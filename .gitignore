@@ -1,0 +1,5 @@
+# Exclude all hidden files
+.*
+# But not .gitignore and .vagrant-puppet
+!.gitignore
+!.vagrant-puppet
