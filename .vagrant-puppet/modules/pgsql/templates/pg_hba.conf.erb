@@ -68,6 +68,8 @@
 
 # icinga
 local   icinga      icinga                            trust
+host    icinga      icinga      127.0.0.1/32          trust
+host    icinga      icinga      ::1/128               trust
 # "local" is for Unix domain socket connections only
 local   all         all                               ident
 # IPv4 local connections:
