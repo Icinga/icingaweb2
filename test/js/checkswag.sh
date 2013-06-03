@@ -1,8 +1,13 @@
 #!/bin/sh
 
-# Make sure that the destination directory for logs and reports exists
-mkdir -p ../../build/log
+set -o nounset
 
-jshint --reporter=jslint "$@" ../.. > ../../build/log/jshint_results.xml
+SCRIPTNAME=$(readlink -f $0)
+DIR=$(dirname $SCRIPTNAME)
+
+# Make sure that the destination directory for logs and reports exists
+mkdir -p $DIR/build/log
+
+jshint --reporter=jslint "$@" ../.. > $DIR/build/log/jshint_results.xml
 
 exit 0
