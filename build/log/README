@@ -1,5 +1,0 @@
-The purpose for this directory is to store temporary logs and
-reports by test-runner, style-checkers or build-routines.
-
-"temporary" means in this case that the contents of this directory
-are completely ignored by Git.
