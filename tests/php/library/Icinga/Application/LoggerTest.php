@@ -9,8 +9,8 @@ require_once("Zend/Log/Writer/Mock.php");
 require_once("Zend/Log/Writer/Null.php");
 require_once("Zend/Log/Filter/Priority.php");
 
-require_once("../library/Icinga/Application/Logger.php");
-require_once("../library/Icinga/Exception/ConfigurationError.php");
+require_once("../../library/Icinga/Application/Logger.php");
+require_once("../../library/Icinga/Exception/ConfigurationError.php");
 
 use \Icinga\Application\Logger as Logger;
 /**

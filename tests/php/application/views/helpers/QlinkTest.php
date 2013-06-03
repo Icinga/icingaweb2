@@ -15,7 +15,7 @@ if(!class_exists('Zend_View_Helper_Abstract')) {
     };
 }
 
-require('../application/views/helpers/Qlink.php');
+require('../../application/views/helpers/Qlink.php');
 
 
 /**
