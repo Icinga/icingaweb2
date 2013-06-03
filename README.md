@@ -18,7 +18,7 @@ After you should be able to browse [localhost:8080/icinga2-web](http://localhost
 
 #### Environment 
 
-Forwarded ports:
+**Forwarded ports**:
 
 <table>
     <tr>
@@ -38,19 +38,40 @@ Forwarded ports:
     </tr>
 </table>
 
-Installed packages:
+**Installed packages**:
 
 * Apache2 with PHP library
 * PHP with MySQL libray
 * MySQL server and client software
 * PostgreSQL server and client software
+* [Icinga prerequisites](http://docs.icinga.org/latest/en/quickstart-idoutils.html#installpackages)
 
-Installed users and groups:
+**Installed users and groups**:
 
 * User icinga with group icinga and icinga-cmd
 * Webserver user added to group icinga-cmd
 
-Installed software:
+**Installed files**:
 
-* Icinga with IDOUtils using a MySQL database
-* Icinga with IDOUtils using a PostgreSQL database
+* `/usr/share/icinga/htpasswd.users` account information for logging into the Icinga classic web interface for both instances
+
+**Installed software**:
+
+* Icinga 1.9.1 with IDOUtils using a MySQL database
+* Icinga 1.9.1 with IDOUtils using a PostgreSQL database
+
+##### Icinga with IDOUtils using a MySQL database
+
+**Installation path**: `/usr/local/icinga-mysql`
+
+**Services**:
+
+* `icinga-mysql`
+* `ido2db-mysql`
+
+Connect to the **icinga mysql database** using the following command:
+
+    mysql -u icinga -p icinga icinga
+
+Access the **Classic UI** (CGIs) via [localhost:8080/icinga-mysql](http://localhost:8080/icinga-mysql).
+For logging into the Icinga classic web interface use user *icingaadmin* with password *icinga*.

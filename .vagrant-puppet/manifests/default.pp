@@ -1,7 +1,7 @@
 include apache
-include php
 include mysql
 include pgsql
+include php
 
 Exec { path => '/bin:/usr/bin:/sbin' }
 
@@ -10,7 +10,7 @@ exec { 'create-mysql-icinga-db':
   command => 'mysql -uroot -e "CREATE DATABASE icinga; \
               GRANT ALL ON icinga.* TO icinga@localhost \
               IDENTIFIED BY \'icinga\';"',
-  require => Service['mysqld'],
+  require => Service['mysqld']
 }
 
 exec{ 'create-pgsql-icinga-db':
@@ -25,9 +25,9 @@ $icinga_packages = [ 'gcc', 'glibc', 'glibc-common', 'gd', 'gd-devel',
   'libdbi-dbd-mysql', 'libdbi-dbd-pgsql' ]
 package { $icinga_packages: ensure => installed }
 
+
 group { 'icinga-cmd':
-  ensure  => present,
-  members => 'www-data'
+  ensure => present
 }
 
 user { 'icinga':
@@ -36,13 +36,23 @@ user { 'icinga':
   managehome => false
 }
 
+user { 'apache':
+  groups  => 'icinga-cmd',
+  require => [Package["${apache::apache}"], Group['icinga-cmd']]
+}
+
 cmmi { 'icinga-mysql':
   url     => 'http://sourceforge.net/projects/icinga/files/icinga/1.9.1/icinga-1.9.1.tar.gz/download',
   output  => 'icinga-1.9.1.tar.gz',
   flags   => '--prefix=/usr/local/icinga-mysql --with-command-group=icinga-cmd \
-              --enable-idoutils --with-init-dir=/tmp/icinga-mysql/etc/init.d',
+              --enable-idoutils --with-init-dir=/tmp/icinga-mysql/etc/init.d \
+              --with-htmurl=/icinga-mysql --with-httpd-conf-file=/etc/httpd/conf.d/icinga-mysql.conf \
+              --with-cgiurl=/icinga-mysql/cgi-bin \
+              --with-http-auth-file=/usr/share/icinga/htpasswd.users',
   creates => '/usr/local/icinga-mysql',
-  require => User['icinga']
+  make    => 'make all && make fullinstall install-config',
+  require => User['icinga'],
+  notify  => Service["${apache::apache}"]
 }
 
 file { '/etc/init.d/icinga-mysql':
@@ -60,9 +70,14 @@ cmmi { 'icinga-pgsql':
   output  => 'icinga-1.9.1.tar.gz',
   flags   => '--prefix=/usr/local/icinga-pgsql \
               --with-command-group=icinga-cmd --enable-idoutils \
-              --with-init-dir=/tmp/icinga-pgsql/etc/init.d',
+              --with-init-dir=/tmp/icinga-pgsql/etc/init.d \
+              --with-htmurl=/icinga-pgsql --with-httpd-conf-file=/etc/httpd/conf.d/icinga-pgsql.conf \
+              --with-cgiurl=/icinga-pgsql/cgi-bin \
+              --with-http-auth-file=/usr/share/icinga/htpasswd.users',
   creates => '/usr/local/icinga-pgsql',
-  require => User['icinga']
+  make    => 'make all && make install install-base install-cgis install-html install-init install-commandmode install-idoutils install-config',
+  require => User['icinga'],
+  notify  => Service["${apache::apache}"]
 }
 
 file { '/etc/init.d/icinga-pgsql':
@@ -76,13 +91,13 @@ file { '/etc/init.d/ido2db-pgsql':
 }
 
 exec { 'populate-icinga-mysql-db':
-  unless  => 'mysql -uicinga -picinga icinga -e "SELECT * FROM icinga_dbversion;" > /dev/null',
+  unless  => 'mysql -uicinga -picinga icinga -e "SELECT * FROM icinga_dbversion;" &> /dev/null',
   command => 'mysql -uicinga -picinga icinga < /usr/local/src/icinga-mysql/icinga-1.9.1/module/idoutils/db/mysql/mysql.sql',
   require => [Cmmi['icinga-mysql'], Exec['create-mysql-icinga-db']]
 }
 
 exec { 'populate-icinga-pgsql-db':
-  unless  => 'psql -U icinga -d icinga -c "SELECT * FROM icinga_dbversion;" > /dev/null',
+  unless  => 'psql -U icinga -d icinga -c "SELECT * FROM icinga_dbversion;" &> /dev/null',
   command => 'sudo -u postgres psql -U icinga -d icinga < /usr/local/src/icinga-pgsql/icinga-1.9.1/module/idoutils/db/pgsql/pgsql.sql',
   require => [Cmmi['icinga-pgsql'], Exec['create-pgsql-icinga-db']]
 }
@@ -158,4 +173,10 @@ file { '/usr/local/icinga-pgsql/etc/modules/idoutils.cfg':
 exec { 'iptables-allow-http':
   unless  => 'grep -Fxqe "-A INPUT -p tcp -m state --state NEW -m tcp --dport 80 -j ACCEPT" /etc/sysconfig/iptables',
   command => 'iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 80 -j ACCEPT && iptables-save > /etc/sysconfig/iptables'
+}
+
+exec { 'icinga-htpasswd':
+  creates => '/usr/share/icinga/htpasswd.users',
+  command => 'mkdir /usr/share/icinga && htpasswd -b -c /usr/share/icinga/htpasswd.users icingaadmin icinga',
+  require => Package["${apache::apache}"]
 }

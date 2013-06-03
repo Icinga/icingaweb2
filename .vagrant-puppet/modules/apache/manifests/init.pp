@@ -26,6 +26,7 @@ class apache {
 
   service { $apache:
     ensure  => running,
+    alias   => 'apache',
     require => Package['apache']
   }
 }

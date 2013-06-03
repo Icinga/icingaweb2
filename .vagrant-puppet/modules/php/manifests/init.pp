@@ -15,7 +15,7 @@
 class php {
 
   package { 'php':
-    ensure => installed,
+    ensure  => installed,
     require => Package["${apache::apache}"]
   }
 

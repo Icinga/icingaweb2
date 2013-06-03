@@ -31,7 +31,7 @@ define cmmi(
   $output,
   $flags,
   $creates,
-  $make='make all && make fullinstall && make install-config',
+  $make='make all && make install',
 ) {
 
   Exec { path => '/bin:/usr/bin' }
