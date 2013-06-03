@@ -47,7 +47,7 @@ Vagrant::Config.run do |config|
   # Share an additional folder to the guest VM. The first argument is
   # an identifier, the second is the path on the guest to mount the
   # folder, and the third is the path on the host to the actual folder.
-  config.vm.share_folder "v-icinga2-web-pub", "/var/www/html/icinga2-web", "./pub", :owner => "apache", :group => "apache"
+  config.vm.share_folder "v-icinga2-web-pub", "/var/www/html/icinga2-web", "./pub"
 
   # Enable provisioning with Puppet stand alone.  Puppet manifests
   # are contained in a directory path relative to this Vagrantfile.
