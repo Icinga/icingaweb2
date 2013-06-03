@@ -2,14 +2,14 @@
 
 namespace Tests\Icinga\Backend\Statusdat;
 use Tests\Icinga\Protocol\Statusdat\ReaderMock as ReaderMock;
-
+require_once("Zend/Config.php");
 require_once("./library/Icinga/Protocol/Statusdat/ReaderMock.php");
-require_once("../library/Icinga/Backend/Query.php");
-require_once("../library/Icinga/Backend/Criteria/Order.php");
-require_once("../library/Icinga/Backend/AbstractBackend.php");
-require_once("../library/Icinga/Backend/Statusdat/Query.php");
-require_once("../library/Icinga/Backend/Statusdat/GroupsummaryQuery.php");
-require_once("../library/Icinga/Backend/Statusdat/ServicegroupsummaryQuery.php");
+require_once("../../library/Icinga/Backend/Query.php");
+require_once("../../library/Icinga/Backend/Criteria/Order.php");
+require_once("../../library/Icinga/Backend/AbstractBackend.php");
+require_once("../../library/Icinga/Backend/Statusdat/Query.php");
+require_once("../../library/Icinga/Backend/Statusdat/GroupsummaryQuery.php");
+require_once("../../library/Icinga/Backend/Statusdat/ServicegroupsummaryQuery.php");
 
 class BackendMock  extends \Icinga\Backend\AbstractBackend{
     public $reader;
