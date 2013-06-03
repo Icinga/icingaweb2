@@ -6,8 +6,8 @@ SCRIPTNAME=$(readlink -f $0)
 DIR=$(dirname $SCRIPTNAME)
 
 # Make sure that the destination directory for logs and reports exists
-mkdir -p $DIR/build/log
+mkdir -p $DIR/../../build/log
 
-jshint --reporter=jslint "$@" ../.. > $DIR/build/log/jshint_results.xml
+jshint --reporter=jslint "$@" $DIR/../.. > $DIR/../../build/log/jshint_results.xm
 
 exit 0
