@@ -29,7 +29,7 @@ Vagrant::Config.run do |config|
 
   # Forward a port from the guest to the host, which allows for outside
   # computers to access the VM, whereas host only networking does not.
-  # config.vm.forward_port 80, 8080
+  config.vm.forward_port 80, 8080
 
   # An example Puppet manifest to provision the message of the day:
   #
@@ -47,7 +47,7 @@ Vagrant::Config.run do |config|
   # Share an additional folder to the guest VM. The first argument is
   # an identifier, the second is the path on the guest to mount the
   # folder, and the third is the path on the host to the actual folder.
-  # # config.vm.share_folder "puppet-templates", "/tmp/vagrant-puppet/templates", "templates"
+  config.vm.share_folder "v-icinga2-web-pub", "/var/www/html/icinga2-web", "./pub", :owner => "apache", :group => "apache"
 
   # Enable provisioning with Puppet stand alone.  Puppet manifests
   # are contained in a directory path relative to this Vagrantfile.
@@ -56,7 +56,6 @@ Vagrant::Config.run do |config|
   config.vm.provision :puppet do |puppet|
     puppet.module_path = ".vagrant-puppet/modules"
     puppet.manifests_path = ".vagrant-puppet/manifests"
-    # # puppet.options = ["--templatedir", "/tmp/vagrant-puppet/templates"]
     puppet.options = "-v -d"
   end
 end

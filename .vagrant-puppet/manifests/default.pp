@@ -3,7 +3,7 @@ include php
 include mysql
 include pgsql
 
-Exec { path => '/bin:/usr/bin' }
+Exec { path => '/bin:/usr/bin:/sbin' }
 
 exec { 'create-mysql-icinga-db':
   unless  => 'mysql -uicinga -picinga icinga',
@@ -153,4 +153,9 @@ file { '/usr/local/icinga-pgsql/etc/modules/idoutils.cfg':
   group   => 'icinga',
   require => Cmmi['icinga-pgsql'],
   notify  => [Service['icinga-pgsql'], Service['ido2db-pgsql']]
+}
+
+exec { 'iptables-allow-http':
+  unless  => 'grep -Fxqe "-A INPUT -p tcp -m state --state NEW -m tcp --dport 80 -j ACCEPT" /etc/sysconfig/iptables',
+  command => 'iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 80 -j ACCEPT && iptables-save > /etc/sysconfig/iptables'
 }
