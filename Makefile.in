@@ -1,0 +1,92 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+
+WWW_CONF_PATH=@www_conf_path@
+INSTALL=@INSTALL@
+INSTALL_OPTS=@INSTALL_OPTS@
+INSTALL_OPTS_WEB=@INSTALL_OPTS_WEB@
+
+#
+# Installs the whole application w\o httpd configurations
+#
+install: install-static-files install-runtime-dirs
+
+#
+# Removes files created by ./configure
+#
+clean:
+	if [ -f ./public/.htaccess ];then \
+		rm ./public/.htaccess; \
+	fi; \
+	if [ -f ./Makefile ];then \
+		rm ./Makefile; \
+	fi; \
+	if [ -f ./etc/apache/cranberry.conf ];then \
+		rm ./etc/apache/cranberry.conf; \
+	fi;
+
+#
+# Installs/copies all static files (executables, scripts, html, etc)
+#
+install-static-files: install-application copy-folder-public copy-folder-config
+	$(INSTALL) -m 644 $(INSTALL_OPTS) "./public/.htaccess"  $(DESTDIR)$(prefix)/public/.htaccess;
+
+#
+# Installs runtime directories like the application cache
+#
+install-runtime-dirs:
+	$(INSTALL) -m 755 $(INSTALL_OPTS_WEB) -d $(DESTDIR)$(prefix)/application/cache
+
+#
+# Copies the tests into the installation directory
+#
+install-tests: copy-folder-tests
+
+#
+# Install configurations for apache2
+#
+install-apache-configs:
+	$(INSTALL) -m 644 $(INSTALL_OPTS) "./etc/apache/cranberry.conf"  $(WWW_CONF_PATH)/cranberry.conf;
+
+#
+# Installs the php files to the prefix
+#
+install-application: copy-php-files-application copy-php-files-library
+
+#
+# Rule for coying folders and containing files (arbitary types), hidden files are excluded
+#
+copy-folder-%:
+	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(prefix)/$*
+
+	@dirs=`find ./$* -mindepth 1 -type d `;\
+	for dir in $$dirs; do \
+		$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(prefix)/"$$dir"; \
+	done;
+
+	@files=`find ./$* -mindepth 1 -type f \
+		-and ! -name ".*"`; \
+		for file in $$files; do \
+			$(INSTALL) -m 644 $(INSTALL_OPTS) "$$file"  $(DESTDIR)$(prefix)/"$$file"; \
+		done
+
+
+#
+# Rule for copying only php, *html, js and ini files. Hidden files are ignored
+#
+copy-php-files-%:
+	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(prefix)/$*
+
+	@dirs=`find ./$* -mindepth 1 -type d `;\
+	for dir in $$dirs; do \
+		$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(prefix)/"$$dir"; \
+	done;
+
+	@files=`find ./$* -mindepth 1 -type f \
+		-name "*.php" -or -name "*.ini" -or -name "*.*html" -or -name "*.js"  \
+		-and ! -name ".*"`; \
+		for file in $$files; do \
+			$(INSTALL) -m 644 $(INSTALL_OPTS) "$$file"  $(DESTDIR)$(prefix)/"$$file"; \
+		done
+
+
