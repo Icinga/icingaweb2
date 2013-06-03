@@ -75,7 +75,7 @@ cmmi { 'icinga-pgsql':
               --with-cgiurl=/icinga-pgsql/cgi-bin \
               --with-http-auth-file=/usr/share/icinga/htpasswd.users',
   creates => '/usr/local/icinga-pgsql',
-  make    => 'make all && make install install-base install-cgis install-html install-init install-commandmode install-idoutils install-config',
+  make    => 'make all && make fullinstall install-config',
   require => User['icinga'],
   notify  => Service["${apache::apache}"]
 }

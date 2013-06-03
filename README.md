@@ -75,3 +75,19 @@ Connect to the **icinga mysql database** using the following command:
 
 Access the **Classic UI** (CGIs) via [localhost:8080/icinga-mysql](http://localhost:8080/icinga-mysql).
 For logging into the Icinga classic web interface use user *icingaadmin* with password *icinga*.
+
+##### Icinga with IDOUtils using a PostgreSQL database
+
+**Installation path**: `/usr/local/icinga-pgsql`
+
+**Services**:
+
+* `icinga-pgsql`
+* `ido2db-pgsql`
+
+Connect to the **icinga mysql database** using the following command:
+
+    sudo -u postgres psql -U icinga -d icinga
+
+Access the **Classic UI** (CGIs) via [localhost:8080/icinga-pgsql](http://localhost:8080/icinga-pgsql).
+For logging into the Icinga classic web interface use user *icingaadmin* with password *icinga*.
