@@ -7,8 +7,8 @@ namespace Tests\Icinga\Web;
 * Created Fri, 22 Mar 2013 09:44:40 +0000 
 *
 **/
-require_once("../library/Icinga/Exception/ProgrammingError.php");
-require_once("../library/Icinga/Web/Hook.php");
+require_once("../../library/Icinga/Exception/ProgrammingError.php");
+require_once("../../library/Icinga/Web/Hook.php");
 
 use Icinga\Web\Hook as Hook;
 class Base

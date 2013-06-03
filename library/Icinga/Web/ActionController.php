@@ -1,0 +1,350 @@
+<?php
+
+/**
+ * Action controller
+ */
+namespace Icinga\Web;
+
+use Icinga\Authentication\Auth;
+use Icinga\Application\Benchmark;
+use Icinga\Exception;
+use Icinga\Application\Config;
+use Icinga\Web\Notification;
+use Zend_Layout as ZfLayout;
+use Zend_Controller_Action as ZfController;
+use Zend_Controller_Request_Abstract as ZfRequest;
+use Zend_Controller_Response_Abstract as ZfResponse;
+use Zend_Controller_Action_HelperBroker as ZfActionHelper;
+
+/**
+ * Base class for all core action controllers
+ *
+ * All Icinga Web core controllers should extend this class
+ *
+ * @copyright  Copyright (c) 2013 Icinga-Web Team <info@icinga.org>
+ * @author     Icinga-Web Team <info@icinga.org>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License
+ */
+class ActionController extends ZfController
+{
+    /**
+     * The Icinga Config object is available in all controllers. This is the
+     * modules config for module action controllers.
+     *
+     * @var Config
+     */
+    protected $config;
+
+    protected $replaceLayout = false;
+
+    /**
+     * The current module name. TODO: Find out whether this shall be null for
+     * non-module actions
+     *
+     * @var string
+     */
+    protected $module_name;
+
+    /**
+     * The current controller name
+     *
+     * @var string
+     */
+    protected $controller_name;
+
+    /**
+     * The current action name
+     *
+     * @var string
+     */
+    protected $action_name;
+
+    protected $handlesAuthentication = false;
+
+    protected $modifiesSession = false;
+
+    protected $allowAccess = false;
+
+    /**
+     * The constructor starts benchmarking, loads the configuration and sets
+     * other useful controller properties
+     *
+     * @param ZfRequest $request
+     * @param ZfResponse $response
+     * @param array $invokeArgs Any additional invocation arguments
+     */
+    public function __construct(
+        ZfRequest $request,
+        ZfResponse $response,
+        array $invokeArgs = array()
+    ) {
+        Benchmark::measure('Action::__construct()');
+        if (Auth::getInstance()->isAuthenticated()
+            && ! $this->modifiesSession
+            && ! Notification::getInstance()->hasMessages()
+        ) {
+            session_write_close();
+        }
+        $this->module_name     = $request->getModuleName();
+        $this->controller_name = $request->getControllerName();
+        $this->action_name     = $request->getActionName();
+
+        $this->loadConfig();
+        $this->setRequest($request)
+             ->setResponse($response)
+             ->_setInvokeArgs($invokeArgs);
+        $this->_helper = new ZfActionHelper($this);
+
+        if ($this->handlesAuthentication()
+          || Auth::getInstance()->isAuthenticated()) {
+            $this->allowAccess = true;
+            $this->init();
+        }
+    }
+
+    /**
+     * This is where the configuration is going to be loaded
+     *
+     * @return void
+     */
+    protected function loadConfig()
+    {
+        $this->config = Config::getInstance();
+    }
+
+    /**
+     * Translates the given string with the global translation catalog
+     *
+     * @param  string $string The string that should be translated
+     *
+     * @return string
+     */
+    public function translate($string)
+    {
+        return t($string);
+    }
+
+    /**
+     * Helper function creating a new widget
+     *
+     * @param  string $name       The widget name
+     * @param  string $properties Optional widget properties
+     *
+     * @return Widget\AbstractWidget
+     */
+    public function widget($name, $properties = array())
+    {
+        return Widget::create($name, $properties);
+    }
+
+    /**
+     * Whether the current user has the given permission
+     *
+     * TODO: This has not been implemented yet
+     *
+     * @param  string $permission Permission name
+     * @param  string $object     No idea what this should have been :-)
+     *
+     * @return bool
+     */
+    final protected function hasPermission($uri, $permission = 'read')
+    {
+        return Auth::getInstance()->hasPermission($uri, $permission);
+    }
+
+    /**
+     * Assert the current user has the given permission
+     *
+     * TODO: This has not been implemented yet
+     *
+     * @param  string $permission Permission name
+     * @param  string $object     No idea what this should have been :-)
+     *
+     * @return self
+     */
+    final protected function assertPermission($permission, $object = null)
+    {
+        if (! $this->hasPermission($permission, $object)) {
+            // TODO: Log violation, create dedicated Exception class
+            throw new \Exception('Permission denied');
+        }
+        return $this;
+    }
+
+    /**
+     * Our benchmark wants to know when we started our dispatch loop
+     *
+     * @return void
+     */
+    public function preDispatch()
+    {
+        Benchmark::measure('Action::preDispatch()');
+        if (! $this->allowAccess) {
+            $this->_request->setModuleName('default')
+                ->setControllerName('authentication')
+                ->setActionName('login')
+                ->setDispatched(false);
+            return;
+        }
+
+        $this->view->action_name = $this->action_name;
+        $this->view->controller_name = $this->controller_name;
+        $this->view->module_name = $this->module_name;
+
+        //$this->quickRedirect('/authentication/login?a=e');
+    }
+
+    public function redirectNow($url, array $params = array())
+    {
+        $this->_helper->Redirector->gotoUrlAndExit($url);
+    }
+
+    public function handlesAuthentication()
+    {
+        return $this->handlesAuthentication;
+    }
+
+    /**
+     * Render our benchmark
+     *
+     * @return string
+     */
+    protected function renderBenchmark()
+    {
+        return '<pre class="benchmark">'
+             . Benchmark::renderToHtml()
+             . '</pre>';
+    }
+
+    /**
+     * After dispatch happend we are going to do some automagic stuff
+     *
+     * - Benchmark is completed and rendered
+     * - Notifications will be collected here
+     * - Layout is disabled for XHR requests
+     * - TODO: Headers with required JS and other things will be created
+     *   for XHR requests
+     *
+     * @return void
+     */
+    public function postDispatch()
+    {
+        Benchmark::measure('Action::postDispatch()');
+        
+        
+        // TODO: Move this elsewhere, this is just an ugly test:
+        if ($this->_request->getParam('filetype') === 'pdf') {
+        
+            // Snippet stolen from less compiler in public/css.php:
+
+            require_once 'vendor/lessphp/lessc.inc.php';
+            $less = new \lessc;
+            $cssdir = dirname(ICINGA_LIBDIR) . '/public/css';
+             // TODO: We need a way to retrieve public dir, even if located elsewhere
+
+            $css = $less->compileFile($cssdir . '/pdfprint.less');
+/*
+            foreach ($app->moduleManager()->getLoadedModules() as $name => $module) {
+                if ($module->hasCss()) {
+                    $css .= $less->compile(
+                        '.icinga-module.module-'
+                        . $name
+                        . " {\n"
+                        . file_get_contents($module->getCssFilename())
+                        . "}\n\n"
+                    );
+                }
+            }
+*/
+
+            // END of CSS test
+        
+             $this->render(
+                null,
+                $this->_helper->viewRenderer->getResponseSegment(),
+                $this->_helper->viewRenderer->getNoController()
+            );
+            $html = '<style>' . $css . '</style>' . (string) $this->getResponse();
+
+            $pdf = new \Icinga\Pdf\File();
+            $pdf->AddPage();
+            $pdf->writeHTMLCell(0, 0, '', '', $html, 0, 1, 0, true, '', true);
+            $pdf->Output('docs.pdf', 'I');
+            exit;
+        }
+        // END of PDF test
+        
+        
+        if ($this->_request->isXmlHttpRequest()) {
+            if ($this->replaceLayout || $this->_getParam('_render') === 'body') {
+                $this->_helper->layout()->setLayout('just-the-body');
+                header('X-Icinga-Target: body');
+            } else {
+                $this->_helper->layout()->setLayout('inline');
+            }
+        }
+        $notification = Notification::getInstance();
+        if ($notification->hasMessages()) {
+            $nhtml = '<ul class="notification">';
+            foreach ($notification->getMessages() as $msg) {
+                $nhtml .= '<li>['
+                        . $msg->type
+                        . '] '
+                        . htmlspecialchars($msg->message);
+            }
+            $nhtml .= '</ul>';
+            $this->getResponse()->append('notification', $nhtml);
+        }
+
+        if (Session::getInstance()->show_benchmark) {
+            Benchmark::measure('Response ready');
+            $this->getResponse()->append('benchmark', $this->renderBenchmark());
+        }
+
+    }
+
+    /**
+     * Whether the token parameter is valid
+     *
+     * TODO: Could this make use of Icinga\Web\Session once done?
+     *
+     * @param int    $maxAge    Max allowed token age
+     * @param string $sessionId A specific session id (useful for tests?)
+     *
+     * return bool
+     */
+    public function hasValidToken($maxAge = 600, $sessionId = null)
+    {
+        $sessionId = $sessionId ? $sessionId : session_id();
+        $seed = $this->_getParam('seed');
+        if (! is_numeric($seed)) {
+            return false;
+        }
+
+        // Remove quantitized timestamp portion so maxAge applies
+        $seed -= (intval(time() / $maxAge) * $maxAge);
+        $token = $this->_getParam('token');
+        return $token === hash('sha256', $sessionId . $seed);
+    }
+
+    /**
+     * Get a new seed/token pair
+     *
+     * TODO: Could this make use of Icinga\Web\Session once done?
+     *
+     * @param int    $maxAge    Max allowed token age
+     * @param string $sessionId A specific session id (useful for tests?)
+     *
+     * return array
+     */
+    public function getSeedTokenPair($maxAge = 600, $sessionId = null)
+    {
+        $sessionId = $sessionId ? $sessionId : session_id();
+        $seed = mt_rand();
+        $hash = hash('sha256', $sessionId . $seed);
+
+        // Add quantitized timestamp portion to apply maxAge
+        $seed += (intval(time() / $maxAge) * $maxAge);
+        return array($seed, $hash);
+    }
+}

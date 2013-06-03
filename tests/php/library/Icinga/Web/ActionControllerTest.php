@@ -4,7 +4,7 @@ namespace Tests\Icinga\Web\ActionController;
 use Icinga\Web\ActionController as Action;
 
 require_once('Zend/Controller/Action.php');
-require_once('../library/Icinga/Web/ActionController.php');
+require_once('../../library/Icinga/Web/ActionController.php');
 
 /**
  * This is not a nice hack, but doesn't affect the behaviour of
