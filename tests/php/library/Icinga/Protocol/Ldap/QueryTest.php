@@ -1,8 +1,8 @@
 <?php
 namespace Tests\Icinga\Protocol\Ldap;
-require_once '../library/Icinga/Protocol/Ldap/Query.php';
-require_once '../library/Icinga/Protocol/Ldap/Connection.php';
-require_once '../library/Icinga/Protocol/Ldap/LdapUtils.php';
+require_once '../../library/Icinga/Protocol/Ldap/Query.php';
+require_once '../../library/Icinga/Protocol/Ldap/Connection.php';
+require_once '../../library/Icinga/Protocol/Ldap/LdapUtils.php';
 /**
 *
 * Test class for Query

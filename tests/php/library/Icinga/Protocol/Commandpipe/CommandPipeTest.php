@@ -8,13 +8,16 @@ use Icinga\Protocol\Commandpipe\Commandpipe as Commandpipe;
 use \Icinga\Protocol\Commandpipe\PropertyModifier as MONFLAG;
 
 require_once("Zend/Config.php");
-require_once("../library/Icinga/Protocol/Commandpipe/IComment.php");
-require_once("../library/Icinga/Protocol/Commandpipe/Comment.php");
-require_once("../library/Icinga/Protocol/Commandpipe/CommandPipe.php");
-require_once("../library/Icinga/Protocol/Commandpipe/Acknowledgement.php");
-require_once("../library/Icinga/Protocol/Commandpipe/Downtime.php");
-require_once("../library/Icinga/Protocol/Commandpipe/PropertyModifier.php");
-require_once("../library/Icinga/Protocol/Commandpipe/Exception/InvalidCommandException.php");
+require_once("Zend/Log.php");
+require_once("../../library/Icinga/Application/Logger.php");
+
+require_once("../../library/Icinga/Protocol/Commandpipe/IComment.php");
+require_once("../../library/Icinga/Protocol/Commandpipe/Comment.php");
+require_once("../../library/Icinga/Protocol/Commandpipe/CommandPipe.php");
+require_once("../../library/Icinga/Protocol/Commandpipe/Acknowledgement.php");
+require_once("../../library/Icinga/Protocol/Commandpipe/Downtime.php");
+require_once("../../library/Icinga/Protocol/Commandpipe/PropertyModifier.php");
+require_once("../../library/Icinga/Protocol/Commandpipe/Exception/InvalidCommandException.php");
 
 if(!defined("EXTCMD_TEST_BIN"))
     define("EXTCMD_TEST_BIN", "./bin/extcmd_test");

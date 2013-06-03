@@ -5,11 +5,11 @@ namespace Tests\Icinga\Protocol\Commandpipe;
 use Icinga\Protocol\Commandpipe\Comment as Comment;
 use Icinga\Protocol\Commandpipe\Commandpipe as Commandpipe;
 
-require_once("../library/Icinga/Protocol/Commandpipe/IComment.php");
-require_once("../library/Icinga/Protocol/Commandpipe/Comment.php");
-require_once("../library/Icinga/Protocol/Commandpipe/CommandPipe.php");
-require_once("../library/Icinga/Protocol/Commandpipe/Acknowledgement.php");
-require_once("../library/Icinga/Protocol/Commandpipe/Exception/InvalidCommandException.php");
+require_once("../../library/Icinga/Protocol/Commandpipe/IComment.php");
+require_once("../../library/Icinga/Protocol/Commandpipe/Comment.php");
+require_once("../../library/Icinga/Protocol/Commandpipe/CommandPipe.php");
+require_once("../../library/Icinga/Protocol/Commandpipe/Acknowledgement.php");
+require_once("../../library/Icinga/Protocol/Commandpipe/Exception/InvalidCommandException.php");
 
 class AcknowledgementTest extends \PHPUnit_Framework_TestCase
 {
