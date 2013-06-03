@@ -1,8 +1,8 @@
 <?php
 
 namespace Tests\Icinga\Protocol\Statusdat\Query;
-require_once("../library/Icinga/Protocol/Statusdat/Query/IQueryPart.php");
-require_once("../library/Icinga/Protocol/Statusdat/Query/Group.php");
+require_once("../../library/Icinga/Protocol/Statusdat/Query/IQueryPart.php");
+require_once("../../library/Icinga/Protocol/Statusdat/Query/Group.php");
 
 /**
  *

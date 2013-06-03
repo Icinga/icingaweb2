@@ -1,9 +1,9 @@
 <?php
 
 namespace Tests\Icinga\Protocol\Statusdat;
-require_once("../library/Icinga/Protocol/Statusdat/IReader.php");
-require_once("../library/Icinga/Protocol/Statusdat/Reader.php");
-require_once("../library/Icinga/Exception/ConfigurationError.php");
+require_once("../../library/Icinga/Protocol/Statusdat/IReader.php");
+require_once("../../library/Icinga/Protocol/Statusdat/Reader.php");
+require_once("../../library/Icinga/Exception/ConfigurationError.php");
 
 use Icinga\Protocol\Statusdat\Reader as Reader;
 define("APPLICATION_PATH","./"); // TODO: test boostrap

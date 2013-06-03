@@ -1,9 +1,9 @@
 <?php
 
 namespace Tests\Icinga\Protocol\Statusdat;
-require_once("../library/Icinga/Protocol/Statusdat/Exception/ParsingException.php");
-require_once("../library/Icinga/Exception/ProgrammingError.php");
-require_once("../library/Icinga/Protocol/Statusdat/Parser.php");
+require_once("../../library/Icinga/Protocol/Statusdat/Exception/ParsingException.php");
+require_once("../../library/Icinga/Exception/ProgrammingError.php");
+require_once("../../library/Icinga/Protocol/Statusdat/Parser.php");
 use Icinga\Protocol\Statusdat\Parser;
 /**
 *

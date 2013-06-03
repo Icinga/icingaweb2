@@ -1,6 +1,6 @@
 <?php
 namespace Tests\Icinga\Protocol\Statusdat;
-require_once("../library/Icinga/Protocol/Statusdat/IReader.php");
+require_once("../../library/Icinga/Protocol/Statusdat/IReader.php");
 
 use Icinga\Protocol\Statusdat\IReader;
 
