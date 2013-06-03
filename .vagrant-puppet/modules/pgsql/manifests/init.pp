@@ -37,8 +37,6 @@ class pgsql {
 
   file { '/var/lib/pgsql/data/pg_hba.conf':
     content => template('pgsql/pg_hba.conf.erb'),
-    owner   => 'root',
-    group   => 'root',
     require => [Package['postgresql-server'], Exec['initdb']],
     notify  => Service['postgresql']
   }
