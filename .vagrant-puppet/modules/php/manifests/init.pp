@@ -23,4 +23,9 @@ class php {
     ensure  => installed,
     require => Package['mysql-server']
   }
+
+  package { 'php-pgsql':
+    ensure  => installed,
+    require => Package['postgresql-server']
+  }
 }
