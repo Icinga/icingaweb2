@@ -1,0 +1,22 @@
+<phpunit backupGlobals="true"
+         backupStaticAttributes="true"
+         colors="false"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         forceCoversAnnotation="false"
+         processIsolation="false"
+         stopOnError="false"
+         stopOnFailure="false"
+         stopOnIncomplete="false"
+         stopOnSkipped="false"
+         strict="false"
+         verbose="false">
+
+        <logging>
+                <log type="coverage-clover" target="../../build/log/phpunit_coverage.xml"/>
+                <log type="junit" target="../../build/log/phpunit_results.xml" logIncompleteSkipped="true"/>
+        </logging>
+
+</phpunit>
+
