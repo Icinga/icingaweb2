@@ -31,25 +31,21 @@ define cmmi(
   $output,
   $flags,
   $creates,
-  $make='make all && make install',
+  $make,
 ) {
 
   Exec { path => '/bin:/usr/bin' }
 
-  if ! defined(Package['wget']) {
-    package{ 'wget':
-      ensure => installed
-    }
-  }
-
   $cwd = '/usr/local/src'
+
+  include wget
 
   exec { "download-${name}":
     cwd     => $cwd,
     command => "wget -q ${url} -O ${output}",
     creates => "${cwd}/${output}",
     timeout => 120,
-    require => Package['wget']
+    require => Class['wget']
   }
 
   $tld = inline_template('<%= File.basename(output, ".tar.gz") %>')

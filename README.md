@@ -4,7 +4,7 @@
 
 1. [Vagrant - Virtual development environment](#vagrant)
 
-### Vagrant
+## Vagrant
 
 The Icinga 2 Web project ships with a Vagrant virtual machine that integrates
 the source code with various services and example data in a controlled
@@ -16,7 +16,7 @@ have to do is install Vagrant and run:
 
 After you should be able to browse [localhost:8080/icinga2-web](http://localhost:8080/icinga2-web).
 
-#### Environment 
+### Environment 
 
 **Forwarded ports**:
 
@@ -40,8 +40,8 @@ After you should be able to browse [localhost:8080/icinga2-web](http://localhost
 
 **Installed packages**:
 
-* Apache2 with PHP library
-* PHP with MySQL libray
+* Apache2 with PHP enabled
+* PHP with MySQL and PostgreSQL libraries
 * MySQL server and client software
 * PostgreSQL server and client software
 * [Icinga prerequisites](http://docs.icinga.org/latest/en/quickstart-idoutils.html#installpackages)
@@ -51,16 +51,17 @@ After you should be able to browse [localhost:8080/icinga2-web](http://localhost
 * User icinga with group icinga and icinga-cmd
 * Webserver user added to group icinga-cmd
 
-**Installed files**:
-
-* `/usr/share/icinga/htpasswd.users` account information for logging into the Icinga classic web interface for both instances
-
 **Installed software**:
 
 * Icinga 1.9.1 with IDOUtils using a MySQL database
 * Icinga 1.9.1 with IDOUtils using a PostgreSQL database
 
-##### Icinga with IDOUtils using a MySQL database
+**Installed files**:
+
+* `/usr/share/icinga/htpasswd.users` account information for logging into the Icinga classic web interface for both icinga instances
+* `/usr/lib64/nagios/plugins` Nagios Plugins 1.4.16 for both icinga instances
+
+#### Icinga with IDOUtils using a MySQL database
 
 **Installation path**: `/usr/local/icinga-mysql`
 
@@ -74,9 +75,9 @@ Connect to the **icinga mysql database** using the following command:
     mysql -u icinga -p icinga icinga
 
 Access the **Classic UI** (CGIs) via [localhost:8080/icinga-mysql](http://localhost:8080/icinga-mysql).
-For logging into the Icinga classic web interface use user *icingaadmin* with password *icinga*.
+For **logging into** the Icinga classic web interface use user *icingaadmin* with password *icinga*.
 
-##### Icinga with IDOUtils using a PostgreSQL database
+#### Icinga with IDOUtils using a PostgreSQL database
 
 **Installation path**: `/usr/local/icinga-pgsql`
 
@@ -90,4 +91,4 @@ Connect to the **icinga mysql database** using the following command:
     sudo -u postgres psql -U icinga -d icinga
 
 Access the **Classic UI** (CGIs) via [localhost:8080/icinga-pgsql](http://localhost:8080/icinga-pgsql).
-For logging into the Icinga classic web interface use user *icingaadmin* with password *icinga*.
+For **logging into** the Icinga classic web interface use user *icingaadmin* with password *icinga*.

@@ -1,7 +1,6 @@
 include apache
 include mysql
 include pgsql
-include php
 
 Exec { path => '/bin:/usr/bin:/sbin' }
 
@@ -25,6 +24,9 @@ $icinga_packages = [ 'gcc', 'glibc', 'glibc-common', 'gd', 'gd-devel',
   'libdbi-dbd-mysql', 'libdbi-dbd-pgsql' ]
 package { $icinga_packages: ensure => installed }
 
+php::extension { ['php-mysql', 'php-pgsql']:
+  require => [Class['mysql'], Class['pgsql']]
+}
 
 group { 'icinga-cmd':
   ensure => present
@@ -48,10 +50,11 @@ cmmi { 'icinga-mysql':
               --enable-idoutils --with-init-dir=/tmp/icinga-mysql/etc/init.d \
               --with-htmurl=/icinga-mysql --with-httpd-conf-file=/etc/httpd/conf.d/icinga-mysql.conf \
               --with-cgiurl=/icinga-mysql/cgi-bin \
-              --with-http-auth-file=/usr/share/icinga/htpasswd.users',
+              --with-http-auth-file=/usr/share/icinga/htpasswd.users \
+              --with-plugin-dir=/usr/lib64/nagios/plugins/libexec',
   creates => '/usr/local/icinga-mysql',
   make    => 'make all && make fullinstall install-config',
-  require => User['icinga'],
+  require => [User['icinga'], Cmmi['icinga-plugins']],
   notify  => Service["${apache::apache}"]
 }
 
@@ -73,10 +76,11 @@ cmmi { 'icinga-pgsql':
               --with-init-dir=/tmp/icinga-pgsql/etc/init.d \
               --with-htmurl=/icinga-pgsql --with-httpd-conf-file=/etc/httpd/conf.d/icinga-pgsql.conf \
               --with-cgiurl=/icinga-pgsql/cgi-bin \
-              --with-http-auth-file=/usr/share/icinga/htpasswd.users',
+              --with-http-auth-file=/usr/share/icinga/htpasswd.users \
+              --with-plugin-dir=/usr/lib64/nagios/plugins/libexec',
   creates => '/usr/local/icinga-pgsql',
   make    => 'make all && make fullinstall install-config',
-  require => User['icinga'],
+  require => [User['icinga'], Cmmi['icinga-plugins']],
   notify  => Service["${apache::apache}"]
 }
 
@@ -179,4 +183,15 @@ exec { 'icinga-htpasswd':
   creates => '/usr/share/icinga/htpasswd.users',
   command => 'mkdir /usr/share/icinga && htpasswd -b -c /usr/share/icinga/htpasswd.users icingaadmin icinga',
   require => Package["${apache::apache}"]
+}
+
+cmmi { 'icinga-plugins':
+  url     => 'http://sourceforge.net/projects/nagiosplug/files/nagiosplug/1.4.16/nagios-plugins-1.4.16.tar.gz/download',
+  output  => 'nagios-plugins-1.4.16.tar.gz',
+  flags   => '--prefix=/usr/lib64/nagios/plugins \
+              --with-nagios-user=icinga --with-nagios-group=icinga \
+              --with-cgiurl=/icinga-mysql/cgi-bin',
+  creates => '/usr/lib64/nagios/plugins/libexec',
+  make    => 'make && make install',
+  require => User['icinga']
 }

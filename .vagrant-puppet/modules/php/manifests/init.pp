@@ -1,6 +1,6 @@
 # Class: php
 #
-#   This class installs the php and php-mysql packages.
+#   This class installs php.
 #
 # Parameters:
 #
@@ -15,17 +15,6 @@
 class php {
 
   package { 'php':
-    ensure  => installed,
-    require => Package["${apache::apache}"]
-  }
-
-  package { 'php-mysql':
-    ensure  => installed,
-    require => Package['mysql-server']
-  }
-
-  package { 'php-pgsql':
-    ensure  => installed,
-    require => Package['postgresql-server']
+    ensure  => installed
   }
 }
