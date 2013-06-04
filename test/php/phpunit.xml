@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <phpunit backupGlobals="true"
          backupStaticAttributes="true"
          colors="false"
@@ -13,10 +14,26 @@
          strict="false"
          verbose="false">
 
-        <logging>
-                <log type="coverage-clover" target="../../build/log/phpunit_coverage.xml"/>
-                <log type="junit" target="../../build/log/phpunit_results.xml" logIncompleteSkipped="true"/>
-        </logging>
+    <logging>
+        <log type="coverage-clover" target="../../build/log/phpunit_coverage.xml"/>
+        <log type="junit" target="../../build/log/phpunit_results.xml" logIncompleteSkipped="true"/>
+    </logging>
 
+    <testsuites>
+        <!--
+            Unit testing
+        -->
+        <testsuite name="unit">
+            <directory>application/</directory>
+            <directory>bin/</directory>
+            <directory>library/</directory>
+        </testsuite>
+
+        <!--
+            Regression testing
+        -->
+        <testsuite name="regression">
+            <directory>regression/</directory>
+        </testsuite>
+    </testsuites>
 </phpunit>
-

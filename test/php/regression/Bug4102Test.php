@@ -1,0 +1,44 @@
+<?php
+/**
+ * Icinga2-Web regression test
+ * (c) 2013 Icinga Development Team
+ */
+
+namespace Tests\Icinga\Regression;
+
+/**
+ * Class Bug4102
+ * 
+ * Bogus regression test
+ *
+ * @see https://dev.icinga.org/issues/4102
+ * @package Tests\Icinga\Regression
+ */
+class Bug4102Test extends \PHPUnit_Framework_TestCase
+{
+    /**
+     * Test class name to match definition
+     */
+    public function testClassName()
+    {
+        $class = get_class($this);
+        $this->assertContains('Bug4102Test', $class);
+    }
+
+    /**
+     * Test namespace to match definition
+     */
+    public function testNamespace()
+    {
+        $namespace = __NAMESPACE__;
+        $this->assertEquals('Tests\Icinga\Regression', $namespace);
+    }
+
+    /**
+     * Test phpunit inheritance
+     */
+    public function testInheritance()
+    {
+        $this->assertInstanceOf('\PHPUnit_Framework_TestCase', $this);
+    }
+}

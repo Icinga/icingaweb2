@@ -16,6 +16,6 @@ mkdir -p $DIR/../../build/log
 
 cd $DIR
 
-$PHPUNIT "$@" .
+$PHPUNIT "$@" 
 
 exit 0
