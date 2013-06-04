@@ -195,3 +195,20 @@ cmmi { 'icinga-plugins':
   make    => 'make && make install',
   require => User['icinga']
 }
+
+cmmi { 'mk-livestatus':
+  url     => 'http://mathias-kettner.de/download/mk-livestatus-1.2.2p1.tar.gz',
+  output  => 'mk-livestatus-1.2.2p1.tar.gz',
+  flags   => '--prefix=/usr/local/icinga-mysql --exec-prefix=/usr/local/icinga-mysql',
+  creates => '/usr/local/icinga-mysql/lib/mk-livestatus',
+  make    => 'make && make install',
+  require => Cmmi['icinga-mysql']
+}
+
+file { '/usr/local/icinga-mysql/etc/modules/mk-livestatus.cfg':
+  content => template('mk-livestatus/mk-livestatus.cfg.erb'),
+  owner   => 'icinga',
+  group   => 'icinga',
+  require => Cmmi['mk-livestatus'],
+  notify  => [Service['icinga-mysql'], Service['ido2db-mysql']]
+}

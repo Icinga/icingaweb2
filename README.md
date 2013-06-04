@@ -92,3 +92,16 @@ Connect to the **icinga mysql database** using the following command:
 
 Access the **Classic UI** (CGIs) via [localhost:8080/icinga-pgsql](http://localhost:8080/icinga-pgsql).
 For **logging into** the Icinga classic web interface use user *icingaadmin* with password *icinga*.
+
+#### MK Livestatus
+
+MK Livestatus is added to the Icinga installation using a MySQL database.
+
+**Installation path**:
+* `/usr/local/icinga-mysql/bin/unixcat`
+* `/usr/local/icinga-mysql/lib/mk-livestatus/livecheck`
+* `/usr/local/icinga-mysql/lib/mk-livestatus/livestatus.o`
+* `/usr/local/icinga-mysql/etc/modules/mk-livestatus.cfg`
+* `/usr/local/icinga-mysql/var/rw/live`
+
+
