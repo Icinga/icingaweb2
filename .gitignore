@@ -1,3 +1,11 @@
+# Exclude all hidden files
+.*
+# But not .gitignore and .vagrant-puppet
+!.gitignore
+!.vagrant-puppet
+# Build artefacts
 build/
+# Dev environmental
 .idea/
+# Configure output
 config.log
