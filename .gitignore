@@ -3,9 +3,9 @@
 # But not .gitignore and .vagrant-puppet
 !.gitignore
 !.vagrant-puppet
-# Build artefacts
+
 build/
-# Dev environmental
-.idea/
-# Configure output
+test/js/npm-debug.log
+
+# ./configure output
 config.log
