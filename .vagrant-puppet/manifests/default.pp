@@ -240,3 +240,19 @@ exec { 'populate-openldap':
   require => [Service['slapd'], File['openldap/db.ldif'],
               File['openldap/dit.ldif'], File['openldap/users.ldif']]
 }
+
+class { 'phantomjs':
+  url     => 'https://phantomjs.googlecode.com/files/phantomjs-1.9.1-linux-x86_64.tar.bz2',
+  output  => 'phantomjs-1.9.1-linux-x86_64.tar.bz2',
+  creates => '/usr/local/phantomjs'
+}
+
+class { 'casperjs':
+  url     => 'https://github.com/n1k0/casperjs/tarball/1.0.2',
+  output  => 'casperjs-1.0.2.tar.gz',
+  creates => '/usr/local/casperjs'
+}
+
+file { '/etc/profile.d/env.sh':
+  source => 'puppet:////vagrant/.vagrant-puppet/files/etc/profile.d/env.sh'
+}
