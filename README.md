@@ -140,10 +140,10 @@ This is what the **dc=icinga,dc=org** *DIT* looks like:
 > 
 > dn: cn=Users,ou=groups,dc=icinga,dc=org
 > cn: Users
-> uniqueMember: uid=jdoe,ou=people,dc=icinga,dc=rg
-> uniqueMember: uid=jsmith,ou=people,dc=icinga,dc=rg
-> uniqueMember: uid=jqpublic,ou=people,dc=icinga,dc=rg
-> uniqueMember: uid=jroe,ou=people,dc=icinga,dc=rg
+> uniqueMember: cn=Jon Doe,ou=people,dc=icinga,dc=org
+> uniqueMember: cn=Jane Smith,ou=people,dc=icinga,dc=org
+> uniqueMember: cn=John Q. Public,ou=people,dc=icinga,dc=org
+> uniqueMember: cn=Richard Roe,ou=people,dc=icinga,dc=org
 > 
 > dn: cn=John Doe,ou=people,dc=icinga,dc=org
 > cn: John Doe
@@ -159,6 +159,6 @@ This is what the **dc=icinga,dc=org** *DIT* looks like:
 > 
 > dn: cn=Richard Roe,ou=people,dc=icinga,dc=org
 > cn: Richard Roe
-> uid: jroe
+> uid: rroe
 
 All users share the password `password`.

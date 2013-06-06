@@ -31,13 +31,13 @@ dn: cn=Richard Roe,ou=people,dc=icinga,dc=org
 objectclass: inetOrgPerson
 cn: Richard Roe
 sn: Roe
-uid: jroe
+uid: rroe
 userpassword: password
 
 dn: cn=Users,ou=groups,dc=icinga,dc=org
 objectClass: groupOfUniqueNames
 cn: Users
-uniqueMember: uid=jdoe,ou=people,dc=icinga,dc=rg
-uniqueMember: uid=jsmith,ou=people,dc=icinga,dc=rg
-uniqueMember: uid=jqpublic,ou=people,dc=icinga,dc=rg
-uniqueMember: uid=jroe,ou=people,dc=icinga,dc=rg
+uniqueMember: cn=Jon Doe,ou=people,dc=icinga,dc=org
+uniqueMember: cn=Jane Smith,ou=people,dc=icinga,dc=org
+uniqueMember: cn=John Q. Public,ou=people,dc=icinga,dc=org
+uniqueMember: cn=Richard Roe,ou=people,dc=icinga,dc=org
