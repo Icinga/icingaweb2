@@ -6,6 +6,10 @@ SCRIPTNAME=$(readlink -f $0)
 DIR=$(dirname $SCRIPTNAME)
 PHPUNIT=$(which phpunit)
 
+if [[ ! -x ./bin/extcmd_test ]]; then
+    make
+fi;
+
 if [[ ! -x $PHPUNIT ]]; then
     echo "PHPUnit not found!"
     exit 1
