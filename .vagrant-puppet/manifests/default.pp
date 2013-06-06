@@ -257,6 +257,22 @@ file { '/etc/profile.d/env.sh':
   source => 'puppet:////vagrant/.vagrant-puppet/files/etc/profile.d/env.sh'
 }
 
-pear::package { 'phpcs':
-  channel => 'PHP_CodeSniffer'
+include epel
+
+exec { 'install PHPUnit':
+  command => 'yum -d 0 -e 0 -y --enablerepo=epel install php-phpunit-PHPUnit',
+  unless  => 'rpm -qa | grep php-phpunit-PHPUnit',
+  require => Class['epel']
+}
+
+exec { 'install PHP CodeSniffer':
+  command => 'yum -d 0 -e 0 -y --enablerepo=epel install php-pear-PHP-CodeSniffer',
+  unless  => 'rpm -qa | grep php-pear-PHP-CodeSniffer',
+  require => Class['epel']
+}
+
+exec { 'install nodejs':
+  command => 'yum -d 0 -e 0 -y --enablerepo=epel install npm',
+  unless  => 'rpm -qa | grep ^npm',
+  require => Class['epel']
 }
