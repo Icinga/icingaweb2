@@ -1,16 +1,30 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
+
 namespace Icinga\Backend\Statusdat\DataView;
+
+use Icinga\Backend\DataView\ObjectRemappingView;
 use \Icinga\Protocol\Statusdat\IReader;
 
-class StatusdatServiceView extends \Icinga\Backend\DataView\ObjectRemappingView
+class StatusdatServiceView extends ObjectRemappingView
 {
+    /**
+     * @var mixed
+     */
     private $state;
 
+    /**
+     * @var array
+     */
     protected $handlerParameters = array(
         "host" => "getHost",
         "downtimes_with_info" => "getDowntimes"
     );
 
+    /**
+     * @var array
+     */
     protected $mappedParameters = array(
         "host_address" => "parenthost.address",
         "host_name" => "host_name",
@@ -26,35 +40,57 @@ class StatusdatServiceView extends \Icinga\Backend\DataView\ObjectRemappingView
         "service_next_check" => "status.next_check",
         "service_check_latency" => "status.check_latency",
         "service_check_execution_time" => "status.check_execution_time",
-        "service_acknowledged"  => "status.problem_has_been_acknowledged",
-        "service_comments"      => "comment"
+        "service_acknowledged" => "status.problem_has_been_acknowledged",
+        "service_comments" => "comment"
 
     );
 
+    /**
+     * @param \Icinga\Backend\DataView\The $item
+     * @param \Icinga\Backend\DataView\The $field
+     * @return \Icinga\Backend\DataView\The|string
+     */
     public function get(&$item, $field)
     {
-        if(!isset($item->parenthost) && isset($this->state["host"]))
+        if (!isset($item->parenthost) && isset($this->state["host"])) {
             $item->parenthost = $this->state["host"];
+        }
 
-        return parent::get($item,$field);
+        return parent::get($item, $field);
     }
+
+    /**
+     * @param \Icinga\Backend\DataView\The $item
+     * @param \Icinga\Backend\DataView\The $field
+     * @return bool
+     */
     public function exists(&$item, $field)
     {
-        if(!isset($item->parenthost))
+        if (!isset($item->parenthost)) {
             $item->parenthost = $this->state["host"];
+        }
 
-        return parent::exists($item,$field);
+        return parent::exists($item, $field);
     }
 
+    /**
+     * @param $item
+     * @return null
+     */
     public function getHost(&$item)
     {
-        if (!isset($this->state["host"][$item->host_name]))
+        if (!isset($this->state["host"][$item->host_name])) {
             return null;
-        if (!isset($this->state["host"][$item->host_name]))
+        }
+        if (!isset($this->state["host"][$item->host_name])) {
             return null;
+        }
         return $this->state["host"][$item->host_name];
     }
 
+    /**
+     * @param IReader $reader
+     */
     public function __construct(IReader $reader)
     {
         $this->state = & $reader->getState();

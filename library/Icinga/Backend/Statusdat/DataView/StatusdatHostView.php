@@ -1,16 +1,34 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
+
 namespace Icinga\Backend\Statusdat\DataView;
+
 use \Icinga\Protocol\Statusdat\IReader;
+
+/**
+ * Class StatusdatHostView
+ * @package Icinga\Backend\Statusdat\DataView
+ */
 class StatusdatHostView extends \Icinga\Backend\DataView\ObjectRemappingView
 {
+    /**
+     * @var mixed
+     */
     private $state;
 
+    /**
+     * @var array
+     */
     protected $handlerParameters = array(
         "host" => "getHost",
         "downtimes_with_info" => "getDowntimes",
         "comments_with_info" => "getComments"
     );
 
+    /**
+     * @var array
+     */
     protected $mappedParameters = array(
         "host_address" => "host_name",
         "host_name" => "host_name",
@@ -27,22 +45,31 @@ class StatusdatHostView extends \Icinga\Backend\DataView\ObjectRemappingView
         "host_check_latency" => "status.check_latency",
         "host_check_execution_time" => "status.check_execution_time",
         "active_checks_enabled" => "status.active_checks_enabled",
-
         "acknowledged" => "status.problem_has_been_acknowledged",
         "host_acknowledged" => "status.problem_has_been_acknowledged",
         // "state" => "current_state"
     );
 
-
-    public function getHost(&$item) {
-        if(!isset($this->state["host"][$item->host_name]))
+    /**
+     * @param $item
+     * @return null
+     */
+    public function getHost(&$item)
+    {
+        if (!isset($this->state["host"][$item->host_name])) {
             return null;
-        if(!isset($this->state["host"][$item->host_name]))
+        }
+        if (!isset($this->state["host"][$item->host_name])) {
             return null;
+        }
         return $this->state["host"][$item->host_name];
     }
 
-    public function __construct(IReader $reader) {
-        $this->state = &$reader->getState();
+    /**
+     * @param IReader $reader
+     */
+    public function __construct(IReader $reader)
+    {
+        $this->state = & $reader->getState();
     }
 }

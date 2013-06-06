@@ -1,17 +1,25 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Backend\DataView;
+
 /**
+ * Class ObjectRemappingView
+ *
  * Dataview that maps generic field names to storage specific fields or requests them via handlers.
  *
- * When accessing objects, every storage api returns them with other names. You can't simply say $object->service_state,
- * because this field is, e.g. under status.current_state in the status.dat view, while IDO uses servicestate->current_state.
+ * When accessing objects, every storage api returns them with other names. You can't simply say
+ * $object->service_state, because this field is, e.g. under status.current_state in the status.dat
+ * view, while IDO uses servicestate->current_state.
  *
- * This view is intended for normalizing these changes, so a request of service_state returns the right field for the backend.
- * When implementing it, you have to fill the mappedParameters and/or the handlerParameters array. While mappedParameters
- * simply translate logic field names to storage specific ones, handlerParameters determins functions that handle data
- * retrieval for the specific fields.
+ * This view is intended for normalizing these changes, so a request of service_state returns the
+ * right field for the backend. When implementing it, you have to fill the mappedParameters and/or
+ * the handlerParameters array. While mappedParameters simply translate logic field names to
+ * storage specific ones, handlerParameters determins functions that handle data retrieval for
+ * the specific fields.
  *
+ * @package Icinga\Backend\DataView
  */
 class ObjectRemappingView implements AbstractAccessorStrategy
 {
@@ -46,15 +54,17 @@ class ObjectRemappingView implements AbstractAccessorStrategy
     public function get(&$item, $field)
     {
 
-        if (isset($item->$field))
+        if (isset($item->$field)) {
             return $item->$field;
+        }
         if (isset($this->mappedParameters[$field])) {
-            $mapped = explode(".",$this->mappedParameters[$field]);
+            $mapped = explode(".", $this->mappedParameters[$field]);
             $res = $item;
 
-            foreach($mapped as $map) {
-                if(!isset($res->$map))
+            foreach ($mapped as $map) {
+                if (!isset($res->$map)) {
                     return "";
+                }
                 $res = $res->$map;
             }
             return $res;
@@ -76,8 +86,9 @@ class ObjectRemappingView implements AbstractAccessorStrategy
      */
     public function getNormalizedFieldName($field)
     {
-        if(isset($this->mappedParameters[$field]))
+        if (isset($this->mappedParameters[$field])) {
             return $this->mappedParameters[$field];
+        }
         return $field;
     }
 
@@ -96,5 +107,4 @@ class ObjectRemappingView implements AbstractAccessorStrategy
             || isset($this->handlerParameters[$field])
         );
     }
-
 }
