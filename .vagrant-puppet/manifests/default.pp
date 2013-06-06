@@ -256,3 +256,7 @@ class { 'casperjs':
 file { '/etc/profile.d/env.sh':
   source => 'puppet:////vagrant/.vagrant-puppet/files/etc/profile.d/env.sh'
 }
+
+pear::package { 'phpcs':
+  channel => 'PHP_CodeSniffer'
+}
