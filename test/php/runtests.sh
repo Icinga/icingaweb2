@@ -6,10 +6,6 @@ SCRIPTNAME=$(readlink -f $0)
 DIR=$(dirname $SCRIPTNAME)
 PHPUNIT=$(which phpunit)
 
-if [[ ! -x ./bin/extcmd_test ]]; then
-    make
-fi;
-
 if [[ ! -x $PHPUNIT ]]; then
     echo "PHPUnit not found!"
     exit 1
@@ -19,6 +15,11 @@ fi
 mkdir -p $DIR/../../build/log
 
 cd $DIR
+
+if [[ ! -x ./bin/extcmd_test ]]; then
+    make
+fi;
+
 
 $PHPUNIT "$@" 
 
