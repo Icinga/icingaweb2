@@ -1,0 +1,199 @@
+<?php
+
+namespace Icinga\Application;
+
+require_once dirname(__FILE__) . '/ApplicationBootstrap.php';
+use Icinga\Web\Session;
+use Zend_Controller_Front as FrontController;
+use Zend_Layout as Layout;
+use Zend_Paginator as Paginator;
+use Zend_View_Helper_PaginationControl as PaginationControl;
+use Zend_Controller_Action_HelperBroker as ActionHelper;
+use Zend_Controller_Router_Route as Route;
+
+/**
+ * Use this if you want to make use of Icinga funtionality in other web projects
+ *
+ * Usage example:
+ * <code>
+ * use Icinga\Application\EmbeddedWeb;
+ * EmbeddedWeb::start();
+ * </code>
+ *
+ * @copyright  Copyright (c) 2013 Icinga-Web Team <info@icinga.org>
+ * @author     Icinga-Web Team <info@icinga.org>
+ * @package    Icinga\Application
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License
+ */
+class Web extends ApplicationBootstrap
+{
+    protected $view;
+    protected $frontController;
+    protected $isWeb = true;
+
+    protected function bootstrap()
+    {
+        return $this->loadConfig()
+                    ->configureErrorHandling()
+                    ->setTimezone()
+                    ->configureSession()
+                    ->configureCache()
+                    ->prepareZendMvc()
+                    ->loadTranslations()
+                    ->loadEnabledModules()
+                    ->setupSpecialRoutes()
+                    ->configurePagination();
+    }
+
+    protected function setupSpecialRoutes()
+    {
+        // TODO: Find a better solution
+        $this->frontController->getRouter()->addRoute(
+            'module_overview',
+            new Route(
+                'js/modules/list.js',
+                array(
+                    'controller' =>'static',
+                    'action'     =>'modulelist',
+                )
+            )
+        );
+        return $this;
+    }
+
+    public function frontController()
+    {
+        // TODO: ProgrammingError if null
+        return $this->frontController;
+    }
+
+    public function getView()
+    {
+        // TODO: ProgrammingError if null
+        return $this->view;
+    }
+
+    public function dispatch()
+    {
+        $this->dispatchFrontController();
+    }
+
+    /**
+     * Configure web session settings
+     *
+     * @return self
+     */
+    protected function configureSession()
+    {
+        Session::setOptions(
+            array(
+                 // strict requires Zend_Session::start()
+                'strict'                  => true,
+                'cookie_secure'           => false,
+                'name'                    => $this->config->{'global'}->get(
+                    'session_cookie',
+                    'ICINGA_SID'
+                ),
+
+                // Obsolete once moved to Icinga\Web\Session:
+                'cookie_httponly'         => true,
+                'use_only_cookies'        => true,
+                'hash_function'           => true,
+                'hash_bits_per_character' => 5,
+            )
+        );
+        return $this;
+    }
+
+    protected function loadTranslations()
+    {
+        $locale = Session::getInstance()->language;
+        if (! $locale) {
+            $locale = 'en_US';
+        }
+        putenv('LC_ALL=' . $locale . '.UTF-8');
+        setlocale(LC_ALL, $locale . '.UTF-8');
+        bindtextdomain('icinga', ICINGA_APPDIR . '/locale');
+        textdomain('icinga');
+        return $this;
+    }
+
+    protected function dispatchFrontController()
+    {
+        Session::getInstance();
+        $this->frontController->dispatch();
+        return $this;
+    }
+
+    /**
+     * Prepare Zend MVC Base
+     *
+     * @return self
+     */
+    protected function prepareZendMvc()
+    {
+        // TODO: Replace Zend_Application:
+        Layout::startMvc(
+            array(
+                'layout'     => 'layout',
+                'layoutPath' => $this->appdir . '/layouts/scripts'
+            )
+        );
+
+        return $this->prepareFrontController()
+                    ->prepareView();
+    }
+
+    protected function prepareFrontController()
+    {
+        $this->frontController = FrontController::getInstance()
+            ->setControllerDirectory($this->appdir . '/controllers')
+            // TODO: Create config option for Load balancers etc:
+            // ->setBaseurl()
+            ->setParams(
+                array(
+                    'displayExceptions' => 1
+                )
+            );
+        return $this;
+    }
+
+    protected function prepareView()
+    {
+        $view = ActionHelper::getStaticHelper('viewRenderer');
+        $view->initView();
+
+        $view->view->addHelperPath($this->appdir . '/views/helpers');
+        // TODO: find out how to avoid this additional helper path:
+        $view->view->addHelperPath($this->appdir . '/views/helpers/layout');
+
+        $view->view->setEncoding('UTF-8');
+        $view->view->headTitle()->prepend(
+            $this->config->{'global'}->get('project', 'Icinga')
+        );
+        $view->view->headTitle()->setSeparator(' :: ');
+        $view->view->navigation = $this->config->menu;
+
+        $this->view = $view;
+        return $this;
+    }
+
+    /**
+     * Configure pagination settings
+     *
+     * @return self
+     */
+    protected function configurePagination()
+    {
+        Paginator::addScrollingStylePrefixPath(
+            'Icinga_Web_Paginator_ScrollingStyle',
+            'Icinga/Web/Paginator/ScrollingStyle'
+        );
+
+        Paginator::setDefaultScrollingStyle('SlidingWithBorder');
+        PaginationControl::setDefaultViewPartial(
+            array('mixedPagination.phtml','default')
+        );
+        return $this;
+    }
+}
