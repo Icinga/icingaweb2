@@ -44,14 +44,14 @@ for arg in $@;do
             if [ "$arg" != "--help" ]; then
                 echo "Unknown option $arg" 
             fi;   
-            echo "Testrunner for interface tests: ./$0 [--verbose] [--include %include%] [--exclude %exclude%] [--build]"
-            echo "\t\t --verbose \t\t\t Print verbose output when testing"
-            echo "\t\t --include %filelist%\t\t Include only files matching this patterns"
-            echo "\t\t --exclude %filelist%\t\t Exclude files matching this patterns"
-            echo "\t\t --build \t\t\t Write test results to ../../build/log/casper_results.xml"
-            echo "\t\t --help \t\t\t Print this message"
+            printf "%b" "Testrunner for interface tests\n\n"
+            printf "%b" "Usage: ./$0 [--verbose] [--include %include%] [--exclude %exclude%] [--build]\n\n"
+            printf "%b" "  --verbose \t\t\t Print verbose output when testing\n"
+            printf "%b" "  --include %filelist%\t\t Include only files matching this patterns\n"
+            printf "%b" "  --exclude %filelist%\t\t Exclude files matching this patterns\n"
+            printf "%b" "  --build \t\t\t Write test results to ../../build/log/casper_results.xml\n"
+            printf "%b" "  --help \t\t\t Print this message\n\n"
             exit 1
-
     esac;
 done;
 
