@@ -82,6 +82,8 @@ def main():
     if not application_path:
         print 'ERROR: {0} not found!'.format(APPLICATION)
         return 2
+    if not os.path.isfile('./bin/extcmd_test'):
+        execute_command('make', shell=True)
 
     # Commandline preparation
     command_options = []
