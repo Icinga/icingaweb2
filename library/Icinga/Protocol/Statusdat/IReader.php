@@ -1,18 +1,25 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: moja
- * Date: 1/17/13
- * Time: 10:21 AM
- * To change this template use File | Settings | File Templates.
- */
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
+
 namespace Icinga\Protocol\Statusdat;
+
 interface IReader
 {
-
+    /**
+     * @return mixed
+     */
     public function getState();
+
+    /**
+     * @return mixed
+     */
     public function getObjects();
 
-    public function getObjectByName($type,$name);
-
+    /**
+     * @param $type
+     * @param $name
+     * @return mixed
+     */
+    public function getObjectByName($type, $name);
 }

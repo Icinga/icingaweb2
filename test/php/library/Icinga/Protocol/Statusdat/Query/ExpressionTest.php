@@ -24,12 +24,12 @@ class ExpressionTest extends \PHPUnit_Framework_TestCase
     {
         $assertions = array(
             "expression > ?" => "IS_GREATER",
-            "expression >= ?" => "IS_GREATER_EQ",
-            "expression <=   ?" => "IS_LESS_EQ",
-            "expression <  ?" => "IS_LESS",
-            "expression =  ?" => "IS_EQUAL",
-            "expression !=  ?" => "IS_NOT_EQUAL",
-            "expression like ?" => "IS_LIKE",
+            "expression >= ?" => "isGreaterEq",
+            "expression <=   ?" => "isLessEq",
+            "expression <  ?" => "isLess",
+            "expression =  ?" => "isEqual",
+            "expression !=  ?" => "isNotEqual",
+            "expression like ?" => "isLike",
             "expression IN ? " => "IS_IN"
         );
 

@@ -1,89 +1,154 @@
 <?php
-
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Protocol\Statusdat\Query;
 
 class Expression implements IQueryPart
 {
+    /**
+     *
+     */
     const ENC_NUMERIC = 0;
+
+    /**
+     *
+     */
     const ENC_SET = 0;
+
+    /**
+     *
+     */
     const ENC_STRING = 0;
 
+    /**
+     * @var string
+     */
     private $expression;
+
+    /**
+     * @var null
+     */
     private $field = null;
+
+    /**
+     * @var array
+     */
     private $basedata = array();
+
+    /**
+     * @var null
+     */
     private $function = null;
+
+    /**
+     * @var string
+     */
     private $value = "";
+
+    /**
+     * @var null
+     */
     private $operator = null;
+
+    /**
+     * @var null
+     */
     private $name = null;
+
+    /**
+     * @var null
+     */
     public $CB = null;
 
+    /**
+     * @param $token
+     * @throws \Exception
+     */
     private function getOperatorType($token)
     {
         switch (strtoupper($token)) {
             case ">":
-                $this->CB = "IS_GREATER";
+                $this->CB = "isGreater";
                 break;
             case "<":
-                $this->CB = "IS_LESS";
+                $this->CB = "isLess";
                 break;
             case ">=":
-                $this->CB = "IS_GREATER_EQ";
+                $this->CB = "isGreaterEq";
                 break;
             case "<=":
-                $this->CB = "IS_LESS_EQ";
+                $this->CB = "isLessEq";
                 break;
             case "=":
-                $this->CB = "IS_EQUAL";
+                $this->CB = "isEqual";
                 break;
             case "LIKE":
-                $this->CB = "IS_LIKE";
+                $this->CB = "isLike";
                 break;
             case "!=":
-                $this->CB = "IS_NOT_EQUAL";
+                $this->CB = "isNotEqual";
                 break;
             case "IN":
-                $this->CB = "IS_IN";
+                $this->CB = "isIn";
                 break;
-
             default:
                 throw new \Exception("Unknown operator $token in expression $this->expression !");
         }
     }
 
-
-    private function extractAggregationFunction(&$tokens) {
+    /**
+     * @param $tokens
+     * @return mixed
+     */
+    private function extractAggregationFunction(&$tokens)
+    {
         $token = $tokens[0];
         $value = array();
-        if(preg_match("/COUNT\{(.*)\}/",$token,$value) == false)
+        if (preg_match("/COUNT\{(.*)\}/", $token, $value) == false) {
             return $token;
+        }
         $this->function = "count";
         $tokens[0] = $value[1];
     }
 
+    /**
+     * @param $values
+     */
     private function parseExpression(&$values)
     {
         $tokenized = preg_split("/ +/", trim($this->expression), 3);
         $this->extractAggregationFunction($tokenized);
-        if (count($tokenized) != 3)
-            echo ("Currently statusdat query expressions must be in the format FIELD OPERATOR ? or FIELD OPERATOR :value_name");
+        if (count($tokenized) != 3) {
+            echo(
+                "Currently statusdat query expressions must be in "
+                . "the format FIELD OPERATOR ? or FIELD OPERATOR :value_name"
+            );
+        }
 
-        $this->fields = explode(".",trim($tokenized[0]));
-        $this->field = $this->fields[count($this->fields)-1];
+        $this->fields = explode(".", trim($tokenized[0]));
+        $this->field = $this->fields[count($this->fields) - 1];
         $this->getOperatorType(trim($tokenized[1]));
         $tokenized[2] = trim($tokenized[2]);
 
         if ($tokenized[2][0] === ":") {
             $this->name = substr($tokenized, 1);
             $this->value = $values[$this->name];
-        } else if ($tokenized[2] === "?") {
-            $this->value = array_shift($values);
         } else {
-            $this->value = trim($tokenized[2]);
+            if ($tokenized[2] === "?") {
+                $this->value = array_shift($values);
+            } else {
+                $this->value = trim($tokenized[2]);
+            }
         }
 
     }
 
+    /**
+     * @param $expression
+     * @param $values
+     * @return $this
+     */
     public function fromString($expression, &$values)
     {
         $this->expression = $expression;
@@ -91,61 +156,91 @@ class Expression implements IQueryPart
         return $this;
     }
 
+    /**
+     * @param null $expression
+     * @param array $values
+     */
     public function __construct($expression = null, &$values = array())
     {
-        if ($expression)
+        if ($expression) {
             $this->fromString($expression, $values);
+        }
 
     }
 
+    /**
+     * @param array $base
+     * @param array $idx
+     * @return array|mixed
+     */
     public function filter(array &$base, &$idx = array())
     {
-        if (!$idx)
+        if (!$idx) {
             $idx = array_keys($base);
+        }
         $this->basedata = $base;
-        return array_filter($idx, array($this,"filterFn"));
+        return array_filter($idx, array($this, "filterFn"));
     }
 
+    /**
+     * @return string
+     */
     public function getValue()
     {
         return $this->value;
     }
 
+    /**
+     * @return null
+     */
     public function getField()
     {
         return $this->field;
     }
 
-    protected function filterFn($idx) {
+    /**
+     * @param $idx
+     * @return bool
+     */
+    protected function filterFn($idx)
+    {
         $values = $this->getFieldValues($idx);
 
-        if($values === False)
+        if ($values === false) {
             return false;
+        }
 
-        if($this->CB == "IS_IN" ) {
-            return count(array_intersect($values,$this->value)) > 0;
+        if ($this->CB == "IS_IN") {
+            return count(array_intersect($values, $this->value)) > 0;
         }
-        if($this->CB == "IS_NOT_IN" )
-            return count(array_intersect($values,$this->value)) == 0;
-        if($this->function) {
-            $values = call_user_func($this->function,$values);
-            if(!is_array($values))
+        if ($this->CB == "IS_NOT_IN") {
+            return count(array_intersect($values, $this->value)) == 0;
+        }
+        if ($this->function) {
+            $values = call_user_func($this->function, $values);
+            if (!is_array($values)) {
                 $values = array($values);
+            }
         }
-        foreach($values as $val)
-            if($this->{$this->CB}($val))
+        foreach ($values as $val) {
+            if ($this->{$this->CB}($val)) {
                 return true;
+            }
+        }
 
         return false;
     }
 
-
-
-    private function getFieldValues($idx) {
+    /**
+     * @param $idx
+     * @return array
+     */
+    private function getFieldValues($idx)
+    {
         $res = $this->basedata[$idx];
-        foreach($this->fields as $field) {
-            if(!is_array($res)) {
-                if(!isset($res->$field)) {
+        foreach ($this->fields as $field) {
+            if (!is_array($res)) {
+                if (!isset($res->$field)) {
                     $res = array();
                     break;
                 }
@@ -157,60 +252,87 @@ class Expression implements IQueryPart
             // happens when using comments, in this case we have to create a new
             // array that contains the values/objects we're searching
             $swap = array();
-            foreach($res as $sub) {
-                if(!isset($sub->$field))
+            foreach ($res as $sub) {
+                if (!isset($sub->$field)) {
                     continue;
-                if(!is_array($sub->$field))
+                }
+                if (!is_array($sub->$field)) {
                     $swap[] = $sub->$field;
-                else {
-                    $swap = array_merge($swap,$sub->$field);
+                } else {
+                    $swap = array_merge($swap, $sub->$field);
                 }
             }
             $res = $swap;
         }
-        if(!is_array($res))
+        if (!is_array($res)) {
             return array($res);
+        }
         return $res;
     }
 
-    public function IS_GREATER($value)
+    /**
+     * @param $value
+     * @return bool
+     */
+    public function isGreater($value)
     {
         return $value > $this->value;
     }
 
-    public function IS_LESS($value)
+    /**
+     * @param $value
+     * @return bool
+     */
+    public function isLess($value)
     {
         return $value < $this->value;
     }
 
-    public function IS_LIKE($value)
+    /**
+     * @param $value
+     * @return bool
+     */
+    public function isLike($value)
     {
-
-        return preg_match("/^".str_replace("%", ".*", $this->value)."$/", $value) ? true : false;
+        return preg_match("/^" . str_replace("%", ".*", $this->value) . "$/", $value) ? true : false;
     }
 
-    public function IS_EQUAL($value)
+    /**
+     * @param $value
+     * @return bool
+     */
+    public function isEqual($value)
     {
-        if(!is_numeric($value))
-            return strtolower($value) ==strtolower($this->value);
+        if (!is_numeric($value)) {
+            return strtolower($value) == strtolower($this->value);
+        }
         return $value == $this->value;
     }
 
-    public function IS_NOT_EQUAL($value)
+    /**
+     * @param $value
+     * @return bool
+     */
+    public function isNotEqual($value)
     {
         return $value != $this->value;
     }
 
-    public function IS_GREATER_EQ($value)
+    /**
+     * @param $value
+     * @return bool
+     */
+    public function isGreaterEq($value)
     {
         return $value >= $this->value;
     }
 
-    public function IS_LESS_EQ($value)
+    /**
+     * @param $value
+     * @return bool
+     */
+    public function isLessEq($value)
     {
         return $value <= $this->value;
     }
-
-
-
 }

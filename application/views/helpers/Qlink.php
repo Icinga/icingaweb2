@@ -1,4 +1,6 @@
 <?php
+// @codingStandardsIgnoreStart
+
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
@@ -91,3 +93,4 @@ class Zend_View_Helper_Qlink extends Zend_View_Helper_Abstract
         return is_null($baseUrl) ? $this->view->baseUrl($url) : $baseUrl . $url;
     }
 }
+// @codingStandardsIgnoreEnd

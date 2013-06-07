@@ -12,19 +12,59 @@ use Icinga\Application\Logger as IcingaLogger;
  */
 class CommandPipe
 {
+    /**
+     * @var mixed
+     */
     private $path;
+
+    /**
+     * @var mixed
+     */
     private $name;
+
+    /**
+     * @var bool|mixed
+     */
     private $user = false;
+
+    /**
+     * @var bool|mixed
+     */
     private $host = false;
+
+    /**
+     * @var int|mixed
+     */
     private $port = 22;
+
+    /**
+     * @var string
+     */
     public $fopen_mode = "w";
 
+    /**
+     *
+     */
     const TYPE_HOST = "HOST";
+
+    /**
+     *
+     */
     const TYPE_SERVICE = "SVC";
+
+    /**
+     *
+     */
     const TYPE_HOSTGROUP = "HOSTGROUP";
+
+    /**
+     *
+     */
     const TYPE_SERVICEGROUP = "SERVICEGROUP";
 
-
+    /**
+     * @param \Zend_Config $config
+     */
     public function __construct(\Zend_Config $config)
     {
         $this->path = $config->path;
@@ -40,6 +80,10 @@ class CommandPipe
         }
     }
 
+    /**
+     * @param $command
+     * @throws \RuntimeException
+     */
     public function send($command)
     {
         if (!$this->host) {
@@ -94,6 +138,10 @@ class CommandPipe
         }
     }
 
+    /**
+     * @param $objects
+     * @param IComment $acknowledgementOrComment
+     */
     public function acknowledge($objects, IComment $acknowledgementOrComment)
     {
         if (is_a($acknowledgementOrComment, 'Icinga\Protocol\Commandpipe\Comment')) {
@@ -111,6 +159,9 @@ class CommandPipe
         }
     }
 
+    /**
+     * @param $objects
+     */
     public function removeAcknowledge($objects)
     {
         foreach ($objects as $object) {
@@ -122,6 +173,11 @@ class CommandPipe
         }
     }
 
+    /**
+     * @param $objects
+     * @param $state
+     * @param $output
+     */
     public function submitCheckResult($objects, $state, $output)
     {
         foreach ($objects as $object) {
@@ -133,6 +189,11 @@ class CommandPipe
         }
     }
 
+    /**
+     * @param $objects
+     * @param bool $time
+     * @param bool $withChilds
+     */
     public function scheduleForcedCheck($objects, $time = false, $withChilds = false)
     {
         if (!$time) {
@@ -148,6 +209,11 @@ class CommandPipe
         }
     }
 
+    /**
+     * @param $objects
+     * @param bool $time
+     * @param bool $withChilds
+     */
     public function scheduleCheck($objects, $time = false, $withChilds = false)
     {
         if (!$time) {
@@ -163,6 +229,10 @@ class CommandPipe
         }
     }
 
+    /**
+     * @param array $objects
+     * @param Comment $comment
+     */
     public function addComment(array $objects, Comment $comment)
     {
         foreach ($objects as $object) {
@@ -177,6 +247,9 @@ class CommandPipe
 
     }
 
+    /**
+     * @param $objectsOrComments
+     */
     public function removeComment($objectsOrComments)
     {
         foreach ($objectsOrComments as $object) {
@@ -202,16 +275,26 @@ class CommandPipe
         }
     }
 
+    /**
+     *
+     */
     public function enableGlobalNotifications()
     {
         $this->send("ENABLE_NOTIFICATIONS");
     }
 
+    /**
+     *
+     */
     public function disableGlobalNotifications()
     {
         $this->send("DISABLE_NOTIFICATIONS");
     }
 
+    /**
+     * @param $object
+     * @return string
+     */
     private function getObjectType($object)
     {
         //@TODO: This must be refactored once more commands are supported
@@ -221,6 +304,10 @@ class CommandPipe
         return self::TYPE_HOST;
     }
 
+    /**
+     * @param $objects
+     * @param Downtime $downtime
+     */
     public function scheduleDowntime($objects, Downtime $downtime)
     {
         foreach ($objects as $object) {
@@ -235,6 +322,10 @@ class CommandPipe
         }
     }
 
+    /**
+     * @param $objects
+     * @param int $starttime
+     */
     public function removeDowntime($objects, $starttime = 0)
     {
         foreach ($objects as $object) {
@@ -254,11 +345,18 @@ class CommandPipe
         }
     }
 
+    /**
+     *
+     */
     public function restartIcinga()
     {
         $this->send("RESTART_PROCESS");
     }
 
+    /**
+     * @param $objects
+     * @param PropertyModifier $flags
+     */
     public function setMonitoringProperties($objects, PropertyModifier $flags)
     {
         foreach ($objects as $object) {
@@ -273,6 +371,9 @@ class CommandPipe
         }
     }
 
+    /**
+     * @param $objects
+     */
     public function enableActiveChecks($objects)
     {
         $this->setMonitoringProperties(
@@ -285,6 +386,9 @@ class CommandPipe
         );
     }
 
+    /**
+     * @param $objects
+     */
     public function disableActiveChecks($objects)
     {
         $this->modifyMonitoringProperties(
@@ -297,6 +401,9 @@ class CommandPipe
         );
     }
 
+    /**
+     * @param $objects
+     */
     public function enablePassiveChecks($objects)
     {
         $this->setMonitoringProperties(
@@ -309,6 +416,9 @@ class CommandPipe
         );
     }
 
+    /**
+     * @param $objects
+     */
     public function disablePassiveChecks($objects)
     {
         $this->modifyMonitoringProperties(
@@ -321,6 +431,9 @@ class CommandPipe
         );
     }
 
+    /**
+     * @param $objects
+     */
     public function enableFlappingDetection($objects)
     {
         $this->setMonitoringProperties(
@@ -333,6 +446,9 @@ class CommandPipe
         );
     }
 
+    /**
+     * @param $objects
+     */
     public function disableFlappingDetection($objects)
     {
         $this->setMonitoringProperties(
@@ -345,6 +461,9 @@ class CommandPipe
         );
     }
 
+    /**
+     * @param $objects
+     */
     public function enableNotifications($objects)
     {
         $this->setMonitoringProperties(
@@ -357,6 +476,9 @@ class CommandPipe
         );
     }
 
+    /**
+     * @param $objects
+     */
     public function disableNotifications($objects)
     {
         $this->setMonitoringProperties(
@@ -369,6 +491,9 @@ class CommandPipe
         );
     }
 
+    /**
+     * @param $objects
+     */
     public function enableFreshnessChecks($objects)
     {
         $this->setMonitoringProperties(
@@ -381,6 +506,9 @@ class CommandPipe
         );
     }
 
+    /**
+     * @param $objects
+     */
     public function disableFreshnessChecks($objects)
     {
         $this->setMonitoringProperties(
@@ -393,6 +521,9 @@ class CommandPipe
         );
     }
 
+    /**
+     * @param $objects
+     */
     public function enableEventHandler($objects)
     {
         $this->setMonitoringProperties(
@@ -405,6 +536,9 @@ class CommandPipe
         );
     }
 
+    /**
+     * @param $objects
+     */
     public function disableEventHandler($objects)
     {
         $this->setMonitoringProperties(
@@ -417,6 +551,9 @@ class CommandPipe
         );
     }
 
+    /**
+     * @param $objects
+     */
     public function enablePerfdata($objects)
     {
         $this->setMonitoringProperties(
