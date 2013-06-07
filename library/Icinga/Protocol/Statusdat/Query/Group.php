@@ -1,49 +1,130 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Protocol\Statusdat\Query;
 
+/**
+ * Class Group
+ * @package Icinga\Protocol\Statusdat\Query
+ */
 class Group implements IQueryPart
 {
+    /**
+     *
+     */
     const GROUP_BEGIN = "(";
+
+    /**
+     *
+     */
     const GROUP_END = ")";
+
+    /**
+     *
+     */
     const CONJUNCTION_AND = "AND ";
+
+    /**
+     *
+     */
     const CONJUNCTION_OR = "OR ";
 
+    /**
+     *
+     */
     const EXPRESSION = 0;
+
+    /**
+     *
+     */
     const EOF = -1;
 
+    /**
+     *
+     */
     const TYPE_AND = "AND";
+
+    /**
+     *
+     */
     const TYPE_OR = "OR";
 
+    /**
+     * @var array
+     */
     private $items = array();
+
+    /**
+     * @var int
+     */
     private $parsePos = 0;
+
+    /**
+     * @var string
+     */
     private $expression = "";
+
+    /**
+     * @var null
+     */
     private $expressionClass = null;
+
+    /**
+     * @var string
+     */
     private $type = "";
+
+    /**
+     * @var int
+     */
     private $subExpressionStart = 0;
+
+    /**
+     * @var int
+     */
     private $subExpressionLength = 0;
+
+    /**
+     * @var
+     */
     private $value;
 
+    /**
+     * @param $value
+     */
     public function setValue($value)
     {
         $this->value = $value;
     }
 
+    /**
+     * @return array
+     */
     public function getItems()
     {
         return $this->items;
     }
 
+    /**
+     * @return string
+     */
     public function getType()
     {
         return $this->type ? $this->type : self::TYPE_AND;
     }
 
+    /**
+     * @param $type
+     */
     public function setType($type)
     {
         $this->type = $type;
     }
 
+    /**
+     * @throws \Exception
+     */
     private function tokenize()
     {
         $token = 0;
@@ -54,17 +135,28 @@ class Group implements IQueryPart
 
             if ($token === self::GROUP_BEGIN) {
 
-                if ($subgroupCount == 0) // check if this is a nested group, if so then it's considered part of the subexpression
+                /**
+                 * check if this is a nested group, if so then it's
+                 * considered part of the subexpression
+                 */
+                if ($subgroupCount == 0) {
                     $this->startNewSubExpression();
+                }
                 $subgroupCount++;
                 continue;
             }
             if ($token === self::GROUP_END) {
-                if ($subgroupCount < 1)
+                if ($subgroupCount < 1) {
                     throw new \Exception("Invalid Query: unexpected ')' at pos " . $this->parsePos);
+                }
                 $subgroupCount--;
-                if ($subgroupCount == 0) // check if this is a nested group, if so then it's considered part of the subexpression
+                /*
+                 * check if this is a nested group, if so then it's
+                 * considered part of the subexpression
+                 */
+                if ($subgroupCount == 0) {
                     $this->addSubgroupFromExpression();
+                }
                 continue;
             }
 
@@ -92,12 +184,16 @@ class Group implements IQueryPart
 
             $this->subExpressionLength = $this->parsePos - $this->subExpressionStart;
         }
-        if ($subgroupCount > 0)
+        if ($subgroupCount > 0) {
             throw new \Exception("Unexpected end of query, are you missing a parenthesis?");
+        }
 
         $this->startNewSubExpression();
     }
 
+    /**
+     * @param $type
+     */
     private function createImplicitGroup($type)
     {
         $group = new Group();
@@ -110,25 +206,35 @@ class Group implements IQueryPart
 
     }
 
+    /**
+     *
+     */
     private function startNewSubExpression()
     {
         if ($this->getCurrentSubExpression() != "") {
-            if (!$this->expressionClass)
+            if (!$this->expressionClass) {
                 $this->items[] = new Expression($this->getCurrentSubExpression(), $this->value);
-            else
+            } else {
                 $this->items[] = new $this->expressionClass($this->getCurrentSubExpression(), $this->value);
+            }
         }
 
         $this->subExpressionStart = $this->parsePos;
         $this->subExpressionLength = 0;
     }
 
+    /**
+     * @return string
+     */
     private function getCurrentSubExpression()
     {
 
         return substr($this->expression, $this->subExpressionStart, $this->subExpressionLength);
     }
 
+    /**
+     *
+     */
     private function addSubgroupFromExpression()
     {
 
@@ -143,23 +249,32 @@ class Group implements IQueryPart
         $this->subExpressionLength = 0;
     }
 
+    /**
+     * @return bool
+     */
     private function isEOF()
     {
-        if ($this->parsePos >= strlen($this->expression))
+        if ($this->parsePos >= strlen($this->expression)) {
             return true;
+        }
         return false;
     }
 
+    /**
+     * @return int|string
+     */
     private function getNextToken()
     {
-        if ($this->isEOF())
+        if ($this->isEOF()) {
             return self::EOF;
+        }
 
         // skip whitespaces
         while ($this->expression[$this->parsePos] == " ") {
             $this->parsePos++;
-            if ($this->isEOF())
+            if ($this->isEOF()) {
                 return self::EOF;
+            }
         }
         if ($this->expression[$this->parsePos] == self::GROUP_BEGIN) {
             $this->parsePos++;
@@ -169,11 +284,23 @@ class Group implements IQueryPart
             $this->parsePos++;
             return self::GROUP_END;
         }
-        if (substr_compare($this->expression, self::CONJUNCTION_AND, $this->parsePos, strlen(self::CONJUNCTION_AND), true) === 0) {
+        if (substr_compare(
+            $this->expression,
+            self::CONJUNCTION_AND,
+            $this->parsePos,
+            strlen(self::CONJUNCTION_AND),
+            true
+        ) === 0) {
             $this->parsePos += strlen(self::CONJUNCTION_AND);
             return self::CONJUNCTION_AND;
         }
-        if (substr_compare($this->expression, self::CONJUNCTION_OR, $this->parsePos, strlen(self::CONJUNCTION_OR), true) === 0) {
+        if (substr_compare(
+            $this->expression,
+            self::CONJUNCTION_OR,
+            $this->parsePos,
+            strlen(self::CONJUNCTION_OR),
+            true
+        ) === 0) {
             $this->parsePos += strlen(self::CONJUNCTION_OR);
             return self::CONJUNCTION_OR;
         }
@@ -181,12 +308,22 @@ class Group implements IQueryPart
         return self::EXPRESSION;
     }
 
+    /**
+     * @param $ex
+     * @return $this
+     */
     public function addItem($ex)
     {
         $this->items[] = $ex;
         return $this;
     }
 
+    /**
+     * @param $expression
+     * @param array $value
+     * @param null $expressionClass
+     * @return $this
+     */
     public function fromString($expression, &$value = array(), $expressionClass = null)
     {
         $this->expression = $expression;
@@ -197,24 +334,33 @@ class Group implements IQueryPart
         return $this;
     }
 
-
+    /**
+     * @param null $expression
+     * @param array $value
+     */
     public function __construct($expression = null, &$value = array())
     {
-        if ($expression)
+        if ($expression) {
             $this->fromString($expression, $value);
+        }
     }
 
+    /**
+     * @param array $base
+     * @param null $idx
+     * @return array|null
+     */
     public function filter(array &$base, &$idx = null)
     {
-
         if ($this->type == self::TYPE_OR) {
             $idx = array();
             foreach ($this->items as &$subFilter) {
                 $idx += $subFilter->filter($base, array_keys($base));
             }
         } else {
-            if (!$idx)
+            if (!$idx) {
                 $idx = array_keys($base);
+            }
             foreach ($this->items as $subFilter) {
                 $idx = array_intersect($idx, $subFilter->filter($base, $idx));
             }
@@ -223,4 +369,3 @@ class Group implements IQueryPart
         return $idx;
     }
 }
-

@@ -1,15 +1,13 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Protocol\Ldap;
+
 use Icinga\Application\Platform;
 use Icinga\Application\Config;
 use Icinga\Application\Logger as Log;
 
-/**
- * Connection class
- *
- * @package Icinga\Protocol\Ldap
- */
 /**
  * Backend class managing all the LDAP stuff for you.
  *
@@ -31,12 +29,39 @@ use Icinga\Application\Logger as Log;
  */
 class Connection
 {
+    /**
+     * @var string
+     */
     protected $ds;
+
+    /**
+     * @var string
+     */
     protected $hostname;
+
+    /**
+     * @var string
+     */
     protected $bind_dn;
+
+    /**
+     * @var string
+     */
     protected $bind_pw;
+
+    /**
+     * @var string
+     */
     protected $root_dn;
+
+    /**
+     * @var string
+     */
     protected $count;
+
+    /**
+     * @var array
+     */
     protected $ldap_extension = array(
         '1.3.6.1.4.1.1466.20037' => 'STARTTLS', // notes?
         // '1.3.6.1.4.1.4203.1.11.1' => '11.1', // PASSWORD_MODIFY
@@ -44,40 +69,38 @@ class Connection
         // '1.3.6.1.1.8' => '8', // Cancel Extended Request
     );
 
+    /**
+     * @var array
+     */
     protected $ms_capability = array(
         // Prefix LDAP_CAP_
         // Source: http://msdn.microsoft.com/en-us/library/cc223359.aspx
 
         // Running Active Directory as AD DS:
-        '1.2.840.113556.1.4.800'  => 'ACTIVE_DIRECTORY_OID',
-
+        '1.2.840.113556.1.4.800' => 'ACTIVE_DIRECTORY_OID',
         // Capable of signing and sealing on an NTLM authenticated connection
         // and of performing subsequent binds on a signed or sealed connection.
         '1.2.840.113556.1.4.1791' => 'ACTIVE_DIRECTORY_LDAP_INTEG_OID',
-
         // If AD DS: running at least W2K3, if AD LDS running at least W2K8
         '1.2.840.113556.1.4.1670' => 'ACTIVE_DIRECTORY_V51_OID',
-
         // If AD LDS: accepts DIGEST-MD5 binds for AD LDSsecurity principals
         '1.2.840.113556.1.4.1880' => 'ACTIVE_DIRECTORY_ADAM_DIGEST',
-
         // Running Active Directory as AD LDS
         '1.2.840.113556.1.4.1851' => 'ACTIVE_DIRECTORY_ADAM_OID',
-
         // If AD DS: it's a Read Only DC (RODC)
         '1.2.840.113556.1.4.1920' => 'ACTIVE_DIRECTORY_PARTIAL_SECRETS_OID',
-
         // Running at least W2K8
         '1.2.840.113556.1.4.1935' => 'ACTIVE_DIRECTORY_V60_OID',
-
         // Running at least W2K8r2
         '1.2.840.113556.1.4.2080' => 'ACTIVE_DIRECTORY_V61_R2_OID',
-
         // Running at least W2K12
         '1.2.840.113556.1.4.2237' => 'ACTIVE_DIRECTORY_W8_OID',
 
     );
 
+    /**
+     * @var string
+     */
     protected $root;
 
     /**
@@ -90,17 +113,23 @@ class Connection
     public function __construct($config)
     {
         $this->hostname = $config->hostname;
-        $this->bind_dn  = $config->bind_dn;
-        $this->bind_pw  = $config->bind_pw;
-        $this->root_dn  = $config->root_dn;
+        $this->bind_dn = $config->bind_dn;
+        $this->bind_pw = $config->bind_pw;
+        $this->root_dn = $config->root_dn;
 
     }
 
+    /**
+     * @return string
+     */
     public function getDN()
     {
         return $this->root_dn;
     }
 
+    /**
+     * @return Root|string
+     */
     public function root()
     {
         if ($this->root === null) {
@@ -109,30 +138,50 @@ class Connection
         return $this->root;
     }
 
+    /**
+     * @return Query
+     */
     public function select()
     {
         return new Query($this);
     }
 
+    /**
+     * @param $query
+     * @param array $fields
+     * @return mixed
+     */
     public function fetchOne($query, $fields = array())
     {
-        $row = (array) $this->fetchRow($query, $fields);
+        $row = (array)$this->fetchRow($query, $fields);
         return array_shift($row);
     }
-    
+
+    /**
+     * @param $query
+     * @param array $fields
+     * @return mixed
+     * @throws Exception
+     */
     public function fetchDN($query, $fields = array())
     {
         $rows = $this->fetchAll($query, $fields);
         if (count($rows) !== 1) {
-            throw new Exception(sprintf(
-                'Cannot fetch single DN for %s',
-                $query
-            ));
+            throw new Exception(
+                sprintf(
+                    'Cannot fetch single DN for %s',
+                    $query
+                )
+            );
         }
         return key($rows);
     }
 
-
+    /**
+     * @param $query
+     * @param array $fields
+     * @return mixed
+     */
     public function fetchRow($query, $fields = array())
     {
         // TODO: This is ugly, make it better!
@@ -140,19 +189,28 @@ class Connection
         return array_shift($results);
     }
 
+    /**
+     * @param Query $query
+     * @return int
+     */
     public function count(Query $query)
     {
         $results = $this->runQuery($query, '+');
         return ldap_count_entries($this->ds, $results);
     }
 
+    /**
+     * @param $query
+     * @param array $fields
+     * @return array
+     */
     public function fetchAll($query, $fields = array())
     {
         $offset = null;
         $limit = null;
         if ($query->hasLimit()) {
             $offset = $query->getOffset();
-            $limit  = $query->getLimit();
+            $limit = $query->getLimit();
         }
         $entries = array();
         $results = $this->runQuery($query, $fields);
@@ -172,9 +230,13 @@ class Connection
         return $entries;
     }
 
+    /**
+     * @param $attrs
+     * @return object
+     */
     public function cleanupAttributes(& $attrs)
     {
-        $clean = (object) array();
+        $clean = (object)array();
         for ($i = 0; $i < $attrs['count']; $i++) {
             $attr_name = $attrs[$i];
             if ($attrs[$attr_name]['count'] === 1) {
@@ -188,6 +250,12 @@ class Connection
         return $clean;
     }
 
+    /**
+     * @param $query
+     * @param $fields
+     * @return resource
+     * @throws Exception
+     */
     protected function runQuery($query, $fields)
     {
         $this->connect();
@@ -201,29 +269,37 @@ class Connection
         $results = ldap_search(
             $this->ds,
             $this->root_dn,
-            (string) $query,
+            (string)$query,
             $fields,
             0, // Attributes and values
-            0  // No limit - at least where possible
+            0 // No limit - at least where possible
         );
-        if (! $results) {
-            throw new Exception(sprintf(
-                'LDAP query "%s" (root %s) failed: %s',
-                $query,
-                $this->root_dn,
-                ldap_error($this->ds)
-            ));
+        if (!$results) {
+            throw new Exception(
+                sprintf(
+                    'LDAP query "%s" (root %s) failed: %s',
+                    $query,
+                    $this->root_dn,
+                    ldap_error($this->ds)
+                )
+            );
+
             die('Query failed');
         }
         $list = array();
         if ($query instanceof Query) {
             foreach ($query->getSortColumns() as $col) {
-                ldap_sort($this->ds, $results, $col[0]) ;
+                ldap_sort($this->ds, $results, $col[0]);
             }
         }
         return $results;
     }
 
+    /**
+     * @param $username
+     * @param $password
+     * @return bool
+     */
     public function testCredentials($username, $password)
     {
         Log::debug("Trying to connect to %s", $this->hostname);
@@ -233,10 +309,12 @@ class Connection
         if ($r) {
             return true;
         } else {
-            log::fatal('LDAP connection (%s / %s) failed: %s',
+            log::fatal(
+                'LDAP connection (%s / %s) failed: %s',
                 $username,
                 '***',
-                ldap_error($ds));
+                ldap_error($ds)
+            );
             return false;
             /* TODO: Log failure
             throw new Exception(sprintf(
@@ -249,17 +327,26 @@ class Connection
         }
     }
 
+    /**
+     * @return string
+     */
     protected function getConfigDir()
     {
         return Config::getInstance()->getConfigDir() . '/ldap';
     }
 
+    /**
+     * @param $domain
+     */
     protected function discoverServerlistForDomain($domain)
     {
         $ldaps_records = dns_get_record('_ldaps._tcp.' . $domain, DNS_SRV);
-        $ldap_records  = dns_get_record('_ldap._tcp.' . $domain, DNS_SRV);
+        $ldap_records = dns_get_record('_ldap._tcp.' . $domain, DNS_SRV);
     }
 
+    /**
+     *
+     */
     protected function prepareTlsEnvironment()
     {
         $strict_tls = true;
@@ -276,9 +363,13 @@ class Connection
         // file_put_contents('/tmp/tom_LDAP.conf', "TLS_REQCERT never\n");
     }
 
+    /**
+     * @return object
+     */
     protected function fetchRootDseDetails()
     {
-        $query = $this->select()->from('*', array('+'))
+        $query = $this->select()->from('*', array('+'));
+
         /*,  array(
             'defaultNamingContext',
             'namingContexts',
@@ -288,13 +379,13 @@ class Connection
             'supportedLDAPVersion', // => array(3, 2)
             'supportedCapabilities'
         ))*/
-        ;
+
         $fields = $query->listFields();
 
         $result = ldap_read(
             $this->ds,
             '',
-            (string) $query,
+            (string)$query,
             $query->listFields(),
             0,
             0
@@ -302,8 +393,8 @@ class Connection
 
         $entry = ldap_first_entry($this->ds, $result);
         $result = $this->cleanupAttributes(ldap_get_attributes($this->ds, $entry));
-        
-        
+
+
         if (isset($result->supportedCapabilities)) {
             foreach ($result->supportedCapabilities as $oid) {
                 if (array_key_exists($oid, $this->ms_capability)) {
@@ -322,14 +413,22 @@ class Connection
         return $result;
     }
 
+    /**
+     *
+     */
     public function discoverCapabilities()
     {
         $this->fetchRootDseDetails();
     }
 
+    /**
+     * @throws Exception
+     */
     public function connect()
     {
-        if ($this->ds !== null) return;
+        if ($this->ds !== null) {
+            return;
+        }
         $use_tls = true;
         $force_tls = true;
 
@@ -343,34 +442,42 @@ class Connection
         if (ldap_start_tls($this->ds)) {
             Log::debug("Trying ldap_start_tls() succeeded");
         } else {
-            Log::warn("ldap_start_tls() failed: %s. Does your ldap_ca.conf point to the certificate? ",ldap_error($this->ds));
+            Log::warn(
+                "ldap_start_tls() failed: %s. Does your ldap_ca.conf point to the certificate? ",
+                ldap_error($this->ds)
+            );
         }
 
 
         // ldap_rename requires LDAPv3:
-        if (! ldap_set_option($this->ds, LDAP_OPT_PROTOCOL_VERSION, 3)) {
+        if (!ldap_set_option($this->ds, LDAP_OPT_PROTOCOL_VERSION, 3)) {
             throw new Exception('LDAPv3 is required');
         }
-// 
-                // Not setting this results in "Operations error" on AD when using the
+
+        // Not setting this results in "Operations error" on AD when using the
         // whole domain as search base:
         ldap_set_option($this->ds, LDAP_OPT_REFERRALS, 0);
+
         // ldap_set_option($this->ds, LDAP_OPT_DEREF, LDAP_DEREF_NEVER);
-        Log::debug("Trying ldap_bind(%s)",$this->bind_dn);
+        Log::debug("Trying ldap_bind(%s)", $this->bind_dn);
+
         $r = @ldap_bind($this->ds, $this->bind_dn, $this->bind_pw);
 
-        if (! $r) {
-            log::fatal('LDAP connection (%s / %s) failed: %s',
-                $this->bind_dn,
-                '***',
-                ldap_error($this->ds));
-            throw new Exception(sprintf(
+        if (!$r) {
+            log::fatal(
                 'LDAP connection (%s / %s) failed: %s',
                 $this->bind_dn,
-                '***' /* $this->bind_pw */,
+                '***',
                 ldap_error($this->ds)
-            ));
+            );
+            throw new Exception(
+                sprintf(
+                    'LDAP connection (%s / %s) failed: %s',
+                    $this->bind_dn,
+                    '***' /* $this->bind_pw */,
+                    ldap_error($this->ds)
+                )
+            );
         }
     }
 }
-

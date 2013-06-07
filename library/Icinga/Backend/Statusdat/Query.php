@@ -1,28 +1,41 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
+
 namespace Icinga\Backend\Statusdat;
+
+use Icinga\Backend\Criteria\Order;
 use Icinga\Backend\MonitoringObjectList as MList;
 use Icinga\Protocol\Statusdat;
 use Icinga\Exception;
-
+use Icinga\Backend\Query as BaseQuery;
 
 /**
- * Base class for statusdat queries, contains most of the filter/order logic
- *
+ * Class Query
+ * @package Icinga\Backend\Statusdat
  */
-abstract class Query extends \Icinga\Backend\Query
+abstract class Query extends BaseQuery
 {
+    /**
+     * @var null
+     */
     protected $cursor = null;
+
+    /**
+     * @var string
+     */
     protected $view = 'Icinga\Backend\Statusdat\DataView\StatusdatServiceView';
+
     /**
      * @var array Mapping of order to field names
      * @todo Is not complete right now
      */
     protected $orderColumns = array(
-        \Icinga\Backend\Criteria\Order::SERVICE_STATE => "status.current_state",
-        \Icinga\Backend\Criteria\Order::STATE_CHANGE => "status.last_state_change",
-        \Icinga\Backend\Criteria\Order::HOST_STATE => "status.current_state",
-        \Icinga\Backend\Criteria\Order::HOST_NAME => "host_name",
-        \Icinga\Backend\Criteria\Order::SERVICE_NAME => "service_description"
+        Order::SERVICE_STATE => "status.current_state",
+        Order::STATE_CHANGE => "status.last_state_change",
+        Order::HOST_STATE => "status.current_state",
+        Order::HOST_NAME => "host_name",
+        Order::SERVICE_NAME => "service_description"
     );
 
     /**
@@ -40,10 +53,11 @@ abstract class Query extends \Icinga\Backend\Query
         foreach ($filters as $filter => $value) {
             $filter[0] = strtoupper($filter[0]);
             $filterMethod = "apply" . $filter . "Filter";
-            if (method_exists($this, $filterMethod))
+            if (method_exists($this, $filterMethod)) {
                 $this->$filterMethod($filter, $value);
-            else
+            } else {
                 $this->where($filter, $value);
+            }
         }
         return $this;
     }
@@ -117,27 +131,45 @@ abstract class Query extends \Icinga\Backend\Query
         $this->query->where("(status.problem_has_been_acknowledged = ? )", $val);
     }
 
+    /**
+     * @param $type
+     * @param $value
+     */
     public function applyHostnameFilter($type, $value)
     {
-        if (!is_array($value))
+        if (!is_array($value)) {
             $value = array($value);
+        }
         $this->query->where("host_name LIKE ?", $value);
     }
 
+    /**
+     * @param $type
+     * @param $value
+     */
     public function applyStateFilter($type, $value)
     {
         $this->query->where("status.current_state = $value");
     }
 
+    /**
+     * @param $type
+     * @param $value
+     */
     public function applyHoststateFilter($type, $value)
     {
         $this->query->where("host.status.current_state = $value");
     }
 
+    /**
+     * @param $type
+     * @param $value
+     */
     public function applyServiceDescriptionFilter($type, $value)
     {
-        if (!is_array($value))
+        if (!is_array($value)) {
             $value = array($value);
+        }
         $this->query->where("service_description LIKE ?", $value);
     }
 
@@ -163,52 +195,70 @@ abstract class Query extends \Icinga\Backend\Query
     public function order($column = '', $dir = null)
     {
 
-        if ($column)
+        if ($column) {
             $this->query->order($this->orderColumns[$column], strtolower($dir));
+        }
         return $this;
     }
 
     /**
      * Applies a filter on this query by calling the statusdat where() function
      *
-     * @param $column       The (statusdat!) column to filter in "field operator ?" format. (@example status.current_state > ?)
+     * @param $column       The (statusdat!) column to filter in "field operator ?"
+     *                      format. (@example status.current_state > ?)
      * @param mixed $value  The value to filter for
      * @return Query        Returns this query,for fluent interface
      */
     public function where($column, $value = null)
     {
-        if (!is_array($value))
+        if (!is_array($value)) {
             $value = array($value);
+        }
         $this->query->where($column, $value);
         return $this;
     }
 
+    /**
+     * @return MList|mixed|null
+     */
     public function fetchAll()
     {
         $view = $this->view;
-        if (!$this->cursor)
+        if (!$this->cursor) {
             $this->cursor = new MList($this->query->getResult(), new $view($this->reader));
+        }
         return $this->cursor;
     }
 
+    /**
+     * @return mixed
+     */
     public function fetchRow()
     {
         return next($this->fetchAll());
     }
 
+    /**
+     * @return mixed|void
+     */
     public function fetchPairs()
     {
 
     }
 
+    /**
+     * @return mixed
+     */
     public function fetchOne()
     {
         return next($this->fetchAll());
     }
 
+    /**
+     * @return int|mixed
+     */
     public function count()
     {
         return count($this->query->getResult());
     }
-
 }

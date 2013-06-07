@@ -1,14 +1,14 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
-/**
- * Action controller
- */
 namespace Icinga\Web;
 
 use Icinga\Authentication\Auth;
 use Icinga\Application\Benchmark;
 use Icinga\Exception;
 use Icinga\Application\Config;
+use Icinga\Pdf\File;
 use Icinga\Web\Notification;
 use Zend_Layout as ZfLayout;
 use Zend_Controller_Action as ZfController;
@@ -24,6 +24,7 @@ use Zend_Controller_Action_HelperBroker as ZfActionHelper;
  * @copyright  Copyright (c) 2013 Icinga-Web Team <info@icinga.org>
  * @author     Icinga-Web Team <info@icinga.org>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License
+ * @package Icinga\Web
  */
 class ActionController extends ZfController
 {
@@ -35,6 +36,9 @@ class ActionController extends ZfController
      */
     protected $config;
 
+    /**
+     * @var bool
+     */
     protected $replaceLayout = false;
 
     /**
@@ -59,10 +63,19 @@ class ActionController extends ZfController
      */
     protected $action_name;
 
+    /**
+     * @var bool
+     */
     protected $handlesAuthentication = false;
 
+    /**
+     * @var bool
+     */
     protected $modifiesSession = false;
 
+    /**
+     * @var bool
+     */
     protected $allowAccess = false;
 
     /**
@@ -80,23 +93,24 @@ class ActionController extends ZfController
     ) {
         Benchmark::measure('Action::__construct()');
         if (Auth::getInstance()->isAuthenticated()
-            && ! $this->modifiesSession
-            && ! Notification::getInstance()->hasMessages()
+            && !$this->modifiesSession
+            && !Notification::getInstance()->hasMessages()
         ) {
             session_write_close();
         }
-        $this->module_name     = $request->getModuleName();
+        $this->module_name = $request->getModuleName();
         $this->controller_name = $request->getControllerName();
-        $this->action_name     = $request->getActionName();
+        $this->action_name = $request->getActionName();
 
         $this->loadConfig();
         $this->setRequest($request)
-             ->setResponse($response)
-             ->_setInvokeArgs($invokeArgs);
+            ->setResponse($response)
+            ->_setInvokeArgs($invokeArgs);
         $this->_helper = new ZfActionHelper($this);
 
         if ($this->handlesAuthentication()
-          || Auth::getInstance()->isAuthenticated()) {
+            || Auth::getInstance()->isAuthenticated()
+        ) {
             $this->allowAccess = true;
             $this->init();
         }
@@ -128,7 +142,7 @@ class ActionController extends ZfController
      * Helper function creating a new widget
      *
      * @param  string $name       The widget name
-     * @param  string $properties Optional widget properties
+     * @param array|string $properties Optional widget properties
      *
      * @return Widget\AbstractWidget
      */
@@ -142,8 +156,9 @@ class ActionController extends ZfController
      *
      * TODO: This has not been implemented yet
      *
+     * @param $uri
      * @param  string $permission Permission name
-     * @param  string $object     No idea what this should have been :-)
+     * @internal param string $object No idea what this should have been :-)
      *
      * @return bool
      */
@@ -160,11 +175,12 @@ class ActionController extends ZfController
      * @param  string $permission Permission name
      * @param  string $object     No idea what this should have been :-)
      *
+     * @throws \Exception
      * @return self
      */
     final protected function assertPermission($permission, $object = null)
     {
-        if (! $this->hasPermission($permission, $object)) {
+        if (!$this->hasPermission($permission, $object)) {
             // TODO: Log violation, create dedicated Exception class
             throw new \Exception('Permission denied');
         }
@@ -179,7 +195,7 @@ class ActionController extends ZfController
     public function preDispatch()
     {
         Benchmark::measure('Action::preDispatch()');
-        if (! $this->allowAccess) {
+        if (!$this->allowAccess) {
             $this->_request->setModuleName('default')
                 ->setControllerName('authentication')
                 ->setActionName('login')
@@ -194,11 +210,18 @@ class ActionController extends ZfController
         //$this->quickRedirect('/authentication/login?a=e');
     }
 
+    /**
+     * @param $url
+     * @param array $params
+     */
     public function redirectNow($url, array $params = array())
     {
         $this->_helper->Redirector->gotoUrlAndExit($url);
     }
 
+    /**
+     * @return bool
+     */
     public function handlesAuthentication()
     {
         return $this->handlesAuthentication;
@@ -212,8 +235,8 @@ class ActionController extends ZfController
     protected function renderBenchmark()
     {
         return '<pre class="benchmark">'
-             . Benchmark::renderToHtml()
-             . '</pre>';
+        . Benchmark::renderToHtml()
+        . '</pre>';
     }
 
     /**
@@ -230,51 +253,51 @@ class ActionController extends ZfController
     public function postDispatch()
     {
         Benchmark::measure('Action::postDispatch()');
-        
-        
+
+
         // TODO: Move this elsewhere, this is just an ugly test:
         if ($this->_request->getParam('filetype') === 'pdf') {
-        
+
             // Snippet stolen from less compiler in public/css.php:
 
             require_once 'vendor/lessphp/lessc.inc.php';
             $less = new \lessc;
             $cssdir = dirname(ICINGA_LIBDIR) . '/public/css';
-             // TODO: We need a way to retrieve public dir, even if located elsewhere
+            // TODO: We need a way to retrieve public dir, even if located elsewhere
 
             $css = $less->compileFile($cssdir . '/pdfprint.less');
-/*
-            foreach ($app->moduleManager()->getLoadedModules() as $name => $module) {
-                if ($module->hasCss()) {
-                    $css .= $less->compile(
-                        '.icinga-module.module-'
-                        . $name
-                        . " {\n"
-                        . file_get_contents($module->getCssFilename())
-                        . "}\n\n"
-                    );
-                }
-            }
-*/
+            /*
+                        foreach ($app->moduleManager()->getLoadedModules() as $name => $module) {
+                            if ($module->hasCss()) {
+                                $css .= $less->compile(
+                                    '.icinga-module.module-'
+                                    . $name
+                                    . " {\n"
+                                    . file_get_contents($module->getCssFilename())
+                                    . "}\n\n"
+                                );
+                            }
+                        }
+            */
 
             // END of CSS test
-        
-             $this->render(
+
+            $this->render(
                 null,
                 $this->_helper->viewRenderer->getResponseSegment(),
                 $this->_helper->viewRenderer->getNoController()
             );
-            $html = '<style>' . $css . '</style>' . (string) $this->getResponse();
+            $html = '<style>' . $css . '</style>' . (string)$this->getResponse();
 
-            $pdf = new \Icinga\Pdf\File();
+            $pdf = new File();
             $pdf->AddPage();
             $pdf->writeHTMLCell(0, 0, '', '', $html, 0, 1, 0, true, '', true);
             $pdf->Output('docs.pdf', 'I');
             exit;
         }
         // END of PDF test
-        
-        
+
+
         if ($this->_request->isXmlHttpRequest()) {
             if ($this->replaceLayout || $this->_getParam('_render') === 'body') {
                 $this->_helper->layout()->setLayout('just-the-body');
@@ -288,9 +311,9 @@ class ActionController extends ZfController
             $nhtml = '<ul class="notification">';
             foreach ($notification->getMessages() as $msg) {
                 $nhtml .= '<li>['
-                        . $msg->type
-                        . '] '
-                        . htmlspecialchars($msg->message);
+                    . $msg->type
+                    . '] '
+                    . htmlspecialchars($msg->message);
             }
             $nhtml .= '</ul>';
             $this->getResponse()->append('notification', $nhtml);
@@ -308,16 +331,15 @@ class ActionController extends ZfController
      *
      * TODO: Could this make use of Icinga\Web\Session once done?
      *
-     * @param int    $maxAge    Max allowed token age
+     * @param int $maxAge    Max allowed token age
      * @param string $sessionId A specific session id (useful for tests?)
-     *
-     * return bool
+     * @return bool
      */
     public function hasValidToken($maxAge = 600, $sessionId = null)
     {
         $sessionId = $sessionId ? $sessionId : session_id();
         $seed = $this->_getParam('seed');
-        if (! is_numeric($seed)) {
+        if (!is_numeric($seed)) {
             return false;
         }
 
@@ -332,10 +354,10 @@ class ActionController extends ZfController
      *
      * TODO: Could this make use of Icinga\Web\Session once done?
      *
-     * @param int    $maxAge    Max allowed token age
+     * @param int $maxAge    Max allowed token age
      * @param string $sessionId A specific session id (useful for tests?)
      *
-     * return array
+     * @return array
      */
     public function getSeedTokenPair($maxAge = 600, $sessionId = null)
     {

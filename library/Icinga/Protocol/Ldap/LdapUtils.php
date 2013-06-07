@@ -1,11 +1,9 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Protocol\Ldap;
-/**
- * LdapUtils class
- *
- * @package Icinga\Protocol\Ldap
- */
+
 /**
  * This class provides useful LDAP-related functions
  *
@@ -52,7 +50,9 @@ class LdapUtils
     {
         $str = '';
         foreach ($parts as $part) {
-            if ($str !== '') { $str .= ','; }
+            if ($str !== '') {
+                $str .= ',';
+            }
             list($key, $val) = preg_split('~=~', $part, 2);
             $str .= $key . '=' . self::quoteForDN($val);
         }
@@ -69,9 +69,20 @@ class LdapUtils
      */
     public static function quoteForDN($str)
     {
-        return self::quoteChars($str, array(
-            ',', '=', '+', '<', '>', ';', '\\', '"', '#'
-        ));
+        return self::quoteChars(
+            $str,
+            array(
+                ',',
+                '=',
+                '+',
+                '<',
+                '>',
+                ';',
+                '\\',
+                '"',
+                '#'
+            )
+        );
     }
 
     /**
@@ -80,6 +91,7 @@ class LdapUtils
      * Special characters will be escaped
      *
      * @param  string String to be escaped
+     * @param bool $allow_wildcard
      * @return string
      */
     public static function quoteForSearch($str, $allow_wildcard = false)
@@ -95,14 +107,16 @@ class LdapUtils
      *
      * Special characters will be escaped
      *
-     * @param  string String to be escaped
+     * @param $str
+     * @param $chars
+     * @internal param String $string to be escaped
      * @return string
      */
     protected static function quoteChars($str, $chars)
     {
         $quotedChars = array();
         foreach ($chars as $k => $v) {
-            // Temporarily prefixing with illegal '(' 
+            // Temporarily prefixing with illegal '('
             $quotedChars[$k] = '(' . str_pad(dechex(ord($v)), 2, '0');
         }
         $str = str_replace($chars, $quotedChars, $str);
@@ -112,4 +126,3 @@ class LdapUtils
         return $str;
     }
 }
-

@@ -1,9 +1,13 @@
 #!/usr/bin/php
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 require_once dirname(__FILE__) . '/../library/Icinga/Application/Cli.php';
-use Icinga\Application\Cli,
-    Icinga\Application\TranslationHelper;
+
+use Icinga\Application\Cli;
+use Icinga\Application\TranslationHelper;
+
 $bootstrap = Cli::start();
 
 if (count($argv) < 2) {

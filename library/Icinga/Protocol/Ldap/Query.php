@@ -1,11 +1,11 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Protocol\Ldap;
-/**
- * Search class
- *
- * @package Icinga\Protocol\Ldap
- */
+
+use Icinga\Web\Paginator\Adapter\QueryAdapter;
+
 /**
  * Search abstraction class
  *
@@ -19,22 +19,50 @@ namespace Icinga\Protocol\Ldap;
  * @author     Icinga-Web Team <info@icinga.org>
  * @package Icinga\Protocol\Ldap
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License
+ * @package Icinga\Protocol\Ldap
  */
 class Query
 {
+    /**
+     * @var Connection
+     */
     protected $connection;
+
+    /**
+     * @var array
+     */
     protected $filters = array();
+
+    /**
+     * @var array
+     */
     protected $fields = array();
+
+    /**
+     * @var
+     */
     protected $limit_count;
+
+    /**
+     * @var
+     */
     protected $limit_offset;
+
+    /**
+     * @var array
+     */
     protected $sort_columns = array();
+
+    /**
+     * @var
+     */
     protected $count;
 
     /**
      * Constructor
      *
-     * @param Connection LDAP Connection object
-     * @return void
+     * @param \Icinga\Protocol\Ldap\Connection $connection LDAP Connection object
+     * @return \Icinga\Protocol\Ldap\Query
      */
     public function __construct(Connection $connection)
     {
@@ -57,19 +85,24 @@ class Query
     /**
      * Count result set, ignoring limits
      *
+     * @param null $count
+     * @param null $offset
+     * @throws Exception
      * @return int
      */
     public function limit($count = null, $offset = null)
     {
-        if (! preg_match('~^\d+~', $count . $offset)) {
-            throw new Exception(sprintf(
-                'Got invalid limit: %s, %s',
-                $count,
-                $offset
-            ));
+        if (!preg_match('~^\d+~', $count . $offset)) {
+            throw new Exception(
+                sprintf(
+                    'Got invalid limit: %s, %s',
+                    $count,
+                    $offset
+                )
+            );
         }
-        $this->limit_count  = (int) $count;
-        $this->limit_offset = (int) $offset;
+        $this->limit_count = (int)$count;
+        $this->limit_offset = (int)$offset;
         return $this;
     }
 
@@ -122,15 +155,18 @@ class Query
     {
         $result = $this->fetchAll();
         $sorted = array();
-        foreach ($result as $key => & $item)
-        {
-            $new_key = LdapUtils::implodeDN(array_reverse(LdapUtils::explodeDN(
-                preg_replace(
-                    '/,' . preg_quote($this->connection->getDN(), '/') . '$/',
-                    '',
-                    $key
+        foreach ($result as $key => & $item) {
+            $new_key = LdapUtils::implodeDN(
+                array_reverse(
+                    LdapUtils::explodeDN(
+                        preg_replace(
+                            '/,' . preg_quote($this->connection->getDN(), '/') . '$/',
+                            '',
+                            $key
+                        )
+                    )
                 )
-            )));
+            );
             $sorted[$new_key] = $key;
         }
         unset($groups);
@@ -189,6 +225,8 @@ class Query
      *
      * This creates an objectClass filter
      *
+     * @param $objectClass
+     * @param array $fields
      * @return Query
      */
     public function from($objectClass, $fields = array())
@@ -249,6 +287,8 @@ class Query
     /**
      * Return a pagination adapter for the current query
      *
+     * @param null $limit
+     * @param null $page
      * @return \Zend_Paginator
      */
     public function paginate($limit = null, $page = null)
@@ -264,7 +304,7 @@ class Query
         }
         $paginator = new \Zend_Paginator(
             // TODO: Adapter doesn't fit yet:
-            new \Icinga\Web\Paginator\Adapter\QueryAdapter($this)
+            new QueryAdapter($this)
         );
         $paginator->setItemCountPerPage($limit);
         $paginator->setCurrentPageNumber($page);
@@ -303,7 +343,7 @@ class Query
     }
 
     /**
-     * Descructor
+     * Destructor
      */
     public function __destruct()
     {
@@ -311,4 +351,3 @@ class Query
         unset($this->connection);
     }
 }
-
