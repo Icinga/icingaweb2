@@ -4,6 +4,8 @@
 
 namespace Icinga\Protocol\Ldap;
 
+use Icinga\Web\Paginator\Adapter\QueryAdapter;
+
 /**
  * Search abstraction class
  *
@@ -302,7 +304,7 @@ class Query
         }
         $paginator = new \Zend_Paginator(
             // TODO: Adapter doesn't fit yet:
-            new \Icinga\Web\Paginator\Adapter\QueryAdapter($this)
+            new QueryAdapter($this)
         );
         $paginator->setItemCountPerPage($limit);
         $paginator->setCurrentPageNumber($page);

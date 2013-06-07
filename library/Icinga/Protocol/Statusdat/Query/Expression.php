@@ -110,6 +110,8 @@ class Expression implements IQueryPart
         }
         $this->function = "count";
         $tokens[0] = $value[1];
+
+        return null;
     }
 
     /**

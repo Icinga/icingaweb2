@@ -4,13 +4,14 @@
 
 namespace Icinga\Backend\Statusdat\DataView;
 
+use Icinga\Backend\DataView\ObjectRemappingView;
 use \Icinga\Protocol\Statusdat\IReader;
 
 /**
  * Class StatusdatHostView
  * @package Icinga\Backend\Statusdat\DataView
  */
-class StatusdatHostView extends \Icinga\Backend\DataView\ObjectRemappingView
+class StatusdatHostView extends ObjectRemappingView
 {
     /**
      * @var mixed
@@ -35,10 +36,7 @@ class StatusdatHostView extends \Icinga\Backend\DataView\ObjectRemappingView
         "host_state" => "status.current_state",
         "host_output" => "status.plugin_output",
         "host_perfdata" => "status.long_plugin_output",
-        "host_state" => "status.current_state",
-        "host_perfdata" => "status.long_plugin_output",
         "host_last_state_change" => "status.last_state_change",
-        "host_output" => "status.plugin_output",
         "host_check_command" => "check_command",
         "host_last_check" => "status.last_check",
         "host_next_check" => "status.next_check",

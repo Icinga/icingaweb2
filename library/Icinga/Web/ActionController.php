@@ -8,6 +8,7 @@ use Icinga\Authentication\Auth;
 use Icinga\Application\Benchmark;
 use Icinga\Exception;
 use Icinga\Application\Config;
+use Icinga\Pdf\File;
 use Icinga\Web\Notification;
 use Zend_Layout as ZfLayout;
 use Zend_Controller_Action as ZfController;
@@ -288,7 +289,7 @@ class ActionController extends ZfController
             );
             $html = '<style>' . $css . '</style>' . (string)$this->getResponse();
 
-            $pdf = new \Icinga\Pdf\File();
+            $pdf = new File();
             $pdf->AddPage();
             $pdf->writeHTMLCell(0, 0, '', '', $html, 0, 1, 0, true, '', true);
             $pdf->Output('docs.pdf', 'I');

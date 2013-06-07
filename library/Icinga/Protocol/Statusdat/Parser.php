@@ -4,7 +4,9 @@
 
 namespace Icinga\Protocol\Statusdat;
 
+use Icinga\Application\Logger;
 use Icinga\Exception\ConfigurationError;
+use Icinga\Exception\ProgrammingError;
 use Icinga\Protocol\Statusdat\Exception\ParsingException as ParsingException;
 
 /**
@@ -64,7 +66,7 @@ class Parser
      */
     public function parseObjectsFile()
     {
-        \Icinga\Application\Logger::debug("Reading new objects file");
+        Logger::debug("Reading new objects file");
         $DEFINE = strlen("define ");
         $filehandle = $this->filehandle;
         $this->icingaState = array();
@@ -87,7 +89,7 @@ class Parser
 
     /**
      * @param null $filehandle
-     * @throws \Icinga\Exception\ProgrammingError
+     * @throws ProgrammingError
      */
     public function parseRuntimeState($filehandle = null)
     {
@@ -98,7 +100,7 @@ class Parser
         }
 
         if (!$this->icingaState) {
-            throw new \Icinga\Exception\ProgrammingError("Tried to read runtime state without existing objects data");
+            throw new ProgrammingError("Tried to read runtime state without existing objects data");
         }
         $this->overwrites = array();
         while (!feof($filehandle)) {
@@ -224,7 +226,7 @@ class Parser
         if (!$returnString) {
             while (trim(fgets($this->filehandle)) !== "}") {
             }
-            return;
+            return null;
         } else {
             $str = "";
             while (($val = trim(fgets($this->filehandle))) !== "}") {
@@ -254,14 +256,14 @@ class Parser
     protected function registerObjectAsProperty(&$object)
     {
         if ($this->currentObjectType == "service" || $this->currentObjectType == "host") {
-            return;
+            return null;
         }
         $isService = strpos($this->currentObjectType, "service") !== false;
         $isHost = strpos($this->currentObjectType, "host") !== false;
 
         $name = $this->getObjectIdentifier($object);
         if ($isService === false && $isHost === false) { // this would be error in the parser implementation
-            return;
+            return null;
         }
         $property = $this->currentObjectType;
         if ($isService) {
@@ -292,6 +294,8 @@ class Parser
             }
             array_push($source->$property, $object);
         }
+
+        return null;
     }
 
     /**

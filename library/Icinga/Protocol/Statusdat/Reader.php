@@ -4,6 +4,7 @@
 
 namespace Icinga\Protocol\Statusdat;
 
+use Icinga\Backend\MonitoringObjectList;
 use Icinga\Exception as Exception;
 use Icinga\Benchmark as Benchmark;
 
@@ -157,6 +158,8 @@ class Reader implements IReader
         if ($this->lastState == false) {
             return false;
         }
+
+        return true;
     }
 
     /**
@@ -169,6 +172,7 @@ class Reader implements IReader
             return false;
         }
         $this->hasRuntimeState = true;
+        return true;
     }
 
     /**
@@ -237,11 +241,11 @@ class Reader implements IReader
 
     /**
      * @param Query $query
-     * @return \Icinga\Backend\MonitoringObjectList
+     * @return MonitoringObjectList
      */
     public function fetchAll(Query $query)
     {
-        return new \Icinga\Backend\MonitoringObjectList(
+        return new MonitoringObjectList(
             $query->getResult(),
             $query->getView()
         );

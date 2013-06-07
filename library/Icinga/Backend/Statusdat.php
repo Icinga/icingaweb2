@@ -4,6 +4,8 @@
 
 namespace Icinga\Backend;
 
+use Icinga\Backend\Statusdat\DataView\StatusdatHostView;
+use Icinga\Backend\Statusdat\DataView\StatusdatServiceView;
 use Icinga\Protocol\Statusdat as StatusdatProtocol;
 
 /**
@@ -58,7 +60,7 @@ class Statusdat extends AbstractBackend
         $result = array($objs["host"][$host]);
         return new MonitoringObjectList(
             $result,
-            new \Icinga\Backend\Statusdat\DataView\StatusdatHostView($this->reader)
+            new StatusdatHostView($this->reader)
         );
     }
 
@@ -78,7 +80,7 @@ class Statusdat extends AbstractBackend
         $result = array($objs["service"][$idxName]);
         return new MonitoringObjectList(
             $result,
-            new \Icinga\Backend\Statusdat\DataView\StatusdatServiceView($this->reader)
+            new StatusdatServiceView($this->reader)
         );
 
     }

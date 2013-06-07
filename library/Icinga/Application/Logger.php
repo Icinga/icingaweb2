@@ -4,6 +4,8 @@
 
 namespace Icinga\Application;
 
+use Icinga\Exception\ConfigurationError;
+
 /**
  * Class Logger
  * @package Icinga\Application
@@ -71,7 +73,7 @@ class Logger
             if ($config->debug && $config->debug->enable == 1) {
                 $this->setupDebugLog($config);
             }
-        } catch (\Icinga\Exception\ConfigurationError $e) {
+        } catch (ConfigurationError $e) {
             $this->warn("Could not create debug log: {$e->getMessage()}");
         }
 
@@ -114,14 +116,14 @@ class Logger
      * @param $type
      * @param $target
      * @param $priority
-     * @throws \Icinga\Exception\ConfigurationError
+     * @throws ConfigurationError
      */
     private function addWriter($type, $target, $priority)
     {
         $type[0] = strtoupper($type[0]);
         $writerClass = "\Zend_Log_Writer_" . $type;
         if (!class_exists($writerClass)) {
-            throw new \Icinga\Exception\ConfigurationError("Could not create log: Unknown type " . $type);
+            throw new ConfigurationError("Could not create log: Unknown type " . $type);
         }
 
         $writer = new $writerClass($target);
