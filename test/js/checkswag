@@ -91,25 +91,28 @@ def main():
         command_options.append('--verbose')
         if options.verbose:
             command_options.append('--show-non-errors')
+    path_args = [arguments.remove(a) or a
+                 for a in arguments[:len(arguments)]
+                 if os.path.isfile(a) or os.path.isdir(a)]
+    if not path_args:
+        path_args = ['../../application', '../../bin', '../../library/Icinga']
     if options.exclude:
         pass # TODO: Preprocess disallowed files/directories
     elif options.include:
         pass # TODO: Preprocess allowed files/directories
-    else:
-        arguments.extend(['../../application', '../../bin',
-                          '../../library/Icinga'])
 
     # Application invocation..
     if options.build:
         result_data = execute_command([application_path] + DEFAULT_ARGS +
-                                      command_options + arguments, True)
+                                      command_options + arguments +
+                                      path_args, True)
         result_path = os.path.join(get_report_directory(),
                                    'jshint_results.xml')
         with open(result_path, 'w') as result_file:
             result_file.write(result_data)
     else:
         execute_command([application_path] + DEFAULT_ARGS +
-                        command_options + arguments)
+                        command_options + arguments + path_args)
     return 0
 
 
