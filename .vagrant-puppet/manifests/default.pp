@@ -283,6 +283,12 @@ exec { 'install npm/mocha':
   require => Exec['install nodejs']
 }
 
+exec { 'install npm/mocha-cobertura-reporter':
+  command => 'npm install -g mocha-cobertura-reporter',
+  creates => '/usr/lib/node_modules/cobertura',
+  require => Exec['install npm/mocha']
+}
+
 exec { 'install npm/jshint':
   command => 'npm install -g jshint',
   creates => '/usr/lib/node_modules/jshint',
