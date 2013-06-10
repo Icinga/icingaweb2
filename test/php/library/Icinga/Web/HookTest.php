@@ -10,6 +10,9 @@ namespace Tests\Icinga\Web;
 require_once("../../library/Icinga/Exception/ProgrammingError.php");
 require_once("../../library/Icinga/Web/Hook.php");
 
+require_once("Zend/Log.php");
+require_once("../../library/Icinga/Application/Logger.php");
+
 use Icinga\Web\Hook as Hook;
 class Base
 {
@@ -23,6 +26,13 @@ class TestBadHookImplementation
 {
 }
 
+class ErrorProneHookImplementation
+{
+    public function __construct()
+    {
+        throw new \Exception("HOOK ERROR");
+    }
+}
 
 class HookTest extends \PHPUnit_Framework_TestCase
 {
@@ -64,13 +74,32 @@ class HookTest extends \PHPUnit_Framework_TestCase
      *
      *
      **/
-    public function testCreateInvalidInstance()
+    public function testCreateInvalidInstance1()
     {
         $this->setExpectedException('\Icinga\Exception\ProgrammingError');
         Hook::clean();
         Hook::$BASE_NS = "Tests\\Icinga\\Web\\";
         Hook::register("Base","b","Tests\\Icinga\\Web\\TestBadHookImplementation");
         Hook::createInstance("Base","b");
+        Hook::clean();
+    }
+
+    public function testCreateInvalidInstance2()
+    {
+        Hook::clean();
+        Hook::$BASE_NS = "Tests\\Icinga\\Web\\";
+        $test = Hook::createInstance("Base","NOTEXIST");
+        $this->assertNull($test);
+        Hook::clean();
+    }
+
+    public function testCreateInvalidInstance3()
+    {
+        Hook::clean();
+        Hook::$BASE_NS = "Tests\\Icinga\\Web\\";
+        Hook::register("Base","ErrorProne","Tests\\Icinga\\Web\\ErrorProneHookImplementation");
+        $test = Hook::createInstance("Base","ErrorProne");
+        $this->assertNull($test);
         Hook::clean();
     }
 
@@ -109,5 +138,4 @@ class HookTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf("Tests\\Icinga\\Web\\TestHookImplementation",Hook::first("Base"));
         Hook::clean();
     }
-
 }
