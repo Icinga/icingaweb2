@@ -15,6 +15,7 @@ use Icinga\Exception\ProgrammingError;
  * @copyright  Copyright (c) 2013 Icinga-Web Team <info@icinga.org>
  * @author     Icinga-Web Team <info@icinga.org>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License
+ * @deprecated Because of HTML creation of PHP<
  */
 class Tabs extends AbstractWidget
 {
