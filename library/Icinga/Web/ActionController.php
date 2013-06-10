@@ -4,7 +4,7 @@
 
 namespace Icinga\Web;
 
-use Icinga\Authentication\Auth;
+use Icinga\Authentication\Manager;
 use Icinga\Application\Benchmark;
 use Icinga\Exception;
 use Icinga\Application\Config;
@@ -92,12 +92,6 @@ class ActionController extends ZfController
         array $invokeArgs = array()
     ) {
         Benchmark::measure('Action::__construct()');
-        if (Auth::getInstance()->isAuthenticated()
-            && !$this->modifiesSession
-            && !Notification::getInstance()->hasMessages()
-        ) {
-            session_write_close();
-        }
         $this->module_name = $request->getModuleName();
         $this->controller_name = $request->getControllerName();
         $this->action_name = $request->getActionName();
@@ -108,8 +102,13 @@ class ActionController extends ZfController
             ->_setInvokeArgs($invokeArgs);
         $this->_helper = new ZfActionHelper($this);
 
-        if ($this->handlesAuthentication()
-            || Auth::getInstance()->isAuthenticated()
+        if ($this->handlesAuthentication() ||
+                Auth::getInstance(
+                    null,
+                    array(
+                        "writeSession" => $this->modifiesSession
+                    )
+                )->isAuthenticated()
         ) {
             $this->allowAccess = true;
             $this->init();
@@ -164,7 +163,7 @@ class ActionController extends ZfController
      */
     final protected function hasPermission($uri, $permission = 'read')
     {
-        return Auth::getInstance()->hasPermission($uri, $permission);
+        return true;  
     }
 
     /**
