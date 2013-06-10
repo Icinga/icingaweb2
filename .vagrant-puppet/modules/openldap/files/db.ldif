@@ -1,0 +1,18 @@
+dn: olcDatabase={0}config,cn=config
+changetype: modify
+replace: olcRootPW
+olcRootPW: {SSHA}N/2WMqT8q7cElh7KUQz+p9TJbjmKv/u9
+-
+replace: olcRootDN
+olcRootDN: cn=admin,cn=config
+
+dn: olcDatabase={2}bdb,cn=config
+changetype: modify
+replace: olcRootPW
+olcRootPW: {SSHA}MxMpLBo2/TSymoIBf/Sb5iQac7Wwiur5
+-
+replace: olcSuffix
+olcSuffix: dc=icinga,dc=org
+-
+replace: olcRootDN
+olcRootDN: cn=admin,dc=icinga,dc=org

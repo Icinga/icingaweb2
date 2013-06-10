@@ -27,6 +27,7 @@ class LdapUtils
     public static function explodeDN($dn, $with_type = true)
     {
         $res = ldap_explode_dn($dn, $with_type ? 0 : 1);
+
         foreach ($res as $k => $v) {
             $res[$k] = preg_replace(
                 '/\\\([0-9a-f]{2})/ei',

@@ -1,0 +1,4 @@
+dn: dc=icinga,dc=org
+dc: icinga
+objectClass: top
+objectClass: domain

@@ -1,0 +1,43 @@
+dn: ou=people,dc=icinga,dc=org
+ou: people
+objectclass: organizationalunit
+
+dn: ou=groups,dc=icinga,dc=org
+ou: groups
+objectclass: organizationalunit
+
+dn: cn=John Doe,ou=people,dc=icinga,dc=org
+objectclass: inetOrgPerson
+cn: John Doe
+sn: Doe
+uid: jdoe
+userpassword: password
+
+dn: cn=Jane Smith,ou=people,dc=icinga,dc=org
+objectclass: inetOrgPerson
+cn: Jane Smith
+sn: Smith
+uid: jsmith
+userpassword: password
+
+dn: cn=John Q. Public,ou=people,dc=icinga,dc=org
+objectclass: inetOrgPerson
+cn: John Q. Public
+sn: Public
+uid: jqpublic
+userpassword: password
+
+dn: cn=Richard Roe,ou=people,dc=icinga,dc=org
+objectclass: inetOrgPerson
+cn: Richard Roe
+sn: Roe
+uid: rroe
+userpassword: password
+
+dn: cn=Users,ou=groups,dc=icinga,dc=org
+objectClass: groupOfUniqueNames
+cn: Users
+uniqueMember: cn=Jon Doe,ou=people,dc=icinga,dc=org
+uniqueMember: cn=Jane Smith,ou=people,dc=icinga,dc=org
+uniqueMember: cn=John Q. Public,ou=people,dc=icinga,dc=org
+uniqueMember: cn=Richard Roe,ou=people,dc=icinga,dc=org

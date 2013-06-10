@@ -14,6 +14,10 @@ have to do is install Vagrant and run:
 
     vagrant up
 
+> **Note** that the first boot of the vm takes a fairly long time because
+> you'll download a plain CentOS base box and Vagrant will automatically
+> provision the environment on the first go.
+
 After you should be able to browse [localhost:8080/icinga2-web](http://localhost:8080/icinga2-web).
 
 ### Environment 
@@ -98,10 +102,63 @@ For **logging into** the Icinga classic web interface use user *icingaadmin* wit
 MK Livestatus is added to the Icinga installation using a MySQL database.
 
 **Installation path**:
+
 * `/usr/local/icinga-mysql/bin/unixcat`
 * `/usr/local/icinga-mysql/lib/mk-livestatus/livecheck`
 * `/usr/local/icinga-mysql/lib/mk-livestatus/livestatus.o`
 * `/usr/local/icinga-mysql/etc/modules/mk-livestatus.cfg`
 * `/usr/local/icinga-mysql/var/rw/live`
 
+**Example usage**:
 
+    echo "GET hosts" | /usr/local/icinga-mysql/bin/unixcat /usr/local/icinga-mysql/var/rw/live
+
+#### LDAP example data
+
+The environment includes a openldap server with example data. *Domain* suffix is **dc=icinga,dc=org**.
+Administrator (*rootDN*) of the slapd configuration database is **cn=admin,cn=config** and the
+administrator (*rootDN*) of our database instance is **cn=admin,dc=icinga,dc=org**. Both share
+the *password* `admin`.
+
+Examples to query the slapd configuration database:
+
+    ldapsearch -x -W -LLL -D cn=admin,cn=config -b cn=config dn
+    ldapsearch -Y EXTERNAL -H ldapi:/// -LLL -b cn=config dn
+
+Examples to query our database instance:
+
+    ldapsearch -x -W -LLL -D cn=admin,dc=icinga,dc=org -b dc=icinga,dc=org dn
+    ldapsearch -Y EXTERNAL -H ldapi:/// -LLL -b dc=icinga,dc=org dn
+
+This is what the **dc=icinga,dc=org** *DIT* looks like:
+
+> dn: dc=icinga,dc=org
+> 
+> dn: ou=people,dc=icinga,dc=org
+> 
+> dn: ou=groups,dc=icinga,dc=org
+> 
+> dn: cn=Users,ou=groups,dc=icinga,dc=org
+> cn: Users
+> uniqueMember: cn=Jon Doe,ou=people,dc=icinga,dc=org
+> uniqueMember: cn=Jane Smith,ou=people,dc=icinga,dc=org
+> uniqueMember: cn=John Q. Public,ou=people,dc=icinga,dc=org
+> uniqueMember: cn=Richard Roe,ou=people,dc=icinga,dc=org
+> 
+> dn: cn=John Doe,ou=people,dc=icinga,dc=org
+> cn: John Doe
+> uid: jdoe
+> 
+> dn: cn=Jane Smith,ou=people,dc=icinga,dc=org
+> cn: Jane Smith
+> uid: jsmith
+> 
+> dn: cn=John Q. Public,ou=people,dc=icinga,dc=org
+> cn: John Q. Public
+> uid: jqpublic
+> 
+> dn: cn=Richard Roe,ou=people,dc=icinga,dc=org
+> cn: Richard Roe
+> uid: rroe
+
+All users share the password `password`.

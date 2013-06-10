@@ -1,6 +1,7 @@
 include apache
 include mysql
 include pgsql
+include openldap
 
 Exec { path => '/bin:/usr/bin:/sbin' }
 
@@ -24,8 +25,8 @@ $icinga_packages = [ 'gcc', 'glibc', 'glibc-common', 'gd', 'gd-devel',
   'libdbi-dbd-mysql', 'libdbi-dbd-pgsql' ]
 package { $icinga_packages: ensure => installed }
 
-php::extension { ['php-mysql', 'php-pgsql']:
-  require => [Class['mysql'], Class['pgsql']]
+php::extension { ['php-mysql', 'php-pgsql', 'php-ldap']:
+  require => [Class['mysql'], Class['pgsql'], Class['openldap']]
 }
 
 group { 'icinga-cmd':
@@ -211,4 +212,31 @@ file { '/usr/local/icinga-mysql/etc/modules/mk-livestatus.cfg':
   group   => 'icinga',
   require => Cmmi['mk-livestatus'],
   notify  => [Service['icinga-mysql'], Service['ido2db-mysql']]
+}
+
+file { 'openldap/db.ldif':
+  path    => '/usr/share/openldap-servers/db.ldif',
+  source  => 'puppet:///modules/openldap/db.ldif',
+  require => Class['openldap']
+}
+
+file { 'openldap/dit.ldif':
+  path    => '/usr/share/openldap-servers/dit.ldif',
+  source  => 'puppet:///modules/openldap/dit.ldif',
+  require => Class['openldap']
+}
+
+file { 'openldap/users.ldif':
+  path    => '/usr/share/openldap-servers/users.ldif',
+  source  => 'puppet:///modules/openldap/users.ldif',
+  require => Class['openldap']
+}
+
+exec { 'populate-openldap':
+  # TODO: Split the command and use unless instead of trying to populate openldap everytime
+  command => 'sudo ldapadd -c -Y EXTERNAL -H ldapi:/// -f /usr/share/openldap-servers/db.ldif || true && \
+              sudo ldapadd -c -D cn=admin,dc=icinga,dc=org -x -w admin -f /usr/share/openldap-servers/dit.ldif || true && \
+              sudo ldapadd -c -D cn=admin,dc=icinga,dc=org -x -w admin -f /usr/share/openldap-servers/users.ldif || true',
+  require => [Service['slapd'], File['openldap/db.ldif'],
+              File['openldap/dit.ldif'], File['openldap/users.ldif']]
 }
