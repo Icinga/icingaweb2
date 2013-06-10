@@ -1,4 +1,6 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 /**
  * Icinga Authentication User class

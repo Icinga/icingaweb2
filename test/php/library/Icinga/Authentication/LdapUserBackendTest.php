@@ -1,6 +1,10 @@
 <?php
 
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
+
 namespace Tests\Icinga\Authentication;
+
 /**
 *
 * Test class for Ldapuserbackend 
