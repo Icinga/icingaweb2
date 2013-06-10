@@ -9,7 +9,9 @@ class Manager
 {
     const BACKEND_TYPE_USER = "User";
     const BACKEND_TYPE_GROUP = "Group";
-    
+
+    private static $instance = null;
+
     private $user = null;
     private $groups = array();
     private $userBackend = null;
@@ -29,7 +31,7 @@ class Manager
         }
 
         if (isset($options["groupBackendClass"])) {
-            $this->userBackend = $options["groupBackendClass"];
+            $this->groupBackend = $options["groupBackendClass"];
         } elseif ($config->groups != null) {
             $this->groupBackend = initBackend(BACKEND_TYPE_GROUP, $config->groups);
         }
@@ -37,16 +39,26 @@ class Manager
         if (!isset($options["sessionClass"])) {
             $this->session = new PhpSession($config->session);
         } else {
-            $options["sessionClass"];
+            $this->session = $options["sessionClass"];
+        }
+        if (isset($options["writeSession"]) && $options["writeSession"] === true) {
+            $this->session->read(true);
+        } else {
+            $this->session->read();
         }
     }
 
     public static function getInstance($config = null, array $options = array())
     {
         if (self::$instance === null) {
-            self::$instance = new Auth($config, $options);
+            self::$instance = new Manager($config, $options);
         }
         return self::$instance;
+    }
+
+    public static function clearInstance()
+    {
+        self::$instance = null;
     }
 
     private function initBackend($authenticationTarget, $authenticationSource)
@@ -56,7 +68,7 @@ class Manager
         return new $class($authenticationSource);
     }
 
-    public function authenticate(Credentials $credentials)
+    public function authenticate(Credentials $credentials, $persist = true)
     {
         if (!$this->userBackend->hasUsername($credentials)) {
             Logger::info("Unknown user %s tried to log in", $credentials->getUsername());
@@ -68,26 +80,29 @@ class Manager
             return false;
         }
         
-        persistCurrentUser();
+        if ($persist == true) {
+            $this->persistCurrentUser();
+            $this->session->write();
+        }
         return true;
     }
 
     public function persistCurrentUser()
     {
-        $this->session->set("user", $this->user->toSession());
+        $this->session->set("user", $this->user);
     }
 
     public function authenticateFromSession()
     {
-        $this->user = User::fromSession($this->session->get("user", null));
+        $this->user = $this->session->get("user", null);
     }
 
-    public function isAuthenticated()
+    public function isAuthenticated($ignoreSession = false)
     {
-        if ($this->user === null) {
+        if ($this->user === null && !$ignoreSession) {
             $this->authenticateFromSession();
         }
-        return is_object($this->user) && !empty($this->user->username);
+        return is_object($this->user);
     }
 
     public function removeAuthorization()

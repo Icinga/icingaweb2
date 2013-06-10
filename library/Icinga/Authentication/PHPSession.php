@@ -28,7 +28,11 @@ class PhpSession extends Session
         }
         foreach ($options as $sessionVar => $value) {
             if (ini_set("session.".$sessionVar, $value) === false) {
-                Logger::warn("Could not set php.ini settint %s = %s", $sessionVar, $value);
+                Logger::warn(
+                    "Could not set php.ini setting %s = %s. This might affect your sessions behaviour.",
+                    $sessionVar,
+                    $value
+                );
             }
         }
     }

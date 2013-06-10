@@ -10,61 +10,116 @@ namespace Icinga\Authentication;
 /**
  * This class represents a user object
  *
- * TODO: Show some use cases
  *
  * @copyright  Copyright (c) 2013 Icinga-Web Team <info@icinga.org>
  * @author     Icinga-Web Team <info@icinga.org>
  * @package    Icinga\Application
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License
  */
-class User extends Storable
+class User
 {
-    protected $defaultProps = array(
-        'username'   => null,
-        'password'   => null,
-        'first_name' => null,
-        'last_name'  => null,
-        'email'      => null,
-    );
-    protected $permissions = array();
-    protected $backend;
-    protected $groups;
-    protected $key = 'username';
+    private $username = "";
+    private $firstname = "";
+    private $lastname = "";
+    private $email = "";
+    private $domain = "";
+    private $additionalInformation = array();
 
-    public function listGroups()
+    private $permissions = array();
+    private $groups = array();
+
+    public function __construct($username, $firstname, $lastname, $email)
     {
-        if ($this->groups === null) {
-            $this->loadGroups();
-        }
+        $this->setUsername($username);
+        $this->setFirstname($firstname);
+        $this->setLastname($lastname);
+        $this->setEmail($email);
     }
 
-    protected function loadGroups()
+    public function getGroups()
     {
-        // Whatever
+        return $this->groups;
+    }
+
+    public function setGroups(array $groups)
+    {
+        $this->groups = $groups;
     }
 
     public function isMemberOf(Group $group)
     {
-        
+        return in_array($group, $this->groups);
     }
 
-    public function getPermissionList()
+    public function getPermissions()
     {
         return $this->permissions;
     }
 
-    public function hasPermission($uri, $permission)
+    public function getUsername()
     {
-
+        return $this->username;
     }
 
-    public function grantPermission($uri, $permission)
+    public function setUsername($name)
     {
-
+        $this->username = $name;
     }
 
-    public function revokePermission($uri, $permission)
+    public function getFirstname()
     {
+        return $this->firstname;
+    }
 
+    public function setFirstname($name)
+    {
+        $this->firstname = $name;
+    }
+
+    public function getLastname()
+    {
+        return $this->lastname;
+    }
+
+    public function setLastname($name)
+    {
+        $this->lastname = $name;
+    }
+
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    public function setEmail($mail)
+    {
+        if (filter_var($mail, FILTER_VALIDATE_EMAIL)) {
+            $this->mail = $mail;
+        } else {
+            throw new InvalidArgumentException("Invalid mail given for user $this->username: $mail");
+        }
+    }
+
+    public function setDomain($domain)
+    {
+        $this->domain = $domain;
+    }
+
+    public function getDomain()
+    {
+        return $this->domain;
+    }
+
+    public function setAdditional($key, $value)
+    {
+        $this->additionalInformation[$key] = $value;
+    }
+
+    public function getAdditional($key)
+    {
+        if (isset($this->additionalInformation[$key])) {
+            return $this->additionalInformation[$key];
+        }
+        return null;
     }
 }
