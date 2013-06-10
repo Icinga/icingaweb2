@@ -11,6 +11,7 @@
 #   [*flags*]       - configure options.
 #   [*creates*]     - target directory the software will install to.
 #   [*make* ]       - command to make and make install the software.
+#   [*timeout* ]    - timeout for the make command.
 #
 # Actions:
 #
@@ -32,6 +33,7 @@ define cmmi(
   $flags,
   $creates,
   $make,
+  $timeout=300
 ) {
 
   Exec { path => '/bin:/usr/bin' }
@@ -70,6 +72,7 @@ define cmmi(
     cwd     => $src,
     command => $make,
     creates => $creates,
-    require => Exec["configure-${name}"]
+    require => Exec["configure-${name}"],
+    timeout => $timeout
   }
 }

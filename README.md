@@ -59,6 +59,7 @@ After you should be able to browse [localhost:8080/icinga2-web](http://localhost
 
 * Icinga 1.9.1 with IDOUtils using a MySQL database
 * Icinga 1.9.1 with IDOUtils using a PostgreSQL database
+* Icinga 2 version 0.0.1
 
 **Installed files**:
 
@@ -176,3 +177,12 @@ In order to run all tests you have to execute the following commands:
 
 `runtests` will execute unit and regression tests and `checkswag` will report
 code style issues.
+
+#### Icinga 2
+
+**Installation path**: `/usr/local/icinga2`
+
+**Example usage**:
+
+    cd /usr/local/icinga2
+    ./sbin/icinga2 -c etc/icinga2/icinga2.conf.dist
