@@ -1,8 +1,7 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
-/**
- * Web widget class
- */
 namespace Icinga\Web;
 
 use Icinga\Exception\ProgrammingError;
@@ -25,13 +24,13 @@ use Icinga\Exception\ProgrammingError;
  */
 class Widget
 {
-
     /**
      * Create a new widget
      *
      * @param string $name    Widget name
-     * @param array  $options Widget constructor options
+     * @param array $options Widget constructor options
      *
+     * @throws \Icinga\Exception\ProgrammingError
      * @return Icinga\Web\Widget\AbstractWidget
      */
     public static function create($name, $options = array())
