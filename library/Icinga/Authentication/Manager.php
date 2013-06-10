@@ -64,7 +64,7 @@ class Manager
     private function initBackend($authenticationTarget, $authenticationSource)
     {
         $userbackend = ucwords(strtolower($authenticationSource->backend));
-        $class = '\\Icinga\\Authentication\\' . $backend . $authenticationTarget. 'Backend';
+        $class = '\\Icinga\\Authentication\\Backend\\' . $backend . $authenticationTarget. 'Backend';
         return new $class($authenticationSource);
     }
 
