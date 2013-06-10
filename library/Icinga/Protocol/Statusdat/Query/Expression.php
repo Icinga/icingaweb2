@@ -212,10 +212,10 @@ class Expression implements IQueryPart
             return false;
         }
 
-        if ($this->CB == "IS_IN") {
+        if ($this->CB == "isIn") {
             return count(array_intersect($values, $this->value)) > 0;
         }
-        if ($this->CB == "IS_NOT_IN") {
+        if ($this->CB == "isNotIn") {
             return count(array_intersect($values, $this->value)) == 0;
         }
         if ($this->function) {

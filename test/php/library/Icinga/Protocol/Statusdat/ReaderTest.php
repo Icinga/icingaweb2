@@ -45,7 +45,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
 
     public function testFileCaching() {
         $parser = new ParserMock();
-        @system("rm ./tmp/zend_cache*");
+        @system("rm /tmp/zend_cache*");
         $parser->runtime = array("host"=>array(
             "test" => (object) array(
                 "host_name" => "test"
@@ -54,21 +54,21 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
         $object_file = tempnam("./dir","object");
         $status_file = tempnam("./dir","status");
         $reader = new Reader(new ConfigMock(array(
-            "cache_path" => "./tmp",
+            "cache_path" => "/tmp",
             "objects_file" => $object_file,
             "status_file" => $status_file
         )),$parser);
         unlink($object_file);
         unlink($status_file);
-        $this->assertTrue(file_exists("./tmp/zend_cache---objects".md5($object_file)));
-        $this->assertTrue(file_exists("./tmp/zend_cache---state".md5($object_file)));
-        system("rm ./tmp/zend_cache*");
+        $this->assertTrue(file_exists("/tmp/zend_cache---objects".md5($object_file)));
+        $this->assertTrue(file_exists("/tmp/zend_cache---state".md5($object_file)));
+        system("rm /tmp/zend_cache*");
     }
     public function testEmptyFileException() {
         $this->setExpectedException("Icinga\Exception\ConfigurationError");
         $parser = new ParserMock();
         $reader = new Reader(new ConfigMock(array(
-            "cache_path" => "./tmp",
+            "cache_path" => "/tmp",
             "objects_file" => "",
             "status_file" => "",
         )),$parser);

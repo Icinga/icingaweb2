@@ -23,14 +23,14 @@ class ExpressionTest extends \PHPUnit_Framework_TestCase
     public function testFromStringParsing()
     {
         $assertions = array(
-            "expression > ?" => "IS_GREATER",
+            "expression > ?" => "isGreater",
             "expression >= ?" => "isGreaterEq",
             "expression <=   ?" => "isLessEq",
             "expression <  ?" => "isLess",
             "expression =  ?" => "isEqual",
             "expression !=  ?" => "isNotEqual",
             "expression like ?" => "isLike",
-            "expression IN ? " => "IS_IN"
+            "expression IN ? " => "isIn"
         );
 
         foreach ($assertions as $query => $callback) {
@@ -126,7 +126,8 @@ class ExpressionTest extends \PHPUnit_Framework_TestCase
 
     }
 
-    public function testCountQuery() {
+    public function testCountQuery()
+    {
         $testArray = array(
             (object)array(
                 "expression" => "atest",
