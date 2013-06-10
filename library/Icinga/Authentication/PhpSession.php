@@ -4,6 +4,16 @@ namespace Icinga\Authentication;
 
 use Icinga\Application\Logger as Logger;
 
+/**
+*   Standard PHP Session handling
+*   You have to call read() first in order to start the session. If
+*   no parameter is given to read, the session is closed immediately
+*   after reading the persisted variables, in order to avoid concurrent
+*   requests to be blocked. Otherwise, you can call write() (again with
+*   no parameter in order to auto-close it) to persist all values previously
+*   set with the set() method
+* 
+**/
 class PhpSession extends Session
 {
     const SESSION_NAME = "Icinga2Web";
@@ -24,7 +34,9 @@ class PhpSession extends Session
     public function __construct(array $options = null)
     {
         if ($options !== null) {
-            $options = array_merge(PhpSession::DEFAULT_COOKIEOPTIONS, $options);
+            $options = array_merge(PhpSession::$DEFAULT_COOKIEOPTIONS, $options);
+        } else {
+            $options = PhpSession::$DEFAULT_COOKIEOPTIONS;
         }
         foreach ($options as $sessionVar => $value) {
             if (ini_set("session.".$sessionVar, $value) === false) {
@@ -115,8 +127,27 @@ class PhpSession extends Session
 
     public function purge()
     {
-        if (!$this->ensureOpen() && !$this->isFlushed) {
+        if ($this->ensureOpen() && !$this->isFlushed) {
+            $_SESSION = array();
             session_destroy();
+            $this->clearCookies();
         }
+    }
+
+    private function clearCookies()
+    {
+        if (ini_get("session.use_cookies")) {
+            $params = session_get_cookie_params();
+            setcookie(
+                session_name(),
+                '',
+                time() - 42000,
+                $params["path"],
+                $params["domain"],
+                $params["secure"],
+                $params["httponly"]
+            );
+        }
+
     }
 }
