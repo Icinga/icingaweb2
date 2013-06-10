@@ -95,7 +95,7 @@ class Reader implements IReader
      */
     private function initializeCaches()
     {
-        $defaultCachePath = "/tmp/" . self::STATUSDAT_DEFAULT_CACHE_PATH;
+        $defaultCachePath = "/tmp" . self::STATUSDAT_DEFAULT_CACHE_PATH;
 
         $cachePath = $this->config->get('cache_path', $defaultCachePath);
         $maxCacheLifetime = intval($this->config->get('cache_path', self::DEFAULT_CACHE_LIFETIME));
@@ -167,10 +167,16 @@ class Reader implements IReader
      */
     private function readStatusCache()
     {
+        if (!isset($this->stateCache)) {
+            return true;
+        }
+
         $statusInfo = $this->stateCache->load('state' . md5($this->config->status_file));
+
         if ($statusInfo == false) {
             return false;
         }
+
         $this->hasRuntimeState = true;
         return true;
     }

@@ -324,7 +324,12 @@ class Parser
      */
     protected function getMembers(&$object)
     {
+        if (!isset($object->members)) {
+            return array();
+        }
+
         $members = explode(",", $object->members);
+
         if ($this->currentObjectType == "service") {
             $res = array();
             for ($i = 0; $i < count($members); $i += 2) {
