@@ -7,8 +7,8 @@ from optparse import OptionParser, BadOptionError, AmbiguousOptionError
 
 
 APPLICATION = 'phpcs'
-DEFAULT_ARGS = ['-p', '--standard', 'PSR2', '--extensions',
-                'php', '--encoding', 'utf-8']
+DEFAULT_ARGS = ['-p', '--standard=PSR2', '--extensions=php',
+                '--encoding=utf-8']
 
 REPORT_DIRECTORY = '../../build/log'
 
@@ -89,12 +89,9 @@ def main():
     if options.verbose:
         command_options.append('-v')
     if options.build:
-        command_options.append('--report-checkstyle')
-        command_options.append(os.path.join(get_report_directory(),
-                                            'phpcs_results.xml'))
+        command_options.append('--report-checkstyle=' + os.path.join(get_report_directory(), 'phpcs_results.xml'))
     if options.exclude:
-        command_options.extend(['--ignore-patterns',
-                                ','.join(options.exclude)])
+        command_options.extend(['--ignore=' + ','.join(options.exclude)])
     if options.include:
         arguments.extend(options.include)
     else:

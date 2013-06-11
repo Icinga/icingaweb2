@@ -3,6 +3,7 @@
 import os
 import sys
 import subprocess
+from fnmatch import fnmatch
 from optparse import OptionParser, BadOptionError, AmbiguousOptionError
 
 
@@ -63,12 +64,8 @@ def parse_commandline():
                       help='Enable reporting.')
     parser.add_option('-v', '--verbose', action='store_true',
                       help='Be more verbose.')
-    parser.add_option('-i', '--include', metavar='PATTERN', action='append',
-                      help='Include only specific files/test cases.'
-                           ' (Can be supplied multiple times.)')
-    parser.add_option('-e', '--exclude', metavar='PATTERN', action='append',
-                      help='Exclude specific files/test cases. '
-                           '(Can be supplied multiple times.)')
+    parser.add_option('-i', '--include', metavar='PATTERN', action='store',
+                      help='Include only specific files/test cases.')
     return parser.parse_args()
 
 
@@ -98,16 +95,13 @@ def main():
         command_options.append(os.path.join(report_directory,
                                             'phpunit_coverage.xml'))
     if options.include:
-        command_options.extend(['--group', ','.join(options.include)])
-    if options.exclude:
-        command_options.extend(['--exclude-group',
-                                ','.join(options.exclude)])
+        command_options.append('--filter')
+        command_options.append(options.include)
 
     # Application invocation..
     execute_command([application_path] + DEFAULT_ARGS +
                     command_options + arguments)
     return 0
-
 
 if __name__ == '__main__':
     sys.exit(main())
