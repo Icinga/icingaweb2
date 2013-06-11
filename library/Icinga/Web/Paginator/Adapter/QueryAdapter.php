@@ -59,4 +59,3 @@ class QueryAdapter implements \Zend_Paginator_Adapter_Interface
         return $this->count;
     }
 }
-

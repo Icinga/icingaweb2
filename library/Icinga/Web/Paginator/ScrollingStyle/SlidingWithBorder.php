@@ -1,4 +1,6 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 /**
  * @see Zend_Paginator_ScrollingStyle_Interface
@@ -7,7 +9,7 @@ class Icinga_Web_Paginator_ScrollingStyle_SlidingWithBorder implements Zend_Pagi
 {
     /**
      * Returns an array of "local" pages given a page number and range.
-     * 
+     *
      * @param  Zend_Paginator $paginator
      * @param  integer $pageRange (Optional) Page range
      * @return array
@@ -19,14 +21,14 @@ class Icinga_Web_Paginator_ScrollingStyle_SlidingWithBorder implements Zend_Pagi
         }
 
         $pageNumber = $paginator->getCurrentPageNumber();
-        $pageCount  = count($paginator);
+        $pageCount = count($paginator);
         $range = array();
 
-
-       
         if ($pageCount < 15) {
             for ($i = 1; $i < 15; $i++) {
-                if ($i > $pageCount) break;
+                if ($i > $pageCount) {
+                    break;
+                }
                 $range[$i] = $i;
             }
         } else {
@@ -40,7 +42,9 @@ class Icinga_Web_Paginator_ScrollingStyle_SlidingWithBorder implements Zend_Pagi
                     $start = 9 - ($pageCount - $pageNumber);
                 }
                 for ($i = $pageNumber - $start; $i < $pageNumber + (10 - $start); $i++) {
-                    if ($i > $pageCount) break;
+                    if ($i > $pageCount) {
+                        break;
+                    }
                     $range[$i] = $i;
                 }
             } else {
@@ -55,9 +59,9 @@ class Icinga_Web_Paginator_ScrollingStyle_SlidingWithBorder implements Zend_Pagi
                 }
             }
         }
-        if (empty($range)) $range[] = 1;
+        if (empty($range)) {
+            $range[] = 1;
+        }
         return $range;
     }
 }
-
-
