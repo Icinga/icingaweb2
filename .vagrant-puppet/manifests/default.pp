@@ -312,3 +312,17 @@ exec { 'install ZendFramework':
   unless  => 'rpm -qa | grep php-ZendFramework',
   require => Class['epel']
 }
+
+package { 'boost-devel':
+  ensure => installed
+}
+
+cmmi { 'icinga2':
+  url     => 'http://sourceforge.net/projects/icinga/files/icinga2/0.0.1/icinga2-0.0.1.tar.gz/download',
+  output  => 'icinga2-0.0.1.tar.gz',
+  flags   => '--prefix=/usr/local/icinga2',
+  creates => '/usr/local/icinga2',
+  make    => 'make && make install',
+  require => Package['boost-devel'],
+  timeout => 600
+}
