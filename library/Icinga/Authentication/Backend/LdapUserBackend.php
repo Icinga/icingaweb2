@@ -1,21 +1,24 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Authentication;
+namespace Icinga\Authentication\Backend;
 
+use Icinga\Authentication\User as User;
 use Icinga\Protocol\Ldap;
 
-class LdapUserBackend extends UserBackend
+class LdapUserBackend implements UserBackend
 {
     protected $connection;
 
-    protected function init()
+    public function __construct($config)
     {
-        $this->connection = new Ldap\Connection($this->config);
+        $this->connection = new Ldap\Connection($config);
     }
 
     public function hasUsername($username)
     {
-        if (! $username) {
+        if (!$username) {
             return false;
         }
         return $this->connection->fetchOne(
@@ -40,18 +43,15 @@ class LdapUserBackend extends UserBackend
         if (empty($username) || empty($password)) {
             return false;
         }
-        if (! $this->connection->testCredentials(
+
+        if (!$this->connection->testCredentials(
             $this->connection->fetchDN($this->selectUsername($username)),
             $password
-        )) {
+        )     ) {
             return false;
         }
-        $user = User::create(
-            $this,
-            array(
-                'username' => $username,
-            )
-        );
+        $user = new User($username);
+
         return $user;
     }
 }

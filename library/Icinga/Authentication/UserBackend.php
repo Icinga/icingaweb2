@@ -1,28 +1,15 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}}
 
 namespace Icinga\Authentication;
 
-class UserBackend
+interface UserBackend
 {
-    protected $config;
+    public function __construct($config);
 
-    public function __construct($config)
-    {
-        $this->config = $config;
-        $this->init();
-    }
+    public function hasUsername(Credentials $credentials);
 
-    protected function init()
-    {
-    }
-
-    public function hasUsername($username)
-    {
-        return false;
-    }
-
-    public function authenticate($username, $password = null)
-    {
-        return false;
-    }
+    public function authenticate(Credentials $credentials);
 }
