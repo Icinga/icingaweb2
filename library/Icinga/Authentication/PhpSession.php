@@ -7,15 +7,18 @@ namespace Icinga\Authentication;
 use Icinga\Application\Logger as Logger;
 
 /**
-*   Standard PHP Session handling
-*   You have to call read() first in order to start the session. If
-*   no parameter is given to read, the session is closed immediately
-*   after reading the persisted variables, in order to avoid concurrent
-*   requests to be blocked. Otherwise, you can call write() (again with
-*   no parameter in order to auto-close it) to persist all values previously
-*   set with the set() method
-* 
-**/
+ * Class PhpSession
+ *
+ * Standard PHP Session handling
+ * You have to call read() first in order to start the session. If
+ * no parameter is given to read, the session is closed immediately
+ * after reading the persisted variables, in order to avoid concurrent
+ * requests to be blocked. Otherwise, you can call write() (again with
+ * no parameter in order to auto-close it) to persist all values previously
+ * set with the set() method
+ *
+ * @package Icinga\Authentication
+ */
 class PhpSession extends Session
 {
     const SESSION_NAME = "Icinga2Web";
@@ -31,7 +34,6 @@ class PhpSession extends Session
         'hash_function'           => true,
         'hash_bits_per_character' => 5,
     );
-
 
     public function __construct(array $options = null)
     {
@@ -114,9 +116,11 @@ class PhpSession extends Session
             $_SESSION[$key] = $value;
         }
         if ($keepOpen) {
-            return;
+            return null;
         }
         $this->close();
+
+        return null;
     }
     
     public function close()

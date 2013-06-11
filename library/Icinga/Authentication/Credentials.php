@@ -4,7 +4,6 @@
 
 namespace Icinga\Authentication;
 
-
 class Credentials
 {
     protected $username;

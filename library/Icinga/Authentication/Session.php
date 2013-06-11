@@ -7,8 +7,7 @@ namespace Icinga\Authentication;
 abstract class Session
 {
     private $sessionValues = array();
-    
-    
+
     abstract public function open();
     abstract public function read($keepOpen = false);
     abstract public function write($keepOpen = false);

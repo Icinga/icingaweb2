@@ -18,7 +18,7 @@ class LdapUserBackend implements UserBackend
 
     public function hasUsername($username)
     {
-        if (! $username) {
+        if (!$username) {
             return false;
         }
         return $this->connection->fetchOne(
@@ -43,13 +43,15 @@ class LdapUserBackend implements UserBackend
         if (empty($username) || empty($password)) {
             return false;
         }
-        if (! $this->connection->testCredentials(
+
+        if (!$this->connection->testCredentials(
             $this->connection->fetchDN($this->selectUsername($username)),
             $password
-        )) {
+        )     ) {
             return false;
         }
         $user = new User($username);
+
         return $user;
     }
 }

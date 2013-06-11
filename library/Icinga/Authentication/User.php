@@ -30,12 +30,21 @@ class User
     private $permissions = array();
     private $groups = array();
 
-    public function __construct($username, $firstname, $lastname, $email)
+    public function __construct($username, $firstname = null, $lastname = null, $email = null)
     {
         $this->setUsername($username);
-        $this->setFirstname($firstname);
-        $this->setLastname($lastname);
-        $this->setEmail($email);
+
+        if ($firstname !== null) {
+            $this->setFirstname($firstname);
+        }
+
+        if ($lastname !== null) {
+            $this->setLastname($lastname);
+        }
+
+        if ($email !== null) {
+            $this->setEmail($email);
+        }
     }
 
     public function getGroups()
