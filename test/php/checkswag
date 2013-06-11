@@ -1,0 +1,109 @@
+#!/usr/bin/env python
+
+import os
+import sys
+import subprocess
+from optparse import OptionParser, BadOptionError, AmbiguousOptionError
+
+
+APPLICATION = 'phpcs'
+DEFAULT_ARGS = ['-p', '--standard=PSR2', '--extensions=php',
+                '--encoding=utf-8']
+
+REPORT_DIRECTORY = '../../build/log'
+
+
+class PassThroughOptionParser(OptionParser):
+    """
+    An unknown option pass-through implementation of OptionParser.
+
+    When unknown arguments are encountered, bundle with largs and try again,
+    until rargs is depleted.
+
+    sys.exit(status) will still be called if a known argument is passed
+    incorrectly (e.g. missing arguments or bad argument types, etc.)
+
+    Borrowed from: http://stackoverflow.com/a/9307174
+    """
+    def _process_args(self, largs, rargs, values):
+        while rargs:
+            try:
+                OptionParser._process_args(self, largs, rargs, values)
+            except (BadOptionError, AmbiguousOptionError), error:
+                largs.append(error.opt_str)
+
+
+def execute_command(command, return_output=False, shell=False):
+    prog = subprocess.Popen(command, shell=shell,
+                            stdout=subprocess.PIPE
+                                   if return_output
+                                   else None)
+    return prog.wait() if not return_output else \
+           prog.communicate()[0]
+
+
+def get_report_directory():
+    path = os.path.abspath(REPORT_DIRECTORY)
+
+    try:
+        os.makedirs(REPORT_DIRECTORY)
+    except OSError:
+        pass
+
+    return path
+
+
+def get_script_directory():
+    return os.path.dirname(os.path.abspath(sys.argv[0]))
+
+
+def parse_commandline():
+    parser = PassThroughOptionParser(usage='%prog [options] [additional arguments'
+                                           ' for {0}]'.format(APPLICATION))
+    parser.add_option('-b', '--build', action='store_true',
+                      help='Enable reporting.')
+    parser.add_option('-v', '--verbose', action='store_true',
+                      help='Be more verbose.')
+    parser.add_option('-i', '--include', metavar='PATTERN', action='append',
+                      help='Include only specific files/test cases.'
+                           ' (Can be supplied multiple times.)')
+    parser.add_option('-e', '--exclude', metavar='PATTERN', action='append',
+                      help='Exclude specific files/test cases. '
+                           '(Can be supplied multiple times.)')
+    return parser.parse_args()
+
+
+def main():
+    options, arguments = parse_commandline()
+
+    # Environment preparation and verification
+    os.chdir(get_script_directory())
+    application_path = execute_command('which {0}'.format(APPLICATION),
+                                       True, True).strip()
+    if not application_path:
+        print 'ERROR: {0} not found!'.format(APPLICATION)
+        return 2
+
+    # Commandline preparation
+    command_options = []
+    if options.verbose:
+        command_options.append('-v')
+    if options.build:
+        command_options.append('--report-checkstyle=' + os.path.join(get_report_directory(), 'phpcs_results.xml'))
+    if options.exclude:
+        command_options.extend(['--ignore=' + ','.join(options.exclude)])
+    if options.include:
+        arguments.extend(options.include)
+    else:
+        arguments.extend(['../../application', '../../bin',
+                          '../../library/Icinga'])
+
+    # Application invocation..
+    execute_command([application_path] + DEFAULT_ARGS +
+                    command_options + arguments)
+    
+    return 0
+
+
+if __name__ == '__main__':
+    sys.exit(main())
