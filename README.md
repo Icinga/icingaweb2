@@ -162,3 +162,17 @@ This is what the **dc=icinga,dc=org** *DIT* looks like:
 > uid: rroe
 
 All users share the password `password`.
+
+#### Testing the code
+
+All software required to run tests is installed in the virtual machine. 
+In order to run all tests you have to execute the following commands:
+ 
+    vagrant ssh -c /vagrant/test/php/runtests
+    vagrant ssh -c /vagrant/test/php/checkswag
+    vagrant ssh -c /vagrant/test/js/runtests
+    vagrant ssh -c /vagrant/test/js/checkswag
+    vagrant ssh -c /vagrant/test/frontend/runtests
+
+`runtests` will execute unit and regression tests and `checkswag` will report
+code style issues.

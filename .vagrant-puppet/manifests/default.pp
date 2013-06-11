@@ -240,3 +240,75 @@ exec { 'populate-openldap':
   require => [Service['slapd'], File['openldap/db.ldif'],
               File['openldap/dit.ldif'], File['openldap/users.ldif']]
 }
+
+class { 'phantomjs':
+  url     => 'https://phantomjs.googlecode.com/files/phantomjs-1.9.1-linux-x86_64.tar.bz2',
+  output  => 'phantomjs-1.9.1-linux-x86_64.tar.bz2',
+  creates => '/usr/local/phantomjs'
+}
+
+class { 'casperjs':
+  url     => 'https://github.com/n1k0/casperjs/tarball/1.0.2',
+  output  => 'casperjs-1.0.2.tar.gz',
+  creates => '/usr/local/casperjs'
+}
+
+file { '/etc/profile.d/env.sh':
+  source => 'puppet:////vagrant/.vagrant-puppet/files/etc/profile.d/env.sh'
+}
+
+include epel
+
+exec { 'install PHPUnit':
+  command => 'yum -d 0 -e 0 -y --enablerepo=epel install php-phpunit-PHPUnit',
+  unless  => 'rpm -qa | grep php-phpunit-PHPUnit',
+  require => Class['epel']
+}
+
+exec { 'install PHP CodeSniffer':
+  command => 'yum -d 0 -e 0 -y --enablerepo=epel install php-pear-PHP-CodeSniffer',
+  unless  => 'rpm -qa | grep php-pear-PHP-CodeSniffer',
+  require => Class['epel']
+}
+
+exec { 'install nodejs':
+  command => 'yum -d 0 -e 0 -y --enablerepo=epel install npm',
+  unless  => 'rpm -qa | grep ^npm',
+  require => Class['epel']
+}
+
+exec { 'install npm/mocha':
+  command => 'npm install -g mocha',
+  creates => '/usr/lib/node_modules/mocha',
+  require => Exec['install nodejs']
+}
+
+exec { 'install npm/mocha-cobertura-reporter':
+  command => 'npm install -g mocha-cobertura-reporter',
+  creates => '/usr/lib/node_modules/cobertura',
+  require => Exec['install npm/mocha']
+}
+
+exec { 'install npm/jshint':
+  command => 'npm install -g jshint',
+  creates => '/usr/lib/node_modules/jshint',
+  require => Exec['install nodejs']
+}
+
+exec { 'install npm/expect':
+  command => 'npm install -g expect',
+  creates => '/usr/lib/node_modules/expect',
+  require => Exec['install nodejs']
+}
+
+exec { 'install npm/should':
+  command => 'npm install -g should',
+  creates => '/usr/lib/node_modules/should',
+  require => Exec['install nodejs']
+}
+
+exec { 'install ZendFramework':
+  command => 'yum -d 0 -e 0 -y --enablerepo=epel install php-ZendFramework',
+  unless  => 'rpm -qa | grep php-ZendFramework',
+  require => Class['epel']
+}
