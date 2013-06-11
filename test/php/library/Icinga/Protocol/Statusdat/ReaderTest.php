@@ -45,10 +45,18 @@ class ParserMock {
 require("Zend/Cache.php");
 class ReaderTest extends \PHPUnit_Framework_TestCase
 {
+    protected function tearDown()
+    {
+        if (file_exists('./tmp')) {
+            @system("rm -rf ./tmp");
+        }
+    }
 
     public function testFileCaching() {
+        if (!file_exists('./tmp')) {
+            mkdir('./tmp');
+        }
         $parser = new ParserMock();
-        @system("rm /tmp/zend_cache*");
         $parser->runtime = array("host"=>array(
             "test" => (object) array(
                 "host_name" => "test"
@@ -68,6 +76,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
         system("rm /tmp/zend_cache*");
     }
     public function testEmptyFileException() {
+
         $this->setExpectedException("Icinga\Exception\ConfigurationError");
         $parser = new ParserMock();
         $reader = new Reader(new ConfigMock(array(

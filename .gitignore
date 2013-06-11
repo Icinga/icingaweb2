@@ -9,3 +9,6 @@ test/js/npm-debug.log
 
 # ./configure output
 config.log
+
+# cmd tester
+test/php/bin/extcmd_test
