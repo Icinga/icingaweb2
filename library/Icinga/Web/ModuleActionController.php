@@ -1,8 +1,7 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
-/**
- * Module action controller
- */
 namespace Icinga\Web;
 
 use Icinga\Application\Config;

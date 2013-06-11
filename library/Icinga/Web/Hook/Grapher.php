@@ -1,8 +1,7 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
-/**
- * Icinga Web Grapher Hook
- */
 namespace Icinga\Web\Hook;
 
 /**

@@ -56,15 +56,24 @@ class QueryAdapterTest extends \PHPUnit_Framework_TestCase
         $backend = new Statusdat($this->config);
         $query = $backend->select()->from('hostlist');
 
-        $paginator = new QueryAdapter($query);
+        $adapter = new QueryAdapter($query);
 
-        $this->assertEquals(30, $paginator->count());
+        $this->assertEquals(30, $adapter->count());
 
-        $data = $paginator->getItems(0, 10);
+        $data = $adapter->getItems(0, 10);
 
         $this->assertCount(10, $data);
 
-        $data = $paginator->getItems(10, 20);
+        $data = $adapter->getItems(10, 20);
         $this->assertCount(10, $data);
+    }
+
+    public function testLimit2()
+    {
+        $backend = new Statusdat($this->config);
+        $query = $backend->select()->from('hostlist');
+
+        $adapter = new QueryAdapter($query);
+        $this->assertEquals(30, $adapter->count());
     }
 }

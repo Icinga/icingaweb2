@@ -1,6 +1,9 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Web\Paginator\Adapter;
+
 /**
  * @see Zend_Paginator_Adapter_Interface
  */

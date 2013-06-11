@@ -1,4 +1,6 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Web;
 
@@ -6,13 +8,17 @@ use Zend_Form;
 use Zend_Controller_Front as Front; // TODO: Get from App
 use Zend_Controller_Action_HelperBroker as ZfActionHelper;
 
+/**
+ * Class Form
+ * @package Icinga\Web
+ */
 class Form extends Zend_Form
 {
     protected $request;
 
     /**
-     * @param Zend_Controller_Request_Abstract $request
      * @param array $options[optional]
+     * @internal param \Icinga\Web\Zend_Controller_Request_Abstract $request
      */
     public function __construct($options = null)
     {

@@ -27,6 +27,8 @@ require_once '../../library/Icinga/Protocol/AbstractQuery.php';
 require_once '../../library/Icinga/Protocol/Statusdat/IReader.php';
 require_once '../../library/Icinga/Protocol/Statusdat/Reader.php';
 require_once '../../library/Icinga/Protocol/Statusdat/Query.php';
+require_once '../../library/Icinga/Protocol/Statusdat/Parser.php';
+require_once '../../library/Icinga/Protocol/Statusdat/RuntimeStateContainer.php';
 
 require_once '../../library/Icinga/Web/Paginator/ScrollingStyle/SlidingWithBorder.php';
 

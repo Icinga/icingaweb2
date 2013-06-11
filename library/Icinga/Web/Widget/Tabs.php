@@ -1,8 +1,7 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
-/**
- * Navigation tabs
- */
 namespace Icinga\Web\Widget;
 
 use Icinga\Exception\ProgrammingError;

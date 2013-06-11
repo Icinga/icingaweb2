@@ -1,4 +1,6 @@
 <?php
+// @codingStandardsIgnoreStart
+
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
@@ -65,3 +67,5 @@ class Icinga_Web_Paginator_ScrollingStyle_SlidingWithBorder implements Zend_Pagi
         return $range;
     }
 }
+
+// @codingStandardsIgnoreEnd
