@@ -101,6 +101,7 @@ def main():
     # Application invocation..
     execute_command([application_path] + DEFAULT_ARGS +
                     command_options + arguments)
+    
     return 0
 
 
