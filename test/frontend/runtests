@@ -1,10 +1,9 @@
 #!/usr/bin/env sh
 
 set -o nounset
+cd `dirname $0`
 
-pushd `dirname $0` > /dev/null
 DIR=`pwd`
-popd > /dev/null
 CASPER=$(which casperjs)
 INCLUDE=""
 EXCLUDE=""
@@ -24,7 +23,7 @@ fi;
 
 PARAM="0"
 for arg in $@;do
-    if [ ! "$PARAM" == "0" ]; then
+    if [ ! "$PARAM" = "0" ]; then
         export $PARAM=$arg
         PARAM="0"
         continue 
@@ -74,12 +73,11 @@ if [ "$PARAM" !=  "0" ]; then
     exit 1
 fi;
 
-cd $DIR
 FILELIST=""
 #
 # Default : Run regression and cases directory
 #
-if [ "$INCLUDE" == "" -a "$EXCLUDE" == "" ];then
+if [ "$INCLUDE" = "" -a "$EXCLUDE" = "" ];then
     FILELIST="./cases ./regression"
 fi; 
 
@@ -108,7 +106,7 @@ if [ "$EXCLUDE" != "" ];then
         GLUE="\|"
     done;
     NAME=$NAME"\)$"
-    if [ "$FILELIST" == "" ]; then
+    if [ "$FILELIST" = "" ]; then
         FILELIST=`find .|grep ".*js$"`
     fi
     FILELIST=`echo $FILELIST | grep -v "$NAME"`
