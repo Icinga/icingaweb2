@@ -14,7 +14,7 @@ var BASE = "../../../../public/js/";
 require(BASE+"icinga/module.js");
 
 var module = rjsmock.getDefine(); 
-
+GLOBAL.document = $('body');
 /**
 * Test module that only uses eventhandlers and 
 * no custom logic
@@ -186,5 +186,41 @@ describe('Module loader', function() {
         tearDownTestDOM();
         $('body').unbind();
     });
+});
 
+
+describe('The icinga module bootstrap', function() {
+    it("Should automatically load all enabled modules", function() {
+        rjsmock.purgeDependencies();
+        var testClick = false;
+        rjsmock.registerDependencies({
+            "icinga/module": module,
+            "modules/test" : {
+                eventHandler: {
+                    "a.test" : {
+                        click : function() {
+                            testClick = true;
+                        }
+                    }  
+                }
+            },
+            "icinga/container" : {
+                registerAsyncMgr: function() {},
+                initializeContainers: function() {}
+            },
+            "modules/list" : [
+                { name: 'test' },   
+                { name: 'test2'} // this one fails 
+            ]
+        });
+        tearDownTestDOM();
+        require(BASE+"icinga/icinga.js");
+        var icinga = rjsmock.getDefine();
+        $('body').append($("<a class='test'></a>"));
+        $('a.test').click();
+        should.equal(testClick, true, "Module wasn't automatically loaded!");
+        icinga.getFailedModules().should.have.length(1);
+        should.equal(icinga.getFailedModules()[0].name, "test2");
+        tearDownTestDOM(); 
+    });
 });

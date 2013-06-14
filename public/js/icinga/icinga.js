@@ -1,27 +1,25 @@
 /*global Icinga:false, document: false, define:false require:false base_url:false console:false */
 define([
     'jquery',
-    'vendor/jquery.sparkline.min',
     'logging',
-    'icinga/behaviour',
+    'icinga/module',
     'icinga/util/async',
     'icinga/container',
     'modules/list'
-], function ($,sparkline,log,behaviour,async,containerMgr, modules) {
+], function ($, log, moduleMgr, async, containerMgr, modules) {
     'use strict';
 
     /**
      * Icinga prototype
      */
     var Icinga = function() {
-        var internalBehaviours = ['icinga/behaviour/actionTable','icinga/behaviour/mainDetail'];
+        var internalModules = ['icinga/modules/actionTable','icinga/modules/mainDetail'];
 
         this.modules     = {};
         var failedModules = [];
 
         var initialize = function () {
-            require(['modules/list']);
-            enableDefaultBehaviour();
+            enableInternalModules();
 
             containerMgr.registerAsyncMgr(async);
             containerMgr.initializeContainers(document);
@@ -30,9 +28,20 @@ define([
             enableModules();
         };
 
-        var enableDefaultBehaviour = function() {
-            $.each(internalBehaviours,function(idx,behaviourImpl) {
-                behaviour.enableBehaviour(behaviourImpl,log.error);
+        
+
+        var enableInternalModules = function() {
+            $.each(internalModules,function(idx,module) {
+                 moduleMgr.enableModule(module, log.error);
+            });
+        };
+
+        var loadModuleScript = function(name) {
+            moduleMgr.enableModule("modules/"+name, function(error) {
+                failedModules.push({
+                    name: name,
+                    errorMessage: error
+                 });
             });
         };
 
@@ -40,17 +49,10 @@ define([
             moduleList = moduleList || modules;
 
             $.each(modules,function(idx,module) {
-                if(module.behaviour) {
-                    behaviour.enableBehaviour(module.name+"/"+module.name,function(error) {
-                        failedModules.push({name: module.name,errorMessage: error});
-                    });
-                }
+                loadModuleScript(module.name);
             });
         };
 
-        var enableCb = function(behaviour) {
-            behaviour.enable();
-        };
 
         $(document).ready(initialize.bind(this));
 
@@ -60,10 +62,14 @@ define([
              */
             loadModule: function(blubb,bla) {
                 behaviour.registerBehaviour(blubb,bla);
-            } ,
+            },
 
             loadIntoContainer: function(ctr) {
 
+            },
+            
+            getFailedModules: function() {
+                return failedModules;
             }
 
         };
