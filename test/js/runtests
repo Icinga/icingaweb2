@@ -3,12 +3,14 @@
 import os
 import sys
 import subprocess
+from pipes import quote
 from optparse import OptionParser, BadOptionError, AmbiguousOptionError
 
 
 APPLICATION = 'mocha'
 DEFAULT_ARGS = ['--recursive', '--require', 'should']
 
+VAGRANT_SCRIPT = '/vagrant/test/js/runtests'
 REPORT_DIRECTORY = '../../build/log'
 
 
@@ -69,62 +71,78 @@ def parse_commandline():
     parser.add_option('-e', '--exclude', metavar='PATTERN', action='append',
                       help='Exclude specific files/test cases. '
                            '(Can be supplied multiple times.)')
+    parser.add_option('-V', '--vagrant', action='store_true',
+                      help='Run in vagrant VM')
     return parser.parse_args()
 
 
 def main():
     options, arguments = parse_commandline()
 
-    # Environment preparation and verification
-    os.chdir(get_script_directory())
-    application_path = execute_command('which {0}'.format(APPLICATION),
-                                       True, True).strip()
-    if not application_path:
-        print 'ERROR: {0} not found!'.format(APPLICATION)
-        return 2
-    os.environ['NODE_PATH'] = os.environ.get('NODE_PATH', '') + \
-                              ':/usr/local/lib/node_modules' \
-                              ':/usr/local/share/npm/lib/node_modules' \
-                              ':/usr/lib/node_modules:./testlib'
+    if options.vagrant and os.environ['USER'] != 'vagrant':
+        # Check if vagrant is installed
+        vagrant_path = execute_command('which vagrant', True, True).strip()
+        if not vagrant_path:
+            print 'ERROR: vagrant not found!'
+            return 2
 
-    # Commandline preparation
-    command_options, more_command_options = [], None
-    if options.include or options.exclude:
-        for pattern in (options.include or options.exclude):
-            command_options.append('--grep')
-            command_options.append(pattern)
-    if options.exclude:
-        command_options.append('--invert')
-    if options.build:
-        more_command_options = command_options[:len(command_options)] + \
-                               ['--reporter', 'mocha-cobertura-reporter']
-        command_options.extend(['--reporter', 'xunit'])
-    elif options.verbose:
-        command_options.extend(['--reporter', 'spec'])
+        # Call the script in the Vagrant VM with the same parameters
+        commandline = ' '.join(quote(p) for p in sys.argv[1:])
+        return execute_command('vagrant ssh -c "{0} {1}"'
+                               ''.format(VAGRANT_SCRIPT, commandline),
+                               shell=True)
     else:
-        command_options.extend(['--reporter', 'nyan'])
-    if not any(os.path.isfile(a) or os.path.isdir(a) for a in arguments):
-        arguments.append('.')
+        # Environment preparation and verification
+        os.chdir(get_script_directory())
+        application_path = execute_command('which {0}'.format(APPLICATION),
+                                           True, True).strip()
+        if not application_path:
+            print 'ERROR: {0} not found!'.format(APPLICATION)
+            return 2
+        os.environ['NODE_PATH'] = os.environ.get('NODE_PATH', '') + \
+                                  ':/usr/local/lib/node_modules' \
+                                  ':/usr/local/share/npm/lib/node_modules' \
+                                  ':/usr/lib/node_modules:./testlib'
 
-    # Application invocation..
-    if more_command_options is None:
-        execute_command([application_path] + DEFAULT_ARGS +
-                        command_options + arguments)
-    else:
-        result_data = execute_command([application_path] + DEFAULT_ARGS +
-                                      command_options + arguments, True)
-        coverage_data = execute_command([application_path] + DEFAULT_ARGS +
-                                        more_command_options + arguments, True)
-        # Result storage
-        report_directory = get_report_directory()
-        result_path = os.path.join(report_directory, 'mocha_results.xml')
-        coverage_path = os.path.join(report_directory, 'mocha_coverage.xml')
-        with open(result_path, 'w') as result_file:
-            result_file.write(result_data)
-        with open(coverage_path, 'w') as coverage_file:
-            coverage_file.write(coverage_data)
+        # Commandline preparation
+        command_options, more_command_options = [], None
+        if options.include or options.exclude:
+            for pattern in (options.include or options.exclude):
+                command_options.append('--grep')
+                command_options.append(pattern)
+        if options.exclude:
+            command_options.append('--invert')
+        if options.build:
+            more_command_options = command_options[:len(command_options)] + \
+                                   ['--reporter', 'mocha-cobertura-reporter']
+            command_options.extend(['--reporter', 'xunit'])
+        elif options.verbose:
+            command_options.extend(['--reporter', 'spec'])
+        else:
+            command_options.extend(['--reporter', 'nyan'])
+        if not any(os.path.isfile(a) or os.path.isdir(a) for a in arguments):
+            arguments.append('.')
 
-    return 0
+        # Application invocation..
+        if more_command_options is None:
+            execute_command([application_path] + DEFAULT_ARGS +
+                            command_options + arguments)
+        else:
+            result_data = execute_command([application_path] + DEFAULT_ARGS +
+                                          command_options + arguments, True)
+            coverage_data = execute_command([application_path] + DEFAULT_ARGS +
+                                            more_command_options + arguments,
+                                            return_output=True)
+            # Result storage
+            report_directory = get_report_directory()
+            result_path = os.path.join(report_directory, 'mocha_results.xml')
+            coverage_path = os.path.join(report_directory, 'mocha_coverage.xml')
+            with open(result_path, 'w') as result_file:
+                result_file.write(result_data)
+            with open(coverage_path, 'w') as coverage_file:
+                coverage_file.write(coverage_data)
+
+        return 0
 
 
 if __name__ == '__main__':
