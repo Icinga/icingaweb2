@@ -111,13 +111,17 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
 
     /**
     *
-    *   @expectedException \Exception
     **/
     public function testWriteSessionTwice()
     {
-        $auth = $this->getManagerInstance($session, false);
-        $this->assertFalse($auth->isAuthenticated(true));
-        $auth->authenticate(new Credentials("jdoe", "passjdoe"));
-        
+        $exception = false;
+        try {
+            $auth = $this->getManagerInstance($session, false);
+            $this->assertFalse($auth->isAuthenticated(true));
+            $auth->authenticate(new Credentials("jdoe", "passjdoe"));
+        } catch (\Exception $e) {
+            $exception = true;
+        }
+        $this->assertTrue($exception);
     }
 }
