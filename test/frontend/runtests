@@ -108,8 +108,11 @@ if [ "$EXCLUDE" != "" ];then
     fi
     FILELIST=`echo $FILELIST | grep -v "$NAME"`
 fi;
-
+cd $DIR/static 
+python -m SimpleHTTPServer 12999&
+PID=$!
+cd $DIR
 echo $EXEC $FILELIST
 $EXEC $FILELIST 
-
+kill $PID
 exit 0
