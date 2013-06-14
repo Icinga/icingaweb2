@@ -115,7 +115,7 @@ module.exports = {
     purgeDependencies: purgeDependencies,
     registerDependencies: registerDependencies,
     getDefine: function(name) {
-        if (typeof arg === "undefined") {
+        if (typeof name === "undefined") {
             return registeredDependencies.__define__;
         } else {
             return registeredDependencies[name];
