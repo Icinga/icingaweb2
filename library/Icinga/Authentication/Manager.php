@@ -5,6 +5,7 @@
 namespace Icinga\Authentication;
 
 use Icinga\Application\Logger as Logger;
+use Icinga\Application\Config as Config;
 
 class Manager
 {
@@ -28,13 +29,13 @@ class Manager
         if (isset($options["userBackendClass"])) {
             $this->userBackend = $options["userBackendClass"];
         } elseif ($config->users !== null) {
-            $this->userBackend = initBackend(BACKEND_TYPE_USER, $config->users);
+            $this->userBackend = $this->initBackend(self::BACKEND_TYPE_USER, $config->users);
         }
 
         if (isset($options["groupBackendClass"])) {
             $this->groupBackend = $options["groupBackendClass"];
         } elseif ($config->groups != null) {
-            $this->groupBackend = initBackend(BACKEND_TYPE_GROUP, $config->groups);
+            $this->groupBackend = $this->initBackend(self::BACKEND_TYPE_GROUP, $config->groups);
         }
 
         if (!isset($options["sessionClass"])) {
@@ -64,8 +65,13 @@ class Manager
 
     private function initBackend($authenticationTarget, $authenticationSource)
     {
-        $userbackend = ucwords(strtolower($authenticationSource->backend));
-        $class = '\\Icinga\\Authentication\\Backend\\' . $backend . $authenticationTarget. 'Backend';
+        $userBackend = ucwords(strtolower($authenticationSource->backend));
+
+        if (!$userBackend) {
+            return null;
+        }
+
+        $class = '\\Icinga\\Authentication\\Backend\\' . $userBackend . $authenticationTarget. 'Backend';
         return new $class($authenticationSource);
     }
 

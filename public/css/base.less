@@ -1,0 +1,180 @@
+@vertical-bar-height: 41px;
+@navigation-bar-width: 123px;
+
+@center-padding: 1px;
+
+
+@import 'themes/default.less';
+
+
+@font-face {
+  font-family: 'duepuntozero';
+  src: url('./fonts/duepuntozero.ttf');
+}
+
+body {
+  .gradient(@color-white,lighten(@color-white,20%)); 
+  color: @color-black;
+  padding-top:@vertical-bar-height;
+  font-family: Verdana, "sans serif";
+  a {
+    text-decoration: none;
+  }
+}
+
+.gradient(@start, @end) {
+  background-color: @start;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(@start), to(@end));
+  background-image: -webkit-linear-gradient(top, @start, @end);
+  background-image: -moz-linear-gradient(top, @start, @end);
+  background-image: -ms-linear-gradient(top, @start, @end);
+  background-image: -o-linear-gradient(top, @start, @end);
+}
+
+.gradient-left(@start, @end) {
+  background-color: @start;
+  background-image: -webkit-gradient(linear, left top, right top, from(@start), to(@end));
+  background-image: -webkit-linear-gradient(left, @start, @end);
+  background-image: -moz-linear-gradient(left, @start, @end);
+  background-image: -ms-linear-gradient(left, @start, @end);
+  background-image: -o-linear-gradient(left, @start, @end);
+}
+
+.gradient-hard(@start, @end, @colorstop) {
+}
+
+.gradient-hard-left(@start, @end, @colorstop) {
+}
+
+.navbar-fixed-top input {
+  height: 15px !important;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  overflow: hidden;
+
+}
+
+.expanded_absolute {
+  top:0px;
+  bottom:0px;
+  left:0px;
+  right: 0px;
+}
+
+.fullpage_infobox {
+  max-width: 90%;
+  padding:1.5em;
+  margin:auto;
+  margin-top:5%;
+  text-align:center;
+}
+
+.main {
+  position: fixed;
+  top: @vertical-bar-height;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  overflow:hidden;
+
+  .icinga-container {
+    position: absolute;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    .container-subtab {
+      position:absolute;
+      top:0px;
+      bottom:0px;
+      width:100%;
+      .nav.nav-tabs {
+        overflow:hidden;
+      }
+      .tab-content {
+        position:absolute;
+        top:45px;
+        bottom:0px;
+        width:100%;
+      }
+    }
+  }
+
+  .expandable {
+    padding:0.2em;
+    margin-bottom: 0.5em;
+    height: auto;
+    .expand-title {
+
+      /*
+      background-color: lighten(@color-emphasis,30%);
+
+      text-shadow: 0px 1px 0px rgba(255,255,255,.5);
+      padding: 0.5em;
+      */
+      color:@color-black;
+      /* border-left:1px solid @color-emphasis;*/
+      box-shadow: 1px 1px 1px darken(@color-emphasis,20%);
+    }
+    .expand-content {
+      border:1px solid @color-emphasis;
+      padding:0.5em;
+      dl,dt, dd {
+        padding: 0;
+        margin: 0;
+      }
+    }
+
+    .expand-controls {
+      float:right;
+      .expand-link {
+        display:none;
+      }
+      .collapse-link {
+        display:block;
+      }
+      i {
+
+        margin:0px;
+        padding:0px;
+        -moz-transition-duration: 1s;
+        -webkit-transition-duration: 1s;
+        -ms-transition-duration: 1s;
+        transition-duration: 1s;
+        cursor:pointer;
+        &:hover {
+          transform: rotate(180deg);
+          -ms-transform: rotate(180deg);
+          -webkit-transform: rotate(180deg);
+          -moz-transform: rotate(180deg);
+
+        }
+      }
+
+    }
+    &.collapsed {
+      .expand-controls {
+        .expand-link {
+          display:block;
+        }
+        .collapse-link {
+          display:none;
+        }
+      }
+      .expand-content {
+        height: 0px;
+        display: none;
+        overflow:hidden;
+      }
+    }
+  }
+}
+
+@import 'components/toolbars';
+@import 'dataviews';
+@import 'components/layouts';
+@import 'components/tables';

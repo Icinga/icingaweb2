@@ -62,6 +62,7 @@ abstract class ApplicationBootstrap
         $this->libdir = realpath(dirname(dirname(dirname(__FILE__))));
 
         require $this->libdir . '/Icinga/Application/Loader.php';
+
         if (! defined('ICINGA_LIBDIR')) {
             define('ICINGA_LIBDIR', $this->libdir);
         }
@@ -73,6 +74,7 @@ abstract class ApplicationBootstrap
 
         $this->loader = Loader::register();
         $this->registerZendAutoloader();
+
         Benchmark::measure('Bootstrap, autoloader registered');
 
         Icinga::setApp($this);

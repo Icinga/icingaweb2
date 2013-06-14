@@ -1,0 +1,426 @@
+
+/* BEGIN classictable */
+table.classic {
+    width: 100%;
+    border: none;
+    table-layout: fixed;
+    font-size: 0.8em;
+}
+
+table.classic th {
+    text-align: left;
+    background-color: #2F3D41;
+    color: white;
+    padding-left: 0.5em;
+}
+
+table.classic td {
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    border: none;
+}
+
+table.classic tbody tr {
+    border-left: none;
+    border-bottom: 2px solid white;
+}
+
+table.classic tbody tr td {
+    background-color: #e7e7e7;
+    overflow: hidden;
+}
+
+table.classic tbody tr:hover td {
+    background-color: #ccc;
+    cursor: pointer;
+}
+/* END classictable */
+
+/* BEGIN servicetest table */
+table.servicetest {
+    width: 100%;
+    table-layout: fixed;
+}
+
+table.servicetest th {
+    text-align: left;
+}
+
+table.servicetest td.state {
+/*
+    border-radius: 0.4em;
+    -moz-border-radius: 0.4em;
+*/
+}
+
+table.servicetest td {
+    padding: 0.2em 0.6em 0.2em 0.6em;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+table.servicetest td.state {
+    font-size: 0.7em;
+}
+
+table.servicetest tr {
+    border-bottom: 0.125em solid white;
+}
+
+table.servicetest tbody tr:hover {
+    background-color: #ccc;
+    cursor: pointer;
+}
+/* END servicetest table */
+
+/* BEGIN pivot */
+
+table.pivot {
+    width: 100%;
+    table-layout: fixed;
+}
+
+table.pivot thead th {
+    /* font-size: 0.7em; */
+}
+
+table.pivot tbody td {
+    text-align: center;
+    line-height: 1.5em;
+    border-bottom: 0.125em solid white;
+    padding: 0.2em 0.5em 0.2em 0.5em;
+    white-space: nowrap;
+    overflow: hidden;    
+    border-right: 0.125em solid white;
+}
+
+table.pivot tbody td, table.pivot tbody td a {
+    /* color: white; */
+}
+
+table.pivot .ok {
+    background-color: #00cb33;
+}
+
+table.pivot .warning {
+    background-color: #ffec00;
+    color: #333;
+}
+
+table.pivot .critical {
+    background-color: #f30;
+}
+
+table.pivot .unknown {
+    background-color: #e066ff;
+}
+
+table.pivot .warning.handled {
+    background-color: #ffff9f;
+    color: #333;
+}
+
+table.pivot .critical.handled {
+    background-color: #f5a9a9;
+}
+
+table.pivot .unknown.handled {
+    background-color: #eeaeee;
+}
+
+table.pivot tbody tr:hover td {
+    cursor: pointer;
+    background-color: #333;
+    color: #ccc
+}
+
+/* END pivot */
+
+/* BEGIN actiontable */
+table.action {
+    width: 100%;
+}
+
+table.action a {
+    color: black;
+    text-decoration: none;
+}
+
+table.action tr {
+    border-bottom: 1px solid #ccc;
+}
+
+table.action td.state {
+    padding: 0;
+    font-size: 0.7em;
+    width: 8em;
+}
+
+table.action td.state a {
+    display: block;
+    margin: 0;
+}
+
+table.action tr td {
+    line-height: 1.1em;
+}
+
+table.action thead th {
+    text-align: left;
+}
+
+table.action tbody tr:hover i {
+    background-image: url("../img/glyphicons-halflings-white.png");
+}
+
+table.action tbody tr:hover td {
+    background-color: #08c;
+    cursor: pointer;
+}
+
+table.action tr td.state, table.action tr td.state a {
+    text-align: center;
+    color: white;
+}
+
+table.action a:hover {
+    text-decoration: underline;
+}
+
+table.action tbody tr:hover, table.action tbody tr:hover a {
+    color: white;
+    cursor: pointer;
+}
+
+table.action .ok .state, table.action .up .state, table.action tbody tr.ok:hover, table.action tbody tr.up:hover, table.action .ok.active, table.action .up.active {
+    background-color: #00cb33;
+}
+
+table.action .warning .state, table.action tbody tr.warning:hover, table.action .warning.active {
+    background-color: #ffec00;
+    color: #333;
+}
+
+table.action .critical .state, table.action .down .state, table.action tbody tr.critical:hover, table.action tbody tr.down:hover, table.action .critical.active, table.action .down.active {
+    background-color: #f30;
+}
+
+table.action .unknown .state, table.action .unreachable .state, table.action tbody tr.unknown:hover, table.action tbody tr.unreachable:hover, table.action .unknown.active, table.action .unreachable.active {
+    background-color: #e066ff;
+}
+
+table.action .warning.handled .state, table.action tbody tr.warning.handled:hover, table.action .warning.handled.active {
+    background-color: #ffff9f;
+    color: #333;
+}
+
+table.action .pending .state, table.action tbody tr.pending:hover, table.action .pending.active {
+    background-color: #ccc;
+}
+
+
+
+table.action tr.warning.handled td a {
+    color: #333;
+}
+
+table.action .critical.handled .state, table.action .down.handled .state, table.action tbody tr.critical.handled:hover, table.action tbody tr.down.handled:hover, table.action .critical.handled.active, table.action .down.handled.active {
+    background-color: #f5a9a9;
+}
+
+table.action tbody tr td.empty, table.action tbody tr:hover td.empty {
+    background-color: transparent;
+    cursor: auto;
+}
+
+table.action .unknown.handled .state, table.action .unreachable.handled .state, table.action tbody tr.unknown.handled:hover, table.action tbody tr.unreachable.handled:hover, table.action .unknown.handled.active, table.action .unreachable.handled.active {
+    background-color: #eeaeee;
+}
+
+table.action .new .state {
+    font-weight: bold;
+    text-decoration: blink;
+}
+
+table.action img.icon {
+    float: right;
+}
+/* END actiontable */
+
+/* BEGIN benchmark */
+pre.benchmark {
+    font-size: 0.6em;
+    width: 95%;
+/*    position: fixed;
+    bottom: 0;
+    height: 10em;
+    */
+    overflow: hidden;
+   /* display: none; */
+}
+
+pre.benchmark table {
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.icinga-container pre.benchmark {
+    font-size: 0.6em;
+}
+/* END benchmark */
+
+/* BEGIN Pagination */
+.pagination {
+    padding: 0.125em;
+    margin-left: 1.5em;
+    font-size: 0.68em;
+}
+
+.pagination ul {
+    margin: 0;
+    padding: 0;
+    text-align: left; /*Set to "right" to right align pagination interface*/
+   /* position: fixed;
+    bottom: 4.4em;*/
+}
+
+.pagination li {
+    list-style-type: none;
+    display: inline;
+    padding-bottom: 0.063em;
+    color: #333;
+}
+
+.pagination a, .pagination a:visited, .pagination span {
+    padding: 0.2em 0.2em;
+    border: 0.063em solid #333;
+    border-radius: 0.3em;
+    text-decoration: none; 
+    color: #333;
+}
+
+/* Bootstrap CSS workaround */
+.pagination ul > li > a, .pagination ul > li > span {
+    padding: 0.1em 0.4em;
+    float: none;
+}
+
+.pagination a:hover, .pagination a:active {
+    color: #000;
+    background-color: #bbb;
+    /* border: 0.063em solid #000;*/
+}
+
+.pagination a.current {
+    border-color: #000;
+    color: #fff !important;
+    background-color: #333;
+    font-weight: bold;
+    cursor: default;
+}
+
+.pagination span.disabled {
+    background-color: white;
+    cursor: default;
+    color: #bbb;
+    border-color: #bbb;
+}
+/*
+.pagination a.prevnext {
+    font-weight: bold;
+}*/
+
+/* END pagination */
+
+/* BEGIN Tabs, icinga-prefix to avoid collision - unused right now */
+ul.icinga-tabs {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    background: #ddd;
+    width: 100%;
+    clear: both;
+    height: 2em;
+    padding-top: 1em;
+}
+
+ul.icinga-tabs li {
+    float: left;
+    height: 2em;
+    margin: 0 0.5em 0 0;
+    padding: 0;
+}
+
+ul.icinga-tabs li a {
+    text-decoration: none;
+    padding: 0.5em 1em 0.5em 1em;
+    color: white;
+    background: #333;
+    background: #5d6577;
+}
+
+ul.icinga-tabs li a:hover, ul.icinga-tabs li.active a {
+    color: black;
+    background: #fff;
+    background: #AFB4C0;
+    /* border: 0.125em solid transparent; */
+/*    border-bottom: none;*/
+}
+
+ul.icinga-tabs li.active a {
+    /* border: 0.125em solid black; */
+
+}
+/* END Tabs */
+
+/* BEGIN host-service details */
+
+.host-header h1, .service-header h1, .host-details h1, .service-details h1 {
+    font-size: 1.3em;
+    line-height: 1.3em;
+    margin: 0.2em;
+}
+
+.host-header h2, .service-header h2, .host-details h2, .service-details h2 {
+    font-size: 1.2em;
+    line-height: 1.2em;
+    margin: 0.2em;
+}
+
+.host-header h3, .service-header h3, .host-details h3, .service-details h3 {
+    font-size: 1.1em;
+    line-height: 1.1em;
+    margin: 0.2em;
+}
+
+.host-header .host.icon, .service-header .service.icon {
+    width: 64px;
+    height: 64px;
+    float: left;
+    
+}
+/* END details */
+
+
+/* BEGIN dashboard */
+.main .dashboard.icinga-container {
+    float: left;
+    display: block;
+    position: relative;
+    /* height: 23em; */
+    border: 1px solid #ccc;
+    margin-left: 1%;
+    margin-bottom: 1%;
+    padding: 2px;
+    font-size: 0.8em;
+}
+
+.layout-main-detail .dashboard.icinga-container {
+    width: 47.3%;   
+}
+
+.layout-main-detail.collapsed .dashboard.icinga-container {
+    width: 31.5%;
+}
+
+/* END dashboard */

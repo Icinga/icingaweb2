@@ -76,9 +76,14 @@ class PhpSession extends Session
         if (!$this->sessionCanBeOpened()) {
             return false;
         }
-            
+
         session_name(PhpSession::SESSION_NAME);
-        session_start();
+
+        /*
+         * @todo This is not right
+         */
+        \Zend_Session::start();
+        // session_start();
         $this->isOpen = true;
         $this->setAll($_SESSION);
         return true;
@@ -97,7 +102,7 @@ class PhpSession extends Session
  
     public function read($keepOpen = false)
     {
-        if (!$this->ensureOpen) {
+        if (!$this->ensureOpen()) {
             return false;
         }
         if ($keepOpen) {
@@ -109,7 +114,7 @@ class PhpSession extends Session
  
     public function write($keepOpen = false)
     {
-        if (!$this->ensureOpen) {
+        if (!$this->ensureOpen()) {
             return false;
         }
         foreach ($this->getAll() as $key => $value) {

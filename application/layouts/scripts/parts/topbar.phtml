@@ -1,0 +1,26 @@
+<div class="navbar navbar-inverse navbar-fixed-top">
+ <div class="navbar-inner ">
+  <ul class="nav pull-left">
+   <li style="float:left"><a href="<?php echo $this->baseUrl('/') ?>" class="brand" style="margin-left:0px;">Icinga</a></li>
+  </ul>
+<?php if ($this->auth()->isAuthenticated()): ?>
+  <ul class="nav pull-right" >
+    <li>
+    <form class="navbar-search" style="padding-top:0.2em">
+        <input type="text" class="search-query" placeholder="Search" style="padding-top:0.3em">
+    </form>
+    </li>
+   <li class="dropdown">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo
+      $this->escape($this->auth()->getUsername())
+       ?> <i class="icon-user icon-white" style="margin-top:0.2em"></i>
+    <b class="caret"></b>
+    </a>
+    <ul class="dropdown-menu">
+     <li><?php echo $this->qlink(_('Logout'), '/authentication/logout') ?></li>
+    </ul>
+   </li>
+  </ul>
+<?php endif ?>
+ </div>
+</div>

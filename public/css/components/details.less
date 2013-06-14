@@ -1,0 +1,87 @@
+/**
+* Detail views underneath the content class
+**/
+
+font-size: 12px;
+
+.object-name {
+  display:block;
+  float:none;
+  @media (min-width:750px) {
+    .icon {
+       width: 32px;
+       height: 32px;
+       float:left;
+       border: 1px dashed grey;
+       margin-right:1em;
+       service {
+
+       }
+       clear:left;
+       box-shadow: 1px 1px 1px darken(@color-emphasis,10%);
+
+     }
+  }
+
+  @media  (max-width: 750px) {
+    .icon {
+      display:none;
+    }
+  }
+
+  .headings {
+    h1 {
+      font-size: 16px;
+      margin:0px;
+      padding:0px;
+      line-height: 1.0em;
+    }
+
+    h2 {
+      font-size: 14px;
+      margin:0px;
+      font-weight:normal;
+      padding:0px;
+      line-height: 1.5em;
+    }
+
+
+  }
+  clear:both;
+}
+
+.status {
+  .status-indicator();
+  border:1px solid @color-black;
+  padding:0.20em;
+  margin:0.5em;
+  width:95%;
+  text-align:center;
+  box-shadow: 1px 1px 1px darken(@color-emphasis,10%);
+}
+
+
+.output_text {
+  font-family: monaco,monospacen;
+  width:95%;
+  text-align:left;
+  padding:0.5em;
+  box-shadow: inset 1px 1px 2px darken(@color-light,10%);
+  background-color:@color-white;
+}
+
+.detail {
+
+  .check_info {
+
+  }
+
+
+  label {
+    width: 125px;
+    display:block;
+    float:left;
+    clear:left;
+    font-weight:bold;
+  }
+}

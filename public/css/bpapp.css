@@ -1,0 +1,223 @@
+/* BPAddon CSS file */
+
+div.bpapp {
+    padding-bottom: 20px;
+}
+
+.bpapp table.businessprocess, table.businessprocess table {
+    border-collapse: collapse;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+.bpapp table.businessprocess {
+    width: 98%;
+    margin-left: 1%;
+}
+
+.bpapp table.businessprocess tr {
+    margin: 0;
+    padding: 0;
+    font-family: Verdana, Helvetica, Arial, sans-serif;
+    font-size: 0.97em; 
+}
+
+.bpapp table.businessprocess tr tr tr tr {
+    font-size: 1em;
+}
+
+.bpapp table.businessprocess th, table.businessprocess td {
+    margin: 0;
+    padding: 0.3em 0 0 0.3em;
+    text-align: left;
+    vertical-align: middle;
+    line-height: 1.7em;
+}
+
+.bpapp table.businessprocess th {
+/* IE? */
+    padding: 0.2em 1em 0.2em 1em;
+    cursor: pointer;
+}
+
+.bpapp table.businessprocess th.hovered.state {
+     text-decoration: underline; 
+}
+
+.bpapp a img {
+    border: none;
+}
+
+.bpapp table.businessprocess th.bptitle {
+    border-radius: 10px 10px 10px 0;
+    -moz-border-radius: 10px 10px 10px 0;
+}
+
+.bpapp table.collapsed > tbody > tr > th.bptitle {
+    border-radius: 10px;
+    -moz-border-radius: 10px;
+}
+
+.bpapp table.businessprocess th.operator {
+    width: 1.5em;
+    text-align: center;
+    vertical-align: middle;
+    border-radius: 0 0 10px 10px;
+    -moz-border-radius: 0 0 10px 10px;
+}
+
+.bpapp table.businessprocess td.service {
+    border-radius: 7px;
+    -moz-border-radius: 7px;
+    width: 10em;
+    text-align: center;
+    font-weight: bold;
+}
+
+.bpapp table.businessprocess td.service img {
+    float: left;
+}
+
+.bpapp table.businessprocess, table.businessprocess table {
+    border-top: 2px solid white;
+    border-left: 2px solid white;
+}
+
+.bpapp .state.unknown {
+    background-color: #988;
+    background-color: #99b;
+}
+
+.bpapp .state.critical {
+    background-color: #b00;
+    background-color: #f30;
+    color: white;
+}
+
+.bpapp .state.critical.handled {
+    background-color: #ffd4c9;
+    color: #000;
+}
+
+.bpapp .state.warning {
+    background-color: #fc3;
+    background-color: #ff0;
+}
+
+.bpapp .state.warning.handled {
+    background-color: #ffffb2;
+    color: #000;
+}
+
+.bpapp .state.ok {
+    background-color: #8f0;
+    background-color: #0c3;
+    color: #fff;
+}
+
+.bpapp th.hovered.state.unknown {
+    background-color: #aac;
+}
+
+.bpapp table.businessprocess th p.problems {
+    font-weight: normal;
+    font-size: 0.7em;
+    margin: 0;
+    padding: 0;
+    display: none;
+}
+
+.bpapp .collapsed > tbody > tr > th > p.problems {
+    display: inline;
+}
+
+.bpapp table.businessprocess th p.problems span {
+    padding: 3px;
+}
+
+.bpapp table.businessprocess th.hovered p.problems > .state {
+    text-decoration: none;
+}
+
+.bpapp span.collapsible {
+    background-image: url("../img/bpaddon/icon_collapse.png");
+    background-repeat: no-repeat;
+    width: 1.7em;
+    height: 1.7em;
+    background-position: left center;
+    display: block;
+    float: left;
+}
+
+.bpapp .collapsed span.collapsible {
+    background: url("../img/bpaddon/icon_expand.png");
+    background-repeat: no-repeat;
+    background-position: left center;
+}
+
+.bpapp .collapsed tr.children {
+    display: none;
+}
+
+.bpapp .inlinepie {
+    display: block;
+    width: 2em;
+    float: right;
+    margin-top: 0.1em;
+    text-align: center;
+    vertical-align: middle;
+    color: transparent;
+}
+
+
+/* VHV - to be removed */
+/*
+h1 {
+    color: #51626F;
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-left: 10px;
+    margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+div.bgvhv {
+    background-color: #51626F;
+    color: white;
+    padding-left: 20px;
+    padding-bottom: 2px;
+    font-size: 0.8em;
+}
+
+div.bgvhv span {
+    display: inline;
+    background-image: url('../img/vhv/pfeil_gruen.gif');
+    background-repeat: no-repeat;
+    background-position: 8px 3px;
+    text-align: left;
+}
+
+div.bgvhv span a {
+    color: white;
+    margin-left: 20px;
+    margin-right: 20px;
+    text-decoration: none;
+}
+
+div.bgvhv.bottom {
+    bottom: 0;
+    position: fixed;
+    width: 100%;
+}
+
+table.bgvhv span a:hover {
+    text-decoration: underline;
+}
+
+img.logo {
+    margin: 20px;
+}
+*/
+
+/* VHV ENDE */

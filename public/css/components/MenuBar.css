@@ -1,0 +1,169 @@
+/**
+ * menu bar style
+ *
+ * @author Jan Kowalleck <jan.kowalleck@googlemail.com>
+ *
+ *
+ */
+
+.menuBar {
+	cursor: default;
+}
+
+.menuBar ,
+.menuBar ul {
+	list-style-type: none;
+	margin: 0ex 0em;
+	padding: 0ex 0em;
+	display: block;
+	display: inline-block;
+	vertical-align: top;
+}
+div.menuBar ul {
+	height: 100% ;
+}
+
+
+.menuBar li {
+	display: block;
+	margin: 0ex 0.3em;
+	padding: 0.5ex 0.3em;
+	white-space: nowrap;
+}
+.menuBar li:first-child { margin-top: 1ex; }
+.menuBar li:last-child { margin-bottom: 1ex; }
+
+
+ul.menuBar a ,
+div.menuBar.s-closed ul.l0 li ,
+div.menuBar li.href {
+	cursor: pointer;
+	-webkit-user-select: none;
+	-webkit-tap-highlight-color: rgba(1,1,1,0);
+}
+html.touch ul.menuBar a ,
+html.touch div.menuBar.s-closed ul.l0 li ,
+html.touch div.menuBar li.sub ,
+html.touch div.menuBar li.href {
+	min-height: 40px; /* as apple wants for their touch devices*/
+	min-width: 40px;
+}
+
+ul.menuBar li {
+	position: relative;
+	overflow: visible;
+}
+
+ul.menuBar img ,
+div.menuBar .icon {
+	display: block;
+	margin: 0ex 0em;
+	margin-right: 0ex;
+	padding: 0ex 0em;
+	width: 6ex;
+	height: 6ex;
+	border-radius: 1ex;
+}
+
+
+ul.menuBar li ul {
+	display: none;
+	position: absolute;
+	top: -1ex;
+	left: 100%;
+}
+ul.menuBar li:hover > ul {
+	display: block;
+}
+
+
+ul.menuBar > li ,
+div.menuBar ul.l0 {
+	line-height: 0ex;
+}
+ul.menuBar > li> ul {
+	line-height: normal;
+}
+div.menuBar ul.l0 li {
+	margin-left: 1ex;
+	margin-right: 1ex;
+	padding: 0.5ex 0.5ex;
+}
+ul.menuBar > li {
+	margin: 0ex 0em;
+	padding: 0.5ex 1ex;
+}
+div.menuBar ul.l0 li {
+	border-radius: 1ex;
+}
+
+ul.menuBar > li > span ,
+div.menuBar ul.l0 .label {
+	display: none;
+}
+
+ul.menuBar > li > a {
+	display: block;
+	position: absolute;
+	top: 0ex;
+	right: 0em;
+	bottom: 0ex;
+	left: 0em;
+	padding: 0ex 0em;
+	overflow: hidden;
+	background-color: black; opacity: 0; filter: alpha(opacity=0); /* to get overlay working in IE */
+}
+
+
+
+
+/* dir */
+div.menuBar.dir-ltr ul {
+	float: left;
+}
+div.menuBar.dir-ltr ul li.sub.sel {
+	margin-right: 0ex;
+	padding-right: 1.5ex;
+	border-top-right-radius: 0ex;
+	border-bottom-right-radius: 0ex;
+}
+
+
+
+/* scrolling - capable of IE bugs */
+div.menuBar ul {
+	overflow: hidden;
+}
+div.menuBar ul.scroll li.scrollSpanner {
+	display: block;
+	height: 0ex;
+	margin-top: 0ex;
+	margin-right: 0em;
+	margin-left: 0em;
+	padding: 0ex 0em;
+}
+div.menuBar ul.scroll:hover {
+	overflow-y: scroll;
+}
+div.menuBar ul.scroll:hover li.scrollSpanner {
+	margin-left: 0em !important;
+	margin-right: 0em !important;
+}
+html.touch div.menuBar ul.scroll {
+	overflow: auto;
+	-webkit-overflow-scrolling: touch;
+}
+
+
+
+/* IE fixes */
+html.no-flexbox div.menuBar { position:relative; }
+html.no-flexbox div.menuBar ul {
+	position: absolute;
+	top: 0ex;
+	bottom: 0ex;
+	height: 100%;
+	width: auto;
+}
+
+

@@ -1,0 +1,126 @@
+
+
+
+.statusTable(@color) {
+  &:hover {
+    background-color: @color;
+
+  }
+  &.active {
+    background-color: lighten(@color-emphasis,20%);
+    text-shadow: 0px 1px 0px rgba(255,255,255,.5);
+    color:@color-black;
+  }
+  & td:first-child {
+    background-color: @color;
+    text-shadow: 0px 1px 0px rgba(255,255,255,.5);
+    color:darken(@color,50%);
+    text-align:center;
+    a {
+      text-shadow: 0px 1px 0px rgba(255,255,255,.5);
+      color:darken(@color,40%);
+    }
+  }
+  cursor:pointer;
+}
+
+.icinga-container.action-table-content {
+  .expanded_absolute;
+  top: 35px;
+}
+
+.icinga-container {
+
+  table.action {
+    font-size:0.8em;
+    a {
+      color: black;
+      &:hover {
+        color: black;
+        text-decoration:none;
+      }
+    }
+    width: 100%;
+
+    tbody tr {
+      border-bottom: 1px solid #ededed;
+    }
+    thead tr {
+      //background-color: @color-black;
+    }
+    tr {
+
+      th {
+        //background-color: @color-black;
+        text-shadow: inset 0px 1px 0px rgba(0,0,0,.5);
+        //color:@color-emphasis;
+        border-bottom:1px solid @color-black;
+        text-align:center;
+        height:2em;
+
+      }
+      cursor:pointer;
+/*
+      &.ok, &.up{
+        .statusTable(@color-ok);
+      }
+      &.warning {
+        .statusTable(@color-warning);
+      }
+      &.warning.handled {
+        .statusTable(@color-warning-handled);
+      }
+      &.critical, &.down {
+        .statusTable(@color-critical);
+      }
+      &.critical.handled, &.down.handled {
+        .statusTable(@color-critical-handled);
+      }
+      &.unknown, &.unreachable {
+        .statusTable(@color-unknown);
+      }
+      &.unknown.handled, &.unreachable.handled {
+        .statusTable(@color-unknown-handled);
+      }
+      &.pending, &.pending {
+        .statusTable(@color-pending);
+      }
+*/
+    }
+    td {;
+      padding:0.1em;
+      padding-left:0.2em;
+      padding-right:0.3em;
+    }
+  }
+}
+
+table.subTable {
+  border:lighten(@color-emphasis,20%);
+  padding:0.5em;
+  width:100%;
+  th {
+
+    text-shadow: 0px 1px 0px rgba(255,255,255,.5);
+    color:@color-black;
+    padding: 0.5em;
+    border:1px solid lighten(@color-emphasis,20%);
+
+  }
+
+  tr {
+    td {
+      padding: 0.5em;
+      border-left:1px solid lighten(@color-emphasis,20%);
+      border-right:1px solid lighten(@color-emphasis,20%);
+
+      &:first-child {
+
+        font-weight: bold;
+        text-shadow: 0px 1px 0px rgba(255,255,255,.5);
+        color:@color-black;
+
+      }
+    }
+  }
+}

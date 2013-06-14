@@ -1,0 +1,40 @@
+<?php
+    // determine current key
+    $url = Zend_Controller_Front::getInstance()->getRequest()->getRequestUri();
+    $currentKey = isset($this->navkey) ? $this->navkey : $url;
+
+    $item = $this->navigation->listAll("menu");
+?>
+<?php if ($this->auth()->isAuthenticated()): ?>
+<ul class="nav nav-tabs icinga-navigation" >
+<?php
+    $activeSet = false;
+    foreach ($item as $itemName) {
+        if($itemName[0] == "_") {
+?>
+    <li class="section-end"></li>
+<?php
+            continue;
+        }
+
+        $item = $this->navigation->menu->$itemName;
+        $active = false;
+        $url = "";
+
+        if (is_string($item)) {
+            $active = !$activeSet && $this->baseUrl($item) == $currentKey;
+            $url = $this->baseUrl($item);
+        } else {
+            $url = $this->baseUrl(isset($item->route) ? $item->route : "");
+            $itemName = isset($item->title) ? $item->title : $itemName;
+            $active = !$activeSet && (isset($item->key) ? $item->key : $url) === $currentKey;
+        }
+        $activeSet = $activeSet || $active;
+        ?>
+    <li class="<?php echo $active ? "active" : "" ?>"><a href="<?php echo $url ?>"><?php echo $itemName ?></a></li>
+<?php
+        $class = "";
+    }
+?>
+</ul>
+<?php endif ?>

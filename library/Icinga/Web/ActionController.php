@@ -102,8 +102,21 @@ class ActionController extends ZfController
             ->_setInvokeArgs($invokeArgs);
         $this->_helper = new ZfActionHelper($this);
 
+        /*
+         * --------------------------------------------
+         * Authentication is disabled to test bootstrap
+         * --------------------------------------------
+         *
+         * @todo remove this!
+         */
+
+        $this->allowAccess = true;
+        $this->init();
+
+        return null;
+
         if ($this->handlesAuthentication() ||
-                Auth::getInstance(
+                Manager::getInstance(
                     null,
                     array(
                         "writeSession" => $this->modifiesSession
@@ -163,7 +176,7 @@ class ActionController extends ZfController
      */
     final protected function hasPermission($uri, $permission = 'read')
     {
-        return true;  
+        return true;
     }
 
     /**
@@ -194,6 +207,7 @@ class ActionController extends ZfController
     public function preDispatch()
     {
         Benchmark::measure('Action::preDispatch()');
+
         if (!$this->allowAccess) {
             $this->_request->setModuleName('default')
                 ->setControllerName('authentication')
@@ -296,7 +310,6 @@ class ActionController extends ZfController
         }
         // END of PDF test
 
-
         if ($this->_request->isXmlHttpRequest()) {
             if ($this->replaceLayout || $this->_getParam('_render') === 'body') {
                 $this->_helper->layout()->setLayout('just-the-body');
@@ -305,6 +318,7 @@ class ActionController extends ZfController
                 $this->_helper->layout()->setLayout('inline');
             }
         }
+
         $notification = Notification::getInstance();
         if ($notification->hasMessages()) {
             $nhtml = '<ul class="notification">';
@@ -318,10 +332,10 @@ class ActionController extends ZfController
             $this->getResponse()->append('notification', $nhtml);
         }
 
-        if (Session::getInstance()->show_benchmark) {
+        /*if (Session::getInstance()->show_benchmark) {
             Benchmark::measure('Response ready');
             $this->getResponse()->append('benchmark', $this->renderBenchmark());
-        }
+        }*/
 
     }
 

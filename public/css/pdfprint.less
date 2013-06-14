@@ -1,0 +1,65 @@
+td {
+    font-size: 14px;
+}
+
+table.action {
+    border-spacing: 1px 1px;
+    padding:5px 2px 5px 2px;
+    width: 1560px;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+}
+
+.nav, .pagination, .dontprint {
+    display: none;
+}
+
+tr td.state {
+    width: 100px;
+    text-align: center;
+    vertical-align: middle;
+    color: white;
+}
+
+table.action .ok .state, table.action .up .state, table.action .ok.active, table.action .up.active {
+    background-color: #00cb33;
+}
+
+table.action .warning .state, table.action .warning.active {
+    background-color: #ffec00;
+    color: #333;
+}
+
+table.action .critical .state, table.action .down .state, table.action tbody tr.critical:hover, table.action .critical.active, table.action .down.active {
+    background-color: #f30;
+}
+
+table.action .unknown .state, table.action .unreachable .state, table.action .unknown.active, table.action .unreachable.active {
+    background-color: #e066ff;
+}
+
+table.action .warning.handled .state, table.action .warning.handled.active {
+    background-color: #ffff9f;
+    color: #333;
+}
+
+table.action .pending .state, table.action .pending.active {
+    background-color: #ccc;
+}
+
+table.action .critical.handled .state, table.action .down.handled .state, table.action .critical.handled.active, table.action .down.handled.active {
+    background-color: #f5a9a9;
+}
+
+table.action tbody tr td.empty {
+    background-color: transparent;
+    cursor: auto;
+}
+
+table.action .unknown.handled .state, table.action .unreachable.handled .state, table.action .unknown.handled.active, table.action .unreachable.handled.active {
+    background-color: #eeaeee;
+}
+

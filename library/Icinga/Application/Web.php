@@ -1,8 +1,10 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Application;
 
-require_once dirname(__FILE__) . '/ApplicationBootstrap.php';
+use Icinga\Authentication\Manager;
 use Icinga\Web\Session;
 use Zend_Controller_Front as FrontController;
 use Zend_Layout as Layout;
@@ -34,15 +36,15 @@ class Web extends ApplicationBootstrap
     protected function bootstrap()
     {
         return $this->loadConfig()
-                    ->configureErrorHandling()
-                    ->setTimezone()
-                    ->configureSession()
-                    ->configureCache()
-                    ->prepareZendMvc()
-                    ->loadTranslations()
-                    ->loadEnabledModules()
-                    ->setupSpecialRoutes()
-                    ->configurePagination();
+            ->configureErrorHandling()
+            ->setTimezone()
+            ->configureSession()
+            ->configureCache()
+            ->prepareZendMvc()
+            ->loadTranslations()
+            ->loadEnabledModules()
+            ->setupSpecialRoutes()
+            ->configurePagination();
     }
 
     protected function setupSpecialRoutes()
@@ -53,8 +55,8 @@ class Web extends ApplicationBootstrap
             new Route(
                 'js/modules/list.js',
                 array(
-                    'controller' =>'static',
-                    'action'     =>'modulelist',
+                    'controller' => 'static',
+                    'action' => 'modulelist',
                 )
             )
         );
@@ -85,30 +87,15 @@ class Web extends ApplicationBootstrap
      */
     protected function configureSession()
     {
-        Session::setOptions(
-            array(
-                 // strict requires Zend_Session::start()
-                'strict'                  => true,
-                'cookie_secure'           => false,
-                'name'                    => $this->config->{'global'}->get(
-                    'session_cookie',
-                    'ICINGA_SID'
-                ),
-
-                // Obsolete once moved to Icinga\Web\Session:
-                'cookie_httponly'         => true,
-                'use_only_cookies'        => true,
-                'hash_function'           => true,
-                'hash_bits_per_character' => 5,
-            )
-        );
+        Manager::getInstance();
         return $this;
     }
 
     protected function loadTranslations()
     {
-        $locale = Session::getInstance()->language;
-        if (! $locale) {
+        // Session::getInstance()->language;
+        $locale = null;
+        if (!$locale) {
             $locale = 'en_US';
         }
         putenv('LC_ALL=' . $locale . '.UTF-8');
@@ -120,7 +107,7 @@ class Web extends ApplicationBootstrap
 
     protected function dispatchFrontController()
     {
-        Session::getInstance();
+        // Session::getInstance();
         $this->frontController->dispatch();
         return $this;
     }
@@ -135,26 +122,27 @@ class Web extends ApplicationBootstrap
         // TODO: Replace Zend_Application:
         Layout::startMvc(
             array(
-                'layout'     => 'layout',
+                'layout' => 'layout',
                 'layoutPath' => $this->appdir . '/layouts/scripts'
             )
         );
 
         return $this->prepareFrontController()
-                    ->prepareView();
+            ->prepareView();
     }
 
     protected function prepareFrontController()
     {
-        $this->frontController = FrontController::getInstance()
-            ->setControllerDirectory($this->appdir . '/controllers')
-            // TODO: Create config option for Load balancers etc:
-            // ->setBaseurl()
-            ->setParams(
-                array(
-                    'displayExceptions' => 1
-                )
-            );
+        $this->frontController = FrontController::getInstance();
+
+        $this->frontController->setControllerDirectory($this->appdir . '/controllers');
+
+        $this->frontController->setParams(
+            array(
+                'displayExceptions' => true
+            )
+        );
+
         return $this;
     }
 
@@ -192,7 +180,7 @@ class Web extends ApplicationBootstrap
 
         Paginator::setDefaultScrollingStyle('SlidingWithBorder');
         PaginationControl::setDefaultViewPartial(
-            array('mixedPagination.phtml','default')
+            array('mixedPagination.phtml', 'default')
         );
         return $this;
     }

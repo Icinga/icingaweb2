@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta content="width=320; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+
+    <link rel="stylesheet" href="<?php echo $this->baseUrl('css/normalize.min.css') ?>">
+    <link rel="stylesheet" href="<?php echo $this->baseUrl('css/vendor/bootstrap.css') ?>">
+    <link rel="stylesheet" href="<?php echo $this->baseUrl('css/main.css') ?>">
+    <link rel="stylesheet" href="<?php echo $this->baseUrl('css/vendor/jquery.qtip.min.css') ?>">
+    <script type="text/javascript">
+        var base_url = '<?php echo $this->baseUrl() ?>';
+        ICINGA_DEBUG = true;
+    </script>
+    <script src="<?php echo $this->baseUrl('js/vendor/modernizr-2.6.2.min.js') ?>"></script>
+    <link rel="stylesheet" href="<?php echo $this->baseUrl('css/icinga.css') ?>">
+    <link rel="stylesheet" href="<?php echo $this->baseUrl('css/vendor/bootstrap-responsive.min.css') ?>">
+    <script data-main="<?php echo $this->baseUrl('js/main.js')?>" src="<?php echo $this->baseUrl('js/vendor/require.js') ?>"></script>
+
+</head>
+<body class="cranberry">
+<?php echo $this->render('parts/topbar.phtml') ?>
+<div class="main">
+ <div class="tabbable tabs-left" style="height:100%;">
+  <?php echo $this->render('parts/navigation.phtml') ?>
+ </div>
+ <div class="layout-main-detail collapsed">
+  <div id="icinga-main" container-id="icinga-main" class="icinga-container">
+   <?php echo $this->layout()->moduleStart ?>
+   <?php echo $this->layout()->content ?>
+   <?php echo $this->layout()->moduleEnd ?>
+  </div>
+  <div id="icinga-detail" class="icinga-container " container-id="icinga-detail">
+   <!--<div class="container-controls">
+   <a class="container-expand-link" title="expand" target="_self" href="...">
+   <i class="icon-fullscreen"></i>
+   </a>
+   <a class="container-detach-link" title="detach" target="popup" href="...">
+   <i class="icon-share"></i>
+   </a>
+   </div>-->
+  </div><!-- End of icinga-detail -->
+ </div><!-- End of layout-main-detail -->
+</div><!-- End of main -->
+</body>
+</html>

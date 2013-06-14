@@ -1,0 +1,27 @@
+<?php echo $this->render('parts/topbar.phtml') ?>
+<div class="main">
+  <!-- Only required for left/right tabs -->
+  <div class="tabbable tabs-left "style="height:100%;">
+    <?php echo $this->render('parts/navigation.phtml') ?>
+
+<div class="layout-main-detail collapsed">
+<div id="icinga-main" container-id="icinga-main" class="icinga-container">
+<?php echo $this->layout()->moduleStart ?>
+<?php echo $this->layout()->content ?>
+<?php echo $this->layout()->moduleEnd ?>
+</div>
+
+<div id="icinga-detail" class="icinga-container " container-id="icinga-detail">
+<div class="container-controls">
+<a class="container-expand-link" title="expand" target="_self" href="/develop/monitoring/list/services">
+<i class="icon-fullscreen"></i>
+</a>
+<a class="container-detach-link" title="detach" target="popup" href="/develop/develop/monitoring/list/services">
+<i class="icon-share"></i>
+</a>
+</div>
+</div>
+
+  </div>
+</div>
+
