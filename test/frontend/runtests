@@ -8,6 +8,7 @@ CASPER=$(which casperjs)
 INCLUDE=""
 EXCLUDE=""
 VERBOSE=0
+VAGRANT=0
 BUILD=0
 
 if [ ! -x $CASPER ]; then
@@ -29,18 +30,21 @@ for arg in $@;do
         continue 
     fi; 
     case $arg in
-        --verbose)
+        -v|--verbose)
             VERBOSE=1
             ;;
-        --include)
+        -V|--vagrant)
+            VAGRANT=1
+            ;;
+        -i|--include)
             PARAM="INCLUDE"
             continue
             ;;
-        --exclude)
+        -e|--exclude)
             PARAM="EXCLUDE"
             continue
             ;;
-        --build)
+        -b|--build)
             BUILD=1
             continue
             ;;
@@ -58,6 +62,27 @@ for arg in $@;do
             exit 1
     esac;
 done;
+
+#
+# If vagrant is set the tests are ran in the vagrant VM
+#
+if [ $VAGRANT -eq 1 ] && [ $USER != "vagrant" ]; then
+    # Check if vagrant is installed
+    if [ ! -n `which vagrant` ]; then
+        echo "Vagrant is not installed on your system!"
+        exit 1  
+    fi
+
+    # Call the script in the Vagrant VM with the same parameters
+    vagrant ssh -c "/vagrant/test/frontend/runtests $@"
+    exit $?
+fi
+
+if [ "$CASPER" = "" -o ! -x $CASPER ]; then
+    echo "CasperJS is not installed but required to run frontend tests\n"\
+"Take a look at http://casperjs.org/installation.html to see how the installation works for your system"
+    exit 1
+fi;
 
 EXEC="$CASPER test"
 
