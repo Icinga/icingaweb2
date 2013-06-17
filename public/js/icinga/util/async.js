@@ -3,7 +3,7 @@
     "use strict";
     var asyncMgrInstance = null;
 
-    define(['icinga/container','logging','icinga/behaviour','jquery'],function(containerMgr,log,behaviour,$) {
+    define(['icinga/container','logging','jquery'],function(containerMgr,log,$) {
 
 
         var pending = {
@@ -21,7 +21,6 @@
         };
 
         var handleResponse = function(html) {
-
             if(this.destination) {
                 containerMgr.updateContainer(this.destination,html,this);
             } else {
@@ -94,7 +93,13 @@
                     });
                     req.destination = destination;
                 }
-
+                if (destination == "icinga-main") {
+                    History.pushState(data, document.title, url);
+                } else {
+                    data = data || {};
+                    data[destination] = url;
+                    History.pushState(data, document.title, document.location.href); 
+                }
                 return req;
 
             };
