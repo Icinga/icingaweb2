@@ -93,6 +93,14 @@ if (path === null)
     var openFromBase = function(url, options) {
         return copenFrom.apply(casper,[this.getBaseURL(url), options]);
     };
+    casper.on('remote.message', function(message) {
+        console.log(message);
+    });
+
+    casper.on('page.error', function(message, trace) {
+        console.error(message, JSON.stringify(trace));
+    });
+
 
     exports.getTestEnv = function() {
         casper.getBaseURL = getBaseURL;
@@ -102,6 +110,49 @@ if (path === null)
         return casper;
     };
 
+    exports.setupRequireJs = function(libraries) {
+        if (typeof libraries === "undefined") {
+            libraries = {
+                jquery: 'vendor/jquery-1.8.3',
+                bootstrap: 'vendor/bootstrap.min',
+                eve: 'vendor/raphael/eve'
+            };
+        } else {
+            libraries = libraries || {};
+            libraries.logging = 'icinga/util/logging';
+            libraries.jquery = 'vendor/jquery-1.8.3';
+            libraries["modules/list"] = "/moduleMock";
+            if (libraries.bootstrap || libraries.icinga) {
+                libraries.bootstrap = 'vendor/bootstrap.min';
+                libraries.history = 'vendor/history';
+                libraries.eve =  'vendor/raphael/eve';
+                libraries.raphael = 'vendor/raphael/raphael.amd';
+                libraries["raphael.core"] = 'vendor/raphael/raphael.core';
+                libraries["raphael.svg"] = 'vendor/raphael/raphael.svg';
+                libraries["raphael.vml"] = 'vendor/raphael/raphael.vml';
+            }
+            if (libraries.ace) {
+                libraries.ace = 'vendor/ace/ace';
+            }
+        }
+        var bootstrap = libraries.icinga;
+        delete(libraries.icinga);
+        requirejs.config({
+            baseUrl: window.base_url + '/js',
+            paths: libraries       
+        });
+        if (bootstrap) {
+
+            requirejs(['jquery', 'history']);
+            requirejs(['bootstrap']);
+            requirejs(['icinga/icinga'], function (Icinga) {
+                window.$ = $;
+                window.jQuery = $;
+                window.Icinga = Icinga;
+                window.History = History;
+            });
+        }
+    };
 })();
 
 
