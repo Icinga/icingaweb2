@@ -16,6 +16,11 @@ if [ ! -x $CASPER ]; then
 "Take a look at http://casperjs.org/installation.html to see how the installation works for your system"
     exit 1
 fi;
+if [ ! -e "${DIR}/static/public" ]; then
+    echo "!"
+    ln -s "${DIR}/../../public" "${DIR}/static/public" 
+fi;
+
 
 PARAM="0"
 for arg in $@;do
@@ -108,10 +113,16 @@ if [ "$EXCLUDE" != "" ];then
     fi
     FILELIST=`echo $FILELIST | grep -v "$NAME"`
 fi;
+
 cd $DIR/static 
+PROC=`ps ax|grep "SimpleHTTPServer 12999"|awk '{ print $1 }'`
+if [ "$PROC" != "" ]; then
+    kill $PROC
+fi; 
 python -m SimpleHTTPServer 12999&
 PID=$!
 cd $DIR
+
 echo $EXEC $FILELIST
 $EXEC $FILELIST 
 kill $PID
