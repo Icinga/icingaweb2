@@ -44,12 +44,16 @@ var onSecondLink = function() {
     casper.page.evaluate(function() {
         requirejs(["icinga/icinga"], function(icinga) {
             icinga.loadUrl("/fragments/testFragment3.html?this=is_a_param", "icinga-detail");
-            console.log(document.location.href);
+             
         }); 
     });
-    console.log(casper.page.evaluate(function() {
-        return document.location.href;
-    }));
+    this.wait(400, function() {
+        console.log(casper.page.evaluate(function() {
+            return window.location.href;
+        }));
+
+        this.test.assertUrlMatch(/testFragment2.html.*testFragment3.html/);
+    });
 };
 
 casper.run(function() {
