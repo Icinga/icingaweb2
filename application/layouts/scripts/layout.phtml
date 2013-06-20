@@ -21,12 +21,12 @@
         ICINGA_DEBUG = true;
     </script>
     <script src="<?php echo $this->baseUrl('js/vendor/modernizr-2.6.2.min.js') ?>"></script>
-    <link rel="stylesheet" href="<?php echo $this->baseUrl('css/icinga.css') ?>">
+    <link rel="stylesheet" href="<?php echo $this->baseUrl('css.php') ?>">
     <link rel="stylesheet" href="<?php echo $this->baseUrl('css/vendor/bootstrap-responsive.min.css') ?>">
     <script data-main="<?php echo $this->baseUrl('js/main.js')?>" src="<?php echo $this->baseUrl('js/vendor/require.js') ?>"></script>
 
 </head>
-<body class="cranberry">
+<body class="cranberry"> 
 <?php echo $this->render('parts/topbar.phtml') ?>
 <div class="main">
  <div class="tabbable tabs-left" style="height:100%;">

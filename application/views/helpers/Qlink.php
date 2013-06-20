@@ -36,6 +36,9 @@ class Zend_View_Helper_Qlink extends Zend_View_Helper_Abstract
                 $quote = $val;
                 continue;
             }
+            if ($key === 'target') {
+                $attibutes[] = 'target="'.$val.'"';
+            }
             if ($key === 'style' && is_array($val)) {
                 if (empty($val)) {
                     continue;

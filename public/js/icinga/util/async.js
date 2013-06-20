@@ -5,11 +5,9 @@
 
     define(['icinga/container','logging','icinga/behaviour','jquery'],function(containerMgr,log,behaviour,$) {
 
-
         var pending = {
 
         };
-
         var getDOMForDestination = function(destination) {
             var target = destination;
             if(typeof destination === "string") {
@@ -84,13 +82,14 @@
 
             this.loadToTarget = function(destination,url,data) {
                 if(destination) {
+                    log.debug("Laoding to container", destination, url);
                     this.clearPendingRequestsFor(destination);
                 }
                 var req = this.createRequest(url,data);
                 if(destination) {
                     pending.push({
                         request: req,
-                        DOM: getDOMForDestination(destination)
+                DOM: getDOMForDestination(destination)
                     });
                     req.destination = destination;
                 }
@@ -105,5 +104,4 @@
         };
         return new CallInterface();
     });
-
 })();
