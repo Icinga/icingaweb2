@@ -24,7 +24,7 @@
         this.updateContainer = function(id,content,req) {
             var target = id;
             if (typeof id === "string") {
-                target = $('div[container-id='+id+']');
+                target = this.getContainer(id);
             }
             var ctrl = $('.container-controls',target);
             target.html(content);
@@ -100,6 +100,9 @@
         };
 
         this.getContainer = function(id) {
+            if(id == 'body') {
+                return $(document.body);
+            }
             return $('div[container-id='+id+']');
         };
 

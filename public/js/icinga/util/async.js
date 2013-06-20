@@ -10,7 +10,7 @@
         };
         var getDOMForDestination = function(destination) {
             var target = destination;
-            if(typeof destination === "string") {
+            if (typeof destination === "string") {
                 target = containerMgr.getContainer(destination)[0];
             } else if(typeof destination.context !== "undefined") {
                 target = destination[0];
@@ -89,7 +89,7 @@
                 if(destination) {
                     pending.push({
                         request: req,
-                DOM: getDOMForDestination(destination)
+                        DOM: getDOMForDestination(destination)
                     });
                     req.destination = destination;
                 }

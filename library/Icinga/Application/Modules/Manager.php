@@ -6,6 +6,7 @@ use Icinga\Application\ApplicationBootstrap;
 use Icinga\Data\ArrayDatasource;
 use Icinga\Web\Notification;
 use Icinga\Exception\ConfigurationError;
+use Icinga\Exception\SystemPermissionException;
 
 // TODO: show whether enabling/disabling modules is allowed by checking enableDir
 //       perms
@@ -20,17 +21,20 @@ class Manager
 
     protected $enableDir;
 
-    public function __construct(ApplicationBootstrap $app)
+    public function __construct(ApplicationBootstrap $app, $dir = null)
     {
         $this->app = $app;
-        $this->prepareEssentials();
+        if ($dir === null) {
+            $dir = $this->app->getConfig()->getConfigDir()
+                         . '/enabledModules';
+        }
+        $this->prepareEssentials($dir);
         $this->detectEnabledModules();
     }
 
-    protected function prepareEssentials()
+    protected function prepareEssentials($moduleDir)
     {
-        $this->enableDir = $this->app->getConfig()->getConfigDir()
-                         . '/enabledModules';
+        $this->enableDir = $moduleDir;
 
         if (! file_exists($this->enableDir) || ! is_dir($this->enableDir)) {
             throw new ProgrammingError(
@@ -99,13 +103,20 @@ class Manager
         $target = $this->installedBaseDirs[$name];
         $link = $this->enableDir . '/' . $name;
         if (! is_writable($this->enableDir)) {
-            Notification::error("I do not have permissions to enable modules");
+            throw new SystemPermissionException(
+                "Insufficient system permissions for enabling modules",
+                "write",
+                $this->enableDir
+            );
+        }
+        if (file_exists($link) && is_link($link)) {
             return $this;
         }
-        if (@symlink($target, $link)) {
-            Notification::success("The module $name has been enabled");
-        } else {
-            Notification::error("Enabling module $name failed");
+        if (!@symlink($target, $link)) {
+            $error = error_get_last();
+            if (strstr($error["message"], "File exists") === false) {
+                throw new SystemPermissionException($error["message"], "symlink", $link);
+            }
         }
         return $this;
     }
@@ -116,16 +127,29 @@ class Manager
             return $this;
         }
         if (! is_writable($this->enableDir)) {
-            Notification::error("I do not have permissions to disable modules");
+            throw new SystemPermissionException("Can't write the module directory", "write", $this->enableDir);
             return $this;
         }
         $link = $this->enableDir . '/' . $name;
+        if (!file_exists($link)) {
+            throw new ConfigurationError("The module $name could not be found, can't disable it");
+        }
+        if (!is_link($link)) {
+            throw new ConfigurationError(
+                "The module $name can't be disabled as this would delete the whole module. ".
+                "It looks like you have installed this module manually and moved it to your module folder.".
+                "In order to dynamically enable and disable modules, you have to create a symlink to ".
+                "the enabled_modules folder"
+            );
+        }
+            
         if (file_exists($link) && is_link($link)) {
-            if (@unlink($link)) {
-                Notification::success("The module $name has been disabled");
-            } else {
-                Notification::error("Disabling module $name failed");
+            if (!@unlink($link)) {
+                $error = error_get_last();
+                throw new SystemPermissionException($error["message"], "unlink", $link);
             }
+        } else {
+
         }
         return $this;
     }
