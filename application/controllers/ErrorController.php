@@ -34,7 +34,6 @@ class ErrorController extends ActionController
                 $this->view->message = 'Application error';
                 break;
         }
-
         // conditionally display exceptions
         if ($this->getInvokeArg('displayExceptions') == true) {
             $this->view->exception = $errors->exception;
