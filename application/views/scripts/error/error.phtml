@@ -9,8 +9,15 @@
     <div style="text-align:left;">
         <h3>Exception information:</h3>
 
-        <p >
-          <b>Message:</b> <?php echo $this->exception->getMessage() ?>
+        <p>
+            <b>Message:</b> <?php echo $this->exception->getMessage() ?>
+            <?php if (isset($this->exception->action)): ?>
+                <br/><b>Action</b>: <?= $this->exception->action; ?>
+            <?php endif ?>
+            <?php if (isset($this->exception->action)): ?>
+                <br/><b>Target</b>: <?= $this->exception->target; ?>
+            <?php endif ?>
+      
         </p>
 
         <h3>Stack trace:</h3>
