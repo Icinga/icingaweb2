@@ -2,39 +2,33 @@
 
 namespace Icinga\Application\Modules;
 
+use Icinga\Application\ApplicationBootstrap;
+use Icinga\Data\ArrayDatasource;
+use Icinga\Web\Notification;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\SystemPermissionException;
-use Icinga\Exception\ProgrammingError;
 
 // TODO: show whether enabling/disabling modules is allowed by checking enableDir
 //       perms
 
 class Manager
 {
-    protected $installedBaseDirs = null;
+    protected $installedBaseDirs;
     protected $enabledDirs       = array();
     protected $loadedModules     = array();
     protected $index;
     protected $app;
+
     protected $enableDir;
-    protected $modulePaths = array();
-    /**
-    *   @param $app :   The applicaiton bootstrap. This one needs a properly defined interface 
-    *                   In order to test it correctly, the application now only requires a stdClass
-    *   @param $dir :   
-    **/
-    public function __construct($app, $enabledDir = null, array $availableDirs = array())
+
+    public function __construct(ApplicationBootstrap $app, $dir = null)
     {
         $this->app = $app;
-        if (empty($availableDirs)) {
-            $availableDirs = array(ICINGA_APPDIR."/../modules");
-        }
-        $this->modulePaths = $availableDirs;
-        if ($enabledDir === null) {
-            $enabledDir = $this->app->getConfig()->getConfigDir()
+        if ($dir === null) {
+            $dir = $this->app->getConfig()->getConfigDir()
                          . '/enabledModules';
         }
-        $this->prepareEssentials($enabledDir);
+        $this->prepareEssentials($dir);
         $this->detectEnabledModules();
     }
 
@@ -52,17 +46,10 @@ class Manager
         }
     }
 
-    public function select()
-    {
-        $source = new \Icinga\Data\ArrayDataSource($this->getModuleInfo());
-        return $source->select();
-    }
-
     protected function detectEnabledModules()
     {
         $fh = opendir($this->enableDir);
 
-        $this->enabledDirs = array();
         while (false !== ($file = readdir($fh))) {
 
             if ($file[0] === '.') {
@@ -91,18 +78,12 @@ class Manager
         return $this;
     }
 
-    public function loadModule($name, $moduleBase = null)
+    public function loadModule($name)
     {
         if ($this->hasLoaded($name)) {
             return $this;
         }
-
-        $module = null;
-        if ($moduleBase === null) {
-            $module = new Module($this->app, $name, $this->getModuleDir($name));
-        } else {
-            $module = new $moduleBase($this->app, $name, $this->getModuleDir($name));
-        }
+        $module = new Module($this->app, $name, $this->getModuleDir($name));
         $module->register();
         $this->loadedModules[$name] = $module;
         return $this;
@@ -119,7 +100,6 @@ class Manager
             );
             return $this;
         }
-        clearstatcache(true);
         $target = $this->installedBaseDirs[$name];
         $link = $this->enableDir . '/' . $name;
         if (! is_writable($this->enableDir)) {
@@ -138,7 +118,6 @@ class Manager
                 throw new SystemPermissionException($error["message"], "symlink", $link);
             }
         }
-        $this->enabledDirs[$name] = $link;
         return $this;
     }
 
@@ -172,7 +151,6 @@ class Manager
         } else {
 
         }
-        unset($this->enabledDirs[$name]);
         return $this;
     }
 
@@ -250,6 +228,12 @@ class Manager
         return $info;
     }
 
+    public function select()
+    {
+        $ds = new ArrayDatasource($this->getModuleInfo());
+        return $ds->select();
+    }
+
     public function listEnabledModules()
     {
         return array_keys($this->enabledDirs);
@@ -270,19 +254,19 @@ class Manager
 
     public function detectInstalledModules()
     {
-        foreach ($this->modulePaths as $basedir) {
-            $fh = opendir($basedir);
-            if ($fh === false) {
-                return $this;
+        // TODO: Allow multiple paths for installed modules (e.g. web vs pkg)
+        $basedir = realpath(ICINGA_APPDIR . '/../modules');
+        $fh = @opendir($basedir);
+        if ($fh === false) {
+            return $this;
+        }
+
+        while ($name = readdir($fh)) {
+            if ($name[0] === '.') {
+                continue;
             }
-    
-            while ($name = readdir($fh)) {
-                if ($name[0] === '.') {
-                    continue;
-                }
-                if (is_dir($basedir . '/' . $name)) {
-                    $this->installedBaseDirs[$name] = $basedir . '/' . $name;
-                }
+            if (is_dir($basedir . '/' . $name)) {
+                $this->installedBaseDirs[$name] = $basedir . '/' . $name;
             }
         }
     }

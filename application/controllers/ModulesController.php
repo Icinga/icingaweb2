@@ -35,11 +35,7 @@ class ModulesController extends ActionController
     public function enableAction()
     {
         $this->manager->enableModule($this->_getParam('name'));
-        $this->manager->loadModule($this->_getParam('name'));
-        $this->getResponse()->setHeader('X-Icinga-Enable-Module', $this->_getParam('name')); 
-        $this->replaceLayout = true; 
-        $this->indexAction();
-
+        $this->redirectNow('modules/overview?_render=body');
     }
 
     public function disableAction()
