@@ -1,0 +1,61 @@
+<? if ($this->pageCount > 1): ?>
+<?php
+if (is_array($this->preserve)) {
+    $preserve = $this->preserve;
+} else {
+    $preserve = array();
+}
+
+$fromto = t('%d to %d of %d');
+$total = $this->totalItemCount;
+?>
+<div class="pagination pagination-mini" style="margin:0px">
+  <ul>
+    <!-- Previous page link -->
+<? if (isset($this->previous)): ?>
+    <li><a href="<?= $this->url($preserve + array('page' => $this->previous)); ?>" title="<?= 
+        sprintf($fromto,
+        ($this->current - 2) * $this->itemCountPerPage + 1,
+        ($this->current - 1) * $this->itemCountPerPage,
+        $this->totalItemCount)
+      ?>">« <?= t('Back') ?></a></li>
+<? else: ?>
+    <li class="disabled"><span>« <?= t('Back') ?></span></li>
+<?php
+endif;
+?>
+    <!-- Numbered page links -->
+<? foreach ($this->pagesInRange as $page): ?>
+<?php
+
+$start = ($page - 1) * $this->itemCountPerPage + 1;
+$end = $page * $this->itemCountPerPage;
+if ($end > $total) {
+    $end = $total;
+}
+$title = sprintf($fromto, $start, $end, $total);
+$active_class = $page === $this->current ? ' class="active"' : '';
+
+?>
+<?php if ($page === '...'): ?>
+    <li class="disabled"><span>...</span></li>
+<?php else: ?>
+    <li<?= $active_class ?>><a href="<?= $this->url(
+    $preserve + array('page' => $page)
+); ?>" title="<?= $title ?>"><?= $page; ?></a></li>
+<? endif ?>
+<? endforeach ?>
+<!-- Next page link -->
+<? if (isset($this->next)): ?>
+    <li><a href="<?= $this->url($preserve + array('page' => $this->next)); ?>" title="<?= 
+        sprintf($fromto,
+        ($this->current) * $this->itemCountPerPage + 1,
+        ($this->current + 1) * $this->itemCountPerPage,
+        $total)
+?>"><?= t('Next') ?> »</a></li>
+<? else: ?>
+    <li class="disabled"><span><?= t('Next') ?> »</span></li>
+<? endif ?>
+  </ul>
+</div>
+<? endif ?>
