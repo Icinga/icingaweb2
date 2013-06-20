@@ -1,0 +1,38 @@
+<?php
+$this->modules->limit(10);
+$modules = $this->modules->paginate();
+
+?>
+<h3>Installed Modules</h3>
+<?= $this->paginationControl($modules, null, null, array(
+    'preserve' => $this->preserve
+)); ?>
+<table >
+<tbody>
+<? foreach ($modules as $module): ?>
+<tr>
+<td>
+<? if ($module->enabled): ?>
+ <i class="icon-ok-sign"></i> <?= $this->qlink(
+    $module->name,
+    'modules/disable',
+    array('name' => $module->name),
+    array('target'=>'body')
+ ) ?>
+<? else: ?>
+ <i class="icon-remove-sign"></i> <?= $this->qlink(
+    $module->name,
+    'modules/enable',
+    array('name' => $module->name),
+    array('target'=>'body')
+ ) ?>
+<? endif ?>
+ (<?=
+  $module->enabled
+  ? ($module->loaded ? 'enabled' : 'failed')
+  : 'disabled'
+ ?>)</td>
+</tr>
+<? endforeach ?>
+</tbody>
+</table>
