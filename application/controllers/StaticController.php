@@ -9,6 +9,7 @@ use Icinga\Web\ActionController;
 use Icinga\Application\Icinga;
 use Zend_Controller_Action_Exception as ActionException;
 
+use Icinga\Application\Benchmark;
 /**
  * Class StaticController
  * @package Icinga\Web\Form
@@ -69,7 +70,7 @@ class StaticController extends ActionController
      */
     public function javascriptAction()
     {
-        $module = $this->_getParam('moduleName');
+        $module = $this->_getParam('module_name');
         $file = $this->_getParam('file');
         $basedir = Icinga::app()->getModule($module)->getBaseDir();
 
@@ -96,14 +97,15 @@ class StaticController extends ActionController
             ) . ' GMT'
         );
 
+        $hash = md5_file($filePath);
+
         if ($hash === $this->getRequest()->getHeader('If-None-Match')) {
             $response->setHttpResponseCode(304);
             return;
         } else {
             readfile($filePath);
         }
-        // TODO: get rid of exit:
-        exit;
+        return;
     }
 }
 
