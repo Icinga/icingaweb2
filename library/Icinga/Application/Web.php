@@ -60,6 +60,17 @@ class Web extends ApplicationBootstrap
                 )
             )
         );
+
+        $this->frontController->getRouter()->addRoute(
+            'module_javascript',
+            new Route(
+                'js/modules/:module_name/:file',
+                array(
+                    'controller' => 'static',
+                    'action' => 'javascript'
+                )
+            )
+        );
         return $this;
     }
 
@@ -173,6 +184,7 @@ class Web extends ApplicationBootstrap
      */
     protected function configurePagination()
     {
+
         Paginator::addScrollingStylePrefixPath(
             'Icinga_Web_Paginator_ScrollingStyle',
             'Icinga/Web/Paginator/ScrollingStyle'
