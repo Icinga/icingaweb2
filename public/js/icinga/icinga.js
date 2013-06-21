@@ -19,19 +19,16 @@ define([
         var failedModules = [];
 
         var initialize = function () {
-            registerLazyModuleLoading();
             enableInternalModules();
-            
+
             containerMgr.registerAsyncMgr(async);
             containerMgr.initializeContainers(document);
             log.debug("Initialization finished");
 
             enableModules();
         };
+
         
-        var registerLazyModuleLoading = function() {
-            async.registerHeaderListener("X-Icinga-Enable-Module", loadModuleScript, this);
-        };
 
         var enableInternalModules = function() {
             $.each(internalModules,function(idx,module) {
@@ -40,7 +37,6 @@ define([
         };
 
         var loadModuleScript = function(name) {
-            console.log("Loading ", name);
             moduleMgr.enableModule("modules/"+name+"/"+name, function(error) {
                 failedModules.push({
                     name: name,
@@ -71,12 +67,7 @@ define([
             loadIntoContainer: function(ctr) {
 
             },
-        
-            loadUrl: function(url, target, params) {
-                target = target || "icinga-main";
-                async.loadToTarget(target, url, params);
-            },
- 
+            
             getFailedModules: function() {
                 return failedModules;
             }
