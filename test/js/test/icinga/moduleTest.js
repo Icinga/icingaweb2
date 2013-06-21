@@ -9,12 +9,12 @@
 // {{LICENSE_HEADER}}
 var should = require("should");
 var rjsmock = require("requiremock.js");
+var asyncMock = require("asyncmock.js");
 
-var BASE = "../../../../public/js/";
-require(BASE+"icinga/module.js");
-
+requireNew("icinga/module.js");
 var module = rjsmock.getDefine(); 
 GLOBAL.document = $('body');
+
 /**
 * Test module that only uses eventhandlers and 
 * no custom logic
@@ -195,6 +195,9 @@ describe('The icinga module bootstrap', function() {
         var testClick = false;
         rjsmock.registerDependencies({
             "icinga/module": module,
+            "icinga/util/async" : {
+                registerHeaderListener: function() {}
+            },
             "modules/test/test" : {
                 eventHandler: {
                     "a.test" : {
@@ -214,7 +217,7 @@ describe('The icinga module bootstrap', function() {
             ]
         });
         tearDownTestDOM();
-        require(BASE+"icinga/icinga.js");
+        requireNew("icinga/icinga.js");
         var icinga = rjsmock.getDefine();
         $('body').append($("<a class='test'></a>"));
         $('a.test').click();
@@ -222,5 +225,56 @@ describe('The icinga module bootstrap', function() {
         icinga.getFailedModules().should.have.length(1);
         should.equal(icinga.getFailedModules()[0].name, "test2");
         tearDownTestDOM(); 
+    });
+
+    it("Should load modules lazily when discovering a X-Icinga-Enable-Module header", function() {
+        rjsmock.purgeDependencies();
+
+        requireNew("icinga/util/async.js");
+        var async = rjsmock.getDefine();
+        
+        rjsmock.registerDependencies({
+            "icinga/module": module,
+            "icinga/util/async": async,
+            "modules/test/test" : {
+                eventHandler: {
+                    "a.test" : {
+                        click : function() {
+                            testClick = true;
+                        }
+                    }  
+                }
+            },
+            "icinga/container" : {
+                registerAsyncMgr: function() {},
+                initializeContainers: function() {}
+            },
+            "modules/list" : [
+            ]
+        });
+
+        tearDownTestDOM();
+        
+        requireNew("icinga/icinga.js");
+        var icinga = rjsmock.getDefine();
+
+        var testClick = false;
+        // The module shouldn't be loaded
+        $('body').append($("<a class='test'></a>"));
+        $('a.test').click();
+        should.equal(testClick, false, "Unregistered module was loaded");
+         
+        asyncMock.setNextAsyncResult(async,"result", false, {
+            "X-Icinga-Enable-Module" : "test"
+        });
+        async.createRequest();
+         // The module shouldn't be loaded
+        $('body').append($("<a class='test'></a>"));
+        $('a.test').click();
+        should.equal(testClick, true, "Module wasn't automatically loaded on header!");
+         
+
+        tearDownTestDOM(); 
+
     });
 });
