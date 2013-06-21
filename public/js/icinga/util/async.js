@@ -3,7 +3,8 @@
     "use strict";
     var asyncMgrInstance = null;
 
-    define(['icinga/container','logging','icinga/behaviour','jquery'],function(containerMgr,log,behaviour,$) {
+    define(['icinga/container','logging','jquery'],function(containerMgr,log,$) {
+        var headerListeners = {};
 
         var pending = {
 
@@ -18,12 +19,30 @@
             return target;
         };
 
-        var handleResponse = function(html) {
+        var applyHeaderListeners = function(headers) {
+            for (var header in headerListeners) {
+                if (headers.getResponseHeader(header) === null) {
+                    // see if the browser/server converts headers to lowercase
+                    if (headers.getResponseHeader(header.toLowerCase()) === null) {
+                        continue;
+                    }
+                    header = header.toLowerCase();
+                }
+                var value = headers.getResponseHeader(header);
+                var listeners = headerListeners[header];
+                for (var i=0;i<listeners.length;i++) {
+                    listeners[i].fn.apply(listeners[i].scope, [value, header, headers]);
+                }
+            }
+        };
 
+        var handleResponse = function(html, status, response) {
+            applyHeaderListeners(response); 
             if(this.destination) {
                 containerMgr.updateContainer(this.destination,html,this);
             } else {
-                containerMgr.createPopupContainer(html,this);
+            // tbd
+            // containerMgr.createPopupContainer(html,this);
             }
         };
 
@@ -49,6 +68,8 @@
 
         var CallInterface = function() {
 
+            this.__internalXHRImplementation = $.ajax; 
+
             this.clearPendingRequestsFor = function(destination) {
                 if(!$.isArray(pending)) {
                     pending = [];
@@ -68,7 +89,7 @@
             };
 
             this.createRequest = function(url,data) {
-                var req = $.ajax({
+                var req = this.__internalXHRImplementation({
                     type   : data ? 'POST' : 'GET',
                     url    :  url,
                     data   : data,
@@ -100,6 +121,11 @@
 
             this.loadCSS = function(name) {
 
+            };
+
+            this.registerHeaderListener = function(header, fn, scope) {
+                headerListeners[header] = headerListeners[header] || [];
+                headerListeners[header].push({fn: fn, scope:scope});
             };
         };
         return new CallInterface();
