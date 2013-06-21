@@ -195,7 +195,7 @@ describe('The icinga module bootstrap', function() {
         var testClick = false;
         rjsmock.registerDependencies({
             "icinga/module": module,
-            "modules/test" : {
+            "modules/test/test" : {
                 eventHandler: {
                     "a.test" : {
                         click : function() {
