@@ -13,7 +13,7 @@ define([
      * Icinga prototype
      */
     var Icinga = function() {
-        var internalModules = ['icinga/modules/actionTable','icinga/modules/mainDetail'];
+        var internalModules = ['icinga/components/actionTable','icinga/components/mainDetail'];
 
         this.modules     = {};
         var failedModules = [];
@@ -37,7 +37,7 @@ define([
         };
 
         var loadModuleScript = function(name) {
-            moduleMgr.enableModule("modules/"+name, function(error) {
+            moduleMgr.enableModule("modules/"+name+"/"+name, function(error) {
                 failedModules.push({
                     name: name,
                     errorMessage: error

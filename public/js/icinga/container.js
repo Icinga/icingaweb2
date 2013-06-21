@@ -5,7 +5,7 @@
     var containerMgrInstance = null;
     var async;
 
-    var ContainerMgr = function($,log,Widgets,SubTable,holder) {
+    var ContainerMgr = function($,log,Widgets,SubTable) {
 
 
         var enhanceDetachLinks = function() {
@@ -34,14 +34,12 @@
             }
             target.focus();
             this.initializeContainers(target);
-            
         };
 
         this.updateControlTargets = function(ctrl, req) {
             $('a',ctrl).each(function() {
                 $(this).attr("href",req.url);
             });
-            
         };
 
         this.initControlBehaviour = function(root) {
@@ -86,7 +84,6 @@
             this.initExpandables(root);
             this.drawImplicitWidgets(root);
             this.loadAsyncContainers(root);
-            
         };
 
         this.createPopupContainer = function(content,req) {
@@ -96,7 +93,6 @@
                 .append($("<div>").addClass('modal-body').html(content)).appendTo(document.body);
 
             closeButton.on("click",function() {container.remove();});
-            
         };
 
         this.getContainer = function(id) {
@@ -107,7 +103,7 @@
         };
 
     };
-    define(['jquery','logging','icinga/widgets/checkIcons','icinga/widgets/subTable'], function($,log,widgets,subTable) {
+    define(['jquery','logging','icinga/widgets/checkIcons','icinga/widgets/subTable'],function($,log,widgets,subTable) {
         if (containerMgrInstance === null) {
             containerMgrInstance = new ContainerMgr($,log,widgets,subTable);
         }
