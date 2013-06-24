@@ -4,7 +4,7 @@
 require_once('Zend/View/Helper/Abstract.php');
 require_once('Zend/View.php');
 
-require('../../application/views/helpers/Qlink.php');
+require_once('../../application/views/helpers/Qlink.php');
 
 
 /**

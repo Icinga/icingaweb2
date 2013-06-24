@@ -7,7 +7,6 @@ namespace Icinga\Web;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Application\Platform;
 use Icinga\Application\Logger as Log;
-use Zend_Session_Namespace as SessionNamespace;
 
 /**
  * Class Notification
@@ -149,10 +148,10 @@ class Notification
      */
     final private function __construct()
     {
-        $this->session = new SessionNamespace('IcingaNotification');
-        if (!is_array($this->session->messages)) {
+        //$this->session = new SessionNamespace('IcingaNotification');
+        //if (!is_array($this->session->messages)) {
             $this->session->messages = array();
-        }
+        //}
 
         if (Platform::isCli()) {
             $this->cliFlag = true;

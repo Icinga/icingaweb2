@@ -28,7 +28,6 @@ class PhpSession extends Session
     private static $DEFAULT_COOKIEOPTIONS = array(
         'use_trans_sid'           => false,
         'use_cookies'             => true,
-        'use_only_cooies'         => true,
         'cookie_httponly'         => true,
         'use_only_cookies'        => true,
         'hash_function'           => true,
@@ -50,6 +49,9 @@ class PhpSession extends Session
                     $value
                 );
             }
+        }
+        if (!is_writable(session_save_path())) {
+            throw new \Icinga\Exception\ConfigurationError("Can't save session");
         }
     }
 
@@ -78,12 +80,7 @@ class PhpSession extends Session
         }
 
         session_name(PhpSession::SESSION_NAME);
-
-        /*
-         * @todo This is not right
-         */
-        \Zend_Session::start();
-        // session_start();
+        session_start();
         $this->isOpen = true;
         $this->setAll($_SESSION);
         return true;
@@ -138,16 +135,18 @@ class PhpSession extends Session
 
     public function purge()
     {
-        if ($this->ensureOpen() && !$this->isFlushed) {
+        if ($this->ensureOpen()) {
             $_SESSION = array();
             session_destroy();
             $this->clearCookies();
+            $this->close();
         }
     }
 
     private function clearCookies()
     {
         if (ini_get("session.use_cookies")) {
+            Logger::debug("Clearing cookies");
             $params = session_get_cookie_params();
             setcookie(
                 session_name(),
