@@ -8,6 +8,23 @@ require_once("../../library/Icinga/Form/Builder.php");
 
 use Icinga\Form\Builder as Builder;
 
+class BuilderTestModel
+{
+    public $username = '';
+    public $password = '';
+    private $test;
+
+    public function getTest()
+    {
+        return $this->test;
+    }
+
+    public function setTest($test)
+    {
+        $this->test = $test;
+    }
+}
+
 class BuilderTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -118,13 +135,23 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
     public function testModelBindingWithArray()
     {
         $view = new \Zend_View();
-        $builder = new Builder(null, array("CSRFProtection" => false));
-        $builder->setView($view);
+
         $myModel = array(
             "username" => "",
             "password" => ""
         );
-        $builder->bindToModel($myModel);
+
+        $builder = new Builder(
+            null,
+            array(
+                "CSRFProtection" => false,
+                "model" => &$myModel
+            )
+        );
+
+        $builder->setView($view);
+
+        // $builder->bindToModel($myModel);
         $builder->addElement("text", "username");
         $builder->addElement("password", "password");
         // test sync from form to model
@@ -155,22 +182,26 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         $view = new \Zend_View();
         $builder = new Builder(null, array("CSRFProtection" => false));
         $builder->setView($view);
-        $myModel = (object) array(
-            "username" => "",
-            "password" => ""
-        );
+
+
+
+        $myModel = new BuilderTestModel();
+
         $builder->bindToModel($myModel);
         $builder->addElement("text", "username");
         $builder->addElement("password", "password");
+        $builder->addElement("text", "test");
         // test sync from form to model
         $builder->populate(
             (object) array(
                 "username" => "User input<html>",
-                "password" => "Secret$123"
+                "password" => "Secret$123",
+                "test" => 'test334'
             )
         );
         $this->assertEquals("User input<html>", $myModel->username);
         $this->assertEquals("Secret$123", $myModel->password);
+        $this->assertEquals("test334", $myModel->getTest());
 
         // test sync from model to form
         $myModel->username = "Another user";
@@ -179,5 +210,15 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         $builder->syncWithModel();
         $this->assertEquals("Another user", $builder->getElement("username")->getValue());
         $this->assertEquals("Another pass", $builder->getElement("password")->getValue());
+    }
+
+    /**
+     * @expectedException \BadMethodCallException
+     * @expectedExceptionMessage Method doesNotExist123 does not exist either in \Icinga\Form\Builder nor in Zend_Form
+     */
+    public function testBadCall1()
+    {
+        $builder = new Builder(null, array("CSRFProtection" => false));
+        $builder->doesNotExist123();
     }
 }
