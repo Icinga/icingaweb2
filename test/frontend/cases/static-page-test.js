@@ -7,11 +7,14 @@ i2w = require('./i2w-config');
 
 var casper = i2w.getTestEnv();
 
-casper.start("http://build.icinga.org/jenkins");
+casper.start("http://localhost:12999/empty.html");
+
 
 casper.then(function() {
-    this.test.assertTitle("icinga-web test [Jenkins]", "The jenkins page");
+    casper.log(this.test);
+    this.test.assertTitle("Just an empty page");
 });
+
   
 casper.run(function() {
     this.test.done();
