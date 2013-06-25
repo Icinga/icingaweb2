@@ -17,8 +17,8 @@ requirejs.config({
 });
 
 define(['jquery','Holder'], function ($) {
-    require(['bootstrap']);
-    require(['icinga/icinga'], function (Icinga) {
+    requirejs(['bootstrap']);
+    requirejs(['icinga/icinga'], function (Icinga) {
         window.$ = $;
         window.jQuery = $;
         window.Icinga = Icinga;

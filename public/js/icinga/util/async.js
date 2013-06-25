@@ -3,13 +3,39 @@
     "use strict";
     var asyncMgrInstance = null;
 
-    define(['icinga/container','logging','icinga/behaviour','jquery'],function(containerMgr,log,behaviour,$) {
+    define(['icinga/container','logging','jquery'],function(containerMgr,log,$) {
 
 
         var pending = {
 
         };
-
+        
+        var getCurrentGETParameters = function() {
+            var currentGET = window.location.search.substring(1).split("&");
+            var params = {};
+            if(currentGET.length > 0) {
+                $.each(currentGET, function(idx, elem) {
+                    var keyVal = elem.split("=");
+                    params[encodeURIComponent(keyVal[0])] = encodeURIComponent(keyVal[1]);
+                }); 
+            }
+            return params;
+        }
+;
+        var pushGet = function(param, value, url) {
+            url = url || (window.location.origin+window.location.pathname);
+            var params = getCurrentGETParameters();
+            params[encodeURIComponent(param)] = encodeURIComponent(value);
+            var search = "?";
+            for (var name in params) {
+                if(search != "?")
+                    search += "&";
+                search += name+"="+params[name];
+            }
+    
+            return url+search+"#"+window.location.hash;
+        };
+        
         var getDOMForDestination = function(destination) {
             var target = destination;
             if(typeof destination === "string") {
@@ -21,7 +47,6 @@
         };
 
         var handleResponse = function(html) {
-
             if(this.destination) {
                 containerMgr.updateContainer(this.destination,html,this);
             } else {
@@ -94,11 +119,16 @@
                     });
                     req.destination = destination;
                 }
-
+                if (destination == "icinga-main") {
+                    History.pushState(data, document.title, url);
+                } else {
+                    url = pushGet("c["+destination+"]", url);
+                    History.pushState(data, document.title, url);
+                }
+                console.log("New url: ", url);
                 return req;
-
             };
-
+            
             this.loadCSS = function(name) {
 
             };

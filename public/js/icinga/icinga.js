@@ -67,7 +67,12 @@ define([
             loadIntoContainer: function(ctr) {
 
             },
-            
+        
+            loadUrl: function(url, target, params) {
+                target = target || "icinga-main";
+                async.loadToTarget(target, url, params);
+            },
+ 
             getFailedModules: function() {
                 return failedModules;
             }

@@ -34,14 +34,14 @@
             }
             target.focus();
             this.initializeContainers(target);
-            holder.run();
+            
         };
 
         this.updateControlTargets = function(ctrl, req) {
             $('a',ctrl).each(function() {
                 $(this).attr("href",req.url);
             });
-            holder.run();
+            
         };
 
         this.initControlBehaviour = function(root) {
@@ -86,7 +86,7 @@
             this.initExpandables(root);
             this.drawImplicitWidgets(root);
             this.loadAsyncContainers(root);
-            holder.run();
+            
         };
 
         this.createPopupContainer = function(content,req) {
@@ -96,7 +96,7 @@
                 .append($("<div>").addClass('modal-body').html(content)).appendTo(document.body);
 
             closeButton.on("click",function() {container.remove();});
-            holder.run();
+            
         };
 
         this.getContainer = function(id) {
@@ -104,9 +104,9 @@
         };
 
     };
-    define(['jquery','logging','icinga/widgets/checkIcons','icinga/widgets/subTable','Holder'],function($,log,widgets,subTable,holder) {
+    define(['jquery','logging','icinga/widgets/checkIcons','icinga/widgets/subTable'], function($,log,widgets,subTable) {
         if (containerMgrInstance === null) {
-            containerMgrInstance = new ContainerMgr($,log,widgets,subTable,holder);
+            containerMgrInstance = new ContainerMgr($,log,widgets,subTable);
         }
         return containerMgrInstance;
 

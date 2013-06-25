@@ -11,7 +11,6 @@ casper.start("http://localhost:12999/empty.html");
 
 
 casper.then(function() {
-    casper.log(this.test);
     this.test.assertTitle("Just an empty page");
 });
 
