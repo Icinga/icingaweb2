@@ -110,10 +110,6 @@ class ActionController extends ZfController
          * @todo remove this!
          */
 
-        $this->allowAccess = true;
-        $this->init();
-
-        return null;
 
         if ($this->handlesAuthentication() ||
                 Manager::getInstance(
@@ -337,49 +333,5 @@ class ActionController extends ZfController
             $this->getResponse()->append('benchmark', $this->renderBenchmark());
         }*/
 
-    }
-
-    /**
-     * Whether the token parameter is valid
-     *
-     * TODO: Could this make use of Icinga\Web\Session once done?
-     *
-     * @param int $maxAge    Max allowed token age
-     * @param string $sessionId A specific session id (useful for tests?)
-     * @return bool
-     */
-    public function hasValidToken($maxAge = 600, $sessionId = null)
-    {
-        $sessionId = $sessionId ? $sessionId : session_id();
-        $seed = $this->_getParam('seed');
-        if (!is_numeric($seed)) {
-            return false;
-        }
-
-        // Remove quantitized timestamp portion so maxAge applies
-        $seed -= (intval(time() / $maxAge) * $maxAge);
-        $token = $this->_getParam('token');
-        return $token === hash('sha256', $sessionId . $seed);
-    }
-
-    /**
-     * Get a new seed/token pair
-     *
-     * TODO: Could this make use of Icinga\Web\Session once done?
-     *
-     * @param int $maxAge    Max allowed token age
-     * @param string $sessionId A specific session id (useful for tests?)
-     *
-     * @return array
-     */
-    public function getSeedTokenPair($maxAge = 600, $sessionId = null)
-    {
-        $sessionId = $sessionId ? $sessionId : session_id();
-        $seed = mt_rand();
-        $hash = hash('sha256', $sessionId . $seed);
-
-        // Add quantitized timestamp portion to apply maxAge
-        $seed += (intval(time() / $maxAge) * $maxAge);
-        return array($seed, $hash);
     }
 }
