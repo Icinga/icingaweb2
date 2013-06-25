@@ -7,6 +7,7 @@ namespace Tests\Icinga\Authentication;
 require_once("../../library/Icinga/Authentication/Session.php");
 require_once("../../library/Icinga/Authentication/PhpSession.php");
 require_once("../../library/Icinga/Application/Logger.php");
+require_once("../../library/Icinga/Exception/ConfigurationError.php");
 require_once("Zend/Log.php");
 
 use Icinga\Authentication\PhpSession as PhpSession;
