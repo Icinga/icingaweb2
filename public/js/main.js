@@ -24,4 +24,3 @@ define(['jquery','Holder'], function ($) {
         window.Icinga = Icinga;
     });
 });
-

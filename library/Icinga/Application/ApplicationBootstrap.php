@@ -100,7 +100,7 @@ abstract class ApplicationBootstrap
     public function moduleManager()
     {
         if ($this->moduleManager === null) {
-            $this->moduleManager = new ModuleManager($this, "/etc/icinga2/modules_enabled");
+            $this->moduleManager = new ModuleManager($this, $this->config->global->moduleFolder);
         }
         return $this->moduleManager;
     }

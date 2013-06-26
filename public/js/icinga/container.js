@@ -108,6 +108,5 @@
             containerMgrInstance = new ContainerMgr($,log,widgets,subTable);
         }
         return containerMgrInstance;
-
     });
 })();
