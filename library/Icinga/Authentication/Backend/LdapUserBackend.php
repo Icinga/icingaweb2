@@ -8,6 +8,7 @@ use Icinga\Authentication\User as User;
 use Icinga\Authentication\UserBackend;
 use Icinga\Authentication\Credentials;
 use Icinga\Protocol\Ldap;
+use Icinga\Application\Config;
 
 class LdapUserBackend implements UserBackend
 {
@@ -33,8 +34,16 @@ class LdapUserBackend implements UserBackend
     protected function selectUsername($username)
     {
         return $this->connection->select()
-            ->from('user', array('sAMAccountName'))
-            ->where('sAMAccountName', $this->stripAsterisks($username));
+            ->from(
+                Config::getInstance()->authentication->users->user_class,
+                array(
+                    Config::getInstance()->authentication->users->user_name_attribute
+                )
+            )
+            ->where(
+                Config::getInstance()->authentication->users->user_name_attribute,
+                $this->stripAsterisks($username)
+            );
     }
 
     public function authenticate(Credentials $credentials)
@@ -42,7 +51,8 @@ class LdapUserBackend implements UserBackend
         if (!$this->connection->testCredentials(
             $this->connection->fetchDN($this->selectUsername($credentials->getUsername())),
             $credentials->getPassword()
-        )     ) {
+        )
+        ) {
             return false;
         }
         $user = new User($credentials->getUsername());
