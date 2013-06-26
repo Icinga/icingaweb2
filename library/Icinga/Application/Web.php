@@ -38,7 +38,6 @@ class Web extends ApplicationBootstrap
         return $this->loadConfig()
             ->configureErrorHandling()
             ->setTimezone()
-            ->configureSession()
             ->configureCache()
             ->prepareZendMvc()
             ->loadTranslations()
@@ -91,16 +90,6 @@ class Web extends ApplicationBootstrap
         $this->dispatchFrontController();
     }
 
-    /**
-     * Configure web session settings
-     *
-     * @return self
-     */
-    protected function configureSession()
-    {
-        Manager::getInstance();
-        return $this;
-    }
 
     protected function loadTranslations()
     {

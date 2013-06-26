@@ -1,0 +1,1 @@
+<testsuite time="0"><testcase classname="cases/static-page-test" name="The jenkins page" time="0.626"><failure type="assertTitle">Page title is: "i4cinga-web test [Jenkins]"</failure></testcase></testsuite>

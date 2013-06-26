@@ -20,15 +20,15 @@ namespace Icinga\Authentication;
  */
 class User
 {
-    private $username = "";
-    private $firstname = "";
-    private $lastname = "";
-    private $email = "";
-    private $domain = "";
-    private $additionalInformation = array();
+    public $username = "";
+    public $firstname = "";
+    public $lastname = "";
+    public $email = "";
+    public $domain = "";
+    public $additionalInformation = array();
 
-    private $permissions = array();
-    private $groups = array();
+    public $permissions = array();
+    public $groups = array();
 
     public function __construct($username, $firstname = null, $lastname = null, $email = null)
     {
