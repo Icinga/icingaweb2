@@ -54,7 +54,7 @@ class Manager
 
     public function select()
     {
-        $source = new \Icinga\Data\ArrayDataSource($this->getModuleInfo());
+        $source = new \Icinga\Data\ArrayDatasource($this->getModuleInfo());
         return $source->select();
     }
 
@@ -238,7 +238,12 @@ class Manager
     public function getModuleInfo()
     {
         $installed = $this->listInstalledModules();
+        
         $info = array();
+        if ($installed === null) {
+            return $info;
+        }
+        
         foreach ($installed as $name) {
             $info[] = (object) array(
                 'name'    => $name,
@@ -265,7 +270,10 @@ class Manager
         if ($this->installedBaseDirs === null) {
             $this->detectInstalledModules();
         }
-        return array_keys($this->installedBaseDirs);
+        
+        if ($this->installedBaseDirs !== null) {
+            return array_keys($this->installedBaseDirs);
+        }
     }
 
     public function detectInstalledModules()

@@ -80,5 +80,3 @@ define([
     };
     return new Icinga();
 });
-
-
