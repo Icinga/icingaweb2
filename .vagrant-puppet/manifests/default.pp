@@ -326,3 +326,8 @@ cmmi { 'icinga2':
   require => Package['boost-devel'],
   timeout => 600
 }
+
+file { 'icinga2-web-public':
+  ensure => '/vagrant/public',
+  path   => '/var/www/html/icinga2-web'
+}
