@@ -3,14 +3,14 @@
 namespace Icinga\Monitoring;
 
 use Icinga\Application\Config;
-use Icinga\Web\Session;
+use Icinga\Authentication\Manager as AuthManager;
 use Exception;
 
 class Backend
 {
     protected static $instances = array();
     protected static $backendConfigs;
-    
+
     final protected function __construct()
     {
     }
@@ -76,7 +76,7 @@ class Backend
         } else {
             if ($name === null) {
                 // TODO: Remove this, will be chosen by Environment
-                $name = Session::getInstance()->backend;
+                $name = AuthManager::getInstance()->getSession()->get('backend');
             }
             return self::getBackend($name);
         }

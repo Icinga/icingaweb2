@@ -176,7 +176,7 @@ class Manager
             Logger::info("Invalid credentials for user %s provided", $credentials->getUsername());
             return false;
         }
-        
+
         if ($persist == true) {
             $this->persistCurrentUser();
             $this->session->write();
@@ -243,5 +243,10 @@ class Manager
     public function getGroups()
     {
         return $this->user->getGroups();
+    }
+
+    public function getSession()
+    {
+        return $this->session;
     }
 }

@@ -3,8 +3,6 @@
 namespace Icinga\Monitoring;
 
 use Icinga\Application\Config;
-use Icinga\Web\Session;
-use Exception;
 
 class Environment
 {
