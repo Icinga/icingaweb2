@@ -1,0 +1,40 @@
+<?= $this->partial('show/header.phtml', array(
+    'host'    => $this->host,
+    'service' => $this->service,
+    'tabs'    => $this->tabs,
+    'compact' => $this->compact
+)); ?>
+<?= $this->expandable(
+    $this->pluginOutput($this->host->host_output),
+    $this->pluginOutput($this->host->host_long_output)
+) ?>
+<?= $this->expandable(
+    '<b>Command:</b> ' . array_shift(preg_split('|!|', $this->host->host_check_command)),
+    $this->commandArguments($this->host->host_check_command)
+) ?>
+<? if (! empty($this->hostgroups)): ?>
+<?
+$list = array();
+foreach ($this->hostgroups as $name => $alias) {
+    $list[] = $this->qlink($alias, 'monitoring/list/services', array(
+        'hostgroups' => $name
+    ));
+}
+?>
+<b>Hostgroups:</b> <?= implode(', ', $list) ?><br />
+<? endif ?>
+<?= $this->render('show/components/contacts.phtml') ?>
+<?= $this->render('show/components/comments.phtml') ?>
+
+<? foreach ($this->customvars as $name => $value): ?>
+<b><?= $this->escape($name) ?>:</b> <?= $this->escape($value) ?><br />
+<? endforeach ?>
+<? if ($this->host->host_perfdata): ?>
+<?= $this->expandable(
+    '<b>Performance data</b>',
+    $this->perfdata($this->host->host_perfdata),
+    array('collapsed' => false)
+) ?>
+<? endif ?>
+<?= $this->preview_image ?>
+

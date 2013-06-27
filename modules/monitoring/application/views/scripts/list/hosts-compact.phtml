@@ -1,0 +1,59 @@
+<?php if (empty($this->hosts)): ?>
+- no hosts is matching this filter -
+<? return; endif ?>
+<? $hosts = $this->hosts->paginate(); ?>
+<table class="hosts action">
+ <thead>
+  <tr>
+   <th style="width: 6em;" >State</th>
+   <th >Host</th>
+  </tr>
+ </thead>
+ <tbody>
+<? foreach ($hosts as $host): ?>
+<?php
+
+$icons = array();
+if ($host->host_acknowledged) {
+    $icons['ack.gif'] = 'Problem has been acknowledged';
+}
+
+if ($host->host_in_downtime) {
+    $icons['downtime.gif'] = 'Host is in a scheduled downtime';
+}
+
+$state_classes = array($this->monitoringState($host, 'host'));
+
+if ($host->host_acknowledged || $host->host_in_downtime) {
+    $state_classes[] = 'handled';
+}
+if ($host->host_last_state_change > (time() - 600)) {
+    $state_classes[] = 'new';
+}
+$state_title = strtoupper($this->monitoringState($host, 'host'))
+    . ' since '
+    . date('Y-m-d H:i:s', $host->host_last_state_change);
+?>
+  <tr class="<?= implode(' ', $state_classes) ?>">
+   <td style="width: 20%;" class="state" title="<?= $state_title ?>"><?= $this->qlink(
+    $this->timeSince($host->host_last_state_change),
+    'monitoring/show/history',
+    array('host'  => $host->host_name),
+    array('quote' => false)) ?></td>
+   <td style="width: 80%;"><?
+   foreach ($icons as $icon => $alt)
+    echo $this->img('img/classic/' . $icon, array(
+        'class' => 'icon',
+        'title' => $alt
+    ));
+?>
+<?= $this->qlink(
+    $host->host_name,
+    'monitoring/show/host',
+    array('host' => $host->host_name),
+    array('class' => 'row-action')
+    ) ?></td>
+  </tr>
+<? endforeach ?>
+ </tbody>
+</table>

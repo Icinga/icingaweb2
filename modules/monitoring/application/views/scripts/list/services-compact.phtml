@@ -1,0 +1,73 @@
+<? if (empty($this->services)): ?>
+<div class="alert alert-info fullpage_infobox">
+    Sorry, no services found for this search
+</div>
+<? return; endif ?>
+<?
+
+$services = $this->services->paginate();
+
+?>
+<table class="services action">
+    <thead>
+        <tr>
+            <th style="width: 6em;" >State</th>
+            <th >Service</th>
+        </tr>
+    </thead>
+    <tbody>
+<? foreach ($services as $service): ?>
+<?php
+
+$icons = array();
+if ($service->service_acknowledged) {
+    $icons['ack.gif'] = 'Problem has been acknowledged';
+}
+
+if (! empty($service->service_downtimes_with_info)) {
+    $icons['downtime.gif'] = implode("\n",
+        $this->resolveComments($service->service_downtimes_with_info)
+    );
+}
+
+if (! empty($service->service_comments_with_info)) {
+    $icons['comment.gif'] = implode("\n",
+        $this->resolveComments($service->service_comments_with_info)
+    );
+}
+
+$state_classes = array($this->monitoringState($service, 'service'));
+if ($service->service_handled || $service->service_acknowledged || ! empty($service->service_downtimes_with_info)) {
+   $state_classes[] = 'handled';
+}
+if ($service->service_last_state_change > (time() - 600)) {
+    $state_classes[] = 'new';
+}
+$state_title = date('Y-m-d H:i:s', $service->service_last_state_change);
+
+$params =  array(
+    'host'    => $service->host_name,
+    'service' => $service->service_description
+);
+if (isset($this->preserve['backend'])) {
+    $params['backend'] = $this->preserve['backend'];
+}
+?>
+    <tr class="<?= implode(' ', $state_classes) ?>">
+        <td class="state" title="<?= $state_title ?>">
+            <?= $this->qlink(
+            $this->timeSince($service->service_last_state_change),
+            'monitoring/show/history', $params, array('quote' => false)) ?>
+        </td>
+        <td>
+            <?= $this->qlink(
+            $service->host_name,
+            'monitoring/show/host',
+            $params
+        ); ?>:
+            <?= $this->qlink($service->service_description, 'monitoring/show/service', $params, array('class' => 'row-action')) ?>
+        </td>
+    </tr>
+        <? endforeach ?>
+    </tbody>
+</table>
