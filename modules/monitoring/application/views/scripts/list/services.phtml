@@ -63,9 +63,9 @@ if (isset($_GET['dir'])) {
 }
 ?>
 <div class="dontprint">
-<? if (! empty($fparams)): ?>
+<?php if (! empty($fparams)): ?>
 <div style="float: right; width: 20em; font-size: 0.8em;"><b>Filters</b><br>
-<? foreach ($fparams as $k => $v): ?>
+<?php foreach ($fparams as $k => $v): ?>
 <?= $this->qlink(
     'x',
     'monitoring/list/services',
@@ -74,9 +74,9 @@ if (isset($_GET['dir'])) {
         'style' => array('color' => 'red')
     )
 ) ?> <?= $this->escape("$k = $v") ?></br>
-<? endforeach ?>
+<?php endforeach; ?>
 </div>
-<? endif ?>
+<?php endif; ?>
 <form method="get" action="<?= $this->qUrl(
     'monitoring/list/services?' . http_build_query(
         $this->services->getAppliedFilter()->toParams()
@@ -106,11 +106,11 @@ Sort by <?= $this->formSelect(
     Sorry, no services found for this search
 </div>
 
-<?php return; endif ?>
+<?php return; endif; ?>
 <?= $this->paginationControl($services, null, null, array('preserve' => $this->preserve )); ?>
 <table class="action">
  <tbody>
-<? foreach ($services as $service):
+<?php foreach ($services as $service):
  list($host_col,$icons,$state_classes,$state_title,$graph) = getRowProperties($service,$last_host,$this); ?>
   <tr class="<?= implode(' ', $state_classes) ?>">
         <td class="state" title="<?= $state_title ?>">

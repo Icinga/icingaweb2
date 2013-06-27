@@ -12,20 +12,20 @@
 <?= $this->render('show/components/contacts.phtml') ?>
 <?= $this->render('show/components/comments.phtml') ?>
 
-<? foreach ($this->customvars as $name => $value): ?>
+<?php foreach ($this->customvars as $name => $value): ?>
 <b><?= $this->escape($name) ?>:</b> <?= $this->escape($value) ?><br />
-<? endforeach ?>
+<?php endforeach; ?>
 <?= $this->expandable(
     '<b>Command:</b> ' . array_shift(preg_split('|!|', $this->service->service_check_command)),
     $this->commandArguments($this->service->service_check_command)
 ) ?>
-<? if ($this->service->service_perfdata): ?>
+<?php if ($this->service->service_perfdata): ?>
 <?= $this->expandable(
     '<b>Performance data</b>:',
     $this->perfdata($this->service->service_perfdata),
     array('collapsed' => false)
 ) ?>
-<? endif ?>
+<?php endif; ?>
 
 <?= $this->partial('show/legacy-service.phtml', array('service' => $this->service)) ?>
 <?= $this->preview_image ?>

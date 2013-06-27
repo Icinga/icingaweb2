@@ -8,13 +8,13 @@ $history = $this->history->paginate();
 
 ?>
 
-<? if (empty($history)): ?>
+<?php if (empty($history)): ?>
 There are no matching history entries right now
-<? else: ?>
+<?php else: ?>
 <?= $this->paginationControl($history, null, null, array('preserve' => $this->preserve)); ?>
 <table class="paginatable">
  <tbody>
-<? foreach ($history as $event): ?>
+<?php foreach ($history as $event): ?>
 <?php
 
 if ($event->object_type == 'host') {
@@ -27,11 +27,11 @@ $row_class = array_key_exists($event->state, $states) ? $states[$event->state] :
 
 ?>
 <tr class="<?= $row_class ?>"><td class="state"><?= date('d.m. H:i', $event->timestamp ) ?></td>
-<? if (! isset($this->host)): ?>
+<?php if (! isset($this->host)): ?>
 <td><?= $this->escape($event->host_name) ?></td>
-<? endif ?>
-<? if (! isset($this->service)): ?>
-<td><? if (isset($this->host)): ?>
+<?php endif; ?>
+<?php if (! isset($this->service)): ?>
+<td><?php if (isset($this->host)): ?>
 <?= $this->qlink(
     $event->service_description,
     'monitoring/show/service',
@@ -40,11 +40,11 @@ $row_class = array_key_exists($event->state, $states) ? $states[$event->state] :
         'service' => $event->service_description
     )
 ) ?>
-<? else: ?>
+<?php else: ?>
 <?= $this->escape($event->service_description) ?>
-<? endif ?>
+<?php endif; ?>
 </td>
-<? endif ?>
+<?php endif; ?>
 <td style="padding: 0.2em;"><?php
 
 $imgparams = array(
@@ -83,9 +83,9 @@ switch ($event->type) {
         break;
 }
  ?>
-<? if ($event->attempt !== null): ?>
+<?php if ($event->attempt !== null): ?>
  [ <?= $event->attempt ?>/<?=$event->max_attempts ?> ]
-<? endif ?>
+<?php endif; ?>
  <?= $this->ticket_pattern ? preg_replace(
             $this->ticket_pattern,
             $this->ticket_link,
@@ -93,7 +93,7 @@ switch ($event->type) {
     ) : $this->pluginOutput($event->output) ?>
 </td>
 </tr>
-<? endforeach ?>
+<?php endforeach; ?>
  </tbody>
 </table>
-<? endif ?>
+<?php endif; ?>

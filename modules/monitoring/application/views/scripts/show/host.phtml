@@ -12,7 +12,7 @@
     '<b>Command:</b> ' . array_shift(preg_split('|!|', $this->host->host_check_command)),
     $this->commandArguments($this->host->host_check_command)
 ) ?>
-<? if (! empty($this->hostgroups)): ?>
+<?php if (! empty($this->hostgroups)): ?>
 <?
 $list = array();
 foreach ($this->hostgroups as $name => $alias) {
@@ -22,19 +22,19 @@ foreach ($this->hostgroups as $name => $alias) {
 }
 ?>
 <b>Hostgroups:</b> <?= implode(', ', $list) ?><br />
-<? endif ?>
+<?php endif; ?>
 <?= $this->render('show/components/contacts.phtml') ?>
 <?= $this->render('show/components/comments.phtml') ?>
 
-<? foreach ($this->customvars as $name => $value): ?>
+<?php foreach ($this->customvars as $name => $value): ?>
 <b><?= $this->escape($name) ?>:</b> <?= $this->escape($value) ?><br />
-<? endforeach ?>
-<? if ($this->host->host_perfdata): ?>
+<?php endforeach; ?>
+<?php if ($this->host->host_perfdata): ?>
 <?= $this->expandable(
     '<b>Performance data</b>',
     $this->perfdata($this->host->host_perfdata),
     array('collapsed' => false)
 ) ?>
-<? endif ?>
+<?php endif; ?>
 <?= $this->preview_image ?>
 

@@ -1,22 +1,22 @@
 <?php
 $showService = isset($this->service) && $this->tabs->getActiveName() !== 'host';
 ?>
-<? if (! $this->compact): ?>
+<?php if (! $this->compact): ?>
 <?= $this->tabs ?>
-<? endif ?>
+<?php endif; ?>
 <table style="margin-bottom: 1em">
   <tr class="<?= $this->monitoringState($this->host, 'host') ?><?= $this->host->host_handled ? ' handled' : '' ?>">
     <td><b><?= $this->escape($this->host->host_name) ?><?
  if ($this->host->host_address && $this->host->host_address !== $this->host->host_name): ?>
  (<?= $this->escape($this->host->host_address) ?>)
-<? endif ?>
+<?php endif; ?>
     </b></td>
     <td class="state"<?= $showService ? '' : ' rowspan="2"' ?>>
       <?= $this->util()->getHostStateName($this->host->host_state); ?><br />
       since <?= $this->timeSince($this->host->host_last_state_change) ?>
     </td>
   </tr>
-<? if ($showService): ?>
+<?php if ($showService): ?>
   <tr class="<?= $this->monitoringState($this->service, 'service'); ?><?= $this->service->service_handled ? ' handled' : '' ?>">
     <td><b>Service: <?= $this->escape($this->service->service_description) ?></b></td>
     <td class="state">
@@ -24,7 +24,7 @@ $showService = isset($this->service) && $this->tabs->getActiveName() !== 'host';
       since <?= $this->timeSince($this->service->service_last_state_change) ?>
     </td>
   </tr>
-<? else: ?>
+<?php else: ?>
   <tr><td><b>Host state</b></td></tr>
-<? endif ?>
+<?php endif; ?>
 </table>

@@ -1,8 +1,8 @@
-<? if (empty($this->services)): ?>
+<?php if (empty($this->services)): ?>
 <div class="alert alert-info fullpage_infobox">
     Sorry, no services found for this search
 </div>
-<? return; endif ?>
+<?php return; endif; ?>
 <?
 
 $services = $this->services->paginate();
@@ -16,7 +16,7 @@ $services = $this->services->paginate();
         </tr>
     </thead>
     <tbody>
-<? foreach ($services as $service): ?>
+<?php foreach ($services as $service): ?>
 <?php
 
 $icons = array();
@@ -68,6 +68,6 @@ if (isset($this->preserve['backend'])) {
             <?= $this->qlink($service->service_description, 'monitoring/show/service', $params, array('class' => 'row-action')) ?>
         </td>
     </tr>
-        <? endforeach ?>
+        <?php endforeach; ?>
     </tbody>
 </table>

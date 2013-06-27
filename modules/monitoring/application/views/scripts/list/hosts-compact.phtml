@@ -1,7 +1,7 @@
 <?php if (empty($this->hosts)): ?>
 - no hosts is matching this filter -
-<? return; endif ?>
-<? $hosts = $this->hosts->paginate(); ?>
+<?php return; endif; ?>
+<?php $hosts = $this->hosts->paginate(); ?>
 <table class="hosts action">
  <thead>
   <tr>
@@ -10,7 +10,7 @@
   </tr>
  </thead>
  <tbody>
-<? foreach ($hosts as $host): ?>
+<?php foreach ($hosts as $host): ?>
 <?php
 
 $icons = array();
@@ -54,6 +54,6 @@ $state_title = strtoupper($this->monitoringState($host, 'host'))
     array('class' => 'row-action')
     ) ?></td>
   </tr>
-<? endforeach ?>
+<?php endforeach; ?>
  </tbody>
 </table>

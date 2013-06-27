@@ -1,4 +1,4 @@
-<? if (! empty($this->contacts)): ?>
+<?php if (! empty($this->contacts)): ?>
 <?
 $list = array();
 foreach ($this->contacts as $contact) {
@@ -8,9 +8,9 @@ foreach ($this->contacts as $contact) {
 }
 ?>
 <b>Contacts:</b> <?= implode(', ', $list) ?><br />
-<? endif ?>
+<?php endif; ?>
 
-<? if (! empty($this->contactgroups)): ?>
+<?php if (! empty($this->contactgroups)): ?>
 <?
 $list = array();
 foreach ($this->contactgroups as $contactgroup) {
@@ -20,5 +20,5 @@ foreach ($this->contactgroups as $contactgroup) {
 }
 ?>
 <b>Contactgroups:</b> <?= implode(', ', $list) ?><br />
-<? endif ?>
+<?php endif; ?>
 

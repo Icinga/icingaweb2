@@ -1,5 +1,5 @@
 
-<? if (! empty($this->comments)): ?>
+<?php if (! empty($this->comments)): ?>
 <?
 $list = array();
 foreach ($this->comments as $comment) {
@@ -22,4 +22,4 @@ foreach ($this->comments as $comment) {
 }
 ?>
 <b>Comments:</b><blockquote> <?= implode('<br />', $list) ?></blockquote>
-<? endif ?>
+<?php endif; ?>

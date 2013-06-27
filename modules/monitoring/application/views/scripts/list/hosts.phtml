@@ -43,9 +43,9 @@ if (isset($_GET['dir'])) {
     $always['dir'] = $_GET['dir'];
 }
 ?>
-<? if (! empty($fparams)): ?>
+<?php if (! empty($fparams)): ?>
 <div style="float: right; width: 20em; font-size: 0.8em;"><b>Filters</b><br>
-<? foreach ($fparams as $k => $v): ?>
+<?php foreach ($fparams as $k => $v): ?>
 <?= $this->qlink(
     'x',
     'monitoring/list/hosts',
@@ -54,9 +54,9 @@ if (isset($_GET['dir'])) {
         'style' => array('color' => 'red')
     )
 ) ?> <?= $this->escape("$k = $v") ?></br>
-<? endforeach ?>
+<?php endforeach; ?>
 </div>
-<? endif ?>
+<?php endif; ?>
 <form method="get" action="<?= $this->qUrl(
     'monitoring/list/hosts?' . http_build_query(
         $this->hosts->getAppliedFilter()->toParams()
@@ -77,19 +77,19 @@ Sort by <?= $this->formSelect(
 <input type="text" placeholder="Add filter..." name="search" />
 </form>
 <?php // end filter ?>
-<? if (empty($hosts)): ?>
+<?php if (empty($hosts)): ?>
 
 <div class="alert alert-info fullpage_infobox">
     Sorry, no host found for this search
 </div>
-<? return; endif ?>
+<?php return; endif; ?>
 
 <?=  $this->paginationControl($hosts, null, null, array('preserve' => $this->preserve)) ?>
 
 <table class="action">
  <tbody>
 
-<? foreach ($hosts as $host):
+<?php foreach ($hosts as $host):
  list($icons,$state_classes,$state_title) = getRowProperties($host,$this); ?>
   <tr class="<?= implode(' ', $state_classes) ?>">
    <td class="state" title="<?= $state_title ?>"><?= $this->qlink(
