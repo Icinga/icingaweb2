@@ -17,7 +17,6 @@ use Icinga\Application\Logger as Logger;
  * no parameter in order to auto-close it) to persist all values previously
  * set with the set() method
  *
- * @package Icinga\Authentication
  */
 class PhpSession extends Session
 {
@@ -33,7 +32,13 @@ class PhpSession extends Session
         'hash_function'           => true,
         'hash_bits_per_character' => 5,
     );
-
+    
+    /**
+    *   Creates a new PHPSession object using the provided options (if any)
+    *   
+    *   @param  Array   $options        An optional array of ini options to set,
+    *                                   @see http://php.net/manual/en/session.configuration.php
+    **/
     public function __construct(array $options = null)
     {
         if ($options !== null) {
@@ -55,6 +60,11 @@ class PhpSession extends Session
         }
     }
 
+    /**
+    *   Returns true when the session has not yet been closed
+    *
+    *   @return Boolean
+    **/
     private function sessionCanBeChanged()
     {
         if ($this->isFlushed) {
@@ -64,6 +74,11 @@ class PhpSession extends Session
         return true;
     }
     
+    /**
+    *   Returns true when the session has not yet been opened
+    *
+    *   @return Boolean
+    **/
     private function sessionCanBeOpened()
     {
         if ($this->isOpen) {
@@ -73,6 +88,11 @@ class PhpSession extends Session
         return $this->sessionCanBeChanged();
     }
  
+    /**
+    *   Opens a PHP session when possible
+    *
+    *   @return Boolean     True on success
+    **/
     public function open()
     {
         if (!$this->sessionCanBeOpened()) {
@@ -86,6 +106,11 @@ class PhpSession extends Session
         return true;
     }
   
+    /**
+    *   Ensures that the session is open modifyable
+    * 
+    *   @return Boolean     True on success
+    **/
     private function ensureOpen()
     {
         // try to open first
@@ -97,6 +122,15 @@ class PhpSession extends Session
         return true;
     }
  
+    /**
+    *   Reads all values written to the underyling session and
+    *   makes them accessible. if keepOpen is not set, the session
+    *   is immediately closed again
+    *
+    *   @param  Boolean $keepOpen       Set to true when modifying the session
+    *
+    *   @return Boolean                 True on success
+    **/
     public function read($keepOpen = false)
     {
         if (!$this->ensureOpen()) {
@@ -109,6 +143,14 @@ class PhpSession extends Session
         return true;
     }
  
+    /**
+    *   Writes all values of this session opbject to the underyling session implementation
+    *   If keepOpen is not set, the session is closed
+    *
+    *   @param  Boolean $keepOpen       Set to true when modifying the session further
+    *
+    *   @return Boolean                 True on success
+    **/
     public function write($keepOpen = false)
     {
         if (!$this->ensureOpen()) {
@@ -125,6 +167,11 @@ class PhpSession extends Session
         return null;
     }
     
+    /**
+    *   Closes and writes the session. Call @see PHPSession::write in order to persist changes
+    *   and only call this if you want the session to be closed without any changes
+    *
+    **/
     public function close()
     {
         if (!$this->isFlushed) {
@@ -132,7 +179,11 @@ class PhpSession extends Session
         }
         $this->isFlushed = true;
     }
-
+    
+    /**
+    *  Deletes the current session, causing all session information to be lost
+    *
+    **/
     public function purge()
     {
         if ($this->ensureOpen()) {
@@ -143,6 +194,10 @@ class PhpSession extends Session
         }
     }
 
+    /**
+    *   Removes session cookies
+    *
+    **/
     private function clearCookies()
     {
         if (ini_get("session.use_cookies")) {
