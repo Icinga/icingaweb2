@@ -13,22 +13,25 @@ define([
      * Icinga prototype
      */
     var Icinga = function() {
-        var internalModules = ['icinga/modules/actionTable','icinga/modules/mainDetail'];
+        var internalModules = ['icinga/components/actionTable','icinga/components/mainDetail'];
 
         this.modules     = {};
         var failedModules = [];
 
         var initialize = function () {
+            registerLazyModuleLoading();
             enableInternalModules();
-
+            
             containerMgr.registerAsyncMgr(async);
             containerMgr.initializeContainers(document);
             log.debug("Initialization finished");
 
             enableModules();
         };
-
         
+        var registerLazyModuleLoading = function() {
+            async.registerHeaderListener("X-Icinga-Enable-Module", loadModuleScript, this);
+        };
 
         var enableInternalModules = function() {
             $.each(internalModules,function(idx,module) {
@@ -37,7 +40,8 @@ define([
         };
 
         var loadModuleScript = function(name) {
-            moduleMgr.enableModule("modules/"+name, function(error) {
+            console.log("Loading ", name);
+            moduleMgr.enableModule("modules/"+name+"/"+name, function(error) {
                 failedModules.push({
                     name: name,
                     errorMessage: error
@@ -81,5 +85,3 @@ define([
     };
     return new Icinga();
 });
-
-

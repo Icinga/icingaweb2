@@ -6,6 +6,9 @@ namespace Icinga\Authentication;
 
 class Backend
 {
+    /**
+     * @var UserBackend
+     */
     protected $userBackend;
 
     public function __construct($config)

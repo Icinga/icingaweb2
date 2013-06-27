@@ -6,6 +6,7 @@ namespace Icinga\Authentication;
 
 use Icinga\Application\Logger as Logger;
 use Icinga\Application\Config as Config;
+use Icinga\Exception\ConfigurationError as ConfigError;
 
 class Manager
 {
@@ -25,7 +26,6 @@ class Manager
         if ($config === null) {
             $config = Config::getInstance()->authentication;
         }
-
         if (isset($options["userBackendClass"])) {
             $this->userBackend = $options["userBackendClass"];
         } elseif ($config->users !== null) {
@@ -77,6 +77,15 @@ class Manager
 
     public function authenticate(Credentials $credentials, $persist = true)
     {
+        if (!$this->userBackend) {
+            Logger::error("No authentication backend provided, your users will never be able to login.");
+            throw new ConfigError(
+                "No authentication backend set - login will never succeed as icinga-web ".
+                "doesn't know how to determine your user. \n".
+                "To fix this error, setup your authentication.ini with a valid authentication backend."
+            );
+            return false;
+        }
         if (!$this->userBackend->hasUsername($credentials)) {
             Logger::info("Unknown user %s tried to log in", $credentials->getUsername());
             return false;
@@ -115,7 +124,7 @@ class Manager
     public function removeAuthorization()
     {
         $this->user = null;
-        $this->session->delete();
+        $this->session->purge();
     }
 
     public function getUser()

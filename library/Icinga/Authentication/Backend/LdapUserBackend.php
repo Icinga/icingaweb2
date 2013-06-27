@@ -5,7 +5,10 @@
 namespace Icinga\Authentication\Backend;
 
 use Icinga\Authentication\User as User;
+use Icinga\Authentication\UserBackend;
+use Icinga\Authentication\Credentials;
 use Icinga\Protocol\Ldap;
+use Icinga\Application\Config;
 
 class LdapUserBackend implements UserBackend
 {
@@ -16,14 +19,11 @@ class LdapUserBackend implements UserBackend
         $this->connection = new Ldap\Connection($config);
     }
 
-    public function hasUsername($username)
+    public function hasUsername(Credentials $credential)
     {
-        if (!$username) {
-            return false;
-        }
         return $this->connection->fetchOne(
-            $this->selectUsername($username)
-        ) === $username;
+            $this->selectUsername($credential->getUsername())
+        ) === $credential->getUsername();
     }
 
     protected function stripAsterisks($string)
@@ -34,23 +34,28 @@ class LdapUserBackend implements UserBackend
     protected function selectUsername($username)
     {
         return $this->connection->select()
-            ->from('user', array('sAMAccountName'))
-            ->where('sAMAccountName', $this->stripAsterisks($username));
+            ->from(
+                Config::getInstance()->authentication->users->user_class,
+                array(
+                    Config::getInstance()->authentication->users->user_name_attribute
+                )
+            )
+            ->where(
+                Config::getInstance()->authentication->users->user_name_attribute,
+                $this->stripAsterisks($username)
+            );
     }
 
-    public function authenticate($username, $password = null)
+    public function authenticate(Credentials $credentials)
     {
-        if (empty($username) || empty($password)) {
-            return false;
-        }
-
         if (!$this->connection->testCredentials(
-            $this->connection->fetchDN($this->selectUsername($username)),
-            $password
-        )     ) {
+            $this->connection->fetchDN($this->selectUsername($credentials->getUsername())),
+            $credentials->getPassword()
+        )
+        ) {
             return false;
         }
-        $user = new User($username);
+        $user = new User($credentials->getUsername());
 
         return $user;
     }

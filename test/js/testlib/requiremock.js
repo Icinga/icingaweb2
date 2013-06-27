@@ -13,6 +13,7 @@
 *   to console.
 *  
 **/
+var path = require('path');
 var registeredDependencies = {};
 
 /**
@@ -21,11 +22,13 @@ var registeredDependencies = {};
 *   in dependencies and calls fn with them as the parameter
 *
 **/
+var debug = false;
 var requireJsMock = function(dependencies, fn) {
     var fnArgs = [];
     for (var i=0;i<dependencies.length;i++) {
         if (typeof registeredDependencies[dependencies[i]] === "undefined") {
-            console.warn("Unknown dependency "+dependencies[i]+" in define()");
+            if (debug === true)
+                console.warn("Unknown dependency "+dependencies[i]+" in define()");
         }
         fnArgs.push(registeredDependencies[dependencies[i]]);
     }
@@ -55,7 +58,7 @@ var defineMock = function() {
             var argList = arguments[currentArg];
             fn = arguments[currentArg+1];
             for (var i=0;i<argList.length;i++) {
-                if (typeof registerDependencies[argList[i]] === "undefined") {
+                if (typeof registerDependencies[argList[i]] === "undefined" && debug) {
                     console.warn("Unknown dependency "+argList[i]+" in define()");
                 }
                 
@@ -91,7 +94,6 @@ initRequireMethods();
 function purgeDependencies() {
     registeredDependencies = {
         'jquery' : GLOBAL.$,
-        '__define__' : registeredDependencies.__define__,
         'logging' : console
     };
 }
@@ -107,6 +109,12 @@ function registerDependencies(obj) {
         registeredDependencies[name] = obj[name];
     }
 }
+var base = path.normalize(__dirname+"../../../../public/js");
+GLOBAL.requireNew = function(key) {
+    key = path.normalize(base+"/"+key);
+    delete require.cache[key];
+    return require(key);
+}; 
 
 /**
 *   The API for this module
@@ -122,3 +130,4 @@ module.exports = {
         }
     }
 };
+

@@ -12,3 +12,6 @@ config.log
 
 # cmd tester
 test/php/bin/extcmd_test
+
+# misc test output
+test/frontend/static/public

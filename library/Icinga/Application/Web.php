@@ -38,7 +38,6 @@ class Web extends ApplicationBootstrap
         return $this->loadConfig()
             ->configureErrorHandling()
             ->setTimezone()
-            ->configureSession()
             ->configureCache()
             ->prepareZendMvc()
             ->loadTranslations()
@@ -57,6 +56,17 @@ class Web extends ApplicationBootstrap
                 array(
                     'controller' => 'static',
                     'action' => 'modulelist',
+                )
+            )
+        );
+
+        $this->frontController->getRouter()->addRoute(
+            'module_javascript',
+            new Route(
+                'js/modules/:module_name/:file',
+                array(
+                    'controller' => 'static',
+                    'action' => 'javascript'
                 )
             )
         );
@@ -80,16 +90,6 @@ class Web extends ApplicationBootstrap
         $this->dispatchFrontController();
     }
 
-    /**
-     * Configure web session settings
-     *
-     * @return self
-     */
-    protected function configureSession()
-    {
-        Manager::getInstance();
-        return $this;
-    }
 
     protected function loadTranslations()
     {
@@ -173,6 +173,7 @@ class Web extends ApplicationBootstrap
      */
     protected function configurePagination()
     {
+
         Paginator::addScrollingStylePrefixPath(
             'Icinga_Web_Paginator_ScrollingStyle',
             'Icinga/Web/Paginator/ScrollingStyle'

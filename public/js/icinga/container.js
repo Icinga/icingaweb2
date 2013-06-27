@@ -5,7 +5,7 @@
     var containerMgrInstance = null;
     var async;
 
-    var ContainerMgr = function($,log,Widgets,SubTable,holder) {
+    var ContainerMgr = function($,log,Widgets,SubTable) {
 
 
         var enhanceDetachLinks = function() {
@@ -24,7 +24,7 @@
         this.updateContainer = function(id,content,req) {
             var target = id;
             if (typeof id === "string") {
-                target = $('div[container-id='+id+']');
+                target = this.getContainer(id);
             }
             var ctrl = $('.container-controls',target);
             target.html(content);
@@ -34,14 +34,12 @@
             }
             target.focus();
             this.initializeContainers(target);
-            
         };
 
         this.updateControlTargets = function(ctrl, req) {
             $('a',ctrl).each(function() {
                 $(this).attr("href",req.url);
             });
-            
         };
 
         this.initControlBehaviour = function(root) {
@@ -86,7 +84,6 @@
             this.initExpandables(root);
             this.drawImplicitWidgets(root);
             this.loadAsyncContainers(root);
-            
         };
 
         this.createPopupContainer = function(content,req) {
@@ -96,10 +93,12 @@
                 .append($("<div>").addClass('modal-body').html(content)).appendTo(document.body);
 
             closeButton.on("click",function() {container.remove();});
-            
         };
 
         this.getContainer = function(id) {
+            if(id == 'body') {
+                return $(document.body);
+            }
             return $('div[container-id='+id+']');
         };
 
@@ -109,6 +108,5 @@
             containerMgrInstance = new ContainerMgr($,log,widgets,subTable);
         }
         return containerMgrInstance;
-
     });
 })();

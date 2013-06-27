@@ -4,6 +4,7 @@
 
 namespace Icinga\Protocol\Ldap;
 
+use Icinga\Exception\ConfigurationError as ConfigError;
 use Icinga\Application\Platform;
 use Icinga\Application\Config;
 use Icinga\Application\Logger as Log;
@@ -69,6 +70,10 @@ class Connection
         // '1.3.6.1.1.8' => '8', // Cancel Extended Request
     );
 
+    protected $use_tls = false;
+    protected $force_tls = false;
+
+
     /**
      * @var array
      */
@@ -116,7 +121,8 @@ class Connection
         $this->bind_dn = $config->bind_dn;
         $this->bind_pw = $config->bind_pw;
         $this->root_dn = $config->root_dn;
-
+        $this->use_tls = isset($config->tls) ? $config->tls : false;
+        $this->force_tls = $this->use_tls;
     }
 
     /**
@@ -266,6 +272,7 @@ class Connection
         // We do not support pagination right now, and there is no chance to
         // do so for PHP < 5.4. Warnings about "Sizelimit exceeded" will
         // therefore not be hidden right now.
+        Log::debug("Query: %s", $query->__toString());
         $results = ldap_search(
             $this->ds,
             $this->root_dn,
@@ -405,7 +412,6 @@ class Connection
         if (isset($result->supportedExtension)) {
             foreach ($result->supportedExtension as $oid) {
                 if (array_key_exists($oid, $this->ldap_extension)) {
-                    echo $this->ldap_extension[$oid] . "\n";
                     // STARTTLS -> läuft mit OpenLDAP
                 }
             }
@@ -429,23 +435,23 @@ class Connection
         if ($this->ds !== null) {
             return;
         }
-        $use_tls = true;
-        $force_tls = true;
 
-        if ($use_tls) {
+        if ($this->use_tls) {
             $this->prepareTlsEnvironment();
         }
         Log::debug("Trying to connect to %s", $this->hostname);
         $this->ds = ldap_connect($this->hostname, 389);
         $this->discoverCapabilities();
-        Log::debug("Trying ldap_start_tls()");
-        if (ldap_start_tls($this->ds)) {
-            Log::debug("Trying ldap_start_tls() succeeded");
-        } else {
-            Log::warn(
-                "ldap_start_tls() failed: %s. Does your ldap_ca.conf point to the certificate? ",
-                ldap_error($this->ds)
-            );
+        if ($this->use_tls) {
+            Log::debug("Trying ldap_start_tls()");
+            if (@ldap_start_tls($this->ds)) {
+                Log::debug("Trying ldap_start_tls() succeeded");
+            } else {
+                Log::warn(
+                    "ldap_start_tls() failed: %s. Does your ldap_ca.conf point to the certificate? ",
+                    ldap_error($this->ds)
+                );
+            }
         }
 
 
@@ -470,12 +476,10 @@ class Connection
                 '***',
                 ldap_error($this->ds)
             );
-            throw new Exception(
+            throw new ConfigError(
                 sprintf(
-                    'LDAP connection (%s / %s) failed: %s',
-                    $this->bind_dn,
-                    '***' /* $this->bind_pw */,
-                    ldap_error($this->ds)
+                    'Could not connect to the authentication server, please '.
+                    'review your LDAP connection settings.'
                 )
             );
         }

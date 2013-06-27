@@ -18,6 +18,7 @@ use Icinga\Exception\ConfigurationError;
  * Usage example for CLI:
  * <code>
  * use Icinga\Application\Cli;
+
  * Cli::start();
  * </code>
  *
@@ -99,7 +100,7 @@ abstract class ApplicationBootstrap
     public function moduleManager()
     {
         if ($this->moduleManager === null) {
-            $this->moduleManager = new ModuleManager($this);
+            $this->moduleManager = new ModuleManager($this, $this->config->global->moduleFolder);
         }
         return $this->moduleManager;
     }

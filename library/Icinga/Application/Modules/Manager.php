@@ -2,35 +2,45 @@
 
 namespace Icinga\Application\Modules;
 
-use Icinga\Application\ApplicationBootstrap;
-use Icinga\Data\ArrayDatasource;
-use Icinga\Web\Notification;
 use Icinga\Exception\ConfigurationError;
+use Icinga\Exception\SystemPermissionException;
+use Icinga\Exception\ProgrammingError;
 
 // TODO: show whether enabling/disabling modules is allowed by checking enableDir
 //       perms
 
 class Manager
 {
-    protected $installedBaseDirs;
+    protected $installedBaseDirs = null;
     protected $enabledDirs       = array();
     protected $loadedModules     = array();
     protected $index;
     protected $app;
-
     protected $enableDir;
-
-    public function __construct(ApplicationBootstrap $app)
+    protected $modulePaths = array();
+    /**
+    *   @param $app :   The applicaiton bootstrap. This one needs a properly defined interface 
+    *                   In order to test it correctly, the application now only requires a stdClass
+    *   @param $dir :   
+    **/
+    public function __construct($app, $enabledDir = null, array $availableDirs = array())
     {
         $this->app = $app;
-        $this->prepareEssentials();
+        if (empty($availableDirs)) {
+            $availableDirs = array(ICINGA_APPDIR."/../modules");
+        }
+        $this->modulePaths = $availableDirs;
+        if ($enabledDir === null) {
+            $enabledDir = $this->app->getConfig()->getConfigDir()
+                         . '/enabledModules';
+        }
+        $this->prepareEssentials($enabledDir);
         $this->detectEnabledModules();
     }
 
-    protected function prepareEssentials()
+    protected function prepareEssentials($moduleDir)
     {
-        $this->enableDir = $this->app->getConfig()->getConfigDir()
-                         . '/enabledModules';
+        $this->enableDir = $moduleDir;
 
         if (! file_exists($this->enableDir) || ! is_dir($this->enableDir)) {
             throw new ProgrammingError(
@@ -42,10 +52,17 @@ class Manager
         }
     }
 
+    public function select()
+    {
+        $source = new \Icinga\Data\ArrayDatasource($this->getModuleInfo());
+        return $source->select();
+    }
+
     protected function detectEnabledModules()
     {
         $fh = opendir($this->enableDir);
 
+        $this->enabledDirs = array();
         while (false !== ($file = readdir($fh))) {
 
             if ($file[0] === '.') {
@@ -74,12 +91,18 @@ class Manager
         return $this;
     }
 
-    public function loadModule($name)
+    public function loadModule($name, $moduleBase = null)
     {
         if ($this->hasLoaded($name)) {
             return $this;
         }
-        $module = new Module($this->app, $name, $this->getModuleDir($name));
+
+        $module = null;
+        if ($moduleBase === null) {
+            $module = new Module($this->app, $name, $this->getModuleDir($name));
+        } else {
+            $module = new $moduleBase($this->app, $name, $this->getModuleDir($name));
+        }
         $module->register();
         $this->loadedModules[$name] = $module;
         return $this;
@@ -96,17 +119,26 @@ class Manager
             );
             return $this;
         }
+        clearstatcache(true);
         $target = $this->installedBaseDirs[$name];
         $link = $this->enableDir . '/' . $name;
         if (! is_writable($this->enableDir)) {
-            Notification::error("I do not have permissions to enable modules");
+            throw new SystemPermissionException(
+                "Insufficient system permissions for enabling modules",
+                "write",
+                $this->enableDir
+            );
+        }
+        if (file_exists($link) && is_link($link)) {
             return $this;
         }
-        if (@symlink($target, $link)) {
-            Notification::success("The module $name has been enabled");
-        } else {
-            Notification::error("Enabling module $name failed");
+        if (!@symlink($target, $link)) {
+            $error = error_get_last();
+            if (strstr($error["message"], "File exists") === false) {
+                throw new SystemPermissionException($error["message"], "symlink", $link);
+            }
         }
+        $this->enabledDirs[$name] = $link;
         return $this;
     }
 
@@ -116,17 +148,31 @@ class Manager
             return $this;
         }
         if (! is_writable($this->enableDir)) {
-            Notification::error("I do not have permissions to disable modules");
+            throw new SystemPermissionException("Can't write the module directory", "write", $this->enableDir);
             return $this;
         }
         $link = $this->enableDir . '/' . $name;
-        if (file_exists($link) && is_link($link)) {
-            if (@unlink($link)) {
-                Notification::success("The module $name has been disabled");
-            } else {
-                Notification::error("Disabling module $name failed");
-            }
+        if (!file_exists($link)) {
+            throw new ConfigurationError("The module $name could not be found, can't disable it");
         }
+        if (!is_link($link)) {
+            throw new ConfigurationError(
+                "The module $name can't be disabled as this would delete the whole module. ".
+                "It looks like you have installed this module manually and moved it to your module folder.".
+                "In order to dynamically enable and disable modules, you have to create a symlink to ".
+                "the enabled_modules folder"
+            );
+        }
+            
+        if (file_exists($link) && is_link($link)) {
+            if (!@unlink($link)) {
+                $error = error_get_last();
+                throw new SystemPermissionException($error["message"], "unlink", $link);
+            }
+        } else {
+
+        }
+        unset($this->enabledDirs[$name]);
         return $this;
     }
 
@@ -192,7 +238,12 @@ class Manager
     public function getModuleInfo()
     {
         $installed = $this->listInstalledModules();
+        
         $info = array();
+        if ($installed === null) {
+            return $info;
+        }
+        
         foreach ($installed as $name) {
             $info[] = (object) array(
                 'name'    => $name,
@@ -202,12 +253,6 @@ class Manager
             );
         }
         return $info;
-    }
-
-    public function select()
-    {
-        $ds = new ArrayDatasource($this->getModuleInfo());
-        return $ds->select();
     }
 
     public function listEnabledModules()
@@ -225,24 +270,27 @@ class Manager
         if ($this->installedBaseDirs === null) {
             $this->detectInstalledModules();
         }
-        return array_keys($this->installedBaseDirs);
+        
+        if ($this->installedBaseDirs !== null) {
+            return array_keys($this->installedBaseDirs);
+        }
     }
 
     public function detectInstalledModules()
     {
-        // TODO: Allow multiple paths for installed modules (e.g. web vs pkg)
-        $basedir = realpath(ICINGA_APPDIR . '/../modules');
-        $fh = @opendir($basedir);
-        if ($fh === false) {
-            return $this;
-        }
-
-        while ($name = readdir($fh)) {
-            if ($name[0] === '.') {
-                continue;
+        foreach ($this->modulePaths as $basedir) {
+            $fh = opendir($basedir);
+            if ($fh === false) {
+                return $this;
             }
-            if (is_dir($basedir . '/' . $name)) {
-                $this->installedBaseDirs[$name] = $basedir . '/' . $name;
+    
+            while ($name = readdir($fh)) {
+                if ($name[0] === '.') {
+                    continue;
+                }
+                if (is_dir($basedir . '/' . $name)) {
+                    $this->installedBaseDirs[$name] = $basedir . '/' . $name;
+                }
             }
         }
     }
