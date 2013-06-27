@@ -7,7 +7,6 @@ namespace Icinga\Web\Widget;
 
 use Icinga\Exception\ProgrammingError;
 use Icinga\Web\Url;
-use Icinga\Authentication\Auth;
 
 /**
  * Navigation tab widget
@@ -219,7 +218,9 @@ class Tabs extends AbstractWidget
             Url::create('dashboard/addurl'),
             array('url' => Url::current()->getRelative())
         );
-        $auth = Auth::getInstance();
+
+        // @todo rework auth
+        // $auth = Auth::getInstance();
         // if ($this->specialActions && ! empty($special) && $auth->isAuthenticated() && $auth->getUsername() === 'admin') {
         if ($this->specialActions) {
             $html .= '
