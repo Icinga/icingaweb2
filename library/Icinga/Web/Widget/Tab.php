@@ -1,7 +1,8 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
 
+/**
+ * Single tab
+ */
 namespace Icinga\Web\Widget;
 
 use Icinga\Exception\ProgrammingError;
@@ -22,7 +23,6 @@ use Icinga\Exception\ProgrammingError;
  * @copyright  Copyright (c) 2013 Icinga-Web Team <info@icinga.org>
  * @author     Icinga-Web Team <info@icinga.org>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License
- * @deprecated Because of HTML creation of PHP<
  */
 class Tab extends AbstractWidget
 {
@@ -39,16 +39,18 @@ class Tab extends AbstractWidget
      * @var array
      */
     protected $properties = array(
-        'name' => null,
-        'title' => '',
-        'url' => null,
+        'name'      => null,
+        'title'     => '',
+        'url'       => null,
         'urlParams' => array(),
-        'icon' => null,
+        'icon'      => null,
     );
 
     /**
      * Health check at initialization time
-     * @throws \Icinga\Exception\ProgrammingError if tab name is missing
+     *
+     * @throws Icinga\Exception\ProgrammingError if tab name is missing
+     *
      * @return void
      */
     protected function init()
@@ -72,7 +74,7 @@ class Tab extends AbstractWidget
      */
     public function setActive($active = true)
     {
-        $this->active = (bool)$active;
+        $this->active = (bool) $active;
         return $this;
     }
 
@@ -97,15 +99,10 @@ class Tab extends AbstractWidget
         $class = $this->isActive() ? ' class="active"' : '';
         $caption = $this->title;
         if ($this->icon !== null) {
-            $caption = $view->img(
-                $this->icon,
-                array(
-                    'width' => 16,
-                    'height' => 16
-                )
-            )
-            . ' '
-            . $caption;
+            $caption = $view->img($this->icon, array(
+                'width'  => 16,
+                'height' => 16
+            )) . ' ' . $caption;
         }
         if ($this->url !== null) {
             $tab = $view->qlink(

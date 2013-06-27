@@ -1,7 +1,8 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
 
+/**
+ * Web Widget abstract class
+ */
 namespace Icinga\Web\Widget;
 
 use Icinga\Exception\ProgrammingError;
@@ -31,6 +32,8 @@ abstract class AbstractWidget
      * @var Zend_View_Abstract
      */
     protected static $view;
+
+    protected $module_name;
 
     /**
      * Fill $properties with default values for all your valid widget properties
@@ -62,8 +65,11 @@ abstract class AbstractWidget
      *
      * @param array $properties An optional properties array
      */
-    final public function __construct($properties = array())
+    final public function __construct($properties = array(), $module_name = null)
     {
+        if ($module_name !== null) {
+            $this->module_name = $module_name;
+        }
         foreach ($properties as $key => $val) {
             $this->$key = $val;
         }
