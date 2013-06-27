@@ -1,35 +1,23 @@
 <?php
-// @codingStandardsIgnoreStart
 
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+// TODO: Search for the best and safest quoting
+// TODO: Check whether attributes are safe. Script, title in combination with
+//       Hover-Tips etc. Eventually create a whitelist for a few options only.
+use Icinga\Web\Url;
 
-/**
- * Class Zend_View_Helper_Qlink
- * @package Application\Views
- */
 class Zend_View_Helper_Qlink extends Zend_View_Helper_Abstract
 {
-    /**
-     * @param $htmlContent
-     * @param $urlFormat
-     * @param array $uriParams
-     * @param array $properties
-     * @return string
-     */
-    public function qlink(
-        $htmlContent,
-        $urlFormat,
-        array $uriParams = array(),
-        array $properties = array()
-    ) {
+
+    public function qlink($htmlContent, $urlFormat, array $uriParams = array(),
+        array $properties = array())
+    {
         $quote = true;
         $attributes = array();
         $baseUrl = null;
         foreach ($properties as $key => $val) {
-            if ($key === 'baseUrl') {
+            if ($key === 'baseUrl' ) {
                 // $baseUrl = filter_var($val, FILTER_SANITIZE_URL) . '/';
-                $baseUrl = rawurlencode($val) . '/';
+                $baseUrl = $val; //rawurlencode($val) . '/';
                 continue;
             }
             if ($key === 'quote') {
@@ -59,25 +47,29 @@ class Zend_View_Helper_Qlink extends Zend_View_Helper_Abstract
             );
 
         }
-
+        if ($urlFormat instanceof Url) {
+            $url = $urlFormat;
+            $uriParams = $url->getParams() + $uriParams;
+        } else {
+            $url = Url::create($urlFormat);
+        }
+        $url->setParams($uriParams)->setBaseUrl($baseUrl);
         return sprintf(
             '<a href="%s"%s>%s</a>',
-            $this->getFormattedUrl($urlFormat, $uriParams, $baseUrl),
+//            $this->getFormattedUrl($urlFormat, $uriParams, $baseUrl),
+            $url,
             !empty($attributes) ? ' ' . implode(' ', $attributes) : '',
-            $quote ? filter_var(
+            $quote
+          ? filter_var(
                 $htmlContent,
                 FILTER_SANITIZE_FULL_SPECIAL_CHARS,
                 FILTER_FLAG_NO_ENCODE_QUOTES
-            ) : $htmlContent // Alternative: htmlentities($htmlContent)
+            )
+            // Alternativ: htmlentities($htmlContent)
+          : $htmlContent
         );
     }
-
-    /**
-     * @param $urlFormat
-     * @param $uriParams
-     * @param null $baseUrl
-     * @return string
-     */
+/*
     public function getFormattedUrl($urlFormat, $uriParams, $baseUrl = null)
     {
         $params = $args = array();
@@ -90,10 +82,11 @@ class Zend_View_Helper_Qlink extends Zend_View_Helper_Abstract
         }
         $url = $urlFormat;
         $url = vsprintf($url, $params);
-        if (!empty($args)) {
+        if (! empty($args)) {
             $url .= '?' . implode('&amp;', $args);
         }
-        return is_null($baseUrl) ? $this->view->baseUrl($url) : $baseUrl . $url;
+        return is_null($baseUrl) ? $this->view->baseUrl($url) : $baseUrl.$url;
     }
+*/
 }
-// @codingStandardsIgnoreEnd
+
