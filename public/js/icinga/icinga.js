@@ -40,7 +40,6 @@ define([
         };
 
         var loadModuleScript = function(name) {
-            console.log("Loading ", name);
             moduleMgr.enableModule("modules/"+name+"/"+name, function(error) {
                 failedModules.push({
                     name: name,

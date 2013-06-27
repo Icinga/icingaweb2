@@ -17,4 +17,10 @@
             <directory>regression/</directory>
         </testsuite>
     </testsuites>
+    <filter>
+        <blacklist>
+            <directory suffix=".php">/usr/share/php</directory>
+            <directory suffix=".php">/usr/lib</directory>
+        </blacklist>
+    </filter> 
 </phpunit>

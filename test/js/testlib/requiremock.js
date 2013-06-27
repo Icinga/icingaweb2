@@ -59,7 +59,7 @@ var defineMock = function() {
             fn = arguments[currentArg+1];
             for (var i=0;i<argList.length;i++) {
                 if (typeof registerDependencies[argList[i]] === "undefined" && debug) {
-                    console.warn("Unknown dependency "+argList[i]+" in define()");
+//                    console.warn("Unknown dependency "+argList[i]+" in define()");
                 }
                 
                 fnargs.push(registeredDependencies[argList[i]]);
@@ -98,7 +98,7 @@ function purgeDependencies() {
     };
 }
 // helper to log debug messages with console
-console.debug = console.log;
+console.debug = function() {};
 
 /**
 *  Registers a name=>object map of dependencies
