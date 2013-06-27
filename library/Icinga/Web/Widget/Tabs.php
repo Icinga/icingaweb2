@@ -1,10 +1,13 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
 
+/**
+ * Navigation tabs
+ */
 namespace Icinga\Web\Widget;
 
 use Icinga\Exception\ProgrammingError;
+use Icinga\Web\Url;
+use Icinga\Authentication\Auth;
 
 /**
  * Navigation tab widget
@@ -14,7 +17,6 @@ use Icinga\Exception\ProgrammingError;
  * @copyright  Copyright (c) 2013 Icinga-Web Team <info@icinga.org>
  * @author     Icinga-Web Team <info@icinga.org>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License
- * @deprecated Because of HTML creation of PHP<
  */
 class Tabs extends AbstractWidget
 {
@@ -38,6 +40,8 @@ class Tabs extends AbstractWidget
      * @var string
      */
     protected $tab_class = 'nav-tabs';
+
+    protected $specialActions = false;
 
     /**
      * Activate the tab with the given name
@@ -172,6 +176,12 @@ class Tabs extends AbstractWidget
         return $this;
     }
 
+    public function enableSpecialActions()
+    {
+        $this->specialActions = true;
+        return $this;
+    }
+
     /**
      * This is where the tabs are going to be rendered
      *
@@ -188,6 +198,43 @@ class Tabs extends AbstractWidget
 
         foreach ($this->tabs as $tab) {
             $html .= $tab;
+        }
+
+        $special = array();
+        $special[] = $this->view()->qlink(
+            'PDF',
+            Url::current(),
+            array('filetype' => 'pdf'),
+            array('target' => '_blank')
+        );
+
+        $special[] = $this->view()->qlink(
+            'Basket',
+            Url::create('basket/add'),
+            array('url' => Url::current()->getRelative())
+        );
+
+        $special[] = $this->view()->qlink(
+            'Dashboard',
+            Url::create('dashboard/addurl'),
+            array('url' => Url::current()->getRelative())
+        );
+        $auth = Auth::getInstance();
+        // if ($this->specialActions && ! empty($special) && $auth->isAuthenticated() && $auth->getUsername() === 'admin') {
+        if ($this->specialActions) {
+            $html .= '
+               <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><b class="caret"></b></a>
+                <ul class="dropdown-menu">
+            ';
+
+            foreach ($special as $shtml) {
+                $html .= '<li>' . $shtml . "</li>\n";
+            }
+            $html .= '    </ul>
+               </li>
+            ';
+
         }
         $html .= "</ul>\n";
         return $html;
