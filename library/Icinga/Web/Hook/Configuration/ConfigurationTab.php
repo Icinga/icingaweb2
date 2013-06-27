@@ -33,7 +33,14 @@ class ConfigurationTab implements ConfigurationTabInterface
      */
     private $title;
 
-    function __construct($name = null, $url = null, $title = null)
+    /**
+     * Create a new instance
+     *
+     * @param string|null $name
+     * @param string|null $url
+     * @param string|null $title
+     */
+    public function __construct($name = null, $url = null, $title = null)
     {
         if ($name !== null) {
             $this->setModuleName($name);
@@ -136,5 +143,4 @@ class ConfigurationTab implements ConfigurationTabInterface
         $this->assertConfiguration();
         return $this->moduleName;
     }
-
 }
