@@ -4,35 +4,35 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use \Icinga\Web\ActionController;
+use Icinga\Application\Benchmark;
+use Icinga\Authentication\Manager;
+use Icinga\Web\ActionController;
+use Icinga\Web\Hook\Configuration\ConfigurationTab;
+use Icinga\Web\Hook\Configuration\ConfigurationTabBuilder;
 
 /**
  * Class ConfigurationController
  */
 class ConfigurationController extends ActionController
 {
+    public function init()
+    {
+        parent::init();
+    }
+
+
     /**
      * Index action
      */
     public function indexAction()
     {
-        $this->view->tabs = $this->createTabs();
-    }
-
-    /**
-     * @return \Icinga\Web\Widget
-     */
-    protected function createTabs()
-    {
-        $tabs = $this->widget('tabs')->add(
-                'configuration',
-                array(
-                    'title' => $this->translate('Overview'),
-                    'url'   => 'configuration/index',
-            )
+        $tabBuilder = new ConfigurationTabBuilder(
+            $this->widget('tabs')
         );
 
-        return $tabs;
+        $tabBuilder->build();
+
+        $this->view->tabs = $tabBuilder->getTabs();
     }
 }
 

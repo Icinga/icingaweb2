@@ -3,6 +3,7 @@ $this->modules->limit(10);
 $modules = $this->modules->paginate();
 
 ?>
+<?= $this->tabs; ?>
 <h3>Installed Modules</h3>
 <?= $this->paginationControl($modules, null, null, array(
     'preserve' => $this->preserve

@@ -17,7 +17,7 @@ use Icinga\Web\Url;
  * @author     Icinga-Web Team <info@icinga.org>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License
  */
-class Tabs extends AbstractWidget
+class Tabs extends AbstractWidget implements \Countable
 {
     /**
      * This is where single tabs added to this container will be stored
@@ -239,5 +239,19 @@ class Tabs extends AbstractWidget
         }
         $html .= "</ul>\n";
         return $html;
+    }
+
+    /**
+     * Counting registered tabs
+     * @return int
+     */
+    public function count()
+    {
+        return count($this->tabs);
+    }
+
+    public function getTabs()
+    {
+        return $this->tabs;
     }
 }

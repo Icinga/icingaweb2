@@ -5,9 +5,9 @@
 
 # namespace Icinga\Application\Controllers;
 
-
 use Icinga\Web\ActionController;
 use Icinga\Application\Icinga;
+use Icinga\Web\Hook\Configuration\ConfigurationTabBuilder;
 
 class ModulesController extends ActionController
 {
@@ -20,6 +20,14 @@ class ModulesController extends ActionController
 
     public function indexAction()
     {
+        $tabBuilder = new ConfigurationTabBuilder(
+            $this->widget('tabs')
+        );
+
+        $tabBuilder->build();
+
+        $this->view->tabs = $tabBuilder->getTabs();
+
         $this->view->modules = $this->manager->select()
             ->from('modules')
             ->order('name');
