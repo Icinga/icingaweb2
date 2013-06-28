@@ -1,8 +1,9 @@
 # Exclude all hidden files
 .*
-# But not .gitignore and .vagrant-puppet
+# But not .gitignore, .vagrant-puppet and .htaccess
 !.gitignore
 !.vagrant-puppet
+!public/.htaccess
 
 build/
 test/js/npm-debug.log

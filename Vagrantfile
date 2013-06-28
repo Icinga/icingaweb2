@@ -56,6 +56,12 @@ Vagrant::Config.run do |config|
   config.vm.provision :puppet do |puppet|
     puppet.module_path = ".vagrant-puppet/modules"
     puppet.manifests_path = ".vagrant-puppet/manifests"
-    puppet.options = "-v -d"
+    #puppet.options = "-v -d"
+  end
+
+  # The npm module jquery won't install via puppet because of an mysterious error
+  # when node-gyp rebuilding the dependent contextify module
+  config.vm.provision :shell do |shell|
+    shell.inline = "[ -d /usr/lib/node_modules/jquery ] || npm install --silent -g jquery"
   end
 end
