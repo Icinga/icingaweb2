@@ -350,3 +350,7 @@ file { ['/etc/icinga2-web/',
   owner  => 'apache',
   group  => 'apache'
 }
+
+file { '/etc/motd':
+  source  => 'puppet:////vagrant/.vagrant-puppet/files/etc/motd'
+}
