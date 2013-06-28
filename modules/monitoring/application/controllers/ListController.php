@@ -1,0 +1,208 @@
+<?php
+
+use Icinga\Web\ModuleActionController;
+use Icinga\Web\Hook;
+use Icinga\Monitoring\Backend;
+
+class Monitoring_ListController extends ModuleActionController
+{
+    protected $backend;
+
+    public function init()
+    {
+        $this->view->tabs = $this->getTabs()
+             ->activate($this->action_name)
+             ->enableSpecialActions();
+        $this->backend = Backend::getInstance($this->_getParam('backend'));
+        $this->view->grapher = Hook::get('grapher');
+    }
+
+    public function hostsAction()
+    {
+        $this->view->hosts = $this->backend->select()->from('status', array(
+            'host_name',
+            'host_state',
+            'host_acknowledged',
+            'host_output',
+            'host_in_downtime',
+            'host_handled',
+            'host_last_state_change'
+        ));
+            
+        if ($search = $this->_getParam('search')) {
+            $this->_setParam('search', null);
+            if (strpos($search, '=') === false) {
+                $this->_setParam('host_name', $search);
+            } else {
+                list($key, $val) = preg_split('~\s*=\s*~', $search, 2);
+                if ($this->view->hosts->isValidFilterColumn($key) || $key[0] === '_') {
+                    $this->_setParam($key, $val);
+                }
+            }
+        }
+        $this->view->hosts->applyRequest($this->_request);
+$this->view->hosts->getQuery()->group('hs.host_object_id');
+    if ($this->_getParam('dump') === 'sql') {
+        echo '<pre>' . htmlspecialchars(wordwrap($this->view->hosts->getQuery()->dump())) . '</pre>';
+        exit;
+    }
+
+        // TODO: Get rid of "preserve"
+        $preserve = array();
+        if ($this->_getParam('sort')) {
+            $preserve['sort'] = $this->view->sort = $this->_getParam('sort');
+        }
+        if ($this->_getParam('backend')) {
+            $preserve['backend'] = $this->_getParam('backend');
+        }
+        $this->view->preserve = $preserve;
+
+        if ($this->_getParam('view') === 'compact') {
+            $this->_helper->viewRenderer('hosts_compact');
+        }
+    }
+
+    public function servicesAction()
+    {
+        $state_type = $this->_getParam('_statetype', 'soft');
+        if ($state_type = 'soft') {
+            $state_column = 'service_state';
+            $state_change_column = 'service_last_state_change';
+        } else {
+            $state_column = 'service_hard_state';
+            $state_change_column = 'service_last_hard_state_change';
+        }
+        $this->view->services = $this->backend->select()
+            ->from('status', array(
+            'host_name',
+            'service_description',
+            'service_state' => $state_column,
+            'service_in_downtime',
+            'service_acknowledged',
+            'service_handled',
+            'service_output',
+            'service_last_state_change' => $state_change_column
+            ));
+
+        if ($search = $this->_getParam('search')) {
+            $this->_setParam('search', null);
+            if (strpos($search, '=') === false) {
+                $this->_setParam('service_description', $search);
+            } else {
+                list($key, $val) = preg_split('~\s*=\s*~', $search, 2);
+                if ($this->view->services->isValidFilterColumn($key) || $key[0] === '_') {
+                    $this->_setParam($key, $val);
+                }
+            }
+        }
+
+        $this->view->services->applyRequest($this->_request);
+    if ($this->_getParam('dump') === 'sql') {
+        echo '<pre>' . htmlspecialchars(wordwrap($this->view->services->getQuery()->dump())) . '</pre>';
+        exit;
+    }
+
+        $preserve = array();
+        if ($this->_getParam('sort')) {
+            $preserve['sort'] = $this->view->sort = $this->_getParam('sort');
+            
+        }
+        if ($this->_getParam('backend')) {
+            $preserve['backend'] = $this->_getParam('backend');
+        }
+        $this->view->preserve = $preserve;
+        if ($this->_getParam('view') == 'compact') {
+            $this->_helper->viewRenderer('services-compact');
+        }
+    }
+
+    public function hostgroupsAction()
+    {
+        $this->view->hostgroups = $this->backend->select()
+            ->from('hostgroup', array(
+            'hostgroup_name',
+            'hostgroup_alias',
+        ))->applyRequest($this->_request);
+    }
+
+    public function servicegroupsAction()
+    {
+        $this->view->servicegroups = $this->backend->select()
+            ->from('servicegroup', array(
+            'servicegroup_name',
+            'servicegroup_alias',
+        ))->applyRequest($this->_request);
+    }
+
+    public function contactgroupsAction()
+    {
+        $this->view->contactgroups = $this->backend->select()
+            ->from('contactgroup', array(
+            'contactgroup_name',
+            'contactgroup_alias',
+        ))->applyRequest($this->_request);
+    }
+
+    public function contactsAction()
+    {
+        $this->view->contacts = $this->backend->select()
+            ->from('contact', array(
+            'contact_name',
+            'contact_alias',
+            'contact_email',
+            'contact_pager'
+        ))->applyRequest($this->_request);
+    }
+
+    // TODO: Search helper playground
+    public function searchAction()
+    {
+        $data = array(
+            'service_description',
+            'service_state',
+            'service_acknowledged',
+            'service_handled',
+            'service_output',
+            // '_host_satellite',
+            'service_last_state_change'
+            );
+        echo json_encode($data);
+        exit;
+    }
+
+    protected function getTabs()
+    {
+        $tabs = $this->widget('tabs');
+        $tabs->add('services', array(
+            'title'     => 'Services',
+            'icon'      => 'img/classic/service.png',
+            'url'       => 'monitoring/list/services',
+        ));
+        $tabs->add('hosts', array(
+            'title'     => 'Hosts',
+            'icon'      => 'img/classic/server.png',
+            'url'       => 'monitoring/list/hosts',
+        ));
+        $tabs->add('hostgroups', array(
+            'title'     => 'Hostgroups',
+            'icon'      => 'img/classic/servers-network.png',
+            'url'       => 'monitoring/list/hostgroups',
+        ));
+        $tabs->add('servicegroups', array(
+            'title'     => 'Servicegroups',
+            'icon'      => 'img/classic/servers-network.png',
+            'url'       => 'monitoring/list/servicegroups',
+        ));
+        $tabs->add('contacts', array(
+            'title'     => 'Contacts',
+            'icon'      => 'img/classic/servers-network.png',
+            'url'       => 'monitoring/list/contacts',
+        ));
+        $tabs->add('contactgroups', array(
+            'title'     => 'Contactgroups',
+            'icon'      => 'img/classic/servers-network.png',
+            'url'       => 'monitoring/list/contactgroups',
+        ));
+        return $tabs;
+    }
+}

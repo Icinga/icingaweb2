@@ -1,0 +1,125 @@
+<?= $this->tabs ?>
+<?php
+$this->hosts->limit(10);
+$hosts = $this->hosts->paginate();
+
+function getRowProperties(& $host, $scope) {
+
+    $icons = array();
+    if ($host->host_acknowledged) {
+        $icons['ack.gif'] = 'Problem has been acknowledged';
+    }
+
+    if ($host->host_in_downtime) {
+        $icons['downtime.gif'] = 'Host is in a scheduled downtime';
+    }
+
+    $state_classes = array($scope->monitoringState($host, 'host'));
+
+    if ($host->host_acknowledged || $host->host_in_downtime) {
+        $state_classes[] = 'handled';
+    }
+    if ($host->host_last_state_change > (time() - 600)) {
+        $state_classes[] = 'new';
+    }
+    $state_title = strtoupper($scope->monitoringState($host,"host"))
+        . ' since '
+        . date('Y-m-d H:i:s', $host->host_last_state_change);
+    return array($icons,$state_classes,$state_title);
+}
+// filter start
+$fparams = $this->hosts->getAppliedFilter()->toParams();
+if ($this->preserve === null) {
+    $this->preserve = $fparams;
+} else {
+    $this->preserve += $fparams;
+}
+
+$always = array();
+if (isset($_GET['sort'])) {
+    $always['sort'] = $_GET['sort'];
+}
+if (isset($_GET['dir'])) {
+    $always['dir'] = $_GET['dir'];
+}
+?>
+<?php if (! empty($fparams)): ?>
+<div style="float: right; width: 20em; font-size: 0.8em;"><b>Filters</b><br>
+<?php foreach ($fparams as $k => $v): ?>
+<?= $this->qlink(
+    'x',
+    'monitoring/list/hosts',
+    $this->hosts->getAppliedFilter()->without($k)->toParams() + $always,
+    array(
+        'style' => array('color' => 'red')
+    )
+) ?> <?= $this->escape("$k = $v") ?></br>
+<?php endforeach; ?>
+</div>
+<?php endif; ?>
+<form method="get" action="<?= $this->qUrl(
+    'monitoring/list/hosts?' . http_build_query(
+        $this->hosts->getAppliedFilter()->toParams()
+    ),
+    array()
+)
+?>">
+Sort by <?= $this->formSelect(
+    'sort',
+    $this->sort,
+    array('class' => 'autosubmit'),
+    array(
+        'host_severity' => 'Severity',
+        'host_last_state_change' => 'Last state change',
+        'host_name' => 'Host',
+    )
+) ?>
+<input type="text" placeholder="Add filter..." name="search" />
+</form>
+<?php // end filter ?>
+<?php if (empty($hosts)): ?>
+
+<div class="alert alert-info fullpage_infobox">
+    Sorry, no host found for this search
+</div>
+<?php return; endif; ?>
+
+<?=  $this->paginationControl($hosts, null, null, array('preserve' => $this->preserve)) ?>
+
+<table class="action">
+ <tbody>
+
+<?php foreach ($hosts as $host):
+ list($icons,$state_classes,$state_title) = getRowProperties($host,$this); ?>
+  <tr class="<?= implode(' ', $state_classes) ?>">
+   <td class="state" title="<?= $state_title ?>"><?= $this->qlink(
+    substr(strtoupper($this->monitoringState($host,"host")), 0, 4)
+      . '&nbsp;since<br /> '
+      . $this->timeSince($host->host_last_state_change),
+    'monitoring/show/history', array(
+        'host'    => $host->host_name
+    ),
+    array('quote' => false)
+) ?></td>
+    <td><?
+
+foreach ($icons as $icon => $alt)
+    echo $this->img('img/classic/' . $icon, array(
+        'class' => 'icon',
+        'title' => $alt
+    ));
+?>
+<?= $this->qlink(
+    $host->host_name,
+    'monitoring/show/host', array(
+        'host'    => $host->host_name
+    ), array('class' => 'row-action')
+) ?><br />
+   <span style="font-size: 0.7em"><?=
+    $this->escape(substr(strip_tags($host->host_output), 0, 10000))
+?></span>
+   </td>
+  </tr>
+<?php endforeach; ?>
+ </tbody>
+</table>

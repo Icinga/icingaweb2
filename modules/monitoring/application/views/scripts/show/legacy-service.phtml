@@ -1,0 +1,117 @@
+<!--<?php if (!isset($this->service) || $this->service == null): ?>
+<div class="alert alert-info fullpage_infobox">
+    No service selected
+</div>
+<?php return; endif; ?>
+<br>
+<?= $this->expandable(
+    '<b>'
+    . $this->translate('Plugin output:')
+    . '</b> '
+    . $this->pluginOutput($this->service->service_output),
+    $this->service->service_long_output
+    ? $this->pluginOutput($this->service->service_long_output)
+    : ''
+) ?>
+<?php
+$explodedCmd = explode('!', $this->service->service_check_command);
+$row = '<dd><b>%s</b> : %s</dd>';
+$table = '';
+if (count($explodedCmd) > 1) {
+    $table  = '<dl>';
+    for ($i = 1; $i < count($explodedCmd); $i++) {
+        $table .= sprintf($row, '$ARG' . $i . '$', $explodedCmd[$i]);
+    }
+    $table .= '</dl>';
+}
+echo $this->expandable('<b>' . $this->translate('Check command:') . '</b> ' .$explodedCmd[0], $table); ?>
+
+<?php
+
+$perfData = $this->perfdata($this->service->service_perfdata);
+if (!$perfData && $this->service->service_perfdata)
+    $perfData = $this->service->service_perfdata;
+
+?>
+<?php if ($perfData): ?>
+<div class="expandable" >
+    <div class="expand-title"><b><?= $this->translate('Performance data') ?></b> </div>
+    <div class="expand-content">
+        <?= $perfData ?>
+    </div>
+</div>
+<?php endif; ?>
+-->
+<?php //@TODO: Create check_statistic helper
+?>
+<?= $this->expandable(
+  $this->translate('Check statistics'),
+  'sdfas'
+) ?>
+
+    <div class="expandable" >
+        <div class="expand-title">
+            <b><?= $this->translate('Check statistics') ?></b>
+            <div class="expand-controls">
+                <a href="#" target="_self" title="<?= $this->translate('Check now') ?>">
+                  <i class='icon-repeat'></i>
+                </a>
+            </div>
+        </div>
+        <div class="expand-content">
+            <table style="width:100%">
+                <thead>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="width: 25em"><?= $this->translate('Last check') ?></td>
+                        <td><?= $this->format()->timeSince($this->service->service_last_check) ?></td>
+                    </tr>
+                    <tr>
+                        <td><?= $this->translate('Next check')?></td>
+                        <td>
+                            <span class="icinga-uiwidget-countdown" countdown-end="<?= $this->service->service_next_check ?>">
+                                <?= $this->format()->timeUntil($this->service->service_next_check) ?>
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><?= $this->translate('Check execution time') ?></td>
+                        <td><?= $this->service->service_check_execution_time ?></td>
+                    </tr>
+                    <tr>
+                        <td><?= $this->translate('Check latency') ?></td>
+                        <td><?=$this->service->service_check_latency ?></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+<?php if (isset($this->service->service_comments) && is_array($this->service->service_comments)): ?>
+<div class="expandable" >
+    <div class="expand-title">
+        <b><?= $this->translate('Comments') ?></b>
+    </div>
+    <div class="expand-content" style="padding: 0px">
+        <table class="subTable icinga-widget" type="icinga/subTable" maxItems="10" style="width:100%">
+            <thead>
+            </thead>
+            <tbody>
+<?php
+    $comments = $this->service->service_comments;
+    if (! is_array($comments)) {
+        $comments = array($comments);
+    }
+    foreach ($comments as $comment ): ?>
+                <tr>
+                    <td><?= $this->timeSince($comment->entry_time); ?></td>
+                    <td><?= htmlspecialchars($comment->author); ?></td>
+                    <td><?= htmlspecialchars($comment->data); ?></td>
+                </tr>
+<?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+</div>
+<?php endif; ?>

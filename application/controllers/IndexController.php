@@ -25,14 +25,8 @@ class IndexController extends ActionController
     public function preDispatch()
     {
         parent::preDispatch(); // -> auth :(
-        $enabled = Icinga::app()->moduleManager()->listEnabledModules();
-        $default = array('docs', 'certificates');
-        if (count(array_diff($enabled, $default)) === 0) {
-            if ($this->action_name !== 'welcome') {
-                $this->_forward('welcome');
-            }
-        } else {
-            $this->_forward('index', 'dashboard');
+        if ($this->action_name !== 'welcome') {
+            $this->_forward('welcome');
         }
     }
 

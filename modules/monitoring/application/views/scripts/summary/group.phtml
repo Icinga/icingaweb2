@@ -1,0 +1,167 @@
+<?php if (! $this->compact): ?>
+<?= $this->tabs ?>
+<?php endif; ?>
+<?php if (empty($this->summary)): ?>
+There are no such services right now
+<?php else: ?>
+<?php
+
+$now = time();
+
+?>
+<?php if (! $this->compact && $this->summary instanceof \Zend_Paginator): ?>
+<?= $this->paginationControl($this->summary, null, null, array('preserve' => $this->preserve)); ?>
+<?php endif; ?>
+<table class="pivot action">
+<thead>
+ <tr>
+<!--  <th style="width: 6em;">&nbsp;</th>-->
+  <th style="text-align: left;">&nbsp;</th>
+  <th style="width: 5em;">Critical</th>
+  <th style="width: 5em;">Unknown</th>
+  <th style="width: 5em;">Warning</th>
+ <?php if (! $this->compact): ?>  <th style="width: 9%;">OK</th><?php endif; ?>
+ </tr>
+</thead>
+<tbody>
+<?php foreach ($this->summary as $row): ?>
+<?php
+
+$class_ok       = '';
+$class_warning  = '';
+$class_critical = '';
+$class_unknown  = '';
+
+$html_ok = '-';
+$html_warning = '-';
+$html_critical = '-';
+$html_unknown = '-';
+
+$name_class = null;
+
+if ($row->critical > 0) {
+    $class_critical = 'critical';
+    $html_critical = $row->critical;
+    if ($row->critical_ack + $row->critical_dt > 0) {
+        $html_critical = sprintf(
+            '%s <span class="critical handled">(%s/%s)</span>',
+            $row->critical,
+            $row->critical_ack,
+            $row->critical_dt
+        );
+    }
+    if ($name_class === null) $name_class = 'critical';
+} elseif ($row->critical_dt + $row->critical_ack > 0) {
+    $class_critical = 'critical handled';
+    $html_critical = sprintf(
+        '%s / %s',
+        $row->critical_ack,
+        $row->critical_dt
+    );
+    if ($name_class === null) $name_class = 'critical handled';
+}
+
+if ($row->unknown > 0) {
+    $class_unknown = 'unknown';
+    $html_unknown = $row->unknown;
+    if ($row->unknown_ack + $row->unknown_dt > 0) {
+        $html_unknown .= sprintf(
+            ' <span class="unknown handled">(%s/%s)</span>',
+            $row->unknown,
+            $row->unknown_ack,
+            $row->unknown_dt
+        );
+    }
+    if ($name_class === null) $name_class = 'unknown';
+} elseif ($row->unknown_dt + $row->unknown_ack > 0) {
+    $class_unknown = 'unknown handled';
+    $html_unknown = sprintf(
+        '%s / %s',
+        $row->unknown_ack,
+        $row->unknown_dt
+    );
+    if ($name_class === null) $name_class = 'unknown handled';
+}
+
+if ($row->warning > 0) {
+    $class_warning = 'warning';
+    $html_warning = $row->warning;
+    if ($row->warning_ack + $row->warning_dt > 0) {
+        $html_warning .= sprintf(
+            ' <span class="warning handled">(%s/%s)</span>',
+            $row->warning,
+            $row->warning_ack,
+            $row->warning_dt
+        );
+    }
+    if ($name_class === null) $name_class = 'warning';
+} elseif ($row->warning_dt + $row->warning_ack > 0) {
+    $class_warning = 'warning handled';
+    $html_warning = sprintf(
+        '%s / %s',
+        $row->warning_ack,
+        $row->warning_dt
+    );
+    if ($name_class === null) $name_class = 'warning handled';
+}
+
+
+if ($row->ok > 0) {
+    $class_ok = 'ok';
+    if (isset($row->hostgroup_name)) {
+        $html_ok = $this->qlink($row->ok, 'monitoring/list/services', array(
+            'hostgroups' => $row->hostgroup_name
+        ));
+    } else {
+        $html_ok = $this->qlink($row->ok, 'monitoring/list/services', array(
+            'servicegroups' => $row->servicegroup_name
+        ));
+    }
+    if ($name_class === null) $name_class = 'ok';
+}
+
+
+if (isset($row->hostgroup_name)) {
+    if ($name_class === 'ok') {
+        $name_html = $this->qlink($row->hostgroup_name, 'monitoring/list/services', array(
+            'hostgroups' => $row->hostgroup_name
+        ));
+    } else {
+        $name_html = $this->qlink($row->hostgroup_name, 'monitoring/list/services', array(
+            'hostgroups' => $row->hostgroup_name,
+            'problems' => '1',
+            'sort' => 'severity'
+        ));
+    }
+} else {
+    if ($name_class === 'ok') {
+        $name_html = $this->qlink($row->servicegroup_name, 'monitoring/list/services', array(
+            'servicegroups' => $row->servicegroup_name
+        ));
+    } else {
+        $name_html = $this->qlink($row->servicegroup_name, 'monitoring/list/services', array(
+            'servicegroups' => $row->servicegroup_name,
+            'problems' => '1',
+            'sort' => 'severity'
+        ));
+    }
+
+}
+?>
+<tr>
+<!-- <td class="<?= $name_class ?>"><?php if ($row->last_state_change + 600 > $now): ?>
+ <blink><?= $this->timeSince($row->last_state_change) ?></blink>
+ <?php else: ?>
+ <?= $this->timeSince($row->last_state_change) ?>
+ <?php endif; ?></td>-->
+ <td style="text-align: left;"><?= $name_html ?></td>
+ <td class="<?= $class_critical ?>"><?= $html_critical ?></td>
+ <td class="<?= $class_unknown ?>"><?= $html_unknown ?></td>
+ <td class="<?= $class_warning ?>"><?= $html_warning ?></td>
+ <?php if (! $this->compact): ?><td class="ok"><?= $html_ok ?></td><?php endif; ?>
+</tr>
+<?php endforeach; ?>
+</tbody>
+</table>
+<?php endif; ?>
+<?php if ($this->compact): ?><a href="<?= $this->baseUrl('monitoring/summary/group') ?>">more</a><?php endif; ?>

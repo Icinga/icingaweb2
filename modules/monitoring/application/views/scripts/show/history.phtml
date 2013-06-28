@@ -1,0 +1,99 @@
+<?= $this->partial('show/header.phtml', array(
+    'host'    => $this->host,
+    'service' => $this->service,
+    'tabs'    => $this->tabs
+)); ?><?php
+$this->history->limit(10);
+$history = $this->history->paginate();
+
+?>
+
+<?php if (empty($history)): ?>
+There are no matching history entries right now
+<?php else: ?>
+<?= $this->paginationControl($history, null, null, array('preserve' => $this->preserve)); ?>
+<table class="paginatable">
+ <tbody>
+<?php foreach ($history as $event): ?>
+<?php
+
+if ($event->object_type == 'host') {
+    $states = array('up', 'down', 'unreachable', 'unknown', 99 => 'pending', null => 'pending');
+} else {
+    $states = array('ok', 'warning', 'critical', 'unknown', 99 => 'pending', null => 'pending');
+}
+
+$row_class = array_key_exists($event->state, $states) ? $states[$event->state] : 'invalid';
+
+?>
+<tr class="<?= $row_class ?>"><td class="state"><?= date('d.m. H:i', $event->timestamp ) ?></td>
+<?php if (! isset($this->host)): ?>
+<td><?= $this->escape($event->host_name) ?></td>
+<?php endif; ?>
+<?php if (! isset($this->service)): ?>
+<td><?php if (isset($this->host)): ?>
+<?= $this->qlink(
+    $event->service_description,
+    'monitoring/show/service',
+    array(
+        'host'    => $this->host->host_name,
+        'service' => $event->service_description
+    )
+) ?>
+<?php else: ?>
+<?= $this->escape($event->service_description) ?>
+<?php endif; ?>
+</td>
+<?php endif; ?>
+<td style="padding: 0.2em;"><?php
+
+$imgparams = array(
+    'width'  => 16,
+    'height' => 16,
+);
+switch ($event->type) {
+    case 'notify':
+        echo $this->img('img/classic/mail-notification.png', $imgparams);
+        break;
+    case 'comment':
+        echo $this->img('img/classic/comment.gif', $imgparams);
+        break;
+    case 'ack':
+        echo $this->img('img/classic/ack.gif', $imgparams);
+        break;
+    case 'dt_comment':
+        echo $this->img('img/classic/downtime.gif', $imgparams);
+        break;
+    case 'flapping':
+        echo $this->img('img/classic/flapping.gif', $imgparams);
+        break;
+    case 'hard_state':
+        echo $this->img('img/classic/state-hard.png', $imgparams);
+        break;
+    case 'soft_state':
+        echo $this->img('img/classic/state-soft.png', $imgparams);
+        break;
+    case 'dt_start':
+        echo $this->img('img/classic/downtime-start.png', $imgparams);
+        echo ' Downtime start';
+        break;
+    case 'dt_end':
+        echo $this->img('img/classic/downtime-end.png', $imgparams);
+        echo ' Downtime end';
+        break;
+}
+ ?>
+<?php if ($event->attempt !== null): ?>
+ [ <?= $event->attempt ?>/<?=$event->max_attempts ?> ]
+<?php endif; ?>
+ <?= $this->ticket_pattern ? preg_replace(
+            $this->ticket_pattern,
+            $this->ticket_link,
+            $this->pluginOutput($event->output)
+    ) : $this->pluginOutput($event->output) ?>
+</td>
+</tr>
+<?php endforeach; ?>
+ </tbody>
+</table>
+<?php endif; ?>

@@ -1,0 +1,24 @@
+<?php if (! empty($this->contacts)): ?>
+<?
+$list = array();
+foreach ($this->contacts as $contact) {
+    $list[] = $this->qlink($contact->contact_alias, 'monitoring/show/contact', array(
+        'contact_name' => $contact->contact_name
+    ));
+}
+?>
+<b>Contacts:</b> <?= implode(', ', $list) ?><br />
+<?php endif; ?>
+
+<?php if (! empty($this->contactgroups)): ?>
+<?
+$list = array();
+foreach ($this->contactgroups as $contactgroup) {
+    $list[] = $this->qlink($contactgroup->contactgroup_alias, 'monitoring/show/contactgroup', array(
+        'contactgroup_name' => $contactgroup->contactgroup_name
+    ));
+}
+?>
+<b>Contactgroups:</b> <?= implode(', ', $list) ?><br />
+<?php endif; ?>
+

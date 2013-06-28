@@ -5,7 +5,6 @@
 namespace Icinga\Application;
 
 use Icinga\Authentication\Manager;
-use Icinga\Web\Session;
 use Zend_Controller_Front as FrontController;
 use Zend_Layout as Layout;
 use Zend_Paginator as Paginator;
@@ -93,7 +92,7 @@ class Web extends ApplicationBootstrap
 
     protected function loadTranslations()
     {
-        // Session::getInstance()->language;
+        // AuthManager::getInstance()->getSession()->language;
         $locale = null;
         if (!$locale) {
             $locale = 'en_US';
@@ -107,7 +106,7 @@ class Web extends ApplicationBootstrap
 
     protected function dispatchFrontController()
     {
-        // Session::getInstance();
+        // AuthManager::getInstance()->getSession();
         $this->frontController->dispatch();
         return $this;
     }
