@@ -490,6 +490,7 @@ AS_IF([test "x$ldap_authentication" != xno],
 >>>>>>> ws-jmosshammer:icinga2-web moja$ git commit
 =======
     AC_CHECK_PHP_MODULE([ldap])
+    AC_CHECK_PHP_MODULE([mcrypt])
     ldap_enabled=""
 )
 >>>>>>> Add Autoconf based installation with most parameters
