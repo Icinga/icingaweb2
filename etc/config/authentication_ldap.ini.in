@@ -1,0 +1,15 @@
+[users]
+backend=ldap
+hostname=@ldap_host@
+port=@ldap_port@
+root_dn='@ldap_rootdn@'
+bind_dn='@ldap_binddn@'
+bind_pw=@ldap_bindpass@
+
+; Attributes for ldap user lookup
+user_class=@ldap_user_class@
+user_name_attribute=@ldap_attribute_username@
+user_firstname_attribute=@ldap_attribute_firstname@
+user_lastname_attribute=@ldap_attribute_lastname@
+user_password_attribute=@ldap_attribute_password@
+ 
