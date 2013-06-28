@@ -335,7 +335,7 @@ file { 'icinga2-web-public':
 
 file { '/etc/httpd/conf.d/icinga2-web.conf':
   source  => 'puppet:////vagrant/.vagrant-puppet/files/etc/httpd/conf.d/icinga2-web.conf',
-  require => Class['apache']
+  notify  => Service["${apache::apache}"]
 }
 
 exec { 'install php-ZendFramework-Db-Adapter-Pdo-Mysql':
