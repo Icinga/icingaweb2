@@ -285,7 +285,7 @@ exec { 'install npm/mocha':
 
 exec { 'install npm/mocha-cobertura-reporter':
   command => 'npm install -g mocha-cobertura-reporter',
-  creates => '/usr/lib/node_modules/cobertura',
+  creates => '/usr/lib/node_modules/mocha-cobertura-reporter',
   require => Exec['install npm/mocha']
 }
 
@@ -318,16 +318,35 @@ package { 'boost-devel':
 }
 
 cmmi { 'icinga2':
-  url     => 'http://sourceforge.net/projects/icinga/files/icinga2/0.0.1/icinga2-0.0.1.tar.gz/download',
-  output  => 'icinga2-0.0.1.tar.gz',
-  flags   => '--prefix=/usr/local/icinga2',
-  creates => '/usr/local/icinga2',
-  make    => 'make && make install',
-  require => Package['boost-devel'],
-  timeout => 600
+  url          => 'http://sourceforge.net/projects/icinga/files/icinga2/0.0.1/icinga2-0.0.1.tar.gz/download',
+  output       => 'icinga2-0.0.1.tar.gz',
+  flags        => '--prefix=/usr/local/icinga2',
+  creates      => '/usr/local/icinga2',
+  make         => 'make && make install',
+  require      => Package['boost-devel'],
+  make_timeout => 600
 }
 
 file { 'icinga2-web-public':
-  ensure => '/vagrant/public',
-  path   => '/var/www/html/icinga2-web'
+  ensure  => '/vagrant/public',
+  path    => '/var/www/html/icinga2-web',
+  require => Class['apache']
+}
+
+file { '/etc/httpd/conf.d/icinga2-web.conf':
+  source  => 'puppet:////vagrant/.vagrant-puppet/files/etc/httpd/conf.d/icinga2-web.conf',
+  require => Class['apache']
+}
+
+exec { 'install php-ZendFramework-Db-Adapter-Pdo-Mysql':
+  command => 'yum -d 0 -e 0 -y --enablerepo=epel install php-ZendFramework-Db-Adapter-Pdo-Mysql',
+  unless  => 'rpm -qa | grep php-ZendFramework-Db-Adapter-Pdo-Mysql',
+  require => Exec['install ZendFramework']
+}
+
+file { ['/etc/icinga2-web/',
+        '/etc/icinga2-web/enabledModules/']:
+  ensure => 'directory',
+  owner  => 'apache',
+  group  => 'apache'
 }

@@ -6,12 +6,12 @@
 # *Note* make sure to install build essentials before running cmmi.
 #
 # Parameters:
-#   [*url*]         - fetch archive via wget from this url.
-#   [*output*]      - filename to fetch the archive into.
-#   [*flags*]       - configure options.
-#   [*creates*]     - target directory the software will install to.
-#   [*make* ]       - command to make and make install the software.
-#   [*timeout* ]    - timeout for the make command.
+#   [*url*]           - fetch archive via wget from this url.
+#   [*output*]        - filename to fetch the archive into.
+#   [*flags*]         - configure options.
+#   [*creates*]       - target directory the software will install to.
+#   [*make* ]         - command to make and make install the software.
+#   [*make_timeout* ] - timeout for the make command.
 #
 # Actions:
 #
@@ -20,11 +20,12 @@
 # Sample Usage:
 #
 #  cmmi { 'example-software':
-#    url     => 'http://example-software.com/download/',
-#    output  => 'example-software.tar.gz',
-#    flags   => '--prefix=/opt/example-software',
-#    creates => '/opt/example-software',
-#    make    => 'make && make install'
+#    url          => 'http://example-software.com/download/',
+#    output       => 'example-software.tar.gz',
+#    flags        => '--prefix=/opt/example-software',
+#    creates      => '/opt/example-software',
+#    make         => 'make && make install'
+#    make_timeout => 600
 #  }
 #
 define cmmi(
@@ -33,7 +34,7 @@ define cmmi(
   $flags,
   $creates,
   $make,
-  $timeout=300
+  $make_timeout=300
 ) {
 
   Exec { path => '/bin:/usr/bin' }
@@ -46,7 +47,6 @@ define cmmi(
     cwd     => $cwd,
     command => "wget -q ${url} -O ${output}",
     creates => "${cwd}/${output}",
-    timeout => 120,
     require => Class['wget']
   }
 
@@ -73,6 +73,6 @@ define cmmi(
     command => $make,
     creates => $creates,
     require => Exec["configure-${name}"],
-    timeout => $timeout
+    timeout => $make_timeout
   }
 }
