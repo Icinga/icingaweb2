@@ -37,6 +37,7 @@ AC_ARG_WITH([icinga2web_config_path],
     icinga2web_config_path="'$prefix/config/'"
 )
 
+#
 # Users for webfiles
 #
 
@@ -171,6 +172,7 @@ AC_ARG_WITH([ldap_rootdn],
     ldap_rootdn=["ou=people, dc=icinga, dc=org"]
 )
 
+<<<<<<< HEAD
 AC_ARG_WITH([ldap_user_objectclass], 
     AS_HELP_STRING([--with-ldap-user-objectclass=LDAP_OBJECT_CLASS], [ldap object class to use for user authentication (default: inetOrgPerson)]),
     ldap_user_objectclass=$withval,
@@ -179,10 +181,21 @@ AC_ARG_WITH([ldap_user_objectclass],
     
 AC_ARG_WITH([ldap_attribute_username],
     AS_HELP_STRING([--with-ldap-attribute-username=LDAP_ATTRIBUTE], [user attribute to use for the username (default: uid)]),
+=======
+AC_ARG_WITH([ldap_user_class], 
+    AS_HELP_STRING([--with-ldap-attribute-username=LDAP_ATTRIBUTE], [user object type to use for the authentication (defaults inetOrgPerson)]),
+    ldap_user_class=$withval,
+    ldap_user_class="inetOrgPerson"
+)
+    
+AC_ARG_WITH([ldap_attribute_username],
+    AS_HELP_STRING([--with-ldap-attribute-username=LDAP_ATTRIBUTE], [user attribute to use for the username (defaults uid)]),
+>>>>>>> ws-jmosshammer:icinga2-web moja$ git commit
     ldap_attribute_username=$withval,
     ldap_attribute_username="uid"
 )
 
+<<<<<<< HEAD
 AC_ARG_WITH([ldap_attribute_password],
     AS_HELP_STRING([--with-ldap-attribute-password=LDAP_ATTRIBUTE], [user attribute to use for the password (default: password)]),
     ldap_attribute_password=$withval,
@@ -289,11 +302,32 @@ AC_ARG_WITH([icinga_commandpipe],
     icinga_commandpipe=$withval,
     icinga_commandpipe="/usr/local/icinga/var/rw/icinga.cmd"
 )      
+=======
+AC_ARG_WITH([ldap_attribute_firstname],
+    AS_HELP_STRING([--with-ldap-attribute-firstname=LDAP_ATTRIBUTE], [user attribute to use for the firstname (defaults firstname)]),
+    ldap_attribute_firstname=$withval,
+    ldap_attribute_firstname="firstname"
+)
+
+AC_ARG_WITH([ldap_attribute_lastname],
+    AS_HELP_STRING([--with-ldap-attribute-lastname=LDAP_ATTRIBUTE], [user attribute to use for the lastname (defaults lastname)]),
+    ldap_attribute_lastname=$withval,
+    ldap_attribute_lastname="lastname"
+)
+
+AC_ARG_WITH([ldap_attribute_password],
+    AS_HELP_STRING([--with-ldap-attribute-password=LDAP_ATTRIBUTE], [user attribute to use for the password (defaults password)]),
+    ldap_attribute_password=$withval,
+    ldap_attribute_password="password"
+)
+
+>>>>>>> ws-jmosshammer:icinga2-web moja$ git commit
 
 # Installation options
 INSTALL_OPTS="-o $bin_user -g $bin_group"
 INSTALL_OPTS_WEB="-o $web_user -g $web_group"
 
+<<<<<<< HEAD
 AS_IF([test "x$internal_db_type" = xmysql], [
     AC_CHECK_PHP_INCLUDE([Zend/Db/Adapter/Pdo/Mysql.php],[Zend Framework - MySQL PDO Adapter])
     AC_CHECK_PHP_MODULE([mysql])
@@ -335,6 +369,15 @@ AS_IF([test "x$ldap_authentication" != xno],
     AC_CHECK_PHP_MODULE([ldap])
     ldap_enabled=""
 )
+=======
+
+AS_IF([test "x$internal_db_type" == xmysql],
+    [AC_CHECK_PHP_INCLUDE([Zend/Db/Adapter/Pdo/Mysql.php],[Zend Framework - MySQL PDO Adapter])])
+AS_IF([test "x$internal_db_type" == xpgsql],
+    [AC_CHECK_PHP_INCLUDE([Zend/Db/Adapter/Pdo/Pgsql.php],[Zend Framework - PostgreSQL PDO Adapter])])
+AS_IF([test "x$ldap_authentication" != xno],
+    AC_CHECK_PHP_MODULE([ldap]))
+>>>>>>> ws-jmosshammer:icinga2-web moja$ git commit
 
 # Installation directives
 AC_SUBST(app_name)
@@ -396,6 +439,28 @@ AC_SUBST(livestatus_enabled)
 AC_SUBST(statusdat_enabled)
 AC_SUBST(ido_enabled)
 AC_SUBST(ldap_enabled)
+
+# Internal db setup
+AC_SUBST(internal_db_type)
+AC_SUBST(internal_db_name)
+AC_SUBST(internal_db_host)
+AC_SUBST(internal_db_port)
+AC_SUBST(internal_db_user)
+AC_SUBST(internal_db_pass)
+
+# ldap setup 
+AC_SUBST(ldap_host)
+AC_SUBST(ldap_port)
+AC_SUBST(ldap_rootdn)
+AC_SUBST(ldap_binddn)
+AC_SUBST(ldap_bindpass)
+AC_SUBST(ldap_user_class)
+AC_SUBST(ldap_attribute_basedn)
+AC_SUBST(ldap_attribute_username)
+AC_SUBST(ldap_attribute_firstname)
+AC_SUBST(ldap_attribute_lastname)
+AC_SUBST(ldap_attribute_password)
+
 
 AC_SUBST(PHP)
 AC_SUBST(INSTALL_OPTS)
