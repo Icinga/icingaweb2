@@ -30,7 +30,13 @@ AC_CHECK_PHP_MODULE([sockets json])
 
 # Checks for header files.
 
-#
+
+AC_ARG_WITH([icinga2web_config_path],
+    AS_HELP_STRING([--with-icinga2web-config-path], [Configuration path for icinga ]),
+    icinga2web_config_path="'$withval'",
+    icinga2web_config_path="'$prefix/config/'"
+)
+
 # Users for webfiles
 #
 
@@ -165,48 +171,170 @@ AC_ARG_WITH([ldap_rootdn],
     ldap_rootdn=["ou=people, dc=icinga, dc=org"]
 )
 
-AC_ARG_WITH([ldap_user_class], 
-    AS_HELP_STRING([--with-ldap-attribute-username=LDAP_ATTRIBUTE], [user object type to use for the authentication (defaults inetOrgPerson)]),
-    ldap_user_class=$withval,
-    ldap_user_class="inetOrgPerson"
+AC_ARG_WITH([ldap_user_objectclass], 
+    AS_HELP_STRING([--with-ldap-user-objectclass=LDAP_OBJECT_CLASS], [ldap object class to use for user authentication (default: inetOrgPerson)]),
+    ldap_user_objectclass=$withval,
+    ldap_user_objectclass="inetOrgPerson"
 )
     
 AC_ARG_WITH([ldap_attribute_username],
-    AS_HELP_STRING([--with-ldap-attribute-username=LDAP_ATTRIBUTE], [user attribute to use for the username (defaults uid)]),
+    AS_HELP_STRING([--with-ldap-attribute-username=LDAP_ATTRIBUTE], [user attribute to use for the username (default: uid)]),
     ldap_attribute_username=$withval,
     ldap_attribute_username="uid"
 )
 
-AC_ARG_WITH([ldap_attribute_firstname],
-    AS_HELP_STRING([--with-ldap-attribute-firstname=LDAP_ATTRIBUTE], [user attribute to use for the firstname (defaults firstname)]),
-    ldap_attribute_firstname=$withval,
-    ldap_attribute_firstname="firstname"
-)
-
-AC_ARG_WITH([ldap_attribute_lastname],
-    AS_HELP_STRING([--with-ldap-attribute-lastname=LDAP_ATTRIBUTE], [user attribute to use for the lastname (defaults lastname)]),
-    ldap_attribute_lastname=$withval,
-    ldap_attribute_lastname="lastname"
-)
-
 AC_ARG_WITH([ldap_attribute_password],
-    AS_HELP_STRING([--with-ldap-attribute-password=LDAP_ATTRIBUTE], [user attribute to use for the password (defaults password)]),
+    AS_HELP_STRING([--with-ldap-attribute-password=LDAP_ATTRIBUTE], [user attribute to use for the password (default: password)]),
     ldap_attribute_password=$withval,
     ldap_attribute_password="password"
 )
 
+AC_ARG_WITH([ldap_group_objectclass], 
+    AS_HELP_STRING([--with-ldap-group-objectclass=LDAP_ATTRIBUTE], [ldap object type to use for group authentication (default: inetOrgPerson)]),
+    ldap_group_objectclass=$withval,
+    ldap_group_objectclass="group"
+)
+    
+AC_ARG_WITH([ldap_attribute_groupname], 
+    AS_HELP_STRING([--with-ldap-attribute-groupname=LDAP_OBJECT_CLASS], [user object type to use for the authentication (default: inetOrgPerson)]),
+    ldap_attribute_groupname=$withval,
+    ldap_attribute_groupname="guid"
+)
+    
+
+#
+#   Icinga backend selection
+#
+
+AC_ARG_WITH([icinga_backend], 
+    AS_HELP_STRING([--with-icinga-backend=(ido, statusdat, livestatus)], [backend to use for rb (default: statusdat)]),
+    icinga_backend=$withval,
+    icinga_backend="statusdat"
+)
+
+#
+#   Ido settings
+#
+
+AC_ARG_WITH([ido_db_type],
+    AS_HELP_STRING([--with-ido-db-type=(mysql, pgsql)], [database engine to use for retrieving data from the ido db (default: mysql)]),
+    ido_db_type=$withval,
+    ido_db_type="statusdat"
+)
+
+AC_ARG_WITH([ido_host],
+    AS_HELP_STRING([--with-ido-host=HOST], [host to use for retrieving data from the ido db (default: localhost)]),
+    ido_host=$withval,
+    ido_host="localhost"
+)
+
+AC_ARG_WITH([ido_port],
+    AS_HELP_STRING([--with-ido-port=PORT], [backend to use for retrieving data from the ido db (default: 3306 for mysql. 5432 for pgsql)]),
+    ido_port=$withval,
+    ido_port=db_default_port
+)
+
+
+AC_ARG_WITH([ido_database],
+    AS_HELP_STRING([--with-ido-database=DATABASE], [database name to use for retrieving data from the ido db (default: icinga)]),
+    ido_database=$withval,
+    ido_database="icinga"
+)
+
+
+AC_ARG_WITH([ido_user],
+    AS_HELP_STRING([--with-ido-host=USER], [user to use for retrieving data from the ido db (default: icinga)]),
+    ido_user=$withval,
+    ido_user="icinga"
+)
+
+AC_ARG_WITH([ido_password],
+    AS_HELP_STRING([--with-ido-password=PASSWORD], [password to use for retrieving data from the ido db (default: icinga)]),
+    ido_password=$withval,
+    ido_password="icinga"
+)
+
+#
+#   Statusdat file location
+#
+
+AC_ARG_WITH([statusdat_file],
+    AS_HELP_STRING([--with-statusdat-file=FILE], [location of the status.dat file when retrieving data from status.dat (default: /usr/local/icinga/var/status.dat)]),
+    statusdat_file=$withval,
+    statusdat_file="/usr/local/icinga/var/status.dat"
+)
+
+AC_ARG_WITH([objects_cache_file],
+    AS_HELP_STRING([--with-objects-file=FILE], [location of the objects.cache file when retrieving data from status.dat (default: /usr/local/icinga/var/objects.cache)]),
+    objects_cache_file=$withval,
+    objects_cache_file="/usr/local/icinga/var/objects.cache"
+)   
+
+#
+#   Livestatus connection
+#
+
+AC_ARG_WITH([livestatus_socket], 
+    AS_HELP_STRING([--with-livestatus-socket=FILE], [location of the livestatus socket (default: /usr/local/icinga/var/rw/live)]),
+    livestatus_socket=$withval,
+    livestatus_socket="/usr/local/icinga/var/rw/live"
+)   
+
+#
+# Icinga commandpipe
+#
+
+AC_ARG_WITH([icinga_commandpipe],
+    AS_HELP_STRING([--with-icinga-commandpipe=FILE], [location of the command pipe used for sending commands (default: /usr/local/icinga/var/rw/icinga.cmd)]),
+    icinga_commandpipe=$withval,
+    icinga_commandpipe="/usr/local/icinga/var/rw/icinga.cmd"
+)      
 
 # Installation options
 INSTALL_OPTS="-o $bin_user -g $bin_group"
 INSTALL_OPTS_WEB="-o $web_user -g $web_group"
 
+AS_IF([test "x$internal_db_type" = xmysql], [
+    AC_CHECK_PHP_INCLUDE([Zend/Db/Adapter/Pdo/Mysql.php],[Zend Framework - MySQL PDO Adapter])
+    AC_CHECK_PHP_MODULE([mysql])
+    AS_IF([test "x$internal_db_port" == xdb_default_port], [internal_db_port=3306])
+])
 
-AS_IF([test "x$internal_db_type" == xmysql],
-    [AC_CHECK_PHP_INCLUDE([Zend/Db/Adapter/Pdo/Mysql.php],[Zend Framework - MySQL PDO Adapter])])
-AS_IF([test "x$internal_db_type" == xpgsql],
-    [AC_CHECK_PHP_INCLUDE([Zend/Db/Adapter/Pdo/Pgsql.php],[Zend Framework - PostgreSQL PDO Adapter])])
+AS_IF([test "x$ido_db_type" = xmysql], [
+    AC_CHECK_PHP_INCLUDE([Zend/Db/Adapter/Pdo/Mysql.php],[Zend Framework - MySQL PDO Adapter])
+    AC_CHECK_PHP_MODULE([mysql])
+    AS_IF([test "x$ido_port" = xdb_default_port], [ido_port=3306])
+])
+
+AS_IF([test "x$internal_db_type" = xpgsql], [
+    AC_CHECK_PHP_INCLUDE([Zend/Db/Adapter/Pdo/Pgsql.php],[Zend Framework - PostgreSQL PDO Adapter])
+    AC_CHECK_PHP_MODULE([pgsql])
+    AS_IF([test "x$internal_db_port" = xdb_default_port], [internal_db_port=5432])
+])
+
+AS_IF([test "x$ido_db_type" = xpgsql], [
+    AC_CHECK_PHP_INCLUDE([Zend/Db/Adapter/Pdo/Pgsql.php],[Zend Framework - PostgreSQL PDO Adapter])
+    AC_CHECK_PHP_MODULE([pgsql])
+    AS_IF([test "x$ido_port" = xdb_default_port], [ido_port=5432])
+])
+
+# comment out the disabled backends per default
+ido_enabled="disable=1" 
+statusdat_enabled="disable=1" 
+livestatus_enabled="disable=1" 
+ldap_enabled="disable=1"
+
+AS_CASE([$icinga_backend],
+    ["ido"], [ido_enabled=""],
+    ["statusdat"], [statusdat_enabled=""],
+    ["livestatus"], [livestatus_enabled=""],
+    [statusdat_enabled=""])
+
+
 AS_IF([test "x$ldap_authentication" != xno],
-    AC_CHECK_PHP_MODULE([ldap]))
+    AC_CHECK_PHP_MODULE([ldap])
+    ldap_enabled=""
+)
 
 # Installation directives
 AC_SUBST(app_name)
@@ -216,6 +344,7 @@ AC_SUBST(web_path)
 AC_SUBST(www_conf_path)
 AC_SUBST(bin_user)
 AC_SUBST(bin_group)
+AC_SUBST(icinga2web_config_path)
 
 # Internal db setup
 AC_SUBST(internal_db_type)
@@ -231,13 +360,42 @@ AC_SUBST(ldap_port)
 AC_SUBST(ldap_rootdn)
 AC_SUBST(ldap_binddn)
 AC_SUBST(ldap_bindpass)
-AC_SUBST(ldap_user_class)
+AC_SUBST(ldap_user_objectclass)
 AC_SUBST(ldap_attribute_basedn)
 AC_SUBST(ldap_attribute_username)
-AC_SUBST(ldap_attribute_firstname)
-AC_SUBST(ldap_attribute_lastname)
 AC_SUBST(ldap_attribute_password)
+AC_SUBST(ldap_group_objectclass)
+AC_SUBST(ldap_attribute_groupname)
 
+# backend setup
+AC_SUBST(icinga_backend)
+
+# ido backend variables
+AC_SUBST(ido_db_type)
+AC_SUBST(ido_host)
+AC_SUBST(ido_port)
+AC_SUBST(ido_database)
+AC_SUBST(ido_user)
+AC_SUBST(ido_password)
+
+# status.dat backend
+AC_SUBST(statusdat_file)
+AC_SUBST(objects_cache_file)
+
+# livestatus backend
+AC_SUBST(livestatus_socket)
+
+# command pipe
+AC_SUBST(icinga_commandpipe)
+
+
+# 
+# Comment placeholders for toggling backends
+#
+AC_SUBST(livestatus_enabled)
+AC_SUBST(statusdat_enabled)
+AC_SUBST(ido_enabled)
+AC_SUBST(ldap_enabled)
 
 AC_SUBST(PHP)
 AC_SUBST(INSTALL_OPTS)
@@ -245,8 +403,9 @@ AC_SUBST(INSTALL_OPTS_WEB)
 
 AC_CONFIG_FILES([
     Makefile
-    etc/config/authentication_db.ini
-    etc/config/authentication_ldap.ini
+    config/authentication.ini
+    config/backends.ini
+    public/index.php
 ])
 
 AC_OUTPUT

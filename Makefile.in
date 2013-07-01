@@ -15,20 +15,18 @@ install: install-static-files install-runtime-dirs
 # Removes files created by ./configure
 #
 clean:
-	if [ -f ./public/.htaccess ];then \
-		rm ./public/.htaccess; \
 	fi; \
 	if [ -f ./Makefile ];then \
 		rm ./Makefile; \
 	fi; \
-	if [ -f ./etc/apache/cranberry.conf ];then \
-		rm ./etc/apache/cranberry.conf; \
+	if [ -f ./etc/apache/icinga2web.conf ];then \
+		rm ./etc/apache/icinga2web.conf; \
 	fi;
 
 #
 # Installs/copies all static files (executables, scripts, html, etc)
 #
-install-static-files: install-application copy-folder-public copy-folder-config
+install-static-files: install-application copy-web-files-public copy-web-files-config
 	$(INSTALL) -m 644 $(INSTALL_OPTS) "./public/.htaccess"  $(DESTDIR)$(prefix)/public/.htaccess;
 
 #
@@ -46,12 +44,12 @@ install-tests: copy-folder-tests
 # Install configurations for apache2
 #
 install-apache-configs:
-	$(INSTALL) -m 644 $(INSTALL_OPTS) "./etc/apache/cranberry.conf"  $(WWW_CONF_PATH)/cranberry.conf;
+	$(INSTALL) -m 644 $(INSTALL_OPTS) "./etc/apache/icinga2web.conf"  $(WWW_CONF_PATH)/icinga2web.conf;
 
 #
 # Installs the php files to the prefix
 #
-install-application: copy-php-files-application copy-php-files-library
+install-application: copy-web-files-application copy-web-files-library
 
 #
 # Rule for coying folders and containing files (arbitary types), hidden files are excluded
@@ -74,7 +72,7 @@ copy-folder-%:
 #
 # Rule for copying only php, *html, js and ini files. Hidden files are ignored
 #
-copy-php-files-%:
+copy-web-files-%:
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(prefix)/$*
 
 	@dirs=`find ./$* -mindepth 1 -type d `;\
