@@ -1,9 +1,0 @@
-[users]
-backend=db
-type=@internal_db_type@
-host=@internal_db_host@
-port=@internal_db_port@
-database=@internal_db_name@
-user=@internal_db_user@
-password=@internal_db_pass@
-
