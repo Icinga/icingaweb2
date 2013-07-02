@@ -21,5 +21,11 @@ foreach ($this->comments as $comment) {
     );
 }
 ?>
-<b>Comments:</b><blockquote> <?= implode('<br />', $list) ?></blockquote>
+<div class="information-container">
+    <div class="head">
+        <span>Comments</span>
+    </div>
+
+    <blockquote> <?= implode('<br />', $list) ?></blockquote>
+</div>
 <?php endif; ?>
