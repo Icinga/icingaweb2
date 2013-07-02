@@ -143,10 +143,10 @@
                     req.destination = destination;
                 }
                 if (destination == "icinga-main") {
-                    History.pushState(data, document.title, url);
+                    history.pushState(data, document.title, url);
                 } else {
                     url = pushGet("c["+destination+"]", url);
-                    History.pushState(data, document.title, url);
+                    history.pushState(data, document.title, url);
                 }
                 console.log("New url: ", url);
                 return req;
