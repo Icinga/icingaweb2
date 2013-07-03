@@ -6,11 +6,18 @@ INSTALL=@INSTALL@
 INSTALL_OPTS=@INSTALL_OPTS@
 INSTALL_OPTS_WEB=@INSTALL_OPTS_WEB@
 
+default:
+	@echo "Icinga2Web make targets: "
+	@echo " -install: \t\t Install the application and overwrite configs"
+	@echo " -update: \t\t Install the application without touching the configs"
+	@echo " -install-apache-config: \t Install the apache configuration"
+
 #
 # Installs the whole application w\o httpd configurations
 #
 install: install-static-files install-runtime-dirs
 
+update: install-application
 #
 # Removes files created by ./configure
 #
@@ -43,7 +50,7 @@ install-tests: copy-folder-tests
 #
 # Install configurations for apache2
 #
-install-apache-configs:
+install-apache-config:
 	$(INSTALL) -m 644 $(INSTALL_OPTS) "./etc/apache/icinga2web.conf"  $(WWW_CONF_PATH)/icinga2web.conf;
 
 #
