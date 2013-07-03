@@ -10,6 +10,9 @@ test/js/npm-debug.log
 
 # ./configure output
 config.log
+autom4te.cache
+autoscan*
+config.status
 
 # cmd tester
 test/php/bin/extcmd_test
