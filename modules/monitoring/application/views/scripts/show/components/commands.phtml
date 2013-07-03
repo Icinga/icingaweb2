@@ -1,0 +1,17 @@
+<?php
+    $commands = $this->monitoringCommands(
+        $this->object,
+        (isset($this->type)) ? $this->type : 'full'
+    );
+    var_dump($commands);
+?>
+<div>
+    <button type="button" class="btn btn-primary">
+        <span>Check now </span>
+    </button>
+</div>
+<div class="container-spacer">
+    <button type="button" class="btn btn-danger">
+        <span>Acknowledge</span>
+    </button>
+</div>

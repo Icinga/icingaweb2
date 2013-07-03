@@ -18,16 +18,15 @@ if (!$this->compact) {
 <div class="information-container">
     <?php if ($inlineCommands === true) { ?>
     <div class="pull-right">
-        <div>
-            <button type="button" class="btn btn-primary">
-                <span>Check now</span>
-            </button>
-        </div>
-        <div class="container-spacer">
-            <button type="button" class="btn btn-danger">
-                <span>Acknowledge</span>
-            </button>
-        </div>
+        <?=
+            $this->partial(
+                'show/components/commands.phtml',
+                array(
+                    'object' => ($showService === true) ? $this->service : $this->host,
+                    'type' => 'small'
+                )
+            );
+        ?>
     </div>
     <?php } ?>
 
