@@ -11,8 +11,6 @@
             );
         }
     }
-
-var_dump($this->host);
 ?>
 <?=
     $this->partial(
@@ -76,3 +74,12 @@ var_dump($this->host);
         </div>
     </div>
 <?php endif; ?>
+
+<div class="information-container">
+    <div class="head">
+        <span>Flags</span>
+    </div>
+    <div>
+        <?= $this->render('show/components/flags.phtml'); ?>
+    </div>
+</div>

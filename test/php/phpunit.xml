@@ -8,6 +8,7 @@
             <directory>application/</directory>
             <directory>bin/</directory>
             <directory>library/</directory>
+            <directory>modules/</directory>
         </testsuite>
 
         <!--

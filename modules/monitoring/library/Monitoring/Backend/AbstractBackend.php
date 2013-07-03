@@ -84,7 +84,13 @@ class AbstractBackend implements DatasourceInterface
     }
 
 
-    // UGLY temporary host fetch
+    /**
+     * UGLY temporary host fetch
+     *
+     * @param string $host
+     * @param bool $fetchAll
+     * @return mixed
+     */
     public function fetchHost($host, $fetchAll = false)
     {
         $fields = array(
@@ -102,49 +108,51 @@ class AbstractBackend implements DatasourceInterface
             'host_perfdata'
         );
 
-        $fields = array_merge(
-            $fields,
-            array(
-                'current_check_attempt',
-                'max_check_attempts',
-                'attempt',
-                'last_check',
-                'next_check',
-                'check_type',
-                'last_state_change',
-                'last_hard_state_change',
-                'last_hard_state',
-                'last_time_up',
-                'last_time_down',
-                'last_time_unreachable',
-                'state_type',
-                'last_notification',
-                'next_notification',
-                'no_more_notifications',
-                'notifications_enabled',
-                'problem_has_been_acknowledged',
-                'acknowledgement_type',
-                'current_notification_number',
-                'passive_checks_enabled',
-                'active_checks_enabled',
-                'event_handler_enabled',
-                'flap_detection_enabled',
-                'is_flapping',
-                'percent_state_change',
-                'latency',
-                'execution_time',
-                'scheduled_downtime_depth',
-                'failure_prediction_enabled',
-                'process_performance_data',
-                'obsess_over_host',
-                'modified_host_attributes',
-                'event_handler',
-                'check_command',
-                'normal_check_interval',
-                'retry_check_interval',
-                'check_timeperiod_object_id'
-            )
-        );
+        if ($fetchAll === true) {
+            $fields = array_merge(
+                $fields,
+                array(
+                    'host_current_check_attempt',
+                    'host_max_check_attempts',
+                    'host_attempt',
+                    'host_last_check',
+                    'host_next_check',
+                    'host_check_type',
+                    'host_last_state_change',
+                    'host_last_hard_state_change',
+                    'host_last_hard_state',
+                    'host_last_time_up',
+                    'host_last_time_down',
+                    'host_last_time_unreachable',
+                    'host_state_type',
+                    'host_last_notification',
+                    'host_next_notification',
+                    'host_no_more_notifications',
+                    'host_notifications_enabled',
+                    'host_problem_has_been_acknowledged',
+                    'host_acknowledgement_type',
+                    'host_current_notification_number',
+                    'host_passive_checks_enabled',
+                    'host_active_checks_enabled',
+                    'host_event_handler_enabled',
+                    'host_flap_detection_enabled',
+                    'host_is_flapping',
+                    'host_percent_state_change',
+                    'host_latency',
+                    'host_execution_time',
+                    'host_scheduled_downtime_depth',
+                    'host_failure_prediction_enabled',
+                    'host_process_performance_data',
+                    'host_obsess_over_host',
+                    'host_modified_host_attributes',
+                    'host_event_handler',
+                    'host_check_command',
+                    'host_normal_check_interval',
+                    'host_retry_check_interval',
+                    'host_check_timeperiod_object_id'
+                )
+            );
+        }
 
         $select = $this->select()
             ->from('status', $fields)

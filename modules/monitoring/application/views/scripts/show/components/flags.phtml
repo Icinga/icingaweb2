@@ -1,0 +1,25 @@
+<?php
+    $object = null;
+
+    if (isset($this->service)) {
+        $object = $this->service;
+    } elseif (isset($this->host)) {
+        $object = $this->host;
+    }
+
+    $flags = $this->monitoringFlags($object);
+?>
+<table class="flag-container">
+<?php foreach ($flags as $name => $value) { ?>
+    <tr>
+        <th><?= $name; ?></th>
+        <td>
+            <?php if ($value === true) { ?>
+                <span class="flag flag-enabled">ENABLED</span>
+            <?php } else { ?>
+                <span class="flag flag-disabled">DISABLED</span>
+            <?php } ?>
+        </td>
+    </tr>
+<?php } ?>
+</table>
