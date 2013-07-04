@@ -369,12 +369,13 @@ class Builder
             return true;
         }
         
-        if ($this->form->getElement(self::CSRF_ID) == null) {
+        if ($this->getForm()->getElement(self::CSRF_ID) == null) {
             return false;
         }
 
         $sessionId = $sessionId ? $sessionId : session_id();
-        $seed = $this->form->getElement(self::CSRF_ID.'_seed')->getValue();
+        $seed = $this->getForm()->getElement(self::CSRF_ID.'_seed')->getValue();
+
         if (! is_numeric($seed)) {
             return false;
         }

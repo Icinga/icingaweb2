@@ -1,6 +1,11 @@
 <?php
+use Icinga\Backend;
+use Icinga\Form\Confirmation;
+use Icinga\Application\Config;
 use Icinga\Web\ModuleActionController;
-use \Icinga\Exception as IcingaException;
+use Icinga\Protocol\Commandpipe\CommandPipe;
+use Icinga\Exception\ConfigurationError;
+use Icinga\Exception\MissingParameterException;
 
 class Monitoring_CommandController extends ModuleActionController
 {
@@ -9,46 +14,41 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public $target;
 
-    private function getMandatoryParameter($name)
-    {
-        $value = $this->_request->getPost($name, false);
-        if ($value === false)
-            throw new IcingaException\MissingParameterException("Missing parameter $name");
-        return $value;
-    }
-
     public function init()
     {
-        if (!$this->_request->isPost()) {
-            $this->_response->clearBody();
-            $this->_response->clearHeaders();
-            $this->_response->setHttpResponseCode(405);
-            $this->_redirect("/");
-        }
-        if (!$this->hasValidToken())
-            throw new Exception("Invalid token given", 401);
-        $this->_helper->viewRenderer->setNoRender(true);
-        $this->_helper->layout()->disableLayout();
-        $targets = $this->config->instances;
-        $instance = $this->_getParam("instance");
-        if ($instance && isset($targets[$instance])) {
-            $this->target = new \Icinga\Protocol\Commandpipe\CommandPipe($targets[$instance]);
-        } else {
-            foreach ($targets as $target) {
-                $this->target = new \Icinga\Protocol\Commandpipe\CommandPipe($target);
-                break;
+        if ($this->_request->isPost()) {
+            // We do not need to display a view..
+            $this->_helper->viewRenderer->setNoRender(true);
+            // ..nor the overall site layout in case its a POST request.
+            $this->_helper->layout()->disableLayout();
+
+            $instance = $this->_request->getPost("instance");
+            $target_config = Config::getInstance()->getModuleConfig("instances", "monitoring");
+            if ($instance) {
+                if (isset($target_config[$instance])) {
+                    $this->target = new CommandPipe($target_config[$instance]);
+                } else {
+                    throw new ConfigurationError("Instance $instance is not configured");
+                }
+            } else {
+                $target_info = $target_config->current(); // Take the very first section
+                if ($target_info === false) {
+                    throw new ConfigurationError("Not any instances are configured yet");
+                } else {
+                    $this->target = new CommandPipe($target_info);
+                }
             }
         }
     }
 
     private function selectCommandTargets()
     {
-        $hostname = $this->_getParam("hosts");
-        $servicename = $this->_getParam("services");
+        $hostname = $this->_request->getPost("hosts");
+        $servicename = $this->_request->getPost("services");
         $target = "hostlist";
         $filter = array();
         if (!$hostname && !$servicename) {
-            throw new IcingaException\MissingParameterException("Missing host and service definition");
+            throw new MissingParameterException("Missing host and service definition");
         }
         if ($hostname) {
             $filter["hostname"] = explode(";", $hostname);
@@ -57,12 +57,29 @@ class Monitoring_CommandController extends ModuleActionController
             $filter["servicedescription"] = explode(";", $servicename);
             $target = "servicelist";
         }
+        return Backend::getInstance()->select()->from($target)->applyFilters($filter)->fetchAll();
+    }
 
-        return $this->backend = Icinga\Backend::getInstance()
-            ->select()
-            ->from($target)
-            ->applyFilters($filter)
-            ->fetchAll();
+    private function getMandatoryParameter($name)
+    {
+        $value = $this->_request->getParam($name);
+        if (!$value) {
+            throw new MissingParameterException("Missing parameter $name");
+        }
+        return $value;
+    }
+
+    public function restartAction()
+    {
+        $form = new Confirmation("Restart Icinga?", Confirmation::YES_NO);
+        if ($this->_request->isPost()) {
+            if ($form->isValid() && $form->isConfirmed()) {
+                $this->target->restartIcinga();
+            }
+        } else {
+            $form->setAction($this->view->url());
+            $this->view->form = $form;
+        }
     }
 
     public function sendReschedule()
@@ -168,11 +185,6 @@ class Monitoring_CommandController extends ModuleActionController
         }
     }
 
-    public function sendRestartIcinga()
-    {
-        $this->target->restartIcinga();
-    }
-
     public function sendDeletedowntime()
     {
         if ($this->_request->getPost("downtimes")) {
@@ -192,22 +204,4 @@ class Monitoring_CommandController extends ModuleActionController
             $this->target->removeDowntime($this->selectCommandTargets());
         }
     }
-
-
-    public function __call($method, $args)
-    {
-        $command = substr($method, 0, -6);
-        if ('Action' == substr($method, -6)) {
-            $command[0] = strtoupper($command[0]);
-            if (method_exists($this, "send$command")) {
-                return $this->{"send$command"}();
-            }
-            throw new Exception("Invalid command $command", 404);
-        }
-
-        throw new BadMethodCallException("Call to undefined method $method");
-
-    }
-
-
 }
