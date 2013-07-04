@@ -82,6 +82,7 @@ class Meta
     const CMD_ACKNOWLEDGE_PROBLEM = 26;
     const CMD_REMOVE_ACKNOWLEDGEMENT = 27;
     const CMD_DELAY_NOTIFICATION = 28;
+    const CMD_REMOVE_DOWNTIME = 29;
 
     /**
      * Filter array for array displayed in small interfaces
