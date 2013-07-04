@@ -4,7 +4,7 @@ namespace Test\Modules\Monitoring\Application\Views\Helpers;
 
 require_once 'Zend/View/Helper/Abstract.php';
 require_once 'Zend/View.php';
-require_once __DIR__. '/../../../../../../../modules/monitoring/application/views/helpers/MonitoringFlags.php';
+require_once __DIR__. '/../../../../../application/views/helpers/MonitoringFlags.php';
 
 class MonitoringFlagsTest extends \PHPUnit_Framework_TestCase
 {

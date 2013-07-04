@@ -19,12 +19,9 @@ if (!$this->compact) {
     <?php if ($inlineCommands === true) { ?>
     <div class="pull-right">
         <?=
-            $this->partial(
-                'show/components/commands.phtml',
-                array(
-                    'object' => ($showService === true) ? $this->service : $this->host,
-                    'type' => 'small'
-                )
+            $this->monitoringCommands(
+                ($showService === true) ? $this->service : $this->host,
+                'small'
             );
         ?>
     </div>

@@ -83,3 +83,12 @@
         <?= $this->render('show/components/flags.phtml'); ?>
     </div>
 </div>
+
+<div class="information-container">
+    <div class="head">
+        <span>Commands</span>
+    </div>
+    <div>
+        <?= $this->monitoringCommands($this->host, 'full'); ?>
+    </div>
+</div>

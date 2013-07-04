@@ -27,36 +27,62 @@ use Icinga\Monitoring\Command\Meta;
 
 /**
  * Class MonitoringCommands
+ *
+ * Helper which produces a list of command buttons
+ * depending on object states
  */
 class Zend_View_Helper_MonitoringCommands extends Zend_View_Helper_Abstract
 {
     /**
-     * Type of small interface style
+     * @param stdClass $object host or service object or something other
+     * @param string $type small or full
+     * @return string html output
      */
-    const TYPE_SMALL = 'small';
-
-    /**
-     * Type of full featured interface style
-     */
-    const TYPE_FULL = 'full';
-    /**
-     * Returns the object type from object
-     * @param stdClass $object
-     * @return string
-     */
-    public function getObjectType(\stdClass $object)
-    {
-        return array_shift(explode('_', array_shift(array_keys(get_object_vars($object))), 2));
-    }
-
     public function monitoringCommands(\stdClass $object, $type)
     {
-        $type = $this->getObjectType($object);
-
         $commands = new Meta();
-        var_dump($commands->getCommandsForObject($object));
+        $definitions = $commands->getCommandForObject($object, $type);
+        $out = '<div>';
+        $i = 0;
 
+        foreach ($definitions as $definition) {
 
-        var_dump($type);
+            if ($i % 5 === 0) {
+                $out .= '</div><div class="command-section pull-left">';
+            }
+
+            if ($type === Meta::TYPE_FULL) {
+                $out .= '<div>';
+            }
+
+            $out .= sprintf(
+                '<button type="button" data-target="command"'
+                . ' data-command-id="%1$s" class="btn %5$s"'
+                . ' title="%3$s">'
+                . '<i class="%4$s"></i> %2$s'
+                . '</button>',
+                $definition->id,
+                $definition->shortDescription,
+                $definition->longDescription,
+                $definition->iconCls,
+                $definition->btnCls
+            );
+
+            if ($type === Meta::TYPE_FULL) {
+                $out .= '</div>';
+            }
+
+            $i++;
+        }
+
+        $out .= '</div>';
+
+        $out .= '<div class="clearfix"></div>';
+
+        if ($type === Meta::TYPE_FULL) {
+            return '<div class="command-container">'. $out. '</div>';
+        }
+
+        return $out;
     }
 }
