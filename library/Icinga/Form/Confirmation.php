@@ -2,7 +2,6 @@
 namespace Icinga\Form;
 
 use Icinga\Form\Builder;
-use Icinga\Form\Elements\Note;
 use Icinga\Exception\ProgrammingError;
 
 class Confirmation extends Builder
@@ -21,7 +20,10 @@ class Confirmation extends Builder
     public function init()
     {
         $this->setMethod("post");
-        $this->addElement(new Note($this->message));
+
+        $note = new \Zend_Form_Element_Note("note");
+        $note->setValue($this->message);
+        $this->addElement($note);
 
         if ($this->style === self::YES_NO) {
             $this->addElement('submit', 'btn_yes', array(
