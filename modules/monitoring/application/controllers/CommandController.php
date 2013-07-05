@@ -1,5 +1,6 @@
 <?php
 use Icinga\Backend;
+use Icinga\Form\SendCommand;
 use Icinga\Form\Confirmation;
 use Icinga\Application\Config;
 use Icinga\Web\ModuleActionController;
@@ -41,29 +42,27 @@ class Monitoring_CommandController extends ModuleActionController
         }
     }
 
-    private function selectCommandTargets()
+    private function selectCommandTargets($hostname, $servicename = null)
     {
-        $hostname = $this->_request->getPost("hosts");
-        $servicename = $this->_request->getPost("services");
         $target = "hostlist";
         $filter = array();
         if (!$hostname && !$servicename) {
             throw new MissingParameterException("Missing host and service definition");
         }
         if ($hostname) {
-            $filter["hostname"] = explode(";", $hostname);
+            $filter["host_name"] = $hostname;
         }
         if ($servicename) {
-            $filter["servicedescription"] = explode(";", $servicename);
+            $filter["service_description"] = $servicename;
             $target = "servicelist";
         }
         return Backend::getInstance()->select()->from($target)->applyFilters($filter)->fetchAll();
     }
 
-    private function getMandatoryParameter($name)
+    private function getParameter($name, $mandatory = true)
     {
         $value = $this->_request->getParam($name);
-        if (!$value) {
+        if ($mandatory && !$value) {
             throw new MissingParameterException("Missing parameter $name");
         }
         return $value;
@@ -82,15 +81,38 @@ class Monitoring_CommandController extends ModuleActionController
         }
     }
 
-    public function sendReschedule()
+    public function schedulecheckAction()
     {
-        $forced = (trim($this->_getParam("forced"), false) === "true");
-        $time = $this->_request->getPost("time", false);
-        $childs = $this->_request->getPost("withChilds", false);
-        if ($forced) {
-            $this->target->scheduleForcedCheck($this->selectCommandTargets(), $time, $childs);
+        $form = new SendCommand("Schedule Host/Service check");
+        $form->addDatePicker("checkDate", "Check date", date("m-d-Y"));
+        $form->addTimePicker("checkTime", "Check time", date("h:i A"));
+        $form->addCheckbox("forceCheck", "Force check", false);
+
+        if ($this->_request->isPost()) {
+            if ($form->isValid()) {
+                $withChilds = false;
+                $services = $form->getServices();
+                $time = sprintf("%s %s", $form->getDate("checkDate"), $form->getTime("checkTime"));
+
+                if (!$services || $services === "all") {
+                    $withChilds = $services === "all";
+                    $targets = $this->selectCommandTargets($form->getHosts());
+                } else {
+                    $targets = $this->selectCommandTargets($form->getHosts(), $services);
+                }
+
+                if ($form->isChecked("forceCheck")) {
+                    $this->target->scheduleForcedCheck($targets, $time, $withChilds);
+                } else {
+                    $this->target->scheduleCheck($targets, $time, $withChilds);
+                }
+            }
         } else {
-            $this->target->scheduleCheck($this->selectCommandTargets(), $time, $childs);
+            $form->setServices($this->getParameter("services", false));
+            $form->setHosts($this->getParameter("hosts"));
+            $form->setAction($this->view->url());
+            $form->addSubmitButton("Commit");
+            $this->view->form = $form;
         }
     }
 
