@@ -111,6 +111,20 @@ class SendCommand extends Builder
     {
         return $this->getValue($id);
     }
+
+    public function addChoice($id, $label, $values)
+    {
+        $this->addElement("select", $id, array(
+            'label' => $label
+            )
+        );
+        $this->getElement($id)->setMultiOptions($values);
+    }
+
+    public function getChoice($id)
+    {
+        return $this->getElement($id)->options[$_POST[$id]];
+    }
 }
 
 ?>
