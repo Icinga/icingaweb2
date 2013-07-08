@@ -309,6 +309,40 @@ class Monitoring_CommandController extends ModuleActionController
         }
     }
 
+    public function enableeventhandlingAction()
+    {
+        $form = new SendCommand("Enable event handler?");
+        if ($this->_request->isPost()) {
+            if ($form->isValid()) {
+                $targets = $this->selectCommandTargets($form->getHosts(), $form->getServices());
+                $this->target->enableEventHandler($targets);
+            }
+        } else {
+            $form->setServices($this->getParameter("services", false));
+            $form->setHosts($this->getParameter("hosts"));
+            $form->setAction($this->view->url());
+            $form->addSubmitButton("Commit");
+            $this->view->form = $form;
+        }
+    }
+
+    public function disableeventhandlingAction()
+    {
+        $form = new SendCommand("Disable event handler?");
+        if ($this->_request->isPost()) {
+            if ($form->isValid()) {
+                $targets = $this->selectCommandTargets($form->getHosts(), $form->getServices());
+                $this->target->disableEventHandler($targets);
+            }
+        } else {
+            $form->setServices($this->getParameter("services", false));
+            $form->setHosts($this->getParameter("hosts"));
+            $form->setAction($this->view->url());
+            $form->addSubmitButton("Commit");
+            $this->view->form = $form;
+        }
+    }
+
     public function sendPassivechecks()
     {
         if ($this->getMandatoryParameter("enable")) {
