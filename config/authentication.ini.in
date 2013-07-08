@@ -1,0 +1,24 @@
+[ldap-authentication]
+backend=ldap
+hostname=@ldap_host@
+port=@ldap_port@
+root_dn='@ldap_rootdn@'
+bind_dn='@ldap_binddn@'
+bind_pw=@ldap_bindpass@
+
+; Attributes for ldap user lookup
+user.ldap_object_class=@ldap_user_objectclass@
+user.ldap_name_attribute=@ldap_attribute_username@
+user.password_attribute=@ldap_attribute_password@
+group.ldap_object_class=@ldap_group_objectclass@
+group.ldap_name_attribute=@ldap_attribute_groupname@
+
+[internal-authentication]
+backend=db
+type=@internal_db_type@
+host=@internal_db_host@
+port=@internal_db_port@
+database=@internal_db_name@
+user=@internal_db_user@
+password=@internal_db_pass@
+
