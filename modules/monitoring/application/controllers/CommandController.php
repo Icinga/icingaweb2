@@ -377,12 +377,37 @@ class Monitoring_CommandController extends ModuleActionController
         }
     }
 
-    public function sendPassivechecks()
+    public function enablepassivechecksAction()
     {
-        if ($this->getMandatoryParameter("enable")) {
-            $this->target->enablePassiveChecks($this->selectCommandTargets());
+        $form = new SendCommand("Enable passive checks?");
+        if ($this->_request->isPost()) {
+            if ($form->isValid()) {
+                $targets = $this->selectCommandTargets($form->getHosts(), $form->getServices());
+                $this->target->enablePassiveChecks($targets);
+            }
         } else {
-            $this->target->disablePassiveChecks($this->selectCommandTargets());
+            $form->setServices($this->getParameter("services", false));
+            $form->setHosts($this->getParameter("hosts"));
+            $form->setAction($this->view->url());
+            $form->addSubmitButton("Commit");
+            $this->view->form = $form;
+        }
+    }
+
+    public function disablepassivechecksAction()
+    {
+        $form = new SendCommand("Disable passive checks?");
+        if ($this->_request->isPost()) {
+            if ($form->isValid()) {
+                $targets = $this->selectCommandTargets($form->getHosts(), $form->getServices());
+                $this->target->disablePassiveChecks($targets);
+            }
+        } else {
+            $form->setServices($this->getParameter("services", false));
+            $form->setHosts($this->getParameter("hosts"));
+            $form->setAction($this->view->url());
+            $form->addSubmitButton("Commit");
+            $this->view->form = $form;
         }
     }
 
