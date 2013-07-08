@@ -151,12 +151,77 @@ class Monitoring_CommandController extends ModuleActionController
         $this->target->scheduleDowntime($this->selectCommandTargets(), $downtime);
     }
 
-    public function sendActivechecks()
+    public function enableactivechecksAction()
     {
-        if ($this->getMandatoryParameter("enable")) {
-            $this->target->enableActiveChecks($this->selectCommandTargets());
+        // @TODO: Elaborate how "withChilds" and "forHosts" can be utilised
+        $form = new SendCommand("Enable active checks?");
+        if ($this->_request->isPost()) {
+            if ($form->isValid()) {
+                $withChilds = $forHosts = false;
+                $services = $form->getServices();
+
+                if ($services) {
+                    $withChilds = $services === "all";
+                    $form->addCheckbox("forHosts", "", false);
+                    $forHosts = $form->isChecked("forHosts");
+                    if ($withChilds) {
+                        $targets = $this->selectCommandTargets($form->getHosts());
+                    } else {
+                        $targets = $this->selectCommandTargets($form->getHosts(), $services);
+                    }
+                } else {
+                    $targets = $this->selectCommandTargets($form->getHosts());
+                }
+
+                $this->target->enableActiveChecks($targets);
+            }
         } else {
-            $this->target->disableActiveChecks($this->selectCommandTargets());
+            $services = $this->getParameter("services", false);
+            if ($services) {
+                $form->addCheckbox("forHosts", "Enable for hosts too?", false);
+            }
+            $form->setServices($services);
+            $form->setHosts($this->getParameter("hosts"));
+            $form->setAction($this->view->url());
+            $form->addSubmitButton("Commit");
+            $this->view->form = $form;
+        }
+    }
+
+    public function disableactivechecksAction()
+    {
+        // @TODO: Elaborate how "withChilds" and "forHosts" can be utilised
+        $form = new SendCommand("Disable active checks?");
+        if ($this->_request->isPost()) {
+            if ($form->isValid()) {
+                $withChilds = $forHosts = false;
+                $services = $form->getServices();
+
+                if ($services) {
+                    $withChilds = $services === "all";
+                    $form->addCheckbox("forHosts", "", false);
+                    $forHosts = $form->isChecked("forHosts");
+                    if ($withChilds) {
+                        $targets = $this->selectCommandTargets($form->getHosts());
+                    } else {
+                        $targets = $this->selectCommandTargets($form->getHosts(), $services);
+                    }
+                } else {
+                    $targets = $this->selectCommandTargets($form->getHosts());
+                }
+
+                $this->target->disableActiveChecks($targets);
+            }
+        } else {
+            $services = $this->getParameter("services", false);
+            if ($services) {
+                $form->addCheckbox("forHosts", "Disable for hosts too?", false);
+            }
+            $form->setServices($services);
+            $form->setHosts($this->getParameter("hosts"));
+            $form->setAction($this->view->url());
+            $form->addSubmitButton("Commit");
+            $this->view->form = $form;
         }
     }
 
