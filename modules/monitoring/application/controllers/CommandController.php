@@ -225,6 +225,90 @@ class Monitoring_CommandController extends ModuleActionController
         }
     }
 
+    public function enablenotificationsAction()
+    {
+        // @TODO: Elaborate how "withChilds", "childHosts" and "forHosts" can be utilised
+        $form = new SendCommand("Enable notifications?");
+        if ($this->_request->isPost()) {
+            if ($form->isValid()) {
+                $services = $form->getServices();
+                $withChilds = $forHosts = $childHosts = false;
+
+                if ($services) {
+                    $withChilds = $services === "all";
+                    $form->addCheckbox("forHosts", "", false);
+                    $forHosts = $form->isChecked("forHosts");
+                    if ($withChilds) {
+                        $targets = $this->selectCommandTargets($form->getHosts());
+                    } else {
+                        $targets = $this->selectCommandTargets($form->getHosts(), $services);
+                    }
+                } else {
+                    $form->addCheckbox("childHosts", "", false);
+                    $childHosts = $form->isChecked("childHosts");
+                    $targets = $this->selectCommandTargets($form->getHosts());
+                }
+
+                $this->target->enableNotifications($targets);
+            }
+        } else {
+            $services = $this->getParameter("services", false);
+            if ($services) {
+                $form->addCheckbox("forHosts", "Enable for hosts too?", false);
+            } else {
+                $form->addCheckbox("childHosts", "Enable notifications for ".
+                                                 "child hosts too?", false);
+            }
+            $form->setServices($services);
+            $form->setHosts($this->getParameter("hosts"));
+            $form->setAction($this->view->url());
+            $form->addSubmitButton("Commit");
+            $this->view->form = $form;
+        }
+    }
+
+    public function disablenotificationsAction()
+    {
+        // @TODO: Elaborate how "withChilds", "childHosts" and "forHosts" can be utilised
+        $form = new SendCommand("Disable notifications?");
+        if ($this->_request->isPost()) {
+            if ($form->isValid()) {
+                $services = $form->getServices();
+                $withChilds = $forHosts = $childHosts = false;
+
+                if ($services) {
+                    $withChilds = $services === "all";
+                    $form->addCheckbox("forHosts", "", false);
+                    $forHosts = $form->isChecked("forHosts");
+                    if ($withChilds) {
+                        $targets = $this->selectCommandTargets($form->getHosts());
+                    } else {
+                        $targets = $this->selectCommandTargets($form->getHosts(), $services);
+                    }
+                } else {
+                    $form->addCheckbox("childHosts", "", false);
+                    $childHosts = $form->isChecked("childHosts");
+                    $targets = $this->selectCommandTargets($form->getHosts());
+                }
+
+                $this->target->disableNotifications($targets);
+            }
+        } else {
+            $services = $this->getParameter("services", false);
+            if ($services) {
+                $form->addCheckbox("forHosts", "Disable for hosts too?", false);
+            } else {
+                $form->addCheckbox("childHosts", "Disable notifications for ".
+                                                 "child hosts too?", false);
+            }
+            $form->setServices($services);
+            $form->setHosts($this->getParameter("hosts"));
+            $form->setAction($this->view->url());
+            $form->addSubmitButton("Commit");
+            $this->view->form = $form;
+        }
+    }
+
     public function sendPassivechecks()
     {
         if ($this->getMandatoryParameter("enable")) {
