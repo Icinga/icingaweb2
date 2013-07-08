@@ -149,7 +149,8 @@ class AbstractBackend implements DatasourceInterface
                     'host_check_command',
                     'host_normal_check_interval',
                     'host_retry_check_interval',
-                    'host_check_timeperiod_object_id'
+                    'host_check_timeperiod_object_id',
+                    'host_status_update_time'
                 )
             );
         }

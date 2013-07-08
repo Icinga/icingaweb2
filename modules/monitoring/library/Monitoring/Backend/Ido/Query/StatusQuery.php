@@ -66,6 +66,7 @@ class StatusQuery extends AbstractQuery
             'host_normal_check_interval' => 'hs.normal_check_interval',
             'host_retry_check_interval' => 'hs.retry_check_interval',
             'host_check_timeperiod_object_id' => 'hs.check_timeperiod_object_id',
+            'host_status_update_time' => 'hs.status_update_time',
 
             'host_problems' => 'CASE WHEN hs.current_state = 0 THEN 0 ELSE 1 END',
             'host_severity' => 'CASE WHEN hs.current_state = 0

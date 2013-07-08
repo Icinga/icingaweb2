@@ -45,6 +45,9 @@ if (!$this->compact) {
             <td class="state"<?= $showService ? '' : ' rowspan="2"'; ?>>
                 <?= $this->util()->getHostStateName($this->host->host_state); ?>
                 since <?= $this->timeSince($this->host->host_last_state_change); ?>
+                <?php if ($this->host->host_acknowledged === '1') { ?>
+                    (Has been acknowledged)
+                <?php } ?>
             </td>
         </tr>
         <?php if ($showService === true) { ?>
@@ -57,6 +60,9 @@ if (!$this->compact) {
                 <td class="state">
                     <?= $this->util()->getServiceStateName($this->service->service_state); ?>
                     since <?= $this->timeSince($this->service->service_last_state_change); ?>
+                    <?php if ($this->host->service_acknowledged === '1') { ?>
+                        (Has been acknowledged)
+                    <?php } ?>
                 </td>
             </tr>
         <?php } else { ?>
