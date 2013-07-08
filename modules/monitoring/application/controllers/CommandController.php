@@ -411,6 +411,40 @@ class Monitoring_CommandController extends ModuleActionController
         }
     }
 
+    public function startobsessingAction()
+    {
+        $form = new SendCommand("Start obsessing?");
+        if ($this->_request->isPost()) {
+            if ($form->isValid()) {
+                $targets = $this->selectCommandTargets($form->getHosts(), $form->getServices());
+                $this->target->startObsessing($targets);
+            }
+        } else {
+            $form->setServices($this->getParameter("services", false));
+            $form->setHosts($this->getParameter("hosts"));
+            $form->setAction($this->view->url());
+            $form->addSubmitButton("Commit");
+            $this->view->form = $form;
+        }
+    }
+
+    public function stopobsessingAction()
+    {
+        $form = new SendCommand("Stop obsessing?");
+        if ($this->_request->isPost()) {
+            if ($form->isValid()) {
+                $targets = $this->selectCommandTargets($form->getHosts(), $form->getServices());
+                $this->target->stopObsessing($targets);
+            }
+        } else {
+            $form->setServices($this->getParameter("services", false));
+            $form->setHosts($this->getParameter("hosts"));
+            $form->setAction($this->view->url());
+            $form->addSubmitButton("Commit");
+            $this->view->form = $form;
+        }
+    }
+
     public function sendComment()
     {
         $author = "AUTHOR"; //@TODO: get from auth backend
