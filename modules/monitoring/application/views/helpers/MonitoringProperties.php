@@ -45,7 +45,7 @@ class Zend_View_Helper_MonitoringProperties extends Zend_View_Helper_Abstract
      * @var array
      */
     private static $keys = array(
-        'buildAttempt' => 'Current Attempt',
+        'buildAttempt' => 'Current attempt',
         'last_check' => 'Last check time',
         'buildCheckType' => 'Check type',
         'buildLatency' => 'Check latency / duration',
