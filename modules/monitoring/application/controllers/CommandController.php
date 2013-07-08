@@ -3,8 +3,11 @@ use Icinga\Backend;
 use Icinga\Form\SendCommand;
 use Icinga\Form\Confirmation;
 use Icinga\Application\Config;
+use Icinga\Authentication\Manager;
 use Icinga\Web\ModuleActionController;
+use Icinga\Protocol\Commandpipe\Comment;
 use Icinga\Protocol\Commandpipe\CommandPipe;
+use Icinga\Protocol\Commandpipe\Acknowledgement;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\MissingParameterException;
 
@@ -114,23 +117,6 @@ class Monitoring_CommandController extends ModuleActionController
             $form->addSubmitButton("Commit");
             $this->view->form = $form;
         }
-    }
-
-    public function sendAcknowledge()
-    {
-        $author = "AUTHOR"; //@TODO: get from auth backend
-        $comment = $this->getMandatoryParameter("comment");
-        $persistent = $this->_request->getPost("persistent", false) == "true";
-        $commentObj = new \Icinga\Protocol\Commandpipe\Comment($author, $comment, $persistent);
-
-        $notify = $this->_request->getPost("notify", false) == "true";
-        $sticky = $this->_request->getPost("sticky", false) == "true";
-        $expire = intval($this->_request->getPost("expire", false));
-        if (!$expire) {
-            $expire = -1;
-        }
-        $ack = new \Icinga\Protocol\Commandpipe\Acknowledgement($commentObj, $notify, $expire, $sticky);
-        $this->target->acknowledge($this->selectCommandTargets(), $ack);
     }
 
     public function sendScheduledowntime()
@@ -435,6 +421,62 @@ class Monitoring_CommandController extends ModuleActionController
             if ($form->isValid()) {
                 $targets = $this->selectCommandTargets($form->getHosts(), $form->getServices());
                 $this->target->stopObsessing($targets);
+            }
+        } else {
+            $form->setServices($this->getParameter("services", false));
+            $form->setHosts($this->getParameter("hosts"));
+            $form->setAction($this->view->url());
+            $form->addSubmitButton("Commit");
+            $this->view->form = $form;
+        }
+    }
+
+    public function placeacknowledgementAction()
+    {
+        $form = new SendCommand("Place acknowledgement?");
+        $form->addTextBox("author", "Author (Your name):", "", true);
+        $form->addTextBox("comment", "Comment:", "", false, true);
+        $form->addCheckbox("persistent", "Persistent comment:", false);
+        $form->addDatePicker("expireDate", "Expire date:", "");
+        $form->addTimePicker("expireTime", "Expire time:", "");
+        $form->addCheckbox("sticky", "Sticky acknowledgement:", true);
+        $form->addCheckbox("notify", "Send notification:", true);
+
+        if ($this->_request->isPost()) {
+            if ($form->isValid()) {
+                $raw_time = strptime(sprintf("%s %s", $form->getDate("expireDate"),
+                                             $form->getTime("expireTime")), "%m-%d-%Y %I:%M %p");
+                if ($raw_time) {
+                    $time = mktime($raw_time['tm_hour'], $raw_time['tm_min'], $raw_time['tm_sec'],
+                                   $raw_time['tm_mon'], $raw_time['tm_mday'], $raw_time['tm_year']);
+                } else {
+                    $time = -1;
+                }
+
+                $comment = new Comment($form->getText("author"), $form->getText("comment"),
+                                       $form->isChecked("persistent"));
+                $acknowledgement = new Acknowledgement($comment, $form->isChecked("notify"),
+                                                       $time, $form->isChecked("sticky"));
+                $targets = $this->selectCommandTargets($form->getHosts(), $form->getServices());
+                $this->target->acknowledge($targets, $acknowledgement);
+            }
+        } else {
+            $form->getElement("author")->setValue(Manager::getInstance()->getUser()->getUsername());
+            $form->setServices($this->getParameter("services", false));
+            $form->setHosts($this->getParameter("hosts"));
+            $form->setAction($this->view->url());
+            $form->addSubmitButton("Commit");
+            $this->view->form = $form;
+        }
+    }
+
+    public function deleteacknowledgementAction()
+    {
+        $form = new SendCommand("Remove acknowledgements?");
+        if ($this->_request->isPost()) {
+            if ($form->isValid()) {
+                $targets = $this->selectCommandTargets($form->getHosts(), $form->getServices());
+                $this->target->removeAcknowledge($targets);
             }
         } else {
             $form->setServices($this->getParameter("services", false));
