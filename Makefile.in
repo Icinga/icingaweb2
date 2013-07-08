@@ -8,9 +8,9 @@ INSTALL_OPTS_WEB=@INSTALL_OPTS_WEB@
 
 default:
 	@echo "Icinga2Web make targets: "
-	@echo " -install: \t\t Install the application and overwrite configs"
-	@echo " -update: \t\t Install the application without touching the configs"
-	@echo " -install-apache-config: \t Install the apache configuration"
+	@printf "%b" " -install:\t\t\tInstall the application and overwrite configs\n"
+	@printf "%b" " -update:\t\t\tInstall the application without touching the configs\n"
+	@printf "%b" " -install-apache-config:\tInstall the apache configuration\n"
 
 #
 # Installs the whole application w\o httpd configurations
