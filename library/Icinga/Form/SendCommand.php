@@ -97,6 +97,20 @@ class SendCommand extends Builder
     {
         return $this->getValue($id);
     }
+
+    public function addTextBox($id, $label, $value = "", $readonly = false, $multiline = false)
+    {
+        $options = array('label' => $label, 'value' => $value);
+        if ($readonly) {
+            $options['readonly'] = 1;
+        }
+        $this->addElement($multiline ? "textarea" : "text", $id, $options);
+    }
+
+    public function getText($id)
+    {
+        return $this->getValue($id);
+    }
 }
 
 ?>
