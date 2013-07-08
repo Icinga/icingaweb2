@@ -343,21 +343,46 @@ class Monitoring_CommandController extends ModuleActionController
         }
     }
 
+    public function enableflapdetectionAction()
+    {
+        $form = new SendCommand("Enable flap detection?");
+        if ($this->_request->isPost()) {
+            if ($form->isValid()) {
+                $targets = $this->selectCommandTargets($form->getHosts(), $form->getServices());
+                $this->target->enableFlappingDetection($targets);
+            }
+        } else {
+            $form->setServices($this->getParameter("services", false));
+            $form->setHosts($this->getParameter("hosts"));
+            $form->setAction($this->view->url());
+            $form->addSubmitButton("Commit");
+            $this->view->form = $form;
+        }
+    }
+
+    public function disableflapdetectionAction()
+    {
+        $form = new SendCommand("Disable flap detection?");
+        if ($this->_request->isPost()) {
+            if ($form->isValid()) {
+                $targets = $this->selectCommandTargets($form->getHosts(), $form->getServices());
+                $this->target->disableFlappingDetection($targets);
+            }
+        } else {
+            $form->setServices($this->getParameter("services", false));
+            $form->setHosts($this->getParameter("hosts"));
+            $form->setAction($this->view->url());
+            $form->addSubmitButton("Commit");
+            $this->view->form = $form;
+        }
+    }
+
     public function sendPassivechecks()
     {
         if ($this->getMandatoryParameter("enable")) {
             $this->target->enablePassiveChecks($this->selectCommandTargets());
         } else {
             $this->target->disablePassiveChecks($this->selectCommandTargets());
-        }
-    }
-
-    public function sendFlappingdetection()
-    {
-        if ($this->getMandatoryParameter("enable")) {
-            $this->target->enableFlappingDetection($this->selectCommandTargets());
-        } else {
-            $this->target->disableFlappingDetection($this->selectCommandTargets());
         }
     }
 
