@@ -487,6 +487,29 @@ class Monitoring_CommandController extends ModuleActionController
         }
     }
 
+    public function submitcheckresultAction()
+    {
+        // @TODO: How should the "perfdata" be handled? (The interface function does not accept it)
+        $form = new SendCommand("Submit passive check result");
+        $form->addChoice("state", "Check result:", array("UP", "DOWN", "UNREACHABLE"));
+        $form->addTextBox("output", "Check output:", "", false, true);
+        $form->addTextBox("perfdata", "Performance data:", "", false, true);
+
+        if ($this->_request->isPost()) {
+            if ($form->isValid()) {
+                $targets = $this->selectCommandTargets($form->getHosts(), $form->getServices());
+                $this->target->submitCheckResult($targets, $form->getChoice("state"),
+                                                 $form->getText("output"));
+            }
+        } else {
+            $form->setServices($this->getParameter("services", false));
+            $form->setHosts($this->getParameter("hosts"));
+            $form->setAction($this->view->url());
+            $form->addSubmitButton("Commit");
+            $this->view->form = $form;
+        }
+    }
+
     public function sendComment()
     {
         $author = "AUTHOR"; //@TODO: get from auth backend
