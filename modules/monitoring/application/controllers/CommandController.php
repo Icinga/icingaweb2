@@ -541,6 +541,25 @@ class Monitoring_CommandController extends ModuleActionController
         }
     }
 
+    public function delaynotificationAction()
+    {
+        $form = new SendCommand("Delay a notification");
+        $form->addNumberBox("delay", "Notification delay (minutes from now):");
+
+        if ($this->_request->isPost()) {
+            if ($form->isValid()) {
+                $targets = $this->selectCommandTargets($form->getHosts(), $form->getServices());
+                $this->target->delayNotification($targets, $form->getNumber("delay"));
+            }
+        } else {
+            $form->setServices($this->getParameter("services", false));
+            $form->setHosts($this->getParameter("hosts"));
+            $form->setAction($this->view->url());
+            $form->addSubmitButton("Commit");
+            $this->view->form = $form;
+        }
+    }
+
     public function sendComment()
     {
         $author = "AUTHOR"; //@TODO: get from auth backend
