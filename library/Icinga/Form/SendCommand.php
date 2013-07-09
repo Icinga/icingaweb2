@@ -4,6 +4,7 @@ namespace Icinga\Form;
 use Icinga\Form\Builder;
 use Icinga\Form\Elements\Date;
 use Icinga\Form\Elements\Time;
+use Icinga\Form\Elements\Number;
 
 class SendCommand extends Builder
 {
@@ -124,6 +125,27 @@ class SendCommand extends Builder
     public function getChoice($id)
     {
         return $this->getElement($id)->options[$_POST[$id]];
+    }
+
+    /**
+     * @TODO: "min", "max" and "step" seem to have no effect :(
+     */
+    public function addNumberBox($id, $label, $value = "", $min = 0, $max = -1, $step = "any")
+    {
+        $number = new Number($id);
+        $number->setValue($value);
+        $this->addElement($number, $id, array(
+            'label' => $label,
+            'step' => $step,
+            'min' => $min,
+            'max' => $max
+            )
+        );
+    }
+
+    public function getNumber($id)
+    {
+        return $this->getValue($id);
     }
 }
 
