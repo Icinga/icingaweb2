@@ -108,9 +108,9 @@ def main():
             command_options.append('--log-junit')
             command_options.append(os.path.join(report_directory,
                                                 'phpunit_results.xml'))
-            command_options.append('--coverage-clover')
+            command_options.append('--coverage-html')
             command_options.append(os.path.join(report_directory,
-                                                'phpunit_coverage.xml'))
+                                                'php_html_coverage'))
         if options.include:
             command_options.append('--filter')
             command_options.append(options.include)
