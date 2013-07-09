@@ -510,6 +510,37 @@ class Monitoring_CommandController extends ModuleActionController
         }
     }
 
+    public function sendcustomnotificationAction()
+    {
+        $form = new SendCommand("Send custom notification");
+        $form->addTextBox("author", "Author (Your name):", "", true);
+        $form->addTextBox("comment", "Comment:", "", false, true);
+        $form->addCheckbox("force", "Forced:", false);
+        $form->addCheckbox("broadcast", "Broadcast:", false);
+
+        if ($this->_request->isPost()) {
+            if ($form->isValid()) {
+                $comment = new Comment($form->getText("author"), $form->getText("comment"));
+                $targets = $this->selectCommandTargets($form->getHosts(), $form->getServices());
+
+                if ($form->isChecked("force")) {
+                    $this->target->sendForcedCustomNotification($targets, $comment,
+                                                                $form->isChecked("broadcast"));
+                } else {
+                    $this->target->sendCustomNotification($targets, $comment,
+                                                          $form->isChecked("broadcast"));
+                }
+            }
+        } else {
+            $form->getElement("author")->setValue(Manager::getInstance()->getUser()->getUsername());
+            $form->setServices($this->getParameter("services", false));
+            $form->setHosts($this->getParameter("hosts"));
+            $form->setAction($this->view->url());
+            $form->addSubmitButton("Commit");
+            $this->view->form = $form;
+        }
+    }
+
     public function sendComment()
     {
         $author = "AUTHOR"; //@TODO: get from auth backend
