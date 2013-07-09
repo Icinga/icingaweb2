@@ -560,13 +560,59 @@ class Monitoring_CommandController extends ModuleActionController
         }
     }
 
-    public function sendComment()
+    public function addcommentAction()
     {
-        $author = "AUTHOR"; //@TODO: get from auth backend
-        $comment = $this->getMandatoryParameter("comment");
-        $persistent = $this->_request->getPost("persistent", false) == "true";
-        $commentObj = new \Icinga\Protocol\Commandpipe\Comment($author, $comment, $persistent);
-        $this->target->addComment($this->selectCommandTargets(), $commentObj);
+        $form = new SendCommand("Add comment");
+        $form->addTextBox("author", "Author (Your name):", "", true);
+        $form->addTextBox("comment", "Comment:", "", false, true);
+        $form->addCheckbox("persistent", "Persistent:", false);
+
+        if ($this->_request->isPost()) {
+            if ($form->isValid()) {
+                $comment = new Comment($form->getText("author"), $form->getText("comment"),
+                                       $form->isChecked("persistent"));
+                $targets = $this->selectCommandTargets($form->getHosts(), $form->getServices());
+                $this->target->addComment($targets, $comment);
+            }
+        } else {
+            $form->getElement("author")->setValue(Manager::getInstance()->getUser()->getUsername());
+            $form->setServices($this->getParameter("services", false));
+            $form->setHosts($this->getParameter("hosts"));
+            $form->setAction($this->view->url());
+            $form->addSubmitButton("Commit");
+            $this->view->form = $form;
+        }
+    }
+
+    public function deletecommentAction()
+    {
+        $form = new SendCommand("Delete comment");
+        // @TODO: How should this form look like?
+
+        if ($this->_request->isPost()) {
+            if ($form->isValid()) {
+                $comments = $form->getValue("comments");
+                if ($comments) {
+                    // @TODO: Which data structure should be used to transmit comment details?
+                    $this->target->removeComment($comments);
+                } else {
+                    $targets = $this->selectCommandTargets($form->getHosts(), $form->getServices());
+                    $this->target->removeComment($targets);
+                }
+            }
+        } else {
+            $comments = $this->getParameter("comments", false);
+            if ($comments) {
+                // @TODO: Which data structure should be used to transmit comment details?
+            } else {
+                $form->setServices($this->getParameter("services", false));
+                $form->setHosts($this->getParameter("hosts"));
+            }
+
+            $form->setAction($this->view->url());
+            $form->addSubmitButton("Commit");
+            $this->view->form = $form;
+        }
     }
 
     public function sendDeletecomment()
