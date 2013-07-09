@@ -19,6 +19,9 @@ If you generated the documentation already, you can follow [this link](apidoc/id
 
 Change to Icinga 2 Web root directory (source tree) and run:
 
-```
-phpdoc -c doc/phpdoc.xml
-```
+    bin/createapidoc.sh
+
+## Options for createapidoc.sh
+
+    --build    Optional, silent build mode
+    --help     Displays help message
