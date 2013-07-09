@@ -1,0 +1,24 @@
+# Create API documentation
+
+## Prerequisites
+
+You need phpDocumentor 2 installed on your system to create the api
+documentation. Please visit [phpdoc's website](http://phpdoc.org/) for more
+information.
+
+## Configuration
+
+phpDocumentator is configured with xml configuration reside in doc/phpdoc.xml.
+In there you'll find the target path where the documentation is created as
+html. Default location is doc/api/. Just point to index.html in this directory
+with a browser.
+
+If you generated the documentation already, you can follow [this link](apidoc/idnex.html).
+
+## Generation
+
+Change to Icinga 2 Web root directory (source tree) and run:
+
+```
+phpdoc -c doc/phpdoc.xml
+```

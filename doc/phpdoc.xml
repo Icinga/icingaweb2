@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<phpdoc>
+    <title>Icinga 2 Web</title>
+    <parser>
+        <target>./api</target>
+        <extension>php</extension>
+    </parser>
+    <visibility>public,private,protected</visibility>
+    <transformer>
+        <target>./api</target>
+    </transformer>
+    <logging>
+        <level>quiet</level>
+    </logging>
+    <transformations>
+        <template name="responsive" />
+    </transformations>
+    <files>
+        <directory>../library/Icinga</directory>
+        <directory>../library/application</directory>
+    </files>
+</phpdoc>
