@@ -4,7 +4,7 @@
 
 You need phpDocumentor 2 installed on your system to create the api
 documentation. Please visit [phpdoc's website](http://phpdoc.org/) for more
-information.
+information. Additionally, the graphviz package is required to be installed. 
 
 ## Configuration
 
