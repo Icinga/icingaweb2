@@ -12,43 +12,25 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
 
-    <link rel="stylesheet" href="<?php echo $this->baseUrl('css/normalize.min.css') ?>">
-    <link rel="stylesheet" href="<?php echo $this->baseUrl('css/vendor/bootstrap.css') ?>">
-    <link rel="stylesheet" href="<?php echo $this->baseUrl('css/main.css') ?>">
-    <link rel="stylesheet" href="<?php echo $this->baseUrl('css/vendor/jquery.qtip.min.css') ?>">
+    <link rel="stylesheet" href="<?= $this->baseUrl('css/normalize.min.css') ?>">
+    <link rel="stylesheet" href="<?= $this->baseUrl('css/vendor/bootstrap.css') ?>">
+    <link rel="stylesheet" href="<?= $this->baseUrl('css/vendor/ui-lightness/jquery-ui-1.10.3.custom.min.css') ?>">
+    <link rel="stylesheet" href="<?= $this->baseUrl('css/main.css') ?>">
+    <link rel="stylesheet" href="<?= $this->baseUrl('css/vendor/jquery.qtip.min.css') ?>">
     <script type="text/javascript">
-        var base_url = '<?php echo $this->baseUrl() ?>';
+        var base_url = '<?= $this->baseUrl() ?>';
         ICINGA_DEBUG = true;
     </script>
-    <script src="<?php echo $this->baseUrl('js/vendor/modernizr-2.6.2.min.js') ?>"></script>
-    <link rel="stylesheet" href="<?php echo $this->baseUrl('css.php') ?>">
-    <link rel="stylesheet" href="<?php echo $this->baseUrl('css/vendor/bootstrap-responsive.min.css') ?>">
-    <script data-main="<?php echo $this->baseUrl('js/main.js')?>" src="<?php echo $this->baseUrl('js/vendor/require.js') ?>"></script>
+    <? if (isset($_GET['iframe']) && $_GET['iframe'] === 'true'): ?>
+    <base target="_parent" />
+    <? endif ?>
+    <script src="<?= $this->baseUrl('js/vendor/modernizr-2.6.2.min.js') ?>"></script>
+    <link rel="stylesheet" href="<?= $this->baseUrl('css/icinga.css') ?>">
+    <link rel="stylesheet" href="<?= $this->baseUrl('css/vendor/bootstrap-responsive.min.css') ?>">
+<script data-main="<?= $this->baseUrl('js/main.js')?>" src="<?= $this->baseUrl('js/vendor/require.js') ?>"></script>
 
 </head>
-<body class="cranberry"> 
-<?php echo $this->render('parts/topbar.phtml') ?>
-<div class="main">
- <div class="tabbable tabs-left" style="height:100%;">
-  <?php echo $this->render('parts/navigation.phtml') ?>
- </div>
- <div class="layout-main-detail collapsed">
-  <div id="icinga-main" container-id="icinga-main" class="icinga-container">
-   <?php echo $this->layout()->moduleStart ?>
-   <?php echo $this->layout()->content ?>
-   <?php echo $this->layout()->moduleEnd ?>
-  </div>
-  <div id="icinga-detail" class="icinga-container " container-id="icinga-detail">
-   <!--<div class="container-controls">
-   <a class="container-expand-link" title="expand" target="_self" href="...">
-   <i class="icon-fullscreen"></i>
-   </a>
-   <a class="container-detach-link" title="detach" target="popup" href="...">
-   <i class="icon-share"></i>
-   </a>
-   </div>-->
-  </div><!-- End of icinga-detail -->
- </div><!-- End of layout-main-detail -->
-</div><!-- End of main -->
+<body class="cranberry">
+<?= $this->render('just-the-body.phtml') ?>
 </body>
 </html>

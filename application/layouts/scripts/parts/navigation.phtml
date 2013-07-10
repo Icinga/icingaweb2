@@ -5,8 +5,7 @@
 
     $item = $this->navigation->listAll("menu");
 ?>
-<?php if (true || $this->auth()->isAuthenticated()): ?>
-
+<?php if ($this->auth()->isAuthenticated()): ?>
 <ul class="nav nav-tabs icinga-navigation" >
 <?php
     $activeSet = false;
@@ -32,10 +31,10 @@
         }
         $activeSet = $activeSet || $active;
         ?>
-    <li class="<?php echo $active ? "active" : "" ?>"><a href="<?php echo $url ?>"><?php echo $itemName ?></a></li>
+    <li class="<?= $active ? "active" : "" ?>"><a href="<?= $url ?>"><?= $itemName ?></a></li>
 <?php
         $class = "";
     }
 ?>
 </ul>
-<?php endif ?>
+<? endif ?>
