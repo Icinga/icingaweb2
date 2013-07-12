@@ -3,6 +3,7 @@
 namespace Icinga\Application\Modules;
 
 use Icinga\Application\ApplicationBootstrap;
+use Icinga\Application\Icinga;
 use Icinga\Web\Hook;
 use Zend_Controller_Router_Route as Route;
 
@@ -38,6 +39,23 @@ class Module
         return true;
     }
 
+    public static function exists($name)
+    {
+        return Icinga::app()->moduleManager()->hasEnabled($name);
+    }
+
+    public static function get($name, $autoload = false)
+    {
+        $manager = Icinga::app()->moduleManager();
+        if (! $manager->hasLoaded($name)) {
+            if ($autoload === true && $manager->hasEnabled($name)) {
+                $manager->loadModule($name);
+            }
+        }
+        // @throws ProgrammingError:
+        return $manager->getModule($name);
+    }
+
     public function hasCss()
     {
         return file_exists($this->getCssFilename());
@@ -56,6 +74,13 @@ class Module
     public function getConfigDir()
     {
         return $this->configdir;
+    }
+
+    public function getConfig($file = null)
+    {
+        return $this->app
+            ->getConfig()
+            ->module($this->name, $file);
     }
 
     protected function registerLibrary()
@@ -88,17 +113,14 @@ class Module
         }
 
         $this->registerLocales()
-             ->registerRoutes()
-             ->registerMenuEntries();
+             ->registerRoutes();
+//             ->registerMenuEntries();
         return $this;
     }
 
     protected function registerMenuEntries()
     {
-        $cfg = $this->app
-            ->getConfig()
-            ->getModuleConfig('menu', $this->name);
-
+        $cfg = $this->getConfig('menu.ini');
         $view = $this->app->getView();
         if ($cfg) {
             $view->view->navigation = $cfg->merge($view->view->navigation);
@@ -115,6 +137,17 @@ class Module
                 array(
                     'controller'    => 'static',
                     'action'        =>'javascript',
+                    'moduleName'    => $this->name
+                )
+            )
+        );
+        $this->app->frontController()->getRouter()->addRoute(
+            $this->name . '_img',
+            new Route(
+                'img/' . $this->name . '/:file',
+                array(
+                    'controller'    => 'static',
+                    'action'        => 'img',
                     'moduleName'    => $this->name
                 )
             )
