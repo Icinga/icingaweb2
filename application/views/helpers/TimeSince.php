@@ -4,7 +4,9 @@ class Zend_View_Helper_TimeSince extends Zend_View_Helper_Abstract
 {
     public function timeSince($timestamp)
     {
-        if (! $timestamp) return '-';
+        if (! $timestamp || is_nan($timestamp)) {
+            return '-';
+        }
         $duration = time() - $timestamp;
         $prefix = '';
         if ($duration < 0) {
@@ -33,4 +35,3 @@ class Zend_View_Helper_TimeSince extends Zend_View_Helper_Abstract
         return floor($hour / 24) . 'd ' . ($hour % 24) . 'h';
     }
 }
-
