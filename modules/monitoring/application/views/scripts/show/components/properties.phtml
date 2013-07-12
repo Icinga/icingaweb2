@@ -1,0 +1,19 @@
+<?php
+$object = null;
+
+if (isset($this->service)) {
+    $object = $this->service;
+} elseif (isset($this->host)) {
+    $object = $this->host;
+}
+
+$properties = $this->monitoringProperties($object);
+?>
+<table>
+    <?php foreach ($properties as $label => $value) { ?>
+    <tr>
+        <th><?= $label ?></th>
+        <td><?= $value ?></td>
+    </tr>
+    <?php } ?>
+</table>

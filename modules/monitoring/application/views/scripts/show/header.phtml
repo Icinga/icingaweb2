@@ -18,16 +18,12 @@ if (!$this->compact) {
 <div class="information-container">
     <?php if ($inlineCommands === true) { ?>
     <div class="pull-right">
-        <div>
-            <button type="button" class="btn btn-primary">
-                <span>Check now</span>
-            </button>
-        </div>
-        <div class="container-spacer">
-            <button type="button" class="btn btn-danger">
-                <span>Acknowledge</span>
-            </button>
-        </div>
+        <?=
+            $this->monitoringCommands(
+                ($showService === true) ? $this->service : $this->host,
+                'small'
+            );
+        ?>
     </div>
     <?php } ?>
 
@@ -49,6 +45,9 @@ if (!$this->compact) {
             <td class="state"<?= $showService ? '' : ' rowspan="2"'; ?>>
                 <?= $this->util()->getHostStateName($this->host->host_state); ?>
                 since <?= $this->timeSince($this->host->host_last_state_change); ?>
+                <?php if ($this->host->host_acknowledged === '1') { ?>
+                    (Has been acknowledged)
+                <?php } ?>
             </td>
         </tr>
         <?php if ($showService === true) { ?>
@@ -61,6 +60,9 @@ if (!$this->compact) {
                 <td class="state">
                     <?= $this->util()->getServiceStateName($this->service->service_state); ?>
                     since <?= $this->timeSince($this->service->service_last_state_change); ?>
+                    <?php if ($this->host->service_acknowledged === '1') { ?>
+                        (Has been acknowledged)
+                    <?php } ?>
                 </td>
             </tr>
         <?php } else { ?>

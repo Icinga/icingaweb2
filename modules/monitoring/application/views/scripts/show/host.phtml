@@ -11,8 +11,6 @@
             );
         }
     }
-
-var_dump($this->host);
 ?>
 <?=
     $this->partial(
@@ -27,7 +25,6 @@ var_dump($this->host);
 ?>
 
 <?= $this->preview_image ?>
-
 <div class="information-container">
     <div class="head">
         <span>Plugin output</span>
@@ -64,6 +61,8 @@ var_dump($this->host);
 
 <?= $this->render('show/components/comments.phtml'); ?>
 
+<?= $this->render('show/components/downtime.phtml'); ?>
+
 <?= $this->render('show/components/customvars.phtml'); ?>
 
 <?php if ($this->host->host_perfdata): ?>
@@ -76,3 +75,54 @@ var_dump($this->host);
         </div>
     </div>
 <?php endif; ?>
+
+<div class="information-container">
+    <div class="head">
+        <span>Flags</span>
+    </div>
+    <div>
+        <?= $this->render('show/components/flags.phtml'); ?>
+    </div>
+</div>
+
+<div class="information-container">
+    <div class="head">
+        <span>Properties</span>
+    </div>
+    <div>
+        <?= $this->render('show/components/properties.phtml'); ?>
+    </div>
+</div>
+
+<div class="information-container">
+    <div class="head">
+        <span>Groups and Contacts</span>
+    </div>
+    <?php if (count($hostgroupLinkList)) { ?>
+        <strong>Hostgroups:</strong>
+        <?= implode(' ', $hostgroupLinkList); ?>
+    <?php } ?>
+
+    <?= $this->render('show/components/contacts.phtml') ?>
+</div>
+
+<?= $this->render('show/components/comments.phtml'); ?>
+
+<?= $this->render('show/components/customvars.phtml'); ?>
+
+<?php if ($this->host->host_perfdata): ?>
+    <div class="information-container">
+        <div class="head">
+            <span>Perfdata</span>
+        </div>
+        <div>
+            <?= $this->perfdata($this->host->host_perfdata); ?>
+        </div>
+    </div>
+<?php endif; ?>
+        <span>Commands</span>
+    </div>
+    <div>
+        <?= $this->monitoringCommands($this->host, 'full'); ?>
+    </div>
+</div>

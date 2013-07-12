@@ -8,6 +8,10 @@
             <directory>application/</directory>
             <directory>bin/</directory>
             <directory>library/</directory>
+
+            <!-- Module tests are independent from core tests -->
+            <directory>../../modules/*/test/php</directory>
+            <exclude>../../modules/*/test/php/regression</exclude>
         </testsuite>
 
         <!--
@@ -15,6 +19,7 @@
         -->
         <testsuite name="regression">
             <directory>regression/</directory>
+            <directory>../../modules/*/test/regression</directory>
         </testsuite>
     </testsuites>
     <filter>

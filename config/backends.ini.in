@@ -1,0 +1,25 @@
+[localdb]
+type = ido
+host = @ido_host@
+port = @ido_port@
+user = @ido_user@
+pass = @ido_password@
+db = @ido_database@
+@ido_enabled@
+
+[locallive]
+type = livestatus
+socket = @livestatus_socket@
+@livestatus_enabled@
+
+[localfile]
+type = statusdat
+status_file = @statusdat_file@
+objects_file = @objects_cache_file@
+@statusdat_enabled@
+
+;[localfailsafe]
+;enabled=false
+;type = combo
+;backends = localdb, locallive, localfile
+
