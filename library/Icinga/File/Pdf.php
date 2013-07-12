@@ -1,14 +1,18 @@
 <?php
 
-namespace Icinga\Pdf;
+namespace Icinga\File;
 
 use TCPDF;
+use Icinga\Web\Url;
+use Icinga\Application\Icinga;
 
+// $_SERVER['DOCUMENT_ROOT'] = '/';
+$_SERVER['DOCUMENT_ROOT'] = Icinga::app()->getApplicationDir() . '/../public';
 define('K_TCPDF_EXTERNAL_CONFIG', true);
 
 //define('K_PATH_URL', 'http://net-test-icinga-vm1.adm.netways.de/develop/'); // ???
 // define('K_PATH_URL', '/var/www/net-test-icinga-vm1.adm.netways.de/develop/public'); // ???
-define('K_PATH_URL', '/develop'); // ???
+define('K_PATH_URL', (string) Url::create('/') === '/' ? '' : (string) Url::create('/')); // ???'/'));
 define('K_PATH_MAIN', dirname(ICINGA_LIBDIR) . '/public');
 define('K_PATH_FONTS', ICINGA_LIBDIR . '/vendor/tcpdf/fonts/');
 define('K_PATH_CACHE', ICINGA_LIBDIR . '/vendor/tcpdf/cache/');
@@ -19,13 +23,13 @@ define('K_BLANK_IMAGE', K_PATH_IMAGES.'_blank.png');  // COULD be anything?
 
 // define('K_CELL_HEIGHT_RATIO', 1.25);
 define('K_SMALL_RATIO', 2/3);
-define('K_TCPDF_CALLS_IN_HTML', true); // SECURITY: is false better?
+define('K_TCPDF_CALLS_IN_HTML', false); // SECURITY: is false better?
 define('K_TCPDF_THROW_EXCEPTION_ERROR', true);
-
+define('K_THAI_TOPCHARS', false);
 
 require_once 'vendor/tcpdf/tcpdf.php';
 
-class File extends TCPDF
+class Pdf extends TCPDF
 {
     protected $cell_height_ratio = 1.25;
     public function __construct(

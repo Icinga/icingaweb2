@@ -1,32 +1,12 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-/**
- * Icinga 2 Web - Head for multiple monitoring frontends
- * Copyright (C) 2013 Icinga Development Team
- * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
- * @copyright 2013 Icinga Development Team <info@icinga.org>
- * @author Icinga Development Team <info@icinga.org>
- */
-// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Protocol\Ldap;
 
-use Icinga\Web\Paginator\Adapter\QueryAdapter;
-
+/**
+ * Search class
+ *
+ * @package Icinga\Protocol\Ldap
+ */
 /**
  * Search abstraction class
  *
@@ -38,52 +18,24 @@ use Icinga\Web\Paginator\Adapter\QueryAdapter;
  *
  * @copyright  Copyright (c) 2013 Icinga-Web Team <info@icinga.org>
  * @author     Icinga-Web Team <info@icinga.org>
- * @package Icinga\Protocol\Ldap
+ * @package    Icinga\Protocol\Ldap
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License
- * @package Icinga\Protocol\Ldap
  */
 class Query
 {
-    /**
-     * @var Connection
-     */
     protected $connection;
-
-    /**
-     * @var array
-     */
     protected $filters = array();
-
-    /**
-     * @var array
-     */
     protected $fields = array();
-
-    /**
-     * @var
-     */
     protected $limit_count;
-
-    /**
-     * @var
-     */
     protected $limit_offset;
-
-    /**
-     * @var array
-     */
     protected $sort_columns = array();
-
-    /**
-     * @var
-     */
     protected $count;
 
     /**
      * Constructor
      *
-     * @param \Icinga\Protocol\Ldap\Connection $connection LDAP Connection object
-     * @return \Icinga\Protocol\Ldap\Query
+     * @param Connection LDAP Connection object
+     * @return void
      */
     public function __construct(Connection $connection)
     {
@@ -106,14 +58,11 @@ class Query
     /**
      * Count result set, ignoring limits
      *
-     * @param null $count
-     * @param null $offset
-     * @throws Exception
      * @return int
      */
     public function limit($count = null, $offset = null)
     {
-        if (!preg_match('~^\d+~', $count . $offset)) {
+        if (! preg_match('~^\d+~', $count . $offset)) {
             throw new Exception(
                 sprintf(
                     'Got invalid limit: %s, %s',
@@ -122,8 +71,8 @@ class Query
                 )
             );
         }
-        $this->limit_count = (int)$count;
-        $this->limit_offset = (int)$offset;
+        $this->limit_count  = (int) $count;
+        $this->limit_offset = (int) $offset;
         return $this;
     }
 
@@ -176,15 +125,12 @@ class Query
     {
         $result = $this->fetchAll();
         $sorted = array();
+        $quotedDn = preg_quote($this->connection->getDN(), '/');
         foreach ($result as $key => & $item) {
             $new_key = LdapUtils::implodeDN(
                 array_reverse(
                     LdapUtils::explodeDN(
-                        preg_replace(
-                            '/,' . preg_quote($this->connection->getDN(), '/') . '$/',
-                            '',
-                            $key
-                        )
+                        preg_replace('/,' . $quotedDn . '$/', '', $key)
                     )
                 )
             );
@@ -194,7 +140,11 @@ class Query
         ksort($sorted);
 
         $tree = Root::forConnection($this->connection);
+        $root_dn = $tree->getDN();
         foreach ($sorted as $sort_key => & $key) {
+            if ($key === $root_dn) {
+                continue;
+            }
             $tree->createChildByDN($key, $result[$key]);
         }
         return $tree;
@@ -246,8 +196,6 @@ class Query
      *
      * This creates an objectClass filter
      *
-     * @param $objectClass
-     * @param array $fields
      * @return Query
      */
     public function from($objectClass, $fields = array())
@@ -308,8 +256,6 @@ class Query
     /**
      * Return a pagination adapter for the current query
      *
-     * @param null $limit
-     * @param null $page
      * @return \Zend_Paginator
      */
     public function paginate($limit = null, $page = null)
@@ -325,7 +271,7 @@ class Query
         }
         $paginator = new \Zend_Paginator(
             // TODO: Adapter doesn't fit yet:
-            new QueryAdapter($this)
+            new \Icinga\Web\Paginator\Adapter\QueryAdapter($this)
         );
         $paginator->setItemCountPerPage($limit);
         $paginator->setCurrentPageNumber($page);
@@ -364,7 +310,7 @@ class Query
     }
 
     /**
-     * Destructor
+     * Descructor
      */
     public function __destruct()
     {

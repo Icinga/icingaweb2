@@ -5,7 +5,8 @@
 use Icinga\Monitoring\Backend;
 use Icinga\Web\ModuleActionController;
 use Icinga\Web\Hook;
-use Icinga\Application\Benchmark;
+use Icinga\Monitoring\Object\Host;
+use Icinga\Monitoring\Object\Service;
 
 /**
  * Class Monitoring_ShowController
@@ -26,13 +27,18 @@ class Monitoring_ShowController extends ModuleActionController
     {
         $host = $this->_getParam('host');
         $service = $this->_getParam('service');
+        $this->backend = Backend::getInstance($this->_getParam('backend'));
+        $object = null;
+        // TODO: Do not allow wildcards in names!
         if ($host !== null) {
             // TODO: $this->assertPermission('host/read', $host);
+            if ($this->action_name !== 'host' && $service !== null && $service !== '*') {
+                // TODO: $this->assertPermission('service/read', $service);
+                $object = Service::fetch($this->backend, $host, $service);
+            } else {
+                $object = Host::fetch($this->backend, $host);
+            }
         }
-        if ($service !== null) {
-            // TODO: $this->assertPermission('service/read', $service);
-        }
-        // TODO: don't allow wildcards
 
         $this->backend = Backend::getInstance($this->_getParam('backend'));
         if ($service !== null && $service !== '*') {
@@ -42,30 +48,14 @@ class Monitoring_ShowController extends ModuleActionController
             $this->view->host = $this->backend->fetchHost($host, true);
         }
         $this->view->compact = $this->_getParam('view') === 'compact';
+        if ($object === null) {
+            // TODO: Notification, not found
+            $this->redirectNow('monitoring/list/services');
+            return;
+        }
+        $this->view->object = $object;
         $this->view->tabs = $this->createTabs();
-
-        // If ticket hook:
-        $params = array();
-        if ($host !== null) {
-            $params['host'] = $this->view->host->host_name;
-        }
-        if ($service !== null) {
-            $params['service'] = $this->view->service->service_description;
-        }
-        if (Hook::has('ticket')) {
-            $params['ticket'] = '__ID__';
-            $this->view->ticket_link = preg_replace(
-                '~__ID__~',
-                '\$1',
-                $this->view->qlink(
-                    '#__ID__',
-                    'monitoring/show/ticket',
-                    $params
-                )
-            );
-            // TODO: Global ticket pattern config (or per environment)
-            $this->view->ticket_pattern = '~#(\d{4,6})~';
-        }
+        $this->prepareTicketHook();
     }
 
     /**
@@ -144,6 +134,8 @@ class Monitoring_ShowController extends ModuleActionController
             ->where('object_type', 'service')
             ->fetchPairs();
         Benchmark::measure('Service action done');
+        $object = $this->view->object->prefetch();
+        $this->prepareGrapherHook();
     }
 
     /**
@@ -243,6 +235,8 @@ class Monitoring_ShowController extends ModuleActionController
             ->where('host_name', $this->view->host->host_name)
             ->where('object_type', 'host')
             ->fetchPairs();
+        $this->view->object->prefetch();
+        $this->prepareGrapherHook();
     }
 
     /**
@@ -250,9 +244,6 @@ class Monitoring_ShowController extends ModuleActionController
      */
     public function historyAction()
     {
-        if ($this->view->host) {
-            $this->view->tabs->activate('history')->enableSpecialActions();
-        }
         $this->view->history = $this->backend->select()
             ->from(
                 'eventHistory',
@@ -269,7 +260,6 @@ class Monitoring_ShowController extends ModuleActionController
                 )
             )->applyRequest($this->_request);
 
-
         $this->view->preserve = $this->view->history->getAppliedFilter()->toParams();
         if ($this->_getParam('dump') === 'sql') {
             echo '<pre>' . htmlspecialchars($this->view->history->getQuery()->dump()) . '</pre>';
@@ -278,6 +268,7 @@ class Monitoring_ShowController extends ModuleActionController
         if ($this->_getParam('sort')) {
             $this->view->preserve['sort'] = $this->_getParam('sort');
         }
+        $this->view->preserve = $this->view->history->getAppliedFilter()->toParams();
     }
 
     /**
@@ -285,6 +276,7 @@ class Monitoring_ShowController extends ModuleActionController
      */
     public function servicesAction()
     {
+        $this->_setParam('service', null);
         // Ugly and slow:
         $this->view->services = $this->view->action(
             'services',
@@ -295,6 +287,9 @@ class Monitoring_ShowController extends ModuleActionController
                 //'sort', 'service_description'
             )
         );
+        $this->view->services = $this->view->action('services', 'list', 'monitoring', array(
+            'view' => 'compact'
+        ));
     }
 
     /**
@@ -302,10 +297,9 @@ class Monitoring_ShowController extends ModuleActionController
      */
     public function ticketAction()
     {
-        $this->view->tabs->activate('ticket')->enableSpecialActions();
-        $id = $this->_getParam('ticket');
-        // Still hardcoded, TODO: get URL:
         if (Hook::has('ticket')) {
+            // TODO: Still hardcoded, should ask for URL:
+            $id = $this->_getParam('ticket');
             $ticketModule = 'rt';
             $this->render();
             $this->_forward(
@@ -319,12 +313,54 @@ class Monitoring_ShowController extends ModuleActionController
         }
     }
 
+    protected function prepareTicketHook()
+    {
+        if (Hook::has('ticket')) {
+            $object = $this->view->object;
+            $params = array(
+                'host' => $object->host_name
+            );
+            if ($object instanceof Service) {
+                $params['service'] = $object->service_description;
+            }
+
+            $params['ticket'] = '__ID__';
+            $this->view->ticket_link = preg_replace(
+                '~__ID__~',
+                '\$1',
+                $this->view->qlink('#__ID__',
+                    'monitoring/show/ticket',
+                    $params
+                )
+            );
+            // TODO: Global ticket pattern config (or per environment)
+            $this->view->ticket_pattern = '~#(\d{4,6})~';
+        }
+    }
+
+    protected function prepareGrapherHook()
+    {
+        if ($grapher = Hook::get('grapher')) {
+            $object = $this->view->object;
+            if ($grapher->hasGraph(
+                $object->host_name,
+                $object->service_description
+            )) {
+                $this->view->preview_image = $grapher->getPreviewImage(
+                    $object->host_name,
+                    $object->service_description
+                );
+            }
+        }
+    }
+    
     /**
      * Creating tabs for this controller
      * @return \Icinga\Web\Widget\AbstractWidget
      */
     protected function createTabs()
     {
+        $object = $this->view->object;
         $tabs = $this->widget('tabs');
         if (!$this->view->host) {
             return $tabs;
@@ -335,11 +371,10 @@ class Monitoring_ShowController extends ModuleActionController
         if ($backend = $this->_getParam('backend')) {
             $params['backend'] = $backend;
         }
-        if (isset($this->view->service)) {
-            $params['service'] = $this->view->service->service_description;
-            $hostParams = $params + array('active' => 'host');
-        } else {
-            $hostParams = $params;
+        if ($object instanceof Service) {
+            $params['service'] = $object->service_description;
+        } elseif ($service = $this->_getParam('service')) {
+            $params['service'] = $service;
         }
         $tabs->add(
             'host',
@@ -347,7 +382,7 @@ class Monitoring_ShowController extends ModuleActionController
                 'title' => 'Host',
                 'icon' => 'img/classic/server.png',
                 'url' => 'monitoring/show/host',
-                'urlParams' => $hostParams,
+                'urlParams' => $params,
             )
         );
         $tabs->add(
@@ -390,13 +425,16 @@ class Monitoring_ShowController extends ModuleActionController
                 )
             );
         }
-        /*
-                $tabs->add('contacts', array(
-                    'title'     => 'Contacts',
-                    'icon'      => 'img/classic/customer.png',
-                    'url'       => 'monitoring/detail/contacts',
-                    'urlParams' => $params,
-                ));
+        
+        $tabs->activate($this->action_name)->enableSpecialActions();
+
+        /**
+        $tabs->add('contacts', array(
+            'title'     => 'Contacts',
+            'icon'      => 'img/classic/customer.png',
+            'url'       => 'monitoring/detail/contacts',
+            'urlParams' => $params,
+        ));
         */
         // TODO: Inventory 'img/classic/facts.gif'
         //       Ticket    'img/classic/ticket.gif'

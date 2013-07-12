@@ -8,15 +8,16 @@ class CommentQuery extends AbstractQuery
         'comments' => array(
             'comment_data'      => 'cm.comment_data',
             'comment_author'    => 'cm.author_name',
-            'comment_timestamp' => 'UNIX_TIMESTAMP(cm.entry_time)',
+            //'comment_timestamp' => 'UNIX_TIMESTAMP(cm.entry_time)',
+            'comment_timestamp' => 'UNIX_TIMESTAMP(cm.comment_time)',
             'comment_type'      => "CASE cm.entry_type WHEN 1 THEN 'comment' WHEN 2 THEN 'downtime' WHEN 3 THEN 'flapping' WHEN 4 THEN 'ack' END",
         ),
         'hosts' => array(
             'host_name' => 'ho.name1',
         ),
         'services' => array(
-            'service_host_name'   => 'so.name1',
-            'service_description' => 'so.name2',
+            'service_host_name'   => 'so.name1 COLLATE latin1_general_ci',
+            'service_description' => 'so.name2 COLLATE latin1_general_ci',
         )
     );
 

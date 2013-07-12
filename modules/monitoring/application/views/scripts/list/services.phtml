@@ -1,7 +1,7 @@
 <?= $this->tabs ?>
 <?php
-$this->services->limit(10);
-$services = $this->services->paginate();
+
+$paginator = $services->paginate();
 
 function getRowProperties(&$service, &$last_host, $scope) {
     if ($last_host !== $service->host_name) {
@@ -21,8 +21,12 @@ function getRowProperties(&$service, &$last_host, $scope) {
         $icons['ack.gif'] = 'Problem has been acknowledged';
     }
 
-    if (! empty($service->service_in_downtime)) {
+    if ($service->service_in_downtime) {
         $icons['downtime.gif'] = 'Service is in a scheduled downtime';
+    }
+
+    if ($service->host_problems) {
+        $icons['server.png'] = 'This services host has a problem';
     }
 
     $state_classes = array($scope->monitoringState($service));
@@ -63,9 +67,9 @@ if (isset($_GET['dir'])) {
 }
 ?>
 <div class="dontprint">
-<?php if (! empty($fparams)): ?>
+<? if (! empty($fparams)): ?>
 <div style="float: right; width: 20em; font-size: 0.8em;"><b>Filters</b><br>
-<?php foreach ($fparams as $k => $v): ?>
+<? foreach ($fparams as $k => $v): ?>
 <?= $this->qlink(
     'x',
     'monitoring/list/services',
@@ -74,9 +78,9 @@ if (isset($_GET['dir'])) {
         'style' => array('color' => 'red')
     )
 ) ?> <?= $this->escape("$k = $v") ?></br>
-<?php endforeach; ?>
+<? endforeach ?>
 </div>
-<?php endif; ?>
+<? endif ?>
 <form method="get" action="<?= $this->qUrl(
     'monitoring/list/services?' . http_build_query(
         $this->services->getAppliedFilter()->toParams()
@@ -93,11 +97,21 @@ Sort by <?= $this->formSelect(
     array(
         'severity' => 'Severity',
         'service_last_state_change' => 'Last state change',
+        'service_last_time_unknown' => 'Last UNKNOWN',
+        'service_last_time_critical' => 'Last CRITICAL',
+        'service_last_time_warning' => 'Last WARNING',
+        'service_last_time_ok' => 'Last OK',
         'host_name' => 'Host',
         'service_description' => 'Service',
     )
 ) ?>
-<input type="text" placeholder="Add filter..." name="search" />
+<?= $this->formText(
+    'search',
+    $this->search,
+    array(
+        'placeholder' => 'Add filllter...',
+    )
+) ?>
 </form>
 </div>
 <?php if (empty($services)): ?>
@@ -106,11 +120,11 @@ Sort by <?= $this->formSelect(
     Sorry, no services found for this search
 </div>
 
-<?php return; endif; ?>
-<?= $this->paginationControl($services, null, null, array('preserve' => $this->preserve )); ?>
+<?php return; endif ?>
+<?= $this->paginationControl($paginator, null, null, array('preserve' => $this->preserve )); ?>
 <table class="action">
  <tbody>
-<?php foreach ($services as $service):
+<?php foreach ($services->fetchAll() as $service):
  list($host_col,$icons,$state_classes,$state_title,$graph) = getRowProperties($service,$last_host,$this); ?>
   <tr class="<?= implode(' ', $state_classes) ?>">
         <td class="state" title="<?= $state_title ?>">
@@ -148,6 +162,9 @@ Sort by <?= $this->formSelect(
             </span>
             <?= $graph ?>
         </td>
+<? foreach ($this->extraColumns as $col): ?>
+        <td><?= $this->escape($service->$col) ?></td>
+<? endforeach ?>
     </tr>
 <?php endforeach; ?>
     </tbody>

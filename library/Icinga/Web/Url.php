@@ -8,31 +8,39 @@ use Icinga\Exception\ProgrammingError;
 class Url
 {
     protected $params = array();
-    protected $url;
+    protected $path;
     protected $baseUrl;
+    protected $request;
 
-    public function __construct($url, $params = null)
+    public function __construct($url, $params = null, $request = null)
     {
-        if (($split = strpos($url, '?')) === false) {
-            $this->url = $url;
-            if (! empty($params)) {
-                $this->params = $params;
-            }
+        if ($request === null) {
+            $this->request = Icinga::app()->frontController()->getRequest();
         } else {
-            $this->url = substr($url, 0, $split);
-            parse_str(substr($url, $split + 1), $urlParams);
-            $this->params = $urlParams;
-            if (! empty($params)) {
-                $this->params += $params;
-                // TODO: Test += behavior!
+            // Tests only
+            $this->request = $request;
+        }
+        if ($url === null) {
+            $this->path   = $this->request->getPathInfo();
+            $this->params = $this->request->getQuery();
+        } else {
+            if (($split = strpos($url, '?')) === false) {
+                $this->path = $url;
+            } else {
+                $this->path = substr($url, 0, $split);
+                // TODO: Use something better than parse_str
+                parse_str(substr($url, $split + 1), $urlParams);
+                $this->params = $urlParams;
             }
         }
-
+        if (! empty($params)) {
+            $this->setParams($params);
+        }
     }
 
-    public static function create($url, $params = null)
+    public static function create($url, $params = null, $request = null)
     {
-        $u = new Url($url, $params);
+        $u = new Url($url, $params, $request);
         return $u;
     }
 
@@ -43,30 +51,15 @@ class Url
         return $this;
     }
 
-    public static function current()
+    public static function current($request = null)
     {
-        $app = Icinga::app();
-        $view = $app->getView()->view;
-        $request = $app->frontController()->getRequest();
-        $parts = array();
-        // TODO: getQuery!
-        $params = $request->getParams();
-        foreach (array('module', 'controller', 'action') as $param) {
-            if ($view->{$param . '_name'} !== 'default') {
-                $parts[] = $view->{$param . '_name'};
-            }
-            if (array_key_exists($param, $params)) {
-                unset($params[$param]);
-            }
-        }
-        $rel = implode('/', $parts);
-        $url = new Url($rel, $params);
+        $url = new Url(null, null, $request);
         return $url;
     }
 
-    public function getScript()
+    public function getPath()
     {
-        return $this->url;
+        return $this->path;
     }
 
     public function getRelative()
@@ -79,9 +72,9 @@ class Url
                 $args[] = rawurlencode($name) . '=' . rawurlencode($value);
             }
         }
-        $url = vsprintf($this->url, $params);
+        $url = vsprintf($this->path, $params);
         if (! empty($args)) {
-            $url .= '?' . implode('&', $args);
+            $url .= '?' . implode('&amp;', $args);
         }
         return $url;
     }
@@ -94,16 +87,18 @@ class Url
 
     public function setParams($params)
     {
-        $this->params = $params;
+        if ($params === null) {
+            $this->params = array();
+        } else {
+            $this->params = $params;
+        }
         return $this;
     }
 
-    public function set($key, $val)
+    public function getParams()
     {
-        $this->params[$key] = $val;
-        return $this;
+        return $this->params;
     }
-
 
     public function hasParam($key)
     {
@@ -118,31 +113,42 @@ class Url
         return $default;
     }
 
-    public function getParams()
+    public function setParam($key, $value)
     {
-        return $this->params;
+        $this->params[$key] = $value;
+        return $this;
     }
 
-    public function without($keys)
+    public function remove()
     {
-        if (! is_array($keys)) {
-            $keys = array($keys);
-        }
-        foreach ($keys as $key) {
-            if (array_key_exists($key, $this->params)) {
-                unset($this->params[$key]);
+        $args = func_get_args();
+        foreach ($args as $keys) {
+            if (! is_array($keys)) {
+                $keys = array($keys);
+            }
+            foreach ($keys as $key) {
+                if (array_key_exists($key, $this->params)) {
+                    unset($this->params[$key]);
+                }
             }
         }
         return $this;
     }
 
+    public function without()
+    {
+        $url = clone($this);
+        $args = func_get_args();
+        return call_user_func_array(array($url, 'remove'), $args);
+    }
+
     public function __toString()
     {
         $url = $this->getRelative();
-        $base = is_null($this->baseUrl)
-            ? Icinga::app()->getView()->view->baseUrl()
+        $base = null === $this->baseUrl
+            ? $this->request->getBaseUrl()
             : $this->baseUrl;
-        if ($base === '') {
+        if ($base === '' && $url[0]!== '/') {
             // Otherwise all URLs would be relative to wherever you are
             $base = '/';
         }
@@ -152,3 +158,4 @@ class Url
         return $base . $url;
     }
 }
+

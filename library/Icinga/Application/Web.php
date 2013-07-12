@@ -3,21 +3,21 @@
 /**
  * Icinga 2 Web - Head for multiple monitoring frontends
  * Copyright (C) 2013 Icinga Development Team
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
+ *
  * @copyright 2013 Icinga Development Team <info@icinga.org>
  * @author Icinga Development Team <info@icinga.org>
  */
@@ -32,6 +32,7 @@ use Zend_Paginator as Paginator;
 use Zend_View_Helper_PaginationControl as PaginationControl;
 use Zend_Controller_Action_HelperBroker as ActionHelper;
 use Zend_Controller_Router_Route as Route;
+use Icinga\Web\View as IcingaView;
 
 /**
  * Use this if you want to make use of Icinga funtionality in other web projects
@@ -169,7 +170,7 @@ class Web extends ApplicationBootstrap
     protected function prepareView()
     {
         $view = ActionHelper::getStaticHelper('viewRenderer');
-        $view->initView();
+        $view->setView(new IcingaView());
 
         $view->view->addHelperPath($this->appdir . '/views/helpers');
         // TODO: find out how to avoid this additional helper path:

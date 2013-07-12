@@ -72,6 +72,11 @@ abstract class AbstractQuery
         $this->init();
     }
 
+    public function getDatasource()
+    {
+        return $this->ds;
+    }
+
     protected function getDefaultColumns()
     {
         return null;
@@ -89,6 +94,9 @@ abstract class AbstractQuery
         $this->table = $table;
         if ($columns !== null) {
             $this->columns($columns);
+        } else {
+            // TODO: Really?
+            $this->columns = $this->getDefaultColumns();
         }
         return $this;
     }
@@ -100,7 +108,6 @@ abstract class AbstractQuery
         } else {
             $this->columns = array($columns);
         }
-
         return $this;
     }
     
@@ -355,6 +362,7 @@ abstract class AbstractQuery
                 $limit = $request->getParam('limit', 20);
             }
         }
+        $this->limit($limit, $page * $limit);
 
         $paginator = new \Zend_Paginator(
             new \Icinga\Web\Paginator\Adapter\QueryAdapter($this)

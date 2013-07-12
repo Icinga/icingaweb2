@@ -29,7 +29,7 @@ class Monitoring_CommandController extends ModuleActionController
             throw new Exception("Invalid token given", 401);
         $this->_helper->viewRenderer->setNoRender(true);
         $this->_helper->layout()->disableLayout();
-        $targets = Icinga\Application\Config::getInstance()->getModuleConfig("instances", "monitoring");
+        $targets = $this->config->instances;
         $instance = $this->_getParam("instance");
         if ($instance && isset($targets[$instance])) {
             $this->target = new \Icinga\Protocol\Commandpipe\CommandPipe($targets[$instance]);

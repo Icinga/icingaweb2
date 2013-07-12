@@ -6,17 +6,17 @@ class ContactQuery extends AbstractQuery
 {
     protected $columnMap = array(
         'contacts' => array(
-            'contact_name'   => 'co.name1',
+            'contact_name'   => 'co.name1 COLLATE latin1_general_ci',
             'contact_alias'  => 'c.alias',
             'contact_email'  => 'c.email_address',
             'contact_pager'  => 'c.pager_address',
         ),
         'hosts' => array(
-            'host_name' => 'ho.name1',
+            'host_name' => 'ho.name1 COLLATE latin1_general_ci',
         ),
         'services' => array(
-            'service_host_name'   => 'so.name1',
-            'service_description' => 'so.name2',
+            'service_host_name'   => 'so.name1 COLLATE latin1_general_ci',
+            'service_description' => 'so.name2 COLLATE latin1_general_ci',
         )
     );
 

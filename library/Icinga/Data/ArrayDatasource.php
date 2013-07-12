@@ -36,6 +36,22 @@ class ArrayDatasource implements DatasourceInterface
         return $result;
     }
 
+    public function fetchPairs(ArrayQuery $query)
+    {
+        $result = array();
+        $keys = null;
+        foreach ($this->getResult($query) as $row) {
+            if ($keys === null) {
+                $keys = array_keys((array) $row);
+                if (count($keys) < 2) {
+                    $keys[1] = $keys[0];
+                }
+            }
+            $result[$row->{$keys[0]}] = $row->{$keys[1]};
+        }
+        return $result;
+    }
+
     public function fetchAll(ArrayQuery $query)
     {
         $result = $this->getResult($query);
@@ -70,11 +86,14 @@ class ArrayDatasource implements DatasourceInterface
                 $result[] = $row;
             } else {
                 $c_row = (object) array();
-                foreach ($columns as $key) {
+                foreach ($columns as $alias => $key) {
+                    if (is_int($alias)) {
+                        $alias = $key;
+                    }
                     if (isset($row->$key)) {
-                        $c_row->$key = $row->$key;
+                        $c_row->$alias = $row->$key;
                     } else {
-                        $c_row->$key = null;
+                        $c_row->$alias = null;
                     }
                 }
                 $result[] = $c_row;

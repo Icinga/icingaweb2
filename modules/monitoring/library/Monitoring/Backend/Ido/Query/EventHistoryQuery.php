@@ -10,10 +10,10 @@ class EventHistoryQuery extends AbstractQuery
 
     protected $columnMap = array(
         'eventhistory' => array(
-            'host'                => 'eho.name1',
-            'service'             => 'eho.name2',
-            'host_name'           => 'eho.name1',
-            'service_description' => 'eho.name2',
+            'host'                => 'eho.name1 COLLATE latin1_general_ci',
+            'service'             => 'eho.name2 COLLATE latin1_general_ci',
+            'host_name'           => 'eho.name1 COLLATE latin1_general_ci',
+            'service_description' => 'eho.name2 COLLATE latin1_general_ci',
             'object_type'         => "CASE WHEN eho.objecttype_id = 1 THEN 'host' ELSE 'service' END",
             'timestamp'       => 'UNIX_TIMESTAMP(eh.state_time)',
             'raw_timestamp'   => 'eh.state_time',
@@ -69,7 +69,8 @@ class EventHistoryQuery extends AbstractQuery
                 'type'       => "('dt_start')",
                 'state'      => '(NULL)',
                 'state_type' => '(NULL)',
-                'output'     => "CONCAT('[', author_name, '] ', comment_data)",
+//                'output'     => "CONCAT('[', author_name, '] ', comment_data)",
+                'output'     => "('[' || author_name || '] ' || comment_data)",
                 'attempt'      => '(NULL)',
                 'max_attempts' => '(NULL)',
             )
@@ -90,7 +91,8 @@ class EventHistoryQuery extends AbstractQuery
                 'type'       => "('dt_end')",
                 'state'      => '(NULL)',
                 'state_type' => '(NULL)',
-                'output'     => "CONCAT('[', author_name, '] ', comment_data)",
+//                 'output'     => "CONCAT('[', author_name, '] ', comment_data)",
+                'output'     => "('[' || author_name || '] ' || comment_data)",
                 'attempt'      => '(NULL)',
                 'max_attempts' => '(NULL)',
             )
@@ -110,7 +112,8 @@ class EventHistoryQuery extends AbstractQuery
                 'type'       => "(CASE entry_type WHEN 1 THEN 'comment' WHEN 2 THEN 'dt_comment' WHEN 3 THEN 'flapping' WHEN 4 THEN 'ack' END)",
                 'state'      => '(NULL)',
                 'state_type' => '(NULL)',
-                'output'     => "CONCAT('[', author_name, '] ', comment_data)",
+//                 'output'     => "CONCAT('[', author_name, '] ', comment_data)",
+                'output'     => "('[' || author_name || '] ' || comment_data)",
                 'attempt'      => '(NULL)',
                 'max_attempts' => '(NULL)',
             )
@@ -121,14 +124,39 @@ class EventHistoryQuery extends AbstractQuery
         }
         if ($end !== null) {
             $comments->where('comment_time <= ?', $end);
-        }        
+        }
+
+        // This is one of the db-specific workarounds that could be abstracted
+        // in a better way:
+        switch ($this->ds->getConnection()->getDbType()) {
+            case 'mysql':
+                $concat_contacts = "GROUP_CONCAT(c.alias ORDER BY c.alias SEPARATOR ', ')";
+                break;
+            case 'pgsql':
+                // TODO: Find a way to "ORDER" these:
+                $concat_contacts = "ARRAY_TO_STRING(ARRAY_AGG(c.alias), ', ')";
+                break;
+            case 'oracle':
+                // TODO: This is only valid for Oracle >= 11g Release 2.
+                $concat_contacts = "LISTAGG(c.alias, ', ') WITHIN GROUP (ORDER BY c.alias)";
+                // Alternatives:
+                //
+                //   RTRIM(XMLAGG(XMLELEMENT(e, column_name, ',').EXTRACT('//text()')),
+                //
+                //   not supported and not documented but works since 10.1,
+                //   however it is NOT always present;
+                //   WM_CONCAT(c.alias)
+                break;
+            default:
+                die('Not yet'); // TODO: Proper Exception
+        }
 
         $cndetails = $this->db->select()->from(
             array('cn' => $this->prefix . 'contactnotifications'),
             array(
+                'notification_id' => 'notification_id',
                 'cnt'      => 'COUNT(*)',
-                'contacts' => 'GROUP_CONCAT(c.alias)',
-                'notification_id' => 'notification_id'
+                'contacts' => $concat_contacts
             )
         )->join(
             array('c' => $this->prefix . 'contacts'),
@@ -144,7 +172,8 @@ class EventHistoryQuery extends AbstractQuery
                 'type'       => "('notify')",
                 'state'      => 'state',
                 'state_type' => '(NULL)',
-                'output'     => "CONCAT('[', cndetails.contacts, '] ', n.output)",
+               //  'output'     => "CONCAT('[', cndetails.contacts, '] ', n.output)",
+                'output'     => "('[' || cndetails.contacts || '] ' || n.output)",
                 'attempt'      => '(NULL)',
                 'max_attempts' => '(NULL)',
             )

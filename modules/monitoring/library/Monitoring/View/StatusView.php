@@ -5,9 +5,11 @@ namespace Icinga\Monitoring\View;
 class StatusView extends MonitoringView
 {
     protected $query;
+    // protected $searchColumn = 'host'; -> besser in der Query, 'search' mitgeben
 
     protected $availableColumns = array(
         // Hosts
+        'host',
         'host_name',
         'host_display_name',
         'host_alias',
@@ -29,9 +31,15 @@ class StatusView extends MonitoringView
         'host_does_active_checks',
         'host_accepts_passive_checks',
         'host_last_state_change',
+        'host_last_hard_state',
         'host_last_hard_state_change',
+        'host_notifications_enabled',
+        'host_last_time_up',
+        'host_last_time_down',
+        'host_last_time_unreachable',
 
         // Services
+        'service',
         'service_description',
         'service_display_name',
 
@@ -49,7 +57,15 @@ class StatusView extends MonitoringView
         'service_does_active_checks',
         'service_accepts_passive_checks',
         'service_last_state_change',
+        'service_last_hard_state',
         'service_last_hard_state_change',
+        'service_notifications_enabled',
+        'service_last_time_ok',
+        'service_last_time_warning',
+        'service_last_time_critical',
+        'service_last_time_unknown',
+
+        'object_type',
 
         // Status
         'problems',
@@ -66,6 +82,12 @@ class StatusView extends MonitoringView
         'host_name' => array(
             'columns' => array(
                 'host_name',
+            ),
+            'default_dir' => self::SORT_ASC
+        ),
+        'service_host_name' => array(
+            'columns' => array(
+                'service_host_name',
                 'service_description'
             ),
             'default_dir' => self::SORT_ASC
@@ -86,6 +108,7 @@ class StatusView extends MonitoringView
         'severity' => array(
             'columns' => array(
                 'severity',
+                'host_name',
                 'service_last_state_change',
             ),
             'default_dir' => self::SORT_DESC

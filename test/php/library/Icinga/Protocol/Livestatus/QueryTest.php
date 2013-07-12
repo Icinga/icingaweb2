@@ -1,13 +1,22 @@
 <?php
 
 namespace Tests\Icinga\Protocol\Livestatus;
+
+use Icinga\Protocol\Livestatus\Connection;
+use Icinga\Protocol\Livestatus\Query;
+use PHPUnit_Framework_TestCase as TestCase;
+
+require_once('../../library/Icinga/Protocol/AbstractQuery.php');
+require_once('../../library/Icinga/Protocol/Livestatus/Query.php');
+require_once('../../library/Icinga/Protocol/Livestatus/Connection.php');
+
+
 /**
 *
 * Test class for Query 
-* Created Wed, 16 Jan 2013 15:15:16 +0000 
 *
 **/
-class QueryTest extends \PHPUnit_Framework_TestCase
+class QueryTest extends TestCase
 {
 
     /**

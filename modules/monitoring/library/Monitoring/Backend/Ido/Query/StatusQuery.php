@@ -8,13 +8,13 @@ class StatusQuery extends AbstractQuery
 
     protected $columnMap = array(
         'hosts' => array(
-            'host' => 'ho.name1',
-            'host_name' => 'ho.name1',
-            'host_display_name' => 'h.display_name',
-            'host_alias' => 'h.alias',
-            'host_address' => 'h.address',
-            'host_ipv4' => 'INET_ATON(h.address)',
-            'host_icon_image' => 'h.icon_image',
+            'host'                   => 'ho.name1 COLLATE latin1_general_ci',
+            'host_name'              => 'ho.name1 COLLATE latin1_general_ci',
+            'host_display_name'      => 'h.display_name',
+            'host_alias'             => 'h.alias',
+            'host_address'           => 'h.address',
+            'host_ipv4'              => 'INET_ATON(h.address)',
+            'host_icon_image'        => 'h.icon_image',
         ),
         'hoststatus' => array(
             'host_state' => 'CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL THEN 99 ELSE hs.current_state END',
@@ -53,8 +53,8 @@ class StatusQuery extends AbstractQuery
             'host_flap_detection_enabled' => 'hs.flap_detection_enabled',
             'host_is_flapping' => 'hs.is_flapping',
             'host_percent_state_change' => 'hs.percent_state_change',
-            'host_latency' => 'hs.latency',
-            'host_execution_time' => 'hs.execution_time',
+            'host_check_latency' => 'hs.latency',
+            'host_check_execution_time' => 'hs.execution_time',
             'host_scheduled_downtime_depth' => 'hs.scheduled_downtime_depth',
             'host_failure_prediction_enabled' => 'hs.failure_prediction_enabled',
             'host_process_performance_data' => 'hs.process_performance_data',
@@ -102,12 +102,15 @@ class StatusQuery extends AbstractQuery
         'hostgroups' => array(
             'hostgroups' => 'hgo.name1',
         ),
+        'servicegroups' => array(
+            'servicegroups' => 'sgo.name1',
+        ),
         'services' => array(
-            'service_host_name' => 'so.name1',
-            'service' => 'so.name2',
-            'service_description' => 'so.name2',
-            'service_display_name' => 's.display_name',
-            'service_icon_image' => 's.icon_image',
+            'service_host_name'      => 'so.name1 COLLATE latin1_general_ci',
+            'service'                => 'so.name2 COLLATE latin1_general_ci',
+            'service_description'    => 'so.name2 COLLATE latin1_general_ci',
+            'service_display_name'   => 's.display_name',
+            'service_icon_image'     => 's.icon_image',
         ),
         'servicestatus' => array(
             'current_state' => 'CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL THEN 99 ELSE ss.current_state END',
@@ -122,13 +125,19 @@ class StatusQuery extends AbstractQuery
             'service_handled' => 'CASE WHEN (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth + COALESCE(hs.current_state, 0)) > 0 THEN 1 ELSE 0 END',
             'service_does_active_checks' => 'ss.active_checks_enabled',
             'service_accepts_passive_checks' => 'ss.passive_checks_enabled',
-            'service_last_state_change' => 'UNIX_TIMESTAMP(ss.last_state_change)',
+            'service_last_state_change'      => 'UNIX_TIMESTAMP(ss.last_state_change)',
+            'service_last_hard_state'        => 'ss.last_hard_state',
             'service_last_hard_state_change' => 'UNIX_TIMESTAMP(ss.last_hard_state_change)',
-            'service_check_command' => 'ss.check_command',
-            'service_last_check' => 'UNIX_TIMESTAMP(ss.last_check)',
-            'service_next_check' => 'CASE WHEN ss.should_be_scheduled THEN UNIX_TIMESTAMP(ss.next_check) ELSE NULL END',
-            'service_check_execution_time' => 'ss.execution_time',
-            'service_check_latency' => 'ss.latency',
+            'service_check_command'          => 'ss.check_command',
+            'service_last_check'             => 'UNIX_TIMESTAMP(ss.last_check)',
+            'service_next_check'             => 'CASE WHEN ss.should_be_scheduled = 1 THEN UNIX_TIMESTAMP(ss.next_check) ELSE NULL END',
+            'service_check_execution_time'   => 'ss.execution_time',
+            'service_check_latency'          => 'ss.latency',
+            'service_notifications_enabled'  => 'ss.notifications_enabled',
+            'service_last_time_ok'           => 'ss.last_time_ok',
+            'service_last_time_warning'      => 'ss.last_time_warning',
+            'service_last_time_critical'     => 'ss.last_time_critical',
+            'service_last_time_unknown'      => 'ss.last_time_unknown',
         ),
         'status' => array(
             'problems' => 'CASE WHEN ss.current_state = 0 THEN 0 ELSE 1 END',
@@ -165,7 +174,7 @@ class StatusQuery extends AbstractQuery
                         END
                 END
             END',
-        )
+        ),
     );
 
     public function group($col)
@@ -190,14 +199,14 @@ class StatusQuery extends AbstractQuery
             array('ho' => $this->prefix . 'objects'),
             array()
         )->join(
-                array('hs' => $this->prefix . 'hoststatus'),
-                'ho.object_id = hs.host_object_id AND ho.is_active = 1',
-                array()
-            )->join(
-                array('h' => $this->prefix . 'hosts'),
-                'hs.host_object_id = h.host_object_id',
-                array()
-            );
+            array('hs' => $this->prefix . 'hoststatus'),
+            'ho.object_id = hs.host_object_id AND ho.is_active = 1 AND ho.objecttype_id = 1',
+            array()
+        )->join(
+            array('h' => $this->prefix . 'hosts'),
+            'hs.host_object_id = h.host_object_id',
+            array()
+        );
         $this->joinedVirtualTables = array(
             'hosts' => true,
             'hoststatus' => true,
@@ -278,20 +287,22 @@ class StatusQuery extends AbstractQuery
 
     protected function joinServicegroups()
     {
+        $this->requireVirtualTable('services');
         $this->baseQuery->join(
             array('sgm' => $this->prefix . 'servicegroup_members'),
             'sgm.service_object_id = s.service_object_id',
             array()
         )->join(
-                array('sg' => $this->prefix . 'servicegroups'),
-                'sgm.servicegroup_id = sg.' . $this->servicegroup_id,
-                array()
-            )->join(
-                array('hgo' => $this->prefix . 'objects'),
-                'hgo.' . $this->object_id . ' = hg.' . $this->hostgroup_id
-                . ' AND hgo.is_active = 1',
-                array()
-            );
+
+            array('sg' => $this->prefix . 'servicegroups'),
+            'sgm.servicegroup_id = sg.' . $this->servicegroup_id,
+            array()
+        )->join(
+            array('sgo' => $this->prefix . 'objects'),
+            'sgo.' . $this->object_id. ' = sg.servicegroup_object_id'
+          . ' AND sgo.is_active = 1',
+            array()
+        );
 
         return $this;
     }
