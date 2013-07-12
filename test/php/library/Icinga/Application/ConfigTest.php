@@ -5,8 +5,8 @@
 
 namespace Tests\Icinga\Application;
 
-require 'Zend/Config/Ini.php';
-require dirname(__FILE__) . '/../../../../../library/Icinga/Application/Config.php';
+require_once 'Zend/Config/Ini.php';
+require_once dirname(__FILE__) . '/../../../../../library/Icinga/Application/Config.php';
 
 use Icinga\Application\Config as IcingaConfig;
 
