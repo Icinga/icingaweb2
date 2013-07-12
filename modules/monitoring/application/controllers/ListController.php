@@ -3,6 +3,7 @@
 use Icinga\Web\ModuleActionController;
 use Icinga\Web\Hook;
 use Icinga\Monitoring\Backend;
+use Icinga\Application\Benchmark;
 
 class Monitoring_ListController extends ModuleActionController
 {
@@ -19,16 +20,27 @@ class Monitoring_ListController extends ModuleActionController
 
     public function hostsAction()
     {
-        $this->view->hosts = $this->backend->select()->from('status', array(
-            'host_name',
-            'host_state',
-            'host_acknowledged',
-            'host_output',
-            'host_in_downtime',
-            'host_handled',
-            'host_last_state_change'
-        ));
-            
+        Benchmark::measure("hostsAction::query()");
+        $this->view->hosts = $this->backend->select()->from(
+            'status',
+            array(
+                'host_icon_image',
+                'host_name',
+                'host_state',
+                'host_address',
+                'host_acknowledged',
+                'host_output',
+                'host_in_downtime',
+                'is_flapping',
+                'state_type',
+                'host_handled',
+                'host_last_state_change',
+                'notifications_enabled',
+                'problems'
+             //   'host_comment_count'
+            )
+        );
+          
         if ($search = $this->_getParam('search')) {
             $this->_setParam('search', null);
             if (strpos($search, '=') === false) {
@@ -40,13 +52,12 @@ class Monitoring_ListController extends ModuleActionController
                 }
             }
         }
-        $this->view->hosts->applyRequest($this->_request);
-$this->view->hosts->getQuery()->group('hs.host_object_id');
-    if ($this->_getParam('dump') === 'sql') {
-        echo '<pre>' . htmlspecialchars(wordwrap($this->view->hosts->getQuery()->dump())) . '</pre>';
-        exit;
-    }
 
+        $this->view->hosts->getQuery()->group('host_id');
+        if ($this->_getParam('dump') === 'sql') {
+            echo '<pre>' . htmlspecialchars(wordwrap($this->view->hosts->getQuery()->dump())) . '</pre>';
+            exit;
+        }
         // TODO: Get rid of "preserve"
         $preserve = array();
         if ($this->_getParam('sort')) {
