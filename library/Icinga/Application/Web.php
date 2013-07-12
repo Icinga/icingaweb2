@@ -181,7 +181,7 @@ class Web extends ApplicationBootstrap
             $this->config->{'global'}->get('project', 'Icinga')
         );
         $view->view->headTitle()->setSeparator(' :: ');
-        $view->view->navigation = $this->config->menu;
+        $view->view->navigation = $this->config->app('menu');
 
         $this->view = $view;
         return $this;

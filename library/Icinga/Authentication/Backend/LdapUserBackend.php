@@ -3,21 +3,21 @@
 /**
  * Icinga 2 Web - Head for multiple monitoring frontends
  * Copyright (C) 2013 Icinga Development Team
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
+ *
  * @copyright 2013 Icinga Development Team <info@icinga.org>
  * @author Icinga Development Team <info@icinga.org>
  */
@@ -33,7 +33,7 @@ use Icinga\Application\Config as IcingaConfig;
 
 /**
 *   User authentication backend (@see Icinga\Authentication\UserBackend) for
-*   authentication of users via LDAP. The attributes and location of the 
+*   authentication of users via LDAP. The attributes and location of the
 *   user is configurable via the application.ini
 *
 *   See the UserBackend class (@see Icinga\Authentication\UserBackend) for
@@ -45,9 +45,9 @@ class LdapUserBackend implements UserBackend
     *   @var Ldap\Connection
     **/
     protected $connection;
-   
+
     /**
-    *   Creates a new Authentication backend using the 
+    *   Creates a new Authentication backend using the
     *   connection information provided in $config
     *
     *   @param object $config   The ldap connection information
@@ -69,7 +69,7 @@ class LdapUserBackend implements UserBackend
 
     /**
     *   Removes the '*' characted from $string
-    *   
+    *
     *   @param String $string
     *
     *   @return String
@@ -81,19 +81,19 @@ class LdapUserBackend implements UserBackend
 
     /**
     *   Tries to fetch the username given in $username from
-    *   the ldap connection, using the configuration parameters 
+    *   the ldap connection, using the configuration parameters
     *   given in the Authentication configuration
     *
     *   @param  String  $username       The username to select
     *
-    *   @return object  $result 
+    *   @return object  $result
     **/
     protected function selectUsername($username)
     {
         return $this->connection->select()
-            ->from(IcingaConfig::getInstance()->authentication->users->user_class,
-                array(IcingaConfig::getInstance()->authentication->users->user_name_attribute))
-            ->where(IcingaConfig::getInstance()->authentication->users->user_name_attribute,
+            ->from(IcingaConfig::app('authentication')->users->user_class,
+                array(IcingaConfig::app('authentication')->users->user_name_attribute))
+            ->where(IcingaConfig::app('authentication')->users->user_name_attribute,
                 $this->stripAsterisks($username));
     }
 
