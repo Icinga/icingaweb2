@@ -6,18 +6,18 @@ class ContactgroupQuery extends AbstractQuery
 {
     protected $columnMap = array(
         'contactgroups' => array(
-            'contactgroup_name'   => 'cgo.name1',
+            'contactgroup_name'   => 'cgo.name1 COLLATE latin1_general_ci',
             'contactgroup_alias'  => 'cg.alias',
         ),
         'contacts' => array(
-            'contact_name'        => 'co.name1',
+            'contact_name'        => 'co.name1 COLLATE latin1_general_ci',
         ),
         'hosts' => array(
             'host_name' => 'ho.name1',
         ),
         'services' => array(
-            'service_host_name'           => 'so.name1',
-            'service_description' => 'so.name2',
+            'service_host_name'           => 'so.name1 COLLATE latin1_general_ci',
+            'service_description' => 'so.name2 COLLATE latin1_general_ci',
         )
     );
 

@@ -23,6 +23,10 @@ class StatusQuery extends AbstractQuery
         'host_accepts_passive_checks'     => 'host_accept_passive_checks',
         'host_last_state_change',
 
+        'host_problems' => 'is_flapping',
+        'service_in_downtime' => 'is_flapping',
+        'service_handled' => 'is_flapping',
+
         // Service config
         'service_description'            => 'description',
         'service_display_name'           => 'display_name',
@@ -37,12 +41,34 @@ class StatusQuery extends AbstractQuery
         'service_last_state_change'      => 'last_state_change',
 
         // Service comments
-        'comments_with_info',
-        'downtimes_with_info',
+        //'comments_with_info',
+        //'downtimes_with_info',
     );
+
+    public function init()
+    {
+        $this->query = $this->createQuery();
+        //print_r($this->ds->getConnection()->fetchAll($this->query));
+        //die('asdf');
+    }
+
+    public function count()
+    {
+        return $this->ds->getConnection()->count($this->query);
+    }
+
+    public function fetchAll()
+    {
+        return $this->ds->getConnection()->fetchAll($this->query);
+    }
+
+    public function fetchRow()
+    {
+        return array_shift($this->ds->getConnection()->fetchAll($this->query));
+    }
 
     protected function createQuery()
     {
-        return $this->connection->getConnection()->select()->from('services', $this->available_columns);
+        return $this->ds->getConnection()->select()->from('services', $this->available_columns);
     }
 }

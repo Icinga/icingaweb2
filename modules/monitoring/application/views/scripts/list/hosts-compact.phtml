@@ -1,8 +1,14 @@
-<?php if (empty($this->hosts)): ?>
-- no hosts is matching this filter -
-<?php return; endif; ?>
-<?php $hosts = $this->hosts->paginate(); ?>
-<table class="hosts action">
+<?php
+
+$count = $hosts->count();
+if (! $count) {
+    echo '- no host is matching this filter -';
+    return;
+}
+
+$hosts->paginate();
+
+?><table class="hosts action">
  <thead>
   <tr>
    <th style="width: 6em;" >State</th>
@@ -10,8 +16,7 @@
   </tr>
  </thead>
  <tbody>
-<?php foreach ($hosts as $host): ?>
-<?php
+<?php foreach ($hosts->fetchAll() as $host):
 
 $icons = array();
 if ($host->host_acknowledged) {
@@ -54,6 +59,6 @@ $state_title = strtoupper($this->monitoringState($host, 'host'))
     array('class' => 'row-action')
     ) ?></td>
   </tr>
-<?php endforeach; ?>
+<? endforeach ?>
  </tbody>
 </table>

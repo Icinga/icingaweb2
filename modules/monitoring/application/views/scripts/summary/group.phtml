@@ -1,17 +1,17 @@
-<?php if (! $this->compact): ?>
+<? if (! $this->compact): ?>
 <?= $this->tabs ?>
-<?php endif; ?>
-<?php if (empty($this->summary)): ?>
+<? endif ?>
+<? if (empty($this->summary)): ?>
 There are no such services right now
-<?php else: ?>
+<? else: ?>
 <?php
 
 $now = time();
 
 ?>
-<?php if (! $this->compact && $this->summary instanceof \Zend_Paginator): ?>
+<? if (! $this->compact && $this->summary instanceof \Zend_Paginator): ?>
 <?= $this->paginationControl($this->summary, null, null, array('preserve' => $this->preserve)); ?>
-<?php endif; ?>
+<? endif ?>
 <table class="pivot action">
 <thead>
  <tr>
@@ -20,11 +20,11 @@ $now = time();
   <th style="width: 5em;">Critical</th>
   <th style="width: 5em;">Unknown</th>
   <th style="width: 5em;">Warning</th>
- <?php if (! $this->compact): ?>  <th style="width: 9%;">OK</th><?php endif; ?>
+ <? if (! $this->compact): ?>  <th style="width: 9%;">OK</th><? endif ?>
  </tr>
 </thead>
 <tbody>
-<?php foreach ($this->summary as $row): ?>
+<? foreach ($this->summary as $row): ?>
 <?php
 
 $class_ok       = '';
@@ -149,19 +149,19 @@ if (isset($row->hostgroup_name)) {
 }
 ?>
 <tr>
-<!-- <td class="<?= $name_class ?>"><?php if ($row->last_state_change + 600 > $now): ?>
+<!-- <td class="<?= $name_class ?>"><? if ($row->last_state_change + 600 > $now): ?>
  <blink><?= $this->timeSince($row->last_state_change) ?></blink>
- <?php else: ?>
+ <? else: ?>
  <?= $this->timeSince($row->last_state_change) ?>
- <?php endif; ?></td>-->
+ <? endif ?></td>-->
  <td style="text-align: left;"><?= $name_html ?></td>
  <td class="<?= $class_critical ?>"><?= $html_critical ?></td>
  <td class="<?= $class_unknown ?>"><?= $html_unknown ?></td>
  <td class="<?= $class_warning ?>"><?= $html_warning ?></td>
- <?php if (! $this->compact): ?><td class="ok"><?= $html_ok ?></td><?php endif; ?>
+ <? if (! $this->compact): ?><td class="ok"><?= $html_ok ?></td><? endif ?>
 </tr>
-<?php endforeach; ?>
+<? endforeach ?>
 </tbody>
 </table>
-<?php endif; ?>
-<?php if ($this->compact): ?><a href="<?= $this->baseUrl('monitoring/summary/group') ?>">more</a><?php endif; ?>
+<? endif ?>
+<? if ($this->compact): ?><a href="<?= $this->baseUrl('monitoring/summary/group') ?>">more</a><? endif ?>

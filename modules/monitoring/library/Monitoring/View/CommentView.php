@@ -11,6 +11,9 @@ class CommentView extends MonitoringView
         'comment_author',
         'comment_timestamp',
         'comment_type',
+        'host_name',
+        'service_host_name',
+        'service_description',
     );
 
     protected $specialFilters = array();

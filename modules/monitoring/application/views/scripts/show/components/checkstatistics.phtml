@@ -1,0 +1,29 @@
+<?= $this->expandable(
+  $this->translate('Check statistics'),
+'<table style="width:100%">
+    <thead>
+    </thead>
+    <tbody>
+        <tr>
+   <td style="width: 25em">' . $this->translate('Last check') . '</td>
+   <td>' . $this->format()->timeSince($object->last_check) . '</td>
+  </tr>
+  <tr>
+   <td>' . $this->translate('Next check') . '</td>
+   <td class="icinga-uiwidget-countdown" countdown-end="' . $object->next_check . '">'
+      . $this->format()->timeUntil($object->next_check)
+      . '</td>
+  </tr>
+  <tr>
+    <td>' . $this->translate('Check execution time') . '</td>
+    <td>' . $object->check_execution_time . '</td>
+  </tr>
+  <tr>
+   <td>' . $this->translate('Check latency') . '</td>
+   <td>' . $object->check_latency . '</td>
+  </tr>
+ </tbody>
+</table>
+',
+array('collapsed' => false)
+);

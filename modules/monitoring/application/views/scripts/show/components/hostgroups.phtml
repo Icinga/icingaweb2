@@ -1,0 +1,12 @@
+<?php
+
+if (empty($object->hostgroups)) return;
+
+$list = array();
+foreach ($object->hostgroups as $name => $alias) {
+    $list[] = $this->qlink($alias, 'monitoring/list/services', array(
+        'hostgroups' => $name
+    ));
+}
+echo '<b>Hostgroups:</b> ' .  implode(', ', $list) . "<br />\n";
+

@@ -2,7 +2,7 @@
 
 namespace Icinga\Monitoring\Backend\Ido\Query;
 
-class StatusQuery extends AbstractQuery
+class HoststatusQuery extends AbstractQuery
 {
     protected $allowCustomVars = true;
 
@@ -21,19 +21,19 @@ class StatusQuery extends AbstractQuery
             'host_output'                 => 'hs.output',
             'host_long_output'            => 'hs.long_output',
             'host_perfdata'               => 'hs.perfdata',
+            'host_problem'                => 'CASE WHEN hs.current_state = 0 THEN 0 ELSE 1 END',
             'host_acknowledged'           => 'hs.problem_has_been_acknowledged',
-            'host_in_downtime'           => 'CASE WHEN (hs.scheduled_downtime_depth = 0) THEN 0 ELSE 1 END',
-            'host_handled'        => 'CASE WHEN (hs.problem_has_been_acknowledged + hs.scheduled_downtime_depth) > 0 THEN 1 ELSE 0 END',
+            'host_in_downtime'            => 'CASE WHEN (hs.scheduled_downtime_depth = 0) THEN 0 ELSE 1 END',
+            'host_handled'                => 'CASE WHEN (hs.problem_has_been_acknowledged + hs.scheduled_downtime_depth) > 0 THEN 1 ELSE 0 END',
             'host_does_active_checks'     => 'hs.active_checks_enabled',
             'host_accepts_passive_checks' => 'hs.passive_checks_enabled',
             'host_last_state_change'      => 'UNIX_TIMESTAMP(hs.last_state_change)',
             'host_last_hard_state'        => 'hs.last_hard_state',
             'host_check_command'          => 'hs.check_command',
             'host_last_check'             => 'UNIX_TIMESTAMP(hs.last_check)',
-            'host_next_check'             => 'CASE WHEN hs.should_be_scheduled = 1 THEN UNIX_TIMESTAMP(hs.next_check) ELSE NULL END',
+            'host_next_check'             => 'CASE WHEN hs.should_be_scheduled THEN UNIX_TIMESTAMP(hs.next_check) ELSE NULL END',
             'host_check_execution_time'   => 'hs.execution_time',
             'host_check_latency'          => 'hs.latency',
-            'host_problems'               => 'CASE WHEN hs.current_state = 0 THEN 0 ELSE 1 END',
             'host_notifications_enabled'  => 'hs.notifications_enabled',
             'host_last_time_up'           => 'hs.last_time_up',
             'host_last_time_down'         => 'hs.last_time_down',
@@ -74,94 +74,12 @@ class StatusQuery extends AbstractQuery
         'hostgroups' => array(
             'hostgroups' => 'hgo.name1',
         ),
-        'servicegroups' => array(
-            'servicegroups' => 'sgo.name1',
-        ),
-        'services' => array(
-            'service_host_name'      => 'so.name1 COLLATE latin1_general_ci',
-            'service'                => 'so.name2 COLLATE latin1_general_ci',
-            'service_description'    => 'so.name2 COLLATE latin1_general_ci',
-            'service_display_name'   => 's.display_name',
-            'service_icon_image'     => 's.icon_image',
-        ),
-        'servicestatus' => array(
-            'current_state'          => 'CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL THEN 99 ELSE ss.current_state END',
-            'service_state'          => 'CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL THEN 99 ELSE ss.current_state END',
-            'service_hard_state'     => 'CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL THEN 99 ELSE CASE WHEN ss.state_type = 1 THEN ss.current_state ELSE ss.last_hard_state END END',
-            'service_state_type'     => 'ss.state_type',
-            'service_output'         => 'ss.output',
-            'service_long_output'    => 'ss.long_output',
-            'service_perfdata'       => 'ss.perfdata',
-            'service_acknowledged'   => 'ss.problem_has_been_acknowledged',
-            'service_in_downtime'    => 'CASE WHEN (ss.scheduled_downtime_depth = 0) THEN 0 ELSE 1 END',
-            'service_handled'        => 'CASE WHEN (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth + COALESCE(hs.current_state, 0)) > 0 THEN 1 ELSE 0 END',
-            'service_does_active_checks'     => 'ss.active_checks_enabled',
-            'service_accepts_passive_checks' => 'ss.passive_checks_enabled',
-            'service_last_state_change'      => 'UNIX_TIMESTAMP(ss.last_state_change)',
-            'service_last_hard_state'        => 'ss.last_hard_state',
-            'service_last_hard_state_change' => 'UNIX_TIMESTAMP(ss.last_hard_state_change)',
-            'service_check_command'          => 'ss.check_command',
-            'service_last_check'             => 'UNIX_TIMESTAMP(ss.last_check)',
-            'service_next_check'             => 'CASE WHEN ss.should_be_scheduled = 1 THEN UNIX_TIMESTAMP(ss.next_check) ELSE NULL END',
-            'service_check_execution_time'   => 'ss.execution_time',
-            'service_check_latency'          => 'ss.latency',
-            'service_notifications_enabled'  => 'ss.notifications_enabled',
-            'service_last_time_ok'           => 'ss.last_time_ok',
-            'service_last_time_warning'      => 'ss.last_time_warning',
-            'service_last_time_critical'     => 'ss.last_time_critical',
-            'service_last_time_unknown'      => 'ss.last_time_unknown',
-        ),
-        'status' => array(
-            'problems' => 'CASE WHEN ss.current_state = 0 THEN 0 ELSE 1 END',
-            'handled'  => 'CASE WHEN ss.problem_has_been_acknowledged = 1 OR ss.scheduled_downtime_depth > 0 THEN 1 ELSE 0 END',
-            'severity' => 'CASE WHEN ss.current_state = 0
-            THEN 
-                CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL
-                     THEN 16
-                     ELSE 0
-                END
-                +
-                CASE WHEN ss.problem_has_been_acknowledged = 1
-                     THEN 2
-                     ELSE
-                        CASE WHEN ss.scheduled_downtime_depth > 0
-                            THEN 1
-                            ELSE 4
-                        END
-                END
-            ELSE
-                CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL THEN 16
-                     WHEN ss.current_state = 1 THEN 32
-                     WHEN ss.current_state = 2 THEN 128 
-                     WHEN ss.current_state = 3 THEN 64
-                     ELSE 256
-                END
-                +
-                CASE WHEN ss.problem_has_been_acknowledged = 1
-                     THEN 2
-                     ELSE
-                        CASE WHEN ss.scheduled_downtime_depth > 0
-                            THEN 1
-                            ELSE 4
-                        END
-                END
-            END',
-        ),
     );
-/*    
-public function group($col)
-{
-    $this->baseQuery->group($col);
-}
-*/
+
     protected function getDefaultColumns()
     {
-        return $this->columnMap['hosts'];
-        /*
-             + $this->columnMap['services']
-             + $this->columnMap['hoststatus']
-             + $this->columnMap['servicestatus']
-             ;*/
+        return $this->columnMap['hosts']
+             + $this->columnMap['hoststatus'];
     }
 
     protected function joinBaseTables()
@@ -172,7 +90,7 @@ public function group($col)
             array()
         )->join(
             array('hs' => $this->prefix . 'hoststatus'),
-            'ho.object_id = hs.host_object_id AND ho.is_active = 1 AND ho.objecttype_id = 1',
+            'ho.' . $this->object_id . ' = hs.host_object_id AND ho.is_active = 1 AND ho.objecttype_id = 1',
             array()
         )->join(
             array('h' => $this->prefix . 'hosts'),

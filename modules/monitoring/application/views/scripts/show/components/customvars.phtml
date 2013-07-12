@@ -1,0 +1,12 @@
+<?php
+
+if (! $object->customvars) return;
+
+foreach ($object->customvars as $name => $value) {
+    printf(
+        "<b>%s:</b> %s<br />\n",
+        $this->escape($name),
+        $this->escape($value)
+    );
+}
+

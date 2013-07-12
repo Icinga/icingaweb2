@@ -1,39 +1,34 @@
-<?php if (empty($this->services)): ?>
-<div class="alert alert-info fullpage_infobox">
-    Sorry, no services found for this search
-</div>
-<?php return; endif; ?>
-<?
-
-$services = $this->services->paginate();
-
-?>
-<table class="services action">
-    <thead>
-        <tr>
-            <th style="width: 6em;" >State</th>
-            <th >Service</th>
-        </tr>
-    </thead>
-    <tbody>
-<?php foreach ($services as $service): ?>
 <?php
+
+$count = $services->count();
+if (! $count) {
+    echo '- no object is matching this filter -';
+    return;
+}
+
+$services->paginate();
+
+?><table class="services action">
+ <thead>
+  <tr>
+   <th style="width: 6em;" >State</th>
+   <th >Service</th>
+  </tr>
+ </thead>
+ <tbody>
+<?php foreach ($services->fetchAll() as $service):
 
 $icons = array();
 if ($service->service_acknowledged) {
     $icons['ack.gif'] = 'Problem has been acknowledged';
 }
 
-if (! empty($service->service_downtimes_with_info)) {
-    $icons['downtime.gif'] = implode("\n",
-        $this->resolveComments($service->service_downtimes_with_info)
-    );
+if ($service->service_in_downtime) {
+    $icons['downtime.gif'] = 'Service is in a scheduled downtime';
 }
 
-if (! empty($service->service_comments_with_info)) {
-    $icons['comment.gif'] = implode("\n",
-        $this->resolveComments($service->service_comments_with_info)
-    );
+if ($service->host_problems) {
+    $icons['server.png'] = 'This services host has a problem';
 }
 
 $state_classes = array($this->monitoringState($service, 'service'));
@@ -53,21 +48,55 @@ if (isset($this->preserve['backend'])) {
     $params['backend'] = $this->preserve['backend'];
 }
 ?>
-    <tr class="<?= implode(' ', $state_classes) ?>">
-        <td class="state" title="<?= $state_title ?>">
-            <?= $this->qlink(
-            $this->timeSince($service->service_last_state_change),
-            'monitoring/show/history', $params, array('quote' => false)) ?>
-        </td>
-        <td>
-            <?= $this->qlink(
-            $service->host_name,
-            'monitoring/show/host',
-            $params
-        ); ?>:
-            <?= $this->qlink($service->service_description, 'monitoring/show/service', $params, array('class' => 'row-action')) ?>
-        </td>
-    </tr>
-        <?php endforeach; ?>
-    </tbody>
+  <tr class="<?= implode(' ', $state_classes) ?>">
+   <td class="state" title="<?= $state_title ?>"><?=
+    $this->qlink(
+        $this->timeSince($service->service_last_state_change),
+        'monitoring/show/history',
+        $params,
+        array('quote' => false)
+    ) ?></td>
+   <td><?php
+        
+foreach ($icons as $icon => $alt) {
+    echo $this->img('img/classic/' . $icon, array(
+        'class' => 'icon',
+        'title' => $alt
+    ));
+}
+
+echo $this->qlink(
+    $service->host_name,
+    'monitoring/show/host',
+    $params
+) . ': ' . $this->qlink(
+    $service->service_description,
+    'monitoring/show/service',
+    $params,
+    array('class' => 'row-action')
+) ?></td>
+  </tr>
+<?php endforeach ?>
+ </tbody>
 </table>
+<?php
+$limit = $services->getLimit();
+$count = $services->count();
+
+if ($limit < $count) {
+    $more = sprintf(
+        $this->translate(
+            'Showing %d of %s, click here for more',
+            $limit,
+            $count
+        )
+    );
+} else {
+    $more = $this->translate(
+        sprintf(
+            'Showing %d objects, click here for details',
+            $count
+        )
+    );
+}
+?><p><?= $this->qlink($more,$this->url()->without('page', 'limit', 'view')) ?></p>

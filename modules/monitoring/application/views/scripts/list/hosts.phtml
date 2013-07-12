@@ -1,7 +1,7 @@
 <?= $this->tabs ?>
 <?php
-$this->hosts->limit(10);
-$hosts = $this->hosts->paginate();
+
+$paginator = $hosts->paginate();
 
 function getRowProperties(& $host, $scope) {
 
@@ -43,9 +43,9 @@ if (isset($_GET['dir'])) {
     $always['dir'] = $_GET['dir'];
 }
 ?>
-<?php if (! empty($fparams)): ?>
+<? if (! empty($fparams)): ?>
 <div style="float: right; width: 20em; font-size: 0.8em;"><b>Filters</b><br>
-<?php foreach ($fparams as $k => $v): ?>
+<? foreach ($fparams as $k => $v): ?>
 <?= $this->qlink(
     'x',
     'monitoring/list/hosts',
@@ -54,9 +54,9 @@ if (isset($_GET['dir'])) {
         'style' => array('color' => 'red')
     )
 ) ?> <?= $this->escape("$k = $v") ?></br>
-<?php endforeach; ?>
+<? endforeach ?>
 </div>
-<?php endif; ?>
+<? endif ?>
 <form method="get" action="<?= $this->qUrl(
     'monitoring/list/hosts?' . http_build_query(
         $this->hosts->getAppliedFilter()->toParams()
@@ -69,27 +69,29 @@ Sort by <?= $this->formSelect(
     $this->sort,
     array('class' => 'autosubmit'),
     array(
-        'host_severity' => 'Severity',
-        'host_last_state_change' => 'Last state change',
-        'host_name' => 'Host',
+        'host_severity'              => 'Severity',
+        'host_last_state_change'     => 'Last state change',
+        'host_name'                  => 'Host',
+        'host_last_time_up'          => 'Last UP',
+        'host_last_time_down'        => 'Last DOWN',
+        'host_last_time_unreachable' => 'Last UNREACHABLE',
     )
 ) ?>
-<input type="text" placeholder="Add filter..." name="search" />
+<input type="text" placeholder="Add filter..." name="search" value="<?= $this->escape($this->search) ?>" />
 </form>
 <?php // end filter ?>
-<?php if (empty($hosts)): ?>
+<? if (empty($hosts)): ?>
 
 <div class="alert alert-info fullpage_infobox">
     Sorry, no host found for this search
 </div>
-<?php return; endif; ?>
+<? return; endif ?>
 
-<?=  $this->paginationControl($hosts, null, null, array('preserve' => $this->preserve)) ?>
-
+<?=  $this->paginationControl($paginator, null, null, array('preserve' => $this->preserve)) ?>
 <table class="action">
  <tbody>
 
-<?php foreach ($hosts as $host):
+<? foreach ($hosts->fetchAll() as $host):
  list($icons,$state_classes,$state_title) = getRowProperties($host,$this); ?>
   <tr class="<?= implode(' ', $state_classes) ?>">
    <td class="state" title="<?= $state_title ?>"><?= $this->qlink(

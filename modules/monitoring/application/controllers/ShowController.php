@@ -3,7 +3,8 @@
 use Icinga\Monitoring\Backend;
 use Icinga\Web\ModuleActionController;
 use Icinga\Web\Hook;
-use Icinga\Application\Benchmark;
+use Icinga\Monitoring\Object\Host;
+use Icinga\Monitoring\Object\Service;
 
 class Monitoring_ShowController extends ModuleActionController
 {
@@ -13,33 +14,94 @@ class Monitoring_ShowController extends ModuleActionController
     {
         $host = $this->_getParam('host');
         $service = $this->_getParam('service');
+        $this->backend = Backend::getInstance($this->_getParam('backend'));
+        $object = null;
+        // TODO: Do not allow wildcards in names!
         if ($host !== null) {
             // TODO: $this->assertPermission('host/read', $host);
+            if ($this->action_name !== 'host' && $service !== null && $service !== '*') {
+                // TODO: $this->assertPermission('service/read', $service);
+                $object = Service::fetch($this->backend, $host, $service);
+            } else {
+                $object = Host::fetch($this->backend, $host);
+            }
         }
-        if ($service !== null) {
-            // TODO: $this->assertPermission('service/read', $service);
-        }
-        // TODO: don't allow wildcards
 
-        $this->backend = Backend::getInstance($this->_getParam('backend'));
-        if ($service !== null && $service !== '*') {
-            $this->view->service = $this->backend->fetchService($host, $service);
-        }
-        if ($host !== null) {
-            $this->view->host = $this->backend->fetchHost($host);
-        }
         $this->view->compact = $this->_getParam('view') === 'compact';
-        $this->view->tabs = $this->createTabs();
 
-        // If ticket hook:
-        $params = array();
-        if ($host !== null) {
-            $params['host'] = $this->view->host->host_name;
+        if ($object === null) {
+            // TODO: Notification, not found
+            $this->redirectNow('monitoring/list/services');
+            return;
         }
-        if ($service !== null) {
-            $params['service'] = $this->view->service->service_description;
-        }
+        $this->view->object = $object;
+        $this->view->tabs = $this->createTabs();
+        $this->prepareTicketHook();
+    }
+
+    public function serviceAction()
+    {
+        $object = $this->view->object->prefetch();
+        $this->prepareGrapherHook();
+    }
+
+    public function hostAction()
+    {
+        $this->view->object->prefetch();
+        $this->prepareGrapherHook();
+    }
+
+    public function historyAction()
+    {
+        $this->view->history = $this->backend->select()
+            ->from('eventHistory', array(
+                'object_type',
+                'host_name',
+                'service_description',
+                'timestamp',
+                'state',
+                'attempt',
+                'max_attempts',
+                'output',
+                'type'
+            ))->applyRequest($this->_request);
+
+        $this->view->preserve = $this->view->history->getAppliedFilter()->toParams();
+    }
+
+    public function servicesAction()
+    {
+        $this->_setParam('service', null);
+        // Ugly and slow:
+        $this->view->services = $this->view->action('services', 'list', 'monitoring', array(
+            'view' => 'compact'
+        ));
+    }
+
+    public function ticketAction()
+    {
         if (Hook::has('ticket')) {
+            // TODO: Still hardcoded, should ask for URL:
+            $id = $this->_getParam('ticket');
+            $ticketModule = 'rt';
+            $this->render();
+            $this->_forward('ticket', 'show', $ticketModule, array(
+                'id' => $id
+            ));
+        }
+    }
+
+    protected function prepareTicketHook()
+    {
+        if (Hook::has('ticket')) {
+            $object = $this->view->object;
+            $params = array(
+                'host' => $object->host_name
+            );
+            if ($object instanceof Service) {
+                $params['service'] = $object->service_description;
+            }
+
             $params['ticket'] = '__ID__';
             $this->view->ticket_link = preg_replace(
                 '~__ID__~',
@@ -54,209 +116,49 @@ class Monitoring_ShowController extends ModuleActionController
         }
     }
 
-    public function serviceAction()
+    protected function prepareGrapherHook()
     {
-        Benchmark::measure('Entered service action');
-        $this->view->active = 'service';
-        $this->view->tabs->activate('service')->enableSpecialActions();
-        
         if ($grapher = Hook::get('grapher')) {
+            $object = $this->view->object;
             if ($grapher->hasGraph(
-                $this->view->host->host_name,
-                $this->view->service->service_description
+                $object->host_name,
+                $object->service_description
             )) {
                 $this->view->preview_image = $grapher->getPreviewImage(
-                    $this->view->host->host_name,
-                    $this->view->service->service_description
+                    $object->host_name,
+                    $object->service_description
                 );
             }
-        }
-
-        $this->view->contacts = $this->backend->select()
-            ->from('contact', array(
-                'contact_name',
-                'contact_alias',
-                'contact_email',
-                'contact_pager',
-            ))
-            ->where('service_host_name', $this->view->host->host_name)
-            ->where('service_description', $this->view->service->service_description)
-            ->fetchAll();
-
-        $this->view->contactgroups = $this->backend->select()
-            ->from('contactgroup', array(
-                'contactgroup_name',
-                'contactgroup_alias',
-            ))
-            ->where('service_host_name', $this->view->host->host_name)
-            ->where('service_description', $this->view->service->service_description)
-            ->fetchAll();
-
-        $this->view->comments = $this->backend->select()
-            ->from('comment', array(
-                'comment_timestamp',
-                'comment_author',
-                'comment_data',
-                'comment_type',
-            ))
-            ->where('service_host_name', $this->view->host->host_name)
-            ->where('service_description', $this->view->service->service_description)
-            ->fetchAll();
-
-        $this->view->customvars = $this->backend->select()
-            ->from('customvar', array(
-                'varname',
-                'varvalue'
-            ))
-            ->where('varname', '-*PW*,-*PASS*')
-            ->where('host_name', $this->view->host->host_name)
-            ->where('service_description', $this->view->service->service_description)
-            ->where('object_type', 'service')
-            ->fetchPairs();
-        Benchmark::measure('Service action done');
-    }
-
-    public function hostAction()
-    {
-        $this->view->active = 'host';
-        $this->view->tabs->activate('host')->enableSpecialActions();
-        
-        if ($grapher = Hook::get('grapher')) {
-            if ($grapher->hasGraph($this->view->host->host_name)) {
-                $this->view->preview_image = $grapher->getPreviewImage(
-                    $this->view->host->host_name
-                );
-            }
-        }
-
-        $this->view->hostgroups = $this->backend->select()
-            ->from('hostgroup', array(
-                'hostgroup_name',
-                'hostgroup_alias'
-            ))
-            ->where('host_name', $this->view->host->host_name)
-            ->fetchPairs();
-
-        $this->view->contacts = $this->backend->select()
-            ->from('contact', array(
-                'contact_name',
-                'contact_alias',
-                'contact_email',
-                'contact_pager',
-            ))
-            ->where('host_name', $this->view->host->host_name)
-            ->fetchAll();
-
-        $this->view->contactgroups = $this->backend->select()
-            ->from('contactgroup', array(
-                'contactgroup_name',
-                'contactgroup_alias',
-            ))
-            ->where('host_name', $this->view->host->host_name)
-            ->fetchAll();
-
-        $this->view->comments = $this->backend->select()
-            ->from('comment', array(
-                'comment_timestamp',
-                'comment_author',
-                'comment_data',
-                'comment_type',
-            ))
-            ->where('host_name', $this->view->host->host_name)
-            ->fetchAll();
-
-        $this->view->customvars = $this->backend->select()
-            ->from('customvar', array(
-                'varname',
-                'varvalue'
-            ))
-            ->where('varname', '-*PW*,-*PASS*')
-            ->where('host_name', $this->view->host->host_name)
-            ->where('object_type', 'host')
-            ->fetchPairs();
-    }
-
-    public function historyAction()
-    {
-        if ($this->view->host) {
-            $this->view->tabs->activate('history')->enableSpecialActions();
-        }
-        $this->view->history = $this->backend->select()
-            ->from('eventHistory', array(
-                'object_type',
-                'host_name',
-                'service_description',
-                'timestamp',
-                'state',
-                'attempt',
-                'max_attempts',
-                'output',
-                'type'
-            ))->applyRequest($this->_request);
-
-
-            $this->view->preserve = $this->view->history->getAppliedFilter()->toParams();
-    if ($this->_getParam('dump') === 'sql') {
-        echo '<pre>' . htmlspecialchars($this->view->history->getQuery()->dump()) . '</pre>';
-        exit;
-    }
-        if ($this->_getParam('sort')) {
-            $this->view->preserve['sort'] = $this->_getParam('sort');
-        }
-    }
-
-    public function servicesAction()
-    {
-        // Ugly and slow:
-        $this->view->services = $this->view->action('services', 'list', 'monitoring', array(
-            'host_name' => $this->view->host->host_name,
-            //'sort', 'service_description'
-        ));
-    }
-
-    public function ticketAction()
-    {
-        $this->view->tabs->activate('ticket')->enableSpecialActions();
-        $id = $this->_getParam('ticket');
-        // Still hardcoded, TODO: get URL:
-        if (Hook::has('ticket')) {
-            $ticketModule = 'rt';
-            $this->render();
-            $this->_forward('ticket', 'show', $ticketModule, array(
-                'id' => $id
-            ));
         }
     }
 
     protected function createTabs()
     {
+        $object = $this->view->object;
         $tabs = $this->widget('tabs');
-        if ( ! $this->view->host) {
-            return $tabs;
-        }
-        $params = array(
-            'host' => $this->view->host->host_name,
-        );
+        $params = array('host' => $object->host_name);
         if ($backend = $this->_getParam('backend')) {
             $params['backend'] = $backend;
         }
-        if (isset($this->view->service)) {
-            $params['service'] = $this->view->service->service_description;
-            $hostParams = $params + array('active' => 'host');
-        } else {
-            $hostParams = $params;
+        if ($object instanceof Service) {
+            $params['service'] = $object->service_description;
+        } elseif ($service = $this->_getParam('service')) {
+            $params['service'] = $service;
         }
+        // TODO: Work with URL
+        $servicesParams = $params;
+        unset($servicesParams['service']);
         $tabs->add('host', array(
             'title'     => 'Host',
             'icon'      => 'img/classic/server.png',
             'url'       => 'monitoring/show/host',
-            'urlParams' => $hostParams,
+            'urlParams' => $params,
         ));
         $tabs->add('services', array(
             'title'     => 'Services',
             'icon'      => 'img/classic/service.png',
             'url'       => 'monitoring/show/services',
-            'urlParams' => $params,
+            'urlParams' => $servicesParams,
         ));
         if (isset($params['service'])) {
             $tabs->add('service', array(
@@ -280,6 +182,9 @@ class Monitoring_ShowController extends ModuleActionController
                 'urlParams' => $params + array('ticket' => $this->_getParam('ticket')),
             ));
         }
+
+        $tabs->activate($this->action_name)->enableSpecialActions();
+
 /*
         $tabs->add('contacts', array(
             'title'     => 'Contacts',

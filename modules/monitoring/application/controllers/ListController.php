@@ -2,6 +2,7 @@
 
 use Icinga\Web\ModuleActionController;
 use Icinga\Web\Hook;
+use Icinga\File\Csv;
 use Icinga\Monitoring\Backend;
 
 class Monitoring_ListController extends ModuleActionController
@@ -19,7 +20,7 @@ class Monitoring_ListController extends ModuleActionController
 
     public function hostsAction()
     {
-        $this->view->hosts = $this->backend->select()->from('status', array(
+        $this->view->hosts = $this->query('hoststatus', array(
             'host_name',
             'host_state',
             'host_acknowledged',
@@ -28,36 +29,9 @@ class Monitoring_ListController extends ModuleActionController
             'host_handled',
             'host_last_state_change'
         ));
-            
-        if ($search = $this->_getParam('search')) {
-            $this->_setParam('search', null);
-            if (strpos($search, '=') === false) {
-                $this->_setParam('host_name', $search);
-            } else {
-                list($key, $val) = preg_split('~\s*=\s*~', $search, 2);
-                if ($this->view->hosts->isValidFilterColumn($key) || $key[0] === '_') {
-                    $this->_setParam($key, $val);
-                }
-            }
-        }
-        $this->view->hosts->applyRequest($this->_request);
-$this->view->hosts->getQuery()->group('hs.host_object_id');
-    if ($this->_getParam('dump') === 'sql') {
-        echo '<pre>' . htmlspecialchars(wordwrap($this->view->hosts->getQuery()->dump())) . '</pre>';
-        exit;
-    }
-
-        // TODO: Get rid of "preserve"
-        $preserve = array();
-        if ($this->_getParam('sort')) {
-            $preserve['sort'] = $this->view->sort = $this->_getParam('sort');
-        }
-        if ($this->_getParam('backend')) {
-            $preserve['backend'] = $this->_getParam('backend');
-        }
-        $this->view->preserve = $preserve;
-
-        if ($this->_getParam('view') === 'compact') {
+        $this->view->sort = $this->_getParam('sort');
+        $this->preserve('sort')->preserve('backend');
+        if ($this->view->compact) {
             $this->_helper->viewRenderer('hosts_compact');
         }
     }
@@ -72,9 +46,10 @@ $this->view->hosts->getQuery()->group('hs.host_object_id');
             $state_column = 'service_hard_state';
             $state_change_column = 'service_last_hard_state_change';
         }
-        $this->view->services = $this->backend->select()
-            ->from('status', array(
+
+        $this->view->services = $this->query('status', array(
             'host_name',
+            'host_problems',
             'service_description',
             'service_state' => $state_column,
             'service_in_downtime',
@@ -82,36 +57,12 @@ $this->view->hosts->getQuery()->group('hs.host_object_id');
             'service_handled',
             'service_output',
             'service_last_state_change' => $state_change_column
-            ));
-
-        if ($search = $this->_getParam('search')) {
-            $this->_setParam('search', null);
-            if (strpos($search, '=') === false) {
-                $this->_setParam('service_description', $search);
-            } else {
-                list($key, $val) = preg_split('~\s*=\s*~', $search, 2);
-                if ($this->view->services->isValidFilterColumn($key) || $key[0] === '_') {
-                    $this->_setParam($key, $val);
-                }
-            }
-        }
-
-        $this->view->services->applyRequest($this->_request);
-    if ($this->_getParam('dump') === 'sql') {
-        echo '<pre>' . htmlspecialchars(wordwrap($this->view->services->getQuery()->dump())) . '</pre>';
-        exit;
-    }
-
-        $preserve = array();
-        if ($this->_getParam('sort')) {
-            $preserve['sort'] = $this->view->sort = $this->_getParam('sort');
-            
-        }
-        if ($this->_getParam('backend')) {
-            $preserve['backend'] = $this->_getParam('backend');
-        }
-        $this->view->preserve = $preserve;
-        if ($this->_getParam('view') == 'compact') {
+        ));
+        $this->preserve('sort')
+             ->preserve('backend')
+             ->preserve('extracolumns');
+        $this->view->sort = $this->_getParam('sort');
+        if ($this->view->compact) {
             $this->_helper->viewRenderer('services-compact');
         }
     }
@@ -170,19 +121,58 @@ $this->view->hosts->getQuery()->group('hs.host_object_id');
         exit;
     }
 
+    protected function query($view, $columns)
+    {
+        $extra = preg_split(
+            '~,~',
+            $this->_getParam('extracolumns', ''),
+            -1,
+            PREG_SPLIT_NO_EMPTY
+        );
+        $this->view->extraColumns = $extra;
+        $query = $this->backend->select()
+            ->from($view, array_merge($columns, $extra))
+            ->applyRequest($this->_request);
+        $this->handleFormatRequest($query);
+        return $query;
+    }
+
+    protected function handleFormatRequest($query)
+    {
+        if ($this->_getParam('format') === 'sql') {
+            echo '<pre>'
+                . htmlspecialchars(wordwrap($query->getQuery()->dump()))
+                . '</pre>';
+            exit;
+        }
+        if ($this->_getParam('format') === 'json'
+            || $this->_request->getHeader('Accept') === 'application/json')
+        {
+            header('Content-type: application/json');
+            echo json_encode($query->fetchAll());
+            exit;
+        }
+        if ($this->_getParam('format') === 'csv'
+            || $this->_request->getHeader('Accept') === 'text/csv') {
+            Csv::fromQuery($query)->dump();
+            exit;
+        }
+    }
+
     protected function getTabs()
     {
         $tabs = $this->widget('tabs');
         $tabs->add('services', array(
-            'title'     => 'Services',
+            'title'     => 'All services',
             'icon'      => 'img/classic/service.png',
             'url'       => 'monitoring/list/services',
         ));
         $tabs->add('hosts', array(
-            'title'     => 'Hosts',
+            'title'     => 'All hosts',
             'icon'      => 'img/classic/server.png',
             'url'       => 'monitoring/list/hosts',
         ));
+/*
         $tabs->add('hostgroups', array(
             'title'     => 'Hostgroups',
             'icon'      => 'img/classic/servers-network.png',
@@ -203,6 +193,7 @@ $this->view->hosts->getQuery()->group('hs.host_object_id');
             'icon'      => 'img/classic/servers-network.png',
             'url'       => 'monitoring/list/contactgroups',
         ));
+*/
         return $tabs;
     }
 }

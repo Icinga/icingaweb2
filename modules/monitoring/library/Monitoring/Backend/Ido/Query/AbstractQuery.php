@@ -19,6 +19,8 @@ abstract class AbstractQuery extends Query
     protected $joinedVirtualTables = array();
 
     protected $object_id       = 'object_id';
+    protected $host_id         = 'host_id';
+    protected $service_id      = 'service_id';
     protected $hostgroup_id    = 'hostgroup_id';
     protected $servicegroup_id = 'servicegroup_id';
 
@@ -31,10 +33,18 @@ abstract class AbstractQuery extends Query
         $this->prefix = $this->ds->getPrefix();
 
         if ($this->ds->getConnection()->getDbType() === 'oracle') {
-            $this->object_id = $this->hostgroup_id = $this->servicegroup_id = 'id';
+            $this->object_id = $this->host_id = $this->service_id = $this->hostgroup_id = $this->servicegroup_id = 'id'; // REALLY?
             foreach ($this->columnMap as $table => & $columns) {
-                foreach ($column as $key => & $value) {
+                foreach ($columns as $key => & $value) {
                     $value = preg_replace('/UNIX_TIMESTAMP/', 'localts2unixts', $value);
+                    $value = preg_replace('/ COLLATE .+$/', '', $value);
+                }
+            }
+        }
+        if ($this->ds->getConnection()->getDbType() === 'pgsql') {
+            foreach ($this->columnMap as $table => & $columns) {
+                foreach ($columns as $key => & $value) {
+                    $value = preg_replace('/ COLLATE .+$/', '', $value);
                 }
             }
         }
@@ -58,7 +68,11 @@ abstract class AbstractQuery extends Query
 
         // TODO: extend if we allow queries with only hosts / only services
         //       ($leftcol s.host_object_id vs h.host_object_id
-        $leftcol = 's.' . $type . '_object_id';
+        if ($this->hasJoinedVirtualTable('services')) {
+            $leftcol = 's.' . $type . '_object_id';
+        } else {
+            $leftcol = 'h.' . $type . '_object_id';
+        }
         $joinOn = $leftcol
                 . ' = '
                 . $alias
@@ -100,7 +114,7 @@ abstract class AbstractQuery extends Query
     protected function beforeCreatingSelectQuery()
     {
         $this->setRealColumns();
-        Benchmark::measure(sprintf('%s is going to SELECT', get_class($this)));
+        Benchmark::measure(sprintf('%s ready to run', array_pop(explode('\\', get_class($this)))));
     }
 
     protected function applyAllFilters()
@@ -274,6 +288,10 @@ abstract class AbstractQuery extends Query
 
         // Go through all given values
         foreach ($value as $val) {
+            if ($val === '') {
+                // TODO: REALLY??
+                continue;
+            }
             // Value starting with minus: negation
             if ($val[0] === '-') {
                 $val = substr($val, 1);
