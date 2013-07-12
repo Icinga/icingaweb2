@@ -31,12 +31,12 @@ class Monitoring_ListController extends ModuleActionController
                 'host_acknowledged',
                 'host_output',
                 'host_in_downtime',
-                'is_flapping',
-                'state_type',
+                'host_is_flapping',
+                'host_state_type',
                 'host_handled',
                 'host_last_state_change',
-                'notifications_enabled',
-                'problems'
+                'host_notifications_enabled',
+                'host_problems'
              //   'host_comment_count'
             )
         );
