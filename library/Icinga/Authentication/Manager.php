@@ -3,21 +3,21 @@
 /**
  * Icinga 2 Web - Head for multiple monitoring frontends
  * Copyright (C) 2013 Icinga Development Team
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
+ *
  * @copyright 2013 Icinga Development Team <info@icinga.org>
  * @author Icinga Development Team <info@icinga.org>
  */
@@ -25,31 +25,31 @@
 
 namespace Icinga\Authentication;
 
-use Icinga\Application\Logger as Logger;
-use Icinga\Application\Config as Config;
+use Icinga\Application\Logger;
+use Icinga\Application\Config as IcingaConfig;
 use Icinga\Exception\ConfigurationError as ConfigError;
 
 /**
 *   The authentication manager allows to identify users and
 *   to persist authentication information in a session.
-*   
+*
 *   Direct instanciation is not permitted, the Authencation manager
-*   must be created using the getInstance method. Subsequent getInstance 
+*   must be created using the getInstance method. Subsequent getInstance
 *   calls return the same object and ignore any additional configuration
 *
 *   When creating the Authentication manager with standard PHP Sessions,
 *   you have to decide whether you want to modify the session on the first
-*   initialization and provide the 'writeSession' option if so, otherwise 
+*   initialization and provide the 'writeSession' option if so, otherwise
 *   session changes won't be written to disk. This is done to prevent PHP
 *   from blockung concurrent requests
 *
-*   @TODO: Group support is not implemented yet 
+*   @TODO: Group support is not implemented yet
 **/
 class Manager
 {
     const BACKEND_TYPE_USER = "User";
     const BACKEND_TYPE_GROUP = "Group";
-    
+
     /**
     *   @var Manager
     **/
@@ -60,7 +60,7 @@ class Manager
     **/
     private $user = null;
     private $groups = array();
-    
+
     /**
     *   @var UserBackend
     **/
@@ -70,32 +70,32 @@ class Manager
     *   @var GroupBackend
     **/
     private $groupBackend = null;
-    
+
     /**
     *   @var Session
     **/
     private $session = null;
-   
+
     /**
     *   Creates a new authentication manager using the provided config (or the
     *   configuration provided in the authentication.ini if no config is given)
-    *   and with the given options. 
+    *   and with the given options.
     *
-    *   @param  Icinga\Config   $config     The configuration to use for authentication
+    *   @param  IcingaConfig    $config     The configuration to use for authentication
     *                                       instead of the authentication.ini
     *   @param  Array           $options    Additional options that affect the managers behaviour.
     *                                       Supported values:
-    *                                       * writeSession : Whether the session should be writable 
-    *                                       * userBackendClass : Allows to provide an own user backend class 
+    *                                       * writeSession : Whether the session should be writable
+    *                                       * userBackendClass : Allows to provide an own user backend class
     *                                         (used for testing)
-    *                                       * groupBackendClass : Allows to provide an own group backend class 
+    *                                       * groupBackendClass : Allows to provide an own group backend class
     *                                         (used for testing)
     *                                       * sessionClass : Allows to provide a different session implementation)
     **/
     private function __construct($config = null, array $options = array())
     {
         if ($config === null) {
-            $config = Config::getInstance()->authentication;
+            $config = IcingaConfig::app('authentication');
         }
         if (isset($options["userBackendClass"])) {
             $this->userBackend = $options["userBackendClass"];
@@ -141,14 +141,14 @@ class Manager
     }
 
     /**
-    *   Creates a backend for the the given authenticationTarget (User or Group) and the 
-    *   Authenticaiton source. 
+    *   Creates a backend for the the given authenticationTarget (User or Group) and the
+    *   Authenticaiton source.
     *
-    *   initBackend("User", "Ldap") would create a UserLdapBackend, 
-    *   initBackend("Group", "MySource") would create a GroupMySourceBackend, 
-    *   
+    *   initBackend("User", "Ldap") would create a UserLdapBackend,
+    *   initBackend("Group", "MySource") would create a GroupMySourceBackend,
+    *
     *   Supported backends can be found in the Authentication\Backend folder
-    *   
+    *
     *   @param  String  $authenticationTarget   "User" or "Group", depending on what
     *                                           authentication information the backend should
     *                                           provide
@@ -169,9 +169,9 @@ class Manager
     }
 
     /**
-    *   Tries to authenticate the current user with the Credentials (@see Credentials). 
+    *   Tries to authenticate the current user with the Credentials (@see Credentials).
     *
-    *   @param Credentials  $credentials        The credentials to use for authentication   
+    *   @param Credentials  $credentials        The credentials to use for authentication
     *   @param Boolean      $persist            Whether to persist the authentication result
     *                                           in the current session
     *
@@ -214,9 +214,9 @@ class Manager
     {
         $this->session->set("user", $this->user);
     }
-    
+
     /**
-    *   Tries to authenticate the user with the current session 
+    *   Tries to authenticate the user with the current session
     **/
     public function authenticateFromSession()
     {
@@ -225,10 +225,10 @@ class Manager
 
     /**
     *   Returns true when the user is currently authenticated
-    *   
+    *
     *   @param  Boolean $ignoreSession      Set to true to prevent authentication by session
     *
-    *   @param  Boolean 
+    *   @param  Boolean
     **/
     public function isAuthenticated($ignoreSession = false)
     {
@@ -240,7 +240,7 @@ class Manager
 
     /**
     *   Purges the current authorisation information and deletes the session
-    *   
+    *
     **/
     public function removeAuthorization()
     {
@@ -250,7 +250,7 @@ class Manager
 
     /**
     *   Returns the current user or null if no user is authenticated
-    *   
+    *
     *   @return User
     **/
     public function getUser()

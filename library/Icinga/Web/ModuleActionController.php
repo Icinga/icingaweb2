@@ -5,7 +5,7 @@
  */
 namespace Icinga\Web;
 
-use Icinga\Application\Config;
+use Icinga\Application\Config as IcingaConfig;
 use Icinga\Application\Icinga;
 
 /**
@@ -64,7 +64,7 @@ class ModuleActionController extends ActionController
      */
     protected function loadConfig()
     {
-        $this->config = Config::module($this->module_name);
+        $this->config = IcingaConfig::module($this->module_name);
     }
 
     /**

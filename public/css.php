@@ -3,7 +3,7 @@
 use Icinga\Application\EmbeddedWeb;
 
 require_once dirname(__FILE__) . '/../library/Icinga/Application/EmbeddedWeb.php';
-$app = EmbeddedWeb::start();
+$app = EmbeddedWeb::start(dirname(__FILE__) . '/../config/');
 require_once 'vendor/lessphp/lessc.inc.php';
 header('Content-type: text/css');
 $less = new lessc;

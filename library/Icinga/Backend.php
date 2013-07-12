@@ -2,7 +2,7 @@
 
 namespace Icinga;
 
-use Icinga\Application\Config;
+use Icinga\Application\Config as IcingaConfig;
 use Icinga\Authentication\Manager as AuthManager;
 
 class Backend
@@ -14,15 +14,15 @@ class Backend
     public static function getInstance($name = null)
     {
         if (! array_key_exists($name, self::$instances)) {
-            $config = Config::getInstance()->backends;
+            $backends = IcingaConfig::app('backends');
             if ($name === null) {
                 $name = AuthManager::getInstance()->getSession()->get('backend');
             }
             if ($name === null) {
-                $name = array_shift(array_keys($config->toArray()));
+                $name = array_shift(array_keys($backends->toArray()));
             }
-            if (isset($config->backends->$name)) {
-                $config = $config->backends->$name;
+            if (isset($backends->$name)) {
+                $config = $backends->$name;
                 $type = $config->type;
                 $type[0] = strtoupper($type[0]);
                 $class = '\\Icinga\\Backend\\' . $type;
