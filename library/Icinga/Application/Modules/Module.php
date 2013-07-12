@@ -113,8 +113,8 @@ class Module
         }
 
         $this->registerLocales()
-             ->registerRoutes();
-//             ->registerMenuEntries();
+             ->registerRoutes()
+             ->registerMenuEntries();
         return $this;
     }
 
