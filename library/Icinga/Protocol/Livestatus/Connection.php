@@ -1,6 +1,28 @@
 <?php
 
 namespace Icinga\Protocol\Livestatus;
+
+use Icinga\Application\Benchmark;
+use Exception;
+
+/**
+ * Backend class managing handling MKI Livestatus connections
+ *
+ * Usage example:
+ *
+ * <code>
+ * $lconf = new Connection((object) array(
+ *     'hostname' => 'localhost',
+ *     'root_dn'  => 'dc=monitoring,dc=...',
+ *     'bind_dn'  => 'cn=Mangager,dc=monitoring,dc=...',
+ *     'bind_pw'  => '***'
+ * ));
+ * </code>
+ *
+ * @copyright  Copyright (c) 2013 Icinga-Web Team <info@icinga.org>
+ * @author     Icinga-Web Team <info@icinga.org>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License
+ */
 class Connection
 {
     const TYPE_UNIX = 1;
@@ -49,19 +71,23 @@ class Connection
         $this->assertPhpExtensionLoaded('sockets');
         if ($socket[0] === '/') {
             if (! is_writable($socket)) {
-                throw new \Exception(sprintf(
-                    'Cannot write to livestatus socket "%s"',
-                    $socket
-                ));
+                throw new \Exception(
+                    sprintf(
+                        'Cannot write to livestatus socket "%s"',
+                        $socket
+                    )
+                );
             }
             $this->socket_type = self::TYPE_UNIX;
             $this->socket_path = $socket;
         } else {
             if (! preg_match('~^tcp://([^:]+):(\d+)~', $socket, $m)) {
-                throw new \Exception(sprintf(
-                    'Invalid TCP socket syntax: "%s"',
-                    $socket
-                ));
+                throw new \Exception(
+                    sprintf(
+                        'Invalid TCP socket syntax: "%s"',
+                        $socket
+                    )
+                );
             }
             // TODO: Better syntax checks
             $this->socket_host = $m[1];
@@ -80,17 +106,17 @@ class Connection
     {
         $count = clone($query);
         $count->count();
-        \Icinga\Benchmark::measure('Sending Livestatus Count Query');
-        $data = $this->_fetch((string) $count);
-        \Icinga\Benchmark::measure('Got Livestatus count result');
+        Benchmark::measure('Sending Livestatus Count Query');
+        $data = $this->doFetch((string) $count);
+        Benchmark::measure('Got Livestatus count result');
         return $data[0][0];
     }
 
     public function fetchAll(Query $query)
     {
-        \Icinga\Benchmark::measure('Sending Livestatus Query');
-        $data = $this->_fetch((string) $query);
-        \Icinga\Benchmark::measure('Got Livestatus Data');
+        Benchmark::measure('Sending Livestatus Query');
+        $data = $this->doFetch((string) $query);
+        Benchmark::measure('Got Livestatus Data');
         if ($query->hasColumns()) {
             $headers = $query->getColumnAliases();
         } else {
@@ -114,12 +140,12 @@ class Connection
                 $query->getLimit()
             );
         }
-        \Icinga\Benchmark::measure('Data sorted, limits applied');
+        Benchmark::measure('Data sorted, limits applied');
         
         return $result;
     }
 
-    protected function _fetch($raw_query)
+    protected function doFetch($raw_query)
     {
         $conn = $this->getConnection();
         $this->writeToSocket($raw_query);
@@ -128,15 +154,17 @@ class Connection
         $length = (int) trim(substr($header, 4));
         $body = $this->readFromSocket($length);
         if ($status !== 200) {
-            throw new \Exception(sprintf(
-                'Problem while reading %d bytes from livestatus: %s',
-                $length,
-                $body
-            ));
+            throw new Exception(
+                sprintf(
+                    'Problem while reading %d bytes from livestatus: %s',
+                    $length,
+                    $body
+                )
+            );
         }
         $result = json_decode($body);
         if ($result === null) {
-            throw new \Exception('Got invalid response body from livestatus');
+            throw new Exception('Got invalid response body from livestatus');
         }
         
         return $result;
@@ -147,13 +175,15 @@ class Connection
         $offset = 0;
         $buffer = '';
         
-        while($offset < $length) {
+        while ($offset < $length) {
             $data = socket_read($this->connection, $length - $offset);
             if ($data === false) {
-                throw new \Exception(sprintf(
-                    'Failed to read from livestatus socket: %s',
-                    socket_strerror(socket_last_error($this->connection))
-                ));
+                throw new Exception(
+                    sprintf(
+                        'Failed to read from livestatus socket: %s',
+                        socket_strerror(socket_last_error($this->connection))
+                    )
+                );
             }
             $size = strlen($data);
             $offset += $size;
@@ -164,10 +194,13 @@ class Connection
             }
         }
         if ($offset !== $length) {
-            throw new \Exception(sprintf(
-                'Got only %d instead of %d bytes from livestatus socket',
-                $offset, $length
-            ));
+            throw new \Exception(
+                sprintf(
+                    'Got only %d instead of %d bytes from livestatus socket',
+                    $offset,
+                    $length
+                )
+            );
         }
 
         return $buffer;
@@ -185,10 +218,12 @@ class Connection
     protected function assertPhpExtensionLoaded($name)
     {
         if (! extension_loaded($name)) {
-            throw new \Exception(sprintf(
-                'The extension "%s" is not loaded',
-                $name
-            ));
+            throw new \Exception(
+                sprintf(
+                    'The extension "%s" is not loaded',
+                    $name
+                )
+            );
         }
     }
 
@@ -213,24 +248,28 @@ class Connection
         
         $this->connection = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
         if (! @socket_connect($this->connection, $this->socket_host, $this->socket_port)) {
-            throw new \Exception(sprintf(
-                'Cannot connect to livestatus TCP socket "%s:%d": %s',
-                $this->socket_host,
-                $this->socket_port,
-                socket_strerror(socket_last_error($this->connection))
-            ));
+            throw new \Exception(
+                sprintf(
+                    'Cannot connect to livestatus TCP socket "%s:%d": %s',
+                    $this->socket_host,
+                    $this->socket_port,
+                    socket_strerror(socket_last_error($this->connection))
+                )
+            );
         }
         socket_set_option($this->connection, SOL_TCP, TCP_NODELAY, 1);
     }
 
     protected function establishSocketConnection()
     {
-        $this->connection = socket_create(AF_UNIX, SOCK_STREAM, 0);        
+        $this->connection = socket_create(AF_UNIX, SOCK_STREAM, 0);
         if (! socket_connect($this->connection, $this->socket_path)) {
-            throw new \Exception(sprintf(
-                'Cannot connect to livestatus local socket "%s"',
-                $this->socket_path
-            ));
+            throw new \Exception(
+                sprintf(
+                    'Cannot connect to livestatus local socket "%s"',
+                    $this->socket_path
+                )
+            );
         }
     }
 
@@ -246,4 +285,3 @@ class Connection
         $this->disconnect();
     }
 }
-

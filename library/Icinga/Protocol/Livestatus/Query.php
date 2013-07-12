@@ -1,9 +1,10 @@
 <?php
 
 namespace Icinga\Protocol\Livestatus;
-use Icinga\Protocol;
 
-class Query extends Protocol\AbstractQuery
+use Icinga\Protocol\AbstractQuery;
+
+class Query extends AbstractQuery
 {
 
     protected $connection;
@@ -62,7 +63,10 @@ class Query extends Protocol\AbstractQuery
 
     public function order($col)
     {
-        if (($pos = strpos($col, ' ')) !== false) {
+        if (($pos = strpos($col, ' ')) === false) {
+            $col = $col;
+            $dir = self::SORT_ASC;
+        } else {
             $dir = strtoupper(substr($col, $pos + 1));
             if ($dir === 'DESC') {
                 $dir = self::SORT_DESC;
@@ -70,8 +74,6 @@ class Query extends Protocol\AbstractQuery
                 $dir = self::SORT_ASC;
             }
             $col = substr($col, 0, $pos);
-        } else {
-            $col = $col;
         }
         $this->order_columns[] = array($col, $dir);
         return $this;
@@ -82,11 +84,13 @@ class Query extends Protocol\AbstractQuery
     public function limit($count = null, $offset = null)
     {
         if (! preg_match('~^\d+~', $count . $offset)) {
-            throw new Exception(sprintf(
-                'Got invalid limit: %s, %s',
-                $count,
-                $offset
-            ));
+            throw new Exception(
+                sprintf(
+                    'Got invalid limit: %s, %s',
+                    $count,
+                    $offset
+                )
+            );
         }
         $this->limit_count  = (int) $count;
         $this->limit_offset = (int) $offset;
@@ -116,10 +120,12 @@ class Query extends Protocol\AbstractQuery
     public function from($table, $columns = null)
     {
         if (! $this->connection->hasTable($table)) {
-            throw new Exception(sprintf(
-                'This livestatus connection does not provide "%s"',
-                $table
-            ));
+            throw new Exception(
+                sprintf(
+                    'This livestatus connection does not provide "%s"',
+                    $table
+                )
+            );
         }
         $this->table = $table;
         if (is_array($columns)) {
@@ -207,4 +213,3 @@ class Query extends Protocol\AbstractQuery
         unset($this->connection);
     }
 }
-
