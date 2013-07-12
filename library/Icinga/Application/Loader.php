@@ -1,71 +1,73 @@
 <?php
-
+// {{{ICINGA_LICENSE_HEADER}}}
 /**
- * Icinga\Application\Loader class
+ * Icinga 2 Web - Head for multiple monitoring frontends
+ * Copyright (C) 2013 Icinga Development Team
  *
- * @category Icinga\Application
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ * @copyright 2013 Icinga Development Team <info@icinga.org>
+ * @author Icinga Development Team <info@icinga.org>
  */
+// {{{ICINGA_LICENSE_HEADER}}}
+
 namespace Icinga\Application;
 
-use Icinga\Application\Log;
+use Icinga\Exception\ProgrammingError;
 
-/**
- * This class provides a simple Autoloader
- *
- * It takes care of loading classes in the Icinga namespace. You shouldn't need
- * to manually instantiate this class, as bootstrapping code will do so for you.
- *
- * Usage example:
- *
- * <code>
- * Icinga\Application\Loader::register();
- * </code>
- *
- * @copyright  Copyright (c) 2013 Icinga-Web Team <info@icinga.org>
- * @author     Icinga-Web Team <info@icinga.org>
- * @package    Icinga\Application
- * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License
- */
 class Loader
 {
-    const NS = '\\';
-    protected $moduleDirs = array();
-
-    private static $instance;
+    /**
+     * Namespace separator
+     */
+    const NAMESPACE_SEPARATOR = '\\';
 
     /**
-     * Register the Icinga autoloader
-     *
-     * You could also call getInstance(), this alias function is here to make
-     * code look better
-     *
-     * @return self
+     * List of namespaces
+     * @var array
      */
-    public static function register()
+    private $namespaces = array();
+
+    public function __destruct()
     {
-        return self::getInstance();
+        $this->unRegister();
     }
 
     /**
-     * Singleton
-     *
-     * Registers the Icinga autoloader if not already been done
-     *
-     * @return self
+     * Register new namespace for directory
+     * @param string $namespace
+     * @param string $directory
+     * @throws \Icinga\Exception\ProgrammingError
      */
-    public static function getInstance()
+    public function registerNamespace($namespace, $directory)
     {
-        if (self::$instance === null) {
-            self::$instance = new Loader();
-            self::$instance->registerAutoloader();
+        if (!is_dir($directory)) {
+            throw new ProgrammingError('Directory does not exist: '. $directory);
         }
-        return self::$instance;
+
+        $this->namespaces[$namespace] = $directory;
     }
 
-    public function addModule($name, $dir)
+    /**
+     * Test if a namespace exists
+     * @param string $namespace
+     * @return bool
+     */
+    public function hasNamespace($namespace)
     {
-        $this->moduleDirs[ucfirst($name)] = $dir;
-        return $this;
+        return array_key_exists($namespace, $this->namespaces);
     }
 
     /**
@@ -73,59 +75,72 @@ class Loader
      *
      * Ignores all but classes in the Icinga namespace.
      *
+     * @param string $class
      * @return boolean
      */
     public function loadClass($class)
     {
-        if (strpos($class, 'Icinga' . self::NS) === false) {
-            return false;
-        }
-        $file = str_replace(self::NS, '/', $class) . '.php';
-        $file = ICINGA_LIBDIR . '/' . $file;
-        if (! @is_file($file)) {
-            $parts = preg_split('~\\\~', $class);
-            array_shift($parts);
-            $module = $parts[0];
-            if (array_key_exists($module, $this->moduleDirs)) {
-                $file = $this->moduleDirs[$module]
-                      . '/'
-                      . implode('/', $parts) . '.php';
-                if (@is_file($file)) {
-                    require_once $file;
-                    return true;
-                }
+        $namespace = $this->getNamespaceForClass($class);
+
+        if ($namespace) {
+            $file = $this->namespaces[$namespace]
+                . '/'
+                . preg_replace('/^'. preg_quote($namespace). '/', '', $class);
+
+            $file = (str_replace(self::NAMESPACE_SEPARATOR, '/', $file). '.php');
+            if (@file_exists($file)) {
+                require_once $file;
+                return true;
             }
-            // Log::debug('File ' . $file . ' not found');
-            return false;
         }
-        require_once $file;
-        return true;
+
+        return false;
+    }
+
+    /**
+     * Test if we have a registered namespaces for this class
+     *
+     * Return is the longest match in the array found
+     *
+     * @param string $className
+     * @return bool|string
+     */
+    private function getNamespaceForClass($className)
+    {
+        $testNamespace = '';
+        $testLength = 0;
+
+        foreach ($this->namespaces as $namespace => $directory) {
+            $stub = preg_replace('/^'. preg_quote($namespace). '/', '', $className);
+            $length = strlen($className) - strlen($stub);
+            if ($length > $testLength) {
+                $testLength = $length;
+                $testNamespace = $namespace;
+            }
+        }
+
+        if ($testLength > 0) {
+            return $testNamespace;
+        }
+
+        return false;
     }
 
     /**
      * Effectively registers the autoloader the PHP/SPL way
-     *
-     * @return void
      */
-    protected function registerAutoloader()
+    public function register()
     {
-        // Not adding ourselves to include_path right now, MAY be faster
-        /*set_include_path(implode(PATH_SEPARATOR, array(
-            realpath(dirname(dirname(__FILE__))),
-            get_include_path(),
-        )));*/
-        spl_autoload_register(array($this, 'loadClass'));
+        // Think about to add class pathes to php include path
+        // this could be faster (tg)
+        spl_autoload_register(array(&$this, 'loadClass'));
     }
 
     /**
-     * Constructor
-     *
-     * Singleton usage is enforced, you are also not allowed to overwrite this
-     * function
-     *
-     * @return void
+     * Detach autoloader from spl registration
      */
-    final private function __construct()
+    public function unRegister()
     {
+        spl_autoload_unregister(array(&$this, 'loadClass'));
     }
 }
