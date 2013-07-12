@@ -1,13 +1,21 @@
 <?php
 
 namespace Tests\Icinga\Protocol\Livestatus;
+
+use Icinga\Protocol\Livestatus\Connection;
+use Icinga\Protocol\Livestatus\Query;
+use PHPUnit_Framework_TestCase as TestCase;
+
+require_once('../../library/Icinga/Protocol/AbstractQuery.php');
+require_once('../../library/Icinga/Protocol/Livestatus/Connection.php');
+require_once('../../library/Icinga/Protocol/Livestatus/Query.php');
+
 /**
 *
 * Test class for Connection 
-* Created Wed, 16 Jan 2013 15:15:16 +0000 
 *
 **/
-class ConnectionTest extends \PHPUnit_Framework_TestCase
+class ConnectionTest extends TestCase
 {
 
     /**
@@ -25,7 +33,10 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
     **/
     public function testSelect()
     {
-        $this->markTestIncomplete('testSelect is not implemented yet');
+        $socket = tempnam(sys_get_temp_dir(), 'IcingaTest');
+        $connection = new Connection($socket);
+        $this->assertTrue($connection->select() instanceof Query);
+        unlink($socket);
     }
 
     /**
