@@ -48,6 +48,8 @@ Vagrant::Config.run do |config|
   # an identifier, the second is the path on the guest to mount the
   # folder, and the third is the path on the host to the actual folder.
   # # config.vm.share_folder "v-icinga2-web-pub", "/var/www/html/icinga2-web", "./pub"
+  config.vm.share_folder "v-test", "/vagrant/config", "./config", :owner => 'vagrant', :group => 'apache', :extra => 'dmode=775,fmode=775'
+  config.vm.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate/v-test", "1"]
 
   # Enable provisioning with Puppet stand alone.  Puppet manifests
   # are contained in a directory path relative to this Vagrantfile.
@@ -56,7 +58,7 @@ Vagrant::Config.run do |config|
   config.vm.provision :puppet do |puppet|
     puppet.module_path = ".vagrant-puppet/modules"
     puppet.manifests_path = ".vagrant-puppet/manifests"
-    #puppet.options = "-v -d"
+  # #   puppet.options = "-v -d"
   end
 
   # The npm module jquery won't install via puppet because of an mysterious error

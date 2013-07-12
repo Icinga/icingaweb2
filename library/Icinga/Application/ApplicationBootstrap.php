@@ -44,7 +44,7 @@ abstract class ApplicationBootstrap
     protected $loader;
     protected $libdir;
     protected $config;
-    protected $configFile;
+    protected $configDir;
     protected $appdir;
     protected $moduleManager;
     protected $isCli = false;
@@ -57,7 +57,7 @@ abstract class ApplicationBootstrap
      *
      * @return void
      */
-    protected function __construct($configFile = null)
+    protected function __construct($configDir)
     {
         $this->checkPrerequisites();
         $this->libdir = realpath(dirname(dirname(dirname(__FILE__))));
@@ -88,10 +88,7 @@ abstract class ApplicationBootstrap
             )
         );
 
-        if ($configFile === null) {
-            $configFile = dirname($this->libdir) . '/config/icinga.ini';
-        }
-        $this->configFile = $configFile;
+        $this->configDir = $configDir;
         require_once dirname(__FILE__) . '/functions.php';
     }
 
@@ -100,7 +97,7 @@ abstract class ApplicationBootstrap
     public function moduleManager()
     {
         if ($this->moduleManager === null) {
-            $this->moduleManager = new ModuleManager($this, $this->config->global->moduleFolder);
+            $this->moduleManager = new ModuleManager($this, $this->configDir . '/enabledModules');
         }
         return $this->moduleManager;
     }
@@ -155,10 +152,10 @@ abstract class ApplicationBootstrap
         return $this->config;
     }
 
-    public static function start($config = null)
+    public static function start($configDir)
     {
         $class = get_called_class();
-        $obj = new $class();
+        $obj = new $class($configDir);
         $obj->bootstrap();
         return $obj;
     }
@@ -217,11 +214,8 @@ abstract class ApplicationBootstrap
      */
     protected function loadConfig()
     {
-        // TODO: add an absolutely failsafe config loader
-        if (! @is_readable($this->configFile)) {
-            throw new \Exception('Cannot read config file: ' . $this->configFile);
-        }
-        $this->config = Config::getInstance($this->configFile);
+        Config::$configDir = $this->configDir;
+        $this->config = Config::app();
         return $this;
     }
 
@@ -247,7 +241,7 @@ abstract class ApplicationBootstrap
      */
     protected function configureErrorHandling()
     {
-        if ($this->config->global->environment == 'development') {
+        if ($this->config->get('global', 'environment') == 'development') {
             error_reporting(E_ALL | E_NOTICE);
             ini_set('display_startup_errors', 1);
             ini_set('display_errors', 1);
@@ -264,7 +258,7 @@ abstract class ApplicationBootstrap
     protected function setTimezone()
     {
         date_default_timezone_set(
-            $this->config->{'global'}->get('timezone', 'UTC')
+            $this->config->global->get('timezone', 'UTC')
         );
         return $this;
     }

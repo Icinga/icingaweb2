@@ -2,7 +2,7 @@
 
 namespace Icinga\Monitoring;
 
-use Icinga\Application\Config;
+use Icinga\Application\Config as IcingaConfig;
 use Icinga\Authentication\Manager as AuthManager;
 use Exception;
 
@@ -36,8 +36,7 @@ class Backend
     public function getBackendConfigs()
     {
         if (self::$backendConfigs === null) {
-            $config = Config::getInstance()->backends;
-            $backends = $config->backends;
+            $backends = IcingaConfig::app('backends');
             foreach ($backends as $name => $config) {
                 // TODO: Check if access to this backend is allowed
                 self::$backendConfigs[$name] = $config;

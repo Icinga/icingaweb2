@@ -3,7 +3,7 @@
     $url = Zend_Controller_Front::getInstance()->getRequest()->getRequestUri();
     $currentKey = isset($this->navkey) ? $this->navkey : $url;
 
-    $item = $this->navigation->listAll("menu");
+    $item = $this->navigation->keys("menu");
 ?>
 <?php if ($this->auth()->isAuthenticated()): ?>
 <ul class="nav nav-tabs icinga-navigation" >

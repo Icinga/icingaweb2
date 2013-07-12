@@ -1,79 +1,115 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Application;
 
-use Icinga\Application\Modules\Module;
+use Icinga\Protocol\Ldap\Exception;
 use Zend_Config_Ini;
-use Zend_Config;
 
+/**
+ * Global registry of application and module configuration.
+ */
 class Config extends Zend_Config_Ini
 {
-    protected $data;
-    protected static $instance;
-    protected $configDir;
+    /**
+     * Configuration directory where ALL (application and module) configuration is located
+     * @var string
+     */
+    public static $configDir;
 
-    public function listAll($what)
+    /**
+     * The INI file this configuration has been loaded from
+     * @var string
+     */
+    protected $configFile;
+
+    /**
+     * Application config instances per file
+     * @var array
+     */
+    protected static $app = array();
+
+    /**
+     * Module config instances per file
+     * @var array
+     */
+    protected static $modules = array();
+
+    /**
+     * Load configuration from the config file $filename
+     *
+     * @see     Zend_Config_Ini::__construct
+     *
+     * @param   string      $filename
+     * @throws  Exception
+     */
+    public function __construct($filename)
     {
-        if ($this->$what === null) {
+        if (!@is_readable($filename)) {
+            throw new Exception('Cannot read config file: ' . $filename);
+        };
+        $this->configFile = $filename;
+        $section = null;
+        $options = array(
+            'allowModifications' => true
+        );
+        parent::__construct($filename, $section, $options);
+    }
+
+    /**
+     * Retrieve a application config instance
+     *
+     * @param   string  $configname
+     * @return  mixed
+     */
+    public static function app($configname = 'config')
+    {
+        if (!isset(self::$app[$configname])) {
+            $filename = self::$configDir . '/' . $configname . '.ini';
+            self::$app[$configname] = new Config(realpath($filename));
+        }
+        return self::$app[$configname];
+    }
+
+    /**
+     * Retrieve a module config instance
+     *
+     * @param   string  $modulename
+     * @param   string  $configname
+     * @return  Config
+     */
+    public static function module($modulename, $configname = 'config')
+    {
+        if (!isset(self::$modules[$modulename])) {
+            self::$modules[$modulename] = array();
+        }
+        $moduleConfigs = self::$modules[$modulename];
+        if (!isset($moduleConfigs[$configname])) {
+            $filename = self::$configDir . '/modules/' . $modulename . '/' . $configname . '.ini';
+            if (file_exists($filename)) {
+                $moduleConfigs[$configname] = new Config(realpath($filename));
+            } else {
+                $moduleConfigs[$configname] = null;
+            }
+        }
+        return $moduleConfigs[$configname];
+    }
+
+    /**
+     * Retrieve names of accessible sections or properties
+     *
+     * @param   $name
+     * @return  array
+     */
+    public function keys($name = null)
+    {
+        if ($name === null) {
+            return array_keys($this->toArray());
+        } elseif ($this->$name === null) {
             return array();
         } else {
-            return array_keys($this->$what->toArray());
+            return array_keys($this->$name->toArray());
         }
-    }
-
-    public function getConfigDir()
-    {
-        return $this->configDir;
-    }
-
-    public function __construct($filename, $section = null, $options = false)
-    {
-        $options['allowModifications'] = true;
-        $this->configDir = dirname($filename);
-        return parent::__construct($filename, $section, $options);
-    }
-
-    public static function module($name, $file = null)
-    {
-        if ($file === null) {
-            $file = $name . '.ini'; // TODO: default should be module/config.ini
-        }
-        $filename = Module::get($name)->getConfigDir() . '/' . $file;
-        if (file_exists($filename)) {
-            $config = new Config($filename);
-            // Compat: $config->$module->$whatever
-            self::getInstance()->$name = $config;
-            return $config;
-        }
-        return null;
-    }
-
-    public function __get($key)
-    {
-        $res = parent::__get($key);
-        if ($res === null) {
-            $app = Icinga::app();
-            if ($app->hasModule($key)) {
-                $filename = $app->getModule($key)->getConfigDir() . "/$key.ini";
-            } else {
-                $filename = $this->configDir . '/' . $key . '.ini';
-            }
-            if (file_exists($filename)) {
-                $res = $this->$key = new Config($filename);
-            }
-        }
-        return $res;
-    }
-
-    public static function getInstance($configFile = null)
-    {
-        if (self::$instance === null) {
-            if ($configFile === null) {
-                $configFile = dirname(dirname(dirname(dirname(__FILE__))))
-                            . '/config/icinga.ini';
-            }
-            self::$instance = new Config($configFile);
-        }
-        return self::$instance;
     }
 }
