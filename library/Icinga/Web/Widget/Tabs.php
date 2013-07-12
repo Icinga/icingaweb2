@@ -8,6 +8,8 @@ namespace Icinga\Web\Widget;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Web\Url;
 
+use Countable;
+
 /**
  * Navigation tab widget
  *
@@ -17,7 +19,7 @@ use Icinga\Web\Url;
  * @author     Icinga-Web Team <info@icinga.org>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License
  */
-class Tabs extends AbstractWidget implements \Countable
+class Tabs extends AbstractWidget implements Countable
 {
     /**
      * This is where single tabs added to this container will be stored
@@ -201,25 +203,37 @@ class Tabs extends AbstractWidget implements \Countable
 
         $special = array();
         $special[] = $this->view()->qlink(
-            'PDF',
+            $this->view()->img('img/classic/application-pdf.png') . ' PDF',
             Url::current(),
             array('filetype' => 'pdf'),
-            array('target' => '_blank')
+            array('target' => '_blank', 'quote' => false)
+        );
+        $special[] = $this->view()->qlink(
+            $this->view()->img('img/classic/application-csv.png') . ' CSV',
+            Url::current(),
+            array('format' => 'csv'),
+            array('target' => '_blank', 'quote' => false)
+        );
+        $special[] = $this->view()->qlink(
+            $this->view()->img('img/classic/application-json.png') . ' JSON',
+            Url::current(),
+            array('format' => 'json', 'quote' => false),
+            array('target' => '_blank', 'quote' => false)
         );
 
         $special[] = $this->view()->qlink(
-            'Basket',
+            $this->view()->img('img/classic/basket.png') . ' URL Basket',
             Url::create('basket/add'),
-            array('url' => Url::current()->getRelative())
+            array('url' => Url::current()->getRelative()),
+            array('quote' => false)
         );
 
         $special[] = $this->view()->qlink(
-            'Dashboard',
+            $this->view()->img('img/classic/dashboard.png') . ' Dashboard',
             Url::create('dashboard/addurl'),
-            array('url' => Url::current()->getRelative())
+            array('url' => Url::current()->getRelative()),
+            array('quote' => false)
         );
-
-        // @todo rework auth
         // $auth = Auth::getInstance();
         // if ($this->specialActions && ! empty($special) && $auth->isAuthenticated() && $auth->getUsername() === 'admin') {
         if ($this->specialActions) {
@@ -241,10 +255,6 @@ class Tabs extends AbstractWidget implements \Countable
         return $html;
     }
 
-    /**
-     * Counting registered tabs
-     * @return int
-     */
     public function count()
     {
         return count($this->tabs);
