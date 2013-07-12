@@ -137,10 +137,10 @@ class Zend_View_Helper_MonitoringProperties extends Zend_View_Helper_Abstract
         if ($this->buildCheckType($object) === self::CHECK_PASSIVE) {
             $val .= self::VALUE_NA;
         } else {
-            $val .= $this->floatFormatter($object->latency);
+            $val .= $this->floatFormatter($object->check_latency);
         }
 
-        $val .= ' / '. $this->floatFormatter($object->execution_time). ' seconds';
+        $val .= ' / '. $this->floatFormatter($object->check_execution_time). ' seconds';
 
         return $val;
     }
