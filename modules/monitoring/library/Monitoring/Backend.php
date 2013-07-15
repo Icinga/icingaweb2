@@ -1,6 +1,6 @@
 <?php
 
-namespace Icinga\Monitoring;
+namespace Monitoring;
 
 use Icinga\Application\Config as IcingaConfig;
 use Icinga\Authentication\Manager as AuthManager;
@@ -62,7 +62,7 @@ class Backend
             $config = self::$backendConfigs[$name];
             $type = $config->type;
             $type[0] = strtoupper($type[0]);
-            $class = '\\Icinga\\Monitoring\\Backend\\' . $type;
+            $class = '\\Monitoring\\Backend\\' . $type;
             self::$instances[$name] = new $class($config);
         }
         return self::$instances[$name];

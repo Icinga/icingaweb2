@@ -1,9 +1,9 @@
 <?php
 
-namespace Icinga\Monitoring\Object;
+namespace Monitoring\Object;
 
 use Icinga\Data\AbstractQuery as Query;
-use Icinga\Monitoring\Backend\AbstractBackend;
+use Monitoring\Backend\AbstractBackend;
 
 abstract class AbstractObject
 {

@@ -40,6 +40,9 @@ class Loader
      */
     private $namespaces = array();
 
+    /**
+     * Detach spl autoload method from stack
+     */
     public function __destruct()
     {
         $this->unRegister();

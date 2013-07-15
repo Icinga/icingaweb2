@@ -27,7 +27,7 @@ $row_class = array_key_exists($event->state, $states) ? $states[$event->state] :
 <? if (! $object): ?>
 <td><?= $this->escape($event->host_name) ?></td>
 <? endif ?>
-<? if (! $object instanceof Icinga\Monitoring\Object\Service): ?>
+<? if (! $object instanceof Monitoring\Object\Service): ?>
 <td><? if ($object): ?>
 <?= $this->qlink(
     $event->service_description,

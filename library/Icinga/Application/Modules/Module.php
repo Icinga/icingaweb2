@@ -30,6 +30,11 @@ use Icinga\Application\Config;
 use Icinga\Web\Hook;
 use Zend_Controller_Router_Route as Route;
 
+/**
+ * Module handling
+ *
+ * Register modules and initialize it
+ */
 class Module
 {
     /**
@@ -112,6 +117,11 @@ class Module
         return true;
     }
 
+    /**
+     * Test for an enabled module by name
+     * @param string $name
+     * @return boolean
+     */
     public static function exists($name)
     {
         return Icinga::app()->moduleManager()->hasEnabled($name);
@@ -214,9 +224,6 @@ class Module
             $moduleLibraryDir = $this->getLibDir(). '/'. $moduleName;
 
             $this->app->getLoader()->registerNamespace($moduleName, $moduleLibraryDir);
-
-            // TODO(mh): Old namespace for convenience (#4409). Should be removed immediately
-            $this->app->getLoader()->registerNamespace('Icinga\\'. $moduleName, $moduleLibraryDir);
 
             $this->app->getLoader()->registerNamespace($moduleName. '\\Form', $this->getFormDir());
         }
