@@ -83,11 +83,10 @@ class Loader
         $namespace = $this->getNamespaceForClass($class);
 
         if ($namespace) {
-            $file = $this->namespaces[$namespace]
-                . '/'
-                . preg_replace('/^'. preg_quote($namespace). '/', '', $class);
+            $file = $this->namespaces[$namespace]. preg_replace('/^'. preg_quote($namespace). '/', '', $class);
 
-            $file = (str_replace(self::NAMESPACE_SEPARATOR, '/', $file). '.php');
+            $file = str_replace(self::NAMESPACE_SEPARATOR, '/', $file). '.php';
+
             if (@file_exists($file)) {
                 require_once $file;
                 return true;
