@@ -2,7 +2,7 @@
 
 namespace Test\Modules\Monitoring\Application\Views\Helpers;
 
-use Icinga\Monitoring\Command\Meta;
+use Monitoring\Command\Meta;
 
 require_once 'Zend/View/Helper/Abstract.php';
 require_once 'Zend/View.php';

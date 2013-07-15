@@ -22,7 +22,7 @@
  * @author Icinga Development Team <info@icinga.org>
  */
 // {{{ICINGA_LICENSE_HEADER}}}
-namespace Icinga\Monitoring\View;
+namespace Monitoring\View;
 
 /**
  * Class DowntimeView

@@ -3,9 +3,9 @@
 /**
  * Icinga Livestatus Backend
  *
- * @package Icinga\Monitoring
+ * @package Monitoring
  */
-namespace Icinga\Monitoring\Backend;
+namespace Monitoring\Backend;
 
 use Icinga\Protocol\Livestatus\Connection;
 

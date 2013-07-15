@@ -3,7 +3,7 @@
 use Icinga\Web\ModuleActionController;
 use Icinga\Web\Hook;
 use Icinga\File\Csv;
-use Icinga\Monitoring\Backend;
+use Monitoring\Backend;
 use Icinga\Application\Benchmark;
 
 class Monitoring_ListController extends ModuleActionController

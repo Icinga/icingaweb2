@@ -26,12 +26,8 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Exception;
+namespace Monitoring\Form;
 
-/**
- * Class ConfigurationError
- * @package Icinga\Exception
- */
-class ConfigurationError extends \RuntimeException
+class TestForm
 {
 }

@@ -23,7 +23,7 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Monitoring\Command;
+namespace Monitoring\Command;
 
 use Icinga\Authentication\User;
 use Icinga\Exception\ProgrammingError;

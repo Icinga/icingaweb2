@@ -23,7 +23,7 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Monitoring\Backend\Ido\Query;
+namespace Monitoring\Backend\Ido\Query;
 
 /**
  * Class DowntimeQuery

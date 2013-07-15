@@ -5,7 +5,7 @@ namespace Test\Modules\Monitoring\Library\Command;
 require_once __DIR__. '/../../../../library/Monitoring/Command/Meta.php';
 require_once __DIR__. '/../../../../../../library/Icinga/Exception/ProgrammingError.php';
 
-use Icinga\Monitoring\Command\Meta;
+use Monitoring\Command\Meta;
 
 class HostStruct extends \stdClass
 {

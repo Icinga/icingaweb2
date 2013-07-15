@@ -23,7 +23,7 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use Icinga\Monitoring\Command\Meta;
+use \Monitoring\Command\Meta;
 
 /**
  * Class MonitoringCommands
