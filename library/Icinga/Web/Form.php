@@ -27,6 +27,11 @@ namespace Icinga\Web;
 
 use Icinga\Exception\ProgrammingError;
 
+/**
+ * Class Form
+ *
+ * How forms are used in Icinga 2 Web
+ */
 abstract class Form extends \Zend_Form
 {
     /**
@@ -69,16 +74,47 @@ abstract class Form extends \Zend_Form
     /**
      * Add elements to this form (used by extending classes)
      */
-    abstract public function create();
+    abstract protected function create();
 
     /**
-     * Apply a request object wherewith the form can work
-     *
-     * @param $request The request object of a session
+     * Setter for request
+     * @param \Zend_Controller_Request_Abstract $request The request object of a session
      */
-    public function setRequest($request)
+    public function setRequest(\Zend_Controller_Request_Abstract $request)
     {
         $this->request = $request;
+    }
+
+    /**
+     * Getter for request
+     * @return \Zend_Controller_Request_Abstract
+     */
+    public function getRequest()
+    {
+        return $this->request;
+    }
+
+    /**
+     * Test if data from array or request is valid
+     *
+     * If $data is null, internal request is selected to test validity
+     *
+     * @param null|\Zend_Controller_Request_Abstract|array $data
+     * @return bool
+     */
+    public function isValid($data)
+    {
+        $check = null;
+
+        if ($data === null) {
+            $data = $this->getRequest()->getParams();
+        } elseif ($data instanceof \Zend_Controller_Request_Abstract) {
+            $check = $data->getParams();
+        } else {
+            $check = $data;
+        }
+
+        return parent::isValid($check);
     }
 
     /**
@@ -108,9 +144,12 @@ abstract class Form extends \Zend_Form
         }
         list($seed, $token) = $this->generateCsrfToken($this->tokenTimeout);
 
-        $this->addElement('hidden', $this->tokenElementName, array(
-            'value'      => sprintf('%s\|/%s', $seed, $token),
-            'decorators' => array('ViewHelper')
+        $this->addElement(
+            'hidden',
+            $this->tokenElementName,
+            array(
+                'value'      => sprintf('%s\|/%s', $seed, $token),
+                'decorators' => array('ViewHelper')
             )
         );
     }
