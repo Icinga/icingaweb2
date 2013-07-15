@@ -10,13 +10,14 @@ requirejs.config({
         "raphael.vml": 'vendor/raphael/raphael.vml',
         'ace' : 'vendor/ace/ace',
         "Holder": 'vendor/holder',
+        "History": 'vendor/history',
 
         logging: 'icinga/util/logging'
     }
 
 });
 
-define(['jquery','Holder'], function ($) {
+define(['jquery','Holder', 'History'], function ($) {
     requirejs(['bootstrap']);
     requirejs(['icinga/icinga'], function (Icinga) {
         window.$ = $;
