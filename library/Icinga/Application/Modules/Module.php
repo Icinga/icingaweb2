@@ -227,8 +227,9 @@ class Module
             $moduleLibraryDir = $this->getLibDir(). '/'. $moduleName;
 
             $this->app->getLoader()->registerNamespace($moduleName, $moduleLibraryDir);
-
-            $this->app->getLoader()->registerNamespace($moduleName. '\\Form', $this->getFormDir());
+            if (is_dir($this->getFormDir())) {
+                $this->app->getLoader()->registerNamespace($moduleName. '\\Form', $this->getFormDir());
+            }
         }
 
         return $this;
