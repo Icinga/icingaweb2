@@ -1,6 +1,6 @@
 <?php
 
-namespace Icinga\Monitoring\Backend;
+namespace Monitoring\Backend;
 
 use Icinga\Data\DatasourceInterface;
 use Icinga\Exception\ProgrammingError;
@@ -66,7 +66,7 @@ class AbstractBackend implements DatasourceInterface
 
     protected function tableToClassName($virtual_table)
     {
-        return 'Icinga\\Monitoring\\View\\'
+        return 'Monitoring\\View\\'
              // . $this->getName()
              // . '\\'
              . ucfirst($virtual_table)

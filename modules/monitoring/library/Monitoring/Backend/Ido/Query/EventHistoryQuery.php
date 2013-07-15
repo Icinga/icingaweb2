@@ -1,6 +1,6 @@
 <?php
 
-namespace Icinga\Monitoring\Backend\Ido\Query;
+namespace Monitoring\Backend\Ido\Query;
 
 use Icinga\Exception\ProgrammingError;
 

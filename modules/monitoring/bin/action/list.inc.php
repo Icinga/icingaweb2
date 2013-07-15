@@ -1,6 +1,6 @@
 <?php
 
-use Icinga\Monitoring\Backend;
+use Monitoring\Backend;
 use Icinga\Util\Format;
 
 $backend = Backend::getInstance($params->shift('backend'));

@@ -1,6 +1,6 @@
 <?php
 
-namespace Icinga\Monitoring\View;
+namespace Monitoring\View;
 
 use Icinga\Data\AbstractQuery;
 use Icinga\Data\Filter;
@@ -13,11 +13,11 @@ use Icinga\Data\Filter;
  *
  * You should not directly instantiate such a view but always go through the
  * Monitoring Backend. Using the Backend's select() method selecting from
- * 'virtualtable' returns a Icinga\Monitoring\View\VirtualtableView instance.
+ * 'virtualtable' returns a Monitoring\View\VirtualtableView instance.
  *
  * Usage example:
  * <code>
- * use Icinga\Monitoring\Backend;
+ * use Monitoring\Backend;
  * $backend = Backend::getInstance();
  * $query = $backend->select()->from('viewname', array(
  *     'one_column',

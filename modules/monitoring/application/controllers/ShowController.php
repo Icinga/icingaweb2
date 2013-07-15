@@ -1,10 +1,10 @@
 <?php
 
-use Icinga\Monitoring\Backend;
+use Monitoring\Backend;
 use Icinga\Web\ModuleActionController;
 use Icinga\Web\Hook;
-use Icinga\Monitoring\Object\Host;
-use Icinga\Monitoring\Object\Service;
+use Monitoring\Object\Host;
+use Monitoring\Object\Service;
 
 class Monitoring_ShowController extends ModuleActionController
 {

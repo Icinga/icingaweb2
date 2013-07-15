@@ -2,7 +2,7 @@
 
 use Icinga\Web\ModuleActionController;
 use Icinga\Web\Url;
-use Icinga\Monitoring\Backend;
+use Monitoring\Backend;
 use Zend_Soap_Server as ZfSoapServer;
 use Zend_Soap_AutoDiscover as ZfSoapAutoDiscover;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Icinga\Monitoring;
+namespace Monitoring;
 
 use Icinga\Application\Config;
 use Icinga\Web\Session;

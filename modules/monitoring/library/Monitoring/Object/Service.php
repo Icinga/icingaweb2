@@ -1,6 +1,6 @@
 <?php
 
-namespace Icinga\Monitoring\Object;
+namespace Monitoring\Object;
 
 use Icinga\Data\AbstractQuery as Query;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Icinga\Monitoring\View;
+namespace Monitoring\View;
 
 class ContactgroupView extends MonitoringView
 {
