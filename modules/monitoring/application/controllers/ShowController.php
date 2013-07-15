@@ -7,7 +7,7 @@ use Icinga\Web\ModuleActionController;
 use Icinga\Web\Hook;
 use Icinga\Monitoring\Object\Host;
 use Icinga\Monitoring\Object\Service;
-
+use Icinga\Application\Benchmark;
 /**
  * Class Monitoring_ShowController
  *

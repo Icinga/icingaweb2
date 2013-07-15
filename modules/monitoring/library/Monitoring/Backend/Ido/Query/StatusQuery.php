@@ -8,13 +8,15 @@ class StatusQuery extends AbstractQuery
 
     protected $columnMap = array(
         'hosts' => array(
-            'host'                   => 'ho.name1 COLLATE latin1_general_ci',
-            'host_name'              => 'ho.name1 COLLATE latin1_general_ci',
-            'host_display_name'      => 'h.display_name',
-            'host_alias'             => 'h.alias',
-            'host_address'           => 'h.address',
-            'host_ipv4'              => 'INET_ATON(h.address)',
-            'host_icon_image'        => 'h.icon_image',
+            'host'                  => 'ho.name1 COLLATE latin1_general_ci',
+            'host_name'             => 'ho.name1 COLLATE latin1_general_ci',
+            'host_display_name'     => 'h.display_name',
+            'host_alias'            => 'h.alias',
+            'host_address'          => 'h.address',
+            'host_ipv4'             => 'INET_ATON(h.address)',
+            'host_icon_image'       => 'h.icon_image',
+            'host_action_url'       => 'h.action_url',
+            'host_notes_url'        => 'h.notes_url'
         ),
         'hoststatus' => array(
             'host_state' => 'CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL THEN 99 ELSE hs.current_state END',
@@ -30,7 +32,7 @@ class StatusQuery extends AbstractQuery
             'host_check_command' => 'hs.check_command',
             'host_current_check_attempt' => 'hs.current_check_attempt',
             'host_max_check_attempts' => 'hs.max_check_attempts',
-            'host_attempt' => 'CONCAT(hs.current_check_attempt, "/", hs.max_check_attempts)',
+            'host_attempt' => 'CONCAT(hs.current_check_attempt, \'/\', hs.max_check_attempts)',
             'host_last_check' => 'hs.last_check',
             'host_next_check' => 'hs.next_check',
             'host_check_type' => 'hs.check_type',
@@ -68,7 +70,7 @@ class StatusQuery extends AbstractQuery
             'host_status_update_time' => 'hs.status_update_time',
             'host_problems' => 'CASE WHEN hs.current_state = 0 THEN 0 ELSE 1 END',
             'host_severity' => 'CASE WHEN hs.current_state = 0
-            THEN 
+            THEN
                 CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL
                      THEN 16
                      ELSE 0
@@ -139,11 +141,17 @@ class StatusQuery extends AbstractQuery
             'service_last_time_critical'     => 'ss.last_time_critical',
             'service_last_time_unknown'      => 'ss.last_time_unknown',
         ),
+        'lasthostcomment' => array(
+            'host_last_comment' => 'hlc.comment_id'
+        ),
+        'lastservicecomment' => array(
+            'service_last_comment' => 'slc.comment_id'
+        ),
         'status' => array(
             'problems' => 'CASE WHEN ss.current_state = 0 THEN 0 ELSE 1 END',
             'handled' => 'CASE WHEN ss.problem_has_been_acknowledged = 1 OR ss.scheduled_downtime_depth > 0 THEN 1 ELSE 0 END',
             'severity' => 'CASE WHEN ss.current_state = 0
-            THEN 
+            THEN
                 CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL
                      THEN 16
                      ELSE 0
@@ -160,7 +168,7 @@ class StatusQuery extends AbstractQuery
             ELSE
                 CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL THEN 16
                      WHEN ss.current_state = 1 THEN 32
-                     WHEN ss.current_state = 2 THEN 128 
+                     WHEN ss.current_state = 2 THEN 128
                      WHEN ss.current_state = 3 THEN 64
                      ELSE 256
                 END
@@ -231,11 +239,11 @@ class StatusQuery extends AbstractQuery
             array()
         )->join(
                 array('so' => $this->prefix . 'objects'),
-                "so.$this->object_id = s.service_object_id AND so.is_active = 1",
+                'so.'.$this->object_id.' = s.service_object_id AND so.is_active = 1',
                 array()
             )->joinLeft(
                 array('ss' => $this->prefix . 'servicestatus'),
-                "so.$this->object_id = ss.service_object_id",
+                'so.'.$this->object_id.' = ss.service_object_id',
                 array()
             );
     }
@@ -258,7 +266,7 @@ class StatusQuery extends AbstractQuery
             array()
         )->join(
                 array('hg' => $this->prefix . 'hostgroups'),
-                "hgm.hostgroup_id = hg.$this->hostgroup_id",
+                'hgm.hostgroup_id = hg'.$this->hostgroup_id,
                 array()
             );
 
@@ -305,5 +313,17 @@ class StatusQuery extends AbstractQuery
         );
 
         return $this;
+    }
+
+    protected function joinLasthostcomment()
+    {
+        $this->baseQuery->joinleft(
+            array ('hlc' => new \Zend_Db_Expr(
+                '(SELECT MAX(c.comment_id) as comment_id, c.object_id '.
+                'FROM icinga_comments c GROUP BY c.object_id)')
+            ),
+            'hlc.object_id = hs.host_object_id',
+            array()
+        );
     }
 }

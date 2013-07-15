@@ -156,9 +156,11 @@ class AbstractBackend implements DatasourceInterface
             );
         }
 
+
         $select = $this->select()
             ->from('status', $fields)
             ->where('host_name', $host);
+
         return $select->fetchRow();
     }
 

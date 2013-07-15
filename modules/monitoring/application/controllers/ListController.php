@@ -37,8 +37,10 @@ class Monitoring_ListController extends ModuleActionController
                 'host_handled',
                 'host_last_state_change',
                 'host_notifications_enabled',
-                'host_problems'
-             //   'host_comment_count'
+                'host_problems',
+                'host_action_url',
+                'host_notes_url',
+                'host_last_comment'
             )
         );
           
@@ -54,20 +56,11 @@ class Monitoring_ListController extends ModuleActionController
             }
         }
 
-        $this->view->hosts->getQuery()->group('host_id');
+        //$this->view->hosts->getQuery()->group('host_id');
         if ($this->_getParam('dump') === 'sql') {
             echo '<pre>' . htmlspecialchars(wordwrap($this->view->hosts->getQuery()->dump())) . '</pre>';
             exit;
         }
-        // TODO: Get rid of "preserve"
-        $preserve = array();
-        if ($this->_getParam('sort')) {
-            $preserve['sort'] = $this->view->sort = $this->_getParam('sort');
-        }
-        if ($this->_getParam('backend')) {
-            $preserve['backend'] = $this->_getParam('backend');
-        }
-        $this->view->preserve = $preserve;
 
         if ($this->_getParam('view') === 'compact') {
             $this->_helper->viewRenderer('hosts_compact');
