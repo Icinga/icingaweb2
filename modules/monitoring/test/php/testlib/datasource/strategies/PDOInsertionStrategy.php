@@ -8,6 +8,8 @@ class PDOInsertionStrategy {
     private $fixture;
     private $connection;
 
+    public $datetimeFormat = "U";
+
     public function setConnection($connection) {
         $this->connection = $connection;
     }
@@ -62,7 +64,7 @@ class PDOInsertionStrategy {
                 $host["icon_image"], $host["notes_url"], $host["action_url"]
             ));
             $insertHostStatusQuery->execute(array(
-                $this->objectId, $host["state"], $flags->time, $flags->notifications,
+                $this->objectId, $host["state"], date($this->datetimeFormat, $flags->time), $flags->notifications,
                 $flags->active_checks, $flags->passive_checks, $flags->flapping, $flags->in_downtime));
 
             foreach($host["contacts"] as $contact) {
@@ -112,7 +114,7 @@ class PDOInsertionStrategy {
                 $service["notes_url"], $service["action_url"], $service["icon_image"]
             ));
             $insertServiceStatusQuery->execute(array(
-                $this->objectId, $service["state"], $flags->time, $flags->notifications,
+                $this->objectId, $service["state"], date($this->datetimeFormat, $flags->time), $flags->notifications,
                 $flags->active_checks, $flags->passive_checks, $flags->flapping, $flags->in_downtime));
 
             foreach($service["contacts"] as $contact) {

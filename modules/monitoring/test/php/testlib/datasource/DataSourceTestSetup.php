@@ -30,6 +30,7 @@ class DataSourceTestSetup implements SetupStrategy, InsertionStrategy
         } elseif ($type == 'pgsql') {
             $this->setupStrategy = new PgSQLSetupStrategy();
             $this->insertionStrategy = new PDOInsertionStrategy();
+            $this->insertionStrategy->datetimeFormat = "Y-m-d H:i:s";
         } else {
             throw new \Exception('Unsupported backend '.$type);
         }

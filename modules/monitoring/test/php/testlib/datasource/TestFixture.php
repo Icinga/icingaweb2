@@ -10,7 +10,7 @@ class ObjectFlags {
     public $in_downtime = 0;
     public $time = 0;
 
-    public function ObjectFlags($ageInSeconds = null) {
+    public function __construct($ageInSeconds = null) {
         if(!is_int($ageInSeconds))
             $ageInSeconds = 0;
         $this->time = time()-$ageInSeconds;
