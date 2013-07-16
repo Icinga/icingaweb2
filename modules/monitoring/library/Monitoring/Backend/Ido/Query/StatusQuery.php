@@ -68,7 +68,7 @@ class StatusQuery extends AbstractQuery
             'host_retry_check_interval' => 'hs.retry_check_interval',
             'host_check_timeperiod_object_id' => 'hs.check_timeperiod_object_id',
             'host_status_update_time' => 'hs.status_update_time',
-            'host_problems' => 'CASE WHEN hs.current_state = 0 THEN 0 ELSE 1 END',
+            'host_problem' => 'CASE WHEN hs.current_state = 0 THEN 0 ELSE 1 END',
             'host_severity' => 'CASE WHEN hs.current_state = 0
             THEN
                 CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL
@@ -113,6 +113,7 @@ class StatusQuery extends AbstractQuery
             'service_description'    => 'so.name2 COLLATE latin1_general_ci',
             'service_display_name'   => 's.display_name',
             'service_icon_image'     => 's.icon_image',
+
         ),
         'servicestatus' => array(
             'current_state' => 'CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL THEN 99 ELSE ss.current_state END',
@@ -140,6 +141,9 @@ class StatusQuery extends AbstractQuery
             'service_last_time_warning'      => 'ss.last_time_warning',
             'service_last_time_critical'     => 'ss.last_time_critical',
             'service_last_time_unknown'      => 'ss.last_time_unknown',
+        ),
+        'serviceproblemsummary' => array(
+            'host_unhandled_service_count' => 'sps.unhandled_service_count'
         ),
         'lasthostcomment' => array(
             'host_last_comment' => 'hlc.comment_id'
@@ -313,6 +317,21 @@ class StatusQuery extends AbstractQuery
         );
 
         return $this;
+    }
+
+    protected function joinServiceproblemsummary()
+    {
+        $this->baseQuery->joinleft(
+            array ('sps' => new \Zend_Db_Expr(
+                '(SELECT COUNT(s.service_object_id) as unhandled_service_count, s.host_object_id as host_object_id '.
+                    'FROM icinga_services s INNER JOIN icinga_servicestatus ss ON '.
+                        'ss.problem_has_been_acknowledged = 0 AND ss.scheduled_downtime_depth = 0 AND '.
+                        'ss.service_object_id = s.service_object_id '.
+                    'GROUP BY s.host_object_id'.
+                ')')),
+            'sps.host_object_id = hs.host_object_id',
+            array()
+        );
     }
 
     protected function joinLasthostcomment()

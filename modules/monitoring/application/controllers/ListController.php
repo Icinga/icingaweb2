@@ -37,7 +37,7 @@ class Monitoring_ListController extends ModuleActionController
                 'host_handled',
                 'host_last_state_change',
                 'host_notifications_enabled',
-                'host_problems',
+                'host_unhandled_service_count',
                 'host_action_url',
                 'host_notes_url',
                 'host_last_comment'
