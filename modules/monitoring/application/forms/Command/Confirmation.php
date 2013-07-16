@@ -1,9 +1,9 @@
 <?php
-// @codingStandardsIgnoreStart
-
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
- * Icinga 2 Web - Head for multiple monitoring frontends
+ * This file is part of Icinga 2 Web.
+ *
+ * Icinga 2 Web - Head for multiple monitoring backends.
  * Copyright (C) 2013 Icinga Development Team
  *
  * This program is free software; you can redistribute it and/or
@@ -21,18 +21,18 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  * @copyright 2013 Icinga Development Team <info@icinga.org>
- * @author Icinga Development Team <info@icinga.org>
+ * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
+ * @author    Icinga Development Team <info@icinga.org>
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use Icinga\Util\Format;
+namespace Monitoring\Form\Command;
 
-class Zend_View_Helper_Format extends Zend_View_Helper_Abstract
+/**
+ * Simple confirmation form
+ *
+ * Exist to make the abstract form concrete.
+ */
+class Confirmation extends AbstractCommand
 {
-    public function format()
-    {
-        return Format::getInstance();
-    }
 }
-
-// @codingStandardsIgnoreStop

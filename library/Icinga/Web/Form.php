@@ -26,6 +26,7 @@
 namespace Icinga\Web;
 
 use Icinga\Exception\ProgrammingError;
+use Zend_View_Interface;
 
 /**
  * Class Form
@@ -68,7 +69,14 @@ abstract class Form extends \Zend_Form
         if (!$this->tokenDisabled) {
             $this->initCsrfToken();
         }
-        $this->create();
+    }
+
+    public function render(Zend_View_Interface $view = null)
+    {
+        if ($this->_isRendered === false) {
+            $this->create();
+        }
+        return parent::render($view);
     }
 
     /**
