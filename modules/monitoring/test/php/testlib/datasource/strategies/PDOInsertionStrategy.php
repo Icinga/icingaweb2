@@ -60,7 +60,7 @@ class PDOInsertionStrategy {
 
             $insertObjectQuery->execute(array($this->objectId, $host["name"]));
             $insertHostQuery->execute(array(
-                $this->objectId, $host["name"], $host["name"], $host["address"], $this->objectId,
+                $this->objectId, $host["name"], $host["name"]." alias", $host["address"], $this->objectId,
                 $host["icon_image"], $host["notes_url"], $host["action_url"]
             ));
             $insertHostStatusQuery->execute(array(

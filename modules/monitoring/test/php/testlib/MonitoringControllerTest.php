@@ -24,6 +24,7 @@ namespace Icinga\Web
 
 namespace Test\Monitoring\Testlib
 {
+    use Icinga\Protocol\Statusdat\Reader;
     use Test\Monitoring\Testlib\DataSource\TestFixture;
     use Test\Monitoring\Testlib\DataSource\DataSourceTestSetup;
     use Monitoring\Backend\Ido;
@@ -115,6 +116,11 @@ namespace Test\Monitoring\Testlib
                     'pass'  => "icinga_unittest",
                     'db'    => "icinga_unittest"
                 )));
+            } else if ($type == "statusdat") {
+                return new Reader(new \Zend_Config(array(
+                    'status_file' => '/tmp/teststatus.dat',
+                    'objects_file' => '/tmp/testobjects.cache'
+                )), null, true);
             }
         }
     }
