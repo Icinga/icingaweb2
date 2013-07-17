@@ -1,0 +1,8 @@
+<h4><?= t('List of supported commands'); ?></h4>
+<ul>
+    <?php foreach($this->commands as $command): ?>
+    <li>
+        <?= $this->qlink($command, 'monitoring/command/'. $command); ?>
+    </li>
+    <?php endforeach; ?>
+</ul>

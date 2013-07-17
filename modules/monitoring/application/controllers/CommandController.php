@@ -91,8 +91,10 @@ class Monitoring_CommandController extends ModuleActionController
             }
         }
 
-        // Reduce template writing mess
-        $this->_helper->viewRenderer->setRender(self::DEFAULT_VIEW_SCRIPT);
+        if ($this->getRequest()->getActionName() !== 'list') {
+            // Reduce template writing mess
+            $this->_helper->viewRenderer->setRender(self::DEFAULT_VIEW_SCRIPT);
+        }
     }
 
     /**
@@ -120,19 +122,20 @@ class Monitoring_CommandController extends ModuleActionController
     }
 
     /**
-     * Getter for request parameters
-     * @param string $name
-     * @param bool $mandatory
-     * @return mixed
-     * @throws Icinga\Exception\MissingParameterException
+     * Displays a list of all commands
      */
-    private function getParameter($name, $mandatory = true)
+    public function listAction()
     {
-        $value = $this->_request->getParam($name);
-        if ($mandatory && !$value) {
-            throw new MissingParameterException("Missing parameter $name");
+        $reflection = new ReflectionObject($this);
+        $commands = array();
+        $methods = $reflection->getMethods(ReflectionMethod::IS_PUBLIC);
+        foreach ($methods as $method) {
+            $name = $method->getName();
+            if ($name !== 'listAction' && preg_match('/Action$/', $name)) {
+                $commands[] = preg_replace('/Action$/', '', $name);
+            }
         }
-        return $value;
+        $this->view->commands = $commands;
     }
 
     // ------------------------------------------------------------------------
