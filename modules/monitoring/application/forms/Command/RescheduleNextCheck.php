@@ -35,29 +35,8 @@ use DateTime as PhpDateTime;
 /**
  * Form for RescheduleNextCheck
  */
-class RescheduleNextCheck extends AbstractCommand
+class RescheduleNextCheck extends WithChildrenCommand
 {
-
-    private $withChildren = false;
-
-    /**
-     * Setter for withChildren
-     * @param bool $flag
-     */
-    public function setWithChildred($flag = true)
-    {
-        $this->withChildren = $flag;
-    }
-
-    /**
-     * Getter for withChildren
-     * @return bool
-     */
-    public function getWithChildren()
-    {
-        return $this->withChildren;
-    }
-
     /**
      * Interface method to build the form
      * @see Form::create()

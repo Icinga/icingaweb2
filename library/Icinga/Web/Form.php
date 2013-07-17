@@ -75,6 +75,11 @@ abstract class Form extends \Zend_Form
     {
         if ($this->_isRendered === false) {
             $this->create();
+
+            // Empty action if not safe
+            if (!$this->getAction() && $this->getRequest()) {
+                $this->setAction($this->getRequest()->getRequestUri());
+            }
         }
         return parent::render($view);
     }
@@ -115,7 +120,7 @@ abstract class Form extends \Zend_Form
         $check = null;
 
         if ($data === null) {
-            $data = $this->getRequest()->getParams();
+            $check = $this->getRequest()->getParams();
         } elseif ($data instanceof \Zend_Controller_Request_Abstract) {
             $check = $data->getParams();
         } else {

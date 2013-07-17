@@ -28,6 +28,11 @@
 
 namespace Monitoring\Form\Command;
 
+use Icinga\Web\Form\Element\DateTime;
+use \DateTime as PhpDateTime;
+use \DateInterval;
+use Icinga\Web\Form\Element\Note;
+
 /**
  * Form for acknowledge commands
  */
@@ -59,6 +64,48 @@ class Acknowledge extends AbstractCommand
             )
         );
 
+        $expireCheck = $this->createElement(
+            'checkbox',
+            'expire',
+            array(
+                'label'    => t('Use expire time'),
+                'value'    => false
+            )
+        );
+
+        $now = new PhpDateTime();
+        $interval = new DateInterval('PT1H'); // Add 3600 seconds
+        $now->add($interval);
+
+        $expireTime = new DateTime(
+            array(
+                'name'  => 'expiretime',
+                'label' => t('Expire time'),
+                'value' => $now->format('Y-m-d H:i:s')
+            )
+        );
+
+        $expireNote = new Note(
+            array(
+                'name'  => 'expirenote',
+                'value' => t('If the acknowledgement should expire, check the box and enter an expiration timestamp.')
+            )
+        );
+
+        $this->addElements(array($expireNote, $expireCheck, $expireTime));
+
+        $this->addDisplayGroup(
+            array(
+                'expirenote',
+                'expire',
+                'expiretime'
+            ),
+            'expire_group',
+            array(
+                'legend' => t('Expire acknowledgement')
+            )
+        );
+
         $this->addElement(
             'checkbox',
             'sticky',
@@ -81,5 +128,4 @@ class Acknowledge extends AbstractCommand
 
         parent::create();
     }
-
 }

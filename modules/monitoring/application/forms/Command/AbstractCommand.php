@@ -30,7 +30,7 @@ namespace Monitoring\Form\Command;
 
 use Icinga\Web\Form;
 use Icinga\Web\Form\Element\Note;
-use Zend_Form_Element_Hidden;
+use \Zend_Form_Element_Hidden;
 
 /**
  * Class AbstractCommand
@@ -124,6 +124,18 @@ abstract class AbstractCommand extends Form
     }
 
     /**
+     * Create an instance name containing hidden field
+     * @return Zend_Form_Element_Hidden
+     */
+    private function createInstanceHiddenField()
+    {
+        $field = new Zend_Form_Element_Hidden('instance');
+        $value = $this->getRequest()->getParam($field->getName());
+        $field->setValue($value);
+        return $field;
+    }
+
+    /**
      * Add elements to this form (used by extending classes)
      */
     protected function create()
@@ -161,6 +173,8 @@ abstract class AbstractCommand extends Form
             );
             $this->addElement($submitButton);
         }
+
+        $this->addElement($this->createInstanceHiddenField());
     }
 
     /**

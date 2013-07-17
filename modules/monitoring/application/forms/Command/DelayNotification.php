@@ -26,18 +26,33 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Web\Form\Element;
-
-use Zend_Form_Element_Xhtml;
+namespace Monitoring\Form\Command;
 
 /**
- * Implements note element for Zend forms
+ * Form to handle DelayNotification command
  */
-class Note extends Zend_Form_Element_Xhtml
+class DelayNotification extends AbstractCommand
 {
     /**
-     * Name of the view helper
-     * @var string
+     * Interface method to build the form
+     * @see Form::create()
      */
-    public $helper = 'formNote';
+    protected function create()
+    {
+        $this->addElement(
+            'text',
+            'minutes',
+            array(
+                'label' => t('Notification delay'),
+                'style' => 'width: 80px;',
+                'value' => 0
+            )
+        );
+
+        $this->addNote('Delay next notification in minutes from now');
+
+        $this->setSubmitLabel(t('Delay notification'));
+
+        parent::create();
+    }
 }
