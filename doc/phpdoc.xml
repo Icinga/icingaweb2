@@ -20,6 +20,7 @@
     <files>
         <directory>../library/Icinga</directory>
         <directory>../library/application</directory>
-        <directory>../modules/monitoring</directory>
+        <directory>../modules/*/library</directory>
+        <directory>../modules/*/application</directory>
     </files>
 </phpdoc>
