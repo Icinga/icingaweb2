@@ -1,11 +1,6 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: moja
- * Date: 7/17/13
- * Time: 10:18 AM
- * To change this template use File | Settings | File Templates.
- */
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Test\Monitoring\Testlib\Datasource\Strategies;
 use Test\Monitoring\Testlib\DataSource\schemes\ObjectsCacheTemplates;
@@ -15,20 +10,69 @@ use \Test\Monitoring\Testlib\DataSource\schemes\StatusdatTemplates;
 require_once(dirname(__FILE__).'/../schemes/ObjectsCacheTemplates.php');
 require_once(dirname(__FILE__).'/../schemes/StatusdatTemplates.php');
 
+/**
+ *  An @see InsertionStrategy for creating status.dat and objects.cache
+ *  files from a TestFixture
+ *
+ *  This class helps testing status.dat backends by writing testfixtures
+ *  to according objects.cache and status.dat files which then can be read
+ *  by the Statusdat parser and used in tests.
+ *
+ *  The templates for insertion can be found under schemes/objectsCacheTemplates.php
+ *  and schemes/StatusdatTempaltes.php
+ *
+ */
 class StatusdatInsertionStrategy implements InsertionStrategy {
 
+    /**
+     * The status.dat filename to write the object-state to
+     * @var String
+     */
     private $statusDatFile;
+
+    /**
+     * The objects.cache filename to write the object structure to
+     * @var String
+     */
     private $objectsCacheFile;
+
+    /**
+     * The TestFixture that will be written to a status.dat compatible format
+     * @var TestFixture
+     */
     private $fixture;
+
+    /**
+     * The content of the status.dat file that will be written
+     * @var String
+     */
     private $statusDat;
+
+    /**
+     * The content of the objects.cache file that will be written
+     * @var String
+     */
     private $objectsCache;
 
+    /**
+     * Tell this object to use the status.dat/objects.cache file combination
+     * provided in $resource
+     *
+     * @param Array $ressource  An associative array containing the following keys:
+     *                          - "status_file" : The location where to write the status.dat to
+     *                          - "objects_file" : The location to write the objects cache to
+     */
     public function setConnection($ressource)
     {
         $this->statusDatFile = $ressource['status_file'];
         $this->objectsCacheFile = $ressource['objects_file'];
     }
 
+    /**
+     * Insert the provided fixture into the status.dat and objects.cache files for testing
+     *
+     * @param TestFixture $fixture  The fixture to create status.dat and objects.cache files from
+     */
     public function insert(TestFixture $fixture)
     {
         $this->fixture = $fixture;
@@ -47,6 +91,11 @@ class StatusdatInsertionStrategy implements InsertionStrategy {
         file_put_contents($this->objectsCacheFile, $this->objectsCache);
     }
 
+    /**
+     *  Insert the host monitoring state from the provided fixture to the internal
+     *  statusdat string $statusDat
+     *
+     */
     private function insertHoststatus()
     {
         $hosts = $this->fixture->getHosts();
@@ -70,6 +119,11 @@ class StatusdatInsertionStrategy implements InsertionStrategy {
         }
     }
 
+    /**
+     *  Insert the host object state into the internal objects.cache representation
+     *  $objectsCache
+     *
+     */
     private function insertHosts()
     {
         $hosts = $this->fixture->getHosts();
@@ -92,6 +146,11 @@ class StatusdatInsertionStrategy implements InsertionStrategy {
         }
     }
 
+    /**
+     *  Insert the service monitoring state from the provided fixture to the internal
+     *  statusdat string $statusDat
+     *
+     */
     private function insertServicestatus()
     {
         $services = $this->fixture->getServices();
@@ -124,6 +183,11 @@ class StatusdatInsertionStrategy implements InsertionStrategy {
 
     }
 
+    /**
+     *  Insert the service object state into the internal objects.cache representation
+     *  $objectsCache
+     *
+     */
     private function insertServices()
     {
         $services = $this->fixture->getServices();
@@ -143,6 +207,13 @@ class StatusdatInsertionStrategy implements InsertionStrategy {
         }
     }
 
+    /**
+     * Inserts a group object into the object.cache file
+     *
+     * @param String    $type       The type of the group ('host' or 'service')
+     * @param String    $name       The name of the group to insert
+     * @param array     $members    A String array of the members names to use
+     */
     private function insertGroup($type, $name, array $members)
     {
         $groupDefinition = str_replace(
@@ -150,13 +221,17 @@ class StatusdatInsertionStrategy implements InsertionStrategy {
                 '{{TYPE}}', '{{NAME}}', '{{MEMBERS}}'
             ),
             array("\t",
-                'host', $name, implode(",", $members)
+                $type, $name, implode(",", $members)
             ),
             ObjectsCacheTemplates::$GROUP
         );
         $this->objectsCache .= "\n".$groupDefinition;
     }
 
+    /**
+     * Insert all hostgroups from the fixtures into the objects.cache
+     *
+     */
     private function insertHostgroups()
     {
         $hostgroups = $this->fixture->getHostgroups();
@@ -169,6 +244,10 @@ class StatusdatInsertionStrategy implements InsertionStrategy {
         }
     }
 
+    /**
+     * Inserts all servicegroups from the fixtures into the objects.cache
+     *
+     */
     private function insertServicegroups()
     {
         $servicegroups = $this->fixture->getServicegroups();
@@ -178,10 +257,15 @@ class StatusdatInsertionStrategy implements InsertionStrategy {
                 $memberNames[] = $member["host"]["name"];
                 $memberNames[] = $member["name"];
             }
-            $this->insertGroup("service", $serviegroup["name"], $memberNames);
+            $this->insertGroup("service", $servicegroup["name"], $memberNames);
         }
     }
 
+    /**
+     * Inserts all comments from the fixtures into the status.dat string
+     * $statusDat
+     *
+     */
     private function insertComments()
     {
         $comments = $this->fixture->getComments();
@@ -209,8 +293,6 @@ class StatusdatInsertionStrategy implements InsertionStrategy {
                 );
             }
             $this->statusDat .= "\n".$commentDefinition;
-
         }
-
     }
 }

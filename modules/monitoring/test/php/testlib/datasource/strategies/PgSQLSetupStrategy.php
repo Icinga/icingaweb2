@@ -1,16 +1,34 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: moja
- * Date: 7/16/13
- * Time: 3:30 PM
- * To change this template use File | Settings | File Templates.
- */
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Test\Monitoring\Testlib\Datasource\Strategies;
 
+/***
+ * SetupStrategy implementation for PostgreSQL based IDO-Backends
+ *
+ * This strategy creates a new PostgreSQL Database and removes old ones
+ * if necessary. Per default the database user is icinga_unittest:icinga_unittest
+ * and the database to be created is also icinga_unittest.
+ **/
+class PgSQLSetupStrategy implements SetupStrategy {
 
-class PgSQLSetupStrategy {
+    /**
+     * Tears down any existing databases and creates a new blank IDO scheme.
+     *
+     * The database is created according to the passed version (or using the
+     * newest version if no version is provided), using the idoPgSQL-%VERSION%.sql
+     * underneath the schemes folder.
+     * A \PDO Connection can be provided, if not the icinga_unittest default
+     * connection will be established and used.
+     *
+     * @param String $version   An optional version to use as the db scheme
+     * @param \PDO $connection  An optional connection to use instead of icinga_unittest
+     * @return \PDO             The connection that has been created
+     *
+     * @throws \PDOException    In case connecting to or creating the database fails
+     * @throws \Exception       In case of an invalid/non-existing DB scheme
+     */
     public function setup($version = null, $connection = null)
     {
         if ($connection === null) {
@@ -35,6 +53,13 @@ class PgSQLSetupStrategy {
         return $connection;
     }
 
+    /**
+     * Drops all tables from the connection via DROP TABLE
+     *
+     * @param \PDO $connection  An optional connection to use, if none is
+     *                          given the icinga_unittest default will be used
+     *
+     */
     public function teardown($connection = null)
     {
         if ($connection === null) {

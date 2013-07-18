@@ -1,12 +1,33 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Web
 {
+    /**
+     * Mocked controller base class to avoid the complete
+     * Bootstrap dependency of the normally used ModuleActionController
+     */
     class ModuleActionController
     {
+        /**
+         * The view this controller would create
+         * @var stdClass
+         */
         public $view;
+
+        /**
+         * Parameters provided on call
+         * @var array
+         */
         public $params = array();
 
+        /**
+         * _getParam method that normally retrieves GET/POST parameters
+         *
+         * @param string $param     The parameter name to retrieve
+         * @return mixed|bool       The parameter $param or false if it doesn't exist
+         */
         public function _getParam($param)
         {
             if (!isset($this->params[$param])) {
@@ -14,6 +35,12 @@ namespace Icinga\Web
             }
             return $this->params[$param];
         }
+
+        /**
+         * Sets the backend for this controller which will be used in the action
+         *
+         * @param $backend
+         */
         public function setBackend($backend)
         {
             $this->backend = $backend;
@@ -30,10 +57,51 @@ namespace Test\Monitoring\Testlib
     use Monitoring\Backend\Ido;
     use Monitoring\Backend\Statusdat;
 
+    /**
+     * Base class for monitoring controllers that loads required dependencies
+     * and allows easier setup of tests
+     *
+     * Example:
+     * <code>
+     *
+     * class MyControllerTest  extends MonitoringControllerTest
+     * {
+     *      public function testSomething()
+     *      {
+     *          // Create a test fixture
+     *          $fixture = new TestFixture()
+     *          $fixture->addHost('host', 0)->addService(...)->..->;
+     *
+     *          $this->setupFixture($fixture, "mysql"); // setup the fixture
+     *          $controller = $this->requireController('MyController', 'mysql');
+     *          // controller is now the Zend controller instance, perform an action
+     *          $controller->myAction();
+     *          $result = $controller->view->hosts->fetchAll();
+     *          // assert stuff
+     *      }
+     * }
+     */
     class MonitoringControllerTest extends \PHPUnit_Framework_TestCase
     {
+        /**
+         * The module directory for requiring modules (is relative to the source file)
+         * @var string
+         */
         private $moduleDir = "";
+
+        /**
+         * The application directory for requirying library files (is relative to the source file)
+         * @var string
+         */
         private $appDir = "";
+
+        /**
+         *  Require necessary libraries on test creation
+         *
+         *  This is called for every test and assures that all required libraries for the controllers
+         *  are loaded. If you need additional dependencies you should overwrite this method, call the parent
+         *  and then require your classes
+         */
         public function setUp()
         {
             $this->moduleDir = dirname(__FILE__) . '/../../../';
@@ -51,6 +119,10 @@ namespace Test\Monitoring\Testlib
             $this->requireViews();
         }
 
+        /**
+         * Require base application and data retrieval classes from the Icinga Library
+         *
+         */
         private function requireBase()
         {
             require_once('Application/Benchmark.php');
@@ -64,12 +136,21 @@ namespace Test\Monitoring\Testlib
 
         }
 
+        /**
+         * Require all defined IDO queries in this module
+         *
+         */
         private function requireIDOQueries()
         {
             require_once('library/Monitoring/Backend/Ido.php');
             $this->requireFolder('library/Monitoring/Backend/Ido/Query');
         }
 
+        /**
+         * Require all php files in the folder $folder
+         *
+         * @param $folder   The path to the folder containing PHP files
+         */
         private function requireFolder($folder)
         {
             $module = $this->moduleDir;
@@ -82,6 +163,10 @@ namespace Test\Monitoring\Testlib
             }
         }
 
+        /**
+         * Require all views and queries from the statusdat backen
+         *
+         */
         private function requireStatusDatQueries()
         {
             require_once('library/Monitoring/Backend/Statusdat.php');
@@ -93,6 +178,9 @@ namespace Test\Monitoring\Testlib
             $this->requireFolder('library/Monitoring/Backend/Statusdat/DataView');
         }
 
+        /**
+         *  Require all (generic) view classes from the monitoring module
+         */
         private function requireViews()
         {
             $module = $this->moduleDir;
@@ -100,6 +188,13 @@ namespace Test\Monitoring\Testlib
             $this->requireFolder('library/Monitoring/View/');
         }
 
+        /**
+         * Require and set up a controller $controller using the backend type specified at $backend
+         *
+         * @param string $controller            The name of the controller tu use (must be under monitoring/application/controllers)
+         * @param string $backend               The backend to use ('mysql', 'pgsql' or 'statusdat')
+         * @return ModuleActionController       The newly created controller
+         */
         public function requireController($controller, $backend)
         {
             require_once($this->moduleDir.'/application/controllers/'.$controller.'.php');
@@ -109,14 +204,25 @@ namespace Test\Monitoring\Testlib
             return $controller;
         }
 
+        /**
+         * Create a new backend and insert the given fixture into it
+         *
+         * @param TestFixture $fixture  The TestFixture to create
+         * @param string $type          The type of the backend ('mysql', 'pgsql' or 'statusdat')
+         */
         public function setupFixture(TestFixture $fixture, $type)
         {
             $dbInstance =  new DataSourceTestSetup($type);
             $dbInstance->setup();
             $dbInstance->insert($fixture);
-
         }
 
+        /**
+         * Set up and configure a new testbackend for the given type
+         *
+         * @param  string $type     The type of the backend 'mysql', 'pgsql' or 'statusdat'
+         * @return Ido|Statusdat    The newly created backend
+         */
         public function getBackendFor($type) {
             if ($type == "mysql" || $type == "pgsql") {
                 $this->requireIDOQueries();
@@ -134,7 +240,6 @@ namespace Test\Monitoring\Testlib
                     'objects_file' => '/tmp/testobjects.cache',
                     'no_cache' => true
                 )));
-
             }
         }
     }

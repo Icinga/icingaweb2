@@ -3,7 +3,10 @@
 
 namespace Test\Monitoring\Testlib\DataSource\schemes;
 
-
+/**
+ * Container class for Objectcache object snipptes
+ *
+ */
 class ObjectsCacheTemplates {
 
     public static $HOST =<<<'EOF'

@@ -9,7 +9,10 @@
 
 namespace Test\Monitoring\Testlib\DataSource\schemes;
 
-
+/**
+ * Container class for Statusdat object snippets
+ *
+ */
 class StatusdatTemplates {
 
     public static $HOST =<<<'EOF'

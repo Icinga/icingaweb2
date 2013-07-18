@@ -1,19 +1,60 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Test\Monitoring\Testlib\Datasource\Strategies;
 use \Test\Monitoring\Testlib\DataSource\TestFixture;
 
-class PDOInsertionStrategy {
+/**
+ * TestFixture insertion implementation for PDO based backends
+ *
+ * This class allows to create the actual IDO databases from TestFixture
+ * classes using PDO.
+ *
+ */
+class PDOInsertionStrategy
+{
+    /**
+     * Points to the (icinga) objectId of the next inserted object
+     * @var int
+     */
     private $objectId = 0;
+
+    /**
+     * The fixture that is being inserted by this object
+     * @var TestFixture
+     */
     private $fixture;
+
+    /**
+     * The database (PDO) connection to use for inserting
+     * @var \PDO
+     */
     private $connection;
 
+    /**
+     * The date format that will be used for inserting
+     * date values, see @link http://php.net/manual/en/function.date.php
+     * for possible values
+     *
+     * @var string
+     */
     public $datetimeFormat = "U";
 
+    /**
+     * @see InsertionStrategy::setConnection
+     *
+     * @param \PDO $connection  The PDO connection to use
+     */
     public function setConnection($connection) {
         $this->connection = $connection;
     }
 
+    /**
+     * Insert the provided @see TestFixture into this database
+     *
+     * @param TestFixture $fixture  The fixture to insert into the database
+     */
     public function insert(TestFixture $fixture)
     {
         $this->fixture = $fixture;
@@ -28,7 +69,14 @@ class PDOInsertionStrategy {
         $this->insertServicegroups();
     }
 
-
+    /**
+     * Insert all hosts from the current fixture into the IDO Database
+     *
+     * This method updates the icinga_objects, icinga_hosts, icinga_hoststatus
+     * and icinga_customvariablestatus tables with the host values provided
+     * by the internal fixture (@see PDOInsertStrategy::insert)
+     *
+     */
     private function insertHosts()
     {
         $hosts = &$this->fixture->getHosts();
@@ -83,6 +131,12 @@ class PDOInsertionStrategy {
         }
     }
 
+    /**
+     *  Insert all services from the provided fixture into the IDO database
+     *
+     *  This method updates the icinga_objects, icinga_services, icinga_servicestatus,
+     *  icinga_service_contacts, icinga_customvariablestatus
+     */
     private function insertServices()
     {
         $services = $this->fixture->getServices();
@@ -106,7 +160,7 @@ class PDOInsertionStrategy {
             'INSERT INTO icinga_service_contacts (host_id, contact_object_id) VALUES (?, ?);'
         );
         $insertCVQuery = $this->connection->prepare(
-            'INSERT INTO icinga_customvariablestatus'.
+            'INSERT INTO icinga_customvariablestatus '.
             '(object_id, varname, varvalue) VALUES (?, ?, ?)'
         );
 
@@ -139,6 +193,12 @@ class PDOInsertionStrategy {
         }
     }
 
+    /**
+     *  Insert the contacts provided by the fixture into the database
+     *
+     *  This method updates the icinga_objects and icinga_contacts tables
+     *  according to the provided fixture
+     */
     private function insertContacts()
     {
         $insertObjectQuery = $this->connection->prepare(
@@ -156,6 +216,12 @@ class PDOInsertionStrategy {
         }
     }
 
+    /**
+     *  Insert comments provided by the fixture into the IDO database
+     *
+     *  This method updates the icinga_comments table according to the provided
+     *  fixture
+     */
     private function insertComments()
     {   $comment_id=0;
         $insertCommentsQuery = $this->connection->prepare(
@@ -177,6 +243,12 @@ class PDOInsertionStrategy {
         }
     }
 
+    /**
+     *  Insert hostgroups from the provided fixture into the IDO database
+     *
+     *  This method updates the icinga_objects, icinga_hostgroups and icinga_hostgroup_members
+     *  table with the values provide by the fixture
+     */
     private function insertHostgroups()
     {
         $insertObjectQuery = $this->connection->prepare(
@@ -198,9 +270,14 @@ class PDOInsertionStrategy {
             }
             $this->objectId++;
         }
-
     }
 
+    /**
+     *  Insert servicegroups from the provided fixture into the IDO database
+     *
+     *  This method updates the icinga_objects, icinga_servicegroups and icinga_servicegroup_members
+     *  table with the values provide by the fixture
+     */
     private function insertServicegroups()
     {
         $insertObjectQuery = $this->connection->prepare(
