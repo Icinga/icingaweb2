@@ -42,8 +42,9 @@ class Comment extends AbstractCommand
             'textarea',
             'comment',
             array(
-                'label' => t('Comment'),
-                'rows'  => 4
+                'label'    => t('Comment'),
+                'rows'     => 4,
+                'required' => true
             )
         );
 

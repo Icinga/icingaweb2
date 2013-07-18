@@ -96,6 +96,13 @@ class ConfirmationWithIdentifier extends Confirmation
         $fieldLabel = $this->getFieldLabel();
 
         $hiddenField = new Zend_Form_Element_Hidden($this->getFieldName());
+        $hiddenField->setValue($value);
+        $hiddenField->setRequired(true);
+        $hiddenField->addValidator(
+            'digits',
+            true
+        );
+
         $hiddenField->removeDecorator('Label');
 
         $hiddenField->addDecorator(

@@ -122,7 +122,21 @@ class SubmitPassiveCheckResult extends AbstractCommand
             'pluginstate',
             array(
                 'label'        => t('Plugin state'),
-                'multiOptions' => $this->getOptions()
+                'multiOptions' => $this->getOptions(),
+                'required'     => true,
+                'validators'   => array(
+                    array(
+                        'Digits',
+                        true
+                    ),
+                    array(
+                        'InArray',
+                        true,
+                        array(
+                            array_keys($this->getOptions())
+                        )
+                    )
+                )
             )
         );
 
@@ -130,8 +144,9 @@ class SubmitPassiveCheckResult extends AbstractCommand
             'textarea',
             'checkoutput',
             array(
-                'label' => t('Check output'),
-                'rows'  => 2
+                'label'    => t('Check output'),
+                'rows'     => 2,
+                'required' => true
             )
         );
 

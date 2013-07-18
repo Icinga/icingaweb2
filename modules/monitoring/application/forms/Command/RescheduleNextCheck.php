@@ -54,6 +54,9 @@ class RescheduleNextCheck extends WithChildrenCommand
             )
         );
 
+        $dateElement->setRequired(true);
+        $dateElement->addValidator($this->createDateTimeValidator(), true);
+
         $this->addElement($dateElement);
 
         $checkBox = new Zend_Form_Element_Checkbox(

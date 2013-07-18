@@ -32,6 +32,8 @@ use Icinga\Web\Form\Element\DateTime;
 use \DateTime as PhpDateTime;
 use \DateInterval;
 use \Zend_Form_Element_Text;
+use \Zend_Validate_GreaterThan;
+use \Zend_Validate_Digits;
 
 /**
  * Form for any ScheduleDowntime command
@@ -43,12 +45,6 @@ class ScheduleDowntime extends WithChildrenCommand
      * @see http://php.net/manual/de/class.dateinterval.php
      */
     const DEFAULT_ENDTIME_INTERVAL = 'PT1H';
-
-    /**
-     * Default time format
-     * TODO(mh): Should be configurable on a central place (#4424)
-     */
-    const DEFAULT_DATE_FORMAT = 'Y-m-d H:i:s';
 
     /**
      * Type constant for fixed downtimes
@@ -69,11 +65,11 @@ class ScheduleDowntime extends WithChildrenCommand
         $out = array();
 
         $dateTimeObject = new PhpDateTime();
-        $out[] = $dateTimeObject->format(self::DEFAULT_DATE_FORMAT);
+        $out[] = $dateTimeObject->format($this->getDateFormat());
 
         $dateInterval = new DateInterval(self::DEFAULT_ENDTIME_INTERVAL);
         $dateTimeObject->add($dateInterval);
-        $out[] = $dateTimeObject->format(self::DEFAULT_DATE_FORMAT);
+        $out[] = $dateTimeObject->format($this->getDateFormat());
 
         return $out;
     }
@@ -102,8 +98,9 @@ class ScheduleDowntime extends WithChildrenCommand
             'textarea',
             'comment',
             array(
-                'label' => t('Comment'),
-                'rows'  => 4
+                'label'    => t('Comment'),
+                'rows'     => 4,
+                'required' => true
             )
         );
 
@@ -111,7 +108,22 @@ class ScheduleDowntime extends WithChildrenCommand
             'text',
             'triggered',
             array(
-                'label' => t('Triggered by')
+                'label'      => t('Triggered by'),
+                'value'      => 0,
+                'required'   => true,
+                'validators' => array(
+                    array(
+                        'Digits',
+                        true
+                    ),
+                    array(
+                        'GreaterThan',
+                        true,
+                        array(
+                            'min' => -1
+                        )
+                    )
+                )
             )
         );
 
@@ -124,6 +136,8 @@ class ScheduleDowntime extends WithChildrenCommand
                 'value' => $timestampStart
             )
         );
+        $dateTimeStart->setRequired(true);
+        $dateTimeStart->addValidator($this->createDateTimeValidator(), true);
 
         $dateTimeEnd = new DateTime(
             array(
@@ -132,6 +146,8 @@ class ScheduleDowntime extends WithChildrenCommand
                 'value' => $timestampEnd
             )
         );
+        $dateTimeEnd->setRequired(true);
+        $dateTimeEnd->addValidator($this->createDateTimeValidator(), true);
 
         $this->addElements(array($dateTimeStart, $dateTimeEnd));
 
@@ -140,7 +156,17 @@ class ScheduleDowntime extends WithChildrenCommand
             'type',
             array(
                 'label'        => t('Downtime type'),
-                'multiOptions' => $this->getDowntimeTypeOptions()
+                'multiOptions' => $this->getDowntimeTypeOptions(),
+                'required'     => true,
+                'validators'   => array(
+                    array(
+                        'InArray',
+                        true,
+                        array(
+                            array_keys($this->getDowntimeTypeOptions())
+                        )
+                    )
+                )
             )
         );
 
@@ -188,6 +214,19 @@ class ScheduleDowntime extends WithChildrenCommand
                         0 => t('Do nothing with child objects'),
                         1 => t('Schedule triggered downtime for all child objects'),
                         2 => t('Schedule non-triggered downtime for all child objects')
+                    ),
+                    'validators'   => array(
+                        array(
+                            'Digits',
+                            true
+                        ),
+                        array(
+                            'InArray',
+                            true,
+                            array(
+                                array(0, 1, 2)
+                            )
+                        )
                     )
                 )
             );
@@ -198,5 +237,30 @@ class ScheduleDowntime extends WithChildrenCommand
         $this->setSubmitLabel(t('Schedule downtime'));
 
         parent::create();
+    }
+
+    /**
+     * Change validators at runtime
+     * @param array $data
+     */
+    protected function preValid(array $data)
+    {
+        /*
+         * Other values needed when downtime type change to flexible
+         */
+        if (isset($data['type']) && $data['type'] === self::TYPE_FLEXIBLE) {
+            $greaterThanValidator = new Zend_Validate_GreaterThan(-1);
+            $digitsValidator = new Zend_Validate_Digits();
+
+            $hours = $this->getElement('hours');
+            $hours->setRequired(true);
+            $hours->addValidator($digitsValidator, true);
+            $hours->addValidator($greaterThanValidator, true);
+
+            $minutes = $this->getElement('minutes');
+            $minutes->setRequired(true);
+            $minutes->addValidator($digitsValidator, true);
+            $minutes->addValidator($greaterThanValidator, true);
+        }
     }
 }

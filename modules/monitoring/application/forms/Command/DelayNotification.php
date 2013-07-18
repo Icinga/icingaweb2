@@ -34,6 +34,10 @@ namespace Monitoring\Form\Command;
 class DelayNotification extends AbstractCommand
 {
     /**
+     * Biggest value for minutes
+     */
+    const MAX_VALUE = 1440;
+    /**
      * Interface method to build the form
      * @see Form::create()
      */
@@ -43,9 +47,20 @@ class DelayNotification extends AbstractCommand
             'text',
             'minutes',
             array(
-                'label' => t('Notification delay'),
-                'style' => 'width: 80px;',
-                'value' => 0
+                'label'    => t('Notification delay'),
+                'style'    => 'width: 80px;',
+                'value'    => 0,
+                'required' => true,
+                'validators' => array(
+                    array(
+                        'between',
+                        true,
+                        array(
+                            'min' => 1,
+                            'max' => self::MAX_VALUE
+                        )
+                    )
+                )
             )
         );
 

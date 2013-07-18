@@ -50,8 +50,9 @@ class Acknowledge extends AbstractCommand
             'textarea',
             'comment',
             array(
-                'label' => t('Comment'),
-                'rows'  => 4
+                'label'    => t('Comment'),
+                'rows'     => 4,
+                'required' => true
             )
         );
 
@@ -68,8 +69,7 @@ class Acknowledge extends AbstractCommand
             'checkbox',
             'expire',
             array(
-                'label'    => t('Use expire time'),
-                'value'    => false
+                'label'    => t('Use expire time')
             )
         );
 
@@ -81,7 +81,7 @@ class Acknowledge extends AbstractCommand
             array(
                 'name'  => 'expiretime',
                 'label' => t('Expire time'),
-                'value' => $now->format('Y-m-d H:i:s')
+                'value' => $now->format($this->getDateFormat())
             )
         );
 
@@ -127,5 +127,18 @@ class Acknowledge extends AbstractCommand
         $this->setSubmitLabel(t('Acknowledge problem'));
 
         parent::create();
+    }
+
+    /**
+     * Add validator for dependent fields
+     * @param array $data
+     */
+    protected function preValid(array $data)
+    {
+        if (isset($data['expire']) && $data['expire'] === '1') {
+            $expireTime = $this->getElement('expiretime');
+            $expireTime->setRequired(true);
+            $expireTime->addValidator($this->createDateTimeValidator(), true);
+        }
     }
 }

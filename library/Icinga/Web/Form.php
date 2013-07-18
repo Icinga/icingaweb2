@@ -95,6 +95,22 @@ abstract class Form extends \Zend_Form
     abstract protected function create();
 
     /**
+     * Method called before validation
+     */
+    protected function preValid(array $data)
+    {
+    }
+
+    /**
+     * Method called after validation
+     * @param array $data
+     * @param bool  &$isValid
+     */
+    protected function postValid(array $data, &$isValid)
+    {
+    }
+
+    /**
      * Setter for request
      * @param \Zend_Controller_Request_Abstract $request The request object of a session
      */
@@ -139,20 +155,24 @@ abstract class Form extends \Zend_Form
      */
     public function isValid($data)
     {
-        $check = null;
+        $checkData = null;
 
         // Elements must be there to validate
         $this->buildForm();
 
         if ($data === null) {
-            $check = $this->getRequest()->getParams();
+            $checkData = $this->getRequest()->getParams();
         } elseif ($data instanceof \Zend_Controller_Request_Abstract) {
-            $check = $data->getParams();
+            $checkData = $data->getParams();
         } else {
-            $check = $data;
+            $checkData = $data;
         }
 
-        return parent::isValid($check);
+        $this->preValid($checkData);
+        $checkValue = parent::isValid($checkData);
+        $this->postValid($checkData, $checkValue);
+
+        return $checkValue;
     }
 
     /**

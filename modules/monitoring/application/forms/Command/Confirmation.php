@@ -31,7 +31,7 @@ namespace Monitoring\Form\Command;
 /**
  * Simple confirmation form
  *
- * Exist to make the abstract form concrete.
+ * Exist to make the abstract available as concrete class
  */
 class Confirmation extends AbstractCommand
 {
