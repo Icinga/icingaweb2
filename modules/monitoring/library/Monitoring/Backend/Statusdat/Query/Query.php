@@ -26,19 +26,18 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Backend\Statusdat;
+namespace Monitoring\Backend\Statusdat\Query;
 
-use Icinga\Backend\Criteria\Order;
-use Icinga\Backend\MonitoringObjectList as MList;
+use Monitoring\Backend\Statusdat\Criteria\Order;
 use Icinga\Protocol\Statusdat;
 use Icinga\Exception;
-use Icinga\Backend\Query as BaseQuery;
-
+use Icinga\Data\AbstractQuery;
+use Icinga\Protocol\Statusdat\View\MonitoringObjectList as MList;
 /**
  * Class Query
  * @package Icinga\Backend\Statusdat
  */
-abstract class Query extends BaseQuery
+abstract class Query extends AbstractQuery
 {
     /**
      * @var null
@@ -48,7 +47,7 @@ abstract class Query extends BaseQuery
     /**
      * @var string
      */
-    protected $view = 'Icinga\Backend\Statusdat\DataView\StatusdatServiceView';
+    protected $view = 'Monitoring\Statusdat\DataView\StatusdatServiceView';
 
     /**
      * @var array Mapping of order to field names
@@ -283,6 +282,7 @@ abstract class Query extends BaseQuery
      */
     public function count()
     {
+
         return count($this->query->getResult());
     }
 }

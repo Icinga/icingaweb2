@@ -26,52 +26,33 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Backend\Criteria;
+namespace Monitoring\Backend\Statusdat\Query;
+
+use Icinga\Protocol\Statusdat;
+use Icinga\Exception;
 
 /**
- * Class Order
- *
- * Constants for order definitions.
- * These only describe logical orders without going into storage specific
- * details, like which fields are used for ordering. It's completely up to the query to determine what to do with these
- * constants (although the result should be consistent among the different storage apis).
- *
- * @package Icinga\Backend\Criteria
+ * Class HostListQuery
+ * @package Icinga\Backend\Statusdat
  */
-class Order
+class HostListQuery extends Query
 {
     /**
-     * Order by the newest events. What this means has to be determined in the context.
-     * Mostly this affects last_state_change
-     *
-     * @var string
+     * @var \Icinga\Protocol\Statusdat\Query
      */
-    const STATE_CHANGE = "state_change";
-
-    /**
-     * Order by the state of service objects. Mostly this is critical->unknown->warning->ok,
-     * but also might take acknowledgments and downtimes in account
-     *
-     * @var string
-     */
-    const SERVICE_STATE = "service_state";
-
-    /**
-     * Order by the state of host objects. Mostly this is critical->unknown->warning->ok,
-     * but also might take acknowledgments and downtimes in account
-     *
-     * @var string
-     */
-    const HOST_STATE = "host_state";
+    protected $query;
 
     /**
      * @var string
      */
-    const HOST_NAME = "host_name";
+    protected $view = 'Icinga\Backend\Statusdat\DataView\StatusdatHostView';
 
     /**
-     *
-     * @var string
+     * @return mixed|void
      */
-    const SERVICE_NAME = "service_description";
+    public function init()
+    {
+        $this->reader = $this->backend->getReader();
+        $this->query = $this->reader->select()->from("hosts", array());
+    }
 }

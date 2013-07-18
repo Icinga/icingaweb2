@@ -26,10 +26,9 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Backend;
+namespace Monitoring\Backend;
 
-use Icinga\Backend\Statusdat\DataView\StatusdatHostView;
-use Icinga\Backend\Statusdat\DataView\StatusdatServiceView;
+
 use Icinga\Protocol\Statusdat as StatusdatProtocol;
 
 /**

@@ -26,21 +26,21 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Backend\Statusdat;
+namespace Monitoring\Backend\Statusdat\Query;
 
 /**
- * Class ServicegroupsummaryQuery
+ * Class HostgroupsummaryQuery
  * @package Icinga\Backend\Statusdat
  */
-class ServicegroupsummaryQuery extends GroupsummaryQuery
+class HostgroupsummaryQuery extends GroupsummaryQuery
 {
     /**
      * @var string
      */
-    protected $groupType = "servicegroup";
+    protected $groupType = "hostgroup";
 
     /**
      * @var string
      */
-    protected $base     = "services";
+    protected $base     = "hosts";
 }

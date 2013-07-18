@@ -26,7 +26,7 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Backend\Statusdat;
+namespace Monitoring\Backend\Statusdat\Query;
 
 abstract class GroupsummaryQuery extends Query
 {

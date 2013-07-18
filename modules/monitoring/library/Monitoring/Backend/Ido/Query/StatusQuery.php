@@ -324,7 +324,7 @@ class StatusQuery extends AbstractQuery
         $this->baseQuery->joinleft(
             array ('sps' => new \Zend_Db_Expr(
                 '(SELECT COUNT(s.service_object_id) as unhandled_service_count, s.host_object_id as host_object_id '.
-                    'FROM icinga_services s INNER JOIN icinga_servicestatus ss ON '.
+                    'FROM icinga_services s INNER JOIN icinga_servicestatus ss ON ss.current_state != 0 AND '.
                         'ss.problem_has_been_acknowledged = 0 AND ss.scheduled_downtime_depth = 0 AND '.
                         'ss.service_object_id = s.service_object_id '.
                     'GROUP BY s.host_object_id'.

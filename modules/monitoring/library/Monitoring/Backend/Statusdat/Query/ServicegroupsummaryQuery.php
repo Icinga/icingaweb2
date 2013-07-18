@@ -26,33 +26,21 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Backend\Statusdat;
-
-use Icinga\Protocol\Statusdat;
-use Icinga\Exception;
+namespace Monitoring\Backend\Statusdat\Query;
 
 /**
- * Class HostListQuery
+ * Class ServicegroupsummaryQuery
  * @package Icinga\Backend\Statusdat
  */
-class HostListQuery extends Query
+class ServicegroupsummaryQuery extends GroupsummaryQuery
 {
     /**
-     * @var \Icinga\Protocol\Statusdat\Query
+     * @var string
      */
-    protected $query;
+    protected $groupType = "servicegroup";
 
     /**
      * @var string
      */
-    protected $view = 'Icinga\Backend\Statusdat\DataView\StatusdatHostView';
-
-    /**
-     * @return mixed|void
-     */
-    public function init()
-    {
-        $this->reader = $this->backend->getReader();
-        $this->query = $this->reader->select()->from("hosts", array());
-    }
+    protected $base     = "services";
 }

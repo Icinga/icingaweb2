@@ -26,11 +26,9 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Backend\Statusdat;
+namespace Monitoring\Backend\Statusdat\Query;
 
-use Icinga\Backend\MonitoringObjectList as MList;
 use Icinga\Protocol\Statusdat;
-use Icinga\Backend\Statusdat\DataView\StatusdatServiceView as StatusdatServiceView;
 use Icinga\Exception;
 
 /**

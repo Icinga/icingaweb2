@@ -26,16 +26,12 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Backend\Statusdat\DataView;
+namespace Monitoring\Backend\Statusdat\DataView;
 
-use Icinga\Backend\DataView\ObjectRemappingView;
+use Icinga\Protocol\Statusdat\View\ObjectRemappingView;
 use \Icinga\Protocol\Statusdat\IReader;
 
-/**
- * Class StatusdatHostView
- * @package Icinga\Backend\Statusdat\DataView
- */
-class StatusdatHostView extends ObjectRemappingView
+class StatusdatServiceView extends ObjectRemappingView
 {
     /**
      * @var mixed
@@ -47,30 +43,59 @@ class StatusdatHostView extends ObjectRemappingView
      */
     protected $handlerParameters = array(
         "host" => "getHost",
-        "downtimes_with_info" => "getDowntimes",
-        "comments_with_info" => "getComments"
+        "downtimes_with_info" => "getDowntimes"
     );
 
     /**
      * @var array
      */
     protected $mappedParameters = array(
-        "host_address" => "host_name",
+        "host_address" => "parenthost.address",
         "host_name" => "host_name",
-        "host_state" => "status.current_state",
-        "host_output" => "status.plugin_output",
-        "host_perfdata" => "status.long_plugin_output",
-        "host_last_state_change" => "status.last_state_change",
-        "host_check_command" => "check_command",
-        "host_last_check" => "status.last_check",
-        "host_next_check" => "status.next_check",
-        "host_check_latency" => "status.check_latency",
-        "host_check_execution_time" => "status.check_execution_time",
         "active_checks_enabled" => "status.active_checks_enabled",
-        "acknowledged" => "status.problem_has_been_acknowledged",
-        "host_acknowledged" => "status.problem_has_been_acknowledged",
-        // "state" => "current_state"
+        "passive_checks_enabled" => "status.passive_checks_enabled",
+        "service_state" => "status.current_state",
+        "service_perfdata" => "status.performance_data",
+        "service_last_state_change" => "status.last_state_change",
+        "service_output" => "status.plugin_output",
+        "service_long_output" => "status.long_plugin_output",
+        "service_check_command" => "check_command",
+        "service_last_check" => "status.last_check",
+        "service_next_check" => "status.next_check",
+        "service_check_latency" => "status.check_latency",
+        "service_check_execution_time" => "status.check_execution_time",
+        "service_acknowledged" => "status.problem_has_been_acknowledged",
+        "service_comments" => "comment"
+
     );
+
+    /**
+     * @param \Icinga\Backend\DataView\The $item
+     * @param \Icinga\Backend\DataView\The $field
+     * @return \Icinga\Backend\DataView\The|string
+     */
+    public function get(&$item, $field)
+    {
+        if (!isset($item->parenthost) && isset($this->state["host"])) {
+            $item->parenthost = $this->state["host"];
+        }
+
+        return parent::get($item, $field);
+    }
+
+    /**
+     * @param \Icinga\Backend\DataView\The $item
+     * @param \Icinga\Backend\DataView\The $field
+     * @return bool
+     */
+    public function exists(&$item, $field)
+    {
+        if (!isset($item->parenthost)) {
+            $item->parenthost = $this->state["host"];
+        }
+
+        return parent::exists($item, $field);
+    }
 
     /**
      * @param $item
