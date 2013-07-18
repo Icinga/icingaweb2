@@ -45,6 +45,10 @@ class SubmitPassiveCheckResult extends AbstractCommand
      */
     const TYPE_SERVICE = 'service';
 
+    /**
+     * List of choices for plugin states
+     * @var array
+     */
     private static $options = array();
 
     /**

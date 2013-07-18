@@ -28,6 +28,9 @@
 
 namespace Monitoring\Form\Command;
 
+/**
+ * Form for adding comment commands
+ */
 class Comment extends AbstractCommand
 {
     /**
