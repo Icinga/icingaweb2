@@ -33,10 +33,10 @@ class StatusdatTemplates {
         current_event_id=14756
         current_problem_id=6016
         last_problem_id=6010
-        plugin_output=host_00 (checked by localhost.localdomain) FLAP: flap hostcheck down
-        long_plugin_output=
+        plugin_output=Plugin output for host {{HOST_NAME}}
+        long_plugin_output=Long plugin output for host {{HOST_NAME}}
         performance_data=
-        last_check=1373991189
+        last_check={{TIME}}
         next_check=1374002661
         check_options=0
         current_attempt=2
@@ -105,8 +105,8 @@ EOF;
         last_time_warning=0
         last_time_unknown=0
         last_time_critical=1373024663
-        plugin_output=host_00 (checked by localhost.localdomain) CRITICAL: critical critical_6
-        long_plugin_output=
+        plugin_output=Plugin output for service {{SERVICE_NAME}}
+        long_plugin_output=Long plugin output for service {{SERVICE_NAME}}
         performance_data=runtime=0.012226
         last_check=1373087666
         next_check=1374002401
@@ -123,8 +123,8 @@ EOF;
         active_checks_enabled={{ACTIVE_ENABLED}}
         passive_checks_enabled={{PASSIVE_ENABLED}}
         event_handler_enabled=1
-        problem_has_been_acknowledged=0
-        acknowledgement_type={{ACKNOWLEDGED}}
+        problem_has_been_acknowledged={{ACKNOWLEDGED}}
+        acknowledgement_type=1
         acknowledgement_end_time=0
         flap_detection_enabled=1
         failure_prediction_enabled=1

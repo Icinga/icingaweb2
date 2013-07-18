@@ -28,6 +28,7 @@ namespace Test\Monitoring\Testlib
     use Test\Monitoring\Testlib\DataSource\TestFixture;
     use Test\Monitoring\Testlib\DataSource\DataSourceTestSetup;
     use Monitoring\Backend\Ido;
+    use Monitoring\Backend\Statusdat;
 
     class MonitoringControllerTest extends \PHPUnit_Framework_TestCase
     {
@@ -48,7 +49,6 @@ namespace Test\Monitoring\Testlib
 
             $this->requireBase();
             $this->requireViews();
-            $this->requireQueries();
         }
 
         private function requireBase()
@@ -61,33 +61,43 @@ namespace Test\Monitoring\Testlib
             require_once('Exception/ProgrammingError.php');
 
             require_once('library/Monitoring/Backend/AbstractBackend.php');
-            require_once('library/Monitoring/Backend/Ido.php');
+
         }
 
-        private function requireQueries()
+        private function requireIDOQueries()
+        {
+            require_once('library/Monitoring/Backend/Ido.php');
+            $this->requireFolder('library/Monitoring/Backend/Ido/Query');
+        }
+
+        private function requireFolder($folder)
         {
             $module = $this->moduleDir;
-            $views = scandir($module.'library/Monitoring/Backend/Ido/Query');
+            $views = scandir($module.$folder);
             foreach ($views as $view) {
                 if (!preg_match('/php$/', $view)) {
                     continue;
                 }
-                require_once($module.'library/Monitoring/Backend/Ido/Query/'.$view);
+                require_once($module.$folder."/".$view);
             }
+        }
+
+        private function requireStatusDatQueries()
+        {
+            require_once('library/Monitoring/Backend/Statusdat.php');
+            require_once($this->moduleDir.'/library/Monitoring/Backend/Statusdat/Query/Query.php');
+            $this->requireFolder('library/Monitoring/Backend/Statusdat');
+            $this->requireFolder('library/Monitoring/Backend/Statusdat/Criteria');
+            $this->requireFolder('library/Monitoring/Backend/Statusdat/Query');
+            $this->requireFolder('library/Monitoring/Backend/Statusdat/DataView');
+            $this->requireFolder('library/Monitoring/Backend/Statusdat/DataView');
         }
 
         private function requireViews()
         {
             $module = $this->moduleDir;
             require_once($module.'library/Monitoring/View/MonitoringView.php');
-
-            $views = scandir($module.'library/Monitoring/View');
-            foreach ($views as $view) {
-                if (!preg_match('/php$/', $view)) {
-                    continue;
-                }
-                require_once($module.'library/Monitoring/View/'.$view);
-            }
+            $this->requireFolder('library/Monitoring/View/');
         }
 
         public function requireController($controller, $backend)
@@ -109,6 +119,7 @@ namespace Test\Monitoring\Testlib
 
         public function getBackendFor($type) {
             if ($type == "mysql" || $type == "pgsql") {
+                $this->requireIDOQueries();
                 return new Ido(new \Zend_Config(array(
                     "dbtype"=> $type,
                     'host'  => "localhost",
@@ -117,10 +128,13 @@ namespace Test\Monitoring\Testlib
                     'db'    => "icinga_unittest"
                 )));
             } else if ($type == "statusdat") {
-                return new Reader(new \Zend_Config(array(
+                $this->requireStatusDatQueries();
+                return new Statusdat(new \Zend_Config(array(
                     'status_file' => '/tmp/teststatus.dat',
-                    'objects_file' => '/tmp/testobjects.cache'
-                )), null, true);
+                    'objects_file' => '/tmp/testobjects.cache',
+                    'no_cache' => true
+                )));
+
             }
         }
     }

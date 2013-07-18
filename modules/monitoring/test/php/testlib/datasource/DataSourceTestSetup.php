@@ -33,6 +33,8 @@ class DataSourceTestSetup implements SetupStrategy, InsertionStrategy
         if ($type == 'mysql') {
             $this->setupStrategy = new MySQLSetupStrategy();
             $this->insertionStrategy = new PDOInsertionStrategy();
+            $this->insertionStrategy->datetimeFormat = "Y-m-d H:i:s";
+
         } elseif ($type == 'pgsql') {
             $this->setupStrategy = new PgSQLSetupStrategy();
             $this->insertionStrategy = new PDOInsertionStrategy();

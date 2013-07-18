@@ -74,6 +74,9 @@ class StatusdatInsertionStrategy implements InsertionStrategy {
     {
         $hosts = $this->fixture->getHosts();
         foreach ($hosts as $host) {
+            if ($host['flags']->is_pending) {
+                continue; // Pending states are not written to status.dat yet
+            }
             $hostDefinition = str_replace(
                 array('\t',
                     '{{HOST_NAME}}', '{{HOST_ADDRESS}}', '{{ICON_IMAGE}}',
@@ -93,6 +96,9 @@ class StatusdatInsertionStrategy implements InsertionStrategy {
     {
         $services = $this->fixture->getServices();
         foreach ($services as $service) {
+            if ($service['flags']->is_pending) {
+                continue; // Pending states are not written to status.dat yet
+            }
             $cvs = '';
             foreach ($service['customvariables'] as $name=>$var) {
                 $cvs .= '_'.$name.'='.$var;
@@ -179,7 +185,7 @@ class StatusdatInsertionStrategy implements InsertionStrategy {
     private function insertComments()
     {
         $comments = $this->fixture->getComments();
-        $commentId = 0;
+        $commentId = 1;
         foreach($comments as $comment) {
             if (isset($comment["service"])) {
                 $service = $comment["service"];

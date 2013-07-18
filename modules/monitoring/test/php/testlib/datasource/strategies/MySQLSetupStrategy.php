@@ -34,7 +34,6 @@ class MySQLSetupStrategy implements SetupStrategy {
         if ($connection === null) {
             $connection = new \PDO("mysql:dbname=icinga_unittest", "icinga_unittest", "icinga_unittest");
         }
-        echo "teardown";
 
         $tables = $connection->query("SHOW TABLES")->fetchAll();
         foreach($tables as $table) {

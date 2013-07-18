@@ -8,33 +8,46 @@ class ObjectFlags {
     public $passive_checks = 1;
     public $acknowledged = 0;
     public $in_downtime = 0;
+    public $is_pending = 0;
     public $time = 0;
 
-    public function __construct($ageInSeconds = null) {
+    public function __construct($ageInSeconds = null)
+    {
         if(!is_int($ageInSeconds))
             $ageInSeconds = 0;
         $this->time = time()-$ageInSeconds;
     }
 
-    public static function FLAPPING() {
+    public static function FLAPPING()
+    {
         $flags = new ObjectFlags();
         $flags->flapping = 0;
         return $flags;
     }
 
-    public static function DISABLE_NOTIFICATIONS() {
+    public static function PENDING()
+    {
+        $flags = new ObjectFlags();
+        $flags->is_pending = 1;
+        return $flags;
+    }
+
+    public static function DISABLE_NOTIFICATIONS()
+    {
         $flags = new ObjectFlags();
         $flags->notifications = 0;
         return $flags;
     }
 
-    public static function PASSIVE_ONLY() {
+    public static function PASSIVE_ONLY()
+    {
         $flags = new ObjectFlags();
         $flags->active_checks = 0;
         return $flags;
     }
 
-    public static function ACTIVE_ONLY() {
+    public static function ACTIVE_ONLY()
+    {
         $flags = new ObjectFlags();
         $flags->passive_checks = 0;
         return $flags;
@@ -48,13 +61,15 @@ class ObjectFlags {
         return $flags;
     }
 
-    public static function ACKNOWLEDGED() {
+    public static function ACKNOWLEDGED()
+    {
         $flags = new ObjectFlags();
         $flags->acknowledged = 1;
         return $flags;
     }
 
-    public static function IN_DOWNTIME() {
+    public static function IN_DOWNTIME()
+    {
         $flags = new ObjectFlags();
         $flags->in_downtime = 1;
         return $flags;

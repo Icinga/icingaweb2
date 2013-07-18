@@ -47,9 +47,10 @@ class PDOInsertionStrategy {
         );
         $insertHostStatusQuery = $this->connection->prepare(
             'INSERT INTO icinga_hoststatus'.
-            '(host_object_id, current_state, last_check, notifications_enabled, '.
-            'active_checks_enabled, passive_checks_enabled, is_flapping, scheduled_downtime_depth)'.
-            ' VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+            '(host_object_id, current_state, last_check, last_state_change, notifications_enabled, '.
+            'active_checks_enabled, passive_checks_enabled, is_flapping, scheduled_downtime_depth,'.
+            'output, long_output, '.
+            'problem_has_been_acknowledged, has_been_checked) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
         );
         $insertCVQuery = $this->connection->prepare(
             'INSERT INTO icinga_customvariablestatus'.
@@ -60,12 +61,15 @@ class PDOInsertionStrategy {
 
             $insertObjectQuery->execute(array($this->objectId, $host["name"]));
             $insertHostQuery->execute(array(
-                $this->objectId, $host["name"], $host["name"]." alias", $host["address"], $this->objectId,
+                $this->objectId, $host["name"]." alias", $host["name"], $host["address"], $this->objectId,
                 $host["icon_image"], $host["notes_url"], $host["action_url"]
             ));
             $insertHostStatusQuery->execute(array(
-                $this->objectId, $host["state"], date($this->datetimeFormat, $flags->time), $flags->notifications,
-                $flags->active_checks, $flags->passive_checks, $flags->flapping, $flags->in_downtime));
+                $this->objectId, $host["state"], date($this->datetimeFormat, $flags->time),
+                date($this->datetimeFormat, $flags->time), $flags->notifications, $flags->active_checks,
+                $flags->passive_checks, $flags->flapping, $flags->in_downtime, "Plugin output for host ".$host["name"],
+                "Long plugin output for host ".$host["name"], $flags->acknowledged, $flags->is_pending == 0
+            ));
 
             foreach($host["contacts"] as $contact) {
                 $insertContactQuery->execute(array($this->objectId, $contact["object_id"]));
@@ -93,9 +97,10 @@ class PDOInsertionStrategy {
         );
         $insertServiceStatusQuery = $this->connection->prepare(
             'INSERT INTO icinga_servicestatus'.
-            '(service_object_id, current_state, last_check, notifications_enabled, '.
-            'active_checks_enabled, passive_checks_enabled, is_flapping, scheduled_downtime_depth)'.
-            ' VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+            '(service_object_id, current_state, last_check, last_state_change, notifications_enabled, '.
+            'active_checks_enabled, passive_checks_enabled, is_flapping, scheduled_downtime_depth,'.
+            'output, long_output, '.
+            'problem_has_been_acknowledged, has_been_checked)  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) '
         );
         $insertContactQuery = $this->connection->prepare(
             'INSERT INTO icinga_service_contacts (host_id, contact_object_id) VALUES (?, ?);'
@@ -114,8 +119,12 @@ class PDOInsertionStrategy {
                 $service["notes_url"], $service["action_url"], $service["icon_image"]
             ));
             $insertServiceStatusQuery->execute(array(
-                $this->objectId, $service["state"], date($this->datetimeFormat, $flags->time), $flags->notifications,
-                $flags->active_checks, $flags->passive_checks, $flags->flapping, $flags->in_downtime));
+                $this->objectId, $service["state"], date($this->datetimeFormat, $flags->time),
+                date($this->datetimeFormat, $flags->time), $flags->notifications, $flags->active_checks,
+                $flags->passive_checks, $flags->flapping, $flags->in_downtime, "Plugin output for service ".$service["name"],
+                "Long plugin output for service ".$service["name"], $flags->acknowledged,
+                $flags->is_pending == 0
+            ));
 
             foreach($service["contacts"] as $contact) {
                 $insertContactQuery->execute(array($this->objectId, $contact["object_id"]));
@@ -148,9 +157,10 @@ class PDOInsertionStrategy {
     }
 
     private function insertComments()
-    {
+    {   $comment_id=0;
         $insertCommentsQuery = $this->connection->prepare(
-            'INSERT INTO icinga_comments (object_id, comment_type, author_name, comment_data) VALUES (?, ?, ?, ?);'
+            'INSERT INTO icinga_comments (object_id, comment_type, internal_comment_id, author_name, comment_data)'.
+            ' VALUES (?, ?, ?, ?, ?);'
         );
         $comments = &$this->fixture->getComments();
         foreach ($comments as $comment) {
@@ -161,7 +171,9 @@ class PDOInsertionStrategy {
                 $type = 2;
                 $object_id = $comment["service"]["object_id"];
             }
-            $insertCommentsQuery->execute(array($object_id, $type, $comment["author"], $comment["text"]));
+            $insertCommentsQuery->execute(array(
+                $object_id, $type, $comment_id++, $comment["author"], $comment["text"]
+            ));
         }
     }
 
