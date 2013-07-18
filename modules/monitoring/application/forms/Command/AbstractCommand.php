@@ -120,7 +120,7 @@ abstract class AbstractCommand extends Form
     /**
      * Purge messages from stack
      */
-    public function purgeNotes()
+    public function clearNotes()
     {
         $this->notes = array();
     }
@@ -207,10 +207,10 @@ abstract class AbstractCommand extends Form
 
         $authorField = new Zend_Form_Element_Hidden(
             array(
-                'name'     => 'author',
-                'label'    => t('Author name'),
-                'value'    => $authorName,
-                'required' => true
+                'name'       => 'author',
+                'label'      => t('Author name'),
+                'value'      => $authorName,
+                'required'   => true
             )
         );
 

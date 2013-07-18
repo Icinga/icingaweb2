@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<phpunit>
+<phpunit processIsolation="true">
     <testsuites>
         <!--
             Unit testing
@@ -27,5 +27,5 @@
             <directory suffix=".php">/usr/share/php</directory>
             <directory suffix=".php">/usr/lib</directory>
         </blacklist>
-    </filter> 
+    </filter>
 </phpunit>

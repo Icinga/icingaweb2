@@ -50,7 +50,7 @@ class RescheduleNextCheck extends WithChildrenCommand
             array(
                 'name'  => 'checktime',
                 'label' => t('Check time'),
-                'value' => $now->format('Y-m-d H:i:s')
+                'value' => $now->format($this->getDateFormat())
             )
         );
 

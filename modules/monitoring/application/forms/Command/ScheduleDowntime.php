@@ -210,6 +210,7 @@ class ScheduleDowntime extends WithChildrenCommand
                 'childobjects',
                 array(
                     'label'        => t('Child objects'),
+                    'required'     => true,
                     'multiOptions' => array(
                         0 => t('Do nothing with child objects'),
                         1 => t('Schedule triggered downtime for all child objects'),

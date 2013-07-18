@@ -105,7 +105,7 @@ class SubmitPassiveCheckResult extends AbstractCommand
      * @return array
      * @throws \Icinga\Exception\ProgrammingError
      */
-    private function getOptions()
+    public function getOptions()
     {
         if (in_array($this->getType(), array(self::TYPE_HOST, self::TYPE_SERVICE)) === false) {
             throw new ProgrammingError('Type is not valid');
