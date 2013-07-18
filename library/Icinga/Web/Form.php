@@ -62,6 +62,12 @@ abstract class Form extends \Zend_Form
     private $tokenTimeout = 300;
 
     /**
+     * Flag to indicate that form is already build
+     * @var bool
+     */
+    private $created = false;
+
+    /**
      * @see Zend_Form::init
      */
     public function init()
@@ -71,16 +77,15 @@ abstract class Form extends \Zend_Form
         }
     }
 
+    /**
+     * Render the form to html
+     * @param  Zend_View_Interface $view
+     * @return string
+     */
     public function render(Zend_View_Interface $view = null)
     {
-        if ($this->_isRendered === false) {
-            $this->create();
-
-            // Empty action if not safe
-            if (!$this->getAction() && $this->getRequest()) {
-                $this->setAction($this->getRequest()->getRequestUri());
-            }
-        }
+        // Elements must be there to render the form
+        $this->buildForm();
         return parent::render($view);
     }
 
@@ -108,6 +113,23 @@ abstract class Form extends \Zend_Form
     }
 
     /**
+     * Triggers form creation
+     */
+    public function buildForm()
+    {
+        if ($this->created === false) {
+            $this->create();
+
+            // Empty action if not safe
+            if (!$this->getAction() && $this->getRequest()) {
+                $this->setAction($this->getRequest()->getRequestUri());
+            }
+
+            $this->created = true;
+        }
+    }
+
+    /**
      * Test if data from array or request is valid
      *
      * If $data is null, internal request is selected to test validity
@@ -118,6 +140,9 @@ abstract class Form extends \Zend_Form
     public function isValid($data)
     {
         $check = null;
+
+        // Elements must be there to validate
+        $this->buildForm();
 
         if ($data === null) {
             $check = $this->getRequest()->getParams();

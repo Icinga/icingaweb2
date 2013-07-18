@@ -45,6 +45,7 @@ class LoginForm extends Form
                 'required' => true
             )
         );
+
         $this->addElement(
             'password',
             'password',
@@ -53,6 +54,7 @@ class LoginForm extends Form
                 'required' => true
             )
         );
+
         $this->addElement(
             'submit',
             'submit',
@@ -61,6 +63,7 @@ class LoginForm extends Form
                 'class' => 'pull-right'
             )
         );
+
         $this->disableCsrfToken();
     }
 }

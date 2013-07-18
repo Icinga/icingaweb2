@@ -71,6 +71,7 @@ class AuthenticationController extends ActionController
 
             if ($this->getRequest()->isPost() && $this->view->form->isValid($this->getRequest())) {
 
+
                 $credentials->setUsername($this->view->form->getValue('username'));
                 $credentials->setPassword($this->view->form->getValue('password'));
 
