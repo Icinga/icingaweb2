@@ -2,29 +2,30 @@
 
 namespace Tests\Icinga\Web\Paginator\Adapter;
 
-use Icinga\Backend\Statusdat;
+use Monitoring\Backend\Statusdat;
 use Icinga\Protocol\Statusdat\Reader;
 use Icinga\Web\Paginator\Adapter\QueryAdapter;
+use Tests\Icinga\Protocol\Statusdat\StatusdatTestLoader;
 
 require_once 'Zend/Paginator/Adapter/Interface.php';
-require_once 'Zend/Config.php';
-require_once 'Zend/Cache.php';
 
 require_once '../../library/Icinga/Web/Paginator/Adapter/QueryAdapter.php';
-require_once '../../library/Icinga/Backend/Criteria/Order.php';
-require_once '../../library/Icinga/Backend/AbstractBackend.php';
-require_once '../../library/Icinga/Backend/Query.php';
-require_once '../../library/Icinga/Backend/Statusdat/Query.php';
-require_once '../../library/Icinga/Backend/Statusdat.php';
-require_once '../../library/Icinga/Backend/MonitoringObjectList.php';
-require_once '../../library/Icinga/Backend/Statusdat/HostlistQuery.php';
-require_once '../../library/Icinga/Backend/DataView/AbstractAccessorStrategy.php';
-require_once '../../library/Icinga/Backend/DataView/ObjectRemappingView.php';
-require_once '../../library/Icinga/Backend/Statusdat/DataView/StatusdatHostView.php';
+
+require_once 'library/Icinga/Protocol/Statusdat/StatusdatTestLoader.php';
+StatusdatTestLoader::requireLibrary();
+
+require_once '../../modules/monitoring/library/Monitoring/Backend/Statusdat/Criteria/Order.php';
+require_once '../../modules/monitoring/library/Monitoring/Backend/AbstractBackend.php';
+require_once '../../modules/monitoring/library/Monitoring/Backend/Statusdat/Query/Query.php';
+require_once '../../modules/monitoring/library/Monitoring/Backend/Statusdat.php';
+require_once '../../modules/monitoring/library/Monitoring/Backend/Statusdat/Query/StatusQuery.php';
+require_once '../../modules/monitoring/library/Monitoring/Backend/Statusdat/DataView/StatusdatHostView.php';
+require_once '../../modules/monitoring/library/Monitoring/View/MonitoringView.php';
+require_once '../../modules/monitoring/library/Monitoring/View/StatusView.php';
+
 require_once '../../library/Icinga/Protocol/AbstractQuery.php';
-require_once '../../library/Icinga/Protocol/Statusdat/IReader.php';
-require_once '../../library/Icinga/Protocol/Statusdat/Reader.php';
-require_once '../../library/Icinga/Protocol/Statusdat/Query.php';
+
+
 
 class QueryAdapterTest extends \PHPUnit_Framework_TestCase
 {
@@ -54,7 +55,7 @@ class QueryAdapterTest extends \PHPUnit_Framework_TestCase
     public function testLimit1()
     {
         $backend = new Statusdat($this->config);
-        $query = $backend->select()->from('hostlist');
+        $query = $backend->select()->from('status');
 
         $adapter = new QueryAdapter($query);
 
@@ -71,7 +72,7 @@ class QueryAdapterTest extends \PHPUnit_Framework_TestCase
     public function testLimit2()
     {
         $backend = new Statusdat($this->config);
-        $query = $backend->select()->from('hostlist');
+        $query = $backend->select()->from('status');
 
         $adapter = new QueryAdapter($query);
         $this->assertEquals(30, $adapter->count());

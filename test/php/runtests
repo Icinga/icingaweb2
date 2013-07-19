@@ -9,7 +9,7 @@ from optparse import OptionParser, BadOptionError, AmbiguousOptionError
 
 
 APPLICATION = 'phpunit'
-DEFAULT_ARGS = ['--strict', '--static-backup']
+DEFAULT_ARGS = ['--static-backup']
 
 VAGRANT_SCRIPT = '/vagrant/test/php/runtests'
 REPORT_DIRECTORY = '../../build/log'
