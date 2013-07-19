@@ -170,14 +170,14 @@ class PDOInsertionStrategy
             $insertObjectQuery->execute(array($this->objectId, $service["host"]["name"], $service["name"]));
             $insertServiceQuery->execute(array(
                 $this->objectId, $service['host']['object_id'], $this->objectId, $service['name'],
-                $service["notes_url"], $service["action_url"], $service["icon_image"]
+                $service["icon_image"], $service["notes_url"], $service["action_url"]
             ));
             $insertServiceStatusQuery->execute(array(
                 $this->objectId, $service["state"], date($this->datetimeFormat, $flags->time),
                 date($this->datetimeFormat, $flags->time), $flags->notifications, $flags->active_checks,
                 $flags->passive_checks, $flags->flapping, $flags->in_downtime, "Plugin output for service ".$service["name"],
                 "Long plugin output for service ".$service["name"], $flags->acknowledged,
-                $flags->is_pending == 0
+                $flags->is_pending == 0 ? '1' : '0'
             ));
 
             foreach($service["contacts"] as $contact) {

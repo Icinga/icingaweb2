@@ -113,6 +113,8 @@ class StatusQuery extends AbstractQuery
             'service_description'    => 'so.name2 COLLATE latin1_general_ci',
             'service_display_name'   => 's.display_name',
             'service_icon_image'     => 's.icon_image',
+            'service_action_url'     => 's.action_url',
+            'service_notes_url'      => 's.notes_url'
 
         ),
         'servicestatus' => array(
@@ -123,9 +125,10 @@ class StatusQuery extends AbstractQuery
             'service_output' => 'ss.output',
             'service_long_output' => 'ss.long_output',
             'service_perfdata' => 'ss.perfdata',
+            'service_is_flapping'           => 'ss.is_flapping',
             'service_acknowledged' => 'ss.problem_has_been_acknowledged',
             'service_in_downtime' => 'CASE WHEN (ss.scheduled_downtime_depth = 0) THEN 0 ELSE 1 END',
-            'service_handled' => 'CASE WHEN (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth + COALESCE(hs.current_state, 0)) > 0 THEN 1 ELSE 0 END',
+            'service_handled' => 'CASE WHEN (COALESCE(ss.current_state, 0) * ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth + COALESCE(hs.current_state, 0)) > 0 THEN 1 ELSE 0 END',
             'service_does_active_checks' => 'ss.active_checks_enabled',
             'service_accepts_passive_checks' => 'ss.passive_checks_enabled',
             'service_last_state_change'      => 'UNIX_TIMESTAMP(ss.last_state_change)',
@@ -152,9 +155,9 @@ class StatusQuery extends AbstractQuery
             'service_last_comment' => 'slc.comment_id'
         ),
         'status' => array(
-            'problems' => 'CASE WHEN ss.current_state = 0 THEN 0 ELSE 1 END',
-            'handled' => 'CASE WHEN ss.problem_has_been_acknowledged = 1 OR ss.scheduled_downtime_depth > 0 THEN 1 ELSE 0 END',
-            'severity' => 'CASE WHEN ss.current_state = 0
+            'service_problems' => 'CASE WHEN ss.current_state = 0 THEN 0 ELSE 1 END',
+            'service_handled' => 'CASE WHEN ss.problem_has_been_acknowledged = 1 OR ss.scheduled_downtime_depth > 0 THEN 1 ELSE 0 END',
+            'service_severity' => 'CASE WHEN ss.current_state = 0
             THEN
                 CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL
                      THEN 16
@@ -342,6 +345,18 @@ class StatusQuery extends AbstractQuery
                 'FROM icinga_comments c GROUP BY c.object_id)')
             ),
             'hlc.object_id = hs.host_object_id',
+            array()
+        );
+    }
+
+    protected function joinLastservicecomment()
+    {
+        $this->baseQuery->joinleft(
+            array ('slc' => new \Zend_Db_Expr(
+                '(SELECT MAX(c.comment_id) as comment_id, c.object_id '.
+                'FROM icinga_comments c GROUP BY c.object_id)')
+            ),
+            'slc.object_id = ss.service_object_id',
             array()
         );
     }

@@ -49,9 +49,9 @@ class Query extends AbstractQuery
         "servicegroups" => array("servicegroup"),
         "comments" => array("servicecomment", "hostcomment"),
         "hostcomments" => array("hostcomment"),
-        "servicecomments" => array("servicecomment"),
-        "status" => array("host", "service")
+        "servicecomments" => array("servicecomment")
     );
+
 
     /**
      * @var IReader|null
@@ -62,11 +62,6 @@ class Query extends AbstractQuery
      * @var string
      */
     private $source = "";
-
-    /**
-     * @var array
-     */
-    protected $columns = array();
 
     /**
      * @var null
@@ -165,13 +160,7 @@ class Query extends AbstractQuery
         return $this->offset;
     }
 
-    /**
-     * @param IReader $reader
-     */
-    public function __construct(IReader $reader)
-    {
-        $this->ds = $reader;
-    }
+
 
     /**
      * @param $key
@@ -248,7 +237,6 @@ class Query extends AbstractQuery
         } else {
             throw new \Exception("Unknown from target for status.dat :" . $table);
         }
-        $this->columns = $columns;
         return $this;
     }
 
@@ -269,7 +257,8 @@ class Query extends AbstractQuery
 
         $state = $this->ds->getObjects();
         $result = array();
-        foreach (self::$VALID_TARGETS[$this->source] as $target) {
+        $source = self::$VALID_TARGETS[$this->source];
+        foreach ($source as $target) {
             $indexes = & array_keys($state[$target]);
             if ($baseGroup) {
                 $indexes = & $baseGroup->filter($state[$target]);
@@ -307,7 +296,6 @@ class Query extends AbstractQuery
         $o2 = & $this->ds->getObjectByName($this->currentType, $b);
         $result = 0;
         foreach ($this->order_columns as $col) {
-
             $result += $col[1] * strnatcasecmp($o1->{$col[0]}, $o2->{$col[0]});
         }
         if ($result > 0) {
@@ -410,4 +398,5 @@ class Query extends AbstractQuery
         }
         return $result;
     }
+
 }

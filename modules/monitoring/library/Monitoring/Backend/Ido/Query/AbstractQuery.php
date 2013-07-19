@@ -153,11 +153,10 @@ abstract class AbstractQuery extends Query
         } elseif ($this->hasAliasName($col)) {
             $col = $this->aliasToColumnName($col);
         } else {
-            die('SHIT');
+            throw new \InvalidArgumentException('Can\'t order by column '.$col);
         }
         $this->order_columns[] = array($col, $dir);
         return $this;
-        return parent::order($col, $dir);
     }
     
     public function setRealColumns()

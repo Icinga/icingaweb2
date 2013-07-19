@@ -54,6 +54,7 @@ class AbstractBackend implements DatasourceInterface
                 )
             );
         }
+
         $query = new $classname($this, $fields);
         return $query;
     }

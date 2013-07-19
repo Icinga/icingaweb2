@@ -96,7 +96,6 @@ class ListControllerHostMySQLTest  extends MonitoringControllerTest
         $this->assertEquals("note1.html", $hostToTest->host_notes_url, 'Testing for notes url (backend '.$backend.')');
         $this->assertEquals("action.html", $hostToTest->host_action_url, 'Testing for action url (backend '.$backend.')');
         $this->assertEquals(2, $hostToTest->host_unhandled_service_count, 'Testing correct open problems count (backend '.$backend.')');
-
     }
 
 }

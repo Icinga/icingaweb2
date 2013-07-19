@@ -29,6 +29,7 @@
 namespace Icinga\Protocol\Statusdat;
 
 
+use Icinga\Data\DatasourceInterface;
 use Icinga\Exception as Exception;
 use Icinga\Benchmark as Benchmark;
 use Icinga\Protocol\Statusdat\View\MonitoringObjectList;
@@ -36,7 +37,7 @@ use Icinga\Protocol\Statusdat\View\MonitoringObjectList;
  * Class Reader
  * @package Icinga\Protocol\Statusdat
  */
-class Reader implements IReader
+class Reader implements IReader, DatasourceInterface
 {
     /**
      *

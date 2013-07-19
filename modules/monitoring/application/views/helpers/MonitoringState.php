@@ -27,6 +27,14 @@ class Zend_View_Helper_MonitoringState extends Zend_View_Helper_Abstract
             if ($object->host_last_state_change > (time() - 600)) {
                 $state_classes[] = 'new';
             }
+        } else {
+            $state_classes[] = $this->monitoringState($object, "service");
+            if ($object->service_acknowledged || $object->service_in_downtime) {
+                $state_classes[] = 'handled';
+            }
+            if ($object->service_last_state_change > (time() - 600)) {
+                $state_classes[] = 'new';
+            }
         }
 
         return $state_classes;

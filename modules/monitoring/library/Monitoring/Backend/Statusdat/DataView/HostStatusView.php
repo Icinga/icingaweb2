@@ -35,7 +35,7 @@ use Icinga\Protocol\Statusdat\IReader;
  * Class StatusdatHostView
  * @package Icinga\Backend\Statusdat\DataView
  */
-class StatusdatHostView extends ObjectRemappingView
+class HostStatusView extends ObjectRemappingView
 {
     /**
      * @var mixed
@@ -49,7 +49,8 @@ class StatusdatHostView extends ObjectRemappingView
         "host"                          => "getHost",
         "host_unhandled_service_count"  => "getNrOfUnhandledServices",
         "host_last_comment"             => "getLastComment",
-        'host_handled'                  => "checkIfHandled"
+        'host_handled'                  => "checkIfHandled",
+
     );
 
     public function checkIfHandled(&$host)
@@ -83,20 +84,21 @@ class StatusdatHostView extends ObjectRemappingView
     /**
      * @var array
      */
-    protected $mappedParameters = array(
+    public static $mappedParameters = array(
         "host_address"              => "address",
         "host_name"                 => "host_name",
+        "host"                      => "host_name",
         "host_state"                => "status.current_state",
         "host_output"               => "status.plugin_output",
         "host_long_output"          => "status.long_plugin_output",
-        "host_perfdata"             => "status.pluign",
+        "host_perfdata"             => "status.performance_data",
         "host_last_state_change"    => "status.last_state_change",
         "host_check_command"        => "check_command",
         "host_last_check"           => "TO_DATE(status.last_check)",
         "host_next_check"           => "status.next_check",
         "host_check_latency"        => "status.check_latency",
         "host_check_execution_time" => "status.check_execution_time",
-        "active_checks_enabled"     => "status.active_checks_enabled",
+        "host_active_checks_enabled"     => "status.active_checks_enabled",
         "host_in_downtime"          => "status.scheduled_downtime_depth",
         "host_is_flapping"          => "status.is_flapping",
         "host_notifications_enabled"=> "status.notifications_enabled",
@@ -104,7 +106,7 @@ class StatusdatHostView extends ObjectRemappingView
         "host_icon_image"           => "icon_image",
         "host_action_url"           => "action_url",
         "host_notes_url"            => "notes_url",
-        "host_acknowledged"         => "status.problem_has_been_acknowledged",
+        "host_acknowledged"         => "status.problem_has_been_acknowledged"
         // "state" => "current_state"
     );
 
@@ -114,7 +116,7 @@ class StatusdatHostView extends ObjectRemappingView
      */
     public function getHost(&$item)
     {
-        if (!isset($this->state["host"][$item->host_name])) {
+        if (!isset($this->state["service"][$item->host_name])) {
             return null;
         }
         if (!isset($this->state["host"][$item->host_name])) {

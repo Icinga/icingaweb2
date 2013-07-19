@@ -135,6 +135,7 @@ class MonitoringView extends AbstractQuery
      */
     protected function applyRequestSorting($request)
     {
+
         return $this->order(
             // TODO: Use first sortDefaults entry if available, fall back to
             //       column if not
@@ -238,12 +239,12 @@ class MonitoringView extends AbstractQuery
 			    -4
 			) . 'Query';
 			$class = '\\' . get_class($this->ds) . '\\Query\\' . $class;
-
             $query = new $class($this->ds, $this->columns);
             foreach ($this->filters as $f) {
                 $query->where($f[0], $f[1]);
             }
             foreach ($this->order_columns as $col) {
+
                 if (isset($this->sortDefaults[$col[0]]['columns'])) {
                     foreach ($this->sortDefaults[$col[0]]['columns'] as $c) {
                         $query->order($c, $col[1]);
@@ -252,11 +253,13 @@ class MonitoringView extends AbstractQuery
                     $query->order($col[0], $col[1]);
                 }
             }
+
             $this->query = $query;
         }
         if ($this->hasLimit()) {
             $this->query->limit($this->getLimit(), $this->getOffset());
         }
+
         return $this->query;
     }
 

@@ -46,16 +46,16 @@ namespace Icinga\Protocol\Statusdat\View;
  */
 
 
-class ObjectRemappingView implements AbstractAccessorStrategy
+class ObjectRemappingView implements AccessorStrategy
 {
 
     /**
      * When implementing your own Mapper, this contains the static mapping rules.
-     * @see Icinga\Backend\Statusdat\DataView\StatusdatServiceView for an example
+     * @see Monitoring\Backend\Statusdat\DataView\StatusdatServiceView for an example
      *
      * @var array
      */
-    protected $mappedParameters = array();
+    public static $mappedParameters = array();
 
     private $functionMap = array(
         "TO_DATE" => "toDateFormat"
@@ -73,7 +73,7 @@ class ObjectRemappingView implements AbstractAccessorStrategy
 
     /**
      *
-     * @see Icinga\Backend\DataView\AbstractAccessorStrategy
+     * @see Icinga\Backend\DataView\AccessorStrategy
      *
      * @param The $item
      * @param The $field
@@ -86,7 +86,7 @@ class ObjectRemappingView implements AbstractAccessorStrategy
         if (isset($item->$field)) {
             return $item->$field;
         }
-        if (isset($this->mappedParameters[$field])) {
+        if (isset(static::$mappedParameters[$field])) {
             return $this->getMappedParameter($item, $field);
         }
 
@@ -118,7 +118,7 @@ class ObjectRemappingView implements AbstractAccessorStrategy
     private function getMappedParameter(&$item, $field)
     {
         $matches = array();
-        $fieldDef = $this->mappedParameters[$field];
+        $fieldDef = static::$mappedParameters[$field];
         $function = false;
         if (preg_match_all('/(?P<FUNCTION>\w+)\((?P<PARAMETER>.*)\)/', $fieldDef, $matches)) {
             $function = $matches["FUNCTION"][0];
@@ -141,22 +141,22 @@ class ObjectRemappingView implements AbstractAccessorStrategy
 
     /**
      *
-     * @see Icinga\Backend\DataView\AbstractAccessorStrategy
+     * @see Icinga\Backend\DataView\AccessorStrategy
      *
      * @param The $field
      * @return The|string
      */
     public function getNormalizedFieldName($field)
     {
-        if (isset($this->mappedParameters[$field])) {
-            return $this->mappedParameters[$field];
+        if (isset(static::$mappedParameters[$field])) {
+            return static::$mappedParameters[$field];
         }
         return $field;
     }
 
     /**
      *
-     * @see Icinga\Backend\DataView\AbstractAccessorStrategy
+     * @see Icinga\Backend\DataView\AccessorStrategy
      *
      * @param The $item
      * @param The $field
@@ -165,7 +165,7 @@ class ObjectRemappingView implements AbstractAccessorStrategy
     public function exists(&$item, $field)
     {
         return (isset($item->$field)
-            || isset($this->mappedParameters[$field])
+            || isset(static::$mappedParameters[$field])
             || isset($this->handlerParameters[$field])
         );
     }

@@ -15,22 +15,24 @@ use Icinga\Exception;
 
 class StatusQuery extends Query
 {
-    /**
-     * @var \Icinga\Protocol\Statusdat\Query
-     */
-    protected $query;
 
-    /**
-     * @var string
-     */
-    protected $view = 'Monitoring\Backend\Statusdat\DataView\StatusdatHostView';
-
+    private function getTarget()
+    {
+        foreach($this->getColumns() as $column) {
+            if(preg_match("/^service/",$column))
+                return "service";
+        }
+        return "host";
+    }
 
     public function init()
     {
-
+        $target = $this->getTarget();
         $this->reader = $this->ds->getReader();
-        $this->query = $this->reader->select()->from("hosts", array());
+        $this->setResultViewClass(ucfirst($target)."StatusView");
+        $this->setBaseQuery($this->reader->select()->from($target."s", array()));
+
+
     }
 
 }

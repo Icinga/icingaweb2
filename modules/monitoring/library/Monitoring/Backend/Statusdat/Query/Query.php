@@ -33,6 +33,7 @@ use Icinga\Protocol\Statusdat;
 use Icinga\Exception;
 use Icinga\Data\AbstractQuery;
 use Icinga\Protocol\Statusdat\View\MonitoringObjectList as MList;
+use Icinga\Protocol\Statusdat\Query as StatusdatQuery;
 /**
  * Class Query
  * @package Icinga\Backend\Statusdat
@@ -42,24 +43,24 @@ abstract class Query extends AbstractQuery
     /**
      * @var null
      */
-    protected $cursor = null;
+    private $cursor = null;
 
     /**
      * @var string
      */
-    protected $view = 'Monitoring\Statusdat\DataView\StatusdatServiceView';
+    private $viewClass = '\Monitoring\Backend\Statusdat\DataView\StatusdatServiceView';
+    private $baseQuery = null;
 
-    /**
-     * @var array Mapping of order to field names
-     * @todo Is not complete right now
-     */
-    protected $orderColumns = array(
-        Order::SERVICE_STATE => "status.current_state",
-        Order::STATE_CHANGE => "status.last_state_change",
-        Order::HOST_STATE => "status.current_state",
-        Order::HOST_NAME => "host_name",
-        Order::SERVICE_NAME => "service_description"
-    );
+    public function setBaseQuery(StatusdatQuery $query)
+    {
+        $this->baseQuery = $query;
+    }
+
+    public function setResultViewClass($viewClass)
+    {
+        $this->viewClass = '\Monitoring\Backend\Statusdat\DataView\\'.$viewClass;
+    }
+
 
     /**
      * Calls the apply%Filtername%Filter() method for the given filter, or simply calls
@@ -113,7 +114,7 @@ abstract class Query extends AbstractQuery
         $text = "%$value%";
         $val = array($text, $text, $text);
 
-        $this->query->where("(host_name LIKE ? OR service_description LIKE ? OR status.plugin_output LIKE ?)", $val);
+        $this->baseQuery->where("(host_name LIKE ? OR service_description LIKE ? OR status.plugin_output LIKE ?)", $val);
 
     }
 
@@ -126,7 +127,7 @@ abstract class Query extends AbstractQuery
     public function applyHostgroupsFilter($type, $value)
     {
         $filter = array($value);
-        $this->query->where("host.group IN ?", $filter);
+        $this->baseQuery->where("host.group IN ?", $filter);
     }
 
     /**
@@ -138,7 +139,7 @@ abstract class Query extends AbstractQuery
     public function applyServicegroupsFilter($type, $value)
     {
         $filter = array($value);
-        $this->query->where("group IN ?", $filter);
+        $this->baseQuery->where("group IN ?", $filter);
     }
 
     /**
@@ -151,7 +152,7 @@ abstract class Query extends AbstractQuery
     public function applyHandledFilter($type, $value)
     {
         $val = array($value, $value);
-        $this->query->where("(status.problem_has_been_acknowledged = ? )", $val);
+        $this->baseQuery->where("(status.problem_has_been_acknowledged = ? )", $val);
     }
 
     /**
@@ -163,7 +164,7 @@ abstract class Query extends AbstractQuery
         if (!is_array($value)) {
             $value = array($value);
         }
-        $this->query->where("host_name LIKE ?", $value);
+        $this->baseQuery->where("host_name LIKE ?", $value);
     }
 
     /**
@@ -172,7 +173,7 @@ abstract class Query extends AbstractQuery
      */
     public function applyStateFilter($type, $value)
     {
-        $this->query->where("status.current_state = $value");
+        $this->baseQuery->where("status.current_state = $value");
     }
 
     /**
@@ -181,7 +182,7 @@ abstract class Query extends AbstractQuery
      */
     public function applyHoststateFilter($type, $value)
     {
-        $this->query->where("host.status.current_state = $value");
+        $this->baseQuery->where("host.status.current_state = $value");
     }
 
     /**
@@ -193,7 +194,7 @@ abstract class Query extends AbstractQuery
         if (!is_array($value)) {
             $value = array($value);
         }
-        $this->query->where("service_description LIKE ?", $value);
+        $this->baseQuery->where("service_description LIKE ?", $value);
     }
 
     /**
@@ -204,7 +205,7 @@ abstract class Query extends AbstractQuery
      */
     public function limit($count = null, $offset = null)
     {
-        $this->query->limit($count, $offset);
+        $this->baseQuery->limit($count, $offset);
         return $this;
     }
 
@@ -219,7 +220,8 @@ abstract class Query extends AbstractQuery
     {
 
         if ($column) {
-            $this->query->order($this->orderColumns[$column], strtolower($dir));
+            $class = $this->viewClass;
+            $this->baseQuery->order($class::$mappedParameters[$column], strtolower($dir));
         }
         return $this;
     }
@@ -237,7 +239,7 @@ abstract class Query extends AbstractQuery
         if (!is_array($value)) {
             $value = array($value);
         }
-        $this->query->where($column, $value);
+        $this->baseQuery->where($column, $value);
         return $this;
     }
 
@@ -246,9 +248,9 @@ abstract class Query extends AbstractQuery
      */
     public function fetchAll()
     {
-        $view = $this->view;
+        $view = $this->viewClass;
         if (!$this->cursor) {
-            $this->cursor = new MList($this->query->getResult(), new $view($this->reader));
+            $this->cursor = new MList($this->baseQuery->getResult(), new $view($this->reader));
         }
         return $this->cursor;
     }
@@ -283,6 +285,6 @@ abstract class Query extends AbstractQuery
     public function count()
     {
 
-        return count($this->query->getResult());
+        return count($this->baseQuery->getResult());
     }
 }

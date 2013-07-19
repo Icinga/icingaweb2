@@ -2,7 +2,7 @@
 
 /**
  * Wrapper around an array of monitoring objects that can be enhanced with an optional
- * object that extends AbstractAccessorStrategy. This will act as a dataview and provide
+ * object that extends AccessorStrategy. This will act as a dataview and provide
  * normalized access to the underlying data (mapping properties, retrieving additional data)
  *
  * If not Accessor is set, this class just behaves like a normal Iterator and returns
@@ -19,7 +19,7 @@ class MonitoringObjectList implements \Iterator, \Countable, \ArrayAccess
     private $position = 0;
     private $dataView = null;
 
-    function __construct(array &$dataset, AbstractAccessorStrategy $dataView = null)
+    function __construct(array &$dataset, AccessorStrategy $dataView = null)
     {
         $this->dataSet = $dataset;
         $this->position = 0;

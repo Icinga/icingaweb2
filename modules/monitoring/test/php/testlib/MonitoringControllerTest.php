@@ -16,6 +16,8 @@ namespace Icinga\Web
          */
         public $view;
 
+        public $headers = array();
+
         /**
          * Parameters provided on call
          * @var array
@@ -28,12 +30,27 @@ namespace Icinga\Web
          * @param string $param     The parameter name to retrieve
          * @return mixed|bool       The parameter $param or false if it doesn't exist
          */
-        public function _getParam($param)
+        public function _getParam($param, $default = null)
         {
             if (!isset($this->params[$param])) {
-                return false;
+                return $default;
             }
             return $this->params[$param];
+        }
+
+        public function getParam($param, $default = null)
+        {
+            return $this->_getParam($param, $default);
+        }
+
+        public function preserve()
+        {
+            return $this;
+        }
+
+        public function getParams()
+        {
+            return $this->params;
         }
 
         /**
@@ -44,6 +61,17 @@ namespace Icinga\Web
         public function setBackend($backend)
         {
             $this->backend = $backend;
+        }
+
+        public function __get($param) {
+            return $this;
+        }
+
+        public function getHeader($header) {
+            if (isset($this->headers[$header])) {
+                return $this->headers[$header];
+            }
+            return null;
         }
     }
 }

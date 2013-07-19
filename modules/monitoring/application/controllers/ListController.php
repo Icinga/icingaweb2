@@ -83,22 +83,36 @@ class Monitoring_ListController extends ModuleActionController
 
         $this->view->services = $this->query('status', array(
             'host_name',
-            'host_problems',
+            'host_state',
+            'host_state_type',
+            'host_last_state_change',
+            'host_address',
+            'host_handled',
             'service_description',
+            'service_display_name',
             'service_state' => $state_column,
             'service_in_downtime',
             'service_acknowledged',
             'service_handled',
             'service_output',
-            'service_last_state_change' => $state_change_column
+            'service_last_state_change' => $state_change_column,
+            'service_icon_image',
+            'service_long_output',
+            'service_is_flapping',
+            'service_state_type',
+            'service_handled',
+            'service_severity',
+            'service_last_check',
+            'service_notifications_enabled',
+            'service_action_url',
+            'service_notes_url',
+            'service_last_comment'
         ));
-        $this->preserve('sort')
-             ->preserve('backend')
-             ->preserve('extracolumns');
-        $this->view->sort = $this->_getParam('sort');
-        if ($this->view->compact) {
-            $this->_helper->viewRenderer('services-compact');
+        if ($this->_getParam('sort')) {
+            $this->view->sort = $this->_getParam('sort');
         }
+
+
     }
 
     public function hostgroupsAction()

@@ -49,7 +49,7 @@ class StatusdatServiceView extends ObjectRemappingView
     /**
      * @var array
      */
-    protected $mappedParameters = array(
+    public static $mappedParameters = array(
         "host_address" => "parenthost.address",
         "host_name" => "host_name",
         "active_checks_enabled" => "status.active_checks_enabled",
