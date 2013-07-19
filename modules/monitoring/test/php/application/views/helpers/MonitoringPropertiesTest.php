@@ -66,6 +66,7 @@ class MonitoringPropertiesTest extends \PHPUnit_Framework_TestCase
         $host = new HostStruct4Properties();
         $host->host_current_check_attempt = '5';
 
+
         $propertyHelper = new \Zend_View_Helper_MonitoringProperties();
         $items = $propertyHelper->monitoringProperties($host);
 
@@ -76,6 +77,7 @@ class MonitoringPropertiesTest extends \PHPUnit_Framework_TestCase
 
     public function testOutput2()
     {
+        date_default_timezone_set("UTC");
         $host = new HostStruct4Properties();
         $host->host_current_check_attempt = '5';
         $host->host_active_checks_enabled = '1';
@@ -93,7 +95,7 @@ class MonitoringPropertiesTest extends \PHPUnit_Framework_TestCase
             'Check type' => "ACTIVE",
             'Check latency / duration' => "0.1204 / 0.0000 seconds",
             'Next scheduled active check' => "2013-07-04 11:29:43",
-            'Last state change' => "2013-07-04 13:24:43",
+            'Last state change' => "2013-07-04 11:24:43",
             'Last notification' => "N/A (notification 0)",
             'Is this host flapping?' => "YES (12.37% state change)",
             'In scheduled downtime?' => "YES",

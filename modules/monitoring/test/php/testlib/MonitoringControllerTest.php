@@ -81,7 +81,7 @@ namespace Test\Monitoring\Testlib
      *      }
      * }
      */
-    class MonitoringControllerTest extends \PHPUnit_Framework_TestCase
+    abstract class MonitoringControllerTest extends \PHPUnit_Framework_TestCase
     {
         /**
          * The module directory for requiring modules (is relative to the source file)
@@ -159,7 +159,7 @@ namespace Test\Monitoring\Testlib
                 if (!preg_match('/php$/', $view)) {
                     continue;
                 }
-                require_once($module.$folder."/".$view);
+                require_once(realpath($module.$folder."/".$view));
             }
         }
 
@@ -169,8 +169,8 @@ namespace Test\Monitoring\Testlib
          */
         private function requireStatusDatQueries()
         {
-            require_once('library/Monitoring/Backend/Statusdat.php');
-            require_once($this->moduleDir.'/library/Monitoring/Backend/Statusdat/Query/Query.php');
+            require_once(realpath($this->moduleDir.'/library/Monitoring/Backend/Statusdat.php'));
+            require_once(realpath($this->moduleDir.'/library/Monitoring/Backend/Statusdat/Query/Query.php'));
             $this->requireFolder('library/Monitoring/Backend/Statusdat');
             $this->requireFolder('library/Monitoring/Backend/Statusdat/Criteria');
             $this->requireFolder('library/Monitoring/Backend/Statusdat/Query');

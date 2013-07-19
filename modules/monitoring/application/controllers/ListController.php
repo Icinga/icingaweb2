@@ -31,10 +31,12 @@ class Monitoring_ListController extends ModuleActionController
                 'host_address',
                 'host_acknowledged',
                 'host_output',
+                'host_long_output',
                 'host_in_downtime',
                 'host_is_flapping',
                 'host_state_type',
                 'host_handled',
+                'host_last_check',
                 'host_last_state_change',
                 'host_notifications_enabled',
                 'host_unhandled_service_count',
@@ -65,6 +67,7 @@ class Monitoring_ListController extends ModuleActionController
         if ($this->_getParam('view') === 'compact') {
             $this->_helper->viewRenderer('hosts_compact');
         }
+
     }
 
     public function servicesAction()

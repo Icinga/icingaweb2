@@ -170,7 +170,7 @@ abstract class GroupsummaryQuery extends Query
      */
     public function init()
     {
-        $this->reader = $this->backend->getReader();
+        $this->reader = $this->ds->getReader();
         $this->query = $this->reader->select()->from($this->base, array())->groupByFunction(
             "groupByProblemType",
             $this

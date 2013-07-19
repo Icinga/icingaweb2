@@ -29,12 +29,12 @@
 namespace Icinga\Protocol\Statusdat;
 
 use Icinga\Protocol;
-
+use Icinga\Data\AbstractQuery;
 /**
  * Class Query
  * @package Icinga\Protocol\Statusdat
  */
-class Query extends Protocol\AbstractQuery
+class Query extends AbstractQuery
 {
     /**
      * @var array
@@ -49,7 +49,8 @@ class Query extends Protocol\AbstractQuery
         "servicegroups" => array("servicegroup"),
         "comments" => array("servicecomment", "hostcomment"),
         "hostcomments" => array("hostcomment"),
-        "servicecomments" => array("servicecomment")
+        "servicecomments" => array("servicecomment"),
+        "status" => array("host", "service")
     );
 
     /**
@@ -65,7 +66,7 @@ class Query extends Protocol\AbstractQuery
     /**
      * @var array
      */
-    private $columns = array();
+    protected $columns = array();
 
     /**
      * @var null
@@ -80,7 +81,7 @@ class Query extends Protocol\AbstractQuery
     /**
      * @var array
      */
-    private $order_columns = array();
+    protected $order_columns = array();
 
     /**
      * @var array
@@ -169,7 +170,7 @@ class Query extends Protocol\AbstractQuery
      */
     public function __construct(IReader $reader)
     {
-        $this->reader = $reader;
+        $this->ds = $reader;
     }
 
     /**
@@ -266,7 +267,7 @@ class Query extends Protocol\AbstractQuery
             }
         }
 
-        $state = $this->reader->getObjects();
+        $state = $this->ds->getObjects();
         $result = array();
         foreach (self::$VALID_TARGETS[$this->source] as $target) {
             $indexes = & array_keys($state[$target]);
@@ -302,8 +303,8 @@ class Query extends Protocol\AbstractQuery
      */
     private function orderResult($a, $b)
     {
-        $o1 = & $this->reader->getObjectByName($this->currentType, $a);
-        $o2 = & $this->reader->getObjectByName($this->currentType, $b);
+        $o1 = & $this->ds->getObjectByName($this->currentType, $a);
+        $o2 = & $this->ds->getObjectByName($this->currentType, $b);
         $result = 0;
         foreach ($this->order_columns as $col) {
 
@@ -363,7 +364,7 @@ class Query extends Protocol\AbstractQuery
         $result = array();
         foreach ($indices as $type => $subindices) {
             foreach ($subindices as $objectIndex) {
-                $r = & $this->reader->getObjectByName($type, $objectIndex);
+                $r = & $this->ds->getObjectByName($type, $objectIndex);
                 $hash = "";
                 $cols = array();
                 foreach ($this->groupColumns as $col) {
@@ -400,7 +401,7 @@ class Query extends Protocol\AbstractQuery
         $this->limitIndices($indices);
 
         $result = array();
-        $state = & $this->reader->getObjects();
+        $state = & $this->ds->getObjects();
         foreach ($indices as $type => $subindices) {
 
             foreach ($subindices as $index) {

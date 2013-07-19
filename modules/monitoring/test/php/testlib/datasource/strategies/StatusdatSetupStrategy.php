@@ -4,6 +4,7 @@
 
 namespace Test\Monitoring\Testlib\Datasource\Strategies;
 
+use Tests\Icinga\Protocol\Statusdat\StatusdatTestLoader;
 /**
  *  SetupStrategy for status dat.
  *
@@ -28,7 +29,7 @@ class StatusdatSetupStrategy implements SetupStrategy {
             if (is_dir($folder."/".$file)) {
                 $this->requireFolder($folder."/".$file);
             } elseif (preg_match("/\.php/", $file)) {
-                require_once($folder."/".$file);
+                require_once(realpath($folder."/".$file));
             }
         }
     }
@@ -42,17 +43,8 @@ class StatusdatSetupStrategy implements SetupStrategy {
      */
     private function requireStatusDat()
     {
-        $moduleDir = realpath(dirname(__FILE__)."/../../../../../");
-        $appDir = realpath($moduleDir."/../../");
-        $base = $appDir."/library/Icinga/Protocol/StatusDat";
-        require_once("Zend/Cache.php");
-        require_once("Zend/Log.php");
-        require_once($appDir."/library/Icinga/Application/Logger.php");
-        require_once($appDir."/library/Icinga/Protocol/AbstractQuery.php");
-        require_once($base."/Exception/ParsingException.php");
-        require_once($base."/Query/IQueryPart.php");
-        require_once($base."/IReader.php");
-        $this->requireFolder($base);
+        require_once 'library/Icinga/Protocol/Statusdat/StatusdatTestLoader.php';
+        StatusdatTestLoader::requireLibrary();
     }
 
     /**

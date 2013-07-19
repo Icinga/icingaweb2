@@ -1,17 +1,22 @@
 <?php
 
-namespace Tests\Icinga\Backend\Statusdat;
+namespace Tests\Monitoring\Backend\Statusdat;
 use Tests\Icinga\Protocol\Statusdat\ReaderMock as ReaderMock;
-require_once("Zend/Config.php");
-require_once("./library/Icinga/Protocol/Statusdat/ReaderMock.php");
-require_once("../../library/Icinga/Backend/Query.php");
-require_once("../../library/Icinga/Backend/Criteria/Order.php");
-require_once("../../library/Icinga/Backend/AbstractBackend.php");
-require_once("../../library/Icinga/Backend/Statusdat/Query.php");
-require_once("../../library/Icinga/Backend/Statusdat/GroupsummaryQuery.php");
-require_once("../../library/Icinga/Backend/Statusdat/ServicegroupsummaryQuery.php");
+use \Monitoring\Backend\Statusdat\Query\ServicegroupsummaryQuery;
 
-class BackendMock  extends \Icinga\Backend\AbstractBackend{
+$base = dirname(__FILE__)."/../../../../..";
+require_once("Zend/Config.php");
+require_once($base."/../../test/php/library/Icinga/Protocol/Statusdat/ReaderMock.php");
+require_once($base."/../../library/Icinga/Data/AbstractQuery.php");
+
+require_once($base."/library/Monitoring/Backend/Statusdat/Criteria/Order.php");
+require_once($base."/library/Monitoring/Backend/AbstractBackend.php");
+require_once($base."/library/Monitoring/Backend/Statusdat/Query/Query.php");
+require_once($base."/library/Monitoring/Backend/Statusdat/Query/GroupsummaryQuery.php");
+require_once(realpath($base."/library/Monitoring/Backend/Statusdat/Query/ServicegroupsummaryQuery.php"));
+
+class BackendMock  extends \Monitoring\Backend\AbstractBackend
+{
     public $reader;
 
     public function select() {
@@ -27,12 +32,6 @@ class BackendMock  extends \Icinga\Backend\AbstractBackend{
 }
 
 
-/**
-*
-* Test class for Servicegroupsummaryquery 
-* Created Mon, 18 Feb 2013 14:33:21 +0000 
-*
-**/
 class ServicegroupsummaryqueryTest extends \PHPUnit_Framework_TestCase
 {
 
@@ -40,7 +39,7 @@ class ServicegroupsummaryqueryTest extends \PHPUnit_Framework_TestCase
     {
         $backend = new BackendMock();
         $backend->setReader($this->getTestDataset());
-        $q = new \Icinga\Backend\Statusdat\ServicegroupsummaryQuery($backend);
+        $q = new ServicegroupsummaryQuery($backend);
         $indices = array(
             "service" => array(
                 "hosta;service1", "hosta;service2", "hosta;service3",

@@ -28,10 +28,10 @@
 
 namespace Icinga\Protocol\Statusdat;
 
-use Icinga\Backend\MonitoringObjectList;
+
 use Icinga\Exception as Exception;
 use Icinga\Benchmark as Benchmark;
-
+use Icinga\Protocol\Statusdat\View\MonitoringObjectList;
 /**
  * Class Reader
  * @package Icinga\Protocol\Statusdat
@@ -91,9 +91,12 @@ class Reader implements IReader
     public function __construct($config = \Zend_Config, $parser = null, $noCache = false)
     {
         $this->noCache = $noCache;
+        if (isset($config->no_cache)) {
+            $this->noCache = $config->no_cache;
+        }
         $this->config = $config;
         $this->parser = $parser;
-        if (!$noCache) {
+        if (!$this->noCache) {
             $this->cache = $this->initializeCaches($config);
             if ($this->fromCache()) {
                 $this->createHostServiceConnections();
@@ -104,7 +107,7 @@ class Reader implements IReader
             $this->parseObjectsCacheFile();
         }
         if (!$this->hasRuntimeState) {
-            ;
+
         }
         $this->parseStatusDatFile();
         if (!$noCache && $this->newState) {
@@ -275,10 +278,7 @@ class Reader implements IReader
      */
     public function fetchAll(Query $query)
     {
-        return new MonitoringObjectList(
-            $query->getResult(),
-            $query->getView()
-        );
+        return $query->getResult();
     }
 
     /**
@@ -318,4 +318,5 @@ class Reader implements IReader
     {
         return isset($this->lastState[$type]) ? array_keys($this->lastState[$type]) : null;
     }
+
 }
