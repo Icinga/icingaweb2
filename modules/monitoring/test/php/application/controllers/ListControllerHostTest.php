@@ -63,7 +63,7 @@ class ListControllerHostMySQLTest  extends MonitoringControllerTest
             $this->setupFixture($fixture, $backend);
         } catch (\PDOException $e) {
             echo $e->getMessage();
-            $this->markTestSkipped('Could not setup fixture for backends '.implode(',',$backends).' :'.$e->getMessage());
+            $this->markTestSkipped('Could not setup fixture for backends '.$backend.' :'.$e->getMessage());
             return null;
         }
         $controller = $this->requireController('ListController', $backend);
