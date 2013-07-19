@@ -9,16 +9,18 @@ class StatusdatTestLoader extends LibraryLoader
     public static function requireLibrary()
     {
         $libPath = LibraryLoader::getLibraryPath();
-        require_once($libPath."/Data/AbstractQuery.php");
-        require_once($libPath."/Data/DatasourceInterface.php");
-        $statusdat = realpath($libPath."/Protocol/Statusdat/");
-
         require_once 'Zend/Config.php';
         require_once 'Zend/Cache.php';
+        require_once 'Zend/Log.php';
+        require_once($libPath."/Data/AbstractQuery.php");
+        require_once($libPath."/Application/Logger.php");
 
-        require_once($statusdat."/View/AbstractAccessorStrategy.php");
+        require_once($libPath."/Data/DatasourceInterface.php");
+        $statusdat = realpath($libPath."/Protocol/Statusdat/");
+        require_once($statusdat."/View/AccessorStrategy.php");
         require_once($statusdat."/View/MonitoringObjectList.php");
         require_once($statusdat."/View/ObjectRemappingView.php");
+        require_once($statusdat."/ObjectContainer.php");
         require_once($statusdat."/IReader.php");
         require_once($statusdat."/RuntimeStateContainer.php");
         require_once($statusdat."/Query.php");
