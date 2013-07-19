@@ -22,7 +22,7 @@ class Monitoring_ListController extends ModuleActionController
     public function hostsAction()
     {
         Benchmark::measure("hostsAction::query()");
-        $this->view->hosts = $this->backend->select()->from(
+        $this->view->hosts = $this->query(
             'status',
             array(
                 'host_icon_image',
@@ -45,28 +45,6 @@ class Monitoring_ListController extends ModuleActionController
                 'host_last_comment'
             )
         );
-          
-        if ($search = $this->_getParam('search')) {
-            $this->_setParam('search', null);
-            if (strpos($search, '=') === false) {
-                $this->_setParam('host_name', $search);
-            } else {
-                list($key, $val) = preg_split('~\s*=\s*~', $search, 2);
-                if ($this->view->hosts->isValidFilterColumn($key) || $key[0] === '_') {
-                    $this->_setParam($key, $val);
-                }
-            }
-        }
-
-        //$this->view->hosts->getQuery()->group('host_id');
-        if ($this->_getParam('dump') === 'sql') {
-            echo '<pre>' . htmlspecialchars(wordwrap($this->view->hosts->getQuery()->dump())) . '</pre>';
-            exit;
-        }
-
-        if ($this->_getParam('view') === 'compact') {
-            $this->_helper->viewRenderer('hosts_compact');
-        }
 
     }
 
