@@ -17,16 +17,18 @@ define php::extension(
   $ensure=installed
 ) {
 
+  include apache
   include php
 
   if $::require {
-    $require_ = [Class['php'], $::require]
+    $require_ = [Package['apache'], Class['php'], $::require]
   } else {
-    $require_ = Class['php']
+    $require_ = [Package['apache'], Class['php']]
   }
 
   package { $name:
     ensure  => $ensure,
-    require => $require_
+    require => $require_,
+    notify  => Service['apache']
   }
 }

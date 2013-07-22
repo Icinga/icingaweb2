@@ -57,14 +57,14 @@ After you should be able to browse [localhost:8080/icinga2-web](http://localhost
 
 **Installed software**:
 
-* Icinga 1.9.1 with IDOUtils using a MySQL database
-* Icinga 1.9.1 with IDOUtils using a PostgreSQL database
-* Icinga 2 version 0.0.1
+* Icinga with IDOUtils using a MySQL database
+* Icinga with IDOUtils using a PostgreSQL database
+* Icinga 2
 
 **Installed files**:
 
 * `/usr/share/icinga/htpasswd.users` account information for logging into the Icinga classic web interface for both icinga instances
-* `/usr/lib64/nagios/plugins` Nagios Plugins 1.4.16 for both icinga instances
+* `/usr/lib64/nagios/plugins` Nagios Plugins for both icinga instances
 
 #### Icinga with IDOUtils using a MySQL database
 

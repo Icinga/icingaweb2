@@ -41,80 +41,80 @@ user { 'icinga':
 
 user { 'apache':
   groups  => 'icinga-cmd',
-  require => [Package["${apache::apache}"], Group['icinga-cmd']]
+  require => [Class['apache'], Group['icinga-cmd']]
 }
 
 cmmi { 'icinga-mysql':
-  url     => 'http://sourceforge.net/projects/icinga/files/icinga/1.9.1/icinga-1.9.1.tar.gz/download',
-  output  => 'icinga-1.9.1.tar.gz',
+  url     => 'http://sourceforge.net/projects/icinga/files/icinga/1.9.3/icinga-1.9.3.tar.gz/download',
+  output  => 'icinga-1.9.3.tar.gz',
   flags   => '--prefix=/usr/local/icinga-mysql --with-command-group=icinga-cmd \
-              --enable-idoutils --with-init-dir=/tmp/icinga-mysql/etc/init.d \
+              --enable-idoutils --with-init-dir=/usr/local/icinga-mysql/etc/init.d \
               --with-htmurl=/icinga-mysql --with-httpd-conf-file=/etc/httpd/conf.d/icinga-mysql.conf \
               --with-cgiurl=/icinga-mysql/cgi-bin \
               --with-http-auth-file=/usr/share/icinga/htpasswd.users \
               --with-plugin-dir=/usr/lib64/nagios/plugins/libexec',
   creates => '/usr/local/icinga-mysql',
   make    => 'make all && make fullinstall install-config',
-  require => [User['icinga'], Cmmi['icinga-plugins']],
-  notify  => Service["${apache::apache}"]
+  require => [User['icinga'], Cmmi['icinga-plugins'], Package['apache']],
+  notify  => Service['apache']
 }
 
 file { '/etc/init.d/icinga-mysql':
-  source  => '/tmp/icinga-mysql/etc/init.d/icinga',
+  source  => '/usr/local/icinga-mysql/etc/init.d/icinga',
   require => Cmmi['icinga-mysql']
 }
 
 file { '/etc/init.d/ido2db-mysql':
-  source  => '/tmp/icinga-mysql/etc/init.d/ido2db',
+  source  => '/usr/local/icinga-mysql/etc/init.d/ido2db',
   require => Cmmi['icinga-mysql']
 }
 
 cmmi { 'icinga-pgsql':
-  url     => 'http://sourceforge.net/projects/icinga/files/icinga/1.9.1/icinga-1.9.1.tar.gz/download',
-  output  => 'icinga-1.9.1.tar.gz',
+  url     => 'http://sourceforge.net/projects/icinga/files/icinga/1.9.3/icinga-1.9.3.tar.gz/download',
+  output  => 'icinga-1.9.3.tar.gz',
   flags   => '--prefix=/usr/local/icinga-pgsql \
               --with-command-group=icinga-cmd --enable-idoutils \
-              --with-init-dir=/tmp/icinga-pgsql/etc/init.d \
+              --with-init-dir=/usr/local/icinga-pgsql/etc/init.d \
               --with-htmurl=/icinga-pgsql --with-httpd-conf-file=/etc/httpd/conf.d/icinga-pgsql.conf \
               --with-cgiurl=/icinga-pgsql/cgi-bin \
               --with-http-auth-file=/usr/share/icinga/htpasswd.users \
               --with-plugin-dir=/usr/lib64/nagios/plugins/libexec',
   creates => '/usr/local/icinga-pgsql',
   make    => 'make all && make fullinstall install-config',
-  require => [User['icinga'], Cmmi['icinga-plugins']],
-  notify  => Service["${apache::apache}"]
+  require => [User['icinga'], Cmmi['icinga-plugins'], Package['apache']],
+  notify  => Service['apache']
 }
 
 file { '/etc/init.d/icinga-pgsql':
-  source  => '/tmp/icinga-pgsql/etc/init.d/icinga',
+  source  => '/usr/local/icinga-pgsql/etc/init.d/icinga',
   require => Cmmi['icinga-pgsql']
 }
 
 file { '/etc/init.d/ido2db-pgsql':
-  source  => '/tmp/icinga-pgsql/etc/init.d/ido2db',
+  source  => '/usr/local/icinga-pgsql/etc/init.d/ido2db',
   require => Cmmi['icinga-pgsql']
 }
 
 exec { 'populate-icinga-mysql-db':
   unless  => 'mysql -uicinga -picinga icinga -e "SELECT * FROM icinga_dbversion;" &> /dev/null',
-  command => 'mysql -uicinga -picinga icinga < /usr/local/src/icinga-mysql/icinga-1.9.1/module/idoutils/db/mysql/mysql.sql',
+  command => 'mysql -uicinga -picinga icinga < /usr/local/src/icinga-mysql/icinga-1.9.3/module/idoutils/db/mysql/mysql.sql',
   require => [Cmmi['icinga-mysql'], Exec['create-mysql-icinga-db']]
 }
 
 exec { 'populate-icinga-pgsql-db':
   unless  => 'psql -U icinga -d icinga -c "SELECT * FROM icinga_dbversion;" &> /dev/null',
-  command => 'sudo -u postgres psql -U icinga -d icinga < /usr/local/src/icinga-pgsql/icinga-1.9.1/module/idoutils/db/pgsql/pgsql.sql',
+  command => 'sudo -u postgres psql -U icinga -d icinga < /usr/local/src/icinga-pgsql/icinga-1.9.3/module/idoutils/db/pgsql/pgsql.sql',
   require => [Cmmi['icinga-pgsql'], Exec['create-pgsql-icinga-db']]
 }
 
 service { 'icinga-mysql':
   ensure  => running,
-  require => Cmmi['icinga-mysql']
+  require => File['/etc/init.d/icinga-mysql']
 }
 
 service { 'ido2db-mysql':
   ensure  => running,
-  require => Cmmi['icinga-mysql']
+  require => File['/etc/init.d/ido2db-mysql']
 }
 
 file { '/usr/local/icinga-mysql/etc/ido2db.cfg':
@@ -183,7 +183,7 @@ exec { 'iptables-allow-http':
 exec { 'icinga-htpasswd':
   creates => '/usr/share/icinga/htpasswd.users',
   command => 'mkdir /usr/share/icinga && htpasswd -b -c /usr/share/icinga/htpasswd.users icingaadmin icinga',
-  require => Package["${apache::apache}"]
+  require => Class['apache']
 }
 
 cmmi { 'icinga-plugins':
@@ -318,13 +318,13 @@ package { 'boost-devel':
 }
 
 cmmi { 'icinga2':
-  url          => 'http://sourceforge.net/projects/icinga/files/icinga2/0.0.1/icinga2-0.0.1.tar.gz/download',
-  output       => 'icinga2-0.0.1.tar.gz',
+  url          => 'http://sourceforge.net/projects/icinga/files/icinga2/0.0.2/icinga2-0.0.2.tar.gz/download',
+  output       => 'icinga2-0.0.2.tar.gz',
   flags        => '--prefix=/usr/local/icinga2',
   creates      => '/usr/local/icinga2',
   make         => 'make && make install',
   require      => Package['boost-devel'],
-  make_timeout => 600
+  make_timeout => 900
 }
 
 file { 'icinga2-web-public':
@@ -335,7 +335,8 @@ file { 'icinga2-web-public':
 
 file { '/etc/httpd/conf.d/icinga2-web.conf':
   source  => 'puppet:////vagrant/.vagrant-puppet/files/etc/httpd/conf.d/icinga2-web.conf',
-  notify  => Service["${apache::apache}"]
+  require => Package['apache'],
+  notify  => Service['apache']
 }
 
 exec { 'install php-ZendFramework-Db-Adapter-Pdo-Mysql':

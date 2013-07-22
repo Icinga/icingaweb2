@@ -45,7 +45,7 @@ define cmmi(
 
   exec { "download-${name}":
     cwd     => $cwd,
-    command => "wget -q ${url} -O ${output}",
+    command => "wget -q \"${url}\" -O ${output}",
     creates => "${cwd}/${output}",
     require => Class['wget']
   }
@@ -55,8 +55,9 @@ define cmmi(
 
   exec { "extract-${name}":
     cwd     => $cwd,
-    command => "mkdir -p ${name} && tar --no-same-owner \
-                --no-same-permissions -xzf ${output} -C ${name}",
+    command => "mkdir -p ${name}/${tld} && tar --no-same-owner \
+                --no-same-permissions -xzf ${output} -C ${name}/${tld} \
+                --strip-components 1",
     creates => $src,
     require => Exec["download-${name}"]
   }
