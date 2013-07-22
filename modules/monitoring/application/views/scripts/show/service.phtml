@@ -1,31 +1,105 @@
-<?= $this->partial('show/header.phtml', array(
-    'host'    => $this->host,
-    'service' => $this->service,
-    'tabs'    => $this->tabs,
-    'compact' => $this->compact
-)); ?>
-<?= $this->expandable(
-    $this->pluginOutput($this->service->service_output),
-    $this->pluginOutput($this->service->service_long_output)
-) ?>
+<?php
+$servicegroupLinkList = array();
+if (!empty($this->hostgroups)) {
+    foreach ($this->hostgroups as $name => $alias) {
+        $servicegroupLinkList[] = $this->qlink(
+            $alias,
+            'monitoring/list/services',
+            array(
+                'servicegroups' => $name
+            )
+        );
+    }
+}
+?>
+<?=
+$this->partial(
+    'show/header.phtml',
+    array(
+        'host'    => $this->host,
+        'service' => $this->service,
+        'tabs'    => $this->tabs,
+        'compact' => $this->compact
+    )
+);
+?>
 
-<?= $this->render('show/components/contacts.phtml') ?>
-<?= $this->render('show/components/comments.phtml') ?>
+<?= $this->preview_image ?>
 
-<?php foreach ($this->customvars as $name => $value): ?>
-<b><?= $this->escape($name) ?>:</b> <?= $this->escape($value) ?><br />
-<?php endforeach; ?>
-<?= $this->expandable(
-    '<b>Command:</b> ' . array_shift(preg_split('|!|', $this->service->service_check_command)),
-    $this->commandArguments($this->service->service_check_command)
-) ?>
+<div class="information-container">
+    <div class="head">
+        <span>Plugin output</span>
+    </div>
+    <div>
+        <?= $this->pluginOutput($this->service->service_output); ?>
+        <?= $this->pluginOutput($this->service->service_long_output); ?>
+    </div>
+</div>
+
+<div class="information-container">
+    <div class="head">
+        <span>Command</span>
+    </div>
+
+    <div>
+        <strong>Command:</strong>
+        <?= array_shift(explode('!', $this->service->service_check_command, 2)); ?>
+        <?= $this->commandArguments($this->service->service_check_command); ?>
+    </div>
+</div>
+
+<div class="information-container">
+    <div class="head">
+        <span>Groups and Contacts</span>
+    </div>
+    <?php if (count($servicegroupLinkList)) { ?>
+        <strong>Servicegroups:</strong>
+        <?= implode(' ', $servicegroupLinkList); ?>
+    <?php } ?>
+
+    <?= $this->render('show/components/contacts.phtml') ?>
+</div>
+
+<?= $this->render('show/components/comments.phtml'); ?>
+
+<?= $this->render('show/components/downtime.phtml'); ?>
+
+<?= $this->render('show/components/customvars.phtml'); ?>
+
 <?php if ($this->service->service_perfdata): ?>
-<?= $this->expandable(
-    '<b>Performance data</b>:',
-    $this->perfdata($this->service->service_perfdata),
-    array('collapsed' => false)
-) ?>
+    <div class="information-container">
+        <div class="head">
+            <span>Perfdata</span>
+        </div>
+        <div>
+            <?= $this->perfdata($this->service->service_perfdata); ?>
+        </div>
+    </div>
 <?php endif; ?>
 
-<?= $this->partial('show/legacy-service.phtml', array('service' => $this->service)) ?>
-<?= $this->preview_image ?>
+<div class="information-container">
+    <div class="head">
+        <span>Flags</span>
+    </div>
+    <div>
+        <?= $this->render('show/components/flags.phtml'); ?>
+    </div>
+</div>
+
+<div class="information-container">
+    <div class="head">
+        <span>Properties</span>
+    </div>
+    <div>
+        <?= $this->render('show/components/properties.phtml'); ?>
+    </div>
+</div>
+
+<div class="information-container">
+    <div class="head">
+        <span>Commands</span>
+    </div>
+    <div>
+        <?= $this->monitoringCommands($this->service, 'full'); ?>
+    </div>
+</div>

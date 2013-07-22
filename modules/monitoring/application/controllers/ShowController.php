@@ -36,7 +36,7 @@ class Monitoring_ShowController extends ModuleActionController
 
         $this->backend = Backend::getInstance($this->_getParam('backend'));
         if ($service !== null && $service !== '*') {
-            $this->view->service = $this->backend->fetchService($host, $service);
+            $this->view->service = $this->backend->fetchService($host, $service, true);
         }
         if ($host !== null) {
             $this->view->host = $this->backend->fetchHost($host, true);
@@ -205,6 +205,27 @@ class Monitoring_ShowController extends ModuleActionController
                     'comment_author',
                     'comment_data',
                     'comment_type',
+                )
+            )
+            ->where('host_name', $this->view->host->host_name)
+            ->fetchAll();
+
+        $this->view->downtimes = $this->backend->select()
+            ->from(
+                'downtime',
+                array(
+                    'host_name',
+                    'downtime_type',
+                    'downtime_author_name',
+                    'downtime_comment_data',
+                    'downtime_is_fixed',
+                    'downtime_duration',
+                    'downtime_scheduled_start_time',
+                    'downtime_scheduled_end_time',
+                    'downtime_actual_start_time',
+                    'downtime_was_started',
+                    'downtime_is_in_effect',
+                    'downtime_internal_downtime_id'
                 )
             )
             ->where('host_name', $this->view->host->host_name)
