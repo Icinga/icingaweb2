@@ -47,7 +47,7 @@ $trimArea = $this->getHelper('Trim');
             </td>
             <td class="icons indicator"> 
                 <div class="icon-box"><?php $trimArea->start(); ?>
-                <?php if (!$host->host_handled): ?>
+                <?php if (!$host->host_handled && $host->host_state > 0): ?>
                     <a href="#" title="<?= 'Unhandled host' ?>">
                         <i class="icon-warning-sign"></i>
                     </a>
