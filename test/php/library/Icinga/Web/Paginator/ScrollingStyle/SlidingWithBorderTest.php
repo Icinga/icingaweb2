@@ -24,7 +24,7 @@ require_once '../../modules/monitoring/library/Monitoring/Backend/AbstractBacken
 require_once '../../modules/monitoring/library/Monitoring/Backend/Statusdat/Query/Query.php';
 require_once '../../modules/monitoring/library/Monitoring/Backend/Statusdat.php';
 require_once '../../modules/monitoring/library/Monitoring/Backend/Statusdat/Query/StatusQuery.php';
-require_once '../../modules/monitoring/library/Monitoring/Backend/Statusdat/DataView/StatusdatHostView.php';
+require_once '../../modules/monitoring/library/Monitoring/Backend/Statusdat/DataView/HostStatusView.php';
 require_once '../../modules/monitoring/library/Monitoring/View/MonitoringView.php';
 require_once '../../modules/monitoring/library/Monitoring/View/StatusView.php';
 require_once '../../library/Icinga/Web/Paginator/ScrollingStyle/SlidingWithBorder.php';

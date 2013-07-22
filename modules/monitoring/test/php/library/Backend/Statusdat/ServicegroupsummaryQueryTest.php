@@ -2,17 +2,14 @@
 
 namespace Tests\Monitoring\Backend\Statusdat;
 use Tests\Icinga\Protocol\Statusdat\ReaderMock as ReaderMock;
-use \Monitoring\Backend\Statusdat\Query\ServicegroupsummaryQuery;
+use Monitoring\Backend\Statusdat\Query\ServicegroupsummaryQuery;
+use Tests\Icinga\Protocol\Statusdat\StatusdatTestLoader;
 
 $base = dirname(__FILE__)."/../../../../..";
-require_once("Zend/Config.php");
-require_once($base."/../../test/php/library/Icinga/Protocol/Statusdat/ReaderMock.php");
-require_once($base."/../../library/Icinga/Data/AbstractQuery.php");
 
-require_once($base."/library/Monitoring/Backend/Statusdat/Criteria/Order.php");
-require_once($base."/library/Monitoring/Backend/AbstractBackend.php");
-require_once($base."/library/Monitoring/Backend/Statusdat/Query/Query.php");
-require_once($base."/library/Monitoring/Backend/Statusdat/Query/GroupsummaryQuery.php");
+require_once($base."/../../test/php/library/Icinga/Protocol/Statusdat/StatusdatTestLoader.php");
+StatusdatTestLoader::requireLibrary();
+require_once(realpath($base."/library/Monitoring/Backend/Statusdat/Query/GroupsummaryQuery.php"));
 require_once(realpath($base."/library/Monitoring/Backend/Statusdat/Query/ServicegroupsummaryQuery.php"));
 
 class BackendMock  extends \Monitoring\Backend\AbstractBackend
