@@ -1,7 +1,8 @@
 <?php
+
 $servicegroupLinkList = array();
-if (!empty($this->hostgroups)) {
-    foreach ($this->hostgroups as $name => $alias) {
+if (!empty($this->servicegroups)) {
+    foreach ($this->servicegroups as $name => $alias) {
         $servicegroupLinkList[] = $this->qlink(
             $alias,
             'monitoring/list/services',
@@ -68,6 +69,7 @@ $this->partial(
 
 <?php if ($this->service->service_perfdata): ?>
     <div class="information-container">
+
         <div class="head">
             <span>Perfdata</span>
         </div>

@@ -79,16 +79,29 @@ class Monitoring_ShowController extends ModuleActionController
 
         if ($grapher = Hook::get('grapher')) {
             if ($grapher->hasGraph(
-                $this->view->host->host_name,
+                $this->view->service->host_name,
                 $this->view->service->service_description
             )
             ) {
                 $this->view->preview_image = $grapher->getPreviewImage(
-                    $this->view->host->host_name,
+                    $this->view->service->host_name,
                     $this->view->service->service_description
                 );
             }
         }
+
+        $this->view->servicegroups = $this->backend->select()
+            ->from(
+                'servicegroup',
+                array(
+                    'servicegroup_name',
+                    'servicegroup_alias'
+                )
+            )
+            ->where('host_name', $this->view->host->host_name)
+            ->where('service_description', $this->view->service->service_description)
+
+            ->fetchPairs();
 
         $this->view->contacts = $this->backend->select()
             ->from(
@@ -350,15 +363,17 @@ class Monitoring_ShowController extends ModuleActionController
                 'urlParams' => $hostParams,
             )
         );
-        $tabs->add(
-            'services',
-            array(
-                'title' => 'Services',
-                'icon' => 'img/classic/service.png',
-                'url' => 'monitoring/show/services',
-                'urlParams' => $params,
-            )
-        );
+        if (!isset($this->view->service)) {
+            $tabs->add(
+                'services',
+                array(
+                    'title' => 'Services',
+                    'icon' => 'img/classic/service.png',
+                    'url' => 'monitoring/show/services',
+                    'urlParams' => $params,
+                )
+            );
+        }
         if (isset($params['service'])) {
             $tabs->add(
                 'service',

@@ -98,6 +98,7 @@ class AbstractBackend implements DatasourceInterface
             'host_address',
             'host_state',
             'host_handled',
+            'host_icon_image',
             'host_in_downtime',
             'host_acknowledged',
             'host_check_command',
@@ -105,7 +106,9 @@ class AbstractBackend implements DatasourceInterface
             'host_alias',
             'host_output',
             'host_long_output',
-            'host_perfdata'
+            'host_perfdata',
+            'host_notes_url',
+            'host_action_url'
         );
 
         if ($fetchAll === true) {
@@ -236,6 +239,7 @@ class AbstractBackend implements DatasourceInterface
 
         $select = $this->select()
             ->from('status', $fields)
+            ->where('service_description', $service)
             ->where('host_name', $host);
         return $select->fetchRow();
         

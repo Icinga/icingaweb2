@@ -6,6 +6,7 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
 {
     public function perfdata($perfdata, $compact = false, $float = 'right')
     {
+
         if (empty($perfdata)) {
             return '';
         }
@@ -75,9 +76,15 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
                      . '</td></tr>';
             }
         }
+        if ($result == '') {
+            $result = $perfdata;
+        }
         if (! $compact && $result !== '') {
             $result = '<table style="width: 100%">' . $result . '</table>';
         }
+
+
+
         return $result;
     }
 }
