@@ -24,10 +24,15 @@
     <? if (isset($_GET['iframe']) && $_GET['iframe'] === 'true'): ?>
     <base target="_parent" />
     <? endif ?>
-    <script src="<?= $this->baseUrl('js/vendor/modernizr-2.6.2.min.js') ?>"></script>
-    <link rel="stylesheet" href="<?= $this->baseUrl('css/icinga.css') ?>">
-    <link rel="stylesheet" href="<?= $this->baseUrl('css/vendor/bootstrap-responsive.min.css') ?>">
-<script data-main="<?= $this->baseUrl('js/main.js')?>" src="<?= $this->baseUrl('js/vendor/require.js') ?>"></script>
+
+    <script src="<?php echo $this->baseUrl('js/vendor/modernizr-2.6.2.min.js') ?>"></script>
+    <link rel="stylesheet" href="<?php echo $this->baseUrl('css.php') ?>">
+    <link rel="stylesheet" href="<?php echo $this->baseUrl('css/vendor/bootstrap-responsive.min.css') ?>">
+    <link rel="stylesheet" href="<?php echo $this->baseUrl('css/vendor/font-awesome.min.css') ?>">
+    <!--[if IE 7]>
+        <link rel="stylesheet" href="<?php echo $this->baseUrl('css/vendor/font-awesome-ie7.min.css') ?>">
+    <![endif]-->
+    <script data-main="<?php echo $this->baseUrl('js/main.js')?>" src="<?php echo $this->baseUrl('js/vendor/require.js') ?>"></script>
 
 </head>
 <body class="cranberry">

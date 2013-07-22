@@ -164,6 +164,7 @@ abstract class AbstractQuery
                 $dir = self::SORT_ASC;
             }
         }
+
         $this->order_columns[] = array($col, $dir);
         return $this;
     }
@@ -372,6 +373,11 @@ abstract class AbstractQuery
         $paginator->setCurrentPageNumber($page);
 
         return $paginator;
+    }
+
+    public function getColumns()
+    {
+        return $this->columns;
     }
 
     /**

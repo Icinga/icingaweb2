@@ -4,6 +4,7 @@ use Icinga\Web\ModuleActionController;
 use Icinga\Web\Hook;
 use Icinga\File\Csv;
 use Monitoring\Backend;
+use Icinga\Application\Benchmark;
 
 class Monitoring_ListController extends ModuleActionController
 {
@@ -20,20 +21,53 @@ class Monitoring_ListController extends ModuleActionController
 
     public function hostsAction()
     {
-        $this->view->hosts = $this->query('hoststatus', array(
-            'host_name',
-            'host_state',
-            'host_acknowledged',
-            'host_output',
-            'host_in_downtime',
-            'host_handled',
-            'host_last_state_change'
-        ));
-        $this->view->sort = $this->_getParam('sort');
-        $this->preserve('sort')->preserve('backend');
-        if ($this->view->compact) {
+        Benchmark::measure("hostsAction::query()");
+        $this->view->hosts = $this->backend->select()->from(
+            'status',
+            array(
+                'host_icon_image',
+                'host_name',
+                'host_state',
+                'host_address',
+                'host_acknowledged',
+                'host_output',
+                'host_long_output',
+                'host_in_downtime',
+                'host_is_flapping',
+                'host_state_type',
+                'host_handled',
+                'host_last_check',
+                'host_last_state_change',
+                'host_notifications_enabled',
+                'host_unhandled_service_count',
+                'host_action_url',
+                'host_notes_url',
+                'host_last_comment'
+            )
+        );
+          
+        if ($search = $this->_getParam('search')) {
+            $this->_setParam('search', null);
+            if (strpos($search, '=') === false) {
+                $this->_setParam('host_name', $search);
+            } else {
+                list($key, $val) = preg_split('~\s*=\s*~', $search, 2);
+                if ($this->view->hosts->isValidFilterColumn($key) || $key[0] === '_') {
+                    $this->_setParam($key, $val);
+                }
+            }
+        }
+
+        //$this->view->hosts->getQuery()->group('host_id');
+        if ($this->_getParam('dump') === 'sql') {
+            echo '<pre>' . htmlspecialchars(wordwrap($this->view->hosts->getQuery()->dump())) . '</pre>';
+            exit;
+        }
+
+        if ($this->_getParam('view') === 'compact') {
             $this->_helper->viewRenderer('hosts_compact');
         }
+
     }
 
     public function servicesAction()
@@ -49,22 +83,36 @@ class Monitoring_ListController extends ModuleActionController
 
         $this->view->services = $this->query('status', array(
             'host_name',
-            'host_problems',
+            'host_state',
+            'host_state_type',
+            'host_last_state_change',
+            'host_address',
+            'host_handled',
             'service_description',
+            'service_display_name',
             'service_state' => $state_column,
             'service_in_downtime',
             'service_acknowledged',
             'service_handled',
             'service_output',
-            'service_last_state_change' => $state_change_column
+            'service_last_state_change' => $state_change_column,
+            'service_icon_image',
+            'service_long_output',
+            'service_is_flapping',
+            'service_state_type',
+            'service_handled',
+            'service_severity',
+            'service_last_check',
+            'service_notifications_enabled',
+            'service_action_url',
+            'service_notes_url',
+            'service_last_comment'
         ));
-        $this->preserve('sort')
-             ->preserve('backend')
-             ->preserve('extracolumns');
-        $this->view->sort = $this->_getParam('sort');
-        if ($this->view->compact) {
-            $this->_helper->viewRenderer('services-compact');
+        if ($this->_getParam('sort')) {
+            $this->view->sort = $this->_getParam('sort');
         }
+
+
     }
 
     public function hostgroupsAction()

@@ -1,21 +1,10 @@
 <?php
 
 namespace Tests\Icinga\Protocol\Statusdat;
-require_once("Zend/Config.php");
-require_once("Zend/Log.php");
+require_once("Zend/Config.php");;
+require_once("Zend/Log.php");;
 
-require_once("../../library/Icinga/Protocol/Statusdat/IReader.php");
-require_once("../../library/Icinga/Protocol/Statusdat/Reader.php");
-require_once("../../library/Icinga/Protocol/Statusdat/Exception/ParsingException.php");
-require_once("../../library/Icinga/Exception/ProgrammingError.php");
-require_once("../../library/Icinga/Protocol/Statusdat/Parser.php");
-require_once("../../library/Icinga/Protocol/AbstractQuery.php");
-require_once("../../library/Icinga/Protocol/Statusdat/Query.php");
-require_once("../../library/Icinga/Protocol/Statusdat/Query/IQueryPart.php");
-require_once("../../library/Icinga/Protocol/Statusdat/Query/Group.php");
-require_once("../../library/Icinga/Protocol/Statusdat/Query/Expression.php");
-require_once("../../library/Icinga/Exception/ConfigurationError.php");
-require_once("../../library/Icinga/Application/Logger.php");
+
 use  \Icinga\Protocol\Statusdat as SD;
 
 /**
@@ -25,6 +14,8 @@ use  \Icinga\Protocol\Statusdat as SD;
 class StatusdatComponentTest extends \PHPUnit_Framework_TestCase
 {
     public function getReader() {
+        require_once(dirname(__FILE__)."/../StatusdatTestLoader.php");
+        StatusdatTestLoader::requireLibrary();
         $reader = new SD\Reader(new \Zend_Config(array(
             "status_file" => dirname(__FILE__)."/status.dat",
             "objects_file" => dirname(__FILE__)."/objects.cache"

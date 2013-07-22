@@ -37,6 +37,7 @@ class StatusView extends MonitoringView
         'host_last_time_up',
         'host_last_time_down',
         'host_last_time_unreachable',
+        'host_unhandled_service_count',
 
         // Services
         'service',

@@ -57,7 +57,8 @@ class Connection implements DatasourceInterface
                 $adapter = 'Pdo_Mysql';
                 $drv_options[\PDO::MYSQL_ATTR_INIT_COMMAND] =
                     "SET SESSION SQL_MODE='STRICT_ALL_TABLES,NO_ZERO_IN_DATE,"
-                  . "NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION';";
+                   ."NO_ZERO_IN_DATE,ANSI,TRADITIONAL,ONLY_FULL_GROUP_BY,"
+                  . "NO_ENGINE_SUBSTITUTION';";
                 // Not using ONLY_FULL_GROUP_BY as of performance impact
                 // TODO: NO_ZERO_IN_DATE as been added with 5.1.11. Is it
                 //       ignored by other versions?

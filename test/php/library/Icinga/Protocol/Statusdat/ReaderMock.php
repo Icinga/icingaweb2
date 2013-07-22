@@ -1,10 +1,11 @@
 <?php
 namespace Tests\Icinga\Protocol\Statusdat;
 require_once("../../library/Icinga/Protocol/Statusdat/IReader.php");
-
+require_once(realpath("../../library/Icinga/Data/DatasourceInterface.php"));
+use Icinga\Data\DatasourceInterface;
 use Icinga\Protocol\Statusdat\IReader;
 
-class ReaderMock implements IReader
+class ReaderMock implements IReader, DatasourceInterface
 {
     private $objects;
     private $indices;
@@ -31,6 +32,10 @@ class ReaderMock implements IReader
         return $this;
     }
 
+    public function select()
+    {
+        return $this;
+    }
 
     public function getObjectByName($type, $idx)
     {

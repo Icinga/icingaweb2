@@ -1,0 +1,171 @@
+<?= $this->tabs ?>
+<?php
+
+$paginator = $services->paginate();
+
+function getRowProperties(&$service, &$last_host, $scope) {
+    if ($last_host !== $service->host_name) {
+        $host_col = '<b>' . $scope->qlink(
+            $service->host_name,
+            'monitoring/show/host',
+            array('host' => $service->host_name)
+        ) . ':</b><span style="font-size: 0.7em">'
+            .  (isset($service->host->address) ? ' ( ' . $scope->escape($service->host->address) . ')' : '')
+            . '</span>';
+        $last_host = $service->host_name;
+    } else {
+        $host_col = '&nbsp; ';
+    }
+    $icons = array();
+    if ($service->service_acknowledged) {
+        $icons['ack.gif'] = 'Problem has been acknowledged';
+    }
+
+    if ($service->service_in_downtime) {
+        $icons['downtime.gif'] = 'Service is in a scheduled downtime';
+    }
+
+    if ($service->host_problems) {
+        $icons['server.png'] = 'This services host has a problem';
+    }
+
+    $state_classes = array($scope->monitoringState($service));
+
+    if ($service->service_handled) {
+        $state_classes[] = 'handled';
+    }
+    if ($service->service_last_state_change > (time() - 600)) {
+        $state_classes[] = 'new';
+    }
+    $state_title = strtoupper($scope->monitoringState($service))
+        . ' since '
+        . date('Y-m-d H:i:s', $service->service_last_state_change);
+    if ($scope->grapher && $scope->grapher->hasGraph($service->host_name, $service->service_description)) {
+        $graph = $scope->grapher->getSmallPreviewImage(
+            $service->host_name,
+            $service->service_description
+        );
+    } else {
+        $graph = '';
+    }
+    return array($host_col,$icons,$state_classes,$state_title,$graph);
+}
+
+$fparams = $this->services->getAppliedFilter()->toParams();
+if ($this->preserve === null) {
+    $this->preserve = $fparams;
+} else {
+    $this->preserve += $fparams;
+}
+    $last_host = null;
+$always = array();
+if (isset($_GET['sort'])) {
+    $always['sort'] = $_GET['sort'];
+}
+if (isset($_GET['dir'])) {
+    $always['dir'] = $_GET['dir'];
+}
+?>
+<div class="dontprint">
+<? if (! empty($fparams)): ?>
+<div style="float: right; width: 20em; font-size: 0.8em;"><b>Filters</b><br>
+<? foreach ($fparams as $k => $v): ?>
+<?= $this->qlink(
+    'x',
+    'monitoring/list/services',
+    $this->services->getAppliedFilter()->without($k)->toParams() + $always,
+    array(
+        'style' => array('color' => 'red')
+    )
+) ?> <?= $this->escape("$k = $v") ?></br>
+<? endforeach ?>
+</div>
+<? endif ?>
+<form method="get" action="<?= $this->qUrl(
+    'monitoring/list/services?' . http_build_query(
+        $this->services->getAppliedFilter()->toParams()
+    ),
+    array()
+)
+?>">
+Sort by <?= $this->formSelect(
+    'sort',
+    $this->sort,
+    array(
+        'class' => 'autosubmit',
+    ),
+    array(
+        'severity' => 'Severity',
+        'service_last_state_change' => 'Last state change',
+        'service_last_time_unknown' => 'Last UNKNOWN',
+        'service_last_time_critical' => 'Last CRITICAL',
+        'service_last_time_warning' => 'Last WARNING',
+        'service_last_time_ok' => 'Last OK',
+        'host_name' => 'Host',
+        'service_description' => 'Service',
+    )
+) ?>
+<?= $this->formText(
+    'search',
+    $this->search,
+    array(
+        'placeholder' => 'Add filllter...',
+    )
+) ?>
+</form>
+</div>
+<?php if (empty($services)): ?>
+
+<div class="alert alert-info fullpage_infobox">
+    Sorry, no services found for this search
+</div>
+
+<?php return; endif ?>
+<?= $this->paginationControl($paginator, null, null, array('preserve' => $this->preserve )); ?>
+<table class="action">
+ <tbody>
+<?php foreach ($services->fetchAll() as $service):
+ list($host_col,$icons,$state_classes,$state_title,$graph) = getRowProperties($service,$last_host,$this); ?>
+  <tr class="<?= implode(' ', $state_classes) ?>">
+        <td class="state" title="<?= $state_title ?>">
+            <?= $this->qlink(
+            
+                $service->service_state == 99 ? 'PENDING' : 
+                substr(strtoupper($this->monitoringState($service)), 0, 4)
+                . '&nbsp;since<br /> '
+                . $this->timeSince($service->service_last_state_change),
+            'monitoring/show/history', array(
+                'host'    => $service->host_name,
+                'service' => $service->service_description
+            ), array('quote' => false)) ?>
+        </td>
+
+        <td>
+            <?php
+            foreach ($icons as $icon => $alt) {
+                echo $this->img('img/classic/' . $icon, array(
+                    'class' => 'icon',
+                    'title' => $alt
+                ));
+            } ?>
+            <?= $host_col ?>
+            <?= $this->qlink($service->service_description, 'monitoring/show/service', array(
+                        'host'    => $service->host_name,
+                        'service' => $service->service_description
+                    ), array('class' => 'row-action')
+                )
+            ?>
+
+            <br />
+            &nbsp; &nbsp; <span style="font-size: 0.7em">
+                <?= $this->escape(substr(strip_tags($service->service_output), 0, 900)) ?>
+            </span>
+            <?= $graph ?>
+        </td>
+<? foreach ($this->extraColumns as $col): ?>
+        <td><?= $this->escape($service->$col) ?></td>
+<? endforeach ?>
+    </tr>
+<?php endforeach; ?>
+    </tbody>
+</table>

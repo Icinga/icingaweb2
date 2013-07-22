@@ -23,7 +23,7 @@ $title_next = sprintf(
   <ul>
     <!-- Previous page link -->
 <?php if (isset($this->previous)): ?>
-    <li><a href="<?= $this->url()->setParam('page', $this->previous) ?>" title="<?= $titleprev ?>">« <?= $this->translate('Back') ?></a></li>
+    <li><a href="<?= $this->url()->setParam('page', $this->previous) ?>" title="<?= $title_prev ?>">« <?= $this->translate('Back') ?></a></li>
 <?php else: ?>
     <li class="disabled"><span>« <?= $this->translate('Back') ?></span></li>
 <?php endif ?>

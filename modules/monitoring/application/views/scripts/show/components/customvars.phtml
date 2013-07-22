@@ -1,12 +1,22 @@
-<?php
+<?php if (isset($this->customvars) && count($this->customvars)) { ?>
+<div class="information-container">
+    <div class="head">
+         <span>Customvariables</span>
+    </div>
 
-if (! $object->customvars) return;
-
-foreach ($object->customvars as $name => $value) {
-    printf(
-        "<b>%s:</b> %s<br />\n",
-        $this->escape($name),
-        $this->escape($value)
-    );
-}
-
+    <div>
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Value</th>
+            </tr>
+            <?php foreach ($this->customvars as $name => $value) { ?>
+                <tr>
+                    <td><?= $this->escape($name) ?></td>
+                    <td><?= $this->escape($value) ?></td>
+                </tr>
+            <?php } ?>
+        </table>
+    </div>
+</div>
+<?php } ?>

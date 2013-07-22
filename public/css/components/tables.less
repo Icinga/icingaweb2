@@ -2,31 +2,66 @@
 
 
 .statusTable(@color) {
+  font-size:10px;
   &:hover {
-    background-color: @color;
-
+    background-color: darken(@color-white, 10%);
   }
   &.active {
     background-color: lighten(@color-emphasis,20%);
-    text-shadow: 0px 1px 0px rgba(255,255,255,.5);
     color:@color-black;
-  }
-  & td:first-child {
+  } 
+  td.indicator {
     background-color: @color;
-    text-shadow: 0px 1px 0px rgba(255,255,255,.5);
     color:darken(@color,50%);
     text-align:center;
     a {
-      text-shadow: 0px 1px 0px rgba(255,255,255,.5);
       color:darken(@color,40%);
     }
+  }
+  td.icons {
+    padding-top:0.4em;
+    font-size: 12px;
+    color:black;
+    .icon-box {
+        display: inline-block;
+        width: 32px;
+        max-width:64px;
+        &:empty {
+            width: 0px;
+        }
+    }
+    .img-box {
+        display: inline-block;
+        width: 16px;
+        max-width:16px;
+        &:empty {
+            width: 0px;
+        }
+    }
+  }
+  border-collapse:collapse; 
+  td.state {
+    padding-right:1em;
+    .statetext {
+        max-width:8em;
+        min-width:6em;
+    }
+  }
+
+  td.hostname {
+    width:12%;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+  }
+  td.expand-full {
+    width: 100%;
   }
   cursor:pointer;
 }
 
 .icinga-container.action-table-content {
   .expanded_absolute;
-  top: 35px;
+  top: 1em;
 }
 
 .icinga-container {
@@ -51,16 +86,12 @@
     tr {
 
       th {
-        //background-color: @color-black;
-        text-shadow: inset 0px 1px 0px rgba(0,0,0,.5);
-        //color:@color-emphasis;
         border-bottom:1px solid @color-black;
-        text-align:center;
-        height:2em;
-
+        text-align:left;
+        height:1em;
+        font-size:1em;
       }
       cursor:pointer;
-/*
       &.ok, &.up{
         .statusTable(@color-ok);
       }
@@ -85,11 +116,10 @@
       &.pending, &.pending {
         .statusTable(@color-pending);
       }
-*/
     }
     td {;
       padding:0.1em;
-      padding-left:0.2em;
+      padding-left:0.3em;
       padding-right:0.3em;
     }
   }

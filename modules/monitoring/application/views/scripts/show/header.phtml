@@ -1,30 +1,74 @@
 <?php
-$showService = isset($this->service) && $this->tabs->getActiveName() !== 'host';
+/** @var boolean $showService */
+$showService = false;
+if (isset($this->service) && $this->tabs->getActiveName() !== 'host') {
+    $showService = true;
+}
+
+/** @var boolean $inlineCommands */
+$inlineCommands = true;
+if ($this->tabs->getActiveName() === 'history') {
+    $inlineCommands = false;
+}
+
+if (!$this->compact) {
+    echo $this->tabs;
+}
 ?>
-<?php if (! $this->compact): ?>
-<?= $this->tabs ?>
-<?php endif; ?>
-<table style="margin-bottom: 1em">
-  <tr class="<?= $this->monitoringState($this->host, 'host') ?><?= $this->host->host_handled ? ' handled' : '' ?>">
-    <td><b><?= $this->escape($this->host->host_name) ?><?
- if ($this->host->host_address && $this->host->host_address !== $this->host->host_name): ?>
- (<?= $this->escape($this->host->host_address) ?>)
-<?php endif; ?>
-    </b></td>
-    <td class="state"<?= $showService ? '' : ' rowspan="2"' ?>>
-      <?= $this->util()->getHostStateName($this->host->host_state); ?><br />
-      since <?= $this->timeSince($this->host->host_last_state_change) ?>
-    </td>
-  </tr>
-<?php if ($showService): ?>
-  <tr class="<?= $this->monitoringState($this->service, 'service'); ?><?= $this->service->service_handled ? ' handled' : '' ?>">
-    <td><b>Service: <?= $this->escape($this->service->service_description) ?></b></td>
-    <td class="state">
-      <?= $this->util()->getServiceStateName($this->service->service_state); ?><br />
-      since <?= $this->timeSince($this->service->service_last_state_change) ?>
-    </td>
-  </tr>
-<?php else: ?>
-  <tr><td><b>Host state</b></td></tr>
-<?php endif; ?>
-</table>
+<div class="information-container">
+    <?php if ($inlineCommands === true) { ?>
+    <div class="pull-right">
+        <?=
+            $this->monitoringCommands(
+                ($showService === true) ? $this->service : $this->host,
+                'small'
+            );
+        ?>
+    </div>
+    <?php } ?>
+
+    <table>
+        <tr class="<?= $this->monitoringState($this->host, 'host') ?><?= $this->host->host_handled ? ' handled' : '' ?>">
+            <td>
+                <strong>
+                    <?= $this->escape($this->host->host_name); ?>
+                    <?php if ($this->host->host_address && $this->host->host_address !== $this->host->host_name) { ?>
+                        (<?= $this->escape($this->host->host_address); ?>)
+                    <?php } ?>
+                </strong>
+
+                <?php if (isset($this->host->host_alias) && $this->host->host_alias !== $this->host->host_name) { ?>
+                    <br />
+                    <sup>(<?= $this->host->host_alias; ?>)</sup>
+                <?php } ?>
+            </td>
+            <td class="state"<?= $showService ? '' : ' rowspan="2"'; ?>>
+                <?= $this->util()->getHostStateName($this->host->host_state); ?>
+                since <?= $this->timeSince($this->host->host_last_state_change); ?>
+                <?php if ($this->host->host_acknowledged === '1') { ?>
+                    (Has been acknowledged)
+                <?php } ?>
+            </td>
+        </tr>
+        <?php if ($showService === true) { ?>
+            <tr class="<?= $this->monitoringState($this->service, 'service'); ?><?= $this->service->service_handled ? ' handled' : '' ?>">
+                <td>
+                    <strong>
+                        Service: <?= $this->escape($this->service->service_description); ?>
+                    </strong>
+                </td>
+                <td class="state">
+                    <?= $this->util()->getServiceStateName($this->service->service_state); ?>
+                    since <?= $this->timeSince($this->service->service_last_state_change); ?>
+                    <?php if ($this->host->service_acknowledged === '1') { ?>
+                        (Has been acknowledged)
+                    <?php } ?>
+                </td>
+            </tr>
+        <?php } else { ?>
+            <?php // BYPASS ?>
+        <?php } ?>
+    </table>
+
+    <div class="clearfix"></div>
+</div>
