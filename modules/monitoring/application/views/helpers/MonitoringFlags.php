@@ -29,7 +29,11 @@ class Zend_View_Helper_MonitoringFlags extends Zend_View_Helper_Abstract
      */
     private function getObjectType(array $vars)
     {
-        return array_shift(explode('_', array_shift(array_keys($vars)), 2));
+        $keys = array_keys($vars);
+        $firstKey = array_shift($keys);
+        $keyParts = explode('_', $firstKey, 2);
+
+        return array_shift($keyParts);
     }
 
     /**

@@ -638,7 +638,9 @@ class Meta
      */
     private function getObjectType(\stdClass $object)
     {
-        return array_shift(explode('_', array_shift(array_keys(get_object_vars($object))), 2));
+        $objectKeys = array_keys(get_object_vars($object));
+        $firstKeys = explode('_', array_shift($objectKeys), 2);
+        return array_shift($firstKeys);
     }
 
     /**

@@ -242,7 +242,7 @@ class Reader implements IReader, DatasourceInterface
             $this->parser = new Parser(fopen($this->config->objects_file, "r"));
         }
         $this->parser->parseObjectsFile();
-        $this->lastState = & $this->parser->getRuntimeState();
+        $this->lastState = $this->parser->getRuntimeState();
     }
 
     /**
@@ -259,7 +259,7 @@ class Reader implements IReader, DatasourceInterface
             $this->parser = new Parser(fopen($this->config->status_file, "r"), $this->lastState);
         }
         $this->parser->parseRuntimeState(fopen($this->config->status_file, "r"));
-        $this->lastState = & $this->parser->getRuntimeState();
+        $this->lastState = $this->parser->getRuntimeState();
         if (!$this->noCache) {
             $this->statusCache->save(array("true" => true), "state" . md5($this->config->objects_file));
         }

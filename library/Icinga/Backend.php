@@ -19,13 +19,14 @@ class Backend
                 $name = AuthManager::getInstance()->getSession()->get('backend');
             }
             if ($name === null) {
-                $name = array_shift(array_keys($backends->toArray()));
+                $backendKeys = array_keys($backends->toArray());
+                $name = array_shift($backendKeys);
             }
             if (isset($backends->$name)) {
                 $config = $backends->$name;
                 $type = $config->type;
                 $type[0] = strtoupper($type[0]);
-                $class = '\\Icinga\\Backend\\' . $type;
+                $class = '\\Monitoring\\Backend\\' . $type;
                 self::$instances[$name] = new $class($config);
             } else {
                 throw new \Exception(sprintf(

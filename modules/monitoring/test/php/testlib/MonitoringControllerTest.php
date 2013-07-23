@@ -79,11 +79,15 @@ namespace Icinga\Web
 
 namespace Test\Monitoring\Testlib
 {
+    require_once 'Zend/View.php';
+
     use Icinga\Protocol\Statusdat\Reader;
+    use Icinga\Web\ActionController;
     use Test\Monitoring\Testlib\DataSource\TestFixture;
     use Test\Monitoring\Testlib\DataSource\DataSourceTestSetup;
     use Monitoring\Backend\Ido;
     use Monitoring\Backend\Statusdat;
+    use \Zend_View;
 
     /**
      * Base class for monitoring controllers that loads required dependencies
@@ -227,8 +231,13 @@ namespace Test\Monitoring\Testlib
         {
             require_once($this->moduleDir.'/application/controllers/'.$controller.'.php');
             $controllerName = '\Monitoring_'.ucfirst($controller);
+            /** @var ActionController $controller */
             $controller = new $controllerName;
             $controller->setBackend($this->getBackendFor($backend));
+
+            // Many controllers need a view to work properly
+            $controller->view = new Zend_View();
+
             return $controller;
         }
 

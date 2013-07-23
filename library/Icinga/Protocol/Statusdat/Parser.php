@@ -188,7 +188,7 @@ class Parser
             throw new ParsingException("No $this->currentObjectType objects registered in objects.cache");
         }
         $base = & $this->icingaState[$this->currentObjectType];
-        $state = & $this->skipObject(true);
+        $state = $this->skipObject(true);
         $statusdatObject->runtimeState = & $state;
         $name = $this->getObjectIdentifier($statusdatObject);
 

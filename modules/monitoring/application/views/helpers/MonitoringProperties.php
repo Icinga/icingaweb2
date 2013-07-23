@@ -64,7 +64,9 @@ class Zend_View_Helper_MonitoringProperties extends Zend_View_Helper_Abstract
      */
     private function getObjectType(\stdClass $object)
     {
-        return array_shift(explode('_', array_shift(array_keys(get_object_vars($object))), 2));
+        $keys = array_keys(get_object_vars($object));
+        $keyParts = explode('_', array_shift($keys), 2);
+        return array_shift($keyParts);
     }
 
     /**
@@ -136,10 +138,14 @@ class Zend_View_Helper_MonitoringProperties extends Zend_View_Helper_Abstract
         if ($this->buildCheckType($object) === self::CHECK_PASSIVE) {
             $val .= self::VALUE_NA;
         } else {
-            $val .= $this->floatFormatter($object->latency);
+            $val .= $this->floatFormatter(
+                (isset($object->latency)) ? $object->latency : 0
+            );
         }
 
-        $val .= ' / '. $this->floatFormatter($object->execution_time). ' seconds';
+        $val .= ' / '. $this->floatFormatter(
+                isset($object->execution_time) ? $object->execution_time : 0
+        ). ' seconds';
 
         return $val;
     }

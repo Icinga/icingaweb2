@@ -155,6 +155,7 @@ class Monitoring_ListController extends ModuleActionController
             -1,
             PREG_SPLIT_NO_EMPTY
         );
+
         $this->view->extraColumns = $extra;
         $query = $this->backend->select()
             ->from($view, array_merge($columns, $extra))

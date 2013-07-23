@@ -11,6 +11,8 @@
             );
         }
     }
+
+    $checkCommandParts = explode('!', $this->host->host_check_command, 2);
 ?>
 <?=
     $this->partial(
@@ -42,7 +44,7 @@
 
     <div>
         <strong>Command:</strong>
-        <?= array_shift(explode('!', $this->host->host_check_command, 2)); ?>
+        <?= array_shift($checkCommandParts); ?>
         <?= $this->commandArguments($this->host->host_check_command); ?>
     </div>
 </div>

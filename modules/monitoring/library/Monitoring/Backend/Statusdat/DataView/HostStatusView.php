@@ -130,6 +130,6 @@ class HostStatusView extends ObjectRemappingView
      */
     public function __construct(IReader $reader)
     {
-        $this->state = & $reader->getState();
+        $this->state = $reader->getState();
     }
 }

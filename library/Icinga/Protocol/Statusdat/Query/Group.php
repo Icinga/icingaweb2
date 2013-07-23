@@ -379,7 +379,8 @@ class Group implements IQueryPart
         if ($this->type == self::TYPE_OR) {
             $idx = array();
             foreach ($this->items as &$subFilter) {
-                $idx += $subFilter->filter($base, array_keys($base));
+                $baseKeys = array_keys($base);
+                $idx += $subFilter->filter($base, $baseKeys);
             }
         } else {
             if (!$idx) {

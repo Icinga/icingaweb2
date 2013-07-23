@@ -233,12 +233,13 @@ class MonitoringView extends AbstractQuery
     {
 
         if ($this->query === null) {
-			$class = substr(
-			    array_pop(preg_split('|\\\|', get_class($this))),
-			    0,
-			    -4
-			) . 'Query';
-			$class = '\\' . get_class($this->ds) . '\\Query\\' . $class;
+            $classParts = preg_split('|\\\|', get_class($this));
+            $class = substr(
+                array_pop($classParts),
+                0,
+                -4
+            ) . 'Query';
+            $class = '\\' . get_class($this->ds) . '\\Query\\' . $class;
             $query = new $class($this->ds, $this->columns);
             foreach ($this->filters as $f) {
                 $query->where($f[0], $f[1]);

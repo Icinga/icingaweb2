@@ -1,5 +1,9 @@
+<?php
+    $commandParts = preg_split('|!|', $object->check_command);
+    $commandName = array_shift($commandParts);
+?>
 <?= $this->expandable(
-    '<b>Command:</b> ' . array_shift(preg_split('|!|', $object->check_command)),
+    '<b>Command:</b> '. $commandName,
     $this->commandArguments($object->check_command),
     // TODO: no JS handler right now, should be collapsed
     array('collapsed' => ! (bool) strpos($object->check_command, '!'))

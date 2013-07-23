@@ -114,7 +114,8 @@ abstract class AbstractQuery extends Query
     protected function beforeCreatingSelectQuery()
     {
         $this->setRealColumns();
-        Benchmark::measure(sprintf('%s ready to run', array_pop(explode('\\', get_class($this)))));
+        $classParts = explode('\\', get_class($this));
+        Benchmark::measure(sprintf('%s ready to run', array_pop($classParts)));
     }
 
     protected function applyAllFilters()

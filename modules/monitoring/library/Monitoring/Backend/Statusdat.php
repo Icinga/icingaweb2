@@ -73,7 +73,7 @@ class Statusdat extends AbstractBackend
      * @param $host
      * @return MonitoringObjectList|null
      */
-    public function fetchHost($host)
+    public function fetchHost($host, $fetchAll = false)
     {
         $objs = & $this->reader->getObjects();
 

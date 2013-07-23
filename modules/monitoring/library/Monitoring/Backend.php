@@ -33,7 +33,7 @@ class Backend
         return key($configs);
     }
 
-    public function getBackendConfigs()
+    public static function getBackendConfigs()
     {
         if (self::$backendConfigs === null) {
             $backends = IcingaConfig::app('backends');
@@ -45,7 +45,7 @@ class Backend
         return self::$backendConfigs;
     }
 
-    public function getBackend($name = null)
+    public static function getBackend($name = null)
     {
         if (! array_key_exists($name, self::$instances)) {
             if ($name === null) {

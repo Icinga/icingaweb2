@@ -259,9 +259,9 @@ class Query extends AbstractQuery
         $result = array();
         $source = self::$VALID_TARGETS[$this->source];
         foreach ($source as $target) {
-            $indexes = & array_keys($state[$target]);
+            $indexes = array_keys($state[$target]);
             if ($baseGroup) {
-                $indexes = & $baseGroup->filter($state[$target]);
+                $indexes = $baseGroup->filter($state[$target]);
             }
             if (!isset($result[$target])) {
                 $result[$target] = $indexes;
@@ -292,8 +292,8 @@ class Query extends AbstractQuery
      */
     private function orderResult($a, $b)
     {
-        $o1 = & $this->ds->getObjectByName($this->currentType, $a);
-        $o2 = & $this->ds->getObjectByName($this->currentType, $b);
+        $o1 = $this->ds->getObjectByName($this->currentType, $a);
+        $o2 = $this->ds->getObjectByName($this->currentType, $b);
         $result = 0;
         foreach ($this->order_columns as $col) {
             $result += $col[1] * strnatcasecmp($o1->{$col[0]}, $o2->{$col[0]});
@@ -352,7 +352,7 @@ class Query extends AbstractQuery
         $result = array();
         foreach ($indices as $type => $subindices) {
             foreach ($subindices as $objectIndex) {
-                $r = & $this->ds->getObjectByName($type, $objectIndex);
+                $r = $this->ds->getObjectByName($type, $objectIndex);
                 $hash = "";
                 $cols = array();
                 foreach ($this->groupColumns as $col) {
@@ -377,7 +377,7 @@ class Query extends AbstractQuery
     public function getResult()
     {
 
-        $indices = & $this->getFilteredIndices();
+        $indices = $this->getFilteredIndices();
         $this->orderIndices($indices);
         if ($this->groupByFn) {
             $scope = $this->groupByFn[self::FN_SCOPE];
@@ -389,7 +389,7 @@ class Query extends AbstractQuery
         $this->limitIndices($indices);
 
         $result = array();
-        $state = & $this->ds->getObjects();
+        $state = $this->ds->getObjects();
         foreach ($indices as $type => $subindices) {
 
             foreach ($subindices as $index) {

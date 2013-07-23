@@ -21,6 +21,12 @@ use \Icinga\Application\Logger as Logger;
 **/
 class LoggerTest extends \PHPUnit_Framework_TestCase
 {
+    private $timeZone;
+
+    protected function setUp()
+    {
+        date_default_timezone_set('GMT');
+    }
 
     public function testOverwrite() {
         $cfg1 = new \Zend_Config(array(

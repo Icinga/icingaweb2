@@ -250,7 +250,8 @@ abstract class Query extends AbstractQuery
     {
         $view = $this->viewClass;
         if (!$this->cursor) {
-            $this->cursor = new MList($this->baseQuery->getResult(), new $view($this->reader));
+            $result = $this->baseQuery->getResult();
+            $this->cursor = new MList($result, new $view($this->reader));
         }
         return $this->cursor;
     }

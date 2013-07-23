@@ -39,9 +39,10 @@ class AbstractBackend implements DatasourceInterface
      *
      * Leave fields empty to get all available properties
      *
-     * @param string Virtual table name
-     * @param array  Fields
-     * return self
+     * @param string $virtual_table Virtual table name
+     * @param array  $fields        Fields
+     * @throws \Icinga\Exception\ProgrammingError
+     * @return self
      */
     public function from($virtual_table, $fields = array())
     {

@@ -138,7 +138,7 @@ abstract class GroupsummaryQuery extends Query
 
             foreach ($subIndices as $objName) {
 
-                $obj = & $this->reader->getObjectByName($type, $objName);
+                $obj = $this->reader->getObjectByName($type, $objName);
                 $statetype = $this->getStateType($obj);
                 foreach ($obj->group as $group) {
                     if (!isset($result[$group])) {

@@ -41,6 +41,10 @@ abstract class LibraryLoader {
         }
     }
 
-    abstract public static function requireLibrary();
-
+    /**
+     * Should be abstract but in php this should not be
+     */
+    public static function requireLibrary()
+    {
+    }
 }

@@ -22,7 +22,7 @@ class QueryTest extends \PHPUnit_Framework_TestCase
         $readerMock = $this->getServiceTestReader();
         $query = new Statusdat\Query($readerMock);
 
-        $result = & $query->from("services")->getResult();
+        $result = $query->from("services")->getResult();
         $objects = $readerMock->getObjects();
         $this->assertCount(count($objects["service"]), $result);
 
@@ -33,7 +33,7 @@ class QueryTest extends \PHPUnit_Framework_TestCase
         $readerMock = $this->getServiceTestReader();
         $query = new Statusdat\Query($readerMock);
 
-        $result = & $query->from("hosts")->getResult();
+        $result = $query->from("hosts")->getResult();
         $objects = $readerMock->getObjects();
         $this->assertCount(count($objects["host"]), $result);
 
@@ -45,7 +45,7 @@ class QueryTest extends \PHPUnit_Framework_TestCase
         $objects = $readerMock->getObjects();
         $query = new Statusdat\Query($readerMock);
 
-        $result = &$query->from("services")->limit(2)->getResult();
+        $result = $query->from("services")->limit(2)->getResult();
         $this->assertCount(2, $result);
 
     }
@@ -56,7 +56,7 @@ class QueryTest extends \PHPUnit_Framework_TestCase
         $objects = $readerMock->getObjects();
         $query = new Statusdat\Query($readerMock);
 
-        $result = & $query->from("services")->limit(2, 4)->getResult();
+        $result = $query->from("services")->limit(2, 4)->getResult();
         $this->assertCount(2, $result);
 
     }
@@ -66,7 +66,7 @@ class QueryTest extends \PHPUnit_Framework_TestCase
         $readerMock = $this->getServiceTestReader();
         $objects = $readerMock->getObjects();
         $query = new Statusdat\Query($readerMock);
-        $result = &$query->from("services")->groupByColumns("numeric_val")->getResult();
+        $result = $query->from("services")->groupByColumns("numeric_val")->getResult();
         $this->assertCount(3,$result);
         foreach($result as $value) {
             $this->assertTrue(isset($value->count));
@@ -81,7 +81,7 @@ class QueryTest extends \PHPUnit_Framework_TestCase
         $readerMock = $this->getServiceTestReader();
         $objects = $readerMock->getObjects();
         $query = new Statusdat\Query($readerMock);
-        $result = &$query->from("services")->order('numeric_val ASC')->groupByColumns("numeric_val")->getResult();
+        $result = $query->from("services")->order('numeric_val ASC')->groupByColumns("numeric_val")->getResult();
         $this->assertCount(3,$result);
         $lastIdx = ~PHP_INT_MAX;
         foreach($result as $sstatus) {
@@ -101,7 +101,7 @@ class QueryTest extends \PHPUnit_Framework_TestCase
         $readerMock = $this->getServiceTestReader();
         $objects = $readerMock->getObjects();
         $query = new Statusdat\Query($readerMock);
-        $result = &$query->from("services")->order('numeric_val ASC')->getResult();
+        $result = $query->from("services")->order('numeric_val ASC')->getResult();
         $lastIdx = ~PHP_INT_MAX;
         foreach($result as $sstatus) {
             $this->assertGreaterThanOrEqual($lastIdx,$sstatus->numeric_val);
@@ -114,7 +114,7 @@ class QueryTest extends \PHPUnit_Framework_TestCase
         $readerMock = $this->getServiceTestReader();
         $objects = $readerMock->getObjects();
         $query = new Statusdat\Query($readerMock);
-        $result = &$query->from("services")->order('numeric_val DESC')->getResult();
+        $result = $query->from("services")->order('numeric_val DESC')->getResult();
         $lastIdx = PHP_INT_MAX;
         foreach($result as $sstatus) {
             $this->assertLessThanOrEqual($lastIdx,$sstatus->numeric_val);
@@ -131,17 +131,17 @@ class QueryTest extends \PHPUnit_Framework_TestCase
         $readerMock = $this->getServiceTestReader();
         $objects = $readerMock->getObjects();
         $query = new Statusdat\Query($readerMock);
-        $result = &$query->from("services")->where('numeric_val = ?',array(1))->getResult();
+        $result = $query->from("services")->where('numeric_val = ?',array(1))->getResult();
         foreach($result as $testresult) {
             $this->assertEquals($testresult->numeric_val,1);
         }
         $query = new Statusdat\Query($readerMock);
-        $result = &$query->from("services")->where('numeric_val < ? OR numeric_val = ?',array(2,3))->getResult();
+        $result = $query->from("services")->where('numeric_val < ? OR numeric_val = ?',array(2,3))->getResult();
         foreach($result as $testresult) {
             $this->assertNotEquals($testresult->numeric_val,2);
         }
         $query = new Statusdat\Query($readerMock);
-        $result = &$query->from("services")->where('numeric_val < ? OR numeric_val = ?',array(2,3))->where("numeric_val = ?",array(1))->getResult();
+        $result = $query->from("services")->where('numeric_val < ? OR numeric_val = ?',array(2,3))->where("numeric_val = ?",array(1))->getResult();
         foreach($result as $testresult) {
             $this->assertEquals($testresult->numeric_val,1);
         }
