@@ -6,6 +6,10 @@
 
 ## Vagrant
 
+	
+> **Note** that the deployment of the virtual machine is tested against Vagrant starting with version 1.1.
+> Unfortunately older versions will not work.
+
 The Icinga 2 Web project ships with a Vagrant virtual machine that integrates
 the source code with various services and example data in a controlled
 environment. This enables developers and users to test Livestatus, status.dat,
