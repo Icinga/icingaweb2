@@ -27,15 +27,15 @@ namespace Test\Monitoring\Forms\Command {
     require_once __DIR__. '/../../../../../../../library/Icinga/Web/Form.php';
     require_once __DIR__. '/../../../../../../../library/Icinga/Web/Form/Element/Note.php';
     require_once __DIR__. '/../../../../../../../library/Icinga/Web/Form/Element/DateTime.php';
-    require_once __DIR__. '/../../../../../application/forms/Command/AbstractCommand.php';
-    require_once __DIR__. '/../../../../../application/forms/Command/WithChildrenCommand.php';
-    require_once __DIR__. '/../../../../../application/forms/Command/ScheduleDowntime.php';
+    require_once __DIR__. '/../../../../../application/forms/Command/ConfirmationForm.php';
+    require_once __DIR__. '/../../../../../application/forms/Command/WithChildrenCommandForm.php';
+    require_once __DIR__. '/../../../../../application/forms/Command/ScheduleDowntimeForm.php';
 
-    use Monitoring\Form\Command\ScheduleDowntime;
+    use Monitoring\Form\Command\ScheduleDowntimeForm;
     use \Zend_View;
     use \Zend_Test_PHPUnit_ControllerTestCase;
 
-    class ScheduleDowntimeTest extends Zend_Test_PHPUnit_ControllerTestCase
+    class ScheduleDowntimeFormTest extends Zend_Test_PHPUnit_ControllerTestCase
     {
         public function testFormElements1()
         {
@@ -45,13 +45,13 @@ namespace Test\Monitoring\Forms\Command {
                 )
             );
 
-            $form = new ScheduleDowntime();
+            $form = new ScheduleDowntimeForm();
             $form->setRequest($this->getRequest());
             $form->buildForm();
 
             $this->assertCount(13, $form->getElements());
 
-            $form = new ScheduleDowntime();
+            $form = new ScheduleDowntimeForm();
             $form->setRequest($this->getRequest());
             $form->setWithChildren(true);
             $form->buildForm();
@@ -68,7 +68,7 @@ namespace Test\Monitoring\Forms\Command {
                 )
             );
 
-            $form = new ScheduleDowntime();
+            $form = new ScheduleDowntimeForm();
             $form->setRequest($this->getRequest());
             $form->setWithChildren(true);
 
@@ -80,7 +80,7 @@ namespace Test\Monitoring\Forms\Command {
                         'triggered' => '4',
                         'starttime' => '2013-07-17 10:30:00',
                         'endtime'   => '2013-07-17 10:30:00',
-                        'type'      => ScheduleDowntime::TYPE_FIXED,
+                        'type'      => ScheduleDowntimeForm::TYPE_FIXED,
                         'hours'     => '',
                         'minutes'   => '',
                         // 'childobjects' => '',
@@ -96,7 +96,7 @@ namespace Test\Monitoring\Forms\Command {
                         'triggered' => '4',
                         'starttime' => '2013-07-17 10:30:00',
                         'endtime'   => '2013-07-17 10:30:00',
-                        'type'      => ScheduleDowntime::TYPE_FLEXIBLE,
+                        'type'      => ScheduleDowntimeForm::TYPE_FLEXIBLE,
                         'hours'     => '',
                         'minutes'   => '',
                         // 'childobjects' => '',
@@ -112,7 +112,7 @@ namespace Test\Monitoring\Forms\Command {
                         'triggered' => '4',
                         'starttime' => '2013-07-17 10:30:00',
                         'endtime'   => '2013-07-17 10:30:00',
-                        'type'      => ScheduleDowntime::TYPE_FLEXIBLE,
+                        'type'      => ScheduleDowntimeForm::TYPE_FLEXIBLE,
                         'hours'     => '10',
                         'minutes'   => '10',
                         // 'childobjects' => '',
@@ -128,7 +128,7 @@ namespace Test\Monitoring\Forms\Command {
                         'triggered' => '4',
                         'starttime' => '2013-07-17 10:30:00',
                         'endtime'   => '2013-07-17 10:30:00',
-                        'type'      => ScheduleDowntime::TYPE_FIXED,
+                        'type'      => ScheduleDowntimeForm::TYPE_FIXED,
                         'hours'     => '',
                         'minutes'   => '',
                         // 'childobjects' => '',
@@ -144,7 +144,7 @@ namespace Test\Monitoring\Forms\Command {
                         'triggered' => '4',
                         'starttime' => '2013-07-17 10:30:00',
                         'endtime'   => '2013-07-17 10:30:00',
-                        'type'      => ScheduleDowntime::TYPE_FIXED,
+                        'type'      => ScheduleDowntimeForm::TYPE_FIXED,
                         'hours'     => '',
                         'minutes'   => '',
                         // 'childobjects' => '',
@@ -160,7 +160,7 @@ namespace Test\Monitoring\Forms\Command {
                         'triggered' => 'HAHA',
                         'starttime' => '2013-07-17 10:30:00',
                         'endtime'   => '2013-07-17 10:30:00',
-                        'type'      => ScheduleDowntime::TYPE_FIXED,
+                        'type'      => ScheduleDowntimeForm::TYPE_FIXED,
                         'hours'     => '',
                         'minutes'   => '',
                         // 'childobjects' => '',
@@ -176,7 +176,7 @@ namespace Test\Monitoring\Forms\Command {
                         'triggered' => '123',
                         'starttime' => '2013-07-17',
                         'endtime'   => '2013-07-17 10:30:00',
-                        'type'      => ScheduleDowntime::TYPE_FIXED,
+                        'type'      => ScheduleDowntimeForm::TYPE_FIXED,
                         'hours'     => '',
                         'minutes'   => '',
                         // 'childobjects' => '',
@@ -192,7 +192,7 @@ namespace Test\Monitoring\Forms\Command {
                         'triggered' => '123',
                         'starttime' => '2013-07-17 10:30:00',
                         'endtime'   => 'DING',
-                        'type'      => ScheduleDowntime::TYPE_FIXED,
+                        'type'      => ScheduleDowntimeForm::TYPE_FIXED,
                         'hours'     => '',
                         'minutes'   => '',
                         // 'childobjects' => '',
@@ -208,7 +208,7 @@ namespace Test\Monitoring\Forms\Command {
                         'triggered' => '123',
                         'starttime' => '2013-07-17 10:30:00',
                         'endtime'   => '2013-07-17 09:30:00',
-                        'type'      => ScheduleDowntime::TYPE_FLEXIBLE,
+                        'type'      => ScheduleDowntimeForm::TYPE_FLEXIBLE,
                         'hours'     => '-1',
                         'minutes'   => '12',
                         // 'childobjects' => '',
@@ -224,7 +224,7 @@ namespace Test\Monitoring\Forms\Command {
                         'triggered' => '123',
                         'starttime' => '2013-07-17 10:30:00',
                         'endtime'   => '2013-07-17 09:30:00',
-                        'type'      => ScheduleDowntime::TYPE_FLEXIBLE,
+                        'type'      => ScheduleDowntimeForm::TYPE_FLEXIBLE,
                         'hours'     => '12',
                         'minutes'   => 'DING',
                         // 'childobjects' => '',
@@ -242,7 +242,7 @@ namespace Test\Monitoring\Forms\Command {
                 )
             );
 
-            $form = new ScheduleDowntime();
+            $form = new ScheduleDowntimeForm();
             $form->setWithChildren(false);
             $form->setRequest($this->getRequest());
 
@@ -254,7 +254,7 @@ namespace Test\Monitoring\Forms\Command {
                         'triggered' => '4',
                         'starttime' => '2013-07-17 10:30:00',
                         'endtime'   => '2013-07-17 10:30:00',
-                        'type'      => ScheduleDowntime::TYPE_FIXED,
+                        'type'      => ScheduleDowntimeForm::TYPE_FIXED,
                         'hours'     => '',
                         'minutes'   => '',
                         'childobjects' => '0',
@@ -270,7 +270,7 @@ namespace Test\Monitoring\Forms\Command {
                         'triggered' => '4',
                         'starttime' => '2013-07-17 10:30:00',
                         'endtime'   => '2013-07-17 10:30:00',
-                        'type'      => ScheduleDowntime::TYPE_FIXED,
+                        'type'      => ScheduleDowntimeForm::TYPE_FIXED,
                         'hours'     => '',
                         'minutes'   => '',
                         'childobjects' => 'AHA',
@@ -286,7 +286,7 @@ namespace Test\Monitoring\Forms\Command {
                         'triggered' => '4',
                         'starttime' => '2013-07-17 10:30:00',
                         'endtime'   => '2013-07-17 10:30:00',
-                        'type'      => ScheduleDowntime::TYPE_FIXED,
+                        'type'      => ScheduleDowntimeForm::TYPE_FIXED,
                         'hours'     => '',
                         'minutes'   => '',
                         'childobjects' => '4',
@@ -303,7 +303,7 @@ namespace Test\Monitoring\Forms\Command {
                 )
             );
 
-            $form = new ScheduleDowntime();
+            $form = new ScheduleDowntimeForm();
             $form->setWithChildren(false);
             $form->setRequest($this->getRequest());
             $form->buildForm();

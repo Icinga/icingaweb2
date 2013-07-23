@@ -28,19 +28,19 @@ namespace Test\Monitoring\Forms\Command {
     require_once __DIR__. '/../../../../../../../library/Icinga/Web/Form.php';
     require_once __DIR__. '/../../../../../../../library/Icinga/Web/Form/Element/Note.php';
     require_once __DIR__. '/../../../../../../../library/Icinga/Web/Form/Element/DateTime.php';
-    require_once __DIR__. '/../../../../../application/forms/Command/AbstractCommand.php';
-    require_once __DIR__. '/../../../../../application/forms/Command/WithChildrenCommand.php';
-    require_once __DIR__. '/../../../../../application/forms/Command/Acknowledge.php';
+    require_once __DIR__. '/../../../../../application/forms/Command/ConfirmationForm.php';
+    require_once __DIR__. '/../../../../../application/forms/Command/WithChildrenCommandForm.php';
+    require_once __DIR__. '/../../../../../application/forms/Command/AcknowledgeForm.php';
 
-    use Monitoring\Form\Command\Acknowledge;
+    use Monitoring\Form\Command\AcknowledgeForm;
     use \Zend_View;
     use \Zend_Test_PHPUnit_ControllerTestCase;
 
-    class AcknowledgeTest extends Zend_Test_PHPUnit_ControllerTestCase
+    class AcknowledgeFormTest extends Zend_Test_PHPUnit_ControllerTestCase
     {
         public function testForm()
         {
-            $form = new Acknowledge();
+            $form = new AcknowledgeForm();
             $form->setRequest($this->getRequest());
             $form->buildForm();
 
@@ -49,7 +49,7 @@ namespace Test\Monitoring\Forms\Command {
 
         public function testValidation1()
         {
-            $form = new Acknowledge();
+            $form = new AcknowledgeForm();
             $form->setRequest($this->getRequest());
 
             $this->assertTrue(

@@ -24,25 +24,26 @@ namespace Test\Monitoring\Forms\Command {
 
     require_once __DIR__. '/../../../../../../../library/Icinga/Web/Form.php';
     require_once __DIR__. '/../../../../../../../library/Icinga/Web/Form/Element/Note.php';
-    require_once __DIR__. '/../../../../../application/forms/Command/AbstractCommand.php';
-    require_once __DIR__. '/../../../../../application/forms/Command/DelayNotification.php';
+    require_once __DIR__. '/../../../../../application/forms/Command/ConfirmationForm.php';
+    require_once __DIR__. '/../../../../../application/forms/Command/DelayNotificationForm.php';
 
 
     use \Zend_View;
     use \Zend_Test_PHPUnit_ControllerTestCase;
-    use Monitoring\Form\Command\DelayNotification;
+    use Monitoring\Form\Command\DelayNotificationForm;
 
-    class DelayNotificationTest extends Zend_Test_PHPUnit_ControllerTestCase
+    class DelayNotificationFormFormTest extends Zend_Test_PHPUnit_ControllerTestCase
     {
         public function testForm1()
         {
+            $this->getRequest()->setMethod('POST');
             $this->getRequest()->setPost(
                 array(
                     'minutes' => 12
                 )
             );
 
-            $form = new DelayNotification();
+            $form = new DelayNotificationForm();
 
             $form->setRequest($this->getRequest());
             $form->buildForm();
@@ -54,25 +55,26 @@ namespace Test\Monitoring\Forms\Command {
             $this->assertEquals('0', $element->getValue());
             $this->assertTrue($element->isRequired());
 
-            $this->assertTrue($form->isValid(null));
+            $this->assertTrue($form->isPostAndValid());
 
             $this->assertEquals('12', $form->getValue('minutes'));
         }
 
         public function testValidation()
         {
+            $this->getRequest()->setMethod('POST');
             $this->getRequest()->setPost(
                 array(
                     'minutes' => 'SCHAHH-LAHH-LAHH'
                 )
             );
 
-            $form = new DelayNotification();
+            $form = new DelayNotificationForm();
 
             $form->setRequest($this->getRequest());
             $form->buildForm();
 
-            $this->assertFalse($form->isValid(null));
+            $this->assertFalse($form->isPostAndValid());
 
             $errors = $form->getErrors('minutes');
             $this->assertEquals('notBetween', $errors[0]);

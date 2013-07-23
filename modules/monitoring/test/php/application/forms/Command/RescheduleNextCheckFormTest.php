@@ -27,16 +27,16 @@ namespace Test\Monitoring\Forms\Command {
     require_once __DIR__. '/../../../../../../../library/Icinga/Web/Form.php';
     require_once __DIR__. '/../../../../../../../library/Icinga/Web/Form/Element/Note.php';
     require_once __DIR__. '/../../../../../../../library/Icinga/Web/Form/Element/DateTime.php';
-    require_once __DIR__. '/../../../../../application/forms/Command/AbstractCommand.php';
-    require_once __DIR__. '/../../../../../application/forms/Command/WithChildrenCommand.php';
-    require_once __DIR__. '/../../../../../application/forms/Command/RescheduleNextCheck.php';
+    require_once __DIR__. '/../../../../../application/forms/Command/ConfirmationForm.php';
+    require_once __DIR__. '/../../../../../application/forms/Command/WithChildrenCommandForm.php';
+    require_once __DIR__. '/../../../../../application/forms/Command/RescheduleNextCheckForm.php';
 
 
-    use Monitoring\Form\Command\RescheduleNextCheck;
+    use Monitoring\Form\Command\RescheduleNextCheckForm;
     use \Zend_View;
     use \Zend_Test_PHPUnit_ControllerTestCase;
 
-    class RescheduleNextCheckTest extends Zend_Test_PHPUnit_ControllerTestCase
+    class RescheduleNextCheckFormTest extends Zend_Test_PHPUnit_ControllerTestCase
     {
         public function testForm1()
         {
@@ -46,7 +46,7 @@ namespace Test\Monitoring\Forms\Command {
                 )
             );
 
-            $form = new RescheduleNextCheck();
+            $form = new RescheduleNextCheckForm();
             $form->setRequest($this->getRequest());
             $form->buildForm();
 
@@ -92,21 +92,21 @@ namespace Test\Monitoring\Forms\Command {
         public function testChildrenFlag()
         {
 
-            $form = new RescheduleNextCheck();
+            $form = new RescheduleNextCheckForm();
             $form->setRequest($this->getRequest());
             $form->setWithChildren(true);
             $form->buildForm();
             $notes1 = $form->getNotes();
             $form = null;
 
-            $form = new RescheduleNextCheck();
+            $form = new RescheduleNextCheckForm();
             $form->setRequest($this->getRequest());
             $form->setWithChildren(false);
             $form->buildForm();
             $notes2 = $form->getNotes();
             $form = null;
 
-            $form = new RescheduleNextCheck();
+            $form = new RescheduleNextCheckForm();
             $form->setRequest($this->getRequest());
             $form->setWithChildren();
             $form->buildForm();

@@ -24,27 +24,19 @@ In here you can add elements to your form, add validations and filters of your
 choice. The creation method is invoked lazy just before a form is rendered or
 *isValid()* is called.
 
-#### Calling is *isValid()*
+#### Calling is *IsPostAndValid()*
 
-*isValid()* is used to test of all needed parameters there. Our form class
-respects just a couple of data:
+*IsPostAndValid()* is used to test of all needed parameters there. It combines
+testing for post request and pulls out the data from request object to handle
+over an array for Zend native method *isValid()*
 
-1. *null*. If a request was set before (*setRequest()*) and you provide null to
-this method, the data or the current request is used to validate
-
-2. *Zend_Controller_Request_Abstract*. If you provide a Zend request class the
-data to test validity is extracted from the request data.
-
-3. *array*. The Zend default style, provide you test data as an array
-
-#### Pre- and post validation
+#### Pre validation
 
 To handle dependend fields you can just override *preValid()* or *postValid()*
 to dynamically add or remove validations. This behaviour reduces the overhead
 to write own validator classes.
 
-* *preValid()* Work just before pre validation
-* *postValid()* Override validation status afterwards
+* *preValidation()* Work just before pre validation
 
 #### Autoloading of form code
 
@@ -112,7 +104,7 @@ use an other namesoace for, e.g.
          * Check dependent fields
          * @param array $data
          */
-        protected function preValid(array $data)
+        protected function preValidation(array $data)
         {
             if (isset($data['flag']) && $data['flag'] === '1') {
                 $textField = $this->getElement('flagValue');
@@ -164,19 +156,9 @@ interface methods:
          * Pre validation
          * @param array $data
          */
-        protected function preValid(array $data)
+        protected function preValidation(array $data)
         {
             // Add depending filters or validation here
-        }
-
-        /**
-         * Post validation
-         * @param array $data
-         * @param bool $isValid
-         */
-        protected function postValid(array $data, &$isValid)
-        {
-            // Test validation setting and overriding afterwards
         }
     }
 

@@ -36,11 +36,11 @@ use Icinga\Web\Form\Element\Note;
 /**
  * Form for acknowledge commands
  */
-class Acknowledge extends AbstractCommand
+class AcknowledgeForm extends ConfirmationForm
 {
     /**
      * Interface method to build the form
-     * @see Form::create()
+     * @see ConfirmationForm::create
      */
     protected function create()
     {
@@ -131,9 +131,10 @@ class Acknowledge extends AbstractCommand
 
     /**
      * Add validator for dependent fields
+     * @see Form::preValidation
      * @param array $data
      */
-    protected function preValid(array $data)
+    protected function preValidation(array $data)
     {
         if (isset($data['expire']) && $data['expire'] === '1') {
             $expireTime = $this->getElement('expiretime');

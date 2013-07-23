@@ -29,10 +29,45 @@
 namespace Monitoring\Form\Command;
 
 /**
- * Simple confirmation form
- *
- * Exist to make the abstract available as concrete class
+ * Form to handle DelayNotification command
  */
-class Confirmation extends AbstractCommand
+class DelayNotificationForm extends ConfirmationForm
 {
+    /**
+     * Biggest value for minutes
+     */
+    const MAX_VALUE = 1440;
+    /**
+     * Interface method to build the form
+     * @see ConfirmationForm::create
+     */
+    protected function create()
+    {
+        $this->addElement(
+            'text',
+            'minutes',
+            array(
+                'label'    => t('Notification delay'),
+                'style'    => 'width: 80px;',
+                'value'    => 0,
+                'required' => true,
+                'validators' => array(
+                    array(
+                        'between',
+                        true,
+                        array(
+                            'min' => 1,
+                            'max' => self::MAX_VALUE
+                        )
+                    )
+                )
+            )
+        );
+
+        $this->addNote('Delay next notification in minutes from now');
+
+        $this->setSubmitLabel(t('Delay notification'));
+
+        parent::create();
+    }
 }

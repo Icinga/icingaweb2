@@ -28,54 +28,48 @@
 
 namespace Monitoring\Form\Command;
 
-use Icinga\Web\Form\Element\DateTime;
-use Zend_Form_Element_Checkbox;
-use DateTime as PhpDateTime;
+use Zend_Form_Element_Hidden;
 
 /**
- * Form for RescheduleNextCheck
+ * For for command CustomNotification
  */
-class RescheduleNextCheck extends WithChildrenCommand
+class CustomNotificationForm extends ConfirmationForm
 {
     /**
      * Interface method to build the form
-     * @see Form::create()
+     * @see ConfirmationForm::create
      */
     protected function create()
     {
+        $this->addElement($this->createAuthorField());
 
-        $now = new PhpDateTime();
-
-        $dateElement = new DateTime(
+        $this->addElement(
+            'textarea',
+            'comment',
             array(
-                'name'  => 'checktime',
-                'label' => t('Check time'),
-                'value' => $now->format($this->getDateFormat())
+                'label'    => t('Comment'),
+                'rows'     => 4,
+                'required' => true
             )
         );
 
-        $dateElement->setRequired(true);
-        $dateElement->addValidator($this->createDateTimeValidator(), true);
-
-        $this->addElement($dateElement);
-
-        $checkBox = new Zend_Form_Element_Checkbox(
+        $this->addElement(
+            'checkbox',
+            'force',
             array(
-                'name'  => 'forcecheck',
-                'label' => t('Force check'),
-                'value' => true
+                'label' => t('Forced')
             )
         );
 
-        $this->addElement($checkBox);
+        $this->addElement(
+            'checkbox',
+            'broadcast',
+            array(
+                'label' => t('Broadcast')
+            )
+        );
 
-        if ($this->getWithChildren() === true) {
-            $this->addNote(t('Reschedule next check for this host and its services.'));
-        } else {
-            $this->addNote(t('Reschedule next check for this object.'));
-        }
-
-        $this->setSubmitLabel(t('Reschedule check'));
+        $this->setSubmitLabel(t('Send custom notification'));
 
         parent::create();
     }

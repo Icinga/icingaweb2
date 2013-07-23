@@ -34,9 +34,9 @@ use \Zend_Form_Element_Hidden;
 use \Zend_Validate_Date;
 
 /**
- * Class AbstractCommand
+ * Simple confirmation command
  */
-abstract class AbstractCommand extends Form
+class ConfirmationForm extends Form
 {
     /**
      * Default date format
@@ -148,6 +148,7 @@ abstract class AbstractCommand extends Form
 
     /**
      * Add elements to this form (used by extending classes)
+     * @see Form::create
      */
     protected function create()
     {

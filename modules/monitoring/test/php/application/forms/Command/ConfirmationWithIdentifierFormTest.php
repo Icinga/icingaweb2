@@ -28,19 +28,19 @@ namespace Test\Monitoring\Forms\Command {
     require_once __DIR__. '/../../../../../../../library/Icinga/Web/Form.php';
     require_once __DIR__. '/../../../../../../../library/Icinga/Web/Form/Element/Note.php';
     require_once __DIR__. '/../../../../../../../library/Icinga/Web/Form/Element/DateTime.php';
-    require_once __DIR__. '/../../../../../application/forms/Command/AbstractCommand.php';
-    require_once __DIR__. '/../../../../../application/forms/Command/WithChildrenCommand.php';
-    require_once __DIR__. '/../../../../../application/forms/Command/ConfirmationWithIdentifier.php';
+    require_once __DIR__. '/../../../../../application/forms/Command/ConfirmationForm.php';
+    require_once __DIR__. '/../../../../../application/forms/Command/WithChildrenCommandForm.php';
+    require_once __DIR__. '/../../../../../application/forms/Command/ConfirmationWithIdentifierForm.php';
 
-    use Monitoring\Form\Command\ConfirmationWithIdentifier;
+    use Monitoring\Form\Command\ConfirmationWithIdentifierForm;
     use \Zend_View;
     use \Zend_Test_PHPUnit_ControllerTestCase;
 
-    class ConfirmationWithIdentifierTest extends Zend_Test_PHPUnit_ControllerTestCase
+    class ConfirmationWithIdentifierFormTest extends Zend_Test_PHPUnit_ControllerTestCase
     {
         public function testForm()
         {
-            $form = new ConfirmationWithIdentifier();
+            $form = new ConfirmationWithIdentifierForm();
             $form->setRequest($this->getRequest());
             $form->setSubmitLabel('DING DING');
             $form->buildForm();
@@ -50,7 +50,7 @@ namespace Test\Monitoring\Forms\Command {
 
         public function testValidation()
         {
-            $form = new ConfirmationWithIdentifier();
+            $form = new ConfirmationWithIdentifierForm();
             $form->setRequest($this->getRequest());
             $form->setFieldLabel('Test1');
             $form->setFieldName('testval');
@@ -83,18 +83,18 @@ namespace Test\Monitoring\Forms\Command {
 
         public function testRequestBridge()
         {
+            $this->getRequest()->setMethod('POST');
             $this->getRequest()->setPost(
                 array(
                     'objectid' => 123123666
                 )
             );
 
-            $form = new ConfirmationWithIdentifier();
+            $form = new ConfirmationWithIdentifierForm();
             $form->setRequest($this->getRequest());
             $form->buildForm();
 
-            $this->assertTrue($form->isValid(null));
-            $this->assertTrue($form->isValid($this->getRequest()));
+            $this->assertTrue($form->isPostAndValid());
 
             $this->assertEquals('123123666', $form->getElement('objectid')->getValue());
         }

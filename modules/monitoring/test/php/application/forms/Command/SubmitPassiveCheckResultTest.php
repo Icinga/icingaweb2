@@ -28,22 +28,22 @@ namespace Test\Monitoring\Forms\Command {
     require_once __DIR__. '/../../../../../../../library/Icinga/Web/Form.php';
     require_once __DIR__. '/../../../../../../../library/Icinga/Web/Form/Element/Note.php';
     require_once __DIR__. '/../../../../../../../library/Icinga/Web/Form/Element/DateTime.php';
-    require_once __DIR__. '/../../../../../application/forms/Command/AbstractCommand.php';
-    require_once __DIR__. '/../../../../../application/forms/Command/WithChildrenCommand.php';
-    require_once __DIR__. '/../../../../../application/forms/Command/SubmitPassiveCheckResult.php';
+    require_once __DIR__. '/../../../../../application/forms/Command/ConfirmationForm.php';
+    require_once __DIR__. '/../../../../../application/forms/Command/WithChildrenCommandForm.php';
+    require_once __DIR__. '/../../../../../application/forms/Command/SubmitPassiveCheckResultForm.php';
 
-    use Monitoring\Form\Command\SubmitPassiveCheckResult;
+    use Monitoring\Form\Command\SubmitPassiveCheckResultForm;
     use \Zend_View;
     use \Zend_Test_PHPUnit_ControllerTestCase;
 
-    class SubmitPassiveCheckResultTest extends Zend_Test_PHPUnit_ControllerTestCase
+    class SubmitPassiveCheckResultFormTest extends Zend_Test_PHPUnit_ControllerTestCase
     {
         public function testStateTypes()
         {
-            $form = new SubmitPassiveCheckResult();
+            $form = new SubmitPassiveCheckResultForm();
             $form->setRequest($this->getRequest());
 
-            $form->setType(SubmitPassiveCheckResult::TYPE_SERVICE);
+            $form->setType(SubmitPassiveCheckResultForm::TYPE_SERVICE);
             $options = $form->getOptions();
             $this->assertCount(4, $options);
             $this->assertEquals('OK', $options[0]);
@@ -51,7 +51,7 @@ namespace Test\Monitoring\Forms\Command {
             $this->assertEquals('CRITICAL', $options[2]);
             $this->assertEquals('UNKNOWN', $options[3]);
 
-            $form->setType(SubmitPassiveCheckResult::TYPE_HOST);
+            $form->setType(SubmitPassiveCheckResultForm::TYPE_HOST);
             $options = $form->getOptions();
             $this->assertCount(3, $options);
             $this->assertEquals('UP', $options[0]);
@@ -65,16 +65,16 @@ namespace Test\Monitoring\Forms\Command {
          */
         public function testForm1()
         {
-            $form = new SubmitPassiveCheckResult();
+            $form = new SubmitPassiveCheckResultForm();
             $form->setRequest($this->getRequest());
             $form->buildForm();
         }
 
         public function testForm2()
         {
-            $form = new SubmitPassiveCheckResult();
+            $form = new SubmitPassiveCheckResultForm();
             $form->setRequest($this->getRequest());
-            $form->setType(SubmitPassiveCheckResult::TYPE_SERVICE);
+            $form->setType(SubmitPassiveCheckResultForm::TYPE_SERVICE);
             $form->buildForm();
 
             $this->assertCount(6, $form->getElements());
@@ -82,9 +82,9 @@ namespace Test\Monitoring\Forms\Command {
 
         public function testValidation1()
         {
-            $form = new SubmitPassiveCheckResult();
+            $form = new SubmitPassiveCheckResultForm();
             $form->setRequest($this->getRequest());
-            $form->setType(SubmitPassiveCheckResult::TYPE_SERVICE);
+            $form->setType(SubmitPassiveCheckResultForm::TYPE_SERVICE);
 
             $this->assertTrue(
                 $form->isValid(

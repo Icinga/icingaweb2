@@ -9,20 +9,19 @@ require_once 'Zend/Form/Element/Reset.php';
 
 require_once __DIR__. '/../../../../../../../library/Icinga/Web/Form.php';
 require_once __DIR__. '/../../../../../../../library/Icinga/Web/Form/Element/Note.php';
-require_once __DIR__. '/../../../../../application/forms/Command/AbstractCommand.php';
-require_once __DIR__. '/../../../../../application/forms/Command/Confirmation.php';
+require_once __DIR__. '/../../../../../application/forms/Command/ConfirmationForm.php';
 
 
 use \Zend_View;
 use \Zend_Test_PHPUnit_ControllerTestCase;
-use Monitoring\Form\Command\Confirmation;
+use Monitoring\Form\Command\ConfirmationForm;
 
-class ConfirmationTest extends Zend_Test_PHPUnit_ControllerTestCase
+class ConfirmationFormTest extends Zend_Test_PHPUnit_ControllerTestCase
 {
     public function testForm1()
     {
         $view = new Zend_View();
-        $form = new Confirmation();
+        $form = new ConfirmationForm();
 
         $form->setRequest($this->getRequest());
 
@@ -45,7 +44,7 @@ class ConfirmationTest extends Zend_Test_PHPUnit_ControllerTestCase
 
     public function testNotes1()
     {
-        $form = new Confirmation();
+        $form = new ConfirmationForm();
         $form->addNote('test1');
         $form->addNote('test2');
 

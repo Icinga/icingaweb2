@@ -26,6 +26,7 @@
 namespace Icinga\Web;
 
 use Icinga\Exception\ProgrammingError;
+use Zend_Form_Exception;
 use Zend_View_Interface;
 
 /**
@@ -97,16 +98,7 @@ abstract class Form extends \Zend_Form
     /**
      * Method called before validation
      */
-    protected function preValid(array $data)
-    {
-    }
-
-    /**
-     * Method called after validation
-     * @param array $data
-     * @param bool  &$isValid
-     */
-    protected function postValid(array $data, &$isValid)
+    protected function preValidation(array $data)
     {
     }
 
@@ -146,33 +138,32 @@ abstract class Form extends \Zend_Form
     }
 
     /**
-     * Test if data from array or request is valid
-     *
-     * If $data is null, internal request is selected to test validity
-     *
-     * @param null|\Zend_Controller_Request_Abstract|array $data
+     * Overridden to assert form creation
+     * @param array $data
      * @return bool
      */
     public function isValid($data)
     {
-        $checkData = null;
-
-        // Elements must be there to validate
         $this->buildForm();
+        $this->preValidation($data);
+        return parent::isValid($data);
+    }
 
-        if ($data === null) {
-            $checkData = $this->getRequest()->getParams();
-        } elseif ($data instanceof \Zend_Controller_Request_Abstract) {
-            $checkData = $data->getParams();
-        } else {
-            $checkData = $data;
+
+    /**
+     * Test if data from array or request is valid
+     *
+     * If $data is null, internal request is selected to test validity
+     * @return bool
+     */
+    public function isPostAndValid()
+    {
+        if ($this->getRequest()->isPost() === false) {
+            return false;
         }
 
-        $this->preValid($checkData);
-        $checkValue = parent::isValid($checkData);
-        $this->postValid($checkData, $checkValue);
-
-        return $checkValue;
+        $checkData = $this->getRequest()->getParams();
+        return parent::isValid($checkData);
     }
 
     /**

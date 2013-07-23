@@ -33,7 +33,7 @@ use Icinga\Exception\ProgrammingError;
 /**
  * Form for command SubmitPassiveCheckResult
  */
-class SubmitPassiveCheckResult extends AbstractCommand
+class SubmitPassiveCheckResultForm extends ConfirmationForm
 {
     /**
      * Type constant for host form
@@ -59,6 +59,7 @@ class SubmitPassiveCheckResult extends AbstractCommand
 
     /**
      * Setup plugin states
+     * @see Zend_Form::init
      */
     public function init()
     {
@@ -116,7 +117,7 @@ class SubmitPassiveCheckResult extends AbstractCommand
 
     /**
      * Interface method to build the form
-     * @see Form::create()
+     * @see ConfirmationForm::create
      */
     protected function create()
     {

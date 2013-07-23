@@ -38,7 +38,7 @@ use \Zend_Validate_Digits;
 /**
  * Form for any ScheduleDowntime command
  */
-class ScheduleDowntime extends WithChildrenCommand
+class ScheduleDowntimeForm extends WithChildrenCommandForm
 {
     /**
      * Default endtime interval definition
@@ -88,7 +88,7 @@ class ScheduleDowntime extends WithChildrenCommand
 
     /**
      * Interface method to build the form
-     * @see Form::create()
+     * @see ConfirmationForm::create
      */
     protected function create()
     {
@@ -242,9 +242,10 @@ class ScheduleDowntime extends WithChildrenCommand
 
     /**
      * Change validators at runtime
+     * @see Form::preValidation
      * @param array $data
      */
-    protected function preValid(array $data)
+    protected function preValidation(array $data)
     {
         /*
          * Other values needed when downtime type change to flexible

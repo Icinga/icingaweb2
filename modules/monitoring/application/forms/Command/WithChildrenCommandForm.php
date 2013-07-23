@@ -29,39 +29,31 @@
 namespace Monitoring\Form\Command;
 
 /**
- * Form for adding comment commands
+ * Class handle specific command flags
  */
-class Comment extends AbstractCommand
+abstract class WithChildrenCommandForm extends ConfirmationForm
 {
     /**
-     * Interface method to build the form
-     * @see Form::create()
+     * Flag if we handle child objects as well
+     * @var bool
      */
-    protected function create()
+    private $withChildren = false;
+
+    /**
+     * Setter for withChildren
+     * @param bool $flag
+     */
+    public function setWithChildren($flag = true)
     {
-        $this->addElement($this->createAuthorField());
+        $this->withChildren = $flag;
+    }
 
-        $this->addElement(
-            'textarea',
-            'comment',
-            array(
-                'label'    => t('Comment'),
-                'rows'     => 4,
-                'required' => true
-            )
-        );
-
-        $this->addElement(
-            'checkbox',
-            'persistent',
-            array(
-                'label' => t('Persistent'),
-                'value' => false
-            )
-        );
-
-        $this->setSubmitLabel(t('Post comment'));
-
-        parent::create();
+    /**
+     * Getter for withChildren
+     * @return bool
+     */
+    public function getWithChildren()
+    {
+        return $this->withChildren;
     }
 }

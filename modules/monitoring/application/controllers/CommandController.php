@@ -39,15 +39,15 @@ use Icinga\Protocol\Commandpipe\CommandPipe;
 use Icinga\Protocol\Commandpipe\Acknowledgement;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\MissingParameterException;
-use Monitoring\Form\Command\Acknowledge;
-use Monitoring\Form\Command\Comment as CommentForm;
-use Monitoring\Form\Command\Confirmation;
-use Monitoring\Form\Command\ConfirmationWithIdentifier;
-use Monitoring\Form\Command\CustomNotification;
-use Monitoring\Form\Command\DelayNotification;
-use Monitoring\Form\Command\RescheduleNextCheck;
-use Monitoring\Form\Command\ScheduleDowntime;
-use Monitoring\Form\Command\SubmitPassiveCheckResult;
+use Monitoring\Form\Command\AcknowledgeForm;
+use Monitoring\Form\Command\CommentForm;
+use Monitoring\Form\Command\ConfirmationForm;
+use Monitoring\Form\Command\ConfirmationWithIdentifierForm;
+use Monitoring\Form\Command\CustomNotificationForm;
+use Monitoring\Form\Command\DelayNotificationForm;
+use Monitoring\Form\Command\RescheduleNextCheckForm;
+use Monitoring\Form\Command\ScheduleDowntimeForm;
+use Monitoring\Form\Command\SubmitPassiveCheckResultForm;
 
 /**
  * Class Monitoring_CommandController
@@ -202,7 +202,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function disableactivechecksAction()
     {
-        $form = new Confirmation();
+        $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Disable active checks'));
         $form->addNote(t('Disable active checks for this object.'));
@@ -219,7 +219,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function enableactivechecksAction()
     {
-        $form = new Confirmation();
+        $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Enable active checks'));
         $form->addNote(t('Enable active checks for this object.'));
@@ -236,7 +236,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function reschedulenextcheckAction()
     {
-        $form = new RescheduleNextCheck();
+        $form = new RescheduleNextCheckForm();
         $form->setRequest($this->getRequest());
 
         $this->setForm($form);
@@ -252,9 +252,9 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function submitpassivecheckresultAction()
     {
-        $type = SubmitPassiveCheckResult::TYPE_SERVICE;
+        $type = SubmitPassiveCheckResultForm::TYPE_SERVICE;
 
-        $form = new SubmitPassiveCheckResult();
+        $form = new SubmitPassiveCheckResultForm();
         $form->setRequest($this->getRequest());
         $form->setType($type);
 
@@ -271,7 +271,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function stopobsessingAction()
     {
-        $form = new Confirmation();
+        $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Stop obsessing'));
         $form->addNote(t('Stop obsessing over this object.'));
@@ -288,7 +288,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function startobsessingAction()
     {
-        $form = new Confirmation();
+        $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Start obsessing'));
         $form->addNote(t('Start obsessing over this object.'));
@@ -305,7 +305,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function stopacceptingpassivechecksAction()
     {
-        $form = new Confirmation();
+        $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Stop accepting passive checks'));
         $form->addNote(t('Passive checks for this object will be omitted.'));
@@ -322,7 +322,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function startacceptingpassivechecksAction()
     {
-        $form = new Confirmation();
+        $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Start accepting passive checks'));
         $form->addNote(t('Passive checks for this object will be accepted.'));
@@ -339,7 +339,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function disablenotificationsAction()
     {
-        $form = new Confirmation();
+        $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Disable notifications'));
         $form->addNote(t('Notifications for this object will be disabled.'));
@@ -356,7 +356,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function enablenotificationsAction()
     {
-        $form = new Confirmation();
+        $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Enable notifications'));
         $form->addNote(t('Notifications for this object will be enabled.'));
@@ -373,7 +373,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function sendcustomnotificationAction()
     {
-        $form = new CustomNotification();
+        $form = new CustomNotificationForm();
         $form->setRequest($this->getRequest());
         $this->setForm($form);
 
@@ -388,7 +388,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function scheduledowntimeAction()
     {
-        $form = new ScheduleDowntime();
+        $form = new ScheduleDowntimeForm();
         $form->setRequest($this->getRequest());
         $form->setWithChildren(false);
         $this->setForm($form);
@@ -404,7 +404,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function scheduledowntimeswithchildrenAction()
     {
-        $form = new ScheduleDowntime();
+        $form = new ScheduleDowntimeForm();
         $form->setRequest($this->getRequest());
         $form->setWithChildren(true);
         $this->setForm($form);
@@ -420,7 +420,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function removedowntimeswithchildrenAction()
     {
-        $form = new Confirmation();
+        $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Remove downtime(s)'));
         $form->addNote(t('Remove downtime(s) from this host and its services.'));
@@ -437,7 +437,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function disablenotificationswithchildrenAction()
     {
-        $form = new Confirmation();
+        $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Disable notifications'));
         $form->addNote(t('Notifications for this host and its services will be disabled.'));
@@ -454,7 +454,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function enablenotificationswithchildrenAction()
     {
-        $form = new Confirmation();
+        $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Enable notifications'));
         $form->addNote(t('Notifications for this host and its services will be enabled.'));
@@ -471,7 +471,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function reschedulenextcheckwithchildrenAction()
     {
-        $form = new RescheduleNextCheck();
+        $form = new RescheduleNextCheckForm();
         $form->setRequest($this->getRequest());
 
         $form->setWithChildren(true);
@@ -489,7 +489,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function disableactivecheckswithchildrenAction()
     {
-        $form = new Confirmation();
+        $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Disable active checks'));
         $form->addNote(t('Disable active checks for this host and its services.'));
@@ -506,7 +506,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function enableactivecheckswithchildrenAction()
     {
-        $form = new Confirmation();
+        $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Enable active checks'));
         $form->addNote(t('Enable active checks for this host and its services.'));
@@ -523,7 +523,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function disableeventhandlerAction()
     {
-        $form = new Confirmation();
+        $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Disable event handler'));
         $form->addNote(t('Disable event handler for this object.'));
@@ -540,7 +540,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function enableeventhandlerAction()
     {
-        $form = new Confirmation();
+        $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Enable event handler'));
         $form->addNote(t('Enable event handler for this object.'));
@@ -557,7 +557,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function disableflapdetectionAction()
     {
-        $form = new Confirmation();
+        $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Disable flapping detection'));
         $form->addNote(t('Disable flapping detection for this object.'));
@@ -574,7 +574,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function enableflapdetectionAction()
     {
-        $form = new Confirmation();
+        $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Enable flapping detection'));
         $form->addNote(t('Enable flapping detection for this object.'));
@@ -607,7 +607,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function resetattributesAction()
     {
-        $form = new Confirmation();
+        $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Reset attributes'));
         $form->addNote(t('Reset modified attributes to its default.'));
@@ -624,7 +624,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function acknowledgeproblemAction()
     {
-        $form = new Acknowledge();
+        $form = new AcknowledgeForm();
         $form->setRequest($this->getRequest());
 
         $this->setForm($form);
@@ -640,7 +640,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function removeacknowledgementAction()
     {
-        $form = new Confirmation();
+        $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Remove problem acknowledgement'));
         $form->addNote(t('Remove problem acknowledgement for this object.'));
@@ -657,7 +657,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function delaynotificationAction()
     {
-        $form = new DelayNotification();
+        $form = new DelayNotificationForm();
         $form->setRequest($this->getRequest());
 
         $this->setForm($form);
@@ -673,7 +673,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function removedowntimeAction()
     {
-        $form = new ConfirmationWithIdentifier();
+        $form = new ConfirmationWithIdentifierForm();
         $form->setRequest($this->getRequest());
 
         $form->setSubmitLabel(t('Delete downtime'));

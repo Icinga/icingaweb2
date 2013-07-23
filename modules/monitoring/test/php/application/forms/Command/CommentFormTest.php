@@ -28,19 +28,19 @@ namespace Test\Monitoring\Forms\Command {
     require_once __DIR__. '/../../../../../../../library/Icinga/Web/Form.php';
     require_once __DIR__. '/../../../../../../../library/Icinga/Web/Form/Element/Note.php';
     require_once __DIR__. '/../../../../../../../library/Icinga/Web/Form/Element/DateTime.php';
-    require_once __DIR__. '/../../../../../application/forms/Command/AbstractCommand.php';
-    require_once __DIR__. '/../../../../../application/forms/Command/WithChildrenCommand.php';
-    require_once __DIR__. '/../../../../../application/forms/Command/Comment.php';
+    require_once __DIR__. '/../../../../../application/forms/Command/ConfirmationForm.php';
+    require_once __DIR__. '/../../../../../application/forms/Command/WithChildrenCommandForm.php';
+    require_once __DIR__. '/../../../../../application/forms/Command/CommentForm.php';
 
-    use Monitoring\Form\Command\Comment;
+    use Monitoring\Form\Command\CommentForm;
     use \Zend_View;
     use \Zend_Test_PHPUnit_ControllerTestCase;
 
-    class CommentTest extends Zend_Test_PHPUnit_ControllerTestCase
+    class CommentFormTest extends Zend_Test_PHPUnit_ControllerTestCase
     {
         public function testForm()
         {
-            $form = new Comment();
+            $form = new CommentForm();
             $form->setRequest($this->getRequest());
             $form->buildForm();
 
@@ -49,7 +49,7 @@ namespace Test\Monitoring\Forms\Command {
 
         public function testValidation()
         {
-            $form = new Comment();
+            $form = new CommentForm();
             $form->setRequest($this->getRequest());
 
             $this->assertTrue(
