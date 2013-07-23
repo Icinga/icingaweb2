@@ -146,22 +146,9 @@ define servicegroup {
      */
     public function testRuntimeParsingForBigFile()
     {
-        $this->markTestSkipped('Skipped slow tests');
-        $objects = fopen("res/status/objects.cache","r");
-        $status = fopen("res/status/status.big.dat","r");
-        $testParser = new Parser($objects);
-        $testParser->parseObjectsFile();
-        $testParser->parseRuntimeState($status);
-    }
-
-    /**
-     * Assert no errors occuring
-     */
-    public function testRuntimeParsingForIcinga2()
-    {
-        $this->markTestSkipped('Skipped slow tests');
-        $objects = fopen("res/status/objects.icinga2.cache","r");
-        $status = fopen("res/status/status.icinga2.dat","r");
+        //$this->markTestSkipped('Skipped slow tests');
+        $objects = fopen("./res/status/icinga.objects.cache","r");
+        $status = fopen("./res/status/icinga.status.dat","r");
         $testParser = new Parser($objects);
         $testParser->parseObjectsFile();
         $testParser->parseRuntimeState($status);

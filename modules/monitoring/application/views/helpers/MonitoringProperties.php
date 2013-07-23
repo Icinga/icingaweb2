@@ -139,13 +139,13 @@ class Zend_View_Helper_MonitoringProperties extends Zend_View_Helper_Abstract
             $val .= self::VALUE_NA;
         } else {
             $val .= $this->floatFormatter(
-                (isset($object->latency)) ? $object->latency : 0
+                (isset($object->check_latency)) ? $object->check_latency : 0
             );
         }
 
         $val .= ' / '. $this->floatFormatter(
-                isset($object->execution_time) ? $object->execution_time : 0
-        ). ' seconds';
+                isset($object->check_execution_time) ? $object->check_execution_time : 0
+            ). ' seconds';
 
         return $val;
     }

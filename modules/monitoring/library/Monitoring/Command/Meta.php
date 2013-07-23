@@ -729,8 +729,8 @@ class Meta
         } else {
             unset($commands[self::CMD_START_ACCEPTING_PASSIVE_CHECKS]);
         }
-
-        if ($object->obsess_over_host === '1') {
+        $obsess = 'obsess_over_'.$type;
+        if ($object->$obsess === '1') {
             unset($commands[self::CMD_START_OBSESSING]);
         } else {
             unset($commands[self::CMD_STOP_OBSESSING]);

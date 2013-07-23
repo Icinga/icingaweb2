@@ -79,7 +79,7 @@ class PDOInsertionStrategy
      */
     private function insertHosts()
     {
-        $hosts = &$this->fixture->getHosts();
+        $hosts = $this->fixture->getHosts();
 
         $insertObjectQuery = $this->connection->prepare(
             'INSERT INTO icinga_objects (object_id, objecttype_id, name1, is_active) VALUES (?, 1, ?, 1);'
@@ -207,7 +207,7 @@ class PDOInsertionStrategy
         $insertContactQuery = $this->connection->prepare(
             'INSERT INTO icinga_contacts (contact_object_id, alias) VALUES (?, ?);'
         );
-        $contacts = &$this->fixture->getContacts();
+        $contacts = $this->fixture->getContacts();
         foreach($contacts as &$contact) {
             $insertObjectQuery->execute($this->objectId, $contact["alias"]);
             $insertContactQuery->execute($this->objectId, $contact["alias"]);
@@ -228,7 +228,7 @@ class PDOInsertionStrategy
             'INSERT INTO icinga_comments (object_id, comment_type, internal_comment_id, author_name, comment_data)'.
             ' VALUES (?, ?, ?, ?, ?);'
         );
-        $comments = &$this->fixture->getComments();
+        $comments = $this->fixture->getComments();
         foreach ($comments as $comment) {
             if (isset($comment["host"])) {
                 $type = 1;
@@ -260,7 +260,7 @@ class PDOInsertionStrategy
         $insertHostgroupMemberQuery = $this->connection->prepare(
             'INSERT INTO icinga_hostgroup_members (hostgroup_id, host_object_id) VALUES (?, ?)'
         );
-        $hostgroups = &$this->fixture->getHostgroups();
+        $hostgroups = $this->fixture->getHostgroups();
 
         foreach ($hostgroups as &$hostgroup) {
             $insertObjectQuery->execute(array($this->objectId, $hostgroup["name"]));
@@ -289,7 +289,7 @@ class PDOInsertionStrategy
         $insertServicegroupMemberQuery = $this->connection->prepare(
             'INSERT INTO icinga_servicegroup_members (servicegroup_id, service_object_id) VALUES (?, ?)'
         );
-        $servicegroups = &$this->fixture->getServicegroups();
+        $servicegroups = $this->fixture->getServicegroups();
 
         foreach ($servicegroups as &$servicegroup) {
             $insertObjectQuery->execute(array($this->objectId, $servicegroup["name"]));

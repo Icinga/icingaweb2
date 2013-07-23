@@ -1,6 +1,7 @@
 <?php
 /** @var boolean $showService */
 $showService = false;
+
 if (isset($this->service) && $this->tabs->getActiveName() !== 'host') {
     $showService = true;
 }
@@ -16,43 +17,73 @@ if (!$this->compact) {
 }
 ?>
 <div class="information-container">
-    <?php if ($inlineCommands === true) { ?>
-    <div class="pull-right">
-        <?=
+    <?php if ($inlineCommands === true): ?>
+        <div class="pull-right">
+            <?=
             $this->monitoringCommands(
                 ($showService === true) ? $this->service : $this->host,
                 'small'
             );
-        ?>
-    </div>
-    <?php } ?>
+            ?>
+        </div>
+    <?php endif; ?>
 
     <table>
         <tr class="<?= $this->monitoringState($this->host, 'host') ?><?= $this->host->host_handled ? ' handled' : '' ?>">
             <td>
+
+                <?php if ($this->host->host_icon_image): ?>
+                    <div class="monitoring_icon">
+                        <img src="<?= $this->host->host_icon_image; ?>" alt="Host image" />
+                    </div>
+                <?php endif; ?>
                 <strong>
                     <?= $this->escape($this->host->host_name); ?>
-                    <?php if ($this->host->host_address && $this->host->host_address !== $this->host->host_name) { ?>
+                    <?php if ($this->host->host_address && $this->host->host_address !== $this->host->host_name): ?>
                         (<?= $this->escape($this->host->host_address); ?>)
-                    <?php } ?>
+                    <?php endif; ?>
                 </strong>
 
-                <?php if (isset($this->host->host_alias) && $this->host->host_alias !== $this->host->host_name) { ?>
+                <?php if (isset($this->host->host_alias) && $this->host->host_alias !== $this->host->host_name): ?>
                     <br />
                     <sup>(<?= $this->host->host_alias; ?>)</sup>
-                <?php } ?>
+                <?php endif; ?>
             </td>
-            <td class="state"<?= $showService ? '' : ' rowspan="2"'; ?>>
+            <td class="state"<?= $showService ? '' : ' rowspan="2"'; ?>
                 <?= $this->util()->getHostStateName($this->host->host_state); ?>
                 since <?= $this->timeSince($this->host->host_last_state_change); ?>
-                <?php if ($this->host->host_acknowledged === '1') { ?>
-                    (Has been acknowledged)
-                <?php } ?>
+            <?php if ($this->host->host_acknowledged === '1'): ?>
+                (Has been acknowledged)
+            <?php endif; ?>
             </td>
         </tr>
-        <?php if ($showService === true) { ?>
+
+        <?php if ($this->host->host_action_url || $this->host->host_notes_url): ?>
+            <tr>
+                <td class="urls" rowspan="2">
+                    <?php if ($this->host->host_action_url): ?>
+                        <span class="url">
+                            <a href='<?= $this->host->host_notes_url ?>'>Host actions </a>
+                        </span>
+                    <?php endif; ?>
+                    <?php if ($this->host->host_notes_url): ?>
+                        <span class="url">
+                            <a href='<?= $this->host->host_notes_url ?>'>Host notes </a>
+                        </span>
+                    <?php endif; ?>
+                </td>
+            </tr>
+        <?php endif; ?>
+
+
+        <?php if ($showService === true): ?>
             <tr class="<?= $this->monitoringState($this->service, 'service'); ?><?= $this->service->service_handled ? ' handled' : '' ?>">
                 <td>
+                    <?php if ($this->service->service_icon_image): ?>
+                        <div class="monitoring_icon">
+                            <img src="<?= $this->service->service_icon_image; ?>" alt="Host image" />
+                        </div>
+                    <?php endif; ?>
                     <strong>
                         Service: <?= $this->escape($this->service->service_description); ?>
                     </strong>
@@ -60,15 +91,32 @@ if (!$this->compact) {
                 <td class="state">
                     <?= $this->util()->getServiceStateName($this->service->service_state); ?>
                     since <?= $this->timeSince($this->service->service_last_state_change); ?>
-                    <?php if ($this->host->service_acknowledged === '1') { ?>
+                    <?php if ($this->service->service_acknowledged === '1'): ?>
                         (Has been acknowledged)
-                    <?php } ?>
+                    <?php endif; ?>
                 </td>
             </tr>
-        <?php } else { ?>
-            <?php // BYPASS ?>
-        <?php } ?>
-    </table>
 
+
+            <?php if ($this->service->service_action_url || $this->service->service_notes_url): ?>
+                <tr>
+                    <td class="urls" rowspan="2">
+                        <?php if ($this->service->service_action_url): ?>
+                            <span class="url">
+                            <a href='<?= $this->service->service_notes_url ?>'>Service actions </a>
+                        </span>
+                        <?php endif; ?>
+                        <?php if ($this->service->service_notes_url): ?>
+                            <span class="url">
+                            <a href='<?= $this->service->service_notes_url ?>'>Service notes </a>
+                        </span>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            <?php endif; ?>
+
+
+        <?php endif; ?>
+    </table>
     <div class="clearfix"></div>
 </div>

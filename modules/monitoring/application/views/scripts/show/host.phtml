@@ -1,32 +1,31 @@
 <?php
-    $hostgroupLinkList = array();
-    if (!empty($this->hostgroups)) {
-        foreach ($this->hostgroups as $name => $alias) {
-            $hostgroupLinkList[] = $this->qlink(
-                $alias,
-                'monitoring/list/services',
-                array(
-                    'hostgroups' => $name
-                )
-            );
-        }
+$hostgroupLinkList = array();
+if (!empty($this->hostgroups)) {
+    foreach ($this->hostgroups as $name => $alias) {
+        $hostgroupLinkList[] = $this->qlink(
+            $alias,
+            'monitoring/list/services',
+            array(
+                'hostgroups' => $name
+            )
+        );
     }
-
-    $checkCommandParts = explode('!', $this->host->host_check_command, 2);
+}
 ?>
 <?=
-    $this->partial(
-        'show/header.phtml',
-        array(
-            'host'    => $this->host,
-            'service' => $this->service,
-            'tabs'    => $this->tabs,
-            'compact' => $this->compact
-        )
-    );
+$this->partial(
+    'show/header.phtml',
+    array(
+        'host'    => $this->host,
+        'service' => $this->service,
+        'tabs'    => $this->tabs,
+        'compact' => $this->compact
+    )
+);
 ?>
 
 <?= $this->preview_image ?>
+
 <div class="information-container">
     <div class="head">
         <span>Plugin output</span>
@@ -44,7 +43,10 @@
 
     <div>
         <strong>Command:</strong>
-        <?= array_shift($checkCommandParts); ?>
+        <?php
+            $explodedCommand = explode('!', $this->host->host_check_command, 2);
+            array_shift($explodedCommand);
+        ?>
         <?= $this->commandArguments($this->host->host_check_command); ?>
     </div>
 </div>
@@ -53,10 +55,10 @@
     <div class="head">
         <span>Groups and Contacts</span>
     </div>
-    <?php if (count($hostgroupLinkList)) { ?>
+    <?php if (count($hostgroupLinkList)): ?>
         <strong>Hostgroups:</strong>
         <?= implode(' ', $hostgroupLinkList); ?>
-    <?php } ?>
+    <?php endif; ?>
 
     <?= $this->render('show/components/contacts.phtml') ?>
 </div>
@@ -98,30 +100,6 @@
 
 <div class="information-container">
     <div class="head">
-        <span>Groups and Contacts</span>
-    </div>
-    <?php if (count($hostgroupLinkList)) { ?>
-        <strong>Hostgroups:</strong>
-        <?= implode(' ', $hostgroupLinkList); ?>
-    <?php } ?>
-
-    <?= $this->render('show/components/contacts.phtml') ?>
-</div>
-
-<?= $this->render('show/components/comments.phtml'); ?>
-
-<?= $this->render('show/components/customvars.phtml'); ?>
-
-<?php if ($this->host->host_perfdata): ?>
-    <div class="information-container">
-        <div class="head">
-            <span>Perfdata</span>
-        </div>
-        <div>
-            <?= $this->perfdata($this->host->host_perfdata); ?>
-        </div>
-    </div>
-<?php endif; ?>
         <span>Commands</span>
     </div>
     <div>

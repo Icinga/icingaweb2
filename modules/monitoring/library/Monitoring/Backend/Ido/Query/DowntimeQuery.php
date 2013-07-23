@@ -25,8 +25,9 @@
 
 namespace Monitoring\Backend\Ido\Query;
 
+
 /**
- * Class DowntimeQuery
+ * Handling downtime queries
  */
 class DowntimeQuery extends AbstractQuery
 {

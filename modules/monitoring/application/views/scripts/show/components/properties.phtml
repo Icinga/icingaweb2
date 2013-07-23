@@ -10,10 +10,10 @@ if (isset($this->service)) {
 $properties = $this->monitoringProperties($object);
 ?>
 <table>
-    <?php foreach ($properties as $label => $value) { ?>
+    <?php foreach ($properties as $label => $value): ?>
     <tr>
         <th><?= $label ?></th>
         <td><?= $value ?></td>
     </tr>
-    <?php } ?>
+    <?php endforeach; ?>
 </table>

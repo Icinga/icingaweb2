@@ -217,9 +217,9 @@ class Manager
     {
         $this->session->set("user", $this->user);
     }
-
+    
     /**
-    *   Tries to authenticate the user with the current session
+    *   Tries to authenticate the user with the current session 
     **/
     public function authenticateFromSession()
     {
@@ -228,10 +228,10 @@ class Manager
 
     /**
     *   Returns true when the user is currently authenticated
-    *
+    *   
     *   @param  Boolean $ignoreSession      Set to true to prevent authentication by session
     *
-    *   @param  Boolean
+    *   @param  Boolean 
     **/
     public function isAuthenticated($ignoreSession = false)
     {

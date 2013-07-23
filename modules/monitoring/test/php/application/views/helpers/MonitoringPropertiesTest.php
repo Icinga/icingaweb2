@@ -45,8 +45,8 @@ class HostStruct4Properties extends \stdClass
     public $host_flap_detection_enabled = '1';
     public $host_is_flapping = '0';
     public $host_percent_state_change = '12.36842';
-    public $host_latency = '0.12041';
-    public $host_execution_time = '0';
+    public $host_check_latency = '0.12041';
+    public $host_check_execution_time = '0';
     public $host_scheduled_downtime_depth = '1';
     public $host_failure_prediction_enabled = '1';
     public $host_process_performance_data = '1';

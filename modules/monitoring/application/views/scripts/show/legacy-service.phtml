@@ -77,11 +77,11 @@ if (!$perfData && $this->service->service_perfdata)
                     </tr>
                     <tr>
                         <td><?= $this->translate('Check execution time') ?></td>
-                        <td><?= $this->service->service_check_execution_time ?></td>
+                        <td><?= $this->service->service_execution_time ?></td>
                     </tr>
                     <tr>
                         <td><?= $this->translate('Check latency') ?></td>
-                        <td><?=$this->service->service_check_latency ?></td>
+                        <td><?=$this->service->service_latency ?></td>
                     </tr>
                 </tbody>
             </table>
@@ -91,7 +91,7 @@ if (!$perfData && $this->service->service_perfdata)
 <?php if (isset($this->service->service_comments) && is_array($this->service->service_comments)): ?>
 <div class="expandable" >
     <div class="expand-title">
-        <b><?= $this->translate('Comments') ?></b>
+        <b><?= $this->translate('Comments') ?></b>+
     </div>
     <div class="expand-content" style="padding: 0px">
         <table class="subTable icinga-widget" type="icinga/subTable" maxItems="10" style="width:100%">

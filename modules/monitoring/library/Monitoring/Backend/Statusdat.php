@@ -92,7 +92,7 @@ class Statusdat extends AbstractBackend
      * @param $service
      * @return MonitoringObjectList|null
      */
-    public function fetchService($host, $service)
+    public function fetchService($host, $service, $fetchAll = false)
     {
         $idxName = $host . ";" . $service;
         $objs = & $this->reader->getObjects();

@@ -118,32 +118,56 @@ class StatusQuery extends AbstractQuery
 
         ),
         'servicestatus' => array(
-            'current_state' => 'CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL THEN 99 ELSE ss.current_state END',
             'service_state' => 'CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL THEN 99 ELSE ss.current_state END',
-            'service_hard_state' => 'CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL THEN 99 ELSE CASE WHEN ss.state_type = 1 THEN ss.current_state ELSE ss.last_hard_state END END',
-            'service_state_type' => 'ss.state_type',
             'service_output' => 'ss.output',
             'service_long_output' => 'ss.long_output',
             'service_perfdata' => 'ss.perfdata',
-            'service_is_flapping'           => 'ss.is_flapping',
             'service_acknowledged' => 'ss.problem_has_been_acknowledged',
             'service_in_downtime' => 'CASE WHEN (ss.scheduled_downtime_depth = 0) THEN 0 ELSE 1 END',
-            'service_handled' => 'CASE WHEN (COALESCE(ss.current_state, 0) * ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth + COALESCE(hs.current_state, 0)) > 0 THEN 1 ELSE 0 END',
+            'service_handled' => 'CASE WHEN (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth) > 0 THEN 1 ELSE 0 END',
             'service_does_active_checks' => 'ss.active_checks_enabled',
             'service_accepts_passive_checks' => 'ss.passive_checks_enabled',
-            'service_last_state_change'      => 'UNIX_TIMESTAMP(ss.last_state_change)',
-            'service_last_hard_state'        => 'ss.last_hard_state',
-            'service_last_hard_state_change' => 'UNIX_TIMESTAMP(ss.last_hard_state_change)',
-            'service_check_command'          => 'ss.check_command',
-            'service_last_check'             => 'UNIX_TIMESTAMP(ss.last_check)',
-            'service_next_check'             => 'CASE WHEN ss.should_be_scheduled = 1 THEN UNIX_TIMESTAMP(ss.next_check) ELSE NULL END',
-            'service_check_execution_time'   => 'ss.execution_time',
-            'service_check_latency'          => 'ss.latency',
-            'service_notifications_enabled'  => 'ss.notifications_enabled',
-            'service_last_time_ok'           => 'ss.last_time_ok',
-            'service_last_time_warning'      => 'ss.last_time_warning',
-            'service_last_time_critical'     => 'ss.last_time_critical',
-            'service_last_time_unknown'      => 'ss.last_time_unknown',
+            'service_last_state_change' => 'UNIX_TIMESTAMP(ss.last_state_change)',
+            'service_check_command' => 'ss.check_command',
+            'service_last_time_ok' => 'ss.last_time_ok',
+            'service_last_time_warning' => 'ss.last_time_warning',
+            'service_last_time_critical' => 'ss.last_time_critical',
+            'service_last_time_unknown' => 'ss.last_time_unknown',
+            'service_current_check_attempt' => 'ss.current_check_attempt',
+            'service_max_check_attempts' => 'ss.max_check_attempts',
+            'service_attempt' => 'CONCAT(ss.current_check_attempt, \'/\', ss.max_check_attempts)',
+            'service_last_check' => 'ss.last_check',
+            'service_next_check' => 'ss.next_check',
+            'service_check_type' => 'ss.check_type',
+            'service_last_hard_state_change' => 'ss.last_hard_state_change',
+            'service_last_hard_state' => 'ss.last_hard_state',
+            'service_state_type' => 'ss.state_type',
+            'service_last_notification' => 'ss.last_notification',
+            'service_next_notification' => 'ss.next_notification',
+            'service_no_more_notifications' => 'ss.no_more_notifications',
+            'service_notifications_enabled' => 'ss.notifications_enabled',
+            'service_problem_has_been_acknowledged' => 'ss.problem_has_been_acknowledged',
+            'service_acknowledgement_type' => 'ss.acknowledgement_type',
+            'service_current_notification_number' => 'ss.current_notification_number',
+            'service_passive_checks_enabled' => 'ss.passive_checks_enabled',
+            'service_active_checks_enabled' => 'ss.active_checks_enabled',
+            'service_event_handler_enabled' => 'ss.event_handler_enabled',
+            'service_flap_detection_enabled' => 'ss.flap_detection_enabled',
+            'service_is_flapping' => 'ss.is_flapping',
+            'service_percent_state_change' => 'ss.percent_state_change',
+            'service_check_latency' => 'ss.latency',
+            'service_check_execution_time' => 'ss.execution_time',
+            'service_scheduled_downtime_depth' => 'ss.scheduled_downtime_depth',
+            'service_failure_prediction_enabled' => 'ss.failure_prediction_enabled',
+            'service_process_performance_data' => 'ss.process_performance_data',
+            'service_obsess_over_service' => 'ss.obsess_over_service',
+            'service_modified_service_attributes' => 'ss.modified_service_attributes',
+            'service_event_handler' => 'ss.event_handler',
+            'service_check_command' => 'ss.check_command',
+            'service_normal_check_interval' => 'ss.normal_check_interval',
+            'service_retry_check_interval' => 'ss.retry_check_interval',
+            'service_check_timeperiod_object_id' => 'ss.check_timeperiod_object_id',
+            'service_status_update_time' => 'ss.status_update_time'
         ),
         'serviceproblemsummary' => array(
             'host_unhandled_service_count' => 'sps.unhandled_service_count'
@@ -214,14 +238,14 @@ class StatusQuery extends AbstractQuery
             array('ho' => $this->prefix . 'objects'),
             array()
         )->join(
-            array('hs' => $this->prefix . 'hoststatus'),
-            'ho.object_id = hs.host_object_id AND ho.is_active = 1 AND ho.objecttype_id = 1',
-            array()
-        )->join(
-            array('h' => $this->prefix . 'hosts'),
-            'hs.host_object_id = h.host_object_id',
-            array()
-        );
+                array('hs' => $this->prefix . 'hoststatus'),
+                'ho.object_id = hs.host_object_id AND ho.is_active = 1 AND ho.objecttype_id = 1',
+                array()
+            )->join(
+                array('h' => $this->prefix . 'hosts'),
+                'hs.host_object_id = h.host_object_id',
+                array()
+            );
         $this->joinedVirtualTables = array(
             'hosts' => true,
             'hoststatus' => true,
@@ -309,15 +333,15 @@ class StatusQuery extends AbstractQuery
             array()
         )->join(
 
-            array('sg' => $this->prefix . 'servicegroups'),
-            'sgm.servicegroup_id = sg.' . $this->servicegroup_id,
-            array()
-        )->join(
-            array('sgo' => $this->prefix . 'objects'),
-            'sgo.' . $this->object_id. ' = sg.servicegroup_object_id'
-          . ' AND sgo.is_active = 1',
-            array()
-        );
+                array('sg' => $this->prefix . 'servicegroups'),
+                'sgm.servicegroup_id = sg.' . $this->servicegroup_id,
+                array()
+            )->join(
+                array('sgo' => $this->prefix . 'objects'),
+                'sgo.' . $this->object_id. ' = sg.servicegroup_object_id'
+                . ' AND sgo.is_active = 1',
+                array()
+            );
 
         return $this;
     }
@@ -327,10 +351,10 @@ class StatusQuery extends AbstractQuery
         $this->baseQuery->joinleft(
             array ('sps' => new \Zend_Db_Expr(
                 '(SELECT COUNT(s.service_object_id) as unhandled_service_count, s.host_object_id as host_object_id '.
-                    'FROM icinga_services s INNER JOIN icinga_servicestatus ss ON ss.current_state != 0 AND '.
-                        'ss.problem_has_been_acknowledged = 0 AND ss.scheduled_downtime_depth = 0 AND '.
-                        'ss.service_object_id = s.service_object_id '.
-                    'GROUP BY s.host_object_id'.
+                'FROM icinga_services s INNER JOIN icinga_servicestatus ss ON ss.current_state != 0 AND '.
+                'ss.problem_has_been_acknowledged = 0 AND ss.scheduled_downtime_depth = 0 AND '.
+                'ss.service_object_id = s.service_object_id '.
+                'GROUP BY s.host_object_id'.
                 ')')),
             'sps.host_object_id = hs.host_object_id',
             array()

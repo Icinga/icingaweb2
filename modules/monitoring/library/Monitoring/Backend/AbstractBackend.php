@@ -93,6 +93,7 @@ class AbstractBackend implements DatasourceInterface
      * @param bool $fetchAll
      * @return mixed
      */
+   
     public function fetchHost($host, $fetchAll = false)
     {
         $fields = array(
@@ -100,15 +101,17 @@ class AbstractBackend implements DatasourceInterface
             'host_address',
             'host_state',
             'host_handled',
+            'host_icon_image',
             'host_in_downtime',
             'host_acknowledged',
-            'host_check_command',
             'host_check_command',
             'host_last_state_change',
             'host_alias',
             'host_output',
             'host_long_output',
-            'host_perfdata'
+            'host_perfdata',
+            'host_notes_url',
+            'host_action_url'
         );
 
         if ($fetchAll === true) {
@@ -167,74 +170,84 @@ class AbstractBackend implements DatasourceInterface
     }
 
     // UGLY temporary service fetch
-    public function fetchService($host, $service)
+    public function fetchService($host, $service, $fetchAll = false)
     {
-        Benchmark::measure('Preparing service select');
-        $select = $this->select()
-            ->from(
-                'status',
-                array(
+        $fields = array(
+            'service_description',
+            'host_name',
+            'host_address',
+            'host_state',
+            'host_handled',
+            'host_icon_image',
+            'service_state',
+            'service_handled',
+            'service_in_downtime',
+            'service_acknowledged',
+            'service_check_command',
+            'service_last_state_change',
+            'service_display_name',
+            'service_output',
+            'service_long_output',
+            'service_perfdata',
+            'service_action_url',
+            'service_notes_url',
+            'service_icon_image'
+        );
 
-                    'host_name',
-                    'host_state',
-                    'host_check_command',
-                    'host_last_state_change',
-                    'service_description',
-                    'service_state',
-                    'service_acknowledged',
-                    'service_handled',
-                    'service_output',
-                    'service_long_output',
-                    'service_perfdata',
-                    // '_host_satellite',
-                    'service_check_command',
-                    'service_last_state_change',
+        if ($fetchAll === true) {
+            $fields = array_merge(
+                $fields,
+                array(
+                    'service_current_check_attempt',
+                    'service_max_check_attempts',
+                    'service_attempt',
                     'service_last_check',
                     'service_next_check',
-                    'service_check_execution_time',
+                    'service_check_type',
+                    'service_last_state_change',
+                    'service_last_hard_state_change',
+                    'service_last_hard_state',
+                    'service_last_time_ok',
+                    'service_last_time_warning',
+                    'service_last_time_unknown',
+                    'service_last_time_critical',
+                    'service_state_type',
+                    'service_last_notification',
+                    'service_next_notification',
+                    'service_no_more_notifications',
+                    'service_notifications_enabled',
+                    'service_problem_has_been_acknowledged',
+                    'service_acknowledgement_type',
+                    'service_current_notification_number',
+                    'service_passive_checks_enabled',
+                    'service_active_checks_enabled',
+                    'service_event_handler_enabled',
+                    'service_flap_detection_enabled',
+                    'service_is_flapping',
+                    'service_percent_state_change',
                     'service_check_latency',
-                    //            'service_
+                    'service_check_execution_time',
+                    'service_scheduled_downtime_depth',
+                    'service_failure_prediction_enabled',
+                    'service_process_performance_data',
+                    'service_obsess_over_service',
+                    'service_modified_service_attributes',
+                    'service_event_handler',
+                    'service_check_command',
+                    'service_normal_check_interval',
+                    'service_retry_check_interval',
+                    'service_check_timeperiod_object_id',
+                    'service_status_update_time'
                 )
-            )
-            ->where('host_name', $host)
-            ->where('service_description', $service);
-        // Benchmark::measure((string) $select->getQuery());
-        Benchmark::measure('Prepared service select');
+            );
+        }
 
+        $select = $this->select()
+            ->from('status', $fields)
+            ->where('service_description', $service)
+            ->where('host_name', $host);
         return $select->fetchRow();
-        $object = \Icinga\Objects\Service::fromBackend(
-            $this->select()
-                ->from(
-                    'status',
-                    array(
-
-                        'host_name',
-                        'host_state',
-                        'host_check_command',
-                        'host_last_state_change',
-                        'service_description',
-                        'service_state',
-                        'service_acknowledged',
-                        'service_handled',
-                        'service_output',
-                        'service_long_output',
-                        'service_perfdata',
-                        // '_host_satellite',
-                        'service_check_command',
-                        'service_last_state_change',
-                        'service_last_check',
-                        'service_next_check',
-                        'service_check_execution_time',
-                        'service_check_latency',
-                        //            'service_
-                    )
-                )
-                ->where('host_name', $host)
-                ->where('service_description', $service)
-                ->fetchRow()
-        );
-        // $object->customvars = $this->fetchCustomvars($host, $service);
-        return $object;
+        
     }
 
 

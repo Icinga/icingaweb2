@@ -72,7 +72,7 @@ class LdapUserBackend implements UserBackend
 
     /**
     *   Removes the '*' characted from $string
-    *
+    *   
     *   @param String $string
     *
     *   @return String
@@ -84,12 +84,12 @@ class LdapUserBackend implements UserBackend
 
     /**
     *   Tries to fetch the username given in $username from
-    *   the ldap connection, using the configuration parameters
+    *   the ldap connection, using the configuration parameters 
     *   given in the Authentication configuration
     *
     *   @param  String  $username       The username to select
     *
-    *   @return object  $result
+    *   @return object  $result 
     **/
     protected function selectUsername($username)
     {
