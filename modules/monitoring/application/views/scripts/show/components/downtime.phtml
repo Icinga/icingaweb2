@@ -1,4 +1,4 @@
-<?php if (!empty($this->downtimes)) { ?>
+<?php if (!empty($this->downtimes)): ?>
 <?php
     $list = array();
     foreach ($this->downtimes as $downtime) {
@@ -40,4 +40,4 @@
         </table>
     </div>
 </div>
-<?php } ?>
+<?php endif; ?>

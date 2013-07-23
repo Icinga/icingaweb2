@@ -25,7 +25,7 @@
 namespace Icinga\Monitoring\View;
 
 /**
- * Class DowntimeView
+ * View for downtimes
  */
 class DowntimeView extends MonitoringView
 {

@@ -26,7 +26,7 @@
 use Icinga\Monitoring\Command\Meta;
 
 /**
- * Class MonitoringCommands
+ * Display a bunch of commands
  *
  * Helper which produces a list of command buttons
  * depending on object states
@@ -34,8 +34,10 @@ use Icinga\Monitoring\Command\Meta;
 class Zend_View_Helper_MonitoringCommands extends Zend_View_Helper_Abstract
 {
     /**
+     * Helper function called externally
+     *
      * @param stdClass $object host or service object or something other
-     * @param string $type small or full
+     * @param string   $type   small or full
      * @return string html output
      */
     public function monitoringCommands(\stdClass $object, $type)

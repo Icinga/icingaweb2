@@ -17,7 +17,7 @@ if (!$this->compact) {
 }
 ?>
 <div class="information-container">
-    <?php if ($inlineCommands === true) { ?>
+    <?php if ($inlineCommands === true): ?>
     <div class="pull-right">
         <?=
             $this->monitoringCommands(
@@ -26,35 +26,35 @@ if (!$this->compact) {
             );
         ?>
     </div>
-    <?php } ?>
+    <?php endif; ?>
 
     <table>
         <tr class="<?= $this->monitoringState($this->host, 'host') ?><?= $this->host->host_handled ? ' handled' : '' ?>">
             <td>
 
-                <?php if ($this->host->host_icon_image) : ?>
+                <?php if ($this->host->host_icon_image): ?>
                     <div class="monitoring_icon">
                         <img src="<?= $this->host->host_icon_image; ?>" alt="Host image" />
                     </div>
                 <?php endif; ?>
                 <strong>
                     <?= $this->escape($this->host->host_name); ?>
-                    <?php if ($this->host->host_address && $this->host->host_address !== $this->host->host_name) { ?>
+                    <?php if ($this->host->host_address && $this->host->host_address !== $this->host->host_name): ?>
                         (<?= $this->escape($this->host->host_address); ?>)
-                    <?php } ?>
+                    <?php endif; ?>
                 </strong>
 
-                <?php if (isset($this->host->host_alias) && $this->host->host_alias !== $this->host->host_name) { ?>
+                <?php if (isset($this->host->host_alias) && $this->host->host_alias !== $this->host->host_name): ?>
                     <br />
                     <sup>(<?= $this->host->host_alias; ?>)</sup>
-                <?php } ?>
+                <?php endif; ?>
             </td>
             <td class="state"<?= $showService ? '' : ' rowspan="2"'; ?>
                 <?= $this->util()->getHostStateName($this->host->host_state); ?>
                 since <?= $this->timeSince($this->host->host_last_state_change); ?>
-                <?php if ($this->host->host_acknowledged === '1') { ?>
+                <?php if ($this->host->host_acknowledged === '1'): ?>
                     (Has been acknowledged)
-                <?php } ?>
+                <?php endif; ?>
             </td>
         </tr>
 
@@ -91,9 +91,9 @@ if (!$this->compact) {
                 <td class="state">
                     <?= $this->util()->getServiceStateName($this->service->service_state); ?>
                     since <?= $this->timeSince($this->service->service_last_state_change); ?>
-                    <?php if ($this->service->service_acknowledged === '1') { ?>
+                    <?php if ($this->service->service_acknowledged === '1'): ?>
                         (Has been acknowledged)
-                    <?php } ?>
+                    <?php endif; ?>
                 </td>
             </tr>
 

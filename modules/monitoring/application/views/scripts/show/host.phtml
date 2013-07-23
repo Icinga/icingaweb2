@@ -52,10 +52,10 @@
     <div class="head">
         <span>Groups and Contacts</span>
     </div>
-    <?php if (count($hostgroupLinkList)) { ?>
+    <?php if (count($hostgroupLinkList)): ?>
         <strong>Hostgroups:</strong>
         <?= implode(' ', $hostgroupLinkList); ?>
-    <?php } ?>
+    <?php endif; ?>
 
     <?= $this->render('show/components/contacts.phtml') ?>
 </div>

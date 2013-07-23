@@ -29,8 +29,6 @@ use Icinga\Authentication\User;
 use Icinga\Exception\ProgrammingError;
 
 /**
- * Class Meta
- *
  * Deals with objects and available commands which can be used on the object
  */
 class Meta
