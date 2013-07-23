@@ -355,3 +355,8 @@ file { ['/etc/icinga2-web/',
 file { '/etc/motd':
   source  => 'puppet:////vagrant/.vagrant-puppet/files/etc/motd'
 }
+
+user { 'vagrant':
+  groups  => 'icinga-cmd',
+  require => Group['icinga-cmd']
+}
