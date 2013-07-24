@@ -26,30 +26,30 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 
 /**
- * Class Zend_View_Helper_Img
+ * Helper to generate a number input
  */
-class Zend_View_Helper_Img extends Zend_View_Helper_Abstract
+class Zend_View_Helper_FormNumber extends \Zend_View_Helper_FormText
 {
-    public function img($url, array $properties = array())
+    /**
+     * Generates a html number input
+     *
+     * @access public
+     *
+     * @param string $name The element name.
+     * @param string $value The default value.
+     * @param array $attribs Attributes which should be added to the input tag.
+     *
+     * @return string The input tag and options XHTML.
+     */
+    public function formNumber($name, $value = null, $attribs = null)
     {
-        $attributes = array();
-        $has_alt = false;
-        foreach ($properties as $key => $val) {
-            if ($key === 'alt') $has_alt = true;
-            $attributes[] = sprintf(
-                '%s="%s"',
-                filter_var($key, FILTER_SANITIZE_URL),
-                filter_var($val, FILTER_SANITIZE_FULL_SPECIAL_CHARS)
-            );
-        }
-        if (! $has_alt) $attributes[] = 'alt=""';
-
-        return sprintf(
-            '<img src="%s"%s />',
-            $this->view->baseUrl($url),
-            !empty($attributes) ? ' ' . implode(' ', $attributes) : ''
-        );
+        return '<input type="number"'
+             . ' name="' . $this->view->escape($name) . '"'
+             . ' value="' . $this->view->escape($value) . '"'
+             . ' id="' . $this->view->escape($name) . '"'
+             . $this->_htmlAttribs($attribs)
+             . $this->getClosingBracket();
     }
 }
 
-// @codingStandardsIgnoreStart
+// @codingStandardsIgnoreStop

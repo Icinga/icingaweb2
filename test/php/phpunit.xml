@@ -27,5 +27,5 @@
             <directory suffix=".php">/usr/share/php</directory>
             <directory suffix=".php">/usr/lib</directory>
         </blacklist>
-    </filter> 
+    </filter>
 </phpunit>

@@ -3,7 +3,9 @@
     <title>Icinga 2 Web</title>
     <parser>
         <target>./api</target>
-        <extension>php</extension>
+        <extensions>
+            <extension>php</extension>
+        </extensions>
     </parser>
     <visibility>public,private,protected</visibility>
     <transformer>
@@ -18,5 +20,7 @@
     <files>
         <directory>../library/Icinga</directory>
         <directory>../library/application</directory>
+        <directory>../modules/*/library</directory>
+        <directory>../modules/*/application</directory>
     </files>
 </phpdoc>

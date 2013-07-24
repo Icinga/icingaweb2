@@ -13,7 +13,9 @@ define([
      * Icinga prototype
      */
     var Icinga = function() {
-        var internalModules = ['icinga/components/actionTable','icinga/components/mainDetail'];
+        var internalModules = ['icinga/components/actionTable',
+                               'icinga/components/mainDetail',
+                               'icinga/components/datetime'];
 
         this.modules     = {};
         var failedModules = [];

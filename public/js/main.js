@@ -12,7 +12,10 @@ requirejs.config({
         "Holder": 'vendor/holder',
         "History": 'vendor/history',
 
-        logging: 'icinga/util/logging'
+        logging: 'icinga/util/logging',
+
+        datepicker: 'vendor/datepicker/js/bootstrap-datepicker',
+        timepicker: 'vendor/timepicker/js/bootstrap-timepicker'
     }
 
 });
@@ -24,4 +27,9 @@ define(['jquery','Holder', 'History'], function ($) {
         window.jQuery = $;
         window.Icinga = Icinga;
     });
+});
+
+define(['bootstrap'], function () {
+    requirejs(['datepicker']);
+    requirejs(['timepicker']);
 });
