@@ -1,12 +1,7 @@
 <?php
 namespace Test\Monitoring\Forms\Command;
 
-require_once 'Zend/Test/PHPUnit/ControllerTestCase.php';
-require_once 'Zend/Form.php';
-require_once 'Zend/View.php';
-require_once 'Zend/Form/Element/Submit.php';
-require_once 'Zend/Form/Element/Reset.php';
-
+require_once __DIR__.'/BaseFormTest.php';
 require_once __DIR__. '/../../../../../../../library/Icinga/Web/Form.php';
 require_once __DIR__. '/../../../../../../../library/Icinga/Web/Form/Element/Note.php';
 require_once __DIR__. '/../../../../../application/forms/Command/ConfirmationForm.php';
@@ -16,9 +11,9 @@ use \Zend_View;
 use \Zend_Test_PHPUnit_ControllerTestCase;
 use Monitoring\Form\Command\ConfirmationForm;
 
-class ConfirmationFormTest extends Zend_Test_PHPUnit_ControllerTestCase
+class ConfirmationFormTest extends BaseFormTest
 {
-    public function testForm1()
+    public function testFormCreation()
     {
         $view = new Zend_View();
         $form = new ConfirmationForm();
@@ -31,7 +26,7 @@ class ConfirmationFormTest extends Zend_Test_PHPUnit_ControllerTestCase
 
         $form->addNote('444 NOTE 1');
         $form->addNote('555 NOTE 2');
-
+        $form->buildForm();
         $content = $form->render($view);
 
         $this->assertContains('<input type="submit" name="submit" id="submit" value="111TEST_SUBMIT" class="btn btn-primary pull-right">', $content);
@@ -42,7 +37,7 @@ class ConfirmationFormTest extends Zend_Test_PHPUnit_ControllerTestCase
         $this->assertContains('555 NOTE 2</dd>', $content);
     }
 
-    public function testNotes1()
+    public function testFormNotes()
     {
         $form = new ConfirmationForm();
         $form->addNote('test1');

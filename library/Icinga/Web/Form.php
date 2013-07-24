@@ -26,6 +26,7 @@
 namespace Icinga\Web;
 
 use Icinga\Exception\ProgrammingError;
+use Icinga\Web\Form\InvalidCSRFTokenException;
 use Zend_Form_Exception;
 use Zend_View_Interface;
 
@@ -69,14 +70,53 @@ abstract class Form extends \Zend_Form
     private $created = false;
 
     /**
+     * Session id required for CSRF token generation
+     * @var numeric|bool
+     */
+    private $sessionId = false;
+
+    /**
+     * Returns the session ID stored in this form instance
+     * @return mixed
+     */
+    public function getSessionId()
+    {
+        if (!$this->sessionId) {
+            $this->sessionId = session_id();
+        }
+        return $this->sessionId;
+    }
+
+    /**
+     * Overwrites the currently set session id to a user
+     * provided one, helpful when testing
+     *
+     * @param $sessionId    The session id to use for CSRF generation
+     */
+    public function setSessionId($sessionId)
+    {
+        $this->sessionId = $sessionId;
+    }
+
+    /**
      * @see Zend_Form::init
      */
     public function init()
     {
-        if (!$this->tokenDisabled) {
-            $this->initCsrfToken();
-        }
+
     }
+
+    /**
+     * Returns the html-element name of the CSRF token
+     * field
+     *
+     * @return string
+     */
+    public function getTokenElementName()
+    {
+        return $this->tokenElementName;
+    }
+
 
     /**
      * Render the form to html
@@ -86,7 +126,6 @@ abstract class Form extends \Zend_Form
     public function render(Zend_View_Interface $view = null)
     {
         // Elements must be there to render the form
-        $this->buildForm();
         return parent::render($view);
     }
 
@@ -126,6 +165,7 @@ abstract class Form extends \Zend_Form
     public function buildForm()
     {
         if ($this->created === false) {
+            $this->initCsrfToken();
             $this->create();
 
             // Empty action if not safe
@@ -137,17 +177,6 @@ abstract class Form extends \Zend_Form
         }
     }
 
-    /**
-     * Overridden to assert form creation
-     * @param array $data
-     * @return bool
-     */
-    public function isValid($data)
-    {
-        $this->buildForm();
-        $this->preValidation($data);
-        return parent::isValid($data);
-    }
 
 
     /**
@@ -163,24 +192,23 @@ abstract class Form extends \Zend_Form
         }
 
         $checkData = $this->getRequest()->getParams();
+
+        $this->buildForm();
+        $this->assertValidCsrfToken($checkData);
+        $this->preValidation($checkData);
         return parent::isValid($checkData);
     }
 
-    /**
-     * Enable CSRF counter measure
-     */
-    final public function enableCsrfToken()
-    {
-        $this->tokenDisabled = false;
-    }
+
 
     /**
      * Disable CSRF counter measure and remove its field if already added
      */
-    final public function disableCsrfToken()
+    final public function setTokenDisabled($value)
     {
-        $this->tokenDisabled = true;
-        $this->removeElement($this->tokenElementName);
+        $this->tokenDisabled = $value;
+        if ($value == true)
+            $this->removeElement($this->tokenElementName);
     }
 
     /**
@@ -191,62 +219,89 @@ abstract class Form extends \Zend_Form
         if ($this->tokenDisabled || $this->getElement($this->tokenElementName)) {
             return;
         }
-        list($seed, $token) = $this->generateCsrfToken($this->tokenTimeout);
 
         $this->addElement(
             'hidden',
             $this->tokenElementName,
             array(
-                'value'      => sprintf('%s\|/%s', $seed, $token),
+                'value'      => $this->generateCsrfTokenAsString(),
                 'decorators' => array('ViewHelper')
             )
         );
     }
 
     /**
+     * Tests the submitted data for a correct CSRF token, if needed
+     *
+     * @param Array $checkData                  The POST data send by the user
+     * @throws Form\InvalidCSRFTokenException   When CSRF Validation fails
+     */
+    final public function assertValidCsrfToken(array $checkData)
+    {
+        if ($this->tokenDisabled) {
+            return;
+        }
+
+        if (!isset($checkData[$this->tokenElementName]) || !$this->hasValidCsrfToken($checkData[$this->tokenElementName])) {
+            throw new InvalidCSRFTokenException();
+        }
+    }
+
+    /**
      * Check whether the form's CSRF token-field has a valid value
      *
      * @param int    $maxAge    Max allowed token age
-     * @param string $sessionId A specific session id
      *
      * @return bool
      */
-    final private function hasValidCsrfToken($maxAge, $sessionId = null)
+    final private function hasValidCsrfToken($checkData)
     {
-        if ($this->tokenDisabled) {
-            return true;
-        }
 
         if ($this->getElement($this->tokenElementName) === null) {
             return false;
         }
 
-        $elementValue = $this->getElement($this->tokenElementName)->getValue();
-        list($seed, $token) = explode($elementValue, '\|/');
+        $elementValue = $checkData;
+        if (strpos($elementValue, '|') === false) {
+            return false;
+        }
+
+
+        list($seed, $token) = explode('|', $elementValue);
 
         if (!is_numeric($seed)) {
             return false;
         }
 
-        $seed -= intval(time() / $maxAge) * $maxAge;
-        $sessionId = $sessionId ? $sessionId : session_id();
-        return $token === hash('sha256', $sessionId . $seed);
+        $seed -= intval(time() / $this->tokenTimeout) * $this->tokenTimeout;
+
+        return $token === hash('sha256', $this->getSessionId() . $seed);
     }
 
     /**
      * Generate a new (seed, token) pair
      *
      * @param int    $maxAge    Max allowed token age
-     * @param string $sessionId A specific session id
      *
      * @return array
      */
-    final private function generateCsrfToken($maxAge, $sessionId = null)
+    final public function generateCsrfToken()
     {
-        $sessionId = $sessionId ? $sessionId : session_id();
         $seed = mt_rand();
-        $hash = hash('sha256', $sessionId . $seed);
-        $seed += intval(time() / $maxAge) * $maxAge;
+        $hash = hash('sha256', $this->getSessionId() . $seed);
+        $seed += intval(time() / $this->tokenTimeout) * $this->tokenTimeout;
+
         return array($seed, $hash);
+    }
+
+    /**
+     * Returns the string representation of the CSRF seed/token pair
+     *
+     * @return string
+     */
+    final public function generateCsrfTokenAsString()
+    {
+        list ($seed, $token) = $this->generateCsrfToken($this->getSessionId());
+        return sprintf('%s|%s', $seed, $token);
     }
 }

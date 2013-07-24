@@ -1,120 +1,101 @@
 <?php
 
-namespace {
-    if (!function_exists('t')) {
-        function t() {
-            return func_get_arg(0);
-        }
-    }
-
-    if (!function_exists('mt')) {
-        function mt() {
-            return func_get_arg(0);
-        }
-    }
-}
-
-namespace Test\Monitoring\Forms\Command {
-
-    require_once 'Zend/Test/PHPUnit/ControllerTestCase.php';
-    require_once 'Zend/Form.php';
-    require_once 'Zend/View.php';
-    require_once 'Zend/Form/Element/Submit.php';
-    require_once 'Zend/Form/Element/Reset.php';
-    require_once 'Zend/Form/Element/Checkbox.php';
-    require_once 'Zend/Validate/Date.php';
-
-    require_once __DIR__. '/../../../../../../../library/Icinga/Web/Form.php';
-    require_once __DIR__. '/../../../../../../../library/Icinga/Web/Form/Element/Note.php';
-    require_once __DIR__. '/../../../../../../../library/Icinga/Web/Form/Element/DateTime.php';
-    require_once __DIR__. '/../../../../../application/forms/Command/ConfirmationForm.php';
-    require_once __DIR__. '/../../../../../application/forms/Command/WithChildrenCommandForm.php';
-    require_once __DIR__. '/../../../../../application/forms/Command/RescheduleNextCheckForm.php';
 
 
-    use Monitoring\Form\Command\RescheduleNextCheckForm;
-    use \Zend_View;
-    use \Zend_Test_PHPUnit_ControllerTestCase;
+namespace Test\Monitoring\Forms\Command;
 
-    class RescheduleNextCheckFormTest extends Zend_Test_PHPUnit_ControllerTestCase
+
+require_once __DIR__. '/BaseFormTest.php';
+require_once __DIR__. '/../../../../../application/forms/Command/ConfirmationForm.php';
+require_once __DIR__. '/../../../../../application/forms/Command/WithChildrenCommandForm.php';
+require_once __DIR__. '/../../../../../application/forms/Command/RescheduleNextCheckForm.php';
+
+
+use Monitoring\Form\Command\RescheduleNextCheckForm;
+use \Zend_View;
+use \Zend_Test_PHPUnit_ControllerTestCase;
+
+class RescheduleNextCheckFormTest extends BaseFormTest
+{
+
+    const FORMCLASS = 'Monitoring\Form\Command\RescheduleNextCheckForm';
+
+    public function testValidRescheduleSubmissions()
     {
-        public function testForm1()
-        {
-            $this->getRequest()->setPost(
-                array(
 
-                )
-            );
+        $form = $this->getRequestForm(array(
+            'checktime'  => '2013-10-19 17:30:00',
+            'forcecheck' => 1
+        ), self::FORMCLASS);
+        $form->buildForm();
 
-            $form = new RescheduleNextCheckForm();
-            $form->setRequest($this->getRequest());
-            $form->buildForm();
+        $this->assertCount(6, $form->getElements());
 
-            $this->assertCount(6, $form->getElements());
+        $this->assertTrue(
+            $form->isPostAndValid(),
+            'Asserting a reschedule form with correct time and forececheck=1 to be valid'
+        );
+        $form = $this->getRequestForm(array(
+            'checktime'  => '2013-10-19 17:30:00',
+            'forcecheck' => 0
+        ), self::FORMCLASS);
 
-            $this->assertTrue(
-                $form->isValid(
-                    array(
-                        'checktime'  => '2013-10-19 17:30:00',
-                        'forcecheck' => 1
-                    )
-                )
-            );
+        $this->assertTrue(
+            $form->isPostAndValid(),
+            'Asserting a reschedule form with correct time and forecheck=0 to be valid'
+        );
+    }
 
-            $this->assertTrue(
-                $form->isValid(
-                    array(
-                        'checktime'  => '2013-10-19 17:30:00',
-                        'forcecheck' => 0
-                    )
-                )
-            );
+    public function testInValidRescheduleChecktimeSubmissions()
+    {
+        $form = $this->getRequestForm(array(
+            'checktime'  => '2013-24-12 17:30:00',
+            'forcecheck' => 1
+        ), self::FORMCLASS);
 
-            $this->assertFalse(
-                $form->isValid(
-                    array(
-                        'checktime'  => '2013-24-12 17:30:00',
-                        'forcecheck' => 1
-                    )
-                )
-            );
+        $this->assertFalse(
+            $form->isPostAndValid(),
+            'Asserting an logically invalid checktime to be considered as invalid reschedule data'
+        );
 
-            $this->assertFalse(
-                $form->isValid(
-                    array(
-                        'checktime'  => 'AHAHA',
-                        'forcecheck' => 1
-                    )
-                )
-            );
-        }
+        $form = $this->getRequestForm(array(
+            'checktime'  => 'AHAHA',
+            'forcecheck' => 1
+        ), self::FORMCLASS);
 
-        public function testChildrenFlag()
-        {
 
-            $form = new RescheduleNextCheckForm();
-            $form->setRequest($this->getRequest());
-            $form->setWithChildren(true);
-            $form->buildForm();
-            $notes1 = $form->getNotes();
-            $form = null;
+        $this->assertFalse(
+            $form->isPostAndValid(),
+            'Asserting an invalid non-numeric checktime to be considered as invalid reschedule data'
+        );
+    }
 
-            $form = new RescheduleNextCheckForm();
-            $form->setRequest($this->getRequest());
-            $form->setWithChildren(false);
-            $form->buildForm();
-            $notes2 = $form->getNotes();
-            $form = null;
+    public function testChildrenFlag()
+    {
 
-            $form = new RescheduleNextCheckForm();
-            $form->setRequest($this->getRequest());
-            $form->setWithChildren();
-            $form->buildForm();
-            $notes3 = $form->getNotes();
-            $form = null;
+        $form = new RescheduleNextCheckForm();
+        $form->setRequest($this->getRequest());
+        $form->setWithChildren(true);
+        $form->buildForm();
+        $notes1 = $form->getNotes();
+        $form = null;
 
-            $this->assertEquals($notes1, $notes3);
-            $this->assertNotEquals($notes1, $notes2);
-        }
+        $form = new RescheduleNextCheckForm();
+        $form->setRequest($this->getRequest());
+        $form->setWithChildren(false);
+        $form->buildForm();
+        $notes2 = $form->getNotes();
+        $form = null;
+
+        $form = new RescheduleNextCheckForm();
+        $form->setRequest($this->getRequest());
+        $form->setWithChildren();
+        $form->buildForm();
+        $notes3 = $form->getNotes();
+        $form = null;
+
+        $this->assertEquals($notes1, $notes3);
+        $this->assertNotEquals($notes1, $notes2);
     }
 }
+

@@ -1,86 +1,68 @@
 <?php
 
-namespace {
-    if (!function_exists('t')) {
-        function t() {
-            return func_get_arg(0);
-        }
-    }
+namespace Test\Monitoring\Forms\Command;
 
-    if (!function_exists('mt')) {
-        function mt() {
-            return func_get_arg(0);
-        }
-    }
-}
 
-namespace Test\Monitoring\Forms\Command {
+require_once __DIR__.'/BaseFormTest.php';
+require_once __DIR__. '/../../../../../application/forms/Command/ConfirmationForm.php';
+require_once __DIR__. '/../../../../../application/forms/Command/WithChildrenCommandForm.php';
+require_once __DIR__. '/../../../../../application/forms/Command/CommentForm.php';
 
-    require_once 'Zend/Test/PHPUnit/ControllerTestCase.php';
-    require_once 'Zend/Form.php';
-    require_once 'Zend/View.php';
-    require_once 'Zend/Form/Element/Submit.php';
-    require_once 'Zend/Form/Element/Reset.php';
-    require_once 'Zend/Form/Element/Checkbox.php';
-    require_once 'Zend/Validate/Date.php';
+use Monitoring\Form\Command\CommentForm;
+use \Zend_View;
 
-    require_once __DIR__. '/../../../../../../../library/Icinga/Exception/ProgrammingError.php';
-    require_once __DIR__. '/../../../../../../../library/Icinga/Web/Form.php';
-    require_once __DIR__. '/../../../../../../../library/Icinga/Web/Form/Element/Note.php';
-    require_once __DIR__. '/../../../../../../../library/Icinga/Web/Form/Element/DateTime.php';
-    require_once __DIR__. '/../../../../../application/forms/Command/ConfirmationForm.php';
-    require_once __DIR__. '/../../../../../application/forms/Command/WithChildrenCommandForm.php';
-    require_once __DIR__. '/../../../../../application/forms/Command/CommentForm.php';
 
-    use Monitoring\Form\Command\CommentForm;
-    use \Zend_View;
-    use \Zend_Test_PHPUnit_ControllerTestCase;
-
-    class CommentFormTest extends Zend_Test_PHPUnit_ControllerTestCase
+class CommentFormTest extends BaseFormTest
+{
+    const FORMCLASS = "Monitoring\Form\Command\CommentForm";
+    public function testForm()
     {
-        public function testForm()
-        {
-            $form = new CommentForm();
-            $form->setRequest($this->getRequest());
-            $form->buildForm();
+        $form = new CommentForm();
+        $form->setRequest($this->getRequest());
+        $form->buildForm();
 
-            $this->assertCount(6, $form->getElements());
-        }
+        $this->assertCount(6, $form->getElements());
+    }
 
-        public function testValidation()
-        {
-            $form = new CommentForm();
-            $form->setRequest($this->getRequest());
 
-            $this->assertTrue(
-                $form->isValid(
-                    array(
-                        'author'  => 'test1',
-                        'comment' => 'test2',
-                        'sticky'  => '0'
-                    )
-                )
-            );
+    public function testCorrectCommentValidation()
+    {
+        $form = $this->getRequestForm(array(
+            'author'  => 'test1',
+            'comment' => 'test2',
+            'sticky'  => '0'
+        ), self::FORMCLASS);
 
-            $this->assertFalse(
-                $form->isValid(
-                    array(
-                        'author'  => 'test1',
-                        'comment' => '',
-                        'sticky'  => '0'
-                    )
-                )
-            );
+        $this->assertTrue(
+            $form->isPostAndValid(),
+            "Asserting correct comment form to be considered valid"
+        );
+    }
 
-            $this->assertFalse(
-                $form->isValid(
-                    array(
-                        'author'  => '',
-                        'comment' => 'test2',
-                        'sticky'  => '0'
-                    )
-                )
-            );
-        }
+    public function testRecognizeMissingCommentText()
+    {
+        $form = $this->getRequestForm(array(
+            'author'  => 'test1',
+            'comment' => '',
+            'sticky'  => '0'
+        ), self::FORMCLASS);
+        $this->assertFalse(
+            $form->isPostAndValid(),
+            "Asserting missing comment text in comment form to cause validation errors"
+        );
+    }
+
+    public function testRecognizeMissingCommentAuthor()
+    {
+        $form = $this->getRequestForm(array(
+            'author'  => '',
+            'comment' => 'test2',
+            'sticky'  => '0'
+        ), self::FORMCLASS);
+        $this->assertFalse(
+            $form->isPostAndValid(),
+            "Asserting missing comment author to cause validation errors"
+        );
     }
 }
+

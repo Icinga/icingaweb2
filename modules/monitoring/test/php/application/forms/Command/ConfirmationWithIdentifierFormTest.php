@@ -1,102 +1,79 @@
 <?php
 
-namespace {
-    if (!function_exists('t')) {
-        function t() {
-            return func_get_arg(0);
-        }
-    }
 
-    if (!function_exists('mt')) {
-        function mt() {
-            return func_get_arg(0);
-        }
-    }
-}
+namespace Test\Monitoring\Forms\Command;
 
-namespace Test\Monitoring\Forms\Command {
+require_once __DIR__. '/BaseFormTest.php';
+require_once __DIR__. '/../../../../../application/forms/Command/ConfirmationForm.php';
+require_once __DIR__. '/../../../../../application/forms/Command/WithChildrenCommandForm.php';
+require_once __DIR__. '/../../../../../application/forms/Command/ConfirmationWithIdentifierForm.php';
 
-    require_once 'Zend/Test/PHPUnit/ControllerTestCase.php';
-    require_once 'Zend/Form.php';
-    require_once 'Zend/View.php';
-    require_once 'Zend/Form/Element/Submit.php';
-    require_once 'Zend/Form/Element/Reset.php';
-    require_once 'Zend/Form/Element/Checkbox.php';
-    require_once 'Zend/Validate/Date.php';
+use Monitoring\Form\Command\ConfirmationWithIdentifierForm;
+use \Zend_View;
+use \Zend_Test_PHPUnit_ControllerTestCase;
 
-    require_once __DIR__. '/../../../../../../../library/Icinga/Exception/ProgrammingError.php';
-    require_once __DIR__. '/../../../../../../../library/Icinga/Web/Form.php';
-    require_once __DIR__. '/../../../../../../../library/Icinga/Web/Form/Element/Note.php';
-    require_once __DIR__. '/../../../../../../../library/Icinga/Web/Form/Element/DateTime.php';
-    require_once __DIR__. '/../../../../../application/forms/Command/ConfirmationForm.php';
-    require_once __DIR__. '/../../../../../application/forms/Command/WithChildrenCommandForm.php';
-    require_once __DIR__. '/../../../../../application/forms/Command/ConfirmationWithIdentifierForm.php';
-
-    use Monitoring\Form\Command\ConfirmationWithIdentifierForm;
-    use \Zend_View;
-    use \Zend_Test_PHPUnit_ControllerTestCase;
-
-    class ConfirmationWithIdentifierFormTest extends Zend_Test_PHPUnit_ControllerTestCase
+class ConfirmationWithIdentifierFormTest extends BaseFormTest
+{
+    const FORMCLASS = "Monitoring\Form\Command\ConfirmationWithIdentifierForm";
+    public function testForm()
     {
-        public function testForm()
-        {
-            $form = new ConfirmationWithIdentifierForm();
-            $form->setRequest($this->getRequest());
-            $form->setSubmitLabel('DING DING');
-            $form->buildForm();
+        $form = $this->getRequestForm(array(), self::FORMCLASS);
+        $form->setSubmitLabel('DING DING');
+        $form->buildForm();
 
-            $this->assertCount(4, $form->getElements());
-        }
+        $this->assertCount(4, $form->getElements());
+    }
 
-        public function testValidation()
-        {
-            $form = new ConfirmationWithIdentifierForm();
-            $form->setRequest($this->getRequest());
-            $form->setFieldLabel('Test1');
-            $form->setFieldName('testval');
-            $form->setSubmitLabel('DING DING');
+    public function testCorrectFormValidation()
+    {
 
-            $this->assertTrue(
-                $form->isValid(
-                    array(
-                        'testval' => 123
-                    )
-                )
-            );
+        $form = $this->getRequestForm(array(
+            'testval' => 123
+        ), self::FORMCLASS);
 
-            $this->assertFalse(
-                $form->isValid(
-                    array(
-                        'testval' => ''
-                    )
-                )
-            );
+        $form->setFieldLabel('Test1');
+        $form->setFieldName('testval');
+        $form->setSubmitLabel('DING DING');
 
-            $this->assertFalse(
-                $form->isValid(
-                    array(
-                        'testval' => 'NaN'
-                    )
-                )
-            );
-        }
+        $this->assertTrue(
+            $form->isPostAndValid(),
+            "Asserting correct confirmation with id to be valid"
+        );
+    }
 
-        public function testRequestBridge()
-        {
-            $this->getRequest()->setMethod('POST');
-            $this->getRequest()->setPost(
-                array(
-                    'objectid' => 123123666
-                )
-            );
+    public function testInvalidValueValidationErrors()
+    {
+        $form = $this->getRequestForm(array(
+            'testval' => ''
+        ), self::FORMCLASS);
 
-            $form = new ConfirmationWithIdentifierForm();
-            $form->setRequest($this->getRequest());
-            $form->buildForm();
+        $this->assertFalse(
+            $form->isPostAndValid(),
+            "Asserting an invalid (empty) value to cause validation errors"
+        );
+    }
 
-            $this->assertTrue($form->isPostAndValid());
+    public function testNonNumericValueValidationErrors()
+    {
+        $form = $this->getRequestForm(array(
+            'testval' => 'NaN'
+        ), self::FORMCLASS);
 
-            $this->assertEquals('123123666', $form->getElement('objectid')->getValue());
-        }
+        $this->assertFalse(
+            $form->isPostAndValid(),
+            "Asserting an non numeric value to cause validation errors"
+        );
+    }
+
+    public function testRequestBridge()
+    {
+        $form = $this->getRequestForm(array(
+            'objectid' => 123123666
+        ), self::FORMCLASS);
+        $form->buildForm();
+
+        $this->assertTrue($form->isPostAndValid());
+
+        $this->assertEquals('123123666', $form->getElement('objectid')->getValue());
     }
 }
