@@ -29,7 +29,6 @@
 
 namespace Icinga\Authentication\Backend;
 
-use Icinga\Util\Crypto as Crypto;
 use Icinga\Authentication\User as User;
 use Icinga\Authentication\UserBackend;
 use Icinga\Authentication\Credentials;
@@ -110,10 +109,10 @@ class DbUserBackend implements UserBackend {
             ->select()->from($this->userTable)
                 ->where($this->USER_NAME_COLUMN.' = ?',$credential->getUsername())
                 ->where($this->ACTIVE_COLUMN.   ' = ?',true)
-                ->where($this->PASSWORD_COLUMN. ' = ?',Crypto::hashPassword(
-                        $credential->getPassword(),
-                        $this->getUserSalt($credential->getUsername())
-                    ))
+                ->where($this->PASSWORD_COLUMN. ' = ?',hash_hmac("sha256",
+                        $this->getUserSalt($credential->getUsername()),
+                        $credential->getPassword())
+                    )
                 ->query()->fetch();
         if(!empty($res)){
             $this->updateLastLogin($credential->getUsername());

@@ -15,7 +15,6 @@ require_once("../../library/Icinga/Protocol/Ldap/Exception.php");
 require_once("../../library/Icinga/Application/Config.php");
 require_once("../../library/Icinga/Authentication/Credentials.php");
 require_once("../../library/Icinga/Authentication/Backend/DbUserBackend.php");
-require_once("../../library/Icinga/Util/Crypto.php");
 require_once("../../library/Icinga/Authentication/User.php");
 
 use Icinga\Authentication\Backend\DbUserBackend;
@@ -80,7 +79,10 @@ class DbUserBackendTest  extends \PHPUnit_Framework_TestCase {
             )
         );
 
-        // TODO: Fetch config folder from somewhere instead of defining it statically.
+        /*
+         *  TODO: Fetch config folder from somewhere instead of defining it statically, or this test
+         *  will break when the path changes
+         */
         Config::$configDir = "/vagrant/config";
         $config = Config::app('authentication')->users;
         $config->table = $this->testTable;
@@ -126,9 +128,10 @@ class DbUserBackendTest  extends \PHPUnit_Framework_TestCase {
             $usr = $this->users[$i];
             $data = Array(
                 $this->USER_NAME_COLUMN => $usr[$this->USER_NAME_COLUMN],
-                $this->PASSWORD_COLUMN  => Crypto::hashPassword(
-                    $usr[$this->PASSWORD_COLUMN],
-                    $usr[$this->SALT_COLUMN]),
+                $this->PASSWORD_COLUMN  => hash_hmac("sha256",
+                    $usr[$this->SALT_COLUMN],
+                    $usr[$this->PASSWORD_COLUMN]
+                    ),
                 $this->ACTIVE_COLUMN    => $usr[$this->ACTIVE_COLUMN],
                 $this->SALT_COLUMN      => $usr[$this->SALT_COLUMN]
             );
