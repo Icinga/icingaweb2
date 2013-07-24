@@ -80,21 +80,12 @@ class Monitoring_CommandController extends ModuleActionController
     }
 
     /**
-     * Getter for form
-     * @return Form
-     */
-    public function getForm()
-    {
-        return $this->form;
-    }
-
-    /**
      * Test if we have a valid form object
      * @return bool
      */
     public function issetForm()
     {
-        return $this->getForm() !== null && ($this->getForm() instanceof Form);
+        return $this->form !== null && ($this->form instanceof Form);
     }
 
     /**
@@ -105,11 +96,11 @@ class Monitoring_CommandController extends ModuleActionController
     public function postDispatch()
     {
         if ($this->issetForm()) {
-            if ($this->getRequest()->isPost() && $this->getForm()->isValid(null) === true) {
+            if ($this->form->isPostAndValid()) {
                 $this->_helper->viewRenderer->setNoRender(true);
                 $this->_helper->layout()->disableLayout();
             }
-            $this->view->form = $this->getForm();
+            $this->view->form = $this->form;
         }
 
         parent::postDispatch();
@@ -208,7 +199,7 @@ class Monitoring_CommandController extends ModuleActionController
         $form->addNote(t('Disable active checks for this object.'));
         $this->setForm($form);
 
-        if ($this->getRequest()->isPost() && $form->isValid(null)) {
+        if ($form->isPostAndValid() === true) {
             throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
         }
     }
@@ -225,7 +216,7 @@ class Monitoring_CommandController extends ModuleActionController
         $form->addNote(t('Enable active checks for this object.'));
         $this->setForm($form);
 
-        if ($this->getRequest()->isPost() && $form->isValid(null)) {
+        if ($form->isPostAndValid() === true) {
             throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
         }
     }
@@ -241,7 +232,7 @@ class Monitoring_CommandController extends ModuleActionController
 
         $this->setForm($form);
 
-        if ($this->getRequest()->isPost() && $form->isValid(null)) {
+        if ($form->isPostAndValid() === true) {
             throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
         }
     }
@@ -260,7 +251,7 @@ class Monitoring_CommandController extends ModuleActionController
 
         $this->setForm($form);
 
-        if ($this->getRequest()->isPost() && $form->isValid(null)) {
+        if ($form->isPostAndValid() === true) {
             throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
         }
     }
@@ -277,7 +268,7 @@ class Monitoring_CommandController extends ModuleActionController
         $form->addNote(t('Stop obsessing over this object.'));
         $this->setForm($form);
 
-        if ($this->getRequest()->isPost() && $form->isValid(null)) {
+        if ($form->isPostAndValid() === true) {
             throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
         }
     }
@@ -294,7 +285,7 @@ class Monitoring_CommandController extends ModuleActionController
         $form->addNote(t('Start obsessing over this object.'));
         $this->setForm($form);
 
-        if ($this->getRequest()->isPost() && $form->isValid(null)) {
+        if ($form->isPostAndValid() === true) {
             throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
         }
     }
@@ -311,7 +302,7 @@ class Monitoring_CommandController extends ModuleActionController
         $form->addNote(t('Passive checks for this object will be omitted.'));
         $this->setForm($form);
 
-        if ($this->getRequest()->isPost() && $form->isValid(null)) {
+        if ($form->isPostAndValid() === true) {
             throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
         }
     }
@@ -328,7 +319,7 @@ class Monitoring_CommandController extends ModuleActionController
         $form->addNote(t('Passive checks for this object will be accepted.'));
         $this->setForm($form);
 
-        if ($this->getRequest()->isPost() && $form->isValid(null)) {
+        if ($form->isPostAndValid() === true) {
             throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
         }
     }
@@ -345,7 +336,7 @@ class Monitoring_CommandController extends ModuleActionController
         $form->addNote(t('Notifications for this object will be disabled.'));
         $this->setForm($form);
 
-        if ($this->getRequest()->isPost() && $form->isValid(null)) {
+        if ($form->isPostAndValid() === true) {
             throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
         }
     }
@@ -362,7 +353,7 @@ class Monitoring_CommandController extends ModuleActionController
         $form->addNote(t('Notifications for this object will be enabled.'));
         $this->setForm($form);
 
-        if ($this->getRequest()->isPost() && $form->isValid(null)) {
+        if ($form->isPostAndValid() === true) {
             throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
         }
     }
@@ -377,7 +368,7 @@ class Monitoring_CommandController extends ModuleActionController
         $form->setRequest($this->getRequest());
         $this->setForm($form);
 
-        if ($this->getRequest()->isPost() && $form->isValid(null)) {
+        if ($form->isPostAndValid() === true) {
             throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
         }
     }
@@ -393,7 +384,7 @@ class Monitoring_CommandController extends ModuleActionController
         $form->setWithChildren(false);
         $this->setForm($form);
 
-        if ($this->getRequest()->isPost() && $form->isValid(null)) {
+        if ($form->isPostAndValid() === true) {
             throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
         }
     }
@@ -409,7 +400,7 @@ class Monitoring_CommandController extends ModuleActionController
         $form->setWithChildren(true);
         $this->setForm($form);
 
-        if ($this->getRequest()->isPost() && $form->isValid(null)) {
+        if ($form->isPostAndValid() === true) {
             throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
         }
     }
@@ -426,7 +417,7 @@ class Monitoring_CommandController extends ModuleActionController
         $form->addNote(t('Remove downtime(s) from this host and its services.'));
         $this->setForm($form);
 
-        if ($this->getRequest()->isPost() && $form->isValid(null)) {
+        if ($form->isPostAndValid() === true) {
             throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
         }
     }
@@ -443,7 +434,7 @@ class Monitoring_CommandController extends ModuleActionController
         $form->addNote(t('Notifications for this host and its services will be disabled.'));
         $this->setForm($form);
 
-        if ($this->getRequest()->isPost() && $form->isValid(null)) {
+        if ($form->isPostAndValid() === true) {
             throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
         }
     }
@@ -460,7 +451,7 @@ class Monitoring_CommandController extends ModuleActionController
         $form->addNote(t('Notifications for this host and its services will be enabled.'));
         $this->setForm($form);
 
-        if ($this->getRequest()->isPost() && $form->isValid(null)) {
+        if ($form->isPostAndValid() === true) {
             throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
         }
     }
@@ -478,7 +469,7 @@ class Monitoring_CommandController extends ModuleActionController
 
         $this->setForm($form);
 
-        if ($this->getRequest()->isPost() && $form->isValid(null)) {
+        if ($form->isPostAndValid() === true) {
             throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
         }
     }
@@ -495,7 +486,7 @@ class Monitoring_CommandController extends ModuleActionController
         $form->addNote(t('Disable active checks for this host and its services.'));
         $this->setForm($form);
 
-        if ($this->getRequest()->isPost() && $form->isValid(null)) {
+        if ($form->isPostAndValid() === true) {
             throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
         }
     }
@@ -512,7 +503,7 @@ class Monitoring_CommandController extends ModuleActionController
         $form->addNote(t('Enable active checks for this host and its services.'));
         $this->setForm($form);
 
-        if ($this->getRequest()->isPost() && $form->isValid(null)) {
+        if ($form->isPostAndValid() === true) {
             throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
         }
     }
@@ -529,7 +520,7 @@ class Monitoring_CommandController extends ModuleActionController
         $form->addNote(t('Disable event handler for this object.'));
         $this->setForm($form);
 
-        if ($this->getRequest()->isPost() && $form->isValid(null)) {
+        if ($form->isPostAndValid() === true) {
             throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
         }
     }
@@ -546,7 +537,7 @@ class Monitoring_CommandController extends ModuleActionController
         $form->addNote(t('Enable event handler for this object.'));
         $this->setForm($form);
 
-        if ($this->getRequest()->isPost() && $form->isValid(null)) {
+        if ($form->isPostAndValid() === true) {
             throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
         }
     }
@@ -563,7 +554,7 @@ class Monitoring_CommandController extends ModuleActionController
         $form->addNote(t('Disable flapping detection for this object.'));
         $this->setForm($form);
 
-        if ($this->getRequest()->isPost() && $form->isValid(null)) {
+        if ($form->isPostAndValid() === true) {
             throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
         }
     }
@@ -580,7 +571,7 @@ class Monitoring_CommandController extends ModuleActionController
         $form->addNote(t('Enable flapping detection for this object.'));
         $this->setForm($form);
 
-        if ($this->getRequest()->isPost() && $form->isValid(null)) {
+        if ($form->isPostAndValid() === true) {
             throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
         }
     }
@@ -596,7 +587,7 @@ class Monitoring_CommandController extends ModuleActionController
 
         $this->setForm($form);
 
-        if ($this->getRequest()->isPost() && $form->isValid(null)) {
+        if ($form->isPostAndValid() === true) {
             throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
         }
     }
@@ -613,7 +604,7 @@ class Monitoring_CommandController extends ModuleActionController
         $form->addNote(t('Reset modified attributes to its default.'));
         $this->setForm($form);
 
-        if ($this->getRequest()->isPost() && $form->isValid(null)) {
+        if ($form->isPostAndValid() === true) {
             throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
         }
     }
@@ -629,7 +620,7 @@ class Monitoring_CommandController extends ModuleActionController
 
         $this->setForm($form);
 
-        if ($this->getRequest()->isPost() && $form->isValid(null)) {
+        if ($form->isPostAndValid() === true) {
             throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
         }
     }
@@ -646,7 +637,7 @@ class Monitoring_CommandController extends ModuleActionController
         $form->addNote(t('Remove problem acknowledgement for this object.'));
         $this->setForm($form);
 
-        if ($this->getRequest()->isPost() && $form->isValid(null)) {
+        if ($form->isPostAndValid() === true) {
             throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
         }
     }
@@ -662,7 +653,7 @@ class Monitoring_CommandController extends ModuleActionController
 
         $this->setForm($form);
 
-        if ($this->getRequest()->isPost() && $form->isValid(null)) {
+        if ($form->isPostAndValid() === true) {
             throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
         }
     }
@@ -683,7 +674,7 @@ class Monitoring_CommandController extends ModuleActionController
 
         $this->setForm($form);
 
-        if ($this->getRequest()->isPost() && $form->isValid(null)) {
+        if ($form->isPostAndValid() === true) {
             throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
         }
     }

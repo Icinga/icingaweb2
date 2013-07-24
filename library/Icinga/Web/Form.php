@@ -39,9 +39,9 @@ abstract class Form extends \Zend_Form
 {
     /**
      * The form's request object
-     * @var null
+     * @var \Zend_Controller_Request_Abstract
      */
-    private $request = null;
+    private $request;
 
     /**
      * Whether this form should NOT add random generated "challenge" tokens that are associated
@@ -99,14 +99,6 @@ abstract class Form extends \Zend_Form
     }
 
     /**
-     * @see Zend_Form::init
-     */
-    public function init()
-    {
-
-    }
-
-    /**
      * Returns the html-element name of the CSRF token
      * field
      *
@@ -126,6 +118,7 @@ abstract class Form extends \Zend_Form
     public function render(Zend_View_Interface $view = null)
     {
         // Elements must be there to render the form
+        $this->buildForm();
         return parent::render($view);
     }
 
@@ -177,8 +170,6 @@ abstract class Form extends \Zend_Form
         }
     }
 
-
-
     /**
      * Test if data from array or request is valid
      *
@@ -199,16 +190,16 @@ abstract class Form extends \Zend_Form
         return parent::isValid($checkData);
     }
 
-
-
     /**
      * Disable CSRF counter measure and remove its field if already added
+     * @param boolean $value Flag
      */
-    final public function setTokenDisabled($value)
+    final public function setTokenDisabled($value = true)
     {
-        $this->tokenDisabled = $value;
-        if ($value == true)
+        $this->tokenDisabled = (boolean)$value;
+        if ($value == true) {
             $this->removeElement($this->tokenElementName);
+        }
     }
 
     /**
@@ -242,7 +233,9 @@ abstract class Form extends \Zend_Form
             return;
         }
 
-        if (!isset($checkData[$this->tokenElementName]) || !$this->hasValidCsrfToken($checkData[$this->tokenElementName])) {
+        if (!isset($checkData[$this->tokenElementName])
+            || !$this->hasValidCsrfToken($checkData[$this->tokenElementName])
+        ) {
             throw new InvalidCSRFTokenException();
         }
     }
@@ -250,18 +243,16 @@ abstract class Form extends \Zend_Form
     /**
      * Check whether the form's CSRF token-field has a valid value
      *
-     * @param int    $maxAge    Max allowed token age
-     *
+     * @param string $elementValue Value from the form element
      * @return bool
      */
-    final private function hasValidCsrfToken($checkData)
+    final private function hasValidCsrfToken($elementValue)
     {
 
         if ($this->getElement($this->tokenElementName) === null) {
             return false;
         }
 
-        $elementValue = $checkData;
         if (strpos($elementValue, '|') === false) {
             return false;
         }
@@ -280,9 +271,6 @@ abstract class Form extends \Zend_Form
 
     /**
      * Generate a new (seed, token) pair
-     *
-     * @param int    $maxAge    Max allowed token age
-     *
      * @return array
      */
     final public function generateCsrfToken()

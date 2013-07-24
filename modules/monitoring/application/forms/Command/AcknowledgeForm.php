@@ -136,8 +136,7 @@ class AcknowledgeForm extends ConfirmationForm
      */
     protected function preValidation(array $data)
     {
-
-        if (isset($data['expire']) && intval($data['expire']) === 1 ) {
+        if (isset($data['expire']) && intval($data['expire']) === 1) {
             $expireTime = $this->getElement('expiretime');
             $expireTime->setRequired(true);
             $expireTime->addValidator($this->createDateTimeValidator(), true);
