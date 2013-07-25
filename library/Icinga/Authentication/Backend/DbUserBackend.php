@@ -64,10 +64,12 @@ class DbUserBackend implements UserBackend {
     );
 
     /**
-     * Creates a DbUserBackend with the given configuration.
+     * Creates a DbUserBackend with the given configuration
+     *
      * @param $config The configuration-object containing the members host,user,password,db
      */
-    public function __construct($config){
+    public function __construct($config)
+    {
         $this->dbtype = $config->dbtype;
         $this->userTable = $config->table;
 
@@ -88,7 +90,8 @@ class DbUserBackend implements UserBackend {
     }
 
     /**
-     * Checks if the user in the given Credentials-object is available.
+     * Checks if the user in the given Credentials-object is available
+     *
      * @param Credentials $credentials The login credentials of the user.
      * @return boolean True when the username is known and currently active.
      */
@@ -99,11 +102,13 @@ class DbUserBackend implements UserBackend {
     }
 
     /**
-     * Authenticate a user with the given credentials.
+     * Authenticate a user with the given credentials
+     *
      * @param Credentials $credentials
      * @return User|null The authenticated user or Null.
      */
-    public function authenticate(Credentials $credential){
+    public function authenticate(Credentials $credential)
+    {
         $this->db->getConnection();
         $res = $this->db
             ->select()->from($this->userTable)
@@ -114,7 +119,7 @@ class DbUserBackend implements UserBackend {
                         $credential->getPassword())
                     )
                 ->query()->fetch();
-        if(!empty($res)){
+        if (!empty($res)) {
             $this->updateLastLogin($credential->getUsername());
             return $this->createUserFromResult($res);
         }
@@ -122,10 +127,12 @@ class DbUserBackend implements UserBackend {
 
     /**
      * Updates the timestamp containing the time of the last login for
-     * the user with the given username.
+     * the user with the given username
+     *
      * @param $username The login-name of the user.
      */
-    private function updateLastLogin($username){
+    private function updateLastLogin($username)
+    {
         $this->db->getConnection();
         $this->db->update(
             $this->userTable,
@@ -136,11 +143,13 @@ class DbUserBackend implements UserBackend {
     }
 
     /**
-     * Fetches the user's salt from the database.
+     * Fetches the user's salt from the database
+     *
      * @param $username The user whose salt should be fetched.
      * @return String|null Returns the salt-string or Null, when the user does not exist.
      */
-    private function getUserSalt($username){
+    private function getUserSalt($username)
+    {
         $this->db->getConnection();
         $res = $this->db->select()
             ->from($this->userTable,$this->SALT_COLUMN)
@@ -150,29 +159,33 @@ class DbUserBackend implements UserBackend {
     }
 
     /**
-     * Fetches the user information from the database.
+     * Fetches the user information from the database
+     *
      * @param $username The name of the user.
      * @return User|null Returns the user object, or null when the user does not exist.
      */
-    private function getUserByName($username){
+    private function getUserByName($username)
+    {
         $this->db->getConnection();
         $res = $this->db->
             select()->from($this->userTable)
                 ->where($this->USER_NAME_COLUMN.' = ?',$username)
                 ->where($this->ACTIVE_COLUMN.' = ?',true)
                 ->query()->fetch();
-        if(empty($res)){
+        if (empty($res)) {
             return null;
         }
         return $this->createUserFromResult($res);
     }
 
     /**
-     * Creates a new instance of User from the given result-array.
+     * Creates a new instance of User from the given result-array
+     *
      * @param array $result The query result-array containing the column
      * @return User The created instance of User.
      */
-    private function createUserFromResult(Array $result){
+    private function createUserFromResult(Array $result)
+    {
         $usr = new User(
             $result[$this->USER_NAME_COLUMN],
             $result[$this->FIRST_NAME_COLUMN],

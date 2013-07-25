@@ -10,3 +10,23 @@ create table icinga_users (
   active BOOL,
   PRIMARY KEY (user_name)
 );
+
+/*
+ *  user:     icingaadmin
+ *  password: icinga
+ */
+INSERT INTO icinga_users (
+    user_name,
+    first_name,
+    last_name,
+    salt,
+    password,
+    active)
+  VALUES (
+    'icingaadmin',
+    'john',
+    'doe',
+    'IepKgTTShC',
+    '52deddb5cc7a5769484fcb0fbc5981a7c62cd9f3ddbb8ff3ddb1b89ea324ad16',
+    true
+  );

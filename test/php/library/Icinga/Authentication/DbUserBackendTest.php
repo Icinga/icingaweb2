@@ -60,6 +60,7 @@ class DbUserBackendTest  extends \PHPUnit_Framework_TestCase {
 
     /**
      * Create a preset-configuration that can be used to access the database
+     *
      * with the icinga_unittest account.
      * @return \stdClass
      */
@@ -75,19 +76,20 @@ class DbUserBackendTest  extends \PHPUnit_Framework_TestCase {
     }
 
     /**
-     * Create a backend with the given database type.
+     * Create a backend with the given database type
+     *
      * @param $dbType The database type as a string, like "mysql" or "pgsql".
      * @return DbUserBackend|null
      */
-    private function createBackend($dbType){
-        try{
+    private function createBackend($dbType)
+    {
+        try {
             $config = $this->getBackendConfig();
             $config->dbtype = $dbType;
             $db = $this->createDb($dbType,$config);
             $this->setUpDb($db);
             return new DbUserBackend($config);
-        }
-        catch(\Exception $e){
+        } catch(\Exception $e) {
             echo "CREATE_BACKEND_ERROR:".$e->getMessage();
             return null;
         }
@@ -125,7 +127,8 @@ class DbUserBackendTest  extends \PHPUnit_Framework_TestCase {
     /**
      * Test the PostgreSQL backend.
      */
-    public function testPgsql(){
+    public function testPgsql()
+    {
         if(!empty($this->pgsql)){
             $this->runBackendAuthentication($this->pgsql);
             $this->runBackendUsername($this->pgsql);
@@ -139,7 +142,8 @@ class DbUserBackendTest  extends \PHPUnit_Framework_TestCase {
     /**
      * Test the MySQL-Backend.
      */
-    public function testMySQL(){
+    public function testMySQL()
+    {
         if(!empty($this->mysql)){
             $this->runBackendAuthentication($this->mysql);
             $this->runBackendUsername($this->mysql);
@@ -151,12 +155,14 @@ class DbUserBackendTest  extends \PHPUnit_Framework_TestCase {
     }
 
     /**
-     * Create a database with the given config and type.
+     * Create a database with the given config and type
+     *
      * @param $dbtype The database type as a string, like "mysql" or "pgsql".
      * @param $config The configuration-object.
      * @return mixed
      */
-    private function createDb($dbtype,$config){
+    private function createDb($dbtype,$config)
+    {
         return \Zend_Db::factory($this->dbTypeMap[$dbtype],
             array(
                 'host'      => $config->host,
@@ -167,35 +173,37 @@ class DbUserBackendTest  extends \PHPUnit_Framework_TestCase {
     }
 
     /**
-     * Try to drop all databases that may eventually be present.
+     * Try to drop all databases that may eventually be present
      */
     public function tearDown()
     {
         try{
             $db = $this->createDb("mysql",$this->getBackendConfig());
             $this->tearDownDb($db);
-        }
-        catch(\Exception $e){}
-        try{
+        } catch(\Exception $e) { }
+        try {
             $db = $this->createDb("pgsql",$this->getBackendConfig());
             $this->tearDownDb($db);
-        }
-        catch(\Exception $e){}
+        } catch(\Exception $e) { }
     }
 
     /**
-     * Drop the test database in the given db.
+     * Drop the test database in the given db
+     *
      * @param $db
      */
-    private function tearDownDb($db){
+    private function tearDownDb($db)
+    {
         $db->exec('DROP TABLE '.$this->testTable);
     }
 
     /**
-     * Fill the given database with the sample-data provided in users.
+     * Fill the given database with the sample-data provided in users
+     *
      * @param $db
      */
-    private function setUpDb($db){
+    private function setUpDb($db)
+    {
         $db->exec('CREATE TABLE '.$this->testTable.' (
                   '.$this->USER_NAME_COLUMN.' varchar(255) NOT NULL,
                   '.$this->FIRST_NAME_COLUMN.' varchar(255),
@@ -208,7 +216,7 @@ class DbUserBackendTest  extends \PHPUnit_Framework_TestCase {
                   '.$this->ACTIVE_COLUMN.' BOOL,
                   PRIMARY KEY ('.$this->USER_NAME_COLUMN.')
             )');
-        for($i = 0; $i < count($this->users); $i++){
+        for ($i = 0; $i < count($this->users); $i++) {
             $usr = $this->users[$i];
             $data = Array(
                 $this->USER_NAME_COLUMN => $usr[$this->USER_NAME_COLUMN],
@@ -225,10 +233,12 @@ class DbUserBackendTest  extends \PHPUnit_Framework_TestCase {
 
 
     /**
-     * Run the hasUsername test against an instance of DbUserBackend.
+     * Run the hasUsername test against an instance of DbUserBackend
+     *
      * @param $backend The backend that will be tested.
      */
-    private function runBackendUsername($backend){
+    private function runBackendUsername($backend)
+    {
         // Known user
         $this->assertTrue($backend->hasUsername(
             new Credentials(
@@ -252,10 +262,12 @@ class DbUserBackendTest  extends \PHPUnit_Framework_TestCase {
     }
 
     /**
-     * Run the authentication test against an instance of DbUserBackend.
+     * Run the authentication test against an instance of DbUserBackend
+     *
      * @param $backend The backend that will be tested.
      */
-    private function runBackendAuthentication($backend){
+    private function runBackendAuthentication($backend)
+    {
         // Known user
         $this->assertNotNull($backend->authenticate(
             new Credentials(
