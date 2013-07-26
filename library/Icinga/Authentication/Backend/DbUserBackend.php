@@ -36,7 +36,7 @@ use Icinga\Authentication;
 use Icinga\Application\Logger;
 
 /**
- * Authenticates users using a sql db as backend.
+ * Authenticate users using a sql db as backend.
  * @package Icinga\Authentication\Backend
  */
 class DbUserBackend implements UserBackend {
@@ -70,8 +70,10 @@ class DbUserBackend implements UserBackend {
             $DOMAIN_COLUMN      = 'domain',
             $EMAIL_COLUMN       = 'email';
 
-    /*
-     * maps the configuration dbtypes to the corresponding Zend-PDOs
+    /**
+     * Map the configuration dbtypes to the corresponding Zend-PDOs
+     *
+     * @var Array
      */
     private $dbTypeMap = Array(
         'mysql' => 'PDO_MYSQL',
@@ -79,7 +81,7 @@ class DbUserBackend implements UserBackend {
     );
 
     /**
-     * Creates a DbUserBackend
+     * Create a DbUserBackend
      *
      * @param $config The configuration-object containing the members host,user,password,db
      */
@@ -110,7 +112,7 @@ class DbUserBackend implements UserBackend {
     }
 
     /**
-     * Checks if the user identified by the given credentials is available
+     * Check if the user identified by the given credentials is available
      *
      * @param Credentials $credentials The login credentials
      * @return boolean True when the username is known and currently active.
@@ -171,7 +173,7 @@ class DbUserBackend implements UserBackend {
     }
 
     /**
-     * Fetch the user's salt from the database
+     * Fetch the users salt from the database
      *
      * @param $username The user whose salt should be fetched.
      * @return String|null Returns the salt-string or Null, when the user does not exist.
@@ -216,7 +218,7 @@ class DbUserBackend implements UserBackend {
     }
 
     /**
-     * Creates a new instance of User from the given result-array
+     * Create a new instance of User from a query result
      *
      * @param array $result The query result-array containing the column
      * @return User The created instance of User.

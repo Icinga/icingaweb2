@@ -96,7 +96,7 @@ class DbUserBackendTest  extends \PHPUnit_Framework_TestCase {
     }
 
     /**
-     * Create the backends and fill it with sample-data.
+     * Create the backends and fill it with sample-data
      */
     protected function setUp()
     {
@@ -125,7 +125,7 @@ class DbUserBackendTest  extends \PHPUnit_Framework_TestCase {
     }
 
     /**
-     * Test the PostgreSQL backend.
+     * Test the PostgreSQL backend
      */
     public function testPgsql()
     {
@@ -140,7 +140,7 @@ class DbUserBackendTest  extends \PHPUnit_Framework_TestCase {
     }
 
     /**
-     * Test the MySQL-Backend.
+     * Test the MySQL-Backend
      */
     public function testMySQL()
     {
