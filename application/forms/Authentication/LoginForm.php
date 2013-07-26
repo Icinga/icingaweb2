@@ -64,6 +64,6 @@ class LoginForm extends Form
             )
         );
 
-        $this->disableCsrfToken();
+        $this->setTokenDisabled(true);
     }
 }

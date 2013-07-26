@@ -69,7 +69,7 @@ class AuthenticationController extends ActionController
                 $this->redirectNow('index?_render=body');
             }
 
-            if ($this->getRequest()->isPost() && $this->view->form->isValid($this->getRequest())) {
+            if ($this->view->form->isPostAndValid()) {
 
 
                 $credentials->setUsername($this->view->form->getValue('username'));
