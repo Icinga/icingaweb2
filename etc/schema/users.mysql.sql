@@ -1,4 +1,4 @@
-create table icinga_users (
+create table user (
   user_name varchar(255) NOT NULL,
   first_name varchar(255),
   last_name varchar(255),
@@ -15,17 +15,13 @@ create table icinga_users (
  *  user:     icingaadmin
  *  password: icinga
  */
-INSERT INTO icinga_users (
+INSERT INTO user (
     user_name,
-    first_name,
-    last_name,
     salt,
     password,
     active)
   VALUES (
     'icingaadmin',
-    'john',
-    'doe',
     'IepKgTTShC',
     '52deddb5cc7a5769484fcb0fbc5981a7c62cd9f3ddbb8ff3ddb1b89ea324ad16',
     true

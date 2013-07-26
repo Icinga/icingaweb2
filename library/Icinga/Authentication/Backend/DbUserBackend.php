@@ -64,7 +64,7 @@ class DbUserBackend implements UserBackend {
     );
 
     /**
-     * Creates a DbUserBackend with the given configuration
+     * Creates a DbUserBackend
      *
      * @param $config The configuration-object containing the members host,user,password,db
      */
@@ -90,9 +90,9 @@ class DbUserBackend implements UserBackend {
     }
 
     /**
-     * Checks if the user in the given Credentials-object is available
+     * Checks if the user identified by the given credentials is available
      *
-     * @param Credentials $credentials The login credentials of the user.
+     * @param Credentials $credentials The login credentials
      * @return boolean True when the username is known and currently active.
      */
     public function hasUsername(Credentials $credential)
@@ -104,7 +104,7 @@ class DbUserBackend implements UserBackend {
     /**
      * Authenticate a user with the given credentials
      *
-     * @param Credentials $credentials
+     * @param Credentials $credentials The login credentials
      * @return User|null The authenticated user or Null.
      */
     public function authenticate(Credentials $credential)
@@ -126,7 +126,7 @@ class DbUserBackend implements UserBackend {
     }
 
     /**
-     * Updates the timestamp containing the time of the last login for
+     * Update the timestamp containing the time of the last login for
      * the user with the given username
      *
      * @param $username The login-name of the user.
@@ -143,7 +143,7 @@ class DbUserBackend implements UserBackend {
     }
 
     /**
-     * Fetches the user's salt from the database
+     * Fetch the user's salt from the database
      *
      * @param $username The user whose salt should be fetched.
      * @return String|null Returns the salt-string or Null, when the user does not exist.
@@ -159,7 +159,7 @@ class DbUserBackend implements UserBackend {
     }
 
     /**
-     * Fetches the user information from the database
+     * Fetch the user information from the database
      *
      * @param $username The name of the user.
      * @return User|null Returns the user object, or null when the user does not exist.

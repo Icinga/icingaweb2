@@ -89,8 +89,6 @@ class Monitoring_ListController extends ModuleActionController
         if ($this->_getParam('sort')) {
             $this->view->sort = $this->_getParam('sort');
         }
-
-
     }
 
     public function hostgroupsAction()

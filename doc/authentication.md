@@ -1,12 +1,12 @@
 # Authentication via internal DB
 
-The class DbUserBackend allows 
+The class DbUserBackend allows to handle the user authentication internally in a database.
 
 ## Configuration
 
 The internal authentication is configured in *config/authentication.ini*. The value
 of the configuration key "backend" will determine which UserBackend class to
-load. To use the internal backend you will need to specifiy the value "Db"
+load. To use the internal backend you need to specifiy the value "Db"
 which will cause the class "DbUserBackend" to be loaded.
 
 There are various configuration keys in "Authentication.ini" and some are only

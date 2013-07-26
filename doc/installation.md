@@ -22,7 +22,7 @@ If you want to install the application to a different directory, use the --prefi
 configure call:
 `
 ./configure --prefix=/my/target/directory
-` 
+`
 
 ### Authentication
 
@@ -38,6 +38,49 @@ The default option for icinga2web is to configure all icinga backends with the d
 call `--with-icinga-backend=` and provide ido, livestatus or statusdat as an option. To further configure
 your backend, take a look at the various options described in `./configure --help` 
 
+### Databases
+
+It is required to set up all used Databases correctly, which basically means to create all needed user accounts and to
+create all database tables. You will find the installation guides for the different databases in the sections below:
+
+*IMPORTANT*: Select a secure password instead of "icinga" and alter the config/*.ini accordingly.
+
+
+#### MySQL
+
+1. Create the user and the database
+
+
+   mysql -u root -p
+   mysql> CREATE USER `icingaweb`@`localhost` IDENTIFIED BY 'icinga';
+   mysql> CREATE DATABASE `icingaweb`;
+   mysql> GRANT ALL PRIVILEGES ON `icingaweb`.* TO `icingaweb`@`localhost`;
+   mysql> FLUSH PRIVILEGES;
+   mysql> quit
+
+
+2. Create all tables (You need to be in the icinga2-web folder)
+
+
+   bash$  mysql -u root -p icingaweb < etc/schema/users.mysql.sql
+
+
+#### PostgreSQL
+
+1. Create the user and the database
+
+
+    sudo su postgres
+    psql
+    postgres=#  CREATE USER icingaweb WITH PASSWORD 'icinga';
+    postgres=#  CREATE DATABASE icingaweb;
+    postgres=#  \q
+
+
+2. Create all tables (You need to be in the icinga2-web folder)
+
+
+    bash$  psql -d icingaweb -a -f etc/schema/users.mysql.sql
 
 
 Quick and Dirty
