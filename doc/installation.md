@@ -43,7 +43,7 @@ your backend, take a look at the various options described in `./configure --hel
 It is required to set up all used Databases correctly, which basically means to create all needed user accounts and to
 create all database tables. You will find the installation guides for the different databases in the sections below:
 
-*IMPORTANT*: Select a secure password instead of "icinga" and alter the config/*.ini accordingly.
+*IMPORTANT*: Select a secure password instead of "icinga" and alter the config/authentication.ini accordingly.
 
 
 #### MySQL
@@ -51,12 +51,12 @@ create all database tables. You will find the installation guides for the differ
 1. Create the user and the database
 
 
-   mysql -u root -p
-   mysql> CREATE USER `icingaweb`@`localhost` IDENTIFIED BY 'icinga';
-   mysql> CREATE DATABASE `icingaweb`;
-   mysql> GRANT ALL PRIVILEGES ON `icingaweb`.* TO `icingaweb`@`localhost`;
-   mysql> FLUSH PRIVILEGES;
-   mysql> quit
+    mysql -u root -p
+    mysql> CREATE USER `icingaweb`@`localhost` IDENTIFIED BY 'icinga';
+    mysql> CREATE DATABASE `icingaweb`;
+    mysql> GRANT ALL PRIVILEGES ON `icingaweb`.* TO `icingaweb`@`localhost`;
+    mysql> FLUSH PRIVILEGES;
+    mysql> quit
 
 
 2. Create all tables (You need to be in the icinga2-web folder)
@@ -80,8 +80,18 @@ create all database tables. You will find the installation guides for the differ
 2. Create all tables (You need to be in the icinga2-web folder)
 
 
-    bash$  psql -d icingaweb -a -f etc/schema/users.mysql.sql
+    bash$  psql -U icingaweb -a -f etc/schema/users.pgsql.sql
 
+3. Enable trust authentication on localhost
+
+Add the following lines to your pg_hba.conf (etc/postgresql/X.x/main/pg_hba.conf under debian, /var/lib/pgsql/data/pg_hba.conf for Redhat/Fedora)
+to enable trust authentication for the icingaweb user when connecting from the localhost.
+
+    local   icingaweb      icingaweb                            trust
+    host    icingaweb      icingaweb      127.0.0.1/32          trust
+    host    icingaweb      icingaweb      ::1/128               trust
+
+And restart your databse ('service postgresql restart' or '/etc/init.d/postgresql-X.x reload')
 
 Quick and Dirty
 ----------------

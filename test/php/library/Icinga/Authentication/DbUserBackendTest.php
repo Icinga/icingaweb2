@@ -8,14 +8,14 @@ namespace Tests\Icinga\Authentication;
 //use Icinga\Protocol\Ldap\Exception;
 //use Zend_Config_Ini;
 
-require_once("Zend/Config/Ini.php");
-require_once("Zend/Db.php");
-require_once("../../library/Icinga/Authentication/UserBackend.php");
-require_once("../../library/Icinga/Protocol/Ldap/Exception.php");
-require_once("../../library/Icinga/Application/Config.php");
-require_once("../../library/Icinga/Authentication/Credentials.php");
-require_once("../../library/Icinga/Authentication/Backend/DbUserBackend.php");
-require_once("../../library/Icinga/Authentication/User.php");
+require_once('Zend/Config/Ini.php');
+require_once('Zend/Db.php');
+require_once('../../library/Icinga/Authentication/UserBackend.php');
+require_once('../../library/Icinga/Protocol/Ldap/Exception.php');
+require_once('../../library/Icinga/Application/Config.php');
+require_once('../../library/Icinga/Authentication/Credentials.php');
+require_once('../../library/Icinga/Authentication/Backend/DbUserBackend.php');
+require_once('../../library/Icinga/Authentication/User.php');
 
 use Icinga\Authentication\Backend\DbUserBackend;
 use Icinga\Util\Crypto;
@@ -33,21 +33,21 @@ class DbUserBackendTest  extends \PHPUnit_Framework_TestCase {
 
     private $dbUserBackend;
     private $db;
-    private $testTable = "icinga_users_test";
-    private $testDatabase = "icinga_unittest";
+    private $testTable = 'account';
+    private $testDatabase = 'icinga_unittest';
 
     /*
      * Must be identical with the column names defined in DbUserBackend
      */
-    private $USER_NAME_COLUMN   = "user_name",
-            $FIRST_NAME_COLUMN  = "first_name",
-            $LAST_NAME_COLUMN   = "last_name",
-            $LAST_LOGIN_COLUMN  = "last_login",
-            $SALT_COLUMN        = "salt",
-            $PASSWORD_COLUMN    = "password",
-            $ACTIVE_COLUMN      = "active",
-            $DOMAIN_COLUMN      = "domain",
-            $EMAIL_COLUMN       = "email";
+    private $USER_NAME_COLUMN   = 'user_name',
+            $FIRST_NAME_COLUMN  = 'first_name',
+            $LAST_NAME_COLUMN   = 'last_name',
+            $LAST_LOGIN_COLUMN  = 'last_login',
+            $SALT_COLUMN        = 'salt',
+            $PASSWORD_COLUMN    = 'password',
+            $ACTIVE_COLUMN      = 'active',
+            $DOMAIN_COLUMN      = 'domain',
+            $EMAIL_COLUMN       = 'email';
 
     private $users;
     private $mysql;
@@ -67,9 +67,9 @@ class DbUserBackendTest  extends \PHPUnit_Framework_TestCase {
     private function getBackendConfig()
     {
         $config = new \stdClass();
-        $config->host = "127.0.0.1";
-        $config->user = "icinga_unittest";
-        $config->password= "icinga_unittest";
+        $config->host = '127.0.0.1';
+        $config->user = 'icinga_unittest';
+        $config->password= 'icinga_unittest';
         $config->table = $this->testTable;
         $config->db = $this->testDatabase;
         return $config;
@@ -78,7 +78,7 @@ class DbUserBackendTest  extends \PHPUnit_Framework_TestCase {
     /**
      * Create a backend with the given database type
      *
-     * @param $dbType The database type as a string, like "mysql" or "pgsql".
+     * @param $dbType The database type as a string, like 'mysql' or 'pgsql'.
      * @return DbUserBackend|null
      */
     private function createBackend($dbType)
@@ -90,7 +90,7 @@ class DbUserBackendTest  extends \PHPUnit_Framework_TestCase {
             $this->setUpDb($db);
             return new DbUserBackend($config);
         } catch(\Exception $e) {
-            echo "CREATE_BACKEND_ERROR:".$e->getMessage();
+            echo 'CREATE_BACKEND_ERROR:'.$e->getMessage();
             return null;
         }
     }
@@ -120,8 +120,8 @@ class DbUserBackendTest  extends \PHPUnit_Framework_TestCase {
                 $this->ACTIVE_COLUMN    => 0
             )
         );
-        $this->mysql = $this->createBackend("mysql");
-        $this->pgsql = $this->createBackend("pgsql");
+        $this->mysql = $this->createBackend('mysql');
+        $this->pgsql = $this->createBackend('pgsql');
     }
 
     /**
@@ -134,7 +134,7 @@ class DbUserBackendTest  extends \PHPUnit_Framework_TestCase {
             $this->runBackendUsername($this->pgsql);
         }
         else{
-            echo "\nSKIPPING PGSQL TEST...\n";
+            echo '\nSKIPPING PGSQL TEST...\n';
             $this->markTestSkipped();
         }
     }
@@ -149,7 +149,7 @@ class DbUserBackendTest  extends \PHPUnit_Framework_TestCase {
             $this->runBackendUsername($this->mysql);
         }
         else{
-            echo "\nSKIPPING MYSQL TEST...\n";
+            echo '\nSKIPPING MYSQL TEST...\n';
             $this->markTestSkipped();
         }
     }
@@ -157,7 +157,7 @@ class DbUserBackendTest  extends \PHPUnit_Framework_TestCase {
     /**
      * Create a database with the given config and type
      *
-     * @param $dbtype The database type as a string, like "mysql" or "pgsql".
+     * @param $dbtype The database type as a string, like 'mysql' or 'pgsql'.
      * @param $config The configuration-object.
      * @return mixed
      */
@@ -168,7 +168,7 @@ class DbUserBackendTest  extends \PHPUnit_Framework_TestCase {
                 'host'      => $config->host,
                 'username'  => $config->user,
                 'password'  => $config->password,
-                "dbname"    => "icinga_unittest"
+                'dbname'    => 'icinga_unittest'
             ));
     }
 
@@ -178,11 +178,11 @@ class DbUserBackendTest  extends \PHPUnit_Framework_TestCase {
     public function tearDown()
     {
         try{
-            $db = $this->createDb("mysql",$this->getBackendConfig());
+            $db = $this->createDb('mysql',$this->getBackendConfig());
             $this->tearDownDb($db);
         } catch(\Exception $e) { }
         try {
-            $db = $this->createDb("pgsql",$this->getBackendConfig());
+            $db = $this->createDb('pgsql',$this->getBackendConfig());
             $this->tearDownDb($db);
         } catch(\Exception $e) { }
     }
@@ -204,6 +204,11 @@ class DbUserBackendTest  extends \PHPUnit_Framework_TestCase {
      */
     private function setUpDb($db)
     {
+        try {
+            $this->tearDownDb($db);
+        } catch (\Exception $e) {
+            // if no database exists, an exception will be thrown
+        }
         $db->exec('CREATE TABLE '.$this->testTable.' (
                   '.$this->USER_NAME_COLUMN.' varchar(255) NOT NULL,
                   '.$this->FIRST_NAME_COLUMN.' varchar(255),
@@ -220,7 +225,7 @@ class DbUserBackendTest  extends \PHPUnit_Framework_TestCase {
             $usr = $this->users[$i];
             $data = Array(
                 $this->USER_NAME_COLUMN => $usr[$this->USER_NAME_COLUMN],
-                $this->PASSWORD_COLUMN  => hash_hmac("sha256",
+                $this->PASSWORD_COLUMN  => hash_hmac('sha256',
                     $usr[$this->SALT_COLUMN],
                     $usr[$this->PASSWORD_COLUMN]
                     ),

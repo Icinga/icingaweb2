@@ -1,4 +1,4 @@
-create table "user" (
+create table "account" (
   user_name varchar(255) NOT NULL,
   first_name varchar(255),
   last_name varchar(255),
@@ -15,7 +15,7 @@ create table "user" (
  *  user:     icingaadmin
  *  password: icinga
  */
-INSERT INTO "user" (
+INSERT INTO "account" (
     user_name,
     salt,
     password,

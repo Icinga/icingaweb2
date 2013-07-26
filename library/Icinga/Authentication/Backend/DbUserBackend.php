@@ -33,7 +33,7 @@ use Icinga\Authentication\User as User;
 use Icinga\Authentication\UserBackend;
 use Icinga\Authentication\Credentials;
 use Icinga\Authentication;
-
+use Icinga\Application\Logger;
 
 /**
  * Authenticates users using a sql db as backend.
@@ -41,26 +41,41 @@ use Icinga\Authentication;
  */
 class DbUserBackend implements UserBackend {
 
-    private $db;
+    /**
+     * The database connection that will be used for fetching users
+     *
+     * @var \Zend_Db
+     */
+    private $db = null;
 
+    /**
+     * The name of the user table as provided by the configuration
+     *
+     * @var String
+     */
     private $userTable;
 
-    private $USER_NAME_COLUMN   = "user_name",
-            $FIRST_NAME_COLUMN  = "first_name",
-            $LAST_NAME_COLUMN   = "last_name",
-            $LAST_LOGIN_COLUMN  = "last_login",
-            $SALT_COLUMN        = "salt",
-            $PASSWORD_COLUMN    = "password",
-            $ACTIVE_COLUMN      = "active",
-            $DOMAIN_COLUMN      = "domain",
-            $EMAIL_COLUMN       = "email";
+    /**
+     * Mapping of columns
+     *
+     * @var string
+     */
+    private $USER_NAME_COLUMN   = 'user_name',
+            $FIRST_NAME_COLUMN  = 'first_name',
+            $LAST_NAME_COLUMN   = 'last_name',
+            $LAST_LOGIN_COLUMN  = 'last_login',
+            $SALT_COLUMN        = 'salt',
+            $PASSWORD_COLUMN    = 'password',
+            $ACTIVE_COLUMN      = 'active',
+            $DOMAIN_COLUMN      = 'domain',
+            $EMAIL_COLUMN       = 'email';
 
     /*
      * maps the configuration dbtypes to the corresponding Zend-PDOs
      */
     private $dbTypeMap = Array(
-        "mysql" => "PDO_MYSQL",
-        "pgsql" => "PDO_PGSQL"
+        'mysql' => 'PDO_MYSQL',
+        'pgsql' => 'PDO_PGSQL'
     );
 
     /**
@@ -72,21 +87,26 @@ class DbUserBackend implements UserBackend {
     {
         $this->dbtype = $config->dbtype;
         $this->userTable = $config->table;
+        try {
+            $this->db = \Zend_Db::factory(
+                $this->dbTypeMap[$config->dbtype],
+                array(
+                    'host'      => $config->host,
+                    'username'  => $config->user,
+                    'password'  => $config->password,
+                    'dbname'    => $config->db
+            ));
 
-        $this->db = \Zend_Db::factory(
-            $this->dbTypeMap[$config->dbtype],
-            array(
-                'host'      => $config->host,
-                'username'  => $config->user,
-                'password'  => $config->password,
-                'dbname'    => $config->db
-        ));
+            /*
+             * Test the connection settings
+             */
+            $this->db->getConnection();
+            $this->db->select()->from($this->userTable,new \Zend_Db_Expr('TRUE'));
+        } catch (\Zend_Db_Adapter_Exception $exc) {
+            Logger::error('Could not authenticate via database : %s ', $exc->getMessage());
+            $this->db = null;
 
-        /*
-         * Test the connection settings
-         */
-        $this->db->getConnection();
-        $this->db->select()->from($this->userTable,new \Zend_Db_Expr("TRUE"));
+        }
     }
 
     /**
@@ -97,6 +117,10 @@ class DbUserBackend implements UserBackend {
      */
     public function hasUsername(Credentials $credential)
     {
+        if ($this->db === null) {
+            Logger::warn('Ignoring hasUsername in database as no connection is available');
+            return false;
+        }
         $user = $this->getUserByName($credential->getUsername());
         return !empty($user);
     }
@@ -109,12 +133,16 @@ class DbUserBackend implements UserBackend {
      */
     public function authenticate(Credentials $credential)
     {
+        if ($this->db === null) {
+            Logger::warn('Ignoring database authentication as no connection is available');
+            return null;
+        }
         $this->db->getConnection();
         $res = $this->db
             ->select()->from($this->userTable)
                 ->where($this->USER_NAME_COLUMN.' = ?',$credential->getUsername())
                 ->where($this->ACTIVE_COLUMN.   ' = ?',true)
-                ->where($this->PASSWORD_COLUMN. ' = ?',hash_hmac("sha256",
+                ->where($this->PASSWORD_COLUMN. ' = ?',hash_hmac('sha256',
                         $this->getUserSalt($credential->getUsername()),
                         $credential->getPassword())
                     )
@@ -137,7 +165,7 @@ class DbUserBackend implements UserBackend {
         $this->db->update(
             $this->userTable,
             array(
-                $this->LAST_LOGIN_COLUMN => new \Zend_Db_Expr("NOW()")
+                $this->LAST_LOGIN_COLUMN => new \Zend_Db_Expr('NOW()')
             ),
             $this->USER_NAME_COLUMN.' = '.$this->db->quoteInto('?',$username));
     }
@@ -166,16 +194,25 @@ class DbUserBackend implements UserBackend {
      */
     private function getUserByName($username)
     {
-        $this->db->getConnection();
-        $res = $this->db->
-            select()->from($this->userTable)
-                ->where($this->USER_NAME_COLUMN.' = ?',$username)
-                ->where($this->ACTIVE_COLUMN.' = ?',true)
-                ->query()->fetch();
-        if (empty($res)) {
+        if ($this->db === null) {
+            Logger::warn('Ignoring getUserByName as no database connection is available');
             return null;
         }
-        return $this->createUserFromResult($res);
+        try {
+            $this->db->getConnection();
+            $res = $this->db->
+                select()->from($this->userTable)
+                    ->where($this->USER_NAME_COLUMN.' = ?',$username)
+                    ->where($this->ACTIVE_COLUMN.' = ?',true)
+                    ->query()->fetch();
+            if (empty($res)) {
+                return null;
+            }
+            return $this->createUserFromResult($res);
+        } catch (\Zend_Db_Statement_Exception $exc) {
+            Logger::error("Could not fetch users from db : %s ", $exc->getMessage());
+            return null;
+        }
     }
 
     /**
