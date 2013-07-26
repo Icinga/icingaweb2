@@ -28,7 +28,7 @@
 
 namespace Icinga\Authentication\Backend;
 
-use Icinga\Authentication\User as User;
+use Icinga\User;
 use Icinga\Authentication\UserBackend;
 use Icinga\Authentication\Credentials;
 use Icinga\Protocol\Ldap;
@@ -94,10 +94,16 @@ class LdapUserBackend implements UserBackend
     protected function selectUsername($username)
     {
         return $this->connection->select()
-            ->from(IcingaConfig::app('authentication')->users->user_class,
-                array(IcingaConfig::app('authentication')->users->user_name_attribute))
-            ->where(IcingaConfig::app('authentication')->users->user_name_attribute,
-                $this->stripAsterisks($username));
+            ->from(
+                IcingaConfig::app('authentication')->users->user_class,
+                array(
+                    IcingaConfig::app('authentication')->users->user_name_attribute
+                )
+            )
+            ->where(
+                IcingaConfig::app('authentication')->users->user_name_attribute,
+                $this->stripAsterisks($username)
+            );
     }
 
     /**

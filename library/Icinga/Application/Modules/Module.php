@@ -30,6 +30,7 @@ namespace Icinga\Application\Modules;
 
 use Icinga\Application\ApplicationBootstrap;
 use Icinga\Application\Config;
+use Icinga\Application\Icinga;
 use Icinga\Web\Hook;
 use Zend_Controller_Router_Route as Route;
 
@@ -42,58 +43,74 @@ class Module
 {
     /**
      * Module name
+     *
      * @var string
      */
     private $name;
 
     /**
      * Base directory of module
+     *
      * @var string
      */
     private $basedir;
 
     /**
      * Directory for styles
+     *
      * @var string
      */
     private $cssdir;
 
     /**
      * Library directory
+     *
      * @var string
      */
     private $libdir;
 
     /**
      * Directory containing translations
+     *
      * @var string
      */
     private $localedir;
 
     /**
      * Directory where controllers reside
+     *
      * @var string
      */
     private $controllerdir;
 
     /**
      * Directory containing form implementations
+     *
      * @var string
      */
     private $formdir;
 
     /**
      * Module bootstrapping script
+     *
      * @var string
      */
     private $registerscript;
 
     /**
      * Icinga application
-     * @var \Icinga\Application\ApplicationBootstrap
+     *
+     * @var \Icinga\Application\Web
      */
     private $app;
 
+    /**
+     * Creates a new module object
+     *
+     * @param ApplicationBootstrap $app
+     * @param string               $name
+     * @param strinb               $basedir
+     */
     public function __construct(ApplicationBootstrap $app, $name, $basedir)
     {
         $this->app            = $app;
@@ -110,6 +127,7 @@ class Module
 
     /**
      * Register module
+     *
      * @return bool
      */
     public function register()
@@ -122,18 +140,26 @@ class Module
 
     /**
      * Test for an enabled module by name
+     *
      * @param string $name
      * @return boolean
      */
     public static function exists($name)
     {
-        return Icinga::app()->moduleManager()->hasEnabled($name);
+        return Icinga::app()->getModuleManager()->hasEnabled($name);
     }
 
+    /**
+     * Get module by name
+     *
+     * @param  string $name
+     * @param  bool   $autoload
+     * @return mixed
+     */
     public static function get($name, $autoload = false)
     {
-        $manager = Icinga::app()->moduleManager();
-        if (! $manager->hasLoaded($name)) {
+        $manager = Icinga::app()->getModuleManager();
+        if (!$manager->hasLoaded($name)) {
             if ($autoload === true && $manager->hasEnabled($name)) {
                 $manager->loadModule($name);
             }
@@ -144,6 +170,7 @@ class Module
 
     /**
      * Test if module provide css
+     *
      * @return bool
      */
     public function hasCss()
@@ -153,6 +180,8 @@ class Module
 
     /**
      * Getter for module name
+     *
+     * @return string
      */
     public function getName()
     {
@@ -161,6 +190,7 @@ class Module
 
     /**
      * Getter for css file name
+     *
      * @return string
      */
     public function getCssFilename()
@@ -179,6 +209,7 @@ class Module
 
     /**
      * Getter for library directory
+     *
      * @return string
      */
     public function getLibDir()
@@ -188,6 +219,7 @@ class Module
 
     /**
      * Getter for configuration directory
+     *
      * @return string
      */
     public function getConfigDir()
@@ -197,6 +229,7 @@ class Module
 
     /**
      * Getter for form directory
+     *
      * @return string
      */
     public function getFormDir()
@@ -206,7 +239,8 @@ class Module
 
     /**
      * Getter for module config object
-     * @param null|string $file
+     *
+     * @param  null|string $file
      * @return Config
      */
     public function getConfig($file = null)
@@ -218,7 +252,8 @@ class Module
 
     /**
      * Register new namespaces on the autoloader
-     * @return Module
+     *
+     * @return self
      */
     protected function registerAutoloader()
     {
@@ -237,7 +272,8 @@ class Module
 
     /**
      * Bind text domain for i18n
-     * @return Module
+     *
+     * @return self
      */
     protected function registerLocales()
     {
@@ -252,7 +288,7 @@ class Module
      *
      * Add controller directory to mvc
      *
-     * @return Module
+     * @return self
      */
     protected function registerWebIntegration()
     {
@@ -261,7 +297,7 @@ class Module
         }
 
         if (file_exists($this->controllerdir) && is_dir($this->controllerdir)) {
-            $this->app->frontController()->addControllerDirectory(
+            $this->app->getfrontController()->addControllerDirectory(
                 $this->controllerdir,
                 $this->name
             );
@@ -275,14 +311,15 @@ class Module
 
     /**
      * Register menu entries
-     * @return Module
+     *
+     * @return self
      */
     protected function registerMenuEntries()
     {
         $cfg = $this->app
             ->getConfig()
             ->module($this->name, 'menu');
-        $view = $this->app->getView();
+        $view = $this->app->getViewRenderer();
         if ($cfg) {
             $view->view->navigation = $cfg->merge($view->view->navigation);
         }
@@ -291,11 +328,12 @@ class Module
 
     /**
      * Register routes for web access
-     * @return Module
+     *
+     * @return self
      */
     protected function registerRoutes()
     {
-        $this->app->frontController()->getRouter()->addRoute(
+        $this->app->getFrontController()->getRouter()->addRoute(
             $this->name . '_jsprovider',
             new Route(
                 'js/' . $this->name . '/:file',
@@ -306,7 +344,7 @@ class Module
                 )
             )
         );
-        $this->app->frontController()->getRouter()->addRoute(
+        $this->app->getFrontController()->getRouter()->addRoute(
             $this->name . '_img',
             new Route(
                 'img/' . $this->name . '/:file',
@@ -322,7 +360,8 @@ class Module
 
     /**
      * Run module bootstrap script
-     * @return Module
+     *
+     * @return self
      */
     protected function runRegisterScript()
     {
@@ -335,10 +374,11 @@ class Module
 
     /**
      * Register hook
+     *
      * @param string $name
      * @param string $class
      * @param string $key
-     * @return Module
+     * @return self
      */
     protected function registerHook($name, $key, $class)
     {

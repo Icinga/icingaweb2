@@ -4,13 +4,13 @@
 
 namespace Tests\Icinga\Authentication;
 
-require_once("../../library/Icinga/Authentication/Credentials.php");
-require_once("../../library/Icinga/Authentication/UserBackend.php");
-require_once("../../library/Icinga/Authentication/User.php");
+require_once __DIR__. '/../../../../../library/Icinga/Authentication/Credentials.php';
+require_once __DIR__. '/../../../../../library/Icinga/Authentication/UserBackend.php';
+require_once __DIR__. '/../../../../../library/Icinga/User.php';
 
 use Icinga\Authentication\Credentials as Credentials;
 use Icinga\Authentication\UserBackend as UserBackend;
-use Icinga\Authentication\User as User;
+use Icinga\User;
 
 /**
 *   Simple backend mock that takes an config object  

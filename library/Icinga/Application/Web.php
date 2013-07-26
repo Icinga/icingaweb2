@@ -2,24 +2,24 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga 2 Web.
- * 
+ *
  * Icinga 2 Web - Head for multiple monitoring backends.
  * Copyright (C) 2013 Icinga Development Team
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
+ *
  * @copyright 2013 Icinga Development Team <info@icinga.org>
  * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
  * @author    Icinga Development Team <info@icinga.org>
@@ -28,14 +28,18 @@
 
 namespace Icinga\Application;
 
-use Icinga\Authentication\Manager;
-use Zend_Controller_Front as FrontController;
-use Zend_Layout as Layout;
-use Zend_Paginator as Paginator;
-use Zend_View_Helper_PaginationControl as PaginationControl;
-use Zend_Controller_Action_HelperBroker as ActionHelper;
-use Zend_Controller_Router_Route as Route;
-use Icinga\Web\View as IcingaView;
+use Icinga\Authentication\Manager as AuthenticationManager;
+use Icinga\Exception\ProgrammingError;
+use Icinga\User\Preferences;
+use Icinga\Web\Request;
+use Zend_Controller_Front;
+use Zend_Layout;
+use Zend_Paginator;
+use Zend_View_Helper_PaginationControl;
+use Zend_Controller_Action_HelperBroker;
+use Zend_Controller_Router_Route;
+use Zend_Controller_Action_Helper_ViewRenderer;
+use Icinga\Web\View;
 
 /**
  * Use this if you want to make use of Icinga funtionality in other web projects
@@ -45,77 +49,114 @@ use Icinga\Web\View as IcingaView;
  * use Icinga\Application\EmbeddedWeb;
  * EmbeddedWeb::start();
  * </code>
- *
- * @copyright  Copyright (c) 2013 Icinga-Web Team <info@icinga.org>
- * @author     Icinga-Web Team <info@icinga.org>
- * @package    Icinga\Application
- * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License
  */
 class Web extends ApplicationBootstrap
 {
-    protected $view;
-    protected $frontController;
+    /**
+     * View object
+     *
+     * @var View
+     */
+    private $viewRenderer;
+
+    /**
+     * Zend front controller instance
+     *
+     * @var Zend_Controller_Front
+     */
+    private $frontController;
+
+    /**
+     * Request object
+     *
+     * @var Request
+     */
+    private $request;
+
+    /**
+     * Identify web bootstrap
+     *
+     * @var bool
+     */
     protected $isWeb = true;
 
+    /**
+     * Initialize all together
+     *
+     * @return self
+     */
     protected function bootstrap()
     {
-        return $this->loadConfig()
-            ->configureErrorHandling()
-            ->setTimezone()
-            ->configureCache()
-            ->prepareZendMvc()
-            ->loadTranslations()
-            ->loadEnabledModules()
-            ->setupSpecialRoutes()
-            ->configurePagination();
+        return $this->setupConfig()
+            ->setupErrorHandling()
+            ->setupTimezone()
+            ->setupRequest()
+            ->setupZendMvc()
+            ->setupTranslation()
+            ->setupModules()
+            ->setupRoute()
+            ->setupPagination();
     }
 
-    protected function setupSpecialRoutes()
+    /**
+     * Prepare routing
+     *
+     * @return self
+     */
+    private function setupRoute()
     {
         // TODO: Find a better solution
         $this->frontController->getRouter()->addRoute(
             'module_overview',
-            new Route(
+            new Zend_Controller_Router_Route(
                 'js/modules/list.js',
                 array(
                     'controller' => 'static',
-                    'action' => 'modulelist',
+                    'action'     => 'modulelist',
                 )
             )
         );
 
         $this->frontController->getRouter()->addRoute(
             'module_javascript',
-            new Route(
+            new Zend_Controller_Router_Route(
                 'js/modules/:module_name/:file',
                 array(
                     'controller' => 'static',
-                    'action' => 'javascript'
+                    'action'     => 'javascript'
                 )
             )
         );
+
         return $this;
     }
 
-    public function frontController()
+    /**
+     * Getter for frontController
+     *
+     * @return Zend_Controller_Front
+     */
+    public function getFrontController()
     {
-        // TODO: ProgrammingError if null
         return $this->frontController;
     }
 
-    public function getView()
+    /**
+     * Getter for view
+     *
+     * @return View
+     */
+    public function getViewRenderer()
     {
-        // TODO: ProgrammingError if null
-        return $this->view;
+        return $this->viewRenderer;
     }
 
-    public function dispatch()
-    {
-        $this->dispatchFrontController();
-    }
-
-
-    protected function loadTranslations()
+    /**
+     * Load translations
+     *
+     * @return self
+     */
+    private function setupTranslation()
     {
         // AuthManager::getInstance()->getSession()->language;
         $locale = null;
@@ -124,16 +165,17 @@ class Web extends ApplicationBootstrap
         }
         putenv('LC_ALL=' . $locale . '.UTF-8');
         setlocale(LC_ALL, $locale . '.UTF-8');
-        bindtextdomain('icinga', ICINGA_APPDIR . '/locale');
+        bindtextdomain('icinga', $this->getApplicationDir() . '/locale');
         textdomain('icinga');
         return $this;
     }
 
-    protected function dispatchFrontController()
+    /**
+     * Dispatch public interface
+     */
+    public function dispatch()
     {
-        // AuthManager::getInstance()->getSession();
         $this->frontController->dispatch();
-        return $this;
     }
 
     /**
@@ -141,25 +183,62 @@ class Web extends ApplicationBootstrap
      *
      * @return self
      */
-    protected function prepareZendMvc()
+    private function setupZendMvc()
     {
         // TODO: Replace Zend_Application:
-        Layout::startMvc(
+        Zend_Layout::startMvc(
             array(
-                'layout' => 'layout',
-                'layoutPath' => $this->appdir . '/layouts/scripts'
+                'layout'     => 'layout',
+                'layoutPath' => $this->getApplicationDir('/layouts/scripts')
             )
         );
 
-        return $this->prepareFrontController()
-            ->prepareView();
+        $this->setupFrontController();
+        $this->setupViewRenderer();
+
+        return $this;
     }
 
-    protected function prepareFrontController()
+    /**
+     * Injects dependencies into request
+     *
+     * @return self
+     */
+    private function setupRequest()
     {
-        $this->frontController = FrontController::getInstance();
+        $this->request = new Request();
 
-        $this->frontController->setControllerDirectory($this->appdir . '/controllers');
+        $authenticationManager = AuthenticationManager::getInstance(
+            null,
+            array(
+                'writeSession' => true
+            )
+        );
+
+        if ($authenticationManager->isAuthenticated() === true) {
+            $user = $authenticationManager->getUser();
+
+            $preferences = new Preferences();
+            $user->setPreferences($preferences);
+
+            $this->request->setUser($user);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Instantiate front controller
+     *
+     * @return self
+     */
+    private function setupFrontController()
+    {
+        $this->frontController = Zend_Controller_Front::getInstance();
+
+        $this->frontController->setRequest($this->request);
+
+        $this->frontController->setControllerDirectory($this->getApplicationDir('/controllers'));
 
         $this->frontController->setParams(
             array(
@@ -170,43 +249,52 @@ class Web extends ApplicationBootstrap
         return $this;
     }
 
-    protected function prepareView()
+    /**
+     * Register helper paths and views for renderer
+     *
+     * @return self
+     */
+    private function setupViewRenderer()
     {
-        $view = ActionHelper::getStaticHelper('viewRenderer');
-        $view->setView(new IcingaView());
+        /** @var \Zend_Controller_Action_Helper_ViewRenderer $view */
+        $view = Zend_Controller_Action_HelperBroker::getStaticHelper('viewRenderer');
+        $view->setView(new View());
 
-        $view->view->addHelperPath($this->appdir . '/views/helpers');
+        $view->view->addHelperPath($this->getApplicationDir('/views/helpers'));
         // TODO: find out how to avoid this additional helper path:
-        $view->view->addHelperPath($this->appdir . '/views/helpers/layout');
+        $view->view->addHelperPath($this->getApplicationDir('/views/helpers/layout'));
 
         $view->view->setEncoding('UTF-8');
         $view->view->headTitle()->prepend(
-            $this->config->{'global'}->get('project', 'Icinga')
+            $this->getConfig()->{'global'}->get('project', 'Icinga')
         );
-        $view->view->headTitle()->setSeparator(' :: ');
-        $view->view->navigation = $this->config->app('menu');
 
-        $this->view = $view;
+        $view->view->headTitle()->setSeparator(' :: ');
+        $view->view->navigation = $this->getConfig()->app('menu');
+
+        $this->viewRenderer = $view;
+
         return $this;
     }
 
     /**
      * Configure pagination settings
-     *
+
      * @return self
      */
-    protected function configurePagination()
+    private function setupPagination()
     {
 
-        Paginator::addScrollingStylePrefixPath(
+        Zend_Paginator::addScrollingStylePrefixPath(
             'Icinga_Web_Paginator_ScrollingStyle',
             'Icinga/Web/Paginator/ScrollingStyle'
         );
 
-        Paginator::setDefaultScrollingStyle('SlidingWithBorder');
-        PaginationControl::setDefaultViewPartial(
+        Zend_Paginator::setDefaultScrollingStyle('SlidingWithBorder');
+        Zend_View_Helper_PaginationControl::setDefaultViewPartial(
             array('mixedPagination.phtml', 'default')
         );
+
         return $this;
     }
 }

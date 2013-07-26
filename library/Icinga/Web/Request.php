@@ -26,47 +26,46 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Application;
+namespace Icinga\Web;
 
 use Icinga\Exception\ProgrammingError;
+use Zend_Controller_Request_Http;
+use Icinga\User;
 
 /**
- * Icinga application container
+ * Request to handle special attributes
  */
-class Icinga
+class Request extends Zend_Controller_Request_Http
 {
     /**
-     * @var ApplicationBootstrap
+     * User object
+     *
+     * @var User
      */
-    private static $app;
+    private $user;
 
     /**
-     * Getter for an application environment
+     * Setter for user
      *
-     * @return ApplicationBootstrap|Web
-     * @throws ProgrammingError
+     * @param User $user
      */
-    public static function app()
+    public function setUser(User $user)
     {
-        if (self::$app == null) {
-            throw new ProgrammingError('Icinga has never been started');
-        }
-
-        return self::$app;
+        $this->user = $user;
     }
 
     /**
-     * Setter for an application environment
+     * Getter for user
      *
-     * @param ApplicationBootstrap $app
      * @throws ProgrammingError
+     * @return User
      */
-    public static function setApp(ApplicationBootstrap $app)
+    public function getUser()
     {
-        if (self::$app !== null) {
-            throw new ProgrammingError('Cannot start Icinga twice');
+        if (!$this->user instanceof User) {
+            throw new ProgrammingError('User not previously initialized');
         }
 
-        self::$app = $app;
+        return $this->user;
     }
 }
