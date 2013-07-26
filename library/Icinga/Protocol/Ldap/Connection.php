@@ -402,9 +402,9 @@ class Connection
             // TODO: Is it OK to have no capabilities?
             return $cap;
         }
-
+        $ldapAttributes = ldap_get_attributes($ds, $entry);
         $result = $this->cleanupAttributes(
-            ldap_get_attributes($ds, $entry)
+            $ldapAttributes
         );
         /*
         if (isset($result->dnsHostName)) {
