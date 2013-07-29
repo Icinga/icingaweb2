@@ -55,13 +55,24 @@ use Icinga\Application\Config;
  */
 class DbUserBackendTest  extends \PHPUnit_Framework_TestCase {
 
-    private $dbUserBackend;
-    private $db;
+    /**
+     * The table that is used to store the authentication data
+     *
+     * @var string
+     */
     private $testTable = 'account';
+
+    /**
+     * The database that is used to store the authentication data
+     *
+     * @var string
+     */
     private $testDatabase = 'icinga_unittest';
 
-    /*
-     * Must be identical with the column names defined in DbUserBackend
+    /**
+     * Mapping of columns
+     *
+     * @var string
      */
     private $USER_NAME_COLUMN   = 'user_name',
             $FIRST_NAME_COLUMN  = 'first_name',
@@ -73,10 +84,33 @@ class DbUserBackendTest  extends \PHPUnit_Framework_TestCase {
             $DOMAIN_COLUMN      = 'domain',
             $EMAIL_COLUMN       = 'email';
 
+    /**
+     * Example users
+     *
+     * @var array
+     */
     private $users;
+
+    /**
+     * The DbUserBackend configured to use MySQL
+     *
+     * @var DbUserBackend
+     */
     private $mysql;
+
+
+    /**
+     * The DbUserBackend configured to use PostgreSQL
+     *
+     * @var DbUserBackend
+     */
     private $pgsql;
 
+    /**
+     * Contains the PDO names used for the different SQL databases.
+     *
+     * @var array
+     */
     private $dbTypeMap = Array(
         'mysql' => 'PDO_MYSQL',
         'pgsql' => 'PDO_PGSQL'
@@ -103,6 +137,7 @@ class DbUserBackendTest  extends \PHPUnit_Framework_TestCase {
      * Create a backend with the given database type
      *
      * @param $dbType The database type as a string, like 'mysql' or 'pgsql'.
+     *
      * @return DbUserBackend|null
      */
     private function createBackend($dbType)
