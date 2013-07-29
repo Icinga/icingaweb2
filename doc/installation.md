@@ -77,12 +77,7 @@ create all database tables. You will find the installation guides for the differ
     postgres=#  \q
 
 
-2. Create all tables (You need to be in the icinga2-web folder)
-
-
-    bash$  psql -U icingaweb -a -f etc/schema/users.pgsql.sql
-
-3. Enable trust authentication on localhost
+2. Enable trust authentication on localhost
 
 Add the following lines to your pg_hba.conf (etc/postgresql/X.x/main/pg_hba.conf under debian, /var/lib/pgsql/data/pg_hba.conf for Redhat/Fedora)
 to enable trust authentication for the icingaweb user when connecting from the localhost.
@@ -91,7 +86,14 @@ to enable trust authentication for the icingaweb user when connecting from the l
     host    icingaweb      icingaweb      127.0.0.1/32          trust
     host    icingaweb      icingaweb      ::1/128               trust
 
-And restart your databse ('service postgresql restart' or '/etc/init.d/postgresql-X.x reload')
+And restart your database ('service postgresql restart' or '/etc/init.d/postgresql-X.x reload' while being root)
+
+
+3. Create all tables (You need to be in the icinga2-web folder)
+
+    bash$  psql -U icingaweb -a -f etc/schema/users.pgsql.sql
+
+
 
 Quick and Dirty
 ----------------

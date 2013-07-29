@@ -1,6 +1,30 @@
 <?php
 
 // {{{ICINGA_LICENSE_HEADER}}}
+/**
+ * This file is part of Icinga 2 Web.
+ *
+ * Icinga 2 Web - Head for multiple monitoring backends.
+ * Copyright (C) 2013 Icinga Development Team
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ * @copyright 2013 Icinga Development Team <info@icinga.org>
+ * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
+ * @author    Icinga Development Team <info@icinga.org>
+ */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Tests\Icinga\Authentication;
@@ -24,10 +48,10 @@ use Icinga\Authentication\User;
 use Icinga\Application\Config;
 
 /**
+ *
  * Test Class fpr DbUserBackend
  * Created Wed, 17 Jul 2013 11:52:34 +0000
  *
- * @package Tests\Icinga\Authentication
  */
 class DbUserBackendTest  extends \PHPUnit_Framework_TestCase {
 
@@ -60,8 +84,8 @@ class DbUserBackendTest  extends \PHPUnit_Framework_TestCase {
 
     /**
      * Create a preset-configuration that can be used to access the database
-     *
      * with the icinga_unittest account.
+     *
      * @return \stdClass
      */
     private function getBackendConfig()
@@ -125,9 +149,9 @@ class DbUserBackendTest  extends \PHPUnit_Framework_TestCase {
     }
 
     /**
-     * Test the PostgreSQL backend
+     * Test the authentication functions of the DbUserBackend using PostgreSQL as backend.
      */
-    public function testPgsql()
+    public function testCorrectUserLoginForPgsql()
     {
         if(!empty($this->pgsql)){
             $this->runBackendAuthentication($this->pgsql);
@@ -140,9 +164,9 @@ class DbUserBackendTest  extends \PHPUnit_Framework_TestCase {
     }
 
     /**
-     * Test the MySQL-Backend
+     * Test the authentication functions of the DbUserBackend using MySQL as backend.
      */
-    public function testMySQL()
+    public function testCorrectUserLoginForMySQL()
     {
         if(!empty($this->mysql)){
             $this->runBackendAuthentication($this->mysql);
@@ -249,21 +273,21 @@ class DbUserBackendTest  extends \PHPUnit_Framework_TestCase {
             new Credentials(
                 $this->users[0][$this->USER_NAME_COLUMN],
                 $this->users[0][$this->PASSWORD_COLUMN])
-        ));
+        ),'Assert that the user is known by the backend');
 
         // Unknown user
         $this->assertFalse($backend->hasUsername(
             new Credentials(
-                'unkown user',
+                'unknown user',
                 'secret')
-        ));
+        ),'Assert that the user is not known by the backend');
 
         // Inactive user
         $this->assertFalse($backend->hasUsername(
             new Credentials(
                 $this->users[2][$this->USER_NAME_COLUMN],
                 $this->users[2][$this->PASSWORD_COLUMN])
-        ));
+        ),'Assert that the user is inactive and therefore not known by the backend');
     }
 
     /**
@@ -278,7 +302,7 @@ class DbUserBackendTest  extends \PHPUnit_Framework_TestCase {
             new Credentials(
                 $this->users[0][$this->USER_NAME_COLUMN],
                 $this->users[0][$this->PASSWORD_COLUMN])
-        ));
+        ),'Assert that an existing, active user with the right credentials can authenticate.');
 
         // Wrong password
         $this->assertNull(
@@ -286,7 +310,7 @@ class DbUserBackendTest  extends \PHPUnit_Framework_TestCase {
                 new Credentials(
                     $this->users[1][$this->USER_NAME_COLUMN],
                     'wrongpassword')
-            )
+            ),'Assert that an existing user with an invalid password cannot authenticate'
         );
 
         // Nonexisting user
@@ -295,7 +319,7 @@ class DbUserBackendTest  extends \PHPUnit_Framework_TestCase {
                 new Credentials(
                     'nonexisting user',
                     $this->users[1][$this->PASSWORD_COLUMN])
-            )
+            ),'Assert that a non-existing user cannot authenticate.'
         );
 
         // Inactive user
@@ -304,6 +328,6 @@ class DbUserBackendTest  extends \PHPUnit_Framework_TestCase {
                 new Credentials(
                     $this->users[2][$this->USER_NAME_COLUMN],
                     $this->users[2][$this->PASSWORD_COLUMN])
-        ));
+        ),'Assert that an inactive user cannot authenticate.');
     }
 }

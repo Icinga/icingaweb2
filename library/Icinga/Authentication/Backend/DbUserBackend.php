@@ -36,8 +36,12 @@ use Icinga\Authentication;
 use Icinga\Application\Logger;
 
 /**
- * Authenticate users using a sql db as backend.
- * @package Icinga\Authentication\Backend
+ * User authentication backend (@see Icinga\Authentication\UserBackend) for
+ * authentication of users via an SQL database. The credentials needed to access
+ * the database are configurable via the application.ini
+ *
+ * See the UserBackend class (@see Icinga\Authentication\UserBackend) for
+ * usage information
  */
 class DbUserBackend implements UserBackend {
 
