@@ -3,6 +3,10 @@
 namespace Icinga\Data\Db;
 
 use Icinga\Data\DatasourceInterface;
+use Icinga\Exception\ConfigurationError;
+use Zend_Config as ZfConfig;
+use Zend_Db as ZfDb;
+use PDO;
 
 class Connection implements DatasourceInterface
 {
@@ -10,7 +14,7 @@ class Connection implements DatasourceInterface
     protected $config;
     protected $dbtype;
 
-    public function __construct(\Zend_Config $config = null)
+    public function __construct(ZfConfig $config = null)
     {
         $this->config = $config;
         $this->connect();
@@ -41,24 +45,24 @@ class Connection implements DatasourceInterface
         $this->dbtype = $this->config->get('dbtype', 'mysql');
 
         $options = array(
-            \Zend_Db::AUTO_QUOTE_IDENTIFIERS => false,
-            \Zend_Db::CASE_FOLDING           => \Zend_Db::CASE_LOWER
+            ZfDb::AUTO_QUOTE_IDENTIFIERS => false,
+            ZfDb::CASE_FOLDING           => ZfDb::CASE_LOWER
         );
 
         $drv_options = array(
-            \PDO::ATTR_TIMEOUT            => 2,
+            PDO::ATTR_TIMEOUT            => 2,
             // TODO: Check whether LC is useful. Zend_Db does fetchNum for Oci:
-            \PDO::ATTR_CASE               => \PDO::CASE_LOWER
+            PDO::ATTR_CASE               => PDO::CASE_LOWER
             // TODO: ATTR_ERRMODE => ERRMODE_EXCEPTION vs ERRMODE_SILENT
         );
 
         switch ($this->dbtype) {
             case 'mysql':
                 $adapter = 'Pdo_Mysql';
-                $drv_options[\PDO::MYSQL_ATTR_INIT_COMMAND] =
+                $drv_options[PDO::MYSQL_ATTR_INIT_COMMAND] =
                     "SET SESSION SQL_MODE='STRICT_ALL_TABLES,NO_ZERO_IN_DATE,"
-                   ."NO_ZERO_IN_DATE,ANSI,TRADITIONAL,ONLY_FULL_GROUP_BY,"
-                  . "NO_ENGINE_SUBSTITUTION';";
+                  . "NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION,PIPES_AS_CONCAT,"
+                  . "ANSI_QUOTES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER';";
                 // Not using ONLY_FULL_GROUP_BY as of performance impact
                 // TODO: NO_ZERO_IN_DATE as been added with 5.1.11. Is it
                 //       ignored by other versions?
@@ -72,7 +76,7 @@ class Connection implements DatasourceInterface
                 $adapter = 'Pdo_Oci';
                 // $adapter = 'Oracle';
                 $port = $this->config->get('port', 1521);
-//                $drv_options[\PDO::ATTR_STRINGIFY_FETCHES] = true;
+//                $drv_options[PDO::ATTR_STRINGIFY_FETCHES] = true;
 
                 if ($adapter === 'Oracle') {
                     // Unused right now
@@ -86,7 +90,7 @@ class Connection implements DatasourceInterface
 
                 break;
             default:
-                throw new \Exception(sprintf(
+                throw new ConfigurationError(sprintf(
                     'Backend "%s" is not supported', $type
                 ));
         }
@@ -102,13 +106,13 @@ class Connection implements DatasourceInterface
         if ($this->dbtype === 'oracle') {
             $attributes['persistent'] = true;
         }
-        $this->db = \Zend_Db::factory($adapter, $attributes);
+        $this->db = ZfDb::factory($adapter, $attributes);
         if ($adapter === 'Oracle') {
             $this->db->setLobAsString(false);
         }
         
-        // TODO: Zend_Db::FETCH_ASSOC for Oracle?
-        $this->db->setFetchMode(\Zend_Db::FETCH_OBJ);
+        // TODO: ZfDb::FETCH_ASSOC for Oracle?
+        $this->db->setFetchMode(ZfDb::FETCH_OBJ);
 
     }
 }
