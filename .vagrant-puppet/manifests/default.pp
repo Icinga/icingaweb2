@@ -378,3 +378,9 @@ exec{ 'create-pgsql-icinga_unittest-db':
               sudo -u postgres createlang plpgsql icinga_unittest',
   require => Service['postgresql']
 }
+
+exec { 'install php-ZendFramework-Db-Adapter-Pdo-Pgsql':
+  command => 'yum -d 0 -e 0 -y --enablerepo=epel install php-ZendFramework-Db-Adapter-Pdo-Pgsql',
+  unless  => 'rpm -qa | grep php-ZendFramework-Db-Adapter-Pdo-Pgsql',
+  require => Exec['install ZendFramework']
+}
