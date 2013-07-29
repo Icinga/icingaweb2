@@ -9,4 +9,5 @@ RewriteRule ^.*$ - [NC,L]
 RewriteRule ^.*$ index.php [NC,L]
 
 php_flag short_open_tag on
-php_value short_open_tag 1
+
+php_value xdebug.idekey PHPSTORM

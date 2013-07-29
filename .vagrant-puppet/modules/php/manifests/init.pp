@@ -29,4 +29,10 @@ class php {
     require => Package['php'],
     notify  => Service['apache']
   }
+
+  file { '/etc/php.d/xdebug_settings.ini':
+    content => template('php/xdebug_settings.ini.erb'),
+    require => Package['php'],
+    notify  => Service['apache']
+  }
 }
