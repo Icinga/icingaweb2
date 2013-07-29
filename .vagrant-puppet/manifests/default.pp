@@ -14,8 +14,10 @@ exec { 'create-mysql-icinga-db':
 }
 
 exec{ 'create-pgsql-icinga-db':
-  unless  => 'sudo -u postgres psql -l 2> /dev/null | grep -s icinga',
-  command => 'sudo -u postgres psql -c "CREATE ROLE icinga WITH LOGIN PASSWORD \'icinga\';" && sudo -u postgres createdb -O icinga -E UTF8 icinga && sudo -u postgres createlang plpgsql icinga',
+  unless  => 'sudo -u postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname=\'icinga\'" | grep -q 1',
+  command => 'sudo -u postgres psql -c "CREATE ROLE icinga WITH LOGIN PASSWORD \'icinga\';" && \
+              sudo -u postgres createdb -O icinga -E UTF8 icinga && \
+              sudo -u postgres createlang plpgsql icinga',
   require => Service['postgresql']
 }
 
@@ -359,4 +361,20 @@ file { '/etc/motd':
 user { 'vagrant':
   groups  => 'icinga-cmd',
   require => Group['icinga-cmd']
+}
+
+exec { 'create-mysql-icinga_unittest-db':
+  unless  => 'mysql -uicinga_unittest -picinga_unittest icinga_unittest',
+  command => 'mysql -uroot -e "CREATE DATABASE icinga_unittest; \
+              GRANT ALL ON icinga_unittest.* TO icinga_unittest@localhost \
+              IDENTIFIED BY \'icinga_unittest\';"',
+  require => Service['mysqld']
+}
+
+exec{ 'create-pgsql-icinga_unittest-db':
+  unless  => 'sudo -u postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname=\'icinga_unittest\'" | grep -q 1',
+  command => 'sudo -u postgres psql -c "CREATE ROLE icinga_unittest WITH LOGIN PASSWORD \'icinga_unittest\';" && \
+              sudo -u postgres createdb -O icinga_unittest -E UTF8 icinga_unittest && \
+              sudo -u postgres createlang plpgsql icinga_unittest',
+  require => Service['postgresql']
 }
