@@ -140,7 +140,7 @@ abstract class ApplicationBootstrap
         Benchmark::measure('Bootstrap, autoloader registered');
 
         Icinga::setApp($this);
-        $this->configDir = $configDir;
+        $this->configDir = realpath($configDir);
 
         require_once dirname(__FILE__) . '/functions.php';
     }
@@ -212,10 +212,32 @@ abstract class ApplicationBootstrap
      */
     public function getApplicationDir($subdir = null)
     {
-        $dir = $this->appDir;
+        return $this->getDirWithSubDir($this->appDir, $subdir);
+    }
+
+    /**
+     * Getter for config dir
+     * @param  string|null $subdir
+     * @return string
+     */
+    public function getConfigDir($subdir = null)
+    {
+        return $this->getDirWithSubDir($this->configDir, $subdir);
+    }
+
+    /**
+     * Helper to glue directories together
+     *
+     * @param  string      $dir
+     * @param  string|null $subdir
+     * @return string
+     */
+    private function getDirWithSubDir($dir, $subdir=null)
+    {
         if ($subdir !== null) {
             $dir .= '/' . ltrim($subdir, '/');
         }
+
         return $dir;
     }
 

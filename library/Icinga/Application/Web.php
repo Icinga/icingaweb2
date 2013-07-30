@@ -30,6 +30,7 @@ namespace Icinga\Application;
 
 use Icinga\Authentication\Manager as AuthenticationManager;
 use Icinga\User\Preferences;
+use Icinga\User;
 use Icinga\Web\Request;
 use Zend_Controller_Front;
 use Zend_Layout;
@@ -39,6 +40,8 @@ use Zend_Controller_Action_HelperBroker;
 use Zend_Controller_Router_Route;
 use Zend_Controller_Action_Helper_ViewRenderer;
 use Icinga\Web\View;
+use Icinga\User\Preferences\StorageFactory;
+use Icinga\User\Preferences\SessionStore;
 
 /**
  * Use this if you want to make use of Icinga funtionality in other web projects
@@ -198,15 +201,8 @@ class Web extends ApplicationBootstrap
         return $this;
     }
 
-    /**
-     * Inject dependencies into request
-     *
-     * @return self
-     */
-    private function setupRequest()
+    private function setupUser()
     {
-        $this->request = new Request();
-
         $authenticationManager = AuthenticationManager::getInstance(
             null,
             array(
@@ -217,9 +213,44 @@ class Web extends ApplicationBootstrap
         if ($authenticationManager->isAuthenticated() === true) {
             $user = $authenticationManager->getUser();
 
-            $preferences = new Preferences(array());
+            $this->getConfig()->preferences->configPath = $this->getConfigDir('preferences');
+
+            $preferenceStore = StorageFactory::create(
+                $this->getConfig()->preferences,
+                $user
+            );
+
+            $sessionStore = new SessionStore($authenticationManager->getSession());
+
+            $initialPreferences = (count($sessionStore->load()))
+                ? $sessionStore->load() : $preferenceStore->load();
+
+            $preferences = new Preferences($initialPreferences);
+
+            $preferences->attach($sessionStore);
+            $preferences->attach($preferenceStore);
+
             $user->setPreferences($preferences);
 
+            $requestCounter = $user->getPreferences()->get('test.request.counter', 0);
+            $requestCounter++;
+            $user->getPreferences()->set('test.request.counter', $requestCounter);
+
+            return $user;
+        }
+    }
+
+    /**
+     * Inject dependencies into request
+     *
+     * @return self
+     */
+    private function setupRequest()
+    {
+        $this->request = new Request();
+
+        $user = $this->setupUser();
+        if ($user instanceof User) {
             $this->request->setUser($user);
         }
 

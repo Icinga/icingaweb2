@@ -45,16 +45,11 @@ use \Zend_Config_Writer_Ini;
 class IniStore implements LoadInterface, FlushObserverInterface
 {
     /**
-     * Name of preferences section in ini file
-     */
-    const DEFAULT_SECTION = 'preferences';
-
-    /**
      * Path to ini configuration
      *
      * @var string
      */
-    private $configDir;
+    private $configPath;
 
     /**
      * Specific user file for preferences
@@ -87,26 +82,28 @@ class IniStore implements LoadInterface, FlushObserverInterface
     /**
      * Create a new object
      *
-     * @param string $configDir
+     * @param string|null $configPath
      */
-    public function __construct($configDir)
+    public function __construct($configPath=null)
     {
-        $this->setConfigDir($configDir);
+        if ($configPath !== null) {
+            $this->setConfigPath($configPath);
+        }
     }
 
     /**
      * Setter for config directory
      *
-     * @param  string $configDir
+     * @param  string $configPath
      * @throws \Icinga\Exception\ConfigurationError
      */
-    public function setConfigDir($configDir)
+    public function setConfigPath($configPath)
     {
-        if (!is_dir($configDir)) {
-            throw new ConfigurationError('Config dir dos not exist: '. $configDir);
+        if (!is_dir($configPath)) {
+            throw new ConfigurationError('Config dir dos not exist: '. $configPath);
         }
 
-        $this->configDir = $configDir;
+        $this->configPath = $configPath;
     }
 
     /**
@@ -120,7 +117,7 @@ class IniStore implements LoadInterface, FlushObserverInterface
 
         $this->preferencesFile = sprintf(
             '%s/%s.ini',
-            $this->configDir,
+            $this->configPath,
             $this->user->getUsername()
         );
 
@@ -146,17 +143,7 @@ class IniStore implements LoadInterface, FlushObserverInterface
      */
     private function createDefaultIniFile()
     {
-        $writer = new Zend_Config_Writer_Ini(
-            array(
-                'config'   => new Zend_Config(
-                    array(
-                        self::DEFAULT_SECTION => array()
-                    )
-                ),
-                'filename' => $this->preferencesFile
-            )
-        );
-        $writer->write();
+        touch($this->preferencesFile);
     }
 
     /**
