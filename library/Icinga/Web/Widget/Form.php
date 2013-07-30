@@ -46,7 +46,7 @@ class Form extends AbstractWidget
             $module_name = null;
         }
         if ($module_name !== null) {
-            $fname = $app->moduleManager()->getModule($module_name)->getBaseDir()
+            $fname = $app->getModuleManager()->getModule($module_name)->getBaseDir()
                    . '/application/forms/'
                    . implode('/', $fparts)
                    . 'Form.php';
