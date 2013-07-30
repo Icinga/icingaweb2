@@ -105,7 +105,7 @@ class Module
     private $app;
 
     /**
-     * Creates a new module object
+     * Create a new module object
      *
      * @param ApplicationBootstrap $app
      * @param string               $name

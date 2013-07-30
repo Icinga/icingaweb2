@@ -25,7 +25,7 @@
 
 namespace Monitoring\Command;
 
-use Icinga\Authentication\User;
+use Icinga\User;
 use Icinga\Exception\ProgrammingError;
 
 /**

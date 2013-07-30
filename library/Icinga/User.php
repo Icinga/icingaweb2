@@ -149,7 +149,7 @@ class User
     }
 
     /**
-     * Returns all groups this user belongs to
+     * Return all groups this user belongs to
      *
      * @return array
      */
@@ -159,7 +159,7 @@ class User
     }
 
     /**
-     * Sets the groups this user belongs to
+     * Set the groups this user belongs to
      */
     public function setGroups(array $groups)
     {
@@ -167,7 +167,7 @@ class User
     }
 
     /**
-     * Returns true if the user is a member of this group
+     * Return true if the user is a member of this group
      *
      * @param  string $group
      * @return boolean
@@ -178,7 +178,7 @@ class User
     }
 
     /**
-     * Returns permission information for this user
+     * Return permission information for this user
      *
      * @return Array
      */
@@ -293,7 +293,7 @@ class User
     }
 
     /**
-     * Sets additional information about user
+     * Set additional information about user
      *
      * @param string $key
      * @param string $value

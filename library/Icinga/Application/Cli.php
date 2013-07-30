@@ -30,7 +30,10 @@ namespace Icinga\Application;
 
 // @codingStandardsIgnoreStart
 require_once dirname(__FILE__). '/ApplicationBootstrap.php';
+require_once dirname(__FILE__). '/../Exception/ProgrammingError.php';
 // @codingStandardsIgnoreStop
+
+use Icinga\Exception\ProgrammingError;
 
 /**
  * Bootstrapping on cli environment
@@ -59,6 +62,6 @@ class Cli extends ApplicationBootstrap
             return;
         }
 
-        throw new \Exception('Icinga is not running on CLI');
+        throw new ProgrammingError('Icinga is not running on CLI');
     }
 }

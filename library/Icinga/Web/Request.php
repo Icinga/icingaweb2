@@ -57,15 +57,10 @@ class Request extends Zend_Controller_Request_Http
     /**
      * Getter for user
      *
-     * @throws ProgrammingError
      * @return User
      */
     public function getUser()
     {
-        if (!$this->user instanceof User) {
-            throw new ProgrammingError('User not previously initialized');
-        }
-
         return $this->user;
     }
 }

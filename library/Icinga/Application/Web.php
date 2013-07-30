@@ -29,7 +29,6 @@
 namespace Icinga\Application;
 
 use Icinga\Authentication\Manager as AuthenticationManager;
-use Icinga\Exception\ProgrammingError;
 use Icinga\User\Preferences;
 use Icinga\Web\Request;
 use Zend_Controller_Front;
@@ -200,7 +199,7 @@ class Web extends ApplicationBootstrap
     }
 
     /**
-     * Injects dependencies into request
+     * Inject dependencies into request
      *
      * @return self
      */
