@@ -2,58 +2,115 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga 2 Web.
- * 
+ *
  * Icinga 2 Web - Head for multiple monitoring backends.
  * Copyright (C) 2013 Icinga Development Team
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
+ *
  * @copyright 2013 Icinga Development Team <info@icinga.org>
  * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
  * @author    Icinga Development Team <info@icinga.org>
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Authentication;
+namespace Icinga;
+
+use Icinga\User\Preferences;
+use InvalidArgumentException;
 
 /**
- *  This class represents an authorized user and can be used
- *  to retrieve authorization information (@TODO: Not implemented yet) or
- *  to retrieve user information 
+ *  This class represents an authorized user
+ *
+ *  You can retrieve authorization information (@TODO: Not implemented yet) or
+ *  to retrieve user information
  *
  */
 class User
 {
-    public $username = "";
-    public $firstname = "";
-    public $lastname = "";
-    public $email = "";
-    public $domain = "";
-    public $additionalInformation = array();
-
-    public $permissions = array();
-    public $groups = array();
-    
     /**
-    *   Creates a user object given the provided information
-    *   
-    *   @param String $username
-    *   @param String $firstname
-    *   @param String $lastname
-    *   @param String $email
-    **/
+     * Username
+     *
+     * @var string
+     */
+    private $username;
+
+    /**
+     * Firstname
+     *
+     * @var string
+     */
+    private $firstname;
+
+    /**
+     * Lastname
+     *
+     * @var string
+     */
+    private $lastname;
+
+    /**
+     * Users email address
+     *
+     * @var string
+     */
+    private $email;
+
+    /**
+     * Domain
+     *
+     * @var string
+     */
+    private $domain;
+
+    /**
+     * More information about user
+     *
+     * @var array
+     */
+    private $additionalInformation = array();
+
+    /**
+     * Set of permissions
+     *
+     * @var array
+     */
+    private $permissions = array();
+
+    /**
+     * Groups for this user
+     *
+     * @var array
+     */
+    private $groups = array();
+
+    /**
+     * Preferences object
+     *
+     * @var Preferences
+     */
+    private $preferences;
+
+    /**
+     * Creates a user object given the provided information
+     *
+     * @param string $username
+     * @param string $firstname
+     * @param string $lastname
+     * @param string $email
+     */
     public function __construct($username, $firstname = null, $lastname = null, $email = null)
     {
         $this->setUsername($username);
@@ -72,143 +129,186 @@ class User
     }
 
     /**
-    *   Returns all groups this user belongs to
-    *
-    *   @return Array 
-    **/
+     * Setter for preferences
+     *
+     * @param Preferences $preferences
+     */
+    public function setPreferences(Preferences $preferences)
+    {
+        $this->preferences = $preferences;
+    }
+
+    /**
+     * Getter for preferences
+     *
+     * @return Preferences
+     */
+    public function getPreferences()
+    {
+        return $this->preferences;
+    }
+
+    /**
+     * Return all groups this user belongs to
+     *
+     * @return array
+     */
     public function getGroups()
     {
         return $this->groups;
     }
 
     /**
-    *   Sets the groups this user belongs to
-    *   
-    *   @return Array
-    **/
+     * Set the groups this user belongs to
+     */
     public function setGroups(array $groups)
     {
         $this->groups = $groups;
     }
-    
+
     /**
-    *   Returns true if the user is a member of this group
-    *   
-    *   @return Boolean 
-    **/
-    public function isMemberOf(Group $group)
+     * Return true if the user is a member of this group
+     *
+     * @param  string $group
+     * @return boolean
+     */
+    public function isMemberOf($group)
     {
         return in_array($group, $this->groups);
     }
 
     /**
-    *   Returns permission information for this user
-    *
-    *   @return Array
-    **/
+     * Return permission information for this user
+     *
+     * @return Array
+     */
     public function getPermissions()
     {
         return $this->permissions;
     }
 
     /**
-    *   @return String
-    **/
+     * Getter for username
+     *
+     * @return string
+     */
     public function getUsername()
     {
         return $this->username;
     }
 
     /**
-    *   @param String $name
-    **/
+     * Setter for username
+     *
+     * @param string $name
+     */
     public function setUsername($name)
     {
         $this->username = $name;
     }
 
     /**
-    *  @return String
-    **/
+     * Getter for firstname
+     *
+     * @return string
+     */
     public function getFirstname()
     {
         return $this->firstname;
     }
 
-    /*+
-    *   @param String $name
-    **/
+    /**
+     * Setter for firstname
+     *
+     * @param string $name
+     */
     public function setFirstname($name)
     {
         $this->firstname = $name;
     }
 
     /**
-    *  @return String
-    **/
+     * Getter for lastname
+     *
+     * @return string
+     */
     public function getLastname()
     {
         return $this->lastname;
     }
 
     /**
-    *   @param String $name     
-    **/
+     * Setter for lastname
+     *
+     * @param string $name
+     */
     public function setLastname($name)
     {
         $this->lastname = $name;
     }
 
     /**
-    *  @return String
-    **/
+     * Getter for email
+     *
+     * @return string
+     */
     public function getEmail()
     {
         return $this->email;
     }
-    
+
     /**
-    *   @param String $mail
-    *   
-    *   @throws \InvalidArgumentException   When an invalid mail is provided
-    **/
+     * Setter for mail
+     *
+     * @param  string $mail
+     * @throws InvalidArgumentException When an invalid mail is provided
+     */
     public function setEmail($mail)
     {
         if (filter_var($mail, FILTER_VALIDATE_EMAIL)) {
             $this->mail = $mail;
         } else {
-            throw new \InvalidArgumentException("Invalid mail given for user $this->username: $mail");
+            throw new InvalidArgumentException("Invalid mail given for user $this->username: $mail");
         }
     }
-    
+
     /**
-    *   @param String $domain
-    **/
+     * Setter for domain
+     *
+     * @param string $domain
+     */
     public function setDomain($domain)
     {
         $this->domain = $domain;
     }
 
     /**
-    *  @return String
-    **/
+     * Getter for domain
+     *
+     * @return string
+     */
     public function getDomain()
     {
         return $this->domain;
     }
 
     /**
-    *   @param String $key
-    *   @param String $value
-    **/
+     * Set additional information about user
+     *
+     * @param string $key
+     * @param string $value
+     */
     public function setAdditional($key, $value)
     {
         $this->additionalInformation[$key] = $value;
     }
 
     /**
-    *  @return mixed
-    **/
+     * Getter for additional information
+     *
+     * @param  string $key
+     * @return mixed|null
+     */
     public function getAdditional($key)
     {
         if (isset($this->additionalInformation[$key])) {

@@ -39,12 +39,12 @@ require_once('../../library/Icinga/Protocol/Ldap/Exception.php');
 require_once('../../library/Icinga/Application/Config.php');
 require_once('../../library/Icinga/Authentication/Credentials.php');
 require_once('../../library/Icinga/Authentication/Backend/DbUserBackend.php');
-require_once('../../library/Icinga/Authentication/User.php');
+require_once('../../library/Icinga/User.php');
 
 use Icinga\Authentication\Backend\DbUserBackend;
 use Icinga\Util\Crypto;
 use Icinga\Authentication\Credentials;
-use Icinga\Authentication\User;
+use Icinga\User;
 use Icinga\Application\Config;
 
 /**

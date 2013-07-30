@@ -15,7 +15,7 @@ class Url
     public function __construct($url, $params = null, $request = null)
     {
         if ($request === null) {
-            $this->request = Icinga::app()->frontController()->getRequest();
+            $this->request = Icinga::app()->getFrontController()->getRequest();
         } else {
             // Tests only
             $this->request = $request;
@@ -158,4 +158,3 @@ class Url
         return $base . $url;
     }
 }
-

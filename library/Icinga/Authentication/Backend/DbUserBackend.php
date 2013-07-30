@@ -29,7 +29,7 @@
 
 namespace Icinga\Authentication\Backend;
 
-use Icinga\Authentication\User as User;
+use Icinga\User;
 use Icinga\Authentication\UserBackend;
 use Icinga\Authentication\Credentials;
 use Icinga\Authentication;

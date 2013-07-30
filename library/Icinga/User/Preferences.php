@@ -26,47 +26,11 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Application;
-
-use Icinga\Exception\ProgrammingError;
+namespace Icinga\User;
 
 /**
- * Icinga application container
+ * Handling retrieve and persist of user preferences
  */
-class Icinga
+class Preferences
 {
-    /**
-     * @var ApplicationBootstrap
-     */
-    private static $app;
-
-    /**
-     * Getter for an application environment
-     *
-     * @return ApplicationBootstrap|Web
-     * @throws ProgrammingError
-     */
-    public static function app()
-    {
-        if (self::$app == null) {
-            throw new ProgrammingError('Icinga has never been started');
-        }
-
-        return self::$app;
-    }
-
-    /**
-     * Setter for an application environment
-     *
-     * @param ApplicationBootstrap $app
-     * @throws ProgrammingError
-     */
-    public static function setApp(ApplicationBootstrap $app)
-    {
-        if (self::$app !== null) {
-            throw new ProgrammingError('Cannot start Icinga twice');
-        }
-
-        self::$app = $app;
-    }
 }

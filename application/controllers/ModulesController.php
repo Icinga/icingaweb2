@@ -36,7 +36,7 @@ class ModulesController extends ActionController
 
     public function init()
     {
-        $this->manager = Icinga::app()->moduleManager();
+        $this->manager = Icinga::app()->getModuleManager();
     }
 
     public function indexAction()

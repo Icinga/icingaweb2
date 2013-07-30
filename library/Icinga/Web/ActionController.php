@@ -299,7 +299,7 @@ class ActionController extends ZfController
 
             $css = $less->compileFile($cssdir . '/pdfprint.less');
 /*
-            foreach (\Icinga\Application\Icinga::app()->moduleManager()->getLoadedModules() as $name => $module) {
+            foreach (\Icinga\Application\Icinga::app()->getModuleManager()->getLoadedModules() as $name => $module) {
                 if ($module->hasCss()) {
                     $css .= $less->compile(
                         '.icinga-module.module-'

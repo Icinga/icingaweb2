@@ -30,7 +30,8 @@ namespace Icinga\Application;
 
 use Icinga\Application\Modules\Manager as ModuleManager;
 use Icinga\Application\Platform;
-use Zend_Loader_Autoloader as ZendLoader;
+use Icinga\Exception\ProgrammingError;
+use Zend_Loader_Autoloader;
 use Icinga\Exception\ConfigurationError;
 
 /**
@@ -54,21 +55,63 @@ use Icinga\Exception\ConfigurationError;
  * use Icinga\Application\LegacyWeb;
  * LegacyWeb::start()->setIcingaWebBasedir(ICINGAWEB_BASEDIR)->dispatch();
  * </code>
- *
- * @copyright  Copyright (c) 2013 Icinga-Web Team <info@icinga.org>
- * @author     Icinga-Web Team <info@icinga.org>
- * @package    Icinga\Application
- * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License
  */
 abstract class ApplicationBootstrap
 {
-    protected $loader;
-    protected $libdir;
-    protected $config;
-    protected $configDir;
-    protected $appdir;
-    protected $moduleManager;
+    /**
+     * Icinga auto loader
+     *
+     * @var Loader
+     */
+    private $loader;
+
+    /**
+     * Library directory
+     *
+     * @var string
+     */
+    private $libDir;
+
+    /**
+     * Config object
+     *
+     * @var Config
+     */
+    private $config;
+
+    /**
+     * Configuration directory
+     *
+     * @var string
+     */
+    private $configDir;
+
+    /**
+     * Application directory
+     *
+     * @var string
+     */
+    private $appDir;
+
+    /**
+     * Module manager
+     *
+     * @var ModuleManager
+     */
+    private $moduleManager;
+
+    /**
+     * Flag indicates we're on cli environment
+     *
+     * @var bool
+     */
     protected $isCli = false;
+
+    /**
+     * Flag indicates we're on web environment
+     * 
+     * @var bool
+     */
     protected $isWeb = false;
 
     /**
@@ -78,52 +121,50 @@ abstract class ApplicationBootstrap
      */
     protected function __construct($configDir)
     {
-        $this->checkPrerequisites();
+        $this->libDir = realpath(__DIR__. '/../..');
 
-        $this->libdir = realpath(__DIR__. '/../..');
-
-        if (! defined('ICINGA_LIBDIR')) {
-            define('ICINGA_LIBDIR', $this->libdir);
+        if (!defined('ICINGA_LIBDIR')) {
+            define('ICINGA_LIBDIR', $this->libDir);
         }
 
         // TODO: Make appdir configurable for packagers
-        $this->appdir = realpath($this->libdir. '/../application');
+        $this->appDir = realpath($this->libDir. '/../application');
 
-        if (! defined('ICINGA_APPDIR')) {
-            define('ICINGA_APPDIR', $this->appdir);
+        if (!defined('ICINGA_APPDIR')) {
+            define('ICINGA_APPDIR', $this->appDir);
         }
 
-        $this->registerAutoloader();
-        $this->registerZendAutoloader();
+        $this->setupAutoloader();
+        $this->setupZendAutoloader();
 
         Benchmark::measure('Bootstrap, autoloader registered');
 
         Icinga::setApp($this);
-
-        // Unfortunately this is needed to get the Zend Plugin loader working:
-        set_include_path(
-            implode(
-                PATH_SEPARATOR,
-                array($this->libdir, get_include_path())
-            )
-        );
-
         $this->configDir = $configDir;
+
         require_once dirname(__FILE__) . '/functions.php';
     }
 
+    /**
+     * Bootstrap interface method for concrete bootstrap objects
+     *
+     * @return mixed
+     */
     abstract protected function bootstrap();
 
-    public function moduleManager()
+    /**
+     * Getter for module manager
+     *
+     * @return ModuleManager
+     */
+    public function getModuleManager()
     {
-        if ($this->moduleManager === null) {
-            $this->moduleManager = new ModuleManager($this, $this->configDir . '/enabledModules');
-        }
         return $this->moduleManager;
     }
 
     /**
      * Getter for class loader
+     *
      * @return Loader
      */
     public function getLoader()
@@ -131,68 +172,84 @@ abstract class ApplicationBootstrap
         return $this->loader;
     }
 
-    protected function loadEnabledModules()
+    /**
+     * Getter for configuration object
+     *
+     * @return Config
+     */
+    public function getConfig()
     {
-        $this->moduleManager()->loadEnabledModules();
-        return $this;
+        return $this->config;
     }
 
+    /**
+     * Flag indicates we're on cli environment
+     *
+     * @return bool
+     */
     public function isCli()
     {
         return $this->isCli;
     }
 
+    /**
+     * Flag indicates we're on web environment
+     *
+     * @return bool
+     */
     public function isWeb()
     {
         return $this->isWeb;
     }
 
+    /**
+     * Getter for application dir
+     *
+     * Optional append sub directory
+     *
+     * @param  null|string $subdir optional subdir
+     * @return string
+     */
     public function getApplicationDir($subdir = null)
     {
-        $dir = $this->appdir;
+        $dir = $this->appDir;
         if ($subdir !== null) {
             $dir .= '/' . ltrim($subdir, '/');
         }
         return $dir;
     }
 
-    public function hasModule($name)
-    {
-        return $this->moduleManager()->hasLoaded($name);
-    }
-
-    public function getModule($name)
-    {
-        return $this->moduleManager()->getModule($name);
-    }
-
-    public function loadModule($name)
-    {
-        return $this->moduleManager()->loadModule($name);
-    }
-
-    public function getConfig()
-    {
-        return $this->config;
-    }
-
+    /**
+     * Starting concrete bootstrap classes
+     *
+     * @param  string $configDir
+     * @return ApplicationBootstrap
+     */
     public static function start($configDir)
     {
         $class = get_called_class();
+        /** @var ApplicationBootstrap $obj */
         $obj = new $class($configDir);
         $obj->bootstrap();
         return $obj;
     }
 
-    public function registerAutoloader()
+    /**
+     * Setup icinga auto loader
+     *
+     * @return self
+     */
+    public function setupAutoloader()
     {
-        require $this->libdir. '/Icinga/Exception/ProgrammingError.php';
-        require $this->libdir. '/Icinga/Application/Loader.php';
+        require $this->libDir. '/Icinga/Exception/ProgrammingError.php';
+        require $this->libDir. '/Icinga/Application/Loader.php';
 
         $this->loader = new Loader();
-        $this->loader->registerNamespace('Icinga', $this->libdir. '/Icinga');
-        $this->loader->registerNamespace('Icinga\\Form', $this->appdir. '/forms');
+        $this->loader->registerNamespace('Icinga', $this->libDir. '/Icinga');
+        $this->loader->registerNamespace('Icinga\\Form', $this->appDir. '/forms');
         $this->loader->register();
+
+        return $this;
     }
 
     /**
@@ -200,46 +257,35 @@ abstract class ApplicationBootstrap
      *
      * @return self
      */
-    protected function registerZendAutoloader()
+    protected function setupZendAutoloader()
     {
         require_once 'Zend/Loader/Autoloader.php';
-        ZendLoader::getInstance();
+
+        \Zend_Loader_Autoloader::getInstance();
+
+        // Unfortunately this is needed to get the Zend Plugin loader working:
+        set_include_path(
+            implode(
+                PATH_SEPARATOR,
+                array($this->libDir, get_include_path())
+            )
+        );
+
         return $this;
     }
 
     /**
-     * Check whether we have all we need
-     *
-     * Pretty useless right now as a namespaces class would not work
-     * with PHP 5.3
+     * Setup module loader and all enabled modules
      *
      * @return self
      */
-    protected function checkPrerequisites()
+    protected function setupModules()
     {
-        if (version_compare(phpversion(), '5.3.0', '<') === true) {
-            die('PHP > 5.3.0 required');
-        }
-        return $this;
-    }
+        $this->moduleManager = new ModuleManager($this, $this->configDir . '/enabledModules');
 
-    /**
-     * Check whether a given PHP extension is available
-     *
-     * @return boolean
-     */
-    protected function hasExtension($name)
-    {
-        if (!extension_loaded($name)) {
-            if (! @ dl($name)) {
-                throw new ConfigurationError(
-                    sprintf(
-                        'The PHP extension %s is not available',
-                        $name
-                    )
-                );
-            }
-        }
+        $this->moduleManager->loadEnabledModules();
+
+        return $this;
     }
 
     /**
@@ -247,25 +293,10 @@ abstract class ApplicationBootstrap
      *
      * @return self
      */
-    protected function loadConfig()
+    protected function setupConfig()
     {
         Config::$configDir = $this->configDir;
         $this->config = Config::app();
-        return $this;
-    }
-
-
-    /**
-     * Configure cache settings
-     *
-     * TODO: Right now APC is hardcoded, make this configurable
-     *
-     * @return self
-     */
-    protected function configureCache()
-    {
-        // TODO: Provide Zend_Cache_Frontend_File for statusdat
-        //$this->cache = \Zend_Cache::factory('Core', 'Apc');
         return $this;
     }
 
@@ -274,7 +305,7 @@ abstract class ApplicationBootstrap
      *
      * @return self
      */
-    protected function configureErrorHandling()
+    protected function setupErrorHandling()
     {
         if ($this->config->get('global', 'environment') == 'development') {
             error_reporting(E_ALL | E_NOTICE);
@@ -286,15 +317,16 @@ abstract class ApplicationBootstrap
     }
 
     /**
-     * Set timezone settings
+     * Setup default timezone
      *
      * @return self
      */
-    protected function setTimezone()
+    protected function setupTimezone()
     {
         date_default_timezone_set(
             $this->config->global->get('timezone', 'UTC')
         );
+
         return $this;
     }
 }

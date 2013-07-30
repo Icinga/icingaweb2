@@ -17,7 +17,7 @@ class StaticController extends ActionController
 
     private function getModuleList()
     {
-        $modules = Icinga::app()->moduleManager()->getLoadedModules();
+        $modules = Icinga::app()->getModuleManager()->getLoadedModules();
 
         // preliminary static definition
         $result = array();

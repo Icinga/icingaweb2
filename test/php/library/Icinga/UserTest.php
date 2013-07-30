@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Icinga\Authentication;
+namespace Tests\Icinga;
 /**
 *
 * Test class for User 
