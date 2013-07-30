@@ -45,7 +45,6 @@ class Monitoring_ListController extends ModuleActionController
                 'host_last_comment'
             )
         );
-
     }
 
     public function servicesAction()
@@ -86,9 +85,7 @@ class Monitoring_ListController extends ModuleActionController
             'service_notes_url',
             'service_last_comment'
         ));
-        if ($this->_getParam('sort')) {
-            $this->view->sort = $this->_getParam('sort');
-        }
+        $this->inheritCurrentSortColumn();
     }
 
     public function hostgroupsAction()
@@ -145,6 +142,36 @@ class Monitoring_ListController extends ModuleActionController
         exit;
     }
 
+    /**
+     * Fetch the current downtimes and put them into the view
+     * property 'downtimes'
+     */
+    public function downtimesAction()
+    {
+         $query = $this->backend->select()
+            ->from('downtime',array(
+                'host_name',
+                'object_type',
+                'service_description',
+                'downtime_entry_time',
+                'downtime_internal_downtime_id',
+                'downtime_author_name',
+                'downtime_comment_data',
+                'downtime_duration',
+                'downtime_scheduled_start_time',
+                'downtime_scheduled_end_time',
+                'downtime_is_fixed',
+                'downtime_is_in_effect',
+                'downtime_triggered_by_id',
+                'downtime_trigger_time'
+        ));
+        if (!$this->_getParam('sort')) {
+            $query->order('downtime_is_in_effect');
+        }
+        $this->view->downtimes = $query->applyRequest($this->_request);
+        $this->inheritCurrentSortColumn();
+    }
+
     protected function query($view, $columns)
     {
         $extra = preg_split(
@@ -197,6 +224,11 @@ class Monitoring_ListController extends ModuleActionController
             'icon'      => 'img/classic/server.png',
             'url'       => 'monitoring/list/hosts',
         ));
+        $tabs->add('downtimes', array(
+            'title'     => 'Downtimes',
+            'icon'      => 'img/classic/downtime.gif',
+            'url'       => 'monitoring/list/downtimes',
+        ));
 /*
         $tabs->add('hostgroups', array(
             'title'     => 'Hostgroups',
@@ -220,5 +252,17 @@ class Monitoring_ListController extends ModuleActionController
         ));
 */
         return $tabs;
+    }
+
+
+    /**
+     * Let the current response inherit the used sort column by applying it to the
+     * view property 'sort'
+     */
+    private function inheritCurrentSortColumn()
+    {
+        if ($this->_getParam('sort')) {
+            $this->view->sort = $this->_getParam('sort');
+        }
     }
 }
