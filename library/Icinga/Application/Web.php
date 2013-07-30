@@ -217,7 +217,7 @@ class Web extends ApplicationBootstrap
         if ($authenticationManager->isAuthenticated() === true) {
             $user = $authenticationManager->getUser();
 
-            $preferences = new Preferences();
+            $preferences = new Preferences(array());
             $user->setPreferences($preferences);
 
             $this->request->setUser($user);
