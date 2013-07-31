@@ -39,7 +39,7 @@ class Monitoring_SoapController extends ModuleActionController
             $wsdl->handle();
         } else {
             $wsdl->dump('/tmp/test.wsdl');
-            $uri = 'http://itenos-devel.tom.local/' . Url::create('monitoring/soap');
+            $uri = 'http://itenos-devel.tom.local/' . Url::fromPath('monitoring/soap');
             $server = new Zend_Soap_Server('/tmp/test.wsdl');
             $server->setClass('Api');
             $server->handle();

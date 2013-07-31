@@ -79,9 +79,12 @@ class Zend_View_Helper_Qlink extends Zend_View_Helper_Abstract
             $url = $urlFormat;
             $uriParams = $url->getParams() + $uriParams;
         } else {
-            $url = Url::create($urlFormat);
+            $url = Url::fromPath($urlFormat);
         }
-        $url->setParams($uriParams)->setBaseUrl($baseUrl);
+        $url->setParams($uriParams);
+        if ($baseUrl) {
+            $url->setBaseUrl($baseUrl);
+        }
         return sprintf(
             '<a href="%s"%s>%s</a>',
 //            $this->getFormattedUrl($urlFormat, $uriParams, $baseUrl),

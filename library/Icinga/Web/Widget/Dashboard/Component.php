@@ -22,7 +22,7 @@ class Component
         if ($url instanceof Url) {
             $this->url = $url;
         } else {
-            $this->url = Url::create($url);
+            $this->url = Url::fromPath($url);
         }
     }
 
@@ -57,7 +57,7 @@ class Component
         if ($url instanceof Url) {
             $this->url = $url;
         } else {
-            $this->url = Url::create($url);
+            $this->url = Url::fromPath($url);
         }
         return $this;
     }

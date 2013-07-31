@@ -7,12 +7,12 @@ use Icinga\Web\Url;
 function url($path = null, $params = null)
 {
     if ($path === null) {
-        $url = Url::current();
+        $url = Url::fromRequest();
         if ($params !== null) {
             $url->setParams($params);
         }
     } else {
-        $url = Url::create($path, $params);
+        $url = Url::fromPath($path, $params);
     }
     return $url;
 }
