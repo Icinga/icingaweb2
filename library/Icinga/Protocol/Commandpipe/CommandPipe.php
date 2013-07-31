@@ -645,6 +645,32 @@ class CommandPipe
         );
     }
 
+    public function startObsessing($objects)
+    {
+        foreach ($objects as $object) {
+            $type = $this->getObjectType($object);
+            $msg = "START_OBSESSING_OVER_". (($type == self::TYPE_SERVICE) ? 'SVC' : 'HOST');
+            $msg .= ';'.$object->host_name;
+            if ($type == self::TYPE_SERVICE) {
+                $msg .= ';'.$object->service_description;
+            }
+            $this->send($msg);
+        }
+    }
+
+    public function stopObsessing($objects)
+    {
+        foreach ($objects as $object) {
+            $type = $this->getObjectType($object);
+            $msg = "STOP_OBSESSING_OVER_". (($type == self::TYPE_SERVICE) ? 'SVC' : 'HOST');
+            $msg .= ';'.$object->host_name;
+            if ($type == self::TYPE_SERVICE) {
+                $msg .= ';'.$object->service_description;
+            }
+            $this->send($msg);
+        }
+    }
+
     /**
      * Start obsessing over provided services/hosts
      *

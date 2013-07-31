@@ -74,6 +74,7 @@ class PropertyModifier
      */
     const FRESHNESS = "%s_FRESHNESS_CHECKS";
 
+
     /**
      *  Template for enabling/disabling event handler
      */
@@ -90,6 +91,7 @@ class PropertyModifier
         self::PASSIVE => self::STATE_KEEP,
         self::NOTIFICATIONS => self::STATE_KEEP,
         self::FRESHNESS => self::STATE_KEEP,
+        self::OBSESSING => self::STATE_KEEP,
         self::EVENTHANDLER => self::STATE_KEEP
     );
 
