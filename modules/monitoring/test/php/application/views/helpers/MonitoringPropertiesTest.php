@@ -50,7 +50,7 @@ class HostStruct4Properties extends \stdClass
     public $host_scheduled_downtime_depth = '1';
     public $host_failure_prediction_enabled = '1';
     public $host_process_performance_data = '1';
-    public $host_obsess_over_host = '1';
+    public $host_obsessing = '1';
     public $host_modified_host_attributes = '14';
     public $host_event_handler = '';
     public $host_normal_check_interval = '5';

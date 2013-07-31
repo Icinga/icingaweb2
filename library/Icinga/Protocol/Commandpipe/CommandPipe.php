@@ -136,11 +136,14 @@ class CommandPipe
      * @param $state
      * @param $output
      */
-    public function submitCheckResult($objects, $state, $output)
+    public function submitCheckResult($objects, $state, $output, $perfdata = "")
     {
+        if ($perfdata) {
+            $output = $output."|".$perfdata;
+        }
         foreach ($objects as $object) {
             if (isset($object->service_description)) {
-                $this->send("PROCESS_SVC_CHECK_RESULT;$object->host_name;$object->service_description;$state;$output");
+                $this->send("PROCESS_SERVICE_CHECK_RESULT;$object->host_name;$object->service_description;$state;$output");
             } else {
                 $this->send("PROCESS_HOST_CHECK_RESULT;$object->host_name;$state;$output");
             }
@@ -349,7 +352,7 @@ class CommandPipe
      */
     public function disableActiveChecks($objects)
     {
-        $this->modifyMonitoringProperties(
+        $this->setMonitoringProperties(
             $objects,
             new PropertyModifier(
                 array(
@@ -379,7 +382,7 @@ class CommandPipe
      */
     public function disablePassiveChecks($objects)
     {
-        $this->modifyMonitoringProperties(
+        $this->setMonitoringProperties(
             $objects,
             new PropertyModifier(
                 array(
@@ -534,6 +537,32 @@ class CommandPipe
                 )
             )
         );
+    }
+
+    public function startObsessing($objects)
+    {
+        foreach ($objects as $object) {
+            $type = $this->getObjectType($object);
+            $msg = "START_OBSESSING_OVER_". (($type == self::TYPE_SERVICE) ? 'SVC' : 'HOST');
+            $msg .= ';'.$object->host_name;
+            if ($type == self::TYPE_SERVICE) {
+                $msg .= ';'.$object->service_description;
+            }
+            $this->send($msg);
+        }
+    }
+
+    public function stopObsessing($objects)
+    {
+        foreach ($objects as $object) {
+            $type = $this->getObjectType($object);
+            $msg = "STOP_OBSESSING_OVER_". (($type == self::TYPE_SERVICE) ? 'SVC' : 'HOST');
+            $msg .= ';'.$object->host_name;
+            if ($type == self::TYPE_SERVICE) {
+                $msg .= ';'.$object->service_description;
+            }
+            $this->send($msg);
+        }
     }
 
     /**

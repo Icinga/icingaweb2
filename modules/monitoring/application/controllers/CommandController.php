@@ -29,8 +29,10 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 
 use Icinga\Application\Benchmark;
+use Icinga\Application\Icinga;
 use Icinga\Backend;
 use Icinga\Application\Config;
+use Icinga\Application\Logger;
 use Icinga\Authentication\Manager;
 use Icinga\Web\Form;
 use Icinga\Web\ModuleActionController;
@@ -113,6 +115,11 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function init()
     {
+        $this->objects = $this->selectCommandTargets();
+        if (empty($this->objects) && ! $this->isGlobalCommand()) {
+            throw new \Exception("No objects found for your command");
+        }
+
         if ($this->_request->isPost()) {
 
             $instance = $this->_request->getPost("instance");
@@ -142,6 +149,11 @@ class Monitoring_CommandController extends ModuleActionController
         }
     }
 
+    private function isGlobalCommand()
+    {
+        return false;
+    }
+
     /**
      * Retrieve all existing targets for host- and service combination
      * @param string $hostname
@@ -149,21 +161,38 @@ class Monitoring_CommandController extends ModuleActionController
      * @return array
      * @throws Icinga\Exception\MissingParameterException
      */
-    private function selectCommandTargets($hostname, $servicename = null)
+    private function selectCommandTargets()
     {
-        $target = "hostlist";
-        $filter = array();
-        if (!$hostname && !$servicename) {
-            throw new MissingParameterException("Missing host and service definition");
+        $query = null;
+        $fields = array(
+            'host_name',
+            'host_state'
+        );
+        try {
+            $hostname    =  $this->getParam('host', null);
+            $servicename =  $this->getParam('service', null);
+            $filter = array();
+            if (!$hostname && !$servicename) {
+                throw new MissingParameterException("No target given for this command");
+            }
+            if ($hostname) {
+                $filter["host_name"] = $hostname;
+            }
+            if ($servicename) {
+                $filter["service_description"] = $servicename;
+                $fields[] = "service_description";
+                $fields[] = "service_state";
+            }
+            ;
+            $query = Backend::getInstance()->select()->from("status", $fields);
+            return $query->applyFilters($filter)->fetchAll();
+        } catch (\Exception $e) {
+            Logger::error(
+                "CommandController: SQL Query '%s' failed (message %s) ",
+                $query ? (string) $query->getQuery()->dump() : '--', $e->getMessage()
+            );
+            return array();
         }
-        if ($hostname) {
-            $filter["host_name"] = $hostname;
-        }
-        if ($servicename) {
-            $filter["service_description"] = $servicename;
-            $target = "servicelist";
-        }
-        return Backend::getInstance()->select()->from($target)->applyFilters($filter)->fetchAll();
     }
 
     /**
@@ -193,6 +222,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function disableactivechecksAction()
     {
+
         $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Disable active checks'));
@@ -200,7 +230,7 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
+            $this->target->disableActiveChecks($this->objects);
         }
     }
 
@@ -217,7 +247,7 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
+            $this->target->enableActiveChecks($this->objects);
         }
     }
 
@@ -233,7 +263,7 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
+            $this->target->scheduleCheck($this->objects);
         }
     }
 
@@ -252,7 +282,7 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
+            $this->target->submitCheckResult($this->objects, $form->getState(), $form->getOutput(), $form->getPerformancedata());
         }
     }
 
@@ -269,7 +299,7 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
+            $this->target->stopObsessing($this->objects);
         }
     }
 
@@ -286,7 +316,7 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
+            $this->target->startObsessing($this->objects);
         }
     }
 

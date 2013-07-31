@@ -168,4 +168,20 @@ class SubmitPassiveCheckResultForm extends ConfirmationForm
 
         parent::create();
     }
+
+    public function getState()
+    {
+        return intval($this->getValue('pluginstate'));
+    }
+
+    public function getOutput()
+    {
+        return $this->getValue('checkoutput');
+    }
+
+    public function getPerformancedata()
+    {
+        return $this->getValue('performancedata');
+    }
+
 }

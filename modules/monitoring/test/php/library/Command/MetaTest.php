@@ -51,7 +51,7 @@ class HostStruct extends \stdClass
     public $host_scheduled_downtime_depth = '1';
     public $host_failure_prediction_enabled = '1';
     public $host_process_performance_data = '1';
-    public $host_obsess_over_host = '1';
+    public $host_obsessing = '1';
     public $host_modified_host_attributes = '14';
     public $host_event_handler = '';
     public $host_normal_check_interval = '5';
@@ -158,7 +158,7 @@ class MetaTest extends \PHPUnit_Framework_TestCase
 
         $object = new HostStruct();
 
-        $object->host_obsess_over_host = '0';
+        $object->host_obsessing = '0';
         $object->host_flap_detection_enabled = '0';
         $object->host_active_checks_enabled = '0';
 
