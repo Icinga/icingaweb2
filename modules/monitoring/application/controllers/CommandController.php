@@ -99,6 +99,7 @@ class Monitoring_CommandController extends ModuleActionController
     {
         if ($this->issetForm()) {
             if ($this->form->isPostAndValid()) {
+                
                 $this->_helper->viewRenderer->setNoRender(true);
                 $this->_helper->layout()->disableLayout();
             }
@@ -122,7 +123,6 @@ class Monitoring_CommandController extends ModuleActionController
             $instance = $this->_request->getPost("instance");
 
             $targetConfig = Config::module('monitoring', 'instances');
-
             if ($instance) {
                 if ($targetConfig->get($instance)) {
                     $this->target = new CommandPipe($targetConfig->get($instance));
@@ -141,9 +141,6 @@ class Monitoring_CommandController extends ModuleActionController
         }
 
         if ($this->getRequest()->getActionName() !== 'list') {
-
-
-
             // Reduce template writing mess
             $this->_helper->viewRenderer->setRender(self::DEFAULT_VIEW_SCRIPT);
         }
@@ -219,19 +216,19 @@ class Monitoring_CommandController extends ModuleActionController
             throw new \Exception('Missing parameter, supported: '.implode(', ', $supported));
         }
         if (isset($given["host"])) {
-            $this->objects = $this->selectCommandTargets(!in_array("service", $supported));
-            if (empty($this->objects)) {
+            $this->view->objects = $this->selectCommandTargets(!in_array("service", $supported));
+            if (empty($this->view->objects)) {
                 throw new \Exception("No objects found for your command");
             }
 
         } else if (in_array("downtimeid", $supported)) {
-            $this->objects = array();
+            $this->view->objects = array();
             $downtimes = $this->getParam("downtimeid");
             if (!is_array($downtimes)) {
                 $downtimes = array($downtimes);
             }
             foreach ($downtimes as $downtimeId) {
-                $this->objects[] = (object) array("downtime_id" => $downtimeId);
+                $this->view->objects[] = (object) array("downtime_id" => $downtimeId);
             }
         }
     }
@@ -254,7 +251,7 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            $this->target->disableActiveChecks($this->objects);
+            $this->target->disableActiveChecks($this->view->objects);
         }
     }
 
@@ -272,7 +269,7 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            $this->target->enableActiveChecks($this->objects);
+            $this->target->enableActiveChecks($this->view->objects);
         }
     }
 
@@ -289,7 +286,7 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            $this->target->scheduleCheck($this->objects);
+            $this->target->scheduleCheck($this->view->objects);
         }
     }
 
@@ -309,7 +306,7 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            $this->target->submitCheckResult($this->objects, $form->getState(), $form->getOutput(), $form->getPerformancedata());
+            $this->target->submitCheckResult($this->view->objects, $form->getState(), $form->getOutput(), $form->getPerformancedata());
         }
     }
 
@@ -327,7 +324,7 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            $this->target->stopObsessing($this->objects);
+            $this->target->stopObsessing($this->view->objects);
         }
     }
 
@@ -345,7 +342,7 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            $this->target->startObsessing($this->objects);
+            $this->target->startObsessing($this->view->objects);
         }
     }
 
@@ -363,7 +360,7 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            $this->target->disablePassiveChecks($this->objects);
+            $this->target->disablePassiveChecks($this->view->objects);
         }
     }
 
@@ -381,7 +378,7 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            $this->target->enableActiveChecks($this->objects);
+            $this->target->enableActiveChecks($this->view->objects);
         }
     }
 
@@ -399,7 +396,7 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            $this->target->disableNotifications($this->objects);
+            $this->target->disableNotifications($this->view->objects);
         }
     }
 
@@ -416,7 +413,7 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            $this->target->enableNotifications($this->objects);
+            $this->target->enableNotifications($this->view->objects);
         }
     }
 
@@ -434,7 +431,7 @@ class Monitoring_CommandController extends ModuleActionController
         if ($form->isPostAndValid() === true) {
             $author = $this->getRequest()->getUser()->getUsername();
             $this->target->sendCustomNotification(
-                $this->objects,
+                $this->view->objects,
                 new Comment($author, $form->getComment()),
                 $form->getOptions()
             );
@@ -454,7 +451,7 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            $this->target->scheduleDowntime($this->objects, $form->getDowntime());
+            $this->target->scheduleDowntime($this->view->objects, $form->getDowntime());
         }
     }
 
@@ -471,7 +468,7 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            $this->target->scheduleDowntime($this->objects, $form->getDowntime());
+            $this->target->scheduleDowntime($this->view->objects, $form->getDowntime());
         }
     }
 
@@ -489,7 +486,7 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            $this->target->removeDowntime($this->objects);
+            $this->target->removeDowntime($this->view->objects);
         }
     }
 
@@ -507,8 +504,8 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            $this->target->disableNotifications($this->objects);
-            $this->target->disableNotificationsForServices($this->objects);
+            $this->target->disableNotifications($this->view->objects);
+            $this->target->disableNotificationsForServices($this->view->objects);
         }
     }
 
@@ -526,8 +523,8 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            $this->target->enableNotifications($this->objects);
-            $this->target->enableNotificationsForServices($this->objects);
+            $this->target->enableNotifications($this->view->objects);
+            $this->target->enableNotificationsForServices($this->view->objects);
         }
     }
 
@@ -547,11 +544,11 @@ class Monitoring_CommandController extends ModuleActionController
 
         if ($form->isPostAndValid() === true) {
             if ($form->isForced()) {
-                $this->target->scheduleForcedCheck($this->objects, time());
-                $this->target->scheduleForcedCheck($this->objects, time(), true);
+                $this->target->scheduleForcedCheck($this->view->objects, time());
+                $this->target->scheduleForcedCheck($this->view->objects, time(), true);
             } else {
-                $this->target->scheduleCheck($this->objects, time());
-                $this->target->scheduleCheck($this->objects, time(), true);
+                $this->target->scheduleCheck($this->view->objects, time());
+                $this->target->scheduleCheck($this->view->objects, time(), true);
             }
         }
     }
@@ -570,8 +567,8 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            $this->target->disableActiveChecks($this->objects);
-            $this->target->disableActiveChecksWithChildren($this->objects);
+            $this->target->disableActiveChecks($this->view->objects);
+            $this->target->disableActiveChecksWithChildren($this->view->objects);
         }
     }
 
@@ -589,8 +586,8 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            $this->target->enableActiveChecks($this->objects);
-            $this->target->enableActiveChecksWithChildren($this->objects);
+            $this->target->enableActiveChecks($this->view->objects);
+            $this->target->enableActiveChecksWithChildren($this->view->objects);
         }
     }
 
@@ -608,7 +605,7 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            $this->target->disableEventHandler($this->objects);
+            $this->target->disableEventHandler($this->view->objects);
         }
     }
 
@@ -626,7 +623,7 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            $this->target->enableEventHandler($this->objects);
+            $this->target->enableEventHandler($this->view->objects);
         }
     }
 
@@ -644,7 +641,7 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            $this->target->disableFlappingDetection($this->objects);
+            $this->target->disableFlappingDetection($this->view->objects);
         }
     }
 
@@ -662,7 +659,7 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            $this->target->enableFlappingDetection($this->objects);
+            $this->target->enableFlappingDetection($this->view->objects);
         }
     }
 
@@ -679,7 +676,7 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            $this->target->addComment($this->objects, $form->getComment());
+            $this->target->addComment($this->view->objects, $form->getComment());
         }
     }
 
@@ -697,7 +694,7 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            $this->target->resetAttributes($this->objects);
+            $this->target->resetAttributes($this->view->objects);
         }
     }
 
@@ -714,7 +711,7 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            $this->target->acknowledge($this->objects, $form->getAcknowledgement());
+            $this->target->acknowledge($this->view->objects, $form->getAcknowledgement());
         }
     }
 
@@ -732,7 +729,7 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            $this->target->removeAcknowledge($this->objects);
+            $this->target->removeAcknowledge($this->view->objects);
         }
     }
 
@@ -749,7 +746,7 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            $this->target->delayNotification($this->objects, $form->getDelayTime());
+            $this->target->delayNotification($this->view->objects, $form->getDelayTime());
         }
     }
 
@@ -771,7 +768,7 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            $this->target->removeDowntime($this->objects);
+            $this->target->removeDowntime($this->view->objects);
         }
     }
 }
