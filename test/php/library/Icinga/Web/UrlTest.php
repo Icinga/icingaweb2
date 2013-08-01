@@ -352,6 +352,25 @@ class UrlTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    function testAddParamAfterCreation()
+    {
+        $url = Url::fromPath('/my/test/url.html?param=val&param2=val2&param3=val3', array(), new RequestMock());
+        $url->addParams(array(
+            "param4" => "val4",
+            "param3" => "newval3"
+        ));
+        $this->assertEquals(
+            "val4",
+            $url->getParam("param4", "wrongval"),
+            "Asserting that a parameter can be added with addParam"
+        );
+        $this->assertEquals(
+            "val3",
+            $url->getParam("param3", "wrongval"),
+            "Asserting that addParam doesn't overwrite existing parameters"
+        );
+    }
+
     /**
      * Test whether toString is the same as getAbsoluteUrl
      *

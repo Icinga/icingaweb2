@@ -94,6 +94,7 @@ class Url
             $urlObject->setPath($urlParts["path"]);
         }
         if (isset($urlParts["query"])) {
+            $urlParams = array();
             parse_str($urlParts["query"], $urlParams);
             $params = array_merge($urlParams, $params);
         }
@@ -149,9 +150,10 @@ class Url
      */
     public function getRelativeUrl()
     {
-        if (empty($this->params))
-            return ltrim($this->path,'/');
-        return ltrim($this->path,'/').'?'.http_build_query($this->params);
+        if (empty($this->params)) {
+            return ltrim($this->path, '/');
+        }
+        return ltrim($this->path, '/').'?'.http_build_query($this->params);
     }
 
     /**
@@ -167,7 +169,7 @@ class Url
     }
 
     /**
-     * Add a set of parameters to the query part
+     * Add a set of parameters to the query part if the keys don't exist yet
      *
      * @param array $params  The parameters to add
      * @return $this

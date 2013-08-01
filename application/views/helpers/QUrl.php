@@ -39,8 +39,6 @@ class Zend_View_Helper_QUrl extends Zend_View_Helper_Abstract
             $params = array();
         }
         return Url::fromPath($url, $params);
-        $params = array_map('rawurlencode', $params);
-        return $this->view->baseUrl(vsprintf($url, $params));
     }
 }
 
