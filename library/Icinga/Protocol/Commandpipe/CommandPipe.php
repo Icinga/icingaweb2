@@ -645,6 +645,11 @@ class CommandPipe
         );
     }
 
+    /**
+     * Start obsessing over provided services/hosts
+     *
+     * @param array $objects    An array of hosts and/or services
+     */
     public function startObsessing($objects)
     {
         foreach ($objects as $object) {
@@ -658,6 +663,11 @@ class CommandPipe
         }
     }
 
+    /**
+     * Stop obsessing over provided services/hosts
+     *
+     * @param array $objects    An array of hosts and/or services
+     */
     public function stopObsessing($objects)
     {
         foreach ($objects as $object) {

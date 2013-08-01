@@ -74,7 +74,6 @@ class PropertyModifier
      */
     const FRESHNESS = "%s_FRESHNESS_CHECKS";
 
-
     /**
      *  Template for enabling/disabling event handler
      */
