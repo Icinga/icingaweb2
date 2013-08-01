@@ -29,30 +29,38 @@
 namespace Icinga\Protocol\Commandpipe;
 
 /**
- * Class Comment
- * @package Icinga\Protocol\Commandpipe
+ * Container for comment information that can be send to icinga's external command pipe
+ *
  */
 class Comment implements IComment
 {
     /**
+     * Whether the persistent flag should be submitted with this command
+     *
      * @var bool
      */
     public $persistent = false;
 
     /**
-     * @var string
+     *  The author of this comment
+     *
+     *  @var string
      */
     public $author = "";
 
     /**
-     * @var string
+     *  The comment text to use
+     *
+     *  @var string
      */
     public $comment = "";
 
     /**
-     * @param $author
-     * @param $comment
-     * @param bool $persistent
+     * Create a new comment object
+     *
+     * @param string $author    The author name to use for this object
+     * @param string $comment   The comment text to use
+     * @param bool $persistent  Whether this comment should persist icinga restarts
      */
     public function __construct($author, $comment, $persistent = false)
     {
@@ -62,9 +70,13 @@ class Comment implements IComment
     }
 
     /**
-     * @param $type
-     * @return string
-     * @throws InvalidCommandException
+     * Return this comment as an ADD_?_COMMENT external command string that can directly be send to the command pipe
+     *
+     * @param string $type                  either CommandPipe::TYPE_HOST or CommandPipe::TYPE_SERVICE
+     *
+     * @return string                       The ADD_HOST_COMMENT or ADD_SVC_COMMENT command, without the timestamp
+     *
+     * @throws InvalidCommandException      When $type is unknown
      */
     public function getFormatString($type)
     {

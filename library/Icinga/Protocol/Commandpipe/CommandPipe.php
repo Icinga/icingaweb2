@@ -35,14 +35,24 @@ use Icinga\Protocol\Commandpipe\Transport\LocalPipe;
 use Icinga\Protocol\Commandpipe\Transport\SecureShell;
 
 /**
- * Class CommandPipe
- * @package Icinga\Protocol\Commandpipe
+ * Class to the access icinga CommandPipe via a @see Icinga\Protocol\Commandpipe\Transport.php
+ *
+ * Will be configured using the instances.ini
  */
 class CommandPipe
 {
-
+    /**
+     * The name of this class as defined in the instances.ini
+     *
+     * @var string
+     */
     private $name = "";
 
+    /**
+     * The underlying @see Icinga\Protocol\Commandpipe\Transport.php class handling communication with icinga
+     *
+     * @var Icinga\Protocol\Commandpipe\Transport
+     */
     private $transport = null;
 
     /**
@@ -87,6 +97,8 @@ class CommandPipe
     const NOTIFY_INCREMENT  = 4;
 
     /**
+     * Create a new CommandPipe class which accesses the icinga.cmd pipe as defined in $config
+     *
      * @param \Zend_Config $config
      */
     public function __construct(\Zend_Config $config)
@@ -95,11 +107,17 @@ class CommandPipe
         $this->name = $config->name;
     }
 
-    private function getTransportForConfiguration(\Zend_Config $config, $transport = null)
+    /**
+     * Setup the @see Icinga\Protocol\Commandpipe\Transport.php class that will be used for accessing the command pipe
+     *
+     * Currently this method uses SecureShell when a host is given, otherwise it assumes the pipe is accessible
+     * via the machines filesystem
+     *
+     * @param \Zend_Config $config          The configuration as defined in the instances.ini
+     */
+    private function getTransportForConfiguration(\Zend_Config $config)
     {
-        if ($transport != null) {
-            $this->transport = $transport;
-        } else if (isset($config->host)) {
+        if (isset($config->host)) {
             $this->transport = new SecureShell();
             $this->transport->setEndpoint($config);
         } else {
@@ -109,8 +127,11 @@ class CommandPipe
     }
 
     /**
-     * @param $command
-     * @throws \RuntimeException
+     * Send the command string $command to the icinga pipe
+     *
+     * This method just delegates the send command to the underlying transport
+     *
+     * @param String $command       The command string to send, without the timestamp
      */
     public function send($command)
     {
@@ -118,8 +139,12 @@ class CommandPipe
     }
 
     /**
-     * @param $objects
-     * @param IComment $acknowledgementOrComment
+     * Acknowledge a set of monitoring objects
+     *
+     * $objects can be a mixed array of host and service objects
+     *
+     * @param array $objects                        An array of host and service objects
+     * @param IComment $acknowledgementOrComment    An acknowledgement or comment object to use as the comment
      */
     public function acknowledge($objects, IComment $acknowledgementOrComment)
     {
@@ -139,7 +164,9 @@ class CommandPipe
     }
 
     /**
-     * @param $objects
+     * Remove the acknowledgements of the provided objects
+     *
+     * @param array $objects        An array of mixed service and host objects whose acknowledgments will be removed
      */
     public function removeAcknowledge($objects)
     {
@@ -153,9 +180,12 @@ class CommandPipe
     }
 
     /**
-     * @param $objects
-     * @param $state
-     * @param $output
+     * Submit passive check result for all provided objects
+     *
+     * @param array $objects        An array of hosts and services to submit the passive check result to
+     * @param int $state            The state to set for the monitoring objects
+     * @param string $output        The output string to set as the check result
+     * @param string $perfdata      The optional perfdata to submit as the check result
      */
     public function submitCheckResult($objects, $state, $output, $perfdata = "")
     {
@@ -172,9 +202,11 @@ class CommandPipe
     }
 
     /**
-     * @param $objects
-     * @param bool $time
-     * @param bool $withChilds
+     * Reschedule a forced check for all provided objects
+     *
+     * @param array $objects            An array of hosts and services to reschedule
+     * @param int|bool $time            The time to submit, if empty time() will be used
+     * @param bool $withChilds          Whether only childs should be rescheduled
      */
     public function scheduleForcedCheck($objects, $time = false, $withChilds = false)
     {
@@ -192,9 +224,11 @@ class CommandPipe
     }
 
     /**
-     * @param $objects
-     * @param bool $time
-     * @param bool $withChilds
+     * Reschedule a check for all provided objects
+     *
+     * @param array $objects            An array of hosts and services to reschedule
+     * @param int|bool $time            The time to submit, if empty time() will be used
+     * @param bool $withChilds          Whether only childs should be rescheduled
      */
     public function scheduleCheck($objects, $time = false, $withChilds = false)
     {
@@ -212,8 +246,10 @@ class CommandPipe
     }
 
     /**
-     * @param array $objects
-     * @param Comment $comment
+     * Add a comment to all submitted objects
+     *
+     * @param array $objects        An array of hosts and services to add a comment for
+     * @param Comment $comment      The comment object to add
      */
     public function addComment(array $objects, Comment $comment)
     {
@@ -230,7 +266,10 @@ class CommandPipe
     }
 
     /**
-     * @param $objectsOrComments
+     * Removes the submitted comments
+     *
+     * @param array $objectsOrComments      An array of hosts and services (to remove all their comments)
+     *                                      or single comment objects to remove
      */
     public function removeComment($objectsOrComments)
     {
@@ -258,6 +297,7 @@ class CommandPipe
     }
 
     /**
+     *  Globally enable notifications for this instance
      *
      */
     public function enableGlobalNotifications()
@@ -266,6 +306,7 @@ class CommandPipe
     }
 
     /**
+     *  Globally disable notifications for this instance
      *
      */
     public function disableGlobalNotifications()
@@ -274,8 +315,10 @@ class CommandPipe
     }
 
     /**
-     * @param $object
-     * @return string
+     * Return the object type of the provided object (TYPE_SERVICE or TYPE_HOST)
+     *
+     * @param $object           The object to identify
+     * @return string           TYPE_SERVICE or TYPE_HOST
      */
     private function getObjectType($object)
     {
@@ -287,8 +330,10 @@ class CommandPipe
     }
 
     /**
-     * @param $objects
-     * @param Downtime $downtime
+     * Schedule a downtime for all provided objects
+     *
+     * @param array $objects        An array of monitoring objects to schedule the downtime for
+     * @param Downtime $downtime    The downtime object to schedule
      */
     public function scheduleDowntime($objects, Downtime $downtime)
     {
@@ -305,8 +350,10 @@ class CommandPipe
     }
 
     /**
-     * @param $objects
-     * @param int $starttime
+     * Remove downtimes for objects
+     *
+     * @param array $objects        An array containing hosts, service or downtime objects
+     * @param int $starttime        An optional starttime to use for the DEL_DOWNTIME_BY_HOST_NAME command
      */
     public function removeDowntime($objects, $starttime = 0)
     {
@@ -328,6 +375,7 @@ class CommandPipe
     }
 
     /**
+     *  Restart the icinga instance
      *
      */
     public function restartIcinga()
@@ -336,8 +384,10 @@ class CommandPipe
     }
 
     /**
-     * @param $objects
-     * @param PropertyModifier $flags
+     * Modify monitoring flags for the provided objects
+     *
+     * @param array $objects            An arry of service and/or host objects to modify
+     * @param PropertyModifier $flags   The Monitoring attributes to modify
      */
     public function setMonitoringProperties($objects, PropertyModifier $flags)
     {
@@ -354,7 +404,9 @@ class CommandPipe
     }
 
     /**
-     * @param $objects
+     * Enable active checks for all provided objects
+     *
+     * @param array $objects        An array containing services and hosts to enable active checks for
      */
     public function enableActiveChecks($objects)
     {
@@ -369,7 +421,9 @@ class CommandPipe
     }
 
     /**
-     * @param $objects
+     * Disable active checks for all provided objects
+     *
+     * @param array $objects        An array containing services and hosts to disable active checks
      */
     public function disableActiveChecks($objects)
     {
@@ -384,7 +438,9 @@ class CommandPipe
     }
 
     /**
-     * @param $objects
+     * Enable passive checks for all provided objects
+     *
+     * @param array $objects        An array containing services and hosts to enable passive checks for
      */
     public function enablePassiveChecks($objects)
     {
@@ -399,7 +455,9 @@ class CommandPipe
     }
 
     /**
-     * @param $objects
+     * Enable passive checks for all provided objects
+     *
+     * @param array $objects        An array containing services and hosts to enable passive checks for
      */
     public function disablePassiveChecks($objects)
     {
@@ -414,7 +472,10 @@ class CommandPipe
     }
 
     /**
-     * @param $objects
+     * Enable flap detection for all provided objects
+     *
+     * @param array $objects        An array containing services and hosts to enable flap detection
+     *
      */
     public function enableFlappingDetection($objects)
     {
@@ -429,7 +490,10 @@ class CommandPipe
     }
 
     /**
-     * @param $objects
+     * Disable flap detection for all provided objects
+     *
+     * @param array $objects        An array containing services and hosts to disable flap detection
+     *
      */
     public function disableFlappingDetection($objects)
     {
@@ -444,7 +508,10 @@ class CommandPipe
     }
 
     /**
-     * @param $objects
+     * Enable notifications for all provided objects
+     *
+     * @param array $objects        An array containing services and hosts to enable notification
+     *
      */
     public function enableNotifications($objects)
     {
@@ -459,7 +526,10 @@ class CommandPipe
     }
 
     /**
-     * @param $objects
+     * Disable flap detection for all provided objects
+     *
+     * @param array $objects        An array containing services and hosts to disable notifications
+     *
      */
     public function disableNotifications($objects)
     {
@@ -474,7 +544,9 @@ class CommandPipe
     }
 
     /**
-     * @param $objects
+     * Enable freshness checks for all provided objects
+     *
+     * @param array $objects    An array of hosts and/or services
      */
     public function enableFreshnessChecks($objects)
     {
@@ -489,7 +561,9 @@ class CommandPipe
     }
 
     /**
-     * @param $objects
+     * Disable freshness checks for all provided objects
+     *
+     * @param array $objects    An array of hosts and/or services
      */
     public function disableFreshnessChecks($objects)
     {
@@ -504,7 +578,9 @@ class CommandPipe
     }
 
     /**
-     * @param $objects
+     * Enable event handler for all provided objects
+     *
+     * @param array $objects    An array of hosts and/or services
      */
     public function enableEventHandler($objects)
     {
@@ -519,7 +595,9 @@ class CommandPipe
     }
 
     /**
-     * @param $objects
+     * Disable event handler for all provided objects
+     *
+     * @param array $objects    An array of hosts and/or services
      */
     public function disableEventHandler($objects)
     {
@@ -534,7 +612,9 @@ class CommandPipe
     }
 
     /**
-     * @param $objects
+     * Enable performance data parsing for all provided objects
+     *
+     * @param array $objects    An array of hosts and/or services
      */
     public function enablePerfdata($objects)
     {
@@ -548,6 +628,11 @@ class CommandPipe
         );
     }
 
+    /**
+     * Disable performance data parsing for all provided objects
+     *
+     * @param array $objects    An array of hosts and/or services
+     */
     public function disablePerfdata($objects)
     {
         $this->setMonitoringProperties(
@@ -560,6 +645,11 @@ class CommandPipe
         );
     }
 
+    /**
+     * Start obsessing over provided services/hosts
+     *
+     * @param array $objects    An array of hosts and/or services
+     */
     public function startObsessing($objects)
     {
         foreach ($objects as $object) {
@@ -573,6 +663,11 @@ class CommandPipe
         }
     }
 
+    /**
+     * Stop obsessing over provided services/hosts
+     *
+     * @param array $objects    An array of hosts and/or services
+     */
     public function stopObsessing($objects)
     {
         foreach ($objects as $object) {
@@ -615,6 +710,11 @@ class CommandPipe
         }
     }
 
+    /**
+     * Disable notifications for all services of the provided hosts
+     *
+     * @param array $objects    An array of hosts
+     */
     public function disableNotificationsForServices($objects)
     {
         foreach ($objects as $host) {
@@ -623,6 +723,11 @@ class CommandPipe
         }
     }
 
+    /**
+     * Enable notifications for all services of the provided hosts
+     *
+     * @param array $objects    An array of hosts
+     */
     public function enableNotificationsForServices($objects)
     {
         foreach ($objects as $host) {
@@ -631,6 +736,11 @@ class CommandPipe
         }
     }
 
+    /**
+     * Disable active checks for all services of the provided hosts
+     *
+     * @param array $objects    An array of hosts
+     */
     public function disableActiveChecksWithChildren($objects)
     {
         foreach ($objects as $host) {
@@ -639,6 +749,11 @@ class CommandPipe
         }
     }
 
+    /**
+     * Enable active checks for all services of the provided hosts
+     *
+     * @param array $objects    An array of hosts
+     */
     public function enableActiveChecksWithChildren($objects)
     {
         foreach ($objects as $host) {
@@ -647,6 +762,11 @@ class CommandPipe
         }
     }
 
+    /**
+     * Rest modified attributes for all provided objects
+     *
+     * @param array $objects    An array of hosts and services
+     */
     public function resetAttributes($objects)
     {
         foreach ($objects as $object) {
@@ -659,6 +779,12 @@ class CommandPipe
         }
     }
 
+    /**
+     * Delay notifications for all provided hosts and services for $time seconds
+     *
+     * @param array $objects    An array of hosts and services
+     * @param int   $time       The number of seconds to delay notifications for
+     */
     public function delayNotification($objects, $time)
     {
         foreach ($objects as $object) {

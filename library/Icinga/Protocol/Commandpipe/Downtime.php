@@ -29,51 +29,83 @@
 namespace Icinga\Protocol\Commandpipe;
 
 /**
- * Class Downtime
- * @package Icinga\Protocol\Commandpipe
+ * Container class containing downtime information
+ *
  */
 class Downtime
 {
-    const TYPE_WITH_CHILDREN = 'AND_PROPAGATE_';
-    const TYPE_WITH_CHILDREN_TRIGERRED = 'AND_PROPAGATE_TRIGGERED_';
-    const TYPE_HOST_SVC = 'HOST_SVC';
     /**
-     * @var mixed
+     * Propagate this downtime for all child objects
+     */
+    const TYPE_WITH_CHILDREN = 'AND_PROPAGATE_';
+
+    /**
+     * Propagate this downtime for all child objects as triggered downtime
+     */
+    const TYPE_WITH_CHILDREN_TRIGERRED = 'AND_PROPAGATE_TRIGGERED_';
+
+    /**
+     * Schedule downtime for the services of the given hos
+     */
+    const TYPE_HOST_SVC = 'HOST_SVC';
+
+    /**
+     * Timestamp representing the downtime's start
+     *
+     * @var int
      */
     public $startTime;
 
     /**
-     * @var mixed
+     * Timestamp representing the downtime's end
+     *
+     * @var int
      */
     public $endTime;
 
     /**
-     * @var mixed
+     * Whether this is a fixed downtime
+     *
+     * @var boolean
      */
     private $fixed = false;
 
     /**
-     * @var mixed
+     * The duration of the downtime in seconds if flexible
+     *
+     * @var int
      */
     public $duration;
 
     /**
-     * @var mixed
+     * The comment object of the downtime
+     *
+     * @var Comment
      */
     public $comment;
 
     /**
+     * The downtime id that triggers this downtime (0 = no triggered downtime)
+     *
      * @var int
      */
     public $trigger_id = 0;
 
+    /**
+     * Internal information for the exact type of the downtime (with children, with children and triggered, services etc.)
+     *
+     * @var string
+     */
     private $subtype = '';
 
     /**
-     * @param $start
-     * @param $end
-     * @param Comment $comment
-     * @param int $duration
+     * Create a new downtime container
+     *
+     * @param int $start            A timestamp that defines the downtime's start time
+     * @param int $end              A timestamp that defines the downtime's end time
+     * @param Comment $comment      A comment that will be used when scheduling the downtime
+     * @param int $duration         The duration of this downtime in seconds. Duration > 0 will make this a flexible downtime
+     * @param int $trigger_id       An id of the downtime that triggers this downtime. 0 means this is not a triggered downtime
      */
     public function __construct($start, $end, Comment $comment, $duration = 0, $trigger_id = 0)
     {
@@ -88,8 +120,12 @@ class Downtime
     }
 
     /**
-     * @param $type
-     * @return string
+     * Return the SCHEDULE_?_DOWNTIME representing this class for the given $type
+     *
+     * @param string $type      CommandPipe::TYPE_SERVICE to trigger a service downtime or CommandPipe::TYPE_HOST to
+     *                          trigger a host downtime
+     * @return string           A schedule downtime command representing the state of this class
+     *
      */
     public function getFormatString($type)
     {
@@ -111,6 +147,11 @@ class Downtime
             . $this->comment->comment;
     }
 
+    /**
+     * Set the exact type of this downtime (see the TYPE_ constants)
+     *
+     * @param $type     The type of to use for this downtime
+     */
     public function setType($type)
     {
         $this->subtype = $type;

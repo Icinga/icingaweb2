@@ -359,7 +359,7 @@ class CommandPipeTest extends \PHPUnit_Framework_TestCase
                     "host_name" => "Testhost"
                 )
             ),$downtime);
-            $this->assertCommandSucceeded("SCHEDULE_HOST_DOWNTIME;Testhost;25;26;0;0;0;me;test");
+            $this->assertCommandSucceeded("SCHEDULE_HOST_DOWNTIME;Testhost;25;26;1;0;0;me;test");
 
             $pipe->scheduleDowntime(array(
                 (object) array(
@@ -367,7 +367,7 @@ class CommandPipeTest extends \PHPUnit_Framework_TestCase
                     "service_description" => "svc"
                 )
             ),$downtime);
-            $this->assertCommandSucceeded("SCHEDULE_SVC_DOWNTIME;Testhost;svc;25;26;0;0;0;me;test");
+            $this->assertCommandSucceeded("SCHEDULE_SVC_DOWNTIME;Testhost;svc;25;26;1;0;0;me;test");
 
         } catch (Exception $e) {
             $this->cleanup();
