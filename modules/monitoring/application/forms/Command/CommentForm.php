@@ -28,6 +28,7 @@
 
 namespace Monitoring\Form\Command;
 
+use Icinga\Protocol\Commandpipe\Comment;
 /**
  * Form for adding comment commands
  */
@@ -63,5 +64,10 @@ class CommentForm extends ConfirmationForm
         $this->setSubmitLabel(t('Post comment'));
 
         parent::create();
+    }
+
+    public function getComment()
+    {
+        return new Comment($this->getAuthorName(), $this->getValue('comment'), $this->getValue('persistent'));
     }
 }

@@ -73,4 +73,21 @@ class CustomNotificationForm extends ConfirmationForm
 
         parent::create();
     }
+
+    public function getComment()
+    {
+        return $this->getValue('comment');
+    }
+
+    public function getOptions()
+    {
+        $value = 0;
+        if ($this->getValue('force')) {
+            $value |= 2;
+        }
+        if ($this->getValue('broadcast')) {
+            $value |= 1;
+        }
+        return $value;
+    }
 }

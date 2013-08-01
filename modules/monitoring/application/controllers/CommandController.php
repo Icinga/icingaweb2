@@ -115,10 +115,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function init()
     {
-        $this->objects = $this->selectCommandTargets();
-        if (empty($this->objects) && ! $this->isGlobalCommand()) {
-            throw new \Exception("No objects found for your command");
-        }
+
 
         if ($this->_request->isPost()) {
 
@@ -144,6 +141,9 @@ class Monitoring_CommandController extends ModuleActionController
         }
 
         if ($this->getRequest()->getActionName() !== 'list') {
+
+
+
             // Reduce template writing mess
             $this->_helper->viewRenderer->setRender(self::DEFAULT_VIEW_SCRIPT);
         }
@@ -161,7 +161,7 @@ class Monitoring_CommandController extends ModuleActionController
      * @return array
      * @throws Icinga\Exception\MissingParameterException
      */
-    private function selectCommandTargets()
+    private function selectCommandTargets($hostOnly = false)
     {
         $query = null;
         $fields = array(
@@ -178,7 +178,7 @@ class Monitoring_CommandController extends ModuleActionController
             if ($hostname) {
                 $filter["host_name"] = $hostname;
             }
-            if ($servicename) {
+            if ($servicename && !$hostOnly) {
                 $filter["service_description"] = $servicename;
                 $fields[] = "service_description";
                 $fields[] = "service_state";
@@ -212,6 +212,30 @@ class Monitoring_CommandController extends ModuleActionController
         $this->view->commands = $commands;
     }
 
+    private function supportedParameter(array $supported)
+    {
+        $given = array_intersect_key(array_flip($supported), $this->getRequest()->getParams());
+        if (empty($given)) {
+            throw new \Exception('Missing parameter, supported: '.implode(', ', $supported));
+        }
+        if (isset($given["host"])) {
+            $this->objects = $this->selectCommandTargets(!in_array("service", $supported));
+            if (empty($this->objects)) {
+                throw new \Exception("No objects found for your command");
+            }
+
+        } else if (in_array("downtimeid", $supported)) {
+            $this->objects = array();
+            $downtimes = $this->getParam("downtimeid");
+            if (!is_array($downtimes)) {
+                $downtimes = array($downtimes);
+            }
+            foreach ($downtimes as $downtimeId) {
+                $this->objects[] = (object) array("downtime_id" => $downtimeId);
+            }
+        }
+    }
+
     // ------------------------------------------------------------------------
     // Commands for hosts / services
     // ------------------------------------------------------------------------
@@ -222,7 +246,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function disableactivechecksAction()
     {
-
+        $this->supportedParameter(array('host', 'service'));
         $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Disable active checks'));
@@ -240,6 +264,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function enableactivechecksAction()
     {
+        $this->supportedParameter(array('host', 'service'));
         $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Enable active checks'));
@@ -257,6 +282,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function reschedulenextcheckAction()
     {
+        $this->supportedParameter(array('host', 'service'));
         $form = new RescheduleNextCheckForm();
         $form->setRequest($this->getRequest());
 
@@ -273,6 +299,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function submitpassivecheckresultAction()
     {
+        $this->supportedParameter(array('host', 'service'));
         $type = SubmitPassiveCheckResultForm::TYPE_SERVICE;
 
         $form = new SubmitPassiveCheckResultForm();
@@ -292,6 +319,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function stopobsessingAction()
     {
+        $this->supportedParameter(array('host', 'service'));
         $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Stop obsessing'));
@@ -309,6 +337,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function startobsessingAction()
     {
+        $this->supportedParameter(array('host', 'service'));
         $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Start obsessing'));
@@ -326,6 +355,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function stopacceptingpassivechecksAction()
     {
+        $this->supportedParameter(array('host', 'service'));
         $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Stop accepting passive checks'));
@@ -333,7 +363,7 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
+            $this->target->disablePassiveChecks($this->objects);
         }
     }
 
@@ -343,6 +373,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function startacceptingpassivechecksAction()
     {
+        $this->supportedParameter(array('host', 'service'));
         $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Start accepting passive checks'));
@@ -350,7 +381,7 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
+            $this->target->enableActiveChecks($this->objects);
         }
     }
 
@@ -360,6 +391,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function disablenotificationsAction()
     {
+        $this->supportedParameter(array('host', 'service'));
         $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Disable notifications'));
@@ -367,7 +399,7 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
+            $this->target->disableNotifications($this->objects);
         }
     }
 
@@ -384,7 +416,7 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
+            $this->target->enableNotifications($this->objects);
         }
     }
 
@@ -394,12 +426,18 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function sendcustomnotificationAction()
     {
+        $this->supportedParameter(array('host', 'service'));
         $form = new CustomNotificationForm();
         $form->setRequest($this->getRequest());
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
+            $author = $this->getRequest()->getUser()->getUsername();
+            $this->target->sendCustomNotification(
+                $this->objects,
+                new Comment($author, $form->getComment()),
+                $form->getOptions()
+            );
         }
     }
 
@@ -409,13 +447,14 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function scheduledowntimeAction()
     {
+        $this->supportedParameter(array('host', 'service'));
         $form = new ScheduleDowntimeForm();
         $form->setRequest($this->getRequest());
         $form->setWithChildren(false);
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
+            $this->target->scheduleDowntime($this->objects, $form->getDowntime());
         }
     }
 
@@ -425,13 +464,14 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function scheduledowntimeswithchildrenAction()
     {
+        $this->supportedParameter(array('host'));
         $form = new ScheduleDowntimeForm();
         $form->setRequest($this->getRequest());
         $form->setWithChildren(true);
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
+            $this->target->scheduleDowntime($this->objects, $form->getDowntime());
         }
     }
 
@@ -441,6 +481,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function removedowntimeswithchildrenAction()
     {
+        $this->supportedParameter(array('host'));
         $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Remove downtime(s)'));
@@ -448,7 +489,7 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
+            $this->target->removeDowntime($this->objects);
         }
     }
 
@@ -458,6 +499,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function disablenotificationswithchildrenAction()
     {
+        $this->supportedParameter(array('host'));
         $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Disable notifications'));
@@ -465,7 +507,8 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
+            $this->target->disableNotifications($this->objects);
+            $this->target->disableNotificationsForServices($this->objects);
         }
     }
 
@@ -475,6 +518,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function enablenotificationswithchildrenAction()
     {
+        $this->supportedParameter(array('host'));
         $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Enable notifications'));
@@ -482,7 +526,8 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
+            $this->target->enableNotifications($this->objects);
+            $this->target->enableNotificationsForServices($this->objects);
         }
     }
 
@@ -492,6 +537,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function reschedulenextcheckwithchildrenAction()
     {
+        $this->supportedParameter(array('host'));
         $form = new RescheduleNextCheckForm();
         $form->setRequest($this->getRequest());
 
@@ -500,7 +546,13 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
+            if ($form->isForced()) {
+                $this->target->scheduleForcedCheck($this->objects, time());
+                $this->target->scheduleForcedCheck($this->objects, time(), true);
+            } else {
+                $this->target->scheduleCheck($this->objects, time());
+                $this->target->scheduleCheck($this->objects, time(), true);
+            }
         }
     }
 
@@ -510,6 +562,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function disableactivecheckswithchildrenAction()
     {
+        $this->supportedParameter(array('host'));
         $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Disable active checks'));
@@ -517,7 +570,8 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
+            $this->target->disableActiveChecks($this->objects);
+            $this->target->disableActiveChecksWithChildren($this->objects);
         }
     }
 
@@ -527,6 +581,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function enableactivecheckswithchildrenAction()
     {
+        $this->supportedParameter(array('host'));
         $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Enable active checks'));
@@ -534,7 +589,8 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
+            $this->target->enableActiveChecks($this->objects);
+            $this->target->enableActiveChecksWithChildren($this->objects);
         }
     }
 
@@ -544,6 +600,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function disableeventhandlerAction()
     {
+        $this->supportedParameter(array('host', 'service'));
         $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Disable event handler'));
@@ -551,7 +608,7 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
+            $this->target->disableEventHandler($this->objects);
         }
     }
 
@@ -561,6 +618,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function enableeventhandlerAction()
     {
+        $this->supportedParameter(array('host', 'service'));
         $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Enable event handler'));
@@ -568,7 +626,7 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
+            $this->target->enableEventHandler($this->objects);
         }
     }
 
@@ -578,6 +636,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function disableflapdetectionAction()
     {
+        $this->supportedParameter(array('host', 'service'));
         $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Disable flapping detection'));
@@ -585,7 +644,7 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
+            $this->target->disableFlappingDetection($this->objects);
         }
     }
 
@@ -595,6 +654,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function enableflapdetectionAction()
     {
+        $this->supportedParameter(array('host', 'service'));
         $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Enable flapping detection'));
@@ -602,7 +662,7 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
+            $this->target->enableFlappingDetection($this->objects);
         }
     }
 
@@ -612,13 +672,14 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function addcommentAction()
     {
+        $this->supportedParameter(array('host', 'service'));
         $form = new CommentForm();
         $form->setRequest($this->getRequest());
 
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
+            $this->target->addComment($this->objects, $form->getComment());
         }
     }
 
@@ -628,6 +689,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function resetattributesAction()
     {
+        $this->supportedParameter(array('host', 'service'));
         $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Reset attributes'));
@@ -635,7 +697,7 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
+            $this->target->resetAttributes($this->objects);
         }
     }
 
@@ -645,13 +707,14 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function acknowledgeproblemAction()
     {
+        $this->supportedParameter(array('host', 'service'));
         $form = new AcknowledgeForm();
         $form->setRequest($this->getRequest());
 
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
+            $this->target->acknowledge($this->objects, $form->getAcknowledgement());
         }
     }
 
@@ -661,6 +724,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function removeacknowledgementAction()
     {
+        $this->supportedParameter(array('host', 'service'));
         $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Remove problem acknowledgement'));
@@ -668,7 +732,7 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
+            $this->target->removeAcknowledge($this->objects);
         }
     }
 
@@ -678,13 +742,14 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function delaynotificationAction()
     {
+        $this->supportedParameter(array('host', 'service'));
         $form = new DelayNotificationForm();
         $form->setRequest($this->getRequest());
 
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
+            $this->target->delayNotification($this->objects, $form->getDelayTime());
         }
     }
 
@@ -694,6 +759,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function removedowntimeAction()
     {
+        $this->supportedParameter(array('downtimeid'));
         $form = new ConfirmationWithIdentifierForm();
         $form->setRequest($this->getRequest());
 
@@ -705,7 +771,7 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->isPostAndValid() === true) {
-            throw new \Icinga\Exception\ProgrammingError('Command sender not implemented: '. __FUNCTION__);
+            $this->target->removeDowntime($this->objects);
         }
     }
 }

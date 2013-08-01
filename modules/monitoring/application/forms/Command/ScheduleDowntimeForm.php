@@ -29,6 +29,8 @@
 namespace Monitoring\Form\Command;
 
 use Icinga\Web\Form\Element\DateTime;
+use Icinga\Protocol\Commandpipe\Downtime;
+use Icinga\Protocol\Commandpipe\Comment;
 use \DateTime as PhpDateTime;
 use \DateInterval;
 use \Zend_Form_Element_Text;
@@ -58,6 +60,7 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
 
     /**
      * Build an array of timestamps
+     *
      * @return string[]
      */
     private function generateDefaultTimestamps()
@@ -76,6 +79,7 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
 
     /**
      * Generate translated multi options based on type constants
+     *
      * @return array
      */
     private function getDowntimeTypeOptions()
@@ -88,6 +92,7 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
 
     /**
      * Interface method to build the form
+     *
      * @see ConfirmationForm::create
      */
     protected function create()
@@ -104,6 +109,10 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
             )
         );
 
+        /**
+         * @TODO: Display downtime list (Bug #4496)
+         *
+         */
         $this->addElement(
             'text',
             'triggered',
@@ -242,6 +251,7 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
 
     /**
      * Change validators at runtime
+     *
      * @see Form::preValidation
      * @param array $data
      */
@@ -264,5 +274,46 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
             $minutes->addValidator($digitsValidator, true);
             $minutes->addValidator($greaterThanValidator, true);
         }
+    }
+
+    /**
+     *  Return the downtime submitted in this form
+     *
+     *  @return Downtime
+     */
+    public function getDowntime()
+    {
+
+        $comment = new Comment(
+            $this->getRequest()->getUser()->getUsername(),
+            $this->getValue('comment')
+        );
+        $duration = 0;
+        if ($this->getValue('type') === self::TYPE_FLEXIBLE) {
+            $duration = ($this->getValue('hours')*3600) + ($this->getValue('minutes')*60);
+        }
+        $starttime = new PhpDateTime($this->getValue('starttime'));
+        $endtime = new PhpDateTime($this->getValue('endtime'));
+
+        $downtime = new Downtime(
+            $starttime->getTimestamp(),
+            $endtime->getTimestamp(),
+            $comment,
+            $duration,
+            $this->getValue('triggered')
+        );
+        if (! $this->getWithChildren()) {
+            switch ($this->getValue('childobjects')) {
+                case 1:
+                    $downtime->setType(Downtime::TYPE_WITH_CHILDREN_TRIGERRED);
+                    break;
+                case 2:
+                    $downtime->setType(Downtime::TYPE_WITH_CHILDREN);
+                    break;
+            }
+        } else {
+            $downtime->setType(Downtime::TYPE_HOST_SVC);
+        }
+        return $downtime;
     }
 }

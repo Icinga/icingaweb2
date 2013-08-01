@@ -46,24 +46,45 @@ class CommandPipe
     private $transport = null;
 
     /**
-     *
+     *  Constant identifying a monitoring object as host
      */
     const TYPE_HOST = "HOST";
 
     /**
-     *
+     *  Constant identifying a monitoring object as service
      */
     const TYPE_SERVICE = "SVC";
 
     /**
-     *
+     *  Constant identifying a monitoring object as hostgroup
      */
     const TYPE_HOSTGROUP = "HOSTGROUP";
 
     /**
-     *
+     *  Constant identifying a monitoring object as servicegroups
      */
     const TYPE_SERVICEGROUP = "SERVICEGROUP";
+
+    /**
+     *  Notification option (use logical OR for combination)
+     *
+     *  Broadcast (send notification to all normal and all escalated contacts for the service)
+     */
+    const NOTIFY_BROADCAST  = 1;
+
+    /**
+     *  Notification option (use logical OR for combination)
+     *
+     *  notification is sent out regardless of current time, whether or not notifications are enabled, etc.
+     */
+    const NOTIFY_FORCED     = 2;
+
+    /**
+     *  Notification option (use logical OR for combination)
+     *
+     *  Increment current notification # for the service(this is not done by default for custom notifications)
+     */
+    const NOTIFY_INCREMENT  = 4;
 
     /**
      * @param \Zend_Config $config
@@ -562,6 +583,91 @@ class CommandPipe
                 $msg .= ';'.$object->service_description;
             }
             $this->send($msg);
+        }
+    }
+
+    /**
+     * Send a custom host or service notification
+     *
+     * @param $objects              monitoring objects to send this notification to
+     * @param Comment $comment      comment to use in the notification
+     * @param int [$...]            Optional list of Notification flags which will be used as the option parameter
+     */
+    public function sendCustomNotification($objects, Comment $comment, $optionsVarList = 0/*, ...*/)
+    {
+        $args = func_get_args();
+        // logical OR for all notification options
+        for ($i = 3; $i < count($args); $i++) {
+            $optionsVarList |= $args[$i];
+        }
+
+        foreach ($objects as $object) {
+            $type = $this->getObjectType($object);
+            $msg = 'SEND_CUSTOM_'.(($type == self::TYPE_SERVICE) ? 'SVC' : 'HOST' ).'_NOTIFICATION';
+            $msg .= ';'.$object->host_name;
+            if ($type == self::TYPE_SERVICE) {
+                $msg .= ';'.$object->service_description;
+            }
+            $msg .= ';'.$optionsVarList;
+            $msg .= ';'.$comment->author;
+            $msg .= ';'.$comment->comment;
+            $this->send($msg);
+        }
+    }
+
+    public function disableNotificationsForServices($objects)
+    {
+        foreach ($objects as $host) {
+            $msg = 'DISABLE_HOST_SVC_NOTIFICATIONS;'.$host->host_name;
+            $this->send($msg);
+        }
+    }
+
+    public function enableNotificationsForServices($objects)
+    {
+        foreach ($objects as $host) {
+            $msg = 'ENABLE_HOST_SVC_NOTIFICATIONS;'.$host->host_name;
+            $this->send($msg);
+        }
+    }
+
+    public function disableActiveChecksWithChildren($objects)
+    {
+        foreach ($objects as $host) {
+            $msg = 'DISABLE_HOST_SVC_CHECKS;'.$host->host_name;
+            $this->send($msg);
+        }
+    }
+
+    public function enableActiveChecksWithChildren($objects)
+    {
+        foreach ($objects as $host) {
+            $msg = 'ENABLE_HOST_SVC_CHECKS;'.$host->host_name;
+            $this->send($msg);
+        }
+    }
+
+    public function resetAttributes($objects)
+    {
+        foreach ($objects as $object) {
+            $type = $this->getObjectType($object);
+            if ($type === self::TYPE_SERVICE) {
+                $this->send('CHANGE_SVC_MODATTR;'.$object->host_name.';'.$object->service_description.';0');
+            } else {
+                $this->send('CHANGE_HOST_MODATTR;'.$object->host_name.';0');
+            }
+        }
+    }
+
+    public function delayNotification($objects, $time)
+    {
+        foreach ($objects as $object) {
+            $type = $this->getObjectType($object);
+            if ($type ===  self::TYPE_SERVICE) {
+                $this->send('DELAY_SVC_NOTIFICATION;'.$object->host_name.';'.$object->service_description.';'.$time);
+            } else {
+                $this->send('DELAY_HOST_NOTIFICATION;'.$object->host_name.';'.$time);
+            }
         }
     }
 

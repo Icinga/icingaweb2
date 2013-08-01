@@ -34,6 +34,9 @@ namespace Icinga\Protocol\Commandpipe;
  */
 class Downtime
 {
+    const TYPE_WITH_CHILDREN = 'AND_PROPAGATE_';
+    const TYPE_WITH_CHILDREN_TRIGERRED = 'AND_PROPAGATE_TRIGGERED_';
+    const TYPE_HOST_SVC = 'HOST_SVC';
     /**
      * @var mixed
      */
@@ -60,20 +63,28 @@ class Downtime
     public $comment;
 
     /**
+     * @var int
+     */
+    public $trigger_id = 0;
+
+    private $subtype = '';
+
+    /**
      * @param $start
      * @param $end
      * @param Comment $comment
      * @param int $duration
      */
-    public function __construct($start, $end, Comment $comment, $duration = 0)
+    public function __construct($start, $end, Comment $comment, $duration = 0, $trigger_id = 0)
     {
         $this->startTime = $start;
         $this->endTime = $end;
         $this->comment = $comment;
-        if ($duration != 0) {
+        if ($duration == 0) {
             $this->fixed = true;
         }
         $this->duration = intval($duration);
+        $this->trigger_id = intval($trigger_id);
     }
 
     /**
@@ -82,10 +93,26 @@ class Downtime
      */
     public function getFormatString($type)
     {
-        return 'SCHEDULE_' . $type . '_DOWNTIME;%s'
-        . ($type == CommandPipe::TYPE_SERVICE ? ';%s;' : ';')
-        . $this->startTime . ';' . $this->endTime
-        . ';' . ($this->fixed ? '1' : '0') . ';' . $this->duration . ';0;'
-        . $this->comment->author . ';' . $this->comment->comment;
+        if ($this->subtype == self::TYPE_HOST_SVC) {
+            $type = "";
+        }
+        return 'SCHEDULE_'
+            . $this->subtype
+            . $type
+            . '_DOWNTIME;'
+            . '%s;'
+            . ($type == CommandPipe::TYPE_SERVICE ? '%s;' : '')
+            . $this->startTime . ';'
+            . $this->endTime . ';'
+            . ($this->fixed ? '1' : '0') . ';'
+            . $this->trigger_id  . ';'
+            . $this->duration . ';'
+            . $this->comment->author . ';'
+            . $this->comment->comment;
+    }
+
+    public function setType($type)
+    {
+        $this->subtype = $type;
     }
 }

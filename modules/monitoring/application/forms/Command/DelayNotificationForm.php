@@ -70,4 +70,9 @@ class DelayNotificationForm extends ConfirmationForm
 
         parent::create();
     }
+
+    public function getDelayTime()
+    {
+        return $this->getValue('minutes')*60;
+    }
 }

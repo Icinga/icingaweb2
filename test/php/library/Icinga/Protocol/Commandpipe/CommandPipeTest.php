@@ -9,6 +9,7 @@ use Icinga\Protocol\Commandpipe\Acknowledgement as Acknowledgement;
 use Icinga\Protocol\Commandpipe\Downtime as Downtime;
 use Icinga\Protocol\Commandpipe\Commandpipe as Commandpipe;
 use \Icinga\Protocol\Commandpipe\PropertyModifier as MONFLAG;
+use Icinga\Protocol\Ldap\Exception;
 
 if(!defined("EXTCMD_TEST_BIN"))
     define("EXTCMD_TEST_BIN", "./bin/extcmd_test");
@@ -406,6 +407,58 @@ class CommandPipeTest extends \PHPUnit_Framework_TestCase
             $this->assertCommandSucceeded("DEL_DOWNTIME_BY_HOST_NAME;host;svc",$result[1]);
             $this->assertCommandSucceeded("DEL_SVC_DOWNTIME;123",$result[2]);
 
+        } catch (Exception $e) {
+            $this->cleanup();
+            throw $e;
+        }
+        $this->cleanup();
+    }
+
+    /**
+     * Test whether custom  servicenotifications are correctly send to the commandpipe without options
+     *
+     * @throws \Exception
+     */
+    public function testSendCustomServiceNotification()
+    {
+        $pipe = $this->getLocalTestPipe();
+        try {
+            $comment = new Comment("author", "commenttext");
+            $pipe->sendCustomNotification(array(
+                (object) array(
+                    "host_name" => "host1",
+                    "service_description" => "service1"
+                )
+            ), $comment);
+            $this->assertCommandSucceeded(
+                "SEND_CUSTOM_SVC_NOTIFICATION;host1;service1;0;author;commenttext"
+            );
+        } catch (Exception $e) {
+            $this->cleanup();
+            throw $e;
+        }
+        $this->cleanup();
+    }
+
+    /**
+     * Test whether custom hostnotifications are correctly send to the commandpipe with a varlist of options
+     *
+     * @throws \Exception
+     */
+    public function testSendCustomHostNotificationWithOptions()
+    {
+        $pipe = $this->getLocalTestPipe();
+        try {
+            $comment = new Comment('author', 'commenttext');
+            $pipe->sendCustomNotification(array(
+                (object) array(
+                    'host_name' => 'host'
+                )
+            ), $comment, Commandpipe::NOTIFY_FORCED, Commandpipe::NOTIFY_BROADCAST, Commandpipe::NOTIFY_INCREMENT);
+
+            $this->assertCommandSucceeded(
+                'SEND_CUSTOM_HOST_NOTIFICATION;host;7;author;commenttext'
+            );
         } catch (Exception $e) {
             $this->cleanup();
             throw $e;
