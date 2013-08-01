@@ -38,7 +38,6 @@ use Icinga\Web\Form;
 use Icinga\Web\ModuleActionController;
 use Icinga\Protocol\Commandpipe\Comment;
 use Icinga\Protocol\Commandpipe\CommandPipe;
-use Icinga\Protocol\Commandpipe\Acknowledgement;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\MissingParameterException;
 use Monitoring\Form\Command\AcknowledgeForm;
@@ -105,23 +104,20 @@ class Monitoring_CommandController extends ModuleActionController
             }
             $this->view->form = $this->form;
         }
-
         parent::postDispatch();
     }
 
 
     /**
      * Controller configuration
+     *
      * @throws Icinga\Exception\ConfigurationError
      */
     public function init()
     {
-
-
         if ($this->_request->isPost()) {
 
             $instance = $this->_request->getPost("instance");
-
             $targetConfig = Config::module('monitoring', 'instances');
             if ($instance) {
                 if ($targetConfig->get($instance)) {
@@ -141,21 +137,18 @@ class Monitoring_CommandController extends ModuleActionController
         }
 
         if ($this->getRequest()->getActionName() !== 'list') {
-            // Reduce template writing mess
             $this->_helper->viewRenderer->setRender(self::DEFAULT_VIEW_SCRIPT);
         }
     }
 
-    private function isGlobalCommand()
-    {
-        return false;
-    }
-
     /**
      * Retrieve all existing targets for host- and service combination
-     * @param string $hostname
-     * @param string $servicename
-     * @return array
+     *
+     * @param $hostOnly         Ignore the service parameters
+     *                          (for example when using commands that only make sense for hosts)
+     *
+     * @return array            Array of monitoring objects
+     *
      * @throws Icinga\Exception\MissingParameterException
      */
     private function selectCommandTargets($hostOnly = false)
@@ -194,6 +187,10 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Displays a list of all commands
+     *
+     * This method uses reflection on the sourcecode to determine all *Action classes and return
+     * a list of them (ignoring the listAction)
+     *
      */
     public function listAction()
     {
@@ -209,7 +206,14 @@ class Monitoring_CommandController extends ModuleActionController
         $this->view->commands = $commands;
     }
 
-    private function supportedParameter(array $supported)
+    /**
+     * Tell the controller that at least one of the parameters in $supported is required to be availabe
+     *
+     * @param array $supported      An array of properties to check for existence in the POST or GET parameter list
+     *
+     * @throws Exception            When non of the supported parameters is given
+     */
+    private function setSupportedParameters(array $supported)
     {
         $given = array_intersect_key(array_flip($supported), $this->getRequest()->getParams());
         if (empty($given)) {
@@ -239,11 +243,11 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command disableactivechecks
-     * @throws Icinga\Exception\ProgrammingError
+     *
      */
     public function disableactivechecksAction()
     {
-        $this->supportedParameter(array('host', 'service'));
+        $this->setSupportedParameters(array('host', 'service'));
         $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Disable active checks'));
@@ -257,11 +261,11 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command  enableactivechecks
-     * @throws Icinga\Exception\ProgrammingError
+     *
      */
     public function enableactivechecksAction()
     {
-        $this->supportedParameter(array('host', 'service'));
+        $this->setSupportedParameters(array('host', 'service'));
         $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Enable active checks'));
@@ -275,11 +279,11 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command  reschedulenextcheck
-     * @throws Icinga\Exception\ProgrammingError
+     *
      */
     public function reschedulenextcheckAction()
     {
-        $this->supportedParameter(array('host', 'service'));
+        $this->setSupportedParameters(array('host', 'service'));
         $form = new RescheduleNextCheckForm();
         $form->setRequest($this->getRequest());
 
@@ -292,11 +296,11 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command  submitpassivecheckresult
-     * @throws Icinga\Exception\ProgrammingError
+     *
      */
     public function submitpassivecheckresultAction()
     {
-        $this->supportedParameter(array('host', 'service'));
+        $this->setSupportedParameters(array('host', 'service'));
         $type = SubmitPassiveCheckResultForm::TYPE_SERVICE;
 
         $form = new SubmitPassiveCheckResultForm();
@@ -312,11 +316,11 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command stopobsessing
-     * @throws Icinga\Exception\ProgrammingError
+     *
      */
     public function stopobsessingAction()
     {
-        $this->supportedParameter(array('host', 'service'));
+        $this->setSupportedParameters(array('host', 'service'));
         $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Stop obsessing'));
@@ -330,11 +334,11 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command startobsessing
-     * @throws Icinga\Exception\ProgrammingError
+     *
      */
     public function startobsessingAction()
     {
-        $this->supportedParameter(array('host', 'service'));
+        $this->setSupportedParameters(array('host', 'service'));
         $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Start obsessing'));
@@ -348,11 +352,11 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command stopacceptingpassivechecks
-     * @throws Icinga\Exception\ProgrammingError
+     *
      */
     public function stopacceptingpassivechecksAction()
     {
-        $this->supportedParameter(array('host', 'service'));
+        $this->setSupportedParameters(array('host', 'service'));
         $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Stop accepting passive checks'));
@@ -366,11 +370,11 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command startacceptingpassivechecks
-     * @throws Icinga\Exception\ProgrammingError
+     *
      */
     public function startacceptingpassivechecksAction()
     {
-        $this->supportedParameter(array('host', 'service'));
+        $this->setSupportedParameters(array('host', 'service'));
         $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Start accepting passive checks'));
@@ -384,11 +388,11 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command disablenotifications
-     * @throws Icinga\Exception\ProgrammingError
+     *
      */
     public function disablenotificationsAction()
     {
-        $this->supportedParameter(array('host', 'service'));
+        $this->setSupportedParameters(array('host', 'service'));
         $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Disable notifications'));
@@ -402,7 +406,7 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command enablenotifications
-     * @throws Icinga\Exception\ProgrammingError
+     *
      */
     public function enablenotificationsAction()
     {
@@ -419,11 +423,11 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command sendcustomnotification
-     * @throws Icinga\Exception\ProgrammingError
+     *
      */
     public function sendcustomnotificationAction()
     {
-        $this->supportedParameter(array('host', 'service'));
+        $this->setSupportedParameters(array('host', 'service'));
         $form = new CustomNotificationForm();
         $form->setRequest($this->getRequest());
         $this->setForm($form);
@@ -440,11 +444,11 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command scheduledowntime
-     * @throws Icinga\Exception\ProgrammingError
+     *
      */
     public function scheduledowntimeAction()
     {
-        $this->supportedParameter(array('host', 'service'));
+        $this->setSupportedParameters(array('host', 'service'));
         $form = new ScheduleDowntimeForm();
         $form->setRequest($this->getRequest());
         $form->setWithChildren(false);
@@ -457,11 +461,12 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command scheduledowntimeswithchildren
+     *
      * @throws Icinga\Exception\ProgrammingError
      */
     public function scheduledowntimeswithchildrenAction()
     {
-        $this->supportedParameter(array('host'));
+        $this->setSupportedParameters(array('host'));
         $form = new ScheduleDowntimeForm();
         $form->setRequest($this->getRequest());
         $form->setWithChildren(true);
@@ -474,11 +479,11 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command removedowntimeswithchildren
-     * @throws Icinga\Exception\ProgrammingError
+     *
      */
     public function removedowntimeswithchildrenAction()
     {
-        $this->supportedParameter(array('host'));
+        $this->setSupportedParameters(array('host'));
         $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Remove downtime(s)'));
@@ -492,11 +497,11 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command disablenotificationswithchildren
-     * @throws Icinga\Exception\ProgrammingError
+     *
      */
     public function disablenotificationswithchildrenAction()
     {
-        $this->supportedParameter(array('host'));
+        $this->setSupportedParameters(array('host'));
         $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Disable notifications'));
@@ -511,11 +516,11 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command enablenotificationswithchildren
-     * @throws Icinga\Exception\ProgrammingError
+     *
      */
     public function enablenotificationswithchildrenAction()
     {
-        $this->supportedParameter(array('host'));
+        $this->setSupportedParameters(array('host'));
         $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Enable notifications'));
@@ -530,11 +535,11 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command reschedulenextcheckwithchildren
-     * @throws Icinga\Exception\ProgrammingError
+     *
      */
     public function reschedulenextcheckwithchildrenAction()
     {
-        $this->supportedParameter(array('host'));
+        $this->setSupportedParameters(array('host'));
         $form = new RescheduleNextCheckForm();
         $form->setRequest($this->getRequest());
 
@@ -555,11 +560,11 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command disableactivecheckswithchildren
-     * @throws Icinga\Exception\ProgrammingError
+     *
      */
     public function disableactivecheckswithchildrenAction()
     {
-        $this->supportedParameter(array('host'));
+        $this->setSupportedParameters(array('host'));
         $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Disable active checks'));
@@ -574,11 +579,11 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command enableactivecheckswithchildren
-     * @throws Icinga\Exception\ProgrammingError
+     *
      */
     public function enableactivecheckswithchildrenAction()
     {
-        $this->supportedParameter(array('host'));
+        $this->setSupportedParameters(array('host'));
         $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Enable active checks'));
@@ -593,11 +598,11 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command disableeventhandler
-     * @throws Icinga\Exception\ProgrammingError
+     *
      */
     public function disableeventhandlerAction()
     {
-        $this->supportedParameter(array('host', 'service'));
+        $this->setSupportedParameters(array('host', 'service'));
         $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Disable event handler'));
@@ -611,11 +616,11 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command enableeventhandler
-     * @throws Icinga\Exception\ProgrammingError
+     *
      */
     public function enableeventhandlerAction()
     {
-        $this->supportedParameter(array('host', 'service'));
+        $this->setSupportedParameters(array('host', 'service'));
         $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Enable event handler'));
@@ -629,11 +634,11 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command disableflapdetection
-     * @throws Icinga\Exception\ProgrammingError
+     *
      */
     public function disableflapdetectionAction()
     {
-        $this->supportedParameter(array('host', 'service'));
+        $this->setSupportedParameters(array('host', 'service'));
         $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Disable flapping detection'));
@@ -647,11 +652,11 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command enableflapdetection
-     * @throws Icinga\Exception\ProgrammingError
+     *
      */
     public function enableflapdetectionAction()
     {
-        $this->supportedParameter(array('host', 'service'));
+        $this->setSupportedParameters(array('host', 'service'));
         $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Enable flapping detection'));
@@ -665,11 +670,11 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command addcomment
-     * @throws Icinga\Exception\ProgrammingError
+     *
      */
     public function addcommentAction()
     {
-        $this->supportedParameter(array('host', 'service'));
+        $this->setSupportedParameters(array('host', 'service'));
         $form = new CommentForm();
         $form->setRequest($this->getRequest());
 
@@ -682,11 +687,11 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command resetattributes
-     * @throws Icinga\Exception\ProgrammingError
+     *
      */
     public function resetattributesAction()
     {
-        $this->supportedParameter(array('host', 'service'));
+        $this->setSupportedParameters(array('host', 'service'));
         $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Reset attributes'));
@@ -700,11 +705,11 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command acknowledgeproblem
-     * @throws Icinga\Exception\ProgrammingError
+     *
      */
     public function acknowledgeproblemAction()
     {
-        $this->supportedParameter(array('host', 'service'));
+        $this->setSupportedParameters(array('host', 'service'));
         $form = new AcknowledgeForm();
         $form->setRequest($this->getRequest());
 
@@ -717,11 +722,11 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command removeacknowledgement
-     * @throws Icinga\Exception\ProgrammingError
+     *
      */
     public function removeacknowledgementAction()
     {
-        $this->supportedParameter(array('host', 'service'));
+        $this->setSupportedParameters(array('host', 'service'));
         $form = new ConfirmationForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Remove problem acknowledgement'));
@@ -735,11 +740,11 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command delaynotification
-     * @throws Icinga\Exception\ProgrammingError
+     *
      */
     public function delaynotificationAction()
     {
-        $this->supportedParameter(array('host', 'service'));
+        $this->setSupportedParameters(array('host', 'service'));
         $form = new DelayNotificationForm();
         $form->setRequest($this->getRequest());
 
@@ -752,11 +757,11 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command removedowntime
-     * @throws Icinga\Exception\ProgrammingError
+     *
      */
     public function removedowntimeAction()
     {
-        $this->supportedParameter(array('downtimeid'));
+        $this->setSupportedParameters(array('downtimeid'));
         $form = new ConfirmationWithIdentifierForm();
         $form->setRequest($this->getRequest());
 

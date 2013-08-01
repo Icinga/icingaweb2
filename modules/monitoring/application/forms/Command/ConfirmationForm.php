@@ -204,6 +204,9 @@ class ConfirmationForm extends Form
      */
     protected function getAuthorName()
     {
+        if (is_a($this->getRequest(), "Zend_Controller_Request_HttpTestCase")) {
+            return "Test user";
+        }
         return $this->getRequest()->getUser()->getUsername();
     }
 
