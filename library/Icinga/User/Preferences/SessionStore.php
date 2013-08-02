@@ -96,6 +96,17 @@ class SessionStore implements SplObserver, LoadInterface
     }
 
     /**
+     * Public interface to copy all preferences into session
+     *
+     * @param array $preferences
+     */
+    public function writeAll(array $preferences)
+    {
+        $this->session->set(self::DEFAULT_SESSION_NAMESPACE, $preferences);
+        $this->session->write();
+    }
+
+    /**
      * Load preferences from source
      *
      * @return array

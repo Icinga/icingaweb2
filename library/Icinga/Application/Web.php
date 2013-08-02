@@ -236,8 +236,13 @@ class Web extends ApplicationBootstrap
 
             // Performance: Do not ask provider if we've preferences
             // stored in session
-            $initialPreferences = (count($sessionStore->load()))
-                ? $sessionStore->load() : $preferenceStore->load();
+            $initialPreferences = array();
+            if (count($sessionStore->load())) {
+                $initialPreferences = $sessionStore->load();
+            } else {
+                $initialPreferences = $preferenceStore->load();
+                $sessionStore->writeAll($initialPreferences);
+            }
 
             $preferences = new Preferences($initialPreferences);
 
@@ -250,6 +255,8 @@ class Web extends ApplicationBootstrap
             $requestCounter = $user->getPreferences()->get('test.request.counter', 0);
             $requestCounter++;
             $user->getPreferences()->set('test.request.counter', $requestCounter);
+
+            var_dump($requestCounter);
 
             return $user;
         }
