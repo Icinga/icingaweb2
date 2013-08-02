@@ -59,6 +59,14 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
     const TYPE_FLEXIBLE = 'flexible';
 
     /**
+     * Initialize form
+     */
+    public function init()
+    {
+        $this->setName('ScheduleDowntimeForm');
+    }
+
+    /**
      * Build an array of timestamps
      *
      * @return string[]
@@ -178,37 +186,41 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
                 )
             )
         );
+        $this->enableAutoSubmit(array('type'));
 
-        $hoursText = new Zend_Form_Element_Text('hours');
-        $hoursText->setLabel(t('Flexible duration'));
-        $hoursText->setAttrib('style', 'width: 40px;');
-        $hoursText->setValue(1);
-        $hoursText->addDecorator('HtmlTag', array('tag' => 'dd', 'openOnly' => true));
-        $hoursText->addDecorator(
-            'Callback',
-            array(
-                'callback' => function () {
-                    return t('Hours');
-                }
-            )
-        );
+        
+        if ($this->getRequest()->getPost('type') === self::TYPE_FLEXIBLE) {
+            $hoursText = new Zend_Form_Element_Text('hours');
+            $hoursText->setLabel(t('Flexible duration'));
+            $hoursText->setAttrib('style', 'width: 40px;');
+            $hoursText->setValue(1);
+            $hoursText->addDecorator('HtmlTag', array('tag' => 'dd', 'openOnly' => true));
+            $hoursText->addDecorator(
+                'Callback',
+                array(
+                    'callback' => function () {
+                        return t('Hours');
+                    }
+                )
+            );
 
-        $minutesText = new Zend_Form_Element_Text('minutes');
-        $minutesText->setLabel(t('Minutes'));
-        $minutesText->setAttrib('style', 'width: 40px;');
-        $minutesText->setValue(0);
-        $minutesText->removeDecorator('HtmlTag');
-        $minutesText->removeDecorator('Label');
-        $minutesText->addDecorator(
-            'Callback',
-            array(
-                'callback' => function () {
-                    return t('Minutes');
-                }
-            )
-        );
+            $minutesText = new Zend_Form_Element_Text('minutes');
+            $minutesText->setLabel(t('Minutes'));
+            $minutesText->setAttrib('style', 'width: 40px;');
+            $minutesText->setValue(0);
+            $minutesText->removeDecorator('HtmlTag');
+            $minutesText->removeDecorator('Label');
+            $minutesText->addDecorator(
+                'Callback',
+                array(
+                    'callback' => function () {
+                        return t('Minutes');
+                    }
+                )
+            );
 
-        $this->addElements(array($hoursText, $minutesText));
+            $this->addElements(array($hoursText, $minutesText));
+        }
 
         if ($this->getWithChildren() === true) {
             $this->addNote(t('Schedule downtime for host and its services.'));

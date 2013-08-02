@@ -27,7 +27,6 @@ namespace Icinga\Web;
 
 use Icinga\Exception\ProgrammingError;
 use Icinga\Web\Form\InvalidCSRFTokenException;
-use Zend_Form_Exception;
 use Zend_View_Interface;
 
 /**
