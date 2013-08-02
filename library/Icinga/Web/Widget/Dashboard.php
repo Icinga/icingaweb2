@@ -24,7 +24,7 @@ class Dashboard extends AbstractWidget
     protected function init()
     {
         if ($this->url === null) {
-            $this->url = Url::current()->without($this->tabParam);
+            $this->url = Url::fromRequest()->without($this->tabParam);
         }
     }
 
@@ -141,7 +141,7 @@ class Dashboard extends AbstractWidget
     {
         $active = $this->tabs()->getActiveName();
         if (! $active) {
-            if ($active = Url::current()->getParam($this->tabParam)) {
+            if ($active = Url::fromRequest()->getParam($this->tabParam)) {
                 $this->activate($active);
             } else {
                 reset($this->panes);
@@ -186,7 +186,7 @@ class Dashboard extends AbstractWidget
                 unset($item['base_url']);
                 $this->getPane($dashboard)->addComponent(
                     $title,
-                    Url::create($base_url, $item)
+                    Url::fromPath($base_url, $item)
                 );
             }
         }

@@ -204,34 +204,34 @@ class Tabs extends AbstractWidget implements Countable
         $special = array();
         $special[] = $this->view()->qlink(
             $this->view()->img('img/classic/application-pdf.png') . ' PDF',
-            Url::current(),
+            Url::fromRequest(),
             array('filetype' => 'pdf'),
             array('target' => '_blank', 'quote' => false)
         );
         $special[] = $this->view()->qlink(
             $this->view()->img('img/classic/application-csv.png') . ' CSV',
-            Url::current(),
+            Url::fromRequest(),
             array('format' => 'csv'),
             array('target' => '_blank', 'quote' => false)
         );
         $special[] = $this->view()->qlink(
             $this->view()->img('img/classic/application-json.png') . ' JSON',
-            Url::current(),
+            Url::fromRequest(),
             array('format' => 'json', 'quote' => false),
             array('target' => '_blank', 'quote' => false)
         );
 
         $special[] = $this->view()->qlink(
             $this->view()->img('img/classic/basket.png') . ' URL Basket',
-            Url::create('basket/add'),
-            array('url' => Url::current()->getRelative()),
+            Url::fromPath('basket/add'),
+            array('url' => Url::fromRequest()->getRelativeUrl()),
             array('quote' => false)
         );
 
         $special[] = $this->view()->qlink(
             $this->view()->img('img/classic/dashboard.png') . ' Dashboard',
-            Url::create('dashboard/addurl'),
-            array('url' => Url::current()->getRelative()),
+            Url::fromPath('dashboard/addurl'),
+            array('url' => Url::fromRequest()->getRelativeUrl()),
             array('quote' => false)
         );
         // $auth = Auth::getInstance();

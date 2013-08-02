@@ -12,7 +12,7 @@ define('K_TCPDF_EXTERNAL_CONFIG', true);
 
 //define('K_PATH_URL', 'http://net-test-icinga-vm1.adm.netways.de/develop/'); // ???
 // define('K_PATH_URL', '/var/www/net-test-icinga-vm1.adm.netways.de/develop/public'); // ???
-define('K_PATH_URL', (string) Url::create('/') === '/' ? '' : (string) Url::create('/')); // ???'/'));
+define('K_PATH_URL', (string) Url::fromPath('/') === '/' ? '' : (string) Url::fromPath('/')); // ???'/'));
 define('K_PATH_MAIN', dirname(ICINGA_LIBDIR) . '/public');
 define('K_PATH_FONTS', ICINGA_LIBDIR . '/vendor/tcpdf/fonts/');
 define('K_PATH_CACHE', ICINGA_LIBDIR . '/vendor/tcpdf/cache/');
