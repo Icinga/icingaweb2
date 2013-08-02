@@ -34,7 +34,7 @@ class CommentFormTest extends BaseFormTest
         ), self::FORMCLASS);
 
         $this->assertTrue(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             "Asserting correct comment form to be considered valid"
         );
     }
@@ -47,7 +47,7 @@ class CommentFormTest extends BaseFormTest
             'sticky'  => '0'
         ), self::FORMCLASS);
         $this->assertFalse(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             "Asserting missing comment text in comment form to cause validation errors"
         );
     }
@@ -60,7 +60,7 @@ class CommentFormTest extends BaseFormTest
             'sticky'  => '0'
         ), self::FORMCLASS);
         $this->assertFalse(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             "Asserting missing comment author to cause validation errors"
         );
     }

@@ -32,7 +32,7 @@ class RescheduleNextCheckFormTest extends BaseFormTest
         $this->assertCount(6, $form->getElements());
 
         $this->assertTrue(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             'Asserting a reschedule form with correct time and forececheck=1 to be valid'
         );
         $form = $this->getRequestForm(array(
@@ -41,7 +41,7 @@ class RescheduleNextCheckFormTest extends BaseFormTest
         ), self::FORMCLASS);
 
         $this->assertTrue(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             'Asserting a reschedule form with correct time and forecheck=0 to be valid'
         );
     }
@@ -54,7 +54,7 @@ class RescheduleNextCheckFormTest extends BaseFormTest
         ), self::FORMCLASS);
 
         $this->assertFalse(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             'Asserting an logically invalid checktime to be considered as invalid reschedule data'
         );
 
@@ -65,7 +65,7 @@ class RescheduleNextCheckFormTest extends BaseFormTest
 
 
         $this->assertFalse(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             'Asserting an invalid non-numeric checktime to be considered as invalid reschedule data'
         );
     }

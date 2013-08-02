@@ -24,11 +24,11 @@ In here you can add elements to your form, add validations and filters of your
 choice. The creation method is invoked lazy just before a form is rendered or
 *isValid()* is called.
 
-#### Calling is *IsPostAndValid()*
+#### Calling is *isSubmittedAndValid()*
 
-*IsPostAndValid()* is used to test of all needed parameters there. It combines
-testing for post request and pulls out the data from request object to handle
-over an array for Zend native method *isValid()*
+*isSubmittedAndValid()* is used to check whether the form is ready to be processed or not.
+It ensures that the current request method is POST, that the form was manually submitted
+and that the data provided in the request is valid and gets repopulated in case its invalid.
 
 #### Pre validation
 

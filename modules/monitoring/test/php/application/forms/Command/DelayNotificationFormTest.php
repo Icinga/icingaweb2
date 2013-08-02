@@ -28,7 +28,7 @@ class DelayNotificationFormFormTest extends BaseFormTest
         $this->assertTrue($element->isRequired(), "Assert minutes to be declared as required");
 
         $this->assertTrue(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             "Assert a correct DelayNotificationForm to be considered valid"
         );
 
@@ -44,7 +44,7 @@ class DelayNotificationFormFormTest extends BaseFormTest
         $form->buildForm();
 
         $this->assertFalse(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             "Asserting invalid minutes (NaN) to cause validation errors"
         );
 

@@ -65,7 +65,7 @@ class SubmitPassiveCheckResultFormTest extends BaseFormTest
         $form->setType(SubmitPassiveCheckResultForm::TYPE_SERVICE);
 
         $this->assertTrue(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             "Assert a correct passive service check form to pass form validation"
         );
     }
@@ -80,7 +80,7 @@ class SubmitPassiveCheckResultFormTest extends BaseFormTest
         $form->setType(SubmitPassiveCheckResultForm::TYPE_SERVICE);
 
         $this->assertFalse(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             "Assert empty checkoutput to cause validation errors in passive service check "
         );
     }
@@ -95,7 +95,7 @@ class SubmitPassiveCheckResultFormTest extends BaseFormTest
         $form->setType(SubmitPassiveCheckResultForm::TYPE_SERVICE);
 
         $this->assertFalse(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             "Assert invalid (non-numeric) state to cause validation errors in passive service check"
         );
     }

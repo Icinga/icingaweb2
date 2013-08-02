@@ -56,7 +56,7 @@ namespace Tests\Icinga\Regression
             $form = new LoginForm();
             $form->setRequest($request);
             $form->buildForm();
-            $this->assertTrue($form->isPostAndValid());
+            $this->assertTrue($form->isSubmittedAndValid());
 
         }
     }

@@ -47,7 +47,7 @@ class ScheduleDowntimeFormTest extends BaseFormTest
         $form->setWithChildren(true);
 
         $this->assertTrue(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             'Asserting a correct fixed downtime form to be considered valid'
         );
         $form = $this->getRequestForm(array(
@@ -64,7 +64,7 @@ class ScheduleDowntimeFormTest extends BaseFormTest
         $form->setWithChildren(true);
 
         $this->assertTrue(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             'Asserting a correct flexible downtime form to be considered valid'
         );
 
@@ -86,7 +86,7 @@ class ScheduleDowntimeFormTest extends BaseFormTest
         $form->setWithChildren(true);
 
         $this->assertFalse(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             'Assert missing hours and minutes in downtime form to cause failing validation'
         );
     }
@@ -109,7 +109,7 @@ class ScheduleDowntimeFormTest extends BaseFormTest
 
 
         $this->assertFalse(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             'Assert missing author to cause validation errors in fixed downtime'
         );
     }
@@ -131,7 +131,7 @@ class ScheduleDowntimeFormTest extends BaseFormTest
 
 
         $this->assertFalse(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             'Assert missing comment to cause validation errors in fixed downtime'
         );
     }
@@ -152,7 +152,7 @@ class ScheduleDowntimeFormTest extends BaseFormTest
         $form->setWithChildren(true);
 
         $this->assertFalse(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             'Assert invalid trigger field to cause validation to fail'
         );
     }
@@ -173,7 +173,7 @@ class ScheduleDowntimeFormTest extends BaseFormTest
         $form->setWithChildren(true);
 
         $this->assertFalse(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             'Assert incorrect start time to cause validation errors in fixed downtime'
         );
     }
@@ -195,7 +195,7 @@ class ScheduleDowntimeFormTest extends BaseFormTest
         $form->setWithChildren(true);
 
         $this->assertFalse(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             'Assert invalid endtime to cause validation errors in fixed downtime'
         );
     }
@@ -217,7 +217,7 @@ class ScheduleDowntimeFormTest extends BaseFormTest
         $form->setWithChildren(true);
 
         $this->assertFalse(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             'Assert negative hours to cause validation errors in flexible downtime'
         );
     }
@@ -238,7 +238,7 @@ class ScheduleDowntimeFormTest extends BaseFormTest
         $form->setWithChildren(true);
 
         $this->assertFalse(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             'Assert non numeric valud to cause validation errors in flexible downtime '
         );
 
@@ -261,7 +261,7 @@ class ScheduleDowntimeFormTest extends BaseFormTest
 
 
         $this->assertTrue(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             "Assert a correct schedule downtime without children form to be considered valid"
         );
     }
@@ -281,7 +281,7 @@ class ScheduleDowntimeFormTest extends BaseFormTest
         $form->setWithChildren(false);
 
         $this->assertFalse(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             "Assert and incorrect (non-numeric) childobjects value to cause validation errors"
         );
 
@@ -299,7 +299,7 @@ class ScheduleDowntimeFormTest extends BaseFormTest
         $form->setWithChildren(false);
 
         $this->assertFalse(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             "Assert and incorrect (numeric) childobjects value to cause validation errors"
         );
     }

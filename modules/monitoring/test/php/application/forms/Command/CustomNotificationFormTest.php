@@ -22,7 +22,7 @@ class CustomNotificationFormTest extends BaseFormTest
         $form->buildForm();
 
         $this->assertCount(7, $form->getElements());
-        $this->assertTrue($form->isPostAndValid());
+        $this->assertTrue($form->isSubmittedAndValid());
     }
 }
 

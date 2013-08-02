@@ -97,8 +97,7 @@ class Monitoring_CommandController extends ModuleActionController
     public function postDispatch()
     {
         if ($this->issetForm()) {
-            if ($this->form->isPostAndValid()) {
-                
+            if ($this->form->isSubmittedAndValid()) {
                 $this->_helper->viewRenderer->setNoRender(true);
                 $this->_helper->layout()->disableLayout();
             }
@@ -254,7 +253,7 @@ class Monitoring_CommandController extends ModuleActionController
         $form->addNote(t('Disable active checks for this object.'));
         $this->setForm($form);
 
-        if ($form->isPostAndValid() === true) {
+        if ($form->IsSubmittedAndValid() === true) {
             $this->target->disableActiveChecks($this->view->objects);
         }
     }
@@ -272,7 +271,7 @@ class Monitoring_CommandController extends ModuleActionController
         $form->addNote(t('Enable active checks for this object.'));
         $this->setForm($form);
 
-        if ($form->isPostAndValid() === true) {
+        if ($form->IsSubmittedAndValid() === true) {
             $this->target->enableActiveChecks($this->view->objects);
         }
     }
@@ -289,7 +288,7 @@ class Monitoring_CommandController extends ModuleActionController
 
         $this->setForm($form);
 
-        if ($form->isPostAndValid() === true) {
+        if ($form->IsSubmittedAndValid() === true) {
             $this->target->scheduleCheck($this->view->objects);
         }
     }
@@ -309,7 +308,7 @@ class Monitoring_CommandController extends ModuleActionController
 
         $this->setForm($form);
 
-        if ($form->isPostAndValid() === true) {
+        if ($form->IsSubmittedAndValid() === true) {
             $this->target->submitCheckResult($this->view->objects, $form->getState(), $form->getOutput(), $form->getPerformancedata());
         }
     }
@@ -327,7 +326,7 @@ class Monitoring_CommandController extends ModuleActionController
         $form->addNote(t('Stop obsessing over this object.'));
         $this->setForm($form);
 
-        if ($form->isPostAndValid() === true) {
+        if ($form->IsSubmittedAndValid() === true) {
             $this->target->stopObsessing($this->view->objects);
         }
     }
@@ -345,7 +344,7 @@ class Monitoring_CommandController extends ModuleActionController
         $form->addNote(t('Start obsessing over this object.'));
         $this->setForm($form);
 
-        if ($form->isPostAndValid() === true) {
+        if ($form->IsSubmittedAndValid() === true) {
             $this->target->startObsessing($this->view->objects);
         }
     }
@@ -363,7 +362,7 @@ class Monitoring_CommandController extends ModuleActionController
         $form->addNote(t('Passive checks for this object will be omitted.'));
         $this->setForm($form);
 
-        if ($form->isPostAndValid() === true) {
+        if ($form->IsSubmittedAndValid() === true) {
             $this->target->disablePassiveChecks($this->view->objects);
         }
     }
@@ -381,7 +380,7 @@ class Monitoring_CommandController extends ModuleActionController
         $form->addNote(t('Passive checks for this object will be accepted.'));
         $this->setForm($form);
 
-        if ($form->isPostAndValid() === true) {
+        if ($form->IsSubmittedAndValid() === true) {
             $this->target->enableActiveChecks($this->view->objects);
         }
     }
@@ -399,7 +398,7 @@ class Monitoring_CommandController extends ModuleActionController
         $form->addNote(t('Notifications for this object will be disabled.'));
         $this->setForm($form);
 
-        if ($form->isPostAndValid() === true) {
+        if ($form->IsSubmittedAndValid() === true) {
             $this->target->disableNotifications($this->view->objects);
         }
     }
@@ -416,7 +415,7 @@ class Monitoring_CommandController extends ModuleActionController
         $form->addNote(t('Notifications for this object will be enabled.'));
         $this->setForm($form);
 
-        if ($form->isPostAndValid() === true) {
+        if ($form->IsSubmittedAndValid() === true) {
             $this->target->enableNotifications($this->view->objects);
         }
     }
@@ -432,7 +431,7 @@ class Monitoring_CommandController extends ModuleActionController
         $form->setRequest($this->getRequest());
         $this->setForm($form);
 
-        if ($form->isPostAndValid() === true) {
+        if ($form->IsSubmittedAndValid() === true) {
             $author = $this->getRequest()->getUser()->getUsername();
             $this->target->sendCustomNotification(
                 $this->view->objects,
@@ -454,7 +453,7 @@ class Monitoring_CommandController extends ModuleActionController
         $form->setWithChildren(false);
         $this->setForm($form);
 
-        if ($form->isPostAndValid() === true) {
+        if ($form->IsSubmittedAndValid() === true) {
             $this->target->scheduleDowntime($this->view->objects, $form->getDowntime());
         }
     }
@@ -472,7 +471,7 @@ class Monitoring_CommandController extends ModuleActionController
         $form->setWithChildren(true);
         $this->setForm($form);
 
-        if ($form->isPostAndValid() === true) {
+        if ($form->IsSubmittedAndValid() === true) {
             $this->target->scheduleDowntime($this->view->objects, $form->getDowntime());
         }
     }
@@ -490,7 +489,7 @@ class Monitoring_CommandController extends ModuleActionController
         $form->addNote(t('Remove downtime(s) from this host and its services.'));
         $this->setForm($form);
 
-        if ($form->isPostAndValid() === true) {
+        if ($form->IsSubmittedAndValid() === true) {
             $this->target->removeDowntime($this->view->objects);
         }
     }
@@ -508,7 +507,7 @@ class Monitoring_CommandController extends ModuleActionController
         $form->addNote(t('Notifications for this host and its services will be disabled.'));
         $this->setForm($form);
 
-        if ($form->isPostAndValid() === true) {
+        if ($form->IsSubmittedAndValid() === true) {
             $this->target->disableNotifications($this->view->objects);
             $this->target->disableNotificationsForServices($this->view->objects);
         }
@@ -527,7 +526,7 @@ class Monitoring_CommandController extends ModuleActionController
         $form->addNote(t('Notifications for this host and its services will be enabled.'));
         $this->setForm($form);
 
-        if ($form->isPostAndValid() === true) {
+        if ($form->IsSubmittedAndValid() === true) {
             $this->target->enableNotifications($this->view->objects);
             $this->target->enableNotificationsForServices($this->view->objects);
         }
@@ -547,7 +546,7 @@ class Monitoring_CommandController extends ModuleActionController
 
         $this->setForm($form);
 
-        if ($form->isPostAndValid() === true) {
+        if ($form->IsSubmittedAndValid() === true) {
             if ($form->isForced()) {
                 $this->target->scheduleForcedCheck($this->view->objects, time());
                 $this->target->scheduleForcedCheck($this->view->objects, time(), true);
@@ -571,7 +570,7 @@ class Monitoring_CommandController extends ModuleActionController
         $form->addNote(t('Disable active checks for this host and its services.'));
         $this->setForm($form);
 
-        if ($form->isPostAndValid() === true) {
+        if ($form->IsSubmittedAndValid() === true) {
             $this->target->disableActiveChecks($this->view->objects);
             $this->target->disableActiveChecksWithChildren($this->view->objects);
         }
@@ -590,7 +589,7 @@ class Monitoring_CommandController extends ModuleActionController
         $form->addNote(t('Enable active checks for this host and its services.'));
         $this->setForm($form);
 
-        if ($form->isPostAndValid() === true) {
+        if ($form->IsSubmittedAndValid() === true) {
             $this->target->enableActiveChecks($this->view->objects);
             $this->target->enableActiveChecksWithChildren($this->view->objects);
         }
@@ -609,7 +608,7 @@ class Monitoring_CommandController extends ModuleActionController
         $form->addNote(t('Disable event handler for this object.'));
         $this->setForm($form);
 
-        if ($form->isPostAndValid() === true) {
+        if ($form->IsSubmittedAndValid() === true) {
             $this->target->disableEventHandler($this->view->objects);
         }
     }
@@ -627,7 +626,7 @@ class Monitoring_CommandController extends ModuleActionController
         $form->addNote(t('Enable event handler for this object.'));
         $this->setForm($form);
 
-        if ($form->isPostAndValid() === true) {
+        if ($form->IsSubmittedAndValid() === true) {
             $this->target->enableEventHandler($this->view->objects);
         }
     }
@@ -645,7 +644,7 @@ class Monitoring_CommandController extends ModuleActionController
         $form->addNote(t('Disable flapping detection for this object.'));
         $this->setForm($form);
 
-        if ($form->isPostAndValid() === true) {
+        if ($form->IsSubmittedAndValid() === true) {
             $this->target->disableFlappingDetection($this->view->objects);
         }
     }
@@ -663,7 +662,7 @@ class Monitoring_CommandController extends ModuleActionController
         $form->addNote(t('Enable flapping detection for this object.'));
         $this->setForm($form);
 
-        if ($form->isPostAndValid() === true) {
+        if ($form->IsSubmittedAndValid() === true) {
             $this->target->enableFlappingDetection($this->view->objects);
         }
     }
@@ -680,7 +679,7 @@ class Monitoring_CommandController extends ModuleActionController
 
         $this->setForm($form);
 
-        if ($form->isPostAndValid() === true) {
+        if ($form->IsSubmittedAndValid() === true) {
             $this->target->addComment($this->view->objects, $form->getComment());
         }
     }
@@ -698,7 +697,7 @@ class Monitoring_CommandController extends ModuleActionController
         $form->addNote(t('Reset modified attributes to its default.'));
         $this->setForm($form);
 
-        if ($form->isPostAndValid() === true) {
+        if ($form->IsSubmittedAndValid() === true) {
             $this->target->resetAttributes($this->view->objects);
         }
     }
@@ -715,7 +714,7 @@ class Monitoring_CommandController extends ModuleActionController
 
         $this->setForm($form);
 
-        if ($form->isPostAndValid() === true) {
+        if ($form->IsSubmittedAndValid() === true) {
             $this->target->acknowledge($this->view->objects, $form->getAcknowledgement());
         }
     }
@@ -733,7 +732,7 @@ class Monitoring_CommandController extends ModuleActionController
         $form->addNote(t('Remove problem acknowledgement for this object.'));
         $this->setForm($form);
 
-        if ($form->isPostAndValid() === true) {
+        if ($form->IsSubmittedAndValid() === true) {
             $this->target->removeAcknowledge($this->view->objects);
         }
     }
@@ -750,7 +749,7 @@ class Monitoring_CommandController extends ModuleActionController
 
         $this->setForm($form);
 
-        if ($form->isPostAndValid() === true) {
+        if ($form->IsSubmittedAndValid() === true) {
             $this->target->delayNotification($this->view->objects, $form->getDelayTime());
         }
     }
@@ -772,7 +771,7 @@ class Monitoring_CommandController extends ModuleActionController
 
         $this->setForm($form);
 
-        if ($form->isPostAndValid() === true) {
+        if ($form->IsSubmittedAndValid() === true) {
             $this->target->removeDowntime($this->view->objects);
         }
     }

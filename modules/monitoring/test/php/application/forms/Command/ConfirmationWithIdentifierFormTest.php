@@ -36,7 +36,7 @@ class ConfirmationWithIdentifierFormTest extends BaseFormTest
         $form->setSubmitLabel('DING DING');
 
         $this->assertTrue(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             "Asserting correct confirmation with id to be valid"
         );
     }
@@ -48,7 +48,7 @@ class ConfirmationWithIdentifierFormTest extends BaseFormTest
         ), self::FORMCLASS);
 
         $this->assertFalse(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             "Asserting an invalid (empty) value to cause validation errors"
         );
     }
@@ -60,7 +60,7 @@ class ConfirmationWithIdentifierFormTest extends BaseFormTest
         ), self::FORMCLASS);
 
         $this->assertFalse(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             "Asserting an non numeric value to cause validation errors"
         );
     }
@@ -72,7 +72,7 @@ class ConfirmationWithIdentifierFormTest extends BaseFormTest
         ), self::FORMCLASS);
         $form->buildForm();
 
-        $this->assertTrue($form->isPostAndValid());
+        $this->assertTrue($form->isSubmittedAndValid());
 
         $this->assertEquals('123123666', $form->getElement('objectid')->getValue());
     }

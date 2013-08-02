@@ -171,23 +171,58 @@ abstract class Form extends \Zend_Form
     }
 
     /**
-     * Test if data from array or request is valid
+     * Enable automatic submission
      *
-     * If $data is null, internal request is selected to test validity
+     * Enables automatic submission of this form once the user edits specific elements.
+     *
+     * @param array $trigger_elements The element names which should auto-submit the form
+     * @throws ProgrammingError       When the form has no name or an element is found
+     *                                which does not yet exist
+     */
+    final public function enableAutoSubmit($trigger_elements)
+    {
+        $form_name = $this->getName();
+        if ($form_name === null) {
+            throw new ProgrammingError('You need to set a name for this form.');
+        }
+
+        foreach ($trigger_elements as $element_name) {
+            $element = $this->getElement($element_name);
+            if ($element !== null) {
+                $element->setAttrib('onchange', '$("#' . $form_name . '").submit();');
+            } else {
+                throw new ProgrammingError(
+                    'You need to add the element "' . $element_name . '" to' .
+                    ' the form before automatic submission can be enabled!'
+                );
+            }
+        }
+    }
+
+    /**
+     * Check whether the form was submitted with a valid request
+     *
+     * Ensures that the current request method is POST, that the
+     * form was manually submitted and that the data provided in
+     * the request is valid and gets repopulated in case its invalid.
+     *
      * @return bool
      */
-    public function isPostAndValid()
+    public function isSubmittedAndValid()
     {
         if ($this->getRequest()->isPost() === false) {
             return false;
         }
 
-        $checkData = $this->getRequest()->getParams();
-
         $this->buildForm();
+        $checkData = $this->getRequest()->getParams();
         $this->assertValidCsrfToken($checkData);
-        $this->preValidation($checkData);
-        return parent::isValid($checkData);
+
+        $submitted = isset($checkData['btn_submit']);
+        if ($submitted) {
+            $this->preValidation($checkData);
+        }
+        return parent::isValid($checkData) && $submitted;
     }
 
     /**

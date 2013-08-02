@@ -40,7 +40,7 @@ class AcknowledgeFormTest extends BaseFormTest
         ), self::FORMCLASS);
 
         $this->assertTrue(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             "Asserting a correct form to be validated correctly"
         );
     }
@@ -57,7 +57,7 @@ class AcknowledgeFormTest extends BaseFormTest
             'notify'     => '0',
         ), self::FORMCLASS);
         $this->assertFalse(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             "Asserting a missing comment text to cause validation errors"
         );
     }
@@ -74,7 +74,7 @@ class AcknowledgeFormTest extends BaseFormTest
             'notify'     => '0'
         ), self::FORMCLASS);
         $this->assertFalse(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             "Asserting a missing expire time to cause validation errors when expire is 1"
         );
     }
@@ -91,7 +91,7 @@ class AcknowledgeFormTest extends BaseFormTest
             'notify'     => '0'
         ), self::FORMCLASS);
         $this->assertFalse(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             "Assert incorrect dates to be recognized when validating expiretime"
         );
     }
@@ -108,7 +108,7 @@ class AcknowledgeFormTest extends BaseFormTest
             'notify'     => '0'
         ), self::FORMCLASS);
         $this->assertTrue(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             "Assert that correct expire time acknowledgement is considered valid"
         );
     }

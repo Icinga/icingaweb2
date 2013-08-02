@@ -176,7 +176,7 @@ class ConfirmationForm extends Form
         if ($this->getCancelLabel()) {
             $cancelLabel = new \Zend_Form_Element_Reset(
                 array(
-                    'name' => 'reset',
+                    'name' => 'btn_reset',
                     'label' => $this->getCancelLabel(),
                     'class' => 'btn pull-right'
                 )
@@ -187,7 +187,7 @@ class ConfirmationForm extends Form
         if ($this->getSubmitLabel()) {
             $submitButton = new \Zend_Form_Element_Submit(
                 array(
-                    'name' => 'submit',
+                    'name' => 'btn_submit',
                     'label' => $this->getSubmitLabel(),
                     'class' => 'btn btn-primary pull-right'
                 )
