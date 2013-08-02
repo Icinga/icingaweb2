@@ -59,18 +59,10 @@ class Connection implements DatasourceInterface
         switch ($this->dbtype) {
             case 'mysql':
                 $adapter = 'Pdo_Mysql';
-                /* Set MySQL server SQL modes to behave as closely as possible to Oracle and
-                 * PostgreSQL. Note that the ONLY_FULL_GROUP_BY mode is left on purpose because
-                 * MySQL requires you to specify all non-aggregate columns in the group by list
-                 * even if the query is grouped by the master table's primary key which is valid
-                 * ANSI SQL though. Further in that case the query plan would suffer if you add more
-                 * columns to the group by list.
-                 * @TODO(#4462): NO_ZERO_IN_DATE has been added with MySQL version 5.1.11. Is it
-                 * safe to pass this option since (older) versions ignore modes unknown by this time?
-                 */
-                $drv_ptions[PDO::MYSQL_ATTR_INIT_COMMAND] = "SET SESSION SQL_MODE='"
-                    . "STRICT_ALL_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,"
-                    . "NO_AUTO_CREATE_USER,ANSI_QUOTES,PIPES_AS_CONCAT,NO_ENGINE_SUBSTITUTION';";
+                $drv_options[\PDO::MYSQL_ATTR_INIT_COMMAND] =
+                    "SET SESSION SQL_MODE='STRICT_ALL_TABLES,NO_ZERO_IN_DATE,"
+                  . "NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION';";
+                // Not using ONLY_FULL_GROUP_BY as of performance impact
                 $port = $this->config->get('port', 3306);
                 break;
             case 'pgsql':
