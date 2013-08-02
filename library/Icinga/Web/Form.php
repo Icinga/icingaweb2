@@ -295,8 +295,12 @@ abstract class Form extends Zend_Form
 
         if ($submitted) {
             $this->preValidation($checkData);
+            return $this->isValid($checkData);
+        } else {
+            $this->populate($checkData);
+            return false;
         }
-        return parent::isValid($checkData) && $submitted;
+
     }
 
     /**
@@ -373,8 +377,6 @@ abstract class Form extends Zend_Form
             return false;
         }
 
-        $seed -= intval(time() / $this->tokenTimeout) * $this->tokenTimeout;
-
         return $token === hash('sha256', $this->getSessionId() . $seed);
     }
 
@@ -386,7 +388,6 @@ abstract class Form extends Zend_Form
     {
         $seed = mt_rand();
         $hash = hash('sha256', $this->getSessionId() . $seed);
-        $seed += intval(time() / $this->tokenTimeout) * $this->tokenTimeout;
 
         return array($seed, $hash);
     }
