@@ -31,8 +31,12 @@ namespace Icinga\User\Preferences;
 use Icinga\User;
 use Icinga\Exception\ProgrammingError;
 use \Zend_Config;
+use \Zend_Db;
 
-final class StorageFactory
+/**
+ * Create preference stores from zend config
+ */
+final class StoreFactory
 {
     /**
      * Prefix for classes containing namespace
@@ -65,6 +69,31 @@ final class StorageFactory
 
             $items = $config->toArray();
             unset($items['type']);
+
+            // TODO(mh): Encapsulate into a db adapter factory (#4503)
+            if (isset($items['dbname'])
+                && isset($items['dbuser'])
+                && isset($items['dbpassword'])
+                && isset($items['dbhost'])
+                && isset($items['dbtype'])
+            ) {
+                $zendDbType = 'PDO_'. strtoupper($items['dbtype']);
+
+                $zendDbOptions = array(
+                    'host'     => $items['dbhost'],
+                    'username' => $items['dbuser'],
+                    'password' => $items['dbpassword'],
+                    'dbname'   => $items['dbname']
+                );
+
+                if (isset($items['port'])) {
+                    $zendDbOptions['port'] = $items['port'];
+                }
+
+                $dbAdapter = Zend_Db::factory($zendDbType, $zendDbOptions);
+
+                $items['dbAdapter'] = $dbAdapter;
+            }
 
             foreach ($items as $key => $value) {
                 $setter = 'set'. ucfirst($key);

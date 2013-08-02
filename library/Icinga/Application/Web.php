@@ -29,6 +29,7 @@
 namespace Icinga\Application;
 
 use Icinga\Authentication\Manager as AuthenticationManager;
+use Icinga\Exception\ConfigurationError;
 use Icinga\User\Preferences;
 use Icinga\User;
 use Icinga\Web\Request;
@@ -40,7 +41,7 @@ use Zend_Controller_Action_HelperBroker;
 use Zend_Controller_Router_Route;
 use Zend_Controller_Action_Helper_ViewRenderer;
 use Icinga\Web\View;
-use Icinga\User\Preferences\StorageFactory;
+use Icinga\User\Preferences\StoreFactory;
 use Icinga\User\Preferences\SessionStore;
 
 /**
@@ -201,6 +202,12 @@ class Web extends ApplicationBootstrap
         return $this;
     }
 
+    /**
+     * Create user object and inject preference interface
+     *
+     * @throws ConfigurationError
+     * @return User
+     */
     private function setupUser()
     {
         $authenticationManager = AuthenticationManager::getInstance(
@@ -211,17 +218,24 @@ class Web extends ApplicationBootstrap
         );
 
         if ($authenticationManager->isAuthenticated() === true) {
+            if ($this->getConfig()->preferences === null) {
+                throw new ConfigurationError('Preferences not configured in config.ini');
+            }
+
             $user = $authenticationManager->getUser();
 
             $this->getConfig()->preferences->configPath = $this->getConfigDir('preferences');
 
-            $preferenceStore = StorageFactory::create(
+            $preferenceStore = StoreFactory::create(
                 $this->getConfig()->preferences,
                 $user
             );
 
+            // Needed to update values in user session
             $sessionStore = new SessionStore($authenticationManager->getSession());
 
+            // Performance: Do not ask provider if we've preferences
+            // stored in session
             $initialPreferences = (count($sessionStore->load()))
                 ? $sessionStore->load() : $preferenceStore->load();
 
@@ -232,6 +246,7 @@ class Web extends ApplicationBootstrap
 
             $user->setPreferences($preferences);
 
+            // TESTING
             $requestCounter = $user->getPreferences()->get('test.request.counter', 0);
             $requestCounter++;
             $user->getPreferences()->set('test.request.counter', $requestCounter);

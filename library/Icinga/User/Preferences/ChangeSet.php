@@ -34,21 +34,21 @@ namespace Icinga\User\Preferences;
 class ChangeSet
 {
     /**
-     * Items to update
+     * Stack of pending updates
      *
      * @var array
      */
     private $update = array();
 
     /**
-     * Items to delete
+     * Stack of pending delete operations
      *
      * @var array
      */
     private $delete = array();
 
     /**
-     * Items to create
+     * Stack of pending create operations
      *
      * @var array
      */
@@ -56,6 +56,7 @@ class ChangeSet
 
     /**
      * Push an update to stack
+     *
      * @param string $key
      * @param mixed $value
      */
@@ -66,6 +67,7 @@ class ChangeSet
 
     /**
      * Getter for pending updates
+     *
      * @return array
      */
     public function getUpdate()
@@ -84,6 +86,8 @@ class ChangeSet
     }
 
     /**
+     * Get pending delete operations
+     *
      * @return array
      */
     public function getDelete()
@@ -95,13 +99,18 @@ class ChangeSet
      * Push create operation to stack
      *
      * @param string $key
-     * @param mixed $value
+     * @param mixed  $value
      */
     public function appendCreate($key, $value)
     {
         $this->create[$key] = $value;
     }
 
+    /**
+     * Get pending create operations
+     *
+     * @return array
+     */
     public function getCreate()
     {
         return $this->create;
