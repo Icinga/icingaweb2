@@ -40,6 +40,7 @@ class DowntimeQuery extends AbstractQuery
             'downtime_type' => 'sd.downtime_type',
             'downtime_author_name' => 'sd.author_name',
             'downtime_comment_data' => 'sd.comment_data',
+            'downtime_entry_time' => 'sd.entry_time',
             'downtime_is_fixed' => 'sd.is_fixed',
             'downtime_duration' => 'sd.duration',
             'downtime_scheduled_start_time' => 'sd.scheduled_start_time',
@@ -49,14 +50,14 @@ class DowntimeQuery extends AbstractQuery
             'downtime_actual_start_time_usec' => 'sd.actual_start_time_usec',
             'downtime_is_in_effect' => 'sd.is_in_effect',
             'downtime_trigger_time' => 'sd.trigger_time',
+            'downtime_triggered_by_id' => 'sd.triggered_by_id',
             'downtime_internal_downtime_id' => 'sd.internal_downtime_id'
         ),
-        'hosts' => array(
-            'host_name' => 'ho.name1',
-        ),
-        'services' => array(
-            'service_host_name' => 'so.name1',
-            'service_description' => 'so.name2',
+        'objects' => array(
+            'host_name' => 'o.name1 COLLATE latin1_general_ci',
+            'service_host_name' => 'o.name1 COLLATE latin1_general_ci',
+            'service_description' => 'o.name2 COLLATE latin1_general_ci',
+            'object_type' => "CASE o.objecttype_id WHEN 1 THEN 'host' ELSE 'service' END",
         )
     );
 
@@ -70,29 +71,17 @@ class DowntimeQuery extends AbstractQuery
             array()
         );
 
-        $this->joinedVirtualTables = array('downtime' => true);
+        $this->joinedVirtualTables = array('downtime' => true, 'services' => true);
     }
 
     /**
      * Join if host needed
      */
-    protected function joinHosts()
+    protected function joinObjects()
     {
         $this->baseQuery->join(
-            array('ho' => $this->prefix . 'objects'),
-            'sd.object_id = ho.object_id AND ho.is_active = 1 AND ho.objecttype_id = 1',
-            array()
-        );
-    }
-
-    /**
-     * Join if services needed
-     */
-    protected function joinServices()
-    {
-        $this->baseQuery->join(
-            array('so' => $this->prefix . 'objects'),
-            'so.object_id = ho.object_id AND ho.is_active = 1 AND ho.objecttype_id = 2',
+            array('o' => $this->prefix . 'objects'),
+            'sd.object_id = o.object_id AND o.is_active = 1 AND o.objecttype_id IN (1, 2)',
             array()
         );
     }

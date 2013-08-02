@@ -135,6 +135,30 @@ class Monitoring_ShowController extends ModuleActionController
             ->where('service_description', $this->view->service->service_description)
             ->fetchAll();
 
+        $this->view->downtimes = $this->backend->select()
+            ->from(
+                'downtime',
+                array(
+                    'host_name',
+                    'service_description',
+                    'downtime_type',
+                    'downtime_author_name',
+                    'downtime_comment_data',
+                    'downtime_is_fixed',
+                    'downtime_duration',
+                    'downtime_scheduled_start_time',
+                    'downtime_scheduled_end_time',
+                    'downtime_actual_start_time',
+                    'downtime_was_started',
+                    'downtime_is_in_effect',
+                    'downtime_internal_downtime_id'
+                )
+            )
+            ->where('host_name', $this->view->host->host_name)
+            ->where('service_description', $this->view->service->service_description)
+            ->where('object_type','service')
+            ->fetchAll();
+
         $this->view->customvars = $this->backend->select()
             ->from(
                 'customvar',
@@ -236,6 +260,7 @@ class Monitoring_ShowController extends ModuleActionController
                 )
             )
             ->where('host_name', $this->view->host->host_name)
+            ->where('object_type','host')
             ->fetchAll();
 
         $this->view->customvars = $this->backend->select()
@@ -368,7 +393,6 @@ class Monitoring_ShowController extends ModuleActionController
             }
         }
     }
-    
     /**
      * Creating tabs for this controller
      * @return \Icinga\Web\Widget\AbstractWidget
