@@ -59,6 +59,14 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
     const TYPE_FLEXIBLE = 'flexible';
 
     /**
+     * Initialize form
+     */
+    public function init()
+    {
+        $this->setName('ScheduleDowntimeForm');
+    }
+
+    /**
      * Build an array of timestamps
      *
      * @return string[]

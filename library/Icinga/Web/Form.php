@@ -365,11 +365,9 @@ abstract class Form extends Zend_Form
         if ($this->getElement($this->tokenElementName) === null) {
             return false;
         }
-
         if (strpos($elementValue, '|') === false) {
             return false;
         }
-
 
         list($seed, $token) = explode('|', $elementValue);
 
