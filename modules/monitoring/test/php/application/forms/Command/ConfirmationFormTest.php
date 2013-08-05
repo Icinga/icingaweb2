@@ -20,17 +20,11 @@ class ConfirmationFormTest extends BaseFormTest
 
         $form->setRequest($this->getRequest());
 
-        $form->setSubmitLabel('111TEST_SUBMIT');
-
-        $form->setCancelLabel('888TEST_RESET');
-
         $form->addNote('444 NOTE 1');
         $form->addNote('555 NOTE 2');
         $form->buildForm();
         $content = $form->render($view);
 
-        $this->assertContains('<input type="submit" name="submit" id="submit" value="111TEST_SUBMIT" class="btn btn-primary pull-right">', $content);
-        $this->assertContains('<input type="reset" name="reset" id="reset" value="888TEST_RESET" class="btn pull-right"></dd>', $content);
         $this->assertContains('<dd id="note_0-element">', $content);
         $this->assertContains('<dd id="note_1-element">', $content);
         $this->assertContains('444 NOTE 1</dd>', $content);

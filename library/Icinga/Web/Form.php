@@ -75,6 +75,24 @@ abstract class Form extends \Zend_Form
     private $sessionId = false;
 
     /**
+     * Label for submit button
+     *
+     * If omitted, no button will be shown.
+     *
+     * @var string
+     */
+    private $submitLabel;
+
+    /**
+     * Label for cancel button
+     *
+     * If omitted, no button will be shown.
+     *
+     * @var string
+     */
+    private $cancelLabel;
+
+    /**
      * Returns the session ID stored in this form instance
      * @return mixed
      */
@@ -160,6 +178,14 @@ abstract class Form extends \Zend_Form
             $this->initCsrfToken();
             $this->create();
 
+            if ($this->getSubmitLabel()) {
+                $this->addSubmitButton();
+            }
+
+            if ($this->getCancelLabel()) {
+                $this->addCancelButton();
+            }
+
             // Empty action if not safe
             if (!$this->getAction() && $this->getRequest()) {
                 $this->setAction($this->getRequest()->getRequestUri());
@@ -167,6 +193,72 @@ abstract class Form extends \Zend_Form
 
             $this->created = true;
         }
+    }
+
+    /**
+     * Setter for cancel label
+     * @param string $cancelLabel
+     */
+    public function setCancelLabel($cancelLabel)
+    {
+        $this->cancelLabel = $cancelLabel;
+    }
+
+    /**
+     * Getter for cancel label
+     * @return string
+     */
+    public function getCancelLabel()
+    {
+        return $this->cancelLabel;
+    }
+
+    /**
+     * Add cancel button to form
+     */
+    protected function addCancelButton()
+    {
+        $cancelLabel = new \Zend_Form_Element_Reset(
+            array(
+                'name' => 'btn_reset',
+                'label' => $this->getCancelLabel(),
+                'class' => 'btn pull-right'
+            )
+        );
+        $this->addElement($cancelLabel);
+    }
+
+    /**
+     * Setter for submit label
+     * @param string $submitLabel
+     */
+    public function setSubmitLabel($submitLabel)
+    {
+        $this->submitLabel = $submitLabel;
+    }
+
+    /**
+     * Getter for submit label
+     * @return string
+     */
+    public function getSubmitLabel()
+    {
+        return $this->submitLabel;
+    }
+
+    /**
+     * Add submit button to form
+     */
+    protected function addSubmitButton()
+    {
+        $submitButton = new \Zend_Form_Element_Submit(
+            array(
+                'name' => 'btn_submit',
+                'label' => $this->getSubmitLabel(),
+                'class' => 'btn btn-primary pull-right'
+            )
+        );
+        $this->addElement($submitButton);
     }
 
     /**
