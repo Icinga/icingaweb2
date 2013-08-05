@@ -309,7 +309,11 @@ abstract class Form extends \Zend_Form
         $checkData = $this->getRequest()->getParams();
         $this->assertValidCsrfToken($checkData);
 
-        $submitted = isset($checkData['btn_submit']);
+        $submitted = true;
+        if ($this->getSubmitLabel()) {
+            $submitted = isset($checkData['btn_submit']);
+        }
+
         if ($submitted) {
             $this->preValidation($checkData);
         }

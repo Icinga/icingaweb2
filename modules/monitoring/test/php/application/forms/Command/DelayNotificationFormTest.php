@@ -16,7 +16,8 @@ class DelayNotificationFormFormTest extends BaseFormTest
     public function testValidForm()
     {
         $form = $this->getRequestForm(array(
-            'minutes' => 12
+            'minutes'    => 12,
+            'btn_submit' => 'foo'
         ), 'Monitoring\Form\Command\DelayNotificationForm');
 
         $form->buildForm();

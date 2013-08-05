@@ -17,15 +17,19 @@ use \Zend_Test_PHPUnit_ControllerTestCase;
 class AcknowledgeFormTest extends BaseFormTest
 {
     const FORMCLASS = "Monitoring\Form\Command\AcknowledgeForm";
+
     public function testForm()
     {
-        $form = $this->getRequestForm(array(), self::FORMCLASS);
-        $form->buildForm();
+        $formWithoutExpiration = $this->getRequestForm(array(), self::FORMCLASS);
+        $formWithoutExpiration->buildForm();
+        $formWithExpiration = $this->getRequestForm(array(
+            'expire' => '1'
+        ), self::FORMCLASS);
+        $formWithExpiration->buildForm();
 
-        $this->assertCount(11, $form->getElements());
+        $this->assertCount(10, $formWithoutExpiration->getElements());
+        $this->assertCount(11, $formWithExpiration->getElements());
     }
-
-
 
     public function testValidateCorrectForm()
     {
@@ -34,9 +38,9 @@ class AcknowledgeFormTest extends BaseFormTest
             'comment'    => 'test comment',
             'persistent' => '0',
             'expire'     => '0',
-            'expiretime' => '',
             'sticky'     => '0',
-            'notify'     => '0'
+            'notify'     => '0',
+            'btn_submit' => 'foo'
         ), self::FORMCLASS);
 
         $this->assertTrue(
@@ -52,9 +56,9 @@ class AcknowledgeFormTest extends BaseFormTest
             'comment'    => '',
             'persistent' => '0',
             'expire'     => '0',
-            'expiretime' => '',
             'sticky'     => '0',
             'notify'     => '0',
+            'btn_submit' => 'foo'
         ), self::FORMCLASS);
         $this->assertFalse(
             $form->isSubmittedAndValid(),
@@ -71,7 +75,8 @@ class AcknowledgeFormTest extends BaseFormTest
             'expire'     => '1',
             'expiretime' => '',
             'sticky'     => '0',
-            'notify'     => '0'
+            'notify'     => '0',
+            'btn_submit' => 'foo'
         ), self::FORMCLASS);
         $this->assertFalse(
             $form->isSubmittedAndValid(),
@@ -88,7 +93,8 @@ class AcknowledgeFormTest extends BaseFormTest
             'expire'     => '1',
             'expiretime' => 'NOT A DATE',
             'sticky'     => '0',
-            'notify'     => '0'
+            'notify'     => '0',
+            'btn_submit' => 'foo'
         ), self::FORMCLASS);
         $this->assertFalse(
             $form->isSubmittedAndValid(),
@@ -105,7 +111,8 @@ class AcknowledgeFormTest extends BaseFormTest
             'expire'     => '1',
             'expiretime' => '2013-07-10 17:32:16',
             'sticky'     => '0',
-            'notify'     => '0'
+            'notify'     => '0',
+            'btn_submit' => 'foo'
         ), self::FORMCLASS);
         $this->assertTrue(
             $form->isSubmittedAndValid(),

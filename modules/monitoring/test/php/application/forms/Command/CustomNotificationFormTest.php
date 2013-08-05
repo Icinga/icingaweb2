@@ -16,8 +16,9 @@ class CustomNotificationFormTest extends BaseFormTest
     public function testForm1()
     {
         $form = $this->getRequestForm(array(
-            'comment' => 'TEST COMMENT',
-            'author'  => 'LAOLA'
+            'comment'    => 'TEST COMMENT',
+            'author'     => 'LAOLA',
+            'btn_submit' => 'foo'
         ), "Monitoring\Form\Command\CustomNotificationForm");
         $form->buildForm();
 

@@ -59,7 +59,8 @@ class SubmitPassiveCheckResultFormTest extends BaseFormTest
         $form = $this->getRequestForm(array(
             'pluginstate'     => 0,
             'checkoutput'     => 'DING',
-            'performancedata' => ''
+            'performancedata' => '',
+            'btn_submit'      => 'foo'
         ), self::FORMCLASS);
 
         $form->setType(SubmitPassiveCheckResultForm::TYPE_SERVICE);

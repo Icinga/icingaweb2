@@ -28,7 +28,8 @@ class ConfirmationWithIdentifierFormTest extends BaseFormTest
     {
 
         $form = $this->getRequestForm(array(
-            'testval' => 123
+            'testval'    => 123,
+            'btn_submit' => 'foo'
         ), self::FORMCLASS);
 
         $form->setFieldLabel('Test1');

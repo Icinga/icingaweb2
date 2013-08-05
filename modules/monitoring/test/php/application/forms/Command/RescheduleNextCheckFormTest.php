@@ -25,7 +25,8 @@ class RescheduleNextCheckFormTest extends BaseFormTest
 
         $form = $this->getRequestForm(array(
             'checktime'  => '2013-10-19 17:30:00',
-            'forcecheck' => 1
+            'forcecheck' => 1,
+            'btn_submit' => 'foo'
         ), self::FORMCLASS);
         $form->buildForm();
 
@@ -37,7 +38,8 @@ class RescheduleNextCheckFormTest extends BaseFormTest
         );
         $form = $this->getRequestForm(array(
             'checktime'  => '2013-10-19 17:30:00',
-            'forcecheck' => 0
+            'forcecheck' => 0,
+            'btn_submit' => 'foo'
         ), self::FORMCLASS);
 
         $this->assertTrue(

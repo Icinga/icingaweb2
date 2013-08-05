@@ -28,9 +28,10 @@ class CommentFormTest extends BaseFormTest
     public function testCorrectCommentValidation()
     {
         $form = $this->getRequestForm(array(
-            'author'  => 'test1',
-            'comment' => 'test2',
-            'sticky'  => '0'
+            'author'     => 'test1',
+            'comment'    => 'test2',
+            'sticky'     => '0',
+            'btn_submit' => 'foo'
         ), self::FORMCLASS);
 
         $this->assertTrue(

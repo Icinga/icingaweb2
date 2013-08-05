@@ -16,10 +16,15 @@ class ScheduleDowntimeFormTest extends BaseFormTest
     const FORMCLASS = 'Monitoring\Form\Command\ScheduleDowntimeForm';
     public function testCorrectFormElementCreation()
     {
-        $form = $this->getRequestForm(array(), self::FORMCLASS);
-        $form->buildForm();
+        $formFixed = $this->getRequestForm(array(), self::FORMCLASS);
+        $formFixed->buildForm();
+        $formFlexible = $this->getRequestForm(array(
+            'type' => 'flexible'
+        ), self::FORMCLASS);
+        $formFlexible->buildForm();
 
-        $this->assertCount(13, $form->getElements());
+        $this->assertCount(11, $formFixed->getElements());
+        $this->assertCount(13, $formFlexible->getElements());
 
         $form = $this->getRequestForm(array(), self::FORMCLASS);
         $form->setWithChildren(true);
@@ -32,14 +37,15 @@ class ScheduleDowntimeFormTest extends BaseFormTest
     public function testCorrectValidationWithChildrend()
     {
         $form = $this->getRequestForm(array(
-            'author'    => 'TEST_AUTHOR',
-            'comment'   => 'DING DING',
-            'triggered' => '4',
-            'starttime' => '2013-07-17 10:30:00',
-            'endtime'   => '2013-07-17 10:30:00',
-            'type'      => ScheduleDowntimeForm::TYPE_FIXED,
-            'hours'     => '',
-            'minutes'   => '',
+            'author'     => 'TEST_AUTHOR',
+            'comment'    => 'DING DING',
+            'triggered'  => '4',
+            'starttime'  => '2013-07-17 10:30:00',
+            'endtime'    => '2013-07-17 10:30:00',
+            'type'       => ScheduleDowntimeForm::TYPE_FIXED,
+            'hours'      => '',
+            'minutes'    => '',
+            'btn_submit' => 'foo',
             // 'childobjects' => '',
         ), self::FORMCLASS);
 
@@ -51,14 +57,15 @@ class ScheduleDowntimeFormTest extends BaseFormTest
             'Asserting a correct fixed downtime form to be considered valid'
         );
         $form = $this->getRequestForm(array(
-            'author'    => 'TEST_AUTHOR',
-            'comment'   => 'DING DING',
-            'triggered' => '4',
-            'starttime' => '2013-07-17 10:30:00',
-            'endtime'   => '2013-07-17 10:30:00',
-            'type'      => ScheduleDowntimeForm::TYPE_FLEXIBLE,
-            'hours'     => '10',
-            'minutes'   => '10',
+            'author'     => 'TEST_AUTHOR',
+            'comment'    => 'DING DING',
+            'triggered'  => '4',
+            'starttime'  => '2013-07-17 10:30:00',
+            'endtime'    => '2013-07-17 10:30:00',
+            'type'       => ScheduleDowntimeForm::TYPE_FLEXIBLE,
+            'hours'      => '10',
+            'minutes'    => '10',
+            'btn_submit' => 'foo'
             // 'childobjects' => '',
         ), self::FORMCLASS);
         $form->setWithChildren(true);
@@ -247,14 +254,15 @@ class ScheduleDowntimeFormTest extends BaseFormTest
     public function testCorrectScheduleDowntimeWithoutChildrenForm()
     {
         $form = $this->getRequestForm(array(
-            'author'    => 'TEST_AUTHOR',
-            'comment'   => 'DING DING',
-            'triggered' => '4',
-            'starttime' => '2013-07-17 10:30:00',
-            'endtime'   => '2013-07-17 10:30:00',
-            'type'      => ScheduleDowntimeForm::TYPE_FIXED,
-            'hours'     => '',
-            'minutes'   => '',
+            'author'       => 'TEST_AUTHOR',
+            'comment'      => 'DING DING',
+            'triggered'    => '4',
+            'starttime'    => '2013-07-17 10:30:00',
+            'endtime'      => '2013-07-17 10:30:00',
+            'type'         => ScheduleDowntimeForm::TYPE_FIXED,
+            'hours'        => '',
+            'minutes'      => '',
+            'btn_submit'   => 'foo',
             'childobjects' => '0',
         ), self::FORMCLASS);
         $form->setWithChildren(false);
