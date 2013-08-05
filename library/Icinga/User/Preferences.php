@@ -78,13 +78,10 @@ class Preferences implements SplSubject, \Countable
     }
 
     /**
-     * (PHP 5 &gt;= 5.1.0)<br/>
      * Attach an SplObserver
+     *
      * @link http://php.net/manual/en/splsubject.attach.php
-     * @param SplObserver $observer <p>
-     * The <b>SplObserver</b> to attach.
-     * </p>
-     * @return void
+     * @param SplObserver $observer
      */
     public function attach(SplObserver $observer)
     {
@@ -92,13 +89,10 @@ class Preferences implements SplSubject, \Countable
     }
 
     /**
-     * (PHP 5 &gt;= 5.1.0)<br/>
      * Detach an observer
+     *
      * @link http://php.net/manual/en/splsubject.detach.php
-     * @param SplObserver $observer <p>
-     * The <b>SplObserver</b> to detach.
-     * </p>
-     * @return void
+     * @param SplObserver $observer
      */
     public function detach(SplObserver $observer)
     {
@@ -109,10 +103,9 @@ class Preferences implements SplSubject, \Countable
     }
 
     /**
-     * (PHP 5 &gt;= 5.1.0)<br/>
      * Notify an observer
+     *
      * @link http://php.net/manual/en/splsubject.notify.php
-     * @return void
      */
     public function notify()
     {
@@ -124,13 +117,10 @@ class Preferences implements SplSubject, \Countable
     }
 
     /**
-     * (PHP 5 &gt;= 5.1.0)<br/>
      * Count elements of an object
+     *
      * @link http://php.net/manual/en/countable.count.php
-     * @return int The custom count as an integer.
-     * </p>
-     * <p>
-     * The return value is cast to an integer.
+     * @return int The custom count as an integer
      */
     public function count()
     {

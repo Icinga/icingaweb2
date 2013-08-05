@@ -18,7 +18,7 @@ settings are this:
     type=ini
 
 The ini provider uses the directory **config/preferences** to create one ini
-file per user and persists the data into a single file. If your want to drop your
+file per user and persists the data into a single file. If you want to drop your
 preferences just drop the file from disk and you'll start with a new profile.
 
 ## Database provider
@@ -68,13 +68,13 @@ database and a writable user you need to import the initial table file:
     mysql> exit
     # mysql -u root -p icingaweb < /path/to/icingaweb/etc/schema/preferences.mysql.sql
 
-After following this steps above you can configure your preferences provider.
+After following these steps above you can configure your preferences provider.
 
 ## Coding API
 
-Preferenecs are controlled by the Preferences object which was injected into the
-User object on application start (You do not have to think about). For example
-if you have gathered the user object:
+You can set, update or remove preferences using the Preference data object
+which is bound to the user. Here are some simple examples how to work with
+that:
 
     $preferences = $user->getPreferences();
     // Get language with en_US as fallback
