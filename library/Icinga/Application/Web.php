@@ -251,13 +251,6 @@ class Web extends ApplicationBootstrap
 
             $user->setPreferences($preferences);
 
-            // TESTING
-            $requestCounter = $user->getPreferences()->get('test.request.counter', 0);
-            $requestCounter++;
-            $user->getPreferences()->set('test.request.counter', $requestCounter);
-
-            var_dump($requestCounter);
-
             return $user;
         }
     }
