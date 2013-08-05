@@ -3,7 +3,7 @@
 Preferences are user based configuration for Icinga 2 Web. For example max page
 items, languages or date time settings can controlled by users.
 
-# Architecture behind
+# Architecture
 
 Preferences are initially loaded from a provider (ini files or database) and
 stored into session at login time. After this step preferences are only
@@ -11,13 +11,14 @@ persisted to the configured backend, but never reloaded from them.
 
 # Configuration
 
-Preferences can be configured in config.ini in section, default settings are this:
+Preferences can be configured in config.ini in **preferences** section, default
+settings are this:
 
     [preferences]
     type=ini
 
 The ini provider uses the directory **config/preferences** to create one ini
-file per user and persists the data into this file. If your want to drop your
+file per user and persists the data into a single file. If your want to drop your
 preferences just drop the file from disk and you'll start with a new profile.
 
 ## Database provider
@@ -88,9 +89,11 @@ if you have gathered the user object:
     $preferences->remove('test.pref3');
     $preferemces->commit(); // Stores 3 changes in one operation
 
+More information can be found in the api docs.
+
 ## Namespaces and behaviour
 
-If you are using this API please obey following rules:
+If you are using this API please obey the following rules:
 
 * Use dotted notation for preferences
 * Namespaces starting with one context identifier
