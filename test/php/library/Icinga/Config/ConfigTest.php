@@ -14,7 +14,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        IcingaConfig::$configDir = dirname(__FILE__) . '/Config/files';
+        IcingaConfig::$configDir = dirname(__FILE__) . '/files';
     }
 
     public function testAppConfig()

@@ -33,6 +33,7 @@ namespace Tests\Icinga\PreservingIniWriterTest;
 require_once 'Zend/Config.php';
 require_once 'Zend/Config/Ini.php';
 require_once 'Zend/Config/Writer/Ini.php';
+require_once('../../library/Icinga/Config/IniEditor.php');
 require_once('../../library/Icinga/Config/PreservingIniWriter.php');
 
 use Icinga\Config\PreservingIniWriter;
@@ -255,8 +256,7 @@ prop2="5"
             'Section property numerical created.');
 
         $this->assertNull($config->parent->list->{0},
-            'Section array deleted'
-        );
+            'Section array deleted');
 
         $this->assertEquals('new',$config->parent->list->{1},
             'Section array changed.');
