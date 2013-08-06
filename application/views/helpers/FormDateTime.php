@@ -55,8 +55,7 @@ class Zend_View_Helper_FormDateTime extends Zend_View_Helper_FormElement
 
         // Do we have a value?
         if (isset($value) && !empty($value)) {
-            $dt = new DateTime($value);
-            $value = ' value="' . $dt->format('Y-m-d H:i:s') . '"';
+            $value = ' value="' . $this->view->dateFormat()->formatDateTime($value) . '"';
         } else {
             $value = '';
         }

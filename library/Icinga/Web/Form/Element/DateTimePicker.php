@@ -36,8 +36,8 @@ use Zend_Form_Element_Xhtml;
 class DateTimePicker extends Zend_Form_Element_Xhtml
 {
     /**
-     * Default form view helper to use for rendering
+     * View helper to use
      * @var string
      */
-    public $helper = "formDateTime";
+    public $helper = 'formDateTime';
 }

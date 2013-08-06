@@ -324,7 +324,7 @@ class User
      *
      * @return string
      */
-    public function getTimezone()
+    public function getTimeZone()
     {
         $tz = $this->preferences->get('timezone');
         if ($tz === null) {
