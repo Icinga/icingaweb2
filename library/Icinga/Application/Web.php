@@ -29,7 +29,9 @@
 namespace Icinga\Application;
 
 use Icinga\Authentication\Manager as AuthenticationManager;
+use Icinga\Exception\ConfigurationError;
 use Icinga\User\Preferences;
+use Icinga\User;
 use Icinga\Web\Request;
 use Zend_Controller_Front;
 use Zend_Layout;
@@ -39,6 +41,8 @@ use Zend_Controller_Action_HelperBroker;
 use Zend_Controller_Router_Route;
 use Zend_Controller_Action_Helper_ViewRenderer;
 use Icinga\Web\View;
+use Icinga\User\Preferences\StoreFactory;
+use Icinga\User\Preferences\SessionStore;
 
 /**
  * Use this if you want to make use of Icinga funtionality in other web projects
@@ -199,14 +203,13 @@ class Web extends ApplicationBootstrap
     }
 
     /**
-     * Inject dependencies into request
+     * Create user object and inject preference interface
      *
-     * @return self
+     * @throws ConfigurationError
+     * @return User
      */
-    private function setupRequest()
+    private function setupUser()
     {
-        $this->request = new Request();
-
         $authenticationManager = AuthenticationManager::getInstance(
             null,
             array(
@@ -215,11 +218,54 @@ class Web extends ApplicationBootstrap
         );
 
         if ($authenticationManager->isAuthenticated() === true) {
+            if ($this->getConfig()->preferences === null) {
+                throw new ConfigurationError('Preferences not configured in config.ini');
+            }
+
             $user = $authenticationManager->getUser();
 
-            $preferences = new Preferences();
+            $this->getConfig()->preferences->configPath = $this->getConfigDir('preferences');
+
+            $preferenceStore = StoreFactory::create(
+                $this->getConfig()->preferences,
+                $user
+            );
+
+            // Needed to update values in user session
+            $sessionStore = new SessionStore($authenticationManager->getSession());
+
+            // Performance: Do not ask provider if we've preferences
+            // stored in session
+            $initialPreferences = array();
+            if (count($sessionStore->load())) {
+                $initialPreferences = $sessionStore->load();
+            } else {
+                $initialPreferences = $preferenceStore->load();
+                $sessionStore->writeAll($initialPreferences);
+            }
+
+            $preferences = new Preferences($initialPreferences);
+
+            $preferences->attach($sessionStore);
+            $preferences->attach($preferenceStore);
+
             $user->setPreferences($preferences);
 
+            return $user;
+        }
+    }
+
+    /**
+     * Inject dependencies into request
+     *
+     * @return self
+     */
+    private function setupRequest()
+    {
+        $this->request = new Request();
+
+        $user = $this->setupUser();
+        if ($user instanceof User) {
             $this->request->setUser($user);
         }
 

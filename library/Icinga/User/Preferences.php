@@ -28,9 +28,193 @@
 
 namespace Icinga\User;
 
+use \SplObjectStorage;
+use \SplObserver;
+use \SplSubject;
+use Icinga\User\Preferences\ChangeSet;
+use Icinga\Exception\ProgrammingError;
+
 /**
  * Handling retrieve and persist of user preferences
  */
-class Preferences
+class Preferences implements SplSubject, \Countable
 {
+    /**
+     * Container for all preferences
+     *
+     * @var array
+     */
+    private $preferences = array();
+
+    /**
+     * All observers for changes
+     *
+     * @var SplObserver[]
+     */
+    private $observer = array();
+
+    /**
+     * Current change set
+     *
+     * @var ChangeSet
+     */
+    private $changeSet;
+
+    /**
+     * Flag how commits are handled
+     *
+     * @var bool
+     */
+    private $autoCommit = true;
+
+    /**
+     * Create a new instance
+     * @param array $initialPreferences
+     */
+    public function __construct(array $initialPreferences)
+    {
+        $this->preferences = $initialPreferences;
+        $this->changeSet = new ChangeSet();
+    }
+
+    /**
+     * Attach an SplObserver
+     *
+     * @link http://php.net/manual/en/splsubject.attach.php
+     * @param SplObserver $observer
+     */
+    public function attach(SplObserver $observer)
+    {
+        $this->observer[] = $observer;
+    }
+
+    /**
+     * Detach an observer
+     *
+     * @link http://php.net/manual/en/splsubject.detach.php
+     * @param SplObserver $observer
+     */
+    public function detach(SplObserver $observer)
+    {
+        $key = array_search($observer, $this->observer, true);
+        if ($key !== false) {
+            unset($this->observer[$key]);
+        }
+    }
+
+    /**
+     * Notify an observer
+     *
+     * @link http://php.net/manual/en/splsubject.notify.php
+     */
+    public function notify()
+    {
+        /** @var SplObserver $observer */
+        $observer = null;
+        foreach ($this->observer as $observer) {
+            $observer->update($this);
+        }
+    }
+
+    /**
+     * Count elements of an object
+     *
+     * @link http://php.net/manual/en/countable.count.php
+     * @return int The custom count as an integer
+     */
+    public function count()
+    {
+        return count($this->preferences);
+    }
+
+    /**
+     * Getter for change set
+     * @return ChangeSet
+     */
+    public function getChangeSet()
+    {
+        return $this->changeSet;
+    }
+
+    public function has($key)
+    {
+        return array_key_exists($key, $this->preferences);
+    }
+
+    public function set($key, $value)
+    {
+        if ($this->has($key)) {
+            $oldValue = $this->get($key);
+
+            // Do not notify useless writes
+            if ($oldValue !== $value) {
+                $this->changeSet->appendUpdate($key, $value);
+            }
+        } else {
+            $this->changeSet->appendCreate($key, $value);
+        }
+
+        $this->processCommit();
+    }
+
+    public function get($key, $default = null)
+    {
+        if ($this->has($key)) {
+            return $this->preferences[$key];
+        }
+
+        return $default;
+    }
+
+    public function remove($key)
+    {
+        if ($this->has($key)) {
+            $this->changeSet->appendDelete($key);
+            $this->processCommit();
+            return true;
+        }
+
+        return false;
+    }
+
+    public function startTransaction()
+    {
+        $this->autoCommit = false;
+    }
+
+    public function commit()
+    {
+        $changeSet = $this->changeSet;
+
+        if ($this->autoCommit === false) {
+            $this->autoCommit = true;
+        }
+
+        if ($changeSet->hasChanges() === true) {
+            foreach ($changeSet->getCreate() as $key => $value) {
+                $this->preferences[$key] = $value;
+            }
+
+            foreach ($changeSet->getUpdate() as $key => $value) {
+                $this->preferences[$key] = $value;
+            }
+
+            foreach ($changeSet->getDelete() as $key) {
+                unset($this->preferences[$key]);
+            }
+
+            $this->notify();
+
+            $this->changeSet->clear();
+        } else {
+            throw new ProgrammingError('Nothing to commit');
+        }
+    }
+
+    private function processCommit()
+    {
+        if ($this->autoCommit === true) {
+            $this->commit();
+        }
+    }
 }

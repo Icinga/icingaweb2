@@ -26,3 +26,6 @@ doc/api
 
 # Enabled modules
 config/enabledModules/
+
+# User preferences
+config/preferences/*.ini
