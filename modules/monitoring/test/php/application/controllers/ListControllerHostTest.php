@@ -29,7 +29,7 @@ class ListControllerHostMySQLTest  extends MonitoringControllerTest
     public function executeHostListTestFor($backend)
     {
         date_default_timezone_set('UTC');
-        $checkTime = time()-2000;
+        $checkTime = (string)(time()-2000);
         $fixture = new TestFixture();
         $firstHostFlags = ObjectFlags::PASSIVE_ONLY();
         $firstHostFlags->acknowledged = 1;
