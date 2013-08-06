@@ -3,28 +3,30 @@
 namespace Icinga\Web\Widget;
 
 use Icinga\Application\Icinga;
-use Icinga\Config\Config;
+use Icinga\Config\Config as IcingaConfig;;
+use Icinga\Application\Logger;
+use Icinga\Exception\ConfigurationError;
 use Icinga\Web\Widget\Widget;
 use Icinga\Web\Widget\Dashboard\Pane;
+use Icinga\Web\Widget\Dashboard\Component as DashboardComponent;
+
 use Icinga\Web\Url;
-use Zend_Config as ZfConfig;
 
 class Dashboard implements Widget
 {
     /**
-     * @var Config
+     * @var IcingaConfig;
      */
-    protected $config;
-    protected $configfile;
-    protected $panes = array();
-    protected $tabs;
+    private $config;
+    private $configfile;
+    private $panes = array();
+    private $tabs;
 
-    protected $properties = array(
-        'url'      => null,
-        'tabParam' => 'pane'
-    );
+    private $url      = null;
+    private $tabParam = 'pane';
 
-    protected function init()
+
+    public function __construct()
     {
         if ($this->url === null) {
             $this->url = Url::fromRequest()->getUrlWithout($this->tabParam);
@@ -33,14 +35,15 @@ class Dashboard implements Widget
 
     public function activate($name)
     {
-        $this->tabs()->activate($name);
+        $this->getTabs()->activate($name);
     }
     
-    public function tabs()
+    public function getTabs()
     {
         if ($this->tabs === null) {
             $this->tabs = new Tabs();
             foreach ($this->panes as $key => $pane) {
+
                 $this->tabs->add($key, array(
                     'title'     => $pane->getTitle(),
                     'url'       => clone($this->url),
@@ -57,28 +60,56 @@ class Dashboard implements Widget
         return is_writable($this->configfile);
     }
 
-    public function store()
+    public function store($file = null)
     {
+        if ($file === null) {
+            $file = IcingaConfig::app('dashboard/dashboard')->getConfigFile();
+        }
+        $this->configfile = $file;
+        if (!$this->isWritable()) {
+            Logger::error("Tried to persist dashboard to %s, but path is not writeable", $this->configfile);
+            throw new ConfigurationError('Can\'t persist dashboard');
+        }
+
         if (! @file_put_contents($this->configfile, $this->toIni())) {
-            return false;
+            $error = error_get_last();
+            if ($error == NULL) {
+                $error = "Unknown error";
+            } else {
+                $error = $error["message"];
+            }
+            Logger::error("Tried to persist dashboard to %s, but got error: %s", $this->configfile, $error);
+            throw new ConfigurationError('Can\'t persist dashboard');
         } else {
             return $this;
         }
+
     }
 
-    public function readConfig(ZfConfig $config)
+    public function readConfig(IcingaConfig $config)
     {
-        $this->configfile = Icinga::app('dashboard')->getApplicationDir("dashboard");
         $this->config = $config;
         $this->panes = array();
         $this->loadConfigPanes();
         return $this;
     }
 
+    public function createPane($title)
+    {
+        $pane = new Pane($title);
+        $pane->setTitle($title);
+        $this->addPane($pane);
+
+    }
+
     public function setComponentUrl($pane, $component, $url)
     {
         if ($component === null && strpos($pane, '.')) {
             list($pane, $component) = preg_split('~\.~', $pane, 2);
+        }
+
+        if (!isset($this->panes[$pane])) {
+            $this->createPane($pane);
         }
         $pane = $this->getPane($pane);
         if ($pane->hasComponent($component)) {
@@ -89,16 +120,30 @@ class Dashboard implements Widget
         return $this;
     }
 
+    public function isEmptyPane($pane)
+    {
+        $paneObj = $this->getPane($pane);
+        if ($paneObj === null) {
+            return true;
+        }
+        $cmps = $paneObj->getComponents();
+        return !empty($cmps);
+    }
+
     public function removeComponent($pane, $component)
     {
         if ($component === null && strpos($pane, '.')) {
             list($pane, $component) = preg_split('~\.~', $pane, 2);
         }
-        $this->getPane($pane)->removeComponent($component);
+        $pane = $this->getPane($pane);
+        if ($pane !== null) {
+            $pane->removeComponent($component);
+        }
+
         return $this;
     }
 
-    public function paneEnum()
+    public function getPaneKeyTitleArray()
     {
         $list = array();
         foreach ($this->panes as $name => $pane) {
@@ -127,6 +172,8 @@ class Dashboard implements Widget
 
     public function getPane($name)
     {
+        if (!isset($this->panes[$name]))
+            return null;
         return $this->panes[$name];
     }
     
@@ -136,22 +183,31 @@ class Dashboard implements Widget
             return '';
         }
 
-        return $this->tabs() . $this->getActivePane();
+        return $this->getActivePane()->render($view);
+    }
+
+    private function setDefaultPane()
+    {
+        reset($this->panes);
+        $active = key($this->panes);
+        $this->activate($active);
+        return $active;
     }
 
     public function getActivePane()
     {
-        $active = $this->tabs()->getActiveName();
+        $active = $this->getTabs()->getActiveName();
         if (! $active) {
             if ($active = Url::fromRequest()->getParam($this->tabParam)) {
-                $this->activate($active);
+                if ($this->isEmptyPane($active)) {
+                    $active = $this->setDefaultPane();
+                } else {
+                    $this->activate($active);
+                }
             } else {
-                reset($this->panes);
-                $active = key($this->panes);
-                $this->activate($active);
+                $active = $this->setDefaultPane();
             }
         }
-
         return $this->panes[$active];
     }
 
@@ -166,31 +222,20 @@ class Dashboard implements Widget
     
     protected function loadConfigPanes()
     {
-        $items = $this->config->keys();
+        $items = $this->config;
         $app = Icinga::app();
-        foreach ($items as $key => $item) {
+        foreach ($items->keys() as $key) {
+            $item = $this->config->get($key, false);
             if (false === strstr($key, '.')) {
-                $pane = new Pane($key);
-                if (isset($item['title'])) {
-                    $pane->setTitle($item['title']);
-                }
-                $this->addPane($pane);
+                $this->addPane(Pane::fromIni($key, $item));
+
             } else {
-                list($dashboard, $title) = preg_split('~\.~', $key, 2);
-                $base_url = $item['base_url'];
-
-                $module = substr($base_url, 0, strpos($base_url, '/'));
-                $whitelist = array();
-                if (! $app->hasModule($module)) {
-                    continue;
-                }
-
-                unset($item['base_url']);
-                $this->getPane($dashboard)->addComponent(
-                    $title,
-                    Url::fromPath($base_url, $item)
-                );
+                list($paneName, $title) = explode('.', $key , 2);
+                $pane = $this->getPane($paneName);
+                $pane->addComponent(DashboardComponent::fromIni($title, $item, $pane));
             }
         }
+
+
     }
 }

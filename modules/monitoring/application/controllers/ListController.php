@@ -10,6 +10,7 @@ use Icinga\Web\Widget\Tabs;
 class Monitoring_ListController extends ModuleActionController
 {
     protected $backend;
+    private $compactView = null;
 
     public function init()
     {
@@ -23,6 +24,7 @@ class Monitoring_ListController extends ModuleActionController
     public function hostsAction()
     {
         Benchmark::measure("hostsAction::query()");
+        $this->compactView = "hosts-compact";
         $this->view->hosts = $this->query(
             'status',
             array(
@@ -192,6 +194,10 @@ class Monitoring_ListController extends ModuleActionController
 
     protected function handleFormatRequest($query)
     {
+        if ($this->compactView !== null && $this->_getParam("view", false) === "compact") {
+            $this->_helper->viewRenderer($this->compactView);
+        }
+
         if ($this->_getParam('format') === 'sql') {
             echo '<pre>'
                 . htmlspecialchars(wordwrap($query->getQuery()->dump()))

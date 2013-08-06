@@ -4,8 +4,10 @@ namespace Icinga\Web\Widget\Dashboard;
 
 use Icinga\Web\Url;
 use Icinga\Exception\ConfigurationError;
+use Icinga\Web\Widget\Widget;
+use Zend_Config;
 
-class Pane
+class Pane implements Widget
 {
     protected $name;
     protected $title;
@@ -61,13 +63,22 @@ class Pane
     {
         return $this->components;
     }
-    
+
+    public function render(\Zend_View_Abstract $view)
+    {
+        $html = PHP_EOL;
+        foreach ($this->getComponents() as $component) {
+            $html .= PHP_EOL.$component->render($view);
+        }
+        return $html;
+    }
+
     public function addComponent($component, $url = null)
     {
         if ($component instanceof Component) {
-            $this->components[$component->title] = $component;
+            $this->components[$component->getTitle()] = $component;
         } elseif (is_string($component) && $url !== null) {
-             $this->components[$component] = new Component($component, $url);
+             $this->components[$component] = new Component($component, $url, $this);
         } else{
             throw new ConfigurationError('You messed up your dashboard');
         }
@@ -81,24 +92,28 @@ class Pane
 
     public function toIni()
     {
-        $ini = sprintf(
-            "[%s]\ntitle = %s\n",
-            $this->getName(),
-            $this->quoteIni($this->getTitle())
-        ) . "\n";
+        if (empty($this->components))
+        {
+            return "";
+        }
+        $ini = '['.$this->getName().']'.PHP_EOL.
+               'title = '.$this->quoteIni($this->getTitle()).PHP_EOL;
 
         foreach ($this->components as $title => $component) {
-            $ini .= sprintf(
-                "[%s.%s]\n",
-                $this->getName(),
-                $title
-            ) . $component->toIni() . "\n";
+            // component header
+            $ini .= '['.$this->getName().'.'.$title.']'.PHP_EOL;
+            // component content
+            $ini .= $component->toIni().PHP_EOL;
         }
         return $ini;
     }
 
-    public function __toString()
+    public static function fromIni($title, Zend_Config $config)
     {
-        return implode('', $this->components);
+        $pane = new Pane($title);
+        if ($config->get('title', false)) {
+            $pane->setTitle($config->get('title'));
+        }
+        return $pane;
     }
 }

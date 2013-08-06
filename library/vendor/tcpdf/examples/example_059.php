@@ -5,7 +5,7 @@
 // Last Update : 2011-04-15
 //
 // Description : Example 059 for TCPDF class
-//               Table Of Content using HTML templates.
+//               Table Of Content using HTML Templates.
 //
 // Author: Nicola Asuni
 //
@@ -19,7 +19,7 @@
 /**
  * Creates an example PDF TEST document using TCPDF
  * @package com.tecnick.tcpdf
- * @abstract TCPDF - Example: Table Of Content using HTML templates.
+ * @abstract TCPDF - Example: Table Of Content using HTML Templates.
  * @author Nicola Asuni
  * @since 2010-05-06
  */
@@ -153,7 +153,7 @@ $bookmark_templates = array();
 
 /*
  * The key of the $bookmark_templates array represent the bookmark level (from 0 to n).
- * The following templates will be replaced with proper content:
+ * The following Templates will be replaced with proper content:
  *     #TOC_DESCRIPTION#    this will be replaced with the bookmark description;
  *     #TOC_PAGE_NUMBER#    this will be replaced with page number.
  *
@@ -166,7 +166,7 @@ $bookmark_templates = array();
 $bookmark_templates[0] = '<table border="0" cellpadding="0" cellspacing="0" style="background-color:#EEFAFF"><tr><td width="155mm"><span style="font-family:times;font-weight:bold;font-size:12pt;color:black;">#TOC_DESCRIPTION#</span></td><td width="25mm"><span style="font-family:courier;font-weight:bold;font-size:12pt;color:black;" align="right">#TOC_PAGE_NUMBER#</span></td></tr></table>';
 $bookmark_templates[1] = '<table border="0" cellpadding="0" cellspacing="0"><tr><td width="5mm">&nbsp;</td><td width="150mm"><span style="font-family:times;font-size:11pt;color:green;">#TOC_DESCRIPTION#</span></td><td width="25mm"><span style="font-family:courier;font-weight:bold;font-size:11pt;color:green;" align="right">#TOC_PAGE_NUMBER#</span></td></tr></table>';
 $bookmark_templates[2] = '<table border="0" cellpadding="0" cellspacing="0"><tr><td width="10mm">&nbsp;</td><td width="145mm"><span style="font-family:times;font-size:10pt;color:#666666;"><i>#TOC_DESCRIPTION#</i></span></td><td width="25mm"><span style="font-family:courier;font-weight:bold;font-size:10pt;color:#666666;" align="right">#TOC_PAGE_NUMBER#</span></td></tr></table>';
-// add other bookmark level templates here ...
+// add other bookmark level Templates here ...
 
 // add table of content at page 1
 // (check the example n. 45 for a text-only TOC

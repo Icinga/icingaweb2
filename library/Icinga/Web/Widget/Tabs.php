@@ -197,6 +197,7 @@ class Tabs implements Countable, Widget
             $html .= $tab->render($view);
         }
 
+        // @TODO: Remove special part from tabs (Bug #4512)
         $special = array();
         $special[] = $view->qlink(
             $view->img('img/classic/application-pdf.png') . ' PDF',

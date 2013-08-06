@@ -41,6 +41,10 @@ some fields in the form) the form is repopulated but not validated at this time.
 in this case, but no errors are added to the created form.
 
 
+In order to be able to use isSubmittedAndValid, you have to define a submitbutton in the form.
+This is done with the *setSubmitLabel(string)* function, with the first parameter being the
+label set to the submit button.
+
 #### Pre validation
 
 To handle dependend fields you can just override *preValid()* or *postValid()*

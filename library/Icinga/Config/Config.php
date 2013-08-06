@@ -45,7 +45,7 @@ class Config extends Zend_Config_Ini
      * The INI file this configuration has been loaded from
      * @var string
      */
-    protected $configFile;
+    private $configFile;
 
     /**
      * Application config instances per file
@@ -135,4 +135,11 @@ class Config extends Zend_Config_Ini
             return array_keys($this->$name->toArray());
         }
     }
+
+    public function  getConfigFile()
+    {
+        return $this->configFile;
+    }
+
+
 }

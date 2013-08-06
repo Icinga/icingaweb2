@@ -84,6 +84,8 @@ class AuthenticationController extends ActionController
         }
     }
 
+
+
     /**
      * Action handle logout
      */

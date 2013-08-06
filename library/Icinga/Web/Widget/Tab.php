@@ -41,6 +41,7 @@ class Tab implements Widget
     private $url = null;
     private $urlParams = array();
     private $icon = null;
+    private $iconCls = null;
 
 
     /**
@@ -57,6 +58,16 @@ class Tab implements Widget
     public function getIcon()
     {
         return $this->icon;
+    }
+
+    public function setIconCls($iconCls)
+    {
+        $this->iconCls = $iconCls;
+    }
+
+    public function getIconCls()
+    {
+        return $this->iconCls;
     }
 
     /**
@@ -107,6 +118,22 @@ class Tab implements Widget
         return $this->url;
     }
 
+    /**
+     * @param mixed $url
+     */
+    public function setUrlParams(array $urlParams)
+    {
+        $this->urlParams = $urlParams;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getUrlParams()
+    {
+        return $this->urlParams;
+    }
+
     public function __construct(array $properties = array())
     {
         foreach ($properties as $name=>$value) {
@@ -115,18 +142,6 @@ class Tab implements Widget
                 $this->$setter($value);
             }
         }
-
-    }
-
-    /**
-     * Health check at initialization time
-     *
-     * @throws Icinga\Exception\ProgrammingError if tab name is missing
-     *
-     * @return void
-     */
-    protected function init()
-    {
         if ($this->name === null) {
             throw new ProgrammingError('Cannot create a nameless tab');
         }
@@ -172,6 +187,8 @@ class Tab implements Widget
                     'width'  => 16,
                     'height' => 16
                 )) . ' ' . $caption;
+        } else if ($this->iconCls !== null) {
+            $caption = '<i class="icon-'.$this->iconCls.'"></i> ' . $caption;
         }
         if ($this->url !== null) {
             $tab = $view->qlink(

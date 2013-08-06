@@ -18,7 +18,7 @@ require_once(dirname(__FILE__).'/../schemes/StatusdatTemplates.php');
  *  to according objects.cache and status.dat files which then can be read
  *  by the Statusdat parser and used in tests.
  *
- *  The templates for insertion can be found under schemes/objectsCacheTemplates.php
+ *  The Templates for insertion can be found under schemes/objectsCacheTemplates.php
  *  and schemes/StatusdatTempaltes.php
  *
  */

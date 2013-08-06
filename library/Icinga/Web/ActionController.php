@@ -237,7 +237,7 @@ class ActionController extends ZfController
     public function redirectNow($url, array $params = array())
     {
         if ($url instanceof Url) {
-            $url = $url->getRelative();
+            $url = $url->getRelativeUrl();
         }
         $this->_helper->Redirector->gotoUrlAndExit($url);
     }
