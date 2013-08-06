@@ -162,6 +162,32 @@ interface methods:
         }
     }
 
+## Testing forms
+
+When testing forms it is a good idea to use Zend_Test_PHPUnit_ControllerTestCase
+instead of others like PHPUnit_Framework_TestCase as this enables you to use a
+request dummy which can be passed to your form.
+
+### Example:
+
+    require_once 'Zend/Test/PHPUnit/ControllerTestCase.php';
+
+    class YourTestCase extends Zend_Test_PHPUnit_ControllerTestCase
+    {
+        function exampleTest()
+        {
+            $request = $this->getRequest();
+            $request->setMethod('POST')->setPost(array(
+                'key' => 'value'
+                )
+            );
+            $form = new SomeForm();
+            $form->setRequest($request);
+
+            ...
+        }
+    }
+
 ## Additional resources
 
 * [API documentation](http://build.icinga.org/jenkins/view/icinga2-web/job/icinga2web-development/javadoc/?)
