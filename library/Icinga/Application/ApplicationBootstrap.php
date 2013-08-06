@@ -2,24 +2,24 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga 2 Web.
- * 
+ *
  * Icinga 2 Web - Head for multiple monitoring backends.
  * Copyright (C) 2013 Icinga Development Team
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
+ *
  * @copyright 2013 Icinga Development Team <info@icinga.org>
  * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
  * @author    Icinga Development Team <info@icinga.org>
@@ -28,12 +28,13 @@
 
 namespace Icinga\Application;
 
+use \DateTimeZone;
+use \Exception;
 use Icinga\Application\Modules\Manager as ModuleManager;
 use Icinga\Application\Platform;
-use Icinga\Exception\ProgrammingError;
 use \Icinga\Application\Config;
-use Zend_Loader_Autoloader;
 use Icinga\Exception\ConfigurationError;
+use Zend_Loader_Autoloader;
 
 /**
  * This class bootstraps a thin Icinga application layer
@@ -110,7 +111,7 @@ abstract class ApplicationBootstrap
 
     /**
      * Flag indicates we're on web environment
-     * 
+     *
      * @var bool
      */
     protected $isWeb = false;
@@ -264,7 +265,6 @@ abstract class ApplicationBootstrap
      */
     public function setupAutoloader()
     {
-        require $this->libDir. '/Icinga/Exception/ProgrammingError.php';
         require $this->libDir. '/Icinga/Application/Loader.php';
 
         $this->loader = new Loader();
@@ -340,16 +340,20 @@ abstract class ApplicationBootstrap
     }
 
     /**
-     * Setup default timezone
+     * Setup timezone
      *
      * @return self
+     * @throws \Icinga\Exception\ConfigurationError if the timezone in config.ini isn't valid
      */
     protected function setupTimezone()
     {
-        date_default_timezone_set(
-            $this->config->global->get('timezone', 'UTC')
-        );
-
+        $tz = $this->config->global->get('timezone', 'UTC');
+        try {
+            new DateTimeZone($tz);
+        } catch (Exception $e) {
+            throw new ConfigurationError(t('Invalid timezone') . ' "' . $tz . '"');
+        }
+        date_default_timezone_set($tz);
         return $this;
     }
 }
