@@ -28,14 +28,15 @@
 
 namespace Monitoring\Form\Command;
 
+use \DateTime;
 use Icinga\Web\Form\Element\DateTimePicker;
-use \DateTime as PhpDateTime;
 use \DateInterval;
 use Icinga\Web\Form\Element\Note;
 use Icinga\Protocol\Commandpipe\Acknowledgement;
 use Icinga\Protocol\Commandpipe\Comment;
+
 /**
- * Form for acknowledge commands
+ * Form for problem acknowledgements
  */
 class AcknowledgeForm extends CommandForm
 {
@@ -90,7 +91,7 @@ class AcknowledgeForm extends CommandForm
         );
 
         if ($this->getRequest()->getPost('expire', '0') === '1') {
-            $now = new PhpDateTime();
+            $now = new DateTime();
             $interval = new DateInterval('PT1H'); // Add 3600 seconds
             $now->add($interval);
 
@@ -162,7 +163,7 @@ class AcknowledgeForm extends CommandForm
     {
         $expireTime = -1;
         if ($this->getValue('expire')) {
-            $time = new PhpDateTime($this->getValue('expiretime'));
+            $time = new DateTime($this->getValue('expiretime'));
             $expireTime = $time->getTimestamp();
         }
         return new Acknowledgement(

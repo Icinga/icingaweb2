@@ -28,10 +28,10 @@
 
 namespace Monitoring\Form\Command;
 
+use \DateTime;
 use Icinga\Web\Form\Element\DateTimePicker;
 use Icinga\Protocol\Commandpipe\Downtime;
 use Icinga\Protocol\Commandpipe\Comment;
-use \DateTime as PhpDateTime;
 use \DateInterval;
 use \Zend_Form_Element_Text;
 use \Zend_Validate_GreaterThan;
@@ -75,7 +75,7 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
     {
         $out = array();
 
-        $dateTimeObject = new PhpDateTime();
+        $dateTimeObject = new DateTime();
         $out[] = $dateTimeObject->format($this->getDateFormat());
 
         $dateInterval = new DateInterval(self::DEFAULT_ENDTIME_INTERVAL);
@@ -304,8 +304,8 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
         if ($this->getValue('type') === self::TYPE_FLEXIBLE) {
             $duration = ($this->getValue('hours')*3600) + ($this->getValue('minutes')*60);
         }
-        $starttime = new PhpDateTime($this->getValue('starttime'));
-        $endtime = new PhpDateTime($this->getValue('endtime'));
+        $starttime = new DateTime($this->getValue('starttime'));
+        $endtime = new DateTime($this->getValue('endtime'));
 
         $downtime = new Downtime(
             $starttime->getTimestamp(),
