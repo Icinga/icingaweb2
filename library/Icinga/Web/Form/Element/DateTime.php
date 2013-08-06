@@ -30,6 +30,9 @@ namespace Icinga\Web\Form\Element;
 
 use Zend_Form_Element_Xhtml;
 
+/**
+ * Datetime form element
+ */
 class DateTime extends Zend_Form_Element_Xhtml
 {
     /**
