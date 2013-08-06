@@ -28,7 +28,7 @@
 
 namespace Monitoring\Form\Command;
 
-use Icinga\Web\Form\Element\DateTime;
+use Icinga\Web\Form\Element\DateTimePicker;
 use Icinga\Protocol\Commandpipe\Downtime;
 use Icinga\Protocol\Commandpipe\Comment;
 use \DateTime as PhpDateTime;
@@ -146,7 +146,7 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
 
         list($timestampStart, $timestampEnd) = $this->generateDefaultTimestamps();
 
-        $dateTimeStart = new DateTime(
+        $dateTimeStart = new DateTimePicker(
             array(
                 'name'  => 'starttime',
                 'label' => t('Start time'),
@@ -156,7 +156,7 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
         $dateTimeStart->setRequired(true);
         $dateTimeStart->addValidator($this->createDateTimeValidator(), true);
 
-        $dateTimeEnd = new DateTime(
+        $dateTimeEnd = new DateTimePicker(
             array(
                 'name'  => 'endtime',
                 'label' => t('End time'),
@@ -188,7 +188,7 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
         );
         $this->enableAutoSubmit(array('type'));
 
-        
+
         if ($this->getRequest()->getPost('type') === self::TYPE_FLEXIBLE) {
             $hoursText = new Zend_Form_Element_Text('hours');
             $hoursText->setLabel(t('Flexible duration'));

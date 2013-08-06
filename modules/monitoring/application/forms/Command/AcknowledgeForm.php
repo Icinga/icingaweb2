@@ -28,7 +28,7 @@
 
 namespace Monitoring\Form\Command;
 
-use Icinga\Web\Form\Element\DateTime;
+use Icinga\Web\Form\Element\DateTimePicker;
 use \DateTime as PhpDateTime;
 use \DateInterval;
 use Icinga\Web\Form\Element\Note;
@@ -94,14 +94,14 @@ class AcknowledgeForm extends CommandForm
             $interval = new DateInterval('PT1H'); // Add 3600 seconds
             $now->add($interval);
 
-            $expireTime = new DateTime(
+            $expireTime = new DateTimePicker(
                 array(
                     'name'  => 'expiretime',
                     'label' => t('Expire time'),
                     'value' => $now->format($this->getDateFormat())
                 )
             );
-            
+
             $this->addElements(array($expireNote, $expireCheck, $expireTime));
         } else {
             $this->addElements(array($expireNote, $expireCheck));

@@ -33,7 +33,7 @@ use Zend_Form_Element_Xhtml;
 /**
  * Datetime form element
  */
-class DateTime extends Zend_Form_Element_Xhtml
+class DateTimePicker extends Zend_Form_Element_Xhtml
 {
     /**
      * Default form view helper to use for rendering
