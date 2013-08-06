@@ -684,42 +684,6 @@ class CommandPipe
     }
 
     /**
-     * Start obsessing over provided services/hosts
-     *
-     * @param array $objects    An array of hosts and/or services
-     */
-    public function startObsessing($objects)
-    {
-        foreach ($objects as $object) {
-            $type = $this->getObjectType($object);
-            $msg = "START_OBSESSING_OVER_". (($type == self::TYPE_SERVICE) ? 'SVC' : 'HOST');
-            $msg .= ';'.$object->host_name;
-            if ($type == self::TYPE_SERVICE) {
-                $msg .= ';'.$object->service_description;
-            }
-            $this->send($msg);
-        }
-    }
-
-    /**
-     * Stop obsessing over provided services/hosts
-     *
-     * @param array $objects    An array of hosts and/or services
-     */
-    public function stopObsessing($objects)
-    {
-        foreach ($objects as $object) {
-            $type = $this->getObjectType($object);
-            $msg = "STOP_OBSESSING_OVER_". (($type == self::TYPE_SERVICE) ? 'SVC' : 'HOST');
-            $msg .= ';'.$object->host_name;
-            if ($type == self::TYPE_SERVICE) {
-                $msg .= ';'.$object->service_description;
-            }
-            $this->send($msg);
-        }
-    }
-
-    /**
      * Send a custom host or service notification
      *
      * @param $objects              monitoring objects to send this notification to
