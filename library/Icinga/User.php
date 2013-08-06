@@ -316,4 +316,20 @@ class User
         }
         return null;
     }
+
+    /**
+     * Retrieve the user's timezone
+     *
+     * If the user did not set a timezone, the default timezone set via config.ini will be returned
+     *
+     * @return string
+     */
+    public function getTimezone()
+    {
+        $tz = $this->preferences->get('timezone');
+        if ($tz === null) {
+            $tz = date_default_timezone_get();
+        }
+        return $tz;
+    }
 }
