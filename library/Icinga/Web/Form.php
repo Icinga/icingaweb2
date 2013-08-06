@@ -294,9 +294,14 @@ abstract class Form extends Zend_Form
         }
 
         if ($submitted) {
+            // perform full validation if submitted
             $this->preValidation($checkData);
+            return $this->isValid($checkData);
+        } else {
+            // only populate if not submitted
+            $this->populate($checkData);
+            return false;
         }
-        return parent::isValid($checkData) && $submitted;
     }
 
     /**
@@ -361,19 +366,15 @@ abstract class Form extends Zend_Form
         if ($this->getElement($this->tokenElementName) === null) {
             return false;
         }
-
         if (strpos($elementValue, '|') === false) {
             return false;
         }
-
 
         list($seed, $token) = explode('|', $elementValue);
 
         if (!is_numeric($seed)) {
             return false;
         }
-
-        $seed -= intval(time() / $this->tokenTimeout) * $this->tokenTimeout;
 
         return $token === hash('sha256', $this->getSessionId() . $seed);
     }
@@ -386,7 +387,6 @@ abstract class Form extends Zend_Form
     {
         $seed = mt_rand();
         $hash = hash('sha256', $this->getSessionId() . $seed);
-        $seed += intval(time() / $this->tokenTimeout) * $this->tokenTimeout;
 
         return array($seed, $hash);
     }

@@ -24,11 +24,22 @@ In here you can add elements to your form, add validations and filters of your
 choice. The creation method is invoked lazy just before a form is rendered or
 *isValid()* is called.
 
+In order to let icingaweb create a submit button for you (which is required for using the *isSubmittedAndValid*
+method) you have to call the *setSubmitLabel($label)* method, which will add a
+Zend_Form_Element_Submit element to your form.
+
 #### Calling is *isSubmittedAndValid()*
 
 *isSubmittedAndValid()* is used to check whether the form is ready to be processed or not.
 It ensures that the current request method is POST, that the form was manually submitted
-and that the data provided in the request is valid and gets repopulated in case its invalid.
+and that the data provided in the request is valid and gets repopulated in case its invalid. This only works when
+the sumbit button has been added with the *setSubmitLabel($label)* function, otherwise a form is always considered to be
+submitted when a POST request is received.
+
+If the form has been updated, but not submitted (for example, because the a button has been pressed that adds or removes
+some fields in the form) the form is repopulated but not validated at this time. is SubmittedAndValid() returns false
+in this case, but no errors are added to the created form.
+
 
 #### Pre validation
 

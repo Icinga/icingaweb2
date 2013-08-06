@@ -39,7 +39,8 @@ class DelayNotificationFormFormTest extends BaseFormTest
     public function testInvalidMinuteValue()
     {
         $form = $this->getRequestForm(array(
-            'minutes' => 'SCHAHH-LAHH-LAHH'
+            'minutes' => 'SCHAHH-LAHH-LAHH',
+            'btn_submit' => 'foo'
         ), 'Monitoring\Form\Command\DelayNotificationForm');
 
         $form->buildForm();
@@ -50,6 +51,7 @@ class DelayNotificationFormFormTest extends BaseFormTest
         );
 
         $errors = $form->getErrors('minutes');
+        $this->assertCount(1, $errors, "Asserting an error to be added when the minutes value is invalid");
         $this->assertEquals('notBetween', $errors[0], "Assert correct error message");
     }
 }
