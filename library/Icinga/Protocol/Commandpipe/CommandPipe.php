@@ -30,141 +30,121 @@ namespace Icinga\Protocol\Commandpipe;
 
 use Icinga\Application\Logger as IcingaLogger;
 
+use Icinga\Protocol\Commandpipe\Transport\Transport;
+use Icinga\Protocol\Commandpipe\Transport\LocalPipe;
+use Icinga\Protocol\Commandpipe\Transport\SecureShell;
+
 /**
- * Class CommandPipe
- * @package Icinga\Protocol\Commandpipe
+ * Class to the access icinga CommandPipe via a @see Icinga\Protocol\Commandpipe\Transport.php
+ *
+ * Will be configured using the instances.ini
  */
 class CommandPipe
 {
     /**
-     * @var mixed
-     */
-    private $path;
-
-    /**
-     * @var mixed
-     */
-    private $name;
-
-    /**
-     * @var bool|mixed
-     */
-    private $user = false;
-
-    /**
-     * @var bool|mixed
-     */
-    private $host = false;
-
-    /**
-     * @var int|mixed
-     */
-    private $port = 22;
-
-    /**
+     * The name of this class as defined in the instances.ini
+     *
      * @var string
      */
-    public $fopen_mode = "w";
+    private $name = "";
 
     /**
+     * The underlying @see Icinga\Protocol\Commandpipe\Transport.php class handling communication with icinga
      *
+     * @var Icinga\Protocol\Commandpipe\Transport
+     */
+    private $transport = null;
+
+    /**
+     *  Constant identifying a monitoring object as host
      */
     const TYPE_HOST = "HOST";
 
     /**
-     *
+     *  Constant identifying a monitoring object as service
      */
     const TYPE_SERVICE = "SVC";
 
     /**
-     *
+     *  Constant identifying a monitoring object as hostgroup
      */
     const TYPE_HOSTGROUP = "HOSTGROUP";
 
     /**
-     *
+     *  Constant identifying a monitoring object as servicegroups
      */
     const TYPE_SERVICEGROUP = "SERVICEGROUP";
 
     /**
+     *  Notification option (use logical OR for combination)
+     *
+     *  Broadcast (send notification to all normal and all escalated contacts for the service)
+     */
+    const NOTIFY_BROADCAST  = 1;
+
+    /**
+     *  Notification option (use logical OR for combination)
+     *
+     *  notification is sent out regardless of current time, whether or not notifications are enabled, etc.
+     */
+    const NOTIFY_FORCED     = 2;
+
+    /**
+     *  Notification option (use logical OR for combination)
+     *
+     *  Increment current notification # for the service(this is not done by default for custom notifications)
+     */
+    const NOTIFY_INCREMENT  = 4;
+
+    /**
+     * Create a new CommandPipe class which accesses the icinga.cmd pipe as defined in $config
+     *
      * @param \Zend_Config $config
      */
     public function __construct(\Zend_Config $config)
     {
-        $this->path = $config->path;
+        $this->getTransportForConfiguration($config);
         $this->name = $config->name;
+    }
+
+    /**
+     * Setup the @see Icinga\Protocol\Commandpipe\Transport.php class that will be used for accessing the command pipe
+     *
+     * Currently this method uses SecureShell when a host is given, otherwise it assumes the pipe is accessible
+     * via the machines filesystem
+     *
+     * @param \Zend_Config $config          The configuration as defined in the instances.ini
+     */
+    private function getTransportForConfiguration(\Zend_Config $config)
+    {
         if (isset($config->host)) {
-            $this->host = $config->host;
-        }
-        if (isset($config->port)) {
-            $this->port = $config->port;
-        }
-        if (isset($config->user)) {
-            $this->user = $config->user;
+            $this->transport = new SecureShell();
+            $this->transport->setEndpoint($config);
+        } else {
+            $this->transport = new LocalPipe();
+            $this->transport->setEndpoint($config);
         }
     }
 
     /**
-     * @param $command
-     * @throws \RuntimeException
+     * Send the command string $command to the icinga pipe
+     *
+     * This method just delegates the send command to the underlying transport
+     *
+     * @param String $command       The command string to send, without the timestamp
      */
     public function send($command)
     {
-        if (!$this->host) {
-            IcingaLogger::debug(
-                "Attempting to send external icinga command $command to local command file {$this->path}"
-            );
-            $file = @fopen($this->path, $this->fopen_mode);
-            if (!$file) {
-                throw new \RuntimeException("Could not open icinga pipe at $file : " . print_r(error_get_last(), true));
-            }
-            fwrite($file, "[" . time() . "] " . $command . PHP_EOL);
-            IcingaLogger::debug('Writing [' . time() . '] ' . $command . PHP_EOL);
-            fclose($file);
-        } else {
-            // send over ssh
-            $retCode = 0;
-            $output = array();
-            IcingaLogger::debug(
-                'Icinga instance is on different host, attempting to send command %s via ssh to %s:%s/%s',
-                $command,
-                $this->host,
-                $this->port,
-                $this->path
-            );
-            $hostConnector = $this->user ? $this->user . "@" . $this->host : $this->host;
-            exec(
-                "ssh $hostConnector -p{$this->port} \"echo '[" . time() . "] "
-                . escapeshellcmd(
-                    $command
-                )
-                . "' > {$this->path}\"",
-                $output,
-                $retCode
-            );
-            IcingaLogger::debug(
-                "$:ssh $hostConnector -p{$this->port} \"echo '[" . time() . "] " . escapeshellcmd(
-                    $command
-                ) . "' > {$this->path}\""
-            );
-            IcingaLogger::debug("Code code %s: %s ", $retCode, $output);
-
-            if ($retCode != 0) {
-                throw new \RuntimeException(
-                    'Could not send command to remote icinga host: '
-                    . implode(
-                        "\n",
-                        $output
-                    )
-                    . " (returncode $retCode)"
-                );
-            }
-        }
+        $this->transport->send($command);
     }
 
     /**
-     * @param $objects
-     * @param IComment $acknowledgementOrComment
+     * Acknowledge a set of monitoring objects
+     *
+     * $objects can be a mixed array of host and service objects
+     *
+     * @param array $objects                        An array of host and service objects
+     * @param IComment $acknowledgementOrComment    An acknowledgement or comment object to use as the comment
      */
     public function acknowledge($objects, IComment $acknowledgementOrComment)
     {
@@ -184,7 +164,9 @@ class CommandPipe
     }
 
     /**
-     * @param $objects
+     * Remove the acknowledgements of the provided objects
+     *
+     * @param array $objects        An array of mixed service and host objects whose acknowledgments will be removed
      */
     public function removeAcknowledge($objects)
     {
@@ -198,15 +180,23 @@ class CommandPipe
     }
 
     /**
-     * @param $objects
-     * @param $state
-     * @param $output
+     * Submit passive check result for all provided objects
+     *
+     * @param array $objects        An array of hosts and services to submit the passive check result to
+     * @param int $state            The state to set for the monitoring objects
+     * @param string $output        The output string to set as the check result
+     * @param string $perfdata      The optional perfdata to submit as the check result
      */
-    public function submitCheckResult($objects, $state, $output)
+    public function submitCheckResult($objects, $state, $output, $perfdata = "")
     {
+        if ($perfdata) {
+            $output = $output."|".$perfdata;
+        }
         foreach ($objects as $object) {
             if (isset($object->service_description)) {
-                $this->send("PROCESS_SVC_CHECK_RESULT;$object->host_name;$object->service_description;$state;$output");
+                $this->send(
+                    "PROCESS_SERVICE_CHECK_RESULT;$object->host_name;$object->service_description;$state;$output"
+                );
             } else {
                 $this->send("PROCESS_HOST_CHECK_RESULT;$object->host_name;$state;$output");
             }
@@ -214,9 +204,11 @@ class CommandPipe
     }
 
     /**
-     * @param $objects
-     * @param bool $time
-     * @param bool $withChilds
+     * Reschedule a forced check for all provided objects
+     *
+     * @param array $objects            An array of hosts and services to reschedule
+     * @param int|bool $time            The time to submit, if empty time() will be used
+     * @param bool $withChilds          Whether only childs should be rescheduled
      */
     public function scheduleForcedCheck($objects, $time = false, $withChilds = false)
     {
@@ -234,9 +226,11 @@ class CommandPipe
     }
 
     /**
-     * @param $objects
-     * @param bool $time
-     * @param bool $withChilds
+     * Reschedule a check for all provided objects
+     *
+     * @param array $objects            An array of hosts and services to reschedule
+     * @param int|bool $time            The time to submit, if empty time() will be used
+     * @param bool $withChilds          Whether only childs should be rescheduled
      */
     public function scheduleCheck($objects, $time = false, $withChilds = false)
     {
@@ -254,8 +248,10 @@ class CommandPipe
     }
 
     /**
-     * @param array $objects
-     * @param Comment $comment
+     * Add a comment to all submitted objects
+     *
+     * @param array $objects        An array of hosts and services to add a comment for
+     * @param Comment $comment      The comment object to add
      */
     public function addComment(array $objects, Comment $comment)
     {
@@ -272,7 +268,10 @@ class CommandPipe
     }
 
     /**
-     * @param $objectsOrComments
+     * Removes the submitted comments
+     *
+     * @param array $objectsOrComments      An array of hosts and services (to remove all their comments)
+     *                                      or single comment objects to remove
      */
     public function removeComment($objectsOrComments)
     {
@@ -300,6 +299,7 @@ class CommandPipe
     }
 
     /**
+     *  Globally enable notifications for this instance
      *
      */
     public function enableGlobalNotifications()
@@ -308,6 +308,7 @@ class CommandPipe
     }
 
     /**
+     *  Globally disable notifications for this instance
      *
      */
     public function disableGlobalNotifications()
@@ -316,8 +317,10 @@ class CommandPipe
     }
 
     /**
-     * @param $object
-     * @return string
+     * Return the object type of the provided object (TYPE_SERVICE or TYPE_HOST)
+     *
+     * @param $object           The object to identify
+     * @return string           TYPE_SERVICE or TYPE_HOST
      */
     private function getObjectType($object)
     {
@@ -329,8 +332,10 @@ class CommandPipe
     }
 
     /**
-     * @param $objects
-     * @param Downtime $downtime
+     * Schedule a downtime for all provided objects
+     *
+     * @param array $objects        An array of monitoring objects to schedule the downtime for
+     * @param Downtime $downtime    The downtime object to schedule
      */
     public function scheduleDowntime($objects, Downtime $downtime)
     {
@@ -347,8 +352,10 @@ class CommandPipe
     }
 
     /**
-     * @param $objects
-     * @param int $starttime
+     * Remove downtimes for objects
+     *
+     * @param array $objects        An array containing hosts, service or downtime objects
+     * @param int $starttime        An optional starttime to use for the DEL_DOWNTIME_BY_HOST_NAME command
      */
     public function removeDowntime($objects, $starttime = 0)
     {
@@ -370,6 +377,7 @@ class CommandPipe
     }
 
     /**
+     *  Restart the icinga instance
      *
      */
     public function restartIcinga()
@@ -378,8 +386,10 @@ class CommandPipe
     }
 
     /**
-     * @param $objects
-     * @param PropertyModifier $flags
+     * Modify monitoring flags for the provided objects
+     *
+     * @param array $objects            An arry of service and/or host objects to modify
+     * @param PropertyModifier $flags   The Monitoring attributes to modify
      */
     public function setMonitoringProperties($objects, PropertyModifier $flags)
     {
@@ -396,7 +406,9 @@ class CommandPipe
     }
 
     /**
-     * @param $objects
+     * Enable active checks for all provided objects
+     *
+     * @param array $objects        An array containing services and hosts to enable active checks for
      */
     public function enableActiveChecks($objects)
     {
@@ -411,11 +423,13 @@ class CommandPipe
     }
 
     /**
-     * @param $objects
+     * Disable active checks for all provided objects
+     *
+     * @param array $objects        An array containing services and hosts to disable active checks
      */
     public function disableActiveChecks($objects)
     {
-        $this->modifyMonitoringProperties(
+        $this->setMonitoringProperties(
             $objects,
             new PropertyModifier(
                 array(
@@ -426,7 +440,9 @@ class CommandPipe
     }
 
     /**
-     * @param $objects
+     * Enable passive checks for all provided objects
+     *
+     * @param array $objects        An array containing services and hosts to enable passive checks for
      */
     public function enablePassiveChecks($objects)
     {
@@ -441,11 +457,13 @@ class CommandPipe
     }
 
     /**
-     * @param $objects
+     * Enable passive checks for all provided objects
+     *
+     * @param array $objects        An array containing services and hosts to enable passive checks for
      */
     public function disablePassiveChecks($objects)
     {
-        $this->modifyMonitoringProperties(
+        $this->setMonitoringProperties(
             $objects,
             new PropertyModifier(
                 array(
@@ -456,7 +474,10 @@ class CommandPipe
     }
 
     /**
-     * @param $objects
+     * Enable flap detection for all provided objects
+     *
+     * @param array $objects        An array containing services and hosts to enable flap detection
+     *
      */
     public function enableFlappingDetection($objects)
     {
@@ -471,7 +492,10 @@ class CommandPipe
     }
 
     /**
-     * @param $objects
+     * Disable flap detection for all provided objects
+     *
+     * @param array $objects        An array containing services and hosts to disable flap detection
+     *
      */
     public function disableFlappingDetection($objects)
     {
@@ -486,7 +510,10 @@ class CommandPipe
     }
 
     /**
-     * @param $objects
+     * Enable notifications for all provided objects
+     *
+     * @param array $objects        An array containing services and hosts to enable notification
+     *
      */
     public function enableNotifications($objects)
     {
@@ -501,7 +528,10 @@ class CommandPipe
     }
 
     /**
-     * @param $objects
+     * Disable flap detection for all provided objects
+     *
+     * @param array $objects        An array containing services and hosts to disable notifications
+     *
      */
     public function disableNotifications($objects)
     {
@@ -516,7 +546,9 @@ class CommandPipe
     }
 
     /**
-     * @param $objects
+     * Enable freshness checks for all provided objects
+     *
+     * @param array $objects    An array of hosts and/or services
      */
     public function enableFreshnessChecks($objects)
     {
@@ -531,7 +563,9 @@ class CommandPipe
     }
 
     /**
-     * @param $objects
+     * Disable freshness checks for all provided objects
+     *
+     * @param array $objects    An array of hosts and/or services
      */
     public function disableFreshnessChecks($objects)
     {
@@ -546,7 +580,9 @@ class CommandPipe
     }
 
     /**
-     * @param $objects
+     * Enable event handler for all provided objects
+     *
+     * @param array $objects    An array of hosts and/or services
      */
     public function enableEventHandler($objects)
     {
@@ -561,7 +597,9 @@ class CommandPipe
     }
 
     /**
-     * @param $objects
+     * Disable event handler for all provided objects
+     *
+     * @param array $objects    An array of hosts and/or services
      */
     public function disableEventHandler($objects)
     {
@@ -576,7 +614,9 @@ class CommandPipe
     }
 
     /**
-     * @param $objects
+     * Enable performance data parsing for all provided objects
+     *
+     * @param array $objects    An array of hosts and/or services
      */
     public function enablePerfdata($objects)
     {
@@ -590,6 +630,11 @@ class CommandPipe
         );
     }
 
+    /**
+     * Disable performance data parsing for all provided objects
+     *
+     * @param array $objects    An array of hosts and/or services
+     */
     public function disablePerfdata($objects)
     {
         $this->setMonitoringProperties(
@@ -600,5 +645,203 @@ class CommandPipe
                 )
             )
         );
+    }
+
+    /**
+     * Start obsessing over provided services/hosts
+     *
+     * @param array $objects    An array of hosts and/or services
+     */
+    public function startObsessing($objects)
+    {
+        foreach ($objects as $object) {
+            $type = $this->getObjectType($object);
+            $msg = "START_OBSESSING_OVER_". (($type == self::TYPE_SERVICE) ? 'SVC' : 'HOST');
+            $msg .= ';'.$object->host_name;
+            if ($type == self::TYPE_SERVICE) {
+                $msg .= ';'.$object->service_description;
+            }
+            $this->send($msg);
+        }
+    }
+
+    /**
+     * Stop obsessing over provided services/hosts
+     *
+     * @param array $objects    An array of hosts and/or services
+     */
+    public function stopObsessing($objects)
+    {
+        foreach ($objects as $object) {
+            $type = $this->getObjectType($object);
+            $msg = "STOP_OBSESSING_OVER_". (($type == self::TYPE_SERVICE) ? 'SVC' : 'HOST');
+            $msg .= ';'.$object->host_name;
+            if ($type == self::TYPE_SERVICE) {
+                $msg .= ';'.$object->service_description;
+            }
+            $this->send($msg);
+        }
+    }
+
+    /**
+     * Start obsessing over provided services/hosts
+     *
+     * @param array $objects    An array of hosts and/or services
+     */
+    public function startObsessing($objects)
+    {
+        foreach ($objects as $object) {
+            $type = $this->getObjectType($object);
+            $msg = "START_OBSESSING_OVER_". (($type == self::TYPE_SERVICE) ? 'SVC' : 'HOST');
+            $msg .= ';'.$object->host_name;
+            if ($type == self::TYPE_SERVICE) {
+                $msg .= ';'.$object->service_description;
+            }
+            $this->send($msg);
+        }
+    }
+
+    /**
+     * Stop obsessing over provided services/hosts
+     *
+     * @param array $objects    An array of hosts and/or services
+     */
+    public function stopObsessing($objects)
+    {
+        foreach ($objects as $object) {
+            $type = $this->getObjectType($object);
+            $msg = "STOP_OBSESSING_OVER_". (($type == self::TYPE_SERVICE) ? 'SVC' : 'HOST');
+            $msg .= ';'.$object->host_name;
+            if ($type == self::TYPE_SERVICE) {
+                $msg .= ';'.$object->service_description;
+            }
+            $this->send($msg);
+        }
+    }
+
+    /**
+     * Send a custom host or service notification
+     *
+     * @param $objects              monitoring objects to send this notification to
+     * @param Comment $comment      comment to use in the notification
+     * @param int [$...]            Optional list of Notification flags which will be used as the option parameter
+     */
+    public function sendCustomNotification($objects, Comment $comment, $optionsVarList = 0/*, ...*/)
+    {
+        $args = func_get_args();
+        // logical OR for all notification options
+        for ($i = 3; $i < count($args); $i++) {
+            $optionsVarList |= $args[$i];
+        }
+
+        foreach ($objects as $object) {
+            $type = $this->getObjectType($object);
+            $msg = 'SEND_CUSTOM_'.(($type == self::TYPE_SERVICE) ? 'SVC' : 'HOST' ).'_NOTIFICATION';
+            $msg .= ';'.$object->host_name;
+            if ($type == self::TYPE_SERVICE) {
+                $msg .= ';'.$object->service_description;
+            }
+            $msg .= ';'.$optionsVarList;
+            $msg .= ';'.$comment->author;
+            $msg .= ';'.$comment->comment;
+            $this->send($msg);
+        }
+    }
+
+    /**
+     * Disable notifications for all services of the provided hosts
+     *
+     * @param array $objects    An array of hosts
+     */
+    public function disableNotificationsForServices($objects)
+    {
+        foreach ($objects as $host) {
+            $msg = 'DISABLE_HOST_SVC_NOTIFICATIONS;'.$host->host_name;
+            $this->send($msg);
+        }
+    }
+
+    /**
+     * Enable notifications for all services of the provided hosts
+     *
+     * @param array $objects    An array of hosts
+     */
+    public function enableNotificationsForServices($objects)
+    {
+        foreach ($objects as $host) {
+            $msg = 'ENABLE_HOST_SVC_NOTIFICATIONS;'.$host->host_name;
+            $this->send($msg);
+        }
+    }
+
+    /**
+     * Disable active checks for all services of the provided hosts
+     *
+     * @param array $objects    An array of hosts
+     */
+    public function disableActiveChecksWithChildren($objects)
+    {
+        foreach ($objects as $host) {
+            $msg = 'DISABLE_HOST_SVC_CHECKS;'.$host->host_name;
+            $this->send($msg);
+        }
+    }
+
+    /**
+     * Enable active checks for all services of the provided hosts
+     *
+     * @param array $objects    An array of hosts
+     */
+    public function enableActiveChecksWithChildren($objects)
+    {
+        foreach ($objects as $host) {
+            $msg = 'ENABLE_HOST_SVC_CHECKS;'.$host->host_name;
+            $this->send($msg);
+        }
+    }
+
+    /**
+     * Reset modified attributes for all provided objects
+     *
+     * @param array $objects    An array of hosts and services
+     */
+    public function resetAttributes($objects)
+    {
+        foreach ($objects as $object) {
+            $type = $this->getObjectType($object);
+            if ($type === self::TYPE_SERVICE) {
+                $this->send('CHANGE_SVC_MODATTR;'.$object->host_name.';'.$object->service_description.';0');
+            } else {
+                $this->send('CHANGE_HOST_MODATTR;'.$object->host_name.';0');
+            }
+        }
+    }
+
+    /**
+     * Delay notifications for all provided hosts and services for $time seconds
+     *
+     * @param array $objects    An array of hosts and services
+     * @param int   $time       The number of seconds to delay notifications for
+     */
+    public function delayNotification($objects, $time)
+    {
+        foreach ($objects as $object) {
+            $type = $this->getObjectType($object);
+            if ($type ===  self::TYPE_SERVICE) {
+                $this->send('DELAY_SVC_NOTIFICATION;'.$object->host_name.';'.$object->service_description.';'.$time);
+            } else {
+                $this->send('DELAY_HOST_NOTIFICATION;'.$object->host_name.';'.$time);
+            }
+        }
+    }
+
+    /**
+     * Return the transport handler that handles actual sending of commands
+     *
+     * @return Transport
+     */
+    public function getTransport()
+    {
+        return $this->transport;
     }
 }

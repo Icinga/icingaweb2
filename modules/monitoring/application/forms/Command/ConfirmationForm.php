@@ -68,12 +68,14 @@ class ConfirmationForm extends Form
 
     /**
      * Array of messages
+     * 
      * @var string[]
      */
     private $notes = array();
 
     /**
      * Setter for cancel label
+     *
      * @param string $cancelLabel
      */
     public function setCancelLabel($cancelLabel)
@@ -83,6 +85,7 @@ class ConfirmationForm extends Form
 
     /**
      * Getter for cancel label
+     *
      * @return string
      */
     public function getCancelLabel()
@@ -92,6 +95,7 @@ class ConfirmationForm extends Form
 
     /**
      * Setter for submit label
+     *
      * @param string $submitLabel
      */
     public function setSubmitLabel($submitLabel)
@@ -101,6 +105,7 @@ class ConfirmationForm extends Form
 
     /**
      * Getter for submit label
+     *
      * @return string
      */
     public function getSubmitLabel()
@@ -110,6 +115,7 @@ class ConfirmationForm extends Form
 
     /**
      * Add message to stack
+     *
      * @param string $message
      */
     public function addNote($message)
@@ -119,6 +125,7 @@ class ConfirmationForm extends Form
 
     /**
      * Purge messages from stack
+     *
      */
     public function clearNotes()
     {
@@ -127,6 +134,7 @@ class ConfirmationForm extends Form
 
     /**
      * Getter for notes
+     *
      * @return string[]
      */
     public function getNotes()
@@ -148,6 +156,7 @@ class ConfirmationForm extends Form
 
     /**
      * Add elements to this form (used by extending classes)
+     *
      * @see Form::create
      */
     protected function create()
@@ -191,15 +200,19 @@ class ConfirmationForm extends Form
 
     /**
      * Get the author name
-     * TODO(mh): This should work on the request, at present it's fix
+
      */
     protected function getAuthorName()
     {
-        return 'Iwan IV. Wassiljewitsch, der Schreckliche';
+        if (is_a($this->getRequest(), "Zend_Controller_Request_HttpTestCase")) {
+            return "Test user";
+        }
+        return $this->getRequest()->getUser()->getUsername();
     }
 
     /**
      * Creator for author field
+     *
      * @return Zend_Form_Element_Hidden
      */
     protected function createAuthorField()

@@ -32,33 +32,42 @@ use \Icinga\Protocol\Commandpipe\Exception\InvalidCommandException;
 use \Icinga\Protocol\Commandpipe\Comment;
 
 /**
- * Class Acknowledgement
- * @package Icinga\Protocol\Commandpipe
+ * Container for a host/service Acknowledgement
  */
 class Acknowledgement implements IComment
 {
     /**
+     * The expire time of this acknowledgement or -1 if no expire time is used
+     *
      * @var int
      */
-    public $expireTime = -1;
+    private $expireTime = -1;
 
     /**
+     * Whether to set the notify flag of the acknowledgment
+     *
      * @var bool
      */
-    public $notify = false;
+    private $notify = false;
 
     /**
-     * @var Comment|null
+     * The comment text of this acknowledgment
+     *
+     * @var Comment
      */
-    public $comment = null;
+    private $comment;
 
     /**
+     * true if this is a sticky acknowledgment
+     *
      * @var bool
      */
     public $sticky;
 
     /**
-     * @param int $time
+     * Set the expire time of this acknowledgment to $time
+     *
+     * @param int $time     The new expire time as a UNIX timestamp
      */
     public function setExpireTime($time)
     {
@@ -66,7 +75,9 @@ class Acknowledgement implements IComment
     }
 
     /**
-     * @param boolean $bool
+     * Set the notify flag of this object
+     *
+     * @param boolean $bool     True if notify should be set, otherwise false
      */
     public function setNotify($bool)
     {
@@ -74,10 +85,12 @@ class Acknowledgement implements IComment
     }
 
     /**
-     * @param Comment $comment
-     * @param bool $notify
-     * @param $expire
-     * @param bool $sticky
+     * Create a new acknowledgment container
+     *
+     * @param Comment $comment      The comment to use for the acknowledgement
+     * @param bool $notify          Whether to set the notify flag
+     * @param int  $expire          The expire time or -1 of not expiring
+     * @param bool $sticky          Whether to set the sticky flag
      */
     public function __construct(Comment $comment, $notify = false, $expire = -1, $sticky = false)
     {
@@ -88,9 +101,11 @@ class Acknowledgement implements IComment
     }
 
     /**
-     * @param $type
-     * @return string
-     * @throws Exception\InvalidCommandException
+     * Return the ACKNOWLEDGE_?_PROBLEM string to be used for submitting an external icinga command
+     *
+     * @param  string $type Either CommandPipe::TYPE_HOST or CommandPipe::TYPE_SERVICE
+     * @return string       The command string to be submitted to the command pipe
+     * @throws InvalidCommandException
      */
     public function getFormatString($type)
     {

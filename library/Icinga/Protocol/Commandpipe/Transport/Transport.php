@@ -26,48 +26,25 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Monitoring\Form\Command;
+namespace Icinga\Protocol\Commandpipe\Transport;
 
-use Icinga\Protocol\Commandpipe\Comment;
 /**
- * Form for adding comment commands
+ * Interface for Transport classes handling the concrete access to the command pipe
+ *
  */
-class CommentForm extends ConfirmationForm
+interface Transport
 {
     /**
-     * Interface method to build the form
-     * @see ConfirmationForm::create
+     * Overwrite the target file of this Transport class using the given config from instances.ini
+     *
+     * @param \Zend_Config $config      A configuration file containing a 'path' setting
      */
-    protected function create()
-    {
-        $this->addElement($this->createAuthorField());
+    public function setEndpoint(\Zend_Config $config);
 
-        $this->addElement(
-            'textarea',
-            'comment',
-            array(
-                'label'    => t('Comment'),
-                'rows'     => 4,
-                'required' => true
-            )
-        );
-
-        $this->addElement(
-            'checkbox',
-            'persistent',
-            array(
-                'label' => t('Persistent'),
-                'value' => false
-            )
-        );
-
-        $this->setSubmitLabel(t('Post comment'));
-
-        parent::create();
-    }
-
-    public function getComment()
-    {
-        return new Comment($this->getAuthorName(), $this->getValue('comment'), $this->getValue('persistent'));
-    }
+    /**
+     * Write the given external command to the command pipe
+     *
+     * @param string $message       The command to send, without the timestamp (this will be added here)
+     */
+    public function send($message);
 }

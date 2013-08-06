@@ -29,8 +29,7 @@
 namespace Icinga\Protocol\Commandpipe\Exception;
 
 /**
- * Class InvalidCommandException
- * @package Icinga\Protocol\Commandpipe\Exception
+ * Exception class for unknown/invalid external commands
  */
 class InvalidCommandException extends \Exception
 {

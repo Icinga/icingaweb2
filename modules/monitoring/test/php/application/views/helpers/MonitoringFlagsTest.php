@@ -13,7 +13,7 @@ class MonitoringFlagsTest extends \PHPUnit_Framework_TestCase
         $testArray = array(
             'host_passive_checks_enabled' => '0',
             'host_active_checks_enabled' => '0',
-            'host_obsess_over_host' => '1',
+            'host_obsessing' => '1',
             'host_notifications_enabled' => '0',
             'host_event_handler_enabled' => '1',
             'host_flap_detection_enabled' => '1',
@@ -41,7 +41,7 @@ class MonitoringFlagsTest extends \PHPUnit_Framework_TestCase
         $testArray = array(
             'service_passive_checks_enabled' => '0',
             'service_active_checks_enabled' => '1',
-            'service_obsess_over_host' => '0',
+            'service_obsessing' => '0',
             'service_notifications_enabled' => '1',
             'service_event_handler_enabled' => '1',
             'service_flap_detection_enabled' => '0',
@@ -68,7 +68,7 @@ class MonitoringFlagsTest extends \PHPUnit_Framework_TestCase
     {
         $testArray = array(
             'service_active_checks_enabled' => '1',
-            'service_obsess_over_host' => '1',
+            'service_obsessing' => '1',
             'DING DING' => '$$$',
             'DONG DONG' => '###'
         );

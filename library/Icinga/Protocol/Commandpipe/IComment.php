@@ -29,8 +29,8 @@
 namespace Icinga\Protocol\Commandpipe;
 
 /**
- * Class IComment
- * @package Icinga\Protocol\Commandpipe
+ * Interface flagging a class as being a comment
+ *
  */
 interface IComment
 {

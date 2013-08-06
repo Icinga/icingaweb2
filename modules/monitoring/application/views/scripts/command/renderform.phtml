@@ -1,4 +1,30 @@
+
+<?php if (isset($this->objects) && !empty($this->objects) && isset($this->objects[0]->host_name)): ?>
+<table class="table table-bordered table-striped table-condensed">
+    <legend>Affected objects</legend>
+    <thead>
+        <tr>
+            <th>Host name</th>
+            <th>Service name</th>
+        </tr>
+    </thead>
+    <tbody>
+<?php foreach ($this->objects as $object): ?>
+        <tr>
+            <td><?= $object->host_name; ?></td>
+            <td><?= (isset($object->service_description) ? $object->service_description : ''); ?></td>
+
+        </tr>
+<?php endforeach; ?>
+    </tbody>
+</table>
+
+<?php endif; ?>
+
+<?php if ($this->form): ?>
 <div style="border: 1px #cc0000 solid; padding: 5px; margin: 10px 0 0 10px; max-width: 600px;">
     <?= $this->form; ?>
     <div class="clearfix"></div>
 </div>
+<?php endif; ?>
+

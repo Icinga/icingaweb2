@@ -32,7 +32,8 @@ use Icinga\Web\Form\Element\DateTime;
 use \DateTime as PhpDateTime;
 use \DateInterval;
 use Icinga\Web\Form\Element\Note;
-
+use Icinga\Protocol\Commandpipe\Acknowledgement;
+use Icinga\Protocol\Commandpipe\Comment;
 /**
  * Form for acknowledge commands
  */
@@ -141,5 +142,25 @@ class AcknowledgeForm extends ConfirmationForm
             $expireTime->setRequired(true);
             $expireTime->addValidator($this->createDateTimeValidator(), true);
         }
+    }
+
+    public function getAcknowledgement()
+    {
+        $expireTime = -1;
+        if ($this->getValue('expire')) {
+            $time = new PhpDateTime($this->getValue('expiretime'));
+            $expireTime = $time->getTimestamp();
+        }
+        return new Acknowledgement(
+            new Comment(
+                $this->getAuthorName(),
+                $this->getValue('comment'),
+                $this->getValue('persistent')
+            ),
+            $this->getValue('notify'),
+            $expireTime,
+            $this->getValue('sticky')
+        );
+
     }
 }
