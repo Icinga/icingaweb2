@@ -94,7 +94,7 @@ class AuthenticationController extends ActionController
         ));
         $this->replaceLayout = true;
         $auth->removeAuthorization();
-        $this->_forward('login');
+        $this->redirect('login');
     }
 }
 

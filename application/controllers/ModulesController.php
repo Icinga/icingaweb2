@@ -2,7 +2,9 @@
 // @codingStandardsIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
- * Icinga 2 Web - Head for multiple monitoring frontends
+ * This file is part of Icinga 2 Web.
+ *
+ * Icinga 2 Web - Head for multiple monitoring backends.
  * Copyright (C) 2013 Icinga Development Team
  *
  * This program is free software; you can redistribute it and/or
@@ -20,25 +22,42 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  * @copyright 2013 Icinga Development Team <info@icinga.org>
- * @author Icinga Development Team <info@icinga.org>
+ * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
+ * @author    Icinga Development Team <info@icinga.org>
  */
 // {{{ICINGA_LICENSE_HEADER}}}
+
 
 # namespace Icinga\Application\Controllers;
 
 use Icinga\Web\ActionController;
 use Icinga\Application\Icinga;
 use Icinga\Web\Hook\Configuration\ConfigurationTabBuilder;
+use Icinga\Application\Modules\Manager as ModuleManager;
+use Zend_Controller_Action as ZfActionController;
 
+/**
+ * Handle module depending frontend actions
+ */
 class ModulesController extends ActionController
 {
+    /**
+     * @var ModuleManager
+     */
     protected $manager;
 
+    /**
+     * Setup this controller
+     * @see ZfActionController::init
+     */
     public function init()
     {
         $this->manager = Icinga::app()->getModuleManager();
     }
 
+    /**
+     * Display a list of all modules
+     */
     public function indexAction()
     {
         $tabBuilder = new ConfigurationTabBuilder(
@@ -55,25 +74,37 @@ class ModulesController extends ActionController
         $this->render('overview');
     }
 
+    /**
+     * Alias for index
+     *
+     * @see self::indexAction
+     */
     public function overviewAction()
     {
         $this->indexAction();
 
     }
 
+    /**
+     * Enable a module
+     */
     public function enableAction()
     {
         $this->manager->enableModule($this->_getParam('name'));
         $this->manager->loadModule($this->_getParam('name'));
         $this->getResponse()->setHeader('X-Icinga-Enable-Module', $this->_getParam('name'));
-        $this->redirectNow('index?_render=body');
+        $this->redirectNow('modules/overview?_render=body');
 
     }
 
+    /**
+     * Disable a module
+     */
     public function disableAction()
     {
         $this->manager->disableModule($this->_getParam('name'));
         $this->redirectNow('modules/overview?_render=body');
     }
-
 }
+
+// @codingStandardsIgnoreEnd
