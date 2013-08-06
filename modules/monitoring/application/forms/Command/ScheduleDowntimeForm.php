@@ -305,7 +305,7 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
         if (! $this->getWithChildren()) {
             switch ($this->getValue('childobjects')) {
                 case 1:
-                    $downtime->setType(Downtime::TYPE_WITH_CHILDREN_TRIGERRED);
+                    $downtime->setType(Downtime::TYPE_WITH_CHILDREN_TRIGGERED);
                     break;
                 case 2:
                     $downtime->setType(Downtime::TYPE_WITH_CHILDREN);

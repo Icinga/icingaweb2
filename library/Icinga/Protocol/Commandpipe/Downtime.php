@@ -42,7 +42,7 @@ class Downtime
     /**
      * Propagate this downtime for all child objects as triggered downtime
      */
-    const TYPE_WITH_CHILDREN_TRIGERRED = 'AND_PROPAGATE_TRIGGERED_';
+    const TYPE_WITH_CHILDREN_TRIGGERED = 'AND_PROPAGATE_TRIGGERED_';
 
     /**
      * Schedule downtime for the services of the given hos
@@ -92,7 +92,9 @@ class Downtime
     public $trigger_id = 0;
 
     /**
-     * Internal information for the exact type of the downtime (with children, with children and triggered, services etc.)
+     * Internal information for the exact type of the downtime
+     *
+     * E.g. with children, with children and triggered, services etc.
      *
      * @var string
      */
@@ -104,8 +106,10 @@ class Downtime
      * @param int $start            A timestamp that defines the downtime's start time
      * @param int $end              A timestamp that defines the downtime's end time
      * @param Comment $comment      A comment that will be used when scheduling the downtime
-     * @param int $duration         The duration of this downtime in seconds. Duration > 0 will make this a flexible downtime
-     * @param int $trigger_id       An id of the downtime that triggers this downtime. 0 means this is not a triggered downtime
+     * @param int $duration         The duration of this downtime in seconds.
+     *                              Duration > 0 will make this a flexible downtime
+     * @param int $trigger_id       An id of the downtime that triggers this downtime.
+     *                              0 means this is not a triggered downtime
      */
     public function __construct($start, $end, Comment $comment, $duration = 0, $trigger_id = 0)
     {

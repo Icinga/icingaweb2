@@ -194,7 +194,9 @@ class CommandPipe
         }
         foreach ($objects as $object) {
             if (isset($object->service_description)) {
-                $this->send("PROCESS_SERVICE_CHECK_RESULT;$object->host_name;$object->service_description;$state;$output");
+                $this->send(
+                    "PROCESS_SERVICE_CHECK_RESULT;$object->host_name;$object->service_description;$state;$output"
+                );
             } else {
                 $this->send("PROCESS_HOST_CHECK_RESULT;$object->host_name;$state;$output");
             }
@@ -799,7 +801,7 @@ class CommandPipe
     }
 
     /**
-     * Rest modified attributes for all provided objects
+     * Reset modified attributes for all provided objects
      *
      * @param array $objects    An array of hosts and services
      */

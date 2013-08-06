@@ -33,7 +33,6 @@ use \Icinga\Protocol\Commandpipe\Comment;
 
 /**
  * Container for a host/service Acknowledgement
- *
  */
 class Acknowledgement implements IComment
 {
@@ -54,9 +53,9 @@ class Acknowledgement implements IComment
     /**
      * The comment text of this acknowledgment
      *
-     * @var Comment|null
+     * @var Comment
      */
-    private $comment = null;
+    private $comment;
 
     /**
      * true if this is a sticky acknowledgment
@@ -90,7 +89,7 @@ class Acknowledgement implements IComment
      *
      * @param Comment $comment      The comment to use for the acknowledgement
      * @param bool $notify          Whether to set the notify flag
-     * @param $expire               The expire time or -1 of not expiring
+     * @param int  $expire          The expire time or -1 of not expiring
      * @param bool $sticky          Whether to set the sticky flag
      */
     public function __construct(Comment $comment, $notify = false, $expire = -1, $sticky = false)
@@ -104,8 +103,9 @@ class Acknowledgement implements IComment
     /**
      * Return the ACKNOWLEDGE_?_PROBLEM string to be used for submitting an external icinga command
      *
-     * @param $type             Either CommandPipe::TYPE_HOST or CommandPipe::  TYPE_SERVICE
-     * @return string           The command string to be submitted to the command pipe
+     * @param  string $type Either CommandPipe::TYPE_HOST or CommandPipe::TYPE_SERVICE
+     * @return string       The command string to be submitted to the command pipe
+     * @throws InvalidCommandException
      */
     public function getFormatString($type)
     {
