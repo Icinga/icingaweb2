@@ -294,13 +294,14 @@ abstract class Form extends Zend_Form
         }
 
         if ($submitted) {
+            // perform full validation if submitted
             $this->preValidation($checkData);
             return $this->isValid($checkData);
         } else {
+            // only populate if not submitted
             $this->populate($checkData);
             return false;
         }
-
     }
 
     /**
