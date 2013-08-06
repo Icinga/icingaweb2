@@ -2,6 +2,7 @@
 
 use Icinga\Web\ModuleActionController;
 use Icinga\Backend;
+use Icinga\Web\Widget\Tabs;
 
 class Monitoring_SummaryController extends ModuleActionController
 {
@@ -18,7 +19,7 @@ class Monitoring_SummaryController extends ModuleActionController
 
     protected function getTabs()
     {
-        $tabs = $this->widget('tabs');
+        $tabs = new Tabs();
         $tabs->add('hostgroup', array(
             'title'     => 'Hostgroups',
             'url'       => 'monitoring/summary/group',

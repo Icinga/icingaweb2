@@ -1,12 +1,10 @@
 <?php
 
-/**
- * Navigation tabs
- */
 namespace Icinga\Web\Widget;
 
 use Icinga\Exception\ProgrammingError;
 use Icinga\Web\Url;
+use Zend_Controller_Action_HelperBroker as ZfActionHelper;
 
 use Countable;
 
@@ -19,30 +17,30 @@ use Countable;
  * @author     Icinga-Web Team <info@icinga.org>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License
  */
-class Tabs extends AbstractWidget implements Countable
+class Tabs implements Countable, Widget
 {
     /**
      * This is where single tabs added to this container will be stored
      *
      * @var array
      */
-    protected $tabs = array();
+    private $tabs = array();
 
     /**
      * The name of the currently activated tab
      *
      * @var string
      */
-    protected $active;
+    private $active;
 
     /**
      * Class name(s) going to be assigned to the &lt;ul&gt; element
      *
      * @var string
      */
-    protected $tab_class = 'nav-tabs';
+    private $tab_class = 'nav-tabs';
 
-    protected $specialActions = false;
+    private $specialActions = false;
 
     /**
      * Activate the tab with the given name
@@ -188,48 +186,46 @@ class Tabs extends AbstractWidget implements Countable
      *
      * @return string
      */
-    public function renderAsHtml()
+    public function render(\Zend_View_Abstract $view)
     {
-        $view = $this->view();
-
         if (empty($this->tabs)) {
             return '';
         }
         $html = '<ul class="nav ' . $this->tab_class . '">' . "\n";
 
         foreach ($this->tabs as $tab) {
-            $html .= $tab;
+            $html .= $tab->render($view);
         }
 
         $special = array();
-        $special[] = $this->view()->qlink(
-            $this->view()->img('img/classic/application-pdf.png') . ' PDF',
+        $special[] = $view->qlink(
+            $view->img('img/classic/application-pdf.png') . ' PDF',
             Url::fromRequest(),
             array('filetype' => 'pdf'),
             array('target' => '_blank', 'quote' => false)
         );
-        $special[] = $this->view()->qlink(
-            $this->view()->img('img/classic/application-csv.png') . ' CSV',
+        $special[] = $view->qlink(
+            $view->img('img/classic/application-csv.png') . ' CSV',
             Url::fromRequest(),
             array('format' => 'csv'),
             array('target' => '_blank', 'quote' => false)
         );
-        $special[] = $this->view()->qlink(
-            $this->view()->img('img/classic/application-json.png') . ' JSON',
+        $special[] = $view->qlink(
+            $view->img('img/classic/application-json.png') . ' JSON',
             Url::fromRequest(),
             array('format' => 'json', 'quote' => false),
             array('target' => '_blank', 'quote' => false)
         );
 
-        $special[] = $this->view()->qlink(
-            $this->view()->img('img/classic/basket.png') . ' URL Basket',
+        $special[] = $view->qlink(
+            $view->img('img/classic/basket.png') . ' URL Basket',
             Url::fromPath('basket/add'),
             array('url' => Url::fromRequest()->getRelativeUrl()),
             array('quote' => false)
         );
 
-        $special[] = $this->view()->qlink(
-            $this->view()->img('img/classic/dashboard.png') . ' Dashboard',
+        $special[] = $view->qlink(
+            $view->img('img/classic/dashboard.png') . ' Dashboard',
             Url::fromPath('dashboard/addurl'),
             array('url' => Url::fromRequest()->getRelativeUrl()),
             array('quote' => false)
@@ -254,6 +250,7 @@ class Tabs extends AbstractWidget implements Countable
         $html .= "</ul>\n";
         return $html;
     }
+
 
     public function count()
     {

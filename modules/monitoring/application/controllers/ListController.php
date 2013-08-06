@@ -5,6 +5,7 @@ use Icinga\Web\Hook;
 use Icinga\File\Csv;
 use Monitoring\Backend;
 use Icinga\Application\Benchmark;
+use Icinga\Web\Widget\Tabs;
 
 class Monitoring_ListController extends ModuleActionController
 {
@@ -213,7 +214,7 @@ class Monitoring_ListController extends ModuleActionController
 
     protected function getTabs()
     {
-        $tabs = $this->widget('tabs');
+        $tabs = new Tabs();
         $tabs->add('services', array(
             'title'     => 'All services',
             'icon'      => 'img/classic/service.png',

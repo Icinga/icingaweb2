@@ -33,8 +33,7 @@
 use Icinga\Web\ActionController;
 use Icinga\Application\Icinga;
 use Icinga\Web\Hook\Configuration\ConfigurationTabBuilder;
-use Icinga\Application\Modules\Manager as ModuleManager;
-use Zend_Controller_Action as ZfActionController;
+use Icinga\Web\Widget\Tabs;
 
 /**
  * Handle module depending frontend actions
@@ -60,9 +59,7 @@ class ModulesController extends ActionController
      */
     public function indexAction()
     {
-        $tabBuilder = new ConfigurationTabBuilder(
-            $this->widget('tabs')
-        );
+        $tabBuilder = new ConfigurationTabBuilder(new Tabs());
 
         $tabBuilder->build();
 

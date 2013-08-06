@@ -1,21 +1,18 @@
 <?php
 
-/**
- * Form
- */
 namespace Icinga\Web\Widget;
 
 use Icinga\Exception\ProgrammingError;
 use Icinga\Application\Icinga;
 
 /**
- * A form loader...
+ * A form loader
  *
  * @copyright  Copyright (c) 2013 Icinga-Web Team <info@icinga.org>
  * @author     Icinga-Web Team <info@icinga.org>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License
  */
-class Form extends AbstractWidget
+class Form
 {
     protected $form;
     protected $properties = array(
@@ -74,7 +71,7 @@ class Form extends AbstractWidget
         $this->form = new $class($this->options);
     }
 
-    public function renderAsHtml()
+    public function render()
     {
         return (string) $this->form;
     }

@@ -13,7 +13,8 @@ if ($this->tabs->getActiveName() === 'history') {
 }
 
 if (!$this->compact) {
-    echo $this->tabs;
+    echo $this->tabs->render($this);
+
 }
 ?>
 <div class="information-container">

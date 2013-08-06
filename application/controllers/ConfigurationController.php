@@ -28,7 +28,7 @@
 use Icinga\Application\Benchmark;
 use Icinga\Authentication\Manager;
 use Icinga\Web\ActionController;
-use Icinga\Web\Hook\Configuration\ConfigurationTab;
+use Icinga\Web\Widget\Tabs;
 use Icinga\Web\Hook\Configuration\ConfigurationTabBuilder;
 
 /**
@@ -48,7 +48,7 @@ class ConfigurationController extends ActionController
     public function indexAction()
     {
         $tabBuilder = new ConfigurationTabBuilder(
-            $this->widget('tabs')
+            new Tabs()
         );
 
         $tabBuilder->build();

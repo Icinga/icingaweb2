@@ -4,13 +4,16 @@ namespace Icinga\Web\Widget;
 
 use Icinga\Application\Icinga;
 use Icinga\Config\Config;
-use Icinga\Web\Widget;
+use Icinga\Web\Widget\Widget;
 use Icinga\Web\Widget\Dashboard\Pane;
 use Icinga\Web\Url;
 use Zend_Config as ZfConfig;
 
-class Dashboard extends AbstractWidget
+class Dashboard implements Widget
 {
+    /**
+     * @var Config
+     */
     protected $config;
     protected $configfile;
     protected $panes = array();
@@ -24,7 +27,7 @@ class Dashboard extends AbstractWidget
     protected function init()
     {
         if ($this->url === null) {
-            $this->url = Url::fromRequest()->without($this->tabParam);
+            $this->url = Url::fromRequest()->getUrlWithout($this->tabParam);
         }
     }
 
@@ -36,7 +39,7 @@ class Dashboard extends AbstractWidget
     public function tabs()
     {
         if ($this->tabs === null) {
-            $this->tabs = Widget::create('tabs');
+            $this->tabs = new Tabs();
             foreach ($this->panes as $key => $pane) {
                 $this->tabs->add($key, array(
                     'title'     => $pane->getTitle(),
@@ -65,8 +68,7 @@ class Dashboard extends AbstractWidget
 
     public function readConfig(ZfConfig $config)
     {
-        $this->configfile = Config::getInstance()->getConfigDir()
-                          . '/dashboard.ini';
+        $this->configfile = Icinga::app('dashboard')->getApplicationDir("dashboard");
         $this->config = $config;
         $this->panes = array();
         $this->loadConfigPanes();
@@ -128,7 +130,7 @@ class Dashboard extends AbstractWidget
         return $this->panes[$name];
     }
     
-    public function renderAsHtml()
+    public function render(\Zend_View_Abstract $view)
     {
         if (empty($this->panes)) {
             return '';
@@ -164,7 +166,7 @@ class Dashboard extends AbstractWidget
     
     protected function loadConfigPanes()
     {
-        $items = $this->config->dashboard->toArray();
+        $items = $this->config->keys();
         $app = Icinga::app();
         foreach ($items as $key => $item) {
             if (false === strstr($key, '.')) {
