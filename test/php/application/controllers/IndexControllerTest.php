@@ -10,7 +10,7 @@ require 'Zend/Controller/Action.php';
 
 require '../../library/Icinga/Exception/ProgrammingError.php';
 require '../../library/Icinga/Application/Benchmark.php';
-require '../../library/Icinga/Application/Config.php';
+require '../../library/Icinga/Config/Config.php';
 require '../../library/Icinga/Application/Icinga.php';
 require '../../library/Icinga/Web/ActionController.php';
 require '../../library/Icinga/Web/Notification.php';

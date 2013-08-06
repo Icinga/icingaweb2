@@ -3,7 +3,7 @@
 namespace Icinga\Web\Widget;
 
 use Icinga\Application\Icinga;
-use Icinga\Application\Config;
+use Icinga\Config\Config;
 use Icinga\Web\Widget;
 use Icinga\Web\Widget\Dashboard\Pane;
 use Icinga\Web\Url;

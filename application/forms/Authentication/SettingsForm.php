@@ -28,7 +28,7 @@ namespace Icinga\Web\Form;
 use Icinga\Web\Form;
 use Icinga\Web\Session;
 use Icinga\Web\Notification;
-use Icinga\Application\Config;
+use Icinga\Config\Config;
 
 /**
  * Class SettingsForm

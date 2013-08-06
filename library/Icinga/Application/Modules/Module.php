@@ -29,7 +29,7 @@
 namespace Icinga\Application\Modules;
 
 use Icinga\Application\ApplicationBootstrap;
-use Icinga\Application\Config;
+use Icinga\Config\Config;
 use Icinga\Application\Icinga;
 use Icinga\Web\Hook;
 use Zend_Controller_Router_Route as Route;

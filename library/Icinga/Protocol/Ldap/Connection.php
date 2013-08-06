@@ -6,7 +6,7 @@
 namespace Icinga\Protocol\Ldap;
 
 use Icinga\Application\Platform;
-use Icinga\Application\Config;
+use Icinga\Config\Config;
 use Icinga\Application\Logger as Log;
 
 /**

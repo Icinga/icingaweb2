@@ -1,13 +1,13 @@
 # Application and Module Configuration
 
-The \Icinga\Application\Config class is a general purpose service to help you find, load and save
+The \Icinga\Config\Config class is a general purpose service to help you find, load and save
 configuration data. It is used both by the Icinga 2 Web modules and the framework itself. With
 INI files as source it enables you to store configuration in a familiar format. Icinga 2 Web
 defines some configuration files for its own purposes. Please note that both modules and framework
 keep their main configuration in the INI file called config.ini. Here's some example code:
 
     <?php
-    use \Icinga\Application\Config as IcingaConfig;
+    use \Icinga\Config\Config as IcingaConfig;
 
     // Retrieve the default timezone using 'Europe/Berlin' in case it is not set
     IcingaConfig::app()->global->get('defaultTimezone', 'Europe/Berlin');

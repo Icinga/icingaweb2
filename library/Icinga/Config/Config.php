@@ -26,7 +26,7 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Application;
+namespace Icinga\Config;
 
 use Zend_Config_Ini;
 

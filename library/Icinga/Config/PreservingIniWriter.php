@@ -1,5 +1,4 @@
 <?php
-
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga 2 Web.
@@ -27,285 +26,547 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
+
 namespace Icinga\Config;
 
+
 /**
- * A ini file adapter that preserves comments in the existing ini file, when writing changes to it
+ * A ini file adapter that respects the file structure and the comments of already
+ * existing ini files
  */
-class PreservingIniWriter extends \Zend_Config_Writer
+class PreservingIniWriter extends \Zend_Config_Writer_FileAbstract
 {
     /**
-     * The file that is written to
+     * Create a new instance of PreservingIniWriter
      *
-     * @var string
+     * @param array $options The options passed to the base class
      */
-    private $filename;
-
-    public function setFilename($filename)
-    {
-        $this->filename = $filename;
-    }
-
     function __construct(array $options)
     {
         parent::__construct($options);
     }
 
     /**
-     * Write the config to the file
-     */
-    public function write()
-    {
-        if (empty($this->filename)) {
-            throw new Exception('No filename for configuration provided');
-        }
-        $oldConfig = parse_ini_file($this->filename);
-        $newConfig = $this->_config;
-        $diff = $this->createPropertyDiff($oldConfig,$newConfig);
-    }
-
-    /**
-     * Create a diff between the properties of two Zend_Config objects
+     * Render the Zend_Config into a config file string
      *
-     * @param \Zend_Config $oldConfig
-     * @param \Zend_Config $newConfig
+     * @return string
      */
-    private function createConfigDiff(\Zend_Config $oldConfig, \Zend_Config $newConfig)
+    public function render()
     {
-        // TODO: Find deleted sections in old
+        $oldconfig = new \Zend_Config_Ini($this->_filename);
+        $newconfig = $this->_config;
+        $editor = new IniEditor(file_get_contents($this->_filename));
+        $this->diffConfigs($oldconfig,$newconfig,$editor);
+        return $editor->getText();
     }
 
-    private function updateIniWithDiff($fileDiff)
+    /**
+     * Create a property diff and apply the changes to the editor
+     *
+     * Compare two Zend_Config that represent the state change of an ini file and use the
+     * IniEditor to write the changes back to the config, while preserving the structure and
+     * the comments of the original file.
+     *
+     * @param Zend_Config $oldconfig The config representing the state before the change
+     * @param Zend_Config $newconfig The config representing the state after the change
+     * @param IniEditor $editor The editor that should be used to edit the old config file
+     * @param array $parents The parent keys that should be respected when editing the config
+     */
+    private function diffConfigs(
+        \Zend_Config $oldconfig,
+        \Zend_Config $newconfig,
+        IniEditor $editor,
+        array $parents = array())
     {
-        $iniReader = new IniKeyPositionReader();
-        $editor = new FileEditor($this->filename);
-        foreach ($fileDiff as $key => $diff) {
-
+        foreach ($newconfig as $key => $value) {
+            $oldvalue = $oldconfig->get($key);
+            $fullKey = array_merge($parents,array($key));
+            if ($value instanceof \Zend_Config) {
+                if (empty($parents)) {
+                    $extends = $newconfig->getExtends();
+                    $extend = array_key_exists($key,$extends) ? $extends[$key] : null;
+                    $editor->setSection($key,$extend);
+                }
+                if (!isset($oldvalue)) {
+                    $this->diffConfigs(new \Zend_Config(array()),$value,$editor,$fullKey);
+                } else {
+                    $this->diffConfigs($oldvalue,$value,$editor,$fullKey);
+                }
+            } else {
+                if (is_numeric($key)){
+                    $editor->setArrayEl($fullKey,$value);
+                } else {
+                    $editor->set($fullKey,$value);
+                }
+            }
+        }
+        foreach ($oldconfig as $key => $value) {
+            $fullKey = array_merge($parents,array($key));
+            $o = $newconfig->get($key);
+            if (!isset($o)) {
+                if ($value instanceof \Zend_Config) {
+                    $this->diffConfigs(
+                        $value,new \Zend_Config(array()),$editor,$fullKey
+                    );
+                    $editor->removeSection($key);
+                } else {
+                    if (is_numeric($key)) {
+                        $editor->delArrayEl($fullKey);
+                    } else {
+                        $editor->reset($fullKey);
+                    }
+                }
+            }
         }
     }
-
-    private function unwrapKeys($parents,$diffs)
-    {
-
-    }
 }
 
-/**
- * Can read information about the position of ini-file keys and values
- * from
- */
-class IniKeyPositionReader
-{
-    public function getKeyStart(array $parents,String $key)
-    {
-        // return line
-    }
-
-    public function getKeyContainerFirstEmpty(String $section)
-    {
-        // return line
-    }
-
-    public function getKeyLine(String $section,String $key)
-    {
-        // return line
-    }
-}
 
 /**
- * Edit a file line by line
- *
- * The functions delete, insert and update can be applied to certain lines
- * of the file and are written to it, once applyChanges is called. Line inserts and deletes
- * are handled automatically and the changes in line numbers don't need to be respected when
- * calling the edit functions.
+ * Edit the sections and keys of an ini in-place
  */
-class FileEditor
+class IniEditor
 {
     /**
-     * @var String
-     */
-    private $filename;
-
-    /**
-     * The symbol that delimits a comment.
+     * The text that is edited
      *
      * @var string
      */
-    private $commentDelimiter = '';
+    private $text;
 
     /**
-     * Set a new comment delimiter
+     * The symbol that is used
+     *
+     * @var string
      */
-    public function setCommentDelimiter(String $delimiter)
+    private $nestSeparator = '.';
+
+    /**
+     * Get the nest separator
+     *
+     * @return string The nest separator
+     */
+    public function getNestSeparator()
     {
-        $this->commentDelimiter = $delimiter;
+        return $this->nestSeparator;
+    }
+
+    /**
+     * Set the nest separator
+     *
+     * @param $separator The nest separator
+     * @return mixed The current instance of IniReader
+     */
+    public function setNestSeparator($separator)
+    {
+        $this->nestSeparator = $separator;
         return $this;
     }
 
     /**
-     * Get the current comment delimiter
+     * Create a new IniEditor
      *
-     * @return string The comment delimiter
+     * @param $content The content of the ini as string
      */
-    public function getCommentDelimiter()
+    public function __construct($content)
     {
-        return $this->commentDelimiter;
+        $this->text = explode("\n",$content);
     }
 
     /**
-     * Create a new FileEditor
+     * Set the value of the given key.
      *
-     * @param $filename The file that should be edited.
+     * Update the key, if it already exists, otherwise create it.
+     *
+     * @param array $key
+     * @param $value
      */
-    public function __constructor($filename)
+    public function set(array $key,$value)
     {
-        $this->filename = $filename;
+        $line = $this->getKeyLine($key);
+        if ($line === -1) {
+            $this->insert($key,$value);
+            return;
+        }
+        $content = $this->formatKeyValuePair(
+            $this->truncateSection($key),$value);
+        $this->updateLine($line,$content);
+    }
+
+    public function delArrayEl(array $key)
+    {
+        $line = $this->getArrayEl($key);
+        if ($line !== -1) {
+            $this->deleteLine($line);
+        }
+    }
+
+    public function setArrayEl(array $key,$value)
+    {
+        $line = $this->getArrayEl($key);
+        if (count($key) > 1) {
+            $ident = $this->truncateSection($key);
+            $section = $key[0];
+        } else {
+            $ident = $key;
+            $section = null;
+        }
+        if ($line !== -1) {
+            if (count($ident) > 1){
+                $this->updateLine($line,$this->formatKeyValuePair($ident,$value));
+            } else {
+                // move into own section
+                $this->deleteLine($line);
+                $this->setSection($section);
+                $this->insert(array_merge(array($section),$ident),$value);
+            }
+        } else {
+            $e = $this->getSectionEnd($section);
+            $this->insertAtLine($e,$this->formatKeyValuePair($ident,$value));
+        }
     }
 
     /**
-     * Delete a line
+     * Get the line of an array element
      *
-     * @param $line The line
+     * @param array $key The key of the property.
+     * @param $value The value
      */
-    public function delete($line)
+    private function getArrayEl(array $key)
     {
+        $line = 0;
+        if (count($key) > 1) {
+            $line = $this->getSectionDeclLine($key[0]) + 1;
+            $validKey = array_slice($key,1,null,true);
+        }
+        $index = array_pop($validKey);
+        $formattedKey = explode('=',$this->formatKeyValuePair($validKey,''));
+        $formattedKey = $formattedKey[0];
 
-    }
-
-    /**
-     * Insert a text into the file
-     *
-     * @param $line The line where the text should be inserted
-     * @param $text The text
-     */
-    public function insert($line,$text)
-    {
-
-    }
-
-    /**
-     * Update the given line and insert $text
-     *
-     * Update the line but ignore text separated by a comment delimiter.
-     *
-     * @param $line The line number
-     * @param $text The text that will be inserted
-     */
-    public function update($line,$text)
-    {
-
-    }
-
-    /**
-     * Write changes to the file
-     */
-    public function applyChanges()
-    {
-
-    }
-}
-
-/**
- * A diff that describes the change of an object property
- */
-class PropertyDiff {
-
-    /**
-     * Create the property diff between two objects
-     *
-     * @param stdClass $oldObject The object representing the state before the change
-     * @param stdClass $newObject The object representing the state after the change
-     *
-     * @return array An associative array mapping all changed properties to a property diff
-     * describing the change
-     */
-    public static function createObjectDiff(stdClass $oldObject,stdClass $newObject)
-    {
-        $diffs = array();
-        /*
-         * Search inserted or updated properties
-         */
-        foreach ($newObject as $key => $value) {
-            $newProperty = $value;
-            $oldProperty = $oldObject->{$key};
-            if (is_array($newProperty)) {
-                if (empty($oldProperty)) {
-                    $diffs[$key] = new PropertyDiff(
-                        PropertyDiff::ACTION_INSERT,
-                        PropertyDiff::createObjectDiff(new \stdClass(),$newObject));
-                } else {
-                    $diffs[$key] = new PropertyDiff(
-                        PropertyDiff::ACTION_NONE,
-                        PropertyDiff::createObjectDiff($oldObject,$newObject)
-                    );
+        for (;$line < count($this->text);$line++) {
+            $l = $this->text[$line];
+            if ($this->isSectionDecl($l)) {
+                return -1;
+            }
+            if (strlen($formattedKey) > 0) {
+                if (preg_match('/^'.$formattedKey.'\[\]/',$l) === 1 ||
+                    preg_match('/^'.$formattedKey.'.'.$index.'/',$l) === 1 ) {
+                    return $line;
                 }
             } else {
-                if (empty($oldProperty)) {
-                    $diffs[$key] =
-                        new PropertyDiff(PropertyDiff::ACTION_INSERT,$newProperty);
-                } elseif (strcasecmp($newProperty,$oldProperty) != 0) {
-                    $diffs[$key] =
-                        new PropertyDiff(PropertyDiff::ACTION_UPDATE,$newProperty);
+                if (preg_match('/^'.$index.'/',$l) === 1 ) {
+                    return $line;
                 }
             }
         }
-        /*
-         * Search deleted properties
-         */
-        foreach ($oldObject as $key => $value) {
-            if (empty($newObject->{$key})) {
-                $oldProperty = $value;
-                if (is_array($oldProperty)){
-                    $diffs[key] = new PropertyDiff(
-                        PropertyDiff::ACTION_DELETE,
-                        PropertyDiff::createObjectDiff($oldObject,new \stdClass())
-                    );
-                } else {
-                    $diffs[$key] =
-                        new PropertyDiff(PropertyDiff::ACTION_DELETE,null);
-                }
-            }
+        return -1;
+    }
+
+    /**
+     * Reset the given key
+     *
+     * Set the key to null, if it already exists. Otherwise do nothing.
+     *
+     * @param array $key
+     */
+    public function reset(array $key)
+    {
+        $line = $this->getKeyLine($key);
+        if ($line === -1) {
+            return;
+        }
+        $this->deleteLine($line);
+    }
+
+    /**
+     * Change the extended section of $section
+     */
+    public function setSection($section,$extend = null)
+    {
+        if (isset($extend)) {
+            $decl = '['.$section.' : '.$extend.']';
+        } else {
+            $decl = '['.$section.']';
+        }
+        $line = $this->getSectionDeclLine($section);
+        if ($line !== -1) {
+            $this->deleteLine($line);
+            $this->insertAtLine($line,$decl);
+        } else {
+            $line = $this->getLastLine();
+            $this->insertAtLine($line,$decl);
+            $this->insertAtLine($line,"");
         }
     }
 
     /**
-     * The available action types
+     * Remove the section declarationa of $section
      */
-    const ACTION_INSERT = 0;
-    const ACTION_UPDATE = 1;
-    const ACTION_DELETE = 2;
-    const ACTION_NONE = 3;
-
-    /**
-     * The action described by this diff
-     *
-     * @var String
-     */
-    public $action;
-
-    /**
-     * The value after the change
-     *
-     * @var StdClass
-     */
-    public $value;
-
-    /**
-     * Create a new PropertyDiff
-     *
-     * @param int $action The action described by this diff
-     * @param string $value The value after the change
-     */
-    public function Diff($action, $value)
+    public function removeSection($section)
     {
-        if (action != ACTION_CREATE &&
-            action != ACTION_UPDATE &&
-            action != ACTION_DELETE) {
-            throw new \Exception('Invalid action code: '.$action);
+        $line = $this->getSectionDeclLine($section);
+        if ($line !== -1) {
+            $this->deleteLine($line);
         }
-        $this->action = $action;
-        $this->value = $value;
+    }
+
+    /**
+     * Insert a key
+     *
+     * Insert the key at the end of the corresponding section.
+     *
+     * @param array $key The key to insert
+     * @param $value The value to insert
+     */
+    private function insert(array $key,$value)
+    {
+        if (count($key) > 1) {
+            // insert into end of section
+            $line = $this->getSectionEnd($key[0]);
+        } else {
+            // insert into section-less space
+            $line = $this->getSectionEnd();
+        }
+        $content = $this->formatKeyValuePair($this->truncateSection($key),$value);
+        $this->insertAtLine($line,$content);
+    }
+
+
+    /**
+     * Return the edited text
+     *
+     * @return string The edited text
+     */
+    public function getText()
+    {
+        // clean up whitespaces
+        $i = count($this->text) - 1;
+        for (;$i >= 0; $i--) {
+            $line = $this->text[$i];
+            if ($this->isSectionDecl($line)) {
+                $i--;
+                $line = $this->text[$i];
+                while ($i >= 0 && preg_match('/^[\s]*$/',$line) === 1) {
+                    $this->deleteLine($i);
+                    $i--;
+                    $line = $this->text[$i];
+                }
+                if ($i !== 0) {
+                    $this->insertAtLine($i + 1,'');
+                }
+            }
+        }
+        return implode("\n",$this->text);
+    }
+
+    /**
+     * Insert the text at line $lineNr
+     *
+     * @param $lineNr The line nr the inserted line should have
+     * @param $toInsert The text that will be inserted
+     */
+    private function insertAtLine($lineNr,$toInsert)
+    {
+        $this->text = IniEditor::insertIntoArray($this->text,$lineNr,$toInsert);
+    }
+
+    /**
+     * Update the line $lineNr
+     *
+     * @param $lineNr
+     * @param $toInsert The lineNr starting at 0
+     */
+    private function updateLine($lineNr,$toInsert)
+    {
+        $this->text[$lineNr] = $toInsert;
+    }
+
+    /**
+     * Delete the line $lineNr
+     *
+     * @param $lineNr The lineNr starting at 0
+     */
+    private function deleteLine($lineNr)
+    {
+        $this->text = $this->removeFromArray($this->text,$lineNr);
+    }
+
+    /**
+     * Format a key-value pair to an INI file-entry
+     *
+     * @param array $key The key
+     * @param $value The value
+     *
+     * @return string The formatted key-value pair
+     */
+    private function formatKeyValuePair(array $key,$value)
+    {
+        return implode($this->nestSeparator,$key).'='.$this->_prepareValue($value);
+    }
+
+    /**
+     * Strip the section off of a key, when necessary.
+     *
+     * @param array $key
+     * @return array
+     */
+    private function truncateSection(array $key)
+    {
+        if (count($key) > 1) {
+            unset($key[0]);
+        }
+        return $key;
+    }
+
+    /**
+     * Get the first line after the given $section
+     *
+     * If section is empty, return the end of section-less
+     * space at the file start.
+     *
+     * @param $section The name of the section
+     * @return int
+     */
+    private function getSectionEnd($section = null)
+    {
+        $i = 0;
+        $started = false;
+        if (!isset($section)) {
+            $started = true;
+        }
+        foreach ($this->text as $line) {
+            if ($started) {
+                if (preg_match('/^\[/',$line) === 1) {
+                    return $i;
+                }
+            } elseif (preg_match('/^\['.$section.'.*\]/',$line) === 1) {
+                $started = true;
+            }
+            $i++;
+        }
+        if (!$started) {
+            return -1;
+        }
+        return $i;
+    }
+
+    /**
+     * Check if the given line contains a section declaration
+     *
+     * @param $lineContent The content of the line
+     * @param string $section The optional section name that will be assumed
+     * @return bool
+     */
+    private function isSectionDecl($lineContent,$section = "")
+    {
+        return preg_match('/^\[/'.$section,$lineContent) === 1;
+    }
+
+    private function getSectionDeclLine($section)
+    {
+        $i = 0;
+        foreach ($this->text as $line) {
+            if (preg_match('/^\['.$section.'/',$line)) {
+                return $i;
+            }
+            $i++;
+        }
+        return -1;
+    }
+
+    /**
+     * Return the line number of the given key
+     *
+     * When sections are active, return the first matching key in the key's
+     * section, otherwise return the first matching key.
+     *
+     * @param array $keys The key and its parents
+     */
+    private function getKeyLine(array $keys)
+    {
+        // remove section
+        if (count($keys) > 1) {
+            // the key is in a section
+            $section = $keys[0];
+            $key = implode($this->nestSeparator,array_slice($keys,1,null,true));
+            $inSection = false;
+        } else {
+            // section-less key
+            $section = null;
+            $key = implode($this->nestSeparator,$keys);
+            $inSection = true;
+        }
+        $i = 0;
+        foreach ($this->text as $line) {
+            if ($inSection && preg_match('/^\[/',$line) === 1) {
+                return -1;
+            }
+            if ($inSection && preg_match('/^'.$key.'/',$line) === 1) {
+                return $i;
+            }
+            if (!$inSection && preg_match('/^\['.$section.'/',$line) === 1) {
+                $inSection = true;
+            }
+            $i++;
+        }
+        return -1;
+    }
+
+    /**
+     * Get the last line number
+     *
+     * @return int The line nr. of the last line
+     */
+    private function getLastLine()
+    {
+        return count($this->text);
+    }
+
+    /**
+     * Insert a new element into a specific position of an array
+     *
+     * @param $array The array to use
+     * @param $pos The target position
+     * @param $element The element to insert
+     */
+    private static function insertIntoArray($array,$pos,$element)
+    {
+        array_splice($array, $pos, 0, $element);
+        return $array;
+    }
+
+    /**
+     * Remove an element from an array
+     *
+     * @param $array The array to use
+     * @param $pos The position to remove
+     */
+    private function removeFromArray($array,$pos)
+    {
+        unset($array[$pos]);
+        return array_values($array);
+    }
+
+    /**
+     * Prepare a value for INI
+     *
+     * @param $value
+     * @return string
+     * @throws Zend_Config_Exception
+     */
+    protected function _prepareValue($value)
+    {
+        if (is_integer($value) || is_float($value)) {
+            return $value;
+        } elseif (is_bool($value)) {
+            return ($value ? 'true' : 'false');
+        } elseif (strpos($value, '"') === false) {
+            return '"' . $value .  '"';
+        } else {
+            /** @see Zend_Config_Exception */
+            require_once 'Zend/Config/Exception.php';
+            throw new Zend_Config_Exception('Value can not contain double quotes "');
+        }
     }
 }
 

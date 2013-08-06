@@ -28,7 +28,7 @@
  */
 namespace Icinga\Web;
 
-use Icinga\Application\Config as IcingaConfig;
+use Icinga\Config\Config as IcingaConfig;
 use Icinga\Application\Icinga;
 
 /**

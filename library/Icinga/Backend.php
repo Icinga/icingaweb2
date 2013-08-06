@@ -2,7 +2,7 @@
 
 namespace Icinga;
 
-use Icinga\Application\Config as IcingaConfig;
+use Icinga\Config\Config as IcingaConfig;
 use Icinga\Authentication\Manager as AuthManager;
 
 class Backend
