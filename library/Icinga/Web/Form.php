@@ -27,18 +27,22 @@ namespace Icinga\Web;
 
 use Icinga\Exception\ProgrammingError;
 use Icinga\Web\Form\InvalidCSRFTokenException;
-use Zend_View_Interface;
+use \Zend_Controller_Request_Abstract;
+use \Zend_Form_Element_Submit;
+use \Zend_Form_Element_Reset;
+use \Zend_View_Interface;
+use \Zend_Form;
 
 /**
  * Class Form
  *
  * How forms are used in Icinga 2 Web
  */
-abstract class Form extends \Zend_Form
+abstract class Form extends Zend_Form
 {
     /**
      * The form's request object
-     * @var \Zend_Controller_Request_Abstract
+     * @var Zend_Controller_Request_Abstract
      */
     private $request;
 
@@ -126,7 +130,6 @@ abstract class Form extends \Zend_Form
         return $this->tokenElementName;
     }
 
-
     /**
      * Render the form to html
      * @param  Zend_View_Interface $view
@@ -153,16 +156,16 @@ abstract class Form extends \Zend_Form
 
     /**
      * Setter for request
-     * @param \Zend_Controller_Request_Abstract $request The request object of a session
+     * @param Zend_Controller_Request_Abstract $request The request object of a session
      */
-    public function setRequest(\Zend_Controller_Request_Abstract $request)
+    public function setRequest(Zend_Controller_Request_Abstract $request)
     {
         $this->request = $request;
     }
 
     /**
      * Getter for request
-     * @return \Zend_Controller_Request_Abstract
+     * @return Zend_Controller_Request_Abstract
      */
     public function getRequest()
     {
@@ -178,11 +181,11 @@ abstract class Form extends \Zend_Form
             $this->initCsrfToken();
             $this->create();
 
-            if ($this->getSubmitLabel()) {
+            if ($this->submitLabel) {
                 $this->addSubmitButton();
             }
 
-            if ($this->getCancelLabel()) {
+            if ($this->cancelLabel) {
                 $this->addCancelButton();
             }
 
@@ -205,23 +208,14 @@ abstract class Form extends \Zend_Form
     }
 
     /**
-     * Getter for cancel label
-     * @return string
-     */
-    public function getCancelLabel()
-    {
-        return $this->cancelLabel;
-    }
-
-    /**
      * Add cancel button to form
      */
-    protected function addCancelButton()
+    private function addCancelButton()
     {
-        $cancelLabel = new \Zend_Form_Element_Reset(
+        $cancelLabel = new Zend_Form_Element_Reset(
             array(
                 'name' => 'btn_reset',
-                'label' => $this->getCancelLabel(),
+                'label' => $this->cancelLabel,
                 'class' => 'btn pull-right'
             )
         );
@@ -238,23 +232,14 @@ abstract class Form extends \Zend_Form
     }
 
     /**
-     * Getter for submit label
-     * @return string
-     */
-    public function getSubmitLabel()
-    {
-        return $this->submitLabel;
-    }
-
-    /**
      * Add submit button to form
      */
-    protected function addSubmitButton()
+    private function addSubmitButton()
     {
-        $submitButton = new \Zend_Form_Element_Submit(
+        $submitButton = new Zend_Form_Element_Submit(
             array(
                 'name' => 'btn_submit',
-                'label' => $this->getSubmitLabel(),
+                'label' => $this->submitLabel,
                 'class' => 'btn btn-primary pull-right'
             )
         );
@@ -266,24 +251,18 @@ abstract class Form extends \Zend_Form
      *
      * Enables automatic submission of this form once the user edits specific elements.
      *
-     * @param array $trigger_elements The element names which should auto-submit the form
-     * @throws ProgrammingError       When the form has no name or an element is found
-     *                                which does not yet exist
+     * @param array $triggerElements The element names which should auto-submit the form
+     * @throws ProgrammingError      When an element is found which does not yet exist
      */
-    final public function enableAutoSubmit($trigger_elements)
+    final public function enableAutoSubmit($triggerElements)
     {
-        $form_name = $this->getName();
-        if ($form_name === null) {
-            throw new ProgrammingError('You need to set a name for this form.');
-        }
-
-        foreach ($trigger_elements as $element_name) {
-            $element = $this->getElement($element_name);
+        foreach ($triggerElements as $elementName) {
+            $element = $this->getElement($elementName);
             if ($element !== null) {
-                $element->setAttrib('onchange', '$("#' . $form_name . '").submit();');
+                $element->setAttrib('onchange', '$(this.form).submit();');
             } else {
                 throw new ProgrammingError(
-                    'You need to add the element "' . $element_name . '" to' .
+                    'You need to add the element "' . $elementName . '" to' .
                     ' the form before automatic submission can be enabled!'
                 );
             }
@@ -310,7 +289,7 @@ abstract class Form extends \Zend_Form
         $this->assertValidCsrfToken($checkData);
 
         $submitted = true;
-        if ($this->getSubmitLabel()) {
+        if ($this->submitLabel) {
             $submitted = isset($checkData['btn_submit']);
         }
 
@@ -354,8 +333,8 @@ abstract class Form extends \Zend_Form
     /**
      * Tests the submitted data for a correct CSRF token, if needed
      *
-     * @param Array $checkData                  The POST data send by the user
-     * @throws Form\InvalidCSRFTokenException   When CSRF Validation fails
+     * @param Array $checkData           The POST data send by the user
+     * @throws InvalidCSRFTokenException When CSRF Validation fails
      */
     final public function assertValidCsrfToken(array $checkData)
     {

@@ -40,14 +40,6 @@ use Icinga\Protocol\Commandpipe\Comment;
 class AcknowledgeForm extends ConfirmationForm
 {
     /**
-     * Initialize form
-     */
-    public function init()
-    {
-        $this->setName('AcknowledgeForm');
-    }
-
-    /**
      * Interface method to build the form
      * @see ConfirmationForm::create
      */
