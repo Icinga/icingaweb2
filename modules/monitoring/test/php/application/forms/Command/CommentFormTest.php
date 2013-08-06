@@ -4,7 +4,7 @@ namespace Test\Monitoring\Forms\Command;
 
 
 require_once __DIR__.'/BaseFormTest.php';
-require_once __DIR__. '/../../../../../application/forms/Command/ConfirmationForm.php';
+require_once __DIR__. '/../../../../../application/forms/Command/CommandForm.php';
 require_once __DIR__. '/../../../../../application/forms/Command/WithChildrenCommandForm.php';
 require_once __DIR__. '/../../../../../application/forms/Command/CommentForm.php';
 
@@ -28,13 +28,14 @@ class CommentFormTest extends BaseFormTest
     public function testCorrectCommentValidation()
     {
         $form = $this->getRequestForm(array(
-            'author'  => 'test1',
-            'comment' => 'test2',
-            'sticky'  => '0'
+            'author'     => 'test1',
+            'comment'    => 'test2',
+            'sticky'     => '0',
+            'btn_submit' => 'foo'
         ), self::FORMCLASS);
 
         $this->assertTrue(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             "Asserting correct comment form to be considered valid"
         );
     }
@@ -47,7 +48,7 @@ class CommentFormTest extends BaseFormTest
             'sticky'  => '0'
         ), self::FORMCLASS);
         $this->assertFalse(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             "Asserting missing comment text in comment form to cause validation errors"
         );
     }
@@ -60,7 +61,7 @@ class CommentFormTest extends BaseFormTest
             'sticky'  => '0'
         ), self::FORMCLASS);
         $this->assertFalse(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             "Asserting missing comment author to cause validation errors"
         );
     }

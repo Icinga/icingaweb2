@@ -6,7 +6,7 @@ namespace Test\Monitoring\Forms\Command;
 
 
 require_once __DIR__. '/BaseFormTest.php';
-require_once __DIR__. '/../../../../../application/forms/Command/ConfirmationForm.php';
+require_once __DIR__. '/../../../../../application/forms/Command/CommandForm.php';
 require_once __DIR__. '/../../../../../application/forms/Command/WithChildrenCommandForm.php';
 require_once __DIR__. '/../../../../../application/forms/Command/RescheduleNextCheckForm.php';
 
@@ -25,23 +25,25 @@ class RescheduleNextCheckFormTest extends BaseFormTest
 
         $form = $this->getRequestForm(array(
             'checktime'  => '2013-10-19 17:30:00',
-            'forcecheck' => 1
+            'forcecheck' => 1,
+            'btn_submit' => 'foo'
         ), self::FORMCLASS);
         $form->buildForm();
 
         $this->assertCount(6, $form->getElements());
 
         $this->assertTrue(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             'Asserting a reschedule form with correct time and forececheck=1 to be valid'
         );
         $form = $this->getRequestForm(array(
             'checktime'  => '2013-10-19 17:30:00',
-            'forcecheck' => 0
+            'forcecheck' => 0,
+            'btn_submit' => 'foo'
         ), self::FORMCLASS);
 
         $this->assertTrue(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             'Asserting a reschedule form with correct time and forecheck=0 to be valid'
         );
     }
@@ -54,7 +56,7 @@ class RescheduleNextCheckFormTest extends BaseFormTest
         ), self::FORMCLASS);
 
         $this->assertFalse(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             'Asserting an logically invalid checktime to be considered as invalid reschedule data'
         );
 
@@ -65,7 +67,7 @@ class RescheduleNextCheckFormTest extends BaseFormTest
 
 
         $this->assertFalse(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             'Asserting an invalid non-numeric checktime to be considered as invalid reschedule data'
         );
     }

@@ -37,11 +37,11 @@ use Icinga\Protocol\Commandpipe\Comment;
 /**
  * Form for acknowledge commands
  */
-class AcknowledgeForm extends ConfirmationForm
+class AcknowledgeForm extends CommandForm
 {
     /**
      * Interface method to build the form
-     * @see ConfirmationForm::create
+     * @see CommandForm::create
      */
     protected function create()
     {
@@ -66,6 +66,13 @@ class AcknowledgeForm extends ConfirmationForm
             )
         );
 
+        $expireNote = new Note(
+            array(
+                'name'  => 'expirenote',
+                'value' => t('If the acknowledgement should expire, check the box and enter an expiration timestamp.')
+            )
+        );
+
         $expireCheck = $this->createElement(
             'checkbox',
             'expire',
@@ -74,26 +81,25 @@ class AcknowledgeForm extends ConfirmationForm
             )
         );
 
-        $now = new PhpDateTime();
-        $interval = new DateInterval('PT1H'); // Add 3600 seconds
-        $now->add($interval);
+        if ($this->getRequest()->getPost('expire', '0') === '1') {
+            $now = new PhpDateTime();
+            $interval = new DateInterval('PT1H'); // Add 3600 seconds
+            $now->add($interval);
 
-        $expireTime = new DateTime(
-            array(
-                'name'  => 'expiretime',
-                'label' => t('Expire time'),
-                'value' => $now->format($this->getDateFormat())
-            )
-        );
+            $expireTime = new DateTime(
+                array(
+                    'name'  => 'expiretime',
+                    'label' => t('Expire time'),
+                    'value' => $now->format($this->getDateFormat())
+                )
+            );
+            
+            $this->addElements(array($expireNote, $expireCheck, $expireTime));
+        } else {
+            $this->addElements(array($expireNote, $expireCheck));
+        }
 
-        $expireNote = new Note(
-            array(
-                'name'  => 'expirenote',
-                'value' => t('If the acknowledgement should expire, check the box and enter an expiration timestamp.')
-            )
-        );
-
-        $this->addElements(array($expireNote, $expireCheck, $expireTime));
+        $this->enableAutoSubmit(array('expire'));
 
         $this->addDisplayGroup(
             array(

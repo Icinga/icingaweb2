@@ -36,7 +36,7 @@ use \Zend_Validate_Date;
 /**
  * Simple confirmation command
  */
-class ConfirmationForm extends Form
+class CommandForm extends Form
 {
     /**
      * Default date format
@@ -49,69 +49,11 @@ class ConfirmationForm extends Form
     const DEFAULT_DATE_VALIDATION = 'yyyy-MM-dd hh:ii:ss';
 
     /**
-     * Label for submit button
-     *
-     * If omitted, no button will be shown.
-     *
-     * @var string
-     */
-    private $submitLabel;
-
-    /**
-     * Label for cancel button
-     *
-     * If omitted, no button will be shown.
-     *
-     * @var string
-     */
-    private $cancelLabel;
-
-    /**
      * Array of messages
      * 
      * @var string[]
      */
     private $notes = array();
-
-    /**
-     * Setter for cancel label
-     *
-     * @param string $cancelLabel
-     */
-    public function setCancelLabel($cancelLabel)
-    {
-        $this->cancelLabel = $cancelLabel;
-    }
-
-    /**
-     * Getter for cancel label
-     *
-     * @return string
-     */
-    public function getCancelLabel()
-    {
-        return $this->cancelLabel;
-    }
-
-    /**
-     * Setter for submit label
-     *
-     * @param string $submitLabel
-     */
-    public function setSubmitLabel($submitLabel)
-    {
-        $this->submitLabel = $submitLabel;
-    }
-
-    /**
-     * Getter for submit label
-     *
-     * @return string
-     */
-    public function getSubmitLabel()
-    {
-        return $this->submitLabel;
-    }
 
     /**
      * Add message to stack
@@ -171,28 +113,6 @@ class ConfirmationForm extends Form
                 );
                 $this->addElement($element);
             }
-        }
-
-        if ($this->getCancelLabel()) {
-            $cancelLabel = new \Zend_Form_Element_Reset(
-                array(
-                    'name' => 'reset',
-                    'label' => $this->getCancelLabel(),
-                    'class' => 'btn pull-right'
-                )
-            );
-            $this->addElement($cancelLabel);
-        }
-
-        if ($this->getSubmitLabel()) {
-            $submitButton = new \Zend_Form_Element_Submit(
-                array(
-                    'name' => 'submit',
-                    'label' => $this->getSubmitLabel(),
-                    'class' => 'btn btn-primary pull-right'
-                )
-            );
-            $this->addElement($submitButton);
         }
 
         $this->addElement($this->createInstanceHiddenField());

@@ -33,7 +33,7 @@ use Icinga\Exception\ProgrammingError;
 /**
  * Form for command SubmitPassiveCheckResult
  */
-class SubmitPassiveCheckResultForm extends ConfirmationForm
+class SubmitPassiveCheckResultForm extends CommandForm
 {
     /**
      * Type constant for host form
@@ -117,7 +117,7 @@ class SubmitPassiveCheckResultForm extends ConfirmationForm
 
     /**
      * Interface method to build the form
-     * @see ConfirmationForm::create
+     * @see CommandForm::create
      */
     protected function create()
     {

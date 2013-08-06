@@ -31,7 +31,7 @@ namespace Monitoring\Form\Command;
 /**
  * Class handle specific command flags
  */
-abstract class WithChildrenCommandForm extends ConfirmationForm
+abstract class WithChildrenCommandForm extends CommandForm
 {
     /**
      * Flag if we handle child objects as well

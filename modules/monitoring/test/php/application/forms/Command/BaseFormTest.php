@@ -32,6 +32,11 @@ namespace Test\Monitoring\Forms\Command {
     require_once realpath($base.'library/Icinga/Web/Form/Element/DateTime.php');
 
     use \Zend_View;
+    use \Zend_Form;
+    use \Zend_View_Interface;
+    use \Zend_Form_Element_Reset;
+    use \Zend_Form_Element_Submit;
+    use \Zend_Controller_Request_Abstract;
     use \Zend_Test_PHPUnit_ControllerTestCase;
 
 

@@ -27,19 +27,22 @@ namespace Icinga\Web;
 
 use Icinga\Exception\ProgrammingError;
 use Icinga\Web\Form\InvalidCSRFTokenException;
-use Zend_Form_Exception;
-use Zend_View_Interface;
+use \Zend_Controller_Request_Abstract;
+use \Zend_Form_Element_Submit;
+use \Zend_Form_Element_Reset;
+use \Zend_View_Interface;
+use \Zend_Form;
 
 /**
  * Class Form
  *
  * How forms are used in Icinga 2 Web
  */
-abstract class Form extends \Zend_Form
+abstract class Form extends Zend_Form
 {
     /**
      * The form's request object
-     * @var \Zend_Controller_Request_Abstract
+     * @var Zend_Controller_Request_Abstract
      */
     private $request;
 
@@ -76,6 +79,24 @@ abstract class Form extends \Zend_Form
     private $sessionId = false;
 
     /**
+     * Label for submit button
+     *
+     * If omitted, no button will be shown.
+     *
+     * @var string
+     */
+    private $submitLabel;
+
+    /**
+     * Label for cancel button
+     *
+     * If omitted, no button will be shown.
+     *
+     * @var string
+     */
+    private $cancelLabel;
+
+    /**
      * Returns the session ID stored in this form instance
      * @return mixed
      */
@@ -109,7 +130,6 @@ abstract class Form extends \Zend_Form
         return $this->tokenElementName;
     }
 
-
     /**
      * Render the form to html
      * @param  Zend_View_Interface $view
@@ -136,16 +156,16 @@ abstract class Form extends \Zend_Form
 
     /**
      * Setter for request
-     * @param \Zend_Controller_Request_Abstract $request The request object of a session
+     * @param Zend_Controller_Request_Abstract $request The request object of a session
      */
-    public function setRequest(\Zend_Controller_Request_Abstract $request)
+    public function setRequest(Zend_Controller_Request_Abstract $request)
     {
         $this->request = $request;
     }
 
     /**
      * Getter for request
-     * @return \Zend_Controller_Request_Abstract
+     * @return Zend_Controller_Request_Abstract
      */
     public function getRequest()
     {
@@ -161,6 +181,14 @@ abstract class Form extends \Zend_Form
             $this->initCsrfToken();
             $this->create();
 
+            if ($this->submitLabel) {
+                $this->addSubmitButton();
+            }
+
+            if ($this->cancelLabel) {
+                $this->addCancelButton();
+            }
+
             // Empty action if not safe
             if (!$this->getAction() && $this->getRequest()) {
                 $this->setAction($this->getRequest()->getRequestUri());
@@ -171,23 +199,104 @@ abstract class Form extends \Zend_Form
     }
 
     /**
-     * Test if data from array or request is valid
+     * Setter for cancel label
+     * @param string $cancelLabel
+     */
+    public function setCancelLabel($cancelLabel)
+    {
+        $this->cancelLabel = $cancelLabel;
+    }
+
+    /**
+     * Add cancel button to form
+     */
+    private function addCancelButton()
+    {
+        $cancelLabel = new Zend_Form_Element_Reset(
+            array(
+                'name' => 'btn_reset',
+                'label' => $this->cancelLabel,
+                'class' => 'btn pull-right'
+            )
+        );
+        $this->addElement($cancelLabel);
+    }
+
+    /**
+     * Setter for submit label
+     * @param string $submitLabel
+     */
+    public function setSubmitLabel($submitLabel)
+    {
+        $this->submitLabel = $submitLabel;
+    }
+
+    /**
+     * Add submit button to form
+     */
+    private function addSubmitButton()
+    {
+        $submitButton = new Zend_Form_Element_Submit(
+            array(
+                'name' => 'btn_submit',
+                'label' => $this->submitLabel,
+                'class' => 'btn btn-primary pull-right'
+            )
+        );
+        $this->addElement($submitButton);
+    }
+
+    /**
+     * Enable automatic submission
      *
-     * If $data is null, internal request is selected to test validity
+     * Enables automatic submission of this form once the user edits specific elements.
+     *
+     * @param array $triggerElements The element names which should auto-submit the form
+     * @throws ProgrammingError      When an element is found which does not yet exist
+     */
+    final public function enableAutoSubmit($triggerElements)
+    {
+        foreach ($triggerElements as $elementName) {
+            $element = $this->getElement($elementName);
+            if ($element !== null) {
+                $element->setAttrib('onchange', '$(this.form).submit();');
+            } else {
+                throw new ProgrammingError(
+                    'You need to add the element "' . $elementName . '" to' .
+                    ' the form before automatic submission can be enabled!'
+                );
+            }
+        }
+    }
+
+    /**
+     * Check whether the form was submitted with a valid request
+     *
+     * Ensures that the current request method is POST, that the
+     * form was manually submitted and that the data provided in
+     * the request is valid and gets repopulated in case its invalid.
+     *
      * @return bool
      */
-    public function isPostAndValid()
+    public function isSubmittedAndValid()
     {
         if ($this->getRequest()->isPost() === false) {
             return false;
         }
 
-        $checkData = $this->getRequest()->getParams();
-
         $this->buildForm();
+        $checkData = $this->getRequest()->getParams();
         $this->assertValidCsrfToken($checkData);
-        $this->preValidation($checkData);
-        return parent::isValid($checkData);
+
+        $submitted = true;
+        if ($this->submitLabel) {
+            $submitted = isset($checkData['btn_submit']);
+        }
+
+        if ($submitted) {
+            $this->preValidation($checkData);
+        }
+        return parent::isValid($checkData) && $submitted;
     }
 
     /**
@@ -224,8 +333,8 @@ abstract class Form extends \Zend_Form
     /**
      * Tests the submitted data for a correct CSRF token, if needed
      *
-     * @param Array $checkData                  The POST data send by the user
-     * @throws Form\InvalidCSRFTokenException   When CSRF Validation fails
+     * @param Array $checkData           The POST data send by the user
+     * @throws InvalidCSRFTokenException When CSRF Validation fails
      */
     final public function assertValidCsrfToken(array $checkData)
     {

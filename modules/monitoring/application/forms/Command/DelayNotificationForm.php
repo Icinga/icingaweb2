@@ -31,7 +31,7 @@ namespace Monitoring\Form\Command;
 /**
  * Form to handle DelayNotification command
  */
-class DelayNotificationForm extends ConfirmationForm
+class DelayNotificationForm extends CommandForm
 {
     /**
      * Biggest value for minutes
@@ -39,7 +39,7 @@ class DelayNotificationForm extends ConfirmationForm
     const MAX_VALUE = 1440;
     /**
      * Interface method to build the form
-     * @see ConfirmationForm::create
+     * @see CommandForm::create
      */
     protected function create()
     {

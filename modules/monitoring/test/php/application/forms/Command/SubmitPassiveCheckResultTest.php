@@ -3,7 +3,7 @@
 namespace Test\Monitoring\Forms\Command;
 
 require_once __DIR__. '/BaseFormTest.php';
-require_once __DIR__. '/../../../../../application/forms/Command/ConfirmationForm.php';
+require_once __DIR__. '/../../../../../application/forms/Command/CommandForm.php';
 require_once __DIR__. '/../../../../../application/forms/Command/WithChildrenCommandForm.php';
 require_once __DIR__. '/../../../../../application/forms/Command/SubmitPassiveCheckResultForm.php';
 
@@ -59,13 +59,14 @@ class SubmitPassiveCheckResultFormTest extends BaseFormTest
         $form = $this->getRequestForm(array(
             'pluginstate'     => 0,
             'checkoutput'     => 'DING',
-            'performancedata' => ''
+            'performancedata' => '',
+            'btn_submit'      => 'foo'
         ), self::FORMCLASS);
 
         $form->setType(SubmitPassiveCheckResultForm::TYPE_SERVICE);
 
         $this->assertTrue(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             "Assert a correct passive service check form to pass form validation"
         );
     }
@@ -80,7 +81,7 @@ class SubmitPassiveCheckResultFormTest extends BaseFormTest
         $form->setType(SubmitPassiveCheckResultForm::TYPE_SERVICE);
 
         $this->assertFalse(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             "Assert empty checkoutput to cause validation errors in passive service check "
         );
     }
@@ -95,7 +96,7 @@ class SubmitPassiveCheckResultFormTest extends BaseFormTest
         $form->setType(SubmitPassiveCheckResultForm::TYPE_SERVICE);
 
         $this->assertFalse(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             "Assert invalid (non-numeric) state to cause validation errors in passive service check"
         );
     }

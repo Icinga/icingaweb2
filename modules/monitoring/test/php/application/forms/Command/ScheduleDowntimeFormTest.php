@@ -3,7 +3,7 @@
 namespace Test\Monitoring\Forms\Command;
 
 require_once __DIR__. '/BaseFormTest.php';
-require_once __DIR__. '/../../../../../application/forms/Command/ConfirmationForm.php';
+require_once __DIR__. '/../../../../../application/forms/Command/CommandForm.php';
 require_once __DIR__. '/../../../../../application/forms/Command/WithChildrenCommandForm.php';
 require_once __DIR__. '/../../../../../application/forms/Command/ScheduleDowntimeForm.php';
 
@@ -16,10 +16,15 @@ class ScheduleDowntimeFormTest extends BaseFormTest
     const FORMCLASS = 'Monitoring\Form\Command\ScheduleDowntimeForm';
     public function testCorrectFormElementCreation()
     {
-        $form = $this->getRequestForm(array(), self::FORMCLASS);
-        $form->buildForm();
+        $formFixed = $this->getRequestForm(array(), self::FORMCLASS);
+        $formFixed->buildForm();
+        $formFlexible = $this->getRequestForm(array(
+            'type' => 'flexible'
+        ), self::FORMCLASS);
+        $formFlexible->buildForm();
 
-        $this->assertCount(13, $form->getElements());
+        $this->assertCount(11, $formFixed->getElements());
+        $this->assertCount(13, $formFlexible->getElements());
 
         $form = $this->getRequestForm(array(), self::FORMCLASS);
         $form->setWithChildren(true);
@@ -32,14 +37,15 @@ class ScheduleDowntimeFormTest extends BaseFormTest
     public function testCorrectValidationWithChildrend()
     {
         $form = $this->getRequestForm(array(
-            'author'    => 'TEST_AUTHOR',
-            'comment'   => 'DING DING',
-            'triggered' => '4',
-            'starttime' => '2013-07-17 10:30:00',
-            'endtime'   => '2013-07-17 10:30:00',
-            'type'      => ScheduleDowntimeForm::TYPE_FIXED,
-            'hours'     => '',
-            'minutes'   => '',
+            'author'     => 'TEST_AUTHOR',
+            'comment'    => 'DING DING',
+            'triggered'  => '4',
+            'starttime'  => '2013-07-17 10:30:00',
+            'endtime'    => '2013-07-17 10:30:00',
+            'type'       => ScheduleDowntimeForm::TYPE_FIXED,
+            'hours'      => '',
+            'minutes'    => '',
+            'btn_submit' => 'foo',
             // 'childobjects' => '',
         ), self::FORMCLASS);
 
@@ -47,24 +53,25 @@ class ScheduleDowntimeFormTest extends BaseFormTest
         $form->setWithChildren(true);
 
         $this->assertTrue(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             'Asserting a correct fixed downtime form to be considered valid'
         );
         $form = $this->getRequestForm(array(
-            'author'    => 'TEST_AUTHOR',
-            'comment'   => 'DING DING',
-            'triggered' => '4',
-            'starttime' => '2013-07-17 10:30:00',
-            'endtime'   => '2013-07-17 10:30:00',
-            'type'      => ScheduleDowntimeForm::TYPE_FLEXIBLE,
-            'hours'     => '10',
-            'minutes'   => '10',
+            'author'     => 'TEST_AUTHOR',
+            'comment'    => 'DING DING',
+            'triggered'  => '4',
+            'starttime'  => '2013-07-17 10:30:00',
+            'endtime'    => '2013-07-17 10:30:00',
+            'type'       => ScheduleDowntimeForm::TYPE_FLEXIBLE,
+            'hours'      => '10',
+            'minutes'    => '10',
+            'btn_submit' => 'foo'
             // 'childobjects' => '',
         ), self::FORMCLASS);
         $form->setWithChildren(true);
 
         $this->assertTrue(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             'Asserting a correct flexible downtime form to be considered valid'
         );
 
@@ -86,7 +93,7 @@ class ScheduleDowntimeFormTest extends BaseFormTest
         $form->setWithChildren(true);
 
         $this->assertFalse(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             'Assert missing hours and minutes in downtime form to cause failing validation'
         );
     }
@@ -109,7 +116,7 @@ class ScheduleDowntimeFormTest extends BaseFormTest
 
 
         $this->assertFalse(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             'Assert missing author to cause validation errors in fixed downtime'
         );
     }
@@ -131,7 +138,7 @@ class ScheduleDowntimeFormTest extends BaseFormTest
 
 
         $this->assertFalse(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             'Assert missing comment to cause validation errors in fixed downtime'
         );
     }
@@ -152,7 +159,7 @@ class ScheduleDowntimeFormTest extends BaseFormTest
         $form->setWithChildren(true);
 
         $this->assertFalse(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             'Assert invalid trigger field to cause validation to fail'
         );
     }
@@ -173,7 +180,7 @@ class ScheduleDowntimeFormTest extends BaseFormTest
         $form->setWithChildren(true);
 
         $this->assertFalse(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             'Assert incorrect start time to cause validation errors in fixed downtime'
         );
     }
@@ -195,7 +202,7 @@ class ScheduleDowntimeFormTest extends BaseFormTest
         $form->setWithChildren(true);
 
         $this->assertFalse(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             'Assert invalid endtime to cause validation errors in fixed downtime'
         );
     }
@@ -217,7 +224,7 @@ class ScheduleDowntimeFormTest extends BaseFormTest
         $form->setWithChildren(true);
 
         $this->assertFalse(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             'Assert negative hours to cause validation errors in flexible downtime'
         );
     }
@@ -238,7 +245,7 @@ class ScheduleDowntimeFormTest extends BaseFormTest
         $form->setWithChildren(true);
 
         $this->assertFalse(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             'Assert non numeric valud to cause validation errors in flexible downtime '
         );
 
@@ -247,21 +254,22 @@ class ScheduleDowntimeFormTest extends BaseFormTest
     public function testCorrectScheduleDowntimeWithoutChildrenForm()
     {
         $form = $this->getRequestForm(array(
-            'author'    => 'TEST_AUTHOR',
-            'comment'   => 'DING DING',
-            'triggered' => '4',
-            'starttime' => '2013-07-17 10:30:00',
-            'endtime'   => '2013-07-17 10:30:00',
-            'type'      => ScheduleDowntimeForm::TYPE_FIXED,
-            'hours'     => '',
-            'minutes'   => '',
+            'author'       => 'TEST_AUTHOR',
+            'comment'      => 'DING DING',
+            'triggered'    => '4',
+            'starttime'    => '2013-07-17 10:30:00',
+            'endtime'      => '2013-07-17 10:30:00',
+            'type'         => ScheduleDowntimeForm::TYPE_FIXED,
+            'hours'        => '',
+            'minutes'      => '',
+            'btn_submit'   => 'foo',
             'childobjects' => '0',
         ), self::FORMCLASS);
         $form->setWithChildren(false);
 
 
         $this->assertTrue(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             "Assert a correct schedule downtime without children form to be considered valid"
         );
     }
@@ -281,7 +289,7 @@ class ScheduleDowntimeFormTest extends BaseFormTest
         $form->setWithChildren(false);
 
         $this->assertFalse(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             "Assert and incorrect (non-numeric) childobjects value to cause validation errors"
         );
 
@@ -299,7 +307,7 @@ class ScheduleDowntimeFormTest extends BaseFormTest
         $form->setWithChildren(false);
 
         $this->assertFalse(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             "Assert and incorrect (numeric) childobjects value to cause validation errors"
         );
     }

@@ -33,11 +33,11 @@ use Zend_Form_Element_Hidden;
 /**
  * For for command CustomNotification
  */
-class CustomNotificationForm extends ConfirmationForm
+class CustomNotificationForm extends CommandForm
 {
     /**
      * Interface method to build the form
-     * @see ConfirmationForm::create
+     * @see CommandForm::create
      */
     protected function create()
     {

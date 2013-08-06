@@ -3,7 +3,7 @@
 namespace Test\Monitoring\Forms\Command;
 
 require_once __DIR__. '/BaseFormTest.php';
-require_once __DIR__. '/../../../../../application/forms/Command/ConfirmationForm.php';
+require_once __DIR__. '/../../../../../application/forms/Command/CommandForm.php';
 require_once __DIR__. '/../../../../../application/forms/Command/DelayNotificationForm.php';
 
 
@@ -16,7 +16,8 @@ class DelayNotificationFormFormTest extends BaseFormTest
     public function testValidForm()
     {
         $form = $this->getRequestForm(array(
-            'minutes' => 12
+            'minutes'    => 12,
+            'btn_submit' => 'foo'
         ), 'Monitoring\Form\Command\DelayNotificationForm');
 
         $form->buildForm();
@@ -28,7 +29,7 @@ class DelayNotificationFormFormTest extends BaseFormTest
         $this->assertTrue($element->isRequired(), "Assert minutes to be declared as required");
 
         $this->assertTrue(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             "Assert a correct DelayNotificationForm to be considered valid"
         );
 
@@ -44,7 +45,7 @@ class DelayNotificationFormFormTest extends BaseFormTest
         $form->buildForm();
 
         $this->assertFalse(
-            $form->isPostAndValid(),
+            $form->isSubmittedAndValid(),
             "Asserting invalid minutes (NaN) to cause validation errors"
         );
 

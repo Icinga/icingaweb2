@@ -33,7 +33,7 @@ use \Zend_Form_Element_Hidden;
 /**
  * Form to handle confirmations with a single value processed
  */
-class ConfirmationWithIdentifierForm extends ConfirmationForm
+class CommandWithIdentifierForm extends CommandForm
 {
     /**
      * Identifier for data field
@@ -124,7 +124,7 @@ class ConfirmationWithIdentifierForm extends ConfirmationForm
 
     /**
      * Interface method to build the form
-     * @see ConfirmationForm::create
+     * @see CommandForm::create
      */
     protected function create()
     {
