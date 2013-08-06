@@ -6,7 +6,7 @@ namespace Test\Monitoring\Forms\Command;
 
 require_once __DIR__.'/BaseFormTest.php';
 $base = __DIR__.'/../../../../../../../';
-require_once $base.'modules/monitoring/application/forms/Command/ConfirmationForm.php';
+require_once $base.'modules/monitoring/application/forms/Command/CommandForm.php';
 require_once realpath($base.'modules/monitoring/application/forms/Command/WithChildrenCommandForm.php');
 require_once realpath($base.'modules/monitoring/application/forms/Command/AcknowledgeForm.php');
 

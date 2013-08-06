@@ -36,7 +36,7 @@ use \Zend_Validate_Date;
 /**
  * Simple confirmation command
  */
-class ConfirmationForm extends Form
+class CommandForm extends Form
 {
     /**
      * Default date format

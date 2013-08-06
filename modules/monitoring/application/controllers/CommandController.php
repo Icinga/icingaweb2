@@ -42,8 +42,8 @@ use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\MissingParameterException;
 use Monitoring\Form\Command\AcknowledgeForm;
 use Monitoring\Form\Command\CommentForm;
-use Monitoring\Form\Command\ConfirmationForm;
-use Monitoring\Form\Command\ConfirmationWithIdentifierForm;
+use Monitoring\Form\Command\CommandForm;
+use Monitoring\Form\Command\CommandWithIdentifierForm;
 use Monitoring\Form\Command\CustomNotificationForm;
 use Monitoring\Form\Command\DelayNotificationForm;
 use Monitoring\Form\Command\RescheduleNextCheckForm;
@@ -247,7 +247,7 @@ class Monitoring_CommandController extends ModuleActionController
     public function disableactivechecksAction()
     {
         $this->setSupportedParameters(array('host', 'service'));
-        $form = new ConfirmationForm();
+        $form = new CommandForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Disable active checks'));
         $form->addNote(t('Disable active checks for this object.'));
@@ -265,7 +265,7 @@ class Monitoring_CommandController extends ModuleActionController
     public function enableactivechecksAction()
     {
         $this->setSupportedParameters(array('host', 'service'));
-        $form = new ConfirmationForm();
+        $form = new CommandForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Enable active checks'));
         $form->addNote(t('Enable active checks for this object.'));
@@ -320,7 +320,7 @@ class Monitoring_CommandController extends ModuleActionController
     public function stopobsessingAction()
     {
         $this->setSupportedParameters(array('host', 'service'));
-        $form = new ConfirmationForm();
+        $form = new CommandForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Stop obsessing'));
         $form->addNote(t('Stop obsessing over this object.'));
@@ -338,7 +338,7 @@ class Monitoring_CommandController extends ModuleActionController
     public function startobsessingAction()
     {
         $this->setSupportedParameters(array('host', 'service'));
-        $form = new ConfirmationForm();
+        $form = new CommandForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Start obsessing'));
         $form->addNote(t('Start obsessing over this object.'));
@@ -356,7 +356,7 @@ class Monitoring_CommandController extends ModuleActionController
     public function stopacceptingpassivechecksAction()
     {
         $this->setSupportedParameters(array('host', 'service'));
-        $form = new ConfirmationForm();
+        $form = new CommandForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Stop accepting passive checks'));
         $form->addNote(t('Passive checks for this object will be omitted.'));
@@ -374,7 +374,7 @@ class Monitoring_CommandController extends ModuleActionController
     public function startacceptingpassivechecksAction()
     {
         $this->setSupportedParameters(array('host', 'service'));
-        $form = new ConfirmationForm();
+        $form = new CommandForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Start accepting passive checks'));
         $form->addNote(t('Passive checks for this object will be accepted.'));
@@ -392,7 +392,7 @@ class Monitoring_CommandController extends ModuleActionController
     public function disablenotificationsAction()
     {
         $this->setSupportedParameters(array('host', 'service'));
-        $form = new ConfirmationForm();
+        $form = new CommandForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Disable notifications'));
         $form->addNote(t('Notifications for this object will be disabled.'));
@@ -409,7 +409,7 @@ class Monitoring_CommandController extends ModuleActionController
      */
     public function enablenotificationsAction()
     {
-        $form = new ConfirmationForm();
+        $form = new CommandForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Enable notifications'));
         $form->addNote(t('Notifications for this object will be enabled.'));
@@ -483,7 +483,7 @@ class Monitoring_CommandController extends ModuleActionController
     public function removedowntimeswithchildrenAction()
     {
         $this->setSupportedParameters(array('host'));
-        $form = new ConfirmationForm();
+        $form = new CommandForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Remove downtime(s)'));
         $form->addNote(t('Remove downtime(s) from this host and its services.'));
@@ -501,7 +501,7 @@ class Monitoring_CommandController extends ModuleActionController
     public function disablenotificationswithchildrenAction()
     {
         $this->setSupportedParameters(array('host'));
-        $form = new ConfirmationForm();
+        $form = new CommandForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Disable notifications'));
         $form->addNote(t('Notifications for this host and its services will be disabled.'));
@@ -520,7 +520,7 @@ class Monitoring_CommandController extends ModuleActionController
     public function enablenotificationswithchildrenAction()
     {
         $this->setSupportedParameters(array('host'));
-        $form = new ConfirmationForm();
+        $form = new CommandForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Enable notifications'));
         $form->addNote(t('Notifications for this host and its services will be enabled.'));
@@ -564,7 +564,7 @@ class Monitoring_CommandController extends ModuleActionController
     public function disableactivecheckswithchildrenAction()
     {
         $this->setSupportedParameters(array('host'));
-        $form = new ConfirmationForm();
+        $form = new CommandForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Disable active checks'));
         $form->addNote(t('Disable active checks for this host and its services.'));
@@ -583,7 +583,7 @@ class Monitoring_CommandController extends ModuleActionController
     public function enableactivecheckswithchildrenAction()
     {
         $this->setSupportedParameters(array('host'));
-        $form = new ConfirmationForm();
+        $form = new CommandForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Enable active checks'));
         $form->addNote(t('Enable active checks for this host and its services.'));
@@ -602,7 +602,7 @@ class Monitoring_CommandController extends ModuleActionController
     public function disableeventhandlerAction()
     {
         $this->setSupportedParameters(array('host', 'service'));
-        $form = new ConfirmationForm();
+        $form = new CommandForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Disable event handler'));
         $form->addNote(t('Disable event handler for this object.'));
@@ -620,7 +620,7 @@ class Monitoring_CommandController extends ModuleActionController
     public function enableeventhandlerAction()
     {
         $this->setSupportedParameters(array('host', 'service'));
-        $form = new ConfirmationForm();
+        $form = new CommandForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Enable event handler'));
         $form->addNote(t('Enable event handler for this object.'));
@@ -638,7 +638,7 @@ class Monitoring_CommandController extends ModuleActionController
     public function disableflapdetectionAction()
     {
         $this->setSupportedParameters(array('host', 'service'));
-        $form = new ConfirmationForm();
+        $form = new CommandForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Disable flapping detection'));
         $form->addNote(t('Disable flapping detection for this object.'));
@@ -656,7 +656,7 @@ class Monitoring_CommandController extends ModuleActionController
     public function enableflapdetectionAction()
     {
         $this->setSupportedParameters(array('host', 'service'));
-        $form = new ConfirmationForm();
+        $form = new CommandForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Enable flapping detection'));
         $form->addNote(t('Enable flapping detection for this object.'));
@@ -691,7 +691,7 @@ class Monitoring_CommandController extends ModuleActionController
     public function resetattributesAction()
     {
         $this->setSupportedParameters(array('host', 'service'));
-        $form = new ConfirmationForm();
+        $form = new CommandForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Reset attributes'));
         $form->addNote(t('Reset modified attributes to its default.'));
@@ -726,7 +726,7 @@ class Monitoring_CommandController extends ModuleActionController
     public function removeacknowledgementAction()
     {
         $this->setSupportedParameters(array('host', 'service'));
-        $form = new ConfirmationForm();
+        $form = new CommandForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Remove problem acknowledgement'));
         $form->addNote(t('Remove problem acknowledgement for this object.'));
@@ -761,7 +761,7 @@ class Monitoring_CommandController extends ModuleActionController
     public function removedowntimeAction()
     {
         $this->setSupportedParameters(array('downtimeid'));
-        $form = new ConfirmationWithIdentifierForm();
+        $form = new CommandWithIdentifierForm();
         $form->setRequest($this->getRequest());
 
         $form->setSubmitLabel(t('Delete downtime'));

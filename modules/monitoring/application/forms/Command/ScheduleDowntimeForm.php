@@ -93,7 +93,7 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
     /**
      * Interface method to build the form
      *
-     * @see ConfirmationForm::create
+     * @see CommandForm::create
      */
     protected function create()
     {

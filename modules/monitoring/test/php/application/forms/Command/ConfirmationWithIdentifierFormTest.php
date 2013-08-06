@@ -4,17 +4,17 @@
 namespace Test\Monitoring\Forms\Command;
 
 require_once __DIR__. '/BaseFormTest.php';
-require_once __DIR__. '/../../../../../application/forms/Command/ConfirmationForm.php';
+require_once __DIR__. '/../../../../../application/forms/Command/CommandForm.php';
 require_once __DIR__. '/../../../../../application/forms/Command/WithChildrenCommandForm.php';
-require_once __DIR__. '/../../../../../application/forms/Command/ConfirmationWithIdentifierForm.php';
+require_once __DIR__. '/../../../../../application/forms/Command/CommandWithIdentifierForm.php';
 
-use Monitoring\Form\Command\ConfirmationWithIdentifierForm;
+use Monitoring\Form\Command\CommandWithIdentifierForm;
 use \Zend_View;
 use \Zend_Test_PHPUnit_ControllerTestCase;
 
-class ConfirmationWithIdentifierFormTest extends BaseFormTest
+class CommandWithIdentifierFormTest extends BaseFormTest
 {
-    const FORMCLASS = "Monitoring\Form\Command\ConfirmationWithIdentifierForm";
+    const FORMCLASS = "Monitoring\Form\Command\CommandWithIdentifierForm";
     public function testForm()
     {
         $form = $this->getRequestForm(array(), self::FORMCLASS);

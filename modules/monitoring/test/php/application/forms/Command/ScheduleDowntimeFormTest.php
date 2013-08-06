@@ -3,7 +3,7 @@
 namespace Test\Monitoring\Forms\Command;
 
 require_once __DIR__. '/BaseFormTest.php';
-require_once __DIR__. '/../../../../../application/forms/Command/ConfirmationForm.php';
+require_once __DIR__. '/../../../../../application/forms/Command/CommandForm.php';
 require_once __DIR__. '/../../../../../application/forms/Command/WithChildrenCommandForm.php';
 require_once __DIR__. '/../../../../../application/forms/Command/ScheduleDowntimeForm.php';
 

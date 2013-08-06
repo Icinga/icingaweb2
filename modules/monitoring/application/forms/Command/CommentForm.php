@@ -32,11 +32,11 @@ use Icinga\Protocol\Commandpipe\Comment;
 /**
  * Form for adding comment commands
  */
-class CommentForm extends ConfirmationForm
+class CommentForm extends CommandForm
 {
     /**
      * Interface method to build the form
-     * @see ConfirmationForm::create
+     * @see CommandForm::create
      */
     protected function create()
     {

@@ -37,11 +37,11 @@ use Icinga\Protocol\Commandpipe\Comment;
 /**
  * Form for acknowledge commands
  */
-class AcknowledgeForm extends ConfirmationForm
+class AcknowledgeForm extends CommandForm
 {
     /**
      * Interface method to build the form
-     * @see ConfirmationForm::create
+     * @see CommandForm::create
      */
     protected function create()
     {
