@@ -5,7 +5,6 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 
 use \DateTime;
-use \DateTimeZone;
 use Icinga\Application\Icinga;
 use Icinga\Application\Config as IcingaConfig;
 
@@ -24,7 +23,7 @@ class Zend_View_Helper_DateFormat extends Zend_View_Helper_Abstract
     /**
      * Constructor
      *
-     * Retrieve current request
+     * Retrieve request
      */
     public function __construct()
     {
@@ -42,53 +41,64 @@ class Zend_View_Helper_DateFormat extends Zend_View_Helper_Abstract
     }
 
     /**
-     * Format date according to current user's format
+     * Return date formatted according to given format respecting the user's timezone
+     *
+     * @param   int     $timestamp
+     * @param   string  $format
+     * @return  string
+     */
+    private function format($timestamp, $format)
+    {
+        // Using the Unix timestamp format to construct a new DateTime
+        $dt = new DateTime('@' . $timestamp, $this->getTimeZone());
+        return $dt->format($format);
+    }
+
+    /**
+     * Format date according to user's format
      *
      * @param   int     $timestamp  A unix timestamp
      * @return  string  The formatted date string
      */
     public function formatDate($timestamp)
     {
-        $dt = new DateTime($timestamp, $this->getTimeZone());
-        return $dt->format($this->getDateFormat());
+        return $this->format($timestamp, $this->getDateFormat());
     }
 
     /**
-     * Format time according to current user's format
+     * Format time according to user's format
      *
      * @param   int     $timestamp  A unix timestamp
      * @return  string  The formatted time string
      */
     public function formatTime($timestamp)
     {
-        $dt = new DateTime($timestamp, $this->getTimeZone());
-        return $dt->format($this->getTimeFormat());
+        return $this->format($timestamp, $this->getTimeFormat());
     }
 
     /**
-     * Format datetime according to current user's format
+     * Format datetime according to user's format
      *
      * @param   int     $timestamp  A unix timestamp
      * @return  string  The formatted datetime string
      */
     public function formatDateTime($timestamp)
     {
-        $dt = new DateTime($timestamp, $this->getTimeZone());
-        return $dt->format($this->getDateTimeFormat());
+        return $this->format($timestamp, $this->getDateTimeFormat());
     }
 
     /**
-     * Retrieve the current user's timezone
+     * Retrieve the user's timezone
      *
      * @return  DateTimeZone
      */
     private function getTimeZone()
     {
-        return new DateTimeZone($this->request->getUser()->getTimeZone());
+        return $this->request->getUser()->getTimeZone();
     }
 
     /**
-     * Retrieve the current user's date format string
+     * Retrieve the user's date format string
      *
      * @return  string
      */
@@ -100,7 +110,7 @@ class Zend_View_Helper_DateFormat extends Zend_View_Helper_Abstract
     }
 
     /**
-     * Retrieve the current user's time format string
+     * Retrieve the user's time format string
      *
      * @return  string
      */
@@ -112,7 +122,7 @@ class Zend_View_Helper_DateFormat extends Zend_View_Helper_Abstract
     }
 
     /**
-     * Retrieve the current user's datetime format string
+     * Retrieve the user's datetime format string
      *
      * @return  string
      */
