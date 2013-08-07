@@ -31,7 +31,7 @@ namespace Icinga\Web;
 use Icinga\Authentication\Manager as AuthManager;
 use Icinga\Application\Benchmark;
 use Icinga\Exception;
-use Icinga\Application\Config;
+use Icinga\Config\Config;
 use Icinga\Web\Notification;
 use Zend_Layout as ZfLayout;
 use Zend_Controller_Action as ZfController;

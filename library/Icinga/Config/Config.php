@@ -26,9 +26,8 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Application;
+namespace Icinga\Config;
 
-use Icinga\Protocol\Ldap\Exception;
 use Zend_Config_Ini;
 
 /**
@@ -71,7 +70,7 @@ class Config extends Zend_Config_Ini
     public function __construct($filename)
     {
         if (!@is_readable($filename)) {
-            throw new Exception('Cannot read config file: ' . $filename);
+            throw new \Exception('Cannot read config file: ' . $filename);
         };
         $this->configFile = $filename;
         $section = null;

@@ -6,15 +6,15 @@
 namespace Tests\Icinga\Application;
 
 require_once 'Zend/Config/Ini.php';
-require_once dirname(__FILE__) . '/../../../../../library/Icinga/Application/Config.php';
+require_once '../../library/Icinga/Config/Config.php';
 
-use Icinga\Application\Config as IcingaConfig;
+use Icinga\Config\Config as IcingaConfig;
 
 class ConfigTest extends \PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        IcingaConfig::$configDir = dirname(__FILE__) . '/Config/files';
+        IcingaConfig::$configDir = dirname(__FILE__) . '/files';
     }
 
     public function testAppConfig()

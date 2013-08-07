@@ -2,7 +2,7 @@
 
 namespace Monitoring;
 
-use Icinga\Application\Config;
+use Icinga\Config\Config;
 use Icinga\Web\Session;
 use Exception;
 
