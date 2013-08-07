@@ -149,7 +149,7 @@ class Tab implements Widget
      */
     public function __construct(array $properties = array())
     {
-        foreach ($properties as $name=>$value) {
+        foreach ($properties as $name => $value) {
             $setter = 'set'.ucfirst($name);
             if (method_exists($this, $setter)) {
                 $this->$setter($value);
@@ -185,11 +185,14 @@ class Tab implements Widget
         $class = $this->active ? ' class="active"' : '';
         $caption = $this->title;
         if ($this->icon !== null) {
-            $caption = $view->img($this->icon, array(
+            $caption = $view->img(
+                $this->icon,
+                array(
                     'width'  => 16,
                     'height' => 16
-                )) . ' ' . $caption;
-        } else if ($this->iconCls !== null) {
+                )
+            ) . ' ' . $caption;
+        } elseif ($this->iconCls !== null) {
             $caption = '<i class="icon-'.$this->iconCls.'"></i> ' . $caption;
         }
         if ($this->url !== null) {
@@ -205,5 +208,4 @@ class Tab implements Widget
 
         return '<li '.$class.'>'.$tab.'</li>'.PHP_EOL;
     }
-
 }

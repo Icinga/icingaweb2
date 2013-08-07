@@ -25,18 +25,24 @@ class AddUrlForm extends Form
     private function addPaneSelectionBox(Dashboard $dashboard)
     {
 
-        $selectPane = new Zend_Form_Element_Select('pane', array(
-            'label'     => 'Dashboard',
-            'required'  => true,
-            'style'     => 'display:inline-block',
-            'multiOptions' => $dashboard->getPaneKeyTitleArray()
-        ));
+        $selectPane = new Zend_Form_Element_Select(
+            'pane',
+            array(
+                'label'     => 'Dashboard',
+                'required'  => true,
+                'style'     => 'display:inline-block',
+                'multiOptions' => $dashboard->getPaneKeyTitleArray()
+            )
+        );
 
-        $newDashboardBtn = new Zend_Form_Element_Submit('create_new_pane', array(
-            'label'     => '+',
-            'required'  => false,
-            'style'     => 'display:inline-block'
-        ));
+        $newDashboardBtn = new Zend_Form_Element_Submit(
+            'create_new_pane',
+            array(
+                'label'     => '+',
+                'required'  => false,
+                'style'     => 'display:inline-block'
+            )
+        );
 
         $newDashboardBtn->removeDecorator('DtDdWrapper');
         $selectPane->removeDecorator('DtDdWrapper');
@@ -54,23 +60,32 @@ class AddUrlForm extends Form
      */
     private function addNewPaneTextField()
     {
-        $txtCreatePane = new Zend_Form_Element_Text('pane', array(
-            'label'     => 'New dashboard title',
-            'required'  => true,
-            'style'     => 'display:inline-block'
-        ));
+        $txtCreatePane = new Zend_Form_Element_Text(
+            'pane',
+            array(
+                'label'     => 'New dashboard title',
+                'required'  => true,
+                'style'     => 'display:inline-block'
+            )
+        );
 
         // Marks this field as a new pane (and prevents the checkbox being displayed when validation errors occur)
-        $markAsNewPane = new Zend_Form_Element_Hidden('create_new_pane', array(
-            'required'  => true,
-            'value'     => 1
-        ));
+        $markAsNewPane = new Zend_Form_Element_Hidden(
+            'create_new_pane',
+            array(
+                'required'  => true,
+                'value'     => 1
+            )
+        );
 
-        $cancelDashboardBtn = new Zend_Form_Element_Submit('use_existing_dashboard', array(
-            'label'     => 'X',
-            'required'  => false,
-            'style'     => 'display:inline-block'
-        ));
+        $cancelDashboardBtn = new Zend_Form_Element_Submit(
+            'use_existing_dashboard',
+            array(
+                'label'     => 'X',
+                'required'  => false,
+                'style'     => 'display:inline-block'
+            )
+        );
 
         $cancelDashboardBtn->removeDecorator('DtDdWrapper');
         $txtCreatePane->removeDecorator('DtDdWrapper');
@@ -89,26 +104,33 @@ class AddUrlForm extends Form
     {
         $dashboard = new Dashboard();
         $dashboard->readConfig(IcingaConfig::app('dashboard/dashboard'));
-        $this->addElement('text', 'url', array(
-            'label'    => 'Url',
-            'required' => true,
-        ));
+        $this->addElement(
+            'text',
+            'url',
+            array(
+                'label'    => 'Url',
+                'required' => true,
+            )
+        );
         $elems = $dashboard->getPaneKeyTitleArray();
 
         if (empty($elems) ||    // show textfield instead of combobox when no pane is available
-            ($this->getRequest()->getPost('create_new_pane', '0') &&   // or when a new pane should be created (+ button)
-            !$this->getRequest()->getPost('use_existing_dashboard', '0'))  // and the user didn't click the 'use existing' button
+            ($this->getRequest()->getPost('create_new_pane', '0') &&  // or when a new pane should be created (+ button)
+            !$this->getRequest()->getPost('use_existing_dashboard', '0')) // and the user didn't click the 'use existing' button
         ) {
             $this->addNewPaneTextField();
         } else {
             $this->addPaneSelectionBox($dashboard);
         }
 
-        $this->addElement('text', 'component', array(
-            'label'    => 'Title',
-            'required' => true,
-        ));
+        $this->addElement(
+            'text',
+            'component',
+            array(
+                'label'    => 'Title',
+                'required' => true,
+            )
+        );
         $this->setSubmitLabel("Add to dashboard");
     }
 }
-

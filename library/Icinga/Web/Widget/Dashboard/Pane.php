@@ -103,10 +103,7 @@ class Pane implements Widget
         if ($this->hasComponent($title)) {
             return $this->components[$title];
         }
-        throw new ProgrammingError(sprintf(
-            'Trying to access invalid component: %s',
-            $title
-        ));
+        throw new ProgrammingError(sprintf('Trying to access invalid component: %s', $title));
     }
 
     /**
@@ -148,7 +145,8 @@ class Pane implements Widget
     /**
      * Add a component to this pane, optionally creating it if $component is a string
      *
-     * @param string|Component $component               The component object or title (if a new component will be created)
+     * @param string|Component $component               The component object or title 
+     *                                                  (if a new component will be created)
      * @param string|null $url                          An Url to be used when component is a string
      *
      * @return Pane $this
@@ -160,7 +158,7 @@ class Pane implements Widget
             $this->components[$component->getTitle()] = $component;
         } elseif (is_string($component) && $url !== null) {
              $this->components[$component] = new Component($component, $url, $this);
-        } else{
+        } else {
             throw new ConfigurationError('Invalid component added: '.$component);
         }
         return $this;
@@ -173,8 +171,7 @@ class Pane implements Widget
      */
     public function toIni()
     {
-        if (empty($this->components))
-        {
+        if (empty($this->components)) {
             return '';
         }
         $ini = '['.$this->getName().']'.PHP_EOL.

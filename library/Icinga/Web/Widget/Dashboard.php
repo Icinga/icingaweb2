@@ -75,11 +75,14 @@ class Dashboard implements Widget
             $this->tabs = new Tabs();
 
             foreach ($this->panes as $key => $pane) {
-                $this->tabs->add($key, array(
-                    'title'     => $pane->getTitle(),
-                    'url'       => clone($url),
-                    'urlParams' => array($this->tabParam => $key)
-                ));
+                $this->tabs->add(
+                    $key,
+                    array(
+                        'title'     => $pane->getTitle(),
+                        'url'       => clone($url),
+                        'urlParams' => array($this->tabParam => $key)
+                    )
+                );
             }
         }
         return $this->tabs;
@@ -113,7 +116,7 @@ class Dashboard implements Widget
         }
         if (!@file_put_contents($file, $iniString)) {
             $error = error_get_last();
-            if ($error == NULL) {
+            if ($error == null) {
                 $error = 'Unknown error';
             } else {
                 $error = $error['message'];
@@ -340,4 +343,3 @@ class Dashboard implements Widget
         }
     }
 }
-

@@ -8,7 +8,6 @@ use Icinga\Config\Config as IcingaConfig;
 use Icinga\Form\Dashboard\AddUrlForm;
 use Icinga\Exception\ConfigurationError;
 
-
 /**
  * Handle creation, removal and displaying of dashboards, panes and components
  *
@@ -45,7 +44,7 @@ class DashboardController extends ActionController
                 $this->_getParam('component')
             )->store();
             $this->redirectNow(Url::fromPath('dashboard', array('pane' => $pane)));
-        } catch(ConfigurationError $exc ) {
+        } catch (ConfigurationError $exc ) {
 
             $this->_helper->viewRenderer('show_configuration');
             $this->view->exceptionMessage = $exc->getMessage();
@@ -74,7 +73,7 @@ class DashboardController extends ActionController
             try {
                 $dashboard->store();
                 $this->redirectNow(
-                    Url::fromPath('dashboard',array('pane' => $form->getValue('pane')))
+                    Url::fromPath('dashboard', array('pane' => $form->getValue('pane')))
                 );
             } catch (ConfigurationError $exc) {
                 $this->_helper->viewRenderer('show_configuration');
@@ -100,12 +99,14 @@ class DashboardController extends ActionController
             $dashboard->activate($dashboardName);
         }
         $this->view->tabs = $dashboard->getTabs();
-        $this->view->tabs->add('Add', array(
-            'title' => 'Add Url',
-            'iconCls' => 'plus',
-            'url' => Url::fromPath('dashboard/addurl')
-        ));
-        $this->view->dashboard = $dashboard;  
+        $this->view->tabs->add(
+            'Add',
+            array(
+                'title' => 'Add Url',
+                'iconCls' => 'plus',
+                'url' => Url::fromPath('dashboard/addurl')
+            )
+        );
+        $this->view->dashboard = $dashboard;
     }
 }
-
