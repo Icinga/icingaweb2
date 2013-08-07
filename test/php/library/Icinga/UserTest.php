@@ -6,6 +6,7 @@ require_once __DIR__ . '/../../../../library/Icinga/User.php';
 require_once __DIR__ . '/../../../../library/Icinga/User/Preferences.php';
 require_once __DIR__ . '/../../../../library/Icinga/User/Preferences/ChangeSet.php';
 
+use \DateTimeZone;
 use Icinga\User as IcingaUser;
 use Icinga\User\Preferences as UserPreferences;
 
@@ -49,7 +50,7 @@ class UserTest extends \PHPUnit_Framework_TestCase
         $user = new IcingaUser('unittest');
         $prefs = new UserPreferences(array());
         $user->setPreferences($prefs);
-        $this->assertEquals($user->getTimeZone(), $defaultTz,
+        $this->assertEquals($user->getTimeZone(), new DateTimeZone($defaultTz),
             'User\'s timezone does not match the default timezone'
         );
     }
@@ -64,7 +65,7 @@ class UserTest extends \PHPUnit_Framework_TestCase
             'timezone' => $explicitTz
         ));
         $user->setPreferences($prefs);
-        $this->assertEquals($user->getTimeZone(), $explicitTz,
+        $this->assertEquals($user->getTimeZone(), new DateTimeZone($defaultTz),
             'User\'s timezone does not match the timezone set by himself'
         );
     }
