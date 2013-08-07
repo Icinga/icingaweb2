@@ -66,7 +66,7 @@ class IniEditor
      * @param $value        The value to set
      * @param $section      The section to insert to.
      */
-    public function set(array $key,$value,$section = null)
+    public function set(array $key, $value, $section = null)
     {
         $line = $this->getKeyLine($key,$section);
         if ($line === -1) {
@@ -98,7 +98,7 @@ class IniEditor
      * @param $value        The value of the property
      * @param $section      The section to use
      */
-    public function setArrayElement(array $key,$value,$section = null)
+    public function setArrayElement(array $key, $value, $section = null)
     {
         $line = $this->getArrayEl($key,$section);
         if ($line !== -1) {
@@ -125,12 +125,12 @@ class IniEditor
      *
      * @return              The line of the array element.
      */
-    private function getArrayEl(array $key,$section = null)
+    private function getArrayEl(array $key, $section = null)
     {
         $line = isset($section) ? $this->getSectionLine($section) +1 : 0;
         $index = array_pop($key);
         $formatted = $this->formatKey($key);
-        for (;$line < count($this->text);$line++) {
+        for (; $line < count($this->text); $line++) {
             $l = $this->text[$line];
             if ($this->isSectionDeclaration($l)) {
                 return -1;
@@ -138,7 +138,7 @@ class IniEditor
             if (strlen($formatted) > 0) {
                 if (preg_match('/^'.$formatted.'\[\]=/',$l) === 1 ||
                     preg_match(
-                        '/^'.$formatted.$this->nestSeparator.$index.'=/',$l) === 1){
+                        '/^'.$formatted.$this->nestSeparator.$index.'=/',$l) === 1) {
                     return $line;
                 }
             } else {
@@ -156,7 +156,7 @@ class IniEditor
      * @param array $key    The key to reset
      * @param $section      The section of the key
      */
-    public function reset(array $key,$section = null)
+    public function reset(array $key, $section = null)
     {
         $line = $this->getKeyLine($key,$section);
         if ($line === -1) {
@@ -171,7 +171,7 @@ class IniEditor
      * @param $section  The section name
      * @param $extend   The section that should be extended by this section
      */
-    public function setSection($section,$extend = null)
+    public function setSection($section, $extend = null)
     {
         if (isset($extend)) {
             $decl = '['.$section.' : '.$extend.']';
@@ -208,7 +208,7 @@ class IniEditor
      * @param $value        The value to insert
      * @param array $key    The key to insert
      */
-    private function insert(array $key,$value,$section = null)
+    private function insert(array $key, $value, $section = null)
     {
         $line = $this->getSectionEnd($section);
         $content = $this->formatKeyValuePair($key,$value);
@@ -232,7 +232,7 @@ class IniEditor
     private function cleanUpWhitespaces()
     {
         $i = count($this->text) - 1;
-        for (;$i >= 0; $i--) {
+        for (; $i >= 0; $i--) {
             $line = $this->text[$i];
             if ($this->isSectionDeclaration($line)) {
                 $i--;
@@ -268,7 +268,7 @@ class IniEditor
      * @param $lineNr   The line nr the inserted line should have
      * @param $toInsert The text that will be inserted
      */
-    private function insertAtLine($lineNr,$toInsert)
+    private function insertAtLine($lineNr, $toInsert)
     {
         $this->text = IniEditor::insertIntoArray($this->text,$lineNr,$toInsert);
     }
@@ -279,7 +279,7 @@ class IniEditor
      * @param $lineNr   The line number of the target line
      * @param $toInsert The new line content
      */
-    private function updateLine($lineNr,$content)
+    private function updateLine($lineNr, $content)
     {
         $this->text[$lineNr] = $content;
     }
@@ -302,7 +302,7 @@ class IniEditor
      *
      * @return string The formatted key-value pair
      */
-    private function formatKeyValuePair(array $key,$value)
+    private function formatKeyValuePair(array $key, $value)
     {
         return $this->formatKey($key).'='.$this->formatValue($value);
     }
@@ -358,7 +358,7 @@ class IniEditor
      *
      * @return bool
      */
-    private function isSectionDeclaration($lineContent,$section = "")
+    private function isSectionDeclaration($lineContent, $section = "")
     {
         return preg_match('/^\[/'.$section,$lineContent) === 1;
     }
@@ -390,7 +390,7 @@ class IniEditor
      *
      * @return int The line number
      */
-    private function getKeyLine(array $keys,$section = null)
+    private function getKeyLine(array $keys, $section = null)
     {
         $key = implode($this->nestSeparator,$keys);
         $inSection = isset($section) ? false : true;
@@ -429,7 +429,7 @@ class IniEditor
      *
      * @return array    The changed array
      */
-    private static function insertIntoArray($array,$pos,$element)
+    private static function insertIntoArray($array, $pos, $element)
     {
         array_splice($array, $pos, 0, $element);
         return $array;
@@ -441,7 +441,7 @@ class IniEditor
      * @param $array    The array to use
      * @param $pos      The position to remove
      */
-    private function removeFromArray($array,$pos)
+    private function removeFromArray($array, $pos)
     {
         unset($array[$pos]);
         return array_values($array);
@@ -469,3 +469,4 @@ class IniEditor
         }
     }
 }
+

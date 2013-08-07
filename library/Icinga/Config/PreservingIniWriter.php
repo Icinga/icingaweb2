@@ -38,16 +38,6 @@ use Zend_Config_Ini;
 class PreservingIniWriter extends \Zend_Config_Writer_FileAbstract
 {
     /**
-     * Create a new instance of PreservingIniWriter
-     *
-     * @param array $options The options passed to the base class
-     */
-    function __construct(array $options)
-    {
-        parent::__construct($options);
-    }
-
-    /**
      * Render the Zend_Config into a config file string
      *
      * @return string
@@ -129,7 +119,7 @@ class PreservingIniWriter extends \Zend_Config_Writer_FileAbstract
                 /*
                  * The value is a plain value, use the editor to set it
                  */
-                if (is_numeric($key)){
+                if (is_numeric($key)) {
                     $editor->setArrayElement($keyIdentifier,$value,$section);
                 } else {
                     $editor->set($keyIdentifier,$value,$section);
