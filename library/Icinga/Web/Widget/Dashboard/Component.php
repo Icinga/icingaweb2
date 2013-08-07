@@ -169,21 +169,19 @@ EOD;
     {
         $url = clone($this->url);
         $url->addParams(array('view' => 'compact'));
-        if (isset($_GET['layout'])) {
-            $url->addParams(array('layout' => $_GET['layout']));
-        }
+
         $removeUrl = Url::fromPath(
-            "/dashboard/removecomponent",
+            '/dashboard/removecomponent',
             array(
-                "pane" => $this->pane->getName(),
-                "component" => $this->getTitle()
+                'pane' => $this->pane->getName(),
+                'component' => $this->getTitle()
             )
         );
 
-        $html = str_replace("{URL}", $url->getAbsoluteUrl(), $this->template);
-        $html = str_replace("{REMOVE_URL}", $removeUrl, $html);
-        $html = str_replace("{DIMENSION}", $this->getBoxSizeAsCSS(), $html);
-        $html = str_replace("{TITLE}", $view->escape($this->getTitle()), $html);
+        $html = str_replace('{URL}', $url->getAbsoluteUrl(), $this->template);
+        $html = str_replace('{REMOVE_URL}', $removeUrl, $html);
+        $html = str_replace('{DIMENSION}', $this->getBoxSizeAsCSS(), $html);
+        $html = str_replace('{TITLE}', $view->escape($this->getTitle()), $html);
         return $html;
     }
 
@@ -194,7 +192,7 @@ EOD;
      */
     private function getBoxSizeAsCSS()
     {
-        $style = "";
+        $style = '';
         if ($this->height) {
             $style .= 'height:'.(string) $this->height.';';
         }
@@ -219,16 +217,16 @@ EOD;
         $width = null;
         $url = $config->get('url');
         $parameters = $config->toArray();
-        unset($parameters["url"]); // otherwise there's an url = parameter in the Url
+        unset($parameters['url']); // otherwise there's an url = parameter in the Url
 
-        if (isset($parameters["height"])) {
-            $height = Dimension::fromString($parameters["height"]);
-            unset($parameters["height"]);
+        if (isset($parameters['height'])) {
+            $height = Dimension::fromString($parameters['height']);
+            unset($parameters['height']);
         }
 
-        if (isset($parameters["width"])) {
-            $width = Dimension::fromString($parameters["width"]);
-            unset($parameters["width"]);
+        if (isset($parameters['width'])) {
+            $width = Dimension::fromString($parameters['width']);
+            unset($parameters['width']);
         }
 
         $cmp = new Component($title, Url::fromPath($url, $parameters), $pane);

@@ -3,7 +3,7 @@
 namespace Icinga\Web\Widget;
 
 use Icinga\Application\Icinga;
-use Icinga\Config\Config as IcingaConfig;;
+use Icinga\Config\Config as IcingaConfig;
 use Icinga\Application\Logger;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Web\Widget\Widget;
@@ -11,6 +11,7 @@ use Icinga\Web\Widget\Dashboard\Pane;
 use Icinga\Web\Widget\Dashboard\Component as DashboardComponent;
 
 use Icinga\Web\Url;
+use Zend_View_Abstract;
 
 /**
  * Dashboards display multiple views on a single page
@@ -72,8 +73,8 @@ class Dashboard implements Widget
         $url = Url::fromRequest()->getUrlWithout($this->tabParam);
         if ($this->tabs === null) {
             $this->tabs = new Tabs();
-            foreach ($this->panes as $key => $pane) {
 
+            foreach ($this->panes as $key => $pane) {
                 $this->tabs->add($key, array(
                     'title'     => $pane->getTitle(),
                     'url'       => clone($url),
@@ -105,8 +106,12 @@ class Dashboard implements Widget
             Logger::error('Tried to persist dashboard to %s, but path is not writeable', $file);
             throw new ConfigurationError('Can\'t persist dashboard');
         }
-
-        if (! @file_put_contents($file, $this->toIni())) {
+        // make sure empty dashboards don't cause errors
+        $iniString = trim($this->toIni());
+        if (!$iniString) {
+            $iniString = " ";
+        }
+        if (!@file_put_contents($file, $iniString)) {
             $error = error_get_last();
             if ($error == NULL) {
                 $error = 'Unknown error';
@@ -145,7 +150,6 @@ class Dashboard implements Widget
         $pane = new Pane($title);
         $pane->setTitle($title);
         $this->addPane($pane);
-
     }
 
     /**
@@ -251,15 +255,16 @@ class Dashboard implements Widget
      */
     public function getPane($name)
     {
-        if (!isset($this->panes[$name]))
+        if (!isset($this->panes[$name])) {
             return null;
+        }
         return $this->panes[$name];
     }
 
     /**
      * @see Icinga\Web\Widget::render
      */
-    public function render(\Zend_View_Abstract $view)
+    public function render(Zend_View_Abstract $view)
     {
         if (empty($this->panes)) {
             return '';
@@ -288,7 +293,7 @@ class Dashboard implements Widget
     public function determineActivePane()
     {
         $active = $this->getTabs()->getActiveName();
-        if (! $active) {
+        if (!$active) {
             if ($active = Url::fromRequest()->getParam($this->tabParam)) {
                 if ($this->isEmptyPane($active)) {
                     $active = $this->setDefaultPane();

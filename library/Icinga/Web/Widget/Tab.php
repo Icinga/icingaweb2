@@ -3,6 +3,7 @@
 namespace Icinga\Web\Widget;
 
 use Icinga\Exception\ProgrammingError;
+use Zend_View_Abstract;
 
 /**
  * A single tab, usually used through the tabs widget
@@ -37,15 +38,46 @@ class Tab implements Widget
      */
     private $name = null;
 
+    /**
+     * The title displayed for this tab
+     *
+     * @var string
+     */
     private $title = '';
+
+    /**
+     * The Url this tab points to
+     *
+     * @var string|null
+     */
     private $url = null;
+
+    /**
+     * The parameters for this tab's Url
+     *
+     * @var array
+     */
     private $urlParams = array();
+
+    /**
+     * The icon image to use for this tab or null if none
+     *
+     * @var string|null
+     */
     private $icon = null;
+
+    /**
+     * The icon class to use if $icon is null
+     *
+     * @var string|null
+     */
     private $iconCls = null;
 
 
     /**
-     * @param mixed $icon
+     * Sets an icon image for this tab
+     *
+     * @param string $icon      The url of the image to use
      */
     public function setIcon($icon)
     {
@@ -53,22 +85,15 @@ class Tab implements Widget
     }
 
     /**
-     * @return mixed
+     * Set's an icon class that will be used in an <i> tag if no icon image is set
+     *
+     * @param string $iconCls       The CSS class of the icon to use
      */
-    public function getIcon()
-    {
-        return $this->icon;
-    }
-
     public function setIconCls($iconCls)
     {
         $this->iconCls = $iconCls;
     }
 
-    public function getIconCls()
-    {
-        return $this->iconCls;
-    }
 
     /**
      * @param mixed $name
@@ -95,31 +120,20 @@ class Tab implements Widget
     }
 
     /**
-     * @return mixed
-     */
-    public function getTitle()
-    {
-        return $this->title;
-    }
-
-    /**
-     * @param mixed $url
+     * Set the Url this tab points to
+     *
+     * @param string $url       The Url to use for this tab
      */
     public function setUrl($url)
     {
         $this->url = $url;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getUrl()
-    {
-        return $this->url;
-    }
 
     /**
-     * @param mixed $url
+     * Set the parameters to be set for this tabs Url
+     *
+     * @param array $url        The Url parameters to set
      */
     public function setUrlParams(array $urlParams)
     {
@@ -127,13 +141,12 @@ class Tab implements Widget
     }
 
     /**
-     * @return mixed
+     * Create a new Tab with the given properties
+     *
+     * Allowed properties are all properties for which a setter exists
+     *
+     * @param array $properties     An array of properties
      */
-    public function getUrlParams()
-    {
-        return $this->urlParams;
-    }
-
     public function __construct(array $properties = array())
     {
         foreach ($properties as $name=>$value) {
@@ -163,24 +176,13 @@ class Tab implements Widget
         return $this;
     }
 
-    /**
-     * Whether this tab is currently active
-     *
-     * @return bool
-     */
-    public function isActive()
-    {
-        return $this->active;
-    }
 
     /**
-     * This is where the list item HTML is created
-     *
-     * @return string
+     * @see Widget::render()
      */
-    public function render(\Zend_View_Abstract $view)
+    public function render(Zend_View_Abstract $view)
     {
-        $class = $this->isActive() ? ' class="active"' : '';
+        $class = $this->active ? ' class="active"' : '';
         $caption = $this->title;
         if ($this->icon !== null) {
             $caption = $view->img($this->icon, array(
@@ -201,7 +203,7 @@ class Tab implements Widget
             $tab = $caption;
         }
 
-        return "<li $class>$tab</li>\n";
+        return '<li '.$class.'>'.$tab.'</li>'.PHP_EOL;
     }
 
 }

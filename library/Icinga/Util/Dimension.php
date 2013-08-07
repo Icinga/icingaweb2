@@ -9,7 +9,6 @@
 
 namespace Icinga\Util;
 
-use InvalidArgumentException;
 
 class Dimension
 {

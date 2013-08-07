@@ -2,10 +2,10 @@
 
 namespace Icinga\Web\Widget\Dashboard;
 
-use Icinga\Web\Url;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Web\Widget\Widget;
 use Zend_Config;
+use Zend_View_Abstract;
 
 /**
  * A pane, displaying different Dashboard components
@@ -136,10 +136,10 @@ class Pane implements Widget
     /**
      * @see Widget::render
      */
-    public function render(\Zend_View_Abstract $view)
+    public function render(Zend_View_Abstract $view)
     {
         $html = PHP_EOL;
-        foreach ($this->getComponents() as $component) {
+        foreach ($this->components as $component) {
             $html .= PHP_EOL.$component->render($view);
         }
         return $html;

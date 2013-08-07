@@ -4,18 +4,12 @@ namespace Icinga\Web\Widget;
 
 use Icinga\Exception\ProgrammingError;
 use Icinga\Web\Url;
-use Zend_Controller_Action_HelperBroker as ZfActionHelper;
 
 use Countable;
 
 /**
  * Navigation tab widget
  *
- * Useful if you want to create navigation tabs
- *
- * @copyright  Copyright (c) 2013 Icinga-Web Team <info@icinga.org>
- * @author     Icinga-Web Team <info@icinga.org>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License
  */
 class Tabs implements Countable, Widget
 {
@@ -40,6 +34,12 @@ class Tabs implements Countable, Widget
      */
     private $tab_class = 'nav-tabs';
 
+    /**
+     * Array when special actions (dropdown) are enabled
+     * @TODO: Remove special part from tabs (Bug #4512)
+     *
+     * @var bool|array
+     */
     private $specialActions = false;
 
     /**
@@ -75,6 +75,11 @@ class Tabs implements Countable, Widget
         );
     }
 
+    /**
+     * Return the name of the active tab
+     *
+     * @return string
+     */
     public function getActiveName()
     {
         return $this->active;
@@ -116,7 +121,7 @@ class Tabs implements Countable, Widget
      */
     public function get($name)
     {
-        if (! $this->has($name)) {
+        if (!$this->has($name)) {
             throw new ProgrammingError(
                 sprintf(
                     'There is no such tab: %s',
@@ -175,6 +180,13 @@ class Tabs implements Countable, Widget
         return $this;
     }
 
+    /**
+     * Enable special actions (dropdown with format, basket and dashboard)
+     *
+     * @TODO: Remove special part from tabs (Bug #4512)
+     *
+     * @return $this
+     */
     public function enableSpecialActions()
     {
         $this->specialActions = true;
@@ -182,16 +194,14 @@ class Tabs implements Countable, Widget
     }
 
     /**
-     * This is where the tabs are going to be rendered
-     *
-     * @return string
+     * @see Widget::render
      */
     public function render(\Zend_View_Abstract $view)
     {
         if (empty($this->tabs)) {
             return '';
         }
-        $html = '<ul class="nav ' . $this->tab_class . '">' . "\n";
+        $html = '<ul class="nav ' . $this->tab_class . '">' . PHP_EOL;
 
         foreach ($this->tabs as $tab) {
             $html .= $tab->render($view);
@@ -252,12 +262,23 @@ class Tabs implements Countable, Widget
         return $html;
     }
 
-
+    /**
+     * Return the number of tabs
+     *
+     * @see Countable
+     *
+     * @return int
+     */
     public function count()
     {
         return count($this->tabs);
     }
 
+    /**
+     * Return all tabs contained in this tab panel
+     *
+     * @return array
+     */
     public function getTabs()
     {
         return $this->tabs;

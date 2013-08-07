@@ -1,18 +1,23 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: moja
- * Date: 8/5/13
- * Time: 11:58 AM
- * To change this template use File | Settings | File Templates.
- */
 
 namespace Icinga\Web\Widget;
 
-
 use Icinga\Web\View;
+use Zend_View_Abstract;
 
-interface Widget {
-
-    public function render(\Zend_View_Abstract $view);
+/**
+ * Abstract class for reusable view elements that can be
+ * rendered to a view
+ *
+ */
+interface Widget
+{
+    /**
+     * Renders this widget via the given view and returns the
+     * HTML as a string
+     *
+     * @param \Zend_View_Abstract $view
+     * @return string
+     */
+    public function render(Zend_View_Abstract $view);
 }

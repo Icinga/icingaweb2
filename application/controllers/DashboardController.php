@@ -1,7 +1,6 @@
 <?php
 
 use Icinga\Web\ActionController;
-use Icinga\Application\Config;
 use Icinga\Web\Url;
 use Icinga\Application\Icinga;
 use Icinga\Web\Widget\Dashboard;
@@ -40,17 +39,18 @@ class DashboardController extends ActionController
     {
         $pane =  $this->_getParam('pane');
         $dashboard = $this->getDashboard();
-        $dashboard->removeComponent(
-            $pane,
-            $this->_getParam('component')
-        )->store();
+        try {
+            $dashboard->removeComponent(
+                $pane,
+                $this->_getParam('component')
+            )->store();
+            $this->redirectNow(Url::fromPath('dashboard', array('pane' => $pane)));
+        } catch(ConfigurationError $exc ) {
 
-        // When the pane doesn't exist anymore, display the default pane
-        if ($dashboard->isEmptyPane($pane)) {
-            $this->redirectNow(Url::fromPath('dashboard'));
-            return;
+            $this->_helper->viewRenderer('show_configuration');
+            $this->view->exceptionMessage = $exc->getMessage();
+            $this->view->iniConfigurationString = $dashboard->toIni();
         }
-        $this->redirectNow(Url::fromPath('dashboard', array('pane' => $pane)));
     }
 
 

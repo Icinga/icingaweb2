@@ -1,4 +1,3 @@
-
 <?php
 $hosts = $this->hosts->paginate();
 $viewHelper = $this->getHelper('MonitoringState');
@@ -59,7 +58,7 @@ $trimArea = $this->getHelper('Trim');
             <td class="indicator state" title="<?= $viewHelper->getStateTitle($host, 'host'); ?>">
                 <div class="statetext">
                 <?= $this->qlink(
-                        "<b>".ucfirst($viewHelper->monitoringState($host, 'host'))."</b>".
+                        "<b>".ucfirst($viewHelper->monitoringState($host, 'host')).'</b>'.
                              '<div class="nowrap"> since&nbsp;'.
                             $this->timeSince($host->host_last_state_change),
                         'monitoring/show/history', array(
@@ -82,8 +81,8 @@ $trimArea = $this->getHelper('Trim');
                     </a>
                 <?php endif; ?>
                 <?= $this->qlink(
-                    "<b>".$host->host_name."</b><br/>".
-                    "<i>".$host->host_address."</i>",
+                    '<b>'.$host->host_name.'</b><br/>'.
+                    '<i>'.$host->host_address.'</i>',
                     'monitoring/show/host', array(
                         'host'    => $host->host_name
                     ), array(
@@ -93,11 +92,11 @@ $trimArea = $this->getHelper('Trim');
                 ); ?>
 
 
-                <?php if ($host->host_action_url != ""): ?>
+                <?php if ($host->host_action_url != ''): ?>
                 <a href="<?= $host->host_action_url; ?>">Action</a>
                 <?php endif; ?>
 
-                <?php if ($host->host_notes_url != ""): ?>
+                <?php if ($host->host_notes_url != ''): ?>
                 <a href="<?= $host->host_notes_url; ?>">Notes</a>
                 <?php endif; ?>
             </td>
