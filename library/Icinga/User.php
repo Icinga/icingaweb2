@@ -28,8 +28,9 @@
 
 namespace Icinga;
 
+use \DateTimeZone;
+use \InvalidArgumentException;
 use Icinga\User\Preferences;
-use InvalidArgumentException;
 
 /**
  *  This class represents an authorized user
@@ -320,9 +321,9 @@ class User
     /**
      * Retrieve the user's timezone
      *
-     * If the user did not set a timezone, the default timezone set via config.ini will be returned
+     * If the user did not set a timezone, the default timezone set via config.ini is returned
      *
-     * @return string
+     * @return  DateTimeZone
      */
     public function getTimeZone()
     {
@@ -330,6 +331,6 @@ class User
         if ($tz === null) {
             $tz = date_default_timezone_get();
         }
-        return $tz;
+        return new DateTimeZone($tz);
     }
 }
