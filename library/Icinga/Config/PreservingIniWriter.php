@@ -73,16 +73,49 @@ class PreservingIniWriter extends \Zend_Config_Writer_FileAbstract
         Zend_Config $oldconfig,
         Zend_Config $newconfig,
         IniEditor $editor,
-        array $parents = array())
-    {
+        array $parents = array()
+    ) {
+        $this->diffPropertyUpdates($oldconfig,$newconfig,$editor,$parents);
+        $this->diffPropertyDeletions($oldconfig,$newconfig,$editor,$parents);
+    }
+
+    /**
+     * Search for created and updated properties and use the editor to create or update these entries
+     *
+     * @param Zend_Config   $oldconfig    The config representing the state before the change
+     * @param Zend_Config   $newconfig    The config representing the state after the change
+     * @param IniEditor     $eeditor      The editor that should be used to edit the old config file
+     * @param array         $parents      The parent keys that should be respected when editing the config
+     */
+    private function diffPropertyUpdates(
+        Zend_Config $oldconfig,
+        Zend_Config $newconfig,
+        IniEditor $editor,
+        array $parents = array()
+    ) {
+        /*
+         * The current section. This value is null when processing
+         * the section-less root element
+         */
         $section = empty($parents) ? null : $parents[0];
+
+        /*
+         * Iterate over all properties in the new configuration file and search for changes
+         */
         foreach ($newconfig as $key => $value) {
             $oldvalue = $oldconfig->get($key);
             $nextParents = array_merge($parents,array($key));
-            $ident = empty($parents) ? 
+            $keyIdentifier = empty($parents) ?
                 array($key) : array_slice($nextParents,1,null,true);
+
             if ($value instanceof Zend_Config) {
+                /*
+                 * The value is a nested Zend_Config, handle it recursively
+                 */
                 if (!isset($section)) {
+                    /*
+                     * Update the section declaration
+                     */
                     $extends = $newconfig->getExtends();
                     $extend = array_key_exists($key,$extends) ?
                         $extends[$key] : null;
@@ -93,31 +126,65 @@ class PreservingIniWriter extends \Zend_Config_Writer_FileAbstract
                 }
                 $this->diffConfigs($oldvalue,$value,$editor,$nextParents);
             } else {
+                /*
+                 * The value is a plain value, use the editor to set it
+                 */
                 if (is_numeric($key)){
-                    $editor->setArrayElement($ident,$value,$section);
+                    $editor->setArrayElement($keyIdentifier,$value,$section);
                 } else {
-                    $editor->set($ident,$value,$section);
+                    $editor->set($keyIdentifier,$value,$section);
                 }
             }
         }
+    }
+
+    /**
+     * Search for deleted properties and use the editor to delete these entries
+     *
+     * @param Zend_Config   $oldconfig    The config representing the state before the change
+     * @param Zend_Config   $newconfig    The config representing the state after the change
+     * @param IniEditor     $eeditor      The editor that should be used to edit the old config file
+     * @param array         $parents      The parent keys that should be respected when editing the config
+     */
+    private function diffPropertyDeletions(
+        Zend_Config $oldconfig,
+        Zend_Config $newconfig,
+        IniEditor $editor,
+        array $parents = array()
+    ) {
+        /*
+         * The current section. This value is null when processing
+         * the section-less root element
+         */
+        $section = empty($parents) ? null : $parents[0];
+
+        /*
+         * Iterate over all properties in the old configuration file and search for
+         * deleted properties
+         */
         foreach ($oldconfig as $key => $value) {
             $nextParents = array_merge($parents,array($key));
             $newvalue = $newconfig->get($key);
-            $ident = empty($parents) ? 
+            $keyIdentifier = empty($parents) ?
                 array($key) : array_slice($nextParents,1,null,true);
+
             if (!isset($newvalue)) {
                 if ($value instanceof Zend_Config) {
-                    $this->diffConfigs(
-                        $value,new Zend_Config(array()),$editor,$nextParents
-                    );
+                    /*
+                     * The deleted value is a nested Zend_Config, handle it recursively
+                     */
+                    $this->diffConfigs($value,new Zend_Config(array()),$editor,$nextParents);
                     if (!isset($section)) {
                         $editor->removeSection($key);
                     }
                 } else {
+                    /*
+                     * The deleted value is a plain value, use the editor to delete it
+                     */
                     if (is_numeric($key)) {
-                        $editor->resetArrayElement($ident,$section);
+                        $editor->resetArrayElement($keyIdentifier,$section);
                     } else {
-                        $editor->reset($ident,$section);
+                        $editor->reset($keyIdentifier,$section);
                     }
                 }
             }

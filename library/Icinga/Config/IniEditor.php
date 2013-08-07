@@ -136,13 +136,13 @@ class IniEditor
                 return -1;
             }
             if (strlen($formatted) > 0) {
-                if (preg_match('/^'.$formatted.'\[\]/',$l) === 1 ||
+                if (preg_match('/^'.$formatted.'\[\]=/',$l) === 1 ||
                     preg_match(
-                        '/^'.$formatted.$this->nestSeparator.$index.'/',$l) === 1){
+                        '/^'.$formatted.$this->nestSeparator.$index.'=/',$l) === 1){
                     return $line;
                 }
             } else {
-                if (preg_match('/^'.$index.'/',$l) === 1 ) {
+                if (preg_match('/^'.$index.'=/',$l) === 1 ) {
                     return $line;
                 }
             }
@@ -237,11 +237,24 @@ class IniEditor
             if ($this->isSectionDeclaration($line)) {
                 $i--;
                 $line = $this->text[$i];
+                /*
+                 * Ignore comments that are glued to the section declaration
+                 */
+                while ($i > 0 && preg_match('/^;/',$line) === 1) {
+                    $i--;
+                    $line = $this->text[$i];
+                }
+                /*
+                 * Remove whitespaces between the sections
+                 */
                 while ($i > 0 && preg_match('/^[\s]*$/',$line) === 1) {
                     $this->deleteLine($i);
                     $i--;
                     $line = $this->text[$i];
                 }
+                /*
+                 * Add a single whitespace
+                 */
                 if ($i !== 0) {
                     $this->insertAtLine($i + 1,'');
                 }
@@ -315,6 +328,16 @@ class IniEditor
         $started = isset($section) ? false: true;
         foreach ($this->text as $line) {
             if ($started && preg_match('/^\[/',$line) === 1) {
+                if ($i === 0) {
+                    return $i;
+                }
+                /*
+                 * ignore all comments 'glued' to the next section, to allow section
+                 * comments in front of sections
+                 */
+                while (preg_match('/^;/',$this->text[$i - 1]) === 1) {
+                    $i--;
+                }
                 return $i;
             } elseif (preg_match('/^\['.$section.'.*\]/',$line) === 1) {
                 $started = true;
@@ -376,10 +399,10 @@ class IniEditor
             if ($inSection && preg_match('/^\[/',$line) === 1) {
                 return -1;
             }
-            if ($inSection && preg_match('/^'.$key.'/',$line) === 1) {
+            if ($inSection && preg_match('/^'.$key.'=/',$line) === 1) {
                 return $i;
             }
-            if (!$inSection && preg_match('/^\['.$section.'/',$line) === 1) {
+            if (!$inSection && preg_match('/^\[ *'.$section.' *[\]:]/',$line) === 1) {
                 $inSection = true;
             }
             $i++;
