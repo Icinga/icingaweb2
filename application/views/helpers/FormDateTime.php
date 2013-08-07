@@ -36,9 +36,9 @@ class Zend_View_Helper_FormDateTime extends Zend_View_Helper_FormElement
     /**
      * Generate a 'datetime' element
      *
-     * @param   string  $name    The element name
-     * @param   int     $value   The default timestamp
-     * @param   array   $attribs Attributes for the element tag
+     * @param   string  $name       The element name
+     * @param   int     $value      The default timestamp
+     * @param   array   $attribs    Attributes for the element tag
      *
      * @return  string  The element XHTML
      */
