@@ -52,7 +52,6 @@ class ConfigurationController extends ActionController
         );
 
         $tabBuilder->build();
-
         $this->view->tabs = $tabBuilder->getTabs();
     }
 }

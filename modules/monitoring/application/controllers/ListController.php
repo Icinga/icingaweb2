@@ -60,6 +60,8 @@ class Monitoring_ListController extends ModuleActionController
             $state_column = 'service_hard_state';
             $state_change_column = 'service_last_hard_state_change';
         }
+        $this->compactView = "services-compact";
+
 
         $this->view->services = $this->query('status', array(
             'host_name',

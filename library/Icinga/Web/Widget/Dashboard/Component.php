@@ -10,21 +10,49 @@ use Zend_Config;
 /**
  * A dashboard pane component
  *
- * Needs a title and an URL
+ * This is the element displaying a specific view in icinga2web
  *
  */
 class Component implements Widget
 {
+    /**
+     * The url of this Component
+     *
+     * @var \Icinga\Web\Url
+     */
     private $url;
-    private $title;
-    private $width;
-    private $height;
 
     /**
+     * The title being displayed on top of the component
+     * @var
+     */
+    private $title;
+
+    /**
+     * The width of the component, if set
+     *
+     * @var Dimension|null
+     */
+    private $width = null;
+
+    /**
+     * The height of the component, if set
+     *
+     * @var Dimension|null
+     */
+    private $height = null;
+
+    /**
+     * The pane containing this component, needed for the 'remove button'
      * @var Pane
      */
     private $pane;
 
+    /**
+     * The template string used for rendering this widget
+     *
+     * @var string
+     */
     private $template =<<<'EOD'
 
     <div class="icinga-container dashboard" icingatitle="{TITLE}" style="{DIMENSION}">
@@ -39,7 +67,13 @@ class Component implements Widget
     </div>
 EOD;
 
-
+    /**
+     * Create a new component displaying the given url in the provided pane
+     *
+     * @param string $title     The title to use for this component
+     * @param Url|string $url   The url this component uses for displaying information
+     * @param Pane $pane        The pane this Component will be added to
+     */
     public function __construct($title, $url, Pane $pane)
     {
         $this->title = $title;
@@ -51,18 +85,28 @@ EOD;
         }
     }
 
+    /**
+     * Set the with for this component or use the default width if null is provided
+     *
+     * @param Dimension|null $width     The width to use or null to use the default width
+     */
     public function setWidth(Dimension $width = null)
     {
         $this->width = $width;
     }
 
+    /**
+     * Set the with for this component or use the default height if null is provided
+     *
+     * @param Dimension|null $height     The height to use or null to use the default height
+     */
     public function setHeight(Dimension $height = null)
     {
         $this->height = $height;
     }
 
     /**
-     * Retrieve this components title
+     * Retrieve the components title
      *
      * @return string
      */
@@ -72,7 +116,7 @@ EOD;
     }
 
     /**
-     * Retrieve my url
+     * Retrieve the components url
      *
      * @return Url
      */
@@ -82,10 +126,11 @@ EOD;
     }
 
     /**
-     * Set this components URL
+     * Set the components URL
      *
-     * @param  string|Url $url Component URL
-     * @return self
+     * @param  string|Url $url  The url to use, either as an Url object or as a path
+     *
+     * @return $this
      */
     public function setUrl($url)
     {
@@ -97,35 +142,29 @@ EOD;
         return $this;
     }
 
-    protected function iniPair($key, $val)
-    {
-        return sprintf(
-            "%s = %s\n",
-            $key,
-            $this->quoteIni($val)
-        );
-    }
-
-    protected function quoteIni($str)
-    {
-        return '"' . $str . '"';
-    }
-
+    /**
+     * Return this component in a suitable format and encoding for ini files
+     *
+     * @return string
+     */
     public function toIni()
     {
-        $ini = $this->iniPair('url', $this->url->getRelativeUrl());
+        $ini =  'url = "'.$this->url->getRelativeUrl().'"'.PHP_EOL;
         foreach ($this->url->getParams() as $key => $val) {
-            $ini .= $this->iniPair($key, $val);
+            $ini .= $key.' = "'.$val.'"'.PHP_EOL;
         }
         if ($this->height !== null) {
-            $ini .= 'height: '.((string) $this->height).'\n';
+            $ini .= 'height = "'.((string) $this->height).'"'.PHP_EOL;
         }
         if ($this->width !== null) {
-            $ini .= 'width: '.((string) $this->width).'\n';
+            $ini .= 'width = "'.((string) $this->width).'"'.PHP_EOL;
         }
         return $ini;
     }
 
+    /**
+     * @see Widget::render()
+     */
     public function render(\Zend_View_Abstract $view)
     {
         $url = clone($this->url);
@@ -141,14 +180,18 @@ EOD;
             )
         );
 
-
         $html = str_replace("{URL}", $url->getAbsoluteUrl(), $this->template);
         $html = str_replace("{REMOVE_URL}", $removeUrl, $html);
-        $html = str_replace("{STYLE}", $this->getBoxSizeAsCSS(), $html);
+        $html = str_replace("{DIMENSION}", $this->getBoxSizeAsCSS(), $html);
         $html = str_replace("{TITLE}", $view->escape($this->getTitle()), $html);
         return $html;
     }
 
+    /**
+     * Return the height and width deifnition (if given) in CSS format
+     *
+     * @return string
+     */
     private function getBoxSizeAsCSS()
     {
         $style = "";
@@ -158,8 +201,18 @@ EOD;
         if ($this->width) {
             $style .= 'width:'.(string) $this->width.';';
         }
+        return $style;
     }
 
+    /**
+     * Create a @see Component instance from the given Zend config, using the provided title
+     *
+     * @param $title                    The title for this component
+     * @param Zend_Config $config       The configuration defining url, parameters, height, width, etc.
+     * @param Pane $pane                The pane this component belongs to
+     *
+     * @return Component                A newly created Component for use in the Dashboard
+     */
     public static function fromIni($title, Zend_Config $config, Pane $pane)
     {
         $height = null;

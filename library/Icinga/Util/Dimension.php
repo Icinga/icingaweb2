@@ -48,7 +48,7 @@ class Dimension
     private $unit = self::UNIT_PX;
 
     /**
-     * Creates a new Dimension object with the given size and unit
+     * Create a new Dimension object with the given size and unit
      *
      * @param int $value        The new value
      * @param string $unit      The unit to use (default: px)
@@ -71,7 +71,7 @@ class Dimension
     }
 
     /**
-     * Returns true when the value is > 0
+     * Return true when the value is > 0
      *
      * @return bool
      */
@@ -81,7 +81,7 @@ class Dimension
     }
 
     /**
-     * Returns the underlying value without unit information
+     * Return the underlying value without unit information
      *
      * @return int
      */
@@ -91,7 +91,17 @@ class Dimension
     }
 
     /**
-     * Returns this value with it's according unit as a string
+     * Return the unit used for the value
+     *
+     * @return string
+     */
+    public function getUnit()
+    {
+        return $this->unit;
+    }
+
+    /**
+     * Return this value with it's according unit as a string
      *
      * @return string
      */
@@ -103,12 +113,19 @@ class Dimension
         return $this->value.$this->unit;
     }
 
+    /**
+     * Create a new Dimension object from a string containing the numeric value and the dimension (e.g. 200px, 20%)
+     *
+     * @param $string                       The string to parse
+     *
+     * @return Dimension
+     */
     public static function fromString($string)
     {
         $matches = array();
         if (!preg_match_all('/^ *([0-9]+)(px|pt|em|\%) */i', $string, $matches)) {
-            throw new InvalidArgumentException($string.' is not a valid dimension');
+            return new Dimension(0);
         }
-        return new Dimension(intval($matches[1]), $matches[2]);
+        return new Dimension(intval($matches[1][0]), $matches[2][0]);
     }
 }

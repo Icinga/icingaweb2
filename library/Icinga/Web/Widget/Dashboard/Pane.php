@@ -7,39 +7,97 @@ use Icinga\Exception\ConfigurationError;
 use Icinga\Web\Widget\Widget;
 use Zend_Config;
 
+/**
+ * A pane, displaying different Dashboard components
+ *
+ */
 class Pane implements Widget
 {
-    protected $name;
-    protected $title;
-    protected $components = array();
+    /**
+     * The name of this pane, as defined in the ini file
+     *
+     * @var string
+     */
+    private $name;
 
+    /**
+     * The title of this pane, as displayed in the dashboard tabs
+     * @TODO: Currently the same as $name, evaluate if distinguishing is needed
+     *
+     * @var string
+     */
+    private $title;
+
+    /**
+     * An array of @see Components that are displayed in this pane
+     *
+     * @var array
+     */
+    private $components = array();
+
+    /**
+     * Create a new pane
+     *
+     * @param $name         The pane to create
+     */
     public function __construct($name)
     {
         $this->name  = $name;
         $this->title = $name;
     }
 
+    /**
+     * Returns the name of this pane
+     *
+     * @return string
+     */
     public function getName()
     {
         return $this->name;
     }
 
+    /**
+     * Returns the title of this pane
+     *
+     * @return string
+     */
     public function getTitle()
     {
         return $this->title;
     }
 
+    /**
+     * Overwrite the title of this pane
+     *
+     * @param string $title     The new title to use for this pane
+     * @return Pane $this
+     */
     public function setTitle($title)
     {
         $this->title = $title;
         return $this;
     }
 
+    /**
+     * Return true if a component with the given title exists in this pane
+     *
+     * @param string $title     The title of the component to check for existence
+     *
+     * @return bool
+     */
     public function hasComponent($title)
     {
         return array_key_exists($title, $this->components);
     }
 
+    /**
+     * Return a component with the given name if existing
+     *
+     * @param string $title         The title of the component to return
+     *
+     * @return Component            The component with the given title
+     * @throws ProgrammingError     If the component doesn't exist
+     */
     public function getComponent($title)
     {
         if ($this->hasComponent($title)) {
@@ -51,6 +109,12 @@ class Pane implements Widget
         ));
     }
 
+    /**
+     * Removes the component with the given title if it exists in this pane
+     *
+     * @param string $title         The pane
+     * @return Pane $this
+     */
     public function removeComponent($title)
     {
         if ($this->hasComponent($title)) {
@@ -59,11 +123,19 @@ class Pane implements Widget
         return $this;
     }
 
+    /**
+     * Return all components added at this pane
+     *
+     * @return array
+     */
     public function getComponents()
     {
         return $this->components;
     }
 
+    /**
+     * @see Widget::render
+     */
     public function render(\Zend_View_Abstract $view)
     {
         $html = PHP_EOL;
@@ -73,6 +145,15 @@ class Pane implements Widget
         return $html;
     }
 
+    /**
+     * Add a component to this pane, optionally creating it if $component is a string
+     *
+     * @param string|Component $component               The component object or title (if a new component will be created)
+     * @param string|null $url                          An Url to be used when component is a string
+     *
+     * @return Pane $this
+     * @throws \Icinga\Exception\ConfigurationError
+     */
     public function addComponent($component, $url = null)
     {
         if ($component instanceof Component) {
@@ -80,24 +161,24 @@ class Pane implements Widget
         } elseif (is_string($component) && $url !== null) {
              $this->components[$component] = new Component($component, $url, $this);
         } else{
-            throw new ConfigurationError('You messed up your dashboard');
+            throw new ConfigurationError('Invalid component added: '.$component);
         }
         return $this;
     }
 
-    protected function quoteIni($str)
-    {
-        return '"' . $str . '"';
-    }
-
+    /**
+     * Return the ini representation of this pane as a string
+     *
+     * @return string
+     */
     public function toIni()
     {
         if (empty($this->components))
         {
-            return "";
+            return '';
         }
         $ini = '['.$this->getName().']'.PHP_EOL.
-               'title = '.$this->quoteIni($this->getTitle()).PHP_EOL;
+               'title = "'.$this->getTitle().'"'.PHP_EOL;
 
         foreach ($this->components as $title => $component) {
             // component header
@@ -108,6 +189,14 @@ class Pane implements Widget
         return $ini;
     }
 
+    /**
+     * Create a new pane with the title $title from the given configuration
+     *
+     * @param $title                The title for this pane
+     * @param Zend_Config $config   The configuration to use for setup
+     *
+     * @return Pane
+     */
     public static function fromIni($title, Zend_Config $config)
     {
         $pane = new Pane($title);
