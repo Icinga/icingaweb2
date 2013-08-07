@@ -100,4 +100,3 @@ class RescheduleNextCheckFormTest extends BaseFormTest
         $this->assertNotEquals($notes1, $notes2);
     }
 }
-

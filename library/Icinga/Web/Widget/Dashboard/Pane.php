@@ -102,4 +102,3 @@ class Pane
         return implode('', $this->components);
     }
 }
-

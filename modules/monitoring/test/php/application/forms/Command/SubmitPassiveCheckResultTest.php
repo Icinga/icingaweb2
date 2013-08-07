@@ -101,4 +101,3 @@ class SubmitPassiveCheckResultFormTest extends BaseFormTest
         );
     }
 }
-

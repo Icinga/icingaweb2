@@ -55,4 +55,3 @@ class DelayNotificationFormFormTest extends BaseFormTest
         $this->assertEquals('notBetween', $errors[0], "Assert correct error message");
     }
 }
-

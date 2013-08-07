@@ -26,4 +26,3 @@ class CustomNotificationFormTest extends BaseFormTest
         $this->assertTrue($form->isSubmittedAndValid());
     }
 }
-

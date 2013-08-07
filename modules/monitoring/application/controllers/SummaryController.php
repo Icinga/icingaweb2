@@ -67,4 +67,3 @@ class Monitoring_SummaryController extends ModuleActionController
     }
 
 }
-

@@ -143,4 +143,3 @@ abstract class AbstractObject
         return $this;
     }
 }
-

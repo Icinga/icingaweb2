@@ -38,4 +38,3 @@ class Backend
         return self::$instances[$name];
     }
 }
-

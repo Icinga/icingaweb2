@@ -79,4 +79,3 @@ class Form extends AbstractWidget
         return (string) $this->form;
     }
 }
-

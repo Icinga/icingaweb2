@@ -120,4 +120,3 @@ class AcknowledgeFormTest extends BaseFormTest
         );
     }
 }
-

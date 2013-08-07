@@ -114,4 +114,3 @@ class Component
         return $htm;
     }
 }
-

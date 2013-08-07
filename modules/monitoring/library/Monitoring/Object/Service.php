@@ -66,4 +66,3 @@ class Service extends AbstractObject
         ->fetchRow();
     }
 }
-

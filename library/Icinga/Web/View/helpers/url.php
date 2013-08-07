@@ -16,4 +16,3 @@ function url($path = null, $params = null)
     }
     return $url;
 }
-

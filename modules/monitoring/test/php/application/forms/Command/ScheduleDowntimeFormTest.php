@@ -323,4 +323,3 @@ class ScheduleDowntimeFormTest extends BaseFormTest
         $this->assertEquals(3600, ($time2 - $time1));
     }
 }
-

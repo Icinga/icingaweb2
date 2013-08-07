@@ -61,4 +61,3 @@ class View extends ZfViewAbstract
         }
     }
 }
-

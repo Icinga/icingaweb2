@@ -84,4 +84,3 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
         return self::$purifier;
     }
 }
-

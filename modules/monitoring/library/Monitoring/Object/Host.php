@@ -55,4 +55,3 @@ class Host extends AbstractObject
         ))->where('host_name', $this->name1)->fetchRow();
     }
 }
-

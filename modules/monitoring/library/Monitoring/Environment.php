@@ -58,4 +58,3 @@ class Environment
         return CommandPipe::getInstance(self::config($env, 'commandPipe'));
     }
 }
-

@@ -174,4 +174,3 @@ class ServicegroupsummaryqueryTest extends \PHPUnit_Framework_TestCase
         ));
     }
 }
-

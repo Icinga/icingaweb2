@@ -88,4 +88,3 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
         return $result;
     }
 }
-
