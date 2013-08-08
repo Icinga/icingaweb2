@@ -196,7 +196,7 @@ class Monitoring_ListController extends ModuleActionController
 
     protected function handleFormatRequest($query)
     {
-        if ($this->compactView !== null && $this->_getParam("view", false) === "compact") {
+        if ($this->compactView !== null && ($this->_getParam('view', false) === 'compact')) {
             $this->_helper->viewRenderer($this->compactView);
         }
 
