@@ -3,7 +3,7 @@
     <h4><i class="icon-warning-sign"> </i>Saving dashboard failed</h4>
     <br/>
     <p>
-        Your dashboard couldn't be stored (error: "<?= $this->exceptionMessage ?>"). This could have one or more
+        Your dashboard couldn't be stored (error: "<?= $this->exceptionMessage; ?>"). This could have one or more
         of the following reasons:
     </p>
     <ul>
@@ -23,7 +23,7 @@
 <p>
     <pre>
         <code>
-<?= $this->escape($this->iniConfigurationString) ?>
+<?= $this->escape($this->iniConfigurationString); ?>
         </code>
     </pre>
 </p>

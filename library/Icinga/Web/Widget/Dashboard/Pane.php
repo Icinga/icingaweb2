@@ -1,8 +1,34 @@
 <?php
-
+// {{{ICINGA_LICENSE_HEADER}}}
+/**
+ * This file is part of Icinga 2 Web.
+ *
+ * Icinga 2 Web - Head for multiple monitoring backends.
+ * Copyright (C) 2013 Icinga Development Team
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ * @copyright 2013 Icinga Development Team <info@icinga.org>
+ * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
+ * @author    Icinga Development Team <info@icinga.org>
+ */
+// {{{ICINGA_LICENSE_HEADER}}}
 namespace Icinga\Web\Widget\Dashboard;
 
 use Icinga\Exception\ConfigurationError;
+use Icinga\Exception\ProgrammingError;
 use Icinga\Web\Widget\Widget;
 use Zend_Config;
 use Zend_View_Abstract;
@@ -70,6 +96,7 @@ class Pane implements Widget
      * Overwrite the title of this pane
      *
      * @param string $title     The new title to use for this pane
+     *
      * @return Pane $this
      */
     public function setTitle($title)
@@ -159,7 +186,7 @@ class Pane implements Widget
         } elseif (is_string($component) && $url !== null) {
              $this->components[$component] = new Component($component, $url, $this);
         } else {
-            throw new ConfigurationError('Invalid component added: '.$component);
+            throw new ConfigurationError('Invalid component added: ' . $component);
         }
         return $this;
     }
@@ -174,14 +201,14 @@ class Pane implements Widget
         if (empty($this->components)) {
             return '';
         }
-        $ini = '['.$this->getName().']'.PHP_EOL.
-               'title = "'.$this->getTitle().'"'.PHP_EOL;
+        $ini = '[' . $this->getName() . ']' . PHP_EOL.
+               'title = "' . $this->getTitle() . '"' . PHP_EOL;
 
         foreach ($this->components as $title => $component) {
             // component header
-            $ini .= '['.$this->getName().'.'.$title.']'.PHP_EOL;
+            $ini .= '[' . $this->getName() . '.' . $title . ']' . PHP_EOL;
             // component content
-            $ini .= $component->toIni().PHP_EOL;
+            $ini .= $component->toIni() . PHP_EOL;
         }
         return $ini;
     }
