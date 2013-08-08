@@ -1,5 +1,4 @@
 <?php
-// @codingStandardsIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga 2 Web.
@@ -27,39 +26,35 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-# namespace Icinga\Application\Controllers;
+namespace Icinga\Web\Widget\Tabextension;
 
-use Icinga\Web\Controller\ActionController;
-use Icinga\Application\Icinga;
+use Icinga\Web\Url;
+use Icinga\Config\Config as IcingaConfig;
+use Icinga\Web\Widget\Tabs;
+use Icinga\Web\Widget\Dashboard;
 
 /**
- * Class IndexController
+ * Tabextension that allows to add the current URL to a dashboard
+ *
+ * Displayed as a dropdown field in the tabs
  */
-class IndexController extends ActionController
+class DashboardAction implements Tabextension
 {
-
     /**
-     * @var bool
+     * @see Tabextension::apply()
      */
-    protected $modifiesSession = true;
-
-    /**
-     *
-     */
-    public function preDispatch()
+    public function apply(Tabs $tabs)
     {
-        parent::preDispatch(); // -> auth :(
-        if ($this->action_name !== 'welcome') {
-            $this->redirect('index/welcome');
-        }
-    }
-
-    /**
-     *
-     */
-    public function welcomeAction()
-    {
+        $tabs->addAsDropdown(
+            'dashboard',
+            array(
+                'title' => 'Add to Dashboard',
+                'iconCls' => 'dashboard',
+                'url'   => Url::fromPath('dashboard/addurl'),
+                'urlParams' => array(
+                    'url'       => Url::fromRequest()->getRelativeUrl()
+                )
+            )
+        );
     }
 }
-
-// @codingStandardsIgnoreEnd

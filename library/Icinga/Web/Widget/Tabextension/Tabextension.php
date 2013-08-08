@@ -1,5 +1,4 @@
 <?php
-// @codingStandardsIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga 2 Web.
@@ -27,39 +26,24 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-# namespace Icinga\Application\Controllers;
+namespace Icinga\Web\Widget\Tabextension;
 
-use Icinga\Web\Controller\ActionController;
-use Icinga\Application\Icinga;
+use Icinga\Web\Widget\Tabs;
 
 /**
- * Class IndexController
- */
-class IndexController extends ActionController
+* Tabextension interface that allows to extend a tabbar with reusable components.
+*
+* Tabs can be either extended by creating a tabextension and calling the apply method
+* or by calling the tabs @see \Icinga\Web\Widget\Tabs::extend() method and providing
+* a tab extension.
+*
+**/
+interface Tabextension
 {
-
     /**
-     * @var bool
-     */
-    protected $modifiesSession = true;
-
-    /**
-     *
-     */
-    public function preDispatch()
-    {
-        parent::preDispatch(); // -> auth :(
-        if ($this->action_name !== 'welcome') {
-            $this->redirect('index/welcome');
-        }
-    }
-
-    /**
-     *
-     */
-    public function welcomeAction()
-    {
-    }
+    * Apply this tabextension to the provided tabs
+    *   
+    * @param Tabs $tabs     The tabbar to modify
+    **/
+    public function apply(Tabs $tabs);
 }
-
-// @codingStandardsIgnoreEnd

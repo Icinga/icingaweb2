@@ -31,7 +31,9 @@ use Icinga\Web\Hook;
 use Icinga\File\Csv;
 use Monitoring\Backend;
 use Icinga\Application\Benchmark;
-use Icinga\Web\Widget\Tabs;
+use Icinga\Web\Widget\Tabextension\OutputFormat;
+use Icinga\Web\Widget\Tabextension\DashboardAction;
+use Icinga\Web\Widget\Tabextension\BasketAction;
 
 class Monitoring_ListController extends ModuleActionController
 {
@@ -57,11 +59,9 @@ class Monitoring_ListController extends ModuleActionController
      */
     public function init()
     {
-        $this->view->tabs = $this->getTabs()
-             ->activate($this->action_name)
-             ->enableSpecialActions();
         $this->backend = Backend::getInstance($this->_getParam('backend'));
         $this->view->grapher = Hook::get('grapher');
+        $this->createTabs();
     }
 
     /**
@@ -275,9 +275,14 @@ class Monitoring_ListController extends ModuleActionController
      *
      * @return Tabs
      */
-    protected function getTabs()
+    protected function createTabs()
     {
-        $tabs = new Tabs();
+
+        $tabs = $this->getTabs();
+        $tabs->extend(new OutputFormat())
+            ->extend(new DashboardAction())
+            ->extend(new BasketAction());
+
         $tabs->add('services', array(
             'title'     => 'All services',
             'icon'      => 'img/classic/service.png',
@@ -290,9 +295,12 @@ class Monitoring_ListController extends ModuleActionController
         ));
         $tabs->add('downtimes', array(
             'title'     => 'Downtimes',
+            'usePost'   => true,
             'icon'      => 'img/classic/downtime.gif',
             'url'       => 'monitoring/list/downtimes',
         ));
+
+
 /*
         $tabs->add('hostgroups', array(
             'title'     => 'Hostgroups',
@@ -315,7 +323,6 @@ class Monitoring_ListController extends ModuleActionController
             'url'       => 'monitoring/list/contactgroups',
         ));
 */
-        return $tabs;
     }
 
 

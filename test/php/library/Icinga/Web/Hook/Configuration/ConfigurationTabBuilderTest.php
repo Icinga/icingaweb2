@@ -13,9 +13,18 @@ require_once '../../library/Icinga/Exception/ProgrammingError.php';
 
 use Icinga\Web\Hook\Configuration\ConfigurationTab;
 use Icinga\Web\Hook;
+use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabs;
 use PHPUnit_Framework_TestResult;
 
+class RequestMock
+{
+    public function getBaseUrl()
+    {
+        return "/";
+    }
+
+}
 
 class ConfigurationTabBuilderTest extends \PHPUnit_Framework_TestCase
 {
@@ -23,12 +32,14 @@ class ConfigurationTabBuilderTest extends \PHPUnit_Framework_TestCase
     {
         parent::setUp();
         Hook::clean();
+        Url::$overwrittenRequest = new RequestMock();
     }
 
     protected function tearDown()
     {
         parent::tearDown();
         Hook::clean();
+        Url::$overwrittenRequest = null;
     }
 
     public function testDefaultTabs()

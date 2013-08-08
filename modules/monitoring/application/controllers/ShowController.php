@@ -33,14 +33,16 @@ use Icinga\Web\Hook;
 use Monitoring\Object\Host;
 use Monitoring\Object\Service;
 use Icinga\Application\Benchmark;
-use Icinga\Web\Widget\Tabs;
+
+use Icinga\Web\Widget\Tabextension\OutputFormat;
+use Icinga\Web\Widget\Tabextension\DashboardAction;
+use Icinga\Web\Widget\Tabextension\BasketAction;
+
 /**
  * Class Monitoring_ShowController
  *
  * Actions for show context
  */
-
-
 class Monitoring_ShowController extends ModuleActionController
 {
     /**
@@ -82,7 +84,7 @@ class Monitoring_ShowController extends ModuleActionController
             return;
         }
         $this->view->object = $object;
-        $this->view->tabs = $this->createTabs();
+        $this->createTabs();
         $this->prepareTicketHook();
     }
 
@@ -93,7 +95,6 @@ class Monitoring_ShowController extends ModuleActionController
     {
         Benchmark::measure('Entered service action');
         $this->view->active = 'service';
-        $this->view->tabs->activate('service')->enableSpecialActions();
 
         if ($grapher = Hook::get('grapher')) {
             if ($grapher->hasGraph(
@@ -209,7 +210,6 @@ class Monitoring_ShowController extends ModuleActionController
     public function hostAction()
     {
         $this->view->active = 'host';
-        $this->view->tabs->activate('host')->enableSpecialActions();
 
         if ($grapher = Hook::get('grapher')) {
             if ($grapher->hasGraph($this->view->host->host_name)) {
@@ -302,6 +302,7 @@ class Monitoring_ShowController extends ModuleActionController
             ->where('object_type', 'host')
             ->fetchPairs();
         $this->view->object->prefetch();
+        $this->prepareTicketHook();
         $this->prepareGrapherHook();
     }
 
@@ -426,7 +427,7 @@ class Monitoring_ShowController extends ModuleActionController
     protected function createTabs()
     {
         $object = $this->view->object;
-        $tabs = new Tabs();
+        $tabs = $this->getTabs();
         if (!$this->view->host) {
             return $tabs;
         }
@@ -493,7 +494,9 @@ class Monitoring_ShowController extends ModuleActionController
             );
         }
         
-        $tabs->activate($this->action_name)->enableSpecialActions();
+        $tabs->extend(new OutputFormat())
+            ->extend(new DashboardAction())
+            ->extend(new BasketAction);
 
         /**
         $tabs->add('contacts', array(
@@ -501,12 +504,8 @@ class Monitoring_ShowController extends ModuleActionController
             'icon'      => 'img/classic/customer.png',
             'url'       => 'monitoring/detail/contacts',
             'urlParams' => $params,
-        ));
-        */
-        // TODO: Inventory 'img/classic/facts.gif'
-        //       Ticket    'img/classic/ticket.gif'
-        //       Customer  'img/classic/customer.png'
-        return $tabs;
+        ));**/
+
     }
 }
 

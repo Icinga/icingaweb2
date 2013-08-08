@@ -32,16 +32,12 @@ use \Icinga\Application\Benchmark;
 use \Icinga\Exception;
 use \Icinga\Application\Config;
 use \Icinga\Web\Notification;
+use \Icinga\Web\Widget\Tabs;
 use \Zend_Layout as ZfLayout;
 use \Zend_Controller_Action as ZfController;
 use \Zend_Controller_Request_Abstract as ZfRequest;
 use \Zend_Controller_Response_Abstract as ZfResponse;
 use \Zend_Controller_Action_HelperBroker as ZfActionHelper;
-
-/*
- * @TODO(el): There was a note from tg that the following line is temporary. Ask him why.
- */
-use Icinga\File\Pdf;
 
 /**
  * Base class for all core action controllers
@@ -54,14 +50,40 @@ use Icinga\File\Pdf;
  */
 class ActionController extends ZfController
 {
-    /**
-     * The Icinga Config object is available in all controllers. This is the
-     * modules config for module action controllers.
-     * @var Config
-     */
-    protected $config;
 
+    /**
+    * True to mark this layout to not render the full layout
+    *
+    * @var bool
+    */
     protected $replaceLayout = false;
+
+    /**
+    * If true, this controller will be shown even when no authentication is available
+    * Needed mainly for the authentication controller 
+    *
+    * @var bool
+    */
+    protected $handlesAuthentication = false;
+
+    /**
+    * Set true when this controller modifies the session.
+    *
+    * otherwise the session will be written back to disk and closed before the controller 
+    * action is executed, leading to every modification in the session to be lost after
+    * the response is submitted
+    *
+    * @var bool 
+    */
+    protected $modifiesSession = false;
+
+    /**
+    * True if authentication suceeded, otherwise false
+    *
+    * @var bool
+    **/
+    protected $allowAccess = false;
+
 
     /**
      * The current module name. TODO: Find out whether this shall be null for
@@ -85,12 +107,7 @@ class ActionController extends ZfController
      */
     protected $action_name;
 
-    // @TODO(el): Should be true, is/was disabled for testing purpose
-    protected $handlesAuthentication = false;
 
-    protected $modifiesSession = false;
-
-    private $allowAccess = false;
 
     /**
      * The constructor starts benchmarking, loads the configuration and sets
@@ -111,13 +128,12 @@ class ActionController extends ZfController
         $this->controller_name = $request->getControllerName();
         $this->action_name     = $request->getActionName();
 
-        $this->loadConfig();
         $this->setRequest($request)
              ->setResponse($response)
              ->_setInvokeArgs($invokeArgs);
         $this->_helper = new ZfActionHelper($this);
 
-        if ($this->handlesAuthentication() ||
+        if ($this->handlesAuthentication ||
                 AuthManager::getInstance(
                     null,
                     array(
@@ -126,24 +142,26 @@ class ActionController extends ZfController
                 )->isAuthenticated()
         ) {
             $this->allowAccess = true;
+            $this->view->tabs = new Tabs();
             $this->init();
         }
     }
 
     /**
-     * This is where the configuration is going to be loaded
-     *
-     * @return void
-     */
-    protected function loadConfig()
+    * Return the @see \Icinga\Widget\Web\Tabs of this view
+    *
+    * @return Tabs
+    **/
+    public function getTabs()
     {
-        $this->config = Config::app();
+        return $this->view->tabs;
     }
 
+
     /**
-     * Translates the given string with the global translation catalog
+     * Translate the given string with the global translation catalog
      *
-     * @param  string $string The string that should be translated
+     * @param  string $string   The string that should be translated
      *
      * @return string
      */
@@ -155,14 +173,11 @@ class ActionController extends ZfController
     /**
      * Whether the current user has the given permission
      *
-     * TODO: This has not been implemented yet
-     *
-     * @param  string $permission Permission name
-     * @param  string $object     No idea what this should have been :-)
+     * TODO: This has not been implemented yet (Feature #4111)
      *
      * @return bool
      */
-    final protected function hasPermission($uri, $permission = 'read')
+    final protected function hasPermission($uri)
     {
         return true;
     }
@@ -170,38 +185,25 @@ class ActionController extends ZfController
     /**
      * Assert the current user has the given permission
      *
-     * TODO: This has not been implemented yet
-     *
-     * @param  string $permission Permission name
-     * @param  string $object     No idea what this should have been :-)
-     *
+     * TODO: This has not been implemented yet (Feature #4111)
+     * 
      * @return self
      */
-    final protected function assertPermission($permission, $object = null)
+    final protected function assertPermission()
     {
-        if (! $this->hasPermission($permission, $object)) {
-            // TODO: Log violation, create dedicated Exception class
-            throw new \Exception('Permission denied');
-        }
         return $this;
     }
 
-    protected function preserve($key, $value = null)
+    private function redirectToLogin()
     {
-        if ($value === null) {
-            $value = $this->_getParam($key);
-        }
-        if ($value !== null) {
-            if (! isset($this->view->preserve)) {
-                $this->view->preserve = array();
-            }
-            $this->view->preserve[$key] = $value;
-        }
-        return $this;
+        $this->_request->setModuleName('default')
+            ->setControllerName('authentication')
+            ->setActionName('login')
+            ->setDispatched(false);
     }
 
     /**
-     * Our benchmark wants to know when we started our dispatch loop
+     * Prepare action execution by testing for correct permissions and setting shortcuts
      *
      * @return void
      */
@@ -209,19 +211,12 @@ class ActionController extends ZfController
     {
         Benchmark::measure('Action::preDispatch()');
         if (! $this->allowAccess) {
-            $this->_request->setModuleName('default')
-                ->setControllerName('authentication')
-                ->setActionName('login')
-                ->setDispatched(false);
-            return;
+            return $this->redirectToLogin();
         }
 
         $this->view->action_name = $this->action_name;
         $this->view->controller_name = $this->controller_name;
         $this->view->module_name = $this->module_name;
-
-        // TODO(el): What is this, why do we need that here?
-        $this->view->compact = $this->_request->getParam('view') === 'compact';
 
         Benchmark::measure(
             sprintf(
@@ -231,11 +226,14 @@ class ActionController extends ZfController
                 $this->action_name
             )
         );
-
-        //$this->quickRedirect('/authentication/login?a=e');
     }
 
-    public function redirectNow($url, array $params = array())
+    /**
+    *  Redirect to a specific url, updating the browsers URL field
+    *  
+    *  @param Url|string $url       The target to redirect to
+    **/
+    public function redirectNow($url)
     {
         if ($url instanceof Url) {
             $url = $url->getRelativeUrl();
@@ -243,76 +241,14 @@ class ActionController extends ZfController
         $this->_helper->Redirector->gotoUrlAndExit($url);
     }
 
-    public function handlesAuthentication()
-    {
-        return $this->handlesAuthentication;
-    }
-
     /**
-     * Render our benchmark
+     * Detect whether the current request requires changes in the layout and apply them before rendering
      *
-     * @return string
-     */
-    protected function renderBenchmark()
-    {
-        return '<pre class="benchmark">'
-             . Benchmark::renderToHtml()
-             . '</pre>';
-    }
-
-    /**
-     * After dispatch happend we are going to do some automagic stuff
-     *
-     * - Benchmark is completed and rendered
-     * - Notifications will be collected here
-     * - Layout is disabled for XHR requests
-     * - TODO: Headers with required JS and other things will be created
-     *   for XHR requests
-     *
-     * @return void
+     * @see Zend_Controller_Action::postDispatch()
      */
     public function postDispatch()
     {
         Benchmark::measure('Action::postDispatch()');
-
-        // TODO: Move this elsewhere, this is just an ugly test:
-        if ($this->_request->getParam('filetype') === 'pdf') {
-
-            // Snippet stolen from less compiler in public/css.php:
-
-            require_once 'vendor/lessphp/lessc.inc.php';
-            $less = new \lessc;
-            $cssdir = dirname(ICINGA_LIBDIR) . '/public/css';
-            // TODO: We need a way to retrieve public dir, even if located elsewhere
-
-            $css = $less->compileFile($cssdir . '/pdfprint.less');
-            $this->render(
-                null,
-                $this->_helper->viewRenderer->getResponseSegment(),
-                $this->_helper->viewRenderer->getNoController()
-            );
-            $html = (string) $this->getResponse();
-            if ($this->module_name !== null) {
-                $html = '<div class="icinga-module module-'
-                . $this->module_name
-                . '">'
-                . "\n"
-                . $html
-                . '</div>';
-            }
-
-            $html = '<style>' . $css . '</style>' . $html;
-
-            $pdf = new Pdf();
-            $pdf->AddPage();
-            $pdf->setFontSubsetting(false);
-            $pdf->writeHTML($html); //0, 0, '', '', $html, 0, 1, 0, true, '', true);
-
-            $pdf->Output('docs.pdf', 'I');
-            exit;
-        }
-        // END of PDF test
-
 
         if ($this->_request->isXmlHttpRequest()) {
             if ($this->replaceLayout || $this->_getParam('_render') === 'body') {
@@ -321,23 +257,6 @@ class ActionController extends ZfController
             } else {
                 $this->_helper->layout()->setLayout('inline');
             }
-        }
-        $notification = Notification::getInstance();
-        if ($notification->hasMessages()) {
-            $nhtml = '<ul class="notification">';
-            foreach ($notification->getMessages() as $msg) {
-                $nhtml .= '<li>['
-                        . $msg->type
-                        . '] '
-                        . htmlspecialchars($msg->message);
-            }
-            $nhtml .= '</ul>';
-            $this->getResponse()->append('notification', $nhtml);
-        }
-
-        if (AuthManager::getInstance()->getSession()->get('show_benchmark')) {
-            Benchmark::measure('Response ready');
-            $this->_helper->layout()->benchmark = $this->renderBenchmark();
         }
     }
 }

@@ -28,7 +28,6 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 use Icinga\Web\Controller\ModuleActionController;
 use Icinga\Backend;
-use Icinga\Web\Widget\Tabs;
 
 class Monitoring_SummaryController extends ModuleActionController
 {
@@ -39,13 +38,12 @@ class Monitoring_SummaryController extends ModuleActionController
     public function init()
     {
         $this->backend = Backend::getInstance($this->_getParam('backend'));
-        $this->view->compact = $this->_getParam('view') === 'compact';
         $this->view->tabs = $this->getTabs();
     }
 
-    protected function getTabs()
+    protected function createTabs()
     {
-        $tabs = new Tabs();
+        $tabs = $this->getTabs();
         $tabs->add('hostgroup', array(
             'title'     => 'Hostgroups',
             'url'       => 'monitoring/summary/group',

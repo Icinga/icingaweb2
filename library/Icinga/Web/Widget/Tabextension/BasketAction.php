@@ -1,5 +1,4 @@
 <?php
-// @codingStandardsIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga 2 Web.
@@ -27,39 +26,30 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-# namespace Icinga\Application\Controllers;
+namespace Icinga\Web\Widget\Tabextension;
 
-use Icinga\Web\Controller\ActionController;
-use Icinga\Application\Icinga;
+use Icinga\Web\Widget\Tabs;
+use Icinga\Web\Url;
 
 /**
- * Class IndexController
+ * Tabextension that adds the basket command
+ *
+ * @TODO: Baskets are not supported in the codebase yet (Feature #4537)
  */
-class IndexController extends ActionController
+class BasketAction implements Tabextension
 {
-
     /**
-     * @var bool
+     * @see Tabextension::apply()
      */
-    protected $modifiesSession = true;
-
-    /**
-     *
-     */
-    public function preDispatch()
+    public function apply(Tabs $tabs)
     {
-        parent::preDispatch(); // -> auth :(
-        if ($this->action_name !== 'welcome') {
-            $this->redirect('index/welcome');
-        }
-    }
-
-    /**
-     *
-     */
-    public function welcomeAction()
-    {
+        $tabs->addAsDropdown('basket', array(
+            'title'     =>  'URL Basket',
+            'icon'      =>  'img/classic/basket.png',
+            'url'       =>  Url::fromPath('basket/add'),
+            'urlParams' => array(
+                'url'   => Url::fromRequest()->getRelativeUrl()
+            )
+        ));
     }
 }
-
-// @codingStandardsIgnoreEnd
