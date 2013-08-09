@@ -12,13 +12,18 @@
             'class' => 'autosubmit'
         ),
         array(
-            'time' => 'Time'
+            'notification_start_time' => 'Time'
         )
     );
 ?> 
     <input type="search" name="filter" placeholder="Type to filter" />
     <button class="btn btn-small"><i class="icon-refresh"></i></button>
 </form>
+
+<?php
+$notifications = $this->notifications->paginate();
+echo $this->paginationControl($notifications, null, null, array('preserve' => $this->preserve));
+?>
 
 <table class="statustable action hosts">
     <thead>
@@ -27,13 +32,75 @@
             <th>Service</th>
             <th>Type</th>
             <th>Time</th>
-            <th>Time period</th>
             <th>Contact</th>
             <th>Notification command</th>
             <th>Information</th>
         </tr>
     </thead>
     <tbody>
-        
+<?php foreach ($notifications as $notification): ?>
+        <tr>
+            <td>
+                <?= $notification->host_name ?>
+            </td>
+            <td>
+                <?= empty($notification->service_description) ? 'N/A' : $notification->service_description ?>
+            </td>
+            <td><?php
+                switch ($notification->notification_reason)
+                {
+                    case 0:
+                        echo 'NORMAL';
+                        break;
+                    case 1:
+                        echo 'ACKNOWLEDGEMENT';
+                        break;
+                    case 2:
+                        echo 'FLAPPINGSTART';
+                        break;
+                    case 3:
+                        echo 'FLAPPINGSTOP';
+                        break;
+                    case 4:
+                        echo 'FLAPPINGDISABLED';
+                        break;
+                    case 5:
+                        echo 'DOWNTIMESTART';
+                        break;
+                    case 6:
+                        echo 'DOWNTIMEEND';
+                        break;
+                    case 7:
+                        echo 'DOWNTIMECANCELLED';
+                        break;
+                    case 8:
+                        if (intval($notification->notification_type) === 0) {
+                            echo 'CUSTOM(UP)';
+                        } else {
+                            echo 'CUSTOM(OK)';
+                        }
+                        break;
+                    case 9:
+                        echo 'STALKING';
+                        break;
+                    default:
+                        echo 'UNKNOWN';
+                }
+?>
+            </td>
+            <td>
+                <?= $notification->notification_start_time ?>
+            </td>
+            <td>
+                <?= $notification->notification_contact ?>
+            </td>
+            <td>
+                <?= $notification->notification_command ?>
+            </td>
+            <td>
+                <?= $this->escape(substr(strip_tags($notification->notification_information), 0, 10000)); ?>
+            </td>
+        </tr>
+<?php endforeach; ?>
     </tbody>
 </table>

@@ -27,7 +27,7 @@ namespace Monitoring\Backend\Ido\Query;
 
 
 /**
- * Handling notification queries
+ * NotificationQuery
  */
 class NotificationQuery extends AbstractQuery
 {
@@ -38,19 +38,20 @@ class NotificationQuery extends AbstractQuery
      */
     protected $columnMap = array(
         'notification' => array(
-            'notification_type' => '',
-            'notification_start_time' => '',
-            'notification_information' => ''
+            'notification_type' => 'n.notification_type',
+            'notification_reason' => 'n.notification_reason',
+            'notification_start_time' => 'n.start_time',
+            'notification_information' => 'n.output'
         ),
         'objects' => array(
-            'host_name' => '',
-            'service_description' => ''
+            'host_name' => 'o.name1',
+            'service_description' => 'o.name2'
         ),
         'contact' => array(
-            'notification_contact' => ''
+            'notification_contact' => 'c_o.name1'
         ),
-        'timeperiod' => array(
-            'notification_timeperiod' => ''
+        'command' => array(
+            'notification_command' => 'cmd_o.name1'
         )
     );
 
@@ -59,7 +60,10 @@ class NotificationQuery extends AbstractQuery
      */
     protected function joinBaseTables()
     {
-        
+        $this->baseQuery = $this->db->select()->from(array(
+            'n' => $this->prefix . 'notifications'
+        ));
+        $this->joinedVirtualTables = array('notification' => true);
     }
 
     /**
@@ -67,7 +71,12 @@ class NotificationQuery extends AbstractQuery
      */
     protected function joinObjects()
     {
-        
+        $this->baseQuery->joinInner(
+            array(
+                'o' => $this->prefix . 'objects'
+            ),
+            'n.object_id = o.object_id AND o.is_active = 1 AND o.objecttype_id IN (1, 2)'
+        );
     }
 
     /**
@@ -75,14 +84,42 @@ class NotificationQuery extends AbstractQuery
      */
     protected function joinContact()
     {
-        
+        $this->baseQuery->joinInner(
+            array(
+                'c' => $this->prefix . 'contactnotifications'
+            ),
+            'n.notification_id = c.notification_id'
+        );
+        $this->baseQuery->joinInner(
+            array(
+                'c_o' => $this->prefix . 'objects'
+            ),
+            'c.contact_object_id = c_o.object_id'
+        );
     }
 
     /**
-     * Fetch assigned time period for each notification
+     * Fetch name of the command which was used to send out a notification
      */
-    protected function joinTimeperiod()
+    protected function joinCommand()
     {
-        
+        $this->baseQuery->joinInner(
+            array(
+                'cmd_c' => $this->prefix . 'contactnotifications'
+            ),
+            'n.notification_id = cmd_c.notification_id'
+        );
+        $this->baseQuery->joinInner(
+            array(
+                'cmd_m' => $this->prefix . 'contactnotificationmethods'
+            ),
+            'cmd_c.notification_id = cmd_m.contactnotification_id'
+        );
+        $this->baseQuery->joinInner(
+            array(
+                'cmd_o' => $this->prefix . 'objects'
+            ),
+            'cmd_m.command_object_id = cmd_o.object_id'
+        );
     }
 }

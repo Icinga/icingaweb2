@@ -38,10 +38,10 @@ class NotificationView extends MonitoringView
         'host_name',
         'service_description',
         'notification_type',
+        'notification_reason',
         'notification_start_time',
         'notification_contact',
         'notification_information',
-        'notification_timeperiod',
         'notification_command'
     );
 

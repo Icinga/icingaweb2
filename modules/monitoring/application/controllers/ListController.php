@@ -224,16 +224,17 @@ class Monitoring_ListController extends ModuleActionController
                 'host_name',
                 'service_description',
                 'notification_type',
+                'notification_reason',
                 'notification_start_time',
                 'notification_contact',
                 'notification_information',
-                //'notification_timeperiod',
-                //'notification_command'
+                'notification_command'
         ));
         if (!$this->_getParam('sort')) {
             // TODO: Remove this once MonitoringView::applyRequestSorting
             //       applies NotificationView::sortDefaults
-            $query->order('time', -1); // Descending
+            $this->_request->setParam('sort', 'notification_start_time');
+            $this->_request->setParam('dir', -1); // Query is still using ASC!?
         }
         $this->view->notifications = $query->applyRequest($this->_request);
         $this->inheritCurrentSortColumn();
