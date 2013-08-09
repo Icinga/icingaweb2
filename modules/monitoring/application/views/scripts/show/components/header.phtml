@@ -1,6 +1,6 @@
 <? $showService = $object->service_description && $tabs->getActiveName() !== 'host' ?>
 <? if (! $compact): ?>
-<?= $tabs ?>
+<?= $tabs->render($this) ?>
 <? endif ?>
 <table style="margin-bottom: 1em">
   <tr class="<?= $this->monitoringState($object, 'host') ?><?= $object->host_handled ? ' handled' : '' ?>">

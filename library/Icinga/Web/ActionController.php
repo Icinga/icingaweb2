@@ -154,19 +154,6 @@ class ActionController extends ZfController
     }
 
     /**
-     * Helper function creating a new widget
-     *
-     * @param  string $name       The widget name
-     * @param  string $properties Optional widget properties
-     *
-     * @return Widget\AbstractWidget
-     */
-    public function widget($name, $properties = array())
-    {
-        return Widget::create($name, $properties);
-    }
-
-    /**
      * Whether the current user has the given permission
      *
      * TODO: This has not been implemented yet
@@ -250,7 +237,7 @@ class ActionController extends ZfController
     public function redirectNow($url, array $params = array())
     {
         if ($url instanceof Url) {
-            $url = $url->getRelative();
+            $url = $url->getRelativeUrl();
         }
         $this->_helper->Redirector->gotoUrlAndExit($url);
     }

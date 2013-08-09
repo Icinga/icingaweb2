@@ -72,8 +72,9 @@ class StaticController extends ActionController
 
     public function imgAction()
     {
-        $module = $this->_getParam('moduleName');
+        $module = $this->_getParam('module_name');
         $file   = $this->_getParam('file');
+        
         $basedir = Icinga::app()->getModuleManager()->getModule($module)->getBaseDir();
 
         $filePath = $basedir . '/public/img/' . $file;
@@ -102,7 +103,7 @@ class StaticController extends ActionController
         ) . ' GMT');
 
         readfile($filePath);
-        $this->_viewRenderer->setNoRender();
+        return;
     }
 
     public function javascriptAction()
@@ -110,17 +111,16 @@ class StaticController extends ActionController
         $module = $this->_getParam('module_name');
         $file   = $this->_getParam('file');
 
+        if (!Icinga::app()->getModuleManager()->hasEnabled($module)) {
+            echo "/** Module not enabled **/";
+            return;
+        }
         $basedir = Icinga::app()->getModuleManager()->getModule($module)->getBaseDir();
 
         $filePath = $basedir . '/public/js/' . $file;
         if (!file_exists($filePath)) {
-            throw new ActionException(
-                sprintf(
-                    '%s does not exist',
-                    $filePath
-                ),
-                404
-            );
+            echo "/** Module has no js files **/";
+            return;
         }
         $hash = md5_file($filePath);
         $response = $this->getResponse();
@@ -143,7 +143,8 @@ class StaticController extends ActionController
         } else {
             readfile($filePath);
         }
-        $this->_viewRenderer->setNoRender();
+
+        return;
     }
 
 }

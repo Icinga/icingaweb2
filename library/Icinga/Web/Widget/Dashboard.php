@@ -1,82 +1,208 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+/**
+ * This file is part of Icinga 2 Web.
+ *
+ * Icinga 2 Web - Head for multiple monitoring backends.
+ * Copyright (C) 2013 Icinga Development Team
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ * @copyright 2013 Icinga Development Team <info@icinga.org>
+ * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
+ * @author    Icinga Development Team <info@icinga.org>
+ */
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Web\Widget;
 
 use Icinga\Application\Icinga;
-use Icinga\Config\Config;
-use Icinga\Web\Widget;
+use Icinga\Config\Config as IcingaConfig;
+use Icinga\Application\Logger;
+use Icinga\Exception\ConfigurationError;
+use Icinga\Web\Widget\Widget;
 use Icinga\Web\Widget\Dashboard\Pane;
+use Icinga\Web\Widget\Dashboard\Component as DashboardComponent;
+
 use Icinga\Web\Url;
-use Zend_Config as ZfConfig;
+use Zend_View_Abstract;
 
-class Dashboard extends AbstractWidget
+/**
+ * Dashboards display multiple views on a single page
+ *
+ * The terminology is as follows:
+ * - Component:     A single view showing a specific url
+ * - Pane:          Aggregates one or more components on one page, displays it's title as a tab
+ * - Dashboard:     Shows all panes
+ *
+ */
+class Dashboard implements Widget
 {
-    protected $config;
-    protected $configfile;
-    protected $panes = array();
-    protected $tabs;
+    /**
+     * The configuration containing information about this dashboard
+     *
+     * @var IcingaConfig;
+     */
+    private $config;
 
-    protected $properties = array(
-        'url'      => null,
-        'tabParam' => 'pane'
-    );
+    /**
+     * An array containing all panes of this dashboard
+     *
+     * @var array
+     */
+    private $panes = array();
 
-    protected function init()
-    {
-        if ($this->url === null) {
-            $this->url = Url::fromRequest()->without($this->tabParam);
-        }
-    }
+    /**
+     * The @see Icinga\Web\Widget\Tabs object for displaying displayable panes
+     *
+     * @var Tabs
+     */
+    private $tabs;
 
+    /**
+     * The parameter that will be added to identify panes
+     *
+     * @var string
+     */
+    private $tabParam = 'pane';
+
+    /**
+     * Set the given tab name as active.
+     *
+     * @param string $name      The tab name to activate
+     *
+     */
     public function activate($name)
     {
-        $this->tabs()->activate($name);
+        $this->getTabs()->activate($name);
     }
-    
-    public function tabs()
+
+    /**
+     * Return the tab object used to navigate through this dashboard
+     *
+     * @return Tabs
+     */
+    public function getTabs()
     {
+        $url = Url::fromRequest()->getUrlWithout($this->tabParam);
         if ($this->tabs === null) {
-            $this->tabs = Widget::create('tabs');
+            $this->tabs = new Tabs();
+
             foreach ($this->panes as $key => $pane) {
-                $this->tabs->add($key, array(
-                    'title'     => $pane->getTitle(),
-                    'url'       => clone($this->url),
-                    'urlParams' => array($this->tabParam => $key)
-                ));
+                $this->tabs->add(
+                    $key,
+                    array(
+                        'title'     => $pane->getTitle(),
+                        'url'       => clone($url),
+                        'urlParams' => array($this->tabParam => $key)
+                    )
+                );
             }
         }
-
         return $this->tabs;
     }
 
-    public function isWritable()
+    /**
+     * Store the current dashboard with all it's panes and components to the given file (or the default one if none is
+     * given)
+     *
+     *
+     * @param string $file                              The filename to store this dashboard as an ini
+     *
+     * @return $this
+     * @throws \Icinga\Exception\ConfigurationError     If persisting fails, details are written to the log
+     *
+     */
+    public function store($file = null)
     {
-        return is_writable($this->configfile);
-    }
+        if ($file === null) {
+            $file = IcingaConfig::app('dashboard/dashboard')->getConfigFile();
+        }
 
-    public function store()
-    {
-        if (! @file_put_contents($this->configfile, $this->toIni())) {
-            return false;
+        if (!is_writable($file)) {
+            Logger::error('Tried to persist dashboard to %s, but path is not writeable', $file);
+            throw new ConfigurationError('Can\'t persist dashboard');
+        }
+        // make sure empty dashboards don't cause errors
+        $iniString = trim($this->toIni());
+        if (!$iniString) {
+            $iniString = ' ';
+        }
+        if (!@file_put_contents($file, $iniString)) {
+            $error = error_get_last();
+            if ($error == null) {
+                $error = 'Unknown error';
+            } else {
+                $error = $error['message'];
+            }
+            Logger::error('Tried to persist dashboard to %s, but got error: %s', $file, $error);
+            throw new ConfigurationError('Can\'t persist dashboard');
         } else {
             return $this;
         }
     }
 
-    public function readConfig(ZfConfig $config)
+    /**
+     * Populate this dashboard via the given configuration file
+     *
+     * @param IcingaConfig $config      The configuration file to populate this dashboard with
+     *
+     * @return self
+     */
+    public function readConfig(IcingaConfig $config)
     {
-        $this->configfile = Config::getInstance()->getConfigDir()
-                          . '/dashboard.ini';
         $this->config = $config;
         $this->panes = array();
         $this->loadConfigPanes();
         return $this;
     }
 
+    /**
+     * Creates a new empty pane with the given title
+     *
+     * @param string $title
+     *
+     * @return self
+     */
+    public function createPane($title)
+    {
+        $pane = new Pane($title);
+        $pane->setTitle($title);
+        $this->addPane($pane);
+
+        return $this;
+    }
+
+    /**
+     * Update or adds a new component with the given url to a pane
+     *
+     * @TODO:   Should only allow component objects to be added directly as soon as we store more information
+     *
+     * @param string $pane                  The pane to add the component to
+     * @param Component|string $component   The component to add or the title of the newly created component
+     * @param $url                          The url to use for the component
+     *
+     * @return self
+     */
     public function setComponentUrl($pane, $component, $url)
     {
         if ($component === null && strpos($pane, '.')) {
             list($pane, $component) = preg_split('~\.~', $pane, 2);
+        }
+        if (!isset($this->panes[$pane])) {
+            $this->createPane($pane);
         }
         $pane = $this->getPane($pane);
         if ($pane->hasComponent($component)) {
@@ -87,16 +213,51 @@ class Dashboard extends AbstractWidget
         return $this;
     }
 
+    /**
+     * Return true if a pane doesn't exist or doesn't have any components in it
+     *
+     * @param string $pane      The name of the pane to check for emptyness
+     *
+     * @return bool
+     */
+    public function isEmptyPane($pane)
+    {
+        $paneObj = $this->getPane($pane);
+        if ($paneObj === null) {
+            return true;
+        }
+        $cmps = $paneObj->getComponents();
+        return !empty($cmps);
+    }
+
+
+    /**
+     * Remove a component $component from the given pane
+     *
+     * @param string $pane                      The pane to remove the component from
+     * @param Component|string $component       The component to remove or it's name
+     *
+     * @return self
+     */
     public function removeComponent($pane, $component)
     {
         if ($component === null && strpos($pane, '.')) {
             list($pane, $component) = preg_split('~\.~', $pane, 2);
         }
-        $this->getPane($pane)->removeComponent($component);
+        $pane = $this->getPane($pane);
+        if ($pane !== null) {
+            $pane->removeComponent($component);
+        }
+
         return $this;
     }
 
-    public function paneEnum()
+    /**
+     * Return an array with pane name=>title format used for comboboxes
+     *
+     * @return array
+     */
+    public function getPaneKeyTitleArray()
     {
         $list = array();
         foreach ($this->panes as $name => $pane) {
@@ -105,54 +266,85 @@ class Dashboard extends AbstractWidget
         return $list;
     }
 
-    public function getComponentEnum()
-    {
-        $list = array();
-        foreach ($this->panes as $name => $pane) {
-            foreach ($pane->getComponents() as $component) {
-                $list[$name . '.' . $component->getTitle()] =
-                    $pane->getTitle() . ': ' . $component->getTitle();
-            }
-        }
-        return $list;
-    }
-
+    /**
+     * Add a pane object to this dashboard
+     *
+     * @param Pane $pane        The pane to add
+     *
+     * @return self
+     */
     public function addPane(Pane $pane)
     {
         $this->panes[$pane->getName()] = $pane;
         return $this;
     }
 
+    /**
+     * Return the pane with the provided name or null if it doesn't exit
+     *
+     * @param string $name      The name of the pane to return
+     *
+     * @return null|Pane        The pane or null if no pane with the given name exists
+     */
     public function getPane($name)
     {
+        if (!isset($this->panes[$name])) {
+            return null;
+        }
         return $this->panes[$name];
     }
-    
-    public function renderAsHtml()
+
+    /**
+     * @see Icinga\Web\Widget::render
+     */
+    public function render(Zend_View_Abstract $view)
     {
         if (empty($this->panes)) {
             return '';
         }
-
-        return $this->tabs() . $this->getActivePane();
+        return $this->determineActivePane()->render($view);
     }
 
-    public function getActivePane()
+    /**
+     * Activates the default pane of this dashboard and returns it's name
+     *
+     * @return mixed
+     */
+    private function setDefaultPane()
     {
-        $active = $this->tabs()->getActiveName();
-        if (! $active) {
+        reset($this->panes);
+        $active = key($this->panes);
+        $this->activate($active);
+        return $active;
+    }
+
+    /**
+     * Determine the active pane either by the selected tab or the current request
+     *
+     * @return Pane         The currently active pane
+     */
+    public function determineActivePane()
+    {
+        $active = $this->getTabs()->getActiveName();
+        if (!$active) {
             if ($active = Url::fromRequest()->getParam($this->tabParam)) {
-                $this->activate($active);
+                if ($this->isEmptyPane($active)) {
+                    $active = $this->setDefaultPane();
+                } else {
+                    $this->activate($active);
+                }
             } else {
-                reset($this->panes);
-                $active = key($this->panes);
-                $this->activate($active);
+                $active = $this->setDefaultPane();
             }
         }
-
         return $this->panes[$active];
     }
 
+    /**
+     * Return the ini string describing this dashboard
+     *
+     * @return string
+     */
     public function toIni()
     {
         $ini = '';
@@ -161,33 +353,22 @@ class Dashboard extends AbstractWidget
         }
         return $ini;
     }
-    
-    protected function loadConfigPanes()
+
+    /**
+     * Load all config panes from @see Dashboard::$config
+     *
+     */
+    private function loadConfigPanes()
     {
-        $items = $this->config->dashboard->toArray();
-        $app = Icinga::app();
-        foreach ($items as $key => $item) {
+        $items = $this->config;
+        foreach ($items->keys() as $key) {
+            $item = $this->config->get($key, false);
             if (false === strstr($key, '.')) {
-                $pane = new Pane($key);
-                if (isset($item['title'])) {
-                    $pane->setTitle($item['title']);
-                }
-                $this->addPane($pane);
+                $this->addPane(Pane::fromIni($key, $item));
             } else {
-                list($dashboard, $title) = preg_split('~\.~', $key, 2);
-                $base_url = $item['base_url'];
-
-                $module = substr($base_url, 0, strpos($base_url, '/'));
-                $whitelist = array();
-                if (! $app->hasModule($module)) {
-                    continue;
-                }
-
-                unset($item['base_url']);
-                $this->getPane($dashboard)->addComponent(
-                    $title,
-                    Url::fromPath($base_url, $item)
-                );
+                list($paneName, $title) = explode('.', $key, 2);
+                $pane = $this->getPane($paneName);
+                $pane->addComponent(DashboardComponent::fromIni($title, $item, $pane));
             }
         }
     }

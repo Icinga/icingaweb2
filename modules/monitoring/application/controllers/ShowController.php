@@ -33,6 +33,7 @@ use Icinga\Web\Hook;
 use Monitoring\Object\Host;
 use Monitoring\Object\Service;
 use Icinga\Application\Benchmark;
+use Icinga\Web\Widget\Tabs;
 /**
  * Class Monitoring_ShowController
  *
@@ -425,7 +426,7 @@ class Monitoring_ShowController extends ModuleActionController
     protected function createTabs()
     {
         $object = $this->view->object;
-        $tabs = $this->widget('tabs');
+        $tabs = new Tabs();
         if (!$this->view->host) {
             return $tabs;
         }

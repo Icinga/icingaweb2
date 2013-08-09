@@ -5,10 +5,12 @@ use Icinga\Web\Hook;
 use Icinga\File\Csv;
 use Monitoring\Backend;
 use Icinga\Application\Benchmark;
+use Icinga\Web\Widget\Tabs;
 
 class Monitoring_ListController extends ModuleActionController
 {
     protected $backend;
+    private $compactView = null;
 
     public function init()
     {
@@ -22,6 +24,7 @@ class Monitoring_ListController extends ModuleActionController
     public function hostsAction()
     {
         Benchmark::measure("hostsAction::query()");
+        $this->compactView = "hosts-compact";
         $this->view->hosts = $this->query(
             'status',
             array(
@@ -57,6 +60,8 @@ class Monitoring_ListController extends ModuleActionController
             $state_column = 'service_hard_state';
             $state_change_column = 'service_last_hard_state_change';
         }
+        $this->compactView = "services-compact";
+
 
         $this->view->services = $this->query('status', array(
             'host_name',
@@ -191,6 +196,10 @@ class Monitoring_ListController extends ModuleActionController
 
     protected function handleFormatRequest($query)
     {
+        if ($this->compactView !== null && ($this->_getParam('view', false) === 'compact')) {
+            $this->_helper->viewRenderer($this->compactView);
+        }
+
         if ($this->_getParam('format') === 'sql') {
             echo '<pre>'
                 . htmlspecialchars(wordwrap($query->getQuery()->dump()))
@@ -213,7 +222,7 @@ class Monitoring_ListController extends ModuleActionController
 
     protected function getTabs()
     {
-        $tabs = $this->widget('tabs');
+        $tabs = new Tabs();
         $tabs->add('services', array(
             'title'     => 'All services',
             'icon'      => 'img/classic/service.png',

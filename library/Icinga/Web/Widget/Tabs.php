@@ -1,8 +1,31 @@
 <?php
-
+// {{{ICINGA_LICENSE_HEADER}}}
 /**
- * Navigation tabs
+ * This file is part of Icinga 2 Web.
+ *
+ * Icinga 2 Web - Head for multiple monitoring backends.
+ * Copyright (C) 2013 Icinga Development Team
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ * @copyright 2013 Icinga Development Team <info@icinga.org>
+ * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
+ * @author    Icinga Development Team <info@icinga.org>
  */
+// {{{ICINGA_LICENSE_HEADER}}}
+
 namespace Icinga\Web\Widget;
 
 use Icinga\Exception\ProgrammingError;
@@ -13,36 +36,37 @@ use Countable;
 /**
  * Navigation tab widget
  *
- * Useful if you want to create navigation tabs
- *
- * @copyright  Copyright (c) 2013 Icinga-Web Team <info@icinga.org>
- * @author     Icinga-Web Team <info@icinga.org>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License
  */
-class Tabs extends AbstractWidget implements Countable
+class Tabs implements Countable, Widget
 {
     /**
      * This is where single tabs added to this container will be stored
      *
      * @var array
      */
-    protected $tabs = array();
+    private $tabs = array();
 
     /**
      * The name of the currently activated tab
      *
      * @var string
      */
-    protected $active;
+    private $active;
 
     /**
      * Class name(s) going to be assigned to the &lt;ul&gt; element
      *
      * @var string
      */
-    protected $tab_class = 'nav-tabs';
+    private $tab_class = 'nav-tabs';
 
-    protected $specialActions = false;
+    /**
+     * Array when special actions (dropdown) are enabled
+     * @TODO: Remove special part from tabs (Bug #4512)
+     *
+     * @var bool|array
+     */
+    private $specialActions = false;
 
     /**
      * Activate the tab with the given name
@@ -77,6 +101,11 @@ class Tabs extends AbstractWidget implements Countable
         );
     }
 
+    /**
+     * Return the name of the active tab
+     *
+     * @return string
+     */
     public function getActiveName()
     {
         return $this->active;
@@ -118,7 +147,7 @@ class Tabs extends AbstractWidget implements Countable
      */
     public function get($name)
     {
-        if (! $this->has($name)) {
+        if (!$this->has($name)) {
             throw new ProgrammingError(
                 sprintf(
                     'There is no such tab: %s',
@@ -177,6 +206,13 @@ class Tabs extends AbstractWidget implements Countable
         return $this;
     }
 
+    /**
+     * Enable special actions (dropdown with format, basket and dashboard)
+     *
+     * @TODO: Remove special part from tabs (Bug #4512)
+     *
+     * @return $this
+     */
     public function enableSpecialActions()
     {
         $this->specialActions = true;
@@ -184,52 +220,49 @@ class Tabs extends AbstractWidget implements Countable
     }
 
     /**
-     * This is where the tabs are going to be rendered
-     *
-     * @return string
+     * @see Widget::render
      */
-    public function renderAsHtml()
+    public function render(\Zend_View_Abstract $view)
     {
-        $view = $this->view();
-
         if (empty($this->tabs)) {
             return '';
         }
-        $html = '<ul class="nav ' . $this->tab_class . '">' . "\n";
+        $html = '<ul class="nav ' . $this->tab_class . '">' . PHP_EOL;
 
         foreach ($this->tabs as $tab) {
-            $html .= $tab;
+            $html .= $tab->render($view);
         }
 
+        // @TODO: Remove special part from tabs (Bug #4512)
         $special = array();
-        $special[] = $this->view()->qlink(
-            $this->view()->img('img/classic/application-pdf.png') . ' PDF',
+        $special[] = $view->qlink(
+            $view->img('img/classic/application-pdf.png') . ' PDF',
             Url::fromRequest(),
             array('filetype' => 'pdf'),
             array('target' => '_blank', 'quote' => false)
         );
-        $special[] = $this->view()->qlink(
-            $this->view()->img('img/classic/application-csv.png') . ' CSV',
+        $special[] = $view->qlink(
+            $view->img('img/classic/application-csv.png') . ' CSV',
             Url::fromRequest(),
             array('format' => 'csv'),
             array('target' => '_blank', 'quote' => false)
         );
-        $special[] = $this->view()->qlink(
-            $this->view()->img('img/classic/application-json.png') . ' JSON',
+        $special[] = $view->qlink(
+            $view->img('img/classic/application-json.png') . ' JSON',
             Url::fromRequest(),
             array('format' => 'json', 'quote' => false),
             array('target' => '_blank', 'quote' => false)
         );
 
-        $special[] = $this->view()->qlink(
-            $this->view()->img('img/classic/basket.png') . ' URL Basket',
+        $special[] = $view->qlink(
+            $view->img('img/classic/basket.png') . ' URL Basket',
             Url::fromPath('basket/add'),
             array('url' => Url::fromRequest()->getRelativeUrl()),
             array('quote' => false)
         );
 
-        $special[] = $this->view()->qlink(
-            $this->view()->img('img/classic/dashboard.png') . ' Dashboard',
+        $special[] = $view->qlink(
+            $view->img('img/classic/dashboard.png') . ' Dashboard',
             Url::fromPath('dashboard/addurl'),
             array('url' => Url::fromRequest()->getRelativeUrl()),
             array('quote' => false)
@@ -255,11 +288,23 @@ class Tabs extends AbstractWidget implements Countable
         return $html;
     }
 
+    /**
+     * Return the number of tabs
+     *
+     * @see Countable
+     *
+     * @return int
+     */
     public function count()
     {
         return count($this->tabs);
     }
 
+    /**
+     * Return all tabs contained in this tab panel
+     *
+     * @return array
+     */
     public function getTabs()
     {
         return $this->tabs;

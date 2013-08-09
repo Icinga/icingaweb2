@@ -6,7 +6,7 @@ require_once '../../library/Icinga/Web/Hook/Configuration/ConfigurationTabInterf
 require_once '../../library/Icinga/Web/Hook/Configuration/ConfigurationTab.php';
 require_once '../../library/Icinga/Web/Hook/Configuration/ConfigurationTabBuilder.php';
 require_once '../../library/Icinga/Web/Hook.php';
-require_once '../../library/Icinga/Web/Widget/AbstractWidget.php';
+require_once '../../library/Icinga/Web/Widget/Widget.php';
 require_once '../../library/Icinga/Web/Widget/Tabs.php';
 require_once '../../library/Icinga/Web/Widget/Tab.php';
 require_once '../../library/Icinga/Exception/ProgrammingError.php';

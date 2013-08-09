@@ -122,6 +122,16 @@ class Url
     }
 
     /**
+     * Return the baseUrl set for this Url
+     *
+     * @return string
+     */
+    public function getBaseUrl()
+    {
+        return $this->baseUrl;
+    }
+
+    /**
      * Set the relative path of this url, without query parameters
      *
      * @param string $path         The path to set
@@ -301,6 +311,8 @@ class Url
         $url->remove($keyOrArrayOfKeys);
         return $url;
     }
+
+
 
     /**
      * Alias for @see Url::getAbsoluteUrl()

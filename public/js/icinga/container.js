@@ -71,12 +71,13 @@
         };
 
         this.loadAsyncContainers = function(root) {
-            $('.icinga-container[icinga-url]',root).each(function() {
+            $('.icinga-container[icingaurl]',root).each(function() {
                 var el = $(this);
-                var url = el.attr('icinga-url');
+                var url = el.attr('icingaurl');
                 el.attr('loaded',true);
                 async.loadToTarget(el,url);
             });
+            log.debug("Loading async");
         };
 
         this.initializeContainers = function(root) {
