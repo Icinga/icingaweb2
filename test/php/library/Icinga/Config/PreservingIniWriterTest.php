@@ -27,7 +27,6 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-
 namespace Tests\Icinga\PreservingIniWriterTest;
 
 require_once 'Zend/Config.php';
@@ -48,16 +47,23 @@ class PreservingIniWriterTest extends \PHPUnit_Framework_TestCase {
     public function setUp()
     {
         $ini =
-';1
+'
 trailing1="wert"
 arr[]="0"
 arr[]="1"
 arr[]="2"
 arr[]="3"
 
+Trailing2=
+
+;1
 ;2
 ;3
-Trailing2=
+[section]
+property = "some value"         ; Some " ; comment"
+property2 = "some ;value"      ; Some comment with " quotes "
+property3.nest1.nest2 = "value" ; ;
+
 [parent]
 ;4
 ;5
@@ -81,8 +87,6 @@ PropOne="overwritten"
 ;10      
 ';
         $this->writeToTmp('orig',$ini);
-
-        $this->writeToTmp('sonst','');
 
         $emptyIni = " ";
         $this->writeToTmp('empty',$emptyIni);
@@ -262,7 +266,7 @@ prop2="5"
             'Section array changed.');
 
         $this->assertEquals('changed',$config->parent->many->many->nests,
-            'Change strongy nested value.');
+            'Change strongly nested value.');
 
         $this->assertEquals('new',$config->parent->many->many->new,
             'Ccreate strongy nested value.');
@@ -296,6 +300,10 @@ prop2="5"
         $config->new = 'value';
         $config->arr->{2} = "update";
         $config->arr->{4} = "arrvalue";
+
+        $config->section->property = "updated";
+        unset($config->section->property3);
+        $config->section->property4 = "created";
 
         $config->parent->propOne = null;
         $config->parent->propThree = 'update';

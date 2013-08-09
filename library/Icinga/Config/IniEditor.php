@@ -85,7 +85,7 @@ class IniEditor
      */
     public function resetArrayElement(array $key, $section = null)
     {
-        $line = $this->getArrayEl($key, $section);
+        $line = $this->getArrayElement($key, $section);
         if ($line !== -1) {
             $this->deleteLine($line);
         }
@@ -100,7 +100,7 @@ class IniEditor
      */
     public function setArrayElement(array $key, $value, $section = null)
     {
-        $line = $this->getArrayEl($key,$section);
+        $line = $this->getArrayElement($key,$section);
         if ($line !== -1) {
             if (isset($section)) {
                 $this->updateLine($line,$this->formatKeyValuePair($key,$value));
@@ -125,7 +125,7 @@ class IniEditor
      *
      * @return              The line of the array element.
      */
-    private function getArrayEl(array $key, $section = null)
+    private function getArrayElement(array $key, $section = null)
     {
         $line = isset($section) ? $this->getSectionLine($section) +1 : 0;
         $index = array_pop($key);
@@ -135,16 +135,11 @@ class IniEditor
             if ($this->isSectionDeclaration($l)) {
                 return -1;
             }
-            if (strlen($formatted) > 0) {
-                if (preg_match('/^'.$formatted.'\[\]=/',$l) === 1 ||
-                    preg_match(
-                        '/^'.$formatted.$this->nestSeparator.$index.'=/',$l) === 1) {
-                    return $line;
-                }
-            } else {
-                if (preg_match('/^'.$index.'=/',$l) === 1 ) {
-                    return $line;
-                }
+            if (preg_match('/^\s*'.$formatted.'\[\]\s*=/',$l) === 1) {
+                return $line;
+            }
+            if ($this->isPropertyDeclaration($l,array_merge($key,array($index)))) {
+                return $line;
             }
         }
         return -1;
@@ -240,14 +235,14 @@ class IniEditor
                 /*
                  * Ignore comments that are glued to the section declaration
                  */
-                while ($i > 0 && preg_match('/^;/',$line) === 1) {
+                while ($i > 0 && preg_match('/^\s*;/',$line) === 1) {
                     $i--;
                     $line = $this->text[$i];
                 }
                 /*
                  * Remove whitespaces between the sections
                  */
-                while ($i > 0 && preg_match('/^[\s]*$/',$line) === 1) {
+                while ($i > 0 && preg_match('/^\s*$/',$line) === 1) {
                     $this->deleteLine($i);
                     $i--;
                     $line = $this->text[$i];
@@ -281,7 +276,30 @@ class IniEditor
      */
     private function updateLine($lineNr, $content)
     {
-        $this->text[$lineNr] = $content;
+        $comment = $this->getComment($this->text[$lineNr]);
+        if (strlen($comment) > 0) {
+            $comment = " ; " . trim($comment);
+        }
+        $this->text[$lineNr] = str_pad($content,43) . $comment;
+    }
+
+    /**
+     * Get the comment from the given line
+     *
+     * @param $lineContent  The content of the line
+     *
+     * @return string       The extracted comment
+     */
+    private function getComment($lineContent)
+    {
+        /*
+         * Remove all content in double quotes that is not behind a semicolon, recognizing
+         * escaped double quotes inside the string
+         */
+        $cleaned = preg_replace('/^[^;"]*"[^"\\\\]*(?:\\\\.[^"\\\\]*)*"/s','',$lineContent);
+
+        $matches = mb_split(';',$cleaned,2);
+        return array_key_exists(1,$matches) ? $matches[1] : "";
     }
 
     /**
@@ -304,7 +322,7 @@ class IniEditor
      */
     private function formatKeyValuePair(array $key, $value)
     {
-        return $this->formatKey($key).'='.$this->formatValue($value);
+        return str_pad($this->formatKey($key),19) . " = ".$this->formatValue($value);
     }
 
     /**
@@ -327,7 +345,7 @@ class IniEditor
         $i = 0;
         $started = isset($section) ? false: true;
         foreach ($this->text as $line) {
-            if ($started && preg_match('/^\[/',$line) === 1) {
+            if ($started && $this->isSectionDeclaration($line)) {
                 if ($i === 0) {
                     return $i;
                 }
@@ -335,11 +353,11 @@ class IniEditor
                  * ignore all comments 'glued' to the next section, to allow section
                  * comments in front of sections
                  */
-                while (preg_match('/^;/',$this->text[$i - 1]) === 1) {
+                while ($i > 0 && preg_match('/^\s*;/',$this->text[$i - 1]) === 1) {
                     $i--;
                 }
                 return $i;
-            } elseif (preg_match('/^\['.$section.'.*\]/',$line) === 1) {
+            } elseif ( $this->isSectionDeclaration($line,$section) ) {
                 $started = true;
             }
             $i++;
@@ -351,16 +369,36 @@ class IniEditor
     }
 
     /**
+     * Check if the line contains the property declaration for a key
+     *
+     * @param $lineContent  The content of the line
+     * @param array $key    The key this declaration is supposed to have
+     *
+     * @return boolean      True, when the lineContent is a property declaration
+     */
+    private function isPropertyDeclaration($lineContent, array $key)
+    {
+        return preg_match(
+            '/^\s*' . $this->formatKey($key) .'\s*=\s*/'
+            ,$lineContent
+        ) === 1;
+    }
+
+    /**
      * Check if the given line contains a section declaration
      *
      * @param $lineContent      The content of the line
      * @param string $section   The optional section name that will be assumed
      *
-     * @return bool
+     * @return bool             True, when the lineContent is a section declaration
      */
-    private function isSectionDeclaration($lineContent, $section = "")
+    private function isSectionDeclaration($lineContent, $section = null)
     {
-        return preg_match('/^\[/'.$section,$lineContent) === 1;
+        if (isset($section)) {
+            return preg_match('/^\s*\[\s*'.$section.'\s*[\]:]/',$lineContent) === 1;
+        } else {
+            return preg_match('/^\s*\[/',$lineContent) === 1;
+        }
     }
 
     /**
@@ -374,7 +412,7 @@ class IniEditor
     {
         $i = 0;
         foreach ($this->text as $line) {
-            if (preg_match('/^\['.$section.'/',$line)) {
+            if ($this->isSectionDeclaration($line,$section)) {
                 return $i;
             }
             $i++;
@@ -388,7 +426,7 @@ class IniEditor
      * @param array $keys   The key and its parents
      * @param $section      The section of the key
      *
-     * @return int The line number
+     * @return int          The line number
      */
     private function getKeyLine(array $keys, $section = null)
     {
@@ -396,13 +434,13 @@ class IniEditor
         $inSection = isset($section) ? false : true;
         $i = 0;
         foreach ($this->text as $line) {
-            if ($inSection && preg_match('/^\[/',$line) === 1) {
+            if ($inSection && $this->isSectionDeclaration($line)) {
                 return -1;
             }
-            if ($inSection && preg_match('/^'.$key.'=/',$line) === 1) {
+            if ($inSection && $this->isPropertyDeclaration($line,$keys)) {
                 return $i;
             }
-            if (!$inSection && preg_match('/^\[ *'.$section.' *[\]:]/',$line) === 1) {
+            if (!$inSection && $this->isSectionDeclaration($line,$section)) {
                 $inSection = true;
             }
             $i++;
@@ -448,7 +486,7 @@ class IniEditor
     }
 
     /**
-     * Prepare a value for INI
+     * Prepare a value for INe
      *
      * @param $value    The value of the string
      *
@@ -465,7 +503,7 @@ class IniEditor
         } elseif (strpos($value, '"') === false) {
             return '"' . $value .  '"';
         } else {
-            throw new ConfigurationError('Value can not contain double quotes "');
+            return '"' . str_replace('"','\"',$value) . '"';
         }
     }
 }

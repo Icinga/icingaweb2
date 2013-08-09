@@ -54,10 +54,10 @@ class PreservingIniWriter extends \Zend_Config_Writer_FileAbstract
     /**
      * Create a property diff and apply the changes to the editor
      *
-     * @param Zend_Config   $oldconfig    The config representing the state before the change
-     * @param Zend_Config   $newconfig    The config representing the state after the change
-     * @param IniEditor     $eeditor      The editor that should be used to edit the old config file
-     * @param array         $parents      The parent keys that should be respected when editing the config
+     * @param Zend_Config   $oldconfig  The config representing the state before the change
+     * @param Zend_Config   $newconfig  The config representing the state after the change
+     * @param IniEditor     $editor     The editor that should be used to edit the old config file
+     * @param array         $parents    The parent keys that should be respected when editing the config
      */
     private function diffConfigs(
         Zend_Config $oldconfig,
@@ -72,10 +72,10 @@ class PreservingIniWriter extends \Zend_Config_Writer_FileAbstract
     /**
      * Search for created and updated properties and use the editor to create or update these entries
      *
-     * @param Zend_Config   $oldconfig    The config representing the state before the change
-     * @param Zend_Config   $newconfig    The config representing the state after the change
-     * @param IniEditor     $eeditor      The editor that should be used to edit the old config file
-     * @param array         $parents      The parent keys that should be respected when editing the config
+     * @param Zend_Config   $oldconfig  The config representing the state before the change
+     * @param Zend_Config   $newconfig  The config representing the state after the change
+     * @param IniEditor     $editor     The editor that should be used to edit the old config file
+     * @param array         $parents    The parent keys that should be respected when editing the config
      */
     private function diffPropertyUpdates(
         Zend_Config $oldconfig,
@@ -131,10 +131,10 @@ class PreservingIniWriter extends \Zend_Config_Writer_FileAbstract
     /**
      * Search for deleted properties and use the editor to delete these entries
      *
-     * @param Zend_Config   $oldconfig    The config representing the state before the change
-     * @param Zend_Config   $newconfig    The config representing the state after the change
-     * @param IniEditor     $eeditor      The editor that should be used to edit the old config file
-     * @param array         $parents      The parent keys that should be respected when editing the config
+     * @param Zend_Config   $oldconfig  The config representing the state before the change
+     * @param Zend_Config   $newconfig  The config representing the state after the change
+     * @param IniEditor     $editor     The editor that should be used to edit the old config file
+     * @param array         $parents    The parent keys that should be respected when editing the config
      */
     private function diffPropertyDeletions(
         Zend_Config $oldconfig,
