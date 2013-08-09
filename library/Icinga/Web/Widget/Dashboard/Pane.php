@@ -25,6 +25,7 @@
  * @author    Icinga Development Team <info@icinga.org>
  */
 // {{{ICINGA_LICENSE_HEADER}}}
+
 namespace Icinga\Web\Widget\Dashboard;
 
 use Icinga\Exception\ConfigurationError;
@@ -97,7 +98,7 @@ class Pane implements Widget
      *
      * @param string $title     The new title to use for this pane
      *
-     * @return Pane $this
+     * @return self
      */
     public function setTitle($title)
     {
@@ -176,7 +177,7 @@ class Pane implements Widget
      *                                                  (if a new component will be created)
      * @param string|null $url                          An Url to be used when component is a string
      *
-     * @return Pane $this
+     * @return self
      * @throws \Icinga\Exception\ConfigurationError
      */
     public function addComponent($component, $url = null)

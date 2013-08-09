@@ -25,6 +25,7 @@
  * @author    Icinga Development Team <info@icinga.org>
  */
 // {{{ICINGA_LICENSE_HEADER}}}
+
 namespace Icinga\Web\Widget\Dashboard;
 
 use Icinga\Util\Dimension;
@@ -155,7 +156,7 @@ EOD;
      *
      * @param  string|Url $url  The url to use, either as an Url object or as a path
      *
-     * @return $this
+     * @return self
      */
     public function setUrl($url)
     {

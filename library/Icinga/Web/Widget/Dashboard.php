@@ -159,7 +159,7 @@ class Dashboard implements Widget
      *
      * @param IcingaConfig $config      The configuration file to populate this dashboard with
      *
-     * @return $this
+     * @return self
      */
     public function readConfig(IcingaConfig $config)
     {
@@ -174,7 +174,7 @@ class Dashboard implements Widget
      *
      * @param string $title
      *
-     * @return Dashboard $this
+     * @return self
      */
     public function createPane($title)
     {
@@ -194,7 +194,7 @@ class Dashboard implements Widget
      * @param Component|string $component   The component to add or the title of the newly created component
      * @param $url                          The url to use for the component
      *
-     * @return $this
+     * @return self
      */
     public function setComponentUrl($pane, $component, $url)
     {
@@ -237,7 +237,7 @@ class Dashboard implements Widget
      * @param string $pane                      The pane to remove the component from
      * @param Component|string $component       The component to remove or it's name
      *
-     * @return $this
+     * @return self
      */
     public function removeComponent($pane, $component)
     {
@@ -271,7 +271,7 @@ class Dashboard implements Widget
      *
      * @param Pane $pane        The pane to add
      *
-     * @return $this
+     * @return self
      */
     public function addPane(Pane $pane)
     {
