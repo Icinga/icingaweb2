@@ -25,7 +25,7 @@ $notifications = $this->notifications->paginate();
 echo $this->paginationControl($notifications, null, null, array('preserve' => $this->preserve));
 ?>
 
-<table class="statustable action hosts">
+<table class="statustable action table-hover">
     <thead>
         <tr>
             <th>Host</th>
@@ -84,7 +84,7 @@ echo $this->paginationControl($notifications, null, null, array('preserve' => $t
                         echo 'STALKING';
                         break;
                     default:
-                        echo 'UNKNOWN';
+                        echo 'N/A';
                 }
 ?>
             </td>
@@ -99,6 +99,33 @@ echo $this->paginationControl($notifications, null, null, array('preserve' => $t
             </td>
             <td>
                 <?= $this->escape(substr(strip_tags($notification->notification_information), 0, 10000)); ?>
+            </td>
+            <td><?php
+                if (intval($notification->notification_type) === 0) {
+                    echo $this->qlink(
+                        '',
+                        'monitoring/show/host',
+                        array(
+                            'host' => $notification->host_name
+                        ),
+                        array(
+                            'class' => 'row-action'
+                        )
+                    );
+                } else {
+                    echo $this->qlink(
+                        '',
+                        'monitoring/show/service',
+                        array(
+                            'host' => $notification->host_name,
+                            'service' => $notification->service_description
+                        ),
+                        array(
+                            'class' => 'row-action'
+                        )
+                    );
+                }
+?>
             </td>
         </tr>
 <?php endforeach; ?>
