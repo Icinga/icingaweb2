@@ -1,0 +1,39 @@
+<?= $this->tabs->render($this); ?>
+
+<form method="get" action="<?= $this->qUrl(
+    'monitoring/list/notifications',
+    $this->notifications->getAppliedFilter()->toParams()
+);
+?>">
+    Sort by <?= $this->formSelect(
+        'sort',
+        $this->sort,
+        array(
+            'class' => 'autosubmit'
+        ),
+        array(
+            'time' => 'Time'
+        )
+    );
+?> 
+    <input type="search" name="filter" placeholder="Type to filter" />
+    <button class="btn btn-small"><i class="icon-refresh"></i></button>
+</form>
+
+<table class="statustable action hosts">
+    <thead>
+        <tr>
+            <th>Host</th>
+            <th>Service</th>
+            <th>Type</th>
+            <th>Time</th>
+            <th>Time period</th>
+            <th>Contact</th>
+            <th>Notification command</th>
+            <th>Information</th>
+        </tr>
+    </thead>
+    <tbody>
+        
+    </tbody>
+</table>

@@ -215,13 +215,30 @@ class Monitoring_ListController extends ModuleActionController
     }
 
     /**
-     * Create a query for the given view
-     *
-     * @param string $view              An string identifying view to query
-     * @param array $columns            An array with the column names to display
-     *
-     * @return \Icinga\Data\Db\Query
+     * Display notification overview
      */
+    public function notificationsAction()
+    {
+        $query = $this->backend->select()
+            ->from('notification', array(
+                'host_name',
+                'service_description',
+                'notification_type',
+                'notification_start_time',
+                'notification_contact',
+                'notification_information',
+                //'notification_timeperiod',
+                //'notification_command'
+        ));
+        if (!$this->_getParam('sort')) {
+            // TODO: Remove this once MonitoringView::applyRequestSorting
+            //       applies NotificationView::sortDefaults
+            $query->order('time', -1); // Descending
+        }
+        $this->view->notifications = $query->applyRequest($this->_request);
+        $this->inheritCurrentSortColumn();
+    }
+
     protected function query($view, $columns)
     {
         $extra = preg_split(
@@ -299,8 +316,11 @@ class Monitoring_ListController extends ModuleActionController
             'icon'      => 'img/classic/downtime.gif',
             'url'       => 'monitoring/list/downtimes',
         ));
-
-
+        $tabs->add('notifications', array(
+            'title'     => 'Notifications',
+            'icon'      => 'img/classic/alarm-clock.png',
+            'url'       => 'monitoring/list/notifications'
+        ));
 /*
         $tabs->add('hostgroups', array(
             'title'     => 'Hostgroups',
