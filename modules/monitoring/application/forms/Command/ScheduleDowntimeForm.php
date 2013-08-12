@@ -28,26 +28,19 @@
 
 namespace Monitoring\Form\Command;
 
-use \DateTime;
-use Icinga\Web\Form\Element\DateTimePicker;
-use Icinga\Protocol\Commandpipe\Downtime;
-use Icinga\Protocol\Commandpipe\Comment;
-use \DateInterval;
 use \Zend_Form_Element_Text;
 use \Zend_Validate_GreaterThan;
 use \Zend_Validate_Digits;
+use Icinga\Web\Form\Element\DateTimePicker;
+use Icinga\Protocol\Commandpipe\Downtime;
+use Icinga\Protocol\Commandpipe\Comment;
+use Icinga\Util\DateTimeFactory;
 
 /**
  * Form for any ScheduleDowntime command
  */
 class ScheduleDowntimeForm extends WithChildrenCommandForm
 {
-    /**
-     * Default endtime interval definition
-     * @see http://php.net/manual/de/class.dateinterval.php
-     */
-    const DEFAULT_ENDTIME_INTERVAL = 'PT1H';
-
     /**
      * Type constant for fixed downtimes
      */
@@ -64,25 +57,6 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
     public function init()
     {
         $this->setName('ScheduleDowntimeForm');
-    }
-
-    /**
-     * Build an array of timestamps
-     *
-     * @return string[]
-     */
-    private function generateDefaultTimestamps()
-    {
-        $out = array();
-
-        $dateTimeObject = new DateTime();
-        $out[] = $dateTimeObject->format($this->getDateFormat());
-
-        $dateInterval = new DateInterval(self::DEFAULT_ENDTIME_INTERVAL);
-        $dateTimeObject->add($dateInterval);
-        $out[] = $dateTimeObject->format($this->getDateFormat());
-
-        return $out;
     }
 
     /**
@@ -144,28 +118,21 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
             )
         );
 
-        list($timestampStart, $timestampEnd) = $this->generateDefaultTimestamps();
-
+        $now = DateTimeFactory::create();
         $dateTimeStart = new DateTimePicker(
             array(
                 'name'  => 'starttime',
                 'label' => t('Start time'),
-                'value' => $timestampStart
+                'value' => $now->getTimestamp()
             )
         );
-        $dateTimeStart->setRequired(true);
-        $dateTimeStart->addValidator($this->createDateTimeValidator(), true);
-
         $dateTimeEnd = new DateTimePicker(
             array(
                 'name'  => 'endtime',
                 'label' => t('End time'),
-                'value' => $timestampEnd
+                'value' => $now->getTimestamp() + 3600
             )
         );
-        $dateTimeEnd->setRequired(true);
-        $dateTimeEnd->addValidator($this->createDateTimeValidator(), true);
-
         $this->addElements(array($dateTimeStart, $dateTimeEnd));
 
         $this->addElement(
@@ -304,12 +271,12 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
         if ($this->getValue('type') === self::TYPE_FLEXIBLE) {
             $duration = ($this->getValue('hours')*3600) + ($this->getValue('minutes')*60);
         }
-        $starttime = new DateTime($this->getValue('starttime'));
-        $endtime = new DateTime($this->getValue('endtime'));
+        $starttime = $this->getValue('starttime');
+        $endtime = $this->getValue('endtime');
 
         $downtime = new Downtime(
-            $starttime->getTimestamp(),
-            $endtime->getTimestamp(),
+            $starttime,
+            $endtime,
             $comment,
             $duration,
             $this->getValue('triggered')

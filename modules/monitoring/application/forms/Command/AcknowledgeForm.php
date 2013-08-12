@@ -28,12 +28,11 @@
 
 namespace Monitoring\Form\Command;
 
-use \DateTime;
 use Icinga\Web\Form\Element\DateTimePicker;
-use \DateInterval;
 use Icinga\Web\Form\Element\Note;
 use Icinga\Protocol\Commandpipe\Acknowledgement;
 use Icinga\Protocol\Commandpipe\Comment;
+use Icinga\Util\DateTimeFactory;
 
 /**
  * Form for problem acknowledgements
@@ -59,9 +58,9 @@ class AcknowledgeForm extends CommandForm
             'textarea',
             'comment',
             array(
-                'label'    => t('Comment'),
-                'rows'     => 4,
-                'required' => true
+                'label'     => t('Comment'),
+                'rows'      => 4,
+                'required'  => true
             )
         );
 
@@ -85,20 +84,17 @@ class AcknowledgeForm extends CommandForm
             'checkbox',
             'expire',
             array(
-                'label'    => t('Use expire time')
+                'label' => t('Use expire time')
             )
         );
 
         if ($this->getRequest()->getPost('expire', '0') === '1') {
-            $now = new DateTime();
-            $interval = new DateInterval('PT1H'); // Add 3600 seconds
-            $now->add($interval);
-
+            $now = DateTimeFactory::create();
             $expireTime = new DateTimePicker(
                 array(
                     'name'  => 'expiretime',
                     'label' => t('Expire time'),
-                    'value' => $now->format($this->getDateFormat())
+                    'value' => $now->getTimestamp() + 3600
                 )
             );
 
@@ -146,15 +142,15 @@ class AcknowledgeForm extends CommandForm
 
     /**
      * Add validator for dependent fields
-     * @see Form::preValidation
-     * @param array $data
+     *
+     * @param   array   $data
+     * @see     \Icinga\Web\Form::preValidation()
      */
     protected function preValidation(array $data)
     {
         if (isset($data['expire']) && intval($data['expire']) === 1) {
             $expireTime = $this->getElement('expiretime');
             $expireTime->setRequired(true);
-            $expireTime->addValidator($this->createDateTimeValidator(), true);
         }
     }
 
@@ -162,8 +158,7 @@ class AcknowledgeForm extends CommandForm
     {
         $expireTime = -1;
         if ($this->getValue('expire')) {
-            $time = new DateTime($this->getValue('expiretime'));
-            $expireTime = $time->getTimestamp();
+            $expireTime = $this->getValue('expiretime');
         }
         return new Acknowledgement(
             new Comment(

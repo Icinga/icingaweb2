@@ -1,22 +1,37 @@
 <?php
 
-
-
 namespace Test\Monitoring\Forms\Command;
 
 require_once __DIR__.'/BaseFormTest.php';
 $base = __DIR__.'/../../../../../../../';
 require_once $base.'modules/monitoring/application/forms/Command/CommandForm.php';
+require_once $base . 'library/Icinga/Util/ConfigAwareFactory.php';
+require_once $base . 'library/Icinga/Util/DateTimeFactory.php';
 require_once realpath($base.'modules/monitoring/application/forms/Command/WithChildrenCommandForm.php');
 require_once realpath($base.'modules/monitoring/application/forms/Command/AcknowledgeForm.php');
 
-use Monitoring\Form\Command\AcknowledgeForm;
+use \DateTimeZone;
 use \Zend_View;
 use \Zend_Test_PHPUnit_ControllerTestCase;
+use Monitoring\Form\Command\AcknowledgeForm;
+use Icinga\Util\DateTimeFactory;
 
 class AcknowledgeFormTest extends BaseFormTest
 {
     const FORMCLASS = "Monitoring\Form\Command\AcknowledgeForm";
+
+    /**
+     * Set up the default time zone
+     *
+     * Utilizes singleton DateTimeFactory
+     *
+     * @backupStaticAttributes enabled
+     */
+    public function setUp()
+    {
+        date_default_timezone_set('UTC');
+        DateTimeFactory::setConfig(array('timezone' => new DateTimeZone('UTC')));
+    }
 
     public function testForm()
     {
