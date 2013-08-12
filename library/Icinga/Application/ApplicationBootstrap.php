@@ -235,7 +235,7 @@ abstract class ApplicationBootstrap
      * @param  string|null $subdir
      * @return string
      */
-    private function getDirWithSubDir($dir, $subdir=null)
+    private function getDirWithSubDir($dir, $subdir = null)
     {
         if ($subdir !== null) {
             $dir .= '/' . ltrim($subdir, '/');

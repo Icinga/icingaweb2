@@ -184,5 +184,4 @@ class SubmitPassiveCheckResultForm extends CommandForm
     {
         return $this->getValue('performancedata');
     }
-
 }

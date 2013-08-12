@@ -93,7 +93,7 @@ class DateTimeTest extends PHPUnit_Framework_TestCase
             $dt->getValue(),
             1373616223,
             'getValue did not return the correct Unix timestamp according to the given date/time '
-                . 'string'
+            . 'string'
         );
     }
 

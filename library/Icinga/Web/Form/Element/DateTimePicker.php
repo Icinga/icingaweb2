@@ -94,7 +94,7 @@ class DateTimePicker extends Zend_Form_Element_Xhtml
                 $this->addErrorMessage(
                     _(
                         'Failed to parse datetime string. See '
-                            . 'http://www.php.net/manual/en/datetime.formats.php for valid formats'
+                        . 'http://www.php.net/manual/en/datetime.formats.php for valid formats'
                     )
                 );
                 return false;
