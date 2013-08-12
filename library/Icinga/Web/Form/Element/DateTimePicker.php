@@ -48,7 +48,7 @@ class DateTimePicker extends Zend_Form_Element_Xhtml
     public $helper = 'formDateTime';
 
     /**
-     * Finds whether a variable is a Unix timestamp
+     * Find whether a variable is a Unix timestamp
      *
      * @param   mixed   $timestamp
      * @return  bool

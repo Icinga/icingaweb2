@@ -6,11 +6,18 @@ namespace Icinga\Util;
 
 use \DateTime;
 use \DateTimeZone;
-use Icinga\Util\ConfigAwareFactory;
-use Icinga\Exception\ConfigurationError;
+use \Icinga\Util\ConfigAwareFactory;
+use \Icinga\Exception\ConfigurationError;
 
+/**
+ * Factory for time zone aware DateTime objects
+ */
 class DateTimeFactory implements ConfigAwareFactory
 {
+    /**
+     * Time zone used throughout DateTime object creation
+     * @var DateTimeZone
+     */
     private static $timeZone;
 
     /**
