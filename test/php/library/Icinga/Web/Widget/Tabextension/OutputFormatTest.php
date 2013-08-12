@@ -31,7 +31,7 @@ namespace Tests\Icinga\Web\Widget\Tabextension;
 require_once('../../library/Icinga/Web/Widget/Widget.php');
 require_once('../../library/Icinga/Web/Widget/Tab.php');
 require_once('../../library/Icinga/Web/Widget/Tabs.php');
-require_once('../../library/Icinga/Web/Widget/Tabextension/TabExtension.php');
+require_once('../../library/Icinga/Web/Widget/Tabextension/Tabextension.php');
 require_once('../../library/Icinga/Web/Widget/Tabextension/OutputFormat.php');
 require_once('../../library/Icinga/Web/Url.php');
 
