@@ -3,13 +3,17 @@
 namespace Test\Icinga\Web\Form\Element;
 
 require_once 'Zend/Form/Element/Xhtml.php';
-require_once __DIR__ . '/../../../../../../../library/Icinga/Application/Icinga.php';
-require_once __DIR__ . '/../../../../../../../library/Icinga/Web/Form/Element/DateTimePicker.php';
+require_once realpath(__DIR__ . '/../../../../../../../library/Icinga/Application/Icinga.php');
+require_once realpath(__DIR__ . '/../../../../../../../library/Icinga/Web/Form/Element/DateTimePicker.php');
+require_once realpath(__DIR__ . '/../../../../../../../library/Icinga/Util/ConfigAwareFactory.php');
+require_once realpath(__DIR__ . '/../../../../../../../library/Icinga/Util/DateTimeFactory.php');
 
 use \DateTimeZone;
-use Icinga\Web\Form\Element\DateTimePicker;
+use \PHPUnit_Framework_TestCase;
+use \Icinga\Web\Form\Element\DateTimePicker;
+use \Icinga\Util\DateTimeFactory;
 
-class DateTimeTest extends \PHPUnit_Framework_TestCase
+class DateTimeTest extends PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
@@ -18,13 +22,19 @@ class DateTimeTest extends \PHPUnit_Framework_TestCase
         date_default_timezone_set('UTC');
     }
 
+    /**
+     * Test that DateTimePicker::isValid() returns false if the input is not valid in terms of being a date/time string
+     * or a timestamp
+     *
+     * Utilizes singleton DateTimeFactory
+     *
+     * @backupStaticAttributes enabled
+     */
     public function testValidateInvalidInput()
     {
+        DateTimeFactory::setConfig(array('timezone' => new DateTimeZone('UTC')));
+
         $dt = new DateTimePicker('foo');
-        // Set element's timezone else it'll try to load the time zone from the user
-        // which requires Icinga::app() to be bootstrapped which is not the case
-        // within tests - so without a ProgrammingError will be thrown
-        $dt->setTimeZone(new DateTimeZone('UTC'));
 
         $this->assertFalse(
             $dt->isValid('bar'),
@@ -36,10 +46,19 @@ class DateTimeTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * Test that DateTimePicker::isValid() returns true if the input is valid in terms of being a date/time string
+     * or a timestamp
+     *
+     * Utilizes singleton DateTimeFactory
+     *
+     * @backupStaticAttributes enabled
+     */
     public function testValidateValidInput()
     {
+        DateTimeFactory::setConfig(array('timezone' => new DateTimeZone('UTC')));
+
         $dt = new DateTimePicker('foo');
-        $dt->setTimeZone(new DateTimeZone('UTC'));
 
         $this->assertTrue(
             $dt->isValid('2013-07-12 08:03:43'),
@@ -55,11 +74,24 @@ class DateTimeTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testGetValueReturnsUnixTimestamp()
+    /**
+     * Test that DateTimePicker::getValue() returns a timestamp after a call to isValid considers the input as correct
+     *
+     * Utilizes singleton DateTimeFactory
+     *
+     * @backupStaticAttributes enabled
+     */
+    public function testGetValueReturnsUnixTimestampAfterSuccessfulIsValidCall()
     {
+        DateTimeFactory::setConfig(array('timezone' => new DateTimeZone('UTC')));
+
         $dt = new DateTimePicker('foo');
-        $dt->setTimeZone(new DateTimeZone('UTC'))
-            ->setValue('2013-07-12 08:03:43');
+        $dt->setValue('2013-07-12 08:03:43');
+
+        $this->assertTrue(
+            $dt->isValid($dt->getValue()),
+            'Using a valid date/time string must not fail'
+        );
 
         $this->assertEquals(
             $dt->getValue(),
@@ -69,17 +101,30 @@ class DateTimeTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * Test that DateTimePicker::getValue() returns a timestamp respecting the given non-UTC time zone after a call to
+     * isValid considers the input as correct
+     *
+     * Utilizes singleton DateTimeFactory
+     *
+     * @backupStaticAttributes enabled
+     */
     public function testGetValueIsTimeZoneAware()
     {
+        DateTimeFactory::setConfig(array('timezone' => new DateTimeZone('Europe/Berlin')));
+
         $dt = new DateTimePicker('foo');
-        $dt->setTimeZone(new DateTimeZone('Europe/Berlin'))
-            ->setValue('2013-07-12 08:03:43');
+        $dt->setValue('2013-07-12 08:03:43');
+
+        $this->assertTrue(
+            $dt->isValid($dt->getValue()),
+            'Using a valid date/time string must not fail'
+        );
 
         $this->assertEquals(
             $dt->getValue(),
             1373609023,
-            'getValue did not return the correct Unix timestamp according to the given date/time '
-                . 'string'
+            'getValue did not return the correct Unix timestamp according to the given date/time string and time zone'
         );
     }
 }

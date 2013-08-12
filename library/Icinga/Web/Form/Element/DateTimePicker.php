@@ -28,14 +28,16 @@
 
 namespace Icinga\Web\Form\Element;
 
-use \DateTime;
-use \DateTimeZone;
 use \Exception;
-use Zend_Form_Element_Xhtml;
-use Icinga\Application\Icinga;
+use \Zend_Form_Element_Xhtml;
+use \Icinga\Application\Icinga;
+use \Icinga\Util\DateTimeFactory;
 
 /**
- * Datetime form element
+ * Datetime form element which returns the input as Unix timestamp after the input has been proven valid. Utilizes
+ * DateTimeFactory to ensure time zone awareness
+ *
+ * @see isValid()
  */
 class DateTimePicker extends Zend_Form_Element_Xhtml
 {
@@ -44,41 +46,6 @@ class DateTimePicker extends Zend_Form_Element_Xhtml
      * @var string
      */
     public $helper = 'formDateTime';
-
-    /**
-     * Time zone
-     * @var mixed
-     */
-    private $timeZone;
-
-    /**
-     * Getter for the time zone
-     *
-     * If the time zone has never been set, the user's time zone is returned
-     *
-     * @return  DateTimeZone
-     * @see     setTimeZone()
-     */
-    public function getTimeZone()
-    {
-        $timeZone = $this->timeZone;
-        if ($timeZone === null) {
-            $timeZone = Icinga::app()->getFrontController()->getRequest()->getUser()->getTimeZone();
-        }
-        return $timeZone;
-    }
-
-    /**
-     * Setter for the time zone
-     *
-     * @param   DateTimeZone    $timeZone
-     * @return  self
-     */
-    public function setTimeZone(DateTimeZone $timeZone)
-    {
-        $this->timeZone = $timeZone;
-        return $this;
-    }
 
     /**
      * Finds whether a variable is a Unix timestamp
@@ -94,35 +61,19 @@ class DateTimePicker extends Zend_Form_Element_Xhtml
     }
 
     /**
-     * Retrieve element value as unix timestamp respecting the user's timezone
-     *
-     * @param   mixed   $timeZone
-     * @return  int
-     */
-    public function getValue()
-    {
-        $valueFiltered = parent::getValue();
-        if ($this->isUnixTimestamp($valueFiltered)) {
-            // Using the Unix timestamp format to construct a new DateTime
-            $valueFiltered = '@' . $valueFiltered;
-        }
-        $dt = new DateTime($valueFiltered, $this->getTimeZone());
-        return $dt->getTimestamp();
-    }
-
-    /**
      * Validate filtered date/time strings
      *
-     * Expects formats that the php date parser understands
+     * Expects formats that the php date parser understands. Sets element value as Unix timestamp if the input is
+     * considered valid. Utilizes DateTimeFactory to ensure time zone awareness
      *
      * @param   string  $value
      * @param   mixed   $context
      * @return  bool
-     * @see     DateTime::__construct()
+     * @see     \Icinga\Util\DateTimeFactory::create()
      */
     public function isValid($value, $context = null)
     {
-        if (!parent::isValid(parent::getValue(), $context)) {
+        if (!parent::isValid($value, $context)) {
             return false;
         }
 
@@ -139,7 +90,7 @@ class DateTimePicker extends Zend_Form_Element_Xhtml
         }
 
         try {
-            new DateTime($value);
+            $dt = DateTimeFactory::create($value);
         } catch (Exception $e) {
             $this->addErrorMessage(
                 _(
@@ -149,6 +100,8 @@ class DateTimePicker extends Zend_Form_Element_Xhtml
             );
             return false;
         }
+
+        $this->setValue($dt->getTimestamp());
 
         return true;
     }
