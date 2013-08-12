@@ -49,8 +49,7 @@ class AcknowledgeForm extends CommandForm
     }
 
     /**
-     * Interface method to build the form
-     * @see CommandForm::create
+     * Create the form's elements
      */
     protected function create()
     {

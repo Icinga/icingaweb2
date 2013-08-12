@@ -31,7 +31,7 @@ namespace Monitoring\Form\Command;
 use Icinga\Exception\ProgrammingError;
 
 /**
- * Form for command SubmitPassiveCheckResult
+ * Form for submitting passive check results
  */
 class SubmitPassiveCheckResultForm extends CommandForm
 {
@@ -116,8 +116,9 @@ class SubmitPassiveCheckResultForm extends CommandForm
     }
 
     /**
-     * Interface method to build the form
-     * @see CommandForm::create
+     * Create the form's elements
+     *
+     * @see CommandForm::create()
      */
     protected function create()
     {
