@@ -30,11 +30,12 @@ namespace Icinga\Application;
 
 use \DateTimeZone;
 use \Exception;
+use Zend_Loader_Autoloader;
 use Icinga\Application\Modules\Manager as ModuleManager;
 use Icinga\Application\Platform;
 use \Icinga\Application\Config;
 use Icinga\Exception\ConfigurationError;
-use Zend_Loader_Autoloader;
+use Icinga\Util\DateTimeFactory;
 
 /**
  * This class bootstraps a thin Icinga application layer
@@ -340,20 +341,21 @@ abstract class ApplicationBootstrap
     }
 
     /**
-     * Setup timezone
+     * Setup time zone
      *
      * @return self
-     * @throws \Icinga\Exception\ConfigurationError if the timezone in config.ini isn't valid
+     * @throws ConfigurationError if the timezone in config.ini isn't valid
      */
     protected function setupTimezone()
     {
         $tz = $this->config->global->get('timezone', 'UTC');
         try {
-            new DateTimeZone($tz);
+            $tz = new DateTimeZone($tz);
         } catch (Exception $e) {
             throw new ConfigurationError(t('Invalid timezone') . ' "' . $tz . '"');
         }
         date_default_timezone_set($tz);
+        DateTimeFactory::setConfig(array('timezone' => $tz));
         return $this;
     }
 }
