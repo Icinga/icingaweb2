@@ -32,7 +32,7 @@ use Icinga\User;
 use Icinga\Authentication\UserBackend;
 use Icinga\Authentication\Credentials;
 use Icinga\Protocol\Ldap;
-use Icinga\Config\Config as IcingaConfig;
+use \Icinga\Application\Config as IcingaConfig;
 
 /**
 *   User authentication backend (@see Icinga\Authentication\UserBackend) for

@@ -31,7 +31,7 @@ use Icinga\Web\ActionController;
 use Icinga\Web\Url;
 use Icinga\Application\Icinga;
 use Icinga\Web\Widget\Dashboard;
-use Icinga\Config\Config as IcingaConfig;
+use \Icinga\Application\Config as IcingaConfig;
 use Icinga\Form\Dashboard\AddUrlForm;
 use Icinga\Exception\ConfigurationError;
 

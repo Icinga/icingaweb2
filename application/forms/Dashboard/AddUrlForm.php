@@ -2,7 +2,7 @@
 
 namespace Icinga\Form\Dashboard;
 
-use Icinga\Config\Config as IcingaConfig;
+use \Icinga\Application\Config as IcingaConfig;
 use Icinga\Web\Form;
 use Icinga\Web\Widget\Dashboard;
 use Zend_Form_Element_Text;

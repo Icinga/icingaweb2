@@ -29,7 +29,7 @@
 namespace Icinga\Web\Widget;
 
 use Icinga\Application\Icinga;
-use Icinga\Config\Config as IcingaConfig;
+use \Icinga\Application\Config as IcingaConfig;
 use Icinga\Application\Logger;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Web\Widget\Widget;
