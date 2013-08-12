@@ -5,11 +5,14 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 
 use \DateTime;
-use Icinga\Application\Icinga;
-use Icinga\Application\Config as IcingaConfig;
+use \Icinga\Application\Icinga;
+use \Icinga\Application\Config as IcingaConfig;
+use \Icinga\Util\DateTimeFactory;
 
 /**
- * Helper to format date and time
+ * Helper to format date and time. Utilizes DateTimeFactory to ensure time zone awareness
+ *
+ * @see \Icinga\Util\DateTimeFactory::create()
  */
 class Zend_View_Helper_DateFormat extends Zend_View_Helper_Abstract
 {
@@ -49,8 +52,8 @@ class Zend_View_Helper_DateFormat extends Zend_View_Helper_Abstract
      */
     private function format($timestamp, $format)
     {
-        // Using the Unix timestamp format to construct a new DateTime
-        $dt = new DateTime('@' . $timestamp, $this->getTimeZone());
+        $dt = DateTimeFactory::create();
+        $dt->setTimestamp($timestamp);
         return $dt->format($format);
     }
 
@@ -85,16 +88,6 @@ class Zend_View_Helper_DateFormat extends Zend_View_Helper_Abstract
     public function formatDateTime($timestamp)
     {
         return $this->format($timestamp, $this->getDateTimeFormat());
-    }
-
-    /**
-     * Retrieve the user's timezone
-     *
-     * @return  DateTimeZone
-     */
-    private function getTimeZone()
-    {
-        return $this->request->getUser()->getTimeZone();
     }
 
     /**

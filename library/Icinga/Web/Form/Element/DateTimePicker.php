@@ -85,20 +85,20 @@ class DateTimePicker extends Zend_Form_Element_Xhtml
         }
 
         if ($this->isUnixTimestamp($value)) {
-            // Using the Unix timestamp format to construct a new DateTime
-            $value = '@' . $value;
-        }
-
-        try {
-            $dt = DateTimeFactory::create($value);
-        } catch (Exception $e) {
-            $this->addErrorMessage(
-                _(
-                    'Failed to parse datetime string. See '
-                        . 'http://www.php.net/manual/en/datetime.formats.php for valid formats'
-                )
-            );
-            return false;
+            $dt = DateTimeFactory::create();
+            $dt->setTimestamp($value);
+        } else {
+            try {
+                $dt = DateTimeFactory::create($value);
+            } catch (Exception $e) {
+                $this->addErrorMessage(
+                    _(
+                        'Failed to parse datetime string. See '
+                            . 'http://www.php.net/manual/en/datetime.formats.php for valid formats'
+                    )
+                );
+                return false;
+            }
         }
 
         $this->setValue($dt->getTimestamp());

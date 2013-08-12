@@ -65,10 +65,6 @@ class DateTimeTest extends PHPUnit_Framework_TestCase
             'Using a valid date/time string must not fail'
         );
         $this->assertTrue(
-            $dt->isValid('@' . 1373616223),
-            'Using the Unix timestamp format must not fail'
-        );
-        $this->assertTrue(
             $dt->isValid(1373616223),
             'Using valid Unix timestamps must not fail'
         );
