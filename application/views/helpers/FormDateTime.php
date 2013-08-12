@@ -25,30 +25,51 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
+use \DateTime;
+use \Zend_View_Helper_FormElement;
+
 /**
- * Helper to generate a text input with a datepicker being attached
+ * Helper to generate a "datetime" element
  */
-class Zend_View_Helper_FormDateTime extends \Zend_View_Helper_FormText
+class Zend_View_Helper_FormDateTime extends Zend_View_Helper_FormElement
 {
     /**
-     * Generates a html date input
+     * Generate a 'datetime' element
      *
-     * @access public
+     * @param   string  $name       The element name
+     * @param   int     $value      The default timestamp
+     * @param   array   $attribs    Attributes for the element tag
      *
-     * @param string $name The element name.
-     * @param string $value The default value.
-     * @param array $attribs Attributes which should be added to the input tag.
-     *
-     * @return string The input tag and options XHTML.
+     * @return  string  The element XHTML
      */
     public function formDateTime($name, $value = null, $attribs = null)
     {
-        return '<input type="datetime" class="datepick"'
-        . ' name="' . $this->view->escape($name) . '"'
-        . ' value="' . $this->view->escape($value) . '"'
-        . ' id="' . $this->view->escape($name) . '"'
-        . $this->_htmlAttribs($attribs)
-        . $this->getClosingBracket();
+        $info = $this->_getInfo($name, $value, $attribs);
+        extract($info); // name, value, attribs, options, listsep, disable
+
+        // Is it disabled?
+        $disabled = '';
+        if ($disable) {
+            $disabled = ' disabled="disabled"';
+        }
+
+        // Do we have a value?
+        if (isset($value) && !empty($value)) {
+            $value = ' value="' . $this->view->dateFormat()->formatDateTime($value) . '"';
+        } else {
+            $value = '';
+        }
+
+        // Build the element
+        $xhtml = '<div class="datetime">'
+            . '<input type="text" name="' . $this->view->escape($name) . '"'
+            . ' id="' . $this->view->escape($id) . '"'
+            . $value
+            . $disabled
+            . $this->_htmlAttribs($attribs)
+            . $this->getClosingBracket()
+            . '</div>';
+        return $xhtml;
     }
 }
 

@@ -228,7 +228,7 @@ class ScheduleDowntimeFormTest extends BaseFormTest
             'Assert negative hours to cause validation errors in flexible downtime'
         );
     }
-    
+
     public function testInvalidMinutesValueRecognitionInFlexibleDowntime()
     {
         $form = $this->getRequestForm(array(
@@ -317,8 +317,8 @@ class ScheduleDowntimeFormTest extends BaseFormTest
         $form = $this->getRequestForm(array(), self::FORMCLASS);
         $form->buildForm();
 
-        $time1 = strtotime($form->getElement('starttime')->getValue());
-        $time2 = strtotime($form->getElement('endtime')->getValue());
+        $time1 = $form->getElement('starttime')->getValue();
+        $time2 = $form->getElement('endtime')->getValue();
 
         $this->assertEquals(3600, ($time2 - $time1));
     }

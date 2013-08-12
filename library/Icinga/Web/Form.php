@@ -25,18 +25,16 @@
 
 namespace Icinga\Web;
 
-use Icinga\Exception\ProgrammingError;
-use Icinga\Web\Form\InvalidCSRFTokenException;
 use \Zend_Controller_Request_Abstract;
 use \Zend_Form_Element_Submit;
 use \Zend_Form_Element_Reset;
 use \Zend_View_Interface;
 use \Zend_Form;
+use Icinga\Exception\ProgrammingError;
+use Icinga\Web\Form\InvalidCSRFTokenException;
 
 /**
- * Class Form
- *
- * How forms are used in Icinga 2 Web
+ * Base class for forms providing CSRF protection, confirmation logic and auto submission
  */
 abstract class Form extends Zend_Form
 {
@@ -47,12 +45,12 @@ abstract class Form extends Zend_Form
     private $request;
 
     /**
-     * Whether this form should NOT add random generated "challenge" tokens that are associated
-     * with the user's current session in order to prevent Cross-Site Request Forgery (CSRF).
-     * It is the form's responsibility to verify the existence and correctness of this token
+     * Whether this form should NOT add random generated "challenge" tokens that are associated with the user's current
+     * session in order to prevent Cross-Site Request Forgery (CSRF). It is the form's responsibility to verify the
+     * existence and correctness of this token
      * @var bool
      */
-    private $tokenDisabled = false;
+    protected $tokenDisabled = false;
 
     /**
      * Name of the CSRF token element (used to create non-colliding hashes)
@@ -61,27 +59,21 @@ abstract class Form extends Zend_Form
     private $tokenElementName = 'CSRFToken';
 
     /**
-     * Time to live for the CRSF token
-     * @var int
-     */
-    private $tokenTimeout = 300;
-
-    /**
      * Flag to indicate that form is already build
      * @var bool
      */
     private $created = false;
 
     /**
-     * Session id required for CSRF token generation
-     * @var numeric|bool
+     * Session id used for CSRF token generation
+     * @var string
      */
-    private $sessionId = false;
+    private $sessionId;
 
     /**
      * Label for submit button
      *
-     * If omitted, no button will be shown.
+     * If omitted, no button will be shown
      *
      * @var string
      */
@@ -90,15 +82,20 @@ abstract class Form extends Zend_Form
     /**
      * Label for cancel button
      *
-     * If omitted, no button will be shown.
+     * If omitted, no button will be shown
      *
      * @var string
      */
     private $cancelLabel;
 
     /**
-     * Returns the session ID stored in this form instance
-     * @return mixed
+     * Getter for the session ID
+     *
+     * If the ID has never been set, the ID from session_id() is returned
+     *
+     * @return  string
+     * @see     session_id()
+     * @see     setSessionId()
      */
     public function getSessionId()
     {
@@ -109,10 +106,11 @@ abstract class Form extends Zend_Form
     }
 
     /**
-     * Overwrites the currently set session id to a user
-     * provided one, helpful when testing
+     * Setter for the session ID
      *
-     * @param $sessionId    The session id to use for CSRF generation
+     * This method should be used for testing purposes only
+     *
+     * @param   string  $sessionId
      */
     public function setSessionId($sessionId)
     {
@@ -120,10 +118,9 @@ abstract class Form extends Zend_Form
     }
 
     /**
-     * Returns the html-element name of the CSRF token
-     * field
+     * Return the HTML element name of the CSRF token field
      *
-     * @return string
+     * @return  string
      */
     public function getTokenElementName()
     {
@@ -131,9 +128,10 @@ abstract class Form extends Zend_Form
     }
 
     /**
-     * Render the form to html
-     * @param  Zend_View_Interface $view
-     * @return string
+     * Render the form to HTML
+     *
+     * @param   Zend_View_Interface $view
+     * @return  string
      */
     public function render(Zend_View_Interface $view = null)
     {
@@ -155,8 +153,9 @@ abstract class Form extends Zend_Form
     }
 
     /**
-     * Setter for request
-     * @param Zend_Controller_Request_Abstract $request The request object of a session
+     * Setter for the request
+     *
+     * @param   Zend_Controller_Request_Abstract    $request
      */
     public function setRequest(Zend_Controller_Request_Abstract $request)
     {
@@ -164,8 +163,9 @@ abstract class Form extends Zend_Form
     }
 
     /**
-     * Getter for request
-     * @return Zend_Controller_Request_Abstract
+     * Getter for the request
+     *
+     * @return  Zend_Controller_Request_Abstract
      */
     public function getRequest()
     {
@@ -173,7 +173,9 @@ abstract class Form extends Zend_Form
     }
 
     /**
-     * Triggers form creation
+     * Create the form if not done already
+     *
+     * Adds all elements to the form
      */
     public function buildForm()
     {
@@ -199,8 +201,9 @@ abstract class Form extends Zend_Form
     }
 
     /**
-     * Setter for cancel label
-     * @param string $cancelLabel
+     * Setter for the cancel label
+     *
+     * @param   string  $cancelLabel
      */
     public function setCancelLabel($cancelLabel)
     {
@@ -223,8 +226,9 @@ abstract class Form extends Zend_Form
     }
 
     /**
-     * Setter for submit label
-     * @param string $submitLabel
+     * Setter for the submit label
+     *
+     * @param   string  $submitLabel
      */
     public function setSubmitLabel($submitLabel)
     {
@@ -238,7 +242,7 @@ abstract class Form extends Zend_Form
     {
         $submitButton = new Zend_Form_Element_Submit(
             array(
-                'name' => 'btn_submit',
+                'name'  => 'btn_submit',
                 'label' => $this->submitLabel,
                 'class' => 'btn btn-primary pull-right'
             )
@@ -247,12 +251,12 @@ abstract class Form extends Zend_Form
     }
 
     /**
-     * Enable automatic submission
+     * Enable automatic form submission on the given elements
      *
-     * Enables automatic submission of this form once the user edits specific elements.
+     * Enables automatic submission of this form once the user edits specific elements
      *
-     * @param array $triggerElements The element names which should auto-submit the form
-     * @throws ProgrammingError      When an element is found which does not yet exist
+     * @param   array   $triggerElements    The element names which should auto-submit the form
+     * @throws  ProgrammingError    When an element is found which does not yet exist
      */
     final public function enableAutoSubmit($triggerElements)
     {
@@ -272,11 +276,10 @@ abstract class Form extends Zend_Form
     /**
      * Check whether the form was submitted with a valid request
      *
-     * Ensures that the current request method is POST, that the
-     * form was manually submitted and that the data provided in
-     * the request is valid and gets repopulated in case its invalid.
+     * Ensures that the current request method is POST, that the form was manually submitted and that the data provided
+     * in the request is valid and gets repopulated in case its invalid.
      *
-     * @return bool
+     * @return  bool
      */
     public function isSubmittedAndValid()
     {
@@ -306,12 +309,16 @@ abstract class Form extends Zend_Form
 
     /**
      * Disable CSRF counter measure and remove its field if already added
-     * @param boolean $value Flag
+     *
+     * This method should be used for testing purposes only
+     *
+     * @param   bool    $disabled
+     * @see     tokenDisabled
      */
-    final public function setTokenDisabled($value = true)
+    final public function setTokenDisabled($disabled = true)
     {
-        $this->tokenDisabled = (boolean)$value;
-        if ($value == true) {
+        $this->tokenDisabled = (boolean) $disabled;
+        if ($disabled === true) {
             $this->removeElement($this->tokenElementName);
         }
     }
@@ -324,22 +331,21 @@ abstract class Form extends Zend_Form
         if ($this->tokenDisabled || $this->getElement($this->tokenElementName)) {
             return;
         }
-
         $this->addElement(
             'hidden',
             $this->tokenElementName,
             array(
-                'value'      => $this->generateCsrfTokenAsString(),
-                'decorators' => array('ViewHelper')
+                'value'         => $this->generateCsrfTokenAsString(),
+                'decorators'    => array('ViewHelper')
             )
         );
     }
 
     /**
-     * Tests the submitted data for a correct CSRF token, if needed
+     * Test the submitted data for a correct CSRF token
      *
-     * @param Array $checkData           The POST data send by the user
-     * @throws InvalidCSRFTokenException When CSRF Validation fails
+     * @param   array   $checkData  The POST data send by the user
+     * @throws  InvalidCSRFTokenException   When CSRF Validation fails
      */
     final public function assertValidCsrfToken(array $checkData)
     {
@@ -357,12 +363,11 @@ abstract class Form extends Zend_Form
     /**
      * Check whether the form's CSRF token-field has a valid value
      *
-     * @param string $elementValue Value from the form element
-     * @return bool
+     * @param   string  $elementValue   Value from the form element
+     * @return  bool
      */
-    final private function hasValidCsrfToken($elementValue)
+    private function hasValidCsrfToken($elementValue)
     {
-
         if ($this->getElement($this->tokenElementName) === null) {
             return false;
         }
@@ -381,7 +386,8 @@ abstract class Form extends Zend_Form
 
     /**
      * Generate a new (seed, token) pair
-     * @return array
+     *
+     * @return  array
      */
     final public function generateCsrfToken()
     {
@@ -392,9 +398,9 @@ abstract class Form extends Zend_Form
     }
 
     /**
-     * Returns the string representation of the CSRF seed/token pair
+     * Return the string representation of the CSRF seed/token pair
      *
-     * @return string
+     * @return  string
      */
     final public function generateCsrfTokenAsString()
     {

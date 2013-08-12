@@ -3,17 +3,18 @@
 /**
  * Ensures that our date/time controls will work on every browser (natively or javascript based)
  */
-define(['jquery', 'datepicker', 'timepicker'],function($) {
+define(['jquery', 'datetimepicker'], function($) {
     "use strict";
 
     var DateTimeBehaviour = function() {
         this.enable = function() {
-            if (!Modernizr.inputtypes.date) {
-                $(".datepick").datepicker();
-            }
-            if (!Modernizr.inputtypes.time) {
-                $(".timepick").timepicker();
-            }
+            $('.datetime input')
+                .attr('data-format', 'yyyy-MM-dd hh:mm:ss');
+            $('.datetime')
+                .addClass('input-append')
+                .append('<span class="add-on">' +
+                    '<i data-time-icon="icon-time" data-date-icon="icon-calendar"></i></span>')
+                .datetimepicker();
         }
     };
     return new DateTimeBehaviour();

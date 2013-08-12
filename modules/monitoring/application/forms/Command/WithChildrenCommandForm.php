@@ -29,18 +29,19 @@
 namespace Monitoring\Form\Command;
 
 /**
- * Class handle specific command flags
+ * Base class for command forms which allow to propagate the command to child objects too
  */
 abstract class WithChildrenCommandForm extends CommandForm
 {
     /**
-     * Flag if we handle child objects as well
+     * Whether to include all objects beyond as well
      * @var bool
      */
     private $withChildren = false;
 
     /**
      * Setter for withChildren
+     *
      * @param bool $flag
      */
     public function setWithChildren($flag = true)
@@ -50,6 +51,7 @@ abstract class WithChildrenCommandForm extends CommandForm
 
     /**
      * Getter for withChildren
+     *
      * @return bool
      */
     public function getWithChildren()

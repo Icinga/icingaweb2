@@ -14,8 +14,7 @@ requirejs.config({
 
         logging: 'icinga/util/logging',
 
-        datepicker: 'vendor/datepicker/js/bootstrap-datepicker',
-        timepicker: 'vendor/timepicker/js/bootstrap-timepicker'
+        datetimepicker: 'vendor/datetimepicker/bootstrap-datetimepicker.min'
     }
 
 });
@@ -30,6 +29,5 @@ define(['jquery','Holder', 'History'], function ($) {
 });
 
 define(['bootstrap'], function () {
-    requirejs(['datepicker']);
-    requirejs(['timepicker']);
+    requirejs(['datetimepicker']);
 });

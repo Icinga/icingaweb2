@@ -29,17 +29,19 @@
 namespace Monitoring\Form\Command;
 
 /**
- * Form to handle DelayNotification command
+ * Form for the delay notification command
  */
 class DelayNotificationForm extends CommandForm
 {
     /**
-     * Biggest value for minutes
+     * Maximum delay amount in minutes
      */
-    const MAX_VALUE = 1440;
+    const MAX_DELAY = 1440; // 1 day
+
     /**
-     * Interface method to build the form
-     * @see CommandForm::create
+     * Create the form's elements
+     *
+     * @see CommandForm::create()
      */
     protected function create()
     {
@@ -47,26 +49,32 @@ class DelayNotificationForm extends CommandForm
             'text',
             'minutes',
             array(
-                'label'    => t('Notification delay'),
-                'style'    => 'width: 80px;',
-                'value'    => 0,
-                'required' => true,
-                'validators' => array(
+                'label'         => t('Notification Delay (minutes from now)'),
+                'style'         => 'width: 80px;',
+                'value'         => 0,
+                'required'      => true,
+                'validators'    => array(
                     array(
                         'between',
                         true,
                         array(
                             'min' => 1,
-                            'max' => self::MAX_VALUE
+                            'max' => self::MAX_DELAY
                         )
                     )
                 )
             )
         );
 
-        $this->addNote('Delay next notification in minutes from now');
+        $this->addNote(
+            t(
+                'Delay the next problem notification. The notification delay will be '
+                . 'disregarded if the host/service changes state before the next notification is '
+                . 'scheduled to be sent out.'
+            )
+        );
 
-        $this->setSubmitLabel(t('Delay notification'));
+        $this->setSubmitLabel(t('Delay Notification'));
 
         parent::create();
     }

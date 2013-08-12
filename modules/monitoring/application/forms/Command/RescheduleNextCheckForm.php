@@ -28,9 +28,10 @@
 
 namespace Monitoring\Form\Command;
 
-use Icinga\Web\Form\Element\DateTime;
-use Zend_Form_Element_Checkbox;
-use DateTime as PhpDateTime;
+use \DateTime;
+use \Zend_Form_Element_Checkbox;
+use \Icinga\Web\Form\Element\DateTimePicker;
+use \Icinga\Util\DateTimeFactory;
 
 /**
  * Form for RescheduleNextCheck
@@ -38,25 +39,18 @@ use DateTime as PhpDateTime;
 class RescheduleNextCheckForm extends WithChildrenCommandForm
 {
     /**
-     * Interface method to build the form
-     * @see CommandForm::create
+     * Create the form's elements
      */
     protected function create()
     {
-
-        $now = new PhpDateTime();
-
-        $dateElement = new DateTime(
+        $now = DateTimeFactory::create();
+        $dateElement = new DateTimePicker(
             array(
                 'name'  => 'checktime',
                 'label' => t('Check time'),
-                'value' => $now->format($this->getDateFormat())
+                'value' => $now->getTimestamp()
             )
         );
-
-        $dateElement->setRequired(true);
-        $dateElement->addValidator($this->createDateTimeValidator(), true);
-
         $this->addElement($dateElement);
 
         $checkBox = new Zend_Form_Element_Checkbox(

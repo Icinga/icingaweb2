@@ -2,24 +2,24 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga 2 Web.
- * 
+ *
  * Icinga 2 Web - Head for multiple monitoring backends.
  * Copyright (C) 2013 Icinga Development Team
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
+ *
  * @copyright 2013 Icinga Development Team <info@icinga.org>
  * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
  * @author    Icinga Development Team <info@icinga.org>
@@ -28,12 +28,14 @@
 
 namespace Icinga\Application;
 
+use \DateTimeZone;
+use \Exception;
+use Zend_Loader_Autoloader;
 use Icinga\Application\Modules\Manager as ModuleManager;
 use Icinga\Application\Platform;
-use Icinga\Exception\ProgrammingError;
 use \Icinga\Application\Config;
-use Zend_Loader_Autoloader;
 use Icinga\Exception\ConfigurationError;
+use Icinga\Util\DateTimeFactory;
 
 /**
  * This class bootstraps a thin Icinga application layer
@@ -110,7 +112,7 @@ abstract class ApplicationBootstrap
 
     /**
      * Flag indicates we're on web environment
-     * 
+     *
      * @var bool
      */
     protected $isWeb = false;
@@ -233,7 +235,7 @@ abstract class ApplicationBootstrap
      * @param  string|null $subdir
      * @return string
      */
-    private function getDirWithSubDir($dir, $subdir=null)
+    private function getDirWithSubDir($dir, $subdir = null)
     {
         if ($subdir !== null) {
             $dir .= '/' . ltrim($subdir, '/');
@@ -264,7 +266,6 @@ abstract class ApplicationBootstrap
      */
     public function setupAutoloader()
     {
-        require $this->libDir. '/Icinga/Exception/ProgrammingError.php';
         require $this->libDir. '/Icinga/Application/Loader.php';
 
         $this->loader = new Loader();
@@ -340,16 +341,21 @@ abstract class ApplicationBootstrap
     }
 
     /**
-     * Setup default timezone
+     * Setup time zone
      *
      * @return self
+     * @throws ConfigurationError if the timezone in config.ini isn't valid
      */
     protected function setupTimezone()
     {
-        date_default_timezone_set(
-            $this->config->global->get('timezone', 'UTC')
-        );
-
+        $timeZoneString = $this->config->global->get('timezone', 'UTC');
+        try {
+            $tz = new DateTimeZone($timeZoneString);
+        } catch (Exception $e) {
+            throw new ConfigurationError(t('Invalid timezone') . ' "' . $timeZoneString . '"');
+        }
+        date_default_timezone_set($timeZoneString);
+        DateTimeFactory::setConfig(array('timezone' => $tz));
         return $this;
     }
 }
