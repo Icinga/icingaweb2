@@ -2,7 +2,7 @@
 
 namespace Monitoring;
 
-use Icinga\Config\Config as IcingaConfig;
+use \Icinga\Application\Config as IcingaConfig;
 use Icinga\Authentication\Manager as AuthManager;
 use Exception;
 

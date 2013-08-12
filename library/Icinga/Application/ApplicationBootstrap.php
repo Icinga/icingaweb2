@@ -31,7 +31,7 @@ namespace Icinga\Application;
 use Icinga\Application\Modules\Manager as ModuleManager;
 use Icinga\Application\Platform;
 use Icinga\Exception\ProgrammingError;
-use Icinga\Config\Config;
+use \Icinga\Application\Config;
 use Zend_Loader_Autoloader;
 use Icinga\Exception\ConfigurationError;
 

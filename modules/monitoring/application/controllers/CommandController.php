@@ -31,7 +31,7 @@
 use Icinga\Application\Benchmark;
 use Icinga\Application\Icinga;
 use Icinga\Backend;
-use Icinga\Config\Config;
+use \Icinga\Application\Config;
 use Icinga\Application\Logger;
 use Icinga\Authentication\Manager;
 use Icinga\Web\Form;

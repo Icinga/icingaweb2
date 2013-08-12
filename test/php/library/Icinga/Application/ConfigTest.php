@@ -2,27 +2,37 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-
 namespace Tests\Icinga\Application;
 
 require_once 'Zend/Config/Ini.php';
-require_once '../../library/Icinga/Config/Config.php';
+require_once realpath(__DIR__ . '/../../../../../library/Icinga/Application/Config.php');
 
-use Icinga\Config\Config as IcingaConfig;
+use \Icinga\Application\Config as IcingaConfig;
 
 class ConfigTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * Set up config dir
+     *
+     * Utilizes singleton IcingaConfig
+     *
+     * @backupStaticAttributes  enabled
+     */
     public function setUp()
     {
-        IcingaConfig::$configDir = dirname(__FILE__) . '/files';
+        IcingaConfig::$configDir = dirname(__FILE__) . '/Config/files';
     }
 
     public function testAppConfig()
     {
         $config = IcingaConfig::app();
-        $this->assertEquals(1, $config->logging->enable);
+        $this->assertEquals(1, $config->logging->enable, 'Unexpected value retrieved from config file');
         // Test non-existent property where null is the default value
-        $this->assertEquals(null, $config->logging->get('disable'));
+        $this->assertEquals(
+            null,
+            $config->logging->get('disable'),
+            'Unexpected default value for non-existent properties'
+        );
         // Test non-existent property using zero as the default value
         $this->assertEquals(0, $config->logging->get('disable', 0));
         // Test retrieve full section

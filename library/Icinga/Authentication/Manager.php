@@ -29,7 +29,7 @@
 namespace Icinga\Authentication;
 
 use Icinga\Application\Logger;
-use Icinga\Config\Config as IcingaConfig;
+use \Icinga\Application\Config as IcingaConfig;
 use Icinga\Exception\ConfigurationError as ConfigError;
 use Icinga\User;
 
