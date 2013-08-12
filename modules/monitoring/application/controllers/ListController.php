@@ -219,8 +219,9 @@ class Monitoring_ListController extends ModuleActionController
      */
     public function notificationsAction()
     {
-        $query = $this->backend->select()
-            ->from('notification', array(
+        $this->view->notifications = $this->query(
+            'notification',
+            array(
                 'host_name',
                 'service_description',
                 'notification_type',
@@ -229,14 +230,12 @@ class Monitoring_ListController extends ModuleActionController
                 'notification_contact',
                 'notification_information',
                 'notification_command'
-        ));
+            )
+        );
         if (!$this->_getParam('sort')) {
-            // TODO: Remove this once MonitoringView::applyRequestSorting
-            //       applies NotificationView::sortDefaults
-            $this->_request->setParam('sort', 'notification_start_time');
-            $this->_request->setParam('dir', -1); // Query is still using ASC!?
+            $this->view->notifications->order('notification_start_time DESC');
         }
-        $this->view->notifications = $query->applyRequest($this->_request);
+
         $this->inheritCurrentSortColumn();
     }
 

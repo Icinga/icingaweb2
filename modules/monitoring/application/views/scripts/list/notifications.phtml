@@ -1,9 +1,16 @@
 <?= $this->tabs->render($this); ?>
 
-<form method="get" action="<?= $this->qUrl(
-    'monitoring/list/notifications',
-    $this->notifications->getAppliedFilter()->toParams()
-);
+<?php
+use Icinga\Web\Url;
+
+$formatter = $this->getHelper('MonitoringProperties');
+?>
+
+<form method="get" action="<?=
+    Url::fromPath(
+        'monitoring/list/notifications',
+        $this->notifications->getAppliedFilter()->toParams()
+    )->getAbsoluteUrl();
 ?>">
     Sort by <?= $this->formSelect(
         'sort',
@@ -44,49 +51,9 @@ echo $this->paginationControl($notifications, null, null, array('preserve' => $t
                 <?= $notification->host_name ?>
             </td>
             <td>
-                <?= empty($notification->service_description) ? 'N/A' : $notification->service_description ?>
+                <?= empty($notification->service_description) ? '' : $notification->service_description; ?>
             </td>
-            <td><?php
-                switch ($notification->notification_reason)
-                {
-                    case 0:
-                        echo 'NORMAL';
-                        break;
-                    case 1:
-                        echo 'ACKNOWLEDGEMENT';
-                        break;
-                    case 2:
-                        echo 'FLAPPINGSTART';
-                        break;
-                    case 3:
-                        echo 'FLAPPINGSTOP';
-                        break;
-                    case 4:
-                        echo 'FLAPPINGDISABLED';
-                        break;
-                    case 5:
-                        echo 'DOWNTIMESTART';
-                        break;
-                    case 6:
-                        echo 'DOWNTIMEEND';
-                        break;
-                    case 7:
-                        echo 'DOWNTIMECANCELLED';
-                        break;
-                    case 8:
-                        if (intval($notification->notification_type) === 0) {
-                            echo 'CUSTOM(UP)';
-                        } else {
-                            echo 'CUSTOM(OK)';
-                        }
-                        break;
-                    case 9:
-                        echo 'STALKING';
-                        break;
-                    default:
-                        echo 'N/A';
-                }
-?>
+            <td><?= $formatter->getNotificationType($notification); ?>
             </td>
             <td>
                 <?= $notification->notification_start_time ?>
@@ -100,32 +67,24 @@ echo $this->paginationControl($notifications, null, null, array('preserve' => $t
             <td>
                 <?= $this->escape(substr(strip_tags($notification->notification_information), 0, 10000)); ?>
             </td>
-            <td><?php
-                if (intval($notification->notification_type) === 0) {
-                    echo $this->qlink(
-                        '',
+            <td>
+                <?php if (intval($notification->notification_type) === 0): ?>
+                <a href="<?=
+                    Url::fromPath(
                         'monitoring/show/host',
-                        array(
-                            'host' => $notification->host_name
-                        ),
-                        array(
-                            'class' => 'row-action'
-                        )
-                    );
-                } else {
-                    echo $this->qlink(
-                        '',
-                        'monitoring/show/service',
+                        array('host' => $notification->host_name)
+                    )->getAbsoluteUrl();
+                ?>" class="row-action"> </a>
+
+                <?php else: ?>
+                <a href="<?=
+                    Url::fromPath('monitoring/show/service',
                         array(
                             'host' => $notification->host_name,
                             'service' => $notification->service_description
-                        ),
-                        array(
-                            'class' => 'row-action'
                         )
-                    );
-                }
-?>
+                    )->getAbsoluteUrl(); ?>" class="row-action"></a>
+                <?php endif; ?>
             </td>
         </tr>
 <?php endforeach; ?>
