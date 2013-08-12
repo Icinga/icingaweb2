@@ -23,7 +23,7 @@ class DateTimeFactory implements ConfigAwareFactory
      */
     public static function setConfig($config)
     {
-        if (!array_key_exists('timezome', $config)) {
+        if (!array_key_exists('timezone', $config)) {
             throw new ConfigurationError(t('"DateTimeFactory" expects a valid time zone to be set via "setConfig"'));
         }
         self::$timeZone = $config['timezone'];

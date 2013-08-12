@@ -348,13 +348,13 @@ abstract class ApplicationBootstrap
      */
     protected function setupTimezone()
     {
-        $tz = $this->config->global->get('timezone', 'UTC');
+        $timeZoneString = $this->config->global->get('timezone', 'UTC');
         try {
-            $tz = new DateTimeZone($tz);
+            $tz = new DateTimeZone($timeZoneString);
         } catch (Exception $e) {
-            throw new ConfigurationError(t('Invalid timezone') . ' "' . $tz . '"');
+            throw new ConfigurationError(t('Invalid timezone') . ' "' . $timeZoneString . '"');
         }
-        date_default_timezone_set($tz);
+        date_default_timezone_set($timeZoneString);
         DateTimeFactory::setConfig(array('timezone' => $tz));
         return $this;
     }
