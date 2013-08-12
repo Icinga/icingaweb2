@@ -26,7 +26,7 @@
 
 # namespace Icinga\Application\Controllers;
 
-use Icinga\Web\ActionController;
+use Icinga\Web\Controller\ActionController;
 
 /**
  * Class ErrorController

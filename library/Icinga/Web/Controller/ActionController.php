@@ -25,19 +25,18 @@
  * @author    Icinga Development Team <info@icinga.org>
  */
 // {{{ICINGA_LICENSE_HEADER}}}
+namespace Icinga\Web\Controller;
 
-namespace Icinga\Web;
-
-use Icinga\Authentication\Manager as AuthManager;
-use Icinga\Application\Benchmark;
-use Icinga\Exception;
+use \Icinga\Authentication\Manager as AuthManager;
+use \Icinga\Application\Benchmark;
+use \Icinga\Exception;
 use \Icinga\Application\Config;
-use Icinga\Web\Notification;
-use Zend_Layout as ZfLayout;
-use Zend_Controller_Action as ZfController;
-use Zend_Controller_Request_Abstract as ZfRequest;
-use Zend_Controller_Response_Abstract as ZfResponse;
-use Zend_Controller_Action_HelperBroker as ZfActionHelper;
+use \Icinga\Web\Notification;
+use \Zend_Layout as ZfLayout;
+use \Zend_Controller_Action as ZfController;
+use \Zend_Controller_Request_Abstract as ZfRequest;
+use \Zend_Controller_Response_Abstract as ZfResponse;
+use \Zend_Controller_Action_HelperBroker as ZfActionHelper;
 
 /*
  * @TODO(el): There was a note from tg that the following line is temporary. Ask him why.

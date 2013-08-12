@@ -1,6 +1,6 @@
 <?php
 
-use Icinga\Web\ModuleActionController;
+use Icinga\Web\Controller\ModuleActionController;
 use Icinga\Web\Url;
 use Monitoring\Backend;
 use Zend_Soap_Server as ZfSoapServer;

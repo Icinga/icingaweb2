@@ -207,6 +207,11 @@ class Module
         return $this->basedir;
     }
 
+    public function getControllerDir()
+    {
+        return $this->controllerdir;
+    }
+
     /**
      * Getter for library directory
      *
@@ -385,4 +390,5 @@ class Module
         Hook::register($name, $key, $class);
         return $this;
     }
+
 }

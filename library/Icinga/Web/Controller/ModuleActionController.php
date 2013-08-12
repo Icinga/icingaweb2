@@ -26,7 +26,7 @@
 /**
  * Module action controller
  */
-namespace Icinga\Web;
+namespace Icinga\Web\Controller;
 
 use \Icinga\Application\Config as IcingaConfig;
 use Icinga\Application\Icinga;

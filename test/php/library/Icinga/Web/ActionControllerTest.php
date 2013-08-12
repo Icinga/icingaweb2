@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Icinga\Web\ActionController;
+namespace Tests\Icinga\Web\Controller\ActionController;
 
 
 

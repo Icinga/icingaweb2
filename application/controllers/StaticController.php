@@ -27,7 +27,7 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use Icinga\Web\ActionController;
+use Icinga\Web\Controller\ActionController;
 use Icinga\Application\Icinga,
     Zend_Controller_Action_Exception as ActionException;
 

@@ -2,24 +2,70 @@
 
 namespace Icinga\Application\Modules;
 
+use Icinga\Application\Icinga;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\SystemPermissionException;
 use Icinga\Exception\ProgrammingError;
 
-// TODO: show whether enabling/disabling modules is allowed by checking enableDir
-//       perms
-
+/**
+ * Module manager that handles detecting, enabling and disabling of modules
+ *
+ * Modules can have 3 states:
+ *      - installed         Means that the module exists, but could be deactivated (see enabled and loaded)
+ *      - enabled           Means that the module is marked as being enabled and should be used
+ *      - loaded            Means that the module has been registered in the autoloader and is being used
+ *
+ */
 class Manager
 {
-    protected $installedBaseDirs = null;
-    protected $enabledDirs       = array();
-    protected $loadedModules     = array();
-    protected $index;
-    protected $app;
-    protected $enableDir;
-    protected $modulePaths = array();
     /**
-    *   @param $app :   The applicaiton bootstrap. This one needs a properly defined interface 
+     * Array of all installed module's base directories
+     *
+     * null if modules haven't been scanned yet
+     *
+     * @var array|null
+     */
+    protected $installedBaseDirs = null;
+
+    /**
+     * Array of all enabled modules base dirs
+     *
+     * @var array
+     */
+    protected $enabledDirs       = array();
+
+    /**
+     * Array of all module names that have been loaded
+     *
+     * @var array
+     */
+    protected $loadedModules     = array();
+
+    /**
+     * Reference to Icinga::app
+     *
+     * @var Icinga
+     */
+    protected $app;
+
+    /**
+     * The directory that is used to detect enabled modules
+     *
+     * @var string
+     */
+    protected $enableDir;
+
+    /**
+     * All paths to look for installed modules that can be enabled
+     *
+     * @var array
+     */
+    protected $modulePaths = array();
+
+    /**
+     * Creates a new instance of the module manager to
+     *
+     *  @param $app :   The applicaiton bootstrap. This one needs a properly defined interface
     *                   In order to test it correctly, the application now only requires a stdClass
     *   @param $dir :   
     **/
@@ -294,4 +340,5 @@ class Manager
             }
         }
     }
+
 }

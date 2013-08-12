@@ -1,6 +1,6 @@
 <?php
 
-use Icinga\Web\ModuleActionController;
+use Icinga\Web\Controller\ModuleActionController;
 use Icinga\Backend;
 use Icinga\Web\Widget\Tabs;
 

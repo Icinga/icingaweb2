@@ -28,7 +28,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 
 use Monitoring\Backend;
-use Icinga\Web\ModuleActionController;
+use Icinga\Web\Controller\ModuleActionController;
 use Icinga\Web\Hook;
 use Monitoring\Object\Host;
 use Monitoring\Object\Service;

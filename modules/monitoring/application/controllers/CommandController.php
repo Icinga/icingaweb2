@@ -35,7 +35,7 @@ use \Icinga\Application\Config;
 use Icinga\Application\Logger;
 use Icinga\Authentication\Manager;
 use Icinga\Web\Form;
-use Icinga\Web\ModuleActionController;
+use Icinga\Web\Controller\ModuleActionController;
 use Icinga\Protocol\Commandpipe\Comment;
 use Icinga\Protocol\Commandpipe\CommandPipe;
 use Icinga\Exception\ConfigurationError;
