@@ -28,7 +28,7 @@ $icinga_packages = [ 'gcc', 'glibc', 'glibc-common', 'gd', 'gd-devel',
 package { $icinga_packages: ensure => installed }
 
 php::extension { ['php-mysql', 'php-pgsql', 'php-ldap']:
-  require => [Class['mysql'], Class['pgsql'], Class['openldap']]
+  require => [ Class['mysql'], Class['pgsql'], Class['openldap'] ]
 }
 
 group { 'icinga-cmd':
@@ -43,7 +43,7 @@ user { 'icinga':
 
 user { 'apache':
   groups  => 'icinga-cmd',
-  require => [Class['apache'], Group['icinga-cmd']]
+  require => [ Class['apache'], Group['icinga-cmd'] ]
 }
 
 cmmi { 'icinga-mysql':
@@ -57,7 +57,7 @@ cmmi { 'icinga-mysql':
               --with-plugin-dir=/usr/lib64/nagios/plugins/libexec',
   creates => '/usr/local/icinga-mysql',
   make    => 'make all && make fullinstall install-config',
-  require => [User['icinga'], Cmmi['icinga-plugins'], Package['apache']],
+  require => [ User['icinga'], Cmmi['icinga-plugins'], Package['apache'] ],
   notify  => Service['apache']
 }
 
@@ -83,7 +83,7 @@ cmmi { 'icinga-pgsql':
               --with-plugin-dir=/usr/lib64/nagios/plugins/libexec',
   creates => '/usr/local/icinga-pgsql',
   make    => 'make all && make fullinstall install-config',
-  require => [User['icinga'], Cmmi['icinga-plugins'], Package['apache']],
+  require => [ User['icinga'], Cmmi['icinga-plugins'], Package['apache'] ],
   notify  => Service['apache']
 }
 
@@ -100,13 +100,13 @@ file { '/etc/init.d/ido2db-pgsql':
 exec { 'populate-icinga-mysql-db':
   unless  => 'mysql -uicinga -picinga icinga -e "SELECT * FROM icinga_dbversion;" &> /dev/null',
   command => 'mysql -uicinga -picinga icinga < /usr/local/src/icinga-mysql/icinga-1.9.3/module/idoutils/db/mysql/mysql.sql',
-  require => [Cmmi['icinga-mysql'], Exec['create-mysql-icinga-db']]
+  require => [ Cmmi['icinga-mysql'], Exec['create-mysql-icinga-db'] ]
 }
 
 exec { 'populate-icinga-pgsql-db':
   unless  => 'psql -U icinga -d icinga -c "SELECT * FROM icinga_dbversion;" &> /dev/null',
   command => 'sudo -u postgres psql -U icinga -d icinga < /usr/local/src/icinga-pgsql/icinga-1.9.3/module/idoutils/db/pgsql/pgsql.sql',
-  require => [Cmmi['icinga-pgsql'], Exec['create-pgsql-icinga-db']]
+  require => [ Cmmi['icinga-pgsql'], Exec['create-pgsql-icinga-db'] ]
 }
 
 service { 'icinga-mysql':
@@ -124,7 +124,7 @@ file { '/usr/local/icinga-mysql/etc/ido2db.cfg':
   owner   => 'icinga',
   group   => 'icinga',
   require => Cmmi['icinga-mysql'],
-  notify  => [Service['icinga-mysql'], Service['ido2db-mysql']]
+  notify  => [ Service['icinga-mysql'], Service['ido2db-mysql'] ]
 }
 
 file { '/usr/local/icinga-mysql/etc/idomod.cfg':
@@ -132,7 +132,7 @@ file { '/usr/local/icinga-mysql/etc/idomod.cfg':
   owner   => 'icinga',
   group   => 'icinga',
   require => Cmmi['icinga-mysql'],
-  notify  => [Service['icinga-mysql'], Service['ido2db-mysql']]
+  notify  => [ Service['icinga-mysql'], Service['ido2db-mysql'] ]
 }
 
 file { '/usr/local/icinga-mysql/etc/modules/idoutils.cfg':
@@ -140,7 +140,7 @@ file { '/usr/local/icinga-mysql/etc/modules/idoutils.cfg':
   owner   => 'icinga',
   group   => 'icinga',
   require => Cmmi['icinga-mysql'],
-  notify  => [Service['icinga-mysql'], Service['ido2db-mysql']]
+  notify  => [ Service['icinga-mysql'], Service['ido2db-mysql'] ]
 }
 
 service { 'icinga-pgsql':
@@ -158,7 +158,7 @@ file { '/usr/local/icinga-pgsql/etc/ido2db.cfg':
   owner   => 'icinga',
   group   => 'icinga',
   require => Cmmi['icinga-pgsql'],
-  notify  => [Service['icinga-pgsql'], Service['ido2db-pgsql']]
+  notify  => [ Service['icinga-pgsql'], Service['ido2db-pgsql'] ]
 }
 
 file { '/usr/local/icinga-pgsql/etc/idomod.cfg':
@@ -166,7 +166,7 @@ file { '/usr/local/icinga-pgsql/etc/idomod.cfg':
   owner   => 'icinga',
   group   => 'icinga',
   require => Cmmi['icinga-pgsql'],
-  notify  => [Service['icinga-pgsql'], Service['ido2db-pgsql']]
+  notify  => [ Service['icinga-pgsql'], Service['ido2db-pgsql'] ]
 }
 
 file { '/usr/local/icinga-pgsql/etc/modules/idoutils.cfg':
@@ -174,7 +174,7 @@ file { '/usr/local/icinga-pgsql/etc/modules/idoutils.cfg':
   owner   => 'icinga',
   group   => 'icinga',
   require => Cmmi['icinga-pgsql'],
-  notify  => [Service['icinga-pgsql'], Service['ido2db-pgsql']]
+  notify  => [ Service['icinga-pgsql'], Service['ido2db-pgsql'] ]
 }
 
 exec { 'iptables-allow-http':
@@ -213,7 +213,7 @@ file { '/usr/local/icinga-mysql/etc/modules/mk-livestatus.cfg':
   owner   => 'icinga',
   group   => 'icinga',
   require => Cmmi['mk-livestatus'],
-  notify  => [Service['icinga-mysql'], Service['ido2db-mysql']]
+  notify  => [ Service['icinga-mysql'], Service['ido2db-mysql'] ]
 }
 
 file { 'openldap/db.ldif':
@@ -239,8 +239,8 @@ exec { 'populate-openldap':
   command => 'sudo ldapadd -c -Y EXTERNAL -H ldapi:/// -f /usr/share/openldap-servers/db.ldif || true && \
               sudo ldapadd -c -D cn=admin,dc=icinga,dc=org -x -w admin -f /usr/share/openldap-servers/dit.ldif || true && \
               sudo ldapadd -c -D cn=admin,dc=icinga,dc=org -x -w admin -f /usr/share/openldap-servers/users.ldif || true',
-  require => [Service['slapd'], File['openldap/db.ldif'],
-              File['openldap/dit.ldif'], File['openldap/users.ldif']]
+  require => [ Service['slapd'], File['openldap/db.ldif'],
+               File['openldap/dit.ldif'], File['openldap/users.ldif'] ]
 }
 
 class { 'phantomjs':
@@ -405,7 +405,6 @@ exec { 'create_monitoring_test_config':
 
 define populate_monitoring_test_config {
   file { "/usr/local/icinga-mysql/etc/conf.d/test_config/${name}.cfg":
-    recurse => true,
     owner   => 'icinga',
     group   => 'icinga',
     source  => "/usr/local/share/misc/monitoring_test_config/etc/conf.d/${name}.cfg",
@@ -435,7 +434,22 @@ file { '/usr/local/icinga-pgsql/etc/conf.d/test_config':
 
 populate_monitoring_test_config { ['commands', 'contacts', 'dependencies',
                                    'hostgroups', 'hosts', 'servicegroups', 'services']:
-  require   => [Exec['create_monitoring_test_config'],
-                File['/usr/local/icinga-mysql/etc/conf.d/test_config/'],
-                File['/usr/local/icinga-pgsql/etc/conf.d/test_config/']]
+  require   => [ Exec['create_monitoring_test_config'],
+                 File['/usr/local/icinga-mysql/etc/conf.d/test_config/'],
+                 File['/usr/local/icinga-pgsql/etc/conf.d/test_config/'] ]
+}
+
+define populate_monitoring_test_config_plugins {
+  file { "/usr/lib64/nagios/plugins/libexec/${name}":
+    owner   => 'icinga',
+    group   => 'icinga',
+    source  => "/usr/local/share/misc/monitoring_test_config/plugins/${name}",
+    notify  => [ Service['icinga-mysql'], Service['icinga-pgsql'] ]
+  }
+}
+
+populate_monitoring_test_config_plugins{ ['test_hostcheck.pl', 'test_servicecheck.pl']:
+  require   => [ Exec['create_monitoring_test_config'],
+                 Cmmi['icinga-mysql'],
+                 Cmmi['icinga-pgsql'] ]
 }
