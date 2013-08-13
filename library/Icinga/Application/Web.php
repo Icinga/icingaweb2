@@ -93,6 +93,7 @@ class Web extends ApplicationBootstrap
         return $this->setupConfig()
             ->setupErrorHandling()
             ->setupTimezone()
+            ->setupResourceFactories()
             ->setupRequest()
             ->setupZendMvc()
             ->setupTranslation()

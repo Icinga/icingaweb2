@@ -53,11 +53,11 @@ class DbUserBackend implements UserBackend {
     private $db = null;
 
     /**
-     * The name of the user table as provided by the configuration
+     * The name of the user table
      *
      * @var String
      */
-    private $userTable;
+    private $userTable = "account";
 
     /**
      * Mapping of columns
@@ -75,44 +75,18 @@ class DbUserBackend implements UserBackend {
             $EMAIL_COLUMN       = 'email';
 
     /**
-     * Map the configuration dbtypes to the corresponding Zend-PDOs
-     *
-     * @var Array
-     */
-    private $dbTypeMap = Array(
-        'mysql' => 'PDO_MYSQL',
-        'pgsql' => 'PDO_PGSQL'
-    );
-
-    /**
      * Create a DbUserBackend
      *
-     * @param $config The configuration-object containing the members host,user,password,db
+     * @param   Zend_Db     The database that provides the authentication data
      */
-    public function __construct($config)
+    public function __construct($database)
     {
-        $this->dbtype = $config->dbtype;
-        $this->userTable = $config->table;
-        try {
-            $this->db = \Zend_Db::factory(
-                $this->dbTypeMap[$config->dbtype],
-                array(
-                    'host'      => $config->host,
-                    'username'  => $config->user,
-                    'password'  => $config->password,
-                    'dbname'    => $config->db
-            ));
+        $this->db = $database;
 
-            /*
-             * Test the connection settings
-             */
-            $this->db->getConnection();
-            $this->db->select()->from($this->userTable,new \Zend_Db_Expr('TRUE'));
-        } catch (\Zend_Db_Adapter_Exception $exc) {
-            Logger::error('Could not authenticate via database : %s ', $exc->getMessage());
-            $this->db = null;
-
-        }
+        /*
+         * Test if the connection is available
+         */
+        $this->db->getConnection();
     }
 
     /**
@@ -180,6 +154,7 @@ class DbUserBackend implements UserBackend {
      * Fetch the users salt from the database
      *
      * @param $username The user whose salt should be fetched.
+     *
      * @return String|null Returns the salt-string or Null, when the user does not exist.
      */
     private function getUserSalt($username)
@@ -196,6 +171,7 @@ class DbUserBackend implements UserBackend {
      * Fetch the user information from the database
      *
      * @param $username The name of the user.
+     *
      * @return User|null Returns the user object, or null when the user does not exist.
      */
     private function getUserByName($username)

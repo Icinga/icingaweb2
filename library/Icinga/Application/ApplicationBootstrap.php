@@ -34,6 +34,8 @@ use Zend_Loader_Autoloader;
 use Icinga\Application\Modules\Manager as ModuleManager;
 use Icinga\Application\Platform;
 use \Icinga\Application\Config;
+use Icinga\Exception\ProgrammingError;
+use Icinga\Application\DbAdapterFactory;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Util\DateTimeFactory;
 
@@ -341,7 +343,23 @@ abstract class ApplicationBootstrap
     }
 
     /**
+<<<<<<< HEAD
      * Setup time zone
+=======
+     * Setup factories that provide access to the resources
+     *
+     * @return self
+     */
+    protected function setupResourceFactories()
+    {
+        $config = Config::app('resources');
+        DbAdapterFactory::setConfig($config);
+        return $this;
+    }
+
+    /**
+     * Setup default timezone
+>>>>>>> Add the DbAdapterFactory to instanciate database adapters using resource names
      *
      * @return self
      * @throws ConfigurationError if the timezone in config.ini isn't valid

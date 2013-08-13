@@ -29,9 +29,6 @@
 
 namespace Tests\Icinga\Authentication;
 
-//use Icinga\Protocol\Ldap\Exception;
-//use Zend_Config_Ini;
-
 require_once('Zend/Config/Ini.php');
 require_once('Zend/Db.php');
 require_once('../../library/Icinga/Authentication/UserBackend.php');
@@ -147,7 +144,7 @@ class DbUserBackendTest  extends \PHPUnit_Framework_TestCase {
             $config->dbtype = $dbType;
             $db = $this->createDb($dbType,$config);
             $this->setUpDb($db);
-            return new DbUserBackend($config);
+            return new DbUserBackend($db);
         } catch(\Exception $e) {
             echo 'CREATE_BACKEND_ERROR:'.$e->getMessage();
             return null;

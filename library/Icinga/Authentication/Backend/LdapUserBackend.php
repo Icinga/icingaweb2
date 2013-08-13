@@ -45,24 +45,32 @@ use \Icinga\Application\Config as IcingaConfig;
 class LdapUserBackend implements UserBackend
 {
     /**
-    *   @var Ldap\Connection
-    **/
+     * @var Ldap\Connection
+     **/
     protected $connection;
 
     /**
-    *   Creates a new Authentication backend using the
-    *   connection information provided in $config
-    *
-    *   @param object $config   The ldap connection information
-    **/
+     * The ldap connection information
+     *
+     * @var object
+     */
+    private $config;
+
+    /**
+     *   Creates a new Authentication backend using the
+     *   connection information provided in $config
+     *
+     *   @param object $config   The ldap connection information
+     **/
     public function __construct($config)
     {
         $this->connection = new Ldap\Connection($config);
+        $this->config = $config;
     }
 
     /**
-    *   @see Icinga\Authentication\UserBackend::hasUsername
-    **/
+     *   @see Icinga\Authentication\UserBackend::hasUsername
+     **/
     public function hasUsername(Credentials $credential)
     {
         return $this->connection->fetchOne(
@@ -71,44 +79,44 @@ class LdapUserBackend implements UserBackend
     }
 
     /**
-    *   Removes the '*' characted from $string
-    *   
-    *   @param String $string
-    *
-    *   @return String
-    **/
+     *   Removes the '*' characted from $string
+     *
+     *   @param String $string
+     *
+     *   @return String
+     **/
     protected function stripAsterisks($string)
     {
         return str_replace('*', '', $string);
     }
 
     /**
-    *   Tries to fetch the username given in $username from
-    *   the ldap connection, using the configuration parameters 
-    *   given in the Authentication configuration
-    *
-    *   @param  String  $username       The username to select
-    *
-    *   @return object  $result 
-    **/
+     *   Tries to fetch the username given in $username from
+     *   the ldap connection, using the configuration parameters
+     *   given in the Authentication configuration
+     *
+     *   @param  String  $username       The username to select
+     *
+     *   @return object  $result
+     **/
     protected function selectUsername($username)
     {
         return $this->connection->select()
             ->from(
-                IcingaConfig::app('authentication')->users->user_class,
+                $this->config->user_class,
                 array(
-                    IcingaConfig::app('authentication')->users->user_name_attribute
+                    $this->config->user_name_attribute
                 )
             )
             ->where(
-                IcingaConfig::app('authentication')->users->user_name_attribute,
+                $this->config->user_name_attribute,
                 $this->stripAsterisks($username)
             );
     }
 
     /**
-    *   @see Icinga\Authentication\UserBackend::authenticate
-    **/
+     *   @see Icinga\Authentication\UserBackend::authenticate
+     **/
     public function authenticate(Credentials $credentials)
     {
         if (!$this->connection->testCredentials(
