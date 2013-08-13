@@ -385,7 +385,57 @@ exec { 'install php-ZendFramework-Db-Adapter-Pdo-Pgsql':
   require => Exec['install ZendFramework']
 }
 
+
+#
+# Following section installs the Perl module Monitoring::Generator::TestConfig in order to create test config to
+# */usr/local/share/misc/monitoring_test_config*. Then the config is copied to *<instance>/etc/conf.d/test_config/* of
+# both the MySQL and PostgreSQL Icinga instance
+#
 cpan { 'Monitoring::Generator::TestConfig':
   creates => '/usr/local/share/perl5/Monitoring/Generator/TestConfig.pm',
   timeout => 600
+}
+
+exec { 'create_monitoring_test_config':
+  command => 'sudo install -o root -g root -d /usr/local/share/misc/ && \
+              sudo /usr/local/bin/create_monitoring_test_config.pl -l icinga \
+              /usr/local/share/misc/monitoring_test_config',
+  creates => '/usr/local/share/misc/monitoring_test_config'
+}
+
+define populate_monitoring_test_config {
+  file { "/usr/local/icinga-mysql/etc/conf.d/test_config/${name}.cfg":
+    recurse => true,
+    owner   => 'icinga',
+    group   => 'icinga',
+    source  => "/usr/local/share/misc/monitoring_test_config/etc/conf.d/${name}.cfg",
+    notify  => Service['icinga-mysql']
+  }
+  file { "/usr/local/icinga-pgsql/etc/conf.d/test_config/${name}.cfg":
+    owner   => 'icinga',
+    group   => 'icinga',
+    source  => "/usr/local/share/misc/monitoring_test_config/etc/conf.d/${name}.cfg",
+    notify  => Service['icinga-pgsql']
+  }
+}
+
+file { '/usr/local/icinga-mysql/etc/conf.d/test_config':
+  ensure  => directory,
+  owner   => icinga,
+  group   => icinga,
+  require => Cmmi['icinga-mysql']
+}
+
+file { '/usr/local/icinga-pgsql/etc/conf.d/test_config':
+  ensure  => directory,
+  owner   => icinga,
+  group   => icinga,
+  require => Cmmi['icinga-pgsql']
+}
+
+populate_monitoring_test_config { ['commands', 'contacts', 'dependencies',
+                                   'hostgroups', 'hosts', 'servicegroups', 'services']:
+  require   => [Exec['create_monitoring_test_config'],
+                File['/usr/local/icinga-mysql/etc/conf.d/test_config/'],
+                File['/usr/local/icinga-pgsql/etc/conf.d/test_config/']]
 }
