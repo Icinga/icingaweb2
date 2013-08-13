@@ -384,3 +384,8 @@ exec { 'install php-ZendFramework-Db-Adapter-Pdo-Pgsql':
   unless  => 'rpm -qa | grep php-ZendFramework-Db-Adapter-Pdo-Pgsql',
   require => Exec['install ZendFramework']
 }
+
+cpan { 'Monitoring::Generator::TestConfig':
+  creates => '/usr/local/share/perl5/Monitoring/Generator/TestConfig.pm',
+  timeout => 600
+}
