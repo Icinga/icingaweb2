@@ -1,6 +1,5 @@
 <?php
 // @codingStandardsIgnoreStart
-
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * Icinga 2 Web - Head for multiple monitoring frontends
@@ -33,12 +32,18 @@ use Icinga\Web\Url;
 use Icinga\Web\Hook\Configuration\ConfigurationTabBuilder;
 use Icinga\Application\Icinga;
 
-
 /**
- * Class ConfigController
+ * Application wide controller for application preferences
+ *
  */
 class ConfigController extends BaseConfigController
 {
+    /**
+     * Create tabs for this configuration controller
+     *
+     * @return array
+     * @see BaseConfigController::createProvidedTabs
+     */
     public static function createProvidedTabs()
     {
         return array(
@@ -63,13 +68,17 @@ class ConfigController extends BaseConfigController
     }
 
     /**
-     * Index action
+     * Index action, entry point for configuration
+     * @TODO: Implement configuration interface (#3777)
      */
     public function indexAction()
     {
 
     }
 
+    /**
+     * Display the list of all modules
+     */
     public function moduleoverviewAction()
     {
         $this->view->modules = Icinga::app()->getModuleManager()->select()
@@ -79,7 +88,7 @@ class ConfigController extends BaseConfigController
     }
 
     /**
-     * Enable a module
+     * Enable a specific module provided by the 'name' param
      */
     public function moduleenableAction()
     {
@@ -91,7 +100,7 @@ class ConfigController extends BaseConfigController
     }
 
     /**
-     * Disable a module
+     * Disable a module specific module provided by the 'name' param
      */
     public function moduledisableAction()
     {
@@ -100,5 +109,4 @@ class ConfigController extends BaseConfigController
         $this->redirectNow('config/moduleoverview?_render=body');
     }
 }
-
 // @codingStandardsIgnoreEnd

@@ -223,12 +223,14 @@ class ActionController extends ZfController
         // TODO(el): What is this, why do we need that here?
         $this->view->compact = $this->_request->getParam('view') === 'compact';
 
-        Benchmark::measure(sprintf(
-            'Action::preDispatched(): %s / %s / %s',
-            $this->module_name,
-            $this->controller_name,
-            $this->action_name
-        ));
+        Benchmark::measure(
+            sprintf(
+                'Action::preDispatched(): %s / %s / %s',
+                $this->module_name,
+                $this->controller_name,
+                $this->action_name
+            )
+        );
 
         //$this->quickRedirect('/authentication/login?a=e');
     }
@@ -281,26 +283,10 @@ class ActionController extends ZfController
             require_once 'vendor/lessphp/lessc.inc.php';
             $less = new \lessc;
             $cssdir = dirname(ICINGA_LIBDIR) . '/public/css';
-             // TODO: We need a way to retrieve public dir, even if located elsewhere
+            // TODO: We need a way to retrieve public dir, even if located elsewhere
 
             $css = $less->compileFile($cssdir . '/pdfprint.less');
-/*
-            foreach (\Icinga\Application\Icinga::app()->getModuleManager()->getLoadedModules() as $name => $module) {
-                if ($module->hasCss()) {
-                    $css .= $less->compile(
-                        '.icinga-module.module-'
-                        . $name
-                        . " {\n"
-                        . file_get_contents($module->getCssFilename())
-                        . "}\n\n"
-                    );
-                }
-            }
-
-*/
-            // END of CSS test
-
-             $this->render(
+            $this->render(
                 null,
                 $this->_helper->viewRenderer->getResponseSegment(),
                 $this->_helper->viewRenderer->getNoController()
@@ -308,18 +294,15 @@ class ActionController extends ZfController
             $html = (string) $this->getResponse();
             if ($this->module_name !== null) {
                 $html = '<div class="icinga-module module-'
-          . $this->module_name
-          . '">'
-          . "\n"
-          . $html
-          . '</div>';
+                . $this->module_name
+                . '">'
+                . "\n"
+                . $html
+                . '</div>';
             }
 
             $html = '<style>' . $css . '</style>' . $html;
 
-            //$html .= $this->view->action('services', 'list', 'monitoring', array('limit' => 10));
-//            $html = preg_replace('~icinga-module.module-bpapp~', 'csstest', $html);
-// echo $html; exit;
             $pdf = new Pdf();
             $pdf->AddPage();
             $pdf->setFontSubsetting(false);
@@ -356,6 +339,5 @@ class ActionController extends ZfController
             Benchmark::measure('Response ready');
             $this->_helper->layout()->benchmark = $this->renderBenchmark();
         }
-
     }
 }

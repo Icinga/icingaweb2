@@ -1,7 +1,10 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Application\Modules;
 
+use Icinga\Application\ApplicationBootstrap;
 use Icinga\Application\Icinga;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\SystemPermissionException;
@@ -25,50 +28,53 @@ class Manager
      *
      * @var array|null
      */
-    protected $installedBaseDirs = null;
+    private $installedBaseDirs = null;
 
     /**
      * Array of all enabled modules base dirs
      *
      * @var array
      */
-    protected $enabledDirs       = array();
+    private $enabledDirs       = array();
 
     /**
      * Array of all module names that have been loaded
      *
      * @var array
      */
-    protected $loadedModules     = array();
+    private $loadedModules     = array();
 
     /**
      * Reference to Icinga::app
      *
      * @var Icinga
      */
-    protected $app;
+    private $app;
 
     /**
      * The directory that is used to detect enabled modules
      *
      * @var string
      */
-    protected $enableDir;
+    private $enableDir;
 
     /**
      * All paths to look for installed modules that can be enabled
      *
      * @var array
      */
-    protected $modulePaths = array();
+    private $modulePaths = array();
 
     /**
-     * Creates a new instance of the module manager to
+     *  Create a new instance of the module manager
      *
-     *  @param $app :   The applicaiton bootstrap. This one needs a properly defined interface
-    *                   In order to test it correctly, the application now only requires a stdClass
-    *   @param $dir :   
-    **/
+     *  @param ApplicationBootstrap $app    The application bootstrap. This one needs a properly defined interface
+     *                                      In order to test it correctly, the application now only requires a stdClass
+     *  @param string $enabledDir           The path of the dir used for adding symlinks to enabled modules
+     *                                      ( must be writable )
+     *  @param array $availableDirs         An array containing all paths where the modulemanager can look for available
+     *                                      modules
+     **/
     public function __construct($app, $enabledDir = null, array $availableDirs = array())
     {
         $this->app = $app;
@@ -84,7 +90,13 @@ class Manager
         $this->detectEnabledModules();
     }
 
-    protected function prepareEssentials($moduleDir)
+    /**
+     * Set the module dir and checks for existence
+     *
+     * @param string $moduleDir                     The module directory to set for the module manager
+     * @throws \Icinga\Exception\ProgrammingError
+     */
+    private function prepareEssentials($moduleDir)
     {
         $this->enableDir = $moduleDir;
 
@@ -98,13 +110,22 @@ class Manager
         }
     }
 
+    /**
+     * Query interface for the module manager
+     *
+     * @return \Icinga\Data\ArrayQuery
+     */
     public function select()
     {
         $source = new \Icinga\Data\ArrayDatasource($this->getModuleInfo());
         return $source->select();
     }
 
-    protected function detectEnabledModules()
+    /**
+     *  Check for enabled modules and update the internal $enabledDirs property with the enabled modules
+     *
+     */
+    private function detectEnabledModules()
     {
         $fh = opendir($this->enableDir);
 
@@ -117,11 +138,22 @@ class Manager
 
             $link = $this->enableDir . '/' . $file;
             if (! is_link($link)) {
+                Logger::warn(
+                    'Found invalid module in enabledModule directory "%s": "%s" is not a symlink',
+                    $this->enableDir,
+                    $link
+                );
                 continue;
             }
 
             $dir = realpath($link);
             if (! file_exists($dir) || ! is_dir($dir)) {
+                Logger::warn(
+                    'Found invalid module in enabledModule directory "%s": "%s" points to non existing path "%s"',
+                    $this->enableDir,
+                    $link,
+                    $dir
+                );
                 continue;
             }
 
@@ -129,6 +161,12 @@ class Manager
         }
     }
 
+    /**
+     * Try to set all enabled modules in loaded sate
+     *
+     * @return  self
+     * @see     Manager::loadModule()
+     */
     public function loadEnabledModules()
     {
         foreach ($this->listEnabledModules() as $name) {
@@ -137,6 +175,14 @@ class Manager
         return $this;
     }
 
+    /**
+     * Try to load the module and register it in the application
+     *
+     * @param string $name              The name of the module to load
+     * @param null|mixed $moduleBase    An alternative class to use instead of @see Module, used for testing
+     *
+     * @return self
+     */
     public function loadModule($name, $moduleBase = null)
     {
         if ($this->hasLoaded($name)) {
@@ -154,6 +200,15 @@ class Manager
         return $this;
     }
 
+    /**
+     * Set the given module to the enabled state
+     *
+     * @param string $name                                  The module to enable
+     *
+     * @return self
+     * @throws \Icinga\Exception\ConfigurationError         When trying to enable a module that is not installed
+     * @throws \Icinga\Exception\SystemPermissionException  When insufficient permissions for the application exist
+     */
     public function enableModule($name)
     {
         if (! $this->hasInstalled($name)) {
@@ -188,6 +243,15 @@ class Manager
         return $this;
     }
 
+    /**
+     * Disable the given module and remove it's enabled state
+     *
+     * @param string $name                                  The name of the module to disable
+     *
+     * @return self
+     * @throws \Icinga\Exception\ConfigurationError         When the module is not installed or it's not symlinked
+     * @throws \Icinga\Exception\SystemPermissionException  When the module can't be disabled
+     */
     public function disableModule($name)
     {
         if (! $this->hasEnabled($name)) {
@@ -222,11 +286,15 @@ class Manager
         return $this;
     }
 
-    public function getModuleConfigDir($name)
-    {
-        return $this->getModuleDir($name, '/config');
-    }
-
+    /**
+     * Return the directory of the given module as a string, optionally with a given sub directoy
+     *
+     * @param string $name                          The module name to return the module directory of
+     * @param string $subdir                        The sub directory to append to the path
+     *
+     * @return string
+     * @throws \Icinga\Exception\ProgrammingError   When the module is not installed or existing
+     */
     public function getModuleDir($name, $subdir = '')
     {
         if ($this->hasEnabled($name)) {
@@ -245,6 +313,12 @@ class Manager
         );
     }
 
+    /**
+     * Return true when the module with the given name is installed, otherwise false
+     *
+     * @param string $name          The module to check for being installed
+     * @return bool
+     */
     public function hasInstalled($name)
     {
         if ($this->installedBaseDirs === null) {
@@ -253,21 +327,49 @@ class Manager
         return array_key_exists($name, $this->installedBaseDirs);
     }
 
+    /**
+     * Return true when the given module is in enabled state, otherwise false
+     *
+     * @param string $name          The module to check for being enabled
+     *
+     * @return bool
+     */
     public function hasEnabled($name)
     {
         return array_key_exists($name, $this->enabledDirs);
     }
 
+    /**
+     * Return true when the module is in loaded state, otherwise false
+     *
+     * @param string $name          The module to check for being loaded
+     *
+     * @return bool
+     */
     public function hasLoaded($name)
     {
         return array_key_exists($name, $this->loadedModules);
     }
 
+    /**
+     * Return an array containing all loaded modules
+     *
+     * @return  array
+     * @see     Module
+     */
     public function getLoadedModules()
     {
         return $this->loadedModules;
     }
 
+    /**
+     * Return the module instance of the given module when it is loaded
+     *
+     * @param string $name                          The module name to return
+     * @return Module
+     *
+     * @throws \Icinga\Exception\ProgrammingError   Thrown when the module hasn't been loaded
+     */
     public function getModule($name)
     {
         if (! $this->hasLoaded($name)) {
@@ -281,6 +383,17 @@ class Manager
         return $this->loadedModules[$name];
     }
 
+    /**
+     * Return an array containing information objects for each available module
+     *
+     * Each entry has the following fields
+     *  - name:     The name of the module as a string
+     *  - path:     The path where the module is located as a string
+     *  - enabled:  Whether the module is enabled or not as a boolean
+     *  - loaded:   Whether the module is loaded or not as a boolean
+     *
+     * @return array
+     */
     public function getModuleInfo()
     {
         $installed = $this->listInstalledModules();
@@ -301,16 +414,34 @@ class Manager
         return $info;
     }
 
+    /**
+     * Return an array containing all enabled module names as strings
+     *
+     * @return array
+     */
     public function listEnabledModules()
     {
         return array_keys($this->enabledDirs);
     }
 
+    /**
+     * Return an array containing all loaded module names as strings
+     *
+     * @return array
+     */
     public function listLoadedModules()
     {
         return array_keys($this->loadedModules);
     }
 
+    /**
+     * Return an array containing all installled module names as strings
+     *
+     * Calls @see Manager::detectInstalledModules if no module discovery has
+     * been performed yet
+     *
+     * @return array
+     */
     public function listInstalledModules()
     {
         if ($this->installedBaseDirs === null) {
@@ -322,6 +453,11 @@ class Manager
         }
     }
 
+    /**
+     * Detect installed modules from every path provided in modulePaths
+     *
+     * @return self
+     */
     public function detectInstalledModules()
     {
         foreach ($this->modulePaths as $basedir) {
@@ -339,6 +475,6 @@ class Manager
                 }
             }
         }
+        return $this;
     }
-
 }

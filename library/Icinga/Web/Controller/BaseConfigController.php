@@ -26,7 +26,6 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-
 namespace Icinga\Web\Controller;
 
 use \Icinga\Application\Icinga;
@@ -55,6 +54,8 @@ class BaseConfigController extends ActionController
     }
 
     /**
+     * Initialize the controller and collect all tabs for it from the application and it's modules
+     *
      * @see ActionController::init
      */
     public function init()

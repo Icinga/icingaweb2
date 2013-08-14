@@ -1,5 +1,31 @@
 <?php
-
+// @codingStandardsIgnoreStart
+// {{{ICINGA_LICENSE_HEADER}}}
+/**
+ * This file is part of Icinga 2 Web.
+ *
+ * Icinga 2 Web - Head for multiple monitoring backends.
+ * Copyright (C) 2013 Icinga Development Team
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ * @copyright 2013 Icinga Development Team <info@icinga.org>
+ * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
+ * @author    Icinga Development Team <info@icinga.org>
+ */
+// {{{ICINGA_LICENSE_HEADER}}}
 use Icinga\Web\Controller\ModuleActionController;
 use Icinga\Web\Hook;
 use Icinga\File\Csv;
@@ -9,9 +35,26 @@ use Icinga\Web\Widget\Tabs;
 
 class Monitoring_ListController extends ModuleActionController
 {
+    /**
+     * The backend used for this controller
+     *
+     * @var \Icinga\Backend
+     */
     protected $backend;
+
+    /**
+     * Set to a string containing the compact layout name to use when
+     * 'compact' is set as the layout parameter, otherwise null
+     *
+     * @var string|null
+     */
     private $compactView = null;
 
+    /**
+     * Retrieve backend and hooks for this controller
+     *
+     * @see ActionController::init
+     */
     public function init()
     {
         $this->view->tabs = $this->getTabs()
@@ -21,6 +64,9 @@ class Monitoring_ListController extends ModuleActionController
         $this->view->grapher = Hook::get('grapher');
     }
 
+    /**
+     * Display host list
+     */
     public function hostsAction()
     {
         Benchmark::measure("hostsAction::query()");
@@ -50,6 +96,9 @@ class Monitoring_ListController extends ModuleActionController
         );
     }
 
+    /**
+     * Display service list
+     */
     public function servicesAction()
     {
         $state_type = $this->_getParam('_statetype', 'soft');
@@ -93,6 +142,11 @@ class Monitoring_ListController extends ModuleActionController
         $this->inheritCurrentSortColumn();
     }
 
+    /**
+     * Display hostgroup list
+     *
+     * @TODO Implement hostgroup overview (feature #4184)
+     */
     public function hostgroupsAction()
     {
         $this->view->hostgroups = $this->backend->select()
@@ -102,6 +156,11 @@ class Monitoring_ListController extends ModuleActionController
         ))->applyRequest($this->_request);
     }
 
+    /**
+     * Display servicegroup list
+     *
+     * @TODO Implement servicegroup overview (feature #4185)
+     */
     public function servicegroupsAction()
     {
         $this->view->servicegroups = $this->backend->select()
@@ -111,6 +170,11 @@ class Monitoring_ListController extends ModuleActionController
         ))->applyRequest($this->_request);
     }
 
+    /**
+     * Display contactgroups overview
+     *
+     *
+     */
     public function contactgroupsAction()
     {
         $this->view->contactgroups = $this->backend->select()
@@ -118,33 +182,6 @@ class Monitoring_ListController extends ModuleActionController
             'contactgroup_name',
             'contactgroup_alias',
         ))->applyRequest($this->_request);
-    }
-
-    public function contactsAction()
-    {
-        $this->view->contacts = $this->backend->select()
-            ->from('contact', array(
-            'contact_name',
-            'contact_alias',
-            'contact_email',
-            'contact_pager'
-        ))->applyRequest($this->_request);
-    }
-
-    // TODO: Search helper playground
-    public function searchAction()
-    {
-        $data = array(
-            'service_description',
-            'service_state',
-            'service_acknowledged',
-            'service_handled',
-            'service_output',
-            // '_host_satellite',
-            'service_last_state_change'
-            );
-        echo json_encode($data);
-        exit;
     }
 
     /**
@@ -177,6 +214,14 @@ class Monitoring_ListController extends ModuleActionController
         $this->inheritCurrentSortColumn();
     }
 
+    /**
+     * Create a query for the given view
+     *
+     * @param string $view              An string identifying view to query
+     * @param array $columns            An array with the column names to display
+     *
+     * @return \Icinga\Data\Db\Query
+     */
     protected function query($view, $columns)
     {
         $extra = preg_split(
@@ -194,6 +239,11 @@ class Monitoring_ListController extends ModuleActionController
         return $query;
     }
 
+    /**
+     * Handle the 'format' and 'view' parameter
+     *
+     * @param \Icinga\Data\Db\Query $query      The current query
+     */
     protected function handleFormatRequest($query)
     {
         if ($this->compactView !== null && ($this->_getParam('view', false) === 'compact')) {
@@ -220,6 +270,11 @@ class Monitoring_ListController extends ModuleActionController
         }
     }
 
+    /**
+     * Return all tabs for this controller
+     *
+     * @return Tabs
+     */
     protected function getTabs()
     {
         $tabs = new Tabs();
@@ -275,3 +330,4 @@ class Monitoring_ListController extends ModuleActionController
         }
     }
 }
+// @codingStandardsIgnoreEnd

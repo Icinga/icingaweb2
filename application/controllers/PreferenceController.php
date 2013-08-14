@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga 2 Web.
@@ -38,9 +39,10 @@ class PreferenceController extends BasePreferenceController
 {
 
     /**
-     *  @see BasePreferenceController::createProvidedTabs
+     * Create tabs for this preference controller
      *
      *  @return array
+     *  @see    BasePreferenceController::createProvidedTabs
      */
     public static function createProvidedTabs()
     {
@@ -65,3 +67,4 @@ class PreferenceController extends BasePreferenceController
 
     }
 }
+// @codingStandardsIgnoreEnd

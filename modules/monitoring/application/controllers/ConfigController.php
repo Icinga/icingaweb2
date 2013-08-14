@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga 2 Web.
@@ -50,3 +51,4 @@ class Monitoring_ConfigController extends BaseConfigController {
     }
 
 }
+// @codingStandardsIgnoreEnd

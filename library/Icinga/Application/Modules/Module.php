@@ -383,5 +383,4 @@ class Module
         Hook::register($name, $key, $class);
         return $this;
     }
-
 }
