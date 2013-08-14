@@ -17,7 +17,9 @@ priority in case of an error. If the resource referenced in the first entry (the
 is not reachable, the next lower entry will be used for authentication.
 Please be aware that this behaviour is not valid for the authentication itself.
 The authentication will only be done against the one available resource with the highest
-priority.
+priority. When an account is only present in a backend with lower priority, it will not
+be able to authenticate when a backend with higher priority is active that does not contain
+this account.
 
 ### Backend
 
@@ -46,7 +48,8 @@ in the *authentication.ini*, like described in the example configuration.
 
 ### target
 
-The value of the configuration key *target* defines
+The value of the configuration key *target* defines the type of authentication the described backend provides.
+The allowed values are *user* for a backend that provides user authentication or *group* for group authentication.
 
 
 ## Technical description

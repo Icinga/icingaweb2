@@ -1,9 +1,8 @@
 # Resources
 
 The configuration file *config/resources.ini* contains data sources that can be referenced
-in other configurations. This allows you to manage all connections to SQL databases in one
-single place, avoiding the need to edit several different configuration files, when the
-connection information of a resource change.
+in other configurations. This allows you to manage all connections to databases at one central
+place, avoiding the need to edit several different files, when the connection information of a resource change.
 
 ## Configuration
 
@@ -14,7 +13,7 @@ Currently only the resource type *db* is available.
 
 ### db
 
-This resource type represents a SQL database. The property *db* defines the used sql database, which
+This resource type describes a SQL database. The property *db* defines the used database vendor, which
 could be a value like *mysql* or *pgsql*. The other properties like *host*, *password*, *username* and
 *dbname* are the connection information for the resource.
 
