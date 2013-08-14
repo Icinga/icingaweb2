@@ -4,11 +4,12 @@
 
 namespace Icinga\Application\Modules;
 
-use Icinga\Application\ApplicationBootstrap;
-use Icinga\Application\Icinga;
-use Icinga\Exception\ConfigurationError;
-use Icinga\Exception\SystemPermissionException;
-use Icinga\Exception\ProgrammingError;
+use \Icinga\Application\ApplicationBootstrap;
+use \Icinga\Application\Icinga;
+use \Icinga\Application\Logger;
+use \Icinga\Exception\ConfigurationError;
+use \Icinga\Exception\SystemPermissionException;
+use \Icinga\Exception\ProgrammingError;
 
 /**
  * Module manager that handles detecting, enabling and disabling of modules

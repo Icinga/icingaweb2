@@ -28,11 +28,11 @@
 
 namespace Icinga\Application\Modules;
 
-use Icinga\Application\ApplicationBootstrap;
+use \Icinga\Application\ApplicationBootstrap;
 use \Icinga\Application\Config;
-use Icinga\Application\Icinga;
-use Icinga\Web\Hook;
-use Zend_Controller_Router_Route as Route;
+use \Icinga\Application\Icinga;
+use \Icinga\Web\Hook;
+use \Zend_Controller_Router_Route as Route;
 
 /**
  * Module handling
