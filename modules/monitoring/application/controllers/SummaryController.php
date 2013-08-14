@@ -90,6 +90,5 @@ class Monitoring_SummaryController extends ModuleActionController
         $this->view->summary = $query->paginate();
 
     }
-
 }
 // @codingStandardsIgnoreEnd

@@ -28,7 +28,7 @@
 
 namespace Icinga\Web\Widget\Tabextension;
 
-use Icinga\Web\Widget\Tabs;
+use \Icinga\Web\Widget\Tabs;
 
 /**
 * Tabextension interface that allows to extend a tabbar with reusable components.

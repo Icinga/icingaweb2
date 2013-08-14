@@ -28,16 +28,16 @@
 
 namespace Icinga\Web\Widget;
 
-use Icinga\Application\Icinga;
+use \Icinga\Application\Icinga;
 use \Icinga\Application\Config as IcingaConfig;
-use Icinga\Application\Logger;
-use Icinga\Exception\ConfigurationError;
-use Icinga\Web\Widget\Widget;
-use Icinga\Web\Widget\Dashboard\Pane;
-use Icinga\Web\Widget\Dashboard\Component as DashboardComponent;
+use \Icinga\Application\Logger;
+use \Icinga\Exception\ConfigurationError;
+use \Icinga\Web\Widget\Widget;
+use \Icinga\Web\Widget\Dashboard\Pane;
+use \Icinga\Web\Widget\Dashboard\Component as DashboardComponent;
 
-use Icinga\Web\Url;
-use Zend_View_Abstract;
+use \Icinga\Web\Url;
+use \Zend_View_Abstract;
 
 /**
  * Dashboards display multiple views on a single page

@@ -28,11 +28,11 @@
 
 namespace Icinga\Web\Widget;
 
-use Icinga\Exception\ProgrammingError;
-use Icinga\Web\Widget\Tabextension\Tabextension;
-use Zend_View_Abstract;
+use \Icinga\Exception\ProgrammingError;
+use \Icinga\Web\Widget\Tabextension\Tabextension;
+use \Zend_View_Abstract;
 
-use Countable;
+use \Countable;
 
 /**
  * Navigation tab widget

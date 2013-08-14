@@ -28,9 +28,8 @@
 
 namespace Icinga\Web\Widget;
 
-use Icinga\Exception\ProgrammingError;
-use Icinga\Web\Url;
-use Zend_View_Abstract;
+use \Icinga\Web\Url;
+use \Zend_View_Abstract;
 
 /**
  * A single tab, usually used through the tabs widget
@@ -45,9 +44,6 @@ use Zend_View_Abstract;
  *                             base URL
  * @property string $urlParams Action URL Parameters
  *
- * @copyright  Copyright (c) 2013 Icinga-Web Team <info@icinga.org>
- * @author     Icinga-Web Team <info@icinga.org>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License
  */
 class Tab implements Widget
 {
@@ -221,7 +217,7 @@ class Tab implements Widget
             $caption = '<i class="icon-' . $this->iconCls . '"></i> ' . $caption;
         }
         if ($this->url !== null) {
-            $this->url->addParams($this->urlParams);
+            $this->url->overwriteParams($this->urlParams);
             $tab = '<a href="' . $this->url->getAbsoluteUrl() . '">' . $caption . '</a>';
         } else {
             $tab = $caption;

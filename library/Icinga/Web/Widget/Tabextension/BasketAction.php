@@ -28,8 +28,8 @@
 
 namespace Icinga\Web\Widget\Tabextension;
 
-use Icinga\Web\Widget\Tabs;
-use Icinga\Web\Url;
+use \Icinga\Web\Widget\Tabs;
+use \Icinga\Web\Url;
 
 /**
  * Tabextension that adds the basket command
@@ -43,13 +43,16 @@ class BasketAction implements Tabextension
      */
     public function apply(Tabs $tabs)
     {
-        $tabs->addAsDropdown('basket', array(
-            'title'     =>  'URL Basket',
-            'icon'      =>  'img/classic/basket.png',
-            'url'       =>  Url::fromPath('basket/add'),
-            'urlParams' => array(
-                'url'   => Url::fromRequest()->getRelativeUrl()
+        $tabs->addAsDropdown(
+            'basket',
+            array(
+                'title'     =>  'URL Basket',
+                'icon'      =>  'img/classic/basket.png',
+                'url'       =>  Url::fromPath('basket/add'),
+                'urlParams' => array(
+                    'url'   => Url::fromRequest()->getRelativeUrl()
+                )
             )
-        ));
+        );
     }
 }

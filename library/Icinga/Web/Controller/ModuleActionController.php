@@ -30,6 +30,7 @@
  * Module action controller
  */
 namespace Icinga\Web\Controller;
+
 /**
  * Base class for all module action controllers
  *

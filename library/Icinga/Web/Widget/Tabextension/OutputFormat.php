@@ -117,6 +117,10 @@ class OutputFormat implements Tabextension
     }
 
     /**
+     * Applies the format selectio to the provided tabset
+     *
+     * @param Tabs                  The tabs object to extend with
+     *
      * @see Tabextension::apply()
      */
     public function apply(Tabs $tabs)

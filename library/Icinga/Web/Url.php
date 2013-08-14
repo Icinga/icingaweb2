@@ -201,12 +201,24 @@ class Url
     /**
      * Add a set of parameters to the query part if the keys don't exist yet
      *
-     * @param array $params  The parameters to add
-     * @return $this
+     * @param array $params     The parameters to add
+     * @return self
      */
     public function addParams(array $params)
     {
         $this->params += $params;
+        return $this;
+    }
+
+    /**
+     * Set and overwrite the given params if one if the same key already exists
+     *
+     * @param array $params     The parameters to set
+     * @return self
+     */
+    public function overwriteParams(array $params)
+    {
+        $this->params = array_merge($this->params, $params);
         return $this;
     }
 
@@ -338,7 +350,8 @@ class Url
      * Alias for @see Url::getAbsoluteUrl()
      * @return mixed
      */
-    public function __toString() {
+    public function __toString()
+    {
         return $this->getAbsoluteUrl();
     }
 }

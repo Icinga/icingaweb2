@@ -12,7 +12,7 @@ simple interface, only providing a 'render' method that takes a view and returns
         public function render(Zend_View_Abstract $view);
     }
 
-When implementing own Widgets you just have to make sure that your provide this render method.
+When implementing own Widgets you just have to make sure that you provide this render method.
 
 ## Using widgets
 
@@ -24,7 +24,7 @@ Widgets are normally created in the controller and added to the view:
         $this->view->myWidget = new MyWidget();
     }
 
- The HTML is then rendered in the template using the *render()* method described above. As the '$this' scope in a view is your
+ The HTML is then rendered in the template using the *render()* method described above. As the '$this' scope in a view is
  a reference to your current view, you can just pass it to the *render()* method:
 
     // in your template
@@ -41,7 +41,7 @@ Tab bar, you just have to call:
 
     $tabbar = new Tabs();
 
-**Note** : When using an ActionController, there's already an empty tabs object created unter $this->view->tabs. This is
+**Note** : When using an ActionController, there's already an empty tabs object created under $this->view->tabs. This is
          done in the preDispatch function
 
 ### Adding tabs

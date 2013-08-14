@@ -28,10 +28,10 @@
 
 namespace Icinga\Web\Widget\Tabextension;
 
-use Icinga\Web\Url;
-use Icinga\Config\Config as IcingaConfig;
-use Icinga\Web\Widget\Tabs;
-use Icinga\Web\Widget\Dashboard;
+use \Icinga\Web\Url;
+use \Icinga\Config\Config as IcingaConfig;
+use \Icinga\Web\Widget\Tabs;
+use \Icinga\Web\Widget\Dashboard;
 
 /**
  * Tabextension that allows to add the current URL to a dashboard
@@ -41,6 +41,9 @@ use Icinga\Web\Widget\Dashboard;
 class DashboardAction implements Tabextension
 {
     /**
+     * Applies the dashboard actions to the provided tabset
+     *
+     * @param Tabs                  The tabs object to extend with
      * @see Tabextension::apply()
      */
     public function apply(Tabs $tabs)
