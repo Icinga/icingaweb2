@@ -53,6 +53,7 @@ After you should be able to browse [localhost:8080/icinga2-web](http://localhost
 * MySQL server and client software
 * PostgreSQL server and client software
 * [Icinga prerequisites](http://docs.icinga.org/latest/en/quickstart-idoutils.html#installpackages)
+* OpenLDAP servers and clients
 
 **Installed users and groups**:
 
@@ -101,6 +102,18 @@ Connect to the **icinga mysql database** using the following command:
 
 Access the **Classic UI** (CGIs) via [localhost:8080/icinga-pgsql](http://localhost:8080/icinga-pgsql).
 For **logging into** the Icinga classic web interface use user *icingaadmin* with password *icinga*.
+
+#### Monitoring Test Config
+
+Test config is added to both the MySQL and PostgreSQL Icinga instance utilizing the Perl module
+**Monitoring::Generator::TestConfig** to generate test config to **/usr/local/share/misc/monitoring_test_config**
+which is then copied to **<instance>/etc/conf.d/test_config/**.
+Configuration can be adjusted and recreated with **/usr/local/share/misc/monitoring_test_config/recreate.pl**.
+**Note** that you have to run
+
+    vagrant provision
+
+in the host after any modification to the script just mentioned. 
 
 #### MK Livestatus
 

@@ -19,14 +19,14 @@
 #
 # Sample Usage:
 #
-#  cmmi { 'example-software':
-#    url          => 'http://example-software.com/download/',
-#    output       => 'example-software.tar.gz',
-#    flags        => '--prefix=/opt/example-software',
-#    creates      => '/opt/example-software',
-#    make         => 'make && make install'
-#    make_timeout => 600
-#  }
+#   cmmi { 'example-software':
+#     url          => 'http://example-software.com/download/',
+#     output       => 'example-software.tar.gz',
+#     flags        => '--prefix=/opt/example-software',
+#     creates      => '/opt/example-software',
+#     make         => 'make && make install'
+#     make_timeout => 600
+#   }
 #
 define cmmi(
   $url,
