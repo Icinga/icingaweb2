@@ -31,6 +31,9 @@ use \Icinga\Web\Widget\Tab;
 use \Icinga\Web\Url;
 use \Icinga\Web\Hook\Configuration\ConfigurationTabBuilder;
 use \Icinga\Application\Icinga;
+use \Icinga\Form\Config\GeneralForm;
+use \Icinga\Form\Config\LoggingForm;
+use \Icinga\Config\PreservingIniWriter;
 
 /**
  * Application wide controller for application preferences
@@ -49,18 +52,23 @@ class ConfigController extends BaseConfigController
         return array(
             'index' => new Tab(
                 array(
-                    'name'      => 'index',
-                    'title'     => 'Configuration',
-                    'iconCls'   => 'wrench',
-                    'url'       => Url::fromPath('/config')
+                    "name"      => "index",
+                    "title"     => "Application",
+                    "url"       => Url::fromPath("/config")
                 )
             ),
-            'modules' => new Tab(
+            "logging" => new Tab(
                 array(
-                    'name'      => 'modules',
-                    'title'     => 'Modules',
-                    'iconCls'   => 'puzzle-piece',
-                    'url'       => Url::fromPath('/config/moduleoverview')
+                    "name"      => "logging",
+                    "title"     => "Logging",
+                    "url"       => Url::fromPath("/config/logging")
+                )
+            ),
+            "modules" => new Tab(
+                array(
+                    "name"      => "modules",
+                    "title"     => "Modules",
+                    "url"       => Url::fromPath("/config/moduleoverview")
                 )
             )
         );
@@ -72,7 +80,26 @@ class ConfigController extends BaseConfigController
      */
     public function indexAction()
     {
+        $form = new GeneralForm();
+        $form->setConfiguration(IcingaConfig::app());
+        $form->setRequest($this->_request);
+        if ($form->isSubmittedAndValid()) {
+            $cfg = IcingaConfig::app()->getConfigFile();
+            $writer = new PreservingIniWriter(
+                array('config' => $form->getConfig(),'filename' => $cfg)
+            );
+            print_r($writer->render());die();
+        }
+        $this->view->form = $form;
+    }
 
+    public function loggingAction()
+    {
+        $form = new LoggingForm();
+        $form->setConfiguration(IcingaConfig::app());
+        $form->setRequest($this->_request);
+
+        $this->view->form = $form;
     }
 
     /**
@@ -106,5 +133,7 @@ class ConfigController extends BaseConfigController
         $manager->disableModule($this->_getParam('name'));
         $this->redirectNow('config/moduleoverview?_render=body');
     }
+
+
 }
 // @codingStandardsIgnoreEnd

@@ -1,5 +1,4 @@
 <?php
-// @codingStandardsIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga 2 Web.
@@ -27,27 +26,40 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use \Icinga\Web\Controller\BaseConfigController;
-use \Icinga\Web\Widget\Tab;
-use \Icinga\Web\Url;
 
-class Monitoring_ConfigController extends BaseConfigController {
+/**
+ * Decorator to hide elements using a &gt;noscript&lt; tag instead of
+ * type='hidden' or css styles.
+ *
+ * This allows to hide depending elements for browsers with javascript
+ * (who can then automatically refresh their pages) but show them in
+ * case JavaScript is disabled
+ */
 
-    static public function createProvidedTabs()
+namespace Icinga\Web\Form\Decorator;
+
+use \Zend_Form_Decorator_Abstract;
+
+class ConditionalHidden extends Zend_Form_Decorator_Abstract
+{
+    /**
+     * Generates a html number input
+     *
+     * @access public
+     *
+     * @param string $name The element name.
+     * @param string $value The default value.
+     * @param array $attribs Attributes which should be added to the input tag.
+     *
+     * @return string The input tag and options XHTML.
+     */
+    public function render($content ='')
     {
-        return array(
-            "backends" => new Tab(array(
-                "name"  => "backends",
-                "title" => "Monitoring Backends",
-                "url"   => Url::fromPath("/monitoring/config/backend")
-            ))
-        );
+        $attributes = $this->getElement()->getAttribs();
+        $condition = isset($attributes['condition']) ? $attributes['condition'] : 1;
+        if ($condition != 1) {
+            $content = '<noscript>' . $content . '</noscript>';
+        }
+        return $content;
     }
-
-    public function backendAction()
-    {
-        $this->redirectNow("/config");
-    }
-
 }
-// @codingStandardsIgnoreEnd
