@@ -27,7 +27,7 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use Icinga\Web\ActionController;
+use Icinga\Web\Controller\ActionController;
 use Icinga\Web\Url;
 use Icinga\Application\Icinga;
 use Icinga\Web\Widget\Dashboard;

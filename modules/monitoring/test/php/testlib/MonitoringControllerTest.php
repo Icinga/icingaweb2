@@ -2,7 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Web
+namespace Icinga\Web\Controller
 {
     /**
      * Mocked controller base class to avoid the complete
@@ -82,7 +82,7 @@ namespace Test\Monitoring\Testlib
     require_once 'Zend/View.php';
 
     use Icinga\Protocol\Statusdat\Reader;
-    use Icinga\Web\ActionController;
+    use Icinga\Web\Controller\ActionController;
     use Test\Monitoring\Testlib\DataSource\TestFixture;
     use Test\Monitoring\Testlib\DataSource\DataSourceTestSetup;
     use Monitoring\Backend\Ido;

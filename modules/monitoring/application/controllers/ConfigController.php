@@ -1,9 +1,10 @@
 <?php
 // @codingStandardsIgnoreStart
-
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
- * Icinga 2 Web - Head for multiple monitoring frontends
+ * This file is part of Icinga 2 Web.
+ * 
+ * Icinga 2 Web - Head for multiple monitoring backends.
  * Copyright (C) 2013 Icinga Development Team
  * 
  * This program is free software; you can redistribute it and/or
@@ -21,39 +22,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  * 
  * @copyright 2013 Icinga Development Team <info@icinga.org>
- * @author Icinga Development Team <info@icinga.org>
+ * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
+ * @author    Icinga Development Team <info@icinga.org>
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use Icinga\Application\Benchmark;
-use Icinga\Authentication\Manager;
-use Icinga\Web\ActionController;
-use Icinga\Web\Widget\Tabs;
-use Icinga\Web\Hook\Configuration\ConfigurationTabBuilder;
+use \Icinga\Web\Controller\BaseConfigController;
+use \Icinga\Web\Widget\Tab;
+use \Icinga\Web\Url;
 
-/**
- * Class ConfigurationController
- */
-class ConfigurationController extends ActionController
-{
-    public function init()
+class Monitoring_ConfigController extends BaseConfigController {
+
+    static public function createProvidedTabs()
     {
-        parent::init();
-    }
-
-
-    /**
-     * Index action
-     */
-    public function indexAction()
-    {
-        $tabBuilder = new ConfigurationTabBuilder(
-            new Tabs()
+        return array(
+            "backends" => new Tab(array(
+                "name"  => "backends",
+                "iconCls"  => "hdd",
+                "title" => "Monitoring Backends",
+                "url"   => Url::fromPath("/monitoring/config/backend")
+            ))
         );
-
-        $tabBuilder->build();
-        $this->view->tabs = $tabBuilder->getTabs();
     }
-}
 
+    public function backendAction()
+    {
+        $this->redirectNow("/config");
+    }
+
+}
 // @codingStandardsIgnoreEnd

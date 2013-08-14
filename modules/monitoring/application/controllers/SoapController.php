@@ -1,10 +1,14 @@
 <?php
+// @codingStandardsIgnoreStart
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
-use Icinga\Web\ModuleActionController;
-use Icinga\Web\Url;
-use Monitoring\Backend;
-use Zend_Soap_Server as ZfSoapServer;
-use Zend_Soap_AutoDiscover as ZfSoapAutoDiscover;
+use \Zend_Soap_Server as ZfSoapServer;
+use \Zend_Soap_AutoDiscover as ZfSoapAutoDiscover;
+use \Icinga\Web\Controller\ModuleActionController;
+use \Icinga\Web\Url;
+use \Monitoring\Backend;
+
 
 class Api
 {
@@ -22,7 +26,7 @@ try {
 } catch (Exception $e) {
         return array('error' => $e->getMessage());
 }
-        return $result; 
+        return $result;
     }
 }
 
@@ -47,3 +51,4 @@ class Monitoring_SoapController extends ModuleActionController
         exit;
     }
 }
+// @codingStandardsIgnoreEnd

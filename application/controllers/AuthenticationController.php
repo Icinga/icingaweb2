@@ -26,7 +26,7 @@
 
 # namespace Icinga\Application\Controllers;
 
-use Icinga\Web\ActionController;
+use Icinga\Web\Controller\ActionController;
 use Icinga\Authentication\Credentials;
 use Icinga\Authentication\Manager as AuthManager;
 use Icinga\Form\Authentication\LoginForm;
