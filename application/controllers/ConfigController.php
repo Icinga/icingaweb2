@@ -86,9 +86,12 @@ class ConfigController extends BaseConfigController
         if ($form->isSubmittedAndValid()) {
             $cfg = IcingaConfig::app()->getConfigFile();
             $writer = new PreservingIniWriter(
-                array('config' => $form->getConfig(),'filename' => $cfg)
+                array(
+                    'config' => $form->getConfig(),
+                    'filename' => $cfg
+                )
             );
-            print_r($writer->render());die();
+            $writer->write();
         }
         $this->view->form = $form;
     }

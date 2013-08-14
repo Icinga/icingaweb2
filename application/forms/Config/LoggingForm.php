@@ -135,7 +135,6 @@ class LoggingForm extends Form
 
             return;
         }
-        $this->addDecorator(new ConditionalHidden());
 
         $this->addElement(
             'text',
@@ -195,7 +194,7 @@ class LoggingForm extends Form
                 'label'     => 'Debug log path',
                 'required'  => true,
                 'condition' => $this->shouldDisplayDebugLog($debug),
-                'value'     => $debug->get('target', '/var/log/icingaweb.debug.log')
+                'value'     => $debug->get('target')
             )
         );
         $loggingPathNote = new Note(
@@ -205,9 +204,12 @@ class LoggingForm extends Form
                 'condition' => $this->shouldDisplayDebugLog($debug)
             )
         );
-
+        $decorator = new ConditionalHidden();
         $this->addElement($textLoggingDebugPath);
         $this->addElement($loggingPathNote);
+
+        $textLoggingDebugPath->addDecorator($decorator);
+        $loggingPathNote->addDecorator($decorator);
 
         $this->enableAutoSubmit(array('logging_use_debug', 'logging_enable'));
 

@@ -25,13 +25,14 @@
 
 namespace Icinga\Web;
 
+use \Icinga\Web\Form\Decorator\ConditionalHidden;
 use \Zend_Controller_Request_Abstract;
 use \Zend_Form_Element_Submit;
 use \Zend_Form_Element_Reset;
 use \Zend_View_Interface;
 use \Zend_Form;
-use Icinga\Exception\ProgrammingError;
-use Icinga\Web\Form\InvalidCSRFTokenException;
+use \Icinga\Exception\ProgrammingError;
+use \Icinga\Web\Form\InvalidCSRFTokenException;
 
 /**
  * Base class for forms providing CSRF protection, confirmation logic and auto submission
@@ -179,6 +180,7 @@ abstract class Form extends Zend_Form
      */
     public function buildForm()
     {
+
         if ($this->created === false) {
             $this->initCsrfToken();
             $this->create();

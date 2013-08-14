@@ -40,4 +40,9 @@ class Note extends Zend_Form_Element_Xhtml
      * @var string
      */
     public $helper = 'formNote';
+
+    public function isValid($value)
+    {
+        return true;
+    }
 }

@@ -27,41 +27,17 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Form\Config;
-/**
- * [global]
-environment = development
-timezone    = "Europe/Berlin"
-indexModule = monitoring
-indexController = dashboard
-moduleFolder = "/etc/icinga2-web/enabledModules"
-dateFormat = "d/m/Y"
-timeFormat = "g:i A"
 
-[logging]
-; General log
-enable  = 1
-type    = stream
-verbose = 1
-target  = /tmp/icinga2.log
-
-; For development and debug purposes: Logs additional (non critical) events to a
-; seperate log
-debug.enable = 1
-debug.type   = stream
-debug.target = /tmp/icinga2.debug.log
-
-; Use ini store to store preferences on local disk
-[preferences]
-type=ini
-
- */
 use \Icinga\Application\Config as IcingaConfig;
-use Icinga\Application\Icinga;
+use \Icinga\Application\Icinga;
 use \Icinga\Web\Form;
-use \Zend_Form_Element_Radio;
+use \Icinga\Web\Form\Decorator\ConditionalHidden;
+use \Icinga\Web\Form\Element\Note;
+
 use \DateTimeZone;
 use \Zend_Config;
-use Icinga\Web\Form\Element\Note;
+use \Zend_Form_Element_Text;
+
 
 /**
  * Configuration form for general, application-wide settings
@@ -231,6 +207,56 @@ class GeneralForm extends Form
         )));
     }
 
+    public function addUserPreferencesDialog(Zend_Config $cfg)
+    {
+        $backend = $cfg->get('type', 'ini');
+        if ($this->getRequest()->get('preferences_type', null) !== null) {
+            $backend = $this->getRequest()->get('preferences_type');
+        }
+        $this->addElement(
+            'select',
+            'preferences_type',
+            array(
+                'label'         => 'User preference storage type',
+                'required'      => true,
+                'value'         => $backend,
+                'multiOptions'  => array(
+                    'ini'   => 'File system (ini files)',
+                    'db'    => 'Database'
+                )
+            )
+        );
+
+        $txtPreferencesIniPath = new Zend_Form_Element_Text(
+            array(
+                'name'      =>  'preferences_ini_path',
+                'label'     =>  'Path to store user preference files',
+                'required'  =>  $backend === 'ini',
+                'condition' =>  $backend === 'ini',
+                'value'     =>  $cfg->get('configPath')
+            )
+        );
+
+        $txtPreferencesDbResource = new Zend_Form_Element_Text(
+            array(
+                'name'      =>  'preferences_db_resource',
+                'label'     =>  'Database connection (TODO: Make select field)',
+                'required'  =>  $backend === 'db',
+                'condition' =>  $backend === 'db',
+                'value'     =>  $cfg->get('resource')
+            )
+        );
+
+        $this->addElement($txtPreferencesIniPath);
+        $this->addElement($txtPreferencesDbResource);
+
+        $txtPreferencesIniPath->addDecorator(new ConditionalHidden());
+        $txtPreferencesDbResource->addDecorator(new ConditionalHidden());
+        $this->enableAutoSubmit(array(
+            'preferences_type'
+        ));
+    }
+
     /**
      * Create the general form, using the provided configuration
      *
@@ -245,11 +271,17 @@ class GeneralForm extends Form
         if ($global === null) {
             $global = new Zend_Config(array());
         }
+        $preferences = $this->config->preferences;
+        if ($preferences === null) {
+            $preferences = new Zend_Config(array());
+        }
 
         $this->addDevelopmentCheckbox($global);
         $this->addTimezoneSelection($global);
         $this->addModuleSettings($global);
         $this->addDateFormatSettings($global);
+        $this->addUserPreferencesDialog($preferences);
+
 
         $this->setSubmitLabel('Save changes');
     }
@@ -259,9 +291,11 @@ class GeneralForm extends Form
         if ($this->config === null) {
             $this->config = new Zend_Config(array());
         }
-        $global = $this->config->global;
-        if ($global === null) {
+        if ($this->config->global === null) {
             $this->config->global = new Zend_Config(array());
+        }
+        if ($this->config->preferences === null) {
+            $this->config->preferences = new Zend_Config(array());
         }
 
         $values = $this->getValues();
@@ -271,6 +305,13 @@ class GeneralForm extends Form
         $cfg->global->moduleFolder = $values['module_folder'];
         $cfg->global->dateFormat   = $values['date_format'];
         $cfg->global->timeFormat   = $values['time_format'];
+
+        $cfg->preferences->type = $values['preferences_type'];
+        if ($cfg->preferences->type === 'ini') {
+            $cfg->preferences->configPath = $values['preferences_ini_path'];
+        } elseif ($cfg->preferences->type === 'db') {
+            $cfg->preferences->resource = $values['preferences_db_resource'];
+        }
 
         return $cfg;
     }
