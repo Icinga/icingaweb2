@@ -55,8 +55,9 @@ Lets assume for the following examples, that we have an *resources.ini* that loo
     bar         =   "bar"
 
 
-In the most simple use-case you can create an Adapter by calling the
-*getDbAdapter* function. The created adapter will be an instance of Zend_Db_Adapter_
+In the most simple use-case you can create an adapter by calling the
+*getDbAdapter* function. The created adapter will be an instance of
+Zend_Db_Adapter_Pdo_Mysql
 
     $adapter = DbAdapterFactory::getDbAdapter('resource1');
 
