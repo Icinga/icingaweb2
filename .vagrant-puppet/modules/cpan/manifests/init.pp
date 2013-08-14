@@ -1,7 +1,6 @@
 # Define: cpan
 #
-# Download and install Perl modules from the Perl Archive Network, the gateway to all things Perl.
-# The canonical location for Perl code and modules.
+# Download and install Perl modules from the Perl Archive Network, the canonical location for Perl code and modules.
 #
 # Parameters:
 #   [*creates*]  - target directory the software will install to.
@@ -11,12 +10,14 @@
 #
 # Requires:
 #
+#   Perl
+#
 # Sample Usage:
 #
-#  cpan { 'perl-module':
-#    creates => '/usr/local/share/perl5/perl-module',
-#    timeout => 600
-#  }
+#   cpan { 'perl-module':
+#     creates => '/usr/local/share/perl5/perl-module',
+#     timeout => 600
+#   }
 #
 define cpan(
   $creates,
@@ -29,9 +30,14 @@ define cpan(
     ensure => installed
   }
 
+  file { [ '/root/.cpan/', '/root/.cpan/CPAN/' ]:
+    ensure  => directory
+  }
+
   file { '/root/.cpan/CPAN/MyConfig.pm':
     content => template('cpan/MyConfig.pm.erb'),
-    require => Package['perl-CPAN']
+    require => [ Package['perl-CPAN'],
+                 File[[ '/root/.cpan/', '/root/.cpan/CPAN/' ]] ]
   }
 
   exec { "cpan-${name}":
