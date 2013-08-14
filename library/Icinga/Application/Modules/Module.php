@@ -43,54 +43,63 @@ class Module
 {
     /**
      * Module name
+     *
      * @var string
      */
     private $name;
 
     /**
      * Base directory of module
+     *
      * @var string
      */
     private $basedir;
 
     /**
      * Directory for styles
+     *
      * @var string
      */
     private $cssdir;
 
     /**
      * Library directory
+     *
      * @var string
      */
     private $libdir;
 
     /**
      * Directory containing translations
+     *
      * @var string
      */
     private $localedir;
 
     /**
      * Directory where controllers reside
+     *
      * @var string
      */
     private $controllerdir;
 
     /**
      * Directory containing form implementations
+     *
      * @var string
      */
     private $formdir;
 
     /**
      * Module bootstrapping script
+     *
      * @var string
      */
     private $registerscript;
 
     /**
      * Icinga application
+     *
      * @var \Icinga\Application\Web
      */
     private $app;
@@ -98,9 +107,9 @@ class Module
     /**
      * Create a new module object
      *
-     * @param   ApplicationBootstrap    $app
-     * @param   string                  $name
-     * @param   string                  $basedir
+     * @param ApplicationBootstrap  $app
+     * @param string                $name
+     * @param string                $basedir
      */
     public function __construct(ApplicationBootstrap $app, $name, $basedir)
     {
@@ -133,6 +142,7 @@ class Module
      * Test for an enabled module by name
      *
      * @param   string $name
+     *
      * @return  boolean
      */
     public static function exists($name)
@@ -145,8 +155,10 @@ class Module
      *
      * @param   string  $name
      * @param   bool    $autoload
+     *
      * @return  mixed
-     * @throws  \Icinga\Exception\ProgrammingError  When the module is not yet loaded
+     *
+     * @throws  \Icinga\Exception\ProgrammingError When the module is not yet loaded
      */
     public static function get($name, $autoload = false)
     {
@@ -238,7 +250,8 @@ class Module
     /**
      * Getter for module config object
      *
-     * @param   null|string $file
+     * @param   string $file
+     *
      * @return  Config
      */
     public function getConfig($file = null)
@@ -373,9 +386,10 @@ class Module
     /**
      * Register hook
      *
-     * @param   string  $name
-     * @param   string  $class
-     * @param   string  $key
+     * @param   string $name
+     * @param   string $class
+     * @param   string $key
+     *
      * @return  self
      */
     protected function registerHook($name, $key, $class)
