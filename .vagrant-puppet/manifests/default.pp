@@ -347,13 +347,6 @@ exec { 'install php-ZendFramework-Db-Adapter-Pdo-Mysql':
   require => Exec['install ZendFramework']
 }
 
-file { ['/etc/icinga2-web/',
-        '/etc/icinga2-web/enabledModules/']:
-  ensure => 'directory',
-  owner  => 'apache',
-  group  => 'apache'
-}
-
 file { '/etc/motd':
   source  => 'puppet:////vagrant/.vagrant-puppet/files/etc/motd'
 }
