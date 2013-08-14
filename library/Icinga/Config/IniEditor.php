@@ -227,7 +227,7 @@ class IniEditor
     private function cleanUpWhitespaces()
     {
         $i = count($this->text) - 1;
-        for (; $i >= 0; $i--) {
+        for (; $i > 0; $i--) {
             $line = $this->text[$i];
             if ($this->isSectionDeclaration($line)) {
                 $i--;
