@@ -454,3 +454,35 @@ populate_monitoring_test_config_plugins{ ['test_hostcheck.pl', 'test_servicechec
                  Cmmi['icinga-mysql'],
                  Cmmi['icinga-pgsql'] ]
 }
+
+
+#
+# Following section creates and populates MySQL and PostgreSQL Icinga 2 Web databases
+#
+exec { 'create-mysql-icingaweb-db':
+  unless  => 'mysql -uicingaweb -picinga icingaweb',
+  command => 'mysql -uroot -e "CREATE DATABASE icingaweb; \
+              GRANT ALL ON icingaweb.* TO icingaweb@localhost \
+              IDENTIFIED BY \'icinga\';"',
+  require => Service['mysqld']
+}
+
+exec{ 'create-pgsql-icingaweb-db':
+  unless  => 'sudo -u postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname=\'icingaweb\'" | grep -q 1',
+  command => 'sudo -u postgres psql -c "CREATE ROLE icingaweb WITH LOGIN PASSWORD \'icinga\';" && \
+              sudo -u postgres createdb -O icingaweb -E UTF8 icingaweb && \
+              sudo -u postgres createlang plpgsql icingaweb',
+  require => Service['postgresql']
+}
+
+exec { 'populate-icingaweb-mysql-db':
+  unless  => 'mysql -uicingaweb -picinga icingaweb -e "SELECT * FROM account;" &> /dev/null',
+  command => 'mysql -uicingaweb -picinga icingaweb < /vagrant/etc/schema/users.mysql.sql',
+  require => [ Exec['create-mysql-icingaweb-db'] ]
+}
+
+exec { 'populate-icingweba-pgsql-db':
+  unless  => 'psql -U icingaweb -d icingaweb -c "SELECT * FROM account;" &> /dev/null',
+  command => 'sudo -u postgres psql -U icingaweb -d icingaweb -f /vagrant/etc/schema/users.pgsql.sql',
+  require => [ Exec['create-pgsql-icingaweb-db'] ]
+}
