@@ -125,7 +125,7 @@ class DbAdapterFactoryTest extends \PHPUnit_Framework_TestCase {
     /**
      * Test if an exception is thrown, when an invalid database is used.
      *
-     * @expectedException \Exception
+     * @expectedException Icinga\Exception\ConfigurationError
      */
     public function testGetInvalidDatabase()
     {
@@ -135,7 +135,7 @@ class DbAdapterFactoryTest extends \PHPUnit_Framework_TestCase {
     /**
      * Test if an exception is thrown, when an invalid type is used.
      *
-     * @expectedException \Exception
+     * @expectedException Icinga\Exception\ConfigurationError
      */
     public function testGetInvalidType()
     {
