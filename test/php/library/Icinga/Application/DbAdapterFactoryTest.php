@@ -36,6 +36,7 @@ require_once('Zend/Config.php');
 require_once('../../library/Icinga/Application/Logger.php');
 require_once('library/Icinga/Application/ZendDbMock.php');
 require_once('../../library/Icinga/Exception/ConfigurationError.php');
+require_once('../../library/Icinga/Exception/ProgrammingError.php');
 require_once('../../library/Icinga/Application/ConfigAwareFactory.php');
 require_once('../../library/Icinga/Application/DbAdapterFactory.php');
 
@@ -58,7 +59,7 @@ class DbAdapterFactoryTest extends \PHPUnit_Framework_TestCase {
      */
     public function setUp()
     {
-        $resources = array(
+        $this->resources = array(
             /*
              * PostgreSQL databse
              */
@@ -99,7 +100,6 @@ class DbAdapterFactoryTest extends \PHPUnit_Framework_TestCase {
                 'type'  => 'ldap',
             ),
         );
-        $this->resources = new \Zend_Config($resources);
         DbAdapterFactory::setConfig(
             $this->resources,
             array(
@@ -116,10 +116,32 @@ class DbAdapterFactoryTest extends \PHPUnit_Framework_TestCase {
             ZendDbMock::getAdapter(),
             'The db adapter name must be Pdo_Mysql.');
         $this->assertEquals(
-            $this->getOptions($this->resources->{'resource2'}),
+            $this->getOptions($this->resources['resource2']),
             ZendDbMock::getConfig(),
             'The options must match the original config file content'
         );
+    }
+
+    public function testResourceExists()
+    {
+        $this->assertTrue(DbAdapterFactory::resourceExists('resource2'),
+            'resourceExists() called with an existing resource should return true');
+
+        $this->assertFalse(DbAdapterFactory::resourceExists('not existing'),
+            'resourceExists() called with an existing resource should return false');
+
+        $this->assertFalse(DbAdapterFactory::resourceExists('resource4'),
+            'resourceExists() called with an incompatible resource should return false');
+    }
+
+    public function testGetResources()
+    {
+        $withoutIncompatible = array_merge(array(),$this->resources);
+        unset($withoutIncompatible['resource4']);
+        $this->assertEquals(
+            $withoutIncompatible,
+            DbAdapterFactory::getResources(),
+            'getResources should return an array of all existing resources that are compatible');
     }
 
     /**
@@ -151,7 +173,7 @@ class DbAdapterFactoryTest extends \PHPUnit_Framework_TestCase {
      */
     private function getOptions($config)
     {
-        $options = array_merge(array(),$config->toArray());
+        $options = array_merge(array(),$config);
         unset($options['type']);
         unset($options['db']);
         return $options;

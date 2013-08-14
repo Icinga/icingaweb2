@@ -73,6 +73,9 @@ class DbAdapterFactory implements ConfigAwareFactory {
      */
     public static function setConfig($config, array $options = null)
     {
+        if (is_array($config)) {
+            $config = new Zend_Config($config);
+        }
         self::$resources = $config;
         if (isset($options['factory'])) {
             self::$factoryClass = $options['factory'];
@@ -91,6 +94,35 @@ class DbAdapterFactory implements ConfigAwareFactory {
     }
 
     /**
+     * Get a list of all resources available to this factory
+     *
+     * @return array    An array containing all resources compatible to this factory
+     */
+    public static function getResources()
+    {
+        $resources = self::$resources->toArray();
+        foreach ($resources as $identifier => $resource) {
+            if ($resource['type'] !== 'db') {
+                unset($resources[$identifier]);
+            }
+        }
+        return $resources;
+    }
+
+    /**
+     * Return if a resource with the given identifier exists
+     *
+     * @param $identifier   The name of the resource
+     *
+     * @return boolean      If the resource exists and is compatible
+     */
+    public static function resourceExists($identifier)
+    {
+        return isset(self::$resources->{$identifier})
+               && (self::$resources->{$identifier}->type === 'db');
+    }
+
+    /**
      * Get the resource with the given $identifier
      *
      * @param   $identifier     The name of the resource
@@ -99,7 +131,7 @@ class DbAdapterFactory implements ConfigAwareFactory {
     {
         if (!isset(self::$resources)) {
             $msg = 'Creation of resource ' . $identifier . ' not possible, because there is no configuration present.'
-                . ' Make shure this factory class was initiated correctly during the application bootstrap.';
+                . ' Make shure this factory class was initialised correctly during the application bootstrap.';
                 Logger::error($msg);
             throw new ProgrammingError($msg);
         }
