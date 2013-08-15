@@ -31,7 +31,8 @@ namespace Tests\Icinga\Application;
 /**
  * Partially emulate the functionality of Zend_Db
  */
-class ZendDbMock {
+class ZendDbMock
+{
 
     /**
      * The config that was used in the last call of the factory function

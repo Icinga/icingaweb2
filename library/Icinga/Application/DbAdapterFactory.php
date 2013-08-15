@@ -31,6 +31,7 @@ namespace Icinga\Application;
 use Zend_Config;
 use Zend_Db;
 use Icinga\Application\Logger;
+use Icinga\Util\ConfigAwareFactory;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\ProgrammingError;
 use Tests\Icinga\Application\ZendDbMock;
@@ -38,8 +39,8 @@ use Tests\Icinga\Application\ZendDbMock;
 /**
  * Create resources using short identifiers referring to configuration entries
  */
-class DbAdapterFactory implements ConfigAwareFactory {
-
+class DbAdapterFactory implements ConfigAwareFactory
+{
     /**
      * Resource definitions
      *
@@ -142,7 +143,7 @@ class DbAdapterFactory implements ConfigAwareFactory {
             Logger::error($msg);
             throw new ConfigurationError($msg);
         }
-        if (array_key_exists($identifier,self::$resourceCache)) {
+        if (array_key_exists($identifier, self::$resourceCache)) {
             return self::$resourceCache[$identifier];
         } else {
             $res = self::createDbAdapter(self::$resources->{$identifier});
@@ -165,7 +166,8 @@ class DbAdapterFactory implements ConfigAwareFactory {
     {
         if ($config->type !== 'db') {
             throw new ConfigurationError(
-                'Resource type must be "db" but is "' . $config->type . '"');
+                'Resource type must be "db" but is "' . $config->type . '"'
+            );
         }
         $options = array(
             'dbname'    => $config->dbname,
@@ -175,10 +177,10 @@ class DbAdapterFactory implements ConfigAwareFactory {
         );
         switch ($config->db) {
             case 'mysql':
-                return self::callFactory('Pdo_Mysql',$options);
+                return self::callFactory('Pdo_Mysql' ,$options);
 
             case 'pgsql':
-                return self::callFactory('Pdo_Pgsql',$options);
+                return self::callFactory('Pdo_Pgsql', $options);
 
             default:
                 throw new ConfigurationError('Unsupported db type ' . $config->db . '.');
@@ -197,6 +199,6 @@ class DbAdapterFactory implements ConfigAwareFactory {
     private static function callFactory($adapter, $options)
     {
         $factory = self::$factoryClass;
-        return $factory::factory($adapter,$options);
+        return $factory::factory($adapter, $options);
     }
 }

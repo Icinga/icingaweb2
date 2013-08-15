@@ -29,11 +29,11 @@
 
 namespace Icinga\Authentication\Backend;
 
-use Icinga\User;
-use Icinga\Authentication\UserBackend;
-use Icinga\Authentication\Credentials;
-use Icinga\Authentication;
-use Icinga\Application\Logger;
+use \Icinga\User;
+use \Icinga\Authentication\UserBackend;
+use \Icinga\Authentication\Credentials;
+use \Icinga\Authentication;
+use \Icinga\Application\Logger;
 
 /**
  * User authentication backend (@see Icinga\Authentication\UserBackend) for
@@ -43,8 +43,8 @@ use Icinga\Application\Logger;
  * See the UserBackend class (@see Icinga\Authentication\UserBackend) for
  * usage information
  */
-class DbUserBackend implements UserBackend {
-
+class DbUserBackend implements UserBackend
+{
     /**
      * The database connection that will be used for fetching users
      *
@@ -93,6 +93,7 @@ class DbUserBackend implements UserBackend {
      * Check if the user identified by the given credentials is available
      *
      * @param Credentials $credentials The login credentials
+     *
      * @return boolean True when the username is known and currently active.
      */
     public function hasUsername(Credentials $credential)
@@ -109,6 +110,7 @@ class DbUserBackend implements UserBackend {
      * Authenticate a user with the given credentials
      *
      * @param Credentials $credentials The login credentials
+     *
      * @return User|null The authenticated user or Null.
      */
     public function authenticate(Credentials $credential)
@@ -120,12 +122,13 @@ class DbUserBackend implements UserBackend {
         $this->db->getConnection();
         $res = $this->db
             ->select()->from($this->userTable)
-                ->where($this->USER_NAME_COLUMN.' = ?',$credential->getUsername())
-                ->where($this->ACTIVE_COLUMN.   ' = ?',true)
-                ->where($this->PASSWORD_COLUMN. ' = ?',hash_hmac('sha256',
-                        $this->getUserSalt($credential->getUsername()),
-                        $credential->getPassword())
-                    )
+                ->where($this->USER_NAME_COLUMN.' = ?', $credential->getUsername())
+                ->where($this->ACTIVE_COLUMN.   ' = ?', true)
+                ->where(
+                    $this->PASSWORD_COLUMN. ' = ?', hash_hmac('sha256',
+                    $this->getUserSalt($credential->getUsername()),
+                    $credential->getPassword())
+                )
                 ->query()->fetch();
         if (!empty($res)) {
             $this->updateLastLogin($credential->getUsername());
@@ -147,7 +150,7 @@ class DbUserBackend implements UserBackend {
             array(
                 $this->LAST_LOGIN_COLUMN => new \Zend_Db_Expr('NOW()')
             ),
-            $this->USER_NAME_COLUMN.' = '.$this->db->quoteInto('?',$username));
+            $this->USER_NAME_COLUMN.' = '.$this->db->quoteInto('?', $username));
     }
 
     /**
@@ -161,8 +164,8 @@ class DbUserBackend implements UserBackend {
     {
         $this->db->getConnection();
         $res = $this->db->select()
-            ->from($this->userTable,$this->SALT_COLUMN)
-            ->where($this->USER_NAME_COLUMN.' = ?',$username)
+            ->from($this->userTable, $this->SALT_COLUMN)
+            ->where($this->USER_NAME_COLUMN.' = ?', $username)
             ->query()->fetch();
         return $res[$this->SALT_COLUMN];
     }
@@ -201,6 +204,7 @@ class DbUserBackend implements UserBackend {
      * Create a new instance of User from a query result
      *
      * @param array $result The query result-array containing the column
+     *
      * @return User The created instance of User.
      */
     private function createUserFromResult(Array $result)
@@ -209,7 +213,8 @@ class DbUserBackend implements UserBackend {
             $result[$this->USER_NAME_COLUMN],
             $result[$this->FIRST_NAME_COLUMN],
             $result[$this->LAST_NAME_COLUMN],
-            $result[$this->EMAIL_COLUMN]);
+            $result[$this->EMAIL_COLUMN]
+        );
         $usr->setDomain($result[$this->DOMAIN_COLUMN]);
         return $usr;
     }

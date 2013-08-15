@@ -28,11 +28,11 @@
 
 namespace Icinga\Authentication;
 
-use Icinga\Application\Logger;
+use \Icinga\Application\Logger;
 use \Icinga\Application\Config as IcingaConfig;
-use Icinga\Application\DbAdapterFactory;
-use Icinga\Exception\ConfigurationError as ConfigError;
-use Icinga\User;
+use \Icinga\Application\DbAdapterFactory;
+use \Icinga\Exception\ConfigurationError as ConfigError;
+use \Icinga\User;
 
 /**
  *   The authentication manager allows to identify users and
@@ -159,7 +159,7 @@ class Manager
     {
         foreach ($backends as $backend) {
             if (strtolower($target) === strtolower($backend->target)) {
-                $db = $this->tryToInitBackend($target,$backend);
+                $db = $this->tryToInitBackend($target, $backend);
                 if (isset($db)) {
                     break;
                 }
@@ -198,7 +198,7 @@ class Manager
             return new $class($resource);
         } catch (\Exception $e) {
             $msg = 'Not able to create backend: ' .
-                print_r($backendConfig->backend,true)
+                print_r($backendConfig->backend, true)
                 . '. Exception: ' . $e->getMessage();
             Logger::warn($msg);
             return null;

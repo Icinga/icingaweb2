@@ -37,12 +37,11 @@ require_once('../../library/Icinga/Application/Logger.php');
 require_once('library/Icinga/Application/ZendDbMock.php');
 require_once('../../library/Icinga/Exception/ConfigurationError.php');
 require_once('../../library/Icinga/Exception/ProgrammingError.php');
-require_once('../../library/Icinga/Application/ConfigAwareFactory.php');
+require_once('../../library/Icinga/Util/ConfigAwareFactory.php');
 require_once('../../library/Icinga/Application/DbAdapterFactory.php');
 
-use Tests\Icinga\Application\ZendDbMock;
-use Icinga\Application\DbAdapterFactory;
-use Icinga\Exception\ConfigurationError;
+use \Tests\Icinga\Application\ZendDbMock;
+use \Icinga\Application\DbAdapterFactory;
 
 /*
  * Unit test for the class DbAdapterFactory
