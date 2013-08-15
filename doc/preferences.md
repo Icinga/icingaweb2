@@ -29,27 +29,12 @@ example:
 
     [preferences]
     type=db
-    dbtype=pgsql
-    dbhost=127.0.0.1
-    dbpassword=icingaweb
-    dbuser=icingaweb
-    dbname=icingaweb
+    resource=icingaweb-pgsql
 
 ### Settings
 
-* **dbtype**: Database adapter, currently supporting ***mysql*** or ***pgsql***
-
-* **dbhost**: Host of the database server, use localhost or 127.0.0.1
-for unix socket transport
-
-* **dbpassword**: Password for the configured database user
-
-* **dbuser**: User who can connect to database
-
-* **dbname**: Name of the database
-
-* **port**(optional): For network connections the specific port if not default
-(3306 for mysql and 5432 for postgres)
+* **resource**: A reference to a database declared in *resources.ini*. Please read the chapter about
+ resources for a detailed description about how to set up resources.
 
 ### Preparation
 

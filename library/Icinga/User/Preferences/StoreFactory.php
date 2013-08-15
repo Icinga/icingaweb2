@@ -30,6 +30,7 @@ namespace Icinga\User\Preferences;
 
 use Icinga\User;
 use Icinga\Exception\ProgrammingError;
+use \Icinga\Application\DbAdapterFactory;
 use \Zend_Config;
 use \Zend_Db;
 
@@ -53,6 +54,7 @@ final class StoreFactory
      *
      * @param  Zend_Config $config
      * @param  User $user
+     *
      * @return FlushObserverInterface
      * @throws ProgrammingError
      */
@@ -68,32 +70,11 @@ final class StoreFactory
             }
 
             $items = $config->toArray();
-            unset($items['type']);
 
-            // TODO(mh): Encapsulate into a db adapter factory (#4503)
-            if (isset($items['dbname'])
-                && isset($items['dbuser'])
-                && isset($items['dbpassword'])
-                && isset($items['dbhost'])
-                && isset($items['dbtype'])
-            ) {
-                $zendDbType = 'PDO_'. strtoupper($items['dbtype']);
-
-                $zendDbOptions = array(
-                    'host'     => $items['dbhost'],
-                    'username' => $items['dbuser'],
-                    'password' => $items['dbpassword'],
-                    'dbname'   => $items['dbname']
-                );
-
-                if (isset($items['port'])) {
-                    $zendDbOptions['port'] = $items['port'];
-                }
-
-                $dbAdapter = Zend_Db::factory($zendDbType, $zendDbOptions);
-
-                $items['dbAdapter'] = $dbAdapter;
+            if ($items['type'] == 'db') {
+                $items['dbAdapter'] = DbAdapterFactory::getDbAdapter($items['resource']);
             }
+            unset($items['type']);
 
             foreach ($items as $key => $value) {
                 $setter = 'set'. ucfirst($key);

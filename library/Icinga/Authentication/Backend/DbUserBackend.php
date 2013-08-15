@@ -29,11 +29,11 @@
 
 namespace Icinga\Authentication\Backend;
 
-use Icinga\User;
-use Icinga\Authentication\UserBackend;
-use Icinga\Authentication\Credentials;
-use Icinga\Authentication;
-use Icinga\Application\Logger;
+use \Icinga\User;
+use \Icinga\Authentication\UserBackend;
+use \Icinga\Authentication\Credentials;
+use \Icinga\Authentication;
+use \Icinga\Application\Logger;
 
 /**
  * User authentication backend (@see Icinga\Authentication\UserBackend) for
@@ -43,7 +43,29 @@ use Icinga\Application\Logger;
  * See the UserBackend class (@see Icinga\Authentication\UserBackend) for
  * usage information
  */
-class DbUserBackend implements UserBackend {
+class DbUserBackend implements UserBackend
+{
+    /**
+     * Mapping of all table column names
+     */
+
+    const USER_NAME_COLUMN   = 'user_name';
+
+    const FIRST_NAME_COLUMN  = 'first_name';
+
+    const LAST_NAME_COLUMN   = 'last_name';
+
+    const LAST_LOGIN_COLUMN  = 'last_login';
+
+    const SALT_COLUMN        = 'salt';
+
+    const PASSWORD_COLUMN    = 'password';
+
+    const ACTIVE_COLUMN      = 'active';
+
+    const DOMAIN_COLUMN      = 'domain';
+
+    const EMAIL_COLUMN       = 'email';
 
     /**
      * The database connection that will be used for fetching users
@@ -53,72 +75,31 @@ class DbUserBackend implements UserBackend {
     private $db = null;
 
     /**
-     * The name of the user table as provided by the configuration
+     * The name of the user table
      *
      * @var String
      */
-    private $userTable;
-
-    /**
-     * Mapping of columns
-     *
-     * @var string
-     */
-    private $USER_NAME_COLUMN   = 'user_name',
-            $FIRST_NAME_COLUMN  = 'first_name',
-            $LAST_NAME_COLUMN   = 'last_name',
-            $LAST_LOGIN_COLUMN  = 'last_login',
-            $SALT_COLUMN        = 'salt',
-            $PASSWORD_COLUMN    = 'password',
-            $ACTIVE_COLUMN      = 'active',
-            $DOMAIN_COLUMN      = 'domain',
-            $EMAIL_COLUMN       = 'email';
-
-    /**
-     * Map the configuration dbtypes to the corresponding Zend-PDOs
-     *
-     * @var Array
-     */
-    private $dbTypeMap = Array(
-        'mysql' => 'PDO_MYSQL',
-        'pgsql' => 'PDO_PGSQL'
-    );
-
+    private $userTable = "account";
     /**
      * Create a DbUserBackend
      *
-     * @param $config The configuration-object containing the members host,user,password,db
+     * @param   Zend_Db     The database that provides the authentication data
      */
-    public function __construct($config)
+    public function __construct($database)
     {
-        $this->dbtype = $config->dbtype;
-        $this->userTable = $config->table;
-        try {
-            $this->db = \Zend_Db::factory(
-                $this->dbTypeMap[$config->dbtype],
-                array(
-                    'host'      => $config->host,
-                    'username'  => $config->user,
-                    'password'  => $config->password,
-                    'dbname'    => $config->db
-            ));
+        $this->db = $database;
 
-            /*
-             * Test the connection settings
-             */
-            $this->db->getConnection();
-            $this->db->select()->from($this->userTable,new \Zend_Db_Expr('TRUE'));
-        } catch (\Zend_Db_Adapter_Exception $exc) {
-            Logger::error('Could not authenticate via database : %s ', $exc->getMessage());
-            $this->db = null;
-
-        }
+        /*
+         * Test if the connection is available
+         */
+        $this->db->getConnection();
     }
 
     /**
      * Check if the user identified by the given credentials is available
      *
      * @param Credentials $credentials The login credentials
+     *
      * @return boolean True when the username is known and currently active.
      */
     public function hasUsername(Credentials $credential)
@@ -135,6 +116,7 @@ class DbUserBackend implements UserBackend {
      * Authenticate a user with the given credentials
      *
      * @param Credentials $credentials The login credentials
+     *
      * @return User|null The authenticated user or Null.
      */
     public function authenticate(Credentials $credential)
@@ -146,12 +128,16 @@ class DbUserBackend implements UserBackend {
         $this->db->getConnection();
         $res = $this->db
             ->select()->from($this->userTable)
-                ->where($this->USER_NAME_COLUMN.' = ?',$credential->getUsername())
-                ->where($this->ACTIVE_COLUMN.   ' = ?',true)
-                ->where($this->PASSWORD_COLUMN. ' = ?',hash_hmac('sha256',
+                ->where(self::USER_NAME_COLUMN.' = ?', $credential->getUsername())
+                ->where(self::ACTIVE_COLUMN.   ' = ?', true)
+                ->where(
+                    self::PASSWORD_COLUMN. ' = ?',
+                    hash_hmac(
+                        'sha256',
                         $this->getUserSalt($credential->getUsername()),
-                        $credential->getPassword())
+                        $credential->getPassword()
                     )
+                )
                 ->query()->fetch();
         if (!empty($res)) {
             $this->updateLastLogin($credential->getUsername());
@@ -171,31 +157,34 @@ class DbUserBackend implements UserBackend {
         $this->db->update(
             $this->userTable,
             array(
-                $this->LAST_LOGIN_COLUMN => new \Zend_Db_Expr('NOW()')
+                self::LAST_LOGIN_COLUMN => new \Zend_Db_Expr('NOW()')
             ),
-            $this->USER_NAME_COLUMN.' = '.$this->db->quoteInto('?',$username));
+            self::USER_NAME_COLUMN.' = '.$this->db->quoteInto('?', $username)
+        );
     }
 
     /**
      * Fetch the users salt from the database
      *
      * @param $username The user whose salt should be fetched.
+     *
      * @return String|null Returns the salt-string or Null, when the user does not exist.
      */
     private function getUserSalt($username)
     {
         $this->db->getConnection();
         $res = $this->db->select()
-            ->from($this->userTable,$this->SALT_COLUMN)
-            ->where($this->USER_NAME_COLUMN.' = ?',$username)
+            ->from($this->userTable, self::SALT_COLUMN)
+            ->where(self::USER_NAME_COLUMN.' = ?', $username)
             ->query()->fetch();
-        return $res[$this->SALT_COLUMN];
+        return $res[self::SALT_COLUMN];
     }
 
     /**
      * Fetch the user information from the database
      *
      * @param $username The name of the user.
+     *
      * @return User|null Returns the user object, or null when the user does not exist.
      */
     private function getUserByName($username)
@@ -208,8 +197,8 @@ class DbUserBackend implements UserBackend {
             $this->db->getConnection();
             $res = $this->db->
                 select()->from($this->userTable)
-                    ->where($this->USER_NAME_COLUMN.' = ?',$username)
-                    ->where($this->ACTIVE_COLUMN.' = ?',true)
+                    ->where(self::USER_NAME_COLUMN.' = ?', $username)
+                    ->where(self::ACTIVE_COLUMN.' = ?', true)
                     ->query()->fetch();
             if (empty($res)) {
                 return null;
@@ -225,16 +214,18 @@ class DbUserBackend implements UserBackend {
      * Create a new instance of User from a query result
      *
      * @param array $result The query result-array containing the column
+     *
      * @return User The created instance of User.
      */
     private function createUserFromResult(Array $result)
     {
         $usr = new User(
-            $result[$this->USER_NAME_COLUMN],
-            $result[$this->FIRST_NAME_COLUMN],
-            $result[$this->LAST_NAME_COLUMN],
-            $result[$this->EMAIL_COLUMN]);
-        $usr->setDomain($result[$this->DOMAIN_COLUMN]);
+            $result[self::USER_NAME_COLUMN],
+            $result[self::FIRST_NAME_COLUMN],
+            $result[self::LAST_NAME_COLUMN],
+            $result[self::EMAIL_COLUMN]
+        );
+        $usr->setDomain($result[self::DOMAIN_COLUMN]);
         return $usr;
     }
 }

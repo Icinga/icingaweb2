@@ -28,74 +28,75 @@
 
 namespace Icinga\Authentication;
 
-use Icinga\Application\Logger;
+use \Icinga\Application\Logger;
 use \Icinga\Application\Config as IcingaConfig;
-use Icinga\Exception\ConfigurationError as ConfigError;
-use Icinga\User;
+use \Icinga\Application\DbAdapterFactory;
+use \Icinga\Exception\ConfigurationError as ConfigError;
+use \Icinga\User;
 
 /**
-*   The authentication manager allows to identify users and
-*   to persist authentication information in a session.
-*
-*   Direct instanciation is not permitted, the Authencation manager
-*   must be created using the getInstance method. Subsequent getInstance
-*   calls return the same object and ignore any additional configuration
-*
-*   When creating the Authentication manager with standard PHP Sessions,
-*   you have to decide whether you want to modify the session on the first
-*   initialization and provide the 'writeSession' option if so, otherwise
-*   session changes won't be written to disk. This is done to prevent PHP
-*   from blockung concurrent requests
-*
-*   @TODO: Group support is not implemented yet
-**/
+ *   The authentication manager allows to identify users and
+ *   to persist authentication information in a session.
+ *
+ *   Direct instanciation is not permitted, the Authencation manager
+ *   must be created using the getInstance method. Subsequent getInstance
+ *   calls return the same object and ignore any additional configuration
+ *
+ *   When creating the Authentication manager with standard PHP Sessions,
+ *   you have to decide whether you want to modify the session on the first
+ *   initialization and provide the 'writeSession' option if so, otherwise
+ *   session changes won't be written to disk. This is done to prevent PHP
+ *   from blockung concurrent requests
+ *
+ *   @TODO: Group support is not implemented yet
+ **/
 class Manager
 {
     const BACKEND_TYPE_USER = "User";
     const BACKEND_TYPE_GROUP = "Group";
 
     /**
-    *   @var Manager
-    **/
+     * @var Manager
+     **/
     private static $instance = null;
 
     /**
-    *   @var User
-    **/
+     * @var User
+     **/
     private $user = null;
     private $groups = array();
 
     /**
-    *   @var UserBackend
-    **/
+     * @var UserBackend
+     **/
     private $userBackend = null;
 
     /**
-    *   @var GroupBackend
-    **/
+     * @var GroupBackend
+     **/
     private $groupBackend = null;
 
     /**
-    *   @var Session
-    **/
+     * @var Session
+     **/
     private $session = null;
 
     /**
-    *   Creates a new authentication manager using the provided config (or the
-    *   configuration provided in the authentication.ini if no config is given)
-    *   and with the given options.
-    *
-    *   @param  IcingaConfig    $config     The configuration to use for authentication
-    *                                       instead of the authentication.ini
-    *   @param  Array           $options    Additional options that affect the managers behaviour.
-    *                                       Supported values:
-    *                                       * writeSession : Whether the session should be writable
-    *                                       * userBackendClass : Allows to provide an own user backend class
-    *                                         (used for testing)
-    *                                       * groupBackendClass : Allows to provide an own group backend class
-    *                                         (used for testing)
-    *                                       * sessionClass : Allows to provide a different session implementation)
-    **/
+     * Creates a new authentication manager using the provided config (or the
+     * configuration provided in the authentication.ini if no config is given)
+     * and with the given options.
+     *
+     * @param  IcingaConfig    $config     The configuration to use for authentication
+     *                                       instead of the authentication.ini
+     * @param  Array           $options    Additional options that affect the managers behaviour.
+     *                                       Supported values:
+     *                                       * writeSession : Whether the session should be writable
+     *                                       * userBackendClass : Allows to provide an own user backend class
+     *                                         (used for testing)
+     *                                       * groupBackendClass : Allows to provide an own group backend class
+     *                                         (used for testing)
+     *                                       * sessionClass : Allows to provide a different session implementation)
+     **/
     private function __construct($config = null, array $options = array())
     {
         if ($config === null) {
@@ -103,14 +104,14 @@ class Manager
         }
         if (isset($options["userBackendClass"])) {
             $this->userBackend = $options["userBackendClass"];
-        } elseif ($config->users !== null) {
-            $this->userBackend = $this->initBackend(self::BACKEND_TYPE_USER, $config->users);
+        } else {
+            $this->userBackend = $this->initBestBackend(self::BACKEND_TYPE_USER, $config);
         }
 
         if (isset($options["groupBackendClass"])) {
             $this->groupBackend = $options["groupBackendClass"];
-        } elseif ($config->groups != null) {
-            $this->groupBackend = $this->initBackend(self::BACKEND_TYPE_GROUP, $config->groups);
+        } else {
+            $this->groupBackend = $this->initBestBackend(self::BACKEND_TYPE_GROUP, $config);
         }
 
         if (!isset($options["sessionClass"])) {
@@ -126,8 +127,8 @@ class Manager
     }
 
     /**
-    *   @see Manager:__construct()
-    **/
+     * @see Manager:__construct()
+     **/
     public static function getInstance($config = null, array $options = array())
     {
         if (self::$instance === null) {
@@ -137,50 +138,82 @@ class Manager
     }
 
     /**
-    *   Clears the instance (this is mostly needed for testing and shouldn't be called otherwise)
-    **/
+     * Clear the instance (this is mostly needed for testing and shouldn't be called otherwise)
+     **/
     public static function clearInstance()
     {
         self::$instance = null;
     }
 
     /**
-    *   Creates a backend for the the given authenticationTarget (User or Group) and the
-    *   Authenticaiton source.
-    *
-    *   initBackend("User", "Ldap") would create a UserLdapBackend,
-    *   initBackend("Group", "MySource") would create a GroupMySourceBackend,
-    *
-    *   Supported backends can be found in the Authentication\Backend folder
-    *
-    *   @param  String  $authenticationTarget   "User" or "Group", depending on what
-    *                                           authentication information the backend should
-    *                                           provide
-    *   @param  String  $authenticationSource   The Source, see the above examples
-    *
-    *   @return (null|UserBackend|GroupBackend)
-    **/
-    private function initBackend($authenticationTarget, $authenticationSource)
+     * Create a connection to the best available backend
+     *
+     * @param  String  $target      "User" or "Group", depending on what
+     *                                authentication information the backend should provide
+     * @param  Mixed   $backends    The configuration containing all backend configurations
+     *                                in falling priority
+     *
+     * @return (null|UserBackend|GroupBackend)
+     */
+    private function initBestBackend($target, $backends)
     {
-        $backend = ucwords(strtolower($authenticationSource->backend));
-
-        if (!$backend) {
+        foreach ($backends as $backend) {
+            if (strtolower($target) === strtolower($backend->target)) {
+                $db = $this->tryToInitBackend($target, $backend);
+                if (isset($db)) {
+                    break;
+                }
+            }
+        }
+        if (!isset($db)) {
+            $msg = 'Failed to create any authentication backend, login will not be possible.';
+            Logger::error($msg);
             return null;
         }
-
-        $class = '\\Icinga\\Authentication\\Backend\\' . $backend . $authenticationTarget. 'Backend';
-        return new $class($authenticationSource);
+        return $db;
     }
 
     /**
-    *   Tries to authenticate the current user with the Credentials (@see Credentials).
-    *
-    *   @param Credentials  $credentials        The credentials to use for authentication
-    *   @param Boolean      $persist            Whether to persist the authentication result
-    *                                           in the current session
-    *
-    *   @return Boolean                         true on success, otherwise false
-    **/
+     * Try to create the backend with the given configuration
+     *
+     * @param   String  $target     "User" or "Group", depending on what
+     *                                authentication information the backend should provide
+     * @param   $backendConfig      The configuration containing backend description
+     *
+     * @return  UserBackend|null    Return the created backend or null
+     */
+    private function tryToInitBackend($target, $backendConfig)
+    {
+        $type = ucwords(strtolower($backendConfig->backend));
+        if (!$type) {
+            return null;
+        }
+        try {
+            if ($backendConfig->backend === 'db') {
+                $resource = DbAdapterFactory::getDbAdapter($backendConfig->resource);
+            } else {
+                $resource = $backendConfig;
+            }
+            $class = '\\Icinga\\Authentication\\Backend\\' . $type . $target. 'Backend';
+            return new $class($resource);
+        } catch (\Exception $e) {
+            $msg = 'Not able to create backend: ' .
+                print_r($backendConfig->backend, true)
+                . '. Exception: ' . $e->getMessage();
+            Logger::warn($msg);
+            return null;
+        }
+    }
+
+    /**
+     * Try to authenticate the current user with the Credentials (@see Credentials).
+     *
+     * @param Credentials  $credentials        The credentials to use for authentication
+     * @param Boolean      $persist            Whether to persist the authentication result
+     *                                           in the current session
+     *
+     * @return Boolean                         true on success, otherwise false
+     **/
     public function authenticate(Credentials $credentials, $persist = true)
     {
         if (!$this->userBackend) {
@@ -211,29 +244,28 @@ class Manager
 
 
     /**
-    *   Writes the current user to the session (only usable when writeSession = true)
-    *
-    **/
+     * Writes the current user to the session (only usable when writeSession = true)
+     **/
     public function persistCurrentUser()
     {
         $this->session->set("user", $this->user);
     }
     
     /**
-    *   Tries to authenticate the user with the current session 
-    **/
+     * Tries to authenticate the user with the current session
+     **/
     public function authenticateFromSession()
     {
         $this->user = $this->session->get("user", null);
     }
 
     /**
-    *   Returns true when the user is currently authenticated
-    *   
-    *   @param  Boolean $ignoreSession      Set to true to prevent authentication by session
-    *
-    *   @param  Boolean 
-    **/
+     * Returns true when the user is currently authenticated
+     *
+     * @param  Boolean    $ignoreSession      Set to true to prevent authentication by session
+     *
+     * @param  Boolean
+     **/
     public function isAuthenticated($ignoreSession = false)
     {
         if ($this->user === null && !$ignoreSession) {
@@ -243,9 +275,8 @@ class Manager
     }
 
     /**
-    *   Purges the current authorisation information and deletes the session
-    *
-    **/
+     * Purges the current authorisation information and deletes the session
+     **/
     public function removeAuthorization()
     {
         $this->user = null;
@@ -253,18 +284,18 @@ class Manager
     }
 
     /**
-    *   Returns the current user or null if no user is authenticated
-    *
-    *   @return User
-    **/
+     *   Returns the current user or null if no user is authenticated
+     *
+     *   @return User
+     **/
     public function getUser()
     {
         return $this->user;
     }
 
     /**
-    *   @see User::getGroups
-    **/
+     *   @see User::getGroups
+     **/
     public function getGroups()
     {
         return $this->user->getGroups();
