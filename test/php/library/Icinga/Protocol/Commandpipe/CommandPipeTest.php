@@ -1,4 +1,8 @@
 <?php
+// @codingStandardsIgnoreStart
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
+
 namespace Tests\Icinga\Protocol\Commandpipe;
 
 require_once(__DIR__.'/CommandPipeLoader.php');
@@ -6,6 +10,7 @@ CommandPipeLoader::requireLibrary();
 
 use Icinga\Protocol\Commandpipe\Comment as Comment;
 use Icinga\Protocol\Commandpipe\Acknowledgement as Acknowledgement;
+use Icinga\Protocol\Commandpipe\CustomNotification;
 use Icinga\Protocol\Commandpipe\Downtime as Downtime;
 use Icinga\Protocol\Commandpipe\Commandpipe as Commandpipe;
 use \Icinga\Protocol\Commandpipe\PropertyModifier as MONFLAG;
@@ -423,15 +428,15 @@ class CommandPipeTest extends \PHPUnit_Framework_TestCase
     {
         $pipe = $this->getLocalTestPipe();
         try {
-            $comment = new Comment("author", "commenttext");
+            $notification = new CustomNotification('Author', 'Comment');
             $pipe->sendCustomNotification(array(
                 (object) array(
-                    "host_name" => "host1",
-                    "service_description" => "service1"
+                    'host_name'             => 'Host',
+                    'service_description'   => 'Service'
                 )
-            ), $comment);
+            ), $notification);
             $this->assertCommandSucceeded(
-                "SEND_CUSTOM_SVC_NOTIFICATION;host1;service1;0;author;commenttext"
+                'SEND_CUSTOM_SVC_NOTIFICATION;Host;Service;0;Author;Comment'
             );
         } catch (Exception $e) {
             $this->cleanup();
@@ -449,15 +454,15 @@ class CommandPipeTest extends \PHPUnit_Framework_TestCase
     {
         $pipe = $this->getLocalTestPipe();
         try {
-            $comment = new Comment('author', 'commenttext');
+            $notification = new CustomNotification('Author', 'Comment', true, true);
             $pipe->sendCustomNotification(array(
                 (object) array(
-                    'host_name' => 'host'
+                    'host_name'             => 'Host',
+                    'service_description'   => 'Service'
                 )
-            ), $comment, Commandpipe::NOTIFY_FORCED, Commandpipe::NOTIFY_BROADCAST, Commandpipe::NOTIFY_INCREMENT);
-
+            ), $notification);
             $this->assertCommandSucceeded(
-                'SEND_CUSTOM_HOST_NOTIFICATION;host;7;author;commenttext'
+                'SEND_CUSTOM_SVC_NOTIFICATION;Host;Service;3;Author;Comment'
             );
         } catch (Exception $e) {
             $this->cleanup();
@@ -493,3 +498,4 @@ class CommandPipeTest extends \PHPUnit_Framework_TestCase
         $this->cleanup();
     }
 }
+// @codingStandardsIgnoreStop

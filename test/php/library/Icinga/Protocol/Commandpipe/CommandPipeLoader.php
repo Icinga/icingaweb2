@@ -1,11 +1,7 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: moja
- * Date: 7/31/13
- * Time: 1:29 PM
- * To change this template use File | Settings | File Templates.
- */
+// @codingStandardsIgnoreStart
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Tests\Icinga\Protocol\Commandpipe;
 
@@ -30,5 +26,7 @@ class CommandPipeLoader extends LibraryLoader {
         require_once("../../library/Icinga/Protocol/Commandpipe/Transport/Transport.php");
         require_once("../../library/Icinga/Protocol/Commandpipe/Transport/SecureShell.php");
         require_once("../../library/Icinga/Protocol/Commandpipe/Transport/LocalPipe.php");
+        require_once('../../library/Icinga/Protocol/Commandpipe/CustomNotification.php');
     }
 }
+// @codingStandardsIgnoreEnd

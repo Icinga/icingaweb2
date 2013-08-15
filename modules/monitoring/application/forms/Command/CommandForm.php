@@ -39,18 +39,8 @@ use \Zend_Validate_Date;
 class CommandForm extends Form
 {
     /**
-     * Default date format
-     */
-    const DEFAULT_DATE_FORMAT = 'Y-m-d H:i:s';
-
-    /**
-     * Default format for validation
-     */
-    const DEFAULT_DATE_VALIDATION = 'yyyy-MM-dd hh:ii:ss';
-
-    /**
      * Array of messages
-     * 
+     *
      * @var string[]
      */
     private $notes = array();
@@ -142,7 +132,7 @@ class CommandForm extends Form
         $authorField = new Zend_Form_Element_Hidden(
             array(
                 'name'       => 'author',
-                'label'      => t('Author name'),
+                'label'      => t('Author (Your Name)'),
                 'value'      => $authorName,
                 'required'   => true
             )
@@ -158,35 +148,5 @@ class CommandForm extends Form
         );
 
         return $authorField;
-    }
-
-    /**
-     * Getter for date format
-     * TODO(mh): Should be user preferences
-     * @return string
-     */
-    protected function getDateFormat()
-    {
-        return self::DEFAULT_DATE_FORMAT;
-    }
-
-    /**
-     * Getter for date validation format
-     * @return string
-     */
-    protected function getDateValidationFormat()
-    {
-        return self::DEFAULT_DATE_VALIDATION;
-    }
-
-    /**
-     * Create a new date validator
-     * @return Zend_Validate_Date
-     */
-    protected function createDateTimeValidator()
-    {
-        $validator = new Zend_Validate_Date();
-        $validator->setFormat($this->getDateValidationFormat());
-        return $validator;
     }
 }
