@@ -28,18 +28,28 @@
 
 namespace Monitoring\Form\Command;
 
-use Icinga\Protocol\Commandpipe\Comment;
+use \Icinga\Protocol\Commandpipe\Comment;
+use \Icinga\Web\Form\Element\Note;
+
 /**
  * Form for adding comment commands
  */
 class CommentForm extends CommandForm
 {
     /**
-     * Interface method to build the form
-     * @see CommandForm::create
+     * Create the form's elements
      */
     protected function create()
     {
+        $this->addElement(
+            new Note(
+                array(
+                    'name'  => 'commanddescription',
+                    'value' => t('This command is used to add a comment host or services.')
+                )
+            )
+        );
+
         $this->addElement($this->createAuthorField());
 
         $this->addElement(
@@ -51,13 +61,36 @@ class CommentForm extends CommandForm
                 'required' => true
             )
         );
+        $this->addElement(
+            new Note(
+                array(
+                    'name'  => 'commentnote',
+                    'value' => t(
+                        'If you work with other administrators, you may find it useful to share information '
+                        . 'about a host or service that is having problems if more than one of you may be working on '
+                        . 'it. Make sure you enter a brief description of what you are doing.'
+                    )
+                )
+            )
+        );
 
         $this->addElement(
             'checkbox',
             'persistent',
             array(
                 'label' => t('Persistent'),
-                'value' => false
+                'value' => true
+            )
+        );
+        $this->addElement(
+            new Note(
+                array(
+                    'name'  => 'persistentnote',
+                    'value' => t(
+                        'If you uncheck this option, the comment will automatically be deleted the next time '
+                        . 'Icinga is restarted.'
+                    )
+                )
             )
         );
 
@@ -66,6 +99,11 @@ class CommentForm extends CommandForm
         parent::create();
     }
 
+    /**
+     * Create comment from request data
+     *
+     * @return \Icinga\Web\Form\Element\Note
+     */
     public function getComment()
     {
         return new Comment($this->getAuthorName(), $this->getValue('comment'), $this->getValue('persistent'));
