@@ -46,6 +46,28 @@ use \Icinga\Application\Logger;
 class DbUserBackend implements UserBackend
 {
     /**
+     * Mapping of all table column names
+     */
+
+    const USER_NAME_COLUMN   = 'user_name';
+
+    const FIRST_NAME_COLUMN  = 'first_name';
+
+    const LAST_NAME_COLUMN   = 'last_name';
+
+    const LAST_LOGIN_COLUMN  = 'last_login';
+
+    const SALT_COLUMN        = 'salt';
+
+    const PASSWORD_COLUMN    = 'password';
+
+    const ACTIVE_COLUMN      = 'active';
+
+    const DOMAIN_COLUMN      = 'domain';
+
+    const EMAIL_COLUMN       = 'email';
+
+    /**
      * The database connection that will be used for fetching users
      *
      * @var \Zend_Db
@@ -58,22 +80,6 @@ class DbUserBackend implements UserBackend
      * @var String
      */
     private $userTable = "account";
-
-    /**
-     * Mapping of columns
-     *
-     * @var string
-     */
-    private $USER_NAME_COLUMN   = 'user_name',
-            $FIRST_NAME_COLUMN  = 'first_name',
-            $LAST_NAME_COLUMN   = 'last_name',
-            $LAST_LOGIN_COLUMN  = 'last_login',
-            $SALT_COLUMN        = 'salt',
-            $PASSWORD_COLUMN    = 'password',
-            $ACTIVE_COLUMN      = 'active',
-            $DOMAIN_COLUMN      = 'domain',
-            $EMAIL_COLUMN       = 'email';
-
     /**
      * Create a DbUserBackend
      *
@@ -122,12 +128,15 @@ class DbUserBackend implements UserBackend
         $this->db->getConnection();
         $res = $this->db
             ->select()->from($this->userTable)
-                ->where($this->USER_NAME_COLUMN.' = ?', $credential->getUsername())
-                ->where($this->ACTIVE_COLUMN.   ' = ?', true)
+                ->where(self::USER_NAME_COLUMN.' = ?', $credential->getUsername())
+                ->where(self::ACTIVE_COLUMN.   ' = ?', true)
                 ->where(
-                    $this->PASSWORD_COLUMN. ' = ?', hash_hmac('sha256',
-                    $this->getUserSalt($credential->getUsername()),
-                    $credential->getPassword())
+                    self::PASSWORD_COLUMN. ' = ?',
+                    hash_hmac(
+                        'sha256',
+                        $this->getUserSalt($credential->getUsername()),
+                        $credential->getPassword()
+                    )
                 )
                 ->query()->fetch();
         if (!empty($res)) {
@@ -148,9 +157,10 @@ class DbUserBackend implements UserBackend
         $this->db->update(
             $this->userTable,
             array(
-                $this->LAST_LOGIN_COLUMN => new \Zend_Db_Expr('NOW()')
+                self::LAST_LOGIN_COLUMN => new \Zend_Db_Expr('NOW()')
             ),
-            $this->USER_NAME_COLUMN.' = '.$this->db->quoteInto('?', $username));
+            self::USER_NAME_COLUMN.' = '.$this->db->quoteInto('?', $username)
+        );
     }
 
     /**
@@ -164,10 +174,10 @@ class DbUserBackend implements UserBackend
     {
         $this->db->getConnection();
         $res = $this->db->select()
-            ->from($this->userTable, $this->SALT_COLUMN)
-            ->where($this->USER_NAME_COLUMN.' = ?', $username)
+            ->from($this->userTable, self::SALT_COLUMN)
+            ->where(self::USER_NAME_COLUMN.' = ?', $username)
             ->query()->fetch();
-        return $res[$this->SALT_COLUMN];
+        return $res[self::SALT_COLUMN];
     }
 
     /**
@@ -187,8 +197,8 @@ class DbUserBackend implements UserBackend
             $this->db->getConnection();
             $res = $this->db->
                 select()->from($this->userTable)
-                    ->where($this->USER_NAME_COLUMN.' = ?',$username)
-                    ->where($this->ACTIVE_COLUMN.' = ?',true)
+                    ->where(self::USER_NAME_COLUMN.' = ?', $username)
+                    ->where(self::ACTIVE_COLUMN.' = ?', true)
                     ->query()->fetch();
             if (empty($res)) {
                 return null;
@@ -210,12 +220,12 @@ class DbUserBackend implements UserBackend
     private function createUserFromResult(Array $result)
     {
         $usr = new User(
-            $result[$this->USER_NAME_COLUMN],
-            $result[$this->FIRST_NAME_COLUMN],
-            $result[$this->LAST_NAME_COLUMN],
-            $result[$this->EMAIL_COLUMN]
+            $result[self::USER_NAME_COLUMN],
+            $result[self::FIRST_NAME_COLUMN],
+            $result[self::LAST_NAME_COLUMN],
+            $result[self::EMAIL_COLUMN]
         );
-        $usr->setDomain($result[$this->DOMAIN_COLUMN]);
+        $usr->setDomain($result[self::DOMAIN_COLUMN]);
         return $usr;
     }
 }

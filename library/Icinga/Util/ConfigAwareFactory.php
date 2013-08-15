@@ -41,4 +41,3 @@ interface ConfigAwareFactory
      */
     public static function setConfig($config);
 }
-

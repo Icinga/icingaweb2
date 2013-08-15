@@ -177,11 +177,9 @@ class DbAdapterFactory implements ConfigAwareFactory
         );
         switch ($config->db) {
             case 'mysql':
-                return self::callFactory('Pdo_Mysql' ,$options);
-
+                return self::callFactory('Pdo_Mysql', $options);
             case 'pgsql':
                 return self::callFactory('Pdo_Pgsql', $options);
-
             default:
                 throw new ConfigurationError('Unsupported db type ' . $config->db . '.');
         }
