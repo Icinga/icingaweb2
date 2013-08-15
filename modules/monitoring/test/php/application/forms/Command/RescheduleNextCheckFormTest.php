@@ -5,7 +5,7 @@
 
 namespace Test\Monitoring\Forms\Command;
 
-require_once realpath(__DIR__ . '/BaseFormTest.php');
+require_once realpath('library/Icinga/Web/Form/BaseFormTest.php');
 require_once realpath(__DIR__ . '/../../../../../application/forms/Command/RescheduleNextCheckForm.php');
 require_once realpath(__DIR__ . '/../../../../../../../library/Icinga/Util/ConfigAwareFactory.php');
 require_once realpath(__DIR__ . '/../../../../../../../library/Icinga/Util/DateTimeFactory.php');
@@ -13,6 +13,7 @@ require_once realpath(__DIR__ . '/../../../../../../../library/Icinga/Util/DateT
 use \Monitoring\Form\Command\RescheduleNextCheckForm; // Used by constant FORM_CLASS
 use \DateTimeZone;
 use \Icinga\Util\DateTimeFactory;
+use \Test\Icinga\Web\Form\BaseFormTest;
 
 class RescheduleNextCheckFormTest extends BaseFormTest
 {

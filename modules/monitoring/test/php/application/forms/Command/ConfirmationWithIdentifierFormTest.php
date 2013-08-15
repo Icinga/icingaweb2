@@ -3,7 +3,7 @@
 
 namespace Test\Monitoring\Forms\Command;
 
-require_once __DIR__. '/BaseFormTest.php';
+require_once  realpath('library/Icinga/Web/Form/BaseFormTest.php');
 require_once __DIR__. '/../../../../../application/forms/Command/CommandForm.php';
 require_once __DIR__. '/../../../../../application/forms/Command/WithChildrenCommandForm.php';
 require_once __DIR__. '/../../../../../application/forms/Command/CommandWithIdentifierForm.php';
@@ -11,6 +11,7 @@ require_once __DIR__. '/../../../../../application/forms/Command/CommandWithIden
 use Monitoring\Form\Command\CommandWithIdentifierForm;
 use \Zend_View;
 use \Zend_Test_PHPUnit_ControllerTestCase;
+use \Test\Icinga\Web\Form\BaseFormTest;
 
 class CommandWithIdentifierFormTest extends BaseFormTest
 {

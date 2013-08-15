@@ -64,7 +64,7 @@ class GeneralForm extends Form
      *
      * @param IcingaConfig $cfg
      */
-    public function setConfiguration(IcingaConfig $cfg)
+    public function setConfiguration($cfg)
     {
         $this->config = $cfg;
     }

@@ -1,4 +1,8 @@
 <?php
+// @codingStandardsIgnoreStart
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
+
 
 namespace {
     if (!function_exists('t')) {
@@ -14,7 +18,7 @@ namespace {
     }
 }
 
-namespace Test\Monitoring\Forms\Command {
+namespace Test\Icinga\Web\Form {
 
     require_once 'Zend/Test/PHPUnit/ControllerTestCase.php';
     require_once 'Zend/Form.php';
@@ -23,16 +27,17 @@ namespace Test\Monitoring\Forms\Command {
     require_once 'Zend/Form/Element/Reset.php';
     require_once 'Zend/Form/Element/Checkbox.php';
     require_once 'Zend/Form/Element/Hidden.php';
+    require_once 'Zend/Form/Decorator/Abstract.php';
     require_once 'Zend/Validate/Date.php';
-    $base = __DIR__.'/../../../../../../../';
-    require_once realpath($base.'library/Icinga/Exception/ProgrammingError.php');
-    require_once realpath($base.'library/Icinga/Web/Form.php');
-    require_once realpath($base.'library/Icinga/Web/Form/InvalidCSRFTokenException.php');
-    require_once realpath($base.'library/Icinga/Web/Form/Element/Note.php');
-    require_once realpath($base.'library/Icinga/Web/Form/Element/DateTimePicker.php');
+    $base = '../../';
+    require_once realpath($base . 'library/Icinga/Exception/ProgrammingError.php');
+    require_once realpath($base . 'library/Icinga/Web/Form.php');
+    require_once realpath($base . 'library/Icinga/Web/Form/InvalidCSRFTokenException.php');
+    require_once realpath($base . 'library/Icinga/Web/Form/Element/Note.php');
+    require_once realpath($base . 'library/Icinga/Web/Form/Element/DateTimePicker.php');
     require_once realpath($base . 'modules/monitoring/application/forms/Command/CommandForm.php');
     require_once realpath($base . 'modules/monitoring/application/forms/Command/WithChildrenCommandForm.php');
-
+    require_once realpath('../../library/Icinga/Web/Form/Decorator/ConditionalHidden.php');
     use \Zend_View;
     use \Zend_Form;
     use \Zend_View_Interface;
@@ -57,6 +62,11 @@ namespace Test\Monitoring\Forms\Command {
             $form->setRequest($request);
 
             return $form;
+        }
+
+        public function testForRemovingWarnings()
+        {
+            $this->assertTrue(true);
         }
     }
 

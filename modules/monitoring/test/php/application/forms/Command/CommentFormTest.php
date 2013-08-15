@@ -5,10 +5,11 @@
 
 namespace Test\Monitoring\Forms\Command;
 
-require_once realpath(__DIR__ . '/BaseFormTest.php');
+require_once realpath('library/Icinga/Web/Form/BaseFormTest.php');
 require_once realpath(__DIR__ . '/../../../../../../../modules/monitoring/application/forms/Command/CommentForm.php');
 
 use \Monitoring\Form\Command\CommentForm; // Used by constant FORMCLASS
+use \Test\Icinga\Web\Form\BaseFormTest;
 
 class CommentFormTest extends BaseFormTest
 {
