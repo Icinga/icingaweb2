@@ -30,6 +30,7 @@ namespace Icinga\Form\Config;
 
 use \Icinga\Application\Config as IcingaConfig;
 use \Icinga\Application\Icinga;
+use \Icinga\Application\DbAdapterFactory;
 use \Icinga\Web\Form;
 use \Icinga\Web\Form\Decorator\ConditionalHidden;
 use \Icinga\Web\Form\Element\Note;
@@ -37,7 +38,7 @@ use \Icinga\Web\Form\Element\Note;
 use \DateTimeZone;
 use \Zend_Config;
 use \Zend_Form_Element_Text;
-
+use \Zend_Form_Element_Select;
 
 /**
  * Configuration form for general, application-wide settings
@@ -58,6 +59,14 @@ class GeneralForm extends Form
      * @var string
      */
     private $configDir = null;
+
+
+    /**
+     * The resources to use instead of the factory provided ones (use for testing)
+     *
+     * @var null
+     */
+    private $resources = null;
 
     /**
      * Set the configuration to be used for this form
@@ -88,6 +97,31 @@ class GeneralForm extends Form
     public function getConfigDir()
     {
         return $this->configDir === null ? IcingaConfig::$configDir : $this->configDir;
+    }
+
+    /**
+     * Set an alternative array of resources that should be used instead of the DBFactory resource set
+     * (used for testing)
+     *
+     * @param array $resources              The resources to use for populating the db selection field
+     */
+    public function setResources(array $resources)
+    {
+        $this->resources = $resources;
+    }
+
+    /**
+     * Return content of the resources.ini or previously set resources for displaying in the database selection field
+     *
+     * @return array
+     */
+    public function getResources()
+    {
+        if ($this->resources === null ) {
+            return DbAdapterFactory::getResources();
+        } else {
+            return $this->resources;
+        }
     }
 
     /**
@@ -236,14 +270,23 @@ class GeneralForm extends Form
                 'value'     =>  $cfg->get('configPath')
             )
         );
+        $backends = array();
+        foreach ($this->getResources() as $name => $resource)
+        {
+            if ($resource['type'] !== 'db') {
+                continue;
+            }
+            $backends[$name] = $name;
+        }
 
-        $txtPreferencesDbResource = new Zend_Form_Element_Text(
+        $txtPreferencesDbResource = new Zend_Form_Element_Select(
             array(
-                'name'      =>  'preferences_db_resource',
-                'label'     =>  'Database connection (TODO: Make select field)',
-                'required'  =>  $backend === 'db',
-                'condition' =>  $backend === 'db',
-                'value'     =>  $cfg->get('resource')
+                'name'          =>  'preferences_db_resource',
+                'label'         =>  'Database connection',
+                'required'      =>  $backend === 'db',
+                'condition'     =>  $backend === 'db',
+                'value'         =>  $cfg->get('resource'),
+                'multiOptions'  =>  $backends
             )
         );
 
@@ -281,7 +324,6 @@ class GeneralForm extends Form
         $this->addModuleSettings($global);
         $this->addDateFormatSettings($global);
         $this->addUserPreferencesDialog($preferences);
-
 
         $this->setSubmitLabel('Save changes');
     }

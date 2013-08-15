@@ -32,6 +32,7 @@ use \Icinga\Web\Url;
 use \Icinga\Web\Hook\Configuration\ConfigurationTabBuilder;
 use \Icinga\Application\Icinga;
 use \Icinga\Form\Config\GeneralForm;
+use \Icinga\Form\Config\AuthenticationForm;
 use \Icinga\Form\Config\LoggingForm;
 use \Icinga\Config\PreservingIniWriter;
 
@@ -57,6 +58,15 @@ class ConfigController extends BaseConfigController
                     "url"       => Url::fromPath("/config")
                 )
             ),
+
+            "authentication" => new Tab(
+                array(
+                    "name"      => "auth",
+                    "title"     => "Authentication",
+                    "url"       =>  Url::fromPath('/config/authentication')
+                )
+            ),
+
             "logging" => new Tab(
                 array(
                     "name"      => "logging",
@@ -93,6 +103,15 @@ class ConfigController extends BaseConfigController
             );
             $writer->write();
         }
+        $this->view->form = $form;
+    }
+
+    public function authenticationAction()
+    {
+        $form = new AuthenticationForm();
+        $form->setConfiguration(IcingaConfig::app('authentication'));
+        $form->setRequest($this->_request);
+        $form->isSubmittedAndValid();
         $this->view->form = $form;
     }
 
