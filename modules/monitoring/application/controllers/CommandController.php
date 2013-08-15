@@ -431,12 +431,7 @@ class Monitoring_CommandController extends ModuleActionController
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
-            $author = $this->getRequest()->getUser()->getUsername();
-            $this->target->sendCustomNotification(
-                $this->view->objects,
-                new Comment($author, $form->getComment()),
-                $form->getOptions()
-            );
+            $this->target->sendCustomNotification($this->view->objects, $form->getCustomNotification());
         }
     }
 
