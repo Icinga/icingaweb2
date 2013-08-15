@@ -448,7 +448,6 @@ populate_monitoring_test_config_plugins{ ['test_hostcheck.pl', 'test_servicechec
                  Cmmi['icinga-pgsql'] ]
 }
 
-
 #
 # Following section creates and populates MySQL and PostgreSQL Icinga 2 Web databases
 #
@@ -460,7 +459,7 @@ exec { 'create-mysql-icingaweb-db':
   require => Service['mysqld']
 }
 
-exec{ 'create-pgsql-icingaweb-db':
+exec { 'create-pgsql-icingaweb-db':
   unless  => 'sudo -u postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname=\'icingaweb\'" | grep -q 1',
   command => 'sudo -u postgres psql -c "CREATE ROLE icingaweb WITH LOGIN PASSWORD \'icinga\';" && \
               sudo -u postgres createdb -O icingaweb -E UTF8 icingaweb && \
@@ -478,4 +477,35 @@ exec { 'populate-icingweba-pgsql-db':
   unless  => 'psql -U icingaweb -d icingaweb -c "SELECT * FROM account;" &> /dev/null',
   command => 'sudo -u postgres psql -U icingaweb -d icingaweb -f /vagrant/etc/schema/users.pgsql.sql',
   require => [ Exec['create-pgsql-icingaweb-db'] ]
+}
+
+#
+# Following section creates the Icinga command proxy to /usr/local/icinga-mysql/var/rw/icinga.cmd (which is the
+# config's default path for the Icinga command pipe) in order to send commands to both the MySQL and PostgreSQL instance
+#
+file { [ '/usr/local/icinga/', '/usr/local/icinga/var/', '/usr/local/icinga/var/rw/' ]:
+  ensure  => directory,
+  owner   => icinga,
+  group   => icinga,
+  require => User['icinga']
+}
+
+file { '/usr/local/bin/icinga_command_proxy':
+  source => 'puppet:////vagrant/.vagrant-puppet/files/usr/local/bin/icinga_command_proxy',
+  owner  => root,
+  group  => root,
+  mode   => 755
+}
+
+file { '/etc/init.d/icinga_command_proxy':
+  source  => 'puppet:////vagrant/.vagrant-puppet/files/etc/init.d/icinga_command_proxy',
+  owner   => root,
+  group   => root,
+  mode    => 755,
+  require => File['/usr/local/bin/icinga_command_proxy']
+}
+
+service { 'icinga_command_proxy':
+  ensure  => running,
+  require => [ File['/etc/init.d/icinga_command_proxy'], Service['icinga-mysql'], Service['icinga-pgsql'] ]
 }
