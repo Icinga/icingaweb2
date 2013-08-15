@@ -28,8 +28,8 @@
 
 namespace Monitoring\Form\Command;
 
-use \Icinga\Protocol\Commandpipe\Comment;
 use \Icinga\Web\Form\Element\Note;
+use \Icinga\Protocol\Commandpipe\Comment;
 
 /**
  * Form for adding comment commands
@@ -45,7 +45,7 @@ class CommentForm extends CommandForm
             new Note(
                 array(
                     'name'  => 'commanddescription',
-                    'value' => t('This command is used to add a comment host or services.')
+                    'value' => t('This command is used to add a comment to hosts or services.')
                 )
             )
         );
@@ -102,7 +102,7 @@ class CommentForm extends CommandForm
     /**
      * Create comment from request data
      *
-     * @return \Icinga\Web\Form\Element\Note
+     * @return \Icinga\Protocol\Commandpipe\Comment
      */
     public function getComment()
     {

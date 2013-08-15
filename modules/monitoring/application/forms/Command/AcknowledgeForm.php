@@ -49,7 +49,7 @@ class AcknowledgeForm extends CommandForm
                 array(
                     'name'  => 'commanddescription',
                     'value' => t(
-                        'This command is used to acknowledge a host/service problem. When a problem is '
+                        'This command is used to acknowledge host or service problems. When a problem is '
                         . 'acknowledged, future notifications about problems are temporarily disabled until the '
                         . 'host/service changes from its current state.'
                     )
@@ -85,7 +85,7 @@ class AcknowledgeForm extends CommandForm
             'checkbox',
             'persistent',
             array(
-                'label' => t('Persistent comment'),
+                'label' => t('Persistent Comment'),
                 'value' => false
             )
         );
@@ -165,7 +165,7 @@ class AcknowledgeForm extends CommandForm
             'checkbox',
             'notify',
             array(
-                'label' => t('Send notification'),
+                'label' => t('Send Notification'),
                 'value' => true
             )
         );
@@ -181,7 +181,7 @@ class AcknowledgeForm extends CommandForm
             )
         );
 
-        $this->setSubmitLabel(t('Acknowledge problem'));
+        $this->setSubmitLabel(t('Acknowledge Problem'));
 
         parent::create();
     }
