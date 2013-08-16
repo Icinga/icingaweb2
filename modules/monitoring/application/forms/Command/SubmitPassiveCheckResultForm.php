@@ -209,16 +209,31 @@ class SubmitPassiveCheckResultForm extends CommandForm
         parent::create();
     }
 
+    /**
+     * Return the entered object state as an integer
+     *
+     * @return int
+     */
     public function getState()
     {
         return intval($this->getValue('pluginstate'));
     }
 
+    /**
+     * Return the entered check output as a string
+     *
+     * @return string
+     */
     public function getOutput()
     {
         return $this->getValue('checkoutput');
     }
 
+    /**
+     * Return the entered performance data as a string
+     *
+     * @return string
+     */
     public function getPerformancedata()
     {
         return $this->getValue('performancedata');

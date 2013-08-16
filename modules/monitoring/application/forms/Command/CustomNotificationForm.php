@@ -91,7 +91,7 @@ class CustomNotificationForm extends CommandForm
                     'name'  => 'forcenote',
                     'value' => t(
                         'Custom notifications normally follow the regular notification logic in Icinga. Selecting this '
-                        . 'option will force the notification to be sent out, regardless of the time restrictions, '
+                        . 'option will force the notification to be sent out, regardless of time restrictions, '
                         . 'whether or not notifications are enabled, etc.'
                     )
                 )

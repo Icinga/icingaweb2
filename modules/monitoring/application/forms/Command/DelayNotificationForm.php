@@ -85,6 +85,11 @@ class DelayNotificationForm extends CommandForm
         parent::create();
     }
 
+    /**
+     * Return the currently set delay time in seconds
+     *
+     * @return integer
+     */
     public function getDelayTime()
     {
         return $this->getValue('minutes') * 60;

@@ -73,7 +73,7 @@ class AcknowledgeForm extends CommandForm
                 array(
                     'name'  => 'commentnote',
                     'value' => t(
-                        ' If you work with other administrators, you may find it useful to share information '
+                        ' If you work with other administrators you may find it useful to share information '
                         . 'about a host or service that is having problems if more than one of you may be working on '
                         . 'it. Make sure you enter a brief description of what you are doing.'
                     )
@@ -94,7 +94,7 @@ class AcknowledgeForm extends CommandForm
                 array(
                     'name'  => 'persistentnote',
                     'value' => t(
-                        'If you would like the comment to remain once the acknowledgement is removed, '
+                        'If you would like the comment to remain even when the acknowledgement is removed, '
                         . 'check this option.'
                     )
                 )
@@ -133,8 +133,8 @@ class AcknowledgeForm extends CommandForm
                     array(
                         'name'  => 'expiretimenote',
                         'value' => t(
-                            'Enter here the expire date/time for this acknowledgement. Icinga will '
-                            . ' delete the acknowledgement after this time expired.'
+                            'Enter the expire date/time for this acknowledgement here. Icinga will '
+                            . ' delete the acknowledgement after this date expired.'
                         )
                     )
                 )
@@ -174,7 +174,7 @@ class AcknowledgeForm extends CommandForm
                 array(
                     'name'  => 'sendnotificationnote',
                     'value' => t(
-                        'If you do not want an acknowledgement notification sent out to the appropriate '
+                        'If you do not want an acknowledgement notification to be sent out to the appropriate '
                         . 'contacts, uncheck this option.'
                     )
                 )

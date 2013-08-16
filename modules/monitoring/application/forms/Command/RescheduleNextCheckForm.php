@@ -108,6 +108,11 @@ class RescheduleNextCheckForm extends WithChildrenCommandForm
         parent::create();
     }
 
+    /**
+     * Return whether this is a forced check (force is checked)
+     *
+     * @return bool
+     */
     public function isForced()
     {
         return $this->getValue('forcecheck') == true;
