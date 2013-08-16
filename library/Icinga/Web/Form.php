@@ -309,6 +309,7 @@ abstract class Form extends Zend_Form
         }
     }
 
+
     /**
      * Disable CSRF counter measure and remove its field if already added
      *

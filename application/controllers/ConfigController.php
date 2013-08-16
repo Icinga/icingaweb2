@@ -33,6 +33,8 @@ use \Icinga\Web\Hook\Configuration\ConfigurationTabBuilder;
 use \Icinga\Application\Icinga;
 use \Icinga\Form\Config\GeneralForm;
 use \Icinga\Form\Config\AuthenticationForm;
+use \Icinga\Form\Config\Authentication\LdapBackendForm;
+use \Icinga\Form\Config\Authentication\DbBackendForm;
 use \Icinga\Form\Config\LoggingForm;
 use \Icinga\Config\PreservingIniWriter;
 
@@ -106,14 +108,7 @@ class ConfigController extends BaseConfigController
         $this->view->form = $form;
     }
 
-    public function authenticationAction()
-    {
-        $form = new AuthenticationForm();
-        $form->setConfiguration(IcingaConfig::app('authentication'));
-        $form->setRequest($this->_request);
-        $form->isSubmittedAndValid();
-        $this->view->form = $form;
-    }
+
 
     public function loggingAction()
     {
@@ -156,6 +151,66 @@ class ConfigController extends BaseConfigController
         $this->redirectNow('config/moduleoverview?_render=body');
     }
 
+    private function writeAuthenticationFile(array $config)
+    {
+        $cfg = new Zend_Config($config);
+        $writer = new Zend_Config_Writer_Ini(
+            array(
+                'config' => $cfg,
+                'filename' => IcingaConfig::app('authentication')->getConfigFile()
+            )
+        );
+        try {
+            $writer->write();
+        } catch (Exception $exc) {
+            $this->view->exceptionMessage = $exc->getMessage();
+            $this->view->iniConfigurationString = $writer->render();
+            $this->render('authentication/show-configuration');
+        }
+    }
+
+    /**
+     * Action for creating a new authentication backend
+     *
+     */
+    public function authenticationAction()
+    {
+        $form = new AuthenticationForm();
+        $config = IcingaConfig::app('authentication');
+        $form->setConfiguration($config);
+        $form->setRequest($this->_request);
+
+        if ($form->isSubmittedAndValid()) {
+            $this->writeAuthenticationFile($form->getConfig());
+        }
+        $this->view->form = $form;
+
+    }
+
+    /**
+     * Action for creating a new authentication backend
+     *
+     */
+    public function createauthenticationbackendAction()
+    {
+        if ($this->getRequest()->getParam('type') === 'ldap') {
+            $form = new LdapBackendForm();
+        } else {
+            $form = new DbBackendForm();
+        }
+        $form->setRequest($this->getRequest());
+        if ($form->isSubmittedAndValid()) {
+            $backendCfg = IcingaConfig::app('authentication')->toArray();
+
+            foreach ($form->getConfig() as $backendName => $settings) {
+                $backendCfg[$backendName] = $settings;
+            }
+
+            $this->writeAuthenticationFile($backendCfg);
+        }
+        $this->view->form = $form;
+        $this->render('authentication/modify');
+    }
 
 }
 // @codingStandardsIgnoreEnd

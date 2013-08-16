@@ -32,6 +32,8 @@ use \Icinga\Application\Config as IcingaConfig;
 use \Icinga\Application\Icinga;
 use \Icinga\Application\Logger;
 use \Icinga\Application\DbAdapterFactory;
+use \Icinga\Form\Config\Authentication\DbBackendForm;
+use \Icinga\Form\Config\Authentication\LdapBackendForm;
 
 use \Icinga\Web\Form;
 use \Icinga\Web\Form\Element\Note;
@@ -39,6 +41,7 @@ use \Icinga\Web\Form\Decorator\ConditionalHidden;
 use \Zend_Config;
 use \Zend_Form_Element_Text;
 use \Zend_Form_Element_Select;
+use \Zend_Form_Element_Button;
 
 class AuthenticationForm extends Form
 {
@@ -56,6 +59,10 @@ class AuthenticationForm extends Form
      */
     private $resources = null;
 
+
+    private $backendForms = array();
+
+
     /**
      * Set an alternative array of resources that should be used instead of the DBFactory resource set
      * (used for testing)
@@ -68,20 +75,6 @@ class AuthenticationForm extends Form
     }
 
     /**
-     * Return content of the resources.ini or previously set resources for displaying in the database selection field
-     *
-     * @return array
-     */
-    public function getResources()
-    {
-        if ($this->resources === null ) {
-            return DbAdapterFactory::getResources();
-        } else {
-            return $this->resources;
-        }
-    }
-
-    /**
      * Set the configuration to be used for this form
      *
      * @param IcingaConfig $cfg
@@ -91,189 +84,214 @@ class AuthenticationForm extends Form
         $this->config = $cfg;
     }
 
-    private function addProviderFormForDb($name, $backend)
-    {
 
-        $backends = array();
-        foreach ($this->getResources() as $resname => $resource)
-        {
-            if ($resource['type'] !== 'db') {
-                continue;
-            }
-            $backends[$resname] = $resname;
+    private function addRemoveHint($name)
+    {
+        $this->addElement(
+            'checkbox',
+            'backend_' . $name . '_remove',
+            array(
+                'name'          => 'backend_' . $name . '_remove',
+                'label'         => 'Remove this authentication provider',
+                'value'         => $name,
+                'checked'       => $this->isMarkedForDeletion($name)
+            )
+        );
+        $this->enableAutoSubmit(array('backend_' . $name . '_remove'));
+        return 'backend_' . $name . '_remove';
+    }
+
+    private function addProviderForm($name, $backend)
+    {
+        $type = ucfirst(strtolower($backend->get('backend')));
+        $formClass = '\Icinga\Form\Config\Authentication\\' . $type . 'BackendForm';
+        if (!class_exists($formClass)) {
+            Logger::error('Unsupported backend found in authentication configuration: ' . $backend->get('backend'));
+            return;
         }
 
-        $this->addElement(
-            'select',
-            'backend_' . $name . '_resource',
-            array(
-                'label'         =>  'Database connection',
-                'required'      =>  true,
-                'value'         =>  $backend->get('resource'),
-                'multiOptions'  =>  $backends
-            )
-        );
+        $form = new $formClass();
+        $form->setBackendName($name);
+        $form->setBackend($backend);
 
+        if ($this->resources) {
+            $form->setResources($this->resources);
+        }
+        // It would be nice to directly set the form via
+        // this->setForm, but Zend doesn't handle form validation
+        // properly if doing so.
+        $form->create();
+        foreach ($form->getElements() as $name => $element) {
+            $this->addElement($element, $name);
+        }
 
-        $this->addElement(
-            'submit',
-            'backend_' . $name . '_remove',
-            array(
-                'label'     => 'Remove this backend',
-                'required'  => true
-            )
-        );
-
-        $this->addDisplayGroup(
-            array(
-                'backend_' . $name . '_resource',
-                'backend_' . $name . '_remove'
-            ),
-            'auth_provider_' . $name,
-            array(
-                'legend' => 'DB Authentication ' . $name
-            )
-        );
-    }
-
-    private function addProviderFormForLdap($name, $backend)
-    {
-        $this->addElement(
-            'text',
-            'backend_' . $name . '_hostname',
-            array(
-                'label'     => 'LDAP server host',
-                'value'     => $backend->get('hostname', 'localhost'),
-                'required'  => true
-            )
-        );
-
-        $this->addElement(
-            'text',
-            'backend_' . $name . '_root_dn',
-            array(
-                'label'     => 'LDAP root dn',
-                'value'     => $backend->get('hostname', 'ou=people,dc=icinga,dc=org'),
-                'required'  => true
-            )
-        );
-
-        $this->addElement(
-            'text',
-            'backend_' . $name . '_bind_dn',
-            array(
-                'label'     => 'LDAP bind dn',
-                'value'     => $backend->get('bind_dn', 'cn=admin,cn=config'),
-                'required'  => true
-            )
-        );
-
-        $this->addElement(
-            'password',
-            'backend_' . $name . '_bind_pw',
-            array(
-                'label'     =>  'LDAP bind password',
-                'value'     =>  $backend->get('bind_pw', 'admin'),
-                'required'  => true
-            )
-        );
-
-        $this->addElement(
-            'text',
-            'backend_' . $name . '_bind_user_class',
-            array(
-                'label'     => 'LDAP user object class',
-                'value'     => $backend->get('user_class', 'inetOrgPerson'),
-                'required'  => true
-            )
-        );
-
-        $this->addElement(
-            'text',
-            'backend_' . $name . '_bind_user_name_attribute',
-            array(
-                'label'     => 'LDAP user name attribute',
-                'value'     => $backend->get('user_name_attribute', 'uid'),
-                'required'  => true
-            )
-        );
-
-        $this->addElement(
-            'submit',
-            'backend_' . $name . '_remove',
-            array(
-                'label' => 'Remove this backend'
-            )
-        );
-
-        $this->addDisplayGroup(
-            array(
-                'backend_' . $name . '_hostname',
-                'backend_' . $name . '_root_dn',
-                'backend_' . $name . '_bind_dn',
-                'backend_' . $name . '_bind_pw',
-                'backend_' . $name . '_bind_user_class',
-                'backend_' . $name . '_bind_user_name_attribute',
-                'backend_' . $name . '_remove'
-            ),
-            'auth_provider_' . $name,
-            array(
-                'legend' => 'LDAP Authentication ' . $name
-            )
-        );
+        $this->backendForms[] = $form;
     }
 
 
-    public function addPriorityButtons($name, $pos)
+
+
+
+    public function addPriorityButtons($name, $order = array())
     {
-        if ($pos > 0) {
+        $formEls = array();
+        $priorities = array(
+            "up"    =>  join(',', self::moveElementUp($name, $order)),
+            "down"  =>  join(',', self::moveElementDown($name, $order))
+        );
+        if ($priorities["up"] != join(',', $order)) {
             $this->addElement(
-                'submit',
-                'priority_change_'.$name.'_down',
+                'button',
+                'priority' . $name . '_up',
                 array(
+                    'name'  => 'priority',
                     'label' => 'Move up in authentication order',
-                    'value' => $pos-1
+                    'value' =>  $priorities["up"],
+                    'type'  => 'submit'
                 )
             );
+            $formEls[] = 'priority' . $name . '_up';
         }
-        if ($pos+1 < count($this->config->keys())) {
+        if ($priorities["down"] != join(',', $order)) {
             $this->addElement(
-                'submit',
-                'priority_change_'.$name.'_up',
+                'button',
+                'priority' . $name . '_down',
                 array(
+                    'name'  => 'priority',
                     'label' => 'Move down in authentication order',
-                    'value' => $pos+1
+                    'value' =>  $priorities["down"],
+                    'type'  => 'submit'
                 )
             );
+            $formEls[] = 'priority' . $name . '_down';
         }
+
+        return $formEls;
     }
+
+
+    public function populate(array $values)
+    {
+        $last_priority = $this->getValue('current_priority');
+        parent::populate($values);
+        $this->getElement('current_priority')->setValue($last_priority);
+
+    }
+
+    private function getAuthenticationOrder ()
+    {
+        $request = $this->getRequest();
+        $order = $request->getParam(
+            'priority',
+            $request->getParam('current_priority', null)
+        );
+
+        if ($order === null) {
+            $order = array_keys($this->config->toArray());
+        } else {
+            $order = explode(',', $order);
+        }
+
+        return $order;
+    }
+
+
+    private function isMarkedForDeletion($backendName)
+    {
+        return intval($this->getRequest()->getParam('backend_' . $backendName . '_remove', 0)) === 1;
+    }
+
+    private function addPersistentState()
+    {
+
+        $this->addElement(
+            'hidden',
+            'current_priority',
+            array(
+                'name'  =>  'current_priority',
+                'value' =>  join(',', $this->getAuthenticationOrder())
+            )
+        );
+    }
+
+
 
     public function create()
     {
-        $this->addElement(
-            'submit',
-            'add_backend',
-            array(
-                'label' => 'Add a new authentication provider',
-                'class' => 'btn'
-            )
-        );
-        $pos = 0;
-        foreach ($this->config as $name => $backend) {
+        $order = $this->getAuthenticationOrder();
 
-            $type = strtolower($backend->get('backend'));
-            if ($type === 'db') {
-                $this->addProviderFormForDb($name, $backend);
-            } elseif ($type === 'ldap') {
-                $this->addProviderFormForLdap($name, $backend);
-            } else {
-                Logger::error('Unsupported backend found in authentication configuration: ' . $backend->get('backend'));
+        foreach ($order as $name) {
+            $this->addElement(
+                new Note(
+                    array(
+                        'escape' => false,
+                        'name'  => 'title_backend_' . $name,
+                        'value' => '<h4>Backend ' . $name . '</h4>'
+                    )
+                )
+            );
+            $this->addRemoveHint($this->filterName($name));
+            $backend = $this->config->get($name, null);
+            if ($backend === null) {
                 continue;
             }
-            $this->addPriorityButtons($name, $pos);
-
-            $pos++;
+            if (!$this->isMarkedForDeletion($this->filterName($name))) {
+                $this->addProviderForm($name, $backend);
+                $this->addPriorityButtons($name, $order);
+            }
         }
+
+        $this->addPersistentState();
+        $this->enableConditionalDecorator();
         $this->setSubmitLabel('Save changes');
+    }
+
+    public function getConfig()
+    {
+        $result = array();
+        foreach ($this->backendForms as $name) {
+
+            $name->populate($this->getRequest()->getParams());
+            $result += $name->getConfig();
+
+        }
+        return $result;
+    }
+
+    private function enableConditionalDecorator()
+    {
+        foreach ($this->getElements() as $element) {
+            $element->addDecorator(new ConditionalHidden());
+        }
+    }
+
+    private static function moveElementUp($key, array $array)
+    {
+        $swap = null;
+        for ($i=0; $i<count($array)-1; $i++) {
+            if ($array[$i+1] !== $key) {
+                continue;
+            }
+            $swap = $array[$i];
+            $array[$i] = $array[$i+1];
+            $array[$i+1] = $swap;
+            return $array;
+        }
+        return $array;
+    }
+
+    private static function moveElementDown($key, array $array)
+    {
+        $swap = null;
+        for ($i=0; $i<count($array)-1; $i++) {
+            if ($array[$i] !== $key) {
+                continue;
+            }
+            $swap = $array[$i+1];
+            $array[$i+1] = $array[$i];
+            $array[$i] = $swap;
+            return $array;
+        }
+        return $array;
     }
 }

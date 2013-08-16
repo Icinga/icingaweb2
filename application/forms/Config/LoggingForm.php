@@ -83,6 +83,12 @@ class LoggingForm extends Form
 
     }
 
+    /**
+     * Return true when logging is enabled according to the request and the configuration
+     *
+     * @param Zend_Config $config           The logging section of the config.ini
+     * @return bool
+     */
     private function loggingIsEnabled(Zend_Config $config)
     {
         $loggingRequestParam = $this->getRequest()->getParam('logging_enable', null);
@@ -146,13 +152,15 @@ class LoggingForm extends Form
             )
         );
 
-        $this->addElement(new Note(
-            array(
-                'name' => 'note_logging_app_path',
-                'value'=> 'The logfile to write the icingaweb debug logs to. The webserver must be able to write'
+        $this->addElement(
+            new Note(
+                array(
+                    'name' => 'note_logging_app_path',
+                    'value'=> 'The logfile to write the icingaweb debug logs to. The webserver must be able to write'
                             . 'at this location'
+                )
             )
-        ));
+        );
 
         $this->addElement(
             'checkbox',
@@ -164,12 +172,14 @@ class LoggingForm extends Form
             )
         );
 
-        $this->addElement(new Note(
-            array(
-                'name' => 'note_logging_app_verbose',
-                'value'=> 'Check to write more verbose output to the icinga log file'
+        $this->addElement(
+            new Note(
+                array(
+                    'name' => 'note_logging_app_verbose',
+                    'value'=> 'Check to write more verbose output to the icinga log file'
+                )
             )
-        ));
+        );
 
         $this->addElement(
             'checkbox',
@@ -180,12 +190,14 @@ class LoggingForm extends Form
                 'value'     => $this->shouldDisplayDebugLog($debug)
             )
         );
-        $this->addElement(new Note(
-            array(
-                'name' => 'note_logging_use_debug',
-                'value'=> 'Check to write a seperate debug log (Warning: This file can grow very big)'
+        $this->addElement(
+            new Note(
+                array(
+                    'name' => 'note_logging_use_debug',
+                    'value'=> 'Check to write a seperate debug log (Warning: This file can grow very big)'
+                )
             )
-        ));
+        );
 
 
         $textLoggingDebugPath = new Zend_Form_Element_Text(
@@ -215,5 +227,4 @@ class LoggingForm extends Form
 
         $this->setSubmitLabel('Save changes');
     }
-
 }

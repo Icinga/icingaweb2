@@ -1,2 +1,20 @@
+<?php
+use Icinga\Web\Url;
+$createLdapBackend = Url::fromPath(
+    '/config/createAuthenticationBackend',
+    array('type' => 'ldap')
+)->getAbsoluteUrl();
+
+$createDbBackend = Url::fromPath(
+    '/config/createAuthenticationBackend',
+    array('type' => 'db')
+)->getAbsoluteUrl();
+
+?>
 <?= $this->tabs->render($this); ?>
+
+<div>
+    <a href="<?= $createLdapBackend ?>">Create a new LDAP authentication backend</a><br/>
+    <a href="<?= $createDbBackend ?>">Create a new DB authentication backend</a>
+</div>
 <?= $this->form ?>

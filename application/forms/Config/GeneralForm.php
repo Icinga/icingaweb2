@@ -117,7 +117,7 @@ class GeneralForm extends Form
      */
     public function getResources()
     {
-        if ($this->resources === null ) {
+        if ($this->resources === null) {
             return DbAdapterFactory::getResources();
         } else {
             return $this->resources;
@@ -142,11 +142,16 @@ class GeneralForm extends Form
                 'value'     => $env === 'development'
             )
         );
-        $this->addElement(new Note(array(
-            'name'  => 'note_env',
-            'value' => 'Set true to show more detailed errors and disable certain optimizations '
-                        . 'in order to make debugging easier.'
-        )));
+        $this->addElement(
+            new Note(
+                array(
+                    'name'  => 'note_env',
+                    'value' => 'Set true to show more detailed errors '
+                                . 'and disable certain optimizations '
+                                . 'in order to make debugging easier.'
+                )
+            )
+        );
     }
 
     /**
@@ -159,7 +164,7 @@ class GeneralForm extends Form
     private function addTimezoneSelection(Zend_Config $cfg)
     {
         $tzList = array();
-        foreach(DateTimeZone::listIdentifiers() as $tz) {
+        foreach (DateTimeZone::listIdentifiers() as $tz) {
             $tzList[$tz] = $tz;
         }
 
@@ -173,11 +178,15 @@ class GeneralForm extends Form
                 'value'         =>  $cfg->get('timezone', date_default_timezone_get())
             )
         );
-        $this->addElement(new Note(array(
-            'name' => 'noteTimezone',
-            'value' => 'Select the timezone to be used as the default. User\'s can set their own timezone if'.
-            ' they like to, but this is the timezone to be used as the default setting .'
-        )));
+        $this->addElement(
+            new Note(
+                array(
+                    'name' => 'noteTimezone',
+                    'value' => 'Select the timezone to be used as the default. User\'s can set their own timezone if'
+                                . ' they like to, but this is the timezone to be used as the default setting .'
+                )
+            )
+        );
     }
 
     /**
@@ -193,13 +202,17 @@ class GeneralForm extends Form
             array(
                 'label'     => 'Module folder',
                 'required'  => true,
-                'value'     => $cfg->get('moduleFolder',  $this->getConfigDir() . '/config/enabledModules')
+                'value'     => $cfg->get('moduleFolder', $this->getConfigDir() . '/config/enabledModules')
             )
         );
-        $this->addElement(new Note(array(
-            'name' => 'noteModuleFolder',
-            'value' => 'Use this folder to activate modules (must be writable by your webserver)'
-        )));
+        $this->addElement(
+            new Note(
+                array(
+                    'name' => 'noteModuleFolder',
+                    'value' => 'Use this folder to activate modules (must be writable by your webserver)'
+                )
+            )
+        );
     }
 
     /**
@@ -209,7 +222,8 @@ class GeneralForm extends Form
      */
     private function addDateFormatSettings(Zend_Config $cfg)
     {
-        $phpUrl = '<a href="http://php.net/manual/en/function.date.php" target="_new">the official PHP documentation</a>';
+        $phpUrl = '<a href="http://php.net/manual/en/function.date.php" target="_new">'
+                    . 'the official PHP documentation</a>';
 
         $this->addElement(
             'text',
@@ -220,10 +234,14 @@ class GeneralForm extends Form
                 'value'     => $cfg->get('dateFormat', 'd/m/Y')
             )
         );
-        $this->addElement(new Note(array(
-            'name'  =>  'noteDateFormat',
-            'value' =>  'Display dates according to this format. See ' . $phpUrl . ' for possible values'
-        )));
+        $this->addElement(
+            new Note(
+                array(
+                    'name'  =>  'noteDateFormat',
+                    'value' =>  'Display dates according to this format. See ' . $phpUrl . ' for possible values'
+                )
+            )
+        );
 
 
         $this->addElement(
@@ -235,12 +253,22 @@ class GeneralForm extends Form
                 'value'     => $cfg->get('timeFormat', 'g:i A')
             )
         );
-        $this->addElement(new Note(array(
-            'name'  =>  'noteTimeFormat',
-            'value' =>  'Display times according to this format. See ' . $phpUrl . ' for possible values'
-        )));
+        $this->addElement(
+            new Note(
+                array(
+                    'name'  =>  'noteTimeFormat',
+                    'value' =>  'Display times according to this format. See '
+                        . $phpUrl . ' for possible values'
+                )
+            )
+        );
     }
 
+    /**
+     * Add form elements for setting the user preference storage backend
+     *
+     * @param Zend_Config $cfg      The Zend_config object of preference section
+     */
     public function addUserPreferencesDialog(Zend_Config $cfg)
     {
         $backend = $cfg->get('type', 'ini');
@@ -271,8 +299,7 @@ class GeneralForm extends Form
             )
         );
         $backends = array();
-        foreach ($this->getResources() as $name => $resource)
-        {
+        foreach ($this->getResources() as $name => $resource) {
             if ($resource['type'] !== 'db') {
                 continue;
             }
@@ -295,9 +322,11 @@ class GeneralForm extends Form
 
         $txtPreferencesIniPath->addDecorator(new ConditionalHidden());
         $txtPreferencesDbResource->addDecorator(new ConditionalHidden());
-        $this->enableAutoSubmit(array(
-            'preferences_type'
-        ));
+        $this->enableAutoSubmit(
+            array(
+                'preferences_type'
+            )
+        );
     }
 
     /**
@@ -328,6 +357,11 @@ class GeneralForm extends Form
         $this->setSubmitLabel('Save changes');
     }
 
+    /**
+     * Return an Zend_Config object containing the configuration set in this form
+     *
+     * @return Zend_Config
+     */
     public function getConfig()
     {
         if ($this->config === null) {
@@ -357,5 +391,4 @@ class GeneralForm extends Form
 
         return $cfg;
     }
-
 }

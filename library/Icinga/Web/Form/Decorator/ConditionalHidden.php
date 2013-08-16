@@ -53,7 +53,7 @@ class ConditionalHidden extends Zend_Form_Decorator_Abstract
      *
      * @return string The input tag and options XHTML.
      */
-    public function render($content ='')
+    public function render($content = '')
     {
         $attributes = $this->getElement()->getAttribs();
         $condition = isset($attributes['condition']) ? $attributes['condition'] : 1;
