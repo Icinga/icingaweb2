@@ -1,102 +1,70 @@
 <?php
-
-
+// @codingStandardsIgnoreStart
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Test\Monitoring\Forms\Command;
 
+require_once realpath(__DIR__ . '/BaseFormTest.php');
+require_once realpath(__DIR__ . '/../../../../../application/forms/Command/RescheduleNextCheckForm.php');
+require_once realpath(__DIR__ . '/../../../../../../../library/Icinga/Util/ConfigAwareFactory.php');
+require_once realpath(__DIR__ . '/../../../../../../../library/Icinga/Util/DateTimeFactory.php');
 
-require_once __DIR__. '/BaseFormTest.php';
-require_once __DIR__. '/../../../../../application/forms/Command/CommandForm.php';
-require_once __DIR__. '/../../../../../application/forms/Command/WithChildrenCommandForm.php';
-require_once __DIR__. '/../../../../../application/forms/Command/RescheduleNextCheckForm.php';
-
-
-use Monitoring\Form\Command\RescheduleNextCheckForm;
-use \Zend_View;
-use \Zend_Test_PHPUnit_ControllerTestCase;
+use \Monitoring\Form\Command\RescheduleNextCheckForm; // Used by constant FORM_CLASS
+use \DateTimeZone;
+use \Icinga\Util\DateTimeFactory;
 
 class RescheduleNextCheckFormTest extends BaseFormTest
 {
+    const FORM_CLASS = 'Monitoring\Form\Command\RescheduleNextCheckForm';
 
-    const FORMCLASS = 'Monitoring\Form\Command\RescheduleNextCheckForm';
-
-    public function testValidRescheduleSubmissions()
+    /**
+     * Set up the default time zone
+     *
+     * Utilizes singleton DateTimeFactory
+     *
+     * @backupStaticAttributes enabled
+     */
+    public function setUp()
     {
-
-        $form = $this->getRequestForm(array(
-            'checktime'  => '2013-10-19 17:30:00',
-            'forcecheck' => 1,
-            'btn_submit' => 'foo'
-        ), self::FORMCLASS);
-        $form->buildForm();
-
-        $this->assertCount(6, $form->getElements());
-
-        $this->assertTrue(
-            $form->isSubmittedAndValid(),
-            'Asserting a reschedule form with correct time and forececheck=1 to be valid'
-        );
-        $form = $this->getRequestForm(array(
-            'checktime'  => '2013-10-19 17:30:00',
-            'forcecheck' => 0,
-            'btn_submit' => 'foo'
-        ), self::FORMCLASS);
-
-        $this->assertTrue(
-            $form->isSubmittedAndValid(),
-            'Asserting a reschedule form with correct time and forecheck=0 to be valid'
-        );
+        date_default_timezone_set('UTC');
+        DateTimeFactory::setConfig(array('timezone' => new DateTimeZone('UTC')));
     }
 
-    public function testInValidRescheduleChecktimeSubmissions()
+    public function testFormInvalidWhenChecktimeIsIncorrect()
     {
         $form = $this->getRequestForm(array(
-            'checktime'  => '2013-24-12 17:30:00',
-            'forcecheck' => 1
-        ), self::FORMCLASS);
+            'checktime'     => '2013-24-12 17:30:00',
+            'forcecheck'    => 0,
+            'btn_submit'    => 'Submit'
+        ), self::FORM_CLASS);
 
         $this->assertFalse(
             $form->isSubmittedAndValid(),
-            'Asserting an logically invalid checktime to be considered as invalid reschedule data'
+            'Asserting a logically incorrect checktime as invalid'
         );
 
-        $form = $this->getRequestForm(array(
-            'checktime'  => 'AHAHA',
-            'forcecheck' => 1
-        ), self::FORMCLASS);
-
+        $form2 = $this->getRequestForm(array(
+            'checktime'     => 'Captain Morgan',
+            'forcecheck'    => 1,
+            'btn_submit'    => 'Submit'
+        ), self::FORM_CLASS);
 
         $this->assertFalse(
-            $form->isSubmittedAndValid(),
-            'Asserting an invalid non-numeric checktime to be considered as invalid reschedule data'
+            $form2->isSubmittedAndValid(),
+            'Providing arbitrary strings as checktime must be considered invalid'
         );
-    }
 
-    public function testChildrenFlag()
-    {
+        $form3 = $this->getRequestForm(array(
+            'checktime'     => '',
+            'forcecheck'    => 0,
+            'btn_submit'    => 'Submit'
+        ), self::FORM_CLASS);
 
-        $form = new RescheduleNextCheckForm();
-        $form->setRequest($this->getRequest());
-        $form->setWithChildren(true);
-        $form->buildForm();
-        $notes1 = $form->getNotes();
-        $form = null;
-
-        $form = new RescheduleNextCheckForm();
-        $form->setRequest($this->getRequest());
-        $form->setWithChildren(false);
-        $form->buildForm();
-        $notes2 = $form->getNotes();
-        $form = null;
-
-        $form = new RescheduleNextCheckForm();
-        $form->setRequest($this->getRequest());
-        $form->setWithChildren();
-        $form->buildForm();
-        $notes3 = $form->getNotes();
-        $form = null;
-
-        $this->assertEquals($notes1, $notes3);
-        $this->assertNotEquals($notes1, $notes2);
+        $this->assertFalse(
+            $form3->isSubmittedAndValid(),
+            'Missing checktime must be considered invalid'
+        );
     }
 }
+// @codingStandardsIgnoreStop
