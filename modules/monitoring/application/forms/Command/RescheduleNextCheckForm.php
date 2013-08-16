@@ -28,13 +28,13 @@
 
 namespace Monitoring\Form\Command;
 
-use \DateTime;
 use \Zend_Form_Element_Checkbox;
 use \Icinga\Web\Form\Element\DateTimePicker;
 use \Icinga\Util\DateTimeFactory;
+use \Icinga\Web\Form\Element\Note;
 
 /**
- * Form for RescheduleNextCheck
+ * Form for scheduling checks
  */
 class RescheduleNextCheckForm extends WithChildrenCommandForm
 {
@@ -43,33 +43,66 @@ class RescheduleNextCheckForm extends WithChildrenCommandForm
      */
     protected function create()
     {
-        $now = DateTimeFactory::create();
-        $dateElement = new DateTimePicker(
-            array(
-                'name'  => 'checktime',
-                'label' => t('Check time'),
-                'value' => $now->getTimestamp()
-            )
-        );
-        $this->addElement($dateElement);
-
-        $checkBox = new Zend_Form_Element_Checkbox(
-            array(
-                'name'  => 'forcecheck',
-                'label' => t('Force check'),
-                'value' => true
+        $this->addElement(
+            new Note(
+                array(
+                    'name'  => 'commanddescription',
+                    'value' => t(
+                        'This command is used to schedule the next check of hosts/services. Icinga will re-queue the '
+                        . 'check at the time you specify.'
+                    )
+                )
             )
         );
 
-        $this->addElement($checkBox);
+        $this->addElement(
+            new DateTimePicker(
+                array(
+                    'name'  => 'checktime',
+                    'label' => t('Check Time'),
+                    'value' => DateTimeFactory::create()->getTimestamp()
+                )
+            )
+        );
+        $this->addElement(
+            new Note(
+                array(
+                    'name'  => 'checktimenote',
+                    'value' => t('Set the date/time when this check should be executed.')
+                )
+            )
+        );
 
+        $this->addElement(
+            new Zend_Form_Element_Checkbox(
+                array(
+                    'name'  => 'forcecheck',
+                    'label' => t('Force Check'),
+                    'value' => true
+                )
+            )
+        );
+        $this->addElement(
+            new Note(
+                array(
+                    'name'  => 'forcechecknote',
+                    'value' => t(
+                        'If you select this option, Icinga will force a check regardless of both what time the '
+                        . 'scheduled check occurs and whether or not checks are enabled.'
+                    )
+                )
+            )
+        );
+
+        // TODO: As of the time of writing it's possible to set hosts AND services as affected by this command but
+        // with children only makes sense on hosts
         if ($this->getWithChildren() === true) {
-            $this->addNote(t('Reschedule next check for this host and its services.'));
+            $this->addNote(t('TODO: Help message when with children is enabled'));
         } else {
-            $this->addNote(t('Reschedule next check for this object.'));
+            $this->addNote(t('TODO: Help message when with children is disabled'));
         }
 
-        $this->setSubmitLabel(t('Reschedule check'));
+        $this->setSubmitLabel(t('Reschedule Check'));
 
         parent::create();
     }
