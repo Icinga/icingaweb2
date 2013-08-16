@@ -28,15 +28,13 @@
 
 namespace Icinga\Web\Widget\Tabextension;
 
-use Icinga\Application\Logger;
-use Icinga\Web\Widget\Tab;
-use Icinga\Web\Widget\Tabs;
-use Icinga\Web\Url;
+use \Icinga\Application\Logger;
+use \Icinga\Web\Widget\Tab;
+use \Icinga\Web\Widget\Tabs;
+use \Icinga\Web\Url;
 
 /**
  * Tabextension that offers different output formats for the user in the dropdown area
- *
- *
  */
 class OutputFormat implements Tabextension
 {
@@ -97,7 +95,7 @@ class OutputFormat implements Tabextension
      * In general, it's assumed that all types are supported when an outputFormat extension
      * is added, so this class offers to remove specific types instead of adding ones
      *
-     * @param array $disabled       An array of output types to <b>not</b> show.
+     * @param array $disabled An array of output types to <b>not</b> show.
      *
      */
     public function __construct(array $disabled = array())
@@ -119,9 +117,9 @@ class OutputFormat implements Tabextension
     /**
      * Applies the format selectio to the provided tabset
      *
-     * @param Tabs                  The tabs object to extend with
+     * @param   Tabs $tabs The tabs object to extend with
      *
-     * @see Tabextension::apply()
+     * @see     Tabextension::apply()
      */
     public function apply(Tabs $tabs)
     {

@@ -39,18 +39,22 @@ use \Icinga\Web\Url;
 class BasketAction implements Tabextension
 {
     /**
-     * @see Tabextension::apply()
+     * Applies the dashboard actions to the provided tabset
+     *
+     * @param   Tabs $tabs The tabs object to extend with
+     *
+     * @see     \Icinga\Web\Widget\Tabextension::apply()
      */
     public function apply(Tabs $tabs)
     {
         $tabs->addAsDropdown(
             'basket',
             array(
-                'title'     =>  'URL Basket',
-                'icon'      =>  'img/classic/basket.png',
-                'url'       =>  Url::fromPath('basket/add'),
+                'title'     => 'URL Basket',
+                'icon'      => 'img/classic/basket.png',
+                'url'       => Url::fromPath('basket/add'),
                 'urlParams' => array(
-                    'url'   => Url::fromRequest()->getRelativeUrl()
+                    'url' => Url::fromRequest()->getRelativeUrl()
                 )
             )
         );

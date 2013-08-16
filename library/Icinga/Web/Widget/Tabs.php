@@ -31,12 +31,10 @@ namespace Icinga\Web\Widget;
 use \Icinga\Exception\ProgrammingError;
 use \Icinga\Web\Widget\Tabextension\Tabextension;
 use \Zend_View_Abstract;
-
 use \Countable;
 
 /**
  * Navigation tab widget
- *
  */
 class Tabs implements Countable, Widget
 {
@@ -45,11 +43,11 @@ class Tabs implements Countable, Widget
      *
      * @var string
      */
-    private $baseTpl =<<<'EOT'
-    <ul class="nav nav-tabs">
-        {TABS}
+    private $baseTpl = <<< 'EOT'
+<ul class="nav nav-tabs">
+    {TABS}
     {DROPDOWN}
-    </ul>
+</ul>
 EOT;
 
     /**
@@ -57,13 +55,15 @@ EOT;
      *
      * @var string
      */
-    private $dropdownTpl =<<<'EOT'
-        <li class="dropdown pull-right ">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-list-ul"> </i></a>
-            <ul class="dropdown-menu">
-                {TABS}
-            </ul>
-         </li>
+    private $dropdownTpl = <<< 'EOT'
+<li class="dropdown pull-right ">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+        <i class="icon-list-ul"></i>
+    </a>
+    <ul class="dropdown-menu">
+        {TABS}
+    </ul>
+</li>
 EOT;
 
 
@@ -93,11 +93,12 @@ EOT;
      *
      * If another tab is currently active it will be deactivated
      *
-     * @param  string $name Name of the tab going to be activated
+     * @param   string $name Name of the tab going to be activated
      *
-     * @throws ProgrammingError if given tab name doesn't exist
+     * @return  self
      *
-     * @return self
+     * @throws  ProgrammingError When the given tab name doesn't exist
+     *
      */
     public function activate($name)
     {
@@ -124,9 +125,9 @@ EOT;
     /**
      * Set the CSS class name(s) for the &lt;ul&gt; element
      *
-     * @param  string $name CSS class name(s)
+     * @param   string $name CSS class name(s)
      *
-     * @return self
+     * @return  self
      */
     public function setClass($name)
     {
@@ -137,9 +138,9 @@ EOT;
     /**
      * Whether the given tab name exists
      *
-     * @param  string $name Tab name
+     * @param   string $name Tab name
      *
-     * @return bool
+     * @return  bool
      */
     public function has($name)
     {
@@ -149,11 +150,11 @@ EOT;
     /**
      * Whether the given tab name exists
      *
-     * @param  string $name The tab you're interested in
+     * @param   string $name The tab you're interested in
      *
-     * @throws ProgrammingError if given tab name doesn't exist
+     * @return  Tab
      *
-     * @return Tab
+     * @throws  ProgrammingError When the given tab name doesn't exist
      */
     public function get($name)
     {
@@ -169,12 +170,12 @@ EOT;
      * A unique tab name is required, the Tab itself can either be an array
      * with tab properties or an instance of an existing Tab
      *
-     * @param  string $name                The new tab name
-     * @param  array|Tab The tab itself of it's properties
+     * @param   string      $name   The new tab name
+     * @param   array|Tab   $tab    The tab itself of it's properties
      *
-     * @throws ProgrammingError if tab name already exists
+     * @return  self
      *
-     * @return self
+     * @throws  ProgrammingError When the tab name already exists
      */
     public function add($name, $tab)
     {
@@ -196,10 +197,10 @@ EOT;
      * exists. The tab can either be an array with tab properties or an instance
      * of an existing Tab
      *
-     * @param  string $name                The new tab name
-     * @param  array|Tab The tab itself of it's properties
+     * @param   string      $name   The new tab name
+     * @param   array|Tab   $tab    The tab itself of it's properties
      *
-     * @return self
+     * @return  self
      */
     public function set($name, $tab)
     {
@@ -227,9 +228,9 @@ EOT;
     /**
      * Render the dropdown area with it's tabs and return the resulting HTML
      *
-     * @param Zend_View_Abstract $view      The view used for rendering
+     * @param   Zend_View_Abstract $view The view used for rendering
      *
-     * @return mixed|string
+     * @return  mixed|string
      */
     private function renderDropdownTabs(Zend_View_Abstract $view)
     {
@@ -244,15 +245,15 @@ EOT;
             }
             $tabs .= $tab->render($view);
         }
-        return str_replace("{TABS}", $tabs, $this->dropdownTpl);
+        return str_replace('{TABS}', $tabs, $this->dropdownTpl);
     }
 
     /**
      * Render all tabs, except the ones in dropdown area and return the resulting HTML
      *
-     * @param Zend_View_Abstract $view  The view used for rendering
+     * @param   Zend_View_Abstract $view The view used for rendering
      *
-     * @return string
+     * @return  string
      */
     private function renderTabs(Zend_View_Abstract $view)
     {
@@ -268,6 +269,8 @@ EOT;
     }
 
     /**
+     * Render to HTML
+     *
      * @see Widget::render
      */
     public function render(Zend_View_Abstract $view)
@@ -277,17 +280,17 @@ EOT;
         }
 
         $html = $this->baseTpl;
-        $html = str_replace("{TABS}", $this->renderTabs($view), $html);
-        $html = str_replace("{DROPDOWN}", $this->renderDropdownTabs($view), $html);
+        $html = str_replace('{TABS}', $this->renderTabs($view), $html);
+        $html = str_replace('{DROPDOWN}', $this->renderDropdownTabs($view), $html);
         return $html;
     }
 
     /**
      * Return the number of tabs
      *
-     * @see Countable
+     * @return  int
      *
-     * @return int
+     * @see     Countable
      */
     public function count()
     {
@@ -307,9 +310,9 @@ EOT;
     /**
      * Apply a Tabextension on this tabs object
      *
-     * @param Tabextension $tabextension
+     * @param   Tabextension $tabextension
      *
-     * @return self
+     * @return  self
      */
     public function extend(Tabextension $tabextension)
     {

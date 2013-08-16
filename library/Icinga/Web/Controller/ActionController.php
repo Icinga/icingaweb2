@@ -2,29 +2,30 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga 2 Web.
- * 
+ *
  * Icinga 2 Web - Head for multiple monitoring backends.
  * Copyright (C) 2013 Icinga Development Team
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
+ *
  * @copyright 2013 Icinga Development Team <info@icinga.org>
  * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
  * @author    Icinga Development Team <info@icinga.org>
  */
 // {{{ICINGA_LICENSE_HEADER}}}
+
 namespace Icinga\Web\Controller;
 
 use \Icinga\Authentication\Manager as AuthManager;
@@ -50,38 +51,37 @@ use \Zend_Controller_Action_HelperBroker as ZfActionHelper;
  */
 class ActionController extends ZfController
 {
-
     /**
-    * True to mark this layout to not render the full layout
-    *
-    * @var bool
-    */
+     * True to mark this layout to not render the full layout
+     *
+     * @var bool
+     */
     protected $replaceLayout = false;
 
     /**
-    * If true, this controller will be shown even when no authentication is available
-    * Needed mainly for the authentication controller 
-    *
-    * @var bool
-    */
+     * If true, this controller will be shown even when no authentication is available
+     * Needed mainly for the authentication controller
+     *
+     * @var bool
+     */
     protected $handlesAuthentication = false;
 
     /**
-    * Set true when this controller modifies the session.
-    *
-    * otherwise the session will be written back to disk and closed before the controller 
-    * action is executed, leading to every modification in the session to be lost after
-    * the response is submitted
-    *
-    * @var bool 
-    */
+     * Set true when this controller modifies the session
+     *
+     * otherwise the session will be written back to disk and closed before the controller
+     * action is executed, leading to every modification in the session to be lost after
+     * the response is submitted
+     *
+     * @var bool
+     */
     protected $modifiesSession = false;
 
     /**
-    * True if authentication suceeded, otherwise false
-    *
-    * @var bool
-    **/
+     * True if authentication suceeded, otherwise false
+     *
+     * @var bool
+     */
     protected $allowAccess = false;
 
 
@@ -107,15 +107,13 @@ class ActionController extends ZfController
      */
     protected $action_name;
 
-
-
     /**
      * The constructor starts benchmarking, loads the configuration and sets
      * other useful controller properties
      *
-     * @param ZfRequest $request
-     * @param ZfResponse $response
-     * @param array $invokeArgs Any additional invocation arguments
+     * @param ZfRequest     $request
+     * @param ZfResponse    $response
+     * @param array         $invokeArgs Any additional invocation arguments
      */
     public function __construct(
         ZfRequest $request,
@@ -148,10 +146,10 @@ class ActionController extends ZfController
     }
 
     /**
-    * Return the @see \Icinga\Widget\Web\Tabs of this view
-    *
-    * @return Tabs
-    **/
+     * Return the tabs
+     *
+     * @return \Icinga\Widget\Web\Tabs
+     */
     public function getTabs()
     {
         return $this->view->tabs;
@@ -186,7 +184,7 @@ class ActionController extends ZfController
      * Assert the current user has the given permission
      *
      * TODO: This has not been implemented yet (Feature #4111)
-     * 
+     *
      * @return self
      */
     final protected function assertPermission()
@@ -230,7 +228,7 @@ class ActionController extends ZfController
 
     /**
     *  Redirect to a specific url, updating the browsers URL field
-    *  
+    *
     *  @param Url|string $url       The target to redirect to
     **/
     public function redirectNow($url)
