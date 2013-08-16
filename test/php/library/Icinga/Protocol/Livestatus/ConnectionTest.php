@@ -19,15 +19,6 @@ class ConnectionTest extends TestCase
 {
 
     /**
-    * Test for Connection::HasTable() 
-    *
-    **/
-    public function testHasTable()
-    {
-        $this->markTestIncomplete('testHasTable is not implemented yet');
-    }
-
-    /**
     * Test for Connection::Select() 
     *
     **/
@@ -37,33 +28,6 @@ class ConnectionTest extends TestCase
         $connection = new Connection($socket);
         $this->assertTrue($connection->select() instanceof Query);
         unlink($socket);
-    }
-
-    /**
-    * Test for Connection::FetchAll() 
-    *
-    **/
-    public function testFetchAll()
-    {
-        $this->markTestIncomplete('testFetchAll is not implemented yet');
-    }
-
-    /**
-    * Test for Connection::Disconnect() 
-    *
-    **/
-    public function testDisconnect()
-    {
-        $this->markTestIncomplete('testDisconnect is not implemented yet');
-    }
-
-    /**
-    * Test for Connection::__destruct() 
-    *
-    **/
-    public function test__destruct()
-    {
-        $this->markTestIncomplete('test__destruct is not implemented yet');
     }
 
 }

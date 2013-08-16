@@ -28,8 +28,8 @@
 
 namespace Icinga\Web\Widget;
 
-use Icinga\Exception\ProgrammingError;
-use Zend_View_Abstract;
+use \Icinga\Web\Url;
+use \Zend_View_Abstract;
 
 /**
  * A single tab, usually used through the tabs widget
@@ -44,9 +44,6 @@ use Zend_View_Abstract;
  *                             base URL
  * @property string $urlParams Action URL Parameters
  *
- * @copyright  Copyright (c) 2013 Icinga-Web Team <info@icinga.org>
- * @author     Icinga-Web Team <info@icinga.org>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License
  */
 class Tab implements Widget
 {
@@ -99,7 +96,6 @@ class Tab implements Widget
      */
     private $iconCls = null;
 
-
     /**
      * Sets an icon image for this tab
      *
@@ -107,6 +103,9 @@ class Tab implements Widget
      */
     public function setIcon($icon)
     {
+        if (is_string($icon)) {
+            $icon = Url::fromPath($icon);
+        }
         $this->icon = $icon;
     }
 
@@ -152,9 +151,11 @@ class Tab implements Widget
      */
     public function setUrl($url)
     {
+        if (is_string($url)) {
+            $url = Url::fromPath($url);
+        }
         $this->url = $url;
     }
-
 
     /**
      * Set the parameters to be set for this tabs Url
@@ -181,9 +182,6 @@ class Tab implements Widget
                 $this->$setter($value);
             }
         }
-        if ($this->name === null) {
-            throw new ProgrammingError('Cannot create a nameless tab');
-        }
     }
 
     /**
@@ -203,6 +201,7 @@ class Tab implements Widget
     }
 
 
+
     /**
      * @see Widget::render()
      */
@@ -210,24 +209,16 @@ class Tab implements Widget
     {
         $class = $this->active ? ' class="active"' : '';
         $caption = $this->title;
+
         if ($this->icon !== null) {
-            $caption = $view->img(
-                $this->icon,
-                array(
-                    'width'  => 16,
-                    'height' => 16
-                )
-            ) . ' ' . $caption;
+            $caption = '<img src="' . $this->icon->getAbsoluteUrl()
+                . '" style="width:16px;height:16px"/> ' . $caption;
         } elseif ($this->iconCls !== null) {
             $caption = '<i class="icon-' . $this->iconCls . '"></i> ' . $caption;
         }
         if ($this->url !== null) {
-            $tab = $view->qlink(
-                $caption,
-                $this->url,
-                $this->urlParams,
-                array('quote' => false)
-            );
+            $this->url->overwriteParams($this->urlParams);
+            $tab = '<a href="' . $this->url->getAbsoluteUrl() . '">' . $caption . '</a>';
         } else {
             $tab = $caption;
         }

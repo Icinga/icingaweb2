@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga 2 Web.
@@ -26,17 +27,24 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-/**
- * Module action controller
- */
-namespace Icinga\Web\Controller;
+
+namespace Tests\Icinga\Web;
+
+require_once('Zend/View/Abstract.php');
+use \Zend_View_Abstract;
 
 /**
- * Base class for all module action controllers
+ * ViewMock that does absolutely nothing
  *
- * @TODO: Only here for compatibility and testing reasons, make ActionController testable and remove this (Bug #4540)
- *
-*/
-class ModuleActionController extends ActionController
+ */
+class ViewMock extends Zend_View_Abstract
 {
+    /**
+     * No operation is performed here
+     */
+    protected function _run()
+    {
+    }
 }
+
+// @codingStandardsIgnoreEnd

@@ -87,9 +87,7 @@ var onLinkTagClick = function(ev) {
             '.layout-main-detail * a' : {
                 'click' : onLinkTagClick
             },
-/*            'a' : {
-                'click' : onOuterLinkClick
-            },*/
+
             '.layout-main-detail .icinga-container#icinga-detail' : {
                 'focus' : expandDetailView
             }

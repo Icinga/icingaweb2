@@ -27,13 +27,15 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use Icinga\Web\Controller\ActionController;
-use Icinga\Application\Icinga,
-    Zend_Controller_Action_Exception as ActionException;
+use \Zend_Controller_Action_Exception as ActionException;
+use \Icinga\Web\Controller\ActionController;
+use \Icinga\Application\Icinga;
 
 class StaticController extends ActionController
 {
-
+    /**
+     * @TODO: Bug #4572
+     */
     protected $handlesAuthentication = true;
 
     public function init()
@@ -45,11 +47,10 @@ class StaticController extends ActionController
     private function getModuleList()
     {
         $modules = Icinga::app()->getModuleManager()->getLoadedModules();
-
         // preliminary static definition
         $result = array();
         foreach ($modules as $name => $module) {
-            $hasJs = file_exists($module->getBasedir() . "/public/js/$name.js");
+            $hasJs = file_exists($module->getBasedir() . '/public/js/' . $name . '.js');
             $result[] = array(
                 'name'      => $name,
                 'active'    => true,
@@ -62,11 +63,10 @@ class StaticController extends ActionController
 
     public function modulelistAction()
     {
-
         $this->_helper->viewRenderer->setNoRender(true);
         $this->_helper->layout()->disableLayout();
-        $this->getResponse()->setHeader("Content-Type","application/json");
-        echo "define(function() { return ".json_encode($this->getModuleList(),true)."; })";
+        $this->getResponse()->setHeader('Content-Type', 'application/json');
+        echo 'define(function() { return ' . json_encode($this->getModuleList(), true) . '; })';
         exit;
     }
 
@@ -74,7 +74,7 @@ class StaticController extends ActionController
     {
         $module = $this->_getParam('module_name');
         $file   = $this->_getParam('file');
-        
+
         $basedir = Icinga::app()->getModuleManager()->getModule($module)->getBaseDir();
 
         $filePath = $basedir . '/public/img/' . $file;
@@ -112,14 +112,14 @@ class StaticController extends ActionController
         $file   = $this->_getParam('file');
 
         if (!Icinga::app()->getModuleManager()->hasEnabled($module)) {
-            echo "/** Module not enabled **/";
+            echo '/** Module not enabled **/';
             return;
         }
         $basedir = Icinga::app()->getModuleManager()->getModule($module)->getBaseDir();
 
         $filePath = $basedir . '/public/js/' . $file;
         if (!file_exists($filePath)) {
-            echo "/** Module has no js files **/";
+            echo '/** Module has no js files **/';
             return;
         }
         $hash = md5_file($filePath);
@@ -143,10 +143,7 @@ class StaticController extends ActionController
         } else {
             readfile($filePath);
         }
-
         return;
     }
-
 }
-
 // @codingStandardsIgnoreEnd

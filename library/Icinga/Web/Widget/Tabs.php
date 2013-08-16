@@ -28,17 +28,45 @@
 
 namespace Icinga\Web\Widget;
 
-use Icinga\Exception\ProgrammingError;
-use Icinga\Web\Url;
-
-use Countable;
+use \Icinga\Exception\ProgrammingError;
+use \Icinga\Web\Widget\Tabextension\Tabextension;
+use \Zend_View_Abstract;
+use \Countable;
 
 /**
  * Navigation tab widget
- *
  */
 class Tabs implements Countable, Widget
 {
+    /**
+     * Template used for the base tabs
+     *
+     * @var string
+     */
+    private $baseTpl = <<< 'EOT'
+<ul class="nav nav-tabs">
+    {TABS}
+    {DROPDOWN}
+</ul>
+EOT;
+
+    /**
+     * Template used for the tabs dropdown
+     *
+     * @var string
+     */
+    private $dropdownTpl = <<< 'EOT'
+<li class="dropdown pull-right ">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+        <i class="icon-list-ul"></i>
+    </a>
+    <ul class="dropdown-menu">
+        {TABS}
+    </ul>
+</li>
+EOT;
+
+
     /**
      * This is where single tabs added to this container will be stored
      *
@@ -54,30 +82,23 @@ class Tabs implements Countable, Widget
     private $active;
 
     /**
-     * Class name(s) going to be assigned to the &lt;ul&gt; element
+     * Array of tab names which should be displayed in a dropdown
      *
-     * @var string
+     * @var array
      */
-    private $tab_class = 'nav-tabs';
-
-    /**
-     * Array when special actions (dropdown) are enabled
-     * @TODO: Remove special part from tabs (Bug #4512)
-     *
-     * @var bool|array
-     */
-    private $specialActions = false;
+    private $dropdownTabs = array();
 
     /**
      * Activate the tab with the given name
      *
      * If another tab is currently active it will be deactivated
      *
-     * @param  string $name Name of the tab going to be activated
+     * @param   string $name Name of the tab going to be activated
      *
-     * @throws ProgrammingError if given tab name doesn't exist
+     * @return  self
      *
-     * @return self
+     * @throws  ProgrammingError When the given tab name doesn't exist
+     *
      */
     public function activate($name)
     {
@@ -87,18 +108,8 @@ class Tabs implements Countable, Widget
             }
             $this->get($name)->setActive();
             $this->active = $name;
-            return $this;
         }
-
-        throw new ProgrammingError(
-            sprintf(
-                "Cannot activate a tab that doesn't exist: %s. Available: %s",
-                $name,
-                empty($this->tabs)
-                ? 'none'
-                : implode(', ', array_keys($this->tabs))
-            )
-        );
+        return $this;
     }
 
     /**
@@ -114,9 +125,9 @@ class Tabs implements Countable, Widget
     /**
      * Set the CSS class name(s) for the &lt;ul&gt; element
      *
-     * @param  string $name CSS class name(s)
+     * @param   string $name CSS class name(s)
      *
-     * @return self
+     * @return  self
      */
     public function setClass($name)
     {
@@ -127,9 +138,9 @@ class Tabs implements Countable, Widget
     /**
      * Whether the given tab name exists
      *
-     * @param  string $name Tab name
+     * @param   string $name Tab name
      *
-     * @return bool
+     * @return  bool
      */
     public function has($name)
     {
@@ -139,21 +150,16 @@ class Tabs implements Countable, Widget
     /**
      * Whether the given tab name exists
      *
-     * @param  string $name The tab you're interested in
+     * @param   string $name The tab you're interested in
      *
-     * @throws ProgrammingError if given tab name doesn't exist
+     * @return  Tab
      *
-     * @return Tab
+     * @throws  ProgrammingError When the given tab name doesn't exist
      */
     public function get($name)
     {
         if (!$this->has($name)) {
-            throw new ProgrammingError(
-                sprintf(
-                    'There is no such tab: %s',
-                    $name
-                )
-            );
+            return null;
         }
         return $this->tabs[$name];
     }
@@ -164,12 +170,12 @@ class Tabs implements Countable, Widget
      * A unique tab name is required, the Tab itself can either be an array
      * with tab properties or an instance of an existing Tab
      *
-     * @param  string $name                The new tab name
-     * @param  array|Tab The tab itself of it's properties
+     * @param   string      $name   The new tab name
+     * @param   array|Tab   $tab    The tab itself of it's properties
      *
-     * @throws ProgrammingError if tab name already exists
+     * @return  self
      *
-     * @return self
+     * @throws  ProgrammingError When the tab name already exists
      */
     public function add($name, $tab)
     {
@@ -191,10 +197,10 @@ class Tabs implements Countable, Widget
      * exists. The tab can either be an array with tab properties or an instance
      * of an existing Tab
      *
-     * @param  string $name                The new tab name
-     * @param  array|Tab The tab itself of it's properties
+     * @param   string      $name   The new tab name
+     * @param   array|Tab   $tab    The tab itself of it's properties
      *
-     * @return self
+     * @return  self
      */
     public function set($name, $tab)
     {
@@ -207,93 +213,84 @@ class Tabs implements Countable, Widget
     }
 
     /**
-     * Enable special actions (dropdown with format, basket and dashboard)
+     * Add a tab to the dropdown on the right side of the tab-bar.
      *
-     * @TODO: Remove special part from tabs (Bug #4512)
-     *
-     * @return $this
+     * @param $name
+     * @param $tab
      */
-    public function enableSpecialActions()
+    public function addAsDropdown($name, $tab)
     {
-        $this->specialActions = true;
-        return $this;
+        $this->set($name, $tab);
+        $this->dropdownTabs[] = $name;
+        $this->dropdownTabs = array_unique($this->dropdownTabs);
     }
 
     /**
+     * Render the dropdown area with it's tabs and return the resulting HTML
+     *
+     * @param   Zend_View_Abstract $view The view used for rendering
+     *
+     * @return  mixed|string
+     */
+    private function renderDropdownTabs(Zend_View_Abstract $view)
+    {
+        if (empty($this->dropdownTabs)) {
+            return '';
+        }
+        $tabs = '';
+        foreach ($this->dropdownTabs as $tabname) {
+            $tab = $this->get($tabname);
+            if ($tab === null) {
+                continue;
+            }
+            $tabs .= $tab->render($view);
+        }
+        return str_replace('{TABS}', $tabs, $this->dropdownTpl);
+    }
+
+    /**
+     * Render all tabs, except the ones in dropdown area and return the resulting HTML
+     *
+     * @param   Zend_View_Abstract $view The view used for rendering
+     *
+     * @return  string
+     */
+    private function renderTabs(Zend_View_Abstract $view)
+    {
+        $tabs = '';
+        foreach ($this->tabs as $name => $tab) {
+            // ignore tabs added to dropdown
+            if (in_array($name, $this->dropdownTabs)) {
+                continue;
+            }
+            $tabs .= $tab->render($view);
+        }
+        return $tabs;
+    }
+
+    /**
+     * Render to HTML
+     *
      * @see Widget::render
      */
-    public function render(\Zend_View_Abstract $view)
+    public function render(Zend_View_Abstract $view)
     {
         if (empty($this->tabs)) {
             return '';
         }
-        $html = '<ul class="nav ' . $this->tab_class . '">' . PHP_EOL;
 
-        foreach ($this->tabs as $tab) {
-            $html .= $tab->render($view);
-        }
-
-        // @TODO: Remove special part from tabs (Bug #4512)
-        $special = array();
-        $special[] = $view->qlink(
-            $view->img('img/classic/application-pdf.png') . ' PDF',
-            Url::fromRequest(),
-            array('filetype' => 'pdf'),
-            array('target' => '_blank', 'quote' => false)
-        );
-        $special[] = $view->qlink(
-            $view->img('img/classic/application-csv.png') . ' CSV',
-            Url::fromRequest(),
-            array('format' => 'csv'),
-            array('target' => '_blank', 'quote' => false)
-        );
-        $special[] = $view->qlink(
-            $view->img('img/classic/application-json.png') . ' JSON',
-            Url::fromRequest(),
-            array('format' => 'json', 'quote' => false),
-            array('target' => '_blank', 'quote' => false)
-        );
-
-        $special[] = $view->qlink(
-            $view->img('img/classic/basket.png') . ' URL Basket',
-            Url::fromPath('basket/add'),
-            array('url' => Url::fromRequest()->getRelativeUrl()),
-            array('quote' => false)
-        );
-
-        $special[] = $view->qlink(
-            $view->img('img/classic/dashboard.png') . ' Dashboard',
-            Url::fromPath('dashboard/addurl'),
-            array('url' => Url::fromRequest()->getRelativeUrl()),
-            array('quote' => false)
-        );
-        // $auth = Auth::getInstance();
-        // if ($this->specialActions && ! empty($special) && $auth->isAuthenticated() && $auth->getUsername() === 'admin') {
-        if ($this->specialActions) {
-            $html .= '
-               <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><b class="caret"></b></a>
-                <ul class="dropdown-menu">
-            ';
-
-            foreach ($special as $shtml) {
-                $html .= '<li>' . $shtml . "</li>\n";
-            }
-            $html .= '    </ul>
-               </li>
-            ';
-
-        }
-        $html .= "</ul>\n";
+        $html = $this->baseTpl;
+        $html = str_replace('{TABS}', $this->renderTabs($view), $html);
+        $html = str_replace('{DROPDOWN}', $this->renderDropdownTabs($view), $html);
         return $html;
     }
 
     /**
      * Return the number of tabs
      *
-     * @see Countable
+     * @return  int
      *
-     * @return int
+     * @see     Countable
      */
     public function count()
     {
@@ -308,5 +305,18 @@ class Tabs implements Countable, Widget
     public function getTabs()
     {
         return $this->tabs;
+    }
+
+    /**
+     * Apply a Tabextension on this tabs object
+     *
+     * @param   Tabextension $tabextension
+     *
+     * @return  self
+     */
+    public function extend(Tabextension $tabextension)
+    {
+        $tabextension->apply($this);
+        return $this;
     }
 }

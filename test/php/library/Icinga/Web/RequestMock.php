@@ -26,17 +26,64 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-/**
- * Module action controller
- */
-namespace Icinga\Web\Controller;
+
+namespace Tests\Icinga\Web;
 
 /**
- * Base class for all module action controllers
+ * Request mock that implements all methods required by the
+ * Url class
  *
- * @TODO: Only here for compatibility and testing reasons, make ActionController testable and remove this (Bug #4540)
- *
-*/
-class ModuleActionController extends ActionController
+ */
+class RequestMock
 {
+    /**
+     * The path of the request
+     *
+     * @var string
+     */
+    public $path = "";
+
+    /**
+     * The baseUrl of the request
+     *
+     * @var string
+     */
+    public $baseUrl = '/';
+
+    /**
+     * An array of query parameters that the request should resemble
+     *
+     * @var array
+     */
+    public $query = array();
+
+    /**
+     * Returns the path set for the request
+     *
+     * @return string
+     */
+    public function getPathInfo()
+    {
+        return $this->path;
+    }
+
+    /**
+     * Returns the baseUrl set for the request
+     *
+     * @return string
+     */
+    public function getBaseUrl()
+    {
+        return $this->baseUrl;
+    }
+
+    /**
+     * Returns the query set for the request
+     *
+     * @return array
+     */
+    public function getQuery()
+    {
+        return $this->query;
+    }
 }

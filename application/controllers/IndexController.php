@@ -29,23 +29,16 @@
 
 # namespace Icinga\Application\Controllers;
 
-use Icinga\Web\Controller\ActionController;
-use Icinga\Application\Icinga;
+use \Icinga\Web\Controller\ActionController;
+use \Icinga\Application\Icinga;
 
 /**
- * Class IndexController
- * @package Icinga\Application\Controllers
+ * Application wide index controller
  */
 class IndexController extends ActionController
 {
-
     /**
-     * @var bool
-     */
-    protected $modifiesSession = true;
-
-    /**
-     *
+     * Always authenticate
      */
     public function preDispatch()
     {
@@ -56,11 +49,10 @@ class IndexController extends ActionController
     }
 
     /**
-     *
+     * Application's start page
      */
     public function welcomeAction()
     {
     }
 }
-
 // @codingStandardsIgnoreEnd

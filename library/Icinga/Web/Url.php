@@ -17,6 +17,14 @@ use Icinga\Application\Icinga;
 class Url
 {
     /**
+     * Rather dirty hack as the ApplicationBootstrap isn't an interface right now and can't be mocked
+     * overwrite this to use a specific request for all Urls (so only in tests)
+     *
+     * @var null
+     */
+    public static $overwrittenRequest = null;
+
+    /**
      * An array of all parameters stored in this Url
      *
      * @var array
@@ -59,7 +67,7 @@ class Url
     public static function fromRequest(array $params = array(), $request = null)
     {
         if ($request === null) {
-            $request = Icinga::app()->getFrontController()->getRequest();
+            $request = self::getRequest();
         }
 
         $urlObject = new Url();
@@ -67,6 +75,19 @@ class Url
         $urlObject->setParams(array_merge($request->getQuery(), $params));
         $urlObject->setBaseUrl($request->getBaseUrl());
         return $urlObject;
+    }
+
+    /**
+     * Return a request object that should be used for determining the URL
+     *
+     * @return Zend_Abstract_Request
+     */
+    private static function getRequest()
+    {
+        if (self::$overwrittenRequest) {
+            return self::$overwrittenRequest;
+        }
+        return Icinga::app()->getFrontController()->getRequest();
     }
 
     /**
@@ -85,7 +106,7 @@ class Url
     {
         $urlObject = new Url();
         if ($request === null) {
-            $request = Icinga::app()->getFrontController()->getRequest();
+            $request = self::getRequest();
         }
         $urlObject->setBaseUrl($request->getBaseUrl());
 
@@ -174,19 +195,30 @@ class Url
     public function getAbsoluteUrl()
     {
         $url = $this->getRelativeUrl();
-        $baseUrl = '/'.ltrim($this->baseUrl, '/');
-        return $baseUrl.'/'.$url;
+        return preg_replace('/\/{2,}/', '/', '/'.$this->baseUrl.'/'.$url);
     }
 
     /**
      * Add a set of parameters to the query part if the keys don't exist yet
      *
-     * @param array $params  The parameters to add
-     * @return $this
+     * @param array $params     The parameters to add
+     * @return self
      */
     public function addParams(array $params)
     {
         $this->params += $params;
+        return $this;
+    }
+
+    /**
+     * Set and overwrite the given params if one if the same key already exists
+     *
+     * @param array $params     The parameters to set
+     * @return self
+     */
+    public function overwriteParams(array $params)
+    {
+        $this->params = array_merge($this->params, $params);
         return $this;
     }
 
@@ -318,7 +350,8 @@ class Url
      * Alias for @see Url::getAbsoluteUrl()
      * @return mixed
      */
-    public function __toString() {
+    public function __toString()
+    {
         return $this->getAbsoluteUrl();
     }
 }

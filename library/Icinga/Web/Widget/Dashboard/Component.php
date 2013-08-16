@@ -207,7 +207,7 @@ EOD;
         $html = str_replace('{URL}', $url->getAbsoluteUrl(), $this->template);
         $html = str_replace('{REMOVE_URL}', $removeUrl, $html);
         $html = str_replace('{DIMENSION}', $this->getBoxSizeAsCSS(), $html);
-        $html = str_replace('{TITLE}', $view->escape($this->getTitle()), $html);
+        $html = str_replace('{TITLE}', htmlentities($this->getTitle()), $html);
         return $html;
     }
 

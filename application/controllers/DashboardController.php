@@ -27,13 +27,13 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use Icinga\Web\Controller\ActionController;
-use Icinga\Web\Url;
-use Icinga\Application\Icinga;
-use Icinga\Web\Widget\Dashboard;
+use \Icinga\Web\Controller\ActionController;
+use \Icinga\Web\Url;
+use \Icinga\Application\Icinga;
+use \Icinga\Web\Widget\Dashboard;
 use \Icinga\Application\Config as IcingaConfig;
-use Icinga\Form\Dashboard\AddUrlForm;
-use Icinga\Exception\ConfigurationError;
+use \Icinga\Form\Dashboard\AddUrlForm;
+use \Icinga\Exception\ConfigurationError;
 
 /**
  * Handle creation, removal and displaying of dashboards, panes and components
@@ -42,13 +42,12 @@ use Icinga\Exception\ConfigurationError;
  */
 class DashboardController extends ActionController
 {
-
     /**
      * Retrieve a dashboard from the provided config
      *
-     * @param string $config    The config to read the dashboard from, or 'dashboard/dashboard' if none is given
+     * @param   string $config The config to read the dashboard from, or 'dashboard/dashboard' if none is given
      *
-     * @return Dashboard
+     * @return  \Icinga\Web\Widget\Dashboard
      */
     private function getDashboard($config = 'dashboard/dashboard')
     {
@@ -59,7 +58,6 @@ class DashboardController extends ActionController
 
     /**
      * Remove a component from the pane identified by the 'pane' parameter
-     *
      */
     public function removecomponentAction()
     {
@@ -72,24 +70,20 @@ class DashboardController extends ActionController
             )->store();
             $this->redirectNow(Url::fromPath('dashboard', array('pane' => $pane)));
         } catch (ConfigurationError $exc ) {
-
             $this->_helper->viewRenderer('show_configuration');
             $this->view->exceptionMessage = $exc->getMessage();
             $this->view->iniConfigurationString = $dashboard->toIni();
         }
     }
 
-
     /**
      * Display the form for adding new components or add the new component if submitted
-     *
      */
     public function addurlAction()
     {
         $form = new AddUrlForm();
         $form->setRequest($this->_request);
         $this->view->form = $form;
-
         if ($form->isSubmittedAndValid()) {
             $dashboard = $this->getDashboard();
             $dashboard->setComponentUrl(
@@ -115,12 +109,10 @@ class DashboardController extends ActionController
      *
      * If no pane is submitted or the submitted one doesn't exist, the default pane is
      * displayed (normally the first one)
-     *
      */
     public function indexAction()
     {
         $dashboard = $this->getDashboard();
-
         if ($this->_getParam('pane')) {
             $pane = $this->_getParam('pane');
             $dashboard->activate($pane);
@@ -137,5 +129,4 @@ class DashboardController extends ActionController
         $this->view->dashboard = $dashboard;
     }
 }
-
 // @codingStandardsIgnoreEnd
