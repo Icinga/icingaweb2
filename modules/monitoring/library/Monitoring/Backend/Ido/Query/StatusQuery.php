@@ -1,4 +1,7 @@
 <?php
+// @codingStandardsIgnoreStart
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Monitoring\Backend\Ido\Query;
 
@@ -238,13 +241,13 @@ class StatusQuery extends AbstractQuery
             array('ho' => $this->prefix . 'objects'),
             array()
         )->join(
-                array('hs' => $this->prefix . 'hoststatus'),
-                'ho.object_id = hs.host_object_id AND ho.is_active = 1 AND ho.objecttype_id = 1',
-                array()
-            )->join(
-                array('h' => $this->prefix . 'hosts'),
-                'hs.host_object_id = h.host_object_id',
-                array()
+            array('hs' => $this->prefix . 'hoststatus'),
+            'ho.object_id = hs.host_object_id AND ho.is_active = 1 AND ho.objecttype_id = 1',
+            array()
+        )->join(
+            array('h' => $this->prefix . 'hosts'),
+            'hs.host_object_id = h.host_object_id',
+            array()
             );
         $this->joinedVirtualTables = array(
             'hosts' => true,
@@ -269,14 +272,14 @@ class StatusQuery extends AbstractQuery
             's.host_object_id = h.host_object_id',
             array()
         )->join(
-                array('so' => $this->prefix . 'objects'),
-                'so.'.$this->object_id.' = s.service_object_id AND so.is_active = 1',
-                array()
-            )->joinLeft(
-                array('ss' => $this->prefix . 'servicestatus'),
-                'so.'.$this->object_id.' = ss.service_object_id',
-                array()
-            );
+            array('so' => $this->prefix . 'objects'),
+            'so.'.$this->object_id.' = s.service_object_id AND so.is_active = 1',
+            array()
+        )->joinLeft(
+            array('ss' => $this->prefix . 'servicestatus'),
+            'so.'.$this->object_id.' = ss.service_object_id',
+            array()
+        );
     }
 
     // TODO: Test this one, doesn't seem to work right now
@@ -296,10 +299,10 @@ class StatusQuery extends AbstractQuery
             'hgm.host_object_id = h.host_object_id',
             array()
         )->join(
-                array('hg' => $this->prefix . 'hostgroups'),
-                'hgm.hostgroup_id = hg'.$this->hostgroup_id,
-                array()
-            );
+            array('hg' => $this->prefix . 'hostgroups'),
+            'hgm.hostgroup_id = hg'.$this->hostgroup_id,
+            array()
+        );
 
         return $this;
     }
@@ -311,15 +314,15 @@ class StatusQuery extends AbstractQuery
             'hgm.host_object_id = s.host_object_id',
             array()
         )->join(
-                array('hg' => $this->prefix . 'hostgroups'),
-                'hgm.hostgroup_id = hg.' . $this->hostgroup_id,
-                array()
-            )->join(
-                array('hgo' => $this->prefix . 'objects'),
-                'hgo.' . $this->object_id . ' = hg.hostgroup_object_id'
-                . ' AND hgo.is_active = 1',
-                array()
-            );
+            array('hg' => $this->prefix . 'hostgroups'),
+            'hgm.hostgroup_id = hg.' . $this->hostgroup_id,
+            array()
+        )->join(
+            array('hgo' => $this->prefix . 'objects'),
+            'hgo.' . $this->object_id . ' = hg.hostgroup_object_id'
+            . ' AND hgo.is_active = 1',
+            array()
+        );
 
         return $this;
     }
@@ -332,16 +335,15 @@ class StatusQuery extends AbstractQuery
             'sgm.service_object_id = s.service_object_id',
             array()
         )->join(
-
-                array('sg' => $this->prefix . 'servicegroups'),
-                'sgm.servicegroup_id = sg.' . $this->servicegroup_id,
-                array()
-            )->join(
-                array('sgo' => $this->prefix . 'objects'),
-                'sgo.' . $this->object_id. ' = sg.servicegroup_object_id'
-                . ' AND sgo.is_active = 1',
-                array()
-            );
+            array('sg' => $this->prefix . 'servicegroups'),
+            'sgm.servicegroup_id = sg.' . $this->servicegroup_id,
+            array()
+        )->join(
+            array('sgo' => $this->prefix . 'objects'),
+            'sgo.' . $this->object_id. ' = sg.servicegroup_object_id'
+            . ' AND sgo.is_active = 1',
+            array()
+        );
 
         return $this;
     }
@@ -385,3 +387,4 @@ class StatusQuery extends AbstractQuery
         );
     }
 }
+// @codingStandardsIgnoreStop

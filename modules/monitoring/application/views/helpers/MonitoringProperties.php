@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
@@ -158,8 +159,8 @@ class Zend_View_Helper_MonitoringProperties extends Zend_View_Helper_Abstract
         }
 
         $val .= ' / '. $this->floatFormatter(
-                isset($object->check_execution_time) ? $object->check_execution_time : 0
-            ). ' seconds';
+            isset($object->check_execution_time) ? $object->check_execution_time : 0
+        ). ' seconds';
 
         return $val;
     }
@@ -274,13 +275,14 @@ class Zend_View_Helper_MonitoringProperties extends Zend_View_Helper_Abstract
             return 'N/A';
         }
         $type = self::$notificationReasons[$reason];
-        if ($reason === 8 ) {
-             if (intval($notification->notification_type) === 0) {
+        if ($reason === 8) {
+            if (intval($notification->notification_type) === 0) {
                 $type .= '(UP)';
-             } else {
+            } else {
                 $type .= '(OK)';
-             }
+            }
         }
         return $type;
     }
 }
+// @codingStandardsIgnoreStop

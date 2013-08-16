@@ -22,6 +22,7 @@
  * @author Icinga Development Team <info@icinga.org>
  */
 // {{{ICINGA_LICENSE_HEADER}}}
+
 namespace Monitoring\View;
 
 /**
