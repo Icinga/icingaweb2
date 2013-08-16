@@ -6,7 +6,6 @@
 
 ## Vagrant
 
-	
 > **Note** that the deployment of the virtual machine is tested against Vagrant starting with version 1.1.
 > Unfortunately older versions will not work.
 
@@ -24,7 +23,7 @@ have to do is install Vagrant and run:
 
 After you should be able to browse [localhost:8080/icinga2-web](http://localhost:8080/icinga2-web).
 
-### Environment 
+### Environment
 
 **Forwarded ports**:
 
@@ -113,7 +112,7 @@ Configuration can be adjusted and recreated with **/usr/local/share/misc/monitor
 
     vagrant provision
 
-in the host after any modification to the script just mentioned. 
+in the host after any modification to the script just mentioned.
 
 #### MK Livestatus
 
@@ -151,30 +150,30 @@ Examples to query our database instance:
 This is what the **dc=icinga,dc=org** *DIT* looks like:
 
 > dn: dc=icinga,dc=org
-> 
+>
 > dn: ou=people,dc=icinga,dc=org
-> 
+>
 > dn: ou=groups,dc=icinga,dc=org
-> 
+>
 > dn: cn=Users,ou=groups,dc=icinga,dc=org
 > cn: Users
 > uniqueMember: cn=Jon Doe,ou=people,dc=icinga,dc=org
 > uniqueMember: cn=Jane Smith,ou=people,dc=icinga,dc=org
 > uniqueMember: cn=John Q. Public,ou=people,dc=icinga,dc=org
 > uniqueMember: cn=Richard Roe,ou=people,dc=icinga,dc=org
-> 
+>
 > dn: cn=John Doe,ou=people,dc=icinga,dc=org
 > cn: John Doe
 > uid: jdoe
-> 
+>
 > dn: cn=Jane Smith,ou=people,dc=icinga,dc=org
 > cn: Jane Smith
 > uid: jsmith
-> 
+>
 > dn: cn=John Q. Public,ou=people,dc=icinga,dc=org
 > cn: John Q. Public
 > uid: jqpublic
-> 
+>
 > dn: cn=Richard Roe,ou=people,dc=icinga,dc=org
 > cn: Richard Roe
 > uid: rroe
@@ -183,9 +182,9 @@ All users share the password `password`.
 
 #### Testing the code
 
-All software required to run tests is installed in the virtual machine. 
+All software required to run tests is installed in the virtual machine.
 In order to run all tests you have to execute the following commands:
- 
+
     vagrant ssh -c /vagrant/test/php/runtests
     vagrant ssh -c /vagrant/test/php/checkswag
     vagrant ssh -c /vagrant/test/js/runtests
@@ -203,3 +202,12 @@ code style issues.
 
     cd /usr/local/icinga2
     ./sbin/icinga2 -c etc/icinga2/icinga2.conf.dist
+
+## Log into Icinga 2 Web
+
+If you've configure LDAP as authentication backend (which is the default) use the following login credentials:
+
+> **Username**: jdoe
+> **Password**: password
+
+Have a look at [LDAP example data](#ldap example data) for more accounts.
