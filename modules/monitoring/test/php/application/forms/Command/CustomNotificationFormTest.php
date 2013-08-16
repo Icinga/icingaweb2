@@ -8,11 +8,11 @@ namespace Test\Monitoring\Forms\Command;
 require_once realpath(__DIR__ . '/BaseFormTest.php');
 require_once realpath(__DIR__ . '/../../../../../application/forms/Command/CustomNotificationForm.php');
 
-use \Monitoring\Form\Command\CustomNotificationForm; // Used by constant FORMCLASS
+use \Monitoring\Form\Command\CustomNotificationForm; // Used by constant FORM_CLASS
 
 class CustomNotificationFormTest extends BaseFormTest
 {
-    const FORMCLASS = 'Monitoring\Form\Command\CustomNotificationForm';
+    const FORM_CLASS = 'Monitoring\Form\Command\CustomNotificationForm';
 
     public function testFormInvalidWhenCommentMissing()
     {
@@ -20,7 +20,7 @@ class CustomNotificationFormTest extends BaseFormTest
             'author'        => 'Author',
             'comment'       => '',
             'btn_submit'    => 'Submit'
-        ), self::FORMCLASS);
+        ), self::FORM_CLASS);
 
         $this->assertFalse(
             $form->isSubmittedAndValid(),
