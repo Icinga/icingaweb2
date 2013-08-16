@@ -4,21 +4,21 @@
 /**
  * Icinga 2 Web - Head for multiple monitoring frontends
  * Copyright (C) 2013 Icinga Development Team
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
+ *
  * @copyright 2013 Icinga Development Team <info@icinga.org>
  * @author Icinga Development Team <info@icinga.org>
  */
@@ -26,32 +26,36 @@
 
 # namespace Icinga\Application\Controllers;
 
-use Icinga\Web\Controller\ActionController;
-use Icinga\Authentication\Credentials;
-use Icinga\Authentication\Manager as AuthManager;
-use Icinga\Form\Authentication\LoginForm;
+use \Icinga\Web\Controller\ActionController;
+use \Icinga\Authentication\Credentials;
+use \Icinga\Authentication\Manager as AuthManager;
+use \Icinga\Form\Authentication\LoginForm;
+use \Icinga\Exception\ConfigurationError;
 
 
 /**
- * Class AuthenticationController
- * @package Icinga\Application\Controllers
+ * Application wide controller for authentication
  */
 class AuthenticationController extends ActionController
 {
     /**
-     * Flag indicates authentication handling
+     * This controller handles authentication
+     *
      * @var bool
      */
     protected $handlesAuthentication = true;
 
     /**
-     * Flag indicates session modification
+     * This controller modifies the session
+     *
      * @var bool
+     *
+     * @see \Icinga\Web\Controller\ActionController::$modifiesSession
      */
     protected $modifiesSession = true;
 
     /**
-     * Action to handle login
+     * Log into the application
      */
     public function loginAction()
     {
@@ -62,7 +66,7 @@ class AuthenticationController extends ActionController
 
         try {
             $auth = AuthManager::getInstance(null, array(
-                "writeSession" => true 
+                'writeSession' => $this->modifiesSession
             ));
 
             if ($auth->isAuthenticated()) {
@@ -74,30 +78,28 @@ class AuthenticationController extends ActionController
                 $credentials->setPassword($this->view->form->getValue('password'));
 
                 if (!$auth->authenticate($credentials)) {
-                    $this->view->form->getElement('password')->addError(t('Please provide a valid username and password'));
+                    $this->view->form->getElement('password')
+                        ->addError(t('Please provide a valid username and password'));
                 } else {
                     $this->redirectNow('index?_render=body');
                 }
             }
-        } catch (\Icinga\Exception\ConfigurationError $configError) {
+        } catch (ConfigurationError $configError) {
             $this->view->errorInfo = $configError->getMessage();
         }
     }
 
-
-
     /**
-     * Action handle logout
+     * Log out the current user
      */
     public function logoutAction()
     {
         $auth = AuthManager::getInstance(null, array(
-            "writeSession" => true 
+            'writeSession' => $this->modifiesSession
         ));
         $this->replaceLayout = true;
         $auth->removeAuthorization();
         $this->redirect('login');
     }
 }
-
 // @codingStandardsIgnoreEnd
