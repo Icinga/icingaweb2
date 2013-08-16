@@ -1,38 +1,37 @@
 <?php
+// @codingStandardsIgnoreStart
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Test\Monitoring\Forms\Command;
 
-require_once __DIR__. '/BaseFormTest.php';
-require_once __DIR__. '/../../../../../application/forms/Command/CommandForm.php';
-require_once __DIR__. '/../../../../../application/forms/Command/WithChildrenCommandForm.php';
-require_once __DIR__. '/../../../../../application/forms/Command/SubmitPassiveCheckResultForm.php';
+require_once realpath(__DIR__ . '/BaseFormTest.php');
+require_once realpath(__DIR__ . '/../../../../../application/forms/Command/SubmitPassiveCheckResultForm.php');
 
-
-use \Zend_View;
-use \Zend_Test_PHPUnit_ControllerTestCase;
-use Monitoring\Form\Command\SubmitPassiveCheckResultForm;
+use \Monitoring\Form\Command\SubmitPassiveCheckResultForm; // Used by constant FORM_CLASS
 
 class SubmitPassiveCheckResultFormTest extends BaseFormTest
 {
-    const FORMCLASS = "Monitoring\Form\Command\SubmitPassiveCheckResultForm";
+    const FORM_CLASS = 'Monitoring\Form\Command\SubmitPassiveCheckResultForm';
+
     public function testStateTypes()
     {
-        $form = $this->getRequestForm(array(), self::FORMCLASS);
+        $form = $this->getRequestForm(array(), self::FORM_CLASS);
 
         $form->setType(SubmitPassiveCheckResultForm::TYPE_SERVICE);
         $options = $form->getOptions();
-        $this->assertCount(4, $options, "Assert correct number of states in service passive checks form");
-        $this->assertEquals('OK', $options[0], "Assert OK state to be available in service passive check form");
-        $this->assertEquals('WARNING', $options[1], "Assert WARNING state to be available in service passive check form");
-        $this->assertEquals('CRITICAL', $options[2], "Assert CRITICAL state to be available in service passive check form");
-        $this->assertEquals('UNKNOWN', $options[3], "Assert UNKNOWN state to be available in service passive check form");
+        $this->assertCount(4, $options, 'Assert correct number of states in service passive checks form');
+        $this->assertEquals('OK', $options[0], 'Assert OK state to be available in service passive check form');
+        $this->assertEquals('WARNING', $options[1], 'Assert WARNING state to be available in service passive check form');
+        $this->assertEquals('CRITICAL', $options[2], 'Assert CRITICAL state to be available in service passive check form');
+        $this->assertEquals('UNKNOWN', $options[3], 'Assert UNKNOWN state to be available in service passive check form');
 
         $form->setType(SubmitPassiveCheckResultForm::TYPE_HOST);
         $options = $form->getOptions();
-        $this->assertCount(3, $options, "Assert correct number of states in host passive checks form");
-        $this->assertEquals('UP', $options[0], "Assert UP state to be available in host passive check form");
-        $this->assertEquals('DOWN', $options[1], "Assert DOWN state to be available in host passive check form");
-        $this->assertEquals('UNREACHABLE', $options[2], "Assert UNREACHABLE state to be available in host passive check form");
+        $this->assertCount(3, $options, 'Assert correct number of states in host passive checks form');
+        $this->assertEquals('UP', $options[0], 'Assert UP state to be available in host passive check form');
+        $this->assertEquals('DOWN', $options[1], 'Assert DOWN state to be available in host passive check form');
+        $this->assertEquals('UNREACHABLE', $options[2], 'Assert UNREACHABLE state to be available in host passive check form');
     }
 
     /**
@@ -41,17 +40,15 @@ class SubmitPassiveCheckResultFormTest extends BaseFormTest
      */
     public function testMissingTypeThrowingException()
     {
-        $form = $this->getRequestForm(array(), self::FORMCLASS);
+        $form = $this->getRequestForm(array(), self::FORM_CLASS);
         $form->buildForm();
     }
 
     public function testCorrectFormCreation()
     {
-        $form = $this->getRequestForm(array(), self::FORMCLASS);
+        $form = $this->getRequestForm(array(), self::FORM_CLASS);
         $form->setType(SubmitPassiveCheckResultForm::TYPE_SERVICE);
         $form->buildForm();
-
-        $this->assertCount(6, $form->getElements(), "Assert correct number of elements in form");
     }
 
     public function testCorrectServicePassiveCheckSubmission()
@@ -61,13 +58,13 @@ class SubmitPassiveCheckResultFormTest extends BaseFormTest
             'checkoutput'     => 'DING',
             'performancedata' => '',
             'btn_submit'      => 'foo'
-        ), self::FORMCLASS);
+        ), self::FORM_CLASS);
 
         $form->setType(SubmitPassiveCheckResultForm::TYPE_SERVICE);
 
         $this->assertTrue(
             $form->isSubmittedAndValid(),
-            "Assert a correct passive service check form to pass form validation"
+            'Assert a correct passive service check form to pass form validation'
         );
     }
 
@@ -77,12 +74,12 @@ class SubmitPassiveCheckResultFormTest extends BaseFormTest
             'pluginstate'     => 0,
             'checkoutput'     => '',
             'performancedata' => ''
-        ), self::FORMCLASS);
+        ), self::FORM_CLASS);
         $form->setType(SubmitPassiveCheckResultForm::TYPE_SERVICE);
 
         $this->assertFalse(
             $form->isSubmittedAndValid(),
-            "Assert empty checkoutput to cause validation errors in passive service check "
+            'Assert empty checkoutput to cause validation errors in passive service check '
         );
     }
 
@@ -92,12 +89,12 @@ class SubmitPassiveCheckResultFormTest extends BaseFormTest
             'pluginstate'     => 'LA',
             'checkoutput'     => 'DING',
             'performancedata' => ''
-        ), self::FORMCLASS);
+        ), self::FORM_CLASS);
         $form->setType(SubmitPassiveCheckResultForm::TYPE_SERVICE);
 
         $this->assertFalse(
             $form->isSubmittedAndValid(),
-            "Assert invalid (non-numeric) state to cause validation errors in passive service check"
+            'Assert invalid (non-numeric) state to cause validation errors in passive service check'
         );
     }
 }

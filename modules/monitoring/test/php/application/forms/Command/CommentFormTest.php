@@ -5,10 +5,8 @@
 
 namespace Test\Monitoring\Forms\Command;
 
-require_once __DIR__ .'/BaseFormTest.php';
-require_once __DIR__ . '/../../../../../application/forms/Command/CommandForm.php';
-require_once __DIR__ . '/../../../../../application/forms/Command/WithChildrenCommandForm.php';
-require_once __DIR__ . '/../../../../../application/forms/Command/CommentForm.php';
+require_once realpath(__DIR__ . '/BaseFormTest.php');
+require_once realpath(__DIR__ . '/../../../../../../../modules/monitoring/application/forms/Command/CommentForm.php');
 
 use \Monitoring\Form\Command\CommentForm; // Used by constant FORMCLASS
 

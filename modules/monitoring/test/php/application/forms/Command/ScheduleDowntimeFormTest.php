@@ -1,38 +1,49 @@
 <?php
+// @codingStandardsIgnoreStart
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Test\Monitoring\Forms\Command;
 
-require_once __DIR__. '/BaseFormTest.php';
-require_once __DIR__. '/../../../../../application/forms/Command/CommandForm.php';
-require_once __DIR__. '/../../../../../application/forms/Command/WithChildrenCommandForm.php';
-require_once __DIR__. '/../../../../../application/forms/Command/ScheduleDowntimeForm.php';
+require_once realpath(__DIR__ . '/BaseFormTest.php');
+require_once realpath(__DIR__ . '/../../../../../../../modules/monitoring/application/forms/Command/ScheduleDowntimeForm.php');
+require_once realpath(__DIR__ . '/../../../../../../../library/Icinga/Util/ConfigAwareFactory.php');
+require_once realpath(__DIR__ . '/../../../../../../../library/Icinga/Util/DateTimeFactory.php');
 
-use Monitoring\Form\Command\ScheduleDowntimeForm;
-use \Zend_View;
-use \Zend_Test_PHPUnit_ControllerTestCase;
+use \Monitoring\Form\Command\ScheduleDowntimeForm; // Used by constant FORM_CLASS
+use \DateTimeZone;
+use \Icinga\Util\DateTimeFactory;
 
 class ScheduleDowntimeFormTest extends BaseFormTest
 {
-    const FORMCLASS = 'Monitoring\Form\Command\ScheduleDowntimeForm';
+    const FORM_CLASS = 'Monitoring\Form\Command\ScheduleDowntimeForm';
+
+    /**
+     * Set up the default time zone
+     *
+     * Utilizes singleton DateTimeFactory
+     *
+     * @backupStaticAttributes enabled
+     */
+    public function setUp()
+    {
+        date_default_timezone_set('UTC');
+        DateTimeFactory::setConfig(array('timezone' => new DateTimeZone('UTC')));
+    }
+
     public function testCorrectFormElementCreation()
     {
-        $formFixed = $this->getRequestForm(array(), self::FORMCLASS);
+        $formFixed = $this->getRequestForm(array(), self::FORM_CLASS);
         $formFixed->buildForm();
         $formFlexible = $this->getRequestForm(array(
             'type' => 'flexible'
-        ), self::FORMCLASS);
+        ), self::FORM_CLASS);
         $formFlexible->buildForm();
 
-        $this->assertCount(11, $formFixed->getElements());
-        $this->assertCount(13, $formFlexible->getElements());
-
-        $form = $this->getRequestForm(array(), self::FORMCLASS);
+        $form = $this->getRequestForm(array(), self::FORM_CLASS);
         $form->setWithChildren(true);
         $form->buildForm();
-
-        $this->assertCount(12, $form->getElements());
     }
-
 
     public function testCorrectValidationWithChildrend()
     {
@@ -47,8 +58,7 @@ class ScheduleDowntimeFormTest extends BaseFormTest
             'minutes'    => '',
             'btn_submit' => 'foo',
             // 'childobjects' => '',
-        ), self::FORMCLASS);
-
+        ), self::FORM_CLASS);
 
         $form->setWithChildren(true);
 
@@ -67,14 +77,13 @@ class ScheduleDowntimeFormTest extends BaseFormTest
             'minutes'    => '10',
             'btn_submit' => 'foo'
             // 'childobjects' => '',
-        ), self::FORMCLASS);
+        ), self::FORM_CLASS);
         $form->setWithChildren(true);
 
         $this->assertTrue(
             $form->isSubmittedAndValid(),
             'Asserting a correct flexible downtime form to be considered valid'
         );
-
     }
 
     public function testMissingFlexibleDurationRecognition()
@@ -89,7 +98,7 @@ class ScheduleDowntimeFormTest extends BaseFormTest
             'hours'     => '',
             'minutes'   => '',
             // 'childobjects' => '',
-        ), self::FORMCLASS);
+        ), self::FORM_CLASS);
         $form->setWithChildren(true);
 
         $this->assertFalse(
@@ -100,7 +109,6 @@ class ScheduleDowntimeFormTest extends BaseFormTest
 
     public function testMissingAuthorRecognition()
     {
-
         $form = $this->getRequestForm(array(
             'author'    => '',
             'comment'   => 'DING DING',
@@ -111,7 +119,7 @@ class ScheduleDowntimeFormTest extends BaseFormTest
             'hours'     => '',
             'minutes'   => '',
             // 'childobjects' => '',
-        ), self::FORMCLASS);
+        ), self::FORM_CLASS);
         $form->setWithChildren(true);
 
 
@@ -133,7 +141,7 @@ class ScheduleDowntimeFormTest extends BaseFormTest
             'hours'     => '',
             'minutes'   => '',
             // 'childobjects' => '',
-        ), self::FORMCLASS);
+        ), self::FORM_CLASS);
         $form->setWithChildren(true);
 
 
@@ -155,7 +163,7 @@ class ScheduleDowntimeFormTest extends BaseFormTest
             'hours'     => '',
             'minutes'   => '',
             // 'childobjects' => '',
-        ), self::FORMCLASS);
+        ), self::FORM_CLASS);
         $form->setWithChildren(true);
 
         $this->assertFalse(
@@ -176,7 +184,7 @@ class ScheduleDowntimeFormTest extends BaseFormTest
             'hours'     => '',
             'minutes'   => '',
             // 'childobjects' => '',
-        ), self::FORMCLASS);
+        ), self::FORM_CLASS);
         $form->setWithChildren(true);
 
         $this->assertFalse(
@@ -187,7 +195,6 @@ class ScheduleDowntimeFormTest extends BaseFormTest
 
     public function testInvalidEndTimeRecognition()
     {
-
         $form = $this->getRequestForm(array(
             'author'    => 'OK',
             'comment'   => 'OK',
@@ -198,7 +205,7 @@ class ScheduleDowntimeFormTest extends BaseFormTest
             'hours'     => '',
             'minutes'   => '',
             // 'childobjects' => '',
-        ), self::FORMCLASS);
+        ), self::FORM_CLASS);
         $form->setWithChildren(true);
 
         $this->assertFalse(
@@ -220,7 +227,7 @@ class ScheduleDowntimeFormTest extends BaseFormTest
             'hours'     => '-1',
             'minutes'   => '12',
             // 'childobjects' => '',
-        ), self::FORMCLASS);
+        ), self::FORM_CLASS);
         $form->setWithChildren(true);
 
         $this->assertFalse(
@@ -241,7 +248,7 @@ class ScheduleDowntimeFormTest extends BaseFormTest
             'hours'     => '12',
             'minutes'   => 'DING',
             // 'childobjects' => '',
-        ), self::FORMCLASS);
+        ), self::FORM_CLASS);
         $form->setWithChildren(true);
 
         $this->assertFalse(
@@ -264,13 +271,13 @@ class ScheduleDowntimeFormTest extends BaseFormTest
             'minutes'      => '',
             'btn_submit'   => 'foo',
             'childobjects' => '0',
-        ), self::FORMCLASS);
+        ), self::FORM_CLASS);
         $form->setWithChildren(false);
 
 
         $this->assertTrue(
             $form->isSubmittedAndValid(),
-            "Assert a correct schedule downtime without children form to be considered valid"
+            'Assert a correct schedule downtime without children form to be considered valid'
         );
     }
 
@@ -285,12 +292,12 @@ class ScheduleDowntimeFormTest extends BaseFormTest
             'hours'     => '',
             'minutes'   => '',
             'childobjects' => 'AHA',
-        ), self::FORMCLASS);
+        ), self::FORM_CLASS);
         $form->setWithChildren(false);
 
         $this->assertFalse(
             $form->isSubmittedAndValid(),
-            "Assert and incorrect (non-numeric) childobjects value to cause validation errors"
+            'Assert and incorrect (non-numeric) childobjects value to cause validation errors'
         );
 
         $form = $this->getRequestForm(array(
@@ -303,18 +310,18 @@ class ScheduleDowntimeFormTest extends BaseFormTest
             'hours'     => '',
             'minutes'   => '',
             'childobjects' => '4',
-        ), self::FORMCLASS);
+        ), self::FORM_CLASS);
         $form->setWithChildren(false);
 
         $this->assertFalse(
             $form->isSubmittedAndValid(),
-            "Assert and incorrect (numeric) childobjects value to cause validation errors"
+            'Assert and incorrect (numeric) childobjects value to cause validation errors'
         );
     }
 
     public function testTimeRange()
     {
-        $form = $this->getRequestForm(array(), self::FORMCLASS);
+        $form = $this->getRequestForm(array(), self::FORM_CLASS);
         $form->buildForm();
 
         $time1 = $form->getElement('starttime')->getValue();
@@ -323,3 +330,4 @@ class ScheduleDowntimeFormTest extends BaseFormTest
         $this->assertEquals(3600, ($time2 - $time1));
     }
 }
+// @codingStandardsIgnoreStop

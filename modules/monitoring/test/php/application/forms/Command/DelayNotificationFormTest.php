@@ -6,13 +6,11 @@
 namespace Test\Monitoring\Forms\Command;
 
 require_once realpath(__DIR__ . '/BaseFormTest.php');
-require_once realpath(__DIR__ . '/../../../../../application/forms/Command/CommandForm.php');
 require_once realpath(__DIR__ . '/../../../../../application/forms/Command/DelayNotificationForm.php');
-
 
 use \Monitoring\Form\Command\DelayNotificationForm; // Used by constant FORM_CLASS
 
-class DelayNotificationFormFormTest extends BaseFormTest
+class DelayNotificationFormTest extends BaseFormTest
 {
     const FORM_CLASS = 'Monitoring\Form\Command\DelayNotificationForm';
 
