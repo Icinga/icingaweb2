@@ -2,24 +2,24 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga 2 Web.
- * 
+ *
  * Icinga 2 Web - Head for multiple monitoring backends.
  * Copyright (C) 2013 Icinga Development Team
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
+ *
  * @copyright 2013 Icinga Development Team <info@icinga.org>
  * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
  * @author    Icinga Development Team <info@icinga.org>
@@ -648,31 +648,31 @@ class CommandPipe
     }
 
     /**
-     * Send a custom host or service notification
+     * Send custom host and/or service notifications
      *
-     * @param $objects              monitoring objects to send this notification to
-     * @param Comment $comment      comment to use in the notification
-     * @param int [$...]            Optional list of Notification flags which will be used as the option parameter
+     * @param array                 $objects        Affected monitoring objects
+     * @param CustomNotification    $notification
      */
-    public function sendCustomNotification($objects, Comment $comment, $optionsVarList = 0/*, ...*/)
+    public function sendCustomNotification(array $objects, CustomNotification $notification)
     {
-        $args = func_get_args();
-        // logical OR for all notification options
-        for ($i = 3; $i < count($args); $i++) {
-            $optionsVarList |= $args[$i];
-        }
-
-        foreach ($objects as $object) {
-            $type = $this->getObjectType($object);
-            $msg = 'SEND_CUSTOM_'.(($type == self::TYPE_SERVICE) ? 'SVC' : 'HOST' ).'_NOTIFICATION';
-            $msg .= ';'.$object->host_name;
-            if ($type == self::TYPE_SERVICE) {
-                $msg .= ';'.$object->service_description;
+        foreach ($objects as $hostOrService) {
+            if (isset($hostOrService->service_description) && isset($hostOrService->host_name)) {
+                // Assume service
+                $command = sprintf(
+                    $notification->getFormatString(self::TYPE_SERVICE),
+                    $hostOrService->host_name,
+                    $hostOrService->service_description
+                );
+            } elseif (isset($hostOrService->host_name)) {
+                // Assume host
+                $command = sprintf(
+                    $notification->getFormatString(self::TYPE_HOST),
+                    $hostOrService->host_name
+                );
+            } else {
+                continue;
             }
-            $msg .= ';'.$optionsVarList;
-            $msg .= ';'.$comment->author;
-            $msg .= ';'.$comment->comment;
-            $this->send($msg);
+            $this->send($command);
         }
     }
 

@@ -31,13 +31,14 @@ namespace Monitoring\Form\Command;
 use \Zend_Form_Element_Text;
 use \Zend_Validate_GreaterThan;
 use \Zend_Validate_Digits;
-use Icinga\Web\Form\Element\DateTimePicker;
-use Icinga\Protocol\Commandpipe\Downtime;
-use Icinga\Protocol\Commandpipe\Comment;
-use Icinga\Util\DateTimeFactory;
+use \Icinga\Web\Form\Element\DateTimePicker;
+use \Icinga\Protocol\Commandpipe\Downtime;
+use \Icinga\Protocol\Commandpipe\Comment;
+use \Icinga\Util\DateTimeFactory;
+use \Icinga\Web\Form\Element\Note;
 
 /**
- * Form for any ScheduleDowntime command
+ * Form for scheduling downtimes
  */
 class ScheduleDowntimeForm extends WithChildrenCommandForm
 {
@@ -73,12 +74,24 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
     }
 
     /**
-     * Interface method to build the form
-     *
-     * @see CommandForm::create
+     * Create the form's elements
      */
     protected function create()
     {
+        $this->addElement(
+            new Note(
+                array(
+                    'name'  => 'commanddescription',
+                    'value' => t(
+                        'This command is used to schedule downtime for hosts/services. During the specified downtime, '
+                        . 'Icinga will not send notifications out about the affected objects. When the scheduled '
+                        . 'downtime expires, Icinga will send out notifications as it normally would. Scheduled '
+                        . 'downtimes are preserved across program shutdowns and restarts.'
+                    )
+                )
+            )
+        );
+
         $this->addElement($this->createAuthorField());
 
         $this->addElement(
@@ -88,6 +101,18 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
                 'label'    => t('Comment'),
                 'rows'     => 4,
                 'required' => true
+            )
+        );
+        $this->addElement(
+            new Note(
+                array(
+                    'name'  => 'commentnote',
+                    'value' => t(
+                        'If you work with other administrators, you may find it useful to share information '
+                        . 'about a host or service that is having problems if more than one of you may be working on '
+                        . 'it. Make sure you enter a brief description of what you are doing.'
+                    )
+                )
             )
         );
 
@@ -119,30 +144,49 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
         );
 
         $now = DateTimeFactory::create();
-        $dateTimeStart = new DateTimePicker(
-            array(
-                'name'  => 'starttime',
-                'label' => t('Start time'),
-                'value' => $now->getTimestamp()
+        $this->addElement(
+            new DateTimePicker(
+                array(
+                    'name'  => 'starttime',
+                    'label' => t('Start Time'),
+                    'value' => $now->getTimestamp()
+                )
             )
         );
-        $dateTimeEnd = new DateTimePicker(
-            array(
-                'name'  => 'endtime',
-                'label' => t('End time'),
-                'value' => $now->getTimestamp() + 3600
+        $this->addElement(
+            new Note(
+                array(
+                    'name'  => 'stattimenote',
+                    'value' => t('Set the start date/time for the downtime.')
+                )
             )
         );
-        $this->addElements(array($dateTimeStart, $dateTimeEnd));
+        $this->addElement(
+            new DateTimePicker(
+                array(
+                    'name'  => 'endtime',
+                    'label' => t('End Time'),
+                    'value' => $now->getTimestamp() + 3600
+                )
+            )
+        );
+        $this->addElement(
+            new Note(
+                array(
+                    'name'  => 'endtimenote',
+                    'value' => t('Set the end date/time for the downtime.')
+                )
+            )
+        );
 
         $this->addElement(
             'select',
             'type',
             array(
-                'label'        => t('Downtime type'),
-                'multiOptions' => $this->getDowntimeTypeOptions(),
-                'required'     => true,
-                'validators'   => array(
+                'label'         => t('Downtime Type'),
+                'multiOptions'  => $this->getDowntimeTypeOptions(),
+                'required'      => true,
+                'validators'    => array(
                     array(
                         'InArray',
                         true,
@@ -153,12 +197,25 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
                 )
             )
         );
+        $this->addElement(
+            new Note(
+                array(
+                    'name'  => 'typenote',
+                    'value' => t(
+                        'If you select the fixed option, the downtime will be in effect between the start and end '
+                        . 'times you specify whereas a flexible downtime starts when the service enters a non-OK state '
+                        . '(sometime between the start and end times you specified) and lasts as long as the duration '
+                        . 'of time you enter. The duration fields do not apply for fixed downtime.'
+                    )
+                )
+            )
+        );
         $this->enableAutoSubmit(array('type'));
 
 
         if ($this->getRequest()->getPost('type') === self::TYPE_FLEXIBLE) {
             $hoursText = new Zend_Form_Element_Text('hours');
-            $hoursText->setLabel(t('Flexible duration'));
+            $hoursText->setLabel(t('Flexible Duration'));
             $hoursText->setAttrib('style', 'width: 40px;');
             $hoursText->setValue(1);
             $hoursText->addDecorator('HtmlTag', array('tag' => 'dd', 'openOnly' => true));
@@ -170,7 +227,6 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
                     }
                 )
             );
-
             $minutesText = new Zend_Form_Element_Text('minutes');
             $minutesText->setLabel(t('Minutes'));
             $minutesText->setAttrib('style', 'width: 40px;');
@@ -185,19 +241,30 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
                     }
                 )
             );
-
             $this->addElements(array($hoursText, $minutesText));
+            $this->addElement(
+                new Note(
+                    array(
+                        'name'  => 'flexiblenote',
+                        'value' => t(
+                            'Enter here the duration of the downtime. Icinga will automatically delete the downtime '
+                            . 'after this time expired.'
+                        )
+                    )
+                )
+            );
         }
 
+        // TODO: As of the time of writing it's possible to set hosts AND services as affected by this command but
+        // with children only makes sense on hosts
         if ($this->getWithChildren() === true) {
-            $this->addNote(t('Schedule downtime for host and its services.'));
+            $this->addNote(t('TODO: Help message when with children is enabled'));
         } else {
-
             $this->addElement(
                 'select',
                 'childobjects',
                 array(
-                    'label'        => t('Child objects'),
+                    'label'        => t('Child Objects'),
                     'required'     => true,
                     'multiOptions' => array(
                         0 => t('Do nothing with child objects'),
@@ -219,11 +286,10 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
                     )
                 )
             );
-
-            $this->addNote(t('Schedule downtime for this object.'));
+            $this->addNote(t('TODO: Help message when with children is disabled'));
         }
 
-        $this->setSubmitLabel(t('Schedule downtime'));
+        $this->setSubmitLabel(t('Schedule Downtime'));
 
         parent::create();
     }
@@ -256,9 +322,9 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
     }
 
     /**
-     *  Return the downtime submitted in this form
+     * Create Downtime from request Data
      *
-     *  @return Downtime
+     * @return \Icinga\Protocol\Commandpipe\Downtime
      */
     public function getDowntime()
     {
@@ -269,7 +335,7 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
         );
         $duration = 0;
         if ($this->getValue('type') === self::TYPE_FLEXIBLE) {
-            $duration = ($this->getValue('hours')*3600) + ($this->getValue('minutes')*60);
+            $duration = ($this->getValue('hours') * 3600) + ($this->getValue('minutes') * 60);
         }
         $starttime = $this->getValue('starttime');
         $endtime = $this->getValue('endtime');
@@ -281,7 +347,7 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
             $duration,
             $this->getValue('triggered')
         );
-        if (! $this->getWithChildren()) {
+        if (!$this->getWithChildren()) {
             switch ($this->getValue('childobjects')) {
                 case 1:
                     $downtime->setType(Downtime::TYPE_WITH_CHILDREN_TRIGGERED);

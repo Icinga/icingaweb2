@@ -28,6 +28,8 @@
 
 namespace Monitoring\Form\Command;
 
+use \Icinga\Web\Form\Element\Note;
+
 /**
  * Form for the delay notification command
  */
@@ -40,11 +42,17 @@ class DelayNotificationForm extends CommandForm
 
     /**
      * Create the form's elements
-     *
-     * @see CommandForm::create()
      */
     protected function create()
     {
+        $this->addElement(
+            new Note(
+                array(
+                    'name'  => 'commanddescription',
+                    'value' => t('This command is used to delay the next problem notification that is sent out.')
+                )
+            )
+        );
         $this->addElement(
             'text',
             'minutes',
@@ -65,12 +73,10 @@ class DelayNotificationForm extends CommandForm
                 )
             )
         );
-
         $this->addNote(
             t(
-                'Delay the next problem notification. The notification delay will be '
-                . 'disregarded if the host/service changes state before the next notification is '
-                . 'scheduled to be sent out.'
+                'The notification delay will be disregarded if the host/service changes state before the next '
+                . 'notification is scheduled to be sent out.'
             )
         );
 
@@ -79,8 +85,13 @@ class DelayNotificationForm extends CommandForm
         parent::create();
     }
 
+    /**
+     * Return the currently set delay time in seconds
+     *
+     * @return integer
+     */
     public function getDelayTime()
     {
-        return $this->getValue('minutes')*60;
+        return $this->getValue('minutes') * 60;
     }
 }

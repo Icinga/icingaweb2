@@ -1,57 +1,56 @@
 <?php
+// @codingStandardsIgnoreStart
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Test\Monitoring\Forms\Command;
 
-require_once __DIR__. '/BaseFormTest.php';
-require_once __DIR__. '/../../../../../application/forms/Command/CommandForm.php';
-require_once __DIR__. '/../../../../../application/forms/Command/DelayNotificationForm.php';
+require_once realpath(__DIR__ . '/BaseFormTest.php');
+require_once realpath(__DIR__ . '/../../../../../application/forms/Command/DelayNotificationForm.php');
 
+use \Monitoring\Form\Command\DelayNotificationForm; // Used by constant FORM_CLASS
 
-use \Zend_View;
-use \Zend_Test_PHPUnit_ControllerTestCase;
-use Monitoring\Form\Command\DelayNotificationForm;
-
-class DelayNotificationFormFormTest extends BaseFormTest
+class DelayNotificationFormTest extends BaseFormTest
 {
-    public function testValidForm()
+    const FORM_CLASS = 'Monitoring\Form\Command\DelayNotificationForm';
+
+    public function testFormInvalidWhenNotificationDelayMissing()
     {
         $form = $this->getRequestForm(array(
-            'minutes'    => 12,
-            'btn_submit' => 'foo'
-        ), 'Monitoring\Form\Command\DelayNotificationForm');
-
-        $form->buildForm();
-        $this->assertCount(5, $form->getElements());
-
-        $element = $form->getElement('minutes');
-        $this->assertInstanceOf('Zend_Form_Element_Text', $element);
-        $this->assertEquals('0', $element->getValue(), "Assert a correct default value in minutes");
-        $this->assertTrue($element->isRequired(), "Assert minutes to be declared as required");
-
-        $this->assertTrue(
-            $form->isSubmittedAndValid(),
-            "Assert a correct DelayNotificationForm to be considered valid"
-        );
-
-        $this->assertEquals('12', $form->getValue('minutes'), "Assert the minutes field to be correctly populated");
-    }
-
-    public function testInvalidMinuteValue()
-    {
-        $form = $this->getRequestForm(array(
-            'minutes' => 'SCHAHH-LAHH-LAHH',
-            'btn_submit' => 'foo'
-        ), 'Monitoring\Form\Command\DelayNotificationForm');
-
-        $form->buildForm();
+            'minutes'       => '',
+            'btn_submit'    => 'Submit'
+        ), self::FORM_CLASS);
 
         $this->assertFalse(
             $form->isSubmittedAndValid(),
-            "Asserting invalid minutes (NaN) to cause validation errors"
+            'Missing notification delay must be considered invalid'
         );
+    }
 
-        $errors = $form->getErrors('minutes');
-        $this->assertCount(1, $errors, "Asserting an error to be added when the minutes value is invalid");
-        $this->assertEquals('notBetween', $errors[0], "Assert correct error message");
+    public function testFormInvalidWhenNotificationDelayNaN()
+    {
+        $form = $this->getRequestForm(array(
+            'minutes'       => 'A String',
+            'btn_submit'    => 'Submit'
+        ), self::FORM_CLASS);
+
+        $this->assertFalse(
+            $form->isSubmittedAndValid(),
+            'Incorrect notification delay, i.e. NaN must be considered invalid'
+        );
+    }
+
+    public function testFormInvalidWhenNotificationDelayOverflows()
+    {
+        $form = $this->getRequestForm(array(
+            'minutes'       => DelayNotificationForm::MAX_DELAY + 1,
+            'btn_submit'    => 'Submit'
+        ), self::FORM_CLASS);
+
+        $this->assertFalse(
+            $form->isSubmittedAndValid(),
+            'Notification delay bigger than constant "DelayNotificationForm::MAX_DELAY" must be considered invalid'
+        );
     }
 }
+// @codingStandardsIgnoreEnd

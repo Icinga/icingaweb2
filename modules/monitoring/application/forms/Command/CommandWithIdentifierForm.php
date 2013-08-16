@@ -37,6 +37,7 @@ class CommandWithIdentifierForm extends CommandForm
 {
     /**
      * Identifier for data field
+     *
      * @var string
      */
     private $fieldName = 'objectid';
@@ -52,6 +53,7 @@ class CommandWithIdentifierForm extends CommandForm
 
     /**
      * Setter for field label
+     *
      * @param string $fieldLabel
      */
     public function setFieldLabel($fieldLabel)
@@ -61,6 +63,7 @@ class CommandWithIdentifierForm extends CommandForm
 
     /**
      * Getter for field label
+     *
      * @return string
      */
     public function getFieldLabel()
@@ -70,6 +73,7 @@ class CommandWithIdentifierForm extends CommandForm
 
     /**
      * Setter for field name
+     *
      * @param string $fieldName
      */
     public function setFieldName($fieldName)
@@ -79,6 +83,7 @@ class CommandWithIdentifierForm extends CommandForm
 
     /**
      * Getter for field name
+     *
      * @return string
      */
     public function getFieldName()

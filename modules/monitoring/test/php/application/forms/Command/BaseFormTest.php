@@ -30,6 +30,8 @@ namespace Test\Monitoring\Forms\Command {
     require_once realpath($base.'library/Icinga/Web/Form/InvalidCSRFTokenException.php');
     require_once realpath($base.'library/Icinga/Web/Form/Element/Note.php');
     require_once realpath($base.'library/Icinga/Web/Form/Element/DateTimePicker.php');
+    require_once realpath($base . 'modules/monitoring/application/forms/Command/CommandForm.php');
+    require_once realpath($base . 'modules/monitoring/application/forms/Command/WithChildrenCommandForm.php');
 
     use \Zend_View;
     use \Zend_Form;

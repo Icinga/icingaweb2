@@ -28,7 +28,8 @@
 
 namespace Monitoring\Form\Command;
 
-use Icinga\Exception\ProgrammingError;
+use \Icinga\Exception\ProgrammingError;
+use \Icinga\Web\Form\Element\Note;
 
 /**
  * Form for submitting passive check results
@@ -59,6 +60,7 @@ class SubmitPassiveCheckResultForm extends CommandForm
 
     /**
      * Setup plugin states
+     *
      * @see Zend_Form::init
      */
     public function init()
@@ -85,6 +87,7 @@ class SubmitPassiveCheckResultForm extends CommandForm
 
     /**
      * Setter for type
+     *
      * @param string $type
      */
     public function setType($type)
@@ -94,6 +97,7 @@ class SubmitPassiveCheckResultForm extends CommandForm
 
     /**
      * Getter for type
+     *
      * @return string
      */
     public function getType()
@@ -103,6 +107,7 @@ class SubmitPassiveCheckResultForm extends CommandForm
 
     /**
      * Return array of options
+     *
      * @return array
      * @throws \Icinga\Exception\ProgrammingError
      */
@@ -117,20 +122,30 @@ class SubmitPassiveCheckResultForm extends CommandForm
 
     /**
      * Create the form's elements
-     *
-     * @see CommandForm::create()
      */
     protected function create()
     {
+        $this->addElement(
+            new Note(
+                array(
+                    'name'  => 'commanddescription',
+                    'value' => t(
+                        'This command is used to submit a passive check result for particular hosts/services. It is '
+                        . 'particularly useful for resetting security-related objects to OK states once they have been '
+                        . 'dealt with.'
+                    )
+                )
+            )
+        );
 
         $this->addElement(
             'select',
             'pluginstate',
             array(
-                'label'        => t('Plugin state'),
-                'multiOptions' => $this->getOptions(),
-                'required'     => true,
-                'validators'   => array(
+                'label'         => t('Check Result'),
+                'multiOptions'  => $this->getOptions(),
+                'required'      => true,
+                'validators'    => array(
                     array(
                         'Digits',
                         true
@@ -145,14 +160,30 @@ class SubmitPassiveCheckResultForm extends CommandForm
                 )
             )
         );
+        $this->addElement(
+            new Note(
+                array(
+                    'name'  => 'checkresultnote',
+                    'value' => t('Set the state which should be send to Icinga for this objects.')
+                )
+            )
+        );
 
         $this->addElement(
             'textarea',
             'checkoutput',
             array(
-                'label'    => t('Check output'),
-                'rows'     => 2,
-                'required' => true
+                'label'     => t('Check Output'),
+                'rows'      => 2,
+                'required'  => true
+            )
+        );
+        $this->addElement(
+            new Note(
+                array(
+                    'name'  => 'checkoutputnote',
+                    'value' => t('Fill in the check output string which should be send to Icinga.')
+                )
             )
         );
 
@@ -160,26 +191,49 @@ class SubmitPassiveCheckResultForm extends CommandForm
             'textarea',
             'performancedata',
             array(
-                'label' => t('Performance data'),
+                'label' => t('Performance Data'),
                 'rows' => 2
             )
         );
+        $this->addElement(
+            new Note(
+                array(
+                    'name'  => 'performancedatanote',
+                    'value' => t('Fill in the performance data string which should be send to Icinga.')
+                )
+            )
+        );
 
-        $this->setSubmitLabel(t('Submit passive check result'));
+        $this->setSubmitLabel(t('Submit Passive Check Result'));
 
         parent::create();
     }
 
+    /**
+     * Return the entered object state as an integer
+     *
+     * @return int
+     */
     public function getState()
     {
         return intval($this->getValue('pluginstate'));
     }
 
+    /**
+     * Return the entered check output as a string
+     *
+     * @return string
+     */
     public function getOutput()
     {
         return $this->getValue('checkoutput');
     }
 
+    /**
+     * Return the entered performance data as a string
+     *
+     * @return string
+     */
     public function getPerformancedata()
     {
         return $this->getValue('performancedata');

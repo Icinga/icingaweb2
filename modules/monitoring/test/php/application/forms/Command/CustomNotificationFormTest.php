@@ -1,28 +1,31 @@
 <?php
+// @codingStandardsIgnoreStart
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Test\Monitoring\Forms\Command;
 
-require_once __DIR__. '/BaseFormTest.php';
-require_once __DIR__. '/../../../../../application/forms/Command/CommandForm.php';
-require_once __DIR__. '/../../../../../application/forms/Command/CustomNotificationForm.php';
+require_once realpath(__DIR__ . '/BaseFormTest.php');
+require_once realpath(__DIR__ . '/../../../../../application/forms/Command/CustomNotificationForm.php');
 
-
-use Monitoring\Form\Command\CustomNotificationForm;
-use \Zend_View;
-use \Zend_Test_PHPUnit_ControllerTestCase;
+use \Monitoring\Form\Command\CustomNotificationForm; // Used by constant FORM_CLASS
 
 class CustomNotificationFormTest extends BaseFormTest
 {
-    public function testForm1()
+    const FORM_CLASS = 'Monitoring\Form\Command\CustomNotificationForm';
+
+    public function testFormInvalidWhenCommentMissing()
     {
         $form = $this->getRequestForm(array(
-            'comment'    => 'TEST COMMENT',
-            'author'     => 'LAOLA',
-            'btn_submit' => 'foo'
-        ), "Monitoring\Form\Command\CustomNotificationForm");
-        $form->buildForm();
+            'author'        => 'Author',
+            'comment'       => '',
+            'btn_submit'    => 'Submit'
+        ), self::FORM_CLASS);
 
-        $this->assertCount(7, $form->getElements());
-        $this->assertTrue($form->isSubmittedAndValid());
+        $this->assertFalse(
+            $form->isSubmittedAndValid(),
+            'Missing comment must be considered not valid'
+        );
     }
 }
+// @codingStandardsIgnoreEnd

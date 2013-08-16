@@ -1,68 +1,63 @@
 <?php
+// @codingStandardsIgnoreStart
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Test\Monitoring\Forms\Command;
 
+require_once realpath(__DIR__ . '/BaseFormTest.php');
+require_once realpath(__DIR__ . '/../../../../../../../modules/monitoring/application/forms/Command/CommentForm.php');
 
-require_once __DIR__.'/BaseFormTest.php';
-require_once __DIR__. '/../../../../../application/forms/Command/CommandForm.php';
-require_once __DIR__. '/../../../../../application/forms/Command/WithChildrenCommandForm.php';
-require_once __DIR__. '/../../../../../application/forms/Command/CommentForm.php';
-
-use Monitoring\Form\Command\CommentForm;
-use \Zend_View;
-
+use \Monitoring\Form\Command\CommentForm; // Used by constant FORMCLASS
 
 class CommentFormTest extends BaseFormTest
 {
-    const FORMCLASS = "Monitoring\Form\Command\CommentForm";
-    public function testForm()
-    {
-        $form = new CommentForm();
-        $form->setRequest($this->getRequest());
-        $form->buildForm();
-
-        $this->assertCount(6, $form->getElements());
-    }
-
+    const FORMCLASS = 'Monitoring\Form\Command\CommentForm';
 
     public function testCorrectCommentValidation()
     {
         $form = $this->getRequestForm(array(
-            'author'     => 'test1',
-            'comment'    => 'test2',
-            'sticky'     => '0',
-            'btn_submit' => 'foo'
+            'author'        => 'Author',
+            'comment'       => 'Comment',
+            'sticky'        => '0',
+            'btn_submit'    => 'Submit'
         ), self::FORMCLASS);
 
         $this->assertTrue(
             $form->isSubmittedAndValid(),
-            "Asserting correct comment form to be considered valid"
+            'Legal request data must be considered valid'
         );
     }
 
-    public function testRecognizeMissingCommentText()
+    public function testFormInvalidWhenCommentMissing()
     {
         $form = $this->getRequestForm(array(
-            'author'  => 'test1',
-            'comment' => '',
-            'sticky'  => '0'
+            'author'        => 'Author',
+            'comment'       => '',
+            'sticky'        => '0',
+            'btn_submit'    => 'Submit'
+
         ), self::FORMCLASS);
+
         $this->assertFalse(
             $form->isSubmittedAndValid(),
-            "Asserting missing comment text in comment form to cause validation errors"
+            'Missing comment must be considered not valid'
         );
     }
 
-    public function testRecognizeMissingCommentAuthor()
+    public function testFormInvalidWhenAuthorMissing()
     {
         $form = $this->getRequestForm(array(
-            'author'  => '',
-            'comment' => 'test2',
-            'sticky'  => '0'
+            'author'        => '',
+            'comment'       => 'Comment',
+            'sticky'        => '0',
+            'btn_submit'    => 'Submit'
         ), self::FORMCLASS);
+
         $this->assertFalse(
             $form->isSubmittedAndValid(),
-            "Asserting missing comment author to cause validation errors"
+            'Missing author must be considered not valid'
         );
     }
 }
+// @codingStandardsIgnoreEnd

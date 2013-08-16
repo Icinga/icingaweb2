@@ -28,11 +28,11 @@
 
 namespace Monitoring\Form\Command;
 
-use Icinga\Web\Form\Element\DateTimePicker;
-use Icinga\Web\Form\Element\Note;
-use Icinga\Protocol\Commandpipe\Acknowledgement;
-use Icinga\Protocol\Commandpipe\Comment;
-use Icinga\Util\DateTimeFactory;
+use \Icinga\Web\Form\Element\DateTimePicker;
+use \Icinga\Web\Form\Element\Note;
+use \Icinga\Protocol\Commandpipe\Acknowledgement;
+use \Icinga\Protocol\Commandpipe\Comment;
+use \Icinga\Util\DateTimeFactory;
 
 /**
  * Form for problem acknowledgements
@@ -40,18 +40,23 @@ use Icinga\Util\DateTimeFactory;
 class AcknowledgeForm extends CommandForm
 {
     /**
-     * Initialize form
-     */
-    public function init()
-    {
-        $this->setName('AcknowledgeForm');
-    }
-
-    /**
      * Create the form's elements
      */
     protected function create()
     {
+        $this->addElement(
+            new Note(
+                array(
+                    'name'  => 'commanddescription',
+                    'value' => t(
+                        'This command is used to acknowledge host or service problems. When a problem is '
+                        . 'acknowledged, future notifications about problems are temporarily disabled until the '
+                        . 'host/service changes from its current state.'
+                    )
+                )
+            )
+        );
+
         $this->addElement($this->createAuthorField());
 
         $this->addElement(
@@ -63,66 +68,96 @@ class AcknowledgeForm extends CommandForm
                 'required'  => true
             )
         );
+        $this->addElement(
+            new Note(
+                array(
+                    'name'  => 'commentnote',
+                    'value' => t(
+                        ' If you work with other administrators you may find it useful to share information '
+                        . 'about a host or service that is having problems if more than one of you may be working on '
+                        . 'it. Make sure you enter a brief description of what you are doing.'
+                    )
+                )
+            )
+        );
 
         $this->addElement(
             'checkbox',
             'persistent',
             array(
-                'label' => t('Persistent comment'),
+                'label' => t('Persistent Comment'),
                 'value' => false
             )
         );
-
-        $expireNote = new Note(
-            array(
-                'name'  => 'expirenote',
-                'value' => t('If the acknowledgement should expire, check the box and enter an expiration timestamp.')
-            )
-        );
-
-        $expireCheck = $this->createElement(
-            'checkbox',
-            'expire',
-            array(
-                'label' => t('Use expire time')
-            )
-        );
-
-        if ($this->getRequest()->getPost('expire', '0') === '1') {
-            $now = DateTimeFactory::create();
-            $expireTime = new DateTimePicker(
+        $this->addElement(
+            new Note(
                 array(
-                    'name'  => 'expiretime',
-                    'label' => t('Expire time'),
-                    'value' => $now->getTimestamp() + 3600
+                    'name'  => 'persistentnote',
+                    'value' => t(
+                        'If you would like the comment to remain even when the acknowledgement is removed, '
+                        . 'check this option.'
+                    )
                 )
-            );
-
-            $this->addElements(array($expireNote, $expireCheck, $expireTime));
-        } else {
-            $this->addElements(array($expireNote, $expireCheck));
-        }
-
-        $this->enableAutoSubmit(array('expire'));
-
-        $this->addDisplayGroup(
-            array(
-                'expirenote',
-                'expire',
-                'expiretime'
-            ),
-            'expire_group',
-            array(
-                'legend' => t('Expire acknowledgement')
             )
         );
 
         $this->addElement(
             'checkbox',
+            'expire',
+            array(
+                'label' => t('Use Expire Time')
+            )
+        );
+        $this->enableAutoSubmit(array('expire'));
+        $this->addElement(
+            new Note(
+                array(
+                    'name'  => 'expirenote',
+                    'value' => t('If the acknowledgement should expire, check this option.')
+                )
+            )
+        );
+        if ($this->getRequest()->getPost('expire', '0') === '1') {
+            $now = DateTimeFactory::create();
+            $this->addElement(
+                new DateTimePicker(
+                    array(
+                        'name'  => 'expiretime',
+                        'label' => t('Expire Time'),
+                        'value' => $now->getTimestamp() + 3600
+                    )
+                )
+            );
+            $this->addElement(
+                new Note(
+                    array(
+                        'name'  => 'expiretimenote',
+                        'value' => t(
+                            'Enter the expire date/time for this acknowledgement here. Icinga will '
+                            . ' delete the acknowledgement after this date expired.'
+                        )
+                    )
+                )
+            );
+        }
+
+        $this->addElement(
+            'checkbox',
             'sticky',
             array(
-                'label' => t('Sticky acknowledgement'),
-                'value' => false
+                'label' => t('Sticky Acknowledgement'),
+                'value' => true
+            )
+        );
+        $this->addElement(
+            new Note(
+                array(
+                    'name'  => 'stickynote',
+                    'value' => t(
+                        'If you want the acknowledgement to disable notifications until the host/service '
+                        . 'recovers, check this option.'
+                    )
+                )
             )
         );
 
@@ -130,12 +165,23 @@ class AcknowledgeForm extends CommandForm
             'checkbox',
             'notify',
             array(
-                'label' => t('Send notification'),
-                'value' => false
+                'label' => t('Send Notification'),
+                'value' => true
+            )
+        );
+        $this->addElement(
+            new Note(
+                array(
+                    'name'  => 'sendnotificationnote',
+                    'value' => t(
+                        'If you do not want an acknowledgement notification to be sent out to the appropriate '
+                        . 'contacts, uncheck this option.'
+                    )
+                )
             )
         );
 
-        $this->setSubmitLabel(t('Acknowledge problem'));
+        $this->setSubmitLabel(t('Acknowledge Problem'));
 
         parent::create();
     }
@@ -143,7 +189,8 @@ class AcknowledgeForm extends CommandForm
     /**
      * Add validator for dependent fields
      *
-     * @param   array   $data
+     * @param   array $data
+     *
      * @see     \Icinga\Web\Form::preValidation()
      */
     protected function preValidation(array $data)
@@ -154,6 +201,11 @@ class AcknowledgeForm extends CommandForm
         }
     }
 
+    /**
+     * Create acknowledgement from request data
+     *
+     * @return \Icinga\Protocol\Commandpipe\Acknowledgement
+     */
     public function getAcknowledgement()
     {
         $expireTime = -1;
@@ -170,6 +222,5 @@ class AcknowledgeForm extends CommandForm
             $expireTime,
             $this->getValue('sticky')
         );
-
     }
 }

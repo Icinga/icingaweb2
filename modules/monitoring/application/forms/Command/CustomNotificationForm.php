@@ -28,7 +28,8 @@
 
 namespace Monitoring\Form\Command;
 
-use Zend_Form_Element_Hidden;
+use \Icinga\Web\Form\Element\Note;
+use \Icinga\Protocol\Commandpipe\CustomNotification;
 
 /**
  * For for command CustomNotification
@@ -36,11 +37,23 @@ use Zend_Form_Element_Hidden;
 class CustomNotificationForm extends CommandForm
 {
     /**
-     * Interface method to build the form
-     * @see CommandForm::create
+     * Create the form's elements
      */
     protected function create()
     {
+        $this->addElement(
+            new Note(
+                array(
+                    'name'  => 'commanddescription',
+                    'value' => t(
+                        'This command is used to send a custom notification about hosts or services. Useful in '
+                        . 'emergencies when you need to notify admins of an issue regarding a monitored system or '
+                        . 'service.'
+                    )
+                )
+            )
+        );
+
         $this->addElement($this->createAuthorField());
 
         $this->addElement(
@@ -52,12 +65,36 @@ class CustomNotificationForm extends CommandForm
                 'required' => true
             )
         );
+        $this->addElement(
+            new Note(
+                array(
+                    'name'  => 'commentnote',
+                    'value' => t(
+                        'If you work with other administrators, you may find it useful to share information '
+                        . 'about a host or service that is having problems if more than one of you may be working on '
+                        . 'it. Make sure you enter a brief description of what you are doing.'
+                    )
+                )
+            )
+        );
 
         $this->addElement(
             'checkbox',
-            'force',
+            'forced',
             array(
                 'label' => t('Forced')
+            )
+        );
+        $this->addElement(
+            new Note(
+                array(
+                    'name'  => 'forcenote',
+                    'value' => t(
+                        'Custom notifications normally follow the regular notification logic in Icinga. Selecting this '
+                        . 'option will force the notification to be sent out, regardless of time restrictions, '
+                        . 'whether or not notifications are enabled, etc.'
+                    )
+                )
             )
         );
 
@@ -68,26 +105,36 @@ class CustomNotificationForm extends CommandForm
                 'label' => t('Broadcast')
             )
         );
+        $this->addElement(
+            new Note(
+                array(
+                    'name'  => 'broadcastnote',
+                    'value' => t(
+                        'Selecting this option causes the notification to be sent out to all normal (non-escalated) '
+                        . ' and escalated contacts. These options allow you to override the normal notification logic '
+                        . 'if you need to get an important message out.'
+                    )
+                )
+            )
+        );
 
-        $this->setSubmitLabel(t('Send custom notification'));
+        $this->setSubmitLabel(t('Send Custom Notification'));
 
         parent::create();
     }
 
-    public function getComment()
+    /**
+     * Create Custom Notification from request data
+     *
+     * @return \Icinga\Protocol\Commandpipe\CustomNotification
+     */
+    public function getCustomNotification()
     {
-        return $this->getValue('comment');
-    }
-
-    public function getOptions()
-    {
-        $value = 0;
-        if ($this->getValue('force')) {
-            $value |= 2;
-        }
-        if ($this->getValue('broadcast')) {
-            $value |= 1;
-        }
-        return $value;
+        return new CustomNotification(
+            $this->getAuthorName(),
+            $this->getValue('comment'),
+            $this->getValue('forced'),
+            $this->getValue('broadcast')
+        );
     }
 }

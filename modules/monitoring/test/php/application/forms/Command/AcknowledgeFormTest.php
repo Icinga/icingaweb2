@@ -1,24 +1,22 @@
 <?php
+// @codingStandardsIgnoreStart
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Test\Monitoring\Forms\Command;
 
-require_once __DIR__.'/BaseFormTest.php';
-$base = __DIR__.'/../../../../../../../';
-require_once $base.'modules/monitoring/application/forms/Command/CommandForm.php';
-require_once $base . 'library/Icinga/Util/ConfigAwareFactory.php';
-require_once $base . 'library/Icinga/Util/DateTimeFactory.php';
-require_once realpath($base.'modules/monitoring/application/forms/Command/WithChildrenCommandForm.php');
-require_once realpath($base.'modules/monitoring/application/forms/Command/AcknowledgeForm.php');
+require_once realpath(__DIR__ . '/BaseFormTest.php');
+require_once realpath(__DIR__ . '/../../../../../../../modules/monitoring/application/forms/Command/AcknowledgeForm.php');
+require_once realpath(__DIR__ . '/../../../../../../../library/Icinga/Util/ConfigAwareFactory.php');
+require_once realpath(__DIR__ . '/../../../../../../../library/Icinga/Util/DateTimeFactory.php');
 
 use \DateTimeZone;
-use \Zend_View;
-use \Zend_Test_PHPUnit_ControllerTestCase;
-use Monitoring\Form\Command\AcknowledgeForm;
-use Icinga\Util\DateTimeFactory;
+use \Monitoring\Form\Command\AcknowledgeForm; // Used by constant FORMCLASS
+use \Icinga\Util\DateTimeFactory;
 
 class AcknowledgeFormTest extends BaseFormTest
 {
-    const FORMCLASS = "Monitoring\Form\Command\AcknowledgeForm";
+    const FORMCLASS = 'Monitoring\Form\Command\AcknowledgeForm';
 
     /**
      * Set up the default time zone
@@ -33,105 +31,93 @@ class AcknowledgeFormTest extends BaseFormTest
         DateTimeFactory::setConfig(array('timezone' => new DateTimeZone('UTC')));
     }
 
-    public function testForm()
-    {
-        $formWithoutExpiration = $this->getRequestForm(array(), self::FORMCLASS);
-        $formWithoutExpiration->buildForm();
-        $formWithExpiration = $this->getRequestForm(array(
-            'expire' => '1'
-        ), self::FORMCLASS);
-        $formWithExpiration->buildForm();
-
-        $this->assertCount(10, $formWithoutExpiration->getElements());
-        $this->assertCount(11, $formWithExpiration->getElements());
-    }
-
-    public function testValidateCorrectForm()
+    public function testFormValid()
     {
         $form = $this->getRequestForm(array(
-            'author'     => 'test1',
-            'comment'    => 'test comment',
-            'persistent' => '0',
-            'expire'     => '0',
-            'sticky'     => '0',
-            'notify'     => '0',
-            'btn_submit' => 'foo'
+            'author'        => 'Author',
+            'comment'       => 'Comment',
+            'persistent'    => '0',
+            'expire'        => '0',
+            'sticky'        => '0',
+            'notify'        => '0',
+            'btn_submit'    => 'Submit'
         ), self::FORMCLASS);
 
         $this->assertTrue(
             $form->isSubmittedAndValid(),
-            "Asserting a correct form to be validated correctly"
+            'Legal request data without expire time must be considered valid'
         );
-    }
 
-    public function testDetectMissingAcknowledgementComment()
-    {
-        $form = $this->getRequestForm(array(
-            'author'     => 'test1',
-            'comment'    => '',
-            'persistent' => '0',
-            'expire'     => '0',
-            'sticky'     => '0',
-            'notify'     => '0',
-            'btn_submit' => 'foo'
+        $formWithExpireTime = $this->getRequestForm(array(
+            'author'        => 'Author',
+            'comment'       => 'Comment',
+            'persistent'    => '0',
+            'expire'        => '1',
+            'expiretime'    => '2013-07-10 17:32:16',
+            'sticky'        => '0',
+            'notify'        => '0',
+            'btn_submit'    => 'Submit'
         ), self::FORMCLASS);
-        $this->assertFalse(
-            $form->isSubmittedAndValid(),
-            "Asserting a missing comment text to cause validation errors"
-        );
-    }
 
-    public function testValidateMissingExpireTime()
-    {
-        $form = $this->getRequestForm(array(
-            'author'     => 'test1',
-            'comment'    => 'test comment',
-            'persistent' => '0',
-            'expire'     => '1',
-            'expiretime' => '',
-            'sticky'     => '0',
-            'notify'     => '0',
-            'btn_submit' => 'foo'
-        ), self::FORMCLASS);
-        $this->assertFalse(
-            $form->isSubmittedAndValid(),
-            "Asserting a missing expire time to cause validation errors when expire is 1"
-        );
-    }
-
-    public function testValidateIncorrectExpireTime()
-    {
-        $form = $this->getRequestForm(array(
-            'author'     => 'test1',
-            'comment'    => 'test comment',
-            'persistent' => '0',
-            'expire'     => '1',
-            'expiretime' => 'NOT A DATE',
-            'sticky'     => '0',
-            'notify'     => '0',
-            'btn_submit' => 'foo'
-        ), self::FORMCLASS);
-        $this->assertFalse(
-            $form->isSubmittedAndValid(),
-            "Assert incorrect dates to be recognized when validating expiretime"
-        );
-    }
-
-    public function testValidateCorrectAcknowledgementWithExpireTime()
-    {
-        $form = $this->getRequestForm(array(
-            'author'     => 'test1',
-            'comment'    => 'test comment',
-            'persistent' => '0',
-            'expire'     => '1',
-            'expiretime' => '2013-07-10 17:32:16',
-            'sticky'     => '0',
-            'notify'     => '0',
-            'btn_submit' => 'foo'
-        ), self::FORMCLASS);
         $this->assertTrue(
+            $formWithExpireTime->isSubmittedAndValid(),
+            'Legal request data with expire time must be considered valid'
+        );
+    }
+
+    public function testFormInvalidWhenCommentMissing()
+    {
+        $form = $this->getRequestForm(array(
+            'author'        => 'Author',
+            'comment'       => '',
+            'persistent'    => '0',
+            'expire'        => '0',
+            'sticky'        => '0',
+            'notify'        => '0',
+            'btn_submit'    => 'Submit'
+        ), self::FORMCLASS);
+
+        $this->assertFalse(
             $form->isSubmittedAndValid(),
-            "Assert that correct expire time acknowledgement is considered valid"
+            'Missing comment must be considered not valid'
+        );
+    }
+
+    public function testFormInvalidWhenExpireTimeMissingAndExpireSet()
+    {
+        $form = $this->getRequestForm(array(
+            'author'        => 'Author',
+            'comment'       => 'Comment',
+            'persistent'    => '0',
+            'expire'        => '1',
+            'sticky'        => '0',
+            'notify'        => '0',
+            'btn_submit'    => 'Submit'
+        ), self::FORMCLASS);
+
+        $this->assertFalse(
+            $form->isSubmittedAndValid(),
+            'If expire is set and expire time is missing, the form must not be valid'
+        );
+    }
+
+    public function testFormInvalidWhenExpireTimeIsIncorrectAndExpireSet()
+    {
+        $form = $this->getRequestForm(array(
+            'author'        => 'Author',
+            'comment'       => 'Comment',
+            'persistent'    => '0',
+            'expire'        => '1',
+            'expiretime'    => 'Not a date',
+            'sticky'        => '0',
+            'notify'        => '0',
+            'btn_submit'    => 'Submit'
+        ), self::FORMCLASS);
+
+        $this->assertFalse(
+            $form->isSubmittedAndValid(),
+            'If expire is set and expire time is incorrect, the form must not be valid'
         );
     }
 }
+// @codingStandardsIgnoreStop
