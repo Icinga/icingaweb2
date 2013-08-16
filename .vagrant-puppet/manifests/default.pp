@@ -349,7 +349,7 @@ exec { 'install php-ZendFramework-Db-Adapter-Pdo-Mysql':
 
 file { '/etc/motd':
   source => 'puppet:////vagrant/.vagrant-puppet/files/etc/motd',
-  user   => root,
+  owner   => root,
   group  => root
 }
 
