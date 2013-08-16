@@ -87,7 +87,11 @@ class GeneralFormTest extends \Test\Icinga\Web\Form\BaseFormTest
                 )
             )
         );
-
+        $form->setResources(
+            array(
+                'db'    => 'db'
+            )
+        );
         $form->setConfigDir('/tmp');
         $view = new Zend_View();
 
@@ -117,7 +121,13 @@ class GeneralFormTest extends \Test\Icinga\Web\Form\BaseFormTest
             )
         );
         $form->setConfigDir('/tmp');
+        $form->setResources(
+            array(
+                'db'    => 'db'
+            )
+        );
         $form->create();
+
         $view = new Zend_View();
 
         $this->assertFalse(
@@ -146,6 +156,11 @@ class GeneralFormTest extends \Test\Icinga\Web\Form\BaseFormTest
             )
         );
         $form->setConfigDir('/tmp');
+        $form->setResources(
+            array(
+                'db'    => 'db'
+            )
+        );
         $form->create();
         $view = new Zend_View();
 
