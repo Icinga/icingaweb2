@@ -29,13 +29,25 @@
 
 use \Icinga\Web\Controller\BasePreferenceController;
 use \Icinga\Web\Widget\Tab;
+use \Icinga\Application\Config as IcingaConfig;
 use \Icinga\Web\Url;
+use \Icinga\Form\Preference\GeneralForm;
 
 /**
  * Application wide preference controller for user preferences
  */
 class PreferenceController extends BasePreferenceController
 {
+
+    /**
+     * This controller modifies the session
+     *
+     * @var bool
+     *
+     * @see \Icinga\Web\Controller\ActionController::$modifiesSession
+     */
+    protected $modifiesSession = true;
+
     /**
      * Create tabs for this preference controller
      *
@@ -48,9 +60,8 @@ class PreferenceController extends BasePreferenceController
         return array(
             'preference' => new Tab(
                 array(
-                    'name'      => 'preferences',
-                    'iconCls'   => 'user',
-                    'title'     => 'Preferences',
+                    'name'      => 'general',
+                    'title'     => 'General settings',
                     'url'       => Url::fromPath('/preference')
                 )
             )
@@ -58,11 +69,33 @@ class PreferenceController extends BasePreferenceController
     }
 
     /**
-     * @TODO: Implement User preferences (feature #5425)
+     * General settings for date and time
      */
     public function indexAction()
     {
+        $form = new GeneralForm();
+        $form->setConfiguration(IcingaConfig::app());
+        $form->setRequest($this->_request);
 
+        if ($form->isSubmittedAndValid()) {
+            $preferences = $form->getPreferences();
+            $userPreferences = $this->getRequest()->getUser()->getPreferences();
+            $userPreferences->startTransaction();
+            foreach ($preferences as $key=>$value) {
+                if ($value == "") {
+                    $userPreferences->remove($key);
+                } else {
+                    $userPreferences->set($key, $value);
+                }
+            }
+            try {
+                $userPreferences->commit();
+                $this->view->success = true;
+            } catch (Exception $e) {
+                $this->view->exceptionMessage = $e->getMessage();
+            }
+        }
+        $this->view->form = $form;
     }
 }
 // @codingStandardsIgnoreEnd
