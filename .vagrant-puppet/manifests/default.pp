@@ -349,7 +349,7 @@ exec { 'install php-ZendFramework-Db-Adapter-Pdo-Mysql':
 
 file { '/etc/motd':
   source => 'puppet:////vagrant/.vagrant-puppet/files/etc/motd',
-  owner   => root,
+  owner  => root,
   group  => root
 }
 
@@ -482,13 +482,13 @@ exec { 'populate-icingweba-pgsql-db-accounts':
 }
 
 exec { 'populate-icingaweb-mysql-db-preferences':
-  unless  => 'mysql -uicingaweb -picinga icingaweb -e "SELECT * FROM preference;" &> /dev/null',
+  unless  => 'mysql -uicingaweb -picinga icingaweb -e "SELECT * FROM preferences;" &> /dev/null',
   command => 'mysql -uicingaweb -picinga icingaweb < /vagrant/etc/schema/preferences.mysql.sql',
   require => [ Exec['create-mysql-icingaweb-db'] ]
 }
 
 exec { 'populate-icingweba-pgsql-db-preferences':
-  unless  => 'psql -U icingaweb -d icingaweb -c "SELECT * FROM preference;" &> /dev/null',
+  unless  => 'psql -U icingaweb -d icingaweb -c "SELECT * FROM preferences;" &> /dev/null',
   command => 'sudo -u postgres psql -U icingaweb -d icingaweb -f /vagrant/etc/schema/preferences.pgsql.sql',
   require => [ Exec['create-pgsql-icingaweb-db'] ]
 }
