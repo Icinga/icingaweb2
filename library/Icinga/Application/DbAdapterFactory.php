@@ -28,13 +28,14 @@
 
 namespace Icinga\Application;
 
-use Zend_Config;
-use Zend_Db;
-use Icinga\Application\Logger;
-use Icinga\Util\ConfigAwareFactory;
-use Icinga\Exception\ConfigurationError;
-use Icinga\Exception\ProgrammingError;
-use Tests\Icinga\Application\ZendDbMock;
+use \PDO;
+use \Zend_Config;
+use \Zend_Db;
+use \Zend_Db_Adapter_Abstract;
+use \Icinga\Application\Logger;
+use \Icinga\Util\ConfigAwareFactory;
+use \Icinga\Exception\ConfigurationError;
+use \Icinga\Exception\ProgrammingError;
 
 /**
  * Create resources using short identifiers referring to configuration entries
@@ -61,6 +62,29 @@ class DbAdapterFactory implements ConfigAwareFactory
      * @var array
      */
     private static $resourceCache = array();
+
+    /**
+     * Array of PDO driver options
+     *
+     * @see http://www.php.net/manual/en/pdo.constants.php
+     * @var array
+     */
+    private static $defaultPdoDriverOptions = array(
+        PDO::ATTR_TIMEOUT => 2,
+        PDO::ATTR_CASE    => PDO::CASE_LOWER
+    );
+
+    /**
+     * Array of Zend_Db adapter options
+     *
+     * @see http://framework.zend.com/manual/1.12/en/zend.db.html
+     * @var array
+     */
+    private static $defaultZendDbAdapterOptions = array(
+        Zend_Db::AUTO_QUOTE_IDENTIFIERS => false,
+        Zend_Db::CASE_FOLDING           => Zend_Db::CASE_LOWER,
+        Zend_Db::FETCH_MODE             => Zend_Db::FETCH_OBJ
+    );
 
     /**
      * Set the configuration that stores the available resources
@@ -90,8 +114,8 @@ class DbAdapterFactory implements ConfigAwareFactory
      */
     public static function resetConfig()
     {
-        unset(self::$resources);
-        unset(self::$factoryClass);
+        self::$resources = null;
+        self::$factoryClass = null;
     }
 
     /**
@@ -126,7 +150,11 @@ class DbAdapterFactory implements ConfigAwareFactory
     /**
      * Get the resource with the given $identifier
      *
-     * @param   $identifier     The name of the resource
+     * @throws ConfigurationError
+     * @throws ProgrammingError
+     * @param  string $identifier        The name of the resource
+     *
+     * @return Zend_Db_Adapter_Abstract
      */
     public static function getDbAdapter($identifier)
     {
@@ -158,22 +186,24 @@ class DbAdapterFactory implements ConfigAwareFactory
      * @param   mixed       $config         The configuration section containing the
      *                                        db information
      *
-     * @return \Zend_Db_Adapter_Abstract    The created Zend_Db_Adapter
+     * @return Zend_Db_Adapter_Abstract    The created Zend_Db_Adapter
      *
-     * @throws \ConfigurationError          When the specified db type is invalid
+     * @throws ConfigurationError          When the specified db type is invalid
      */
     private static function createDbAdapter($config)
     {
         if ($config->type !== 'db') {
-            throw new ConfigurationError(
-                'Resource type must be "db" but is "' . $config->type . '"'
-            );
+            $msg = 'Resource type must be "db" but is "' . $config->type . '"';
+            Logger::error($msg);
+            throw new ConfigurationError($msg);
         }
         $options = array(
-            'dbname'    => $config->dbname,
-            'host'      => $config->host,
-            'username'  => $config->username,
-            'password'  => $config->password,
+            'dbname'         => $config->dbname,
+            'host'           => $config->host,
+            'username'       => $config->username,
+            'password'       => $config->password,
+            'options'        => self::$defaultZendDbAdapterOptions,
+            'driver_options' => self::$defaultPdoDriverOptions
         );
         switch ($config->db) {
             case 'mysql':
@@ -181,22 +211,72 @@ class DbAdapterFactory implements ConfigAwareFactory
             case 'pgsql':
                 return self::callFactory('Pdo_Pgsql', $options);
             default:
-                throw new ConfigurationError('Unsupported db type ' . $config->db . '.');
+                if (!$config->db) {
+                    $msg = 'Database type is missing (e.g. db=mysql).';
+                } else {
+                    $msg = 'Unsupported db type ' . $config->db . '.';
+                }
+                Logger::error($msg);
+                throw new ConfigurationError($msg);
         }
     }
 
     /**
      * Call the currently set factory class
      *
-     * @param  $adapter                     The name of the used db adapter
-     * @param  $options                     OPTIONAL: an array or Zend_Config object with adapter
-     *                                        parameters
+     * @param  string $adapter              The name of the used db adapter
+     * @param  array $options               An array or Zend_Config object with adapter
+     *                                      parameters
      *
      * @return Zend_Db_Adapter_Abstract     The created adapter
      */
-    private static function callFactory($adapter, $options)
+    private static function callFactory($adapter, array $options)
     {
         $factory = self::$factoryClass;
+
+        $optionModifierCallback = __CLASS__.  '::get'. ucfirst(str_replace('_', '', $adapter)). 'Options';
+
+        if (is_callable($optionModifierCallback)) {
+            $options = call_user_func($optionModifierCallback, $options);
+        }
+
         return $factory::factory($adapter, $options);
+    }
+
+    /**
+     * Get modified attributes for driver PDO_Mysql
+     *
+     * @param array $options
+     *
+     * @return array
+     */
+    private static function getPdoMysqlOptions(array $options)
+    {
+        // To get response for lazy sql statements
+        $options['driver_options'][PDO::MYSQL_ATTR_INIT_COMMAND] =
+            'SET SESSION SQL_MODE=\'STRICT_ALL_TABLES,NO_ZERO_IN_DATE,'
+            . 'NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION\';';
+
+        if (!isset($options['port'])) {
+            $options['port'] = 3306;
+        }
+
+        return $options;
+    }
+
+    /**
+     * Get modified attributes for driver PDO_PGSQL
+     *
+     * @param array $options
+     *
+     * @return array
+     */
+    private static function getPdoPgsqlOptions(array $options)
+    {
+        if (!isset($options['port'])) {
+            $options['port'] = 5432;
+        }
+
+        return $options;
     }
 }

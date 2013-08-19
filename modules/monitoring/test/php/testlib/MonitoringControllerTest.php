@@ -1,5 +1,29 @@
 <?php
 // {{{ICINGA_LICENSE_HEADER}}}
+/**
+ * This file is part of Icinga 2 Web.
+ *
+ * Icinga 2 Web - Head for multiple monitoring backends.
+ * Copyright (C) 2013 Icinga Development Team
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ * @copyright 2013 Icinga Development Team <info@icinga.org>
+ * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
+ * @author    Icinga Development Team <info@icinga.org>
+ */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Web\Controller
@@ -81,13 +105,15 @@ namespace Test\Monitoring\Testlib
 {
     require_once 'Zend/View.php';
 
-    use Icinga\Protocol\Statusdat\Reader;
-    use Icinga\Web\Controller\ActionController;
-    use Test\Monitoring\Testlib\DataSource\TestFixture;
-    use Test\Monitoring\Testlib\DataSource\DataSourceTestSetup;
-    use Monitoring\Backend\Ido;
-    use Monitoring\Backend\Statusdat;
     use \Zend_View;
+    use \Zend_Config;
+    use \Icinga\Protocol\Statusdat\Reader;
+    use \Icinga\Web\Controller\ActionController;
+    use \Icinga\Application\DbAdapterFactory;
+    use \Monitoring\Backend\Ido;
+    use \Monitoring\Backend\Statusdat;
+    use \Test\Monitoring\Testlib\DataSource\TestFixture;
+    use \Test\Monitoring\Testlib\DataSource\DataSourceTestSetup;
 
     /**
      * Base class for monitoring controllers that loads required dependencies
@@ -174,6 +200,7 @@ namespace Test\Monitoring\Testlib
          */
         private function requireIDOQueries()
         {
+            require_once('Application/DbAdapterFactory.php');
             require_once('library/Monitoring/Backend/Ido.php');
             $this->requireFolder('library/Monitoring/Backend/Ido/Query');
         }
@@ -223,7 +250,8 @@ namespace Test\Monitoring\Testlib
         /**
          * Require and set up a controller $controller using the backend type specified at $backend
          *
-         * @param string $controller            The name of the controller tu use (must be under monitoring/application/controllers)
+         * @param string $controller            The name of the controller tu use
+         *                                      (must be under monitoring/application/controllers)
          * @param string $backend               The backend to use ('mysql', 'pgsql' or 'statusdat')
          * @return ModuleActionController       The newly created controller
          */
@@ -260,23 +288,44 @@ namespace Test\Monitoring\Testlib
          * @param  string $type     The type of the backend 'mysql', 'pgsql' or 'statusdat'
          * @return Ido|Statusdat    The newly created backend
          */
-        public function getBackendFor($type) {
+        public function getBackendFor($type)
+        {
             if ($type == "mysql" || $type == "pgsql") {
                 $this->requireIDOQueries();
-                return new Ido(new \Zend_Config(array(
-                    "dbtype"=> $type,
-                    'host'  => "localhost",
-                    'user'  => "icinga_unittest",
-                    'pass'  => "icinga_unittest",
-                    'db'    => "icinga_unittest"
-                )));
-            } else if ($type == "statusdat") {
+
+                $resourceConfig = array(
+                    'icinga-db-unittest' => array(
+                        'type'     => 'db',
+                        'db'       => $type,
+                        'host'     => "localhost",
+                        'username' => "icinga_unittest",
+                        'password' => "icinga_unittest",
+                        'dbname'   => "icinga_unittest"
+                    )
+                );
+
+                DbAdapterFactory::resetConfig();
+                DbAdapterFactory::setConfig($resourceConfig);
+
+                $backendConfig = array(
+                    'type'     => 'db',
+                    'resource' => 'icinga-db-unittest'
+                );
+
+                return new Ido(
+                    new Zend_Config($backendConfig)
+                );
+            } elseif ($type == "statusdat") {
                 $this->requireStatusDatQueries();
-                return new Statusdat(new \Zend_Config(array(
-                    'status_file' => '/tmp/teststatus.dat',
-                    'objects_file' => '/tmp/testobjects.cache',
-                    'no_cache' => true
-                )));
+                return new Statusdat(
+                    new \Zend_Config(
+                        array(
+                            'status_file'  => '/tmp/teststatus.dat',
+                            'objects_file' => '/tmp/testobjects.cache',
+                            'no_cache'     => true
+                        )
+                    )
+                );
             }
         }
     }

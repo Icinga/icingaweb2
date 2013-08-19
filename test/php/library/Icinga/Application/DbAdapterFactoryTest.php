@@ -28,25 +28,28 @@
 
 namespace Tests\Icinga\Application;
 
-require_once('Zend/Db.php');
-require_once('Zend/Db/Adapter/Pdo/Mysql.php');
-require_once('Zend/Config.php');
-require_once('Zend/Log.php');
-require_once('Zend/Config.php');
-require_once('../../library/Icinga/Application/Logger.php');
-require_once('library/Icinga/Application/ZendDbMock.php');
-require_once('../../library/Icinga/Exception/ConfigurationError.php');
-require_once('../../library/Icinga/Exception/ProgrammingError.php');
-require_once('../../library/Icinga/Util/ConfigAwareFactory.php');
-require_once('../../library/Icinga/Application/DbAdapterFactory.php');
+require_once 'Zend/Db.php';
+require_once 'Zend/Db/Adapter/Pdo/Mysql.php';
+require_once 'Zend/Config.php';
+require_once 'Zend/Log.php';
+require_once 'Zend/Config.php';
+require_once realpath(__DIR__. '/../../../library/Icinga/Application/ZendDbMock.php');
+require_once realpath(__DIR__. '/../../../../../library/Icinga/Application/Logger.php');
+require_once realpath(__DIR__. '/../../../../../library/Icinga/Exception/ConfigurationError.php');
+require_once realpath(__DIR__. '/../../../../../library/Icinga/Exception/ProgrammingError.php');
+require_once realpath(__DIR__. '/../../../../../library/Icinga/Util/ConfigAwareFactory.php');
+require_once realpath(__DIR__. '/../../../../../library/Icinga/Application/DbAdapterFactory.php');
 
+use \PDO;
+use \Zend_Db;
 use \Tests\Icinga\Application\ZendDbMock;
 use \Icinga\Application\DbAdapterFactory;
 
 /*
  * Unit test for the class DbAdapterFactory
  */
-class DbAdapterFactoryTest extends \PHPUnit_Framework_TestCase {
+class DbAdapterFactoryTest extends \PHPUnit_Framework_TestCase
+{
 
     /**
      * The resources used for this test
@@ -60,7 +63,7 @@ class DbAdapterFactoryTest extends \PHPUnit_Framework_TestCase {
     {
         $this->resources = array(
             /*
-             * PostgreSQL databse
+             * PostgreSQL database
              */
             'resource1'  =>  array(
                 'type'   => 'db',
@@ -68,7 +71,17 @@ class DbAdapterFactoryTest extends \PHPUnit_Framework_TestCase {
                 'dbname' => 'resource1',
                 'host'   => 'host1',
                 'username'  => 'username1',
-                'password'  => 'password1'
+                'password'  => 'password1',
+                'options'   => array(
+                    Zend_Db::AUTO_QUOTE_IDENTIFIERS => false,
+                    Zend_Db::CASE_FOLDING           => Zend_Db::CASE_LOWER,
+                    Zend_Db::FETCH_MODE             => Zend_Db::FETCH_OBJ
+                ),
+                'driver_options' => array(
+                    PDO::ATTR_TIMEOUT => 2,
+                    PDO::ATTR_CASE    => PDO::CASE_LOWER
+                ),
+                'port' => 5432
             ),
             /*
              * MySQL database
@@ -79,7 +92,19 @@ class DbAdapterFactoryTest extends \PHPUnit_Framework_TestCase {
                 'dbname' => 'resource2',
                 'host'   => 'host2',
                 'username'  => 'username2',
-                'password'  => 'password2'
+                'password'  => 'password2',
+                'options'   => array(
+                    Zend_Db::AUTO_QUOTE_IDENTIFIERS => false,
+                    Zend_Db::CASE_FOLDING           => Zend_Db::CASE_LOWER,
+                    Zend_Db::FETCH_MODE             => Zend_Db::FETCH_OBJ
+                ),
+                'driver_options' => array(
+                    PDO::ATTR_TIMEOUT => 2,
+                    PDO::ATTR_CASE    => PDO::CASE_LOWER,
+                    PDO::MYSQL_ATTR_INIT_COMMAND => 'SET SESSION SQL_MODE=\'STRICT_ALL_TABLES,NO_ZERO_IN_DATE,'
+                    . 'NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION\';'
+                ),
+                'port' => 3306
             ),
             /*
              * Unsupported database type
@@ -102,7 +127,7 @@ class DbAdapterFactoryTest extends \PHPUnit_Framework_TestCase {
         DbAdapterFactory::setConfig(
             $this->resources,
             array(
-                'factory'   => 'Tests\Icinga\Application\ZendDbMock'
+                'factory'   => '\Tests\Icinga\Application\ZendDbMock'
             )
         );
     }
@@ -113,7 +138,8 @@ class DbAdapterFactoryTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(
             'Pdo_Mysql',
             ZendDbMock::getAdapter(),
-            'The db adapter name must be Pdo_Mysql.');
+            'The db adapter name must be Pdo_Mysql.'
+        );
         $this->assertEquals(
             $this->getOptions($this->resources['resource2']),
             ZendDbMock::getConfig(),
@@ -123,24 +149,31 @@ class DbAdapterFactoryTest extends \PHPUnit_Framework_TestCase {
 
     public function testResourceExists()
     {
-        $this->assertTrue(DbAdapterFactory::resourceExists('resource2'),
-            'resourceExists() called with an existing resource should return true');
+        $this->assertTrue(
+            DbAdapterFactory::resourceExists('resource2'),
+            'resourceExists() called with an existing resource should return true'
+        );
 
-        $this->assertFalse(DbAdapterFactory::resourceExists('not existing'),
-            'resourceExists() called with an existing resource should return false');
+        $this->assertFalse(
+            DbAdapterFactory::resourceExists('not existing'),
+            'resourceExists() called with an existing resource should return false'
+        );
 
-        $this->assertFalse(DbAdapterFactory::resourceExists('resource4'),
-            'resourceExists() called with an incompatible resource should return false');
+        $this->assertFalse(
+            DbAdapterFactory::resourceExists('resource4'),
+            'resourceExists() called with an incompatible resource should return false'
+        );
     }
 
     public function testGetResources()
     {
-        $withoutIncompatible = array_merge(array(),$this->resources);
+        $withoutIncompatible = array_merge(array(), $this->resources);
         unset($withoutIncompatible['resource4']);
         $this->assertEquals(
             $withoutIncompatible,
             DbAdapterFactory::getResources(),
-            'getResources should return an array of all existing resources that are compatible');
+            'getResources should return an array of all existing resources that are compatible'
+        );
     }
 
     /**
@@ -172,7 +205,7 @@ class DbAdapterFactoryTest extends \PHPUnit_Framework_TestCase {
      */
     private function getOptions($config)
     {
-        $options = array_merge(array(),$config);
+        $options = array_merge(array(), $config);
         unset($options['type']);
         unset($options['db']);
         return $options;
