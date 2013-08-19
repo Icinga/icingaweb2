@@ -22,4 +22,3 @@ objects_file = @objects_cache_file@
 ;enabled=false
 ;type = combo
 ;backends = localdb, locallive, localfile
-

@@ -1,9 +1,8 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-
 AC_PREREQ([2.61])
-AC_INIT([Icinga2Web], [0.0.1], [])
+AC_INIT([Icinga2Web], [1.0.0], [info@icinga.org])
 AC_PREFIX_DEFAULT(/usr/local/icinga2-web)
 
 if test "x$prefix" = "xNONE" ; then
@@ -25,12 +24,11 @@ AC_CHECK_PHP_VERSION([5],[3],[0])
 AC_CHECK_BIN([PHP], [php])
 
 # Checks for libraries.
-
 AC_CHECK_PHP_MODULE([sockets json])
 
-# Checks for header files.
-
-
+#
+#   Configuration files
+#
 AC_ARG_WITH([icinga2web_config_path],
     AS_HELP_STRING([--with-icinga2web-config-path], [Configuration path for icinga ]),
     icinga2web_config_path="'$withval'",
@@ -38,7 +36,7 @@ AC_ARG_WITH([icinga2web_config_path],
 )
 
 #
-# Users for webfiles
+#   Users for webfiles
 #
 
 AC_ARG_WITH([web_user],
@@ -96,7 +94,7 @@ AC_ARG_WITH([internal_db_name],
     internal_db_name=$withval,
     internal_db_name=icinga2web
 )
-    
+
 AC_ARG_WITH([internal_db_host],
     AS_HELP_STRING([--with-internal-db-host=HOST], [database host to use for internal database (default localhost)]),
     internal_db_host=$withval,
@@ -123,7 +121,6 @@ AC_ARG_WITH([internal_db_user],
 
 #
 #   Authorization method
-#   
 #
 
 AC_ARG_WITH([internal_authentication], 
@@ -172,48 +169,22 @@ AC_ARG_WITH([ldap_rootdn],
     ldap_rootdn=["ou=people, dc=icinga, dc=org"]
 )
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> Add Autoconf based installation with most parameters
-AC_ARG_WITH([ldap_user_objectclass], 
+AC_ARG_WITH([ldap_user_objectclass],
     AS_HELP_STRING([--with-ldap-user-objectclass=LDAP_OBJECT_CLASS], [ldap object class to use for user authentication (default: inetOrgPerson)]),
     ldap_user_objectclass=$withval,
     ldap_user_objectclass="inetOrgPerson"
-<<<<<<< HEAD
 )
-    
+
 AC_ARG_WITH([ldap_attribute_username],
     AS_HELP_STRING([--with-ldap-attribute-username=LDAP_ATTRIBUTE], [user attribute to use for the username (default: uid)]),
-=======
-AC_ARG_WITH([ldap_user_class], 
-    AS_HELP_STRING([--with-ldap-attribute-username=LDAP_ATTRIBUTE], [user object type to use for the authentication (defaults inetOrgPerson)]),
-    ldap_user_class=$withval,
-    ldap_user_class="inetOrgPerson"
-)
-    
-AC_ARG_WITH([ldap_attribute_username],
-    AS_HELP_STRING([--with-ldap-attribute-username=LDAP_ATTRIBUTE], [user attribute to use for the username (defaults uid)]),
->>>>>>> ws-jmosshammer:icinga2-web moja$ git commit
-=======
-)
-    
-AC_ARG_WITH([ldap_attribute_username],
-    AS_HELP_STRING([--with-ldap-attribute-username=LDAP_ATTRIBUTE], [user attribute to use for the username (default: uid)]),
->>>>>>> Add Autoconf based installation with most parameters
     ldap_attribute_username=$withval,
     ldap_attribute_username="uid"
 )
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> Add Autoconf based installation with most parameters
 AC_ARG_WITH([ldap_attribute_password],
     AS_HELP_STRING([--with-ldap-attribute-password=LDAP_ATTRIBUTE], [user attribute to use for the password (default: password)]),
     ldap_attribute_password=$withval,
     ldap_attribute_password="password"
-<<<<<<< HEAD
 )
 
 AC_ARG_WITH([ldap_group_objectclass], 
@@ -221,13 +192,12 @@ AC_ARG_WITH([ldap_group_objectclass],
     ldap_group_objectclass=$withval,
     ldap_group_objectclass="group"
 )
-    
+
 AC_ARG_WITH([ldap_attribute_groupname], 
     AS_HELP_STRING([--with-ldap-attribute-groupname=LDAP_OBJECT_CLASS], [user object type to use for the authentication (default: inetOrgPerson)]),
     ldap_attribute_groupname=$withval,
     ldap_attribute_groupname="guid"
 )
-    
 
 #
 #   Icinga backend selection
@@ -261,13 +231,11 @@ AC_ARG_WITH([ido_port],
     ido_port=db_default_port
 )
 
-
 AC_ARG_WITH([ido_database],
     AS_HELP_STRING([--with-ido-database=DATABASE], [database name to use for retrieving data from the ido db (default: icinga)]),
     ido_database=$withval,
     ido_database="icinga"
 )
-
 
 AC_ARG_WITH([ido_user],
     AS_HELP_STRING([--with-ido-host=USER], [user to use for retrieving data from the ido db (default: icinga)]),
@@ -295,7 +263,7 @@ AC_ARG_WITH([objects_cache_file],
     AS_HELP_STRING([--with-objects-file=FILE], [location of the objects.cache file when retrieving data from status.dat (default: /usr/local/icinga/var/objects.cache)]),
     objects_cache_file=$withval,
     objects_cache_file="/usr/local/icinga/var/objects.cache"
-)   
+)
 
 #
 #   Livestatus connection
@@ -308,7 +276,7 @@ AC_ARG_WITH([livestatus_socket],
 )   
 
 #
-# Icinga commandpipe
+#   Icinga commandpipe
 #
 
 AC_ARG_WITH([icinga_commandpipe],
@@ -316,93 +284,7 @@ AC_ARG_WITH([icinga_commandpipe],
     icinga_commandpipe=$withval,
     icinga_commandpipe="/usr/local/icinga/var/rw/icinga.cmd"
 )      
-=======
-AC_ARG_WITH([ldap_attribute_firstname],
-    AS_HELP_STRING([--with-ldap-attribute-firstname=LDAP_ATTRIBUTE], [user attribute to use for the firstname (defaults firstname)]),
-    ldap_attribute_firstname=$withval,
-    ldap_attribute_firstname="firstname"
-=======
->>>>>>> Add Autoconf based installation with most parameters
-)
 
-AC_ARG_WITH([ldap_group_objectclass], 
-    AS_HELP_STRING([--with-ldap-group-objectclass=LDAP_ATTRIBUTE], [ldap object type to use for group authentication (default: inetOrgPerson)]),
-    ldap_group_objectclass=$withval,
-    ldap_group_objectclass="group"
-)
-    
-AC_ARG_WITH([ldap_attribute_groupname], 
-    AS_HELP_STRING([--with-ldap-attribute-groupname=LDAP_OBJECT_CLASS], [user object type to use for the authentication (default: inetOrgPerson)]),
-    ldap_attribute_groupname=$withval,
-    ldap_attribute_groupname="guid"
-)
-    
-
-#
-#   Icinga backend selection
-#
-
-AC_ARG_WITH([icinga_backend], 
-    AS_HELP_STRING([--with-icinga-backend=(ido, statusdat, livestatus)], [backend to use for rb (default: statusdat)]),
-    icinga_backend=$withval,
-    icinga_backend="statusdat"
-)
-
-#
-#   Ido settings
-#
-
-AC_ARG_WITH([ido_db_type],
-    AS_HELP_STRING([--with-ido-db-type=(mysql, pgsql)], [database engine to use for retrieving data from the ido db (default: mysql)]),
-    ido_db_type=$withval,
-    ido_db_type="statusdat"
-)
-
-AC_ARG_WITH([ido_host],
-    AS_HELP_STRING([--with-ido-host=HOST], [host to use for retrieving data from the ido db (default: localhost)]),
-    ido_host=$withval,
-    ido_host="localhost"
-)
-
-AC_ARG_WITH([ido_port],
-    AS_HELP_STRING([--with-ido-port=PORT], [backend to use for retrieving data from the ido db (default: 3306 for mysql. 5432 for pgsql)]),
-    ido_port=$withval,
-    ido_port=db_default_port
-)
-
-
-AC_ARG_WITH([ido_database],
-    AS_HELP_STRING([--with-ido-database=DATABASE], [database name to use for retrieving data from the ido db (default: icinga)]),
-    ido_database=$withval,
-    ido_database="icinga"
-)
-
-
-AC_ARG_WITH([ido_user],
-    AS_HELP_STRING([--with-ido-host=USER], [user to use for retrieving data from the ido db (default: icinga)]),
-    ido_user=$withval,
-    ido_user="icinga"
-)
-
-AC_ARG_WITH([ido_password],
-    AS_HELP_STRING([--with-ido-password=PASSWORD], [password to use for retrieving data from the ido db (default: icinga)]),
-    ido_password=$withval,
-    ido_password="icinga"
-)
-
-#
-#   Statusdat file location
-#
-
-AC_ARG_WITH([statusdat_file],
-    AS_HELP_STRING([--with-statusdat-file=FILE], [location of the status.dat file when retrieving data from status.dat (default: /usr/local/icinga/var/status.dat)]),
-    statusdat_file=$withval,
-    statusdat_file="/usr/local/icinga/var/status.dat"
-)
-
-<<<<<<< HEAD
->>>>>>> ws-jmosshammer:icinga2-web moja$ git commit
-=======
 AC_ARG_WITH([objects_cache_file],
     AS_HELP_STRING([--with-objects-file=FILE], [location of the objects.cache file when retrieving data from status.dat (default: /usr/local/icinga/var/objects.cache)]),
     objects_cache_file=$withval,
@@ -428,16 +310,11 @@ AC_ARG_WITH([icinga_commandpipe],
     icinga_commandpipe=$withval,
     icinga_commandpipe="/usr/local/icinga/var/rw/icinga.cmd"
 )      
->>>>>>> Add Autoconf based installation with most parameters
 
 # Installation options
 INSTALL_OPTS="-o $bin_user -g $bin_group"
 INSTALL_OPTS_WEB="-o $web_user -g $web_group"
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> Add Autoconf based installation with most parameters
 AS_IF([test "x$internal_db_type" = xmysql], [
     AC_CHECK_PHP_INCLUDE([Zend/Db/Adapter/Pdo/Mysql.php],[Zend Framework - MySQL PDO Adapter])
     AC_CHECK_PHP_MODULE([mysql])
@@ -462,7 +339,10 @@ AS_IF([test "x$ido_db_type" = xpgsql], [
     AS_IF([test "x$ido_port" = xdb_default_port], [ido_port=5432])
 ])
 
-# comment out the disabled backends per default
+#
+#   Comment out the disabled backends per default
+#
+
 ido_enabled="disable=1" 
 statusdat_enabled="disable=1" 
 livestatus_enabled="disable=1" 
@@ -474,26 +354,14 @@ AS_CASE([$icinga_backend],
     ["livestatus"], [livestatus_enabled=""],
     [statusdat_enabled=""])
 
-<<<<<<< HEAD
-
 AS_IF([test "x$ldap_authentication" != xno],
     AC_CHECK_PHP_MODULE([ldap])
     ldap_enabled=""
 )
-=======
-=======
->>>>>>> Add Autoconf based installation with most parameters
 
-AS_IF([test "x$ldap_authentication" != xno],
-<<<<<<< HEAD
-    AC_CHECK_PHP_MODULE([ldap]))
->>>>>>> ws-jmosshammer:icinga2-web moja$ git commit
-=======
-    AC_CHECK_PHP_MODULE([ldap])
-    AC_CHECK_PHP_MODULE([mcrypt])
-    ldap_enabled=""
-)
->>>>>>> Add Autoconf based installation with most parameters
+#
+#   Substitution variables
+#
 
 # Installation directives
 AC_SUBST(app_name)
@@ -504,7 +372,6 @@ AC_SUBST(www_conf_path)
 AC_SUBST(bin_user)
 AC_SUBST(bin_group)
 AC_SUBST(icinga2web_config_path)
-<<<<<<< HEAD
 
 # Internal db setup
 AC_SUBST(internal_db_type)
@@ -548,16 +415,11 @@ AC_SUBST(livestatus_socket)
 # command pipe
 AC_SUBST(icinga_commandpipe)
 
-
-# 
 # Comment placeholders for toggling backends
-#
 AC_SUBST(livestatus_enabled)
 AC_SUBST(statusdat_enabled)
 AC_SUBST(ido_enabled)
 AC_SUBST(ldap_enabled)
-=======
->>>>>>> Add Autoconf based installation with most parameters
 
 # Internal db setup
 AC_SUBST(internal_db_type)
@@ -601,24 +463,28 @@ AC_SUBST(livestatus_socket)
 # command pipe
 AC_SUBST(icinga_commandpipe)
 
-
-# 
 # Comment placeholders for toggling backends
-#
 AC_SUBST(livestatus_enabled)
 AC_SUBST(statusdat_enabled)
 AC_SUBST(ido_enabled)
 AC_SUBST(ldap_enabled)
 
+# Application and installation
 AC_SUBST(PHP)
 AC_SUBST(INSTALL_OPTS)
 AC_SUBST(INSTALL_OPTS_WEB)
 
+#
+#   Create config files
+#
 AC_CONFIG_FILES([
     Makefile
     config/authentication.ini
-    config/backends.ini
+    config/modules/monitoring/backends.ini
     public/index.php
 ])
 
+#
+#   Commit and write
+#
 AC_OUTPUT
