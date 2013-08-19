@@ -216,7 +216,7 @@ AC_ARG_WITH([icinga_backend],
 AC_ARG_WITH([ido_db_type],
     AS_HELP_STRING([--with-ido-db-type=(mysql, pgsql)], [database engine to use for retrieving data from the ido db (default: mysql)]),
     ido_db_type=$withval,
-    ido_db_type="statusdat"
+    ido_db_type="mysql"
 )
 
 AC_ARG_WITH([ido_host],
@@ -480,6 +480,7 @@ AC_SUBST(INSTALL_OPTS_WEB)
 AC_CONFIG_FILES([
     Makefile
     config/authentication.ini
+    config/resources.ini
     config/modules/monitoring/backends.ini
     public/index.php
 ])

@@ -1,10 +1,6 @@
 [localdb]
 type = ido
-host = @ido_host@
-port = @ido_port@
-user = @ido_user@
-pass = @ido_password@
-db = @ido_database@
+resource = "ido"
 @ido_enabled@
 
 [locallive]
