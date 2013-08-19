@@ -29,20 +29,11 @@ password            = icinga
 username            = icingaweb
 dbname              = icingaweb
 
-[ido-pgsql]
+[ido]
 type                = db
-db                  = pgsql         ; PostgreSQL
-host                = localhost
-password            = icinga
-username            = icinga
-port                = 5432
-dbname              = icinga
-
-[ido-mysql]
-type                = db
-db                  = mysql         ; MySQL
-host                = localhost
-password            = icinga
-username            = icinga
-port                = 3306
-dbname              = icinga
+db                  = @ido_db_type@
+host                = @ido_host@
+password            = @ido_user@
+username            = @ido_user@
+port                = @ido_port@
+dbname              = @ido_database@

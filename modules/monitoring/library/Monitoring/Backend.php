@@ -1,26 +1,84 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+/**
+ * This file is part of Icinga 2 Web.
+ *
+ * Icinga 2 Web - Head for multiple monitoring backends.
+ * Copyright (C) 2013 Icinga Development Team
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ * @copyright 2013 Icinga Development Team <info@icinga.org>
+ * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
+ * @author    Icinga Development Team <info@icinga.org>
+ */
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Monitoring;
 
 use \Icinga\Application\Config as IcingaConfig;
-use Icinga\Authentication\Manager as AuthManager;
-use Exception;
+use \Icinga\Authentication\Manager as AuthManager;
+use \Exception;
+use \Monitoring\Backend\AbstractBackend;
 
+/**
+ * Container for monitoring backends
+ */
 class Backend
 {
+    /**
+     * Array of backends
+     *
+     * @var array
+     */
     protected static $instances = array();
+
+    /**
+     * Array of configuration settings for backends
+     *
+     * @var array
+     */
     protected static $backendConfigs;
 
+    /**
+     * Locked constructor
+     */
     final protected function __construct()
     {
     }
 
+    /**
+     * Test if configuration key exist
+     *
+     * @param string $name
+     *
+     * @return bool
+     */
     public static function exists($name)
     {
         $configs = self::getBackendConfigs();
         return array_key_exists($name, $configs);
     }
 
+    /**
+     * Get the first configuration name of all backends
+     *
+     * @throws Exception
+     *
+     * @return string
+     */
     public static function getDefaultName()
     {
         $configs = self::getBackendConfigs();
@@ -33,18 +91,32 @@ class Backend
         return key($configs);
     }
 
+    /**
+     * Getter for backend configuration with lazy initializing
+     *
+     * @return array
+     */
     public static function getBackendConfigs()
     {
         if (self::$backendConfigs === null) {
-            $backends = IcingaConfig::app('backends');
+            $backends = IcingaConfig::module('monitoring', 'backends');
             foreach ($backends as $name => $config) {
                 // TODO: Check if access to this backend is allowed
                 self::$backendConfigs[$name] = $config;
             }
         }
+
         return self::$backendConfigs;
     }
 
+    /**
+     * Get a backend by name or a default one
+     *
+     * @throws \Exception
+     * @param string $name
+     *
+     * @return AbstractBackend
+     */
     public static function getBackend($name = null)
     {
         if (! array_key_exists($name, self::$instances)) {
@@ -52,10 +124,12 @@ class Backend
                 $name = self::getDefaultName();
             } else {
                 if (! self::exists($name)) {
-                    throw new Exception(sprintf(
-                        'There is no such backend: "%s"',
-                        $name
-                    ));
+                    throw new Exception(
+                        sprintf(
+                            'There is no such backend: "%s"',
+                            $name
+                        )
+                    );
                 }
             }
 
@@ -68,6 +142,13 @@ class Backend
         return self::$instances[$name];
     }
 
+    /**
+     * Get backend by name or by user configuration
+     *
+     * @param string $name
+     *
+     * @return AbstractBackend
+     */
     public static function getInstance($name = null)
     {
         if (array_key_exists($name, self::$instances)) {
