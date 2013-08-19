@@ -1,3 +1,17 @@
 <?= $this->tabs->render($this); ?>
+<?php $errors = $this->form->getErrorMessages(); ?>
+<?php if (!empty($errors)) : ?>
+<div class="alert alert-danger">
+    <h4>Errors occured when trying to save the project</h4>
+    <p>
+        The following errors occured when trying to save the configuration:
+    </p>
+    <ul>
+        <?php foreach($errors as $error): ?>
+            <li><?= $this->escape($error) ?></li>
+        <?php endforeach; ?>
+    </ul>
+</div>
 
+<?php endif; ?>
 <?= $this->form ?>

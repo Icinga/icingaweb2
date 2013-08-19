@@ -26,39 +26,47 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Web\Form\Decorator;
+namespace Icinga\Web\Form\Validator;
 
-use \Zend_Form_Decorator_Abstract;
+use \Zend_Validate_Abstract;
 
 /**
- * Decorator to hide elements using a &gt;noscript&lt; tag instead of
- * type='hidden' or css styles.
+ * Validator that interprets the value as a path and checks if it's writable
  *
- * This allows to hide depending elements for browsers with javascript
- * (who can then automatically refresh their pages) but show them in
- * case JavaScript is disabled
  */
-class ConditionalHidden extends Zend_Form_Decorator_Abstract
+class WritablePathValidator extends Zend_Validate_Abstract
 {
     /**
-     * Generate a field that will be wrapped in <noscript> tag if the
-     * "condition" attribute is set and false or 0
+     * The messages to write on differen error states
      *
-     * @access public
-     *
-     * @param string $name The element name.
-     * @param string $value The default value.
-     * @param array $attribs Attributes which should be added to the input tag.
-     *
-     * @return string The input tag and options XHTML.
+     * @var array
+     * @see Zend_Validate_Abstract::$_messageTemplates‚
      */
-    public function render($content = '')
+    // @codingStandardsIgnoreStart
+    protected $_messageTemplates = array(
+        'NOT_WRITABLE'  =>  'Path is not writable'
+    );
+    // @codingStandardsIgnoreEnd
+
+    /**
+     * Check whether the given value is writable path
+     *
+     * @param string $value     The value submitted in the form
+     * @param null $context     The context of the form
+     *
+     * @return bool             True when validation worked, otherwise false‚
+     * @see Zend_Validate_Abstract::isValid()‚
+     */
+    public function isValid($value, $context = null)
     {
-        $attributes = $this->getElement()->getAttribs();
-        $condition = isset($attributes['condition']) ? $attributes['condition'] : 1;
-        if ($condition != 1) {
-            $content = '<noscript>' . $content . '</noscript>';
+        $value = (string) $value;
+        $this->_setValue($value);
+
+        if ((file_exists($value) && is_writable($value)) ||
+            (is_dir(dirname($value)) != '' && is_writable(dirname($value)))) {
+            return true;
         }
-        return $content;
+        $this->_error('NOT_WRITABLE');
+        return false;
     }
 }

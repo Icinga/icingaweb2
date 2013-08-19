@@ -56,10 +56,11 @@ class LdapBackendForm extends BaseBackendForm
             'text',
             'backend_'.$name.'_name',
             array(
-                'required' => true,
-                'allowEmpty'    =>  false,
-                'label' => 'Backend name',
-                'value' => $this->getBackendName()
+                'required'  => true,
+                'allowEmpty'=>  false,
+                'label'     => 'Backend name',
+                'helptext'  => 'The name of this authentication backend',
+                'value'     => $this->getBackendName()
             )
         );
 
@@ -67,10 +68,11 @@ class LdapBackendForm extends BaseBackendForm
             'text',
             'backend_' . $name . '_hostname',
             array(
-                'label'     => 'LDAP server host',
+                'label'         => 'LDAP server host',
                 'allowEmpty'    =>  false,
-                'value'     => $backend->get('hostname', 'localhost'),
-                'required'  => true
+                'value'         => $backend->get('hostname', 'localhost'),
+                'helptext'      => 'The hostname or address of the LDAP server to use for authentication',
+                'required'      => true
             )
         );
 
@@ -79,7 +81,8 @@ class LdapBackendForm extends BaseBackendForm
             'backend_' . $name . '_root_dn',
             array(
                 'label'     => 'LDAP root dn',
-                'value'     => $backend->get('hostname', 'ou=people,dc=icinga,dc=org'),
+                'value'     => $backend->get('root_dn', 'ou=people,dc=icinga,dc=org'),
+                'helptext'      => 'The path where users can be found on the ldap server',
                 'required'  => true
             )
         );
@@ -90,6 +93,7 @@ class LdapBackendForm extends BaseBackendForm
             array(
                 'label'     => 'LDAP bind dn',
                 'value'     => $backend->get('bind_dn', 'cn=admin,cn=config'),
+                'helptext'      => 'The user dn to use for querying the ldap server',
                 'required'  => true
             )
         );
@@ -101,26 +105,29 @@ class LdapBackendForm extends BaseBackendForm
                 'label'     => 'LDAP bind password',
                 'renderPassword' => true,
                 'value'     => $backend->get('bind_pw', 'admin'),
+                'helptext'  => 'The password to use for querying the ldap server',
                 'required'  => true
             )
         );
 
         $this->addElement(
             'text',
-            'backend_' . $name . '_bind_user_class',
+            'backend_' . $name . '_user_class',
             array(
                 'label'     => 'LDAP user object class',
                 'value'     => $backend->get('user_class', 'inetOrgPerson'),
+                'helptext'  => 'The object class used for storing users on the ldap server',
                 'required'  => true
             )
         );
 
         $this->addElement(
             'text',
-            'backend_' . $name . '_bind_user_name_attribute',
+            'backend_' . $name . '_user_name_attribute',
             array(
                 'label'     => 'LDAP user name attribute',
                 'value'     => $backend->get('user_name_attribute', 'uid'),
+                'helptext'  => 'The attribute name used for storing the user name on the ldap server',
                 'required'  => true
             )
         );
@@ -147,8 +154,8 @@ class LdapBackendForm extends BaseBackendForm
             'root_dn'                   =>  $this->getValue($prefix . 'root_dn'),
             'bind_dn'                   =>  $this->getValue($prefix . 'bind_dn'),
             'bind_pw'                   =>  $this->getValue($prefix . 'bind_pw'),
-            'bind_user_class'           =>  $this->getValue($prefix . 'bind_user_class'),
-            'bind_user_name_attribute'  =>  $this->getValue($prefix . 'bind_user_name_attribute')
+            'user_class'                =>  $this->getValue($prefix . 'user_class'),
+            'user_name_attribute'       =>  $this->getValue($prefix . 'user_name_attribute')
         );
         return array(
             $section => $cfg

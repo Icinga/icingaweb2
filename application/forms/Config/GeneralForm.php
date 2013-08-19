@@ -32,8 +32,10 @@ use \Icinga\Application\Config as IcingaConfig;
 use \Icinga\Application\Icinga;
 use \Icinga\Application\DbAdapterFactory;
 use \Icinga\Web\Form;
+use \Icinga\Web\Form\Validator\WritablePathValidator;
+use \Icinga\Web\Form\Validator\TimeFormatValidator;
+use \Icinga\Web\Form\Validator\DateFormatValidator;
 use \Icinga\Web\Form\Decorator\ConditionalHidden;
-use \Icinga\Web\Form\Element\Note;
 
 use \DateTimeZone;
 use \Zend_Config;
@@ -138,20 +140,14 @@ class GeneralForm extends Form
             array(
                 'label'     => 'Development mode',
                 'required'  => true,
+                'helptesxt' => 'Set true to show more detailed errors '
+                                . 'and disable certain optimizations '
+                                . 'in order to make debugging easier.',
                 'tooltip'   => 'More verbose output',
                 'value'     => $env === 'development'
             )
         );
-        $this->addElement(
-            new Note(
-                array(
-                    'name'  => 'note_env',
-                    'value' => 'Set true to show more detailed errors '
-                                . 'and disable certain optimizations '
-                                . 'in order to make debugging easier.'
-                )
-            )
-        );
+
     }
 
     /**
@@ -167,6 +163,8 @@ class GeneralForm extends Form
         foreach (DateTimeZone::listIdentifiers() as $tz) {
             $tzList[$tz] = $tz;
         }
+        $helptext = 'Select the timezone to be used as the default. User\'s can set their own timezone if'
+            . ' they like to, but this is the timezone to be used as the default setting .';
 
         $this->addElement(
             'select',
@@ -175,16 +173,8 @@ class GeneralForm extends Form
                 'label'         =>  'Default application timezone',
                 'required'      =>  true,
                 'multiOptions'  =>  $tzList,
+                'helptext'      =>  $helptext,
                 'value'         =>  $cfg->get('timezone', date_default_timezone_get())
-            )
-        );
-        $this->addElement(
-            new Note(
-                array(
-                    'name' => 'noteTimezone',
-                    'value' => 'Select the timezone to be used as the default. User\'s can set their own timezone if'
-                                . ' they like to, but this is the timezone to be used as the default setting .'
-                )
             )
         );
     }
@@ -202,15 +192,8 @@ class GeneralForm extends Form
             array(
                 'label'     => 'Module folder',
                 'required'  => true,
+                'helptext'  => 'Use this folder to activate modules (must be writable by your webserver)',
                 'value'     => $cfg->get('moduleFolder', $this->getConfigDir() . '/config/enabledModules')
-            )
-        );
-        $this->addElement(
-            new Note(
-                array(
-                    'name' => 'noteModuleFolder',
-                    'value' => 'Use this folder to activate modules (must be writable by your webserver)'
-                )
             )
         );
     }
@@ -225,43 +208,29 @@ class GeneralForm extends Form
         $phpUrl = '<a href="http://php.net/manual/en/function.date.php" target="_new">'
                     . 'the official PHP documentation</a>';
 
-        $this->addElement(
-            'text',
-            'date_format',
+        $txtDefaultDateFormat = new Zend_Form_Element_Text(
             array(
+                'name'      =>  'date_format',
                 'label'     =>  'Date format',
+                'helptext'  =>  'Display dates according to this format. See ' . $phpUrl . ' for possible values',
                 'required'  =>  true,
-                'value'     => $cfg->get('dateFormat', 'd/m/Y')
+                'value'     =>  $cfg->get('dateFormat', 'd/m/Y')
             )
         );
-        $this->addElement(
-            new Note(
-                array(
-                    'name'  =>  'noteDateFormat',
-                    'value' =>  'Display dates according to this format. See ' . $phpUrl . ' for possible values'
-                )
-            )
-        );
+        $this->addElement($txtDefaultDateFormat);
+        $txtDefaultDateFormat->addValidator(new DateFormatValidator());
 
-
-        $this->addElement(
-            'text',
-            'time_format',
+        $txtDefaultTimeFormat = new Zend_Form_Element_Text(
             array(
+                'name'      =>  'time_format',
                 'label'     =>  'Time format',
                 'required'  =>  true,
-                'value'     => $cfg->get('timeFormat', 'g:i A')
+                'helptext'  =>  'Display times according to this format. See ' . $phpUrl . ' for possible values',
+                'value'     =>  $cfg->get('timeFormat', 'g:i A')
             )
         );
-        $this->addElement(
-            new Note(
-                array(
-                    'name'  =>  'noteTimeFormat',
-                    'value' =>  'Display times according to this format. See '
-                        . $phpUrl . ' for possible values'
-                )
-            )
-        );
+        $txtDefaultTimeFormat->addValidator(new TimeFormatValidator());
+        $this->addElement($txtDefaultTimeFormat);
     }
 
     /**
@@ -316,7 +285,7 @@ class GeneralForm extends Form
                 'multiOptions'  =>  $backends
             )
         );
-
+        $txtPreferencesIniPath->addValidator(new WritablePathValidator());
         $this->addElement($txtPreferencesIniPath);
         $this->addElement($txtPreferencesDbResource);
 

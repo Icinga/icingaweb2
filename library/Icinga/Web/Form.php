@@ -25,7 +25,7 @@
 
 namespace Icinga\Web;
 
-use \Icinga\Web\Form\Decorator\ConditionalHidden;
+use \Icinga\Web\Form\Decorator\HelpText;
 use \Zend_Controller_Request_Abstract;
 use \Zend_Form_Element_Submit;
 use \Zend_Form_Element_Reset;
@@ -197,7 +197,7 @@ abstract class Form extends Zend_Form
             if (!$this->getAction() && $this->getRequest()) {
                 $this->setAction($this->getRequest()->getRequestUri());
             }
-
+            $this->enableAdditionalDecorators();
             $this->created = true;
         }
     }
@@ -385,6 +385,13 @@ abstract class Form extends Zend_Form
         }
 
         return $token === hash('sha256', $this->getSessionId() . $seed);
+    }
+
+    public function enableAdditionalDecorators()
+    {
+        foreach ($this->getElements() as $element) {
+            $element->addDecorator(new HelpText());
+        }
     }
 
     /**

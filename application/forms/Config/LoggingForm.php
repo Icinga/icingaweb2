@@ -32,6 +32,7 @@ use \Icinga\Application\Config as IcingaConfig;
 use \Icinga\Application\Icinga;
 use \Icinga\Web\Form;
 use \Icinga\Web\Form\Element\Note;
+use \Icinga\Web\Form\Validator\WritablePathValidator;
 use \Icinga\Web\Form\Decorator\ConditionalHidden;
 use \Zend_Config;
 use \Zend_Form_Element_Text;
@@ -50,6 +51,13 @@ class LoggingForm extends Form
     private $config = null;
 
     /**
+     * Base directory to use instead of the one provided by Icinga::app (used for testing)
+     *
+     * @var null
+     */
+    private $baseDir = null;
+
+    /**
      * Set the configuration of this form
      *
      * If not called, default values are used instead
@@ -59,6 +67,32 @@ class LoggingForm extends Form
     public function setConfiguration(Zend_Config $cfg)
     {
         $this->config = $cfg;
+    }
+
+    /**
+     * Set a different base directory to use for default paths instead of the one provided by Icinga::app()
+     *
+     * @param string $dir       The new directory to use
+     */
+    public function setBaseDir($dir)
+    {
+        $this->baseDir = $dir;
+    }
+
+    /**
+     * Return the applications base directory or the value from a previous setBaseDir call
+     *
+     * This is used to determine the default logging paths in a manner that allows to set a different path
+     * during testing
+     *
+     * @return string
+     */
+    public function getBaseDir()
+    {
+        if ($this->baseDir) {
+            return $this->baseDir;
+        }
+        return realpath(Icinga::app()->getApplicationDir().'/../');
     }
 
     /**
@@ -74,7 +108,7 @@ class LoggingForm extends Form
      */
     private function shouldDisplayDebugLog(Zend_Config $config)
     {
-        $debugParam = $this->getRequest()->getParam('logging_use_debug', null);
+        $debugParam = $this->getRequest()->getParam('logging_debug_enable', null);
         if ($debugParam !== null) {
             return intval($debugParam) === 1;
         } else {
@@ -101,6 +135,8 @@ class LoggingForm extends Form
     }
 
     /**
+     * Create this logging configuration form
+     *
      * @see Form::create()
      */
     public function create()
@@ -127,7 +163,7 @@ class LoggingForm extends Form
                 'value'     => $this->loggingIsEnabled($logging)
             )
         );
-        if (!$this->loggingIsEnabled($debug)) {
+        if (!$this->loggingIsEnabled($logging)) {
             $this->addElement(
                 new Note(
                     array(
@@ -142,25 +178,19 @@ class LoggingForm extends Form
             return;
         }
 
-        $this->addElement(
-            'text',
-            'logging_app_path',
+
+        $txtLogPath = new Zend_Form_Element_Text(
             array(
+                'name'          => 'logging_app_target',
                 'label'         => 'Application log path',
+                'helptext'      => 'The logfile to write the icingaweb debug logs to.'
+                                    . 'The webserver must be able to write at this location',
                 'required'      => true,
                 'value'         => $logging->get('target', '/var/log/icingaweb.log')
             )
         );
-
-        $this->addElement(
-            new Note(
-                array(
-                    'name' => 'note_logging_app_path',
-                    'value'=> 'The logfile to write the icingaweb debug logs to. The webserver must be able to write'
-                            . 'at this location'
-                )
-            )
-        );
+        $txtLogPath->addValidator(new WritablePathValidator());
+        $this->addElement($txtLogPath);
 
         $this->addElement(
             'checkbox',
@@ -168,63 +198,73 @@ class LoggingForm extends Form
             array(
                 'label'     => 'Verbose logging',
                 'required'  => true,
+                'helptext'  => 'Check to write more verbose output to the icinga log file',
                 'value'     => intval($logging->get('verbose', 0)) === 1
             )
         );
 
         $this->addElement(
-            new Note(
-                array(
-                    'name' => 'note_logging_app_verbose',
-                    'value'=> 'Check to write more verbose output to the icinga log file'
-                )
-            )
-        );
-
-        $this->addElement(
             'checkbox',
-            'logging_use_debug',
+            'logging_debug_enable',
             array(
                 'label'     => 'Use debug log',
                 'required'  => true,
+                'helptext'  => 'Check to write a seperate debug log (Warning: This file can grow very big)',
                 'value'     => $this->shouldDisplayDebugLog($debug)
             )
         );
-        $this->addElement(
-            new Note(
-                array(
-                    'name' => 'note_logging_use_debug',
-                    'value'=> 'Check to write a seperate debug log (Warning: This file can grow very big)'
-                )
-            )
-        );
-
 
         $textLoggingDebugPath = new Zend_Form_Element_Text(
             array(
-                'name'      => 'logging_debug_path',
+                'name'      => 'logging_debug_target',
                 'label'     => 'Debug log path',
-                'required'  => true,
+                'required'  => $this->shouldDisplayDebugLog($debug),
                 'condition' => $this->shouldDisplayDebugLog($debug),
-                'value'     => $debug->get('target')
+                'value'     => $debug->get('target', $this->getBaseDir() . '/var/log/icinga2.debug.log'),
+                'helptext'  => 'Set the path to the debug log'
             )
         );
-        $loggingPathNote = new Note(
-            array(
-                'name'      => 'note_logging_debug_path',
-                'value'     => 'Set the path to the debug log',
-                'condition' => $this->shouldDisplayDebugLog($debug)
-            )
-        );
+        $textLoggingDebugPath->addValidator(new WritablePathValidator());
+
         $decorator = new ConditionalHidden();
         $this->addElement($textLoggingDebugPath);
-        $this->addElement($loggingPathNote);
-
         $textLoggingDebugPath->addDecorator($decorator);
-        $loggingPathNote->addDecorator($decorator);
 
-        $this->enableAutoSubmit(array('logging_use_debug', 'logging_enable'));
+
+        $this->enableAutoSubmit(array('logging_debug_enable', 'logging_enable'));
 
         $this->setSubmitLabel('Save changes');
+    }
+
+    /**
+     *  Return a Zend_Config object containing the state defined in this form
+     *
+     *  @return Zend_Config             The config defined in this form
+     */
+    public function getConfig()
+    {
+        if ($this->config === null) {
+            $this->config = new Zend_Config(array());
+        }
+        if ($this->config->logging === null) {
+            $this->config->logging = new Zend_Config(array());
+        }
+        if ($this->config->logging->debug === null) {
+            $this->config->logging->debug = new Zend_Config(array());
+
+        }
+
+        $values = $this->getValues();
+        $cfg = $this->config->toArray();
+
+        $cfg['logging']['enable']           =   intval($values['logging_enable']);
+        $cfg['logging']['type']             =   'stream';
+        $cfg['logging']['verbose']          =   $values['logging_app_verbose'];
+        $cfg['logging']['target']           =   $values['logging_app_target'];
+
+        $cfg['logging']['debug']['enable']  =   intval($values['logging_debug_enable']);
+        $cfg['logging']['debug']['type']    =   'stream';
+        $cfg['logging']['debug']['target']  =   $values['logging_debug_target'];
+        return new Zend_Config($cfg);
     }
 }

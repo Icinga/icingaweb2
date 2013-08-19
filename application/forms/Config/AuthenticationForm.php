@@ -32,17 +32,17 @@ use \Icinga\Application\Config as IcingaConfig;
 use \Icinga\Application\Icinga;
 use \Icinga\Application\Logger;
 use \Icinga\Application\DbAdapterFactory;
-use \Icinga\Form\Config\Authentication\DbBackendForm;
-use \Icinga\Form\Config\Authentication\LdapBackendForm;
 
 use \Icinga\Web\Form;
 use \Icinga\Web\Form\Element\Note;
 use \Icinga\Web\Form\Decorator\ConditionalHidden;
 use \Zend_Config;
-use \Zend_Form_Element_Text;
-use \Zend_Form_Element_Select;
-use \Zend_Form_Element_Button;
 
+/**
+ * Form for modifying the authentication provider and order.
+ *
+ * This is a composite form from one or more forms under the Authentication folder
+ */
 class AuthenticationForm extends Form
 {
     /**
@@ -59,7 +59,11 @@ class AuthenticationForm extends Form
      */
     private $resources = null;
 
-
+    /**
+     * An array containing all provider subforms currently displayed
+     *
+     * @var array
+     */
     private $backendForms = array();
 
 
@@ -84,7 +88,15 @@ class AuthenticationForm extends Form
         $this->config = $cfg;
     }
 
-
+    /**
+     *  Add a hint to remove the backend identified by $name
+     *
+     *  The button will have the name "backend_$name_remove"
+     *
+     *  @param string $name                 The backend to add this button for
+     *
+     *  @return string                      The id of the added button
+     */
     private function addRemoveHint($name)
     {
         $this->addElement(
@@ -101,6 +113,19 @@ class AuthenticationForm extends Form
         return 'backend_' . $name . '_remove';
     }
 
+    /**
+     *  Add the form for the provider identified by $name, with the configuration $backend
+     *
+     *  Supported backends are backends with a form found under \Icinga\Form\Config\Authentication.
+     *  The backend name ist the (uppercase first) prefix with 'BackendForm' as the suffix.
+     *
+     *  Originally it was intended to add the provider as a subform. As this didn't really work with
+     *  the Zend validation logic (maybe our own validation logic breaks it), we now create the form, but add
+     *  all elements to this form explicitly.
+     *
+     *  @param string       $name           The name of the backend to add
+     *  @param Zend_Config  $backend        The configuration of the backend
+     */
     private function addProviderForm($name, $backend)
     {
         $type = ucfirst(strtolower($backend->get('backend')));
@@ -117,49 +142,56 @@ class AuthenticationForm extends Form
         if ($this->resources) {
             $form->setResources($this->resources);
         }
+
         // It would be nice to directly set the form via
         // this->setForm, but Zend doesn't handle form validation
         // properly if doing so.
         $form->create();
-        foreach ($form->getElements() as $name => $element) {
-            $this->addElement($element, $name);
+        foreach ($form->getElements() as $elName => $element) {
+            if ($elName === 'backend_' . $this->filterName($name) . '_name') {
+                continue;
+            }
+            $this->addElement($element, $elName);
         }
-
         $this->backendForms[] = $form;
     }
 
-
-
-
-
+    /**
+     * Add the buttons for modifying authentication priorities
+     *
+     * @param string    $name           The name of the backend to add the buttons for
+     * @param array     $order          The current order which will be used to determine the changed order
+     *
+     * @return array                    An array containing the newly added form element ids as strings
+     */
     public function addPriorityButtons($name, $order = array())
     {
         $formEls = array();
         $priorities = array(
-            "up"    =>  join(',', self::moveElementUp($name, $order)),
-            "down"  =>  join(',', self::moveElementDown($name, $order))
+            'up'    =>  join(',', self::moveElementUp($name, $order)),
+            'down'  =>  join(',', self::moveElementDown($name, $order))
         );
-        if ($priorities["up"] != join(',', $order)) {
+        if ($priorities['up'] != join(',', $order)) {
             $this->addElement(
                 'button',
                 'priority' . $name . '_up',
                 array(
                     'name'  => 'priority',
                     'label' => 'Move up in authentication order',
-                    'value' =>  $priorities["up"],
+                    'value' =>  $priorities['up'],
                     'type'  => 'submit'
                 )
             );
             $formEls[] = 'priority' . $name . '_up';
         }
-        if ($priorities["down"] != join(',', $order)) {
+        if ($priorities['down'] != join(',', $order)) {
             $this->addElement(
                 'button',
                 'priority' . $name . '_down',
                 array(
                     'name'  => 'priority',
                     'label' => 'Move down in authentication order',
-                    'value' =>  $priorities["down"],
+                    'value' =>  $priorities['down'],
                     'type'  => 'submit'
                 )
             );
@@ -169,7 +201,14 @@ class AuthenticationForm extends Form
         return $formEls;
     }
 
-
+    /**
+     * Overwrite for Zend_Form::populate in order to preserve the modified priority of the backends
+     *
+     * @param array $values                 The values to populate the form with
+     *
+     * @return void|\Zend_Form
+     * @see Zend_Form::populate
+     */
     public function populate(array $values)
     {
         $last_priority = $this->getValue('current_priority');
@@ -178,7 +217,13 @@ class AuthenticationForm extends Form
 
     }
 
-    private function getAuthenticationOrder ()
+    /**
+     * Return an array containing all authentication providers in the order they should be used
+     *
+     * @return array            An array containing the identifiers (section names) of the authentication backend in
+     *                          the order they should be persisted
+     */
+    private function getAuthenticationOrder()
     {
         $request = $this->getRequest();
         $order = $request->getParam(
@@ -195,15 +240,26 @@ class AuthenticationForm extends Form
         return $order;
     }
 
-
+    /**
+     * Return true if the backend should be deleted when the changes are persisted
+     *
+     * @param string $backendName              The name of the backend to check for being in a 'delete' state
+     *
+     * @return bool                            Whether this backend will be deleted on save
+     */
     private function isMarkedForDeletion($backendName)
     {
         return intval($this->getRequest()->getParam('backend_' . $backendName . '_remove', 0)) === 1;
     }
 
+    /**
+     * Add persistent values to the form in hidden fields
+     *
+     * Currently this adds the 'current_priority' field to persist priority modifications. This prevents changes in the
+     * authentication order to be lost as soon as other changes are submitted (like marking a backend for deletion)
+     */
     private function addPersistentState()
     {
-
         $this->addElement(
             'hidden',
             'current_priority',
@@ -214,8 +270,11 @@ class AuthenticationForm extends Form
         );
     }
 
-
-
+    /**
+     * Create the authentication provider configuration form
+     *
+     * @see IcingaForm::create()
+     */
     public function create()
     {
         $order = $this->getAuthenticationOrder();
@@ -246,6 +305,11 @@ class AuthenticationForm extends Form
         $this->setSubmitLabel('Save changes');
     }
 
+    /**
+     * Return the configuration state defined by this form
+     *
+     * @return array
+     */
     public function getConfig()
     {
         $result = array();
@@ -258,6 +322,11 @@ class AuthenticationForm extends Form
         return $result;
     }
 
+    /**
+     *  Enable the "ConditionalHidden" Decorator for all elements in this form
+     *
+     *  @see ConditionalHidden
+     */
     private function enableConditionalDecorator()
     {
         foreach ($this->getElements() as $element) {
@@ -265,6 +334,21 @@ class AuthenticationForm extends Form
         }
     }
 
+    /**
+     * Static helper for moving an element in an array one slot up, if possible
+     *
+     * Example:
+     *
+     * <pre>
+     * $array = array('first', 'second', 'third');
+     * moveElementUp('third', $array); // returns ['first', 'third', 'second']
+     * </pre>
+     *
+     * @param   string    $key              The key to bubble up one slot
+     * @param   array     $array            The array to work with
+     *
+     * @return  array                       The modified array
+     */
     private static function moveElementUp($key, array $array)
     {
         $swap = null;
@@ -280,6 +364,21 @@ class AuthenticationForm extends Form
         return $array;
     }
 
+    /**
+     * Static helper for moving an element in an array one slot up, if possible
+     *
+     * Example:
+     *
+     * <pre>
+     * $array = array('first', 'second', 'third');
+     * moveElementDown('first', $array); // returns ['second', 'first', 'third']
+     * </pre>
+     *
+     * @param   string    $key              The key to bubble up one slot
+     * @param   array     $array            The array to work with
+     *
+     * @return  array                       The modified array
+     */
     private static function moveElementDown($key, array $array)
     {
         $swap = null;

@@ -1,14 +1,14 @@
 <?= $this->tabs->render($this); ?>
 <br/>
 <div class="alert alert-error">
-    <h4><i class="icon-warning-sign"> </i>Saving authentication.ini failed</h4>
+    <h4><i class="icon-warning-sign"> </i>Saving <?= $this->escape($this->file); ?>.ini failed</h4>
     <br/>
     <p>
-        Your authentication configuration couldn't be stored (error: "<?= $this->exceptionMessage; ?>"). This could have one or more
-        of the following reasons:
+        Your <?= $this->escape($this->file); ?> configuration couldn't be stored (error: "<?= $this->exceptionMessage; ?>").<br/>
+        This could have one or more of the following reasons:
     </p>
     <ul>
-        <li>You don't have file-system permissions to write to the authentication.ini file</li>
+        <li>You don't have file-system permissions to write to the <?= $this->escape($this->file); ?>.ini file</li>
         <li>Something went wrong while writing the file</li>
         <li>There's an application error preventing you from persisting the configuration</li>
     </ul>
@@ -17,7 +17,7 @@
 <p>
     Details can be seen in your application log (if you don't have access to this file, call your administrator in this case).
     <br/>
-    In case you can access the configuration file (config/authentication.ini) by yourself, you can open it and
+    In case you can access the configuration file (config/<?= $this->escape($this->file); ?>.ini) by yourself, you can open it and
     insert the config manually:
 
 </p>
