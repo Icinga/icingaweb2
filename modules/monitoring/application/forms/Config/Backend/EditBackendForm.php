@@ -138,7 +138,7 @@ class EditBackendForm extends Form
             'select',
             'backend_ido_resource',
             array(
-                'label'         => 'Ido Connection',
+                'label'         => 'IDO Connection',
                 'value'         =>  $this->backend->resource,
                 'required'      =>  true,
                 'multiOptions'  =>  $this->getDatabaseResources(),

@@ -15,7 +15,7 @@
   <?php $removeUrl = Url::fromPath('/monitoring/config/removebackend', array('backend' => $backendName)); ?>
   <?php $editUrl = Url::fromPath('/monitoring/config/editbackend', array('backend' => $backendName)); ?>
   <b><?= $this->escape($backendName); ?></b>
-  <small>(Type: <?= $this->escape($config['type']); ?>)</small>
+  <small>(Type: <?= $this->escape($config['type'] === 'ido' ? 'IDO' : ucfirst($config['type'])); ?>)</small>
   <?php if ($config['disabled']): ?>
     - <b>Disabled</b>
   <?php endif; ?>
