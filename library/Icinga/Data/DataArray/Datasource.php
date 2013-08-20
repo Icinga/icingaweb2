@@ -1,8 +1,10 @@
 <?php
 
-namespace Icinga\Data;
+namespace Icinga\Data\DataArray;
 
-class ArrayDatasource implements DatasourceInterface
+use Icinga\Data\DatasourceInterface;
+
+class Datasource implements DatasourceInterface
 {
     protected $data;
 
@@ -17,16 +19,16 @@ class ArrayDatasource implements DatasourceInterface
     }
 
     /**
-     * Instantiate an ArrayQuery object
+     * Instantiate a Query object
      *
-     * @return ArrayQuery
+     * @return Query
      */
     public function select()
     {
-        return new ArrayQuery($this);
+        return new Query($this);
     }
 
-    public function fetchColumn(ArrayQuery $query)
+    public function fetchColumn(Query $query)
     {
         $result = array();
         foreach ($this->getResult($query) as $row) {
@@ -36,7 +38,7 @@ class ArrayDatasource implements DatasourceInterface
         return $result;
     }
 
-    public function fetchPairs(ArrayQuery $query)
+    public function fetchPairs(Query $query)
     {
         $result = array();
         $keys = null;
@@ -52,19 +54,19 @@ class ArrayDatasource implements DatasourceInterface
         return $result;
     }
 
-    public function fetchAll(ArrayQuery $query)
+    public function fetchAll(Query $query)
     {
         $result = $this->getResult($query);
         return $result;
     }
 
-    public function count(ArrayQuery $query)
+    public function count(Query $query)
     {
         $this->createResult($query);
         return $query->getCount();
     }
 
-    protected function createResult(ArrayQuery $query)
+    protected function createResult(Query $query)
     {
         if ($query->hasResult()) {
             return $this;
@@ -109,7 +111,7 @@ class ArrayDatasource implements DatasourceInterface
         return $this;
     }
 
-    protected function getResult(ArrayQuery $query)
+    protected function getResult(Query $query)
     {
         if (! $query->hasResult()) {
             $this->createResult($query);
