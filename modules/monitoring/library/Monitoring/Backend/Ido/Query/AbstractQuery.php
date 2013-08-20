@@ -133,18 +133,12 @@ abstract class AbstractQuery extends Query
     protected function applyAllFilters()
     {
         $filters = array();
-        // TODO: Handle $special in a more generic way
-        $special =  array('hostgroups', 'servicegroups');
         foreach ($this->filters as $f) {
             $alias = $f[0];
             $value = $f[1];
             $this->requireColumn($alias);
 
-            if ($alias === 'hostgroups') {
-                $col = 'hg.alias';
-            } elseif ($alias === 'servicegroups') {
-                $col = 'sg.alias';
-            } elseif ($this->isCustomvar($alias)) {
+            if ($this->isCustomvar($alias)) {
                 $col = $this->getCustomvarColumnName($alias);
             } elseif ($this->hasAliasName($alias)) {
                 $col = $this->aliasToColumnName($alias);
