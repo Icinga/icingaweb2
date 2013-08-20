@@ -334,6 +334,8 @@ class StatusQuery extends AbstractQuery
         return $this;
     }
 
+    // TODO: This will be obsolete once status is based on the new hoststatus, offering much more
+    //       columns in a more efficient way
     protected function joinServiceproblemsummary()
     {
         $this->baseQuery->joinleft(
@@ -349,6 +351,7 @@ class StatusQuery extends AbstractQuery
         );
     }
 
+    // TODO: Terribly slow. As I have no idea of how to fix this we should remove it.
     protected function joinLasthostcomment()
     {
         $this->baseQuery->joinleft(
@@ -361,6 +364,7 @@ class StatusQuery extends AbstractQuery
         );
     }
 
+    // TODO: Terribly slow. As I have no idea of how to fix this we should remove it.
     protected function joinLastservicecomment()
     {
         $this->baseQuery->joinleft(
