@@ -21,7 +21,9 @@ class EventHistoryView extends AbstractView
         'type'
     );
 
-    protected $specialFilters = array();
+    protected $specialFilters = array(
+        'hostgroup',
+    );
 
     protected $sortDefaults = array(
         'raw_timestamp' => array(
