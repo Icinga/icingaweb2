@@ -122,6 +122,8 @@ class StatusQuery extends AbstractQuery
         ),
         'servicestatus' => array(
             'service_state'          => 'CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL THEN 99 ELSE ss.current_state END',
+            'service_hard_state'     => 'CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL THEN 99 ELSE CASE WHEN ss.state_type = 1 THEN ss.current_state ELSE ss.last_hard_state END END',
+            'service_state_type'     => 'ss.state_type',
             'service_output'         => 'ss.output',
             'service_long_output'    => 'ss.long_output',
             'service_perfdata'       => 'ss.perfdata',
@@ -144,7 +146,6 @@ class StatusQuery extends AbstractQuery
             'service_check_type' => 'ss.check_type',
             'service_last_hard_state_change' => 'ss.last_hard_state_change',
             'service_last_hard_state' => 'ss.last_hard_state',
-            'service_state_type' => 'ss.state_type',
             'service_last_notification' => 'ss.last_notification',
             'service_next_notification' => 'ss.next_notification',
             'service_no_more_notifications' => 'ss.no_more_notifications',
