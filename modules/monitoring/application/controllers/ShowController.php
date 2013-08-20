@@ -1,5 +1,4 @@
 <?php
-// @codingStandardsIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga 2 Web.
@@ -27,6 +26,7 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
+// @codingStandardsIgnoreStart
 use \Icinga\Module\Monitoring\Backend;
 use Icinga\Web\Controller\ActionController;
 use Icinga\Web\Hook;
@@ -356,21 +356,6 @@ class Monitoring_ShowController extends ActionController
         ));
     }
 
-    protected function prepareGrapherHook()
-    {
-        if ($grapher = Hook::get('grapher')) {
-            $object = $this->view->object;
-            if ($grapher->hasGraph(
-                $object->host_name,
-                $object->service_description
-            )) {
-                $this->view->preview_image = $grapher->getPreviewImage(
-                    $object->host_name,
-                    $object->service_description
-                );
-            }
-        }
-    }
     /**
      * Creating tabs for this controller
      * @return \Icinga\Web\Widget\AbstractWidget
@@ -444,5 +429,4 @@ class Monitoring_ShowController extends ActionController
 
     }
 }
-
 // @codingStandardsIgnoreEnd
