@@ -151,9 +151,14 @@ class IniStore implements LoadInterface, FlushObserverInterface
      */
     private function createDefaultIniFile()
     {
-        touch($this->preferencesFile);
+        // TODO: We should be able to work without preferences. Also we shouldn't store any
+        //       prefs as long as we didn't change some.
+        if (! is_writable($this->configPath) || touch($this->preferencesFile) === false) {
+            throw new ConfigurationError(
+                sprintf('Unable to store "%s"', $this->preferencesFile)
+            );
+        }
         chmod($this->preferencesFile, 0664);
-
     }
 
     /**
