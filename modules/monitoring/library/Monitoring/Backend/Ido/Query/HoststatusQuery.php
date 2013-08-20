@@ -17,6 +17,9 @@ class HoststatusQuery extends AbstractQuery
             'host_icon_image'        => 'h.icon_image',
         ),
         'hoststatus' => array(
+            'problems'                   => 'CASE WHEN hs.current_state = 0 THEN 0 ELSE 1 END',
+            'handled'                    => 'CASE WHEN (hs.problem_has_been_acknowledged + hs.scheduled_downtime_depth) > 0 THEN 1 ELSE 0 END',
+            'unhandled'                  => 'CASE WHEN (hs.problem_has_been_acknowledged + hs.scheduled_downtime_depth) = 0 THEN 1 ELSE 0 END',
             'host_state'                  => 'CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL THEN 99 ELSE hs.current_state END',
             'host_output'                 => 'hs.output',
             'host_long_output'            => 'hs.long_output',
@@ -72,7 +75,7 @@ class HoststatusQuery extends AbstractQuery
             END',
         ),
         'hostgroups' => array(
-            'hostgroups' => 'hgo.name1',
+            'hostgroup' => 'hgo.name1 COLLATE latin1_general_ci',
         ),
     );
 
