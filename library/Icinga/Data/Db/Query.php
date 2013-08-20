@@ -104,6 +104,11 @@ class Query extends AbstractQuery
         return $this->db->fetchRow($this->getSelectQuery());
     }
 
+    public function fetchColumn()
+    {
+        return $this->db->fetchCol($this->getSelectQuery());
+    }
+
     public function fetchOne()
     {
         return $this->db->fetchOne($this->getSelectQuery());
