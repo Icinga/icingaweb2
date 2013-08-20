@@ -1,6 +1,6 @@
 <?php
 
-namespace Icinga\Monitoring\Backend\Ido\Query;
+namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
 use Zend_Db_Select;
 

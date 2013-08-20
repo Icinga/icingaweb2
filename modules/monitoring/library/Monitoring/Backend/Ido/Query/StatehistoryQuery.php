@@ -1,6 +1,6 @@
 <?php
 
-namespace Icinga\Monitoring\Backend\Ido\Query;
+namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
 class StatehistoryQuery extends AbstractQuery
 {
