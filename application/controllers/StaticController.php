@@ -30,6 +30,7 @@
 use \Zend_Controller_Action_Exception as ActionException;
 use \Icinga\Web\Controller\ActionController;
 use \Icinga\Application\Icinga;
+use \Icinga\Application\Logger;
 
 class StaticController extends ActionController
 {
@@ -124,6 +125,9 @@ class StaticController extends ActionController
         }
 
         if (!file_exists($filePath)) {
+            Logger::error(
+                'Non-existing frontend component "' . $module . '/' . $file
+                . '" was requested, which would resolve to the the path: ' . $filePath);
             echo '/** Module has no js files **/';
             return;
         }

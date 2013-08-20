@@ -25,7 +25,7 @@ define(['jquery'], function($) {
         var createId = (function() {
             var id = 0;
             return function() {
-                return 'icinga-component-'+id++;
+                return 'icinga-component-' + id++;
             };
         })();
 

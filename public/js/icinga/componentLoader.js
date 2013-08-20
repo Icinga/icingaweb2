@@ -22,7 +22,7 @@ define(['jquery', 'logging', 'icinga/componentRegistry'], function ($, log, regi
              */
             var loadComponent = function(cmpType, target, fin, err) {
                 requirejs(
-                    ['modules/'+cmpType],
+                    ['modules/' + cmpType],
                     function (Cmp) {
                         var cmp;
                         try {
@@ -40,7 +40,7 @@ define(['jquery', 'logging', 'icinga/componentRegistry'], function ($, log, regi
                         if (!ex) {
                             return;
                         }
-                        log.emergency('Component "'+cmpType+'" could not be loaded.', ex);
+                        log.emergency('Component "' + cmpType + '" could not be loaded.', ex);
                         if (err) {
                             err(ex);
                         }

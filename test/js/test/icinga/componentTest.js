@@ -30,19 +30,19 @@ var setUp = function(registry)
          */
         'modules/app/component1': function(cmp) {
             cmp.test = 'changed-by-component-1';
-            this.type = function(){
+            this.type = function() {
                 return "app/component1";
             };
         },
         'modules/app/component2': function(cmp) {
             cmp.test = 'changed-by-component-2';
-            this.type = function(){
+            this.type = function() {
                 return "app/component2";
             };
         },
         'modules/module/component3': function(cmp) {
             cmp.test = 'changed-by-component-3-from-module';
-            this.type = function(){
+            this.type = function() {
                 return "module/component3";
             };
         }
@@ -60,21 +60,20 @@ var setUp = function(registry)
  * @param   type    {String}    The type of the component in the form: "<module>/<type>"
  * @param   id      {String}    The optional id of the component
  */
-var addComponent = function(type,id) {
-    var txt = '<div '+( id ? ( ' id= "'+id+'" ' ) : '' ) +
-    ' data-icinga-component="'+type+'" >test</div>';
+var addComponent = function(type, id) {
+    var txt = '<div ' + ( id ? ( ' id= "' + id + '" ' ) : '' ) +
+    ' data-icinga-component="' + type + '" >test</div>';
 
     $('body').append(txt);
 };
 
-describe('Component loader',function(){
+describe('Component loader', function() {
 
-    it('Component loaded with automatic id',function(){
+    it('Component loaded with automatic id', function() {
         setUp();
         addComponent('app/component1');
 
-        component.load(function(){
-            // loading complete
+        component.load(function() {
             var cmpNode = $('#icinga-component-0');
             cmpNode.length.should.equal(1);
             cmpNode[0].test.should.equal('changed-by-component-1');
@@ -82,12 +81,11 @@ describe('Component loader',function(){
         });
     });
 
-    it('Component load with user-defined id',function(){
+    it('Component load with user-defined id', function() {
         setUp();
         addComponent('app/component2','some-id');
 
-        component.load(function(){
-            // loading complete
+        component.load(function() {
             var cmpNode = $('#some-id');
             cmpNode.length.should.equal(1);
             cmpNode[0].test.should.equal('changed-by-component-2');
@@ -95,40 +93,39 @@ describe('Component loader',function(){
         });
     });
 
-    it('Garbage collection removes deleted components',function(){
+    it('Garbage collection removes deleted components', function() {
         setUp();
         addComponent('app/component1');
         addComponent('app/component2');
         addComponent('app/component2');
         addComponent('module/component3');
 
-        component.load(function(){
-            // loading complete
+        component.load(function() {
             var components = component.getComponents();
             components.length.should.equal(4);
             $('body').empty();
-            component.load(function(){
+            component.load(function() {
                 var components = component.getComponents();
                 components.length.should.equal(0);
             });
         });
     });
 
-    it('Component queries are delegated to the registry correctly',function(){
+    it('Component queries are delegated to the registry correctly', function() {
         var getByIdCalled = false;
         var getByTypeCalled = false;
         var getComponentsCalled = false;
 
         var registryMock = {
-            getById: function(id){
+            getById: function(id) {
                 getByIdCalled = true;
                 id.should.equal('some-id');
             },
-            getByType: function(type){
+            getByType: function(type) {
                 getByTypeCalled = true;
                 type.should.equal('some-type');
             },
-            getComponents: function(){
+            getComponents: function() {
                 getComponentsCalled = true;
             }
         };
