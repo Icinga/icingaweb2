@@ -141,7 +141,7 @@ class LoggingForm extends Form
         $txtLogPath = new Zend_Form_Element_Text(
             array(
                 'name'          => 'logging_app_target',
-                'label'         => 'Application log path',
+                'label'         => 'Application Log Path',
                 'helptext'      => 'The logfile to write the icingaweb debug logs to.'
                                     . 'The webserver must be able to write at this location',
                 'required'      => true,
@@ -155,7 +155,7 @@ class LoggingForm extends Form
             'checkbox',
             'logging_app_verbose',
             array(
-                'label'     => 'Verbose logging',
+                'label'     => 'Verbose Logging',
                 'required'  => true,
                 'helptext'  => 'Check to write more verbose output to the icinga log file',
                 'value'     => intval($logging->get('verbose', 0)) === 1
@@ -166,7 +166,7 @@ class LoggingForm extends Form
             'checkbox',
             'logging_debug_enable',
             array(
-                'label'     => 'Use debug log',
+                'label'     => 'Use Debug Log',
                 'required'  => true,
                 'helptext'  => 'Check to write a seperate debug log (Warning: This file can grow very big)',
                 'value'     => $this->shouldDisplayDebugLog($debug)
@@ -176,7 +176,7 @@ class LoggingForm extends Form
         $textLoggingDebugPath = new Zend_Form_Element_Text(
             array(
                 'name'      => 'logging_debug_target',
-                'label'     => 'Debug log path',
+                'label'     => 'Debug Log Path',
                 'required'  => $this->shouldDisplayDebugLog($debug),
                 'condition' => $this->shouldDisplayDebugLog($debug),
                 'value'     => $debug->get('target', $this->getBaseDir() . '/var/log/icinga2.debug.log'),
@@ -192,7 +192,7 @@ class LoggingForm extends Form
 
         $this->enableAutoSubmit(array('logging_debug_enable'));
 
-        $this->setSubmitLabel('Save changes');
+        $this->setSubmitLabel('Save Changes');
     }
 
     /**

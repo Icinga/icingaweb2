@@ -138,7 +138,7 @@ class GeneralForm extends Form
             'checkbox',
             'environment',
             array(
-                'label'     => 'Development mode',
+                'label'     => 'Development Mode',
                 'required'  => true,
                 'helptext' => 'Set true to show more detailed errors '
                                 . 'and disable certain optimizations '
@@ -170,7 +170,7 @@ class GeneralForm extends Form
             'select',
             'timezone',
             array(
-                'label'         =>  'Default application timezone',
+                'label'         =>  'Default Application Timezone',
                 'required'      =>  true,
                 'multiOptions'  =>  $tzList,
                 'helptext'      =>  $helptext,
@@ -190,7 +190,7 @@ class GeneralForm extends Form
             'text',
             'module_folder',
             array(
-                'label'     => 'Module folder',
+                'label'     => 'Module Folder',
                 'required'  => true,
                 'helptext'  => 'Use this folder to activate modules (must be writable by your webserver)',
                 'value'     => $cfg->get('moduleFolder', $this->getConfigDir() . '/config/enabledModules')
@@ -211,7 +211,7 @@ class GeneralForm extends Form
         $txtDefaultDateFormat = new Zend_Form_Element_Text(
             array(
                 'name'      =>  'date_format',
-                'label'     =>  'Date format',
+                'label'     =>  'Date Format',
                 'helptext'  =>  'Display dates according to this format. See ' . $phpUrl . ' for possible values',
                 'required'  =>  true,
                 'value'     =>  $cfg->get('dateFormat', 'd/m/Y')
@@ -223,7 +223,7 @@ class GeneralForm extends Form
         $txtDefaultTimeFormat = new Zend_Form_Element_Text(
             array(
                 'name'      =>  'time_format',
-                'label'     =>  'Time format',
+                'label'     =>  'Time Format',
                 'required'  =>  true,
                 'helptext'  =>  'Display times according to this format. See ' . $phpUrl . ' for possible values',
                 'value'     =>  $cfg->get('timeFormat', 'g:i A')
@@ -248,11 +248,11 @@ class GeneralForm extends Form
             'select',
             'preferences_type',
             array(
-                'label'         => 'User preference storage type',
+                'label'         => 'User Preference Storage Type',
                 'required'      => true,
                 'value'         => $backend,
                 'multiOptions'  => array(
-                    'ini'   => 'File system (ini files)',
+                    'ini'   => 'File System (ini files)',
                     'db'    => 'Database'
                 )
             )
@@ -261,7 +261,7 @@ class GeneralForm extends Form
         $txtPreferencesIniPath = new Zend_Form_Element_Text(
             array(
                 'name'      =>  'preferences_ini_path',
-                'label'     =>  'Path to store user preference files',
+                'label'     =>  'User Preference Filepath',
                 'required'  =>  $backend === 'ini',
                 'condition' =>  $backend === 'ini',
                 'value'     =>  $cfg->get('configPath')
@@ -279,7 +279,7 @@ class GeneralForm extends Form
         $txtPreferencesDbResource = new Zend_Form_Element_Select(
             array(
                 'name'          =>  'preferences_db_resource',
-                'label'         =>  'Database connection',
+                'label'         =>  'Database Connection',
                 'required'      =>  $backend === 'db',
                 'condition'     =>  $backend === 'db',
                 'value'         =>  $cfg->get('resource'),
@@ -327,7 +327,7 @@ class GeneralForm extends Form
         $this->addDateFormatSettings($global);
         $this->addUserPreferencesDialog($preferences);
 
-        $this->setSubmitLabel('Save changes');
+        $this->setSubmitLabel('Save Changes');
     }
 
     /**

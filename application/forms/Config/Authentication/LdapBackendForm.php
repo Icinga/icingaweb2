@@ -58,7 +58,7 @@ class LdapBackendForm extends BaseBackendForm
             array(
                 'required'  => true,
                 'allowEmpty'=>  false,
-                'label'     => 'Backend name',
+                'label'     => 'Backend Name',
                 'helptext'  => 'The name of this authentication backend',
                 'value'     => $this->getBackendName()
             )
@@ -68,7 +68,7 @@ class LdapBackendForm extends BaseBackendForm
             'text',
             'backend_' . $name . '_hostname',
             array(
-                'label'         => 'LDAP server host',
+                'label'         => 'LDAP Server Host',
                 'allowEmpty'    =>  false,
                 'value'         => $backend->get('hostname', 'localhost'),
                 'helptext'      => 'The hostname or address of the LDAP server to use for authentication',
@@ -80,7 +80,7 @@ class LdapBackendForm extends BaseBackendForm
             'text',
             'backend_' . $name . '_root_dn',
             array(
-                'label'     => 'LDAP root dn',
+                'label'     => 'LDAP Root DN',
                 'value'     => $backend->get('root_dn', 'ou=people,dc=icinga,dc=org'),
                 'helptext'      => 'The path where users can be found on the ldap server',
                 'required'  => true
@@ -91,7 +91,7 @@ class LdapBackendForm extends BaseBackendForm
             'text',
             'backend_' . $name . '_bind_dn',
             array(
-                'label'     => 'LDAP bind dn',
+                'label'     => 'LDAP Bind DN',
                 'value'     => $backend->get('bind_dn', 'cn=admin,cn=config'),
                 'helptext'      => 'The user dn to use for querying the ldap server',
                 'required'  => true
@@ -102,7 +102,7 @@ class LdapBackendForm extends BaseBackendForm
             'password',
             'backend_' . $name . '_bind_pw',
             array(
-                'label'     => 'LDAP bind password',
+                'label'     => 'LDAP Bind Password',
                 'renderPassword' => true,
                 'value'     => $backend->get('bind_pw', 'admin'),
                 'helptext'  => 'The password to use for querying the ldap server',
@@ -114,7 +114,7 @@ class LdapBackendForm extends BaseBackendForm
             'text',
             'backend_' . $name . '_user_class',
             array(
-                'label'     => 'LDAP user object class',
+                'label'     => 'LDAP User Object Class',
                 'value'     => $backend->get('user_class', 'inetOrgPerson'),
                 'helptext'  => 'The object class used for storing users on the ldap server',
                 'required'  => true
@@ -125,14 +125,14 @@ class LdapBackendForm extends BaseBackendForm
             'text',
             'backend_' . $name . '_user_name_attribute',
             array(
-                'label'     => 'LDAP user name attribute',
+                'label'     => 'LDAP User Name Attribute',
                 'value'     => $backend->get('user_name_attribute', 'uid'),
                 'helptext'  => 'The attribute name used for storing the user name on the ldap server',
                 'required'  => true
             )
         );
 
-        $this->setSubmitLabel('Save backend');
+        $this->setSubmitLabel('Save Backend');
     }
 
     /**

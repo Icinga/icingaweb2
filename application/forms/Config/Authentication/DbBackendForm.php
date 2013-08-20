@@ -78,7 +78,7 @@ class DbBackendForm extends BaseBackendForm
             array(
                 'required'  => true,
                 'allowEmpty'=>  false,
-                'label'     => 'Backend name',
+                'label'     => 'Backend Name',
                 'helptext'  => 'The name of this authentication provider',
                 'value'     => $this->getBackendName()
             )
@@ -88,7 +88,7 @@ class DbBackendForm extends BaseBackendForm
             'select',
             'backend_' . $name . '_resource',
             array(
-                'label'         =>  'Database connection',
+                'label'         =>  'Database Connection',
                 'required'      =>  true,
                 'allowEmpty'    =>  false,
                 'helptext'      => 'The database connection to use for authenticating with this provider',

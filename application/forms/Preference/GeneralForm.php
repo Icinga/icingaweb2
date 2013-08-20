@@ -84,7 +84,7 @@ class GeneralForm extends Form
         $selectTimezone = new Zend_Form_Element_Select(
             array(
                 'name'          => 'timezone',
-                'label'         =>  'Your current timezone',
+                'label'         =>  'Your Current Timezone',
                 'required'      =>  !$useGlobalTimezone,
                 'multiOptions'  =>  $tzList,
                 'helptext'      =>  $helptext,
@@ -95,7 +95,7 @@ class GeneralForm extends Form
             'checkbox',
             'default_timezone',
             array(
-                'label'         => 'Use default timezone',
+                'label'         => 'Use Default Timezone',
                 'value'         => !$prefs->has('app.timezone'),
                 'required'      => true
             )
@@ -128,7 +128,7 @@ class GeneralForm extends Form
             'checkbox',
             'default_date_format',
             array(
-                'label'         => 'Use default date format',
+                'label'         => 'Use Default Date Format',
                 'value'         => !$prefs->has('app.dateFormat'),
                 'required'      => true
             )
@@ -136,7 +136,7 @@ class GeneralForm extends Form
         $txtDefaultDateFormat = new Zend_Form_Element_Text(
             array(
                 'name'      =>  'date_format',
-                'label'     =>  'Preferred date format',
+                'label'     =>  'Preferred Date Format',
                 'helptext'  =>  'Display dates according to this format. See ' . $phpUrl . ' for possible values',
                 'required'  =>  !$useGlobalDateFormat,
                 'value'     =>  $prefs->get('app.dateFormat', $cfg->get('dateFormat', 'd/m/Y'))
@@ -153,7 +153,7 @@ class GeneralForm extends Form
             'checkbox',
             'default_time_format',
             array(
-                'label'         => 'Use default time format',
+                'label'         => 'Use Default Time Format',
                 'value'         => !$prefs->has('app.timeFormat'),
                 'required'      => !$useGlobalTimeFormat
             )
@@ -161,7 +161,7 @@ class GeneralForm extends Form
         $txtDefaultTimeFormat = new Zend_Form_Element_Text(
             array(
                 'name'      =>  'time_format',
-                'label'     =>  'Preferred time format',
+                'label'     =>  'Preferred Time Format',
                 'required'  =>  !$useGlobalTimeFormat,
                 'helptext'  =>  'Display times according to this format. See ' . $phpUrl . ' for possible values',
                 'value'     =>  $prefs->get('app.timeFormat', $cfg->get('timeFormat', 'g:i A'))
@@ -196,7 +196,7 @@ class GeneralForm extends Form
         $this->addTimezoneSelection($global);
         $this->addDateFormatSettings($global);
 
-        $this->setSubmitLabel('Save changes');
+        $this->setSubmitLabel('Save Changes');
     }
 
     /**
