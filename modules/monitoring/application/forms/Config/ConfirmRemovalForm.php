@@ -78,6 +78,6 @@ class ConfirmRemovalForm extends Form
                 'required'  => true
             )
         );
-        $this->setSubmitLabel('Confirm removal');
+        $this->setSubmitLabel('Confirm Removal');
     }
 }

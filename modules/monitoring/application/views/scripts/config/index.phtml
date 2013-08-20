@@ -4,7 +4,9 @@
 <h3>Backends</h3>
 
 <div>
-  <a href="<?= Url::fromPath('/monitoring/config/createbackend')->getAbsoluteUrl();?>">Create new backend</a>
+  <a href="<?= Url::fromPath('/monitoring/config/createbackend')->getAbsoluteUrl();?>">
+      Create New Backend
+  </a>
 </div>
 <br/>
 
@@ -13,13 +15,13 @@
   <?php $removeUrl = Url::fromPath('/monitoring/config/removebackend', array('backend' => $backendName)); ?>
   <?php $editUrl = Url::fromPath('/monitoring/config/editbackend', array('backend' => $backendName)); ?>
   <b><?= $this->escape($backendName); ?></b>
-  <small>(Type: <?= $this->escape($config["type"]); ?>)</small>
+  <small>(Type: <?= $this->escape($config['type']); ?>)</small>
   <?php if ($config['disabled']): ?>
     - <b>Disabled</b>
   <?php endif; ?>
   <div>
-    <a href="<?= $removeUrl; ?>">Remove this backend</a><br/>
-    <a href="<?= $editUrl; ?>">Edit this backend</a>
+    <a href="<?= $removeUrl; ?>">Remove This Backend</a><br/>
+    <a href="<?= $editUrl; ?>">Edit This Backend</a>
   </div>
 </div>
 <br/>
@@ -27,10 +29,12 @@
 
 <br/>
 
-<h3>Montoring instances</h3>
+<h3>Monitoring Instances</h3>
 
 <div>
-  <a href="<?= Url::fromPath('/monitoring/config/createinstance')->getAbsoluteUrl();?>">Create new instance </a>
+  <a href="<?= Url::fromPath('/monitoring/config/createinstance')->getAbsoluteUrl();?>">
+      Create New Instance
+  </a>
 </div>
 
 <br/>
@@ -39,11 +43,11 @@
   <?php $editUrl = Url::fromPath('/monitoring/config/editinstance', array('instance' => $instanceName)); ?>
 <div>
   <b><?= $this->escape($instanceName); ?></b>
-  <small>(Type: <?= isset($config["host"]) ? 'Remote' : 'Local'; ?>)</small>
+  <small>(Type: <?= isset($config['host']) ? 'Remote' : 'Local'; ?>)</small>
 
   <div>
-    <a href="<?= $removeUrl; ?>">Remove this instance</a><br/>
-    <a href="<?= $editUrl; ?>">Edit this instance</a>
+    <a href="<?= $removeUrl; ?>">Remove This Instance</a><br/>
+    <a href="<?= $editUrl; ?>">Edit This Instance</a>
   </div>
 </div>
 <br/>

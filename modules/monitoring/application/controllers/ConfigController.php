@@ -59,7 +59,7 @@ class Monitoring_ConfigController extends BaseConfigController {
             'backends' => new Tab(array(
                 'name'  => 'backends',
                 'title' => 'Monitoring Backends',
-                'url'   => Url::fromPath('/monitoring/config/backend')
+                'url'   => Url::fromPath('/monitoring/config')
             ))
         );
     }
@@ -81,7 +81,7 @@ class Monitoring_ConfigController extends BaseConfigController {
     {
         $backend = $this->getParam('backend');
         if (!$this->isExistingBackend($backend)) {
-            $this->view->error = "Unknown backend " . htmlentities($backend);
+            $this->view->error = 'Unknown backend ' . $backend;
             return;
         }
         $backendForm = new EditBackendForm();
@@ -135,7 +135,7 @@ class Monitoring_ConfigController extends BaseConfigController {
     {
         $backend = $this->getParam('backend');
         if (!$this->isExistingBackend($backend)) {
-            $this->view->error = "Unknown backend " . $backend;
+            $this->view->error = 'Unknown backend ' . $backend;
             return;
         }
         $form = new ConfirmRemovalForm();
@@ -166,7 +166,7 @@ class Monitoring_ConfigController extends BaseConfigController {
     {
         $instance = $this->getParam('instance');
         if (!$this->isExistingInstance($instance)) {
-            $this->view->error = "Unknown instance " . $instance;
+            $this->view->error = 'Unknown instance ' . $instance;
             return;
         }
 
@@ -197,7 +197,7 @@ class Monitoring_ConfigController extends BaseConfigController {
     {
         $instance = $this->getParam('instance');
         if (!$this->isExistingInstance($instance)) {
-            $this->view->error = "Unknown instance " . htmlentities($instance);
+            $this->view->error = 'Unknown instance ' . htmlentities($instance);
             return;
         }
         $form = new EditInstanceForm();
