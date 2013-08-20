@@ -77,6 +77,12 @@ class HoststatusQuery extends AbstractQuery
         'hostgroups' => array(
             'hostgroup' => 'hgo.name1 COLLATE latin1_general_ci',
         ),
+        'contactgroups' => array(
+            'contactgroup' => 'contactgroup',
+        ),
+        'contacts' => array(
+            'contact' => 'hco.name1 COLLATE latin1_general_ci',
+        ),
         'services' => array(
             'services_cnt'      => 'SUM(1)',
             'services_ok'       => 'SUM(CASE WHEN ss.current_state = 0 THEN 1 ELSE 0 END)',
@@ -102,6 +108,8 @@ class HoststatusQuery extends AbstractQuery
         'services_problem_handled'   => true,
         'services_problem_unhandled' => true,
     );
+
+    protected $hcgSub;
 
     protected function getDefaultColumns()
     {
@@ -172,6 +180,121 @@ class HoststatusQuery extends AbstractQuery
         } else {
             return $this->joinHostHostgroups();
         }
+    }
+
+    protected function joinContacts()
+    {
+        $this->hcgcSub = $this->db->select()->distinct()->from(
+            array('hcgc' => $this->prefix . 'host_contactgroups'),
+            array('host_name' => 'ho.name1')
+        )->join(
+            array('cgo' => $this->prefix . 'objects'),
+            'hcg.contactgroup_object_id = cgo.' . $this->object_id
+          . ' AND cgo.is_active = 1',
+            array()
+        )->join(
+            array('h' => $this->prefix . 'hosts'),
+            'hcg.host_id = h.host_id',
+            array()
+        )->join(
+            array('ho' => $this->prefix . 'objects'),
+            'h.host_object_id = ho.' . $this->object_id . ' AND ho.is_active = 1',
+            array()
+        );
+        $this->baseQuery->join(
+            array('hcg' => $this->hcgSub),
+            'hcg.host_name = ho.name1',
+            array()
+        );
+
+        return $this;
+    }
+
+
+/*
+    protected function joinContacts()
+    {
+
+        
+        $this->baseQuery->join(
+            array('hc' => $this->prefix . 'host_contacts'),
+            'hc.host_id = h.host_id',
+            array()
+        )->join(
+            array('hco' => $this->prefix . 'objects'),
+            'hco.' . $this->object_id. ' = hc.contact_object_id'
+          . ' AND hco.is_active = 1',
+            array()
+        );
+
+        $this->baseQuery->join(
+            array('hcg' => $this->prefix . 'host_contactgroups'),
+            'hcg.host_id = h.host_id',
+            array()
+        )->join(
+            array('hcgo' => $this->prefix . 'objects'),
+            'hcgo.' . $this->object_id. ' = hcg.contactgroup_object_id'
+          . ' AND hcgo.is_active = 1',
+            array()
+        );
+        $this->baseQuery->join(
+            array('cgm' => $this->prefix . 'contactgroup_members'),
+            'cgm.contactgroup_id = cg.contactgroup_id',
+            array()
+        )->join(
+            array('co' => $this->prefix . 'objects'),
+            'cgm.contact_object_id = co.object_id AND co.is_active = 1',
+            array()
+        );
+    }
+
+
+        return $this;
+    }
+*/
+    protected function filterContactgroup($value)
+    {
+        $this->hcgSub->where(
+            $this->prepareFilterStringForColumn(
+                'cgo.name1 COLLATE latin1_general_ci',
+                $value
+            )
+        );
+        return $this;
+    }
+
+
+    protected function createContactgroupFilterSubselect()
+    {
+        die((string) $this->db->select()->distinct()->from(
+            array('hcg' => $this->prefix . 'host_contactgroups'),
+            array('object_id' => 'ho.object_id')
+        )->join(
+            array('cgo' => $this->prefix . 'objects'),
+            'hcg.contactgroup_object_id = cgo.' . $this->object_id
+          . ' AND cgo.is_active = 1',
+            array()
+        )->join(
+            array('h' => $this->prefix . 'hosts'),
+            'hcg.host_id = h.host_id',
+            array()
+        )->join(
+            array('ho' => $this->prefix . 'objects'),
+            'h.host_object_id = ho.' . $this->object_id . ' AND ho.is_active = 1',
+            array()
+        ));
+    }
+
+    protected function joinContactgroups()
+    {
+        $this->hcgSub = $this->createContactgroupFilterSubselect();
+        $this->baseQuery->join(
+            array('hcg' => $this->hcgSub),
+            'hcg.object_id = ho.object_id',
+            array()
+        );
+
+        return $this;
     }
 
     protected function joinHostHostgroups()
