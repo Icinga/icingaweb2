@@ -28,14 +28,16 @@
 
 namespace Icinga\Config;
 
-use Zend_Config;
-use Zend_Config_Ini;
+use \Zend_Config;
+use \Zend_Config_Ini;
+use \Zend_Config_Writer_FileAbstract;
+use \Icinga\Config\IniEditor;
 
 /**
  * A ini file adapter that respects the file structure and the comments of already
  * existing ini files
  */
-class PreservingIniWriter extends \Zend_Config_Writer_FileAbstract
+class PreservingIniWriter extends Zend_Config_Writer_FileAbstract
 {
     /**
      * Render the Zend_Config into a config file string
@@ -47,7 +49,7 @@ class PreservingIniWriter extends \Zend_Config_Writer_FileAbstract
         $oldconfig = new Zend_Config_Ini($this->_filename);
         $newconfig = $this->_config;
         $editor = new IniEditor(file_get_contents($this->_filename));
-        $this->diffConfigs($oldconfig,$newconfig,$editor);
+        $this->diffConfigs($oldconfig, $newconfig, $editor);
         return $editor->getText();
     }
 
@@ -65,8 +67,8 @@ class PreservingIniWriter extends \Zend_Config_Writer_FileAbstract
         IniEditor $editor,
         array $parents = array()
     ) {
-        $this->diffPropertyUpdates($oldconfig,$newconfig,$editor,$parents);
-        $this->diffPropertyDeletions($oldconfig,$newconfig,$editor,$parents);
+        $this->diffPropertyUpdates($oldconfig, $newconfig, $editor, $parents);
+        $this->diffPropertyDeletions($oldconfig, $newconfig, $editor, $parents);
     }
 
     /**
@@ -94,9 +96,9 @@ class PreservingIniWriter extends \Zend_Config_Writer_FileAbstract
          */
         foreach ($newconfig as $key => $value) {
             $oldvalue = $oldconfig->get($key);
-            $nextParents = array_merge($parents,array($key));
+            $nextParents = array_merge($parents, array($key));
             $keyIdentifier = empty($parents) ?
-                array($key) : array_slice($nextParents,1,null,true);
+                array($key) : array_slice($nextParents, 1, null, true);
 
             if ($value instanceof Zend_Config) {
                 /*
@@ -107,22 +109,22 @@ class PreservingIniWriter extends \Zend_Config_Writer_FileAbstract
                      * Update the section declaration
                      */
                     $extends = $newconfig->getExtends();
-                    $extend = array_key_exists($key,$extends) ?
+                    $extend = array_key_exists($key, $extends) ?
                         $extends[$key] : null;
-                    $editor->setSection($key,$extend);
+                    $editor->setSection($key, $extend);
                 }
                 if (!isset($oldvalue)) {
                     $oldvalue = new Zend_Config(array());
                 }
-                $this->diffConfigs($oldvalue,$value,$editor,$nextParents);
+                $this->diffConfigs($oldvalue, $value, $editor, $nextParents);
             } else {
                 /*
                  * The value is a plain value, use the editor to set it
                  */
                 if (is_numeric($key)) {
-                    $editor->setArrayElement($keyIdentifier,$value,$section);
+                    $editor->setArrayElement($keyIdentifier, $value, $section);
                 } else {
-                    $editor->set($keyIdentifier,$value,$section);
+                    $editor->set($keyIdentifier, $value, $section);
                 }
             }
         }
@@ -153,17 +155,17 @@ class PreservingIniWriter extends \Zend_Config_Writer_FileAbstract
          * deleted properties
          */
         foreach ($oldconfig as $key => $value) {
-            $nextParents = array_merge($parents,array($key));
+            $nextParents = array_merge($parents, array($key));
             $newvalue = $newconfig->get($key);
             $keyIdentifier = empty($parents) ?
-                array($key) : array_slice($nextParents,1,null,true);
+                array($key) : array_slice($nextParents, 1, null, true);
 
             if (!isset($newvalue)) {
                 if ($value instanceof Zend_Config) {
                     /*
                      * The deleted value is a nested Zend_Config, handle it recursively
                      */
-                    $this->diffConfigs($value,new Zend_Config(array()),$editor,$nextParents);
+                    $this->diffConfigs($value, new Zend_Config(array()), $editor, $nextParents);
                     if (!isset($section)) {
                         $editor->removeSection($key);
                     }
@@ -172,13 +174,12 @@ class PreservingIniWriter extends \Zend_Config_Writer_FileAbstract
                      * The deleted value is a plain value, use the editor to delete it
                      */
                     if (is_numeric($key)) {
-                        $editor->resetArrayElement($keyIdentifier,$section);
+                        $editor->resetArrayElement($keyIdentifier, $section);
                     } else {
-                        $editor->reset($keyIdentifier,$section);
+                        $editor->reset($keyIdentifier, $section);
                     }
                 }
             }
         }
     }
 }
-

@@ -28,7 +28,7 @@
 
 namespace Icinga\Config;
 
-use Icinga\Exception\ConfigurationError;
+use \Zend_Config_Exception;
 
 /**
  * Edit the sections and keys of an ini in-place
@@ -52,36 +52,36 @@ class IniEditor
     /**
      * Create a new IniEditor
      *
-     * @param $content  The content of the ini as string
+     * @param string $content The content of the ini as string
      */
     public function __construct($content)
     {
-        $this->text = explode("\n",$content);
+        $this->text = explode("\n", $content);
     }
 
     /**
      * Set the value of the given key.
      *
-     * @param array $key    The key to set
-     * @param $value        The value to set
-     * @param $section      The section to insert to.
+     * @param array  $key     The key to set
+     * @param mixed  $value   The value to set
+     * @param string $section The section to insert to.
      */
     public function set(array $key, $value, $section = null)
     {
-        $line = $this->getKeyLine($key,$section);
+        $line = $this->getKeyLine($key, $section);
         if ($line === -1) {
-            $this->insert($key,$value,$section);
+            $this->insert($key, $value, $section);
         } else {
-            $content = $this->formatKeyValuePair($key,$value);
-            $this->updateLine($line,$content);
+            $content = $this->formatKeyValuePair($key, $value);
+            $this->updateLine($line, $content);
         }
     }
 
     /**
      * Reset the value of the given array element
      *
-     * @param $key      The key of the array value
-     * @param $section  The section of the array.
+     * @param array $key      The key of the array value
+     * @param string $section The section of the array.
      */
     public function resetArrayElement(array $key, $section = null)
     {
@@ -94,36 +94,35 @@ class IniEditor
     /**
      * Set the value for an array element
      *
-     * @param array $key    The key of the property
-     * @param $value        The value of the property
-     * @param $section      The section to use
+     * @param array  $key     The key of the property
+     * @param mixed  $value   The value of the property
+     * @param string $section The section to use
      */
     public function setArrayElement(array $key, $value, $section = null)
     {
-        $line = $this->getArrayElement($key,$section);
+        $line = $this->getArrayElement($key, $section);
         if ($line !== -1) {
             if (isset($section)) {
-                $this->updateLine($line,$this->formatKeyValuePair($key,$value));
+                $this->updateLine($line, $this->formatKeyValuePair($key, $value));
             } else {
                 $section = $key[0];
                 unset($key[0]);
                 $this->deleteLine($line);
                 $this->setSection($section);
-                $this->insert($key,$value,$section);
+                $this->insert($key, $value, $section);
             }
         } else {
-            $this->insert($key,$value,$section);
+            $this->insert($key, $value, $section);
         }
     }
 
     /**
      * Get the line of an array element
      *
-     * @param array $key    The key of the property.
-     * @param $value        The value
-     * @param $section      The section to use
+     * @param array $key      The key of the property.
+     * @param string $section The section to use
      *
-     * @return              The line of the array element.
+     * @return int The line of the array element.
      */
     private function getArrayElement(array $key, $section = null)
     {
@@ -135,10 +134,10 @@ class IniEditor
             if ($this->isSectionDeclaration($l)) {
                 return -1;
             }
-            if (preg_match('/^\s*'.$formatted.'\[\]\s*=/',$l) === 1) {
+            if (preg_match('/^\s*' . $formatted.'\[\]\s*=/', $l) === 1) {
                 return $line;
             }
-            if ($this->isPropertyDeclaration($l,array_merge($key,array($index)))) {
+            if ($this->isPropertyDeclaration($l, array_merge($key, array($index)))) {
                 return $line;
             }
         }
@@ -148,12 +147,12 @@ class IniEditor
     /**
      * When it exists, set the key back to null
      *
-     * @param array $key    The key to reset
-     * @param $section      The section of the key
+     * @param array  $key     The key to reset
+     * @param string $section The section of the key
      */
     public function reset(array $key, $section = null)
     {
-        $line = $this->getKeyLine($key,$section);
+        $line = $this->getKeyLine($key, $section);
         if ($line === -1) {
             return;
         }
@@ -163,30 +162,30 @@ class IniEditor
     /**
      * Create the section if it does not exist and set the properties
      *
-     * @param $section  The section name
-     * @param $extend   The section that should be extended by this section
+     * @param string $section The section name
+     * @param string $extend  The section that should be extended by this section
      */
     public function setSection($section, $extend = null)
     {
         if (isset($extend)) {
-            $decl = '['.$section.' : '.$extend.']';
+            $decl = '[' . $section . ' : ' . $extend.']';
         } else {
-            $decl = '['.$section.']';
+            $decl = '[' . $section.']';
         }
         $line = $this->getSectionLine($section);
         if ($line !== -1) {
             $this->deleteLine($line);
-            $this->insertAtLine($line,$decl);
+            $this->insertAtLine($line, $decl);
         } else {
             $line = $this->getLastLine();
-            $this->insertAtLine($line,$decl);
+            $this->insertAtLine($line, $decl);
         }
     }
 
     /**
      * Remove a section declaration
      *
-     * @param $section  The section name
+     * @param string $section The section name
      */
     public function removeSection($section)
     {
@@ -199,15 +198,15 @@ class IniEditor
     /**
      * Insert the key at the end of the corresponding section
      *
-     * @param array $key    The key to insert
-     * @param $value        The value to insert
-     * @param array $key    The key to insert
+     * @param array  $key     The key to insert
+     * @param mixed  $value   The value to insert
+     * @param string $section
      */
     private function insert(array $key, $value, $section = null)
     {
         $line = $this->getSectionEnd($section);
-        $content = $this->formatKeyValuePair($key,$value);
-        $this->insertAtLine($line,$content);
+        $content = $this->formatKeyValuePair($key, $value);
+        $this->insertAtLine($line, $content);
     }
 
     /**
@@ -218,7 +217,7 @@ class IniEditor
     public function getText()
     {
         $this->cleanUpWhitespaces();
-        return implode("\n",$this->text);
+        return implode("\n", $this->text);
     }
 
     /**
@@ -235,14 +234,14 @@ class IniEditor
                 /*
                  * Ignore comments that are glued to the section declaration
                  */
-                while ($i > 0 && preg_match('/^\s*;/',$line) === 1) {
+                while ($i > 0 && preg_match('/^\s*;/', $line) === 1) {
                     $i--;
                     $line = $this->text[$i];
                 }
                 /*
                  * Remove whitespaces between the sections
                  */
-                while ($i > 0 && preg_match('/^\s*$/',$line) === 1) {
+                while ($i > 0 && preg_match('/^\s*$/', $line) === 1) {
                     $this->deleteLine($i);
                     $i--;
                     $line = $this->text[$i];
@@ -251,7 +250,7 @@ class IniEditor
                  * Add a single whitespace
                  */
                 if ($i !== 0) {
-                    $this->insertAtLine($i + 1,'');
+                    $this->insertAtLine($i + 1, '');
                 }
             }
         }
@@ -260,35 +259,35 @@ class IniEditor
     /**
      * Insert the text at line $lineNr
      *
-     * @param $lineNr   The line nr the inserted line should have
-     * @param $toInsert The text that will be inserted
+     * @param int    $lineNr   The line nr the inserted line should have
+     * @param string $toInsert The text that will be inserted
      */
     private function insertAtLine($lineNr, $toInsert)
     {
-        $this->text = IniEditor::insertIntoArray($this->text,$lineNr,$toInsert);
+        $this->text = IniEditor::insertIntoArray($this->text, $lineNr, $toInsert);
     }
 
     /**
      * Update the line $lineNr
      *
-     * @param $lineNr   The line number of the target line
-     * @param $toInsert The new line content
+     * @param int     $lineNr   The line number of the target line
+     * @param string  $content  The content to replace
      */
     private function updateLine($lineNr, $content)
     {
         $comment = $this->getComment($this->text[$lineNr]);
         if (strlen($comment) > 0) {
-            $comment = " ; " . trim($comment);
+            $comment = ' ; ' . trim($comment);
         }
-        $this->text[$lineNr] = str_pad($content,43) . $comment;
+        $this->text[$lineNr] = str_pad($content, 43) . $comment;
     }
 
     /**
      * Get the comment from the given line
      *
-     * @param $lineContent  The content of the line
+     * @param string $lineContent  The content of the line
      *
-     * @return string       The extracted comment
+     * @return string The extracted comment
      */
     private function getComment($lineContent)
     {
@@ -296,49 +295,52 @@ class IniEditor
          * Remove all content in double quotes that is not behind a semicolon, recognizing
          * escaped double quotes inside the string
          */
-        $cleaned = preg_replace('/^[^;"]*"[^"\\\\]*(?:\\\\.[^"\\\\]*)*"/s','',$lineContent);
+        $cleaned = preg_replace('/^[^;"]*"[^"\\\\]*(?:\\\\.[^"\\\\]*)*"/s', '', $lineContent);
 
-        $matches = mb_split(';',$cleaned,2);
-        return array_key_exists(1,$matches) ? $matches[1] : "";
+        $matches = mb_split(';', $cleaned, 2);
+        return array_key_exists(1, $matches) ? $matches[1] : '';
     }
 
     /**
      * Delete the line $lineNr
      *
-     * @param $lineNr The lineNr starting at 0
+     * @param int $lineNr The lineNr starting at 0
      */
     private function deleteLine($lineNr)
     {
-        $this->text = $this->removeFromArray($this->text,$lineNr);
+        $this->text = $this->removeFromArray($this->text, $lineNr);
     }
 
     /**
      * Format a key-value pair to an INI file-entry
      *
-     * @param array $key    The key
-     * @param $value        The value
+     * @param array $key   The key
+     * @param mixed $value The value
      *
      * @return string The formatted key-value pair
      */
     private function formatKeyValuePair(array $key, $value)
     {
-        return str_pad($this->formatKey($key),19) . " = ".$this->formatValue($value);
+        return str_pad($this->formatKey($key), 19) . ' = ' . $this->formatValue($value);
     }
 
     /**
      * Format a key to an INI key
+     *
+     * @param array $key
+     * @return string
      */
     private function formatKey(array $key)
     {
-        return implode($this->nestSeparator,$key);
+        return implode($this->nestSeparator, $key);
     }
 
     /**
      * Get the first line after the given $section
      *
-     * @param $section  The name of the section
+     * @param string $section  The name of the section
      *
-     * @return int      The line number of the section
+     * @return int The line number of the section
      */
     private function getSectionEnd($section = null)
     {
@@ -353,11 +355,11 @@ class IniEditor
                  * ignore all comments 'glued' to the next section, to allow section
                  * comments in front of sections
                  */
-                while ($i > 0 && preg_match('/^\s*;/',$this->text[$i - 1]) === 1) {
+                while ($i > 0 && preg_match('/^\s*;/', $this->text[$i - 1]) === 1) {
                     $i--;
                 }
                 return $i;
-            } elseif ( $this->isSectionDeclaration($line,$section) ) {
+            } elseif ($this->isSectionDeclaration($line, $section)) {
                 $started = true;
             }
             $i++;
@@ -371,48 +373,48 @@ class IniEditor
     /**
      * Check if the line contains the property declaration for a key
      *
-     * @param $lineContent  The content of the line
-     * @param array $key    The key this declaration is supposed to have
+     * @param string $lineContent The content of the line
+     * @param array  $key         The key this declaration is supposed to have
      *
-     * @return boolean      True, when the lineContent is a property declaration
+     * @return bool True, when the lineContent is a property declaration
      */
     private function isPropertyDeclaration($lineContent, array $key)
     {
         return preg_match(
-            '/^\s*' . $this->formatKey($key) .'\s*=\s*/'
-            ,$lineContent
+            '/^\s*' . $this->formatKey($key) .'\s*=\s*/',
+            $lineContent
         ) === 1;
     }
 
     /**
      * Check if the given line contains a section declaration
      *
-     * @param $lineContent      The content of the line
-     * @param string $section   The optional section name that will be assumed
+     * @param string $lineContent The content of the line
+     * @param string $section     The optional section name that will be assumed
      *
-     * @return bool             True, when the lineContent is a section declaration
+     * @return bool True, when the lineContent is a section declaration
      */
     private function isSectionDeclaration($lineContent, $section = null)
     {
         if (isset($section)) {
-            return preg_match('/^\s*\[\s*'.$section.'\s*[\]:]/',$lineContent) === 1;
+            return preg_match('/^\s*\[\s*'.$section.'\s*[\]:]/', $lineContent) === 1;
         } else {
-            return preg_match('/^\s*\[/',$lineContent) === 1;
+            return preg_match('/^\s*\[/', $lineContent) === 1;
         }
     }
 
     /**
      * Get the line where the section begins
      *
-     * @param $section  The section
+     * @param string $section The section
      *
-     * @return int      The line number
+     * @return int The line number
      */
     private function getSectionLine($section)
     {
         $i = 0;
         foreach ($this->text as $line) {
-            if ($this->isSectionDeclaration($line,$section)) {
+            if ($this->isSectionDeclaration($line, $section)) {
                 return $i;
             }
             $i++;
@@ -423,24 +425,23 @@ class IniEditor
     /**
      * Get the line number where the given key occurs
      *
-     * @param array $keys   The key and its parents
-     * @param $section      The section of the key
+     * @param array  $keys    The key and its parents
+     * @param string $section The section of the key
      *
      * @return int          The line number
      */
     private function getKeyLine(array $keys, $section = null)
     {
-        $key = implode($this->nestSeparator,$keys);
         $inSection = isset($section) ? false : true;
         $i = 0;
         foreach ($this->text as $line) {
             if ($inSection && $this->isSectionDeclaration($line)) {
                 return -1;
             }
-            if ($inSection && $this->isPropertyDeclaration($line,$keys)) {
+            if ($inSection && $this->isPropertyDeclaration($line, $keys)) {
                 return $i;
             }
-            if (!$inSection && $this->isSectionDeclaration($line,$section)) {
+            if (!$inSection && $this->isSectionDeclaration($line, $section)) {
                 $inSection = true;
             }
             $i++;
@@ -451,7 +452,7 @@ class IniEditor
     /**
      * Get the last line number occurring in the text
      *
-     * @return  The line number of the last line
+     * @return int The line number of the last line
      */
     private function getLastLine()
     {
@@ -461,9 +462,9 @@ class IniEditor
     /**
      * Insert a new element into a specific position of an array
      *
-     * @param $array    The array to use
-     * @param $pos      The target position
-     * @param $element  The element to insert
+     * @param array $array    The array to use
+     * @param int   $pos      The target position
+     * @param mixed $element  The element to insert
      *
      * @return array    The changed array
      */
@@ -476,10 +477,12 @@ class IniEditor
     /**
      * Remove an element from an array
      *
-     * @param $array    The array to use
-     * @param $pos      The position to remove
+     * @param array $array The array to use
+     * @param mixed $pos   The position to remove
+     *
+     * @return array
      */
-    private function removeFromArray($array, $pos)
+    private function removeFromArray(array $array, $pos)
     {
         unset($array[$pos]);
         return array_values($array);
@@ -488,10 +491,9 @@ class IniEditor
     /**
      * Prepare a value for INe
      *
-     * @param $value    The value of the string
+     * @param mixed $value The value of the string
      *
-     * @return string   The formatted value
-     *
+     * @return string The formatted value
      * @throws Zend_Config_Exception
      */
     private function formatValue($value)
@@ -503,8 +505,7 @@ class IniEditor
         } elseif (strpos($value, '"') === false) {
             return '"' . $value .  '"';
         } else {
-            return '"' . str_replace('"','\"',$value) . '"';
+            return '"' . str_replace('"', '\"', $value) . '"';
         }
     }
 }
-
