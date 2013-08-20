@@ -2,14 +2,14 @@
     if (!empty($this->contacts)) {
         $contactList = array();
         foreach ($this->contacts as $contact) {
-            $contactList[] = $this->qlink(
-                $contact->contact_alias,
-                'monitoring/show/contact',
-                array(
-                    'contact_name' => $contact->contact_name
-                )
-            );
+            $contactList[] = '<a href="' . $this->href(
+              'monitoring/show/contact',
+              array(
+                'contact_name' => $contact->contact_name
+              )
+            ) . '">' . $contact->contact_alias . '</a>';
         }
+
 
         echo '<strong>Contacts:</strong> ';
         echo implode(', ', $contactList);
@@ -18,15 +18,13 @@
     if (!empty($this->contactgroups)) {
         $contactGroupList = array();
         foreach ($this->contactgroups as $contactgroup) {
-            $contactGroupList[] = $this->qlink(
-                $contactgroup->contactgroup_alias,
+            $contactGroupList[] = '<a href="' . $this->href(
                 'monitoring/show/contactgroup',
                 array(
                     'contactgroup_name' => $contactgroup->contactgroup_name
                 )
-            );
+            ) . '">' . $contactgroup->contactgroup_alias . '</a>';
         }
-
         echo '<strong>Contactgroups:</strong> ';
         echo implode(', ', $contactGroupList);
     }

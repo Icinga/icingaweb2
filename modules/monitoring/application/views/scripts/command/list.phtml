@@ -2,7 +2,9 @@
 <ul>
     <?php foreach($this->commands as $command): ?>
     <li>
-        <?= $this->qlink($command, 'monitoring/command/'. $command); ?>
+        <a href="<?= $this->href('monitoring/command/'. $command); ?>">
+            <?= $this->escape($command); ?>
+        </a>
     </li>
     <?php endforeach; ?>
 </ul>

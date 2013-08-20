@@ -5,123 +5,127 @@ $hosts = $this->hosts->paginate();
 $viewHelper = $this->getHelper('MonitoringState');
 $trimArea = $this->getHelper('Trim');
 ?>
-<form method="get" action="<?= $this->qUrl(
-    'monitoring/list/hosts?' . http_build_query($this->hosts->getAppliedFilter()->toParams()),
-    array()
-);
-?>">
-    Sort by <?= $this->formSelect(
-        'sort',
-        $this->sort,
-        array('class' => 'autosubmit'),
-        array(
-            'host_severity' => 'Severity',
-            'host_last_state_change' => 'Last state change',
-            'host_name' => 'Host',
-        )
-    ) ?>
-    <button class="btn btn-small"><i class="icon-refresh"></i></button>
+<form method="get" action="<?= $this->href('monitoring/list/hosts', $this->hosts->getAppliedFilter()->toParams());?>">
+  Sort by <?= $this->formSelect(
+   'sort',
+    $this->sort,
+    array('class' => 'autosubmit'),
+    array(
+      'host_severity' => 'Severity',
+      'host_last_state_change' => 'Last state change',
+      'host_name' => 'Host',
+    )
+  ); ?>
+  <button class="btn btn-small"><i class="icon-refresh"></i></button>
 </form>
 <?=  $this->paginationControl($hosts, null, null, array('preserve' => $this->preserve)) ?>
 
 <table class="statustable action hosts">
 
-    <thead>
-        <tr>
-            <th colspan="3">Status</th>
-            <th>Host</th>
-            <th>Output</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-<?php foreach($hosts as $host): ?>
-        <tr class="<?= implode(' ', $viewHelper->getStateFlags($host, 'host')); ?>">
-            <td class="icons indicator">
-                <div class="img-box"><?php $trimArea->start(); ?>
-                <?php if ($host->host_icon_image) : ?>
-                    <img src="<?= $host->host_icon_image; ?>"/>
-                <?php endif; ?>
-                <?php $trimArea->end(); ?></div>
-            </td>
-            <td class="icons indicator">
-                <div class="icon-box"><?php $trimArea->start(); ?>
-                <?php if (!$host->host_handled && $host->host_state > 0): ?>
-                    <a href="#" title="<?= 'Unhandled host' ?>">
-                        <i class="icon-warning-sign"></i>
-                    </a>
-                <?php endif; ?>
-                <?php if ($host->host_acknowledged && !$host->host_in_downtime): ?>
-                    <a href="#" title="<?= 'Acknowledged' ?>">
-                        <i class="icon-ok-sign"></i>
-                    </a>
-                <?php endif; ?>
-                <?php if ($host->host_is_flapping): ?>
-                    <a href="#" title="<?= 'Flapping' ?>">
-                        <i class="icon-random"></i>
-                    </a>
-                <?php endif; ?>
-                <?php if (!$host->host_notifications_enabled): ?>
-                    <a href="#" title="<?= 'Notifications disabled' ?>">
-                        <i class="icon-volume-off"></i>
-                    </a>
-                <?php endif; ?>
-                <?php if ($host->host_in_downtime): ?>
-                    <a href="#" title="<?= 'In downtime' ?>">
-                        <i class="icon-wrench"></i>
-                    </a>
-                <?php endif; ?>
-                <?php $trimArea->end(); ?></div>
-            </td>
-            <td class="indicator state" title="<?= $viewHelper->getStateTitle($host, 'host'); ?>">
-                <div class="statetext">
-                <?= $this->qlink(
-                        "<b>".ucfirst($viewHelper->monitoringState($host, 'host'))."</b>".
-                             '<div class="nowrap"> since&nbsp;'.
-                            $this->timeSince($host->host_last_state_change),
-                        'monitoring/show/history', array(
-                            'host'    => $host->host_name
-                        ),
-                        array('quote' => false)
-                    );?>
-                    <?php if ($host->host_state_type == 0): ?>
-                    <a href="#" title="<?= 'Soft state' ?>">
-                        <i class="icon-gears"></i>
-                    </a>
-                    <?php endif; ?>
-                </div>
-            </td>
+  <thead>
+  <tr>
+    <th colspan="3">Status</th>
+    <th>Host</th>
+    <th>Output</th>
+    <th></th>
+  </tr>
+  </thead>
+  <tbody>
 
-            <td class="hostname">
-                <?php if ($host->host_last_comment !== null): ?>
-                    <a href="#" title="<?= 'Comments' ?>">
-                        <i class="icon-comment"> </i>
-                    </a>
-                <?php endif; ?>
-                <?= $this->qlink(
-                    "<b>".$host->host_name."</b><br/>".
-                    "<i>".$host->host_address."</i>",
-                    'monitoring/show/host', array(
-                        'host'    => $host->host_name
-                    ), array(
-                        'class' => 'row-action',
-                        'quote' => false
-                    )
-                ); ?>
+  <?php foreach($hosts as $host): ?>
+  <tr class="<?= implode(' ', $viewHelper->getStateFlags($host, 'host')); ?>">
+    <td class="icons indicator">
+      <div class="img-box">
+        <?php $trimArea->start(); ?>
+
+        <?php if ($host->host_icon_image) : ?>
+        <img src="<?= $host->host_icon_image; ?>"/>
+        <?php endif; ?>
+
+        <?php $trimArea->end(); ?>
+      </div>
+    </td>
+    <td class="icons indicator">
+      <div class="icon-box">
+        <?php $trimArea->start(); ?>
+
+        <?php if (!$host->host_handled && $host->host_state > 0): ?>
+        <a href="#" title="<?= 'Unhandled host' ?>">
+          <i class="icon-warning-sign"></i>
+        </a>
+        <?php endif; ?>
+
+        <?php if ($host->host_acknowledged && !$host->host_in_downtime): ?>
+        <a href="#" title="<?= 'Acknowledged' ?>">
+          <i class="icon-ok-sign"></i>
+        </a>
+        <?php endif; ?>
+
+        <?php if ($host->host_is_flapping): ?>
+        <a href="#" title="<?= 'Flapping' ?>">
+          <i class="icon-random"></i>
+        </a>
+        <?php endif; ?>
+
+        <?php if (!$host->host_notifications_enabled): ?>
+        <a href="#" title="<?= 'Notifications disabled' ?>">
+          <i class="icon-volume-off"></i>
+        </a>
+        <?php endif; ?>
+
+        <?php if ($host->host_in_downtime): ?>
+        <a href="#" title="<?= 'In downtime' ?>">
+          <i class="icon-wrench"></i>
+        </a>
+
+        <?php endif; ?>
+        <?php $trimArea->end(); ?>
+
+      </div>
+    </td>
+    <td class="indicator state" title="<?= $viewHelper->getStateTitle($host, 'host'); ?>">
+      <div class="statetext">
+          <b><?= ucfirst($viewHelper->monitoringState($host, 'host')); ?></b>
+
+          <div class="nowrap"> since&nbsp;
+            <?= $this->timeSince($host->host_last_state_change); ?>
 
 
-                <?php if ($host->host_action_url != ""): ?>
-                <a href="<?= $host->host_action_url; ?>">Action</a>
-                <?php endif; ?>
+            <?php if ($host->host_state_type == 0): ?>
+            <a href="#" title="<?= 'Soft state' ?>">
+              <i class="icon-gears"></i>
+            </a>
+            <?php endif; ?>
 
-                <?php if ($host->host_notes_url != ""): ?>
-                <a href="<?= $host->host_notes_url; ?>">Notes</a>
-                <?php endif; ?>
-            </td>
-            <td class="expand-full">
-                <?= $this->escape(substr(strip_tags($host->host_output), 0, 10000)); ?>
-            </td>
-        </tr>
-<?php endforeach; ?>
-    </tbody>
+          </div>
+      </div>
+    </td>
+
+    <td class="hostname">
+
+      <?php if ($host->host_last_comment !== null): ?>
+      <a href="#" title="<?= 'Comments' ?>">
+        <i class="icon-comment"> </i>
+      </a>
+      <?php endif; ?>
+      <a href="<?= $this->href('monitoring/show/host', array('host' => $host->host_name)); ?>" class="row-action">
+        <b> <?= $host->host_name ?></b><br/>
+        <i> <?= $host->host_address ?></i>
+      </a>
+
+      <?php if ($host->host_action_url != ""): ?>
+        <a href="<?= $host->host_action_url; ?>">Action</a>
+      <?php endif; ?>
+
+      <?php if ($host->host_notes_url != ""): ?>
+      <a href="<?= $host->host_notes_url; ?>">Notes</a>
+      <?php endif; ?>
+
+    </td>
+    <td class="expand-full">
+      <?= $this->escape(substr(strip_tags($host->host_output), 0, 10000)); ?>
+    </td>
+  </tr>
+  <?php endforeach; ?>
+  </tbody>
 </table>

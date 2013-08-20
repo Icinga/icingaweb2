@@ -16,143 +16,121 @@ function formatDateString($self,$dateString){
 $paginator = $downtimes->paginate();
 $downtimes = $downtimes->fetchAll();
 ?>
-<form method="get" action="<?= $this->qUrl(
+<form method="get" action="<?= $this->href(
     'monitoring/list/downtimes?',
     array(
         'action' => 'downtimes'
     ));
 ?>">
-    Sort by <?= $this->formSelect(
-        'sort',
-        $this->sort,
-        array('class' => 'autosubmit'),
-        array(
-            'downtime_is_in_effect' => 'Is In Effect',
-            'object_type' => 'Service/Host',
-            'host_name' => 'Host Name',
-            'service_description' => 'Service Name',
-            'downtime_entry_time' => 'Entry Time',
-            'downtime_author_name' => 'Author',
-            'downtime_comment_data' => 'Comment',
-            'downtime_scheduled_start_time' => 'Start',
-            'downtime_scheduled_end_time' => 'End',
-            'downtime_trigger_time' => 'Trigger Time',
-            'downtime_internal_downtime_id' => 'Downtime ID',
-            'downtime_duration' => 'Duration',
-        )
-    ) ?>
-    <button class="btn btn-small"><i class="icon-refresh"></i></button>
+  Sort by <?= $this->formSelect(
+  'sort',
+  $this->sort,
+  array('class' => 'autosubmit'),
+  array(
+  'downtime_is_in_effect' => 'Is In Effect',
+  'object_type' => 'Service/Host',
+  'host_name' => 'Host Name',
+  'service_description' => 'Service Name',
+  'downtime_entry_time' => 'Entry Time',
+  'downtime_author_name' => 'Author',
+  'downtime_comment_data' => 'Comment',
+  'downtime_scheduled_start_time' => 'Start',
+  'downtime_scheduled_end_time' => 'End',
+  'downtime_trigger_time' => 'Trigger Time',
+  'downtime_internal_downtime_id' => 'Downtime ID',
+  'downtime_duration' => 'Duration',
+  )
+  ) ?>
+  <button class="btn btn-small"><i class="icon-refresh"></i></button>
 </form>
 <?=
     $this->paginationControl(
-        $paginator,
-        null,
-        array(
-            'mixedPagination.phtml',
-            'default'),
-        array('preserve' => $this->preserve))
+$paginator,
+null,
+array(
+'mixedPagination.phtml',
+'default'),
+array('preserve' => $this->preserve))
 ?>
 
 <table class="statustable action">
-    <thead>
-        <th> Is In Effect </th>
-        <th> Object </th>
-        <th> Host Name </th>
-        <th> Service Name </th>
-        <th> Entry Time </th>
-        <th> Author </th>
-        <th> Comment </th>
-        <th> Start Time </th>
-        <th> End Time </th>
-        <th> Type </th>
-        <th> Trigger Time </th>
-        <th> Downtime ID </th>
-        <th> Trigger ID </th>
-        <th> Duration </th>
-    </thead>
-    <?php foreach ($downtimes as $downtime): ?>
-        <tr class="<?= $downtime->downtime_is_in_effect == 0 ? 'ok' : 'warning' ?>">
-            <td>
-                <?= $downtime->downtime_is_in_effect == 0 ? 'False' : '<b>True</b>'; ?>
-            </td>
-            <td>
-                <div class="img-box">
-                    <?php if ($downtime->object_type == 'service'): ?>
-                        <img title="Service" src="<?='../../img/classic/service.png'?>"/>
-                    <?php endif; ?>
-                    <?php if ($downtime->object_type == 'host'): ?>
-                        <img title="Host" src="<?='../../img/classic/server.png'?>"/>
-                    <?php endif; ?>
-                 </div>
-            </td>
-            <td>
-                <?= $downtime->host_name ?>
-            </td>
-            <td>
-                <?= $downtime->service_description ?>
-            </td>
-            <td>
-                <?= formatDateString($this,$downtime->downtime_entry_time); ?>
-            </td>
-            <td>
-                <?= $downtime->downtime_author_name ?>
-            </td>
-            <td>
-                <?= $downtime->downtime_comment_data ?>
-            </td>
-            <td>
-                <?= formatDateString($this,$downtime->downtime_scheduled_start_time); ?>
-            </td>
-            <td>
-                <?= formatDateString($this,$downtime->downtime_scheduled_end_time); ?>
-            </td>
-            <td>
-                <?= $downtime->downtime_is_fixed == 1  ? 'Fixed' : 'Not Fixed' ?>
-            </td>
-            <td>
-                <?php
-                    $date = formatDateString($this,$downtime->downtime_trigger_time);
-                    echo $date != 'undef' ? $date : 'N/A';
-                ?>
-            </td>
-            <td>
-                <?= $downtime->downtime_internal_downtime_id ?>
-            </td>
-            <td>
-                <?= $downtime->downtime_triggered_by_id == 0 ?
-                    'N/A' : $downtime->downtime_triggered_by_id ?>
-            </td>
-            <td>
-                <?= $this->util()->showHourMin(intval($downtime->downtime_duration)); ?>
-            </td>
-            <td>
-                <?php
-                if (empty($downtime->service_description)) {
-                    echo $this->qlink(
-                        '',
-                        'monitoring/show/host',
-                        array(
-                            'host' => $downtime->host_name
-                        ),
-                        array(
-                            'class' => 'row-action'
-                        )
-                    );
-                } else {
-                    echo $this->qlink(
-                        '',
-                        'monitoring/show/service',
-                        array(
-                            'host' => $downtime->host_name,
-                            'service' => $downtime->service_description
-                        ),
-                        array(
-                            'class' => 'row-action'
-                        )
-                    );
-                }
-                ?>
-            </td>
-        </tr>
-    <?php endforeach ?>
+  <thead>
+  <th> Is In Effect</th>
+  <th> Object</th>
+  <th> Host Name</th>
+  <th> Service Name</th>
+  <th> Entry Time</th>
+  <th> Author</th>
+  <th> Comment</th>
+  <th> Start Time</th>
+  <th> End Time</th>
+  <th> Type</th>
+  <th> Trigger Time</th>
+  <th> Downtime ID</th>
+  <th> Trigger ID</th>
+  <th> Duration</th>
+  </thead>
+
+  <?php foreach ($downtimes as $downtime): ?>
+  <tr class="<?= $downtime->downtime_is_in_effect == 0 ? 'ok' : 'warning' ?>">
+    <td>
+      <?= $downtime->downtime_is_in_effect == 0 ? 'False' : '<b>True</b>'; ?>
+    </td>
+    <td>
+      <div class="img-box">
+
+        <?php if ($downtime->object_type == 'service'): ?>
+        <img title="Service" src="<?='../../img/classic/service.png'?>"/>
+        <?php endif; ?>
+
+        <?php if ($downtime->object_type == 'host'): ?>
+        <img title="Host" src="<?='../../img/classic/server.png'?>"/>
+        <?php endif; ?>
+
+      </div>
+    </td>
+    <td>
+      <?= $downtime->host_name ?>
+    </td>
+    <td>
+      <?= $downtime->service_description ?>
+    </td>
+    <td>
+      <?= formatDateString($this,$downtime->downtime_entry_time); ?>
+    </td>
+    <td>
+      <?= $downtime->downtime_author_name ?>
+    </td>
+    <td>
+      <?= $downtime->downtime_comment_data ?>
+    </td>
+    <td>
+      <?= formatDateString($this,$downtime->downtime_scheduled_start_time); ?>
+    </td>
+    <td>
+      <?= formatDateString($this,$downtime->downtime_scheduled_end_time); ?>
+    </td>
+    <td>
+      <?= $downtime->downtime_is_fixed == 1 ? 'Fixed' : 'Not Fixed' ?>
+    </td>
+    <td>
+      <?php
+        $date = formatDateString($this,$downtime->downtime_trigger_time);
+        echo $date != 'undef' ? $date : 'N/A';
+      ?>
+    </td>
+    <td>
+      <?= $downtime->downtime_internal_downtime_id ?>
+    </td>
+    <td>
+      <?= $downtime->downtime_triggered_by_id == 0 ?
+      'N/A' : $downtime->downtime_triggered_by_id ?>
+    </td>
+    <td>
+      <?= $this->util()->showHourMin(intval($downtime->downtime_duration)); ?>
+    </td>
+    <td>
+    </td>
+  </tr>
+  <?php endforeach ?>
 </table>
