@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Monitoring\View;
 
-class HoststatusView extends MonitoringView
+class HoststatusView extends AbstractView
 {
     protected $query;
     protected $searchColumn = 'host';

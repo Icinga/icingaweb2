@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Monitoring\View;
 
-class CommentView extends MonitoringView
+class CommentView extends AbstractView
 {
     protected $query;
 

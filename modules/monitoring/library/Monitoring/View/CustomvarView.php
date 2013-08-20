@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Monitoring\View;
 
-class CustomvarView extends MonitoringView
+class CustomvarView extends AbstractView
 {
     protected $query;
 

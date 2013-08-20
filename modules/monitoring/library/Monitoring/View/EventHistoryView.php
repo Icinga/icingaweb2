@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Monitoring\View;
 
-class EventHistoryView extends MonitoringView
+class EventHistoryView extends AbstractView
 {
     protected $query;
 

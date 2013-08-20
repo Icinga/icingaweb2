@@ -28,7 +28,7 @@ namespace Icinga\Module\Monitoring\View;
 /**
  * NotificationView
  */
-class NotificationView extends MonitoringView
+class NotificationView extends AbstractView
 {
     /**
      * Available columns provided by this view

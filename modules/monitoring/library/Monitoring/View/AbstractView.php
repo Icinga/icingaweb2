@@ -6,7 +6,7 @@ use Icinga\Data\AbstractQuery;
 use Icinga\Data\Filter;
 
 /**
- * MonitoringView provides consistent views to our Icinga Backends
+ * AbstractView provides consistent views to our Icinga Backends
  *
  * TODO: * This could be renamed to AbstractView
  *       * We might need more complex filters (let's do the simple ones first)
@@ -32,7 +32,7 @@ use Icinga\Data\Filter;
  * * you can (and should) use a defined set of columns when issueing a query
  * * you can use proper alias names to have an influence on column names
  *   in the result set
- * * the MonitoringView behaves like any Query object and provides useful
+ * * the AbstractView behaves like any Query object and provides useful
  *   methods such as fetchAll, count, fetchPairs and so on
  *
  * If you want to fill a dropdown form element with all your hostgroups
@@ -48,11 +48,11 @@ use Icinga\Data\Filter;
  * $formElement->setMultiOptions($pairs);
  * </code>
  *
- * MonitoringView is a proxy to your Backend Query. While both are Query objects
+ * AbstractView is a proxy to your Backend Query. While both are Query objects
  * providing partially the same interface, they are not directly related to
  * each other.
  */
-class MonitoringView extends AbstractQuery
+class AbstractView extends AbstractQuery
 {
     /**
      * Stores the backend-specific Query Object
@@ -177,7 +177,7 @@ class MonitoringView extends AbstractQuery
     }
 
     // TODO: applyAuthFilters(Auth $auth = null)
-    //       MonitoringView will enforce restrictions as provided by the Auth
+    //       AbstractView will enforce restrictions as provided by the Auth
     //       backend
 
     /**

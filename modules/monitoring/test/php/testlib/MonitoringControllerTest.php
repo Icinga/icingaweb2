@@ -170,7 +170,7 @@ abstract class MonitoringControllerTest extends Zend_Test_PHPUnit_ControllerTest
     private function requireViews()
     {
         $module = $this->moduleDir;
-        require_once($module.'library/Monitoring/View/MonitoringView.php');
+        require_once($module.'library/Monitoring/View/AbstractView.php');
         $this->requireFolder('library/Monitoring/View/');
     }
 

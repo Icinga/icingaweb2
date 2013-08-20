@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Monitoring\View;
 
-class ContactgroupView extends MonitoringView
+class ContactgroupView extends AbstractView
 {
     protected $query;
 
