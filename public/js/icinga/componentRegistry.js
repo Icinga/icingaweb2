@@ -11,7 +11,7 @@
 define(['jquery'], function($) {
     "use strict";
 
-    var Registry = function() {
+    var ComponentRegistry = function() {
         var self = this;
 
         /**
@@ -133,5 +133,5 @@ define(['jquery'], function($) {
             });
         };
     };
-    return new Registry();
+    return new ComponentRegistry();
 });

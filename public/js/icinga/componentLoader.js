@@ -4,13 +4,13 @@
  */
 
 /**
- * A module to load, manage and query frontend components
+ * A module to load and manage frontend components
  *
  */
-define(['jquery', 'logging', 'icinga/registry'], function ($, log, registry) {
+define(['jquery', 'logging', 'icinga/componentRegistry'], function ($, log, registry) {
         "use strict";
 
-        var Manager = function() {
+        var ComponentLoader = function() {
 
             /**
              * Load the component with the given type and attach it to the target
@@ -50,7 +50,7 @@ define(['jquery', 'logging', 'icinga/registry'], function ($, log, registry) {
 
             /**
              * Load all new components and remove components that were removed from
-             * the DOM
+             * the DOM from the internal registry
              *
              * @param {function}        fin         Called when the loading is completed
              */
@@ -138,5 +138,5 @@ define(['jquery', 'logging', 'icinga/registry'], function ($, log, registry) {
                 return registry.getComponents();
             };
         };
-        return new Manager();
+        return new ComponentLoader();
 });

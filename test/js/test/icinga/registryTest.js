@@ -10,7 +10,7 @@ GLOBAL.document = $('body');
 
 var registry;
 var setUp = function() {
-    requireNew('icinga/registry.js');
+    requireNew('icinga/componentRegistry.js');
     registry = rjsmock.getDefine();
 };
 

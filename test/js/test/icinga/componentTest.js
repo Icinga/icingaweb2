@@ -19,11 +19,11 @@ var setUp = function(registry)
 {
     rjsmock.purgeDependencies();
 
-    requireNew('icinga/registry.js');
+    requireNew('icinga/componentRegistry.js');
     registry = registry || rjsmock.getDefine();
 
     rjsmock.registerDependencies({
-        'icinga/registry': registry,
+        'icinga/componentRegistry': registry,
 
         /*
          * Available components
@@ -50,7 +50,7 @@ var setUp = function(registry)
 
     $('body').empty();
 
-    requireNew('icinga/component.js');
+    requireNew('icinga/componentLoader.js');
     component = rjsmock.getDefine();
 };
 
