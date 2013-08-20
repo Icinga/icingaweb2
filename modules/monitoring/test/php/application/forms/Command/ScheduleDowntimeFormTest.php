@@ -17,7 +17,7 @@ use \Test\Icinga\Web\Form\BaseFormTest;
 
 class ScheduleDowntimeFormTest extends BaseFormTest
 {
-    const FORM_CLASS = 'Monitoring\Form\Command\ScheduleDowntimeForm';
+    const FORM_CLASS = '\Icinga\Module\Monitoring\Form\Command\ScheduleDowntimeForm';
 
     /**
      * Set up the default time zone

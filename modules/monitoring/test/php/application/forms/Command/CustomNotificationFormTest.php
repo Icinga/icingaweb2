@@ -13,7 +13,7 @@ use \Icinga\Module\Monitoring\Form\Command\CustomNotificationForm; // Used by co
 
 class CustomNotificationFormTest extends BaseFormTest
 {
-    const FORM_CLASS = 'Monitoring\Form\Command\CustomNotificationForm';
+    const FORM_CLASS = '\Icinga\Module\Monitoring\Form\Command\CustomNotificationForm';
 
     public function testFormInvalidWhenCommentMissing()
     {

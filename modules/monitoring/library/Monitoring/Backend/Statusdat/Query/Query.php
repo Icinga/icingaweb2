@@ -48,7 +48,7 @@ abstract class Query extends AbstractQuery
     /**
      * @var string
      */
-    private $viewClass = '\Monitoring\Backend\Statusdat\DataView\StatusdatServiceView';
+    private $viewClass = '\Icinga\Module\Monitoring\Backend\Statusdat\DataView\StatusdatServiceView';
     private $baseQuery = null;
 
     public function setBaseQuery(StatusdatQuery $query)
@@ -58,7 +58,7 @@ abstract class Query extends AbstractQuery
 
     public function setResultViewClass($viewClass)
     {
-        $this->viewClass = '\Monitoring\Backend\Statusdat\DataView\\'.$viewClass;
+        $this->viewClass = '\Icinga\Module\Monitoring\Backend\Statusdat\DataView\\'.$viewClass;
     }
 
 

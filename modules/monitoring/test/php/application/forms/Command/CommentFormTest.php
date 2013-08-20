@@ -13,7 +13,7 @@ use \Test\Icinga\Web\Form\BaseFormTest;
 
 class CommentFormTest extends BaseFormTest
 {
-    const FORMCLASS = 'Monitoring\Form\Command\CommentForm';
+    const FORMCLASS = '\Icinga\Module\Monitoring\Form\Command\CommentForm';
 
     public function testCorrectCommentValidation()
     {

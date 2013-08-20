@@ -18,7 +18,7 @@ use \Test\Icinga\Web\Form\BaseFormTest;
 
 class AcknowledgeFormTest extends BaseFormTest
 {
-    const FORMCLASS = 'Monitoring\Form\Command\AcknowledgeForm';
+    const FORMCLASS = '\Icinga\Module\Monitoring\Form\Command\AcknowledgeForm';
 
     /**
      * Set up the default time zone

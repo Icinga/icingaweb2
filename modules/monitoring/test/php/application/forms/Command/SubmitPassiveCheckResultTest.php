@@ -13,7 +13,7 @@ use \Icinga\Module\Monitoring\Form\Command\SubmitPassiveCheckResultForm; // Used
 
 class SubmitPassiveCheckResultFormTest extends BaseFormTest
 {
-    const FORM_CLASS = 'Monitoring\Form\Command\SubmitPassiveCheckResultForm';
+    const FORM_CLASS = '\Icinga\Module\Monitoring\Form\Command\SubmitPassiveCheckResultForm';
 
     public function testStateTypes()
     {

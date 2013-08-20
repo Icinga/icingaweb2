@@ -13,7 +13,7 @@ use \Icinga\Module\Monitoring\Form\Command\DelayNotificationForm; // Used by con
 
 class DelayNotificationFormTest extends BaseFormTest
 {
-    const FORM_CLASS = 'Monitoring\Form\Command\DelayNotificationForm';
+    const FORM_CLASS = '\Icinga\Module\Monitoring\Form\Command\DelayNotificationForm';
 
     public function testFormInvalidWhenNotificationDelayMissing()
     {
