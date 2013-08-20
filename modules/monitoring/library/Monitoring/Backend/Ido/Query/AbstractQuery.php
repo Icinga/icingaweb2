@@ -288,8 +288,11 @@ abstract class AbstractQuery extends Query
         $or  = array();
         $and = array();
 
-        if (! is_array($value) && strpos($value, ',') !== false) {
-            $value = preg_split('~,~', $value, -1, PREG_SPLIT_NO_EMPTY);
+        if (
+            ! is_array($value) &&
+            (strpos($value, ',') !== false || strpos($value, '|') !== false)
+        ) {
+            $value = preg_split('~[,|]~', $value, -1, PREG_SPLIT_NO_EMPTY);
         }
         if (! is_array($value)) {
             $value = array($value);
@@ -301,38 +304,56 @@ abstract class AbstractQuery extends Query
                 // TODO: REALLY??
                 continue;
             }
-            // Value starting with minus: negation
-            if ($val[0] === '-') {
+            $not = false;
+            $force = false;
+            $op  = '=';
+            $wildcard = false;
+
+            if ($val[0] === '-' || $val[0] === '!') {
+                // Value starting with minus or !: negation
                 $val = substr($val, 1);
-                if (strpos($val, '*') === false) {
-                    $and[] = $this->db->quoteInto($column . ' != ?', $val);
-                } else {
-                    $and[] = $this->db->quoteInto(
-                        $column . ' NOT LIKE ?',
-                        str_replace('*', '%', $val)
-                    );
-                }
-            } elseif ($val[0] === '+') { // Value starting with +: enforces AND
+                $not = true;
+            }
+
+            if ($val[0] === '+') {
+                // Value starting with +: enforces AND
                 // TODO: depends on correct URL handling, not given in all
-                //       ZF versions
+                //       ZF versions.
                 $val = substr($val, 1);
-                if (strpos($val, '*') === false) {
-                    $and[] = $this->db->quoteInto($column . ' = ?', $val);
-                } else {
-                    $and[] = $this->db->quoteInto(
-                        $column . ' LIKE ?',
-                        str_replace('*', '%', $val)
-                    );
-                }
-            } else { // All others ar ORs:
-                if (strpos($val, '*') === false) {
-                    $or[] = $this->db->quoteInto($column . ' = ?', $val);
-                } else {
-                    $or[] = $this->db->quoteInto(
-                        $column . ' LIKE ?',
-                        str_replace('*', '%', $val)
-                    );
-                }
+                $force = true;
+            }
+            if ($val[0] === '<' || $val[0] === '>') {
+                $op  = $val[0];
+                $val = substr($val, 1);
+            }
+            if (strpos($val, '*') !== false) {
+                $wildcard = true;
+                $val = str_replace('*', '%', $val);
+            }
+
+            $operator = null;
+            switch ($op) {
+                case '=':
+                    if ($not) {
+                        $operator = $wildcard ? 'NOT LIKE' : '!=';
+                    } else {
+                        $operator = $wildcard ? 'LIKE' : '=';
+                    }
+                    break;
+                case '>':
+                    $operator = $not ? '<=' : '>';
+                    break;
+                case '<':
+                    $operator = $not ? '>=' : '<';
+                    break;
+                default:
+                    throw new ProgrammingError("'$op' is not a valid operator");
+            }
+
+            if ($not || $force) {
+                $and[] = $this->db->quoteInto($column . ' ' . $operator . ' ?', $val);
+            } else {
+                $or[] = $this->db->quoteInto($column . ' ' . $operator . ' ?', $val);
             }
         }
 
