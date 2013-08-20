@@ -60,8 +60,8 @@ abstract class AbstractQuery extends Query
             }
         }
 
-        $this->prepareAliasIndexes();
         $this->joinBaseTables();
+        $this->prepareAliasIndexes();
     }
 
     protected function isCustomVar($alias)
