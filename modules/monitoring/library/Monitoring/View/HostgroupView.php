@@ -7,6 +7,7 @@ class HostgroupView extends AbstractView
     protected $query;
 
     protected $availableColumns = array(
+        'hostgroups',
         'hostgroup_name',
         'hostgroup_alias',
     );
