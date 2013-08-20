@@ -155,6 +155,14 @@ class HoststatusQuery extends AbstractQuery
             "so.$this->object_id = ss.service_object_id",
             array()
         );
+        foreach ($this->columns as $col) {
+            $real = $this->aliasToColumnName($col);
+            if (substr($real, 0, 4) === 'SUM(') {
+                continue;
+            }
+            $this->baseQuery->group($real);
+        }
+        $this->uglySlowConservativeCount = true;
     }
 
     protected function joinHostgroups()
