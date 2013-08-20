@@ -117,6 +117,9 @@ class StaticController extends ActionController
             $filePath = $basedir . $file;
         } else {
             if (!Icinga::app()->getModuleManager()->hasEnabled($module)) {
+                Logger::error(
+                    'Non-existing frontend component "' . $module . '/' . $file
+                    . '" was requested. The module "' . $module . '" does not exist or is not active.');
                 echo "/** Module not enabled **/";
                 return;
             }
