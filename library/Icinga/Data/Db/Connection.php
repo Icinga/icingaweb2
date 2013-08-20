@@ -117,6 +117,7 @@ class Connection implements DatasourceInterface
         } else {
             $this->dbType = strtolower(get_class($this->db->getConnection()));
         }
+        $this->db->setFetchMode(Zend_Db::FETCH_OBJ);
 
         if ($this->dbType === null) {
             Logger::warn('Could not determine database type');
