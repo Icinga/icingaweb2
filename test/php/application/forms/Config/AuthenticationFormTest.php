@@ -134,7 +134,11 @@ class AuthenticationFormTest extends \Test\Icinga\Web\Form\BaseFormTest
             )
         );
         $form->setResources(
-            array('db_resource' => 'db_resource')
+            array(
+                'db_resource' => array(
+                    'type'      => 'db'
+                )
+            )
         );
 
         $form->setConfiguration($config);
@@ -167,7 +171,11 @@ class AuthenticationFormTest extends \Test\Icinga\Web\Form\BaseFormTest
         );
         $config = $this->getTestConfig();
         $form->setResources(
-            array('db_resource' => 'db_resource')
+            array(
+                'db_resource' => array(
+                    'type' => 'db'
+                )
+            )
         );
 
         $form->setConfiguration($config);
@@ -202,8 +210,12 @@ class AuthenticationFormTest extends \Test\Icinga\Web\Form\BaseFormTest
 
         $form->setResources(
             array(
-                'db_resource'   =>  'db_resource',
-                'db_resource_2' =>  'db_resource_2'
+                'db_resource'   =>  array(
+                    'type' => 'db'
+                ),
+                'db_resource_2' =>  array(
+                    'type' => 'db'
+                )
             )
         );
 
@@ -289,8 +301,12 @@ class AuthenticationFormTest extends \Test\Icinga\Web\Form\BaseFormTest
 
         $form->setResources(
             array(
-                'db_resource'   =>  'db_resource',
-                'db_resource_2' =>  'db_resource_2'
+                'db_resource'   =>  array(
+                    'type' => 'db'
+                ),
+                'db_resource_2' =>  array(
+                    'type' => 'db'
+                )
             )
         );
 

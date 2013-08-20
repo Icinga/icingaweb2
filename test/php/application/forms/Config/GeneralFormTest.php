@@ -89,7 +89,9 @@ class GeneralFormTest extends \Test\Icinga\Web\Form\BaseFormTest
         );
         $form->setResources(
             array(
-                'db'    => 'db'
+                'db'    => array(
+                    'type' => 'db'
+                )
             )
         );
         $form->setConfigDir('/tmp');
@@ -123,7 +125,9 @@ class GeneralFormTest extends \Test\Icinga\Web\Form\BaseFormTest
         $form->setConfigDir('/tmp');
         $form->setResources(
             array(
-                'db'    => 'db'
+                'db'    => array(
+                    'type' => 'db'
+                )
             )
         );
         $form->create();
@@ -158,7 +162,9 @@ class GeneralFormTest extends \Test\Icinga\Web\Form\BaseFormTest
         $form->setConfigDir('/tmp');
         $form->setResources(
             array(
-                'db'    => 'db'
+                'db'    => array(
+                    'type' => 'db'
+                )
             )
         );
         $form->create();
