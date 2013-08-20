@@ -257,6 +257,15 @@ abstract class AbstractQuery extends Query
         return $this->customVars[$customvar] . '.varvalue';
     }
 
+    protected function createSubQuery($queryName, $columns = array())
+    {
+		$class = '\\'
+		       . substr(__CLASS__, 0, strrpos(__CLASS__, '\\') + 1)
+		       . ucfirst($queryName) . 'Query';
+        $query = new $class($this->ds, $columns);
+        return $query;
+    }
+
     protected function customvarNameToTypeName($customvar)
     {
         // TODO: Improve this:
