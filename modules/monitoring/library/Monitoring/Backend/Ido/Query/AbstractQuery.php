@@ -118,6 +118,18 @@ abstract class AbstractQuery extends Query
         return array_keys($this->columnMap[$table]);
     }
 
+    protected function joinBaseTables()
+    {
+        $table = array_shift(array_keys($this->columnMap));
+
+        $this->baseQuery = $this->db->select()->from(
+            array($table => $this->prefix . $table),
+            array()
+        );
+
+        $this->joinedVirtualTables = array($table => true);
+    }
+
     protected function beforeCreatingCountQuery()
     {
         $this->applyAllFilters();
