@@ -162,6 +162,49 @@ class Monitoring_ListController extends ActionController
             'host_name'             =>  'Host Name',
             'host_address'          =>  'Host Address',
             'host_last_check'       =>  'Last Host Check'
+         ));
+
+        $this->inheritCurrentSortColumn();
+    }
+
+    /**
+     * Display hostgroup list
+     *
+     * @TODO Implement hostgroup overview (feature #4184)
+     */
+    public function hostgroupsAction()
+    {
+        $this->view->hostgroups = $this->query('hostgroup', array(
+            'hostgroup_name',
+            'hostgroup_alias',
+        ));
+    }
+
+    /**
+     * Display servicegroup list
+     *
+     * @TODO Implement servicegroup overview (feature #4185)
+     */
+    public function servicegroupsAction()
+    {
+        $this->view->servicegroups = $this->backend->select()
+            ->from('servicegroup', array(
+            'servicegroup_name',
+            'servicegroup_alias',
+        ));
+    }
+
+    /**
+     * Display contactgroups overview
+     *
+     *
+     */
+    public function contactgroupsAction()
+    {
+        $this->view->contactgroups = $this->query('contactgroup', array(
+            'contactgroup_name',
+            'contactgroup_alias',
+>>>>>>> Slight changes in the ListController... more tbd
         ));
     }
 
@@ -244,10 +287,14 @@ class Monitoring_ListController extends ActionController
             -1,
             PREG_SPLIT_NO_EMPTY
         );
-
+        if (empty($extra)) {
+            $cols = $columns;
+        } else {
+            $cols = array_merge($columns, $extra);
+        }
         $this->view->extraColumns = $extra;
         $query = $this->backend->select()
-            ->from($view, array_merge($columns, $extra))
+            ->from($view, $cols)
             ->applyRequest($this->_request);
         $this->handleFormatRequest($query);
         return $query;
