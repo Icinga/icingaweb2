@@ -45,6 +45,10 @@ define(function() {
         },
         error: function() {
             logTagged('error', arguments);
+        },
+        emergency: function() {
+            logTagged('emergency', arguments);
+            // TODO: log *emergency* errors to the backend
         }
     };
 

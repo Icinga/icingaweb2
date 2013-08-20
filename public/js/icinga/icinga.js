@@ -5,9 +5,14 @@ define([
     'icinga/module',
     'icinga/util/async',
     'icinga/container',
-    'modules/list'
-], function ($, log, moduleMgr, async, containerMgr, modules) {
+    'modules/list',
+    'icinga/component'
+], function ($, log, moduleMgr, async, containerMgr, modules,components) {
     'use strict';
+
+    $(document).ready(function(){
+        components.load();
+    });
 
     /**
      * Icinga prototype
@@ -62,9 +67,6 @@ define([
         $(document).ready(initialize.bind(this));
 
         return {
-            /**
-             *
-             */
             loadModule: function(blubb,bla) {
                 behaviour.registerBehaviour(blubb,bla);
             },

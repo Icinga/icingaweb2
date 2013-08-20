@@ -11,6 +11,7 @@ var should = require("should");
 var rjsmock = require("requiremock.js");
 var asyncMock = require("asyncmock.js");
 
+
 requireNew("icinga/module.js");
 var module = rjsmock.getDefine(); 
 GLOBAL.document = $('body');
@@ -19,6 +20,7 @@ GLOBAL.document = $('body');
 * Test module that only uses eventhandlers and 
 * no custom logic
 **/
+
 var eventOnlyModule = function() {
     var thiz = this;
     this.moduleLinkClick = false;
@@ -81,6 +83,7 @@ var tearDownTestDOM = function() {
     $('body').off();
     $('body').empty();
 };
+
 
 describe('Module loader', function() {
     var err = null;
