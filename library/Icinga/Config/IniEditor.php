@@ -117,11 +117,10 @@ class IniEditor
     /**
      * Get the line of an array element
      *
-     * @param array $key    The key of the property.
-     * @param $value        The value
-     * @param $section      The section to use
+     * @param array $key            The key of the property.
+     * @param mixed $section        The section to use
      *
-     * @return              The line of the array element.
+     * @return int                  The line of the array element.
      */
     private function getArrayElement(array $key, $section = null)
     {
@@ -270,14 +269,14 @@ class IniEditor
     /**
      * Update the line $lineNr
      *
-     * @param $lineNr   The line number of the target line
-     * @param $toInsert The new line content
+     * @param int       $lineNr     The line number of the target line
+     * @param string    $toInsert   The new line content
      */
     private function updateLine($lineNr, $content)
     {
         $comment = $this->getComment($this->text[$lineNr]);
         if (strlen($comment) > 0) {
-            $comment = " ; " . trim($comment);
+            $comment = ' ; ' . trim($comment);
         }
         $this->text[$lineNr] = str_pad($content, 43) . $comment;
     }
