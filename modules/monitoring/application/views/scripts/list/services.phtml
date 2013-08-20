@@ -33,7 +33,6 @@ $trimArea = $this->getHelper('Trim');
             'service_description' => 'Service',
         )
     ) ?>
-    <input type="search" name="filter" placeholder="Type to filter" />
     <button class="btn btn-small"><i class="icon-refresh"></i></button>
 </form>
 <?=  $this->paginationControl($paginator, null, null, array('preserve' => $this->preserve)) ?>
@@ -59,14 +58,14 @@ $trimArea = $this->getHelper('Trim');
                 <?php endif; ?>
                 <?php $trimArea->end(); ?></div>
             </td>
-            <td class="icons indicator"> 
+            <td class="icons indicator">
                 <div class="icon-box"><?php $trimArea->start(); ?>
                 <?php if (!$service->service_handled && $service->service_state > 0): ?>
                     <a href="#" title="<?= 'Unhandled service' ?>">
                         <i class="icon-warning-sign"></i>
                     </a>
-                <?php endif; ?> 
-                <?php if ($service->service_acknowledged && !$service->service_in_downtime): ?> 
+                <?php endif; ?>
+                <?php if ($service->service_acknowledged && !$service->service_in_downtime): ?>
                     <a href="#" title="<?= 'Acknowledged' ?>">
                         <i class="icon-ok-sign"></i>
                     </a>
@@ -75,7 +74,7 @@ $trimArea = $this->getHelper('Trim');
                     <a href="#" title="<?= 'Flapping' ?>">
                         <i class="icon-random"></i>
                     </a>
-                <?php endif; ?> 
+                <?php endif; ?>
                 <?php if (!$service->service_notifications_enabled): ?>
                     <a href="#" title="<?= 'Notifications disabled' ?>">
                         <i class="icon-volume-off"></i>
@@ -86,7 +85,7 @@ $trimArea = $this->getHelper('Trim');
                         <i class="icon-wrench"></i>
                     </a>
                 <?php endif; ?>
-                <?php $trimArea->end(); ?></div> 
+                <?php $trimArea->end(); ?></div>
             </td>
 
 

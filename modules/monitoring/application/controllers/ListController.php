@@ -26,21 +26,25 @@
  * @author    Icinga Development Team <info@icinga.org>
  */
 // {{{ICINGA_LICENSE_HEADER}}}
-use Icinga\Web\Controller\ModuleActionController;
-use Icinga\Web\Hook;
-use Icinga\File\Csv;
-use Monitoring\Backend;
-use Icinga\Application\Benchmark;
-use Icinga\Web\Widget\Tabextension\OutputFormat;
-use Icinga\Web\Widget\Tabextension\DashboardAction;
-use Icinga\Web\Widget\Tabextension\BasketAction;
+
+
+use \Icinga\Application\Benchmark;
+use \Icinga\Data\Db\Query;
+use \Icinga\File\Csv;
+use \Icinga\Web\Controller\ModuleActionController;
+use \Icinga\Web\Hook;
+use \Icinga\Web\Widget\Tabextension\BasketAction;
+use \Icinga\Web\Widget\Tabextension\DashboardAction;
+use \Icinga\Web\Widget\Tabextension\OutputFormat;
+use \Icinga\Web\Widget\Tabs;
+use \Monitoring\Backend;
 
 class Monitoring_ListController extends ModuleActionController
 {
     /**
      * The backend used for this controller
      *
-     * @var \Icinga\Backend
+     * @var Backend
      */
     protected $backend;
 
@@ -48,9 +52,9 @@ class Monitoring_ListController extends ModuleActionController
      * Set to a string containing the compact layout name to use when
      * 'compact' is set as the layout parameter, otherwise null
      *
-     * @var string|null
+     * @var string
      */
-    private $compactView = null;
+    private $compactView;
 
     /**
      * Retrieve backend and hooks for this controller
@@ -101,8 +105,7 @@ class Monitoring_ListController extends ModuleActionController
      */
     public function servicesAction()
     {
-        $state_type = $this->_getParam('_statetype', 'soft');
-        if ($state_type = 'soft') {
+        if ($this->_getParam('_statetype', 'soft') === 'soft') {
             $state_column = 'service_state';
             $state_change_column = 'service_last_state_change';
         } else {
@@ -110,7 +113,6 @@ class Monitoring_ListController extends ModuleActionController
             $state_change_column = 'service_last_hard_state_change';
         }
         $this->compactView = "services-compact";
-
 
         $this->view->services = $this->query('status', array(
             'host_name',
@@ -143,50 +145,7 @@ class Monitoring_ListController extends ModuleActionController
     }
 
     /**
-     * Display hostgroup list
-     *
-     * @TODO Implement hostgroup overview (feature #4184)
-     */
-    public function hostgroupsAction()
-    {
-        $this->view->hostgroups = $this->backend->select()
-            ->from('hostgroup', array(
-            'hostgroup_name',
-            'hostgroup_alias',
-        ))->applyRequest($this->_request);
-    }
-
-    /**
-     * Display servicegroup list
-     *
-     * @TODO Implement servicegroup overview (feature #4185)
-     */
-    public function servicegroupsAction()
-    {
-        $this->view->servicegroups = $this->backend->select()
-            ->from('servicegroup', array(
-            'servicegroup_name',
-            'servicegroup_alias',
-        ))->applyRequest($this->_request);
-    }
-
-    /**
-     * Display contactgroups overview
-     *
-     *
-     */
-    public function contactgroupsAction()
-    {
-        $this->view->contactgroups = $this->backend->select()
-            ->from('contactgroup', array(
-            'contactgroup_name',
-            'contactgroup_alias',
-        ))->applyRequest($this->_request);
-    }
-
-    /**
-     * Fetch the current downtimes and put them into the view
-     * property 'downtimes'
+     * Fetch the current downtimes and put them into the view property `downtimes`
      */
     public function downtimesAction()
     {
@@ -239,7 +198,15 @@ class Monitoring_ListController extends ModuleActionController
         $this->inheritCurrentSortColumn();
     }
 
-    protected function query($view, $columns)
+    /**
+     * Create query
+     *
+     * @param string $view
+     * @param array  $columns
+     *
+     * @return Query
+     */
+    private function query($view, $columns)
     {
         $extra = preg_split(
             '~,~',
@@ -259,9 +226,9 @@ class Monitoring_ListController extends ModuleActionController
     /**
      * Handle the 'format' and 'view' parameter
      *
-     * @param \Icinga\Data\Db\Query $query      The current query
+     * @param Query $query The current query
      */
-    protected function handleFormatRequest($query)
+    private function handleFormatRequest($query)
     {
         if ($this->compactView !== null && ($this->_getParam('view', false) === 'compact')) {
             $this->_helper->viewRenderer($this->compactView);
@@ -292,63 +259,17 @@ class Monitoring_ListController extends ModuleActionController
      *
      * @return Tabs
      */
-    protected function createTabs()
+    private function createTabs()
     {
 
         $tabs = $this->getTabs();
         $tabs->extend(new OutputFormat())
             ->extend(new DashboardAction())
             ->extend(new BasketAction());
-
-        $tabs->add('services', array(
-            'title'     => 'All services',
-            'icon'      => 'img/classic/service.png',
-            'url'       => 'monitoring/list/services',
-        ));
-        $tabs->add('hosts', array(
-            'title'     => 'All hosts',
-            'icon'      => 'img/classic/server.png',
-            'url'       => 'monitoring/list/hosts',
-        ));
-        $tabs->add('downtimes', array(
-            'title'     => 'Downtimes',
-            'usePost'   => true,
-            'icon'      => 'img/classic/downtime.gif',
-            'url'       => 'monitoring/list/downtimes',
-        ));
-        $tabs->add('notifications', array(
-            'title'     => 'Notifications',
-            'icon'      => 'img/classic/alarm-clock.png',
-            'url'       => 'monitoring/list/notifications'
-        ));
-/*
-        $tabs->add('hostgroups', array(
-            'title'     => 'Hostgroups',
-            'icon'      => 'img/classic/servers-network.png',
-            'url'       => 'monitoring/list/hostgroups',
-        ));
-        $tabs->add('servicegroups', array(
-            'title'     => 'Servicegroups',
-            'icon'      => 'img/classic/servers-network.png',
-            'url'       => 'monitoring/list/servicegroups',
-        ));
-        $tabs->add('contacts', array(
-            'title'     => 'Contacts',
-            'icon'      => 'img/classic/servers-network.png',
-            'url'       => 'monitoring/list/contacts',
-        ));
-        $tabs->add('contactgroups', array(
-            'title'     => 'Contactgroups',
-            'icon'      => 'img/classic/servers-network.png',
-            'url'       => 'monitoring/list/contactgroups',
-        ));
-*/
     }
 
-
     /**
-     * Let the current response inherit the used sort column by applying it to the
-     * view property 'sort'
+     * Let the current response inherit the used sort column by applying it to the view property `sort`
      */
     private function inheritCurrentSortColumn()
     {
