@@ -65,7 +65,8 @@ class UserTest extends \PHPUnit_Framework_TestCase
             'timezone' => $explicitTz
         ));
         $user->setPreferences($prefs);
-        $this->assertEquals($user->getTimeZone(), new DateTimeZone($defaultTz),
+
+        $this->assertEquals($user->getTimeZone(), new DateTimeZone($explicitTz),
             'User\'s timezone does not match the timezone set by himself'
         );
     }
