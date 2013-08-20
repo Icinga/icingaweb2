@@ -100,6 +100,12 @@ class AbstractView extends AbstractQuery
         return in_array($column, $this->availableColumns);
     }
 
+    // TODO: Not sure about this yet
+    public function getDefaultColumns()
+    {
+        return $this->availableColumns;
+    }
+
     /**
      * Get a list of all available column names
      *
@@ -139,7 +145,7 @@ class AbstractView extends AbstractQuery
         return $this->order(
             // TODO: Use first sortDefaults entry if available, fall back to
             //       column if not
-            $request->getParam('sort', $this->availableColumns[0]),
+            $request->getParam('sort', $this->getDefaultSortColumn()),
             $request->getParam('dir')
         );
     }
@@ -207,6 +213,25 @@ class AbstractView extends AbstractQuery
     public function getAppliedFilter()
     {
         return new Filter($this->filters);
+    }
+
+    public function hasSingleSortColumn()
+    {
+        return count($this->order_columns) === 1;
+    }
+
+    public function getFirstSortColumn()
+    {
+        return $this->order_columns[0];
+    }
+
+    protected function getDefaultSortColumn()
+    {
+        if (empty($this->sortDefaults)) {
+            return $this->availableColumns[0];
+        } else {
+            return array_shift(array_keys($this->sortDefaults));
+        }
     }
 
     /**
