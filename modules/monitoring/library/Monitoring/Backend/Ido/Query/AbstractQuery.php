@@ -20,9 +20,11 @@ abstract class AbstractQuery extends Query
 
     protected $object_id       = 'object_id';
     protected $host_id         = 'host_id';
-    protected $service_id      = 'service_id';
     protected $hostgroup_id    = 'hostgroup_id';
+    protected $service_id      = 'service_id';
     protected $servicegroup_id = 'servicegroup_id';
+    protected $contact_id      = 'contact_id';
+    protected $contactgroup_id = 'contactgroup_id';
 
     protected $allowCustomVars = false;
 
@@ -33,7 +35,9 @@ abstract class AbstractQuery extends Query
         $this->prefix = $this->ds->getPrefix();
 
         if ($this->ds->getConnection()->getDbType() === 'oracle') {
-            $this->object_id = $this->host_id = $this->service_id = $this->hostgroup_id = $this->servicegroup_id = 'id'; // REALLY?
+            $this->object_id = $this->host_id = $this->service_id
+                = $this->hostgroup_id = $this->servicegroup_id
+                = $this->contact_id = $this->contactgroup_id = 'id'; // REALLY?
             foreach ($this->columnMap as $table => & $columns) {
                 foreach ($columns as $key => & $value) {
                     $value = preg_replace('/UNIX_TIMESTAMP/', 'localts2unixts', $value);
