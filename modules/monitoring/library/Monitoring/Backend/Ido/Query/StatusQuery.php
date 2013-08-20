@@ -121,21 +121,21 @@ class StatusQuery extends AbstractQuery
 
         ),
         'servicestatus' => array(
-            'service_state' => 'CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL THEN 99 ELSE ss.current_state END',
-            'service_output' => 'ss.output',
-            'service_long_output' => 'ss.long_output',
-            'service_perfdata' => 'ss.perfdata',
-            'service_acknowledged' => 'ss.problem_has_been_acknowledged',
-            'service_in_downtime' => 'CASE WHEN (ss.scheduled_downtime_depth = 0) THEN 0 ELSE 1 END',
-            'service_handled' => 'CASE WHEN (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth) > 0 THEN 1 ELSE 0 END',
-            'service_does_active_checks' => 'ss.active_checks_enabled',
+            'service_state'          => 'CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL THEN 99 ELSE ss.current_state END',
+            'service_output'         => 'ss.output',
+            'service_long_output'    => 'ss.long_output',
+            'service_perfdata'       => 'ss.perfdata',
+            'service_acknowledged'   => 'ss.problem_has_been_acknowledged',
+            'service_in_downtime'    => 'CASE WHEN (ss.scheduled_downtime_depth = 0) THEN 0 ELSE 1 END',
+            'service_handled'        => 'CASE WHEN (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth) > 0 THEN 1 ELSE 0 END',
+            'service_does_active_checks'     => 'ss.active_checks_enabled',
             'service_accepts_passive_checks' => 'ss.passive_checks_enabled',
-            'service_last_state_change' => 'UNIX_TIMESTAMP(ss.last_state_change)',
-            'service_check_command' => 'ss.check_command',
-            'service_last_time_ok' => 'ss.last_time_ok',
-            'service_last_time_warning' => 'ss.last_time_warning',
-            'service_last_time_critical' => 'ss.last_time_critical',
-            'service_last_time_unknown' => 'ss.last_time_unknown',
+            'service_last_state_change'      => 'UNIX_TIMESTAMP(ss.last_state_change)',
+            'service_check_command'          => 'ss.check_command',
+            'service_last_time_ok'           => 'ss.last_time_ok',
+            'service_last_time_warning'      => 'ss.last_time_warning',
+            'service_last_time_critical'     => 'ss.last_time_critical',
+            'service_last_time_unknown'      => 'ss.last_time_unknown',
             'service_current_check_attempt' => 'ss.current_check_attempt',
             'service_max_check_attempts' => 'ss.max_check_attempts',
             'service_attempt' => 'ss.current_check_attempt || \'/\' || ss.max_check_attempts',
@@ -219,21 +219,6 @@ class StatusQuery extends AbstractQuery
         ),
     );
 
-    public function group($col)
-    {
-        $this->baseQuery->group($col);
-    }
-
-    protected function getDefaultColumns()
-    {
-        return $this->columnMap['hosts'];
-        /*
-             + $this->columnMap['services']
-             + $this->columnMap['hoststatus']
-             + $this->columnMap['servicestatus']
-             ;*/
-    }
-
     protected function joinBaseTables()
     {
         // TODO: Shall we always add hostobject?
@@ -248,9 +233,9 @@ class StatusQuery extends AbstractQuery
             array('h' => $this->prefix . 'hosts'),
             'hs.host_object_id = h.host_object_id',
             array()
-            );
+        );
         $this->joinedVirtualTables = array(
-            'hosts' => true,
+            'hosts'      => true,
             'hoststatus' => true,
         );
     }
@@ -273,16 +258,15 @@ class StatusQuery extends AbstractQuery
             array()
         )->join(
             array('so' => $this->prefix . 'objects'),
-            'so.'.$this->object_id.' = s.service_object_id AND so.is_active = 1',
+            'so.' . $this->object_id . ' = s.service_object_id AND so.is_active = 1',
             array()
         )->joinLeft(
             array('ss' => $this->prefix . 'servicestatus'),
-            'so.'.$this->object_id.' = ss.service_object_id',
+            'so.' . $this->object_id . ' = ss.service_object_id',
             array()
         );
     }
 
-    // TODO: Test this one, doesn't seem to work right now
     protected function joinHostgroups()
     {
         if ($this->hasJoinedVirtualTable('services')) {
@@ -300,7 +284,7 @@ class StatusQuery extends AbstractQuery
             array()
         )->join(
             array('hg' => $this->prefix . 'hostgroups'),
-            'hgm.hostgroup_id = hg'.$this->hostgroup_id,
+            'hgm.hostgroup_id = hg' . $this->hostgroup_id,
             array()
         );
 
@@ -341,7 +325,7 @@ class StatusQuery extends AbstractQuery
         )->join(
             array('sgo' => $this->prefix . 'objects'),
             'sgo.' . $this->object_id. ' = sg.servicegroup_object_id'
-            . ' AND sgo.is_active = 1',
+          . ' AND sgo.is_active = 1',
             array()
         );
 
