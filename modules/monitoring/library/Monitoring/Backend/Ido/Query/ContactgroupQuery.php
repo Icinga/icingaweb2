@@ -39,6 +39,7 @@ class ContactgroupQuery extends AbstractQuery
             'service_description' => 'so.name2 COLLATE latin1_general_ci',
         )
     );
+    protected $uglySlowConservativeCount = true;
 
     protected function joinBaseTables()
     {
