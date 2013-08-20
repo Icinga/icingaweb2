@@ -31,6 +31,7 @@ namespace Icinga\Form\Preference;
 use \Icinga\Application\Config as IcingaConfig;
 use \Icinga\Application\Icinga;
 use \Icinga\Application\DbAdapterFactory;
+use \Icinga\User\Preferences;
 use \Icinga\Web\Form;
 use \Icinga\Web\Form\Validator\TimeFormatValidator;
 use \Icinga\Web\Form\Validator\DateFormatValidator;
@@ -51,7 +52,14 @@ class GeneralForm extends Form
      *
      * @var IcingaConfig
      */
-    private $config = null;
+    private $config;
+
+    /**
+     * The preference object to use instead of the one from the user (used for testing)
+     *
+     * @var Zend_Config
+     */
+    private $preferences;
 
     /**
      * Set the configuration to be used for this form when no preferences are set yet
@@ -61,6 +69,29 @@ class GeneralForm extends Form
     public function setConfiguration($cfg)
     {
         $this->config = $cfg;
+    }
+
+    /**
+     * Set preferences to be used instead of the one from the user object (used for testing)
+     *
+     * @param Zend_Config $prefs
+     */
+    public function setUserPreferences($prefs)
+    {
+        $this->preferences = $prefs;
+    }
+
+    /**
+     * Return the preferences of the user or the overwritten ones
+     *
+     * @return Zend_Config
+     */
+    public function getUserPreferences()
+    {
+        if ($this->preferences) {
+            return $this->preferences;
+        }
+        return $this->getRequest()->getUser()->getPreferences();
     }
 
     /**
@@ -78,7 +109,7 @@ class GeneralForm extends Form
             $tzList[$tz] = $tz;
         }
         $helptext = 'Use the following timezone for dates and times';
-        $prefs = $this->getRequest()->getUser()->getPreferences();
+        $prefs = $this->getUserPreferences();
         $useGlobalTimezone = $this->getRequest()->getParam('default_timezone', !$prefs->has('app.timezone'));
 
         $selectTimezone = new Zend_Form_Element_Select(
@@ -116,7 +147,7 @@ class GeneralForm extends Form
      */
     private function addDateFormatSettings(Zend_Config $cfg)
     {
-        $prefs = $this->getRequest()->getUser()->getPreferences();
+        $prefs = $this->getUserPreferences();
         $useGlobalDateFormat = $this->getRequest()->getParam('default_date_format', !$prefs->has('app.dateFormat'));
         $useGlobalTimeFormat = $this->getRequest()->getParam('default_time_format', !$prefs->has('app.timeFormat'));
 
