@@ -1,27 +1,28 @@
 <div class="navbar navbar-inverse navbar-fixed-top">
- <div class="navbar-inner ">
-  <ul class="nav pull-left">
-   <li style="float:left"><a href="<?= $this->baseUrl('/') ?>" class="brand" style="margin-left:0px;">Icinga</a></li>
-  </ul>
-<?php if ($this->auth()->isAuthenticated()): ?>
-  <ul class="nav pull-right" >
-    <li>
-    <form class="navbar-search" style="padding-top:0.2em">
-        <input type="text" class="search-query" placeholder="Search" style="padding-top:0.3em">
-    </form>
-    </li>
-   <li class="dropdown">
-    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?=
-      $this->escape($this->auth()->getUser()->getUsername())
-       ?> <i class="icon-user icon-white" style="margin-top:0.2em"></i>
-    <b class="caret"></b>
-    </a>
-    <ul class="dropdown-menu">
-     <li><?= $this->qlink($this->translate('Preferences'), 'preference') ?></li>
-     <li><?= $this->qlink($this->translate('Logout'), 'authentication/logout') ?></li>
+  <div class="navbar-inner ">
+    <ul class="nav pull-left">
+      <li style="float:left"><a href="<?= $this->baseUrl('/') ?>" class="brand" style="margin-left:0px;">Icinga</a></li>
     </ul>
-   </li>
-  </ul>
-<?php endif ?>
- </div>
+    <?php if ($this->auth()->isAuthenticated()): ?>
+      <ul class="nav pull-right" >
+<!--        Remove component as of #4583 since it's not working-->
+<!--        <li>-->
+<!--          <form class="navbar-search" style="padding-top:0.2em">-->
+<!--            <input type="text" class="search-query" placeholder="Search" style="padding-top:0.3em">-->
+<!--          </form>-->
+<!--        </li>-->
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            <?= $this->escape($this->auth()->getUser()->getUsername()); ?>
+            <i class="icon-user icon-white" style="margin-top:0.2em"></i>
+            <b class="caret"></b>
+          </a>
+          <ul class="dropdown-menu">
+            <li><?= $this->qlink($this->translate('Preferences'), 'preference'); ?></li>
+            <li><?= $this->qlink($this->translate('Logout'), 'authentication/logout'); ?></li>
+          </ul>
+        </li>
+      </ul>
+    <?php endif ?>
+  </div>
 </div>
