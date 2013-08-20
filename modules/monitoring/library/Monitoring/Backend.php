@@ -99,9 +99,12 @@ class Backend
     public static function getBackendConfigs()
     {
         if (self::$backendConfigs === null) {
+            $resources = IcingaConfig::app('resources');
+            foreach ($resources as $resource) {
+
+            }
             $backends = IcingaConfig::module('monitoring', 'backends');
             foreach ($backends as $name => $config) {
-                // TODO: Check if access to this backend is allowed
                 self::$backendConfigs[$name] = $config;
             }
         }

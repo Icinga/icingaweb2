@@ -74,7 +74,6 @@ class SecureShell implements Transport
         $this->host = isset($config->host) ? $config->host : "localhost";
         $this->port = isset($config->port) ? $config->port : 22;
         $this->user = isset($config->user) ? $config->user : null;
-        $this->password = isset($config->password) ? $config->password : null;
         $this->path = isset($config->path) ? $config->path : "/usr/local/icinga/var/rw/icinga.cmd";
     }
 
