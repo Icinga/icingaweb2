@@ -29,7 +29,7 @@
 
 use Icinga\Application\Benchmark;
 use Icinga\Application\Icinga;
-use \Monitoring\Backend;
+use \Icinga\Module\Monitoring\Backend;
 use \Icinga\Application\Config;
 use Icinga\Application\Logger;
 use Icinga\Authentication\Manager;
