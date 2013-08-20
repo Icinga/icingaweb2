@@ -37,7 +37,7 @@ class Filter extends ArrayIterator
     }
 
     /**
-     * Get filtere as key-value array
+     * Get filter as key-value array
      *
      * @return array
      */
