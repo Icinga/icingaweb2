@@ -27,21 +27,24 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
+
+use \Icinga\Application\Benchmark;
+use \Icinga\Data\Db\Query;
+use \Icinga\File\Csv;
 use \Icinga\Web\Controller\ModuleActionController;
 use \Icinga\Web\Hook;
-use \Icinga\File\Csv;
-use \Monitoring\Backend;
-use \Icinga\Application\Benchmark;
-use \Icinga\Web\Widget\Tabextension\OutputFormat;
-use \Icinga\Web\Widget\Tabextension\DashboardAction;
 use \Icinga\Web\Widget\Tabextension\BasketAction;
+use \Icinga\Web\Widget\Tabextension\DashboardAction;
+use \Icinga\Web\Widget\Tabextension\OutputFormat;
+use \Icinga\Web\Widget\Tabs;
+use \Monitoring\Backend;
 
 class Monitoring_ListController extends ModuleActionController
 {
     /**
      * The backend used for this controller
      *
-     * @var \Icinga\Backend
+     * @var Backend
      */
     protected $backend;
 
@@ -49,9 +52,9 @@ class Monitoring_ListController extends ModuleActionController
      * Set to a string containing the compact layout name to use when
      * 'compact' is set as the layout parameter, otherwise null
      *
-     * @var string|null
+     * @var string
      */
-    private $compactView = null;
+    private $compactView;
 
     /**
      * Retrieve backend and hooks for this controller
@@ -198,12 +201,12 @@ class Monitoring_ListController extends ModuleActionController
     /**
      * Create query
      *
-     * @param   $view
-     * @param   $columns
+     * @param string $view
+     * @param array  $columns
      *
-     * @return  \Icinga\Data\Db\Query
+     * @return Query
      */
-    protected function query($view, $columns)
+    private function query($view, $columns)
     {
         $extra = preg_split(
             '~,~',
@@ -223,9 +226,9 @@ class Monitoring_ListController extends ModuleActionController
     /**
      * Handle the 'format' and 'view' parameter
      *
-     * @param \Icinga\Data\Db\Query $query The current query
+     * @param Query $query The current query
      */
-    protected function handleFormatRequest($query)
+    private function handleFormatRequest($query)
     {
         if ($this->compactView !== null && ($this->_getParam('view', false) === 'compact')) {
             $this->_helper->viewRenderer($this->compactView);
@@ -256,7 +259,7 @@ class Monitoring_ListController extends ModuleActionController
      *
      * @return Tabs
      */
-    protected function createTabs()
+    private function createTabs()
     {
 
         $tabs = $this->getTabs();
