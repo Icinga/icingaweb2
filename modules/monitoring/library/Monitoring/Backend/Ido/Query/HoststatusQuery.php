@@ -77,6 +77,30 @@ class HoststatusQuery extends AbstractQuery
         'hostgroups' => array(
             'hostgroup' => 'hgo.name1 COLLATE latin1_general_ci',
         ),
+        'services' => array(
+            'services_cnt'      => 'SUM(1)',
+            'services_ok'       => 'SUM(CASE WHEN ss.current_state = 0 THEN 1 ELSE 0 END)',
+            'services_warning'  => 'SUM(CASE WHEN ss.current_state = 1 THEN 1 ELSE 0 END)',
+            'services_critical' => 'SUM(CASE WHEN ss.current_state = 2 THEN 1 ELSE 0 END)',
+            'services_unknown'  => 'SUM(CASE WHEN ss.current_state = 3 THEN 1 ELSE 0 END)',
+            'services_pending'  => 'SUM(CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL THEN 1 ELSE 0 END)',
+            'services_problem'  => 'SUM(CASE WHEN ss.current_state > 0 THEN 1 ELSE 0 END)',
+            'services_problem_handled'  => 'SUM(CASE WHEN ss.current_state > 0 AND (ss.problem_has_been_acknowledged = 1 OR ss.scheduled_downtime_depth > 0) THEN 1 ELSE 0 END)',
+            'services_problem_unhandled'  => 'SUM(CASE WHEN ss.current_state > 0 AND (ss.problem_has_been_acknowledged = 0 AND ss.scheduled_downtime_depth = 0) THEN 1 ELSE 0 END)',
+            'services_warning_handled'  => 'SUM(CASE WHEN ss.current_state = 1 AND (ss.problem_has_been_acknowledged = 1 OR ss.scheduled_downtime_depth > 0) THEN 1 ELSE 0 END)',
+            'services_critical_handled' => 'SUM(CASE WHEN ss.current_state = 2 AND (ss.problem_has_been_acknowledged = 1 OR ss.scheduled_downtime_depth > 0) THEN 1 ELSE 0 END)',
+            'services_unknown_handled'  => 'SUM(CASE WHEN ss.current_state = 3 AND (ss.problem_has_been_acknowledged = 1 OR ss.scheduled_downtime_depth > 0) THEN 1 ELSE 0 END)',
+            'services_warning_unhandled'  => 'SUM(CASE WHEN ss.current_state = 1 AND (ss.problem_has_been_acknowledged = 0 AND ss.scheduled_downtime_depth = 0) THEN 1 ELSE 0 END)',
+            'services_critical_unhandled' => 'SUM(CASE WHEN ss.current_state = 2 AND (ss.problem_has_been_acknowledged = 0 AND ss.scheduled_downtime_depth = 0) THEN 1 ELSE 0 END)',
+            'services_unknown_unhandled'  => 'SUM(CASE WHEN ss.current_state = 3 AND (ss.problem_has_been_acknowledged = 0 AND ss.scheduled_downtime_depth = 0) THEN 1 ELSE 0 END)',
+        ),
+    );
+
+    protected $aggregateColumnIdx = array(
+        'services_cnt'               => true,
+        'services_problem'           => true,
+        'services_problem_handled'   => true,
+        'services_problem_unhandled' => true,
     );
 
     protected function getDefaultColumns()
