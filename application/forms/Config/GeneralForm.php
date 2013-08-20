@@ -140,7 +140,7 @@ class GeneralForm extends Form
             array(
                 'label'     => 'Development mode',
                 'required'  => true,
-                'helptesxt' => 'Set true to show more detailed errors '
+                'helptext' => 'Set true to show more detailed errors '
                                 . 'and disable certain optimizations '
                                 . 'in order to make debugging easier.',
                 'tooltip'   => 'More verbose output',
@@ -267,6 +267,7 @@ class GeneralForm extends Form
                 'value'     =>  $cfg->get('configPath')
             )
         );
+
         $backends = array();
         foreach ($this->getResources() as $name => $resource) {
             if ($resource['type'] !== 'db') {
@@ -285,7 +286,9 @@ class GeneralForm extends Form
                 'multiOptions'  =>  $backends
             )
         );
-        $txtPreferencesIniPath->addValidator(new WritablePathValidator());
+        $validator = new WritablePathValidator();
+        $validator->setRequireExistence();
+        $txtPreferencesIniPath->addValidator($validator);
         $this->addElement($txtPreferencesIniPath);
         $this->addElement($txtPreferencesDbResource);
 
@@ -313,6 +316,7 @@ class GeneralForm extends Form
             $global = new Zend_Config(array());
         }
         $preferences = $this->config->preferences;
+
         if ($preferences === null) {
             $preferences = new Zend_Config(array());
         }

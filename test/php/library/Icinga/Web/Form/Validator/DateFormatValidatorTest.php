@@ -1,5 +1,4 @@
 <?php
-// @codingStandardsIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga 2 Web.
@@ -27,27 +26,36 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use \Icinga\Web\Controller\BaseConfigController;
-use \Icinga\Web\Widget\Tab;
-use \Icinga\Web\Url;
+namespace Test\Icinga\Web\Form\Validator;
 
-class Monitoring_ConfigController extends BaseConfigController {
+require_once('Zend/Validate/Abstract.php');
+require_once(realpath('../../library/Icinga/Web/Form/Validator/DateFormatValidator.php'));
 
-    static public function createProvidedTabs()
+use \PHPUnit_Framework_TestCase;
+use \Icinga\Web\Form\Validator\DateFormatValidator;
+
+class DateFormatValidatorTest extends PHPUnit_Framework_TestCase
+{
+
+    public function testValidateCorrectInput()
     {
-        return array(
-            'backends' => new Tab(array(
-                'name'  => 'backends',
-                'title' => 'Monitoring Backends',
-                'url'   => Url::fromPath('/monitoring/config/backend')
-            ))
+        $validator = new DateFormatValidator();
+        $this->assertTrue(
+            $validator->isValid(
+                'Y-m-d',
+                'Asserting a valid date format to result in correct validation'
+            )
         );
     }
 
-    public function backendAction()
+    public function testValidateInorrectInput()
     {
-        $this->redirectNow('/config');
+        $validator = new DateFormatValidator();
+        $this->assertFalse(
+            $validator->isValid(
+                'Y-m-d h:m:s',
+                'Asserting a date format combined with time to result in a validation error'
+            )
+        );
     }
-
 }
-// @codingStandardsIgnoreEnd

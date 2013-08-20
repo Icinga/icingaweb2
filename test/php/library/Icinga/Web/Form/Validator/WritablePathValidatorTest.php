@@ -1,5 +1,4 @@
 <?php
-// @codingStandardsIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga 2 Web.
@@ -27,27 +26,39 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use \Icinga\Web\Controller\BaseConfigController;
-use \Icinga\Web\Widget\Tab;
-use \Icinga\Web\Url;
+namespace Test\Icinga\Web\Form\Validator;
 
-class Monitoring_ConfigController extends BaseConfigController {
+require_once('Zend/Validate/Abstract.php');
+require_once(realpath('../../library/Icinga/Web/Form/Validator/WritablePathValidator.php'));
 
-    static public function createProvidedTabs()
+use \PHPUnit_Framework_TestCase;
+use \Icinga\Web\Form\Validator\WritablePathValidator;
+
+class WritablePathValidatorTest extends PHPUnit_Framework_TestCase
+{
+
+    public function testValidateInputWithWritablePath()
     {
-        return array(
-            'backends' => new Tab(array(
-                'name'  => 'backends',
-                'title' => 'Monitoring Backends',
-                'url'   => Url::fromPath('/monitoring/config/backend')
-            ))
+        $validator = new WritablePathValidator();
+        if (!is_writeable('/tmp')) {
+            $this->markTestSkipped('Need /tmp to be writable for testing WritablePathValidator');
+        }
+        $this->assertTrue(
+            $validator->isValid(
+                '/tmp/test',
+                'Asserting a writable path to result in correct validation'
+            )
         );
     }
 
-    public function backendAction()
+    public function testValidateInputWithNonWritablePath()
     {
-        $this->redirectNow('/config');
+        $validator = new WritablePathValidator();
+        $this->assertFalse(
+            $validator->isValid(
+                '/etc/shadow',
+                'Asserting a non writable path to result in a validation error'
+            )
+        );
     }
-
 }
-// @codingStandardsIgnoreEnd

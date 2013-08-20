@@ -71,11 +71,7 @@ class LoggingFormTest extends BaseFormTest
         $form->setConfiguration($config);
         $form->setBaseDir('basedir');
         $form->create();
-        $this->assertEquals(
-            '1',
-            $form->getValue('logging_enable'),
-            'Asserting the logging enable tick to be set'
-        );
+
         $this->assertEquals(
             '0',
             $form->getValue('logging_app_verbose'),
@@ -171,44 +167,4 @@ class LoggingFormTest extends BaseFormTest
             'Asserting the debug log target modifications to be applied'
         );
     }
-
-    /**
-     * Test form elements to be hidden when logging is disabled
-     *
-     */
-    public function testLoggingDisabled()
-    {
-        date_default_timezone_set('UTC');
-        $form = $this->getRequestForm(
-            array(),
-            'Icinga\Form\Config\LoggingForm'
-        );
-        $baseConfig = new Zend_Config(
-            array(
-                'global' => array(
-                    'option' => 'value'
-                ),
-                'logging' => array(
-                    'enable'    => 0,
-                    'target'    => '/some/path',
-                    'verbose'   => 0,
-                    'type'      => 'stream',
-                    'debug'     => array(
-                        'enable'    => 1,
-                        'target'    => '/some/debug/path',
-                        'type'      => 'stream'
-                    )
-                )
-            )
-        );
-        $form->setConfiguration($baseConfig);
-
-        $form->create();
-        $this->assertEquals(
-            null,
-            $form->getElement('logging_app_target'),
-            'Asserting no fields being rendered when logging is off'
-        );
-    }
-
 }

@@ -93,6 +93,7 @@ class ConfigController extends BaseConfigController
     public function indexAction()
     {
         $form = new GeneralForm();
+
         $form->setConfiguration(IcingaConfig::app());
         $form->setRequest($this->_request);
         if ($form->isSubmittedAndValid()) {
@@ -116,7 +117,7 @@ class ConfigController extends BaseConfigController
         if ($form->isSubmittedAndValid()) {
             $config = $form->getConfig();
             if (!$this->writeConfigFile($form->getConfig(), 'config')) {
-                return false;
+                return;
             }
             $this->redirectNow('/config/logging');
         }

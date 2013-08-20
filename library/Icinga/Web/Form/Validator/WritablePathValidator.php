@@ -44,9 +44,25 @@ class WritablePathValidator extends Zend_Validate_Abstract
      */
     // @codingStandardsIgnoreStart
     protected $_messageTemplates = array(
-        'NOT_WRITABLE'  =>  'Path is not writable'
+        'NOT_WRITABLE'  =>  'Path is not writable',
+        'DOES_NOT_EXIST'=>  'Path does not exist'
     );
     // @codingStandardsIgnoreEnd
+
+    /**
+     * When true, the file or directory must exist
+     *
+     * @var bool
+     */
+    private $requireExistence = false;
+
+    /**
+     * Set this validator to require the target file to exist
+     */
+    public function setRequireExistence()
+    {
+        $this->requireExistence = true;
+    }
 
     /**
      * Check whether the given value is writable path
@@ -62,8 +78,14 @@ class WritablePathValidator extends Zend_Validate_Abstract
         $value = (string) $value;
         $this->_setValue($value);
 
+        if ($this->requireExistence && !file_exists($value)) {
+            $this->_error('DOES_NOT_EXIST');
+            return false;
+        }
+
         if ((file_exists($value) && is_writable($value)) ||
-            (is_dir(dirname($value)) != '' && is_writable(dirname($value)))) {
+            (is_dir(dirname($value)) && is_writable(dirname($value)))
+        ) {
             return true;
         }
         $this->_error('NOT_WRITABLE');

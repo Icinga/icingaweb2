@@ -92,7 +92,7 @@ class LoggingForm extends Form
         if ($this->baseDir) {
             return $this->baseDir;
         }
-        return realpath(Icinga::app()->getApplicationDir().'/../');
+        return realpath(Icinga::app()->getApplicationDir() . '/../');
     }
 
     /**
@@ -118,23 +118,6 @@ class LoggingForm extends Form
     }
 
     /**
-     * Return true when logging is enabled according to the request and the configuration
-     *
-     * @param Zend_Config $config           The logging section of the config.ini
-     * @return bool
-     */
-    private function loggingIsEnabled(Zend_Config $config)
-    {
-        $loggingRequestParam = $this->getRequest()->getParam('logging_enable', null);
-
-        if ($loggingRequestParam !== null) {
-            return intval($loggingRequestParam) === 1;
-        } else {
-            return intval($config->get('enable', 0)) === 1;
-        }
-    }
-
-    /**
      * Create this logging configuration form
      *
      * @see Form::create()
@@ -154,30 +137,6 @@ class LoggingForm extends Form
         if ($debug === null) {
             $debug = new IcingaConfig(array());
         }
-        $this->addElement(
-            'checkbox',
-            'logging_enable',
-            array(
-                'label'     => 'Logging enabled',
-                'required'  => true,
-                'value'     => $this->loggingIsEnabled($logging)
-            )
-        );
-        if (!$this->loggingIsEnabled($logging)) {
-            $this->addElement(
-                new Note(
-                    array(
-                        'name'      => 'note_logging_disabled',
-                        'value'     => 'Logging is disabled.'
-                    )
-                )
-            );
-            $this->setSubmitLabel('Save changes');
-            $this->enableAutoSubmit(array('logging_enable'));
-
-            return;
-        }
-
 
         $txtLogPath = new Zend_Form_Element_Text(
             array(
@@ -231,7 +190,7 @@ class LoggingForm extends Form
         $textLoggingDebugPath->addDecorator($decorator);
 
 
-        $this->enableAutoSubmit(array('logging_debug_enable', 'logging_enable'));
+        $this->enableAutoSubmit(array('logging_debug_enable'));
 
         $this->setSubmitLabel('Save changes');
     }
@@ -257,7 +216,7 @@ class LoggingForm extends Form
         $values = $this->getValues();
         $cfg = $this->config->toArray();
 
-        $cfg['logging']['enable']           =   intval($values['logging_enable']);
+        $cfg['logging']['enable']           =   1;
         $cfg['logging']['type']             =   'stream';
         $cfg['logging']['verbose']          =   $values['logging_app_verbose'];
         $cfg['logging']['target']           =   $values['logging_app_target'];
