@@ -26,8 +26,15 @@ abstract class AbstractQuery extends Query
     protected $contact_id      = 'contact_id';
     protected $contactgroup_id = 'contactgroup_id';
 
+    protected $aggregateColumnIdx = array();
+
     protected $allowCustomVars = false;
 
+    protected function isAggregateColumn($column)
+    {
+        return array_key_exists($column, $this->aggregateColumnIdx);
+    }
+    
     protected function init()
     {
         parent::init();
@@ -145,7 +152,17 @@ abstract class AbstractQuery extends Query
                     'If you finished here, code has been messed up'
                 );
             }
-            $this->baseQuery->where($this->prepareFilterStringForColumn($col, $value));
+
+            $func = 'filter' . ucfirst($alias);
+            if (method_exists($this, $func)) {
+                $this->$func($value);
+                return;
+            }
+            if ($this->isAggregateColumn($alias)) {
+                $this->baseQuery->having($this->prepareFilterStringForColumn($col, $value));
+            } else {
+                $this->baseQuery->where($this->prepareFilterStringForColumn($col, $value));
+            }
         }
     }
 
