@@ -114,7 +114,8 @@ abstract class AbstractQuery extends Query
 
     protected function getDefaultColumns()
     {
-        return $this->columnMap['hostgroups'];
+        $table = array_shift(array_keys($this->columnMap));
+        return array_keys($this->columnMap[$table]);
     }
 
     protected function beforeCreatingCountQuery()
