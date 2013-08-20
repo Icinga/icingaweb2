@@ -203,6 +203,7 @@ class HoststatusQuery extends AbstractQuery
 
     protected function joinServicegroups()
     {
+        // TODO: Only hosts with services having such servicegroups
         $this->requireVirtualTable('services');
         $this->baseQuery->join(
             array('sgm' => $this->prefix . 'servicegroup_members'),
