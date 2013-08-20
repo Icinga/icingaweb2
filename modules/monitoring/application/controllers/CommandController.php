@@ -29,13 +29,12 @@
 
 use Icinga\Application\Benchmark;
 use Icinga\Application\Icinga;
-use Icinga\Backend;
+use \Monitoring\Backend;
 use \Icinga\Application\Config;
 use Icinga\Application\Logger;
 use Icinga\Authentication\Manager;
 use Icinga\Web\Form;
 use Icinga\Web\Controller\ModuleActionController;
-use Icinga\Protocol\Commandpipe\Comment;
 use Icinga\Protocol\Commandpipe\CommandPipe;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\MissingParameterException;
@@ -172,7 +171,7 @@ class Monitoring_CommandController extends ModuleActionController
                 $fields[] = "service_state";
             }
             ;
-            $query = Backend::getInstance()->select()->from("status", $fields);
+            $query = Backend::getInstance($this->_getParam('backend'))->select()->from("status", $fields);
             return $query->applyFilters($filter)->fetchAll();
         } catch (\Exception $e) {
             Logger::error(
