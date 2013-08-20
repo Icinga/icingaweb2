@@ -81,17 +81,23 @@ define(['jquery', 'logging', 'icinga/componentRegistry'], function ($, log, regi
                     .each(function(index, el) {
                         var type = $(el).attr('data-icinga-component');
                         pendingFns++;
-                        loadComponent(
-                            type,
-                            el,
-                            function(cmp) {
-                                var id = registry.add(cmp, el.id, type);
-                                registry.markActive(id);
-                                el.id = id;
-                                finalize();
-                            },
-                            finalize
-                        );
+
+                        if (!el.id || !registry.getById(el.id)) {
+                            loadComponent(
+                                type,
+                                el,
+                                function(cmp) {
+                                    var id = registry.add(cmp, el.id, type);
+                                    registry.markActive(id);
+                                    el.id = id;
+                                    finalize();
+                                },
+                                finalize
+                            );
+                        } else {
+                            registry.markActive(el.id);
+                            finalize();
+                        }
                     });
                 finalize();
             };
