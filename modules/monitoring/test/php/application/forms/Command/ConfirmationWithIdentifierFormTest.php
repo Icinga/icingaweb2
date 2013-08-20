@@ -8,7 +8,7 @@ require_once __DIR__. '/../../../../../application/forms/Command/CommandForm.php
 require_once __DIR__. '/../../../../../application/forms/Command/WithChildrenCommandForm.php';
 require_once __DIR__. '/../../../../../application/forms/Command/CommandWithIdentifierForm.php';
 
-use Monitoring\Form\Command\CommandWithIdentifierForm;
+use \Icinga\Module\Monitoring\Form\Command\CommandWithIdentifierForm;
 use \Zend_View;
 use \Zend_Test_PHPUnit_ControllerTestCase;
 use \Test\Icinga\Web\Form\BaseFormTest;

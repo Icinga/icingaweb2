@@ -27,13 +27,12 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use Monitoring\Backend;
+use \Icinga\Module\Monitoring\Backend;
 use Icinga\Web\Controller\ActionController;
 use Icinga\Web\Hook;
-use Monitoring\Object\Host;
-use Monitoring\Object\Service;
+use \Icinga\Module\Monitoring\Object\Host;
+use \Icinga\Module\Monitoring\Object\Service;
 use Icinga\Application\Benchmark;
-
 use Icinga\Web\Widget\Tabextension\OutputFormat;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
 use Icinga\Web\Widget\Tabextension\BasketAction;

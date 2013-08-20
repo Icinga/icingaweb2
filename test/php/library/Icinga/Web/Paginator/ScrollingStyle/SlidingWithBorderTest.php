@@ -2,7 +2,7 @@
 
 namespace Tests\Icinga\Web\Paginator\ScrollingStyle;
 
-use Monitoring\Backend\Statusdat;
+use \Icinga\Module\Monitoring\Backend\Statusdat;
 use Icinga\Protocol\Statusdat\Reader;
 use Icinga\Web\Paginator\Adapter\QueryAdapter;
 use Tests\Icinga\Protocol\Statusdat\StatusdatTestLoader;

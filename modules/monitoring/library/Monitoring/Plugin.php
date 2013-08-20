@@ -1,6 +1,6 @@
 <?php
 
-namespace Monitoring;
+namespace Icinga\Module\Monitoring;
 
 require_once ICINGA_LIBDIR . '/Icinga/Application/Cli.php';
 

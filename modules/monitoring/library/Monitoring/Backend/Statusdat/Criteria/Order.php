@@ -26,7 +26,7 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Monitoring\Backend\Statusdat\Criteria;
+namespace Icinga\Module\Monitoring\Backend\Statusdat\Criteria;
 
 /**
  * Class Order

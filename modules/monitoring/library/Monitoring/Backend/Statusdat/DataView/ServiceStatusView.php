@@ -26,7 +26,7 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Monitoring\Backend\Statusdat\DataView;
+namespace Icinga\Module\Monitoring\Backend\Statusdat\DataView;
 
 use Icinga\Protocol\Statusdat\View\ObjectRemappingView;
 use Icinga\Protocol\Statusdat\IReader;

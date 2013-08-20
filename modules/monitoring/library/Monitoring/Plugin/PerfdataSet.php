@@ -1,6 +1,6 @@
 <?php
 
-namespace Monitoring\Plugin;
+namespace Icinga\Module\Monitoring\Plugin;
 
 class PerfdataSet
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Monitoring\Backend;
+namespace Icinga\Module\Monitoring\Backend;
 
 use Icinga\Data\Db\Connection;
 

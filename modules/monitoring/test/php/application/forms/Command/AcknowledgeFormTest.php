@@ -12,7 +12,7 @@ require_once realpath(__DIR__ . '/../../../../../../../library/Icinga/Util/Confi
 require_once realpath(__DIR__ . '/../../../../../../../library/Icinga/Util/DateTimeFactory.php');
 
 use \DateTimeZone;
-use \Monitoring\Form\Command\AcknowledgeForm; // Used by constant FORMCLASS
+use \Icinga\Module\Monitoring\Form\Command\AcknowledgeForm; // Used by constant FORMCLASS
 use \Icinga\Util\DateTimeFactory;
 use \Test\Icinga\Web\Form\BaseFormTest;
 

@@ -23,7 +23,7 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Monitoring\Backend\Ido\Query;
+namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
 
 /**

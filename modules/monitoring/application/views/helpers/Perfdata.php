@@ -1,6 +1,6 @@
 <?php
 
-use Monitoring\Plugin\PerfdataSet;
+use \Icinga\Module\Monitoring\Plugin\PerfdataSet;
 
 class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
 {

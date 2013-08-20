@@ -26,7 +26,7 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Monitoring\Backend;
+namespace Icinga\Module\Monitoring\Backend;
 
 
 use Icinga\Protocol\Statusdat as StatusdatProtocol;

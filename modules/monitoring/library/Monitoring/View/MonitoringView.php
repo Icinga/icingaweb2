@@ -1,6 +1,6 @@
 <?php
 
-namespace Monitoring\View;
+namespace Icinga\Module\Monitoring\View;
 
 use Icinga\Data\AbstractQuery;
 use Icinga\Data\Filter;
@@ -17,7 +17,7 @@ use Icinga\Data\Filter;
  *
  * Usage example:
  * <code>
- * use Monitoring\Backend;
+ * use \Icinga\Module\Monitoring\Backend;
  * $backend = Backend::getInstance();
  * $query = $backend->select()->from('viewname', array(
  *     'one_column',

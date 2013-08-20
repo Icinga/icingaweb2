@@ -26,9 +26,9 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Monitoring\Backend\Statusdat\Query;
+namespace Icinga\Module\Monitoring\Backend\Statusdat\Query;
 
-use Monitoring\Backend\Statusdat\Criteria\Order;
+use \Icinga\Module\Monitoring\Backend\Statusdat\Criteria\Order;
 use Icinga\Protocol\Statusdat;
 use Icinga\Exception;
 use Icinga\Data\AbstractQuery;

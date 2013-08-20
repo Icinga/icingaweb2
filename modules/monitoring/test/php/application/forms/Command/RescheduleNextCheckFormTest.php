@@ -10,7 +10,7 @@ require_once realpath(__DIR__ . '/../../../../../application/forms/Command/Resch
 require_once realpath(__DIR__ . '/../../../../../../../library/Icinga/Util/ConfigAwareFactory.php');
 require_once realpath(__DIR__ . '/../../../../../../../library/Icinga/Util/DateTimeFactory.php');
 
-use \Monitoring\Form\Command\RescheduleNextCheckForm; // Used by constant FORM_CLASS
+use \Icinga\Module\Monitoring\Form\Command\RescheduleNextCheckForm; // Used by constant FORM_CLASS
 use \DateTimeZone;
 use \Icinga\Util\DateTimeFactory;
 use \Test\Icinga\Web\Form\BaseFormTest;
