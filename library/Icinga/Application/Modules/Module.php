@@ -272,9 +272,9 @@ class Module
             $moduleName = ucfirst($this->getName());
             $moduleLibraryDir = $this->getLibDir(). '/'. $moduleName;
 
-            $this->app->getLoader()->registerNamespace($moduleName, $moduleLibraryDir);
+            $this->app->getLoader()->registerNamespace('Icinga\\Module\\' . $moduleName, $moduleLibraryDir);
             if (is_dir($this->getFormDir())) {
-                $this->app->getLoader()->registerNamespace($moduleName. '\\Form', $this->getFormDir());
+                $this->app->getLoader()->registerNamespace('Icinga\\Module\\' . $moduleName. '\\Form', $this->getFormDir());
             }
         }
 
