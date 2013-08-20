@@ -142,46 +142,6 @@ class Monitoring_ListController extends ModuleActionController
     }
 
     /**
-     * Display hostgroup list
-     *
-     * @TODO Implement hostgroup overview (feature #4184)
-     */
-    public function hostgroupsAction()
-    {
-        $this->view->hostgroups = $this->backend->select()
-            ->from('hostgroup', array(
-            'hostgroup_name',
-            'hostgroup_alias',
-        ))->applyRequest($this->_request);
-    }
-
-    /**
-     * Display servicegroup list
-     *
-     * @TODO Implement servicegroup overview (feature #4185)
-     */
-    public function servicegroupsAction()
-    {
-        $this->view->servicegroups = $this->backend->select()
-            ->from('servicegroup', array(
-            'servicegroup_name',
-            'servicegroup_alias',
-        ))->applyRequest($this->_request);
-    }
-
-    /**
-     * Display contactgroups overview
-     */
-    public function contactgroupsAction()
-    {
-        $this->view->contactgroups = $this->backend->select()
-            ->from('contactgroup', array(
-            'contactgroup_name',
-            'contactgroup_alias',
-        ))->applyRequest($this->_request);
-    }
-
-    /**
      * Fetch the current downtimes and put them into the view property `downtimes`
      */
     public function downtimesAction()
