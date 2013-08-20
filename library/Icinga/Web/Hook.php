@@ -1,13 +1,36 @@
 <?php
-
+// {{{ICINGA_LICENSE_HEADER}}}
 /**
- * Icinga Web Hook registry
+ * This file is part of Icinga 2 Web.
+ *
+ * Icinga 2 Web - Head for multiple monitoring backends.
+ * Copyright (C) 2013 Icinga Development Team
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ * @copyright 2013 Icinga Development Team <info@icinga.org>
+ * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
+ * @author    Icinga Development Team <info@icinga.org>
  */
+// {{{ICINGA_LICENSE_HEADER}}}
+
 namespace Icinga\Web;
 
-use Icinga\Application\Logger as Log;
-use Icinga\Exception\ProgrammingError;
-use Icinga\Exception\NotImplementedError;
+use \stdClass;
+use \Icinga\Application\Logger as Log;
+use \Icinga\Exception\ProgrammingError;
 
 /**
  * Icinga Web Hook registry
@@ -18,10 +41,6 @@ use Icinga\Exception\NotImplementedError;
  * <code>
  * Hook::register('grapher', 'My\\Grapher\\Class');
  * </code>
- *
- * @copyright  Copyright (c) 2013 Icinga-Web Team <info@icinga.org>
- * @author     Icinga-Web Team <info@icinga.org>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License
  */
 class Hook
 {
@@ -40,10 +59,15 @@ class Hook
     protected static $instances = array();
 
     /**
+     * Namespace prefix
+     *
      * @var string
      */
     public static $BASE_NS = 'Icinga\\Web\\Hook\\';
 
+    /**
+     * Reset object state
+     */
     public static function clean()
     {
         self::$hooks = array();
@@ -55,7 +79,7 @@ class Hook
     /**
      * Whether someone registered itself for the given hook name
      *
-     * @param  string $name  One of the predefined hook names
+     * @param string $name One of the predefined hook names
      *
      * @return bool
      */
@@ -73,6 +97,7 @@ class Hook
      * @param  string $name  One of the predefined hook names
      *
      * @return mixed
+     * @throws ProgrammingError
      */
     public static function get($name)
     {
@@ -112,9 +137,11 @@ class Hook
 
     /**
      * Create or return an instance of the hook
+     *
      * @param string $name
      * @param string $key
-     * @return \stdClass
+     * @return stdClass
+     *
      */
     public static function createInstance($name, $key)
     {
@@ -145,9 +172,10 @@ class Hook
 
     /**
      * Test for a valid class name
-     * @param \stdClass $instance
+     *
+     * @param stdClass $instance
      * @param string $name
-     * @throws \Icinga\Exception\ProgrammingError
+     * @throws ProgrammingError
      */
     private static function assertValidHook(&$instance, $name)
     {
@@ -165,7 +193,9 @@ class Hook
 
     /**
      * Return all instances of a specific name
+     *
      * @param string $name
+     *
      * @return array
      */
     public static function all($name)
@@ -182,8 +212,11 @@ class Hook
     }
 
     /**
+     * Get the first hook
+     *
      * @param string $name
-     * @return \stdClass
+     *
+     * @return stdClass
      */
     public static function first($name)
     {
@@ -194,12 +227,10 @@ class Hook
      * Register your hook
      *
      * @param  string $name  One of the predefined hook names
+     * @param  string $key
      * @param  string $class Your class name, must inherit one of the classes
      *                       in the Icinga/Web/Hook folder
      *
-     * @throws NotImplementedError unless we support multiple instances
-     *
-     * @return void
      */
     public static function register($name, $key, $class)
     {
@@ -224,10 +255,12 @@ class Hook
 
     /**
      * Register an object
+     *
      * @param string $name
      * @param string $key
      * @param object $object
-     * @throws \Icinga\Exception\ProgrammingError
+     *
+     * @throws ProgrammingError
      */
     public static function registerObject($name, $key, $object)
     {
@@ -242,5 +275,4 @@ class Hook
         self::$instances[$name][$key] =& $object;
         self::registerClass($name, $key, get_class($object));
     }
-
 }
