@@ -183,9 +183,10 @@ class StatusQuery extends AbstractQuery
             'service_last_comment' => 'slc.comment_id'
         ),
         'status' => array(
-            'service_problems' => 'CASE WHEN ss.current_state = 0 THEN 0 ELSE 1 END',
-            'service_handled' => 'CASE WHEN ss.problem_has_been_acknowledged = 1 OR ss.scheduled_downtime_depth > 0 THEN 1 ELSE 0 END',
-            'service_severity' => 'CASE WHEN ss.current_state = 0
+            'service_problems'  => 'CASE WHEN ss.current_state = 0 THEN 0 ELSE 1 END',
+            'service_handled'   => 'CASE WHEN ss.problem_has_been_acknowledged = 1 OR ss.scheduled_downtime_depth > 0 THEN 1 ELSE 0 END',
+            'service_unhandled' => 'CASE WHEN ss.problem_has_been_acknowledged = 0 AND ss.scheduled_downtime_depth = 0 THEN 1 ELSE 0 END',
+            'service_severity'  => 'CASE WHEN ss.current_state = 0
             THEN
                 CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL
                      THEN 16
