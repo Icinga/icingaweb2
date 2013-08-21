@@ -27,26 +27,26 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use Icinga\Application\Benchmark;
-use Icinga\Application\Icinga;
-use \Icinga\Module\Monitoring\Backend;
+use \Icinga\Application\Benchmark;
+use \Icinga\Application\Icinga;
+use \Monitoring\Backend;
 use \Icinga\Application\Config;
-use Icinga\Application\Logger;
-use Icinga\Authentication\Manager;
-use Icinga\Web\Form;
-use Icinga\Web\Controller\ModuleActionController;
-use Icinga\Protocol\Commandpipe\CommandPipe;
-use Icinga\Exception\ConfigurationError;
-use Icinga\Exception\MissingParameterException;
-use Monitoring\Form\Command\AcknowledgeForm;
-use Monitoring\Form\Command\CommentForm;
-use Monitoring\Form\Command\CommandForm;
-use Monitoring\Form\Command\CommandWithIdentifierForm;
-use Monitoring\Form\Command\CustomNotificationForm;
-use Monitoring\Form\Command\DelayNotificationForm;
-use Monitoring\Form\Command\RescheduleNextCheckForm;
-use Monitoring\Form\Command\ScheduleDowntimeForm;
-use Monitoring\Form\Command\SubmitPassiveCheckResultForm;
+use \Icinga\Application\Logger;
+use \Icinga\Authentication\Manager;
+use \Icinga\Web\Form;
+use \Icinga\Web\Controller\ModuleActionController;
+use \Icinga\Protocol\Commandpipe\CommandPipe;
+use \Icinga\Exception\ConfigurationError;
+use \Icinga\Exception\MissingParameterException;
+use \Monitoring\Form\Command\AcknowledgeForm;
+use \Monitoring\Form\Command\CommentForm;
+use \Monitoring\Form\Command\CommandForm;
+use \Monitoring\Form\Command\CommandWithIdentifierForm;
+use \Monitoring\Form\Command\CustomNotificationForm;
+use \Monitoring\Form\Command\DelayNotificationForm;
+use \Monitoring\Form\Command\RescheduleNextCheckForm;
+use \Monitoring\Form\Command\ScheduleDowntimeForm;
+use \Monitoring\Form\Command\SubmitPassiveCheckResultForm;
 
 /**
  * Class Monitoring_CommandController
