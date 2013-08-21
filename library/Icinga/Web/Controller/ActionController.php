@@ -39,6 +39,7 @@ use \Icinga\Exception;
 use \Icinga\Application\Config;
 use \Icinga\Web\Notification;
 use \Icinga\Web\Widget\Tabs;
+use \Icinga\Web\Url;
 
 /**
  * Base class for all core action controllers
