@@ -2,86 +2,25 @@
 define([
     'jquery',
     'logging',
-    'icinga/module',
     'icinga/util/async',
-    'icinga/container',
-    'modules/list'
-], function ($, log, moduleMgr, async, containerMgr, modules) {
+    'icinga/componentLoader'
+], function ($, log, async,components) {
     'use strict';
 
     /**
      * Icinga prototype
      */
     var Icinga = function() {
-        var internalModules = ['icinga/components/actionTable',
-                               'icinga/components/mainDetail',
-                               'icinga/components/datetime'];
-
-        this.modules     = {};
-        var failedModules = [];
 
         var initialize = function () {
-            registerLazyModuleLoading();
-            enableInternalModules();
-            
-            containerMgr.registerAsyncMgr(async);
-            containerMgr.initializeContainers(document);
+            components.load();
             log.debug("Initialization finished");
-
-            enableModules();
         };
-        
-        var registerLazyModuleLoading = function() {
-            async.registerHeaderListener("X-Icinga-Enable-Module", loadModuleScript, this);
-        };
-
-        var enableInternalModules = function() {
-            $.each(internalModules,function(idx,module) {
-                 moduleMgr.enableModule(module, log.error);
-            });
-        };
-
-        var loadModuleScript = function(name) {
-            moduleMgr.enableModule("modules/"+name+"/"+name, function(error) {
-                failedModules.push({
-                    name: name,
-                    errorMessage: error
-                 });
-            });
-        };
-
-        var enableModules = function(moduleList) {
-            moduleList = moduleList || modules;
-
-            $.each(modules,function(idx,module) {
-                loadModuleScript(module.name);
-            });
-        };
-
 
         $(document).ready(initialize.bind(this));
 
         return {
-            /**
-             *
-             */
-            loadModule: function(blubb,bla) {
-                behaviour.registerBehaviour(blubb,bla);
-            },
-
-            loadIntoContainer: function(ctr) {
-
-            },
-        
-            loadUrl: function(url, target, params) {
-                target = target || "icinga-main";
-                async.loadToTarget(target, url, params);
-            },
- 
-            getFailedModules: function() {
-                return failedModules;
-            }
-
+            components: components
         };
     };
     return new Icinga();

@@ -3,7 +3,7 @@
     "use strict";
     var asyncMgrInstance = null;
 
-    define(['icinga/container','logging','jquery'],function(containerMgr,log,$) {
+    define(['logging','jquery'],function(log,$,containerMgr) {
 
         var headerListeners = {};
 

@@ -31,5 +31,4 @@ describe('The async module', function() {
         },this);
         var test = async.createRequest(); 
     });
-
 });
