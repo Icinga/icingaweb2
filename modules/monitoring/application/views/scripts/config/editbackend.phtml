@@ -1,0 +1,14 @@
+<?= $this->tabs->render($this); ?>
+<?php if ($this->name): ?>
+  <h4>Edit Backend "<?= $this->escape($this->name) ?>"</h4>
+<?php else: ?>
+  <h4>Create New Backend</h4>
+<?php endif; ?>
+
+<?php if ($this->error): ?>
+<div class="alert alert-danger">
+  <?= $this->escape($this->error); ?>
+</div>
+<?php endif; ?>
+
+<?= $this->form; ?>

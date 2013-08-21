@@ -1,0 +1,15 @@
+<?= $this->tabs->render($this); ?>
+
+<?php if (isset($this->name)): ?>
+    <h4>Edit Instance Configuration for "<?= $this->escape($this->name) ?>"</h4>
+<?php else: ?>
+    <h4>Configure New Icinga Instance</h4>
+<?php endif; ?>
+
+<?php if ($this->error): ?>
+    <div class="alert alert-danger">
+        <?= $this->escape($this->error); ?>
+    </div>
+<?php endif; ?>
+
+<?= $this->form; ?>

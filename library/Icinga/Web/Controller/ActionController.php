@@ -28,26 +28,23 @@
 
 namespace Icinga\Web\Controller;
 
+use \Zend_Controller_Action as ZfController;
+use \Zend_Controller_Request_Abstract as ZfRequest;
+use \Zend_Controller_Response_Abstract as ZfResponse;
+use \Zend_Controller_Action_HelperBroker as ZfActionHelper;
+use \Zend_Layout as ZfLayout;
 use \Icinga\Authentication\Manager as AuthManager;
 use \Icinga\Application\Benchmark;
 use \Icinga\Exception;
 use \Icinga\Application\Config;
 use \Icinga\Web\Notification;
 use \Icinga\Web\Widget\Tabs;
-use \Zend_Layout as ZfLayout;
-use \Zend_Controller_Action as ZfController;
-use \Zend_Controller_Request_Abstract as ZfRequest;
-use \Zend_Controller_Response_Abstract as ZfResponse;
-use \Zend_Controller_Action_HelperBroker as ZfActionHelper;
+use \Icinga\Web\Url;
 
 /**
  * Base class for all core action controllers
  *
  * All Icinga Web core controllers should extend this class
- *
- * @copyright  Copyright (c) 2013 Icinga-Web Team <info@icinga.org>
- * @author     Icinga-Web Team <info@icinga.org>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License
  */
 class ActionController extends ZfController
 {
@@ -78,7 +75,7 @@ class ActionController extends ZfController
     protected $modifiesSession = false;
 
     /**
-     * True if authentication suceeded, otherwise false
+     * True if authentication succeeded, otherwise false
      *
      * @var bool
      */
@@ -148,7 +145,7 @@ class ActionController extends ZfController
     /**
      * Return the tabs
      *
-     * @return \Icinga\Widget\Web\Tabs
+     * @return Tabs
      */
     public function getTabs()
     {
@@ -159,37 +156,13 @@ class ActionController extends ZfController
     /**
      * Translate the given string with the global translation catalog
      *
-     * @param  string $string   The string that should be translated
+     * @param   string $string The string that should be translated
      *
-     * @return string
+     * @return  string
      */
     public function translate($string)
     {
         return t($string);
-    }
-
-    /**
-     * Whether the current user has the given permission
-     *
-     * TODO: This has not been implemented yet (Feature #4111)
-     *
-     * @return bool
-     */
-    final protected function hasPermission($uri)
-    {
-        return true;
-    }
-
-    /**
-     * Assert the current user has the given permission
-     *
-     * TODO: This has not been implemented yet (Feature #4111)
-     *
-     * @return self
-     */
-    final protected function assertPermission()
-    {
-        return $this;
     }
 
     private function redirectToLogin()
@@ -202,8 +175,6 @@ class ActionController extends ZfController
 
     /**
      * Prepare action execution by testing for correct permissions and setting shortcuts
-     *
-     * @return void
      */
     public function preDispatch()
     {
@@ -229,7 +200,7 @@ class ActionController extends ZfController
     /**
     *  Redirect to a specific url, updating the browsers URL field
     *
-    *  @param Url|string $url       The target to redirect to
+    *  @param Url|string $url The target to redirect to
     **/
     public function redirectNow($url)
     {

@@ -28,12 +28,14 @@
 
 namespace Icinga\Protocol\Commandpipe\Transport;
 
-use Icinga\Application\Logger;
+use \RuntimeException;
+use \Zend_Config;
+use \Icinga\Application\Logger;
 
 /**
- *  Command pipe transport class that uses ssh for connecting to a remote filesystem with the icinga.cmd pipe
- *  The remote host must have KeyAuth enabled for this user
+ * Command pipe transport class that uses ssh for connecting to a remote filesystem with the icinga.cmd pipe
  *
+ * The remote host must have KeyAuth enabled for this user
  */
 class SecureShell implements Transport
 {
@@ -66,21 +68,27 @@ class SecureShell implements Transport
     private $user = null;
 
     /**
-     * @see Transport::setEndpoint()
+     * Overwrite the target file of this Transport class using the given config from instances.ini
      *
+     * @param   Zend_Config $config
+     *
+     * @see     Transport::setEndpoint()
      */
-    public function setEndpoint(\Zend_Config $config)
+    public function setEndpoint(Zend_Config $config)
     {
-        $this->host = isset($config->host) ? $config->host : "localhost";
+        $this->host = isset($config->host) ? $config->host : 'localhost';
         $this->port = isset($config->port) ? $config->port : 22;
         $this->user = isset($config->user) ? $config->user : null;
-        $this->password = isset($config->password) ? $config->password : null;
-        $this->path = isset($config->path) ? $config->path : "/usr/local/icinga/var/rw/icinga.cmd";
+        $this->path = isset($config->path) ? $config->path : '/usr/local/icinga/var/rw/icinga.cmd';
     }
 
     /**
-     * @see Transport::send()
+     * Write the given external command to the command pipe
      *
+     * @param   string $command
+     *
+     * @throws  RuntimeException When the command could not be sent to the remote Icinga host
+     * @see     Transport::send()
      */
     public function send($command)
     {
@@ -114,11 +122,11 @@ class SecureShell implements Transport
         Logger::debug("Return code %s: %s ", $retCode, $output);
 
         if ($retCode != 0) {
-            $msg =  'Could not send command to remote icinga host: '
+            $msg =  'Could not send command to remote Icinga host: '
                 . implode(PHP_EOL, $output)
                 . " (returncode $retCode)";
             Logger::error($msg);
-            throw new \RuntimeException($msg);
+            throw new RuntimeException($msg);
         }
     }
 }

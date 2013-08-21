@@ -1,0 +1,35 @@
+<?php
+use Icinga\Web\Url;
+$createLdapBackend = Url::fromPath(
+    '/config/createAuthenticationBackend',
+    array('type' => 'ldap')
+)->getAbsoluteUrl();
+
+$createDbBackend = Url::fromPath(
+    '/config/createAuthenticationBackend',
+    array('type' => 'db')
+)->getAbsoluteUrl();
+
+?>
+<?= $this->tabs->render($this); ?>
+
+<?php
+    $errors = $this->form->getErrorMessages();
+    if (!empty($errors)):
+?>
+    <div class="alert alert-danger">
+        <h4>There are errors in your configuration</h4>
+        <br/>
+        <ul>
+<?php foreach($errors as $error): ?>
+            <li><?= $error ?></li>
+<?php endforeach;?>
+        </ul>
+    </div>
+<?php endif; ?>
+
+<div>
+    <a href="<?= $createLdapBackend ?>">Create a new LDAP authentication backend</a><br/>
+    <a href="<?= $createDbBackend ?>">Create a new DB authentication backend</a>
+</div>
+<?= $this->form ?>

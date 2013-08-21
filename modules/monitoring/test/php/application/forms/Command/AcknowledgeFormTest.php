@@ -5,7 +5,8 @@
 
 namespace Test\Monitoring\Forms\Command;
 
-require_once realpath(__DIR__ . '/BaseFormTest.php');
+require_once realpath('library/Icinga/Web/Form/BaseFormTest.php');
+require_once realpath(__DIR__ . '/../../../../../../../modules/monitoring/application/forms/Command/CommandForm.php');
 require_once realpath(__DIR__ . '/../../../../../../../modules/monitoring/application/forms/Command/AcknowledgeForm.php');
 require_once realpath(__DIR__ . '/../../../../../../../library/Icinga/Util/ConfigAwareFactory.php');
 require_once realpath(__DIR__ . '/../../../../../../../library/Icinga/Util/DateTimeFactory.php');
@@ -13,6 +14,7 @@ require_once realpath(__DIR__ . '/../../../../../../../library/Icinga/Util/DateT
 use \DateTimeZone;
 use \Monitoring\Form\Command\AcknowledgeForm; // Used by constant FORMCLASS
 use \Icinga\Util\DateTimeFactory;
+use \Test\Icinga\Web\Form\BaseFormTest;
 
 class AcknowledgeFormTest extends BaseFormTest
 {

@@ -31,6 +31,13 @@ use \Icinga\Web\Widget\Tab;
 use \Icinga\Web\Url;
 use \Icinga\Web\Hook\Configuration\ConfigurationTabBuilder;
 use \Icinga\Application\Icinga;
+use \Icinga\Application\Config as IcingaConfig;
+use \Icinga\Form\Config\GeneralForm;
+use \Icinga\Form\Config\AuthenticationForm;
+use \Icinga\Form\Config\Authentication\LdapBackendForm;
+use \Icinga\Form\Config\Authentication\DbBackendForm;
+use \Icinga\Form\Config\LoggingForm;
+use \Icinga\Config\PreservingIniWriter;
 
 /**
  * Application wide controller for application preferences
@@ -50,16 +57,30 @@ class ConfigController extends BaseConfigController
             'index' => new Tab(
                 array(
                     'name'      => 'index',
-                    'title'     => 'Configuration',
-                    'iconCls'   => 'wrench',
+                    'title'     => 'Application',
                     'url'       => Url::fromPath('/config')
+                )
+            ),
+
+            'authentication' => new Tab(
+                array(
+                    'name'      => 'auth',
+                    'title'     => 'Authentication',
+                    'url'       =>  Url::fromPath('/config/authentication')
+                )
+            ),
+
+            'logging' => new Tab(
+                array(
+                    'name'      => 'logging',
+                    'title'     => 'Logging',
+                    'url'       => Url::fromPath('/config/logging')
                 )
             ),
             'modules' => new Tab(
                 array(
                     'name'      => 'modules',
                     'title'     => 'Modules',
-                    'iconCls'   => 'puzzle-piece',
                     'url'       => Url::fromPath('/config/moduleoverview')
                 )
             )
@@ -68,11 +89,39 @@ class ConfigController extends BaseConfigController
 
     /**
      * Index action, entry point for configuration
-     * @TODO: Implement configuration interface (#3777)
      */
     public function indexAction()
     {
+        $form = new GeneralForm();
 
+        $form->setConfiguration(IcingaConfig::app());
+        $form->setRequest($this->_request);
+        if ($form->isSubmittedAndValid()) {
+            if (!$this->writeConfigFile($form->getConfig(), 'config'))  {
+                return false;
+            }
+            $this->redirectNow('/config');
+        }
+        $this->view->form = $form;
+    }
+
+
+    /**
+     * Form for modifying the logging configuration
+     */
+    public function loggingAction()
+    {
+        $form = new LoggingForm();
+        $form->setConfiguration(IcingaConfig::app());
+        $form->setRequest($this->_request);
+        if ($form->isSubmittedAndValid()) {
+            $config = $form->getConfig();
+            if (!$this->writeConfigFile($form->getConfig(), 'config')) {
+                return;
+            }
+            $this->redirectNow('/config/logging');
+        }
+        $this->view->form = $form;
     }
 
     /**
@@ -105,6 +154,111 @@ class ConfigController extends BaseConfigController
         $manager = Icinga::app()->getModuleManager();
         $manager->disableModule($this->_getParam('name'));
         $this->redirectNow('config/moduleoverview?_render=body');
+    }
+
+    /**
+     * Action for creating a new authentication backend
+     */
+    public function authenticationAction()
+    {
+        $form = new AuthenticationForm();
+        $config = IcingaConfig::app('authentication');
+        $form->setConfiguration($config);
+        $form->setRequest($this->_request);
+
+        if ($form->isSubmittedAndValid()) {
+            $modifiedConfig = $form->getConfig();
+            if (empty($modifiedConfig)) {
+                $form->addError('You need at least one authentication backend.');
+            } else if (!$this->writeAuthenticationFile($modifiedConfig)) {
+                return;
+            } else {
+                $this->redirectNow('/config/authentication');
+            }
+        }
+        $this->view->form = $form;
+    }
+
+    /**
+     * Action for creating a new authentication backend
+     */
+    public function createauthenticationbackendAction()
+    {
+        if ($this->getRequest()->getParam('type') === 'ldap') {
+            $form = new LdapBackendForm();
+        } else {
+            $form = new DbBackendForm();
+        }
+        $form->setRequest($this->getRequest());
+        if ($form->isSubmittedAndValid()) {
+            $backendCfg = IcingaConfig::app('authentication')->toArray();
+            foreach ($form->getConfig() as $backendName => $settings) {
+                $backendCfg[$backendName] = $settings;
+            }
+            if (!$this->writeAuthenticationFile($backendCfg)) {
+                return;
+            }
+            $this->redirectNow('/config/authentication');
+
+        }
+        $this->view->form = $form;
+        $this->render('authentication/modify');
+    }
+
+    /**
+     * Write changes to an authentication file
+     *
+     * This uses the Zend_Config_Writer_Ini implementation for now, as the Preserving ini writer can't
+     * handle ordering
+     *
+     * @param   array $config The configuration changes
+     *
+     * @return  bool True when persisting succeeded, otherwise false
+     *
+     * @see     writeConfigFile()
+     */
+    private function writeAuthenticationFile($config) {
+        $writer = new Zend_Config_Writer_Ini(
+            array(
+                'config' => new Zend_Config($config),
+                'filename' => IcingaConfig::app('authentication')->getConfigFile()
+            )
+        );
+        return $this->writeConfigFile($config, 'authentication', $writer);
+    }
+
+    /**
+     * Write changes to a configuration file $file, using the supplied writer or PreservingIniWriter if none is set
+     *
+     * @param   array|Zend_Config   $config The configuration to write
+     * @param   string              $file   The filename to write to (without .ini)
+     * @param   Zend_Config_Writer  $writer An optional writer to use for persisting changes
+     *
+     * @return  bool True when persisting succeeded, otherwise false
+     */
+    private function writeConfigFile($config, $file, $writer = null)
+    {
+        if (is_array($config)) {
+            $config = new Zend_Config($config);
+        }
+        if ($writer === null) {
+            $writer = new PreservingIniWriter(
+                array(
+                    'config' => $config,
+                    'filename' => IcingaConfig::app($file)->getConfigFile()
+                )
+            );
+        }
+        try {
+            $writer->write();
+            return true;
+        } catch (Exception $exc) {
+            $this->view->exceptionMessage = $exc->getMessage();
+            $this->view->iniConfigurationString = $writer->render();
+            $this->view->file = $file;
+            $this->render('show-configuration');
+            return false;
+        }
     }
 }
 // @codingStandardsIgnoreEnd

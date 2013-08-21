@@ -35,6 +35,7 @@ use Icinga\User;
 use Icinga\Web\Request;
 use Zend_Controller_Front;
 use Zend_Layout;
+use Zend_Config;
 use Zend_Paginator;
 use Zend_View_Helper_PaginationControl;
 use Zend_Controller_Action_HelperBroker;
@@ -206,8 +207,9 @@ class Web extends ApplicationBootstrap
     /**
      * Create user object and inject preference interface
      *
-     * @throws ConfigurationError
      * @return User
+     *
+     * @throws ConfigurationError
      */
     private function setupUser()
     {
@@ -225,7 +227,9 @@ class Web extends ApplicationBootstrap
 
             $user = $authenticationManager->getUser();
 
-            $this->getConfig()->preferences->configPath = $this->getConfigDir('preferences');
+            $this->getConfig()->preferences->configPath = Config::app()
+                ->get('preferences', new Zend_Config(array()))
+                ->get('configPath', $this->getConfigDir('preferences'));
 
             $preferenceStore = StoreFactory::create(
                 $this->getConfig()->preferences,
@@ -325,7 +329,7 @@ class Web extends ApplicationBootstrap
 
     /**
      * Configure pagination settings
-
+     *
      * @return self
      */
     private function setupPagination()
