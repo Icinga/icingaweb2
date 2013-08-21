@@ -76,14 +76,13 @@ class PreferenceController extends BasePreferenceController
         $form = new GeneralForm();
         $form->setConfiguration(IcingaConfig::app());
         $form->setRequest($this->getRequest());
-
         if ($form->isSubmittedAndValid()) {
             $preferences = $form->getPreferences();
             $userPreferences = $this->getRequest()->getUser()->getPreferences();
 
             $userPreferences->startTransaction();
             foreach ($preferences as $key => $value) {
-                if ($value === '') {
+                if (!$value) {
                     $userPreferences->remove($key);
                 } else {
                     $userPreferences->set($key, $value);
@@ -92,6 +91,12 @@ class PreferenceController extends BasePreferenceController
             try {
                 $userPreferences->commit();
                 $this->view->success = true;
+
+                // recreate form to show new values
+                $form = new GeneralForm();
+                $form->setConfiguration(IcingaConfig::app());
+                $form->setRequest($this->getRequest());
+
             } catch (Exception $e) {
                 $this->view->exceptionMessage = $e->getMessage();
             }
