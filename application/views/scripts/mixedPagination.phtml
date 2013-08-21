@@ -19,17 +19,18 @@ $title_next = sprintf(
     $total
 );
 
-?><div class="pagination pagination-mini" style="margin:0px">
-  <ul>
-    <!-- Previous page link -->
+?>
+<ul class="pagination pagination-sm">
+  <!-- Previous page link -->
+
 <?php if (isset($this->previous)): ?>
-    <li><a href="<?= $this->url()->setParam('page', $this->previous) ?>" title="<?= $title_prev ?>">« <?= $this->translate('Back') ?></a></li>
+  <li><a href="<?= $this->url()->setParam('page', $this->previous) ?>" title="<?= $title_prev ?>">« <?= $this->translate('Back') ?></a></li>
 <?php else: ?>
-    <li class="disabled"><span>« <?= $this->translate('Back') ?></span></li>
+  <li class="disabled"><span>« <?= $this->translate('Back') ?></span></li>
 <?php endif ?>
+
     <!-- Numbered page links -->
 <?php
-
 foreach ($this->pagesInRange as $page):
 
     $start = ($page - 1) * $limit + 1;
@@ -43,16 +44,19 @@ foreach ($this->pagesInRange as $page):
     if ($page === '...'): ?>
     <li class="disabled"><span>...</span></li>
 <?php else: ?>
-    <li<?= $class ?>><a href="<?= $this->url()->setParam('page', $page) ?>" title="<?= $title ?>"><?= $page ?></a></li>
+    <li <?= $class ?>>
+      <a href="<?= $this->url()->setParam('page', $page) ?>" title="<?= $title ?>">
+        <?= $page ?>
+      </a>
+    </li>
 <?php
     endif;
 endforeach;
 ?>
 <!-- Next page link -->
 <? if (isset($this->next)): ?>
-    <li><a href="<?= $this->url()->setParam('page', $this->next) ?>" title="<?= $title_next ?>"><?= t('Next') ?> »</a></li>
+  <li><a href="<?= $this->url()->setParam('page', $this->next) ?>" title="<?= $title_next ?>"><?= t('Next') ?> »</a></li>
 <? else: ?>
-    <li class="disabled"><span><?= t('Next') ?> »</span></li>
+  <li class="disabled"><span><?= t('Next') ?> »</span></li>
 <? endif ?>
-  </ul>
-</div>
+</ul>

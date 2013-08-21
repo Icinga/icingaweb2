@@ -1,31 +1,33 @@
-<div class="navbar navbar-inverse navbar-fixed-top">
-  <div class="navbar-inner ">
-    <ul class="nav pull-left">
-      <li style="float:left"><a href="<?= $this->baseUrl('/') ?>" class="brand" style="margin-left:0px;">Icinga</a></li>
-    </ul>
-    <?php if ($this->auth()->isAuthenticated()): ?>
-      <ul class="nav pull-right" >
+<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+  <ul class="nav navbar-nav pull-left">
+    <li>
+      <a href="<?= $this->baseUrl('/') ?>" class="brand" style="margin-left:0px;">Icinga</a>
+    </li>
+  </ul>
+  <?php if ($this->auth()->isAuthenticated()): ?>
+  <ul class="nav navbar-nav pull-right" >
 <!--        Remove component as of #4583 since it's not working-->
 <!--        <li>-->
 <!--          <form class="navbar-search" style="padding-top:0.2em">-->
 <!--            <input type="text" class="search-query" placeholder="Search" style="padding-top:0.3em">-->
 <!--          </form>-->
 <!--        </li>-->
-        <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-            <?= $this->escape($this->auth()->getUser()->getUsername()); ?>
-            <i class="icon-user icon-white" style="margin-top:0.2em"></i>
-            <b class="caret"></b>
-          </a>
-          <ul class="dropdown-menu">
-            <li>
-              <a href="<?= $this->href('/preference'); ?>"><?= $this->translate('Preferences'); ?> </a>
-            </li>
-            <li>
-              <a href="<?= $this->href('/authentication/logout'); ?>"><?= $this->translate('Logout'); ?></a>
-          </ul>
+    <li class="dropdown">
+      <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+        <?= $this->escape($this->auth()->getUser()->getUsername()); ?>
+        <i class="icon-user icon-white" style="margin-top:0.2em"></i>
+        <b class="caret"></b>
+      </a>
+      <ul class="dropdown-menu">
+        <li>
+          <a href="<?= $this->href('/preference'); ?>"><?= $this->translate('Preferences'); ?> </a>
+        </li>
+        <li>
+          <a href="<?= $this->href('/authentication/logout'); ?>"><?= $this->translate('Logout'); ?></a>
         </li>
       </ul>
-    <?php endif ?>
-  </div>
-</div>
+    </li>
+  </ul>
+  <?php endif ?>
+
+</nav>

@@ -223,7 +223,7 @@ class ActionController extends ZfController
 
         if ($this->_request->isXmlHttpRequest()) {
             if ($this->replaceLayout || $this->_getParam('_render') === 'body') {
-                $this->_helper->layout()->setLayout('just-the-body');
+                $this->_helper->layout()->setLayout('body');
                 header('X-Icinga-Target: body');
             } else {
                 $this->_helper->layout()->setLayout('inline');

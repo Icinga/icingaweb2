@@ -13,14 +13,19 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <title></title>
   <meta name="description" content="">
-  <meta name="viewport" content="width=device-width">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-  <link rel="stylesheet" href="<?= $this->baseUrl('css/normalize.min.css') ?>">
-  <link rel="stylesheet" href="<?= $this->baseUrl('css/vendor/bootstrap.css') ?>">
-  <link rel="stylesheet" href="<?= $this->baseUrl('css/vendor/datetimepicker/bootstrap-datetimepicker.min.css') ?>">
-  <link rel="stylesheet" href="<?= $this->baseUrl('css/vendor/ui-lightness/jquery-ui-1.10.3.custom.min.css') ?>">
+  <!--      Bootstrap and components    -->
+  <link rel="stylesheet" href="<?= $this->baseUrl('css/vendor/bootstrap/bootstrap.min.css') ?>" media="screen">
+
   <link rel="stylesheet" href="<?= $this->baseUrl('css/main.css') ?>">
-  <link rel="stylesheet" href="<?= $this->baseUrl('css/vendor/jquery.qtip.min.css') ?>">
+  <link rel="stylesheet" href="<?= $this->baseUrl('css/vendor/bootstrap/datetimepicker.min.css') ?>">
+
+  <!--
+  Not used until styling is clear (see #4550)
+  <link rel="stylesheet" href="<?= $this->baseUrl('css.php') ?>">
+  -->
+
   <script type="text/javascript">
     var base_url = '<?= $this->baseUrl() ?>';
     ICINGA_DEBUG = true;
@@ -30,17 +35,18 @@
   <? endif ?>
 
   <script src="<?php echo $this->baseUrl('js/vendor/modernizr-2.6.2.min.js') ?>"></script>
-  <link rel="stylesheet" href="<?php echo $this->baseUrl('css.php') ?>">
-  <link rel="stylesheet" href="<?php echo $this->baseUrl('css/vendor/bootstrap-responsive.min.css') ?>">
-  <link rel="stylesheet" href="<?php echo $this->baseUrl('css/vendor/font-awesome.min.css') ?>">
-  <!--[if IE 7]>
-  <link rel="stylesheet" href="<?php echo $this->baseUrl('css/vendor/font-awesome-ie7.min.css') ?>">
+
+  <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!--[if lt IE 9]>
+  <script src="./js/vendor/html5shiv.js"></script>
+  <script src="./js/vendor/respond.min.js"></script>
   <![endif]-->
+
   <script data-main="<?php echo $this->baseUrl('js/main.js')?>"
           src="<?php echo $this->baseUrl('js/vendor/require.js') ?>"></script>
 
 </head>
 <body class="cranberry">
-<?= $this->render('just-the-body.phtml') ?>
+  <?= $this->render('body.phtml') ?>
 </body>
 </html>

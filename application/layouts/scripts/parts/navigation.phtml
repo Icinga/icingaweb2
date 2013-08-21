@@ -6,35 +6,37 @@ $currentKey = isset($this->navkey) ? $this->navkey : $url;
 $item = $this->navigation->keys("menu");
 ?>
 <?php if ($this->auth()->isAuthenticated()): ?>
-  <ul class="nav nav-tabs icinga-navigation" >
-    <?php
-    $activeSet = false;
-    foreach ($item as $itemName) {
-        if($itemName[0] == "_") {
-            ?>
-            <li class="section-end"></li>
-            <?php
-            continue;
-        }
+<ul class="nav nav-stacked" >
+  <?php
+  $activeSet = false;
+  foreach ($item as $itemName) {
+      if($itemName[0] == "_") {
+          ?>
+          <li class="section-end"></li>
+          <?php
+          continue;
+      }
 
-        $item = $this->navigation->menu->$itemName;
-        $active = false;
-        $url = "";
+      $item = $this->navigation->menu->$itemName;
+      $active = false;
+      $url = "";
 
-        if (is_string($item)) {
-            $active = !$activeSet && $this->baseUrl($item) == $currentKey;
-            $url = $this->baseUrl($item);
-        } else {
-            $url = $this->baseUrl(isset($item->route) ? $item->route : "");
-            $itemName = isset($item->title) ? $item->title : $itemName;
-            $active = !$activeSet && (isset($item->key) ? $item->key : $url) === $currentKey;
-        }
-        $activeSet = $activeSet || $active;
-        ?>
-      <li class="<?= $active ? "active" : "" ?>"><a href="<?= $url ?>"><?= $itemName ?></a></li>
-        <?php
-        $class = "";
-    }
-    ?>
-  </ul>
+      if (is_string($item)) {
+          $active = !$activeSet && $this->baseUrl($item) == $currentKey;
+          $url = $this->baseUrl($item);
+      } else {
+          $url = $this->baseUrl(isset($item->route) ? $item->route : "");
+          $itemName = isset($item->title) ? $item->title : $itemName;
+          $active = !$activeSet && (isset($item->key) ? $item->key : $url) === $currentKey;
+      }
+      $activeSet = $activeSet || $active;
+      ?>
+    <li class="<?= $active ? "active" : "" ?>">
+      <a href="<?= $url ?>"><?= $itemName ?></a>
+    </li>
+      <?php
+      $class = "";
+  }
+  ?>
+</ul>
 <? endif ?>

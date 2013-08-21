@@ -1,17 +1,19 @@
 <?php echo $this->render('parts/topbar.phtml') ?>
-<div class="main">
+<div class="row">
+
   <!-- Only required for left/right tabs -->
-  <div class="tabbable tabs-left "style="height:100%;">
+  <div class="col-md-2">
     <?php echo $this->render('parts/navigation.phtml') ?>
+  </div>
 
-<div class="layout-main-detail collapsed">
-<div id="icinga-main" container-id="icinga-main" class="icinga-container">
-    <?= $this->render('inline.phtml') ?>
-</div>
+  <div class="col-md-10">
+    <div id="icingamain" class="col-md-8">
+      <?= $this->render('inline.phtml') ?>
+    </div>
 
-<div id="icinga-detail" class="icinga-container " container-id="icinga-detail">
-</div>
-
+    <div id="icingadetail" class="col-md-2">
+      Details
+    </div>
   </div>
 </div>
 
