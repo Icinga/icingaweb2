@@ -3,35 +3,37 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga 2 Web.
- * 
+ *
  * Icinga 2 Web - Head for multiple monitoring backends.
  * Copyright (C) 2013 Icinga Development Team
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
+ *
  * @copyright 2013 Icinga Development Team <info@icinga.org>
  * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
  * @author    Icinga Development Team <info@icinga.org>
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
+use \Exception;
+
+use \Icinga\Application\Config as IcingaConfig;
+use \Icinga\Config\PreservingIniWriter;
 use \Icinga\Web\Controller\BaseConfigController;
 use \Icinga\Web\Widget\Tab;
-use \Icinga\Application\Config as IcingaConfig;
 use \Icinga\Web\Url;
-use \Icinga\Config\PreservingIniWriter;
 
 use \Monitoring\Form\Config\ConfirmRemovalForm;
 use \Monitoring\Form\Config\Backend\EditBackendForm;
@@ -40,11 +42,8 @@ use \Monitoring\Form\Config\Backend\CreateBackendForm;
 use \Monitoring\Form\Config\Instance\EditInstanceForm;
 use \Monitoring\Form\Config\Instance\CreateInstanceForm;
 
-use \Exception;
-
 /**
  * Configuration controller for editing monitoring resources
- *
  */
 class Monitoring_ConfigController extends BaseConfigController {
 
@@ -75,7 +74,6 @@ class Monitoring_ConfigController extends BaseConfigController {
 
     /**
      * Display a form to modify the backend identified by the 'backend' parameter of the request
-     *
      */
     public function editbackendAction()
     {
@@ -105,8 +103,7 @@ class Monitoring_ConfigController extends BaseConfigController {
     }
 
     /**
-     *  Display a form to create a new backend
-     * s
+     * Display a form to create a new backends
      */
     public function createbackendAction()
     {
@@ -128,8 +125,7 @@ class Monitoring_ConfigController extends BaseConfigController {
     }
 
     /**
-     *  Display a confirmation form to remove the backend identified by the 'backend' parameter
-     *
+     * Display a confirmation form to remove the backend identified by the 'backend' parameter
      */
     public function removebackendAction()
     {
@@ -160,7 +156,6 @@ class Monitoring_ConfigController extends BaseConfigController {
 
     /**
      * Display a form to remove the instance identified by the 'instance' parameter
-     *
      */
     public function removeinstanceAction()
     {
@@ -218,7 +213,6 @@ class Monitoring_ConfigController extends BaseConfigController {
 
     /**
      * Display a form to create a new instance
-     *
      */
     public function createinstanceAction()
     {
@@ -240,7 +234,6 @@ class Monitoring_ConfigController extends BaseConfigController {
 
     /**
      * Display a form to remove the instance identified by the 'instance' parameter
-     *
      */
     private function writeConfiguration($config, $file)
     {
@@ -263,9 +256,9 @@ class Monitoring_ConfigController extends BaseConfigController {
     /**
      * Return true if the backend exists in the current configuration
      *
-     * @param string $backend           The name of the backend to check for existence
+     * @param   string $backend The name of the backend to check for existence
      *
-     * @return bool                     True if the backend name exists, otherwise false
+     * @return  bool True if the backend name exists, otherwise false
      */
     private function isExistingBackend($backend)
     {
@@ -276,9 +269,9 @@ class Monitoring_ConfigController extends BaseConfigController {
     /**
      * Return true if the instance exists in the current configuration
      *
-     * @param string $backend           The name of the instance to check for existence
+     * @param   string $instance The name of the instance to check for existence
      *
-     * @return bool                     True if the instance name exists, otherwise false
+     * @return  bool True if the instance name exists, otherwise false
      */
     private function isExistingInstance($instance)
     {

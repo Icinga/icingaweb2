@@ -28,6 +28,10 @@
 
 namespace Icinga\Form\Preference;
 
+use \DateTimeZone;
+use \Zend_Config;
+use \Zend_Form_Element_Text;
+use \Zend_Form_Element_Select;
 use \Icinga\Application\Config as IcingaConfig;
 use \Icinga\Application\Icinga;
 use \Icinga\Application\DbAdapterFactory;
@@ -36,14 +40,8 @@ use \Icinga\Web\Form;
 use \Icinga\Web\Form\Validator\TimeFormatValidator;
 use \Icinga\Web\Form\Validator\DateFormatValidator;
 
-use \DateTimeZone;
-use \Zend_Config;
-use \Zend_Form_Element_Text;
-use \Zend_Form_Element_Select;
-
 /**
  * General user preferences
- *
  */
 class GeneralForm extends Form
 {
@@ -100,7 +98,7 @@ class GeneralForm extends Form
      * Possible values are determined by DateTimeZone::listIdentifiers
      * Also, a 'use default format' checkbox is added in order to allow a user to discard his overwritten setting
      *
-     * @param Zend_Config $cfg         The "global" section of the config.ini to be used as default valuse
+     * @param Zend_Config $cfg The "global" section of the config.ini to be used as default valuse
      */
     private function addTimezoneSelection(Zend_Config $cfg)
     {
@@ -143,7 +141,7 @@ class GeneralForm extends Form
      *
      * Also, a 'use default format' checkbox is added in order to allow a user to discard his overwritten setting
      *
-     * @param Zend_Config $cfg         The "global" section of the config.ini to be used as default values
+     * @param Zend_Config $cfg The "global" section of the config.ini to be used as default values
      */
     private function addDateFormatSettings(Zend_Config $cfg)
     {
@@ -205,8 +203,6 @@ class GeneralForm extends Form
         }
 
         $this->enableAutoSubmit(array('default_time_format', 'default_date_format'));
-
-
     }
 
     /**
@@ -243,6 +239,5 @@ class GeneralForm extends Form
             'app.dateFormat'    => $values['date_format'],
             'app.timeFormat'    => $values['time_format']
         );
-
     }
 }

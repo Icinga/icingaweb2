@@ -2,24 +2,24 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga 2 Web.
- * 
+ *
  * Icinga 2 Web - Head for multiple monitoring backends.
  * Copyright (C) 2013 Icinga Development Team
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
+ *
  * @copyright 2013 Icinga Development Team <info@icinga.org>
  * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
  * @author    Icinga Development Team <info@icinga.org>
@@ -28,6 +28,8 @@
 
 namespace Monitoring\Form\Config\Backend;
 
+use \Zend_Config;
+
 use \Icinga\Application\Config as IcingaConfig;
 use \Icinga\Application\Icinga;
 use \Icinga\Application\Logger;
@@ -35,16 +37,14 @@ use \Icinga\Application\DbAdapterFactory;
 
 use \Icinga\Web\Form;
 use \Icinga\Web\Form\Element\Note;
-use \Zend_Config;
 
 /**
  * Form for modifying a monitoring backend
- *
  */
 class EditBackendForm extends Form
 {
     /**
-     *  Database resources to use instead of the one's from DBAdapterFactory (used for testing)
+     * Database resources to use instead of the one's from DBAdapterFactory (used for testing)
      *
      * @var array
      */
@@ -130,7 +130,6 @@ class EditBackendForm extends Form
 
     /**
      * Add form elements used for setting IDO backend parameters
-     *
      */
     private function addIdoBackendForm()
     {
@@ -149,7 +148,6 @@ class EditBackendForm extends Form
 
     /**
      * Add form elements used for setting status.dat backend parameters
-     *
      */
     private function addStatusDatForm()
     {
@@ -176,8 +174,7 @@ class EditBackendForm extends Form
     }
 
     /**
-     * Add form elements used for setting livstatus parameters
-     *
+     * Add form elements used for setting Livestatus parameters
      */
     private function addLivestatusForm()
     {
@@ -195,7 +192,6 @@ class EditBackendForm extends Form
 
     /**
      * Add a checkbox to disable this backends
-     *
      */
     private function addDisableButton()
     {
@@ -212,7 +208,6 @@ class EditBackendForm extends Form
 
     /**
      * Add a select box for choosing the type to use for this backend
-     *
      */
     private function addTypeSelectionBox()
     {
@@ -271,7 +266,7 @@ class EditBackendForm extends Form
     /**
      * Return a configuration containing the backend settings entered in this form
      *
-     * @return Zend_Config          The updated configuration for this backend
+     * @return Zend_Config The updated configuration for this backend
      */
     public function getConfig()
     {

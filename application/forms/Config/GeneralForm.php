@@ -2,24 +2,24 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga 2 Web.
- * 
+ *
  * Icinga 2 Web - Head for multiple monitoring backends.
  * Copyright (C) 2013 Icinga Development Team
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
+ *
  * @copyright 2013 Icinga Development Team <info@icinga.org>
  * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
  * @author    Icinga Development Team <info@icinga.org>
@@ -28,6 +28,10 @@
 
 namespace Icinga\Form\Config;
 
+use \DateTimeZone;
+use \Zend_Config;
+use \Zend_Form_Element_Text;
+use \Zend_Form_Element_Select;
 use \Icinga\Application\Config as IcingaConfig;
 use \Icinga\Application\Icinga;
 use \Icinga\Application\DbAdapterFactory;
@@ -36,11 +40,6 @@ use \Icinga\Web\Form\Validator\WritablePathValidator;
 use \Icinga\Web\Form\Validator\TimeFormatValidator;
 use \Icinga\Web\Form\Validator\DateFormatValidator;
 use \Icinga\Web\Form\Decorator\ConditionalHidden;
-
-use \DateTimeZone;
-use \Zend_Config;
-use \Zend_Form_Element_Text;
-use \Zend_Form_Element_Select;
 
 /**
  * Configuration form for general, application-wide settings
@@ -93,8 +92,9 @@ class GeneralForm extends Form
     /**
      * Return the config path set for this form or the application wide config path if none is set
      *
-     * @return string
-     * @see IcingaConfig::configDir
+     * @return  string
+     *
+     * @see     IcingaConfig::configDir
      */
     public function getConfigDir()
     {
@@ -105,7 +105,7 @@ class GeneralForm extends Form
      * Set an alternative array of resources that should be used instead of the DBFactory resource set
      * (used for testing)
      *
-     * @param array $resources              The resources to use for populating the db selection field
+     * @param array $resources The resources to use for populating the db selection field
      */
     public function setResources(array $resources)
     {
@@ -129,7 +129,7 @@ class GeneralForm extends Form
     /**
      * Add the checkbox for using the development environment to this form
      *
-     * @param Zend_Config $cfg         The "global" section of the config.ini
+     * @param Zend_Config $cfg The "global" section of the config.ini
      */
     private function addDevelopmentCheckbox(Zend_Config $cfg)
     {
@@ -140,9 +140,8 @@ class GeneralForm extends Form
             array(
                 'label'     => 'Development Mode',
                 'required'  => true,
-                'helptext' => 'Set true to show more detailed errors '
-                                . 'and disable certain optimizations '
-                                . 'in order to make debugging easier.',
+                'helptext'  => 'Set true to show more detailed errors and disable certain optimizations in order to '
+                    . 'make debugging easier.',
                 'tooltip'   => 'More verbose output',
                 'value'     => $env === 'development'
             )
@@ -155,7 +154,7 @@ class GeneralForm extends Form
      *
      * Possible values are determined by DateTimeZone::listIdentifiers
      *
-     * @param Zend_Config $cfg         The "global" section of the config.ini
+     * @param Zend_Config $cfg The "global" section of the config.ini
      */
     private function addTimezoneSelection(Zend_Config $cfg)
     {
@@ -182,7 +181,7 @@ class GeneralForm extends Form
     /**
      * Add configuration settings for module paths
      *
-     * @param Zend_Config $cfg          The "global" section of the config.ini
+     * @param Zend_Config $cfg The "global" section of the config.ini
      */
     private function addModuleSettings(Zend_Config $cfg)
     {
@@ -201,12 +200,12 @@ class GeneralForm extends Form
     /**
      * Add text fields for the date and time format used in the application
      *
-     * @param Zend_Config $cfg         The "global" section of the config.ini
+     * @param Zend_Config $cfg The "global" section of the config.ini
      */
     private function addDateFormatSettings(Zend_Config $cfg)
     {
         $phpUrl = '<a href="http://php.net/manual/en/function.date.php" target="_new">'
-                    . 'the official PHP documentation</a>';
+            . 'the official PHP documentation</a>';
 
         $txtDefaultDateFormat = new Zend_Form_Element_Text(
             array(
@@ -236,7 +235,7 @@ class GeneralForm extends Form
     /**
      * Add form elements for setting the user preference storage backend
      *
-     * @param Zend_Config $cfg      The Zend_config object of preference section
+     * @param Zend_Config $cfg The Zend_config object of preference section
      */
     public function addUserPreferencesDialog(Zend_Config $cfg)
     {

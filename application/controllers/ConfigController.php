@@ -158,7 +158,6 @@ class ConfigController extends BaseConfigController
 
     /**
      * Action for creating a new authentication backend
-     *
      */
     public function authenticationAction()
     {
@@ -182,7 +181,6 @@ class ConfigController extends BaseConfigController
 
     /**
      * Action for creating a new authentication backend
-     *
      */
     public function createauthenticationbackendAction()
     {
@@ -208,15 +206,16 @@ class ConfigController extends BaseConfigController
     }
 
     /**
-     * Write changes to an authentication file.
+     * Write changes to an authentication file
      *
      * This uses the Zend_Config_Writer_Ini implementation for now, as the Preserving ini writer can't
      * handle ordering
      *
-     * @param array $config     The configuration changes
+     * @param   array $config The configuration changes
      *
-     * @return bool             True when persisting succeeded, otherwise false
-     * @see writeConfigFile()
+     * @return  bool True when persisting succeeded, otherwise false
+     *
+     * @see     writeConfigFile()
      */
     private function writeAuthenticationFile($config) {
         $writer = new Zend_Config_Writer_Ini(
@@ -229,13 +228,13 @@ class ConfigController extends BaseConfigController
     }
 
     /**
-     * Write changes to a configuration file $file, using the supllied writer or PreservingIniWriter if none is set
+     * Write changes to a configuration file $file, using the supplied writer or PreservingIniWriter if none is set
      *
-     * @param array|Zend_Config     $config     The configuration to write
-     * @param string                $file       The filename to write to (without .ini)
-     * @param Zend_Config_Writer    $writer     An optional writer to use for persisting changes
+     * @param   array|Zend_Config   $config The configuration to write
+     * @param   string              $file   The filename to write to (without .ini)
+     * @param   Zend_Config_Writer  $writer An optional writer to use for persisting changes
      *
-     * @return bool                             True when persisting succeeded, otherwise false
+     * @return  bool True when persisting succeeded, otherwise false
      */
     private function writeConfigFile($config, $file, $writer = null)
     {

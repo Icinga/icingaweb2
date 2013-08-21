@@ -29,13 +29,12 @@
 
 namespace Monitoring\Form\Config\Instance;
 
+use \Zend_Config;
 use \Icinga\Web\Form;
 use \Icinga\Web\Form\Element\Note;
-use \Zend_Config;
 
 /**
  * Form for editing existing instances
- *
  */
 class EditInstanceForm extends Form
 {
@@ -70,7 +69,6 @@ class EditInstanceForm extends Form
 
     /**
      * Add a form field for selecting the command pipe type (local or remote)
-     *
      */
     private function addTypeSelection()
     {
@@ -90,7 +88,6 @@ class EditInstanceForm extends Form
 
     /**
      * Add form elements for remote instance
-     *
      */
     private function addRemoteInstanceForm()
     {
@@ -163,7 +160,7 @@ class EditInstanceForm extends Form
     /**
      * Return the configuration set by this form
      *
-     * @return Zend_Config          The configuration set in this form
+     * @return Zend_Config The configuration set in this form
      */
     public function getConfig()
     {

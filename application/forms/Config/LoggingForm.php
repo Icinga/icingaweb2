@@ -2,24 +2,24 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga 2 Web.
- * 
+ *
  * Icinga 2 Web - Head for multiple monitoring backends.
  * Copyright (C) 2013 Icinga Development Team
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
+ *
  * @copyright 2013 Icinga Development Team <info@icinga.org>
  * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
  * @author    Icinga Development Team <info@icinga.org>
@@ -28,18 +28,16 @@
 
 namespace Icinga\Form\Config;
 
+use \Zend_Config;
+use \Zend_Form_Element_Text;
 use \Icinga\Application\Config as IcingaConfig;
 use \Icinga\Application\Icinga;
 use \Icinga\Web\Form;
-use \Icinga\Web\Form\Element\Note;
 use \Icinga\Web\Form\Validator\WritablePathValidator;
 use \Icinga\Web\Form\Decorator\ConditionalHidden;
-use \Zend_Config;
-use \Zend_Form_Element_Text;
 
 /**
  * Form class for setting the application wide logging configuration
- *
  */
 class LoggingForm extends Form
 {
@@ -62,7 +60,7 @@ class LoggingForm extends Form
      *
      * If not called, default values are used instead
      *
-     * @param Zend_Config $cfg      The config.ini to set with this form
+     * @param Zend_Config $cfg The config.ini to set with this form
      */
     public function setConfiguration(Zend_Config $cfg)
     {
@@ -72,7 +70,7 @@ class LoggingForm extends Form
     /**
      * Set a different base directory to use for default paths instead of the one provided by Icinga::app()
      *
-     * @param string $dir       The new directory to use
+     * @param string $dir The new directory to use
      */
     public function setBaseDir($dir)
     {
@@ -102,9 +100,9 @@ class LoggingForm extends Form
      * and true or if it is not submitted, but the configuration for debug
      * logging is set to true
      *
-     * @param Zend_Config $config       The debug section of the config.ini
+     * @param   Zend_Config $config The debug section of the config.ini
      *
-     * @return bool                     Whether to display the debug path field or not
+     * @return  bool Whether to display the debug path field or not
      */
     private function shouldDisplayDebugLog(Zend_Config $config)
     {
@@ -143,7 +141,7 @@ class LoggingForm extends Form
                 'name'          => 'logging_app_target',
                 'label'         => 'Application Log Path',
                 'helptext'      => 'The logfile to write the icingaweb debug logs to.'
-                                    . 'The webserver must be able to write at this location',
+                    . 'The webserver must be able to write at this location',
                 'required'      => true,
                 'value'         => $logging->get('target', '/var/log/icingaweb.log')
             )
@@ -198,7 +196,7 @@ class LoggingForm extends Form
     /**
      *  Return a Zend_Config object containing the state defined in this form
      *
-     *  @return Zend_Config             The config defined in this form
+     *  @return Zend_Config The config defined in this form
      */
     public function getConfig()
     {

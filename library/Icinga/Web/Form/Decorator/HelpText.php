@@ -39,13 +39,9 @@ class HelpText extends Zend_Form_Decorator_Abstract
     /**
      * Add a helptext to an input field
      *
-     * @access public
+     * @param   string $content The help text
      *
-     * @param string $name The element name.
-     * @param string $value The default value.
-     * @param array $attribs Attributes which should be added to the input tag.
-     *
-     * @return string The input tag and options XHTML.
+     * @return  string The generated tag
      */
     public function render($content = '')
     {

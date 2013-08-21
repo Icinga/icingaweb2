@@ -28,9 +28,9 @@
 
 namespace Monitoring;
 
+use \Exception;
 use \Icinga\Application\Config as IcingaConfig;
 use \Icinga\Authentication\Manager as AuthManager;
-use \Exception;
 use \Monitoring\Backend\AbstractBackend;
 
 /**
@@ -62,9 +62,9 @@ class Backend
     /**
      * Test if configuration key exist
      *
-     * @param string $name
+     * @param   string $name
      *
-     * @return bool
+     * @return  bool
      */
     public static function exists($name)
     {
@@ -75,9 +75,9 @@ class Backend
     /**
      * Get the first configuration name of all backends
      *
-     * @throws Exception
+     * @return  string
      *
-     * @return string
+     * @throws  Exception
      */
     public static function getDefaultName()
     {
@@ -115,10 +115,11 @@ class Backend
     /**
      * Get a backend by name or a default one
      *
-     * @throws \Exception
-     * @param string $name
+     * @param   string $name
      *
-     * @return AbstractBackend
+     * @return  AbstractBackend
+     *
+     * @throws  Exception
      */
     public static function getBackend($name = null)
     {
@@ -148,9 +149,9 @@ class Backend
     /**
      * Get backend by name or by user configuration
      *
-     * @param string $name
+     * @param   string $name
      *
-     * @return AbstractBackend
+     * @return  AbstractBackend
      */
     public static function getInstance($name = null)
     {

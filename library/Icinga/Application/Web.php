@@ -207,8 +207,9 @@ class Web extends ApplicationBootstrap
     /**
      * Create user object and inject preference interface
      *
-     * @throws ConfigurationError
      * @return User
+     *
+     * @throws ConfigurationError
      */
     private function setupUser()
     {
@@ -328,7 +329,7 @@ class Web extends ApplicationBootstrap
 
     /**
      * Configure pagination settings
-
+     *
      * @return self
      */
     private function setupPagination()
