@@ -1,10 +1,12 @@
-<div class="well" style="margin:auto;width: 40%;max-width:25em;margin-top:10%;">
-<h1> Login </h1>
-<?php echo $this->form->render() ?>
-<?php if (isset($this->errorInfo)): ?>
+
+<div class="well">
+  <h1>Login</h1>
+
+  <?= $this->form->render(); ?>
+  <?php if (isset($this->errorInfo)): ?>
     <div class="alert alert-error">
-        <?= $this->errorInfo ?> 
+        <?= $this->errorInfo ?>
     </div>
-<?php endif ?>
+  <?php endif ?>
 
 </div>

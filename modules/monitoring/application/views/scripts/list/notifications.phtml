@@ -1,8 +1,6 @@
 <?= $this->tabs->render($this); ?>
 
 <?php
-use Icinga\Web\Url;
-
 $formatter = $this->getHelper('MonitoringProperties');
 ?>
 
@@ -12,19 +10,23 @@ $formatter = $this->getHelper('MonitoringProperties');
         $this->notifications->getAppliedFilter()->toParams()
     );
 ?>">
-  Sort by <?=
+  <label>Sort by</label> <?=
     $this->formSelect(
-      'sort',
-      $this->sort,
-      array(
-        'class' => 'autosubmit'
-      ),
-      array(
-        'notification_start_time' => 'Time'
-      )
+        'sort',
+        $this->sort,
+        array(
+            'class' => 'autosubmit'
+        ),
+        array(
+            'notification_start_time' => 'Time'
+        )
     );
   ?>
-  <button class="btn btn-small"><i class="icon-refresh"></i></button>
+  <noscript>
+    <button class="btn btn-small btn-default">
+      <i>REFRESH ICON</i>
+    </button>
+  </noscript>
 </form>
 
 <?php
@@ -32,42 +34,42 @@ $notifications = $this->notifications->paginate();
 echo $this->paginationControl($notifications, null, null, array('preserve' => $this->preserve));
 ?>
 
-<table class="statustable action table-hover">
+<table class="table table-condensed">
   <thead>
-  <tr>
-    <th>Host</th>
-    <th>Service</th>
-    <th>Type</th>
-    <th>Time</th>
-    <th>Contact</th>
-    <th>Notification command</th>
-    <th>Information</th>
-  </tr>
+    <tr>
+      <th>Host</th>
+      <th>Service</th>
+      <th>Type</th>
+      <th>Time</th>
+      <th>Contact</th>
+      <th>Notification command</th>
+      <th>Information</th>
+    </tr>
   </thead>
   <tbody>
   <?php foreach ($notifications as $notification): ?>
-  <tr>
-    <td>
-      <?= $notification->host_name ?>
-    </td>
-    <td>
-      <?= empty($notification->service_description) ? '' : $notification->service_description; ?>
-    </td>
-    <td><?= $formatter->getNotificationType($notification); ?>
-    </td>
-    <td>
-      <?= $notification->notification_start_time ?>
-    </td>
-    <td>
-      <?= $notification->notification_contact ?>
-    </td>
-    <td>
-      <?= $notification->notification_command ?>
-    </td>
-    <td>
-      <?= $this->escape(substr(strip_tags($notification->notification_information), 0, 10000)); ?>
-    </td>
-  </tr>
+    <tr>
+      <td>
+        <?= $notification->host_name ?>
+      </td>
+      <td>
+        <?= empty($notification->service_description) ? '' : $notification->service_description; ?>
+      </td>
+      <td><?= $formatter->getNotificationType($notification); ?>
+      </td>
+      <td>
+        <?= $notification->notification_start_time ?>
+      </td>
+      <td>
+        <?= $notification->notification_contact ?>
+      </td>
+      <td>
+        <?= $notification->notification_command ?>
+      </td>
+      <td>
+        <?= $this->escape(substr(strip_tags($notification->notification_information), 0, 10000)); ?>
+      </td>
+    </tr>
   <?php endforeach; ?>
   </tbody>
 </table>

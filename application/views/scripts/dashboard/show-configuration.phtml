@@ -1,24 +1,23 @@
 <br/>
 <div class="alert alert-error">
-    <h4><i class="icon-warning-sign"> </i>Saving dashboard failed</h4>
-    <br/>
-    <p>
-        Your dashboard couldn't be stored (error: "<?= $this->exceptionMessage; ?>"). This could have one or more
-        of the following reasons:
-    </p>
-    <ul>
-        <li>You don't have permissions to write to the dashboard file</li>
-        <li>Something went wrong while writing the file</li>
-        <li>There's an application error preventing you from persisting the configuration</li>
-    </ul>
+  <h4><i>ICON WARNING</i>Saving dashboard failed</h4>
+  <br/>
+  <p>
+    Your dashboard couldn't be stored (error: "<?= $this->exceptionMessage; ?>"). This could have one or more
+    of the following reasons:
+  </p>
+  <ul>
+    <li>You don't have permissions to write to the dashboard file</li>
+    <li>Something went wrong while writing the file</li>
+    <li>There's an application error preventing you from persisting the configuration</li>
+  </ul>
 </div>
 
 <p>
-    Details can be seen in your application log (if you don't have access to this file, call your administrator in this case).
-    <br/>
-    In case you can access the configuration file (config/dashboard/dashboard.ini) by yourself, you can open it and
-    insert the config manually:
-
+  Details can be seen in your application log (if you don't have access to this file, call your administrator in this case).
+  <br/>
+  In case you can access the configuration file (config/dashboard/dashboard.ini) by yourself, you can open it and
+  insert the config manually:
 </p>
 <p>
     <pre>

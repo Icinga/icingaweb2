@@ -2,156 +2,148 @@
 
 <?php
 $paginator = $services->paginate();
-
 $viewHelper = $this->getHelper('MonitoringState');
 $trimArea = $this->getHelper('Trim');
 ?>
 
 <?php if (empty($services)): ?>
-<div class="alert alert-info fullpage_infobox">
+<div>
   Sorry, no services found for this search
 </div>
 <?php return; endif ?>
 
-
 <form method="get" action="<?= $this->href('monitoring/list/services', $this->services->getAppliedFilter()->toParams()); ?>">
-  Sort by <?= $this->formSelect(
-    'sort',
-    $this->sort,
-    array('class' => 'autosubmit'),
-    array(
-      'service_severity' => 'Severity',
-      'service_last_state_change' => 'Last state change',
-      'service_last_time_unknown' => 'Last UNKNOWN',
-      'service_last_time_critical' => 'Last CRITICAL',
-      'service_last_time_warning' => 'Last WARNING',
-      'service_last_time_ok' => 'Last OK',
-      'service_description' => 'Service',
-    )
-  ) ?>
-  <button class="btn btn-small"><i class="icon-refresh"></i></button>
+  <label>Sort by</label>
+  <?= $this->formSelect(
+          'sort',
+          $this->sort,
+          array('class' => 'autosubmit'),
+          array(
+            'service_severity' => 'Severity',
+            'service_last_state_change' => 'Last state change',
+            'service_last_time_unknown' => 'Last UNKNOWN',
+            'service_last_time_critical' => 'Last CRITICAL',
+            'service_last_time_warning' => 'Last WARNING',
+            'service_last_time_ok' => 'Last OK',
+            'service_description' => 'Service',
+          )
+      ); ?>
+  <noscript>
+      <button class="btn btn-small btn-default">
+        <i>ICON REFRESH</i>
+      </button>
+  </noscript>
 </form>
+
 <?=  $this->paginationControl($paginator, null, null, array('preserve' => $this->preserve)) ?>
 
-<table class="statustable action services">
-
+<table class="table table-condensed">
   <thead>
-  <tr>
-    <th colspan="3">Status</th>
-    <th>Service</th>
-    <th>Host</th>
-    <th>Output</th>
-    <th></th>
-  </tr>
+    <tr>
+      <th colspan="2">Status</th>
+      <th>Service</th>
+      <th>Host</th>
+      <th>Output</th>
+      <th></th>
+    </tr>
   </thead>
   <tbody>
-
   <?php foreach ($services->fetchAll() as $service): ?>
-  <tr class="<?= implode(' ', $viewHelper->getStateFlags($service, 'service')); ?>">
-    <td class="icons indicator">
-      <div class="img-box"><?php $trimArea->start(); ?>
-
-        <?php if ($service->service_icon_image) : ?>
-        <img src="<?= $service->service_icon_image; ?>"/>
-        <?php endif; ?>
-
-        <?php $trimArea->end(); ?>
-      </div>
-    </td>
-    <td class="icons indicator">
-      <div class="icon-box"><?php $trimArea->start(); ?>
-
-        <?php if (!$service->service_handled && $service->service_state > 0): ?>
-        <a href="#" title="<?= 'Unhandled service' ?>">
-          <i class="icon-warning-sign"></i>
-        </a>
-        <?php endif; ?>
-
-        <?php if ($service->service_acknowledged && !$service->service_in_downtime): ?>
-        <a href="#" title="<?= 'Acknowledged' ?>">
-          <i class="icon-ok-sign"></i>
-        </a>
-        <?php endif; ?>
-
-        <?php if ($service->service_is_flapping): ?>
-        <a href="#" title="<?= 'Flapping' ?>">
-          <i class="icon-random"></i>
-        </a>
-        <?php endif; ?>
-
-        <?php if (!$service->service_notifications_enabled): ?>
-        <a href="#" title="<?= 'Notifications disabled' ?>">
-          <i class="icon-volume-off"></i>
-        </a>
-        <?php endif; ?>
-
-        <?php if ($service->service_in_downtime): ?>
-        <a href="#" title="<?= 'In downtime' ?>">
-          <i class="icon-wrench"></i>
-        </a>
-        <?php endif; ?>
-
-        <?php $trimArea->end(); ?>
-      </div>
-    </td>
-
-
-    <td class="indicator state" title="<?= $viewHelper->getStateTitle($service, 'service'); ?>">
-      <div class="statetext">
-        <b><?= ucfirst($viewHelper->monitoringState($service, 'service')); ?></b>
-        <div class="nowrap"> since&nbsp;
-          <?= $this->timeSince($service->service_last_state_change); ?>
-
-          <?php if ($service->service_state_type == 0): ?>
-          <a href="#" title="<?= 'Soft state' ?>">
-            <i class="icon-gears"></i>
-          </a>
-        <?php endif; ?>
+    <tr>
+      <td>
+        <div>
+          <?php if ($service->service_icon_image) : ?>
+          <img src="<?= $service->service_icon_image; ?>"/>
+          <?php endif; ?>
         </div>
-      </div>
-    </td>
+      </td>
+      <td>
+        <div>
+          <?php if (!$service->service_handled && $service->service_state > 0): ?>
+          <a href="#" title="<?= 'Unhandled service' ?>">
+            <i>UNHANDLED ICON</i>
+          </a>
+          <?php endif; ?>
+
+          <?php if ($service->service_acknowledged && !$service->service_in_downtime): ?>
+          <a href="#" title="<?= 'Acknowledged' ?>">
+            <i>ACKNOWLEDGED ICON</i>
+          </a>
+          <?php endif; ?>
+
+          <?php if ($service->service_is_flapping): ?>
+          <a href="#" title="<?= 'Flapping' ?>">
+            <i>FLAPPING ICON</i>
+          </a>
+          <?php endif; ?>
+
+          <?php if (!$service->service_notifications_enabled): ?>
+          <a href="#" title="<?= 'Notifications disabled' ?>">
+            <i>NOTIFICATIONS DISABLED ICON</i>
+          </a>
+          <?php endif; ?>
+
+          <?php if ($service->service_in_downtime): ?>
+          <a href="#" title="<?= 'In downtime' ?>">
+            <i>IN DOWNTIME ICON</i>
+          </a>
+          <?php endif; ?>
+
+        </div>
+      </td>
 
 
-    <td class="servicename">
-      <?php if ($service->service_last_comment !== null): ?>
-      <a href="#" title="<?= 'Comments' ?>">
-        <i class="icon-comment"> </i>
-      </a>
-      <?php endif; ?>
+      <td title="<?= $viewHelper->getStateTitle($service, 'service'); ?>">
+        <div>
+          <b><?= ucfirst($viewHelper->monitoringState($service, 'service')); ?></b>
+          <div> since&nbsp;
+            <?= $this->timeSince($service->service_last_state_change); ?>
 
-      <b> <?= $service->service_display_name; ?></b>
-      <br/>
+            <?php if ($service->service_state_type == 0): ?>
+            <a href="#" title="<?= 'Soft state' ?>">
+              <i>SOFTSTATE ICON</i>
+            </a>
+          <?php endif; ?>
+          </div>
+        </div>
+      </td>
 
-      <?php if ($service->service_action_url != ""): ?>
-      <a href="<?= $service->service_action_url; ?>">Action</a>
-      <?php endif; ?>
 
-      <?php if ($service->service_notes_url != ""): ?>
-      <a href="<?= $service->service_notes_url; ?>">Notes</a>
-      <?php endif; ?>
+      <td>
+        <?php if ($service->service_last_comment !== null): ?>
+        <a href="#" title="<?= 'Comments' ?>">
+          <i>COMMENT ICON</i>
+        </a>
+        <?php endif; ?>
 
-      <?php if ($service->service_state_type == 0): ?>
-      <a href="#" title="<?= 'Soft state' ?>">
-        <i class="icon-gears"></i>
-      </a>
-      <?php endif; ?>
-    </td>
+        <b> <?= $service->service_display_name; ?></b>
+        <br/>
 
-    <td class="hostname" title="<?= $viewHelper->getStateTitle($service, 'host'); ?>">
-      <?= $service->host_name; ?>
+        <?php if ($service->service_action_url != ""): ?>
+        <a href="<?= $service->service_action_url; ?>">Action</a>
+        <?php endif; ?>
 
-      <div class="statetext">
-        (<?= ucfirst($viewHelper->monitoringState($service, 'host')); ?>)
-      </div>
-      <span class="host_address">
-          <?= $service->host_address ?>
-      </span>
-    </td>
+        <?php if ($service->service_notes_url != ""): ?>
+        <a href="<?= $service->service_notes_url; ?>">Notes</a>
+        <?php endif; ?>
 
-    <td class="expand-full">
-      <?= $this->escape(substr(strip_tags($service->service_output), 0, 10000)); ?>
-    </td>
-  </tr>
+      </td>
+
+      <td title="<?= $viewHelper->getStateTitle($service, 'host'); ?>">
+        <?= $service->host_name; ?>
+
+        <div>
+          (<?= ucfirst($viewHelper->monitoringState($service, 'host')); ?>)
+        </div>
+        <span>
+            <?= $service->host_address ?>
+        </span>
+      </td>
+
+      <td>
+        <?= $this->escape(substr(strip_tags($service->service_output), 0, 10000)); ?>
+      </td>
+    </tr>
   <?php endforeach; ?>
   </tbody>
 </table>
