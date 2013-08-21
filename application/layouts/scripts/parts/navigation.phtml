@@ -1,19 +1,19 @@
 <?php
-    // determine current key
-    $url = Zend_Controller_Front::getInstance()->getRequest()->getRequestUri();
-    $currentKey = isset($this->navkey) ? $this->navkey : $url;
+// determine current key
+$url = Zend_Controller_Front::getInstance()->getRequest()->getRequestUri();
+$currentKey = isset($this->navkey) ? $this->navkey : $url;
 
-    $item = $this->navigation->keys("menu");
+$item = $this->navigation->keys("menu");
 ?>
 <?php if ($this->auth()->isAuthenticated()): ?>
-<ul class="nav nav-tabs icinga-navigation" >
-<?php
+  <ul class="nav nav-tabs icinga-navigation" >
+    <?php
     $activeSet = false;
     foreach ($item as $itemName) {
         if($itemName[0] == "_") {
-?>
-    <li class="section-end"></li>
-<?php
+            ?>
+            <li class="section-end"></li>
+            <?php
             continue;
         }
 
@@ -31,10 +31,10 @@
         }
         $activeSet = $activeSet || $active;
         ?>
-    <li class="<?= $active ? "active" : "" ?>"><a href="<?= $url ?>"><?= $itemName ?></a></li>
-<?php
+      <li class="<?= $active ? "active" : "" ?>"><a href="<?= $url ?>"><?= $itemName ?></a></li>
+        <?php
         $class = "";
     }
-?>
-</ul>
+    ?>
+  </ul>
 <? endif ?>

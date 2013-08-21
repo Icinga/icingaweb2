@@ -235,6 +235,8 @@ class ActionController extends ZfController
     {
         if ($url instanceof Url) {
             $url = $url->getRelativeUrl();
+        } else {
+            $url = Url::fromPath($url)->getRelativeUrl();
         }
         $this->_helper->Redirector->gotoUrlAndExit($url);
     }

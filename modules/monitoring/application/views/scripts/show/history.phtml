@@ -10,40 +10,39 @@ There are no matching history entries right now
 <?php else: ?>
 <?= $this->paginationControl($hhistory, null, null, array('preserve' => $preserve)); ?>
 <table class="paginatable">
- <tbody>
-<?php foreach ($hhistory as $event): ?>
-<?php
+  <tbody>
+  <?php foreach ($hhistory as $event): ?>
+  <?php
 
-if ($event->object_type == 'host') {
-    $states = array('up', 'down', 'unreachable', 'unknown', 99 => 'pending', null => 'pending');
-} else {
-    $states = array('ok', 'warning', 'critical', 'unknown', 99 => 'pending', null => 'pending');
-}
+  if ($event->object_type == 'host') {
+      $states = array('up', 'down', 'unreachable', 'unknown', 99 => 'pending', null => 'pending');
+  } else {
+      $states = array('ok', 'warning', 'critical', 'unknown', 99 => 'pending', null => 'pending');
+  }
 
-$row_class = array_key_exists($event->state, $states) ? $states[$event->state] : 'invalid';
+  $row_class = array_key_exists($event->state, $states) ? $states[$event->state] : 'invalid';
 
-?>
-<tr class="<?= $row_class ?>"><td class="state"><?= date('d.m. H:i', $event->timestamp ) ?></td>
-<? if (! $object): ?>
-<td><?= $this->escape($event->host_name) ?></td>
+  ?>
+    <tr class="<?= $row_class ?>"><td class="state"><?= date('d.m. H:i', $event->timestamp ) ?></td>
+
+    <? if (! $object): ?>
+          <td><?= $this->escape($event->host_name) ?></td>
+    <? endif ?>
+
+    <? if (! $object instanceof Monitoring\Object\Service): ?>
+      <td>
+        <? if ($object): ?>
+        <a href="<?= $this->href('monitoring/show/service',array(
+                'host'    => $object->host_name,
+                'service' => $event->service_description
+            )); ?>"><?php $event->service_description; ?></a>
+        </a>
+        <? else: ?>
+        <?= $this->escape($event->service_description) ?>
+        <? endif ?>
+      </td>
 <? endif ?>
-<? if (! $object instanceof Monitoring\Object\Service): ?>
-<td><? if ($object): ?>
-<?= $this->qlink(
-    $event->service_description,
-    'monitoring/show/service',
-    array(
-        'host'    => $object->host_name,
-        'service' => $event->service_description
-    )
-) ?>
-<? else: ?>
-<?= $this->escape($event->service_description) ?>
-<? endif ?>
-</td>
-<? endif ?>
-<td style="padding: 0.2em;"><?php
-
+      <td style="padding: 0.2em;"><?php
 $imgparams = array(
     'width'  => 16,
     'height' => 16,
@@ -80,17 +79,12 @@ switch ($event->type) {
         break;
 }
  ?>
-<? if ($event->attempt !== null): ?>
- [ <?= $event->attempt ?>/<?=$event->max_attempts ?> ]
-<? endif ?>
- <?= $ticket_pattern ? preg_replace(
-            $ticket_pattern,
-            $ticket_link,
-            $this->pluginOutput($event->output)
-    ) : $this->pluginOutput($event->output) ?>
-</td>
-</tr>
+      <? if ($event->attempt !== null): ?>
+       [ <?= $event->attempt ?>/<?=$event->max_attempts ?> ]
+      <? endif ?>
+      </td>
+    </tr>
 <? endforeach ?>
- </tbody>
+  </tbody>
 </table>
 <? endif ?>

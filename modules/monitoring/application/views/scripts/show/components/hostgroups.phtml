@@ -4,9 +4,9 @@ if (empty($object->hostgroups)) return;
 
 $list = array();
 foreach ($object->hostgroups as $name => $alias) {
-    $list[] = $this->qlink($alias, 'monitoring/list/services', array(
-        'hostgroups' => $name
-    ));
+    $list[] = '<a href="' . $this->href('monitoring/list/host', array('hostgroups' => $name)) . '">'
+              . $alias
+              . '</a>';
 }
 echo '<b>Hostgroups:</b> ' .  implode(', ', $list) . "<br />\n";
 

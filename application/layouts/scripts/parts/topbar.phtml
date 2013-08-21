@@ -18,8 +18,11 @@
             <b class="caret"></b>
           </a>
           <ul class="dropdown-menu">
-            <li><?= $this->qlink($this->translate('Preferences'), 'preference'); ?></li>
-            <li><?= $this->qlink($this->translate('Logout'), 'authentication/logout'); ?></li>
+            <li>
+              <a href="<?= $this->href('/preference'); ?>"><?= $this->translate('Preferences'); ?> </a>
+            </li>
+            <li>
+              <a href="<?= $this->href('/authentication/logout'); ?>"><?= $this->translate('Logout'); ?></a>
           </ul>
         </li>
       </ul>

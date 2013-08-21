@@ -7,23 +7,24 @@ $formatter = $this->getHelper('MonitoringProperties');
 ?>
 
 <form method="get" action="<?=
-    Url::fromPath(
+    $this->href(
         'monitoring/list/notifications',
         $this->notifications->getAppliedFilter()->toParams()
-    )->getAbsoluteUrl();
-?>">
-    Sort by <?= $this->formSelect(
-        'sort',
-        $this->sort,
-        array(
-            'class' => 'autosubmit'
-        ),
-        array(
-            'notification_start_time' => 'Time'
-        )
     );
-?>
-    <button class="btn btn-small"><i class="icon-refresh"></i></button>
+?>">
+  Sort by <?=
+    $this->formSelect(
+      'sort',
+      $this->sort,
+      array(
+        'class' => 'autosubmit'
+      ),
+      array(
+        'notification_start_time' => 'Time'
+      )
+    );
+  ?>
+  <button class="btn btn-small"><i class="icon-refresh"></i></button>
 </form>
 
 <?php
@@ -32,60 +33,41 @@ echo $this->paginationControl($notifications, null, null, array('preserve' => $t
 ?>
 
 <table class="statustable action table-hover">
-    <thead>
-        <tr>
-            <th>Host</th>
-            <th>Service</th>
-            <th>Type</th>
-            <th>Time</th>
-            <th>Contact</th>
-            <th>Notification command</th>
-            <th>Information</th>
-        </tr>
-    </thead>
-    <tbody>
-<?php foreach ($notifications as $notification): ?>
-        <tr>
-            <td>
-                <?= $notification->host_name ?>
-            </td>
-            <td>
-                <?= empty($notification->service_description) ? '' : $notification->service_description; ?>
-            </td>
-            <td><?= $formatter->getNotificationType($notification); ?>
-            </td>
-            <td>
-                <?= $notification->notification_start_time ?>
-            </td>
-            <td>
-                <?= $notification->notification_contact ?>
-            </td>
-            <td>
-                <?= $notification->notification_command ?>
-            </td>
-            <td>
-                <?= $this->escape(substr(strip_tags($notification->notification_information), 0, 10000)); ?>
-            </td>
-            <td>
-                <?php if (intval($notification->notification_type) === 0): ?>
-                <a href="<?=
-                    Url::fromPath(
-                        'monitoring/show/host',
-                        array('host' => $notification->host_name)
-                    )->getAbsoluteUrl();
-                ?>" class="row-action"> </a>
-
-                <?php else: ?>
-                <a href="<?=
-                    Url::fromPath('monitoring/show/service',
-                        array(
-                            'host' => $notification->host_name,
-                            'service' => $notification->service_description
-                        )
-                    )->getAbsoluteUrl(); ?>" class="row-action"></a>
-                <?php endif; ?>
-            </td>
-        </tr>
-<?php endforeach; ?>
-    </tbody>
+  <thead>
+  <tr>
+    <th>Host</th>
+    <th>Service</th>
+    <th>Type</th>
+    <th>Time</th>
+    <th>Contact</th>
+    <th>Notification command</th>
+    <th>Information</th>
+  </tr>
+  </thead>
+  <tbody>
+  <?php foreach ($notifications as $notification): ?>
+  <tr>
+    <td>
+      <?= $notification->host_name ?>
+    </td>
+    <td>
+      <?= empty($notification->service_description) ? '' : $notification->service_description; ?>
+    </td>
+    <td><?= $formatter->getNotificationType($notification); ?>
+    </td>
+    <td>
+      <?= $notification->notification_start_time ?>
+    </td>
+    <td>
+      <?= $notification->notification_contact ?>
+    </td>
+    <td>
+      <?= $notification->notification_command ?>
+    </td>
+    <td>
+      <?= $this->escape(substr(strip_tags($notification->notification_information), 0, 10000)); ?>
+    </td>
+  </tr>
+  <?php endforeach; ?>
+  </tbody>
 </table>

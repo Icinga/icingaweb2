@@ -1,39 +1,43 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if lt IE 7]>
+<html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>
+<html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>
+<html class="no-js lt-ie9"> <![endif]-->
 <!--[if gt IE 8]><!-->
 <html class="no-js"> <!--<![endif]-->
 <head>
-    <meta charset="utf-8">
-    <meta content="width=320; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title></title>
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width">
+  <meta charset="utf-8">
+  <meta content="width=320; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title></title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width">
 
-    <link rel="stylesheet" href="<?= $this->baseUrl('css/normalize.min.css') ?>">
-    <link rel="stylesheet" href="<?= $this->baseUrl('css/vendor/bootstrap.css') ?>">
-    <link rel="stylesheet" href="<?= $this->baseUrl('css/vendor/datetimepicker/bootstrap-datetimepicker.min.css') ?>">
-    <link rel="stylesheet" href="<?= $this->baseUrl('css/vendor/ui-lightness/jquery-ui-1.10.3.custom.min.css') ?>">
-    <link rel="stylesheet" href="<?= $this->baseUrl('css/main.css') ?>">
-    <link rel="stylesheet" href="<?= $this->baseUrl('css/vendor/jquery.qtip.min.css') ?>">
-    <script type="text/javascript">
-        var base_url = '<?= $this->baseUrl() ?>';
-        ICINGA_DEBUG = true;
-    </script>
-    <? if (isset($_GET['iframe']) && $_GET['iframe'] === 'true'): ?>
-    <base target="_parent" />
-    <? endif ?>
+  <link rel="stylesheet" href="<?= $this->baseUrl('css/normalize.min.css') ?>">
+  <link rel="stylesheet" href="<?= $this->baseUrl('css/vendor/bootstrap.css') ?>">
+  <link rel="stylesheet" href="<?= $this->baseUrl('css/vendor/datetimepicker/bootstrap-datetimepicker.min.css') ?>">
+  <link rel="stylesheet" href="<?= $this->baseUrl('css/vendor/ui-lightness/jquery-ui-1.10.3.custom.min.css') ?>">
+  <link rel="stylesheet" href="<?= $this->baseUrl('css/main.css') ?>">
+  <link rel="stylesheet" href="<?= $this->baseUrl('css/vendor/jquery.qtip.min.css') ?>">
+  <script type="text/javascript">
+    var base_url = '<?= $this->baseUrl() ?>';
+    ICINGA_DEBUG = true;
+  </script>
+  <? if (isset($_GET['iframe']) && $_GET['iframe'] === 'true'): ?>
+  <base target="_parent"/>
+  <? endif ?>
 
-    <script src="<?php echo $this->baseUrl('js/vendor/modernizr-2.6.2.min.js') ?>"></script>
-    <link rel="stylesheet" href="<?php echo $this->baseUrl('css.php') ?>">
-    <link rel="stylesheet" href="<?php echo $this->baseUrl('css/vendor/bootstrap-responsive.min.css') ?>">
-    <link rel="stylesheet" href="<?php echo $this->baseUrl('css/vendor/font-awesome.min.css') ?>">
-    <!--[if IE 7]>
-        <link rel="stylesheet" href="<?php echo $this->baseUrl('css/vendor/font-awesome-ie7.min.css') ?>">
-    <![endif]-->
-    <script data-main="<?php echo $this->baseUrl('js/main.js')?>" src="<?php echo $this->baseUrl('js/vendor/require.js') ?>"></script>
+  <script src="<?php echo $this->baseUrl('js/vendor/modernizr-2.6.2.min.js') ?>"></script>
+  <link rel="stylesheet" href="<?php echo $this->baseUrl('css.php') ?>">
+  <link rel="stylesheet" href="<?php echo $this->baseUrl('css/vendor/bootstrap-responsive.min.css') ?>">
+  <link rel="stylesheet" href="<?php echo $this->baseUrl('css/vendor/font-awesome.min.css') ?>">
+  <!--[if IE 7]>
+  <link rel="stylesheet" href="<?php echo $this->baseUrl('css/vendor/font-awesome-ie7.min.css') ?>">
+  <![endif]-->
+  <script data-main="<?php echo $this->baseUrl('js/main.js')?>"
+          src="<?php echo $this->baseUrl('js/vendor/require.js') ?>"></script>
 
 </head>
 <body class="cranberry">

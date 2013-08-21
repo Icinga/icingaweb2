@@ -85,7 +85,6 @@ class Monitoring_ShowController extends ModuleActionController
         }
         $this->view->object = $object;
         $this->createTabs();
-        $this->prepareTicketHook();
     }
 
     /**
@@ -302,7 +301,6 @@ class Monitoring_ShowController extends ModuleActionController
             ->where('object_type', 'host')
             ->fetchPairs();
         $this->view->object->prefetch();
-        $this->prepareTicketHook();
         $this->prepareGrapherHook();
     }
 
@@ -357,52 +355,6 @@ class Monitoring_ShowController extends ModuleActionController
         $this->view->services = $this->view->action('services', 'list', 'monitoring', array(
             'view' => 'compact'
         ));
-    }
-
-    /**
-     * Ticets actions
-     */
-    public function ticketAction()
-    {
-        if (Hook::has('ticket')) {
-            // TODO: Still hardcoded, should ask for URL:
-            $id = $this->_getParam('ticket');
-            $ticketModule = 'rt';
-            $this->render();
-            $this->redirect(
-                'ticket',
-                'show',
-                $ticketModule,
-                array(
-                    'id' => $id
-                )
-            );
-        }
-    }
-
-    protected function prepareTicketHook()
-    {
-        if (Hook::has('ticket')) {
-            $object = $this->view->object;
-            $params = array(
-                'host' => $object->host_name
-            );
-            if ($object instanceof Service) {
-                $params['service'] = $object->service_description;
-            }
-
-            $params['ticket'] = '__ID__';
-            $this->view->ticket_link = preg_replace(
-                '~__ID__~',
-                '\$1',
-                $this->view->qlink('#__ID__',
-                    'monitoring/show/ticket',
-                    $params
-                )
-            );
-            // TODO: Global ticket pattern config (or per environment)
-            $this->view->ticket_pattern = '~#(\d{4,6})~';
-        }
     }
 
     protected function prepareGrapherHook()
@@ -482,18 +434,9 @@ class Monitoring_ShowController extends ModuleActionController
                 'urlParams' => $params,
             )
         );
-        if ($this->action_name === 'ticket') {
-            $tabs->add(
-                'ticket',
-                array(
-                    'title' => 'Ticket',
-                    'icon' => 'img/classic/ticket.gif',
-                    'url' => 'monitoring/show/ticket',
-                    'urlParams' => $params + array('ticket' => $this->_getParam('ticket')),
-                )
-            );
-        }
-        
+
+
+
         $tabs->extend(new OutputFormat())
             ->extend(new DashboardAction())
             ->extend(new BasketAction);
