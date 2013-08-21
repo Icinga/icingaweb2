@@ -191,7 +191,10 @@ class GeneralForm extends Form
             array(
                 'label'     => 'Module Folder',
                 'required'  => true,
-                'helptext'  => 'Use this folder to activate modules (must be writable by your webserver)',
+                'helptext'  => 'The moduleFolder directive is currently not used anywhere but '
+                    . 'configureable via the frontend and ini. With feature #4607 moduleFolder '
+                    . 'will be replaced with a configuration directive for locations of '
+                    . 'installed modules',
                 'value'     => $cfg->get('moduleFolder', $this->getConfigDir() . '/config/enabledModules')
             )
         );

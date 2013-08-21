@@ -75,7 +75,7 @@ class ActionController extends ZfController
     protected $modifiesSession = false;
 
     /**
-     * True if authentication suceeded, otherwise false
+     * True if authentication succeeded, otherwise false
      *
      * @var bool
      */
