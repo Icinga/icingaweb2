@@ -252,10 +252,16 @@ class DbAdapterFactory implements ConfigAwareFactory
      */
     private static function getPdoMysqlOptions(array $options)
     {
-        // To get response for lazy sql statements
+        /*
+         * Set MySQL server SQL modes to behave as closely as possible to Oracle and PostgreSQL. Note that the
+         * ONLY_FULL_GROUP_BY mode is left on purpose because MySQL requires you to specify all non-aggregate columns
+         * in the group by list even if the query is grouped by the master table's primary key which is valid
+         * ANSI SQL though. Further in that case the query plan would suffer if you add more columns to the group by
+         * list.
+         */
         $options['driver_options'][PDO::MYSQL_ATTR_INIT_COMMAND] =
-            'SET SESSION SQL_MODE=\'STRICT_ALL_TABLES,NO_ZERO_IN_DATE,'
-            . 'NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION\';';
+            'SET SESSION SQL_MODE=\'STRICT_ALL_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,'
+            . 'NO_AUTO_CREATE_USER,ANSI_QUOTES,PIPES_AS_CONCAT,NO_ENGINE_SUBSTITUTION\';';
 
         if (!isset($options['port'])) {
             $options['port'] = 3306;

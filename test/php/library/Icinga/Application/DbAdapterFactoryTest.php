@@ -99,10 +99,12 @@ class DbAdapterFactoryTest extends \PHPUnit_Framework_TestCase
                     Zend_Db::FETCH_MODE             => Zend_Db::FETCH_OBJ
                 ),
                 'driver_options' => array(
-                    PDO::ATTR_TIMEOUT => 2,
-                    PDO::ATTR_CASE    => PDO::CASE_LOWER,
-                    PDO::MYSQL_ATTR_INIT_COMMAND => 'SET SESSION SQL_MODE=\'STRICT_ALL_TABLES,NO_ZERO_IN_DATE,'
-                    . 'NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION\';'
+                    PDO::ATTR_TIMEOUT               => 2,
+                    PDO::ATTR_CASE                  => PDO::CASE_LOWER,
+                    PDO::MYSQL_ATTR_INIT_COMMAND    =>
+                        'SET SESSION SQL_MODE=\'STRICT_ALL_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,'
+                        . 'ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,ANSI_QUOTES,PIPES_AS_CONCAT,'
+                        . 'NO_ENGINE_SUBSTITUTION\';'
                 ),
                 'port' => 3306
             ),
