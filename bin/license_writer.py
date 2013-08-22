@@ -1,4 +1,30 @@
 #!/usr/bin/python
+
+# {{{ICINGA_LICENSE_HEADER}}}
+# This file is part of Icinga 2 Web.
+#
+# Icinga 2 Web - Head for multiple monitoring backends.
+# Copyright (C) 2013 Icinga Development Team
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+#
+# @copyright 2013 Icinga Development Team <info@icinga.org>
+# @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
+# @author    Icinga Development Team <info@icinga.org>
+# {{{ICINGA_LICENSE_HEADER}}}
+
 import sys
 import logging
 import optparse
@@ -14,12 +40,17 @@ FILE_TYPE_CONFIG = {
     'php': {'prefix': ' * ',
             'firstComment': '/**',
             'lastComment': ' */',
-            'linesFirst': 0,
+            'linesBefore': 0,
             'linesAfter': 0},
     'js': {'prefix': ' * ',
            'firstComment': '/**',
            'lastComment': ' */',
-           'linesFirst': 0,
+           'linesBefore': 0,
+           'linesAfter': 0},
+    'py': {'prefix': '# ',
+           'firstComment': None,
+           'lastComment': None,
+           'linesBefore': 0,
            'linesAfter': 0}
 }
 
@@ -156,11 +187,17 @@ def get_license(type):
     except(KeyError):
         config = FILE_TYPE_CONFIG[type]
         license_data = []
-        license_data.extend([''] * config['linesFirst'])
-        license_data.append(config['firstComment'])
+        license_data.extend([''] * config['linesBefore'])
+        if config['firstComment'] != None:
+            license_data.append(config['firstComment'])
         for line in LICENSE_DATA.split('\n'):
-            license_data.append(config['prefix'] + line)
-        license_data.append(config['lastComment'])
+            if line:
+                license_data.append(config['prefix'] + line)
+            else:
+                # Whitespace is uselses in this case (#4603)
+                license_data.append(config['prefix'].rstrip())
+        if config['lastComment'] != None:
+            license_data.append(config['lastComment'])
         license_data.extend([''] * config['linesAfter'])
         __LICENSE_STORE[type] = '\n'.join(license_data)
         __LICENSE_STORE[type] = __LICENSE_STORE[type] % REPLACE_TOKENS
