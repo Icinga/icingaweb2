@@ -302,7 +302,7 @@ class AuthenticationForm extends Form
 
         $this->addPersistentState();
         $this->enableConditionalDecorator();
-        $this->setSubmitLabel('Save Changes');
+        $this->setSubmitLabel('{{SAVE_ICON}} Save Changes');
     }
 
     /**

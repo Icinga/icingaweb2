@@ -81,14 +81,17 @@ class Component implements Widget
      */
     private $template =<<<'EOD'
 
-    <div class="icinga-container dashboard" icingatitle="{TITLE}" style="{DIMENSION}">
-        <a href="{URL}"> {TITLE}</a>
-        <a  class="btn btn-danger btn-mini pull-right" href="{REMOVE_URL}" style="color:black">X</a>
-
-        <div class="icinga-container" icingaurl="{URL}">
-        <noscript>
-            <iframe src="{URL}" style="height:100%; width:99%" frameborder="no"></iframe>
-        </noscript>
+    <div class="panel panel-default" style="{DIMENSION}">
+        <div class="panel-heading panel-title">
+            <a href="{URL}"> {TITLE}</a>
+            <button class="btn btn-danger btn-sm pull-right">
+                <a href="{REMOVE_URL}" style="color:black">{{REMOVE_ICON}}</a>
+            </button>
+        </div>
+        <div class="panel-body">
+            <noscript>
+                <iframe src="{URL}" style="height:100%; width:99%" frameborder="no"></iframe>
+            </noscript>
         </div>
     </div>
 EOD;

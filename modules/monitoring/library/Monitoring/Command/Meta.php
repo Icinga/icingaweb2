@@ -115,149 +115,149 @@ class Meta
      */
     private static $commandInformation = array(
         self::CMD_DISABLE_ACTIVE_CHECKS => array(
-            'Disable active checks for this %s', // Long description (mandatory)
-            'Disable active checks', // Short description (mandatory)
+            'Disable Active Checks For This %s', // Long description (mandatory)
+            'Disable Active Checks', // Short description (mandatory)
             '', // Icon anything (optional)
             '' // Button css cls (optional)
         ),
         self::CMD_ENABLE_ACTIVE_CHECKS => array(
-            'Enable active checks for this %s',
-            'Enable active checks',
+            'Enable Active Checks For This %s',
+            'Enable Active Checks',
             ''
         ),
         self::CMD_RESCHEDULE_NEXT_CHECK => array(
-            'Reschedule next service check',
+            'Reschedule Next Service Check',
             'Recheck',
             '',
             'btn-success'
         ),
         self::CMD_SUBMIT_PASSIVE_CHECK_RESULT => array(
-            'Submit passive check result',
-            'Submit check result',
+            'Submit Passive Check Result',
+            'Submit Check Result',
             ''
         ),
         self::CMD_STOP_OBSESSING => array(
-            'Stop obsessing over this %s',
-            'Stop obsessing',
+            'Stop Obsessing Over This %s',
+            'Stop Obsessing',
             ''
         ),
         self::CMD_START_OBSESSING => array(
-            'Start obsessing over this %s',
-            'Start obsessing',
+            'Start Obsessing Over This %s',
+            'Start Obsessing',
             ''
         ),
         self::CMD_STOP_ACCEPTING_PASSIVE_CHECKS => array(
-            'Stop accepting passive check for this %s',
-            'Stop passive checks',
+            'Stop Accepting Passive Checks For This %s',
+            'Stop Passive Checks',
             ''
         ),
         self::CMD_START_ACCEPTING_PASSIVE_CHECKS => array(
-            'Start accepting passive check for this %s',
-            'Start passive checks',
+            'Start Accepting Passive Checks For This %s',
+            'Start Passive Checks',
             ''
         ),
         self::CMD_DISABLE_NOTIFICATIONS => array(
-            'Disable notifications for this %s',
-            'Disable notifications',
+            'Disable Notifications For This %s',
+            'Disable Notifications',
             ''
         ),
         self::CMD_ENABLE_NOTIFICATIONS => array(
-            'Enable notifications for this %s',
-            'Enable notifications',
+            'Enable Notifications For This %s',
+            'Enable Notifications',
             ''
         ),
         self::CMD_SEND_CUSTOM_NOTIFICATION => array(
-            'Send custom %s notification',
-            'Send notification',
+            'Send Custom %s Notification',
+            'Send Notification',
             ''
         ),
         self::CMD_SCHEDULE_DOWNTIME => array(
-            'Schedule downtime for this %s',
-            'Schedule downtime',
+            'Schedule Downtime For This %s',
+            'Schedule Downtime',
             ''
         ),
         self::CMD_SCHEDULE_DOWNTIMES_TO_ALL => array(
-            'Schedule downtime for this %s and all services',
-            'Schedule services downtime',
+            'Schedule Downtime For This %s And All Services',
+            'Schedule Services Downtime',
             ''
         ),
         self::CMD_REMOVE_DOWNTIMES_FROM_ALL => array(
-            'Remove downtime(s) for this %s and all services',
-            'Remove downtime(s)',
+            'Remove Downtime(s) For This %s And All Services',
+            'Remove Downtime(s)',
             ''
         ),
         self::CMD_DISABLE_NOTIFICATIONS_FOR_ALL => array(
-            'Disable notification for all service on this %s',
-            'Disable service notifications',
+            'Disable Notification For All Service On This %s',
+            'Disable Service Notifications',
             ''
         ),
         self::CMD_ENABLE_NOTIFICATIONS_FOR_ALL => array(
-            'Enable notification for all service on this %s',
-            'Enable service notifications',
+            'Enable Notification For All Service On This %s',
+            'Enable Service Notifications',
             ''
         ),
         self::CMD_RESCHEDULE_NEXT_CHECK_TO_ALL => array(
-            'Schedule a check of all service on this %s',
-            'Recheck all services',
+            'Schedule a Check Of All Service On This %s',
+            'Recheck All Services',
             '',
             'btn-success'
         ),
         self::CMD_DISABLE_ACTIVE_CHECKS_FOR_ALL => array(
-            'Disable checks for all services on this %s',
-            'Disable service checks',
+            'Disable Checks For All Services On This %s',
+            'Disable Service Checks',
             ''
         ),
         self::CMD_ENABLE_ACTIVE_CHECKS_FOR_ALL => array(
-            'Enable checks for all services on this %s',
-            'Enable service checks',
+            'Enable Checks For All Services On This %s',
+            'Enable Service Checks',
             ''
         ),
         self::CMD_DISABLE_EVENT_HANDLER => array(
-            'Disable event handler for this %s',
-            'Disable event handler',
+            'Disable Event Handler For This %s',
+            'Disable Event Handler',
             ''
         ),
         self::CMD_ENABLE_EVENT_HANDLER => array(
-            'Enable event handler for this %s',
-            'Enable event handler',
+            'Enable Event Handler For This %s',
+            'Enable Event Handler',
             ''
         ),
         self::CMD_DISABLE_FLAP_DETECTION => array(
-            'Disable flap detection for this %s',
-            'Disable flap detection',
+            'Disable Flap Detection For This %s',
+            'Disable Flap Detection',
             ''
         ),
         self::CMD_ENABLE_FLAP_DETECTION => array(
-            'Enable flap detection for this %s',
-            'Enable flap detection',
+            'Enable Flap Detection For This %s',
+            'Enable Flap Detection',
             ''
         ),
         self::CMD_ADD_COMMENT => array(
-            'Add new %s comment',
-            'Add comment',
+            'Add New %s Comment',
+            'Add Comment',
             ''
         ),
         self::CMD_RESET_ATTRIBUTES => array(
-            'Reset modified attributes',
-            'Reset attributes',
+            'Reset Modified Attributes',
+            'Reset Attributes',
             '',
             'btn-danger'
         ),
         self::CMD_ACKNOWLEDGE_PROBLEM => array(
-            'Acknowledge %s problem',
+            'Acknowledge %s Problem',
             'Acknowledge',
             '',
             'btn-warning'
         ),
         self::CMD_REMOVE_ACKNOWLEDGEMENT => array(
-            'Remove %s acknowledgement',
-            'Remove acknowledgement',
+            'Remove %s Acknowledgement',
+            'Remove Acknowledgement',
             '',
             'btn-warning'
         ),
         self::CMD_DELAY_NOTIFICATION => array(
-            'Delay next %s notification',
-            'Delay notification',
+            'Delay Next %s Notification',
+            'Delay Notification',
             ''
         ),
     );
@@ -778,6 +778,7 @@ class Meta
     private function buildInterfaceConfiguration(array $commands, $objectType)
     {
         $out = array();
+        $objectType = ucfirst($objectType);
         foreach ($commands as $index => $commandId) {
 
             $command = new \stdClass();

@@ -143,12 +143,12 @@ class Dashboard implements Widget
         if (!@file_put_contents($file, $iniString)) {
             $error = error_get_last();
             if ($error == null) {
-                $error = 'Unknown error';
+                $error = 'Unknown Error';
             } else {
                 $error = $error['message'];
             }
             Logger::error('Tried to persist dashboard to %s, but got error: %s', $file, $error);
-            throw new ConfigurationError('Can\'t persist dashboard');
+            throw new ConfigurationError('Can\'t Persist Dashboard');
         } else {
             return $this;
         }

@@ -190,7 +190,7 @@ class LoggingForm extends Form
 
         $this->enableAutoSubmit(array('logging_debug_enable'));
 
-        $this->setSubmitLabel('Save Changes');
+        $this->setSubmitLabel('{{SAVE_ICON}} Save Changes');
     }
 
     /**

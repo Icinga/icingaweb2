@@ -77,6 +77,6 @@ class ConfirmRemovalForm extends Form
                 'required'  => true
             )
         );
-        $this->setSubmitLabel('Confirm Removal');
+        $this->setSubmitLabel('{{REMOVE_ICON}} Confirm Removal');
     }
 }

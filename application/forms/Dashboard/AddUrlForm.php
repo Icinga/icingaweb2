@@ -89,7 +89,7 @@ class AddUrlForm extends Form
         $txtCreatePane = new Zend_Form_Element_Text(
             'pane',
             array(
-                'label'     => 'New dashboard title',
+                'label'     => 'New Dashboard Title',
                 'required'  => true,
                 'style'     => 'display:inline-block'
             )
@@ -107,7 +107,7 @@ class AddUrlForm extends Form
         $cancelDashboardBtn = new Zend_Form_Element_Submit(
             'use_existing_dashboard',
             array(
-                'label'     => 'X',
+                'label'     => '{{REMOVE_ICON}}',
                 'required'  => false,
                 'style'     => 'display:inline-block'
             )
@@ -159,7 +159,7 @@ class AddUrlForm extends Form
                 'required' => true,
             )
         );
-        $this->setSubmitLabel("Add to dashboard");
+        $this->setSubmitLabel("{{CREATE_ICON}} Add To Dashboard");
 
     }
 }

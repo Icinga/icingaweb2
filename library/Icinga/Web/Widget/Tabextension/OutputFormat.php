@@ -64,20 +64,17 @@ class OutputFormat implements Tabextension
     private $supportedTypes = array(
         self::TYPE_PDF => array(
             'name'      => 'pdf',
-            'title'     => 'PDF',
-            'icon'      => 'img/classic/application-pdf.png',
+            'title'     => '{{PDF_ICON}} PDF',
             'urlParams' => array('filetype' => 'pdf')
         ),
         self::TYPE_CSV => array(
             'name'      => 'csv',
-            'title'     => 'CSV',
-            'icon'      => 'img/classic/application-csv.png',
+            'title'     => '{{CSV_ICON}} CSV',
             'urlParams' => array('filetype' => 'csv')
         ),
         self::TYPE_JSON => array(
             'name'      => 'json',
-            'title'     => 'JSON',
-            'icon'      => 'img/classic/application-json.png',
+            'title'     => '{{JSON_ICON}} JSON',
             'urlParams' => array('filetype' => 'json')
         )
     );

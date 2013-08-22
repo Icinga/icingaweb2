@@ -25,12 +25,12 @@ class MonitoringFlagsTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(6, $returnArray);
 
         $expected = array(
-            'Passive checks' => false,
-            'Active checks' => false,
+            'Passive Checks' => false,
+            'Active Checks' => false,
             'Obsessing' => true,
             'Notifications' => false,
-            'Event handler' => true,
-            'Flap detection' => true
+            'Event Handler' => true,
+            'Flap Detection' => true
         );
 
         $this->assertEquals($expected, $returnArray);
@@ -53,12 +53,12 @@ class MonitoringFlagsTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(6, $returnArray);
 
         $expected = array(
-            'Passive checks' => false,
-            'Active checks' => true,
+            'Passive Checks' => false,
+            'Active Checks' => true,
             'Obsessing' => false,
             'Notifications' => true,
-            'Event handler' => true,
-            'Flap detection' => false
+            'Event Handler' => true,
+            'Flap Detection' => false
         );
 
         $this->assertEquals($expected, $returnArray);
@@ -79,12 +79,12 @@ class MonitoringFlagsTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(6, $returnArray);
 
         $expected = array(
-            'Passive checks' => false,
-            'Active checks' => true,
+            'Passive Checks' => false,
+            'Active Checks' => true,
             'Obsessing' => true,
             'Notifications' => false,
-            'Event handler' => false,
-            'Flap detection' => false
+            'Event Handler' => false,
+            'Flap Detection' => false
         );
 
         $this->assertEquals($expected, $returnArray);
@@ -103,12 +103,12 @@ class MonitoringFlagsTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(6, $returnArray);
 
         $expected = array(
-            'Passive checks' => false,
-            'Active checks' => false,
+            'Passive Checks' => false,
+            'Active Checks' => false,
             'Obsessing' => false,
             'Notifications' => false,
-            'Event handler' => false,
-            'Flap detection' => false
+            'Event Handler' => false,
+            'Flap Detection' => false
         );
 
         $this->assertEquals($expected, $returnArray);

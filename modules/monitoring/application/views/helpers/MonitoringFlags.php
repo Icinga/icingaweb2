@@ -37,12 +37,12 @@ class Zend_View_Helper_MonitoringFlags extends Zend_View_Helper_Abstract
      * @var string[]
      */
     private static $keys = array(
-        'passive_checks_enabled' => 'Passive checks',
-        'active_checks_enabled' => 'Active checks',
+        'passive_checks_enabled' => 'Passive Checks',
+        'active_checks_enabled' => 'Active Checks',
         'obsessing' => 'Obsessing',
         'notifications_enabled' => 'Notifications',
-        'event_handler_enabled' => 'Event handler',
-        'flap_detection_enabled' => 'Flap detection',
+        'event_handler_enabled' => 'Event Handler',
+        'flap_detection_enabled' => 'Flap Detection',
     );
 
     /**
