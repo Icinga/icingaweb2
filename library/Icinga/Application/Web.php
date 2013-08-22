@@ -28,25 +28,25 @@
 
 namespace Icinga\Application;
 
-use Icinga\Authentication\Manager as AuthenticationManager;
-use Icinga\Exception\ConfigurationError;
-use Icinga\User\Preferences;
-use Icinga\User;
-use Icinga\Web\Request;
-use Zend_Controller_Front;
-use Zend_Layout;
-use Zend_Config;
-use Zend_Paginator;
-use Zend_View_Helper_PaginationControl;
-use Zend_Controller_Action_HelperBroker;
-use Zend_Controller_Router_Route;
-use Zend_Controller_Action_Helper_ViewRenderer;
-use Icinga\Web\View;
-use Icinga\User\Preferences\StoreFactory;
-use Icinga\User\Preferences\SessionStore;
+use \Icinga\Authentication\Manager as AuthenticationManager;
+use \Icinga\Exception\ConfigurationError;
+use \Icinga\User\Preferences;
+use \Icinga\User;
+use \Icinga\Web\Request;
+use \Icinga\Web\View;
+use \Icinga\User\Preferences\StoreFactory;
+use \Icinga\User\Preferences\SessionStore;
+use \Zend_Controller_Front;
+use \Zend_Layout;
+use \Zend_Config;
+use \Zend_Paginator;
+use \Zend_View_Helper_PaginationControl;
+use \Zend_Controller_Action_HelperBroker;
+use \Zend_Controller_Router_Route;
+use \Zend_Controller_Action_Helper_ViewRenderer;
 
 /**
- * Use this if you want to make use of Icinga funtionality in other web projects
+ * Use this if you want to make use of Icinga functionality in other web projects
  *
  * Usage example:
  * <code>
@@ -78,6 +78,13 @@ class Web extends ApplicationBootstrap
     private $request;
 
     /**
+     * User object
+     *
+     * @var User
+     */
+    private $user;
+
+    /**
      * Identify web bootstrap
      *
      * @var bool
@@ -95,6 +102,7 @@ class Web extends ApplicationBootstrap
             ->setupErrorHandling()
             ->setupTimezone()
             ->setupResourceFactories()
+            ->setupUser()
             ->setupRequest()
             ->setupZendMvc()
             ->setupTranslation()
@@ -207,9 +215,8 @@ class Web extends ApplicationBootstrap
     /**
      * Create user object and inject preference interface
      *
-     * @return User
-     *
-     * @throws ConfigurationError
+     * @return  self
+     * @throws  ConfigurationError
      */
     private function setupUser()
     {
@@ -227,9 +234,11 @@ class Web extends ApplicationBootstrap
 
             $user = $authenticationManager->getUser();
 
-            $this->getConfig()->preferences->configPath = Config::app()
-                ->get('preferences', new Zend_Config(array()))
-                ->get('configPath', $this->getConfigDir('preferences'));
+            if (is_dir($this->getConfig()->preferences->configPath) === false) {
+                $this->getConfig()->preferences->configPath = Config::app()
+                    ->get('preferences', new Zend_Config(array()))
+                    ->get('configPath', $this->getConfigDir('preferences'));
+            }
 
             $preferenceStore = StoreFactory::create(
                 $this->getConfig()->preferences,
@@ -256,8 +265,10 @@ class Web extends ApplicationBootstrap
 
             $user->setPreferences($preferences);
 
-            return $user;
+            $this->user = $user;
         }
+
+        return $this;
     }
 
     /**
@@ -269,9 +280,8 @@ class Web extends ApplicationBootstrap
     {
         $this->request = new Request();
 
-        $user = $this->setupUser();
-        if ($user instanceof User) {
-            $this->request->setUser($user);
+        if ($this->user instanceof User) {
+            $this->request->setUser($this->user);
         }
 
         return $this;
