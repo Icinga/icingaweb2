@@ -25,8 +25,8 @@ $this->partial(
 ?>
 
 <?= $this->preview_image ?>
-<div class="information-container">
-  <div class="head">
+<div>
+  <div>
     <span>Plugin output</span>
   </div>
   <div>
@@ -35,27 +35,26 @@ $this->partial(
   </div>
 </div>
 
-<div class="information-container">
-  <div class="head">
-    <span>Command</span>
+<div>
+  <div>
+    {{CHECK_ICON}} <span>Check Command</span>
   </div>
 
   <div>
-    <strong>Command:</strong>
     <?php
-            $explodedCommand = explode('!', $this->service->service_check_command, 2);
+    $explodedCommand = explode('!', $this->service->service_check_command, 2);
     echo array_shift($explodedCommand);
     ?>
     <?= $this->commandArguments($this->service->service_check_command); ?>
   </div>
 </div>
 
-<div class="information-container">
-  <div class="head">
-    <span>Groups and Contacts</span>
+<div>
+  <div>
+    {{GROUP_ICON}} <span>Groups and Contacts</span>
   </div>
   <?php if (count($servicegroupLinkList)) { ?>
-  <strong>Servicegroups:</strong>
+    {{SERVICEGROUP_ICON}} <strong>Servicegroups:</strong>
   <?= implode(' ', $servicegroupLinkList); ?>
   <?php } ?>
 
@@ -69,9 +68,9 @@ $this->partial(
 <?= $this->render('show/components/customvars.phtml'); ?>
 
 <?php if ($this->service->service_perfdata): ?>
-<div class="information-container">
+<div>
 
-  <div class="head">
+  <div>
     <span>Perfdata</span>
   </div>
   <div>
@@ -80,8 +79,8 @@ $this->partial(
 </div>
 <?php endif; ?>
 
-<div class="information-container">
-  <div class="head">
+<div>
+  <div>
     <span>Flags</span>
   </div>
   <div>
@@ -89,8 +88,8 @@ $this->partial(
   </div>
 </div>
 
-<div class="information-container">
-  <div class="head">
+<div>
+  <div>
     <span>Properties</span>
   </div>
   <div>
@@ -98,9 +97,9 @@ $this->partial(
   </div>
 </div>
 
-<div class="information-container">
-  <div class="head">
-    <span>Commands</span>
+<div>
+  <div>
+    {{COMMAND_ICON}} <span>Commands</span>
   </div>
   <div>
     <?= $this->monitoringCommands($this->service, 'full'); ?>

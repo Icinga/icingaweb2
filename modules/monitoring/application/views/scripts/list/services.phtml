@@ -13,7 +13,7 @@ $trimArea = $this->getHelper('Trim');
 <?php return; endif ?>
 
 <form method="get" action="<?= $this->href('monitoring/list/services', $this->services->getAppliedFilter()->toParams()); ?>">
-  <label>Sort by</label>
+  <label>Sort By</label>
   <?= $this->formSelect(
           'sort',
           $this->sort,
@@ -61,31 +61,31 @@ $trimArea = $this->getHelper('Trim');
         <div>
           <?php if (!$service->service_handled && $service->service_state > 0): ?>
           <a href="#" title="<?= 'Unhandled service' ?>">
-            <i>UNHANDLED ICON</i>
+            <i>{{UNHANDLED_ICON}}</i>
           </a>
           <?php endif; ?>
 
           <?php if ($service->service_acknowledged && !$service->service_in_downtime): ?>
           <a href="#" title="<?= 'Acknowledged' ?>">
-            <i>ACKNOWLEDGED ICON</i>
+            <i>{{ACKNOWLEDGED_ICON}}</i>
           </a>
           <?php endif; ?>
 
           <?php if ($service->service_is_flapping): ?>
           <a href="#" title="<?= 'Flapping' ?>">
-            <i>FLAPPING ICON</i>
+            <i>{{FLAPPING_ICON}}</i>
           </a>
           <?php endif; ?>
 
           <?php if (!$service->service_notifications_enabled): ?>
           <a href="#" title="<?= 'Notifications disabled' ?>">
-            <i>NOTIFICATIONS DISABLED ICON</i>
+            <i>{{NOTIFICATIONS_DISABLED_ICON}}</i>
           </a>
           <?php endif; ?>
 
           <?php if ($service->service_in_downtime): ?>
           <a href="#" title="<?= 'In downtime' ?>">
-            <i>IN DOWNTIME ICON</i>
+            <i>{{IN_DOWNTIME_ICON}}</i>
           </a>
           <?php endif; ?>
 
@@ -96,12 +96,12 @@ $trimArea = $this->getHelper('Trim');
       <td title="<?= $viewHelper->getStateTitle($service, 'service'); ?>">
         <div>
           <b><?= ucfirst($viewHelper->monitoringState($service, 'service')); ?></b>
-          <div> since&nbsp;
+          <div> Since&nbsp;
             <?= $this->timeSince($service->service_last_state_change); ?>
 
             <?php if ($service->service_state_type == 0): ?>
             <a href="#" title="<?= 'Soft state' ?>">
-              <i>SOFTSTATE ICON</i>
+              <i>{{SOFTSTATE_ICON}}</i>
             </a>
           <?php endif; ?>
           </div>
@@ -112,7 +112,7 @@ $trimArea = $this->getHelper('Trim');
       <td>
         <?php if ($service->service_last_comment !== null): ?>
         <a href="#" title="<?= 'Comments' ?>">
-          <i>COMMENT ICON</i>
+          <i>{{COMMENT_ICON}}</i>
         </a>
         <?php endif; ?>
 

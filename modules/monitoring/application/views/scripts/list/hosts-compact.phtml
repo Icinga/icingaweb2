@@ -29,27 +29,27 @@ $trimArea = $this->getHelper('Trim');
         <div>
           <?php if (!$host->host_handled && $host->host_state > 0): ?>
           <a href="#" title="<?= 'Unhandled host' ?>">
-            <i>UNHANDLED ICON</i>
+            <i>{{UNHANDLED_ICON}}</i>
           </a>
           <?php endif; ?>
           <?php if ($host->host_acknowledged && !$host->host_in_downtime): ?>
           <a href="#" title="<?= 'Acknowledged' ?>">
-            <i>ACKNOWLEDGED ICON</i>
+            <i>{{ACKNOWLEDGED_ICON}}</i>
           </a>
           <?php endif; ?>
           <?php if ($host->host_is_flapping): ?>
           <a href="#" title="<?= 'Flapping' ?>">
-            <i>FLAPPING ICON</i>
+            <i>{{FLAPPING_ICON}}</i>
           </a>
           <?php endif; ?>
           <?php if (!$host->host_notifications_enabled): ?>
           <a href="#" title="<?= 'Notifications disabled' ?>">
-            <i>NOTIFICATIONS DISABLED ICON</i>
+            <i>{{NOTIFICATIONS_DISABLED_ICON}}</i>
           </a>
           <?php endif; ?>
           <?php if ($host->host_in_downtime): ?>
           <a href="#" title="<?= 'In downtime' ?>">
-            <i>IN DOWNTIME ICON</i>
+            <i>{{IN_DOWNTIME_ICON}}</i>
           </a>
           <?php endif; ?>
         </div>
@@ -58,11 +58,11 @@ $trimArea = $this->getHelper('Trim');
         <div>
           <a href="<?= $this->href('monitoring/show/history', array('host' => $host->host_name)); ?>">
             <b> <?= ucfirst($viewHelper->monitoringState($host, 'host')); ?> </b>
-            <div> since&nbsp;
+            <div> Since&nbsp;
               <?= $this->timeSince($host->host_last_state_change); ?>
               <?php if ($host->host_state_type == 0): ?>
               <a href="#" title="<?= 'Soft state' ?>">
-                <i>SOFTSTATE ICON</i>
+                <i>{{SOFTSTATE_ICON}}</i>
               </a>
               <?php endif; ?>
             </div>
@@ -72,7 +72,7 @@ $trimArea = $this->getHelper('Trim');
       <td>
         <?php if ($host->host_last_comment !== null): ?>
         <a href="#" title="<?= 'Comments' ?>">
-          <i>COMMENT ICON</i>
+          <i>{{COMMENT_ICON}}</i>
         </a>
         <?php endif; ?>
         <a href="<?= $this->href('monitoring/show/host', array('host' => $host->host_name)); ?>">

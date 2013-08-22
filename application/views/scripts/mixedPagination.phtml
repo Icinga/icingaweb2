@@ -1,4 +1,5 @@
 <?php
+use Icinga\Web\Url;
 
 if ($this->pageCount <= 1) return;
 
@@ -24,9 +25,13 @@ $title_next = sprintf(
   <!-- Previous page link -->
 
 <?php if (isset($this->previous)): ?>
-  <li><a href="<?= $this->url()->setParam('page', $this->previous) ?>" title="<?= $title_prev ?>">« <?= $this->translate('Back') ?></a></li>
+  <li>
+    <a href="<?= Url::fromRequest()->overwriteParams(array('page' => $this->previous))->getAbsoluteUrl() ?>"
+         title="<?= $title_prev ?>">« <?= $this->translate('Prev') ?>
+    </a>
+  </li>
 <?php else: ?>
-  <li class="disabled"><span>« <?= $this->translate('Back') ?></span></li>
+  <li class="disabled"><span>« <?= $this->translate('Prev') ?></span></li>
 <?php endif ?>
 
     <!-- Numbered page links -->
@@ -45,7 +50,7 @@ foreach ($this->pagesInRange as $page):
     <li class="disabled"><span>...</span></li>
 <?php else: ?>
     <li <?= $class ?>>
-      <a href="<?= $this->url()->setParam('page', $page) ?>" title="<?= $title ?>">
+      <a href="<?= Url::fromRequest()->overwriteParams(array('page' => $page))->getAbsoluteUrl() ?>" title="<?= $title ?>">
         <?= $page ?>
       </a>
     </li>
@@ -55,7 +60,11 @@ endforeach;
 ?>
 <!-- Next page link -->
 <? if (isset($this->next)): ?>
-  <li><a href="<?= $this->url()->setParam('page', $this->next) ?>" title="<?= $title_next ?>"><?= t('Next') ?> »</a></li>
+  <li>
+    <a href="<?= Url::fromRequest()->overwriteParams(array('page' => $this->next))->getAbsoluteUrl() ?>"
+         title="<?= $title_next ?>"><?= t('Next') ?> »
+    </a>
+  </li>
 <? else: ?>
   <li class="disabled"><span><?= t('Next') ?> »</span></li>
 <? endif ?>

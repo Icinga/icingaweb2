@@ -1,10 +1,10 @@
-<h4><?= t('List of supported commands'); ?></h4>
+<h4><?= t('List Of Supported Commands'); ?></h4>
 <ul>
-    <?php foreach($this->commands as $command): ?>
-    <li>
-        <a href="<?= $this->href('monitoring/command/'. $command); ?>">
-            <?= $this->escape($command); ?>
-        </a>
-    </li>
-    <?php endforeach; ?>
+  <?php foreach($this->commands as $command): ?>
+  <li>
+    <a href="<?= $this->href('monitoring/command/'. $command); ?>">
+      <?= $this->escape($command); ?>
+    </a>
+  </li>
+  <?php endforeach; ?>
 </ul>

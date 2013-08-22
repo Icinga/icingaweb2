@@ -1,7 +1,7 @@
 <?= $this->tabs->render($this); ?>
 <br/>
 <div class="alert alert-error">
-    <h4><i class="icon-warning-sign"> </i>Saving <?= $this->escape($this->file); ?>failed</h4>
+    <h4><i>{{ERROR_ICON}}</i> Saving <?= $this->escape($this->file); ?>failed</h4>
     <br/>
     <p>
         Your <?= $this->escape($this->file); ?> configuration couldn't be stored (error: "<?= $this->exceptionMessage; ?>").<br/>

@@ -6,7 +6,7 @@ $viewHelper = $this->getHelper('MonitoringState');
 ?>
 
 <form method="get" class="form-inline" action="<?= $this->href('monitoring/list/hosts', $this->hosts->getAppliedFilter()->toParams());?>">
-  <label>Sort by</label>
+  <label>Sort By</label>
   <?= $this->formSelect(
    'sort',
     $this->sort,
@@ -19,7 +19,7 @@ $viewHelper = $this->getHelper('MonitoringState');
   ); ?>
   <noscript>
     <button class="btn btn-small btn-default">
-      <i>REFRESH ICON</i>
+      <i>{{REFRESH_ICON}}</i>
     </button>
   </noscript>
 </form>
@@ -51,31 +51,31 @@ $viewHelper = $this->getHelper('MonitoringState');
         <div>
           <?php if (!$host->host_handled && $host->host_state > 0): ?>
           <a href="#" title="<?= 'Unhandled host' ?>">
-            <i>UNHANDLED ICON</i>
+            <i>{{UNHANDLED_ICON}}</i>
           </a>
           <?php endif; ?>
 
           <?php if ($host->host_acknowledged && !$host->host_in_downtime): ?>
           <a href="#" title="<?= 'Acknowledged' ?>">
-            <i>ACKNOWLEDGED ICON</i>
+            <i>{{ACKNOWLEDGED_ICON}}</i>
           </a>
           <?php endif; ?>
 
           <?php if ($host->host_is_flapping): ?>
           <a href="#" title="<?= 'Flapping' ?>">
-            <i>FLAPPING ICON</i>
+            <i>{{FLAPPING_ICON}}</i>
           </a>
           <?php endif; ?>
 
           <?php if (!$host->host_notifications_enabled): ?>
           <a href="#" title="<?= 'Notifications disabled' ?>">
-            <i>NOTIFICATIONS DISABLED ICON</i>
+            <i>{{NOTIFICATIONS_DISABLED_ICON}}</i>
           </a>
           <?php endif; ?>
 
           <?php if ($host->host_in_downtime): ?>
           <a href="#" title="<?= 'In downtime' ?>">
-            <i>IN DOWNTIME ICON</i>
+            <i>{{IN_DOWNTIME_ICON}}</i>
           </a>
           <?php endif; ?>
 
@@ -84,11 +84,11 @@ $viewHelper = $this->getHelper('MonitoringState');
       <td title="<?= $viewHelper->getStateTitle($host, 'host'); ?>">
         <div >
             <b><?= ucfirst($viewHelper->monitoringState($host, 'host')); ?></b>
-            <div> since&nbsp;
+            <div> Since&nbsp;
               <?= $this->timeSince($host->host_last_state_change); ?>
               <?php if ($host->host_state_type == 0): ?>
               <a href="#" title="<?= 'Soft state' ?>">
-                <i>SOFTSTATE ICON</i>
+                <i>{{SOFTSTATE_ICON}}</i>
               </a>
               <?php endif; ?>
             </div>
@@ -97,7 +97,7 @@ $viewHelper = $this->getHelper('MonitoringState');
       <td>
         <?php if ($host->host_last_comment !== null): ?>
         <a href="#" title="<?= 'Comments' ?>">
-          <i>COMMENT ICON</i>
+          <i>{{COMMENT_ICON}}</i>
         </a>
         <?php endif; ?>
 

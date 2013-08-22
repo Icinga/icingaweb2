@@ -9,17 +9,17 @@
 
     $flags = $this->monitoringFlags($object);
 ?>
-<table class="flag-container">
+<table class="table table-condensed">
 <?php foreach ($flags as $name => $value): ?>
-    <tr>
-        <th><?= $name; ?></th>
-        <td>
-            <?php if ($value === true): ?>
-                <span class="flag flag-enabled">ENABLED</span>
-            <?php else: ?>
-                <span class="flag flag-disabled">DISABLED</span>
-            <?php endif; ?>
-        </td>
-    </tr>
+  <tr>
+    <th><?= $name; ?></th>
+    <td>
+      <?php if ($value === true): ?>
+          <span>{{ENABLED_ICON}} ENABLED</span>
+      <?php else: ?>
+          <span>{{DISABLED_ICON}} DISABLED</span>
+      <?php endif; ?>
+  </td>
+  </tr>
 <?php endforeach; ?>
 </table>
