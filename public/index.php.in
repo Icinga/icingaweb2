@@ -7,4 +7,4 @@ require_once dirname(__FILE__). '/../library/Icinga/Application/Web.php';
 
 use Icinga\Application\Web;
 
-Web::start(@icinga2web_config_path@)->dispatch();
+Web::start(@icingaweb_config_path@)->dispatch();

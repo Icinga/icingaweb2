@@ -2,11 +2,11 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.61])
-AC_INIT([Icinga2Web], [1.0.0], [info@icinga.org])
-AC_PREFIX_DEFAULT(/usr/local/icinga2-web)
+AC_INIT([IcingaWeb], [1.0.0], [info@icinga.org])
+AC_PREFIX_DEFAULT(/usr/local/icingaweb)
 
 if test "x$prefix" = "xNONE" ; then
-    installDir="/usr/local/icinga2-web"
+    installDir="/usr/local/icingaweb"
     prefix=$installDir
 else
     installDir=$prefix 
@@ -29,10 +29,10 @@ AC_CHECK_PHP_MODULE([sockets json])
 #
 #   Configuration files
 #
-AC_ARG_WITH([icinga2web_config_path],
-    AS_HELP_STRING([--with-icinga2web-config-path], [Configuration path for icinga ]),
-    icinga2web_config_path="'$withval'",
-    icinga2web_config_path="'$prefix/config/'"
+AC_ARG_WITH([icingaweb_config_path],
+    AS_HELP_STRING([--with-icingaweb-config-path], [Configuration path for icinga ]),
+    icingaweb_config_path="'$withval'",
+    icingaweb_config_path="'$prefix/config/'"
 )
 
 #
@@ -52,9 +52,9 @@ AC_ARG_WITH([web_group],
 )
 
 AC_ARG_WITH([web_path],
-    AS_HELP_STRING([--with-web-path=PATH], [web sub path (default /cranberry)]),
+    AS_HELP_STRING([--with-web-path=PATH], [web sub path (default /icingaweb)]),
     web_path=$withval,
-    web_path=/cranberry
+    web_path=/icingaweb
 )
 
 AC_ARG_WITH([www_conf_path],
@@ -90,9 +90,9 @@ AC_ARG_WITH([internal_db_type],
 )
 
 AC_ARG_WITH([internal_db_name],
-    AS_HELP_STRING([--with-internal-db-name=NAME], [database name to use for internal database (default icinga2web)]),
+    AS_HELP_STRING([--with-internal-db-name=NAME], [database name to use for internal database (default icingaweb)]),
     internal_db_name=$withval,
-    internal_db_name=icinga2web
+    internal_db_name=icingaweb
 )
 
 AC_ARG_WITH([internal_db_host],
@@ -108,15 +108,15 @@ AC_ARG_WITH([internal_db_port],
 )
 
 AC_ARG_WITH([internal_db_pass],
-    AS_HELP_STRING([--with-internal-db-pass=PASS], [database pass to use for internal database (default icinga2web)]),
+    AS_HELP_STRING([--with-internal-db-pass=PASS], [database pass to use for internal database (default icingaweb)]),
     internal_db_pass=$withval,
-    internal_db_pass=icinga2web
+    internal_db_pass=icingaweb
 )
 
 AC_ARG_WITH([internal_db_user],
-    AS_HELP_STRING([--with-internal-db-user=USER], [database user to use for internal database (default icinga2web)]),
+    AS_HELP_STRING([--with-internal-db-user=USER], [database user to use for internal database (default icingaweb)]),
     internal_db_user=$withval,
-    internal_db_user=icinga2web
+    internal_db_user=icingaweb
 )
 
 #
@@ -371,7 +371,7 @@ AC_SUBST(web_path)
 AC_SUBST(www_conf_path)
 AC_SUBST(bin_user)
 AC_SUBST(bin_group)
-AC_SUBST(icinga2web_config_path)
+AC_SUBST(icingaweb_config_path)
 
 # Internal db setup
 AC_SUBST(internal_db_type)
@@ -482,6 +482,7 @@ AC_CONFIG_FILES([
     config/authentication.ini
     config/resources.ini
     config/modules/monitoring/backends.ini
+    etc/apache/icingaweb.conf
     public/index.php
 ])
 
