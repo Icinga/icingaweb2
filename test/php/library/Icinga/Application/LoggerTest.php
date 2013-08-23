@@ -41,6 +41,8 @@ use \Icinga\Application\Logger;
 
 /**
  * Test class for Logger
+ *
+ * @backupStaticAttributes enabled
  **/
 class LoggerTest extends \PHPUnit_Framework_TestCase
 {
@@ -49,6 +51,7 @@ class LoggerTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         date_default_timezone_set('GMT');
+        Logger::reset();
     }
 
     public function testOverwrite()
@@ -98,9 +101,7 @@ class LoggerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('Testmessage '.json_encode(array('test1', 'test2')), $message);
     }
 
-    /**
-     * @backupStaticAttributes enabled
-     */
+
     public function testLoggingOutput()
     {
         $cfg1 = new \Zend_Config(
@@ -126,9 +127,6 @@ class LoggerTest extends \PHPUnit_Framework_TestCase
 
     }
 
-    /**
-     * @backupStaticAttributes enabled
-     */
     public function testLogQueuing()
     {
         $cfg1 = new \Zend_Config(
@@ -153,9 +151,6 @@ class LoggerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($writer->events[1]['message'], 'Error');
     }
 
-    /**
-     * @backupStaticAttributes enabled
-     */
     public function testDebugLogErrorCatching()
     {
         $cfg1 = new \Zend_Config(
@@ -179,9 +174,7 @@ class LoggerTest extends \PHPUnit_Framework_TestCase
             $writers[0]->events[0]['message']
         );
     }
-    /**
-     * @backupStaticAttributes enabled
-     */
+
     public function testNotLoggedMessagesQueue()
     {
         $cfg1 = new \Zend_Config(
