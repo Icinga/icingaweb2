@@ -1,28 +1,33 @@
-<? $showService = $object->service_description && $tabs->getActiveName() !== 'host' ?>
-<? if (! $compact): ?>
+<?php $showService = $object->service_description && $tabs->getActiveName() !== 'host' ?>
+<?php if (! $compact): ?>
 <?= $tabs->render($this) ?>
-<? endif ?>
-<table style="margin-bottom: 1em">
-  <tr class="<?= $this->monitoringState($object, 'host') ?><?= $object->host_handled ? ' handled' : '' ?>">
-    <td><b><?= $this->escape($object->host_name) ?><?
- if ($object->host_address && $object->host_address !== $object->host_name): ?>
- (<?= $this->escape($object->host_address) ?>)
-<? endif ?>
-    </b></td>
-    <td class="state"<?= $showService ? '' : ' rowspan="2"' ?>>
-      <?= $this->util()->getHostStateName($object->host_state) ?><br />
+<?php endif ?>
+
+<table class="table">
+  <tr>
+    <td>
+      {{HOST_ICON}} <b><?= $this->escape($object->host_name) ?>
+      <?php if ($object->host_address && $object->host_address !== $object->host_name): ?>
+        (<?= $this->escape($object->host_address) ?>)
+      <?php endif ?>
+      </b>
+    </td>
+    <td>
+      <?= $this->util()->getHostStateName($object->host_state) ?>
+      <br/>
       since <?= $this->timeSince($object->host_last_state_change) ?>
     </td>
   </tr>
-<? if ($showService): ?>
-  <tr class="<?= $this->monitoringState($object, 'service') ?><?= $object->service_handled ? ' handled' : '' ?>">
-    <td><b>Service: <?= $this->escape($object->service_description) ?></b></td>
-    <td class="state">
-      <?= $this->util()->getServiceStateName($object->service_state); ?><br />
+<?php if ($showService): ?>
+  <tr>
+    <td>
+      {{SERVICE_ICON}} <b>Service: <?= $this->escape($object->service_description) ?></b>
+    </td>
+    <td>
+      <?= $this->util()->getServiceStateName($object->service_state); ?>
+      <br/>
       since <?= $this->timeSince($object->service_last_state_change) ?>
     </td>
   </tr>
-<? else: ?>
-  <tr><td><b>Host state</b></td></tr>
-<? endif ?>
+<?php endif; ?>
 </table>

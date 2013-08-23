@@ -1,24 +1,18 @@
-<?php $container = $this->container('modules-container',array(
-    "class" => "expanded_absolute"
-))->beginContent() ?>
-<table class="table table-bordered" style="width:100%">
-    <thead>
-        <tr style="text-align:left">
-            <th width="70%">Module</th>
-            <th width="15%">Type</th>
-            <th width="15%">Active</th>
-        </tr>
-    </thead>
-    <tbody>
-    <?php foreach($this->modules as $module): ?>
-    <tr>
-        <td><?= $module["name"] ?></td>
-        <td><?= $module["type"] ?></td>
-        <td><?= $module["active"] ?></td>
+<table class="table table-bordered" >
+  <thead>
+    <tr style="text-align:left">
+      <th width="70%">Module</th>
+      <th width="15%">Type</th>
+      <th width="15%">Active</th>
     </tr>
-
-<?php endforeach; ?>
-    </tbody>
+  </thead>
+  <tbody>
+  <?php foreach($this->modules as $module): ?>
+    <tr>
+      <td><?= $module["name"]; ?></td>
+      <td><?= $module["type"]; ?></td>
+      <td><?= $module["active"]; ?></td>
+    </tr>
+  <?php endforeach; ?>
+  </tbody>
 </table>
-
-<?= $container; ?>

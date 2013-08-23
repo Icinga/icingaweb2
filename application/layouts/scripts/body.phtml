@@ -1,0 +1,19 @@
+<?php echo $this->render('parts/topbar.phtml') ?>
+<div class="row">
+
+  <!-- Only required for left/right tabs -->
+  <div class="col-md-2">
+    <?php echo $this->render('parts/navigation.phtml') ?>
+  </div>
+
+  <div class="col-md-10">
+    <div id="icingamain" class="col-md-8">
+      <?= $this->render('inline.phtml') ?>
+    </div>
+
+    <div id="icingadetail" class="col-md-2">
+      Details
+    </div>
+  </div>
+</div>
+

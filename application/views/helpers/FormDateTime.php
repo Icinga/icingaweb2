@@ -49,7 +49,7 @@ class Zend_View_Helper_FormDateTime extends Zend_View_Helper_FormElement
 
         // Is it disabled?
         $disabled = '';
-        if ($disable) {
+        if ($disabled) {
             $disabled = ' disabled="disabled"';
         }
 

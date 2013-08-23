@@ -154,7 +154,7 @@ class EditInstanceForm extends Form
                 'helptext'  =>  'The file path where the icinga commandpipe can be found'
             )
         );
-        $this->setSubmitLabel('Save');
+        $this->setSubmitLabel('{{SAVE_ICON}} Save');
     }
 
     /**

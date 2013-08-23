@@ -57,7 +57,7 @@ class DelayNotificationForm extends CommandForm
             'text',
             'minutes',
             array(
-                'label'         => t('Notification Delay (minutes from now)'),
+                'label'         => t('Notification Delay (Minutes From Now)'),
                 'style'         => 'width: 80px;',
                 'value'         => 0,
                 'required'      => true,

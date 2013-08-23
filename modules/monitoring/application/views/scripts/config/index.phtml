@@ -1,11 +1,11 @@
 <?php use Icinga\Web\Url;  ?>
 <?= $this->tabs->render($this); ?>
 
-<h3>Backends</h3>
+<h3>Monitoring Backends</h3>
 
 <div>
   <a href="<?= Url::fromPath('/monitoring/config/createbackend')->getAbsoluteUrl();?>">
-      Create New Backend
+    {{CREATE_ICON}} Create New Monitoring Backend
   </a>
 </div>
 <br/>
@@ -17,11 +17,11 @@
   <b><?= $this->escape($backendName); ?></b>
   <small>(Type: <?= $this->escape($config['type'] === 'ido' ? 'IDO' : ucfirst($config['type'])); ?>)</small>
   <?php if ($config['disabled']): ?>
-    - <b>Disabled</b>
+    - <b>{{DISABLED_ICON}} Disabled</b>
   <?php endif; ?>
   <div>
-    <a href="<?= $removeUrl; ?>">Remove This Backend</a><br/>
-    <a href="<?= $editUrl; ?>">Edit This Backend</a>
+    <a href="<?= $removeUrl; ?>">{{REMOVE_ICON}} Remove This Backend</a><br/>
+    <a href="<?= $editUrl; ?>">{{EDIT_ICON}} Edit This Backend</a>
   </div>
 </div>
 <br/>
@@ -33,7 +33,7 @@
 
 <div>
   <a href="<?= Url::fromPath('/monitoring/config/createinstance')->getAbsoluteUrl();?>">
-      Create New Instance
+    {{CREATE_ICON}} Create New Instance
   </a>
 </div>
 
@@ -46,8 +46,8 @@
   <small>(Type: <?= isset($config['host']) ? 'Remote' : 'Local'; ?>)</small>
 
   <div>
-    <a href="<?= $removeUrl; ?>">Remove This Instance</a><br/>
-    <a href="<?= $editUrl; ?>">Edit This Instance</a>
+    <a href="<?= $removeUrl; ?>">{{REMOVE_ICON}} Remove This Instance</a><br/>
+    <a href="<?= $editUrl; ?>">{{EDIT_ICON}} Edit This Instance</a>
   </div>
 </div>
 <br/>

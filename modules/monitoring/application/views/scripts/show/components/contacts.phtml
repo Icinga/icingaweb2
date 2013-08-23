@@ -11,7 +11,7 @@
         }
 
 
-        echo '<strong>Contacts:</strong> ';
+        echo '<strong>{{CONTACT_ICON}} Contacts:</strong> ';
         echo implode(', ', $contactList);
     }
 
@@ -25,7 +25,7 @@
                 )
             ) . '">' . $contactgroup->contactgroup_alias . '</a>';
         }
-        echo '<strong>Contactgroups:</strong> ';
+        echo '<strong>{{CONTACTGROUP_ICON}} Contactgroups:</strong> ';
         echo implode(', ', $contactGroupList);
     }
 ?>

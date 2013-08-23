@@ -6,33 +6,32 @@ $modules = $this->modules->paginate();
 
 ?>
 <?= $this->tabs->render($this); ?>
+
 <h3>Installed Modules</h3>
 <?= $this->paginationControl($modules, null, null, array(
     'preserve' => $this->preserve
-)); ?>
-<table >
-<tbody>
-<? foreach ($modules as $module): ?>
+));
+?>
+<table class="table">
+  <tbody>
+  <? foreach ($modules as $module): ?>
     <?php
     $enableUrl = Url::fromPath('config/moduleenable/',array('name' => $module->name))->getAbsoluteUrl();
     $disableUrl = Url::fromPath('config/moduledisable/',array('name' => $module->name))->getAbsoluteUrl();
     ?>
-<tr>
-<td>
-<? if ($module->enabled): ?>
-    <i class="icon-ok-sign"></i>
-    <a href="<?= $disableUrl ?>"><?= $this->escape($module->name); ?></a>
-
-<? else: ?>
-    <i class="icon-remove-sign"></i>
-    <a href="<?= $enableUrl ?>"><?= $this->escape($module->name); ?></a>
-<? endif ?>
- (<?=
-  $module->enabled
-  ? ($module->loaded ? 'enabled' : 'failed')
-  : 'disabled'
- ?>)</td>
-</tr>
-<? endforeach ?>
-</tbody>
+    <tr>
+      <td>
+      <? if ($module->enabled): ?>
+        <i>{{OK_ICON}}</i>
+        <a href="<?= $disableUrl ?>"><?= $this->escape($module->name); ?></a>
+      <? else: ?>
+        <i>{{REMOVE_ICON}}</i>
+        <a href="<?= $enableUrl ?>"><?= $this->escape($module->name); ?></a>
+      <? endif ?>
+      (<?=
+        $module->enabled ? ($module->loaded ? 'enabled' : 'failed') : 'disabled' ?>)
+      </td>
+    </tr>
+  <? endforeach ?>
+  </tbody>
 </table>

@@ -6,106 +6,91 @@ $trimArea = $this->getHelper('Trim');
 
 <?= $this->paginationControl($hosts, null, null, array('preserve' => $this->preserve)) ?>
 
-<table class="statustable action hosts">
+<table class="table table-condensed">
   <thead>
-  <tr>
-    <th colspan="3">Status</th>
-    <th>Host</th>
-    <th>Output</th>
-    <th></th>
-  </tr>
+    <tr>
+      <th colspan="2">Status</th>
+      <th>Host</th>
+      <th>Output</th>
+      <th></th>
+    </tr>
   </thead>
   <tbody>
-  <?php foreach ($hosts as $host): ?>
-  <tr class="<?= implode(' ', $viewHelper->getStateFlags($host, 'host')); ?>">
-    <td class="icons indicator">
-      <div class="img-box"><?php $trimArea->start(); ?>
-        <?php if ($host->host_icon_image) : ?>
-        <img src="<?= $host->host_icon_image; ?>"/>
-        <?php endif; ?>
-        <?php $trimArea->end(); ?>
-      </div>
-    </td>
-    <td class="icons indicator">
-      <div class="icon-box"><?php $trimArea->start(); ?>
-
-        <?php if (!$host->host_handled && $host->host_state > 0): ?>
-        <a href="#" title="<?= 'Unhandled host' ?>">
-          <i class="icon-warning-sign"></i>
-        </a>
-        <?php endif; ?>
-
-        <?php if ($host->host_acknowledged && !$host->host_in_downtime): ?>
-        <a href="#" title="<?= 'Acknowledged' ?>">
-          <i class="icon-ok-sign"></i>
-        </a>
-        <?php endif; ?>
-
-        <?php if ($host->host_is_flapping): ?>
-        <a href="#" title="<?= 'Flapping' ?>">
-          <i class="icon-random"></i>
-        </a>
-        <?php endif; ?>
-
-        <?php if (!$host->host_notifications_enabled): ?>
-        <a href="#" title="<?= 'Notifications disabled' ?>">
-          <i class="icon-volume-off"></i>
-        </a>
-        <?php endif; ?>
-
-        <?php if ($host->host_in_downtime): ?>
-        <a href="#" title="<?= 'In downtime' ?>">
-          <i class="icon-wrench"></i>
-        </a>
-        <?php endif; ?>
-
-        <?php $trimArea->end(); ?>
-      </div>
-    </td>
-    <td class="indicator state" title="<?= $viewHelper->getStateTitle($host, 'host'); ?>">
-      <div class="statetext">
-        <a href="<?= $this->href('monitoring/show/history', array('host' => $host->host_name)); ?>">
-          <b> <?= ucfirst($viewHelper->monitoringState($host, 'host')); ?> </b>
-
-          <div class="nowrap"> since&nbsp;
-            <?= $this->timeSince($host->host_last_state_change); ?>
-
-
-            <?php if ($host->host_state_type == 0): ?>
-            <a href="#" title="<?= 'Soft state' ?>">
-              <i class="icon-gears"></i>
-            </a>
-            <?php endif; ?>
-
+    <?php foreach ($hosts as $host): ?>
+    <tr>
+      <td>
+        <div>
+          <?php if ($host->host_icon_image) : ?>
+          <img src="<?= $host->host_icon_image; ?>"/>
+          <?php endif; ?>
         </div>
-      </div>
-    </td>
-
-    <td class="hostname">
-      <?php if ($host->host_last_comment !== null): ?>
-      <a href="#" title="<?= 'Comments' ?>">
-        <i class="icon-comment"> </i>
-      </a>
-      <?php endif; ?>
-      <a href="<?= $this->href('monitoring/show/host', array('host' => $host->host_name)); ?>"
-         class="row-action">
-        <b><?= $host->host_name; ?></b>
-        <br/>
-        <i><?= $host->host_address; ?></i>
-      </a>
-
-      <?php if ($host->host_action_url != ''): ?>
-      <a href="<?= $host->host_action_url; ?>">Action</a>
-      <?php endif; ?>
-
-      <?php if ($host->host_notes_url != ''): ?>
-      <a href="<?= $host->host_notes_url; ?>">Notes</a>
-      <?php endif; ?>
-    </td>
-    <td class="expand-full">
-      <?= $this->escape(substr(strip_tags($host->host_output), 0, 500)); ?>
-    </td>
-  </tr>
-  <?php endforeach; ?>
+      </td>
+      <td>
+        <div>
+          <?php if (!$host->host_handled && $host->host_state > 0): ?>
+          <a href="#" title="<?= 'Unhandled host' ?>">
+            <i>{{UNHANDLED_ICON}}</i>
+          </a>
+          <?php endif; ?>
+          <?php if ($host->host_acknowledged && !$host->host_in_downtime): ?>
+          <a href="#" title="<?= 'Acknowledged' ?>">
+            <i>{{ACKNOWLEDGED_ICON}}</i>
+          </a>
+          <?php endif; ?>
+          <?php if ($host->host_is_flapping): ?>
+          <a href="#" title="<?= 'Flapping' ?>">
+            <i>{{FLAPPING_ICON}}</i>
+          </a>
+          <?php endif; ?>
+          <?php if (!$host->host_notifications_enabled): ?>
+          <a href="#" title="<?= 'Notifications disabled' ?>">
+            <i>{{NOTIFICATIONS_DISABLED_ICON}}</i>
+          </a>
+          <?php endif; ?>
+          <?php if ($host->host_in_downtime): ?>
+          <a href="#" title="<?= 'In downtime' ?>">
+            <i>{{IN_DOWNTIME_ICON}}</i>
+          </a>
+          <?php endif; ?>
+        </div>
+      </td>
+      <td title="<?= $viewHelper->getStateTitle($host, 'host'); ?>">
+        <div>
+          <a href="<?= $this->href('monitoring/show/history', array('host' => $host->host_name)); ?>">
+            <b> <?= ucfirst($viewHelper->monitoringState($host, 'host')); ?> </b>
+            <div> Since&nbsp;
+              <?= $this->timeSince($host->host_last_state_change); ?>
+              <?php if ($host->host_state_type == 0): ?>
+              <a href="#" title="<?= 'Soft state' ?>">
+                <i>{{SOFTSTATE_ICON}}</i>
+              </a>
+              <?php endif; ?>
+            </div>
+          </a>
+        </div>
+      </td>
+      <td>
+        <?php if ($host->host_last_comment !== null): ?>
+        <a href="#" title="<?= 'Comments' ?>">
+          <i>{{COMMENT_ICON}}</i>
+        </a>
+        <?php endif; ?>
+        <a href="<?= $this->href('monitoring/show/host', array('host' => $host->host_name)); ?>">
+          <b><?= $host->host_name; ?></b>
+          <br/>
+          <i><?= $host->host_address; ?></i>
+        </a>
+        <?php if ($host->host_action_url != ''): ?>
+        <a href="<?= $host->host_action_url; ?>">Action</a>
+        <?php endif; ?>
+        <?php if ($host->host_notes_url != ''): ?>
+        <a href="<?= $host->host_notes_url; ?>">Notes</a>
+        <?php endif; ?>
+      </td>
+      <td>
+        <?= $this->escape(substr(strip_tags($host->host_output), 0, 500)); ?>
+      </td>
+    </tr>
+    <?php endforeach; ?>
   </tbody>
 </table>

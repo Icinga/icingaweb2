@@ -130,7 +130,7 @@ class LdapBackendForm extends BaseBackendForm
             )
         );
 
-        $this->setSubmitLabel('Save Backend');
+        $this->setSubmitLabel('{{SAVE_ICON}} Save Backend');
     }
 
     /**

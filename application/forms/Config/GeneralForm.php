@@ -329,7 +329,7 @@ class GeneralForm extends Form
         $this->addDateFormatSettings($global);
         $this->addUserPreferencesDialog($preferences);
 
-        $this->setSubmitLabel('Save Changes');
+        $this->setSubmitLabel('{{SAVE_ICON}} Save Changes');
     }
 
     /**

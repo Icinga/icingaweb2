@@ -1,32 +1,36 @@
-<div class="alert alert-error fullpage_infobox">
-
-    <h1>An error occurred</h1>
-    <p>
+<div class="alert alert-error">
+  <h1>An error occurred</h1>
+  <p>
     <?php echo $this->message ?>
+  </p>
+
+  <?php if (isset($this->exception)): ?>
+  <div style="text-align:left;">
+    <h3>Exception information:</h3>
+
+    <p>
+      <b>Message:</b>
+      <?= $this->exception->getMessage(); ?>
+
+      <?php if (isset($this->exception->action)): ?>
+      <br/>
+      <b>Action</b>: <?= $this->exception->action; ?>
+      <?php endif; ?>
+
+      <?php if (isset($this->exception->action)): ?>
+      <br/>
+      <b>Target</b>: <?= $this->exception->target; ?>
+      <?php endif; ?>
     </p>
 
-    <?php if (isset($this->exception)): ?>
-    <div style="text-align:left;">
-        <h3>Exception information:</h3>
+    <h3>Stack trace:</h3>
+    <pre>
+      <?= $this->exception->getTraceAsString(); ?>
+    </pre>
 
-        <p>
-            <b>Message:</b> <?php echo $this->exception->getMessage() ?>
-            <?php if (isset($this->exception->action)): ?>
-                <br/><b>Action</b>: <?= $this->exception->action; ?>
-            <?php endif ?>
-            <?php if (isset($this->exception->action)): ?>
-                <br/><b>Target</b>: <?= $this->exception->target; ?>
-            <?php endif ?>
-      
-        </p>
-
-        <h3>Stack trace:</h3>
-        <pre style="font-family: monospace"><?php echo $this->exception->getTraceAsString() ?>
-        </pre>
-
-        <h3>Request Parameters:</h3>
-        <pre><?php echo var_export(\Zend_Controller_Front::getInstance()->getParams(), true) ?>
-        </pre>
-    </div>
-    <?php endif ?>
+    <h3>Request Parameters:</h3>
+      <pre><?= var_export(\Zend_Controller_Front::getInstance()->getParams(), true) ?>
+    </pre>
+  </div>
+  <?php endif ?>
 </div>

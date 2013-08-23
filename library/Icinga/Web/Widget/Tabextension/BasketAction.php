@@ -51,7 +51,6 @@ class BasketAction implements Tabextension
             'basket',
             array(
                 'title'     => 'URL Basket',
-                'icon'      => 'img/classic/basket.png',
                 'url'       => Url::fromPath('basket/add'),
                 'urlParams' => array(
                     'url' => Url::fromRequest()->getRelativeUrl()

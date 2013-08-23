@@ -71,7 +71,7 @@ class MonitoringCommandsTest extends \PHPUnit_Framework_TestCase {
 
         $html = $helper->monitoringCommands($object, Meta::TYPE_SMALL);
 
-        $this->assertContains('Remove acknowledgement', $html);
+        $this->assertContains('Remove Acknowledgement', $html);
         $this->assertContains('Recheck', $html);
         $this->assertNotContains('Obsess', $html);
         $this->assertNotContains('Enable', $html);

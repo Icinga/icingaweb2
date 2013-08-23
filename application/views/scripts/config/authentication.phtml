@@ -17,19 +17,19 @@ $createDbBackend = Url::fromPath(
     $errors = $this->form->getErrorMessages();
     if (!empty($errors)):
 ?>
-    <div class="alert alert-danger">
-        <h4>There are errors in your configuration</h4>
-        <br/>
-        <ul>
+  <div class="alert alert-danger">
+    <h4>{{ERROR_ICON}} There are errors in your configuration:</h4>
+    <br/>
+    <ul>
 <?php foreach($errors as $error): ?>
-            <li><?= $error ?></li>
+        <li><?= $error ?></li>
 <?php endforeach;?>
-        </ul>
-    </div>
+    </ul>
+  </div>
 <?php endif; ?>
 
 <div>
-    <a href="<?= $createLdapBackend ?>">Create a new LDAP authentication backend</a><br/>
-    <a href="<?= $createDbBackend ?>">Create a new DB authentication backend</a>
+  <a href="<?= $createLdapBackend ?>">{{CREATE_ICON}} Create A New LDAP Authentication Backend</a><br/>
+  <a href="<?= $createDbBackend ?>">{{CREATE_ICON}} Create A New DB Authentication Backend</a>
 </div>
 <?= $this->form ?>

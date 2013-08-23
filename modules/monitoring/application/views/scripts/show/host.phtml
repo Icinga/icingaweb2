@@ -22,26 +22,24 @@ $this->partial(
     )
 );
 ?>
-
 <?= $this->preview_image ?>
-
-<div class="information-container">
-  <div class="head">
-    <span>Plugin output</span>
+<br/>
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <span>Plugin Output</span>
   </div>
-  <div>
+  <div class="panel-body">
     <?= $this->pluginOutput($this->host->host_output); ?>
     <?= $this->pluginOutput($this->host->host_long_output); ?>
   </div>
 </div>
 
-<div class="information-container">
-  <div class="head">
-    <span>Command</span>
+<div class="panel panel-default">
+  <div class="panel-heading">
+    {{CHECK_ICON}} <span>Check Command</span>
   </div>
 
-  <div>
-    <strong>Command:</strong>
+  <div class="panel-body">
     <?php
             $explodedCommand = explode('!', $this->host->host_check_command, 2);
     array_shift($explodedCommand);
@@ -50,16 +48,17 @@ $this->partial(
   </div>
 </div>
 
-<div class="information-container">
-  <div class="head">
+<div class="panel panel-default">
+  <div class="panel-heading">
     <span>Groups and Contacts</span>
   </div>
+  <div class="panel-body">
   <?php if (count($hostgroupLinkList)): ?>
-  <strong>Hostgroups:</strong>
+  {{HOSTGROUP_ICON}} <strong>Hostgroups:</strong>
   <?= implode(' ', $hostgroupLinkList); ?>
   <?php endif; ?>
-
   <?= $this->render('show/components/contacts.phtml') ?>
+  </div>
 </div>
 
 <?= $this->render('show/components/comments.phtml'); ?>
@@ -69,39 +68,39 @@ $this->partial(
 <?= $this->render('show/components/customvars.phtml'); ?>
 
 <?php if ($this->host->host_perfdata): ?>
-<div class="information-container">
-  <div class="head">
+<div class="panel panel-default">
+  <div class="panel-heading">
     <span>Perfdata</span>
   </div>
-  <div>
+  <div class="panel-body">
     <?= $this->perfdata($this->host->host_perfdata); ?>
   </div>
 </div>
 <?php endif; ?>
 
-<div class="information-container">
-  <div class="head">
+<div class="panel panel-default">
+  <div class="panel-heading">
     <span>Flags</span>
   </div>
-  <div>
+  <div class="panel-body">
     <?= $this->render('show/components/flags.phtml'); ?>
   </div>
 </div>
 
-<div class="information-container">
-  <div class="head">
+<div class="panel panel-default">
+  <div class="panel-heading">
     <span>Properties</span>
   </div>
-  <div>
+  <div class="panel-body">
     <?= $this->render('show/components/properties.phtml'); ?>
   </div>
 </div>
 
-<div class="information-container">
-  <div class="head">
-    <span>Commands</span>
+<div class="panel panel-default">
+  <div class="panel-heading">
+    {{COMMAND_ICON}} <span>Commands</span>
   </div>
-  <div>
+  <div class="panel-body">
     <?= $this->monitoringCommands($this->host, 'full'); ?>
   </div>
 </div>

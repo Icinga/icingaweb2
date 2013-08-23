@@ -1,13 +1,13 @@
 <?= $this->tabs->render($this); ?>
-<h4>Remove Instance "<?= $this->escape($this->name) ?>"</h4>
+<h4>{{REMOVE_ICON}} Remove Instance "<?= $this->escape($this->name) ?>"</h4>
 
 <p>
-    Are you sure you want to remove the instance <?= $this->escape($this->name) ?>?
+  Are you sure you want to remove the instance <?= $this->escape($this->name) ?>?
 </p>
 
 <p>
-    If you have still any environments or views refering to this instance, you won't be able to send commands anymore
-    after deletion.
+  {{WARNING_ICON}} If you have still any environments or views refering to this instance, you won't be able to send commands anymore
+  after deletion.
 </p>
 
 <?= $this->form; ?>

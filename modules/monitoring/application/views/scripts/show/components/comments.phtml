@@ -21,12 +21,13 @@ foreach ($this->comments as $comment) {
     );
 }
 ?>
-<div class="information-container">
-    <div class="head">
-        <span>Comments</span>
-    </div>
-
+<div class="panel">
+  <div class="panel-heading">
+    <span>{{COMMENT_ICON}} Comments</span>
+  </div>
+  <div class="panel-body">
     <blockquote> <?= implode('<br />', $list) ?></blockquote>
+  </div>
 </div>
 
 <?php endif; ?>

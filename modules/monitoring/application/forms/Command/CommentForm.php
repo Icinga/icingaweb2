@@ -94,7 +94,7 @@ class CommentForm extends CommandForm
             )
         );
 
-        $this->setSubmitLabel(t('Post comment'));
+        $this->setSubmitLabel(t('Post Comment'));
 
         parent::create();
     }

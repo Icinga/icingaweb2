@@ -199,7 +199,7 @@ class EditBackendForm extends Form
             'checkbox',
             'backend_disable',
             array(
-                'label'     => 'Disable this Backend',
+                'label'     => 'Disable This Backend',
                 'required'  =>  true,
                 'value'     =>  $this->backend->disabled
             )
@@ -260,7 +260,7 @@ class EditBackendForm extends Form
                 return;
         }
         $this->addDisableButton();
-        $this->setSubmitLabel('Save Changes');
+        $this->setSubmitLabel('{{SAVE_ICON}} Save Changes');
     }
 
     /**

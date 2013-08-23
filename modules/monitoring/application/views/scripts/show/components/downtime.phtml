@@ -21,18 +21,18 @@
 
         $row[] = '<button type="button" data-target="command" class="btn btn-warning"'
             . ' data-command-id="29" data-command-info="'. $downtime->downtime_internal_downtime_id. '"'
-            . '><i class="icon-delete"></i> Delete'
+            . '>{{REMOVE_ICON}} Remove'
             . '</button>';
 
         $list[] = '<td>'. implode('</td><td>', $row). '</td>';
     }
 ?>
-<div class="information-container">
-    <div class="head">
-        <span>Downtimes</span>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <span>{{IN_DOWNTIME_ICON}} Downtimes</span>
     </div>
 
-    <div>
+    <div class="panel-body">
         <table>
             <tr>
             <?= implode('</tr><tr>', $list); ?>

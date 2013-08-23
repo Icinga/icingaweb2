@@ -223,7 +223,7 @@ class GeneralForm extends Form
         $this->addTimezoneSelection($global);
         $this->addDateFormatSettings($global);
 
-        $this->setSubmitLabel('Save Changes');
+        $this->setSubmitLabel('{{SAVE_ICON}} Save Changes');
     }
 
     /**

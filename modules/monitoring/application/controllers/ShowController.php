@@ -397,8 +397,7 @@ class Monitoring_ShowController extends ModuleActionController
         $tabs->add(
             'host',
             array(
-                'title' => 'Host',
-                'icon' => 'img/classic/server.png',
+                'title' => '{{HOST_ICON}} Host',
                 'url' => 'monitoring/show/host',
                 'urlParams' => $params,
             )
@@ -407,8 +406,7 @@ class Monitoring_ShowController extends ModuleActionController
             $tabs->add(
                 'services',
                 array(
-                    'title' => 'Services',
-                    'icon' => 'img/classic/service.png',
+                    'title' => '{{SERVICE_ICON}} Services',
                     'url' => 'monitoring/show/services',
                     'urlParams' => $params,
                 )
@@ -418,8 +416,7 @@ class Monitoring_ShowController extends ModuleActionController
             $tabs->add(
                 'service',
                 array(
-                    'title' => 'Service',
-                    'icon' => 'img/classic/service.png',
+                    'title' => '{{SERVICE_ICON}} Service',
                     'url' => 'monitoring/show/service',
                     'urlParams' => $params,
                 )
@@ -428,8 +425,7 @@ class Monitoring_ShowController extends ModuleActionController
         $tabs->add(
             'history',
             array(
-                'title' => 'History',
-                'icon' => 'img/classic/history.gif',
+                'title' => '{{HISTORY_ICON}} History',
                 'url' => 'monitoring/show/history',
                 'urlParams' => $params,
             )

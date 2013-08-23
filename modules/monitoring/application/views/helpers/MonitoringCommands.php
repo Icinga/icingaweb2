@@ -65,7 +65,7 @@ class Zend_View_Helper_MonitoringCommands extends Zend_View_Helper_Abstract
                 $definition->shortDescription,
                 $definition->longDescription,
                 $definition->iconCls,
-                $definition->btnCls
+                ($definition->btnCls) ? $definition->btnCls : 'btn-default'
             );
 
             if ($type === Meta::TYPE_FULL) {
@@ -80,7 +80,7 @@ class Zend_View_Helper_MonitoringCommands extends Zend_View_Helper_Abstract
         $out .= '<div class="clearfix"></div>';
 
         if ($type === Meta::TYPE_FULL) {
-            return '<div class="command-container">'. $out. '</div>';
+            return '<div>'. $out. '</div>';
         }
 
         return $out;
