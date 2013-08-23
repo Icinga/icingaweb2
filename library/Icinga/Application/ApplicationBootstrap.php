@@ -30,14 +30,14 @@ namespace Icinga\Application;
 
 use \DateTimeZone;
 use \Exception;
-use Zend_Loader_Autoloader;
-use Icinga\Application\Modules\Manager as ModuleManager;
-use Icinga\Application\Platform;
+use \Zend_Loader_Autoloader;
+use \Icinga\Application\Modules\Manager as ModuleManager;
+use \Icinga\Application\Platform;
 use \Icinga\Application\Config;
-use Icinga\Exception\ProgrammingError;
+use \Icinga\Exception\ProgrammingError;
 use \Icinga\Application\DbAdapterFactory;
-use Icinga\Exception\ConfigurationError;
-use Icinga\Util\DateTimeFactory;
+use \Icinga\Exception\ConfigurationError;
+use \Icinga\Util\DateTimeFactory;
 
 /**
  * This class bootstraps a thin Icinga application layer
@@ -121,8 +121,6 @@ abstract class ApplicationBootstrap
 
     /**
      * Constructor
-     *
-     * The constructor is protected to avoid incorrect usage
      */
     protected function __construct($configDir)
     {
@@ -212,8 +210,9 @@ abstract class ApplicationBootstrap
      *
      * Optional append sub directory
      *
-     * @param  null|string $subdir optional subdir
-     * @return string
+     * @param   string $subdir optional subdir
+     *
+     * @return  string
      */
     public function getApplicationDir($subdir = null)
     {
@@ -222,8 +221,10 @@ abstract class ApplicationBootstrap
 
     /**
      * Getter for config dir
-     * @param  string|null $subdir
-     * @return string
+     *
+     * @param   string $subdir
+     *
+     * @return  string
      */
     public function getConfigDir($subdir = null)
     {
@@ -233,9 +234,10 @@ abstract class ApplicationBootstrap
     /**
      * Helper to glue directories together
      *
-     * @param  string      $dir
-     * @param  string|null $subdir
-     * @return string
+     * @param   string $dir
+     * @param   string $subdir
+     *
+     * @return  string
      */
     private function getDirWithSubDir($dir, $subdir = null)
     {
@@ -249,20 +251,52 @@ abstract class ApplicationBootstrap
     /**
      * Starting concrete bootstrap classes
      *
-     * @param  string $configDir
-     * @return ApplicationBootstrap
+     * @param   string $configDir
+     *
+     * @return  ApplicationBootstrap
      */
     public static function start($configDir)
     {
         $class = get_called_class();
         /** @var ApplicationBootstrap $obj */
-        $obj = new $class($configDir);
-        $obj->bootstrap();
-        return $obj;
+        $application = new $class($configDir);
+        $application->bootstrap();
+
+        if (Logger::hasErrorsOccurred()) {
+            $application->stopApplication(Logger::getQueue());
+        }
+
+        return $application;
     }
 
     /**
-     * Setup icinga auto loader
+     * Stop application and show information about errors
+     *
+     * @param array $errors
+     */
+    public function stopApplication(array $errors = array())
+    {
+        $msg = "Application could not be started!\n\n";
+
+        if (count($errors)) {
+            foreach ($errors as $error) {
+                $msg .= $error[0]. "\n";
+            }
+        } else {
+            $msg .= "Further information about the error may have been written to the application's log file.\n"
+                . 'Please check it in order to analyse the problem.';
+        }
+
+        if ($this->isWeb()) {
+            $msg = nl2br($msg);
+        }
+
+        echo $msg;
+        die();
+    }
+
+    /**
+     * Setup Icinga auto loader
      *
      * @return self
      */
@@ -357,8 +391,8 @@ abstract class ApplicationBootstrap
     /**
      * Setup default timezone
      *
-     * @return self
-     * @throws ConfigurationError if the timezone in config.ini isn't valid
+     * @return  self
+     * @throws  ConfigurationError if the timezone in config.ini isn't valid
      */
     protected function setupTimezone()
     {

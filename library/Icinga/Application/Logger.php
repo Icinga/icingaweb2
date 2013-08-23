@@ -28,53 +28,74 @@
 
 namespace Icinga\Application;
 
-use Icinga\Exception\ConfigurationError;
+use \Zend_Config;
+use \Zend_Log;
+use \Zend_Log_Filter_Priority;
+use \Zend_Log_Writer_Abstract;
+use \Zend_Log_Exception;
+use \Icinga\Exception\ConfigurationError;
 
 /**
- * Class Logger
- * @package Icinga\Application
+ * Singleton logger
  */
-class Logger
+final class Logger
 {
     /**
-     *
+     * Default log type
      */
     const DEFAULT_LOG_TYPE = "stream";
 
     /**
-     *
+     * Default log target
      */
     const DEFAULT_LOG_TARGET = "./var/log/icinga.log";
 
     /**
-     *
+     * Default debug target
      */
     const DEFAULT_DEBUG_TARGET = "./var/log/icinga.debug.log";
 
     /**
+     * Array of writers
+     *
      * @var array
      */
     private $writers = array();
 
     /**
-     * @var null
+     * Instance of Zend_Log
+     *
+     * @var Zend_Log
      */
-    private $logger = null;
+    private $logger;
 
     /**
-     * @var
+     * Singleton instance
+     *
+     * @var Logger
      */
     private static $instance;
 
     /**
+     * Queue of unwritten messages
+     *
      * @var array
      */
     private static $queue = array();
 
     /**
-     * @param \Zend_Config $config
+     * Flag indicate that errors occurred in the past
+     *
+     * @var bool
      */
-    public function __construct(\Zend_Config $config)
+    private static $errorsOccurred = false;
+
+    /**
+     * Create a new logger object
+     *
+     * @param Zend_Config $config
+     */
+    public function __construct(Zend_Config $config)
     {
         $this->overwrite($config);
     }
@@ -88,9 +109,13 @@ class Logger
     }
 
     /**
-     * @param \Zend_Config $config
+     * Overwrite config to initiated logger
+     *
+     * @param   Zend_Config $config
+     *
+     * @return  self
      */
-    public function overwrite(\Zend_Config $config)
+    public function overwrite(Zend_Config $config)
     {
         $this->clearLog();
         try {
@@ -98,82 +123,112 @@ class Logger
                 $this->setupDebugLog($config);
             }
         } catch (ConfigurationError $e) {
-            $this->warn("Could not create debug log: {$e->getMessage()}");
+            $this->warn('Could not create debug log: ' . $e->getMessage());
         }
 
         $this->setupLog($config);
         $this->flushQueue();
+
+        return $this;
     }
 
     /**
-     * @param \Zend_Config $config
+     * Configure debug log
+     *
+     * @param Zend_Config $config
      */
-    private function setupDebugLog(\Zend_Config $config)
+    private function setupDebugLog(Zend_Config $config)
     {
         $type = $config->debug->get("type", self::DEFAULT_LOG_TYPE);
         $target = $config->debug->get("target", self::DEFAULT_LOG_TARGET);
         if ($target == self::DEFAULT_LOG_TARGET) {
-            $type == self::DEFAULT_LOG_TYPE;
+            $type = self::DEFAULT_LOG_TYPE;
         }
 
-        $this->addWriter($type, $target, \Zend_Log::DEBUG);
+        $this->addWriter($type, $target, Zend_Log::DEBUG);
     }
 
     /**
-     * @param \Zend_Config $config
+     * Configure log
+     *
+     * @param Zend_Config $config
      */
-    private function setupLog(\Zend_Config $config)
+    private function setupLog(Zend_Config $config)
     {
         $type = $config->get("type", self::DEFAULT_LOG_TYPE);
         $target = $config->get("target", self::DEFAULT_DEBUG_TARGET);
         if ($target == self::DEFAULT_DEBUG_TARGET) {
-            $type == self::DEFAULT_LOG_TYPE;
+            $type = self::DEFAULT_LOG_TYPE;
         }
-        $level = \Zend_Log::WARN;
+        $level = Zend_Log::WARN;
         if ($config->get("verbose", 0) == 1) {
-            $level = \Zend_Log::INFO;
+            $level = Zend_Log::INFO;
         }
         $this->addWriter($type, $target, $level);
     }
 
     /**
-     * @param $type
-     * @param $target
-     * @param $priority
-     * @throws ConfigurationError
+     * Add writer to log instance
+     *
+     * @param   string  $type       Type, e.g. stream
+     * @param   string  $target     Target, e.g. filename
+     * @param   int     $priority   Value of Zend::* constant
+     * @throws  ConfigurationError
      */
     private function addWriter($type, $target, $priority)
     {
         $type[0] = strtoupper($type[0]);
-        $writerClass = "\Zend_Log_Writer_" . $type;
-        if (!class_exists($writerClass)) {
-            throw new ConfigurationError("Could not create log: Unknown type " . $type);
+        $writerClass = "Zend_Log_Writer_" . $type;
+
+        if (!@class_exists($writerClass)) {
+            self::fatal(
+                'Could not add log writer of type "%s". Type does not exist.',
+                $type
+            );
+            return;
         }
 
-        $writer = new $writerClass($target);
-
-        $writer->addFilter(new \Zend_Log_Filter_Priority($priority));
-        $this->logger->addWriter($writer);
-        $this->writers[] = $writer;
+        try {
+            /** @var Zend_Log_Writer_Abstract $writer */
+            $writer = new $writerClass($target);
+            $writer->addFilter(new Zend_Log_Filter_Priority($priority));
+            $this->logger->addWriter($writer);
+            $this->writers[] = $writer;
+        } catch (Zend_Log_Exception $e) {
+            self::fatal(
+                'Could not add log writer of type %s. An exception was thrown: %s',
+                $type,
+                $e->getMessage()
+            );
+        }
     }
 
     /**
-     * flushQueue
+     * Flush pending messages to writer
      */
     public function flushQueue()
     {
-        foreach (self::$queue as $msgTypePair) {
-            $this->logger->log($msgTypePair[0], $msgTypePair[1]);
+        try {
+            foreach (self::$queue as $msgTypePair) {
+                $this->logger->log($msgTypePair[0], $msgTypePair[1]);
+            }
+        } catch (Zend_Log_Exception $e) {
+            self::fatal(
+                'Could not flush logs to output. An exception was thrown: %s',
+                $e->getMessage()
+            );
         }
     }
 
     /**
-     * @param array $argv
-     * @return string
+     * Format output message
+     *
+     * @param   array $argv
+     *
+     * @return  string
      */
     public static function formatMessage(array $argv)
     {
-
         if (count($argv) == 1) {
             $format = $argv[0];
         } else {
@@ -192,20 +247,23 @@ class Logger
     }
 
     /**
-     * clearLog
+     * Reset object configuration
      */
     public function clearLog()
     {
         $this->logger = null;
         $this->writers = array();
-        $this->logger = new \Zend_Log();
+        $this->logger = new Zend_Log();
     }
 
     /**
-     * @param \Zend_Config $config
-     * @return Logger
+     * Create an instance
+     *
+     * @param   Zend_Config $config
+     *
+     * @return  Logger
      */
-    public static function create(\Zend_Config $config)
+    public static function create(Zend_Config $config)
     {
         if (self::$instance) {
             return self::$instance->overwrite($config);
@@ -214,54 +272,60 @@ class Logger
     }
 
     /**
-     * debug
+     * Log message with severity debug
      */
     public static function debug()
     {
-        self::log(self::formatMessage(func_get_args()), \Zend_Log::DEBUG);
+        self::log(self::formatMessage(func_get_args()), Zend_Log::DEBUG);
     }
 
     /**
-     *
+     * Log message with severity warn
      */
     public static function warn()
     {
-        self::log(self::formatMessage(func_get_args()), \Zend_Log::WARN);
+        self::log(self::formatMessage(func_get_args()), Zend_Log::WARN);
     }
 
     /**
-     *
+     * Log message with severity info
      */
     public static function info()
     {
-        self::log(self::formatMessage(func_get_args()), \Zend_Log::INFO);
+        self::log(self::formatMessage(func_get_args()), Zend_Log::INFO);
     }
 
     /**
-     *
+     * Log message with severity error
      */
     public static function error()
     {
-        self::log(self::formatMessage(func_get_args()), \Zend_Log::ERR);
+        self::log(self::formatMessage(func_get_args()), Zend_Log::ERR);
     }
 
     /**
-     *
+     * Log message with severity fatal
      */
     public static function fatal()
     {
-        self::log(self::formatMessage(func_get_args()), \Zend_Log::EMERG);
+        self::log(self::formatMessage(func_get_args()), Zend_Log::EMERG);
     }
 
     /**
-     * @param $msg
-     * @param int $level
+     * Log message
+     *
+     * @param string    $msg    Message
+     * @param int       $level  Log level
      */
-    private static function log($msg, $level = \Zend_Log::INFO)
+    private static function log($msg, $level = Zend_Log::INFO)
     {
         $logger = self::$instance;
 
-        if (!$logger) {
+        if ($level < Zend_Log::WARN && self::$errorsOccurred === false) {
+            self::$errorsOccurred =true;
+        }
+
+        if (!$logger || !count($logger->getWriters())) {
             array_push(self::$queue, array($msg, $level));
             return;
         }
@@ -270,7 +334,29 @@ class Logger
     }
 
     /**
+     * Flag if messages > warning occurred
      *
+     * @return bool
+     */
+    public static function hasErrorsOccurred()
+    {
+        return self::$errorsOccurred;
+    }
+
+    /**
+     * Access the log queue
+     *
+     * The log queue holds messages that could not be written to output
+     *
+     * @return array
+     */
+    public static function getQueue()
+    {
+        return self::$queue;
+    }
+
+    /**
+     * Reset object state
      */
     public static function reset()
     {
