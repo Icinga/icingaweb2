@@ -54,7 +54,7 @@ class DbAdapterFactory implements ConfigAwareFactory
      *
      * @var String
      */
-    private static $factoryClass;
+    private static $factoryClass = 'Zend_Db';
 
     /**
      * Resource cache to allow multiple use
@@ -115,7 +115,7 @@ class DbAdapterFactory implements ConfigAwareFactory
     public static function resetConfig()
     {
         self::$resources = null;
-        self::$factoryClass = null;
+        self::$factoryClass = 'Zend_Db';
     }
 
     /**
@@ -150,11 +150,11 @@ class DbAdapterFactory implements ConfigAwareFactory
     /**
      * Get the resource with the given $identifier
      *
-     * @throws ConfigurationError
-     * @throws ProgrammingError
      * @param  string $identifier        The name of the resource
      *
      * @return Zend_Db_Adapter_Abstract
+     * @throws ConfigurationError
+     * @throws ProgrammingError
      */
     public static function getDbAdapter($identifier)
     {
@@ -178,6 +178,19 @@ class DbAdapterFactory implements ConfigAwareFactory
             self::$resourceCache[$identifier] = $res;
             return $res;
         }
+    }
+
+    /**
+     * Create a db adapter directly from a configuration instead of a resource identifier
+     *
+     * @param  Zend_Config $config          The resource configuration that will be used.
+     *
+     * @return Zend_Db_Adapter_Abstract     The created DbAdapter
+     * @throws ProgrammingError
+     */
+    public static function createDbAdapterFromConfig(Zend_Config $config)
+    {
+        return self::createDbAdapter($config);
     }
 
     /**
@@ -225,21 +238,18 @@ class DbAdapterFactory implements ConfigAwareFactory
      * Call the currently set factory class
      *
      * @param  string $adapter              The name of the used db adapter
-     * @param  array $options               An array or Zend_Config object with adapter
+     * @param  mixed  $options              An array or Zend_Config object with adapter
      *                                      parameters
      *
      * @return Zend_Db_Adapter_Abstract     The created adapter
      */
-    private static function callFactory($adapter, array $options)
+    private static function callFactory($adapter, $options)
     {
         $factory = self::$factoryClass;
-
-        $optionModifierCallback = __CLASS__.  '::get'. ucfirst(str_replace('_', '', $adapter)). 'Options';
-
+        $optionModifierCallback = __CLASS__.  '::get' . ucfirst(str_replace('_', '', $adapter)) . 'Options';
         if (is_callable($optionModifierCallback)) {
             $options = call_user_func($optionModifierCallback, $options);
         }
-
         return $factory::factory($adapter, $options);
     }
 

@@ -2,20 +2,26 @@
 
 namespace Tests\Icinga\User\Preferences;
 
-require_once __DIR__. '/../../../../../../library/Icinga/Exception/ConfigurationError.php';
-require_once __DIR__. '/../../../../../../library/Icinga/User.php';
-require_once __DIR__. '/../../../../../../library/Icinga/User/Preferences.php';
-require_once __DIR__. '/../../../../../../library/Icinga/User/Preferences/LoadInterface.php';
-require_once __DIR__. '/../../../../../../library/Icinga/User/Preferences/FlushObserverInterface.php';
-require_once __DIR__. '/../../../../../../library/Icinga/User/Preferences/DbStore.php';
+require_once __DIR__ . '/../../../../../../library/Icinga/Exception/ConfigurationError.php';
+require_once __DIR__ . '/../../../../../../library/Icinga/Util/ConfigAwareFactory.php';
+require_once __DIR__ . '/../../../../../../library/Icinga/Application/DbAdapterFactory.php';
+require_once __DIR__ . '/../../../../../../library/Icinga/User.php';
+require_once __DIR__ . '/../../../../../../library/Icinga/User/Preferences.php';
+require_once __DIR__ . '/../../../../../../library/Icinga/User/Preferences/ChangeSet.php';
+require_once __DIR__ . '/../../../../../../library/Icinga/User/Preferences/LoadInterface.php';
+require_once __DIR__ . '/../../../../../../library/Icinga/User/Preferences/FlushObserverInterface.php';
+require_once __DIR__ . '/../../../../../../library/Icinga/User/Preferences/DbStore.php';
 
 require_once 'Zend/Db.php';
+require_once 'Zend/Config.php';
 require_once 'Zend/Db/Adapter/Abstract.php';
 
+use Icinga\Application\DbAdapterFactory;
 use Icinga\User;
 use Icinga\User\Preferences\DbStore;
 use Icinga\User\Preferences;
 use \PHPUnit_Framework_TestCase;
+use \Zend_Config;
 use \Zend_Db;
 use \Zend_Db_Adapter_Abstract;
 use \PDOException;
@@ -27,11 +33,10 @@ class DbStoreTest extends PHPUnit_Framework_TestCase
 
     const TYPE_PGSQL = 'pgsql';
 
-    private $database = 'icinga_unittest';
-
-    private $table = 'preferences';
+    private $table = 'preference';
 
     private $databaseConfig = array(
+        'type'     => 'db',
         'host'     => '127.0.0.1',
         'username' => 'icinga_unittest',
         'password' => 'icinga_unittest',
@@ -50,26 +55,18 @@ class DbStoreTest extends PHPUnit_Framework_TestCase
 
     private function createDb($type)
     {
-        $zendType = 'PDO_'. strtoupper($type);
-
-        if ($type === self::TYPE_MYSQL) {
-            $this->databaseConfig['port'] = 3306;
-        } elseif ($type === self::TYPE_PGSQL) {
-            $this->databaseConfig['port'] = 5432;
-        }
-
-        $db = Zend_Db::factory(
-            $zendType,
-            $this->databaseConfig
+        $this->databaseConfig['db'] = $type;
+        $db = DbAdapterFactory::createDbAdapterFromConfig(
+            new Zend_Config($this->databaseConfig)
         );
 
         try {
             $db->getConnection();
 
-            $dumpFile = realpath(__DIR__. '/../../../../../../etc/schema/preferences.'. strtolower($type). '.sql');
+            $dumpFile = realpath(__DIR__ . '/../../../../../../etc/schema/preferences.' . strtolower($type) . '.sql');
 
             if (!$dumpFile) {
-                throw new Exception('Dumpfile for db type not found: '. $type);
+                throw new Exception('Dumpfile for db type not found: ' . $type);
             }
 
             try {
@@ -96,11 +93,11 @@ class DbStoreTest extends PHPUnit_Framework_TestCase
     protected function tearDown()
     {
         if ($this->dbMysql) {
-            $this->dbMysql->getConnection()->exec('DROP TABLE '. $this->table);
+            $this->dbMysql->getConnection()->exec('DROP TABLE ' . $this->table);
         }
 
         if ($this->dbPgsql) {
-            $this->dbPgsql->getConnection()->exec('DROP TABLE '. $this->table);
+            $this->dbPgsql->getConnection()->exec('DROP TABLE ' . $this->table);
         }
 
     }
@@ -165,5 +162,4 @@ class DbStoreTest extends PHPUnit_Framework_TestCase
             $this->markTestSkipped('PgSQL test environment is not configured');
         }
     }
-
 }

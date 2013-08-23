@@ -482,13 +482,13 @@ exec { 'populate-icingweba-pgsql-db-accounts':
 }
 
 exec { 'populate-icingaweb-mysql-db-preferences':
-  unless  => 'mysql -uicingaweb -picinga icingaweb -e "SELECT * FROM preferences;" &> /dev/null',
+  unless  => 'mysql -uicingaweb -picinga icingaweb -e "SELECT * FROM preference;" &> /dev/null',
   command => 'mysql -uicingaweb -picinga icingaweb < /vagrant/etc/schema/preferences.mysql.sql',
   require => [ Exec['create-mysql-icingaweb-db'] ]
 }
 
 exec { 'populate-icingweba-pgsql-db-preferences':
-  unless  => 'psql -U icingaweb -d icingaweb -c "SELECT * FROM preferences;" &> /dev/null',
+  unless  => 'psql -U icingaweb -d icingaweb -c "SELECT * FROM preference;" &> /dev/null',
   command => 'sudo -u postgres psql -U icingaweb -d icingaweb -f /vagrant/etc/schema/preferences.pgsql.sql',
   require => [ Exec['create-pgsql-icingaweb-db'] ]
 }
