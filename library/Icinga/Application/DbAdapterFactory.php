@@ -196,14 +196,12 @@ class DbAdapterFactory implements ConfigAwareFactory
     /**
      * Create the Db_Adapter for the given configuration section
      *
-     * @param   mixed       $config         The configuration section containing the
-     *                                        db information
+     * @param   Zend_Config $config         The configuration section containing the db information
      *
-     * @return Zend_Db_Adapter_Abstract    The created Zend_Db_Adapter
-     *
-     * @throws ConfigurationError          When the specified db type is invalid
+     * @return  Zend_Db_Adapter_Abstract    The created Zend_Db_Adapter
+     * @throws  ConfigurationError          When the specified db type is invalid
      */
-    private static function createDbAdapter($config)
+    public static function createDbAdapter(Zend_Config $config)
     {
         if ($config->type !== 'db') {
             $msg = 'Resource type must be "db" but is "' . $config->type . '"';
