@@ -65,7 +65,7 @@ class Zend_View_Helper_MonitoringCommands extends Zend_View_Helper_Abstract
                 $definition->shortDescription,
                 $definition->longDescription,
                 $definition->iconCls,
-                $definition->btnCls
+                ($definition->btnCls) ? $definition->btnCls : 'btn-default'
             );
 
             if ($type === Meta::TYPE_FULL) {

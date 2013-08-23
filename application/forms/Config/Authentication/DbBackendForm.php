@@ -93,7 +93,7 @@ class DbBackendForm extends BaseBackendForm
             )
         );
 
-        $this->setSubmitLabel('{{SAVE_ICON}} Save backend');
+        $this->setSubmitLabel('{{SAVE_ICON}} Save Backend');
     }
 
     /**

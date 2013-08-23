@@ -1,30 +1,30 @@
 <?= $this->tabs->render($this); ?>
 
 <?php
-$formatter = $this->getHelper('MonitoringProperties');
+  $formatter = $this->getHelper('MonitoringProperties');
 ?>
 
 <form method="get" action="<?=
-    $this->href(
-        'monitoring/list/notifications',
-        $this->notifications->getAppliedFilter()->toParams()
-    );
+  $this->href(
+    'monitoring/list/notifications',
+    $this->notifications->getAppliedFilter()->toParams()
+  );
 ?>">
   <label>Sort By</label> <?=
     $this->formSelect(
         'sort',
         $this->sort,
         array(
-            'class' => 'autosubmit'
+          'class' => 'autosubmit'
         ),
         array(
-            'notification_start_time' => 'Time'
+          'notification_start_time' => 'Time'
         )
     );
   ?>
   <noscript>
     <button class="btn btn-small btn-default">
-      <i>REFRESH ICON</i>
+      {{REFRESH_ICON}}
     </button>
   </noscript>
 </form>
@@ -42,7 +42,7 @@ echo $this->paginationControl($notifications, null, null, array('preserve' => $t
       <th>Type</th>
       <th>Time</th>
       <th>Contact</th>
-      <th>Notification command</th>
+      <th>Notification Command</th>
       <th>Information</th>
     </tr>
   </thead>

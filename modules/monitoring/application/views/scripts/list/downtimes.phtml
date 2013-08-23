@@ -30,24 +30,24 @@ $downtimes = $downtimes->fetchAll();
       $this->sort,
       array('class' => 'autosubmit'),
       array(
-          'downtime_is_in_effect' => 'Is In Effect',
-          'object_type' => 'Service/Host',
-          'host_name' => 'Host Name',
-          'service_description' => 'Service Name',
-          'downtime_entry_time' => 'Entry Time',
-          'downtime_author_name' => 'Author',
-          'downtime_comment_data' => 'Comment',
-          'downtime_scheduled_start_time' => 'Start',
-          'downtime_scheduled_end_time' => 'End',
-          'downtime_trigger_time' => 'Trigger Time',
-          'downtime_internal_downtime_id' => 'Downtime ID',
-          'downtime_duration' => 'Duration',
+        'downtime_is_in_effect'         => 'Is In Effect',
+        'object_type'                   => 'Service/Host',
+        'host_name'                     => 'Host Name',
+        'service_description'           => 'Service Name',
+        'downtime_entry_time'           => 'Entry Time',
+        'downtime_author_name'          => 'Author',
+        'downtime_comment_data'         => 'Comment',
+        'downtime_scheduled_start_time' => 'Start',
+        'downtime_scheduled_end_time'   => 'End',
+        'downtime_trigger_time'         => 'Trigger Time',
+        'downtime_internal_downtime_id' => 'Downtime ID',
+        'downtime_duration'             => 'Duration',
       )
-      )
+  );
   ?>
   <noscript>
     <button class="btn btn-small btn-default" >
-      <i>REFRESH ICON</i>
+      <i>{{REFRESH_ICON}}</i>
     </button>
   </noscript>
 </form>
@@ -90,14 +90,13 @@ $downtimes = $downtimes->fetchAll();
       <?= ($downtime->downtime_is_in_effect == 0 ? 'False' : '<b>True</b>'); ?>
     </td>
     <td>
-      <div >
-
+      <div>
         <?php if ($downtime->object_type == 'service'): ?>
-        <img title="Service" src="<?='../../img/classic/service.png'?>"/>
+          {{SERVICE_ICON}}
         <?php endif; ?>
 
         <?php if ($downtime->object_type == 'host'): ?>
-        <img title="Host" src="<?='../../img/classic/server.png'?>"/>
+          {{HOST_ICON}}
         <?php endif; ?>
       </div>
     </td>
