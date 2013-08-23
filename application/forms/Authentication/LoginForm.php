@@ -43,6 +43,7 @@ class LoginForm extends Form
      */
     protected function create()
     {
+        $this->setName('login');
         $this->addElement(
             'text',
             'username',
