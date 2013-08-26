@@ -93,7 +93,6 @@ class DbStore implements LoadInterface, FlushObserverInterface
     public function setDbAdapter(Zend_Db_Adapter_Abstract $db)
     {
         $this->db = $db;
-        $this->db->getProfiler()->setEnabled(true);
 
     }
 

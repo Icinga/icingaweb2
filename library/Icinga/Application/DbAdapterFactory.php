@@ -211,12 +211,12 @@ class DbAdapterFactory implements ConfigAwareFactory
             throw new ConfigurationError($msg);
         }
         $options = array(
-            'dbname'         => $config->dbname,
-            'host'           => $config->host,
-            'username'       => $config->username,
-            'password'       => $config->password,
-            'options'        => self::$defaultZendDbAdapterOptions,
-            'driver_options' => self::$defaultPdoDriverOptions
+            'dbname'            => $config->dbname,
+            'host'              => $config->host,
+            'username'          => $config->username,
+            'password'          => $config->password,
+            'options'           => self::$defaultZendDbAdapterOptions,
+            'driver_options'    => self::$defaultPdoDriverOptions
         );
         switch ($config->db) {
             case 'mysql':
@@ -246,7 +246,7 @@ class DbAdapterFactory implements ConfigAwareFactory
     private static function callFactory($adapter, $options)
     {
         $factory = self::$factoryClass;
-        $optionModifierCallback = __CLASS__.  '::get' . ucfirst(str_replace('_', '', $adapter)) . 'Options';
+        $optionModifierCallback = __CLASS__ .  '::get' . ucfirst(str_replace('_', '', $adapter)) . 'Options';
         if (is_callable($optionModifierCallback)) {
             $options = call_user_func($optionModifierCallback, $options);
         }

@@ -188,7 +188,7 @@ class Manager
     {
         $type = ucwords(strtolower($backendConfig->backend));
         if (!$type) {
-            Logger::warn('No type given...');
+            Logger::warn('Backend has no type configured. (e.g. backend=ldap)');
             return null;
         }
         try {
@@ -209,12 +209,13 @@ class Manager
     /**
      * Try to authenticate the current user with the Credentials (@see Credentials).
      *
-     * @param Credentials  $credentials        The credentials to use for authentication
-     * @param Boolean      $persist            Whether to persist the authentication result
-     *                                           in the current session
+     * @param   Credentials $credentials        The credentials to use for authentication
+     * @param   Boolean     $persist            Whether to persist the authentication result
+     *                                          in the current session
      *
-     * @return Boolean                         true on success, otherwise false
-     **/
+     * @return  Boolean                         true on success, otherwise false
+     * @throws  ConfigError
+     */
     public function authenticate(Credentials $credentials, $persist = true)
     {
         if (!$this->userBackend) {
