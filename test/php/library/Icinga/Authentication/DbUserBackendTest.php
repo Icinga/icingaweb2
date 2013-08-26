@@ -29,28 +29,45 @@
 
 namespace Tests\Icinga\Authentication;
 
+require_once('Zend/Config.php');
 require_once('Zend/Config/Ini.php');
+require_once('Zend/Db/Adapter/Abstract.php');
 require_once('Zend/Db.php');
+require_once('Zend/Log.php');
+require_once('../../library/Icinga/Util/ConfigAwareFactory.php');
 require_once('../../library/Icinga/Authentication/UserBackend.php');
 require_once('../../library/Icinga/Protocol/Ldap/Exception.php');
+require_once('../../library/Icinga/Application/DbAdapterFactory.php');
 require_once('../../library/Icinga/Application/Config.php');
 require_once('../../library/Icinga/Authentication/Credentials.php');
 require_once('../../library/Icinga/Authentication/Backend/DbUserBackend.php');
 require_once('../../library/Icinga/User.php');
+require_once('../../library/Icinga/Application/Logger.php');
 
+use Zend_Config;
+use Zend_Db_Adapter_Abstract;
 use Icinga\Authentication\Backend\DbUserBackend;
+use Icinga\Application\DbAdapterFactory;
 use Icinga\Util\Crypto;
 use Icinga\Authentication\Credentials;
 use Icinga\User;
 use \Icinga\Application\Config;
 
 /**
- *
  * Test Class fpr DbUserBackend
- * Created Wed, 17 Jul 2013 11:52:34 +0000
- *
  */
 class DbUserBackendTest  extends \PHPUnit_Framework_TestCase {
+
+    /*
+     * Mapping of columns
+     */
+    const USER_NAME_COLUMN = 'username';
+
+    const SALT_COLUMN      = 'salt';
+
+    const PASSWORD_COLUMN  = 'password';
+
+    const ACTIVE_COLUMN    = 'active';
 
     /**
      * The table that is used to store the authentication data
@@ -65,21 +82,6 @@ class DbUserBackendTest  extends \PHPUnit_Framework_TestCase {
      * @var string
      */
     private $testDatabase = 'icinga_unittest';
-
-    /**
-     * Mapping of columns
-     *
-     * @var string
-     */
-    private $USER_NAME_COLUMN   = 'user_name',
-            $FIRST_NAME_COLUMN  = 'first_name',
-            $LAST_NAME_COLUMN   = 'last_name',
-            $LAST_LOGIN_COLUMN  = 'last_login',
-            $SALT_COLUMN        = 'salt',
-            $PASSWORD_COLUMN    = 'password',
-            $ACTIVE_COLUMN      = 'active',
-            $DOMAIN_COLUMN      = 'domain',
-            $EMAIL_COLUMN       = 'email';
 
     /**
      * Example users
@@ -114,36 +116,40 @@ class DbUserBackendTest  extends \PHPUnit_Framework_TestCase {
     );
 
     /**
-     * Create a preset-configuration that can be used to access the database
+     * Create a preset configuration that can be used to access the database
      * with the icinga_unittest account.
      *
-     * @return \stdClass
+     * @param String $dbType    The database type as a string, like 'mysql' or 'pgsql'.
+     *
+     * @return Zend_Config      The created resource configuration
      */
-    private function getBackendConfig()
+    private function getResourceConfig($dbType)
     {
-        $config = new \stdClass();
-        $config->host = '127.0.0.1';
-        $config->user = 'icinga_unittest';
-        $config->password= 'icinga_unittest';
-        $config->table = $this->testTable;
-        $config->db = $this->testDatabase;
-        return $config;
+        return new Zend_Config(
+            array(
+                'type'     => 'db',
+                'db'       => $dbType,
+                'host'     => 'localhost',
+                'username' => 'icinga_unittest',
+                'password' => 'icinga_unittest',
+                'dbname'   => $this->testDatabase,
+                'table'    => $this->testTable
+            )
+        );
     }
 
     /**
      * Create a backend with the given database type
      *
-     * @param $dbType The database type as a string, like 'mysql' or 'pgsql'.
+     * @param   String $dbType      The database type as a string, like 'mysql' or 'pgsql'.
      *
-     * @return DbUserBackend|null
+     * @return  DbUserBackend|null
      */
     private function createBackend($dbType)
     {
         try {
-            $config = $this->getBackendConfig();
-            $config->dbtype = $dbType;
-            $db = $this->createDb($dbType,$config);
-            $this->setUpDb($db);
+            $db = $this->createDb($this->getResourceConfig($dbType));
+            $this->setUpDb($db,$dbType);
             return new DbUserBackend($db);
         } catch(\Exception $e) {
             echo 'CREATE_BACKEND_ERROR:'.$e->getMessage();
@@ -152,28 +158,41 @@ class DbUserBackendTest  extends \PHPUnit_Framework_TestCase {
     }
 
     /**
+     * Create the db adapter
+     *
+     * @param $config                       The configuration to use
+     *
+     * @return Zend_Db_Adapter_Abstract     The created adabter
+     */
+    private function createDb($config)
+    {
+        return DbAdapterFactory::createDbAdapterFromConfig($config);
+    }
+
+    /**
      * Create the backends and fill it with sample-data
      */
     protected function setUp()
     {
+        DbAdapterFactory::resetConfig();
         $this->users = Array(
             0 => Array(
-                $this->USER_NAME_COLUMN => 'user1',
-                $this->PASSWORD_COLUMN  => 'secret1',
-                $this->SALT_COLUMN      => '8a7487a539c5d1d6766639d04d1ed1e6',
-                $this->ACTIVE_COLUMN    => 1
+                self::USER_NAME_COLUMN => 'user1',
+                self::PASSWORD_COLUMN  => 'secret1',
+                self::SALT_COLUMN      => '8a7487a539c5d1d6766639d04d1ed1e6',
+                self::ACTIVE_COLUMN    => 1
             ),
             1 => Array(
-                $this->USER_NAME_COLUMN => 'user2',
-                $this->PASSWORD_COLUMN  => 'secret2',
-                $this->SALT_COLUMN      => '04b5521ddd761b5a5b633be83faa494d',
-                $this->ACTIVE_COLUMN    => 1
+                self::USER_NAME_COLUMN => 'user2',
+                self::PASSWORD_COLUMN  => 'secret2',
+                self::SALT_COLUMN      => '04b5521ddd761b5a5b633be83faa494d',
+                self::ACTIVE_COLUMN    => 1
             ),
             2 => Array(
-                $this->USER_NAME_COLUMN => 'user3',
-                $this->PASSWORD_COLUMN  => 'secret3',
-                $this->SALT_COLUMN      => '08bb94ba3120338ae56db80ef551d324',
-                $this->ACTIVE_COLUMN    => 0
+                self::USER_NAME_COLUMN => 'user3',
+                self::PASSWORD_COLUMN  => 'secret3',
+                self::SALT_COLUMN      => '08bb94ba3120338ae56db80ef551d324',
+                self::ACTIVE_COLUMN    => 0
             )
         );
         $this->mysql = $this->createBackend('mysql');
@@ -185,12 +204,11 @@ class DbUserBackendTest  extends \PHPUnit_Framework_TestCase {
      */
     public function testCorrectUserLoginForPgsql()
     {
-        if(!empty($this->pgsql)){
+        if (!empty($this->pgsql)) {
             $this->runBackendAuthentication($this->pgsql);
             $this->runBackendUsername($this->pgsql);
         }
-        else{
-            echo '\nSKIPPING PGSQL TEST...\n';
+        else {
             $this->markTestSkipped();
         }
     }
@@ -205,27 +223,8 @@ class DbUserBackendTest  extends \PHPUnit_Framework_TestCase {
             $this->runBackendUsername($this->mysql);
         }
         else{
-            echo '\nSKIPPING MYSQL TEST...\n';
             $this->markTestSkipped();
         }
-    }
-
-    /**
-     * Create a database with the given config and type
-     *
-     * @param $dbtype The database type as a string, like 'mysql' or 'pgsql'.
-     * @param $config The configuration-object.
-     * @return mixed
-     */
-    private function createDb($dbtype,$config)
-    {
-        return \Zend_Db::factory($this->dbTypeMap[$dbtype],
-            array(
-                'host'      => $config->host,
-                'username'  => $config->user,
-                'password'  => $config->password,
-                'dbname'    => 'icinga_unittest'
-            ));
     }
 
     /**
@@ -234,11 +233,11 @@ class DbUserBackendTest  extends \PHPUnit_Framework_TestCase {
     public function tearDown()
     {
         try{
-            $db = $this->createDb('mysql',$this->getBackendConfig());
+            $db = $this->createDb($this->getResourceConfig('mysql'));
             $this->tearDownDb($db);
         } catch(\Exception $e) { }
         try {
-            $db = $this->createDb('pgsql',$this->getBackendConfig());
+            $db = $this->createDb($this->getResourceConfig('pgsql'));
             $this->tearDownDb($db);
         } catch(\Exception $e) { }
     }
@@ -256,37 +255,28 @@ class DbUserBackendTest  extends \PHPUnit_Framework_TestCase {
     /**
      * Fill the given database with the sample-data provided in users
      *
-     * @param $db
+     * @param $db   Zend_Db_Adapter_Abstract    The database to set up
+     * @param $type String                      The database type as a string: 'mysql'|'pgsql'
      */
-    private function setUpDb($db)
+    private function setUpDb($db,$type)
     {
         try {
             $this->tearDownDb($db);
-        } catch (\Exception $e) {
-            // if no database exists, an exception will be thrown
-        }
-        $db->exec('CREATE TABLE '.$this->testTable.' (
-                  '.$this->USER_NAME_COLUMN.' varchar(255) NOT NULL,
-                  '.$this->FIRST_NAME_COLUMN.' varchar(255),
-                  '.$this->LAST_NAME_COLUMN.' varchar(255),
-                  '.$this->LAST_LOGIN_COLUMN.' timestamp,
-                  '.$this->SALT_COLUMN.' varchar(255),
-                  '.$this->DOMAIN_COLUMN.' varchar(255),
-                  '.$this->EMAIL_COLUMN.' varchar(255),
-                  '.$this->PASSWORD_COLUMN.' varchar(255) NOT NULL,
-                  '.$this->ACTIVE_COLUMN.' BOOL,
-                  PRIMARY KEY ('.$this->USER_NAME_COLUMN.')
-            )');
+        } catch (\Exception $e) {}
+
+        $setupScript = file_get_contents('../../etc/schema/accounts.' . $type . '.sql');
+        $db->exec($setupScript);
+
         for ($i = 0; $i < count($this->users); $i++) {
             $usr = $this->users[$i];
             $data = Array(
-                $this->USER_NAME_COLUMN => $usr[$this->USER_NAME_COLUMN],
-                $this->PASSWORD_COLUMN  => hash_hmac('sha256',
-                    $usr[$this->SALT_COLUMN],
-                    $usr[$this->PASSWORD_COLUMN]
-                    ),
-                $this->ACTIVE_COLUMN    => $usr[$this->ACTIVE_COLUMN],
-                $this->SALT_COLUMN      => $usr[$this->SALT_COLUMN]
+                self::USER_NAME_COLUMN => $usr[self::USER_NAME_COLUMN],
+                self::PASSWORD_COLUMN  => hash_hmac('sha256',
+                    $usr[self::SALT_COLUMN],
+                    $usr[self::PASSWORD_COLUMN]
+                ),
+                self::ACTIVE_COLUMN    => $usr[self::ACTIVE_COLUMN],
+                self::SALT_COLUMN      => $usr[self::SALT_COLUMN]
             );
             $db->insert($this->testTable,$data);
         }
@@ -296,53 +286,53 @@ class DbUserBackendTest  extends \PHPUnit_Framework_TestCase {
     /**
      * Run the hasUsername test against an instance of DbUserBackend
      *
-     * @param $backend The backend that will be tested.
+     * @param $backend      The backend that will be tested.
      */
     private function runBackendUsername($backend)
     {
         // Known user
         $this->assertTrue($backend->hasUsername(
             new Credentials(
-                $this->users[0][$this->USER_NAME_COLUMN],
-                $this->users[0][$this->PASSWORD_COLUMN])
-        ),'Assert that the user is known by the backend');
+                $this->users[0][self::USER_NAME_COLUMN],
+                $this->users[0][self::PASSWORD_COLUMN])
+        ), 'Assert that the user is known by the backend');
 
         // Unknown user
         $this->assertFalse($backend->hasUsername(
             new Credentials(
                 'unknown user',
                 'secret')
-        ),'Assert that the user is not known by the backend');
+        ), 'Assert that the user is not known by the backend');
 
         // Inactive user
         $this->assertFalse($backend->hasUsername(
             new Credentials(
-                $this->users[2][$this->USER_NAME_COLUMN],
-                $this->users[2][$this->PASSWORD_COLUMN])
-        ),'Assert that the user is inactive and therefore not known by the backend');
+                $this->users[2][self::USER_NAME_COLUMN],
+                $this->users[2][self::PASSWORD_COLUMN])
+        ), 'Assert that the user is inactive and therefore not known by the backend');
     }
 
     /**
      * Run the authentication test against an instance of DbUserBackend
      *
-     * @param $backend The backend that will be tested.
+     * @param $backend      The backend that will be tested.
      */
     private function runBackendAuthentication($backend)
     {
         // Known user
         $this->assertNotNull($backend->authenticate(
             new Credentials(
-                $this->users[0][$this->USER_NAME_COLUMN],
-                $this->users[0][$this->PASSWORD_COLUMN])
-        ),'Assert that an existing, active user with the right credentials can authenticate.');
+                $this->users[0][self::USER_NAME_COLUMN],
+                $this->users[0][self::PASSWORD_COLUMN])
+        ), 'Assert that an existing, active user with the right credentials can authenticate.');
 
         // Wrong password
         $this->assertNull(
             $backend->authenticate(
                 new Credentials(
-                    $this->users[1][$this->USER_NAME_COLUMN],
+                    $this->users[1][self::USER_NAME_COLUMN],
                     'wrongpassword')
-            ),'Assert that an existing user with an invalid password cannot authenticate'
+            ), 'Assert that an existing user with an invalid password cannot authenticate'
         );
 
         // Nonexisting user
@@ -350,16 +340,16 @@ class DbUserBackendTest  extends \PHPUnit_Framework_TestCase {
             $backend->authenticate(
                 new Credentials(
                     'nonexisting user',
-                    $this->users[1][$this->PASSWORD_COLUMN])
-            ),'Assert that a non-existing user cannot authenticate.'
+                    $this->users[1][self::PASSWORD_COLUMN])
+            ), 'Assert that a non-existing user cannot authenticate.'
         );
 
         // Inactive user
         $this->assertNull(
             $backend->authenticate(
                 new Credentials(
-                    $this->users[2][$this->USER_NAME_COLUMN],
-                    $this->users[2][$this->PASSWORD_COLUMN])
-        ),'Assert that an inactive user cannot authenticate.');
+                    $this->users[2][self::USER_NAME_COLUMN],
+                    $this->users[2][self::PASSWORD_COLUMN])
+        ), 'Assert that an inactive user cannot authenticate.');
     }
 }

@@ -1,7 +1,6 @@
-create table `preferences`(
-  `username`    VARCHAR(255) NOT NULL,
-  `preference`  VARCHAR(100) NOT NULL,
+create table `preference`(
+  `username`    VARCHAR(255) COLLATE latin1_general_ci NOT NULL,
+  `key`         VARCHAR(100) COLLATE latin1_general_ci NOT NULL,
   `value`       VARCHAR(255) NOT NULL,
-
-  PRIMARY KEY(username, preference)
-);
+  PRIMARY KEY (`username`, `key`)
+) ENGINE=InnoDB;

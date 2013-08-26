@@ -159,20 +159,20 @@ class Manager
      */
     private function initBestBackend($target, $backends)
     {
-        foreach ($backends as $backend) {
+        foreach ($backends as $key => $backend) {
             if (strtolower($target) === strtolower($backend->target)) {
                 $db = $this->tryToInitBackend($target, $backend);
                 if (isset($db)) {
-                    break;
+                    return $db;
                 }
             }
         }
-        if (!isset($db)) {
-            $msg = 'Failed to create any authentication backend, login will not be possible.';
-            Logger::error($msg);
-            return null;
-        }
-        return $db;
+        Logger::error(
+            'Failed to create any authentication backend '
+            . 'for the target "' . $target . '". Entities belonging to this target'
+            . ' will not be able to authenticate.'
+        );
+        return null;
     }
 
     /**
@@ -188,6 +188,7 @@ class Manager
     {
         $type = ucwords(strtolower($backendConfig->backend));
         if (!$type) {
+            Logger::warn('Backend has no type configured. (e.g. backend=ldap)');
             return null;
         }
         try {
@@ -199,9 +200,7 @@ class Manager
             $class = '\\Icinga\\Authentication\\Backend\\' . $type . $target. 'Backend';
             return new $class($resource);
         } catch (\Exception $e) {
-            $msg = 'Not able to create backend: ' .
-                print_r($backendConfig->backend, true)
-                . '. Exception: ' . $e->getMessage();
+            $msg = 'Not able to create backend. Exception: ' . $e->getMessage();
             Logger::warn($msg);
             return null;
         }
@@ -210,12 +209,13 @@ class Manager
     /**
      * Try to authenticate the current user with the Credentials (@see Credentials).
      *
-     * @param Credentials  $credentials        The credentials to use for authentication
-     * @param Boolean      $persist            Whether to persist the authentication result
-     *                                           in the current session
+     * @param   Credentials $credentials        The credentials to use for authentication
+     * @param   Boolean     $persist            Whether to persist the authentication result
+     *                                          in the current session
      *
-     * @return Boolean                         true on success, otherwise false
-     **/
+     * @return  Boolean                         true on success, otherwise false
+     * @throws  ConfigError
+     */
     public function authenticate(Credentials $credentials, $persist = true)
     {
         if (!$this->userBackend) {

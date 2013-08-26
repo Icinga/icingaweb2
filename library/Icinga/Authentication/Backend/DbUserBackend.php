@@ -29,6 +29,7 @@
 
 namespace Icinga\Authentication\Backend;
 
+use Zend_Db;
 use \Icinga\User;
 use \Icinga\Authentication\UserBackend;
 use \Icinga\Authentication\Credentials;
@@ -49,23 +50,13 @@ class DbUserBackend implements UserBackend
      * Mapping of all table column names
      */
 
-    const USER_NAME_COLUMN   = 'user_name';
-
-    const FIRST_NAME_COLUMN  = 'first_name';
-
-    const LAST_NAME_COLUMN   = 'last_name';
-
-    const LAST_LOGIN_COLUMN  = 'last_login';
+    const USER_NAME_COLUMN   = 'username';
 
     const SALT_COLUMN        = 'salt';
 
     const PASSWORD_COLUMN    = 'password';
 
     const ACTIVE_COLUMN      = 'active';
-
-    const DOMAIN_COLUMN      = 'domain';
-
-    const EMAIL_COLUMN       = 'email';
 
     /**
      * The database connection that will be used for fetching users
@@ -80,6 +71,7 @@ class DbUserBackend implements UserBackend
      * @var String
      */
     private $userTable = "account";
+
     /**
      * Create a DbUserBackend
      *
@@ -98,9 +90,9 @@ class DbUserBackend implements UserBackend
     /**
      * Check if the user identified by the given credentials is available
      *
-     * @param Credentials $credentials The login credentials
+     * @param Credentials $credentials  The login credentials
      *
-     * @return boolean True when the username is known and currently active.
+     * @return boolean                  True when the username is known and currently active.
      */
     public function hasUsername(Credentials $credential)
     {
@@ -109,15 +101,15 @@ class DbUserBackend implements UserBackend
             return false;
         }
         $user = $this->getUserByName($credential->getUsername());
-        return !empty($user);
+        return isset($user);
     }
 
     /**
      * Authenticate a user with the given credentials
      *
-     * @param Credentials $credentials The login credentials
+     * @param Credentials $credentials  The login credentials
      *
-     * @return User|null The authenticated user or Null.
+     * @return User|null                The authenticated user or Null.
      */
     public function authenticate(Credentials $credential)
     {
@@ -126,6 +118,12 @@ class DbUserBackend implements UserBackend
             return null;
         }
         $this->db->getConnection();
+        try {
+            $salt = $this->getUserSalt($credential->getUsername());
+        } catch (\Exception $e) {
+            Logger::error($e->getMessage());
+            return null;
+        }
         $res = $this->db
             ->select()->from($this->userTable)
                 ->where(self::USER_NAME_COLUMN.' = ?', $credential->getUsername())
@@ -134,41 +132,22 @@ class DbUserBackend implements UserBackend
                     self::PASSWORD_COLUMN. ' = ?',
                     hash_hmac(
                         'sha256',
-                        $this->getUserSalt($credential->getUsername()),
+                        $salt,
                         $credential->getPassword()
                     )
                 )
                 ->query()->fetch();
-        if (!empty($res)) {
-            $this->updateLastLogin($credential->getUsername());
+        if ($res !== false) {
             return $this->createUserFromResult($res);
         }
     }
 
     /**
-     * Update the timestamp containing the time of the last login for
-     * the user with the given username
-     *
-     * @param $username The login-name of the user.
-     */
-    private function updateLastLogin($username)
-    {
-        $this->db->getConnection();
-        $this->db->update(
-            $this->userTable,
-            array(
-                self::LAST_LOGIN_COLUMN => new \Zend_Db_Expr('NOW()')
-            ),
-            self::USER_NAME_COLUMN.' = '.$this->db->quoteInto('?', $username)
-        );
-    }
-
-    /**
      * Fetch the users salt from the database
      *
-     * @param $username The user whose salt should be fetched.
+     * @param $username     The user whose salt should be fetched.
      *
-     * @return String|null Returns the salt-string or Null, when the user does not exist.
+     * @return String|null  Returns the salt-string or Null, when the user does not exist.
      */
     private function getUserSalt($username)
     {
@@ -177,15 +156,19 @@ class DbUserBackend implements UserBackend
             ->from($this->userTable, self::SALT_COLUMN)
             ->where(self::USER_NAME_COLUMN.' = ?', $username)
             ->query()->fetch();
-        return $res[self::SALT_COLUMN];
+        if ($res !== false) {
+            return $res->{self::SALT_COLUMN};
+        } else {
+            throw new \Exception('No Salt found for user "' . $username . '"');
+        }
     }
 
     /**
      * Fetch the user information from the database
      *
-     * @param $username The name of the user.
+     * @param $username     The name of the user.
      *
-     * @return User|null Returns the user object, or null when the user does not exist.
+     * @return User|null    Returns the user object, or null when the user does not exist.
      */
     private function getUserByName($username)
     {
@@ -200,10 +183,10 @@ class DbUserBackend implements UserBackend
                     ->where(self::USER_NAME_COLUMN.' = ?', $username)
                     ->where(self::ACTIVE_COLUMN.' = ?', true)
                     ->query()->fetch();
-            if (empty($res)) {
-                return null;
+            if ($res !== false) {
+                return $this->createUserFromResult($res);
             }
-            return $this->createUserFromResult($res);
+            return null;
         } catch (\Zend_Db_Statement_Exception $exc) {
             Logger::error("Could not fetch users from db : %s ", $exc->getMessage());
             return null;
@@ -213,19 +196,15 @@ class DbUserBackend implements UserBackend
     /**
      * Create a new instance of User from a query result
      *
-     * @param array $result The query result-array containing the column
+     * @param $result   The query result containing the user row
      *
-     * @return User The created instance of User.
+     * @return User     The created instance of User.
      */
-    private function createUserFromResult(Array $result)
+    private function createUserFromResult($resultRow)
     {
         $usr = new User(
-            $result[self::USER_NAME_COLUMN],
-            $result[self::FIRST_NAME_COLUMN],
-            $result[self::LAST_NAME_COLUMN],
-            $result[self::EMAIL_COLUMN]
+            $resultRow->{self::USER_NAME_COLUMN}
         );
-        $usr->setDomain($result[self::DOMAIN_COLUMN]);
         return $usr;
     }
 }

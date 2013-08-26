@@ -47,7 +47,7 @@ class DbStore implements LoadInterface, FlushObserverInterface
     /**
      * Column name for preference
      */
-    const COLUMN_PREFERENCE = 'preference';
+    const COLUMN_PREFERENCE = 'key';
 
     /**
      * Column name for value
@@ -66,14 +66,14 @@ class DbStore implements LoadInterface, FlushObserverInterface
      *
      * @var Zend_Db_Adapter_Abstract
      */
-    private $dbAdapter;
+    private $db;
 
     /**
      * Table name
      *
      * @var string
      */
-    private $table = 'preferences';
+    private $table = 'preference';
 
     /**
      * Setter for user
@@ -88,12 +88,11 @@ class DbStore implements LoadInterface, FlushObserverInterface
     /**
      * Setter for db adapter
      *
-     * @param Zend_Db_Adapter_Abstract $dbAdapter
+     * @param Zend_Db_Adapter_Abstract $db
      */
-    public function setDbAdapter(Zend_Db_Adapter_Abstract $dbAdapter)
+    public function setDbAdapter(Zend_Db_Adapter_Abstract $db)
     {
-        $this->dbAdapter = $dbAdapter;
-        $this->dbAdapter->getProfiler()->setEnabled(true);
+        $this->db = $db;
 
     }
 
@@ -114,14 +113,14 @@ class DbStore implements LoadInterface, FlushObserverInterface
      */
     public function load()
     {
-        $res = $this->dbAdapter->select()->from($this->table)
+        $res = $this->db->select()->from($this->table)
             ->where('username=?', $this->user->getUsername())
             ->query();
 
         $out = array();
 
         foreach ($res->fetchAll() as $row) {
-            $out[$row[self::COLUMN_PREFERENCE]] = $row[self::COLUMN_VALUE];
+            $out[$row->{self::COLUMN_PREFERENCE}] = $row->{self::COLUMN_VALUE};
         }
 
         return $out;
@@ -136,8 +135,8 @@ class DbStore implements LoadInterface, FlushObserverInterface
     private function createWhereCondition($preference)
     {
         return array(
-            self::COLUMN_USERNAME. '=?'   => $this->user->getUsername(),
-            self::COLUMN_PREFERENCE. '=?' => $preference
+            $this->db->quoteIdentifier(self::COLUMN_USERNAME) .   '=?' => $this->user->getUsername(),
+            $this->db->quoteIdentifier(self::COLUMN_PREFERENCE) . '=?' => $preference
         );
     }
 
@@ -150,12 +149,12 @@ class DbStore implements LoadInterface, FlushObserverInterface
      */
     private function doCreate($preference, $value)
     {
-        return $this->dbAdapter->insert(
+        return $this->db->insert(
             $this->table,
             array(
-                self::COLUMN_USERNAME   => $this->user->getUsername(),
-                self::COLUMN_PREFERENCE => $preference,
-                self::COLUMN_VALUE      => $value
+                $this->db->quoteIdentifier(self::COLUMN_USERNAME)   => $this->user->getUsername(),
+                $this->db->quoteIdentifier(self::COLUMN_PREFERENCE) => $preference,
+                $this->db->quoteIdentifier(self::COLUMN_VALUE)      => $value
             )
         );
     }
@@ -169,7 +168,7 @@ class DbStore implements LoadInterface, FlushObserverInterface
      */
     private function doUpdate($preference, $value)
     {
-        return $this->dbAdapter->update(
+        return $this->db->update(
             $this->table,
             array(
                 self::COLUMN_VALUE => $value
@@ -186,7 +185,7 @@ class DbStore implements LoadInterface, FlushObserverInterface
      */
     private function doDelete($preference)
     {
-        return $this->dbAdapter->delete(
+        return $this->db->delete(
             $this->table,
             $this->createWhereCondition($preference)
         );
