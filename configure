@@ -2444,7 +2444,7 @@ fi
 if test "${with_ldap_binddn+set}" = set; then :
   withval=$with_ldap_binddn; ldap_binddn=$withval
 else
-  ldap_binddn="cn=Manager, ou=icinga, ou=org"
+  ldap_binddn="cn=admin,cn=config"
 
 fi
 
@@ -2454,7 +2454,7 @@ fi
 if test "${with_ldap_bindpass+set}" = set; then :
   withval=$with_ldap_bindpass; ldap_bindpass=$withval
 else
-  ldap_bindpass="secret"
+  ldap_bindpass="admin"
 
 fi
 
@@ -2966,7 +2966,7 @@ fi
 #
 #   Create config files
 #
-ac_config_files="$ac_config_files Makefile config/authentication.ini config/resources.ini config/modules/monitoring/backends.ini etc/apache/icingaweb.conf public/index.php"
+ac_config_files="$ac_config_files Makefile config/authentication.ini config/resources.ini config/modules/monitoring/backends.ini etc/apache/icingaweb.conf"
 
 
 #
@@ -3683,7 +3683,6 @@ do
     "config/resources.ini") CONFIG_FILES="$CONFIG_FILES config/resources.ini" ;;
     "config/modules/monitoring/backends.ini") CONFIG_FILES="$CONFIG_FILES config/modules/monitoring/backends.ini" ;;
     "etc/apache/icingaweb.conf") CONFIG_FILES="$CONFIG_FILES etc/apache/icingaweb.conf" ;;
-    "public/index.php") CONFIG_FILES="$CONFIG_FILES public/index.php" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac

@@ -107,6 +107,13 @@ if (path === null) {
             'password'  :   pass
         };
     };
+
+    exports.performLogin = function() {
+        casper.open("/authentication/logou", function() {
+            this.fill('form#login', icinga.getCredentials());
+            this.click('form#login input#submit');
+        });
+    };
 })();
 
 

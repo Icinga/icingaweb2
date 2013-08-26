@@ -154,13 +154,13 @@ AC_ARG_WITH([ldap_port],
 AC_ARG_WITH([ldap_binddn],
     AS_HELP_STRING([--with-ldap-binddn=DN], [dn to use for retrieving user information via ldap (default cn=admin, cn=config)]),
     ldap_binddn=$withval,
-    ldap_binddn=["cn=Manager, ou=icinga, ou=org"]
+    ldap_binddn=["cn=admin,cn=config"]
 )
 
 AC_ARG_WITH([ldap_bindpass],
     AS_HELP_STRING([--with-ldap-bindpass=PASS], [password to use for retrieving user information via ldap (default admin)]),
     ldap_bindpass=$withval,
-    ldap_bindpass=["secret"]
+    ldap_bindpass=["admin"]
 )
 
 AC_ARG_WITH([ldap_rootdn],
@@ -483,7 +483,6 @@ AC_CONFIG_FILES([
     config/resources.ini
     config/modules/monitoring/backends.ini
     etc/apache/icingaweb.conf
-    public/index.php
 ])
 
 #
