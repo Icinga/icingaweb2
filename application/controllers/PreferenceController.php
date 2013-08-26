@@ -101,6 +101,7 @@ class PreferenceController extends BasePreferenceController
                 $this->view->exceptionMessage = $e->getMessage();
             }
         }
+
         $this->view->form = $form;
     }
 }
