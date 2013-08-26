@@ -31,13 +31,15 @@ namespace Icinga\Authentication;
 interface UserBackend
 {
     /**
-     * Creates a new object
+     * Create a userbackend from the given configuration or resource
+     *
      * @param $config
      */
     public function __construct($config);
 
     /**
      * Test if the username exists
+     *
      * @param Credentials $credentials
      * @return boolean
      */
@@ -45,8 +47,16 @@ interface UserBackend
 
     /**
      * Authenticate
+     *
      * @param Credentials $credentials
      * @return User
      */
     public function authenticate(Credentials $credentials);
+
+    /**
+     * Get the number of users available through this backend
+     *
+     * @return int
+     */
+    public function getUserCount();
 }

@@ -29,7 +29,7 @@
 
 namespace Icinga\Authentication\Backend;
 
-use Zend_Db;
+use \Zend_Db;
 use \Icinga\User;
 use \Icinga\Authentication\UserBackend;
 use \Icinga\Authentication\Credentials;
@@ -81,9 +81,7 @@ class DbUserBackend implements UserBackend
     {
         $this->db = $database;
 
-        /*
-         * Test if the connection is available
-         */
+        // Test if the connection is available
         $this->db->getConnection();
     }
 
@@ -206,5 +204,13 @@ class DbUserBackend implements UserBackend
             $resultRow->{self::USER_NAME_COLUMN}
         );
         return $usr;
+    }
+
+    public function getUserCount()
+    {
+
+        $this->db->getConnection();
+        $query = $this->db->select()->from($this->userTable, 'COUNT(*) as count')->query();
+        return $query->fetch()->count;
     }
 }
