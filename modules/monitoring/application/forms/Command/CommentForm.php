@@ -28,7 +28,6 @@
 
 namespace Monitoring\Form\Command;
 
-use \Icinga\Web\Form\Element\Note;
 use \Icinga\Protocol\Commandpipe\Comment;
 
 /**
@@ -41,14 +40,7 @@ class CommentForm extends CommandForm
      */
     protected function create()
     {
-        $this->addElement(
-            new Note(
-                array(
-                    'name'  => 'commanddescription',
-                    'value' => t('This command is used to add a comment to hosts or services.')
-                )
-            )
-        );
+        $this->addNote(t('This command is used to add a comment to hosts or services.'));
 
         $this->addElement($this->createAuthorField());
 
@@ -58,18 +50,11 @@ class CommentForm extends CommandForm
             array(
                 'label'    => t('Comment'),
                 'rows'     => 4,
-                'required' => true
-            )
-        );
-        $this->addElement(
-            new Note(
-                array(
-                    'name'  => 'commentnote',
-                    'value' => t(
-                        'If you work with other administrators, you may find it useful to share information '
-                        . 'about a host or service that is having problems if more than one of you may be working on '
-                        . 'it. Make sure you enter a brief description of what you are doing.'
-                    )
+                'required' => true,
+                'helptext' => t(
+                    'If you work with other administrators, you may find it useful to share information '
+                    . 'about a host or service that is having problems if more than one of you may be working on '
+                    . 'it. Make sure you enter a brief description of what you are doing.'
                 )
             )
         );
@@ -78,18 +63,11 @@ class CommentForm extends CommandForm
             'checkbox',
             'persistent',
             array(
-                'label' => t('Persistent'),
-                'value' => true
-            )
-        );
-        $this->addElement(
-            new Note(
-                array(
-                    'name'  => 'persistentnote',
-                    'value' => t(
-                        'If you uncheck this option, the comment will automatically be deleted the next time '
-                        . 'Icinga is restarted.'
-                    )
+                'label'    => t('Persistent'),
+                'value'    => true,
+                'helptext' => t(
+                    'If you uncheck this option, the comment will automatically be deleted the next time '
+                    . 'Icinga is restarted.'
                 )
             )
         );

@@ -29,7 +29,6 @@
 namespace Monitoring\Form\Command;
 
 use \Icinga\Web\Form\Element\DateTimePicker;
-use \Icinga\Web\Form\Element\Note;
 use \Icinga\Protocol\Commandpipe\Acknowledgement;
 use \Icinga\Protocol\Commandpipe\Comment;
 use \Icinga\Util\DateTimeFactory;
@@ -44,16 +43,11 @@ class AcknowledgeForm extends CommandForm
      */
     protected function create()
     {
-        $this->addElement(
-            new Note(
-                array(
-                    'name'  => 'commanddescription',
-                    'value' => t(
-                        'This command is used to acknowledge host or service problems. When a problem is '
-                        . 'acknowledged, future notifications about problems are temporarily disabled until the '
-                        . 'host/service changes from its current state.'
-                    )
-                )
+        $this->addNote(
+            t(
+                'This command is used to acknowledge host or service problems. When a problem is '
+                . 'acknowledged, future notifications about problems are temporarily disabled until the '
+                . 'host/service changes from its current state.'
             )
         );
 
@@ -65,18 +59,11 @@ class AcknowledgeForm extends CommandForm
             array(
                 'label'     => t('Comment'),
                 'rows'      => 4,
-                'required'  => true
-            )
-        );
-        $this->addElement(
-            new Note(
-                array(
-                    'name'  => 'commentnote',
-                    'value' => t(
-                        ' If you work with other administrators you may find it useful to share information '
-                        . 'about a host or service that is having problems if more than one of you may be working on '
-                        . 'it. Make sure you enter a brief description of what you are doing.'
-                    )
+                'required'  => true,
+                'helptext'  => t(
+                    ' If you work with other administrators you may find it useful to share information '
+                    . 'about a host or service that is having problems if more than one of you may be working on '
+                    . 'it. Make sure you enter a brief description of what you are doing.'
                 )
             )
         );
@@ -85,18 +72,11 @@ class AcknowledgeForm extends CommandForm
             'checkbox',
             'persistent',
             array(
-                'label' => t('Persistent Comment'),
-                'value' => false
-            )
-        );
-        $this->addElement(
-            new Note(
-                array(
-                    'name'  => 'persistentnote',
-                    'value' => t(
-                        'If you would like the comment to remain even when the acknowledgement is removed, '
-                        . 'check this option.'
-                    )
+                'label'    => t('Persistent Comment'),
+                'value'    => false,
+                'helptext' => t(
+                    'If you would like the comment to remain even when the acknowledgement is removed, '
+                    . 'check this option.'
                 )
             )
         );
@@ -105,34 +85,21 @@ class AcknowledgeForm extends CommandForm
             'checkbox',
             'expire',
             array(
-                'label' => t('Use Expire Time')
+                'label'    => t('Use Expire Time'),
+                'helptext' => t('If the acknowledgement should expire, check this option.')
             )
         );
         $this->enableAutoSubmit(array('expire'));
-        $this->addElement(
-            new Note(
-                array(
-                    'name'  => 'expirenote',
-                    'value' => t('If the acknowledgement should expire, check this option.')
-                )
-            )
-        );
+
         if ($this->getRequest()->getPost('expire', '0') === '1') {
             $now = DateTimeFactory::create();
             $this->addElement(
                 new DateTimePicker(
                     array(
-                        'name'  => 'expiretime',
-                        'label' => t('Expire Time'),
-                        'value' => $now->getTimestamp() + 3600
-                    )
-                )
-            );
-            $this->addElement(
-                new Note(
-                    array(
-                        'name'  => 'expiretimenote',
-                        'value' => t(
+                        'name'     => 'expiretime',
+                        'label'    => t('Expire Time'),
+                        'value'    => $now->getTimestamp() + 3600,
+                        'helptext' => t(
                             'Enter the expire date/time for this acknowledgement here. Icinga will '
                             . ' delete the acknowledgement after this date expired.'
                         )
@@ -145,18 +112,11 @@ class AcknowledgeForm extends CommandForm
             'checkbox',
             'sticky',
             array(
-                'label' => t('Sticky Acknowledgement'),
-                'value' => true
-            )
-        );
-        $this->addElement(
-            new Note(
-                array(
-                    'name'  => 'stickynote',
-                    'value' => t(
-                        'If you want the acknowledgement to disable notifications until the host/service '
-                        . 'recovers, check this option.'
-                    )
+                'label'    => t('Sticky Acknowledgement'),
+                'value'    => true,
+                'helptext' => t(
+                    'If you want the acknowledgement to disable notifications until the host/service '
+                    . 'recovers, check this option.'
                 )
             )
         );
@@ -165,18 +125,11 @@ class AcknowledgeForm extends CommandForm
             'checkbox',
             'notify',
             array(
-                'label' => t('Send Notification'),
-                'value' => true
-            )
-        );
-        $this->addElement(
-            new Note(
-                array(
-                    'name'  => 'sendnotificationnote',
-                    'value' => t(
-                        'If you do not want an acknowledgement notification to be sent out to the appropriate '
-                        . 'contacts, uncheck this option.'
-                    )
+                'label'    => t('Send Notification'),
+                'value'    => true,
+                'helptext' => t(
+                    'If you do not want an acknowledgement notification to be sent out to the appropriate '
+                    . 'contacts, uncheck this option.'
                 )
             )
         );

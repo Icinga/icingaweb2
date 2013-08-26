@@ -33,6 +33,7 @@ use \Zend_View_Interface;
 use \Icinga\Exception\ProgrammingError;
 use \Icinga\Web\Form\Decorator\HelpText;
 use \Icinga\Web\Form\InvalidCSRFTokenException;
+use \Icinga\Web\Form\Element\Note;
 
 /**
  * Base class for forms providing CSRF protection, confirmation logic and auto submission
@@ -93,6 +94,15 @@ abstract class Form extends Zend_Form
      * @var string
      */
     private $cancelLabel;
+
+    /**
+     * Last used note-id
+     *
+     * Helper to generate unique names for note elements
+     *
+     * @var int
+     */
+    private $last_note_id = 0;
 
     /**
      * Getter for the session ID
@@ -257,6 +267,29 @@ abstract class Form extends Zend_Form
             )
         );
         $this->addElement($submitButton);
+    }
+
+    /**
+     * Add message to form
+     *
+     * @param string $message     The message to be displayed
+     * @param int    $headingType Whether it should be displayed as heading (1-6) or not (null)
+     */
+    public function addNote($message, $headingType = null)
+    {
+        $this->addElement(
+            new Note(
+                array(
+                    'escape' => $headingType === null ? false : true,
+                    'name'   => sprintf('note_%s', $this->last_note_id++),
+                    'value'  => $headingType === null ? $message : sprintf(
+                        '<h%1$s>%2$s</h%1$s>',
+                        $headingType,
+                        $message
+                    )
+                )
+            )
+        );
     }
 
     /**
