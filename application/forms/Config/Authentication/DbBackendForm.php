@@ -29,6 +29,7 @@
 
 namespace Icinga\Form\Config\Authentication;
 
+use Icinga\Authentication\Backend\DbUserBackend;
 use \Zend_Config;
 use \Icinga\Application\Config as IcingaConfig;
 use \Icinga\Application\Icinga;
@@ -117,5 +118,10 @@ class DbBackendForm extends BaseBackendForm
         return array(
             $section => $cfg
         );
+    }
+
+    public function validateAuthenticationBackend()
+    {
+        return true;
     }
 }

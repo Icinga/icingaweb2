@@ -37,24 +37,28 @@ class Config extends Zend_Config_Ini
 {
     /**
      * Configuration directory where ALL (application and module) configuration is located
+     *
      * @var string
      */
     public static $configDir;
 
     /**
      * The INI file this configuration has been loaded from
+     *
      * @var string
      */
     private $configFile;
 
     /**
      * Application config instances per file
+     *
      * @var array
      */
     protected static $app = array();
 
     /**
      * Module config instances per file
+     *
      * @var array
      */
     protected static $modules = array();
@@ -62,10 +66,10 @@ class Config extends Zend_Config_Ini
     /**
      * Load configuration from the config file $filename
      *
+     * @param   string      $filename       The filename to parse
+
      * @see     Zend_Config_Ini::__construct
-     *
-     * @param   string      $filename
-     * @throws  Exception
+     * @throws  Exception                   When the file can't be read
      */
     public function __construct($filename)
     {
@@ -83,12 +87,15 @@ class Config extends Zend_Config_Ini
     /**
      * Retrieve a application config instance
      *
-     * @param   string  $configname
-     * @return  mixed
+     * @param   string  $configname     The configuration name (without ini suffix) to read and return
+     * @param   bool    $fromDisk       When set true, the configuration will be read from the disk, even
+     *                                  if it already has been read
+     *
+     * @return  Config                  The configuration object that has been requested
      */
-    public static function app($configname = 'config')
+    public static function app($configname = 'config', $fromDisk = false)
     {
-        if (!isset(self::$app[$configname])) {
+        if (!isset(self::$app[$configname]) || $fromDisk) {
             $filename = self::$configDir . '/' . $configname . '.ini';
             self::$app[$configname] = new Config(realpath($filename));
         }

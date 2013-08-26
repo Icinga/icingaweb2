@@ -356,8 +356,6 @@ class Web extends ApplicationBootstrap
         $view->setView(new View());
 
         $view->view->addHelperPath($this->getApplicationDir('/views/helpers'));
-        // TODO: find out how to avoid this additional helper path:
-        $view->view->addHelperPath($this->getApplicationDir('/views/helpers/layout'));
 
         $view->view->setEncoding('UTF-8');
         $view->view->headTitle()->prepend(

@@ -130,10 +130,62 @@ abstract class BaseBackendForm extends Form
     }
 
     /**
+     * Add a forcebox at the beginning of the form which allows to skip logic connection validation
+     *
+     */
+    private function addForceCreationCheckbox() {
+        $checkbox = new \Zend_Form_Element_Checkbox(
+            array(
+                'name'      =>  'backend_force_creation',
+                'label'     =>  'Force Changes',
+                'helptext'  =>  'Check this box to enforce changes without connectivity validation',
+                'order'     =>  0
+            )
+        );
+        $checkbox->addDecorator(new HelpText());
+        $this->addElement($checkbox);
+    }
+
+    /**
+     * Validate this form with the Zend validation mechanismn and perform a logic validation of the connection.
+     *
+     * If logic validation fails, the 'backend_force_creation' checkbox is prepended to the form to allow users to
+     * skip the logic connection validation.
+     *
+     * @param array $data       The form input to validate
+     *
+     * @return bool             True when validation succeeded, false if not
+     */
+    public function isValid($data)
+    {
+        if (!parent::isValid($data)) {
+            return false;
+        }
+        if ($this->getRequest()->getPost('backend_force_creation')) {
+            return true;
+        }
+        if(!$this->validateAuthenticationBackend()) {
+            $this->addForceCreationCheckbox();
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * Return an array containing all sections defined by this form as the key and all settings
      * as an key-value sub-array
      *
      * @return array
      */
     abstract public function getConfig();
+
+    /**
+     * Validate the configuration state of this backend with the concrete authentication backend.
+     *
+     * An implementation should not throw any exception, but use the add/setErrorMessages method of
+     * Zend_Form. If the 'backend_force_creation' checkbox is set, this method won't be called.
+     *
+     * @return bool         True when validation succeeded, otherwise false
+     */
+    abstract public function validateAuthenticationBackend();
 }

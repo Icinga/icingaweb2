@@ -28,10 +28,13 @@
 
 namespace Icinga\Form\Config\Authentication;
 
+use \Icinga\Authentication\Backend\LdapUserBackend;
+use \Exception;
 use \Zend_Config;
 use \Icinga\Application\Config as IcingaConfig;
 use \Icinga\Application\Icinga;
 use \Icinga\Application\Logger;
+use \Icinga\Web\Form\Decorator\HelpText;
 use \Icinga\Application\DbAdapterFactory;
 use \Icinga\Web\Form;
 
@@ -133,6 +136,7 @@ class LdapBackendForm extends BaseBackendForm
         $this->setSubmitLabel('{{SAVE_ICON}} Save Backend');
     }
 
+
     /**
      * Return the ldap authentication backend configuration for this form
      *
@@ -159,5 +163,29 @@ class LdapBackendForm extends BaseBackendForm
         return array(
             $section => $cfg
         );
+    }
+
+
+
+    public function validateAuthenticationBackend()
+    {
+        try {
+            $cfg = $this->getConfig();
+            $testConn = new LdapUserBackend(
+                new Zend_Config($cfg[$this->getValue('backend_' . $this->filterName($this->getBackendName()) . '_name')])
+            );
+
+            if ($testConn->getUserCount() === 0) {
+                throw new Exception('No Users Found On Directory Server');
+            }
+        } catch(Exception $exc) {
+
+            $this->addErrorMessage(
+                'Connection Validation Failed:'.
+                $exc->getMessage()
+            );
+            return false;
+        }
+        return true;
     }
 }
