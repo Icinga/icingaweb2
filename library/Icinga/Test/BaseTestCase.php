@@ -120,6 +120,23 @@ class BaseTestCase extends Zend_Test_PHPUnit_ControllerTestCase implements DbTes
     );
 
     /**
+     * Constructs a test case with the given name.
+     *
+     * @param   string $name
+     * @param   array  $data
+     * @param   string $dataName
+     * @see     PHPUnit_Framework_TestCase::__construct
+     */
+    public function __construct($name = null, array $data = array(), $dataName = '')
+    {
+        parent::__construct($name, $data, $dataName);
+
+        $tz = @date_default_timezone_get();
+
+        date_default_timezone_set('UTC');
+    }
+
+    /**
      * Setup test path environment
      *
      * @throws RuntimeException
@@ -318,11 +335,13 @@ class BaseTestCase extends Zend_Test_PHPUnit_ControllerTestCase implements DbTes
     public function requireFormLibraries()
     {
         // @codingStandardsIgnoreStart
-
         require_once 'Zend/Form/Decorator/Abstract.php';
         require_once 'Zend/Validate/Abstract.php';
         require_once 'Zend/Form/Element/Xhtml.php';
+        require_once 'Zend/Form/Element/Text.php';
+        require_once 'Zend/Form/Element/Submit.php';
         require_once 'Zend/Form.php';
+        require_once 'Zend/View.php';
 
         require_once self::$libDir . '/Web/Form/InvalidCSRFTokenException.php';
 

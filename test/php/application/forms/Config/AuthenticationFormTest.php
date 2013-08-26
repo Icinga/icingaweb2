@@ -28,16 +28,23 @@
 
 namespace Test\Icinga\Form\Config;
 
+// @codingStandardsIgnoreStart
+require_once realpath(__DIR__ . '/../../../../../library/Icinga/Test/BaseTestCase.php');
+// @codingStandardsIgnoreEnd
 
-require_once('Zend/Config.php');
-require_once('Zend/Config/Ini.php');
-require_once(realpath('library/Icinga/Web/Form/BaseFormTest.php'));
-require_once(realpath('../../application/forms/Config/AuthenticationForm.php'));
-require_once(realpath('../../application/forms/Config/Authentication/BaseBackendForm.php'));
-require_once(realpath('../../application/forms/Config/Authentication/DbBackendForm.php'));
-require_once(realpath('../../application/forms/Config/Authentication/LdapBackendForm.php'));
+use Icinga\Test\BaseTestCase;
 
-use \Test\Icinga\Web\Form\BaseFormTest;
+// @codingStandardsIgnoreStart
+require_once 'Zend/Form.php';
+require_once 'Zend/Config.php';
+require_once 'Zend/Config/Ini.php';
+require_once BaseTestCase::$libDir . '/Web/Form.php';
+require_once BaseTestCase::$appDir . '/forms/Config/AuthenticationForm.php';
+require_once BaseTestCase::$appDir . '/forms/Config/Authentication/BaseBackendForm.php';
+require_once BaseTestCase::$appDir . '/forms/Config/Authentication/DbBackendForm.php';
+require_once BaseTestCase::$appDir . '/forms/Config/Authentication/LdapBackendForm.php';
+// @codingStandardsIgnoreEnd
+
 use \Icinga\Web\Form;
 use \DOMDocument;
 use \Zend_Config;
@@ -47,7 +54,7 @@ use \Zend_View;
  * Test for the authentication provider form
  *
  */
-class AuthenticationFormTest extends \Test\Icinga\Web\Form\BaseFormTest
+class AuthenticationFormTest extends BaseTestCase
 {
 
     /**
@@ -84,8 +91,8 @@ class AuthenticationFormTest extends \Test\Icinga\Web\Form\BaseFormTest
      */
     public function testLdapProvider()
     {
-        date_default_timezone_set('UTC');
-        $form = $this->getRequestForm(array(), 'Icinga\Form\Config\AuthenticationForm');
+        $this->requireFormLibraries();
+        $form = $this->createForm('Icinga\Form\Config\AuthenticationForm');
         $config = new Zend_Config(
             array(
                 'test-ldap' => array(
@@ -121,9 +128,10 @@ class AuthenticationFormTest extends \Test\Icinga\Web\Form\BaseFormTest
      * Test the database provider form population from config
      *
      */
-    public function testDbProvider() {
-        date_default_timezone_set('UTC');
-        $form = $this->getRequestForm(array(), 'Icinga\Form\Config\AuthenticationForm');
+    public function testDbProvider()
+    {
+        $this->requireFormLibraries();
+        $form = $this->createForm('Icinga\Form\Config\AuthenticationForm');
         $config = new Zend_Config(
             array(
                 'test-db' => array(
@@ -164,10 +172,12 @@ class AuthenticationFormTest extends \Test\Icinga\Web\Form\BaseFormTest
      */
     public function testShowModifiedOrder()
     {
-        date_default_timezone_set('UTC');
-        $form = $this->getRequestForm(
-            array('priority' => 'test-ldap,test-db'),
-            'Icinga\Form\Config\AuthenticationForm'
+        $this->requireFormLibraries();
+        $form = $this->createForm(
+            'Icinga\Form\Config\AuthenticationForm',
+            array(
+                'priority' => 'test-ldap,test-db'
+            )
         );
         $config = $this->getTestConfig();
         $form->setResources(
@@ -192,8 +202,9 @@ class AuthenticationFormTest extends \Test\Icinga\Web\Form\BaseFormTest
      */
     public function testConfigurationCreation()
     {
-        date_default_timezone_set('UTC');
-        $form = $this->getRequestForm(
+        $this->requireFormLibraries();
+        $form = $this->createForm(
+            'Icinga\Form\Config\AuthenticationForm',
             array(
                 'priority'                              =>  'test-ldap,test-db',
                 'backend_testdb_resource'               =>  'db_resource_2',
@@ -202,10 +213,8 @@ class AuthenticationFormTest extends \Test\Icinga\Web\Form\BaseFormTest
                 'backend_testldap_bind_dn'              =>  'modified_bind_dn',
                 'backend_testldap_bind_pw'              =>  'modified_bind_pw',
                 'backend_testldap_user_class'           =>  'modified_user_class',
-                'backend_testldap_user_name_attribute'  =>  'modified_user_name_attribute',
-                'backend_testdb_resource'               =>  'db_resource_2'
-            ),
-            'Icinga\Form\Config\AuthenticationForm'
+                'backend_testldap_user_name_attribute'  =>  'modified_user_name_attribute'
+            )
         );
 
         $form->setResources(
@@ -282,8 +291,9 @@ class AuthenticationFormTest extends \Test\Icinga\Web\Form\BaseFormTest
      */
     public function testBackendRemoval()
     {
-        date_default_timezone_set('UTC');
-        $form = $this->getRequestForm(
+        $this->requireFormLibraries();
+        $form = $this->createForm(
+            'Icinga\Form\Config\AuthenticationForm',
             array(
                 'priority'                              =>  'test-ldap,test-db',
                 'backend_testdb_resource'               =>  'db_resource_2',
@@ -293,10 +303,8 @@ class AuthenticationFormTest extends \Test\Icinga\Web\Form\BaseFormTest
                 'backend_testldap_bind_dn'              =>  'modified_bind_dn',
                 'backend_testldap_bind_pw'              =>  'modified_bind_pw',
                 'backend_testldap_user_class'           =>  'modified_user_class',
-                'backend_testldap_user_name_attribute'  =>  'modified_user_name_attribute',
-                'backend_testdb_resource'               =>  'db_resource_2'
-            ),
-            'Icinga\Form\Config\AuthenticationForm'
+                'backend_testldap_user_name_attribute'  =>  'modified_user_name_attribute'
+            )
         );
 
         $form->setResources(

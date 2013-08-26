@@ -28,29 +28,34 @@
 
 namespace Test\Icinga\Form\Config;
 
+// @codingStandardsIgnoreStart
+require_once realpath(__DIR__ . '/../../../../../library/Icinga/Test/BaseTestCase.php');
+// @codingStandardsIgnoreEnd
 
-require_once('Zend/Config.php');
-require_once('Zend/Config/Ini.php');
-require_once(realpath('library/Icinga/Web/Form/BaseFormTest.php'));
-require_once(realpath('../../application/forms/Config/GeneralForm.php'));
+use Icinga\Test\BaseTestCase;
+// @codingStandardsIgnoreStart
+require_once 'Zend/Form.php';
+require_once 'Zend/Config.php';
+require_once 'Zend/Config/Ini.php';
+require_once BaseTestCase::$libDir . '/Web/Form.php';
+require_once BaseTestCase::$appDir . '/forms/Config/GeneralForm.php';
+// @codingStandardsIgnoreEnd
 
-use Test\Icinga\Web\Form\BaseFormTest;
 use \Icinga\Web\Form;
 use \DOMDocument;
 use \Zend_Config;
 use \Zend_View;
 
-class GeneralFormTest extends \Test\Icinga\Web\Form\BaseFormTest
+class GeneralFormTest extends BaseTestCase
 {
-
     private function isHiddenElement($value, $htmlString)
     {
         $html = new DOMDocument();
         $html->loadHTML($htmlString);
         $hidden = $html->getElementsByTagName('noscript');
 
-        foreach($hidden as $node) {
-            foreach($node->childNodes as $child) {
+        foreach ($hidden as $node) {
+            foreach ($node->childNodes as $child) {
                 if ($child->hasAttributes() === false) {
                     continue;
                 }
@@ -66,8 +71,8 @@ class GeneralFormTest extends \Test\Icinga\Web\Form\BaseFormTest
      */
     public function testCorrectFieldPopulation()
     {
-        date_default_timezone_set('UTC');
-        $form = $this->getRequestForm(array(), 'Icinga\Form\Config\GeneralForm');
+        $this->requireFormLibraries();
+        $form = $this->createForm('Icinga\Form\Config\GeneralForm');
         $form->setConfiguration(
             new Zend_Config(
                 array(
@@ -95,23 +100,54 @@ class GeneralFormTest extends \Test\Icinga\Web\Form\BaseFormTest
             )
         );
         $form->setConfigDir('/tmp');
-        $view = new Zend_View();
 
         $form->create();
-        $this->assertEquals(1, $form->getValue('environment'), 'Asserting the checkbox for devlopment being set to true');
-        $this->assertEquals('Europe/Berlin', $form->getValue('timezone'), 'Asserting the correct timezone to be displayed');
-        $this->assertEquals('/my/module/path', $form->getValue('module_folder'), 'Asserting the correct module folder to be set');
-        $this->assertEquals('d-m/Y', $form->getValue('date_format'), 'Asserting the correct data format to be set');
-        $this->assertEquals('A:i', $form->getValue('time_format'), 'Asserting the correct time to be set');
-        $this->assertEquals('ini', $form->getValue('preferences_type'), 'Asserting the correct preference type to be set');
-        $this->assertEquals('./my/path', $form->getValue('preferences_ini_path'), 'Asserting the correct ini path to be set');
-        $this->assertEquals('', $form->getValue('preferences_db_resource'), 'Asserting the database resource not to be set');
+        $this->assertEquals(
+            1,
+            $form->getValue('environment'),
+            'Asserting the checkbox for devlopment being set to true'
+        );
+        $this->assertEquals(
+            'Europe/Berlin',
+            $form->getValue('timezone'),
+            'Asserting the correct timezone to be displayed'
+        );
+        $this->assertEquals(
+            '/my/module/path',
+            $form->getValue('module_folder'),
+            'Asserting the correct module folder to be set'
+        );
+        $this->assertEquals(
+            'd-m/Y',
+            $form->getValue('date_format'),
+            'Asserting the correct data format to be set'
+        );
+        $this->assertEquals(
+            'A:i',
+            $form->getValue('time_format'),
+            'Asserting the correct time to be set'
+        );
+        $this->assertEquals(
+            'ini',
+            $form->getValue('preferences_type'),
+            'Asserting the correct preference type to be set'
+        );
+        $this->assertEquals(
+            './my/path',
+            $form->getValue('preferences_ini_path'),
+            'Asserting the correct ini path to be set'
+        );
+        $this->assertEquals(
+            '',
+            $form->getValue('preferences_db_resource'),
+            'Asserting the database resource not to be set'
+        );
     }
 
     public function testCorrectConditionalIniFieldRendering()
     {
-        date_default_timezone_set('UTC');
-        $form = $this->getRequestForm(array(), 'Icinga\Form\Config\GeneralForm');
+        $this->requireFormLibraries();
+        $form = $this->createForm('Icinga\Form\Config\GeneralForm');
         $form->setConfiguration(
             new Zend_Config(
                 array(
@@ -146,8 +182,8 @@ class GeneralFormTest extends \Test\Icinga\Web\Form\BaseFormTest
 
     public function testCorrectConditionalDbFieldRendering()
     {
-        date_default_timezone_set('UTC');
-        $form = $this->getRequestForm(array(), 'Icinga\Form\Config\GeneralForm');
+        $this->requireFormLibraries();
+        $form = $this->createForm('Icinga\Form\Config\GeneralForm');
         $form->setConfiguration(
             new Zend_Config(
                 array(
