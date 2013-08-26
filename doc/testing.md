@@ -1,14 +1,13 @@
-Testing guide
-=============
+# Testing guide
 
-Testing controllers for compatibility with different monitoring datasources
----------------------------------------------------------------------------
+
+## Testing controllers for compatibility with different monitoring datasources
+
 
 When it comes to writing controllers, it is important that your actions and queries work on every monitoring
 datasource supported by icinga2 web. For this, the monitoring module provides a test library for controllers.
 
-The database setup for every testcase
---------------------------------------
+## The database setup for every testcase
 
 When testing PostgreSQL and MySQL databases, the test library (normally) executes the following test procedure for every
 test case:
@@ -21,8 +20,7 @@ test case:
 If anything goes wrong during this procedure, the test will be skipped (because maybe you don't have a pgsql database, but
 want to test mysql, for example)
 
-Setting up a test user and database in MySQL
---------------------------------------------
+## Setting up a test user and database in MySQL
 
 In MySQL, it's best to create a user icinga_unittest@localhost, a database icinga_unittest and grant all privileges on
 this database:
@@ -34,8 +32,7 @@ this database:
     mysql> FLUSH PRIVILEGES;
     mysql> quit
 
-Setting up a test user and database in PostgreSQL
--------------------------------------------------
+## Setting up a test user and database in PostgreSQL
 
 In PostgreSQL, you have to modify the pg_hba database if you don't have password authentication set up (which often is
 the case). In this setup the icinga_unittest user is set to trust authentication on localhost, which means that no
@@ -48,9 +45,69 @@ password is queried when connecting from the local machine:
     postgres=#  \q
     bash$       createlang plpgsql icinga;
 
+## Writing tests for icinga
 
-Writing tests for controllers
------------------------------
+Icinga has it's own base test which let you simple require libraries, testing database and form. The class resides in
+library/Icinga/Test. If you write test, just subclass BaseTestCase.
+
+### Default test header
+
+Before write a test you should inclide the base test first
+
+    // @codingStandardsIgnoreStart
+    require_once realpath(__DIR__ . '/../../../../../library/Icinga/Test/BaseTestCase.php');
+    // @codingStandardsIgnoreEnd
+
+Now you can simply include dependencies with predefined properties:
+
+    require_once BaseTestCase::$libDir . '/Web/Form.php';
+    require_once BaseTestCase::$appDir . '/forms/Config/AuthenticationForm.php';
+
+BaseTestCase provides static variables for every directory in the project.
+
+### Writing database tests
+
+The base test uses the PHPUnit dataProvider annotation system to create Zend Database Adapters. Typically a
+database test look like this:
+
+        /**
+         * @dataProvider    mysqlDb
+         * @param           Zend_Db_Adapter_PDO_Abstract $mysqlDb
+         */
+        public function testSomethingWithMySql($mysqlDb)
+        {
+            $this->setupDbProvider($mysqlDb); // Drops everything from existing database
+
+             // Load a dump file into database
+             $this->loadSql($mysqlDb, BaseTestCae::$etcDir . '/etc/schema/mydump.mysql.sql');
+
+             // Test your code
+        }
+
+Available data providers are: mysqlDb, pgsqlDb, oracleDb. The test will be skipped if a provider
+could not be initialized.
+
+### Write form tests
+
+BaseTestCase holds method to require form libraries and create form classes based on class names.
+
+        public function testShowModifiedOrder()
+        {
+            $this->requireFormLibraries();
+            $form = $this->createForm(
+                'Icinga\Form\Config\AuthenticationForm',
+                array(
+                    'priority' => 'test-ldap,test-db'
+                )
+            );
+
+            // Testing your code
+        }
+
+The seconds parameter of createForm() can be omitted. You can set initial post request data as
+an array if need it.
+
+## Writing tests for controllers
 
 When writing tests for controllers, you can subclass the MonitoringControllerTest class underneath monitoring/test/php/testlib:
 
