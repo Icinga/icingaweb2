@@ -99,10 +99,10 @@ casper.then(function() {
         this.waitForSelector('div.alert.alert-success', function() {
             this.test.assertExists('div.alert.alert-success', 'Assert a success message to exist');
         }, function() {
-            this.die("Success message for authentication provider tests didn't pop up");
+            this.test.fail("Success message for authentication provider tests didn't pop up");
         });
     }, function() {
-        this.die('No submit button found when expected the "Edit this authentication provider" form');
+        this.test.fail('No submit button found when expected the "Edit this authentication provider" form');
     });
 
 });
@@ -118,7 +118,7 @@ casper.thenOpen('/config/logging', function() {
     this.waitForSelector('div.alert.alert-success', function() {
         this.test.assertExists('div.alert.alert-success', 'Assert a success message to exist');
     }, function() {
-        this.die('No success message popped up when saving logging configuration');
+        this.test.fail('No success message popped up when saving logging configuration');
     });
     this.echo("Submitting authentication form2");
 
