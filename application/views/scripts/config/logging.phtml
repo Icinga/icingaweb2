@@ -2,6 +2,13 @@
 
 <?php $errors = $this->form->getErrorMessages(); ?>
 
+<?php if ($this->successMessage): ?>
+<div class="alert alert-success">
+  <i>{{OK_ICON}}</i>
+  <strong><?= $this->escape($this->successMessage); ?></strong>
+</div>
+<?php endif; ?>
+
 <?php if (!empty($errors)) : ?>
 <div class="alert alert-danger">
   <h4>Errors occured when trying to save the project.</h4>

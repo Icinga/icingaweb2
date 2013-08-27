@@ -101,7 +101,9 @@ class ConfigController extends BaseConfigController
             if (!$this->writeConfigFile($form->getConfig(), 'config'))  {
                 return;
             }
-            $this->redirectNow('/config');
+            $this->view->successMessage = "Config Sucessfully Updated";
+            $form->setConfiguration(IcingaConfig::app(), true);
+
         }
         $this->view->form = $form;
     }
@@ -116,11 +118,11 @@ class ConfigController extends BaseConfigController
         $form->setConfiguration(IcingaConfig::app());
         $form->setRequest($this->_request);
         if ($form->isSubmittedAndValid()) {
-            $config = $form->getConfig();
             if (!$this->writeConfigFile($form->getConfig(), 'config')) {
                 return;
             }
-            $this->redirectNow('/config/logging');
+            $this->view->successMessage = "Config Sucessfully Updated";
+            $form->setConfiguration(IcingaConfig::app(), true);
         }
         $this->view->form = $form;
     }
@@ -141,10 +143,12 @@ class ConfigController extends BaseConfigController
      */
     public function moduleenableAction()
     {
+        $module = $this->_getParam('name');
         $manager = Icinga::app()->getModuleManager();
-        $manager->enableModule($this->_getParam('name'));
-        $manager->loadModule($this->_getParam('name'));
-        $this->redirectNow('config/moduleoverview?_render=body');
+        $manager->enableModule($module);
+        $manager->loadModule($module);
+        $this->view->successMessage = 'Module "' . $module . '" enabled';
+        $this->moduleoverviewAction();
     }
 
     /**
@@ -152,9 +156,11 @@ class ConfigController extends BaseConfigController
      */
     public function moduledisableAction()
     {
+        $module = $this->_getParam('name');
         $manager = Icinga::app()->getModuleManager();
-        $manager->disableModule($this->_getParam('name'));
-        $this->redirectNow('config/moduleoverview?_render=body');
+        $manager->disableModule($module);
+        $this->view->successMessage = 'Module "' . $module . '" disabled';
+        $this->moduleoverviewAction();
     }
 
     /**

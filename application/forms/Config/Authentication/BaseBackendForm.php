@@ -131,10 +131,10 @@ abstract class BaseBackendForm extends Form
     }
 
     /**
-     * Add a forcebox at the beginning of the form which allows to skip logic connection validation
-     *
+     * Add checkbox at the beginning of the form which allows to skip logic connection validation
      */
-    private function addForceCreationCheckbox() {
+    private function addForceCreationCheckbox()
+    {
         $checkbox = new \Zend_Form_Element_Checkbox(
             array(
                 'name'      =>  'backend_force_creation',
@@ -148,7 +148,7 @@ abstract class BaseBackendForm extends Form
     }
 
     /**
-     * Validate this form with the Zend validation mechanismn and perform a logic validation of the connection.
+     * Validate this form with the Zend validation mechanism and perform a logic validation of the connection.
      *
      * If logic validation fails, the 'backend_force_creation' checkbox is prepended to the form to allow users to
      * skip the logic connection validation.
@@ -165,7 +165,7 @@ abstract class BaseBackendForm extends Form
         if ($this->getRequest()->getPost('backend_force_creation')) {
             return true;
         }
-        if(!$this->validateAuthenticationBackend()) {
+        if (!$this->isValidAuthenticationBackend()) {
             $this->addForceCreationCheckbox();
             return false;
         }
@@ -188,5 +188,5 @@ abstract class BaseBackendForm extends Form
      *
      * @return bool         True when validation succeeded, otherwise false
      */
-    abstract public function validateAuthenticationBackend();
+    abstract public function isValidAuthenticationBackend();
 }

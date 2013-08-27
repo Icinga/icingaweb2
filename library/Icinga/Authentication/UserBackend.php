@@ -28,6 +28,9 @@
 
 namespace Icinga\Authentication;
 
+/**
+ * Interface for backends that authenticate users
+ */
 interface UserBackend
 {
     /**

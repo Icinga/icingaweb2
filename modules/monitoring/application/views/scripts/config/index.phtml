@@ -3,6 +3,13 @@
 
 <h3>Monitoring Backends</h3>
 
+<?php if ($this->successMessage): ?>
+<div class="alert alert-success">
+  <i>{{OK_ICON}}</i>
+  <strong><?= $this->escape($this->successMessage); ?></strong>
+</div>
+<?php endif; ?>
+
 <div>
   <a href="<?= Url::fromPath('/monitoring/config/createbackend')->getAbsoluteUrl();?>">
     {{CREATE_ICON}} Create New Monitoring Backend

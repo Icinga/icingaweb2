@@ -206,6 +206,14 @@ class DbUserBackend implements UserBackend
         return $usr;
     }
 
+    /**
+     * Return the number of users in this database connection
+     *
+     * This class is mainly used for determining whether the authentication backend is valid or not
+     *
+     * @return int      The number of users set in this backend
+     * @see UserBackend::getUserCount
+     */
     public function getUserCount()
     {
 

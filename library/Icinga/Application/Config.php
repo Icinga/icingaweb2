@@ -143,10 +143,8 @@ class Config extends Zend_Config_Ini
         }
     }
 
-    public function  getConfigFile()
+    public function getConfigFile()
     {
         return $this->configFile;
     }
-
-
 }

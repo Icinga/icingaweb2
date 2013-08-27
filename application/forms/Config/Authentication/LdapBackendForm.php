@@ -164,20 +164,25 @@ class LdapBackendForm extends BaseBackendForm
         );
     }
 
-
-
-    public function validateAuthenticationBackend()
+    /**
+     * Validate the current configuration by creating a backend and requesting the user count
+     *
+     * @return bool True when the backend is valid, false otherwise
+     * @see BaseBackendForm::isValidAuthenticationBacken
+     */
+    public function isValidAuthenticationBackend()
     {
         try {
             $cfg = $this->getConfig();
+            $backendName = 'backend_' . $this->filterName($this->getBackendName()) . '_name';
             $testConn = new LdapUserBackend(
-                new Zend_Config($cfg[$this->getValue('backend_' . $this->filterName($this->getBackendName()) . '_name')])
+                new Zend_Config($cfg[$this->getValue($backendName)])
             );
 
             if ($testConn->getUserCount() === 0) {
                 throw new Exception('No Users Found On Directory Server');
             }
-        } catch(Exception $exc) {
+        } catch (Exception $exc) {
 
             $this->addErrorMessage(
                 'Connection Validation Failed:'.

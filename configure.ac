@@ -126,7 +126,7 @@ AC_ARG_WITH([internal_db_user],
 AC_ARG_WITH([internal_authentication], 
     AC_HELP_STRING([--with-internal-authentication], [use the internal database for authentication (default: yes)]),
     internal_authentication=yes,
-    internal_authentication=def
+    internal_authentication=yes
 )
 
 AC_ARG_WITH([ldap_authentication], 
@@ -346,7 +346,6 @@ AS_IF([test "x$ido_db_type" = xpgsql], [
 ido_enabled="disable=1" 
 statusdat_enabled="disable=1" 
 livestatus_enabled="disable=1" 
-ldap_enabled="disable=1"
 
 AS_CASE([$icinga_backend],
     ["ido"], [ido_enabled=""],
@@ -354,9 +353,16 @@ AS_CASE([$icinga_backend],
     ["livestatus"], [livestatus_enabled=""],
     [statusdat_enabled=""])
 
+use_ldap_auth=";"
 AS_IF([test "x$ldap_authentication" != xno],
     AC_CHECK_PHP_MODULE([ldap])
-    ldap_enabled=""
+    use_ldap_auth=""
+)
+
+use_internal_auth=";"
+AS_IF([test "x$internal_authentication" != xno],
+    AC_CHECK_PHP_MODULE([ldap])
+    use_internal_auth=""
 )
 
 #
@@ -416,58 +422,9 @@ AC_SUBST(livestatus_socket)
 AC_SUBST(icinga_commandpipe)
 
 # Comment placeholders for toggling backends
-AC_SUBST(livestatus_enabled)
-AC_SUBST(statusdat_enabled)
-AC_SUBST(ido_enabled)
-AC_SUBST(ldap_enabled)
 
-# Internal db setup
-AC_SUBST(internal_db_type)
-AC_SUBST(internal_db_name)
-AC_SUBST(internal_db_host)
-AC_SUBST(internal_db_port)
-AC_SUBST(internal_db_user)
-AC_SUBST(internal_db_pass)
-
-# ldap setup 
-AC_SUBST(ldap_host)
-AC_SUBST(ldap_port)
-AC_SUBST(ldap_rootdn)
-AC_SUBST(ldap_binddn)
-AC_SUBST(ldap_bindpass)
-AC_SUBST(ldap_user_objectclass)
-AC_SUBST(ldap_attribute_basedn)
-AC_SUBST(ldap_attribute_username)
-AC_SUBST(ldap_attribute_password)
-AC_SUBST(ldap_group_objectclass)
-AC_SUBST(ldap_attribute_groupname)
-
-# backend setup
-AC_SUBST(icinga_backend)
-
-# ido backend variables
-AC_SUBST(ido_db_type)
-AC_SUBST(ido_host)
-AC_SUBST(ido_port)
-AC_SUBST(ido_database)
-AC_SUBST(ido_user)
-AC_SUBST(ido_password)
-
-# status.dat backend
-AC_SUBST(statusdat_file)
-AC_SUBST(objects_cache_file)
-
-# livestatus backend
-AC_SUBST(livestatus_socket)
-
-# command pipe
-AC_SUBST(icinga_commandpipe)
-
-# Comment placeholders for toggling backends
-AC_SUBST(livestatus_enabled)
-AC_SUBST(statusdat_enabled)
-AC_SUBST(ido_enabled)
-AC_SUBST(ldap_enabled)
+AC_SUBST(use_ldap_auth)
+AC_SUBST(use_internal_auth)
 
 # Application and installation
 AC_SUBST(PHP)
@@ -483,6 +440,7 @@ AC_CONFIG_FILES([
     config/resources.ini
     config/modules/monitoring/backends.ini
     etc/apache/icingaweb.conf
+    public/.htaccess
 ])
 
 #

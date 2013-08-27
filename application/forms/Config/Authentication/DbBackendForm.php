@@ -120,7 +120,13 @@ class DbBackendForm extends BaseBackendForm
         );
     }
 
-    public function validateAuthenticationBackend()
+    /**
+     * Validate the current configuration by creating a backend and requesting the user count
+     *
+     * @return bool True when the backend is valid, false otherwise
+     * @see BaseBackendForm::isValidAuthenticationBackend
+     */
+    public function isValidAuthenticationBackend()
     {
         try {
             $name = $this->getBackendName();

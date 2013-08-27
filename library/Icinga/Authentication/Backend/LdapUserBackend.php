@@ -120,10 +120,9 @@ class LdapUserBackend implements UserBackend
     public function authenticate(Credentials $credentials)
     {
         if (!$this->connection->testCredentials(
-                $this->connection->fetchDN($this->selectUsername($credentials->getUsername())),
-                $credentials->getPassword()
-            )
-        ) {
+            $this->connection->fetchDN($this->selectUsername($credentials->getUsername())),
+            $credentials->getPassword()
+        )) {
             return false;
         }
         $user = new User($credentials->getUsername());
@@ -131,7 +130,8 @@ class LdapUserBackend implements UserBackend
         return $user;
     }
 
-    public function getUserCount() {
+    public function getUserCount()
+    {
         return $this->connection->count(
             $this->connection->select()->from(
                 $this->config->user_class,

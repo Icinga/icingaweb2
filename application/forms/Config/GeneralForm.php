@@ -322,7 +322,7 @@ class GeneralForm extends Form
         if ($preferences === null) {
             $preferences = new Zend_Config(array());
         }
-
+        $this->setName('form_config_general');
         $this->addDevelopmentCheckbox($global);
         $this->addTimezoneSelection($global);
         $this->addModuleSettings($global);

@@ -162,7 +162,8 @@ class Form extends Zend_Form
      * Add elements to this form (used by extending classes)
      */
     protected function create()
-    {}
+    {
+    }
 
     /**
      * Method called before validation

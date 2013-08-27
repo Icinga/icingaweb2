@@ -13,21 +13,13 @@
 ; be interpreted. Currently only the resource type *db* is available.
 
 
-[icingaweb-pgsql]
+[internal_db]
 type                = db
-db                  = pgsql         ; PostgreSQL
-host                = localhost
-password            = icinga
-username            = icingaweb
-dbname              = icingaweb
-
-[icingaweb-mysql]
-type                = db
-db                  = mysql         ; MySQL
-host                = localhost
-password            = icinga
-username            = icingaweb
-dbname              = icingaweb
+db                  = @internal_db_type@
+host                = @internal_db_host@
+password            = @internal_db_password@
+username            = @internal_db_user@
+dbname              = @internal_db_database@
 
 [ido]
 type                = db

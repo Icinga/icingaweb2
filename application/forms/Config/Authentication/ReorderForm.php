@@ -141,7 +141,7 @@ class ReorderForm extends Form
                 )
             );
         }
-        $this->setAction(Url::fromPath("config/authentication",array())->getAbsoluteUrl());
+        $this->setAction(Url::fromPath("config/authentication", array())->getAbsoluteUrl());
     }
 
     /**
@@ -162,7 +162,7 @@ class ReorderForm extends Form
             if (is_array($value)) {
                 $result += $value;
             } else {
-               $result[$key] = $value;
+                $result[$key] = $value;
             }
         }
         return $result;

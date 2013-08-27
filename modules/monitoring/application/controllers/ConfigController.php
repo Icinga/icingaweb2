@@ -70,6 +70,7 @@ class Monitoring_ConfigController extends BaseConfigController {
     {
         $this->view->backends  = IcingaConfig::module('monitoring', 'backends')->toArray();
         $this->view->instances = IcingaConfig::module('monitoring', 'instances')->toArray();
+        $this->render('index');
     }
 
     /**
@@ -114,11 +115,12 @@ class Monitoring_ConfigController extends BaseConfigController {
             $configArray[$form->getBackendName()] = $form->getConfig();
 
             if ($this->writeConfiguration(new Zend_Config($configArray), 'backends')) {
-                $this->redirectNow('monitoring/config');
+                $this->view->successMessage = 'Backend Creation Succeeded';
+                $this->indexAction();
             } else {
                 $this->render('show-configuration');
-                return;
             }
+            return;
         }
         $this->view->form = $form;
         $this->render('editbackend');
@@ -143,11 +145,12 @@ class Monitoring_ConfigController extends BaseConfigController {
             unset($configArray[$backend]);
 
             if ($this->writeConfiguration(new Zend_Config($configArray), 'backends')) {
-                $this->redirectNow('monitoring/config');
+                $this->view->successMessage = 'Backend "' . $backend . '" Removed';
+                $this->indexAction();
             } else {
                 $this->render('show-configuration');
-                return;
             }
+            return;
         }
 
         $this->view->form = $form;
@@ -174,11 +177,12 @@ class Monitoring_ConfigController extends BaseConfigController {
             unset($configArray[$instance]);
 
             if ($this->writeConfiguration(new Zend_Config($configArray), 'instances')) {
-                $this->redirectNow('monitoring/config');
+                $this->view->successMessage = 'Instance "' . $instance . '" Removed';
+                $this->indexAction();
             } else {
                 $this->render('show-configuration');
-                return;
             }
+            return;
         }
 
         $this->view->form = $form;
@@ -202,7 +206,8 @@ class Monitoring_ConfigController extends BaseConfigController {
             $instanceConfig = IcingaConfig::module('monitoring', 'instances')->toArray();
             $instanceConfig[$instance] = $form->getConfig();
             if ($this->writeConfiguration(new Zend_Config($instanceConfig), 'instances')) {
-                $this->redirectNow('monitoring/config');
+                $this->view->successMessage = 'Instance Modified';
+                $this->indexAction();
             } else {
                 $this->render('show-configuration');
                 return;
@@ -222,11 +227,12 @@ class Monitoring_ConfigController extends BaseConfigController {
             $instanceConfig = IcingaConfig::module('monitoring', 'instances')->toArray();
             $instanceConfig[$form->getInstanceName()] = $form->getConfig()->toArray();
             if ($this->writeConfiguration(new Zend_Config($instanceConfig), 'instances')) {
-                $this->redirectNow('monitoring/config');
+                $this->view->successMessage = 'Instance Creation Succeeded';
+                $this->indexAction();
             } else {
                 $this->render('show-configuration');
-                return;
             }
+            return;
         }
         $this->view->form = $form;
         $this->render('editinstance');

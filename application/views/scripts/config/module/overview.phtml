@@ -8,6 +8,14 @@ $modules = $this->modules->paginate();
 <?= $this->tabs->render($this); ?>
 
 <h3>Installed Modules</h3>
+
+<?php if ($this->successMessage): ?>
+<div class="alert alert-success">
+  <i>{{OK_ICON}}</i>
+  <strong><?= $this->escape($this->successMessage); ?></strong>
+</div>
+<?php endif; ?>
+
 <?= $this->paginationControl($modules, null, null, array(
     'preserve' => $this->preserve
 ));

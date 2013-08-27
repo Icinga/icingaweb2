@@ -122,6 +122,7 @@ class LoggingForm extends Form
      */
     public function create()
     {
+        $this->setName('form_config_logging');
         if ($this->config === null) {
             $this->config = new Zend_Config(array());
         }

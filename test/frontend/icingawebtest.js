@@ -73,15 +73,15 @@ if (path === null) {
 
 
     var startFromBase = function(url, then) {
-        return cstart.call(casper, this.getBaseURL(url), then);
+        return cstart.call(casper, getBaseURL(url), then);
     };
 
     var thenOpenFromBase = function(url, options) {
-        return cthenOpen.apply(casper, [this.getBaseURL(url), options]);
+        return cthenOpen.apply(casper, [getBaseURL(url), options]);
     };
 
     var openFromBase = function(url, options) {
-        return copen.apply(casper, [this.getBaseURL(url), options]);
+        return copen.apply(casper, [getBaseURL(url), options]);
     };
 
     casper.on('remote.message', function(message) {
@@ -109,7 +109,7 @@ if (path === null) {
     };
 
     exports.performLogin = function() {
-        casper.open("/authentication/logou", function() {
+        casper.start("/authentication/login", function() {
             this.fill('form#login', icinga.getCredentials());
             this.click('form#login input#submit');
         });
