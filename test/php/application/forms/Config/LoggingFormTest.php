@@ -28,13 +28,19 @@
 
 namespace Test\Icinga\Form\Config;
 
-require_once('Zend/Config.php');
-require_once('Zend/Config/Ini.php');
-require_once(realpath('library/Icinga/Web/Form/BaseFormTest.php'));
-require_once(realpath('../../application/forms/Config/LoggingForm.php'));
-require_once(realpath('../../library/Icinga/Application/Icinga.php'));
+// @codingStandardsIgnoreStart
+require_once realpath(__DIR__ . '/../../../../../library/Icinga/Test/BaseTestCase.php');
+// @codingStandardsIgnoreEnd
 
-use \Test\Icinga\Web\Form\BaseFormTest;
+use Icinga\Test\BaseTestCase;
+// @codingStandardsIgnoreStart
+require_once 'Zend/Form.php';
+require_once 'Zend/Config.php';
+require_once 'Zend/Config/Ini.php';
+require_once BaseTestCase::$libDir . '/Web/Form.php';
+require_once BaseTestCase::$appDir . '/forms/Config/GeneralForm.php';
+// @codingStandardsIgnoreEnd
+
 use \Icinga\Web\Form;
 use \Zend_Config;
 
@@ -42,7 +48,7 @@ use \Zend_Config;
  * Test for the authentication provider form
  *
  */
-class LoggingFormTest extends BaseFormTest
+class LoggingFormTest extends BaseTestCase
 {
 
     /**
@@ -51,8 +57,8 @@ class LoggingFormTest extends BaseFormTest
      */
     public function testLoggingFormPopulation()
     {
-        date_default_timezone_set('UTC');
-        $form = $this->getRequestForm(array(), 'Icinga\Form\Config\LoggingForm');
+        $this->requireFormLibraries();
+        $form = $this->createForm('Icinga\Form\Config\LoggingForm');
         $config = new Zend_Config(
             array(
                 'logging' => array(
@@ -76,9 +82,12 @@ class LoggingFormTest extends BaseFormTest
             '0',
             $form->getValue('logging_app_verbose'),
             'Asserting the logging verbose tick not to be set'
-
         );
-        $this->assertEquals('/some/path', $form->getValue('logging_app_target'), 'Asserting the logging path to be set');
+        $this->assertEquals(
+            '/some/path',
+            $form->getValue('logging_app_target'),
+            'Asserting the logging path to be set'
+        );
         $this->assertEquals(
             1,
             $form->getValue('logging_debug_enable'),
@@ -97,16 +106,16 @@ class LoggingFormTest extends BaseFormTest
      */
     public function testCorrectConfigCreation()
     {
-        date_default_timezone_set('UTC');
-        $form = $this->getRequestForm(
+        $this->requireFormLibraries();
+        $form = $this->createForm(
+            'Icinga\Form\Config\LoggingForm',
             array(
                 'logging_enable'        => 1,
                 'logging_app_target'    => 'some/new/target',
                 'logging_app_verbose'   => 1,
                 'logging_debug_enable'  => 0,
                 'logging_debug_target'  => 'a/new/target'
-            ),
-            'Icinga\Form\Config\LoggingForm'
+            )
         );
         $baseConfig = new Zend_Config(
             array(

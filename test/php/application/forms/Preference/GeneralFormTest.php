@@ -28,26 +28,30 @@
 
 namespace Test\Icinga\Form\Preference;
 
+// @codingStandardsIgnoreStart
+require_once realpath(__DIR__ . '/../../../../../library/Icinga/Test/BaseTestCase.php');
+// @codingStandardsIgnoreEnd
 
-require_once('Zend/Config.php');
-require_once('Zend/Config/Ini.php');
-require_once('Zend/Form/Element/Select.php');
-require_once(realpath('library/Icinga/Web/Form/BaseFormTest.php'));
-require_once(realpath('../../application/forms/Preference/GeneralForm.php'));
-require_once(realpath('../../library/Icinga/User/Preferences/ChangeSet.php'));
-require_once(realpath('../../library/Icinga/User/Preferences.php'));
+use Icinga\Test\BaseTestCase;
 
-use Test\Icinga\Web\Form\BaseFormTest;
+// @codingStandardsIgnoreStart
+require_once 'Zend/Config.php';
+require_once 'Zend/Config/Ini.php';
+require_once 'Zend/Form/Element/Select.php';
+require_once BaseTestCase::$libDir . '/User/Preferences.php';
+require_once BaseTestCase::$libDir . '/Web/Form.php';
+require_once BaseTestCase::$appDir . '/forms/Preference/GeneralForm.php';
+require_once BaseTestCase::$libDir . '/User/Preferences/ChangeSet.php';
+// @codingStandardsIgnoreEnd
+
 use \Icinga\Web\Form;
-use \DOMDocument;
 use \Zend_Config;
-use \Zend_View;
 use Icinga\User\Preferences;
 
 /**
  * Test for general form, mainly testing enable/disable behaviour
  */
-class GeneralFormTest extends \Test\Icinga\Web\Form\BaseFormTest
+class GeneralFormTest extends BaseTestCase
 {
 
     /**
@@ -56,8 +60,8 @@ class GeneralFormTest extends \Test\Icinga\Web\Form\BaseFormTest
      */
     public function testDisableFormIfUsingDefault()
     {
-        date_default_timezone_set('UTC');
-        $form = $this->getRequestForm(array(), 'Icinga\Form\Preference\GeneralForm');
+        $this->requireFormLibraries();
+        $form = $this->createForm('Icinga\Form\Preference\GeneralForm');
         $form->setRequest($this->getRequest());
         $form->setConfiguration(
             new Zend_Config(
@@ -85,8 +89,8 @@ class GeneralFormTest extends \Test\Icinga\Web\Form\BaseFormTest
      */
     public function testEnsableFormIfUsingPreference()
     {
-        date_default_timezone_set('UTC');
-        $form = $this->getRequestForm(array(), 'Icinga\Form\Preference\GeneralForm');
+        $this->requireFormLibraries();
+        $form = $this->createForm('Icinga\Form\Preference\GeneralForm');
         $form->setRequest($this->getRequest());
         $form->setConfiguration(
             new Zend_Config(
@@ -109,5 +113,4 @@ class GeneralFormTest extends \Test\Icinga\Web\Form\BaseFormTest
             'Asserting form elements to be disabled when not set in a preference'
         );
     }
-
 }
