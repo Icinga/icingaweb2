@@ -33,10 +33,21 @@ require_once 'Zend/Db/Adapter/Pdo/Pgsql.php';
 require_once realpath(__DIR__ . '/../../../../../library/Icinga/Test/BaseTestCase.php');
 
 use \PDO;
+use \RuntimeException;
 use Icinga\Test\BaseTestCase;
 
 class BaseTestCaseDbTest extends BaseTestCase
 {
+    private $emptySqlDumpFile;
+
+    protected function tearDown()
+    {
+        if ($this->emptySqlDumpFile) {
+            unlink($this->emptySqlDumpFile);
+        }
+    }
+
+
     public function testExistingTestDirectories()
     {
         $this->assertFileExists(self::$appDir);
@@ -147,5 +158,42 @@ class BaseTestCaseDbTest extends BaseTestCase
     public function testPgSqlLoadTable($resource)
     {
         $this->dbAdapterSqlLoadTable($resource);
+    }
+
+    /**
+     * @dataProvider mysqlDb
+     */
+    public function testNotExistSqlDumpFile($resource)
+    {
+        $this->setupDbProvider($resource);
+
+        $this->setExpectedException(
+            'RuntimeException',
+            'Sql file not found: /does/not/exist1238837 (test=testNotExistSqlDumpFile with data set #0)'
+        );
+
+        $this->loadSql($resource, '/does/not/exist1238837');
+    }
+
+    /**
+     * @dataProvider mysqlDb
+     */
+    public function testDumpFileIsEmpty($resource)
+    {
+        $this->setupDbProvider($resource);
+        $this->emptySqlDumpFile = tempnam(sys_get_temp_dir(), 'icinga2-web-db-test-empty');
+        $this->assertFileExists($this->emptySqlDumpFile);
+
+        $expectedMessage = 'Sql file is empty: '
+            . $this->emptySqlDumpFile
+            . ' (test=testDumpFileIsEmpty with data set #0)';
+
+        $this->setExpectedException(
+            'RuntimeException',
+            $expectedMessage
+        );
+
+        $this->loadSql($resource, $this->emptySqlDumpFile);
+
     }
 }

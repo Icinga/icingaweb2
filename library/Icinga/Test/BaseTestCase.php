@@ -149,7 +149,7 @@ class BaseTestCase extends Zend_Test_PHPUnit_ControllerTestCase implements DbTes
             return;
         }
 
-        $baseDir = realpath(__DIR__. '/../../../');
+        $baseDir = realpath(__DIR__ . '/../../../');
 
         if ($baseDir === false) {
             throw new RuntimeException('Application base dir not found');
@@ -160,7 +160,7 @@ class BaseTestCase extends Zend_Test_PHPUnit_ControllerTestCase implements DbTes
         self::$etcDir = $baseDir . '/etc';
         self::$testDir = $baseDir . '/test/php';
         self::$shareDir = $baseDir . '/share/icinga2-web';
-        self::$moduleDir = $baseDir. '/modules';
+        self::$moduleDir = $baseDir . '/modules';
 
         $initialized = true;
     }
@@ -247,10 +247,18 @@ class BaseTestCase extends Zend_Test_PHPUnit_ControllerTestCase implements DbTes
     public function loadSql(Zend_Db_Adapter_Pdo_Abstract $resource, $filename)
     {
         if (!is_file($filename)) {
-            throw new RuntimeException('Sql file not found: ' . $filename);
+            throw new RuntimeException(
+                'Sql file not found: ' . $filename . ' (test=' . $this->getName() . ')'
+            );
         }
 
         $sqlData = file_get_contents($filename);
+
+        if (!$sqlData) {
+            throw new RuntimeException(
+                'Sql file is empty: ' . $filename . ' (test=' . $this->getName() . ')'
+            );
+        }
 
         $resource->exec($sqlData);
     }
@@ -279,7 +287,7 @@ class BaseTestCase extends Zend_Test_PHPUnit_ControllerTestCase implements DbTes
 
         $tables = $resource->listTables();
         foreach ($tables as $table) {
-            $resource->exec('DROP TABLE ' . $table. ';');
+            $resource->exec('DROP TABLE ' . $table . ';');
         }
     }
 
@@ -302,7 +310,7 @@ class BaseTestCase extends Zend_Test_PHPUnit_ControllerTestCase implements DbTes
         $fixedPathComponent = '/forms';
 
         if (strtolower($identifier) == 'icinga') {
-            $startPathComponent = self::$appDir. $fixedPathComponent;
+            $startPathComponent = self::$appDir . $fixedPathComponent;
         } else {
             $startPathComponent = self::$moduleDir
                 . '/'

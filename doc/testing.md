@@ -47,12 +47,12 @@ password is queried when connecting from the local machine:
 
 ## Writing tests for icinga
 
-Icinga has it's own base test which let you simple require libraries, testing database and form. The class resides in
-library/Icinga/Test. If you write test, just subclass BaseTestCase.
+Icinga has it's own base test which lets you easily require libraries, testing database and form functionality. The class resides in
+library/Icinga/Test. If you write a test, just subclass BaseTestCase.
 
 ### Default test header
 
-Before write a test you should inclide the base test first
+Before writing a test you should include the base test first
 
     // @codingStandardsIgnoreStart
     require_once realpath(__DIR__ . '/../../../../../library/Icinga/Test/BaseTestCase.php');
@@ -68,7 +68,7 @@ BaseTestCase provides static variables for every directory in the project.
 ### Writing database tests
 
 The base test uses the PHPUnit dataProvider annotation system to create Zend Database Adapters. Typically a
-database test look like this:
+database test looks like this:
 
         /**
          * @dataProvider    mysqlDb
@@ -79,7 +79,7 @@ database test look like this:
             $this->setupDbProvider($mysqlDb); // Drops everything from existing database
 
              // Load a dump file into database
-             $this->loadSql($mysqlDb, BaseTestCae::$etcDir . '/etc/schema/mydump.mysql.sql');
+             $this->loadSql($mysqlDb, BaseTestCase::$etcDir . '/etc/schema/mydump.mysql.sql');
 
              // Test your code
         }
@@ -104,8 +104,8 @@ BaseTestCase holds method to require form libraries and create form classes base
             // Testing your code
         }
 
-The seconds parameter of createForm() can be omitted. You can set initial post request data as
-an array if need it.
+The second parameter of createForm() can be omitted. You can set initial post request data as
+an array if needed.
 
 ## Writing tests for controllers
 
