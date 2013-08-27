@@ -49,7 +49,11 @@ class BackendMock implements UserBackend
             "user@test.local"
         );
     }
-
+    
+    public function getUserCount() {
+         return count($this->allowedCredentials);
+    }
+    
     public function authenticate(Credentials $credentials)
     {
         if (!in_array($credentials, $this->allowedCredentials)) {
