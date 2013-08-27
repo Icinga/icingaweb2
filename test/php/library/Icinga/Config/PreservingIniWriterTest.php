@@ -36,6 +36,7 @@ require_once('../../library/Icinga/Config/IniEditor.php');
 require_once('../../library/Icinga/Config/PreservingIniWriter.php');
 
 use Icinga\Config\PreservingIniWriter;
+use Zend_Config;
 
 class PreservingIniWriterTest extends \PHPUnit_Framework_TestCase {
 
@@ -86,10 +87,10 @@ Prop5="true"
 PropOne="overwritten"
 ;10      
 ';
-        $this->writeToTmp('orig',$ini);
+        $this->writeToTmp('orig', $ini);
 
         $emptyIni = " ";
-        $this->writeToTmp('empty',$emptyIni);
+        $this->writeToTmp('empty', $emptyIni);
 
         $editedIni =
 ';1
@@ -114,7 +115,7 @@ prop2="2"
 [nested : different]
 prop2="5"
 ';
-        $this->writeToTmp('edited',$editedIni);
+        $this->writeToTmp('edited', $editedIni);
     }
 
     /**
@@ -123,12 +124,12 @@ prop2="5"
      * @param $name The name of the temporary file
      * @param $content The content
      */
-    private function writeToTmp($name,$content)
+    private function writeToTmp($name, $content)
     {
         $this->tmpfiles[$name] =
-            tempnam(dirname(__FILE__) . '/temp',$name);
-        $file = fopen($this->tmpfiles[$name],'w');
-        fwrite($file,$content);
+            tempnam(dirname(__FILE__) . '/temp', $name);
+        $file = fopen($this->tmpfiles[$name], 'w');
+        fwrite($file, $content);
         fflush($file);
         fclose($file);
     }
@@ -151,7 +152,7 @@ prop2="5"
     {
         $this->changeConfigAndWriteToFile('orig');
         $config = new \Zend_Config_Ini(
-            $this->tmpfiles['orig'],null,array('allowModifications' => true)
+            $this->tmpfiles['orig'], null, array('allowModifications' => true)
         );
         $this->checkConfigProperties($config);
         $this->checkConfigComments($this->tmpfiles['orig']);
@@ -164,7 +165,7 @@ prop2="5"
     {
         $this->changeConfigAndWriteToFile('empty');
         $config = new \Zend_Config_Ini(
-            $this->tmpfiles['empty'],null,array('allowModifications' => true)
+            $this->tmpfiles['empty'], null, array('allowModifications' => true)
         );
         $this->checkConfigProperties($config);
     }
@@ -176,10 +177,62 @@ prop2="5"
     {
         $original = $this->changeConfigAndWriteToFile('edited');
         $config = new \Zend_Config_Ini(
-            $this->tmpfiles['edited'],null,array('allowModifications' => true)
+            $this->tmpfiles['edited'], null, array('allowModifications' => true)
         );
         $this->checkConfigProperties($config);
         $this->checkConfigComments($this->tmpfiles['edited']);
+    }
+
+    /**
+     * Test if the order of sections is correctly changed in the config.
+     */
+    public function testSectionOrderChange()
+    {
+        $original = '
+;1
+
+[section2]
+;3
+
+;4
+[section3]
+;5
+
+;2
+[section1]
+property = "something" ; comment
+
+        ';
+        $this->writeToTmp('section-order',$original);
+        $config = new Zend_Config(
+            array(
+                'section1' => array(
+                    'property' => 'something'
+                ),
+                'section2' => array(),
+                'section3' => array()
+            )
+        );
+        $writer = new PreservingIniWriter(
+            array('config' => $config, 'filename' => $this->tmpfiles['section-order'])
+        );
+        $writer->write();
+        $changed = new \Zend_Config_Ini(
+            $this->tmpfiles['section-order'],
+            null,
+            array('allowModifications' => true)
+        );
+        $this->assertEquals($config->section1->property, $changed->section1->property);
+
+        /*
+         * IniWriter should move the sections, so that comments
+         * are now in the right order
+         */
+        $this->checkConfigComments(
+            $this->tmpfiles['section-order'],
+            5,
+            'Sections re-ordered correctly'
+        );
     }
 
     /**
@@ -202,9 +255,11 @@ prop2="5"
     /**
      * Check if all comments are present
      *
-     * @param $file
+     * @param String    $file       The file to check
+     * @param Number    $count      The amount of comments that should be present
+     * @param String    $assertion  The assertion message that will be displayed on errors
      */
-    private function checkConfigComments($file)
+    private function checkConfigComments($file,$count = 10,$assertion = 'Comment unchanged')
     {
         $i = 0;
         foreach (explode("\n",file_get_contents($file)) as $line) {
@@ -212,11 +267,11 @@ prop2="5"
                 $i++;
                 $this->assertEquals(
                     $i,intval(substr($line,1)),
-                    'Comment unchanged'
+                    $assertion
                 );
             }
         }
-        $this->assertEquals(10,$i,'All comments exist');
+        $this->assertEquals($count, $i, 'All comments exist');
     }
 
     /**
@@ -226,65 +281,65 @@ prop2="5"
      */
     private function checkConfigProperties($config)
     {
-        $this->assertEquals('val',$config->Trailing2,
+        $this->assertEquals('val', $config->Trailing2,
             'Section-less property updated.');
 
         $this->assertNull($config->trailing1,
             'Section-less property deleted.');
 
-        $this->assertEquals('value',$config->new,
+        $this->assertEquals('value', $config->new,
             'Section-less property created.');
 
-        $this->assertEquals('0',$config->arr->{0},
+        $this->assertEquals('0', $config->arr->{0},
             'Value persisted in array');
 
-        $this->assertEquals('update',$config->arr->{2},
+        $this->assertEquals('update', $config->arr->{2},
             'Value changed in array');
 
-        $this->assertEquals('arrvalue',$config->arr->{4},
+        $this->assertEquals('arrvalue', $config->arr->{4},
             'Value added to array');
 
-        $this->assertEquals('',$config->parent->propOne,
+        $this->assertEquals('', $config->parent->propOne,
             'Section property deleted.');
 
-        $this->assertEquals("2",$config->parent->propTwo,
+        $this->assertEquals("2", $config->parent->propTwo,
             'Section property numerical unchanged.');
 
-        $this->assertEquals('update',$config->parent->propThree,
+        $this->assertEquals('update', $config->parent->propThree,
             'Section property updated.');
 
-        $this->assertEquals("true",$config->parent->propFour,
+        $this->assertEquals("true", $config->parent->propFour,
             'Section property boolean unchanged.');
 
-        $this->assertEquals("1",$config->parent->new,
+        $this->assertEquals("1", $config->parent->new,
             'Section property numerical created.');
 
         $this->assertNull($config->parent->list->{0},
             'Section array deleted');
 
-        $this->assertEquals('new',$config->parent->list->{1},
+        $this->assertEquals('new', $config->parent->list->{1},
             'Section array changed.');
 
-        $this->assertEquals('changed',$config->parent->many->many->nests,
+        $this->assertEquals('changed', $config->parent->many->many->nests,
             'Change strongly nested value.');
 
-        $this->assertEquals('new',$config->parent->many->many->new,
+        $this->assertEquals('new', $config->parent->many->many->new,
             'Ccreate strongy nested value.');
 
-        $this->assertEquals('overwritten',$config->child->PropOne,
+        $this->assertEquals('overwritten', $config->child->PropOne,
             'Overridden inherited property unchanged.');
 
-        $this->assertEquals('somethingNew',$config->child->propTwo,
+        $this->assertEquals('somethingNew', $config->child->propTwo,
             'Inherited property changed.');
 
-        $this->assertEquals('test',$config->child->create,
+        $this->assertEquals('test', $config->child->create,
             'Non-inherited property created.');
 
-        $this->assertInstanceOf('Zend_Config',$config->newsection,
+        $this->assertInstanceOf('Zend_Config', $config->newsection,
             'New section created.');
 
         $extends = $config->getExtends();
-        $this->assertEquals('child',$extends['newsection'],
+        $this->assertEquals('child', $extends['newsection'],
             'New inheritance created.');
     }
 
@@ -320,7 +375,7 @@ prop2="5"
         $config->newsection = array();
         $config->newsection->p1 = "prop";
         $config->newsection->P2 = "prop";
-        $config->setExtend('newsection','child');
+        $config->setExtend('newsection', 'child');
     }
 
     /**
