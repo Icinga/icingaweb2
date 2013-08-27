@@ -61,7 +61,6 @@ class ConfigController extends BaseConfigController
                     'url'       => Url::fromPath('/config')
                 )
             ),
-
             'authentication' => new Tab(
                 array(
                     'name'      => 'auth',
@@ -208,9 +207,6 @@ class ConfigController extends BaseConfigController
     /**
      * Write changes to an authentication file
      *
-     * This uses the Zend_Config_Writer_Ini implementation for now, as the Preserving ini writer can't
-     * handle ordering
-     *
      * @param   array $config The configuration changes
      *
      * @return  bool True when persisting succeeded, otherwise false
@@ -218,13 +214,7 @@ class ConfigController extends BaseConfigController
      * @see     writeConfigFile()
      */
     private function writeAuthenticationFile($config) {
-        $writer = new Zend_Config_Writer_Ini(
-            array(
-                'config' => new Zend_Config($config),
-                'filename' => IcingaConfig::app('authentication')->getConfigFile()
-            )
-        );
-        return $this->writeConfigFile($config, 'authentication', $writer);
+        return $this->writeConfigFile($config, 'authentication');
     }
 
     /**
