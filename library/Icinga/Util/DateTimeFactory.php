@@ -37,7 +37,23 @@ class DateTimeFactory implements ConfigAwareFactory
     }
 
     /**
-     * Return new DateTime object using the set time zone
+     * Return new DateTime object using the given format, time and set time zone
+     *
+     * Wraps DateTime::createFromFormat()
+     *
+     * @param   string          $format
+     * @param   string          $time
+     * @param   DateTimeZone    $timeZone
+     * @return  DateTime
+     * @see     DateTime::createFromFormat()
+     */
+    public static function parse($time, $format, DateTimeZone $timeZone = null)
+    {
+        return DateTime::createFromFormat($format, $time, $timeZone !== null ? $timeZone : self::$timeZone);
+    }
+
+    /**
+     * Return new DateTime object using the given date/time string and set time zone
      *
      * Wraps DateTime::__construct()
      *
