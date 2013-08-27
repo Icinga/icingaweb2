@@ -230,4 +230,25 @@ class ActionController extends ZfController
             }
         }
     }
+
+    /**
+     * Try to call compatible methods from older zend versions
+     *
+     * Methods like getParam and redirect are _getParam/_redirect in older Zend versions (which reside for example
+     * in Debian Wheezy). Using those methods without the "_" causes the application to fail on those platforms, but
+     * using the version with "_" forces us to use deprecated code. So we try to catch this issue by looking for methods
+     * with the same name, but with a "_" prefix prepended.
+     *
+     * @param string $name  The method name to check
+     * @param array $params The method parameters
+     */
+    public function __call($name, $params)
+    {
+        $deprecatedMethod = '_'.$name;
+
+        if (method_exists($this, $deprecatedMethod)) {
+            return call_user_func_array(array($this, $deprecatedMethod), $params);
+        }
+        return parent::__call($name, $params);
+    }
 }
