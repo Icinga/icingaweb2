@@ -121,8 +121,8 @@ prop2="5"
     /**
      * Write a string to a temporary file
      *
-     * @param $name The name of the temporary file
-     * @param $content The content
+     * @param string    $name     The name of the temporary file
+     * @param string    $content  The content
      */
     private function writeToTmp($name, $content)
     {
@@ -236,10 +236,10 @@ property = "something" ; comment
     }
 
     /**
-     * Change the test config and write the changes to the temporary
-     * file $tmpFile
+     * Change the test config, write the changes to the temporary
+     * file $tmpFile and save the path to the file in the array tmpfiles
      *
-     * @param $tmpFile
+     * @param string $tmpFile   The name that should be given to the temporary file
      */
     private function changeConfigAndWriteToFile($tmpFile)
     {
@@ -277,7 +277,7 @@ property = "something" ; comment
     /**
      * Test if all configuration properties are set correctly
      *
-     * @param $config
+     * @param mixed $config     The configuration to check
      */
     private function checkConfigProperties($config)
     {
@@ -344,9 +344,9 @@ property = "something" ; comment
     }
 
     /**
-     * Change the content of a Zend_Config
+     * Change the content of a Zend_Config for testing purposes
      *
-     * @param Zend_Config $config
+     * @param Zend_Config $config   The configuration that should be changed
      */
     private function alterConfig(\Zend_Config $config)
     {

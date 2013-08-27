@@ -396,10 +396,12 @@ class IniEditor
     private function updateLine($lineNr, $content)
     {
         $comment = $this->getComment($this->text[$lineNr]);
+        $comment = trim($comment);
         if (strlen($comment) > 0) {
-            $comment = ' ; ' . trim($comment);
+            $comment = ' ; ' . $comment;
+            $content = str_pad($content, $this->commentIndentation) . $comment;
         }
-        $this->text[$lineNr] = str_pad($content, $this->commentIndentation) . $comment;
+        $this->text[$lineNr] = $content;
     }
 
     /**
