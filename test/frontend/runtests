@@ -15,7 +15,7 @@ CASPERJS_HOST="localhost"
 CASPERJS_PORT=80
 CASPERJS_USER="jdoe"
 CASPERJS_PASS="password"
-CASPERJS_PATH="icingaweb"
+CASPERJS_PATH="icinga2-web"
 
 if [ ! -x $CASPER ]; then
     echo "CasperJS is not installed but required to run frontend tests\n"\

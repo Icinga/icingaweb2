@@ -1,6 +1,7 @@
 SetEnv APPLICATION_ENV development
 
 RewriteEngine on
+RewriteBase /icinga2-web
 RewriteRule ^css/icinga.css css.php
 RewriteCond %{REQUEST_FILENAME} -s [OR]
 RewriteCond %{REQUEST_FILENAME} -l [OR]
