@@ -41,7 +41,6 @@ require_once BaseTestCase::$libDir . '/Web/Form.php';
 require_once BaseTestCase::$appDir . '/forms/Config/GeneralForm.php';
 // @codingStandardsIgnoreEnd
 
-use \Icinga\Web\Form;
 use \Zend_Config;
 
 /**
@@ -50,7 +49,6 @@ use \Zend_Config;
  */
 class LoggingFormTest extends BaseTestCase
 {
-
     /**
      * Test the logging form to be correctly populated from configuration
      *

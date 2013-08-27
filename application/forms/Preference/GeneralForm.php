@@ -33,9 +33,6 @@ use \Zend_Config;
 use \Zend_Form_Element_Text;
 use \Zend_Form_Element_Select;
 use \Zend_View_Helper_DateFormat;
-use \Icinga\Application\Config as IcingaConfig;
-use \Icinga\Application\Icinga;
-use \Icinga\User\Preferences;
 use \Icinga\Web\Form;
 use \Icinga\Web\Form\Validator\TimeFormatValidator;
 use \Icinga\Web\Form\Validator\DateFormatValidator;
@@ -46,58 +43,11 @@ use \Icinga\Web\Form\Validator\DateFormatValidator;
 class GeneralForm extends Form
 {
     /**
-     * The configuration to use for populating this form
-     *
-     * @var IcingaConfig
-     */
-    private $config;
-
-    /**
-     * The preference object to use instead of the one from the user (used for testing)
-     *
-     * @var Zend_Config
-     */
-    private $preferences;
-
-    /**
      * The view helper to format date/time strings
      *
      * @var Zend_View_Helper_DateFormat
      */
     private $dateHelper;
-
-    /**
-     * Set the configuration to be used for this form when no preferences are set yet
-     *
-     * @param IcingaConfig $cfg
-     */
-    public function setConfiguration($cfg)
-    {
-        $this->config = $cfg;
-    }
-
-    /**
-     * Set preferences to be used instead of the one from the user object (used for testing)
-     *
-     * @param Zend_Config $prefs
-     */
-    public function setUserPreferences($prefs)
-    {
-        $this->preferences = $prefs;
-    }
-
-    /**
-     * Return the preferences of the user or the overwritten ones
-     *
-     * @return Zend_Config
-     */
-    public function getUserPreferences()
-    {
-        if ($this->preferences) {
-            return $this->preferences;
-        }
-        return $this->getRequest()->getUser()->getPreferences();
-    }
 
     /**
      * Return the view helper to format date/time strings
@@ -252,11 +202,10 @@ class GeneralForm extends Form
      */
     public function create()
     {
-        if ($this->config === null) {
-            $this->config = new Zend_Config(array());
-        }
         $this->setName('form_preference_set');
-        $global = $this->config->global;
+
+        $config = $this->getConfiguration();
+        $global = $config->global;
         if ($global === null) {
             $global = new Zend_Config(array());
         }

@@ -27,13 +27,15 @@ namespace Icinga\Web;
 
 use \Zend_Controller_Request_Abstract;
 use \Zend_Form;
+use \Zend_Config;
 use \Zend_Form_Element_Submit;
 use \Zend_Form_Element_Reset;
 use \Zend_View_Interface;
+use \Icinga\Web\Form\Element\Note;
 use \Icinga\Exception\ProgrammingError;
 use \Icinga\Web\Form\Decorator\HelpText;
 use \Icinga\Web\Form\InvalidCSRFTokenException;
-use \Icinga\Web\Form\Element\Note;
+use \Icinga\Application\Config as IcingaConfig;
 
 /**
  * Base class for forms providing CSRF protection, confirmation logic and auto submission
@@ -46,6 +48,22 @@ class Form extends Zend_Form
      * @var Zend_Controller_Request_Abstract
      */
     private $request;
+
+    /**
+     * Main configuration
+     *
+     * Used as fallback if user preferences are not available.
+     *
+     * @var IcingaConfig
+     */
+    private $config;
+
+    /**
+     * The preference object to use instead of the one from the user (used for testing)
+     *
+     * @var Zend_Config
+     */
+    private $preferences;
 
     /**
      * Whether this form should NOT add random generated "challenge" tokens that are associated with the user's current
@@ -190,6 +208,54 @@ class Form extends Zend_Form
     public function getRequest()
     {
         return $this->request;
+    }
+
+    /**
+     * Set the configuration to be used for this form when no preferences are set yet
+     *
+     * @param IcingaConfig $cfg
+     */
+    public function setConfiguration($cfg)
+    {
+        $this->config = $cfg;
+    }
+
+    /**
+     * Get the main configuration
+     *
+     * Returns the set configuration or an empty default one.
+     *
+     * @return Zend_Config
+     */
+    public function getConfiguration()
+    {
+        if ($this->config === null) {
+            $this->config = new Zend_Config(array());
+        }
+        return $this->config;
+    }
+
+    /**
+     * Set preferences to be used instead of the one from the user object (used for testing)
+     *
+     * @param Zend_Config $prefs
+     */
+    public function setUserPreferences($prefs)
+    {
+        $this->preferences = $prefs;
+    }
+
+    /**
+     * Return the preferences of the user or the overwritten ones
+     *
+     * @return Zend_Config
+     */
+    public function getUserPreferences()
+    {
+        if ($this->preferences) {
+            return $this->preferences;
+        }
+        return $this->getRequest()->getUser()->getPreferences();
     }
 
     /**

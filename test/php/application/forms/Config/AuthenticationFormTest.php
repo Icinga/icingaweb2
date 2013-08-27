@@ -49,10 +49,9 @@ require_once BaseTestCase::$appDir . '/forms/Config/Authentication/DbBackendForm
 require_once BaseTestCase::$appDir . '/forms/Config/Authentication/LdapBackendForm.php';
 // @codingStandardsIgnoreEnd
 
-use \Icinga\Web\Form;
-use Icinga\Web\Url;
-use Tests\Icinga\Web\RequestMock;
 use \Zend_Config;
+use \Icinga\Web\Url;
+use \Tests\Icinga\Web\RequestMock;
 
 /**
  * Test for the authentication provider form
@@ -60,7 +59,6 @@ use \Zend_Config;
  */
 class AuthenticationFormTest extends BaseTestCase
 {
-
     /**
      * Return a test configuration containing a database and a ldap backend
      *
@@ -76,14 +74,14 @@ class AuthenticationFormTest extends BaseTestCase
                     'resource'  =>  'db_resource'
                 ),
                 'test-ldap' => array(
-                    'backend' => 'ldap',
-                    'target' => 'user',
-                    'hostname' => 'test host',
-                    'root_dn' => 'ou=test,dc=icinga,dc=org',
-                    'bind_dn' => 'cn=testuser,cn=config',
-                    'bind_pw' => 'password',
-                    'user_class' => 'testClass',
-                    'user_name_attribute' => 'testAttribute'
+                    'backend'               => 'ldap',
+                    'target'                => 'user',
+                    'hostname'              => 'test host',
+                    'root_dn'               => 'ou=test,dc=icinga,dc=org',
+                    'bind_dn'               => 'cn=testuser,cn=config',
+                    'bind_pw'               => 'password',
+                    'user_class'            => 'testClass',
+                    'user_name_attribute'   => 'testAttribute'
                 )
             )
         );
@@ -91,7 +89,6 @@ class AuthenticationFormTest extends BaseTestCase
 
     /**
      * Test the ldap provider form population from config
-     *
      */
     public function testLdapProvider()
     {
@@ -99,14 +96,14 @@ class AuthenticationFormTest extends BaseTestCase
         $form = $this->createForm('Icinga\Form\Config\Authentication\LdapBackendForm');
         $config = new Zend_Config(
             array(
-                'backend' => 'ldap',
-                'target' => 'user',
-                'hostname' => 'test host',
-                'root_dn' => 'ou=test,dc=icinga,dc=org',
-                'bind_dn' => 'cn=testuser,cn=config',
-                'bind_pw' => 'password',
-                'user_class' => 'testClass',
-                'user_name_attribute' => 'testAttribute'
+                'backend'               => 'ldap',
+                'target'                => 'user',
+                'hostname'              => 'test host',
+                'root_dn'               => 'ou=test,dc=icinga,dc=org',
+                'bind_dn'               => 'cn=testuser,cn=config',
+                'bind_pw'               => 'password',
+                'user_class'            => 'testClass',
+                'user_name_attribute'   => 'testAttribute'
             )
         );
         $form->setBackendName('testldap');
@@ -126,7 +123,7 @@ class AuthenticationFormTest extends BaseTestCase
             );
         }
     }
-/*
+
     /**
      * Test the database provider form population from config
      */

@@ -49,7 +49,6 @@ require_once BaseTestCase::$libDir . '/Util/DateTimeFactory.php';
 // @codingStandardsIgnoreEnd
 
 use \DateTimeZone;
-use \Icinga\Web\Form;
 use \Zend_Config;
 use \Icinga\User\Preferences;
 use \Zend_View_Helper_DateFormat;
@@ -60,7 +59,6 @@ use \Icinga\Util\DateTimeFactory;
  */
 class GeneralFormTest extends BaseTestCase
 {
-
     /**
      * Test whether fields using the default values have input disabled
      *
