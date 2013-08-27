@@ -81,7 +81,7 @@ class IniEditor
         $content,
         array $options = array()
     ) {
-        $this->text = explode("\n", $content);
+        $this->text = explode(PHP_EOL, $content);
         $this->valueIndentation = array_key_exists('valueIndentation', $options)
             ? $options['valueIndentation'] : 19;
         $this->commentIndentation = array_key_exists('commentIndentation', $options)
@@ -337,7 +337,7 @@ class IniEditor
     public function getText()
     {
         $this->cleanUpWhitespaces();
-        return implode("\n", $this->text);
+        return implode(PHP_EOL, $this->text);
     }
 
     /**
@@ -370,7 +370,7 @@ class IniEditor
                  * Refresh section separators
                  */
                 if ($i !== 0 && $this->sectionSeparators > 0) {
-                    $this->insertAtLine($i + 1, str_repeat("\n", $this->sectionSeparators - 1));
+                    $this->insertAtLine($i + 1, str_repeat(PHP_EOL, $this->sectionSeparators - 1));
                 }
             }
         }
