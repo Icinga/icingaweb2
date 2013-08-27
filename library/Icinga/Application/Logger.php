@@ -190,7 +190,7 @@ final class Logger
 
         try {
             /** @var Zend_Log_Writer_Abstract $writer */
-            $writer = new $writerClass($target);
+            $writer = new $writerClass(Config::resolvePath($target));
             $writer->addFilter(new Zend_Log_Filter_Priority($priority));
             $this->logger->addWriter($writer);
             $this->writers[] = $writer;

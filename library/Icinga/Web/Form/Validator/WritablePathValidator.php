@@ -29,6 +29,7 @@
 namespace Icinga\Web\Form\Validator;
 
 use \Zend_Validate_Abstract;
+use \Icinga\Application\Config as IcingaConfig;
 
 /**
  * Validator that interprets the value as a path and checks if it's writable
@@ -77,8 +78,9 @@ class WritablePathValidator extends Zend_Validate_Abstract
     public function isValid($value, $context = null)
     {
         $value = (string) $value;
-        $this->_setValue($value);
 
+        $this->_setValue($value);
+        $value = IcingaConfig::resolvePath($value);
         if ($this->requireExistence && !file_exists($value)) {
             $this->_error('DOES_NOT_EXIST');
             return false;

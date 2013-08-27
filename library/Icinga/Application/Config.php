@@ -28,7 +28,8 @@
 
 namespace Icinga\Application;
 
-use Zend_Config_Ini;
+use \Icinga\Exception\ProgrammingError;
+use \Zend_Config_Ini;
 
 /**
  * Global registry of application and module configuration.
@@ -143,8 +144,32 @@ class Config extends Zend_Config_Ini
         }
     }
 
+    /**
+     * Return the application wide config file
+     *
+     * @return string
+     */
     public function getConfigFile()
     {
         return $this->configFile;
+    }
+
+    /**
+     * Return the input path with resolved path variables
+     *
+     * Currently only %app% is considered a path variable and points to the application paths
+     *
+     * @param string $path      The path to resolve
+     *
+     * @return string           The resolved path
+     */
+    public static function resolvePath($path)
+    {
+        try {
+            $appDir = realpath(Icinga::app()->getApplicationDir() . '/..');
+        } catch (ProgrammingError $appNotStarted) {
+            $appDir = realpath(__DIR__ . '/../../..');
+        }
+        return str_replace('{app}', $appDir, $path);
     }
 }
