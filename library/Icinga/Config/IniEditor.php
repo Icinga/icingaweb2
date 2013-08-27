@@ -48,13 +48,46 @@ class IniEditor
     private $nestSeparator = '.';
 
     /**
+     * The indentation level of the comments
+     *
+     * @var string
+     */
+    private $commentIndentation;
+
+    /**
+     * The indentation level of the values
+     *
+     * @var string
+     */
+    private $valueIndentation;
+
+    /**
+     * The number of new lines between sections
+     *
+     * @var number
+     */
+    private $sectionSeparators;
+
+    /**
      * Create a new IniEditor
      *
-     * @param string $content  The content of the ini as string
+     * @param string $content   The content of the ini as string
+     * @param array  $options   Optional formatting options used when changing the ini file
+     *                          * valueIndentation:     The indentation level of the values
+     *                          * commentIndentation:   The indentation level of the comments
+     *                          * sectionSeparators:    The amount of newlines between sections
      */
-    public function __construct($content)
-    {
-        $this->text = explode("\n", $content);
+    public function __construct(
+        $content,
+        array $options = array()
+    ) {
+        $this->text = explode(PHP_EOL, $content);
+        $this->valueIndentation = array_key_exists('valueIndentation', $options)
+            ? $options['valueIndentation'] : 19;
+        $this->commentIndentation = array_key_exists('commentIndentation', $options)
+            ? $options['commentIndentation'] : 43;
+        $this->sectionSeparators = array_key_exists('sectionSeparators', $options)
+            ? $options['sectionSeparators'] : 2;
     }
 
     /**
@@ -103,6 +136,9 @@ class IniEditor
             if (isset($section)) {
                 $this->updateLine($line, $this->formatKeyValuePair($key, $value));
             } else {
+                /*
+                 * Move into new section to avoid ambiguous configurations
+                 */
                 $section = $key[0];
                 unset($key[0]);
                 $this->deleteLine($line);
@@ -181,6 +217,92 @@ class IniEditor
     }
 
     /**
+     * Refresh the section order of the ini file
+     *
+     * @param array $order  An array containing the section names in the new order
+     *                      Example: array(0 => 'FirstSection', 1 => 'SecondSection')
+     */
+    public function refreshSectionOrder(array $order)
+    {
+        $sections = $this->createSectionMap($this->text);
+        /*
+         * Move section-less properties to the start of the ordered text
+         */
+        $orderedText = array();
+        foreach ($sections['[section-less]'] as $line) {
+            array_push($orderedText, $line);
+        }
+        /*
+         * Reorder the sections
+         */
+        $len = count($order);
+        for ($i = 0; $i < $len; $i++) {
+            if (array_key_exists($i, $order)) {
+                /*
+                 * Append the lines of the section to the end of the
+                 * ordered text
+                 */
+                foreach ($sections[$order[$i]] as $line) {
+                    array_push($orderedText, $line);
+                }
+            }
+        }
+        $this->text = $orderedText;
+    }
+
+    /**
+     * Create a map of sections to lines of a given ini file
+     *
+     * @param array $text           The text split up in lines
+     *
+     * @return array $sectionMap    A map containing all sections as arrays of lines. The array of section-less
+     *                              lines will be available using they key '[section-less]' which is no valid
+     *                              section declaration because it contains brackets.
+     */
+    private function createSectionMap($text)
+    {
+        $sections = array('[section-less]' => array());
+        $section = '[section-less]';
+        $len = count($text);
+        for ($i = 0; $i < $len; $i++) {
+            if ($this->isSectionDeclaration($text[$i])) {
+                $newSection = $this->getSectionFromDeclaration($this->text[$i]);
+                $sections[$newSection] = array();
+
+                /*
+                 * Remove comments 'glued' to the new section from the old
+                 * section array and put them into the new section.
+                 */
+                $j = $i - 1;
+                $comments = array();
+                while ($j > 0 && $this->isComment($this->text[$j])) {
+                    array_push($comments, array_pop($sections[$section]));
+                    $j--;
+                }
+                $comments = array_reverse($comments);
+                foreach ($comments as $comment) {
+                    array_push($sections[$newSection], $comment);
+                }
+
+                $section = $newSection;
+            }
+            array_push($sections[$section], $this->text[$i]);
+        }
+        return $sections;
+    }
+
+    /**
+     * Extract the section name from a section declaration
+     *
+     * @param String $declaration    The section declaration
+     */
+    private function getSectionFromDeclaration($declaration)
+    {
+        $tmp = preg_split('/(\[|\]|:)/', $declaration);
+        return trim($tmp[1]);
+    }
+
+    /**
      * Remove a section declaration
      *
      * @param string $section  The section name
@@ -215,7 +337,7 @@ class IniEditor
     public function getText()
     {
         $this->cleanUpWhitespaces();
-        return implode("\n", $this->text);
+        return implode(PHP_EOL, $this->text);
     }
 
     /**
@@ -223,7 +345,6 @@ class IniEditor
      */
     private function cleanUpWhitespaces()
     {
-
         $i = count($this->text) - 1;
         for (; $i > 0; $i--) {
             $line = $this->text[$i];
@@ -233,7 +354,7 @@ class IniEditor
                 /*
                  * Ignore comments that are glued to the section declaration
                  */
-                while ($i > 0 && preg_match('/^\s*;/', $line) === 1) {
+                while ($i > 0 && $this->isComment($line)) {
                     $i--;
                     $line = $this->text[$i];
                 }
@@ -246,10 +367,10 @@ class IniEditor
                     $line = $this->text[$i];
                 }
                 /*
-                 * Add a single whitespace
+                 * Refresh section separators
                  */
-                if ($i !== 0) {
-                    $this->insertAtLine($i + 1, '');
+                if ($i !== 0 && $this->sectionSeparators > 0) {
+                    $this->insertAtLine($i + 1, str_repeat(PHP_EOL, $this->sectionSeparators - 1));
                 }
             }
         }
@@ -275,10 +396,12 @@ class IniEditor
     private function updateLine($lineNr, $content)
     {
         $comment = $this->getComment($this->text[$lineNr]);
+        $comment = trim($comment);
         if (strlen($comment) > 0) {
-            $comment = ' ; ' . trim($comment);
+            $comment = ' ; ' . $comment;
+            $content = str_pad($content, $this->commentIndentation) . $comment;
         }
-        $this->text[$lineNr] = str_pad($content, 43) . $comment;
+        $this->text[$lineNr] = $content;
     }
 
     /**
@@ -320,7 +443,7 @@ class IniEditor
      */
     private function formatKeyValuePair(array $key, $value)
     {
-        return str_pad($this->formatKey($key), 19) . ' = ' . $this->formatValue($value);
+        return str_pad($this->formatKey($key), $this->valueIndentation) . ' = ' . $this->formatValue($value);
     }
 
     /**
@@ -355,7 +478,7 @@ class IniEditor
                  * ignore all comments 'glued' to the next section, to allow section
                  * comments in front of sections
                  */
-                while ($i > 0 && preg_match('/^\s*;/', $this->text[$i - 1]) === 1) {
+                while ($i > 0 && $this->isComment($this->text[$i - 1])) {
                     $i--;
                 }
                 return $i;
@@ -368,6 +491,14 @@ class IniEditor
             return -1;
         }
         return $i;
+    }
+
+    /**
+     * Check if the given line contains only a comment
+     */
+    private function isComment($line)
+    {
+        return preg_match('/^\s*;/', $line) === 1;
     }
 
     /**

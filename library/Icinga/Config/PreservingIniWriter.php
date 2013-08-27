@@ -40,6 +40,31 @@ use \Icinga\Config\IniEditor;
 class PreservingIniWriter extends Zend_Config_Writer_FileAbstract
 {
     /**
+     * Stores the options
+     *
+     * @var array
+     */
+    private $options;
+
+    /**
+     * Create a new PreservingIniWriter
+     *
+     * @param array $options    Contains the options that should be used for the ConfigWriter
+     *                          in an associative array. Supports all options of Zend_Config_Writer and additional
+     *                          options for setting the formatting for the internal IniEditor:
+     *                          * valueIndentation:     The indentation level of the values
+     *                          * commentIndentation:   The indentation level of the comments
+     *                          * sectionSeparators:    The amount of newlines between sections
+     *
+     * @link http://framework.zend.com/apidoc/1.12/files/Config.Writer.html#\Zend_Config_Writer
+     */
+    public function __construct(array $options = null)
+    {
+        $this->options = $options;
+        parent::__construct($options);
+    }
+
+    /**
      * Render the Zend_Config into a config file string
      *
      * @return string
@@ -48,8 +73,9 @@ class PreservingIniWriter extends Zend_Config_Writer_FileAbstract
     {
         $oldconfig = new Zend_Config_Ini($this->_filename);
         $newconfig = $this->_config;
-        $editor = new IniEditor(file_get_contents($this->_filename));
+        $editor = new IniEditor(file_get_contents($this->_filename), $this->options);
         $this->diffConfigs($oldconfig, $newconfig, $editor);
+        $this->updateSectionOrder($newconfig, $editor);
         return $editor->getText();
     }
 
@@ -69,6 +95,23 @@ class PreservingIniWriter extends Zend_Config_Writer_FileAbstract
     ) {
         $this->diffPropertyUpdates($oldconfig, $newconfig, $editor, $parents);
         $this->diffPropertyDeletions($oldconfig, $newconfig, $editor, $parents);
+    }
+
+    /**
+     * Update the order of the sections in the ini file to match
+     * the order of the new config
+     */
+    private function updateSectionOrder(
+        Zend_Config $newconfig,
+        IniEditor $editor
+    ) {
+        $order = array();
+        foreach ($newconfig as $key => $value) {
+            if ($value instanceof Zend_Config) {
+                array_push($order, $key);
+            }
+        }
+        $editor->refreshSectionOrder($order);
     }
 
     /**
