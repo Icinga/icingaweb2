@@ -156,7 +156,10 @@ class LoggingForm extends Form
                 'label'     => 'Debug Log Path',
                 'required'  => $this->shouldDisplayDebugLog($debug),
                 'condition' => $this->shouldDisplayDebugLog($debug),
-                'value'     => $debug->get('target', $this->getBaseDir() . '/var/log/icinga2.debug.log'),
+                'value'     => $debug->get(
+                    'target',
+                    $this->getBaseDir() . '/var/log/icinga2.debug.log'
+                ),
                 'helptext'  => 'Set the path to the debug log'
             )
         );
