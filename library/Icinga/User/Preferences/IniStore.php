@@ -152,6 +152,8 @@ class IniStore implements LoadInterface, FlushObserverInterface
     private function createDefaultIniFile()
     {
         touch($this->preferencesFile);
+        chmod($this->preferencesFile, 0664);
+
     }
 
     /**

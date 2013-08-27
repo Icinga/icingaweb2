@@ -28,6 +28,7 @@
 
 namespace Icinga\Application;
 
+use Icinga\Protocol\Ldap\Exception;
 use \Zend_Config;
 use \Zend_Log;
 use \Zend_Log_Filter_Priority;
@@ -144,7 +145,6 @@ final class Logger
         if ($target == self::DEFAULT_LOG_TARGET) {
             $type = self::DEFAULT_LOG_TYPE;
         }
-
         $this->addWriter($type, $target, Zend_Log::DEBUG);
     }
 
@@ -187,11 +187,17 @@ final class Logger
             );
             return;
         }
-
         try {
-            /** @var Zend_Log_Writer_Abstract $writer */
-            $writer = new $writerClass(Config::resolvePath($target));
+
+            $target = Config::resolvePath($target);
+            $writer = new $writerClass($target);
             $writer->addFilter(new Zend_Log_Filter_Priority($priority));
+            // Make sure the permissions for log target file are correct
+            if ($type === 'Stream' && !file_exists($target)) {
+                touch($target);
+                chmod($target, 0664);
+            }
+
             $this->logger->addWriter($writer);
             $this->writers[] = $writer;
         } catch (Zend_Log_Exception $e) {
