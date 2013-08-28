@@ -209,25 +209,29 @@ class GeneralForm extends Form
         $phpUrl = '<a href="http://php.net/manual/en/function.date.php" target="_new">'
             . 'the official PHP documentation</a>';
 
+        $dateFormatValue = $this->getRequest()->getParam('date_format', $cfg->get('dateFormat', 'd/m/Y'));
         $txtDefaultDateFormat = new Zend_Form_Element_Text(
             array(
                 'name'      =>  'date_format',
                 'label'     =>  'Date Format',
-                'helptext'  =>  'Display dates according to this format. See ' . $phpUrl . ' for possible values',
+                'helptext'  =>  'Display dates according to this format. (See ' . $phpUrl . ' for possible values.) '
+                                . 'Example result: ' . $this->getView()->dateFormat()->format(time(), $dateFormatValue),
                 'required'  =>  true,
-                'value'     =>  $cfg->get('dateFormat', 'd/m/Y')
+                'value'     =>  $dateFormatValue
             )
         );
         $this->addElement($txtDefaultDateFormat);
         $txtDefaultDateFormat->addValidator(new DateFormatValidator());
 
+        $timeFormatValue = $this->getRequest()->getParam('time_format', $cfg->get('timeFormat', 'g:i A'));
         $txtDefaultTimeFormat = new Zend_Form_Element_Text(
             array(
                 'name'      =>  'time_format',
                 'label'     =>  'Time Format',
                 'required'  =>  true,
-                'helptext'  =>  'Display times according to this format. See ' . $phpUrl . ' for possible values',
-                'value'     =>  $cfg->get('timeFormat', 'g:i A')
+                'helptext'  =>  'Display times according to this format. (See ' . $phpUrl . ' for possible values.) '
+                                . 'Example result: ' . $this->getView()->dateFormat()->format(time(), $timeFormatValue),
+                'value'     =>  $timeFormatValue
             )
         );
         $txtDefaultTimeFormat->addValidator(new TimeFormatValidator());

@@ -161,13 +161,18 @@ class GeneralForm extends Form
                 'required'      => true
             )
         );
+        $dateFormatValue = $this->getRequest()->getParam(
+            'date_format',
+            $prefs->get('app.dateFormat', $cfg->get('dateFormat', 'd/m/Y'))
+        );
         $txtDefaultDateFormat = new Zend_Form_Element_Text(
             array(
                 'name'      =>  'date_format',
                 'label'     =>  'Preferred Date Format',
-                'helptext'  =>  'Display dates according to this format. See ' . $phpUrl . ' for possible values',
+                'helptext'  =>  'Display dates according to this format. (See ' . $phpUrl . ' for possible values.) '
+                                . 'Example result: ' . $this->getView()->dateFormat()->format(time(), $dateFormatValue),
                 'required'  =>  !$useGlobalDateFormat,
-                'value'     =>  $prefs->get('app.dateFormat', $cfg->get('dateFormat', 'd/m/Y'))
+                'value'     =>  $dateFormatValue
             )
         );
 
@@ -186,13 +191,18 @@ class GeneralForm extends Form
                 'required'      => !$useGlobalTimeFormat
             )
         );
+        $timeFormatValue = $this->getRequest()->getParam(
+            'time_format',
+            $prefs->get('app.timeFormat', $cfg->get('timeFormat', 'g:i A'))
+        );
         $txtDefaultTimeFormat = new Zend_Form_Element_Text(
             array(
                 'name'      =>  'time_format',
                 'label'     =>  'Preferred Time Format',
                 'required'  =>  !$useGlobalTimeFormat,
-                'helptext'  =>  'Display times according to this format. See ' . $phpUrl . ' for possible values',
-                'value'     =>  $prefs->get('app.timeFormat', $cfg->get('timeFormat', 'g:i A'))
+                'helptext'  =>  'Display times according to this format. (See ' . $phpUrl . ' for possible values.) '
+                                . 'Example result: ' . $this->getView()->dateFormat()->format(time(), $timeFormatValue),
+                'value'     =>  $timeFormatValue
             )
         );
         $txtDefaultTimeFormat->addValidator(new TimeFormatValidator());

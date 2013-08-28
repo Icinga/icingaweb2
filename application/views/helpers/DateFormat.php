@@ -50,7 +50,7 @@ class Zend_View_Helper_DateFormat extends Zend_View_Helper_Abstract
      * @param   string  $format
      * @return  string
      */
-    private function format($timestamp, $format)
+    public function format($timestamp, $format)
     {
         $dt = DateTimeFactory::create();
         $dt->setTimestamp($timestamp);
