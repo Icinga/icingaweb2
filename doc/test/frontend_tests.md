@@ -4,37 +4,55 @@ Frontend tests test your code from the users perspective: By opening a specific 
 and expecting something to happen. We use [CasperJS](http://casperjs.org/) for frontend testing, which is basically a
 headless Webkit browser.
 
-## The current state of frontend testing
+**NOTE**: The 1.1.0DEV version does *NOT* work at this time as the api changed. Use the stable 1.0.3 branch instead.
 
-Currently frontend tests are not very advanced: We spawn a small - non php - server on port 12999 to test static files
-and javascript behaviour. This will change in the future where we are going to test an installation (or use PHP 5.4
-standalone server).
+In order to be able to run the frontend tests, you need a running instance of icingaweb. You should make sure that you
+don't need this instance after running the tests, as they could change preferences or configuration
 
 ## Writing tests
 
-### Test bootstrap
 
-In order to make testing more comfortable, the i2w config provides a few helpers to make testing more straightforward.
-In general you start your test by including i2w-config:
+### Test bootstrap - icingawebtest.js module
 
-    var i2w = require('./i2w-config');
+The icingawebtest.js module is required for proper testing, as this module eases casperjs usage. After importing the
+module with:
 
-and afterward creating a testenvironment with the getTestEnv() method:
+    var icingawebtest = require('./icingawebtest');
 
-    var casper = i2w.getTestEnv();
+You only need two methods for testing:
 
-You can then start the test by calling casper.start with the startpage (the servers root is always frontend/static, where
-public is a symlink to the icingaweb public folder).
+* *getTestEnv()*: This method returns a modified casperjs test environment. The difference to then normal casperjs object
+                  is that all methods which take a URL are overloaded so you can add a relative URL if you want to (and
+                  normally you don't want to hardcode your test URLs)
+                  Example:
 
-    casper.start("http://localhost:12999/generic.html");
+        var casper = icingawebtest.getTestEnv();
 
-As we use requirejs, this has to be set up for our testcases. i2w provides a setupRequireJs function that does everything for you.
-You just have to run this method on your testpage (note that the tested JavaScript is isolated from your test case's JavaScript, if
-you want to execute JavaScript you must use the casper.page.evaluate method).
+* performLogin():   This calls the login page of your icingaweb instance and tries to login with the supplied credentials
 
-    casper.then(function() {
-        // Setup requirejs
-        casper.page.evaluate(i2w.setupRequireJs, {icinga: true});
+        icinga.performLogin();
+
+
+Login is performed with the credentials from the CASPERJS_USER/CASPERJS_PASS environment (this can be set with the
+./runtest --user %user% --pass %pass% arguments). The host, server and port are also represented as
+CASPERJS_HOST, CASPERJS_PORT and CASPERJS_PATH environment settings. The default in runtest resembles the version that
+works best in the vagrant development environment:
+
+*   The default user is 'jdoe'
+*   The default password is 'password'
+*   The host and port are localhost:80
+*   The default path is icinga2-web
+
+### Writing the test code
+
+Most tests will require you to login with the supplied credentials, this can be performed with a simple call
+
+    icinga.performLogin();
+
+You can then start the test by calling casper.thenOpen with the page you want to work
+
+    casper.thenOpen("/mysite", function() {
+        // perform tests
     });
 
 ### Testing

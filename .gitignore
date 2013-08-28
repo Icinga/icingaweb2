@@ -4,6 +4,7 @@
 !.gitignore
 !.vagrant-puppet
 !public/.htaccess
+!public/.htaccess.in
 !.gitkeep
 
 build/
