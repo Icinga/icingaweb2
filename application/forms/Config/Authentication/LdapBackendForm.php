@@ -49,6 +49,7 @@ class LdapBackendForm extends BaseBackendForm
      */
     public function create()
     {
+        $this->setName('form_modify_backend');
         $name = $this->filterName($this->getBackendName());
         $backend = $this->getBackend();
 

@@ -110,8 +110,8 @@ if (path === null) {
 
     exports.performLogin = function() {
         casper.start("/authentication/login", function() {
-            this.fill('form#login', icinga.getCredentials());
-            this.click('form#login input#submit');
+            this.fill('form#form_login', icinga.getCredentials());
+            this.click('form#form_login input#submit');
         });
     };
 })();

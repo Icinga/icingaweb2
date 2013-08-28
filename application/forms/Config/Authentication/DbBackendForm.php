@@ -67,6 +67,7 @@ class DbBackendForm extends BaseBackendForm
      */
     public function create()
     {
+        $this->setName('form_modify_backend');
         $name = $this->filterName($this->getBackendName());
 
         $this->addElement(

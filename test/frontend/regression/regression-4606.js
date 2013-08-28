@@ -55,6 +55,7 @@ casper.then(function() {
         'div.alert.alert-success',
         'Assert no success notice existing when no changes have been done in the general form'
     );
+    this.echo("Changing the default timezone");
     this.fill('#form_config_general', {
         'timezone': 'Europe/Minsk'
     });
@@ -65,6 +66,7 @@ casper.then(function() {
  * Check for the 'Successfully Update' information bubble
  */
 casper.then(function() {
+    this.echo("Clicked on save button of the general form, waiting for success");
     this.waitForSelector('div.alert.alert-success', function() {
         this.test.assertSelectorHasText(
             'div.alert.alert-success',
@@ -72,7 +74,7 @@ casper.then(function() {
             'Assert a success text to appear in the general form'
         );
     }, function() {
-        this.die("No success text appeared in the general form");
+        this.fail("No success text appeared in the general form");
     });
 });
 
@@ -85,9 +87,12 @@ casper.thenOpen('/config/authentication', function() {
         for (var i=0; i<links.length; i++) {
             if (/.* Edit This Authentication/.test(links[i].text)) {
                 document.location.href = links[i].getAttribute('href');
+                return;
             }
         }
     });
+
+    this.echo("Clicked on first authentication backend link");
 });
 
 /**
@@ -96,8 +101,21 @@ casper.thenOpen('/config/authentication', function() {
 casper.then(function() {
     this.waitForSelector('input#btn_submit', function() {
         this.click('input#btn_submit');
-        this.waitForSelector('div.alert.alert-success', function() {
-            this.test.assertExists('div.alert.alert-success', 'Assert a success message to exist');
+        this.echo("Submitted authentication form");
+
+        this.waitForSelector('div.alert', function() {
+            // Force creation when message bubbled
+            if (this.exists('form#form_modify_backend input#backend_force_creation')) {
+                this.echo("Backend persistence requires an additional confirmation in this case");
+                this.fill('#form_modify_backend', {
+                    'backend_force_creation' : '1'
+                });
+                this.click('input#btn_submit');
+            }
+            this.echo("Waiting for success feedback");
+            this.waitForSelector('div.alert.alert-success', function() {
+                this.test.assertExists('div.alert.alert-success', 'Assert a success message to exist');
+            });
         }, function() {
             this.test.fail("Success message for authentication provider tests didn't pop up");
         });
@@ -113,15 +131,11 @@ casper.then(function() {
 casper.thenOpen('/config/logging', function() {
     this.test.assertExists('form#form_config_logging', 'Asserting the logging form to exist');
     this.click('form#form_config_logging input#btn_submit');
-    this.echo("Submitting authentication form1");
-
     this.waitForSelector('div.alert.alert-success', function() {
         this.test.assertExists('div.alert.alert-success', 'Assert a success message to exist');
     }, function() {
         this.test.fail('No success message popped up when saving logging configuration');
     });
-    this.echo("Submitting authentication form2");
-
 });
 
 /**

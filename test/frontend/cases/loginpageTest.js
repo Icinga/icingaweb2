@@ -32,19 +32,19 @@ var casper = icinga.getTestEnv();
 var assertLoginFormExists = function(test) {
 
     test.assertExists(
-        'form#login',
+        'form#form_login',
         'Test whether the login form exists'
     );
     test.assertExists(
-        'form#login input#username',
+        'form#form_login input#username',
         'Test whether a username input field exists'
     );
     test.assertExists(
-        'form#login input#password',
+        'form#form_login input#password',
         'Test whether a password input field exists'
     );
     test.assertExists(
-        'form#login input#submit',
+        'form#form_login input#submit',
         'Test whether a submit input field exists'
     );
 };
@@ -71,11 +71,11 @@ casper.start('/', function() {
  * Login with invalid credentials
  */
 casper.then(function() {
-    this.fill('form#login', {
+    this.fill('form#form_login', {
         'username' : 'no',
         'password' : 'existing_user'
     });
-    this.click('form#login input#submit');
+    this.click('form#form_login input#submit');
 });
 
 /**
@@ -98,8 +98,8 @@ casper.then(function() {
  * Login with valid credentials
  */
 casper.then(function() {
-    this.fill('form#login', icinga.getCredentials());
-    this.click('form#login input#submit');
+    this.fill('form#form_login', icinga.getCredentials());
+    this.click('form#form_login input#submit');
 });
 
 /**
@@ -151,7 +151,7 @@ casper.then(function() {
         this.click('#icinga_app_nav_useraction');
         this.waitUntilVisible('#icinga_app_nav_logout', function() {
             this.click('#icinga_app_nav_logout a');
-            this.waitForSelector('form#login', function() {
+            this.waitForSelector('form#form_login', function() {
                 this.test.assertDoesntExist(
                     '#icinga_app_username',
                     'Test if no username is set in the frontend after logout'

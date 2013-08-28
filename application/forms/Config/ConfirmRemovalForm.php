@@ -69,6 +69,7 @@ class ConfirmRemovalForm extends Form
      */
     public function create()
     {
+        $this->setName('form_confirm_removal');
         $this->addElement(
             'hidden',
             $this->targetName,
