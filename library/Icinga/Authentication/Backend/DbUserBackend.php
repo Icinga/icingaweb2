@@ -1,5 +1,4 @@
 <?php
-
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga 2 Web.
@@ -29,12 +28,18 @@
 
 namespace Icinga\Authentication\Backend;
 
+use \Exception;
+use \stdClass;
+use \Zend_Config;
 use \Zend_Db;
+use \Icinga\Application\DbAdapterFactory;
+use \Icinga\Exception\ProgrammingError;
 use \Icinga\User;
 use \Icinga\Authentication\UserBackend;
 use \Icinga\Authentication\Credentials;
 use \Icinga\Authentication;
 use \Icinga\Application\Logger;
+use \Icinga\Exception\ConfigurationError;
 
 /**
  * User authentication backend (@see Icinga\Authentication\UserBackend) for
@@ -47,21 +52,37 @@ use \Icinga\Application\Logger;
 class DbUserBackend implements UserBackend
 {
     /**
-     * Mapping of all table column names
+     * Table map for column username
+     *
+     * @var string
      */
+    const USER_NAME_COLUMN = 'username';
 
-    const USER_NAME_COLUMN   = 'username';
+    /**
+     * Table map for column salt
+     *
+     * @var string
+     */
+    const SALT_COLUMN = 'salt';
 
-    const SALT_COLUMN        = 'salt';
+    /**
+     * Table map for column password
+     *
+     * @var string
+     */
+    const PASSWORD_COLUMN = 'password';
 
-    const PASSWORD_COLUMN    = 'password';
-
-    const ACTIVE_COLUMN      = 'active';
+    /**
+     * Table map for column active
+     *
+     * @var string
+     */
+    const ACTIVE_COLUMN = 'active';
 
     /**
      * The database connection that will be used for fetching users
      *
-     * @var \Zend_Db
+     * @var Zend_Db
      */
     private $db = null;
 
@@ -70,27 +91,47 @@ class DbUserBackend implements UserBackend
      *
      * @var String
      */
-    private $userTable = "account";
+    private $userTable = 'account';
+
+    /**
+     * Name of the backend
+     *
+     * @var string
+     */
+    private $name;
 
     /**
      * Create a DbUserBackend
      *
-     * @param   Zend_Db     The database that provides the authentication data
+     * @param   Zend_Config $config The database that provides the authentication data
+     * @throws  ConfigurationError
      */
-    public function __construct($database)
+    public function __construct(Zend_Config $config)
     {
-        $this->db = $database;
+        $this->name = $config->name;
+        $this->db = DbAdapterFactory::getDbAdapter($config->resource);
 
-        // Test if the connection is available
+        // Throw any errors for Authentication/Manager
         $this->db->getConnection();
     }
 
     /**
+     * Name of the backend
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+
+    /**
      * Check if the user identified by the given credentials is available
      *
-     * @param Credentials $credentials  The login credentials
+     * @param   Credentials $credential
      *
-     * @return boolean                  True when the username is known and currently active.
+     * @return  boolean                  True when the username is known and currently active.
      */
     public function hasUsername(Credentials $credential)
     {
@@ -105,9 +146,9 @@ class DbUserBackend implements UserBackend
     /**
      * Authenticate a user with the given credentials
      *
-     * @param Credentials $credentials  The login credentials
+     * @param   Credentials $credential
      *
-     * @return User|null                The authenticated user or Null.
+     * @return  User|null                   The authenticated user or Null.
      */
     public function authenticate(Credentials $credential)
     {
@@ -118,16 +159,20 @@ class DbUserBackend implements UserBackend
         $this->db->getConnection();
         try {
             $salt = $this->getUserSalt($credential->getUsername());
-        } catch (\Exception $e) {
-            Logger::error($e->getMessage());
+        } catch (Exception $e) {
+            Logger::error(
+                'Could not create salt for user %s. Exception was thrown: %s',
+                $credential->getUsername(),
+                $e->getMessage()
+            );
             return null;
         }
         $res = $this->db
             ->select()->from($this->userTable)
-                ->where(self::USER_NAME_COLUMN.' = ?', $credential->getUsername())
-                ->where(self::ACTIVE_COLUMN.   ' = ?', true)
+                ->where(self::USER_NAME_COLUMN . ' = ?', $credential->getUsername())
+                ->where(self::ACTIVE_COLUMN . ' = ?', true)
                 ->where(
-                    self::PASSWORD_COLUMN. ' = ?',
+                    self::PASSWORD_COLUMN . ' = ?',
                     hash_hmac(
                         'sha256',
                         $salt,
@@ -138,14 +183,17 @@ class DbUserBackend implements UserBackend
         if ($res !== false) {
             return $this->createUserFromResult($res);
         }
+
+        return null;
     }
 
     /**
      * Fetch the users salt from the database
      *
-     * @param $username     The user whose salt should be fetched.
+     * @param   string$username     The user whose salt should be fetched
      *
-     * @return String|null  Returns the salt-string or Null, when the user does not exist.
+     * @return  string|null         Return the salt-string or null, when the user does not exist
+     * @throws  ProgrammingError
      */
     private function getUserSalt($username)
     {
@@ -157,16 +205,16 @@ class DbUserBackend implements UserBackend
         if ($res !== false) {
             return $res->{self::SALT_COLUMN};
         } else {
-            throw new \Exception('No Salt found for user "' . $username . '"');
+            throw new ProgrammingError('No Salt found for user "' . $username . '"');
         }
     }
 
     /**
      * Fetch the user information from the database
      *
-     * @param $username     The name of the user.
+     * @param   string  $username   The name of the user
      *
-     * @return User|null    Returns the user object, or null when the user does not exist.
+     * @return  User|null           Returns the user object, or null when the user does not exist
      */
     private function getUserByName($username)
     {
@@ -178,15 +226,15 @@ class DbUserBackend implements UserBackend
             $this->db->getConnection();
             $res = $this->db->
                 select()->from($this->userTable)
-                    ->where(self::USER_NAME_COLUMN.' = ?', $username)
-                    ->where(self::ACTIVE_COLUMN.' = ?', true)
+                    ->where(self::USER_NAME_COLUMN .' = ?', $username)
+                    ->where(self::ACTIVE_COLUMN .' = ?', true)
                     ->query()->fetch();
             if ($res !== false) {
                 return $this->createUserFromResult($res);
             }
             return null;
         } catch (\Zend_Db_Statement_Exception $exc) {
-            Logger::error("Could not fetch users from db : %s ", $exc->getMessage());
+            Logger::error('Could not fetch users from db : %s ', $exc->getMessage());
             return null;
         }
     }
@@ -194,17 +242,18 @@ class DbUserBackend implements UserBackend
     /**
      * Create a new instance of User from a query result
      *
-     * @param $result   The query result containing the user row
+     * @param   stdClass $resultRow
      *
-     * @return User     The created instance of User.
+     * @return  User                    The created instance of User.
      */
-    private function createUserFromResult($resultRow)
+    private function createUserFromResult(stdClass $resultRow)
     {
         $usr = new User(
             $resultRow->{self::USER_NAME_COLUMN}
         );
         return $usr;
     }
+
 
     /**
      * Return the number of users in this database connection

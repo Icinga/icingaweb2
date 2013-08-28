@@ -29,58 +29,71 @@
 namespace Icinga\Authentication;
 
 /**
-*   Base class for session, providing getter, setters and required
-*   interface methods
-*   
-**/
+ * Base class for handling sessions
+ */
 abstract class Session
 {
+    /**
+     * Container for session values
+     *
+     * @var array
+     */
     private $sessionValues = array();
 
     /**
-    *   Opens a session or creates a new one if not exists
-    *
-    **/
+     * Opens a session or creates a new one if not exists
+     */
     abstract public function open();
 
     /**
-    *   Reads all values from the underyling session implementation
-    *
-    *   @param Boolean $keepOpen    True to keep the session open (depends on implementaiton)
-    **/
+     * Reads all values from the underlying session implementation
+     *
+     * @param bool $keepOpen True to keep the session open
+     */
     abstract public function read($keepOpen = false);
-    
+
     /**
-    *   Persists changes to the underlying session implementation
-    *   
-    *   @param Boolean $keepOpen    True to keep the session open (depends on implementaiton)
-    **/
+     * Persists changes to the underlying session implementation
+     *
+     * @param bool $keepOpen True to keep the session open
+     */
     abstract public function write($keepOpen = false);
+
+    /**
+     * Close session
+     */
     abstract public function close();
+
+    /**
+     * Purge session
+     */
     abstract public function purge();
 
     /**
-    *   Sets a $value under the provided key in the internal session data array
-    *   Does not persist those changes, use @see Session::write in order to persist the changes
-    *   made here.
-    *
-    *   @param  String  $key
-    *   @param  mixed   $value
-    **/
+     * Setter for session values
+     *
+     * You have to persist values manually
+     *
+     * @see     self::persist
+     * @param   string    $key    Name of value
+     * @param   mixed     $value  Value
+     */
     public function set($key, $value)
     {
         $this->sessionValues[$key] = $value;
     }
 
     /**
-    *   Returns the session value stored under $key or $defaultValue if not found. 
-    *   call @see Session:read in order to populate this array with the underyling session implementation
-    *
-    *   @param  String  $key
-    *   @param  mixed   $defaultValue
-    *
-    *   @return mixed
-    **/
+     * Getter fpr session values
+     *
+     * Values are available after populate session with method read.
+     *
+     * @param   string  $key
+     * @param   mixed   $defaultValue
+     *
+     * @return  mixed
+     * @see     self::read
+     */
     public function get($key, $defaultValue = null)
     {
         return isset($this->sessionValues[$key]) ?
@@ -88,22 +101,23 @@ abstract class Session
     }
 
     /**
-    *   Returns the current session value state (also dirty changes not yet written to the session)
-    *   
-    *   @return Array
-    **/
+     * Getter for all session values
+     *
+     * This are also dirty, unwritten values.
+     *
+     * @return array
+     */
     public function getAll()
     {
         return $this->sessionValues;
     }
 
     /**
-    *   Writes all values provided in the key=>value array to the internal session value state.
-    *   In order to persist these chages, call @see Session:write
-    *   
-    *   @param  Array   $values
-    *   @param  Boolean $overwrite      Whether to overwrite already set values 
-    **/
+     * Put an array into session
+     *
+     * @param array $values
+     * @param bool  $overwrite  Overwrite existing values
+     */
     public function setAll(array $values, $overwrite = false)
     {
         if ($overwrite) {
@@ -116,11 +130,10 @@ abstract class Session
             $this->sessionValues[$key] = $value;
         }
     }
-    
+
     /**
-    *  Clears all values from the session cache 
-    *
-    **/
+     * Clears all values from the session cache
+     */
     public function clear()
     {
         $this->sessionValues = array();
