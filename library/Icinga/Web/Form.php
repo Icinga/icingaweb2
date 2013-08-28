@@ -272,17 +272,17 @@ abstract class Form extends Zend_Form
     /**
      * Add message to form
      *
-     * @param string $message     The message to be displayed
-     * @param int    $headingType Whether it should be displayed as heading (1-6) or not (null)
+     * @param string    $message        The message to be displayed
+     * @param int       $headingType    Whether it should be displayed as heading (1-6) or not (null)
      */
     public function addNote($message, $headingType = null)
     {
         $this->addElement(
             new Note(
                 array(
-                    'escape' => $headingType === null ? false : true,
-                    'name'   => sprintf('note_%s', $this->last_note_id++),
-                    'value'  => $headingType === null ? $message : sprintf(
+                    'escape'    => $headingType === null ? false : true,
+                    'name'      => sprintf('note_%s', $this->last_note_id++),
+                    'value'     => $headingType === null ? $message : sprintf(
                         '<h%1$s>%2$s</h%1$s>',
                         $headingType,
                         $message
