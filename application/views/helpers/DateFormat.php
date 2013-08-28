@@ -8,6 +8,7 @@ use \DateTime;
 use \Icinga\Application\Icinga;
 use \Icinga\Application\Config as IcingaConfig;
 use \Icinga\Util\DateTimeFactory;
+use \Zend_Controller_Request_Http;
 
 /**
  * Helper to format date and time. Utilizes DateTimeFactory to ensure time zone awareness
@@ -16,9 +17,9 @@ use \Icinga\Util\DateTimeFactory;
  */
 class Zend_View_Helper_DateFormat extends Zend_View_Helper_Abstract
 {
-
     /**
      * Current request
+     *
      * @var Zend_Controller_Request_Abstract
      */
     private $request;
@@ -26,11 +27,17 @@ class Zend_View_Helper_DateFormat extends Zend_View_Helper_Abstract
     /**
      * Constructor
      *
-     * Retrieve request
+     * Retrieves the request from the application's front controller if not given.
+     *
+     * @param Zend_Controller_Request_Abstract  $request    The request to use
      */
-    public function __construct()
+    public function __construct(Zend_Controller_Request_Abstract $request = null)
     {
-        $this->request = Icinga::app()->getFrontController()->getRequest();
+        if ($request === null) {
+            $this->request = Icinga::app()->getFrontController()->getRequest();
+        } else {
+            $this->request = $request;
+        }
     }
 
     /**

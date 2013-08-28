@@ -37,14 +37,21 @@ use Icinga\Test\BaseTestCase;
 require_once 'Zend/Form.php';
 require_once 'Zend/Config.php';
 require_once 'Zend/Config/Ini.php';
+require_once 'Zend/View/Helper/Abstract.php';
 require_once BaseTestCase::$libDir . '/Web/Form.php';
 require_once BaseTestCase::$appDir . '/forms/Config/GeneralForm.php';
+require_once BaseTestCase::$appDir . '/views/helpers/DateFormat.php';
+require_once BaseTestCase::$libDir . '/Util/ConfigAwareFactory.php';
+require_once BaseTestCase::$libDir . '/Util/DateTimeFactory.php';
 // @codingStandardsIgnoreEnd
 
+use \DateTimeZone;
 use \Icinga\Web\Form;
 use \DOMDocument;
 use \Zend_Config;
 use \Zend_View;
+use \Zend_View_Helper_DateFormat;
+use \Icinga\Util\DateTimeFactory;
 
 class GeneralFormTest extends BaseTestCase
 {
@@ -71,8 +78,10 @@ class GeneralFormTest extends BaseTestCase
      */
     public function testCorrectFieldPopulation()
     {
+        DateTimeFactory::setConfig(array('timezone' => new DateTimeZone('UTC')));
         $this->requireFormLibraries();
         $form = $this->createForm('Icinga\Form\Config\GeneralForm');
+        $form->setDateFormatter(new Zend_View_Helper_DateFormat($this->getRequest()));
         $form->setConfiguration(
             new Zend_Config(
                 array(
@@ -146,8 +155,10 @@ class GeneralFormTest extends BaseTestCase
 
     public function testCorrectConditionalIniFieldRendering()
     {
+        DateTimeFactory::setConfig(array('timezone' => new DateTimeZone('UTC')));
         $this->requireFormLibraries();
         $form = $this->createForm('Icinga\Form\Config\GeneralForm');
+        $form->setDateFormatter(new Zend_View_Helper_DateFormat($this->getRequest()));
         $form->setConfiguration(
             new Zend_Config(
                 array(
@@ -182,8 +193,10 @@ class GeneralFormTest extends BaseTestCase
 
     public function testCorrectConditionalDbFieldRendering()
     {
+        DateTimeFactory::setConfig(array('timezone' => new DateTimeZone('UTC')));
         $this->requireFormLibraries();
         $form = $this->createForm('Icinga\Form\Config\GeneralForm');
+        $form->setDateFormatter(new Zend_View_Helper_DateFormat($this->getRequest()));
         $form->setConfiguration(
             new Zend_Config(
                 array(

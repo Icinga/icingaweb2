@@ -32,6 +32,7 @@ use \DateTimeZone;
 use \Zend_Config;
 use \Zend_Form_Element_Text;
 use \Zend_Form_Element_Select;
+use \Zend_View_Helper_DateFormat;
 use \Icinga\Application\Config as IcingaConfig;
 use \Icinga\Application\DbAdapterFactory;
 use \Icinga\Web\Form;
@@ -69,6 +70,13 @@ class GeneralForm extends Form
     private $resources = null;
 
     /**
+     * The view helper to format date/time strings
+     *
+     * @var Zend_View_Helper_DateFormat
+     */
+    private $dateHelper;
+
+    /**
      * Set the configuration to be used for this form
      *
      * @param IcingaConfig $cfg
@@ -98,6 +106,29 @@ class GeneralForm extends Form
     public function getConfigDir()
     {
         return $this->configDir === null ? IcingaConfig::$configDir : $this->configDir;
+    }
+
+    /**
+     * Return the view helper to format date/time strings
+     *
+     * @return Zend_View_Helper_DateFormat
+     */
+    public function getDateFormatter()
+    {
+        if ($this->dateHelper === null) {
+            return $this->getView()->dateFormat();
+        }
+        return $this->dateHelper;
+    }
+
+    /**
+     * Set the view helper that is used to format date/time strings (used for testing)
+     *
+     * @param Zend_View_Helper_DateFormat $dateHelper
+     */
+    public function setDateFormatter(Zend_View_Helper_DateFormat $dateHelper)
+    {
+        $this->dateHelper = $dateHelper;
     }
 
     /**
@@ -215,7 +246,7 @@ class GeneralForm extends Form
                 'name'      =>  'date_format',
                 'label'     =>  'Date Format',
                 'helptext'  =>  'Display dates according to this format. (See ' . $phpUrl . ' for possible values.) '
-                                . 'Example result: ' . $this->getView()->dateFormat()->format(time(), $dateFormatValue),
+                                . 'Example result: ' . $this->getDateFormatter()->format(time(), $dateFormatValue),
                 'required'  =>  true,
                 'value'     =>  $dateFormatValue
             )
@@ -230,7 +261,7 @@ class GeneralForm extends Form
                 'label'     =>  'Time Format',
                 'required'  =>  true,
                 'helptext'  =>  'Display times according to this format. (See ' . $phpUrl . ' for possible values.) '
-                                . 'Example result: ' . $this->getView()->dateFormat()->format(time(), $timeFormatValue),
+                                . 'Example result: ' . $this->getDateFormatter()->format(time(), $timeFormatValue),
                 'value'     =>  $timeFormatValue
             )
         );
