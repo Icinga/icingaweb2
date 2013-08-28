@@ -38,17 +38,21 @@ use Icinga\Test\BaseTestCase;
 require_once 'Zend/Form.php';
 require_once 'Zend/Config.php';
 require_once 'Zend/Config/Ini.php';
+
+require_once BaseTestCase::$testDir . '/library/Icinga/Web/RequestMock.php';
+
 require_once BaseTestCase::$libDir . '/Web/Form.php';
-require_once BaseTestCase::$appDir . '/forms/Config/AuthenticationForm.php';
+require_once BaseTestCase::$libDir . '/Web/Url.php';
+
 require_once BaseTestCase::$appDir . '/forms/Config/Authentication/BaseBackendForm.php';
 require_once BaseTestCase::$appDir . '/forms/Config/Authentication/DbBackendForm.php';
 require_once BaseTestCase::$appDir . '/forms/Config/Authentication/LdapBackendForm.php';
 // @codingStandardsIgnoreEnd
 
 use \Icinga\Web\Form;
-use \DOMDocument;
+use Icinga\Web\Url;
+use Tests\Icinga\Web\RequestMock;
 use \Zend_Config;
-use \Zend_View;
 
 /**
  * Test for the authentication provider form
@@ -92,27 +96,26 @@ class AuthenticationFormTest extends BaseTestCase
     public function testLdapProvider()
     {
         $this->requireFormLibraries();
-        $form = $this->createForm('Icinga\Form\Config\AuthenticationForm');
+        $form = $this->createForm('Icinga\Form\Config\Authentication\LdapBackendForm');
         $config = new Zend_Config(
             array(
-                'test-ldap' => array(
-                    'backend' => 'ldap',
-                    'target' => 'user',
-                    'hostname' => 'test host',
-                    'root_dn' => 'ou=test,dc=icinga,dc=org',
-                    'bind_dn' => 'cn=testuser,cn=config',
-                    'bind_pw' => 'password',
-                    'user_class' => 'testClass',
-                    'user_name_attribute' => 'testAttribute'
-                )
+                'backend' => 'ldap',
+                'target' => 'user',
+                'hostname' => 'test host',
+                'root_dn' => 'ou=test,dc=icinga,dc=org',
+                'bind_dn' => 'cn=testuser,cn=config',
+                'bind_pw' => 'password',
+                'user_class' => 'testClass',
+                'user_name_attribute' => 'testAttribute'
             )
         );
-        $form->setConfiguration($config);
+        $form->setBackendName('testldap');
+        $form->setBackend($config);
         $form->create();
 
         // parameters to be hidden
         $notShown = array('backend', 'target');
-        foreach ($config->get('test-ldap')->toArray() as $name => $value) {
+        foreach ($config->toArray() as $name => $value) {
             if (in_array($name, $notShown)) {
                 continue;
             }
@@ -123,22 +126,19 @@ class AuthenticationFormTest extends BaseTestCase
             );
         }
     }
-
+/*
     /**
      * Test the database provider form population from config
-     *
      */
     public function testDbProvider()
     {
         $this->requireFormLibraries();
-        $form = $this->createForm('Icinga\Form\Config\AuthenticationForm');
+        $form = $this->createForm('Icinga\Form\Config\Authentication\DbBackendForm');
         $config = new Zend_Config(
             array(
-                'test-db' => array(
-                    'backend'   =>  'db',
-                    'target'    =>  'user',
-                    'resource'  =>  'db_resource'
-                )
+                'backend'   =>  'db',
+                'target'    =>  'user',
+                'resource'  =>  'db_resource'
             )
         );
         $form->setResources(
@@ -149,12 +149,13 @@ class AuthenticationFormTest extends BaseTestCase
             )
         );
 
-        $form->setConfiguration($config);
+        $form->setBackendName('test-db');
+        $form->setBackend($config);
         $form->create();
 
         // parameters to be hidden
         $notShown = array('backend', 'target');
-        foreach ($config->get('test-db')->toArray() as $name => $value) {
+        foreach ($config->toArray() as $name => $value) {
             if (in_array($name, $notShown)) {
                 continue;
             }
@@ -169,171 +170,70 @@ class AuthenticationFormTest extends BaseTestCase
     /**
      * Test whether order modifications via 'priority' are considered
      *
+     * @backupStaticAttributes enabled
      */
-    public function testShowModifiedOrder()
+    public function testModifyOrder()
     {
+        Url::$overwrittenRequest = new RequestMock();
         $this->requireFormLibraries();
-        $form = $this->createForm(
-            'Icinga\Form\Config\AuthenticationForm',
-            array(
-                'priority' => 'test-ldap,test-db'
-            )
-        );
-        $config = $this->getTestConfig();
-        $form->setResources(
-            array(
-                'db_resource' => array(
-                    'type' => 'db'
-                )
-            )
-        );
+        $form = $this->createForm('Icinga\Form\Config\Authentication\ReorderForm');
+        $form->setAuthenticationBackend('backend2');
+        $form->setCurrentOrder(array('backend1', 'backend2', 'backend3', 'backend4'));
 
-        $form->setConfiguration($config);
         $form->create();
+        $this->assertSame(
+            2,
+            count($form->getSubForms()),
+            'Assert that a form for moving backend up and down exists'
+        );
+        $this->assertTrue(
+            $form->upForm->getElement('form_backend_order') !== null,
+            'Assert that a "move backend up" button exists'
+        );
+        $this->assertSame(
+            array('backend2', 'backend1', 'backend3', 'backend4'),
+            explode(',', $form->upForm->getElement('form_backend_order')->getValue()),
+            'Assert the "move backend up" button containing the correct order'
+        );
 
-        $prio = array_keys($form->getConfig());
-        $this->assertEquals('test-ldap', $prio[0], "Asserting priority changes to be persisted");
-        $this->assertEquals('test-db', $prio[1], "Asserting priority changes to be persisted");
+        $this->assertTrue(
+            $form->downForm->getElement('form_backend_order') !== null,
+            'Assert that a "move backend down" button exists'
+        );
+        $this->assertSame(
+            array('backend1', 'backend3', 'backend2', 'backend4'),
+            explode(',', $form->downForm->getElement('form_backend_order')->getValue()),
+            'Assert the "move backend up" button containing the correct order'
+        );
     }
 
     /**
-     * Test whether configuration changes are correctly returned when calling getConfig
+     * Test whether the reorder form doesn't display senseless ordering (like moving the uppermost element up or
+     * the lowermose down)
      *
+     * @backupStaticAttributes enabled
      */
-    public function testConfigurationCreation()
+    public function testInvalidOrderingNotShown()
     {
+        Url::$overwrittenRequest = new RequestMock();
         $this->requireFormLibraries();
-        $form = $this->createForm(
-            'Icinga\Form\Config\AuthenticationForm',
-            array(
-                'priority'                              =>  'test-ldap,test-db',
-                'backend_testdb_resource'               =>  'db_resource_2',
-                'backend_testldap_hostname'             =>  'modified_host',
-                'backend_testldap_root_dn'              =>  'modified_root_dn',
-                'backend_testldap_bind_dn'              =>  'modified_bind_dn',
-                'backend_testldap_bind_pw'              =>  'modified_bind_pw',
-                'backend_testldap_user_class'           =>  'modified_user_class',
-                'backend_testldap_user_name_attribute'  =>  'modified_user_name_attribute'
-            )
-        );
+        $form = $this->createForm('Icinga\Form\Config\Authentication\ReorderForm');
+        $form->setAuthenticationBackend('backend1');
+        $form->setCurrentOrder(array('backend1', 'backend2', 'backend3', 'backend4'));
 
-        $form->setResources(
-            array(
-                'db_resource'   =>  array(
-                    'type' => 'db'
-                ),
-                'db_resource_2' =>  array(
-                    'type' => 'db'
-                )
-            )
-        );
-
-        $form->setConfiguration($this->getTestConfig());
         $form->create();
-
-        $modified = new Zend_Config($form->getConfig());
-        $this->assertEquals(
-            'db_resource_2',
-            $modified->get('test-db')->resource,
-            'Asserting database resource modifications to be applied'
+        $this->assertSame(
+            2,
+            count($form->getSubForms()),
+            'Assert that a form for moving backend up and down exists, even when moving up is not possible'
         );
-        $this->assertEquals(
-            'user',
-            $modified->get('test-db')->target,
-            'Asserting database target still being user when modifying'
+        $this->assertTrue(
+            $form->downForm->getElement('form_backend_order') !== null,
+            'Assert that a "move backend down" button exists when moving up is not possible'
         );
-        $this->assertEquals(
-            'db',
-            $modified->get('test-db')->backend,
-            'Asserting database backend still being db when modifying'
+        $this->assertTrue(
+            $form->upForm->getElement('form_backend_order') === null,
+            'Assert that a "move backend up" button does not exist when moving up is not possible'
         );
-
-        $ldap = $modified->get('test-ldap');
-        $this->assertEquals(
-            'modified_host',
-            $ldap->hostname,
-            'Asserting hostname modifications to be applied when modifying ldap authentication backends'
-        );
-
-        $this->assertEquals(
-            'modified_root_dn',
-            $ldap->root_dn,
-            'Asserting root dn modifications to be applied when modifying ldap authentication backends'
-        );
-
-        $this->assertEquals(
-            'modified_bind_dn',
-            $ldap->bind_dn,
-            'Asserting bind dn modifications to be applied when modifying ldap authentication backends'
-        );
-
-        $this->assertEquals(
-            'modified_bind_pw',
-            $ldap->bind_pw,
-            'Asserting bind pw modifications to be applied when modifying ldap authentication backends'
-        );
-
-        $this->assertEquals(
-            'modified_user_class',
-            $ldap->user_class,
-            'Asserting user class modifications to be applied when modifying ldap authentication backends'
-        );
-
-        $this->assertEquals(
-            'modified_user_name_attribute',
-            $ldap->user_name_attribute,
-            'Asserting user name attribute modifications to be applied when modifying ldap authentication backends'
-        );
-    }
-
-    /**
-     * Test correct behaviour when ticking the 'remove backend' option
-     */
-    public function testBackendRemoval()
-    {
-        $this->requireFormLibraries();
-        $form = $this->createForm(
-            'Icinga\Form\Config\AuthenticationForm',
-            array(
-                'priority'                              =>  'test-ldap,test-db',
-                'backend_testdb_resource'               =>  'db_resource_2',
-                'backend_testldap_remove'               =>  1,
-                'backend_testldap_hostname'             =>  'modified_host',
-                'backend_testldap_root_dn'              =>  'modified_root_dn',
-                'backend_testldap_bind_dn'              =>  'modified_bind_dn',
-                'backend_testldap_bind_pw'              =>  'modified_bind_pw',
-                'backend_testldap_user_class'           =>  'modified_user_class',
-                'backend_testldap_user_name_attribute'  =>  'modified_user_name_attribute'
-            )
-        );
-
-        $form->setResources(
-            array(
-                'db_resource'   =>  array(
-                    'type' => 'db'
-                ),
-                'db_resource_2' =>  array(
-                    'type' => 'db'
-                )
-            )
-        );
-
-        $form->setConfiguration($this->getTestConfig());
-        $form->create();
-        $view = new Zend_View();
-
-        $html = new DOMDocument();
-        $html->loadHTML($form->render($view));
-        $this->assertEquals(
-            null,
-            $html->getElementById('backend_testldap_hostname-element'),
-            'Asserting configuration to be hidden when an authentication is marked as to be removed'
-        );
-        $config = $form->getConfig();
-        $this->assertFalse(
-            isset($config['test-ldap']),
-            'Asserting deleted backends not being persisted in the configuration'
-        );
-
     }
 }

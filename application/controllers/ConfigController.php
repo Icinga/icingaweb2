@@ -24,8 +24,6 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use \Icinga\Application\Benchmark;
-use \Icinga\Authentication\Manager;
 use \Icinga\Web\Controller\BaseConfigController;
 use \Icinga\Web\Widget\Tab;
 use \Icinga\Web\Url;
@@ -178,7 +176,6 @@ class ConfigController extends BaseConfigController
             $form->setAuthenticationBackend($backend);
             $form->setCurrentOrder($order);
             $form->setRequest($this->_request);
-
 
             if (!$showOnly && $form->isSubmittedAndValid()) {
                 if ($this->writeAuthenticationFile($form->getReorderedConfig($config))) {

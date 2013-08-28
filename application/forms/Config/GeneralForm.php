@@ -33,7 +33,6 @@ use \Zend_Config;
 use \Zend_Form_Element_Text;
 use \Zend_Form_Element_Select;
 use \Icinga\Application\Config as IcingaConfig;
-use \Icinga\Application\Icinga;
 use \Icinga\Application\DbAdapterFactory;
 use \Icinga\Web\Form;
 use \Icinga\Web\Form\Validator\WritablePathValidator;

@@ -90,7 +90,7 @@ class PreferenceController extends BasePreferenceController
             }
             try {
                 $userPreferences->commit();
-                $this->view->success = true;
+                $this->view->successMessage = "Preferences Updated Successfully";
 
                 // recreate form to show new values
                 $form = new GeneralForm();

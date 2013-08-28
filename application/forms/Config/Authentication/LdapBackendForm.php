@@ -31,10 +31,6 @@ namespace Icinga\Form\Config\Authentication;
 use \Icinga\Authentication\Backend\LdapUserBackend;
 use \Exception;
 use \Zend_Config;
-use \Icinga\Application\Config as IcingaConfig;
-use \Icinga\Application\Icinga;
-use \Icinga\Application\Logger;
-use \Icinga\Application\DbAdapterFactory;
 use \Icinga\Web\Form;
 
 /**

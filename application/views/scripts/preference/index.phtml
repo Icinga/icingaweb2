@@ -1,8 +1,8 @@
 <?= $this->tabs->render($this); ?>
 
-<?php if (isset($this->success)) : ?>
+<?php if (isset($this->successMessage)) : ?>
 <div class="alert alert-success">
-  <h4>Preferences Updated Successfully</h4>
+  <h4>{{SUCCESS_ICON}} <?= $this->successMessage ?></h4>
 </div>
 <?php endif; ?>
 

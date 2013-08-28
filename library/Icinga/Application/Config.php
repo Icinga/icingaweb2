@@ -106,17 +106,19 @@ class Config extends Zend_Config_Ini
     /**
      * Retrieve a module config instance
      *
-     * @param   string  $modulename
-     * @param   string  $configname
-     * @return  Config
+     * @param   string  $modulename     The name of the module to look for configurations
+     * @param   string  $configname     The configuration name (without ini suffix) to read and return
+     * @param   string  $fromDisk       Whether to read the configuration from disk
+     *
+     * @return  Config                  The configuration object that has been requested
      */
-    public static function module($modulename, $configname = 'config')
+    public static function module($modulename, $configname = 'config', $fromDisk = false)
     {
         if (!isset(self::$modules[$modulename])) {
             self::$modules[$modulename] = array();
         }
         $moduleConfigs = self::$modules[$modulename];
-        if (!isset($moduleConfigs[$configname])) {
+        if (!isset($moduleConfigs[$configname]) || $fromDisk) {
             $filename = self::$configDir . '/modules/' . $modulename . '/' . $configname . '.ini';
             if (file_exists($filename)) {
                 $moduleConfigs[$configname] = new Config(realpath($filename));
