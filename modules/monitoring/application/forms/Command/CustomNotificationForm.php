@@ -99,7 +99,7 @@ class CustomNotificationForm extends CommandForm
     /**
      * Create Custom Notification from request data
      *
-     * @return \Icinga\Protocol\Commandpipe\CustomNotification
+     * @return CustomNotification
      */
     public function getCustomNotification()
     {

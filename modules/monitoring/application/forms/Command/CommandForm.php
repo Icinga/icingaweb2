@@ -38,6 +38,7 @@ class CommandForm extends Form
 {
     /**
      * Create an instance name containing hidden field
+     *
      * @return Zend_Form_Element_Hidden
      */
     private function createInstanceHiddenField()
@@ -60,7 +61,8 @@ class CommandForm extends Form
 
     /**
      * Get the author name
-
+     *  
+     * @return string
      */
     protected function getAuthorName()
     {

@@ -258,8 +258,9 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
     /**
      * Change validators at runtime
      *
+     * @param array $data   The user provided data that will go into validation
+     *
      * @see Form::preValidation
-     * @param array $data
      */
     protected function preValidation(array $data)
     {

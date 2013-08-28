@@ -83,7 +83,6 @@ class EditBackendForm extends Form
     /**
      * Set a custom array of resources to be used in this form instead of the ones from DbAdapterFactory
      * (used for testing)
-     *
      */
     public function setResources($resources)
     {

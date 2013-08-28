@@ -297,9 +297,9 @@ abstract class Form extends Zend_Form
      *
      * Enables automatic submission of this form once the user edits specific elements
      *
-     * @param   array $triggerElements The element names which should auto-submit the form
+     * @param   array $triggerElements  The element names which should auto-submit the form
      *
-     * @throws  ProgrammingError When an element is found which does not yet exist
+     * @throws  ProgrammingError        When an element is found which does not yet exist
      */
     final public function enableAutoSubmit($triggerElements)
     {
@@ -355,7 +355,7 @@ abstract class Form extends Zend_Form
      *
      * This method should be used for testing purposes only
      *
-     * @param   bool $disabled
+     * @param   bool $disabled  Set true in order to disable CSRF tokens in this form (default: true), otherwise false
      *
      * @see     tokenDisabled
      */
@@ -388,9 +388,9 @@ abstract class Form extends Zend_Form
     /**
      * Test the submitted data for a correct CSRF token
      *
-     * @param   array $checkData The POST data send by the user
+     * @param   array $checkData            The POST data send by the user
      *
-     * @throws  InvalidCSRFTokenException When CSRF Validation fails
+     * @throws  InvalidCSRFTokenException   When CSRF Validation fails
      */
     final public function assertValidCsrfToken(array $checkData)
     {
