@@ -1,5 +1,4 @@
 <?php
-
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga 2 Web.
@@ -107,6 +106,22 @@ class DbUserBackendTest extends BaseTestCase
         )
     );
 
+    private function createDbBackendConfig($resource, $name = null)
+    {
+        if ($name === null) {
+            $name = 'TestDbUserBackend-' . uniqid();
+        }
+
+        $config = new Zend_Config(
+            array(
+                'name'      => $name,
+                'resource'  => $resource
+            )
+        );
+
+        return $config;
+    }
+
     /**
      * Test the authentication functions of the DbUserBackend using PostgreSQL as backend.
      *
@@ -115,7 +130,7 @@ class DbUserBackendTest extends BaseTestCase
     public function testCorrectUserLoginForPgsql($db)
     {
         $this->setupDbProvider($db);
-        $backend = new DbUserBackend($db);
+        $backend = new DbUserBackend($this->createDbBackendConfig($db));
         $this->runBackendAuthentication($backend);
         $this->runBackendUsername($backend);
     }
@@ -128,7 +143,7 @@ class DbUserBackendTest extends BaseTestCase
     public function testCorrectUserLoginForMySQL($db)
     {
         $this->setupDbProvider($db);
-        $backend = new DbUserBackend($db);
+        $backend = new DbUserBackend($this->createDbBackendConfig($db));
         $this->runBackendAuthentication($backend);
         $this->runBackendUsername($backend);
     }
@@ -255,5 +270,18 @@ class DbUserBackendTest extends BaseTestCase
             ),
             'Assert that an inactive user cannot authenticate.'
         );
+    }
+
+    /**
+     * @dataProvider mysqlDb
+     */
+    public function testBackendNameAssignment($db)
+    {
+        $this->setupDbProvider($db);
+
+        $testName = 'test-name-123123';
+        $backend = new DbUserBackend($this->createDbBackendConfig($db, $testName));
+
+        $this->assertSame($testName, $backend->getName());
     }
 }

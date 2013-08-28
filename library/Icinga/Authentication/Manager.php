@@ -190,18 +190,24 @@ class Manager
         $target = ucwords(strtolower($backendConfig->target));
         $name = $backendConfig->name;
 
-        if (!$type) {
-            Logger::warn('AuthManager: Backend "%s" has no type configured. (e.g. backend=ldap)', $name);
+        if (!$type && !$backendConfig->class) {
+            Logger::warn('AuthManager: Backend "%s" has no backend type configuration. (e.g. backend=ldap)', $name);
             return null;
         }
 
-        if (!$target) {
-            Logger::warn('AuthManager: Backend "%s" has no target configured. (e.g. target=user|group)', $name);
+        if (!$target && !$backendConfig->class) {
+            Logger::warn('AuthManager: Backend "%s" has no target configuration. (e.g. target=user|group)', $name);
             return null;
         }
 
         try {
-            $class = '\\Icinga\\Authentication\\Backend\\' . $type . $target . 'Backend';
+            // Allow vendor and test classes in configuration
+            if ($backendConfig->class) {
+                $class = $backendConfig->class;
+            } else {
+                $class = '\\Icinga\\Authentication\\Backend\\' . $type . $target . 'Backend';
+            }
+
             if (!class_exists($class)) {
                 Logger::error('AuthManager: Class not found (%s) for backend %s', $class, $name);
                 return null;
@@ -221,17 +227,43 @@ class Manager
      */
     public function addUserBackend(UserBackend $userBackend)
     {
-        $this->userBackends[] = $userBackend;
+        $this->userBackends[$userBackend->getName()] = $userBackend;
+    }
+
+    /**
+     * Get a user backend by name
+     *
+     * @param   string $name
+     *
+     * @return  UserBackend|null
+     */
+    public function getUserBackend($name)
+    {
+        return (isset($this->userBackends[$name])) ?
+            $this->userBackends[$name] : null;
     }
 
     /**
      * Add a group backend to stack
      *
-     * @param $groupBackend
+     * @param GroupBackend $groupBackend
      */
-    public function addGroupBackend($groupBackend)
+    public function addGroupBackend(GroupBackend $groupBackend)
     {
-        $this->groupBackends[] = $groupBackend;
+        $this->groupBackends[$groupBackend->getName()] = $groupBackend;
+    }
+
+    /**
+     * Get a group backend by name
+     *
+     * @param   string $name
+     *
+     * @return  GroupBackend|null
+     */
+    public function getGroupBackend($name)
+    {
+        return (isset($this->groupBackends[$name])) ?
+            $this->groupBackends[$name] : null;
     }
 
     /**

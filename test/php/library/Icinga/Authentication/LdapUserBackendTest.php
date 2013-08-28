@@ -1,9 +1,52 @@
 <?php
-
 // {{{ICINGA_LICENSE_HEADER}}}
+/**
+ * This file is part of Icinga 2 Web.
+ *
+ * Icinga 2 Web - Head for multiple monitoring backends.
+ * Copyright (C) 2013 Icinga Development Team
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ * @copyright 2013 Icinga Development Team <info@icinga.org>
+ * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
+ * @author    Icinga Development Team <info@icinga.org>
+ */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Tests\Icinga\Authentication;
+
+// @codingStandardsIgnoreStart
+require_once realpath(__DIR__ . '/../../../../../library/Icinga/Test/BaseTestCase.php');
+// @codingStandardsIgnoreEnd
+
+use Icinga\Authentication\Credentials;
+use \Icinga\Test\BaseTestCase;
+
+// @codingStandardsIgnoreStart
+require_once 'Zend/Config.php';
+require_once BaseTestCase::$libDir . '/Protocol/Ldap/Connection.php';
+require_once BaseTestCase::$libDir . '/Protocol/Ldap/Query.php';
+require_once BaseTestCase::$libDir . '/Authentication/Credentials.php';
+require_once BaseTestCase::$libDir . '/Authentication/UserBackend.php';
+require_once BaseTestCase::$libDir . '/Authentication/Backend/LdapUserBackend.php';
+// @codingStandardsIgnoreEnd
+
+use \Exception;
+use \Zend_Config;
+use Icinga\Authentication\Backend\LdapUserBackend;
 
 /**
 *
@@ -11,43 +54,53 @@ namespace Tests\Icinga\Authentication;
 * Created Mon, 10 Jun 2013 07:54:34 +0000 
 *
 **/
-class LdapuserbackendTest extends \PHPUnit_Framework_TestCase
+class LdapUserBackendTest extends BaseTestCase
 {
     // Change this according to your ldap test server
-    const ADMIN_DN = "cn=admin,dc=icinga,dc=org";
-    const ADMIN_PASS = "admin";
+    const ADMIN_DN = 'cn=admin,dc=icinga,dc=org';
+    const ADMIN_PASS = 'admin';
 
     private $users = array(
-        "cn=John Doe, dc=icinga, dc=org" =>  array(
-            "cn" => "John Doe",
-            "sn" => "Doe",
-            "objectclass" => "inetOrgPerson",
-            "givenName" => "John",
-            "mail" => "john@doe.local"
+        'cn=Richard Miles,ou=icinga-unittest,dc=icinga,dc=org' =>  array(
+            'cn'            => 'Richard Miles',
+            'sn'            => 'Miles',
+            'objectclass'   => 'inetOrgPerson',
+            'givenName'     => 'Richard',
+            'mail'          => 'richard@doe.local',
+            'uid'           => 'rmiles',
+            'userPassword'  => 'passrmiles'
         ),
-        "cn=Jane Woe, dc=icinga, dc=org" => array(
-            "cn" => "Jane Woe",
-            "sn" => "Woe",
-            "objectclass" => "inetOrgPerson",
-            "givenName" => "Jane",
-            "mail" => "jane@woe.local"
+        'cn=Jane Woe,ou=icinga-unittest,dc=icinga,dc=org' => array(
+            'cn'            => 'Jane Woe',
+            'sn'            => 'Woe',
+            'objectclass'   => 'inetOrgPerson',
+            'givenName'     => 'Jane',
+            'mail'          => 'jane@woe.local',
+            'uid'           => 'jwoe',
+            'userPassword'  => 'passjwoe'
+        )
+    );
+
+    private $baseOu = array(
+        'ou=icinga-unittest,dc=icinga,dc=org' => array(
+            'objectclass'   => 'organizationalUnit',
+            'ou'            => 'icinga-unittest'
         )
     );
 
     private function getLDAPConnection()
     {
-        $this->markTestSkipped("LDAP User Backend is currently not testable, as it would require to Boostrap most of the application (see Protocol\Ldap\Connection)");
-        return;
-        $ldapConn = ldap_connect("localhost", 389);
+        $ldapConn = ldap_connect('localhost', 389);
+
         if (!$ldapConn) {
-            $this->markTestSkipped("Could not connect to test-ldap server, skipping test");
-            return null;
+            $this->markTestSkipped('Could not connect to test-ldap server, skipping test');
         }
-        $bind = ldap_bind($ldapConn, self::ADMIN_DN, self::ADMIN_PASS);
+        $bind = @ldap_bind($ldapConn, self::ADMIN_DN, self::ADMIN_PASS);
+
         if (!$bind) {
-            $this->markTestSkipped("Could not bind to test-ldap server, skipping test");
-            return null;
+            $this->markTestSkipped('Could not bind to test-ldap server, skipping test');
         }
+
         return $ldapConn;
     }
     
@@ -56,62 +109,114 @@ class LdapuserbackendTest extends \PHPUnit_Framework_TestCase
         foreach ($this->users as $ou => $info) {
             @ldap_delete($connection, $ou);
         }
+
+        foreach ($this->baseOu as $ou => $info) {
+            @ldap_delete($connection, $ou);
+        }
     }
 
     private function insertTestdata($connection)
     {
-        foreach ($this->users as $ou => $info) {
+        foreach ($this->baseOu as $ou => $info) {
             if (ldap_add($connection, $ou, $info) === false) {
-                $this->markTestSkipped("Couldn't set up test-ldap users, skipping test");
+                $this->markTestSkipped('Couldn\'t set up test-ldap users, skipping test');
             }
         }
 
+        foreach ($this->users as $ou => $info) {
+            if (ldap_add($connection, $ou, $info) === false) {
+                $this->markTestSkipped('Couldn\'t set up test-ldap users, skipping test');
+            }
+        }
     }
 
     protected function setUp()
     {
         $conn = $this->getLDAPConnection();
-        if ($conn == null) {
-            return;
-        }
         $this->clearTestData($conn);
         $this->insertTestData($conn);
-        $result = ldap_list($conn, "dc=icinga, dc=org", "(cn=John Doe)");
+
+        $result = ldap_list($conn, 'ou=icinga-unittest, dc=icinga, dc=org', '(cn=Richard Miles)');
+
         if (ldap_count_entries($conn, $result) < 1) {
-            $this->markTestSkipped("Couldn't set up test users, skipping test");
+            $this->markTestSkipped('Couldn\'t set up test users, skipping test');
         }
-        $result = ldap_list($conn, "dc=icinga, dc=org", "(cn=Jane Woe)");
+
+        $result = ldap_list($conn, 'ou=icinga-unittest, dc=icinga, dc=org', '(cn=Jane Woe)');
+
         if (ldap_count_entries($conn, $result) < 1) {
-            $this->markTestSkipped("Couldn't set up test users, skipping test");
+            $this->markTestSkipped('Couldn\'t set up test users, skipping test');
         }
+
         ldap_close($conn);
     }
 
     public function tearDown()
     {
         $conn = $this->getLDAPConnection();
-        if ($conn == null) {
-            return;
-        }
 
-        $this->clearTestData($conn);
+        // $this->clearTestData($conn);
         ldap_close($conn);
     }
 
-    /**
-    * Test for LdapUserBackend::HasUsername() 
-    *
-    **/
-    public function testHasUsername()
+    private function createBackendConfig()
     {
+        $config = new Zend_Config(
+            array(
+                'backend'               => 'ldap',
+                'target'                => 'user',
+                'hostname'              => 'localhost',
+                'root_dn'               => 'ou=icinga-unittest,dc=icinga,dc=org',
+                'bind_dn'               => 'cn=admin,cn=config',
+                'bind_pw'               => 'admin',
+                'user_class'            => 'inetOrgPerson',
+                'user_name_attribute'   => 'uid'
+            )
+        );
+
+        return $config;
     }
 
     /**
-    * Test for LdapUserBackend::Authenticate() 
-    *
-    **/
+     * Test for LdapUserBackend::HasUsername()
+     **/
+    public function testHasUsername()
+    {
+        $backend = new LdapUserBackend($this->createBackendConfig());
+        $this->assertTrue($backend->hasUsername(new Credentials('jwoe')));
+        $this->assertTrue($backend->hasUsername(new Credentials('rmiles')));
+        $this->assertFalse($backend->hasUsername(new Credentials('DoesNotExist')));
+    }
+
+    /**
+     * Test for LdapUserBackend::Authenticate()
+     */
     public function testAuthenticate()
     {
-        $this->markTestIncomplete('testAuthenticate is not implemented yet');
+        $backend = new LdapUserBackend($this->createBackendConfig());
+
+        $this->assertInstanceOf(
+            '\Icinga\User',
+            $backend->authenticate(new Credentials('jwoe', 'passjwoe'))
+        );
+
+        $this->assertFalse($backend->authenticate(new Credentials('jwoe', 'passjwoe22')));
+
+        $this->assertInstanceOf(
+            '\Icinga\User',
+            $backend->authenticate(new Credentials('rmiles', 'passrmiles'))
+        );
+
+        $this->assertFalse($backend->authenticate(new Credentials('rmiles', 'passrmiles33')));
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage Cannot fetch single DN for
+     */
+    public function testAuthenticateUnknownUser()
+    {
+        $backend = new LdapUserBackend($this->createBackendConfig());
+        $this->assertFalse($backend->authenticate(new Credentials('unknown123', 'passunknown123')));
     }
 }

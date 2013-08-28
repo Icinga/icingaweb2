@@ -32,6 +32,7 @@ use \Exception;
 use \stdClass;
 use \Zend_Config;
 use \Zend_Db;
+use \Zend_Db_Adapter_Abstract;
 use \Icinga\Application\DbAdapterFactory;
 use \Icinga\Exception\ProgrammingError;
 use \Icinga\User;
@@ -109,7 +110,12 @@ class DbUserBackend implements UserBackend
     public function __construct(Zend_Config $config)
     {
         $this->name = $config->name;
-        $this->db = DbAdapterFactory::getDbAdapter($config->resource);
+
+        if ($config->resource instanceof Zend_Db_Adapter_Abstract) {
+            $this->db = $config->resource;
+        } else {
+            $this->db = DbAdapterFactory::getDbAdapter($config->resource);
+        }
 
         // Throw any errors for Authentication/Manager
         $this->db->getConnection();
