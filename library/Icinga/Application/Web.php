@@ -28,13 +28,13 @@
 
 namespace Icinga\Application;
 
+use \DateTimeZone;
 use \Exception;
 use \Zend_Layout;
 use \Zend_Paginator;
 use \Zend_View_Helper_PaginationControl;
 use \Zend_Controller_Action_HelperBroker;
 use \Zend_Controller_Router_Route;
-use \Zend_Controller_Action_Helper_ViewRenderer;
 use \Zend_Controller_Front;
 use \Icinga\Application\Logger;
 use \Icinga\Authentication\Manager as AuthenticationManager;
@@ -46,6 +46,7 @@ use \Icinga\Web\Request;
 use \Icinga\Web\View;
 use \Icinga\User\Preferences\StoreFactory;
 use \Icinga\User\Preferences\SessionStore;
+use \Icinga\Util\DateTimeFactory;
 
 /**
  * Use this if you want to make use of Icinga functionality in other web projects
@@ -102,9 +103,9 @@ class Web extends ApplicationBootstrap
     {
         return $this->setupConfig()
             ->setupErrorHandling()
-            ->setupTimezone()
             ->setupResourceFactories()
             ->setupUser()
+            ->setupTimezone()
             ->setupRequest()
             ->setupZendMvc()
             ->setupTranslation()
@@ -398,6 +399,27 @@ class Web extends ApplicationBootstrap
             array('mixedPagination.phtml', 'default')
         );
 
+        return $this;
+    }
+
+    /**
+     * Setup user timezone if set and valid, otherwise global default timezone
+     *
+     * @return  self
+     * @see     ApplicationBootstrap::setupTimezone
+     */
+    protected function setupTimezone()
+    {
+        $userTimeZone = $this->user->getPreferences()->get('app.timezone');
+
+        try {
+            $tz = new DateTimeZone($userTimeZone);
+        } catch (Exception $e) {
+            return parent::setupTimezone();
+        }
+
+        date_default_timezone_set($userTimeZone);
+        DateTimeFactory::setConfig(array('timezone' => $tz));
         return $this;
     }
 }
