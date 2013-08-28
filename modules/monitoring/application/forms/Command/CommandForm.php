@@ -29,9 +29,7 @@
 namespace Monitoring\Form\Command;
 
 use Icinga\Web\Form;
-use Icinga\Web\Form\Element\Note;
 use \Zend_Form_Element_Hidden;
-use \Zend_Validate_Date;
 
 /**
  * Simple confirmation command
@@ -39,43 +37,8 @@ use \Zend_Validate_Date;
 class CommandForm extends Form
 {
     /**
-     * Array of messages
-     *
-     * @var string[]
-     */
-    private $notes = array();
-
-    /**
-     * Add message to stack
-     *
-     * @param string $message
-     */
-    public function addNote($message)
-    {
-        $this->notes[] = $message;
-    }
-
-    /**
-     * Purge messages from stack
-     *
-     */
-    public function clearNotes()
-    {
-        $this->notes = array();
-    }
-
-    /**
-     * Getter for notes
-     *
-     * @return string[]
-     */
-    public function getNotes()
-    {
-        return $this->notes;
-    }
-
-    /**
      * Create an instance name containing hidden field
+     *
      * @return Zend_Form_Element_Hidden
      */
     private function createInstanceHiddenField()
@@ -93,24 +56,13 @@ class CommandForm extends Form
      */
     protected function create()
     {
-        if (count($this->getNotes())) {
-            foreach ($this->getNotes() as $nodeid => $note) {
-                $element = new Note(
-                    array(
-                        'name' => 'note_'. $nodeid,
-                        'value' => $note
-                    )
-                );
-                $this->addElement($element);
-            }
-        }
-
         $this->addElement($this->createInstanceHiddenField());
     }
 
     /**
      * Get the author name
-
+     *  
+     * @return string
      */
     protected function getAuthorName()
     {

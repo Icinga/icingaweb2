@@ -31,7 +31,6 @@ namespace Monitoring\Form\Config\Instance;
 
 use \Zend_Config;
 use \Icinga\Web\Form;
-use \Icinga\Web\Form\Element\Note;
 
 /**
  * Form for editing existing instances
@@ -91,14 +90,8 @@ class EditInstanceForm extends Form
      */
     private function addRemoteInstanceForm()
     {
-        $this->addElement(
-            new Note(
-                array(
-                    'name'  => 'note_ssh_info',
-                    'value' =>  'When configuring a remote host, you need to setup passwordless key authentication'
-                )
-            )
-        );
+        $this->addNote('When configuring a remote host, you need to setup passwordless key authentication');
+
         $this->addElement(
             'text',
             'instance_remote_host',

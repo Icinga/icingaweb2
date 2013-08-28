@@ -29,14 +29,9 @@
 namespace Monitoring\Form\Config\Backend;
 
 use \Zend_Config;
-
-use \Icinga\Application\Config as IcingaConfig;
-use \Icinga\Application\Icinga;
-use \Icinga\Application\Logger;
-use \Icinga\Application\DbAdapterFactory;
-
 use \Icinga\Web\Form;
-use \Icinga\Web\Form\Element\Note;
+use \Icinga\Application\Icinga;
+use \Icinga\Application\DbAdapterFactory;
 
 /**
  * Form for modifying a monitoring backend
@@ -88,7 +83,6 @@ class EditBackendForm extends Form
     /**
      * Set a custom array of resources to be used in this form instead of the ones from DbAdapterFactory
      * (used for testing)
-     *
      */
     public function setResources($resources)
     {
@@ -249,14 +243,7 @@ class EditBackendForm extends Form
                 break;
             default:
                 $this->removeElement('backend_type');
-                $this->addElement(
-                    new Note(
-                        array(
-                            'name'  => 'error_note',
-                            'value' => 'Unknown Backend Type "' . $this->backend->type. '"'
-                        )
-                    )
-                );
+                $this->addNote('Unknown Backend Type "' . $this->backend->type. '"');
                 return;
         }
         $this->addDisableButton();

@@ -30,11 +30,8 @@ namespace Icinga\Form\Config;
 
 use \Zend_Config;
 use \Icinga\Application\Config as IcingaConfig;
-use \Icinga\Application\Icinga;
 use \Icinga\Application\Logger;
-use \Icinga\Application\DbAdapterFactory;
 use \Icinga\Web\Form;
-use \Icinga\Web\Form\Element\Note;
 use \Icinga\Web\Form\Decorator\ConditionalHidden;
 
 /**
@@ -280,15 +277,7 @@ class AuthenticationForm extends Form
         $order = $this->getAuthenticationOrder();
 
         foreach ($order as $name) {
-            $this->addElement(
-                new Note(
-                    array(
-                        'escape' => false,
-                        'name'  => 'title_backend_' . $name,
-                        'value' => '<h4>Backend ' . $name . '</h4>'
-                    )
-                )
-            );
+            $this->addNote('Backend ' . $name, 4);
             $this->addRemoveHint($this->filterName($name));
             $backend = $this->config->get($name, null);
             if ($backend === null) {

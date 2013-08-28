@@ -33,6 +33,7 @@ use \Zend_View_Interface;
 use \Icinga\Exception\ProgrammingError;
 use \Icinga\Web\Form\Decorator\HelpText;
 use \Icinga\Web\Form\InvalidCSRFTokenException;
+use \Icinga\Web\Form\Element\Note;
 
 /**
  * Base class for forms providing CSRF protection, confirmation logic and auto submission
@@ -93,6 +94,15 @@ abstract class Form extends Zend_Form
      * @var string
      */
     private $cancelLabel;
+
+    /**
+     * Last used note-id
+     *
+     * Helper to generate unique names for note elements
+     *
+     * @var int
+     */
+    private $last_note_id = 0;
 
     /**
      * Getter for the session ID
@@ -260,13 +270,36 @@ abstract class Form extends Zend_Form
     }
 
     /**
+     * Add message to form
+     *
+     * @param string    $message        The message to be displayed
+     * @param int       $headingType    Whether it should be displayed as heading (1-6) or not (null)
+     */
+    public function addNote($message, $headingType = null)
+    {
+        $this->addElement(
+            new Note(
+                array(
+                    'escape'    => $headingType === null ? false : true,
+                    'name'      => sprintf('note_%s', $this->last_note_id++),
+                    'value'     => $headingType === null ? $message : sprintf(
+                        '<h%1$s>%2$s</h%1$s>',
+                        $headingType,
+                        $message
+                    )
+                )
+            )
+        );
+    }
+
+    /**
      * Enable automatic form submission on the given elements
      *
      * Enables automatic submission of this form once the user edits specific elements
      *
-     * @param   array $triggerElements The element names which should auto-submit the form
+     * @param   array $triggerElements  The element names which should auto-submit the form
      *
-     * @throws  ProgrammingError When an element is found which does not yet exist
+     * @throws  ProgrammingError        When an element is found which does not yet exist
      */
     final public function enableAutoSubmit($triggerElements)
     {
@@ -322,7 +355,7 @@ abstract class Form extends Zend_Form
      *
      * This method should be used for testing purposes only
      *
-     * @param   bool $disabled
+     * @param   bool $disabled  Set true in order to disable CSRF tokens in this form (default: true), otherwise false
      *
      * @see     tokenDisabled
      */
@@ -355,9 +388,9 @@ abstract class Form extends Zend_Form
     /**
      * Test the submitted data for a correct CSRF token
      *
-     * @param   array $checkData The POST data send by the user
+     * @param   array $checkData            The POST data send by the user
      *
-     * @throws  InvalidCSRFTokenException When CSRF Validation fails
+     * @throws  InvalidCSRFTokenException   When CSRF Validation fails
      */
     final public function assertValidCsrfToken(array $checkData)
     {

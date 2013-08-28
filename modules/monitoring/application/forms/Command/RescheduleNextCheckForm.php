@@ -31,7 +31,6 @@ namespace Monitoring\Form\Command;
 use \Zend_Form_Element_Checkbox;
 use \Icinga\Web\Form\Element\DateTimePicker;
 use \Icinga\Util\DateTimeFactory;
-use \Icinga\Web\Form\Element\Note;
 
 /**
  * Form for scheduling checks
@@ -43,33 +42,21 @@ class RescheduleNextCheckForm extends WithChildrenCommandForm
      */
     protected function create()
     {
-        $this->addElement(
-            new Note(
-                array(
-                    'name'  => 'commanddescription',
-                    'value' => t(
-                        'This command is used to schedule the next check of hosts/services. Icinga will re-queue the '
-                        . 'check at the time you specify.'
-                    )
-                )
+        $this->addNote(
+            t(
+                'This command is used to schedule the next check of hosts/services. Icinga will re-queue the '
+                . 'check at the time you specify.'
             )
         );
 
         $this->addElement(
             new DateTimePicker(
                 array(
-                    'name'      => 'checktime',
-                    'label'     => t('Check Time'),
-                    'value'     => DateTimeFactory::create()->getTimestamp(),
-                    'required'  => !$this->getRequest()->getPost('forcecheck')
-                )
-            )
-        );
-        $this->addElement(
-            new Note(
-                array(
-                    'name'  => 'checktimenote',
-                    'value' => t('Set the date/time when this check should be executed.')
+                    'name'     => 'checktime',
+                    'label'    => t('Check Time'),
+                    'value'    => DateTimeFactory::create()->getTimestamp(),
+                    'required' => !$this->getRequest()->getPost('forcecheck'),
+                    'helptext' => t('Set the date/time when this check should be executed.')
                 )
             )
         );
@@ -77,17 +64,10 @@ class RescheduleNextCheckForm extends WithChildrenCommandForm
         $this->addElement(
             new Zend_Form_Element_Checkbox(
                 array(
-                    'name'  => 'forcecheck',
-                    'label' => t('Force Check'),
-                    'value' => true
-                )
-            )
-        );
-        $this->addElement(
-            new Note(
-                array(
-                    'name'  => 'forcechecknote',
-                    'value' => t(
+                    'name'     => 'forcecheck',
+                    'label'    => t('Force Check'),
+                    'value'    => true,
+                    'helptext' => t(
                         'If you select this option, Icinga will force a check regardless of both what time the '
                         . 'scheduled check occurs and whether or not checks are enabled.'
                     )

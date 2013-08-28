@@ -25,7 +25,6 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use \DateTime;
 use \Zend_View_Helper_FormElement;
 
 /**
@@ -63,7 +62,7 @@ class Zend_View_Helper_FormDateTime extends Zend_View_Helper_FormElement
         // Build the element
         $xhtml = '<div class="datetime">'
             . '<input type="text" name="' . $this->view->escape($name) . '"'
-            . ' id="' . $this->view->escape($id) . '"'
+            . ' id="' . $this->view->escape($name) . '"'
             . $value
             . $disabled
             . $this->_htmlAttribs($attribs)

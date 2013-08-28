@@ -35,7 +35,6 @@ use \Icinga\Web\Form\Element\DateTimePicker;
 use \Icinga\Protocol\Commandpipe\Downtime;
 use \Icinga\Protocol\Commandpipe\Comment;
 use \Icinga\Util\DateTimeFactory;
-use \Icinga\Web\Form\Element\Note;
 
 /**
  * Form for scheduling downtimes
@@ -78,17 +77,12 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
      */
     protected function create()
     {
-        $this->addElement(
-            new Note(
-                array(
-                    'name'  => 'commanddescription',
-                    'value' => t(
-                        'This command is used to schedule downtime for hosts/services. During the specified downtime, '
-                        . 'Icinga will not send notifications out about the affected objects. When the scheduled '
-                        . 'downtime expires, Icinga will send out notifications as it normally would. Scheduled '
-                        . 'downtimes are preserved across program shutdowns and restarts.'
-                    )
-                )
+        $this->addNote(
+            t(
+                'This command is used to schedule downtime for hosts/services. During the specified downtime, '
+                . 'Icinga will not send notifications out about the affected objects. When the scheduled '
+                . 'downtime expires, Icinga will send out notifications as it normally would. Scheduled '
+                . 'downtimes are preserved across program shutdowns and restarts.'
             )
         );
 
@@ -100,18 +94,11 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
             array(
                 'label'    => t('Comment'),
                 'rows'     => 4,
-                'required' => true
-            )
-        );
-        $this->addElement(
-            new Note(
-                array(
-                    'name'  => 'commentnote',
-                    'value' => t(
-                        'If you work with other administrators, you may find it useful to share information '
-                        . 'about a host or service that is having problems if more than one of you may be working on '
-                        . 'it. Make sure you enter a brief description of what you are doing.'
-                    )
+                'required' => true,
+                'helptext' => t(
+                    'If you work with other administrators, you may find it useful to share information '
+                    . 'about a host or service that is having problems if more than one of you may be working on '
+                    . 'it. Make sure you enter a brief description of what you are doing.'
                 )
             )
         );
@@ -147,34 +134,20 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
         $this->addElement(
             new DateTimePicker(
                 array(
-                    'name'  => 'starttime',
-                    'label' => t('Start Time'),
-                    'value' => $now->getTimestamp()
-                )
-            )
-        );
-        $this->addElement(
-            new Note(
-                array(
-                    'name'  => 'stattimenote',
-                    'value' => t('Set the start date/time for the downtime.')
+                    'name'     => 'starttime',
+                    'label'    => t('Start Time'),
+                    'value'    => $now->getTimestamp(),
+                    'helptext' => t('Set the start date/time for the downtime.')
                 )
             )
         );
         $this->addElement(
             new DateTimePicker(
                 array(
-                    'name'  => 'endtime',
-                    'label' => t('End Time'),
-                    'value' => $now->getTimestamp() + 3600
-                )
-            )
-        );
-        $this->addElement(
-            new Note(
-                array(
-                    'name'  => 'endtimenote',
-                    'value' => t('Set the end date/time for the downtime.')
+                    'name'     => 'endtime',
+                    'label'    => t('End Time'),
+                    'value'    => $now->getTimestamp() + 3600,
+                    'helptext' => t('Set the end date/time for the downtime.')
                 )
             )
         );
@@ -183,10 +156,10 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
             'select',
             'type',
             array(
-                'label'         => t('Downtime Type'),
-                'multiOptions'  => $this->getDowntimeTypeOptions(),
-                'required'      => true,
-                'validators'    => array(
+                'label'        => t('Downtime Type'),
+                'multiOptions' => $this->getDowntimeTypeOptions(),
+                'required'     => true,
+                'validators'   => array(
                     array(
                         'InArray',
                         true,
@@ -194,19 +167,12 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
                             array_keys($this->getDowntimeTypeOptions())
                         )
                     )
-                )
-            )
-        );
-        $this->addElement(
-            new Note(
-                array(
-                    'name'  => 'typenote',
-                    'value' => t(
-                        'If you select the fixed option, the downtime will be in effect between the start and end '
-                        . 'times you specify whereas a flexible downtime starts when the service enters a non-OK state '
-                        . '(sometime between the start and end times you specified) and lasts as long as the duration '
-                        . 'of time you enter. The duration fields do not apply for fixed downtime.'
-                    )
+                ),
+                'helptext'     => t(
+                    'If you select the fixed option, the downtime will be in effect between the start and end '
+                    . 'times you specify whereas a flexible downtime starts when the service enters a non-OK state '
+                    . '(sometime between the start and end times you specified) and lasts as long as the duration '
+                    . 'of time you enter. The duration fields do not apply for fixed downtime.'
                 )
             )
         );
@@ -242,15 +208,10 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
                 )
             );
             $this->addElements(array($hoursText, $minutesText));
-            $this->addElement(
-                new Note(
-                    array(
-                        'name'  => 'flexiblenote',
-                        'value' => t(
-                            'Enter here the duration of the downtime. Icinga will automatically delete the downtime '
-                            . 'after this time expired.'
-                        )
-                    )
+            $this->addNote(
+                t(
+                    'Enter here the duration of the downtime. Icinga will automatically delete the downtime '
+                    . 'after this time expired.'
                 )
             );
         }
@@ -297,8 +258,9 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
     /**
      * Change validators at runtime
      *
+     * @param array $data   The user provided data that will go into validation
+     *
      * @see Form::preValidation
-     * @param array $data
      */
     protected function preValidation(array $data)
     {

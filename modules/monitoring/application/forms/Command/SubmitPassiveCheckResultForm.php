@@ -29,7 +29,6 @@
 namespace Monitoring\Form\Command;
 
 use \Icinga\Exception\ProgrammingError;
-use \Icinga\Web\Form\Element\Note;
 
 /**
  * Form for submitting passive check results
@@ -125,16 +124,11 @@ class SubmitPassiveCheckResultForm extends CommandForm
      */
     protected function create()
     {
-        $this->addElement(
-            new Note(
-                array(
-                    'name'  => 'commanddescription',
-                    'value' => t(
-                        'This command is used to submit a passive check result for particular hosts/services. It is '
-                        . 'particularly useful for resetting security-related objects to OK states once they have been '
-                        . 'dealt with.'
-                    )
-                )
+        $this->addNote(
+            t(
+                'This command is used to submit a passive check result for particular hosts/services. It is '
+                . 'particularly useful for resetting security-related objects to OK states once they have been '
+                . 'dealt with.'
             )
         );
 
@@ -142,10 +136,10 @@ class SubmitPassiveCheckResultForm extends CommandForm
             'select',
             'pluginstate',
             array(
-                'label'         => t('Check Result'),
-                'multiOptions'  => $this->getOptions(),
-                'required'      => true,
-                'validators'    => array(
+                'label'        => t('Check Result'),
+                'multiOptions' => $this->getOptions(),
+                'required'     => true,
+                'validators'   => array(
                     array(
                         'Digits',
                         true
@@ -157,15 +151,8 @@ class SubmitPassiveCheckResultForm extends CommandForm
                             array_keys($this->getOptions())
                         )
                     )
-                )
-            )
-        );
-        $this->addElement(
-            new Note(
-                array(
-                    'name'  => 'checkresultnote',
-                    'value' => t('Set the state which should be send to Icinga for this objects.')
-                )
+                ),
+                'helptext'     => t('Set the state which should be send to Icinga for this objects.')
             )
         );
 
@@ -173,17 +160,10 @@ class SubmitPassiveCheckResultForm extends CommandForm
             'textarea',
             'checkoutput',
             array(
-                'label'     => t('Check Output'),
-                'rows'      => 2,
-                'required'  => true
-            )
-        );
-        $this->addElement(
-            new Note(
-                array(
-                    'name'  => 'checkoutputnote',
-                    'value' => t('Fill in the check output string which should be send to Icinga.')
-                )
+                'label'    => t('Check Output'),
+                'rows'     => 2,
+                'required' => true,
+                'helptext' => t('Fill in the check output string which should be send to Icinga.')
             )
         );
 
@@ -191,16 +171,9 @@ class SubmitPassiveCheckResultForm extends CommandForm
             'textarea',
             'performancedata',
             array(
-                'label' => t('Performance Data'),
-                'rows' => 2
-            )
-        );
-        $this->addElement(
-            new Note(
-                array(
-                    'name'  => 'performancedatanote',
-                    'value' => t('Fill in the performance data string which should be send to Icinga.')
-                )
+                'label'    => t('Performance Data'),
+                'rows'     => 2,
+                'helptext' => t('Fill in the performance data string which should be send to Icinga.')
             )
         );
 

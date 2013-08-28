@@ -8,7 +8,6 @@ require_once __DIR__. '/../../../../../application/forms/Command/CommandForm.php
 
 
 use \Zend_View;
-use \Zend_Test_PHPUnit_ControllerTestCase;
 use \Test\Icinga\Web\Form\BaseFormTest;
 
 use Monitoring\Form\Command\CommandForm;
@@ -31,19 +30,5 @@ class CommandFormTest extends BaseFormTest
         $this->assertContains('<dd id="note_1-element">', $content);
         $this->assertContains('444 NOTE 1</dd>', $content);
         $this->assertContains('555 NOTE 2</dd>', $content);
-    }
-
-    public function testFormNotes()
-    {
-        $form = new CommandForm();
-        $form->addNote('test1');
-        $form->addNote('test2');
-
-        $reference = array('test1', 'test2');
-        $this->assertCount(2, $form->getNotes());
-        $this->assertEquals($reference, $form->getNotes());
-
-        $form->clearNotes();
-        $this->assertCount(0, $form->getNotes());
     }
 }
