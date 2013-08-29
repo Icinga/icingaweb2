@@ -28,11 +28,10 @@
 
 namespace Icinga\User\Preferences;
 
-use Icinga\User;
-use Icinga\Exception\ProgrammingError;
-use \Icinga\Application\DbAdapterFactory;
 use \Zend_Config;
-use \Zend_Db;
+use \Icinga\User;
+use \Icinga\Exception\ProgrammingError;
+use \Icinga\Application\DbAdapterFactory;
 
 /**
  * Create preference stores from zend config
@@ -66,7 +65,10 @@ final class StoreFactory
             $store = new $class();
 
             if (!$store instanceof FlushObserverInterface) {
-                throw new ProgrammingError('Not instance of FlushObserverInterface: '. $class);
+                throw new ProgrammingError(
+                    'Preferences StoreFactory could not create provider (class ' . $class . '). '
+                    . 'Class is not instance of FlushObserverInterface.'
+                );
             }
 
             $items = $config->toArray();
@@ -88,6 +90,8 @@ final class StoreFactory
             return $store;
         }
 
-        throw new ProgrammingError('Could not instantiate class: '. $class);
+        throw new ProgrammingError(
+            'Preferences StoreFactory could not create provider (class ' . $class . '). Class not found.'
+        );
     }
 }
