@@ -24,14 +24,7 @@ define(['jquery', 'logging', 'icinga/componentRegistry'], function ($, log, regi
             requirejs(
                 ['modules/' + cmpType],
                 function (Cmp) {
-                    var cmp;
-                    try {
-                        cmp = new Cmp(target);
-                    } catch (e) {
-                        log.emergency(e);
-                        err(e);
-                        return;
-                    }
+                    var cmp = new Cmp(target);
                     if (fin) {
                         fin(cmp);
                     }
@@ -77,7 +70,7 @@ define(['jquery', 'logging', 'icinga/componentRegistry'], function ($, log, regi
 
             registry.markAllInactive();
 
-            $('div[data-icinga-component]')
+            $('[data-icinga-component]')
                 .each(function(index, el) {
                     var type = $(el).attr('data-icinga-component');
                     pendingFns++;
