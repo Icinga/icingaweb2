@@ -79,7 +79,7 @@ copy-folder-%:
 ensure-writable-folders:
 	$(INSTALL) -m 775 $(INSTALL_OPTS_WEB) -d $(DESTDIR)$(prefix)/var/
 	$(INSTALL) -m 775 $(INSTALL_OPTS_WEB) -d $(DESTDIR)$(prefix)/var/log
-	chmod 775 -R $(DESTDIR)$(prefix)/config
+	chmod -R 775 $(DESTDIR)$(prefix)/config
 
 
 #
