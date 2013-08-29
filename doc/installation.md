@@ -8,11 +8,9 @@
 If you like to configurea and install icinga2-web from the command line or 
 if you want to create packages, configure and make is the best choice for installation.
 
+    ./configure && make install && make install-apache2-config
 
-`
-./configure && make install && make install-apache2-config
-`
-will install the application to the default target (/usr/local/icinga2-web). Also 
+will install the application to the default target (/usr/local/icinga2-web). Also
 an apache configuration entry is added to your apache server, so you should restart
 your web server according to your systems configuration.
 
@@ -20,9 +18,9 @@ your web server according to your systems configuration.
 
 If you want to install the application to a different directory, use the --prefix flag in your 
 configure call:
-`
-./configure --prefix=/my/target/directory
-`
+
+    ./configure --prefix=/my/target/directory
+
 
 ### Authentication
 

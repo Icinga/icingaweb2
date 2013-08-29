@@ -38,7 +38,7 @@ use \Icinga\Web\Form\Element\Note;
 /**
  * Base class for forms providing CSRF protection, confirmation logic and auto submission
  */
-abstract class Form extends Zend_Form
+class Form extends Zend_Form
 {
     /**
      * The form's request object
@@ -161,7 +161,9 @@ abstract class Form extends Zend_Form
     /**
      * Add elements to this form (used by extending classes)
      */
-    abstract protected function create();
+    protected function create()
+    {
+    }
 
     /**
      * Method called before validation
@@ -322,7 +324,9 @@ abstract class Form extends Zend_Form
      * Ensures that the current request method is POST, that the form was manually submitted and that the data provided
      * in the request is valid and gets repopulated in case its invalid.
      *
-     * @return bool
+     * @return  bool                True when the form is submitted and valid, otherwise false
+     * @see     Form::isValid()
+     * @see     Form::isSubmitted()
      */
     public function isSubmittedAndValid()
     {
@@ -334,12 +338,7 @@ abstract class Form extends Zend_Form
         $checkData = $this->getRequest()->getParams();
         $this->assertValidCsrfToken($checkData);
 
-        $submitted = true;
-        if ($this->submitLabel) {
-            $submitted = isset($checkData['btn_submit']);
-        }
-
-        if ($submitted) {
+        if ($this->isSubmitted()) {
             // perform full validation if submitted
             $this->preValidation($checkData);
             return $this->isValid($checkData);
@@ -348,6 +347,24 @@ abstract class Form extends Zend_Form
             $this->populate($checkData);
             return false;
         }
+    }
+
+    /**
+     * Check whether this form has been submitted
+     *
+     * Per default, this checks whether the button set with the 'setSubmitLabel' method
+     * is being submitted. For custom submission logic, this method must be overwritten
+     *
+     * @return bool True when the form is marked as submitted, otherwise false
+     */
+    public function isSubmitted()
+    {
+        $submitted = true;
+        if ($this->submitLabel) {
+            $checkData = $this->getRequest()->getParams();
+            $submitted = isset($checkData['btn_submit']);
+        }
+        return $submitted;
     }
 
     /**

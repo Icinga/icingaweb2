@@ -1,5 +1,7 @@
 # Application and Module Configuration
 
+## Basic usage
+
 The \Icinga\Application\Config class is a general purpose service to help you find, load and save
 configuration data. It is used both by the Icinga 2 Web modules and the framework itself. With
 INI files as source it enables you to store configuration in a familiar format. Icinga 2 Web
@@ -22,3 +24,10 @@ keep their main configuration in the INI file called config.ini. Here's some exa
     // The following example loads values from the example module's extra.ini:
     IcingaConfig::module('example', 'extra')->logging->get('enabled', true);
 
+## Reload from disk
+
+If you want to force reading a configuration from disk (i.e. after you modified it), you can use the $fromDisk flag in
+the IcingaConfig::app/IcingaConfig::module call:
+
+    IcingaConfig::app('authentication', true)-> ... // read authentication from disk
+    IcingaConfig::module('example', 'extra', true)->... // read module configuration from disk

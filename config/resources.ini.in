@@ -3,7 +3,7 @@
 ; The configuration file *resources.ini* contains data sources that
 ; can be referenced in other configurations. This allows you to manage
 ; all connections to SQL databases in one single place, avoiding the need
-: to edit several different configuration files, when the connection
+; to edit several different configuration files, when the connection
 ; information of a resource change.
 ;
 ; Each section represents a resource, with the section name being the
@@ -13,21 +13,13 @@
 ; be interpreted. Currently only the resource type *db* is available.
 
 
-[icingaweb-pgsql]
+[internal_db]
 type                = db
-db                  = pgsql         ; PostgreSQL
-host                = localhost
-password            = icinga
-username            = icingaweb
-dbname              = icingaweb
-
-[icingaweb-mysql]
-type                = db
-db                  = mysql         ; MySQL
-host                = localhost
-password            = icinga
-username            = icingaweb
-dbname              = icingaweb
+db                  = @internal_db_type@
+host                = @internal_db_host@
+password            = @internal_db_pass@
+username            = @internal_db_user@
+dbname              = @internal_db_name@
 
 [ido]
 type                = db

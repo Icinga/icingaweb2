@@ -24,8 +24,6 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use \Icinga\Application\Benchmark;
-use \Icinga\Authentication\Manager;
 use \Icinga\Web\Controller\BaseConfigController;
 use \Icinga\Web\Widget\Tab;
 use \Icinga\Web\Url;
@@ -33,10 +31,11 @@ use \Icinga\Web\Hook\Configuration\ConfigurationTabBuilder;
 use \Icinga\Application\Icinga;
 use \Icinga\Application\Config as IcingaConfig;
 use \Icinga\Form\Config\GeneralForm;
-use \Icinga\Form\Config\AuthenticationForm;
+use \Icinga\Form\Config\Authentication\ReorderForm;
 use \Icinga\Form\Config\Authentication\LdapBackendForm;
 use \Icinga\Form\Config\Authentication\DbBackendForm;
 use \Icinga\Form\Config\LoggingForm;
+use \Icinga\Form\Config\ConfirmRemovalForm;
 use \Icinga\Config\PreservingIniWriter;
 
 /**
@@ -44,6 +43,7 @@ use \Icinga\Config\PreservingIniWriter;
  */
 class ConfigController extends BaseConfigController
 {
+
     /**
      * Create tabs for this configuration controller
      *
@@ -97,9 +97,11 @@ class ConfigController extends BaseConfigController
         $form->setRequest($this->_request);
         if ($form->isSubmittedAndValid()) {
             if (!$this->writeConfigFile($form->getConfig(), 'config'))  {
-                return false;
+                return;
             }
-            $this->redirectNow('/config');
+            $this->view->successMessage = "Config Sucessfully Updated";
+            $form->setConfiguration(IcingaConfig::app(), true);
+
         }
         $this->view->form = $form;
     }
@@ -114,11 +116,11 @@ class ConfigController extends BaseConfigController
         $form->setConfiguration(IcingaConfig::app());
         $form->setRequest($this->_request);
         if ($form->isSubmittedAndValid()) {
-            $config = $form->getConfig();
             if (!$this->writeConfigFile($form->getConfig(), 'config')) {
                 return;
             }
-            $this->redirectNow('/config/logging');
+            $this->view->successMessage = "Config Sucessfully Updated";
+            $form->setConfiguration(IcingaConfig::app(), true);
         }
         $this->view->form = $form;
     }
@@ -139,10 +141,12 @@ class ConfigController extends BaseConfigController
      */
     public function moduleenableAction()
     {
+        $module = $this->_getParam('name');
         $manager = Icinga::app()->getModuleManager();
-        $manager->enableModule($this->_getParam('name'));
-        $manager->loadModule($this->_getParam('name'));
-        $this->redirectNow('config/moduleoverview?_render=body');
+        $manager->enableModule($module);
+        $manager->loadModule($module);
+        $this->view->successMessage = 'Module "' . $module . '" enabled';
+        $this->moduleoverviewAction();
     }
 
     /**
@@ -150,32 +154,78 @@ class ConfigController extends BaseConfigController
      */
     public function moduledisableAction()
     {
+        $module = $this->_getParam('name');
         $manager = Icinga::app()->getModuleManager();
-        $manager->disableModule($this->_getParam('name'));
-        $this->redirectNow('config/moduleoverview?_render=body');
+        $manager->disableModule($module);
+        $this->view->successMessage = 'Module "' . $module . '" disabled';
+        $this->moduleoverviewAction();
     }
 
     /**
      * Action for creating a new authentication backend
      */
-    public function authenticationAction()
+    public function authenticationAction($showOnly = false)
     {
-        $form = new AuthenticationForm();
-        $config = IcingaConfig::app('authentication');
-        $form->setConfiguration($config);
-        $form->setRequest($this->_request);
+        $config = IcingaConfig::app('authentication', true);
+        $order = array_keys($config->toArray());
+        $this->view->backends = array();
+
+        foreach ($config as $backend=>$backendConfig) {
+            $form = new ReorderForm();
+            $form->setName('form_reorder_backend_' . $backend);
+            $form->setAuthenticationBackend($backend);
+            $form->setCurrentOrder($order);
+            $form->setRequest($this->_request);
+
+            if (!$showOnly && $form->isSubmittedAndValid()) {
+                if ($this->writeAuthenticationFile($form->getReorderedConfig($config))) {
+                    $this->view->successMessage = 'Authentication Order Updated';
+                    $this->authenticationAction(true);
+                }
+                return;
+            }
+
+            $this->view->backends[] = (object) array(
+                'name'          =>  $backend,
+                'reorderForm'   =>  $form
+            );
+        }
+        $this->render('authentication');
+    }
+
+    /**
+     * Action for removing a backend from the authentication list.
+     *
+     * Redirects to the overview after removal is finished
+     */
+    public function removeauthenticationbackendAction()
+    {
+        $configArray = IcingaConfig::app('authentication', true)->toArray();
+        $authBackend =  $this->getParam('auth_backend');
+        if (!isset($configArray[$authBackend])) {
+            $this->view->errorMessage = 'Can\'t perform removal: Unknown Authentication Backend Provided';
+            $this->authenticationAction(true);
+            return;
+        }
+
+        $form = new ConfirmRemovalForm();
+        $form->setRequest($this->getRequest());
+        $form->setRemoveTarget('auth_backend', $authBackend);
+
 
         if ($form->isSubmittedAndValid()) {
-            $modifiedConfig = $form->getConfig();
-            if (empty($modifiedConfig)) {
-                $form->addError('You need at least one authentication backend.');
-            } else if (!$this->writeAuthenticationFile($modifiedConfig)) {
-                return;
-            } else {
-                $this->redirectNow('/config/authentication');
+            unset($configArray[$authBackend]);
+            if ($this->writeAuthenticationFile($configArray)) {
+                $this->view->successMessage = 'Authentication Backend "' . $authBackend . '" Removed';
+                $this->authenticationAction(true);
             }
+            return;
         }
+
         $this->view->form = $form;
+
+        $this->view->name = $authBackend;
+        $this->render('authentication/remove');
     }
 
     /**
@@ -188,18 +238,78 @@ class ConfigController extends BaseConfigController
         } else {
             $form = new DbBackendForm();
         }
+        if ($this->getParam('auth_backend')) {
+            $form->setBackendName($this->getParam('auth_backend'));
+        }
         $form->setRequest($this->getRequest());
+
+        if ($form->isSubmittedAndValid()) {
+            $backendCfg = IcingaConfig::app('authentication')->toArray();
+            foreach ($form->getConfig() as $backendName => $settings) {
+                if (isset($backendCfg[$backendName])) {
+                    $this->view->errorMessage = 'Backend name already exists';
+                    $this->view->form = $form;
+                    $this->render('authentication/create');
+                    return;
+                }
+                $backendCfg[$backendName] = $settings;
+            }
+            if ($this->writeAuthenticationFile($backendCfg)) {
+                // redirect to overview with success message
+                $this->view->successMessage = 'Backend Modification Written';
+                $this->authenticationAction(true);
+            }
+            return;
+        }
+        $this->view->form = $form;
+        $this->render('authentication/create');
+    }
+
+    /**
+     *  Form for editing backends
+     *
+     *  Mostly the same like the createAuthenticationBackendAction, but with additional checks for backend existence
+     *  and form population
+     */
+    public function editauthenticationbackendAction()
+    {
+        $configArray = IcingaConfig::app('authentication', true)->toArray();
+        $authBackend =  $this->getParam('auth_backend');
+        if (!isset($configArray[$authBackend])) {
+            $this->view->errorMessage = 'Can\'t edit: Unknown Authentication Backend Provided';
+            $this->authenticationAction(true);
+            return;
+        }
+
+        if ($configArray[$authBackend]['backend'] === 'ldap') {
+            $form = new LdapBackendForm();
+        } else {
+            $form = new DbBackendForm();
+        }
+
+        $form->setBackendName($this->getParam('auth_backend'));
+        $form->setBackend(IcingaConfig::app('authentication', true)->$authBackend);
+        $form->setRequest($this->getRequest());
+
         if ($form->isSubmittedAndValid()) {
             $backendCfg = IcingaConfig::app('authentication')->toArray();
             foreach ($form->getConfig() as $backendName => $settings) {
                 $backendCfg[$backendName] = $settings;
+                // Remove the old section if the backend is renamed
+                if ($backendName != $authBackend) {
+                    unset($backendCfg[$authBackend]);
+                }
             }
-            if (!$this->writeAuthenticationFile($backendCfg)) {
-                return;
+            if ($this->writeAuthenticationFile($backendCfg)) {
+                // redirect to overview with success message
+                $this->view->successMessage = 'Backend "' . $authBackend . '" created';
+                $this->authenticationAction(true);
             }
-            $this->redirectNow('/config/authentication');
-
+            return;
         }
+
+
+        $this->view->name = $authBackend;
         $this->view->form = $form;
         $this->render('authentication/modify');
     }

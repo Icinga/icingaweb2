@@ -129,7 +129,7 @@ class AddUrlForm extends Form
     protected function create()
     {
         $dashboard = new Dashboard();
-
+        $this->setName('form_dashboard_add');
         $dashboard->readConfig(IcingaConfig::app('dashboard/dashboard'));
         $this->addElement(
             'text',
@@ -144,7 +144,8 @@ class AddUrlForm extends Form
 
         if (empty($elems) ||    // show textfield instead of combobox when no pane is available
             ($this->getRequest()->getPost('create_new_pane', '0') &&  // or when a new pane should be created (+ button)
-            !$this->getRequest()->getPost('use_existing_dashboard', '0')) // and the user didn't click the 'use existing' button
+            !$this->getRequest()->getPost('use_existing_dashboard', '0')) // and the user didn't click the 'use
+                                                                          // existing' button
         ) {
             $this->addNewPaneTextField();
         } else {

@@ -7,7 +7,7 @@ INSTALL_OPTS=@INSTALL_OPTS@
 INSTALL_OPTS_WEB=@INSTALL_OPTS_WEB@
 
 default:
-	@echo "Icinga2Web make targets: "
+	@echo "IcingaWeb make targets: "
 	@printf "%b" " -install:\t\t\tInstall the application and overwrite configs\n"
 	@printf "%b" " -update:\t\t\tInstall the application without touching the configs\n"
 	@printf "%b" " -install-apache-config:\tInstall the apache configuration\n"
@@ -15,7 +15,7 @@ default:
 #
 # Installs the whole application w\o httpd configurations
 #
-install: install-static-files install-runtime-dirs
+install: install-static-files install-runtime-dirs ensure-writable-folders
 
 update: install-application
 #
@@ -26,8 +26,8 @@ clean:
 	if [ -f ./Makefile ];then \
 		rm ./Makefile; \
 	fi; \
-	if [ -f ./etc/apache/icinga2web.conf ];then \
-		rm ./etc/apache/icinga2web.conf; \
+	if [ -f ./etc/apache/icingaweb.conf ];then \
+		rm ./etc/apache/icingaweb.conf; \
 	fi;
 
 #
@@ -51,12 +51,12 @@ install-tests: copy-folder-tests
 # Install configurations for apache2
 #
 install-apache-config:
-	$(INSTALL) -m 644 $(INSTALL_OPTS) "./etc/apache/icinga2web.conf"  $(WWW_CONF_PATH)/icinga2web.conf;
+	$(INSTALL) -m 644 $(INSTALL_OPTS) "./etc/apache/icingaweb.conf"  $(WWW_CONF_PATH)/icingaweb.conf;
 
 #
 # Installs the php files to the prefix
 #
-install-application: copy-web-files-application copy-web-files-library
+install-application: copy-web-files-application copy-web-files-library 
 
 #
 # Rule for coying folders and containing files (arbitary types), hidden files are excluded
@@ -76,6 +76,12 @@ copy-folder-%:
 		done
 
 
+ensure-writable-folders:
+	$(INSTALL) -m 775 $(INSTALL_OPTS_WEB) -d $(DESTDIR)$(prefix)/var/
+	$(INSTALL) -m 775 $(INSTALL_OPTS_WEB) -d $(DESTDIR)$(prefix)/var/log
+	chmod -R 775 $(DESTDIR)$(prefix)/config
+
+
 #
 # Rule for copying only php, *html, js and ini files. Hidden files are ignored
 #
@@ -84,14 +90,17 @@ copy-web-files-%:
 
 	@dirs=`find ./$* -mindepth 1 -type d `;\
 	for dir in $$dirs; do \
-		$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(prefix)/"$$dir"; \
+		$(INSTALL) -m 755 $(INSTALL_OPTS_WEB) -d $(DESTDIR)$(prefix)/"$$dir"; \
 	done;
 
 	@files=`find ./$* -mindepth 1 -type f \
-		-name "*.php" -or -name "*.ini" -or -name "*.*html" -or -name "*.js"  \
+		-name "*.php" -or -name "*.ini" -or -name "*.*html" \
+		-or -name "*.js" -or -name "*.css" -or -name "*.less"  \
+		-or -name "*.otf" -or -name "*.ttf" -or -name "*.otf" \
+		-or -name "*.svg" -or -name "*.woff" \
 		-and ! -name ".*"`; \
 		for file in $$files; do \
-			$(INSTALL) -m 644 $(INSTALL_OPTS) "$$file"  $(DESTDIR)$(prefix)/"$$file"; \
+			$(INSTALL) -m 644 $(INSTALL_OPTS_WEB) "$$file"  $(DESTDIR)$(prefix)/"$$file"; \
 		done
 
 

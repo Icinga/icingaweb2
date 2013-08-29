@@ -34,7 +34,6 @@ use \Zend_Form_Element_Text;
 use \Zend_Form_Element_Select;
 use \Icinga\Application\Config as IcingaConfig;
 use \Icinga\Application\Icinga;
-use \Icinga\Application\DbAdapterFactory;
 use \Icinga\User\Preferences;
 use \Icinga\Web\Form;
 use \Icinga\Web\Form\Validator\TimeFormatValidator;
@@ -215,6 +214,7 @@ class GeneralForm extends Form
         if ($this->config === null) {
             $this->config = new Zend_Config(array());
         }
+        $this->setName('form_preference_set');
         $global = $this->config->global;
         if ($global === null) {
             $global = new Zend_Config(array());

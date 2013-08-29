@@ -42,7 +42,7 @@ user { 'icinga':
 }
 
 user { 'apache':
-  groups  => 'icinga-cmd',
+  groups  => ['icinga-cmd', 'vagrant'],
   require => [ Class['apache'], Group['icinga-cmd'] ]
 }
 
@@ -471,13 +471,13 @@ exec { 'create-pgsql-icingaweb-db':
 
 exec { 'populate-icingaweb-mysql-db-accounts':
   unless  => 'mysql -uicingaweb -picinga icingaweb -e "SELECT * FROM account;" &> /dev/null',
-  command => 'mysql -uicingaweb -picinga icingaweb < /vagrant/etc/schema/users.mysql.sql',
+  command => 'mysql -uicingaweb -picinga icingaweb < /vagrant/etc/schema/accounts.mysql.sql',
   require => [ Exec['create-mysql-icingaweb-db'] ]
 }
 
 exec { 'populate-icingweba-pgsql-db-accounts':
   unless  => 'psql -U icingaweb -d icingaweb -c "SELECT * FROM account;" &> /dev/null',
-  command => 'sudo -u postgres psql -U icingaweb -d icingaweb -f /vagrant/etc/schema/users.pgsql.sql',
+  command => 'sudo -u postgres psql -U icingaweb -d icingaweb -f /vagrant/etc/schema/accounts.pgsql.sql',
   require => [ Exec['create-pgsql-icingaweb-db'] ]
 }
 

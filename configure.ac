@@ -2,11 +2,11 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.61])
-AC_INIT([Icinga2Web], [1.0.0], [info@icinga.org])
-AC_PREFIX_DEFAULT(/usr/local/icinga2-web)
+AC_INIT([IcingaWeb], [1.0.0], [info@icinga.org])
+AC_PREFIX_DEFAULT(/usr/local/icingaweb)
 
 if test "x$prefix" = "xNONE" ; then
-    installDir="/usr/local/icinga2-web"
+    installDir="/usr/local/icingaweb"
     prefix=$installDir
 else
     installDir=$prefix 
@@ -29,10 +29,10 @@ AC_CHECK_PHP_MODULE([sockets json])
 #
 #   Configuration files
 #
-AC_ARG_WITH([icinga2web_config_path],
-    AS_HELP_STRING([--with-icinga2web-config-path], [Configuration path for icinga ]),
-    icinga2web_config_path="'$withval'",
-    icinga2web_config_path="'$prefix/config/'"
+AC_ARG_WITH([icingaweb_config_path],
+    AS_HELP_STRING([--with-icingaweb-config-path], [Configuration path for icinga ]),
+    icingaweb_config_path="'$withval'",
+    icingaweb_config_path="'$prefix/config/'"
 )
 
 #
@@ -52,9 +52,9 @@ AC_ARG_WITH([web_group],
 )
 
 AC_ARG_WITH([web_path],
-    AS_HELP_STRING([--with-web-path=PATH], [web sub path (default /cranberry)]),
+    AS_HELP_STRING([--with-web-path=PATH], [web sub path (default /icingaweb)]),
     web_path=$withval,
-    web_path=/cranberry
+    web_path=/icingaweb
 )
 
 AC_ARG_WITH([www_conf_path],
@@ -90,9 +90,9 @@ AC_ARG_WITH([internal_db_type],
 )
 
 AC_ARG_WITH([internal_db_name],
-    AS_HELP_STRING([--with-internal-db-name=NAME], [database name to use for internal database (default icinga2web)]),
+    AS_HELP_STRING([--with-internal-db-name=NAME], [database name to use for internal database (default icingaweb)]),
     internal_db_name=$withval,
-    internal_db_name=icinga2web
+    internal_db_name=icingaweb
 )
 
 AC_ARG_WITH([internal_db_host],
@@ -108,15 +108,15 @@ AC_ARG_WITH([internal_db_port],
 )
 
 AC_ARG_WITH([internal_db_pass],
-    AS_HELP_STRING([--with-internal-db-pass=PASS], [database pass to use for internal database (default icinga2web)]),
+    AS_HELP_STRING([--with-internal-db-pass=PASS], [database pass to use for internal database (default icingaweb)]),
     internal_db_pass=$withval,
-    internal_db_pass=icinga2web
+    internal_db_pass=icingaweb
 )
 
 AC_ARG_WITH([internal_db_user],
-    AS_HELP_STRING([--with-internal-db-user=USER], [database user to use for internal database (default icinga2web)]),
+    AS_HELP_STRING([--with-internal-db-user=USER], [database user to use for internal database (default icingaweb)]),
     internal_db_user=$withval,
-    internal_db_user=icinga2web
+    internal_db_user=icingaweb
 )
 
 #
@@ -126,7 +126,7 @@ AC_ARG_WITH([internal_db_user],
 AC_ARG_WITH([internal_authentication], 
     AC_HELP_STRING([--with-internal-authentication], [use the internal database for authentication (default: yes)]),
     internal_authentication=yes,
-    internal_authentication=def
+    internal_authentication=yes
 )
 
 AC_ARG_WITH([ldap_authentication], 
@@ -154,13 +154,13 @@ AC_ARG_WITH([ldap_port],
 AC_ARG_WITH([ldap_binddn],
     AS_HELP_STRING([--with-ldap-binddn=DN], [dn to use for retrieving user information via ldap (default cn=admin, cn=config)]),
     ldap_binddn=$withval,
-    ldap_binddn=["cn=Manager, ou=icinga, ou=org"]
+    ldap_binddn=["cn=admin,cn=config"]
 )
 
 AC_ARG_WITH([ldap_bindpass],
     AS_HELP_STRING([--with-ldap-bindpass=PASS], [password to use for retrieving user information via ldap (default admin)]),
     ldap_bindpass=$withval,
-    ldap_bindpass=["secret"]
+    ldap_bindpass=["admin"]
 )
 
 AC_ARG_WITH([ldap_rootdn],
@@ -346,7 +346,6 @@ AS_IF([test "x$ido_db_type" = xpgsql], [
 ido_enabled="disable=1" 
 statusdat_enabled="disable=1" 
 livestatus_enabled="disable=1" 
-ldap_enabled="disable=1"
 
 AS_CASE([$icinga_backend],
     ["ido"], [ido_enabled=""],
@@ -354,9 +353,16 @@ AS_CASE([$icinga_backend],
     ["livestatus"], [livestatus_enabled=""],
     [statusdat_enabled=""])
 
+use_ldap_auth=";"
 AS_IF([test "x$ldap_authentication" != xno],
     AC_CHECK_PHP_MODULE([ldap])
-    ldap_enabled=""
+    use_ldap_auth=""
+)
+
+use_internal_auth=";"
+AS_IF([test "x$internal_authentication" != xno],
+    AC_CHECK_PHP_MODULE([ldap])
+    use_internal_auth=""
 )
 
 #
@@ -371,7 +377,7 @@ AC_SUBST(web_path)
 AC_SUBST(www_conf_path)
 AC_SUBST(bin_user)
 AC_SUBST(bin_group)
-AC_SUBST(icinga2web_config_path)
+AC_SUBST(icingaweb_config_path)
 
 # Internal db setup
 AC_SUBST(internal_db_type)
@@ -416,58 +422,9 @@ AC_SUBST(livestatus_socket)
 AC_SUBST(icinga_commandpipe)
 
 # Comment placeholders for toggling backends
-AC_SUBST(livestatus_enabled)
-AC_SUBST(statusdat_enabled)
-AC_SUBST(ido_enabled)
-AC_SUBST(ldap_enabled)
 
-# Internal db setup
-AC_SUBST(internal_db_type)
-AC_SUBST(internal_db_name)
-AC_SUBST(internal_db_host)
-AC_SUBST(internal_db_port)
-AC_SUBST(internal_db_user)
-AC_SUBST(internal_db_pass)
-
-# ldap setup 
-AC_SUBST(ldap_host)
-AC_SUBST(ldap_port)
-AC_SUBST(ldap_rootdn)
-AC_SUBST(ldap_binddn)
-AC_SUBST(ldap_bindpass)
-AC_SUBST(ldap_user_objectclass)
-AC_SUBST(ldap_attribute_basedn)
-AC_SUBST(ldap_attribute_username)
-AC_SUBST(ldap_attribute_password)
-AC_SUBST(ldap_group_objectclass)
-AC_SUBST(ldap_attribute_groupname)
-
-# backend setup
-AC_SUBST(icinga_backend)
-
-# ido backend variables
-AC_SUBST(ido_db_type)
-AC_SUBST(ido_host)
-AC_SUBST(ido_port)
-AC_SUBST(ido_database)
-AC_SUBST(ido_user)
-AC_SUBST(ido_password)
-
-# status.dat backend
-AC_SUBST(statusdat_file)
-AC_SUBST(objects_cache_file)
-
-# livestatus backend
-AC_SUBST(livestatus_socket)
-
-# command pipe
-AC_SUBST(icinga_commandpipe)
-
-# Comment placeholders for toggling backends
-AC_SUBST(livestatus_enabled)
-AC_SUBST(statusdat_enabled)
-AC_SUBST(ido_enabled)
-AC_SUBST(ldap_enabled)
+AC_SUBST(use_ldap_auth)
+AC_SUBST(use_internal_auth)
 
 # Application and installation
 AC_SUBST(PHP)
@@ -482,7 +439,8 @@ AC_CONFIG_FILES([
     config/authentication.ini
     config/resources.ini
     config/modules/monitoring/backends.ini
-    public/index.php
+    etc/apache/icingaweb.conf
+    public/.htaccess
 ])
 
 #

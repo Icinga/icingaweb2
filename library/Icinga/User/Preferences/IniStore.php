@@ -28,13 +28,16 @@
 
 namespace Icinga\User\Preferences;
 
+use Icinga\Application\Logger;
+use Icinga\Protocol\Ldap\Exception;
 use \SplObserver;
 use \SplSubject;
-use Icinga\User;
-use Icinga\User\Preferences;
-use Icinga\Exception\ConfigurationError;
-use Icinga\Exception\ProgrammingError;
+use \Icinga\User;
+use \Icinga\User\Preferences;
+use \Icinga\Exception\ConfigurationError;
+use \Icinga\Exception\ProgrammingError;
 use \Zend_Config;
+use \Icinga\Application\Config as IcingaConfig;
 use \Zend_Config_Writer_Ini;
 
 /**
@@ -84,7 +87,7 @@ class IniStore implements LoadInterface, FlushObserverInterface
      *
      * @param string|null $configPath
      */
-    public function __construct($configPath=null)
+    public function __construct($configPath = null)
     {
         if ($configPath !== null) {
             $this->setConfigPath($configPath);
@@ -99,6 +102,7 @@ class IniStore implements LoadInterface, FlushObserverInterface
      */
     public function setConfigPath($configPath)
     {
+        $configPath = IcingaConfig::resolvePath($configPath);
         if (!is_dir($configPath)) {
             throw new ConfigurationError('Config dir dos not exist: '. $configPath);
         }
@@ -124,18 +128,22 @@ class IniStore implements LoadInterface, FlushObserverInterface
         if (file_exists($this->preferencesFile) === false) {
             $this->createDefaultIniFile();
         }
+        try {
+            $this->iniConfig = new Zend_Config(
+                parse_ini_file($this->preferencesFile),
+                true
+            );
 
-        $this->iniConfig = new Zend_Config(
-            parse_ini_file($this->preferencesFile),
-            true
-        );
-
-        $this->iniWriter = new Zend_Config_Writer_Ini(
-            array(
-                'config'   => $this->iniConfig,
-                'filename' => $this->preferencesFile
-            )
-        );
+            $this->iniWriter = new Zend_Config_Writer_Ini(
+                array(
+                    'config'   => $this->iniConfig,
+                    'filename' => $this->preferencesFile
+                )
+            );
+        } catch (Exception $e) {
+            Logger::error('Could not create IniStore backend: %s', $e->getMessage());
+            throw new \RuntimeException("Creating user preference backend failed");
+        }
     }
 
     /**
@@ -144,6 +152,8 @@ class IniStore implements LoadInterface, FlushObserverInterface
     private function createDefaultIniFile()
     {
         touch($this->preferencesFile);
+        chmod($this->preferencesFile, 0664);
+
     }
 
     /**

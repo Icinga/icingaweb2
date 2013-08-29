@@ -87,7 +87,7 @@ class GeneralFormTest extends BaseTestCase
      *  Test whether fields with preferences are enabled
      *
      */
-    public function testEnsableFormIfUsingPreference()
+    public function testEnableFormIfUsingPreference()
     {
         $this->requireFormLibraries();
         $form = $this->createForm('Icinga\Form\Preference\GeneralForm');

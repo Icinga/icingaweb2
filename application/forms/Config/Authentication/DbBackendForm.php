@@ -29,12 +29,8 @@
 
 namespace Icinga\Form\Config\Authentication;
 
-use \Zend_Config;
-use \Icinga\Application\Config as IcingaConfig;
-use \Icinga\Application\Icinga;
-use \Icinga\Application\Logger;
+use \Icinga\Authentication\Backend\DbUserBackend;
 use \Icinga\Application\DbAdapterFactory;
-use \Icinga\Web\Form;
 
 /**
  * Form class for adding/modifying database authentication backends
@@ -66,6 +62,7 @@ class DbBackendForm extends BaseBackendForm
      */
     public function create()
     {
+        $this->setName('form_modify_backend');
         $name = $this->filterName($this->getBackendName());
 
         $this->addElement(
@@ -117,5 +114,33 @@ class DbBackendForm extends BaseBackendForm
         return array(
             $section => $cfg
         );
+    }
+
+    /**
+     * Validate the current configuration by creating a backend and requesting the user count
+     *
+     * @return bool True when the backend is valid, false otherwise
+     * @see BaseBackendForm::isValidAuthenticationBackend
+     */
+    public function isValidAuthenticationBackend()
+    {
+        try {
+            $name = $this->getBackendName();
+            $db = DbAdapterFactory::getDbAdapter(
+                $this->getValue('backend_' . $this->filterName($name) . '_' . 'resource')
+            );
+            $dbBackend = new DbUserBackend($db);
+            if ($dbBackend->getUserCount() < 1) {
+                $this->addErrorMessage("No users found under the specified database backend");
+                return false;
+            }
+        } catch (\Exception $e) {
+            $this->addErrorMessage("Using the specified backend failed: " . $e->getMessage());
+            return false;
+        } catch (\Zend_Db_Statement_Exception $e) {
+            $this->addErrorMessage("Using the specified backend failed: " . $e->getMessage());
+            return false;
+        }
+        return true;
     }
 }

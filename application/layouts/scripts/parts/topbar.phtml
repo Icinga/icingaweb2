@@ -13,17 +13,19 @@
 <!--          </form>-->
 <!--        </li>-->
     <li class="dropdown">
-      <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-        <?= $this->escape($this->auth()->getUser()->getUsername()); ?>
+      <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="icinga_app_nav_useraction">
+        <span id="icinga_app_nav_username">
+          <?= $this->escape($this->auth()->getUser()->getUsername()); ?>
+        </span>
         <i>{{USER_ICON}}</i>
         <b class="caret"></b>
       </a>
       <ul class="dropdown-menu">
-        <li>
+        <li id="icinga_app_nav_preferences">
           <a href="<?= $this->href('/preference'); ?>"><?= $this->translate('Preferences'); ?> </a>
         </li>
-        <li>
-          <a href="<?= $this->href('/authentication/logout'); ?>"><?= $this->translate('Logout'); ?></a>
+        <li id="icinga_app_nav_logout">
+          <a href="<?= $this->href('/authentication/logout'); ?>" title="Logout"><?= $this->translate('Logout'); ?></a>
         </li>
       </ul>
     </li>

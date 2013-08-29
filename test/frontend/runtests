@@ -11,14 +11,16 @@ VERBOSE=0
 VAGRANT=0
 BUILD=0
 
+CASPERJS_HOST="localhost"
+CASPERJS_PORT=80
+CASPERJS_USER="jdoe"
+CASPERJS_PASS="password"
+CASPERJS_PATH="icinga2-web"
+
 if [ ! -x $CASPER ]; then
     echo "CasperJS is not installed but required to run frontend tests\n"\
 "Take a look at http://casperjs.org/installation.html to see how the installation works for your system"
     exit 1
-fi;
-if [ ! -e "${DIR}/static/public" ]; then
-    echo "!"
-    ln -s "${DIR}/../../public" "${DIR}/static/public" 
 fi;
 
 
@@ -48,16 +50,41 @@ for arg in $@;do
             BUILD=1
             continue
             ;;
+        -h|--host)
+            PARAM="CASPERJS_HOST"
+            continue
+            ;;
+        -p|--port)
+            PARAM="CASPERJS_PORT"
+            continue
+            ;;
+        --path)
+            PARAM="CASPERJS_PATH"
+            continue
+            ;;
+        -U|--user)
+            PARAM="CASPERJS_USER"
+            continue
+            ;;
+        -P|--pass)
+            PARAM="CASPERJS_PASS"
+            continue
+            ;;
         **)
             if [ "$arg" != "--help" ]; then
                 echo "Unknown option $arg" 
             fi;   
             printf "%b" "Testrunner for interface tests\n\n"
-            printf "%b" "Usage: ./$0 [--verbose] [--include %include%] [--exclude %exclude%] [--build]\n\n"
+            printf "%b" "Usage: $0 [--verbose] [--include %include%] [--exclude %exclude%] [--build]\n\n"
             printf "%b" "  --verbose \t\t\t Print verbose output when testing\n"
             printf "%b" "  --include %filelist%\t\t Include only files matching this patterns\n"
             printf "%b" "  --exclude %filelist%\t\t Exclude files matching this patterns\n"
             printf "%b" "  --build \t\t\t Write test results to ../../build/log/casper_results.xml\n"
+            printf "%b" "  --host \t\t\t Host to run frontend tests on, default is localhost\n"
+            printf "%b" "  --port \t\t\t Port to use for the host, default is 80 \n"
+            printf "%b" "  --path \t\t\t Base path where icinga can be found (default is icingaweb)\n"
+            printf "%b" "  --user \t\t\t User to use for authentication (default jdoe)\n"
+            printf "%b" "  --pass \t\t\t Password to use for authentication (default password)\n"
             printf "%b" "  --help \t\t\t Print this message\n\n"
             exit 1
     esac;
@@ -84,7 +111,7 @@ if [ "$CASPER" = "" -o ! -x $CASPER ]; then
     exit 1
 fi;
 
-EXEC="$CASPER test"
+EXEC="$CASPER test  --ignore-ssl-errors=true "
 
 #
 # If build is set, the results are written for our jenkins server
@@ -137,16 +164,13 @@ if [ "$EXCLUDE" != "" ];then
     FILELIST=`echo $FILELIST | grep -v "$NAME"`
 fi;
 
-cd $DIR/static 
-PROC=`ps ax|grep "SimpleHTTPServer 12999"|awk '{ print $1 }'`
-if [ "$PROC" != "" ]; then
-    kill $PROC
-fi; 
-python -m SimpleHTTPServer 12999&
-PID=$!
-cd $DIR
 
-echo $EXEC $FILELIST
-$EXEC $FILELIST 
-kill $PID
+export CASPERJS_HOST=$CASPERJS_HOST
+export CASPERJS_PORT=$CASPERJS_PORT
+export CASPERJS_USER=$CASPERJS_USER
+export CASPERJS_PASS=$CASPERJS_PASS
+export CASPERJS_PATH=$CASPERJS_PATH
+
+echo Executing $EXEC $FILELIST
+$EXEC $FILELIST
 exit 0

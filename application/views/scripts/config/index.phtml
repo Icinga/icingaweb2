@@ -1,2 +1,10 @@
 <?= $this->tabs->render($this); ?>
+
+<?php if ($this->successMessage): ?>
+<div class="alert alert-success">
+  <i>{{OK_ICON}}</i>
+  <strong><?= $this->escape($this->successMessage); ?></strong>
+</div>
+<?php endif; ?>
+
 <?= $this->form ?>

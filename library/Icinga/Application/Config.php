@@ -28,7 +28,8 @@
 
 namespace Icinga\Application;
 
-use Zend_Config_Ini;
+use \Icinga\Exception\ProgrammingError;
+use \Zend_Config_Ini;
 
 /**
  * Global registry of application and module configuration.
@@ -37,24 +38,28 @@ class Config extends Zend_Config_Ini
 {
     /**
      * Configuration directory where ALL (application and module) configuration is located
+     *
      * @var string
      */
     public static $configDir;
 
     /**
      * The INI file this configuration has been loaded from
+     *
      * @var string
      */
     private $configFile;
 
     /**
      * Application config instances per file
+     *
      * @var array
      */
     protected static $app = array();
 
     /**
      * Module config instances per file
+     *
      * @var array
      */
     protected static $modules = array();
@@ -62,10 +67,10 @@ class Config extends Zend_Config_Ini
     /**
      * Load configuration from the config file $filename
      *
+     * @param   string      $filename       The filename to parse
+
      * @see     Zend_Config_Ini::__construct
-     *
-     * @param   string      $filename
-     * @throws  Exception
+     * @throws  Exception                   When the file can't be read
      */
     public function __construct($filename)
     {
@@ -83,12 +88,15 @@ class Config extends Zend_Config_Ini
     /**
      * Retrieve a application config instance
      *
-     * @param   string  $configname
-     * @return  mixed
+     * @param   string  $configname     The configuration name (without ini suffix) to read and return
+     * @param   bool    $fromDisk       When set true, the configuration will be read from the disk, even
+     *                                  if it already has been read
+     *
+     * @return  Config                  The configuration object that has been requested
      */
-    public static function app($configname = 'config')
+    public static function app($configname = 'config', $fromDisk = false)
     {
-        if (!isset(self::$app[$configname])) {
+        if (!isset(self::$app[$configname]) || $fromDisk) {
             $filename = self::$configDir . '/' . $configname . '.ini';
             self::$app[$configname] = new Config(realpath($filename));
         }
@@ -98,17 +106,19 @@ class Config extends Zend_Config_Ini
     /**
      * Retrieve a module config instance
      *
-     * @param   string  $modulename
-     * @param   string  $configname
-     * @return  Config
+     * @param   string  $modulename     The name of the module to look for configurations
+     * @param   string  $configname     The configuration name (without ini suffix) to read and return
+     * @param   string  $fromDisk       Whether to read the configuration from disk
+     *
+     * @return  Config                  The configuration object that has been requested
      */
-    public static function module($modulename, $configname = 'config')
+    public static function module($modulename, $configname = 'config', $fromDisk = false)
     {
         if (!isset(self::$modules[$modulename])) {
             self::$modules[$modulename] = array();
         }
         $moduleConfigs = self::$modules[$modulename];
-        if (!isset($moduleConfigs[$configname])) {
+        if (!isset($moduleConfigs[$configname]) || $fromDisk) {
             $filename = self::$configDir . '/modules/' . $modulename . '/' . $configname . '.ini';
             if (file_exists($filename)) {
                 $moduleConfigs[$configname] = new Config(realpath($filename));
@@ -136,10 +146,32 @@ class Config extends Zend_Config_Ini
         }
     }
 
-    public function  getConfigFile()
+    /**
+     * Return the application wide config file
+     *
+     * @return string
+     */
+    public function getConfigFile()
     {
         return $this->configFile;
     }
 
-
+    /**
+     * Return the input path with resolved path variables
+     *
+     * Currently only %app% is considered a path variable and points to the application paths
+     *
+     * @param string $path      The path to resolve
+     *
+     * @return string           The resolved path
+     */
+    public static function resolvePath($path)
+    {
+        try {
+            $appDir = realpath(Icinga::app()->getApplicationDir() . '/..');
+        } catch (ProgrammingError $appNotStarted) {
+            $appDir = realpath(__DIR__ . '/../../..');
+        }
+        return str_replace('{app}', $appDir, $path);
+    }
 }

@@ -1,0 +1,12 @@
+Alias @web_path@ @prefix@/public
+<Directory "@prefix@/public">
+    Options -Indexes
+
+    AllowOverride All
+
+    Order allow,deny
+    Allow from all
+
+    EnableSendfile Off
+</Directory>
+

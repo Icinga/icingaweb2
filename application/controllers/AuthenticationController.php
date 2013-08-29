@@ -63,7 +63,7 @@ class AuthenticationController extends ActionController
         $credentials = new Credentials();
         $this->view->form = new LoginForm();
         $this->view->form->setRequest($this->_request);
-
+        $this->view->title = "Icinga Web Login";
         try {
             $auth = AuthManager::getInstance(null, array(
                 'writeSession' => $this->modifiesSession

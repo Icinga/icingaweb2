@@ -30,6 +30,7 @@ namespace Test\Icinga\Web\Form\Validator;
 
 require_once('Zend/Validate/Abstract.php');
 require_once(realpath('../../library/Icinga/Web/Form/Validator/WritablePathValidator.php'));
+require_once(realpath('../../library/Icinga/Application/Config.php'));
 
 use \PHPUnit_Framework_TestCase;
 use \Icinga\Web\Form\Validator\WritablePathValidator;

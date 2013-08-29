@@ -2,64 +2,82 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga 2 Web.
- * 
+ *
  * Icinga 2 Web - Head for multiple monitoring backends.
  * Copyright (C) 2013 Icinga Development Team
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
+ *
  * @copyright 2013 Icinga Development Team <info@icinga.org>
  * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
  * @author    Icinga Development Team <info@icinga.org>
  */
-// {{{ICINGA_LICENSE_HEADER}}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Authentication;
+
+namespace Icinga\Form\Config;
+
+use Icinga\Web\Form;
 
 /**
- * Interface for backends that authenticate users
+ * Form for confirming removal of an object
  */
-interface UserBackend
+class ConfirmRemovalForm extends Form
 {
     /**
-     * Create a userbackend from the given configuration or resource
+     * The value of the target to remove
      *
-     * @param $config
+     * @var string
      */
-    public function __construct($config);
+    private $removeTarget;
 
     /**
-     * Test if the username exists
+     * The name of the target parameter to remove
      *
-     * @param Credentials $credentials
-     * @return boolean
+     * @var string
      */
-    public function hasUsername(Credentials $credentials);
+    private $targetName;
 
     /**
-     * Authenticate
+     * Set the remove target in this field to be a hidden field with $name and value $target
      *
-     * @param Credentials $credentials
-     * @return User
+     * @param string $name      The name to be set in the hidden field
+     * @param string $target    The value to be set in the hidden field
      */
-    public function authenticate(Credentials $credentials);
+    public function setRemoveTarget($name, $target)
+    {
+        $this->targetName = $name;
+        $this->removeTarget = $target;
+    }
 
     /**
-     * Get the number of users available through this backend
+     * Create the confirmation form
      *
-     * @return int
+     * @see Form::create()
      */
-    public function getUserCount();
+    public function create()
+    {
+        $this->setName('form_confirm_removal');
+        $this->addElement(
+            'hidden',
+            $this->targetName,
+            array(
+                'value'     => $this->removeTarget,
+                'required'  => true
+            )
+        );
+        $this->setSubmitLabel('{{REMOVE_ICON}} Confirm Removal');
+    }
 }

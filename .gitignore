@@ -4,6 +4,7 @@
 !.gitignore
 !.vagrant-puppet
 !public/.htaccess
+!public/.htaccess.in
 !.gitkeep
 
 build/
@@ -30,3 +31,6 @@ config/enabledModules/
 
 # User preferences
 config/preferences/*.ini
+
+# Application logfiles
+var/log/*.log

@@ -249,7 +249,8 @@ class Web extends ApplicationBootstrap
             $preferences->attach($sessionStore);
 
             if ($this->getConfig()->preferences !== null) {
-                if (is_dir($this->getConfig()->preferences->configPath) === false) {
+                $path = Config::resolvePath($this->getConfig()->preferences->configPath);
+                if (is_dir($path) === false) {
                     Logger::error(
                         'Path for preferences not found (IniStore, "%s"). Using default one: "%s"',
                         $this->getConfig()->preferences->configPath,
@@ -356,8 +357,6 @@ class Web extends ApplicationBootstrap
         $view->setView(new View());
 
         $view->view->addHelperPath($this->getApplicationDir('/views/helpers'));
-        // TODO: find out how to avoid this additional helper path:
-        $view->view->addHelperPath($this->getApplicationDir('/views/helpers/layout'));
 
         $view->view->setEncoding('UTF-8');
         $view->view->headTitle()->prepend(

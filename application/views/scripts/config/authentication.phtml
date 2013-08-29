@@ -1,35 +1,56 @@
 <?php
 use Icinga\Web\Url;
-$createLdapBackend = Url::fromPath(
-    '/config/createAuthenticationBackend',
-    array('type' => 'ldap')
-)->getAbsoluteUrl();
-
-$createDbBackend = Url::fromPath(
-    '/config/createAuthenticationBackend',
-    array('type' => 'db')
-)->getAbsoluteUrl();
+$createLdapBackend = $this->href('/config/createAuthenticationBackend', array('type' => 'ldap'));
+$createDbBackend = $this->href('/config/createAuthenticationBackend', array('type' => 'db'));
 
 ?>
+
 <?= $this->tabs->render($this); ?>
 
-<?php
-    $errors = $this->form->getErrorMessages();
-    if (!empty($errors)):
-?>
-  <div class="alert alert-danger">
-    <h4>{{ERROR_ICON}} There are errors in your configuration:</h4>
-    <br/>
-    <ul>
-<?php foreach($errors as $error): ?>
-        <li><?= $error ?></li>
-<?php endforeach;?>
-    </ul>
-  </div>
+<?php if ($this->errorMessage): ?>
+<div class="alert alert-danger">
+  <i>{{ERROR_ICON}}</i>
+  <strong><?= $this->escape($this->errorMessage); ?></strong>
+</div>
 <?php endif; ?>
 
-<div>
-  <a href="<?= $createLdapBackend ?>">{{CREATE_ICON}} Create A New LDAP Authentication Backend</a><br/>
-  <a href="<?= $createDbBackend ?>">{{CREATE_ICON}} Create A New DB Authentication Backend</a>
+
+<?php if ($this->successMessage): ?>
+<div class="alert alert-success">
+  <i>{{OK_ICON}}</i>
+  <strong><?= $this->escape($this->successMessage); ?></strong>
 </div>
-<?= $this->form ?>
+<?php endif; ?>
+
+<div class="panel panel-default">
+  <div class="panel-heading panel-title">
+    Create Authentication Provider
+  </div>
+  <div class="panel-body">
+    <a href="<?= $createLdapBackend ?>">{{CREATE_ICON}} Create A New LDAP Authentication Backend</a><br/>
+    <a href="<?= $createDbBackend ?>">{{CREATE_ICON}} Create A New DB Authentication Backend</a>
+  </div>
+
+</div>
+
+<?php foreach ($this->backends as $backend): ?>
+<div class="panel panel-default">
+  <div class="panel-heading panel-title">
+    Backend <?= $this->escape($backend->name); ?>
+    <br/>
+    <?= $backend->reorderForm; ?>
+  </div>
+  <div class="panel-body">
+    <a href="<?= $this->href('config/editAuthenticationBackend', array('auth_backend' => $backend->name));?>">
+      {{EDIT_ICON}} Edit This Authentication Provider
+    </a>
+    <br/>
+    <?php if (count($this->backends) > 1): ?>
+    <a href="<?= $this->href('config/removeAuthenticationBackend', array('auth_backend' => $backend->name));?>">
+      {{REMOVE_ICON}} Remove This Authentication Provider
+    </a>
+    <br/>
+    <?php endif; ?>
+  </div>
+</div>
+<?php endforeach; ?>

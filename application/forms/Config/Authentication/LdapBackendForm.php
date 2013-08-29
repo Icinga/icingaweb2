@@ -28,11 +28,9 @@
 
 namespace Icinga\Form\Config\Authentication;
 
+use \Icinga\Authentication\Backend\LdapUserBackend;
+use \Exception;
 use \Zend_Config;
-use \Icinga\Application\Config as IcingaConfig;
-use \Icinga\Application\Icinga;
-use \Icinga\Application\Logger;
-use \Icinga\Application\DbAdapterFactory;
 use \Icinga\Web\Form;
 
 /**
@@ -47,6 +45,7 @@ class LdapBackendForm extends BaseBackendForm
      */
     public function create()
     {
+        $this->setName('form_modify_backend');
         $name = $this->filterName($this->getBackendName());
         $backend = $this->getBackend();
 
@@ -133,6 +132,7 @@ class LdapBackendForm extends BaseBackendForm
         $this->setSubmitLabel('{{SAVE_ICON}} Save Backend');
     }
 
+
     /**
      * Return the ldap authentication backend configuration for this form
      *
@@ -159,5 +159,34 @@ class LdapBackendForm extends BaseBackendForm
         return array(
             $section => $cfg
         );
+    }
+
+    /**
+     * Validate the current configuration by creating a backend and requesting the user count
+     *
+     * @return bool True when the backend is valid, false otherwise
+     * @see BaseBackendForm::isValidAuthenticationBacken
+     */
+    public function isValidAuthenticationBackend()
+    {
+        try {
+            $cfg = $this->getConfig();
+            $backendName = 'backend_' . $this->filterName($this->getBackendName()) . '_name';
+            $testConn = new LdapUserBackend(
+                new Zend_Config($cfg[$this->getValue($backendName)])
+            );
+
+            if ($testConn->getUserCount() === 0) {
+                throw new Exception('No Users Found On Directory Server');
+            }
+        } catch (Exception $exc) {
+
+            $this->addErrorMessage(
+                'Connection Validation Failed:'.
+                $exc->getMessage()
+            );
+            return false;
+        }
+        return true;
     }
 }
