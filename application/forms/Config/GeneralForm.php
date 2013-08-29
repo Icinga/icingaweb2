@@ -66,7 +66,7 @@ class GeneralForm extends Form
      *
      * @var null
      */
-    private $resources = null;
+    private $resources;
 
     /**
      * The view helper to format date/time strings
@@ -239,7 +239,10 @@ class GeneralForm extends Form
         $phpUrl = '<a href="http://php.net/manual/en/function.date.php" target="_new">'
             . 'the official PHP documentation</a>';
 
-        $dateFormatValue = $this->getRequest()->getParam('date_format', $cfg->get('dateFormat', 'd/m/Y'));
+        $dateFormatValue = $this->getRequest()->getParam('date_format', '');
+        if (empty($dateFormatValue)) {
+            $dateFormatValue = $cfg->get('dateFormat', 'd/m/Y');
+        }
         $txtDefaultDateFormat = new Zend_Form_Element_Text(
             array(
                 'name'      =>  'date_format',
@@ -253,7 +256,10 @@ class GeneralForm extends Form
         $this->addElement($txtDefaultDateFormat);
         $txtDefaultDateFormat->addValidator(new DateFormatValidator());
 
-        $timeFormatValue = $this->getRequest()->getParam('time_format', $cfg->get('timeFormat', 'g:i A'));
+        $timeFormatValue = $this->getRequest()->getParam('time_format', '');
+        if (empty($timeFormatValue)) {
+            $timeFormatValue = $cfg->get('timeFormat', 'g:i A');
+        }
         $txtDefaultTimeFormat = new Zend_Form_Element_Text(
             array(
                 'name'      =>  'time_format',

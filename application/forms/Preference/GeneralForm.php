@@ -192,10 +192,10 @@ class GeneralForm extends Form
                 'required'      => true
             )
         );
-        $dateFormatValue = $this->getRequest()->getParam(
-            'date_format',
-            $prefs->get('app.dateFormat', $cfg->get('dateFormat', 'd/m/Y'))
-        );
+        $dateFormatValue = $this->getRequest()->getParam('date_format', '');
+        if (empty($dateFormatValue)) {
+            $dateFormatValue = $prefs->get('app.dateFormat', $cfg->get('dateFormat', 'd/m/Y'));
+        }
         $txtDefaultDateFormat = new Zend_Form_Element_Text(
             array(
                 'name'      =>  'date_format',
@@ -222,10 +222,10 @@ class GeneralForm extends Form
                 'required'      => !$useGlobalTimeFormat
             )
         );
-        $timeFormatValue = $this->getRequest()->getParam(
-            'time_format',
-            $prefs->get('app.timeFormat', $cfg->get('timeFormat', 'g:i A'))
-        );
+        $timeFormatValue = $this->getRequest()->getParam('time_format', '');
+        if (empty($timeFormatValue)) {
+            $timeFormatValue = $prefs->get('app.timeFormat', $cfg->get('timeFormat', 'g:i A'));
+        }
         $txtDefaultTimeFormat = new Zend_Form_Element_Text(
             array(
                 'name'      =>  'time_format',
