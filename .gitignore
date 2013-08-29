@@ -31,3 +31,6 @@ config/enabledModules/
 
 # User preferences
 config/preferences/*.ini
+
+# Application logfiles
+var/log/*.log

@@ -74,7 +74,7 @@ casper.then(function() {
             'Assert a success text to appear in the general form'
         );
     }, function() {
-        this.fail("No success text appeared in the general form");
+        this.test.fail("No success text appeared in the general form");
     });
 });
 
