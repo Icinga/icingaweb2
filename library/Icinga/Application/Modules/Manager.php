@@ -51,8 +51,6 @@ class Manager
     /**
      * Array of all installed module's base directories
      *
-     * null if modules haven't been scanned yet
-     *
      * @var array
      */
     private $installedBaseDirs = array();
@@ -104,12 +102,11 @@ class Manager
     {
         $this->app = $app;
         if (empty($availableDirs)) {
-            $availableDirs = array(ICINGA_APPDIR."/../modules");
+            $availableDirs = array(ICINGA_APPDIR . '/../modules');
         }
         $this->modulePaths = $availableDirs;
         if ($enabledDir === null) {
-            $enabledDir = $this->app->getConfig()->getConfigDir()
-                         . '/enabledModules';
+            $enabledDir = $this->app->getConfigDir() . '/enabledModules';
         }
         $this->prepareEssentials($enabledDir);
         $this->detectEnabledModules();
@@ -119,7 +116,7 @@ class Manager
      * Set the module dir and checks for existence
      *
      * @param   string $moduleDir The module directory to set for the module manager
-     * @throws  \Icinga\Exception\ProgrammingError
+     * @throws  ProgrammingError
      */
     private function prepareEssentials($moduleDir)
     {
@@ -228,29 +225,29 @@ class Manager
     /**
      * Set the given module to the enabled state
      *
-     * @param   string $name The module to enable
+     * @param   string $name                The module to enable
      *
      * @return  self
-     * @throws  ConfigurationError        When trying to enable a module that is not installed
-     * @throws  SystemPermissionException When insufficient permissions for the application exist
+     * @throws  ConfigurationError          When trying to enable a module that is not installed
+     * @throws  SystemPermissionException   When insufficient permissions for the application exist
      */
     public function enableModule($name)
     {
         if (!$this->hasInstalled($name)) {
             throw new ConfigurationError(
                 sprintf(
-                    "Cannot enable module '%s' as it isn't installed",
+                    'Cannot enable module "%s". Module is not installed.',
                     $name
                 )
             );
-            return $this;
         }
         clearstatcache(true);
         $target = $this->installedBaseDirs[$name];
         $link = $this->enableDir . '/' . $name;
         if (!is_writable($this->enableDir)) {
             throw new SystemPermissionException(
-                "Insufficient system permissions for enabling modules"
+                'Can not enable module "' . $name . '". '
+                . 'Insufficient system permissions for enabling modules.'
             );
         }
         if (file_exists($link) && is_link($link)) {
@@ -259,7 +256,11 @@ class Manager
         if (!@symlink($target, $link)) {
             $error = error_get_last();
             if (strstr($error["message"], "File exists") === false) {
-                throw new SystemPermissionException($error["message"]);
+                throw new SystemPermissionException(
+                    'Could not enable module "' . $name . '" due to file system errors. '
+                    . 'Please check path and mounting points because this is not a permission error. '
+                    . 'Primary error was: ' . $error['message']
+                );
             }
         }
         $this->enabledDirs[$name] = $link;
@@ -269,12 +270,12 @@ class Manager
     /**
      * Disable the given module and remove it's enabled state
      *
-     * @param   string $name The name of the module to disable
+     * @param   string $name                The name of the module to disable
      *
      * @return  self
      *
-     * @throws  ConfigurationError         When the module is not installed or it's not symlinked
-     * @throws  SystemPermissionException  When the module can't be disabled
+     * @throws  ConfigurationError          When the module is not installed or it's not a symlink
+     * @throws  SystemPermissionException   When the module can't be disabled
      */
     public function disableModule($name)
     {
@@ -282,15 +283,17 @@ class Manager
             return $this;
         }
         if (!is_writable($this->enableDir)) {
-            throw new SystemPermissionException("Can't write the module directory");
+            throw new SystemPermissionException(
+                'Could not disable module. Module path is not writable.'
+            );
         }
         $link = $this->enableDir . '/' . $name;
         if (!file_exists($link)) {
-            throw new ConfigurationError('The module ' . $name . ' could not be found, can\'t disable it');
+            throw new ConfigurationError('Could not disable module. The module ' . $name . ' was not found.');
         }
         if (!is_link($link)) {
             throw new ConfigurationError(
-                'The module ' . $name . ' can\'t be disabled as this would delete the whole module. '
+                'Could not disable module. The module "' . $name . '" is not a symlink. '
                 . 'It looks like you have installed this module manually and moved it to your module folder. '
                 . 'In order to dynamically enable and disable modules, you have to create a symlink to '
                 . 'the enabled_modules folder'
@@ -300,11 +303,14 @@ class Manager
         if (file_exists($link) && is_link($link)) {
             if (!@unlink($link)) {
                 $error = error_get_last();
-                throw new SystemPermissionException($error['message']);
+                throw new SystemPermissionException(
+                    'Could not disable module "' . $name . '" due to file system errors. '
+                    . 'Please check path and mounting points because this is not a permission error. '
+                    . 'Primary error was: ' . $error['message']
+                );
             }
-        } else {
-
         }
+
         unset($this->enabledDirs[$name]);
         return $this;
     }
@@ -317,7 +323,7 @@ class Manager
      *
      * @return  string
      *
-     * @throws  \Icinga\Exception\ProgrammingError When the module is not installed or existing
+     * @throws  ProgrammingError When the module is not installed or existing
      */
     public function getModuleDir($name, $subdir = '')
     {
@@ -380,8 +386,7 @@ class Manager
      * Return an array containing all loaded modules
      *
      * @return  array
-     *
-     * @see     \Icinga\Application\Modules\Module
+     * @see     Module
      */
     public function getLoadedModules()
     {
@@ -391,11 +396,10 @@ class Manager
     /**
      * Return the module instance of the given module when it is loaded
      *
-     * @param   string $name The module name to return
+     * @param   string $name        The module name to return
      *
-     * @return  \Icinga\Application\Modules\Module
-     *
-     * @throws  \Icinga\Exception\ProgrammingError When the module hasn't been loaded
+     * @return  Module
+     * @throws  ProgrammingError    When the module hasn't been loaded
      */
     public function getModule($name)
     {
@@ -462,7 +466,7 @@ class Manager
     }
 
     /**
-     * Return an array containing all installled module names as strings
+     * Return an array of module names from installed modules
      *
      * Calls detectInstalledModules() if no module discovery has been performed yet
      *
@@ -479,6 +483,8 @@ class Manager
         if (count($this->installedBaseDirs)) {
             return array_keys($this->installedBaseDirs);
         }
+
+        return array();
     }
 
     /**

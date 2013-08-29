@@ -141,12 +141,19 @@ class ConfigController extends BaseConfigController
      */
     public function moduleenableAction()
     {
-        $module = $this->_getParam('name');
+        $module = $this->getParam('name');
         $manager = Icinga::app()->getModuleManager();
-        $manager->enableModule($module);
-        $manager->loadModule($module);
-        $this->view->successMessage = 'Module "' . $module . '" enabled';
-        $this->moduleoverviewAction();
+        try {
+            $manager->enableModule($module);
+            $manager->loadModule($module);
+            $this->view->successMessage = 'Module "' . $module . '" enabled';
+            $this->moduleoverviewAction();
+        } catch (Exception $e) {
+            $this->view->exceptionMessage = $e->getMessage();
+            $this->view->moduleName = $module;
+            $this->view->action = 'enable';
+            $this->render('module-configuration-error');
+        }
     }
 
     /**
@@ -154,11 +161,18 @@ class ConfigController extends BaseConfigController
      */
     public function moduledisableAction()
     {
-        $module = $this->_getParam('name');
+        $module = $this->getParam('name');
         $manager = Icinga::app()->getModuleManager();
-        $manager->disableModule($module);
-        $this->view->successMessage = 'Module "' . $module . '" disabled';
-        $this->moduleoverviewAction();
+        try {
+            $manager->disableModule($module);
+            $this->view->successMessage = 'Module "' . $module . '" disabled';
+            $this->moduleoverviewAction();
+        } catch (Exception $e) {
+            $this->view->exceptionMessage = $e->getMessage();
+            $this->view->moduleName = $module;
+            $this->view->action = 'disable';
+            $this->render('module-configuration-error');
+        }
     }
 
     /**
