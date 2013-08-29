@@ -43,7 +43,6 @@ use \Icinga\Web\Form\Decorator\ConditionalHidden;
 
 /**
  * Configuration form for general, application-wide settings
- *
  */
 class GeneralForm extends Form
 {
@@ -79,7 +78,7 @@ class GeneralForm extends Form
     /**
      * Set the configuration to be used for this form
      *
-     * @param IcingaConfig $cfg
+     * @param IcingaConfig  $cfg
      */
     public function setConfiguration($cfg)
     {
@@ -89,7 +88,7 @@ class GeneralForm extends Form
     /**
      * Set a specific configuration directory to use for configuration specific default paths
      *
-     * @param string $dir
+     * @param string    $dir
      */
     public function setConfigDir($dir)
     {
@@ -124,7 +123,7 @@ class GeneralForm extends Form
     /**
      * Set the view helper that is used to format date/time strings (used for testing)
      *
-     * @param Zend_View_Helper_DateFormat $dateHelper
+     * @param Zend_View_Helper_DateFormat   $dateHelper
      */
     public function setDateFormatter(Zend_View_Helper_DateFormat $dateHelper)
     {
@@ -135,7 +134,7 @@ class GeneralForm extends Form
      * Set an alternative array of resources that should be used instead of the DBFactory resource set
      * (used for testing)
      *
-     * @param array $resources The resources to use for populating the db selection field
+     * @param array $resources  The resources to use for populating the db selection field
      */
     public function setResources(array $resources)
     {
@@ -159,7 +158,7 @@ class GeneralForm extends Form
     /**
      * Add the checkbox for using the development environment to this form
      *
-     * @param Zend_Config $cfg The "global" section of the config.ini
+     * @param Zend_Config   $cfg    The "global" section of the config.ini
      */
     private function addDevelopmentCheckbox(Zend_Config $cfg)
     {
@@ -184,7 +183,7 @@ class GeneralForm extends Form
      *
      * Possible values are determined by DateTimeZone::listIdentifiers
      *
-     * @param Zend_Config $cfg The "global" section of the config.ini
+     * @param Zend_Config   $cfg    The "global" section of the config.ini
      */
     private function addTimezoneSelection(Zend_Config $cfg)
     {
@@ -211,7 +210,7 @@ class GeneralForm extends Form
     /**
      * Add configuration settings for module paths
      *
-     * @param Zend_Config $cfg The "global" section of the config.ini
+     * @param Zend_Config   $cfg    The "global" section of the config.ini
      */
     private function addModuleSettings(Zend_Config $cfg)
     {
@@ -233,7 +232,7 @@ class GeneralForm extends Form
     /**
      * Add text fields for the date and time format used in the application
      *
-     * @param Zend_Config $cfg The "global" section of the config.ini
+     * @param Zend_Config   $cfg    The "global" section of the config.ini
      */
     private function addDateFormatSettings(Zend_Config $cfg)
     {
@@ -272,7 +271,7 @@ class GeneralForm extends Form
     /**
      * Add form elements for setting the user preference storage backend
      *
-     * @param Zend_Config $cfg The Zend_config object of preference section
+     * @param Zend_Config   $cfg    The Zend_config object of preference section
      */
     public function addUserPreferencesDialog(Zend_Config $cfg)
     {
