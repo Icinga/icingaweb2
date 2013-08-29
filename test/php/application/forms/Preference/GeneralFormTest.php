@@ -38,15 +38,22 @@ use Icinga\Test\BaseTestCase;
 require_once 'Zend/Config.php';
 require_once 'Zend/Config/Ini.php';
 require_once 'Zend/Form/Element/Select.php';
+require_once 'Zend/View/Helper/Abstract.php';
 require_once BaseTestCase::$libDir . '/User/Preferences.php';
 require_once BaseTestCase::$libDir . '/Web/Form.php';
 require_once BaseTestCase::$appDir . '/forms/Preference/GeneralForm.php';
 require_once BaseTestCase::$libDir . '/User/Preferences/ChangeSet.php';
+require_once BaseTestCase::$appDir . '/views/helpers/DateFormat.php';
+require_once BaseTestCase::$libDir . '/Util/ConfigAwareFactory.php';
+require_once BaseTestCase::$libDir . '/Util/DateTimeFactory.php';
 // @codingStandardsIgnoreEnd
 
+use \DateTimeZone;
 use \Icinga\Web\Form;
 use \Zend_Config;
-use Icinga\User\Preferences;
+use \Icinga\User\Preferences;
+use \Zend_View_Helper_DateFormat;
+use \Icinga\Util\DateTimeFactory;
 
 /**
  * Test for general form, mainly testing enable/disable behaviour
@@ -60,8 +67,10 @@ class GeneralFormTest extends BaseTestCase
      */
     public function testDisableFormIfUsingDefault()
     {
+        DateTimeFactory::setConfig(array('timezone' => new DateTimeZone('UTC')));
         $this->requireFormLibraries();
         $form = $this->createForm('Icinga\Form\Preference\GeneralForm');
+        $form->setDateFormatter(new Zend_View_Helper_DateFormat($this->getRequest()));
         $form->setRequest($this->getRequest());
         $form->setConfiguration(
             new Zend_Config(
@@ -89,8 +98,10 @@ class GeneralFormTest extends BaseTestCase
      */
     public function testEnableFormIfUsingPreference()
     {
+        DateTimeFactory::setConfig(array('timezone' => new DateTimeZone('UTC')));
         $this->requireFormLibraries();
         $form = $this->createForm('Icinga\Form\Preference\GeneralForm');
+        $form->setDateFormatter(new Zend_View_Helper_DateFormat($this->getRequest()));
         $form->setRequest($this->getRequest());
         $form->setConfiguration(
             new Zend_Config(

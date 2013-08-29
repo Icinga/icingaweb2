@@ -32,6 +32,7 @@ use \DateTimeZone;
 use \Zend_Config;
 use \Zend_Form_Element_Text;
 use \Zend_Form_Element_Select;
+use \Zend_View_Helper_DateFormat;
 use \Icinga\Application\Config as IcingaConfig;
 use \Icinga\Application\DbAdapterFactory;
 use \Icinga\Web\Form;
@@ -42,7 +43,6 @@ use \Icinga\Web\Form\Decorator\ConditionalHidden;
 
 /**
  * Configuration form for general, application-wide settings
- *
  */
 class GeneralForm extends Form
 {
@@ -66,12 +66,19 @@ class GeneralForm extends Form
      *
      * @var null
      */
-    private $resources = null;
+    private $resources;
+
+    /**
+     * The view helper to format date/time strings
+     *
+     * @var Zend_View_Helper_DateFormat
+     */
+    private $dateHelper;
 
     /**
      * Set the configuration to be used for this form
      *
-     * @param IcingaConfig $cfg
+     * @param IcingaConfig  $cfg
      */
     public function setConfiguration($cfg)
     {
@@ -81,7 +88,7 @@ class GeneralForm extends Form
     /**
      * Set a specific configuration directory to use for configuration specific default paths
      *
-     * @param string $dir
+     * @param string    $dir
      */
     public function setConfigDir($dir)
     {
@@ -101,10 +108,33 @@ class GeneralForm extends Form
     }
 
     /**
+     * Return the view helper to format date/time strings
+     *
+     * @return Zend_View_Helper_DateFormat
+     */
+    public function getDateFormatter()
+    {
+        if ($this->dateHelper === null) {
+            return $this->getView()->dateFormat();
+        }
+        return $this->dateHelper;
+    }
+
+    /**
+     * Set the view helper that is used to format date/time strings (used for testing)
+     *
+     * @param Zend_View_Helper_DateFormat   $dateHelper
+     */
+    public function setDateFormatter(Zend_View_Helper_DateFormat $dateHelper)
+    {
+        $this->dateHelper = $dateHelper;
+    }
+
+    /**
      * Set an alternative array of resources that should be used instead of the DBFactory resource set
      * (used for testing)
      *
-     * @param array $resources The resources to use for populating the db selection field
+     * @param array $resources  The resources to use for populating the db selection field
      */
     public function setResources(array $resources)
     {
@@ -128,7 +158,7 @@ class GeneralForm extends Form
     /**
      * Add the checkbox for using the development environment to this form
      *
-     * @param Zend_Config $cfg The "global" section of the config.ini
+     * @param Zend_Config   $cfg    The "global" section of the config.ini
      */
     private function addDevelopmentCheckbox(Zend_Config $cfg)
     {
@@ -153,7 +183,7 @@ class GeneralForm extends Form
      *
      * Possible values are determined by DateTimeZone::listIdentifiers
      *
-     * @param Zend_Config $cfg The "global" section of the config.ini
+     * @param Zend_Config   $cfg    The "global" section of the config.ini
      */
     private function addTimezoneSelection(Zend_Config $cfg)
     {
@@ -180,7 +210,7 @@ class GeneralForm extends Form
     /**
      * Add configuration settings for module paths
      *
-     * @param Zend_Config $cfg The "global" section of the config.ini
+     * @param Zend_Config   $cfg    The "global" section of the config.ini
      */
     private function addModuleSettings(Zend_Config $cfg)
     {
@@ -202,32 +232,42 @@ class GeneralForm extends Form
     /**
      * Add text fields for the date and time format used in the application
      *
-     * @param Zend_Config $cfg The "global" section of the config.ini
+     * @param Zend_Config   $cfg    The "global" section of the config.ini
      */
     private function addDateFormatSettings(Zend_Config $cfg)
     {
         $phpUrl = '<a href="http://php.net/manual/en/function.date.php" target="_new">'
             . 'the official PHP documentation</a>';
 
+        $dateFormatValue = $this->getRequest()->getParam('date_format', '');
+        if (empty($dateFormatValue)) {
+            $dateFormatValue = $cfg->get('dateFormat', 'd/m/Y');
+        }
         $txtDefaultDateFormat = new Zend_Form_Element_Text(
             array(
                 'name'      =>  'date_format',
                 'label'     =>  'Date Format',
-                'helptext'  =>  'Display dates according to this format. See ' . $phpUrl . ' for possible values',
+                'helptext'  =>  'Display dates according to this format. (See ' . $phpUrl . ' for possible values.) '
+                                . 'Example result: ' . $this->getDateFormatter()->format(time(), $dateFormatValue),
                 'required'  =>  true,
-                'value'     =>  $cfg->get('dateFormat', 'd/m/Y')
+                'value'     =>  $dateFormatValue
             )
         );
         $this->addElement($txtDefaultDateFormat);
         $txtDefaultDateFormat->addValidator(new DateFormatValidator());
 
+        $timeFormatValue = $this->getRequest()->getParam('time_format', '');
+        if (empty($timeFormatValue)) {
+            $timeFormatValue = $cfg->get('timeFormat', 'g:i A');
+        }
         $txtDefaultTimeFormat = new Zend_Form_Element_Text(
             array(
                 'name'      =>  'time_format',
                 'label'     =>  'Time Format',
                 'required'  =>  true,
-                'helptext'  =>  'Display times according to this format. See ' . $phpUrl . ' for possible values',
-                'value'     =>  $cfg->get('timeFormat', 'g:i A')
+                'helptext'  =>  'Display times according to this format. (See ' . $phpUrl . ' for possible values.) '
+                                . 'Example result: ' . $this->getDateFormatter()->format(time(), $timeFormatValue),
+                'value'     =>  $timeFormatValue
             )
         );
         $txtDefaultTimeFormat->addValidator(new TimeFormatValidator());
@@ -237,7 +277,7 @@ class GeneralForm extends Form
     /**
      * Add form elements for setting the user preference storage backend
      *
-     * @param Zend_Config $cfg The Zend_config object of preference section
+     * @param Zend_Config   $cfg    The Zend_config object of preference section
      */
     public function addUserPreferencesDialog(Zend_Config $cfg)
     {
