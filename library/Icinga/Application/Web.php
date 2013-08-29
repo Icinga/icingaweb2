@@ -410,7 +410,7 @@ class Web extends ApplicationBootstrap
      */
     protected function setupTimezone()
     {
-        $userTimeZone = $this->user->getPreferences()->get('app.timezone');
+        $userTimeZone = $this->user === null ? null : $this->user->getPreferences()->get('app.timezone');
 
         try {
             $tz = new DateTimeZone($userTimeZone);
