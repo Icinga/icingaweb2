@@ -61,12 +61,6 @@ class Query extends AbstractQuery
     protected function createQueryObjects()
     {
         $this->beforeCreatingCountQuery();
-        $this->countQuery = clone($this->baseQuery);
-        if ($this->countColumns === null) {
-            $this->countColumns = array('cnt' => 'COUNT(*)');
-        }
-        $this->countQuery->columns($this->countColumns);
-
         $this->beforeCreatingSelectQuery();
         $this->selectQuery = clone($this->baseQuery);
         $this->selectQuery->columns($this->columns);
@@ -79,6 +73,12 @@ class Query extends AbstractQuery
                 );
             }
         }
+
+        $this->countQuery = clone($this->baseQuery);
+        if ($this->countColumns === null) {
+            $this->countColumns = array('cnt' => 'COUNT(*)');
+        }
+        $this->countQuery->columns($this->countColumns);
     }
     
     protected function beforeCreatingCountQuery()
