@@ -218,6 +218,8 @@ class Form extends Zend_Form
             }
             $this->addElementDecorators();
             $this->created = true;
+            $this->setAttrib('data-icinga-component', 'app/form');
+
         }
     }
 
@@ -308,7 +310,7 @@ class Form extends Zend_Form
         foreach ($triggerElements as $elementName) {
             $element = $this->getElement($elementName);
             if ($element !== null) {
-                $element->setAttrib('data-icinga-autosubmit', 'true');
+                $element->setAttrib('data-icinga-form-autosubmit', 'true');
             } else {
                 throw new ProgrammingError(
                     'You need to add the element "' . $elementName . '" to' .
@@ -349,6 +351,7 @@ class Form extends Zend_Form
             return false;
         }
     }
+
 
     /**
      * Check whether this form has been submitted

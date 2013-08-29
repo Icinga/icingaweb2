@@ -24,7 +24,14 @@ define(['jquery', 'logging', 'icinga/componentRegistry'], function ($, log, regi
             requirejs(
                 ['modules/' + cmpType],
                 function (Cmp) {
-                    var cmp = new Cmp(target);
+                    var cmp;
+                    try {
+                        cmp = new Cmp(target);
+                    } catch (e) {
+                        log.emergency('Error in component "' + cmpType + '" : "' + e + '"');
+                        err(e);
+                        return;
+                    }
                     if (fin) {
                         fin(cmp);
                     }
