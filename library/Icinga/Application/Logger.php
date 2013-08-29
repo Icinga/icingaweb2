@@ -120,14 +120,15 @@ final class Logger
     {
         $this->clearLog();
         try {
-            if ($config->debug && $config->debug->enable == 1) {
+            if ($config->debug && $config->debug->enable == '1') {
                 $this->setupDebugLog($config);
             }
         } catch (ConfigurationError $e) {
             $this->warn('Could not create debug log: ' . $e->getMessage());
         }
-
-        $this->setupLog($config);
+        if ($config->get('enable', '1') != '0') {
+            $this->setupLog($config);
+        }
         $this->flushQueue();
 
         return $this;
