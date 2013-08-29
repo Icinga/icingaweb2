@@ -113,8 +113,8 @@ def main():
                      for a in arguments[:len(arguments)]
                      if os.path.isfile(a) or os.path.isdir(a)]
         if not path_args:
-            path_args = ['../../application', '../../bin',
-                         '../../library/Icinga']
+            path_args = ['../../public/js/icinga', '../../bin',
+                         '../../modules/']
         if options.include:
             path_args = [os.path.join(r, f)
                          for a in path_args
@@ -143,6 +143,7 @@ def main():
             with open(result_path, 'w') as result_file:
                 result_file.write(result_data)
         else:
+            print (application_path )
             execute_command([application_path] + DEFAULT_ARGS +
                             command_options + arguments + path_args)
         return 0
