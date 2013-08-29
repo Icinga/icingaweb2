@@ -1,5 +1,29 @@
 <?php
 // {{{ICINGA_LICENSE_HEADER}}}
+/**
+ * This file is part of Icinga 2 Web.
+ *
+ * Icinga 2 Web - Head for multiple monitoring backends.
+ * Copyright (C) 2013 Icinga Development Team
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ * @copyright 2013 Icinga Development Team <info@icinga.org>
+ * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
+ * @author    Icinga Development Team <info@icinga.org>
+ */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Application\Modules;
@@ -7,6 +31,8 @@ namespace Icinga\Application\Modules;
 use \Icinga\Application\ApplicationBootstrap;
 use \Icinga\Application\Icinga;
 use \Icinga\Application\Logger;
+use \Icinga\Data\ArrayDatasource;
+use \Icinga\Data\ArrayQuery;
 use \Icinga\Exception\ConfigurationError;
 use \Icinga\Exception\SystemPermissionException;
 use \Icinga\Exception\ProgrammingError;
@@ -27,9 +53,9 @@ class Manager
      *
      * null if modules haven't been scanned yet
      *
-     * @var array|null
+     * @var array
      */
-    private $installedBaseDirs = null;
+    private $installedBaseDirs = array();
 
     /**
      * Array of all enabled modules base dirs
@@ -112,11 +138,11 @@ class Manager
     /**
      * Query interface for the module manager
      *
-     * @return \Icinga\Data\ArrayQuery
+     * @return ArrayQuery
      */
     public function select()
     {
-        $source = new \Icinga\Data\ArrayDatasource($this->getModuleInfo());
+        $source = new ArrayDatasource($this->getModuleInfo());
         return $source->select();
     }
 
@@ -205,8 +231,8 @@ class Manager
      * @param   string $name The module to enable
      *
      * @return  self
-     * @throws  \Icinga\Exception\ConfigurationError        When trying to enable a module that is not installed
-     * @throws  \Icinga\Exception\SystemPermissionException When insufficient permissions for the application exist
+     * @throws  ConfigurationError        When trying to enable a module that is not installed
+     * @throws  SystemPermissionException When insufficient permissions for the application exist
      */
     public function enableModule($name)
     {
@@ -224,9 +250,7 @@ class Manager
         $link = $this->enableDir . '/' . $name;
         if (!is_writable($this->enableDir)) {
             throw new SystemPermissionException(
-                "Insufficient system permissions for enabling modules",
-                "write",
-                $this->enableDir
+                "Insufficient system permissions for enabling modules"
             );
         }
         if (file_exists($link) && is_link($link)) {
@@ -235,7 +259,7 @@ class Manager
         if (!@symlink($target, $link)) {
             $error = error_get_last();
             if (strstr($error["message"], "File exists") === false) {
-                throw new SystemPermissionException($error["message"], "symlink", $link);
+                throw new SystemPermissionException($error["message"]);
             }
         }
         $this->enabledDirs[$name] = $link;
@@ -249,8 +273,8 @@ class Manager
      *
      * @return  self
      *
-     * @throws  \Icinga\Exception\ConfigurationError         When the module is not installed or it's not symlinked
-     * @throws  \Icinga\Exception\SystemPermissionException  When the module can't be disabled
+     * @throws  ConfigurationError         When the module is not installed or it's not symlinked
+     * @throws  SystemPermissionException  When the module can't be disabled
      */
     public function disableModule($name)
     {
@@ -258,8 +282,7 @@ class Manager
             return $this;
         }
         if (!is_writable($this->enableDir)) {
-            throw new SystemPermissionException("Can't write the module directory", "write", $this->enableDir);
-            return $this;
+            throw new SystemPermissionException("Can't write the module directory");
         }
         $link = $this->enableDir . '/' . $name;
         if (!file_exists($link)) {
@@ -277,7 +300,7 @@ class Manager
         if (file_exists($link) && is_link($link)) {
             if (!@unlink($link)) {
                 $error = error_get_last();
-                throw new SystemPermissionException($error['message'], 'unlink', $link);
+                throw new SystemPermissionException($error['message']);
             }
         } else {
 
@@ -323,7 +346,7 @@ class Manager
      */
     public function hasInstalled($name)
     {
-        if ($this->installedBaseDirs === null) {
+        if (!count($this->installedBaseDirs)) {
             $this->detectInstalledModules();
         }
         return array_key_exists($name, $this->installedBaseDirs);
@@ -449,11 +472,11 @@ class Manager
      */
     public function listInstalledModules()
     {
-        if ($this->installedBaseDirs === null) {
+        if (!count($this->installedBaseDirs)) {
             $this->detectInstalledModules();
         }
 
-        if ($this->installedBaseDirs !== null) {
+        if (count($this->installedBaseDirs)) {
             return array_keys($this->installedBaseDirs);
         }
     }
