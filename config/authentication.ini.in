@@ -30,4 +30,4 @@
 @use_internal_auth@[internal_authentication]
 @use_internal_auth@backend     = db
 @use_internal_auth@target      = "user"
-@use_internal_auth@resource    = "authentication_db"
+@use_internal_auth@resource    = "internal_db"
