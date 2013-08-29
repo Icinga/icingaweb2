@@ -29,11 +29,9 @@
 namespace Icinga\User\Preferences;
 
 use \Zend_Config;
-use \Zend_Db;
 use \Icinga\User;
 use \Icinga\Exception\ProgrammingError;
 use \Icinga\Application\DbAdapterFactory;
-use Icinga\Application\Logger;
 
 /**
  * Create preference stores from zend config

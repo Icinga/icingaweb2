@@ -30,13 +30,13 @@ namespace Icinga\Application;
 
 use \Exception;
 use \Zend_Layout;
-use \Zend_Config;
 use \Zend_Paginator;
 use \Zend_View_Helper_PaginationControl;
 use \Zend_Controller_Action_HelperBroker;
 use \Zend_Controller_Router_Route;
 use \Zend_Controller_Action_Helper_ViewRenderer;
 use \Zend_Controller_Front;
+use \Icinga\Application\Logger;
 use \Icinga\Authentication\Manager as AuthenticationManager;
 use \Icinga\Exception\ConfigurationError;
 use \Icinga\User\Preferences;
