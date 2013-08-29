@@ -249,6 +249,15 @@ class Web extends ApplicationBootstrap
             $preferences->attach($sessionStore);
 
             if ($this->getConfig()->preferences !== null) {
+                if (!$this->getConfig()->preferences->type) {
+                    Logger::info(
+                        'Preferences provider configuration error. No type was omitted. For convenience we enable '
+                        . 'file based ini provider for you.'
+                    );
+
+                    $this->getConfig()->preferences->type = 'ini';
+                }
+
                 $path = Config::resolvePath($this->getConfig()->preferences->configPath);
                 if (is_dir($path) === false) {
                     Logger::error(
