@@ -29,26 +29,43 @@
 namespace Icinga\Authentication;
 
 /**
-*   Data holder object for authentication information
-*
-*   This object should be used instead of passing names and
-*   passwords as primitives in order to allow additional information
-*   to be provided (like the domain) when needed
-**/
-class Credentials
+ * Data holder object for authentication information
+ *
+ * This object should be used instead of passing names and
+ * passwords as primitives in order to allow additional information
+ * to be provided (like the domain) when needed.
+ */
+class Credential
 {
-    protected $username;
-    protected $password;
-    protected $domain;
-    
     /**
-    *   Create a new credential object
-    *   
-    *   @param String   $username
-    *   @param String   $password
-    *   @param String   $domain
-    **/
-    public function __construct($username = "", $password = null, $domain = null)
+     * Username
+     *
+     * @var string
+     */
+    private $username;
+
+    /**
+     * Password
+     *
+     * @var string
+     */
+    private $password;
+
+    /**
+     * Domain
+     *
+     * @var string
+     */
+    private $domain;
+
+    /**
+     * Create a new credential object
+     *
+     * @param string $username
+     * @param string $password
+     * @param string $domain
+     */
+    public function __construct($username = '', $password = null, $domain = null)
     {
         $this->username = $username;
         $this->password = $password;
@@ -56,50 +73,62 @@ class Credentials
     }
 
     /**
-    *   @return String
-    **/
+     * Getter for username
+     *
+     * @return string
+     */
     public function getUsername()
     {
         return $this->username;
     }
 
     /**
-    *   @param String $username
-    **/
+     * Setter for username
+     *
+     * @param string $username
+     */
     public function setUsername($username)
     {
-        return $this->username = $username;
+        $this->username = $username;
     }
-    
+
     /**
-    *   @return String
-    **/
+     * Getter for password
+     *
+     * @return string
+     */
     public function getPassword()
     {
         return $this->password;
     }
 
     /**
-    *   @param String  $password
-    **/
+     * Setter for password
+     *
+     * @param string $password
+     */
     public function setPassword($password)
     {
-        return $this->password = $password;
+        $this->password = $password;
     }
 
     /**
-    *   @return String
-    **/
+     * Getter for domain
+     *
+     * @return string
+     */
     public function getDomain()
     {
         return $this->domain;
     }
 
     /**
-    *   @param String  $domain
-    **/
+     * Setter for domain
+     *
+     * @param string $domain
+     */
     public function setDomain($domain)
     {
-        return $this->domain = $domain;
+        $this->domain = $domain;
     }
 }

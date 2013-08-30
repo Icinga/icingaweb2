@@ -27,7 +27,7 @@
 # namespace Icinga\Application\Controllers;
 
 use \Icinga\Web\Controller\ActionController;
-use \Icinga\Authentication\Credentials;
+use \Icinga\Authentication\Credential;
 use \Icinga\Authentication\Manager as AuthManager;
 use \Icinga\Form\Authentication\LoginForm;
 use \Icinga\Exception\ConfigurationError;
@@ -60,7 +60,7 @@ class AuthenticationController extends ActionController
     public function loginAction()
     {
         $this->replaceLayout = true;
-        $credentials = new Credentials();
+        $credentials = new Credential();
         $this->view->form = new LoginForm();
         $this->view->form->setRequest($this->_request);
         $this->view->title = "Icinga Web Login";

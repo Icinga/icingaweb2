@@ -28,50 +28,71 @@
 
 namespace Icinga\Authentication\Backend;
 
-use Icinga\User;
-use Icinga\Authentication\UserBackend;
-use Icinga\Authentication\Credentials;
-use Icinga\Protocol\Ldap;
+use \stdClass;
+use \Zend_Config;
+use \Icinga\User;
+use \Icinga\Authentication\UserBackend;
+use \Icinga\Authentication\Credential;
+use \Icinga\Protocol\Ldap;
+use \Icinga\Protocol\Ldap\Connection;
 use \Icinga\Application\Config as IcingaConfig;
 
 /**
-*   User authentication backend (@see Icinga\Authentication\UserBackend) for
-*   authentication of users via LDAP. The attributes and location of the
-*   user is configurable via the application.ini
-*
-*   See the UserBackend class (@see Icinga\Authentication\UserBackend) for
-*   usage information
-**/
+ * User authentication backend
+ */
 class LdapUserBackend implements UserBackend
 {
     /**
-     * @var Ldap\Connection
+     * Ldap resource
+     *
+     * @var Connection
      **/
     protected $connection;
 
     /**
      * The ldap connection information
      *
-     * @var object
+     * @var Zend_Config
      */
     private $config;
 
     /**
-     *   Creates a new Authentication backend using the
-     *   connection information provided in $config
+     * Name of the backend
      *
-     *   @param object $config   The ldap connection information
-     **/
-    public function __construct($config)
+     * @var string
+     */
+    private $name;
+
+    /**
+     * Create new Ldap User backend
+     *
+     * @param Zend_Config $config Configuration to create instance
+     */
+    public function __construct(Zend_Config $config)
     {
         $this->connection = new Ldap\Connection($config);
         $this->config = $config;
+        $this->name = $config->name;
     }
 
     /**
-     *   @see Icinga\Authentication\UserBackend::hasUsername
-     **/
-    public function hasUsername(Credentials $credential)
+     * Name of the backend
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * Test if the username exists
+     *
+     * @param   Credential $credential Credential to find user in database
+     *
+     * @return  bool
+     */
+    public function hasUsername(Credential $credential)
     {
         return $this->connection->fetchOne(
             $this->selectUsername($credential->getUsername())
@@ -79,11 +100,11 @@ class LdapUserBackend implements UserBackend
     }
 
     /**
-     *   Removes the '*' characted from $string
+     * Removes the '*' character from $string
      *
-     *   @param String $string
+     * @param string $string Input string
      *
-     *   @return String
+     * @return string
      **/
     protected function stripAsterisks($string)
     {
@@ -91,13 +112,11 @@ class LdapUserBackend implements UserBackend
     }
 
     /**
-     *   Tries to fetch the username given in $username from
-     *   the ldap connection, using the configuration parameters
-     *   given in the Authentication configuration
+     * Tries to fetch the username
      *
-     *   @param  String  $username       The username to select
+     * @param  string   $username The username to select
      *
-     *   @return object  $result
+     * @return stdClass $result
      **/
     protected function selectUsername($username)
     {
@@ -115,9 +134,13 @@ class LdapUserBackend implements UserBackend
     }
 
     /**
-     *   @see Icinga\Authentication\UserBackend::authenticate
-     **/
-    public function authenticate(Credentials $credentials)
+     * Authenticate
+     *
+     * @param   Credential $credentials Credential to authenticate
+     *
+     * @return  User
+     */
+    public function authenticate(Credential $credentials)
     {
         if (!$this->connection->testCredentials(
             $this->connection->fetchDN($this->selectUsername($credentials->getUsername())),
@@ -130,6 +153,12 @@ class LdapUserBackend implements UserBackend
         return $user;
     }
 
+    /**
+     * Return number of users in this backend
+     *
+     * @return  int The number of users set in this backend
+     * @see     UserBackend::getUserCount
+     */
     public function getUserCount()
     {
         return $this->connection->count(

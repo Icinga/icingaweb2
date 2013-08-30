@@ -31,7 +31,6 @@ class SessionMock extends Session
     
     public function write($keepOpen = false)
     {
-        
         $this->open();
         if (!$keepOpen) {
             $this->close();

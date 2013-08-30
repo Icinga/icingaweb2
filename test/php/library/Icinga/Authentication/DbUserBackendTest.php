@@ -1,5 +1,4 @@
 <?php
-
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga 2 Web.
@@ -41,12 +40,13 @@ require_once 'Zend/Config/Ini.php';
 require_once 'Zend/Db/Adapter/Abstract.php';
 require_once 'Zend/Db.php';
 require_once 'Zend/Log.php';
+require_once BaseTestCase::$libDir . '/Exception/ProgrammingError.php';
 require_once BaseTestCase::$libDir . '/Util/ConfigAwareFactory.php';
 require_once BaseTestCase::$libDir . '/Authentication/UserBackend.php';
 require_once BaseTestCase::$libDir . '/Protocol/Ldap/Exception.php';
 require_once BaseTestCase::$libDir . '/Application/DbAdapterFactory.php';
 require_once BaseTestCase::$libDir . '/Application/Config.php';
-require_once BaseTestCase::$libDir . '/Authentication/Credentials.php';
+require_once BaseTestCase::$libDir . '/Authentication/Credential.php';
 require_once BaseTestCase::$libDir . '/Authentication/Backend/DbUserBackend.php';
 require_once BaseTestCase::$libDir . '/User.php';
 require_once BaseTestCase::$libDir . '/Application/Logger.php';
@@ -57,7 +57,7 @@ use \Zend_Db_Adapter_Pdo_Abstract;
 use \Zend_Config;
 use \Icinga\Authentication\Backend\DbUserBackend;
 use \Icinga\Application\DbAdapterFactory;
-use \Icinga\Authentication\Credentials;
+use \Icinga\Authentication\Credential;
 use \Icinga\User;
 use \Icinga\Application\Config;
 
@@ -107,6 +107,22 @@ class DbUserBackendTest extends BaseTestCase
         )
     );
 
+    private function createDbBackendConfig($resource, $name = null)
+    {
+        if ($name === null) {
+            $name = 'TestDbUserBackend-' . uniqid();
+        }
+
+        $config = new Zend_Config(
+            array(
+                'name'      => $name,
+                'resource'  => $resource
+            )
+        );
+
+        return $config;
+    }
+
     /**
      * Test the authentication functions of the DbUserBackend using PostgreSQL as backend.
      *
@@ -115,7 +131,7 @@ class DbUserBackendTest extends BaseTestCase
     public function testCorrectUserLoginForPgsql($db)
     {
         $this->setupDbProvider($db);
-        $backend = new DbUserBackend($db);
+        $backend = new DbUserBackend($this->createDbBackendConfig($db));
         $this->runBackendAuthentication($backend);
         $this->runBackendUsername($backend);
     }
@@ -128,7 +144,7 @@ class DbUserBackendTest extends BaseTestCase
     public function testCorrectUserLoginForMySQL($db)
     {
         $this->setupDbProvider($db);
-        $backend = new DbUserBackend($db);
+        $backend = new DbUserBackend($this->createDbBackendConfig($db));
         $this->runBackendAuthentication($backend);
         $this->runBackendUsername($backend);
     }
@@ -157,7 +173,7 @@ class DbUserBackendTest extends BaseTestCase
                     $usr[self::SALT_COLUMN],
                     $usr[self::PASSWORD_COLUMN]
                 ),
-                self::ACTIVE_COLUMN     => $usr[self::ACTIVE_COLUMN],
+                self::ACTIVE_COLUMN => $usr[self::ACTIVE_COLUMN],
                 self::SALT_COLUMN   => $usr[self::SALT_COLUMN]
             );
             $resource->insert($this->testTable, $data);
@@ -174,7 +190,7 @@ class DbUserBackendTest extends BaseTestCase
         // Known user
         $this->assertTrue(
             $backend->hasUsername(
-                new Credentials(
+                new Credential(
                     $this->userData[0][self::USER_NAME_COLUMN],
                     $this->userData[0][self::PASSWORD_COLUMN]
                 )
@@ -185,7 +201,7 @@ class DbUserBackendTest extends BaseTestCase
         // Unknown user
         $this->assertFalse(
             $backend->hasUsername(
-                new Credentials(
+                new Credential(
                     'unknown user',
                     'secret'
                 )
@@ -196,7 +212,7 @@ class DbUserBackendTest extends BaseTestCase
         // Inactive user
         $this->assertFalse(
             $backend->hasUsername(
-                new Credentials(
+                new Credential(
                     $this->userData[2][self::USER_NAME_COLUMN],
                     $this->userData[2][self::PASSWORD_COLUMN]
                 )
@@ -215,7 +231,7 @@ class DbUserBackendTest extends BaseTestCase
         // Known user
         $this->assertNotNull(
             $backend->authenticate(
-                new Credentials(
+                new Credential(
                     $this->userData[0][self::USER_NAME_COLUMN],
                     $this->userData[0][self::PASSWORD_COLUMN]
                 )
@@ -226,7 +242,7 @@ class DbUserBackendTest extends BaseTestCase
         // Wrong password
         $this->assertNull(
             $backend->authenticate(
-                new Credentials(
+                new Credential(
                     $this->userData[1][self::USER_NAME_COLUMN],
                     'wrongpassword'
                 )
@@ -237,7 +253,7 @@ class DbUserBackendTest extends BaseTestCase
         // Nonexisting user
         $this->assertNull(
             $backend->authenticate(
-                new Credentials(
+                new Credential(
                     'nonexisting user',
                     $this->userData[1][self::PASSWORD_COLUMN]
                 )
@@ -248,7 +264,7 @@ class DbUserBackendTest extends BaseTestCase
         // Inactive user
         $this->assertNull(
             $backend->authenticate(
-                new Credentials(
+                new Credential(
                     $this->userData[2][self::USER_NAME_COLUMN],
                     $this->userData[2][self::PASSWORD_COLUMN]
                 )
@@ -256,4 +272,43 @@ class DbUserBackendTest extends BaseTestCase
             'Assert that an inactive user cannot authenticate.'
         );
     }
+
+    /**
+     * @dataProvider mysqlDb
+     */
+    public function testBackendNameAssignment($db)
+    {
+        $this->setupDbProvider($db);
+
+        $testName = 'test-name-123123';
+        $backend = new DbUserBackend($this->createDbBackendConfig($db, $testName));
+
+        $this->assertSame($testName, $backend->getName());
+    }
+
+    /**
+     * @dataProvider mysqlDb
+     */
+    public function testCountUsersMySql($db)
+    {
+        $this->setupDbProvider($db);
+        $testName = 'test-name-123123';
+        $backend = new DbUserBackend($this->createDbBackendConfig($db, $testName));
+
+        $this->assertGreaterThan(0, $backend->getUserCount());
+    }
+
+    /**
+     * @dataProvider pgsqlDb
+     */
+    public function testCountUsersPgSql($db)
+    {
+        $this->setupDbProvider($db);
+        $testName = 'test-name-123123';
+        $backend = new DbUserBackend($this->createDbBackendConfig($db, $testName));
+
+        $this->assertGreaterThan(0, $backend->getUserCount());
+    }
+
+
 }

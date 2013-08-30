@@ -28,10 +28,11 @@
 
 namespace Icinga\Authentication;
 
-use Icinga\Application\Logger as Logger;
+use Icinga\Application\Logger;
+use \Icinga\Exception\ConfigurationError;
 
 /**
- * Class PhpSession
+ * Session implementation in PHP
  *
  * Standard PHP Session handling
  * You have to call read() first in order to start the session. If
@@ -44,97 +45,121 @@ use Icinga\Application\Logger as Logger;
  */
 class PhpSession extends Session
 {
-    const SESSION_NAME = "Icinga2Web";
-    private $isOpen = false;
-    private $isFlushed = false;
-    
-    private static $DEFAULT_COOKIEOPTIONS = array(
-        'use_trans_sid'           => false,
-        'use_cookies'             => true,
-        'cookie_httponly'         => true,
-        'use_only_cookies'        => true,
-        'hash_function'           => true,
-        'hash_bits_per_character' => 5,
-    );
-    
     /**
-    *   Creates a new PHPSession object using the provided options (if any)
-    *   
-    *   @param  Array   $options        An optional array of ini options to set,
-    *                                   @see http://php.net/manual/en/session.configuration.php
-    **/
+     * Name of the session
+     *
+     * @var string
+     */
+    const SESSION_NAME = 'Icinga2Web';
+
+    /**
+     * Flag if session is open
+     *
+     * @var bool
+     */
+    private $isOpen = false;
+
+    /**
+     * Flag if session is flushed
+     *
+     * @var bool
+     */
+    private $isFlushed = false;
+
+    /**
+     * Configuration for cookie options
+     *
+     * @var array
+     */
+    private static $defaultCookieOptions = array(
+        'use_trans_sid'             => false,
+        'use_cookies'               => true,
+        'cookie_httponly'           => true,
+        'use_only_cookies'          => true,
+        'hash_function'             => true,
+        'hash_bits_per_character'   => 5,
+    );
+
+    /**
+     * Create a new PHPSession object using the provided options (if any)
+     *
+     * @param   array $options An optional array of ini options to set,
+     *
+     * @throws  ConfigurationError
+     * @see     http://php.net/manual/en/session.configuration.php
+     */
     public function __construct(array $options = null)
     {
         if ($options !== null) {
-            $options = array_merge(PhpSession::$DEFAULT_COOKIEOPTIONS, $options);
+            $options = array_merge(PhpSession::$defaultCookieOptions, $options);
         } else {
-            $options = PhpSession::$DEFAULT_COOKIEOPTIONS;
+            $options = PhpSession::$defaultCookieOptions;
         }
         foreach ($options as $sessionVar => $value) {
             if (ini_set("session.".$sessionVar, $value) === false) {
                 Logger::warn(
-                    "Could not set php.ini setting %s = %s. This might affect your sessions behaviour.",
+                    'Could not set php.ini setting %s = %s. This might affect your sessions behaviour.',
                     $sessionVar,
                     $value
                 );
             }
         }
         if (!is_writable(session_save_path())) {
-            throw new \Icinga\Exception\ConfigurationError("Can't save session");
+            throw new ConfigurationError('Can\'t save session');
         }
     }
 
     /**
-    *   Returns true when the session has not yet been closed
-    *
-    *   @return Boolean
-    **/
+     * Return true when the session has not yet been closed
+     *
+     * @return bool
+     */
     private function sessionCanBeChanged()
     {
         if ($this->isFlushed) {
-            Logger::error("Tried to work on a closed session, session changes will be ignored");
+            Logger::error('Tried to work on a closed session, session changes will be ignored');
             return false;
         }
         return true;
     }
-    
+
     /**
-    *   Returns true when the session has not yet been opened
-    *
-    *   @return Boolean
-    **/
+     * Return true when the session has not yet been opened
+     *
+     * @return bool
+     */
     private function sessionCanBeOpened()
     {
         if ($this->isOpen) {
-            Logger::warn("Tried to open a session more than once");
+            Logger::warn('Tried to open a session more than once');
             return false;
         }
         return $this->sessionCanBeChanged();
     }
- 
+
     /**
-    *   Opens a PHP session when possible
-    *
-    *   @return Boolean     True on success
-    **/
+     * Open a PHP session when possible
+     *
+     * @return bool True on success
+     */
     public function open()
     {
         if (!$this->sessionCanBeOpened()) {
             return false;
         }
 
-        session_name(PhpSession::SESSION_NAME);
+        session_name(self::SESSION_NAME);
         session_start();
         $this->isOpen = true;
         $this->setAll($_SESSION);
         return true;
     }
-  
+
     /**
-    *   Ensures that the session is open modifyable
-    * 
-    *   @return Boolean     True on success
-    **/
+     * Ensure that the session is open modifiable
+     *
+     * @return bool True on success
+     */
     private function ensureOpen()
     {
         // try to open first
@@ -145,16 +170,16 @@ class PhpSession extends Session
         }
         return true;
     }
- 
+
     /**
-    *   Reads all values written to the underyling session and
-    *   makes them accessible. if keepOpen is not set, the session
-    *   is immediately closed again
-    *
-    *   @param  Boolean $keepOpen       Set to true when modifying the session
-    *
-    *   @return Boolean                 True on success
-    **/
+     * Read all values written to the underling session and
+     * makes them accessible. if keepOpen is not set, the session
+     * is immediately closed again
+     *
+     * @param   bool $keepOpen  Set to true when modifying the session
+     *
+     * @return  bool            True on success
+     */
     public function read($keepOpen = false)
     {
         if (!$this->ensureOpen()) {
@@ -166,15 +191,16 @@ class PhpSession extends Session
         $this->close();
         return true;
     }
- 
+
     /**
-    *   Writes all values of this session opbject to the underyling session implementation
-    *   If keepOpen is not set, the session is closed
-    *
-    *   @param  Boolean $keepOpen       Set to true when modifying the session further
-    *
-    *   @return Boolean                 True on success
-    **/
+     * Write all values of this session object to the underlying session implementation
+     *
+     * If keepOpen is not set, the session is closed
+     *
+     * @param   bool $keepOpen  Set to true when modifying the session further
+     *
+     * @return  bool            True on success
+     */
     public function write($keepOpen = false)
     {
         if (!$this->ensureOpen()) {
@@ -190,12 +216,14 @@ class PhpSession extends Session
 
         return null;
     }
-    
+
     /**
-    *   Closes and writes the session. Call @see PHPSession::write in order to persist changes
-    *   and only call this if you want the session to be closed without any changes
-    *
-    **/
+     * Close and writes the session
+     *
+     * Only call this if you want the session to be closed without any changes.
+     *
+     * @see PHPSession::write
+     */
     public function close()
     {
         if (!$this->isFlushed) {
@@ -203,11 +231,10 @@ class PhpSession extends Session
         }
         $this->isFlushed = true;
     }
-    
+
     /**
-    *  Deletes the current session, causing all session information to be lost
-    *
-    **/
+     * Delete the current session, causing all session information to be lost
+     */
     public function purge()
     {
         if ($this->ensureOpen()) {
@@ -219,24 +246,22 @@ class PhpSession extends Session
     }
 
     /**
-    *   Removes session cookies
-    *
-    **/
+     * Remove session cookies
+     */
     private function clearCookies()
     {
-        if (ini_get("session.use_cookies")) {
-            Logger::debug("Clearing cookies");
+        if (ini_get('session.use_cookies')) {
+            Logger::debug('Clear session cookie');
             $params = session_get_cookie_params();
             setcookie(
                 session_name(),
                 '',
                 time() - 42000,
-                $params["path"],
-                $params["domain"],
-                $params["secure"],
-                $params["httponly"]
+                $params['path'],
+                $params['domain'],
+                $params['secure'],
+                $params['httponly']
             );
         }
-
     }
 }

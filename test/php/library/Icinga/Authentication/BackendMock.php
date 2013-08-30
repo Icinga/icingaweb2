@@ -4,33 +4,52 @@
 
 namespace Tests\Icinga\Authentication;
 
-require_once __DIR__. '/../../../../../library/Icinga/Authentication/Credentials.php';
-require_once __DIR__. '/../../../../../library/Icinga/Authentication/UserBackend.php';
-require_once __DIR__. '/../../../../../library/Icinga/User.php';
+// @codingStandardsIgnoreStart
+require_once realpath(__DIR__ . '/../../../../../library/Icinga/Test/BaseTestCase.php');
+// @codingStandardsIgnoreEnd
 
-use Icinga\Authentication\Credentials as Credentials;
-use Icinga\Authentication\UserBackend as UserBackend;
-use Icinga\User;
+use Icinga\Test\BaseTestCase;
+
+// @codingStandardsIgnoreStart
+require_once 'Zend/Config.php';
+require_once BaseTestCase::$libDir . '/Authentication/Credential.php';
+require_once BaseTestCase::$libDir . '/Authentication/UserBackend.php';
+require_once BaseTestCase::$libDir . '/User.php';
+// @codingStandardsIgnoreEnd
+
+use \Zend_Config;
+use \Icinga\Authentication\Credential;
+use \Icinga\Authentication\UserBackend as UserBackend;
+use \Icinga\User;
 
 /**
 *   Simple backend mock that takes an config object  
 *   with the property "credentials", which is an array 
-*   of Credentials this backend authenticates
+*   of Credential this backend authenticates
 **/
 class BackendMock implements UserBackend
 {
     public $allowedCredentials = array();
-    public function __construct($config = null)
+    public $name;
+
+    public function __construct(Zend_Config $config = null)
     {
         if ($config === null) {
             return;
         }
+
         if (isset ($config->credentials)) {
             $this->allowedCredentials = $config->credentials;
         }
+
+        if ($config->name) {
+            $this->name = $config->name;
+        } else {
+            $this->name = 'TestBackendMock-' . uniqid();
+        }
     }
 
-    public function hasUsername(Credentials $userCredentials)
+    public function hasUsername(Credential $userCredentials)
     {
         foreach ($this->allowedCredentials as $credential) {
             if ($credential->getUsername() == $userCredentials->getUsername()) {
@@ -39,26 +58,43 @@ class BackendMock implements UserBackend
         }
         return false;
     }
-    
+
+    /**
+     * Name of the backend
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+
     public static function getDummyUser()
     {
         return new User(
-            "Username",
-            "Firstname",
-            "Lastname",
-            "user@test.local"
+            'Username',
+            'Firstname',
+            'Lastname',
+            'user@test.local'
         );
     }
-    
+
     public function getUserCount() {
          return count($this->allowedCredentials);
     }
-    
-    public function authenticate(Credentials $credentials)
+
+    public function authenticate(Credential $credentials)
     {
         if (!in_array($credentials, $this->allowedCredentials)) {
             return false;
         }
+
         return self::getDummyUser();
+    }
+
+    public function setCredentials(array $credentials)
+    {
+        $this->allowedCredentials = $credentials;
     }
 }
