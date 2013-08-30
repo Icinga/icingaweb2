@@ -33,6 +33,7 @@ use \stdClass;
 use \Zend_Config;
 use \Zend_Db;
 use \Zend_Db_Adapter_Abstract;
+use \Zend_Db_Statement_Exception;
 use \Icinga\Application\DbAdapterFactory;
 use \Icinga\Exception\ProgrammingError;
 use \Icinga\User;
@@ -135,9 +136,9 @@ class DbUserBackend implements UserBackend
     /**
      * Check if the user identified by the given credentials is available
      *
-     * @param   Credential $credential
+     * @param   Credential $credential  Credential to find a user in the database
      *
-     * @return  boolean                  True when the username is known and currently active.
+     * @return  boolean                 True when the username is known and currently active.
      */
     public function hasUsername(Credential $credential)
     {
@@ -152,7 +153,7 @@ class DbUserBackend implements UserBackend
     /**
      * Authenticate a user with the given credentials
      *
-     * @param   Credential $credential
+     * @param   Credential $credential      Credential to authenticate
      *
      * @return  User|null                   The authenticated user or Null.
      */
@@ -167,7 +168,7 @@ class DbUserBackend implements UserBackend
             $salt = $this->getUserSalt($credential->getUsername());
         } catch (Exception $e) {
             Logger::error(
-                'Could not create salt for user %s. Exception was thrown: %s',
+                'Could not fetch salt from database for user %s. Exception was thrown: %s',
                 $credential->getUsername(),
                 $e->getMessage()
             );
@@ -239,7 +240,7 @@ class DbUserBackend implements UserBackend
                 return $this->createUserFromResult($res);
             }
             return null;
-        } catch (\Zend_Db_Statement_Exception $exc) {
+        } catch (Zend_Db_Statement_Exception $exc) {
             Logger::error('Could not fetch users from db : %s ', $exc->getMessage());
             return null;
         }
@@ -248,7 +249,7 @@ class DbUserBackend implements UserBackend
     /**
      * Create a new instance of User from a query result
      *
-     * @param   stdClass $resultRow
+     * @param   stdClass $resultRow     Result object from database
      *
      * @return  User                    The created instance of User.
      */
