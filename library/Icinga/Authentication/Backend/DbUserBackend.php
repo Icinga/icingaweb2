@@ -33,7 +33,6 @@ use \stdClass;
 use \Zend_Config;
 use \Zend_Db;
 use \Zend_Db_Adapter_Abstract;
-use \Zend_Db_Statement_Exception;
 use \Icinga\Application\DbAdapterFactory;
 use \Icinga\Exception\ProgrammingError;
 use \Icinga\User;
@@ -86,7 +85,7 @@ class DbUserBackend implements UserBackend
      *
      * @var Zend_Db
      */
-    private $db = null;
+    private $db;
 
     /**
      * The name of the user table
@@ -142,10 +141,6 @@ class DbUserBackend implements UserBackend
      */
     public function hasUsername(Credential $credential)
     {
-        if ($this->db === null) {
-            Logger::warn('Ignoring hasUsername in database as no connection is available');
-            return false;
-        }
         $user = $this->getUserByName($credential->getUsername());
         return isset($user);
     }
@@ -159,11 +154,8 @@ class DbUserBackend implements UserBackend
      */
     public function authenticate(Credential $credential)
     {
-        if ($this->db === null) {
-            Logger::warn('Ignoring database authentication as no connection is available');
-            return null;
-        }
-        $this->db->getConnection();
+        $this->assertDbConnection();
+
         try {
             $salt = $this->getUserSalt($credential->getUsername());
         } catch (Exception $e) {
@@ -204,7 +196,8 @@ class DbUserBackend implements UserBackend
      */
     private function getUserSalt($username)
     {
-        $this->db->getConnection();
+        $this->assertDbConnection();
+
         $res = $this->db->select()
             ->from($this->userTable, self::SALT_COLUMN)
             ->where(self::USER_NAME_COLUMN.' = ?', $username)
@@ -225,25 +218,20 @@ class DbUserBackend implements UserBackend
      */
     private function getUserByName($username)
     {
-        if ($this->db === null) {
-            Logger::warn('Ignoring getUserByName as no database connection is available');
-            return null;
+
+        $this->assertDbConnection();
+
+        $this->db->getConnection();
+        $res = $this->db->
+            select()->from($this->userTable)
+                ->where(self::USER_NAME_COLUMN .' = ?', $username)
+                ->where(self::ACTIVE_COLUMN .' = ?', true)
+                ->query()->fetch();
+        if ($res !== false) {
+            return $this->createUserFromResult($res);
         }
-        try {
-            $this->db->getConnection();
-            $res = $this->db->
-                select()->from($this->userTable)
-                    ->where(self::USER_NAME_COLUMN .' = ?', $username)
-                    ->where(self::ACTIVE_COLUMN .' = ?', true)
-                    ->query()->fetch();
-            if ($res !== false) {
-                return $this->createUserFromResult($res);
-            }
-            return null;
-        } catch (Zend_Db_Statement_Exception $exc) {
-            Logger::error('Could not fetch users from db : %s ', $exc->getMessage());
-            return null;
-        }
+        return null;
+
     }
 
     /**
@@ -261,6 +249,19 @@ class DbUserBackend implements UserBackend
         return $usr;
     }
 
+    /**
+     * Assert a valid database connection
+     *
+     * @throws ConfigurationError
+     */
+    private function assertDbConnection()
+    {
+        if ($this->db === null) {
+            $msg = 'DbUserBackend ' . $this->getName() . ' has no valid database connection.';
+            Logger::fatal($msg);
+            throw new ConfigurationError($msg);
+        }
+    }
 
     /**
      * Return the number of users in this database connection

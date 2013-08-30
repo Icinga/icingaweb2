@@ -311,7 +311,7 @@ class Manager
             }
         }
 
-        if (count($this->userBackends) === $authErrors) {
+        if ($authErrors >= count($this->userBackends)) {
             Logger::fatal('AuthManager: No working backend found, unable to authenticate any user');
             throw new ConfigurationError(
                 'No working backend found. Unable to authenticate any user.'
