@@ -55,7 +55,7 @@ class AcknowledgeFormTest extends BaseFormTest
             'comment'       => 'Comment',
             'persistent'    => '0',
             'expire'        => '1',
-            'expiretime'    => '2013-07-10 17:32:16',
+            'expiretime'    => '10/07/2013 5:32 PM',
             'sticky'        => '0',
             'notify'        => '0',
             'btn_submit'    => 'Submit'

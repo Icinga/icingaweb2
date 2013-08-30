@@ -276,6 +276,7 @@ class Monitoring_CommandController extends ActionController
         $this->setSupportedParameters(array('host', 'service'));
         $form = new RescheduleNextCheckForm();
         $form->setRequest($this->getRequest());
+        $form->setConfiguration(Config::app());
 
         $this->setForm($form);
 
@@ -430,6 +431,7 @@ class Monitoring_CommandController extends ActionController
         $this->setSupportedParameters(array('host', 'service'));
         $form = new ScheduleDowntimeForm();
         $form->setRequest($this->getRequest());
+        $form->setConfiguration(Config::app());
         $form->setWithChildren(false);
         $this->setForm($form);
 
@@ -446,6 +448,7 @@ class Monitoring_CommandController extends ActionController
         $this->setSupportedParameters(array('host'));
         $form = new ScheduleDowntimeForm();
         $form->setRequest($this->getRequest());
+        $form->setConfiguration(Config::app());
         $form->setWithChildren(true);
         $this->setForm($form);
 
@@ -515,6 +518,7 @@ class Monitoring_CommandController extends ActionController
         $this->setSupportedParameters(array('host'));
         $form = new RescheduleNextCheckForm();
         $form->setRequest($this->getRequest());
+        $form->setConfiguration(Config::app());
 
         $form->setWithChildren(true);
 
@@ -676,6 +680,7 @@ class Monitoring_CommandController extends ActionController
         $this->setSupportedParameters(array('host', 'service'));
         $form = new AcknowledgeForm();
         $form->setRequest($this->getRequest());
+        $form->setConfiguration(Config::app());
 
         $this->setForm($form);
 

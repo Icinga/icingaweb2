@@ -52,11 +52,12 @@ class RescheduleNextCheckForm extends WithChildrenCommandForm
         $this->addElement(
             new DateTimePicker(
                 array(
-                    'name'     => 'checktime',
-                    'label'    => t('Check Time'),
-                    'value'    => DateTimeFactory::create()->getTimestamp(),
-                    'required' => !$this->getRequest()->getPost('forcecheck'),
-                    'helptext' => t('Set the date/time when this check should be executed.')
+                    'name'      => 'checktime',
+                    'label'     => t('Check Time'),
+                    'patterns'  => $this->getValidDateTimeFormats(),
+                    'value'     => DateTimeFactory::create()->getTimestamp(),
+                    'required'  => !$this->getRequest()->getPost('forcecheck'),
+                    'helptext'  => t('Set the date/time when this check should be executed.')
                 )
             )
         );

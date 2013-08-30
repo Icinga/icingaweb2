@@ -28,7 +28,6 @@
 
 namespace Icinga\Web;
 
-use Icinga\Exception\ProgrammingError;
 use Zend_Controller_Request_Http;
 use Icinga\User;
 

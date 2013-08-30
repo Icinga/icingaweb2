@@ -35,21 +35,17 @@ require_once realpath(__DIR__ . '/../../../../../library/Icinga/Test/BaseTestCas
 use Icinga\Test\BaseTestCase;
 
 // @codingStandardsIgnoreStart
-require_once 'Zend/Config.php';
-require_once 'Zend/Config/Ini.php';
 require_once 'Zend/Form/Element/Select.php';
 require_once 'Zend/View/Helper/Abstract.php';
 require_once BaseTestCase::$libDir . '/User/Preferences.php';
 require_once BaseTestCase::$libDir . '/Web/Form.php';
 require_once BaseTestCase::$appDir . '/forms/Preference/GeneralForm.php';
-require_once BaseTestCase::$libDir . '/User/Preferences/ChangeSet.php';
 require_once BaseTestCase::$appDir . '/views/helpers/DateFormat.php';
 require_once BaseTestCase::$libDir . '/Util/ConfigAwareFactory.php';
 require_once BaseTestCase::$libDir . '/Util/DateTimeFactory.php';
 // @codingStandardsIgnoreEnd
 
 use \DateTimeZone;
-use \Zend_Config;
 use \Icinga\User\Preferences;
 use \Zend_View_Helper_DateFormat;
 use \Icinga\Util\DateTimeFactory;
@@ -70,18 +66,6 @@ class GeneralFormTest extends BaseTestCase
         $form = $this->createForm('Icinga\Form\Preference\GeneralForm');
         $form->setDateFormatter(new Zend_View_Helper_DateFormat($this->getRequest()));
         $form->setRequest($this->getRequest());
-        $form->setConfiguration(
-            new Zend_Config(
-                array(
-                    'timezone' => 'UTC'
-                )
-            )
-        );
-        $form->setUserPreferences(
-            new Preferences(
-                array()
-            )
-        );
         $form->create();
         $this->assertSame(
             1,
@@ -101,13 +85,6 @@ class GeneralFormTest extends BaseTestCase
         $form = $this->createForm('Icinga\Form\Preference\GeneralForm');
         $form->setDateFormatter(new Zend_View_Helper_DateFormat($this->getRequest()));
         $form->setRequest($this->getRequest());
-        $form->setConfiguration(
-            new Zend_Config(
-                array(
-                    'timezone' => 'UTC'
-                )
-            )
-        );
         $form->setUserPreferences(
             new Preferences(
                 array(

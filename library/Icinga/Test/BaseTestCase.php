@@ -44,6 +44,7 @@ use \Zend_Db_Adapter_Pdo_Mysql;
 use \Zend_Db_Adapter_Pdo_Pgsql;
 use \Zend_Db_Adapter_Pdo_Oci;
 use \Icinga\Application\DbAdapterFactory;
+use \Icinga\User\Preferences;
 use \Icinga\Web\Form;
 
 /**
@@ -327,12 +328,23 @@ class BaseTestCase extends Zend_Test_PHPUnit_ControllerTestCase implements DbTes
 
         require_once $classFile;
         $form = new $formClass();
+        $form->initCsrfToken();
+
+        $token = $form->getValue($form->getTokenElementName());
+        if ($token !== null) {
+            $requestData[$form->getTokenElementName()] = $token;
+        }
 
         $request = $this->getRequest();
         $request->setMethod('POST');
         $request->setPost($requestData);
 
         $form->setRequest($request);
+        $form->setUserPreferences(
+            new Preferences(
+                array()
+            )
+        );
 
         return $form;
     }
@@ -366,6 +378,7 @@ class BaseTestCase extends Zend_Test_PHPUnit_ControllerTestCase implements DbTes
 
         require_once self::$libDir . '/Web/Form.php';
 
+        require_once self::$libDir . '/User/Preferences.php';
         // @codingStandardsIgnoreEnd
     }
 
