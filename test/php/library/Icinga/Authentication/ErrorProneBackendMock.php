@@ -12,21 +12,21 @@ use Icinga\Test\BaseTestCase;
 
 // @codingStandardsIgnoreStart
 require_once 'Zend/Config.php';
-require_once BaseTestCase::$libDir . '/Authentication/Credentials.php';
+require_once BaseTestCase::$libDir . '/Authentication/Credential.php';
 require_once BaseTestCase::$libDir . '/Authentication/UserBackend.php';
 require_once BaseTestCase::$libDir . '/User.php';
 // @codingStandardsIgnoreEnd
 
 use \Exception;
 use \Zend_Config;
-use \Icinga\Authentication\Credentials as Credentials;
+use \Icinga\Authentication\Credential;
 use \Icinga\Authentication\UserBackend as UserBackend;
 use \Icinga\User;
 
 /**
  *   Simple backend mock that takes an config object
  *   with the property "credentials", which is an array
- *   of Credentials this backend authenticates
+ *   of Credential this backend authenticates
  **/
 class ErrorProneBackendMock implements UserBackend
 {
@@ -56,12 +56,12 @@ class ErrorProneBackendMock implements UserBackend
     /**
      * Test if the username exists
      *
-     * @param   Credentials $credentials
+     * @param   Credential $credentials
      *
      * @return  bool
      * @throws  Exception
      */
-    public function hasUsername(Credentials $credentials)
+    public function hasUsername(Credential $credentials)
     {
         throw new Exception('hasUsername error: ' . $credentials->getUsername());
     }
@@ -69,12 +69,12 @@ class ErrorProneBackendMock implements UserBackend
     /**
      * Authenticate
      *
-     * @param   Credentials $credentials
+     * @param   Credential $credentials
      *
      * @return  User
      * @throws  Exception
      */
-    public function authenticate(Credentials $credentials)
+    public function authenticate(Credential $credentials)
     {
         throw new Exception('authenticate error: ' . $credentials->getUsername());
     }

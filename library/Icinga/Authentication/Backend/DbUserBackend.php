@@ -37,7 +37,7 @@ use \Icinga\Application\DbAdapterFactory;
 use \Icinga\Exception\ProgrammingError;
 use \Icinga\User;
 use \Icinga\Authentication\UserBackend;
-use \Icinga\Authentication\Credentials;
+use \Icinga\Authentication\Credential;
 use \Icinga\Authentication;
 use \Icinga\Application\Logger;
 use \Icinga\Exception\ConfigurationError;
@@ -135,11 +135,11 @@ class DbUserBackend implements UserBackend
     /**
      * Check if the user identified by the given credentials is available
      *
-     * @param   Credentials $credential
+     * @param   Credential $credential
      *
      * @return  boolean                  True when the username is known and currently active.
      */
-    public function hasUsername(Credentials $credential)
+    public function hasUsername(Credential $credential)
     {
         if ($this->db === null) {
             Logger::warn('Ignoring hasUsername in database as no connection is available');
@@ -152,11 +152,11 @@ class DbUserBackend implements UserBackend
     /**
      * Authenticate a user with the given credentials
      *
-     * @param   Credentials $credential
+     * @param   Credential $credential
      *
      * @return  User|null                   The authenticated user or Null.
      */
-    public function authenticate(Credentials $credential)
+    public function authenticate(Credential $credential)
     {
         if ($this->db === null) {
             Logger::warn('Ignoring database authentication as no connection is available');

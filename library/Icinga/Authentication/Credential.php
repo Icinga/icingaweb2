@@ -35,7 +35,7 @@ namespace Icinga\Authentication;
  * passwords as primitives in order to allow additional information
  * to be provided (like the domain) when needed.
  */
-class Credentials
+class Credential
 {
     /**
      * Username

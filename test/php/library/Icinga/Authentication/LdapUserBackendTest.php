@@ -32,14 +32,14 @@ namespace Tests\Icinga\Authentication;
 require_once realpath(__DIR__ . '/../../../../../library/Icinga/Test/BaseTestCase.php');
 // @codingStandardsIgnoreEnd
 
-use Icinga\Authentication\Credentials;
+use Icinga\Authentication\Credential;
 use \Icinga\Test\BaseTestCase;
 
 // @codingStandardsIgnoreStart
 require_once 'Zend/Config.php';
 require_once BaseTestCase::$libDir . '/Protocol/Ldap/Connection.php';
 require_once BaseTestCase::$libDir . '/Protocol/Ldap/Query.php';
-require_once BaseTestCase::$libDir . '/Authentication/Credentials.php';
+require_once BaseTestCase::$libDir . '/Authentication/Credential.php';
 require_once BaseTestCase::$libDir . '/Authentication/UserBackend.php';
 require_once BaseTestCase::$libDir . '/Authentication/Backend/LdapUserBackend.php';
 // @codingStandardsIgnoreEnd
@@ -183,9 +183,9 @@ class LdapUserBackendTest extends BaseTestCase
     public function testHasUsername()
     {
         $backend = new LdapUserBackend($this->createBackendConfig());
-        $this->assertTrue($backend->hasUsername(new Credentials('jwoe')));
-        $this->assertTrue($backend->hasUsername(new Credentials('rmiles')));
-        $this->assertFalse($backend->hasUsername(new Credentials('DoesNotExist')));
+        $this->assertTrue($backend->hasUsername(new Credential('jwoe')));
+        $this->assertTrue($backend->hasUsername(new Credential('rmiles')));
+        $this->assertFalse($backend->hasUsername(new Credential('DoesNotExist')));
     }
 
     /**
@@ -197,17 +197,17 @@ class LdapUserBackendTest extends BaseTestCase
 
         $this->assertInstanceOf(
             '\Icinga\User',
-            $backend->authenticate(new Credentials('jwoe', 'passjwoe'))
+            $backend->authenticate(new Credential('jwoe', 'passjwoe'))
         );
 
-        $this->assertFalse($backend->authenticate(new Credentials('jwoe', 'passjwoe22')));
+        $this->assertFalse($backend->authenticate(new Credential('jwoe', 'passjwoe22')));
 
         $this->assertInstanceOf(
             '\Icinga\User',
-            $backend->authenticate(new Credentials('rmiles', 'passrmiles'))
+            $backend->authenticate(new Credential('rmiles', 'passrmiles'))
         );
 
-        $this->assertFalse($backend->authenticate(new Credentials('rmiles', 'passrmiles33')));
+        $this->assertFalse($backend->authenticate(new Credential('rmiles', 'passrmiles33')));
     }
 
     /**
@@ -217,6 +217,6 @@ class LdapUserBackendTest extends BaseTestCase
     public function testAuthenticateUnknownUser()
     {
         $backend = new LdapUserBackend($this->createBackendConfig());
-        $this->assertFalse($backend->authenticate(new Credentials('unknown123', 'passunknown123')));
+        $this->assertFalse($backend->authenticate(new Credential('unknown123', 'passunknown123')));
     }
 }

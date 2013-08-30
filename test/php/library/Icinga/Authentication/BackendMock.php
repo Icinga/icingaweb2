@@ -12,20 +12,20 @@ use Icinga\Test\BaseTestCase;
 
 // @codingStandardsIgnoreStart
 require_once 'Zend/Config.php';
-require_once BaseTestCase::$libDir . '/Authentication/Credentials.php';
+require_once BaseTestCase::$libDir . '/Authentication/Credential.php';
 require_once BaseTestCase::$libDir . '/Authentication/UserBackend.php';
 require_once BaseTestCase::$libDir . '/User.php';
 // @codingStandardsIgnoreEnd
 
 use \Zend_Config;
-use \Icinga\Authentication\Credentials as Credentials;
+use \Icinga\Authentication\Credential;
 use \Icinga\Authentication\UserBackend as UserBackend;
 use \Icinga\User;
 
 /**
 *   Simple backend mock that takes an config object  
 *   with the property "credentials", which is an array 
-*   of Credentials this backend authenticates
+*   of Credential this backend authenticates
 **/
 class BackendMock implements UserBackend
 {
@@ -49,7 +49,7 @@ class BackendMock implements UserBackend
         }
     }
 
-    public function hasUsername(Credentials $userCredentials)
+    public function hasUsername(Credential $userCredentials)
     {
         foreach ($this->allowedCredentials as $credential) {
             if ($credential->getUsername() == $userCredentials->getUsername()) {
@@ -79,12 +79,12 @@ class BackendMock implements UserBackend
             'user@test.local'
         );
     }
-    
+
     public function getUserCount() {
          return count($this->allowedCredentials);
     }
-    
-    public function authenticate(Credentials $credentials)
+
+    public function authenticate(Credential $credentials)
     {
         if (!in_array($credentials, $this->allowedCredentials)) {
             return false;

@@ -269,12 +269,12 @@ class Manager
     /**
      * Find a backend for a credential
      *
-     * @param   Credentials $credentials
+     * @param   Credential $credentials
      *
      * @return  UserBackend|null
      * @throws  ConfigurationError
      */
-    private function getBackendForCredentials(Credentials $credentials)
+    private function getBackendForCredential(Credential $credentials)
     {
         $authErrors = 0;
 
@@ -324,16 +324,16 @@ class Manager
     }
 
     /**
-     * Try to authenticate the current user with the Credentials (@see Credentials).
+     * Try to authenticate the current user with the Credential (@see Credential).
      *
-     * @param   Credentials $credentials        The credentials to use for authentication
+     * @param   Credential $credentials        The credentials to use for authentication
      * @param   Boolean     $persist            Whether to persist the authentication result
      *                                          in the current session
      *
      * @return  Boolean                         true on success, otherwise false
      * @throws  ConfigError
      */
-    public function authenticate(Credentials $credentials, $persist = true)
+    public function authenticate(Credential $credentials, $persist = true)
     {
         if (count($this->userBackends) === 0) {
             Logger::error('AuthManager: No authentication backend provided, your users will never be able to login.');
@@ -344,7 +344,7 @@ class Manager
             );
         }
 
-        $userBackend = $this->getBackendForCredentials($credentials);
+        $userBackend = $this->getBackendForCredential($credentials);
 
         if ($userBackend === null) {
             Logger::info('AuthManager: Unknown user %s tried to log in', $credentials->getUsername());

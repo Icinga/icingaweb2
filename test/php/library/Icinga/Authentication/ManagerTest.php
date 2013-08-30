@@ -40,7 +40,7 @@ require_once 'Zend/Log.php';
 require_once 'Zend/Config.php';
 require_once BaseTestCase::$libDir . '/Application/Logger.php';
 require_once BaseTestCase::$libDir . '/Authentication/Manager.php';
-require_once BaseTestCase::$libDir . '/Authentication/Credentials.php';
+require_once BaseTestCase::$libDir . '/Authentication/Credential.php';
 require_once BaseTestCase::$libDir . '/Exception/ConfigurationError.php';
 require_once 'BackendMock.php';
 require_once 'ErrorProneBackendMock.php';
@@ -49,7 +49,7 @@ require_once 'SessionMock.php';
 
 use \Zend_Config;
 use \Icinga\Authentication\Manager as AuthManager;
-use \Icinga\Authentication\Credentials;
+use \Icinga\Authentication\Credential;
 use \Icinga\Exception\ConfigurationError;
 
 /**
@@ -60,9 +60,9 @@ class ManagerTest extends BaseTestCase
     public function getTestCredentials()
     {
         return array(
-            new Credentials("jdoe", "passjdoe"),
-            new Credentials("root", "passroot"),
-            new Credentials("test", "passtest")
+            new Credential("jdoe", "passjdoe"),
+            new Credential("root", "passroot"),
+            new Credential("test", "passtest")
         );
     }
 
@@ -115,7 +115,7 @@ class ManagerTest extends BaseTestCase
 
         $this->assertTrue(
             $authMgr->authenticate(
-                new Credentials('jdoe', 'passjdoe')
+                new Credential('jdoe', 'passjdoe')
             )
         );
 
@@ -138,19 +138,19 @@ class ManagerTest extends BaseTestCase
         $auth = $this->getManagerInstance();
         $this->assertFalse(
             $auth->authenticate(
-                new Credentials("jhoe", "passjdoe"),
+                new Credential("jhoe", "passjdoe"),
                 false
             )
         );
         $this->assertFalse(
             $auth->authenticate(
-                new Credentials("joe", "passjhoe"),
+                new Credential("joe", "passjhoe"),
                 false
             )
         );
         $this->assertTrue(
             $auth->authenticate(
-                new Credentials("jdoe", "passjdoe"),
+                new Credential("jdoe", "passjdoe"),
                 false
             )
         );
@@ -161,7 +161,7 @@ class ManagerTest extends BaseTestCase
         $session = new SessionMock();
         $auth = $this->getManagerInstance($session, true);
         $this->assertFalse($auth->isAuthenticated(true));
-        $auth->authenticate(new Credentials("jdoe", "passjdoe"));
+        $auth->authenticate(new Credential("jdoe", "passjdoe"));
         $this->assertNotEquals(null, $session->get("user"));
         $user = $session->get("user");
         $this->assertEquals("Username", $user->getUsername());
@@ -186,7 +186,7 @@ class ManagerTest extends BaseTestCase
     {
         $auth = $this->getManagerInstance($session, false);
         $this->assertFalse($auth->isAuthenticated(true));
-        $auth->authenticate(new Credentials("jdoe", "passjdoe"));
+        $auth->authenticate(new Credential("jdoe", "passjdoe"));
     }
 
     /**
@@ -213,7 +213,7 @@ class ManagerTest extends BaseTestCase
         );
 
         $authManager->authenticate(
-            new Credentials('jdoe', 'passjdoe')
+            new Credential('jdoe', 'passjdoe')
         );
     }
 
@@ -250,7 +250,7 @@ class ManagerTest extends BaseTestCase
         );
 
         $authManager->authenticate(
-            new Credentials('jdoe', 'passjdoe')
+            new Credential('jdoe', 'passjdoe')
         );
     }
 
@@ -272,20 +272,20 @@ class ManagerTest extends BaseTestCase
 
         $authManager->getUserBackend('provider1')->setCredentials(
             array(
-                new Credentials('p1-user1', 'p1-passwd1'),
-                new Credentials('p1-user2', 'p1-passwd2')
+                new Credential('p1-user1', 'p1-passwd1'),
+                new Credential('p1-user2', 'p1-passwd2')
             )
         );
 
         $authManager->getUserBackend('provider2')->setCredentials(
             array(
-                new Credentials('p2-user1', 'p2-passwd1'),
-                new Credentials('p2-user2', 'p2-passwd2')
+                new Credential('p2-user1', 'p2-passwd1'),
+                new Credential('p2-user2', 'p2-passwd2')
             )
         );
 
         $this->assertTrue(
-            $authManager->authenticate(new Credentials('p2-user2', 'p2-passwd2'))
+            $authManager->authenticate(new Credential('p2-user2', 'p2-passwd2'))
         );
     }
 
@@ -323,27 +323,27 @@ class ManagerTest extends BaseTestCase
 
         $authManager->getUserBackend('provider4')->setCredentials(
             array(
-                new Credentials('p4-user1', 'p4-passwd1'),
-                new Credentials('p4-user2', 'p4-passwd2')
+                new Credential('p4-user1', 'p4-passwd1'),
+                new Credential('p4-user2', 'p4-passwd2')
             )
         );
 
         $session->isOpen = true;
 
         $this->assertTrue(
-            $authManager->authenticate(new Credentials('p4-user2', 'p4-passwd2'))
+            $authManager->authenticate(new Credential('p4-user2', 'p4-passwd2'))
         );
 
         $session->isOpen = true;
 
         $this->assertTrue(
-            $authManager->authenticate(new Credentials('p4-user1', 'p4-passwd1'))
+            $authManager->authenticate(new Credential('p4-user1', 'p4-passwd1'))
         );
 
         $session->isOpen = true;
 
         $this->assertFalse(
-            $authManager->authenticate(new Credentials('p4-user2', 'p4-passwd1-WRONG123123'))
+            $authManager->authenticate(new Credential('p4-user2', 'p4-passwd1-WRONG123123'))
         );
     }
 

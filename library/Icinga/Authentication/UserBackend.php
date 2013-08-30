@@ -30,6 +30,7 @@ namespace Icinga\Authentication;
 
 use \Zend_Config;
 use \Icinga\User;
+use Icinga\Authentication\Credential;
 
 /**
  * Public api for an user backend object
@@ -46,20 +47,20 @@ interface UserBackend
     /**
      * Test if the username exists
      *
-     * @param   Credentials $credentials
+     * @param   Credential $credentials
      *
      * @return  bool
      */
-    public function hasUsername(Credentials $credentials);
+    public function hasUsername(Credential $credentials);
 
     /**
      * Authenticate
      *
-     * @param   Credentials $credentials
+     * @param   Credential $credentials
      *
      * @return  User
      */
-    public function authenticate(Credentials $credentials);
+    public function authenticate(Credential $credentials);
 
     /**
      * Name of the backend

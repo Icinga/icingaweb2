@@ -32,7 +32,7 @@ use \stdClass;
 use \Zend_Config;
 use \Icinga\User;
 use \Icinga\Authentication\UserBackend;
-use \Icinga\Authentication\Credentials;
+use \Icinga\Authentication\Credential;
 use \Icinga\Protocol\Ldap;
 use Icinga\Protocol\Ldap\Connection;
 use \Icinga\Application\Config as IcingaConfig;
@@ -88,11 +88,11 @@ class LdapUserBackend implements UserBackend
     /**
      * Test if the username exists
      *
-     * @param   Credentials $credential
+     * @param   Credential $credential
      *
      * @return  bool
      */
-    public function hasUsername(Credentials $credential)
+    public function hasUsername(Credential $credential)
     {
         return $this->connection->fetchOne(
             $this->selectUsername($credential->getUsername())
@@ -136,11 +136,11 @@ class LdapUserBackend implements UserBackend
     /**
      * Authenticate
      *
-     * @param   Credentials $credentials
+     * @param   Credential $credentials
      *
      * @return  User
      */
-    public function authenticate(Credentials $credentials)
+    public function authenticate(Credential $credentials)
     {
         if (!$this->connection->testCredentials(
             $this->connection->fetchDN($this->selectUsername($credentials->getUsername())),

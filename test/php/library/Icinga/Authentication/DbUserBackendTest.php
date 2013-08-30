@@ -45,7 +45,7 @@ require_once BaseTestCase::$libDir . '/Authentication/UserBackend.php';
 require_once BaseTestCase::$libDir . '/Protocol/Ldap/Exception.php';
 require_once BaseTestCase::$libDir . '/Application/DbAdapterFactory.php';
 require_once BaseTestCase::$libDir . '/Application/Config.php';
-require_once BaseTestCase::$libDir . '/Authentication/Credentials.php';
+require_once BaseTestCase::$libDir . '/Authentication/Credential.php';
 require_once BaseTestCase::$libDir . '/Authentication/Backend/DbUserBackend.php';
 require_once BaseTestCase::$libDir . '/User.php';
 require_once BaseTestCase::$libDir . '/Application/Logger.php';
@@ -56,7 +56,7 @@ use \Zend_Db_Adapter_Pdo_Abstract;
 use \Zend_Config;
 use \Icinga\Authentication\Backend\DbUserBackend;
 use \Icinga\Application\DbAdapterFactory;
-use \Icinga\Authentication\Credentials;
+use \Icinga\Authentication\Credential;
 use \Icinga\User;
 use \Icinga\Application\Config;
 
@@ -189,7 +189,7 @@ class DbUserBackendTest extends BaseTestCase
         // Known user
         $this->assertTrue(
             $backend->hasUsername(
-                new Credentials(
+                new Credential(
                     $this->userData[0][self::USER_NAME_COLUMN],
                     $this->userData[0][self::PASSWORD_COLUMN]
                 )
@@ -200,7 +200,7 @@ class DbUserBackendTest extends BaseTestCase
         // Unknown user
         $this->assertFalse(
             $backend->hasUsername(
-                new Credentials(
+                new Credential(
                     'unknown user',
                     'secret'
                 )
@@ -211,7 +211,7 @@ class DbUserBackendTest extends BaseTestCase
         // Inactive user
         $this->assertFalse(
             $backend->hasUsername(
-                new Credentials(
+                new Credential(
                     $this->userData[2][self::USER_NAME_COLUMN],
                     $this->userData[2][self::PASSWORD_COLUMN]
                 )
@@ -230,7 +230,7 @@ class DbUserBackendTest extends BaseTestCase
         // Known user
         $this->assertNotNull(
             $backend->authenticate(
-                new Credentials(
+                new Credential(
                     $this->userData[0][self::USER_NAME_COLUMN],
                     $this->userData[0][self::PASSWORD_COLUMN]
                 )
@@ -241,7 +241,7 @@ class DbUserBackendTest extends BaseTestCase
         // Wrong password
         $this->assertNull(
             $backend->authenticate(
-                new Credentials(
+                new Credential(
                     $this->userData[1][self::USER_NAME_COLUMN],
                     'wrongpassword'
                 )
@@ -252,7 +252,7 @@ class DbUserBackendTest extends BaseTestCase
         // Nonexisting user
         $this->assertNull(
             $backend->authenticate(
-                new Credentials(
+                new Credential(
                     'nonexisting user',
                     $this->userData[1][self::PASSWORD_COLUMN]
                 )
@@ -263,7 +263,7 @@ class DbUserBackendTest extends BaseTestCase
         // Inactive user
         $this->assertNull(
             $backend->authenticate(
-                new Credentials(
+                new Credential(
                     $this->userData[2][self::USER_NAME_COLUMN],
                     $this->userData[2][self::PASSWORD_COLUMN]
                 )
