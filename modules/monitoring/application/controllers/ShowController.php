@@ -28,7 +28,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 
 use Monitoring\Backend;
-use Icinga\Web\Controller\ModuleActionController;
+use Icinga\Web\Controller\ActionController;
 use Icinga\Web\Hook;
 use Monitoring\Object\Host;
 use Monitoring\Object\Service;
@@ -43,7 +43,7 @@ use Icinga\Web\Widget\Tabextension\BasketAction;
  *
  * Actions for show context
  */
-class Monitoring_ShowController extends ModuleActionController
+class Monitoring_ShowController extends ActionController
 {
     /**
      * @var Backend

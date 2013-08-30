@@ -31,7 +31,7 @@
 use \Icinga\Application\Benchmark;
 use \Icinga\Data\Db\Query;
 use \Icinga\File\Csv;
-use \Icinga\Web\Controller\ModuleActionController;
+use \Icinga\Web\Controller\ActionController;
 use \Icinga\Web\Hook;
 use \Icinga\Web\Widget\Tabextension\BasketAction;
 use \Icinga\Web\Widget\Tabextension\DashboardAction;
@@ -39,7 +39,7 @@ use \Icinga\Web\Widget\Tabextension\OutputFormat;
 use \Icinga\Web\Widget\Tabs;
 use \Monitoring\Backend;
 
-class Monitoring_ListController extends ModuleActionController
+class Monitoring_ListController extends ActionController
 {
     /**
      * The backend used for this controller
@@ -66,6 +66,16 @@ class Monitoring_ListController extends ModuleActionController
         $this->backend = Backend::getInstance($this->_getParam('backend'));
         $this->view->grapher = Hook::get('grapher');
         $this->createTabs();
+    }
+
+    /**
+     * Overwrite the backend to use (used for testing)
+     *
+     * @param Backend $backend      The Backend that should be used for querying
+     */
+    public function setBackend($backend)
+    {
+        $this->backend = $backend;
     }
 
     /**

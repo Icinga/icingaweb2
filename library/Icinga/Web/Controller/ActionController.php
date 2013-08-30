@@ -28,11 +28,11 @@
 
 namespace Icinga\Web\Controller;
 
-use \Zend_Controller_Action as ZfController;
-use \Zend_Controller_Request_Abstract as ZfRequest;
-use \Zend_Controller_Response_Abstract as ZfResponse;
-use \Zend_Controller_Action_HelperBroker as ZfActionHelper;
-use \Zend_Layout as ZfLayout;
+use \Zend_Controller_Action;
+use \Zend_Controller_Request_Abstract;
+use \Zend_Controller_Response_Abstract;
+use \Zend_Controller_Action_HelperBroker;
+use \Zend_Layout;
 use \Icinga\Authentication\Manager as AuthManager;
 use \Icinga\Application\Benchmark;
 use \Icinga\Exception;
@@ -46,7 +46,7 @@ use \Icinga\Web\Url;
  *
  * All Icinga Web core controllers should extend this class
  */
-class ActionController extends ZfController
+class ActionController extends Zend_Controller_Action
 {
     /**
      * True to mark this layout to not render the full layout
@@ -61,7 +61,7 @@ class ActionController extends ZfController
      *
      * @var bool
      */
-    protected $handlesAuthentication = false;
+    protected $requiresAuthentication = true;
 
     /**
      * Set true when this controller modifies the session
@@ -75,73 +75,48 @@ class ActionController extends ZfController
     protected $modifiesSession = false;
 
     /**
-     * True if authentication succeeded, otherwise false
-     *
-     * @var bool
-     */
-    protected $allowAccess = false;
-
-
-    /**
-     * The current module name. TODO: Find out whether this shall be null for
-     * non-module actions
-     *
-     * @var string
-     */
-    protected $module_name;
-
-    /**
-     * The current controller name
-     *
-     * @var string
-     */
-    protected $controller_name;
-
-    /**
-     * The current action name
-     *
-     * @var string
-     */
-    protected $action_name;
-
-    /**
      * The constructor starts benchmarking, loads the configuration and sets
      * other useful controller properties
      *
-     * @param ZfRequest     $request
-     * @param ZfResponse    $response
-     * @param array         $invokeArgs Any additional invocation arguments
+     * @param Zend_Controller_Request_Abstract     $request
+     * @param Zend_Controller_Response_Abstract    $response
+     * @param array                                $invokeArgs Any additional invocation arguments
      */
     public function __construct(
-        ZfRequest $request,
-        ZfResponse $response,
+        Zend_Controller_Request_Abstract $request,
+        Zend_Controller_Response_Abstract $response,
         array $invokeArgs = array()
     ) {
-        Benchmark::measure('Action::__construct()');
-
-        $this->module_name     = $request->getModuleName();
-        $this->controller_name = $request->getControllerName();
-        $this->action_name     = $request->getActionName();
-
         $this->setRequest($request)
-             ->setResponse($response)
-             ->_setInvokeArgs($invokeArgs);
-        $this->_helper = new ZfActionHelper($this);
+            ->setResponse($response)
+            ->_setInvokeArgs($invokeArgs);
+        $this->_helper = new Zend_Controller_Action_HelperBroker($this);
 
-        if ($this->handlesAuthentication ||
-                AuthManager::getInstance(
-                    null,
-                    array(
-                        'writeSession' => $this->modifiesSession
-                    )
-                )->isAuthenticated()
-        ) {
-            $this->allowAccess = true;
+        // when noInit is set (e.g. for testing), authentication and init is skipped
+        if (isset($invokeArgs['noInit'])) {
+            return;
+        }
+
+        if ($this->determineAuthenticationState() === true) {
             $this->view->tabs = new Tabs();
             $this->init();
+        } else {
+            $this->redirectToLogin();
         }
     }
 
+    protected function determineAuthenticationState(array $invokeArgs = array())
+    {
+        if (!$this->requiresAuthentication) {
+            return true;
+        }
+
+
+        return AuthManager::getInstance(
+            null,
+            array('writeSession' => $this->modifiesSession)
+        )->isAuthenticated();
+    }
     /**
      * Return the tabs
      *
@@ -165,36 +140,13 @@ class ActionController extends ZfController
         return t($string);
     }
 
+    /**
+     * Redirect to the login path
+     */
     private function redirectToLogin()
     {
-        $this->_request->setModuleName('default')
-            ->setControllerName('authentication')
-            ->setActionName('login')
-            ->setDispatched(false);
-    }
-
-    /**
-     * Prepare action execution by testing for correct permissions and setting shortcuts
-     */
-    public function preDispatch()
-    {
-        Benchmark::measure('Action::preDispatch()');
-        if (! $this->allowAccess) {
-            return $this->redirectToLogin();
-        }
-
-        $this->view->action_name = $this->action_name;
-        $this->view->controller_name = $this->controller_name;
-        $this->view->module_name = $this->module_name;
-
-        Benchmark::measure(
-            sprintf(
-                'Action::preDispatched(): %s / %s / %s',
-                $this->module_name,
-                $this->controller_name,
-                $this->action_name
-            )
-        );
+        $url = Url::fromPath('/authentication/login');
+        $this->redirectNow($url->getRelativeUrl());
     }
 
     /**
