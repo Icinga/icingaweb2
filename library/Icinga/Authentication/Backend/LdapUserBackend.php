@@ -34,7 +34,7 @@ use \Icinga\User;
 use \Icinga\Authentication\UserBackend;
 use \Icinga\Authentication\Credential;
 use \Icinga\Protocol\Ldap;
-use Icinga\Protocol\Ldap\Connection;
+use \Icinga\Protocol\Ldap\Connection;
 use \Icinga\Application\Config as IcingaConfig;
 
 /**
@@ -66,7 +66,7 @@ class LdapUserBackend implements UserBackend
     /**
      * Create new Ldap User backend
      *
-     * @param Zend_Config $config
+     * @param Zend_Config $config Configuration to create instance
      */
     public function __construct(Zend_Config $config)
     {
@@ -88,7 +88,7 @@ class LdapUserBackend implements UserBackend
     /**
      * Test if the username exists
      *
-     * @param   Credential $credential
+     * @param   Credential $credential Credential to find user in database
      *
      * @return  bool
      */
@@ -102,7 +102,7 @@ class LdapUserBackend implements UserBackend
     /**
      * Removes the '*' character from $string
      *
-     * @param string $string
+     * @param string $string Input string
      *
      * @return string
      **/
@@ -136,7 +136,7 @@ class LdapUserBackend implements UserBackend
     /**
      * Authenticate
      *
-     * @param   Credential $credentials
+     * @param   Credential $credentials Credential to authenticate
      *
      * @return  User
      */
