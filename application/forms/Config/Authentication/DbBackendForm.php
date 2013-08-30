@@ -31,6 +31,7 @@ namespace Icinga\Form\Config\Authentication;
 
 use \Icinga\Authentication\Backend\DbUserBackend;
 use \Icinga\Application\DbAdapterFactory;
+use \Zend_Config;
 
 /**
  * Form class for adding/modifying database authentication backends
@@ -126,10 +127,13 @@ class DbBackendForm extends BaseBackendForm
     {
         try {
             $name = $this->getBackendName();
-            $db = DbAdapterFactory::getDbAdapter(
-                $this->getValue('backend_' . $this->filterName($name) . '_' . 'resource')
-            );
-            $dbBackend = new DbUserBackend($db);
+            $dbBackend = new DbUserBackend(new Zend_Config(
+                array(
+                    'backend'   =>  'db',
+                    'target'    =>  'user',
+                    'resource'  =>  $this->getValue('backend_' . $this->filterName($name) . '_resource'),
+                )
+            ));
             if ($dbBackend->getUserCount() < 1) {
                 $this->addErrorMessage("No users found under the specified database backend");
                 return false;
