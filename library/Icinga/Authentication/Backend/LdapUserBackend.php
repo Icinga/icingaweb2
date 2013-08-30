@@ -153,6 +153,12 @@ class LdapUserBackend implements UserBackend
         return $user;
     }
 
+    /**
+     * Return number of users in this backend
+     *
+     * @return  int The number of users set in this backend
+     * @see     UserBackend::getUserCount
+     */
     public function getUserCount()
     {
         return $this->connection->count(

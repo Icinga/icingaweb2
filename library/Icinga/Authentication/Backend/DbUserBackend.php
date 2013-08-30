@@ -131,7 +131,6 @@ class DbUserBackend implements UserBackend
         return $this->name;
     }
 
-
     /**
      * Check if the user identified by the given credentials is available
      *
@@ -154,8 +153,6 @@ class DbUserBackend implements UserBackend
      */
     public function authenticate(Credential $credential)
     {
-        $this->assertDbConnection();
-
         try {
             $salt = $this->getUserSalt($credential->getUsername());
         } catch (Exception $e) {
@@ -196,8 +193,6 @@ class DbUserBackend implements UserBackend
      */
     private function getUserSalt($username)
     {
-        $this->assertDbConnection();
-
         $res = $this->db->select()
             ->from($this->userTable, self::SALT_COLUMN)
             ->where(self::USER_NAME_COLUMN.' = ?', $username)
@@ -218,9 +213,6 @@ class DbUserBackend implements UserBackend
      */
     private function getUserByName($username)
     {
-
-        $this->assertDbConnection();
-
         $this->db->getConnection();
         $res = $this->db->
             select()->from($this->userTable)
@@ -250,31 +242,15 @@ class DbUserBackend implements UserBackend
     }
 
     /**
-     * Assert a valid database connection
-     *
-     * @throws ConfigurationError
-     */
-    private function assertDbConnection()
-    {
-        if ($this->db === null) {
-            $msg = 'DbUserBackend ' . $this->getName() . ' has no valid database connection.';
-            Logger::fatal($msg);
-            throw new ConfigurationError($msg);
-        }
-    }
-
-    /**
      * Return the number of users in this database connection
      *
      * This class is mainly used for determining whether the authentication backend is valid or not
      *
-     * @return int      The number of users set in this backend
-     * @see UserBackend::getUserCount
+     * @return  int The number of users set in this backend
+     * @see     UserBackend::getUserCount
      */
     public function getUserCount()
     {
-
-        $this->db->getConnection();
         $query = $this->db->select()->from($this->userTable, 'COUNT(*) as count')->query();
         return $query->fetch()->count;
     }

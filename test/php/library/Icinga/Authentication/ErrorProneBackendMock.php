@@ -88,4 +88,17 @@ class ErrorProneBackendMock implements UserBackend
     {
         return $this->name;
     }
+
+    /**
+     * Get the number of users available through this backend
+     *
+     * @return int
+     * @throws Exception
+     */
+    public function getUserCount()
+    {
+        throw new Exception('getUserCount error: No users in this error prone backend');
+    }
+
+
 }

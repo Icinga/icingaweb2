@@ -40,6 +40,7 @@ require_once 'Zend/Config/Ini.php';
 require_once 'Zend/Db/Adapter/Abstract.php';
 require_once 'Zend/Db.php';
 require_once 'Zend/Log.php';
+require_once BaseTestCase::$libDir . '/Exception/ProgrammingError.php';
 require_once BaseTestCase::$libDir . '/Util/ConfigAwareFactory.php';
 require_once BaseTestCase::$libDir . '/Authentication/UserBackend.php';
 require_once BaseTestCase::$libDir . '/Protocol/Ldap/Exception.php';
@@ -172,7 +173,7 @@ class DbUserBackendTest extends BaseTestCase
                     $usr[self::SALT_COLUMN],
                     $usr[self::PASSWORD_COLUMN]
                 ),
-                self::ACTIVE_COLUMN     => $usr[self::ACTIVE_COLUMN],
+                self::ACTIVE_COLUMN => $usr[self::ACTIVE_COLUMN],
                 self::SALT_COLUMN   => $usr[self::SALT_COLUMN]
             );
             $resource->insert($this->testTable, $data);
@@ -284,4 +285,30 @@ class DbUserBackendTest extends BaseTestCase
 
         $this->assertSame($testName, $backend->getName());
     }
+
+    /**
+     * @dataProvider mysqlDb
+     */
+    public function testCountUsersMySql($db)
+    {
+        $this->setupDbProvider($db);
+        $testName = 'test-name-123123';
+        $backend = new DbUserBackend($this->createDbBackendConfig($db, $testName));
+
+        $this->assertGreaterThan(0, $backend->getUserCount());
+    }
+
+    /**
+     * @dataProvider pgsqlDb
+     */
+    public function testCountUsersPgSql($db)
+    {
+        $this->setupDbProvider($db);
+        $testName = 'test-name-123123';
+        $backend = new DbUserBackend($this->createDbBackendConfig($db, $testName));
+
+        $this->assertGreaterThan(0, $backend->getUserCount());
+    }
+
+
 }
