@@ -41,12 +41,12 @@ abstract class Session
     private $sessionValues = array();
 
     /**
-     * Opens a session or creates a new one if not exists
+     * Open a session or creates a new one if not exists
      */
     abstract public function open();
 
     /**
-     * Reads all values from the underlying session implementation
+     * Read all values from the underlying session implementation
      *
      * @param bool $keepOpen True to keep the session open
      */
@@ -132,7 +132,7 @@ abstract class Session
     }
 
     /**
-     * Clears all values from the session cache
+     * Clear all values from the session cache
      */
     public function clear()
     {

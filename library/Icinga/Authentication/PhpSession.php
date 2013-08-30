@@ -32,7 +32,7 @@ use Icinga\Application\Logger;
 use \Icinga\Exception\ConfigurationError;
 
 /**
- * Class PhpSession
+ * Session implementation in PHP
  *
  * Standard PHP Session handling
  * You have to call read() first in order to start the session. If
@@ -81,7 +81,7 @@ class PhpSession extends Session
     );
 
     /**
-     * Creates a new PHPSession object using the provided options (if any)
+     * Create a new PHPSession object using the provided options (if any)
      *
      * @param   array $options An optional array of ini options to set,
      *
@@ -110,7 +110,7 @@ class PhpSession extends Session
     }
 
     /**
-     * Returns true when the session has not yet been closed
+     * Return true when the session has not yet been closed
      *
      * @return bool
      */
@@ -124,7 +124,7 @@ class PhpSession extends Session
     }
 
     /**
-     * Returns true when the session has not yet been opened
+     * Return true when the session has not yet been opened
      *
      * @return bool
      */
@@ -138,7 +138,7 @@ class PhpSession extends Session
     }
 
     /**
-     * Opens a PHP session when possible
+     * Open a PHP session when possible
      *
      * @return bool True on success
      */
@@ -156,7 +156,7 @@ class PhpSession extends Session
     }
 
     /**
-     * Ensures that the session is open modifiable
+     * Ensure that the session is open modifiable
      *
      * @return bool True on success
      */
@@ -172,7 +172,7 @@ class PhpSession extends Session
     }
 
     /**
-     * Reads all values written to the underling session and
+     * Read all values written to the underling session and
      * makes them accessible. if keepOpen is not set, the session
      * is immediately closed again
      *
@@ -193,7 +193,7 @@ class PhpSession extends Session
     }
 
     /**
-     * Writes all values of this session object to the underlying session implementation
+     * Write all values of this session object to the underlying session implementation
      *
      * If keepOpen is not set, the session is closed
      *
@@ -218,7 +218,7 @@ class PhpSession extends Session
     }
 
     /**
-     * Closes and writes the session
+     * Close and writes the session
      *
      * Only call this if you want the session to be closed without any changes.
      *
@@ -233,7 +233,7 @@ class PhpSession extends Session
     }
 
     /**
-     * Deletes the current session, causing all session information to be lost
+     * Delete the current session, causing all session information to be lost
      */
     public function purge()
     {
@@ -246,7 +246,7 @@ class PhpSession extends Session
     }
 
     /**
-     * Removes session cookies
+     * Remove session cookies
      */
     private function clearCookies()
     {
