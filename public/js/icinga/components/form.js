@@ -1,6 +1,9 @@
 /*global Icinga:false define:false require:false base_url:false console:false */
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/**
+ * {{LICENSE_HEADER}}
+ * {{LICENSE_HEADER}}
+ */
+
 
 /**
  * Icinga app/form component.
@@ -22,9 +25,9 @@ define(['jquery'], function($) {
     /**
      * Return true when the input element is a autosubmit field
      *
-     * @param {string|DOMElement|jQuery} el         The element to test for autosubmission
+     * @param {string|DOMElement|jQuery} el     The element to test for autosubmission
      *
-     * @returns {boolean}                           True when the element should be automatically submitted
+     * @returns {boolean}                       True when the element should be automatically submitted
      */
     var isAutoSubmitInput = function(el) {
         return $(el).attr('data-icinga-form-autosubmit') === 'true' ||
@@ -34,14 +37,14 @@ define(['jquery'], function($) {
     /**
      * Takes a form and returns an overloaded jQuery object
      *
-     * The returned object is the jQuery mathcer with the following additional methods:
+     * The returned object is the jQuery matcher with the following additional methods:
      *
-     * - isModified                 : Return true when the form is marked as modified
-     * - setModificationFlag        : Mark this form as being modified
-     * - clearModificationFlag      : Clear the modification mark
+     * - isModified:            Return true when the form is marked as modified
+     * - setModificationFlag:   Mark this form as being modified
+     * - clearModificationFlag: Clear the modification mark
      *
      * @param targetForm
-     * @returns {JQuery}
+     * @returns {jQuery}
      */
     var getFormObject = function(targetForm) {
         var form = $(targetForm);
@@ -100,7 +103,7 @@ define(['jquery'], function($) {
      */
     var registerLeaveConfirmationHandler = function(form) {
 
-        $(window).bind('beforeunload', function() {
+        $(window).on('beforeunload', function() {
             if (form.isModified()) {
                 return 'All unsaved changes will be lost when leaving this page';
             }
