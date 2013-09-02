@@ -108,28 +108,8 @@ class Manager
         if ($enabledDir === null) {
             $enabledDir = $this->app->getConfigDir() . '/enabledModules';
         }
-        $this->prepareEssentials($enabledDir);
-        $this->detectEnabledModules();
-    }
 
-    /**
-     * Set the module dir and checks for existence
-     *
-     * @param   string $moduleDir The module directory to set for the module manager
-     * @throws  ProgrammingError
-     */
-    private function prepareEssentials($moduleDir)
-    {
-        $this->enableDir = $moduleDir;
-
-        if (!file_exists($this->enableDir) || !is_dir($this->enableDir)) {
-            throw new ProgrammingError(
-                sprintf(
-                    'Missing module directory: %s',
-                    $this->enableDir
-                )
-            );
-        }
+        $this->enableDir = $enabledDir;
     }
 
     /**
@@ -144,10 +124,26 @@ class Manager
     }
 
     /**
-     * Check for enabled modules and update the internal $enabledDirs property with the enabled modules
+     * Check for enabled modules
+     *
+     * Update the internal $enabledDirs property with the enabled modules.
+     *
+     * @throws ConfigurationError If module dir is not a directory or not readable
      */
     private function detectEnabledModules()
     {
+        if (!is_dir($this->enableDir)) {
+            throw new ConfigurationError(
+                'Could not read enabled modules: Module directory is not a directory: ' . $this->enableDir
+            );
+        }
+
+        if (!is_readable($this->enableDir)) {
+            throw new ConfigurationError(
+                'Could not read enabled modules: Module directory is not readable: ' . $this->enableDir
+            );
+        }
+
         $fh = opendir($this->enableDir);
 
         $this->enabledDirs = array();
@@ -452,6 +448,10 @@ class Manager
      */
     public function listEnabledModules()
     {
+        if (count($this->enabledDirs) === 0) {
+            $this->detectEnabledModules();
+        }
+
         return array_keys($this->enabledDirs);
     }
 

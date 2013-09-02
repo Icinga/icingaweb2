@@ -343,7 +343,14 @@ abstract class ApplicationBootstrap
     {
         $this->moduleManager = new ModuleManager($this, $this->configDir . '/enabledModules');
 
-        $this->moduleManager->loadEnabledModules();
+        try {
+            $this->moduleManager->loadEnabledModules();
+        } catch (Exception $e) {
+            Logger::fatal(
+                'Could not load modules. An exception was thrown during bootstrap: %s',
+                $e->getMessage()
+            );
+        }
 
         return $this;
     }
