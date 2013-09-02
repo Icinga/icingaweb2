@@ -216,6 +216,23 @@ class Web extends ApplicationBootstrap
     }
 
     /**
+     * Registers a @see NullStore as the preference provider
+     *
+     * @param Preferences   $preferences    The preference registry to attach the NullStore to
+     * @param User          $user           The user, required for API compliance
+     */
+    private function registerFallbackPreferenceProvider($preferences, $user)
+    {
+        $this->getConfig()->preferences->type = 'null';
+        $preferenceStore = StoreFactory::create(
+            $this->getConfig()->preferences,
+            $user
+        );
+
+        $preferences->attach($preferenceStore);
+    }
+
+    /**
      * Create user object and inject preference interface
      *
      * @return  self
@@ -261,7 +278,7 @@ class Web extends ApplicationBootstrap
 
                 $path = Config::resolvePath($this->getConfig()->preferences->configPath);
                 if (is_dir($path) === false) {
-                    Logger::error(
+                    Logger::warn(
                         'Path for preferences not found (IniStore, "%s"). Using default one: "%s"',
                         $this->getConfig()->preferences->configPath,
                         $this->getConfigDir('preferences')
@@ -277,14 +294,14 @@ class Web extends ApplicationBootstrap
                         $this->getConfig()->preferences,
                         $user
                     );
-
                     $preferences->attach($preferenceStore);
                 } catch (Exception $e) {
-                    Logger::fatal(
-                        'Could not create create preferences provider. '
-                        . 'An exception during bootstrap was thrown: %s',
+                    Logger::warn(
+                        'Could not create create preferences provider, preferences will be discarded: '
+                        . '"%s"',
                         $e->getMessage()
                     );
+                    $this->registerFallbackPreferenceProvider($preferences, $user);
                 }
 
                 if ($preferencesLoaded === false && $preferenceStore instanceof LoadInterface) {

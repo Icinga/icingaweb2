@@ -275,8 +275,9 @@ class GeneralForm extends Form
                 'required'      => true,
                 'value'         => $backend,
                 'multiOptions'  => array(
-                    'ini'   => 'File System (ini files)',
-                    'db'    => 'Database'
+                    'ini'   => 'File System (ini Files)',
+                    'db'    => 'Database',
+                    'null'  => 'Don\'t Store Preferences'
                 )
             )
         );
