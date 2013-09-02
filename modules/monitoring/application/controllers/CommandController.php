@@ -27,12 +27,10 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use \Icinga\Application\Benchmark;
 use \Icinga\Application\Icinga;
 use \Monitoring\Backend;
 use \Icinga\Application\Config;
 use \Icinga\Application\Logger;
-use \Icinga\Authentication\Manager;
 use \Icinga\Web\Form;
 use \Icinga\Web\Controller\ModuleActionController;
 use \Icinga\Protocol\Commandpipe\CommandPipe;
@@ -59,18 +57,21 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Command target
+     *
      * @var CommandPipe
      */
     private $target;
 
     /**
      * Current form working on
+     *
      * @var Form
      */
     private $form;
 
     /**
      * Setter for form
+     *
      * @param Form $form
      */
     public function setForm($form)
@@ -80,6 +81,7 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Test if we have a valid form object
+     *
      * @return bool
      */
     public function issetForm()
@@ -143,9 +145,7 @@ class Monitoring_CommandController extends ModuleActionController
      *
      * @param $hostOnly         Ignore the service parameters
      *                          (for example when using commands that only make sense for hosts)
-     *
      * @return array            Array of monitoring objects
-     *
      * @throws Icinga\Exception\MissingParameterException
      */
     private function selectCommandTargets($hostOnly = false)
@@ -170,7 +170,6 @@ class Monitoring_CommandController extends ModuleActionController
                 $fields[] = "service_description";
                 $fields[] = "service_state";
             }
-            ;
             $query = Backend::getInstance($this->_getParam('backend'))->select()->from("status", $fields);
             return $query->applyFilters($filter)->fetchAll();
         } catch (\Exception $e) {
@@ -187,7 +186,6 @@ class Monitoring_CommandController extends ModuleActionController
      *
      * This method uses reflection on the sourcecode to determine all *Action classes and return
      * a list of them (ignoring the listAction)
-     *
      */
     public function listAction()
     {
@@ -206,9 +204,8 @@ class Monitoring_CommandController extends ModuleActionController
     /**
      * Tell the controller that at least one of the parameters in $supported is required to be availabe
      *
-     * @param array $supported      An array of properties to check for existence in the POST or GET parameter list
-     *
-     * @throws Exception            When non of the supported parameters is given
+     * @param  array    $supported      An array of properties to check for existence in the POST or GET parameter list
+     * @throws Exception                When non of the supported parameters is given
      */
     private function setSupportedParameters(array $supported)
     {
@@ -221,8 +218,7 @@ class Monitoring_CommandController extends ModuleActionController
             if (empty($this->view->objects)) {
                 throw new \Exception("No objects found for your command");
             }
-
-        } else if (in_array("downtimeid", $supported)) {
+        } elseif (in_array("downtimeid", $supported)) {
             $this->view->objects = array();
             $downtimes = $this->getParam("downtimeid");
             if (!is_array($downtimes)) {
@@ -240,7 +236,6 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command disableactivechecks
-     *
      */
     public function disableactivechecksAction()
     {
@@ -258,7 +253,6 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command  enableactivechecks
-     *
      */
     public function enableactivechecksAction()
     {
@@ -276,7 +270,6 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command  reschedulenextcheck
-     *
      */
     public function reschedulenextcheckAction()
     {
@@ -293,12 +286,14 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command  submitpassivecheckresult
-     *
      */
     public function submitpassivecheckresultAction()
     {
         $this->setSupportedParameters(array('host', 'service'));
         $type = SubmitPassiveCheckResultForm::TYPE_SERVICE;
+        if ($this->getParam('service', null) === null) {
+            $type = SubmitPassiveCheckResultForm::TYPE_HOST;
+        }
 
         $form = new SubmitPassiveCheckResultForm();
         $form->setRequest($this->getRequest());
@@ -313,7 +308,6 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command stopobsessing
-     *
      */
     public function stopobsessingAction()
     {
@@ -331,7 +325,6 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command startobsessing
-     *
      */
     public function startobsessingAction()
     {
@@ -349,7 +342,6 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command stopacceptingpassivechecks
-     *
      */
     public function stopacceptingpassivechecksAction()
     {
@@ -367,7 +359,6 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command startacceptingpassivechecks
-     *
      */
     public function startacceptingpassivechecksAction()
     {
@@ -385,7 +376,6 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command disablenotifications
-     *
      */
     public function disablenotificationsAction()
     {
@@ -403,7 +393,6 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command enablenotifications
-     *
      */
     public function enablenotificationsAction()
     {
@@ -420,7 +409,6 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command sendcustomnotification
-     *
      */
     public function sendcustomnotificationAction()
     {
@@ -436,7 +424,6 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command scheduledowntime
-     *
      */
     public function scheduledowntimeAction()
     {
@@ -453,8 +440,6 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command scheduledowntimeswithchildren
-     *
-     * @throws Icinga\Exception\ProgrammingError
      */
     public function scheduledowntimeswithchildrenAction()
     {
@@ -471,7 +456,6 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command removedowntimeswithchildren
-     *
      */
     public function removedowntimeswithchildrenAction()
     {
@@ -489,7 +473,6 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command disablenotificationswithchildren
-     *
      */
     public function disablenotificationswithchildrenAction()
     {
@@ -508,7 +491,6 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command enablenotificationswithchildren
-     *
      */
     public function enablenotificationswithchildrenAction()
     {
@@ -527,7 +509,6 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command reschedulenextcheckwithchildren
-     *
      */
     public function reschedulenextcheckwithchildrenAction()
     {
@@ -552,7 +533,6 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command disableactivecheckswithchildren
-     *
      */
     public function disableactivecheckswithchildrenAction()
     {
@@ -571,7 +551,6 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command enableactivecheckswithchildren
-     *
      */
     public function enableactivecheckswithchildrenAction()
     {
@@ -590,7 +569,6 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command disableeventhandler
-     *
      */
     public function disableeventhandlerAction()
     {
@@ -608,7 +586,6 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command enableeventhandler
-     *
      */
     public function enableeventhandlerAction()
     {
@@ -626,7 +603,6 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command disableflapdetection
-     *
      */
     public function disableflapdetectionAction()
     {
@@ -644,7 +620,6 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command enableflapdetection
-     *
      */
     public function enableflapdetectionAction()
     {
@@ -662,7 +637,6 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command addcomment
-     *
      */
     public function addcommentAction()
     {
@@ -679,7 +653,6 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command resetattributes
-     *
      */
     public function resetattributesAction()
     {
@@ -697,7 +670,6 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command acknowledgeproblem
-     *
      */
     public function acknowledgeproblemAction()
     {
@@ -714,7 +686,6 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command removeacknowledgement
-     *
      */
     public function removeacknowledgementAction()
     {
@@ -732,7 +703,6 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command delaynotification
-     *
      */
     public function delaynotificationAction()
     {
@@ -749,7 +719,6 @@ class Monitoring_CommandController extends ModuleActionController
 
     /**
      * Handle command removedowntime
-     *
      */
     public function removedowntimeAction()
     {

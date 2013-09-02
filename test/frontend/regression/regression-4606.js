@@ -1,7 +1,7 @@
 /**
  * Configuration: Show message that changes were saved successfully
  *
- * As a user I want too see that configuration changes were successful.
+ * As a user I want to see that configuration changes were successful.
  *
  * This test performs the following steps
  *

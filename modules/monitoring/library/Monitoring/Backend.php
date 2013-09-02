@@ -127,7 +127,7 @@ class Backend
             if ($name === null) {
                 $name = self::getDefaultName();
             } else {
-                if (! self::exists($name)) {
+                if (!self::exists($name)) {
                     throw new Exception(
                         sprintf(
                             'There is no such backend: "%s"',
