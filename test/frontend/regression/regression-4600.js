@@ -36,6 +36,11 @@ icinga.performLogin();
  * Open the command dialog with only a host pattern and ensure that the form exists
  */
 casper.thenOpen('/monitoring/command/submitpassivecheckresult?host=*', function() {
+    if (this.exists('.alert')) {
+        this.test.info('Skipping test; See issue #4666 for more details');
+        return;
+    }
+
     this.test.assertExists(
         '#form_submit_passive_checkresult',
         'Test whether the form to submit passive checkresults is available'
@@ -50,6 +55,11 @@ casper.thenOpen('/monitoring/command/submitpassivecheckresult?host=*', function(
  * Check whether the input contains the checkresult types for hosts
  */
 casper.then(function() {
+    if (this.exists('.alert')) {
+        this.test.info('Skipping test; See issue #4666 for more details');
+        return;
+    }
+
     var options = this.evaluate(function() {
         var elements = document.querySelector(
             '#form_submit_passive_checkresult select#pluginstate'
@@ -84,6 +94,11 @@ casper.then(function() {
  * check whether the input contains the checkresult types for services
  */
 casper.thenOpen('/monitoring/command/submitpassivecheckresult?host=*&service=*', function() {
+    if (this.exists('.alert')) {
+        this.test.info('Skipping test; See issue #4666 for more details');
+        return;
+    }
+
     var options = this.evaluate(function() {
         var elements = document.querySelector(
             '#form_submit_passive_checkresult select#pluginstate'
