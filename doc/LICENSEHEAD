@@ -17,6 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-@copyright %(YEAR)s Icinga Development Team <info@icinga.org>
-@license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
-@author    Icinga Development Team <info@icinga.org>
+@copyright  %(YEAR)s Icinga Development Team <info@icinga.org>
+@license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
+@author     Icinga Development Team <info@icinga.org>

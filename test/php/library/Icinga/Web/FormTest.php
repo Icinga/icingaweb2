@@ -60,7 +60,7 @@ class FormTest extends Zend_Test_PHPUnit_ControllerTestCase
         $form = new TestForm();
         $form->addElement('checkbox', 'example1', array());
         $form->enableAutoSubmit(array('example1'));
-        $this->assertArrayHasKey('onchange', $form->getElement('example1')->getAttribs(),
+        $this->assertArrayHasKey('data-icinga-form-autosubmit', $form->getElement('example1')->getAttribs(),
                                  'Asserting that auto-submit got enabled for one element');
     }
 
@@ -73,9 +73,9 @@ class FormTest extends Zend_Test_PHPUnit_ControllerTestCase
         $form->addElement('checkbox', 'example1', array());
         $form->addElement('checkbox', 'example2', array());
         $form->enableAutoSubmit(array('example1', 'example2'));
-        $this->assertArrayHasKey('onchange', $form->getElement('example1')->getAttribs(),
+        $this->assertArrayHasKey('data-icinga-form-autosubmit', $form->getElement('example1')->getAttribs(),
                                  'Asserting that auto-submit got enabled for multiple elements');
-        $this->assertArrayHasKey('onchange', $form->getElement('example2')->getAttribs(),
+        $this->assertArrayHasKey('data-icinga-form-autosubmit', $form->getElement('example2')->getAttribs(),
                                  'Asserting that auto-submit got enabled for multiple elements');
     }
 

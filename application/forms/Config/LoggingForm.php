@@ -126,7 +126,6 @@ class LoggingForm extends Form
         if ($this->config === null) {
             $this->config = new Zend_Config(array());
         }
-
         $logging = $this->config->logging;
         if ($logging === null) {
             $logging = new IcingaConfig(array());
