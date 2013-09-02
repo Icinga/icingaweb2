@@ -124,6 +124,8 @@ class SubmitPassiveCheckResultForm extends CommandForm
      */
     protected function create()
     {
+        $this->setName('form_submit_passive_checkresult');
+
         $this->addNote(
             t(
                 'This command is used to submit a passive check result for particular hosts/services. It is '
