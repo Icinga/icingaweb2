@@ -43,7 +43,7 @@ class AuthenticationController extends ActionController
      *
      * @var bool
      */
-    protected $handlesAuthentication = true;
+    protected $requiresAuthentication = false;
 
     /**
      * This controller modifies the session

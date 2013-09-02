@@ -35,42 +35,24 @@ use \Icinga\Application\Logger;
 class StaticController extends ActionController
 {
     /**
-     * @TODO: Bug #4572
+     * Static routes don't require authentication
+     *
+     * @var bool
      */
-    protected $handlesAuthentication = true;
+    protected $requiresAuthentication = false;
 
+    /**
+     * Disable layout rendering as this controller doesn't provide any html layouts
+     */
     public function init()
     {
         $this->_helper->viewRenderer->setNoRender(true);
         $this->_helper->layout()->disableLayout();
     }
 
-    private function getModuleList()
-    {
-        $modules = Icinga::app()->getModuleManager()->getLoadedModules();
-        // preliminary static definition
-        $result = array();
-        foreach ($modules as $name => $module) {
-            $hasJs = file_exists($module->getBasedir() . '/public/js/' . $name . '.js');
-            $result[] = array(
-                'name'      => $name,
-                'active'    => true,
-                'type'      => 'generic',
-                'behaviour' => $hasJs
-            );
-        }
-        return $result;
-    }
-
-    public function modulelistAction()
-    {
-        $this->_helper->viewRenderer->setNoRender(true);
-        $this->_helper->layout()->disableLayout();
-        $this->getResponse()->setHeader('Content-Type', 'application/json');
-        echo 'define(function() { return ' . json_encode($this->getModuleList(), true) . '; })';
-        exit;
-    }
-
+    /**
+     * Return an image from the application's or the module's public folder
+     */
     public function imgAction()
     {
         $module = $this->_getParam('module_name');
@@ -107,6 +89,9 @@ class StaticController extends ActionController
         return;
     }
 
+    /**
+     * Return a javascript file from the application's or the module's public folder
+     */
     public function javascriptAction()
     {
         $module = $this->_getParam('module_name');

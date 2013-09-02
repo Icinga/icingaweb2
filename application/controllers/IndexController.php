@@ -38,12 +38,11 @@ use \Icinga\Application\Icinga;
 class IndexController extends ActionController
 {
     /**
-     * Always authenticate
+     * Use a default redirection rule to welcome page
      */
     public function preDispatch()
     {
-        parent::preDispatch(); // -> auth :(
-        if ($this->action_name !== 'welcome') {
+        if ($this->getRequest()->getActionName() !== 'welcome') {
             $this->redirect('index/welcome');
         }
     }
