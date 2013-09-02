@@ -308,13 +308,14 @@ class Web extends ApplicationBootstrap
                     try {
                         $initialPreferences = $preferenceStore->load();
                     } catch (Exception $e) {
-                        Logger::fatal(
+                        Logger::warn(
                             '%s::%s: Could not load preferences from provider. '
                             . 'An exception during bootstrap was thrown: %s',
                             __CLASS__,
                             __FUNCTION__,
                             $e->getMessage()
                         );
+                        $this->registerFallbackPreferenceProvider($preferences, $user);
                     }
 
                     $sessionStore->writeAll($initialPreferences);
