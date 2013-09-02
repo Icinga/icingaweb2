@@ -99,8 +99,9 @@ class ObjectRemappingView implements AccessorStrategy
 
     private function applyPropertyFunction($function, $value)
     {
-        if (!isset($this->functionMap[$function]))
+        if (!isset($this->functionMap[$function])) {
             return $value;
+        }
         $fn = $this->functionMap[$function];
 
         return $this->$fn($value);

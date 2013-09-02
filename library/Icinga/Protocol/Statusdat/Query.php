@@ -30,6 +30,7 @@ namespace Icinga\Protocol\Statusdat;
 
 use Icinga\Protocol;
 use Icinga\Data\AbstractQuery;
+
 /**
  * Class Query
  * @package Icinga\Protocol\Statusdat
@@ -398,5 +399,4 @@ class Query extends AbstractQuery
         }
         return $result;
     }
-
 }

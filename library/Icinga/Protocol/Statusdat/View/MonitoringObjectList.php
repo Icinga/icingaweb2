@@ -11,15 +11,21 @@
  * If the dataset contains arrays instead of objects, they will be cast to objects.
  *
  */
+
 namespace Icinga\Protocol\Statusdat\View;
 
-class MonitoringObjectList implements \Iterator, \Countable, \ArrayAccess
+use \Iterator;
+use \Countable;
+use \ArrayAccess;
+use \Exception;
+
+class MonitoringObjectList implements Iterator, Countable, ArrayAccess
 {
     private $dataSet = array();
     private $position = 0;
     private $dataView = null;
 
-    function __construct(array &$dataset, AccessorStrategy $dataView = null)
+    public function __construct(array &$dataset, AccessorStrategy $dataView = null)
     {
         $this->dataSet = $dataset;
         $this->position = 0;
@@ -44,8 +50,9 @@ class MonitoringObjectList implements \Iterator, \Countable, \ArrayAccess
      */
     public function current()
     {
-        if ($this->dataView)
+        if ($this->dataView) {
             return $this;
+        }
         return $this->dataSet[$this->position];
     }
 
@@ -96,17 +103,17 @@ class MonitoringObjectList implements \Iterator, \Countable, \ArrayAccess
 
     public function __isset($name)
     {
-        return $this->dataView->exists($this->dataSet[$this->position],$name);
+        return $this->dataView->exists($this->dataSet[$this->position], $name);
     }
 
-    function __get($name)
+    public function __get($name)
     {
-        return $this->dataView->get($this->dataSet[$this->position],$name);
+        return $this->dataView->get($this->dataSet[$this->position], $name);
     }
 
-    function __set($name, $value)
+    public function __set($name, $value)
     {
-        throw new \Exception("Setting is currently not available for objects");
+        throw new Exception("Setting is currently not available for objects");
     }
 
     public function offsetExists($offset)
@@ -130,5 +137,4 @@ class MonitoringObjectList implements \Iterator, \Countable, \ArrayAccess
     {
         // non mutable
     }
-
 }
