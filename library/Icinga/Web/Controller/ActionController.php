@@ -56,8 +56,7 @@ class ActionController extends Zend_Controller_Action
     protected $replaceLayout = false;
 
     /**
-     * If true, this controller will be shown even when no authentication is available
-     * Needed mainly for the authentication controller
+     * Whether the controller requires the user to be authenticated
      *
      * @var bool
      */
@@ -97,7 +96,7 @@ class ActionController extends Zend_Controller_Action
             return;
         }
 
-        if ($this->determineAuthenticationState() === true) {
+        if ($this->requiresLogin() === false) {
             $this->view->tabs = new Tabs();
             $this->init();
         } else {
@@ -105,18 +104,26 @@ class ActionController extends Zend_Controller_Action
         }
     }
 
-    protected function determineAuthenticationState(array $invokeArgs = array())
+    /**
+     * Check whether the controller requires a login. That is when the controller requires authentication and the
+     * user is currently not authenticated
+     *
+     * @return  bool
+     * @see     requiresAuthentication
+     */
+    protected function requiresLogin()
     {
         if (!$this->requiresAuthentication) {
-            return true;
+            return false;
         }
 
 
-        return AuthManager::getInstance(
+        return !AuthManager::getInstance(
             null,
             array('writeSession' => $this->modifiesSession)
         )->isAuthenticated();
     }
+
     /**
      * Return the tabs
      *
