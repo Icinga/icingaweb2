@@ -28,19 +28,11 @@
 
 namespace Icinga\Exception;
 
-/**
- * Class ProgrammingError
- * @package Icinga\Exception
- */
-class SystemPermissionException extends \Exception
-{
-    public $action;
-    public $target;
+use \Exception;
 
-    public function __construct($message, $action, $target = "")
-    {
-        parent::__construct($message);
-        $this->action = $action;
-        $this->target = $target;
-    }
+/**
+ * Handle problems according to file system permissions
+ */
+class SystemPermissionException extends Exception
+{
 }

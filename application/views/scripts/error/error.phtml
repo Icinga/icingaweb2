@@ -11,16 +11,6 @@
     <p>
       <b>Message:</b>
       <?= $this->exception->getMessage(); ?>
-
-      <?php if (isset($this->exception->action)): ?>
-      <br/>
-      <b>Action</b>: <?= $this->exception->action; ?>
-      <?php endif; ?>
-
-      <?php if (isset($this->exception->action)): ?>
-      <br/>
-      <b>Target</b>: <?= $this->exception->target; ?>
-      <?php endif; ?>
     </p>
 
     <h3>Stack trace:</h3>
@@ -29,8 +19,8 @@
     </pre>
 
     <h3>Request Parameters:</h3>
-      <pre><?= var_export(\Zend_Controller_Front::getInstance()->getParams(), true) ?>
+      <pre><?= var_export(\Zend_Controller_Front::getInstance()->getParams(), true); ?>
     </pre>
   </div>
-  <?php endif ?>
+  <?php endif; ?>
 </div>

@@ -1,0 +1,28 @@
+<?php
+  $action = (isset($this->action)) ? $this->action : 'do something with';
+  $moduleName = $this->moduleName;
+  $exceptionMessage = $this->exceptionMessage;
+?>
+<?= $this->tabs->render($this); ?>
+<br/>
+<div class="alert alert-error">
+  <h1>Could not <?= $action; ?> module "<?= $moduleName; ?>"</h1>
+  <p>
+    While operation the following error occurred:
+    <br />
+    <?= $exceptionMessage; ?>
+  </p>
+</div>
+
+<p>
+  This could have one or more of the following reasons:
+<ul>
+  <li>No file permissions to write into module directory</li>
+  <li>Errors on filesystems: Mount points, operational errors </li>
+  <li>General application error</li>
+</ul>
+</p>
+
+<p>
+  Details can be seen in your application log (if you don't have access to this file, call your administrator in this case).
+</p>
