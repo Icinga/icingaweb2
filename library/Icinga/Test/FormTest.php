@@ -44,9 +44,4 @@ interface FormTest
      * @return Form
      */
     public function createForm($formClass, array $requestData = array());
-
-    /**
-     * Require all libraries to instantiate forms
-     */
-    public function requireFormLibraries();
 }
