@@ -29,9 +29,9 @@
 namespace Icinga\Module\Monitoring\Form\Command;
 
 use \Icinga\Web\Form\Element\DateTimePicker;
-use \Icinga\Protocol\Commandpipe\Acknowledgement;
 use \Icinga\Protocol\Commandpipe\Comment;
 use \Icinga\Util\DateTimeFactory;
+use \Monitoring\Command\AcknowledgeCommand;
 
 /**
  * Form for problem acknowledgements
@@ -156,25 +156,27 @@ class AcknowledgeForm extends CommandForm
     }
 
     /**
-     * Create acknowledgement from request data
+     * Create the acknowledgement command object
      *
-     * @return \Icinga\Protocol\Commandpipe\Acknowledgement
+     * @return AcknowledgeCommand
      */
-    public function getAcknowledgement()
+    public function createCommand()
     {
-        $expireTime = -1;
-        if ($this->getValue('expire')) {
-            $expireTime = $this->getValue('expiretime');
-        }
-        return new Acknowledgement(
+        $command = new AcknowledgeCommand();
+        $command->setComment(
             new Comment(
                 $this->getAuthorName(),
                 $this->getValue('comment'),
                 $this->getValue('persistent')
-            ),
-            $this->getValue('notify'),
-            $expireTime,
-            $this->getValue('sticky')
+            )
         );
+        $command->setNotify($this->getValue('notify'));
+        $command->setSticky($this->getValue('sticky'));
+
+        if ($this->getValue('expire')) {
+            $command->setExpireTime($expireTime);
+        }
+
+        return $command;
     }
 }

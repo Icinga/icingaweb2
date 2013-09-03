@@ -682,11 +682,11 @@ class Monitoring_CommandController extends ActionController
         $form->setRequest($this->getRequest());
         $form->setConfiguration(Config::app());
 
-        $this->setForm($form);
-
         if ($form->IsSubmittedAndValid() === true) {
-            $this->target->acknowledge($this->view->objects, $form->getAcknowledgement());
+            $this->target->sendCommand($form->createCommand(), $this->view->objects);
         }
+
+        $this->setForm($form);
     }
 
     /**
