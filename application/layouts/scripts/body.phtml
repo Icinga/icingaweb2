@@ -2,18 +2,26 @@
 <div class="row">
 
   <!-- Only required for left/right tabs -->
-  <div class="col-md-2">
+  <div class="col-sm-12 col-xs-12 col-md-2 col-lg-2">
     <?php echo $this->render('parts/navigation.phtml') ?>
   </div>
 
-  <div class="col-md-10">
-    <div id="icingamain" class="col-md-8">
+  <div class="col-sm-12 col-xs-12 col-md-10 col-lg-10">
+    <div id="icingamain" class="col-sm-12 col-xs-12 col-md-8 col-lg-8">
       <?= $this->render('inline.phtml') ?>
     </div>
 
-    <div id="icingadetail" class="col-md-2">
+    <div id="icingadetail" class="hidden-sm hidden-xs col-md-4 col-lg-4">
       Details
     </div>
+  </div>
+</div>
+<br/>
+
+<!-- Make some space at the end of the page -->
+<div class="panel">
+  <div class="panel-body text-center">
+      Icinga2-Web &copy; 2013 Icinga Team
   </div>
 </div>
 

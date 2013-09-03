@@ -26,9 +26,22 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 /*global Icinga:false, document: false, define:false require:false base_url:false console:false, window:false */
 
+
+/**
+ * Icinga Logger
+ *
+ * Allows platform independent logging of via logger.info, logger.warn, logger.error and logger.emergency
+ *
+ */
 define(function() {
     'use strict';
 
+    /**
+     * Log a message to the console (if available), using the provided tag
+     *
+     * @param {String} tag           The tag to use, error and emergency are logged as console.error
+     * @param {String} logArgs       The arguments to log
+     */
     function logTagged(tag, logArgs) {
         var now = new Date();
         var ms = now.getMilliseconds() + '';
@@ -42,13 +55,13 @@ define(function() {
         for (var el in logArgs) {
             args.push(logArgs[el]);
         }
-
         try {
             if (console[tag]) {
-
-                console[tag].apply(console,logArgs);
+                console[tag].apply(console, logArgs);
+            } else if (tag === 'emergency') {
+                console.error.apply(console, logArgs);
             } else {
-                console.log.apply(console,args);
+                console.log.apply(console, args);
             }
 
         } catch (e) { // IE fallback
@@ -59,7 +72,11 @@ define(function() {
     if(!window.console) {
         window.console = { log: function() {} };
     }
-    var features = {
+
+    /**
+     * Callinterface for this module
+     */
+    return {
         debug: function() {
             if (!window.ICINGA_DEBUG) {
                 return;
@@ -77,6 +94,4 @@ define(function() {
             // TODO: log *emergency* errors to the backend
         }
     };
-
-    return features;
 });

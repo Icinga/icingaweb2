@@ -16,41 +16,8 @@ function formatDateString($self,$dateString){
 $paginator = $downtimes->paginate();
 $downtimes = $downtimes->fetchAll();
 ?>
-<form method="get" class="form-inline" action="<?= $this->href(
-    'monitoring/list/downtimes?',
-    array(
-        'action' => 'downtimes'
-    ));
-?>">
-  <label>Sort By</label>
-  <br/>
-  <?=
-  $this->formSelect(
-      'sort',
-      $this->sort,
-      array('class' => 'autosubmit'),
-      array(
-        'downtime_is_in_effect'         => 'Is In Effect',
-        'object_type'                   => 'Service/Host',
-        'host_name'                     => 'Host Name',
-        'service_description'           => 'Service Name',
-        'downtime_entry_time'           => 'Entry Time',
-        'downtime_author_name'          => 'Author',
-        'downtime_comment_data'         => 'Comment',
-        'downtime_scheduled_start_time' => 'Start',
-        'downtime_scheduled_end_time'   => 'End',
-        'downtime_trigger_time'         => 'Trigger Time',
-        'downtime_internal_downtime_id' => 'Downtime ID',
-        'downtime_duration'             => 'Duration',
-      )
-  );
-  ?>
-  <noscript>
-    <button class="btn btn-small btn-default" >
-      <i>{{REFRESH_ICON}}</i>
-    </button>
-  </noscript>
-</form>
+
+<?=  $this->sortControl->render($this); ?>
 <?=
     $this->paginationControl(
         $paginator,

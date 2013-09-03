@@ -4,31 +4,7 @@
   $formatter = $this->getHelper('MonitoringProperties');
 ?>
 
-<form method="get" action="<?=
-  $this->href(
-    'monitoring/list/notifications',
-    $this->notifications->getAppliedFilter()->toParams()
-  );
-?>">
-  <label>Sort By</label> <?=
-    $this->formSelect(
-        'sort',
-        $this->sort,
-        array(
-          'class' => 'autosubmit'
-        ),
-        array(
-          'notification_start_time' => 'Time'
-        )
-    );
-  ?>
-  <noscript>
-    <button class="btn btn-small btn-default">
-      {{REFRESH_ICON}}
-    </button>
-  </noscript>
-</form>
-
+<?= $this->sortControl->render($this); ?>
 <?php
 $notifications = $this->notifications->paginate();
 echo $this->paginationControl($notifications, null, null, array('preserve' => $this->preserve));

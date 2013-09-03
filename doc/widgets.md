@@ -101,3 +101,22 @@ You can now either extend your Tabs object using the DashboardAction's `apply()`
 `extend()` method (which is more fluent):
 
     $tabs->extend(new DashboardAction());
+
+## The SortBox widget
+
+The "SortBox" Widget allows you to create a generic sort input for sortable views.
+It automatically creates a form containing a select box with all sort options and a dropbox with the sort direction. It
+also handles automatic submission of sorting changes and draws an additional submit button when JavaScript is disabled.
+
+The constructor takes an string for the component name ad an array containing the select options, where the key is
+the value to be submitted and the value is the label that will be shown. You then should call applyRequest in order to
+make sure the form is correctly populated when a request with a sort parameter is being made.
+
+    $this->view->sortControl = new SortBox(
+    $this->getRequest()->getActionName(),
+        $columns
+    );
+    $this->view->sortControl->applyRequest($this->getRequest());
+
+
+By default the sortBox uses the GET parameter 'sort' for the sorting key and 'dir' for the sorting direction

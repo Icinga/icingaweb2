@@ -121,22 +121,11 @@ class Web extends ApplicationBootstrap
      */
     private function setupRoute()
     {
-        // TODO: Find a better solution
-        $this->frontController->getRouter()->addRoute(
-            'module_overview',
-            new Zend_Controller_Router_Route(
-                'js/modules/list.js',
-                array(
-                    'controller' => 'static',
-                    'action'     => 'modulelist',
-                )
-            )
-        );
 
         $this->frontController->getRouter()->addRoute(
             'module_javascript',
             new Zend_Controller_Router_Route(
-                'js/modules/:module_name/:file',
+                'js/components/:module_name/:file',
                 array(
                     'controller' => 'static',
                     'action'     => 'javascript'

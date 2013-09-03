@@ -32,11 +32,11 @@ use \Icinga\Data\Db\Query;
 use \Icinga\File\Csv;
 use \Icinga\Web\Controller\ActionController;
 use \Icinga\Web\Hook;
-use \Icinga\Web\Widget\Tabextension\BasketAction;
 use \Icinga\Web\Widget\Tabextension\DashboardAction;
 use \Icinga\Web\Widget\Tabextension\OutputFormat;
 use \Icinga\Web\Widget\Tabs;
-use \Icinga\Module\Monitoring\Backend;
+use \Monitoring\Backend;
+use \Icinga\Web\Widget\SortBox;
 
 class Monitoring_ListController extends ActionController
 {
@@ -46,7 +46,6 @@ class Monitoring_ListController extends ActionController
      * @var Backend
      */
     protected $backend;
-
     /**
      * Set to a string containing the compact layout name to use when
      * 'compact' is set as the layout parameter, otherwise null
@@ -107,6 +106,14 @@ class Monitoring_ListController extends ActionController
                 'host_last_comment'
             )
         );
+        $this->setupSortControl(array(
+            'host_last_check'   => 'Last Host Check',
+            'host_severity'     => 'Host Severity',
+            'host_state'        => 'Current Host State',
+            'host_name'         => 'Host Name',
+            'host_address'      => 'Address',
+            'host_state'        => 'Hard State'
+        ));
     }
 
     /**
@@ -114,13 +121,6 @@ class Monitoring_ListController extends ActionController
      */
     public function servicesAction()
     {
-        if ($this->_getParam('_statetype', 'soft') === 'soft') {
-            $state_column = 'service_state';
-            $state_change_column = 'service_last_state_change';
-        } else {
-            $state_column = 'service_hard_state';
-            $state_change_column = 'service_last_hard_state_change';
-        }
         $this->compactView = "services-compact";
 
         $this->view->services = $this->query('status', array(
@@ -132,12 +132,12 @@ class Monitoring_ListController extends ActionController
             'host_handled',
             'service_description',
             'service_display_name',
-            'service_state' => $state_column,
+            'service_state' => 'service_state',
             'service_in_downtime',
             'service_acknowledged',
             'service_handled',
             'service_output',
-            'service_last_state_change' => $state_change_column,
+            'service_last_state_change' => 'service_last_state_change',
             'service_icon_image',
             'service_long_output',
             'service_is_flapping',
@@ -150,7 +150,19 @@ class Monitoring_ListController extends ActionController
             'service_notes_url',
             'service_last_comment'
         ));
-        $this->inheritCurrentSortColumn();
+
+        $this->setupSortControl(array(
+            'service_last_check'    =>  'Last Service Check',
+            'service_severity'      =>  'Severity',
+            'service_state'         =>  'Current Service State',
+            'service_description'   =>  'Service Name',
+            'service_state_type'    =>  'Hard State',
+            'host_severity'         =>  'Host Severity',
+            'host_state'            =>  'Current Host State',
+            'host_name'             =>  'Host Name',
+            'host_address'          =>  'Host Address',
+            'host_last_check'       =>  'Last Host Check'
+        ));
     }
 
     /**
@@ -158,28 +170,38 @@ class Monitoring_ListController extends ActionController
      */
     public function downtimesAction()
     {
-         $query = $this->backend->select()
-            ->from('downtime',array(
-                'host_name',
-                'object_type',
-                'service_description',
-                'downtime_entry_time',
-                'downtime_internal_downtime_id',
-                'downtime_author_name',
-                'downtime_comment_data',
-                'downtime_duration',
-                'downtime_scheduled_start_time',
-                'downtime_scheduled_end_time',
-                'downtime_is_fixed',
-                'downtime_is_in_effect',
-                'downtime_triggered_by_id',
-                'downtime_trigger_time'
+        $this->setDefaultSortColumn('downtime_is_in_effect');
+        $this->view->downtimes = $this->query('downtime', array(
+            'host_name',
+            'object_type',
+            'service_description',
+            'downtime_entry_time',
+            'downtime_internal_downtime_id',
+            'downtime_author_name',
+            'downtime_comment_data',
+            'downtime_duration',
+            'downtime_scheduled_start_time',
+            'downtime_scheduled_end_time',
+            'downtime_is_fixed',
+            'downtime_is_in_effect',
+            'downtime_triggered_by_id',
+            'downtime_trigger_time'
         ));
-        if (!$this->_getParam('sort')) {
-            $query->order('downtime_is_in_effect');
-        }
-        $this->view->downtimes = $query->applyRequest($this->_request);
-        $this->inheritCurrentSortColumn();
+
+        $this->setupSortControl(array(
+            'downtime_is_in_effect'         => 'Is In Effect',
+            'object_type'                   => 'Service/Host',
+            'host_name'                     => 'Host Name',
+            'service_description'           => 'Service Name',
+            'downtime_entry_time'           => 'Entry Time',
+            'downtime_author_name'          => 'Author',
+            'downtime_comment_data'         => 'Comment',
+            'downtime_scheduled_start_time' => 'Start',
+            'downtime_scheduled_end_time'   => 'End',
+            'downtime_trigger_time'         => 'Trigger Time',
+            'downtime_internal_downtime_id' => 'Downtime ID',
+            'downtime_duration'             => 'Duration',
+         ));
     }
 
     /**
@@ -187,6 +209,7 @@ class Monitoring_ListController extends ActionController
      */
     public function notificationsAction()
     {
+        $this->setDefaultSortColumn('notification_start_time', 'DESC');
         $this->view->notifications = $this->query(
             'notification',
             array(
@@ -200,11 +223,9 @@ class Monitoring_ListController extends ActionController
                 'notification_command'
             )
         );
-        if (!$this->_getParam('sort')) {
-            $this->view->notifications->order('notification_start_time DESC');
-        }
-
-        $this->inheritCurrentSortColumn();
+        $this->setupSortControl(array(
+            'notification_start_time'   => 'Notification Start'
+        ));
     }
 
     /**
@@ -264,6 +285,34 @@ class Monitoring_ListController extends ActionController
     }
 
     /**
+     * Set the default sort column for this action if none is provided
+     *
+     * @param string $column    The column to use for sorting
+     * @param string $dir       The direction ('ASC' or 'DESC')
+     */
+    private function setDefaultSortColumn($column, $dir = 'DESC')
+    {
+
+        $this->setParam('sort', $this->getParam('sort', $column));
+        $this->setParam('dir', $this->getParam('dir', $dir));
+    }
+
+    /**
+     * Create a sort control box at the 'sortControl' view parameter
+     *
+     * @param array $columns    An array containing the sort columns, with the
+     *                          submit value as the key and the value as the label
+     */
+    private function setupSortControl(array $columns)
+    {
+        $this->view->sortControl = new SortBox(
+            $this->getRequest()->getActionName(),
+            $columns
+        );
+        $this->view->sortControl->applyRequest($this->getRequest());
+    }
+
+    /**
      * Return all tabs for this controller
      *
      * @return Tabs
@@ -273,18 +322,7 @@ class Monitoring_ListController extends ActionController
 
         $tabs = $this->getTabs();
         $tabs->extend(new OutputFormat())
-            ->extend(new DashboardAction())
-            ->extend(new BasketAction());
-    }
-
-    /**
-     * Let the current response inherit the used sort column by applying it to the view property `sort`
-     */
-    private function inheritCurrentSortColumn()
-    {
-        if ($this->_getParam('sort')) {
-            $this->view->sort = $this->_getParam('sort');
-        }
+            ->extend(new DashboardAction());
     }
 }
 // @codingStandardsIgnoreEnd

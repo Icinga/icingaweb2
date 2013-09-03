@@ -6,41 +6,13 @@ $viewHelper = $this->getHelper('MonitoringState');
 $trimArea = $this->getHelper('Trim');
 ?>
 
-<?php if (empty($services)): ?>
-<div>
-  Sorry, no services found for this search
-</div>
-<?php return; endif ?>
-
-<form method="get" action="<?= $this->href('monitoring/list/services', $this->services->getAppliedFilter()->toParams()); ?>">
-  <label>Sort By</label>
-  <?= $this->formSelect(
-          'sort',
-          $this->sort,
-          array('class' => 'autosubmit'),
-          array(
-            'service_severity' => 'Severity',
-            'service_last_state_change' => 'Last state change',
-            'service_last_time_unknown' => 'Last UNKNOWN',
-            'service_last_time_critical' => 'Last CRITICAL',
-            'service_last_time_warning' => 'Last WARNING',
-            'service_last_time_ok' => 'Last OK',
-            'service_description' => 'Service',
-          )
-      ); ?>
-  <noscript>
-      <button class="btn btn-small btn-default">
-        <i>ICON REFRESH</i>
-      </button>
-  </noscript>
-</form>
-
+<?=  $this->sortControl->render($this); ?>
 <?=  $this->paginationControl($paginator, null, null, array('preserve' => $this->preserve)) ?>
 
 <table class="table table-condensed">
   <thead>
     <tr>
-      <th colspan="2">Status</th>
+      <th colspan="3">Status</th>
       <th>Service</th>
       <th>Host</th>
       <th>Output</th>

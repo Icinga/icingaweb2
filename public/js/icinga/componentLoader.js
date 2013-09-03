@@ -44,7 +44,7 @@ define(['jquery', 'logging', 'icinga/componentRegistry'], function ($, log, regi
          */
         var loadComponent = function(cmpType, target, fin, err) {
             requirejs(
-                ['modules/' + cmpType],
+                ['components/' + cmpType],
                 function (Cmp) {
                     var cmp;
                     try {

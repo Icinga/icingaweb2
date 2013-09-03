@@ -9,7 +9,6 @@ var rjsmock = require('requiremock.js');
 GLOBAL.document = $('body');
 var component;
 
-
 /**
  * Set up the test fixture
  *
@@ -28,28 +27,30 @@ var setUp = function(registry)
         /*
          * Available components
          */
-        'modules/app/component1': function(cmp) {
+        'components/app/component1': function(cmp) {
             cmp.test = 'changed-by-component-1';
             this.type = function() {
                 return "app/component1";
             };
+            return this;
         },
-        'modules/app/component2': function(cmp) {
+        'components/app/component2': function(cmp) {
             cmp.test = 'changed-by-component-2';
             this.type = function() {
                 return "app/component2";
             };
+            return this;
         },
-        'modules/module/component3': function(cmp) {
+        'components/module/component3': function(cmp) {
             cmp.test = 'changed-by-component-3-from-module';
             this.type = function() {
                 return "module/component3";
             };
+            return this;
         }
     });
 
     $('body').empty();
-
     requireNew('icinga/componentLoader.js');
     component = rjsmock.getDefine();
 };
@@ -72,7 +73,6 @@ describe('Component loader', function() {
     it('Component loaded with automatic id', function() {
         setUp();
         addComponent('app/component1');
-
         component.load(function() {
             var cmpNode = $('#icinga-component-0');
             cmpNode.length.should.equal(1);
