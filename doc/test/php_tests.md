@@ -28,6 +28,37 @@ modules/mymodule/library/MyModule/Helper/MyClass.php.
         }
     }
 
+## Testing Singletons
+
+When test methods **modify static** class properties (which is the case when using singletons), add the PHPUnit
+[`@backupStaticAttributes enabled`](http://phpunit.de/manual/3.7/en/appendixes.annotations.html#appendixes.annotations.backupStaticAttributes)
+annotation to their [DockBlock](http://www.phpdoc.org/docs/latest/for-users/phpdoc/basic-syntax.html#what-is-a-docblock)
+in order to backup and restore static attributes before and after the method execution respectively. For reference you
+should **document** that the test interacts with static attributes:
+
+    <?php
+
+    namespace My\Test;
+
+    use \PHPUnit_Framework_TestCase;
+    use My\CheesecakeFactory;
+
+    class SingletonTest extends PHPUnit_Framework_TestCase
+    {
+        /**
+         * Interact with static attributes
+         *
+         * Utilizes singleton CheesecakeFactory
+         *
+         * @backupStaticAttributes enabled
+         */
+        public function testThatInteractsWithStaticAttributes()
+        {
+            CheesecakeFactory::setOpeningHours(24);
+            // ...
+        }
+    }
+
 ## Requirements and the dependency mess
 
 ### spl_autoload_register vs. require
