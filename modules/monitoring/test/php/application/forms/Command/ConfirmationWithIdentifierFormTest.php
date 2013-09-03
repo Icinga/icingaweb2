@@ -1,81 +1,63 @@
 <?php
-
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Test\Monitoring\Forms\Command;
 
-require_once  realpath('library/Icinga/Web/Form/BaseFormTest.php');
-require_once __DIR__. '/../../../../../application/forms/Command/CommandForm.php';
-require_once __DIR__. '/../../../../../application/forms/Command/WithChildrenCommandForm.php';
-require_once __DIR__. '/../../../../../application/forms/Command/CommandWithIdentifierForm.php';
+require_once realpath(__DIR__ . '/../../../../../../../library/Icinga/Test/BaseTestCase.php');
 
-use \Icinga\Module\Monitoring\Form\Command\CommandWithIdentifierForm;
-use \Zend_View;
-use \Zend_Test_PHPUnit_ControllerTestCase;
-use \Test\Icinga\Web\Form\BaseFormTest;
+use Icinga\Test\BaseTestCase;
 
-class CommandWithIdentifierFormTest extends BaseFormTest
+require_once BaseTestCase::$moduleDir . '/monitoring/application/forms/Command/CommandForm.php';
+require_once BaseTestCase::$moduleDir . '/monitoring/application/forms/Command/WithChildrenCommandForm.php';
+require_once BaseTestCase::$moduleDir . '/monitoring/application/forms/Command/CommandWithIdentifierForm.php';
+
+class CommandWithIdentifierFormTest extends BaseTestCase
 {
-    const FORMCLASS = "\Icinga\Module\Monitoring\Form\Command\CommandWithIdentifierForm";
-    public function testForm()
+    const FORM_CLASS = '\Icinga\Module\Monitoring\Form\Command\CommandWithIdentifierForm';
+
+    public function testFormInvalidWhenObjectIdMissing()
     {
-        $form = $this->getRequestForm(array(), self::FORMCLASS);
-        $form->setSubmitLabel('DING DING');
-        $form->buildForm();
-
-        $this->assertCount(4, $form->getElements());
-    }
-
-    public function testCorrectFormValidation()
-    {
-
-        $form = $this->getRequestForm(array(
-            'testval'    => 123,
-            'btn_submit' => 'foo'
-        ), self::FORMCLASS);
-
-        $form->setFieldLabel('Test1');
-        $form->setFieldName('testval');
-        $form->setSubmitLabel('DING DING');
-
-        $this->assertTrue(
-            $form->isSubmittedAndValid(),
-            "Asserting correct confirmation with id to be valid"
+        $form = $this->createForm(
+            self::FORM_CLASS,
+            array(
+                'object_id'     => '',
+                'btn_submit'    => 'Submit'
+            )
         );
-    }
-
-    public function testInvalidValueValidationErrors()
-    {
-        $form = $this->getRequestForm(array(
-            'testval' => ''
-        ), self::FORMCLASS);
-
         $this->assertFalse(
             $form->isSubmittedAndValid(),
-            "Asserting an invalid (empty) value to cause validation errors"
+            'Missing object_id must be considered not valid'
         );
     }
 
-    public function testNonNumericValueValidationErrors()
+    public function testFormInvalidWhenObjectIdNonDigit()
     {
-        $form = $this->getRequestForm(array(
-            'testval' => 'NaN'
-        ), self::FORMCLASS);
-
+        $form = $this->createForm(
+            self::FORM_CLASS,
+            array(
+                'object_id'     => 'A Service',
+                'btn_submit'    => 'Submit'
+            )
+        );
         $this->assertFalse(
             $form->isSubmittedAndValid(),
-            "Asserting an non numeric value to cause validation errors"
+            'Non numeric input must be considered not valid'
         );
     }
 
-    public function testRequestBridge()
+    public function testFormValidWhenObjectIdIsDigit()
     {
-        $form = $this->getRequestForm(array(
-            'objectid' => 123123666
-        ), self::FORMCLASS);
-        $form->buildForm();
-
-        $this->assertTrue($form->isSubmittedAndValid());
-
-        $this->assertEquals('123123666', $form->getElement('objectid')->getValue());
+        $form = $this->createForm(
+            self::FORM_CLASS,
+            array(
+                'object_id'     => 1,
+                'btn_submit'    => 'Submit'
+            )
+        );
+        $this->assertFalse(
+            $form->isSubmittedAndValid(),
+            'Digits must be considered valid'
+        );
     }
 }

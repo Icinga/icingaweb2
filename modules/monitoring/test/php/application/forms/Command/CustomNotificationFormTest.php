@@ -1,32 +1,33 @@
 <?php
-// @codingStandardsIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Test\Monitoring\Forms\Command;
 
-require_once realpath('library/Icinga/Web/Form/BaseFormTest.php');
-require_once realpath(__DIR__ . '/../../../../../application/forms/Command/CustomNotificationForm.php');
+require_once realpath(__DIR__ . '/../../../../../../../library/Icinga/Test/BaseTestCase.php');
 
-use \Test\Icinga\Web\Form\BaseFormTest;
-use \Icinga\Module\Monitoring\Form\Command\CustomNotificationForm; // Used by constant FORM_CLASS
+use Icinga\Test\BaseTestCase;
 
-class CustomNotificationFormTest extends BaseFormTest
+require_once BaseTestCase::$moduleDir . '/monitoring/application/forms/Command/CommandForm.php';
+require_once BaseTestCase::$moduleDir . '/monitoring/application/forms/Command/CustomNotificationForm.php';
+
+class CustomNotificationFormTest extends BaseTestCase
 {
-    const FORM_CLASS = '\Icinga\Module\Monitoring\Form\Command\CustomNotificationForm';
+    const FORM_CLASS = 'Icinga\Module\Monitoring\Form\Command\CustomNotificationForm';
 
     public function testFormInvalidWhenCommentMissing()
     {
-        $form = $this->getRequestForm(array(
-            'author'        => 'Author',
-            'comment'       => '',
-            'btn_submit'    => 'Submit'
-        ), self::FORM_CLASS);
-
+        $form = $this->createForm(
+            self::FORM_CLASS,
+            array(
+                'author'        => 'Author',
+                'comment'       => '',
+                'btn_submit'    => 'Submit'
+            )
+        );
         $this->assertFalse(
             $form->isSubmittedAndValid(),
             'Missing comment must be considered not valid'
         );
     }
 }
-// @codingStandardsIgnoreEnd
