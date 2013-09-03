@@ -7,7 +7,7 @@ use Icinga\Data\Db\Connection;
 /**
  * This class provides an easy-to-use interface to the IDO database
  *
- * You should usually not directly use this class but go through Monitoring\Backend.
+ * You should usually not directly use this class but go through Icinga\Module\Monitoring\Backend.
  *
  * New MySQL indexes:
  * <code>

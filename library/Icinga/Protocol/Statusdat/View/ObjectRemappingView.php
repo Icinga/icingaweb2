@@ -51,7 +51,7 @@ class ObjectRemappingView implements AccessorStrategy
 
     /**
      * When implementing your own Mapper, this contains the static mapping rules.
-     * @see Monitoring\Backend\Statusdat\DataView\StatusdatServiceView for an example
+     * @see Icinga\Module\Monitoring\Backend\Statusdat\DataView\StatusdatServiceView for an example
      *
      * @var array
      */

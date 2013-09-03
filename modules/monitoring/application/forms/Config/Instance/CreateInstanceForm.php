@@ -27,7 +27,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 
 
-namespace Monitoring\Form\Config\Instance;
+namespace Icinga\Module\Monitoring\Form\Config\Instance;
 
 use \Icinga\Web\Form;
 use \Zend_Config;

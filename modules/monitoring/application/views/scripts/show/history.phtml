@@ -27,7 +27,7 @@ There are no matching history entries right now
       <td><?= $this->escape($event->host_name) ?></td>
       <? endif ?>
 
-      <? if (! $object instanceof Monitoring\Object\Service): ?>
+      <? if (! $object instanceof Icinga\Module\Monitoring\Object\Service): ?>
       <td>
         <? if ($object): ?>
         <a href="<?= $this->href('monitoring/show/service',array(
