@@ -96,10 +96,11 @@ class AcknowledgeForm extends CommandForm
             $this->addElement(
                 new DateTimePicker(
                     array(
-                        'name'     => 'expiretime',
-                        'label'    => t('Expire Time'),
-                        'value'    => $now->getTimestamp() + 3600,
-                        'helptext' => t(
+                        'name'      => 'expiretime',
+                        'label'     => t('Expire Time'),
+                        'value'     => $now->getTimestamp() + 3600,
+                        'patterns'  => $this->getValidDateTimeFormats(),
+                        'helptext'  => t(
                             'Enter the expire date/time for this acknowledgement here. Icinga will '
                             . ' delete the acknowledgement after this date expired.'
                         )

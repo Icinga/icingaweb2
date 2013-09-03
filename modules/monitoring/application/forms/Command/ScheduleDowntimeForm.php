@@ -134,20 +134,22 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
         $this->addElement(
             new DateTimePicker(
                 array(
-                    'name'     => 'starttime',
-                    'label'    => t('Start Time'),
-                    'value'    => $now->getTimestamp(),
-                    'helptext' => t('Set the start date/time for the downtime.')
+                    'name'      => 'starttime',
+                    'label'     => t('Start Time'),
+                    'value'     => $now->getTimestamp(),
+                    'patterns'  => $this->getValidDateTimeFormats(),
+                    'helptext'  => t('Set the start date/time for the downtime.')
                 )
             )
         );
         $this->addElement(
             new DateTimePicker(
                 array(
-                    'name'     => 'endtime',
-                    'label'    => t('End Time'),
-                    'value'    => $now->getTimestamp() + 3600,
-                    'helptext' => t('Set the end date/time for the downtime.')
+                    'name'      => 'endtime',
+                    'label'     => t('End Time'),
+                    'value'     => $now->getTimestamp() + 3600,
+                    'patterns'  => $this->getValidDateTimeFormats(),
+                    'helptext'  => t('Set the end date/time for the downtime.')
                 )
             )
         );

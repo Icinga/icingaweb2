@@ -28,10 +28,9 @@
 
 namespace Icinga\Web\Form\Element;
 
-use \Exception;
 use \Zend_Form_Element_Xhtml;
-use \Icinga\Application\Icinga;
 use \Icinga\Util\DateTimeFactory;
+use \Icinga\Exception\ProgrammingError;
 
 /**
  * Datetime form element which returns the input as Unix timestamp after the input has been proven valid. Utilizes
@@ -48,14 +47,20 @@ class DateTimePicker extends Zend_Form_Element_Xhtml
     public $helper = 'formDateTime';
 
     /**
-     * Find whether a variable is a Unix timestamp
+     * Valid formats to check user input against
+     * @var array
+     */
+    public $patterns;
+
+    /**
+     * Check whether a variable is a Unix timestamp
      *
      * @param   mixed   $timestamp
      * @return  bool
      */
     public function isUnixTimestamp($timestamp)
     {
-        return ((string) (int) $timestamp === (string) $timestamp)
+        return (is_int($timestamp) || ctype_digit($timestamp))
             && ($timestamp <= PHP_INT_MAX)
             && ($timestamp >= ~PHP_INT_MAX);
     }
@@ -63,13 +68,12 @@ class DateTimePicker extends Zend_Form_Element_Xhtml
     /**
      * Validate filtered date/time strings
      *
-     * Expects formats that the php date parser understands. Sets element value as Unix timestamp if the input is
-     * considered valid. Utilizes DateTimeFactory to ensure time zone awareness
+     * Expects one or more valid formats being set in $this->patterns. Sets element value as Unix timestamp
+     * if the input is considered valid. Utilizes DateTimeFactory to ensure time zone awareness.
      *
      * @param   string  $value
      * @param   mixed   $context
      * @return  bool
-     * @see     \Icinga\Util\DateTimeFactory::create()
      */
     public function isValid($value, $context = null)
     {
@@ -88,15 +92,19 @@ class DateTimePicker extends Zend_Form_Element_Xhtml
             $dt = DateTimeFactory::create();
             $dt->setTimestamp($value);
         } else {
-            try {
-                $dt = DateTimeFactory::create($value);
-            } catch (Exception $e) {
-                $this->addErrorMessage(
-                    _(
-                        'Failed to parse datetime string. See '
-                        . 'http://www.php.net/manual/en/datetime.formats.php for valid formats'
-                    )
-                );
+            if (!isset($this->patterns)) {
+                throw new ProgrammingError('Cannot parse datetime string without any pattern');
+            }
+
+            $match_found = false;
+            foreach ($this->patterns as $pattern) {
+                $dt = DateTimeFactory::parse($value, $pattern);
+                if ($dt !== false && $dt->format($pattern) === $value) {
+                    $match_found = true;
+                    break;
+                }
+            }
+            if (!$match_found) {
                 return false;
             }
         }

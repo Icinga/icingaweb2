@@ -47,19 +47,11 @@ use \Icinga\Web\Form\Decorator\ConditionalHidden;
 class GeneralForm extends Form
 {
     /**
-     * The configuration to use for populating this form
-     *
-     * @var IcingaConfig
-     */
-    private $config = null;
-
-    /**
      * The base directory of the icingaweb configuration
      *
      * @var string
      */
     private $configDir = null;
-
 
     /**
      * The resources to use instead of the factory provided ones (use for testing)
@@ -74,16 +66,6 @@ class GeneralForm extends Form
      * @var Zend_View_Helper_DateFormat
      */
     private $dateHelper;
-
-    /**
-     * Set the configuration to be used for this form
-     *
-     * @param IcingaConfig  $cfg
-     */
-    public function setConfiguration($cfg)
-    {
-        $this->config = $cfg;
-    }
 
     /**
      * Set a specific configuration directory to use for configuration specific default paths
@@ -349,15 +331,12 @@ class GeneralForm extends Form
      */
     public function create()
     {
-        if ($this->config === null) {
-            $this->config = new Zend_Config(array());
-        }
-        $global = $this->config->global;
+        $config = $this->getConfiguration();
+        $global = $config->global;
         if ($global === null) {
             $global = new Zend_Config(array());
         }
-        $preferences = $this->config->preferences;
-
+        $preferences = $config->preferences;
         if ($preferences === null) {
             $preferences = new Zend_Config(array());
         }
@@ -378,18 +357,16 @@ class GeneralForm extends Form
      */
     public function getConfig()
     {
-        if ($this->config === null) {
-            $this->config = new Zend_Config(array());
+        $config = $this->getConfiguration();
+        if ($config->global === null) {
+            $config->global = new Zend_Config(array());
         }
-        if ($this->config->global === null) {
-            $this->config->global = new Zend_Config(array());
-        }
-        if ($this->config->preferences === null) {
-            $this->config->preferences = new Zend_Config(array());
+        if ($config->preferences === null) {
+            $config->preferences = new Zend_Config(array());
         }
 
         $values = $this->getValues();
-        $cfg = clone $this->config;
+        $cfg = clone $config;
         $cfg->global->environment  = ($values['environment'] == 1) ? 'development' : 'production';
         $cfg->global->timezone     = $values['timezone'];
         $cfg->global->moduleFolder = $values['module_folder'];

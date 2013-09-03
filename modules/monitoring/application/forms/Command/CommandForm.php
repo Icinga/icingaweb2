@@ -28,7 +28,8 @@
 
 namespace Monitoring\Form\Command;
 
-use Icinga\Web\Form;
+use \Zend_Config;
+use \Icinga\Web\Form;
 use \Zend_Form_Element_Hidden;
 
 /**
@@ -100,5 +101,29 @@ class CommandForm extends Form
         );
 
         return $authorField;
+    }
+
+    /**
+     * Get a list of valid datetime formats
+     *
+     * @return array
+     */
+    public function getValidDateTimeFormats()
+    {
+        $config = $this->getConfiguration();
+        $global = $config->global;
+        if ($global === null) {
+            $global = new Zend_Config(array());
+        }
+        $preferences = $this->getUserPreferences();
+        return array(
+            implode(
+                ' ',
+                array(
+                    $preferences->get('app.dateFormat', $global->get('dateFormat', 'd/m/Y')),
+                    $preferences->get('app.timeFormat', $global->get('timeFormat', 'g:i A'))
+                )
+            )
+        );
     }
 }

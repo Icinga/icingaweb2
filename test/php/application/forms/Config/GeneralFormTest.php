@@ -46,7 +46,6 @@ require_once BaseTestCase::$libDir . '/Util/DateTimeFactory.php';
 // @codingStandardsIgnoreEnd
 
 use \DateTimeZone;
-use \Icinga\Web\Form;
 use \DOMDocument;
 use \Zend_Config;
 use \Zend_View;

@@ -42,30 +42,11 @@ use \Icinga\Web\Form\Decorator\ConditionalHidden;
 class LoggingForm extends Form
 {
     /**
-     * The configuration to use for this form
-     *
-     * @var Zend_Config
-     */
-    private $config = null;
-
-    /**
      * Base directory to use instead of the one provided by Icinga::app (used for testing)
      *
      * @var null
      */
     private $baseDir = null;
-
-    /**
-     * Set the configuration of this form
-     *
-     * If not called, default values are used instead
-     *
-     * @param Zend_Config $cfg The config.ini to set with this form
-     */
-    public function setConfiguration(Zend_Config $cfg)
-    {
-        $this->config = $cfg;
-    }
 
     /**
      * Set a different base directory to use for default paths instead of the one provided by Icinga::app()
@@ -123,15 +104,13 @@ class LoggingForm extends Form
     public function create()
     {
         $this->setName('form_config_logging');
-        if ($this->config === null) {
-            $this->config = new Zend_Config(array());
-        }
-        $logging = $this->config->logging;
+
+        $config = $this->getConfiguration();
+        $logging = $config->logging;
         if ($logging === null) {
             $logging = new IcingaConfig(array());
         }
-
-        $debug = $logging->debug;
+        $debug = $config->logging->debug;
         if ($debug === null) {
             $debug = new IcingaConfig(array());
         }
@@ -200,19 +179,16 @@ class LoggingForm extends Form
      */
     public function getConfig()
     {
-        if ($this->config === null) {
-            $this->config = new Zend_Config(array());
+        $config = $this->getConfiguration();
+        if ($config->logging === null) {
+            $config->logging = new IcingaConfig(array());
         }
-        if ($this->config->logging === null) {
-            $this->config->logging = new Zend_Config(array());
-        }
-        if ($this->config->logging->debug === null) {
-            $this->config->logging->debug = new Zend_Config(array());
-
+        if ($config->logging->debug === null) {
+            $config->logging->debug = new IcingaConfig(array());
         }
 
         $values = $this->getValues();
-        $cfg = $this->config->toArray();
+        $cfg = $config->toArray();
 
         $cfg['logging']['enable']           =   1;
         $cfg['logging']['type']             =   'stream';
