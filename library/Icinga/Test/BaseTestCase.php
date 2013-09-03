@@ -328,7 +328,6 @@ namespace Icinga\Test {
             if ($token !== null) {
                 $requestData[$form->getTokenElementName()] = $token;
             }
-
             $request = $this->getRequest();
             $request->setMethod('POST');
             $request->setPost($requestData);

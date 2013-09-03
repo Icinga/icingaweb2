@@ -35,7 +35,7 @@ use \Zend_View_Interface;
 use \Icinga\Web\Form\Element\Note;
 use \Icinga\Exception\ProgrammingError;
 use \Icinga\Web\Form\Decorator\HelpText;
-use \Icinga\Web\Form\Decorator\BoostrapFormDecorator;
+use \Icinga\Web\Form\Decorator\BootstrapForm;
 use \Icinga\Web\Form\InvalidCSRFTokenException;
 use \Icinga\Application\Config as IcingaConfig;
 
@@ -127,7 +127,7 @@ class Form extends Zend_Form
     /**
      * Decorator that replaces the DtDd Zend-Form default
      *
-     * @var Form\Decorator\BoostrapFormDecorator
+     * @var Form\Decorator\BootstrapFormDecorator
      */
     private $formDecorator;
 
@@ -586,7 +586,7 @@ class Form extends Zend_Form
             $el->removeDecorator('HtmlTag');
             $el->removeDecorator('Label');
             $el->removeDecorator('DtDdWrapper');
-            $el->addDecorator(new BoostrapFormDecorator());
+            $el->addDecorator(new BootstrapForm());
             $el->setAttrib('class', $el->getAttrib('class') . ' form-control input-sm');
         }
 

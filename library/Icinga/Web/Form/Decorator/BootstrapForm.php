@@ -30,7 +30,7 @@ namespace Icinga\Web\Form\Decorator;
 
 use Zend_Form_Decorator_Abstract;
 
-    /**
+ /**
  *  Decorator that styles forms in the DOM boostrap wants for it's forms
  *
  *  This component replaces the dt/dd wrapping of elements with the approach used by bootstrap.
@@ -40,7 +40,7 @@ use Zend_Form_Decorator_Abstract;
  *  cases where you want to put inputs with and inputs without labels on the same line and don't
  *  want buttons to 'jump'
  */
-class BoostrapFormDecorator extends Zend_Form_Decorator_Abstract
+class BootstrapForm extends Zend_Form_Decorator_Abstract
 {
     /**
      * An array of elements that won't get a <label> dom added per default
