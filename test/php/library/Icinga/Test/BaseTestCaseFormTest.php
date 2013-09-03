@@ -30,7 +30,10 @@ namespace Tests\Icinga\Test;
 
 require_once realpath(__DIR__ . '/../../../../../library/Icinga/Test/BaseTestCase.php');
 
-use Icinga\Test\BaseTestCase;
+use \Icinga\Test\BaseTestCase;
+
+require_once BaseTestCase::$appDir . '/forms/Authentication/LoginForm.php';
+require_once BaseTestCase::$moduleDir . '/monitoring/application/forms/Config/ConfirmRemovalForm.php';
 
 class BaseTestCaseFormTest extends BaseTestCase
 {

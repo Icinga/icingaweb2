@@ -47,6 +47,7 @@ require_once BaseTestCase::$libDir . '/Web/Url.php';
 require_once BaseTestCase::$appDir . '/forms/Config/Authentication/BaseBackendForm.php';
 require_once BaseTestCase::$appDir . '/forms/Config/Authentication/DbBackendForm.php';
 require_once BaseTestCase::$appDir . '/forms/Config/Authentication/LdapBackendForm.php';
+require_once BaseTestCase::$appDir . '/forms/Config/Authentication/ReorderForm.php';
 // @codingStandardsIgnoreEnd
 
 use \Zend_Config;

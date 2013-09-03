@@ -41,7 +41,7 @@ use \Icinga\Protocol\Statusdat\Reader;
 use \Icinga\Web\Controller\ActionController;
 use \Icinga\Application\DbAdapterFactory;
 use \Icinga\Module\Monitoring\Backend\Ido;
-use \Icinga\Moudle\Monitoring\Backend\Statusdat;
+use \Icinga\Module\Monitoring\Backend\Statusdat;
 use \Test\Monitoring\Testlib\DataSource\TestFixture;
 use \Test\Monitoring\Testlib\DataSource\DataSourceTestSetup;
 

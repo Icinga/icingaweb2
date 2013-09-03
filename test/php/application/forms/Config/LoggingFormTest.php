@@ -39,6 +39,7 @@ require_once 'Zend/Config.php';
 require_once 'Zend/Config/Ini.php';
 require_once BaseTestCase::$libDir . '/Web/Form.php';
 require_once BaseTestCase::$appDir . '/forms/Config/GeneralForm.php';
+require_once BaseTestCase::$appDir . '/forms/Config/LoggingForm.php';
 // @codingStandardsIgnoreEnd
 
 use \Zend_Config;

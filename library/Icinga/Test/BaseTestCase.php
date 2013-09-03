@@ -293,43 +293,24 @@ class BaseTestCase extends Zend_Test_PHPUnit_ControllerTestCase implements DbTes
     }
 
     /**
-     * Instantiate a new form object
+     * Instantiate a form
      *
-     * @param   string $formClass      Form class to instantiate
-     * @param   array  $requestData    Request data for the form
+     * If the form has CSRF protection enabled, creates the form's token element and adds the generated token to the
+     * request data
+     *
+     * @param   string  $formClass      Qualified class name of the form to create. Note that the class has to be
+     *                                  defined as no attempt is made to require the class before instantiating.
+     * @param   array   $requestData    Request data for the form
      *
      * @return  Form
-     * @throws RuntimeException
+     * @throws  RuntimeException
      */
     public function createForm($formClass, array $requestData = array())
     {
-        $this->requireFormLibraries();
-
-        $classParts = explode('\\', $formClass);
-        $identifier = array_shift($classParts);
-        array_shift($classParts); // Throw away
-        $fixedPathComponent = '/forms';
-
-        if (strtolower($identifier) == 'icinga') {
-            $startPathComponent = self::$appDir . $fixedPathComponent;
-        } else {
-            $startPathComponent = self::$moduleDir
-                . '/'
-                . strtolower($identifier)
-                . '/application'
-                .$fixedPathComponent;
-        }
-
-        $classFile = $startPathComponent . '/' . implode('/', $classParts) . '.php';
-
-        if (!file_exists($classFile)) {
-            throw new RuntimeException('Class file for form "' . $formClass . '" not found');
-        }
-
-        require_once $classFile;
-        $form = new $formClass();
+        $form = new $formClass;
+        // If the form has CSRF protection enabled, add the token to the request data, else all calls to
+        // isSubmittedAndValid will fail
         $form->initCsrfToken();
-
         $token = $form->getValue($form->getTokenElementName());
         if ($token !== null) {
             $requestData[$form->getTokenElementName()] = $token;
@@ -338,14 +319,12 @@ class BaseTestCase extends Zend_Test_PHPUnit_ControllerTestCase implements DbTes
         $request = $this->getRequest();
         $request->setMethod('POST');
         $request->setPost($requestData);
-
         $form->setRequest($request);
         $form->setUserPreferences(
             new Preferences(
                 array()
             )
         );
-
         return $form;
     }
 
