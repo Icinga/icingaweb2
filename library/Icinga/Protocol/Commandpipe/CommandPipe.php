@@ -28,8 +28,6 @@
 
 namespace Icinga\Protocol\Commandpipe;
 
-use Icinga\Application\Logger as IcingaLogger;
-
 use Icinga\Protocol\Commandpipe\Transport\Transport;
 use Icinga\Protocol\Commandpipe\Transport\LocalPipe;
 use Icinga\Protocol\Commandpipe\Transport\SecureShell;
@@ -136,6 +134,23 @@ class CommandPipe
     public function send($command)
     {
         $this->transport->send($command);
+    }
+
+    /**
+     * Send a command to the icinga pipe
+     *
+     * @param \Icinga\Protocol\Commandpipe\Command $command
+     * @param array                                $objects
+     */
+    public function sendCommand(Command $command, array $objects)
+    {
+        foreach ($objects as $object) {
+            if (isset($object->service_description)) {
+                $command->setService($object->service_description);
+            }
+            $command->setHost($object->host_name);
+            $this->transport->send((string) $command);
+        }
     }
 
     /**
