@@ -21,7 +21,7 @@ The ini provider uses the directory **config/preferences** to create one ini
 file per user and persists the data into a single file. If you want to drop your
 preferences just drop the file from disk and you'll start with a new profile.
 
-## Database provider
+## Database Provider
 
 To be more flexible in distributed setups you can store preferences in a
 database (pgsql or mysql), a typical configuration looks like the following
@@ -30,6 +30,17 @@ example:
     [preferences]
     type=db
     resource=icingaweb-pgsql
+
+## Null Provider
+
+The Null Provider discards all preferences and is mainly used as a fallback when no provider could be
+created (due to permission errors, database outtakes, etc.).
+
+    [preferences]
+    type=null
+
+If your preferences aren't stored it's best to take a look into the logfiles - errors during the preference setup
+are displayed as warnings here.
 
 ### Settings
 
