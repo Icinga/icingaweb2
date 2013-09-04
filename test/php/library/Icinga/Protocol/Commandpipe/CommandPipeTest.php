@@ -8,13 +8,15 @@ namespace Tests\Icinga\Protocol\Commandpipe;
 require_once(__DIR__.'/CommandPipeLoader.php');
 CommandPipeLoader::requireLibrary();
 
-use Icinga\Protocol\Commandpipe\Comment as Comment;
-use Icinga\Protocol\Commandpipe\Acknowledgement as Acknowledgement;
+use Zend_Config;
+use Icinga\Protocol\Commandpipe\Comment;
 use Icinga\Protocol\Commandpipe\CustomNotification;
 use Icinga\Protocol\Commandpipe\Downtime as Downtime;
 use Icinga\Protocol\Commandpipe\Commandpipe as Commandpipe;
-use \Icinga\Protocol\Commandpipe\PropertyModifier as MONFLAG;
+use Icinga\Protocol\Commandpipe\PropertyModifier as MONFLAG;
 use Icinga\Protocol\Ldap\Exception;
+use Icinga\Module\Monitoring\Command\AcknowledgeCommand;
+use Icinga\Module\Monitoring\Command\AddCommentCommand;
 
 if(!defined("EXTCMD_TEST_BIN"))
     define("EXTCMD_TEST_BIN", "./bin/extcmd_test");
@@ -50,14 +52,14 @@ class CommandPipeTest extends \PHPUnit_Framework_TestCase
         $this->cleanup();
         touch($tmpPipe);
 
-        $cfg = new \Zend_Config(array(
-            "path" => $tmpPipe,
-            "name" => "test"
-        ));
-        $comment = new Comment("Autor","Comment");
-        $pipe = new Commandpipe($cfg);
+        $cfg = new Zend_Config(
+            array(
+                "path" => $tmpPipe,
+                "name" => "test"
+            )
+        );
 
-        return $pipe;
+        return new Commandpipe($cfg);
     }
 
     /**
@@ -71,18 +73,18 @@ class CommandPipeTest extends \PHPUnit_Framework_TestCase
         $this->cleanup();
         touch($tmpPipe);
 
-        $cfg = new \Zend_Config(array(
-            "path" => $tmpPipe,
-            "user"  => "vagrant",
-            "password" => "vagrant",
-            "host" => 'localhost',
-            "port"  => 22,
-            "name" => "test"
-        ));
-        $comment = new Comment("Autor","Comment");
-        $pipe = new Commandpipe($cfg);
+        $cfg = new Zend_Config(
+            array(
+                "path"      => $tmpPipe,
+                "user"      => "vagrant",
+                "password"  => "vagrant",
+                "host"      => 'localhost',
+                "port"      => 22,
+                "name"      => "test"
+            )
+        );
 
-        return $pipe;
+        return new Commandpipe($cfg);
     }
 
     /**
@@ -131,12 +133,15 @@ class CommandPipeTest extends \PHPUnit_Framework_TestCase
     {
         $pipe = $this->getLocalTestPipe();
         try {
-            $ack = new Acknowledgement(new Comment("I can","sends teh ack"));
-            $pipe->acknowledge(array(
-                (object) array(
-                    "host_name" => "hostA"
+            $ack = new AcknowledgeCommand(new Comment("I can", "sends teh ack"));
+            $pipe->sendCommand(
+                $ack,
+                array(
+                    (object) array(
+                        "host_name" => "hostA"
+                    )
                 )
-            ),$ack);
+            );
             $this->assertCommandSucceeded("ACKNOWLEDGE_HOST_PROBLEM;hostA;0;0;0;I can;sends teh ack");
         } catch(Exception $e) {
             $this->cleanup();
@@ -154,28 +159,31 @@ class CommandPipeTest extends \PHPUnit_Framework_TestCase
     {
         $pipe = $this->getLocalTestPipe();
         try {
-            $ack = new Comment("I can","sends teh ack");
+            $ack = new AcknowledgeCommand(new Comment("I can", "sends teh ack"));
             $pipe->getTransport()->setOpenMode("a");
-            $pipe->acknowledge(array(
-                (object) array(
-                    "host_name" => "hostA"
-                ),(object) array(
-                    "host_name" => "hostB"
-                ),(object) array(
-                    "host_name" => "hostC"
-                ),(object) array(
-                    "host_name" => "hostC",
-                    "service_description" => "svc"
+            $pipe->sendCommand(
+                $ack,
+                array(
+                    (object) array(
+                        "host_name" => "hostA"
+                    ),(object) array(
+                        "host_name" => "hostB"
+                    ),(object) array(
+                        "host_name" => "hostC"
+                    ),(object) array(
+                        "host_name" => "hostC",
+                        "service_description" => "svc"
+                    )
                 )
-            ),$ack);
+            );
 
-            $result = explode("\n",file_get_contents($this->getPipeName()));
+            $result = explode("\n", file_get_contents($this->getPipeName()));
             $this->assertCount(5, $result, "Asserting the correct number of commands being written to the command pipe");
 
-            $this->assertCommandSucceeded("ACKNOWLEDGE_HOST_PROBLEM;hostA;0;0;0;I can;sends teh ack",$result[0]);
-            $this->assertCommandSucceeded("ACKNOWLEDGE_HOST_PROBLEM;hostB;0;0;0;I can;sends teh ack",$result[1]);
-            $this->assertCommandSucceeded("ACKNOWLEDGE_HOST_PROBLEM;hostC;0;0;0;I can;sends teh ack",$result[2]);
-            $this->assertCommandSucceeded("ACKNOWLEDGE_SVC_PROBLEM;hostC;svc;0;0;0;I can;sends teh ack",$result[3]);
+            $this->assertCommandSucceeded("ACKNOWLEDGE_HOST_PROBLEM;hostA;0;0;0;I can;sends teh ack", $result[0]);
+            $this->assertCommandSucceeded("ACKNOWLEDGE_HOST_PROBLEM;hostB;0;0;0;I can;sends teh ack", $result[1]);
+            $this->assertCommandSucceeded("ACKNOWLEDGE_HOST_PROBLEM;hostC;0;0;0;I can;sends teh ack", $result[2]);
+            $this->assertCommandSucceeded("ACKNOWLEDGE_SVC_PROBLEM;hostC;svc;0;0;0;I can;sends teh ack", $result[3]);
 
         } catch(Exception $e) {
             $this->cleanup();
@@ -187,14 +195,24 @@ class CommandPipeTest extends \PHPUnit_Framework_TestCase
     /**
      * Test whether a single host comment is correctly serialized and send to the command pipe
      *
-     * @throws \Exception|Exception
+     * @throws Exception
      */
     public function testAddHostComment()
     {
         $pipe = $this->getLocalTestPipe();
         try {
-            $pipe->addComment(array((object) array("host_name" => "hostA")),
-                new Comment("Autor","Comment")
+            $pipe->sendCommand(
+                new AddCommentCommand(
+                    new Comment(
+                        "Autor",
+                        "Comment"
+                    )
+                ),
+                array(
+                    (object) array(
+                        "host_name" => "hostA"
+                    )
+                )
             );
             $this->assertCommandSucceeded("ADD_HOST_COMMENT;hostA;0;Autor;Comment");
         } catch(Exception $e) {
@@ -358,7 +376,7 @@ class CommandPipeTest extends \PHPUnit_Framework_TestCase
     {
         $pipe = $this->getLocalTestPipe();
         try {
-            $downtime = new Downtime(25,26,new Comment("me","test"));
+            $downtime = new Downtime(25, 26, new Comment("me", "test"));
             $pipe->scheduleDowntime(array(
                 (object) array(
                     "host_name" => "Testhost"
@@ -484,12 +502,15 @@ class CommandPipeTest extends \PHPUnit_Framework_TestCase
         }
         $pipe = $this->getSSHTestPipe();
         try {
-            $ack = new Acknowledgement(new Comment("I can","sends teh ack"));
-            $pipe->acknowledge(array(
-                (object) array(
-                    "host_name" => "hostA"
+            $ack = new AcknowledgeCommand(new Comment("I can", "sends teh ack"));
+            $pipe->sendCommand(
+                $ack,
+                array(
+                    (object) array(
+                        "host_name" => "hostA"
+                    )
                 )
-            ),$ack);
+            );
             $this->assertCommandSucceeded("ACKNOWLEDGE_HOST_PROBLEM;hostA;0;0;0;I can;sends teh ack");
         } catch(Exception $e) {
             $this->cleanup();

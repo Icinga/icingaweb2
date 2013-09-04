@@ -2,54 +2,32 @@
 
 namespace Tests\Icinga\Protocol\Commandpipe;
 
-use Icinga\Protocol\Commandpipe\Comment as Comment;
-use Icinga\Protocol\Commandpipe\Commandpipe as Commandpipe;
+use Icinga\Protocol\Commandpipe\Comment;
+use Icinga\Module\Monitoring\Command\AcknowledgeCommand;
 
-require_once("../../library/Icinga/Protocol/Commandpipe/IComment.php");
 require_once("../../library/Icinga/Protocol/Commandpipe/Comment.php");
+require_once("../../library/Icinga/Protocol/Commandpipe/CommandType.php");
 require_once("../../library/Icinga/Protocol/Commandpipe/CommandPipe.php");
-require_once("../../library/Icinga/Protocol/Commandpipe/Acknowledgement.php");
-require_once("../../library/Icinga/Protocol/Commandpipe/Exception/InvalidCommandException.php");
+require_once('../../modules/monitoring/library/Monitoring/Command/BaseCommand.php');
+require_once('../../modules/monitoring/library/Monitoring/Command/AcknowledgeCommand.php');
 
 class AcknowledgementTest extends \PHPUnit_Framework_TestCase
 {
-
-
     public function testAcknowledgeHostMessage()
     {
-        $ack = new \Icinga\Protocol\Commandpipe\Acknowledgement(new Comment("author","commentdata"),false);
-        $this->assertEquals("ACKNOWLEDGE_HOST_PROBLEM;%s;0;0;0;author;commentdata",$ack->getFormatString(CommandPipe::TYPE_HOST));
+        $ack = new AcknowledgeCommand(new Comment("author", "commentdata"));
+        $this->assertEquals("ACKNOWLEDGE_HOST_PROBLEM;foo;0;0;0;author;commentdata", $ack->getHostCommand('foo'));
 
-        $ack->setExpireTime(1000);
-        $this->assertEquals("ACKNOWLEDGE_HOST_PROBLEM_EXPIRE;%s;0;0;0;1000;author;commentdata",$ack->getFormatString(CommandPipe::TYPE_HOST));
+        $ack->setExpire(1000);
+        $this->assertEquals("ACKNOWLEDGE_HOST_PROBLEM_EXPIRE;bar;0;0;0;1000;author;commentdata", $ack->getHostCommand('bar'));
     }
 
     public function testAcknowledgeServiceMessage()
     {
-        $ack = new \Icinga\Protocol\Commandpipe\Acknowledgement(new Comment("author","commentdata"),false);
-        $this->assertEquals("ACKNOWLEDGE_SVC_PROBLEM;%s;%s;0;0;0;author;commentdata",$ack->getFormatString(CommandPipe::TYPE_SERVICE));
+        $ack = new AcknowledgeCommand(new Comment("author", "commentdata"));
+        $this->assertEquals("ACKNOWLEDGE_SVC_PROBLEM;foo;bar;0;0;0;author;commentdata", $ack->getServiceCommand('foo', 'bar'));
 
-        $ack->setExpireTime(1000);
-        $this->assertEquals("ACKNOWLEDGE_SVC_PROBLEM_EXPIRE;%s;%s;0;0;0;1000;author;commentdata",$ack->getFormatString(CommandPipe::TYPE_SERVICE));
-    }
-
-    /**
-     * @expectedException \Icinga\Protocol\Commandpipe\Exception\InvalidCommandException
-     */
-    public function testInvalidServicegroupAcknowledgement()
-    {
-        $ack = new \Icinga\Protocol\Commandpipe\Acknowledgement(new Comment("author","commentdata"),false);
-        $ack->getFormatString(CommandPipe::TYPE_SERVICEGROUP);
-
-    }
-
-    /**
-     * @expectedException \Icinga\Protocol\Commandpipe\Exception\InvalidCommandException
-     */
-    public function testInvalidHostgroupAcknowledgement()
-    {
-        $ack = new \Icinga\Protocol\Commandpipe\Acknowledgement(new Comment("author","commentdata"),false);
-        $ack->getFormatString(CommandPipe::TYPE_HOSTGROUP);
-
+        $ack->setExpire(1000);
+        $this->assertEquals("ACKNOWLEDGE_SVC_PROBLEM_EXPIRE;bar;foo;0;0;0;1000;author;commentdata", $ack->getServiceCommand('bar', 'foo'));
     }
 }

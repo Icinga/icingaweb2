@@ -35,6 +35,7 @@ use \Icinga\Web\Form\Element\DateTimePicker;
 use \Icinga\Protocol\Commandpipe\Downtime;
 use \Icinga\Protocol\Commandpipe\Comment;
 use \Icinga\Util\DateTimeFactory;
+use \Icinga\Module\Monitoring\Backend;
 
 /**
  * Form for scheduling downtimes
@@ -50,6 +51,8 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
      * Type constant for flexible downtimes
      */
     const TYPE_FLEXIBLE = 'flexible';
+
+    private $downtimes;
 
     /**
      * Initialize form
@@ -70,6 +73,59 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
             self::TYPE_FIXED    => t('Fixed'),
             self::TYPE_FLEXIBLE => t('Flexible')
         );
+    }
+
+    /**
+     * Fetch all available downtimes from the database
+     *
+     * @return array
+     */
+    private function getCurrentDowntimes()
+    {
+        if (isset($this->downtimes)) {
+            return $this->downtimes;
+        }
+
+        $cfg = $this->getConfiguration();
+        $preferences = $this->getUserPreferences();
+        $downtimes = Backend::getInstance($this->getRequest()->getParam('backend'))->select()
+            ->from(
+                'downtime',
+                array(
+                    'host_name',
+                    'service_description',
+                    'downtime_scheduled_start_time',
+                    'downtime_internal_downtime_id'
+                )
+            )->fetchAll();
+
+        $options = array(
+            '0' =>  'No Triggered Downtime '
+        );
+        foreach ($downtimes as $downtime) {
+            $dt = DateTimeFactory::create($downtime->downtime_scheduled_start_time);
+            $date_format = $preferences->get('app.dateFormat', $cfg->get('app.dateFormat', 'd/m/Y'));
+            $time_format = $preferences->get('app.timeFormat', $cfg->get('app.timeFormat', 'g:i A'));
+            $label = sprintf(
+                'ID %s: %s%s Starting @ %s',
+                $downtime->downtime_internal_downtime_id,
+                $downtime->host_name,
+                !empty($downtime->service_description) ? ' (' . $downtime->service_description . ')' : '',
+                $dt->format($date_format . ' ' . $time_format)
+            );
+            $options[$downtime->downtime_internal_downtime_id] = $label;
+        }
+        return $options;
+    }
+
+    /**
+     * Set the downtimes displayed by this form (used for testing)
+     *
+     * @param   array   $downtimes  list of strings
+     */
+    public function setCurrentDowntimes($downtimes)
+    {
+        $this->downtimes = $downtimes;
     }
 
     /**
@@ -108,25 +164,12 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
          *
          */
         $this->addElement(
-            'text',
+            'select',
             'triggered',
             array(
-                'label'      => t('Triggered by'),
-                'value'      => 0,
-                'required'   => true,
-                'validators' => array(
-                    array(
-                        'Digits',
-                        true
-                    ),
-                    array(
-                        'GreaterThan',
-                        true,
-                        array(
-                            'min' => -1
-                        )
-                    )
-                )
+                'label'        => t('Triggered by'),
+                'required'     => true,
+                'multiOptions' => $this->getCurrentDowntimes()
             )
         );
 
@@ -288,7 +331,7 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
     /**
      * Create Downtime from request Data
      *
-     * @return \Icinga\Protocol\Commandpipe\Downtime
+     * @return Downtime
      */
     public function getDowntime()
     {

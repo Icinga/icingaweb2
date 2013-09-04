@@ -28,8 +28,6 @@
 
 namespace Icinga\Protocol\Commandpipe;
 
-use Icinga\Application\Logger as IcingaLogger;
-
 use Icinga\Protocol\Commandpipe\Transport\Transport;
 use Icinga\Protocol\Commandpipe\Transport\LocalPipe;
 use Icinga\Protocol\Commandpipe\Transport\SecureShell;
@@ -139,26 +137,18 @@ class CommandPipe
     }
 
     /**
-     * Acknowledge a set of monitoring objects
+     * Send a command to the icinga pipe
      *
-     * $objects can be a mixed array of host and service objects
-     *
-     * @param array $objects                        An array of host and service objects
-     * @param IComment $acknowledgementOrComment    An acknowledgement or comment object to use as the comment
+     * @param \Icinga\Protocol\Commandpipe\CommandType $command
+     * @param array                                    $objects
      */
-    public function acknowledge($objects, IComment $acknowledgementOrComment)
+    public function sendCommand(CommandType $command, array $objects)
     {
-        if (is_a($acknowledgementOrComment, 'Icinga\Protocol\Commandpipe\Comment')) {
-            $acknowledgementOrComment = new Acknowledgement($acknowledgementOrComment);
-        }
-
         foreach ($objects as $object) {
             if (isset($object->service_description)) {
-                $format = $acknowledgementOrComment->getFormatString(self::TYPE_SERVICE);
-                $this->send(sprintf($format, $object->host_name, $object->service_description));
+                $this->transport->send($command->getServiceCommand($object->host_name, $object->service_description));
             } else {
-                $format = $acknowledgementOrComment->getFormatString(self::TYPE_HOST);
-                $this->send(sprintf($format, $object->host_name));
+                $this->transport->send($command->getHostCommand($object->host_name));
             }
         }
     }
@@ -245,26 +235,6 @@ class CommandPipe
                 $this->send($base . 'HOST_' . ($withChilds ? 'SVC_CHECKS' : 'CHECK') . ";$object->host_name;$time");
             }
         }
-    }
-
-    /**
-     * Add a comment to all submitted objects
-     *
-     * @param array $objects        An array of hosts and services to add a comment for
-     * @param Comment $comment      The comment object to add
-     */
-    public function addComment(array $objects, Comment $comment)
-    {
-        foreach ($objects as $object) {
-            if (isset($object->service_description)) {
-                $format = $comment->getFormatString(self::TYPE_SERVICE);
-                $this->send(sprintf($format, $object->host_name, $object->service_description));
-            } else {
-                $format = $comment->getFormatString(self::TYPE_HOST);
-                $this->send(sprintf($format, $object->host_name));
-            }
-        }
-
     }
 
     /**
