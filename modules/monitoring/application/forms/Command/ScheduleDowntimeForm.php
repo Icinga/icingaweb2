@@ -89,21 +89,25 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
         $cfg = $this->getConfiguration();
         $preferences = $this->getUserPreferences();
         $downtimes = Backend::getInstance($this->getRequest()->getParam('backend'))->select()
-            ->from('downtime', array(
-                'host_name',
-                'service_description',
-                'downtime_scheduled_start_time',
-                'downtime_internal_downtime_id',
-        ))->fetchAll();
+            ->from(
+                'downtime',
+                array(
+                    'host_name',
+                    'service_description',
+                    'downtime_scheduled_start_time',
+                    'downtime_internal_downtime_id'
+                )
+            )->fetchAll();
 
-        $options = array();
-        foreach ($downtimes as $downtime)
-        {
+        $options = array(
+            '0' =>  'No Triggered Downtime '
+        );
+        foreach ($downtimes as $downtime) {
             $dt = DateTimeFactory::create($downtime->downtime_scheduled_start_time);
             $date_format = $preferences->get('app.dateFormat', $cfg->get('app.dateFormat', 'd/m/Y'));
             $time_format = $preferences->get('app.timeFormat', $cfg->get('app.timeFormat', 'g:i A'));
             $label = sprintf(
-                'ID %s: %s%s starting @ %s',
+                'ID %s: %s%s Starting @ %s',
                 $downtime->downtime_internal_downtime_id,
                 $downtime->host_name,
                 !empty($downtime->service_description) ? ' (' . $downtime->service_description . ')' : '',
@@ -327,7 +331,7 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
     /**
      * Create Downtime from request Data
      *
-     * @return \Icinga\Protocol\Commandpipe\Downtime
+     * @return Downtime
      */
     public function getDowntime()
     {

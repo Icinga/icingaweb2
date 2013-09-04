@@ -30,6 +30,11 @@ namespace Icinga\Module\Monitoring\Command;
 
 use Icinga\Protocol\Commandpipe\Comment;
 
+/**
+ * Icinga Command for adding comments
+ *
+ * @see BaseCommand
+ */
 class AddCommentCommand extends BaseCommand
 {
     /**
@@ -62,6 +67,9 @@ class AddCommentCommand extends BaseCommand
     }
 
     /**
+     * @param  String $hostname     The name of the host to create the command for for
+     *
+     * @return String               The command string to return for the host
      * @see BaseCommand::getHostCommand()
      */
     public function getHostCommand($hostname)
@@ -70,6 +78,10 @@ class AddCommentCommand extends BaseCommand
     }
 
     /**
+     * @param  String $hostname     The name of the host to create the command for
+     * @param  String $servicename  The name of the service to create the command for
+     *
+     * @return String               The command string to return for the service
      * @see BaseCommand::getServiceCommand()
      */
     public function getServiceCommand($hostname, $servicename)

@@ -30,6 +30,9 @@ namespace Icinga\Module\Monitoring\Command;
 
 use Icinga\Protocol\Commandpipe\Comment;
 
+/**
+ * Command for acknowledging an object
+ */
 class AcknowledgeCommand extends BaseCommand
 {
     /**
@@ -147,6 +150,9 @@ class AcknowledgeCommand extends BaseCommand
     }
 
     /**
+     * @param  String $hostname     The name of the host to create the command for for
+     *
+     * @return String               The command string to return for the host
      * @see BaseCommand::getHostCommand()
      */
     public function getHostCommand($hostname)
@@ -157,6 +163,10 @@ class AcknowledgeCommand extends BaseCommand
     }
 
     /**
+     * @param  String $hostname     The name of the host to create the command for
+     * @param  String $servicename  The name of the service to create the command for
+     *
+     * @return String               The command string to return for the service
      * @see BaseCommand::getServiceCommand()
      */
     public function getServiceCommand($hostname, $servicename)
