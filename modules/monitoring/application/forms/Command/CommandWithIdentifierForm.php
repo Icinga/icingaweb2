@@ -26,7 +26,7 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Monitoring\Form\Command;
+namespace Icinga\Module\Monitoring\Form\Command;
 
 use \Zend_Form_Element_Hidden;
 

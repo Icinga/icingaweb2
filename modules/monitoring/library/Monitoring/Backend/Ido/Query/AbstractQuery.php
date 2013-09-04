@@ -1,6 +1,6 @@
 <?php
 
-namespace Monitoring\Backend\Ido\Query;
+namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
 use Icinga\Data\Db\Query;
 use Icinga\Application\Benchmark;

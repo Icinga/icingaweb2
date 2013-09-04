@@ -35,12 +35,12 @@ use \Icinga\Web\Controller\BaseConfigController;
 use \Icinga\Web\Widget\Tab;
 use \Icinga\Web\Url;
 
-use \Monitoring\Form\Config\ConfirmRemovalForm;
-use \Monitoring\Form\Config\Backend\EditBackendForm;
-use \Monitoring\Form\Config\Backend\CreateBackendForm;
+use Icinga\Module\Monitoring\Form\Config\ConfirmRemovalForm;
+use Icinga\Module\Monitoring\Form\Config\Backend\EditBackendForm;
+use Icinga\Module\Monitoring\Form\Config\Backend\CreateBackendForm;
 
-use \Monitoring\Form\Config\Instance\EditInstanceForm;
-use \Monitoring\Form\Config\Instance\CreateInstanceForm;
+use Icinga\Module\Monitoring\Form\Config\Instance\EditInstanceForm;
+use Icinga\Module\Monitoring\Form\Config\Instance\CreateInstanceForm;
 
 /**
  * Configuration controller for editing monitoring resources

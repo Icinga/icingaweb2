@@ -2,7 +2,7 @@
 
 namespace Tests\Monitoring\Backend\Statusdat;
 use Tests\Icinga\Protocol\Statusdat\ReaderMock as ReaderMock;
-use Monitoring\Backend\Statusdat\Query\ServicegroupsummaryQuery;
+use \Icinga\Module\Monitoring\Backend\Statusdat\Query\ServicegroupsummaryQuery;
 use Tests\Icinga\Protocol\Statusdat\StatusdatTestLoader;
 
 $base = dirname(__FILE__)."/../../../../..";
@@ -12,7 +12,7 @@ StatusdatTestLoader::requireLibrary();
 require_once(realpath($base."/library/Monitoring/Backend/Statusdat/Query/GroupsummaryQuery.php"));
 require_once(realpath($base."/library/Monitoring/Backend/Statusdat/Query/ServicegroupsummaryQuery.php"));
 
-class BackendMock  extends \Monitoring\Backend\AbstractBackend
+class BackendMock  extends \Icinga\Module\Monitoring\Backend\AbstractBackend
 {
     public $reader;
 

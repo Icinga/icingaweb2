@@ -26,7 +26,7 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Monitoring\Form\Command;
+namespace Icinga\Module\Monitoring\Form\Command;
 
 use \Icinga\Web\Form\Element\DateTimePicker;
 use \Icinga\Protocol\Commandpipe\Acknowledgement;

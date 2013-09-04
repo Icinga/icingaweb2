@@ -1,6 +1,6 @@
 <?php
 
-namespace Monitoring\View;
+namespace Icinga\Module\Monitoring\View;
 
 class HostgroupView extends MonitoringView
 {

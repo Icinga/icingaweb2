@@ -7,7 +7,7 @@
  * To change this template use File | Settings | File Templates.
  */
 
-namespace Monitoring\Backend\Statusdat\Query;
+namespace Icinga\Module\Monitoring\Backend\Statusdat\Query;
 
 use Icinga\Protocol\Statusdat;
 use Icinga\Exception;

@@ -27,7 +27,6 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-
 use \Icinga\Application\Benchmark;
 use \Icinga\Data\Db\Query;
 use \Icinga\File\Csv;
@@ -37,7 +36,7 @@ use \Icinga\Web\Widget\Tabextension\BasketAction;
 use \Icinga\Web\Widget\Tabextension\DashboardAction;
 use \Icinga\Web\Widget\Tabextension\OutputFormat;
 use \Icinga\Web\Widget\Tabs;
-use \Monitoring\Backend;
+use \Icinga\Module\Monitoring\Backend;
 
 class Monitoring_ListController extends ActionController
 {

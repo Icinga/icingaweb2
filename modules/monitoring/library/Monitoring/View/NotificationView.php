@@ -23,7 +23,7 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Monitoring\View;
+namespace Icinga\Module\Monitoring\View;
 
 /**
  * NotificationView

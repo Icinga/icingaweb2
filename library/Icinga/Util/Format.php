@@ -48,7 +48,9 @@ class Format
 
     public static function duration($duration)
     {
-        if (! $duration) return '-';
+        if (! $duration) {
+            return '-';
+        }
         return self::showHourMin($duration);
     }
 
@@ -67,7 +69,9 @@ class Format
 
     public static function timeSince($timestamp)
     {
-        if (! $timestamp) return '-';
+        if (! $timestamp) {
+            return '-';
+        }
         $duration = time() - $timestamp;
         $prefix = '';
         if ($duration < 0) {

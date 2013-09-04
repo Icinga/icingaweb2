@@ -1,6 +1,6 @@
 <?php
 
-namespace Monitoring\Backend\Statusdat\Criteria;
+namespace Icinga\Module\Monitoring\Backend\Statusdat\Criteria;
 
 /**
  * Constants for filter definitions.

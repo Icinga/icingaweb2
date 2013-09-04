@@ -30,9 +30,10 @@ namespace Icinga\Protocol\Statusdat;
 
 
 use Icinga\Data\DatasourceInterface;
-use Icinga\Exception as Exception;
-use Icinga\Benchmark as Benchmark;
+use Icinga\Exception;
+use Icinga\Benchmark;
 use Icinga\Protocol\Statusdat\View\MonitoringObjectList;
+
 /**
  * Class Reader
  * @package Icinga\Protocol\Statusdat
@@ -319,5 +320,4 @@ class Reader implements IReader, DatasourceInterface
     {
         return isset($this->lastState[$type]) ? array_keys($this->lastState[$type]) : null;
     }
-
 }

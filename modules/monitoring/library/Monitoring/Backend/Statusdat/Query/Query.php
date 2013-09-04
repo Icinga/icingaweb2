@@ -26,9 +26,9 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Monitoring\Backend\Statusdat\Query;
+namespace Icinga\Module\Monitoring\Backend\Statusdat\Query;
 
-use Monitoring\Backend\Statusdat\Criteria\Order;
+use \Icinga\Module\Monitoring\Backend\Statusdat\Criteria\Order;
 use Icinga\Protocol\Statusdat;
 use Icinga\Exception;
 use Icinga\Data\AbstractQuery;
@@ -48,7 +48,7 @@ abstract class Query extends AbstractQuery
     /**
      * @var string
      */
-    private $viewClass = '\Monitoring\Backend\Statusdat\DataView\StatusdatServiceView';
+    private $viewClass = '\Icinga\Module\Monitoring\Backend\Statusdat\DataView\StatusdatServiceView';
     private $baseQuery = null;
 
     public function setBaseQuery(StatusdatQuery $query)
@@ -58,7 +58,7 @@ abstract class Query extends AbstractQuery
 
     public function setResultViewClass($viewClass)
     {
-        $this->viewClass = '\Monitoring\Backend\Statusdat\DataView\\'.$viewClass;
+        $this->viewClass = '\Icinga\Module\Monitoring\Backend\Statusdat\DataView\\'.$viewClass;
     }
 
 

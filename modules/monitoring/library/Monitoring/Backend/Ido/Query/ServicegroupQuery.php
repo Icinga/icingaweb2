@@ -1,6 +1,6 @@
 <?php
 
-namespace Monitoring\Backend\Ido\Query;
+namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
 class ServicegroupQuery extends AbstractQuery
 {

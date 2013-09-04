@@ -51,7 +51,7 @@ class ObjectRemappingView implements AccessorStrategy
 
     /**
      * When implementing your own Mapper, this contains the static mapping rules.
-     * @see Monitoring\Backend\Statusdat\DataView\StatusdatServiceView for an example
+     * @see Icinga\Module\Monitoring\Backend\Statusdat\DataView\StatusdatServiceView for an example
      *
      * @var array
      */
@@ -99,8 +99,9 @@ class ObjectRemappingView implements AccessorStrategy
 
     private function applyPropertyFunction($function, $value)
     {
-        if (!isset($this->functionMap[$function]))
+        if (!isset($this->functionMap[$function])) {
             return $value;
+        }
         $fn = $this->functionMap[$function];
 
         return $this->$fn($value);

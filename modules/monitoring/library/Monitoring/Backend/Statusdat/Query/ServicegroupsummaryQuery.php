@@ -26,7 +26,7 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Monitoring\Backend\Statusdat\Query;
+namespace Icinga\Module\Monitoring\Backend\Statusdat\Query;
 
 /**
  * Class ServicegroupsummaryQuery

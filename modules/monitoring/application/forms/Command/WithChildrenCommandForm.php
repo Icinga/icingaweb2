@@ -26,7 +26,7 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Monitoring\Form\Command;
+namespace Icinga\Module\Monitoring\Form\Command;
 
 /**
  * Base class for command forms which allow to propagate the command to child objects too

@@ -5,7 +5,7 @@
  *
  * @package Monitoring
  */
-namespace Monitoring\Backend;
+namespace Icinga\Module\Monitoring\Backend;
 
 use Icinga\Protocol\Livestatus\Connection;
 

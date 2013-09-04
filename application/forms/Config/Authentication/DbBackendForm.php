@@ -127,13 +127,15 @@ class DbBackendForm extends BaseBackendForm
     {
         try {
             $name = $this->getBackendName();
-            $dbBackend = new DbUserBackend(new Zend_Config(
-                array(
-                    'backend'   =>  'db',
-                    'target'    =>  'user',
-                    'resource'  =>  $this->getValue('backend_' . $this->filterName($name) . '_resource'),
+            $dbBackend = new DbUserBackend(
+                new Zend_Config(
+                    array(
+                        'backend'   =>  'db',
+                        'target'    =>  'user',
+                        'resource'  =>  $this->getValue('backend_' . $this->filterName($name) . '_resource'),
+                    )
                 )
-            ));
+            );
             if ($dbBackend->getUserCount() < 1) {
                 $this->addErrorMessage("No users found under the specified database backend");
                 return false;
