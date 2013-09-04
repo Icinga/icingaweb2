@@ -139,41 +139,16 @@ class CommandPipe
     /**
      * Send a command to the icinga pipe
      *
-     * @param \Icinga\Protocol\Commandpipe\Command $command
-     * @param array                                $objects
+     * @param \Icinga\Protocol\Commandpipe\CommandType $command
+     * @param array                                    $objects
      */
-    public function sendCommand(Command $command, array $objects)
+    public function sendCommand(CommandType $command, array $objects)
     {
         foreach ($objects as $object) {
             if (isset($object->service_description)) {
-                $command->setService($object->service_description);
-            }
-            $command->setHost($object->host_name);
-            $this->transport->send((string) $command);
-        }
-    }
-
-    /**
-     * Acknowledge a set of monitoring objects
-     *
-     * $objects can be a mixed array of host and service objects
-     *
-     * @param array $objects                        An array of host and service objects
-     * @param IComment $acknowledgementOrComment    An acknowledgement or comment object to use as the comment
-     */
-    public function acknowledge($objects, IComment $acknowledgementOrComment)
-    {
-        if (is_a($acknowledgementOrComment, 'Icinga\Protocol\Commandpipe\Comment')) {
-            $acknowledgementOrComment = new Acknowledgement($acknowledgementOrComment);
-        }
-
-        foreach ($objects as $object) {
-            if (isset($object->service_description)) {
-                $format = $acknowledgementOrComment->getFormatString(self::TYPE_SERVICE);
-                $this->send(sprintf($format, $object->host_name, $object->service_description));
+                $this->transport->send($command->getServiceCommand($object->host_name, $object->service_description));
             } else {
-                $format = $acknowledgementOrComment->getFormatString(self::TYPE_HOST);
-                $this->send(sprintf($format, $object->host_name));
+                $this->transport->send($command->getHostCommand($object->host_name));
             }
         }
     }

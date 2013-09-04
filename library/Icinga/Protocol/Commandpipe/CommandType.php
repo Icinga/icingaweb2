@@ -31,28 +31,6 @@ namespace Icinga\Protocol\Commandpipe;
 /**
  * Interface definition for command objects processed by the CommandPipe
  */
-interface Command
+interface CommandType
 {
-    /**
-     * Set the hostname for this command
-     *
-     * @param string $hostname
-     * @return self
-     */
-    public function setHost($hostname);
-
-    /**
-     * Set the service description for this command
-     *
-     * @param string $service_description
-     * @return self
-     */
-    public function setService($service_description);
-
-    /**
-     * Return a string representation of this command
-     *
-     * @return string
-     */
-    public function __toString();
 }

@@ -28,28 +28,33 @@
 
 namespace Monitoring\Command;
 
-use \Icinga\Protocol\Commandpipe\Command;
-use \Icinga\Protocol\Commandpipe\CommandPipe;
-use \Icinga\Protocol\Commandpipe\Acknowledgement;
+use \Icinga\Protocol\Commandpipe\Comment;
 
-class AcknowledgeCommand extends MonitoringCommand implements Command
+class AcknowledgeCommand extends BaseCommand
 {
     /**
      * When this acknowledgement should expire
      *
-     * @var int
+     * @var int    The time as UNIX timestamp or -1 if it shouldn't expire
      */
     private $expireTime = -1;
 
     /**
-     * Whether notifications are going to be sent out
+     * The comment associated to this acknowledgment
+     *
+     * @var Comment
+     */
+    protected $comment;
+
+    /**
+     * Whether to set the notify flag of this acknowledgment
      *
      * @var bool
      */
     private $notify;
 
     /**
-     * Whether this acknowledgement is going to be stickied
+     * Whether this acknowledgement is of type sticky
      *
      * @var bool
      */
@@ -58,65 +63,106 @@ class AcknowledgeCommand extends MonitoringCommand implements Command
     /**
      * Set the time when this acknowledgement should expire
      *
-     * @param int $expireTime
-     * @return self
+     * @param   int     $expireTime     The time as UNIX timestamp or -1 if it shouldn't expire
+     * @return  self
      */
-    public function setExpireTime($expireTime)
+    public function setExpire($expireTime)
     {
-        $this->expireTime = $expireTime;
+        $this->expireTime = intval($expireTime);
         return $this;
     }
 
     /**
-     * Set whether notifications should be sent out
+     * Set the comment for this acknowledgement
      *
-     * @param bool $state
-     * @return self
+     * @param   Comment     $comment
+     * @return  self
+     */
+    public function setComment(Comment $comment)
+    {
+        $this->comment = $comment;
+        return $this;
+    }
+
+    /**
+     * Set whether the notify flag of this acknowledgment should be set
+     *
+     * @param   bool    $state
+     * @return  self
      */
     public function setNotify($state)
     {
-        $this->notify = $state;
+        $this->notify = (bool) $state;
         return $this;
     }
 
     /**
-     * Set whether this acknowledgement should be stickied
+     * Set whether this acknowledgement is of type sticky
      *
-     * @param bool $state
-     * @return self
+     * @param   bool    $state
+     * @return  self
      */
     public function setSticky($state)
     {
-        $this->sticky = $state;
+        $this->sticky = (bool) $state;
         return $this;
     }
 
     /**
-     * Create the acknowledgement object
+     * Initialise a new acknowledgement command object
      *
-     * @return \Icinga\Protocol\Commandpipe\Acknowledgement
+     * @param   Comment $comment    The comment to use for this acknowledgement
+     * @param   int     $expire     The expire time or -1 of not expiring
+     * @param   bool    $notify     Whether to set the notify flag
+     * @param   bool    $sticky     Whether to set the sticky flag
      */
-    public function createAcknowledgement()
+    public function __construct(Comment $comment, $expire = -1, $notify = false, $sticky = false)
     {
-        return new Acknowledgement(
-            $this->comment,
-            $this->notify,
-            $this->expireTime,
-            $this->sticky
-        );
+        $this->expireTime = $expire;
+        $this->comment = $comment;
+        $this->notify = $notify;
+        $this->sticky = $sticky;
     }
 
     /**
-     * @see Command::__toString()
+     * Return the parameters in the right order
+     *
+     * @return array
      */
-    public function __toString()
+    public function getParameters()
     {
-        if (isset($this->service_description)) {
-            $template = $this->createAcknowledgement()->getFormatString(CommandPipe::TYPE_SERVICE);
-            return sprintf($template, $this->hostname, $this->service_description);
-        } else {
-            $template = $this->createAcknowledgement()->getFormatString(CommandPipe::TYPE_HOST);
-            return sprintf($template, $this->hostname);
+        $parameters = array(
+            $this->sticky ? '2' : '0',
+            $this->notify ? '1' : '0',
+            $this->comment->persistent ? '1' : '0',
+            $this->comment->author,
+            $this->comment->comment
+        );
+
+        if ($this->expireTime > -1) {
+            array_splice($parameters, 3, 0, array($this->expireTime));
         }
+
+        return $parameters;
+    }
+
+    /**
+     * @see BaseCommand::getHostCommand()
+     */
+    public function getHostCommand($hostname)
+    {
+        $parameters = $this->getParameters();
+        return sprintf('ACKNOWLEDGE_HOST_PROBLEM%s;', $this->expireTime > -1 ? '_EXPIRE' : '')
+               . implode(';', array_merge(array($hostname), $parameters));
+    }
+
+    /**
+     * @see BaseCommand::getServiceCommand()
+     */
+    public function getServiceCommand($hostname, $servicename)
+    {
+        $parameters = $this->getParameters();
+        return sprintf('ACKNOWLEDGE_SVC_PROBLEM%s;', $this->expireTime > -1 ? '_EXPIRE' : '')
+               . implode(';', array_merge(array($hostname, $servicename), $parameters));
     }
 }

@@ -9,12 +9,12 @@ require_once(__DIR__.'/CommandPipeLoader.php');
 CommandPipeLoader::requireLibrary();
 
 use Icinga\Protocol\Commandpipe\Comment as Comment;
-use Icinga\Protocol\Commandpipe\Acknowledgement as Acknowledgement;
 use Icinga\Protocol\Commandpipe\CustomNotification;
 use Icinga\Protocol\Commandpipe\Downtime as Downtime;
 use Icinga\Protocol\Commandpipe\Commandpipe as Commandpipe;
-use \Icinga\Protocol\Commandpipe\PropertyModifier as MONFLAG;
+use Icinga\Protocol\Commandpipe\PropertyModifier as MONFLAG;
 use Icinga\Protocol\Ldap\Exception;
+use Monitoring\Command\AcknowledgeCommand;
 
 if(!defined("EXTCMD_TEST_BIN"))
     define("EXTCMD_TEST_BIN", "./bin/extcmd_test");
@@ -131,12 +131,15 @@ class CommandPipeTest extends \PHPUnit_Framework_TestCase
     {
         $pipe = $this->getLocalTestPipe();
         try {
-            $ack = new Acknowledgement(new Comment("I can","sends teh ack"));
-            $pipe->acknowledge(array(
-                (object) array(
-                    "host_name" => "hostA"
+            $ack = new AcknowledgeCommand(new Comment("I can","sends teh ack"));
+            $pipe->sendCommand(
+                $ack,
+                array(
+                    (object) array(
+                        "host_name" => "hostA"
+                    )
                 )
-            ),$ack);
+            );
             $this->assertCommandSucceeded("ACKNOWLEDGE_HOST_PROBLEM;hostA;0;0;0;I can;sends teh ack");
         } catch(Exception $e) {
             $this->cleanup();
@@ -154,28 +157,31 @@ class CommandPipeTest extends \PHPUnit_Framework_TestCase
     {
         $pipe = $this->getLocalTestPipe();
         try {
-            $ack = new Comment("I can","sends teh ack");
+            $ack = new AcknowledgeCommand(new Comment("I can","sends teh ack"));
             $pipe->getTransport()->setOpenMode("a");
-            $pipe->acknowledge(array(
-                (object) array(
-                    "host_name" => "hostA"
-                ),(object) array(
-                    "host_name" => "hostB"
-                ),(object) array(
-                    "host_name" => "hostC"
-                ),(object) array(
-                    "host_name" => "hostC",
-                    "service_description" => "svc"
+            $pipe->sendCommand(
+                $ack,
+                array(
+                    (object) array(
+                        "host_name" => "hostA"
+                    ),(object) array(
+                        "host_name" => "hostB"
+                    ),(object) array(
+                        "host_name" => "hostC"
+                    ),(object) array(
+                        "host_name" => "hostC",
+                        "service_description" => "svc"
+                    )
                 )
-            ),$ack);
+            );
 
-            $result = explode("\n",file_get_contents($this->getPipeName()));
+            $result = explode("\n", file_get_contents($this->getPipeName()));
             $this->assertCount(5, $result, "Asserting the correct number of commands being written to the command pipe");
 
-            $this->assertCommandSucceeded("ACKNOWLEDGE_HOST_PROBLEM;hostA;0;0;0;I can;sends teh ack",$result[0]);
-            $this->assertCommandSucceeded("ACKNOWLEDGE_HOST_PROBLEM;hostB;0;0;0;I can;sends teh ack",$result[1]);
-            $this->assertCommandSucceeded("ACKNOWLEDGE_HOST_PROBLEM;hostC;0;0;0;I can;sends teh ack",$result[2]);
-            $this->assertCommandSucceeded("ACKNOWLEDGE_SVC_PROBLEM;hostC;svc;0;0;0;I can;sends teh ack",$result[3]);
+            $this->assertCommandSucceeded("ACKNOWLEDGE_HOST_PROBLEM;hostA;0;0;0;I can;sends teh ack", $result[0]);
+            $this->assertCommandSucceeded("ACKNOWLEDGE_HOST_PROBLEM;hostB;0;0;0;I can;sends teh ack", $result[1]);
+            $this->assertCommandSucceeded("ACKNOWLEDGE_HOST_PROBLEM;hostC;0;0;0;I can;sends teh ack", $result[2]);
+            $this->assertCommandSucceeded("ACKNOWLEDGE_SVC_PROBLEM;hostC;svc;0;0;0;I can;sends teh ack", $result[3]);
 
         } catch(Exception $e) {
             $this->cleanup();
@@ -484,12 +490,15 @@ class CommandPipeTest extends \PHPUnit_Framework_TestCase
         }
         $pipe = $this->getSSHTestPipe();
         try {
-            $ack = new Acknowledgement(new Comment("I can","sends teh ack"));
-            $pipe->acknowledge(array(
-                (object) array(
-                    "host_name" => "hostA"
+            $ack = new AcknowledgeCommand(new Comment("I can","sends teh ack"));
+            $pipe->sendCommand(
+                $ack,
+                array(
+                    (object) array(
+                        "host_name" => "hostA"
+                    )
                 )
-            ),$ack);
+            );
             $this->assertCommandSucceeded("ACKNOWLEDGE_HOST_PROBLEM;hostA;0;0;0;I can;sends teh ack");
         } catch(Exception $e) {
             $this->cleanup();

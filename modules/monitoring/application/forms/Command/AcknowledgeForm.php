@@ -162,21 +162,15 @@ class AcknowledgeForm extends CommandForm
      */
     public function createCommand()
     {
-        $command = new AcknowledgeCommand();
-        $command->setComment(
+        return new AcknowledgeCommand(
             new Comment(
                 $this->getAuthorName(),
                 $this->getValue('comment'),
                 $this->getValue('persistent')
-            )
+            ),
+            $this->getValue('expire') ? $this->getValue('expire') : -1,
+            $this->getValue('notify'),
+            $this->getValue('sticky')
         );
-        $command->setNotify($this->getValue('notify'));
-        $command->setSticky($this->getValue('sticky'));
-
-        if ($this->getValue('expire')) {
-            $command->setExpireTime($expireTime);
-        }
-
-        return $command;
     }
 }
