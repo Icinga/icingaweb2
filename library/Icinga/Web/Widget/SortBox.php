@@ -144,18 +144,16 @@ class SortBox implements Widget
         $form->setName($this->name);
         $form->addElement(
             'select',
-            'sort_' . $this->name,
+            'sort',
             array(
-                'name'          => 'sort',
                 'label'         => 'Sort By',
                 'multiOptions'  => $this->sortFields
             )
         );
         $form->addElement(
             'select',
-            'dir_' . $this->name,
+            'dir',
             array(
-                'name'          => 'dir',
                 'multiOptions'  => array(
                     'desc'      => 'Desc',
                     'asc'       => 'Asc'
@@ -164,7 +162,7 @@ class SortBox implements Widget
             )
         );
 
-        $form->enableAutoSubmit(array('sort_' . $this->name, 'dir_'  . $this->name));
+        $form->enableAutoSubmit(array('sort', 'dir'));
         $form->addElement($this->createFallbackSubmitButton());
 
         if ($this->request) {
