@@ -35,7 +35,7 @@ use \Icinga\Web\Hook;
 use \Icinga\Web\Widget\Tabextension\DashboardAction;
 use \Icinga\Web\Widget\Tabextension\OutputFormat;
 use \Icinga\Web\Widget\Tabs;
-use \Monitoring\Backend;
+use Icinga\Module\Monitoring\Backend;
 use \Icinga\Web\Widget\SortBox;
 
 class Monitoring_ListController extends ActionController
