@@ -216,10 +216,12 @@ class Web extends ApplicationBootstrap
     }
 
     /**
-     * Registers a @see NullStore as the preference provider
+     * Registers a NullStore as the preference provider
      *
      * @param Preferences   $preferences    The preference registry to attach the NullStore to
      * @param User          $user           The user, required for API compliance
+     *
+     * @see   NullStore
      */
     private function registerFallbackPreferenceProvider($preferences, $user)
     {

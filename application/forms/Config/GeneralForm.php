@@ -203,7 +203,7 @@ class GeneralForm extends Form
                 'label'     => 'Module Folder',
                 'required'  => true,
                 'helptext'  => 'The moduleFolder directive is currently not used anywhere but '
-                    . 'configureable via the frontend and ini. With feature #4607 moduleFolder '
+                    . 'configureable via the frontend and INI. With feature #4607 moduleFolder '
                     . 'will be replaced with a configuration directive for locations of '
                     . 'installed modules',
                 'value'     => $cfg->get('moduleFolder', $this->getConfigDir() . '/config/enabledModules')
@@ -275,7 +275,7 @@ class GeneralForm extends Form
                 'required'      => true,
                 'value'         => $backend,
                 'multiOptions'  => array(
-                    'ini'   => 'File System (ini Files)',
+                    'ini'   => 'File System (INI Files)',
                     'db'    => 'Database',
                     'null'  => 'Don\'t Store Preferences'
                 )
