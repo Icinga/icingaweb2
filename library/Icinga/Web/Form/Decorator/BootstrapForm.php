@@ -30,8 +30,8 @@ namespace Icinga\Web\Form\Decorator;
 
 use Zend_Form_Decorator_Abstract;
 
- /**
- *  Decorator that styles forms in the DOM boostrap wants for it's forms
+/**
+ *  Decorator that styles forms in the DOM Bootstrap wants for it's forms
  *
  *  This component replaces the dt/dd wrapping of elements with the approach used by bootstrap.
  *

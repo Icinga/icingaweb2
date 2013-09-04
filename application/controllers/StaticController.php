@@ -137,9 +137,9 @@ class StaticController extends ActionController
     }
 
     /**
-     * Set cache header for this resspone
+     * Set cache header for this respone
      *
-     * @param integer $maxAge       The maximum age to set
+     * @param integer $maxAge The maximum age to set
      */
     private function setCacheHeader($maxAge)
     {

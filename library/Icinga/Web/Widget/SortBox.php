@@ -97,7 +97,7 @@ class SortBox implements Widget
     /**
      * Apply the parameters from the given request on this SortBox
      *
-     * @param Request $request      The request to use for populating the form
+     * @param Request $request The request to use for populating the form
      */
     public function applyRequest($request)
     {
@@ -105,10 +105,11 @@ class SortBox implements Widget
     }
 
     /**
-     * Create a submitbutton that is hidden via the @see ConditionalDecorator
-     * in order to allow sorting changes to be sumbitted in a JavaScript-less environment
+     * Create a submit button that is hidden via the ConditionalDecorator
+     * in order to allow sorting changes to be submitted in a JavaScript-less environment
      *
-     * @return Zend_Form_Element_Submit         The submit button that is hidden by default
+     * @return  Zend_Form_Element_Submit    The submit button that is hidden by default
+     * @see     ConditionalDecorator
      */
     private function createFallbackSubmitButton()
     {
@@ -130,8 +131,9 @@ class SortBox implements Widget
      * Renders this widget via the given view and returns the
      * HTML as a string
      *
-     * @param Zend_View_Abstract $view
-     * @return string
+     * @param   Zend_View_Abstract $view
+     *
+     * @return  string
      */
     public function render(Zend_View_Abstract $view)
     {
