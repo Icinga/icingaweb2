@@ -9,6 +9,7 @@ use \Icinga\Application\Icinga;
 use \Icinga\Application\Config as IcingaConfig;
 use \Icinga\Util\DateTimeFactory;
 use \Zend_Controller_Request_Http;
+use \Icinga\Web\Form\Validator\DateTimeValidator;
 
 /**
  * Helper to format date and time. Utilizes DateTimeFactory to ensure time zone awareness
@@ -60,7 +61,11 @@ class Zend_View_Helper_DateFormat extends Zend_View_Helper_Abstract
     public function format($timestamp, $format)
     {
         $dt = DateTimeFactory::create();
-        $dt->setTimestamp($timestamp);
+        if (DateTimeValidator::isUnixTimestamp($timestamp)) {
+            $dt->setTimestamp($timestamp);
+        } else {
+            return $timestamp;
+        }
         return $dt->format($format);
     }
 

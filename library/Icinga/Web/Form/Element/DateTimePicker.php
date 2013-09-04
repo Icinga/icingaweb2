@@ -28,9 +28,10 @@
 
 namespace Icinga\Web\Form\Element;
 
-use \Zend_Form_Element_Xhtml;
+use Icinga\Web\Form\Validator\DateTimeValidator;
+use \Zend_Form_Element_Text;
+use \Zend_Form_Element;
 use \Icinga\Util\DateTimeFactory;
-use \Icinga\Exception\ProgrammingError;
 
 /**
  * Datetime form element which returns the input as Unix timestamp after the input has been proven valid. Utilizes
@@ -38,7 +39,7 @@ use \Icinga\Exception\ProgrammingError;
  *
  * @see isValid()
  */
-class DateTimePicker extends Zend_Form_Element_Xhtml
+class DateTimePicker extends Zend_Form_Element_Text
 {
     /**
      * View helper to use
@@ -47,22 +48,30 @@ class DateTimePicker extends Zend_Form_Element_Xhtml
     public $helper = 'formDateTime';
 
     /**
+     * The validator used for datetime validation
+     * @var DateTimeValidator
+     */
+    private $dateValidator;
+
+    /**
      * Valid formats to check user input against
      * @var array
      */
     public $patterns;
 
     /**
-     * Check whether a variable is a Unix timestamp
+     * Create a new DateTimePicker
      *
-     * @param   mixed   $timestamp
-     * @return  bool
+     * @param array|string|\Zend_Config $spec
+     * @param null $options
+     * @see Zend_Form_Element::__construct()
      */
-    public function isUnixTimestamp($timestamp)
+    public function __construct($spec, $options = null)
     {
-        return (is_int($timestamp) || ctype_digit($timestamp))
-            && ($timestamp <= PHP_INT_MAX)
-            && ($timestamp >= ~PHP_INT_MAX);
+        parent::__construct($spec, $options);
+        $this->dateValidator = new DateTimeValidator($this->patterns);
+        $this->addValidator($this->dateValidator);
+
     }
 
     /**
@@ -77,40 +86,17 @@ class DateTimePicker extends Zend_Form_Element_Xhtml
      */
     public function isValid($value, $context = null)
     {
+        // Overwrite the internal validator to use
+
         if (!parent::isValid($value, $context)) {
             return false;
         }
-
-        if (!is_string($value) && !is_int($value)) {
-            $this->addErrorMessage(
-                _('Invalid type given. Date/time string or Unix timestamp expected')
-            );
-            return false;
+        $pattern = $this->dateValidator->getValidPattern();
+        if (!$pattern) {
+            $this->setValue($value);
+            return true;
         }
-
-        if ($this->isUnixTimestamp($value)) {
-            $dt = DateTimeFactory::create();
-            $dt->setTimestamp($value);
-        } else {
-            if (!isset($this->patterns)) {
-                throw new ProgrammingError('Cannot parse datetime string without any pattern');
-            }
-
-            $match_found = false;
-            foreach ($this->patterns as $pattern) {
-                $dt = DateTimeFactory::parse($value, $pattern);
-                if ($dt !== false && $dt->format($pattern) === $value) {
-                    $match_found = true;
-                    break;
-                }
-            }
-            if (!$match_found) {
-                return false;
-            }
-        }
-
-        $this->setValue($dt->getTimestamp());
-
+        $this->setValue(DateTimeFactory::parse($value, $pattern)->getTimestamp());
         return true;
     }
 }
