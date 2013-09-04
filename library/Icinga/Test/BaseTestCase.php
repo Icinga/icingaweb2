@@ -362,6 +362,7 @@ namespace Icinga\Test {
 
             require_once self::$libDir . '/Web/Form/Decorator/ConditionalHidden.php';
             require_once self::$libDir . '/Web/Form/Decorator/HelpText.php';
+            require_once self::$libDir . '/Web/Form/Decorator/BootstrapForm.php';
 
             require_once self::$libDir . '/Web/Form/Validator/DateFormatValidator.php';
             require_once self::$libDir . '/Web/Form/Validator/TimeFormatValidator.php';
