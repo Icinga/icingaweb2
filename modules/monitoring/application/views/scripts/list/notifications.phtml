@@ -26,10 +26,17 @@ echo $this->paginationControl($notifications, null, null, array('preserve' => $t
   <?php foreach ($notifications as $notification): ?>
     <tr>
       <td>
-        <?= $notification->host_name ?>
+        <a href="<?= $this->href('monitoring/show/host', array('host' => $notification->host_name)); ?>">
+          <?= $notification->host_name ?>
+        </a>
       </td>
       <td>
-        <?= empty($notification->service_description) ? '' : $notification->service_description; ?>
+        <a href="<?= $this->href('monitoring/show/host', array(
+                          'host'    =>  $notification->host_name,
+                          'service' =>  $notification->service_description
+                          )
+                      ); ?>">
+          <?= empty($notification->service_description) ? '' : $notification->service_description; ?>
       </td>
       <td><?= $formatter->getNotificationType($notification); ?>
       </td>

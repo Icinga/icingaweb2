@@ -61,7 +61,7 @@ class Monitoring_ShowController extends ActionController
         // TODO: Do not allow wildcards in names!
         if ($host !== null) {
             // TODO: $this->assertPermission('host/read', $host);
-            if ($this->action_name !== 'host' && $service !== null && $service !== '*') {
+            if ($this->getRequest()->getActionName() !== 'host' && $service !== null && $service !== '*') {
                 // TODO: $this->assertPermission('service/read', $service);
                 $object = Service::fetch($this->backend, $host, $service);
             } else {

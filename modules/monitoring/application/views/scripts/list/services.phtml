@@ -87,8 +87,15 @@ $trimArea = $this->getHelper('Trim');
           <i>{{COMMENT_ICON}}</i>
         </a>
         <?php endif; ?>
-
-        <b> <?= $service->service_display_name; ?></b>
+        <a href="<?= $this->href(
+                          'monitoring/show/service',
+                          array(
+                              'host' => $service->host_name,
+                              'service' => $service->service_description
+                          )
+                      ); ?>">
+          <b> <?= $service->service_display_name; ?></b>
+        </a>
         <br/>
 
         <?php if ($service->service_action_url != ""): ?>
@@ -102,7 +109,14 @@ $trimArea = $this->getHelper('Trim');
       </td>
 
       <td title="<?= $viewHelper->getStateTitle($service, 'host'); ?>">
-        <?= $service->host_name; ?>
+        <a href="<?= $this->href(
+                          'monitoring/show/host',
+                          array(
+                              'host' => $service->host_name,
+                          )
+                      ); ?>">
+          <?= $service->host_name; ?>
+        </a>
 
         <div>
           (<?= ucfirst($viewHelper->monitoringState($service, 'host')); ?>)
