@@ -31,7 +31,7 @@ namespace Icinga\Module\Monitoring\Form\Command;
 use \Icinga\Web\Form\Element\DateTimePicker;
 use \Icinga\Protocol\Commandpipe\Comment;
 use \Icinga\Util\DateTimeFactory;
-use \Monitoring\Command\AcknowledgeCommand;
+use \Icinga\Module\Monitoring\Command\AcknowledgeCommand;
 
 /**
  * Form for problem acknowledgements

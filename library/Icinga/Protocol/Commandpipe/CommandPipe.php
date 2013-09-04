@@ -238,26 +238,6 @@ class CommandPipe
     }
 
     /**
-     * Add a comment to all submitted objects
-     *
-     * @param array $objects        An array of hosts and services to add a comment for
-     * @param Comment $comment      The comment object to add
-     */
-    public function addComment(array $objects, Comment $comment)
-    {
-        foreach ($objects as $object) {
-            if (isset($object->service_description)) {
-                $format = $comment->getFormatString(self::TYPE_SERVICE);
-                $this->send(sprintf($format, $object->host_name, $object->service_description));
-            } else {
-                $format = $comment->getFormatString(self::TYPE_HOST);
-                $this->send(sprintf($format, $object->host_name));
-            }
-        }
-
-    }
-
-    /**
      * Removes the submitted comments
      *
      * @param array $objectsOrComments      An array of hosts and services (to remove all their comments)

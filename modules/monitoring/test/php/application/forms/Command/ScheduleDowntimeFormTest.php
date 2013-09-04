@@ -42,13 +42,13 @@ require_once BaseTestCase::$libDir . '/Util/ConfigAwareFactory.php';
 require_once BaseTestCase::$moduleDir . '/monitoring/application/forms/Command/ScheduleDowntimeForm.php';
 // @codingStandardsIgnoreEnd
 
-use \DateTimeZone;
-use \Icinga\Util\DateTimeFactory;
-use \Monitoring\Form\Command\ScheduleDowntimeForm; // Used by constant FORM_CLASS
+use DateTimeZone;
+use Icinga\Util\DateTimeFactory;
+use Icinga\Module\Monitoring\Form\Command\ScheduleDowntimeForm; // Used by constant FORM_CLASS
 
 class ScheduleDowntimeFormTest extends BaseTestCase
 {
-    const FORM_CLASS = 'Monitoring\Form\Command\ScheduleDowntimeForm';
+    const FORM_CLASS = 'Icinga\Module\Monitoring\Form\Command\ScheduleDowntimeForm';
 
     /**
      * Set up the default time zone

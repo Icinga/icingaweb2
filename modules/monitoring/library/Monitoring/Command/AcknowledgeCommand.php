@@ -26,9 +26,9 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Monitoring\Command;
+namespace Icinga\Module\Monitoring\Command;
 
-use \Icinga\Protocol\Commandpipe\Comment;
+use Icinga\Protocol\Commandpipe\Comment;
 
 class AcknowledgeCommand extends BaseCommand
 {
@@ -44,7 +44,7 @@ class AcknowledgeCommand extends BaseCommand
      *
      * @var Comment
      */
-    protected $comment;
+    private $comment;
 
     /**
      * Whether to set the notify flag of this acknowledgment
@@ -59,6 +59,22 @@ class AcknowledgeCommand extends BaseCommand
      * @var bool
      */
     private $sticky;
+
+    /**
+     * Initialise a new acknowledgement command object
+     *
+     * @param   Comment $comment    The comment to use for this acknowledgement
+     * @param   int     $expire     The expire time or -1 of not expiring
+     * @param   bool    $notify     Whether to set the notify flag
+     * @param   bool    $sticky     Whether to set the sticky flag
+     */
+    public function __construct(Comment $comment, $expire = -1, $notify = false, $sticky = false)
+    {
+        $this->expireTime = $expire;
+        $this->comment = $comment;
+        $this->notify = $notify;
+        $this->sticky = $sticky;
+    }
 
     /**
      * Set the time when this acknowledgement should expire
@@ -109,34 +125,18 @@ class AcknowledgeCommand extends BaseCommand
     }
 
     /**
-     * Initialise a new acknowledgement command object
-     *
-     * @param   Comment $comment    The comment to use for this acknowledgement
-     * @param   int     $expire     The expire time or -1 of not expiring
-     * @param   bool    $notify     Whether to set the notify flag
-     * @param   bool    $sticky     Whether to set the sticky flag
-     */
-    public function __construct(Comment $comment, $expire = -1, $notify = false, $sticky = false)
-    {
-        $this->expireTime = $expire;
-        $this->comment = $comment;
-        $this->notify = $notify;
-        $this->sticky = $sticky;
-    }
-
-    /**
-     * Return the parameters in the right order
+     * Return this command's parameters properly arranged in an array
      *
      * @return array
      */
     public function getParameters()
     {
-        $parameters = array(
-            $this->sticky ? '2' : '0',
-            $this->notify ? '1' : '0',
-            $this->comment->persistent ? '1' : '0',
-            $this->comment->author,
-            $this->comment->comment
+        $parameters = array_merge(
+            array(
+                $this->sticky ? '2' : '0',
+                $this->notify ? '1' : '0'
+            ),
+            $this->comment->getParameters()
         );
 
         if ($this->expireTime > -1) {

@@ -148,7 +148,7 @@ class Downtime
             . $this->trigger_id  . ';'
             . $this->duration . ';'
             . $this->comment->author . ';'
-            . $this->comment->comment;
+            . $this->comment->content;
     }
 
     /**

@@ -8,13 +8,15 @@ namespace Tests\Icinga\Protocol\Commandpipe;
 require_once(__DIR__.'/CommandPipeLoader.php');
 CommandPipeLoader::requireLibrary();
 
-use Icinga\Protocol\Commandpipe\Comment as Comment;
+use Zend_Config;
+use Icinga\Protocol\Commandpipe\Comment;
 use Icinga\Protocol\Commandpipe\CustomNotification;
 use Icinga\Protocol\Commandpipe\Downtime as Downtime;
 use Icinga\Protocol\Commandpipe\Commandpipe as Commandpipe;
 use Icinga\Protocol\Commandpipe\PropertyModifier as MONFLAG;
 use Icinga\Protocol\Ldap\Exception;
-use Monitoring\Command\AcknowledgeCommand;
+use Icinga\Module\Monitoring\Command\AcknowledgeCommand;
+use Icinga\Module\Monitoring\Command\AddCommentCommand;
 
 if(!defined("EXTCMD_TEST_BIN"))
     define("EXTCMD_TEST_BIN", "./bin/extcmd_test");
@@ -50,14 +52,14 @@ class CommandPipeTest extends \PHPUnit_Framework_TestCase
         $this->cleanup();
         touch($tmpPipe);
 
-        $cfg = new \Zend_Config(array(
-            "path" => $tmpPipe,
-            "name" => "test"
-        ));
-        $comment = new Comment("Autor","Comment");
-        $pipe = new Commandpipe($cfg);
+        $cfg = new Zend_Config(
+            array(
+                "path" => $tmpPipe,
+                "name" => "test"
+            )
+        );
 
-        return $pipe;
+        return new Commandpipe($cfg);
     }
 
     /**
@@ -71,18 +73,18 @@ class CommandPipeTest extends \PHPUnit_Framework_TestCase
         $this->cleanup();
         touch($tmpPipe);
 
-        $cfg = new \Zend_Config(array(
-            "path" => $tmpPipe,
-            "user"  => "vagrant",
-            "password" => "vagrant",
-            "host" => 'localhost',
-            "port"  => 22,
-            "name" => "test"
-        ));
-        $comment = new Comment("Autor","Comment");
-        $pipe = new Commandpipe($cfg);
+        $cfg = new Zend_Config(
+            array(
+                "path"      => $tmpPipe,
+                "user"      => "vagrant",
+                "password"  => "vagrant",
+                "host"      => 'localhost',
+                "port"      => 22,
+                "name"      => "test"
+            )
+        );
 
-        return $pipe;
+        return new Commandpipe($cfg);
     }
 
     /**
@@ -131,7 +133,7 @@ class CommandPipeTest extends \PHPUnit_Framework_TestCase
     {
         $pipe = $this->getLocalTestPipe();
         try {
-            $ack = new AcknowledgeCommand(new Comment("I can","sends teh ack"));
+            $ack = new AcknowledgeCommand(new Comment("I can", "sends teh ack"));
             $pipe->sendCommand(
                 $ack,
                 array(
@@ -157,7 +159,7 @@ class CommandPipeTest extends \PHPUnit_Framework_TestCase
     {
         $pipe = $this->getLocalTestPipe();
         try {
-            $ack = new AcknowledgeCommand(new Comment("I can","sends teh ack"));
+            $ack = new AcknowledgeCommand(new Comment("I can", "sends teh ack"));
             $pipe->getTransport()->setOpenMode("a");
             $pipe->sendCommand(
                 $ack,
@@ -193,14 +195,24 @@ class CommandPipeTest extends \PHPUnit_Framework_TestCase
     /**
      * Test whether a single host comment is correctly serialized and send to the command pipe
      *
-     * @throws \Exception|Exception
+     * @throws Exception
      */
     public function testAddHostComment()
     {
         $pipe = $this->getLocalTestPipe();
         try {
-            $pipe->addComment(array((object) array("host_name" => "hostA")),
-                new Comment("Autor","Comment")
+            $pipe->sendCommand(
+                new AddCommentCommand(
+                    new Comment(
+                        "Autor",
+                        "Comment"
+                    )
+                ),
+                array(
+                    (object) array(
+                        "host_name" => "hostA"
+                    )
+                )
             );
             $this->assertCommandSucceeded("ADD_HOST_COMMENT;hostA;0;Autor;Comment");
         } catch(Exception $e) {
@@ -364,7 +376,7 @@ class CommandPipeTest extends \PHPUnit_Framework_TestCase
     {
         $pipe = $this->getLocalTestPipe();
         try {
-            $downtime = new Downtime(25,26,new Comment("me","test"));
+            $downtime = new Downtime(25, 26, new Comment("me", "test"));
             $pipe->scheduleDowntime(array(
                 (object) array(
                     "host_name" => "Testhost"
@@ -490,7 +502,7 @@ class CommandPipeTest extends \PHPUnit_Framework_TestCase
         }
         $pipe = $this->getSSHTestPipe();
         try {
-            $ack = new AcknowledgeCommand(new Comment("I can","sends teh ack"));
+            $ack = new AcknowledgeCommand(new Comment("I can", "sends teh ack"));
             $pipe->sendCommand(
                 $ack,
                 array(

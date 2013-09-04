@@ -35,7 +35,7 @@ use \Icinga\Web\Form\Element\DateTimePicker;
 use \Icinga\Protocol\Commandpipe\Downtime;
 use \Icinga\Protocol\Commandpipe\Comment;
 use \Icinga\Util\DateTimeFactory;
-use \Monitoring\Backend;
+use \Icinga\Module\Monitoring\Backend;
 
 /**
  * Form for scheduling downtimes

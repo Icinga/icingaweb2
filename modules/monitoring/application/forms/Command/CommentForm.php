@@ -28,7 +28,8 @@
 
 namespace Icinga\Module\Monitoring\Form\Command;
 
-use \Icinga\Protocol\Commandpipe\Comment;
+use Icinga\Protocol\Commandpipe\Comment;
+use Icinga\Module\Monitoring\Command\AddCommentCommand;
 
 /**
  * Form for adding comment commands
@@ -40,6 +41,8 @@ class CommentForm extends CommandForm
      */
     protected function create()
     {
+        $this->setName('form_CommentForm');
+
         $this->addNote(t('This command is used to add a comment to hosts or services.'));
 
         $this->addElement($this->createAuthorField());
@@ -78,12 +81,18 @@ class CommentForm extends CommandForm
     }
 
     /**
-     * Create comment from request data
+     * Create the command object to add comments
      *
-     * @return \Icinga\Protocol\Commandpipe\Comment
+     * @return AddCommentCommand
      */
-    public function getComment()
+    public function createCommand()
     {
-        return new Comment($this->getAuthorName(), $this->getValue('comment'), $this->getValue('persistent'));
+        return new AddCommentCommand(
+            new Comment(
+                $this->getAuthorName(),
+                $this->getValue('comment'),
+                $this->getValue('persistent')
+            )
+        );
     }
 }

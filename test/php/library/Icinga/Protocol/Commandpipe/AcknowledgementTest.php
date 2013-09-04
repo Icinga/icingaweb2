@@ -3,9 +3,8 @@
 namespace Tests\Icinga\Protocol\Commandpipe;
 
 use Icinga\Protocol\Commandpipe\Comment;
-use Monitoring\Command\AcknowledgeCommand;
+use Icinga\Module\Monitoring\Command\AcknowledgeCommand;
 
-require_once("../../library/Icinga/Protocol/Commandpipe/IComment.php");
 require_once("../../library/Icinga/Protocol/Commandpipe/Comment.php");
 require_once("../../library/Icinga/Protocol/Commandpipe/CommandType.php");
 require_once("../../library/Icinga/Protocol/Commandpipe/CommandPipe.php");
@@ -25,7 +24,7 @@ class AcknowledgementTest extends \PHPUnit_Framework_TestCase
 
     public function testAcknowledgeServiceMessage()
     {
-        $ack = new AcknowledgeCommand(new Comment("author","commentdata"));
+        $ack = new AcknowledgeCommand(new Comment("author", "commentdata"));
         $this->assertEquals("ACKNOWLEDGE_SVC_PROBLEM;foo;bar;0;0;0;author;commentdata", $ack->getServiceCommand('foo', 'bar'));
 
         $ack->setExpire(1000);

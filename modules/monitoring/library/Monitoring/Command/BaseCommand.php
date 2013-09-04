@@ -26,7 +26,7 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Monitoring\Command;
+namespace Icinga\Module\Monitoring\Command;
 
 use Icinga\Exception\NotImplementedError;
 use Icinga\Protocol\Commandpipe\CommandType;
