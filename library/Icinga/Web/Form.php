@@ -25,6 +25,7 @@
 
 namespace Icinga\Web;
 
+
 use \Zend_Controller_Request_Abstract;
 use \Zend_Form;
 use \Zend_Config;
@@ -34,6 +35,7 @@ use \Zend_View_Interface;
 use \Icinga\Web\Form\Element\Note;
 use \Icinga\Exception\ProgrammingError;
 use \Icinga\Web\Form\Decorator\HelpText;
+use \Icinga\Web\Form\Decorator\BootstrapForm;
 use \Icinga\Web\Form\InvalidCSRFTokenException;
 use \Icinga\Application\Config as IcingaConfig;
 
@@ -121,6 +123,13 @@ class Form extends Zend_Form
      * @var int
      */
     private $last_note_id = 0;
+
+    /**
+     * Decorator that replaces the DtDd Zend-Form default
+     *
+     * @var Form\Decorator\BootstrapFormDecorator
+     */
+    private $formDecorator;
 
     /**
      * Getter for the session ID
@@ -553,5 +562,53 @@ class Form extends Zend_Form
     {
         list ($seed, $token) = $this->generateCsrfToken($this->getSessionId());
         return sprintf('%s|%s', $seed, $token);
+    }
+
+    /**
+     * Add a new element
+     *
+     * Additionally, all DtDd tags will be removed and the Bootstrap compatible
+     * BootstrapForm decorator will be added to the elements
+     *
+     *
+     * @param   string|Zend_Form_Element    $element    String element type, or an object of type Zend_Form_Element
+     * @param   string                      $name       The name of the element to add if $element is a string
+     * @param   array                       $options    The settings for the element if $element is a string
+     *
+     * @return  Form
+     * @see     Zend_Form::addElement()
+     */
+    public function addElement($element, $name = null, $options = null)
+    {
+        parent::addElement($element, $name, $options);
+        $el = $name ? $this->getElement($name) : $element;
+        if ($el) {
+            $el->removeDecorator('HtmlTag');
+            $el->removeDecorator('Label');
+            $el->removeDecorator('DtDdWrapper');
+            $el->addDecorator(new BootstrapForm());
+            $el->setAttrib('class', $el->getAttrib('class') . ' form-control input-sm');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Load the default decorators
+     *
+     * @return Zend_Form
+     */
+    public function loadDefaultDecorators()
+    {
+        if ($this->loadDefaultDecoratorsIsDisabled()) {
+            return $this;
+        }
+
+        $decorators = $this->getDecorators();
+        if (empty($decorators)) {
+            $this->addDecorator('FormElements')
+                 ->addDecorator('Form');
+        }
+        return $this;
     }
 }

@@ -4,31 +4,7 @@
   $formatter = $this->getHelper('MonitoringProperties');
 ?>
 
-<form method="get" action="<?=
-  $this->href(
-    'monitoring/list/notifications',
-    $this->notifications->getAppliedFilter()->toParams()
-  );
-?>">
-  <label>Sort By</label> <?=
-    $this->formSelect(
-        'sort',
-        $this->sort,
-        array(
-          'class' => 'autosubmit'
-        ),
-        array(
-          'notification_start_time' => 'Time'
-        )
-    );
-  ?>
-  <noscript>
-    <button class="btn btn-small btn-default">
-      {{REFRESH_ICON}}
-    </button>
-  </noscript>
-</form>
-
+<?= $this->sortControl->render($this); ?>
 <?php
 $notifications = $this->notifications->paginate();
 echo $this->paginationControl($notifications, null, null, array('preserve' => $this->preserve));
@@ -50,10 +26,17 @@ echo $this->paginationControl($notifications, null, null, array('preserve' => $t
   <?php foreach ($notifications as $notification): ?>
     <tr>
       <td>
-        <?= $notification->host_name ?>
+        <a href="<?= $this->href('monitoring/show/host', array('host' => $notification->host_name)); ?>">
+          <?= $notification->host_name ?>
+        </a>
       </td>
       <td>
-        <?= empty($notification->service_description) ? '' : $notification->service_description; ?>
+        <a href="<?= $this->href('monitoring/show/host', array(
+                          'host'    =>  $notification->host_name,
+                          'service' =>  $notification->service_description
+                          )
+                      ); ?>">
+          <?= empty($notification->service_description) ? '' : $notification->service_description; ?>
       </td>
       <td><?= $formatter->getNotificationType($notification); ?>
       </td>

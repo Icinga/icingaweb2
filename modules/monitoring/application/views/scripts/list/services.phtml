@@ -6,41 +6,13 @@ $viewHelper = $this->getHelper('MonitoringState');
 $trimArea = $this->getHelper('Trim');
 ?>
 
-<?php if (empty($services)): ?>
-<div>
-  Sorry, no services found for this search
-</div>
-<?php return; endif ?>
-
-<form method="get" action="<?= $this->href('monitoring/list/services', $this->services->getAppliedFilter()->toParams()); ?>">
-  <label>Sort By</label>
-  <?= $this->formSelect(
-          'sort',
-          $this->sort,
-          array('class' => 'autosubmit'),
-          array(
-            'service_severity' => 'Severity',
-            'service_last_state_change' => 'Last state change',
-            'service_last_time_unknown' => 'Last UNKNOWN',
-            'service_last_time_critical' => 'Last CRITICAL',
-            'service_last_time_warning' => 'Last WARNING',
-            'service_last_time_ok' => 'Last OK',
-            'service_description' => 'Service',
-          )
-      ); ?>
-  <noscript>
-      <button class="btn btn-small btn-default">
-        <i>ICON REFRESH</i>
-      </button>
-  </noscript>
-</form>
-
+<?=  $this->sortControl->render($this); ?>
 <?=  $this->paginationControl($paginator, null, null, array('preserve' => $this->preserve)) ?>
 
 <table class="table table-condensed">
   <thead>
     <tr>
-      <th colspan="2">Status</th>
+      <th colspan="3">Status</th>
       <th>Service</th>
       <th>Host</th>
       <th>Output</th>
@@ -115,8 +87,15 @@ $trimArea = $this->getHelper('Trim');
           <i>{{COMMENT_ICON}}</i>
         </a>
         <?php endif; ?>
-
-        <b> <?= $service->service_display_name; ?></b>
+        <a href="<?= $this->href(
+                          'monitoring/show/service',
+                          array(
+                              'host' => $service->host_name,
+                              'service' => $service->service_description
+                          )
+                      ); ?>">
+          <b> <?= $service->service_display_name; ?></b>
+        </a>
         <br/>
 
         <?php if ($service->service_action_url != ""): ?>
@@ -130,7 +109,14 @@ $trimArea = $this->getHelper('Trim');
       </td>
 
       <td title="<?= $viewHelper->getStateTitle($service, 'host'); ?>">
-        <?= $service->host_name; ?>
+        <a href="<?= $this->href(
+                          'monitoring/show/host',
+                          array(
+                              'host' => $service->host_name,
+                          )
+                      ); ?>">
+          <?= $service->host_name; ?>
+        </a>
 
         <div>
           (<?= ucfirst($viewHelper->monitoringState($service, 'host')); ?>)

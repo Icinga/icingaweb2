@@ -65,7 +65,7 @@ class GeneralFormTest extends BaseTestCase
                 if ($child->hasAttributes() === false) {
                     continue;
                 }
-                if (strpos($child->attributes->item(0)->value, $value) !== false) {
+                if (strpos($child->attributes->getNamedItem('id')->value, $value . '-element') !== false) {
                     return true;
                 }
             }

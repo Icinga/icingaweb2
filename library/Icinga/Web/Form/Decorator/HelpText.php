@@ -46,13 +46,15 @@ class HelpText extends Zend_Form_Decorator_Abstract
     public function render($content = '')
     {
         $attributes = $this->getElement()->getAttribs();
-
-        if (isset($attributes['helptext'])) {
-            $content = '<div>'
-                . $content
-                . '<span class="helptext">'
+        $visible = true;
+        if (isset($attributes['condition'])) {
+            $visible = $attributes['condition'] == '1';
+        }
+        if (isset($attributes['helptext']) && $visible) {
+            $content =  $content
+                . '<p class="help-block">'
                 . $attributes['helptext']
-                . '</span></div><br/>';
+                . '</p>';
         }
         return $content;
     }

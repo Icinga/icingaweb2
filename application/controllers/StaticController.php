@@ -30,6 +30,7 @@
 use \Zend_Controller_Action_Exception as ActionException;
 use \Icinga\Web\Controller\ActionController;
 use \Icinga\Application\Icinga;
+use \Icinga\Application\Config as IcingaConfig;
 use \Icinga\Application\Logger;
 
 class StaticController extends ActionController
@@ -72,12 +73,7 @@ class StaticController extends ActionController
         } else {
             $extension = 'fixme';
         }
-        $hash = md5_file($filePath);
-        if ($hash === $this->getRequest()->getHeader('If-None-Match')) {
-            $this->getResponse()->setHttpResponseCode(304);
-            return;
-        }
-        header('ETag: ' . $hash);
+
         header('Content-Type: image/' . $extension);
         header('Cache-Control: max-age=3600');
         header('Last-Modified: ' . gmdate(
@@ -119,11 +115,15 @@ class StaticController extends ActionController
             echo '/** Module has no js files **/';
             return;
         }
-        $hash = md5_file($filePath);
         $response = $this->getResponse();
-        $response->setHeader('ETag', $hash);
-        $response->setHeader('Content-Type', 'application/javascript');
-        $response->setHeader('Cache-Control', 'max-age=3600', true);
+        $response->setHeader('Content-Type', 'text/javascript');
+        if (!IcingaConfig::app()->global->get('environment') == 'development') {
+            $this->setCacheHeader(3600);
+        } else {
+            $response->setHeader('Pragma', 'no-cache', true);
+            $response->setHeader('Cache-Control', 'max-age=-3600', true);
+
+        }
         $response->setHeader(
             'Last-Modified',
             gmdate(
@@ -132,15 +132,28 @@ class StaticController extends ActionController
             ) . ' GMT'
         );
 
-        $hash = md5_file($filePath);
-
-        if ($hash === $this->getRequest()->getHeader('If-None-Match')) {
-            $response->setHttpResponseCode(304);
-            return;
-        } else {
-            readfile($filePath);
-        }
+        readfile($filePath);
         return;
+    }
+
+    /**
+     * Set cache header for this respone
+     *
+     * @param integer $maxAge The maximum age to set
+     */
+    private function setCacheHeader($maxAge)
+    {
+        $response = $this->getResponse();
+        $response->setHeader('Cache-Control', 'max-age=3600', true);
+        $response->setHeader('Pragma', 'cache', true);
+        $response->setHeader(
+            'Expires',
+            gmdate(
+                'D, d M Y H:i:s',
+                time()+3600
+            ) . ' GMT',
+            true
+        );
     }
 }
 // @codingStandardsIgnoreEnd
