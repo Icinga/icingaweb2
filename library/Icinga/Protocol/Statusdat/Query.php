@@ -53,7 +53,6 @@ class Query extends AbstractQuery
         "servicecomments" => array("servicecomment")
     );
 
-
     /**
      * @var IReader|null
      */
@@ -160,8 +159,6 @@ class Query extends AbstractQuery
     {
         return $this->offset;
     }
-
-
 
     /**
      * @param $key

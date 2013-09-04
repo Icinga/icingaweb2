@@ -310,5 +310,4 @@ class DbUserBackendTest extends BaseTestCase
         $this->assertGreaterThan(0, $backend->getUserCount());
     }
 
-
 }

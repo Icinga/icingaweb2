@@ -223,7 +223,6 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
         );
         $this->enableAutoSubmit(array('type'));
 
-
         if ($this->getRequest()->getPost('type') === self::TYPE_FLEXIBLE) {
             $hoursText = new Zend_Form_Element_Text('hours');
             $hoursText->setLabel(t('Flexible Duration'));

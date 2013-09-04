@@ -12,7 +12,6 @@ require_once('../../library/Icinga/Web/Form/InvalidCSRFTokenException.php');
 use Icinga\Web\Form;
 use \Zend_Test_PHPUnit_ControllerTestCase;
 
-
 /**
  * Dummy extension class as Icinga\Web\Form is an abstract one
  */
@@ -23,7 +22,6 @@ class TestForm extends Form
         // pass
     }
 }
-
 
 /**
  * Tests for the Icinga\Web\Form class (Base class for all other forms)

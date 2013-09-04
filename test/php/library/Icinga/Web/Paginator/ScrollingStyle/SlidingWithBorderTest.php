@@ -7,7 +7,6 @@ use Icinga\Protocol\Statusdat\Reader;
 use Icinga\Web\Paginator\Adapter\QueryAdapter;
 use Tests\Icinga\Protocol\Statusdat\StatusdatTestLoader;
 
-
 require_once 'Zend/Paginator/Adapter/Interface.php';
 require_once 'Zend/Paginator/ScrollingStyle/Interface.php';
 require_once 'Zend/Paginator.php';
@@ -68,7 +67,6 @@ class TestPaginatorAdapter implements \Zend_Paginator_Adapter_Interface
     {
         return count($this->items);
     }
-
 
 }
 

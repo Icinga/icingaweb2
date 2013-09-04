@@ -132,7 +132,6 @@ class GeneralForm extends Form
         $phpUrl = '<a href="http://php.net/manual/en/function.date.php" target="_new">'
             . 'the official PHP documentation</a>';
 
-
         $this->addElement(
             'checkbox',
             'default_date_format',

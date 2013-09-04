@@ -78,7 +78,6 @@ class BootstrapForm extends Zend_Form_Decorator_Abstract
         return $label;
     }
 
-
     /**
      * Render this element
      *

@@ -101,7 +101,6 @@ class LoggerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('Testmessage '.json_encode(array('test1', 'test2')), $message);
     }
 
-
     public function testLoggingOutput()
     {
         $cfg1 = new \Zend_Config(

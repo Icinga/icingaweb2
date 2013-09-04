@@ -80,7 +80,6 @@ class ExpressionTest extends \PHPUnit_Framework_TestCase
     public function testNestedComparison()
     {
 
-
         $testArray = array(
             (object)array(
                 "expression" => "atest",
@@ -122,7 +121,6 @@ class ExpressionTest extends \PHPUnit_Framework_TestCase
 
         $result = $expression->filter($testArray);
         $this->assertEquals(1, count($result));
-
 
     }
 

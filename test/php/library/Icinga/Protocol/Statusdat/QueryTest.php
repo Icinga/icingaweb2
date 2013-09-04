@@ -5,7 +5,6 @@ require_once("../../library/Icinga/Data/AbstractQuery.php");
 require_once("../../library/Icinga/Protocol/Statusdat/Query.php");
 require_once(dirname(__FILE__)."/ReaderMock.php");
 
-
 use Icinga\Protocol\Statusdat as Statusdat;
 
 /**
@@ -90,7 +89,6 @@ class QueryTest extends \PHPUnit_Framework_TestCase
             $this->assertEquals(2,$sstatus->count);
             $this->assertGreaterThanOrEqual($lastIdx,$sstatus->columns->numeric_val);
             $lastIdx = $sstatus->columns->numeric_val;
-
 
         }
 

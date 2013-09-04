@@ -179,7 +179,6 @@ namespace Icinga\Test {
             $initialized = true;
         }
 
-
         /**
          * Create Zend_Config for database configuration
          *

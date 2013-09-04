@@ -28,7 +28,6 @@
 
 namespace Icinga\Protocol\Statusdat;
 
-
 use Icinga\Data\DatasourceInterface;
 use Icinga\Exception;
 use Icinga\Benchmark;
@@ -134,7 +133,6 @@ class Reader implements IReader, DatasourceInterface
             );
         }
 
-
         $backendOptions = array(
             'cache_dir' => $cachePath
         );
@@ -173,7 +171,6 @@ class Reader implements IReader, DatasourceInterface
             $this->newState = true;
             return false;
         }
-
 
         return true;
     }

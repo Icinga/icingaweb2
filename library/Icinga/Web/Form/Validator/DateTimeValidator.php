@@ -26,7 +26,6 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-
 namespace Icinga\Web\Form\Validator;
 
 use \Icinga\Util\DateTimeFactory;
@@ -100,7 +99,6 @@ class DateTimeValidator extends Zend_Validate_Abstract
     {
         return '"' . join('","', $this->patterns) . '"';
     }
-
 
     /**
      * Validate the input value and set the value of @see validPattern if the input machtes a pattern

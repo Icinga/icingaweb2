@@ -12,7 +12,6 @@ namespace Icinga\Module\Monitoring\Backend\Statusdat\Query;
 use Icinga\Protocol\Statusdat;
 use Icinga\Exception;
 
-
 class StatusQuery extends Query
 {
 
@@ -31,7 +30,6 @@ class StatusQuery extends Query
         $this->reader = $this->ds->getReader();
         $this->setResultViewClass(ucfirst($target)."StatusView");
         $this->setBaseQuery($this->reader->select()->from($target."s", array()));
-
 
     }
 

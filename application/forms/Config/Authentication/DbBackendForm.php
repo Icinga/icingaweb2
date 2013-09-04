@@ -26,7 +26,6 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-
 namespace Icinga\Form\Config\Authentication;
 
 use \Icinga\Authentication\Backend\DbUserBackend;

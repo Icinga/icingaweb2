@@ -166,7 +166,6 @@ class LoggingForm extends Form
         $this->addElement($textLoggingDebugPath);
         $textLoggingDebugPath->addDecorator($decorator);
 
-
         $this->enableAutoSubmit(array('logging_debug_enable'));
 
         $this->setSubmitLabel('{{SAVE_ICON}} Save Changes');

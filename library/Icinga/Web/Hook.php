@@ -75,7 +75,6 @@ class Hook
         self::$BASE_NS = 'Icinga\\Web\\Hook\\';
     }
 
-
     /**
      * Whether someone registered itself for the given hook name
      *

@@ -1,6 +1,5 @@
 <?php
 
-
 class Zend_View_Helper_MonitoringState extends Zend_View_Helper_Abstract
 {
     private $servicestates = array('ok', 'warning', 'critical', 'unknown', 99 => 'pending', null => 'pending');

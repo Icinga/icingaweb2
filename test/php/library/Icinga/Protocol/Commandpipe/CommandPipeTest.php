@@ -297,7 +297,6 @@ class CommandPipeTest extends \PHPUnit_Framework_TestCase
             $this->assertCommandSucceeded("SCHEDULE_FORCED_SVC_CHECK;test;svc1;".$t,$result[3]);
             $this->assertCommandSucceeded("SCHEDULE_FORCED_HOST_SVC_CHECKS;test;".$t,$result[4]);
 
-
         } catch(Exception $e) {
             $this->cleanup();
             throw $e;

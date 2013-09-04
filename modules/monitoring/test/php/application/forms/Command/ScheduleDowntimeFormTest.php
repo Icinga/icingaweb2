@@ -273,7 +273,6 @@ class ScheduleDowntimeFormTest extends BaseTestCase
         );
     }
 
-
     public function testInvalidHoursValueRecognitionInFlexibleDowntime()
     {
         $form = $this->createForm(

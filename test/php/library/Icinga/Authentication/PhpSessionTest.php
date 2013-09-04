@@ -83,7 +83,6 @@ class PhpSessionTest extends BaseTestCase
         $this->assertNotEquals(session_id(), '', 'Asserting a Session ID being available after PhpSession::open()');
     }
 
-
     /**
      *  Test a session being closed by PhpSession::close()
      *

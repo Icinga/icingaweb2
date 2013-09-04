@@ -27,7 +27,6 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-
 namespace Tests\Icinga\Web;
 
 require_once('Zend/View/Abstract.php');

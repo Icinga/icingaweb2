@@ -28,7 +28,6 @@ class BackendMock  extends \Icinga\Module\Monitoring\Backend\AbstractBackend
     }
 }
 
-
 class ServicegroupsummaryqueryTest extends \PHPUnit_Framework_TestCase
 {
 
@@ -72,8 +71,6 @@ class ServicegroupsummaryqueryTest extends \PHPUnit_Framework_TestCase
             )
         ),$q->groupByProblemType($indices));
     }
-
-
 
     private function getTestDataset()
     {

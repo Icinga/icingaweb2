@@ -25,8 +25,6 @@ require_once '../../modules/monitoring/library/Monitoring/View/StatusView.php';
 
 require_once '../../library/Icinga/Protocol/AbstractQuery.php';
 
-
-
 class QueryAdapterTest extends \PHPUnit_Framework_TestCase
 {
     private $cacheDir;

@@ -28,7 +28,6 @@
 
 namespace Icinga\Module\Monitoring\Backend;
 
-
 use Icinga\Protocol\Statusdat as StatusdatProtocol;
 
 /**

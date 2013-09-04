@@ -76,7 +76,6 @@ class StatusdatTemplates {
     }
 EOF;
 
-
     public static $SERIVCE =<<<'EOF'
     servicestatus {
         host_name={{HOST_NAME}}

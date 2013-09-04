@@ -46,8 +46,6 @@ class Url
      */
     private $baseUrl = '/';
 
-
-
     private function __construct()
     {
     }
@@ -123,7 +121,6 @@ class Url
         $urlObject->setParams($params);
         return $urlObject;
     }
-
 
     /**
      * Overwrite the baseUrl.
@@ -343,8 +340,6 @@ class Url
         $url->remove($keyOrArrayOfKeys);
         return $url;
     }
-
-
 
     /**
      * Alias for @see Url::getAbsoluteUrl()

@@ -69,7 +69,6 @@ class Parser
      */
     private $lineCtr = 0;
 
-
     /**
      * @param null $filehandle
      * @param null $baseState
@@ -380,7 +379,6 @@ class Parser
             return $object->{$name};
         }
         return false;
-
 
     }
 

@@ -38,7 +38,6 @@ class ListControllerHostMySQLTest  extends MonitoringControllerTest
         $firstHostFlags->flapping = 1;
         $firstHostFlags->time = $checkTime;
 
-
         $fixture->addHost('host1', 1, $firstHostFlags, array(
             "address" => "10.92.1.5",
             "icon_image" => "myIcon.png",

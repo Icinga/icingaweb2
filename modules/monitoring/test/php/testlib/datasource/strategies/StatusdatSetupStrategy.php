@@ -75,7 +75,6 @@ class StatusdatSetupStrategy implements SetupStrategy {
         return $resource;
     }
 
-
     /**
      *  Remove test status.dat and objects.cache files
      *

@@ -65,5 +65,4 @@ class ListControllerServiceMySQLTest  extends MonitoringControllerTest
 
     }
 
-
 }

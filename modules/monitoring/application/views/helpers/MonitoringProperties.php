@@ -3,7 +3,6 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-
 /**
  * Class Zend_View_Helper_MonitoringProperties
  */

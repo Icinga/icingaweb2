@@ -25,7 +25,6 @@
 
 namespace Icinga\Web;
 
-
 use \Zend_Controller_Request_Abstract;
 use \Zend_Form;
 use \Zend_Config;
@@ -426,7 +425,6 @@ class Form extends Zend_Form
             return false;
         }
     }
-
 
     /**
      * Check whether this form has been submitted

@@ -106,7 +106,6 @@ class ConfigController extends BaseConfigController
         $this->view->form = $form;
     }
 
-
     /**
      * Form for modifying the logging configuration
      */
@@ -226,7 +225,6 @@ class ConfigController extends BaseConfigController
         $form->setRequest($this->getRequest());
         $form->setRemoveTarget('auth_backend', $authBackend);
 
-
         if ($form->isSubmittedAndValid()) {
             unset($configArray[$authBackend]);
             if ($this->writeAuthenticationFile($configArray)) {
@@ -321,7 +319,6 @@ class ConfigController extends BaseConfigController
             }
             return;
         }
-
 
         $this->view->name = $authBackend;
         $this->view->form = $form;

@@ -368,7 +368,6 @@ class Manager
         return true;
     }
 
-
     /**
      * Writes the current user to the session (only usable when writeSession = true)
      **/

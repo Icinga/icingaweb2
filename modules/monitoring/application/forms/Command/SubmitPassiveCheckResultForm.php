@@ -83,7 +83,6 @@ class SubmitPassiveCheckResultForm extends CommandForm
         parent::init();
     }
 
-
     /**
      * Setter for type
      *

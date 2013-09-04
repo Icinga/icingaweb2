@@ -25,7 +25,6 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
-
 /**
  * Handling downtime queries
  */

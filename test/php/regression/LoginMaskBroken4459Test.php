@@ -29,7 +29,6 @@ namespace Tests\Icinga\Regression
     require_once '../../library/Icinga/Web/Form.php';
     require_once realpath('../../application/forms/Authentication/LoginForm.php');
 
-
     class LoginMaskBrokenRegression_4459Test extends \Zend_Test_PHPUnit_ControllerTestCase
     {
 

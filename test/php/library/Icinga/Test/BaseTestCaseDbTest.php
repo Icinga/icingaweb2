@@ -47,7 +47,6 @@ class BaseTestCaseDbTest extends BaseTestCase
         }
     }
 
-
     public function testExistingTestDirectories()
     {
         $this->assertFileExists(self::$appDir);

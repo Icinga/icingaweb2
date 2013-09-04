@@ -66,7 +66,6 @@ EOT;
 </li>
 EOT;
 
-
     /**
      * This is where single tabs added to this container will be stored
      *

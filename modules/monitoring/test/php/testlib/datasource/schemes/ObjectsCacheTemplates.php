@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Test\Monitoring\Testlib\DataSource\schemes;
 
 /**

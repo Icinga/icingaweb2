@@ -430,8 +430,6 @@ class Monitoring_ShowController extends ActionController
             )
         );
 
-
-
         $tabs->extend(new OutputFormat())
             ->extend(new DashboardAction())
             ->extend(new BasketAction);

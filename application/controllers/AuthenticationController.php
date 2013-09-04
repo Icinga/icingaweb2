@@ -32,7 +32,6 @@ use \Icinga\Authentication\Manager as AuthManager;
 use \Icinga\Form\Authentication\LoginForm;
 use \Icinga\Exception\ConfigurationError;
 
-
 /**
  * Application wide controller for authentication
  */

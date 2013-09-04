@@ -132,7 +132,6 @@ class LdapBackendForm extends BaseBackendForm
         $this->setSubmitLabel('{{SAVE_ICON}} Save Backend');
     }
 
-
     /**
      * Return the ldap authentication backend configuration for this form
      *

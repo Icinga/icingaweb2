@@ -69,7 +69,6 @@ class BackendMock implements UserBackend
         return $this->name;
     }
 
-
     public static function getDummyUser()
     {
         return new User(

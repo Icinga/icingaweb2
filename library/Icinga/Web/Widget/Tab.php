@@ -119,7 +119,6 @@ class Tab implements Widget
         $this->iconCls = $iconCls;
     }
 
-
     /**
      * @param mixed $name
      */
@@ -199,8 +198,6 @@ class Tab implements Widget
         $this->active = (bool) $active;
         return $this;
     }
-
-
 
     /**
      * @see Widget::render()

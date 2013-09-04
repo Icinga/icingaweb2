@@ -66,7 +66,6 @@ class MonitoringPropertiesTest extends \PHPUnit_Framework_TestCase
         $host = new HostStruct4Properties();
         $host->host_current_check_attempt = '5';
 
-
         $propertyHelper = new \Zend_View_Helper_MonitoringProperties();
         $items = $propertyHelper->monitoringProperties($host);
 

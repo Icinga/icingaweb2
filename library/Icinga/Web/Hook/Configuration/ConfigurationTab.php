@@ -83,7 +83,6 @@ class ConfigurationTab implements ConfigurationTabInterface
         }
     }
 
-
     /**
      * Setter for title
      * @param string $title

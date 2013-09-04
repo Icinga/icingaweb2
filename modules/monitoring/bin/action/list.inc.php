@@ -81,7 +81,6 @@ foreach ($query->fetchAll() as $key => $row) {
         $service_extra = " \033[34;52;1m[" . implode(',', $service_extra) . "]\033[0m";
     }
 
-
     if ($row->host_name !== $last_host) {
         $out .= sprintf(
             "\n\033[01;37;4%dm %-5s \033[0m \033[30;1m%s\033[0m%s: %s\n",
@@ -111,9 +110,6 @@ foreach ($query->fetchAll() as $key => $row) {
 }
 
 $out .= "\n";
-
-
-
 
     if ($endless) {
         echo "\033[2J\033[1;1H\033[1S" . $out;

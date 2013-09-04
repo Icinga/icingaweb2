@@ -117,7 +117,6 @@ class ActionController extends Zend_Controller_Action
             return false;
         }
 
-
         return !AuthManager::getInstance(
             null,
             array('writeSession' => $this->modifiesSession)
@@ -133,7 +132,6 @@ class ActionController extends Zend_Controller_Action
     {
         return $this->view->tabs;
     }
-
 
     /**
      * Translate the given string with the global translation catalog

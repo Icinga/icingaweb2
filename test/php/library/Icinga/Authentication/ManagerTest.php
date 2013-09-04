@@ -132,7 +132,6 @@ class ManagerTest extends BaseTestCase
         $this->assertNull($authMgr->getUser());
     }
 
-
     public function testAuthentication()
     {
         $auth = $this->getManagerInstance();

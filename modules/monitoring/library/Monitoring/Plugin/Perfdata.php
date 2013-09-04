@@ -142,7 +142,6 @@ class Perfdata
             }
         }
 
-
         if (array_key_exists($unit, $this->byte_map)) {
             $this->unit = self::BYTES;
             $this->val = $this->val * $this->byte_map[$unit];

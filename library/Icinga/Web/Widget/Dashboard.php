@@ -230,7 +230,6 @@ class Dashboard implements Widget
         return !empty($cmps);
     }
 
-
     /**
      * Remove a component $component from the given pane
      *

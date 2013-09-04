@@ -121,7 +121,6 @@ class Zend_View_Helper_Util extends Zend_View_Helper_Abstract
         return sprintf('OUT OF BOUNDS (%s)', var_export($state, 1));
     }
 
-
     public static function getServiceStateName($state)
     {
         if ($state === null) { $state = 3; } // really?

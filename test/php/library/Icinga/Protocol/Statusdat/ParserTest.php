@@ -46,7 +46,6 @@ define service {
     service_description\tCurrent Users
 }
 
-
 define servicegroup {
     servicegroup_name\tgroup
     members\ttest,Current Users
@@ -118,7 +117,6 @@ define servicegroup {
             )
         );
         $fd = $this->getStringAsFileHandle(self::RUNTIME_STATE1);
-
 
         $testParser = new Parser($fd, $baseState);
         $testParser->parseRuntimeState();

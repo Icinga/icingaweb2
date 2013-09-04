@@ -4,7 +4,6 @@ namespace Tests\Icinga\Protocol\Statusdat;
 require_once("Zend/Config.php");;
 require_once("Zend/Log.php");;
 
-
 use  \Icinga\Protocol\Statusdat as SD;
 
 /**

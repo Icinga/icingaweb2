@@ -76,7 +76,6 @@ abstract class Toptray
             return '';
         }
 
-
     }
 
     /**

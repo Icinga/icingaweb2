@@ -85,7 +85,6 @@ class AbstractBackend implements DatasourceInterface
         return $this->getName();
     }
 
-
     /**
      * UGLY temporary host fetch
      *
@@ -160,7 +159,6 @@ class AbstractBackend implements DatasourceInterface
                 )
             );
         }
-
 
         $select = $this->select()
             ->from('status', $fields)
@@ -249,6 +247,5 @@ class AbstractBackend implements DatasourceInterface
         return $select->fetchRow();
 
     }
-
 
 }

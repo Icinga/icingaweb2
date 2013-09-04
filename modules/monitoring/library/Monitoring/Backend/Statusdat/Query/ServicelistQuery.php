@@ -47,7 +47,6 @@ class ServicelistQuery extends Query
      */
     protected $view = 'Icinga\Backend\Statusdat\DataView\StatusdatServiceView';
 
-
     public function init()
     {
         $this->reader = $this->backend->getReader();

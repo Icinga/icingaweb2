@@ -60,7 +60,6 @@ class ServiceStatusView extends ObjectRemappingView
             $service->host->status->scheduled_downtime_depth;
     }
 
-
     public function checkIfHandled(&$service)
     {
         return $service->status->current_state == 0 ||

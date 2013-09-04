@@ -46,7 +46,6 @@ EOD;
         system('rm -rf '. $this->baseDir);
     }
 
-
     public function testObjectCreation1()
     {
         $loader = new Loader();

@@ -100,5 +100,4 @@ class ErrorProneBackendMock implements UserBackend
         throw new Exception('getUserCount error: No users in this error prone backend');
     }
 
-
 }

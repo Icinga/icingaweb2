@@ -26,9 +26,6 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-
-
-
 namespace Test\Monitoring\Testlib;
 
 require_once 'Zend/View.php';

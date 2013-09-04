@@ -55,7 +55,6 @@ class ObjectHookImplementation
         return $this->test;
     }
 
-
     public function __toString()
     {
         return $this->getTest();
@@ -75,7 +74,6 @@ class HookTest extends \PHPUnit_Framework_TestCase
         parent::tearDown();
         Hook::clean();
     }
-
 
     /**
     * Test for Hook::Has()

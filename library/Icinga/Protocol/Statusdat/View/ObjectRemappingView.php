@@ -45,7 +45,6 @@ namespace Icinga\Protocol\Statusdat\View;
  *
  */
 
-
 class ObjectRemappingView implements AccessorStrategy
 {
 

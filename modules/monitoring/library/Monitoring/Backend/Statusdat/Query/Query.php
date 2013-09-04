@@ -61,7 +61,6 @@ abstract class Query extends AbstractQuery
         $this->viewClass = '\Icinga\Module\Monitoring\Backend\Statusdat\DataView\\'.$viewClass;
     }
 
-
     /**
      * Calls the apply%Filtername%Filter() method for the given filter, or simply calls
      * where(), if the method is not available.

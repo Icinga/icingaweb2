@@ -81,7 +81,6 @@ class Pdf extends TCPDF
         );
         $this->setLanguageArray($lang);
 
-
         $this->setFontSubsetting(true);
         $this->SetFont('dejavusans', '', 16, '', true);
     }

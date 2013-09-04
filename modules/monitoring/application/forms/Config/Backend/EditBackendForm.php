@@ -121,7 +121,6 @@ class EditBackendForm extends Form
         return $backends;
     }
 
-
     /**
      * Add form elements used for setting IDO backend parameters
      */

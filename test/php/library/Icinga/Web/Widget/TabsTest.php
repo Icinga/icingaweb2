@@ -26,7 +26,6 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-
 namespace Tests\Icinga\Web\Widget;
 
 require_once('../../library/Icinga/Web/Widget/Widget.php');

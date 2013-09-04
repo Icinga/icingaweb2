@@ -106,7 +106,6 @@ class Monitoring_CommandController extends ActionController
         parent::postDispatch();
     }
 
-
     /**
      * Controller configuration
      *

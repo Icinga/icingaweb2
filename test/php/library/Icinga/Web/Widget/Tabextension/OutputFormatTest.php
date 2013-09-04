@@ -49,7 +49,6 @@ use Tests\Icinga\Web\RequestMock;
 use Tests\Icinga\Web\ViewMock;
 use \Zend_View_Abstract;
 
-
 /**
  * Test for the OutputFormat Tabextension
  *

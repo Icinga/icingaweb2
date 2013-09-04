@@ -83,8 +83,6 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
             $result = '<table style="width: 100%">' . $result . '</table>';
         }
 
-
-
         return $result;
     }
 }

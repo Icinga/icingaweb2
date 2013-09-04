@@ -74,7 +74,6 @@ class AddUrlForm extends Form
         $selectPane->removeDecorator('DtDdWrapper');
         $selectPane->removeDecorator('htmlTag');
 
-
         $this->addElement($selectPane);
         $this->addElement($newDashboardBtn);
         $this->enableAutoSubmit(array('create_new_pane'));

@@ -26,7 +26,6 @@ class ModuleMock
     }
 }
 
-
 class ManagerTest extends \PHPUnit_Framework_TestCase
 {
     const MODULE_TARGET = "/tmp";

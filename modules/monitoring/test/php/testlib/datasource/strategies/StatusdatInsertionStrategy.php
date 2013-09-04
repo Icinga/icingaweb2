@@ -175,11 +175,8 @@ class StatusdatInsertionStrategy implements InsertionStrategy {
                     $flags->flapping, $flags->in_downtime, $service['state'], $cvs
                 ), StatusdatTemplates::$SERIVCE);
 
-
-
             $this->statusDat .= "\n".$serviceStatus;
         }
-
 
     }
 

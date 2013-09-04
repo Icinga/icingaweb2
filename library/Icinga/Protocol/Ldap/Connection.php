@@ -138,7 +138,6 @@ class Connection
         return key($rows);
     }
 
-
     public function fetchRow($query, $fields = array())
     {
         // TODO: This is ugly, make it better!
@@ -438,7 +437,6 @@ class Connection
         }
         return $cap;
     }
-
 
     public function connect()
     {
