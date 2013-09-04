@@ -4,17 +4,15 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use \DateTime;
 use \Icinga\Application\Icinga;
-use \Icinga\Application\Config as IcingaConfig;
+use \Icinga\Application\Config;
 use \Icinga\Util\DateTimeFactory;
-use \Zend_Controller_Request_Http;
 use \Icinga\Web\Form\Validator\DateTimeValidator;
 
 /**
  * Helper to format date and time. Utilizes DateTimeFactory to ensure time zone awareness
  *
- * @see \Icinga\Util\DateTimeFactory::create()
+ * @see DateTimeFactory::create()
  */
 class Zend_View_Helper_DateFormat extends Zend_View_Helper_Abstract
 {
@@ -110,7 +108,7 @@ class Zend_View_Helper_DateFormat extends Zend_View_Helper_Abstract
     public function getDateFormat()
     {
         return $this->request->getUser()->getPreferences()->get(
-            'dateFormat', IcingaConfig::app()->global->get('dateFormat', 'Y-m-d')
+            'app.dateFormat', Config::app()->global->get('dateFormat', 'd/m/Y')
         );
     }
 
@@ -122,7 +120,7 @@ class Zend_View_Helper_DateFormat extends Zend_View_Helper_Abstract
     public function getTimeFormat()
     {
         return $this->request->getUser()->getPreferences()->get(
-            'timeFormat', IcingaConfig::app()->global->get('timeFormat', 'H:i:s')
+            'app.timeFormat', Config::app()->global->get('timeFormat', 'g:i A')
         );
     }
 
