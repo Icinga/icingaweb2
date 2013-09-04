@@ -102,7 +102,7 @@ $pdf->startTransaction();
 $pdf->Write(0, "LINE 7\n");
 
 // commit transaction (actually just frees memory)
-$pdf->commitTransaction(); 
+$pdf->commitTransaction();
 
 // ---------------------------------------------------------
 
@@ -110,5 +110,5 @@ $pdf->commitTransaction();
 $pdf->Output('example_047.pdf', 'I');
 
 //============================================================+
-// END OF FILE                                                
+// END OF FILE
 //============================================================+

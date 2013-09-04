@@ -44,12 +44,12 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
 
         mkdir($moduleDir."/enabledModules");
     }
-    
+
     public function testDetectEnabledModules()
     {
         $manager = new ModuleManager(null, "/tmp/enabledModules", array("none"));
         $this->assertEmpty($manager->listEnabledModules());
-        
+
         symlink(getcwd()."/res/testModules/module1", "/tmp/enabledModules/module1");
         $manager = new ModuleManager(null, "/tmp/enabledModules", array("none"));
         $this->assertEquals(array("module1"), $manager->listEnabledModules());
@@ -58,7 +58,7 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
         $manager = new ModuleManager(null, "/tmp/enabledModules", array("none"));
         $this->assertEquals(array("module1", "module2"), $manager->listEnabledModules());
     }
-   
+
     public function testLoadModule()
     {
         $manager = new ModuleManager(null, "/tmp/enabledModules", array("./res/testModules"));
@@ -71,7 +71,7 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
         $manager = new ModuleManager(null, "/tmp/enabledModules", array("./res/testModules"));
         $this->assertEmpty($manager->getLoadedModules());
     }
-    
+
     public function testEnableModule()
     {
         $manager = new ModuleManager(null, "/tmp/enabledModules", array(getcwd()."/res/testModules"));
@@ -85,7 +85,7 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
         $manager = new ModuleManager(null, "/tmp/enabledModules", array("./res/testModules"));
         $this->assertNotEmpty($manager->listEnabledModules());
     }
- 
+
     public function testDisableModule()
     {
         clearstatcache(true);
@@ -101,7 +101,7 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
         $manager = new ModuleManager(null, "/tmp/enabledModules", array("./res/testModules"));
         $this->assertEmpty($manager->listEnabledModules());
     }
- 
+
     protected function tearDown()
     {
         $moduleDir = self::MODULE_TARGET;

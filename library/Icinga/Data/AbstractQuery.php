@@ -81,7 +81,7 @@ abstract class AbstractQuery
     {
         return null;
     }
-    
+
     /**
      * Choose a table and the colums you are interested in
      *
@@ -110,7 +110,7 @@ abstract class AbstractQuery
         }
         return $this;
     }
-    
+
     /**
      * Use once or multiple times to filter result set
      *
@@ -173,7 +173,7 @@ abstract class AbstractQuery
     {
         return self::SORT_ASC;
     }
-    
+
     /**
      * Limit the result set
      *

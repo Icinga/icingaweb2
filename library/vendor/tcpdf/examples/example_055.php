@@ -76,18 +76,18 @@ $pdf->SetFillColor(221,238,255);
 foreach($core_fonts as $font) {
 	// add a page
 	$pdf->AddPage();
-	
+
 	// Cell($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=false, $link='', $stretch=0, $ignore_min_height=false, $calign='T', $valign='M')
-	
+
 	// set font for title
 	$pdf->SetFont('helvetica', 'B', 16);
-	
+
 	// print font name
 	$pdf->Cell(0, 10, 'FONT: '.$font, 1, 1, 'C', true, '', 0, false, 'T', 'M');
-	
+
 	// set font for chars
 	$pdf->SetFont($font, '', 16);
-	
+
 	// print each character
 	for ($i = 0; $i < 256; ++$i) {
 		if (($i > 0) AND (($i % 16) == 0)) {
@@ -95,9 +95,9 @@ foreach($core_fonts as $font) {
 		}
 		$pdf->Cell(11.25, 11.25, $pdf->unichr($i), 1, 0, 'C', false, '', 0, false, 'T', 'M');
 	}
-	
+
 	$pdf->Ln(20);
-	
+
 	// print a pangram
 	$pdf->Cell(0, 0, 'The quick brown fox jumps over the lazy dog', 0, 1, 'C', false, '', 0, false, 'T', 'M');
 }

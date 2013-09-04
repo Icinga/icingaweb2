@@ -3,8 +3,8 @@
 namespace Tests\Icinga\Web;
 /**
 *
-* Test class for Hook 
-* Created Fri, 22 Mar 2013 09:44:40 +0000 
+* Test class for Hook
+* Created Fri, 22 Mar 2013 09:44:40 +0000
 *
 **/
 require_once("../../library/Icinga/Exception/ProgrammingError.php");
@@ -78,8 +78,8 @@ class HookTest extends \PHPUnit_Framework_TestCase
 
 
     /**
-    * Test for Hook::Has() 
-    * Note: This method is static! 
+    * Test for Hook::Has()
+    * Note: This method is static!
     *
     **/
     public function testHas()
@@ -93,8 +93,8 @@ class HookTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-    * Test for Hook::CreateInstance() 
-    * Note: This method is static! 
+    * Test for Hook::CreateInstance()
+    * Note: This method is static!
     *
     **/
     public function testCreateInstance()
@@ -136,8 +136,8 @@ class HookTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-    * Test for Hook::All() 
-    * Note: This method is static! 
+    * Test for Hook::All()
+    * Note: This method is static!
     *
     **/
     public function testAll()
@@ -154,8 +154,8 @@ class HookTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-    * Test for Hook::First() 
-    * Note: This method is static! 
+    * Test for Hook::First()
+    * Note: This method is static!
     *
     **/
     public function testFirst()

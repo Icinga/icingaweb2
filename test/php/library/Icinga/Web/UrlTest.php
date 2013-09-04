@@ -188,7 +188,7 @@ class UrlTest extends \PHPUnit_Framework_TestCase
         $request->baseUrl = 'path/to';
         $request->path = 'my/test/url.html';
         $request->query = array(
-            'param1' => 'value1', 
+            'param1' => 'value1',
             'param2' => array('key1' => 'value1', 'key2' => 'value2')
         );
         $url = Url::fromRequest(array(), $request);

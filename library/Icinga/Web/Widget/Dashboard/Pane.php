@@ -173,7 +173,7 @@ class Pane implements Widget
     /**
      * Add a component to this pane, optionally creating it if $component is a string
      *
-     * @param string|Component $component               The component object or title 
+     * @param string|Component $component               The component object or title
      *                                                  (if a new component will be created)
      * @param string|null $url                          An Url to be used when component is a string
      *

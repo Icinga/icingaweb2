@@ -93,7 +93,7 @@ class AbstractBackend implements DatasourceInterface
      * @param bool $fetchAll
      * @return mixed
      */
-   
+
     public function fetchHost($host, $fetchAll = false)
     {
         $fields = array(
@@ -247,7 +247,7 @@ class AbstractBackend implements DatasourceInterface
             ->where('service_description', $service)
             ->where('host_name', $host);
         return $select->fetchRow();
-        
+
     }
 
 

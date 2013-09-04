@@ -182,13 +182,13 @@ class EventHistoryQuery extends AbstractQuery
             'cndetails.notification_id = n.notification_id',
             array()
         );
-        
+
         if ($start !== null) {
             $notifications->where('start_time >= ?', $start);
         }
         if ($end !== null) {
             $notifications->where('start_time <= ?', $end);
-        }             
+        }
 
         $this->subQueries = array(
             $history,

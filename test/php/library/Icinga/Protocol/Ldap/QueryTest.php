@@ -6,7 +6,7 @@ require_once '../../library/Icinga/Protocol/Ldap/LdapUtils.php';
 /**
 *
 * Test class for Query
-* Created Wed, 13 Mar 2013 12:57:11 +0000 
+* Created Wed, 13 Mar 2013 12:57:11 +0000
 *
 **/
 class QueryTest extends \PHPUnit_Framework_TestCase
@@ -43,7 +43,7 @@ class QueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-    * Test for Query::Limit() 
+    * Test for Query::Limit()
     *
     **/
     public function testLimit()
@@ -54,7 +54,7 @@ class QueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-    * Test for Query::HasLimit() 
+    * Test for Query::HasLimit()
     *
     **/
     public function testHasLimit()
@@ -66,7 +66,7 @@ class QueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-    * Test for Query::HasOffset() 
+    * Test for Query::HasOffset()
     *
     **/
     public function testHasOffset()
@@ -78,7 +78,7 @@ class QueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-    * Test for Query::GetLimit() 
+    * Test for Query::GetLimit()
     *
     **/
     public function testGetLimit()
@@ -88,7 +88,7 @@ class QueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-    * Test for Query::GetOffset() 
+    * Test for Query::GetOffset()
     *
     **/
     public function testGetOffset()
@@ -98,7 +98,7 @@ class QueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-    * Test for Query::FetchTree() 
+    * Test for Query::FetchTree()
     *
     **/
     public function testFetchTree()
@@ -123,7 +123,7 @@ class QueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-    * Test for Query::FetchOne() 
+    * Test for Query::FetchOne()
     *
     **/
     public function testFetchOne()
@@ -131,7 +131,7 @@ class QueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-    * Test for Query::FetchPairs() 
+    * Test for Query::FetchPairs()
     *
     **/
     public function testFetchPairs()
@@ -139,7 +139,7 @@ class QueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-    * Test for Query::From() 
+    * Test for Query::From()
     *
     **/
     public function testFrom()
@@ -148,7 +148,7 @@ class QueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-    * Test for Query::Where() 
+    * Test for Query::Where()
     *
     **/
     public function testWhere()
@@ -157,7 +157,7 @@ class QueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-    * Test for Query::Order() 
+    * Test for Query::Order()
     *
     **/
     public function testOrder()
@@ -167,7 +167,7 @@ class QueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-    * Test for Query::ListFields() 
+    * Test for Query::ListFields()
     *
     **/
     public function testListFields()
@@ -180,7 +180,7 @@ class QueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-    * Test for Query::GetSortColumns() 
+    * Test for Query::GetSortColumns()
     *
     **/
     public function testGetSortColumns()
@@ -199,7 +199,7 @@ class QueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-    * Test for Query::__toString() 
+    * Test for Query::__toString()
     *
     **/
     public function test__toString()
@@ -210,7 +210,7 @@ class QueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-    * Test for Query::__destruct() 
+    * Test for Query::__destruct()
     *
     **/
     public function test__destruct()

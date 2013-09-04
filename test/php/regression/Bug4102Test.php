@@ -8,7 +8,7 @@ namespace Tests\Icinga\Regression;
 
 /**
  * Class Bug4102
- * 
+ *
  * Bogus regression test
  *
  * @see https://dev.icinga.org/issues/4102

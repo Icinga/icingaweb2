@@ -25,7 +25,7 @@ abstract class AbstractQuery extends Query
     protected $servicegroup_id = 'servicegroup_id';
 
     protected $allowCustomVars = false;
-    
+
     protected function init()
     {
         parent::init();
@@ -81,7 +81,7 @@ abstract class AbstractQuery extends Query
                 . $alias
                 . '.varname = '
                 . $this->db->quote(strtoupper($name));
-       
+
         $this->baseQuery->joinLeft(
             array($alias => $this->prefix . 'customvariablestatus'),
             $joinOn,
@@ -159,7 +159,7 @@ abstract class AbstractQuery extends Query
         $this->order_columns[] = array($col, $dir);
         return $this;
     }
-    
+
     public function setRealColumns()
     {
         $columns = $this->columns;
@@ -178,7 +178,7 @@ abstract class AbstractQuery extends Query
             if (is_int($alias)) {
                 $alias = $col;
             }
-            
+
             $this->columns[$alias] = preg_replace('|\n|', ' ' , $name);
         }
         return $this;
@@ -200,7 +200,7 @@ abstract class AbstractQuery extends Query
     {
         return array_key_exists($alias, $this->idxAliasColumn);
     }
-    
+
     protected function aliasToColumnName($alias)
     {
         return $this->idxAliasColumn[$alias];
@@ -246,7 +246,7 @@ abstract class AbstractQuery extends Query
         }
         return $this;
     }
-    
+
     protected function hasCustomvar($customvar)
     {
         return array_key_exists($customvar, $this->customVars);
@@ -275,7 +275,7 @@ abstract class AbstractQuery extends Query
     {
         $filter = '';
         $filters = array();
-        
+
         $or  = array();
         $and = array();
 

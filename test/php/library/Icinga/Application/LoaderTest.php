@@ -9,8 +9,8 @@ use Icinga\Application\Loader;
 
 /**
 *
-* Test class for Loader 
-* Created Thu, 07 Feb 2013 10:07:13 +0000 
+* Test class for Loader
+* Created Thu, 07 Feb 2013 10:07:13 +0000
 *
 **/
 class LoaderTest extends \PHPUnit_Framework_TestCase

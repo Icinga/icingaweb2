@@ -13,8 +13,8 @@ if (!defined('APPLICATION_PATH')) {
 }
 /**
 *
-* Test class for Reader 
-* Created Wed, 16 Jan 2013 15:15:16 +0000 
+* Test class for Reader
+* Created Wed, 16 Jan 2013 15:15:16 +0000
 *
 **/
 class ConfigMock {

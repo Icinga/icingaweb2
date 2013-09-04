@@ -77,8 +77,8 @@ If you are printing user-generated content, tcpdf tag can be unsafe.
 You can disable this tag by setting to false the K_TCPDF_CALLS_IN_HTML
 constant on TCPDF configuration file.
 
-For security reasons, the parameters for the 'params' attribute of TCPDF 
-tag must be prepared as an array and encoded with the 
+For security reasons, the parameters for the 'params' attribute of TCPDF
+tag must be prepared as an array and encoded with the
 serializeTCPDFtagParameters() method (see the example below).
 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

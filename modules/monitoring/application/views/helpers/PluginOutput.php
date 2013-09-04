@@ -3,7 +3,7 @@
 class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
 {
     protected static $purifier;
- 
+
     public function pluginOutput($output)
     {
         if (preg_match('~<\w+[^>]*>~', $output)) {
@@ -38,7 +38,7 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
     protected function fixLinks($html)
     {
 
-    
+
         $ret = array();
         $dom = new DOMDocument;
         $dom->loadXML('<div>' . $html . '</div>', LIBXML_NOERROR | LIBXML_NOWARNING);

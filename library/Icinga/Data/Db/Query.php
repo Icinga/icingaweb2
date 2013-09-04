@@ -49,7 +49,7 @@ class Query extends AbstractQuery
         }
         return $this->selectQuery;
     }
-    
+
     protected function getCountQuery()
     {
         if ($this->countQuery === null) {
@@ -80,7 +80,7 @@ class Query extends AbstractQuery
         }
         $this->countQuery->columns($this->countColumns);
     }
-    
+
     protected function beforeCreatingCountQuery()
     {
     }
@@ -93,7 +93,7 @@ class Query extends AbstractQuery
     {
         return $this->db->fetchOne($this->getCountQuery());
     }
-    
+
     public function fetchAll()
     {
         return $this->db->fetchAll($this->getSelectQuery());

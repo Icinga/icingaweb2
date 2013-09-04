@@ -23,8 +23,8 @@ use \Icinga\Authentication\UserBackend as UserBackend;
 use \Icinga\User;
 
 /**
-*   Simple backend mock that takes an config object  
-*   with the property "credentials", which is an array 
+*   Simple backend mock that takes an config object
+*   with the property "credentials", which is an array
 *   of Credential this backend authenticates
 **/
 class BackendMock implements UserBackend

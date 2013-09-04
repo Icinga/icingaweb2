@@ -85,7 +85,7 @@ Prop5="true"
 
 [child : parent]
 PropOne="overwritten"
-;10      
+;10
 ';
         $this->writeToTmp('orig', $ini);
 

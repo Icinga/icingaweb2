@@ -22,9 +22,9 @@ class Csv
     public function dump()
     {
         header('Content-type: text/csv');
-        echo (string) $this;    
+        echo (string) $this;
     }
-    
+
     public function __toString()
     {
         $first = true;

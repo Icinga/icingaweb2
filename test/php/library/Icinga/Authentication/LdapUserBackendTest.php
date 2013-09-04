@@ -50,8 +50,8 @@ use Icinga\Authentication\Backend\LdapUserBackend;
 
 /**
 *
-* Test class for Ldapuserbackend 
-* Created Mon, 10 Jun 2013 07:54:34 +0000 
+* Test class for Ldapuserbackend
+* Created Mon, 10 Jun 2013 07:54:34 +0000
 *
 **/
 class LdapUserBackendTest extends BaseTestCase
@@ -103,7 +103,7 @@ class LdapUserBackendTest extends BaseTestCase
 
         return $ldapConn;
     }
-    
+
     private function clearTestData($connection)
     {
         foreach ($this->users as $ou => $info) {

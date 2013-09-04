@@ -99,7 +99,7 @@ class MonitoringView extends AbstractQuery
     {
         return in_array($column, $this->availableColumns);
     }
-    
+
     /**
      * Get a list of all available column names
      *
@@ -116,7 +116,7 @@ class MonitoringView extends AbstractQuery
      * Extract and apply filters and sort rules from a given request object
      *
      * TODO: Enforce Icinga\Web\Request (or similar) as soon as we replaced
-     *       Zend_Controller_Request 
+     *       Zend_Controller_Request
      *
      * @param  mixed $request  The request object
      * @return self

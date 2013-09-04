@@ -8,7 +8,7 @@ class RuntimestatecontainerTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
-    * Test for RuntimeStateContainer::__get() 
+    * Test for RuntimeStateContainer::__get()
     *
     **/
     public function testPropertyResolving()

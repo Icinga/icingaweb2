@@ -81,7 +81,7 @@ class FormTest extends Zend_Test_PHPUnit_ControllerTestCase
 
     /**
      * Tests whether automatic form submission can only be enabled for existing elements
-     * 
+     *
      * @expectedException Icinga\Exception\ProgrammingError
      */
     function testEnableAutoSubmitExisting()

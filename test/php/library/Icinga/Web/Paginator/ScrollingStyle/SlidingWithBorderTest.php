@@ -74,8 +74,8 @@ class TestPaginatorAdapter implements \Zend_Paginator_Adapter_Interface
 
 /**
 *
-* Test class for Slidingwithborder 
-* Created Wed, 16 Jan 2013 15:15:16 +0000 
+* Test class for Slidingwithborder
+* Created Wed, 16 Jan 2013 15:15:16 +0000
 *
 **/
 class SlidingwithborderTest extends \PHPUnit_Framework_TestCase

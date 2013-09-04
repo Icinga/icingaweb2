@@ -32,7 +32,7 @@ class Host extends AbstractObject
             ->fetchCustomvars()
             ->fetchComments();
     }
-    
+
     protected function fetchObject()
     {
         return $this->backend->select()->from('status', array(

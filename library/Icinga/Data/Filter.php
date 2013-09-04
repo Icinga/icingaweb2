@@ -33,7 +33,7 @@ class Filter extends ArrayIterator
         foreach ($params as $k => $v) {
             $filter[] = array($k, $v);
         }
-        return $filter;  
+        return $filter;
     }
 
     /**

@@ -89,7 +89,7 @@ $tbl = <<<EOD
     <tr>
        <td>COL 3 - ROW 3</td>
     </tr>
-  
+
 </table>
 EOD;
 
@@ -111,7 +111,7 @@ $tbl = <<<EOD
     <tr>
        <td>COL 3 - ROW 3</td>
     </tr>
-  
+
 </table>
 EOD;
 
@@ -133,7 +133,7 @@ $tbl = <<<EOD
     <tr>
        <td>COL 3 - ROW 3</td>
     </tr>
-  
+
 </table>
 EOD;
 
@@ -306,5 +306,5 @@ $pdf->writeHTML($tbl, true, false, false, false, '');
 $pdf->Output('example_048.pdf', 'I');
 
 //============================================================+
-// END OF FILE                                                
+// END OF FILE
 //============================================================+

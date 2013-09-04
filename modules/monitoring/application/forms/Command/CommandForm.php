@@ -62,7 +62,7 @@ class CommandForm extends Form
 
     /**
      * Get the author name
-     *  
+     *
      * @return string
      */
     protected function getAuthorName()

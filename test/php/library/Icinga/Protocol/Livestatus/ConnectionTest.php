@@ -12,14 +12,14 @@ require_once('../../library/Icinga/Protocol/Livestatus/Query.php');
 
 /**
 *
-* Test class for Connection 
+* Test class for Connection
 *
 **/
 class ConnectionTest extends TestCase
 {
 
     /**
-    * Test for Connection::Select() 
+    * Test for Connection::Select()
     *
     **/
     public function testSelect()

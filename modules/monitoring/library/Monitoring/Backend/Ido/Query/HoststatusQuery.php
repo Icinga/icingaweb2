@@ -40,7 +40,7 @@ class HoststatusQuery extends AbstractQuery
             'host_last_time_unreachable'  => 'hs.last_time_unreachable',
 
             'host_severity' => 'CASE WHEN hs.current_state = 0
-            THEN 
+            THEN
                 CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL
                      THEN 16
                      ELSE 0
@@ -102,12 +102,12 @@ class HoststatusQuery extends AbstractQuery
             'hoststatus' => true,
         );
     }
-    
+
     protected function joinStatus()
     {
         $this->requireVirtualTable('services');
     }
-    
+
     protected function joinServiceStatus()
     {
         $this->requireVirtualTable('services');

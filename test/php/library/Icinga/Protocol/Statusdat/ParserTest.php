@@ -7,8 +7,8 @@ require_once(realpath("../../library/Icinga/Protocol/Statusdat/Parser.php"));
 use Icinga\Protocol\Statusdat\Parser;
 /**
 *
-* Test class for Parser 
-* Created Wed, 16 Jan 2013 15:15:16 +0000 
+* Test class for Parser
+* Created Wed, 16 Jan 2013 15:15:16 +0000
 *
 **/
 class ParserTest extends \PHPUnit_Framework_TestCase

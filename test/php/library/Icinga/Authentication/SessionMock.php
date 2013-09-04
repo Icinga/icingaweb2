@@ -12,7 +12,7 @@ class SessionMock extends Session
 {
     public $isOpen = false;
     public $isWritten = false;
-    
+
     public function open()
     {
         if (!$this->isOpen && $this->isWritten) {
@@ -20,7 +20,7 @@ class SessionMock extends Session
         }
         $this->isOpen = true;
     }
-    
+
     public function read($keepOpen = false)
     {
         $this->open();
@@ -28,7 +28,7 @@ class SessionMock extends Session
             $this->close();
         }
     }
-    
+
     public function write($keepOpen = false)
     {
         $this->open();
@@ -36,7 +36,7 @@ class SessionMock extends Session
             $this->close();
         }
     }
-    
+
     public function close()
     {
         $this->isOpen = false;

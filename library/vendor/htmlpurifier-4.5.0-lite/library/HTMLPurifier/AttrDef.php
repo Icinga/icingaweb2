@@ -83,7 +83,7 @@ abstract class HTMLPurifier_AttrDef
     }
 
     /**
-     * Parses a possibly escaped CSS string and returns the "pure" 
+     * Parses a possibly escaped CSS string and returns the "pure"
      * version of it.
      */
     protected function expandCSSEscape($string) {

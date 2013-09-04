@@ -6,7 +6,7 @@ class Packet
 {
     const QUERY    = 0x01;
     const RESPONSE = 0x02;
-    
+
     protected $version = 0x02;
     protected $type;
     protected $body;

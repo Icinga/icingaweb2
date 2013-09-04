@@ -141,7 +141,7 @@ class Connection
             );
         }
         Benchmark::measure('Data sorted, limits applied');
-        
+
         return $result;
     }
 
@@ -166,7 +166,7 @@ class Connection
         if ($result === null) {
             throw new Exception('Got invalid response body from livestatus');
         }
-        
+
         return $result;
     }
 
@@ -174,7 +174,7 @@ class Connection
     {
         $offset = 0;
         $buffer = '';
-        
+
         while ($offset < $length) {
             $data = socket_read($this->connection, $length - $offset);
             if ($data === false) {
@@ -188,7 +188,7 @@ class Connection
             $size = strlen($data);
             $offset += $size;
             $buffer .= $data;
-            
+
             if ($size === 0) {
                 break;
             }
@@ -245,7 +245,7 @@ class Connection
         if (! defined('TCP_NODELAY')) {
             define('TCP_NODELAY', 1);
         }
-        
+
         $this->connection = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
         if (! @socket_connect($this->connection, $this->socket_host, $this->socket_port)) {
             throw new \Exception(

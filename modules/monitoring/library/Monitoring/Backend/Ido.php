@@ -39,7 +39,7 @@ class Ido extends AbstractBackend
             $this->prefix = '';
         }
     }
-    
+
     public function getConnection()
     {
         return $this->db;

@@ -82,5 +82,5 @@ $pdf->Annotation(83, 27, 10, 10, "Text annotation example\naccented letters test
 $pdf->Output('example_036.pdf', 'I');
 
 //============================================================+
-// END OF FILE                                                
+// END OF FILE
 //============================================================+

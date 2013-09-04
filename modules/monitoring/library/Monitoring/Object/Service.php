@@ -34,7 +34,7 @@ class Service extends AbstractObject
             ->fetchComments()
             ;
     }
-    
+
     protected function fetchObject()
     {
         return $this->backend->select()->from('status', array(

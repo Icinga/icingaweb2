@@ -8,7 +8,7 @@ class Zend_View_Helper_MonitoringState extends Zend_View_Helper_Abstract
 
     public function monitoringState($object, $type = 'service')
     {
-        
+
         if ($type === 'service') {
             return $this->servicestates[$object->service_state];
         } elseif ($type === 'host') {

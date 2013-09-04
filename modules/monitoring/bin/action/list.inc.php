@@ -105,7 +105,7 @@ foreach ($query->fetchAll() as $key => $row) {
             "\n\033[01;37;4%dm \033[01;37;4%dm      \033[0m  ",
         $host_colors[$row->host_state],
         $service_colors[$row->service_state]
-            
+
         ), substr(wordwrap(str_repeat(' ', 30) . preg_replace('~\@{3,}~', '@@@', $row->service_output), 72), 30))
     );
 }
