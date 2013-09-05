@@ -435,7 +435,7 @@ class Monitoring_CommandController extends ActionController
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
-            $this->target->scheduleDowntime($this->view->objects, $form->getDowntime());
+            $this->target->sendCommand($form->createCommand(), $this->view->objects);
         }
     }
 
@@ -452,7 +452,7 @@ class Monitoring_CommandController extends ActionController
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
-            $this->target->scheduleDowntime($this->view->objects, $form->getDowntime());
+            $this->target->sendCommand($form->createCommand(), $this->view->objects);
         }
     }
 

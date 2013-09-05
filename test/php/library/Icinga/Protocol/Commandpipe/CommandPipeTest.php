@@ -11,12 +11,12 @@ CommandPipeLoader::requireLibrary();
 use Zend_Config;
 use Icinga\Protocol\Commandpipe\Comment;
 use Icinga\Protocol\Commandpipe\CustomNotification;
-use Icinga\Protocol\Commandpipe\Downtime as Downtime;
 use Icinga\Protocol\Commandpipe\Commandpipe as Commandpipe;
 use Icinga\Protocol\Commandpipe\PropertyModifier as MONFLAG;
 use Icinga\Protocol\Ldap\Exception;
 use Icinga\Module\Monitoring\Command\AcknowledgeCommand;
 use Icinga\Module\Monitoring\Command\AddCommentCommand;
+use Icinga\Module\Monitoring\Command\ScheduleDowntimeCommand;
 
 if(!defined("EXTCMD_TEST_BIN"))
     define("EXTCMD_TEST_BIN", "./bin/extcmd_test");
@@ -369,28 +369,33 @@ class CommandPipeTest extends \PHPUnit_Framework_TestCase
     /**
      * Test whether host and servicedowntimes are correctly scheduled
      *
-     * @throws \Exception|Exception
+     * @throws Exception
      */
     public function testScheduleDowntime()
     {
         $pipe = $this->getLocalTestPipe();
         try {
-            $downtime = new Downtime(25, 26, new Comment("me", "test"));
-            $pipe->scheduleDowntime(array(
-                (object) array(
-                    "host_name" => "Testhost"
+            $downtime = new ScheduleDowntimeCommand(25, 26, new Comment("me", "test"));
+            $pipe->sendCommand(
+                $downtime,
+                array(
+                    (object) array(
+                        "host_name" => "Testhost"
+                    )
                 )
-            ),$downtime);
+            );
             $this->assertCommandSucceeded("SCHEDULE_HOST_DOWNTIME;Testhost;25;26;1;0;0;me;test");
 
-            $pipe->scheduleDowntime(array(
-                (object) array(
-                    "host_name" => "Testhost",
-                    "service_description" => "svc"
+            $pipe->sendCommand(
+                $downtime,
+                array(
+                    (object) array(
+                        "host_name" => "Testhost",
+                        "service_description" => "svc"
+                    )
                 )
-            ),$downtime);
+            );
             $this->assertCommandSucceeded("SCHEDULE_SVC_DOWNTIME;Testhost;svc;25;26;1;0;0;me;test");
-
         } catch (Exception $e) {
             $this->cleanup();
             throw $e;

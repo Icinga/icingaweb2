@@ -303,26 +303,6 @@ class CommandPipe
     }
 
     /**
-     * Schedule a downtime for all provided objects
-     *
-     * @param array $objects        An array of monitoring objects to schedule the downtime for
-     * @param Downtime $downtime    The downtime object to schedule
-     */
-    public function scheduleDowntime($objects, Downtime $downtime)
-    {
-        foreach ($objects as $object) {
-            $type = $this->getObjectType($object);
-            if ($type == self::TYPE_SERVICE) {
-                $this->send(
-                    sprintf($downtime->getFormatString($type), $object->host_name, $object->service_description)
-                );
-            } else {
-                $this->send(sprintf($downtime->getFormatString($type), $object->host_name));
-            }
-        }
-    }
-
-    /**
      * Remove downtimes for objects
      *
      * @param array $objects        An array containing hosts, service or downtime objects
