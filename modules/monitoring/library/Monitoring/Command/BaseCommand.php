@@ -40,6 +40,82 @@ use Icinga\Protocol\Commandpipe\CommandType;
 class BaseCommand implements CommandType
 {
     /**
+     * Whether hosts are ignored in case of a host- or servicegroup
+     *
+     * @var bool
+     */
+    protected $withoutHosts = false;
+
+    /**
+     * Whether services are ignored in case of a host- or servicegroup
+     *
+     * @var bool
+     */
+    protected $withoutServices = false;
+
+    /**
+     * Whether child hosts are going to be included in case of a host command
+     *
+     * @var bool
+     */
+    protected $withChildren = false;
+
+    /**
+     * Whether only services are going to be included in case of a host command
+     *
+     * @var bool
+     */
+    protected $onlyServices = false;
+
+    /**
+     * Set whether this command should only affect the services of a host- or servicegroup
+     *
+     * @param   bool    $state
+     * @return  self
+     */
+    public function excludeHosts($state = true)
+    {
+        $this->withoutHosts = (bool) $state;
+        return $this;
+    }
+
+    /**
+     * Set whether this command should only affect the hosts of a host- or servicegroup
+     *
+     * @param   bool    $state
+     * @return  self
+     */
+    public function excludeServices($state = true)
+    {
+        $this->withoutServices = (bool) $state;
+        return $this;
+    }
+
+    /**
+     * Set whether this command should also affect all children hosts of a host
+     *
+     * @param   bool    $state
+     * @return  self
+     */
+    public function includeChildren($state = true)
+    {
+        $this->withChildren = (bool) $state;
+        return $this;
+    }
+
+    /**
+     * Set whether this command only affects those services beyond a host
+     *
+     * @param   bool    $state
+     * @return  self
+     */
+    public function excludeHost($state = true)
+    {
+        $this->onlyServices = (bool) $state;
+        return $this;
+    }
+
+    /**
      * Return this command's parameters properly arranged in an array
      *
      * @return array

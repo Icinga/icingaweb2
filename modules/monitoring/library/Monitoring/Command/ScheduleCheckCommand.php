@@ -28,63 +28,52 @@
 
 namespace Icinga\Module\Monitoring\Command;
 
-use Icinga\Protocol\Commandpipe\Comment;
-
 /**
- * Command to send a custom notification
+ * Command to schedule checks
  */
-class CustomNotificationCommand extends BaseCommand
+class ScheduleCheckCommand extends BaseCommand
 {
     /**
-     * The comment associated with this notification
+     * When this check is scheduled
      *
-     * @var Comment
+     * @var int     The time as UNIX timestamp
      */
-    private $comment;
+    private $checkTime;
 
     /**
-     * Whether this notification is forced
+     * Whether this check is forced
      *
      * @var bool
      */
     private $forced;
 
     /**
-     * Whether this notification is also sent to escalation-contacts
+     * Initialises a new command object to schedule checks
      *
-     * @var bool
+     * @param   int     $checkTime      The time as UNIX timestamp
+     * @param   bool    $forced         Whether this check is forced
      */
-    private $broadcast;
-
-    /**
-     * Initialise a new custom notification command object
-     *
-     * @param   Comment     $comment    The comment for this notification
-     * @param   bool        $forced     Whether this notificatin is forced
-     * @param   bool        $broadcast  Whether this notification is sent to all contacts
-     */
-    public function __construct(Comment $comment, $forced = false, $broadcast = false)
+    public function __construct($checkTime, $forced = false)
     {
-        $this->comment = $comment;
+        $this->checkTime = $checkTime;
         $this->forced = $forced;
-        $this->broadcast = $broadcast;
     }
 
     /**
-     * Set the comment for this notification
+     * Set when to schedule this check
      *
-     * @param   Comment     $comment
+     * @param   int     $checkTime      The time as UNIX timestamp
      *
-     * @return  self
+     * @return self
      */
-    public function setComment(Comment $comment)
+    public function setCheckTime($checkTime)
     {
-        $this->comment = $comment;
+        $this->checkTime = intval($checkTime);
         return $this;
     }
 
     /**
-     * Set whether this notification is forced
+     * Set whether this check is forced
      *
      * @param   bool    $state
      *
@@ -97,19 +86,6 @@ class CustomNotificationCommand extends BaseCommand
     }
 
     /**
-     * Set whether this notification is sent to all contacts
-     *
-     * @param   bool    $state
-     *
-     * @return  self
-     */
-    public function setBroadcast($state)
-    {
-        $this->broadcast = (bool) $state;
-        return $this;
-    }
-
-    /**
      * Return this command's parameters properly arranged in an array
      *
      * @return array
@@ -118,32 +94,30 @@ class CustomNotificationCommand extends BaseCommand
      */
     public function getParameters()
     {
-        $options = 0;
-        if ($this->forced) {
-            $options |= 2;
-        }
-        if ($this->broadcast) {
-            $options |= 1;
-        }
-        return array_merge(array($options), $this->comment->getParameters(true));
+        return array($this->checkTime);
     }
 
     /**
-     * Return the command as a string with the given host being inserted
+     * Return the command as a string for the given host or all of it's services
      *
-     * @param   string  $hostname   The name of the host to insert
+     * @param   string  $hostname       The name of the host to insert
+     * @param   type    $servicesOnly   Whether the given host or each of it's services is checked
      *
-     * @return  string              The string representation of the command
+     * @return  string                  The string representation of the command
      *
      * @see BaseCommand::getHostCommand()
      */
     public function getHostCommand($hostname)
     {
-        return 'SEND_CUSTOM_HOST_NOTIFICATION;' . implode(';', array_merge(array($hostname), $this->getParameters()));
+        return sprintf(
+            'SCHEDULE%s_HOST_%s;',
+            $this->forced ? '_FORCED' : '',
+            $this->onlyServices ? 'SVC_CHECKS' : 'CHECK'
+        ) . implode(';', array_merge(array($hostname), $this->getParameters()));
     }
 
     /**
-     * Return the command as a string with the given host and service being inserted
+     * Return the command as a string for the given service
      *
      * @param   string  $hostname       The name of the host to insert
      * @param   string  $servicename    The name of the service to insert
@@ -154,12 +128,7 @@ class CustomNotificationCommand extends BaseCommand
      */
     public function getServiceCommand($hostname, $servicename)
     {
-        return 'SEND_CUSTOM_SVC_NOTIFICATION;' . implode(
-            ';',
-            array_merge(
-                array($hostname, $servicename),
-                $this->getParameters()
-            )
-        );
+        return sprintf('SCHEDULE%s_SVC_CHECK;', $this->forced ? '_FORCED' : '')
+            . implode(';', array_merge(array($hostname, $servicename), $this->getParameters()));
     }
 }

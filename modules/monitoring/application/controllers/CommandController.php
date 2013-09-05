@@ -280,7 +280,7 @@ class Monitoring_CommandController extends ActionController
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
-            $this->target->scheduleCheck($this->view->objects);
+            $this->target->sendCommand($form->createCommand(), $this->view->objects);
         }
     }
 
@@ -518,19 +518,12 @@ class Monitoring_CommandController extends ActionController
         $form = new RescheduleNextCheckForm();
         $form->setRequest($this->getRequest());
         $form->setConfiguration(Config::app());
-
         $form->setWithChildren(true);
 
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
-            if ($form->isForced()) {
-                $this->target->scheduleForcedCheck($this->view->objects, time());
-                $this->target->scheduleForcedCheck($this->view->objects, time(), true);
-            } else {
-                $this->target->scheduleCheck($this->view->objects, time());
-                $this->target->scheduleCheck($this->view->objects, time(), true);
-            }
+            $this->target->sendCommand($form->createCommand(), $this->view->objects);
         }
     }
 

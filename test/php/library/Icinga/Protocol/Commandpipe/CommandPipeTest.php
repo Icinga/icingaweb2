@@ -41,6 +41,7 @@ use Icinga\Module\Monitoring\Command\AddCommentCommand;
 use Icinga\Module\Monitoring\Command\ScheduleDowntimeCommand;
 use Icinga\Module\Monitoring\Command\CustomNotificationCommand;
 use Icinga\Module\Monitoring\Command\DelayNotificationCommand;
+use Icinga\Module\Monitoring\Command\ScheduleCheckCommand;
 
 if (!defined("EXTCMD_TEST_BIN")) {
     define("EXTCMD_TEST_BIN", "./bin/extcmd_test");
@@ -296,32 +297,51 @@ class CommandPipeTest extends \PHPUnit_Framework_TestCase
     {
         $pipe = $this->getLocalTestPipe();
         try {
-            $pipe->getTransport()->setOpenMode("a"); // append so we have multiple results
-            $t = time();
-            // normal reschedule
-            $pipe->scheduleCheck(array(
-                (object) array("host_name"=>"test"),
-                (object) array("host_name"=>"test","service_description"=>"svc1")
-            ),$t);
-            // forced
-            $pipe->scheduleForcedCheck(array(
-                (object) array("host_name"=>"test"),
-                (object) array("host_name"=>"test","service_description"=>"svc1")
-            ),$t);
-            // forced, recursive
-            $pipe->scheduleForcedCheck(array(
-                (object) array("host_name"=>"test"),
-            ),$t,true);
+            $pipe->getTransport()->setOpenMode('a'); // append so we have multiple results
+            $command = new ScheduleCheckCommand(5000);
+            $pipe->sendCommand(
+                $command,
+                array(
+                    (object) array(
+                        'host_name' => 'test'
+                    ),
+                    (object) array(
+                        'host_name' => 'test',
+                        'service_description' => 'svc1'
+                    )
+                )
+            );
+            $command->setForced(true);
+            $pipe->sendCommand(
+                $command,
+                array(
+                    (object) array(
+                        'host_name' => 'test'
+                    ),
+                    (object) array(
+                        'host_name' => 'test',
+                        'service_description' => 'svc1'
+                    )
+                )
+            );
+            $command->excludeHost();
+            $pipe->sendCommand(
+                $command,
+                array(
+                    (object) array(
+                        'host_name' => 'test'
+                    )
+                )
+            );
 
-            $result = explode("\n",file_get_contents($this->getPipeName()));
-            $this->assertCount(6,$result, "Asserting a correct number of commands being written to the commandpipe");
+            $result = explode("\n", file_get_contents($this->getPipeName()));
+            $this->assertCount(6, $result, 'Asserting a correct number of commands being written to the commandpipe');
 
-            $this->assertCommandSucceeded("SCHEDULE_HOST_CHECK;test;".$t,$result[0]);
-            $this->assertCommandSucceeded("SCHEDULE_SVC_CHECK;test;svc1;".$t,$result[1]);
-            $this->assertCommandSucceeded("SCHEDULE_FORCED_HOST_CHECK;test;".$t,$result[2]);
-            $this->assertCommandSucceeded("SCHEDULE_FORCED_SVC_CHECK;test;svc1;".$t,$result[3]);
-            $this->assertCommandSucceeded("SCHEDULE_FORCED_HOST_SVC_CHECKS;test;".$t,$result[4]);
-
+            $this->assertCommandSucceeded('SCHEDULE_HOST_CHECK;test;5000', $result[0]);
+            $this->assertCommandSucceeded('SCHEDULE_SVC_CHECK;test;svc1;5000', $result[1]);
+            $this->assertCommandSucceeded('SCHEDULE_FORCED_HOST_CHECK;test;5000', $result[2]);
+            $this->assertCommandSucceeded('SCHEDULE_FORCED_SVC_CHECK;test;svc1;5000', $result[3]);
+            $this->assertCommandSucceeded('SCHEDULE_FORCED_HOST_SVC_CHECKS;test;5000', $result[4]);
         } catch(Exception $e) {
             $this->cleanup();
             throw $e;

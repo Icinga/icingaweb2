@@ -195,50 +195,6 @@ class CommandPipe
     }
 
     /**
-     * Reschedule a forced check for all provided objects
-     *
-     * @param array $objects            An array of hosts and services to reschedule
-     * @param int|bool $time            The time to submit, if empty time() will be used
-     * @param bool $withChilds          Whether only childs should be rescheduled
-     */
-    public function scheduleForcedCheck($objects, $time = false, $withChilds = false)
-    {
-        if (!$time) {
-            $time = time();
-        }
-        $base = "SCHEDULE_FORCED_";
-        foreach ($objects as $object) {
-            if (isset($object->service_description)) {
-                $this->send($base . "SVC_CHECK;$object->host_name;$object->service_description;$time");
-            } else {
-                $this->send($base . 'HOST_' . ($withChilds ? 'SVC_CHECKS' : 'CHECK') . ";$object->host_name;$time");
-            }
-        }
-    }
-
-    /**
-     * Reschedule a check for all provided objects
-     *
-     * @param array $objects            An array of hosts and services to reschedule
-     * @param int|bool $time            The time to submit, if empty time() will be used
-     * @param bool $withChilds          Whether only childs should be rescheduled
-     */
-    public function scheduleCheck($objects, $time = false, $withChilds = false)
-    {
-        if (!$time) {
-            $time = time();
-        }
-        $base = "SCHEDULE_";
-        foreach ($objects as $object) {
-            if (isset($object->service_description)) {
-                $this->send($base . "SVC_CHECK;$object->host_name;$object->service_description;$time");
-            } else {
-                $this->send($base . 'HOST_' . ($withChilds ? 'SVC_CHECKS' : 'CHECK') . ";$object->host_name;$time");
-            }
-        }
-    }
-
-    /**
      * Removes the submitted comments
      *
      * @param array $objectsOrComments      An array of hosts and services (to remove all their comments)
