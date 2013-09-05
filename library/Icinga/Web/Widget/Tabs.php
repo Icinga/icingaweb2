@@ -58,7 +58,7 @@ EOT;
     private $dropdownTpl = <<< 'EOT'
 <li class="dropdown pull-right ">
     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-        <i class="icon-list-ul"></i>
+        <b class="caret"></b>
     </a>
     <ul class="dropdown-menu">
         {TABS}
