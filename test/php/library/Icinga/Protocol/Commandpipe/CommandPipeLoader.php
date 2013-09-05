@@ -15,7 +15,6 @@ class CommandPipeLoader extends LibraryLoader {
         require_once("Zend/Config.php");
         require_once("Zend/Log.php");
         require_once("../../library/Icinga/Application/Logger.php");
-        require_once("../../library/Icinga/Exception/NotImplementedError.php");
 
         require_once("../../library/Icinga/Protocol/Commandpipe/Comment.php");
         require_once("../../library/Icinga/Protocol/Commandpipe/CommandType.php");

@@ -29,7 +29,6 @@
 namespace Icinga\Module\Monitoring\Command;
 
 use Icinga\Protocol\Commandpipe\Comment;
-use Icinga\Exception\NotImplementedError;
 
 /**
  * Command for scheduling a new downtime
@@ -177,6 +176,27 @@ class ScheduleDowntimeCommand extends BaseCommand
     }
 
     /**
+     * Return this command's parameters properly arranged in an array
+     *
+     * @return array
+     *
+     * @see BaseCommand::getParameters()
+     */
+    public function getParameters()
+    {
+        return array_merge(
+            array(
+                $this->startTime,
+                $this->endTime,
+                $this->fixed ? '1' : '0',
+                $this->triggerId,
+                $this->duration
+            ),
+            $this->comment->getParameters(true)
+        );
+    }
+
+    /**
      * Return the command as a string for the given host or all of it's services
      *
      * @param   type    $hostname       The name of the host to insert
@@ -186,7 +206,8 @@ class ScheduleDowntimeCommand extends BaseCommand
      */
     public function getHostCommand($hostname, $servicesOnly = false)
     {
-        throw new NotImplementedError();
+        return sprintf('SCHEDULE_HOST%s_DOWNTIME;', $servicesOnly ? '_SVC' : '')
+            . implode(';', array_merge(array($hostname), $this->getParameters()));
     }
 
     /**
@@ -199,7 +220,8 @@ class ScheduleDowntimeCommand extends BaseCommand
      */
     public function getPropagatedHostCommand($hostname, $triggered = false)
     {
-        throw new NotImplementedError();
+        return sprintf('SCHEDULE_AND_PROPAGATE%s_HOST_DOWNTIME;', $triggered ? '_TRIGGERED' : '')
+            . implode(';', array_merge(array($hostname), $this->getParameters()));
     }
 
     /**
@@ -212,7 +234,13 @@ class ScheduleDowntimeCommand extends BaseCommand
      */
     public function getServiceCommand($hostname, $servicename)
     {
-        throw new NotImplementedError();
+        return 'SCHEDULE_SVC_DOWNTIME;' . implode(
+            ';',
+            array_merge(
+                array($hostname, $servicename),
+                $this->getParameters()
+            )
+        );
     }
 
     /**
@@ -225,7 +253,8 @@ class ScheduleDowntimeCommand extends BaseCommand
      */
     public function getHostgroupCommand($hostgroup, $hostsOnly = true)
     {
-        throw new NotImplementedError();
+        return sprintf('SCHEDULE_HOSTGROUP_%s_DOWNTIME;', $hostsOnly ? 'HOST' : 'SVC')
+            . implode(';', array_merge(array($hostgroup), $this->getParameters()));
     }
 
     /**
@@ -238,6 +267,7 @@ class ScheduleDowntimeCommand extends BaseCommand
      */
     public function getServicegroupCommand($servicegroup, $hostsOnly = true)
     {
-        throw new NotImplementedError();
+        return sprintf('SCHEDULE_SERVICEGROUP_%s_DOWNTIME;', $hostsOnly ? 'HOST' : 'SVC')
+            . implode(';', array_merge(array($servicegroup), $this->getParameters()));
     }
 }
