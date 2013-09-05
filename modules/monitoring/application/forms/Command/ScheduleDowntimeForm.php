@@ -100,7 +100,7 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
             )->fetchAll();
 
         $options = array(
-            '0' =>  'No Triggered Downtime '
+            '0' =>  'No Triggered Downtime'
         );
         foreach ($downtimes as $downtime) {
             $dt = DateTimeFactory::create($downtime->downtime_scheduled_start_time);

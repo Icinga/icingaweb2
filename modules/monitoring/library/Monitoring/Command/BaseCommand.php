@@ -40,7 +40,7 @@ use Icinga\Protocol\Commandpipe\CommandType;
 class BaseCommand implements CommandType
 {
     /**
-     * Return the parameters in the right order for this command
+     * Return this command's parameters properly arranged in an array
      *
      * @return array
      */
@@ -53,6 +53,7 @@ class BaseCommand implements CommandType
      * Return the command as a string with the given host being inserted
      *
      * @param   string  $hostname   The name of the host to insert
+     *
      * @return  string              The string representation of the command
      */
     public function getHostCommand($hostname)
@@ -65,6 +66,7 @@ class BaseCommand implements CommandType
      *
      * @param   string  $hostname       The name of the host to insert
      * @param   string  $servicename    The name of the service to insert
+     *
      * @return  string                  The string representation of the command
      */
     public function getServiceCommand($hostname, $servicename)
@@ -76,6 +78,7 @@ class BaseCommand implements CommandType
      * Return the command as a string with the given hostgroup being inserted
      *
      * @param   string  $hostgroup  The name of the hostgroup to insert
+     *
      * @return  string              The string representation of the command
      */
     public function getHostgroupCommand($hostgroup)
@@ -87,6 +90,7 @@ class BaseCommand implements CommandType
      * Return the command as a string with the given servicegroup being inserted
      *
      * @param   string  $servicegroup   The name of the servicegroup to insert
+     *
      * @return  string                  The string representation of the command
      */
     public function getServicegroupCommand($servicegroup)

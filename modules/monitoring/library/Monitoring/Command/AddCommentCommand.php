@@ -58,6 +58,7 @@ class AddCommentCommand extends BaseCommand
      * Set the comment for this command
      *
      * @param   Comment     $comment
+     *
      * @return  self
      */
     public function setComment(Comment $comment)
@@ -67,9 +68,12 @@ class AddCommentCommand extends BaseCommand
     }
 
     /**
-     * @param  String $hostname     The name of the host to create the command for for
+     * Return the command as a string with the given host being inserted
      *
-     * @return String               The command string to return for the host
+     * @param   string  $hostname   The name of the host to insert
+     *
+     * @return  string              The string representation of the command
+     *
      * @see BaseCommand::getHostCommand()
      */
     public function getHostCommand($hostname)
@@ -78,10 +82,13 @@ class AddCommentCommand extends BaseCommand
     }
 
     /**
-     * @param  String $hostname     The name of the host to create the command for
-     * @param  String $servicename  The name of the service to create the command for
+     * Return the command as a string with the given host and service being inserted
      *
-     * @return String               The command string to return for the service
+     * @param   string  $hostname       The name of the host to insert
+     * @param   string  $servicename    The name of the service to insert
+     *
+     * @return  string                  The string representation of the command
+     *
      * @see BaseCommand::getServiceCommand()
      */
     public function getServiceCommand($hostname, $servicename)

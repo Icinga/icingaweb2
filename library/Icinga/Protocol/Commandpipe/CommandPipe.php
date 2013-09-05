@@ -145,7 +145,8 @@ class CommandPipe
     public function sendCommand(CommandType $command, array $objects)
     {
         foreach ($objects as $object) {
-            if (isset($object->service_description)) {
+            $objectType = $this->getObjectType($object);
+            if ($objectType === self::TYPE_SERVICE) {
                 $this->transport->send($command->getServiceCommand($object->host_name, $object->service_description));
             } else {
                 $this->transport->send($command->getHostCommand($object->host_name));

@@ -83,6 +83,7 @@ class AcknowledgeCommand extends BaseCommand
      * Set the time when this acknowledgement should expire
      *
      * @param   int     $expireTime     The time as UNIX timestamp or -1 if it shouldn't expire
+     *
      * @return  self
      */
     public function setExpire($expireTime)
@@ -95,6 +96,7 @@ class AcknowledgeCommand extends BaseCommand
      * Set the comment for this acknowledgement
      *
      * @param   Comment     $comment
+     *
      * @return  self
      */
     public function setComment(Comment $comment)
@@ -107,6 +109,7 @@ class AcknowledgeCommand extends BaseCommand
      * Set whether the notify flag of this acknowledgment should be set
      *
      * @param   bool    $state
+     *
      * @return  self
      */
     public function setNotify($state)
@@ -119,6 +122,7 @@ class AcknowledgeCommand extends BaseCommand
      * Set whether this acknowledgement is of type sticky
      *
      * @param   bool    $state
+     *
      * @return  self
      */
     public function setSticky($state)
@@ -131,6 +135,8 @@ class AcknowledgeCommand extends BaseCommand
      * Return this command's parameters properly arranged in an array
      *
      * @return array
+     *
+     * @see BaseCommand::getParameters()
      */
     public function getParameters()
     {
@@ -150,9 +156,12 @@ class AcknowledgeCommand extends BaseCommand
     }
 
     /**
-     * @param  String $hostname     The name of the host to create the command for for
+     * Return the command as a string with the given host being inserted
      *
-     * @return String               The command string to return for the host
+     * @param   string  $hostname   The name of the host to insert
+     *
+     * @return  string              The string representation of the command
+     *
      * @see BaseCommand::getHostCommand()
      */
     public function getHostCommand($hostname)
@@ -163,10 +172,13 @@ class AcknowledgeCommand extends BaseCommand
     }
 
     /**
-     * @param  String $hostname     The name of the host to create the command for
-     * @param  String $servicename  The name of the service to create the command for
+     * Return the command as a string with the given host and service being inserted
      *
-     * @return String               The command string to return for the service
+     * @param   string  $hostname       The name of the host to insert
+     * @param   string  $servicename    The name of the service to insert
+     *
+     * @return  string                  The string representation of the command
+     *
      * @see BaseCommand::getServiceCommand()
      */
     public function getServiceCommand($hostname, $servicename)
