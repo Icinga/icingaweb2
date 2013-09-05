@@ -717,7 +717,7 @@ class Monitoring_CommandController extends ActionController
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
-            $this->target->delayNotification($this->view->objects, $form->getDelayTime());
+            $this->target->sendCommand($form->createCommand(), $this->view->objects);
         }
     }
 

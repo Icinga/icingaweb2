@@ -668,24 +668,6 @@ class CommandPipe
     }
 
     /**
-     * Delay notifications for all provided hosts and services for $time seconds
-     *
-     * @param array $objects    An array of hosts and services
-     * @param int   $time       The number of seconds to delay notifications for
-     */
-    public function delayNotification($objects, $time)
-    {
-        foreach ($objects as $object) {
-            $type = $this->getObjectType($object);
-            if ($type ===  self::TYPE_SERVICE) {
-                $this->send('DELAY_SVC_NOTIFICATION;'.$object->host_name.';'.$object->service_description.';'.$time);
-            } else {
-                $this->send('DELAY_HOST_NOTIFICATION;'.$object->host_name.';'.$time);
-            }
-        }
-    }
-
-    /**
      * Return the transport handler that handles actual sending of commands
      *
      * @return Transport
