@@ -184,32 +184,16 @@ class SubmitPassiveCheckResultForm extends CommandForm
     }
 
     /**
-     * Return the entered object state as an integer
+     * Create the submit passive checkresult command object
      *
-     * @return int
+     * @return SubmitPassiveCheckresultCommand
      */
-    public function getState()
+    public function createCommand()
     {
-        return intval($this->getValue('pluginstate'));
-    }
-
-    /**
-     * Return the entered check output as a string
-     *
-     * @return string
-     */
-    public function getOutput()
-    {
-        return $this->getValue('checkoutput');
-    }
-
-    /**
-     * Return the entered performance data as a string
-     *
-     * @return string
-     */
-    public function getPerformancedata()
-    {
-        return $this->getValue('performancedata');
+        return new SubmitPassiveCheckresultCommand(
+            $this->getValue('pluginstate'),
+            $this->getValue('checkoutput'),
+            $this->getValue('performancedata')
+        );
     }
 }

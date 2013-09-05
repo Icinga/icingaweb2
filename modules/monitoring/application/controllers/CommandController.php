@@ -302,7 +302,7 @@ class Monitoring_CommandController extends ActionController
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
-            $this->target->submitCheckResult($this->view->objects, $form->getState(), $form->getOutput(), $form->getPerformancedata());
+            $this->target->sendCommand($form->createCommand(), $this->view->objects);
         }
     }
 

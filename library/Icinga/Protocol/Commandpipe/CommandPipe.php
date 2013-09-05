@@ -171,30 +171,6 @@ class CommandPipe
     }
 
     /**
-     * Submit passive check result for all provided objects
-     *
-     * @param array $objects        An array of hosts and services to submit the passive check result to
-     * @param int $state            The state to set for the monitoring objects
-     * @param string $output        The output string to set as the check result
-     * @param string $perfdata      The optional perfdata to submit as the check result
-     */
-    public function submitCheckResult($objects, $state, $output, $perfdata = "")
-    {
-        if ($perfdata) {
-            $output = $output."|".$perfdata;
-        }
-        foreach ($objects as $object) {
-            if (isset($object->service_description)) {
-                $this->send(
-                    "PROCESS_SERVICE_CHECK_RESULT;$object->host_name;$object->service_description;$state;$output"
-                );
-            } else {
-                $this->send("PROCESS_HOST_CHECK_RESULT;$object->host_name;$state;$output");
-            }
-        }
-    }
-
-    /**
      * Removes the submitted comments
      *
      * @param array $objectsOrComments      An array of hosts and services (to remove all their comments)

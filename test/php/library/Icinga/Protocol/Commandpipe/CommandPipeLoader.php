@@ -55,5 +55,6 @@ class CommandPipeLoader extends LibraryLoader {
         require_once('../../modules/monitoring/library/Monitoring/Command/CustomNotificationCommand.php');
         require_once('../../modules/monitoring/library/Monitoring/Command/DelayNotificationCommand.php');
         require_once('../../modules/monitoring/library/Monitoring/Command/ScheduleCheckCommand.php');
+        require_once('../../modules/monitoring/library/Monitoring/Command/SubmitPassiveCheckresultCommand.php');
     }
 }

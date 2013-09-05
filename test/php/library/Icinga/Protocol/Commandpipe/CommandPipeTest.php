@@ -42,6 +42,7 @@ use Icinga\Module\Monitoring\Command\ScheduleDowntimeCommand;
 use Icinga\Module\Monitoring\Command\CustomNotificationCommand;
 use Icinga\Module\Monitoring\Command\DelayNotificationCommand;
 use Icinga\Module\Monitoring\Command\ScheduleCheckCommand;
+use Icinga\Module\Monitoring\Command\SubmitPassiveCheckresultCommand;
 
 if (!defined("EXTCMD_TEST_BIN")) {
     define("EXTCMD_TEST_BIN", "./bin/extcmd_test");
@@ -570,6 +571,45 @@ class CommandPipeTest extends \PHPUnit_Framework_TestCase
                 )
             );
             $this->assertCommandSucceeded('DELAY_HOST_NOTIFICATION;Host;300');
+        } catch (Exception $e) {
+            $this->cleanup();
+            throw $e;
+        }
+        $this->cleanup();
+    }
+
+    /**
+     * Test whether commands to submit passive check results are being sent to the commandpipe
+     *
+     * @throws Exception
+     */
+    public function testSubmitPassiveCheckresult()
+    {
+        $pipe = $this->getLocalTestPipe();
+        try {
+            $result = new SubmitPassiveCheckresultCommand(0, 'foo', 'bar');
+            $pipe->sendCommand(
+                $result,
+                array(
+                    (object) array(
+                        'host_name'             => 'Host',
+                        'service_description'   => 'Service'
+                    )
+                )
+            );
+            $this->assertCommandSucceeded('PROCESS_SERVICE_CHECK_RESULT;Host;Service;0;foo|bar');
+
+            $result->setOutput('foobar');
+            $result->setPerformanceData('');
+            $pipe->sendCommand(
+                $result,
+                array(
+                    (object) array(
+                        'host_name' => 'Host'
+                    )
+                )
+            );
+            $this->assertCommandSucceeded('PROCESS_HOST_CHECK_RESULT;Host;0;foobar');
         } catch (Exception $e) {
             $this->cleanup();
             throw $e;
