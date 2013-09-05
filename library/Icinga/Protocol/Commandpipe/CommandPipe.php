@@ -599,35 +599,6 @@ class CommandPipe
     }
 
     /**
-     * Send custom host and/or service notifications
-     *
-     * @param array                 $objects        Affected monitoring objects
-     * @param CustomNotification    $notification
-     */
-    public function sendCustomNotification(array $objects, CustomNotification $notification)
-    {
-        foreach ($objects as $hostOrService) {
-            if (isset($hostOrService->service_description) && isset($hostOrService->host_name)) {
-                // Assume service
-                $command = sprintf(
-                    $notification->getFormatString(self::TYPE_SERVICE),
-                    $hostOrService->host_name,
-                    $hostOrService->service_description
-                );
-            } elseif (isset($hostOrService->host_name)) {
-                // Assume host
-                $command = sprintf(
-                    $notification->getFormatString(self::TYPE_HOST),
-                    $hostOrService->host_name
-                );
-            } else {
-                continue;
-            }
-            $this->send($command);
-        }
-    }
-
-    /**
      * Disable notifications for all services of the provided hosts
      *
      * @param array $objects    An array of hosts

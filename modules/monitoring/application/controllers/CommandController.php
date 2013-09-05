@@ -418,7 +418,7 @@ class Monitoring_CommandController extends ActionController
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
-            $this->target->sendCustomNotification($this->view->objects, $form->getCustomNotification());
+            $this->target->sendCommand($form->createCommand(), $this->view->objects);
         }
     }
 

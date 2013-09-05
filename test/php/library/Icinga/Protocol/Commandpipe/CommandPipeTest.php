@@ -10,13 +10,13 @@ CommandPipeLoader::requireLibrary();
 
 use Zend_Config;
 use Icinga\Protocol\Commandpipe\Comment;
-use Icinga\Protocol\Commandpipe\CustomNotification;
 use Icinga\Protocol\Commandpipe\Commandpipe as Commandpipe;
 use Icinga\Protocol\Commandpipe\PropertyModifier as MONFLAG;
 use Icinga\Protocol\Ldap\Exception;
 use Icinga\Module\Monitoring\Command\AcknowledgeCommand;
 use Icinga\Module\Monitoring\Command\AddCommentCommand;
 use Icinga\Module\Monitoring\Command\ScheduleDowntimeCommand;
+use Icinga\Module\Monitoring\Command\CustomNotificationCommand;
 
 if(!defined("EXTCMD_TEST_BIN"))
     define("EXTCMD_TEST_BIN", "./bin/extcmd_test");
@@ -444,22 +444,23 @@ class CommandPipeTest extends \PHPUnit_Framework_TestCase
     /**
      * Test whether custom  servicenotifications are correctly send to the commandpipe without options
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function testSendCustomServiceNotification()
     {
         $pipe = $this->getLocalTestPipe();
         try {
-            $notification = new CustomNotification('Author', 'Comment');
-            $pipe->sendCustomNotification(array(
-                (object) array(
-                    'host_name'             => 'Host',
-                    'service_description'   => 'Service'
+            $notification = new CustomNotificationCommand(new Comment('Author', 'Comment'));
+            $pipe->sendCommand(
+                $notification,
+                array(
+                    (object) array(
+                        'host_name'             => 'Host',
+                        'service_description'   => 'Service'
+                    )
                 )
-            ), $notification);
-            $this->assertCommandSucceeded(
-                'SEND_CUSTOM_SVC_NOTIFICATION;Host;Service;0;Author;Comment'
             );
+            $this->assertCommandSucceeded('SEND_CUSTOM_SVC_NOTIFICATION;Host;Service;0;Author;Comment');
         } catch (Exception $e) {
             $this->cleanup();
             throw $e;
@@ -470,22 +471,23 @@ class CommandPipeTest extends \PHPUnit_Framework_TestCase
     /**
      * Test whether custom hostnotifications are correctly send to the commandpipe with a varlist of options
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function testSendCustomHostNotificationWithOptions()
     {
         $pipe = $this->getLocalTestPipe();
         try {
-            $notification = new CustomNotification('Author', 'Comment', true, true);
-            $pipe->sendCustomNotification(array(
-                (object) array(
-                    'host_name'             => 'Host',
-                    'service_description'   => 'Service'
+            $notification = new CustomNotificationCommand(new Comment('Author', 'Comment'), true, true);
+            $pipe->sendCommand(
+                $notification,
+                array(
+                    (object) array(
+                        'host_name'             => 'Host',
+                        'service_description'   => 'Service'
+                    )
                 )
-            ), $notification);
-            $this->assertCommandSucceeded(
-                'SEND_CUSTOM_SVC_NOTIFICATION;Host;Service;3;Author;Comment'
             );
+            $this->assertCommandSucceeded('SEND_CUSTOM_SVC_NOTIFICATION;Host;Service;3;Author;Comment');
         } catch (Exception $e) {
             $this->cleanup();
             throw $e;
