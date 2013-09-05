@@ -6,6 +6,9 @@ require_once 'Zend/View/Helper/Abstract.php';
 require_once 'Zend/View.php';
 require_once __DIR__. '/../../../../../application/views/helpers/MonitoringProperties.php';
 
+/**
+  * @TODO(el): This test is subject to bug #4679 and 
+  */
 class HostStruct4Properties extends \stdClass
 {
     public $host_name = 'localhost';
@@ -70,8 +73,8 @@ class MonitoringPropertiesTest extends \PHPUnit_Framework_TestCase
         $items = $propertyHelper->monitoringProperties($host);
 
         $this->assertCount(10, $items);
-        $this->assertEquals('5/10 (HARD state)', $items['Current attempt']);
-        $this->assertEquals('2013-07-08 10:10:10', $items['Last update']);
+        $this->assertEquals('5/10 (HARD state)', $items['Current Attempt']);
+        $this->assertEquals('2013-07-08 10:10:10', $items['Last Update']);
     }
 
     public function testOutput2()
@@ -89,16 +92,16 @@ class MonitoringPropertiesTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(10, $items);
 
         $test = array(
-            'Current attempt' => "5/10 (HARD state)",
-            'Last check time' => "2013-07-04 11:24:42",
-            'Check type' => "ACTIVE",
-            'Check latency / duration' => "0.1204 / 0.0000 seconds",
-            'Next scheduled active check' => "2013-07-04 11:29:43",
-            'Last state change' => "2013-07-04 11:24:43",
-            'Last notification' => "N/A (notification 0)",
-            'Is this host flapping?' => "YES (12.37% state change)",
-            'In scheduled downtime?' => "YES",
-            'Last update' => "2013-07-08 10:10:10",
+            'Current Attempt' => "5/10 (HARD state)",
+            'Last Check Time' => "2013-07-04 11:24:42",
+            'Check Type' => "ACTIVE",
+            'Check Latency / Duration' => "0.1204 / 0.0000 seconds",
+            'Next Scheduled Active Check' => "2013-07-04 11:29:43",
+            'Last State Change' => "2013-07-04 11:24:43",
+            'Last Notification' => "N/A (notification 0)",
+            'Is This Host Flapping?' => "YES (12.37% state change)",
+            'In Scheduled Downtime?' => "YES",
+            'Last Update' => "2013-07-08 10:10:10",
         );
 
         $this->assertEquals($test, $items);

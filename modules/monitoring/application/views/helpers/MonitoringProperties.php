@@ -46,16 +46,16 @@ class Zend_View_Helper_MonitoringProperties extends Zend_View_Helper_Abstract
      * @var array
      */
     private static $keys = array(
-        'buildAttempt' => 'Current attempt',
-        'last_check' => 'Last check time',
-        'buildCheckType' => 'Check type',
-        'buildLatency' => 'Check latency / duration',
-        'buildNextCheck' => 'Next scheduled active check',
-        'buildLastStateChange' => 'Last state change',
-        'buildLastNotification' => 'Last notification',
-        'buildFlapping' => 'Is this %s flapping?',
-        'buildScheduledDowntime' => 'In scheduled downtime?',
-        'status_update_time' => 'Last update'
+        'buildAttempt' => 'Current Attempt',
+        'last_check' => 'Last Check Time',
+        'buildCheckType' => 'Check Type',
+        'buildLatency' => 'Check Latency / Duration',
+        'buildNextCheck' => 'Next Scheduled Active Check',
+        'buildLastStateChange' => 'Last State Change',
+        'buildLastNotification' => 'Last Notification',
+        'buildFlapping' => 'Is This %s Flapping?',
+        'buildScheduledDowntime' => 'In Scheduled Downtime?',
+        'status_update_time' => 'Last Update'
     );
 
     private static $notificationReasons = array(
@@ -256,7 +256,7 @@ class Zend_View_Helper_MonitoringProperties extends Zend_View_Helper_Abstract
         $out = array();
 
         foreach (self::$keys as $property => $label) {
-            $label = sprintf($label, $type);
+            $label = sprintf($label, ucfirst($type));
             if (is_callable(array(&$this, $property))) {
                 $out[$label] = $this->$property($object);
             } elseif (isset($object->{$property})) {
