@@ -1,7 +1,6 @@
 <?php
 $hosts = $this->hosts->paginate();
 $viewHelper = $this->getHelper('MonitoringState');
-$trimArea = $this->getHelper('Trim');
 ?>
 
 <?= $this->paginationControl($hosts, null, null, array('preserve' => $this->preserve)) ?>
