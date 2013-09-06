@@ -421,27 +421,78 @@ class CommandPipeTest extends \PHPUnit_Framework_TestCase
     {
         $pipe = $this->getLocalTestPipe();
         try {
-            $downtime = new ScheduleDowntimeCommand(25, 26, new Comment("me", "test"));
+            $downtime = new ScheduleDowntimeCommand(25, 26, new Comment('me', 'test'));
             $pipe->sendCommand(
                 $downtime,
                 array(
                     (object) array(
-                        "host_name" => "Testhost"
+                        'host_name' => 'Testhost'
                     )
                 )
             );
-            $this->assertCommandSucceeded("SCHEDULE_HOST_DOWNTIME;Testhost;25;26;1;0;0;me;test");
+            $this->assertCommandSucceeded('SCHEDULE_HOST_DOWNTIME;Testhost;25;26;1;0;0;me;test');
 
             $pipe->sendCommand(
                 $downtime,
                 array(
                     (object) array(
-                        "host_name" => "Testhost",
-                        "service_description" => "svc"
+                        'host_name' => 'Testhost',
+                        'service_description' => 'svc'
                     )
                 )
             );
-            $this->assertCommandSucceeded("SCHEDULE_SVC_DOWNTIME;Testhost;svc;25;26;1;0;0;me;test");
+            $this->assertCommandSucceeded('SCHEDULE_SVC_DOWNTIME;Testhost;svc;25;26;1;0;0;me;test');
+
+            $downtime->excludeHost();
+            $pipe->sendCommand(
+                $downtime,
+                array(
+                    (object) array(
+                        'host_name' => 'Testhost'
+                    )
+                )
+            );
+            $this->assertCommandSucceeded('SCHEDULE_HOST_SVC_DOWNTIME;Testhost;25;26;1;0;0;me;test');
+        } catch (Exception $e) {
+            $this->cleanup();
+            throw $e;
+        }
+        $this->cleanup();
+    }
+
+    /**
+     * Test whether propagated host downtimes are correctly scheduled
+     *
+     * @throws Exception
+     */
+    public function testSchedulePropagatedDowntime()
+    {
+        $pipe = $this->getLocalTestPipe();
+        try {
+            $downtime = new ScheduleDowntimeCommand(25, 26, new Comment('me', 'test'));
+            $downtime->includeChildren();
+            $pipe->sendCommand(
+                $downtime,
+                array(
+                    (object) array(
+                        'host_name' => 'Testhost'
+                    )
+                )
+            );
+            $this->assertCommandSucceeded('SCHEDULE_AND_PROPAGATE_HOST_DOWNTIME;Testhost;25;26;1;0;0;me;test');
+
+            $downtime->includeChildren(true, true);
+            $pipe->sendCommand(
+                $downtime,
+                array(
+                    (object) array(
+                        'host_name' => 'Testhost'
+                    )
+                )
+            );
+            $this->assertCommandSucceeded(
+                'SCHEDULE_AND_PROPAGATE_TRIGGERED_HOST_DOWNTIME;Testhost;25;26;1;0;0;me;test'
+            );
         } catch (Exception $e) {
             $this->cleanup();
             throw $e;

@@ -78,6 +78,13 @@ class ScheduleDowntimeCommand extends BaseCommand
     private $triggerId;
 
     /**
+     * Whether this downtime should trigger children hosts
+     *
+     * @var bool
+     */
+    private $triggerChildren;
+
+    /**
      * Set when to start this downtime
      *
      * @param   int     $startTime
@@ -176,6 +183,19 @@ class ScheduleDowntimeCommand extends BaseCommand
     }
 
     /**
+     * Include all children hosts with this command
+     *
+     * @param   bool    $state
+     * @param   bool    $trigger    Whether children are triggered by this downtime
+     *
+     * @return  self
+     */
+    public function includeChildren($state = true, $trigger = false) {
+        $this->triggerChildren = (bool) $trigger;
+        return parent::includeChildren($state);
+    }
+
+    /**
      * Return this command's parameters properly arranged in an array
      *
      * @return array
@@ -197,31 +217,21 @@ class ScheduleDowntimeCommand extends BaseCommand
     }
 
     /**
-     * Return the command as a string for the given host or all of it's services
+     * Return the command as a string for the given host
      *
      * @param   type    $hostname       The name of the host to insert
-     * @param   type    $servicesOnly   Whether this downtime is for the given host or all of it's services
      *
      * @return  string                  The string representation of the command
      */
-    public function getHostCommand($hostname, $servicesOnly = false)
+    public function getHostCommand($hostname)
     {
-        return sprintf('SCHEDULE_HOST%s_DOWNTIME;', $servicesOnly ? '_SVC' : '')
+        if ($this->withChildren) {
+            return sprintf('SCHEDULE_AND_PROPAGATE%s_HOST_DOWNTIME;', $this->triggerChildren ? '_TRIGGERED' : '')
             . implode(';', array_merge(array($hostname), $this->getParameters()));
-    }
-
-    /**
-     * Return the command as a string for the given host and all of it's children hosts
-     *
-     * @param   string  $hostname       The name of the host to insert
-     * @param   bool    $triggered      Whether it's children are triggered
-     *
-     * @return  string                  The string representation of the command
-     */
-    public function getPropagatedHostCommand($hostname, $triggered = false)
-    {
-        return sprintf('SCHEDULE_AND_PROPAGATE%s_HOST_DOWNTIME;', $triggered ? '_TRIGGERED' : '')
-            . implode(';', array_merge(array($hostname), $this->getParameters()));
+        } else {
+            return sprintf('SCHEDULE_HOST%s_DOWNTIME;', $this->onlyServices ? '_SVC' : '')
+                . implode(';', array_merge(array($hostname), $this->getParameters()));
+        }
     }
 
     /**
@@ -244,30 +254,28 @@ class ScheduleDowntimeCommand extends BaseCommand
     }
 
     /**
-     * Return the command as a string for all hosts or services of the given hostgroup
+     * Return the command as a string for the given hostgroup
      *
      * @param   type    $hostgroup      The name of the hostgroup to insert
-     * @param   type    $hostsOnly      Whether only hosts or services are taken into account
      *
      * @return  string                  The string representation of the command
      */
-    public function getHostgroupCommand($hostgroup, $hostsOnly = true)
+    public function getHostgroupCommand($hostgroup)
     {
-        return sprintf('SCHEDULE_HOSTGROUP_%s_DOWNTIME;', $hostsOnly ? 'HOST' : 'SVC')
+        return sprintf('SCHEDULE_HOSTGROUP_%s_DOWNTIME;', $this->withoutHosts ? 'SVC' : 'HOST')
             . implode(';', array_merge(array($hostgroup), $this->getParameters()));
     }
 
     /**
-     * Return the command as a string for all hosts or services of the given servicegroup
+     * Return the command as a string for the given servicegroup
      *
      * @param   type    $servicegroup   The name of the servicegroup to insert
-     * @param   type    $hostsOnly      Whether only hosts or services are taken into account
      *
      * @return  string                  The string representation of the command
      */
-    public function getServicegroupCommand($servicegroup, $hostsOnly = true)
+    public function getServicegroupCommand($servicegroup)
     {
-        return sprintf('SCHEDULE_SERVICEGROUP_%s_DOWNTIME;', $hostsOnly ? 'HOST' : 'SVC')
+        return sprintf('SCHEDULE_SERVICEGROUP_%s_DOWNTIME;', $this->withoutServices ? 'HOST' : 'SVC')
             . implode(';', array_merge(array($servicegroup), $this->getParameters()));
     }
 }

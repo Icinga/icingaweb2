@@ -159,10 +159,6 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
             )
         );
 
-        /**
-         * @TODO: Display downtime list (Bug #4496)
-         *
-         */
         $this->addElement(
             'select',
             'triggered',
@@ -334,8 +330,8 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
      */
     public function createCommand()
     {
-        // TODO: Add support for propagation, host-/servicegroups and services only (#4588)
-        return new ScheduleDowntimeCommand(
+        // TODO: Add support for host-/servicegroups and services only (#4588)
+        $command = new ScheduleDowntimeCommand(
             $this->getValue('starttime'),
             $this->getValue('endtime'),
             new Comment(
@@ -345,6 +341,10 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
             $this->getValue('type') === self::TYPE_FLEXIBLE,
             $this->getValue('hours') * 3600 + $this->getValue('minutes') * 60,
             $this->getValue('triggered')
+        );
+        return $command->includeChildren(
+            $this->getWithChildren(),
+            $this->getValue('childobjects') === 1
         );
     }
 }
