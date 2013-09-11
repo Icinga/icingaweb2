@@ -207,7 +207,6 @@ class Monitoring_ShowController extends ActionController
     public function hostAction()
     {
         $this->view->active = 'host';
-
         if ($grapher = Hook::get('grapher')) {
             if ($grapher->hasGraph($this->view->host->host_name)) {
                 $this->view->preview_image = $grapher->getPreviewImage(
@@ -376,6 +375,8 @@ class Monitoring_ShowController extends ActionController
         } elseif ($service = $this->_getParam('service')) {
             $params['service'] = $service;
         }
+        /*
+         *
         $tabs->add(
             'host',
             array(
@@ -412,7 +413,7 @@ class Monitoring_ShowController extends ActionController
                 'urlParams' => $params,
             )
         );
-
+*/
         $tabs->extend(new OutputFormat())
             ->extend(new DashboardAction())
             ->extend(new BasketAction);

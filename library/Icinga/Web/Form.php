@@ -131,6 +131,13 @@ class Form extends Zend_Form
     private $formDecorator;
 
     /**
+     * Whether to ignore users leaving the form with unsaved changes
+     *
+     * @var bool
+     */
+    private $ignoreChangeDiscarding = false;
+
+    /**
      * Getter for the session ID
      *
      * If the ID has never been set, the ID from session_id() is returned
@@ -146,6 +153,15 @@ class Form extends Zend_Form
             $this->sessionId = session_id();
         }
         return $this->sessionId;
+    }
+
+    /**
+     * Set whether to inform a user when he is about to discard changes (false, default) or not
+     *
+     * @param boolean $bool False to not inform users when they leave modified forms, otherwise true
+     */
+    public function setIgnoreChangeDiscarding($bool) {
+        $this->ignoreChangeDiscarding = (boolean) $bool;
     }
 
     /**
@@ -292,8 +308,9 @@ class Form extends Zend_Form
             }
             $this->addElementDecorators();
             $this->created = true;
-            $this->setAttrib('data-icinga-component', 'app/form');
-
+            if (!$this->ignoreChangeDiscarding) {
+                $this->setAttrib('data-icinga-component', 'app/form');
+            }
         }
     }
 
@@ -384,7 +401,8 @@ class Form extends Zend_Form
         foreach ($triggerElements as $elementName) {
             $element = $this->getElement($elementName);
             if ($element !== null) {
-                $element->setAttrib('data-icinga-form-autosubmit', 'true');
+                $element->setAttrib('onchange', 'this.form.submit()');
+                $element->setAttrib('data-icinga-form-autosubmit', true);
             } else {
                 throw new ProgrammingError(
                     'You need to add the element "' . $elementName . '" to' .

@@ -3,29 +3,41 @@
 <?php
   $formatter = $this->getHelper('MonitoringProperties');
 ?>
+<div data-icinga-component="app/mainDetailGrid">
+  <?= $this->sortControl->render($this); ?>
+  <?php
+      $notifications = $this->notifications->paginate();
+  ?>
 
-<?= $this->sortControl->render($this); ?>
-<?php
-$notifications = $this->notifications->paginate();
-echo $this->paginationControl($notifications, null, null, array('preserve' => $this->preserve));
-?>
-
-<table class="table table-condensed">
-  <thead>
-    <tr>
-      <th>Host</th>
-      <th>Service</th>
-      <th>Type</th>
-      <th>Time</th>
-      <th>Contact</th>
-      <th>Notification Command</th>
-      <th>Information</th>
-    </tr>
-  </thead>
-  <tbody>
-  <?php foreach ($notifications as $notification): ?>
-    <tr>
-      <td>
+  <?= $this->paginationControl($notifications, null, null, array('preserve' => $this->preserve)); ?>
+  <table class="table table-condensed" >
+    <thead>
+      <tr>
+        <th>Host</th>
+        <th>Service</th>
+        <th>Type</th>
+        <th>Time</th>
+        <th>Contact</th>
+        <th>Notification Command</th>
+        <th>Information</th>
+      </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($notifications as $notification): ?>
+      <?php
+          if (empty($notification->service_description)) {
+              $detailLink = $this->href('monitoring/show/host', array('host' => $notification->host_name));
+          } else {
+              $detailLink = $this->href('monitoring/show/host', array(
+                      'host'    =>  $notification->host_name,
+                      'service' =>  $notification->service_description
+                  )
+              );
+          }
+      ?>
+      <tr <?= ($this->activeRowHref === $detailLink) ? 'class="active"' : ''; ?>>
+        <td>
+        <a href="<?= $detailLink; ?>" style="visibility:hidden"></a>
         <a href="<?= $this->href('monitoring/show/host', array('host' => $notification->host_name)); ?>">
           <?= $notification->host_name ?>
         </a>
@@ -37,6 +49,7 @@ echo $this->paginationControl($notifications, null, null, array('preserve' => $t
                           )
                       ); ?>">
           <?= empty($notification->service_description) ? '' : $notification->service_description; ?>
+          </a>
       </td>
       <td><?= $formatter->getNotificationType($notification); ?>
       </td>
@@ -56,3 +69,5 @@ echo $this->paginationControl($notifications, null, null, array('preserve' => $t
   <?php endforeach; ?>
   </tbody>
 </table>
+
+</div>

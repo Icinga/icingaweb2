@@ -30,16 +30,18 @@ namespace Icinga\Web\Controller;
 
 use \Zend_Controller_Action;
 use \Zend_Controller_Request_Abstract;
+use \Zend_Controller_Front;
 use \Zend_Controller_Response_Abstract;
 use \Zend_Controller_Action_HelperBroker;
 use \Zend_Layout;
 use \Icinga\Authentication\Manager as AuthManager;
 use \Icinga\Application\Benchmark;
-use \Icinga\Exception;
+use \Exception;
 use \Icinga\Application\Config;
 use \Icinga\Web\Notification;
 use \Icinga\Web\Widget\Tabs;
 use \Icinga\Web\Url;
+use \Icinga\Web\Request;
 
 /**
  * Base class for all core action controllers
@@ -104,6 +106,21 @@ class ActionController extends Zend_Controller_Action
         }
     }
 
+    private function dispatchDetailView($url)
+    {
+        // strip the base URL from the detail $url
+        $url = substr($url, strlen($this->getRequest()->getBaseUrl()));
+        // the host is mandatory, but ignored in Zend
+        $req = new Request('http://ignoredhost/' . $url);
+
+        $router = Zend_Controller_Front::getInstance()->getRouter();
+        $router->route($req);
+        $detailHtml = $this->view->action($req->getActionName(), $req->getControllerName(), $req->getModuleName());
+        $this->_helper->layout->assign('detailContent', $detailHtml);
+        $this->_helper->layout->assign('detailClass', 'col-sm-12 col-xs-12 col-md-12 col-lg-6');
+        $this->_helper->layout->assign('mainClass', 'col-sm-12 col-xs-12 col-md-12 col-lg-6');
+    }
+
     /**
      * Check whether the controller requires a login. That is when the controller requires authentication and the
      * user is currently not authenticated
@@ -150,6 +167,12 @@ class ActionController extends Zend_Controller_Action
      */
     private function redirectToLogin()
     {
+        if ($this->getRequest()->isXmlHttpRequest()) {
+
+            $this->getResponse()->setHttpResponseCode(401);
+            $this->getResponse()->sendHeaders();
+            throw new Exception("You are not logged in");
+    }
         $url = Url::fromPath('/authentication/login');
         $this->redirectNow($url->getRelativeUrl());
     }
@@ -169,6 +192,7 @@ class ActionController extends Zend_Controller_Action
         $this->_helper->Redirector->gotoUrlAndExit($url);
     }
 
+
     /**
      * Detect whether the current request requires changes in the layout and apply them before rendering
      *
@@ -179,13 +203,30 @@ class ActionController extends Zend_Controller_Action
         Benchmark::measure('Action::postDispatch()');
 
         if ($this->_request->isXmlHttpRequest()) {
-            if ($this->replaceLayout || $this->_getParam('_render') === 'body') {
-                $this->_helper->layout()->setLayout('body');
-                header('X-Icinga-Target: body');
-            } else {
-                $this->_helper->layout()->setLayout('inline');
-            }
+            $this->_helper->layout()->setLayout('body');
         }
+
+        if ($this->getParam('detail', false)) {
+            $detail = $this->getParam('detail');
+
+            // Zend uses the GET variables when calling getParam, therefore we have to persist the params,
+            // clear the $_GET array, call the detail view with the url set in $detail and afterwards recreate
+            // the $_GET array. If this is not done the following issues occur:
+            //
+            // - A stackoverflow issue due to infinite nested calls of buildDetailView (as the detailview has the same
+            //   postDispatch method) when 'detail' is not set to null
+            //
+            // - Params (like filters in the URL) from the detail view would be applied on all links of the master view
+            //   as those would be in the $_GET array after building the detail view. E.g. if you have a grid in the
+            //   master and a detail view filtering showing one host in detail, the pagination links of the grid would
+            //   contain the host filter of the detail view
+            //
+            $params = $_GET;
+            $_GET['detail'] = null;
+            $this->dispatchDetailView($detail);
+            $_GET = $params;
+        }
+
     }
 
     /**

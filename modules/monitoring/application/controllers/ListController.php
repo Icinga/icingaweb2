@@ -35,8 +35,9 @@ use \Icinga\Web\Hook;
 use \Icinga\Web\Widget\Tabextension\DashboardAction;
 use \Icinga\Web\Widget\Tabextension\OutputFormat;
 use \Icinga\Web\Widget\Tabs;
-use Icinga\Module\Monitoring\Backend;
+use \Icinga\Module\Monitoring\Backend;
 use \Icinga\Web\Widget\SortBox;
+use \Icinga\Application\Config as IcingaConfig;
 
 class Monitoring_ListController extends ActionController
 {
@@ -64,6 +65,7 @@ class Monitoring_ListController extends ActionController
         $this->backend = Backend::getInstance($this->_getParam('backend'));
         $this->view->grapher = Hook::get('grapher');
         $this->createTabs();
+        $this->view->activeRowHref = $this->getParam('detail');
     }
 
     /**
@@ -268,7 +270,8 @@ class Monitoring_ListController extends ActionController
             $this->_helper->viewRenderer($this->compactView);
         }
 
-        if ($this->_getParam('format') === 'sql') {
+        if ($this->_getParam('format') === 'sql'
+            && IcingaConfig::app()->global->get('environment', 'production') === 'development') {
             echo '<pre>'
                 . htmlspecialchars(wordwrap($query->getQuery()->dump()))
                 . '</pre>';
