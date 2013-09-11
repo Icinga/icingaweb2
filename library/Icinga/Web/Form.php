@@ -160,7 +160,8 @@ class Form extends Zend_Form
      *
      * @param boolean $bool False to not inform users when they leave modified forms, otherwise true
      */
-    public function setIgnoreChangeDiscarding($bool) {
+    public function setIgnoreChangeDiscarding($bool)
+    {
         $this->ignoreChangeDiscarding = (boolean) $bool;
     }
 

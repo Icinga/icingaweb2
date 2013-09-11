@@ -172,7 +172,7 @@ class ActionController extends Zend_Controller_Action
             $this->getResponse()->setHttpResponseCode(401);
             $this->getResponse()->sendHeaders();
             throw new Exception("You are not logged in");
-    }
+        }
         $url = Url::fromPath('/authentication/login');
         $this->redirectNow($url->getRelativeUrl());
     }

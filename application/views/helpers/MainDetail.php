@@ -1,4 +1,6 @@
 <?php
+// @codingStandardsIgnoreStart
+
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga 2 Web.
@@ -54,7 +56,7 @@ EOT;
         if ($detailContent != '') {
             $detailCls = '';
             $mainCls = '';
-            foreach (self::$expanded as $type=>$size) {
+            foreach (self::$expanded as $type => $size) {
                 $detailCls .= 'col-' . $type . '-' . ($size == 12 ? 'push-' : '') . $size . ' ';
                 $mainCls .= 'col-' . $type . '-' . ($size == 12 ? 'pull-' : '') . ($size < 12 ? (12-$size) : 12). ' ';
             }
@@ -67,3 +69,4 @@ EOT;
         return $html;
     }
 }
+// @codingStandardsIgnoreEnd
