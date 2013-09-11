@@ -117,13 +117,8 @@ class StaticController extends ActionController
         }
         $response = $this->getResponse();
         $response->setHeader('Content-Type', 'text/javascript');
-        if (!IcingaConfig::app()->global->get('environment') == 'development') {
-            $this->setCacheHeader(3600);
-        } else {
-            $response->setHeader('Pragma', 'no-cache', true);
-            $response->setHeader('Cache-Control', 'max-age=-3600', true);
+        $this->setCacheHeader(3600);
 
-        }
         $response->setHeader(
             'Last-Modified',
             gmdate(
