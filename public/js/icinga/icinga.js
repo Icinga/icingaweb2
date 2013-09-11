@@ -30,8 +30,10 @@ define([
     'jquery',
     'logging',
     'icinga/util/async',
-    'icinga/componentLoader'
-], function ($, log, async,components) {
+    'icinga/componentLoader',
+    'components/app/container',
+    'URIjs/URI'
+], function ($, log, async, components, Container, URI) {
     'use strict';
 
     /**
@@ -39,15 +41,79 @@ define([
      */
     var Icinga = function() {
 
+        var ignoreHistoryChanges = false;
+
         var initialize = function () {
             components.load();
+            registerGenericHistoryHandler();
             log.debug("Initialization finished");
+
         };
 
-        $(document).ready(initialize.bind(this));
+        /**
+         * Register handler for handling the history state generically
+         *
+         */
+        var registerGenericHistoryHandler = function() {
+            var lastUrl = URI(window.location.href);
+            History.Adapter.bind(window, 'popstate', function() {
+                if (ignoreHistoryChanges) {
+                    return;
+                }
+                log.debug(URI(History.getState().url).relativeTo(lastUrl).href());
+                var relativeURLPart = URI(History.getState().url).relativeTo(lastUrl).href();
+                if (relativeURLPart !== "" && relativeURLPart[0] === '?' ) {
+                    // same controller, different parameters, so only update the container
+                    Container.getMainContainer().syncWithCurrentUrl();
+                    Container.getDetailContainer().syncWithCurrentUrl();
+                } else {
+                    gotoUrl(History.getState().url);
+                }
+                lastUrl = URI(window.location.href);
+            });
+        };
 
+
+        var gotoUrl = function(href) {
+            if (typeof document.body.pending !== 'undefined') {
+                document.body.pending.abort();
+            }
+            $.ajax({
+                success: function(domNodes) {
+                    ignoreHistoryChanges = true;
+                    History.pushState({}, document.title, href);
+                    $('body').empty().append($(domNodes));
+                    ignoreHistoryChanges = false;
+                    components.load();
+                },
+                url: href
+            });
+
+            return false;
+        };
+
+        if (Modernizr.history) {
+            $(document.body).on('click', '#icinganavigation, #icingatopbar', function(ev) {
+                var targetEl = ev.target || ev.toElement || ev.relatedTarget;
+                if (targetEl.tagName.toLowerCase() !== 'a') {
+                    return true;
+                }
+
+                var href = $(targetEl).attr('href');
+                if (Container.isExternalLink(href)) {
+                    return true;
+                }
+                ev.preventDefault();
+                ev.stopPropagation();
+                gotoUrl(href);
+                return false;
+            });
+        }
+        $(document).ready(initialize.bind(this));
         return {
-            components: components
+
+            components: components,
+            gotoUrl: gotoUrl
         };
     };
     return new Icinga();

@@ -47,7 +47,7 @@ var logger = {
 
 /**
 *   Mock for the 'define' function of requireJS, behaves exactly the same
-*   except that it looks up the dependencies in the list provided by registerDepencies()
+*   except that it looks up the dependencies in the list provided by registerDependencies()
 *   A module that hasn't been defined with a name can be fetched with getDefined() (without parameter)
 *
 **/
@@ -88,6 +88,7 @@ var defineMock = function() {
 **/
 function initRequireMethods() {
     GLOBAL.$ = require('jquery');
+    GLOBAL.jQuery = GLOBAL.$;
     GLOBAL.requirejs = requireJsMock;
     GLOBAL.define = defineMock;
     registeredDependencies = {

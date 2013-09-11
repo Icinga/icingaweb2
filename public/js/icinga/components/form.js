@@ -43,17 +43,7 @@ define(['jquery'], function($) {
      */
     var ATTR_MODIFIED = 'data-icinga-form-modified';
 
-    /**
-     * Return true when the input element is a autosubmit field
-     *
-     * @param {string|DOMElement|jQuery} el     The element to test for autosubmission
-     *
-     * @returns {boolean}                       True when the element should be automatically submitted
-     */
-    var isAutoSubmitInput = function(el) {
-        return $(el).attr('data-icinga-form-autosubmit') === 'true' ||
-            $(el).attr('data-icinga-form-autosubmit') === '1';
-    };
+
 
     /**
      * Takes a form and returns an overloaded jQuery object
@@ -105,16 +95,16 @@ define(['jquery'], function($) {
      */
     var registerFormEventHandler = function(form) {
         form.change(function(changed) {
-            if (isAutoSubmitInput(changed.target)) {
+            if ($(changed.target).attr('data-icinga-form-autosubmit')) {
                 form.clearModificationFlag();
-                form.submit();
             } else {
                 form.setModificationFlag();
             }
-
         });
         // submissions should clear the modification flag
-        form.submit(form.clearModificationFlag);
+        form.submit(function() {
+            form.clearModificationFlag()
+        });
     };
 
     /**
