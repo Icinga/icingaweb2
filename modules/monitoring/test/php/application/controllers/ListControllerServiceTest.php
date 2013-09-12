@@ -56,9 +56,11 @@ class ListControllerServiceMySQLTest  extends MonitoringControllerTest
 
         $controller = $this->requireController('ListController', $backend);
         $controller->servicesAction();
-        $result = $controller->view->services->fetchAll();
 
-        $this->assertEquals(9, count($result), "Testing for correct service count");
+        $result = $controller->view->services;
+
+        $this->assertEquals(9, $result->getTotalItemCount(), "Testing for correct service count");
+        $result = $result->getAdapter()->getItems(0,1);
         $this->assertEquals("notes.url", $result[0]->service_notes_url, "Testing for correct notes_url");
         $this->assertEquals("action.url", $result[0]->service_action_url, "Testing for correct action_url");
         $this->assertEquals(0, $result[0]->service_state, "Testing for correct Service state");

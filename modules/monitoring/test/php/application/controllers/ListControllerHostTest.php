@@ -67,10 +67,11 @@ class ListControllerHostMySQLTest  extends MonitoringControllerTest
         }
         $controller = $this->requireController('ListController', $backend);
         $controller->hostsAction();
-        $result = $controller->view->hosts->fetchAll();
+        $result = $controller->view->hosts;
 
-        $this->assertCount(5, $result, 'Testing correct result count for '.$backend);
+        $this->assertEquals(5, $result->getTotalItemCount(), 'Testing correct result count for '.$backend);
 
+        $result = $result->getAdapter()->getItems(0,6);
         for($i=1;$i<=5;$i++) {
             $this->assertEquals('host'.$i, $result[$i-1]->host_name, "Asserting correct host names for backend ".$backend);
         }
