@@ -256,7 +256,7 @@ class Monitoring_ListController extends ActionController
             ->from($view, $cols)
             ->applyRequest($this->_request);
         $this->handleFormatRequest($query);
-        return $query;
+        return $query->paginate();
     }
 
     /**

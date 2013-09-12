@@ -30,7 +30,7 @@ describe('Component registry',function() {
         cleanTestDom();
     });
 
-    it('Existing ids are preserved', function() {
+    xit('Existing ids are preserved', function() {
         setUp();
 
         registry.add({}, 'user-defined-id', null).should.equal('user-defined-id');
@@ -41,10 +41,6 @@ describe('Component registry',function() {
     it('Components are correctly added to the library', function() {
         setUp();
 
-        var cmp1 = { component: "cmp1" };
-        registry.add(cmp1, 'user-defined-id', null);
-        registry.getById('user-defined-id').should.equal(cmp1);
-
         var cmp2 = { component: "cmp2" };
         registry.add(cmp2, null, null);
         registry.getById('icinga-component-0').should.equal(cmp2);
@@ -52,7 +48,10 @@ describe('Component registry',function() {
         cleanTestDom();
     });
 
-    it('getId(component) should return the components assigned id.', function() {
+    /**
+     * Not supported anymore
+     */
+    xit('getId(component) should return the components assigned id.', function() {
         setUp();
 
         var cmp1 = { component: "cmp1" };
@@ -72,13 +71,13 @@ describe('Component registry',function() {
         setUp();
 
         var cmp1 = { component: "some/type" };
-        registry.add(cmp1, null, 'some/type');
+        registry.add(cmp1,'some/type');
 
         var cmp2 = { component: "some/type" };
-        registry.add(cmp2, null, "some/type");
+        registry.add(cmp2, "some/type");
 
         var cmp3 = { component: "other/type" };
-        registry.add(cmp3, null, "other/type");
+        registry.add(cmp3, "other/type");
 
         var cmps = registry.getByType('some/type');
         cmps.length.should.equal(2);

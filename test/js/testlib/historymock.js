@@ -21,6 +21,11 @@ var URI = require('URIjs');
     var states = [];
 
 
+    /**
+     * Api for setting the window URL
+     *
+     * @param {string} url      The new url to use for window.location
+     */
     window.setWindowUrl = function(url) {
         var url = URI(url);
         window.location.protocol = url.protocol();

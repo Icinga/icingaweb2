@@ -25,8 +25,8 @@
  * @author     Icinga Development Team <info@icinga.org>
  */
 // {{{ICINGA_LICENSE_HEADER}}}
-define(['components/app/container', 'jquery', 'logging', 'icinga/util/async', 'URIjs/URI', 'URIjs/URITemplate'],
-function(Container, $, logger, async, URI) {
+define(['components/app/container', 'jquery', 'logging', 'URIjs/URI', 'URIjs/URITemplate'],
+function(Container, $, logger, URI) {
     "use strict";
 
     /**
@@ -120,7 +120,6 @@ function(Container, $, logger, async, URI) {
          */
         this.registerTableLinks = function(domContext) {
             domContext = domContext || contentNode;
-            this.container.disableClickHandler();
 
             $('tbody tr', domContext).on('click', function(ev) {
                 var targetEl = ev.target || ev.toElement || ev.relatedTarget;
@@ -148,18 +147,27 @@ function(Container, $, logger, async, URI) {
          * current container
          */
         this.registerControls = function() {
-            controlForms.on('submit', (function(evt) {
-                // append the form's parameters to the current container href
-                var form = $(evt.currentTarget);
-                var url = URI(this.container.getContainerHref());
+
+            controlForms.on('submit', function(evt) {
+                var form = $(this);
+                var container = (new Container(this));
+                var url = URI(container.getContainerHref());
                 url.search(URI.parseQuery(form.serialize()));
-                // reload this container
-                this.container.replaceDomFromUrl(url);
+                container.replaceDomFromUrl(url.href());
 
                 evt.preventDefault();
                 evt.stopPropagation();
                 return false;
-            }).bind(this));
+
+            });
+            $('.pagination li a', contentNode).on('click', function() {
+                Container.hideDetail();
+            });
+        };
+
+        var getSelectedRows = function() {
+            return $('a[href="' + Container.getDetailContainer().getContainerHref() + '"]', determineContentTable()).
+                parentsUntil('table', 'tr');
         };
 
         /**
@@ -167,9 +175,7 @@ function(Container, $, logger, async, URI) {
          */
         this.syncSelectionWithDetail = function() {
             $('tr', contentNode).removeClass('active');
-            var selection = $('a[href="' + Container.getDetailContainer().getContainerHref() + '"]', contentNode).
-                parentsUntil('table', 'tr');
-            selection.addClass('active');
+            getSelectedRows().addClass('active');
         };
 
         /**
@@ -184,10 +190,8 @@ function(Container, $, logger, async, URI) {
          */
         this.construct = function(target) {
             this.container = new Container(target);
-            logger.debug("Registering table events for ", this.container.containerType);
             controlForms = determineControlForms();
             contentNode = determineContentTable();
-
             this.registerControls();
             this.registerTableLinks();
             this.registerHistoryChanges();

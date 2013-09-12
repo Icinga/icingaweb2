@@ -1,13 +1,12 @@
 <?= $this->tabs->render($this); ?>
 
 <?php
-$paginator = $services->paginate();
 $viewHelper = $this->getHelper('MonitoringState');
 ?>
 <div data-icinga-component="app/mainDetailGrid">
 
   <?=  $this->sortControl->render($this); ?>
-  <?=  $this->paginationControl($paginator, null, null, array('preserve' => $this->preserve)) ?>
+  <?=  $this->paginationControl($this->services, null, null, array('preserve' => $this->preserve)) ?>
 
   <table class="table table-condensed">
     <thead>
@@ -20,7 +19,7 @@ $viewHelper = $this->getHelper('MonitoringState');
       </tr>
     </thead>
     <tbody>
-    <?php foreach ($services->fetchAll() as $service): ?>
+    <?php foreach ($services as $service): ?>
       <?php
           $serviceLink = $this->href('monitoring/show/service',array(
                   'host' => $service->host_name,

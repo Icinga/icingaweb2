@@ -13,8 +13,7 @@ function formatDateString($self,$dateString){
     $d = new DateTime($dateString);
     return $self->util()->showTime($d->getTimestamp());
 }
-$paginator = $downtimes->paginate();
-$downtimes = $downtimes->fetchAll();
+
 ?>
 
 <div data-icinga-component="app/mainDetailGrid">
@@ -23,7 +22,7 @@ $downtimes = $downtimes->fetchAll();
   </div>
   <div>
     <?=  $this->paginationControl(
-            $paginator,
+            $downtimes,
             null,
             array(
                 'mixedPagination.phtml',

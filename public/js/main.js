@@ -22,7 +22,7 @@ requirejs.config({
 
 define(['jquery', 'history'], function ($) {
 
-    requirejs(['bootstrap', 'jqueryPlugins/wookmark'], function() {
+    requirejs(['bootstrap'], function() {
         requirejs(['datetimepicker']);
     });
 

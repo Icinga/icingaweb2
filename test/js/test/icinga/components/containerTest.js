@@ -73,8 +73,11 @@ describe('The container component', function() {
      * Test dom selectors and instance creation
      */
     it('should provide access to the main and detail component', function() {
-        requireNew('icinga/components/container.js');
         createDOM();
+        rjsmock.registerDependencies({
+            'URIjs/URI' : URI
+        });
+        requireNew('icinga/components/container.js');
         var Container = rjsmock.getDefine();
         should.exist(Container.getMainContainer().containerDom, 'Assert that the main container has an DOM attached');
         should.exist(Container.getDetailContainer().containerDom, 'Assert that the detail container has an DOM attached');
@@ -94,62 +97,31 @@ describe('The container component', function() {
         requireNew('icinga/components/container.js');
         createDOM();
         var Container = rjsmock.getDefine();
-        Container.getMainContainer().updateContainerHref('/some/other/url?test');
+        var url = Container.getMainContainer().updateContainerHref('/some/other/url?test');
+        window.setWindowUrl(url);
         Container.getMainContainer().containerDom.attr('data-icinga-href').should.equal('/some/other/url?test');
 
-        window.location.href.should.equal(
+        url.should.equal(
             '/some/other/url?test',
             'Assert the main container updating the url correctly');
 
-        Container.getDetailContainer().updateContainerHref('/some/detail/url?test');
+        url = Container.getDetailContainer().updateContainerHref('/some/detail/url?test');
+        window.setWindowUrl(url);
+
         Container.getDetailContainer().containerDom.attr('data-icinga-href').should.equal('/some/detail/url?test');
-        window.location.href.should.equal(
+        url.should.equal(
             '/some/other/url?test&detail=' + encodeURIComponent('/some/detail/url?test'),
             'Assert the detail container only updating the "detail" portion of the URL'
         );
 
-        Container.getMainContainer().updateContainerHref('/some/other2/url?test=test');
+        url = Container.getMainContainer().updateContainerHref('/some/other2/url?test=test');
+
+        window.setWindowUrl(Container.getMainContainer().getContainerHref(window.location.href));
         Container.getMainContainer().containerDom.attr('data-icinga-href').should.equal('/some/other2/url?test=test');
-        window.location.href.should.equal(
+        url.should.equal(
             '/some/other2/url?test=test&detail=' + encodeURIComponent('/some/detail/url?test'),
             'Assert the main container keeping the detail portion untouched if being assigned a new URL'
         );
     });
 
-    /**
-     * Test synchronization with Url
-     */
-    it('should be able to sync correctly with the current url if the URL changed', function() {
-        rjsmock.registerDependencies({
-            'URIjs/URI' : URI,
-            'icinga/componentLoader' : {
-                load: function() {}
-            }
-        });
-        requireNew('icinga/components/container.js');
-        createDOM();
-
-        var Container = rjsmock.getDefine();
-        var containerModified = false;
-
-        Container.getMainContainer().updateContainerHref('/my/test/url?test=1');
-        Container.getMainContainer().registerOnUpdate(function() {
-            containerModified = true;
-        });
-
-        window.setWindowUrl('/my/test/url?test=2');
-        Container.getMainContainer().syncWithCurrentUrl();
-        Container.getMainContainer().containerDom.attr('data-icinga-href').should.equal('/my/test/url?test=2');
-        containerModified.should.equal(true);
-        containerModified = false;
-
-        Container.getMainContainer().syncWithCurrentUrl();
-        // URL hasn't changed, so this should not return true
-        containerModified.should.equal(false);
-
-        window.setWindowUrl('/my/test/url?test=2&detail=test');
-        Container.getMainContainer().syncWithCurrentUrl();
-        // URL is not modified for main container, so this should not return true
-        containerModified.should.equal(false);
-    });
 });

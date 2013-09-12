@@ -26,8 +26,22 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITemplate'], function($, logger, componentLoader, URI) {
+define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITemplate'],
+    function($, logger, componentLoader, URI) {
     "use strict";
+
+     var Icinga;
+
+    /**
+     * Enumeration of possible container types
+     *
+     * @type {{GENERIC: string, MAIN: string, DETAIL: string}}
+     */
+    var CONTAINER_TYPES = {
+        'GENERIC' : 'generic',
+        'MAIN' :    'icingamain',
+        'DETAIL':   'icingadetail'
+    };
 
     /**
      * Static reference to the main container, populated on the first 'getMainContainer' call
@@ -59,17 +73,6 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
      * @param {HTMLElement, jQuery, String} target      A jQuery resultset, dom element or matcher string
      */
     var Container = function(target) {
-
-        /**
-         * Enumeration of possible container types
-         *
-         * @type {{GENERIC: string, MAIN: string, DETAIL: string}}
-         */
-        var CONTAINER_TYPES = {
-            'GENERIC' : 'generic',
-            'MAIN' :    'icingamain',
-            'DETAIL':   'icingadetail'
-        };
 
         /**
          * Set to true when no history changes should be made
@@ -113,8 +116,14 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
             } else {
                 this.containerType = CONTAINER_TYPES.GENERIC;
             }
+            this.containerDom.attr('data-icinga-href', this.getContainerHref());
         };
 
+        /**
+         * Returns the window without the hostname
+         *
+         * @returns {string}    path with query, search and hash
+         */
         var getWindowLocationWithoutHost = function() {
             return window.location.pathname + window.location.search + window.location.hash;
         };
@@ -126,9 +135,9 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
          *
          * @returns {string}        The Url of the main container
          */
-        var getMainContainerHrefFromUrl = function() {
+        var getMainContainerHrefFromUrl = function(baseUrl) {
             // main has the url without the icingadetail part
-            var href = URI(getWindowLocationWithoutHost());
+            var href = URI(getWindowLocationWithoutHost(baseUrl));
             href.removeQuery('detail');
             return href.href();
         };
@@ -141,8 +150,8 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
          *
          * @returns {string|undefined}  The Url of the detail container or undefined if no detail container is active
          */
-        var getDetailContainerHrefFromUrl = function() {
-            var location = new URI(getWindowLocationWithoutHost());
+        var getDetailContainerHrefFromUrl = function(baseUrl) {
+            var location = new URI(baseUrl);
             var href = URI.parseQuery(location.query()).detail;
             if (!href) {
                 return;
@@ -165,17 +174,18 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
          *
          * @returns {String|undefined}  The Url of the container or undefined if the container has no Url set
          */
-        this.getContainerHref = function() {
+        this.getContainerHref = function(baseUrl) {
+            baseUrl = baseUrl || getWindowLocationWithoutHost();
             switch (this.containerType) {
                 case CONTAINER_TYPES.MAIN:
-                    return getMainContainerHrefFromUrl();
+                    return getMainContainerHrefFromUrl(baseUrl);
                 case CONTAINER_TYPES.DETAIL:
-                    return getDetailContainerHrefFromUrl();
+                    return getDetailContainerHrefFromUrl(baseUrl);
                 case CONTAINER_TYPES.GENERIC:
                     if (this.containerDom.attr('data-icinga-href')) {
                         return URI(this.containerDom.attr('data-icinga-href'));
                     } else {
-                        return URI(getWindowLocationWithoutHost()).href();
+                        return URI(baseUrl).href();
                     }
             }
         };
@@ -187,8 +197,8 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
          *
          * @returns {URI}       The modified URI.js containing the new main and the current detail link
          */
-        var setMainContainerHref = function(url) {
-            var detail = getDetailContainerHrefFromUrl();
+        var setMainContainerHref = function(url, baseUrl) {
+            var detail = getDetailContainerHrefFromUrl(baseUrl);
             if (detail) {
                 url.addQuery('detail', detail);
             }
@@ -202,8 +212,8 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
          *
          * @returns {URI}           The modified URI.js containing the new detail and the current main link
          */
-        var setDetailContainerHref = function(url) {
-            var location = new URI(window.location.href);
+        var setDetailContainerHref = function(url, baseUrl) {
+            var location = new URI(baseUrl);
             location.removeQuery('detail');
             if (typeof url !== 'undefined') { // no detail Url given
                 location.addQuery('detail', url);
@@ -219,23 +229,27 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
          * but the containers data-icinga-href still points to the containers element).
          *
          * @param {String|URI} url     An Url string or a URI.js object representing the new Url for this container
+         *
+         * @return {String} url        The new Url of the application (main and detail)
          */
-        this.updateContainerHref = function(url) {
+        this.updateContainerHref = function(url, baseUrl) {
+            baseUrl = baseUrl || getWindowLocationWithoutHost();
             if (typeof url === "string") {
                 url = URI(url);
             }
             var containerUrl, windowUrl;
             switch (this.containerType) {
                 case CONTAINER_TYPES.MAIN:
-                    windowUrl = setMainContainerHref(url);
+                    windowUrl = setMainContainerHref(url, baseUrl);
                     containerUrl = windowUrl.clone().removeQuery('detail');
                     break;
                 case CONTAINER_TYPES.DETAIL:
-                    windowUrl = setDetailContainerHref(url);
+                    windowUrl = setDetailContainerHref(url, baseUrl);
                     containerUrl = url;
                     break;
                 case CONTAINER_TYPES.GENERIC:
                     containerUrl = url;
+                    windowUrl = baseUrl;
                     break;
             }
 
@@ -244,56 +258,10 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
             } else {
                 this.containerDom.removeAttr('data-icinga-href');
             }
-            if (!this.freezeHistory) {
-                History.pushState({container: this.containerDom.attr('id')}, document.title, windowUrl.href());
-            }
-            return windowUrl;
+
+            return windowUrl.href();
         };
 
-        /**
-         * Synchronize the container with the currently active window Url
-         *
-         * This is called mostly after changes in the history and makes sure the container contains the same content
-         * as the Url refers to. If the Url is the same as the Url in the container (the one in the data-icinga-href
-         * attribute), the container will be untouched, otherwise it's content and data-icinga-href attribute will be
-         * updated with the Url from the window.
-         */
-        this.syncWithCurrentUrl = function() {
-            if (this.containerType === CONTAINER_TYPES.GENERIC) {
-                return; // generic containers would require this method to be specialised
-            }
-            // Catch initial page loading: Here no data-icinga-href is set and no url is given, so we're safe to ignore this
-            if (typeof this.containerDom.attr('data-icinga-href') === 'undefined' &&
-                    typeof this.getContainerHref() === 'undefined') {
-                return;
-            }
-            // This is the case when an detail is removed on history back
-            if (typeof this.getContainerHref() === 'undefined' && typeof this.containerDom.attr('data-icinga-href') !== 'undefined') {
-                this.containerDom.removeAttr('data-icinga-href');
-                this.containerDom.empty();
-                this.hideDetail();
-                logger.debug("Hiding detail panel on Url change");
-                return;
-            }
-
-            if (!URI(this.getContainerHref()).equals(this.containerDom.attr('data-icinga-href'))) {
-                logger.debug(
-                    "Applying URL change for ", this.containerType,
-                    "from", this.getContainerHref(),
-                    "to", this.containerDom.attr('data-icinga-href')
-                );
-
-                if (typeof this.containerDom.attr('data-icinga-href') === 'undefined') { // container is empty now
-                    //this.replaceDom('');
-                } else {
-                    this.freezeHistory = true;
-                    this.replaceDomFromUrl(this.getContainerHref());
-                    this.freezeHistory = false;
-                }
-            } else {
-                logger.debug("No action performed on Url change, same Url for ", this.containerType);
-            }
-        };
 
         /**
          * Load the provided url, stop all pending requests for this container and call replaceDom for the returned html
@@ -303,26 +271,7 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
          * @param {String, URI} url     The Url to load or and URI.js object encapsulating it
          */
         this.replaceDomFromUrl = function(url) {
-            if (!Modernizr.history) {
-                window.location.href = this.updateContainerHref(url);
-            }
-
-            this.updateContainerHref(url);
-            var scope = this;
-            if (this.containerDom.pending) {
-                this.containerDom.pending.abort();
-            }
-            this.containerDom.pending = $.ajax({
-                url: url,
-                success: function(domNodes) {
-                    scope.replaceDom(domNodes);
-                },
-                error: function(response) {
-                    if (response.status === 401) {
-                        window.location.reload();
-                    }
-                }
-            });
+            Icinga.replaceBodyFromUrl(this.updateContainerHref(url));
         };
 
         /**
@@ -340,8 +289,7 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
          * @see registerOnUpdate
          */
         this.replaceDom = function(domNodes, keepLayout) {
-            var newDom = $('#icingamain', domNodes);
-            this.containerDom.empty().append(newDom.children());
+            this.containerDom.empty().append(domNodes);
             this.containerDom.trigger('updated', [domNodes]);
             componentLoader.load();
             if (!keepLayout) {
@@ -350,6 +298,8 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
                 }
             }
         };
+
+
 
         /**
          * Register a method to be called when this container is updated
@@ -461,7 +411,7 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
          * more specific handler, causes an update of the main container if it's not external or a browser behaviour link
          * (those starting with '#').
          */
-         $('body').on('click', '#icingamain', function(ev) {
+         $('body').on('click', '#icingamain, #icingadetail', function(ev) {
             var targetEl = ev.target || ev.toElement || ev.relatedTarget;
             if (targetEl.tagName.toLowerCase() !== 'a') {
                 return true;
@@ -470,12 +420,27 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
             if (Container.isExternalLink($(targetEl).attr('href'))) {
                 return true;
             } else {
-                Container.getMainContainer().replaceDomFromUrl(URI($(targetEl).attr('href')).href());
+                var container = new Container($(targetEl));
+                // detail links render to main by default;
+                Icinga.replaceBodyFromUrl(URI($(targetEl).attr('href')).href());
+
                 ev.preventDefault();
                 ev.stopPropagation();
                 return false;
             }
         });
     }
+
+    /**
+     * Injects the icinga object into the Container class
+     *
+     * This can't be done via requirejs as we would end up in circular references
+     *
+     * @param {Icinga} icingaObj        The Icinga object to use for reloading
+     */
+    Container.setIcinga = function(icingaObj) {
+        Icinga = icingaObj;
+    };
+
     return Container;
 });

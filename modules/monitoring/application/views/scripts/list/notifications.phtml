@@ -5,9 +5,6 @@
 ?>
 <div data-icinga-component="app/mainDetailGrid">
   <?= $this->sortControl->render($this); ?>
-  <?php
-      $notifications = $this->notifications->paginate();
-  ?>
 
   <?= $this->paginationControl($notifications, null, null, array('preserve' => $this->preserve)); ?>
   <table class="table table-condensed" >

@@ -29,11 +29,10 @@
 define([
     'jquery',
     'logging',
-    'icinga/util/async',
     'icinga/componentLoader',
     'components/app/container',
     'URIjs/URI'
-], function ($, log, async, components, Container, URI) {
+], function ($, log, components, Container, URI) {
     'use strict';
 
     /**
@@ -45,7 +44,9 @@ define([
 
         var initialize = function () {
             components.load();
+            ignoreHistoryChanges = true;
             registerGenericHistoryHandler();
+            ignoreHistoryChanges = false;
             log.debug("Initialization finished");
 
         };
@@ -60,15 +61,8 @@ define([
                 if (ignoreHistoryChanges) {
                     return;
                 }
-                log.debug(URI(History.getState().url).relativeTo(lastUrl).href());
-                var relativeURLPart = URI(History.getState().url).relativeTo(lastUrl).href();
-                if (relativeURLPart !== "" && relativeURLPart[0] === '?' ) {
-                    // same controller, different parameters, so only update the container
-                    Container.getMainContainer().syncWithCurrentUrl();
-                    Container.getDetailContainer().syncWithCurrentUrl();
-                } else {
-                    gotoUrl(History.getState().url);
-                }
+
+                gotoUrl(History.getState().url);
                 lastUrl = URI(window.location.href);
             });
         };
@@ -78,15 +72,18 @@ define([
             if (typeof document.body.pending !== 'undefined') {
                 document.body.pending.abort();
             }
-            $.ajax({
+            if (typeof href === 'string') {
+                href = URI(href);
+            }
+            document.body.pending = $.ajax({
                 success: function(domNodes) {
+                    $('body').empty().append(jQuery.parseHTML(domNodes));
                     ignoreHistoryChanges = true;
-                    History.pushState({}, document.title, href);
-                    $('body').empty().append($(domNodes));
+                    History.pushState({}, document.title, href.href());
                     ignoreHistoryChanges = false;
                     components.load();
                 },
-                url: href
+                url: href.href()
             });
 
             return false;
@@ -110,11 +107,11 @@ define([
             });
         }
         $(document).ready(initialize.bind(this));
-        return {
-
-            components: components,
-            gotoUrl: gotoUrl
-        };
+        Container.setIcinga(this);
+        this.components = components;
+        this.replaceBodyFromUrl = gotoUrl;
     };
+
+
     return new Icinga();
 });

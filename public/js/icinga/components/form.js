@@ -97,13 +97,14 @@ define(['jquery'], function($) {
         form.change(function(changed) {
             if ($(changed.target).attr('data-icinga-form-autosubmit')) {
                 form.clearModificationFlag();
+                form.submit();
             } else {
                 form.setModificationFlag();
             }
         });
         // submissions should clear the modification flag
         form.submit(function() {
-            form.clearModificationFlag()
+            form.clearModificationFlag();
         });
     };
 
@@ -127,7 +128,12 @@ define(['jquery'], function($) {
      */
     return function(targetForm) {
         var form = getFormObject(targetForm);
+
+
         registerFormEventHandler(form);
         registerLeaveConfirmationHandler(form);
+
+        // Remove DOM level onchange, we registered proper jQuery listeners for them
+        $('[data-icinga-form-autosubmit]').removeAttr('onchange');
     };
 });

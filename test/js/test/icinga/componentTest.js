@@ -81,7 +81,7 @@ describe('Component loader', function() {
         });
     });
 
-    it('Component load with user-defined id', function() {
+    xit('Component load with user-defined id', function() {
         setUp();
         addComponent('app/component2','some-id');
 
