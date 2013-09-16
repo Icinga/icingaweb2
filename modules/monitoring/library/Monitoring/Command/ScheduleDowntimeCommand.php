@@ -200,9 +200,9 @@ class ScheduleDowntimeCommand extends Command
      * Return this command's parameters properly arranged in an array
      *
      * @return  array
-     * @see     Command::getParameters()
+     * @see     Command::getArguments()
      */
-    public function getParameters()
+    public function getArguments()
     {
         return array_merge(
             array(
@@ -212,7 +212,7 @@ class ScheduleDowntimeCommand extends Command
                 $this->triggerId,
                 $this->duration
             ),
-            $this->comment->getParameters(true)
+            $this->comment->getArguments(true)
         );
     }
 
@@ -227,10 +227,10 @@ class ScheduleDowntimeCommand extends Command
     {
         if ($this->withChildren) {
             return sprintf('SCHEDULE_AND_PROPAGATE%s_HOST_DOWNTIME;', $this->triggerChildren ? '_TRIGGERED' : '')
-            . implode(';', array_merge(array($hostname), $this->getParameters()));
+            . implode(';', array_merge(array($hostname), $this->getArguments()));
         } else {
             return sprintf('SCHEDULE_HOST%s_DOWNTIME;', $this->onlyServices ? '_SVC' : '')
-                . implode(';', array_merge(array($hostname), $this->getParameters()));
+                . implode(';', array_merge(array($hostname), $this->getArguments()));
         }
     }
 
@@ -248,7 +248,7 @@ class ScheduleDowntimeCommand extends Command
             ';',
             array_merge(
                 array($hostname, $servicename),
-                $this->getParameters()
+                $this->getArguments()
             )
         );
     }
@@ -263,7 +263,7 @@ class ScheduleDowntimeCommand extends Command
     public function getHostgroupCommand($hostgroup)
     {
         return sprintf('SCHEDULE_HOSTGROUP_%s_DOWNTIME;', $this->withoutHosts ? 'SVC' : 'HOST')
-            . implode(';', array_merge(array($hostgroup), $this->getParameters()));
+            . implode(';', array_merge(array($hostgroup), $this->getArguments()));
     }
 
     /**
@@ -276,6 +276,6 @@ class ScheduleDowntimeCommand extends Command
     public function getServicegroupCommand($servicegroup)
     {
         return sprintf('SCHEDULE_SERVICEGROUP_%s_DOWNTIME;', $this->withoutServices ? 'HOST' : 'SVC')
-            . implode(';', array_merge(array($servicegroup), $this->getParameters()));
+            . implode(';', array_merge(array($servicegroup), $this->getArguments()));
     }
 }

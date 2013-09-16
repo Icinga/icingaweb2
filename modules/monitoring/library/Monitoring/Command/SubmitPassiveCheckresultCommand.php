@@ -112,9 +112,9 @@ class SubmitPassiveCheckresultCommand extends Command
      * Return this command's parameters properly arranged in an array
      *
      * @return  array
-     * @see     Command::getParameters()
+     * @see     Command::getArguments()
      */
-    public function getParameters()
+    public function getArguments()
     {
         return array(
             $this->state,
@@ -132,7 +132,7 @@ class SubmitPassiveCheckresultCommand extends Command
      */
     public function getHostCommand($hostname)
     {
-        return 'PROCESS_HOST_CHECK_RESULT;' . implode(';', array_merge(array($hostname), $this->getParameters()));
+        return 'PROCESS_HOST_CHECK_RESULT;' . implode(';', array_merge(array($hostname), $this->getArguments()));
     }
 
     /**
@@ -150,7 +150,7 @@ class SubmitPassiveCheckresultCommand extends Command
             ';',
             array_merge(
                 array($hostname, $servicename),
-                $this->getParameters()
+                $this->getArguments()
             )
         );
     }

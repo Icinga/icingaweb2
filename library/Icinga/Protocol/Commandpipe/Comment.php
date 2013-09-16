@@ -74,7 +74,7 @@ class Comment
      * @param   bool    $ignorePersistentFlag   Whether the persistent flag should be included or not
      * @return  array
      */
-    public function getParameters($ignorePersistentFlag = false)
+    public function getArguments($ignorePersistentFlag = false)
     {
         if ($ignorePersistentFlag) {
             return array($this->author, $this->content);

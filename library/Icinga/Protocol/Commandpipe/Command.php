@@ -116,7 +116,7 @@ abstract class Command
      *
      * @return array
      */
-    abstract public function getParameters();
+    abstract public function getArguments();
 
     /**
      * Return the command as a string with the given host being inserted

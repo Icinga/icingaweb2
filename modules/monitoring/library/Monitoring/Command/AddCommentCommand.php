@@ -68,9 +68,9 @@ class AddCommentCommand extends Command
         return $this;
     }
 
-    public function getParameters()
+    public function getArguments()
     {
-        return $this->comment->getParameters();
+        return $this->comment->getArguments();
     }
 
     /**
@@ -83,7 +83,7 @@ class AddCommentCommand extends Command
      */
     public function getHostCommand($hostname)
     {
-        return sprintf('ADD_HOST_COMMENT;%s;', $hostname) . implode(';', $this->getParameters());
+        return sprintf('ADD_HOST_COMMENT;%s;', $hostname) . implode(';', $this->getArguments());
     }
 
     /**
@@ -98,6 +98,6 @@ class AddCommentCommand extends Command
     public function getServiceCommand($hostname, $servicename)
     {
         return sprintf('ADD_SVC_COMMENT;%s;%s;', $hostname, $servicename)
-            . implode(';', $this->getParameters());
+            . implode(';', $this->getArguments());
     }
 }

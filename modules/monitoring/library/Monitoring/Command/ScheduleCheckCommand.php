@@ -91,9 +91,9 @@ class ScheduleCheckCommand extends Command
      * Return this command's parameters properly arranged in an array
      *
      * @return  array
-     * @see     Command::getParameters()
+     * @see     Command::getArguments()
      */
-    public function getParameters()
+    public function getArguments()
     {
         return array($this->checkTime);
     }
@@ -112,7 +112,7 @@ class ScheduleCheckCommand extends Command
             'SCHEDULE%s_HOST_%s;',
             $this->forced ? '_FORCED' : '',
             $this->onlyServices ? 'SVC_CHECKS' : 'CHECK'
-        ) . implode(';', array_merge(array($hostname), $this->getParameters()));
+        ) . implode(';', array_merge(array($hostname), $this->getArguments()));
     }
 
     /**
@@ -127,6 +127,6 @@ class ScheduleCheckCommand extends Command
     public function getServiceCommand($hostname, $servicename)
     {
         return sprintf('SCHEDULE%s_SVC_CHECK;', $this->forced ? '_FORCED' : '')
-            . implode(';', array_merge(array($hostname, $servicename), $this->getParameters()));
+            . implode(';', array_merge(array($hostname, $servicename), $this->getArguments()));
     }
 }

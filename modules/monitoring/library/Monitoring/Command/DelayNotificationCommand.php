@@ -69,9 +69,9 @@ class DelayNotificationCommand extends Command
      * Return this command's parameters properly arranged in an array
      *
      * @return  array
-     * @see     Command::getParameters()
+     * @see     Command::getArguments()
      */
-    public function getParameters()
+    public function getArguments()
     {
         return array($this->delay);
     }
@@ -86,7 +86,7 @@ class DelayNotificationCommand extends Command
      */
     public function getHostCommand($hostname)
     {
-        return 'DELAY_HOST_NOTIFICATION;' . implode(';', array_merge(array($hostname), $this->getParameters()));
+        return 'DELAY_HOST_NOTIFICATION;' . implode(';', array_merge(array($hostname), $this->getArguments()));
     }
 
     /**
@@ -104,7 +104,7 @@ class DelayNotificationCommand extends Command
             ';',
             array_merge(
                 array($hostname, $servicename),
-                $this->getParameters()
+                $this->getArguments()
             )
         );
     }

@@ -136,16 +136,16 @@ class AcknowledgeCommand extends Command
      * Return this command's parameters properly arranged in an array
      *
      * @return  array
-     * @see     Command::getParameters()
+     * @see     Command::getArguments()
      */
-    public function getParameters()
+    public function getArguments()
     {
         $parameters = array_merge(
             array(
                 $this->sticky ? '2' : '0',
                 $this->notify ? '1' : '0'
             ),
-            $this->comment->getParameters()
+            $this->comment->getArguments()
         );
 
         if ($this->expireTime > -1) {
@@ -165,7 +165,7 @@ class AcknowledgeCommand extends Command
      */
     public function getHostCommand($hostname)
     {
-        $parameters = $this->getParameters();
+        $parameters = $this->getArguments();
         return sprintf('ACKNOWLEDGE_HOST_PROBLEM%s;', $this->expireTime > -1 ? '_EXPIRE' : '')
                . implode(';', array_merge(array($hostname), $parameters));
     }
@@ -181,7 +181,7 @@ class AcknowledgeCommand extends Command
      */
     public function getServiceCommand($hostname, $servicename)
     {
-        $parameters = $this->getParameters();
+        $parameters = $this->getArguments();
         return sprintf('ACKNOWLEDGE_SVC_PROBLEM%s;', $this->expireTime > -1 ? '_EXPIRE' : '')
                . implode(';', array_merge(array($hostname, $servicename), $parameters));
     }

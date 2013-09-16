@@ -114,9 +114,9 @@ class CustomNotificationCommand extends Command
      * Return this command's parameters properly arranged in an array
      *
      * @return  array
-     * @see     Command::getParameters()
+     * @see     Command::getArguments()
      */
-    public function getParameters()
+    public function getArguments()
     {
         $options = 0;
         if ($this->forced) {
@@ -125,7 +125,7 @@ class CustomNotificationCommand extends Command
         if ($this->broadcast) {
             $options |= 1;
         }
-        return array_merge(array($options), $this->comment->getParameters(true));
+        return array_merge(array($options), $this->comment->getArguments(true));
     }
 
     /**
@@ -138,7 +138,7 @@ class CustomNotificationCommand extends Command
      */
     public function getHostCommand($hostname)
     {
-        return 'SEND_CUSTOM_HOST_NOTIFICATION;' . implode(';', array_merge(array($hostname), $this->getParameters()));
+        return 'SEND_CUSTOM_HOST_NOTIFICATION;' . implode(';', array_merge(array($hostname), $this->getArguments()));
     }
 
     /**
@@ -156,7 +156,7 @@ class CustomNotificationCommand extends Command
             ';',
             array_merge(
                 array($hostname, $servicename),
-                $this->getParameters()
+                $this->getArguments()
             )
         );
     }
