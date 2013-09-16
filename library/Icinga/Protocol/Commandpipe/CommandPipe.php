@@ -142,7 +142,7 @@ class CommandPipe
      * @param Command   $command
      * @param array     $objects
      */
-    public function sendCommand(BaseCommand $command, array $objects)
+    public function sendCommand(Command $command, array $objects)
     {
         foreach ($objects as $object) {
             $objectType = $this->getObjectType($object);

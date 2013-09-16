@@ -28,12 +28,12 @@
 
 namespace Icinga\Module\Monitoring\Command;
 
-use Icinga\Protocol\Commandpipe\BaseCommand;
+use Icinga\Protocol\Commandpipe\Command;
 
 /**
  * Command to submit passive check results
  */
-class SubmitPassiveCheckresultCommand extends BaseCommand
+class SubmitPassiveCheckresultCommand extends Command
 {
     /**
      * The plugin-state that is being reported
@@ -112,7 +112,7 @@ class SubmitPassiveCheckresultCommand extends BaseCommand
      * Return this command's parameters properly arranged in an array
      *
      * @return  array
-     * @see     BaseCommand::getParameters()
+     * @see     Command::getParameters()
      */
     public function getParameters()
     {
@@ -128,7 +128,7 @@ class SubmitPassiveCheckresultCommand extends BaseCommand
      * @param   string  $hostname   The name of the host to insert
      *
      * @return  string              The string representation of the command
-     * @see     BaseCommand::getHostCommand()
+     * @see     Command::getHostCommand()
      */
     public function getHostCommand($hostname)
     {
@@ -142,7 +142,7 @@ class SubmitPassiveCheckresultCommand extends BaseCommand
      * @param   string  $servicename    The name of the service to insert
      *
      * @return  string                  The string representation of the command
-     * @see     BaseCommand::getServiceCommand()
+     * @see     Command::getServiceCommand()
      */
     public function getServiceCommand($hostname, $servicename)
     {

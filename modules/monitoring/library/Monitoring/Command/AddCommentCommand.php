@@ -28,15 +28,15 @@
 
 namespace Icinga\Module\Monitoring\Command;
 
-use Icinga\Protocol\Commandpipe\BaseCommand;
+use Icinga\Protocol\Commandpipe\Command;
 use Icinga\Protocol\Commandpipe\Comment;
 
 /**
  * Icinga Command for adding comments
  *
- * @see BaseCommand
+ * @see Command
  */
-class AddCommentCommand extends BaseCommand
+class AddCommentCommand extends Command
 {
     /**
      * The comment associated to this command
@@ -79,7 +79,7 @@ class AddCommentCommand extends BaseCommand
      * @param   string  $hostname   The name of the host to insert
      *
      * @return  string              The string representation of the command
-     * @see     BaseCommand::getHostCommand()
+     * @see     Command::getHostCommand()
      */
     public function getHostCommand($hostname)
     {
@@ -93,7 +93,7 @@ class AddCommentCommand extends BaseCommand
      * @param   string  $servicename    The name of the service to insert
      *
      * @return  string                  The string representation of the command
-     * @see     BaseCommand::getServiceCommand()
+     * @see     Command::getServiceCommand()
      */
     public function getServiceCommand($hostname, $servicename)
     {

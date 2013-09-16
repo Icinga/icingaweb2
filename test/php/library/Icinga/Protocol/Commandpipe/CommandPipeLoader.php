@@ -39,7 +39,7 @@ class CommandPipeLoader extends LibraryLoader {
         require_once('Zend/Config.php');
         require_once('Zend/Log.php');
         require_once(realpath('../../library/Icinga/Application/Logger.php'));
-        require_once(realpath('../../library/Icinga/Protocol/Commandpipe/BaseCommand.php'));
+        require_once(realpath('../../library/Icinga/Protocol/Commandpipe/Command.php'));
         require_once(realpath('../../library/Icinga/Protocol/Commandpipe/Comment.php'));
         require_once(realpath('../../library/Icinga/Protocol/Commandpipe/CommandPipe.php'));
         require_once(realpath('../../library/Icinga/Protocol/Commandpipe/PropertyModifier.php'));

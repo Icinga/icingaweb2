@@ -29,12 +29,12 @@
 namespace Icinga\Module\Monitoring\Command;
 
 use Icinga\Protocol\Commandpipe\Comment;
-use Icinga\Protocol\Commandpipe\BaseCommand;
+use Icinga\Protocol\Commandpipe\Command;
 
 /**
  * Command for scheduling a new downtime
  */
-class ScheduleDowntimeCommand extends BaseCommand
+class ScheduleDowntimeCommand extends Command
 {
     /**
      * When this downtime should start
@@ -200,7 +200,7 @@ class ScheduleDowntimeCommand extends BaseCommand
      * Return this command's parameters properly arranged in an array
      *
      * @return  array
-     * @see     BaseCommand::getParameters()
+     * @see     Command::getParameters()
      */
     public function getParameters()
     {

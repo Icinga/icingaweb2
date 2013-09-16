@@ -33,7 +33,7 @@ use Icinga\Exception\ProgrammingError;
 /**
  * Base class for any concrete command implementation
  */
-abstract class BaseCommand
+abstract class Command
 {
     /**
      * Whether hosts are ignored in case of a host- or servicegroup
