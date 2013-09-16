@@ -29,48 +29,51 @@
 namespace Icinga\Module\Monitoring\Command;
 
 use Icinga\Protocol\Commandpipe\Command;
-use Icinga\Protocol\Commandpipe\Comment;
 
 /**
- * Icinga Command for adding comments
- *
- * @see Command
+ * Command to delay a notification
  */
-class AddCommentCommand extends Command
+class DelayNotificationCommand extends Command
 {
     /**
-     * The comment associated to this command
+     * The delay in seconds
      *
-     * @var Comment
+     * @var int
      */
-    private $comment;
+    private $delay;
 
     /**
-     * Initialise a new command object to add comments
+     * Initialise a new delay notification command object
      *
-     * @param   Comment $comment    The comment to use for this acknowledgement
+     * @param   int     $delay      How long, in seconds, notifications should be delayed
      */
-    public function __construct(Comment $comment)
+    public function __construct($delay)
     {
-        $this->comment = $comment;
+        $this->delay = $delay;
     }
 
     /**
-     * Set the comment for this command
+     * Set how long notifications should be delayed
      *
-     * @param   Comment     $comment
+     * @param   int     $seconds    In seconds
      *
      * @return  self
      */
-    public function setComment(Comment $comment)
+    public function setDelay($seconds)
     {
-        $this->comment = $comment;
+        $this->delay = (int) $seconds;
         return $this;
     }
 
+    /**
+     * Return this command's parameters properly arranged in an array
+     *
+     * @return  array
+     * @see     Command::getArguments()
+     */
     public function getArguments()
     {
-        return $this->comment->getArguments();
+        return array($this->delay);
     }
 
     /**
@@ -83,7 +86,7 @@ class AddCommentCommand extends Command
      */
     public function getHostCommand($hostname)
     {
-        return sprintf('ADD_HOST_COMMENT;%s;', $hostname) . implode(';', $this->getArguments());
+        return 'DELAY_HOST_NOTIFICATION;' . implode(';', array_merge(array($hostname), $this->getArguments()));
     }
 
     /**
@@ -97,7 +100,12 @@ class AddCommentCommand extends Command
      */
     public function getServiceCommand($hostname, $servicename)
     {
-        return sprintf('ADD_SVC_COMMENT;%s;%s;', $hostname, $servicename)
-            . implode(';', $this->getArguments());
+        return 'DELAY_SVC_NOTIFICATION;' . implode(
+            ';',
+            array_merge(
+                array($hostname, $servicename),
+                $this->getArguments()
+            )
+        );
     }
 }

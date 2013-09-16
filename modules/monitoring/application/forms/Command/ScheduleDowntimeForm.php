@@ -28,14 +28,14 @@
 
 namespace Icinga\Module\Monitoring\Form\Command;
 
-use \Zend_Form_Element_Text;
-use \Zend_Validate_GreaterThan;
-use \Zend_Validate_Digits;
-use \Icinga\Web\Form\Element\DateTimePicker;
-use \Icinga\Protocol\Commandpipe\Downtime;
-use \Icinga\Protocol\Commandpipe\Comment;
-use \Icinga\Util\DateTimeFactory;
-use \Icinga\Module\Monitoring\Backend;
+use Zend_Form_Element_Text;
+use Zend_Validate_GreaterThan;
+use Zend_Validate_Digits;
+use Icinga\Web\Form\Element\DateTimePicker;
+use Icinga\Protocol\Commandpipe\Comment;
+use Icinga\Util\DateTimeFactory;
+use Icinga\Module\Monitoring\Backend;
+use Icinga\Module\Monitoring\Command\ScheduleDowntimeCommand;
 
 /**
  * Form for scheduling downtimes
@@ -100,7 +100,7 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
             )->fetchAll();
 
         $options = array(
-            '0' =>  'No Triggered Downtime '
+            '0' =>  'No Triggered Downtime'
         );
         foreach ($downtimes as $downtime) {
             $dt = DateTimeFactory::create($downtime->downtime_scheduled_start_time);
@@ -159,10 +159,6 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
             )
         );
 
-        /**
-         * @TODO: Display downtime list (Bug #4496)
-         *
-         */
         $this->addElement(
             'select',
             'triggered',
@@ -328,43 +324,27 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
     }
 
     /**
-     * Create Downtime from request Data
+     * Create ScheduleDowntimeCommand object
      *
-     * @return Downtime
+     * @return ScheduleDowntimeCommand
      */
-    public function getDowntime()
+    public function createCommand()
     {
-
-        $comment = new Comment(
-            $this->getRequest()->getUser()->getUsername(),
-            $this->getValue('comment')
-        );
-        $duration = 0;
-        if ($this->getValue('type') === self::TYPE_FLEXIBLE) {
-            $duration = ($this->getValue('hours') * 3600) + ($this->getValue('minutes') * 60);
-        }
-        $starttime = $this->getValue('starttime');
-        $endtime = $this->getValue('endtime');
-
-        $downtime = new Downtime(
-            $starttime,
-            $endtime,
-            $comment,
-            $duration,
+        // TODO: Add support for host-/servicegroups and services only (#4588)
+        $command = new ScheduleDowntimeCommand(
+            $this->getValue('starttime'),
+            $this->getValue('endtime'),
+            new Comment(
+                $this->getRequest()->getUser()->getUsername(),
+                $this->getValue('comment')
+                ),
+            $this->getValue('type') === self::TYPE_FLEXIBLE,
+            $this->getValue('hours') * 3600 + $this->getValue('minutes') * 60,
             $this->getValue('triggered')
         );
-        if (!$this->getWithChildren()) {
-            switch ($this->getValue('childobjects')) {
-                case 1:
-                    $downtime->setType(Downtime::TYPE_WITH_CHILDREN_TRIGGERED);
-                    break;
-                case 2:
-                    $downtime->setType(Downtime::TYPE_WITH_CHILDREN);
-                    break;
-            }
-        } else {
-            $downtime->setType(Downtime::TYPE_HOST_SVC);
-        }
-        return $downtime;
+        return $command->includeChildren(
+            $this->getWithChildren(),
+            $this->getValue('childobjects') === 1
+        );
     }
 }

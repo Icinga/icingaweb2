@@ -139,13 +139,14 @@ class CommandPipe
     /**
      * Send a command to the icinga pipe
      *
-     * @param \Icinga\Protocol\Commandpipe\CommandType $command
-     * @param array                                    $objects
+     * @param Command   $command
+     * @param array     $objects
      */
-    public function sendCommand(CommandType $command, array $objects)
+    public function sendCommand(Command $command, array $objects)
     {
         foreach ($objects as $object) {
-            if (isset($object->service_description)) {
+            $objectType = $this->getObjectType($object);
+            if ($objectType === self::TYPE_SERVICE) {
                 $this->transport->send($command->getServiceCommand($object->host_name, $object->service_description));
             } else {
                 $this->transport->send($command->getHostCommand($object->host_name));
@@ -165,74 +166,6 @@ class CommandPipe
                 $this->send("REMOVE_SVC_ACKNOWLEDGEMENT;$object->host_name;$object->service_description");
             } else {
                 $this->send("REMOVE_HOST_ACKNOWLEDGEMENT;$object->host_name");
-            }
-        }
-    }
-
-    /**
-     * Submit passive check result for all provided objects
-     *
-     * @param array $objects        An array of hosts and services to submit the passive check result to
-     * @param int $state            The state to set for the monitoring objects
-     * @param string $output        The output string to set as the check result
-     * @param string $perfdata      The optional perfdata to submit as the check result
-     */
-    public function submitCheckResult($objects, $state, $output, $perfdata = "")
-    {
-        if ($perfdata) {
-            $output = $output."|".$perfdata;
-        }
-        foreach ($objects as $object) {
-            if (isset($object->service_description)) {
-                $this->send(
-                    "PROCESS_SERVICE_CHECK_RESULT;$object->host_name;$object->service_description;$state;$output"
-                );
-            } else {
-                $this->send("PROCESS_HOST_CHECK_RESULT;$object->host_name;$state;$output");
-            }
-        }
-    }
-
-    /**
-     * Reschedule a forced check for all provided objects
-     *
-     * @param array $objects            An array of hosts and services to reschedule
-     * @param int|bool $time            The time to submit, if empty time() will be used
-     * @param bool $withChilds          Whether only childs should be rescheduled
-     */
-    public function scheduleForcedCheck($objects, $time = false, $withChilds = false)
-    {
-        if (!$time) {
-            $time = time();
-        }
-        $base = "SCHEDULE_FORCED_";
-        foreach ($objects as $object) {
-            if (isset($object->service_description)) {
-                $this->send($base . "SVC_CHECK;$object->host_name;$object->service_description;$time");
-            } else {
-                $this->send($base . 'HOST_' . ($withChilds ? 'SVC_CHECKS' : 'CHECK') . ";$object->host_name;$time");
-            }
-        }
-    }
-
-    /**
-     * Reschedule a check for all provided objects
-     *
-     * @param array $objects            An array of hosts and services to reschedule
-     * @param int|bool $time            The time to submit, if empty time() will be used
-     * @param bool $withChilds          Whether only childs should be rescheduled
-     */
-    public function scheduleCheck($objects, $time = false, $withChilds = false)
-    {
-        if (!$time) {
-            $time = time();
-        }
-        $base = "SCHEDULE_";
-        foreach ($objects as $object) {
-            if (isset($object->service_description)) {
-                $this->send($base . "SVC_CHECK;$object->host_name;$object->service_description;$time");
-            } else {
-                $this->send($base . 'HOST_' . ($withChilds ? 'SVC_CHECKS' : 'CHECK') . ";$object->host_name;$time");
             }
         }
     }
@@ -299,26 +232,6 @@ class CommandPipe
             return self::TYPE_SERVICE;
         }
         return self::TYPE_HOST;
-    }
-
-    /**
-     * Schedule a downtime for all provided objects
-     *
-     * @param array $objects        An array of monitoring objects to schedule the downtime for
-     * @param Downtime $downtime    The downtime object to schedule
-     */
-    public function scheduleDowntime($objects, Downtime $downtime)
-    {
-        foreach ($objects as $object) {
-            $type = $this->getObjectType($object);
-            if ($type == self::TYPE_SERVICE) {
-                $this->send(
-                    sprintf($downtime->getFormatString($type), $object->host_name, $object->service_description)
-                );
-            } else {
-                $this->send(sprintf($downtime->getFormatString($type), $object->host_name));
-            }
-        }
     }
 
     /**
@@ -618,35 +531,6 @@ class CommandPipe
     }
 
     /**
-     * Send custom host and/or service notifications
-     *
-     * @param array                 $objects        Affected monitoring objects
-     * @param CustomNotification    $notification
-     */
-    public function sendCustomNotification(array $objects, CustomNotification $notification)
-    {
-        foreach ($objects as $hostOrService) {
-            if (isset($hostOrService->service_description) && isset($hostOrService->host_name)) {
-                // Assume service
-                $command = sprintf(
-                    $notification->getFormatString(self::TYPE_SERVICE),
-                    $hostOrService->host_name,
-                    $hostOrService->service_description
-                );
-            } elseif (isset($hostOrService->host_name)) {
-                // Assume host
-                $command = sprintf(
-                    $notification->getFormatString(self::TYPE_HOST),
-                    $hostOrService->host_name
-                );
-            } else {
-                continue;
-            }
-            $this->send($command);
-        }
-    }
-
-    /**
      * Disable notifications for all services of the provided hosts
      *
      * @param array $objects    An array of hosts
@@ -711,24 +595,6 @@ class CommandPipe
                 $this->send('CHANGE_SVC_MODATTR;'.$object->host_name.';'.$object->service_description.';0');
             } else {
                 $this->send('CHANGE_HOST_MODATTR;'.$object->host_name.';0');
-            }
-        }
-    }
-
-    /**
-     * Delay notifications for all provided hosts and services for $time seconds
-     *
-     * @param array $objects    An array of hosts and services
-     * @param int   $time       The number of seconds to delay notifications for
-     */
-    public function delayNotification($objects, $time)
-    {
-        foreach ($objects as $object) {
-            $type = $this->getObjectType($object);
-            if ($type ===  self::TYPE_SERVICE) {
-                $this->send('DELAY_SVC_NOTIFICATION;'.$object->host_name.';'.$object->service_description.';'.$time);
-            } else {
-                $this->send('DELAY_HOST_NOTIFICATION;'.$object->host_name.';'.$time);
             }
         }
     }

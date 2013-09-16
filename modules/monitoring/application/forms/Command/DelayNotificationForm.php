@@ -28,6 +28,8 @@
 
 namespace Icinga\Module\Monitoring\Form\Command;
 
+use Icinga\Module\Monitoring\Command\DelayNotificationCommand;
+
 /**
  * Form for the delay notification command
  */
@@ -76,12 +78,12 @@ class DelayNotificationForm extends CommandForm
     }
 
     /**
-     * Return the currently set delay time in seconds
+     * Create the command object to delay notifications
      *
-     * @return integer
+     * @return DelayNotificationCommand
      */
-    public function getDelayTime()
+    public function createCommand()
     {
-        return $this->getValue('minutes') * 60;
+        return new DelayNotificationCommand($this->getValue('minutes') * 60);
     }
 }

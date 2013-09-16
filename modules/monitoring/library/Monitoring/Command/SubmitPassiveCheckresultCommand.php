@@ -29,48 +29,97 @@
 namespace Icinga\Module\Monitoring\Command;
 
 use Icinga\Protocol\Commandpipe\Command;
-use Icinga\Protocol\Commandpipe\Comment;
 
 /**
- * Icinga Command for adding comments
- *
- * @see Command
+ * Command to submit passive check results
  */
-class AddCommentCommand extends Command
+class SubmitPassiveCheckresultCommand extends Command
 {
     /**
-     * The comment associated to this command
+     * The plugin-state that is being reported
      *
-     * @var Comment
+     * @var int
      */
-    private $comment;
+    private $state;
 
     /**
-     * Initialise a new command object to add comments
+     * The output that is included
      *
-     * @param   Comment $comment    The comment to use for this acknowledgement
+     * @var string
      */
-    public function __construct(Comment $comment)
+    private $output;
+
+    /**
+     * The performance data that is included
+     *
+     * @var string
+     */
+    private $perfData;
+
+    /**
+     * Initialises a new command object to submit a passive check result
+     *
+     * @param   int     $state      The plugin-state to report
+     * @param   string  $output     The plugin-output to include
+     * @param   string  $perfData   The performance data to include
+     */
+    public function __construct($state, $output, $perfData)
     {
-        $this->comment = $comment;
+        $this->state = $state;
+        $this->output = $output;
+        $this->perfData = $perfData;
     }
 
     /**
-     * Set the comment for this command
+     * Set which plugin-state is being reported
      *
-     * @param   Comment     $comment
+     * @param   int     $state
      *
      * @return  self
      */
-    public function setComment(Comment $comment)
+    public function setState($state)
     {
-        $this->comment = $comment;
+        $this->state = (int) $state;
         return $this;
     }
 
+    /**
+     * Set the plugin-output to include in the result
+     *
+     * @param   string  $output
+     *
+     * @return  self
+     */
+    public function setOutput($output)
+    {
+        $this->output = (string) $output;
+        return $this;
+    }
+
+    /**
+     * Set the performance data to include in the result
+     *
+     * @param   string  $perfData
+     * @return  self
+     */
+    public function setPerformanceData($perfData)
+    {
+        $this->perfData = (string) $perfData;
+        return $this;
+    }
+
+    /**
+     * Return this command's parameters properly arranged in an array
+     *
+     * @return  array
+     * @see     Command::getArguments()
+     */
     public function getArguments()
     {
-        return $this->comment->getArguments();
+        return array(
+            $this->state,
+            $this->perfData ? $this->output . '|' . $this->perfData : $this->output
+        );
     }
 
     /**
@@ -83,7 +132,7 @@ class AddCommentCommand extends Command
      */
     public function getHostCommand($hostname)
     {
-        return sprintf('ADD_HOST_COMMENT;%s;', $hostname) . implode(';', $this->getArguments());
+        return 'PROCESS_HOST_CHECK_RESULT;' . implode(';', array_merge(array($hostname), $this->getArguments()));
     }
 
     /**
@@ -97,7 +146,12 @@ class AddCommentCommand extends Command
      */
     public function getServiceCommand($hostname, $servicename)
     {
-        return sprintf('ADD_SVC_COMMENT;%s;%s;', $hostname, $servicename)
-            . implode(';', $this->getArguments());
+        return 'PROCESS_SERVICE_CHECK_RESULT;' . implode(
+            ';',
+            array_merge(
+                array($hostname, $servicename),
+                $this->getArguments()
+            )
+        );
     }
 }

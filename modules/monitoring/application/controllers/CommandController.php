@@ -280,7 +280,7 @@ class Monitoring_CommandController extends ActionController
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
-            $this->target->scheduleCheck($this->view->objects);
+            $this->target->sendCommand($form->createCommand(), $this->view->objects);
         }
     }
 
@@ -302,7 +302,7 @@ class Monitoring_CommandController extends ActionController
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
-            $this->target->submitCheckResult($this->view->objects, $form->getState(), $form->getOutput(), $form->getPerformancedata());
+            $this->target->sendCommand($form->createCommand(), $this->view->objects);
         }
     }
 
@@ -418,7 +418,7 @@ class Monitoring_CommandController extends ActionController
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
-            $this->target->sendCustomNotification($this->view->objects, $form->getCustomNotification());
+            $this->target->sendCommand($form->createCommand(), $this->view->objects);
         }
     }
 
@@ -435,7 +435,7 @@ class Monitoring_CommandController extends ActionController
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
-            $this->target->scheduleDowntime($this->view->objects, $form->getDowntime());
+            $this->target->sendCommand($form->createCommand(), $this->view->objects);
         }
     }
 
@@ -452,7 +452,7 @@ class Monitoring_CommandController extends ActionController
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
-            $this->target->scheduleDowntime($this->view->objects, $form->getDowntime());
+            $this->target->sendCommand($form->createCommand(), $this->view->objects);
         }
     }
 
@@ -518,19 +518,12 @@ class Monitoring_CommandController extends ActionController
         $form = new RescheduleNextCheckForm();
         $form->setRequest($this->getRequest());
         $form->setConfiguration(Config::app());
-
         $form->setWithChildren(true);
 
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
-            if ($form->isForced()) {
-                $this->target->scheduleForcedCheck($this->view->objects, time());
-                $this->target->scheduleForcedCheck($this->view->objects, time(), true);
-            } else {
-                $this->target->scheduleCheck($this->view->objects, time());
-                $this->target->scheduleCheck($this->view->objects, time(), true);
-            }
+            $this->target->sendCommand($form->createCommand(), $this->view->objects);
         }
     }
 
@@ -717,7 +710,7 @@ class Monitoring_CommandController extends ActionController
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
-            $this->target->delayNotification($this->view->objects, $form->getDelayTime());
+            $this->target->sendCommand($form->createCommand(), $this->view->objects);
         }
     }
 

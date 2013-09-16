@@ -28,9 +28,10 @@
 
 namespace Icinga\Module\Monitoring\Form\Command;
 
-use \Zend_Form_Element_Checkbox;
-use \Icinga\Web\Form\Element\DateTimePicker;
-use \Icinga\Util\DateTimeFactory;
+use Zend_Form_Element_Checkbox;
+use Icinga\Util\DateTimeFactory;
+use Icinga\Web\Form\Element\DateTimePicker;
+use Icinga\Module\Monitoring\Command\ScheduleCheckCommand;
 
 /**
  * Form for scheduling checks
@@ -90,12 +91,16 @@ class RescheduleNextCheckForm extends WithChildrenCommandForm
     }
 
     /**
-     * Return whether this is a forced check (force is checked)
+     * Create the command object to schedule checks
      *
-     * @return bool
+     * @return ScheduleCheckCommand
      */
-    public function isForced()
+    public function createCommand()
     {
-        return $this->getValue('forcecheck') == true;
+        $command = new ScheduleCheckCommand(
+            $this->getValue('checktime'),
+            $this->getValue('forcecheck')
+        );
+        return $command->excludeHost($this->getWithChildren());
     }
 }

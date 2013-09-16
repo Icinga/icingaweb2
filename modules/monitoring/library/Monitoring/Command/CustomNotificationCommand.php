@@ -32,69 +32,47 @@ use Icinga\Protocol\Commandpipe\Command;
 use Icinga\Protocol\Commandpipe\Comment;
 
 /**
- * Command for acknowledging an object
+ * Command to send a custom notification
  */
-class AcknowledgeCommand extends Command
+class CustomNotificationCommand extends Command
 {
     /**
-     * When this acknowledgement should expire
-     *
-     * @var int    The time as UNIX timestamp or -1 if it shouldn't expire
-     */
-    private $expireTime = -1;
-
-    /**
-     * The comment associated to this acknowledgment
+     * The comment associated with this notification
      *
      * @var Comment
      */
     private $comment;
 
     /**
-     * Whether to set the notify flag of this acknowledgment
+     * Whether this notification is forced
      *
      * @var bool
      */
-    private $notify;
+    private $forced;
 
     /**
-     * Whether this acknowledgement is of type sticky
+     * Whether this notification is also sent to escalation-contacts
      *
      * @var bool
      */
-    private $sticky;
+    private $broadcast;
 
     /**
-     * Initialise a new acknowledgement command object
+     * Initialise a new custom notification command object
      *
-     * @param   Comment $comment    The comment to use for this acknowledgement
-     * @param   int     $expire     The expire time or -1 of not expiring
-     * @param   bool    $notify     Whether to set the notify flag
-     * @param   bool    $sticky     Whether to set the sticky flag
+     * @param   Comment     $comment    The comment for this notification
+     * @param   bool        $forced     Whether this notificatin is forced
+     * @param   bool        $broadcast  Whether this notification is sent to all contacts
      */
-    public function __construct(Comment $comment, $expire = -1, $notify = false, $sticky = false)
+    public function __construct(Comment $comment, $forced = false, $broadcast = false)
     {
-        $this->expireTime = $expire;
         $this->comment = $comment;
-        $this->notify = $notify;
-        $this->sticky = $sticky;
+        $this->forced = $forced;
+        $this->broadcast = $broadcast;
     }
 
     /**
-     * Set the time when this acknowledgement should expire
-     *
-     * @param   int     $expireTime     The time as UNIX timestamp or -1 if it shouldn't expire
-     *
-     * @return  self
-     */
-    public function setExpire($expireTime)
-    {
-        $this->expireTime = (int) $expireTime;
-        return $this;
-    }
-
-    /**
-     * Set the comment for this acknowledgement
+     * Set the comment for this notification
      *
      * @param   Comment     $comment
      *
@@ -107,28 +85,28 @@ class AcknowledgeCommand extends Command
     }
 
     /**
-     * Set whether the notify flag of this acknowledgment should be set
+     * Set whether this notification is forced
      *
      * @param   bool    $state
      *
      * @return  self
      */
-    public function setNotify($state)
+    public function setForced($state)
     {
-        $this->notify = (bool) $state;
+        $this->forced = (bool) $state;
         return $this;
     }
 
     /**
-     * Set whether this acknowledgement is of type sticky
+     * Set whether this notification is sent to all contacts
      *
      * @param   bool    $state
      *
      * @return  self
      */
-    public function setSticky($state)
+    public function setBroadcast($state)
     {
-        $this->sticky = (bool) $state;
+        $this->broadcast = (bool) $state;
         return $this;
     }
 
@@ -140,19 +118,14 @@ class AcknowledgeCommand extends Command
      */
     public function getArguments()
     {
-        $parameters = array_merge(
-            array(
-                $this->sticky ? '2' : '0',
-                $this->notify ? '1' : '0'
-            ),
-            $this->comment->getArguments()
-        );
-
-        if ($this->expireTime > -1) {
-            array_splice($parameters, 3, 0, array($this->expireTime));
+        $options = 0;
+        if ($this->forced) {
+            $options |= 2;
         }
-
-        return $parameters;
+        if ($this->broadcast) {
+            $options |= 1;
+        }
+        return array_merge(array($options), $this->comment->getArguments(true));
     }
 
     /**
@@ -165,9 +138,7 @@ class AcknowledgeCommand extends Command
      */
     public function getHostCommand($hostname)
     {
-        $parameters = $this->getArguments();
-        return sprintf('ACKNOWLEDGE_HOST_PROBLEM%s;', $this->expireTime > -1 ? '_EXPIRE' : '')
-               . implode(';', array_merge(array($hostname), $parameters));
+        return 'SEND_CUSTOM_HOST_NOTIFICATION;' . implode(';', array_merge(array($hostname), $this->getArguments()));
     }
 
     /**
@@ -181,8 +152,12 @@ class AcknowledgeCommand extends Command
      */
     public function getServiceCommand($hostname, $servicename)
     {
-        $parameters = $this->getArguments();
-        return sprintf('ACKNOWLEDGE_SVC_PROBLEM%s;', $this->expireTime > -1 ? '_EXPIRE' : '')
-               . implode(';', array_merge(array($hostname, $servicename), $parameters));
+        return 'SEND_CUSTOM_SVC_NOTIFICATION;' . implode(
+            ';',
+            array_merge(
+                array($hostname, $servicename),
+                $this->getArguments()
+            )
+        );
     }
 }

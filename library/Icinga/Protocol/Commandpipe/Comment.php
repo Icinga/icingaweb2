@@ -29,7 +29,7 @@
 namespace Icinga\Protocol\Commandpipe;
 
 /**
- * Container for comment information that can be send to icinga's external command pipe
+ * Container for comment information that can be send to Icinga's external command pipe
  */
 class Comment
 {
@@ -74,7 +74,7 @@ class Comment
      * @param   bool    $ignorePersistentFlag   Whether the persistent flag should be included or not
      * @return  array
      */
-    public function getParameters($ignorePersistentFlag = false)
+    public function getArguments($ignorePersistentFlag = false)
     {
         if ($ignorePersistentFlag) {
             return array($this->author, $this->content);

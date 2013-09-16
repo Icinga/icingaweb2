@@ -28,7 +28,8 @@
 
 namespace Icinga\Module\Monitoring\Form\Command;
 
-use \Icinga\Protocol\Commandpipe\CustomNotification;
+use Icinga\Protocol\Commandpipe\Comment;
+use Icinga\Module\Monitoring\Command\CustomNotificationCommand;
 
 /**
  * For for command CustomNotification
@@ -97,15 +98,17 @@ class CustomNotificationForm extends CommandForm
     }
 
     /**
-     * Create Custom Notification from request data
+     * Create the command object to send custom notifications
      *
-     * @return CustomNotification
+     * @return CustomNotificationCommand
      */
-    public function getCustomNotification()
+    public function createCommand()
     {
-        return new CustomNotification(
-            $this->getAuthorName(),
-            $this->getValue('comment'),
+        return new CustomNotificationCommand(
+            new Comment(
+                $this->getAuthorName(),
+                $this->getValue('comment')
+                ),
             $this->getValue('forced'),
             $this->getValue('broadcast')
         );
