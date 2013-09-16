@@ -29,7 +29,7 @@
 namespace Icinga\Protocol\Commandpipe;
 
 /**
- * Container for comment information that can be send to icinga's external command pipe
+ * Container for comment information that can be send to Icinga's external command pipe
  */
 class Comment
 {

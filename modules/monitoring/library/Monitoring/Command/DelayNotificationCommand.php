@@ -28,6 +28,8 @@
 
 namespace Icinga\Module\Monitoring\Command;
 
+use Icinga\Protocol\Commandpipe\BaseCommand;
+
 /**
  * Command to delay a notification
  */
@@ -59,16 +61,15 @@ class DelayNotificationCommand extends BaseCommand
      */
     public function setDelay($seconds)
     {
-        $this->delay = intval($seconds);
+        $this->delay = (int) $seconds;
         return $this;
     }
 
     /**
      * Return this command's parameters properly arranged in an array
      *
-     * @return array
-     *
-     * @see BaseCommand::getParameters()
+     * @return  array
+     * @see     BaseCommand::getParameters()
      */
     public function getParameters()
     {
@@ -81,8 +82,7 @@ class DelayNotificationCommand extends BaseCommand
      * @param   string  $hostname   The name of the host to insert
      *
      * @return  string              The string representation of the command
-     *
-     * @see BaseCommand::getHostCommand()
+     * @see     BaseCommand::getHostCommand()
      */
     public function getHostCommand($hostname)
     {
@@ -96,8 +96,7 @@ class DelayNotificationCommand extends BaseCommand
      * @param   string  $servicename    The name of the service to insert
      *
      * @return  string                  The string representation of the command
-     *
-     * @see BaseCommand::getServiceCommand()
+     * @see     BaseCommand::getServiceCommand()
      */
     public function getServiceCommand($hostname, $servicename)
     {

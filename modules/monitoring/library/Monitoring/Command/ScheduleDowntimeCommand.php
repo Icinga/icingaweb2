@@ -29,6 +29,7 @@
 namespace Icinga\Module\Monitoring\Command;
 
 use Icinga\Protocol\Commandpipe\Comment;
+use Icinga\Protocol\Commandpipe\BaseCommand;
 
 /**
  * Command for scheduling a new downtime
@@ -93,7 +94,7 @@ class ScheduleDowntimeCommand extends BaseCommand
      */
     public function setStart($startTime)
     {
-        $this->startTime = intval($startTime);
+        $this->startTime = (int) $startTime;
         return $this;
     }
 
@@ -106,7 +107,7 @@ class ScheduleDowntimeCommand extends BaseCommand
      */
     public function setEnd($endTime)
     {
-        $this->endTime = intval($endTime);
+        $this->endTime = (int) $endTime;
         return $this;
     }
 
@@ -145,7 +146,7 @@ class ScheduleDowntimeCommand extends BaseCommand
      */
     public function setDuration($duration)
     {
-        $this->duration = intval($duration);
+        $this->duration = (int) $duration;
         return $this;
     }
 
@@ -158,7 +159,7 @@ class ScheduleDowntimeCommand extends BaseCommand
      */
     public function setTriggerId($triggerId)
     {
-        $this->triggerId = intval($triggerId);
+        $this->triggerId = (int) $triggerId;
         return $this;
     }
 
@@ -198,9 +199,8 @@ class ScheduleDowntimeCommand extends BaseCommand
     /**
      * Return this command's parameters properly arranged in an array
      *
-     * @return array
-     *
-     * @see BaseCommand::getParameters()
+     * @return  array
+     * @see     BaseCommand::getParameters()
      */
     public function getParameters()
     {

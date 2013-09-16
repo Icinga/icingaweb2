@@ -26,18 +26,14 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Module\Monitoring\Command;
+namespace Icinga\Protocol\Commandpipe;
 
-use Icinga\Exception\NotImplementedError;
-use Icinga\Protocol\Commandpipe\CommandType;
+use Icinga\Exception\ProgrammingError;
 
 /**
  * Base class for any concrete command implementation
- *
- * Provides some example methods and often used routines. When implementing
- * a new command one is encouraged to override one of those examples.
  */
-class BaseCommand implements CommandType
+abstract class BaseCommand
 {
     /**
      * Whether hosts are ignored in case of a host- or servicegroup
@@ -116,14 +112,11 @@ class BaseCommand implements CommandType
     }
 
     /**
-     * Return this command's parameters properly arranged in an array
+     * Return this command's arguments in the order expected by the actual command definition
      *
      * @return array
      */
-    public function getParameters()
-    {
-        throw new NotImplementedError();
-    }
+    abstract public function getParameters();
 
     /**
      * Return the command as a string with the given host being inserted
@@ -132,10 +125,7 @@ class BaseCommand implements CommandType
      *
      * @return  string              The string representation of the command
      */
-    public function getHostCommand($hostname)
-    {
-        throw new NotImplementedError();
-    }
+    abstract public function getHostCommand($hostname);
 
     /**
      * Return the command as a string with the given host and service being inserted
@@ -145,10 +135,7 @@ class BaseCommand implements CommandType
      *
      * @return  string                  The string representation of the command
      */
-    public function getServiceCommand($hostname, $servicename)
-    {
-        throw new NotImplementedError();
-    }
+    abstract public function getServiceCommand($hostname, $servicename);
 
     /**
      * Return the command as a string with the given hostgroup being inserted
@@ -159,7 +146,7 @@ class BaseCommand implements CommandType
      */
     public function getHostgroupCommand($hostgroup)
     {
-        throw new NotImplementedError();
+        throw new ProgrammingError(get_class($this) . ' does not provide a hostgroup command');
     }
 
     /**
@@ -171,6 +158,6 @@ class BaseCommand implements CommandType
      */
     public function getServicegroupCommand($servicegroup)
     {
-        throw new NotImplementedError();
+        throw new ProgrammingError(get_class($this) . ' does not provide a servicegroup command');
     }
 }

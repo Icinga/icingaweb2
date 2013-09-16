@@ -139,10 +139,10 @@ class CommandPipe
     /**
      * Send a command to the icinga pipe
      *
-     * @param \Icinga\Protocol\Commandpipe\CommandType $command
-     * @param array                                    $objects
+     * @param Command   $command
+     * @param array     $objects
      */
-    public function sendCommand(CommandType $command, array $objects)
+    public function sendCommand(BaseCommand $command, array $objects)
     {
         foreach ($objects as $object) {
             $objectType = $this->getObjectType($object);

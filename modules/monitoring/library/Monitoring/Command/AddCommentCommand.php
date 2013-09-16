@@ -28,6 +28,7 @@
 
 namespace Icinga\Module\Monitoring\Command;
 
+use Icinga\Protocol\Commandpipe\BaseCommand;
 use Icinga\Protocol\Commandpipe\Comment;
 
 /**
@@ -67,18 +68,22 @@ class AddCommentCommand extends BaseCommand
         return $this;
     }
 
+    public function getParameters()
+    {
+        return $this->comment->getParameters();
+    }
+
     /**
      * Return the command as a string with the given host being inserted
      *
      * @param   string  $hostname   The name of the host to insert
      *
      * @return  string              The string representation of the command
-     *
-     * @see BaseCommand::getHostCommand()
+     * @see     BaseCommand::getHostCommand()
      */
     public function getHostCommand($hostname)
     {
-        return sprintf('ADD_HOST_COMMENT;%s;', $hostname) . implode(';', $this->comment->getParameters());
+        return sprintf('ADD_HOST_COMMENT;%s;', $hostname) . implode(';', $this->getParameters());
     }
 
     /**
@@ -88,12 +93,11 @@ class AddCommentCommand extends BaseCommand
      * @param   string  $servicename    The name of the service to insert
      *
      * @return  string                  The string representation of the command
-     *
-     * @see BaseCommand::getServiceCommand()
+     * @see     BaseCommand::getServiceCommand()
      */
     public function getServiceCommand($hostname, $servicename)
     {
         return sprintf('ADD_SVC_COMMENT;%s;%s;', $hostname, $servicename)
-            . implode(';', $this->comment->getParameters());
+            . implode(';', $this->getParameters());
     }
 }
