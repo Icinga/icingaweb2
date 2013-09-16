@@ -100,7 +100,7 @@ abstract class Command
     }
 
     /**
-     * Set whether this command only affects those services beyond a host
+     * Set whether this command only affects the services associated with a particular host
      *
      * @param   bool    $state
      * @return  self
