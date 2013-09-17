@@ -2,6 +2,8 @@
 
 namespace Icinga\Monitoring\View;
 
+use Icinga\Module\Monitoring\View\AbstractView;
+
 class StatehistoryView extends AbstractView
 {
     protected $availableColumns = array(

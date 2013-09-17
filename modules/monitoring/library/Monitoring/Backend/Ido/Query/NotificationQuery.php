@@ -119,7 +119,7 @@ class NotificationQuery extends AbstractQuery
             array(
                 'cmd_m' => $this->prefix . 'contactnotificationmethods'
             ),
-            'cmd_c.notification_id = cmd_m.contactnotification_id',
+            'cmd_c.contactnotification_id = cmd_m.contactnotification_id',
             array()
         );
         $this->baseQuery->join(

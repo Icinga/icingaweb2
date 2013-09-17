@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
+use \Zend_Db_Select;
 use Icinga\Exception\ProgrammingError;
 
 class EventHistoryQuery extends AbstractQuery

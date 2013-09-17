@@ -160,4 +160,3 @@ interface QueryInterface extends Countable
      */
     public function paginate($limit = null, $page = null);
 }
-

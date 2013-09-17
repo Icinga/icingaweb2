@@ -112,8 +112,7 @@ class PivotTable
             ->where($ycol, $listY)
             ->where($xcol, $listX)
             ->order($ycol)
-            ->order($xcol)
-            ;
+            ->order($xcol);
         $pivot = array();
         $emptyrow = (object) array();
         foreach ($this->query->listColumns() as $col) {

@@ -56,6 +56,7 @@ abstract class AbstractQuery extends Query
             foreach ($this->columnMap as $table => & $columns) {
                 foreach ($columns as $key => & $value) {
                     $value = preg_replace('/ COLLATE .+$/', '', $value);
+                    $value = preg_replace('/inet_aton\(([[:word:].]+)\)/i', '$1::inet - \'0.0.0.0\'', $value);
                 }
             }
         }
@@ -120,7 +121,8 @@ abstract class AbstractQuery extends Query
 
     protected function joinBaseTables()
     {
-        $table = array_shift(array_keys($this->columnMap));
+        reset($this->columnMap);
+        $table = key($this->columnMap);
 
         $this->baseQuery = $this->db->select()->from(
             array($table => $this->prefix . $table),

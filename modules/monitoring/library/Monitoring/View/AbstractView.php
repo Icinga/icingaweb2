@@ -241,7 +241,8 @@ class AbstractView extends AbstractQuery
         if (empty($this->sortDefaults)) {
             return $this->availableColumns[0];
         } else {
-            return array_shift(array_keys($this->sortDefaults));
+            reset($this->sortDefaults);
+            return key($this->sortDefaults);
         }
     }
 

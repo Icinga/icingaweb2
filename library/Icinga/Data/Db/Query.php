@@ -66,7 +66,9 @@ class Query extends AbstractQuery
 
     protected function createQueryObjects()
     {
+        $this->beforeCreatingCountQuery();
         $this->beforeCreatingSelectQuery();
+
         $this->selectQuery = clone($this->baseQuery);
         $this->selectQuery->columns($this->columns);
         if ($this->hasOrder()) {
@@ -79,7 +81,6 @@ class Query extends AbstractQuery
             }
         }
 
-        $this->beforeCreatingCountQuery();
         if ($this->uglySlowConservativeCount) {
             $query = clone($this->selectQuery);
             if ($this->maxCount === null) {

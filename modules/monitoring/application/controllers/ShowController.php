@@ -199,7 +199,6 @@ class Monitoring_ShowController extends ActionController
             ->fetchPairs();
         Benchmark::measure('Service action done');
         $object = $this->view->object->prefetch();
-        $this->prepareGrapherHook();
     }
 
     /**
@@ -300,7 +299,6 @@ class Monitoring_ShowController extends ActionController
             ->where('object_type', 'host')
             ->fetchPairs();
         $this->view->object->prefetch();
-        $this->prepareGrapherHook();
     }
 
     /**
