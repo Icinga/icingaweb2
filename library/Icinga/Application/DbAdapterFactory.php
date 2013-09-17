@@ -83,7 +83,8 @@ class DbAdapterFactory implements ConfigAwareFactory
     private static $defaultZendDbAdapterOptions = array(
         Zend_Db::AUTO_QUOTE_IDENTIFIERS => false,
         Zend_Db::CASE_FOLDING           => Zend_Db::CASE_LOWER,
-        Zend_Db::FETCH_MODE             => Zend_Db::FETCH_OBJ
+        // Zend_Db::FETCH_MODE             => Zend_Db::FETCH_OBJ
+        'fetchMode'                     => Zend_Db::FETCH_OBJ
     );
 
     /**

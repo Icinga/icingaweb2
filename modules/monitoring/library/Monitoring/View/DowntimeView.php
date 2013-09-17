@@ -27,7 +27,7 @@ namespace Icinga\Module\Monitoring\View;
 /**
  * Class DowntimeView
  */
-class DowntimeView extends MonitoringView
+class DowntimeView extends AbstractView
 {
     /**
      * Query object

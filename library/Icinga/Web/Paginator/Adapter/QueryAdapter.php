@@ -28,11 +28,13 @@
 
 namespace Icinga\Web\Paginator\Adapter;
 
+use Zend_Paginator_Adapter_Interface;
+
 /**
  * @see Zend_Paginator_Adapter_Interface
  */
 
-class QueryAdapter implements \Zend_Paginator_Adapter_Interface
+class QueryAdapter implements Zend_Paginator_Adapter_Interface
 {
     /**
      * Array
@@ -53,9 +55,7 @@ class QueryAdapter implements \Zend_Paginator_Adapter_Interface
      *
      * @param array $query Query to paginate
      */
-    // TODO: Re-add abstract Query type as soon as a more generic one
-    //       is available. Should fit Protocol-Queries too.
-    // public function __construct(\Icinga\Backend\Query $query)
+    // TODO: This might be ready for (QueryInterface $query)
     public function __construct($query)
     {
         $this->query = $query;

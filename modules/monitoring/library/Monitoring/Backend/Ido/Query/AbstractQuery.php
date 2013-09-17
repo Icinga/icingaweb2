@@ -20,12 +20,21 @@ abstract class AbstractQuery extends Query
 
     protected $object_id       = 'object_id';
     protected $host_id         = 'host_id';
-    protected $service_id      = 'service_id';
     protected $hostgroup_id    = 'hostgroup_id';
+    protected $service_id      = 'service_id';
     protected $servicegroup_id = 'servicegroup_id';
+    protected $contact_id      = 'contact_id';
+    protected $contactgroup_id = 'contactgroup_id';
+
+    protected $aggregateColumnIdx = array();
 
     protected $allowCustomVars = false;
 
+    protected function isAggregateColumn($column)
+    {
+        return array_key_exists($column, $this->aggregateColumnIdx);
+    }
+    
     protected function init()
     {
         parent::init();
@@ -33,7 +42,9 @@ abstract class AbstractQuery extends Query
         $this->prefix = $this->ds->getPrefix();
 
         if ($this->ds->getConnection()->getDbType() === 'oracle') {
-            $this->object_id = $this->host_id = $this->service_id = $this->hostgroup_id = $this->servicegroup_id = 'id'; // REALLY?
+            $this->object_id = $this->host_id = $this->service_id
+                = $this->hostgroup_id = $this->servicegroup_id
+                = $this->contact_id = $this->contactgroup_id = 'id'; // REALLY?
             foreach ($this->columnMap as $table => & $columns) {
                 foreach ($columns as $key => & $value) {
                     $value = preg_replace('/UNIX_TIMESTAMP/', 'localts2unixts', $value);
@@ -45,12 +56,13 @@ abstract class AbstractQuery extends Query
             foreach ($this->columnMap as $table => & $columns) {
                 foreach ($columns as $key => & $value) {
                     $value = preg_replace('/ COLLATE .+$/', '', $value);
+                    $value = preg_replace('/inet_aton\(([[:word:].]+)\)/i', '$1::inet - \'0.0.0.0\'', $value);
                 }
             }
         }
 
-        $this->prepareAliasIndexes();
         $this->joinBaseTables();
+        $this->prepareAliasIndexes();
     }
 
     protected function isCustomVar($alias)
@@ -103,7 +115,21 @@ abstract class AbstractQuery extends Query
 
     protected function getDefaultColumns()
     {
-        return $this->columnMap['hostgroups'];
+        $table = array_shift(array_keys($this->columnMap));
+        return array_keys($this->columnMap[$table]);
+    }
+
+    protected function joinBaseTables()
+    {
+        reset($this->columnMap);
+        $table = key($this->columnMap);
+
+        $this->baseQuery = $this->db->select()->from(
+            array($table => $this->prefix . $table),
+            array()
+        );
+
+        $this->joinedVirtualTables = array($table => true);
     }
 
     protected function beforeCreatingCountQuery()
@@ -121,18 +147,12 @@ abstract class AbstractQuery extends Query
     protected function applyAllFilters()
     {
         $filters = array();
-        // TODO: Handle $special in a more generic way
-        $special =  array('hostgroups', 'servicegroups');
         foreach ($this->filters as $f) {
             $alias = $f[0];
             $value = $f[1];
             $this->requireColumn($alias);
 
-            if ($alias === 'hostgroups') {
-                $col = 'hg.alias';
-            } elseif ($alias === 'servicegroups') {
-                $col = 'sg.alias';
-            } elseif ($this->isCustomvar($alias)) {
+            if ($this->isCustomvar($alias)) {
                 $col = $this->getCustomvarColumnName($alias);
             } elseif ($this->hasAliasName($alias)) {
                 $col = $this->aliasToColumnName($alias);
@@ -141,7 +161,17 @@ abstract class AbstractQuery extends Query
                     'If you finished here, code has been messed up'
                 );
             }
-            $this->baseQuery->where($this->prepareFilterStringForColumn($col, $value));
+
+            $func = 'filter' . ucfirst($alias);
+            if (method_exists($this, $func)) {
+                $this->$func($value);
+                return;
+            }
+            if ($this->isAggregateColumn($alias)) {
+                $this->baseQuery->having($this->prepareFilterStringForColumn($col, $value));
+            } else {
+                $this->baseQuery->where($this->prepareFilterStringForColumn($col, $value));
+            }
         }
     }
 
@@ -257,6 +287,15 @@ abstract class AbstractQuery extends Query
         return $this->customVars[$customvar] . '.varvalue';
     }
 
+    protected function createSubQuery($queryName, $columns = array())
+    {
+		$class = '\\'
+		       . substr(__CLASS__, 0, strrpos(__CLASS__, '\\') + 1)
+		       . ucfirst($queryName) . 'Query';
+        $query = new $class($this->ds, $columns);
+        return $query;
+    }
+
     protected function customvarNameToTypeName($customvar)
     {
         // TODO: Improve this:
@@ -279,8 +318,11 @@ abstract class AbstractQuery extends Query
         $or  = array();
         $and = array();
 
-        if (! is_array($value) && strpos($value, ',') !== false) {
-            $value = preg_split('~,~', $value, -1, PREG_SPLIT_NO_EMPTY);
+        if (
+            ! is_array($value) &&
+            (strpos($value, ',') !== false || strpos($value, '|') !== false)
+        ) {
+            $value = preg_split('~[,|]~', $value, -1, PREG_SPLIT_NO_EMPTY);
         }
         if (! is_array($value)) {
             $value = array($value);
@@ -292,38 +334,56 @@ abstract class AbstractQuery extends Query
                 // TODO: REALLY??
                 continue;
             }
-            // Value starting with minus: negation
-            if ($val[0] === '-') {
+            $not = false;
+            $force = false;
+            $op  = '=';
+            $wildcard = false;
+
+            if ($val[0] === '-' || $val[0] === '!') {
+                // Value starting with minus or !: negation
                 $val = substr($val, 1);
-                if (strpos($val, '*') === false) {
-                    $and[] = $this->db->quoteInto($column . ' != ?', $val);
-                } else {
-                    $and[] = $this->db->quoteInto(
-                        $column . ' NOT LIKE ?',
-                        str_replace('*', '%', $val)
-                    );
-                }
-            } elseif ($val[0] === '+') { // Value starting with +: enforces AND
+                $not = true;
+            }
+
+            if ($val[0] === '+') {
+                // Value starting with +: enforces AND
                 // TODO: depends on correct URL handling, not given in all
-                //       ZF versions
+                //       ZF versions.
                 $val = substr($val, 1);
-                if (strpos($val, '*') === false) {
-                    $and[] = $this->db->quoteInto($column . ' = ?', $val);
-                } else {
-                    $and[] = $this->db->quoteInto(
-                        $column . ' LIKE ?',
-                        str_replace('*', '%', $val)
-                    );
-                }
-            } else { // All others ar ORs:
-                if (strpos($val, '*') === false) {
-                    $or[] = $this->db->quoteInto($column . ' = ?', $val);
-                } else {
-                    $or[] = $this->db->quoteInto(
-                        $column . ' LIKE ?',
-                        str_replace('*', '%', $val)
-                    );
-                }
+                $force = true;
+            }
+            if ($val[0] === '<' || $val[0] === '>') {
+                $op  = $val[0];
+                $val = substr($val, 1);
+            }
+            if (strpos($val, '*') !== false) {
+                $wildcard = true;
+                $val = str_replace('*', '%', $val);
+            }
+
+            $operator = null;
+            switch ($op) {
+                case '=':
+                    if ($not) {
+                        $operator = $wildcard ? 'NOT LIKE' : '!=';
+                    } else {
+                        $operator = $wildcard ? 'LIKE' : '=';
+                    }
+                    break;
+                case '>':
+                    $operator = $not ? '<=' : '>';
+                    break;
+                case '<':
+                    $operator = $not ? '>=' : '<';
+                    break;
+                default:
+                    throw new ProgrammingError("'$op' is not a valid operator");
+            }
+
+            if ($not || $force) {
+                $and[] = $this->db->quoteInto($column . ' ' . $operator . ' ?', $val);
+            } else {
+                $or[] = $this->db->quoteInto($column . ' ' . $operator . ' ?', $val);
             }
         }
 

@@ -10,7 +10,7 @@ $less = new lessc;
 $cssdir = dirname(__FILE__) . '/css';
 
 echo $less->compileFile($cssdir . '/base.less');
-foreach ($app->moduleManager()->getLoadedModules() as $name => $module) {
+foreach ($app->getModuleManager()->getLoadedModules() as $name => $module) {
     if ($module->hasCss()) {
         echo $less->compile(
             '.icinga-module.module-'

@@ -20,7 +20,7 @@ require_once '../../modules/monitoring/library/Monitoring/Backend/Statusdat/Quer
 require_once '../../modules/monitoring/library/Monitoring/Backend/Statusdat.php';
 require_once '../../modules/monitoring/library/Monitoring/Backend/Statusdat/Query/StatusQuery.php';
 require_once '../../modules/monitoring/library/Monitoring/Backend/Statusdat/DataView/HostStatusView.php';
-require_once '../../modules/monitoring/library/Monitoring/View/MonitoringView.php';
+require_once '../../modules/monitoring/library/Monitoring/View/AbstractView.php';
 require_once '../../modules/monitoring/library/Monitoring/View/StatusView.php';
 
 require_once '../../library/Icinga/Protocol/AbstractQuery.php';

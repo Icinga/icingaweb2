@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Monitoring\View;
 
-class HoststatusView extends MonitoringView
+class HoststatusView extends AbstractView
 {
     protected $query;
     protected $searchColumn = 'host';
@@ -37,11 +37,19 @@ class HoststatusView extends MonitoringView
         'host_last_time_up',
         'host_last_time_down',
         'host_last_time_unreachable',
+
+        // Services
+        'services_cnt',
+        'services_problem',
+        'services_problem_handled',
+        'services_problem_unhandled',
     );
 
     protected $specialFilters = array(
-        'hostgroups',
-        'servicegroups'
+        'hostgroup',
+        'servicegroup',
+        'contact',
+        'contactgroup',
     );
 
     protected $sortDefaults = array(

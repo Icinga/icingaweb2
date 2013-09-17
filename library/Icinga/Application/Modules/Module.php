@@ -274,7 +274,10 @@ class Module
 
             $this->app->getLoader()->registerNamespace('Icinga\\Module\\' . $moduleName, $moduleLibraryDir);
             if (is_dir($this->getFormDir())) {
-                $this->app->getLoader()->registerNamespace('Icinga\\Module\\' . $moduleName. '\\Form', $this->getFormDir());
+                $this->app->getLoader()->registerNamespace(
+                    'Icinga\\Module\\' . $moduleName. '\\Form',
+                    $this->getFormDir()
+                );
             }
         }
 

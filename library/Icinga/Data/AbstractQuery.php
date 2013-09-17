@@ -4,7 +4,7 @@ namespace Icinga\Data;
 
 use Icinga\Exception;
 
-abstract class AbstractQuery
+abstract class AbstractQuery implements QueryInterface
 {
     /**
      * Sort ascending
@@ -70,6 +70,17 @@ abstract class AbstractQuery
         }
 
         $this->init();
+    }
+
+    public function addColumn($name, $alias = null)
+    {
+        // TODO: Fail if adding column twice, but allow same col with new alias
+        if ($alias === null) {
+            $this->columns[] = $name;
+        } else {
+            $this->columns[$alias] = $name;
+        }
+        return $this;
     }
 
     public function getDatasource()
@@ -158,7 +169,7 @@ abstract class AbstractQuery
                 $col = substr($col, 0, $pos);
             }
         } else {
-            if (strtoupper($dir) === 'DESC') {
+            if ($dir === self::SORT_DESC || strtoupper($dir) === 'DESC') {
                 $dir = self::SORT_DESC;
             } else {
                 $dir = self::SORT_ASC;

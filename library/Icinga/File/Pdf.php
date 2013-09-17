@@ -6,17 +6,14 @@ use TCPDF;
 use Icinga\Web\Url;
 use Icinga\Application\Icinga;
 
-// $_SERVER['DOCUMENT_ROOT'] = '/';
-$_SERVER['DOCUMENT_ROOT'] = Icinga::app()->getApplicationDir() . '/../public';
 define('K_TCPDF_EXTERNAL_CONFIG', true);
-
-//define('K_PATH_URL', 'http://net-test-icinga-vm1.adm.netways.de/develop/'); // ???
-// define('K_PATH_URL', '/var/www/net-test-icinga-vm1.adm.netways.de/develop/public'); // ???
-define('K_PATH_URL', (string) Url::fromPath('/') === '/' ? '' : (string) Url::fromPath('/')); // ???'/'));
+define('K_PATH_URL', (string) Url::create('/'));
 define('K_PATH_MAIN', dirname(ICINGA_LIBDIR) . '/public');
 define('K_PATH_FONTS', ICINGA_LIBDIR . '/vendor/tcpdf/fonts/');
-define('K_PATH_CACHE', ICINGA_LIBDIR . '/vendor/tcpdf/cache/');
-define('K_PATH_URL_CACHE', ICINGA_LIBDIR . '/vendor/tcpdf/cache/');
+// define('K_PATH_CACHE', ICINGA_LIBDIR . '/vendor/tcpdf/cache/');
+// define('K_PATH_URL_CACHE', ICINGA_LIBDIR . '/vendor/tcpdf/cache/');
+define('K_PATH_CACHE', '/tmp/');
+define('K_PATH_URL_CACHE', '/tmp/');
 //define('K_PATH_IMAGES', K_PATH_MAIN . 'images/'); // ???
 define('K_PATH_IMAGES', dirname(ICINGA_LIBDIR) . '/public'); // ???
 define('K_BLANK_IMAGE', K_PATH_IMAGES.'_blank.png');  // COULD be anything?
@@ -41,6 +38,7 @@ class Pdf extends TCPDF
         $diskcache = false,
         $pdfa = false
     ) {
+        unset($_SERVER['DOCUMENT_ROOT']);
         parent::__construct(
             $orientation,
             $unit,

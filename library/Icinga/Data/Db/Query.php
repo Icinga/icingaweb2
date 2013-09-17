@@ -32,6 +32,12 @@ class Query extends AbstractQuery
      */
     protected $countColumns;
 
+    protected $uglySlowConservativeCount = false;
+
+    protected $countCache;
+
+    protected $maxCount;
+
     protected function init()
     {
         $this->db = $this->ds->getConnection()->getDb();
@@ -62,6 +68,7 @@ class Query extends AbstractQuery
     {
         $this->beforeCreatingCountQuery();
         $this->beforeCreatingSelectQuery();
+
         $this->selectQuery = clone($this->baseQuery);
         $this->selectQuery->columns($this->columns);
         if ($this->hasOrder()) {
@@ -74,11 +81,27 @@ class Query extends AbstractQuery
             }
         }
 
-        $this->countQuery = clone($this->baseQuery);
-        if ($this->countColumns === null) {
-            $this->countColumns = array('cnt' => 'COUNT(*)');
+        if ($this->uglySlowConservativeCount) {
+            $query = clone($this->selectQuery);
+            if ($this->maxCount === null) {
+                $this->countQuery = $this->db->select()->from(
+                    $query,
+                    'COUNT(*)'
+                );
+            } else {
+                $this->countQuery = $this->db->select()->from(
+                    $query->reset('order')->limit($this->maxCount),
+                    'COUNT(*)'
+                );
+            }
+        } else {
+            $this->countQuery = clone($this->baseQuery);
+            if ($this->countColumns === null) {
+                $this->countColumns = array('cnt' => 'COUNT(*)');
+            }
+            $this->countQuery->columns($this->countColumns);
         }
-        $this->countQuery->columns($this->countColumns);
+
     }
 
     protected function beforeCreatingCountQuery()
@@ -91,7 +114,10 @@ class Query extends AbstractQuery
 
     public function count()
     {
-        return $this->db->fetchOne($this->getCountQuery());
+        if ($this->countCache === null) {
+            $this->countCache = $this->db->fetchOne($this->getCountQuery());
+        }
+        return $this->countCache;
     }
 
     public function fetchAll()
@@ -102,6 +128,11 @@ class Query extends AbstractQuery
     public function fetchRow()
     {
         return $this->db->fetchRow($this->getSelectQuery());
+    }
+
+    public function fetchColumn()
+    {
+        return $this->db->fetchCol($this->getSelectQuery());
     }
 
     public function fetchOne()

@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Monitoring\View;
 
-class EventHistoryView extends MonitoringView
+class EventHistoryView extends AbstractView
 {
     protected $query;
 
@@ -21,7 +21,9 @@ class EventHistoryView extends MonitoringView
         'type'
     );
 
-    protected $specialFilters = array();
+    protected $specialFilters = array(
+        'hostgroup',
+    );
 
     protected $sortDefaults = array(
         'raw_timestamp' => array(

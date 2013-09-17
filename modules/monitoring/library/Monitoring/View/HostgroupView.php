@@ -2,11 +2,12 @@
 
 namespace Icinga\Module\Monitoring\View;
 
-class HostgroupView extends MonitoringView
+class HostgroupView extends AbstractView
 {
     protected $query;
 
     protected $availableColumns = array(
+        'hostgroups',
         'hostgroup_name',
         'hostgroup_alias',
     );

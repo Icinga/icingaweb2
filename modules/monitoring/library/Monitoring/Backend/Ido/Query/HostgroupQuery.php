@@ -6,6 +6,7 @@ class HostgroupQuery extends AbstractQuery
 {
     protected $columnMap = array(
         'hostgroups' => array(
+            'hostgroups'      => 'hgo.name1 COLLATE latin1_general_ci',
             'hostgroup_name'  => 'hgo.name1 COLLATE latin1_general_ci',
             'hostgroup_alias' => 'hg.alias',
             'id'              => 'hg.hostgroup_id',

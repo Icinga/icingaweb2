@@ -162,7 +162,7 @@ class Monitoring_ListController extends ActionController
             'host_name'             =>  'Host Name',
             'host_address'          =>  'Host Address',
             'host_last_check'       =>  'Last Host Check'
-        ));
+         ));
     }
 
     /**
@@ -244,10 +244,14 @@ class Monitoring_ListController extends ActionController
             -1,
             PREG_SPLIT_NO_EMPTY
         );
-
+        if (empty($extra)) {
+            $cols = $columns;
+        } else {
+            $cols = array_merge($columns, $extra);
+        }
         $this->view->extraColumns = $extra;
         $query = $this->backend->select()
-            ->from($view, array_merge($columns, $extra))
+            ->from($view, $cols)
             ->applyRequest($this->_request);
         $this->handleFormatRequest($query);
         return $query;

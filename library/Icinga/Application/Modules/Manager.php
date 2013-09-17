@@ -149,12 +149,12 @@ class Manager
         $this->enabledDirs = array();
         while (false !== ($file = readdir($fh))) {
 
-            if ($file[0] === '.') {
+            if ($file[0] === '.' || $file === 'README') {
                 continue;
             }
 
             $link = $this->enableDir . '/' . $file;
-            if (!is_link($link)) {
+            if (! is_link($link)) {
                 Logger::warn(
                     'Found invalid module in enabledModule directory "%s": "%s" is not a symlink',
                     $this->enableDir,

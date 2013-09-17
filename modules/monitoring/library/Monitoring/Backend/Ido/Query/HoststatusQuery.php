@@ -17,6 +17,9 @@ class HoststatusQuery extends AbstractQuery
             'host_icon_image'        => 'h.icon_image',
         ),
         'hoststatus' => array(
+            'problems'                   => 'CASE WHEN hs.current_state = 0 THEN 0 ELSE 1 END',
+            'handled'                    => 'CASE WHEN (hs.problem_has_been_acknowledged + hs.scheduled_downtime_depth) > 0 THEN 1 ELSE 0 END',
+            'unhandled'                  => 'CASE WHEN (hs.problem_has_been_acknowledged + hs.scheduled_downtime_depth) = 0 THEN 1 ELSE 0 END',
             'host_state'                  => 'CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL THEN 99 ELSE hs.current_state END',
             'host_output'                 => 'hs.output',
             'host_long_output'            => 'hs.long_output',
@@ -72,9 +75,41 @@ class HoststatusQuery extends AbstractQuery
             END',
         ),
         'hostgroups' => array(
-            'hostgroups' => 'hgo.name1',
+            'hostgroup' => 'hgo.name1 COLLATE latin1_general_ci',
+        ),
+        'contactgroups' => array(
+            'contactgroup' => 'contactgroup',
+        ),
+        'contacts' => array(
+            'contact' => 'hco.name1 COLLATE latin1_general_ci',
+        ),
+        'services' => array(
+            'services_cnt'      => 'SUM(1)',
+            'services_ok'       => 'SUM(CASE WHEN ss.current_state = 0 THEN 1 ELSE 0 END)',
+            'services_warning'  => 'SUM(CASE WHEN ss.current_state = 1 THEN 1 ELSE 0 END)',
+            'services_critical' => 'SUM(CASE WHEN ss.current_state = 2 THEN 1 ELSE 0 END)',
+            'services_unknown'  => 'SUM(CASE WHEN ss.current_state = 3 THEN 1 ELSE 0 END)',
+            'services_pending'  => 'SUM(CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL THEN 1 ELSE 0 END)',
+            'services_problem'  => 'SUM(CASE WHEN ss.current_state > 0 THEN 1 ELSE 0 END)',
+            'services_problem_handled'  => 'SUM(CASE WHEN ss.current_state > 0 AND (ss.problem_has_been_acknowledged = 1 OR ss.scheduled_downtime_depth > 0) THEN 1 ELSE 0 END)',
+            'services_problem_unhandled'  => 'SUM(CASE WHEN ss.current_state > 0 AND (ss.problem_has_been_acknowledged = 0 AND ss.scheduled_downtime_depth = 0) THEN 1 ELSE 0 END)',
+            'services_warning_handled'  => 'SUM(CASE WHEN ss.current_state = 1 AND (ss.problem_has_been_acknowledged = 1 OR ss.scheduled_downtime_depth > 0) THEN 1 ELSE 0 END)',
+            'services_critical_handled' => 'SUM(CASE WHEN ss.current_state = 2 AND (ss.problem_has_been_acknowledged = 1 OR ss.scheduled_downtime_depth > 0) THEN 1 ELSE 0 END)',
+            'services_unknown_handled'  => 'SUM(CASE WHEN ss.current_state = 3 AND (ss.problem_has_been_acknowledged = 1 OR ss.scheduled_downtime_depth > 0) THEN 1 ELSE 0 END)',
+            'services_warning_unhandled'  => 'SUM(CASE WHEN ss.current_state = 1 AND (ss.problem_has_been_acknowledged = 0 AND ss.scheduled_downtime_depth = 0) THEN 1 ELSE 0 END)',
+            'services_critical_unhandled' => 'SUM(CASE WHEN ss.current_state = 2 AND (ss.problem_has_been_acknowledged = 0 AND ss.scheduled_downtime_depth = 0) THEN 1 ELSE 0 END)',
+            'services_unknown_unhandled'  => 'SUM(CASE WHEN ss.current_state = 3 AND (ss.problem_has_been_acknowledged = 0 AND ss.scheduled_downtime_depth = 0) THEN 1 ELSE 0 END)',
         ),
     );
+
+    protected $aggregateColumnIdx = array(
+        'services_cnt'               => true,
+        'services_problem'           => true,
+        'services_problem_handled'   => true,
+        'services_problem_unhandled' => true,
+    );
+
+    protected $hcgSub;
 
     protected function getDefaultColumns()
     {
@@ -128,6 +163,14 @@ class HoststatusQuery extends AbstractQuery
             "so.$this->object_id = ss.service_object_id",
             array()
         );
+        foreach ($this->columns as $col) {
+            $real = $this->aliasToColumnName($col);
+            if (substr($real, 0, 4) === 'SUM(') {
+                continue;
+            }
+            $this->baseQuery->group($real);
+        }
+        $this->uglySlowConservativeCount = true;
     }
 
     protected function joinHostgroups()
@@ -139,6 +182,121 @@ class HoststatusQuery extends AbstractQuery
         }
     }
 
+    protected function joinContacts()
+    {
+        $this->hcgcSub = $this->db->select()->distinct()->from(
+            array('hcgc' => $this->prefix . 'host_contactgroups'),
+            array('host_name' => 'ho.name1')
+        )->join(
+            array('cgo' => $this->prefix . 'objects'),
+            'hcg.contactgroup_object_id = cgo.' . $this->object_id
+          . ' AND cgo.is_active = 1',
+            array()
+        )->join(
+            array('h' => $this->prefix . 'hosts'),
+            'hcg.host_id = h.host_id',
+            array()
+        )->join(
+            array('ho' => $this->prefix . 'objects'),
+            'h.host_object_id = ho.' . $this->object_id . ' AND ho.is_active = 1',
+            array()
+        );
+        $this->baseQuery->join(
+            array('hcg' => $this->hcgSub),
+            'hcg.host_name = ho.name1',
+            array()
+        );
+
+        return $this;
+    }
+
+
+/*
+    protected function joinContacts()
+    {
+
+        
+        $this->baseQuery->join(
+            array('hc' => $this->prefix . 'host_contacts'),
+            'hc.host_id = h.host_id',
+            array()
+        )->join(
+            array('hco' => $this->prefix . 'objects'),
+            'hco.' . $this->object_id. ' = hc.contact_object_id'
+          . ' AND hco.is_active = 1',
+            array()
+        );
+
+        $this->baseQuery->join(
+            array('hcg' => $this->prefix . 'host_contactgroups'),
+            'hcg.host_id = h.host_id',
+            array()
+        )->join(
+            array('hcgo' => $this->prefix . 'objects'),
+            'hcgo.' . $this->object_id. ' = hcg.contactgroup_object_id'
+          . ' AND hcgo.is_active = 1',
+            array()
+        );
+        $this->baseQuery->join(
+            array('cgm' => $this->prefix . 'contactgroup_members'),
+            'cgm.contactgroup_id = cg.contactgroup_id',
+            array()
+        )->join(
+            array('co' => $this->prefix . 'objects'),
+            'cgm.contact_object_id = co.object_id AND co.is_active = 1',
+            array()
+        );
+    }
+
+
+        return $this;
+    }
+*/
+    protected function filterContactgroup($value)
+    {
+        $this->hcgSub->where(
+            $this->prepareFilterStringForColumn(
+                'cgo.name1 COLLATE latin1_general_ci',
+                $value
+            )
+        );
+        return $this;
+    }
+
+
+    protected function createContactgroupFilterSubselect()
+    {
+        die((string) $this->db->select()->distinct()->from(
+            array('hcg' => $this->prefix . 'host_contactgroups'),
+            array('object_id' => 'ho.object_id')
+        )->join(
+            array('cgo' => $this->prefix . 'objects'),
+            'hcg.contactgroup_object_id = cgo.' . $this->object_id
+          . ' AND cgo.is_active = 1',
+            array()
+        )->join(
+            array('h' => $this->prefix . 'hosts'),
+            'hcg.host_id = h.host_id',
+            array()
+        )->join(
+            array('ho' => $this->prefix . 'objects'),
+            'h.host_object_id = ho.' . $this->object_id . ' AND ho.is_active = 1',
+            array()
+        ));
+    }
+
+    protected function joinContactgroups()
+    {
+        $this->hcgSub = $this->createContactgroupFilterSubselect();
+        $this->baseQuery->join(
+            array('hcg' => $this->hcgSub),
+            'hcg.object_id = ho.object_id',
+            array()
+        );
+
+        return $this;
+    }
+
     protected function joinHostHostgroups()
     {
         $this->baseQuery->join(
@@ -148,6 +306,11 @@ class HoststatusQuery extends AbstractQuery
         )->join(
             array('hg' => $this->prefix . 'hostgroups'),
             "hgm.hostgroup_id = hg.$this->hostgroup_id",
+            array()
+        )->join(
+            array('hgo' => $this->prefix . 'objects'),
+            'hgo.' . $this->object_id. ' = hg.hostgroup_object_id'
+          . ' AND hgo.is_active = 1',
             array()
         );
 
@@ -176,6 +339,7 @@ class HoststatusQuery extends AbstractQuery
 
     protected function joinServicegroups()
     {
+        // TODO: Only hosts with services having such servicegroups
         $this->requireVirtualTable('services');
         $this->baseQuery->join(
             array('sgm' => $this->prefix . 'servicegroup_members'),

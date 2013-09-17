@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Monitoring\View;
 
-class ServicegroupView extends MonitoringView
+class ServicegroupView extends AbstractView
 {
     protected $query;
 

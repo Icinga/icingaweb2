@@ -1,8 +1,10 @@
 <?php
 
-namespace Icinga\Data;
+namespace Icinga\Data\DataArray;
 
-class ArrayQuery extends AbstractQuery
+use Icinga\Data\AbstractQuery;
+
+class Query extends AbstractQuery
 {
     /**
      * Remember the last count
