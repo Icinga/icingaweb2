@@ -29,30 +29,19 @@
 namespace Icinga\Chart;
 
 use Exception;
-use Iterator;
 use Icinga\Chart\Legend;
 use Icinga\Chart\Palette;
 use Icinga\Chart\Primitive\Drawable;
 use Icinga\Chart\SVGRenderer;
 
 /**
- * Base class for charts
+ * Base class for charts, extended by all other Chart classes.
  */
 abstract class Chart implements Drawable
 {
-    private $xAxis;
-
-    private $yAxis;
 
     /**
-     * Series to plot
-     *
-     * @var array
-     */
-    protected $dataSets = array();
-
-    /**
-     * SVG renderer
+     * SVG renderer that handles
      *
      * @var SVGRenderer
      */
@@ -63,64 +52,54 @@ abstract class Chart implements Drawable
      *
      * @var Legend
      */
-    public $legend;
+    protected $legend;
 
     /**
      * The style-palette for this chart
      *
      * @var Palette
      */
-    public $palette;
+    protected $palette;
 
     /**
-     * Create a new chart
+     * Create a new chart object and create internal objects
      *
-     * See self::isValidDataFormat() for more information on how each series need to be structured
-     *
-     * @param   array   $dataSet, ...   unlimited number of series to plot
-     *
-     * @see     self::isValidDataFormat()
+     * If you want to extend this class use the init() method as an extension point,
+     * as this will be called at the end o fthe construct call
      */
     public function __construct()
     {
         $this->legend = new Legend();
         $this->palette = new Palette();
-        $this->renderer = new SVGRenderer(2,1);
         $this->init();
     }
 
+    /**
+     * Extension point for subclasses, called on __construct
+     *
+     */
     protected function init()
     {
-
     }
 
     /**
-     * Set up the legend for this chart
-     */
-    protected function setupLegend()
-    {
-
-    }
-
-    /**
-     * Set up the elements for this chart
+     * Extension point for implementing rendering logic
+     *
+     * This method is called after data validation, but before toSvg is called
      */
     protected function build()
     {
-
     }
 
     /**
-     * Check if the current dataset has the proper structure for this chart
+     * Check if the current dataset has the proper structure for this chart.
      *
      * Needs to be overwritten by extending classes. The default implementation returns false.
      *
-     * @return  bool                    Whether the dataset is valid or not
+     * @return  bool                    True when the dataset is valid, otherwise false
      */
-    public function isValidDataFormat()
-    {
-        return false;
-    }
+    abstract public function isValidDataFormat();
+
 
     /**
      * Disable the legend for this chart
@@ -130,7 +109,15 @@ abstract class Chart implements Drawable
         $this->legend = null;
     }
 
-
+    /**
+     *
+     * Render this graph and return the created SVG
+     *
+     * @return string       The SVG created by the SvgRenderer
+     *
+     * @throws Exception    Thrown wen the dataset is not valid for this graph
+     * @see SVGRenderer::render
+     */
     public function render()
     {
         if (!$this->isValidDataFormat()) {
@@ -141,8 +128,4 @@ abstract class Chart implements Drawable
         $this->renderer->getCanvas()->addElement($this);
         return $this->renderer->render();
     }
-
-
-
-
 }

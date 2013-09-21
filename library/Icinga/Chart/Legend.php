@@ -28,6 +28,8 @@
 
 namespace Icinga\Chart;
 
+use DOMElement;
+
 use Icinga\Chart\Palette;
 use Icinga\Chart\Primitive\Canvas;
 use Icinga\Chart\Primitive\Drawable;
@@ -35,11 +37,22 @@ use Icinga\Chart\Primitive\Rect;
 use Icinga\Chart\Primitive\Text;
 use Icinga\Chart\Render\LayoutBox;
 use Icinga\Chart\Render\RenderContext;
-use Icinga\Chart\SVGRenderer;
 
+/**
+ * Drawable for creating a Graph Legend on the bottom of a graph.
+ *
+ * Usually used by the GridChart class internally.
+ */
 class Legend implements Drawable
 {
+
+    /**
+     * Internal counter for unnamed label identifiers
+     *
+     * @var int
+     */
     private $internalCtr = 0;
+
     /**
      *
      * Content of this legend
@@ -48,76 +61,66 @@ class Legend implements Drawable
      */
     private $dataset = array();
 
-    /**
-     * Maximum space this legend can take in percent
-     *
-     * Is intelligently applied depending on the location of the legend.
-     *
-     * @var float
-     */
-    public $maxVolume = 0.05;
-
-    /**
-     * Where this legend is displayed
-     *
-     * Possible values are: left, right, top, bottom
-     *
-     * @var string
-     */
-    public $location = 'bottom';
-
-    /**
-     * The style-palette this legend is using
-     *
-     * @var Palette
-     */
-    public $palette;
-
-    /**
-     * Create a new legend 
-     */
-    public function __construct()
-    {
-
-    }
 
     /**
      * Set the content to be displayed by this legend
      *
-     * @param   array   $data   Array of key-value pairs representing the labels and their colour
+     * @param array $dataset    An array of datasets in the form they are provided to the graphing implementation
      */
     public function addDataset(array $dataset)
     {
         if (!isset($dataset['label'])) {
             $dataset['label'] = 'Dataset ' . (++$this->internalCtr);
         }
+        if (!isset($dataset['color'])) {
+            return;
+        }
         $this->dataset[$dataset['color']] = $dataset['label'];
-
     }
 
-    function toSvg(RenderContext $ctx)
+    /**
+     * Render the legend to an SVG object
+     *
+     * @param RenderContext $ctx    The context to use for rendering this legend
+     *
+     * @return DOMElement           The SVG representation of this legend
+     */
+    public function toSvg(RenderContext $ctx)
     {
-        $outer = new Canvas('legend', new LayoutBox(0, 95, 100, 100));
-        $outer->getLayout()->setPadding(2,10,2,10);
+        $outer = new Canvas('legend', new LayoutBox(0, 90, 100, 100));
+        $outer->getLayout()->setPadding(2, 2, 2, 2);
+        $nrOfColumns = 4;
 
-        $step = 100/count($this->dataset);
+        $leftstep = 100 / $nrOfColumns;
+        $topstep = 10 / $nrOfColumns + 2;
+
         $top = 0;
-
+        $left = 0;
+        $lastLabelEndPos = -1;
         foreach ($this->dataset as $color => $text) {
-            $colorBox = new Rect($top, 0, 2, 2);
-            $colorBox->setFill($color);
-            $colorBox->setStrokeWidth(2);
-            $outer->addElement($colorBox);
-            $textBox = new Text($top+5  , 1.8 , $text);
-            $outer->addElement($textBox);
-            $top += $step;
-        }
-        $ctx->keepRatio();
-        $svg = $outer->toSvg($ctx);
-        $ctx->ignoreRatio();
+            // Make sure labels don't overlap each other
+            while ($lastLabelEndPos >= $left) {
+                $left += $leftstep;
+            }
+            // When a label is longer than the available space, use the next line
+            if ($left + strlen($text) > 100) {
+                $top += $topstep;
+                $left = 0;
+            }
 
+            $colorBox = new Rect($left, $top, 2, 2);
+            $colorBox->setFill($color)->setStrokeWidth(2)->keepRatio();
+            $outer->addElement($colorBox);
+
+            $textBox = new Text($left+5, $top+2, $text);
+            $textBox->setFontSize('2em');
+            $outer->addElement($textBox);
+
+            // readjust layout
+            $lastLabelEndPos = $left + strlen($text);
+            $left += $leftstep;
+        }
+        $svg = $outer->toSvg($ctx);
         return $svg;
     }
-
-
 }

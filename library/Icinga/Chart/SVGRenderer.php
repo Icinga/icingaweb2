@@ -29,6 +29,7 @@
 namespace Icinga\Chart;
 
 use DOMNode;
+use DOMElement;
 use DOMDocument;
 use DOMImplementation;
 use Exception;
@@ -37,6 +38,12 @@ use Icinga\Chart\Render\LayoutBox;
 use Icinga\Chart\Render\RenderContext;
 use Icinga\Chart\Primitive\Canvas;
 
+/**
+ * SVG Renderer component.
+ *
+ * Creates the basic DOM tree of the SVG to use
+ *
+ */
 class SVGRenderer
 {
     /**
@@ -56,22 +63,28 @@ class SVGRenderer
     /**
      * The root layer for all elements
      *
-     * @var DOMNode
+     * @var Canvas
      */
     private $rootCanvas;
 
     /**
-     * The position and dimension of each layer
+     * The width of this renderer
      *
-     * @var array
+     * @var int
      */
-    private $layerInfo = array();
-
     private $width = 100;
 
+    /**
+     * The height of this renderer
+     *
+     * @var int
+     */
     private $height = 100;
 
 
+    /**
+     * Create the root document and the SVG root node
+     */
     private function createRootDocument()
     {
         $implementation = new DOMImplementation();
@@ -87,11 +100,12 @@ class SVGRenderer
 
     }
 
-    private function setRootCanvas(Canvas $root) {
-        $this->rootCanvas = $root;
 
-    }
-
+    /**
+     * Create the outer SVG box  containing the root svg element and namespace and return it
+     *
+     * @return DOMElement   The SVG root node
+     */
     private function createOuterBox()
     {
         $ctx = $this->createRenderContext();
@@ -103,23 +117,29 @@ class SVGRenderer
         $svg->setAttribute(
             'viewBox',
             sprintf(
-                '0 0 %s %s', $ctx->getNrOfUnitsX(), $ctx->getNrOfUnitsY()
+                '0 0 %s %s',
+                $ctx->getNrOfUnitsX(),
+                $ctx->getNrOfUnitsY()
             )
         );
         return $svg;
     }
 
     /**
-     * Initialises the XML-document, SVG-element and this figure's root layer
+     * Initialises the XML-document, SVG-element and this figure's root canvas
+     *
+     * @param int   $width      The width ratio
+     * @param int   $height     The height ratio
      */
-    public function __construct($width, $height) {
+    public function __construct($width, $height)
+    {
         $this->width = $width;
         $this->height = $height;
-        $this->setRootCanvas(new Canvas('root', new LayoutBox(0,0)));
+        $this->rootCanvas = new Canvas('root', new LayoutBox(0, 0));
     }
 
     /**
-     * Render the XML-document
+     * Render the SVG-document
      *
      * @return  string      The resulting XML structure
      */
@@ -132,44 +152,23 @@ class SVGRenderer
         return $this->document->saveXML();
     }
 
+    /**
+     * Create a render context that will be used for rendering elements
+     *
+     * @return RenderContext    The created RenderContext instance
+     */
     public function createRenderContext()
     {
         return new RenderContext($this->document, $this->width, $this->height);
     }
 
-
+    /**
+     * Return the root canvas of this rendered
+     *
+     * @return Canvas       The canvas that will be the uppermost element in this figure
+     */
     public function getCanvas()
     {
         return $this->rootCanvas;
-    }
-
-    /**
-     * Draw a line
-     *
-     * TODO: Arguments
-     */
-    public function line()
-    {
-
-    }
-
-    /**
-     * Draw a pie slice
-     *
-     * TODO: Arguments
-     */
-    public function slice()
-    {
-
-    }
-
-    /**
-     * Draw a bar
-     *
-     * TODO: Arguments
-     */
-    public function bar()
-    {
-
     }
 }

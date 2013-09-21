@@ -29,17 +29,38 @@
 
 namespace Icinga\Chart\Primitive;
 
-
 use Icinga\Chart\Render\RenderContext;
 
+/**
+ * Drawable for svg circles
+ */
 class Circle extends Styleable implements Drawable
 {
+    /**
+     * The circles x position
+     * @var int
+     */
     private $x;
+
+    /**
+     * The circles y position
+     * @var int
+     */
     private $y;
+
+    /**
+     * The circles radius
+     * @var int
+     */
     private $radius;
 
-
-
+    /**
+     * Construct the circle
+     *
+     * @param int $x        The x position of the circle
+     * @param int $y        The y position of the circle
+     * @param int $radius   The radius of the circle
+     */
     public function __construct($x, $y, $radius)
     {
         $this->x = $x;
@@ -47,7 +68,12 @@ class Circle extends Styleable implements Drawable
         $this->radius = $radius;
     }
 
-
+    /**
+     * Create the SVG representation from this Drawable
+     *
+     * @param RenderContext $ctx    The context to use for rendering
+     * @return DOMElement           The SVG Element
+     */
     public function toSvg(RenderContext $ctx)
     {
         $coords = $ctx->toAbsolute($this->x, $this->y);
@@ -58,5 +84,4 @@ class Circle extends Styleable implements Drawable
         $circle->setAttribute('style', $this->getStyle());
         return $circle;
     }
-
 }

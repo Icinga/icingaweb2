@@ -26,20 +26,53 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-
 namespace Icinga\Chart\Primitive;
 
 use Icinga\Chart\Render\RenderContext;
 
-class Rect extends Styleable implements Drawable
+/**
+ * Drawable representing the SVG rect element
+ */
+class Rect extends Animatable implements Drawable
 {
-
+    /**
+     * The x position
+     * @var int
+     */
     private $x;
+
+    /**
+     * The y position
+     * @var int
+     */
     private $y;
+
+    /**
+     * The width of this rect
+     * @var int
+     */
     private $width;
+
+    /**
+     * The height of this rect
+     * @var int
+     */
     private $height;
 
+    /**
+     * Whether to keep the ratio
+     * @var bool
+     */
+    private $keepRatio = false;
 
+    /**
+     * Create this rect
+     *
+     * @param int $x        The x position of the rect
+     * @param int $y        The y position of the rectangle
+     * @param int $width    The width of the rectangle
+     * @param int $height   The height of the rectangle
+     */
     public function __construct($x, $y, $width, $height)
     {
         $this->x = $x;
@@ -48,19 +81,42 @@ class Rect extends Styleable implements Drawable
         $this->height = $height;
     }
 
+    /**
+     * Call to let the rectangle keep the ratio
+     */
+    public function keepRatio()
+    {
+        $this->keepRatio = true;
+    }
 
+    /**
+     * Create the SVG representation from this Drawable
+     *
+     * @param RenderContext $ctx    The context to use for rendering
+     *
+     * @return DOMElement           The SVG Element
+     */
     public function toSvg(RenderContext $ctx)
     {
         $doc = $ctx->getDocument();
         $rect = $doc->createElement('rect');
 
         list($x, $y) = $ctx->toAbsolute($this->x, $this->y);
+        if ($this->keepRatio) {
+            $ctx->keepRatio();
+        }
         list($width, $height) = $ctx->toAbsolute($this->width, $this->height);
+        if ($this->keepRatio) {
+            $ctx->ignoreRatio();
+        }
         $rect->setAttribute('x', $x);
         $rect->setAttribute('y', $y);
         $rect->setAttribute('width', $width);
         $rect->setAttribute('height', $height);
         $rect->setAttribute('style', $this->getStyle());
+
+        $this->appendAnimation($rect, $ctx);
+
         return $rect;
     }
 }

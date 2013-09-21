@@ -26,12 +26,34 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-
 namespace Icinga\Chart\Unit;
+
 use Iterator;
 
-interface AxisUnit extends Iterator {
+/**
+ * Base class for Axis Units
+ *
+ * Concrete subclasses must implement the iterator interface, with
+ * getCurrent returning the axis relative position and getValue the label
+ * that will be displayed
+ */
+interface AxisUnit extends Iterator
+{
 
-    function addValues(array $dataset, $id=0);
-    function transform($value);
+    /**
+     * Add a dataset to this AxisUnit, required for dynamic min and max vlaues
+     *
+     * @param array $dataset        The dataset that will be shown in the Axis
+     * @param int $id               The idx in the dataset (0 for x, 1 for y)
+     */
+    public function addValues(array $dataset, $id = 0);
+
+    /**
+     * Transform the given absolute value in an axis relative value
+     *
+     * @param int $value    The absolute, dataset dependend value
+     *
+     * @return int          An axis relative value
+     */
+    public function transform($value);
 }

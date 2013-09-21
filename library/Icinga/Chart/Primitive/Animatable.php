@@ -28,19 +28,41 @@
 
 namespace Icinga\Chart\Primitive;
 
+use DOMElement;
 use Icinga\Chart\Render\RenderContext;
 
 /**
- * Drawable element for creating svg out of components
+ * Base interace for animatable objects
  */
-interface Drawable
+abstract class Animatable extends Styleable
 {
     /**
-     * Create the SVG representation from this Drawable
+     * The animation object set
      *
-     * @param RenderContext $ctx    The context to use for rendering
-     *
-     * @return DOMElement           The SVG Element
+     * @var Animation
      */
-    public function toSvg(RenderContext $ctx);
+    public $animation = null;
+
+    /**
+     * Set the animation for this object
+     *
+     * @param Animation $anim   The animation to use
+     */
+    public function setAnimation(Animation $anim)
+    {
+        $this->animation = $anim;
+    }
+
+    /**
+     * Append the animation to the given element
+     *
+     * @param DOMElement $dom       The element to append the animstion to
+     * @param RenderContext $ctx    The context to use for rendering the animation object
+     */
+    protected function appendAnimation(DOMElement $dom, RenderContext $ctx)
+    {
+        if ($this->animation) {
+            $dom->appendChild($this->animation->toSvg($ctx));
+        }
+    }
 }

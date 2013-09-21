@@ -28,59 +28,64 @@
 
 namespace Icinga\Chart\Primitive;
 
+use DOMElement;
 use Icinga\Chart\Render\RenderContext;
 
 /**
- * Drawable for the svg line element
+ * Drawable for the SVG animate tag
  */
-class Line extends Styleable implements Drawable
+class Animation implements Drawable
 {
+    /**
+     * The attribute to animate
+     * @var string
+     */
+    private $attribute;
 
     /**
-     * The default stroke width
+     * The 'from' value
      *
-     * @var int
+     * @var mixed
      */
-    public $strokeWidth = 1;
+    private $from;
 
     /**
-     * The line's start x coordinate
-     * @var int
-     */
-    private $xStart = 0;
-
-    /**
-     * The line's end x coordinate
-     * @var int
-     */
-    private $xEnd = 0;
-
-    /**
-     * The line's start y coordinate
-     * @var int
-     */
-    private $yStart = 0;
-
-    /**
-     * The line's end y coordinate
-     * @var int
-     */
-    private $yEnd = 0;
-
-    /**
-     * Create a line object starting at the first coordinate and ending at the second one
+     * The to value
      *
-     * @param int $x1   The line's start x coordinate
-     * @param int $y1   The line's start y coordinate
-     * @param int $x2   The line's end x coordinate
-     * @param int $y2   The line's end y coordinate
+     * @var mixed
      */
-    public function __construct($x1, $y1, $x2, $y2)
+    private $to;
+
+    /**
+     * The begin value (in seconds)
+     *
+     * @var float
+     */
+    private $begin = 0;
+
+    /**
+     * The duration value (in seconds)
+     *
+     * @var float
+     */
+    private $duration = 0.5;
+
+    /**
+     * Create an animation object
+     *
+     * @param string $attribute     The attribute to animate
+     * @param string $from          The from value for the animation
+     * @param string $to            The to value for the animation
+     * @param float  $duration      The duration of the duration
+     * @param float  $begin         The begin of the duration
+     */
+    public function __construct($attribute, $from, $to, $duration = 0.5, $begin = 0)
     {
-        $this->xStart = $x1;
-        $this->xEnd = $x2;
-        $this->yStart = $y1;
-        $this->yEnd = $y2;
+        $this->attribute = $attribute;
+        $this->from = $from;
+        $this->to = $to;
+        $this->duration = $duration;
+        $this->begin = $begin;
     }
 
     /**
@@ -91,15 +96,16 @@ class Line extends Styleable implements Drawable
      */
     public function toSvg(RenderContext $ctx)
     {
-        $doc = $ctx->getDocument();
-        list($x1, $y1) = $ctx->toAbsolute($this->xStart, $this->yStart);
-        list($x2, $y2) = $ctx->toAbsolute($this->xEnd, $this->yEnd);
-        $line = $doc->createElement('line');
-        $line->setAttribute('x1', $x1);
-        $line->setAttribute('x2', $x2);
-        $line->setAttribute('y1', $y1);
-        $line->setAttribute('y2', $y2);
-        $line->setAttribute('style', $this->getStyle());
-        return $line;
+
+        $animate = $ctx->getDocument()->createElement('animate');
+        $animate->setAttribute('attributeName', $this->attribute);
+        $animate->setAttribute('attributeType', 'XML');
+        $animate->setAttribute('from', $this->from);
+        $animate->setAttribute('to', $this->to);
+        $animate->setAttribute('begin', $this->begin . 's');
+        $animate->setAttribute('dur', $this->duration . 's');
+        $animate->setAttributE('fill', "freeze");
+
+        return $animate;
     }
 }

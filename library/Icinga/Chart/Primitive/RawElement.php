@@ -28,13 +28,32 @@
 
 namespace Icinga\Chart\Primitive;
 
+use DOMElement;
 use Icinga\Chart\Render\RenderContext;
 
 /**
- * Drawable element for creating svg out of components
+ * Wrapper for raw elements to be added as Drawable's
  */
-interface Drawable
+class RawElement implements Drawable
 {
+
+    /**
+     * The DOMElement wrapped by this Drawable
+     *
+     * @var DOMElement
+     */
+    private $domEl;
+
+    /**
+     * Create this RawElement
+     *
+     * @param DOMElement $el    The element to wrap here
+     */
+    public function __construct(DOMElement $el)
+    {
+        $this->domEl = $el;
+    }
+
     /**
      * Create the SVG representation from this Drawable
      *
@@ -42,5 +61,8 @@ interface Drawable
      *
      * @return DOMElement           The SVG Element
      */
-    public function toSvg(RenderContext $ctx);
+    public function toSvg(RenderContext $ctx)
+    {
+        return $this->domEl;
+    }
 }

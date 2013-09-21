@@ -29,18 +29,48 @@
 
 namespace Icinga\Chart\Primitive;
 
-
-class Styleable {
-
-    public $strokeWidth = 0;
-    public $strokeColor = '#000';
-    public $fill = 'none';
-    public $additionalStyle = '';
-    public $opacity = '1';
-
+/**
+ * Base class for stylable drawables
+ */
+class Styleable
+{
 
     /**
-     * @param mixed $stroke
+     * The stroke width to use
+     * @var int
+     */
+    public $strokeWidth = 0;
+
+    /**
+     * The stroke color to use
+     * @var string
+     */
+    public $strokeColor = '#000';
+
+    /**
+     * The fill color to use
+     * @var string
+     */
+    public $fill = 'none';
+
+    /**
+     * Additional styles to be appended to the style attribute
+     * @var string
+     */
+    public $additionalStyle = '';
+
+    /**
+     * The id of this element
+     * @var string
+     */
+    public $id = null;
+
+    /**
+     * Set the stroke width for this drawable
+     *
+     * @param  string  $stroke  The stroke with with unit
+     *
+     * @return self             Fluid interface
      */
     public function setStrokeWidth($width)
     {
@@ -48,30 +78,68 @@ class Styleable {
         return $this;
     }
 
+    /**
+     * Set the color for the stroke or none for no stroke
+     *
+     * @param string $color     The color to set for the stroke
+     *
+     * @return self             Fluid interface
+     */
     public function setStrokeColor($color)
     {
         $this->strokeColor = $color ? $color : 'none';
         return $this;
     }
 
+    /**
+     * Set additional styles for this drawable
+     *
+     * @param string $styles    The styles to set additionally
+     *
+     * @return self             Fluid interface
+     */
     public function setAdditionalStyle($styles)
     {
         $this->additionalStyle = $styles;
         return $this;
     }
 
-    public function setFill($color = null) {
+    /**
+     * Set the fill for this styleable
+     *
+     * @param string $color     The color to use for filling or null to use no fill
+     *
+     * @return self             Fluid interface
+     */
+    public function setFill($color = null)
+    {
         $this->fill = $color ? $color : 'none';
         return $this;
     }
 
+    /**
+     * Set the id for this element
+     *
+     * @param string $id        The id to set for this element
+     *
+     * @return self             Fluid interface
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
+    /**
+     * Return the content of the style attribute as a string
+     *
+     * @return string           T
+     */
     public function getStyle()
     {
         $base = sprintf("fill: %s; stroke: %s;stroke-width: %s;", $this->fill, $this->strokeColor, $this->strokeWidth);
         $base .= ';' . $this->additionalStyle . ';';
         return $base;
     }
-
-
-
 }
