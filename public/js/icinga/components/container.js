@@ -422,7 +422,9 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
             } else {
                 var container = new Container($(targetEl));
                 // detail links render to main by default;
-                Icinga.replaceBodyFromUrl(URI($(targetEl).attr('href')).href());
+                Icinga.replaceBodyFromUrl(
+                    container.updateContainerHref(URI($(targetEl).attr('href')).href())
+                );
 
                 ev.preventDefault();
                 ev.stopPropagation();

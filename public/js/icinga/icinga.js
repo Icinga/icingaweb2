@@ -90,7 +90,7 @@ define([
         };
 
         if (Modernizr.history) {
-            $(document.body).on('click', '#icinganavigation, #icingatopbar', function(ev) {
+            $(document.body).on('click', '#icinganavigation', function(ev) {
                 var targetEl = ev.target || ev.toElement || ev.relatedTarget;
                 if (targetEl.tagName.toLowerCase() !== 'a') {
                     return true;
