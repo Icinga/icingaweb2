@@ -147,10 +147,9 @@ function(Container, $, logger, URI) {
          * current container
          */
         this.registerControls = function() {
-
             controlForms.on('submit', function(evt) {
-                var form = $(this);
                 var container = (new Container(this));
+                var form = $(this);
                 var url = URI(container.getContainerHref());
                 url.search(URI.parseQuery(form.serialize()));
                 container.replaceDomFromUrl(url.href());
@@ -160,8 +159,14 @@ function(Container, $, logger, URI) {
                 return false;
 
             });
-            $('.pagination li a', contentNode).on('click', function() {
-                Container.hideDetail();
+            $('.pagination li a', contentNode.parent()).on('click', function(ev) {
+                var container = (new Container(this));
+                Icinga.replaceBodyFromUrl(
+                    container.updateContainerHref($(this).attr('href'))
+                );
+                ev.preventDefault();
+                ev.stopPropagation();
+                return false;
             });
         };
 

@@ -412,6 +412,7 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
          * (those starting with '#').
          */
          $('body').on('click', '#icingamain, #icingadetail', function(ev) {
+
             var targetEl = ev.target || ev.toElement || ev.relatedTarget;
             if (targetEl.tagName.toLowerCase() !== 'a') {
                 return true;
@@ -420,10 +421,9 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
             if (Container.isExternalLink($(targetEl).attr('href'))) {
                 return true;
             } else {
-                var container = new Container($(targetEl));
                 // detail links render to main by default;
                 Icinga.replaceBodyFromUrl(
-                    container.updateContainerHref(URI($(targetEl).attr('href')).href())
+                    mainContainer.updateContainerHref(URI($(targetEl).attr('href')).href())
                 );
 
                 ev.preventDefault();
