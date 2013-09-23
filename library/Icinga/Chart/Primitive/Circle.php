@@ -82,6 +82,7 @@ class Circle extends Styleable implements Drawable
         $circle->setAttribute('cy', $coords[1]);
         $circle->setAttribute('r', 5);
         $circle->setAttribute('style', $this->getStyle());
+        $this->applyAttributes($circle);
         return $circle;
     }
 }

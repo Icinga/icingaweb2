@@ -31,7 +31,11 @@ abstract class LibraryLoader {
     {
         $files = scandir($folder);
         foreach ($files as $file) {
+            if ($file[0] == '.') {
+                continue;
+            }
             if ($recursive && is_dir(realpath($folder."/".$file))) {
+
                 self::loadFolder(realpath($folder."/".$file));
             }
             if (!preg_match('/php$/', $file)) {

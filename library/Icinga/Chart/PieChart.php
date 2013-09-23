@@ -190,7 +190,7 @@ class PieChart extends Chart
                     ->setFill($this->getColorForPieSlice($pie, $idx));
                 $innerBox->addElement($slice);
                 // add caption if not disabled
-                if (!$this->noCaption) {
+                if (!$this->noCaption && isset($pie['labels'])) {
                     $slice->setCaption($pie['labels'][$labelPos++])
                         ->setLabelGroup($labelBox);
 
@@ -231,7 +231,7 @@ class PieChart extends Chart
                     ->setFill($this->getColorForPieSlice($pie, $idx))
                     ->setLabelGroup($labelBox);
 
-                if (!$this->noCaption) {
+                if (!$this->noCaption && isset($pie['labels'])) {
                     $slice->setCaption($pie['labels'][$labelPos++])
                         ->setCaptionOffset($offset)
                         ->setOuterCaptionBound(50);

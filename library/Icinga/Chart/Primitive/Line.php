@@ -100,6 +100,7 @@ class Line extends Styleable implements Drawable
         $line->setAttribute('y1', $y1);
         $line->setAttribute('y2', $y2);
         $line->setAttribute('style', $this->getStyle());
+        $this->applyAttributes($line);
         return $line;
     }
 }

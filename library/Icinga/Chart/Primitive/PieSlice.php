@@ -288,7 +288,9 @@ class PieSlice extends Animatable implements Drawable
 
         $slicePath->setAttribute('d', $this->getPieSlicePath($x, $y, $r));
         $slicePath->setAttribute('style', $this->getStyle());
+        $slicePath->setAttribute('data-icinga-graph-type', 'pieslice');
 
+        $this->applyAttributes($slicePath);
         $group->appendChild($slicePath);
         if ($this->caption != "") {
             $lblGroup = ($this->labelGroup ? $this->labelGroup : $group);

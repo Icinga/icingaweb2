@@ -152,7 +152,6 @@ class Text extends Styleable implements Drawable
     {
         list($x, $y) = $ctx->toAbsolute($this->x, $this->y);
         $text = $ctx->getDocument()->createElement('text');
-
         $text->setAttribute('x', $x - 15);
         $text->setAttribute(
             'style',
@@ -162,6 +161,7 @@ class Text extends Styleable implements Drawable
             . 'font-weight: normal; font-style: normal;'
             .  'text-anchor: ' . $this->alignment
         );
+
         $text->setAttribute('y', $y);
         $text->appendChild(new DOMText($this->text));
         return $text;

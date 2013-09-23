@@ -170,6 +170,7 @@ class Path extends Styleable implements Drawable
         }
         $path->setAttribute('d', $pathDescription);
         $path->setAttribute('style', $this->getStyle());
+        $this->applyAttributes($path);
         $group->appendChild($path);
         return $group;
     }

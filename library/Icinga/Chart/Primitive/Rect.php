@@ -115,6 +115,7 @@ class Rect extends Animatable implements Drawable
         $rect->setAttribute('height', $height);
         $rect->setAttribute('style', $this->getStyle());
 
+        $this->applyAttributes($rect);
         $this->appendAnimation($rect, $ctx);
 
         return $rect;

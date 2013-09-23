@@ -29,6 +29,8 @@
 
 namespace Icinga\Chart\Primitive;
 
+use DOMElement;
+
 /**
  * Base class for stylable drawables
  */
@@ -64,6 +66,13 @@ class Styleable
      * @var string
      */
     public $id = null;
+
+    /**
+     * Additional attributes to be set
+     *
+     * @var array
+     */
+    public $attributes = array();
 
     /**
      * Set the stroke width for this drawable
@@ -141,5 +150,20 @@ class Styleable
         $base = sprintf("fill: %s; stroke: %s;stroke-width: %s;", $this->fill, $this->strokeColor, $this->strokeWidth);
         $base .= ';' . $this->additionalStyle . ';';
         return $base;
+    }
+
+    /**
+     *  Add an additional attribte to this element
+     */
+    public function setAttribute($key, $value)
+    {
+        $this->attributes[$key] = $value;
+    }
+
+    protected function applyAttributes(DOMElement $el)
+    {
+        foreach ($this->attributes as $name => $value) {
+            $el->setAttribute($name, $value);
+        }
     }
 }

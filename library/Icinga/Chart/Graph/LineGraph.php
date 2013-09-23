@@ -144,6 +144,7 @@ class LineGraph extends Styleable implements Drawable
         $path->setStrokeColor($this->strokeColor);
         $path->setStrokeWidth($this->strokeWidth);
 
+        $path->setAttribute('data-icinga-graph-type', 'line');
         if ($this->fill !== 'none') {
             $firstX = $this->dataset[0][0];
             $lastX = $this->dataset[count($this->dataset)-1][0];
@@ -151,6 +152,7 @@ class LineGraph extends Styleable implements Drawable
                 ->append(array($lastX, 100));
             $path->setFill($this->fill);
         }
+
         $path->setAdditionalStyle('clip-path: url(#clip);');
         $path->setId($this->id);
         $group = $path->toSvg($ctx);
