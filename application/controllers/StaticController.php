@@ -33,6 +33,9 @@ use \Icinga\Application\Icinga;
 use \Icinga\Application\Config as IcingaConfig;
 use \Icinga\Application\Logger;
 
+/**
+ * Delivery static content to clients
+ */
 class StaticController extends ActionController
 {
     /**
@@ -132,7 +135,7 @@ class StaticController extends ActionController
     }
 
     /**
-     * Set cache header for this respone
+     * Set cache header for this response
      *
      * @param integer $maxAge The maximum age to set
      */

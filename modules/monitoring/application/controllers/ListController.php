@@ -39,6 +39,9 @@ use \Icinga\Module\Monitoring\Backend;
 use \Icinga\Web\Widget\SortBox;
 use \Icinga\Application\Config as IcingaConfig;
 
+/**
+ * Controller for listing views
+ */
 class Monitoring_ListController extends ActionController
 {
     /**

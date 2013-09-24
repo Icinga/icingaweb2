@@ -28,6 +28,7 @@
 
 namespace Icinga\Web\Controller;
 
+use \Exception;
 use \Zend_Controller_Action;
 use \Zend_Controller_Request_Abstract;
 use \Zend_Controller_Front;
@@ -36,7 +37,6 @@ use \Zend_Controller_Action_HelperBroker;
 use \Zend_Layout;
 use \Icinga\Authentication\Manager as AuthManager;
 use \Icinga\Application\Benchmark;
-use \Exception;
 use \Icinga\Application\Config;
 use \Icinga\Web\Notification;
 use \Icinga\Web\Widget\Tabs;
@@ -237,16 +237,20 @@ class ActionController extends Zend_Controller_Action
      * using the version with "_" forces us to use deprecated code. So we try to catch this issue by looking for methods
      * with the same name, but with a "_" prefix prepended.
      *
-     * @param string $name  The method name to check
-     * @param array $params The method parameters
+     * @param   string  $name   The method name to check
+     * @param   mixed   $params The method parameters
+     * @return  mixed           Anything the method returns
      */
     public function __call($name, $params)
     {
-        $deprecatedMethod = '_'.$name;
+        $deprecatedMethod = '_' . $name;
 
         if (method_exists($this, $deprecatedMethod)) {
             return call_user_func_array(array($this, $deprecatedMethod), $params);
         }
-        return parent::__call($name, $params);
+
+        parent::__call($name, $params);
+
+        return null;
     }
 }

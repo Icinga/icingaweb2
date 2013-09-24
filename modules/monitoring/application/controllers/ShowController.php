@@ -28,14 +28,15 @@
 
 // @codingStandardsIgnoreStart
 use \Icinga\Module\Monitoring\Backend;
-use Icinga\Web\Controller\ActionController;
-use Icinga\Web\Hook;
+use \Icinga\Web\Controller\ActionController;
+use \Icinga\Web\Hook;
 use \Icinga\Module\Monitoring\Object\Host;
 use \Icinga\Module\Monitoring\Object\Service;
-use Icinga\Application\Benchmark;
-use Icinga\Web\Widget\Tabextension\OutputFormat;
-use Icinga\Web\Widget\Tabextension\DashboardAction;
-use Icinga\Web\Widget\Tabextension\BasketAction;
+use \Icinga\Application\Benchmark;
+use \Icinga\Web\Widget\Tabextension\OutputFormat;
+use \Icinga\Web\Widget\Tabextension\DashboardAction;
+use \Icinga\Web\Widget\Tabextension\BasketAction;
+use \Icinga\Web\Widget\Tabs;
 
 /**
  * Class Monitoring_ShowController
@@ -355,7 +356,7 @@ class Monitoring_ShowController extends ActionController
 
     /**
      * Creating tabs for this controller
-     * @return \Icinga\Web\Widget\AbstractWidget
+     * @return Tabs
      */
     protected function createTabs()
     {
