@@ -48,6 +48,8 @@ class Monitoring_ListController extends ActionController
      */
     protected $backend;
     /**
+     * Compact layout name
+     *
      * Set to a string containing the compact layout name to use when
      * 'compact' is set as the layout parameter, otherwise null
      *

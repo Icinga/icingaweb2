@@ -28,9 +28,16 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-
+/**
+ * Helper to render main and detail contents into a container
+ */
 class Zend_View_Helper_MainDetail extends Zend_View_Helper_Abstract
 {
+    /**
+     * HTML template
+     *
+     * @var string
+     */
     private static $tpl = <<<'EOT'
     <div id='icingamain' class='{{MAIN_CLASS}}'>
         {{MAIN_CONTENT}}
@@ -41,6 +48,11 @@ class Zend_View_Helper_MainDetail extends Zend_View_Helper_Abstract
     </div>
 EOT;
 
+    /**
+     * Css class map when detail pane is expanded
+     *
+     * @var array
+     */
     private static $expanded = array(
         'xs'    => 12,
         'sm'    => 12,
@@ -48,6 +60,14 @@ EOT;
         'lg'    => 5
     );
 
+    /**
+     * Content render function
+     *
+     * @param   string  $mainContent    HTML for main
+     * @param   string  $detailContent  HTML for detail
+     *
+     * @return  string                  HTML all together
+     */
     public function mainDetail($mainContent, $detailContent = '')
     {
         $detailCls = 'hidden';
