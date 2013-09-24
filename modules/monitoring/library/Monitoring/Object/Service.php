@@ -31,8 +31,7 @@ class Service extends AbstractObject
             ->fetchContacts()
             ->fetchContactgroups()
             ->fetchCustomvars()
-            ->fetchComments()
-            ;
+            ->fetchComments();
     }
 
     protected function fetchObject()

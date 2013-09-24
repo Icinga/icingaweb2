@@ -1,31 +1,51 @@
+<?php if (!empty($object->contacts)): ?>
 <?php
-    if (!empty($this->contacts)) {
-        $contactList = array();
-        foreach ($this->contacts as $contact) {
-            $contactList[] = '<a href="' . $this->href(
-              'monitoring/show/contact',
-              array(
+$contacts = array();
+foreach ($object->contacts as $contact) {
+    $contacts[] = '<a href="'
+        . $this->href(
+            'monitoring/show/contact',
+            array(
                 'contact_name' => $contact->contact_name
-              )
-            ) . '">' . $contact->contact_alias . '</a>';
-        }
-
-
-        echo '<strong>{{CONTACT_ICON}} Contacts:</strong> ';
-        echo implode(', ', $contactList);
-    }
-
-    if (!empty($this->contactgroups)) {
-        $contactGroupList = array();
-        foreach ($this->contactgroups as $contactgroup) {
-            $contactGroupList[] = '<a href="' . $this->href(
-                'monitoring/show/contactgroup',
-                array(
-                    'contactgroup_name' => $contactgroup->contactgroup_name
-                )
-            ) . '">' . $contactgroup->contactgroup_alias . '</a>';
-        }
-        echo '<strong>{{CONTACTGROUP_ICON}} Contactgroups:</strong> ';
-        echo implode(', ', $contactGroupList);
-    }
+            )
+        )
+        . '">'
+        . $contact->contact_alias
+        . '</a>';
+}
 ?>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        {{CONTACT_ICON}} <span>Contacts</span>
+    </div>
+    <div class="panel-body">
+        <?= implode(', ', $contacts); ?>
+    </div>
+</div>
+<?php endif; ?>
+
+<?php if (!empty($object->contactgroups)): ?>
+<?php
+$contactgroups = array();
+foreach ($object->contactgroups as $contactgroup) {
+    $contactgroups[] = '<a href="'
+        . $this->href(
+            'monitoring/show/contactgroup',
+            array(
+                'contactgroup_name' => $contactgroup->contactgroup_name
+            )
+        )
+        . '">'
+        . $contactgroup->contactgroup_alias
+        . '</a>';
+}
+?>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        {{CONTACTGROUP_ICON}} <span>Contactgroups</span>
+    </div>
+    <div class="panel-body">
+        <?= implode(', ', $contactgroups); ?>
+    </div>
+</div>
+<?php endif; ?>

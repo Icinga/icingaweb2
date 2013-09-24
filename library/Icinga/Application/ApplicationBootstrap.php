@@ -38,6 +38,7 @@ use \Icinga\Exception\ProgrammingError;
 use \Icinga\Application\DbAdapterFactory;
 use \Icinga\Exception\ConfigurationError;
 use \Icinga\Util\DateTimeFactory;
+use Icinga\Data\ResourceFactory;
 
 /**
  * This class bootstraps a thin Icinga application layer
@@ -388,10 +389,11 @@ abstract class ApplicationBootstrap
      *
      * @return self
      */
-    protected function setupResourceFactories()
+    protected function setupResourceFactory()
     {
         $config = Config::app('resources');
         DbAdapterFactory::setConfig($config);
+        ResourceFactory::setConfig($config);
         return $this;
     }
 

@@ -1,0 +1,10 @@
+<?php if ($this->object->perfdata): ?>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <span>Perfdata</span>
+        </div>
+        <div class="panel-body">
+            <?= $this->perfdata($this->object->perfdata); ?>
+        </div>
+    </div>
+<?php endif; ?>

@@ -1,4 +1,4 @@
-<?php if (isset($this->customvars) && count($this->customvars)) { ?>
+<?php if (isset($object->customvars) && count($object->customvars)) { ?>
 <div class="panel panel-default">
     <div class="panel-heading">
          <span>Customvariables</span>
@@ -10,7 +10,7 @@
                 <th>Name</th>
                 <th>Value</th>
             </tr>
-            <?php foreach ($this->customvars as $name => $value) { ?>
+            <?php foreach ($object->customvars as $name => $value) { ?>
                 <tr>
                     <td><?= $this->escape($name) ?></td>
                     <td><?= $this->escape($value) ?></td>

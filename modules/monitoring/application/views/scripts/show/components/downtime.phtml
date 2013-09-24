@@ -29,13 +29,12 @@
 ?>
 <div class="panel panel-default">
     <div class="panel-heading">
-        <span>{{IN_DOWNTIME_ICON}} Downtimes</span>
+        {{IN_DOWNTIME_ICON}}<span>Downtimes</span>
     </div>
-
     <div class="panel-body">
         <table>
             <tr>
-            <?= implode('</tr><tr>', $list); ?>
+                <?= implode('</tr><tr>', $list); ?>
             </tr>
         </table>
     </div>

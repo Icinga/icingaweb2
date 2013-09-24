@@ -103,7 +103,7 @@ class Web extends ApplicationBootstrap
     {
         return $this->setupConfig()
             ->setupErrorHandling()
-            ->setupResourceFactories()
+            ->setupResourceFactory()
             ->setupUser()
             ->setupTimezone()
             ->setupRequest()

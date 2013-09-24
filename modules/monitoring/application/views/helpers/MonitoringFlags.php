@@ -25,6 +25,8 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
+use Icinga\Module\Monitoring\Object\AbstractObject;
+
 /**
  * Class Zend_View_Helper_MonitoringFlags
  *
@@ -64,7 +66,7 @@ class Zend_View_Helper_MonitoringFlags extends Zend_View_Helper_Abstract
      * @param stdClass $object
      * @return array
      */
-    public function monitoringFlags(\stdClass $object)
+    public function monitoringFlags(AbstractObject $object)
     {
         $vars = (array)$object;
         $type = $this->getObjectType($vars);

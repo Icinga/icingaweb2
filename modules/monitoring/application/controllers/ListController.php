@@ -18,6 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
+ *
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
@@ -39,9 +40,10 @@ use \Icinga\Module\Monitoring\Backend;
 use \Icinga\Web\Widget\SortBox;
 use \Icinga\Application\Config as IcingaConfig;
 
-/**
- * Controller for listing views
- */
+use Icinga\Module\Monitoring\DataView\Notification as NotificationView;
+use Icinga\Module\Monitoring\DataView\Downtime as DowntimeView;
+use Icinga\Module\Monitoring\DataView\HostAndServiceStatus as HostAndServiceStatusView;
+
 class Monitoring_ListController extends ActionController
 {
     /**
@@ -67,7 +69,7 @@ class Monitoring_ListController extends ActionController
      */
     public function init()
     {
-        $this->backend = Backend::getInstance($this->_getParam('backend'));
+        $this->backend = Backend::createBackend($this->_getParam('backend'));
         $this->view->grapher = Hook::get('grapher');
         $this->createTabs();
         $this->view->activeRowHref = $this->getParam('detail');
@@ -88,10 +90,9 @@ class Monitoring_ListController extends ActionController
      */
     public function hostsAction()
     {
-        Benchmark::measure("hostsAction::query()");
-        $this->compactView = "hosts-compact";
-        $this->view->hosts = $this->query(
-            'status',
+        $this->compactView = 'hosts-compact';
+        $query = HostAndServiceStatusView::fromRequest(
+            $this->_request,
             array(
                 'host_icon_image',
                 'host_name',
@@ -112,7 +113,8 @@ class Monitoring_ListController extends ActionController
                 'host_notes_url',
                 'host_last_comment'
             )
-        );
+        )->getQuery();
+        $this->view->hosts = $query->paginate();
         $this->setupSortControl(array(
             'host_last_check'   => 'Last Host Check',
             'host_severity'     => 'Host Severity',
@@ -121,6 +123,7 @@ class Monitoring_ListController extends ActionController
             'host_address'      => 'Address',
             'host_state'        => 'Hard State'
         ));
+        $this->handleFormatRequest($query);
     }
 
     /**
@@ -128,36 +131,38 @@ class Monitoring_ListController extends ActionController
      */
     public function servicesAction()
     {
-        $this->compactView = "services-compact";
-
-        $this->view->services = $this->query('status', array(
-            'host_name',
-            'host_state',
-            'host_state_type',
-            'host_last_state_change',
-            'host_address',
-            'host_handled',
-            'service_description',
-            'service_display_name',
-            'service_state' => 'service_state',
-            'service_in_downtime',
-            'service_acknowledged',
-            'service_handled',
-            'service_output',
-            'service_last_state_change' => 'service_last_state_change',
-            'service_icon_image',
-            'service_long_output',
-            'service_is_flapping',
-            'service_state_type',
-            'service_handled',
-            'service_severity',
-            'service_last_check',
-            'service_notifications_enabled',
-            'service_action_url',
-            'service_notes_url',
-            'service_last_comment'
-        ));
-
+        $this->compactView = 'services-compact';
+        $query = HostAndServiceStatusView::fromRequest(
+            $this->_request,
+            array(
+                'host_name',
+                'host_state',
+                'host_state_type',
+                'host_last_state_change',
+                'host_address',
+                'host_handled',
+                'service_description',
+                'service_display_name',
+                'service_state' => 'service_state',
+                'service_in_downtime',
+                'service_acknowledged',
+                'service_handled',
+                'service_output',
+                'service_last_state_change' => 'service_last_state_change',
+                'service_icon_image',
+                'service_long_output',
+                'service_is_flapping',
+                'service_state_type',
+                'service_handled',
+                'service_severity',
+                'service_last_check',
+                'service_notifications_enabled',
+                'service_action_url',
+                'service_notes_url',
+                'service_last_comment'
+            )
+        )->getQuery();
+        $this->view->services = $query->paginate();
         $this->setupSortControl(array(
             'service_last_check'    =>  'Last Service Check',
             'service_severity'      =>  'Severity',
@@ -169,7 +174,8 @@ class Monitoring_ListController extends ActionController
             'host_name'             =>  'Host Name',
             'host_address'          =>  'Host Address',
             'host_last_check'       =>  'Last Host Check'
-         ));
+        ));
+        $this->handleFormatRequest($query);
     }
 
     /**
@@ -177,24 +183,26 @@ class Monitoring_ListController extends ActionController
      */
     public function downtimesAction()
     {
-        $this->setDefaultSortColumn('downtime_is_in_effect');
-        $this->view->downtimes = $this->query('downtime', array(
-            'host_name',
-            'object_type',
-            'service_description',
-            'downtime_entry_time',
-            'downtime_internal_downtime_id',
-            'downtime_author_name',
-            'downtime_comment_data',
-            'downtime_duration',
-            'downtime_scheduled_start_time',
-            'downtime_scheduled_end_time',
-            'downtime_is_fixed',
-            'downtime_is_in_effect',
-            'downtime_triggered_by_id',
-            'downtime_trigger_time'
-        ));
-
+        $query = DowntimeView::fromRequest(
+            $this->_request,
+            array(
+                'host_name',
+                'object_type',
+                'service_description',
+                'downtime_entry_time',
+                'downtime_internal_downtime_id',
+                'downtime_author_name',
+                'downtime_comment_data',
+                'downtime_duration',
+                'downtime_scheduled_start_time',
+                'downtime_scheduled_end_time',
+                'downtime_is_fixed',
+                'downtime_is_in_effect',
+                'downtime_triggered_by_id',
+                'downtime_trigger_time'
+            )
+        )->getQuery();
+        $this->view->downtimes = $query->paginate();
         $this->setupSortControl(array(
             'downtime_is_in_effect'         => 'Is In Effect',
             'object_type'                   => 'Service/Host',
@@ -208,7 +216,8 @@ class Monitoring_ListController extends ActionController
             'downtime_trigger_time'         => 'Trigger Time',
             'downtime_internal_downtime_id' => 'Downtime ID',
             'downtime_duration'             => 'Duration',
-         ));
+        ));
+        $this->handleFormatRequest($query);
     }
 
     /**
@@ -216,9 +225,8 @@ class Monitoring_ListController extends ActionController
      */
     public function notificationsAction()
     {
-        $this->setDefaultSortColumn('notification_start_time', 'DESC');
-        $this->view->notifications = $this->query(
-            'notification',
+        $query = NotificationView::fromRequest(
+            $this->_request,
             array(
                 'host_name',
                 'service_description',
@@ -229,39 +237,12 @@ class Monitoring_ListController extends ActionController
                 'notification_information',
                 'notification_command'
             )
-        );
+        )->getQuery();
+        $this->view->notifications = $query->paginate();
         $this->setupSortControl(array(
             'notification_start_time'   => 'Notification Start'
         ));
-    }
-
-    /**
-     * Create query
-     *
-     * @param string $view
-     * @param array  $columns
-     *
-     * @return Query
-     */
-    private function query($view, $columns)
-    {
-        $extra = preg_split(
-            '~,~',
-            $this->_getParam('extracolumns', ''),
-            -1,
-            PREG_SPLIT_NO_EMPTY
-        );
-        if (empty($extra)) {
-            $cols = $columns;
-        } else {
-            $cols = array_merge($columns, $extra);
-        }
-        $this->view->extraColumns = $extra;
-        $query = $this->backend->select()
-            ->from($view, $cols)
-            ->applyRequest($this->_request);
         $this->handleFormatRequest($query);
-        return $query->paginate();
     }
 
     /**
@@ -278,7 +259,7 @@ class Monitoring_ListController extends ActionController
         if ($this->_getParam('format') === 'sql'
             && IcingaConfig::app()->global->get('environment', 'production') === 'development') {
             echo '<pre>'
-                . htmlspecialchars(wordwrap($query->getQuery()->dump()))
+                . htmlspecialchars(wordwrap($query->dump()))
                 . '</pre>';
             exit;
         }
@@ -294,19 +275,6 @@ class Monitoring_ListController extends ActionController
             Csv::fromQuery($query)->dump();
             exit;
         }
-    }
-
-    /**
-     * Set the default sort column for this action if none is provided
-     *
-     * @param string $column    The column to use for sorting
-     * @param string $dir       The direction ('ASC' or 'DESC')
-     */
-    private function setDefaultSortColumn($column, $dir = 'DESC')
-    {
-
-        $this->setParam('sort', $this->getParam('sort', $column));
-        $this->setParam('dir', $this->getParam('dir', $dir));
     }
 
     /**

@@ -1,16 +1,9 @@
-<?php
-    $object = null;
+<div class="panel panel-default">
+    <div class="panel-heading">Heading</div>
 
-    if (isset($this->service)) {
-        $object = $this->service;
-    } elseif (isset($this->host)) {
-        $object = $this->host;
-    }
-
-    $flags = $this->monitoringFlags($object);
-?>
+    <div class="panel-body">
 <table class="table table-condensed">
-<?php foreach ($flags as $name => $value): ?>
+<?php foreach ($this->monitoringFlags($object) as $name => $value): ?>
   <tr>
     <th><?= $name; ?></th>
     <td>
@@ -23,3 +16,5 @@
   </tr>
 <?php endforeach; ?>
 </table>
+        </div>
+    </div>

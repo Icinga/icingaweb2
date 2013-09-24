@@ -24,7 +24,7 @@ class NotificationhistoryQuery extends AbstractQuery
 //"('[' || cndetails.contacts || '] ' || n.output)"
         // This is one of the db-specific workarounds that could be abstracted
         // in a better way:
-        switch ($this->ds->getConnection()->getDbType()) {
+        switch ($this->ds->getDbType()) {
             case 'mysql':
                 $concat_contacts = "GROUP_CONCAT(c.alias ORDER BY c.alias SEPARATOR ', ')";
                 break;
@@ -73,7 +73,7 @@ $this->columnMap['history']['output'] = "('[' || $concat_contacts || '] ' || n.o
             'cn.contact_object_id = c.contact_object_id',
             array()
         )->group('cn.notification_id')
-        
+
         /*->join(
             array('cndetails' => $cndetails),
             'cndetails.notification_id = n.notification_id',

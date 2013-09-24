@@ -3,7 +3,7 @@
 namespace Icinga\Module\Monitoring\Object;
 
 use Icinga\Data\AbstractQuery as Query;
-use \Icinga\Module\Monitoring\Backend\AbstractBackend;
+use \Icinga\Module\Monitoring\Backend;
 
 abstract class AbstractObject
 {
@@ -26,7 +26,7 @@ abstract class AbstractObject
         // 'comments'      => null,
     );
 
-    public function __construct(AbstractBackend $backend, $name1, $name2 = null)
+    public function __construct(Backend $backend, $name1, $name2 = null)
     {
         $this->backend = $backend;
         $this->name1   = $name1;
@@ -34,7 +34,7 @@ abstract class AbstractObject
         $this->properties = (array) $this->fetchObject();
     }
 
-    public static function fetch(AbstractBackend $backend, $name1, $name2 = null)
+    public static function fetch(Backend $backend, $name1, $name2 = null)
     {
         return new static($backend, $name1, $name2);
     }

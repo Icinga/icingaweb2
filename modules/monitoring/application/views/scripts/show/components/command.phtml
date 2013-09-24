@@ -1,7 +1,13 @@
-<?php
-    $commandParts = preg_split('|!|', $object->check_command);
-    $commandName = array_shift($commandParts);
-?>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        {{CHECK_ICON}} <span>Check Command</span>
+    </div>
 
-{{COMMAND_ICON}} <b>Command:</b> <?= $commandName; ?>
-<?= $this->commandArguments($object->check_command); ?>
+    <div class="panel-body">
+        <?php
+        $explodedCommand = explode('!', $this->object->check_command, 2);
+        array_shift($explodedCommand);
+        ?>
+        <?= $this->commandArguments($this->object->check_command); ?>
+    </div>
+</div>

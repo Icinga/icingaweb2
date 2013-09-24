@@ -1,88 +1,121 @@
 <?php
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga 2 Web.
- *
- * Icinga 2 Web - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright 2013 Icinga Development Team <info@icinga.org>
- * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author    Icinga Development Team <info@icinga.org>
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Module\Monitoring;
 
-use \Exception;
-use \Icinga\Application\Config as IcingaConfig;
-use \Icinga\Authentication\Manager as AuthManager;
+use Zend_config;
+use Icinga\Application\Config as IcingaConfig;
+use Icinga\Exception\ConfigurationError;
+use Icinga\Data\DatasourceInterface;
+use Icinga\Data\ResourceFactory;
+use Icinga\Util\ConfigAwareFactory;
 
-/**
- * Container for monitoring backends
- */
-class Backend
+class Backend implements ConfigAwareFactory, DatasourceInterface
 {
     /**
-     * Array of backends
+     * Resource config
      *
-     * @var array
+     * @var Zend_config
      */
-    protected static $instances = array();
+    private $config;
 
     /**
-     * Array of configuration settings for backends
+     * The resource the backend utilizes
      *
-     * @var array
+     * @var mixed
      */
-    protected static $backendConfigs;
+    private $resource;
+
+    private static $backendInstances = array();
+
+    private static $backendConfigs = array();
 
     /**
-     * Locked constructor
+     * Create a new backend from the given resource config
+     *
+     * @param Zend_config $config
      */
-    final protected function __construct()
+    public function __construct(Zend_Config $config)
     {
+        $this->config   = $config;
+        $this->resource = ResourceFactory::createResource($config->resource);
     }
 
     /**
-     * Test if configuration key exist
+     * Set backend configs
      *
-     * @param   string $name
-     *
-     * @return  bool
+     * @param Zend_Config $backendConfigs
      */
-    public static function exists($name)
+    public static function setConfig($backendConfigs)
     {
-        $configs = self::getBackendConfigs();
-        return array_key_exists($name, $configs);
+        foreach ($backendConfigs as $name => $config) {
+            self::$backendConfigs[$name] = $config;
+        }
     }
 
     /**
-     * Get the first configuration name of all backends
+     * Backend entry point
+     *
+     * return self
+     */
+    public function select()
+    {
+        return $this;
+    }
+
+    /**
+     * Create query to retrieve columns and rows from the the given table
+     *
+     * @param   string  $table
+     * @param   array   $columns
+     *
+     * @return  Query
+     */
+    public function from($table, array $columns)
+    {
+        $queryClass = '\\Icinga\\Module\\Monitoring\\Backend\\'
+            . ucfirst($this->config->type)
+            . '\\Query\\'
+            . ucfirst($table)
+            . 'Query';
+        return new $queryClass($this->resource, $columns);
+    }
+
+    /**
+     * Get the resource which was created in the constructor
+     *
+     * @return mixed
+     */
+    public function getResource()
+    {
+        return $this->resource;
+    }
+
+    /**
+     * Get backend configs
+     *
+     * @return Zend_Config
+     */
+    public static function getBackendConfigs()
+    {
+        if (empty(self::$backendConfigs)) {
+            self::setConfig(IcingaConfig::module('monitoring', 'backends'));
+        }
+        return self::$backendConfigs;
+    }
+
+    /**
+     * Retrieve the name of the default backend which is the INI's first entry
      *
      * @return  string
-     *
-     * @throws  Exception
+     * @throws  ConfigurationError When no backend has been configured
      */
-    public static function getDefaultName()
+    public static function getDefaultBackendName()
     {
         $configs = self::getBackendConfigs();
         if (empty($configs)) {
-            throw new Exception(
+            throw new ConfigurationError(
                 'Cannot get default backend as no backend has been configured'
             );
         }
@@ -91,77 +124,32 @@ class Backend
     }
 
     /**
-     * Getter for backend configuration with lazy initializing
+     * Create the backend with the given name
      *
-     * @return array
+     * @param   $name
+     *
+     * @return  Backend
      */
-    public static function getBackendConfigs()
+    public static function createBackend($name)
     {
-        if (self::$backendConfigs === null) {
-            $resources = IcingaConfig::app('resources');
-            foreach ($resources as $resource) {
-
-            }
-            $backends = IcingaConfig::module('monitoring', 'backends');
-            foreach ($backends as $name => $config) {
-                self::$backendConfigs[$name] = $config;
-            }
+        if (array_key_exists($name, self::$backendInstances)) {
+            return self::$backendInstances[$name];
         }
 
-        return self::$backendConfigs;
-    }
+        if ($name === null) {
+            $name = self::getDefaultBackendName();
+        }
 
-    /**
-     * Get a backend by name or a default one
-     *
-     * @param   string $name
-     *
-     * @return  AbstractBackend
-     *
-     * @throws  Exception
-     */
-    public static function getBackend($name = null)
-    {
-        if (! array_key_exists($name, self::$instances)) {
-            if ($name === null) {
-                $name = self::getDefaultName();
-            } else {
-                if (!self::exists($name)) {
-                    throw new Exception(
-                        sprintf(
-                            'There is no such backend: "%s"',
-                            $name
-                        )
-                    );
+        $config = self::$backendConfigs[$name];
+        self::$backendInstances[$name] = $backend = new self($config);
+        switch (strtolower($config->type)) {
+            case 'ido':
+                if ($backend->getResource()->getDbType() !== 'oracle') {
+                    $backend->getResource()->setTablePrefix('icinga_');
                 }
-            }
+                break;
 
-            $config = self::$backendConfigs[$name];
-            $type = $config->type;
-            $type[0] = strtoupper($type[0]);
-            $class = '\\Icinga\\Module\\Monitoring\\Backend\\' . $type;
-            self::$instances[$name] = new $class($config);
         }
-        return self::$instances[$name];
-    }
-
-    /**
-     * Get backend by name or by user configuration
-     *
-     * @param   string $name
-     *
-     * @return  AbstractBackend
-     */
-    public static function getInstance($name = null)
-    {
-        if (array_key_exists($name, self::$instances)) {
-            return self::$instances[$name];
-        } else {
-            if ($name === null) {
-                // TODO: Remove this, will be chosen by Environment
-                $name = AuthManager::getInstance()->getSession()->get('backend');
-            }
-            return self::getBackend($name);
-        }
+        return $backend;
     }
 }

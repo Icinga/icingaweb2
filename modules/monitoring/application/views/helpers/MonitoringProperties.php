@@ -3,6 +3,8 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
+use Icinga\Module\Monitoring\Object\AbstractObject;
+
 /**
  * Class Zend_View_Helper_MonitoringProperties
  */
@@ -76,7 +78,7 @@ class Zend_View_Helper_MonitoringProperties extends Zend_View_Helper_Abstract
      * @param stdClass $object
      * @return mixed
      */
-    private function getObjectType(stdClass $object)
+    private function getObjectType(AbstractObject $object)
     {
         $keys = array_keys(get_object_vars($object));
         $keyParts = explode('_', array_shift($keys), 2);
@@ -89,7 +91,7 @@ class Zend_View_Helper_MonitoringProperties extends Zend_View_Helper_Abstract
      * @param $type
      * @return object
      */
-    private function dropObjectType(stdClass $object, $type)
+    private function dropObjectType(AbstractObject $object, $type)
     {
         $vars = get_object_vars($object);
         $out = array();
@@ -248,7 +250,7 @@ class Zend_View_Helper_MonitoringProperties extends Zend_View_Helper_Abstract
      * @param stdClass $object
      * @return array
      */
-    public function monitoringProperties(stdClass $object)
+    public function monitoringProperties(AbstractObject $object)
     {
         $type = $this->getObjectType($object);
         $object = $this->dropObjectType($object, $type);

@@ -34,14 +34,14 @@ abstract class AbstractQuery extends Query
     {
         return array_key_exists($column, $this->aggregateColumnIdx);
     }
-    
+
     protected function init()
     {
         parent::init();
         // TODO: $this->applyDbSpecificWorkarounds
-        $this->prefix = $this->ds->getPrefix();
+        $this->prefix = $this->ds->getTablePrefix();
 
-        if ($this->ds->getConnection()->getDbType() === 'oracle') {
+        if ($this->ds->getDbType() === 'oracle') {
             $this->object_id = $this->host_id = $this->service_id
                 = $this->hostgroup_id = $this->servicegroup_id
                 = $this->contact_id = $this->contactgroup_id = 'id'; // REALLY?
@@ -52,7 +52,7 @@ abstract class AbstractQuery extends Query
                 }
             }
         }
-        if ($this->ds->getConnection()->getDbType() === 'pgsql') {
+        if ($this->ds->getDbType() === 'pgsql') {
             foreach ($this->columnMap as $table => & $columns) {
                 foreach ($columns as $key => & $value) {
                     $value = preg_replace('/ COLLATE .+$/', '', $value);
@@ -115,7 +115,8 @@ abstract class AbstractQuery extends Query
 
     protected function getDefaultColumns()
     {
-        $table = array_shift(array_keys($this->columnMap));
+        reset($this->columnMap);
+        $table = key($this->columnMap);
         return array_keys($this->columnMap[$table]);
     }
 

@@ -1,18 +1,9 @@
-
-<?php if (! empty($this->comments)): ?>
+<?php if (!empty($object->comments)): ?>
 <?
-$list = array();
-foreach ($this->comments as $comment) {
-    if ($this->ticket_pattern) {
-        $text = preg_replace(
-            $this->ticket_pattern,
-            $this->ticket_link,
-            $this->escape($comment->comment_data)
-        );
-    } else {
-        $text = $this->escape($comment->comment_data);
-    }
-    $list[] = sprintf(
+$commets = array();
+foreach ($object->comments as $comment) {
+    $text = $this->escape($comment->comment_data);
+    $commets[] = sprintf(
         '[%s] %s (%s): %s',
         $this->escape($comment->comment_author),
         $this->format()->timeSince($comment->comment_timestamp),
@@ -21,13 +12,12 @@ foreach ($this->comments as $comment) {
     );
 }
 ?>
-<div class="panel">
+<div class="panel panel-default ">
   <div class="panel-heading">
     <span>{{COMMENT_ICON}} Comments</span>
   </div>
   <div class="panel-body">
-    <blockquote> <?= implode('<br />', $list) ?></blockquote>
+    <blockquote> <?= implode('<br />', $commets); ?></blockquote>
   </div>
 </div>
-
 <?php endif; ?>

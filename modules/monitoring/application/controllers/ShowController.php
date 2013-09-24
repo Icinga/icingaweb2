@@ -57,7 +57,7 @@ class Monitoring_ShowController extends ActionController
     {
         $host = $this->_getParam('host');
         $service = $this->_getParam('service');
-        $this->backend = Backend::getInstance($this->_getParam('backend'));
+        $this->backend = Backend::createBackend($this->_getParam('backend'));
         $object = null;
         // TODO: Do not allow wildcards in names!
         if ($host !== null) {
@@ -70,13 +70,6 @@ class Monitoring_ShowController extends ActionController
             }
         }
 
-        $this->backend = Backend::getInstance($this->_getParam('backend'));
-        if ($service !== null && $service !== '*') {
-            $this->view->service = $this->backend->fetchService($host, $service, true);
-        }
-        if ($host !== null) {
-            $this->view->host = $this->backend->fetchHost($host, true);
-        }
         $this->view->compact = $this->_getParam('view') === 'compact';
         if ($object === null) {
             // TODO: Notification, not found
@@ -92,114 +85,7 @@ class Monitoring_ShowController extends ActionController
      */
     public function serviceAction()
     {
-        Benchmark::measure('Entered service action');
-        $this->view->active = 'service';
-
-        if ($grapher = Hook::get('grapher')) {
-            if ($grapher->hasGraph(
-                $this->view->service->host_name,
-                $this->view->service->service_description
-            )
-            ) {
-                $this->view->preview_image = $grapher->getPreviewImage(
-                    $this->view->service->host_name,
-                    $this->view->service->service_description
-                );
-            }
-        }
-
-        $this->view->servicegroups = $this->backend->select()
-            ->from(
-                'servicegroup',
-                array(
-                    'servicegroup_name',
-                    'servicegroup_alias'
-                )
-            )
-            ->where('host_name', $this->view->host->host_name)
-            ->where('service_description', $this->view->service->service_description)
-
-            ->fetchPairs();
-
-        $this->view->contacts = $this->backend->select()
-            ->from(
-                'contact',
-                array(
-                    'contact_name',
-                    'contact_alias',
-                    'contact_email',
-                    'contact_pager',
-                )
-            )
-            ->where('service_host_name', $this->view->host->host_name)
-            ->where('service_description', $this->view->service->service_description)
-            ->fetchAll();
-
-        $this->view->contactgroups = $this->backend->select()
-            ->from(
-                'contactgroup',
-                array(
-                    'contactgroup_name',
-                    'contactgroup_alias',
-                )
-            )
-            ->where('service_host_name', $this->view->host->host_name)
-            ->where('service_description', $this->view->service->service_description)
-            ->fetchAll();
-
-        $this->view->comments = $this->backend->select()
-            ->from(
-                'comment',
-                array(
-                    'comment_timestamp',
-                    'comment_author',
-                    'comment_data',
-                    'comment_type',
-                )
-            )
-            ->where('service_host_name', $this->view->host->host_name)
-            ->where('service_description', $this->view->service->service_description)
-            ->fetchAll();
-
-        $this->view->downtimes = $this->backend->select()
-            ->from(
-                'downtime',
-                array(
-                    'host_name',
-                    'service_description',
-                    'downtime_type',
-                    'downtime_author_name',
-                    'downtime_comment_data',
-                    'downtime_is_fixed',
-                    'downtime_duration',
-                    'downtime_scheduled_start_time',
-                    'downtime_scheduled_end_time',
-                    'downtime_actual_start_time',
-                    'downtime_was_started',
-                    'downtime_is_in_effect',
-                    'downtime_internal_downtime_id'
-                )
-            )
-            ->where('host_name', $this->view->host->host_name)
-            ->where('service_description', $this->view->service->service_description)
-            ->where('object_type','service')
-            ->fetchAll();
-
-        $this->view->customvars = $this->backend->select()
-            ->from(
-                'customvar',
-                array(
-                    'varname',
-                    'varvalue'
-                )
-            )
-            ->where('varname', '-*PW*,-*PASS*')
-            ->where('host_name', $this->view->host->host_name)
-            ->where('service_description', $this->view->service->service_description)
-            ->where('object_type', 'service')
-            ->fetchPairs();
-        Benchmark::measure('Service action done');
-        $object = $this->view->object->prefetch();
+        $this->view->object->prefetch();
     }
 
     /**
@@ -207,97 +93,6 @@ class Monitoring_ShowController extends ActionController
      */
     public function hostAction()
     {
-        $this->view->active = 'host';
-        if ($grapher = Hook::get('grapher')) {
-            if ($grapher->hasGraph($this->view->host->host_name)) {
-                $this->view->preview_image = $grapher->getPreviewImage(
-                    $this->view->host->host_name
-                );
-            }
-        }
-
-        $this->view->hostgroups = $this->backend->select()
-            ->from(
-                'hostgroup',
-                array(
-                    'hostgroup_name',
-                    'hostgroup_alias'
-                )
-            )
-            ->where('host_name', $this->view->host->host_name)
-            ->fetchPairs();
-
-        $this->view->contacts = $this->backend->select()
-            ->from(
-                'contact',
-                array(
-                    'contact_name',
-                    'contact_alias',
-                    'contact_email',
-                    'contact_pager',
-                )
-            )
-            ->where('host_name', $this->view->host->host_name)
-            ->fetchAll();
-
-        $this->view->contactgroups = $this->backend->select()
-            ->from(
-                'contactgroup',
-                array(
-                    'contactgroup_name',
-                    'contactgroup_alias',
-                )
-            )
-            ->where('host_name', $this->view->host->host_name)
-            ->fetchAll();
-
-        $this->view->comments = $this->backend->select()
-            ->from(
-                'comment',
-                array(
-                    'comment_timestamp',
-                    'comment_author',
-                    'comment_data',
-                    'comment_type',
-                )
-            )
-            ->where('host_name', $this->view->host->host_name)
-            ->fetchAll();
-
-        $this->view->downtimes = $this->backend->select()
-            ->from(
-                'downtime',
-                array(
-                    'host_name',
-                    'downtime_type',
-                    'downtime_author_name',
-                    'downtime_comment_data',
-                    'downtime_is_fixed',
-                    'downtime_duration',
-                    'downtime_scheduled_start_time',
-                    'downtime_scheduled_end_time',
-                    'downtime_actual_start_time',
-                    'downtime_was_started',
-                    'downtime_is_in_effect',
-                    'downtime_internal_downtime_id'
-                )
-            )
-            ->where('host_name', $this->view->host->host_name)
-            ->where('object_type','host')
-            ->fetchAll();
-
-        $this->view->customvars = $this->backend->select()
-            ->from(
-                'customvar',
-                array(
-                    'varname',
-                    'varvalue'
-                )
-            )
-            ->where('varname', '-*PW*,-*PASS*')
-            ->where('host_name', $this->view->host->host_name)
-            ->where('object_type', 'host')
-            ->fetchPairs();
         $this->view->object->prefetch();
     }
 
@@ -331,27 +126,6 @@ class Monitoring_ShowController extends ActionController
             $this->view->preserve['sort'] = $this->_getParam('sort');
         }
         $this->view->preserve = $this->view->history->getAppliedFilter()->toParams();
-    }
-
-    /**
-     * Service overview
-     */
-    public function servicesAction()
-    {
-        $this->_setParam('service', null);
-        // Ugly and slow:
-        $this->view->services = $this->view->action(
-            'services',
-            'list',
-            'monitoring',
-            array(
-                'host_name' => $this->view->host->host_name,
-                //'sort', 'service_description'
-            )
-        );
-        $this->view->services = $this->view->action('services', 'list', 'monitoring', array(
-            'view' => 'compact'
-        ));
     }
 
     /**

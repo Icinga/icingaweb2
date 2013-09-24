@@ -1,66 +1,10 @@
-<?php
+<?= $this->render('show/components/pluginoutput.phtml') ?>
 
-$hostgroupLinkList = array();
-if (!empty($this->hostgroups)) {
-    foreach ($this->hostgroups as $name => $alias) {
-        $hostgroupLinkList[] = '<a href="' . $this->href(
-            'monitoring/list/hosts',
-            array(
-                'hostgroups' => $name
-            )
-        ) . '">'.$alias. '</a>';
-    }
-}
-?>
-<?=
-$this->partial(
-    'show/header.phtml',
-    array(
-        'host'    => $this->host,
-        'service' => $this->service,
-        'tabs'    => $this->tabs,
-        'compact' => $this->compact
-    )
-);
-?>
-<?= $this->preview_image ?>
-<br/>
-<div class="panel panel-default">
-  <div class="panel-heading">
-    <span>Plugin Output</span>
-  </div>
-  <div class="panel-body">
-    <?= $this->pluginOutput($this->host->host_output); ?>
-    <?= $this->pluginOutput($this->host->host_long_output); ?>
-  </div>
-</div>
+<?= $this->render('show/components/command.phtml') ?>
 
-<div class="panel panel-default">
-  <div class="panel-heading">
-    {{CHECK_ICON}} <span>Check Command</span>
-  </div>
+<?= $this->render('show/components/hostgroups.phtml') ?>
 
-  <div class="panel-body">
-    <?php
-            $explodedCommand = explode('!', $this->host->host_check_command, 2);
-    array_shift($explodedCommand);
-    ?>
-    <?= $this->commandArguments($this->host->host_check_command); ?>
-  </div>
-</div>
-
-<div class="panel panel-default">
-  <div class="panel-heading">
-    <span>Groups and Contacts</span>
-  </div>
-  <div class="panel-body">
-  <?php if (count($hostgroupLinkList)): ?>
-  {{HOSTGROUP_ICON}} <strong>Hostgroups:</strong>
-  <?= implode(' ', $hostgroupLinkList); ?>
-  <?php endif; ?>
-  <?= $this->render('show/components/contacts.phtml') ?>
-  </div>
-</div>
+<?= $this->render('show/components/contacts.phtml') ?>
 
 <?= $this->render('show/components/comments.phtml'); ?>
 
@@ -68,40 +12,6 @@ $this->partial(
 
 <?= $this->render('show/components/customvars.phtml'); ?>
 
-<?php if ($this->host->host_perfdata): ?>
-<div class="panel panel-default">
-  <div class="panel-heading">
-    <span>Perfdata</span>
-  </div>
-  <div class="panel-body">
-    <?= $this->perfdata($this->host->host_perfdata); ?>
-  </div>
-</div>
-<?php endif; ?>
+<?= $this->render('show/components/flags.phtml'); ?>
 
-<div class="panel panel-default">
-  <div class="panel-heading">
-    <span>Flags</span>
-  </div>
-  <div class="panel-body">
-    <?= $this->render('show/components/flags.phtml'); ?>
-  </div>
-</div>
-
-<div class="panel panel-default">
-  <div class="panel-heading">
-    <span>Properties</span>
-  </div>
-  <div class="panel-body">
-    <?= $this->render('show/components/properties.phtml'); ?>
-  </div>
-</div>
-
-<div class="panel panel-default">
-  <div class="panel-heading">
-    {{COMMAND_ICON}} <span>Commands</span>
-  </div>
-  <div class="panel-body">
-    <?= $this->monitoringCommands($this->host, 'full'); ?>
-  </div>
-</div>
+<?= $this->render('show/components/perfdata.phtml'); ?>

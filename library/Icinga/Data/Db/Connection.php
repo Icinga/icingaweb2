@@ -28,14 +28,11 @@
 
 namespace Icinga\Data\Db;
 
-use \PDO;
-use \Zend_Config;
-use \Zend_Db;
-use \Zend_Db_Adapter_Abstract;
-use \Icinga\Application\DbAdapterFactory;
-use \Icinga\Data\DatasourceInterface;
-use \Icinga\Exception\ConfigurationError;
-use \Icinga\Application\Logger;
+use PDO;
+use Zend_Config;
+use Zend_Db;
+use Icinga\Data\DatasourceInterface;
+use Icinga\Exception\ConfigurationError;
 
 /**
  * Encapsulate database connections and query creation
@@ -43,25 +40,33 @@ use \Icinga\Application\Logger;
 class Connection implements DatasourceInterface
 {
     /**
-     * Database connection
-     *
-     * @var Zend_Db_Adapter_Abstract
-     */
-    protected $db;
-
-    /**
-     * Backend configuration
+     * Connection config
      *
      * @var Zend_Config
      */
-    protected $config;
+    private $config;
 
     /**
      * Database type
      *
      * @var string
      */
-    protected $dbType;
+    private $dbType;
+
+    private $conn;
+
+    private $tablePrefix = '';
+
+    private static $genericAdapterOptions = array(
+        Zend_Db::AUTO_QUOTE_IDENTIFIERS => false,
+        Zend_Db::CASE_FOLDING           => Zend_Db::CASE_LOWER
+    );
+
+    private static $driverOptions = array(
+        PDO::ATTR_TIMEOUT   => 2,
+        PDO::ATTR_CASE      => PDO::CASE_LOWER,
+        PDO::ATTR_ERRMODE   => PDO::ERRMODE_EXCEPTION
+    );
 
     /**
      * Create a new connection object
@@ -109,22 +114,69 @@ class Connection implements DatasourceInterface
      */
     private function connect()
     {
-        $resourceName = $this->config->get('resource');
-        $this->db = DbAdapterFactory::getDbAdapter($resourceName);
-
-        if ($this->db->getConnection() instanceof PDO) {
-            $this->dbType = $this->db->getConnection()->getAttribute(PDO::ATTR_DRIVER_NAME);
-        } else {
-            $this->dbType = strtolower(get_class($this->db->getConnection()));
+        $genericAdapterOptions  = self::$genericAdapterOptions;
+        $driverOptions          = self::$driverOptions;
+        $adapterParamaters      = array(
+            'host'              => $this->config->host,
+            'username'          => $this->config->username,
+            'password'          => $this->config->password,
+            'dbname'            => $this->config->dbname,
+            'options'           => & $genericAdapterOptions,
+            'driver_options'    => & $driverOptions
+        );
+        $this->dbType = strtolower($this->config->get('db', 'mysql'));
+        switch ($this->dbType) {
+            case 'mysql':
+                $adapter = 'Pdo_Mysql';
+                /*
+                 * Set MySQL server SQL modes to behave as closely as possible to Oracle and PostgreSQL. Note that the
+                 * ONLY_FULL_GROUP_BY mode is left on purpose because MySQL requires you to specify all non-aggregate columns
+                 * in the group by list even if the query is grouped by the master table's primary key which is valid
+                 * ANSI SQL though. Further in that case the query plan would suffer if you add more columns to the group by
+                 * list.
+                 */
+                $driverOptions[PDO::MYSQL_ATTR_INIT_COMMAND] =
+                    'SET SESSION SQL_MODE=\'STRICT_ALL_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,'
+                    . 'NO_AUTO_CREATE_USER,ANSI_QUOTES,PIPES_AS_CONCAT,NO_ENGINE_SUBSTITUTION\';';
+                $adapterParamaters['port'] = $this->config->get('port', 3306);
+                break;
+            case 'pgsql':
+                $adapter = 'Pdo_Pgsql';
+                $adapterParamaters['port'] = $this->config->get('port', 5432);
+                break;
+//            case 'oracle':
+//                if ($this->dbtype === 'oracle') {
+//                    $attributes['persistent'] = true;
+//                }
+//                $this->db = ZfDb::factory($adapter, $attributes);
+//                if ($adapter === 'Oracle') {
+//                    $this->db->setLobAsString(false);
+//                }
+//                break;
+            default:
+                throw new ConfigurationError(
+                    sprintf(
+                        'Backend "%s" is not supported', $this->dbType
+                    )
+                );
         }
-        $this->db->setFetchMode(Zend_Db::FETCH_OBJ);
+        $this->conn = Zend_Db::factory($adapter, $adapterParamaters);
+        $this->conn->setFetchMode(Zend_Db::FETCH_OBJ);
+    }
 
-        if ($this->dbType === null) {
-            Logger::warn('Could not determine database type');
-        }
+    public function getConnection()
+    {
+        return $this->conn;
+    }
 
-        if ($this->dbType === 'oci') {
-            $this->dbType = 'oracle';
-        }
+    public function getTablePrefix()
+    {
+        return $this->tablePrefix;
+    }
+
+    public function setTablePrefix($prefix)
+    {
+        $this->tablePrefix = $prefix;
+        return $this;
     }
 }
