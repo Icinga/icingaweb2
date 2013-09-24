@@ -25,22 +25,22 @@ $this->partial(
 ?>
 
 <?= $this->preview_image ?>
-<div>
-  <div>
+<div class="panel panel-default">
+  <div class="panel-heading">
     <span>Plugin output</span>
   </div>
-  <div>
+  <div class="panel-body">
     <?= $this->pluginOutput($this->service->service_output); ?>
     <?= $this->pluginOutput($this->service->service_long_output); ?>
   </div>
 </div>
 
-<div>
-  <div>
+<div class="panel panel-default">
+  <div class="panel-heading">
     {{CHECK_ICON}} <span>Check Command</span>
   </div>
 
-  <div>
+  <div class="panel-body">
     <?php
     $explodedCommand = explode('!', $this->service->service_check_command, 2);
     echo array_shift($explodedCommand);
@@ -49,16 +49,18 @@ $this->partial(
   </div>
 </div>
 
-<div>
-  <div>
+<div class="panel panel-default">
+  <div class="panel-heading">
     {{GROUP_ICON}} <span>Groups and Contacts</span>
   </div>
+  <div  class="panel-body">
   <?php if (count($servicegroupLinkList)) { ?>
     {{SERVICEGROUP_ICON}} <strong>Servicegroups:</strong>
   <?= implode(' ', $servicegroupLinkList); ?>
   <?php } ?>
 
   <?= $this->render('show/components/contacts.phtml') ?>
+  </div>
 </div>
 
 <?= $this->render('show/components/comments.phtml'); ?>
@@ -68,40 +70,39 @@ $this->partial(
 <?= $this->render('show/components/customvars.phtml'); ?>
 
 <?php if ($this->service->service_perfdata): ?>
-<div>
-
-  <div>
+<div class="panel panel-default">
+  <div class="panel-heading">
     <span>Perfdata</span>
   </div>
-  <div>
+  <div class="panel-body">
     <?= $this->perfdata($this->service->service_perfdata); ?>
   </div>
 </div>
 <?php endif; ?>
 
-<div>
-  <div>
+<div class="panel panel-default">
+  <div class="panel-heading">
     <span>Flags</span>
   </div>
-  <div>
+  <div class="panel-body">
     <?= $this->render('show/components/flags.phtml'); ?>
   </div>
 </div>
 
-<div>
-  <div>
+<div class="panel panel-default">
+  <div class="panel-heading">
     <span>Properties</span>
   </div>
-  <div>
+  <div class="panel-body">
     <?= $this->render('show/components/properties.phtml'); ?>
   </div>
 </div>
 
-<div>
-  <div>
+<div class="panel panel-default">
+  <div class="panel-heading">
     {{COMMAND_ICON}} <span>Commands</span>
   </div>
-  <div>
+  <div class="panel-body">
     <?= $this->monitoringCommands($this->service, 'full'); ?>
   </div>
 </div>

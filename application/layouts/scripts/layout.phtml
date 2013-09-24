@@ -17,10 +17,10 @@
 
   <!--      Bootstrap and components    -->
   <link rel="stylesheet" href="<?= $this->baseUrl('css/vendor/bootstrap/bootstrap.min.css') ?>" media="screen">
-  <link rel="stylesheet" href="<?= $this->baseUrl('css/vendor/bootstrap/bootstrap-theme.min.css') ?>" media="screen">
 
   <link rel="stylesheet" href="<?= $this->baseUrl('css/main.css') ?>">
   <link rel="stylesheet" href="<?= $this->baseUrl('css/vendor/bootstrap/datetimepicker.min.css') ?>">
+
 
   <!--
   Not used until styling is clear (see #4550)
@@ -35,12 +35,13 @@
   <base target="_parent"/>
   <? endif ?>
 
-  <script src="<?php echo $this->baseUrl('js/vendor/modernizr-2.6.2.min.js') ?>"></script>
+  <script src="<?= $this->baseUrl('js/vendor/modernizr-2.6.2.min.js') ?>"></script>
 
   <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!--[if lt IE 9]>
-  <script src="./js/vendor/html5shiv.js"></script>
-  <script src="./js/vendor/respond.min.js"></script>
+  <script src="<?= $this->baseUrl('js/vendor/html5shiv.js');?>"></script>
+  <script src="<?= $this->baseUrl('js/vendor/respond.min.js');?>"></script>
+
   <![endif]-->
 
 </head>

@@ -1,5 +1,4 @@
 <?php
-$paginator = $services->paginate();
 $viewHelper = $this->getHelper('MonitoringState');
 ?>
 
@@ -9,7 +8,7 @@ $viewHelper = $this->getHelper('MonitoringState');
 </div>
 <?php return; endif ?>
 
-<?=  $this->paginationControl($paginator, null, null, array('preserve' => $this->preserve)) ?>
+<?=  $this->paginationControl($services, null, null, array('preserve' => $this->preserve)) ?>
 
 <table class="table table-condensed">
   <thead>
@@ -21,7 +20,7 @@ $viewHelper = $this->getHelper('MonitoringState');
     </tr>
   </thead>
   <tbody>
-  <?php foreach ($services->fetchAll() as $service): ?>
+  <?php foreach ($services as $service): ?>
     <tr>
       <td>
         <div>

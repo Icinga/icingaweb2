@@ -35,9 +35,13 @@ use \Icinga\Web\Hook;
 use \Icinga\Web\Widget\Tabextension\DashboardAction;
 use \Icinga\Web\Widget\Tabextension\OutputFormat;
 use \Icinga\Web\Widget\Tabs;
-use Icinga\Module\Monitoring\Backend;
+use \Icinga\Module\Monitoring\Backend;
 use \Icinga\Web\Widget\SortBox;
+use \Icinga\Application\Config as IcingaConfig;
 
+/**
+ * Controller for listing views
+ */
 class Monitoring_ListController extends ActionController
 {
     /**
@@ -47,6 +51,8 @@ class Monitoring_ListController extends ActionController
      */
     protected $backend;
     /**
+     * Compact layout name
+     *
      * Set to a string containing the compact layout name to use when
      * 'compact' is set as the layout parameter, otherwise null
      *
@@ -64,6 +70,7 @@ class Monitoring_ListController extends ActionController
         $this->backend = Backend::getInstance($this->_getParam('backend'));
         $this->view->grapher = Hook::get('grapher');
         $this->createTabs();
+        $this->view->activeRowHref = $this->getParam('detail');
     }
 
     /**
@@ -254,7 +261,7 @@ class Monitoring_ListController extends ActionController
             ->from($view, $cols)
             ->applyRequest($this->_request);
         $this->handleFormatRequest($query);
-        return $query;
+        return $query->paginate();
     }
 
     /**
@@ -268,7 +275,8 @@ class Monitoring_ListController extends ActionController
             $this->_helper->viewRenderer($this->compactView);
         }
 
-        if ($this->_getParam('format') === 'sql') {
+        if ($this->_getParam('format') === 'sql'
+            && IcingaConfig::app()->global->get('environment', 'production') === 'development') {
             echo '<pre>'
                 . htmlspecialchars(wordwrap($query->getQuery()->dump()))
                 . '</pre>';

@@ -112,10 +112,8 @@ define(['jquery'], function($) {
          *
          * @returns {*|Array}
          */
-        this.add = function(cmp, id, type) {
-            if (!id){
-                id = self.getId(cmp) || createId();
-            }
+        this.add = function(cmp, type) {
+            var id = createId();
             components[id] = {
                 cmp:    cmp,
                 type:   type,

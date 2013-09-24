@@ -11,10 +11,6 @@ Forms are basically Zend_Form classes with Zend_Form_Element items as controls.
 To ensure common functionallity and control dependent fields Icinga 2 Web
 provides sub classes to build forms on that.
 
-![Basic form design][form1]
-
-*(Methods and attributes are exemplary and does not reflect the full class implementation)*
-
 ### Key design
 
 #### Build of forms
@@ -28,6 +24,20 @@ In order to let icingaweb create a submit button for you (which is required for 
 method) you have to call the *setSubmitLabel($label)* method, which will add a
 Zend_Form_Element_Submit element to your form.
 
+#### Client side behaviour
+
+A few methods in our Form implementation don't affect the rendering, but the behaviour of a form.
+
+* **Automatic submission of fields via *\Icinga\Web\Form::enableAutoSubmit(array $forms)***
+  All form element ids passed in the $forms array will cause a submission of the form when changed. This normally
+  doesn't cause validation errors, as the form is not really seen as submitted by the 'isSubmittedAndValid', but allows
+  you to update your form when necessary. For example, when you have a select box whose selection affects which form elements
+  should be shown, you can use `$form->enableAutoSubmit(array('myForm'))`.
+* **User confirmation when discarding forms.** When a user wants to leave the current page despite having unsaved changes,
+  a popup will appear and asks the user if he **really** wants to leave. This is implemented by the *app/form* componenent
+  and enabled by default. If you don't want this, you can call *setIgnoreChangeDiscarding($bool)* on your form.
+
+
 #### Calling is *isSubmittedAndValid()*
 
 *isSubmittedAndValid()* is used to check whether the form is ready to be processed or not.
@@ -39,7 +49,6 @@ submitted when a POST request is received.
 If the form has been updated, but not submitted (for example, because the a button has been pressed that adds or removes
 some fields in the form) the form is repopulated but not validated at this time. is SubmittedAndValid() returns false
 in this case, but no errors are added to the created form.
-
 
 In order to be able to use isSubmittedAndValid, you have to define a submitbutton in the form.
 This is done with the *setSubmitLabel(string)* function, with the first parameter being the

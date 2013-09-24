@@ -33,6 +33,9 @@ use \Icinga\Application\Icinga;
 use \Icinga\Application\Config as IcingaConfig;
 use \Icinga\Application\Logger;
 
+/**
+ * Delivery static content to clients
+ */
 class StaticController extends ActionController
 {
     /**
@@ -117,13 +120,8 @@ class StaticController extends ActionController
         }
         $response = $this->getResponse();
         $response->setHeader('Content-Type', 'text/javascript');
-        if (!IcingaConfig::app()->global->get('environment') == 'development') {
-            $this->setCacheHeader(3600);
-        } else {
-            $response->setHeader('Pragma', 'no-cache', true);
-            $response->setHeader('Cache-Control', 'max-age=-3600', true);
+        $this->setCacheHeader(3600);
 
-        }
         $response->setHeader(
             'Last-Modified',
             gmdate(
@@ -137,7 +135,7 @@ class StaticController extends ActionController
     }
 
     /**
-     * Set cache header for this respone
+     * Set cache header for this response
      *
      * @param integer $maxAge The maximum age to set
      */

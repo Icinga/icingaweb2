@@ -65,11 +65,11 @@ if (!$this->compact) {
       <td rowspan="2">
         <?php if ($this->host->host_action_url): ?>
           {{EXTERNAL_LINK_ICON}}
-          <a href='<?= $this->host->host_notes_url ?>'>Host actions </a>
+          <a target="_new" href='<?= $this->host->host_notes_url ?>'>Host actions </a>
         <?php endif; ?>
         <?php if ($this->host->host_notes_url): ?>
           {{EXTERNAL_LINK_ICON}}
-          <a href='<?= $this->host->host_notes_url ?>'>Host notes </a>
+          <a target="_new" href='<?= $this->host->host_notes_url ?>'>Host notes </a>
         <?php endif; ?>
       </td>
     </tr>
@@ -103,12 +103,12 @@ if (!$this->compact) {
       <td rowspan="2">
         <?php if ($this->service->service_action_url): ?>
           {{EXTERNAL_LINK_ICON}}
-          <a href='<?= $this->service->service_notes_url ?>'>Service actions </a>
+          <a target="_new" href='<?= $this->service->service_notes_url ?>'>Service actions </a>
         <?php endif; ?>
 
         <?php if ($this->service->service_notes_url): ?>
           {{EXTERNAL_LINK_ICON}}
-          <a href='<?= $this->service->service_notes_url ?>'>Service notes </a>
+          <a target="_new" href='<?= $this->service->service_notes_url ?>'>Service notes </a>
         <?php endif; ?>
       </td>
     </tr>

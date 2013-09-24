@@ -109,7 +109,7 @@ define(['jquery', 'logging', 'icinga/componentRegistry'], function ($, log, regi
                             type,
                             el,
                             function(cmp) {
-                                var id = registry.add(cmp, el.id, type);
+                                var id = registry.add(cmp, type);
                                 registry.markActive(id);
                                 el.id = id;
                                 finalize();

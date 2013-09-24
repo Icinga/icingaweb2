@@ -29,9 +29,10 @@
 define([
     'jquery',
     'logging',
-    'icinga/util/async',
-    'icinga/componentLoader'
-], function ($, log, async,components) {
+    'icinga/componentLoader',
+    'components/app/container',
+    'URIjs/URI'
+], function ($, log, components, Container, URI) {
     'use strict';
 
     /**
@@ -39,16 +40,78 @@ define([
      */
     var Icinga = function() {
 
+        var ignoreHistoryChanges = false;
+
         var initialize = function () {
             components.load();
+            ignoreHistoryChanges = true;
+            registerGenericHistoryHandler();
+            ignoreHistoryChanges = false;
             log.debug("Initialization finished");
+
         };
 
+        /**
+         * Register handler for handling the history state generically
+         *
+         */
+        var registerGenericHistoryHandler = function() {
+            var lastUrl = URI(window.location.href);
+            History.Adapter.bind(window, 'popstate', function() {
+                if (ignoreHistoryChanges) {
+                    return;
+                }
+
+                gotoUrl(History.getState().url);
+                lastUrl = URI(window.location.href);
+            });
+        };
+
+
+        var gotoUrl = function(href) {
+            if (typeof document.body.pending !== 'undefined') {
+                document.body.pending.abort();
+            }
+            if (typeof href === 'string') {
+                href = URI(href);
+            }
+            document.body.pending = $.ajax({
+                success: function(domNodes) {
+                    $('body').empty().append(jQuery.parseHTML(domNodes));
+                    ignoreHistoryChanges = true;
+                    History.pushState({}, document.title, href.href());
+                    ignoreHistoryChanges = false;
+                    components.load();
+                },
+                url: href.href()
+            });
+
+            return false;
+        };
+
+        if (Modernizr.history) {
+            $(document.body).on('click', '#icinganavigation', function(ev) {
+                var targetEl = ev.target || ev.toElement || ev.relatedTarget;
+                if (targetEl.tagName.toLowerCase() !== 'a') {
+                    return true;
+                }
+
+                var href = $(targetEl).attr('href');
+                if (Container.isExternalLink(href)) {
+                    return true;
+                }
+                ev.preventDefault();
+                ev.stopPropagation();
+                gotoUrl(href);
+                return false;
+            });
+        }
         $(document).ready(initialize.bind(this));
-
-        return {
-            components: components
-        };
+        Container.setIcinga(this);
+        this.components = components;
+        this.replaceBodyFromUrl = gotoUrl;
     };
+
+
     return new Icinga();
 });

@@ -6,7 +6,7 @@ $currentKey = isset($this->navkey) ? $this->navkey : $url;
 $item = $this->navigation->keys("menu");
 ?>
 <?php if ($this->auth()->isAuthenticated()): ?>
-<ul class="nav nav-stacked" >
+<ul class="nav nav-stacked" role="navigation" id="icinganavigation">
   <?php
   $activeSet = false;
   foreach ($item as $itemName) {

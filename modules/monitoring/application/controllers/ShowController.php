@@ -28,14 +28,15 @@
 
 // @codingStandardsIgnoreStart
 use \Icinga\Module\Monitoring\Backend;
-use Icinga\Web\Controller\ActionController;
-use Icinga\Web\Hook;
+use \Icinga\Web\Controller\ActionController;
+use \Icinga\Web\Hook;
 use \Icinga\Module\Monitoring\Object\Host;
 use \Icinga\Module\Monitoring\Object\Service;
-use Icinga\Application\Benchmark;
-use Icinga\Web\Widget\Tabextension\OutputFormat;
-use Icinga\Web\Widget\Tabextension\DashboardAction;
-use Icinga\Web\Widget\Tabextension\BasketAction;
+use \Icinga\Application\Benchmark;
+use \Icinga\Web\Widget\Tabextension\OutputFormat;
+use \Icinga\Web\Widget\Tabextension\DashboardAction;
+use \Icinga\Web\Widget\Tabextension\BasketAction;
+use \Icinga\Web\Widget\Tabs;
 
 /**
  * Class Monitoring_ShowController
@@ -207,7 +208,6 @@ class Monitoring_ShowController extends ActionController
     public function hostAction()
     {
         $this->view->active = 'host';
-
         if ($grapher = Hook::get('grapher')) {
             if ($grapher->hasGraph($this->view->host->host_name)) {
                 $this->view->preview_image = $grapher->getPreviewImage(
@@ -356,7 +356,7 @@ class Monitoring_ShowController extends ActionController
 
     /**
      * Creating tabs for this controller
-     * @return \Icinga\Web\Widget\AbstractWidget
+     * @return Tabs
      */
     protected function createTabs()
     {
@@ -376,55 +376,12 @@ class Monitoring_ShowController extends ActionController
         } elseif ($service = $this->_getParam('service')) {
             $params['service'] = $service;
         }
-        $tabs->add(
-            'host',
-            array(
-                'title' => '{{HOST_ICON}} Host',
-                'url' => 'monitoring/show/host',
-                'urlParams' => $params,
-            )
-        );
-        if (!isset($this->view->service)) {
-            $tabs->add(
-                'services',
-                array(
-                    'title' => '{{SERVICE_ICON}} Services',
-                    'url' => 'monitoring/show/services',
-                    'urlParams' => $params,
-                )
-            );
-        }
-        if (isset($params['service'])) {
-            $tabs->add(
-                'service',
-                array(
-                    'title' => '{{SERVICE_ICON}} Service',
-                    'url' => 'monitoring/show/service',
-                    'urlParams' => $params,
-                )
-            );
-        }
-        $tabs->add(
-            'history',
-            array(
-                'title' => '{{HISTORY_ICON}} History',
-                'url' => 'monitoring/show/history',
-                'urlParams' => $params,
-            )
-        );
 
         $tabs->extend(new OutputFormat())
             ->extend(new DashboardAction())
             ->extend(new BasketAction);
 
-        /**
-        $tabs->add('contacts', array(
-            'title'     => 'Contacts',
-            'icon'      => 'img/classic/customer.png',
-            'url'       => 'monitoring/detail/contacts',
-            'urlParams' => $params,
-        ));**/
-
+        return $tabs;
     }
 }
 // @codingStandardsIgnoreEnd
