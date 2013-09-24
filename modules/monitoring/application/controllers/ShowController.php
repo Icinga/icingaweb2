@@ -375,57 +375,12 @@ class Monitoring_ShowController extends ActionController
         } elseif ($service = $this->_getParam('service')) {
             $params['service'] = $service;
         }
-        /*
-         *
-        $tabs->add(
-            'host',
-            array(
-                'title' => '{{HOST_ICON}} Host',
-                'url' => 'monitoring/show/host',
-                'urlParams' => $params,
-            )
-        );
-        if (!isset($this->view->service)) {
-            $tabs->add(
-                'services',
-                array(
-                    'title' => '{{SERVICE_ICON}} Services',
-                    'url' => 'monitoring/show/services',
-                    'urlParams' => $params,
-                )
-            );
-        }
-        if (isset($params['service'])) {
-            $tabs->add(
-                'service',
-                array(
-                    'title' => '{{SERVICE_ICON}} Service',
-                    'url' => 'monitoring/show/service',
-                    'urlParams' => $params,
-                )
-            );
-        }
-        $tabs->add(
-            'history',
-            array(
-                'title' => '{{HISTORY_ICON}} History',
-                'url' => 'monitoring/show/history',
-                'urlParams' => $params,
-            )
-        );
-*/
+
         $tabs->extend(new OutputFormat())
             ->extend(new DashboardAction())
             ->extend(new BasketAction);
 
-        /**
-        $tabs->add('contacts', array(
-            'title'     => 'Contacts',
-            'icon'      => 'img/classic/customer.png',
-            'url'       => 'monitoring/detail/contacts',
-            'urlParams' => $params,
-        ));**/
-
+        return $tabs;
     }
 }
 // @codingStandardsIgnoreEnd
