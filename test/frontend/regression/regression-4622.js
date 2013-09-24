@@ -38,17 +38,17 @@ icinga.performLogin();
 casper.thenOpen('./config/logging', function() {
     "use strict";
 
-    this.test.assertExists('form#form_config_logging', 'Assert the logging configuration form being displayed');
+    this.test.assertExists('form[name=form_config_logging]', 'Assert the logging configuration form being displayed');
     this.test.assertEquals(
-        this.getElementAttribute('form#form_config_logging', 'data-icinga-form-modified'),
+        this.getElementAttribute('form[name=form_config_logging]', 'data-icinga-form-modified'),
         "",
         'Assert a form to initially have no modified flag'
     );
     // Wait for the component to initialize
     this.wait(1000, function() {
-        this.sendKeys('#form_config_logging input#logging_app_target', 'somewhere');
+        this.sendKeys('form[name=form_config_logging] input#logging_app_target', 'somewhere');
         this.test.assertEquals(
-            this.getElementAttribute('form#form_config_logging', 'data-icinga-form-modified'),
+            this.getElementAttribute('form[name=form_config_logging]', 'data-icinga-form-modified'),
             "true",
             'Assert a form to initially be marked as modified when changed'
         );
@@ -62,13 +62,13 @@ casper.thenOpen('./config/logging', function() {
 casper.then(function() {
     "use strict";
 
-    var checkbox = this.getElementAttribute('form#form_config_logging input#logging_debug_enable', 'value');
-    this.click('form#form_config_logging input#logging_debug_enable');
+    var checkbox = this.getElementAttribute('form[name=form_config_logging] input#logging_debug_enable', 'value');
+    this.click('form[name=form_config_logging] input#logging_debug_enable');
     // determine whether the text input field appears after the click or not
     var waitFn = (checkbox === '0' ? this.waitForSelector : this.waitWhileSelector).bind(this);
-    waitFn('form#form_config_logging input#logging_debug_target', function() {
+    waitFn('form[name=form_config_logging] input#logging_debug_target', function() {
         this.test.assertEquals(
-            this.getElementAttribute('form#form_config_logging', 'data-icinga-form-modified'),
+            this.getElementAttribute('form[name=form_config_logging]', 'data-icinga-form-modified'),
             "true",
             'Assert modify flag to be set on the server side if using an autosubmit field'
         );
