@@ -161,7 +161,7 @@ function(Container, $, logger, URI) {
             });
             $('.pagination li a', contentNode.parent()).on('click', function(ev) {
                 var container = (new Container(this));
-                Icinga.replaceBodyFromUrl(
+                container.replaceDomFromUrl(
                     container.updateContainerHref($(this).attr('href'))
                 );
                 ev.preventDefault();
@@ -190,16 +190,22 @@ function(Container, $, logger, URI) {
             Container.getDetailContainer().registerOnUpdate(this.syncSelectionWithDetail.bind(this));
         };
 
+        this.registerLoadIndicator = function() {
+            // console.log(this.container);
+        };
+
         /**
          * Create this component, setup listeners and behaviour
          */
         this.construct = function(target) {
             this.container = new Container(target);
+            this.container.disableDefaultLoadIndicator();
             controlForms = determineControlForms();
             contentNode = determineContentTable();
             this.registerControls();
             this.registerTableLinks();
             this.registerHistoryChanges();
+            this.registerLoadIndicator();
         };
 
         this.construct(gridDomNode);

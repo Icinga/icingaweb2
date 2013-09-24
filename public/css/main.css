@@ -1,1 +1,23 @@
 body { padding-top: 70px; }
+
+.load-indicator .mask {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: #666;
+    opacity: 0.3;
+    z-index: 998;
+}
+
+.load-indicator .label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: #000;
+    background-color: #fff;
+    font-weight: normal;
+    z-index: 999;
+    border: none;
+}

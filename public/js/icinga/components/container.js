@@ -117,6 +117,11 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
                 this.containerType = CONTAINER_TYPES.GENERIC;
             }
             this.containerDom.attr('data-icinga-href', this.getContainerHref());
+
+            if (this.containerDom.data('loadIndicator') !== true) {
+                this.installDefaultLoadIndicator();
+                this.containerDom.data('loadIndicator', true);
+            }
         };
 
         /**
@@ -208,9 +213,9 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
         /**
          * Return a complete Href string representing the current detail href and the provided main Url
          *
-         * @param {URI} url         The detail Url to use as an URI.js object
+         * @param   {URI}   url The detail Url to use as an URI.js object
          *
-         * @returns {URI}           The modified URI.js containing the new detail and the current main link
+         * @returns {URI}       The modified URI.js containing the new detail and the current main link
          */
         var setDetailContainerHref = function(url, baseUrl) {
             var location = new URI(baseUrl);
@@ -219,6 +224,33 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
                 location.addQuery('detail', url);
             }
             return location;
+        };
+
+        /**
+         * Create default load mask
+         *
+         * @private
+         */
+        var createDefaultLoadIndicator = function() {
+
+            this.showDetail();
+
+            if (this.containerDom.find('div.load-indicator').length === 0) {
+                var content = '<div class="load-indicator">' +
+                    '<div class="mask"></div>' +
+                    '<div class="label">Loading</div>' +
+                    '</div>';
+                $(this.containerDom).append(content);
+            }
+        };
+
+        /**
+         * Remove default load mask
+         *
+         * @private
+         */
+        var destroyDefaultLoadIndicator = function() {
+            $(this.containerDom).remove('div.load-indicator');
         };
 
         /**
@@ -262,7 +294,6 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
             return windowUrl.href();
         };
 
-
         /**
          * Load the provided url, stop all pending requests for this container and call replaceDom for the returned html
          *
@@ -271,6 +302,7 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
          * @param {String, URI} url     The Url to load or and URI.js object encapsulating it
          */
         this.replaceDomFromUrl = function(url) {
+            this.containerDom.trigger('showLoadIndicator');
             Icinga.replaceBodyFromUrl(this.updateContainerHref(url));
         };
 
@@ -289,8 +321,10 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
          * @see registerOnUpdate
          */
         this.replaceDom = function(domNodes, keepLayout) {
+            this.containerDom.trigger('showLoadIndicator');
             this.containerDom.empty().append(domNodes);
             this.containerDom.trigger('updated', [domNodes]);
+            this.containerDom.trigger('hideLoadIndicator');
             componentLoader.load();
             if (!keepLayout) {
                 if (this.containerType === CONTAINER_TYPES.DETAIL) {
@@ -299,8 +333,6 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
             }
         };
 
-
-
         /**
          * Register a method to be called when this container is updated
          *
@@ -308,6 +340,41 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
          */
         this.registerOnUpdate = function(fn) {
             this.containerDom.on('updated', fn);
+        };
+
+        /**
+         * Register a method to show a load indicator
+         *
+         * @param {function} fn The function to register
+         */
+        this.registerOnShowLoadIndicator = function(fn) {
+            this.containerDom.on('showLoadIndicator', fn);
+
+        };
+
+        /**
+         * Register a method when load indicator should be removed
+         *
+         * @param {function} fn The function to register
+         */
+        this.registerOnHideLoadIndicator = function(fn) {
+            this.containerDom.on('hideLoadIndicator', fn);
+        };
+
+        /**
+         * Install default load indicator
+         */
+        this.installDefaultLoadIndicator = function() {
+            this.registerOnShowLoadIndicator($.proxy(createDefaultLoadIndicator, this));
+            this.registerOnHideLoadIndicator($.proxy(destroyDefaultLoadIndicator, this));
+        };
+
+        /**
+         * Remove default load indicator
+         */
+        this.disableDefaultLoadIndicator = function() {
+            this.containerDom.off('showLoadIndicator');
+            this.containerDom.off('hideLoadIndicator');
         };
 
         this.construct(target);
@@ -363,16 +430,16 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
         var mainDom = Container.getMainContainer().containerDom,
             detailDom = Container.getDetailContainer().containerDom;
 
+        if (detailDom.find('*').length === 0) {
+            var mainHeight = $(window).height();
+            detailDom.append('<div style="height: ' + mainHeight + 'px;"></div>');
+        }
+
         mainDom.removeClass();
         detailDom.removeClass();
-        mainDom.addClass('hidden-md');
-        detailDom.addClass('col-md-12');
-        mainDom.addClass('col-lg-7');
-        detailDom.addClass('col-lg-5');
-        mainDom.addClass('hidden-xs');
-        detailDom.addClass('col-xs-12');
-        mainDom.addClass('hidden-sm');
-        detailDom.addClass('col-sm-12');
+
+        mainDom.addClass('col-xs-pull-12 col-sm-pull-12 col-md-pull-12 col-lg-7');
+        detailDom.addClass('col-xs-push-12 col-sm-push-12 col-md-push-12 col-lg-5');
     };
 
     /**
