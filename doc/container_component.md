@@ -140,3 +140,59 @@ directly is that you don't need to know in what container your view is displayed
 detail container, the detail container would be updated afterwards.
 
 **NOTE**: You should read the '...' section in order to understand why you shouldn't do it like in this example
+
+### How container refresh states are handled
+
+If you refresh containers content (load url or replace dom), the container displaya a loading
+mask as default behaviour. To disable this mask and handle it yourself, you can register own events:
+
+**Example #3 Load indicator events**
+
+    require(['icinga', 'jquery', 'app/container'], function('Icinga', $, Container) {
+        var mainContainer = Container.getMainContainer();
+
+        // Detach the default behaviour from container
+        mainContainer.removeDefaultLoadIndicator();
+
+        var showFunction = function() {
+            console.log('container is loading');
+        };
+
+        var hideFunction = function() {
+            console.log('container content refreshed');
+        };
+
+        // Install new handlers
+        mainContainer.registerOnShowLoadIndicator(showFunction);
+        mainContainer.registerOnHideLoadIndicator(hideFunction);
+    };
+
+**Example #4 Use this for your components**
+
+Please have a look into [components documentation](components.md) for detailed information about components.
+
+    define(['components/app/container', 'jquery', 'logging', 'URIjs/URI', 'URIjs/URITemplate'],
+    function(Container, $, logger, URI) {
+        "use strict";
+
+        /**
+         * Master/Detail grid component handling history, link behaviour, selection (@TODO 3788) and updates of
+         * grids
+         *
+         * @param {HTMLElement} The outer element to apply the behaviour on
+         */
+        return function(gridDomNode) {
+            /**
+             * Constructor method for this component
+             */
+            this.construct = function(target) {
+                // Container object for the component
+                this.container = new Container(target);
+
+                // Detach default handlers
+                this.container.removeDefaultLoadIndicator();
+            };
+
+            this.construct(gridDomNode);
+        };
+    };
