@@ -223,7 +223,6 @@ class StatusQuery extends AbstractQuery
 
     protected function joinBaseTables()
     {
-        // TODO: Shall we always add hostobject?
         $this->baseQuery = $this->db->select()->from(
             array('ho' => $this->prefix . 'objects'),
             array()
