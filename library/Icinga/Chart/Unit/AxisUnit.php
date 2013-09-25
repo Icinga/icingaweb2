@@ -20,15 +20,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * @copyright 2013 Icinga Development Team <info@icinga.org>
- * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author    Icinga Development Team <info@icinga.org>
+ * @copyright  2013 Icinga Development Team <info@icinga.org>
+ * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
+ * @author     Icinga Development Team <info@icinga.org>
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Chart\Unit;
 
-use Iterator;
+use \Iterator;
 
 /**
  * Base class for Axis Units
@@ -43,17 +43,31 @@ interface AxisUnit extends Iterator
     /**
      * Add a dataset to this AxisUnit, required for dynamic min and max vlaues
      *
-     * @param array $dataset        The dataset that will be shown in the Axis
-     * @param int $id               The idx in the dataset (0 for x, 1 for y)
+     * @param array $dataset    The dataset that will be shown in the Axis
+     * @param int $id           The idx in the dataset (0 for x, 1 for y)
      */
     public function addValues(array $dataset, $id = 0);
 
     /**
      * Transform the given absolute value in an axis relative value
      *
-     * @param int $value    The absolute, dataset dependend value
+     * @param   int $value The absolute, dataset dependent value
      *
-     * @return int          An axis relative value
+     * @return  int        An axis relative value
      */
     public function transform($value);
+
+    /**
+     * Set the axis minimum value to a fixed value
+     *
+     * @param int $min The new minimum value
+     */
+    public function setMin($min);
+
+    /**
+     * Set the axis maximum value to a fixed value
+     *
+     * @param int $max The new maximum value
+     */
+    public function setMax($max);
 }

@@ -20,17 +20,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * @copyright 2013 Icinga Development Team <info@icinga.org>
- * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author    Icinga Development Team <info@icinga.org>
+ * @copyright  2013 Icinga Development Team <info@icinga.org>
+ * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
+ * @author     Icinga Development Team <info@icinga.org>
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 
 namespace Icinga\Chart\Render;
 
-use Icinga\Util\Dimension;
-use DOMDocument;
+use \DOMDocument;
+use \Icinga\Util\Dimension;
 
 /**
  * Context for rendering, handles ratio based coordinate calculations.
@@ -64,20 +64,6 @@ class RenderContext
     private $respectRatio = false;
 
     /**
-     * The current padding (scale) factor on the X axis
-     *
-     * @var int
-     */
-    private $paddingFacX = 1;
-
-    /**
-     * The current padding (scale) factor on the Y Axis
-     *
-     * @var int
-     */
-    private $paddingFacY = 1;
-
-    /**
      * The ratio on the x side. A x ration of 2 means that the width of the SVG is divided in 2000
      * units (see $viewBox)
      *
@@ -96,11 +82,11 @@ class RenderContext
     /**
      * Creates a new context for the given DOM Document
      *
-     * @param DOMDocument   $document       The DOM document represented by this context
-     * @param int           $width          The width (may be approximate) of the document
-     *                                      (only required for ratio calculation)
-     * @param int           $height         The height (may be approximate) of the document
-     *                                      (only required for ratio calculation)
+     * @param DOMDocument   $document   The DOM document represented by this context
+     * @param int           $width      The width (may be approximate) of the document
+     *                                  (only required for ratio calculation)
+     * @param int           $height     The height (may be approximate) of the document
+     *                                  (only required for ratio calculation)
      */
     public function __construct(DOMDocument $document, $width, $height)
     {
@@ -115,7 +101,7 @@ class RenderContext
     /**
      * Return the document represented by this Rendering context
      *
-     * @return DOMDocument          The DOMDocument for creating files
+     * @return DOMDocument The DOMDocument for creating files
      */
     public function getDocument()
     {
@@ -123,9 +109,9 @@ class RenderContext
     }
 
     /**
-     * Let successive toAbsolute operations ignore ratio correction.
+     * Let successive toAbsolute operations ignore ratio correction
      *
-     * This can be called to avoid distortion on certain elements like rectangles
+     * This can be called to avoid distortion on certain elements like rectangles.
      */
     public function keepRatio()
     {
@@ -135,7 +121,7 @@ class RenderContext
     /**
      * Let successive toAbsolute operations perform ratio correction
      *
-     * This will cause distortion on certain elements like rectangles
+     * This will cause distortion on certain elements like rectangles.
      */
     public function ignoreRatio()
     {
@@ -145,7 +131,7 @@ class RenderContext
     /**
      * Return how many unit s are available in the Y axis
      *
-     * @return int      The number of units available on the y axis
+     * @return int The number of units available on the y axis
      */
     public function getNrOfUnitsY()
     {
@@ -155,7 +141,7 @@ class RenderContext
     /**
      * Return how many unit s are available in the X axis
      *
-     * @return int      The number of units available on the x axis
+     * @return int The number of units available on the x axis
      */
     public function getNrOfUnitsX()
     {
@@ -168,11 +154,11 @@ class RenderContext
      * (50, 50) would be a point in the middle of the document and map to 500, 1000 on a
      * 1000 x 1000 viewbox with a 1:2 ratio.
      *
-     * @param int $x        The relative x coordinate
-     * @param int $y        The relative y coordinate
+     * @param   int $x  The relative x coordinate
+     * @param   int $y  The relative y coordinate
      *
-     * @return array        An x,y tupel containing absolute coordinates
-     * @see RenderContext::toRelative
+     * @return  array   An x,y tupel containing absolute coordinates
+     * @see     RenderContext::toRelative
      */
     public function toAbsolute($x, $y)
     {
@@ -184,11 +170,11 @@ class RenderContext
      *
      * This is the inverse function of toAbsolute
      *
-     * @param int $x        The absolute x coordinate
-     * @param int $y        The absolute y coordinate
+     * @param   int $x  The absolute x coordinate
+     * @param   int $y  The absolute y coordinate
      *
-     * @return array        An x,y tupel containing absolute coordinates
-     * @see RenderContext::toAbsolute
+     * @return  array   An x,y tupel containing absolute coordinates
+     * @see     RenderContext::toAbsolute
      */
     public function toRelative($x, $y)
     {
@@ -198,9 +184,9 @@ class RenderContext
     /**
      * Calculates the scale transformation required to apply the padding on an Canvas
      *
-     * @param array $padding    A 4 element array containing top, right, bottom and left padding
+     * @param   array $padding  A 4 element array containing top, right, bottom and left padding
      *
-     * @return array            An array containing the x and y scale
+     * @return  array           An array containing the x and y scale
      */
     public function paddingToScaleFactor(array $padding)
     {
@@ -218,9 +204,9 @@ class RenderContext
     /**
      * Transform a relative x coordinate to an absolute one
      *
-     * @param int $x        A relative x coordinate
+     * @param   int $x  A relative x coordinate
      *
-     * @return int $y       An absolute x coordinate
+     * @return  int     An absolute x coordinate
      **/
     public function xToAbsolute($x)
     {
@@ -230,9 +216,9 @@ class RenderContext
     /**
      * Transform a relative y coordinate to an absolute one
      *
-     * @param int $y       A relative y coordinate
+     * @param   int $y  A relative y coordinate
      *
-     * @return int $y       An absolute y coordinate
+     * @return  int     An absolute y coordinate
      */
     public function yToAbsolute($y)
     {
@@ -242,9 +228,9 @@ class RenderContext
     /**
      * Transform a absolute x coordinate to an relative one
      *
-     * @param int $x        An absolute x coordinate
+     * @param   int $x  An absolute x coordinate
      *
-     * @return int $x       A relative x coordinate
+     * @return  int     A relative x coordinate
      */
     public function xToRelative($x)
     {
@@ -254,9 +240,9 @@ class RenderContext
     /**
      * Transform a absolute y coordinate to an relative one
      *
-     * @param int $y        An absolute x coordinate
+     * @param   int $y  An absolute x coordinate
      *
-     * @return int $y       A relative x coordinate
+     * @return  int     A relative x coordinate
      */
     public function yToRelative($y)
     {

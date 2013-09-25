@@ -20,16 +20,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * @copyright 2013 Icinga Development Team <info@icinga.org>
- * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author    Icinga Development Team <info@icinga.org>
+ * @copyright  2013 Icinga Development Team <info@icinga.org>
+ * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
+ * @author     Icinga Development Team <info@icinga.org>
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Chart\Primitive;
 
-use DOMElement;
-use Icinga\Chart\Render\RenderContext;
+use \DOMElement;
+use \Icinga\Chart\Render\RenderContext;
 
 /**
  * Drawable for the SVG animate tag
@@ -38,6 +38,7 @@ class Animation implements Drawable
 {
     /**
      * The attribute to animate
+     *
      * @var string
      */
     private $attribute;
@@ -73,13 +74,13 @@ class Animation implements Drawable
     /**
      * Create an animation object
      *
-     * @param string $attribute     The attribute to animate
-     * @param string $from          The from value for the animation
-     * @param string $to            The to value for the animation
-     * @param float  $duration      The duration of the duration
-     * @param float  $begin         The begin of the duration
+     * @param string    $attribute  The attribute to animate
+     * @param string    $from       The from value for the animation
+     * @param string    $to         The to value for the animation
+     * @param float     $duration   The duration of the duration
+     * @param float     $begin      The begin of the duration
      */
-    public function __construct($attribute, $from, $to, $duration = 0.5, $begin = 0)
+    public function __construct($attribute, $from, $to, $duration = 0.5, $begin = 0.0)
     {
         $this->attribute = $attribute;
         $this->from = $from;
@@ -91,8 +92,8 @@ class Animation implements Drawable
     /**
      * Create the SVG representation from this Drawable
      *
-     * @param RenderContext $ctx    The context to use for rendering
-     * @return DOMElement           The SVG Element
+     * @param   RenderContext $ctx The context to use for rendering
+     * @return  DOMElement         The SVG Element
      */
     public function toSvg(RenderContext $ctx)
     {

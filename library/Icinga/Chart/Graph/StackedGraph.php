@@ -20,16 +20,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * @copyright 2013 Icinga Development Team <info@icinga.org>
- * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author    Icinga Development Team <info@icinga.org>
+ * @copyright  2013 Icinga Development Team <info@icinga.org>
+ * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
+ * @author     Icinga Development Team <info@icinga.org>
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Chart\Graph;
 
-use Icinga\Chart\Primitive\Drawable;
-use Icinga\Chart\Render\RenderContext;
+use \DOMElement;
+use \Icinga\Chart\Primitive\Drawable;
+use \Icinga\Chart\Render\RenderContext;
 
 /**
  * Graph implementation that stacks several graphs and displays them in a cumulative way

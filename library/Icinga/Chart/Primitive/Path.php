@@ -20,34 +20,54 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * @copyright 2013 Icinga Development Team <info@icinga.org>
- * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author    Icinga Development Team <info@icinga.org>
+ * @copyright  2013 Icinga Development Team <info@icinga.org>
+ * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
+ * @author     Icinga Development Team <info@icinga.org>
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Chart\Primitive;
 
-use Icinga\Chart\Render\RenderContext;
+
+use \DOMElement;
+use \Icinga\Chart\Render\RenderContext;
 
 /**
  * Drawable for creating a svg path element
  */
 class Path extends Styleable implements Drawable
 {
+    /**
+     * Syntax template for moving
+     *
+     * @see http://www.w3.org/TR/SVG/paths.html#PathDataMovetoCommands
+     */
+    const TPL_MOVE = 'M %s %s ';
 
-    const TPL_MOVE = "M %s %s ";
-    const TPL_BEZIER = "S %s %s ";
-    const TPL_STRAIGHT = "L %s %s ";
+    /**
+     * Syntax template for bezier curve
+     *
+     * @see http://www.w3.org/TR/SVG/paths.html#PathDataCubicBezierCommands
+     */
+    const TPL_BEZIER = 'S %s %s ';
+
+    /**
+     * Syntax template for straight lines
+     *
+     * @see http://www.w3.org/TR/SVG/paths.html#PathDataLinetoCommands
+     */
+    const TPL_STRAIGHT = 'L %s %s ';
 
     /**
      * The default stroke width
+     *
      * @var int
      */
     public $strokeWidth = 1;
 
     /**
      * True to treat coordinates as absolute values
+     *
      * @var bool
      */
     protected $isAbsolute = false;
@@ -69,7 +89,7 @@ class Path extends Styleable implements Drawable
     /**
      * Create the path using the given points
      *
-     * @param array $points     Either a single [x, y] point or an array of x, y points
+     * @param array $points Either a single [x, y] point or an array of x, y points
      */
     public function __construct(array $points)
     {
@@ -79,9 +99,9 @@ class Path extends Styleable implements Drawable
     /**
      * Append a single point or an array of points to this path
      *
-     * @param array $points     Either a single [x, y] point or an array of x, y points
+     * @param   array $points Either a single [x, y] point or an array of x, y points
      *
-     * @return self             Fluid interface
+     * @return  self          Fluid interface
      */
     public function append(array $points)
     {
@@ -98,9 +118,9 @@ class Path extends Styleable implements Drawable
     /**
      * Prepend a single point or an array of points to this path
      *
-     * @param array $points     Either a single [x, y] point or an array of x, y points
+     * @param   array $points Either a single [x, y] point or an array of x, y points
      *
-     * @return self             Fluid interface
+     * @return  self          Fluid interface
      */
     public function prepend(array $points)
     {
@@ -117,9 +137,9 @@ class Path extends Styleable implements Drawable
     /**
      * Set this path to be discrete
      *
-     * @param boolean $bool     True to draw discrete or false to draw straight lines between points
+     * @param   boolean $bool True to draw discrete or false to draw straight lines between points
      *
-     * @return self             Fluid interface
+     * @return  self          Fluid interface
      */
     public function setDiscrete($bool)
     {
@@ -130,7 +150,7 @@ class Path extends Styleable implements Drawable
     /**
      * Mark this path as containing absolute coordinates
      *
-     * @return self             Fluid interface
+     * @return self Fluid interface
      */
     public function toAbsolute()
     {
@@ -141,8 +161,8 @@ class Path extends Styleable implements Drawable
     /**
      * Create the SVG representation from this Drawable
      *
-     * @param RenderContext $ctx    The context to use for rendering
-     * @return DOMElement           The SVG Element
+     * @param   RenderContext $ctx The context to use for rendering
+     * @return  DOMElement         The SVG Element
      */
     public function toSvg(RenderContext $ctx)
     {

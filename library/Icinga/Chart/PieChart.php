@@ -1,18 +1,41 @@
 <?php
 // {{{ICINGA_LICENSE_HEADER}}}
+/**
+ * This file is part of Icinga 2 Web.
+ *
+ * Icinga 2 Web - Head for multiple monitoring backends.
+ * Copyright (C) 2013 Icinga Development Team
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ * @copyright  2013 Icinga Development Team <info@icinga.org>
+ * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
+ * @author     Icinga Development Team <info@icinga.org>
+ */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Chart;
 
-use DOMElement;
-
-use Icinga\Chart\Chart;
-use Icinga\Chart\Primitive\Canvas;
-use Icinga\Chart\Primitive\PieSlice;
-use Icinga\Chart\Primitive\RawElement;
-use Icinga\Chart\Primitive\Rect;
-use Icinga\Chart\Render\RenderContext;
-use Icinga\Chart\Render\LayoutBox;
+use \DOMElement;
+use \Icinga\Chart\Chart;
+use \Icinga\Chart\Primitive\Canvas;
+use \Icinga\Chart\Primitive\PieSlice;
+use \Icinga\Chart\Primitive\RawElement;
+use \Icinga\Chart\Primitive\Rect;
+use \Icinga\Chart\Render\RenderContext;
+use \Icinga\Chart\Render\LayoutBox;
 
 /**
  * Graphing component for rendering Pie Charts.
@@ -55,7 +78,7 @@ class PieChart extends Chart
     /**
      * Test if the given pies have the correct format
      *
-     * @return bool     True when the given pies are correct, otherwise false
+     * @return bool True when the given pies are correct, otherwise false
      */
     public function isValidDataFormat()
     {
@@ -81,7 +104,7 @@ class PieChart extends Chart
     /**
      * Normalize the given dataset to represent percentage information instead of absolute valuess
      *
-     * @param array $pie    The pie definition given in the drawPie call
+     * @param array $pie The pie definition given in the drawPie call
      */
     private function normalizeDataSet(&$pie)
     {
@@ -95,14 +118,13 @@ class PieChart extends Chart
     }
 
     /**
-     * Draw an arbitary number of pies in this chart
+     * Draw an arbitrary number of pies in this chart
      *
-     * @param $dataSet      The pie definition, see graphs.md for further details concerning the format
-     * @param ...
+     * @param   array $dataSet,...  The pie definition, see graphs.md for further details concerning the format
      *
-     * @return self         Fluent interface
+     * @return  self                Fluent interface
      */
-    public function drawPie($dataSet)
+    public function drawPie(array $dataSet)
     {
         $dataSets = func_get_args();
         $this->pies += $dataSets;

@@ -6,7 +6,7 @@ Icinga Web comes with an SVG based graphing library that supports the basic grap
 data. These include:
 
 * **Pie Charts**, which display a set of data in a typical pie diagram.
-* **Stacked Pie Charts**, which render one or multiple pies nested in anothe pie chart
+* **Stacked Pie Charts**, which render one or multiple pies nested in another pie chart
 * **Line Charts**, which display a set of datapoints as a line graph
 * **Stacked Line Charts**, which display multiple line charts on top of each other, providing a cumulative view over
     a set of datapoints
@@ -18,7 +18,7 @@ data. These include:
 ### Base Api Synopsis
 
 The `Icinga/Chart/GridChart` class provides the calls required for setting up Grid Charts. A GridChart draws three
-seperate parts: Axis, Legend and the Gridarea.
+separate parts: Axis, Legend and the Gridarea.
 
 To create a new Grid, simply create a `GridChart` object (the constructor takes no parameters):
 
@@ -146,7 +146,7 @@ are:
                     'Dataset %nr%' will be displayed, with %nr% meaning a number starting at 1 and incrementing for every
                     line without a label
 * **stack**         If provided, this graph will be shown on top of each other graph in the same stack and causes all
-                    graphs in the same stack to be rendered culmulative
+                    graphs in the same stack to be rendered cumulative
 * **discrete**      Set to display the line in a discrete manner, i.e. using hard steps between values instead of drawing
                     a interpolated line between points
 * **color**         The color to use for the line or fill, either in Hex form or as a string supported in the SVG style tag
@@ -203,7 +203,7 @@ while '...' means 'as many definitions as you want'. Possible configuration opti
                     'Dataset %nr%' will be displayed, with %nr% meaning a number starting at 1 and incrementing for every
                     line without a label
 * **stack**         If provided, this graph will be shown on top of each other graph in the same stack and causes all
-                    graphs in the same stack to be rendered culmulative
+                    graphs in the same stack to be rendered cumulative
 * **color**         The color to use for filling the bar, either in Hex form or as a string supported in the SVG style tag
 * **palette**       (Ignored if 'color' is set) The color palette to use for determining the fill color
 * **width**         Set the thickness of the line stroke in px (default: 1)

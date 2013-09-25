@@ -20,20 +20,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * @copyright 2013 Icinga Development Team <info@icinga.org>
- * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author    Icinga Development Team <info@icinga.org>
+ * @copyright  2013 Icinga Development Team <info@icinga.org>
+ * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
+ * @author     Icinga Development Team <info@icinga.org>
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 
 namespace Icinga\Chart\Graph;
 
-use Icinga\Chart\Primitive\Drawable;
-use Icinga\Chart\Primitive\Path;
-use Icinga\Chart\Primitive\Circle;
-use Icinga\Chart\Primitive\Styleable;
-use Icinga\Chart\Render\RenderContext;
+use \DOMElement;
+use \Icinga\Chart\Primitive\Drawable;
+use \Icinga\Chart\Primitive\Path;
+use \Icinga\Chart\Primitive\Circle;
+use \Icinga\Chart\Primitive\Styleable;
+use \Icinga\Chart\Render\RenderContext;
 
 /**
  * LineGraph implementation for drawing a set of datapoints as
@@ -43,18 +44,21 @@ class LineGraph extends Styleable implements Drawable
 {
     /**
      * The dataset to use
+     *
      * @var array
      */
     private $dataset;
 
     /**
      * True to show dots for each datapoint
+     *
      * @var bool
      */
     private $showDataPoints = false;
 
     /**
      * When true, the path will be discrete, i.e. showing hard steps instead of a direct line
+     *
      * @var bool
      */
     private $isDiscrete = false;
@@ -68,7 +72,7 @@ class LineGraph extends Styleable implements Drawable
     /**
      * Create a new LineGraph displaying the given dataset
      *
-     * @param array $dataset    An array of [x, y] arrays to display
+     * @param array $dataset An array of [x, y] arrays to display
      */
     public function __construct(array $dataset)
     {
@@ -79,7 +83,7 @@ class LineGraph extends Styleable implements Drawable
     /**
      * Set datapoints to be emphased via dots
      *
-     * @param $bool     True to enable datapoints, otherwise false
+     * @param bool $bool True to enable datapoints, otherwise false
      */
     public function setShowDataPoints($bool)
     {
@@ -89,9 +93,9 @@ class LineGraph extends Styleable implements Drawable
     /**
      * Sort the daset by the xaxis
      *
-     * @param array $v1
-     * @param array $v2
-     * @return int
+     * @param   array $v1
+     * @param   array $v2
+     * @return  int
      */
     private function sortByX(array $v1, array $v2)
     {
@@ -104,7 +108,7 @@ class LineGraph extends Styleable implements Drawable
     /**
      * Configure this style
      *
-     * @param array $cfg    The configuration as given in the drawLine call
+     * @param array $cfg The configuration as given in the drawLine call
      */
     public function setStyleFromConfig(array $cfg)
     {

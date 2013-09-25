@@ -20,9 +20,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * @copyright 2013 Icinga Development Team <info@icinga.org>
- * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author    Icinga Development Team <info@icinga.org>
+ * @copyright  2013 Icinga Development Team <info@icinga.org>
+ * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
+ * @author     Icinga Development Team <info@icinga.org>
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
@@ -85,7 +85,7 @@ class LinearUnit implements AxisUnit
     /**
      * Create and initialize this AxisUnit
      *
-     * @param int $nrOfTicks    The number of ticks to use
+     * @param int $nrOfTicks The number of ticks to use
      */
     public function __construct($nrOfTicks = 10)
     {
@@ -97,10 +97,10 @@ class LinearUnit implements AxisUnit
     /**
      * Add a dataset and calculate the minimum and maximum value for this AxisUnit
      *
-     * @param array $dataset        The dataset to add
-     * @param int $idx              The idx (0 for x, 1 for y)
+     * @param   array $dataset  The dataset to add
+     * @param   int $idx        The idx (0 for x, 1 for y)
      *
-     * @return self                 Fluent interface
+     * @return  self            Fluent interface
      */
     public function addValues(array $dataset, $idx = 0)
     {
@@ -128,8 +128,8 @@ class LinearUnit implements AxisUnit
     /**
      * Transform the absolute value to an axis relative value
      *
-     * @param int $value        The absolute coordinate from the dataset
-     * @return float|int        The axis relative coordinate (between 0 and 100)
+     * @param   int $value  The absolute coordinate from the dataset
+     * @return  float|int   The axis relative coordinate (between 0 and 100)
      */
     public function transform($value)
     {
@@ -164,7 +164,7 @@ class LinearUnit implements AxisUnit
     /**
      * Return the label for the current tick
      *
-     * @return string   The label for the current tick
+     * @return string The label for the current tick
      */
     public function key()
     {
@@ -193,7 +193,7 @@ class LinearUnit implements AxisUnit
     /**
      * Set the axis maximum value to a fixed value
      *
-     * @param int $max  The new maximum value
+     * @param int $max The new maximum value
      */
     public function setMax($max)
     {
@@ -206,7 +206,7 @@ class LinearUnit implements AxisUnit
     /**
      * Set the axis minimum value to a fixed value
      *
-     * @param int $min  The new minimum value
+     * @param int $min The new minimum value
      */
     public function setMin($min)
     {
@@ -219,7 +219,7 @@ class LinearUnit implements AxisUnit
     /**
      * Return the current minimum value of the axis
      *
-     * @return int  The minimum set for this axis
+     * @return int The minimum set for this axis
      */
     public function getMin()
     {
@@ -229,7 +229,7 @@ class LinearUnit implements AxisUnit
     /**
      * Return the current maximum value of the axis
      *
-     * @return int  The maximum set for this axis
+     * @return int The maximum set for this axis
      */
     public function getMax()
     {

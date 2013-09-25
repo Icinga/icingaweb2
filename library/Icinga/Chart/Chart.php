@@ -20,19 +20,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * @copyright 2013 Icinga Development Team <info@icinga.org>
- * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author    Icinga Development Team <info@icinga.org>
+ * @copyright  2013 Icinga Development Team <info@icinga.org>
+ * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
+ * @author     Icinga Development Team <info@icinga.org>
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Chart;
 
-use Exception;
-use Icinga\Chart\Legend;
-use Icinga\Chart\Palette;
-use Icinga\Chart\Primitive\Drawable;
-use Icinga\Chart\SVGRenderer;
+use \Exception;
+use \Icinga\Chart\Legend;
+use \Icinga\Chart\Palette;
+use \Icinga\Chart\Primitive\Drawable;
+use \Icinga\Chart\SVGRenderer;
 
 /**
  * Base class for charts, extended by all other Chart classes.
@@ -76,7 +76,6 @@ abstract class Chart implements Drawable
 
     /**
      * Extension point for subclasses, called on __construct
-     *
      */
     protected function init()
     {
@@ -96,7 +95,7 @@ abstract class Chart implements Drawable
      *
      * Needs to be overwritten by extending classes. The default implementation returns false.
      *
-     * @return  bool                    True when the dataset is valid, otherwise false
+     * @return bool True when the dataset is valid, otherwise false
      */
     abstract public function isValidDataFormat();
 
@@ -113,10 +112,10 @@ abstract class Chart implements Drawable
      *
      * Render this graph and return the created SVG
      *
-     * @return string       The SVG created by the SvgRenderer
+     * @return  string      The SVG created by the SvgRenderer
      *
-     * @throws Exception    Thrown wen the dataset is not valid for this graph
-     * @see SVGRenderer::render
+     * @throws  Exception   Thrown wen the dataset is not valid for this graph
+     * @see     SVGRenderer::render
      */
     public function render()
     {

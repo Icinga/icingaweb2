@@ -20,15 +20,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * @copyright 2013 Icinga Development Team <info@icinga.org>
- * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author    Icinga Development Team <info@icinga.org>
+ * @copyright  2013 Icinga Development Team <info@icinga.org>
+ * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
+ * @author     Icinga Development Team <info@icinga.org>
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Chart\Primitive;
 
-use Icinga\Chart\Render\RenderContext;
+use \DOMElement;
+use \Icinga\Chart\Render\RenderContext;
 
 /**
  * Drawable for the svg line element
@@ -45,24 +46,28 @@ class Line extends Styleable implements Drawable
 
     /**
      * The line's start x coordinate
+     *
      * @var int
      */
     private $xStart = 0;
 
     /**
      * The line's end x coordinate
+     *
      * @var int
      */
     private $xEnd = 0;
 
     /**
      * The line's start y coordinate
+     *
      * @var int
      */
     private $yStart = 0;
 
     /**
      * The line's end y coordinate
+     *
      * @var int
      */
     private $yEnd = 0;
@@ -86,8 +91,8 @@ class Line extends Styleable implements Drawable
     /**
      * Create the SVG representation from this Drawable
      *
-     * @param RenderContext $ctx    The context to use for rendering
-     * @return DOMElement           The SVG Element
+     * @param   RenderContext $ctx The context to use for rendering
+     * @return  DOMElement         The SVG Element
      */
     public function toSvg(RenderContext $ctx)
     {

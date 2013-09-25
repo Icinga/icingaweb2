@@ -20,16 +20,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * @copyright 2013 Icinga Development Team <info@icinga.org>
- * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author    Icinga Development Team <info@icinga.org>
+ * @copyright  2013 Icinga Development Team <info@icinga.org>
+ * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
+ * @author     Icinga Development Team <info@icinga.org>
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 
 namespace Icinga\Chart\Primitive;
 
-use DOMElement;
+use \DOMElement;
 
 /**
  * Base class for stylable drawables
@@ -39,30 +39,35 @@ class Styleable
 
     /**
      * The stroke width to use
+     *
      * @var int
      */
     public $strokeWidth = 0;
 
     /**
      * The stroke color to use
+     *
      * @var string
      */
     public $strokeColor = '#000';
 
     /**
      * The fill color to use
+     *
      * @var string
      */
     public $fill = 'none';
 
     /**
      * Additional styles to be appended to the style attribute
+     *
      * @var string
      */
     public $additionalStyle = '';
 
     /**
      * The id of this element
+     *
      * @var string
      */
     public $id = null;
@@ -77,9 +82,9 @@ class Styleable
     /**
      * Set the stroke width for this drawable
      *
-     * @param  string  $stroke  The stroke with with unit
+     * @param   string $width   The stroke with with unit
      *
-     * @return self             Fluid interface
+     * @return  self            Fluid interface
      */
     public function setStrokeWidth($width)
     {
@@ -90,9 +95,9 @@ class Styleable
     /**
      * Set the color for the stroke or none for no stroke
      *
-     * @param string $color     The color to set for the stroke
+     * @param   string $color   The color to set for the stroke
      *
-     * @return self             Fluid interface
+     * @return  self            Fluid interface
      */
     public function setStrokeColor($color)
     {
@@ -103,9 +108,9 @@ class Styleable
     /**
      * Set additional styles for this drawable
      *
-     * @param string $styles    The styles to set additionally
+     * @param   string $styles  The styles to set additionally
      *
-     * @return self             Fluid interface
+     * @return  self            Fluid interface
      */
     public function setAdditionalStyle($styles)
     {
@@ -116,9 +121,9 @@ class Styleable
     /**
      * Set the fill for this styleable
      *
-     * @param string $color     The color to use for filling or null to use no fill
+     * @param   string $color   The color to use for filling or null to use no fill
      *
-     * @return self             Fluid interface
+     * @return  self            Fluid interface
      */
     public function setFill($color = null)
     {
@@ -129,9 +134,9 @@ class Styleable
     /**
      * Set the id for this element
      *
-     * @param string $id        The id to set for this element
+     * @param   string $id  The id to set for this element
      *
-     * @return self             Fluid interface
+     * @return  self        Fluid interface
      */
     public function setId($id)
     {
@@ -143,7 +148,7 @@ class Styleable
     /**
      * Return the content of the style attribute as a string
      *
-     * @return string           T
+     * @return string A string containing styles
      */
     public function getStyle()
     {
@@ -153,13 +158,18 @@ class Styleable
     }
 
     /**
-     *  Add an additional attribte to this element
+     *  Add an additional attribute to this element
      */
     public function setAttribute($key, $value)
     {
         $this->attributes[$key] = $value;
     }
 
+    /**
+     * Apply attribute to a DOMElement
+     *
+     * @param DOMElement $el Element to apply attributes
+     */
     protected function applyAttributes(DOMElement $el)
     {
         foreach ($this->attributes as $name => $value) {

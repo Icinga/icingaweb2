@@ -20,27 +20,26 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * @copyright 2013 Icinga Development Team <info@icinga.org>
- * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author    Icinga Development Team <info@icinga.org>
+ * @copyright  2013 Icinga Development Team <info@icinga.org>
+ * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
+ * @author     Icinga Development Team <info@icinga.org>
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Chart;
 
-use DOMElement;
-
-use Icinga\Chart\Chart;
-use Icinga\Chart\Axis;
-use Icinga\Chart\Graph\BarGraph;
-use Icinga\Chart\Graph\LineGraph;
-use Icinga\Chart\Graph\StackedGraph;
-use Icinga\Chart\Primitive\Canvas;
-use Icinga\Chart\Primitive\Rect;
-use Icinga\Chart\Primitive\Path;
-use Icinga\Chart\Render\LayoutBox;
-use Icinga\Chart\Render\RenderContext;
-use Icinga\Chart\Unit\AxisUnit;
+use \DOMElement;
+use \Icinga\Chart\Chart;
+use \Icinga\Chart\Axis;
+use \Icinga\Chart\Graph\BarGraph;
+use \Icinga\Chart\Graph\LineGraph;
+use \Icinga\Chart\Graph\StackedGraph;
+use \Icinga\Chart\Primitive\Canvas;
+use \Icinga\Chart\Primitive\Rect;
+use \Icinga\Chart\Primitive\Path;
+use \Icinga\Chart\Render\LayoutBox;
+use \Icinga\Chart\Render\RenderContext;
+use \Icinga\Chart\Unit\AxisUnit;
 
 /**
  * Base class for grid based charts.
@@ -104,7 +103,7 @@ class GridChart extends Chart
      *
      * Needs to be overwritten by extending classes. The default implementation returns false.
      *
-     * @return  bool                    True when the dataset is valid, otherwise false
+     * @return bool True when the dataset is valid, otherwise false
      */
     public function isValidDataFormat()
     {
@@ -120,6 +119,8 @@ class GridChart extends Chart
 
     /**
      * Calls Axis::addDataset for every graph added to this GridChart
+     *
+     * @see Axis::addDataset
      */
     private function configureAxisFromDatasets()
     {
@@ -132,30 +133,29 @@ class GridChart extends Chart
     }
 
     /**
-     * Add an arbitary number of lines to be drawn
+     * Add an arbitrary number of lines to be drawn
      *
      * Refer to the graphs.md for a detailed list of allowed attributes
      *
-     * @param array $axix           The line definitions to draw
-     * @param array ...
+     * @param   array $axis,... The line definitions to draw
      *
-     * @return self                 Fluid interface
+     * @return  self            Fluid interface
      */
-    public function drawLines($axis /*,...*/)
+    public function drawLines(array $axis)
     {
         $this->draw(self::TYPE_LINE, func_get_args());
         return $this;
     }
 
     /**
-     * Add arbitary number of bars to be drawn
+     * Add arbitrary number of bars to be drawn
      *
      * Refer to the graphs.md for a detailed list of allowed attributes
      *
-     * @param $axis
-     * @return $this
+     * @param   array $axis
+     * @return  self
      */
-    public function drawBars($axis)
+    public function drawBars(array $axis)
     {
         $this->draw(self::TYPE_BAR, func_get_args());
         return $this;
@@ -164,8 +164,8 @@ class GridChart extends Chart
     /**
      * Generic method for adding elements to the drawing stack
      *
-     * @param Srring $type      The type of the element to draw (see TYPE_ constants in this class)
-     * @param array $data       The data given to the draw call
+     * @param string $type The type of the element to draw (see TYPE_ constants in this class)
+     * @param array $data The data given to the draw call
      */
     private function draw($type, $data)
     {
@@ -198,11 +198,11 @@ class GridChart extends Chart
     /**
      * Set the label for the x and y axis
      *
-     * @param string $xAxisLabel        The label to use for the x axis
-     * @param string $yAxisLabel        The label to use for the y axis
-     * @param string $axisName          The name of the axis, for now 'default'
+     * @param   string $xAxisLabel  The label to use for the x axis
+     * @param   string $yAxisLabel  The label to use for the y axis
+     * @param   string $axisName    The name of the axis, for now 'default'
      *
-     * @return self                     Fluid interface
+     * @return  self                Fluid interface
      */
     public function setAxisLabel($xAxisLabel, $yAxisLabel, $axisName = 'default')
     {
@@ -213,10 +213,10 @@ class GridChart extends Chart
     /**
      * Set the AxisUnit to use for calculating the values of the x axis
      *
-     * @param AxisUnit $unit        The unit for the x axis
-     * @param string $axisName      The name of the axis to set the label for, currently only 'default'
+     * @param   AxisUnit    $unit       The unit for the x axis
+     * @param   string      $axisName   The name of the axis to set the label for, currently only 'default'
      *
-     * @return self                 Fluid interface
+     * @return  self                    Fluid interface
      */
     public function setXAxis(AxisUnit $unit, $axisName = 'default')
     {
@@ -227,10 +227,10 @@ class GridChart extends Chart
     /**
      * Set the AxisUnit to use for calculating the values of the y axis
      *
-     * @param AxisUnit $unit        The unit for the y axis
-     * @param string $axisName      The name of the axis to set the label for, currently only 'default'
+     * @param   AxisUnit    $unit       The unit for the y axis
+     * @param   string      $axisName   The name of the axis to set the label for, currently only 'default'
      *
-     * @return self                 Fluid interface
+     * @return  self                    Fluid interface
      */
     public function setYAxis(AxisUnit $unit, $axisName = 'default')
     {
@@ -260,10 +260,10 @@ class GridChart extends Chart
     /**
      * Overwrite the axis to use
      *
-     * @param Axis $axis        The new axis to use
-     * @param string $name      The name of the axis, currently only 'default'
+     * @param   Axis    $axis The new axis to use
+     * @param   string  $name The name of the axis, currently only 'default'
      *
-     * @return self             Fluid interface
+     * @return  self          Fluid interface
      */
     public function setAxis(Axis $axis, $name = 'default')
     {
@@ -274,10 +274,10 @@ class GridChart extends Chart
     /**
      * Add an axis to this graph (not really supported right now)
      *
-     * @param Axis $axis        The axis object to add
-     * @param string $name      The name of the axis
+     * @param   Axis    $axis The axis object to add
+     * @param   string  $name The name of the axis
      *
-     * @return self             Fluid interface
+     * @return  self          Fluid interface
      */
     public function addAxis(Axis $axis, $name)
     {
@@ -290,11 +290,11 @@ class GridChart extends Chart
      *
      * Setting null to an axis means this will use a value determined by the dataset
      *
-     * @param int|null $xMin        The minimum value for the x axis or null to use a dynamic value
-     * @param int|null $yMin        The minimum value for the y axis or null to use a dynamic value
-     * @param string $axisName      The name of the axis to set the minimum, currently only 'default'
+     * @param   int     $xMin       The minimum value for the x axis or null to use a dynamic value
+     * @param   int     $yMin       The minimum value for the y axis or null to use a dynamic value
+     * @param   string  $axisName   The name of the axis to set the minimum, currently only 'default'
      *
-     * @return self                 Fluid interface
+     * @return  self                Fluid interface
      */
     public function setAxisMin($xMin = null, $yMin = null, $axisName = 'default')
     {
@@ -307,11 +307,11 @@ class GridChart extends Chart
      *
      * Setting null to an axis means this will use a value determined by the dataset
      *
-     * @param int|null $xMax        The maximum value for the x axis or null to use a dynamic value
-     * @param int|null $yMax        The maximum value for the y axis or null to use a dynamic value
-     * @param string $axisName      The name of the axis to set the maximum, currently only 'default'
+     * @param   int     $xMax       The maximum value for the x axis or null to use a dynamic value
+     * @param   int     $yMax       The maximum value for the y axis or null to use a dynamic value
+     * @param   string  $axisName   The name of the axis to set the maximum, currently only 'default'
      *
-     * @return self                 Fluid interface
+     * @return  self                Fluid interface
      */
     public function setAxisMax($xMax = null, $yMax = null, $axisName = 'default')
     {
@@ -322,9 +322,9 @@ class GridChart extends Chart
     /**
      * Render this GridChart to SVG
      *
-     * @param RenderContext $ctx    The context to use for rendering
+     * @param   RenderContext $ctx The context to use for rendering
      *
-     * @return DOMElement
+     * @return  DOMElement
      */
     public function toSvg(RenderContext $ctx)
     {
@@ -356,7 +356,7 @@ class GridChart extends Chart
      *
      * The clipbox has the id '#clip' and can be used in the clip-mask element
      *
-     * @param Canvas $innerBox      The inner canvas of the graph to add the clip box to
+     * @param Canvas $innerBox The inner canvas of the graph to add the clip box to
      */
     private function createContentClipBox(Canvas $innerBox)
     {
@@ -370,12 +370,13 @@ class GridChart extends Chart
     /**
      * Render the content of the graph, i.e. the draw stack
      *
-     * @param Canvas $innerBox      The inner canvas of the graph to add the content to
+     * @param Canvas $innerBox The inner canvas of the graph to add the content to
      */
     private function renderGraphContent(Canvas $innerBox)
     {
         foreach ($this->graphs as $axisName => $graphs) {
             $axis = $this->axis[$axisName];
+            $graphObj = null;
             foreach ($graphs as $graph) {
                 // determine the type and create a graph object for it
                 switch ($graph['graphType']) {
@@ -399,12 +400,12 @@ class GridChart extends Chart
     /**
      * Setup the provided Graph type
      *
-     * @param mixed $graphObject        The graph class, needs the setStyleFromConfig method
-     * @param array $graphConfig        The configration array of the graph
+     * @param   mixed $graphObject  The graph class, needs the setStyleFromConfig method
+     * @param   array $graphConfig  The configration array of the graph
      *
-     * @return null|mixed               Either the graph to be added or null if the graph is not directly added
-     *                                  to the document (e.g. stacked graphs are added by
-     *                                  the StackedGraph Composite object)
+     * @return  mixed               Either the graph to be added or null if the graph is not directly added
+     *                              to the document (e.g. stacked graphs are added by
+     *                              the StackedGraph Composite object)
      */
     private function setupGraph($graphObject, array $graphConfig)
     {
@@ -415,7 +416,7 @@ class GridChart extends Chart
             if (!$graphConfig['stack']->stackEmpty()) {
                 return $graphConfig['stack'];
             }
-            // return no object when the graph shouldn be rendered
+            // return no object when the graph should not be rendered
             return null;
         }
         return $graphObject;

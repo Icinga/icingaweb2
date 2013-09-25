@@ -20,9 +20,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * @copyright 2013 Icinga Development Team <info@icinga.org>
- * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author    Icinga Development Team <info@icinga.org>
+ * @copyright  2013 Icinga Development Team <info@icinga.org>
+ * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
+ * @author     Icinga Development Team <info@icinga.org>
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
@@ -109,7 +109,7 @@ class LayoutBox
     /**
      * Set a padding to all four sides uniformly
      *
-     * @param int $padding  The padding to set for all four sides
+     * @param int $padding The padding to set for all four sides
      */
     public function setUniformPadding($padding)
     {
@@ -132,9 +132,9 @@ class LayoutBox
     /**
      * Return a string containing the SVG transform attribute values for the padding
      *
-     * @param RenderContext $ctx    The context to determine the translation coordinates
+     * @param   RenderContext $ctx  The context to determine the translation coordinates
      *
-     * @return string               The transformation string
+     * @return  string              The transformation string
      */
     public function getInnerTransform(RenderContext $ctx)
     {
@@ -152,7 +152,7 @@ class LayoutBox
     /**
      * String representation for this Layout, for debug purposes
      *
-     * @return string   A string containing the bounds of this LayoutBox
+     * @return string A string containing the bounds of this LayoutBox
      */
     public function __toString()
     {
@@ -168,7 +168,7 @@ class LayoutBox
     /**
      * Return a four element array with the padding
      *
-     * @return array    The padding of this LayoutBox
+     * @return array The padding of this LayoutBox
      */
     public function getPadding()
     {
@@ -178,7 +178,7 @@ class LayoutBox
     /**
      * Return the height of this LayoutBox
      *
-     * @return int  The height of this box
+     * @return int The height of this box
      */
     public function getHeight()
     {
@@ -188,7 +188,7 @@ class LayoutBox
     /**
      * Return the width of this LayoutBox
      *
-     * @return int  The width of this box
+     * @return int The width of this box
      */
     public function getWidth()
     {
@@ -198,7 +198,7 @@ class LayoutBox
     /**
      * Return the x position of this LayoutBox
      *
-     * @return int  The x position of this box
+     * @return int The x position of this box
      */
     public function getX()
     {

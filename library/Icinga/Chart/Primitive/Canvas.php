@@ -20,17 +20,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * @copyright 2013 Icinga Development Team <info@icinga.org>
- * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author    Icinga Development Team <info@icinga.org>
+ * @copyright  2013 Icinga Development Team <info@icinga.org>
+ * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
+ * @author     Icinga Development Team <info@icinga.org>
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 
 namespace Icinga\Chart\Primitive;
 
-use Icinga\Chart\Render\LayoutBox;
-use Icinga\Chart\Render\RenderContext;
+use \DOMElement;
+use \Icinga\Chart\Render\LayoutBox;
+use \Icinga\Chart\Render\RenderContext;
 
 /**
  * Canvas SVG component that encapsulates grouping and padding and allows rendering
@@ -41,24 +42,28 @@ class Canvas implements Drawable
 {
     /**
      * The name of the canvas, will be used as the id
+     *
      * @var string
      */
     private $name;
 
     /**
      * An array of child elements of this Canvas
+     *
      * @var array
      */
     private $children = array();
 
     /**
      * When true, this canvas is encapsulated in a clipPath tag and not drawn
+     *
      * @var bool
      */
     private $isClipPath = false;
 
     /**
      * The LayoutBox of this Canvas
+     *
      * @var LayoutBox
      */
     private $rect;
@@ -66,8 +71,8 @@ class Canvas implements Drawable
     /**
      * Create this canvas
      *
-     * @param String $name      The name of this canvas
-     * @param LayoutBox $rect   The layout and size of this canvas
+     * @param String    $name The name of this canvas
+     * @param LayoutBox $rect The layout and size of this canvas
      */
     public function __construct($name, LayoutBox $rect)
     {
@@ -106,8 +111,8 @@ class Canvas implements Drawable
     /**
      * Create the SVG representation from this Drawable
      *
-     * @param RenderContext $ctx    The context to use for rendering
-     * @return DOMElement           The SVG Element
+     * @param   RenderContext $ctx The context to use for rendering
+     * @return  DOMElement         The SVG Element
      */
     public function toSvg(RenderContext $ctx)
     {

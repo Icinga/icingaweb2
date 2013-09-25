@@ -20,15 +20,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * @copyright 2013 Icinga Development Team <info@icinga.org>
- * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author    Icinga Development Team <info@icinga.org>
+ * @copyright  2013 Icinga Development Team <info@icinga.org>
+ * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
+ * @author     Icinga Development Team <info@icinga.org>
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Chart\Primitive;
 
-use Icinga\Chart\Render\RenderContext;
+use \DomElement;
+use \Icinga\Chart\Render\RenderContext;
 
 /**
  * Drawable representing the SVG rect element
@@ -37,30 +38,35 @@ class Rect extends Animatable implements Drawable
 {
     /**
      * The x position
+     *
      * @var int
      */
     private $x;
 
     /**
      * The y position
+     *
      * @var int
      */
     private $y;
 
     /**
      * The width of this rect
+     *
      * @var int
      */
     private $width;
 
     /**
      * The height of this rect
+     *
      * @var int
      */
     private $height;
 
     /**
      * Whether to keep the ratio
+     *
      * @var bool
      */
     private $keepRatio = false;
@@ -92,9 +98,9 @@ class Rect extends Animatable implements Drawable
     /**
      * Create the SVG representation from this Drawable
      *
-     * @param RenderContext $ctx    The context to use for rendering
+     * @param   RenderContext $ctx  The context to use for rendering
      *
-     * @return DOMElement           The SVG Element
+     * @return  DOMElement          The SVG Element
      */
     public function toSvg(RenderContext $ctx)
     {

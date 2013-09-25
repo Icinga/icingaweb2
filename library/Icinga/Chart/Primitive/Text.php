@@ -20,18 +20,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * @copyright 2013 Icinga Development Team <info@icinga.org>
- * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author    Icinga Development Team <info@icinga.org>
+ * @copyright  2013 Icinga Development Team <info@icinga.org>
+ * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
+ * @author     Icinga Development Team <info@icinga.org>
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 
 namespace Icinga\Chart\Primitive;
 
-
-use Icinga\Chart\Render\RenderContext;
-use DOMText;
+use \DOMElement;
+use \DOMText;
+use \Icinga\Chart\Render\RenderContext;
 
 /**
  *  Wrapper for the SVG text element
@@ -65,36 +65,42 @@ class Text extends Styleable implements Drawable
 
     /**
      * The x position of the Text
+     *
      * @var int
      */
     private $x;
 
     /**
      * The y position of the Text
+     *
      * @var int
      */
     private $y;
 
     /**
      * The text content
+     *
      * @var string
      */
     private $text;
 
     /**
      * The size of the font
+     *
      * @var string
      */
     private $fontSize = '1.5em';
 
     /**
      * The default fill color
+     *
      * @var string
      */
     public $fill = '#000';
 
     /**
      * The alignment of the text
+     *
      * @var string
      */
     private $alignment = self::ALIGN_START;
@@ -118,9 +124,9 @@ class Text extends Styleable implements Drawable
     /**
      * Set the font size of the svg text element
      *
-     * @param string $size  The font size including a unit
+     * @param   string $size    The font size including a unit
      *
-     * @return self         Fluid interface
+     * @return  self            Fluid interface
      */
     public function setFontSize($size)
     {
@@ -131,9 +137,9 @@ class Text extends Styleable implements Drawable
     /**
      * Set the the text alignment with one of the ALIGN_* constants
      *
-     * @param String $align
+     * @param   String $align   Value how to align
      *
-     * @return self
+     * @return  self            Fluid interface
      */
     public function setAlignment($align)
     {
@@ -144,9 +150,9 @@ class Text extends Styleable implements Drawable
     /**
      * Create the SVG representation from this Drawable
      *
-     * @param RenderContext $ctx    The context to use for rendering
+     * @param   RenderContext $ctx  The context to use for rendering
      *
-     * @return DOMElement           The SVG Element
+     * @return  DOMElement          The SVG Element
      */
     public function toSvg(RenderContext $ctx)
     {

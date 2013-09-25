@@ -20,29 +20,27 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * @copyright 2013 Icinga Development Team <info@icinga.org>
- * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author    Icinga Development Team <info@icinga.org>
+ * @copyright  2013 Icinga Development Team <info@icinga.org>
+ * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
+ * @author     Icinga Development Team <info@icinga.org>
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Chart;
 
-use DOMNode;
-use DOMElement;
-use DOMDocument;
-use DOMImplementation;
-use Exception;
-use Icinga\Util\Dimension;
-use Icinga\Chart\Render\LayoutBox;
-use Icinga\Chart\Render\RenderContext;
-use Icinga\Chart\Primitive\Canvas;
+use \DOMNode;
+use \DOMElement;
+use \DOMDocument;
+use \DOMImplementation;
+use \Icinga\Util\Dimension;
+use \Icinga\Chart\Render\LayoutBox;
+use \Icinga\Chart\Render\RenderContext;
+use \Icinga\Chart\Primitive\Canvas;
 
 /**
  * SVG Renderer component.
  *
  * Creates the basic DOM tree of the SVG to use
- *
  */
 class SVGRenderer
 {
@@ -104,7 +102,7 @@ class SVGRenderer
     /**
      * Create the outer SVG box  containing the root svg element and namespace and return it
      *
-     * @return DOMElement   The SVG root node
+     * @return DOMElement The SVG root node
      */
     private function createOuterBox()
     {
@@ -128,8 +126,8 @@ class SVGRenderer
     /**
      * Initialises the XML-document, SVG-element and this figure's root canvas
      *
-     * @param int   $width      The width ratio
-     * @param int   $height     The height ratio
+     * @param int $width    The width ratio
+     * @param int $height   The height ratio
      */
     public function __construct($width, $height)
     {
@@ -141,7 +139,7 @@ class SVGRenderer
     /**
      * Render the SVG-document
      *
-     * @return  string      The resulting XML structure
+     * @return string The resulting XML structure
      */
     public function render()
     {
@@ -155,7 +153,7 @@ class SVGRenderer
     /**
      * Create a render context that will be used for rendering elements
      *
-     * @return RenderContext    The created RenderContext instance
+     * @return RenderContext The created RenderContext instance
      */
     public function createRenderContext()
     {
@@ -165,7 +163,7 @@ class SVGRenderer
     /**
      * Return the root canvas of this rendered
      *
-     * @return Canvas       The canvas that will be the uppermost element in this figure
+     * @return Canvas The canvas that will be the uppermost element in this figure
      */
     public function getCanvas()
     {

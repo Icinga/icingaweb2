@@ -20,16 +20,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * @copyright 2013 Icinga Development Team <info@icinga.org>
- * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author    Icinga Development Team <info@icinga.org>
+ * @copyright  2013 Icinga Development Team <info@icinga.org>
+ * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
+ * @author     Icinga Development Team <info@icinga.org>
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Chart\Primitive;
 
-use DOMElement;
-use Icinga\Chart\Render\RenderContext;
+use \DOMElement;
+use \Icinga\Chart\Render\RenderContext;
 
 /**
  * Component for drawing a pie slice
@@ -38,36 +38,42 @@ class PieSlice extends Animatable implements Drawable
 {
     /**
      * The radius of this pieslice relative to the canvas
+     *
      * @var int
      */
     private $radius = 50;
 
     /**
      * The start radian of the pie slice
+     *
      * @var float
      */
     private $startRadian = 0;
 
     /**
      * The end radian of the pie slice
+     *
      * @var float
      */
     private $endRadian= 0;
 
     /**
      * The x position of the pie slice's center
+     *
      * @var int
      */
     private $x;
 
     /**
      * The y position of the pie slice's center
+     *
      * @var int
      */
     private $y;
 
     /**
      * The caption of the pie slice, empty string means no caption
+     *
      * @var string
      */
     private $caption = "";
@@ -75,19 +81,22 @@ class PieSlice extends Animatable implements Drawable
     /**
      * The offset of the caption, shifting the indicator from the center of the pie slice
      *
-     * This is required for nested pie slices
+     * This is required for nested pie slices.
+     *
      * @var int
      */
     private $captionOffset = 0;
 
     /**
      * The minimum radius the label must respect
+     *
      * @var int
      */
     private $outerCaptionBound = 0;
 
     /**
      * An optional group element to add labels to when rendering
+     *
      * @var DOMElement
      */
     private $labelGroup;
@@ -110,11 +119,11 @@ class PieSlice extends Animatable implements Drawable
     /**
      * Create the path for the pie slice
      *
-     * @param int $x        The x position of the pie slice
-     * @param int $y        The y position of the pie slice
-     * @param int $r        The absolute radius of the pie slice
+     * @param   int $x      The x position of the pie slice
+     * @param   int $y      The y position of the pie slice
+     * @param   int $r      The absolute radius of the pie slice
      *
-     * @return string       A SVG path string
+     * @return  string      A SVG path string
      */
     private function getPieSlicePath($x, $y, $r)
     {
@@ -143,10 +152,10 @@ class PieSlice extends Animatable implements Drawable
     /**
      * Draw the label handler and the text for this pie slice
      *
-     * @param RenderContext $ctx        The rendering context to use for coordinate translation
-     * @param int           $r          The radius of the pie in absolute coordinates
+     * @param   RenderContext $ctx  The rendering context to use for coordinate translation
+     * @param   int           $r    The radius of the pie in absolute coordinates
      *
-     * @return DOMElement               The group DOMElement containing the handle and label
+     * @return  DOMElement          The group DOMElement containing the handle and label
      */
     private function drawDescriptionLabel(RenderContext $ctx, $r)
     {
@@ -195,9 +204,9 @@ class PieSlice extends Animatable implements Drawable
     /**
      * Set the x position of the pie slice
      *
-     * @param int $x        The new x position
+     * @param   int $x The new x position
      *
-     * @return self         Fluid interface
+     * @return  self   Fluid interface
      */
     public function setX($x)
     {
@@ -208,9 +217,9 @@ class PieSlice extends Animatable implements Drawable
     /**
      * Set the y position of the pie slice
      *
-     * @param int $y        The new y position
+     * @param   int $y  The new y position
      *
-     * @return self         Fluid interface
+     * @return  self    Fluid interface
      */
     public function setY($y)
     {
@@ -221,9 +230,9 @@ class PieSlice extends Animatable implements Drawable
     /**
      * Set a root element to be used for drawing labels
      *
-     * @param DOMElement $group         The label group
+     * @param   DOMElement $group   The label group
      *
-     * @return self                     Fluid interface
+     * @return  self                Fluid interface
      */
     public function setLabelGroup(DOMElement $group)
     {
@@ -234,9 +243,9 @@ class PieSlice extends Animatable implements Drawable
     /**
      * Set the caption for this label
      *
-     * @param string $caption   The caption for this element
+     * @param   string $caption The caption for this element
      *
-     * @return self             Fluid interface
+     * @return  self            Fluid interface
      */
     public function setCaption($caption)
     {
@@ -247,9 +256,9 @@ class PieSlice extends Animatable implements Drawable
     /**
      * Set the internal offset of the caption handle
      *
-     * @param  int $offset      The offset for the caption handle
+     * @param   int $offset     The offset for the caption handle
      *
-     * @return self             Fluid interface
+     * @return  self            Fluid interface
      */
     public function setCaptionOffset($offset)
     {
@@ -260,9 +269,9 @@ class PieSlice extends Animatable implements Drawable
     /**
      * Set the minimum radius to be used for drawing labels
      *
-     * @param  int $bound       The offset for the caption text
+     * @param   int $bound  The offset for the caption text
      *
-     * @return self             Fluid interface
+     * @return  self        Fluid interface
      */
     public function setOuterCaptionBound($bound)
     {
@@ -273,9 +282,9 @@ class PieSlice extends Animatable implements Drawable
     /**
      * Create the SVG representation from this Drawable
      *
-     * @param RenderContext $ctx    The context to use for rendering
+     * @param   RenderContext $ctx  The context to use for rendering
      *
-     * @return DOMElement           The SVG Element
+     * @return  DOMElement          The SVG Element
      */
     public function toSvg(RenderContext $ctx)
     {

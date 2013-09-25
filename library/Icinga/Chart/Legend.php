@@ -20,23 +20,22 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * @copyright 2013 Icinga Development Team <info@icinga.org>
- * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author    Icinga Development Team <info@icinga.org>
+ * @copyright  2013 Icinga Development Team <info@icinga.org>
+ * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
+ * @author     Icinga Development Team <info@icinga.org>
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Chart;
 
-use DOMElement;
-
-use Icinga\Chart\Palette;
-use Icinga\Chart\Primitive\Canvas;
-use Icinga\Chart\Primitive\Drawable;
-use Icinga\Chart\Primitive\Rect;
-use Icinga\Chart\Primitive\Text;
-use Icinga\Chart\Render\LayoutBox;
-use Icinga\Chart\Render\RenderContext;
+use \DOMElement;
+use \Icinga\Chart\Palette;
+use \Icinga\Chart\Primitive\Canvas;
+use \Icinga\Chart\Primitive\Drawable;
+use \Icinga\Chart\Primitive\Rect;
+use \Icinga\Chart\Primitive\Text;
+use \Icinga\Chart\Render\LayoutBox;
+use \Icinga\Chart\Render\RenderContext;
 
 /**
  * Drawable for creating a Graph Legend on the bottom of a graph.
@@ -65,7 +64,7 @@ class Legend implements Drawable
     /**
      * Set the content to be displayed by this legend
      *
-     * @param array $dataset    An array of datasets in the form they are provided to the graphing implementation
+     * @param array $dataset An array of datasets in the form they are provided to the graphing implementation
      */
     public function addDataset(array $dataset)
     {
@@ -81,9 +80,9 @@ class Legend implements Drawable
     /**
      * Render the legend to an SVG object
      *
-     * @param RenderContext $ctx    The context to use for rendering this legend
+     * @param   RenderContext $ctx  The context to use for rendering this legend
      *
-     * @return DOMElement           The SVG representation of this legend
+     * @return  DOMElement          The SVG representation of this legend
      */
     public function toSvg(RenderContext $ctx)
     {
@@ -109,7 +108,8 @@ class Legend implements Drawable
             }
 
             $colorBox = new Rect($left, $top, 2, 2);
-            $colorBox->setFill($color)->setStrokeWidth(2)->keepRatio();
+            $colorBox->setFill($color)->setStrokeWidth(2);
+            $colorBox->keepRatio();
             $outer->addElement($colorBox);
 
             $textBox = new Text($left+5, $top+2, $text);

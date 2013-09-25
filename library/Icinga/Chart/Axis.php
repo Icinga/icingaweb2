@@ -1,18 +1,41 @@
 <?php
 // {{{ICINGA_LICENSE_HEADER}}}
+/**
+ * This file is part of Icinga 2 Web.
+ *
+ * Icinga 2 Web - Head for multiple monitoring backends.
+ * Copyright (C) 2013 Icinga Development Team
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ * @copyright  2013 Icinga Development Team <info@icinga.org>
+ * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
+ * @author     Icinga Development Team <info@icinga.org>
+ */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Chart;
 
-use Icinga\Chart\Primitive\Drawable;
-use Icinga\Chart\Primitive\Line;
-use Icinga\Chart\Primitive\Text;
-use Icinga\Chart\Render\RenderContext;
-use Icinga\Chart\Unit\AxisUnit;
-use Icinga\Chart\Unit\CalendarUnit;
-use Icinga\Chart\Unit\LinearUnit;
-
-use DOMElement;
+use \DOMElement;
+use \Icinga\Chart\Primitive\Drawable;
+use \Icinga\Chart\Primitive\Line;
+use \Icinga\Chart\Primitive\Text;
+use \Icinga\Chart\Render\RenderContext;
+use \Icinga\Chart\Unit\AxisUnit;
+use \Icinga\Chart\Unit\CalendarUnit;
+use \Icinga\Chart\Unit\LinearUnit;
 
 /**
  * Axis class for the GridChart class.
@@ -74,7 +97,7 @@ class Axis implements Drawable
      * their min or max values, as this is the point where they detect the min and max value
      * from the datasets
      *
-     * @param array $dataset        An dataset to respect on axis generation
+     * @param array $dataset An dataset to respect on axis generation
      */
     public function addDataset(array $dataset)
     {
@@ -85,11 +108,11 @@ class Axis implements Drawable
     /**
      * Set the AxisUnit implementation to use for generating the x axis
      *
-     * @param AxisUnit $unit            The AxisUnit implementation to use for the x axis
+     * @param   AxisUnit $unit      The AxisUnit implementation to use for the x axis
      *
-     * @return self                     This Axis Object
-     * @see Axis::CalendarUnit
-     * @see Axis::LinearUnit
+     * @return  self                This Axis Object
+     * @see     Axis::CalendarUnit
+     * @see     Axis::LinearUnit
      */
     public function setUnitForXAxis(AxisUnit $unit)
     {
@@ -100,11 +123,11 @@ class Axis implements Drawable
     /**
      * Set the AxisUnit implementation to use for generating the y axis
      *
-     * @param AxisUnit $unit            The AxisUnit implementation to use for the y axis
+     * @param   AxisUnit $unit      The AxisUnit implementation to use for the y axis
      *
-     * @return self                     This Axis Object
-     * @see Axis::CalendarUnit
-     * @see Axis::LinearUnit
+     * @return  self                This Axis Object
+     * @see     Axis::CalendarUnit
+     * @see     Axis::LinearUnit
      */
     public function setUnitForYAxis(AxisUnit $unit)
     {
@@ -115,7 +138,7 @@ class Axis implements Drawable
     /**
      * Return the padding this axis requires
      *
-     * @return array        An array containing the padding for all sides
+     * @return array An array containing the padding for all sides
      */
     public function getRequiredPadding()
     {
@@ -216,8 +239,8 @@ class Axis implements Drawable
     /**
      * Factory method, create an Axis instance using Linear ticks as the unit
      *
-     * @return Axis         The axis that has been created
-     * @see LinearUnit
+     * @return  Axis        The axis that has been created
+     * @see     LinearUnit
      */
     public static function createLinearAxis()
     {
@@ -228,13 +251,13 @@ class Axis implements Drawable
     }
 
     /**
-     * Set the label for the x axis.
+     * Set the label for the x axis
      *
-     * An empty string means 'no label'
+     * An empty string means 'no label'.
      *
-     * @param string $label     The label to use for the x axis
+     * @param   string $label   The label to use for the x axis
      *
-     * @return $this            Fluid interface
+     * @return  $this           Fluid interface
      */
     public function setXLabel($label)
     {
@@ -243,13 +266,13 @@ class Axis implements Drawable
     }
 
     /**
-    * Set the label for the y axis.
-    *
-    * An empty string means 'no label'
-    *
-    * @param string $label     The label to use for the y axis
+     * Set the label for the y axis
      *
-     * @return $this            Fluid interface
+     * An empty string means 'no label'.
+     *
+     * @param   string $label   The label to use for the y axis
+     *
+     * @return  self            Fluid interface
      */
     public function setYLabel($label)
     {
@@ -262,9 +285,9 @@ class Axis implements Drawable
     *
     * Setting the value to null let's the axis unit decide which value to use for the minimum
     *
-    * @param mixed $label       The minimum value to use for the x axis
+    * @param    int $xMin   The minimum value to use for the x axis
     *
-    * @return $this             Fluid interface
+    * @return   self        Fluid interface
     */
     public function setXMin($xMin)
     {
@@ -277,9 +300,9 @@ class Axis implements Drawable
      *
      * Setting the value to null let's the axis unit decide which value to use for the minimum
      *
-     * @param mixed $label       The minimum value to use for the x axis
+     * @param   int $yMin   The minimum value to use for the x axis
      *
-     * @return $this             Fluid interface
+     * @return  self        Fluid interface
      */
     public function setYMin($yMin)
     {
@@ -292,9 +315,9 @@ class Axis implements Drawable
      *
      * Setting the value to null let's the axis unit decide which value to use for the maximum
      *
-     * @param mixed $label       The minimum value to use for the x axis
+     * @param   int $xMax   The minimum value to use for the x axis
      *
-     * @return $this             Fluid interface
+     * @return  self        Fluid interface
      */
     public function setXMax($xMax)
     {
@@ -307,9 +330,9 @@ class Axis implements Drawable
      *
      * Setting the value to null let's the axis unit decide which value to use for the maximum
      *
-     * @param mixed $label       The minimum value to use for the y axis
+     * @param   int $yMax   The minimum value to use for the y axis
      *
-     * @return $this             Fluid interface
+     * @return  self        Fluid interface
      */
     public function setYMax($yMax)
     {
@@ -320,9 +343,9 @@ class Axis implements Drawable
     /**
      * Transform all coordinates of the given dataset to coordinates that fit the graph's coordinate system
      *
-     * @param array $dataSet    The absolute coordinates as provided in the draw call
+     * @param   array $dataSet  The absolute coordinates as provided in the draw call
      *
-     * @return array            A graph relative representation of the given coordinates
+     * @return  array           A graph relative representation of the given coordinates
      */
     public function transform(array &$dataSet)
     {
@@ -350,8 +373,8 @@ class Axis implements Drawable
      * Create an AxisUnit that can be used in the axis to represent a dataset as equally distributed
      * ticks
      *
-     * @param int $ticks
-     * @return LinearUnit
+     * @param   int $ticks
+     * @return  LinearUnit
      */
     public static function linearUnit($ticks = 10)
     {
@@ -361,11 +384,10 @@ class Axis implements Drawable
     /**
      * Return the SVG representation of this object
      *
-     * @param RenderContext $ctx    The context to use for calculations
+     * @param   RenderContext $ctx The context to use for calculations
      *
-     * @return DOMElement
-     *
-     * @see Drawable::toSvg
+     * @return  DOMElement
+     * @see     Drawable::toSvg
      */
     public function toSvg(RenderContext $ctx)
     {

@@ -20,21 +20,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * @copyright 2013 Icinga Development Team <info@icinga.org>
- * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author    Icinga Development Team <info@icinga.org>
+ * @copyright  2013 Icinga Development Team <info@icinga.org>
+ * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
+ * @author     Icinga Development Team <info@icinga.org>
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Chart\Graph;
 
-use DOMElement;
-
-use Icinga\Chart\Primitive\Animation;
-use Icinga\Chart\Primitive\Drawable;
-use Icinga\Chart\Primitive\Rect;
-use Icinga\Chart\Primitive\Styleable;
-use Icinga\Chart\Render\RenderContext;
+use \DOMElement;
+use \Icinga\Chart\Primitive\Animation;
+use \Icinga\Chart\Primitive\Drawable;
+use \Icinga\Chart\Primitive\Rect;
+use \Icinga\Chart\Primitive\Styleable;
+use \Icinga\Chart\Render\RenderContext;
 
 /**
  * Bar graph implementation
@@ -43,6 +42,7 @@ class BarGraph extends Styleable implements Drawable
 {
     /**
      * The dataset to use for this bar graph
+     *
      * @var array
      */
     private $dataSet;

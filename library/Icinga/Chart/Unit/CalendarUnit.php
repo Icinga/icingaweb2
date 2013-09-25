@@ -20,19 +20,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * @copyright 2013 Icinga Development Team <info@icinga.org>
- * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author    Icinga Development Team <info@icinga.org>
+ * @copyright  2013 Icinga Development Team <info@icinga.org>
+ * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
+ * @author     Icinga Development Team <info@icinga.org>
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 
 namespace Icinga\Chart\Unit;
 
-use Icinga\Application\Icinga;
-use Zend_Config;
-use Icinga\Application\Config as IcingaConfig;
-use Icinga\Util\DateTimeFactory;
+use \Zend_Config;
+use \Icinga\Application\Icinga;
+use \Icinga\Application\Config as IcingaConfig;
+use \Icinga\Util\DateTimeFactory;
 
 /**
  * Calendar Axis Unit that transforms timestamps into user-readable values
@@ -135,10 +135,10 @@ class CalendarUnit extends LinearUnit
     /**
      * Add a dataset to this CalendarUnit and update labels
      *
-     * @param array $dataset        The dataset to update
-     * @param int $idx              The index to use for determining the data
+     * @param   array   $dataset    The dataset to update
+     * @param   int     $idx        The index to use for determining the data
      *
-     * @return self
+     * @return  self                Fluid interface
      */
     public function addValues(array $dataset, $idx = 0)
     {
@@ -150,7 +150,7 @@ class CalendarUnit extends LinearUnit
     /**
      * Return the current axis relative position
      *
-     * @return int  The position of the next tick (between 0 and 100)
+     * @return int The position of the next tick (between 0 and 100)
      */
     public function current()
     {
