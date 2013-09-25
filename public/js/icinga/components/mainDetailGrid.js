@@ -190,10 +190,6 @@ function(Container, $, logger, URI) {
             Container.getDetailContainer().registerOnUpdate(this.syncSelectionWithDetail.bind(this));
         };
 
-        this.registerLoadIndicator = function() {
-            // console.log(this.container);
-        };
-
         /**
          * Create this component, setup listeners and behaviour
          */
@@ -210,5 +206,4 @@ function(Container, $, logger, URI) {
 
         this.construct(gridDomNode);
     };
-
 });
