@@ -55,6 +55,7 @@ class Monitoring_ListController extends MonitoringController
      * @var Backend
      */
     protected $backend;
+
     /**
      * Compact layout name
      *
@@ -361,7 +362,6 @@ class Monitoring_ListController extends MonitoringController
      */
     private function createTabs()
     {
-
         $tabs = $this->getTabs();
         $tabs->extend(new OutputFormat())
             ->extend(new DashboardAction());
