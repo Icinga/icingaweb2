@@ -250,7 +250,7 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
          * @private
          */
         var destroyDefaultLoadIndicator = function() {
-            $(this.containerDom).remove('div.load-indicator');
+            this.containerDom.find('div.load-indicator').remove();
         };
 
         /**
@@ -372,7 +372,7 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
         /**
          * Remove default load indicator
          */
-        this.disableDefaultLoadIndicator = function() {
+        this.removeDefaultLoadIndicator = function() {
             this.containerDom.off('showLoadIndicator');
             this.containerDom.off('hideLoadIndicator');
         };

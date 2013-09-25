@@ -199,7 +199,7 @@ function(Container, $, logger, URI) {
          */
         this.construct = function(target) {
             this.container = new Container(target);
-            this.container.disableDefaultLoadIndicator();
+            this.container.removeDefaultLoadIndicator();
             controlForms = determineControlForms();
             contentNode = determineContentTable();
             this.registerControls();
