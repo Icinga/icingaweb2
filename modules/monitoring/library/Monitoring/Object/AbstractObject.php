@@ -29,8 +29,15 @@ abstract class AbstractObject
     public function __construct(Backend $backend, $name1, $name2 = null)
     {
         $this->backend = $backend;
-        $this->name1   = $name1;
-        $this->name2   = $name2;
+        $this->name1 = $name1;
+        $this->name2 = $name2;
+
+        if ($name1 && $name2) {
+            $this->type = 2;
+        } elseif ($name1 && !$name2) {
+            $this->type = 1;
+        }
+
         $this->properties = (array) $this->fetchObject();
     }
 
@@ -125,7 +132,7 @@ abstract class AbstractObject
                 'comment_author',
                 'comment_data',
                 'comment_type',
-            ))
+            ))->where('comment_objecttype_id', $this->type)
         )->fetchAll();
         return $this;
     }

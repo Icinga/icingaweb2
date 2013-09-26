@@ -1,0 +1,109 @@
+<?php
+    $dateHelper = $this->getHelper('DateFormat');
+?>
+<?= $this->tabs->render($this); ?>
+
+<?php
+$viewHelper = $this->getHelper('MonitoringState');
+?>
+
+<div data-icinga-component="app/mainDetailGrid">
+  <?=  $this->sortControl->render($this); ?>
+  <?=  $this->paginationControl($comments, null, null, array('preserve' => $this->preserve)); ?>
+
+  <table class="table table-condensed">
+    <thead>
+    <tr>
+      <th colspan="2">Comment Id</th>
+      <th>Type</th>
+      <th>Host</th>
+      <th>Service</th>
+      <th>Entry Time</th>
+      <th>Author</th>
+      <th>Comment</th>
+      <th>Persistent</th>
+      <th colspan="2">Expires</th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($comments as $comment): ?>
+      <?php
+        $objectType = ($comment->comment_objecttype_id === '1') ? 'host' : 'service';
+        $objectName = ($objectType === 'host') ? $comment->host_name : $comment->service_name;
+        $hrefParameters = array(
+          $objectType   => $objectName,
+          'comment_id'  => $comment->comment_id
+        );
+        if ($objectType === 'service') {
+          $hrefParameters['host'] = $comment->host_name;
+        }
+
+        $detailLink = $this->href(
+          'monitoring/show/' . $objectType,
+          $hrefParameters
+        );
+
+        $hostLink = $this->href(
+          'monitoring/show/host',
+          array(
+            'host' => $comment->host_name
+          )
+        );
+      ?>
+    <tr <?= ($this->activeRowHref === $detailLink) ? 'class="active"' : ''; ?>>
+        <td>
+          <a class="hidden" href="<?= $detailLink; ?>"></a>
+          <?php if ($comment->comment_objecttype_id === '1'): ?>
+            {{{ICON_HOST}}}
+          <?php elseif ($comment->comment_objecttype_id === '2'): ?>
+            {{{ICON_SERVICE}}}
+          <?php endif; ?>
+        </td>
+        <td>
+          <?= $comment->comment_id; ?>
+        </td>
+        <td>
+          <?= $comment->comment_type; ?>
+        </td>
+        <td>
+          <a href="<?= $hostLink ?>">
+            <?= $comment->host_name; ?>
+          </a>
+        </td>
+        <td>
+          <?php if ($comment->service_name): ?>
+            <a href="<?= $detailLink ?>">
+              <?= $comment->service_name ?>
+            </a>
+          <?php else: ?>
+            &nbsp;
+          <?php endif; ?>
+        </td>
+        <td>
+          <?= $dateHelper->formatDateTime($comment->comment_timestamp); ?>
+        </td>
+        <td>
+          <?= $comment->comment_author; ?>
+        </td>
+        <td>
+          <?= $comment->comment_data; ?>
+        </td>
+        <td>
+          <?= ($comment->comment_is_persistent === '1') ? 'Yes' : 'No'; ?>
+        </td>
+        <td>
+          <?=
+            ($comment->comment_expiration_timestamp) ?
+            $dateHelper->formatDateTime($comment->comment_expiration_timestamp) :
+            '&nbsp;';
+          ?>
+        </td>
+        <td>
+          COMMAND!!!DELETE_COMMENT
+        </td>
+      </tr>
+    <?php endforeach; ?>
+    </tbody>
+  </table>
+
+</div>
