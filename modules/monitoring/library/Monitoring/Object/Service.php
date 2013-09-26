@@ -31,7 +31,8 @@ class Service extends AbstractObject
             ->fetchContacts()
             ->fetchContactgroups()
             ->fetchCustomvars()
-            ->fetchComments();
+            ->fetchComments()
+            ->fetchEventHisoty();
     }
 
     protected function fetchObject()
@@ -59,6 +60,16 @@ class Service extends AbstractObject
             'long_output'   => 'service_long_output',
             'check_command' => 'service_check_command',
             'perfdata'      => 'service_perfdata',
+            'current_check_attempt' => 'service_current_check_attempt',
+            'max_check_attemt' => 'service_max_check_attempts',
+            'state_type' => 'service_state_type',
+            'passive_checks_enabled' => 'service_passive_checks_enabled',
+            'last_state_change' => 'service_last_state_change',
+            'last_notification' => 'service_last_notification',
+            'current_notification_number' => 'service_current_notification_number',
+            'is_flapping' => 'service_is_flapping',
+            'percent_state_change' => 'service_percent_state_change',
+            'in_downtime' => 'service_in_downtime'
         ))
         ->where('host_name', $this->name1)
         ->where('service_description', $this->name2)

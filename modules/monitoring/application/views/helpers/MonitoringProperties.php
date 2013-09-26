@@ -107,7 +107,7 @@ class Zend_View_Helper_MonitoringProperties extends Zend_View_Helper_Abstract
      * @param stdClass $object
      * @return string
      */
-    private function buildAttempt(stdClass $object)
+    private function buildAttempt(AbstractObject $object)
     {
         return sprintf(
             '%s/%s (%s state)',
@@ -132,7 +132,7 @@ class Zend_View_Helper_MonitoringProperties extends Zend_View_Helper_Abstract
      * @param stdClass $object
      * @return string
      */
-    private function buildCheckType(stdClass $object)
+    private function buildCheckType(AbstractObject $object)
     {
         if ($object->passive_checks_enabled === '1' && $object->active_checks_enabled === '0') {
             return self::CHECK_PASSIVE;
@@ -148,7 +148,7 @@ class Zend_View_Helper_MonitoringProperties extends Zend_View_Helper_Abstract
      * @param stdClass $object
      * @return string
      */
-    private function buildLatency(stdClass $object)
+    private function buildLatency(AbstractObject $object)
     {
         $val = '';
         if ($this->buildCheckType($object) === self::CHECK_PASSIVE) {
@@ -171,7 +171,7 @@ class Zend_View_Helper_MonitoringProperties extends Zend_View_Helper_Abstract
      * @param stdClass $object
      * @return string
      */
-    private function buildNextCheck(stdClass $object)
+    private function buildNextCheck(AbstractObject $object)
     {
         if ($this->buildCheckType($object) === self::CHECK_PASSIVE) {
             return self::VALUE_NA;
@@ -185,7 +185,7 @@ class Zend_View_Helper_MonitoringProperties extends Zend_View_Helper_Abstract
      * @param stdClass $object
      * @return string
      */
-    private function buildLastStateChange(stdClass $object)
+    private function buildLastStateChange(AbstractObject $object)
     {
         return strftime('%Y-%m-%d %H:%M:%S', $object->last_state_change);
     }
@@ -195,7 +195,7 @@ class Zend_View_Helper_MonitoringProperties extends Zend_View_Helper_Abstract
      * @param stdClass $object
      * @return string
      */
-    private function buildLastNotification(stdClass $object)
+    private function buildLastNotification(AbstractObject $object)
     {
         $val = '';
 
@@ -215,7 +215,7 @@ class Zend_View_Helper_MonitoringProperties extends Zend_View_Helper_Abstract
      * @param stdClass $object
      * @return string
      */
-    private function buildFlapping(stdClass $object)
+    private function buildFlapping(AbstractObject $object)
     {
         $val = '';
 
@@ -235,7 +235,7 @@ class Zend_View_Helper_MonitoringProperties extends Zend_View_Helper_Abstract
      * @param stdClass $object
      * @return string
      */
-    private function buildScheduledDowntime(stdClass $object)
+    private function buildScheduledDowntime(AbstractObject $object)
     {
         if ($object->in_downtime === '1') {
             return self::VALUE_YES;
@@ -253,10 +253,9 @@ class Zend_View_Helper_MonitoringProperties extends Zend_View_Helper_Abstract
     public function monitoringProperties(AbstractObject $object)
     {
         $type = $this->getObjectType($object);
-        $object = $this->dropObjectType($object, $type);
+        //$object = $this->dropObjectType($object, $type);
 
         $out = array();
-
         foreach (self::$keys as $property => $label) {
             $label = sprintf($label, ucfirst($type));
             if (is_callable(array(&$this, $property))) {
@@ -269,7 +268,7 @@ class Zend_View_Helper_MonitoringProperties extends Zend_View_Helper_Abstract
         return $out;
     }
 
-    public function getNotificationType(stdClass $notification)
+    public function getNotificationType(AbstractObject $notification)
     {
         $reason = intval($notification->notification_reason);
         if (!isset(self::$notificationReasons[$reason])) {

@@ -111,7 +111,10 @@ class Monitoring_ListController extends ActionController
                 'host_unhandled_service_count',
                 'host_action_url',
                 'host_notes_url',
-                'host_last_comment'
+                'host_last_comment',
+                'host_active_checks_enabled',
+                'host_passive_checks_enabled'
+
             )
         )->getQuery();
         $this->view->hosts = $query->paginate();
@@ -159,7 +162,9 @@ class Monitoring_ListController extends ActionController
                 'service_notifications_enabled',
                 'service_action_url',
                 'service_notes_url',
-                'service_last_comment'
+                'service_last_comment',
+                'service_active_checks_enabled',
+                'service_passive_checks_enabled'
             )
         )->getQuery();
         $this->view->services = $query->paginate();

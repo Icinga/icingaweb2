@@ -76,6 +76,8 @@ class HostAndServiceStatus extends DataView
             'service_last_time_warning',
             'service_last_time_critical',
             'service_last_time_unknown',
+            'service_current_check_attempt',
+            'service_max_check_attempts'
 //            'object_type',
 //            'problems',
 //            'handled',
@@ -116,7 +118,7 @@ class HostAndServiceStatus extends DataView
 
     public function getFilterColumns()
     {
-        return array('hostgroups', 'servicegroups');
+        return array('hostgroups', 'servicegroups', 'service_problems');
     }
 
     protected function isValidFilterColumn($column)

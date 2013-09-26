@@ -142,4 +142,22 @@ abstract class AbstractObject
         )->fetchPairs();
         return $this;
     }
+
+    protected function fetchEventHisoty()
+    {
+        $this->foreign['eventHistory'] = $this->applyObjectFilter(
+            $this->backend->select()->from('eventHistory', array(
+                'object_type',
+                'host_name',
+                'service_description',
+                'timestamp',
+                'state',
+                'attempt',
+                'max_attempts',
+                'output',
+                'type'
+            ))
+        );
+        return $this;
+    }
 }

@@ -86,6 +86,7 @@ class Monitoring_ShowController extends ActionController
     public function serviceAction()
     {
         $this->view->object->prefetch();
+        $this->view->preserve = array();
     }
 
     /**
@@ -94,6 +95,7 @@ class Monitoring_ShowController extends ActionController
     public function hostAction()
     {
         $this->view->object->prefetch();
+        $this->view->preserve = array();
     }
 
     /**

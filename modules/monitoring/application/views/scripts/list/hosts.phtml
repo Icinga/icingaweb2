@@ -12,7 +12,7 @@ $viewHelper = $this->getHelper('MonitoringState');
   <table class="table table-condensed">
     <thead>
     <tr>
-      <th colspan="2">Status</th>
+      <th colspan="3">Status</th>
       <th>Host</th>
       <th>Output</th>
     </tr>
@@ -24,67 +24,102 @@ $viewHelper = $this->getHelper('MonitoringState');
       <tr <?= ($this->activeRowHref === $hostLink) ? 'class="active"' : ''; ?> >
         <td>
           <a style="visibility:hidden" href="<?= $hostLink; ?>"></a>
-          <div>
-            <form class="reschedule">
-
-            </form>
-            <?php if ($host->host_icon_image) : ?>
+          <?php if ($host->host_icon_image) : ?>
             <img src="<?= $host->host_icon_image; ?>"/>
-            <?php endif; ?>
-          </div>
+          <?php endif; ?>
         </td>
 
         <td>
-          <div>
-            <?php if (!$host->host_handled && $host->host_state > 0): ?>
-            <a href="#" title="<?= 'Unhandled host' ?>">
-              <i>{{UNHANDLED_ICON}}</i>
-            </a>
-            <?php endif; ?>
+          <?php if (!$host->host_handled && $host->host_state > 0): ?>
+          <a href="#" title="Unhandled">
+            <i>{{UNHANDLED_ICON}}</i>
+          </a>
+          <?php endif; ?>
 
-            <?php if ($host->host_acknowledged && !$host->host_in_downtime): ?>
-            <a href="#" title="<?= 'Acknowledged' ?>">
-              <i>{{ACKNOWLEDGED_ICON}}</i>
-            </a>
-            <?php endif; ?>
+          <?php if ($host->host_acknowledged && !$host->host_in_downtime): ?>
+          <a href="#" title="Acknowledged">
+            <i>{{ACKNOWLEDGED_ICON}}</i>
+          </a>
+          <?php endif; ?>
 
-            <?php if ($host->host_is_flapping): ?>
-            <a href="#" title="<?= 'Flapping' ?>">
-              <i>{{FLAPPING_ICON}}</i>
-            </a>
+          <?php if ($host->host_is_flapping): ?>
+          <a href="#" title="Flapping">
+            <i>{{FLAPPING_ICON}}</i>
+          </a>
+          <?php endif; ?>
+
+          <?php if (!$host->host_notifications_enabled): ?>
+          <a href="#" title="Notifications Disabled">
+            <i>{{NOTIFICATIONS_DISABLED_ICON}}</i>
+          </a>
+          <?php endif; ?>
+
+          <?php if ($host->host_in_downtime): ?>
+          <a href="#" title="In Downtime">
+            <i>{{IN_DOWNTIME_ICON}}</i>
+          </a>
+          <?php endif; ?>
+
+          <?php if (!$host->host_active_checks_enabled): ?>
+            <?php if (!$host->host_passive_checks_enabled): ?>
+              <a href="#" title="Active And Passive Checks Disabled">
+               <i>{{ACTIVE_PASSIVE_CHECKS_DISABLED_ICON}}</i>
+              </a>
+            <?php else: ?>
+              <a href="#" title="Active Checks Disabled">
+               <i>{{ACTIVE_CHECKS_DISABLED_ICON}}</i>
+              </a>
             <?php endif; ?>
-          </div>
-        </td>
-        <td>
+          <?php endif; ?>
+
           <?php if ($host->host_last_comment !== null): ?>
-          <a href="#" title="<?= 'Comments' ?>">
+          <a href="#" title="Comments">
             <i>{{COMMENT_ICON}}</i>
           </a>
           <?php endif; ?>
+        </td>
+
+        <td title="<?= $viewHelper->getStateTitle($host, 'host'); ?>">
+          <div>
+            <?php if ($host->host_state_type == 0): ?>
+            <a href="#" title="Soft State">
+              <i>{{SOFTSTATE_ICON}}</i>
+            </a>
+            <?php endif; ?>
+            <b><?= ucfirst($viewHelper->monitoringState($host, 'host')); ?></b>
+            Since&nbsp;
+            <?= $this->timeSince($host->host_last_state_change); ?>
+          </div>
+        </td>
+
+        <td>
+          <?php if ($host->host_unhandled_service_count): ?>
+            <span class="badge pull-right">
+              <a href="<?= $this->href('monitoring/list/services', array('host' => $host->host_name, 'problem' => 1)); ?>">
+                <?= $host->host_unhandled_service_count; ?>
+              </a>
+            </span>
+          <?php endif; ?>
 
           <a href="<?= $hostLink ?>">
-            <b> <?= $host->host_name ?></b><br/>
-            <i> <?= $host->host_address ?></i>
+            <b><?= $host->host_name ?></b><br/>
+            <i><?= $host->host_address ?></i>
           </a>
 
-          <?php if ($host->host_action_url != ""): ?>
+          <?php if (!empty($host->host_action_url)): ?>
             <a href="<?= $host->host_action_url; ?>">Action</a>
           <?php endif; ?>
-
-          <?php if ($host->host_notes_url != ""): ?>
-          <a href="<?= $host->host_notes_url; ?>">Notes</a>
+          <?php if (!empty($host->host_notes_url)): ?>
+            <a href="<?= $host->host_notes_url; ?>">Notes</a>
           <?php endif; ?>
-
         </td>
 
         <td>
           <?= $this->escape(substr(strip_tags($host->host_output), 0, 10000)); ?>
         </td>
-
       </tr>
     <?php endforeach; ?>
     </tbody>
   </table>
-  <?=  $this->paginationControl($hosts, null, null, array('preserve' => $this->preserve)); ?>
-
+  <?= $this->paginationControl($hosts, null, null, array('preserve' => $this->preserve)); ?>
 </div>
