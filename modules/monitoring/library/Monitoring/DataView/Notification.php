@@ -33,9 +33,4 @@ class Notification extends DataView
             )
         );
     }
-
-    public function getTableName()
-    {
-
-    }
 }
