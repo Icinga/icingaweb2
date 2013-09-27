@@ -11,7 +11,7 @@
                         <td><?= date('d.m. H:i', $event->timestamp); ?></td>
 
                         <td>
-                        <?php if (!$object instanceof Icinga\Module\Monitoring\Object\Service): ?>
+                        <?php if ($object instanceof Icinga\Module\Monitoring\Object\Service): ?>
                           <a href="<?= $this->href('monitoring/show/service', array(
                               'host'    => $object->host_name,
                               'service' => $event->service_description
@@ -84,6 +84,20 @@
                 <? endforeach; ?>
                 </tbody>
             </table>
+            <?php if ($object instanceof Icinga\Module\Monitoring\Object\Service): ?>
+              <a href="<?= $this->href('monitoring/list/eventhistory', array(
+                  'host'    => $object->host_name,
+                  'service' => $object->service_description
+              )); ?>">
+                All events for <?= $event->service_description ?>
+              </a>
+            <?php else: ?>
+              <a href="<?= $this->href('monitoring/list/eventhistory', array(
+                  'host'    => $object->host_name
+              )); ?>">
+                All events for <?= $event->host_name ?>
+              </a>
+            <?php endif; ?>
         </div>
     </div>
 <?php endif; ?>

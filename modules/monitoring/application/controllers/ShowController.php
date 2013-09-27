@@ -96,6 +96,7 @@ class Monitoring_ShowController extends ActionController
     public function hostAction()
     {
         $this->view->object->prefetch();
+        $this->view->object->eventHistory = $this->view->object->eventHistory->limit(10)->fetchAll();
         $this->view->preserve = array();
     }
 

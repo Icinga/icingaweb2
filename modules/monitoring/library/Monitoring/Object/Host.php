@@ -30,7 +30,8 @@ class Host extends AbstractObject
             ->fetchContacts()
             ->fetchContactgroups()
             ->fetchCustomvars()
-            ->fetchComments();
+            ->fetchComments()
+            ->fetchEventHistory();
     }
 
     protected function fetchObject()

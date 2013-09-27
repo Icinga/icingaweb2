@@ -158,7 +158,6 @@ abstract class AbstractObject
                 'type'
             ))
         );
-        // echo $this->foreign['eventHistory']->dump();die;
         return $this;
     }
 }
