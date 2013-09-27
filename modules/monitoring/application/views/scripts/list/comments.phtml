@@ -1,5 +1,6 @@
 <?php
     $dateHelper = $this->getHelper('DateFormat');
+    $commandHelper = $this->getHelper('CommandForm');
 ?>
 <?= $this->tabs->render($this); ?>
 
@@ -101,7 +102,15 @@ $viewHelper = $this->getHelper('MonitoringState');
           ?>
         </td>
         <td>
-          {{{REMOVE_ICON}}}
+          <?=
+            $commandHelper->simpleForm(
+              'removecomment',
+              'Remove',
+              array(
+                'commentid' => $comment->comment_id
+              )
+            );
+          ?>
         </td>
       </tr>
     <?php endforeach; ?>
