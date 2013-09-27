@@ -86,7 +86,9 @@ $viewHelper = $this->getHelper('MonitoringState');
           <?= $comment->comment_author; ?>
         </td>
         <td>
+          <span data-icinga-component="app/ellipsisText">
           <?= $comment->comment_data; ?>
+          </span>
         </td>
         <td>
           <?= ($comment->comment_is_persistent === '1') ? 'Yes' : 'No'; ?>
@@ -99,7 +101,7 @@ $viewHelper = $this->getHelper('MonitoringState');
           ?>
         </td>
         <td>
-          COMMAND!!!DELETE_COMMENT
+          {{{REMOVE_ICON}}}
         </td>
       </tr>
     <?php endforeach; ?>
