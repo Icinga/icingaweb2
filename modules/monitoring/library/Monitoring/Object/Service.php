@@ -32,7 +32,7 @@ class Service extends AbstractObject
             ->fetchContactgroups()
             ->fetchCustomvars()
             ->fetchComments()
-            ->fetchEventHisoty();
+            ->fetchEventHistory();
     }
 
     protected function fetchObject()

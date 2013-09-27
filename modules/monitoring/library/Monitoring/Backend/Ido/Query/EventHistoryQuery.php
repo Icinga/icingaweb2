@@ -31,6 +31,8 @@ class EventHistoryQuery extends AbstractQuery
             'output'          => 'eh.output', // we do not want long_output
             //'problems'        => 'CASE WHEN eh.state = 0 OR eh.state IS NULL THEN 0 ELSE 1 END',
             'type'  => 'eh.type',
+            'service_host_name'                => 'eho.name1 COLLATE latin1_general_ci',
+            'service_description'             => 'eho.name2 COLLATE latin1_general_ci'
         ),
         'hostgroups' => array(
             'hostgroup' => 'hgo.name1 COLLATE latin1_general_ci',
@@ -74,7 +76,7 @@ class EventHistoryQuery extends AbstractQuery
         }
         if ($end) {
             foreach ($this->subQueries as $query) {
-                $query->where('raw_timestamp', '<' . $start);
+                $query->where('raw_timestamp', '<' . $end);
             }
         }
         $sub = $this->db->select()->union($this->subQueries, Zend_Db_Select::SQL_UNION_ALL);

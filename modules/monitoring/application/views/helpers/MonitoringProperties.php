@@ -268,7 +268,7 @@ class Zend_View_Helper_MonitoringProperties extends Zend_View_Helper_Abstract
         return $out;
     }
 
-    public function getNotificationType(AbstractObject $notification)
+    public function getNotificationType($notification)
     {
         $reason = intval($notification->notification_reason);
         if (!isset(self::$notificationReasons[$reason])) {

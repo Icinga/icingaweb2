@@ -1,0 +1,89 @@
+<?php if (!empty($object->eventHistory)): ?>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <span>History</span>
+        </div>
+        <div class="panel-body">
+            <table class="table table-condensed">
+                <tbody>
+                <?php foreach ($object->eventHistory as $event): ?>
+                    <tr>
+                        <td><?= date('d.m. H:i', $event->timestamp); ?></td>
+
+                        <td>
+                        <?php if (!$object instanceof Icinga\Module\Monitoring\Object\Service): ?>
+                          <a href="<?= $this->href('monitoring/show/service', array(
+                              'host'    => $object->host_name,
+                              'service' => $event->service_description
+                          )); ?>">
+                            <?= $event->service_description ?>
+                          </a>
+                        <?php else: ?>
+                          <a href="<?= $this->href('monitoring/show/host', array(
+                              'host'    => $object->host_name
+                          )); ?>">
+                            <?= $event->host_name ?>
+                          </a>
+                        <?php endif; ?>
+                        </td>
+
+                        <td>
+                            <?php
+                            switch ($event->type) {
+                                case 'notify':
+                                    $icon   = '{{NOTIFICATION_ICON}}';
+                                    $title  = 'Notification';
+                                    $msg    = $event->output;
+                                    break;
+                                case 'comment':
+                                    $icon   = '{{COMMENT_ICON}}';
+                                    $title  = 'Comment';
+                                    $msg    = $event->output;
+                                    break;
+                                case 'ack':
+                                    $icon   = '{{ACKNOWLEDGEMENT_ICON}}';
+                                    $title  = 'Acknowledgement';
+                                    $msg    = '';
+                                    break;
+                                case 'dt_comment':
+                                    $icon   = '{{IN_DOWNTIME_ICON}}';
+                                    $title  = 'In Downtime';
+                                    $msg    = $event->output;
+                                    break;
+                                case 'flapping':
+                                    $icon   = '{{FLAPPING_ICON}}';
+                                    $title  = 'Flapping';
+                                    $msg    = '';
+                                    break;
+                                case 'hard_state':
+                                    $icon   = '{{HARDSTATE_ICON}}';
+                                    $title  = 'Hard State';
+                                    $msg    = '[' . $event->attempt . '/' . $event->max_attempts . ']';
+                                    break;
+                                case 'soft_state':
+                                    $icon   = '{{SOFTSTATE_ICON}}';
+                                    $title  = 'Soft State';
+                                    $msg    = '[' . $event->attempt . '/' . $event->max_attempts . ']';
+                                    break;
+                                case 'dt_start':
+                                    $icon   = '{{DOWNTIME_START_ICON}}';
+                                    $title  = 'Downtime Start';
+                                    $msg    = $event->output;
+                                    break;
+                                case 'dt_end':
+                                    $icon   = '{{DOWNTIME_END_ICON}}';
+                                    $title  = 'Downtime End';
+                                    $msg    = $event->output;
+                                    break;
+                            }
+                            ?>
+                            <a href="#" title="<?= $title ?>"><i><?= $icon ?></i></a>
+                            <?php if (!empty($msg)) { echo $msg; } ?>
+                        </td>
+                    </tr>
+                <? endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+<?php endif; ?>

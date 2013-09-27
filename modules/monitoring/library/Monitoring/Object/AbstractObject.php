@@ -143,7 +143,7 @@ abstract class AbstractObject
         return $this;
     }
 
-    protected function fetchEventHisoty()
+    protected function fetchEventHistory()
     {
         $this->foreign['eventHistory'] = $this->applyObjectFilter(
             $this->backend->select()->from('eventHistory', array(
@@ -158,6 +158,7 @@ abstract class AbstractObject
                 'type'
             ))
         );
+        // echo $this->foreign['eventHistory']->dump();die;
         return $this;
     }
 }
