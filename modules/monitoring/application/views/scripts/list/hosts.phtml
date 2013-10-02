@@ -95,7 +95,7 @@ $viewHelper = $this->getHelper('MonitoringState');
         <td>
           <?php if ($host->host_unhandled_service_count): ?>
             <span class="badge pull-right">
-              <a href="<?= $this->href('monitoring/list/services', array('host' => $host->host_name, 'problem' => 1)); ?>">
+              <a href="<?= $this->href('monitoring/list/services', array('host' => $host->host_name, 'service_problems' => 1)); ?>">
                 <?= $host->host_unhandled_service_count; ?>
               </a>
             </span>
