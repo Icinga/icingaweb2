@@ -102,7 +102,7 @@ class ActionController extends Zend_Controller_Action
             $this->view->tabs = new Tabs();
             $this->init();
         } else {
-            $this->redirectToLogin();
+            $this->redirectToLogin($this->getRequestUrl());
         }
     }
 
@@ -164,8 +164,12 @@ class ActionController extends Zend_Controller_Action
 
     /**
      * Redirect to the login path
+     *
+     * @param   string      $afterLogin   The action to call when the login was successful. Defaults to '/index/welcome'
+     *
+     * @throws  \Exception
      */
-    private function redirectToLogin()
+    protected function redirectToLogin($afterLogin = '/index/welcome')
     {
         if ($this->getRequest()->isXmlHttpRequest()) {
 
@@ -174,7 +178,20 @@ class ActionController extends Zend_Controller_Action
             throw new Exception("You are not logged in");
         }
         $url = Url::fromPath('/authentication/login');
+        $url->setParam('redirect', $afterLogin);
         $this->redirectNow($url->getRelativeUrl());
+    }
+
+    /**
+     * Return the URI that can be used to request the current action
+     *
+     * @return string   return the path to this action: <Module>/<Controller>/<Action>
+     */
+    public function getRequestUrl()
+    {
+        return $this->_request->getModuleName() . '/' .
+         $this->_request->getControllerName() . '/' .
+         $this->_request->getActionName();
     }
 
     /**

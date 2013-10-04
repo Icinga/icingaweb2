@@ -80,7 +80,12 @@ class AuthenticationController extends ActionController
                     $this->view->form->getElement('password')
                         ->addError(t('Please provide a valid username and password'));
                 } else {
-                    $this->redirectNow('index?_render=body');
+                    $redirectUrl = $this->_request->getParam('redirect');
+                    if ($redirectUrl == null) {
+                        $this->redirectNow('index?_render=body');
+                    } else {
+                        $this->redirectNow($redirectUrl);
+                    }
                 }
             }
         } catch (ConfigurationError $configError) {
@@ -98,7 +103,7 @@ class AuthenticationController extends ActionController
         ));
         $this->replaceLayout = true;
         $auth->removeAuthorization();
-        $this->redirect('login');
+        $this->redirectToLogin();
     }
 }
 // @codingStandardsIgnoreEnd
