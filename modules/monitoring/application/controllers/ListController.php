@@ -42,6 +42,8 @@ use \Icinga\Application\Config as IcingaConfig;
 
 use Icinga\Module\Monitoring\DataView\Notification as NotificationView;
 use Icinga\Module\Monitoring\DataView\Downtime as DowntimeView;
+use Icinga\Module\Monitoring\DataView\Contact as ContactView;
+use Icinga\Module\Monitoring\DataView\Contactgroup as ContactgroupView;
 use Icinga\Module\Monitoring\DataView\HostAndServiceStatus as HostAndServiceStatusView;
 
 class Monitoring_ListController extends ActionController
@@ -114,7 +116,6 @@ class Monitoring_ListController extends ActionController
                 'host_last_comment',
                 'host_active_checks_enabled',
                 'host_passive_checks_enabled'
-
             )
         )->getQuery();
         $this->view->hosts = $query->paginate();
@@ -245,7 +246,62 @@ class Monitoring_ListController extends ActionController
         )->getQuery();
         $this->view->notifications = $query->paginate();
         $this->setupSortControl(array(
-            'notification_start_time'   => 'Notification Start'
+            'notification_start_time' => 'Notification Start'
+        ));
+        $this->handleFormatRequest($query);
+    }
+
+    public function contactsAction()
+    {
+        $query = ContactView::fromRequest(
+            $this->_request,
+            array(
+                'contact_name',
+                'contact_id',
+                'contact_alias',
+                'contact_email',
+                'contact_pager',
+                'contact_notify_service_timeperiod',
+                'contact_notify_service_recovery',
+                'contact_notify_service_warning',
+                'contact_notify_service_critical',
+                'contact_notify_service_unknown',
+                'contact_notify_service_flapping',
+                'contact_notify_service_downtime',
+                'contact_notify_host_timeperiod',
+                'contact_notify_host_recovery',
+                'contact_notify_host_down',
+                'contact_notify_host_unreachable',
+                'contact_notify_host_flapping',
+                'contact_notify_host_downtime',
+            )
+        )->getQuery();
+        $this->view->contacts = $query->paginate();
+        $this->setupSortControl(array(
+            'contact_name' => 'Name',
+            'contact_alias' => 'Alias',
+            'contact_email' => 'Email',
+            'contact_pager' => 'Pager Address / Number',
+            'contact_notify_service_timeperiod' => 'Service Notification Timeperiod',
+            'contact_notify_host_timeperiod' => 'Host Notification Timeperiod'
+        ));
+        $this->handleFormatRequest($query);
+    }
+
+    public function contactgroupsAction()
+    {
+         $query = ContactgroupView::fromRequest(
+            $this->_request,
+            array(
+                'contactgroup_name',
+                'contactgroup_alias',
+                'contact_name'
+            )
+        )->getQuery();
+        $this->view->contactgroups = $query->paginate();
+        $this->setupSortControl(array(
+            'contactgroup_name' => 'Group Name',
+            'contactgroup_alias' => 'Group Alias'
         ));
         $this->handleFormatRequest($query);
     }

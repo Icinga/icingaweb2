@@ -1,0 +1,41 @@
+<?= $this->tabs->render($this); ?>
+
+<?php
+$viewHelper = $this->getHelper('MonitoringState');
+$contactHelper = $this->getHelper('ContactFlags');
+?>
+
+<div data-icinga-component="app/mainDetailGrid">
+    <?=  $this->sortControl->render($this); ?>
+    <?=  $this->paginationControl($contacts, null, null, array('preserve' => $this->preserve)); ?>
+    <table class="table table-condensed">
+        <thead>
+            <tr>
+                <th> Contact Name </th>
+                <th> Alias </th>
+                <th> Email Address </th>
+                <th> Pager Address / Number </th>
+                <th> Service Notification Options </th>
+                <th> Host Notification Options </th>
+                <th> Service Notification Period </th>
+                <th> Host Notification Period </th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach($contacts as $contact): ?>
+                <?php $periodLink = $this->href('monitoring/show/contacts', array('contact' => $contact->contact_name)); ?>
+                <tr class="active">
+                    <td> <?= $contact->contact_name ?> </td>
+                    <td> <?= $contact->contact_alias ?> </td>
+                    <td> <?= $contact->contact_email ?> </td>
+                    <td> <?= $contact->contact_pager ?> </td>
+                    <td> <?= $contactHelper->contactFlags($contact, 'service') ?> </td>
+                    <td> <?= $contactHelper->contactFlags($contact, 'host') ?> </td>
+                    <td> <?= $contact->contact_notify_service_timeperiod ?> </td>
+                    <td> <?= $contact->contact_notify_host_timeperiod ?> </td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+    <?= $this->paginationControl($contacts, null, null, array('preserve' => $this->preserve)); ?>
+</div>

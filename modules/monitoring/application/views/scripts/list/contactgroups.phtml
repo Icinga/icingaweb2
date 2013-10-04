@@ -1,0 +1,44 @@
+<?= $this->tabs->render($this); ?>
+
+<?php
+$viewHelper = $this->getHelper('MonitoringState');
+$knownGroups = array()
+?>
+
+<div data-icinga-component="app/mainDetailGrid">
+    <?= $this->sortControl->render($this); ?>
+    <?= $this->paginationControl($contactgroups, null, null, array('preserve' => $this->preserve)); ?>
+    <table class="table table-condensed">
+        <thead>
+            <tr>
+                <th> Group Name </th>
+                <th> Description </th>
+                <th> Member Name </th>
+            </tr>
+        </thead>
+        <tbody>
+
+            <?php foreach($contactgroups as $contact): ?>
+
+                <?php $periodLink = $this->href('monitoring/show/contacts', array('contact' => $contact->contact_name)); ?>
+                <tr class="active">
+                    <?php
+                        $groupName = $contact->contactgroup_name;
+                        if (!array_key_exists($groupName, $knownGroups)) {
+                            echo '<td>' . $groupName . '</td><td>' . $contact->contactgroup_alias . '</td>';
+                            $knownGroups[$groupName] = True;
+                        } else {
+                            echo '<td></td><td></td>';
+                        }
+                    ?>
+                    <td>
+                        <a href="<?= $periodLink ?>"">
+                            <?= $contact->contact_name ?>
+                        </a>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+    <?= $this->paginationControl($contactgroups, null, null, array('preserve' => $this->preserve)); ?>
+</div>
