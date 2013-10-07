@@ -4,7 +4,7 @@
 
 namespace Icinga\Module\Monitoring;
 
-use Zend_config;
+use Zend_Config;
 use Icinga\Application\Config as IcingaConfig;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Data\DatasourceInterface;
@@ -34,12 +34,13 @@ class Backend implements ConfigAwareFactory, DatasourceInterface
     /**
      * Create a new backend from the given resource config
      *
-     * @param Zend_config $config
+     * @param Zend_Config $backendConfig
+     * @param Zend_Config $resourceConfig
      */
-    public function __construct(Zend_Config $config)
+    public function __construct(Zend_Config $backendConfig, Zend_Config $resourceConfig)
     {
-        $this->config   = $config;
-        $this->resource = ResourceFactory::createResource($config->resource);
+        $this->config   = $backendConfig;
+        $this->resource = ResourceFactory::createResource($resourceConfig);
     }
 
     /**
@@ -72,7 +73,7 @@ class Backend implements ConfigAwareFactory, DatasourceInterface
      *
      * @return  Query
      */
-    public function from($table, array $columns)
+    public function from($table, array $columns = null)
     {
         $queryClass = '\\Icinga\\Module\\Monitoring\\Backend\\'
             . ucfirst($this->config->type)
@@ -141,7 +142,7 @@ class Backend implements ConfigAwareFactory, DatasourceInterface
         }
 
         $config = self::$backendConfigs[$name];
-        self::$backendInstances[$name] = $backend = new self($config);
+        self::$backendInstances[$name] = $backend = new self($config, ResourceFactory::getResourceConfig($config->resource));
         switch (strtolower($config->type)) {
             case 'ido':
                 if ($backend->getResource()->getDbType() !== 'oracle') {

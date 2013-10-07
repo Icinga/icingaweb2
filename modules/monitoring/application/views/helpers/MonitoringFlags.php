@@ -25,61 +25,40 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use Icinga\Module\Monitoring\Object\AbstractObject;
+/*use Icinga\Module\Monitoring\Object\AbstractObject;*/
 
 /**
- * Class Zend_View_Helper_MonitoringFlags
- *
- * Rendering helper for flags depending on objects
+ * Rendering helper for object's properties which may be either enabled or disabled
  */
 class Zend_View_Helper_MonitoringFlags extends Zend_View_Helper_Abstract
 {
     /**
-     * Key of flags without prefix (e.g. host or service)
+     * Object's properties which may be either enabled or disabled and their human readable description
+     *
      * @var string[]
      */
-    private static $keys = array(
-        'passive_checks_enabled' => 'Passive Checks',
-        'active_checks_enabled' => 'Active Checks',
-        'obsessing' => 'Obsessing',
-        'notifications_enabled' => 'Notifications',
-        'event_handler_enabled' => 'Event Handler',
-        'flap_detection_enabled' => 'Flap Detection',
+    private static $flags = array(
+        'passive_checks_enabled'    => 'Passive Checks',
+        'active_checks_enabled'     => 'Active Checks',
+        'obsessing'                 => 'Obsessing',
+        'notifications_enabled'     => 'Notifications',
+        'event_handler_enabled'     => 'Event Handler',
+        'flap_detection_enabled'    => 'Flap Detection',
     );
 
     /**
-     * Type prefix
-     * @param array $vars
-     * @return string
+     * Retrieve flags as array with either true or false as value
+     *
+     * @param   AbstractObject $object
+     *
+     * @return  array
      */
-    private function getObjectType(array $vars)
+    public function monitoringFlags(/*AbstractObject*/$object)
     {
-        $keys = array_keys($vars);
-        $firstKey = array_shift($keys);
-        $keyParts = explode('_', $firstKey, 2);
-
-        return array_shift($keyParts);
-    }
-
-    /**
-     * Build all existing flags to a readable array
-     * @param stdClass $object
-     * @return array
-     */
-    public function monitoringFlags(AbstractObject $object)
-    {
-        $vars = (array)$object;
-        $type = $this->getObjectType($vars);
-        $out = array();
-
-        foreach (self::$keys as $key => $name) {
-            $value = false;
-            if (array_key_exists(($realKey = $type. '_'. $key), $vars)) {
-                $value = $vars[$realKey] === '1' ? true : false;
-            }
-            $out[$name] = $value;
+        $flags = array();
+        foreach (self::$flags as $column => $description) {
+            $flags[$description] = (bool) $object->{$column};
         }
-
-        return $out;
+        return $flags;
     }
 }

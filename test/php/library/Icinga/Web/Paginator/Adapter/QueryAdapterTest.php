@@ -2,9 +2,11 @@
 
 namespace Tests\Icinga\Web\Paginator\Adapter;
 
-use \Icinga\Module\Monitoring\Backend\Statusdat;
+use PHPUnit_Framework_TestCase;
+use Zend_Config;
 use Icinga\Protocol\Statusdat\Reader;
 use Icinga\Web\Paginator\Adapter\QueryAdapter;
+use Icinga\Module\Monitoring\Backend;
 use Tests\Icinga\Protocol\Statusdat\StatusdatTestLoader;
 
 require_once 'Zend/Paginator/Adapter/Interface.php';
@@ -17,19 +19,22 @@ StatusdatTestLoader::requireLibrary();
 require_once '../../modules/monitoring/library/Monitoring/Backend/Statusdat/Criteria/Order.php';
 require_once '../../modules/monitoring/library/Monitoring/Backend/AbstractBackend.php';
 require_once '../../modules/monitoring/library/Monitoring/Backend/Statusdat/Query/Query.php';
-require_once '../../modules/monitoring/library/Monitoring/Backend/Statusdat.php';
 require_once '../../modules/monitoring/library/Monitoring/Backend/Statusdat/Query/StatusQuery.php';
 require_once '../../modules/monitoring/library/Monitoring/Backend/Statusdat/DataView/HostStatusView.php';
 require_once '../../modules/monitoring/library/Monitoring/View/AbstractView.php';
 require_once '../../modules/monitoring/library/Monitoring/View/StatusView.php';
+require_once '../../modules/monitoring/library/Monitoring/Backend.php';
 
 require_once '../../library/Icinga/Protocol/AbstractQuery.php';
+require_once '../../library/Icinga/Data/ResourceFactory.php';
 
-class QueryAdapterTest extends \PHPUnit_Framework_TestCase
+class QueryAdapterTest extends PHPUnit_Framework_TestCase
 {
     private $cacheDir;
 
-    private $config;
+    private $backendConfig;
+
+    private $resourceConfig;
 
     protected function setUp()
     {
@@ -39,20 +44,26 @@ class QueryAdapterTest extends \PHPUnit_Framework_TestCase
             mkdir($this->cacheDir);
         }
 
-        $statusdatFile = dirname(__FILE__). '/../../../../../res/status/icinga.status.dat';
-        $cacheFile = dirname(__FILE__). '/../../../../../res/status/icinga.objects.cache';
+        $statusdatFile  = dirname(__FILE__) . '/../../../../../res/status/icinga.status.dat';
+        $cacheFile      = dirname(__FILE__) . '/../../../../../res/status/icinga.objects.cache';
 
-        $this->config = new \Zend_Config(
+        $this->backendConfig = new Zend_Config(
             array(
-                'status_file' => $statusdatFile,
-                'objects_file' => $cacheFile
+                'type' => 'statusdat'
+            )
+        );
+        $this->resourceConfig = new Zend_Config(
+            array(
+                'status_file'   => $statusdatFile,
+                'objects_file'  => $cacheFile,
+                'type'          => 'statusdat'
             )
         );
     }
 
     public function testLimit1()
     {
-        $backend = new Statusdat($this->config);
+        $backend = new Backend($this->backendConfig, $this->resourceConfig);
         $query = $backend->select()->from('status');
 
         $adapter = new QueryAdapter($query);
@@ -69,7 +80,7 @@ class QueryAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testLimit2()
     {
-        $backend = new Statusdat($this->config);
+        $backend = new Backend($this->backendConfig, $this->resourceConfig);
         $query = $backend->select()->from('status');
 
         $adapter = new QueryAdapter($query);

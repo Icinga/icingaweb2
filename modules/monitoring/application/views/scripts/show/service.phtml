@@ -1,19 +1,124 @@
-<?= $this->render('show/components/pluginoutput.phtml') ?>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        {{SERVICE_ICON}} <h1>Service Status <?= $this->escape($this->object->service_description); ?></h1>
+    </div>
+
+    <div class="panel-body">
+        <table>
+            <tr>
+                <?php if ($this->object->service_icon_image): ?>
+                <td>
+                    <div>
+                        <img src="<?= $this->object->service_icon_image; ?>" alt="Host image" />
+                    </div>
+                </td>
+                <?php endif; ?>
+                <?php if (!$object->service_handled && $object->service_state > 0): ?>
+                <td>
+                    <a href="#" title="Unhandled">
+                        <i>{{UNHANDLED_ICON}}</i>
+                    </a>
+                    <a href="#" title="Acknowledge">
+                        <i>{{ACKNOWLEDGE_COMMAND}}</i>
+                    </a>
+                </td>
+                <?php endif; ?>
+                <?php if ($object->service_acknowledged && !$object->service_in_downtime): ?>
+                <td>
+                    <a href="#" title="Acknowledged">
+                        <i>{{ACKNOWLEDGED_ICON}}</i>
+                    </a>
+                </td>
+                <?php endif; ?>
+                <td>
+                    <strong><?= $this->util()->getServiceStateName($this->object->service_state); ?></strong>
+                    since <?= $this->timeSince($this->object->service_last_state_change); ?>
+                </td>
+                <td><a class="button" href="#">{{RECHECK_COMMAND_BUTTON}</a></td>
+            </tr>
+            <?php if ($this->object->service_action_url || $this->object->service_notes_url): ?>
+                <tr>
+                    <td rowspan="2">
+                        <?php if ($this->object->service_action_url): ?>
+                            {{SERVICE_ACTIONS_ICON}}
+                            <a target="_new" href='<?= $this->object->service_notes_url ?>'>Host actions</a>
+                        <?php endif; ?>
+                        <?php if ($this->object->service_notes_url): ?>
+                            {{SERVICE_NOTES_ICON}}
+                            <a target="_new" href='<?= $this->object->service_notes_url ?>'>Host notes</a>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            <?php endif; ?>
+        </table>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        {{HOST_ICON}} <span><?= $this->escape($this->object->host_name); ?></span>
+    </div>
+
+    <div class="panel-body">
+        <table>
+            <tr>
+                <?php if ($this->object->host_icon_image): ?>
+                <td>
+                    <div>
+                        <img src="<?= $this->object->host_icon_image; ?>" alt="Host image" />
+                    </div>
+                </td>
+                <?php endif; ?>
+                <?php if ($this->object->host_address && $this->object->host_address !== $this->object->host_name): ?>
+                <td>
+                    <strong>Host Address:</strong> <?= $this->escape($this->object->host_address); ?>
+                </td>
+                <?php endif; ?>
+                <?php if (isset($this->object->host_alias) && $this->object->host_alias !== $this->object->host_name): ?>
+                <td>
+                    <strong>Alias:</strong> <?= $this->object->host_alias; ?>
+                </td>
+                <?php endif; ?>
+                <td>
+                    <strong><?= $this->util()->getHostStateName($this->object->host_state); ?></strong>
+                    since <?= $this->timeSince($this->object->host_last_state_change); ?>
+                <?php if ($this->object->host_acknowledged === '1'): ?>
+                    (Has been acknowledged)
+                <?php endif; ?>
+                </td>
+            </tr>
+            <?php if ($this->object->host_action_url || $this->object->host_notes_url): ?>
+                <tr>
+                    <td rowspan="2">
+                        <?php if ($this->object->host_action_url): ?>
+                            {{HOST_ACTIONS_ICON}}
+                            <a target="_new" href='<?= $this->object->host_notes_url ?>'>Host actions</a>
+                        <?php endif; ?>
+                        <?php if ($this->object->host_notes_url): ?>
+                            {{HOST_NOTES_ICON}}
+                            <a target="_new" href='<?= $this->object->host_notes_url ?>'>Host notes</a>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            <?php endif; ?>
+        </table>
+    </div>
+</div>
 
 <?= $this->render('show/components/command.phtml') ?>
 
-<?= $this->render('show/components/contacts.phtml'); ?>
-
-<?= $this->render('show/components/servicegroups.phtml'); ?>
+<?= $this->render('show/components/downtime.phtml'); ?>
 
 <?= $this->render('show/components/comments.phtml'); ?>
 
-<?= $this->render('show/components/downtime.phtml'); ?>
+<?= $this->render('show/components/properties.phtml'); ?>
+
+<?= $this->render('show/components/flags.phtml'); ?>
 
 <?= $this->render('show/components/customvars.phtml'); ?>
 
-<?= $this->render('show/components/perfdata.phtml'); ?>
+<?= $this->render('show/components/servicegroups.phtml'); ?>
 
-<?= $this->render('show/components/properties.phtml'); ?>
+<?= $this->render('show/components/contacts.phtml'); ?>
 
 <?= $this->render('show/components/eventHistory.phtml'); ?>

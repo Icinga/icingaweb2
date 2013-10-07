@@ -27,7 +27,7 @@ class StatusQuery extends Query
     public function init()
     {
         $target = $this->getTarget();
-        $this->reader = $this->ds->getReader();
+        $this->reader = $this->ds;
         $this->setResultViewClass(ucfirst($target)."StatusView");
         $this->setBaseQuery($this->reader->select()->from($target."s", array()));
 

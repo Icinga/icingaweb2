@@ -1,13 +1,27 @@
 <div class="panel panel-default">
     <div class="panel-heading">
-        {{CHECK_ICON}} <span>Check Command</span>
+        {{CHECK_COMMAND_ICON}}
+        <span>Check Command</span>
     </div>
 
     <div class="panel-body">
-        <?php
-        $explodedCommand = explode('!', $this->object->check_command, 2);
-        array_shift($explodedCommand);
-        ?>
-        <?= $this->commandArguments($this->object->check_command); ?>
+        <table>
+            <tr>
+                <td>Command</td>
+                <td>
+                    <?php
+                    $explodedCommand = explode('!', $this->object->check_command, 2);
+                    $command = array_shift($explodedCommand);
+                    echo $command;
+                    ?>
+                </td>
+            </tr>
+            <tr>
+                <td>Arguments</td>
+                <td>
+                    <?= $this->commandArguments($this->object->check_command); ?>
+                </td>
+            </tr>
+        </table>
     </div>
 </div>

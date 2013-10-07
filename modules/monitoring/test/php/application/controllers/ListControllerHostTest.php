@@ -4,6 +4,11 @@ namespace Test\Monitoring\Application\Controllers\ListController;
 
 require_once(dirname(__FILE__).'/../../testlib/MonitoringControllerTest.php');
 
+require_once(dirname(__FILE__).'/../../../../library/Monitoring/DataView/DataView.php');
+require_once(dirname(__FILE__).'/../../../../library/Monitoring/DataView/HostAndServiceStatus.php');
+require_once(dirname(__FILE__).'/../../../../library/Monitoring/DataView/Notification.php');
+require_once(dirname(__FILE__).'/../../../../library/Monitoring/DataView/Downtime.php');
+
 use Test\Monitoring\Testlib\MonitoringControllerTest;
 use Test\Monitoring\Testlib\Datasource\TestFixture;
 use Test\Monitoring\Testlib\Datasource\ObjectFlags;

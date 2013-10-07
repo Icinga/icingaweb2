@@ -1,10 +1,11 @@
-<?php if (isset($object->customvars) && count($object->customvars)) { ?>
+
 <div class="panel panel-default">
     <div class="panel-heading">
          <span>Customvariables</span>
     </div>
 
     <div class="panel-body">
+        <?php if (isset($object->customvars) && count($object->customvars)) { ?>
         <table>
             <tr>
                 <th>Name</th>
@@ -17,6 +18,6 @@
                 </tr>
             <?php } ?>
         </table>
+        <?php } ?>
     </div>
 </div>
-<?php } ?>

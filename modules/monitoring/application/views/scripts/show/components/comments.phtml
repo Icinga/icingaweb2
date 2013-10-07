@@ -12,12 +12,18 @@ foreach ($object->comments as $comment) {
     );
 }
 ?>
+<?php endif; ?>
 <div class="panel panel-default ">
   <div class="panel-heading">
     <span>{{COMMENT_ICON}} Comments</span>
   </div>
   <div class="panel-body">
-    <blockquote> <?= implode('<br />', $commets); ?></blockquote>
+      <a href="#" class="button">{{COMMENT_COMMAND_BUTTON}}</a>
+      <a href="#" class="button">{{NOTIFICATION_COMMAND_BUTTON}}</a><br/>
+      <?php if (!empty($object->comments)): ?>
+    <blockquote> <?= implode('<br />', $commets); ?><a href="#" class="button">{{REMOVE_COMMENT_COMMAND}}</a></blockquote>
+      <?php else: ?>
+          No comments
+      <?php endif; ?>
   </div>
 </div>
-<?php endif; ?>

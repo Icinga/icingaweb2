@@ -1,20 +1,22 @@
 <div class="panel panel-default">
     <div class="panel-heading">Heading</div>
-
     <div class="panel-body">
-<table class="table table-condensed">
-<?php foreach ($this->monitoringFlags($object) as $name => $value): ?>
-  <tr>
-    <th><?= $name; ?></th>
-    <td>
-      <?php if ($value === true): ?>
-          <span>{{ENABLED_ICON}} ENABLED</span>
-      <?php else: ?>
-          <span>{{DISABLED_ICON}} DISABLED</span>
-      <?php endif; ?>
-  </td>
-  </tr>
-<?php endforeach; ?>
-</table>
-        </div>
+        <table class="table table-condensed">
+        <?php foreach ($this->monitoringFlags($object) as $flag => $enabled): ?>
+            <tr>
+                <th><?= $flag; ?></th>
+                <td>
+                    <?php if ($enabled === true): ?>
+                        <span>{{ENABLED_ICON}} ENABLED</span>
+                    <?php else: ?>
+                        <span>{{DISABLED_ICON}} DISABLED</span>
+                  <?php endif; ?>
+                </td>
+                <td>
+                    <a class="button" href="#">{{{ENABLE_OR_DISABLE_COMMAND}}}</a>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+        </table>
     </div>
+</div>

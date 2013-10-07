@@ -27,16 +27,21 @@
         $list[] = '<td>'. implode('</td><td>', $row). '</td>';
     }
 ?>
+<?php endif; ?>
 <div class="panel panel-default">
     <div class="panel-heading">
         {{IN_DOWNTIME_ICON}}<span>Downtimes</span>
     </div>
     <div class="panel-body">
+        <a href="#" class="button">{{SCHEDULE_DOWNTIME_COMMAND_BUTTON}}</a><br/>
+        <?php if (!empty($this->downtimes)): ?>
         <table>
             <tr>
                 <?= implode('</tr><tr>', $list); ?>
             </tr>
         </table>
+        <?php else: ?>
+            Not in downtime
+        <?php endif; ?>
     </div>
 </div>
-<?php endif; ?>

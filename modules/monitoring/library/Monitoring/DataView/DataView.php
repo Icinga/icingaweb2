@@ -80,7 +80,7 @@ abstract class DataView
      *
      * @return  static
      */
-    public static function fromRequest(Request $request, array $columns = null)
+    public static function fromRequest($request, array $columns = null)
     {
         $view = new static(Backend::createBackend($request->getParam('backend')), $columns);
         $view->filter($request->getParams());

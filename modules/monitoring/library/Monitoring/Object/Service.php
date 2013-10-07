@@ -69,7 +69,13 @@ class Service extends AbstractObject
             'current_notification_number' => 'service_current_notification_number',
             'is_flapping' => 'service_is_flapping',
             'percent_state_change' => 'service_percent_state_change',
-            'in_downtime' => 'service_in_downtime'
+            'in_downtime' => 'service_in_downtime',
+            'passive_checks_enabled'    => 'service_passive_checks_enabled',
+            'obsessing'                 => 'service_obsessing',
+            'notifications_enabled'     => 'service_notifications_enabled',
+            'event_handler_enabled'     => 'service_event_handler_enabled',
+            'flap_detection_enabled'    => 'service_flap_detection_enabled',
+            'active_checks_enabled'     => 'service_active_checks_enabled'
         ))
         ->where('host_name', $this->name1)
         ->where('service_description', $this->name2)

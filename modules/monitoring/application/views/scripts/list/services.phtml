@@ -4,6 +4,7 @@
 $viewHelper = $this->getHelper('MonitoringState');
 ?>
 
+<h1>Services Status</h1>
 <div data-icinga-component="app/mainDetailGrid">
 
   <?= $this->sortControl->render($this); ?>
@@ -104,9 +105,9 @@ $viewHelper = $this->getHelper('MonitoringState');
         </td>
 
         <td>
-          <a href="<?= $serviceLink; ?>">
+          <!--<a href="<?= $serviceLink; ?>">-->
             <b> <?= $service->service_display_name; ?></b>
-          </a>
+          <!--</a>-->
           <br/>
 
           <?php if (!empty($service->service_action_url)): ?>
@@ -124,7 +125,7 @@ $viewHelper = $this->getHelper('MonitoringState');
             <i>{{UNHANDLED_ICON}}</i>
           </a>
           <?php endif; ?>
-          <a href="<?= $hostLink; ?>">
+            <a href="<?= $this->href('monitoring/list/services', array('host' => $service->host_name)) ?>">
             <b><?= $service->host_name; ?></b>
             <?php if ($service->host_state != 0): ?>
               (<?= ucfirst($viewHelper->monitoringState($service, 'host')); ?>)

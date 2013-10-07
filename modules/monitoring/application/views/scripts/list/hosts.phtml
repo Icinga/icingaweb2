@@ -4,6 +4,7 @@
 $viewHelper = $this->getHelper('MonitoringState');
 ?>
 
+<h1>Hosts Status</h1>
 <div data-icinga-component="app/mainDetailGrid">
 
   <?=  $this->sortControl->render($this); ?>
@@ -101,7 +102,7 @@ $viewHelper = $this->getHelper('MonitoringState');
             </span>
           <?php endif; ?>
 
-          <a href="<?= $hostLink ?>">
+          <a href="<?= $this->href('monitoring/list/services', array('host' => $host->host_name)) ?>">
             <b><?= $host->host_name ?></b><br/>
             <i><?= $host->host_address ?></i>
           </a>

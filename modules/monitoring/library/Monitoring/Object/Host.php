@@ -53,6 +53,13 @@ class Host extends AbstractObject
             'long_output'   => 'host_long_output',
             'check_command' => 'host_check_command',
             'perfdata'      => 'host_perfdata',
+            'host_icon_image',
+            'passive_checks_enabled'    => 'host_passive_checks_enabled',
+            'obsessing'                 => 'host_obsessing',
+            'notifications_enabled'     => 'host_notifications_enabled',
+            'event_handler_enabled'     => 'host_event_handler_enabled',
+            'flap_detection_enabled'    => 'host_flap_detection_enabled',
+            'active_checks_enabled'     => 'host_active_checks_enabled'
         ))->where('host_name', $this->name1)->fetchRow();
     }
 }
