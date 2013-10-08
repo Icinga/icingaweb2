@@ -23,12 +23,7 @@ class Zend_View_Helper_CommandForm extends Zend_View_Helper_Abstract
      */
     public function simpleForm($commandName, $submitLabel, array $arguments = array())
     {
-        $form = new CommandForm();
-        $form->setRequest(Icinga::app()->getFrontController()->getRequest());
-        $form->setView($this->view);
-        $form->setAction($this->view->href('monitoring/command/' . $commandName));
-        $form->setSubmitLabel($submitLabel);
-        return $form->render();
+        return '{{{COMMAND_FORM}}}';
     }
 }
 

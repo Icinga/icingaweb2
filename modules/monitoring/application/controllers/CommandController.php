@@ -27,24 +27,25 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use \Icinga\Application\Icinga;
-use \Icinga\Application\Config;
-use \Icinga\Application\Logger;
-use \Icinga\Web\Form;
-use \Icinga\Web\Controller\ActionController;
-use \Icinga\Protocol\Commandpipe\CommandPipe;
-use \Icinga\Exception\ConfigurationError;
-use \Icinga\Exception\MissingParameterException;
-use \Icinga\Module\Monitoring\Backend;
-use \Icinga\Module\Monitoring\Form\Command\AcknowledgeForm;
-use \Icinga\Module\Monitoring\Form\Command\CommentForm;
-use \Icinga\Module\Monitoring\Form\Command\CommandForm;
-use \Icinga\Module\Monitoring\Form\Command\CommandWithIdentifierForm;
-use \Icinga\Module\Monitoring\Form\Command\CustomNotificationForm;
-use \Icinga\Module\Monitoring\Form\Command\DelayNotificationForm;
-use \Icinga\Module\Monitoring\Form\Command\RescheduleNextCheckForm;
-use \Icinga\Module\Monitoring\Form\Command\ScheduleDowntimeForm;
-use \Icinga\Module\Monitoring\Form\Command\SubmitPassiveCheckResultForm;
+use Icinga\Application\Icinga;
+use Icinga\Application\Config;
+use Icinga\Application\Logger;
+use Icinga\Module\Monitoring\Form\Command\SingleArgumentCommandForm;
+use Icinga\Web\Form;
+use Icinga\Web\Controller\ActionController;
+use Icinga\Protocol\Commandpipe\CommandPipe;
+use Icinga\Exception\ConfigurationError;
+use Icinga\Exception\MissingParameterException;
+use Icinga\Module\Monitoring\Backend;
+use Icinga\Module\Monitoring\Form\Command\AcknowledgeForm;
+use Icinga\Module\Monitoring\Form\Command\CommentForm;
+use Icinga\Module\Monitoring\Form\Command\CommandForm;
+use Icinga\Module\Monitoring\Form\Command\CommandWithIdentifierForm;
+use Icinga\Module\Monitoring\Form\Command\CustomNotificationForm;
+use Icinga\Module\Monitoring\Form\Command\DelayNotificationForm;
+use Icinga\Module\Monitoring\Form\Command\RescheduleNextCheckForm;
+use Icinga\Module\Monitoring\Form\Command\ScheduleDowntimeForm;
+use Icinga\Module\Monitoring\Form\Command\SubmitPassiveCheckResultForm;
 
 /**
  * Class Monitoring_CommandController
@@ -169,8 +170,26 @@ class Monitoring_CommandController extends ActionController
                 $fields[] = "service_description";
                 $fields[] = "service_state";
             }
-            $query = Backend::getInstance($this->_getParam('backend'))->select()->from("status", $fields);
-            return $query->applyFilters($filter)->fetchAll();
+
+            // Implemented manuall search because api is not ready.
+            // @TODO Implement this using the database api #4663 (mh)
+
+            $query = Backend::createBackend($this->_getParam('backend'))->select()->from("status", $fields);
+            $data = $query->fetchAll();
+            $out = array();
+
+            foreach ($data as $o) {
+                $test = (array)$o;
+                if ($test['host_name'] === $hostname) {
+                    if (!$servicename) {
+                        $out[] = (object) $o;
+                    } elseif ($servicename && strtolower($test['service_description']) === strtolower($servicename)) {
+                        $out[] = (object) $o;
+                    }
+                }
+            }
+
+            return $out;
         } catch (\Exception $e) {
             Logger::error(
                 "CommandController: SQL Query '%s' failed (message %s) ",
@@ -178,6 +197,29 @@ class Monitoring_CommandController extends ActionController
             );
             return array();
         }
+    }
+
+    /**
+     * Convert other params into valid command structure
+     *
+     * @param   array   $supported  Array of supported parameter names
+     * @param   array   $params     Parameters from request
+     *
+     * @return  array               Return
+     */
+    private function selectOtherTargets(array $supported, array $params)
+    {
+        $others = array_diff_key($supported, array('host' => true, 'service' => true));
+        $otherParams = array_intersect_key($params, $others);
+        $out = array();
+
+        foreach ($otherParams as $name => $value) {
+            $data = new stdClass();
+            $data->{$name} = $value;
+            $out[] = $data;
+        }
+
+        return $out;
     }
 
     /**
@@ -208,25 +250,24 @@ class Monitoring_CommandController extends ActionController
      */
     private function setSupportedParameters(array $supported)
     {
-        $given = array_intersect_key(array_flip($supported), $this->getRequest()->getParams());
+        $objects = array();
+
+        $supported = array_flip($supported);
+
+        $given = array_intersect_key($supported, $this->getRequest()->getParams());
+
         if (empty($given)) {
             throw new \Exception('Missing parameter, supported: '.implode(', ', $supported));
         }
-        if (isset($given["host"])) {
-            $this->view->objects = $this->selectCommandTargets(!in_array("service", $supported));
-            if (empty($this->view->objects)) {
+
+        if (isset($given['host'])) {
+            $objects = $this->selectCommandTargets(!in_array("service", $supported));
+            if (empty($objects)) {
                 throw new \Exception("No objects found for your command");
             }
-        } elseif (in_array("downtimeid", $supported)) {
-            $this->view->objects = array();
-            $downtimes = $this->getParam("downtimeid");
-            if (!is_array($downtimes)) {
-                $downtimes = array($downtimes);
-            }
-            foreach ($downtimes as $downtimeId) {
-                $this->view->objects[] = (object) array("downtime_id" => $downtimeId);
-            }
         }
+
+        $this->view->objects = $objects;
     }
 
     // ------------------------------------------------------------------------
@@ -239,14 +280,16 @@ class Monitoring_CommandController extends ActionController
     public function disableactivechecksAction()
     {
         $this->setSupportedParameters(array('host', 'service'));
-        $form = new CommandForm();
+        $form = new SingleArgumentCommandForm();
+        $form->setCommand('DISABLE_HOST_CHECK', 'DISABLE_SVC_CHECK');
+
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Disable Active Checks'));
         $form->addNote(t('Disable active checks for this object.'));
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
-            $this->target->disableActiveChecks($this->view->objects);
+            $this->target->sendCommand($form->createCommand(), $this->view->objects);
         }
     }
 
@@ -256,14 +299,16 @@ class Monitoring_CommandController extends ActionController
     public function enableactivechecksAction()
     {
         $this->setSupportedParameters(array('host', 'service'));
-        $form = new CommandForm();
+        $form = new SingleArgumentCommandForm();
+        $form->setCommand('ENABLE_HOST_CHECK', 'ENABLE_SVC_CHECK');
+
         $form->setRequest($this->getRequest());
-        $form->setSubmitLabel(t('Enable active checks'));
+        $form->setSubmitLabel(t('Enable Active Checks'));
         $form->addNote(t('Enable active checks for this object.'));
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
-            $this->target->enableActiveChecks($this->view->objects);
+            $this->target->sendCommand($form->createCommand(), $this->view->objects);
         }
     }
 
@@ -312,14 +357,15 @@ class Monitoring_CommandController extends ActionController
     public function stopobsessingAction()
     {
         $this->setSupportedParameters(array('host', 'service'));
-        $form = new CommandForm();
+        $form = new SingleArgumentCommandForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Stop obsessing'));
         $form->addNote(t('Stop obsessing over this object.'));
+        $form->setCommand('STOP_OBSESSING_OVER_HOST', 'STOP_OBSESSING_OVER_SVC');
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
-            $this->target->stopObsessing($this->view->objects);
+            $this->target->sendCommand($form->createCommand(), $this->view->objects);
         }
     }
 
@@ -329,14 +375,15 @@ class Monitoring_CommandController extends ActionController
     public function startobsessingAction()
     {
         $this->setSupportedParameters(array('host', 'service'));
-        $form = new CommandForm();
+        $form = new SingleArgumentCommandForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Start obsessing'));
         $form->addNote(t('Start obsessing over this object.'));
+        $form->setCommand('START_OBSESSING_OVER_HOST', 'START_OBSESSING_OVER_SVC');
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
-            $this->target->startObsessing($this->view->objects);
+            $this->target->sendCommand($form->createCommand(), $this->view->objects);
         }
     }
 
@@ -346,14 +393,15 @@ class Monitoring_CommandController extends ActionController
     public function stopacceptingpassivechecksAction()
     {
         $this->setSupportedParameters(array('host', 'service'));
-        $form = new CommandForm();
+        $form = new SingleArgumentCommandForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Stop Accepting Passive Checks'));
         $form->addNote(t('Passive checks for this object will be omitted.'));
+        $form->setCommand('STOP_ACCEPTING_PASSIVE_HOST_CHECKS', 'STOP_ACCEPTING_PASSIVE_SVC_CHECKS');
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
-            $this->target->disablePassiveChecks($this->view->objects);
+            $this->target->sendCommand($form->createCommand(), $this->view->objects);
         }
     }
 
@@ -363,14 +411,15 @@ class Monitoring_CommandController extends ActionController
     public function startacceptingpassivechecksAction()
     {
         $this->setSupportedParameters(array('host', 'service'));
-        $form = new CommandForm();
+        $form = new SingleArgumentCommandForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Start Accepting Passive Checks'));
         $form->addNote(t('Passive checks for this object will be accepted.'));
+        $form->setCommand('START_ACCEPTING_PASSIVE_HOST_CHECKS', 'START_ACCEPTING_PASSIVE_SVC_CHECKS');
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
-            $this->target->enableActiveChecks($this->view->objects);
+            $this->target->sendCommand($form->createCommand(), $this->view->objects);
         }
     }
 
@@ -380,14 +429,15 @@ class Monitoring_CommandController extends ActionController
     public function disablenotificationsAction()
     {
         $this->setSupportedParameters(array('host', 'service'));
-        $form = new CommandForm();
+        $form = new SingleArgumentCommandForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Disable Notifications'));
         $form->addNote(t('Notifications for this object will be disabled.'));
+        $form->setCommand('DISABLE_HOST_NOTIFICATIONS', 'DISABLE_SVC_NOTIFICATIONS');
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
-            $this->target->disableNotifications($this->view->objects);
+            $this->target->sendCommand($form->createCommand(), $this->view->objects);
         }
     }
 
@@ -396,14 +446,16 @@ class Monitoring_CommandController extends ActionController
      */
     public function enablenotificationsAction()
     {
-        $form = new CommandForm();
+        $this->setSupportedParameters(array('host', 'service'));
+        $form = new SingleArgumentCommandForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Enable Notifications'));
         $form->addNote(t('Notifications for this object will be enabled.'));
+        $form->setCommand('ENABLE_HOST_NOTIFICATIONS', 'ENABLE_SVC_NOTIFICATIONS');
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
-            $this->target->enableNotifications($this->view->objects);
+            $this->target->sendCommand($form->createCommand(), $this->view->objects);
         }
     }
 
@@ -462,14 +514,15 @@ class Monitoring_CommandController extends ActionController
     public function removedowntimeswithchildrenAction()
     {
         $this->setSupportedParameters(array('host'));
-        $form = new CommandForm();
+        $form = new SingleArgumentCommandForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Remove Downtime(s)'));
         $form->addNote(t('Remove downtime(s) from this host and its services.'));
+        $form->setCommand('DEL_DOWNTIME_BY_HOST_NAME', 'DEL_DOWNTIME_BY_HOST_NAME');
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
-            $this->target->removeDowntime($this->view->objects);
+            $this->target->sendCommand($form->createCommand(), $this->view->objects);
         }
     }
 
@@ -479,15 +532,18 @@ class Monitoring_CommandController extends ActionController
     public function disablenotificationswithchildrenAction()
     {
         $this->setSupportedParameters(array('host'));
-        $form = new CommandForm();
+        $form = new SingleArgumentCommandForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Disable Notifications'));
         $form->addNote(t('Notifications for this host and its services will be disabled.'));
+        $form->setCommand('DISABLE_ALL_NOTIFICATIONS_BEYOND_HOST');
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
-            $this->target->disableNotifications($this->view->objects);
-            $this->target->disableNotificationsForServices($this->view->objects);
+            $this->target->sendCommand($form->createCommand(), $this->view->objects);
+            $form->setCommand('DISABLE_HOST_NOTIFICATIONS', 'DISABLE_SVC_NOTIFICATIONS');
+            $this->target->sendCommand($form->createCommand(), $this->view->objects);
+
         }
     }
 
@@ -497,15 +553,17 @@ class Monitoring_CommandController extends ActionController
     public function enablenotificationswithchildrenAction()
     {
         $this->setSupportedParameters(array('host'));
-        $form = new CommandForm();
+        $form = new SingleArgumentCommandForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Enable Notifications'));
         $form->addNote(t('Notifications for this host and its services will be enabled.'));
+        $form->setCommand('ENABLE_ALL_NOTIFICATIONS_BEYOND_HOST');
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
-            $this->target->enableNotifications($this->view->objects);
-            $this->target->enableNotificationsForServices($this->view->objects);
+            $this->target->sendCommand($form->createCommand(), $this->view->objects);
+            $form->setCommand('ENABLE_HOST_NOTIFICATIONS', 'ENABLE_SVC_NOTIFICATIONS');
+            $this->target->sendCommand($form->createCommand(), $this->view->objects);
         }
     }
 
@@ -533,15 +591,16 @@ class Monitoring_CommandController extends ActionController
     public function disableactivecheckswithchildrenAction()
     {
         $this->setSupportedParameters(array('host'));
-        $form = new CommandForm();
+        $form = new SingleArgumentCommandForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Disable Active Checks'));
         $form->addNote(t('Disable active checks for this host and its services.'));
+        $form->setCommand('DISABLE_HOST_CHECK');
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
-            $this->target->disableActiveChecks($this->view->objects);
-            $this->target->disableActiveChecksWithChildren($this->view->objects);
+            // @TODO(mh): Missing child command
+            $this->target->sendCommand($form->createCommand(), $this->view->objects);
         }
     }
 
@@ -551,15 +610,16 @@ class Monitoring_CommandController extends ActionController
     public function enableactivecheckswithchildrenAction()
     {
         $this->setSupportedParameters(array('host'));
-        $form = new CommandForm();
+        $form = new SingleArgumentCommandForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Enable Active Checks'));
         $form->addNote(t('Enable active checks for this host and its services.'));
+        $form->setCommand('ENABLE_HOST_CHECK');
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
-            $this->target->enableActiveChecks($this->view->objects);
-            $this->target->enableActiveChecksWithChildren($this->view->objects);
+            // @TODO(mh): Missing child command
+            $this->target->sendCommand($form->createCommand(), $this->view->objects);
         }
     }
 
@@ -569,14 +629,15 @@ class Monitoring_CommandController extends ActionController
     public function disableeventhandlerAction()
     {
         $this->setSupportedParameters(array('host', 'service'));
-        $form = new CommandForm();
+        $form = new SingleArgumentCommandForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Disable Event Handler'));
         $form->addNote(t('Disable event handler for this object.'));
+        $form->setCommand('DISABLE_HOST_EVENT_HANDLER', 'DISABLE_SVC_EVENT_HANDLER');
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
-            $this->target->disableEventHandler($this->view->objects);
+            $this->target->sendCommand($form->createCommand(), $this->view->objects);
         }
     }
 
@@ -586,14 +647,15 @@ class Monitoring_CommandController extends ActionController
     public function enableeventhandlerAction()
     {
         $this->setSupportedParameters(array('host', 'service'));
-        $form = new CommandForm();
+        $form = new SingleArgumentCommandForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Enable Event Handler'));
         $form->addNote(t('Enable event handler for this object.'));
+        $form->setCommand('ENABLE_HOST_EVENT_HANDLER', 'ENABLE_SVC_EVENT_HANDLER');
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
-            $this->target->enableEventHandler($this->view->objects);
+            $this->target->sendCommand($form->createCommand(), $this->view->objects);
         }
     }
 
@@ -603,14 +665,15 @@ class Monitoring_CommandController extends ActionController
     public function disableflapdetectionAction()
     {
         $this->setSupportedParameters(array('host', 'service'));
-        $form = new CommandForm();
+        $form = new SingleArgumentCommandForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Disable Flapping Detection'));
         $form->addNote(t('Disable flapping detection for this object.'));
+        $form->setCommand('DISABLE_HOST_FLAP_DETECTION', 'DISABLE_SVC_FLAP_DETECTION');
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
-            $this->target->disableFlappingDetection($this->view->objects);
+            $this->target->sendCommand($form->createCommand(), $this->view->objects);
         }
     }
 
@@ -620,14 +683,15 @@ class Monitoring_CommandController extends ActionController
     public function enableflapdetectionAction()
     {
         $this->setSupportedParameters(array('host', 'service'));
-        $form = new CommandForm();
+        $form = new SingleArgumentCommandForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Enable Flapping Detection'));
         $form->addNote(t('Enable flapping detection for this object.'));
+        $form->setCommand('ENABLE_HOST_FLAP_DETECTION', 'ENABLE_SVC_FLAP_DETECTION');
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
-            $this->target->enableFlappingDetection($this->view->objects);
+            $this->target->sendCommand($form->createCommand(), $this->view->objects);
         }
     }
 
@@ -638,8 +702,27 @@ class Monitoring_CommandController extends ActionController
     {
         $this->setSupportedParameters(array('host', 'service'));
         $form = new CommentForm();
-        $form->setRequest($this->getRequest());
+        $form->setRequest($this->_request);
 
+        $this->setForm($form);
+
+        if ($form->IsSubmittedAndValid() === true) {
+            $this->target->sendCommand($form->createCommand(), $this->view->objects);
+        }
+    }
+
+    /**
+     * Remove a single comment
+     */
+    public function removecommentAction()
+    {
+        $this->setSupportedParameters(array('commentid', 'host', 'service'));
+        $form = new SingleArgumentCommandForm();
+        $form->setRequest($this->_request);
+        $form->setCommand('DEL_HOST_COMMENT', 'DEL_SERVICE_COMMENT');
+        $form->setParameterName('commentid');
+        $form->setSubmitLabel(t('Remove comment'));
+        $form->setObjectIgnoreFlag(true);
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
@@ -653,14 +736,16 @@ class Monitoring_CommandController extends ActionController
     public function resetattributesAction()
     {
         $this->setSupportedParameters(array('host', 'service'));
-        $form = new CommandForm();
+        $form = new SingleArgumentCommandForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Reset Attributes'));
         $form->addNote(t('Reset modified attributes to its default.'));
+        $form->setCommand('CHANGE_HOST_MODATTR', 'CHANGE_SVC_MODATTR');
+        $form->setParameterValue(0);
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
-            $this->target->resetAttributes($this->view->objects);
+            $this->target->sendCommand($form->createCommand(), $this->view->objects);
         }
     }
 
@@ -687,14 +772,15 @@ class Monitoring_CommandController extends ActionController
     public function removeacknowledgementAction()
     {
         $this->setSupportedParameters(array('host', 'service'));
-        $form = new CommandForm();
+        $form = new SingleArgumentCommandForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Remove Problem Acknowledgement'));
         $form->addNote(t('Remove problem acknowledgement for this object.'));
+        $form->setCommand('REMOVE_HOST_ACKNOWLEDGEMENT', 'REMOVE_SVC_ACKNOWLEDGEMENT');
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
-            $this->target->removeAcknowledge($this->view->objects);
+            $this->target->sendCommand($form->createCommand(), $this->view->objects);
         }
     }
 
