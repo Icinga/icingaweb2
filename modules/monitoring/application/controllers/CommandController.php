@@ -101,7 +101,17 @@ class Monitoring_CommandController extends ActionController
             if ($this->form->isSubmittedAndValid()) {
                 $this->_helper->viewRenderer->setNoRender(true);
                 $this->_helper->layout()->disableLayout();
+
+                $requested = strtolower($this->_request->getHeader('x-requested-with'));
+                $ajaxRequest = $requested === 'xmlhttprequest' ? true : false;
+
+                if ($this->_request->getHeader('referer') && $ajaxRequest === false) {
+                    $this->redirect($this->_request->getHeader('referer'));
+                }
+
+                return;
             }
+
             $this->view->form = $this->form;
         }
         parent::postDispatch();
@@ -719,7 +729,7 @@ class Monitoring_CommandController extends ActionController
         $this->setSupportedParameters(array('commentid', 'host', 'service'));
         $form = new SingleArgumentCommandForm();
         $form->setRequest($this->_request);
-        $form->setCommand('DEL_HOST_COMMENT', 'DEL_SERVICE_COMMENT');
+        $form->setCommand('DEL_HOST_COMMENT', 'DEL_SVC_COMMENT');
         $form->setParameterName('commentid');
         $form->setSubmitLabel(t('Remove comment'));
         $form->setObjectIgnoreFlag(true);

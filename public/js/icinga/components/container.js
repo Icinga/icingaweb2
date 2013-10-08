@@ -91,7 +91,7 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
          * @returns {HTMLElement|null}                      The nearest container found or null if target is no container
          *                                                  and no container is above target
          */
-        var findNearestContainer = function(target) {
+        this.findNearestContainer = function(target) {
             target = $(target);
             if (target.attr('data-icinga-component') === 'app/container' ||
                     target.attr('id') === 'icingamain' || target.attr('id') === 'icingadetail') {
@@ -106,7 +106,7 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
          * @param {HTMLElement, jQuery, String} target      A jQuery resultset, dom element or matcher string
          */
         this.construct = function(target) {
-            this.containerDom = $(findNearestContainer(target));
+            this.containerDom = $(this.findNearestContainer(target));
             this.containerType = CONTAINER_TYPES.GENERIC;
 
             if (this.containerDom.attr('id') === CONTAINER_TYPES.MAIN) {

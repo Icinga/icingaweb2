@@ -8,6 +8,8 @@
 $viewHelper = $this->getHelper('MonitoringState');
 ?>
 
+<h1>Comments</h1>
+
 <div data-icinga-component="app/mainDetailGrid">
   <?=  $this->sortControl->render($this); ?>
   <?=  $this->paginationControl($comments, null, null, array('preserve' => $this->preserve)); ?>
@@ -98,17 +100,24 @@ $viewHelper = $this->getHelper('MonitoringState');
           <?=
             ($comment->comment_expiration_timestamp) ?
             $dateHelper->formatDateTime($comment->comment_expiration_timestamp) :
-            '&nbsp;';
+            'Never';
           ?>
         </td>
         <td>
-          <?=
-            $commandHelper->simpleForm(
+          <?php
+            $data = array(
+              'commentid' => $comment->comment_id,
+              'host'      => $comment->host_name
+            );
+
+            if ($objectType === 'service') {
+              $data['service'] = $comment->service_name;
+            }
+
+            echo $commandHelper->simpleForm(
               'removecomment',
-              'Remove',
-              array(
-                'commentid' => $comment->comment_id
-              )
+              'Remove Comment',
+              $data
             );
           ?>
         </td>
@@ -117,4 +126,5 @@ $viewHelper = $this->getHelper('MonitoringState');
     </tbody>
   </table>
 
+  <?=  $this->paginationControl($comments, null, null, array('preserve' => $this->preserve)); ?>
 </div>
