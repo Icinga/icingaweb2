@@ -189,8 +189,8 @@ exec { 'icinga-htpasswd':
 }
 
 cmmi { 'icinga-plugins':
-  url     => 'http://sourceforge.net/projects/nagiosplug/files/nagiosplug/1.4.16/nagios-plugins-1.4.16.tar.gz/download',
-  output  => 'nagios-plugins-1.4.16.tar.gz',
+  url     => 'https://www.nagios-plugins.org/download/nagios-plugins-1.5.tar.gz',
+  output  => 'nagios-plugins-1.5.tar.gz',
   flags   => '--prefix=/usr/lib64/nagios/plugins \
               --with-nagios-user=icinga --with-nagios-group=icinga \
               --with-cgiurl=/icinga-mysql/cgi-bin',
