@@ -24,7 +24,7 @@ $contactHelper = $this->getHelper('ContactFlags');
         <tbody>
             <?php foreach($contacts as $contact): ?>
                 <?php $periodLink = $this->href('monitoring/show/contacts', array('contact' => $contact->contact_name)); ?>
-                <tr class="active">
+                <tr>
                     <td> <?= $contact->contact_name ?> </td>
                     <td> <?= $contact->contact_alias ?> </td>
                     <td> <?= $contact->contact_email ?> </td>

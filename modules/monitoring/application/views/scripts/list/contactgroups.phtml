@@ -21,7 +21,7 @@ $knownGroups = array()
             <?php foreach($contactgroups as $contact): ?>
 
                 <?php $periodLink = $this->href('monitoring/show/contacts', array('contact' => $contact->contact_name)); ?>
-                <tr class="active">
+                <tr>
                     <?php
                         $groupName = $contact->contactgroup_name;
                         if (!array_key_exists($groupName, $knownGroups)) {
@@ -32,7 +32,7 @@ $knownGroups = array()
                         }
                     ?>
                     <td>
-                        <a href="<?= $periodLink ?>"">
+                        <a href="<?= $periodLink ?>">
                             <?= $contact->contact_name ?>
                         </a>
                     </td>
