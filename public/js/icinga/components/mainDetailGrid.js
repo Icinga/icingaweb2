@@ -130,6 +130,11 @@ function(Container, $, logger, URI) {
                     if (true || Container.isExternalLink(a.attr('href'))) {
                         return true;
                     }
+                } else if (targetEl.nodeName.toLowerCase() === 'input') {
+                    var type = $(targetEl).attr('type');
+                    if (type === 'submit') {
+                        return true;
+                    }
                 }
 
                 Container.getDetailContainer().replaceDomFromUrl($('a', this).attr('href'));

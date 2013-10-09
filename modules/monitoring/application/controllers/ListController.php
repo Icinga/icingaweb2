@@ -45,6 +45,7 @@ use Icinga\Module\Monitoring\DataView\Downtime as DowntimeView;
 use Icinga\Module\Monitoring\DataView\Contact as ContactView;
 use Icinga\Module\Monitoring\DataView\Contactgroup as ContactgroupView;
 use Icinga\Module\Monitoring\DataView\HostAndServiceStatus as HostAndServiceStatusView;
+use Icinga\Module\Monitoring\DataView\Comment as CommentView;
 
 class Monitoring_ListController extends ActionController
 {
@@ -303,6 +304,37 @@ class Monitoring_ListController extends ActionController
             'contactgroup_name' => 'Group Name',
             'contactgroup_alias' => 'Group Alias'
         ));
+        $this->handleFormatRequest($query);
+    }
+
+    public function commentsAction()
+    {
+        $query = CommentView::fromRequest(
+            $this->_request,
+            array(
+                'comment_objecttype_id',
+                'comment_id',
+                'comment_data',
+                'comment_author',
+                'comment_timestamp',
+                'comment_type',
+                'comment_is_persistent',
+                'comment_expiration_timestamp',
+                'host_name',
+                'service_name'
+            )
+        )->getQuery();
+
+        $this->view->comments = $query->paginate();
+
+        $this->setupSortControl(
+            array(
+                'comment_timestamp' => 'Comment Timestamp',
+                'host_service'      => 'Host and Service',
+                'comment_id'        => 'Comment Id',
+                'comment_expires'   => 'Expiration Timestamp'
+            )
+        );
         $this->handleFormatRequest($query);
     }
 

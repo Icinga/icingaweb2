@@ -28,14 +28,15 @@
 
 namespace Icinga\Module\Monitoring\Form\Command;
 
-use \Zend_Config;
-use \Icinga\Web\Form;
-use \Zend_Form_Element_Hidden;
+use Zend_Config;
+use Zend_Form_Element_Hidden;
+use Icinga\Module\Monitoring\Command\AcknowledgeCommand;
+use Icinga\Web\Form;
 
 /**
  * Simple confirmation command
  */
-class CommandForm extends Form
+abstract class CommandForm extends Form
 {
     /**
      * Create an instance name containing hidden field
@@ -126,4 +127,11 @@ class CommandForm extends Form
             )
         );
     }
+
+    /**
+     * Create command object for CommandPipe protocol
+     *
+     * @return AcknowledgeCommand
+     */
+    abstract public function createCommand();
 }
