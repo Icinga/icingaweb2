@@ -1,3 +1,5 @@
+@import url("icons.css");
+
 body { padding-top: 70px; }
 
 .load-indicator .mask {
@@ -298,7 +300,7 @@ select.input-sm {
 }
 
 .tacheader-status-ok {
-    background-color: #00CC33;
+    /* background-color: #00CC33; */
 }
 
 .tacheader-status-warning {
@@ -320,7 +322,7 @@ select.input-sm {
 }
 
 .tacheader-status-up {
-    background-color: #00CC33;
+    /* background-color: #00CC33; */
 }
 
 

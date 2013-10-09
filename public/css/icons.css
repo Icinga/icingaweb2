@@ -1,0 +1,104 @@
+
+.icinga-icon-acknowledgement {
+    background: transparent url("../img/images/acknowledgement.png") center center no-repeat;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+}
+
+.icinga-icon-comment {
+    background: transparent url("../img/images/comment.png") center center no-repeat;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+}
+
+.icinga-icon-create {
+    background: transparent url("../img/images/create.png") center center no-repeat;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+}
+
+.icinga-icon-dashboard {
+    background: transparent url("../img/images/dashboard.png") center center no-repeat;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+}
+
+.icinga-icon-disabled {
+    background: transparent url("../img/images/disabled.png") center center no-repeat;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+}
+.icinga-icon-edit {
+    background: transparent url("../img/images/edit.png") center center no-repeat;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+}
+
+.icinga-icon-error {
+    background: transparent url("../img/images/error.png") center center no-repeat;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+}
+
+.icinga-icon-flapping {
+    background: transparent url("../img/images/flapping.png") center center no-repeat;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+}
+
+.icinga-icon-in-downtime {
+    background: transparent url("../img/images/in_downtime.png") center center no-repeat;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+}
+
+.icinga-icon-remove {
+    background: transparent url("../img/images/remove.png") center center no-repeat;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+}
+
+.icinga-icon-save {
+    background: transparent url("../img/images/save.png") center center no-repeat;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+}
+
+.icinga-icon-service {
+    background: transparent url("../img/images/service.png") center center no-repeat;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+}
+
+.icinga-icon-submit {
+    background: transparent url("../img/images/submit.png") center center no-repeat;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+}
+
+.icinga-icon-unhandled {
+    background: transparent url("../img/images/unhandled.png") center center no-repeat;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+}
+
+.icinga-icon-user {
+    background: transparent url("../img/images/user.png") center center no-repeat;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+}

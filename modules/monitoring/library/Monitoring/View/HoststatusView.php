@@ -37,6 +37,8 @@ class HoststatusView extends AbstractView
         'host_last_time_up',
         'host_last_time_down',
         'host_last_time_unreachable',
+        'host_current_check_attempt',
+        'host_max_check_attempts',
 
         // Services
         'services_cnt',

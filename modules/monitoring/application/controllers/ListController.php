@@ -116,7 +116,9 @@ class Monitoring_ListController extends MonitoringController
                 'host_notes_url',
                 'host_last_comment',
                 'host_active_checks_enabled',
-                'host_passive_checks_enabled'
+                'host_passive_checks_enabled',
+                'host_current_check_attempt',
+                'host_max_check_attempts'
             )
         )->getQuery();
         $this->view->hosts = $query->paginate();
