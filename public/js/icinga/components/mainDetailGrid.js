@@ -213,7 +213,6 @@ function(Container, $, logger, URI) {
             this.registerControls();
             this.registerTableLinks();
             this.registerHistoryChanges();
-
         };
 
         this.construct(gridDomNode);
