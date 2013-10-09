@@ -4,13 +4,12 @@ namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
 class ContactQuery extends AbstractQuery
 {
-    // TODO: join host/service timeperiod
-
     protected $columnMap = array(
         'contacts' => array(
+            'contact_id'     => 'c.contact_id',
             'contact_name'   => 'co.name1 COLLATE latin1_general_ci',
-            'contact_alias'  => 'c.alias',
-            'contact_email'  => 'c.email_address',
+            'contact_alias'  => 'c.alias COLLATE latin1_general_ci',
+            'contact_email'  => 'c.email_address COLLATE latin1_general_ci',
             'contact_pager'  => 'c.pager_address',
             'contact_has_host_notfications'    => 'c.host_notifications_enabled',
             'contact_has_service_notfications' => 'c.service_notifications_enabled',
@@ -26,6 +25,10 @@ class ContactQuery extends AbstractQuery
             'contact_notify_host_unreachable'  => 'c.notify_host_unreachable',
             'contact_notify_host_flapping'     => 'c.notify_host_flapping',
             'contact_notify_host_downtime'     => 'c.notify_host_downtime',
+        ),
+        'timeperiods' => array(
+            'contact_notify_host_timeperiod' => 'ht.alias COLLATE latin1_general_ci',
+            'contact_notify_service_timeperiod' => 'st.alias COLLATE latin1_general_ci'
         ),
         'hosts' => array(
             'host_object_id' => 'ho.object_id',
@@ -87,4 +90,17 @@ class ContactQuery extends AbstractQuery
         );
     }
 
+    protected function joinTimeperiods()
+    {
+        $this->baseQuery->join(
+            array('ht' => $this->prefix . 'timeperiods'),
+            'ht.timeperiod_object_id = c.host_timeperiod_object_id',
+            array()
+        );
+        $this->baseQuery->join(
+            array('st' => $this->prefix . 'timeperiods'),
+            'st.timeperiod_object_id = c.service_timeperiod_object_id',
+            array()
+        );
+    }
 }
