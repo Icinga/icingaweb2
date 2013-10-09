@@ -76,14 +76,19 @@ define([
                 href = URI(href);
             }
             document.body.pending = $.ajax({
-                success: function(domNodes) {
-                    $('body').empty().append(jQuery.parseHTML(domNodes));
-                    ignoreHistoryChanges = true;
-                    History.pushState({}, document.title, href.href());
-                    ignoreHistoryChanges = false;
-                    components.load();
-                },
                 url: href.href()
+            }).done(function(domNodes) {
+                $('body').empty().append(jQuery.parseHTML(domNodes));
+                ignoreHistoryChanges = true;
+                History.pushState({}, document.title, href.href());
+                ignoreHistoryChanges = false;
+                components.load();
+            }).error(function(xhr, textStatus, errorThrown) {
+                    if (xhr.responseText) {
+                        $('body').empty().append(jQuery.parseHTML(xhr.responseText));
+                    } else if (textStatus !== 'abort') {
+                        logging.emergency('Could not load URL', xhr.href, textStatus, errorThrown);
+                    }
             });
 
             return false;
