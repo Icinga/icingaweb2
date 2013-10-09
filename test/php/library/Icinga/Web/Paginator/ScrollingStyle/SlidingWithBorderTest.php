@@ -2,10 +2,13 @@
 
 namespace Tests\Icinga\Web\Paginator\ScrollingStyle;
 
-use \Icinga\Module\Monitoring\Backend\Statusdat;
+use Zend_Config;
+use Zend_Paginator_Adapter_Interface;
+use Icinga\Module\Monitoring\Backend\Statusdat;
 use Icinga\Protocol\Statusdat\Reader;
 use Icinga\Web\Paginator\Adapter\QueryAdapter;
 use Tests\Icinga\Protocol\Statusdat\StatusdatTestLoader;
+use Icinga\Module\Monitoring\Backend;
 
 require_once 'Zend/Paginator/Adapter/Interface.php';
 require_once 'Zend/Paginator/ScrollingStyle/Interface.php';
@@ -20,15 +23,15 @@ StatusdatTestLoader::requireLibrary();
 
 require_once '../../modules/monitoring/library/Monitoring/Backend/Statusdat/Criteria/Order.php';
 require_once '../../modules/monitoring/library/Monitoring/Backend/AbstractBackend.php';
+require_once '../../modules/monitoring/library/Monitoring/Backend.php';
 require_once '../../modules/monitoring/library/Monitoring/Backend/Statusdat/Query/Query.php';
-require_once '../../modules/monitoring/library/Monitoring/Backend/Statusdat.php';
 require_once '../../modules/monitoring/library/Monitoring/Backend/Statusdat/Query/StatusQuery.php';
 require_once '../../modules/monitoring/library/Monitoring/Backend/Statusdat/DataView/HostStatusView.php';
 require_once '../../modules/monitoring/library/Monitoring/View/AbstractView.php';
 require_once '../../modules/monitoring/library/Monitoring/View/StatusView.php';
 require_once '../../library/Icinga/Web/Paginator/ScrollingStyle/SlidingWithBorder.php';
 
-class TestPaginatorAdapter implements \Zend_Paginator_Adapter_Interface
+class TestPaginatorAdapter implements Zend_Paginator_Adapter_Interface
 {
     private $items = array();
 
@@ -80,7 +83,9 @@ class SlidingwithborderTest extends \PHPUnit_Framework_TestCase
 {
     private $cacheDir;
 
-    private $config;
+    private $backendConfig;
+
+    private $resourceConfig;
 
     protected function setUp()
     {
@@ -93,17 +98,23 @@ class SlidingwithborderTest extends \PHPUnit_Framework_TestCase
         $statusdatFile = dirname(__FILE__). '/../../../../../res/status/icinga.status.dat';
         $cacheFile = dirname(__FILE__). '/../../../../../res/status/icinga.objects.cache';
 
-        $this->config = new \Zend_Config(
+        $this->backendConfig = new Zend_Config(
             array(
-                'status_file' => $statusdatFile,
-                'objects_file' => $cacheFile
+                'type' => 'statusdat'
+            )
+        );
+        $this->resourceConfig = new Zend_Config(
+            array(
+                'status_file'   => $statusdatFile,
+                'objects_file'  => $cacheFile,
+                'type'          => 'statusdat'
             )
         );
     }
 
     public function testGetPages1()
     {
-        $backend = new Statusdat($this->config);
+        $backend = new Backend($this->backendConfig, $this->resourceConfig);
         $query = $backend->select()->from('status');
 
         $adapter = new QueryAdapter($query);

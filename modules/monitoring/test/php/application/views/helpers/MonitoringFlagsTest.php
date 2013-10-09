@@ -11,12 +11,12 @@ class MonitoringFlagsTest extends \PHPUnit_Framework_TestCase
     public function testHosts1()
     {
         $testArray = array(
-            'host_passive_checks_enabled' => '0',
-            'host_active_checks_enabled' => '0',
-            'host_obsessing' => '1',
-            'host_notifications_enabled' => '0',
-            'host_event_handler_enabled' => '1',
-            'host_flap_detection_enabled' => '1',
+            'passive_checks_enabled' => '0',
+            'active_checks_enabled' => '0',
+            'obsessing' => '1',
+            'notifications_enabled' => '0',
+            'event_handler_enabled' => '1',
+            'flap_detection_enabled' => '1',
         );
 
         $monitoringFlags = new \Zend_View_Helper_MonitoringFlags();
@@ -39,12 +39,12 @@ class MonitoringFlagsTest extends \PHPUnit_Framework_TestCase
     public function testService1()
     {
         $testArray = array(
-            'service_passive_checks_enabled' => '0',
-            'service_active_checks_enabled' => '1',
-            'service_obsessing' => '0',
-            'service_notifications_enabled' => '1',
-            'service_event_handler_enabled' => '1',
-            'service_flap_detection_enabled' => '0',
+            'passive_checks_enabled' => '0',
+            'active_checks_enabled' => '1',
+            'obsessing' => '0',
+            'notifications_enabled' => '1',
+            'event_handler_enabled' => '1',
+            'flap_detection_enabled' => '0',
         );
 
         $monitoringFlags = new \Zend_View_Helper_MonitoringFlags();
@@ -58,56 +58,6 @@ class MonitoringFlagsTest extends \PHPUnit_Framework_TestCase
             'Obsessing' => false,
             'Notifications' => true,
             'Event Handler' => true,
-            'Flap Detection' => false
-        );
-
-        $this->assertEquals($expected, $returnArray);
-    }
-
-    public function testUglyConditions1()
-    {
-        $testArray = array(
-            'service_active_checks_enabled' => '1',
-            'service_obsessing' => '1',
-            'DING DING' => '$$$',
-            'DONG DONG' => '###'
-        );
-
-        $monitoringFlags = new \Zend_View_Helper_MonitoringFlags();
-        $returnArray = $monitoringFlags->monitoringFlags((object)$testArray);
-
-        $this->assertCount(6, $returnArray);
-
-        $expected = array(
-            'Passive Checks' => false,
-            'Active Checks' => true,
-            'Obsessing' => true,
-            'Notifications' => false,
-            'Event Handler' => false,
-            'Flap Detection' => false
-        );
-
-        $this->assertEquals($expected, $returnArray);
-    }
-
-    public function testUglyConditions2()
-    {
-        $testArray = array(
-            'DING DING' => '$$$',
-            'DONG DONG' => '###'
-        );
-
-        $monitoringFlags = new \Zend_View_Helper_MonitoringFlags();
-        $returnArray = $monitoringFlags->monitoringFlags((object)$testArray);
-
-        $this->assertCount(6, $returnArray);
-
-        $expected = array(
-            'Passive Checks' => false,
-            'Active Checks' => false,
-            'Obsessing' => false,
-            'Notifications' => false,
-            'Event Handler' => false,
             'Flap Detection' => false
         );
 

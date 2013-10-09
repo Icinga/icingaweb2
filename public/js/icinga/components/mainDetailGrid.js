@@ -122,11 +122,12 @@ function(Container, $, logger, URI) {
             domContext = domContext || contentNode;
 
             $('tbody tr', domContext).on('click', function(ev) {
-                var targetEl = ev.target || ev.toElement || ev.relatedTarget;
+                var targetEl = ev.target || ev.toElement || ev.relatedTarget,
+                    a = $(targetEl).closest('a');
 
-                if (targetEl.nodeName.toLowerCase() === "a") {
+                if (a.length) {
                     // test if the URL is on the current server, if not open it directly
-                    if(Container.isExternalLink($(targetEl).attr('href'))) {
+                    if (true || Container.isExternalLink(a.attr('href'))) {
                         return true;
                     }
                 }

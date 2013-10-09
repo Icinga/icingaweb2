@@ -1,6 +1,8 @@
 <?php
 
 namespace Tests\Monitoring\Backend\Statusdat;
+
+use Zend_Config;
 use Tests\Icinga\Protocol\Statusdat\ReaderMock as ReaderMock;
 use \Icinga\Module\Monitoring\Backend\Statusdat\Query\ServicegroupsummaryQuery;
 use Tests\Icinga\Protocol\Statusdat\StatusdatTestLoader;
@@ -30,10 +32,12 @@ class BackendMock  extends \Icinga\Module\Monitoring\Backend\AbstractBackend
 
 class ServicegroupsummaryqueryTest extends \PHPUnit_Framework_TestCase
 {
-
     public function testGroupByProblemType()
     {
-        $backend = new BackendMock();
+        $backendConfig = new Zend_Config(
+            array()
+        );
+        $backend = new BackendMock($backendConfig);
         $backend->setReader($this->getTestDataset());
         $q = new ServicegroupsummaryQuery($backend);
         $indices = array(

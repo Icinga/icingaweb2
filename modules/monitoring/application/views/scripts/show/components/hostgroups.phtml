@@ -1,0 +1,18 @@
+<?php if (!empty($object->hostgroups)): ?>
+<?php
+$hostgroups = array();
+foreach ($object->hostgroups as $name => $alias) {
+    $hostgroups[] = '<a href="' . $this->href('monitoring/list/hosts', array('hostgroups' => $name)) . '">'
+        . $alias
+        . '</a>';
+}
+?>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        {{HOSTGROUP_ICON}} <span>Hostgroups</span>
+    </div>
+    <div class="panel-body">
+        <?= implode(', ', $hostgroups); ?>
+    </div>
+</div>
+<?php endif; ?>

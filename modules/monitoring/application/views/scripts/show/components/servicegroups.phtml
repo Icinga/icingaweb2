@@ -1,12 +1,18 @@
+<?php if (!empty($object->servicegroups)): ?>
 <?php
-
-if (empty($object->servicegroups)) return;
-
-$list = array();
+$servicegroups = array();
 foreach ($object->servicegroups as $name => $alias) {
-    $list[] = '<a href="' . $this->href('monitoring/list/service', array('servicegroups' => $name)) . '">'
-              . $alias
-              . '</a>';
+    $servicegroups[] = '<a href="' . $this->href('monitoring/list/service', array('servicegroups' => $name)) . '">'
+        . $alias
+        . '</a>';
 }
-echo '{{SERVICEGROUP_ICON}} <b>Servicegroups:</b> ' .  implode(', ', $list) . "<br />\n";
-
+?>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        {{SERVICEGROUP_ICON}} <span>Servicegroups</span>
+    </div>
+    <div class="panel-body">
+        <?= implode(', ', $servicegroups); ?>
+    </div>
+</div>
+<?php endif; ?>

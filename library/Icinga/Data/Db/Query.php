@@ -40,7 +40,7 @@ class Query extends AbstractQuery
 
     protected function init()
     {
-        $this->db = $this->ds->getConnection()->getDb();
+        $this->db = $this->ds->getConnection();
         $this->baseQuery = $this->db->select();
     }
 

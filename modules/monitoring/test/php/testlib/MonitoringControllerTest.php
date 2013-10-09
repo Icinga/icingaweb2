@@ -37,10 +37,10 @@ use \Zend_Test_PHPUnit_ControllerTestCase;
 use \Icinga\Protocol\Statusdat\Reader;
 use \Icinga\Web\Controller\ActionController;
 use \Icinga\Application\DbAdapterFactory;
-use \Icinga\Module\Monitoring\Backend\Ido;
-use \Icinga\Module\Monitoring\Backend\Statusdat;
 use \Test\Monitoring\Testlib\DataSource\TestFixture;
 use \Test\Monitoring\Testlib\DataSource\DataSourceTestSetup;
+use Icinga\Module\Monitoring\Backend;
+use Icinga\Data\ResourceFactory;
 
 /**
  * Base class for monitoring controllers that loads required dependencies
@@ -81,11 +81,13 @@ abstract class MonitoringControllerTest extends Zend_Test_PHPUnit_ControllerTest
     private $appDir = "";
 
     /**
-     *  Require necessary libraries on test creation
+     * Require necessary libraries on test creation
      *
-     *  This is called for every test and assures that all required libraries for the controllers
-     *  are loaded. If you need additional dependencies you should overwrite this method, call the parent
-     *  and then require your classes
+     * This is called for every test and assures that all required libraries for the controllers
+     * are loaded. If you need additional dependencies you should overwrite this method, call the parent
+     * and then require your classes
+     *
+     * @backupStaticAttributes enabled
      */
     public function setUp()
     {
@@ -102,6 +104,49 @@ abstract class MonitoringControllerTest extends Zend_Test_PHPUnit_ControllerTest
 
         $this->requireBase();
         $this->requireViews();
+
+        ResourceFactory::setConfig(
+            new Zend_Config(array(
+                'statusdat-unittest' => array(
+                    'type'          => 'statusdat',
+                    'status_file'   => '/tmp/teststatus.dat',
+                    'objects_file'  => '/tmp/testobjects.cache',
+                    'no_cache'      => true
+                ),
+                'ido-mysql-unittest' => array(
+                    'type'     => 'db',
+                    'db'       => 'mysql',
+                    'host'     => 'localhost',
+                    'username' => 'icinga_unittest',
+                    'password' => 'icinga_unittest',
+                    'dbname'   => 'icinga_unittest'
+                ),
+                'ido-pgsql-unittest' => array(
+                    'type'     => 'db',
+                    'db'       => 'mysql',
+                    'host'     => 'localhost',
+                    'username' => 'icinga_unittest',
+                    'password' => 'icinga_unittest',
+                    'dbname'   => 'icinga_unittest'
+                )
+            ))
+        );
+        Backend::setConfig(
+            new Zend_Config(array(
+                'statusdat-unittest' => array(
+                    'type'     => 'statusdat',
+                    'resource' => 'statusdat-unittest'
+                ),
+                'ido-mysql-unittest' => array(
+                    'type'     => 'ido',
+                    'resource' => 'ido-mysql-unittest'
+                ),
+                'ido-pgsql-unittest' => array(
+                    'type'     => 'ido',
+                    'resource' => 'ido-pgsql-unittest'
+                )
+            ))
+        );
     }
 
     /**
@@ -118,6 +163,7 @@ abstract class MonitoringControllerTest extends Zend_Test_PHPUnit_ControllerTest
         require_once('Exception/ProgrammingError.php');
         require_once('Web/Widget/SortBox.php');
         require_once('library/Monitoring/Backend/AbstractBackend.php');
+        require_once('library/Monitoring/Backend.php');
 
     }
 
@@ -128,7 +174,6 @@ abstract class MonitoringControllerTest extends Zend_Test_PHPUnit_ControllerTest
     private function requireIDOQueries()
     {
         require_once('Application/DbAdapterFactory.php');
-        require_once('library/Monitoring/Backend/Ido.php');
         $this->requireFolder('library/Monitoring/Backend/Ido/Query');
     }
 
@@ -155,7 +200,6 @@ abstract class MonitoringControllerTest extends Zend_Test_PHPUnit_ControllerTest
      */
     private function requireStatusDatQueries()
     {
-        require_once(realpath($this->moduleDir.'/library/Monitoring/Backend/Statusdat.php'));
         require_once(realpath($this->moduleDir.'/library/Monitoring/Backend/Statusdat/Query/Query.php'));
         $this->requireFolder('library/Monitoring/Backend/Statusdat');
         $this->requireFolder('library/Monitoring/Backend/Statusdat/Criteria');
@@ -186,9 +230,17 @@ abstract class MonitoringControllerTest extends Zend_Test_PHPUnit_ControllerTest
     {
         require_once($this->moduleDir.'/application/controllers/'.$controller.'.php');
         $controllerName = '\Monitoring_'.ucfirst($controller);
+        $request = $this->getRequest();
+        if ($backend == 'statusdat') {
+            $this->requireStatusDatQueries();
+            $request->setParam('backend', 'statusdat-unittest');
+        } else {
+            $this->requireStatusDatQueries();
+            $request->setParam('backend', "ido-$backend-unittest");
+        }
         /** @var ActionController $controller */
         $controller = new $controllerName(
-            $this->getRequest(),
+            $request,
             $this->getResponse(),
             array('noInit' => true)
         );
@@ -223,9 +275,11 @@ abstract class MonitoringControllerTest extends Zend_Test_PHPUnit_ControllerTest
     {
         if ($type == "mysql" || $type == "pgsql") {
             $this->requireIDOQueries();
-
-            $resourceConfig = array(
-                'icinga-db-unittest' => array(
+            $backendConfig = new Zend_Config(array(
+                'type'     => 'ido'
+            ));
+            $resourceConfig = new Zend_Config(
+                array(
                     'type'     => 'db',
                     'db'       => $type,
                     'host'     => "localhost",
@@ -234,28 +288,23 @@ abstract class MonitoringControllerTest extends Zend_Test_PHPUnit_ControllerTest
                     'dbname'   => "icinga_unittest"
                 )
             );
-
-            DbAdapterFactory::resetConfig();
-            DbAdapterFactory::setConfig($resourceConfig);
-
-            $backendConfig = array(
-                'type'     => 'db',
-                'resource' => 'icinga-db-unittest'
-            );
-
-            return new Ido(
-                new Zend_Config($backendConfig)
-            );
+            return new Backend($backendConfig, $resourceConfig);
         } elseif ($type == "statusdat") {
             $this->requireStatusDatQueries();
-            return new Statusdat(
-                new \Zend_Config(
-                    array(
-                        'status_file'  => '/tmp/teststatus.dat',
-                        'objects_file' => '/tmp/testobjects.cache',
-                        'no_cache'     => true
-                    )
+            $backendConfig = new Zend_Config(array(
+                'type'     => 'statusdat'
+            ));
+            $resourceConfig = new Zend_Config(
+                array(
+                    'type'          => 'statusdat',
+                    'status_file'   => '/tmp/teststatus.dat',
+                    'objects_file'  => '/tmp/testobjects.cache',
+                    'no_cache'      => true
                 )
+            );
+            return new Backend(
+                $backendConfig,
+                $resourceConfig
             );
         }
     }

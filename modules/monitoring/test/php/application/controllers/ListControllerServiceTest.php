@@ -21,10 +21,10 @@ class ListControllerServiceMySQLTest  extends MonitoringControllerTest
         $this->executeServiceListTestFor("pgsql");
     }
 
-    public function testServiceListStatusdat()
-    {
-        $this->executeServiceListTestFor("statusdat");
-    }
+//    public function testServiceListStatusdat()
+//    {
+//        $this->executeServiceListTestFor("statusdat");
+//    }
 
     public function executeServiceListTestFor($backend)
     {
@@ -64,7 +64,6 @@ class ListControllerServiceMySQLTest  extends MonitoringControllerTest
         $this->assertEquals("notes.url", $result[0]->service_notes_url, "Testing for correct notes_url");
         $this->assertEquals("action.url", $result[0]->service_action_url, "Testing for correct action_url");
         $this->assertEquals(0, $result[0]->service_state, "Testing for correct Service state");
-
     }
 
 }

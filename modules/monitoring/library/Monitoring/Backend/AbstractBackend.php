@@ -11,7 +11,7 @@ class AbstractBackend implements DatasourceInterface
 {
     protected $config;
 
-    public function __construct(Zend_Config $config = null)
+    public function __construct(Zend_Config $config)
     {
         if ($config === null) {
             // $config = new Zend_Config(array()); ???
@@ -25,7 +25,7 @@ class AbstractBackend implements DatasourceInterface
     }
 
     /**
-     * Dummy function for fluent code
+     * Backend entry point
      *
      * return self
      */

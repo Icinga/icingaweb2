@@ -20,12 +20,7 @@ if (!$this->compact) {
 <div>
 <?php if ($inlineCommands === true): ?>
   <div class="pull-right">
-    <?=
-        $this->monitoringCommands(
-            ($showService === true) ? $this->service : $this->host,
-            'small'
-        );
-        ?>
+
   </div>
 <?php endif; ?>
 
@@ -33,43 +28,43 @@ if (!$this->compact) {
     <tr>
       <td>
         {{HOST_ICON}}
-        <?php if ($this->host->host_icon_image): ?>
+        <?php if ($this->object->host_icon_image): ?>
         <div>
-          <img src="<?= $this->host->host_icon_image; ?>" alt="Host image"/>
+          <img src="<?= $this->object->host_icon_image; ?>" alt="Host image"/>
         </div>
         <?php endif; ?>
         <strong>
-          <?= $this->escape($this->host->host_name); ?>
-          <?php if ($this->host->host_address && $this->host->host_address !== $this->host->host_name): ?>
-            (<?= $this->escape($this->host->host_address); ?>)
+          <?= $this->escape($this->object->host_name); ?>
+          <?php if ($this->object->host_address && $this->object->host_address !== $this->object->host_name): ?>
+            (<?= $this->escape($this->object->host_address); ?>)
           <?php endif; ?>
         </strong>
 
-        <?php if (isset($this->host->host_alias) && $this->host->host_alias !== $this->host->host_name): ?>
+        <?php if (isset($this->object->host_alias) && $this->object->host_alias !== $this->object->host_name): ?>
           <br/>
-          <sup>(<?= $this->host->host_alias; ?>)</sup>
+          <sup>(<?= $this->object->host_alias; ?>)</sup>
         <?php endif; ?>
       </td>
       <td
         <?= $showService ? '' : ' rowspan="2"'; ?>
-        <?= $this->util()->getHostStateName($this->host->host_state); ?>
-        since <?= $this->timeSince($this->host->host_last_state_change); ?>
-        <?php if ($this->host->host_acknowledged === '1'): ?>
+        <?= $this->util()->getHostStateName($this->object->host_state); ?>
+        since <?= $this->timeSince($this->object->host_last_state_change); ?>
+        <?php if ($this->object->host_acknowledged === '1'): ?>
           (Has been acknowledged)
         <?php endif; ?>
       </td>
     </tr>
 
-    <?php if ($this->host->host_action_url || $this->host->host_notes_url): ?>
+    <?php if ($this->object->host_action_url || $this->object->host_notes_url): ?>
     <tr>
       <td rowspan="2">
-        <?php if ($this->host->host_action_url): ?>
+        <?php if ($this->object->host_action_url): ?>
           {{EXTERNAL_LINK_ICON}}
-          <a target="_new" href='<?= $this->host->host_notes_url ?>'>Host actions </a>
+          <a target="_new" href='<?= $this->object->host_notes_url ?>'>Host actions </a>
         <?php endif; ?>
-        <?php if ($this->host->host_notes_url): ?>
+        <?php if ($this->object->host_notes_url): ?>
           {{EXTERNAL_LINK_ICON}}
-          <a target="_new" href='<?= $this->host->host_notes_url ?>'>Host notes </a>
+          <a target="_new" href='<?= $this->object->host_notes_url ?>'>Host notes </a>
         <?php endif; ?>
       </td>
     </tr>

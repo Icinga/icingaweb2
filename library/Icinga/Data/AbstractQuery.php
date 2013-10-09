@@ -175,7 +175,6 @@ abstract class AbstractQuery implements QueryInterface
                 $dir = self::SORT_ASC;
             }
         }
-
         $this->order_columns[] = array($col, $dir);
         return $this;
     }

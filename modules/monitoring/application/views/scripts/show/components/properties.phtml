@@ -1,19 +1,15 @@
-<?php
-$object = null;
-
-if (isset($this->service)) {
-    $object = $this->service;
-} elseif (isset($this->host)) {
-    $object = $this->host;
-}
-
-$properties = $this->monitoringProperties($object);
-?>
-<table class="table table-bordered">
-  <?php foreach ($properties as $label => $value): ?>
-  <tr>
-    <th><?= $label ?></th>
-    <td><?= $value ?></td>
-  </tr>
-  <?php endforeach; ?>
-</table>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <span>Properties</span>
+    </div>
+    <div class="panel-body">
+        <table class="table table-bordered">
+            <?php foreach ($this->monitoringProperties($object) as $label => $value): ?>
+            <tr>
+                <th><?= $label ?></th>
+                <td><?= $value ?></td>
+            </tr>
+            <?php endforeach; ?>
+        </table>
+    </div>
+</div>

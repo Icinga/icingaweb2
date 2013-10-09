@@ -28,14 +28,14 @@
 
 namespace Icinga\Application\Modules;
 
-use \Icinga\Application\ApplicationBootstrap;
-use \Icinga\Application\Icinga;
-use \Icinga\Application\Logger;
-use \Icinga\Data\ArrayDatasource;
-use \Icinga\Data\ArrayQuery;
-use \Icinga\Exception\ConfigurationError;
-use \Icinga\Exception\SystemPermissionException;
-use \Icinga\Exception\ProgrammingError;
+use Icinga\Application\ApplicationBootstrap;
+use Icinga\Application\Icinga;
+use Icinga\Application\Logger;
+use Icinga\Data\DataArray\Datasource as ArrayDatasource;
+use Icinga\Data\DataArray\Query as ArrayQuery;
+use Icinga\Exception\ConfigurationError;
+use Icinga\Exception\SystemPermissionException;
+use Icinga\Exception\ProgrammingError;
 
 /**
  * Module manager that handles detecting, enabling and disabling of modules
