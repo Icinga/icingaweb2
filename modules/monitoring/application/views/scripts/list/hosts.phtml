@@ -1,22 +1,14 @@
-<?= $this->tabs->render($this); ?>
-
 <?php
 $viewHelper = $this->getHelper('MonitoringState');
 ?>
 
+<?= $this->tabs->render($this); ?>
 <h1>Hosts Status</h1>
 <div data-icinga-component="app/mainDetailGrid">
-
   <?=  $this->sortControl->render($this); ?>
   <?=  $this->paginationControl($hosts, null, null, array('preserve' => $this->preserve)); ?>
-
   <table class="table table-condensed">
-    <thead>
-    <tr>
-      <th colspan="3">Status</th>
-      <th>Host</th>
-    </tr>
-    </thead>
+
     <tbody>
 
     <?php foreach($hosts as $host): ?>
@@ -27,11 +19,6 @@ $viewHelper = $this->getHelper('MonitoringState');
         <!-- Color column -->
         <td class="tacheader-status-<?= $hostStateName; ?>">
           <a style="visibility:hidden" href="<?= $hostLink; ?>"></a>
-          <!--
-          <?php if ($host->host_icon_image) : ?>
-            <img src="<?= $host->host_icon_image; ?>"/>
-          <?php endif; ?>
-          -->
         </td>
 
         <!-- Icons -->
@@ -69,11 +56,11 @@ $viewHelper = $this->getHelper('MonitoringState');
           <?php if (!$host->host_active_checks_enabled): ?>
             <?php if (!$host->host_passive_checks_enabled): ?>
               <a href="#" title="Active And Passive Checks Disabled">
-               <i>{{ACTIVE_PASSIVE_CHECKS_DISABLED_ICON}}</i>
+               <i class="icinga-icon-active-passive-checks-disabled"></i>
               </a>
             <?php else: ?>
               <a href="#" title="Active Checks Disabled">
-                  <i class="icon-table icinga-icon-disabled"></i>
+                  <i class="icon-table icinga-icon-active-checks-disabled"></i>
               </a>
             <?php endif; ?>
           <?php endif; ?>
@@ -89,32 +76,39 @@ $viewHelper = $this->getHelper('MonitoringState');
         <td title="<?= $viewHelper->getStateTitle($host, 'host'); ?>">
           <div>
             <?php if ($host->host_unhandled_service_count): ?>
-              <span class="badge pull-right">
+              <span class="badge pull-right" title="<?= $host->host_unhandled_service_count; ?> Service Problems on Host">
               <a href="<?= $this->href('monitoring/list/services', array('host' => $host->host_name, 'service_problems' => 1)); ?>">
                 <?= $host->host_unhandled_service_count; ?>
               </a>
             </span>
             <?php endif; ?>
 
-            <b><?= ucfirst($viewHelper->monitoringState($host, 'host')); ?></b><br />Since
-            <?= $this->timeSince($host->host_last_state_change); ?> (<?= $host->host_current_check_attempt; ?>/<?= $host->host_max_check_attempts; ?>)
+            <strong><?= ucfirst($viewHelper->monitoringState($host, 'host')); ?></strong><br />
+            <div class="small-row">
+            Since <?= $this->timeSince($host->host_last_state_change); ?>
+            <?php if ($host->host_state > 0): ?>
+              <br />
+              <strong>Attempt:</strong> <?= $host->host_current_check_attempt; ?>/<?= $host->host_max_check_attempts; ?>
+              (<?= ($host->host_state_type === '1') ? 'Hard' : 'Soft'; ?>)
+            <?php endif; ?>
+            </div>
           </div>
         </td>
 
         <!-- Host / Status / Output -->
         <td>
+          <?php if ($host->host_icon_image) : ?>
+            <div class="pull-left" style="margin-right: 2px;">
+              <i class="inline-image" style="background-image: url(<?= $host->host_icon_image; ?>);"></i>
+            </div>
+          <?php endif; ?>
           <a href="<?= $this->href('monitoring/list/services', array('host' => $host->host_name)) ?>">
-            <b><?= $host->host_name ?></b> (<i><?= $host->host_address ?></i>)
+            <strong><?= $host->host_name ?></strong>
           </a>
 
-          <?php if (!empty($host->host_action_url)): ?>
-            <a href="<?= $host->host_action_url; ?>">Action</a>
-          <?php endif; ?>
-          <?php if (!empty($host->host_notes_url)): ?>
-            <a href="<?= $host->host_notes_url; ?>">Notes</a>
-          <?php endif; ?>
-
-          <br /><?= $this->escape(substr(strip_tags($host->host_output), 0, 10000)); ?>
+          <div class="output-text">
+            <?= $this->escape(substr(strip_tags($host->host_output), 0, 10000)); ?>
+          </div>
         </td>
       </tr>
     <?php endforeach; ?>

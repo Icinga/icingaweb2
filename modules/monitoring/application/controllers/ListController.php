@@ -28,17 +28,17 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use \Icinga\Application\Benchmark;
-use \Icinga\Data\Db\Query;
-use \Icinga\File\Csv;
-use \Icinga\Module\Monitoring\Controller as MonitoringController;
-use \Icinga\Web\Hook;
-use \Icinga\Web\Widget\Tabextension\DashboardAction;
-use \Icinga\Web\Widget\Tabextension\OutputFormat;
-use \Icinga\Web\Widget\Tabs;
-use \Icinga\Module\Monitoring\Backend;
-use \Icinga\Web\Widget\SortBox;
-use \Icinga\Application\Config as IcingaConfig;
+use Icinga\Application\Benchmark;
+use Icinga\Data\Db\Query;
+use Icinga\File\Csv;
+use Icinga\Module\Monitoring\Controller as MonitoringController;
+use Icinga\Web\Hook;
+use Icinga\Web\Widget\Tabextension\DashboardAction;
+use Icinga\Web\Widget\Tabextension\OutputFormat;
+use Icinga\Web\Widget\Tabs;
+use Icinga\Module\Monitoring\Backend;
+use Icinga\Web\Widget\SortBox;
+use Icinga\Application\Config as IcingaConfig;
 
 use Icinga\Module\Monitoring\DataView\Notification as NotificationView;
 use Icinga\Module\Monitoring\DataView\Downtime as DowntimeView;

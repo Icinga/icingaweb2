@@ -24,6 +24,18 @@ body { padding-top: 70px; }
     border: none;
 }
 
+.inline-image {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background: #c0c0c0 center center no-repeat;
+}
+
+.small-row {
+    font-size: 12px;
+    line-height: 16px;
+    display: block;
+}
 
 /* ==========================================================================
    Icinga Design
@@ -188,11 +200,9 @@ td {
 
 .output-text {
   font-size: 12px;
-  line-height: 14px;
-  display: inline-block;
+  line-height: 16px;
+  display: block;
 }
-
-
 
 /* ==========================================================================
    Forms
@@ -291,10 +301,11 @@ select.input-sm {
   background-color: #00cc33; /* xx */
 }
 
-
+.tacheader-status-pending {
+    background-color: #bababa;
+}
 
 /** Service status **/
-
 .tacheader-status-critical {
     background-color: #FF3300;
 }
