@@ -44,14 +44,16 @@ class Host extends AbstractObject
             'in_downtime' => 'host_in_downtime',
             'host_acknowledged',
             'host_last_state_change',
-            'last_check'    => 'host_last_check',
-            'next_check'    => 'host_next_check',
-            'check_execution_time'    => 'host_check_execution_time',
-            'check_latency' => 'host_check_latency',
-            'output'        => 'host_output',
-            'long_output'   => 'host_long_output',
-            'check_command' => 'host_check_command',
-            'perfdata'      => 'host_perfdata',
+            'last_state_change'         => 'host_last_state_change',
+            'last_notification'         => 'host_last_notification',
+            'last_check'                => 'host_last_check',
+            'next_check'                => 'host_next_check',
+            'check_execution_time'      => 'host_check_execution_time',
+            'check_latency'             => 'host_check_latency',
+            'output'                    => 'host_output',
+            'long_output'               => 'host_long_output',
+            'check_command'             => 'host_check_command',
+            'perfdata'                  => 'host_perfdata',
             'host_icon_image',
             'passive_checks_enabled'    => 'host_passive_checks_enabled',
             'obsessing'                 => 'host_obsessing',
@@ -67,7 +69,8 @@ class Host extends AbstractObject
             'is_flapping' => 'host_is_flapping',
             'last_comment'              => 'host_last_comment',
             'action_url'                => 'host_action_url',
-            'notes_url'                 => 'host_notes_url'
+            'notes_url'                 => 'host_notes_url',
+            'percent_state_change'      => 'host_percent_state_change'
         ))->where('host_name', $this->name1)->fetchRow();
     }
 }
