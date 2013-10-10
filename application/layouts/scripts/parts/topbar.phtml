@@ -1,9 +1,7 @@
 <nav class="navbar navbar-default navbar-fixed-top" id="icingatopbar" role="navigation">
-  <ul class="nav navbar-nav pull-left">
-    <li>
-      <a href="<?= $this->baseUrl('/') ?>" class="brand" style="margin-left:0px;">Icinga</a>
-    </li>
-  </ul>
+  <div class="navbar-header">
+    <a href="<?= $this->baseUrl('/') ?>" class="navbar-brand icinga-logo">Icinga</a>
+  </div>
   <?php if ($this->auth()->isAuthenticated()): ?>
   <ul class="nav navbar-nav pull-right" >
 <!--        Remove component as of #4583 since it's not working-->

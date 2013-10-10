@@ -38,6 +38,15 @@ body { padding-top: 70px; }
     font-weight: normal;
 }
 
+.icinga-logo {
+    background: transparent url("../img/logo_icinga.png") center center no-repeat;
+    width: 94px;
+    height: 33px;
+    display: block;
+    text-indent: -999px;
+    margin: 8px 0 0 8px;
+}
+
 /* ==========================================================================
    Icinga Design
    ========================================================================== */
