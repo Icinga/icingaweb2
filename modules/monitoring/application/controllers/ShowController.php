@@ -28,7 +28,7 @@
 
 // @codingStandardsIgnoreStart
 use \Icinga\Module\Monitoring\Backend;
-use \Icinga\Web\Controller\ActionController;
+use Icinga\Module\Monitoring\Controller as MonitoringController;
 use \Icinga\Web\Hook;
 use \Icinga\Module\Monitoring\Object\Host;
 use \Icinga\Module\Monitoring\Object\Service;
@@ -43,7 +43,7 @@ use \Icinga\Web\Widget\Tabs;
  *
  * Actions for show context
  */
-class Monitoring_ShowController extends ActionController
+class Monitoring_ShowController extends MonitoringController
 {
     /**
      * @var Backend
@@ -86,7 +86,6 @@ class Monitoring_ShowController extends ActionController
     public function serviceAction()
     {
         $this->view->object->prefetch();
-        $this->view->object->eventHistory = $this->view->object->eventHistory->limit(10)->fetchAll();
         $this->view->preserve = array();
     }
 
@@ -96,14 +95,27 @@ class Monitoring_ShowController extends ActionController
     public function hostAction()
     {
         $this->view->object->prefetch();
-        $this->view->object->eventHistory = $this->view->object->eventHistory->limit(10)->fetchAll();
         $this->view->preserve = array();
     }
+
+    public function historyAction()
+    {
+        $this->view->object->fetchEventHistory();
+        $this->view->history = $this->view->object->eventHistory->limit(10)->paginate();
+    }
+
+    public function servicesAction()
+    {
+        $params = $this->_request->getParams();
+        unset($params['service']);
+        $this->view->services = $this->fetchServices($params);
+    }
+
 
     /**
      * History entries for objects
      */
-    public function historyAction()
+/*    public function historyAction()
     {
         $this->view->history = $this->backend->select()
             ->from(
@@ -130,7 +142,7 @@ class Monitoring_ShowController extends ActionController
             $this->view->preserve['sort'] = $this->_getParam('sort');
         }
         $this->view->preserve = $this->view->history->getAppliedFilter()->toParams();
-    }
+    }*/
 
     /**
      * Creating tabs for this controller
@@ -140,26 +152,66 @@ class Monitoring_ShowController extends ActionController
     {
         $object = $this->view->object;
         $tabs = $this->getTabs();
-        if (!$this->view->host) {
-            return $tabs;
-        }
         $params = array(
-            'host' => $this->view->host->host_name,
+            'host' => $object->host_name,
         );
-        if ($backend = $this->_getParam('backend')) {
-            $params['backend'] = $backend;
-        }
         if ($object instanceof Service) {
             $params['service'] = $object->service_description;
         } elseif ($service = $this->_getParam('service')) {
             $params['service'] = $service;
         }
-
+        if (isset($params['service'])) {
+            $tabs->add(
+                'service',
+                array(
+                    'title'     => 'Service',
+                    'icon'      => '',
+                    'url'       => 'monitoring/show/service',
+                    'urlParams' => $params,
+                    'tagParams' => array(
+                        'data-icinga-target' => 'detail'
+                    )
+                )
+            );
+        }
+        $tabs->add(
+            'host',
+            array(
+                'title'     => 'Host',
+                'icon'      => '',
+                'url'       => 'monitoring/show/host',
+                'urlParams' => $params,
+                'tagParams' => array(
+                    'data-icinga-target' => 'detail'
+                )
+            )
+        );
+        $tabs->add(
+            'services',
+            array(
+                'title'     => 'Services',
+                'icon'      => 'img/classic/service.png',
+                'url'       => 'monitoring/show/services',
+                'urlParams' => $params,
+                'tagParams' => array(
+                    'data-icinga-target' => 'detail'
+                )
+            )
+        );
+        $tabs->add(
+            'history',
+            array(
+                'title'     => 'History',
+                'icon'      => '',
+                'url'       => 'monitoring/show/history',
+                'urlParams' => $params,
+                'tagParams' => array(
+                    'data-icinga-target' => 'detail'
+                )
+            )
+        );
         $tabs->extend(new OutputFormat())
-            ->extend(new DashboardAction())
-            ->extend(new BasketAction);
-
-        return $tabs;
+            ->extend(new DashboardAction());
     }
 }
 // @codingStandardsIgnoreEnd

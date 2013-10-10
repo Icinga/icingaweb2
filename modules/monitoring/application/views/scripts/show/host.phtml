@@ -1,14 +1,57 @@
-<div class="panel panel-default">
-    <div class="panel-heading">
+<?= $this->tabs->render($this); ?>
+
+<div>
+    <div class="row">
+        <div class="col-md-8">
         <?php if ($this->object->host_icon_image): ?>
             <img src="<?= $this->object->host_icon_image; ?>" alt="Host image" />
         <?php else: ?>
             {{HOST_ICON}}
         <?php endif; ?>
-        <h1>Host Status <?= $this->escape($this->object->host_name); ?></h1>
+        <h4>
+            Host Status
+            <?= $this->escape($this->object->host_name); ?>
+            <?php if ($this->object->host_address && $this->object->host_address !== $this->object->host_name): ?>
+                (<?= $this->object->host_address; ?>)
+            <?php endif; ?>
+            <?php if (isset($this->object->host_alias) && $this->object->host_alias !== $this->object->host_name): ?>
+                (<?= $this->object->host_alias; ?>)
+            <?php endif; ?>
+        </h4>
+        </div>
+        <div class="col-md-4">
+            <?= $this->util()->getHostStateName($this->object->host_state); ?>
+            since <?= $this->timeSince($this->object->host_last_state_change); ?>
+        </div>
     </div>
 
-    <div class="panel-body">
+    <div>
+        <?= $this->pluginOutput($this->object->output); ?>
+    </div>
+
+    <a class="button" href="#">{{RECHECK_COMMAND}</a>
+
+    <div>
+        <?= $this->perfdata($this->object->perfdata); ?>
+    </div>
+
+    <div>
+        <?= $this->pluginOutput($this->object->long_output); ?>
+    </div>
+
+    <?= $this->render('show/components/comments.phtml'); ?>
+
+    <div>
+        Check Statistics
+        <dl class="dl-horizontal">
+            <dt>Last Check</dt>
+            <dd><?= $object->last_check; ?></dd>
+            <dt>Next Check</dt>
+            <dd><?= $object->next_check; ?> <a href="#" class="button">{{RESCHEDULE_COMMAND}}</a></dd>
+        </dl>
+    </div>
+
+    <div>
         <table>
             <tr>
                 <?php if (!$object->host_handled && $object->host_state > 0): ?>
@@ -27,37 +70,19 @@
                         <i>{{ACKNOWLEDGED_ICON}}</i>
                     </a>
                 </td>
-                <?php else: ?>
-                    <td>
-                        Status
-                    </td>
                 <?php endif; ?>
-                <td>
-                    <?= $this->util()->getHostStateName($this->object->host_state); ?>
-                    since <?= $this->timeSince($this->object->host_last_state_change); ?>
-                </td>
-                <td><a class="button" href="#">{{RECHECK_COMMAND_BUTTON}</a></td>
             </tr>
             <tr>
                 <td>Last Check</td>
-                <td><?= $object->last_check ?></td>
+                <td></td>
             </tr>
             <tr>
                 <td>Next Check</td>
-                <td><?= $object->next_check ?></td>
-                <td><a href="#" class="button">{{RESCHEDULE_COMMAND_BUTTON}}</a></td>
+                <td></td>
+                <td></td>
             </tr>
-            <?php if ($this->object->host_address && $this->object->host_address !== $this->object->host_name): ?>
+
             <tr>
-                <td>Host Address</td>
-                <td><?= $this->escape($this->object->host_address); ?></td>
-            </tr>
-            <?php endif; ?>
-            <?php if (isset($this->object->host_alias) && $this->object->host_alias !== $this->object->host_name): ?>
-            <tr>
-                <td>Alias</td>
-                <td><?= $this->object->host_alias; ?></td>
-            <?php endif; ?>
             <?php if ($this->object->host_action_url || $this->object->host_notes_url): ?>
                 <tr>
                     <td rowspan="2">
@@ -70,16 +95,6 @@
                     </td>
                 </tr>
             <?php endif; ?>
-            <tr>
-                <td>Plugin Output</td>
-                <td>
-                    <?= $this->pluginOutput($this->object->output); ?>
-                    <?= $this->pluginOutput($this->object->long_output); ?>
-                </td>
-                <td>
-                    <a class="button" href="#">{{SUBMIT_PASSIVE_CHECK_RESULT_COMMAND}}</a>
-                </td>
-            </tr>
             <?php if ($this->object->perfdata): ?>
                 <tr>
                     <td>Performance Data</td>
@@ -101,8 +116,6 @@
 </div>
 
 <?= $this->render('show/components/downtime.phtml'); ?>
-
-<?= $this->render('show/components/comments.phtml'); ?>
 
 <?= $this->render('show/components/properties.phtml'); ?>
 
