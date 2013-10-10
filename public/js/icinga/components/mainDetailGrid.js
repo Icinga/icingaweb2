@@ -27,6 +27,17 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 define(['components/app/container', 'jquery', 'logging', 'URIjs/URI', 'URIjs/URITemplate', 'icinga/util/url'],
 function(Container, $, logger, URI, tpl, urlMgr) {
+define(
+    [
+        'components/app/container',
+        'jquery',
+        'logging',
+        'icinga/selection/selectable',
+        'icinga/selection/multiSelection',
+        'URIjs/URI',
+        'URIjs/URITemplate'
+    ],
+function(Container, $, logger, Selectable, TableMultiSelection, URI) {
     "use strict";
 
     /**
@@ -64,6 +75,13 @@ function(Container, $, logger, URI, tpl, urlMgr) {
          * @type {jQuery}
          */
         var controlForms;
+
+        /**
+         * Handles multi-selection
+         *
+         * @type {TableMultiSelection}
+         */
+        var selection;
 
         /**
          * Detect and select control forms for this table and return them
@@ -131,7 +149,7 @@ function(Container, $, logger, URI, tpl, urlMgr) {
 
                 if (a.length) {
                     // test if the URL is on the current server, if not open it directly
-                    if (true || Container.isExternalLink(a.attr('href'))) {
+                    if (Container.isExternalLink(a.attr('href'))) {
                         return true;
                     }
                 } else if ($.inArray('input', nodeNames) > -1 || $.inArray('button', nodeNames) > -1) {
@@ -141,16 +159,34 @@ function(Container, $, logger, URI, tpl, urlMgr) {
                     }
                 }
 
-                urlMgr.setDetailUrl($('a', this).attr('href'));
-                if (!ev.ctrlKey && !ev.metaKey) {
-                    $('tr', $(this).parent()).removeClass('active');
+                var selectable = new Selectable(this);
+                if (ev.ctrlKey || ev.metaKey) {
+                    selection.toggle(selectable);
+                } else if (ev.shiftKey) {
+                    // select range ?
+                    selection.add(selectable);
+                } else {
+                    selection.clear();
+                    selection.add(selectable);
                 }
 
-                $(this).addClass('active');
+                // TODO: Detail target
+                var url = URI($('a', this).attr('href'));
+                var segments = url.segment();
+                if (selection.size() === 0) {
+                    // don't open anything
+                    url.search('?');
+                } else if (selection.size() > 1 && segments.length > 3) {
+                    // open detail view for multiple objects
+                    segments[2] = 'multi';
+                    url.pathname(segments.join('/'));
+                    url.search('?');
+                    url.setSearch(selection.toQuery());
+                }
+                Container.getDetailContainer().replaceDomFromUrl(url);
                 return false;
             });
         };
-
 
         /**
          * Register submit handler for the form controls (sorting, filtering, etc). Reloading happens in the
@@ -192,19 +228,23 @@ function(Container, $, logger, URI, tpl, urlMgr) {
                 return false;
             });
         };
-
+        
+        /*
         var getSelectedRows = function() {
             return $('a[href="' + urlMgr.getDetailUrl() + '"]', determineContentTable()).
                 parentsUntil('table', 'tr');
         };
+        */
 
         /**
          * Synchronize the current selection with the url displayed in the detail box
          */
+        /*
         this.syncSelectionWithDetail = function() {
             $('tr', contentNode).removeClass('active');
             getSelectedRows().addClass('active');
         };
+        */
 
         /**
          * Register listener for history changes in the detail box
@@ -221,7 +261,10 @@ function(Container, $, logger, URI, tpl, urlMgr) {
             this.container.removeDefaultLoadIndicator();
             controlForms = determineControlForms();
             contentNode = determineContentTable();
-            this.syncSelectionWithDetail();
+            selection = new TableMultiSelection(
+                contentNode,
+                Container.getDetailContainer().getContainerHref()
+            );
             this.registerControls();
             this.registerTableLinks();
             this.registerHistoryChanges();
