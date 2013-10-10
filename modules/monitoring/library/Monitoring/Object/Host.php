@@ -60,11 +60,14 @@ class Host extends AbstractObject
             'flap_detection_enabled'    => 'host_flap_detection_enabled',
             'active_checks_enabled'     => 'host_active_checks_enabled',
             'current_check_attempt'     => 'host_current_check_attempt',
-            'max_check_attempts'        => 'host_max_check_attempts'
+            'max_check_attempts'        => 'host_max_check_attempts',
             'last_notification' => 'host_last_notification',
             'current_notification_number'   => 'host_current_notification_number',
             'percent_state_change' => 'host_percent_state_change',
-            'is_flapping' => 'host_is_flapping'
+            'is_flapping' => 'host_is_flapping',
+            'last_comment'              => 'host_last_comment',
+            'action_url'                => 'host_action_url',
+            'notes_url'                 => 'host_notes_url'
         ))->where('host_name', $this->name1)->fetchRow();
     }
 }

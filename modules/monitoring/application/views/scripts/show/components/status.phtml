@@ -1,0 +1,116 @@
+<?php
+    $object = $this->object;
+    $type = (isset($object->service_description) === true) ? 'service' : 'host';
+
+    if ($type === 'host') {
+        $objectStateName = strtolower($this->util()->getHostStateName($this->object->host_state));
+    } else {
+        $objectStateName = strtolower($this->util()->getServiceStateName($this->object->service_state));
+    }
+?>
+<div>
+    <div class="panel-heading border-status-<?= $objectStateName ?>">
+        <div class="panel-hostname">
+            <?php if ($type === 'host'): ?>
+                <a title="View all services for this host"
+                   href="<?= $this->href('monitoring/list/services', array('host' => $object->host_name)); ?>">
+                    <?= $this->escape($object->host_name); ?>
+                </a><?= ($object->host_name !== $object->host_alias) ? ',' : ''; ?>
+
+                <?php if ($object->host_name !== $object->host_alias): ?>
+                    <?= $object->host_alias ?>
+                <?php endif; ?>
+
+                <span class="panel-header-status">
+                    - <?= $this->util()->getHostStateName($this->object->host_state); ?>
+                    since <?= $this->timeSince($this->object->host_last_state_change); ?>
+                </span>
+
+            <?php else: ?>
+                <?= $this->escape($object->service_description); ?>
+
+                <span class="panel-header-status">
+                    - <?= $this->util()->getServiceStateName($object->service_state); ?>
+                    since <?= $this->timeSince($object->service_last_state_change); ?>
+                </span>
+            <?php endif; ?>
+
+            <?= $this->render('show/components/statusIcons.phtml'); ?>
+
+            <?php if ($object->service_display_name && $object->service_description !== $object->service_display_name): ?>
+                <div class="small-row">
+                    (<?= $object->service_display_name; ?>)
+                </div>
+            <?php endif; ?>
+            <div class="small-row">
+                <?php if ($type === 'service'): ?>
+                    On <?= $object->host_name; ?>
+                    <?php if ($object->host_state > 0): ?>
+                        (<?= $this->util()->getHostStateName($this->object->host_state); ?>)
+                    <?php endif; ?>
+                <?php endif; ?>
+
+                <?php if ($object->action_url || $object->notes_url): ?>
+                        <br />
+                        <?php if ($object->notes_url): ?>
+                            <a target="_new" href='<?= $object->notes_url ?>'>Notes</a>
+                        <?php endif; ?>
+                        <?php if ($object->action_url): ?>
+                            <a target="_new" href='<?= $this->object->action_url ?>'>Action</a>
+                        <?php endif; ?>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+
+    <hr class="separator" />
+
+    <div class="panel-body">
+
+        <div class="panel-row">
+            <p><?= $this->pluginOutput($object->output); ?></p>
+
+            <form>
+                <button type="submit" class="button btn-cta btn-wide">Recheck</button>
+            </form>
+        </div>
+
+        <div class="panel-row">
+            <?php if ($object->perfdata): ?>
+                <div class="small-row">
+                    <?= $this->perfdata($this->object->perfdata); ?>
+                </div>
+            <?php endif; ?>
+            <?php if ($object->long_output): ?>
+                <div class="small-row">
+                    <?= $this->pluginOutput($object->long_output); ?>
+                </div>
+            <?php endif; ?>
+        </div>
+
+        <div class="panel-row">
+            <div class="panel-label">
+                Last Check
+            </div>
+            <div class="panel-content">
+                <?= $this->dateFormat()->formatDateTime($object->last_check); ?>
+            </div>
+        </div>
+
+        <div class="panel-row">
+            <div class="panel-label">
+                Next Check
+            </div>
+            <div class="panel-content">
+                <?= $this->dateFormat()->formatDateTime($object->next_check); ?>
+            </div>
+            <div class="panel-button">
+                <form>
+                    <button class="button btn-common btn-small">
+                        <i class="icinga-icon-reschedule"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

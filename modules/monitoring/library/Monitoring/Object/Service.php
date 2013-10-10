@@ -74,7 +74,10 @@ class Service extends AbstractObject
             'notifications_enabled'     => 'service_notifications_enabled',
             'event_handler_enabled'     => 'service_event_handler_enabled',
             'flap_detection_enabled'    => 'service_flap_detection_enabled',
-            'active_checks_enabled'     => 'service_active_checks_enabled'
+            'active_checks_enabled'     => 'service_active_checks_enabled',
+            'last_comment'              => 'service_last_comment',
+            'action_url'                => 'service_action_url',
+            'notes_url'                 => 'service_notes_url'
         ))
         ->where('host_name', $this->name1)
         ->where('service_description', $this->name2)

@@ -136,3 +136,129 @@
     width: 16px;
     height: 16px;
 }
+
+.icinga-icon-csv {
+    background: transparent url("../img/icons/csv.png") center center no-repeat;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+}
+
+.icinga-icon-pdf {
+    background: transparent url("../img/icons/pdf.png") center center no-repeat;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+}
+
+.icinga-icon-json {
+    background: transparent url("../img/icons/json.png") center center no-repeat;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+}
+
+.icinga-icon-downtime-start {
+    background: transparent url("../img/icons/downtime_start.png") center center no-repeat;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+}
+
+.icinga-icon-downtime-end {
+    background: transparent url("../img/icons/downtime_end.png") center center no-repeat;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+}
+
+.icinga-icon-hostgroup {
+    background: transparent url("../img/icons/hostgroup.png") center center no-repeat;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+}
+
+.icinga-icon-servicegroup {
+    background: transparent url("../img/icons/servicegroup.png") center center no-repeat;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+}
+
+.icinga-icon-host {
+    background: transparent url("../img/icons/host.png") center center no-repeat;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+}
+
+.icinga-icon-service {
+    background: transparent url("../img/icons/service.png") center center no-repeat;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+}
+
+.icinga-icon-success {
+    background: transparent url("../img/icons/success.png") center center no-repeat;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+}
+
+.icinga-icon-history {
+    background: transparent url("../img/icons/history.png") center center no-repeat;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+}
+
+.icinga-icon-reschedule {
+    background: transparent url("../img/icons/reschedule.png") center center no-repeat;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+}
+
+.icinga-icon-softstate {
+    background: transparent url("../img/icons/softstate.png") center center no-repeat;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+}
+
+.icinga-icon-next {
+    background: transparent url("../img/icons/next.png") center center no-repeat;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+}
+
+.icinga-icon-prev {
+    background: transparent url("../img/icons/prev.png") center center no-repeat;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+}
+
+.icinga-icon-refresh {
+    background: transparent url("../img/icons/refresh.png") center center no-repeat;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+}
+
+.icinga-icon-expand {
+    background: transparent url("../img/icons/expand.png") center center no-repeat;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+}
+
+.icinga-icon-search {
+    background: transparent url("../img/icons/search.png") center center no-repeat;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+}

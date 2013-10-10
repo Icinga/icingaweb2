@@ -1,0 +1,57 @@
+<?php
+    $o = $this->object;
+    $isService = (isset($o->service_description)) ? true : false;
+    $transitionObject = new \stdClass();
+    $transitionObject->handled =
+        ($isService) ? $o->service_handled : $o->host_handled;
+    $transitionObject->state =
+        ($isService) ? $o->service_state : $o->host_state;
+    $transitionObject->acknowledged =
+        ($isService) ? $o->service_acknowledged : $o->host_acknowledged;
+    $transitionObject->in_downtime =
+        ($isService) ? $o->in_downtime : $o->host_in_downtime;
+    $transitionObject->is_flapping =
+        ($isService) ? $o->is_flapping : $o->host_is_flapping;
+    $transitionObject->notifications_enabled =
+        ($isService) ? $o->notifications_enabled : $o->service_notifications_enabled;
+    $transitionObject->active_checks_enabled =
+        ($isService) ? $o->active_checks_enabled : $o->host_active_checks_enabled;
+    $transitionObject->passive_checks_enabled =
+        ($isService) ? $o->passive_checks_enabled : $o->host_passive_checks_enabled;
+    $transitionObject->last_comment =
+        ($isService) ? $o->last_comment : $o->host_last_comment;
+?>
+
+<span>
+    <?php if (!$transitionObject->handled && $transitionObject->state > 0): ?>
+        <i title="Unhandled" class="icinga-icon-unhandled"></i>
+    <?php endif; ?>
+
+    <?php if ($transitionObject->acknowledged && !$transitionObject->in_downtime): ?>
+        <i title="Acknowledged" class="icinga-icon-acknowledgement"></i>
+    <?php endif; ?>
+
+    <?php if ($transitionObject->is_flapping): ?>
+        <i title="Flapping" class="icinga-icon-flapping"></i>
+    <?php endif; ?>
+
+    <?php if (!$transitionObject->notifications_enabled): ?>
+        <i title="Notifications Disabled" class="icinga-icon-notification-disabled"></i>
+    <?php endif; ?>
+
+    <?php if ($transitionObject->in_downtime): ?>
+        <i title="In Downtime" class="icinga-icon-in-downtime"></i>
+    <?php endif; ?>
+
+    <?php if (!$transitionObject->active_checks_enabled): ?>
+        <?php if (!$transitionObject->passive_checks_enabled): ?>
+            <i title="Active And Passive Checks Disabled" class="icinga-icon-active-passive-checks-disabled"></i>
+        <?php else: ?>
+            <i title="Active Checks Disabled" class="icinga-icon-active-checks-disabled"></i>
+        <?php endif; ?>
+    <?php endif; ?>
+
+    <?php if ($transitionObject->last_comment !== null): ?>
+        <i title="Comments" class="icinga-icon-comment"></i>
+    <?php endif; ?>
+            </span>
