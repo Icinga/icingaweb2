@@ -20,6 +20,10 @@ p {
   line-height: 18px;
 }
 
+.gap {
+  margin-bottom: 15px;
+}
+
 
 /* ==========================================================================
    Links
@@ -299,6 +303,43 @@ select.input-sm {
 }
 
 
+/* Borders for Detail Headers  */
+
+.border-status-critical {
+  border-left: 8px solid #FF3300;
+}
+
+.border-status-ok {
+  border-left: 10px solid #00CC33;
+}
+
+.border-status-warning {
+  border-left: 10px solid #FFA500;
+}
+
+.border-status-unknown {
+  border-left: 10px solid #E066FF;
+}
+
+/** Host status **/
+
+.border-status-unreachable {
+  border-left: 10px solid #E066FF;
+}
+
+.border-status-down {
+  border-left: 10px solid #FF3300;
+}
+
+.border-status-up {
+  background-color: #00CC33;
+}
+
+
+
+
+
+
 
 /* ==========================================================================
    Icons
@@ -308,21 +349,220 @@ select.input-sm {
   width: 16px;
   height: 20px;
   display: block;
+  background-position: 50% 0;
 }
+
+.icon-header {
+  background-position: 0 50%;
+  padding-left: 25px;
+  height: 20px;
+}
+
+.icon-btn-small {
+  background-position: 0 0;
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
 
 .icon-flapping {
   background-image: url('images/flapping.png');
   background-repeat: no-repeat;
-  background-position: 50% 0;
-
 }  
 .icon-comment {
   background-image: url('images/comment.png');
   background-repeat: no-repeat;
-  background-position: 0 0;
 }  
 .icon-unhandled {
   background-image: url('images/unhandled.png');
   background-repeat: no-repeat;
-  background-position: 0 0;
+} 
+.icon-host {
+  background-image: url('images/host.png');
+  background-repeat: no-repeat;
+} 
+.icon-acknowledgement {
+  background-image: url('images/acknowledgement.png');
+  background-repeat: no-repeat;
+} 
+.icon-remove {
+  background-image: url('images/remove.png');
+  background-repeat: no-repeat;
+} 
+.icon-submit {
+  background-image: url('images/submit.png');
+  background-repeat: no-repeat;
+}
+.icon-create {
+  background-image: url('images/create.png');
+  background-repeat: no-repeat;
+} 
+.icon-dashboard {
+  background-image: url('images/dashboard.png');
+  background-repeat: no-repeat;
+} 
+.icon-disable {
+  background-image: url('images/disable.png');
+  background-repeat: no-repeat;
+} 
+.icon-edit {
+  background-image: url('images/edit.png');
+  background-repeat: no-repeat;
+} 
+.icon-error {
+  background-image: url('images/error.png');
+  background-repeat: no-repeat;
+} 
+.icon-downtime {
+  background-image: url('images/in_downtime.png');
+  background-repeat: no-repeat;
+} 
+.icon-save {
+  background-image: url('images/save.png');
+  background-repeat: no-repeat;
+} 
+.icon-service {
+  background-image: url('images/service.png');
+  background-repeat: no-repeat;
+} 
+.icon-user {
+  background-image: url('images/user.png');
+  background-repeat: no-repeat;
+}
+.icon-reschedule {
+  background-image: url('images/reschedule.png');
+  background-repeat: no-repeat;
 }  
+
+
+/* ==========================================================================
+   Details Panel
+   ========================================================================== */
+
+
+.panel-heading {
+  border-bottom: 0;
+  margin-bottom: 0px !important;
+  padding-left: 5px;
+  padding-bottom: 3px;
+  padding-top: 5px;
+  overflow: hidden;
+  border-radius: 0;
+}
+
+.panel-hostname {
+  font-weight: bold;
+}
+
+.separator {
+  border-top: 2px solid #ddd;
+  border-bottom: 0;
+  margin: 0;
+  height: 2px;
+}
+
+.panel-header-status {
+  font-weight: normal;
+}
+
+.panel-row {
+  display: block;
+  margin-bottom: 10px;
+  overflow: hidden;
+  border-bottom: 1px dotted #ddd;
+  padding-bottom: 10px;
+}
+
+
+.panel-label {
+  float: left;
+  padding-right: 10px;
+  width: 30%;
+  clear: left;
+  
+}
+.panel-content {
+  float: left;
+  padding-right: 10px;
+  display: inline-block;
+  max-width: 40%;
+}
+
+.panel-button {
+  float: right;
+  display: inline-block;
+  overflow: hidden;
+}
+
+.panel-body {
+  margin-bottom: 45px;
+}
+
+
+
+/* ==========================================================================
+   Buttons
+   ========================================================================== */
+
+.button {
+  text-align: center;
+  padding: 3px;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 3px;
+}
+
+.btn-common {
+  border-color: #ddd;
+  color: #262625;
+  background: rgb(255,255,255); /* Old browsers */
+  background: -moz-linear-gradient(top, rgb(255,255,255) 1%, rgb(245,245,245) 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(1%,rgb(255,255,255)), color-stop(100%,rgb(245,245,245))); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top, rgb(255,255,255) 1%,rgb(245,245,245) 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top, rgb(255,255,255) 1%,rgb(245,245,245) 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top, rgb(255,255,255) 1%,rgb(245,245,245) 100%); /* IE10+ */
+  background: linear-gradient(to bottom, rgb(255,255,255) 1%,rgb(245,245,245) 100%); /* W3C */
+}
+
+.panel-row > a:hover,
+.btn-common:hover {
+  border-color: #262625 !important;
+  color: #262625 !important;
+  text-decoration: none;
+}
+
+
+.btn-cta {
+  border-color: #049BAF;
+  color: #049BAF;
+  background: rgb(255,255,255); /* Old browsers */
+  background: -moz-linear-gradient(top, rgb(255,255,255) 1%, rgb(245,245,245) 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(1%,rgb(255,255,255)), color-stop(100%,rgb(245,245,245))); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top, rgb(255,255,255) 1%,rgb(245,245,245) 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top, rgb(255,255,255) 1%,rgb(245,245,245) 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top, rgb(255,255,255) 1%,rgb(245,245,245) 100%); /* IE10+ */
+  background: linear-gradient(to bottom, rgb(255,255,255) 1%,rgb(245,245,245) 100%); /* W3C */
+}
+
+
+
+.btn-small {
+  width: 25px;
+  height: 25px;
+  display: inline-block;
+}
+
+.btn-wide {
+  width: 100%;
+  display: block;
+}
+
+.btn-half-left {
+  float: left;
+  width: 48%;
+}
+.btn-half-right {
+  float: right;
+  width: 48%;
+}

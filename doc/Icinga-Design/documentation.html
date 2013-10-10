@@ -298,64 +298,12 @@
 
 
 
-
-
-
-
         </div><!-- .docu-module -->
       </div><!-- .docu-example -->
 
       <div class="docu-codeblock">
         <textarea class="docu-code">
 code...
-        </textarea> 
-      </div><!-- .docu-codeblock -->
-    </div><!-- .docu-section --> 
-
-
-
-
-    <h1 class="docu-main-headline">Form Elements</h1>
-
-    <h1 class="docu-sub-headline">Select</h1>
-    <div class="docu-description">
-      Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. 
-    </div>
-
-    <div class="docu-section">
-      <div class="docu-example">
-        <div class="docu-module">
-
-
-          <form data-icinga-component="app/form" action="" method="get" class="form-inline" name="hosts" id="icinga-component-0">
-            <div id="sort-element" class="form-group">
-              <label for="sort">Sort By</label>
-                <select data-icinga-form-autosubmit="1" class="form-control input-sm" id="sort" name="sort">
-                <option value="host_last_check">Last Host Check</option>
-                <option value="host_severity">Host Severity</option>
-                <option value="host_state">Hard State</option>
-                <option value="host_name">Host Name</option>
-                <option value="host_address">Address</option>
-                </select>
-            </div>
-            <div id="dir-element" class="form-group"><label for="dir">&nbsp;</label>
-            <select data-icinga-form-autosubmit="1" class="form-control input-sm" id="dir" name="dir">
-                <option value="desc">Desc</option>
-                <option value="asc">Asc</option>
-            </select></div>
-            <div id="submit_hosts-element" class="form-group"><label for="submit_hosts">&nbsp;</label><noscript>
-            &lt;input type="submit" name="submit_hosts" id="submit_hosts" value="Sort" class="btn btn-default form-control input-sm" condition="0" addLabelPlaceholder="1"&gt;</noscript>
-            </div>
-          </form>
-
-
-        </div><!-- .docu-module -->
-      </div><!-- .docu-example -->
-
-      <div class="docu-codeblock">
-        <textarea class="docu-code">
-  ...
-
         </textarea> 
       </div><!-- .docu-codeblock -->
     </div><!-- .docu-section --> 
@@ -422,7 +370,184 @@ code...
 
 
 
+    <h1 class="docu-main-headline">Details</h1>
 
+    <h1 class="docu-sub-headline">Basic Example</h1>
+    <div class="docu-description">
+      Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. 
+    </div>
+
+    <div class="docu-section">
+      <div class="docu-example">
+        <div class="docu-module">
+
+
+          <div class="panel-heading border-status-critical">
+          <div class="panel-hostname">
+            Host Status host_000 ölaierjoe  paeurüuaeraeüure <span class="panel-header-status">- Unreachable since 15:59</span></div>
+          </div> 
+          <hr class="separator" /> 
+
+          <div class="panel-body">
+
+            <div class="panel-row">
+              <p>host_000 (checked by localhost.localdomain) OK: random hostcheck ok sometimes with multiline and html tags\n </p>
+            </div>    
+
+            <div class="panel-row">
+              <a href="#" class="button btn-common btn-wide">Recheck</a>
+            </div>
+
+
+            <div class="panel-row">
+              <div class="panel-label">
+                Last Check
+              </div>
+              <div class="panel-content">
+                1381308168
+              </div>
+            </div>   
+
+            <div class="panel-row">
+              <div class="panel-label">
+                Next Check
+              </div>
+              <div class="panel-content">
+                1381309978
+              </div>
+              <div class="panel-button">
+                <a href="#" class="button btn-common btn-small"><span class="icon-reschedule icon-btn-small"></span></a>
+              </div>
+            </div>   
+
+
+            <div class="panel-row">
+              <div class="panel-label">
+                Host Address
+              </div>
+              <div class="panel-content">
+                127.0.0.1
+              </div>
+            </div>   
+
+            <div class="panel-row">
+              <div class="panel-label">
+                Alias
+              </div>
+              <div class="panel-content">
+                random_000
+              </div>
+            </div> 
+
+
+            <div class="panel-row">
+              <a href="#" class="button btn-common btn-half-left">View Services For This Host </a>
+              <a href="#" class="button btn-common btn-half-right">Recheck All Services</a>
+            </div> 
+          </div>
+
+
+
+
+
+          <div class="panel-heading">
+          <div class="panel-hostname">
+            Lorem Ipsum</div>
+          </div> 
+          <hr class="separator" /> 
+
+          <div class="panel-body">
+
+            <div class="panel-row">
+              <div class="panel-label">
+                Lorem ipsum
+              </div>
+              <div class="panel-content">
+                Lorem ipsum dolor sit amet, consetetur sadipscing elitr
+              </div>
+              <div class="panel-button">
+                <a href="#" class="button btn-common btn-small"><span class="icon-remove icon-btn-small"></span></a>
+              </div>
+            </div> 
+
+            <div class="panel-row">
+              <div class="panel-label">
+                Lorem ipsum
+              </div>
+              <div class="panel-content ">
+                Lorem ipsum dolor sit amet bla blubb.
+              </div>
+              <div class="panel-button">
+                <a href="#" class="button btn-common btn-small"><span class="icon-remove icon-btn-small"></span></a>
+                <a href="#" class="button btn-common btn-small"><span class="icon-comment icon-btn-small"></span></a>
+              </div>
+           </div>
+
+
+
+          </div>  
+
+
+
+
+
+
+        </div><!-- .docu-module -->
+      </div><!-- .docu-example -->
+
+      <div class="docu-codeblock">
+        <textarea class="docu-code">Code... Code...
+        </textarea> 
+      </div><!-- .docu-codeblock -->
+    </div><!-- .docu-section --> 
+
+
+
+
+    <h1 class="docu-main-headline">Form Elements</h1>
+
+    <h1 class="docu-sub-headline">Select</h1>
+    <div class="docu-description">
+      Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. 
+    </div>
+
+    <div class="docu-section">
+      <div class="docu-example">
+        <div class="docu-module">
+
+
+          <form data-icinga-component="app/form" action="" method="get" class="form-inline" name="hosts" id="icinga-component-0">
+            <div id="sort-element" class="form-group">
+              <label for="sort">Sort By</label>
+                <select data-icinga-form-autosubmit="1" class="form-control input-sm" id="sort" name="sort">
+                <option value="host_last_check">Last Host Check</option>
+                <option value="host_severity">Host Severity</option>
+                <option value="host_state">Hard State</option>
+                <option value="host_name">Host Name</option>
+                <option value="host_address">Address</option>
+                </select>
+            </div>
+            <div id="dir-element" class="form-group"><label for="dir">&nbsp;</label>
+            <select data-icinga-form-autosubmit="1" class="form-control input-sm" id="dir" name="dir">
+                <option value="desc">Desc</option>
+                <option value="asc">Asc</option>
+            </select></div>
+            <div id="submit_hosts-element" class="form-group"><label for="submit_hosts">&nbsp;</label><noscript>
+            &lt;input type="submit" name="submit_hosts" id="submit_hosts" value="Sort" class="btn btn-default form-control input-sm" condition="0" addLabelPlaceholder="1"&gt;</noscript>
+            </div>
+          </form>
+
+
+        </div><!-- .docu-module -->
+      </div><!-- .docu-example -->
+
+      <div class="docu-codeblock">
+        <textarea class="docu-code">
+  ...
+
+        </textarea> 
+      </div><!-- .docu-codeblock -->
+    </div><!-- .docu-section --> 
 
 
     <h1 class="docu-main-headline">Buttons</h1>
