@@ -45,6 +45,7 @@ class Node
     const OPERATOR_GREATER_EQ   = '>=';
     const OPERATOR_LESS_EQ      = '<=';
 
+    const CONTEXT_TIMESTRING    = 'timestring';
     /**
      * Array containing all possible operators
      *
@@ -89,6 +90,13 @@ class Node
      * @var String|Node
      */
     public $right;
+
+    /**
+     * Additional information for this node (like that it represents a date)
+     *
+     * @var mixed
+     */
+    public $context;
 
     /**
      * Factory method for creating operator nodes

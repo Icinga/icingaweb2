@@ -150,7 +150,7 @@ abstract class DataView
      *
      * @return  bool
      */
-    protected function isValidFilterColumn($column)
+    public function isValidFilterColumn($column)
     {
         return in_array($column, $this->getColumns()) || in_array($column, $this->getFilterColumns());
     }

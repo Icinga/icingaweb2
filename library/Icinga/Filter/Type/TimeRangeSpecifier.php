@@ -166,7 +166,9 @@ class TimeRangeSpecifier extends FilterType
         if ($operator === null || $timeQuery === null) {
             return null;
         }
-        return Node::createOperatorNode($operator, $leftOperand, $timeQuery);
+        $node =  Node::createOperatorNode($operator, $leftOperand, $timeQuery);
+        $node->context = Node::CONTEXT_TIMESTRING;
+        return $node;
     }
 
     /**

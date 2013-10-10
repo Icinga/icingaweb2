@@ -71,13 +71,14 @@ class FilterController extends ActionController
         $this->setupQueries();
         $this->view->form->setRequest($this->getRequest());
 
-
         if ($this->view->form->isSubmittedAndValid()) {
             $tree = $this->registry->createQueryTreeForFilter($this->view->form->getValue('query'));
             $this->view->tree = new \Icinga\Web\Widget\FilterBadgeRenderer($tree);
-
+            $view = \Icinga\Module\Monitoring\DataView\HostAndServiceStatus::fromRequest($this->getRequest());
+            $cv = new \Icinga\Module\Monitoring\Filter\Backend\IdoQueryConverter($view);
+            $this->view->sqlString = $cv->treeToSql($tree);
+            $this->view->params = $cv->getParams();
         } else if ($this->getRequest()->getHeader('accept') == 'application/json') {
-
             $this->getResponse()->setHeader('Content-Type', 'application/json');
             $this->_helper->json($this->parse($this->getRequest()->getParam('query', '')));
         }
