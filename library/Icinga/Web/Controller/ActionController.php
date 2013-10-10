@@ -112,10 +112,12 @@ class ActionController extends Zend_Controller_Action
         $url = substr($url, strlen($this->getRequest()->getBaseUrl()));
         // the host is mandatory, but ignored in Zend
         $req = new Request('http://ignoredhost/' . $url);
-
+        $req->setBaseUrl($this->getRequest()->getBaseUrl());
         $router = Zend_Controller_Front::getInstance()->getRouter();
         $router->route($req);
+        Zend_Controller_Front::getInstance()->setRequest($req);
         $detailHtml = $this->view->action($req->getActionName(), $req->getControllerName(), $req->getModuleName());
+        Zend_Controller_Front::getInstance()->setRequest($this->getRequest());
         $this->_helper->layout->assign('detailContent', $detailHtml);
         $this->_helper->layout->assign('detailClass', 'col-sm-12 col-xs-12 col-md-12 col-lg-6');
         $this->_helper->layout->assign('mainClass', 'col-sm-12 col-xs-12 col-md-12 col-lg-6');
