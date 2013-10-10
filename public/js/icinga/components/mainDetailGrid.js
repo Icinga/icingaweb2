@@ -169,8 +169,13 @@ function(Container, $, logger, URI) {
 
                 var container = (new Container(this));
                 logger.debug("Pagination clicked in " + container.containerType);
+                // Detail will be removed when main pagination changes
+                if (container.containerType === 'icingamain') {
+                    Icinga.replaceBodyFromUrl(URI($(this).attr('href')).removeQuery('detail'));
+                } else {
+                    container.replaceDomFromUrl($(this).attr('href'));
+                }
 
-                container.replaceDomFromUrl($(this).attr('href'));
                 ev.preventDefault();
                 ev.stopPropagation();
                 return false;
