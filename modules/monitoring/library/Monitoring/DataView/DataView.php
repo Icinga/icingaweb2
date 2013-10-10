@@ -100,6 +100,33 @@ abstract class DataView
     }
 
     /**
+     * Create view from params
+     *
+     * @param   array   $params
+     * @param   array   $columns
+     *
+     * @return  static
+     */
+    public static function fromParams(array $params, array $columns = null)
+    {
+        $view = new static(Backend::createBackend($params['backend']), $columns);
+        $view->filter($params);
+        $order = isset($params['order']) ? $params['order'] : null;
+        if ($order !== null) {
+            if (strtolower($order) === 'desc') {
+                $order = self::SORT_DESC;
+            } else {
+                $order = self::SORT_ASC;
+            }
+        }
+        $view->sort(
+            isset($params['sort']) ? $params['sort'] : null,
+            $order
+        );
+        return $view;
+    }
+
+    /**
      * Filter rows that match all of the given filters. If a filter is not valid, it's silently ignored
      *
      * @param   array $filters
