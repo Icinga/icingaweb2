@@ -134,9 +134,6 @@ class Domain extends QueryProposer
         foreach ($this->attributes as $attributeHandler) {
            if ($attributeHandler->isValidQuery($query)) {
                $node = $attributeHandler->convertToTreeNode($query);
-               if ($node) {
-                   $node->context = $this->label;
-               }
                return $node;
            }
         }

@@ -232,7 +232,7 @@ abstract class AbstractQuery extends Query
         return array_key_exists($alias, $this->idxAliasColumn);
     }
 
-    protected function aliasToColumnName($alias)
+    public function aliasToColumnName($alias)
     {
         return $this->idxAliasColumn[$alias];
     }
@@ -401,5 +401,16 @@ abstract class AbstractQuery extends Query
         }
 
         return $filter;
+    }
+
+    public function getMappedColumn($name)
+    {
+        foreach ($this->columnMap as $column => $results) {
+            if (isset($results[$name])) {
+                return $results[$name];
+            }
+        }
+
+        return null;
     }
 }

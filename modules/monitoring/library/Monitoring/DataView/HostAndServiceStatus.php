@@ -121,7 +121,7 @@ class HostAndServiceStatus extends DataView
         return array('hostgroups', 'servicegroups', 'service_problems');
     }
 
-    protected function isValidFilterColumn($column)
+    public function isValidFilterColumn($column)
     {
         if ($column[0] === '_'
             && preg_match('/^_(?:host|service)_/', $column)
