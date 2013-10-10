@@ -100,6 +100,26 @@ th {
   border-bottom: 2px solid #ddd;
 }
 
+.table-detail th {
+  font-size: 16px;
+  border-top: 0;
+}
+
+
+.table-detail thead > tr > th, .table tbody > tr > th,
+.table-detail tbody > tr > td, .table tfoot > tr > td  {
+  border-top: 0 !important;
+}
+
+
+
+
+.table-detail > thead {
+  border-top: 0 !important;
+}
+
+
+
 td {
   padding: 8px 10px 8px 8px !important;
   border-bottom: 1px dotted #ddd !important;
@@ -171,6 +191,15 @@ td {
 
 
 
+.disabled {
+  border-left: 8px solid #FF3300;
+}
+
+.enabled {
+  border-left: 8px solid #00CC33;
+}
+
+
 /* ==========================================================================
    Forms
    ========================================================================== */
@@ -219,6 +248,26 @@ label {
 select.input-sm {
 
 }
+
+
+/*input[type="checkbox"] {
+    display:none;
+}
+input[type="checkbox"] + label span {
+    display:inline-block;
+    width:19px;
+    height:19px;
+    margin:-1px 4px 0 0;
+    vertical-align:middle;
+    background:url(images/flapping.png) left top no-repeat;
+    cursor:pointer;
+}
+input[type="checkbox"]:checked + label span {
+    background:url(check_radio_sheet.png) -19px top no-repeat;
+}*/
+
+            
+
 
 
 /* ==========================================================================
@@ -363,6 +412,17 @@ select.input-sm {
   width: 16px;
   height: 16px;
   display: block;
+}
+
+.icon-table-hint {
+  width: 16px;
+  height: 20px;
+  display: block;
+  background-position: 50% 50%;
+}
+.icon-table-hint:after {
+  content: "edited";
+  padding-left: 22px;
 }
 
 
