@@ -121,27 +121,19 @@ function($, URI, Selectable) {
          * Fetch the selections from a query containing multiple selections
          */
         var selectionFromMultiQuery = function(query) {
-            var i = 0;
             var selections = [];
-            alert('query ' + JSON.stringify(query));
             $.each(query, function(key, value) {
                 // Fetch the index from the key
                 var id = key.match(/\[([0-9]+)\]/);
-                alert(id);
                 if (id) {
-                    alert('extracted id ' + id[1]);
                     // Remove the index from the key
                     key = key.replace(/\[[0-9]+\]/,'');
-                    key = encodeURIComponent(key);
-                    value = encodeURIComponent(value);
-                    // Add it to the array representing this index
-                    if (id[1] !== i) {
-                        // begin a new index
-                        selections[i] = [ key + '=' + value ];
-                        i = id[1];
-                    } else {
-                        selections[i].push(key + '=' + value);
+                    // Create an object that contains the queries for each index.
+                    var i = id[1];
+                    if (!selections[i]) {
+                        selections[i] = [];
                     }
+                    selections[i] = [ encodeURIComponent(key) + '=' + encodeURIComponent(value) ];
                 }
             });
             return selections;
@@ -176,8 +168,8 @@ function($, URI, Selectable) {
             }
             var segments = url.segment();
             var parts;
-            if (segments.length > 2 && segments[1] === 'Multi') {
-                alert('from multiselection');
+            // TODO: Handle it for cases when there is no /icinga-web2/ in the path
+            if (segments.length > 2 && segments[2].toLowerCase() === 'multi') {
                 parts = selectionFromMultiQuery(url.query(true));
             } else {
                 parts = selectionFromQuery(url.query(true));
@@ -212,8 +204,10 @@ function($, URI, Selectable) {
             var selected = restoreSelectionStateUrl(detailUrl);
             var selection = {};
             $.each(selected, function(i, selectionId) {
-                if (selectables[selectionId]) {
-                    selection[selectionId] = selectables[selectionId];
+                var restored = selectables[selectionId];
+                if (restored) {
+                    selection[selectionId] = restored;
+                    restored.setActive(true);
                 }
             });
             return selection;
