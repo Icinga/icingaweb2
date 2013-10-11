@@ -603,10 +603,10 @@ code...
 
     <h1 class="docu-main-headline">Main Navigation</h1>
 
-<!--     <h1 class="docu-sub-headline">Sub Header</h1>
+    <h1 class="docu-sub-headline">Without Subnavigation</h1>
     <div class="docu-description">
       Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. 
-    </div> -->
+    </div>
 
     <div class="docu-section">
       <div class="docu-example">
@@ -646,11 +646,228 @@ code...
       </div><!-- .docu-example -->
 
 
+    </div><!-- .docu-section --> 
 
-      <div class="docu-codeblock">
-        <textarea class="docu-code">Code... Code...
-        </textarea> 
-      </div><!-- .docu-codeblock -->
+
+
+
+    <h1 class="docu-sub-headline">With Subnavigation</h1>
+    <div class="docu-description">
+      Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. 
+    </div>
+
+    <div class="docu-section">
+      <div class="docu-example">
+        <div class="docu-module">
+
+          <ul id="icinganavigation" role="navigation" class="nav nav-stacked">
+            <li class="icon-main-nav nav-icon-hosts">
+            <a href="/icinga2-web/monitoring/list/hosts">Hosts</a>
+            </li>
+            <li class="icon-main-nav nav-icon-services">
+            <a href="/icinga2-web/monitoring/list/services" class="nav-notification">Services</a>
+              <span class="badge-container-nav">
+                <a href="/icingawebinsfx/monitoring/list/services?host=host_000&amp;service_problems=1" class="badge-nav">
+                    12
+                </a>
+              </span>  
+            </li>
+            <li class="icon-main-nav nav-icon-downtimes">
+            <a href="/icinga2-web/monitoring/list/downtimes">Downtimes</a>
+            </li>
+            <li class="icon-main-nav nav-icon-notifications">
+            <a href="/icinga2-web/monitoring/list/notifications">Notifications</a>
+            </li>
+
+            <!-- ##### Sub Nav ########  -->
+            <ul class="icinga-subnavigation">
+              <li class="icon-main-nav subnav-icon-configuration">
+                <a href="#">Lorem Ipsum lorem</a>
+              </li>
+              <li class="icon-main-nav subnav-icon-configuration">
+                <a href="#" class="nav-notification">Submenüpunkt 2</a>
+                <span class="badge-container-subnav">
+                  <a href="#" class="badge-subnav">
+                      12
+                  </a>
+                </span>
+              </li>
+              <li class="icon-main-nav subnav-icon-configuration active">
+                <a href="#">Dritter toller Punkt</a>
+              </li>
+            </ul>
+
+            <li class="icon-main-nav nav-icon-comments">
+            <a href="/icinga2-web/monitoring/list/comments">Comments</a>
+            </li>
+            <li class="icon-main-nav nav-icon-dashboard">
+            <a href="/icinga2-web/dashboard/index">Dashboard</a>
+            </li>
+            <li class="icon-main-nav nav-icon-configuration">
+            <a href="/icinga2-web/config/index">Configuration</a>
+            </li>
+           </ul>
+
+
+        </div><!-- .docu-module -->
+      </div><!-- .docu-example -->
+
+
+    </div><!-- .docu-section --> 
+
+
+
+
+
+
+
+
+
+
+
+    <h1 class="docu-main-headline">Dashboard</h1>
+
+
+    <div class="docu-section">
+      <div class="docu-example">
+        <div class="docu-module">
+
+          <div class="dashboard-container">
+            <table class="table table-condensed table-detail table-dashboard">
+
+                <thead class="sep">
+                <tr>
+                  <th colspan="3" class="test">
+                    <a href="#">Dies ist eine tolle Headline</a>
+                  </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                  <td class="border-status-critical">09.10. 17:40</td>
+                  <td>
+                    <i class="dashboard-icons icon-unhandled"></i>
+                    <i class="dashboard-icons icon-flapping"></i>
+                    <i class="dashboard-icons icon-comment"></i>
+                    <i class="dashboard-icons icon-comment"></i>
+                  </td>
+                  <td><a href="#"><strong>Langerlangerlanger Servicename</strong></a> on <a href="#">Host_0815ganzganzganzganzganzlang blabla</a></td>
+                </tr>
+
+                <tr>
+                  <td class="border-status-unknown">unknown</td>
+                  <td>
+                    <i class="dashboard-icons icon-unhandled"></i>
+                  </td>
+                  <td><a href="#"><strong>Ping</strong></a> on <a href="#">Host_123456</a></td>
+                </tr>
+
+                 <tr>
+                  <td class="border-status-warning">11.10.</td>
+                  <td>
+                    <i class="dashboard-icons icon-unhandled"></i>
+                    <i class="dashboard-icons icon-flapping"></i>
+                    <i class="dashboard-icons icon-comment"></i>
+                  </td>
+                  <td><a href="#"><strong>random_06</strong></a> on <a href="#">Host_insertEFFECT</a></td>
+                </tr>
+                <tr>
+                  <td class="border-status-unknown">unknown</td>
+                  <td>
+                    <i class="dashboard-icons icon-unhandled"></i>
+                  </td>
+                  <td><a href="#"><strong>Ping</strong></a> on <a href="#">Host_123456</a></td>
+                </tr>
+                <tr>
+                  <td class="border-status-unknown">unknown</td>
+                  <td>
+                    <i class="dashboard-icons icon-unhandled"></i>
+                  </td>
+                  <td><a href="#"><strong>Ping</strong></a> on <a href="#">Host_123456</a></td>
+                </tr>
+
+              </tbody>
+            </table>  
+          </div>
+
+
+
+          <div class="dashboard-container">
+            <table class="table table-condensed table-detail">
+              <tbody>
+                <tr>
+                  <th colspan="3" class="test">
+                    <a href="#">Dies ist eine tolle Headline</a>
+                  </th>
+                </tr>
+
+                <tr>
+                  <td class="border-status-critical">09.10.</td>
+                  <td>
+                    <i class="dashboard-icons icon-unhandled"></i>
+                    <i class="dashboard-icons icon-flapping"></i>
+                    <i class="dashboard-icons icon-comment"></i>
+                  </td>
+                  <td><a href="#"><strong>Ping</strong></a> on <a href="#">Host_0815</a></td>
+                </tr>
+
+                <tr>
+                  <td class="border-status-unknown">unknown</td>
+                  <td>
+                    <i class="dashboard-icons icon-unhandled"></i>
+                  </td>
+                  <td><a href="#"><strong>Ping</strong></a> on <a href="#">Host_123456</a></td>
+                </tr>
+
+                 <tr>
+                  <td class="border-status-warning">11.10.</td>
+                  <td>
+                    <i class="dashboard-icons icon-unhandled"></i>
+                    <i class="dashboard-icons icon-flapping"></i>
+                    <i class="dashboard-icons icon-comment"></i>
+                  </td>
+                  <td><a href="#"><strong>random_06</strong></a> on <a href="#">Host_insertEFFECT</a></td>
+                </tr>
+                <tr>
+                  <td class="border-status-unknown">unknown</td>
+                  <td>
+                    <i class="dashboard-icons icon-unhandled"></i>
+                  </td>
+                  <td><a href="#"><strong>Ping</strong></a> on <a href="#">Host_123456</a></td>
+                </tr>
+                <tr>
+                  <td class="border-status-unknown">unknown</td>
+                  <td>
+                    <i class="dashboard-icons icon-unhandled"></i>
+                  </td>
+                  <td><a href="#"><strong>Ping</strong></a> on <a href="#">Host_123456</a></td>
+                </tr>
+                 <tr>
+                  <td class="border-status-warning">11.10.</td>
+                  <td>
+                    <i class="dashboard-icons icon-unhandled"></i>
+                    <i class="dashboard-icons icon-flapping"></i>
+                    <i class="dashboard-icons icon-comment"></i>
+                  </td>
+                  <td><a href="#"><strong>random_06</strong></a> on <a href="#">Host_insertEFFECT</a></td>
+                </tr>
+                 <tr>
+                  <td class="border-status-warning">11.10.</td>
+                  <td>
+                    <i class="dashboard-icons icon-unhandled"></i>
+                    <i class="dashboard-icons icon-flapping"></i>
+                    <i class="dashboard-icons icon-comment"></i>
+                  </td>
+                  <td><a href="#"><strong>random_06</strong></a> on <a href="#">Host_insertEFFECT</a></td>
+                </tr>
+              </tbody>
+            </table>  
+          </div>
+
+        </div><!-- .docu-module -->
+      </div><!-- .docu-example -->
+
+
     </div><!-- .docu-section --> 
 
 

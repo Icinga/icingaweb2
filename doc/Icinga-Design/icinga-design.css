@@ -250,25 +250,6 @@ select.input-sm {
 }
 
 
-/*input[type="checkbox"] {
-    display:none;
-}
-input[type="checkbox"] + label span {
-    display:inline-block;
-    width:19px;
-    height:19px;
-    margin:-1px 4px 0 0;
-    vertical-align:middle;
-    background:url(images/flapping.png) left top no-repeat;
-    cursor:pointer;
-}
-input[type="checkbox"]:checked + label span {
-    background:url(check_radio_sheet.png) -19px top no-repeat;
-}*/
-
-            
-
-
 
 /* ==========================================================================
    Pagination
@@ -355,7 +336,7 @@ input[type="checkbox"]:checked + label span {
 /* Borders for Detail Headers  */
 
 .border-status-critical {
-  border-left: 8px solid #FF3300;
+  border-left: 10px solid #FF3300;
 }
 
 .border-status-ok {
@@ -633,12 +614,24 @@ input[type="checkbox"]:checked + label span {
    ========================================================================== */
 
 
+.nav-stacked > li + li {
+    margin-left: 0;
+    margin-top: 0;
+}
+
+
 .nav-stacked {
   background-color: #f8f8f8;
 }
 
+.icinga-subnavigation {
+  list-style: none;
+}
+
+
+
 .nav-stacked > li {
-  padding-top: 5px;
+  padding-top: 7px;
   padding-bottom: 7px;
   border-bottom: 1px dotted #049baf;
   border-right: 1px dotted #049baf;
@@ -647,31 +640,58 @@ input[type="checkbox"]:checked + label span {
   border-top: 1px dotted #049baf;
 }
 
-.nav-stacked > li > a {
+
+.icinga-subnavigation > li {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px dotted #049baf;
+  border-right: 1px dotted #049baf;
+}
+
+ul.icinga-subnavigation {
+
+  border-bottom: 1px dotted #049baf;
+  margin-left: 0;
+  padding-left: 15px;
+}
+
+.icinga-subnavigation > li:last-child {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  border-bottom: 0;
+
+}
+
+.nav-stacked > li > a,
+.icinga-subnavigation > li > a {
   padding-left: 40px;
   padding-right: 3px;
   border-left: 6px solid #049baf;
   display: inline-block;
 }
 
-.nav-stacked > li > a.nav-notification {
+.nav-stacked > li > a.nav-notification,
+.icinga-subnavigation > li > a.nav-notification  {
   border-left: 6px solid red !important;
 }
 
 .nav-stacked > li > a:hover, 
-.nav-stacked > li > a:focus {
+.icinga-subnavigation > li > a:focus {
 /*  font-weight: bold;*/
   background-color: transparent; !important;
   display: inline-block;
 }
 
 .nav-stacked > li:hover, 
-.nav-stacked > li:focus {
+.nav-stacked > li:focus,
+.icinga-subnavigation > li:hover, 
+.icinga-subnavigation > li:focus {
 background-color: #fff;
 
 }
 
-.nav-stacked > li.active {
+.nav-stacked > li.active,
+.icinga-subnavigation > li.active {
   background-color: #fff;
   border-right: 0;
 }
@@ -682,39 +702,48 @@ background-color: #fff;
 .nav-icon-hosts {
   background-image: url('images/host_petrol.png');
   background-repeat: no-repeat;
-  background-position: 18px 17px;
+  background-position: 19px 50%;
 } 
 
 .nav-icon-services {
   background-image: url('images/service_petrol.png');
   background-repeat: no-repeat;
-  background-position: 19px 18px;
+  background-position: 19px 50%;
 } 
 .nav-icon-downtimes {
   background-image: url('images/in_downtime_petrol.png');
   background-repeat: no-repeat;
-  background-position: 19px 17px;
+  background-position: 19px 50%;
 } 
 .nav-icon-notifications {
   background-image: url('images/notification_petrol.png');
   background-repeat: no-repeat;
-  background-position: 19px 18px;
+  background-position: 19px 20px;
 } 
 .nav-icon-comments {
   background-image: url('images/comment_petrol.png');
   background-repeat: no-repeat;
-  background-position: 19px 19px;
+  background-position: 19px 50%;
 } 
 .nav-icon-dashboard {
   background-image: url('images/dashboard_petrol.png');
   background-repeat: no-repeat;
-  background-position: 19px 19px;
+  background-position: 19px 50%;
 } 
 .nav-icon-configuration {
   background-image: url('images/configuration_petrol.png');
   background-repeat: no-repeat;
-  background-position: 19px 19px;
+  background-position: 19px 50%;
 } 
+
+
+.subnav-icon-configuration {
+  background-image: url('images/configuration_petrol.png');
+  background-repeat: no-repeat;
+  background-position: 19px 50%;
+} 
+
+
 
 
 
@@ -723,6 +752,7 @@ background-color: #fff;
   overflow: hidden;
   padding-top: 0;
   margin-bottom: 5px;
+
 }
 .badge-nav {
   background-color: #fff;
@@ -743,5 +773,52 @@ background-color: #fff;
   border: 1px solid #ff3300;
 }
 
+.badge-container-subnav {
+  position: absolute;
+  overflow: hidden;
+  padding-top: 0;
+  padding-bottom;
+  margin-left: 2px;
+  margin-top: -8px;
+}
+.badge-subnav {
+  background-color: #fff;
+  border-radius: 2px;
+  color: #ff3300;
+  display: inline-block;
+  font-size: 10px;
+  font-weight: bold;
+  line-height: 1;
+  min-width: 10px;
+  padding-bottom: 2px;
+  padding-left: 5px;
+  padding-right: 5px;
+  padding-top: 2px;
+  text-align: center;
+  vertical-align: baseline;
+  white-space: nowrap;
+  border: 1px solid #ff3300;
+}
 
+
+
+/* ==========================================================================
+   Dashboard
+   ========================================================================== */
+
+.dashboard-container {
+
+  margin-right: 40px;
+  margin-bottom: 20px;
+
+  display: inline-block;
+  vertical-align: top;
+
+}
+
+.dashboard-icons {
+  display: inline-block;
+  height: 16px;
+  width: 16px;
+}
 
