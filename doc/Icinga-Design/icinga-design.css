@@ -475,6 +475,10 @@ select.input-sm {
   background-image: url('images/reschedule.png');
   background-repeat: no-repeat;
 }  
+.icon-refresh {
+  background-image: url('images/refresh.png');
+  background-repeat: no-repeat;
+} 
 
 
 /* ==========================================================================
@@ -820,5 +824,133 @@ background-color: #fff;
   display: inline-block;
   height: 16px;
   width: 16px;
+}
+
+
+
+
+/* ==========================================================================
+   Top Navbar
+   ========================================================================== */
+
+
+.icinga-logo {
+    background-attachment: scroll;
+    background-clip: border-box;
+    background-color: rgba(0, 0, 0, 0);
+    background-image: url("images/logo_icinga.png");
+    background-origin: padding-box;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: auto auto;
+    display: block;
+    height: 33px;
+    margin-bottom: 0;
+    margin-left: 8px;
+    margin-right: 30px;
+    margin-top: 8px;
+    text-indent: -999px;
+    width: 94px;
+}
+
+.icinga-icon-user {
+    background-attachment: scroll;
+    background-clip: border-box;
+    background-color: rgba(0, 0, 0, 0);
+    background-image: url("images/user.png");
+    background-origin: padding-box;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: auto auto;
+    display: inline-block;
+    height: 16px;
+    width: 16px;
+}
+
+.icinga-navbar {
+  margin-right: 15px;
+}
+.icinga-navbar-reload {
+  margin-top: 13px;
+  margin-right: 40px;
+}
+
+.icinga-navbar-search {
+  background-image: url('images/search.png');
+  background-repeat: no-repeat;
+  background-position: 5px 50%;
+  padding-left: 25px !important;
+}
+
+.icinga-navbar-search-container {
+  border-left: 1px solid #ddd;
+  padding-left: 15px;
+  margin-top: 12px;
+}
+
+
+
+.icinga-navbar-hosts-container {
+  background-image: url('images/host.png');
+  background-repeat: no-repeat;
+  background-position: 5px 50%;
+  padding-left: 30px !important;
+  margin-top: 15px;
+}
+.icinga-navbar-services-container {
+  background-image: url('images/service.png');
+  background-repeat: no-repeat;
+  background-position: 5px 50%;
+  padding-left: 25px !important;
+  margin-top: 15px;
+}
+
+.icinga-navbar-pills {
+  border-style: solid;
+  border-width: 1px;
+  padding: 3px 5px 3px 5px;
+  border-radius: 3px;
+  font-size: 13px;
+}
+
+
+
+/** Service status **/
+
+.icinga-navbar-pills-critical {
+  border-color: #FF3300;
+  color: #FF3300;
+}
+
+.icinga-navbar-pills-ok {
+  border-color: #00CC33;
+  color: #00CC33;
+}
+
+.icinga-navbar-pills-warning {
+  border-color: #FFA500;
+  color: #FFA500;
+}
+
+.icinga-navbar-pills-unknown {
+  border-color: #E066FF;
+  color: #E066FF;
+}
+
+/** Host status **/
+
+.icinga-navbar-pills-unreachable {
+  border-color: #E066FF;
+  color: #E066FF;
+}
+
+.icinga-navbar-pills-down {
+  border-color: #FF3300;
+  color: #FF3300;
+}
+
+.icinga-navbar-pills-up {
+  border-color: #00CC33;
+  color: #00CC33;
 }
 

@@ -15,6 +15,67 @@
   <body>
 
 
+
+ <!-- ######### Top Navbar  ##########-->   
+
+<nav role="navigation" id="icingatopbar" class="navbar navbar-default navbar-fixed-top">
+  <div class="navbar-header">
+    <a class="navbar-brand icinga-logo pull-left" href="/icinga2-web/">Icinga</a>
+  </div>
+
+
+  <div class="pull-left icinga-navbar icinga-navbar-hosts-container">
+    <span class="icinga-navbar-pills icinga-navbar-pills-up">999/999</span>
+    <span class="icinga-navbar-pills icinga-navbar-pills-unreachable">999/999</span>
+    <span class="icinga-navbar-pills icinga-navbar-pills-down">999/999</span>
+  </div>
+
+  <div class="pull-left icinga-navbar icinga-navbar-services-container">
+    <span class="icinga-navbar-pills icinga-navbar-pills-ok">999/999</span>
+    <span class="icinga-navbar-pills icinga-navbar-pills-critical">999/999</span>
+    <span class="icinga-navbar-pills icinga-navbar-pills-warning">999/999</span> 
+    <span class="icinga-navbar-pills icinga-navbar-pills-unknown">999/999</span> 
+  </div>    
+
+  <div class="pull-left icinga-navbar icinga-navbar-reload">
+    <a class="button btn-common btn-small" href="#">
+    <span class="icon-refresh icon-btn-small"></span>
+    </a>
+  </div>  
+
+ 
+  <div class="pull-left icinga-navbar icinga-navbar-search-container">
+    <input type="text" class="form-control input-sm icinga-navbar-search" />
+  </div>  
+
+
+    <ul class="nav navbar-nav pull-right">
+
+    <li class="dropdown">
+      <a id="icinga_app_nav_useraction" data-toggle="dropdown" class="dropdown-toggle" href="#">
+        <span id="icinga_app_nav_username">
+          jdoe        </span>
+        <i class="icinga-icon-user"></i>
+        <b class="caret"></b>
+      </a>
+      <ul class="dropdown-menu">
+        <li id="icinga_app_nav_preferences">
+          <a href="/icinga2-web/preference">Preferences </a>
+        </li>
+        <li id="icinga_app_nav_logout">
+          <a title="Logout" href="/icinga2-web/authentication/logout">Logout</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+  
+</nav>
+
+
+
+
+
+
   <div class="docu-main">
 
     <h1 class="docu-project-name">Icinga Documentation</h1>
@@ -26,9 +87,7 @@
     <h1 class="docu-main-headline">Basic Elements</h1>
 
     <h1 class="docu-sub-headline">Headlines</h1>
-<!--     <div class="docu-description">
-      Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. 
-    </div> -->
+
 
     <div class="docu-section">
       <div class="docu-example">
