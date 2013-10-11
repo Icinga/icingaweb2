@@ -506,33 +506,33 @@ code...
               <tbody>
 
                 <tr>
-                  <td class="enabled">Passive Checks</td>
+                  <td>Passive Checks</td>
                   <td><div class="icon-table-hint icon-edit pull-left"></div></td>
                   <td><input type="checkbox" id="#" name="#" class="pull-right" checked /></td>
                 </tr>
 
                 <tr>
-                  <td class="disabled">Active Checks</td>
+                  <td>Active Checks</td>
                   <td></td>
                   <td><input type="checkbox" id="#" name="#" class="pull-right" /></td>
                 </tr>
                 <tr>
-                  <td class="enabled">Obsessing</td>
+                  <td>Obsessing</td>
                   <td><div class="icon-table-hint icon-edit pull-left"></div></td>
                   <td><input type="checkbox" id="#" name="#" class="pull-right" checked /></td>
                 </tr>
                 <tr>
-                  <td class="enabled">Notifications</td>
+                  <td>Notifications</td>
                   <td></td>
                   <td><input type="checkbox" id="#" name="#" class="pull-right" checked /></td>
                 </tr>
                 <tr>
-                  <td class="disabled">Event Handler</td>
+                  <td>Event Handler</td>
                   <td><div class="icon-table-hint icon-edit pull-left"></div></td>
                   <td><input type="checkbox" id="#" name="#" class="pull-right" /></td>
                 </tr>
                 <tr>
-                  <td class="disabled">Flap Detection</td>
+                  <td>Flap Detection</td>
                   <td></td>
                   <td><input type="checkbox" id="#" name="#" class="pull-right" /></td>
                 </tr>
@@ -540,15 +540,6 @@ code...
               </tbody>
             </table>
            </div>
-
-
-
-
-
-
-
-
-
 
 
 
@@ -610,26 +601,57 @@ code...
     </div><!-- .docu-section --> 
 
 
-    <h1 class="docu-main-headline">Buttons</h1>
+    <h1 class="docu-main-headline">Main Navigation</h1>
 
-    <h1 class="docu-sub-headline">Link Button</h1>
+<!--     <h1 class="docu-sub-headline">Sub Header</h1>
     <div class="docu-description">
-      Link buttons are used for the main menu links on the bottom of every page.
-    </div>
+      Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. 
+    </div> -->
 
     <div class="docu-section">
       <div class="docu-example">
         <div class="docu-module">
-          <a class="clickable-bg frame island--medium link-arrow" href="#">Lorem Ipsum</a>
+
+          <ul id="icinganavigation" role="navigation" class="nav nav-stacked">
+            <li class="icon-main-nav nav-icon-hosts">
+            <a href="/icinga2-web/monitoring/list/hosts">Hosts</a>
+            </li>
+            <li class="icon-main-nav nav-icon-services">
+            <a href="/icinga2-web/monitoring/list/services" class="nav-notification">Services</a>
+              <span class="badge-container-nav">
+                <a href="/icingawebinsfx/monitoring/list/services?host=host_000&amp;service_problems=1" class="badge-nav">
+                    12
+                </a>
+              </span>  
+            </li>
+            <li class="icon-main-nav nav-icon-downtimes">
+            <a href="/icinga2-web/monitoring/list/downtimes">Downtimes</a>
+            </li>
+            <li class="icon-main-nav nav-icon-notifications">
+            <a href="/icinga2-web/monitoring/list/notifications">Notifications</a>
+            </li>
+            <li class="icon-main-nav nav-icon-comments">
+            <a href="/icinga2-web/monitoring/list/comments">Comments</a>
+            </li>
+            <li class="icon-main-nav nav-icon-dashboard active">
+            <a href="/icinga2-web/dashboard/index">Dashboard</a>
+            </li>
+            <li class="icon-main-nav nav-icon-configuration">
+            <a href="/icinga2-web/config/index">Configuration</a>
+            </li>
+           </ul>
+
+
         </div><!-- .docu-module -->
       </div><!-- .docu-example -->
 
+
+
       <div class="docu-codeblock">
-        <textarea class="docu-code"><a class="clickable-bg frame island--medium link-arrow" href="#">Lorem Ipsum</a>
+        <textarea class="docu-code">Code... Code...
         </textarea> 
       </div><!-- .docu-codeblock -->
-
-    </div><!-- .docu-section -->   
+    </div><!-- .docu-section --> 
 
 
 
