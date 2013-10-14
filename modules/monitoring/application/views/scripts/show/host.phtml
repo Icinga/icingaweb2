@@ -10,7 +10,9 @@
         <?php endif; ?>
         <h4>
             Host Status
-            <?= $this->escape($this->object->host_name); ?>
+            <a href="<?= $this->href('monitoring/list/services', array('host' => $object->host_name)); ?>">
+                <?= $this->escape($this->object->host_name); ?>
+            </a>
             <?php if ($this->object->host_address && $this->object->host_address !== $this->object->host_name): ?>
                 (<?= $this->object->host_address; ?>)
             <?php endif; ?>
@@ -53,6 +55,7 @@
 
     <div>
         <table>
+            <i class="successIcon"></i>
             <tr>
                 <?php if (!$object->host_handled && $object->host_state > 0): ?>
                 <td>
@@ -101,16 +104,6 @@
                     <td><?= $this->perfdata($this->object->perfdata); ?></td>
                 </tr>
             <?php endif; ?>
-            <tr>
-                <td colspan="2">
-                    <a href="<?= $this->href('monitoring/list/services', array('host' => $object->host_name)); ?>">
-                        View Services For This Host
-                    </a>
-                </td>
-                <td>
-                    <a class="button" href="#">{{{RECHECK_ALL_SERVICES_COMMAND}}</a>
-                </td>
-            </tr>
         </table>
     </div>
 </div>
