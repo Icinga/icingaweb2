@@ -27,6 +27,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Filter\Type;
+
 use Icinga\Filter\Query\Node;
 
 /**
@@ -104,8 +105,8 @@ class TimeRangeSpecifier extends FilterType
      * Return a two element array with the operator and the timestring parsed from the given query part
      *
      * @param  String $query        The query to extract the operator and time value from
-     * @return array                An array containing the operator as the first and the string for strotime as the second
-     *                              value or (null,null) if the query is invalid
+     * @return array                An array containing the operator as the first and the string for
+     *                              strotime as the second value or (null,null) if the query is invalid
      */
     private function getOperatorAndTimeStringFromQuery($query)
     {
@@ -123,9 +124,9 @@ class TimeRangeSpecifier extends FilterType
         }
 
         if (is_numeric($query[0])) {
-            if($this->forcedPrefix) {
+            if ($this->forcedPrefix) {
                 $prefix = $this->forcedPrefix;
-            } elseif($currentOperator === Node::OPERATOR_GREATER_EQ) {
+            } elseif ($currentOperator === Node::OPERATOR_GREATER_EQ) {
                 $prefix = '-';
             } else {
                 $prefix = '+';

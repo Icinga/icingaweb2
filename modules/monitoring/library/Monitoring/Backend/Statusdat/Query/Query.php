@@ -28,17 +28,19 @@
 
 namespace Icinga\Module\Monitoring\Backend\Statusdat\Query;
 
-use \Icinga\Module\Monitoring\Backend\Statusdat\Criteria\Order;
+use Icinga\Filter\Query\Tree;
 use Icinga\Protocol\Statusdat;
 use Icinga\Exception;
 use Icinga\Data\AbstractQuery;
 use Icinga\Protocol\Statusdat\View\MonitoringObjectList as MList;
 use Icinga\Protocol\Statusdat\Query as StatusdatQuery;
+use Icinga\Filter\Filterable;
+
 /**
  * Class Query
  * @package Icinga\Backend\Statusdat
  */
-abstract class Query extends AbstractQuery
+abstract class Query extends AbstractQuery implements Filterable
 {
     /**
      * @var null
@@ -284,7 +286,22 @@ abstract class Query extends AbstractQuery
      */
     public function count()
     {
-
         return count($this->baseQuery->getResult());
     }
+
+    public function isValidFilterTarget($field)
+    {
+        // TODO: Implement isValidFilterTarget() method.
+    }
+
+    public function getMappedField($field)
+    {
+        // TODO: Implement getMappedField() method.
+    }
+
+    public function applyFilter(Tree $filter)
+    {
+        // TODO: Implement applyFilter() method.
+    }
 }
+

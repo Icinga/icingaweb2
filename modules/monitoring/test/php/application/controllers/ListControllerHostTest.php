@@ -2,12 +2,17 @@
 
 namespace Test\Monitoring\Application\Controllers\ListController;
 
-require_once(dirname(__FILE__).'/../../testlib/MonitoringControllerTest.php');
 
-require_once(dirname(__FILE__).'/../../../../library/Monitoring/DataView/DataView.php');
-require_once(dirname(__FILE__).'/../../../../library/Monitoring/DataView/HostAndServiceStatus.php');
-require_once(dirname(__FILE__).'/../../../../library/Monitoring/DataView/Notification.php');
-require_once(dirname(__FILE__).'/../../../../library/Monitoring/DataView/Downtime.php');
+require_once realpath(__DIR__ . '/../../../../../../library/Icinga/Test/BaseTestCase.php');
+
+use Icinga\Test\BaseTestCase;
+
+require_once(realpath(BaseTestCase::$moduleDir . '/monitoring/test/php/testlib/MonitoringControllerTest.php'));
+require_once(realpath(BaseTestCase::$moduleDir . '/monitoring/library/Monitoring/Filter/Backend/IdoQueryConverter.php'));
+require_once(realpath(BaseTestCase::$moduleDir . '/monitoring/library/Monitoring/DataView/DataView.php'));
+require_once(realpath(BaseTestCase::$moduleDir . '/monitoring/library/Monitoring/DataView/HostStatus.php'));
+require_once(realpath(BaseTestCase::$moduleDir . '/monitoring/library/Monitoring/DataView/Notification.php'));
+require_once(realpath(BaseTestCase::$moduleDir . '/monitoring/library/Monitoring/DataView/Downtime.php'));
 
 use Test\Monitoring\Testlib\MonitoringControllerTest;
 use Test\Monitoring\Testlib\Datasource\TestFixture;

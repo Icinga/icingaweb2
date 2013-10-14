@@ -121,7 +121,7 @@ class BooleanFilter extends FilterType
             if (self::startsWith($query, $match) && $this->subFilter) {
                 $subQuery = trim(substr($query, strlen($match)));
                 $proposals = $proposals + $this->subFilter->getProposalsForQuery($subQuery);
-            } else if (strtolower($query) !== strtolower($match)) {
+            } elseif (strtolower($query) !== strtolower($match)) {
                 $proposals[] = self::markDifference($match, $query);
             }
         }
@@ -146,9 +146,9 @@ class BooleanFilter extends FilterType
         foreach ($operators as $operator) {
             if (strtolower($operator) === strtolower($query)) {
                 $proposals += array_values($this->fields);
-            } else if (self::startsWith($operator, $query)) {
+            } elseif (self::startsWith($operator, $query)) {
                 $proposals[] = self::markDifference($operator, $query);
-            } else if (self::startsWith($query, $operator)) {
+            } elseif (self::startsWith($query, $operator)) {
                 $fieldPart = trim(substr($query, strlen($operator)));
                 $proposals = $proposals + $this->getFieldProposals($fieldPart);
             }
@@ -232,5 +232,4 @@ class BooleanFilter extends FilterType
         }
         return $node;
     }
-
 }

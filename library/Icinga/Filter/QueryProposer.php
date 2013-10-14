@@ -26,7 +26,6 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-
 namespace Icinga\Filter;
 
 /**
@@ -61,5 +60,4 @@ abstract class QueryProposer
      * @return array            An array containing 0..* proposal text tokens
      */
     abstract public function getProposalsForQuery($query);
-
 }

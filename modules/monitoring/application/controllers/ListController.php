@@ -38,16 +38,21 @@ use Icinga\Web\Widget\Tabextension\OutputFormat;
 use Icinga\Web\Widget\Tabs;
 use Icinga\Module\Monitoring\Backend;
 use Icinga\Web\Widget\SortBox;
+use Icinga\Web\Widget\FilterBox;
 use Icinga\Application\Config as IcingaConfig;
 
+use Icinga\Module\Monitoring\DataView\DataView;
 use Icinga\Module\Monitoring\DataView\Notification as NotificationView;
 use Icinga\Module\Monitoring\DataView\Downtime as DowntimeView;
 use Icinga\Module\Monitoring\DataView\Contact as ContactView;
 use Icinga\Module\Monitoring\DataView\Contactgroup as ContactgroupView;
-use Icinga\Module\Monitoring\DataView\HostAndServiceStatus as HostAndServiceStatusView;
+use Icinga\Module\Monitoring\DataView\HostStatus as HostStatusView;
+use Icinga\Module\Monitoring\DataView\ServiceStatus as ServiceStatusView;
 use Icinga\Module\Monitoring\DataView\Comment as CommentView;
 use Icinga\Module\Monitoring\DataView\Groupsummary as GroupsummaryView;
 use Icinga\Module\Monitoring\DataView\EventHistory as EventHistoryView;
+use Icinga\Module\Monitoring\Filter\UrlViewFilter;
+use Icinga\Filter\Filterable;
 
 class Monitoring_ListController extends MonitoringController
 {
@@ -96,8 +101,9 @@ class Monitoring_ListController extends MonitoringController
      */
     public function hostsAction()
     {
+
         $this->compactView = 'hosts-compact';
-        $query = HostAndServiceStatusView::fromRequest(
+        $dataview = HostStatusView::fromRequest(
             $this->_request,
             array(
                 'host_icon_image',
@@ -123,8 +129,9 @@ class Monitoring_ListController extends MonitoringController
                 'host_current_check_attempt',
                 'host_max_check_attempts'
             )
-        )->getQuery();
-        $this->view->hosts = $query->paginate();
+        );
+        $query = $dataview->getQuery();
+        $this->setupFilterControl($dataview);
         $this->setupSortControl(array(
             'host_last_check'   => 'Last Host Check',
             'host_severity'     => 'Host Severity',
@@ -134,6 +141,8 @@ class Monitoring_ListController extends MonitoringController
             'host_state'        => 'Hard State'
         ));
         $this->handleFormatRequest($query);
+        $this->view->hosts = $query->paginate();
+
     }
 
     /**
@@ -390,7 +399,8 @@ class Monitoring_ListController extends MonitoringController
             $this->_helper->viewRenderer($this->compactView);
         }
 
-        if ($this->_getParam('format') === 'sql'
+
+        if ($this->getParam('format') === 'sql'
             && IcingaConfig::app()->global->get('environment', 'production') === 'development') {
             echo '<pre>'
                 . htmlspecialchars(wordwrap($query->dump()))
@@ -424,6 +434,17 @@ class Monitoring_ListController extends MonitoringController
             $columns
         );
         $this->view->sortControl->applyRequest($this->getRequest());
+    }
+
+    private function setupFilterControl(Filterable $dataview)
+    {
+        $parser = new UrlViewFilter($dataview);
+        $this->view->filterBox = new FilterBox(
+            $parser->parseUrl(),
+            'host',
+            'monitoring'
+        );
+
     }
 
     /**

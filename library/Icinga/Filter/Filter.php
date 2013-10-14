@@ -28,7 +28,6 @@
 
 namespace Icinga\Filter;
 
-
 use Icinga\Filter\Query\Tree;
 use Icinga\Filter\Query\Node;
 
@@ -38,7 +37,8 @@ use Icinga\Filter\Query\Node;
  * This class handles the top level parsing of queries, i.e.
  * - Splitting queries at conjunctions and parsing them part by part
  * - Delegating the query parts to specific filter domains handling this filters
- * - Building a query tree that allows to convert a filter representation into others (url to string, string to url, sql..)
+ * - Building a query tree that allows to convert a filter representation into others
+ *   (url to string, string to url, sql..)
  *
  * Filters are split in Filter Domains, Attributes and Types:
  *
@@ -110,7 +110,7 @@ class Filter extends QueryProposer
     {
         if ($this->defaultDomain !== null) {
             return $this->defaultDomain;
-        } else if (count($this->domains) > 0) {
+        } elseif (count($this->domains) > 0) {
             return $this->domains[0];
         }
         return null;
@@ -240,7 +240,7 @@ class Filter extends QueryProposer
         $right = $query;
         do {
             list($left, $conjuction, $right)  = $this->splitQueryAtNextConjunction($right);
-        } while($conjuction !== null);
+        } while ($conjuction !== null);
         return $left;
     }
 
@@ -275,7 +275,7 @@ class Filter extends QueryProposer
 
             if ($conjunction === 'AND') {
                 $tree->insert(Node::createAndNode());
-            } elseif($conjunction === 'OR') {
+            } elseif ($conjunction === 'OR') {
                 $tree->insert(Node::createOrNode());
             }
 

@@ -5,14 +5,25 @@
 namespace Icinga\Module\Monitoring\DataView;
 
 use Icinga\Data\AbstractQuery;
+use Icinga\Filter\Filterable;
+use Icinga\Filter\Query\Tree;
 use Icinga\Module\Monitoring\Backend;
+use Icinga\Module\Monitoring\Filter\UrlViewFilter;
 use Icinga\Web\Request;
 
 /**
  * A read-only view of an underlying Query
  */
-abstract class DataView
+abstract class DataView implements Filterable
 {
+    /**
+     * Sort in ascending order, default
+     */
+    const SORT_ASC = AbstractQuery::SORT_ASC;
+    /**
+     * Sort in reverse order
+     */
+    const SORT_DESC = AbstractQuery::SORT_DESC;
     /**
      * The query used to populate the view
      *
@@ -21,24 +32,16 @@ abstract class DataView
     private $query;
 
     /**
-     * Sort in ascending order, default
-     */
-    const SORT_ASC = AbstractQuery::SORT_ASC;
-
-    /**
-     * Sort in reverse order
-     */
-    const SORT_DESC = AbstractQuery::SORT_DESC;
-
-    /**
      * Create a new view
      *
-     * @param Backend   $ds         Which backend to query
-     * @param array     $columns    Select columns
+     * @param Backend $ds         Which backend to query
+     * @param array $columns    Select columns
      */
     public function __construct(Backend $ds, array $columns = null)
     {
+        $filter = new UrlViewFilter($this);
         $this->query = $ds->select()->from(static::getTableName(), $columns === null ? $this->getColumns() : $columns);
+        $this->applyFilter($filter->parseUrl());
     }
 
     /**
@@ -60,23 +63,16 @@ abstract class DataView
      */
     abstract public function getColumns();
 
-    /**
-     * Retrieve default sorting rules for particular columns. These involve sort order and potential additional to sort
-     *
-     * @return array
-     */
-    abstract public function getSortRules();
-
-    public function getFilterColumns()
+    public function applyFilter(Tree $filter)
     {
-        return array();
+        return $this->query->applyFilter($filter);
     }
 
     /**
      * Create view from request
      *
      * @param   Request $request
-     * @param   array   $columns
+     * @param   array $columns
      *
      * @return  static
      */
@@ -102,8 +98,8 @@ abstract class DataView
     /**
      * Create view from params
      *
-     * @param   array   $params
-     * @param   array   $columns
+     * @param   array $params
+     * @param   array $columns
      *
      * @return  static
      */
@@ -131,12 +127,12 @@ abstract class DataView
      *
      * @param   array $filters
      *
-     * @see     isValidFilterColumn()
+     * @see     Filterable::isValidFilterTarget()
      */
     public function filter(array $filters)
     {
         foreach ($filters as $column => $filter) {
-            if ($this->isValidFilterColumn($column)) {
+            if ($this->isValidFilterTarget($column)) {
                 $this->query->where($column, $filter);
             }
         }
@@ -150,16 +146,21 @@ abstract class DataView
      *
      * @return  bool
      */
-    public function isValidFilterColumn($column)
+    public function isValidFilterTarget($column)
     {
         return in_array($column, $this->getColumns()) || in_array($column, $this->getFilterColumns());
+    }
+
+    public function getFilterColumns()
+    {
+        return array();
     }
 
     /**
      * Sort the rows, according to the specified sort column and order
      *
-     * @param   string    $column   Sort column
-     * @param   int       $order    Sort order, one of the SORT_ constants
+     * @param   string $column   Sort column
+     * @param   int $order    Sort order, one of the SORT_ constants
      *
      * @see     DataView::SORT_ASC
      * @see     DataView::SORT_DESC
@@ -180,8 +181,8 @@ abstract class DataView
                 }
             } else {
                 $sortColumns = array(
-                    'columns'   => array($column),
-                    'order'     => $order
+                    'columns' => array($column),
+                    'order' => $order
                 );
             };
         }
@@ -192,6 +193,18 @@ abstract class DataView
     }
 
     /**
+     * Retrieve default sorting rules for particular columns. These involve sort order and potential additional to sort
+     *
+     * @return array
+     */
+    abstract public function getSortRules();
+
+    public function getMappedField($field)
+    {
+        return $this->query->getMappedField($field);
+    }
+
+    /**
      * Return the query which was created in the constructor
      *
      * @return mixed
@@ -199,5 +212,10 @@ abstract class DataView
     public function getQuery()
     {
         return $this->query;
+    }
+
+    public function getFilterDomain()
+    {
+        return null;
     }
 }

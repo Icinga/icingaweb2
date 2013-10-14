@@ -294,4 +294,5 @@ class FilterTest extends BaseTestCase
             'Assert the root->right->right->type node to be an OPERATOR (query :"' . $query . '")'
         );
     }
+
 }
