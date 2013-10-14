@@ -5,7 +5,7 @@
 namespace Icinga\Module\Monitoring;
 
 use Icinga\Application\Config as IcingaConfig;
-use Icinga\Module\Monitoring\DataView\HostAndServiceStatus as HostAndServiceStatusView;
+use Icinga\Module\Monitoring\DataView\ServiceStatus as ServiceStatusView;
 use Icinga\Web\Controller\ActionController;
 
 /**
@@ -54,13 +54,13 @@ class Controller extends ActionController
             'max_check_attempts'    => 'service_max_check_attempts'
         );
         if ($params === null) {
-            $query = HostAndServiceStatusView::fromRequest(
+            $query = ServiceStatusView::fromRequest(
                 $this->_request,
                 $columns
             )->getQuery();
         } else {
             $params['backend'] = $this->_request->getParam('backend');
-            $query = HostAndServiceStatusView::fromParams(
+            $query = ServiceStatusView::fromParams(
                 $params,
                 $columns
             )->getQuery();
