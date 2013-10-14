@@ -488,10 +488,15 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
             if (Container.isExternalLink($(targetEl).attr('href'))) {
                 return true;
             } else {
-                // detail links render to main by default;
-                Icinga.replaceBodyFromUrl(
-                    mainContainer.updateContainerHref(URI($(targetEl).attr('href')).href())
-                );
+                if ($(targetEl).attr('data-icinga-target') === 'detail') {
+                    Icinga.replaceBodyFromUrl(
+                        detailContainer.updateContainerHref(URI($(targetEl).attr('href')).href())
+                    );
+                } else {
+                    Icinga.replaceBodyFromUrl(
+                        mainContainer.updateContainerHref(URI($(targetEl).attr('href')).href())
+                    );
+                }
 
                 ev.preventDefault();
                 ev.stopPropagation();

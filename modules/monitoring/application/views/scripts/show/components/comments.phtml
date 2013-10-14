@@ -1,29 +1,19 @@
-<?php if (!empty($object->comments)): ?>
-<?
-$commets = array();
-foreach ($object->comments as $comment) {
-    $text = $this->escape($comment->comment_data);
-    $commets[] = sprintf(
-        '[%s] %s (%s): %s',
-        $this->escape($comment->comment_author),
-        $this->format()->timeSince($comment->comment_timestamp),
-        $comment->comment_type,
-        $text
-    );
-}
-?>
-<?php endif; ?>
-<div class="panel panel-default ">
-  <div class="panel-heading">
-    <span>{{COMMENT_ICON}} Comments</span>
-  </div>
-  <div class="panel-body">
-      <a href="#" class="button">{{COMMENT_COMMAND_BUTTON}}</a>
-      <a href="#" class="button">{{NOTIFICATION_COMMAND_BUTTON}}</a><br/>
-      <?php if (!empty($object->comments)): ?>
-    <blockquote> <?= implode('<br />', $commets); ?><a href="#" class="button">{{REMOVE_COMMENT_COMMAND}}</a></blockquote>
-      <?php else: ?>
-          No comments
-      <?php endif; ?>
-  </div>
+<div>
+    Comments
+    <?php if (!empty($object->comments)): ?>
+    <blockquote>
+        <?php foreach ($object->comments as $comment): ?>
+            <p>
+                <?= sprintf(
+                    '[%s] %s (%s): %s',
+                    $this->escape($comment->comment_author),
+                    $this->format()->timeSince($comment->comment_timestamp),
+                    $comment->comment_type,
+                    $comment->comment_data
+                ); ?>
+                <a href="#" class="button">{{REMOVE_ICON}}</a>
+            </p>
+        <?php endforeach; ?>
+    </blockquote>
+    <?php endif; ?>
 </div>

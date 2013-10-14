@@ -97,6 +97,13 @@ class Tab implements Widget
     private $iconCls = null;
 
     /**
+     * Additional a tag attributes
+     *
+     * @var array
+     */
+    private $tagParams;
+
+    /**
      * Sets an icon image for this tab
      *
      * @param string $icon      The url of the image to use
@@ -167,6 +174,16 @@ class Tab implements Widget
     }
 
     /**
+     * Set additional a tag attributes
+     *
+     * @param array $tagParams
+     */
+    public function setTagParams(array $tagParams)
+    {
+        $this->tagParams = $tagParams;
+    }
+
+    /**
      * Create a new Tab with the given properties
      *
      * Allowed properties are all properties for which a setter exists
@@ -215,7 +232,13 @@ class Tab implements Widget
         }
         if ($this->url !== null) {
             $this->url->overwriteParams($this->urlParams);
-            $tab = '<a href="' . $this->url->getAbsoluteUrl() . '">' . $caption . '</a>';
+            $tagParams = '';
+            if ($this->tagParams !== null) {
+                foreach ($this->tagParams as $key => $value) {
+                    $tagParams .= ' ' . $key . '="' . $value . '"';
+                }
+            }
+            $tab = '<a' . $tagParams .' href="' . $this->url->getAbsoluteUrl() . '">' . $caption . '</a>';
         } else {
             $tab = $caption;
         }

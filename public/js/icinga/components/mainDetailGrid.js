@@ -166,10 +166,16 @@ function(Container, $, logger, URI) {
 
             });
             $('.pagination li a', contentNode.parent()).on('click', function(ev) {
+
                 var container = (new Container(this));
-                container.replaceDomFromUrl(
-                    container.updateContainerHref($(this).attr('href'))
-                );
+                logger.debug("Pagination clicked in " + container.containerType);
+                // Detail will be removed when main pagination changes
+                if (container.containerType === 'icingamain') {
+                    Icinga.replaceBodyFromUrl(URI($(this).attr('href')).removeQuery('detail'));
+                } else {
+                    container.replaceDomFromUrl($(this).attr('href'));
+                }
+
                 ev.preventDefault();
                 ev.stopPropagation();
                 return false;
@@ -207,7 +213,7 @@ function(Container, $, logger, URI) {
             this.registerControls();
             this.registerTableLinks();
             this.registerHistoryChanges();
-            this.registerLoadIndicator();
+
         };
 
         this.construct(gridDomNode);

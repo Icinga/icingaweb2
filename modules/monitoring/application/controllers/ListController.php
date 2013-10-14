@@ -31,7 +31,7 @@
 use \Icinga\Application\Benchmark;
 use \Icinga\Data\Db\Query;
 use \Icinga\File\Csv;
-use \Icinga\Web\Controller\ActionController;
+use \Icinga\Module\Monitoring\Controller as MonitoringController;
 use \Icinga\Web\Hook;
 use \Icinga\Web\Widget\Tabextension\DashboardAction;
 use \Icinga\Web\Widget\Tabextension\OutputFormat;
@@ -47,7 +47,7 @@ use Icinga\Module\Monitoring\DataView\Contactgroup as ContactgroupView;
 use Icinga\Module\Monitoring\DataView\HostAndServiceStatus as HostAndServiceStatusView;
 use Icinga\Module\Monitoring\DataView\Comment as CommentView;
 
-class Monitoring_ListController extends ActionController
+class Monitoring_ListController extends MonitoringController
 {
     /**
      * The backend used for this controller
@@ -137,39 +137,7 @@ class Monitoring_ListController extends ActionController
     public function servicesAction()
     {
         $this->compactView = 'services-compact';
-        $query = HostAndServiceStatusView::fromRequest(
-            $this->_request,
-            array(
-                'host_name',
-                'host_state',
-                'host_state_type',
-                'host_last_state_change',
-                'host_address',
-                'host_handled',
-                'service_description',
-                'service_display_name',
-                'service_state' => 'service_state',
-                'service_in_downtime',
-                'service_acknowledged',
-                'service_handled',
-                'service_output',
-                'service_last_state_change' => 'service_last_state_change',
-                'service_icon_image',
-                'service_long_output',
-                'service_is_flapping',
-                'service_state_type',
-                'service_handled',
-                'service_severity',
-                'service_last_check',
-                'service_notifications_enabled',
-                'service_action_url',
-                'service_notes_url',
-                'service_last_comment',
-                'service_active_checks_enabled',
-                'service_passive_checks_enabled'
-            )
-        )->getQuery();
-        $this->view->services = $query->paginate();
+        $this->view->services = $this->fetchServices();
         $this->setupSortControl(array(
             'service_last_check'    =>  'Last Service Check',
             'service_severity'      =>  'Severity',
@@ -182,7 +150,6 @@ class Monitoring_ListController extends ActionController
             'host_address'          =>  'Host Address',
             'host_last_check'       =>  'Last Host Check'
         ));
-        $this->handleFormatRequest($query);
     }
 
     /**

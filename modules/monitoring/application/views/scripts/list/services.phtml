@@ -8,7 +8,7 @@ $viewHelper = $this->getHelper('MonitoringState');
 <div data-icinga-component="app/mainDetailGrid">
 
   <?= $this->sortControl->render($this); ?>
-  <?= $this->paginationControl($this->services, null, null, array('preserve' => $this->preserve)); ?>
+  <?= $this->paginationControl($services, null, null, array('preserve' => $this->preserve)); ?>
 
   <table class="table table-condensed">
     <thead>

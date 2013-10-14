@@ -150,7 +150,7 @@ abstract class AbstractObject
         return $this;
     }
 
-    protected function fetchEventHistory()
+    public function fetchEventHistory()
     {
         $this->foreign['eventHistory'] = $this->applyObjectFilter(
             $this->backend->select()->from('eventHistory', array(
