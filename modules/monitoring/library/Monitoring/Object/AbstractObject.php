@@ -167,4 +167,33 @@ abstract class AbstractObject
         );
         return $this;
     }
+
+    public function fetchDowtimes()
+    {
+        $this->foreign['downtimes'] = $this->applyObjectFilter(
+            $this->backend->select()->from('downtime', array(
+                    'host_name',
+                    'object_type',
+                    'service_host_name',
+                    'service_description',
+                    'downtime_type',
+                    'downtime_author_name',
+                    'downtime_comment_data',
+                    'downtime_is_fixed',
+                    'downtime_duration',
+                    'downtime_entry_time',
+                    'downtime_scheduled_start_time',
+                    'downtime_scheduled_end_time',
+                    'downtime_was_started',
+                    'downtime_actual_start_time',
+                    'downtime_actual_start_time_usec',
+                    'downtime_is_in_effect',
+                    'downtime_trigger_time',
+                    'downtime_triggered_by_id',
+                    'downtime_internal_downtime_id'
+                )
+            )
+        )->fetchAll(9);
+        return $this;
+    }
 }

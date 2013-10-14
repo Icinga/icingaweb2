@@ -12,6 +12,7 @@ class Host extends AbstractObject
         'contactgroups' => null,
         'customvars'    => null,
         'comments'      => null,
+        'downtimes'     => null
     );
 
     public function stateName()
@@ -30,7 +31,8 @@ class Host extends AbstractObject
             ->fetchContacts()
             ->fetchContactgroups()
             ->fetchCustomvars()
-            ->fetchComments();
+            ->fetchComments()
+            ->fetchDowtimes();
     }
 
     protected function fetchObject()
@@ -41,6 +43,7 @@ class Host extends AbstractObject
             'host_address',
             'host_state',
             'host_handled',
+            'host_in_downtime',
             'in_downtime' => 'host_in_downtime',
             'host_acknowledged',
             'host_last_state_change',

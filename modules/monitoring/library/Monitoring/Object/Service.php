@@ -12,6 +12,7 @@ class Service extends AbstractObject
         'contactgroups' => null,
         'customvars'    => null,
         'comments'      => null,
+        'downtimes'     => null
     );
 
     public function stateName()
@@ -31,7 +32,8 @@ class Service extends AbstractObject
             ->fetchContacts()
             ->fetchContactgroups()
             ->fetchCustomvars()
-            ->fetchComments();
+            ->fetchComments()
+            ->fetchDowtimes();
     }
 
     protected function fetchObject()

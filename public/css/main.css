@@ -149,6 +149,22 @@ th {
     border-bottom: 2px solid #ddd;
 }
 
+
+.table-detail th {
+    font-size: 16px;
+    border-top: 0;
+}
+
+.table-detail thead > tr > th, .table tbody > tr > th,
+.table-detail tbody > tr > td, .table tfoot > tr > td  {
+    border-top: 0 !important;
+}
+
+.table-detail > thead {
+    border-top: 0 !important;
+}
+
+
 td {
     padding: 8px 10px 8px 8px !important;
     border-bottom: 1px dotted #ddd !important;
@@ -418,6 +434,16 @@ select.input-sm {
     display: block;
 }
 
+.icon-table-hint {
+    width: 16px;
+    height: 20px;
+    display: block;
+    background-position: 50% 50%;
+}
+.icon-table-hint:after {
+    content: "edited";
+    padding-left: 22px;
+}
 
 .icon-flapping {
     background-image: url('../img/icons/flapping.png');

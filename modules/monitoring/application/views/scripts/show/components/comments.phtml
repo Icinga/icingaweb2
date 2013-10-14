@@ -32,9 +32,21 @@
   <div class="panel-body">
       <table class="table table-condensed table-detail">
           <tbody>
+            <?php if (empty($object->comments)): ?>
+                <tr>
+                    <td>No comments</td>
+                </tr>
+            <?php endif; ?>
             <?php foreach ($object->comments as $comment): ?>
                 <tr>
                     <td>
+                        <div class="pull-right">
+                            <form>
+                                <button type="submit" value="1" class="button btn-small btn-common" title="Remove comment">
+                                    <i class="icinga-icon-remove"></i>
+                                </button>
+                            </form>
+                        </div>
                         <?= $this->escape($comment->comment_author); ?>, <?= $comment->comment_type; ?>
                         (<?= $this->format()->timeSince($comment->comment_timestamp); ?>)
                         <div class="small-row">

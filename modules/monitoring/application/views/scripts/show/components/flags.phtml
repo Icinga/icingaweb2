@@ -1,22 +1,50 @@
-<div class="panel panel-default">
-    <div class="panel-heading">Heading</div>
+<?php
+    $o = $this->object;
+?>
+<div>
+    <div class="panel-heading">
+        <div class="panel-hostname">
+            Configuration
+        </div>
+    </div>
+
+    <hr class="separator" />
+
     <div class="panel-body">
-        <table class="table table-condensed">
-        <?php foreach ($this->monitoringFlags($object) as $flag => $enabled): ?>
-            <tr>
-                <th><?= $flag; ?></th>
-                <td>
-                    <?php if ($enabled === true): ?>
-                        <span>{{ENABLED_ICON}} ENABLED</span>
-                    <?php else: ?>
-                        <span>{{DISABLED_ICON}} DISABLED</span>
-                  <?php endif; ?>
-                </td>
-                <td>
-                    <a class="button" href="#">{{{ENABLE_OR_DISABLE_COMMAND}}}</a>
-                </td>
-            </tr>
-        <?php endforeach; ?>
+        <table class="table table-condensed table-detail">
+            <tbody>
+                <tr>
+                    <td>Passive Checks</td>
+                    <td><div class="icon-table-hint icon-edit pull-left"></div></td>
+                    <td><input type="checkbox" id="#" name="#" class="pull-right" <?= ($o->passive_checks_enabled === '1') ? 'checked="true"' : '' ?> /></td>
+                </tr>
+
+                <tr>
+                    <td>Active Checks</td>
+                    <td></td>
+                    <td><input type="checkbox" id="#" name="#" class="pull-right" <?= ($o->active_checks_enabled === '1') ? 'checked="true"' : '' ?> /></td>
+                </tr>
+                <tr>
+                    <td>Obsessing</td>
+                    <td></td>
+                    <td><input type="checkbox" id="#" name="#" class="pull-right" <?= ($o->obsessing === '1') ? 'checked="true"' : '' ?> /></td>
+                </tr>
+                <tr>
+                    <td>Notifications</td>
+                    <td></td>
+                    <td><input type="checkbox" id="#" name="#" class="pull-right" <?= ($o->notifications_enabled === '1') ? 'checked="true"' : '' ?> /></td>
+                </tr>
+                <tr>
+                    <td>Event Handler</td>
+                    <td></div></td>
+                    <td><input type="checkbox" id="#" name="#" class="pull-right" <?= ($o->event_handler_enabled === '1') ? 'checked="true"' : '' ?> /></td>
+                </tr>
+                <tr>
+                    <td>Flap Detection</td>
+                    <td></td>
+                    <td><input type="checkbox" id="#" name="#" class="pull-right" <?= ($o->flap_detection_enabled === '1') ? 'checked="true"' : '' ?> /></td>
+                </tr>
+            </tbody>
         </table>
     </div>
 </div>
