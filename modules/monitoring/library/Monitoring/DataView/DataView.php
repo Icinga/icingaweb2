@@ -49,7 +49,7 @@ abstract class DataView
     public static function getTableName()
     {
         $tableName = explode('\\', get_called_class());
-        $tableName = strtolower(end($tableName));
+        $tableName = end($tableName);
         return $tableName;
     }
 
