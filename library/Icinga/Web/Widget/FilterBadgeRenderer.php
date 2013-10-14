@@ -26,43 +26,85 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-
 namespace Icinga\Web\Widget;
-
 
 use Icinga\Filter\Query\Tree;
 use Icinga\Filter\Query\Node;
+use Icinga\Module\Monitoring\Filter\UrlViewFilter;
+use Icinga\Web\Url;
+
 use Zend_View_Abstract;
 
+/**
+ * A renderer for filter badges that allow to disable specific filters
+ */
 class FilterBadgeRenderer implements Widget
 {
     private $tree;
+    /**
+     * @var Url
+     */
+    private $baseUrl;
     private $conjunctionCellar = '';
+    private $urlFilter;
 
-
+    /**
+     * Create a new badge renderer for this tree
+     *
+     * @param Tree $tree
+     */
     public function __construct(Tree $tree)
     {
         $this->tree = $tree;
     }
 
+    /**
+     * Create a removable badge from a query tree node
+     *
+     * @param Node $node        The node to create the badge for
+     * @return string           The html for the badge
+     */
     private function nodeToBadge(Node $node)
     {
+        $basePath = $this->baseUrl->getAbsoluteUrl();
+        $allParams = $this->baseUrl->getParams();
+
         if ($node->type === Node::TYPE_OPERATOR) {
-            return  ' <a class="btn btn-default btn-xs">'
+
+            $newTree = $this->tree->withoutNode($node);
+            $url = $this->urlFilter->fromTree($newTree);
+            $url = $basePath . (empty($allParams) ? '?' : '&') . $url;
+
+            return  ' <a class="btn btn-default btn-xs" href="' . $url . '">'
                     . $this->conjunctionCellar .  ' '
                     . ucfirst($node->left) . ' '
                     . $node->operator . ' '
                     . $node->right . '</a>';
         }
         $result = '';
+
         $result .= $this->nodeToBadge($node->left);
         $this->conjunctionCellar = $node->type;
         $result .= $this->nodeToBadge($node->right);
+
         return $result;
 
     }
 
-
+    /**
+     * Initialize $this->baseUrl with an Url instance containing all non-filter parameter
+     */
+    private function buildBaseUrl()
+    {
+        $baseUrl = Url::fromRequest();
+        foreach ($baseUrl->getParams() as $key => $param) {
+            $translated = preg_replace('/[^0-9A-Za-z_]{1,2}$/', '', $key);
+            if ($this->tree->hasNodeWithAttribute($translated) === true) {
+                $baseUrl->removeKey($key);
+            }
+        }
+        $this->baseUrl = $baseUrl;
+    }
 
     /**
      * Renders this widget via the given view and returns the
@@ -73,9 +115,11 @@ class FilterBadgeRenderer implements Widget
      */
     public function render(Zend_View_Abstract $view)
     {
+        $this->urlFilter = new UrlViewFilter();
         if ($this->tree->root == null) {
             return '';
         }
+        $this->buildBaseUrl();
         return $this->nodeToBadge($this->tree->root);
     }
 }

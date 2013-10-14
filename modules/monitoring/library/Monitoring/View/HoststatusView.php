@@ -16,7 +16,6 @@ class HoststatusView extends AbstractView
         'host_address',
         'host_ipv4',
         'host_icon_image',
-
         // Hoststatus
         'host_state',
         'host_problem',
@@ -39,7 +38,6 @@ class HoststatusView extends AbstractView
         'host_last_time_unreachable',
         'host_current_check_attempt',
         'host_max_check_attempts',
-
         // Services
         'services_cnt',
         'services_problem',
@@ -65,8 +63,8 @@ class HoststatusView extends AbstractView
             'columns' => array(
                 'host_ipv4',
                 'service_description'
-             ),
-             'default_dir' => self::SORT_ASC
+            ),
+            'default_dir' => self::SORT_ASC
         ),
         'host_last_state_change' => array(
             'default_dir' => self::SORT_DESC
@@ -87,6 +85,6 @@ class HoststatusView extends AbstractView
         ) {
             return true;
         }
-		return parent::isValidFilterColumn($column);
+        return parent::isValidFilterColumn($column);
     }
 }

@@ -26,9 +26,7 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-
 namespace Icinga\Filter\Type;
-
 
 use Icinga\Filter\Query\Node;
 
@@ -78,7 +76,7 @@ class TextFilter extends FilterType
         foreach ($operators as $operator) {
             if (strtolower($operator) === strtolower($query)) {
                 $proposals += array('\'' . $this->getProposalsForValues($operator) . '\'');
-            } else if (self::startsWith($operator, $query)) {
+            } elseif (self::startsWith($operator, $query)) {
                 $proposals[] = self::markDifference($operator, $query);
             }
         }
@@ -166,10 +164,10 @@ class TextFilter extends FilterType
         }
 
         switch (strtolower($operator)) {
-            case 'starts with':
+            case 'ends with':
                 $value = '*' . $value;
                 break;
-            case 'ends with':
+            case 'starts with':
                 $value = $value . '*';
                 break;
             case 'matches':

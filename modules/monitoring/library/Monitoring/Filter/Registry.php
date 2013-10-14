@@ -26,7 +26,6 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-
 namespace Icinga\Module\Monitoring\Filter;
 
 use Icinga\Filter\Domain;
@@ -41,11 +40,9 @@ use Icinga\Module\Monitoring\Filter\Type\StatusFilter;
  * Factory class to create filter for different monitoring objects
  *
  */
-class MonitoringFilter
+class Registry
 {
-
-
-    private static function getNextCheckFilterType()
+    public static function getNextCheckFilterType()
     {
         $type = new TimeRangeSpecifier();
         $type->setOperator(
@@ -57,7 +54,7 @@ class MonitoringFilter
         return $type;
     }
 
-    private static function getLastCheckFilterType()
+    public static function getLastCheckFilterType()
     {
         $type = new TimeRangeSpecifier();
         $type->setOperator(
@@ -79,30 +76,31 @@ class MonitoringFilter
             FilterAttribute::create(new TextFilter())
                 ->setHandledAttributes('Name', 'Hostname')
                 ->setField('host_name')
-        )->registerAttribute(
-            FilterAttribute::create(StatusFilter::createForHost())
-                ->setHandledAttributes('State', 'Status', 'Current Status')
-                ->setField('host_state')
-        )->registerAttribute(
-            FilterAttribute::create(new BooleanFilter(array(
-                'host_is_flapping'              => 'Flapping',
-                'host_problem'                  => 'In Problem State',
-                'host_notifications_enabled'    => 'Sending Notifications',
-                'host_active_checks_enabled'    => 'Active',
-                'host_passive_checks_enabled'   => 'Accepting Passive Checks',
-                'host_handled'                  => 'Handled',
-                'host_in_downtime'              => 'In Downtime',
-            )))
-        )->registerAttribute(
-            FilterAttribute::create(self::getLastCheckFilterType())
-                ->setHandledAttributes('Last Check', 'Check')
-                ->setField('host_last_check')
-        )->registerAttribute(
-            FilterAttribute::create(self::getNextCheckFilterType())
-                ->setHandledAttributes('Next Check')
-                ->setField('host_next_check')
-        );
+            )->registerAttribute(
+                FilterAttribute::create(StatusFilter::createForHost())
+                    ->setHandledAttributes('State', 'Status', 'Current Status')
+                    ->setField('host_state')
+            )->registerAttribute(
+                FilterAttribute::create(new BooleanFilter(
+                    array(
+                        'host_is_flapping'              => 'Flapping',
+                        'host_problem'                  => 'In Problem State',
+                        'host_notifications_enabled'    => 'Sending Notifications',
+                        'host_active_checks_enabled'    => 'Active',
+                        'host_passive_checks_enabled'   => 'Accepting Passive Checks',
+                        'host_handled'                  => 'Handled',
+                        'host_in_downtime'              => 'In Downtime',
+                    )
+                ))
+            )->registerAttribute(
+                FilterAttribute::create(self::getLastCheckFilterType())
+                    ->setHandledAttributes('Last Check', 'Check')
+                    ->setField('host_last_check')
+            )->registerAttribute(
+                FilterAttribute::create(self::getNextCheckFilterType())
+                    ->setHandledAttributes('Next Check')
+                    ->setField('host_next_check')
+            );
         return $domain;
     }
-
 }

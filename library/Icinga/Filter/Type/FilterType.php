@@ -73,7 +73,7 @@ abstract class FilterType extends QueryProposer
      *
      * @return bool                 True when $string starts with $substring
      */
-    static public function startsWith($string, $substring)
+    public static function startsWith($string, $substring)
     {
         return stripos($string, $substring) === 0;
     }
@@ -90,7 +90,7 @@ abstract class FilterType extends QueryProposer
         $matchingOperator = '';
         foreach ($this->getOperators() as $operator) {
             if (stripos($query, $operator) === 0) {
-                if (strlen($matchingOperator) < strlen($operator) ){
+                if (strlen($matchingOperator) < strlen($operator)) {
                     $matchingOperator = $operator;
                 }
             }

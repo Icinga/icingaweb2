@@ -162,6 +162,8 @@ abstract class MonitoringControllerTest extends Zend_Test_PHPUnit_ControllerTest
         require_once('Data/Db/Query.php');
         require_once('Exception/ProgrammingError.php');
         require_once('Web/Widget/SortBox.php');
+        require_once('Web/Widget/FilterBox.php');
+        require_once('Web/Widget/FilterBadgeRenderer.php');
         require_once('library/Monitoring/Backend/AbstractBackend.php');
         require_once('library/Monitoring/Backend.php');
 

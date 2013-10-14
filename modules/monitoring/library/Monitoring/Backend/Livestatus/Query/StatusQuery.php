@@ -4,7 +4,7 @@ namespace \Icinga\Module\Monitoring\Backend\Livestatus\Query;
 
 use Icinga\Data\AbstractQuery;
 
-class StatusQuery extends AbstractQuery
+class StatusQuery extends AbstractQuery implements Filterable
 {
     protected $available_columns = array(
         'host_name',

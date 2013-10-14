@@ -27,12 +27,14 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 
 
-namespace Icinga\Data;
+namespace Icinga\Filter;
 
+
+use Icinga\Filter\Query\Tree;
 
 interface Filterable
 {
-    public function isValidFilterTarget($targetOrColumn);
-    public function resolveFilterTarget($targetOrColumn);
-
+    public function isValidFilterTarget($field);
+    public function getMappedField($field);
+    public function applyFilter(Tree $filter);
 }

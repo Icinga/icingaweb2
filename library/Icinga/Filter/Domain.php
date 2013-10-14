@@ -26,7 +26,6 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-
 namespace Icinga\Filter;
 
 use Icinga\Filter\Query\Node;
@@ -132,10 +131,10 @@ class Domain extends QueryProposer
         }
 
         foreach ($this->attributes as $attributeHandler) {
-           if ($attributeHandler->isValidQuery($query)) {
-               $node = $attributeHandler->convertToTreeNode($query);
-               return $node;
-           }
+            if ($attributeHandler->isValidQuery($query)) {
+                $node = $attributeHandler->convertToTreeNode($query);
+                return $node;
+            }
         }
         return null;
     }

@@ -25,6 +25,7 @@
  * @author    Icinga Development Team <info@icinga.org>
  */
 // {{{ICINGA_LICENSE_HEADER}}}
+// @codingStandardsIgnoreStart
 
 use Icinga\Web\Form;
 use Icinga\Web\Controller\ActionController;
@@ -34,69 +35,82 @@ use Icinga\Filter\Type\TextFilter;
 use Icinga\Application\Logger;
 use Icinga\Module\Monitoring\Filter\Type\StatusFilter;
 use Icinga\Module\Monitoring\Filter\UrlViewFilter;
+use Icinga\Module\Monitoring\DataView\HostStatus;
 use Icinga\Web\Url;
 
+/**
+ * Application wide interface for filtering
+ */
 class FilterController extends ActionController
 {
     /**
+     * The current filter registry
+     *
      * @var Filter
      */
     private $registry;
 
+    /**
+     * Entry point for filtering, uses the filter_domain and filter_module request parameter
+     * to determine which filter registry should be used
+     */
     public function indexAction()
     {
         $this->registry = new Filter();
-        $filter = new UrlViewFilter();
 
-        $this->view->form = new Form();
-        $this->view->form->addElement(
-            'text',
-            'query',
-            array(
-                'name' => 'query',
-                'label' => 'search',
-                'type' => 'search',
-                'data-icinga-component' => 'app/semanticsearch',
-                'data-icinga-target'    => 'host',
-                'helptext' => 'Filter test'
-            )
-        );
-        $this->view->form->addElement(
-            'submit',
-            'btn_submit',
-            array(
-                'name' => 'submit'
-            )
-        );
-        $this->setupQueries();
-        $this->view->form->setRequest($this->getRequest());
-
-        if ($this->view->form->isSubmittedAndValid()) {
-            $tree = $this->registry->createQueryTreeForFilter($this->view->form->getValue('query'));
-            $this->view->tree = new \Icinga\Web\Widget\FilterBadgeRenderer($tree);
-            $view = \Icinga\Module\Monitoring\DataView\HostAndServiceStatus::fromRequest($this->getRequest());
-            $cv = new \Icinga\Module\Monitoring\Filter\Backend\IdoQueryConverter($view);
-            $this->view->sqlString = $cv->treeToSql($tree);
-            $this->view->params = $cv->getParams();
-        } else if ($this->getRequest()->getHeader('accept') == 'application/json') {
+        if ($this->getRequest()->getHeader('accept') == 'application/json') {
             $this->getResponse()->setHeader('Content-Type', 'application/json');
+
+            $this->setupQueries(
+                $this->getParam('filter_domain', ''),
+                $this->getParam('filter_module', '')
+            );
+
             $this->_helper->json($this->parse($this->getRequest()->getParam('query', '')));
+        } else {
+            $this->redirect('index/welcome');
         }
     }
 
-    private function setupQueries()
+    /**
+     * Set up the query handler for the given domain and module
+     *
+     * @param string $domain    The domain to use
+     * @param string $module    The module to use
+     */
+    private function setupQueries($domain, $module = 'default')
     {
-        $this->registry->addDomain(\Icinga\Module\Monitoring\Filter\MonitoringFilter::hostFilter());
+        $class = '\\Icinga\\Module\\' . ucfirst($module) . '\\Filter\\Registry';
+        $factory = strtolower($domain) . 'Filter';
+        $this->registry->addDomain($class::$factory());
     }
 
+    /**
+     * Parse the given query text and returns the json as expected by the semantic search box
+     *
+     * @param  String $text     The query to parse
+     * @return array            The result structure to be returned in json format
+     */
     private function parse($text)
     {
         try {
-            return $this->registry->getProposalsForQuery($text);
+            $view = HostStatus::fromRequest($this->getRequest());
+            $urlParser = new UrlViewFilter($view);
+            $queryTree = $this->registry->createQueryTreeForFilter($text);
+
+            return array(
+                'state'     => 'success',
+                'proposals' => $this->registry->getProposalsForQuery($text),
+                'urlParam'  => $urlParser->fromTree($queryTree)
+            );
         } catch (\Exception $exc) {
             Logger::error($exc);
+            $this->getResponse()->setHttpResponseCode(500);
+            return array(
+                'state'     => 'error',
+                'message'   => 'Search service is currently not available'
+            );
         }
     }
-
-
 }
+// @codingStandardsIgnoreEnd

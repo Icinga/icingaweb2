@@ -26,7 +26,6 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-
 namespace Icinga\Filter;
 
 use Icinga\Filter\Query\Node;
@@ -88,7 +87,7 @@ class FilterAttribute extends QueryProposer
         if (!$this->field) {
             $this->field = $attr;
         }
-        foreach(func_get_args() as $arg) {
+        foreach (func_get_args() as $arg) {
             $this->attributes[] = trim($arg);
         }
         return $this;
@@ -121,7 +120,7 @@ class FilterAttribute extends QueryProposer
         $query = trim($query);
         foreach ($this->attributes as $attribute) {
             if (stripos($query, $attribute) === 0) {
-               return $attribute;
+                return $attribute;
             }
         }
         return null;
@@ -134,7 +133,8 @@ class FilterAttribute extends QueryProposer
      *
      * @return bool                 True when this query contains an attribute mapped by this filter
      */
-    public function queryHasSupportedAttribute($query) {
+    public function queryHasSupportedAttribute($query)
+    {
         return $this->getMatchingAttribute($query) !== null;
     }
 
@@ -230,6 +230,4 @@ class FilterAttribute extends QueryProposer
     {
         return new FilterAttribute($type);
     }
-
-
 }

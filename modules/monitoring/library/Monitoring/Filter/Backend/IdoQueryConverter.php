@@ -26,33 +26,50 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-
 namespace Icinga\Module\Monitoring\Filter\Backend;
 
-
+use Icinga\Data\DatasourceInterface;
+use Icinga\Data\Db\Query;
 use Icinga\Filter\Query\Tree;
 use Icinga\Filter\Query\Node;
+use Icinga\Filter\Filterable;
 use Icinga\Module\Monitoring\DataView\DataView;
+use Icinga\Module\Monitoring\Backend\Ido\Query\AbstractQuery;
 
-
+/**
+ * Converter class that takes a query tree and creates an SQL Query from it's state
+ */
 class IdoQueryConverter
 {
-    private $view;
+    /**
+     * The query class to use as the base for converting
+     *
+     * @var AbstractQuery
+     */
     private $query;
-    private $params = array();
 
-    public function getParams()
+    /**
+     * The type of the filter (WHERE or HAVING, depending whether it's an aggregate query)
+     * @var string
+     */
+    private $type = 'WHERE';
+
+    /**
+     * Create a new converter from this query
+     *
+     * @param AbstractQuery $query      The query to use for conversion
+     */
+    public function __construct(AbstractQuery $query)
     {
-        return $this->params;
+        $this->query = $query;
     }
 
-    public function __construct(DataView $view, array $initialParams = array())
-    {
-        $this->view = $view;
-        $this->query = $this->view->getQuery();
-        $this->params = $initialParams;
-    }
-
+    /**
+     * Return the SQL equivalent fo the given text operator
+     *
+     * @param  String $operator     The operator from the query node
+     * @return string               The operator for the sql query part
+     */
     private function getSqlOperator($operator)
     {
         switch($operator) {
@@ -65,6 +82,12 @@ class IdoQueryConverter
         }
     }
 
+    /**
+     * Convert a Query Tree node to an sql string
+     *
+     * @param Node $node    The node to convert
+     * @return string       The sql string representing the node's state
+     */
     private function nodeToSqlQuery(Node $node)
     {
         if ($node->type !== Node::TYPE_OPERATOR) {
@@ -74,6 +97,12 @@ class IdoQueryConverter
         }
     }
 
+    /**
+     * Parse an AND or OR node to an sql string
+     *
+     * @param Node $node        The AND/OR node to parse
+     * @return string           The sql string representing this node
+     */
     private function parseConjunctionNode(Node $node)
     {
         $queryString =  '';
@@ -88,33 +117,78 @@ class IdoQueryConverter
         return $queryString;
     }
 
+    /**
+     * Parse an operator node to an sql string
+     *
+     * @param Node $node        The operator node to parse
+     * @return string           The sql string representing this node
+     */
     private function parseOperatorNode(Node $node)
     {
-        if (!$this->view->isValidFilterColumn($node->left) && $this->query->getMappedColumn($node->left)) {
+        if (!$this->query->isValidFilterTarget($node->left) && $this->query->getMappedField($node->left)) {
             return '';
         }
-        $queryString = $this->query->getMappedColumn($node->left);
-        $queryString .= ' ' . (is_integer($node->right) ? $node->operator : $this->getSqlOperator($node->operator));
-        $queryString .= ' ? ';
-        $this->params[] = $this->getParameterValue($node);
+        $queryString = $this->query->getMappedField($node->left);
+        if ($this->query->isAggregateColumn($node->left)) {
+            $this->type = 'HAVING';
+        }
+        $queryString .= ' ' . (is_integer($node->right) ? $node->operator : $this->getSqlOperator($node->operator)) . ' ';
+        $queryString .= $this->getParameterValue($node);
         return $queryString;
     }
 
+    /**
+     * Convert a node value to it's sql equivalent
+     *
+     * This currently only detects if the node is in the timestring context and calls strtotime if so and it replaces
+     * '*' with '%'
+     *
+     * @param Node $node                The node to retrieve the sql string value from
+     * @return String|int               The converted and quoted value
+     */
     private function getParameterValue(Node $node) {
-
+        $value = $node->right;
+        if ($node->operator === Node::OPERATOR_EQUALS || $node->operator === Node::OPERATOR_EQUALS_NOT) {
+            $value = str_replace('*', '%', $value);
+        }
+        if ($this->query->isTimestamp($node->left)) {
+            $node->context = Node::CONTEXT_TIMESTRING;
+        }
         switch($node->context) {
             case Node::CONTEXT_TIMESTRING:
-                return strtotime($node->right);
+                $value = strtotime($value);
             default:
-                return $node->right;
+                break;
+        }
+        return $this->query->getDatasource()->getConnection()->quote($value);
+    }
+
+    /**
+     * Apply the given tree to the query, either as where or as having clause
+     *
+     * @param Tree $tree                        The tree representing the filter
+     * @param \Zend_Db_Select $baseQuery        The query to apply the filter on
+     */
+    public function treeToSql(Tree $tree, $baseQuery)
+    {
+        if ($tree->root == null) {
+            return;
+        }
+        $sql = $this->nodeToSqlQuery($tree->root);
+        if ($this->filtersAggregate()) {
+            $baseQuery->having($sql);
+        } else {
+            $baseQuery->where($sql);
         }
     }
 
-    public function treeToSql(Tree $tree)
+    /**
+     * Return true if this is an filter that should be applied after aggregation
+     *
+     * @return bool         True when having should be used, otherwise false
+     */
+    private function filtersAggregate()
     {
-        if ($tree->root == null) {
-            return '';
-        }
-        return $this->nodeToSqlQuery($tree->root);
+        return $this->type === 'HAVING';
     }
 }

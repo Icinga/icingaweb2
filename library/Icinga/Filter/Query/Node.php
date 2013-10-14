@@ -26,7 +26,6 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-
 namespace Icinga\Filter\Query;
 
 /**
@@ -102,7 +101,8 @@ class Node
      * Factory method for creating operator nodes
      *
      * @param String    $operator   The operator to use
-     * @param String    $left       The left side of the node, i.e. target (mostly attribute) to query for with this node
+     * @param String    $left       The left side of the node, i.e. target (mostly attribute)
+     *                              to query for with this node
      * @param String    $right      The right side of the node, i.e. the value to use for querying
      *
      * @return Node                 An operator Node instance
