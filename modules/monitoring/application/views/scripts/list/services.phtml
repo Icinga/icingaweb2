@@ -90,7 +90,7 @@ $viewHelper = $this->getHelper('MonitoringState');
               <?php if ($service->service_state): ?>
                 <br />
                 <strong>Attempt:</strong>
-                <?= $service->service_current_check_attempt; ?>/<?= $service->service_max_check_attempts; ?>
+                <?= $service->current_check_attempt; ?>/<?= $service->max_check_attempts; ?>
                 (<?= ($service->service_state_type === '1') ? 'Hard' : 'Soft'; ?>)
               <?php endif; ?>
             </div>

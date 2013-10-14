@@ -60,7 +60,7 @@ class Service extends AbstractObject
             'check_command' => 'service_check_command',
             'perfdata'      => 'service_perfdata',
             'current_check_attempt' => 'service_current_check_attempt',
-            'max_check_attemt' => 'service_max_check_attempts',
+            'max_check_attempts' => 'service_max_check_attempts',
             'state_type' => 'service_state_type',
             'passive_checks_enabled' => 'service_passive_checks_enabled',
             'last_state_change' => 'service_last_state_change',
