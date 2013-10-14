@@ -112,6 +112,7 @@ class ActionController extends Zend_Controller_Action
         $url = substr($url, strlen($this->getRequest()->getBaseUrl()));
         // the host is mandatory, but ignored in Zend
         $req = new Request('http://ignoredhost/' . $url);
+        $req->setUser($this->getRequest()->getUser());
         $req->setBaseUrl($this->getRequest()->getBaseUrl());
         $router = Zend_Controller_Front::getInstance()->getRouter();
         $router->route($req);

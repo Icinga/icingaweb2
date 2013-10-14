@@ -28,17 +28,17 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use \Icinga\Application\Benchmark;
-use \Icinga\Data\Db\Query;
-use \Icinga\File\Csv;
-use \Icinga\Module\Monitoring\Controller as MonitoringController;
-use \Icinga\Web\Hook;
-use \Icinga\Web\Widget\Tabextension\DashboardAction;
-use \Icinga\Web\Widget\Tabextension\OutputFormat;
-use \Icinga\Web\Widget\Tabs;
-use \Icinga\Module\Monitoring\Backend;
-use \Icinga\Web\Widget\SortBox;
-use \Icinga\Application\Config as IcingaConfig;
+use Icinga\Application\Benchmark;
+use Icinga\Data\Db\Query;
+use Icinga\File\Csv;
+use Icinga\Module\Monitoring\Controller as MonitoringController;
+use Icinga\Web\Hook;
+use Icinga\Web\Widget\Tabextension\DashboardAction;
+use Icinga\Web\Widget\Tabextension\OutputFormat;
+use Icinga\Web\Widget\Tabs;
+use Icinga\Module\Monitoring\Backend;
+use Icinga\Web\Widget\SortBox;
+use Icinga\Application\Config as IcingaConfig;
 
 use Icinga\Module\Monitoring\DataView\Notification as NotificationView;
 use Icinga\Module\Monitoring\DataView\Downtime as DowntimeView;
@@ -116,7 +116,9 @@ class Monitoring_ListController extends MonitoringController
                 'host_notes_url',
                 'host_last_comment',
                 'host_active_checks_enabled',
-                'host_passive_checks_enabled'
+                'host_passive_checks_enabled',
+                'host_current_check_attempt',
+                'host_max_check_attempts'
             )
         )->getQuery();
         $this->view->hosts = $query->paginate();

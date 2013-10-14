@@ -1,0 +1,125 @@
+/* ==========================================================================
+   Styles ONLY used for documentation
+   ========================================================================== */
+
+html {
+  font-family: sans-serif;
+}
+
+
+/* Projektname - color customer CI */
+
+.docu-project-name {
+  font-size: 2em;
+  color: #049BAF;
+  padding-bottom: 10px;
+}
+
+
+.docu-main {
+  width: 100%;
+  padding: 20px;
+  margin: 0 auto;
+  margin-top: 50px;
+  display: block;
+}
+
+
+.docu-main-headline {
+  font-size: 2em;
+  color: #333;
+  /* customer CI */
+  padding-bottom: 10px;
+  padding-top: 40px;
+}
+
+
+.docu-sub-headline {
+  font-size: 1.5em;
+  color: #333;
+  padding-bottom: 3px;
+  padding-top: 10px;
+}
+
+
+.docu-section {
+  border: 1px solid #dddddd;
+  overflow: hidden;
+  display: block;
+}
+
+
+.docu-description {
+  padding-bottom: 10px;
+}
+
+
+.docu-example {
+  background-color: #FFFFFF;
+  padding: 10px;
+}
+
+
+.docu-example:before {
+  color: #BBBBBB;
+  content: "Example";
+  font-weight: bold;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+
+
+.docu-module {
+  /* width: 320px; */
+  /* show your modules in device width */
+  padding-top: 10px;
+}
+
+
+.docu-codeblock {
+  background-color: #F7F7F9;
+  border-top: 1px solid #e1e1e8;
+  padding: 10px;
+  overflow: hidden;
+  height: 100%;
+}
+
+
+.docu-codeblock:before {
+  color: #BBBBBB;
+  content: "Code";
+  font-weight: bold;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+
+
+.docu-code {
+  font-family: "Courier New", Courier, monospace;
+  font-weight: bold;
+  color: #777;
+  padding-top: 10px;
+  border: none;
+  background-color: transparent;
+  display: block;
+  width: 100%;
+  height: 150px;
+}
+
+
+.docu-footer {
+  margin-top: 40px;
+  padding-top: 10px;
+  border-top: 1px solid #dddddd;
+  font-size: 0.75em;
+  color: #ccc;
+}
+
+
+.docu-classes {
+  background-color: #FEFBED;
+  padding: 3px;
+  color: #c6b256;
+  font-family: "Courier New", Courier, monospace, sans-serif;
+  font-weight: bold;
+}

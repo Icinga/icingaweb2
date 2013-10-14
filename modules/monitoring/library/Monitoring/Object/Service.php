@@ -60,7 +60,7 @@ class Service extends AbstractObject
             'check_command' => 'service_check_command',
             'perfdata'      => 'service_perfdata',
             'current_check_attempt' => 'service_current_check_attempt',
-            'max_check_attemt' => 'service_max_check_attempts',
+            'max_check_attempts' => 'service_max_check_attempts',
             'state_type' => 'service_state_type',
             'passive_checks_enabled' => 'service_passive_checks_enabled',
             'last_state_change' => 'service_last_state_change',
@@ -74,7 +74,10 @@ class Service extends AbstractObject
             'notifications_enabled'     => 'service_notifications_enabled',
             'event_handler_enabled'     => 'service_event_handler_enabled',
             'flap_detection_enabled'    => 'service_flap_detection_enabled',
-            'active_checks_enabled'     => 'service_active_checks_enabled'
+            'active_checks_enabled'     => 'service_active_checks_enabled',
+            'last_comment'              => 'service_last_comment',
+            'action_url'                => 'service_action_url',
+            'notes_url'                 => 'service_notes_url'
         ))
         ->where('host_name', $this->name1)
         ->where('service_description', $this->name2)

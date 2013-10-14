@@ -267,7 +267,7 @@ class Monitoring_CommandController extends ActionController
         $given = array_intersect_key($supported, $this->getRequest()->getParams());
 
         if (empty($given)) {
-            throw new \Exception('Missing parameter, supported: '.implode(', ', $supported));
+            throw new \Exception('Missing parameter, supported: '.implode(', ', array_flip($supported)));
         }
 
         if (isset($given['host'])) {
@@ -815,19 +815,19 @@ class Monitoring_CommandController extends ActionController
      */
     public function removedowntimeAction()
     {
-        $this->setSupportedParameters(array('downtimeid'));
-        $form = new CommandWithIdentifierForm();
+        $this->setSupportedParameters(array('host', 'service', 'downtimeid'));
+        $form = new SingleArgumentCommandForm();
         $form->setRequest($this->getRequest());
 
         $form->setSubmitLabel(t('Delete Downtime'));
-        $form->setFieldName('downtimeid');
-        $form->setFieldLabel(t('Downtime Id'));
+        $form->setParameterName('downtimeid');
         $form->addNote(t('Delete a single downtime with the id shown above'));
-
+        $form->setCommand('DEL_HOST_DOWNTIME', 'DEL_SVC_DOWNTIME');
+        $form->setObjectIgnoreFlag(true);
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
-            $this->target->removeDowntime($this->view->objects);
+            $this->target->sendCommand($form->createCommand(), $this->view->objects);
         }
     }
 }

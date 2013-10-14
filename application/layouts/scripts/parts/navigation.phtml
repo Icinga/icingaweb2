@@ -20,6 +20,7 @@ $item = $this->navigation->keys("menu");
       $item = $this->navigation->menu->$itemName;
       $active = false;
       $url = "";
+      $iconClass = '';
 
       if (is_string($item)) {
           $active = !$activeSet && $this->baseUrl($item) == $currentKey;
@@ -28,10 +29,13 @@ $item = $this->navigation->keys("menu");
           $url = $this->baseUrl(isset($item->route) ? $item->route : "");
           $itemName = isset($item->title) ? $item->title : $itemName;
           $active = !$activeSet && (isset($item->key) ? $item->key : $url) === $currentKey;
+          if (isset($item->iconClass)) {
+              $iconClass = $item->iconClass;
+          }
       }
       $activeSet = $activeSet || $active;
       ?>
-    <li class="<?= $active ? "active" : "" ?>">
+    <li class="<?= $active ? "active" : "" ?> <?= $iconClass; ?>">
       <a href="<?= $url ?>"><?= $itemName ?></a>
     </li>
       <?php

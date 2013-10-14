@@ -41,6 +41,8 @@ class HoststatusQuery extends AbstractQuery
             'host_last_time_up'           => 'hs.last_time_up',
             'host_last_time_down'         => 'hs.last_time_down',
             'host_last_time_unreachable'  => 'hs.last_time_unreachable',
+            'host_current_check_attempt'  => 'hs.current_check_attempt',
+            'host_max_check_attempts'     => 'hs.max_check_attempts',
 
             'host_severity' => 'CASE WHEN hs.current_state = 0
             THEN

@@ -1,5 +1,3 @@
-<?= $this->tabs->render($this); ?>
-
 <?php
 /**
  * Create a DateTime from a string and use the util helper to
@@ -14,7 +12,10 @@ function formatDateString($self,$dateString){
     return $self->util()->showTime($d->getTimestamp());
 }
 
+$commandHelper = $this->getHelper('CommandForm');
 ?>
+
+<?= $this->tabs->render($this); ?>
 
 <div data-icinga-component="app/mainDetailGrid">
   <div>
@@ -48,6 +49,7 @@ function formatDateString($self,$dateString){
           <th>Downtime ID</th>
           <th>Trigger ID</th>
           <th>Duration</th>
+          <th>&nbsp;</th>
         </tr>
       </thead>
 
@@ -109,6 +111,22 @@ function formatDateString($self,$dateString){
           <?= $this->util()->showHourMin(intval($downtime->downtime_duration)); ?>
         </td>
         <td>
+            <?php
+              $data = array(
+                  'downtimeid' => $downtime->downtime_internal_downtime_id,
+                  'host' => $downtime->host_name
+              );
+
+              if ($downtime->object_type == 'service') {
+                $data['service'] = $downtime->service_description;
+              }
+
+              echo $commandHelper->simpleForm(
+                'removedowntime',
+                'Remove Downtime',
+                $data
+              );
+            ?>
         </td>
       </tr>
       <?php endforeach ?>
