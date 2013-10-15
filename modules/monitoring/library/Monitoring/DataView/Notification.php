@@ -24,6 +24,7 @@ class Notification extends DataView
             'notification_command',
             'host',
             'service'
+            'notification_internal_id'
         );
     }
 

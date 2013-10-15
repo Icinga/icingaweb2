@@ -228,7 +228,8 @@ class Monitoring_ListController extends MonitoringController
                 'notification_start_time',
                 'notification_contact',
                 'notification_information',
-                'notification_command'
+                'notification_command',
+                'notification_internal_id'
             )
         )->getQuery();
         $this->view->notifications = $query->paginate();

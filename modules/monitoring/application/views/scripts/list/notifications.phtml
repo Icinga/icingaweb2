@@ -27,7 +27,8 @@
           } else {
               $detailLink = $this->href('monitoring/show/host', array(
                       'host'    =>  $notification->host_name,
-                      'service' =>  $notification->service_description
+                      'service' =>  $notification->service_description,
+                      'notification_id'    =>  $notification->notification_internal_id
                   )
               );
           }

@@ -133,7 +133,7 @@ function($, URI, Selectable) {
                     if (!selections[i]) {
                         selections[i] = [];
                     }
-                    selections[i] = [ encodeURIComponent(key) + '=' + encodeURIComponent(value) ];
+                    selections[i].push(encodeURIComponent(key) + '=' + encodeURIComponent(value));
                 }
             });
             return selections;

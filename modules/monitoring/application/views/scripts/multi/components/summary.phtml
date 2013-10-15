@@ -1,7 +1,8 @@
 <div class="panel panel-default">
   <div class="panel-heading">
-    <span>Summary for <?= count($objects) ?> object(s) </span>
+    <span>Execute commands for all <?= count($objects) ?> object(s) </span>
   </div>
   <div class="panel-body">
+      <?= $this->monitoringCommands($objects, \Icinga\Module\Monitoring\Command\Meta::TYPE_FULL); ?>
   </div>
 </div>

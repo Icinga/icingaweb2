@@ -40,7 +40,8 @@ class NotificationQuery extends IdoQuery
             'notification_type'         => 'n.notification_type',
             'notification_reason'       => 'n.notification_reason',
             'notification_start_time'   => 'n.start_time',
-            'notification_information'  => 'n.output'
+            'notification_information'  => 'n.output',
+            'notification_internal_id'  => 'n.notification_id'
         ),
         'objects' => array(
             'host_name'             => 'o.name1',

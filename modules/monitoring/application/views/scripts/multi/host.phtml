@@ -1,1 +1,21 @@
-<?= $this->render('multi/components/summary.phtml'); ?>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        {{HOST_ICON}} <h1>Selected <?= count($objects) ?> hosts </h1>
+    </div>
+    <div class="panel-body">
+		<ul>
+		    <?php foreach($this->hosts as $host) { ?>	
+			    <li>				
+					<a href="<?= $this->href(
+						'monitoring/show/host', 
+						array('host' => $host->host_name)
+					);?>">
+					<?= $host->host_name ?>
+					</a>
+				</li>				
+			<?php } ?>
+		</ul>
+    </div>
+</div>
+
+<?= $this->render('multi/components/summary.phtml') ?>

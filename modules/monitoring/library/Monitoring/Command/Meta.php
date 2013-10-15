@@ -84,6 +84,20 @@ class Meta
     const CMD_DELAY_NOTIFICATION = 28;
     const CMD_REMOVE_DOWNTIME = 29;
 
+
+    /**
+     * The context defines which commands are related to which icinga object. This
+     * is useful for narrowing down the commands to the relevant ones.
+     */
+
+    const CONTEXT_SERVICE = 'service';
+    const CONTEXT_HOST = 'host';
+    const CONTEXT_DOWNTIME = 'downtime';
+    const CONTEXT_NOTIFICATION = 'notification';
+    const CONTEXT_COMMENT = 'comment';
+    const CONTEXT_CONTACT = 'contact';
+
+
     /**
      * Filter array for array displayed in small interfaces
      * @var int[]
@@ -628,38 +642,21 @@ class Meta
     /**
      * Returns the type of object
      *
-     * This is made by the first key of property
-     * e.g.
-     *      $object->host_state
-     *      Type is 'host'
-     *
-     * @param \stdClass $object
-     * @return mixed
+     * @param  $object	The object
+     * 	
+     * @return string	Either 'host' or 'service'
      */
-    private function getObjectType(\stdClass $object)
+    private function getObjectType($object)
     {
-        $objectKeys = array_keys(get_object_vars($object));
-        $firstKeys = explode('_', array_shift($objectKeys), 2);
-        return array_shift($firstKeys);
+		if ($object instanceof \Icinga\Module\Monitoring\Object\Host) {
+			return 'host';
+		} else if ($object instanceof \Icinga\Module\Monitoring\Object\Service) {
+			return 'service';
+		}
+		
+		throw new ProgrammingError('Object must be either "host" or "service"');
     }
 
-    /**
-     * Returns method name based on object type
-     * @param string $type
-     * @return string
-     * @throws \Icinga\Exception\ProgrammingError
-     */
-    private function getCommandProcessorMethod($type)
-    {
-        if (array_key_exists($type, self::$commandProcessorMethods)) {
-            $method = self::$commandProcessorMethods[$type];
-            if (is_callable(array(&$this, $method))) {
-                return $method;
-            }
-        }
-
-        throw new ProgrammingError('Type has no command processor: '. $type);
-    }
 
     /**
      * Return interface commands by object type
@@ -675,43 +672,19 @@ class Meta
 
         throw new ProgrammingError('Type has no commands defined: '. $type);
     }
-
-    /**
-     * Modifies data objects to drop their object type
-     *
-     * - host_state will be state
-     * - service_state will be also state
-     * - And so on
-     *
-     * @param \stdClass $object
-     * @param $type
-     * @return object
-     */
-    private function dropTypeAttributes(\stdClass $object, $type)
-    {
-        $objectData = get_object_vars($object);
-        foreach ($objectData as $propertyName => $propertyValue) {
-            $newProperty = str_replace($type. '_', '', $propertyName);
-            $objectData[$newProperty] = $propertyValue;
-            unset($objectData[$propertyName]);
-        }
-        return (object)$objectData;
-    }
-
+    
     /**
      * Default processor for host and service objects
      *
      * Drop commands from list based on states and object properties
      *
-     * @param \stdClass $object
+     * @param $object
      * @param array $commands
      * @param string $type
      * @return array
      */
-    private function defaultCommandProcessor(\stdClass $object, array $commands, $type)
+    private function processCommand($object, array $commands, $type)
     {
-        $object = $this->dropTypeAttributes($object, $type);
-
         $commands = array_flip($commands);
 
         if ($object->active_checks_enabled === '1') {
@@ -736,8 +709,8 @@ class Meta
             unset($commands[self::CMD_STOP_OBSESSING]);
         }
 
-        if ($object->state !== '0') {
-            if ($object->acknowledged === '1') {
+        if ($object->{$type . '_state'} !== '0') {
+            if ($object->{ $type . '_acknowledged'} === '1') {
                 unset($commands[self::CMD_ACKNOWLEDGE_PROBLEM]);
             } else {
                 unset($commands[self::CMD_REMOVE_ACKNOWLEDGEMENT]);
@@ -767,6 +740,7 @@ class Meta
 
         return array_flip($commands);
     }
+    
 
     /**
      * Creates structure to work with in interfaces
@@ -825,22 +799,88 @@ class Meta
     }
 
     /**
-     * Get commands for an object
+     * Narrow down several sets of commands to one set that only contains
+     * commands that are possible in all sets
+     *
+     * @param   array $sets The sets of commands to narrow down.
+     *
+     * @returns array       The merged set of commands
+     */
+    private function mergeCommands(array $sets)
+    {
+        /*
+         * Collect all occurring commands
+         */
+        $merged = array();
+        for ($i = 0; $i < count($sets); $i++) {	
+            foreach ($sets[$i] as $j => $value) {
+                $merged[$sets[$i][$j]] = $j;
+            }
+            $sets[$i] = array_flip($sets[$i]);
+        }
+
+        /*
+         * Remove all commands that do not exist in every set
+         *
+        foreach ($merged as $command => $index) {
+            foreach ($sets as $i => $set) {
+                if (!array_key_exists($command, $set)) {
+                    unset($merged[$command]);
+                }
+            }
+        }
+        */
+        return array_flip($merged);
+    }
+
+    /**
+     * Remove all commands that do not apply to the given context.
+     *
+     * @param array     $commands   The commands that will be reduced
+     * @param string    $context    The context, either
+     */
+    private function applyContext($commands, $context)
+    {
+        switch ($context) {
+            case 'comment':
+
+                break;
+        }
+    }
+
+    /**
+     * Get commands that are available for a set of objects. If more than one object is given,
+     * the set of commands will be narrowed down to a CommandSet that is available to all
      *
      * Based on objects and interface type
      *
-     * @param \stdClass $object
-     * @param $interfaceType
-     * @param User $user
+     * @param mixed     $object         Retrieve the commands for
+     * @param           $interfaceType  The interface type (Meta::TYPE_FULL or Meta::TYPE_SMALL) to determine
+     *                                  the amount of showed commands.
+     * @param string    $context        The context that will be used to narrow down the commands.
+     * @param User      $user           CURRENTLY NOT IMPLEMENTED!
+     *
      * @return array
      */
-    public function getCommandForObject(\stdClass $object, $interfaceType, User $user = null)
+    public function getCommandForObject(
+        $objects,
+        $interfaceType,
+        $context = null,
+        User $user = null
+      )
     {
-        $objectType = $this->getObjectType($object);
-        $commands = $this->getCommandsByType($objectType);
-        $method = $this->getCommandProcessorMethod($objectType);
-        $commands = $this->$method($object, $commands, $objectType);
-        $commands = $this->filterInterfaceType($commands, $interfaceType);
+        if (!is_array($objects)) {
+            $objects = array($objects);
+        }
+        $commands = array();
+        foreach ($objects as $object) {
+            $objectType = $this->getObjectType($object);
+            $command = $this->getCommandsByType($objectType);
+            $command = $this->processCommand($object, $command, $objectType);    
+            $command = $this->filterInterfaceType($command, $interfaceType);
+            $commands[] = $command;
+        } 
+        $commands = $this->mergeCommands($commands);
         $commands = $this->buildInterfaceConfiguration($commands, $objectType);
         return $commands;
     }

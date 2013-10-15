@@ -1,0 +1,22 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        {{SERVICE_ICON}} <h1>Selected <?= count($objects) ?> services </h1>
+    </div>
+    <div class="panel-body">
+         <?php foreach($this->services as $service) { ?>	
+			    <li>				
+					<a href="<?= $this->href(
+						'monitoring/show/service', 
+						array(
+							'host' => $service->host_name,
+							'service' => $service->service_description		
+						)
+					);?>">
+					<?= $service->host_name ?> <?= $service->service_description ?> 
+					</a>
+				</li>				
+			<?php } ?>
+    </div>
+</div>
+
+<?= $this->render('multi/components/summary.phtml') ?>

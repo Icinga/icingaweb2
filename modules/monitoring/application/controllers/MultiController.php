@@ -28,7 +28,9 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 
 use \Icinga\Web\Controller\ActionController;
-
+use \Icinga\Module\Monitoring\Backend;
+use \Icinga\Module\Monitoring\Object\Host;
+use \Icinga\Module\Monitoring\Object\Service;
 /**
  * Displays aggregations collections of multiple objects.
  */
@@ -36,31 +38,78 @@ class Monitoring_MultiController extends ActionController
 {
     public function init()
     {
-        $this->view->objects = $this->getDetailQueries();
+        $this->view->queries = $this->getDetailQueries();
+        $this->backend = Backend::createBackend($this->_getParam('backend'));
     }
 
     public function hostAction()
     {
-        $this->view->hosts = $this->_getAllParams();
+        $hosts = array();
+        $warnings = array();
+
+        foreach ($this->view->queries as $index => $query) {
+            if (array_key_exists('host', $query)) {
+                $host = Host::fetch($this->backend, $query['host']);
+				$host->prefetch();
+				$hosts[] = $host;
+            } else {
+                $warnings[] = 'Query ' . $index . ' misses property host.';
+            }
+        }
+        $this->view->commands = array(
+            'host' => array(
+            ),
+            'service' => array(
+
+            ),
+            'notification' => array(
+
+            ),
+            ''
+        );
+
+        $this->view->objects = $this->view->hosts = $hosts;
+        $this->view->warnings = $warnings;
     }
 
-    public function servicesAction()
+    public function serviceAction()
     {
+		$services = array();
+        $warnings = array();
+
+        foreach ($this->view->queries as $index => $query) {
+			if (!array_key_exists('host', $query)) {
+				$warnings[] = 'Query ' . $index . ' misses property host.';
+				continue;
+			}
+			if (!array_key_exists('service', $query)) {
+				$warnings[] = 'Query ' . $index . ' misses property service.';
+				continue;
+			}
+            $service = Service::fetch($this->backend, $query['host'], $query['service']);
+			$service->prefetch();
+			$services[] = $service;
+        }
+
+        $this->view->objects = $this->view->services = $services;
+        $this->view->warnings = $warnings;
     }
 
-    public function notificationsAction()
+    public function notificationAction()
     {
+
     }
 
     public function historyAction()
     {
+		
     }
 
     /**
-     * Fetch all queries from the 'detail' parameter and prepare
-     * them for further processing.
+     * Fetch all requests from the 'detail' parameter.
      *
-     * @return array    An array containing all requests and their filter values.
+     * @return array    An array of request that contain
+     *                  the filter arguments as properties.
      */
     private function getDetailQueries()
     {
@@ -79,4 +128,6 @@ class Monitoring_MultiController extends ActionController
         }
         return $objects;
     }
+
+
 }
