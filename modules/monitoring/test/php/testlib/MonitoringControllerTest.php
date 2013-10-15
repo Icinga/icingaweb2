@@ -228,7 +228,8 @@ abstract class MonitoringControllerTest extends Zend_Test_PHPUnit_ControllerTest
      */
     public function requireController($controller, $backend)
     {
-        require_once($this->moduleDir.'/application/controllers/'.$controller.'.php');
+        require_once($this->moduleDir . '/library/Monitoring/Controller.php');
+        require_once($this->moduleDir . '/application/controllers/'.$controller.'.php');
         $controllerName = '\Monitoring_'.ucfirst($controller);
         $request = $this->getRequest();
         if ($backend == 'statusdat') {
