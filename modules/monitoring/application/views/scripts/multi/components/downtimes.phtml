@@ -1,0 +1,20 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        {{DOWNTIME_ICON}} Downtimes
+    </div>
+    <div class="panel-body">
+        <a href="
+            <?= $this->href(
+                'monitoring/list/downtimes',
+                array()
+            );?>
+        ">
+            <?= count($downtimes); ?> Selected items are currently in downtime.
+        </a>
+
+        <div>
+          {{REMOVE_DOWNTIME_BUTTON}}
+          {{REMOVE_ACKNOWLEDGEMENTS_BUTTON}}
+        </div>
+    </div>
+</div>

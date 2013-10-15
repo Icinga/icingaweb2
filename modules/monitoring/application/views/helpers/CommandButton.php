@@ -28,6 +28,8 @@
 
 /**
  * Class Zend_View_Helper_CommandButton
+ *
+ * TODO: Check if it should eventually be implement as a widget
  */
 class Zend_View_Helper_CommandButton extends Zend_View_Helper_Abstracts {
 
@@ -65,6 +67,17 @@ class Zend_View_Helper_CommandButton extends Zend_View_Helper_Abstracts {
     const CMD_REMOVE_DOWNTIME = 29;
 
     /**
+     * Render the given command-button
+     *
+     * @param $command  The command constant, for example CommandButton::CMD_DISABLE_ACTIVE_CHECKS
+     * @param $href     The href that should be executed when clicking this button.
+     */
+    private function render($command, $href) {
+        $cmd = $this->commandInformation[$command];
+
+    }
+
+    /**
      * Information about interface commands
      *
      * With following structure
@@ -85,14 +98,15 @@ class Zend_View_Helper_CommandButton extends Zend_View_Helper_Abstracts {
      */
     private static $commandInformation = array(
         self::CMD_DISABLE_ACTIVE_CHECKS => array(
-            'Disable Active Checks For This %s', // Long description (mandatory)
-            'Disable Active Checks', // Short description (mandatory)
-            '', // Icon anything (optional)
-            '' // Button css cls (optional)
+            'Disable Active Checks For This %s',
+            'Disable Active Checks',
+            '',
+            ''
         ),
         self::CMD_ENABLE_ACTIVE_CHECKS => array(
             'Enable Active Checks For This %s',
             'Enable Active Checks',
+            '',
             ''
         ),
         self::CMD_RESCHEDULE_NEXT_CHECK => array(
@@ -104,66 +118,79 @@ class Zend_View_Helper_CommandButton extends Zend_View_Helper_Abstracts {
         self::CMD_SUBMIT_PASSIVE_CHECK_RESULT => array(
             'Submit Passive Check Result',
             'Submit Check Result',
+            '',
             ''
         ),
         self::CMD_STOP_OBSESSING => array(
             'Stop Obsessing Over This %s',
             'Stop Obsessing',
+            '',
             ''
         ),
         self::CMD_START_OBSESSING => array(
             'Start Obsessing Over This %s',
             'Start Obsessing',
+            '',
             ''
         ),
         self::CMD_STOP_ACCEPTING_PASSIVE_CHECKS => array(
             'Stop Accepting Passive Checks For This %s',
             'Stop Passive Checks',
+            '',
             ''
         ),
         self::CMD_START_ACCEPTING_PASSIVE_CHECKS => array(
             'Start Accepting Passive Checks For This %s',
             'Start Passive Checks',
+            '',
             ''
         ),
         self::CMD_DISABLE_NOTIFICATIONS => array(
             'Disable Notifications For This %s',
             'Disable Notifications',
+            '',
             ''
         ),
         self::CMD_ENABLE_NOTIFICATIONS => array(
             'Enable Notifications For This %s',
             'Enable Notifications',
+            '',
             ''
         ),
         self::CMD_SEND_CUSTOM_NOTIFICATION => array(
             'Send Custom %s Notification',
             'Send Notification',
+            '',
             ''
         ),
         self::CMD_SCHEDULE_DOWNTIME => array(
             'Schedule Downtime For This %s',
             'Schedule Downtime',
+            '',
             ''
         ),
         self::CMD_SCHEDULE_DOWNTIMES_TO_ALL => array(
             'Schedule Downtime For This %s And All Services',
             'Schedule Services Downtime',
+            '',
             ''
         ),
         self::CMD_REMOVE_DOWNTIMES_FROM_ALL => array(
             'Remove Downtime(s) For This %s And All Services',
             'Remove Downtime(s)',
+            '',
             ''
         ),
         self::CMD_DISABLE_NOTIFICATIONS_FOR_ALL => array(
             'Disable Notification For All Service On This %s',
             'Disable Service Notifications',
+            '',
             ''
         ),
         self::CMD_ENABLE_NOTIFICATIONS_FOR_ALL => array(
             'Enable Notification For All Service On This %s',
             'Enable Service Notifications',
+            '',
             ''
         ),
         self::CMD_RESCHEDULE_NEXT_CHECK_TO_ALL => array(
@@ -175,36 +202,43 @@ class Zend_View_Helper_CommandButton extends Zend_View_Helper_Abstracts {
         self::CMD_DISABLE_ACTIVE_CHECKS_FOR_ALL => array(
             'Disable Checks For All Services On This %s',
             'Disable Service Checks',
+            '',
             ''
         ),
         self::CMD_ENABLE_ACTIVE_CHECKS_FOR_ALL => array(
             'Enable Checks For All Services On This %s',
             'Enable Service Checks',
+            '',
             ''
         ),
         self::CMD_DISABLE_EVENT_HANDLER => array(
             'Disable Event Handler For This %s',
             'Disable Event Handler',
+            '',
             ''
         ),
         self::CMD_ENABLE_EVENT_HANDLER => array(
             'Enable Event Handler For This %s',
             'Enable Event Handler',
+            '',
             ''
         ),
         self::CMD_DISABLE_FLAP_DETECTION => array(
             'Disable Flap Detection For This %s',
             'Disable Flap Detection',
+            '',
             ''
         ),
         self::CMD_ENABLE_FLAP_DETECTION => array(
             'Enable Flap Detection For This %s',
             'Enable Flap Detection',
+            '',
             ''
         ),
         self::CMD_ADD_COMMENT => array(
             'Add New %s Comment',
             'Add Comment',
+            '',
             ''
         ),
         self::CMD_RESET_ATTRIBUTES => array(
@@ -228,7 +262,8 @@ class Zend_View_Helper_CommandButton extends Zend_View_Helper_Abstracts {
         self::CMD_DELAY_NOTIFICATION => array(
             'Delay Next %s Notification',
             'Delay Notification',
+            '',
             ''
-        ),
+        )
     );
 }

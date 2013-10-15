@@ -1,1 +1,24 @@
-<?php
+<div class="panel panel-default ">
+  <div class="panel-heading">
+    <span> {{COMMENT_ICON}} Comments </span>
+  </div>
+
+  <div class="panel-body">
+      <a href=" <?=
+        $this->href(
+            'monitoring/list/comments',
+            array(
+                'comment_id' => implode(',', $comments)
+            )
+        );
+      ?>">
+        <?= count($comments);?> comments are present in the selected items.
+      </a>
+      <div>
+          {{REMOVE_COMMENTS_BUTTON}}
+          {{ADD_COMMENT_BUTTON}}
+          {{SEND_NOTIFICATION_BUTTON}}
+          {{DELAY_NOTIFICATION_BUTTON}}
+      </div>
+  </div>
+</div>

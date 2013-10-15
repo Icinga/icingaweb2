@@ -45,54 +45,68 @@ class Monitoring_MultiController extends ActionController
     public function hostAction()
     {
         $hosts = array();
-        $warnings = array();
+        $hostnames = array();
+        $comments = array();
+        $downtimes = array();
+
+        $errors = array();
 
         foreach ($this->view->queries as $index => $query) {
-            if (array_key_exists('host', $query)) {
-                $host = Host::fetch($this->backend, $query['host']);
-				$host->prefetch();
-				$hosts[] = $host;
-            } else {
-                $warnings[] = 'Query ' . $index . ' misses property host.';
+            if (!array_key_exists('host', $query)) {
+                $errors[] = 'Query ' . $index . ' misses property host.';
+                continue;
             }
+
+            $host = Host::fetch($this->backend, $query['host']);
+            foreach ($host->comments as $comment) {
+                $comments[$comment->comment_id] = null;
+            }
+            if ($host->host_in_downtime) {
+                $downtimes[] += $host->host_in_downtime;
+            }
+            $hostnames[] = $host->host_name;
+            $hosts[] = $host;
         }
-        $this->view->commands = array(
-            'host' => array(
-            ),
-            'service' => array(
-
-            ),
-            'notification' => array(
-
-            ),
-            ''
-        );
 
         $this->view->objects = $this->view->hosts = $hosts;
-        $this->view->warnings = $warnings;
+        $this->view->comments = array_keys($comments);
+        $this->view->hostnames = $hostnames;
+        $this->view->downtimes = $downtimes;
+        $this->view->errors = $errors;
     }
 
     public function serviceAction()
     {
 		$services = array();
-        $warnings = array();
+        $comments = array();
+        $downtimes = array();
+
+        $errors = array();
 
         foreach ($this->view->queries as $index => $query) {
 			if (!array_key_exists('host', $query)) {
-				$warnings[] = 'Query ' . $index . ' misses property host.';
+				$errors[] = 'Query ' . $index . ' misses property host.';
 				continue;
 			}
 			if (!array_key_exists('service', $query)) {
-				$warnings[] = 'Query ' . $index . ' misses property service.';
+				$errors[] = 'Query ' . $index . ' misses property service.';
 				continue;
 			}
-            $service = Service::fetch($this->backend, $query['host'], $query['service']);
-			$service->prefetch();
-			$services[] = $service;
-        }
 
+            $service = Service::fetch($this->backend, $query['host'], $query['service']);
+            foreach ($service->comments as $comment) {
+                $comments[$comment->comment_id] = null;
+            }
+            if ($service->service_in_downtime) {
+                $downtimes[] += $service->service_in_downtime;
+            }
+            $hostnames[] = $service->host_name;
+            $services[] = $service;
+        }
         $this->view->objects = $this->view->services = $services;
-        $this->view->warnings = $warnings;
+        $this->view->comments = array_keys($comments);
+        $this->view->downtimes = $downtimes;
+        $this->view->errors = $errors;
     }
 
     public function notificationAction()
@@ -102,7 +116,7 @@ class Monitoring_MultiController extends ActionController
 
     public function historyAction()
     {
-		
+
     }
 
     /**

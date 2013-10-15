@@ -1,8 +1,50 @@
-<div class="panel panel-default">
-  <div class="panel-heading">
-    <span>Execute commands for all <?= count($objects) ?> object(s) </span>
-  </div>
-  <div class="panel-body">
-      <?= $this->monitoringCommands($objects, \Icinga\Module\Monitoring\Command\Meta::TYPE_FULL); ?>
-  </div>
+<h4> Selected <?= count($objects) ?> objects. </h4>
+<a href="#">{{RECHECK_BUTTON}}</a>
+<a href="#">{{RESCHEDULE_BUTTON}}</a>
+<a href="#">{{ACKNOWLEDGE_PROBLEMS_BUTTON}}</a>
+<a href="#">{{SCHEDULE_DOWNTIMES}}</a>
+<a href="#">{{SUBMIT_PASSIVE_CHECK_RESULTS}}</a>
+<div>
+  <ul class="list-inline">
+      <?php
+      for ($i = 0; $i < count($objects) && $i < 10; $i++) {
+          $object = $objects[$i];
+          ?>
+          <li>
+              <a href="<?php
+              if ($this->is_service) {
+                  echo $this->href(
+                    'monitoring/show/service',
+                    array(
+                      'host' => $object->host_name,
+                      'service' => $object->service_description
+                    )
+                  );
+              } else {
+                  echo $this->href(
+                      'monitoring/show/host', array('host' => $object->host_name)
+                  );
+              }?>" >
+                  <?= $object->host_name; ?>
+                  <?= isset($object->service_description) ? $object->service_description : '' ?>
+              </a>
+          </li>
+      <?php } ?>
+  </ul>
+  <?php if (count($objects) > 10) {
+      if (!$this->is_service) {
+  ?>
+    <a href="
+          <?= $this->href('monitoring/list/hosts', array(
+            'host' => implode(',', $hostnames)
+          )
+      );?>">
+    <?php } else { ?>
+      <a href="
+          <?= $this->href('monitoring/list/services', array(
+          )
+      );?>">
+    <?php } ?>
+    and <?= count($objects) - 10 ?> more ... </a>
+  <?php } ?>
 </div>

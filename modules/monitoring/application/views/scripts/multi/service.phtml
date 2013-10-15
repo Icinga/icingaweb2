@@ -1,22 +1,18 @@
+<?php
+$this->is_service = true;
+?>
+
 <div class="panel panel-default">
     <div class="panel-heading">
-        {{SERVICE_ICON}} <h1>Selected <?= count($objects) ?> services </h1>
+        {{SERVICE_ICON}}
+        <h1> Services </h1>
     </div>
+
     <div class="panel-body">
-         <?php foreach($this->services as $service) { ?>	
-			    <li>				
-					<a href="<?= $this->href(
-						'monitoring/show/service', 
-						array(
-							'host' => $service->host_name,
-							'service' => $service->service_description		
-						)
-					);?>">
-					<?= $service->host_name ?> <?= $service->service_description ?> 
-					</a>
-				</li>				
-			<?php } ?>
+        <?= $this->render('multi/components/summary.phtml'); ?>
     </div>
 </div>
 
-<?= $this->render('multi/components/summary.phtml') ?>
+<?= $this->render('multi/components/downtimes.phtml'); ?>
+<?= $this->render('multi/components/comments.phtml'); ?>
+<?= $this->render('multi/components/configuration.phtml'); ?>
