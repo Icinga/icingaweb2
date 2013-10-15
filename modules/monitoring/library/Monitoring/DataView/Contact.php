@@ -40,7 +40,9 @@ class Contact extends DataView
             'host_name',
             'service_object_id',
             'service_host_name',
-            'service_description'
+            'service_description',
+            'service',
+            'host',
         );
     }
 

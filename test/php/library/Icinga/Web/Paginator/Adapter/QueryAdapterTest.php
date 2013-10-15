@@ -25,8 +25,7 @@ require_once '../../modules/monitoring/library/Monitoring/View/AbstractView.php'
 require_once '../../modules/monitoring/library/Monitoring/View/StatusView.php';
 require_once '../../modules/monitoring/library/Monitoring/Backend.php';
 
-require_once '../../library/Icinga/Protocol/AbstractQuery.php';
-require_once '../../library/Icinga/Data/ResourceFactory.php';
+require_once '../../library/Icinga/Protocol/BaseQuery.phpequire_once '../../library/Icinga/Data/ResourceFactory.php';
 
 class QueryAdapterTest extends PHPUnit_Framework_TestCase
 {

@@ -4,7 +4,7 @@
 
 namespace Icinga\Module\Monitoring\DataView;
 
-use Icinga\Data\AbstractQuery;
+use Icinga\Data\BaseQuery;
 use Icinga\Filter\Filterable;
 use Icinga\Filter\Query\Tree;
 use Icinga\Module\Monitoring\Backend;
@@ -19,15 +19,15 @@ abstract class DataView implements Filterable
     /**
      * Sort in ascending order, default
      */
-    const SORT_ASC = AbstractQuery::SORT_ASC;
+    const SORT_ASC = BaseQuery::SORT_ASC;
     /**
      * Sort in reverse order
      */
-    const SORT_DESC = AbstractQuery::SORT_DESC;
+    const SORT_DESC = BaseQuery::SORT_DESC;
     /**
      * The query used to populate the view
      *
-     * @var AbstractQuery
+     * @var BaseQuery
      */
     private $query;
 
@@ -39,9 +39,7 @@ abstract class DataView implements Filterable
      */
     public function __construct(Backend $ds, array $columns = null)
     {
-        $filter = new UrlViewFilter($this);
         $this->query = $ds->select()->from(static::getTableName(), $columns === null ? $this->getColumns() : $columns);
-        $this->applyFilter($filter->parseUrl());
     }
 
     /**
@@ -63,11 +61,6 @@ abstract class DataView implements Filterable
      */
     abstract public function getColumns();
 
-    public function applyFilter(Tree $filter)
-    {
-        return $this->query->applyFilter($filter);
-    }
-
     /**
      * Create view from request
      *
@@ -78,8 +71,11 @@ abstract class DataView implements Filterable
      */
     public static function fromRequest($request, array $columns = null)
     {
+
         $view = new static(Backend::createBackend($request->getParam('backend')), $columns);
-        $view->filter($request->getParams());
+        $parser = new UrlViewFilter($view);
+        $view->getQuery()->setFilter($parser->parseUrl());
+
         $order = $request->getParam('dir');
         if ($order !== null) {
             if (strtolower($order) === 'desc') {
@@ -106,7 +102,9 @@ abstract class DataView implements Filterable
     public static function fromParams(array $params, array $columns = null)
     {
         $view = new static(Backend::createBackend($params['backend']), $columns);
-        $view->filter($params);
+        foreach ($params as $key => $value) {
+            $view->getQuery()->where($key, $value);
+        }
         $order = isset($params['order']) ? $params['order'] : null;
         if ($order !== null) {
             if (strtolower($order) === 'desc') {
@@ -115,27 +113,12 @@ abstract class DataView implements Filterable
                 $order = self::SORT_ASC;
             }
         }
+
         $view->sort(
             isset($params['sort']) ? $params['sort'] : null,
             $order
         );
         return $view;
-    }
-
-    /**
-     * Filter rows that match all of the given filters. If a filter is not valid, it's silently ignored
-     *
-     * @param   array $filters
-     *
-     * @see     Filterable::isValidFilterTarget()
-     */
-    public function filter(array $filters)
-    {
-        foreach ($filters as $column => $filter) {
-            if ($this->isValidFilterTarget($column)) {
-                $this->query->where($column, $filter);
-            }
-        }
     }
 
     /**
@@ -186,10 +169,14 @@ abstract class DataView implements Filterable
                 );
             };
         }
+
         $order = $order === null ? (isset($sortColumns['order']) ? $sortColumns['order'] : self::SORT_ASC) : $order;
+        $order = ($order === self::SORT_ASC) ? 'ASC' : 'DESC';
+
         foreach ($sortColumns['columns'] as $column) {
             $this->query->order($column, $order);
         }
+        return $this;
     }
 
     /**
@@ -214,8 +201,21 @@ abstract class DataView implements Filterable
         return $this->query;
     }
 
-    public function getFilterDomain()
+    public function applyFilter()
     {
-        return null;
+        $this->query->applyFilter();
+        return $this;
+    }
+
+    public function clearFilter()
+    {
+        $this->query->clearFilter();
+        return $this;
+    }
+
+    public function addFilter($filter)
+    {
+        $this->query->addFilter($filter);
+        return $this;
     }
 }

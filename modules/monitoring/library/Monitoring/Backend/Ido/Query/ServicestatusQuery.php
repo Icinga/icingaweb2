@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
-class ServicestatusQuery extends AbstractQuery
+class ServicestatusQuery extends IdoQuery
 {
     protected $allowCustomVars = true;
 

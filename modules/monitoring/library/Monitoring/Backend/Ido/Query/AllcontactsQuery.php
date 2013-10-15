@@ -4,7 +4,7 @@ namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
 use Zend_Db_Select;
 
-class AllcontactsQuery extends AbstractQuery
+class AllcontactsQuery extends IdoQuery
 {
     protected $columnMap = array(
         'contacts' => array(
@@ -39,7 +39,7 @@ class AllcontactsQuery extends AbstractQuery
 
     protected $contacts;
     protected $contactgroups;
-    protected $uglySlowConservativeCount = true;
+    protected $useSubqueryCount = true;
 
     protected function requireColumn($alias)
     {

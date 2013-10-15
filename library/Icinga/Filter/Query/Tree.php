@@ -73,7 +73,11 @@ class Tree
                     $this->insertOrNode($node, $this->root);
                     break;
                 case Node::TYPE_OPERATOR:
+                    if ($this->lastNode->type == Node::TYPE_OPERATOR) {
+                        $this->insert(Node::createAndNode());
+                    }
                     $node->parent = $this->lastNode;
+
                     if ($this->lastNode->left == null) {
                         $this->lastNode->left = $node;
                     } elseif ($this->lastNode->right == null) {

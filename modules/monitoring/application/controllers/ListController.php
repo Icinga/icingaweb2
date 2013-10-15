@@ -190,6 +190,7 @@ class Monitoring_ListController extends MonitoringController
                 'downtime_trigger_time'
             )
         )->getQuery();
+
         $this->view->downtimes = $query->paginate();
         $this->setupSortControl(array(
             'downtime_is_in_effect'         => 'Is In Effect',
@@ -403,7 +404,7 @@ class Monitoring_ListController extends MonitoringController
         if ($this->getParam('format') === 'sql'
             && IcingaConfig::app()->global->get('environment', 'production') === 'development') {
             echo '<pre>'
-                . htmlspecialchars(wordwrap($query->dump()))
+                . htmlspecialchars(wordwrap($query->__toString()))
                 . '</pre>';
             exit;
         }

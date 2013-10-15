@@ -28,7 +28,7 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
-class HoststatusQuery extends AbstractQuery
+class HoststatusQuery extends IdoQuery
 {
     protected $allowCustomVars = true;
     protected $columnMap = array(
@@ -135,10 +135,9 @@ class HoststatusQuery extends AbstractQuery
     );
     protected $hcgSub;
 
-    protected function getDefaultColumns()
+    public function getDefaultColumns()
     {
-        return $this->columnMap['hosts']
-        + $this->columnMap['hoststatus'];
+        return $this->columnMap['hosts'] + $this->columnMap['hoststatus'];
     }
 
     protected function joinBaseTables()
@@ -187,14 +186,14 @@ class HoststatusQuery extends AbstractQuery
                 "so.$this->object_id = ss.service_object_id",
                 array()
             );
-        foreach ($this->columns as $col) {
+        foreach ($this->getColumns() as $col) {
             $real = $this->aliasToColumnName($col);
             if (substr($real, 0, 4) === 'SUM(') {
                 continue;
             }
             $this->baseQuery->group($real);
         }
-        $this->uglySlowConservativeCount = true;
+        $this->useSubqueryCount = true;
     }
 
     protected function joinHostgroups()

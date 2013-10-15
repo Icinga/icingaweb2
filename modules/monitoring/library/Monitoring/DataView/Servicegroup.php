@@ -17,7 +17,6 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- *
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
@@ -27,12 +26,11 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
+
 namespace Icinga\Module\Monitoring\DataView;
 
-/**
- * View representation for comments
- */
-class Comment extends DataView
+
+class Servicegroup extends DataView
 {
     /**
      * Retrieve columns provided by this view
@@ -42,19 +40,16 @@ class Comment extends DataView
     public function getColumns()
     {
         return array(
-            'comment_objecttype_id',
-            'comment_id',
-            'comment_data',
-            'comment_author',
-            'comment_timestamp',
-            'comment_type',
-            'comment_is_persistent',
-            'comment_expiration_timestamp',
-            'host_name',
-            'service_name',
+            'service',
             'host',
-            'service'
+            'servicegroup_name',
+            'servicegroup_alias'
         );
+    }
+
+    public static function getTableName()
+    {
+        return 'servicegroup';
     }
 
     /**
@@ -65,22 +60,11 @@ class Comment extends DataView
     public function getSortRules()
     {
         return array(
-            'comment_timestamp' => array(
-                'order'     => self::SORT_DESC
-            ),
-            'host_service'      => array(
-                'columns'   => array(
-                    'host_name',
-                    'service_name'
-                ),
-                'order'     => self::SORT_ASC
-            ),
-            'comment_id'    => array(
-                'order'     => self::SORT_ASC
-            ),
-            'comment_expires'       => array(
-                'order'     => self::SORT_DESC
+            'servicegroup_name' => array(
+                'order' => self::SORT_ASC
             )
         );
     }
+
+
 }

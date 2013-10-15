@@ -29,7 +29,7 @@
 namespace Icinga\Protocol;
 
 /**
- * Class AbstractQuery
+ * Class BaseQuery
  * @package Icinga\Protocol
  */
 abstract class AbstractQuery

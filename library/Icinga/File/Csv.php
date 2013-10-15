@@ -2,7 +2,7 @@
 
 namespace Icinga\File;
 
-use Icinga\Data\AbstractQuery;
+use Icinga\Data\BaseQuery;
 
 class Csv
 {
@@ -12,7 +12,7 @@ class Csv
     {
     }
 
-    public static function fromQuery(AbstractQuery $query)
+    public static function fromQuery(BaseQuery $query)
     {
         $csv = new Csv();
         $csv->query = $query;

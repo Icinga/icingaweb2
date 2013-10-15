@@ -31,7 +31,7 @@ namespace Icinga\Module\Monitoring\Backend\Statusdat\Query;
 use Icinga\Filter\Query\Tree;
 use Icinga\Protocol\Statusdat;
 use Icinga\Exception;
-use Icinga\Data\AbstractQuery;
+use Icinga\Data\BaseQuery;
 use Icinga\Protocol\Statusdat\View\MonitoringObjectList as MList;
 use Icinga\Protocol\Statusdat\Query as StatusdatQuery;
 use Icinga\Filter\Filterable;
@@ -40,7 +40,7 @@ use Icinga\Filter\Filterable;
  * Class Query
  * @package Icinga\Backend\Statusdat
  */
-abstract class Query extends AbstractQuery implements Filterable
+abstract class Query extends BaseQuery implements Filterable
 {
     /**
      * @var null

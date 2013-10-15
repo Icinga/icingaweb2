@@ -8,7 +8,8 @@ interface DatasourceInterface
     /**
      * Instantiate a Query object
      *
-     * @return AbstractQuery
+     * @return BaseQuery
      */
     public function select();
+
 }

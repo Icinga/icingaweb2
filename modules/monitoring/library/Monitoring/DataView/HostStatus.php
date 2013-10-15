@@ -16,48 +16,60 @@ class HostStatus extends DataView
     public function getColumns()
     {
         return array(
+            'host',
             'host_name',
+            'host_alias',
+            'host_address',
             'host_state',
             'host_state_type',
-            'host_last_state_change',
-            'host_address',
             'host_handled',
-            'host_icon_image',
-            'host_acknowledged',
-            'host_output',
-            'host_long_output',
             'host_in_downtime',
-            'host_is_flapping',
+            'host_acknowledged',
+            'host_last_state_change',
+            'host_last_state_change',
+            'host_last_notification',
             'host_last_check',
             'host_next_check',
+            'host_check_execution_time',
+            'host_check_latency',
+            'host_output',
+            'host_long_output',
+            'host_check_command',
+            'host_perfdata',
+            'host_passive_checks_enabled',
+            'host_obsessing',
             'host_notifications_enabled',
-            'host_unhandled_service_count',
+            'host_event_handler_enabled',
+            'host_flap_detection_enabled',
+            'host_active_checks_enabled',
+            'host_current_check_attempt',
+            'host_max_check_attempts',
+            'host_last_notification',
+            'host_current_notification_number',
+            'host_percent_state_change',
+            'host_is_flapping',
+            'host_last_comment',
             'host_action_url',
             'host_notes_url',
-            'host_last_comment',
-            'host',
-            'host_display_name',
-            'host_alias',
-            'host_ipv4',
-            'host_severity',
-            'host_perfdata',
-            'host_does_active_checks',
-            'host_accepts_passive_checks',
-            'host_last_hard_state',
-            'host_last_hard_state_change',
-            'host_last_time_up',
-            'host_last_time_down',
-            'host_last_time_unreachable'
+            'host_percent_state_change'
         );
     }
 
-
-
+    /**
+     * Return the table name
+     *
+     * @return string
+     */
     public static function getTableName()
     {
         return 'status';
     }
 
+    /**
+     * The sort rules for this query
+     *
+     * @return array
+     */
     public function getSortRules()
     {
         return array(

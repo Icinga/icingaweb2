@@ -26,20 +26,16 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Module\Monitoring\Filter\Backend;
+namespace Icinga\Data\Db;
 
-use Icinga\Data\DatasourceInterface;
-use Icinga\Data\Db\Query;
+use Icinga\Data\BaseQuery;
 use Icinga\Filter\Query\Tree;
 use Icinga\Filter\Query\Node;
-use Icinga\Filter\Filterable;
-use Icinga\Module\Monitoring\DataView\DataView;
-use Icinga\Module\Monitoring\Backend\Ido\Query\AbstractQuery;
 
 /**
  * Converter class that takes a query tree and creates an SQL Query from it's state
  */
-class IdoQueryConverter
+class TreeToSqlParser
 {
     /**
      * The query class to use as the base for converting
@@ -59,7 +55,7 @@ class IdoQueryConverter
      *
      * @param AbstractQuery $query      The query to use for conversion
      */
-    public function __construct(AbstractQuery $query)
+    public function __construct(BaseQuery $query)
     {
         $this->query = $query;
     }
@@ -128,7 +124,9 @@ class IdoQueryConverter
         if (!$this->query->isValidFilterTarget($node->left) && $this->query->getMappedField($node->left)) {
             return '';
         }
+        $this->query->requireColumn($node->left);
         $queryString = $this->query->getMappedField($node->left);
+
         if ($this->query->isAggregateColumn($node->left)) {
             $this->type = 'HAVING';
         }
@@ -174,6 +172,7 @@ class IdoQueryConverter
         if ($tree->root == null) {
             return;
         }
+        $tree->root = $tree->normalizeTree($tree->root);
         $sql = $this->nodeToSqlQuery($tree->root);
         if ($this->filtersAggregate()) {
             $baseQuery->having($sql);

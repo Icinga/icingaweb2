@@ -29,12 +29,11 @@
 
 namespace Icinga\Filter;
 
-
-use Icinga\Filter\Query\Tree;
-
 interface Filterable
 {
     public function isValidFilterTarget($field);
     public function getMappedField($field);
-    public function applyFilter(Tree $filter);
+    public function applyFilter();
+    public function clearFilter();
+    public function addFilter($filter);
 }

@@ -5,7 +5,7 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
-class StatusQuery extends AbstractQuery
+class StatusQuery extends IdoQuery
 {
     protected $allowCustomVars = true;
 
@@ -29,8 +29,6 @@ class StatusQuery extends AbstractQuery
             'host_acknowledged'           => 'hs.problem_has_been_acknowledged',
             'host_in_downtime'            => 'CASE WHEN (hs.scheduled_downtime_depth = 0) THEN 0 ELSE 1 END',
             'host_handled'                => 'CASE WHEN (hs.problem_has_been_acknowledged + hs.scheduled_downtime_depth) > 0 THEN 1 ELSE 0 END',
-            'host_does_active_checks'     => 'hs.active_checks_enabled',
-            'host_accepts_passive_checks' => 'hs.passive_checks_enabled',
             'host_last_state_change'      => 'UNIX_TIMESTAMP(hs.last_state_change)',
             'host_last_hard_state'        => 'hs.last_hard_state',
             'host_last_hard_state_change' => 'UNIX_TIMESTAMP(hs.last_hard_state_change)',
@@ -130,8 +128,6 @@ class StatusQuery extends AbstractQuery
             'service_acknowledged'   => 'ss.problem_has_been_acknowledged',
             'service_in_downtime'    => 'CASE WHEN (ss.scheduled_downtime_depth = 0) THEN 0 ELSE 1 END',
             'service_handled'        => 'CASE WHEN (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth + COALESCE(hs.current_state, 0)) > 0 THEN 1 ELSE 0 END',
-            'service_does_active_checks'     => 'ss.active_checks_enabled',
-            'service_accepts_passive_checks' => 'ss.passive_checks_enabled',
             'service_last_state_change'      => 'UNIX_TIMESTAMP(ss.last_state_change)',
             'service_check_command'          => 'ss.check_command',
             'service_last_time_ok'           => 'ss.last_time_ok',

@@ -64,7 +64,7 @@ abstract class GroupsummaryQuery extends Query
     /**
      * @var array
      */
-    protected $order_columns = array(
+    protected $orderColumns = array(
         'state' => array(
             'ASC' => array(
                 'ok ASC',

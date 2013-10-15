@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
-class ContactgroupQuery extends AbstractQuery
+class ContactgroupQuery extends IdoQuery
 {
     protected $columnMap = array(
         'contactgroups' => array(
@@ -32,14 +32,16 @@ class ContactgroupQuery extends AbstractQuery
         'hosts' => array(
             'host_object_id' => 'ho.object_id',
             'host_name'      => 'ho.name1',
+            'host'           => 'ho.name1'
         ),
         'services' => array(
             'service_object_id'   => 'so.object_id',
             'service_host_name'   => 'so.name1 COLLATE latin1_general_ci',
+            'service'             => 'so.name1 COLLATE latin1_general_ci',
             'service_description' => 'so.name2 COLLATE latin1_general_ci',
         )
     );
-    protected $uglySlowConservativeCount = true;
+    protected $useSubqueryCount = true;
 
     protected function joinBaseTables()
     {

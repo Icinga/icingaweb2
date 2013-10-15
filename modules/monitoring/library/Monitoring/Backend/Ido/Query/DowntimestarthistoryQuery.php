@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
-class DowntimestarthistoryQuery extends AbstractQuery
+class DowntimestarthistoryQuery extends IdoQuery
 {
     protected $columnMap = array(
         'downtimehistory' => array(

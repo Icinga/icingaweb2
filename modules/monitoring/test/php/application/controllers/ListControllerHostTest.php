@@ -8,7 +8,7 @@ require_once realpath(__DIR__ . '/../../../../../../library/Icinga/Test/BaseTest
 use Icinga\Test\BaseTestCase;
 
 require_once(realpath(BaseTestCase::$moduleDir . '/monitoring/test/php/testlib/MonitoringControllerTest.php'));
-require_once(realpath(BaseTestCase::$moduleDir . '/monitoring/library/Monitoring/Filter/Backend/IdoQueryConverter.php'));
+require_once(realpath(BaseTestCase::$moduleDir . '/monitoring/library/Monitoring/Filter/Backend/TreeToSqlParser.php);
 require_once(realpath(BaseTestCase::$moduleDir . '/monitoring/library/Monitoring/DataView/DataView.php'));
 require_once(realpath(BaseTestCase::$moduleDir . '/monitoring/library/Monitoring/DataView/HostStatus.php'));
 require_once(realpath(BaseTestCase::$moduleDir . '/monitoring/library/Monitoring/DataView/Notification.php'));

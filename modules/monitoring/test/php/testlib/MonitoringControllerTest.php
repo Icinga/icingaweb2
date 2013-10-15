@@ -156,7 +156,7 @@ abstract class MonitoringControllerTest extends Zend_Test_PHPUnit_ControllerTest
     private function requireBase()
     {
         require_once('Application/Benchmark.php');
-        require_once('Data/AbstractQuery.php');
+        require_once('Data/BaseQuery.php');
         require_once('Data/DatasourceInterface.php');
         require_once('Data/Db/Connection.php');
         require_once('Data/Db/Query.php');

@@ -29,13 +29,13 @@
 namespace Icinga\Protocol\Statusdat;
 
 use Icinga\Protocol;
-use Icinga\Data\AbstractQuery;
+use Icinga\Data\BaseQuery;
 
 /**
  * Class Query
  * @package Icinga\Protocol\Statusdat
  */
-class Query extends AbstractQuery
+class Query extends BaseQuery
 {
     /**
      * @var array
@@ -76,7 +76,7 @@ class Query extends AbstractQuery
     /**
      * @var array
      */
-    protected $order_columns = array();
+    protected $orderColumns = array();
 
     /**
      * @var array
@@ -108,7 +108,7 @@ class Query extends AbstractQuery
      */
     public function hasOrder()
     {
-        return !empty($this->order_columns);
+        return !empty($this->orderColumns);
     }
 
     /**
@@ -200,7 +200,7 @@ class Query extends AbstractQuery
                 $col = $col;
             }
 
-            $this->order_columns[] = array($col, $dir);
+            $this->orderColumns[] = array($col, $dir);
         }
         return $this;
     }
@@ -275,7 +275,7 @@ class Query extends AbstractQuery
      */
     private function orderIndices(array &$indices)
     {
-        if (!empty($this->order_columns)) {
+        if (!empty($this->orderColumns)) {
             foreach ($indices as $type => &$subindices) {
                 $this->currentType = $type; // we're singlethreaded, so let's do it a bit dirty
                 usort($subindices, array($this, "orderResult"));
@@ -293,7 +293,7 @@ class Query extends AbstractQuery
         $o1 = $this->ds->getObjectByName($this->currentType, $a);
         $o2 = $this->ds->getObjectByName($this->currentType, $b);
         $result = 0;
-        foreach ($this->order_columns as $col) {
+        foreach ($this->orderColumns as $col) {
             $result += $col[1] * strnatcasecmp($o1->{$col[0]}, $o2->{$col[0]});
         }
         if ($result > 0) {

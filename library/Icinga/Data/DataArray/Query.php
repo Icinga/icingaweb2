@@ -2,9 +2,9 @@
 
 namespace Icinga\Data\DataArray;
 
-use Icinga\Data\AbstractQuery;
+use Icinga\Data\BaseQuery;
 
-class Query extends AbstractQuery
+class Query extends BaseQuery
 {
     /**
      * Remember the last count
@@ -63,16 +63,18 @@ class Query extends AbstractQuery
      */
     public function compare(& $a, & $b, $col_num = 0)
     {
-        if (! array_key_exists($col_num, $this->order_columns)) {
+        $orderColumns = $this->getOrderColumns();
+        if (! array_key_exists($col_num, $orderColumns)) {
             return 0;
         }
-        $col = $this->order_columns[$col_num][0];
-        $dir = $this->order_columns[$col_num][1];
+
+        $col = $orderColumns[$col_num][0];
+        $dir = $orderColumns[$col_num][1];
 
         //$res = strnatcmp(strtolower($a->$col), strtolower($b->$col));
         $res = strcmp(strtolower($a->$col), strtolower($b->$col));
         if ($res === 0) {
-            if (array_key_exists(++$col_num, $this->order_columns)) {
+            if (array_key_exists(++$col_num, $orderColumns)) {
                 return $this->compare($a, $b, $col_num);
             } else {
                 return 0;
@@ -84,4 +86,16 @@ class Query extends AbstractQuery
             return $res * -1;
         }
     }
+
+    public function parseFilterExpression($expression, $parameters = null)
+    {
+        return null;
+    }
+
+    public function applyFilter()
+    {
+        return null;
+    }
+
+
 }

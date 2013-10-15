@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
-class StatehistoryQuery extends AbstractQuery
+class StatehistoryQuery extends IdoQuery
 {
     protected $columnMap = array(
         'statehistory' => array(

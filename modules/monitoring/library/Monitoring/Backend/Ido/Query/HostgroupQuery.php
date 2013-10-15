@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
-class HostgroupQuery extends AbstractQuery
+class HostgroupQuery extends IdoQuery
 {
     protected $columnMap = array(
         'hostgroups' => array(
@@ -12,6 +12,7 @@ class HostgroupQuery extends AbstractQuery
             'id'              => 'hg.hostgroup_id',
         ),
         'hosts' => array(
+            'host'            => 'ho.name1 COLLATE latin1_general_ci',
             'host_name'       => 'ho.name1 COLLATE latin1_general_ci'
         )
     );

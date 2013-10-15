@@ -28,7 +28,7 @@ namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 /**
  * Notification query
  */
-class NotificationQuery extends AbstractQuery
+class NotificationQuery extends IdoQuery
 {
     /**
      * Column map
@@ -44,7 +44,9 @@ class NotificationQuery extends AbstractQuery
         ),
         'objects' => array(
             'host_name'             => 'o.name1',
-            'service_description'   => 'o.name2'
+            'service_description'   => 'o.name2',
+            'service'               => 'o.name2',
+            'host_name'             => 'o.name1'
         ),
         'contact' => array(
             'notification_contact'  => 'c_o.name1'

@@ -5,7 +5,7 @@ namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 use \Zend_Db_Select;
 use Icinga\Exception\ProgrammingError;
 
-class EventHistoryQuery extends AbstractQuery
+class EventHistoryQuery extends IdoQuery
 {
     protected $subQueries = array();
 
@@ -21,27 +21,27 @@ class EventHistoryQuery extends AbstractQuery
             'host_name'           => 'eho.name1 COLLATE latin1_general_ci',
             'service_description' => 'eho.name2 COLLATE latin1_general_ci',
             'object_type'         => "CASE WHEN eho.objecttype_id = 1 THEN 'host' ELSE 'service' END",
-            'timestamp'       => 'eh.timestamp',
-            'raw_timestamp'   => 'eh.raw_timestamp',
-            'state'           => 'eh.state',
-//            'last_state'      => 'eh.last_state',
-//            'last_hard_state' => 'eh.last_hard_state',
-            'attempt'         => 'eh.attempt',
-            'max_attempts'    => 'eh.max_attempts',
-            'output'          => 'eh.output', // we do not want long_output
-            //'problems'        => 'CASE WHEN eh.state = 0 OR eh.state IS NULL THEN 0 ELSE 1 END',
-            'type'  => 'eh.type'
+            'timestamp'           => 'eh.timestamp',
+            'raw_timestamp'       => 'UNIX_TIMESTAMP(eh.raw_timestamp)',
+            'state'               => 'eh.state',
+            'attempt'             => 'eh.attempt',
+            'max_attempts'        => 'eh.max_attempts',
+            'output'              => 'eh.output', // we do not want long_output
+            'type'                => 'eh.type',
+            'service_host_name'   => 'eho.name1 COLLATE latin1_general_ci',
+            'service_description' => 'eho.name2 COLLATE latin1_general_ci'
         ),
         'hostgroups' => array(
             'hostgroup' => 'hgo.name1 COLLATE latin1_general_ci',
         ),
     );
 
-    protected $uglySlowConservativeCount = true;
+    protected $useSubqueryCount = true;
     protected $maxCount = 1000;
 
     protected function joinBaseTables()
     {
+
 //        $start = date('Y-m-d H:i:s', time() - 3600 * 24 * 1);
         $start = date('Y-m-d H:i:s', time() - 3600 * 24 * 2);
         $end   = date('Y-m-d H:i:s');
@@ -67,14 +67,15 @@ class EventHistoryQuery extends AbstractQuery
             $this->createSubQuery('Commenthistory', $columns),
             $this->createSubQuery('Notificationhistory', $columns)
         );
+
         if ($start) {
             foreach ($this->subQueries as $query) {
-                $query->where('raw_timestamp', '>' . $start);
+                $query->where('timestamp > ?', $start);
             }
         }
         if ($end) {
             foreach ($this->subQueries as $query) {
-                $query->where('raw_timestamp', '<' . $end);
+                $query->where('timestamp < ? ', $end);
             }
         }
         $sub = $this->db->select()->union($this->subQueries, Zend_Db_Select::SQL_UNION_ALL);
@@ -88,7 +89,6 @@ class EventHistoryQuery extends AbstractQuery
             . ' AND eho.is_active = 1',
             array()
         );
-
         $this->joinedVirtualTables = array('eventhistory' => true);
     }
 
