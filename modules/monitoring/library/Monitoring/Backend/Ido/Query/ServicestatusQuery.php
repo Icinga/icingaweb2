@@ -43,7 +43,7 @@ class ServicestatusQuery extends AbstractQuery
         ),
         'servicegroups' => array(
             'servicegroups' => 'sgo.name1',
-        ),
+        )
     );
 
     protected function getDefaultColumns()
