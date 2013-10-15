@@ -1,5 +1,8 @@
 <?php
     $o = $this->object;
+
+    /** @var Zend_View_Helper_CommandForm $cf */
+    $cf = $this->getHelper('CommandForm');
 ?>
 <div>
     <div class="panel-heading">
@@ -16,7 +19,9 @@
                 <tr>
                     <td>Passive Checks</td>
                     <td><div class="icon-table-hint icon-edit pull-left"></div></td>
-                    <td><input type="checkbox" id="#" name="#" class="pull-right" <?= ($o->passive_checks_enabled === '1') ? 'checked="true"' : '' ?> /></td>
+                    <td>
+                        <input type="checkbox" id="#" name="#" class="pull-right" <?= ($o->passive_checks_enabled === '1') ? 'checked="true"' : '' ?> />
+                    </td>
                 </tr>
 
                 <tr>

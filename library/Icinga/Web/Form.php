@@ -599,6 +599,14 @@ class Form extends Zend_Form
     {
         parent::addElement($element, $name, $options);
         $el = $name ? $this->getElement($name) : $element;
+
+        // Do not add structural elements to invisible elements
+        // which produces ugly views
+        if (strpos(strtolower(get_class($el)), 'hidden') !== false) {
+            $el->setDecorators(array('ViewHelper'));
+            return $this;
+        }
+
         if ($el) {
             $el->removeDecorator('HtmlTag');
             $el->removeDecorator('Label');

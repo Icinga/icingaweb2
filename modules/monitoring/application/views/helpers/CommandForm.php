@@ -22,7 +22,6 @@ class Zend_View_Helper_CommandForm extends Zend_View_Helper_Abstract
     private function simpleForm($commandName, array $arguments = array())
     {
         $form = new Form();
-
         $form->setIgnoreChangeDiscarding(true);
         $form->setAttrib('data-icinga-component', 'app/ajaxPostSubmitForm');
 
@@ -33,6 +32,8 @@ class Zend_View_Helper_CommandForm extends Zend_View_Helper_Abstract
             $hiddenField = new Zend_Form_Element_Hidden($elementName);
             $hiddenField->setValue($elementValue);
             $form->addElement($hiddenField);
+
+            $hiddenField = $form->getElement($elementName);
         }
 
         return $form;
@@ -72,6 +73,7 @@ class Zend_View_Helper_CommandForm extends Zend_View_Helper_Abstract
     public function labelSubmitForm($submitLabel, $submitTitle, $cls, $commandName, array $arguments = array())
     {
         $form = $this->simpleForm($commandName, $arguments);
+
         $button = new Zend_Form_Element_Button(
             array(
                 'name'      => 'btn_submit',
@@ -84,9 +86,10 @@ class Zend_View_Helper_CommandForm extends Zend_View_Helper_Abstract
             )
         );
 
-        $button->setDecorators(array('ViewHelper'));
-
         $form->addElement($button);
+
+        // Because of implicit added decorators
+        $form->getElement('btn_submit')->setDecorators(array('ViewHelper'));
 
         return $form;
     }
