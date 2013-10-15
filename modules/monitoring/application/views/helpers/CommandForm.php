@@ -72,7 +72,6 @@ class Zend_View_Helper_CommandForm extends Zend_View_Helper_Abstract
     public function labelSubmitForm($submitLabel, $submitTitle, $cls, $commandName, array $arguments = array())
     {
         $form = $this->simpleForm($commandName, $arguments);
-
         $button = new Zend_Form_Element_Button(
             array(
                 'name'      => 'btn_submit',

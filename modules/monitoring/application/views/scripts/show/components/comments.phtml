@@ -1,3 +1,7 @@
+<?php
+    /** @var Zend_View_Helper_CommandForm $cf */
+    $cf = $this->getHelper('CommandForm');
+?>
 <div>
   <div class="panel-heading">
     <div class="panel-hostname">
@@ -41,11 +45,18 @@
                 <tr>
                     <td>
                         <div class="pull-right">
-                            <form>
-                                <button type="submit" value="1" class="button btn-small btn-common" title="Remove comment">
-                                    <i class="icinga-icon-remove"></i>
-                                </button>
-                            </form>
+                            <?php
+                                $deleteData = $data;
+                                $deleteData['commentid'] = $comment->comment_internal_id;
+
+                                echo $cf->iconSubmitForm(
+                                    'icinga-icon-remove',
+                                    'Remove comment',
+                                    'btn-small',
+                                    'removecomment',
+                                    $deleteData
+                                );
+                            ?>
                         </div>
                         <?= $this->escape($comment->comment_author); ?>, <?= $comment->comment_type; ?>
                         (<?= $this->format()->timeSince($comment->comment_timestamp); ?>)

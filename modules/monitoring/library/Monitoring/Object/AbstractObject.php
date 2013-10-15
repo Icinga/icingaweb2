@@ -169,6 +169,7 @@ abstract class AbstractObject
                     'comment_author',
                     'comment_data',
                     'comment_type',
+                    'comment_internal_id'
                 )
             )->where('comment_objecttype_id', $this->type)
         )->fetchAll();
