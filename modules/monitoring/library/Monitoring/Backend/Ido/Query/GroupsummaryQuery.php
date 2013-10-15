@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
-class GroupsummaryQuery extends AbstractQuery
+class GroupsummaryQuery extends IdoQuery
 {
     protected $columnMap = array(
         'hoststatus'    => array(
