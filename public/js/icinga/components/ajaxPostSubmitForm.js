@@ -70,13 +70,13 @@ define(['components/app/container', 'jquery'], function(Container, $) {
             type: 'POST',
             data: data,
             beforeSend: function() {
-                submit.prop('disabled', true);
+                submit.attr('disabled', true);
             }
         }).done(function() {
             var container = getOwnerContainer(form);
             container.replaceDomFromUrl(container.getContainerHref());
         }).error(function() {
-            submit.removeProp('disabled');
+            submit.removeAttr('disabled');
         });
     };
 

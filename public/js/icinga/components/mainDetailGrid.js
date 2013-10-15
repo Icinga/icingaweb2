@@ -125,13 +125,17 @@ function(Container, $, logger, URI) {
                 var targetEl = ev.target || ev.toElement || ev.relatedTarget,
                     a = $(targetEl).closest('a');
 
+                var nodeNames = [];
+                nodeNames.push($(targetEl).prop('nodeName').toLowerCase());
+                nodeNames.push($(targetEl).parent().prop('nodeName').toLowerCase());
+
                 if (a.length) {
                     // test if the URL is on the current server, if not open it directly
                     if (true || Container.isExternalLink(a.attr('href'))) {
                         return true;
                     }
-                } else if (targetEl.nodeName.toLowerCase() === 'input') {
-                    var type = $(targetEl).attr('type');
+                } else if ($.inArray('input', nodeNames) > -1 || $.inArray('button', nodeNames) > -1) {
+                    var type = $(targetEl).attr('type') || $(targetEl).parent().attr('type');
                     if (type === 'submit') {
                         return true;
                     }
