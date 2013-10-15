@@ -41,7 +41,7 @@ class AllcontactsQuery extends IdoQuery
     protected $contactgroups;
     protected $useSubqueryCount = true;
 
-    protected function requireColumn($alias)
+    public function requireColumn($alias)
     {
         $this->contacts->addColumn($alias);
         $this->contactgroups->addColumn($alias);

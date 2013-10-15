@@ -28,6 +28,9 @@
 
 namespace Icinga\Protocol\Statusdat;
 
+use Icinga\Data\Optional;
+use Icinga\Data\The;
+use Icinga\Filter\Query\Node;
 use Icinga\Protocol;
 use Icinga\Data\BaseQuery;
 
@@ -116,17 +119,11 @@ class Query extends BaseQuery
      */
     public function hasColumns()
     {
-        return !empty($this->columns);
+        $columns = $this->getColumns();
+        return !empty($columns);
     }
 
-    /**
-     * @return array
-     */
-    public function getColumns()
-    {
-        return $this->columns;
 
-    }
 
     /**
      * @return bool
@@ -222,13 +219,14 @@ class Query extends BaseQuery
         return $this;
     }
 
+
     /**
      * @param $table
      * @param null $columns
      * @return $this
      * @throws \Exception
      */
-    public function from($table, $columns = null)
+    public function from($table, array $attributes = null)
     {
         if (isset(self::$VALID_TARGETS[$table])) {
             $this->source = $table;
@@ -396,4 +394,23 @@ class Query extends BaseQuery
         }
         return $result;
     }
+
+    /**
+     * Parse a backend specific filter expression and return a Query\Node object
+     *
+     * @param $expression       The expression to parse
+     * @param $parameters       Optional parameters for the expression
+     * @return Node             A query node or null if it's an invalid expression
+     */
+    protected function parseFilterExpression($expression, $parameters = null)
+    {
+        // TODO: Implement parseFilterExpression() method.
+    }
+
+    public function applyFilter()
+    {
+        // TODO: Implement applyFilter() method.
+    }
+
+
 }

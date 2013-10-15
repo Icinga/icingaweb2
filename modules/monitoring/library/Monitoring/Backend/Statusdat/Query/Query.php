@@ -28,6 +28,9 @@
 
 namespace Icinga\Module\Monitoring\Backend\Statusdat\Query;
 
+use Icinga\Data\Optional;
+use Icinga\Data\The;
+use Icinga\Filter\Query\Node;
 use Icinga\Filter\Query\Tree;
 use Icinga\Protocol\Statusdat;
 use Icinga\Exception;
@@ -299,9 +302,26 @@ abstract class Query extends BaseQuery implements Filterable
         // TODO: Implement getMappedField() method.
     }
 
-    public function applyFilter(Tree $filter)
+    public function applyFilter()
     {
         // TODO: Implement applyFilter() method.
     }
+
+    /**
+     * Parse a backend specific filter expression and return a Query\Node object
+     *
+     * @param $expression       The expression to parse
+     * @param $parameters       Optional parameters for the expression
+     * @return Node             A query node or null if it's an invalid expression
+     */
+    protected function parseFilterExpression($expression, $parameters = null)
+    {
+        // TODO: Implement parseFilterExpression() method.
+    }
+
+
+
+
+
 }
 

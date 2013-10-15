@@ -1,7 +1,7 @@
 <?php
 
 namespace Tests\Icinga\Protocol\Statusdat;
-require_once('../../library/Icinga/Data/QueryInterface.php');
+require_once('../../library/Icinga/Filter/Filterable.php');
 require_once('../../library/Icinga/Data/BaseQuery.php');
 require_once('../../library/Icinga/Protocol/Statusdat/Query.php');
 require_once(dirname(__FILE__)."/ReaderMock.php");

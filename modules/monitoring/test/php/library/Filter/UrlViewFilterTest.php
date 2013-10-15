@@ -64,9 +64,19 @@ class FilterMock implements Filterable
         return $field;
     }
 
-    public function applyFilter(Tree $filter)
+    public function applyFilter()
     {
         return true;
+    }
+
+    public function clearFilter()
+    {
+        // TODO: Implement clearFilter() method.
+    }
+
+    public function addFilter($filter)
+    {
+        // TODO: Implement addFilter() method.
     }
 
 
@@ -104,7 +114,7 @@ class UrlViewFilterTest extends BaseTestCase
         $filterFactory = new UrlViewFilter(new FilterMock());
         $uri = $filterFactory->fromTree($tree);
         $this->assertEquals(
-            'attr1!=Hans+wurst|attr2=%2Asomething%2A&attr3=%2Abla|attr4=1&host_last_state_change>=yesterday&attr5=0',
+            'attr1!=Hans+wurst|attr2=%2Asomething%2A&attr3=bla%2A|attr4=1&host_last_state_change>=yesterday&attr5=0',
             $uri,
             'Assert a correct query to be returned when parsing a more complex query ("'. $query .'")'
         );

@@ -164,8 +164,8 @@ abstract class MonitoringControllerTest extends Zend_Test_PHPUnit_ControllerTest
         require_once('Web/Widget/SortBox.php');
         require_once('Web/Widget/FilterBox.php');
         require_once('Web/Widget/FilterBadgeRenderer.php');
-        require_once('library/Monitoring/Backend/AbstractBackend.php');
         require_once('library/Monitoring/Backend.php');
+        require_once('library/Monitoring/Controller.php');
 
     }
 
@@ -176,6 +176,7 @@ abstract class MonitoringControllerTest extends Zend_Test_PHPUnit_ControllerTest
     private function requireIDOQueries()
     {
         require_once('Application/DbAdapterFactory.php');
+        require_once('library/Monitoring/Backend/Ido/Query/IdoQuery.php');
         $this->requireFolder('library/Monitoring/Backend/Ido/Query');
     }
 
@@ -207,7 +208,6 @@ abstract class MonitoringControllerTest extends Zend_Test_PHPUnit_ControllerTest
         $this->requireFolder('library/Monitoring/Backend/Statusdat/Criteria');
         $this->requireFolder('library/Monitoring/Backend/Statusdat/Query');
         $this->requireFolder('library/Monitoring/Backend/Statusdat/DataView');
-        $this->requireFolder('library/Monitoring/Backend/Statusdat/DataView');
     }
 
     /**
@@ -216,8 +216,7 @@ abstract class MonitoringControllerTest extends Zend_Test_PHPUnit_ControllerTest
     private function requireViews()
     {
         $module = $this->moduleDir;
-        require_once($module.'library/Monitoring/View/AbstractView.php');
-        $this->requireFolder('library/Monitoring/View/');
+
     }
 
     /**

@@ -12,7 +12,8 @@ class StatusdatTestLoader extends LibraryLoader
         require_once 'Zend/Config.php';
         require_once 'Zend/Cache.php';
         require_once 'Zend/Log.php';
-        require_once($libPath."/Data/BaseQuery.php        require_once($libPath."/Application/Logger.php");
+        require_once($libPath."/Data/BaseQuery.php");
+        require_once($libPath."/Application/Logger.php");
         require_once($libPath."/Filter/Filterable.php");
         require_once($libPath."/Data/DatasourceInterface.php");
         $statusdat = realpath($libPath."/Protocol/Statusdat/");

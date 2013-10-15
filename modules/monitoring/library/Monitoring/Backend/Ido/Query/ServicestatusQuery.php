@@ -46,7 +46,7 @@ class ServicestatusQuery extends IdoQuery
         )
     );
 
-    protected function getDefaultColumns()
+    public function getDefaultColumns()
     {
         return $this->columnMap['services']
              + $this->columnMap['servicestatus'];
