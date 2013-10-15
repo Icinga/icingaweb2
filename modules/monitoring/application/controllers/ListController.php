@@ -46,6 +46,7 @@ use Icinga\Module\Monitoring\DataView\Contact as ContactView;
 use Icinga\Module\Monitoring\DataView\Contactgroup as ContactgroupView;
 use Icinga\Module\Monitoring\DataView\HostAndServiceStatus as HostAndServiceStatusView;
 use Icinga\Module\Monitoring\DataView\Comment as CommentView;
+use Icinga\Module\Monitoring\DataView\Groupsummary as GroupsummaryView;
 
 class Monitoring_ListController extends MonitoringController
 {
@@ -304,6 +305,32 @@ class Monitoring_ListController extends MonitoringController
                 'comment_expires'   => 'Expiration Timestamp'
             )
         );
+        $this->handleFormatRequest($query);
+    }
+
+    public function servicegroupsAction()
+    {
+        $query = GroupsummaryView::fromRequest(
+            $this->_request,
+            array(
+                'servicegroup_name',
+                'cnt_hosts_up',
+                'cnt_hosts_unreachable',
+                'cnt_hosts_unreachable_unhandled',
+                'cnt_hosts_down',
+                'cnt_hosts_down_unhandled',
+                'cnt_hosts_pending',
+                'cnt_services_ok',
+                'cnt_services_unknown',
+                'cnt_services_unknown_unhandled',
+                'cnt_services_critical',
+                'cnt_services_critical_unhandled',
+                'cnt_services_warning',
+                'cnt_services_warning_unhandled',
+                'cnt_services_pending'
+            )
+        )->getQuery();
+        $this->view->servicegroups = $query->paginate();
         $this->handleFormatRequest($query);
     }
 
