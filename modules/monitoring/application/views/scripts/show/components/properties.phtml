@@ -10,12 +10,8 @@
         <dl class="dl-horizontal">
             <dt>Latency</dt>
             <dd><?= sprintf('%.2f', $this->object->check_execution_time); ?>s</dd>
-        </dl>
-        <dl class="dl-horizontal">
             <dt>Duration</dt>
             <dd><?= sprintf('%.2f', $this->object->check_latency); ?>s</dd>
-        </dl>
-        <dl class="dl-horizontal">
             <dt>Attempt</dt>
             <dd>
                 <?= $this->object->current_check_attempt; ?>/<?= $this->object->max_check_attempts; ?>

@@ -1,4 +1,3 @@
-<?php if (!empty($object->servicegroups)): ?>
 <?php
 $servicegroups = array();
 foreach ($object->servicegroups as $name => $alias) {
@@ -7,12 +6,20 @@ foreach ($object->servicegroups as $name => $alias) {
         . '</a>';
 }
 ?>
-<div class="panel panel-default">
+<div>
     <div class="panel-heading">
-        {{SERVICEGROUP_ICON}} <span>Servicegroups</span>
+        <div class="panel-hostname">
+            Servicegroups
+        </div>
     </div>
+
+    <hr class="separator" />
+
     <div class="panel-body">
-        <?= implode(', ', $servicegroups); ?>
+        <?php if (!count($servicegroups)): ?>
+            No Servicegroups
+        <?php else: ?>
+            <?= implode(', ', $servicegroups); ?>
+        <?php endif; ?>
     </div>
 </div>
-<?php endif; ?>

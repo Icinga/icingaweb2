@@ -8,6 +8,15 @@
     <hr class="separator" />
 
     <div class="panel-body">
-        <?php var_dump($this->object); ?>
+        <?php if (empty($this->object->customvars)): ?>
+        No customvars
+        <?php else: ?>
+        <dl class="dl-horizontal">
+        <?php foreach ($this->object->customvars as $varname => $varvalue): ?>
+            <dt><?= $varname; ?></dt>
+            <dd><?= $varvalue; ?></dd>
+        <?php endforeach; ?>
+        </dl>
+        <?php endif; ?>
     </div>
 </div>

@@ -1,31 +1,82 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+/**
+ * This file is part of Icinga 2 Web.
+ *
+ * Icinga 2 Web - Head for multiple monitoring backends.
+ * Copyright (C) 2013 Icinga Development Team
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ *
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ * @copyright 2013 Icinga Development Team <info@icinga.org>
+ * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
+ * @author    Icinga Development Team <info@icinga.org>
+ */
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Module\Monitoring\Object;
 
 use Icinga\Data\AbstractQuery as Query;
 
+/**
+ * Represent a single service
+ */
 class Service extends AbstractObject
 {
+    /**
+     * Foreign references to objects
+     *
+     * @var array
+     */
     protected $foreign = array(
         'servicegroups' => null,
         'contacts'      => null,
         'contactgroups' => null,
         'customvars'    => null,
         'comments'      => null,
-        'downtimes'     => null
+        'downtimes'     => null,
+        'customvars'    => null
     );
 
+    /**
+     * Statename
+     */
     public function stateName()
     {
         // TODO
     }
 
+    /**
+     * Filter foreign object belongings
+     *
+     * @param   Query $query
+     *
+     * @return  Query
+     */
     protected function applyObjectFilter(Query $query)
     {
         return $query->where('service_host_name', $this->name1)
                      ->where('service_description', $this->name2);
     }
 
+    /**
+     * Collect foreign data
+     *
+     * @return self
+     */
     public function prefetch()
     {
         return $this->fetchServicegroups()
@@ -33,54 +84,63 @@ class Service extends AbstractObject
             ->fetchContactgroups()
             ->fetchCustomvars()
             ->fetchComments()
-            ->fetchDowtimes();
+            ->fetchDowtimes()
+            ->fetchCustomvars();
     }
 
+    /**
+     * Load object data
+     *
+     * @return object
+     */
     protected function fetchObject()
     {
-        return $this->backend->select()->from('status', array(
-            'host_name',
-            'host_alias',
-            'host_address',
-            'host_state',
-            'host_handled',
-            'host_in_downtime',
-            'host_acknowledged',
-            'host_last_state_change',
-            'service_description',
-            'service_state',
-            'service_handled',
-            'service_acknowledged',
-            'service_in_downtime',
-            'service_last_state_change',
-            'last_check'    => 'service_last_check',
-            'next_check'    => 'service_next_check',
-            'check_execution_time'    => 'service_check_execution_time',
-            'check_latency' => 'service_check_latency',
-            'output'        => 'service_output',
-            'long_output'   => 'service_long_output',
-            'check_command' => 'service_check_command',
-            'perfdata'      => 'service_perfdata',
-            'current_check_attempt' => 'service_current_check_attempt',
-            'max_check_attempts' => 'service_max_check_attempts',
-            'state_type' => 'service_state_type',
-            'passive_checks_enabled' => 'service_passive_checks_enabled',
-            'last_state_change' => 'service_last_state_change',
-            'last_notification' => 'service_last_notification',
-            'current_notification_number' => 'service_current_notification_number',
-            'is_flapping' => 'service_is_flapping',
-            'percent_state_change' => 'service_percent_state_change',
-            'in_downtime' => 'service_in_downtime',
-            'passive_checks_enabled'    => 'service_passive_checks_enabled',
-            'obsessing'                 => 'service_obsessing',
-            'notifications_enabled'     => 'service_notifications_enabled',
-            'event_handler_enabled'     => 'service_event_handler_enabled',
-            'flap_detection_enabled'    => 'service_flap_detection_enabled',
-            'active_checks_enabled'     => 'service_active_checks_enabled',
-            'last_comment'              => 'service_last_comment',
-            'action_url'                => 'service_action_url',
-            'notes_url'                 => 'service_notes_url'
-        ))
+        return $this->backend->select()->from(
+            'status',
+            array(
+                'host_name',
+                'host_alias',
+                'host_address',
+                'host_state',
+                'host_handled',
+                'host_in_downtime',
+                'host_acknowledged',
+                'host_last_state_change',
+                'service_description',
+                'service_state',
+                'service_handled',
+                'service_acknowledged',
+                'service_in_downtime',
+                'service_last_state_change',
+                'last_check'                    => 'service_last_check',
+                'next_check'                    => 'service_next_check',
+                'check_execution_time'          => 'service_check_execution_time',
+                'check_latency'                 => 'service_check_latency',
+                'output'                        => 'service_output',
+                'long_output'                   => 'service_long_output',
+                'check_command'                 => 'service_check_command',
+                'perfdata'                      => 'service_perfdata',
+                'current_check_attempt'         => 'service_current_check_attempt',
+                'max_check_attempts'            => 'service_max_check_attempts',
+                'state_type'                    => 'service_state_type',
+                'passive_checks_enabled'        => 'service_passive_checks_enabled',
+                'last_state_change'             => 'service_last_state_change',
+                'last_notification'             => 'service_last_notification',
+                'current_notification_number'   => 'service_current_notification_number',
+                'is_flapping'                   => 'service_is_flapping',
+                'percent_state_change'          => 'service_percent_state_change',
+                'in_downtime'                   => 'service_in_downtime',
+                'passive_checks_enabled'        => 'service_passive_checks_enabled',
+                'obsessing'                     => 'service_obsessing',
+                'notifications_enabled'         => 'service_notifications_enabled',
+                'event_handler_enabled'         => 'service_event_handler_enabled',
+                'flap_detection_enabled'        => 'service_flap_detection_enabled',
+                'active_checks_enabled'         => 'service_active_checks_enabled',
+                'last_comment'                  => 'service_last_comment',
+                'action_url'                    => 'service_action_url',
+                'notes_url'                     => 'service_notes_url'
+            )
+        )
         ->where('host_name', $this->name1)
         ->where('service_description', $this->name2)
         ->fetchRow();

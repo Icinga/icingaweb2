@@ -56,7 +56,7 @@
                 <tr>
                     <td>No Downtimes</td>
                 </tr>
-                <?php endif; ?>
+                <?php else: ?>
                 <?php foreach ($this->object->downtimes as $downtime): ?>
                 <tr>
                     <td>
@@ -89,6 +89,7 @@
                     </td>
                 </tr>
                 <?php endforeach; ?>
+                <?php endif; ?>
             </tbody>
         </table>
     </div>
