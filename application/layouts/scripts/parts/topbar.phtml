@@ -2,6 +2,30 @@
   <div class="navbar-header">
     <a href="<?= $this->baseUrl('/') ?>" class="navbar-brand icinga-logo">Icinga</a>
   </div>
+
+    <div class="pull-left icinga-navbar icinga-navbar-hosts-container">
+        <span class="icinga-navbar-pills icinga-navbar-pills-up">999/999</span>
+        <span class="icinga-navbar-pills icinga-navbar-pills-unreachable">999/999</span>
+        <span class="icinga-navbar-pills icinga-navbar-pills-down">999/999</span>
+    </div>
+
+    <div class="pull-left icinga-navbar icinga-navbar-services-container">
+        <span class="icinga-navbar-pills icinga-navbar-pills-ok">999/999</span>
+        <span class="icinga-navbar-pills icinga-navbar-pills-critical">999/999</span>
+        <span class="icinga-navbar-pills icinga-navbar-pills-warning">999/999</span>
+        <span class="icinga-navbar-pills icinga-navbar-pills-unknown">999/999</span>
+    </div>
+
+    <div class="pull-left icinga-navbar icinga-navbar-reload">
+        <a class="button btn-common btn-small" href="#">
+            <span class="icon-refresh icon-btn-small"></span>
+        </a>
+    </div>
+
+
+    <div class="pull-left icinga-navbar icinga-navbar-search-container">
+        <input type="text" class="form-control input-sm icinga-navbar-search" />
+    </div>
   <?php if ($this->auth()->isAuthenticated()): ?>
   <ul class="nav navbar-nav pull-right" >
 <!--        Remove component as of #4583 since it's not working-->

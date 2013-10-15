@@ -77,7 +77,7 @@ class GroupsummaryQuery extends AbstractQuery
 
     protected function joinHostgroups()
     {
-        if ($this->hasJoinedVirtualTable('services')) {
+        if (in_array('servicegroup_name', $this->getColumns())){
             return $this->joinServiceHostgroups();
         } else {
             return $this->joinHostHostgroups();
@@ -96,7 +96,7 @@ class GroupsummaryQuery extends AbstractQuery
             array()
         )->join(
             array('hgo' => $this->prefix . 'objects'),
-            'hgo.' . $this->object_id. ' = hg.hostgroup_object_id AND hgo.is_active = 1',
+            'hgo.' . $this->object_id . ' = hg.hostgroup_object_id AND hgo.is_active = 1',
             array()
             );
         $this->baseQuery->group('hgo.name1');
@@ -115,7 +115,7 @@ class GroupsummaryQuery extends AbstractQuery
             array()
         )->join(
             array('hgo' => $this->prefix . 'objects'),
-            'hgo.' . $this->object_id. ' = hg.hostgroup_object_id AND hgo.is_active = 1',
+            'hgo.' . $this->object_id . ' = hg.hostgroup_object_id AND hgo.is_active = 1',
             array()
         );
         return $this;

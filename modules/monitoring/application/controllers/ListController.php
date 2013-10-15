@@ -337,6 +337,35 @@ class Monitoring_ListController extends MonitoringController
         ));
     }
 
+    public function hostgroupsAction()
+    {
+        $query = GroupsummaryView::fromRequest(
+            $this->_request,
+            array(
+                'hostgroup_name',
+                'cnt_hosts_up',
+                'cnt_hosts_unreachable',
+                'cnt_hosts_unreachable_unhandled',
+                'cnt_hosts_down',
+                'cnt_hosts_down_unhandled',
+                'cnt_hosts_pending',
+                'cnt_services_ok',
+                'cnt_services_unknown',
+                'cnt_services_unknown_unhandled',
+                'cnt_services_critical',
+                'cnt_services_critical_unhandled',
+                'cnt_services_warning',
+                'cnt_services_warning_unhandled',
+                'cnt_services_pending'
+            )
+        )->getQuery();
+        $this->handleFormatRequest($query);
+        $this->view->hostgroups = $query->paginate();
+        $this->setupSortControl(array(
+            'hostgroup_name' => 'Hostgroup Name'
+        ));
+    }
+
     /**
      * Handle the 'format' and 'view' parameter
      *

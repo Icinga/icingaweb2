@@ -1,0 +1,34 @@
+<div data-icinga-component="app/mainDetailGrid">
+    <?= $this->paginationControl($hostgroups, null, null, array('preserve' => $this->preserve)); ?>
+    <table class="table table-condensed">
+        <tbody>
+        <?php foreach($hostgroups as $hostgroup): ?>
+            <tr>
+                <td>
+                    <a href="<?= $this->href('monitoring/list/services', array('hostgroups' => $hostgroup->hostgroup_name)); ?>">
+                        <?= $hostgroup->hostgroup_name; ?>
+                    </a>
+                </td>
+                <td>
+                    <div>
+                        <span><?= $hostgroup->cnt_hosts_up; ?></span>
+                        <span><?= $hostgroup->cnt_hosts_unreachable; ?>/<?= $hostgroup->cnt_hosts_unreachable_unhandled; ?></span>
+                        <span><?= $hostgroup->cnt_hosts_down; ?>/<?= $hostgroup->cnt_hosts_down_unhandled; ?></span>
+                        <span><?= $hostgroup->cnt_hosts_pending; ?></span>
+                    </div>
+                </td>
+                <td>
+                    <div>
+                        <span><?= $hostgroup->cnt_services_ok; ?></span>
+                        <span><?= $hostgroup->cnt_services_unknown; ?>/<?= $hostgroup->cnt_services_unknown_unhandled; ?></span>
+                        <span><?= $hostgroup->cnt_services_critical; ?>/<?= $hostgroup->cnt_services_critical_unhandled; ?></span>
+                        <span><?= $hostgroup->cnt_services_warning; ?>/<?= $hostgroup->cnt_services_warning_unhandled; ?></span>
+                        <span><?= $hostgroup->cnt_services_pending; ?></span>
+                    </div>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+    <?= $this->paginationControl($hostgroups, null, null, array('preserve' => $this->preserve)); ?>
+</div>
