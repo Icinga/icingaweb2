@@ -1,4 +1,5 @@
 <div data-icinga-component="app/mainDetailGrid">
+    <?= $this->sortControl->render($this); ?>
     <?= $this->paginationControl($hostgroups, null, null, array('preserve' => $this->preserve)); ?>
     <table class="table table-condensed">
         <tbody>

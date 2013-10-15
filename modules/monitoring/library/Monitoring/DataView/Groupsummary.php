@@ -35,10 +35,14 @@ class Groupsummary extends DataView
 
     public function getSortRules()
     {
+        if (in_array('servicegroup_name', $this->getQuery()->getColumns())) {
+            return array(
+                'servicegroup_name' => array(
+                    'order' => self::SORT_ASC
+                )
+            );
+        }
         return array(
-            'servicegroup_name' => array(
-                'order' => self::SORT_ASC
-            ),
             'hostgroup_name' => array(
                 'order' => self::SORT_ASC
             )

@@ -77,7 +77,7 @@ class GroupsummaryQuery extends AbstractQuery
 
     protected function joinHostgroups()
     {
-        if (in_array('servicegroup_name', $this->getColumns())){
+        if (in_array('servicegroup_name', $this->getColumns())) {
             return $this->joinServiceHostgroups();
         } else {
             return $this->joinHostHostgroups();
