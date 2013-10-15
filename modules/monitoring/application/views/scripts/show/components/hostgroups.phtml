@@ -1,4 +1,3 @@
-<?php if (!empty($object->hostgroups)): ?>
 <?php
 $hostgroups = array();
 foreach ($object->hostgroups as $name => $alias) {
@@ -7,12 +6,20 @@ foreach ($object->hostgroups as $name => $alias) {
         . '</a>';
 }
 ?>
-<div class="panel panel-default">
+<div>
     <div class="panel-heading">
-        {{HOSTGROUP_ICON}} <span>Hostgroups</span>
+        <div class="panel-hostname">
+            Hostgroups
+        </div>
     </div>
+
+    <hr class="separator" />
+
     <div class="panel-body">
-        <?= implode(', ', $hostgroups); ?>
+        <?php if (!count($hostgroups)): ?>
+            No Hostgroups
+        <?php else: ?>
+            <?= implode(', ', $hostgroups); ?>
+        <?php endif; ?>
     </div>
 </div>
-<?php endif; ?>

@@ -28,20 +28,69 @@
     }
 ?>
 <?php endif; ?>
-<div class="panel panel-default">
+<div>
     <div class="panel-heading">
-        {{IN_DOWNTIME_ICON}}<span>Downtimes</span>
+        <div class="panel-hostname">
+
+            <div class="pull-right">
+                <?php
+                    $scheduleDowntimeData = array(
+                        'host'      => $this->object->host_name,
+                        'service'   => $this->object->service_description
+                    );
+
+                    $scheduleDowntimeHref = $this->href('monitoring/command/scheduleDowntime', $scheduleDowntimeData);
+                ?>
+                <a href="<?= $scheduleDowntimeHref; ?>" class="btn-common btn-small button" title="Schedule downtime">
+                    <i class="icinga-icon-in-downtime"></i>
+                </a>
+            </div>
+            Downtimes
+        </div>
     </div>
+    <hr class="separator" />
     <div class="panel-body">
-        <a href="#" class="button">{{SCHEDULE_DOWNTIME_COMMAND_BUTTON}}</a><br/>
-        <?php if (!empty($this->downtimes)): ?>
-        <table>
-            <tr>
-                <?= implode('</tr><tr>', $list); ?>
-            </tr>
+        <table class="table table-condensed table-detail">
+            <tbody>
+                <?php if (empty($this->object->downtimes)): ?>
+                <tr>
+                    <td>No Downtimes</td>
+                </tr>
+                <?php else: ?>
+                <?php foreach ($this->object->downtimes as $downtime): ?>
+                <tr>
+                    <td>
+                        <div class="pull-right">
+                            <form action="<?= $this->href('monitoring/command/removeDowntime'); ?>" data-icinga-component="app/ajaxPostSubmitForm">
+                                <button type="submit" class="button btn-common btn-small" name="btn_submit" value="1">
+                                    <i class="icinga-icon-remove"></i>
+                                </button>
+                                <input type="hidden" name="host" value="<?= $downtime->host_name; ?>" />
+                                <input type="hidden" name="service" value="<?= $downtime->service_description; ?>" />
+                                <input type="hidden" name="downtimeid" value="<?= $downtime->downtime_internal_downtime_id; ?>" />
+                                <input type="hidden" name="CSRFToken" value="" />
+                            </form>
+                        </div>
+                        <?php if ($downtime->downtime_is_in_effect === '1'): ?>
+                            Running since <?= $this->timeSince($downtime->downtime_actual_start_time); ?>
+                        <?php else: ?>
+                            <?php if ($downtime->downtime_is_fixed): ?>
+                                Scheduled for <?= $downtime->downtime_scheduled_start_time; ?>
+                            <?php else: ?>
+                                Waiting
+                            <?php endif; ?>
+                        <?php endif; ?>
+
+                        Triggered by <?= $downtime->downtime_author_name; ?>
+
+                        <div class="small-row">
+                            <?= $downtime->downtime_comment_data; ?>
+                        </div>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+                <?php endif; ?>
+            </tbody>
         </table>
-        <?php else: ?>
-            Not in downtime
-        <?php endif; ?>
     </div>
 </div>

@@ -54,7 +54,7 @@ define(['components/app/container', 'jquery'], function(Container, $) {
     var submitHandler = function(e) {
         var form = $(this);
         var url = form.attr('action');
-        var submit = form.find('input[type="submit"]');
+        var submit = form.find('button[type="submit"]', 'input[type="submit"]');
         var data = form.serialize();
 
         e.preventDefault();
@@ -70,13 +70,13 @@ define(['components/app/container', 'jquery'], function(Container, $) {
             type: 'POST',
             data: data,
             beforeSend: function() {
-                submit.prop('disabled', true);
+                submit.attr('disabled', true);
             }
         }).done(function() {
             var container = getOwnerContainer(form);
             container.replaceDomFromUrl(container.getContainerHref());
         }).error(function() {
-            submit.removeProp('disabled');
+            submit.removeAttr('disabled');
         });
     };
 

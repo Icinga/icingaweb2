@@ -1,5 +1,7 @@
 <?php
     $dateHelper = $this->getHelper('DateFormat');
+
+    /** @var Zend_View_Helper_CommandForm $commandHelper */
     $commandHelper = $this->getHelper('CommandForm');
 ?>
 <?= $this->tabs->render($this); ?>
@@ -114,10 +116,12 @@ $viewHelper = $this->getHelper('MonitoringState');
               $data['service'] = $comment->service_name;
             }
 
-            echo $commandHelper->simpleForm(
-              'removecomment',
-              'Remove Comment',
-              $data
+            echo $commandHelper->iconSubmitForm(
+                'icinga-icon-remove',
+                'Remove comment',
+                'btn-small',
+                'removecomment',
+                $data
             );
           ?>
         </td>

@@ -1,4 +1,3 @@
-<?php if (!empty($object->contacts)): ?>
 <?php
 $contacts = array();
 foreach ($object->contacts as $contact) {
@@ -14,17 +13,24 @@ foreach ($object->contacts as $contact) {
         . '</a>';
 }
 ?>
-<div class="panel panel-default">
+<div>
     <div class="panel-heading">
-        {{CONTACT_ICON}} <span>Contacts</span>
+        <div class="panel-hostname">
+            Contacts
+        </div>
     </div>
+
+    <hr class="separator" />
+
     <div class="panel-body">
-        <?= implode(', ', $contacts); ?>
+        <?php if (!count($contacts)): ?>
+            No Contacts
+        <?php else: ?>
+            <?= implode(', ', $contacts); ?>
+        <?php endif; ?>
     </div>
 </div>
-<?php endif; ?>
 
-<?php if (!empty($object->contactgroups)): ?>
 <?php
 $contactgroups = array();
 foreach ($object->contactgroups as $contactgroup) {
@@ -40,12 +46,20 @@ foreach ($object->contactgroups as $contactgroup) {
         . '</a>';
 }
 ?>
-<div class="panel panel-default">
+<div>
     <div class="panel-heading">
-        {{CONTACTGROUP_ICON}} <span>Contactgroups</span>
+        <div class="panel-hostname">
+            Contactgroups
+        </div>
     </div>
+
+    <hr class="separator" />
+
     <div class="panel-body">
-        <?= implode(', ', $contactgroups); ?>
+        <?php if (!count($contactgroups)): ?>
+            No Contactgroups
+        <?php else: ?>
+            <?= implode(', ', $contactgroups); ?>
+        <?php endif; ?>
     </div>
 </div>
-<?php endif; ?>

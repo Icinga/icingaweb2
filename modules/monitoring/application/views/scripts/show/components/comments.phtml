@@ -1,3 +1,7 @@
+<?php
+    /** @var Zend_View_Helper_CommandForm $cf */
+    $cf = $this->getHelper('CommandForm');
+?>
 <div>
   <div class="panel-heading">
     <div class="panel-hostname">
@@ -32,9 +36,28 @@
   <div class="panel-body">
       <table class="table table-condensed table-detail">
           <tbody>
+            <?php if (empty($object->comments)): ?>
+                <tr>
+                    <td>No comments</td>
+                </tr>
+            <?php endif; ?>
             <?php foreach ($object->comments as $comment): ?>
                 <tr>
                     <td>
+                        <div class="pull-right">
+                            <?php
+                                $deleteData = $data;
+                                $deleteData['commentid'] = $comment->comment_internal_id;
+
+                                echo $cf->iconSubmitForm(
+                                    'icinga-icon-remove',
+                                    'Remove comment',
+                                    'btn-small',
+                                    'removecomment',
+                                    $deleteData
+                                );
+                            ?>
+                        </div>
                         <?= $this->escape($comment->comment_author); ?>, <?= $comment->comment_type; ?>
                         (<?= $this->format()->timeSince($comment->comment_timestamp); ?>)
                         <div class="small-row">

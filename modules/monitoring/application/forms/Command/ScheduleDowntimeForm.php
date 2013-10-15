@@ -88,7 +88,7 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
 
         $cfg = $this->getConfiguration();
         $preferences = $this->getUserPreferences();
-        $downtimes = Backend::getInstance($this->getRequest()->getParam('backend'))->select()
+        $downtimes = Backend::createBackend($this->getRequest()->getParam('backend'))->select()
             ->from(
                 'downtime',
                 array(

@@ -1,93 +1,22 @@
-<div class="panel panel-default">
-    <div class="panel-heading">Properties</div>
+<div>
+    <div class="panel-heading">
+        <div class="panel-hostname">
+            Check Statistics
+        </div>
+    </div>
+
+    <hr class="separator" />
     <div class="panel-body">
-        <table class="table table-bordered">
-            <tr>
-                <th>Current Attempt</th>
-                <td>
-                    <?= sprintf(
-                        '%s/%s (%s state)',
-                        $object->current_check_attempt,
-                        $object->max_check_attempts,
-                        ($object->state_type === '1') ? 'HARD' : 'SOFT'
-                    ); ?>
-                </td>
-            </tr>
-            <tr>
-                <th>Check Type</th>
-                <td>
-                    <?php if ($object->passive_checks_enabled === '1' && $object->active_checks_enabled === '0'): ?>
-                    PASSIVE
-                    <?php elseif ($object->passive_checks_enabled === '0' && $object->active_checks_enabled === '0'): ?>
-                    DISABLED
-                    <?php else: ?>
-                    ACTIVE
-                    <?php endif; ?>
-                </td>
-            </tr>
-            <tr>
-                <th>Check Latency / Duration</th>
-                <td>
-                    <?php if ($object->passive_checks_enabled === '0' && $object->active_checks_enabled === '0'): ?>
-                    N/A
-                    <?php else: ?>
-                    <?= sprintf('%.4f', $object->check_latency); ?> / <?= sprintf('%.4f', $object->check_execution_time); ?> seconds
-                    <?php endif; ?>
-                </td>
-            </tr>
-            <tr>
-                <th>Last Notification</th>
-                <td>
-                    <?php
-                    if ($object->service_description) {
-                        $notificationsHref = $this->href('monitoring/list/notifications',
-                            array(
-                                'host'      => $object->host_name,
-                                'service'   => $object->service_description
-                            )
-                        );
-                    } else {
-                        $notificationsHref = $this->href('monitoring/list/notifications',
-                            array(
-                                'host'      => $object->host_name
-                            )
-                        );
-                    }
-                    ?>
-                    <a href="<?= $notificationsHref ?>">
-                        <?php if ($object->last_notification === '0000-00-00 00:00:00'): ?>
-                        N/A
-                        <?php else: ?>
-                        <?= $object->last_notification ?>
-                        <?php if ($object->current_notification_number > 0): ?>
-                        <br />
-                        <?= $object->current_notification_number ?> notifications sent during current problem state
-                        <?php endif ;?>
-                        <?php endif; ?>
-                    </a>
-                </td>
-            </tr>
-            <tr>
-                <th>Is This <?= $object->service_description ? 'Service' : 'Host' ?> Flapping?</th>
-                <td>
-                    <?php if ($object->is_flapping === '1'): ?>
-                        YES
-                    <?php else: ?>
-                        NO
-                    <?php endif; ?>
-                    <?= sprintf('%.2f', $object->percent_state_change); ?>% state change
-                </td>
-            </tr>
-            <tr>
-                <th>In Scheduled Downtime?</th>
-                <td>
-                    <?php if ($object->in_downtime === '1'): ?>
-                    YES
-                    <?php else: ?>
-                    NO
-                    <?php endif; ?>
-                </td>
-            </tr>
-        </table>
+        <dl class="dl-horizontal">
+            <dt>Latency</dt>
+            <dd><?= sprintf('%.2f', $this->object->check_execution_time); ?>s</dd>
+            <dt>Duration</dt>
+            <dd><?= sprintf('%.2f', $this->object->check_latency); ?>s</dd>
+            <dt>Attempt</dt>
+            <dd>
+                <?= $this->object->current_check_attempt; ?>/<?= $this->object->max_check_attempts; ?>
+                (<?= ($this->object->host_state_type === '1') ? 'Hard' : 'Soft'; ?>)
+            </dd>
+        </dl>
     </div>
 </div>

@@ -2,6 +2,9 @@
     $object = $this->object;
     $type = (isset($object->service_description) === true) ? 'service' : 'host';
 
+    /** @var Zend_View_Helper_CommandForm $cf */
+    $cf = $this->getHelper('CommandForm');
+
     if ($type === 'host') {
         $objectStateName = strtolower($this->util()->getHostStateName($this->object->host_state));
         $objectState = (int) $object->host_state;
@@ -72,14 +75,44 @@
         <div class="panel-row">
             <p><?= $this->pluginOutput($object->output); ?></p>
 
-            <form>
-
                 <?php if ($objectState > 0): ?>
-                    <button type="submit" class="button btn-cta btn-half-left">Acknowledge</button>
+                <?php if ($this->object->host_acknowledged || $this->object->service_acknowledged): ?>
+                        <?= $cf->labelSubmitForm(
+                            'Remove Ack',
+                            'Remove problem acknowledgement',
+                            'btn-cta btn-half-left',
+                            'removeacknowledgement',
+                            array(
+                                'host'          => $this->object->host_name,
+                                'service'       => $this->object->service_description
+                            )
+                        ) ?>
+                <?php else: ?>
+                    <a href="<?=
+                    $this->href(
+                        'monitoring/command/acknowledgeproblem',
+                        array(
+                            'host'      => $this->object->host_name,
+                            'service'   => $this->object->service_description
+                        )
+                    );
+                    ?>" class="button btn-cta btn-half-left">
+                        Acknowledge
+                    </a>
                 <?php endif; ?>
-
-                <button type="submit" class="button btn-cta <?= ($objectState > 0) ? 'btn-half-right' : 'btn-wide'; ?>">Recheck</button>
-            </form>
+                <?php endif; ?>
+                <?= $cf->labelSubmitForm(
+                    'Recheck',
+                    'Reschedule next check immediately',
+                    'btn-cta ' . (($objectState > 0) ? 'btn-half-right' : 'btn-wide'),
+                    'reschedulenextcheck',
+                    array(
+                        'host'          => $this->object->host_name,
+                        'service'       => $this->object->service_description,
+                        'checktime'     => time(),
+                        'forcecheck'    => '1'
+                    )
+                ) ?>
         </div>
 
         <div class="panel-row">
@@ -123,11 +156,17 @@
                 <?= $this->dateFormat()->formatDateTime($object->next_check); ?>
             </div>
             <div class="panel-button">
-                <form>
-                    <button class="button btn-common btn-small">
-                        <i class="icinga-icon-reschedule"></i>
-                    </button>
-                </form>
+                <a href="<?=
+                    $this->href(
+                        'monitoring/command/reschedulenextcheck',
+                        array(
+                            'host'      => $this->object->host_name,
+                            'service'   => $this->object->serivce_description
+                        )
+                    );
+                ?>" class="button btn-common btn-small">
+                    <i class="icinga-icon-reschedule"></i>
+                </a>
             </div>
         </div>
 
