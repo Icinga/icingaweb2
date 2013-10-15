@@ -330,8 +330,11 @@ class Monitoring_ListController extends MonitoringController
                 'cnt_services_pending'
             )
         )->getQuery();
-        $this->view->servicegroups = $query->paginate();
         $this->handleFormatRequest($query);
+        $this->view->servicegroups = $query->paginate();
+        $this->setupSortControl(array(
+            'servicegroup_name' => 'Servicegroup Name'
+        ));
     }
 
     /**

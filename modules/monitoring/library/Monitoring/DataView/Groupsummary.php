@@ -37,10 +37,10 @@ class Groupsummary extends DataView
     {
         return array(
             'servicegroup_name' => array(
-                'order' => self::SORT_DESC
+                'order' => self::SORT_ASC
             ),
             'hostgroup_name' => array(
-                'order' => self::SORT_DESC
+                'order' => self::SORT_ASC
             )
         );
     }

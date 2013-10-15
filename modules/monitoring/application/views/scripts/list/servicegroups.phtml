@@ -1,6 +1,7 @@
 <div data-icinga-component="app/mainDetailGrid">
+    <?= $this->sortControl->render($this); ?>
     <?= $this->paginationControl($servicegroups, null, null, array('preserve' => $this->preserve)); ?>
-    <table class="table table-condensed">
+    <table>
         <tbody>
         <?php foreach($servicegroups as $servicegroup): ?>
             <tr>
