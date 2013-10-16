@@ -1,0 +1,251 @@
+/**
+ * This file is part of Icinga 2 Web.
+ *
+ * Icinga 2 Web - Head for multiple monitoring backends.
+ * Copyright (C) 2013 Icinga Development Team
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ * @copyright 2013 Icinga Development Team <info@icinga.org>
+ * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
+ * @author    Icinga Development Team <info@icinga.org>
+ */
+
+/* =========================================================================
+   Default elements for module monitoring
+   ========================================================================= */
+
+.host-name {
+  display: block;
+  margin-top: 5px;
+  font-weight: bold;
+}
+
+
+.active {
+  background-color: #f5f5f5;
+}
+
+.output-text {
+  font-size: 12px;
+  line-height: 16px;
+  display: block;
+}
+
+/* ==========================================================================
+   Forms
+   ========================================================================== */
+
+.panel-row form {
+  display: inline;
+}
+
+/* ==========================================================================
+   Pagination
+   ========================================================================== */
+
+.pagination > .active > a,
+.pagination > .active > span,
+.pagination > .active > a:hover,
+.pagination > .active > span:hover,
+.pagination > .active > a:focus,
+.pagination > .active > span:focus {
+  background-color: #049baf !important;
+  border-color: fuchsia !mportant;
+}
+
+.pagination-sm > li > a, .pagination-sm > li > span {
+  font-size: 16px !important;
+}
+
+/* ==========================================================================
+   Status colors
+   ========================================================================== */
+
+.status-up {
+  background-color: #00cc33; /* green */
+}
+
+.status-warning {
+  background-color: #00cc33; /* xx */
+}
+
+.status-critical {
+  background-color: #ff3300; /* red */
+}
+
+.status-unknown {
+  background-color: #00cc33; /* xx */
+}
+
+.status-pending {
+  background-color: #00cc33; /* xx */
+}
+
+/** Service status **/
+.tacheader-status-pending {
+  background-color: #c0c0c0;
+}
+
+.tacheader-status-critical {
+  background-color: #FF3300;
+}
+
+.tacheader-status-ok {
+  /** background-color: #00CC33; **/
+}
+
+.tacheader-status-warning {
+  background-color: #FFA500;
+}
+
+.tacheader-status-unknown {
+  background-color: #E066FF;
+}
+
+/** Host status **/
+
+.tacheader-status-unreachable {
+  background-color: #E066FF;
+}
+
+.tacheader-status-down {
+  background-color: #FF3300;
+}
+
+.tacheader-status-up {
+  /** background-color: #00CC33; **/
+}
+
+/* Borders for Detail Headers  */
+.border-status-pending {
+  border-left: 8px solid #c0c0c0;
+}
+
+.border-status-critical {
+  border-left: 8px solid #FF3300;
+}
+
+.border-status-ok {
+  border-left: 10px solid #00CC33;
+}
+
+.border-status-warning {
+  border-left: 10px solid #FFA500;
+}
+
+.border-status-unknown {
+  border-left: 10px solid #E066FF;
+}
+
+/** Host status **/
+
+.border-status-unreachable {
+  border-left: 10px solid #E066FF;
+}
+
+.border-status-down {
+  border-left: 10px solid #FF3300;
+}
+
+.border-status-up {
+  border-left: 10px solid #00CC33;
+}
+
+.icinga-navbar {
+  margin-right: 15px;
+}
+.icinga-navbar-reload {
+  margin-top: 13px;
+  margin-right: 40px;
+  margin-left: 15px;
+}
+
+.icinga-navbar-search {
+  background-image: url('../../img/icons/search.png');
+  background-repeat: no-repeat;
+  background-position: 5px 50%;
+  padding-left: 25px !important;
+}
+
+.icinga-navbar-search-container {
+  border-left: 1px solid #ddd;
+  padding-left: 15px;
+  margin-top: 12px;
+}
+
+.icinga-navbar-hosts-container {
+  background-image: url('../../img/icons/host.png');
+  background-repeat: no-repeat;
+  background-position: 5px 50%;
+  padding-left: 30px !important;
+  margin-top: 15px;
+}
+.icinga-navbar-services-container {
+  background-image: url('../../img/icons/service.png');
+  background-repeat: no-repeat;
+  background-position: 5px 50%;
+  padding-left: 25px !important;
+  margin-top: 15px;
+}
+
+.icinga-navbar-pills {
+  border-style: solid;
+  border-width: 1px;
+  padding: 3px 5px 3px 5px;
+  border-radius: 3px;
+  font-size: 13px;
+}
+
+
+
+/** Service status **/
+
+.icinga-navbar-pills-critical {
+  border-color: #FF3300;
+  color: #FF3300;
+}
+
+.icinga-navbar-pills-ok {
+  border-color: #00CC33;
+  color: #00CC33;
+}
+
+.icinga-navbar-pills-warning {
+  border-color: #FFA500;
+  color: #FFA500;
+}
+
+.icinga-navbar-pills-unknown {
+  border-color: #E066FF;
+  color: #E066FF;
+}
+
+/** Host status **/
+
+.icinga-navbar-pills-unreachable {
+  border-color: #E066FF;
+  color: #E066FF;
+}
+
+.icinga-navbar-pills-down {
+  border-color: #FF3300;
+  color: #FF3300;
+}
+
+.icinga-navbar-pills-up {
+  border-color: #00CC33;
+  color: #00CC33;
+}

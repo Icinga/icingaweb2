@@ -165,7 +165,7 @@ class StaticController extends ActionController
 
         foreach ($moduleManager->getLoadedModules() as $moduleName) {
             $cssDir = $moduleName->getCssDir();
-            
+
             if (is_dir($cssDir)) {
                 $lessCompiler->addItem($cssDir);
             }

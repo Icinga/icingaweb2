@@ -1,0 +1,411 @@
+/**
+ * This file is part of Icinga 2 Web.
+ *
+ * Icinga 2 Web - Head for multiple monitoring backends.
+ * Copyright (C) 2013 Icinga Development Team
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ * @copyright 2013 Icinga Development Team <info@icinga.org>
+ * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
+ * @author    Icinga Development Team <info@icinga.org>
+ */
+
+/* =========================================================================
+   Default elements
+   ========================================================================= */
+
+
+html {
+  font-family: sans-serif; /* 1 */
+  -ms-text-size-adjust: 100%; /* 2 */
+  -webkit-text-size-adjust: 100%; /* 2 */
+  overflow-y: scroll;
+}
+
+body {
+  margin: 0;
+  color: #262625;
+  font-family: "Lucida Grande","Lucida Sans Unicode",Verdana,Helvetica,Arial,sans-serif;
+  font-size: 16px;
+  padding-top: 51px;
+}
+
+p {
+  line-height: 18px;
+}
+
+/* =========================================================================
+   Load Indocator
+   ========================================================================= */
+
+
+.load-indicator .mask {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: #666;
+  opacity: 0.3;
+  z-index: 998;
+}
+
+.load-indicator .label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: #000;
+  background-color: #fff;
+  font-weight: normal;
+  z-index: 999;
+  border: none;
+}
+
+/* =========================================================================
+   Common elements
+   ========================================================================= */
+
+
+.inline-image {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background: #c0c0c0 center center no-repeat;
+}
+
+.small-row {
+  font-size: 12px;
+  line-height: 16px;
+  display: block;
+  font-weight: normal;
+}
+
+.gap {
+  margin-bottom: 15px;
+}
+
+/* =========================================================================
+   Icinga Logo
+   ========================================================================= */
+
+.icinga-logo {
+  background: transparent url("@{baseurl}/img/logo_icinga.png") center center no-repeat;
+  width: 94px;
+  height: 33px;
+  display: block;
+  text-indent: -999px;
+  margin: 8px 0 0 8px;
+}
+
+/* =========================================================================
+   Links
+   ========================================================================= */
+
+a {
+  color: #049baf;
+  text-decoration: none;
+}
+
+a.button {
+  height: 30px;
+}
+
+a.btn-small {
+  height: 25px;
+}
+
+/**
+ * Address `outline` inconsistency between Chrome and other browsers.
+ */
+
+a:focus {
+  outline: thin dotted;
+}
+
+/**
+ * Improve readability when focused and also mouse hovered in all browsers.
+ */
+a:active,
+a:hover {
+  outline: 0;
+  color: #049baf;
+  text-decoration: underline;
+}
+
+/* ==========================================================================
+   Typography
+   ========================================================================== */
+
+/**
+ * Address variable `h1` font-size and margin within `section` and `article`
+ * contexts in Firefox 4+, Safari 5, and Chrome.
+ */
+
+h1 {
+  color: #262625;
+  font-size: 20px;
+}
+
+h2 {
+  color: #262625;
+  font-size: 16px;
+}
+
+
+p {
+  margin-top: 0;
+}
+
+
+/* ==========================================================================
+   Tables
+   ========================================================================== */
+
+
+table, th, td {
+  text-align: left;
+  vertical-align: top;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+th {
+  font-weight: bold;
+  font-size: 18px;
+  padding: 8px 8px 10px 8px;
+  border-bottom: 2px solid #ddd;
+}
+
+.table-detail th {
+  font-size: 16px;
+  border-top: 0;
+}
+
+.table-detail thead > tr > th, .table tbody > tr > th,
+.table-detail tbody > tr > td, .table tfoot > tr > td  {
+  border-top: 0 !important;
+}
+
+.table-detail > thead {
+  border-top: 0 !important;
+}
+
+td {
+  padding: 8px 10px 8px 8px !important;
+  border-bottom: 1px dotted #ddd !important;
+  border-top: none;
+}
+
+
+.badge-container {
+  display: block;
+  overflow: hidden;
+}
+
+.badge {
+  background-color: #fff;
+  border-radius: 2px;
+  color: #ff3300;
+  display: inline-block;
+  font-size: 12px;
+  font-weight: bold;
+  line-height: 1;
+  min-width: 10px;
+  padding-bottom: 3px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 3px;
+  text-align: center;
+  vertical-align: baseline;
+  white-space: nowrap;
+  border: 1px solid #ff3300;
+}
+
+.badge a,
+.badge a:active,
+.badge a:hover,
+.badge:hover {
+  color: #ff3300 !important;
+  display: block !important;
+}
+
+/* ==========================================================================
+   Forms
+   ========================================================================== */
+
+.form-inline .form-group {
+  display: inline-block;
+  margin-bottom: 0;
+  vertical-align: middle;
+}
+.form-group {
+  margin-bottom: 15px;
+}
+
+label {
+  display: inline-block;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.input-sm {
+  border-radius: 3px;
+  font-size: 16px;
+  padding: 5px;
+}
+.form-control {
+  background-color: #FFFFFF;
+  border: 1px solid #CCCCCC;
+  border-radius: 4px;
+  padding: 5px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+  color: #555555;
+  display: block;
+  vertical-align: middle;
+  width: 100%;
+}
+
+select.input-sm {
+
+}
+
+/* ==========================================================================
+   Buttons
+   ========================================================================== */
+
+.button {
+  text-align: center;
+  padding: 3px;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 3px;
+}
+
+.btn-common {
+  border-color: #ddd;
+  color: #262625;
+  background: rgb(255,255,255); /* Old browsers */
+  background: -moz-linear-gradient(top, rgb(255,255,255) 1%, rgb(245,245,245) 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(1%,rgb(255,255,255)), color-stop(100%,rgb(245,245,245))); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top, rgb(255,255,255) 1%,rgb(245,245,245) 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top, rgb(255,255,255) 1%,rgb(245,245,245) 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top, rgb(255,255,255) 1%,rgb(245,245,245) 100%); /* IE10+ */
+  background: linear-gradient(to bottom, rgb(255,255,255) 1%,rgb(245,245,245) 100%); /* W3C */
+}
+
+.panel-row > a:hover,
+.btn-common:hover {
+  border-color: #262625 !important;
+  color: #262625 !important;
+  text-decoration: none;
+}
+
+.btn-cta {
+  border-color: #049BAF;
+  color: #049BAF;
+  background: rgb(255,255,255); /* Old browsers */
+  background: -moz-linear-gradient(top, rgb(255,255,255) 1%, rgb(245,245,245) 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(1%,rgb(255,255,255)), color-stop(100%,rgb(245,245,245))); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top, rgb(255,255,255) 1%,rgb(245,245,245) 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top, rgb(255,255,255) 1%,rgb(245,245,245) 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top, rgb(255,255,255) 1%,rgb(245,245,245) 100%); /* IE10+ */
+  background: linear-gradient(to bottom, rgb(255,255,255) 1%,rgb(245,245,245) 100%); /* W3C */
+}
+
+.btn-small {
+  width: 25px;
+  height: 25px;
+  display: inline-block;
+}
+
+.btn-wide {
+  width: 100%;
+  display: block;
+}
+
+.btn-half-left {
+  float: left;
+  width: 48%;
+}
+.btn-half-right {
+  float: right;
+  width: 48%;
+}
+
+/* ==========================================================================
+   Details Panel
+   ========================================================================== */
+
+.panel-heading {
+  border-bottom: 0;
+  margin-bottom: 0px !important;
+  padding-left: 5px;
+  padding-bottom: 3px;
+  padding-top: 5px;
+  overflow: hidden;
+  border-radius: 0;
+}
+
+.panel-hostname {
+  font-weight: bold;
+}
+
+.separator {
+  border-top: 2px solid #ddd;
+  border-bottom: 0;
+  margin: 0;
+  height: 2px;
+}
+
+.panel-header-status {
+  font-weight: normal;
+}
+
+.panel-row {
+  display: block;
+  margin-bottom: 10px;
+  overflow: hidden;
+  border-bottom: 1px dotted #ddd;
+  padding-bottom: 10px;
+}
+
+
+.panel-label {
+  float: left;
+  padding-right: 10px;
+  width: 30%;
+  clear: left;
+
+}
+.panel-content {
+  float: left;
+  padding-right: 10px;
+  display: inline-block;
+  max-width: 40%;
+}
+
+.panel-button {
+  float: right;
+  display: inline-block;
+  overflow: hidden;
+}
+
+.panel-body {
+  margin-bottom: 45px;
+}

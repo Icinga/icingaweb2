@@ -1,0 +1,219 @@
+/**
+ * This file is part of Icinga 2 Web.
+ *
+ * Icinga 2 Web - Head for multiple monitoring backends.
+ * Copyright (C) 2013 Icinga Development Team
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ * @copyright 2013 Icinga Development Team <info@icinga.org>
+ * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
+ * @author    Icinga Development Team <info@icinga.org>
+ */
+
+/* =========================================================================
+   Icinga Navigation
+   ========================================================================= */
+
+.nav-stacked > li + li {
+  margin-left: 0;
+  margin-top: 0;
+}
+
+.nav-stacked {
+  background-color: #f8f8f8;
+}
+
+.icinga-subnavigation {
+  list-style: none;
+}
+
+.nav-stacked > li {
+  padding-left: 8px;
+  padding-top: 1px;
+  padding-bottom: 1px;
+  border-bottom: 1px dotted #049baf;
+  border-right: 1px dotted #049baf;
+
+}
+.nav-stacked > li:first-child {
+  border-top: 1px dotted #049baf;
+}
+
+.icinga-subnavigation > li {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px dotted #049baf;
+  border-right: 1px dotted #049baf;
+}
+
+ul.icinga-subnavigation {
+  border-bottom: 1px dotted #049baf;
+  margin-left: 0;
+  padding-left: 15px;
+}
+
+.icinga-subnavigation > li:last-child {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  border-bottom: 0;
+}
+
+.nav-stacked > li > a,
+.icinga-subnavigation > li > a {
+  padding-left: 40px;
+  padding-right: 3px;
+  border-left: 6px solid #049baf;
+  display: inline-block;
+}
+
+.nav-stacked > li > a.nav-notification,
+.icinga-subnavigation > li > a.nav-notification  {
+  border-left: 6px solid red !important;
+}
+
+.nav-stacked > li > a:hover,
+.icinga-subnavigation > li > a:focus {
+  /*  font-weight: bold;*/
+  background-color: transparent; !important;
+  display: inline-block;
+}
+
+.nav-stacked > li:hover,
+.nav-stacked > li:focus,
+.icinga-subnavigation > li:hover,
+.icinga-subnavigation > li:focus {
+  background-color: #fff;
+}
+
+.nav-stacked > li.active,
+.icinga-subnavigation > li.active {
+  background-color: #fff;
+  border-right: 0;
+}
+
+.subnav-icon-configuration {
+  background-image: url('../../img/icons/configuration_petrol.png');
+  background-repeat: no-repeat;
+  background-position: 19px 50%;
+}
+
+.badge-container-nav {
+  display: inline-block;
+  overflow: hidden;
+  padding-top: 0;
+  margin-bottom: 5px;
+}
+.badge-nav {
+  background-color: #fff;
+  border-radius: 2px;
+  color: #ff3300;
+  display: inline-block;
+  font-size: 12px;
+  font-weight: bold;
+  line-height: 1;
+  min-width: 10px;
+  padding-bottom: 3px;
+  padding-left: 7px;
+  padding-right: 7px;
+  padding-top: 3px;
+  text-align: center;
+  vertical-align: baseline;
+  white-space: nowrap;
+  border: 1px solid #ff3300;
+}
+
+.badge-container-subnav {
+  position: absolute;
+  overflow: hidden;
+  padding-top: 0;
+  padding-bottom;
+  margin-left: 2px;
+  margin-top: -8px;
+}
+.badge-subnav {
+  background-color: #fff;
+  border-radius: 2px;
+  color: #ff3300;
+  display: inline-block;
+  font-size: 10px;
+  font-weight: bold;
+  line-height: 1;
+  min-width: 10px;
+  padding-bottom: 2px;
+  padding-left: 5px;
+  padding-right: 5px;
+  padding-top: 2px;
+  text-align: center;
+  vertical-align: baseline;
+  white-space: nowrap;
+  border: 1px solid #ff3300;
+}
+
+.state-tile {
+  border-style: solid;
+  border-width: 1px;
+  padding: 3px 5px 3px 5px;
+  border-radius: 3px;
+  font-size: 13px;
+}
+
+.state-tile-up {
+  /* less */
+  border-style: solid;
+  border-width: 1px;
+  padding: 3px 5px 3px 5px;
+  border-radius: 3px;
+  font-size: 13px;
+  /* less */
+  border-color: #00CC33;
+  color: #00CC33;
+}
+
+.state-tile-unreachable {
+  /* less */
+  border-style: solid;
+  border-width: 1px;
+  padding: 3px 5px 3px 5px;
+  border-radius: 3px;
+  font-size: 13px;
+  /* less */
+  border-color: #E066FF;
+  color: #E066FF;
+}
+
+.state-tile-down {
+  /* less */
+  border-style: solid;
+  border-width: 1px;
+  padding: 3px 5px 3px 5px;
+  border-radius: 3px;
+  font-size: 13px;
+  /* less */
+  border-color: #FF3300;
+  color: #FF3300;
+}
+
+.state-tile-pending {
+  /* less */
+  border-style: solid;
+  border-width: 1px;
+  padding: 3px 5px 3px 5px;
+  border-radius: 3px;
+  font-size: 13px;
+  /* less */
+  border-color: #c0c0c0;
+  color: #c0c0c0;
+}

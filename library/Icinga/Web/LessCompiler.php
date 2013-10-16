@@ -28,6 +28,7 @@
 
 namespace Icinga\Web;
 
+use \Zend_Controller_Front;
 use \RecursiveDirectoryIterator;
 use \RecursiveIteratorIterator;
 use \RegexIterator;
@@ -52,6 +53,8 @@ class LessCompiler
      */
     private $lessc;
 
+    private $baseUrl;
+
     /**
      * Create a new instance
      */
@@ -59,6 +62,12 @@ class LessCompiler
     {
         require_once 'vendor/lessphp/lessc.inc.php';
         $this->lessc = new \lessc();
+
+        $this->lessc->setVariables(
+            array(
+                'baseurl' => '\'' . Zend_Controller_Front::getInstance()->getBaseUrl(). '\''
+            )
+        );
     }
 
     /**
