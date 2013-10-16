@@ -23,10 +23,17 @@
  * @author    Icinga Development Team <info@icinga.org>
  */
 
+
+@orange : #ff3300;
+@white : white;
+@black : #262625;
+@petrol : #049baf;
+@lightgrey : #ddd;
+@darkgrey : #555555;
+
 /* =========================================================================
    Default elements
    ========================================================================= */
-
 
 html {
   font-family: sans-serif; /* 1 */
@@ -37,7 +44,7 @@ html {
 
 body {
   margin: 0;
-  color: #262625;
+  color: @black;
   font-family: "Lucida Grande","Lucida Sans Unicode",Verdana,Helvetica,Arial,sans-serif;
   font-size: 16px;
   padding-top: 51px;
@@ -48,9 +55,8 @@ p {
 }
 
 /* =========================================================================
-   Load Indocator
+   Load Indicator
    ========================================================================= */
-
 
 .load-indicator .mask {
   position: absolute;
@@ -58,7 +64,7 @@ p {
   right: 0;
   bottom: 0;
   left: 0;
-  background-color: #666;
+  background-color: @darkgrey;
   opacity: 0.3;
   z-index: 998;
 }
@@ -67,8 +73,8 @@ p {
   position: absolute;
   top: 0;
   left: 0;
-  color: #000;
-  background-color: #fff;
+  color: @black;
+  background-color: @white;
   font-weight: normal;
   z-index: 999;
   border: none;
@@ -78,12 +84,11 @@ p {
    Common elements
    ========================================================================= */
 
-
 .inline-image {
   display: inline-block;
   width: 16px;
   height: 16px;
-  background: #c0c0c0 center center no-repeat;
+  background: @lightgrey center center no-repeat;
 }
 
 .small-row {
@@ -115,7 +120,7 @@ p {
    ========================================================================= */
 
 a {
-  color: #049baf;
+  color: @petrol;
   text-decoration: none;
 }
 
@@ -141,7 +146,7 @@ a:focus {
 a:active,
 a:hover {
   outline: 0;
-  color: #049baf;
+  color: @petrol;
   text-decoration: underline;
 }
 
@@ -155,12 +160,12 @@ a:hover {
  */
 
 h1 {
-  color: #262625;
+  color: @black;
   font-size: 20px;
 }
 
 h2 {
-  color: #262625;
+  color: @black;
   font-size: 16px;
 }
 
@@ -189,7 +194,7 @@ th {
   font-weight: bold;
   font-size: 18px;
   padding: 8px 8px 10px 8px;
-  border-bottom: 2px solid #ddd;
+  border-bottom: 2px solid @lightgrey;
 }
 
 .table-detail th {
@@ -208,7 +213,7 @@ th {
 
 td {
   padding: 8px 10px 8px 8px !important;
-  border-bottom: 1px dotted #ddd !important;
+  border-bottom: 1px dotted @lightgrey !important;
   border-top: none;
 }
 
@@ -219,9 +224,9 @@ td {
 }
 
 .badge {
-  background-color: #fff;
+  background-color: @white;
   border-radius: 2px;
-  color: #ff3300;
+  color: @orange;
   display: inline-block;
   font-size: 12px;
   font-weight: bold;
@@ -234,14 +239,14 @@ td {
   text-align: center;
   vertical-align: baseline;
   white-space: nowrap;
-  border: 1px solid #ff3300;
+  border: 1px solid @orange;
 }
 
 .badge a,
 .badge a:active,
 .badge a:hover,
 .badge:hover {
-  color: #ff3300 !important;
+  color: @orange !important;
   display: block !important;
 }
 
@@ -270,12 +275,12 @@ label {
   padding: 5px;
 }
 .form-control {
-  background-color: #FFFFFF;
-  border: 1px solid #CCCCCC;
+  background-color: @white;
+  border: 1px solid @lightgrey;
   border-radius: 4px;
   padding: 5px;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
-  color: #555555;
+  color: @darkgrey;
   display: block;
   vertical-align: middle;
   width: 100%;
@@ -298,8 +303,8 @@ select.input-sm {
 }
 
 .btn-common {
-  border-color: #ddd;
-  color: #262625;
+  border-color: @lightgrey;
+  color: @black;
   background: rgb(255,255,255); /* Old browsers */
   background: -moz-linear-gradient(top, rgb(255,255,255) 1%, rgb(245,245,245) 100%); /* FF3.6+ */
   background: -webkit-gradient(linear, left top, left bottom, color-stop(1%,rgb(255,255,255)), color-stop(100%,rgb(245,245,245))); /* Chrome,Safari4+ */
@@ -311,14 +316,14 @@ select.input-sm {
 
 .panel-row > a:hover,
 .btn-common:hover {
-  border-color: #262625 !important;
-  color: #262625 !important;
+  border-color: @black !important;
+  color: @black !important;
   text-decoration: none;
 }
 
 .btn-cta {
-  border-color: #049BAF;
-  color: #049BAF;
+  border-color: @petrol;
+  color: @petrol;
   background: rgb(255,255,255); /* Old browsers */
   background: -moz-linear-gradient(top, rgb(255,255,255) 1%, rgb(245,245,245) 100%); /* FF3.6+ */
   background: -webkit-gradient(linear, left top, left bottom, color-stop(1%,rgb(255,255,255)), color-stop(100%,rgb(245,245,245))); /* Chrome,Safari4+ */
@@ -367,7 +372,7 @@ select.input-sm {
 }
 
 .separator {
-  border-top: 2px solid #ddd;
+  border-top: 2px solid @lightgrey;
   border-bottom: 0;
   margin: 0;
   height: 2px;
@@ -381,10 +386,9 @@ select.input-sm {
   display: block;
   margin-bottom: 10px;
   overflow: hidden;
-  border-bottom: 1px dotted #ddd;
+  border-bottom: 1px dotted @lightgrey;
   padding-bottom: 10px;
 }
-
 
 .panel-label {
   float: left;

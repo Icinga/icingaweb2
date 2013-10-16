@@ -27,15 +27,23 @@
    Default elements for module monitoring
    ========================================================================= */
 
+@colorOk : #00cc33;
+@colorUp : #00cc33;
+@colorCritical : #ff3300;
+@colorDown: #ff3300;
+@colorPending: #c0c0c0;
+@colorUnknown : #E066FF;
+@colorWarning : #FFA500;
+@colorUnreachable : #E066FF;
+
 .host-name {
   display: block;
   margin-top: 5px;
   font-weight: bold;
 }
 
-
 .active {
-  background-color: #f5f5f5;
+  background-color: @lightgrey;
 }
 
 .output-text {
@@ -62,7 +70,7 @@
 .pagination > .active > span:hover,
 .pagination > .active > a:focus,
 .pagination > .active > span:focus {
-  background-color: #049baf !important;
+  background-color: @petrol !important;
   border-color: fuchsia !mportant;
 }
 
@@ -75,93 +83,97 @@
    ========================================================================== */
 
 .status-up {
-  background-color: #00cc33; /* green */
+  background-color: @colorUp;
 }
 
 .status-warning {
-  background-color: #00cc33; /* xx */
+  background-color: @colorWarning;
 }
 
 .status-critical {
-  background-color: #ff3300; /* red */
+  background-color: @colorCritical;
 }
 
 .status-unknown {
-  background-color: #00cc33; /* xx */
+  background-color: @colorUnknown;
 }
 
 .status-pending {
-  background-color: #00cc33; /* xx */
+  background-color: @colorPending;
 }
 
 /** Service status **/
 .tacheader-status-pending {
-  background-color: #c0c0c0;
+  background-color: @colorPending;
 }
 
 .tacheader-status-critical {
-  background-color: #FF3300;
+  background-color: @colorCritical;
 }
 
 .tacheader-status-ok {
-  /** background-color: #00CC33; **/
+  /* No status is displayed */
 }
 
 .tacheader-status-warning {
-  background-color: #FFA500;
+  background-color: @colorWarning;
 }
 
 .tacheader-status-unknown {
-  background-color: #E066FF;
+  background-color: @colorUnknown;
 }
 
 /** Host status **/
 
 .tacheader-status-unreachable {
-  background-color: #E066FF;
+  background-color: @colorUnreachable;
 }
 
 .tacheader-status-down {
-  background-color: #FF3300;
+  background-color: @colorDown;
 }
 
 .tacheader-status-up {
-  /** background-color: #00CC33; **/
+  /* Do not display any status */
 }
 
 /* Borders for Detail Headers  */
+.border-status-mixin (@color) {
+  border-left: 10px solid @color;
+}
+
 .border-status-pending {
-  border-left: 8px solid #c0c0c0;
+  .border-status-mixin(@colorPending);
 }
 
 .border-status-critical {
-  border-left: 8px solid #FF3300;
+  .border-status-mixin(@colorCritical);
 }
 
 .border-status-ok {
-  border-left: 10px solid #00CC33;
+  .border-status-mixin(@colorOk);
 }
 
 .border-status-warning {
-  border-left: 10px solid #FFA500;
+  .border-status-mixin(@colorWarning);
 }
 
 .border-status-unknown {
-  border-left: 10px solid #E066FF;
+  .border-status-mixin(@colorUnknown);
 }
 
 /** Host status **/
 
 .border-status-unreachable {
-  border-left: 10px solid #E066FF;
+  .border-status-mixin(@colorUnreachable);
 }
 
 .border-status-down {
-  border-left: 10px solid #FF3300;
+  .border-status-mixin(@colorDown);
 }
 
 .border-status-up {
-  border-left: 10px solid #00CC33;
+  .border-status-mixin(@colorUp);
 }
 
 .icinga-navbar {
@@ -180,72 +192,61 @@
   padding-left: 25px !important;
 }
 
-.icinga-navbar-search-container {
-  border-left: 1px solid #ddd;
-  padding-left: 15px;
-  margin-top: 12px;
+.icinga-navbar-pills-mixin (@color) {
+  border-color: @color;
+  color: @color;
 }
 
-.icinga-navbar-hosts-container {
-  background-image: url('../../img/icons/host.png');
-  background-repeat: no-repeat;
-  background-position: 5px 50%;
-  padding-left: 30px !important;
-  margin-top: 15px;
-}
-.icinga-navbar-services-container {
-  background-image: url('../../img/icons/service.png');
-  background-repeat: no-repeat;
-  background-position: 5px 50%;
-  padding-left: 25px !important;
-  margin-top: 15px;
+.icinga-navbar-pills-critical {
+  .icinga-navbar-pills-mixin(@colorCritical);
 }
 
-.icinga-navbar-pills {
+.icinga-navbar-pills-ok {
+  .icinga-navbar-pills-mixin(@colorOk);
+}
+
+.icinga-navbar-pills-warning {
+  .icinga-navbar-pills-mixin(@colorWarning);
+}
+
+.icinga-navbar-pills-unknown {
+  .icinga-navbar-pills-mixin(@colorWarning);
+}
+
+.icinga-navbar-pills-unreachable {
+  .icinga-navbar-pills-mixin(@colorUnreachable);
+}
+
+.icinga-navbar-pills-down {
+  .icinga-navbar-pills-mixin(@colorDown);
+}
+
+.icinga-navbar-pills-up {
+  .icinga-navbar-pills-mixin(@colorUp);
+}
+
+.state-tile (@color) {
   border-style: solid;
   border-width: 1px;
   padding: 3px 5px 3px 5px;
   border-radius: 3px;
   font-size: 13px;
+  border-color: @color;
+  color: @color;
 }
 
-
-
-/** Service status **/
-
-.icinga-navbar-pills-critical {
-  border-color: #FF3300;
-  color: #FF3300;
+.state-tile-up {
+  .navigation-tile-mixin(@colorUp);
 }
 
-.icinga-navbar-pills-ok {
-  border-color: #00CC33;
-  color: #00CC33;
+.state-tile-unreachable {
+  .navigation-tile-mixin(@colorUnreachable);
 }
 
-.icinga-navbar-pills-warning {
-  border-color: #FFA500;
-  color: #FFA500;
+.state-tile-down {
+  .navigation-tile-mixin(@colorDown);
 }
 
-.icinga-navbar-pills-unknown {
-  border-color: #E066FF;
-  color: #E066FF;
-}
-
-/** Host status **/
-
-.icinga-navbar-pills-unreachable {
-  border-color: #E066FF;
-  color: #E066FF;
-}
-
-.icinga-navbar-pills-down {
-  border-color: #FF3300;
-  color: #FF3300;
-}
-
-.icinga-navbar-pills-up {
-  border-color: #00CC33;
-  color: #00CC33;
+.state-tile-pending {
+  .navigation-tile-mixin(@colorPending);
 }

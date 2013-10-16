@@ -228,7 +228,7 @@ class Tab implements Widget
             $caption = '<img src="' . $this->icon->getAbsoluteUrl()
                 . '" style="width:16px;height:16px"/> ' . $caption;
         } elseif ($this->iconCls !== null) {
-            $caption = '<i class="icon-' . $this->iconCls . '"></i> ' . $caption;
+            $caption = '<i class="' . $this->iconCls . '"></i> ' . $caption;
         }
         if ($this->url !== null) {
             $this->url->overwriteParams($this->urlParams);

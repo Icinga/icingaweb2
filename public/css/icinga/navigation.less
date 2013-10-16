@@ -27,13 +27,21 @@
    Icinga Navigation
    ========================================================================= */
 
+.navigation-tile-mixin {
+  border-style: solid;
+  border-width: 1px;
+  padding: 3px 5px 3px 5px;
+  border-radius: 3px;
+  font-size: 13px;
+}
+
 .nav-stacked > li + li {
   margin-left: 0;
   margin-top: 0;
 }
 
 .nav-stacked {
-  background-color: #f8f8f8;
+  background-color: @lightgrey;
 }
 
 .icinga-subnavigation {
@@ -44,23 +52,23 @@
   padding-left: 8px;
   padding-top: 1px;
   padding-bottom: 1px;
-  border-bottom: 1px dotted #049baf;
-  border-right: 1px dotted #049baf;
+  border-bottom: 1px dotted @petrol;
+  border-right: 1px dotted @petrol;
 
 }
 .nav-stacked > li:first-child {
-  border-top: 1px dotted #049baf;
+  border-top: 1px dotted @petrol;
 }
 
 .icinga-subnavigation > li {
   padding-top: 8px;
   padding-bottom: 8px;
-  border-bottom: 1px dotted #049baf;
-  border-right: 1px dotted #049baf;
+  border-bottom: 1px dotted @petrol;
+  border-right: 1px dotted @petrol;
 }
 
 ul.icinga-subnavigation {
-  border-bottom: 1px dotted #049baf;
+  border-bottom: 1px dotted @petrol;
   margin-left: 0;
   padding-left: 15px;
 }
@@ -75,7 +83,7 @@ ul.icinga-subnavigation {
 .icinga-subnavigation > li > a {
   padding-left: 40px;
   padding-right: 3px;
-  border-left: 6px solid #049baf;
+  border-left: 6px solid @petrol;
   display: inline-block;
 }
 
@@ -95,19 +103,13 @@ ul.icinga-subnavigation {
 .nav-stacked > li:focus,
 .icinga-subnavigation > li:hover,
 .icinga-subnavigation > li:focus {
-  background-color: #fff;
+  background-color: @white;
 }
 
 .nav-stacked > li.active,
 .icinga-subnavigation > li.active {
-  background-color: #fff;
+  background-color: @white;
   border-right: 0;
-}
-
-.subnav-icon-configuration {
-  background-image: url('../../img/icons/configuration_petrol.png');
-  background-repeat: no-repeat;
-  background-position: 19px 50%;
 }
 
 .badge-container-nav {
@@ -117,9 +119,9 @@ ul.icinga-subnavigation {
   margin-bottom: 5px;
 }
 .badge-nav {
-  background-color: #fff;
+  background-color: @white;
   border-radius: 2px;
-  color: #ff3300;
+  color: @orange;
   display: inline-block;
   font-size: 12px;
   font-weight: bold;
@@ -132,7 +134,7 @@ ul.icinga-subnavigation {
   text-align: center;
   vertical-align: baseline;
   white-space: nowrap;
-  border: 1px solid #ff3300;
+  border: 1px solid @orange;
 }
 
 .badge-container-subnav {
@@ -144,9 +146,9 @@ ul.icinga-subnavigation {
   margin-top: -8px;
 }
 .badge-subnav {
-  background-color: #fff;
+  background-color: @white;
   border-radius: 2px;
-  color: #ff3300;
+  color: @orange;
   display: inline-block;
   font-size: 10px;
   font-weight: bold;
@@ -159,61 +161,34 @@ ul.icinga-subnavigation {
   text-align: center;
   vertical-align: baseline;
   white-space: nowrap;
-  border: 1px solid #ff3300;
+  border: 1px solid @orange;
 }
 
-.state-tile {
+.icinga-navbar-search-container {
+  border-left: 1px solid #ddd;
+  padding-left: 15px;
+  margin-top: 12px;
+}
+
+.icinga-navbar-hosts-container {
+  background-image: url('../../img/icons/host.png');
+  background-repeat: no-repeat;
+  background-position: 5px 50%;
+  padding-left: 30px !important;
+  margin-top: 15px;
+}
+.icinga-navbar-services-container {
+  background-image: url('../../img/icons/service.png');
+  background-repeat: no-repeat;
+  background-position: 5px 50%;
+  padding-left: 25px !important;
+  margin-top: 15px;
+}
+
+.icinga-navbar-pills {
   border-style: solid;
   border-width: 1px;
   padding: 3px 5px 3px 5px;
   border-radius: 3px;
   font-size: 13px;
-}
-
-.state-tile-up {
-  /* less */
-  border-style: solid;
-  border-width: 1px;
-  padding: 3px 5px 3px 5px;
-  border-radius: 3px;
-  font-size: 13px;
-  /* less */
-  border-color: #00CC33;
-  color: #00CC33;
-}
-
-.state-tile-unreachable {
-  /* less */
-  border-style: solid;
-  border-width: 1px;
-  padding: 3px 5px 3px 5px;
-  border-radius: 3px;
-  font-size: 13px;
-  /* less */
-  border-color: #E066FF;
-  color: #E066FF;
-}
-
-.state-tile-down {
-  /* less */
-  border-style: solid;
-  border-width: 1px;
-  padding: 3px 5px 3px 5px;
-  border-radius: 3px;
-  font-size: 13px;
-  /* less */
-  border-color: #FF3300;
-  color: #FF3300;
-}
-
-.state-tile-pending {
-  /* less */
-  border-style: solid;
-  border-width: 1px;
-  padding: 3px 5px 3px 5px;
-  border-radius: 3px;
-  font-size: 13px;
-  /* less */
-  border-color: #c0c0c0;
-  color: #c0c0c0;
 }
