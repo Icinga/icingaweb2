@@ -1,0 +1,10 @@
+<div class="doc-toc pull-left">
+    <ul class="nav nav-stacked">
+        <?php foreach ($toc as $i): ?>
+            <li class="toc-h<?= $i['level'] ?>">
+                <a href="#<?= $i['fragment'] ?>"><?= $this->escape($i['heading']); ?></a>
+            </li>
+        <?php endforeach; ?>
+    </ul>
+</div>
+<?= $html ?>
