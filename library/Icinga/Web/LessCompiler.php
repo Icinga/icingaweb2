@@ -28,11 +28,12 @@
 
 namespace Icinga\Web;
 
-use \Zend_Controller_Front;
+use \Exception;
 use \RecursiveDirectoryIterator;
 use \RecursiveIteratorIterator;
 use \RegexIterator;
 use \RecursiveRegexIterator;
+use \Zend_Controller_Front;
 
 /**
  * Less compiler prints files or directories to stdout
@@ -93,7 +94,15 @@ class LessCompiler
         if ($ext === 'css') {
             readfile($file);
         } elseif ($ext === 'less') {
-            echo $this->lessc->compileFile($file);
+            try {
+                echo $this->lessc->compileFile($file);
+            } catch (Exception $e) {
+                echo '/* ' . PHP_EOL . ' ===' . PHP_EOL;
+                echo '  Error in file ' . $file . PHP_EOL;
+                echo '  ' . $e->getMessage() . PHP_EOL . PHP_EOL;
+                echo '  ' . 'This file was dropped cause of errors.' . PHP_EOL;
+                echo ' ===' . PHP_EOL . '*/' . PHP_EOL;
+            }
         }
 
         echo PHP_EOL;
