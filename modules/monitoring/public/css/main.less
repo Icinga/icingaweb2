@@ -1,0 +1,252 @@
+/**
+ * This file is part of Icinga 2 Web.
+ *
+ * Icinga 2 Web - Head for multiple monitoring backends.
+ * Copyright (C) 2013 Icinga Development Team
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ * @copyright 2013 Icinga Development Team <info@icinga.org>
+ * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
+ * @author    Icinga Development Team <info@icinga.org>
+ */
+
+/* =========================================================================
+   Default elements for module monitoring
+   ========================================================================= */
+
+@colorOk : #00cc33;
+@colorUp : #00cc33;
+@colorCritical : #ff3300;
+@colorDown: #ff3300;
+@colorPending: #c0c0c0;
+@colorUnknown : #E066FF;
+@colorWarning : #FFA500;
+@colorUnreachable : #E066FF;
+
+.host-name {
+  display: block;
+  margin-top: 5px;
+  font-weight: bold;
+}
+
+.active {
+  background-color: @lightgrey;
+}
+
+.output-text {
+  font-size: 12px;
+  line-height: 16px;
+  display: block;
+}
+
+/* ==========================================================================
+   Forms
+   ========================================================================== */
+
+.panel-row form {
+  display: inline;
+}
+
+/* ==========================================================================
+   Pagination
+   ========================================================================== */
+
+.pagination > .active > a,
+.pagination > .active > span,
+.pagination > .active > a:hover,
+.pagination > .active > span:hover,
+.pagination > .active > a:focus,
+.pagination > .active > span:focus {
+  background-color: @petrol !important;
+  border-color: fuchsia !mportant;
+}
+
+.pagination-sm > li > a, .pagination-sm > li > span {
+  font-size: 16px !important;
+}
+
+/* ==========================================================================
+   Status colors
+   ========================================================================== */
+
+.status-up {
+  background-color: @colorUp;
+}
+
+.status-warning {
+  background-color: @colorWarning;
+}
+
+.status-critical {
+  background-color: @colorCritical;
+}
+
+.status-unknown {
+  background-color: @colorUnknown;
+}
+
+.status-pending {
+  background-color: @colorPending;
+}
+
+/** Service status **/
+.tacheader-status-pending {
+  background-color: @colorPending;
+}
+
+.tacheader-status-critical {
+  background-color: @colorCritical;
+}
+
+.tacheader-status-ok {
+  /* No status is displayed */
+}
+
+.tacheader-status-warning {
+  background-color: @colorWarning;
+}
+
+.tacheader-status-unknown {
+  background-color: @colorUnknown;
+}
+
+/** Host status **/
+
+.tacheader-status-unreachable {
+  background-color: @colorUnreachable;
+}
+
+.tacheader-status-down {
+  background-color: @colorDown;
+}
+
+.tacheader-status-up {
+  /* Do not display any status */
+}
+
+/* Borders for Detail Headers  */
+.border-status-mixin (@color) {
+  border-left: 10px solid @color;
+}
+
+.border-status-pending {
+  .border-status-mixin(@colorPending);
+}
+
+.border-status-critical {
+  .border-status-mixin(@colorCritical);
+}
+
+.border-status-ok {
+  .border-status-mixin(@colorOk);
+}
+
+.border-status-warning {
+  .border-status-mixin(@colorWarning);
+}
+
+.border-status-unknown {
+  .border-status-mixin(@colorUnknown);
+}
+
+/** Host status **/
+
+.border-status-unreachable {
+  .border-status-mixin(@colorUnreachable);
+}
+
+.border-status-down {
+  .border-status-mixin(@colorDown);
+}
+
+.border-status-up {
+  .border-status-mixin(@colorUp);
+}
+
+.icinga-navbar {
+  margin-right: 15px;
+}
+.icinga-navbar-reload {
+  margin-top: 13px;
+  margin-right: 40px;
+  margin-left: 15px;
+}
+
+.icinga-navbar-search {
+  background-image: url('../../img/icons/search.png');
+  background-repeat: no-repeat;
+  background-position: 5px 50%;
+  padding-left: 25px !important;
+}
+
+.icinga-navbar-pills-mixin (@color) {
+  border-color: @color;
+  color: @color;
+}
+
+.icinga-navbar-pills-critical {
+  .icinga-navbar-pills-mixin(@colorCritical);
+}
+
+.icinga-navbar-pills-ok {
+  .icinga-navbar-pills-mixin(@colorOk);
+}
+
+.icinga-navbar-pills-warning {
+  .icinga-navbar-pills-mixin(@colorWarning);
+}
+
+.icinga-navbar-pills-unknown {
+  .icinga-navbar-pills-mixin(@colorWarning);
+}
+
+.icinga-navbar-pills-unreachable {
+  .icinga-navbar-pills-mixin(@colorUnreachable);
+}
+
+.icinga-navbar-pills-down {
+  .icinga-navbar-pills-mixin(@colorDown);
+}
+
+.icinga-navbar-pills-up {
+  .icinga-navbar-pills-mixin(@colorUp);
+}
+
+.state-tile (@color) {
+  border-style: solid;
+  border-width: 1px;
+  padding: 3px 5px 3px 5px;
+  border-radius: 3px;
+  font-size: 13px;
+  border-color: @color;
+  color: @color;
+}
+
+.state-tile-up {
+  .navigation-tile-mixin(@colorUp);
+}
+
+.state-tile-unreachable {
+  .navigation-tile-mixin(@colorUnreachable);
+}
+
+.state-tile-down {
+  .navigation-tile-mixin(@colorDown);
+}
+
+.state-tile-pending {
+  .navigation-tile-mixin(@colorPending);
+}

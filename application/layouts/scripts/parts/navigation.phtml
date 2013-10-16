@@ -35,8 +35,13 @@ $item = $this->navigation->keys("menu");
       }
       $activeSet = $activeSet || $active;
       ?>
-    <li class="<?= $active ? "active" : "" ?> <?= $iconClass; ?>">
-      <a href="<?= $url ?>"><?= $itemName ?></a>
+    <li class="<?= $active ? "active" : "" ?>">
+      <a href="<?= $url ?>">
+          <?php if ($iconClass): ?>
+            <i class="<?= $iconClass; ?>"></i>
+          <?php endif; ?>
+          <?= $itemName ?>
+      </a>
     </li>
       <?php
       $class = "";

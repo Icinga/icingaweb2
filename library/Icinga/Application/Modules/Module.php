@@ -197,9 +197,9 @@ class Module
      *
      * @return string
      */
-    public function getCssFilename()
+    public function getCssDir()
     {
-        return $this->cssdir . '/module.less';
+        return $this->cssdir;
     }
 
     /**

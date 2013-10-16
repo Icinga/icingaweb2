@@ -141,10 +141,9 @@ class StaticController extends ActionController
      */
     private function setCacheHeader($maxAge)
     {
-        $response = $this->getResponse();
-        $response->setHeader('Cache-Control', 'max-age=3600', true);
-        $response->setHeader('Pragma', 'cache', true);
-        $response->setHeader(
+        $this->_response->setHeader('Cache-Control', 'max-age=3600', true);
+        $this->_response->setHeader('Pragma', 'cache', true);
+        $this->_response->setHeader(
             'Expires',
             gmdate(
                 'D, d M Y H:i:s',
@@ -152,6 +151,32 @@ class StaticController extends ActionController
             ) . ' GMT',
             true
         );
+    }
+
+    public function stylesheetAction()
+    {
+        $lessCompiler = new \Icinga\Web\LessCompiler();
+        $moduleManager = Icinga::app()->getModuleManager();
+
+        $publicDir = realpath(dirname($_SERVER['SCRIPT_FILENAME']));
+
+        $lessCompiler->addItem($publicDir . '/css/vendor');
+        $lessCompiler->addItem($publicDir . '/css/icinga');
+
+        foreach ($moduleManager->getLoadedModules() as $moduleName) {
+            $cssDir = $moduleName->getCssDir();
+
+            if (is_dir($cssDir)) {
+                $lessCompiler->addItem($cssDir);
+            }
+        }
+
+        $this->_response->setHeader('Content-Type', 'text/css');
+        $this->setCacheHeader(3600);
+
+        $lessCompiler->printStack();
+
+        return;
     }
 }
 // @codingStandardsIgnoreEnd

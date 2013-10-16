@@ -165,7 +165,7 @@ class Monitoring_ShowController extends MonitoringController
                 'service',
                 array(
                     'title'     => 'Service',
-                    'icon'      => '',
+                    'iconCls'      => 'icinga-icon-service',
                     'url'       => 'monitoring/show/service',
                     'urlParams' => $params,
                     'tagParams' => array(
@@ -178,7 +178,7 @@ class Monitoring_ShowController extends MonitoringController
             'host',
             array(
                 'title'     => 'Host',
-                'icon'      => '',
+                'iconCls'      => 'icinga-icon-host',
                 'url'       => 'monitoring/show/host',
                 'urlParams' => $params,
                 'tagParams' => array(
@@ -190,7 +190,7 @@ class Monitoring_ShowController extends MonitoringController
             'services',
             array(
                 'title'     => 'Services',
-                'icon'      => 'img/classic/service.png',
+                'iconCls'      => 'icinga-icon-service',
                 'url'       => 'monitoring/show/services',
                 'urlParams' => $params,
                 'tagParams' => array(
@@ -202,7 +202,7 @@ class Monitoring_ShowController extends MonitoringController
             'history',
             array(
                 'title'     => 'History',
-                'icon'      => '',
+                'iconCls'      => 'icinga-icon-history',
                 'url'       => 'monitoring/show/history',
                 'urlParams' => $params,
                 'tagParams' => array(
