@@ -1,5 +1,4 @@
 <?php
-
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga 2 Web.
@@ -31,6 +30,9 @@ use \Icinga\Web\Controller\ActionController;
 use \Icinga\Module\Monitoring\Backend;
 use \Icinga\Module\Monitoring\Object\Host;
 use \Icinga\Module\Monitoring\Object\Service;
+use \Icinga\Module\Monitoring\Form\Command\MultiCommandFlagForm;
+use \Icinga\Web\Form;
+
 /**
  * Displays aggregations collections of multiple objects.
  */
@@ -56,7 +58,6 @@ class Monitoring_MultiController extends ActionController
                 $errors[] = 'Query ' . $index . ' misses property host.';
                 continue;
             }
-
             $host = Host::fetch($this->backend, $query['host']);
             foreach ($host->comments as $comment) {
                 $comments[$comment->comment_id] = null;
@@ -73,6 +74,9 @@ class Monitoring_MultiController extends ActionController
         $this->view->hostnames = $hostnames;
         $this->view->downtimes = $downtimes;
         $this->view->errors = $errors;
+
+        $this->handleConfigurationForm();
+        $this->view->form->setAction('/icinga2-web/monitoring/multi/host');
     }
 
     public function serviceAction()
@@ -107,6 +111,9 @@ class Monitoring_MultiController extends ActionController
         $this->view->comments = array_keys($comments);
         $this->view->downtimes = $downtimes;
         $this->view->errors = $errors;
+
+        $this->handleConfigurationForm();
+        $this->view->form->setAction('/icinga2-web/monitoring/multi/service');
     }
 
     public function notificationAction()
@@ -117,6 +124,31 @@ class Monitoring_MultiController extends ActionController
     public function historyAction()
     {
 
+    }
+
+    /**
+     * Handle the form to configure configuration flags.
+     */
+    private function handleConfigurationForm()
+    {
+        $this->view->form = $form = new MultiCommandFlagForm(
+            array(
+                'passive_checks_enabled' => 'Passive Checks',
+                'active_checks_enabled' => 'Active Checks',
+                'obsessing' => 'Obsessing',
+                'notifications_enabled' => 'Notifications',
+                'event_handler_enabled' => 'Event Handler',
+                'flap_detection_enabled' => 'Flap Detection'
+            )
+        );
+        $form->setRequest($this->_request);
+        if ($form->isSubmittedAndValid()) {
+            // TODO: Handle commands
+            $changed = $form->getChangedValues();
+        }
+        if ($this->_request->isPost() === false) {
+            $this->view->form->initFromItems($this->view->objects);
+        }
     }
 
     /**
@@ -142,6 +174,4 @@ class Monitoring_MultiController extends ActionController
         }
         return $objects;
     }
-
-
 }

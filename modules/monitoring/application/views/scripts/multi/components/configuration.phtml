@@ -2,14 +2,8 @@
   <div class="panel-heading">
     <span> Configuration </span>
   </div>
-
   <div class="panel-body">
-      Change settings:
-
-      <form>
-          Active Checks {{CHECKBOX}}
-          Passive Checks {{CHECKBOX}}
-          Flap Detection {{CHECKBOX}}
-      </form>
+    Change configuration for <?= count($this->objects) ?> objects.
+    <?php echo $this->form->render($this); ?>
   </div>
 </div>

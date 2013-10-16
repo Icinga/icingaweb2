@@ -2,15 +2,16 @@
 $this->is_service = true;
 ?>
 
-<div class="panel panel-default">
+<div class="panel-heading">
+
     <div class="panel-heading">
-        {{SERVICE_ICON}}
-        <h1> Services </h1>
+        <h1>Services</h1>
     </div>
 
     <div class="panel-body">
         <?= $this->render('multi/components/summary.phtml'); ?>
     </div>
+
 </div>
 
 <?= $this->render('multi/components/downtimes.phtml'); ?>
