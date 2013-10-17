@@ -52,7 +52,9 @@ class EventHistory extends DataView
             'attempt',
             'max_attempts',
             'output',
-            'type'
+            'type',
+            'host',
+            'service'
         );
     }
 
@@ -72,37 +74,6 @@ class EventHistory extends DataView
     {
         return array(
             'hostgroups'
-        );
-    }
-}
-=======
-            'type',
-            'host',
-            'service'
-        );
-    }
-
-    /**
-     * Return the table name
-     *
-     * @return string
-     */
-    public static function getTableName()
-    {
-        return 'eventhistory';
-    }
-
-    /**
-     * Retrieve default sorting rules for particular columns. These involve sort order and potential additional to sort
-     *
-     * @return array
-     */
-    public function getSortRules()
-    {
-        return array(
-            'raw_timestamp' => array(
-                'order' => self::SORT_DESC
-            )
         );
     }
 }

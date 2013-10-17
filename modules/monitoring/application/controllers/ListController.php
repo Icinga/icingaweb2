@@ -384,12 +384,27 @@ class Monitoring_ListController extends MonitoringController
 
     public function eventhistoryAction()
     {
-        $query = EventHistoryView::fromRequest($this->_request)->getQuery();
+        $query = EventHistoryView::fromRequest(
+            $this->getRequest(),
+            array(
+                'host_name',
+                'service_description',
+                'object_type',
+                'timestamp',
+                'raw_timestamp',
+                'state',
+                'attempt',
+                'max_attempts',
+                'output',
+                'type',
+                'host',
+                'service'
+            )
+        )->getQuery();
         $this->handleFormatRequest($query);
         $this->view->history = $query->paginate();
         $this->setupSortControl(
-            array(
-            )
+            array()
         );
     }
 
