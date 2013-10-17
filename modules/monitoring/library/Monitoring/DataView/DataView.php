@@ -74,7 +74,7 @@ abstract class DataView implements Filterable
 
         $view = new static(Backend::createBackend($request->getParam('backend')), $columns);
         $parser = new UrlViewFilter($view);
-        $view->getQuery()->setFilter($parser->parseUrl());
+        $view->getQuery()->setFilter($parser->fromRequest($request));
 
         $order = $request->getParam('dir');
         if ($order !== null) {
@@ -102,8 +102,11 @@ abstract class DataView implements Filterable
     public static function fromParams(array $params, array $columns = null)
     {
         $view = new static(Backend::createBackend($params['backend']), $columns);
+
         foreach ($params as $key => $value) {
-            $view->getQuery()->where($key, $value);
+            if ($view->isValidFilterTarget($key)) {
+                $view->getQuery()->where($key, $value);
+            }
         }
         $order = isset($params['order']) ? $params['order'] : null;
         if ($order !== null) {

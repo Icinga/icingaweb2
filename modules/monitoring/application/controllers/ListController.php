@@ -52,6 +52,7 @@ use Icinga\Module\Monitoring\DataView\Comment as CommentView;
 use Icinga\Module\Monitoring\DataView\Groupsummary as GroupsummaryView;
 use Icinga\Module\Monitoring\DataView\EventHistory as EventHistoryView;
 use Icinga\Module\Monitoring\Filter\UrlViewFilter;
+use Icinga\Module\Monitoring\DataView\ServiceStatus;
 use Icinga\Filter\Filterable;
 
 class Monitoring_ListController extends MonitoringController
@@ -131,7 +132,8 @@ class Monitoring_ListController extends MonitoringController
             )
         );
         $query = $dataview->getQuery();
-        $this->setupFilterControl($dataview);
+        $this->setupFilterControl($dataview, 'host');
+
         $this->setupSortControl(array(
             'host_last_check'   => 'Last Host Check',
             'host_severity'     => 'Host Severity',
@@ -152,6 +154,8 @@ class Monitoring_ListController extends MonitoringController
     {
         $this->compactView = 'services-compact';
         $this->view->services = $this->fetchServices();
+
+        $this->setupFilterControl(ServiceStatus::fromRequest($this->getRequest()), 'service');
         $this->setupSortControl(array(
             'service_last_check'    =>  'Last Service Check',
             'service_severity'      =>  'Severity',
@@ -437,12 +441,12 @@ class Monitoring_ListController extends MonitoringController
         $this->view->sortControl->applyRequest($this->getRequest());
     }
 
-    private function setupFilterControl(Filterable $dataview)
+    private function setupFilterControl(Filterable $dataview, $domain)
     {
         $parser = new UrlViewFilter($dataview);
         $this->view->filterBox = new FilterBox(
-            $parser->parseUrl(),
-            'host',
+            $parser->fromRequest($this->getRequest()),
+            $domain,
             'monitoring'
         );
 

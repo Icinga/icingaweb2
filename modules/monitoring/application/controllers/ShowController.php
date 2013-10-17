@@ -55,7 +55,16 @@ class Monitoring_ShowController extends MonitoringController
      */
     public function init()
     {
-        $this->view->object = AbstractObject::fromRequest($this->getRequest());
+
+        if ($this->getRequest()->getActionName() === 'host') {
+            $this->view->object = new Host($this->getRequest());
+        } elseif ($this->getRequest()->getActionName() === 'service') {
+            $this->view->object = new Service($this->getRequest());
+
+        } else {
+            $this->view->object = AbstractObject::fromRequest($this->getRequest());
+        }
+
         $this->createTabs();
     }
 

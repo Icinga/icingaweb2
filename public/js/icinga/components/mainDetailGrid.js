@@ -25,8 +25,8 @@
  * @author     Icinga Development Team <info@icinga.org>
  */
 // {{{ICINGA_LICENSE_HEADER}}}
-define(['components/app/container', 'jquery', 'logging', 'URIjs/URI', 'URIjs/URITemplate'],
-function(Container, $, logger, URI) {
+define(['components/app/container', 'jquery', 'logging', 'URIjs/URI', 'URIjs/URITemplate', 'icinga/util/url'],
+function(Container, $, logger, URI, tpl, urlMgr) {
     "use strict";
 
     /**
@@ -141,7 +141,7 @@ function(Container, $, logger, URI) {
                     }
                 }
 
-                Container.getDetailContainer().replaceDomFromUrl($('a', this).attr('href'));
+                urlMgr.setDetailUrl($('a', this).attr('href'));
                 if (!ev.ctrlKey && !ev.metaKey) {
                     $('tr', $(this).parent()).removeClass('active');
                 }
@@ -160,24 +160,31 @@ function(Container, $, logger, URI) {
             controlForms.on('submit', function(evt) {
                 var container = (new Container(this));
                 var form = $(this);
-                var url = URI(container.getContainerHref());
-                url.search(URI.parseQuery(form.serialize()));
-                container.replaceDomFromUrl(url.href());
+                var url = container.getUrl();
+
+                if (url.indexOf('?') >= 0) {
+                    url += '&';
+                } else {
+                    url += '?';
+                }
+                url += form.serialize();
+                container.setUrl(url);
 
                 evt.preventDefault();
                 evt.stopPropagation();
                 return false;
 
             });
-            $('.pagination li a', contentNode.parent()).on('click', function(ev) {
+            $('.pagination li a, a.filter-badge', contentNode.parent()).on('click', function(ev) {
 
                 var container = (new Container(this));
-                logger.debug("Pagination clicked in " + container.containerType);
+
                 // Detail will be removed when main pagination changes
                 if (container.containerType === 'icingamain') {
-                    Icinga.replaceBodyFromUrl(URI($(this).attr('href')).removeQuery('detail'));
+                    urlMgr.setMainUrl(URI($(this).attr('href')));
+                    urlMgr.setDetailUrl('');
                 } else {
-                    container.replaceDomFromUrl($(this).attr('href'));
+                    urlMgr.setDetailUrl(URI($(this).attr('href')));
                 }
 
                 ev.preventDefault();
@@ -187,7 +194,7 @@ function(Container, $, logger, URI) {
         };
 
         var getSelectedRows = function() {
-            return $('a[href="' + Container.getDetailContainer().getContainerHref() + '"]', determineContentTable()).
+            return $('a[href="' + urlMgr.getDetailUrl() + '"]', determineContentTable()).
                 parentsUntil('table', 'tr');
         };
 
@@ -214,9 +221,11 @@ function(Container, $, logger, URI) {
             this.container.removeDefaultLoadIndicator();
             controlForms = determineControlForms();
             contentNode = determineContentTable();
+            this.syncSelectionWithDetail();
             this.registerControls();
             this.registerTableLinks();
             this.registerHistoryChanges();
+
         };
 
         this.construct(gridDomNode);

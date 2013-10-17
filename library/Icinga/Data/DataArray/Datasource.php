@@ -72,16 +72,10 @@ class Datasource implements DatasourceInterface
             return $this;
         }
         $result = array();
-        $filters = $query->listFilters();
+
         $columns = $query->getColumns();
         foreach ($this->data as & $row) {
 
-            // Skip rows that do not match applied filters
-            foreach ($filters as $f) {
-                if ($row->{$f[0]} !== $f[1]) {
-                    continue 2;
-                }
-            }
 
             // Get only desired columns if asked so
             if (empty($columns)) {

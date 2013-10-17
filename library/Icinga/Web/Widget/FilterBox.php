@@ -99,10 +99,10 @@ EOT;
         $form->setTokenDisabled();
         $form->addElement(
             'text',
-            'filter',
+            'query',
             array(
                 'label'  => 'Filter Results',
-                'name'   => 'filter',
+                'name'   => 'query',
                 'data-icinga-component' => 'app/semanticsearch',
                 'data-icinga-filter-domain'    => $this->domain,
                 'data-icinga-filter-module'    => $this->module
@@ -111,7 +111,6 @@ EOT;
         $form->removeAttrib('data-icinga-component');
 
         $form->setIgnoreChangeDiscarding(true);
-
         $badges = new FilterBadgeRenderer($this->initialFilter);
         $html = str_replace('{{FORM}}', $form->render($view), self::$TPL);
         return str_replace('{{BADGES}}', $badges->render($view), $html);

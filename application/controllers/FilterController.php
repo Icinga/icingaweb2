@@ -33,9 +33,6 @@ use Icinga\Filter\Filter;
 use Icinga\Filter\FilterAttribute;
 use Icinga\Filter\Type\TextFilter;
 use Icinga\Application\Logger;
-use Icinga\Module\Monitoring\Filter\Type\StatusFilter;
-use Icinga\Module\Monitoring\Filter\UrlViewFilter;
-use Icinga\Module\Monitoring\DataView\HostStatus;
 use Icinga\Web\Url;
 
 /**
@@ -50,6 +47,8 @@ class FilterController extends ActionController
      */
     private $registry;
 
+    private $moduleRegistry;
+
     /**
      * Entry point for filtering, uses the filter_domain and filter_module request parameter
      * to determine which filter registry should be used
@@ -57,19 +56,27 @@ class FilterController extends ActionController
     public function indexAction()
     {
         $this->registry = new Filter();
+        $query = $this->getRequest()->getParam('query', '');
+        $target = $this->getRequest()->getParam('filter_domain', '');
 
         if ($this->getRequest()->getHeader('accept') == 'application/json') {
             $this->getResponse()->setHeader('Content-Type', 'application/json');
-
             $this->setupQueries(
-                $this->getParam('filter_domain', ''),
+                $target,
                 $this->getParam('filter_module', '')
             );
-
-            $this->_helper->json($this->parse($this->getRequest()->getParam('query', '')));
+            $this->_helper->json($this->parse($query, $target));
         } else {
-            $this->redirect('index/welcome');
+            $this->setupQueries(
+                $target,
+                $this->getParam('filter_module')
+            );
+            $urlTarget = $this->parse($query, $target);
+            die(print_r($urlTarget,true));
+            $this->redirect($urlTarget['urlParam']);
         }
+
+
     }
 
     /**
@@ -82,6 +89,7 @@ class FilterController extends ActionController
     {
         $class = '\\Icinga\\Module\\' . ucfirst($module) . '\\Filter\\Registry';
         $factory = strtolower($domain) . 'Filter';
+        $this->moduleRegistry = $class;
         $this->registry->addDomain($class::$factory());
     }
 
@@ -91,17 +99,16 @@ class FilterController extends ActionController
      * @param  String $text     The query to parse
      * @return array            The result structure to be returned in json format
      */
-    private function parse($text)
+    private function parse($text, $target)
     {
         try {
-            $view = HostStatus::fromRequest($this->getRequest());
-            $urlParser = new UrlViewFilter($view);
-            $queryTree = $this->registry->createQueryTreeForFilter($text);
 
+            $queryTree = $this->registry->createQueryTreeForFilter($text);
+            $registry = $this->moduleRegistry;
             return array(
                 'state'     => 'success',
                 'proposals' => $this->registry->getProposalsForQuery($text),
-                'urlParam'  => $urlParser->fromTree($queryTree)
+                'urlParam'  => $registry::getUrlForTarget($target, $queryTree)
             );
         } catch (\Exception $exc) {
             Logger::error($exc);

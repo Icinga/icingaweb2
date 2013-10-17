@@ -26,42 +26,18 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Web;
 
-use Zend_Controller_Request_Http;
-use Icinga\User;
+namespace Icinga\Filter;
+
+
+use Icinga\Filter\Query\Tree;
 
 /**
- * Request to handle special attributes
+ * Interface for filter registries
+ * Class Registry
+ * @package Icinga\Filter
  */
-class Request extends Zend_Controller_Request_Http
+interface Registry
 {
-    /**
-     * User object
-     *
-     * @var User
-     */
-    private $user;
-
-    /**
-     * Setter for user
-     *
-     * @param User $user
-     */
-    public function setUser(User $user)
-    {
-        $this->user = $user;
-    }
-
-    /**
-     * Getter for user
-     *
-     * @return User
-     */
-    public function getUser()
-    {
-        return $this->user;
-    }
-
-
+    public static function getUrlForTarget($domain, Tree $filter);
 }

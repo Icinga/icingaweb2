@@ -13,6 +13,7 @@ use Icinga\Web\Controller\ActionController;
  */
 class Controller extends ActionController
 {
+
     /**
      * Retrieve services from either given parameters or request
      *

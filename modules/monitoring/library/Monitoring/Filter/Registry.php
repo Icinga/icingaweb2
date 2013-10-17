@@ -28,20 +28,35 @@
 
 namespace Icinga\Module\Monitoring\Filter;
 
+use Icinga\Application\Icinga;
+use Icinga\Application\Logger;
 use Icinga\Filter\Domain;
 use Icinga\Filter\FilterAttribute;
 use Icinga\Filter\Query\Node;
+use Icinga\Filter\Query\Tree;
 use Icinga\Filter\Type\BooleanFilter;
 use Icinga\Filter\Type\TextFilter;
 use Icinga\Filter\Type\TimeRangeSpecifier;
+use Icinga\Module\Monitoring\DataView\HostStatus;
+use Icinga\Module\Monitoring\DataView\ServiceStatus;
 use Icinga\Module\Monitoring\Filter\Type\StatusFilter;
+use Icinga\Filter\Registry as FilterRegistry;
+use Icinga\Module\Monitoring\Object\Host;
+use Icinga\Web\Request;
+use Zend_Controller_Request_Exception;
+use Icinga\Web\Url;
 
 /**
  * Factory class to create filter for different monitoring objects
  *
  */
-class Registry
+class Registry implements FilterRegistry
 {
+    /**
+     * Return a TimeRangeSpecifier for the 'Next Check' query
+     *
+     * @return TimeRangeSpecifier
+     */
     public static function getNextCheckFilterType()
     {
         $type = new TimeRangeSpecifier();
@@ -54,6 +69,11 @@ class Registry
         return $type;
     }
 
+    /**
+     * Return a TimeRangeSpecifier for the 'Last Check' query
+     *
+     * @return TimeRangeSpecifier
+     */
     public static function getLastCheckFilterType()
     {
         $type = new TimeRangeSpecifier();
@@ -68,6 +88,11 @@ class Registry
         return $type;
     }
 
+    /**
+     * Registry function for the host domain
+     *
+     * @return Domain the domain to use in the filter registry
+     */
     public static function hostFilter()
     {
         $domain = new Domain('Host');
@@ -78,7 +103,6 @@ class Registry
                 ->setField('host_name')
             )->registerAttribute(
                 FilterAttribute::create(StatusFilter::createForHost())
-                    ->setHandledAttributes('State', 'Status', 'Current Status')
                     ->setField('host_state')
             )->registerAttribute(
                 FilterAttribute::create(new BooleanFilter(
@@ -103,4 +127,104 @@ class Registry
             );
         return $domain;
     }
+
+    /**
+     * Registry function for the service domain
+     *
+     * @return Domain the domain to use in the filter registry
+     */
+    public static function serviceFilter()
+    {
+        $domain = new Domain('Service');
+
+        $domain->registerAttribute(
+            FilterAttribute::create(new TextFilter())
+                ->setHandledAttributes('Name', 'Servicename')
+                ->setField('service_name')
+            )->registerAttribute(
+                FilterAttribute::create(StatusFilter::createForService())
+                    ->setField('service_state')
+            )->registerAttribute(
+                FilterAttribute::create(StatusFilter::createForHost())
+                    ->setHandledAttributes('Host')
+                    ->setField('host_state')
+            )->registerAttribute(
+                FilterAttribute::create(new BooleanFilter(
+                        array(
+                            'service_is_flapping'              => 'Flapping',
+                            'service_problem'                  => 'In Problem State',
+                            'service_notifications_enabled'    => 'Sending Notifications',
+                            'service_active_checks_enabled'    => 'Active',
+                            'service_passive_checks_enabled'   => 'Accepting Passive Checks',
+                            'service_handled'                  => 'Handled',
+                            'service_in_downtime'              => 'In Downtime',
+                            'host_in_downtime'                 => 'In Host Downtime'
+                        )
+                    ))
+            )->registerAttribute(
+                FilterAttribute::create(self::getLastCheckFilterType())
+                    ->setHandledAttributes('Last Check', 'Check')
+                    ->setField('service_last_check')
+            )->registerAttribute(
+                FilterAttribute::create(self::getNextCheckFilterType())
+                    ->setHandledAttributes('Next Check')
+                    ->setField('service_next_check')
+            );
+        return $domain;
+    }
+
+    /**
+     * Resolve the given filter to an url, using the referer as the base url and base filter
+     *
+     * @param $domain           The domain to filter for
+     * @param Tree $filter      The tree representing the fiter
+     *
+     * @return string           An url
+     * @throws Zend_Controller_Request_Exception    Called if no referer is available
+     */
+    public static function getUrlForTarget($domain, Tree $filter)
+    {
+        if (!isset($_SERVER['HTTP_REFERER'])) {
+            throw new Zend_Controller_Request_Exception('You can\'t use this method without an referer');
+        }
+        $request = Icinga::app()->getFrontController()->getRequest();
+        switch ($domain) {
+            case 'host':
+                $view = HostStatus::fromRequest($request);
+                break;
+            case 'service':
+                $view = ServiceStatus::fromRequest($request);
+                break;
+            default:
+                Logger::error('Invalid filter domain requested : %s', $domain);
+                throw new Exception('Unknown Domain ' . $domain);
+        }
+        $urlParser = new UrlViewFilter($view);
+        $lastQuery = parse_url($_SERVER['HTTP_REFERER'], PHP_URL_QUERY);
+        $lastPath  = parse_url($_SERVER['HTTP_REFERER'], PHP_URL_PATH);
+        $lastFilter = $urlParser->parseUrl($lastQuery);
+        $lastParameters = array();
+
+        parse_str($lastQuery, $lastParameters);
+        if ($lastFilter->root) {
+            $filter->insert($lastFilter->root);
+        }
+        $params = array();
+        foreach ($lastParameters as $key => $param) {
+            if (!$filter->hasNodeWithAttribute($key)) {
+                $params[$key] = $param;
+            }
+        }
+
+        $baseUrl = Url::fromPath($lastPath, $params);
+        $urlString = $baseUrl->getRelativeUrl();
+        if (stripos($urlString, '?') === false) {
+            $urlString .= '?';
+        } else {
+            $urlString .= '&';
+        }
+        $urlString .= $urlParser->fromTree($filter);
+        return '/' . $urlString;
+    }
+
 }

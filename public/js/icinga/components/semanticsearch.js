@@ -53,8 +53,7 @@ define(['jquery', 'logging', 'URIjs/URI', 'components/app/container'], function(
          * Request new proposals for the given input box
          */
         this.getProposal = function() {
-            var text = this.inputDom.val().trim();
-
+            var text = $.trim(this.inputDom.val());
 
             if (this.pendingRequest) {
                 this.pendingRequest.abort();
@@ -114,9 +113,9 @@ define(['jquery', 'logging', 'URIjs/URI', 'components/app/container'], function(
             return {
                 data: {
                     'cache' : (new Date()).getTime(),
-                        'query' : query,
-                        'filter_domain' : this.domain,
-                        'filter_module' : this.module
+                    'query' : query,
+                    'filter_domain' : this.domain,
+                    'filter_module' : this.module
                 },
                 headers: {
                     'Accept': 'application/json'
@@ -131,7 +130,8 @@ define(['jquery', 'logging', 'URIjs/URI', 'components/app/container'], function(
          * @param {Object} response      The jquery response object inheritn XHttpResponse Attributes
          */
         this.showProposals = function(response) {
-            if (response.proposals.length === 0) {
+
+            if (!response || !response.proposals || response.proposals.length === 0) {
                 this.inputDom.popover('destroy');
                 return;
             }
@@ -167,10 +167,12 @@ define(['jquery', 'logging', 'URIjs/URI', 'components/app/container'], function(
             var query = $.trim(this.inputDom.val());
             this.pendingRequest = $.ajax(this.getRequestParams(query))
                 .done((function(response) {
-                    var container = new Container($(this.inputDom));
-                    var url = container.getContainerHref();
-                    url += ( url.indexOf('?') === -1  ? '?' : '&' ) + response.urlParam;
-                    container.replaceDomFromUrl(url);
+                    var domContainer = new Container(this.inputDom);
+                    var url = response.urlParam;
+
+                    if (url) {
+                        domContainer.setUrl(url);
+                    }
                 }).bind(this));
         };
 

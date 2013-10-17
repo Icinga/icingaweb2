@@ -29,11 +29,41 @@
 
 namespace Icinga\Filter;
 
+/**
+ * Interface for filterable data sources
+ */
 interface Filterable
 {
+    /**
+     * Return true when this field is filterable, otherwise false
+     *
+     * @param  string $field        The field to test for being filterable
+     * @return boolean              True when this field is filterable, otherwise false
+     */
     public function isValidFilterTarget($field);
+
+    /**
+     * Return the internal, resolved name of the given field
+     *
+     * @param  string $field        The field to resolve
+     * @return string               The resolved name or null if the field is not resolvable
+     */
     public function getMappedField($field);
+
+    /**
+     * Apply all filters of this filterable on the datasource
+     */
     public function applyFilter();
+
+    /**
+     * Remove all filters from this datasource
+     */
     public function clearFilter();
+
+    /**
+     * Add a filter to this datasource
+     *
+     * @param  mixed $filter        The filter to use
+     */
     public function addFilter($filter);
 }

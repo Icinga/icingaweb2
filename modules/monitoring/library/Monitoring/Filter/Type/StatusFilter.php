@@ -127,7 +127,6 @@ class StatusFilter extends FilterType
     public static function createForService()
     {
         $status = new StatusFilter();
-        $status->setType(self::TYPE_SERVICE);
         $status->setBaseStates(
             array(
                 'Ok'            => 0,

@@ -52,6 +52,7 @@ abstract class AbstractObject
         $this->comments = Comment::fromRequest(
             $this->request,
             array(
+                'comment_internal_id',
                 'comment_timestamp',
                 'comment_author',
                 'comment_data',
@@ -59,6 +60,7 @@ abstract class AbstractObject
             )
         )->getQuery()
             ->where('comment_objecttype_id', 1)
+
             ->fetchAll();
 
         return $this;
@@ -174,7 +176,6 @@ abstract class AbstractObject
     }
 
     abstract public function populate();
-
 
     public static function fromRequest(Request $request)
     {

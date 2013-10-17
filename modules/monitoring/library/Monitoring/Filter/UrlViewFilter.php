@@ -33,6 +33,7 @@ namespace Icinga\Module\Monitoring\Filter;
 use Icinga\Filter\Filterable;
 use Icinga\Filter\Query\Tree;
 use Icinga\Filter\Query\Node;
+use Icinga\Web\Request;
 use Icinga\Web\Url;
 use Icinga\Application\Logger;
 
@@ -112,6 +113,15 @@ class UrlViewFilter
             }
         }
         return $tree->getCopyForFilterable($this->target);
+    }
+
+    public function fromRequest($request)
+    {
+        if($request->getParam('query')) {
+            return $this->parseUrl(urldecode($request->getParam('query')));
+        } else {
+            return $this->parseUrl(parse_url($request->getBaseUrl(), PHP_URL_QUERY));
+        }
     }
 
     /**

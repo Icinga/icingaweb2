@@ -75,7 +75,7 @@ class FilterBadgeRenderer implements Widget
             $url = $this->urlFilter->fromTree($newTree);
             $url = $basePath . (empty($allParams) ? '?' : '&') . $url;
 
-            return  ' <a class="btn btn-default btn-xs" href="' . $url . '">'
+            return  ' <a class="filter-badge btn btn-default btn-xs" href="' . $url . '">'
                     . $this->conjunctionCellar .  ' '
                     . ucfirst($node->left) . ' '
                     . $node->operator . ' '

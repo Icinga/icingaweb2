@@ -31,10 +31,10 @@ $modules = $this->modules->paginate();
       <td>
       <? if ($module->enabled): ?>
         <i>{{OK_ICON}}</i>
-        <a href="<?= $disableUrl ?>"><?= $this->escape($module->name); ?></a>
+        <a href="<?= $disableUrl ?>" data-icinga-target="main"><?= $this->escape($module->name); ?></a>
       <? else: ?>
         <i>{{REMOVE_ICON}}</i>
-        <a href="<?= $enableUrl ?>"><?= $this->escape($module->name); ?></a>
+        <a href="<?= $enableUrl ?>" data-icinga-target="main"><?= $this->escape($module->name); ?></a>
       <? endif ?>
       (<?=
         $module->enabled ? ($module->loaded ? 'enabled' : 'failed') : 'disabled' ?>)

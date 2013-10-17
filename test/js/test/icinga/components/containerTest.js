@@ -96,8 +96,10 @@ describe('The container component', function() {
      */
     it('should provide access to the main and detail component', function() {
         createDOM();
+
         rjsmock.registerDependencies({
-            'URIjs/URI' : URI
+            'URIjs/URI' : URI,
+            'icinga/util/url'    : 'icinga/util/url.js'
         });
         requireNew('icinga/components/container.js');
         var Container = rjsmock.getDefine();
@@ -107,43 +109,6 @@ describe('The container component', function() {
             $('#icingamain')[0], 'Assert the DOM of the main container being #icingamain');
         Container.getDetailContainer().containerDom[0].should.equal(
             $('#icingadetail')[0], 'Assert the DOM of the detail container being #icingadetail');
-    });
-
-    /**
-     * Test dynamic Url update
-     */
-    it('should automatically update its part of the URL if assigning a new URL', function() {
-        rjsmock.registerDependencies({
-            'URIjs/URI' : URI
-        });
-        requireNew('icinga/components/container.js');
-        createDOM();
-        var Container = rjsmock.getDefine();
-        var url = Container.getMainContainer().updateContainerHref('/some/other/url?test');
-        window.setWindowUrl(url);
-        Container.getMainContainer().containerDom.attr('data-icinga-href').should.equal('/some/other/url?test');
-
-        url.should.equal(
-            '/some/other/url?test',
-            'Assert the main container updating the url correctly');
-
-        url = Container.getDetailContainer().updateContainerHref('/some/detail/url?test');
-        window.setWindowUrl(url);
-
-        Container.getDetailContainer().containerDom.attr('data-icinga-href').should.equal('/some/detail/url?test');
-        url.should.equal(
-            '/some/other/url?test&detail=' + encodeURIComponent('/some/detail/url?test'),
-            'Assert the detail container only updating the "detail" portion of the URL'
-        );
-
-        url = Container.getMainContainer().updateContainerHref('/some/other2/url?test=test');
-
-        window.setWindowUrl(Container.getMainContainer().getContainerHref(window.location.href));
-        Container.getMainContainer().containerDom.attr('data-icinga-href').should.equal('/some/other2/url?test=test');
-        url.should.equal(
-            '/some/other2/url?test=test&detail=' + encodeURIComponent('/some/detail/url?test'),
-            'Assert the main container keeping the detail portion untouched if being assigned a new URL'
-        );
     });
 
 });
