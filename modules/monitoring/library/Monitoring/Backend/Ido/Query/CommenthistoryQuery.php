@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
-class CommenthistoryQuery extends AbstractQuery
+class CommenthistoryQuery extends IdoQuery
 {
     protected $columnMap = array(
         'commenthistory' => array(
@@ -19,4 +19,3 @@ class CommenthistoryQuery extends AbstractQuery
         )
     );
 }
-

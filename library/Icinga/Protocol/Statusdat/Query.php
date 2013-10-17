@@ -28,14 +28,17 @@
 
 namespace Icinga\Protocol\Statusdat;
 
+use Icinga\Data\Optional;
+use Icinga\Data\The;
+use Icinga\Filter\Query\Node;
 use Icinga\Protocol;
-use Icinga\Data\AbstractQuery;
+use Icinga\Data\BaseQuery;
 
 /**
  * Class Query
  * @package Icinga\Protocol\Statusdat
  */
-class Query extends AbstractQuery
+class Query extends BaseQuery
 {
     /**
      * @var array
@@ -76,7 +79,7 @@ class Query extends AbstractQuery
     /**
      * @var array
      */
-    protected $order_columns = array();
+    protected $orderColumns = array();
 
     /**
      * @var array
@@ -108,7 +111,7 @@ class Query extends AbstractQuery
      */
     public function hasOrder()
     {
-        return !empty($this->order_columns);
+        return !empty($this->orderColumns);
     }
 
     /**
@@ -116,17 +119,11 @@ class Query extends AbstractQuery
      */
     public function hasColumns()
     {
-        return !empty($this->columns);
+        $columns = $this->getColumns();
+        return !empty($columns);
     }
 
-    /**
-     * @return array
-     */
-    public function getColumns()
-    {
-        return $this->columns;
 
-    }
 
     /**
      * @return bool
@@ -200,7 +197,7 @@ class Query extends AbstractQuery
                 $col = $col;
             }
 
-            $this->order_columns[] = array($col, $dir);
+            $this->orderColumns[] = array($col, $dir);
         }
         return $this;
     }
@@ -222,13 +219,14 @@ class Query extends AbstractQuery
         return $this;
     }
 
+
     /**
      * @param $table
      * @param null $columns
      * @return $this
      * @throws \Exception
      */
-    public function from($table, $columns = null)
+    public function from($table, array $attributes = null)
     {
         if (isset(self::$VALID_TARGETS[$table])) {
             $this->source = $table;
@@ -275,7 +273,7 @@ class Query extends AbstractQuery
      */
     private function orderIndices(array &$indices)
     {
-        if (!empty($this->order_columns)) {
+        if (!empty($this->orderColumns)) {
             foreach ($indices as $type => &$subindices) {
                 $this->currentType = $type; // we're singlethreaded, so let's do it a bit dirty
                 usort($subindices, array($this, "orderResult"));
@@ -293,7 +291,7 @@ class Query extends AbstractQuery
         $o1 = $this->ds->getObjectByName($this->currentType, $a);
         $o2 = $this->ds->getObjectByName($this->currentType, $b);
         $result = 0;
-        foreach ($this->order_columns as $col) {
+        foreach ($this->orderColumns as $col) {
             $result += $col[1] * strnatcasecmp($o1->{$col[0]}, $o2->{$col[0]});
         }
         if ($result > 0) {
@@ -396,4 +394,23 @@ class Query extends AbstractQuery
         }
         return $result;
     }
+
+    /**
+     * Parse a backend specific filter expression and return a Query\Node object
+     *
+     * @param $expression       The expression to parse
+     * @param $parameters       Optional parameters for the expression
+     * @return Node             A query node or null if it's an invalid expression
+     */
+    protected function parseFilterExpression($expression, $parameters = null)
+    {
+        // TODO: Implement parseFilterExpression() method.
+    }
+
+    public function applyFilter()
+    {
+        // TODO: Implement applyFilter() method.
+    }
+
+
 }

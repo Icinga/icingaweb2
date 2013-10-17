@@ -18,7 +18,9 @@ class Contactgroup extends DataView
         return array(
             'contact_name',
             'contactgroup_name',
-            'contactgroup_alias'
+            'contactgroup_alias',
+            'host',
+            'service'
         );
     }
 

@@ -21,7 +21,9 @@ class Notification extends DataView
             'notification_start_time',
             'notification_contact',
             'notification_information',
-            'notification_command'
+            'notification_command',
+            'host',
+            'service'
         );
     }
 

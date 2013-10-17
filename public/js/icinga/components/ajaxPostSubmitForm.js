@@ -74,7 +74,7 @@ define(['components/app/container', 'jquery'], function(Container, $) {
             }
         }).done(function() {
             var container = getOwnerContainer(form);
-            container.replaceDomFromUrl(container.getContainerHref());
+            container.setUrl(container.getUrl());
         }).error(function() {
             submit.removeAttr('disabled');
         });

@@ -2,6 +2,7 @@
 
 namespace Tests\Monitoring\Backend\Statusdat;
 
+use Icinga\Data\DatasourceInterface;
 use Zend_Config;
 use Tests\Icinga\Protocol\Statusdat\ReaderMock as ReaderMock;
 use \Icinga\Module\Monitoring\Backend\Statusdat\Query\ServicegroupsummaryQuery;
@@ -14,7 +15,7 @@ StatusdatTestLoader::requireLibrary();
 require_once(realpath($base."/library/Monitoring/Backend/Statusdat/Query/GroupsummaryQuery.php"));
 require_once(realpath($base."/library/Monitoring/Backend/Statusdat/Query/ServicegroupsummaryQuery.php"));
 
-class BackendMock  extends \Icinga\Module\Monitoring\Backend\AbstractBackend
+class BackendMock  implements DatasourceInterface
 {
     public $reader;
 
@@ -37,7 +38,7 @@ class ServicegroupsummaryqueryTest extends \PHPUnit_Framework_TestCase
         $backendConfig = new Zend_Config(
             array()
         );
-        $backend = new BackendMock($backendConfig);
+        $backend = new BackendMock();
         $backend->setReader($this->getTestDataset());
         $q = new ServicegroupsummaryQuery($backend);
         $indices = array(

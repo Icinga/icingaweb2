@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
-class ServicegroupQuery extends AbstractQuery
+class ServicegroupQuery extends IdoQuery
 {
     protected $columnMap = array(
         'servicegroups' => array(
@@ -10,7 +10,9 @@ class ServicegroupQuery extends AbstractQuery
             'servicegroup_alias' => 'sg.alias',
         ),
         'services' => array(
+            'host'                => 'so.name1 COLLATE latin1_general_ci',
             'host_name'           => 'so.name1 COLLATE latin1_general_ci',
+            'service'             => 'so.name2 COLLATE latin1_general_ci',
             'service_host_name'   => 'so.name1 COLLATE latin1_general_ci',
             'service_description' => 'so.name2 COLLATE latin1_general_ci'
         )

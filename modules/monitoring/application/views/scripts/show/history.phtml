@@ -1,15 +1,23 @@
 <?= $this->tabs->render($this); ?>
 
 <h1>History</h1>
+<?php if($history->count() === 0): ?>
+    <div class="alert alert-info">
+      No History Available For This Object
 
-<?php if (!empty($history)): ?>
+    </div>
+<?php else: ?>
+
 <div data-icinga-component="app/mainDetailGrid">
+
     <?=  $this->paginationControl($history, null, null, array('preserve' => $this->preserve)); ?>
             <table class="table table-condensed">
                 <tbody>
+
                 <?php foreach ($history as $event): ?>
                     <tr>
-                        <td><?= date('d.m. H:i', $event->timestamp); ?></td>
+
+                        <td><?= date('d.m. H:i', $event->raw_timestamp); ?></td>
 
                         <td>
                             <?php if ($object instanceof Icinga\Module\Monitoring\Object\Service): ?>

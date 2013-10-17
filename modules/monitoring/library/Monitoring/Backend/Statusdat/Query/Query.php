@@ -28,17 +28,22 @@
 
 namespace Icinga\Module\Monitoring\Backend\Statusdat\Query;
 
-use \Icinga\Module\Monitoring\Backend\Statusdat\Criteria\Order;
+use Icinga\Data\Optional;
+use Icinga\Data\The;
+use Icinga\Filter\Query\Node;
+use Icinga\Filter\Query\Tree;
 use Icinga\Protocol\Statusdat;
 use Icinga\Exception;
-use Icinga\Data\AbstractQuery;
+use Icinga\Data\BaseQuery;
 use Icinga\Protocol\Statusdat\View\MonitoringObjectList as MList;
 use Icinga\Protocol\Statusdat\Query as StatusdatQuery;
+use Icinga\Filter\Filterable;
+
 /**
  * Class Query
  * @package Icinga\Backend\Statusdat
  */
-abstract class Query extends AbstractQuery
+abstract class Query extends BaseQuery implements Filterable
 {
     /**
      * @var null
@@ -284,7 +289,39 @@ abstract class Query extends AbstractQuery
      */
     public function count()
     {
-
         return count($this->baseQuery->getResult());
     }
+
+    public function isValidFilterTarget($field)
+    {
+        // TODO: Implement isValidFilterTarget() method.
+    }
+
+    public function getMappedField($field)
+    {
+        // TODO: Implement getMappedField() method.
+    }
+
+    public function applyFilter()
+    {
+        // TODO: Implement applyFilter() method.
+    }
+
+    /**
+     * Parse a backend specific filter expression and return a Query\Node object
+     *
+     * @param $expression       The expression to parse
+     * @param $parameters       Optional parameters for the expression
+     * @return Node             A query node or null if it's an invalid expression
+     */
+    protected function parseFilterExpression($expression, $parameters = null)
+    {
+        // TODO: Implement parseFilterExpression() method.
+    }
+
+
+
+
+
 }
+

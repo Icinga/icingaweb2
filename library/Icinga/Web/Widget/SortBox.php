@@ -77,7 +77,7 @@ class SortBox implements Widget
     /**
      * A request object used for initial form population
      *
-     * @var Icinga\Web\Request
+     * @var \Icinga\Web\Request
      */
     private $request;
 
@@ -166,6 +166,7 @@ class SortBox implements Widget
         $form->addElement($this->createFallbackSubmitButton());
 
         if ($this->request) {
+            $form->setAction($this->request->getRequestUri());
             $form->populate($this->request->getParams());
         }
         return $form->render($view);

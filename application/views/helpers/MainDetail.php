@@ -31,6 +31,8 @@
 /**
  * Helper to render main and detail contents into a container
  */
+use Icinga\Application\Icinga;
+
 class Zend_View_Helper_MainDetail extends Zend_View_Helper_Abstract
 {
     /**

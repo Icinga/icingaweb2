@@ -26,11 +26,11 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITemplate'],
-    function($, logger, componentLoader, URI) {
+define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITemplate', 'icinga/util/url'],
+    function($, logger, componentLoader, URI, Tpl, urlMgr) {
     "use strict";
 
-     var Icinga;
+    var Icinga;
 
     /**
      * Enumeration of possible container types
@@ -57,6 +57,7 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
      */
     var detailContainer = null;
 
+    var pendingDetailRequest = null;
     /**
      * A handler for accessing icinga containers, i.e. the #icingamain, #icingadetail containers and specific 'app/container'
      * components.
@@ -74,12 +75,6 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
      */
     var Container = function(target) {
 
-        /**
-         * Set to true when no history changes should be made
-         *
-         * @type {boolean}      true to disable History.js calls, false to reenable them
-         */
-        this.freezeHistory = false;
 
         /**
          * Return the container that is at the nearest location to this element, or the element itself if it is a container
@@ -116,13 +111,13 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
             } else {
                 this.containerType = CONTAINER_TYPES.GENERIC;
             }
-            this.containerDom.attr('data-icinga-href', this.getContainerHref());
 
             if (this.containerDom.data('loadIndicator') !== true) {
                 this.installDefaultLoadIndicator();
                 this.containerDom.data('loadIndicator', true);
             }
         };
+
 
         /**
          * Returns the window without the hostname
@@ -134,99 +129,6 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
         };
 
         /**
-         * Extract and return the main container's location from the current Url
-         *
-         * This takes the window's Url and removes the detail part
-         *
-         * @returns {string}        The Url of the main container
-         */
-        var getMainContainerHrefFromUrl = function(baseUrl) {
-            // main has the url without the icingadetail part
-            var href = URI(getWindowLocationWithoutHost(baseUrl));
-            href.removeQuery('detail');
-            return href.href();
-        };
-
-        /**
-         * Return the detail container's location from the current Url
-         *
-         * This takes the detail parameter of the url and returns it or
-         * undefined if no location is given
-         *
-         * @returns {string|undefined}  The Url of the detail container or undefined if no detail container is active
-         */
-        var getDetailContainerHrefFromUrl = function(baseUrl) {
-            var location = new URI(baseUrl);
-            var href = URI.parseQuery(location.query()).detail;
-            if (!href) {
-                return;
-            }
-            // detail is a query param, so it is possible that (due to a bug or whatever) multiple
-            // detail fields are declared and returned as arrays
-            if (typeof href !== 'string') {
-                href = href[0];
-            }
-            // transform the detail parmameter to an Url
-            return URI(href).href();
-        };
-
-        /**
-         * Return the Url of this container
-         *
-         * This is mostly determined by the Url of the window, but for generic containers we have to rely on the
-         * "data-icinga-href" attribute of the container (which is also available for main and detail, but less
-         * reliable during history changes)
-         *
-         * @returns {String|undefined}  The Url of the container or undefined if the container has no Url set
-         */
-        this.getContainerHref = function(baseUrl) {
-            baseUrl = baseUrl || getWindowLocationWithoutHost();
-            switch (this.containerType) {
-                case CONTAINER_TYPES.MAIN:
-                    return getMainContainerHrefFromUrl(baseUrl);
-                case CONTAINER_TYPES.DETAIL:
-                    return getDetailContainerHrefFromUrl(baseUrl);
-                case CONTAINER_TYPES.GENERIC:
-                    if (this.containerDom.attr('data-icinga-href')) {
-                        return URI(this.containerDom.attr('data-icinga-href'));
-                    } else {
-                        return URI(baseUrl).href();
-                    }
-            }
-        };
-
-        /**
-         * Return a href with representing the current view, but url as the main container
-         *
-         * @param {URI} url     The main Url to use as an URI.js object
-         *
-         * @returns {URI}       The modified URI.js containing the new main and the current detail link
-         */
-        var setMainContainerHref = function(url, baseUrl) {
-            var detail = getDetailContainerHrefFromUrl(baseUrl);
-            if (detail) {
-                url.addQuery('detail', detail);
-            }
-            return url;
-        };
-
-        /**
-         * Return a complete Href string representing the current detail href and the provided main Url
-         *
-         * @param   {URI}   url The detail Url to use as an URI.js object
-         *
-         * @returns {URI}       The modified URI.js containing the new detail and the current main link
-         */
-        var setDetailContainerHref = function(url, baseUrl) {
-            var location = new URI(baseUrl);
-            location.removeQuery('detail');
-            if (typeof url !== 'undefined') { // no detail Url given
-                location.addQuery('detail', url);
-            }
-            return location;
-        };
-
-        /**
          * Create default load mask
          *
          * @private
@@ -234,7 +136,6 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
         var createDefaultLoadIndicator = function() {
 
             this.showDetail();
-
             if (this.containerDom.find('div.load-indicator').length === 0) {
                 var content = '<div class="load-indicator">' +
                     '<div class="mask"></div>' +
@@ -253,46 +154,6 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
             this.containerDom.find('div.load-indicator').remove();
         };
 
-        /**
-         * Update the Url of this container and let the Url reflect the new changes, if required
-         *
-         * This updates the window Url and the data-icinga-href attribute of the container. The latter one is required
-         * to see which url is the last one the container displayed (e.g. after History changes, the url has changed
-         * but the containers data-icinga-href still points to the containers element).
-         *
-         * @param {String|URI} url     An Url string or a URI.js object representing the new Url for this container
-         *
-         * @return {String} url        The new Url of the application (main and detail)
-         */
-        this.updateContainerHref = function(url, baseUrl) {
-            baseUrl = baseUrl || getWindowLocationWithoutHost();
-            if (typeof url === "string") {
-                url = URI(url);
-            }
-            var containerUrl, windowUrl;
-            switch (this.containerType) {
-                case CONTAINER_TYPES.MAIN:
-                    windowUrl = setMainContainerHref(url, baseUrl);
-                    containerUrl = windowUrl.clone().removeQuery('detail');
-                    break;
-                case CONTAINER_TYPES.DETAIL:
-                    windowUrl = setDetailContainerHref(url, baseUrl);
-                    containerUrl = url;
-                    break;
-                case CONTAINER_TYPES.GENERIC:
-                    containerUrl = url;
-                    windowUrl = baseUrl;
-                    break;
-            }
-
-            if (containerUrl) {
-                this.containerDom.attr('data-icinga-href', containerUrl);
-            } else {
-                this.containerDom.removeAttr('data-icinga-href');
-            }
-
-            return windowUrl.href();
-        };
 
         /**
          * Load the provided url, stop all pending requests for this container and call replaceDom for the returned html
@@ -301,9 +162,59 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
          *
          * @param {String, URI} url     The Url to load or and URI.js object encapsulating it
          */
-        this.replaceDomFromUrl = function(url) {
+        this.updateFromUrl = function(url) {
+
+            if (this.containerType === CONTAINER_TYPES.DETAIL) {
+                urlMgr.setDetailUrl(url);
+            } else {
+                urlMgr.setMainUrl(url);
+
+            }
+        };
+
+        this.replaceDomAsync = function(url) {
+            if (url === '') {
+                this.containerDom.empty();
+                this.hideDetail();
+                return;
+            }
+            if (pendingDetailRequest) {
+                pendingDetailRequest.abort();
+            }
             this.containerDom.trigger('showLoadIndicator');
-            Icinga.replaceBodyFromUrl(this.updateContainerHref(url));
+            pendingDetailRequest = $.ajax({
+                'url'  : url,
+                'data' : {
+                    'render' : 'detail'
+                }
+            }).done(
+                (function(response) {
+                    this.replaceDom($(response));
+                }).bind(this)
+            ).fail(
+                (function(response, reason) {
+                    var errorReason;
+                    if (response.statusCode.toString()[0] === '4') {
+                        errorReason = 'The Requested View Couldn\'t Be Found<br/>';
+                    } else {
+                        errorReason = 'An Internal Error Occured';
+                    }
+                    this.replaceDom(
+                        $('<div class="alert alert-danger">').text(errorReason)
+                    );
+                }).bind(this)
+            ).always((function() {
+                this.containerDom.trigger('hideLoadIndicator');
+            }).bind(this));
+        };
+
+        this.getUrl = function() {
+            if (this.containerType === CONTAINER_TYPES.DETAIL) {
+                return urlMgr.detailUrl;
+            } else {
+                return urlMgr.mainUrl;
+            }
+
         };
 
         /**
@@ -377,6 +288,51 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
             this.containerDom.off('hideLoadIndicator');
         };
 
+        this.onLinkClick = function(ev, target) {
+            if ($.trim($(target).attr('href')) === '#') {
+                return true;
+            }
+            var url = URI($(target).attr('href'));
+            var explicitTarget = $(target).attr('data-icinga-target');
+
+            var isHash = ('#' + url.fragment() === url.href());
+            if (isHash) {
+
+                explicitTarget = this.containerType === CONTAINER_TYPES.MAIN ? 'main' : 'detail';
+            }
+            if (explicitTarget) {
+
+                urlMgr[{
+                    'main'   : 'setMainUrl',
+                    'detail' : 'setDetailUrl',
+                    'self'   : 'setUrl'
+                }[explicitTarget]](url.href());
+
+            } else if (this.containerType === CONTAINER_TYPES.MAIN) {
+                urlMgr.setDetailUrl(url.href());
+            } else {
+                urlMgr.setMainUrl(url.href());
+            }
+
+
+            ev.preventDefault();
+            ev.stopPropagation();
+            return false;
+
+        };
+
+        this.setUrl = function(url) {
+            if (typeof url === 'string') {
+                url = URI(url);
+            }
+            console.log(url);
+            if (this.containerType === CONTAINER_TYPES.MAIN) {
+                urlMgr.setMainUrl(url.href());
+            } else {
+                urlMgr.setDetailUrl(url.href());
+            }
+        }
+
         this.construct(target);
     };
 
@@ -389,11 +345,10 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
      *                          when the link should be catched and processed internally
      */
     Container.isExternalLink = function(link) {
-        if (link[0] === '#') {
-            return true;
-        }
         return (/^\/\//).test(URI(link).relativeTo(window.location.href).href());
     };
+
+
 
     /**
      * Return the page's detail container (which is always there)
@@ -402,7 +357,7 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
      */
     Container.getDetailContainer = function() {
         detailContainer = detailContainer || new Container('#icingadetail');
-        if(!jQuery.contains(document.body, detailContainer)) {
+        if(!jQuery.contains(document.body, mainContainer)) {
             detailContainer =  new Container('#icingadetail');
         }
         return detailContainer;
@@ -450,6 +405,7 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
      * Available as a static method on the Container object or as an instance method
      */
     Container.prototype.hideDetail = Container.hideDetail = function() {
+        urlMgr.setDetailUrl('');
         var mainDom = Container.getMainContainer().containerDom,
             detailDom = Container.getDetailContainer().containerDom;
 
@@ -464,47 +420,7 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
         mainDom.addClass('col-sm-12');
         detailDom.addClass('hidden-sm');
         detailDom.removeAttr('data-icinga-href');
-        if (typeof this.freezeHistory === 'undefined' || !this.freezeHistory) {
-            History.replaceState(
-                {},
-                document.title,
-                URI(window.location.href).removeQuery('detail').href()
-            );
-        }
     };
-    if (Modernizr.history) {
-        /**
-         * Register the click behaviour of the main container, which means that every link, if not catched in a
-         * more specific handler, causes an update of the main container if it's not external or a browser behaviour link
-         * (those starting with '#').
-         */
-         $('body').on('click', '#icingamain, #icingadetail', function(ev) {
-
-            var targetEl = ev.target || ev.toElement || ev.relatedTarget;
-            if (targetEl.tagName.toLowerCase() !== 'a') {
-                return true;
-            }
-
-            if (Container.isExternalLink($(targetEl).attr('href'))) {
-                return true;
-            } else {
-                if ($(targetEl).attr('data-icinga-target') === 'detail') {
-                    Icinga.replaceBodyFromUrl(
-                        detailContainer.updateContainerHref(URI($(targetEl).attr('href')).href())
-                    );
-                } else {
-                    Icinga.replaceBodyFromUrl(
-                        mainContainer.updateContainerHref(URI($(targetEl).attr('href')).href())
-                    );
-                }
-
-                ev.preventDefault();
-                ev.stopPropagation();
-                return false;
-            }
-        });
-    }
-
     /**
      * Injects the icinga object into the Container class
      *
@@ -515,6 +431,29 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
     Container.setIcinga = function(icingaObj) {
         Icinga = icingaObj;
     };
+
+    $('body').on('click', '*[data-icinga-component="app/container"], #icingamain, #icingadetail', function(ev) {
+        var targetEl = ev.target || ev.toElement || ev.relatedTarget;
+
+        if (targetEl.tagName.toLowerCase() !== 'a') {
+            targetEl = $(targetEl).parents('a')[0];
+            if (!targetEl) {
+                return true;
+            }
+        }
+        return (new Container(targetEl)).onLinkClick(ev, targetEl);
+
+    });
+
+    $(window).on('hashchange', (function() {
+        urlMgr.syncWithUrl();
+        Container.getDetailContainer().replaceDomAsync(urlMgr.detailUrl);
+    }));
+
+
+    if (urlMgr.detailUrl) {
+        Container.getDetailContainer().replaceDomAsync(urlMgr.detailUrl);
+    }
 
     return Container;
 });

@@ -31,90 +31,94 @@ define([
     'logging',
     'icinga/componentLoader',
     'components/app/container',
-    'URIjs/URI'
-], function ($, log, components, Container, URI) {
+    'URIjs/URI',
+    'icinga/util/url'
+], function ($, log, components, Container, URI, urlMgr) {
     'use strict';
 
     /**
      * Icinga prototype
      */
     var Icinga = function() {
+        var pendingRequest = null;
 
-        var ignoreHistoryChanges = false;
-
+        /**
+         * Initia
+         */
         var initialize = function () {
             components.load();
-            ignoreHistoryChanges = true;
-            registerGenericHistoryHandler();
-            ignoreHistoryChanges = false;
             log.debug("Initialization finished");
-
         };
 
         /**
-         * Register handler for handling the history state generically
+         * Globally open the given url and reload the main/detail box to represent it
          *
+         * @param url The url to load
          */
-        var registerGenericHistoryHandler = function() {
-            var lastUrl = URI(window.location.href);
-            History.Adapter.bind(window, 'popstate', function() {
-                if (ignoreHistoryChanges) {
+        this.openUrl = function(url) {
+            if (pendingRequest) {
+                pendingRequest.abort();
+            }
+            pendingRequest = $.ajax({
+                "url": url
+            }).done(function(response) {
+                var dom = $(response);
+                var detailDom = null;
+                if (urlMgr.detailUrl) {
+                    detailDom = $('#icingadetail');
+                }
+                $(document.body).empty().append(dom);
+                if (detailDom && detailDom.length) {
+                    $('#icingadetail').replaceWith(detailDom);
+                    Container.showDetail();
+                }
+                components.load();
+                Container.getMainContainer();
+            }).fail(function(response, reason) {
+                if (reason === 'abort') {
                     return;
                 }
-
-                gotoUrl(History.getState().url);
-                lastUrl = URI(window.location.href);
+                log.error("Request failed: ", response.message);
             });
         };
 
-
-        var gotoUrl = function(href) {
-            if (typeof document.body.pending !== 'undefined') {
-                document.body.pending.abort();
-            }
-            if (typeof href === 'string') {
-                href = URI(href);
-            }
-            document.body.pending = $.ajax({
-                url: href.href()
-            }).done(function(domNodes) {
-                $('body').empty().append(jQuery.parseHTML(domNodes));
-                ignoreHistoryChanges = true;
-                History.pushState({}, document.title, href.href());
-                ignoreHistoryChanges = false;
-                components.load();
-            }).error(function(xhr, textStatus, errorThrown) {
-                    if (xhr.responseText) {
-                        $('body').empty().append(jQuery.parseHTML(xhr.responseText));
-                    } else if (textStatus !== 'abort') {
-                        logging.emergency('Could not load URL', xhr.href, textStatus, errorThrown);
-                    }
-            });
-
-            return false;
-        };
 
         if (Modernizr.history) {
-            $(document.body).on('click', '#icinganavigation', function(ev) {
-                var targetEl = ev.target || ev.toElement || ev.relatedTarget;
-                if (targetEl.tagName.toLowerCase() !== 'a') {
-                    return true;
+            /**
+             * Event handler that will be called when the url change
+             */
+            urlMgr.syncWithUrl();
+            var lastMain = urlMgr.mainUrl;
+            $(window).on('pushstate', (function() {
+                urlMgr.syncWithUrl();
+                if (urlMgr.mainUrl !== lastMain) {
+                    this.openUrl(urlMgr.getUrl());
+                    lastMain = urlMgr.mainUrl;
+                }
+                // If an anchor is set, scroll to it's position
+                if ($('#' + urlMgr.anchor).length) {
+                    $(document.body).scrollTo($('#' + urlMgr.anchor));
+                }
+            }).bind(this));
+
+            /**
+             * Event handler for browser back/forward events
+             */
+            $(window).on('popstate', (function() {
+                var lastMain = urlMgr.mainUrl;
+                urlMgr.syncWithUrl();
+                if (urlMgr.mainUrl !== lastMain) {
+                    this.openUrl(urlMgr.getUrl());
                 }
 
-                var href = $(targetEl).attr('href');
-                if (Container.isExternalLink(href)) {
-                    return true;
-                }
-                ev.preventDefault();
-                ev.stopPropagation();
-                gotoUrl(href);
-                return false;
-            });
+            }).bind(this));
         }
+
         $(document).ready(initialize.bind(this));
         Container.setIcinga(this);
+
         this.components = components;
-        this.replaceBodyFromUrl = gotoUrl;
+
     };
 
 

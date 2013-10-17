@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
-class ServicestatusQuery extends AbstractQuery
+class ServicestatusQuery extends IdoQuery
 {
     protected $allowCustomVars = true;
 
@@ -46,7 +46,7 @@ class ServicestatusQuery extends AbstractQuery
         )
     );
 
-    protected function getDefaultColumns()
+    public function getDefaultColumns()
     {
         return $this->columnMap['services']
              + $this->columnMap['servicestatus'];

@@ -107,7 +107,7 @@ class TabTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(
             1,
             preg_match(
-                '/<li *><a href="\/my\/url">Title text<\/a><\/li>/i',
+                '/<li *><a href="\/my\/url".*>Title text<\/a><\/li>/i',
                 $html
             ),
             'Asserting an url being rendered inside an HTML anchor. got ' . $html
@@ -155,7 +155,7 @@ class TabTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(
             1,
             preg_match(
-                '/<li *><i class="icon-myIcon"><\/i> Title text<\/li>/i',
+                '/<li *><i class="myIcon"><\/i> Title text<\/li>/i',
                 $html
             ),
             'Asserting an url being rendered inside an HTML anchor. got ' . $html

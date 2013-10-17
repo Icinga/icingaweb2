@@ -5,7 +5,7 @@
 namespace Icinga\Module\Monitoring;
 
 use Icinga\Application\Config as IcingaConfig;
-use Icinga\Module\Monitoring\DataView\HostAndServiceStatus as HostAndServiceStatusView;
+use Icinga\Module\Monitoring\DataView\ServiceStatus as ServiceStatusView;
 use Icinga\Web\Controller\ActionController;
 
 /**
@@ -13,6 +13,7 @@ use Icinga\Web\Controller\ActionController;
  */
 class Controller extends ActionController
 {
+
     /**
      * Retrieve services from either given parameters or request
      *
@@ -54,13 +55,13 @@ class Controller extends ActionController
             'max_check_attempts'    => 'service_max_check_attempts'
         );
         if ($params === null) {
-            $query = HostAndServiceStatusView::fromRequest(
+            $query = ServiceStatusView::fromRequest(
                 $this->_request,
                 $columns
             )->getQuery();
         } else {
             $params['backend'] = $this->_request->getParam('backend');
-            $query = HostAndServiceStatusView::fromParams(
+            $query = ServiceStatusView::fromParams(
                 $params,
                 $columns
             )->getQuery();
@@ -79,8 +80,7 @@ class Controller extends ActionController
             exit;
         }
         if ($this->_getParam('format') === 'json'
-            || $this->_request->getHeader('Accept') === 'application/json')
-        {
+            || $this->_request->getHeader('Accept') === 'application/json') {
             header('Content-type: application/json');
             echo json_encode($query->fetchAll());
             exit;

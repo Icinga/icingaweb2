@@ -32,7 +32,7 @@ namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 /**
  * Query map for comments
  */
-class CommentQuery extends AbstractQuery
+class CommentQuery extends IdoQuery
 {
     protected $columnMap = array(
         'comments' => array(

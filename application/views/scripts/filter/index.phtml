@@ -1,0 +1,11 @@
+<?php
+
+echo $this->form;
+
+if ($this->tree) {
+  echo $this->tree->render($this);
+  echo '<br/><pre><code>';
+  echo $this->sqlString;
+  echo '</pre></code>';
+  print_r($this->params);
+}

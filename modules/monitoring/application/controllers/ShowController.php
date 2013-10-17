@@ -34,8 +34,8 @@ use \Icinga\Module\Monitoring\Object\Host;
 use \Icinga\Module\Monitoring\Object\Service;
 use \Icinga\Application\Benchmark;
 use \Icinga\Web\Widget\Tabextension\OutputFormat;
-use \Icinga\Web\Widget\Tabextension\DashboardAction;
-use \Icinga\Web\Widget\Tabextension\BasketAction;
+use Icinga\Web\Widget\Tabextension\DashboardAction;
+use Icinga\Module\Monitoring\Object\AbstractObject;
 use \Icinga\Web\Widget\Tabs;
 
 /**
@@ -55,28 +55,16 @@ class Monitoring_ShowController extends MonitoringController
      */
     public function init()
     {
-        $host = $this->_getParam('host');
-        $service = $this->_getParam('service');
-        $this->backend = Backend::createBackend($this->_getParam('backend'));
-        $object = null;
-        // TODO: Do not allow wildcards in names!
-        if ($host !== null) {
-            // TODO: $this->assertPermission('host/read', $host);
-            if ($this->getRequest()->getActionName() !== 'host' && $service !== null && $service !== '*') {
-                // TODO: $this->assertPermission('service/read', $service);
-                $object = Service::fetch($this->backend, $host, $service);
-            } else {
-                $object = Host::fetch($this->backend, $host);
-            }
+
+        if ($this->getRequest()->getActionName() === 'host') {
+            $this->view->object = new Host($this->getRequest());
+        } elseif ($this->getRequest()->getActionName() === 'service') {
+            $this->view->object = new Service($this->getRequest());
+
+        } else {
+            $this->view->object = AbstractObject::fromRequest($this->getRequest());
         }
 
-        $this->view->compact = $this->_getParam('view') === 'compact';
-        if ($object === null) {
-            // TODO: Notification, not found
-            $this->redirectNow('monitoring/list/services');
-            return;
-        }
-        $this->view->object = $object;
         $this->createTabs();
     }
 
@@ -85,8 +73,7 @@ class Monitoring_ShowController extends MonitoringController
      */
     public function serviceAction()
     {
-        $this->view->object->prefetch();
-        $this->view->preserve = array();
+        $this->view->object->populate();
     }
 
     /**
@@ -94,14 +81,15 @@ class Monitoring_ShowController extends MonitoringController
      */
     public function hostAction()
     {
-        $this->view->object->prefetch();
-        $this->view->preserve = array();
+        $this->view->object->populate();
     }
 
     public function historyAction()
     {
+        $this->view->object->populate();
         $this->view->object->fetchEventHistory();
-        $this->view->history = $this->view->object->eventHistory->limit(10)->paginate();
+        $this->view->history = $this->view->object->eventhistory->limit(10)->paginate();
+
     }
 
     public function servicesAction()

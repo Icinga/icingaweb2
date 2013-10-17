@@ -3,9 +3,8 @@ requirejs.config({
     'urlArgs': "bust=" + (new Date()).getTime(),
     'paths': {
         'jquery':           'vendor/jquery-1.8.3',
-        'jqueryPlugins':    'vendor/jqueryPlugins/',
+        'jquery_scrollto':  'vendor/jquery.scrollto',
         'bootstrap':        'vendor/bootstrap/bootstrap.min',
-        'history':          'vendor/history',
         'logging':          'icinga/util/logging',
         'URIjs':            'vendor/uri',
         'datetimepicker':   'vendor/bootstrap/datetimepicker.min'
@@ -14,21 +13,23 @@ requirejs.config({
         'datetimepicker': {
             'exports': 'datetimepicker'
         },
+        'jquery_scrollto': {
+            exports: 'jquery_scrollto'
+        },
         'jquery' : {
             exports: 'jquery'
         }
     }
 });
 
-define(['jquery', 'history'], function ($) {
+define(['jquery'], function ($, history) {
+    window.$ = $;
+    window.jQuery = $;
 
-    requirejs(['bootstrap'], function() {
+    requirejs(['bootstrap','jquery_scrollto'], function() {
         requirejs(['datetimepicker']);
     });
-
     requirejs(['icinga/icinga'], function (Icinga) {
-        window.$ = $;
-        window.jQuery = $;
         window.Icinga = Icinga;
     });
 

@@ -51,7 +51,9 @@ class Comment extends DataView
             'comment_is_persistent',
             'comment_expiration_timestamp',
             'host_name',
-            'service_name'
+            'service_name',
+            'host',
+            'service'
         );
     }
 

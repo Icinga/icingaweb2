@@ -22,13 +22,10 @@ require_once 'library/Icinga/Protocol/Statusdat/StatusdatTestLoader.php';
 StatusdatTestLoader::requireLibrary();
 
 require_once '../../modules/monitoring/library/Monitoring/Backend/Statusdat/Criteria/Order.php';
-require_once '../../modules/monitoring/library/Monitoring/Backend/AbstractBackend.php';
 require_once '../../modules/monitoring/library/Monitoring/Backend.php';
 require_once '../../modules/monitoring/library/Monitoring/Backend/Statusdat/Query/Query.php';
 require_once '../../modules/monitoring/library/Monitoring/Backend/Statusdat/Query/StatusQuery.php';
 require_once '../../modules/monitoring/library/Monitoring/Backend/Statusdat/DataView/HostStatusView.php';
-require_once '../../modules/monitoring/library/Monitoring/View/AbstractView.php';
-require_once '../../modules/monitoring/library/Monitoring/View/StatusView.php';
 require_once '../../library/Icinga/Web/Paginator/ScrollingStyle/SlidingWithBorder.php';
 
 class TestPaginatorAdapter implements Zend_Paginator_Adapter_Interface

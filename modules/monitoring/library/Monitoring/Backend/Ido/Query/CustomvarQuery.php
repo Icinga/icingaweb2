@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
-class CustomvarQuery extends AbstractQuery
+class CustomvarQuery extends IdoQuery
 {
     protected $object_id = 'object_id';
 

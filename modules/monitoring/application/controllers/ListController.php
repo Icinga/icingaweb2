@@ -38,16 +38,22 @@ use Icinga\Web\Widget\Tabextension\OutputFormat;
 use Icinga\Web\Widget\Tabs;
 use Icinga\Module\Monitoring\Backend;
 use Icinga\Web\Widget\SortBox;
+use Icinga\Web\Widget\FilterBox;
 use Icinga\Application\Config as IcingaConfig;
 
+use Icinga\Module\Monitoring\DataView\DataView;
 use Icinga\Module\Monitoring\DataView\Notification as NotificationView;
 use Icinga\Module\Monitoring\DataView\Downtime as DowntimeView;
 use Icinga\Module\Monitoring\DataView\Contact as ContactView;
 use Icinga\Module\Monitoring\DataView\Contactgroup as ContactgroupView;
-use Icinga\Module\Monitoring\DataView\HostAndServiceStatus as HostAndServiceStatusView;
+use Icinga\Module\Monitoring\DataView\HostStatus as HostStatusView;
+use Icinga\Module\Monitoring\DataView\ServiceStatus as ServiceStatusView;
 use Icinga\Module\Monitoring\DataView\Comment as CommentView;
 use Icinga\Module\Monitoring\DataView\Groupsummary as GroupsummaryView;
 use Icinga\Module\Monitoring\DataView\EventHistory as EventHistoryView;
+use Icinga\Module\Monitoring\Filter\UrlViewFilter;
+use Icinga\Module\Monitoring\DataView\ServiceStatus;
+use Icinga\Filter\Filterable;
 
 class Monitoring_ListController extends MonitoringController
 {
@@ -57,6 +63,7 @@ class Monitoring_ListController extends MonitoringController
      * @var Backend
      */
     protected $backend;
+
     /**
      * Compact layout name
      *
@@ -95,8 +102,9 @@ class Monitoring_ListController extends MonitoringController
      */
     public function hostsAction()
     {
+
         $this->compactView = 'hosts-compact';
-        $query = HostAndServiceStatusView::fromRequest(
+        $dataview = HostStatusView::fromRequest(
             $this->_request,
             array(
                 'host_icon_image',
@@ -122,8 +130,10 @@ class Monitoring_ListController extends MonitoringController
                 'host_current_check_attempt',
                 'host_max_check_attempts'
             )
-        )->getQuery();
-        $this->view->hosts = $query->paginate();
+        );
+        $query = $dataview->getQuery();
+        $this->setupFilterControl($dataview, 'host');
+
         $this->setupSortControl(array(
             'host_last_check'   => 'Last Host Check',
             'host_severity'     => 'Host Severity',
@@ -133,6 +143,8 @@ class Monitoring_ListController extends MonitoringController
             'host_state'        => 'Hard State'
         ));
         $this->handleFormatRequest($query);
+        $this->view->hosts = $query->paginate();
+
     }
 
     /**
@@ -142,6 +154,8 @@ class Monitoring_ListController extends MonitoringController
     {
         $this->compactView = 'services-compact';
         $this->view->services = $this->fetchServices();
+
+        $this->setupFilterControl(ServiceStatus::fromRequest($this->getRequest()), 'service');
         $this->setupSortControl(array(
             'service_last_check'    =>  'Last Service Check',
             'service_severity'      =>  'Severity',
@@ -180,6 +194,7 @@ class Monitoring_ListController extends MonitoringController
                 'downtime_trigger_time'
             )
         )->getQuery();
+
         $this->view->downtimes = $query->paginate();
         $this->setupSortControl(array(
             'downtime_is_in_effect'         => 'Is In Effect',
@@ -369,12 +384,27 @@ class Monitoring_ListController extends MonitoringController
 
     public function eventhistoryAction()
     {
-        $query = EventHistoryView::fromRequest($this->_request)->getQuery();
+        $query = EventHistoryView::fromRequest(
+            $this->getRequest(),
+            array(
+                'host_name',
+                'service_description',
+                'object_type',
+                'timestamp',
+                'raw_timestamp',
+                'state',
+                'attempt',
+                'max_attempts',
+                'output',
+                'type',
+                'host',
+                'service'
+            )
+        )->getQuery();
         $this->handleFormatRequest($query);
         $this->view->history = $query->paginate();
         $this->setupSortControl(
-            array(
-            )
+            array()
         );
     }
 
@@ -389,10 +419,11 @@ class Monitoring_ListController extends MonitoringController
             $this->_helper->viewRenderer($this->compactView);
         }
 
-        if ($this->_getParam('format') === 'sql'
+
+        if ($this->getParam('format') === 'sql'
             && IcingaConfig::app()->global->get('environment', 'production') === 'development') {
             echo '<pre>'
-                . htmlspecialchars(wordwrap($query->dump()))
+                . htmlspecialchars(wordwrap($query->__toString()))
                 . '</pre>';
             exit;
         }
@@ -425,6 +456,17 @@ class Monitoring_ListController extends MonitoringController
         $this->view->sortControl->applyRequest($this->getRequest());
     }
 
+    private function setupFilterControl(Filterable $dataview, $domain)
+    {
+        $parser = new UrlViewFilter($dataview);
+        $this->view->filterBox = new FilterBox(
+            $parser->fromRequest($this->getRequest()),
+            $domain,
+            'monitoring'
+        );
+
+    }
+
     /**
      * Return all tabs for this controller
      *
@@ -432,7 +474,6 @@ class Monitoring_ListController extends MonitoringController
      */
     private function createTabs()
     {
-
         $tabs = $this->getTabs();
         $tabs->extend(new OutputFormat())
             ->extend(new DashboardAction());
