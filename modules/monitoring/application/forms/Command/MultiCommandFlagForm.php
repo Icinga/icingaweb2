@@ -44,7 +44,7 @@ class MultiCommandFlagForm extends Form {
      *
      * @var string
      */
-    const OLD_VALUE_MARKER = '_&&old';
+    const OLD_VALUE_MARKER = '_old_value';
 
     /**
      * The object properties to change
@@ -141,7 +141,7 @@ class MultiCommandFlagForm extends Form {
         }
         $old = array();
         foreach ($values as $key => $value) {
-            $old[$key . self::OLD_VALUE_MARKER] = $key;
+            $old[$key . self::OLD_VALUE_MARKER] = $value;
         }
         return array_merge($values, $old);
     }
