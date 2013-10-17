@@ -77,11 +77,18 @@ function(Container, $, logger, Selectable, TableMultiSelection, URI) {
         var controlForms;
 
         /**
-         * Handles multi-selection
+         * Handles a multi-selection of rows
          *
          * @type {TableMultiSelection}
          */
         var selection;
+
+        /**
+         * Defines how row clicks are handled. Can either be 'none', 'single' or 'multi'
+         *
+         * @type {string}
+         */
+        var selectionMode;
 
         /**
          * Detect and select control forms for this table and return them
@@ -129,6 +136,29 @@ function(Container, $, logger, Selectable, TableMultiSelection, URI) {
         };
 
         /**
+         * Activate a hover effect on all table rows, to indicate that
+         * this table row is clickable.
+         *
+         * @param domContext
+         */
+        this.activateRowHovering = function(domContext) {
+            domContext = domContext || contentNode;
+            //$(domContext).addClass('table-hover');
+            $('tbody tr', domContext).hover(
+                function(e) {
+                    $(this).addClass('hover');
+                    e.preventDefault();
+                    e.stopPropagation();
+                },
+                function(e) {
+                    $(this).removeClass('hover');
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+            );
+        };
+
+        /**
          * Register the row links of tables using the first link found in the table (no matter if visible or not)
          *
          * Row level links can only be realized via JavaScript, so every row should provide additional links for
@@ -159,18 +189,30 @@ function(Container, $, logger, Selectable, TableMultiSelection, URI) {
                     }
                 }
 
-                var selectable = new Selectable(this);
-                if (ev.ctrlKey || ev.metaKey) {
-                    selection.toggle(selectable);
-                } else if (ev.shiftKey) {
-                    // select range ?
-                    selection.add(selectable);
-                } else {
-                    selection.clear();
-                    selection.add(selectable);
+                switch (selectionMode) {
+                    case 'multi':
+                        var selectable = new Selectable(this);
+                        if (ev.ctrlKey || ev.metaKey) {
+                            selection.toggle(selectable);
+                        } else if (ev.shiftKey) {
+                            // select range ?
+                            selection.add(selectable);
+                        } else {
+                            selection.clear();
+                            selection.add(selectable);
+                        }
+                        break;
+
+                    case 'single':
+                        selection.clear();
+                        selection.add(new Selectable(this));
+                        break;
+
+                    case 'none':
+                        // don't open the link
+                        return;
                 }
 
-                // TODO: Detail target
                 var url = URI($('a', this).attr('href'));
                 var segments = url.segment();
                 if (selection.size() === 0) {
@@ -261,10 +303,14 @@ function(Container, $, logger, Selectable, TableMultiSelection, URI) {
             this.container.removeDefaultLoadIndicator();
             controlForms = determineControlForms();
             contentNode = determineContentTable();
-            selection = new TableMultiSelection(
-                contentNode,
-                Container.getDetailContainer().getContainerHref()
-            );
+            selectionMode = gridDomNode.data('icinga-grid-selection-type');
+            if (selectionMode === 'multi' || selectionMode === 'single') {
+                this.activateRowHovering();
+                selection = new TableMultiSelection(
+                    contentNode,
+                    Container.getDetailContainer().getContainerHref()
+                );
+            }
             this.registerControls();
             this.registerTableLinks();
             this.registerHistoryChanges();

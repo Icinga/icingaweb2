@@ -4,7 +4,7 @@ $viewHelper = $this->getHelper('MonitoringState');
 
 <?= $this->tabs->render($this); ?>
 <h1>Services Status</h1>
-<div data-icinga-component="app/mainDetailGrid">
+<div data-icinga-component="app/mainDetailGrid" data-icinga-grid-selection-type="multi">
   <div class="container">
     <div class="row">
       <div class="col-md-5">
@@ -17,6 +17,14 @@ $viewHelper = $this->getHelper('MonitoringState');
     <div class="row">
       <?=  $this->paginationControl($services, null, null, array('preserve' => $this->preserve)); ?>
     </div>
+    Select
+    <a href='?detail=<?= urlencode(
+        $this->href(
+            'monitoring/multi/host',
+            array('host' => '*', 'service' => '*')
+        )
+    )?>'> All </a>
+    <a href='?'> None </a>
   </div>
   <table class="table table-condensed">
     <tbody>

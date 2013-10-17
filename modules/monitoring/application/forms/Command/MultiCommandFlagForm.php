@@ -75,9 +75,9 @@ class MultiCommandFlagForm extends Form {
     /**
      * Initialise the form values with the array of items to configure.
      *
-     * @param array $items  The items that will be edited with this form.
+     * @param mixed     $items    The items that will be edited with this form.
      */
-    public function initFromItems(array $items)
+    public function initFromItems($items)
     {
         $this->values = $this->valuesFromObjects($items);
         $this->buildForm();
@@ -107,31 +107,26 @@ class MultiCommandFlagForm extends Form {
      *
      * @param array $items  The items
      */
-    private function valuesFromObjects(array $items)
+    private function valuesFromObjects($items)
     {
         $values = array();
         foreach ($items as $item) {
             foreach ($this->flags as $key => $unused) {
-
                 if (isset($item->{$key})) {
                     $value = $item->{$key};
-
                     // convert strings
                     if ($value === '1' || $value === '0') {
                         $value = intval($value);
                     }
-
                     // init key with first value
                     if (!array_key_exists($key, $values)) {
                         $values[$key] = $value;
                         continue;
                     }
-
                     // already a mixed state ?
                     if ($values[$key] === 'unchanged') {
                         continue;
                     }
-
                     // values differ?
                     if ($values[$key] ^ $value) {
                         $values[$key] = 'unchanged';
