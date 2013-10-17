@@ -30,9 +30,7 @@ class EventHistoryQuery extends AbstractQuery
             'max_attempts'    => 'eh.max_attempts',
             'output'          => 'eh.output', // we do not want long_output
             //'problems'        => 'CASE WHEN eh.state = 0 OR eh.state IS NULL THEN 0 ELSE 1 END',
-            'type'  => 'eh.type',
-            'service_host_name'                => 'eho.name1 COLLATE latin1_general_ci',
-            'service_description'             => 'eho.name2 COLLATE latin1_general_ci'
+            'type'  => 'eh.type'
         ),
         'hostgroups' => array(
             'hostgroup' => 'hgo.name1 COLLATE latin1_general_ci',

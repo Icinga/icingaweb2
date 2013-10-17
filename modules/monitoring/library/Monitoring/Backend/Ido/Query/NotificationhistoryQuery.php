@@ -21,46 +21,29 @@ class NotificationhistoryQuery extends AbstractQuery
 
     protected function joinBaseTables()
     {
-//"('[' || cndetails.contacts || '] ' || n.output)"
-        // This is one of the db-specific workarounds that could be abstracted
-        // in a better way:
         switch ($this->ds->getDbType()) {
             case 'mysql':
-                $concat_contacts = "GROUP_CONCAT(c.alias ORDER BY c.alias SEPARATOR ', ')";
+                $concattedContacts = "GROUP_CONCAT(c.alias ORDER BY c.alias SEPARATOR ', ')";
                 break;
             case 'pgsql':
-                // TODO: Find a way to "ORDER" these:
-                $concat_contacts = "ARRAY_TO_STRING(ARRAY_AGG(c.alias), ', ')";
+                // TODO: Find a way to order the contact alias list:
+                $concattedContacts = "ARRAY_TO_STRING(ARRAY_AGG(c.alias), ', ')";
                 break;
             case 'oracle':
-                // TODO: This is only valid for Oracle >= 11g Release 2.
-                $concat_contacts = "LISTAGG(c.alias, ', ') WITHIN GROUP (ORDER BY c.alias)";
+                // TODO: This is only valid for Oracle >= 11g Release 2
+                $concattedContacts = "LISTAGG(c.alias, ', ') WITHIN GROUP (ORDER BY c.alias)";
                 // Alternatives:
                 //
                 //   RTRIM(XMLAGG(XMLELEMENT(e, column_name, ',').EXTRACT('//text()')),
                 //
                 //   not supported and not documented but works since 10.1,
-                //   however it is NOT always present;
+                //   however it is NOT always present:
                 //   WM_CONCAT(c.alias)
                 break;
-            default:
-                die('Not yet'); // TODO: Proper Exception
         }
-$this->columnMap['history']['output'] = "('[' || $concat_contacts || '] ' || n.output)";
-/*
-        $cndetails = $this->db->select()->from(
-            array('cn' => $this->prefix . 'contactnotifications'),
-            array(
-                'notification_id' => 'notification_id',
-                'cnt'      => 'COUNT(*)',
-                'contacts' => $concat_contacts
-            )
-        )->join(
-            array('c' => $this->prefix . 'contacts'),
-            'cn.contact_object_id = c.contact_object_id',
-            array()
-        )->group('notification_id');
-*/
+
+        $this->columnMap['history']['output'] = "('[' || $concattedContacts || '] ' || n.output)";
+
         $this->baseQuery = $this->db->select()->from(
             array('n' => $this->prefix . 'notifications'),
             array()
@@ -72,14 +55,14 @@ $this->columnMap['history']['output'] = "('[' || $concat_contacts || '] ' || n.o
             array('c' => $this->prefix . 'contacts'),
             'cn.contact_object_id = c.contact_object_id',
             array()
-        )->group('cn.notification_id')
+        )->group('cn.notification_id');
 
-        /*->join(
-            array('cndetails' => $cndetails),
-            'cndetails.notification_id = n.notification_id',
-            array()
-        )*/
-        ;
+        if ($this->ds->getDbType() === 'pgsql') {
+            $this->baseQuery->group('n.object_id')
+                ->group('n.start_time')
+                ->group('n.output')
+                ->group('n.state');
+        }
 
         $this->joinedVirtualTables = array('history' => true);
     }

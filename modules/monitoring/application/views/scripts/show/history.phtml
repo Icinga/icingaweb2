@@ -90,13 +90,13 @@
                     'host'    => $object->host_name,
                     'service' => $object->service_description
                 )); ?>">
-                    All events for <?= $event->service_description ?>
+                    All events for <?= $object->service_description ?>
                 </a>
             <?php else: ?>
                 <a href="<?= $this->href('monitoring/list/eventhistory', array(
                     'host'    => $object->host_name
                 )); ?>">
-                    All events for <?= $event->host_name ?>
+                    All events for <?= $object->host_name ?>
                 </a>
             <?php endif; ?>
     </div>
