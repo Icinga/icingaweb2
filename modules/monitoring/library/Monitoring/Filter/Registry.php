@@ -142,7 +142,7 @@ class Registry implements FilterRegistry
         $domain->registerAttribute(
             FilterAttribute::create(new TextFilter())
                 ->setHandledAttributes('Name', 'Servicename')
-                ->setField('service_name')
+                ->setField('service_description')
         )->registerAttribute(
             FilterAttribute::create(StatusFilter::createForService())
                 ->setField('service_state')
