@@ -27,5 +27,4 @@ class Host extends AbstractObject
         $this->view = HostStatus::fromRequest($this->getRequest());
         return $this->view->getQuery()->fetchRow();
     }
-
 }

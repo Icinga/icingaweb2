@@ -15,7 +15,7 @@ abstract class BaseQuery implements Filterable
     /**
      * Sort ascending
      */
-    const SORT_ASC  = 1;
+    const SORT_ASC = 1;
 
     /**
      * Sort descending
@@ -97,7 +97,7 @@ abstract class BaseQuery implements Filterable
      * The Query will return the default attribute the attributes parameter is omitted
      *
      * @param String $target    The target of this query (tablename, objectname, depends on the concrete implementation)
-     * @param array  $columns   An optional array of columns to select, if none are given the default
+     * @param array $columns   An optional array of columns to select, if none are given the default
      *                          columnset is returned
      *
      * @return self             Fluent interface
@@ -119,7 +119,7 @@ abstract class BaseQuery implements Filterable
      * backend-specific query implementation.
      *
      * @param string $expression    Implementation specific search expression
-     * @param mixed  $parameters    Implementation specific search value to use for query placeholders
+     * @param mixed $parameters    Implementation specific search value to use for query placeholders
      *
      * @return self                 Fluent Interface
      * @see BaseQuery::andWhere()   This is an alias to andWhere()
@@ -136,21 +136,20 @@ abstract class BaseQuery implements Filterable
      * backend-specific query implementation.
      *
      * @param string $expression    Implementation specific search expression
-     * @param mixed  $parameters    Implementation specific search value to use for query placeholders
-
+     * @param mixed $parameters    Implementation specific search value to use for query placeholders
      * @return self                 Fluent interface
      */
-     public function andWhere($expression, $parameters = null)
-     {
-         $node = $this->parseFilterExpression($expression, $parameters);
-         if ($node === null) {
-             Logger::debug('Ignoring invalid filter expression: %s (params: %s)', $expression, $parameters);
-             return $this;
-         }
-         $this->filter->insert(Node::createAndNode());
-         $this->filter->insert($node);
-         return $this;
-     }
+    public function andWhere($expression, $parameters = null)
+    {
+        $node = $this->parseFilterExpression($expression, $parameters);
+        if ($node === null) {
+            Logger::debug('Ignoring invalid filter expression: %s (params: %s)', $expression, $parameters);
+            return $this;
+        }
+        $this->filter->insert(Node::createAndNode());
+        $this->filter->insert($node);
+        return $this;
+    }
 
     /**
      * Add an lower priority filter expression to be applied on this query
@@ -159,8 +158,7 @@ abstract class BaseQuery implements Filterable
      * backend-specific query implementation.
      *
      * @param string $expression    Implementation specific search expression
-     * @param mixed  $parameters    Implementation specific search value to use for query placeholders
-
+     * @param mixed $parameters    Implementation specific search value to use for query placeholders
      * @return self                 Fluent interface
      */
     public function orWhere($expression, $parameters = null)
@@ -256,7 +254,7 @@ abstract class BaseQuery implements Filterable
      * </code>
      *
      * @param  string $columnOrAlias Column, may contain direction separated by space
-     * @param  int    $dir Sort direction
+     * @param  int $dir Sort direction
      *
      * @return BaseQuery
      */
@@ -299,7 +297,7 @@ abstract class BaseQuery implements Filterable
      */
     public function limit($count = null, $offset = null)
     {
-        $this->limitCount  = $count !== null ? intval($count) : null;
+        $this->limitCount = $count !== null ? intval($count) : null;
         $this->limitOffset = intval($offset);
 
         return $this;

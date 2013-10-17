@@ -181,7 +181,7 @@ abstract class AbstractObject
     {
         if ($request->has('service') && $request->has('host')) {
             return new Service($request);
-        } else if ($request->has('host')) {
+        } elseif ($request->has('host')) {
             return new Host($request);
         }
     }

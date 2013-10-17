@@ -19,4 +19,3 @@ class CommenthistoryQuery extends IdoQuery
         )
     );
 }
-

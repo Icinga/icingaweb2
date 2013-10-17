@@ -11,5 +11,4 @@ interface DatasourceInterface
      * @return BaseQuery
      */
     public function select();
-
 }

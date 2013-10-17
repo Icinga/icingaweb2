@@ -130,7 +130,8 @@ class TreeToSqlParser
         if ($this->query->isAggregateColumn($node->left)) {
             $this->type = 'HAVING';
         }
-        $queryString .= ' ' . (is_integer($node->right) ? $node->operator : $this->getSqlOperator($node->operator)) . ' ';
+        $queryString .= ' ' . (is_integer($node->right) ?
+                $node->operator : $this->getSqlOperator($node->operator)) . ' ';
         $queryString .= $this->getParameterValue($node);
         return $queryString;
     }
@@ -152,11 +153,8 @@ class TreeToSqlParser
         if ($this->query->isTimestamp($node->left)) {
             $node->context = Node::CONTEXT_TIMESTRING;
         }
-        switch($node->context) {
-            case Node::CONTEXT_TIMESTRING:
-                $value = strtotime($value);
-            default:
-                break;
+        if ($node->context === Node::CONTEXT_TIMESTRING) {
+            $value = strtotime($value);
         }
         return $this->query->getDatasource()->getConnection()->quote($value);
     }

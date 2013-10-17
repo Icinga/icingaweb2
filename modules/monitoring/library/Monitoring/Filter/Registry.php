@@ -79,9 +79,9 @@ class Registry implements FilterRegistry
         $type = new TimeRangeSpecifier();
         $type->setOperator(
             array(
-                'Older Than'    => Node::OPERATOR_LESS_EQ,
+                'Older Than' => Node::OPERATOR_LESS_EQ,
                 'Is Older Than' => Node::OPERATOR_LESS_EQ,
-                'Newer Than'    => Node::OPERATOR_GREATER_EQ,
+                'Newer Than' => Node::OPERATOR_GREATER_EQ,
                 'Is Newer Than' => Node::OPERATOR_GREATER_EQ,
             )
         )->setForcePastValue(true);
@@ -101,21 +101,23 @@ class Registry implements FilterRegistry
             FilterAttribute::create(new TextFilter())
                 ->setHandledAttributes('Name', 'Hostname')
                 ->setField('host_name')
+        )->registerAttribute(
+            FilterAttribute::create(StatusFilter::createForHost())
+                ->setField('host_state')
             )->registerAttribute(
-                FilterAttribute::create(StatusFilter::createForHost())
-                    ->setField('host_state')
-            )->registerAttribute(
-                FilterAttribute::create(new BooleanFilter(
-                    array(
-                        'host_is_flapping'              => 'Flapping',
-                        'host_problem'                  => 'In Problem State',
-                        'host_notifications_enabled'    => 'Sending Notifications',
-                        'host_active_checks_enabled'    => 'Active',
-                        'host_passive_checks_enabled'   => 'Accepting Passive Checks',
-                        'host_handled'                  => 'Handled',
-                        'host_in_downtime'              => 'In Downtime',
+                FilterAttribute::create(
+                    new BooleanFilter(
+                        array(
+                            'host_is_flapping' => 'Flapping',
+                            'host_problem' => 'In Problem State',
+                            'host_notifications_enabled' => 'Sending Notifications',
+                            'host_active_checks_enabled' => 'Active',
+                            'host_passive_checks_enabled' => 'Accepting Passive Checks',
+                            'host_handled' => 'Handled',
+                            'host_in_downtime' => 'In Downtime',
+                        )
                     )
-                ))
+                )
             )->registerAttribute(
                 FilterAttribute::create(self::getLastCheckFilterType())
                     ->setHandledAttributes('Last Check', 'Check')
@@ -141,26 +143,28 @@ class Registry implements FilterRegistry
             FilterAttribute::create(new TextFilter())
                 ->setHandledAttributes('Name', 'Servicename')
                 ->setField('service_name')
-            )->registerAttribute(
-                FilterAttribute::create(StatusFilter::createForService())
-                    ->setField('service_state')
+        )->registerAttribute(
+            FilterAttribute::create(StatusFilter::createForService())
+                ->setField('service_state')
             )->registerAttribute(
                 FilterAttribute::create(StatusFilter::createForHost())
                     ->setHandledAttributes('Host')
                     ->setField('host_state')
             )->registerAttribute(
-                FilterAttribute::create(new BooleanFilter(
+                FilterAttribute::create(
+                    new BooleanFilter(
                         array(
-                            'service_is_flapping'              => 'Flapping',
-                            'service_problem'                  => 'In Problem State',
-                            'service_notifications_enabled'    => 'Sending Notifications',
-                            'service_active_checks_enabled'    => 'Active',
-                            'service_passive_checks_enabled'   => 'Accepting Passive Checks',
-                            'service_handled'                  => 'Handled',
-                            'service_in_downtime'              => 'In Downtime',
-                            'host_in_downtime'                 => 'In Host Downtime'
+                            'service_is_flapping' => 'Flapping',
+                            'service_problem' => 'In Problem State',
+                            'service_notifications_enabled' => 'Sending Notifications',
+                            'service_active_checks_enabled' => 'Active',
+                            'service_passive_checks_enabled' => 'Accepting Passive Checks',
+                            'service_handled' => 'Handled',
+                            'service_in_downtime' => 'In Downtime',
+                            'host_in_downtime' => 'In Host Downtime'
                         )
-                    ))
+                    )
+                )
             )->registerAttribute(
                 FilterAttribute::create(self::getLastCheckFilterType())
                     ->setHandledAttributes('Last Check', 'Check')
@@ -201,7 +205,7 @@ class Registry implements FilterRegistry
         }
         $urlParser = new UrlViewFilter($view);
         $lastQuery = parse_url($_SERVER['HTTP_REFERER'], PHP_URL_QUERY);
-        $lastPath  = parse_url($_SERVER['HTTP_REFERER'], PHP_URL_PATH);
+        $lastPath = parse_url($_SERVER['HTTP_REFERER'], PHP_URL_PATH);
         $lastFilter = $urlParser->parseUrl($lastQuery);
         $lastParameters = array();
 
@@ -226,5 +230,4 @@ class Registry implements FilterRegistry
         $urlString .= $urlParser->fromTree($filter);
         return '/' . $urlString;
     }
-
 }

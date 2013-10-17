@@ -111,7 +111,7 @@ class Query extends BaseQuery
     /**
      * Create the Zend_Db select query for this query
      */
-    private  function createSelectQuery()
+    private function createSelectQuery()
     {
         $this->selectQuery = clone($this->baseQuery);
         $this->selectQuery->columns($this->getColumns());
@@ -170,7 +170,7 @@ class Query extends BaseQuery
         if ($this->useSubqueryCount) {
             $this->countQuery = $this->createCountAsSubquery();
         } else {
-            $this->countQuery =$this->createCustomCountQuery();
+            $this->countQuery = $this->createCustomCountQuery();
         }
     }
 
@@ -184,6 +184,7 @@ class Query extends BaseQuery
     {
 
     }
+
     /**
      * Create the Zend_Db select and count query objects for this instance
      */
@@ -268,10 +269,10 @@ class Query extends BaseQuery
     public function dump()
     {
         return "QUERY\n=====\n"
-             . $this->getSelectQuery()
-             . "\n\nCOUNT\n=====\n"
-             . $this->getCountQuery()
-             . "\n\n";
+        . $this->getSelectQuery()
+        . "\n\nCOUNT\n=====\n"
+        . $this->getCountQuery()
+        . "\n\n";
     }
 
     /**
@@ -310,7 +311,7 @@ class Query extends BaseQuery
             }
         }
         return null;
-     }
+    }
 
     public function applyFilter()
     {
@@ -318,6 +319,4 @@ class Query extends BaseQuery
         $parser->treeToSql($this->getFilter(), $this->baseQuery);
         $this->clearFilter();
     }
-
-
 }

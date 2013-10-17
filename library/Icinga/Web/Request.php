@@ -62,6 +62,4 @@ class Request extends Zend_Controller_Request_Http
     {
         return $this->user;
     }
-
-
 }

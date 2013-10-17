@@ -26,9 +26,7 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-
 namespace Icinga\Module\Monitoring\Filter;
-
 
 use Icinga\Filter\Filterable;
 use Icinga\Filter\Query\Tree;
@@ -117,7 +115,7 @@ class UrlViewFilter
 
     public function fromRequest($request)
     {
-        if($request->getParam('query')) {
+        if ($request->getParam('query')) {
             return $this->parseUrl(urldecode($request->getParam('query')));
         } else {
             return $this->parseUrl(parse_url($request->getBaseUrl(), PHP_URL_QUERY));

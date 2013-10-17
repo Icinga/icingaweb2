@@ -65,6 +65,4 @@ class Servicegroup extends DataView
             )
         );
     }
-
-
 }

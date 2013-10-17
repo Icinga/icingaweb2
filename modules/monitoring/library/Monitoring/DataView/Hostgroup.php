@@ -71,5 +71,4 @@ class Hostgroup extends DataView
             )
         );
     }
-
 }

@@ -34,7 +34,6 @@ use Zend_View_Abstract;
 use Icinga\Web\Form\Decorator\ConditionalHidden;
 use Zend_Form_Element_Submit;
 
-
 /**
  *  Sortbox widget
  *

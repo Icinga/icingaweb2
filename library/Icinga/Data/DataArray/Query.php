@@ -96,6 +96,4 @@ class Query extends BaseQuery
     {
         return null;
     }
-
-
 }

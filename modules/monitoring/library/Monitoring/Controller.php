@@ -80,8 +80,7 @@ class Controller extends ActionController
             exit;
         }
         if ($this->_getParam('format') === 'json'
-            || $this->_request->getHeader('Accept') === 'application/json')
-        {
+            || $this->_request->getHeader('Accept') === 'application/json') {
             header('Content-type: application/json');
             echo json_encode($query->fetchAll());
             exit;

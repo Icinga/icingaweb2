@@ -238,7 +238,8 @@ class Tab implements Widget
                     $tagParams .= ' ' . $key . '="' . $value . '"';
                 }
             }
-            $tab = '<a' . $tagParams .' href="' . $this->url->getAbsoluteUrl() . '" data-icinga-target="self">' . $caption . '</a>';
+            $tab = '<a' . $tagParams .' href="' . $this->url->getAbsoluteUrl()
+                . '" data-icinga-target="self">' . $caption . '</a>';
         } else {
             $tab = $caption;
         }
