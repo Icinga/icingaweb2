@@ -99,5 +99,6 @@
             <? endforeach; ?>
             </tbody>
         </table>
+        <?=  $this->paginationControl($history, null, null, array('preserve' => $this->preserve)); ?>
     </div>
 <?php endif; ?>
