@@ -1,24 +1,64 @@
 <div class="panel panel-default ">
   <div class="panel-heading">
-    <span> {{COMMENT_ICON}} Comments </span>
+    <span> Comments </span>
   </div>
 
   <div class="panel-body">
-      <a href=" <?=
-        $this->href(
-            'monitoring/list/comments',
-            array(
-                'comment_id' => implode(',', $comments)
-            )
-        );
-      ?>">
-        <?= count($comments);?> comments are present in the selected items.
-      </a>
-      <div>
-          {{REMOVE_COMMENTS_BUTTON}}
-          {{ADD_COMMENT_BUTTON}}
-          {{SEND_NOTIFICATION_BUTTON}}
-          {{DELAY_NOTIFICATION_BUTTON}}
+
+      <div class="panel-row">
+		<?php if (count($comments) > 0) { ?>
+			<a href=" <?=
+			$this->href(
+				'monitoring/list/comments',
+				array(
+					'comment_id' => implode(',', $this->comments)
+				)
+			);
+			?>">
+			<?= count($comments);?> comments in the selected items.
+			</a>
+			<a href="<?=
+				$this->href(
+					'monitoring/command/removecomment',
+					$this->target
+				);
+				?>" class="button btn-common btn-small input-sm pull-right">
+				<i class="icinga-icon-remove"></i>
+			</a>
+		<?php } else { ?>
+			0 comments in the selected items.
+		<?php } ?>
+	  </div>
+
+      <div class="panel-row">
+         <a href="<?=
+         $this->href(
+             'monitoring/command/sendcustomnotification',
+             $this->target
+         );
+         ?>" class="button btn-cta btn-common btn-wide">
+             Add Comments
+         </a>
+      </div>
+
+      <div class="panel-row">
+		<a href="<?=
+		$this->href(
+		    'monitoring/command/sendcustomnotification',
+			$this->target
+		);
+		?>" class="button btn-cta btn-common btn-half-left">
+		    Send Notifications
+		</a>
+
+		<a href="<?=
+		$this->href(
+		    'monitoring/command/delaynotification',
+			$this->target
+		);
+		?>" class="button btn-cta btn-common btn-half-right">
+		    Delay Notifications
+		</a>
       </div>
   </div>
 </div>

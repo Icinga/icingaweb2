@@ -27,13 +27,13 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 
 use \Icinga\Web\Form;
+use \Icinga\Web\Controller\ActionController;
 use \Icinga\Module\Monitoring\Backend;
 use \Icinga\Module\Monitoring\Object\Host;
 use \Icinga\Module\Monitoring\Object\Service;
 use \Icinga\Module\Monitoring\Form\Command\MultiCommandFlagForm;
 use \Icinga\Module\Monitoring\DataView\HostAndServiceStatus as HostAndServiceStatusView;
 use \Icinga\Module\Monitoring\DataView\Comment as CommentView;
-use \Icinga\Web\Controller\ActionController;
 
 /**
  * Displays aggregations collections of multiple objects.
@@ -43,7 +43,6 @@ class Monitoring_MultiController extends ActionController
     public function init()
     {
         $this->view->queries = $this->getDetailQueries();
-        $this->view->wildcard = false;
         $this->backend = Backend::createBackend($this->_getParam('backend'));
     }
 
@@ -87,7 +86,7 @@ class Monitoring_MultiController extends ActionController
         }
         $this->view->objects = $this->view->hosts = $hosts;
         $this->view->comments = isset($comments) ? $comments : $this->getComments($hosts);
-        $this->view->hostnames = $this->getHostnames($hosts);
+        $this->view->hostnames = $this->getProperties($hosts, 'host_name');
         $this->view->downtimes = $this->getDowntimes($hosts);
         $this->view->errors = $errors;
 
@@ -108,7 +107,11 @@ class Monitoring_MultiController extends ActionController
         $unique = array();
         foreach ($values as $value)
         {
-            $unique[$value->{$key}] = null;
+			if (is_array($value)) {
+				$unique[$value[$key]] = $value[$key];
+			} else {
+            	$unique[$value->{$key}] = $value->{$key};
+			}
         }
         return $unique;
     }
@@ -117,16 +120,16 @@ class Monitoring_MultiController extends ActionController
     {
         $unique = array();
         foreach ($objects as $object) {
-            $unique = array_merge($this->getUniqueValues($object->comments, 'comment_id'));
+            $unique = array_merge($unique, $this->getUniqueValues($object->comments, 'comment_internal_id'));
         }
         return array_keys($unique);
     }
 
-    private function getHostnames($objects)
+    private function getProperties($objects, $property)
     {
         $objectnames = array();
         foreach ($objects as $object) {
-            $objectnames[] = $object->host_name;
+            $objectnames[] = $object->{$property};
         }
         return $objectnames;
     }
@@ -190,7 +193,8 @@ class Monitoring_MultiController extends ActionController
         }
         $this->view->objects = $this->view->services = $services;
         $this->view->comments = isset($comments) ? $comments : $this->getComments($services);
-        $this->view->hostnames = $this->getHostnames($services);
+        $this->view->hostnames = $this->getProperties($services, 'host_name');
+        $this->view->servicenames = $this->getProperties($services, 'service_description');
         $this->view->downtimes = $this->getDowntimes($services);
         $this->view->errors = $errors;
 

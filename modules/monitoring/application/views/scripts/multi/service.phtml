@@ -1,5 +1,11 @@
 <?php
 $this->is_service = true;
+$this->hostquery = implode($this->hostnames, ',');
+$this->servicequery = implode($this->servicenames, ',');
+$this->target = array(
+	'host'	=> $this->hostquery,
+	'service' => $this->servicequery
+);
 ?>
 
 <div class="panel-heading">

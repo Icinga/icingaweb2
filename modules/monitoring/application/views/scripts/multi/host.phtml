@@ -1,10 +1,13 @@
 <?php
 $this->is_service = false;
+$this->hostquery = implode($this->hostnames, ',');
+$this->target = array(
+	'host' => $this->hostquery
+);
 ?>
 
 <div class="panel panel-default">
     <div class="panel panel-heading">
-        {{HOST_ICON}}
         <h1> Hosts </h1>
     </div>
 

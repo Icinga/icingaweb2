@@ -77,7 +77,7 @@ function(Container, $, logger, Selectable, TableMultiSelection, URI) {
         var controlForms;
 
         /**
-         * Handles a multi-selection of rows
+         * Handles multi-selection
          *
          * @type {TableMultiSelection}
          */
@@ -134,6 +134,15 @@ function(Container, $, logger, Selectable, TableMultiSelection, URI) {
                 return $('table', domContext);
             }
         };
+
+		/**
+		 * Show a 'hand' to indicate that the row is selectable,
+		 * when hovering.
+		 */
+		this.showMousePointerOnRow = function(domContext) {
+			domContext = domContext || contentNode;
+			$('tbody tr', domContext).css('cursor' ,'pointer');
+		}
 
         /**
          * Activate a hover effect on all table rows, to indicate that
@@ -295,6 +304,27 @@ function(Container, $, logger, Selectable, TableMultiSelection, URI) {
             Container.getDetailContainer().registerOnUpdate(this.syncSelectionWithDetail.bind(this));
         };
 
+		/**
+		 * Init all objects responsible for selection handling
+		 *
+		 * - Indicate selection by showing active and hovered rows
+		 * - Handle click-events according to the selection mode
+		 * - Create and follow links according to the row content
+		 */
+		this.initRowSelection = function() {
+            selectionMode = gridDomNode.data('icinga-grid-selection-type');
+            if (selectionMode === 'multi' || selectionMode === 'single') {
+				// indicate selectable rows
+				this.showMousePointerOnRow();
+                this.activateRowHovering();
+                selection = new TableMultiSelection(
+                    contentNode,
+                    Container.getDetailContainer().getContainerHref()
+                );
+            }
+            this.registerTableLinks();
+		}
+
         /**
          * Create this component, setup listeners and behaviour
          */
@@ -303,16 +333,8 @@ function(Container, $, logger, Selectable, TableMultiSelection, URI) {
             this.container.removeDefaultLoadIndicator();
             controlForms = determineControlForms();
             contentNode = determineContentTable();
-            selectionMode = gridDomNode.data('icinga-grid-selection-type');
-            if (selectionMode === 'multi' || selectionMode === 'single') {
-                this.activateRowHovering();
-                selection = new TableMultiSelection(
-                    contentNode,
-                    Container.getDetailContainer().getContainerHref()
-                );
-            }
+			this.initRowSelection();
             this.registerControls();
-            this.registerTableLinks();
             this.registerHistoryChanges();
 
         };

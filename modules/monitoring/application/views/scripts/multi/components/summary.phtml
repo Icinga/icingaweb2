@@ -1,9 +1,67 @@
+<?php
+/** @var Zend_View_Helper_CommandForm $cf */
+$cf = $this->getHelper('CommandForm');
+
+$servicequery = isset($this->servicequery) ? $this->servicequery : '';
+?>
+
 <h4> Selected <?= count($objects) ?> objects. </h4>
-<a href="#">{{RECHECK_BUTTON}}</a>
-<a href="#">{{RESCHEDULE_BUTTON}}</a>
-<a href="#">{{ACKNOWLEDGE_PROBLEMS_BUTTON}}</a>
-<a href="#">{{SCHEDULE_DOWNTIMES}}</a>
-<a href="#">{{SUBMIT_PASSIVE_CHECK_RESULTS}}</a>
+
+<div class="panel-row">
+<a href="<?=
+$this->href(
+    'monitoring/command/reschedulenextcheck',
+	$this->target
+);
+?>" class="button btn-cta btn-half-left">
+    Recheck
+</a>
+<a href="<?=
+$this->href(
+    'monitoring/command/reschedulenextcheck',
+    $this->target
+);
+?>" class="button btn-cta btn-half-right">
+    Reschedule
+</a>
+</div>
+
+<div class="panel-row">
+<a href="<?=
+$this->href(
+    'monitoring/command/acknowledgeproblem',
+	$this->target
+);
+?>" class="button btn-cta btn-wide">
+    Acknowledge Problems
+</a>
+
+</div>
+<div class="panel-row">
+
+<a href="<?=
+$this->href(
+    'monitoring/command/scheduledowntimes',
+	$this->target
+);
+?>" class="button btn-cta btn-common btn-wide">
+    Schedule Downtimes
+</a>
+
+</div>
+<div class="panel-row">
+
+<a href="<?=
+$this->href(
+    'monitoring/command/submitpassivecheckresult',
+	$this->target
+);
+?>" class="button btn-cta btn-common btn-wide">
+    Submit Passive Checkresults
+</a>
+
+</div>
+
 <div>
   <ul class="list-inline">
       <?php
