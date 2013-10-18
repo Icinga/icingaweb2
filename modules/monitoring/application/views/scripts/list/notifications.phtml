@@ -3,7 +3,7 @@
 <?php
   $formatter = $this->getHelper('MonitoringProperties');
 ?>
-<div data-icinga-component="app/mainDetailGrid">
+<div data-icinga-component="app/mainDetailGrid" data-icinga-grid-selection-type="multi">
   <?= $this->sortControl->render($this); ?>
 
   <?= $this->paginationControl($notifications, null, null, array('preserve' => $this->preserve)); ?>
@@ -27,7 +27,8 @@
           } else {
               $detailLink = $this->href('monitoring/show/host', array(
                       'host'    =>  $notification->host_name,
-                      'service' =>  $notification->service_description
+                      'service' =>  $notification->service_description,
+                      'notification_id'    =>  $notification->notification_internal_id
                   )
               );
           }

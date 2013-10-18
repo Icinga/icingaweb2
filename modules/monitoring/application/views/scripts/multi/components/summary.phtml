@@ -1,0 +1,107 @@
+<?php
+/** @var Zend_View_Helper_CommandForm $cf */
+$cf = $this->getHelper('CommandForm');
+$servicequery = isset($this->servicequery) ? $this->servicequery : '';
+?>
+Selected <?= count($objects) ?> objects.
+
+<div class="panel-row">
+<a href="<?=
+$this->href(
+    'monitoring/command/reschedulenextcheck',
+	$this->target
+);
+?>" class="button btn-cta btn-half-left">
+    Recheck
+</a>
+<a href="<?=
+$this->href(
+    'monitoring/command/reschedulenextcheck',
+    $this->target
+);
+?>" class="button btn-cta btn-half-right">
+    Reschedule
+</a>
+</div>
+
+<div class="panel-row">
+The selected objects have <?= $this->problems ?> service problems. <br />
+
+<a href="<?=
+$this->href(
+    'monitoring/command/acknowledgeproblem',
+	$this->target
+);
+?>" class="button btn-cta btn-half-left">
+    Acknowledge
+</a>
+
+<a href="<?=
+$this->href(
+    'monitoring/command/scheduledowntimes',
+	$this->target
+);
+?>" class="button btn-cta btn-half-right">
+    Schedule Downtimes
+</a>
+
+</div>
+<div class="panel-row">
+
+<a href="<?=
+$this->href(
+    'monitoring/command/submitpassivecheckresult',
+	$this->target
+);
+?>" class="button btn-cta btn-common btn-wide">
+    Submit Passive Checkresults
+</a>
+
+</div>
+
+<div>
+  <ul class="list-inline">
+      <?php
+      for ($i = 0; $i < count($objects) && $i < 10; $i++) {
+          $object = $objects[$i];
+          ?>
+          <li>
+              <a href="<?php
+              if ($this->is_service) {
+                  echo $this->href(
+                    'monitoring/show/service',
+                    array(
+                      'host' => $object->host_name,
+                      'service' => $object->service_description
+                    )
+                  );
+              } else {
+                  echo $this->href(
+                      'monitoring/show/host', array('host' => $object->host_name)
+                  );
+              }?>" >
+                  <?= $object->host_name; ?>
+                  <?= isset($object->service_description) ? $object->service_description : '' ?>
+              </a>
+          </li>
+      <?php } ?>
+  </ul>
+  <?php
+  if (count($objects) > 10) {
+     $text = ' and ' . (count($objects) - 10) . ' more ...';
+  } else {
+     $text = ' show all ...';
+  }
+  if ($this->is_service) {
+     $link = 'monitoring/list/hosts';
+     $target = array(
+        'host' => implode(',', $hostnames)
+     );
+  } else {
+      $link = 'monitoring/list/services';
+      // TODO: Show multiple targets for services
+      $target = array();
+  }
+  ?>
+  <a class="pull-right" href="<?= $this->href($link, $target); ?>"> <?= $text ?></a>
+</div>

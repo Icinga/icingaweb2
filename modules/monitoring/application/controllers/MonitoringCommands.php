@@ -34,11 +34,19 @@ use \Icinga\Module\Monitoring\Command\Meta;
 class Zend_View_Helper_MonitoringCommands extends Zend_View_Helper_Abstract
 {
     /**
-     * @param stdClass $object host or service object or something other
-     * @param string $type small or full
-     * @return string html output
+     * Fetch all monitoring commands that are currently available for *all*
+     * given objects and render a html string that contains buttons to execute
+     * these commands.
+     *
+     * NOTE: This means that if you give multiple commands, the commands that
+     * are not available on every single host, will be left out.
+     *
+     * @param array|stdClass    $object host or service object or something other
+     * @param string            $type   small or full
+     *
+     * @return string           The rendered html
      */
-    public function monitoringCommands(\stdClass $object, $type)
+    public function monitoringCommands($object, $type)
     {
         $commands = new Meta();
         $definitions = $commands->getCommandForObject($object, $type);

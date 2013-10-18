@@ -25,8 +25,8 @@
  * @author     Icinga Development Team <info@icinga.org>
  */
 // {{{ICINGA_LICENSE_HEADER}}}
-define(['components/app/container', 'jquery', 'logging', 'URIjs/URI', 'URIjs/URITemplate', 'icinga/util/url'],
-function(Container, $, logger, URI, tpl, urlMgr) {
+define(['components/app/container', 'jquery', 'logging', 'URIjs/URI', 'URIjs/URITemplate', 'icinga/util/url', 'icinga/selection/selectable', 'icinga/selection/multiSelection'],
+function(Container, $, logger, URI, tpl, urlMgr, Selectable, TableMultiSelection) {
     "use strict";
 
     /**
@@ -64,6 +64,20 @@ function(Container, $, logger, URI, tpl, urlMgr) {
          * @type {jQuery}
          */
         var controlForms;
+
+        /**
+         * Handles multi-selection
+         *
+         * @type {TableMultiSelection}
+         */
+        var selection;
+
+        /**
+         * Defines how row clicks are handled. Can either be 'none', 'single' or 'multi'
+         *
+         * @type {string}
+         */
+        var selectionMode;
 
         /**
          * Detect and select control forms for this table and return them
@@ -110,6 +124,38 @@ function(Container, $, logger, URI, tpl, urlMgr) {
             }
         };
 
+		/**
+		 * Show a 'hand' to indicate that the row is selectable,
+		 * when hovering.
+		 */
+		this.showMousePointerOnRow = function(domContext) {
+			domContext = domContext || contentNode;
+			$('tbody tr', domContext).css('cursor' ,'pointer');
+		};
+
+        /**
+         * Activate a hover effect on all table rows, to indicate that
+         * this table row is clickable.
+         *
+         * @param domContext
+         */
+        this.activateRowHovering = function(domContext) {
+            domContext = domContext || contentNode;
+            //$(domContext).addClass('table-hover');
+            $('tbody tr', domContext).hover(
+                function(e) {
+                    $(this).addClass('hover');
+                    e.preventDefault();
+                    e.stopPropagation();
+                },
+                function(e) {
+                    $(this).removeClass('hover');
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+            );
+        };
+
         /**
          * Register the row links of tables using the first link found in the table (no matter if visible or not)
          *
@@ -131,7 +177,7 @@ function(Container, $, logger, URI, tpl, urlMgr) {
 
                 if (a.length) {
                     // test if the URL is on the current server, if not open it directly
-                    if (true || Container.isExternalLink(a.attr('href'))) {
+                    if (Container.isExternalLink(a.attr('href'))) {
                         return true;
                     }
                 } else if ($.inArray('input', nodeNames) > -1 || $.inArray('button', nodeNames) > -1) {
@@ -141,16 +187,46 @@ function(Container, $, logger, URI, tpl, urlMgr) {
                     }
                 }
 
-                urlMgr.setDetailUrl($('a', this).attr('href'));
-                if (!ev.ctrlKey && !ev.metaKey) {
-                    $('tr', $(this).parent()).removeClass('active');
+                switch (selectionMode) {
+                    case 'multi':
+                        var selectable = new Selectable(this);
+                        if (ev.ctrlKey || ev.metaKey) {
+                            selection.toggle(selectable);
+                        } else if (ev.shiftKey) {
+                            // select range ?
+                            selection.add(selectable);
+                        } else {
+                            selection.clear();
+                            selection.add(selectable);
+                        }
+                        break;
+
+                    case 'single':
+                        selection.clear();
+                        selection.add(new Selectable(this));
+                        break;
+
+                    case 'none':
+                        // don't open the link
+                        return;
                 }
 
-                $(this).addClass('active');
+                var url = URI($('a', this).attr('href'));
+                var segments = url.segment();
+                if (selection.size() === 0) {
+                    // don't open anything
+                    url.search('?');
+                } else if (selection.size() > 1 && segments.length > 3) {
+                    // open detail view for multiple objects
+                    segments[2] = 'multi';
+                    url.pathname('/' + segments.join('/'));
+                    url.search('?');
+                    url.setSearch(selection.toQuery());
+                }
+                urlMgr.setDetailUrl(url);
                 return false;
             });
         };
-
 
         /**
          * Register submit handler for the form controls (sorting, filtering, etc). Reloading happens in the
@@ -193,25 +269,35 @@ function(Container, $, logger, URI, tpl, urlMgr) {
             });
         };
 
-        var getSelectedRows = function() {
-            return $('a[href="' + urlMgr.getDetailUrl() + '"]', determineContentTable()).
-                parentsUntil('table', 'tr');
+        /**
+         * Create a new TableMultiSelection, attach it to the content node, and use the
+         * current detail url to restore the selection state
+         */
+        this.initSelection = function() {
+            var detail = urlMgr.getDetailUrl();
+            if (typeof detail !== 'string') {
+                detail = detail[0] || '';
+            }
+            selection = new TableMultiSelection(contentNode,new URI(detail));
         };
 
-        /**
-         * Synchronize the current selection with the url displayed in the detail box
-         */
-        this.syncSelectionWithDetail = function() {
-            $('tr', contentNode).removeClass('active');
-            getSelectedRows().addClass('active');
-        };
-
-        /**
-         * Register listener for history changes in the detail box
-         */
-        this.registerHistoryChanges = function() {
-            Container.getDetailContainer().registerOnUpdate(this.syncSelectionWithDetail.bind(this));
-        };
+		/**
+		 * Init all objects responsible for selection handling
+		 *
+		 * - Indicate selection by showing active and hovered rows
+		 * - Handle click-events according to the selection mode
+		 * - Create and follow links according to the row content
+		 */
+		this.initRowSelection = function() {
+            selectionMode = gridDomNode.data('icinga-grid-selection-type');
+            if (selectionMode === 'multi' || selectionMode === 'single') {
+				// indicate selectable rows
+				this.showMousePointerOnRow();
+                this.activateRowHovering();
+                this.initSelection();
+            }
+            this.registerTableLinks();
+		};
 
         /**
          * Create this component, setup listeners and behaviour
@@ -221,9 +307,8 @@ function(Container, $, logger, URI, tpl, urlMgr) {
             this.container.removeDefaultLoadIndicator();
             controlForms = determineControlForms();
             contentNode = determineContentTable();
-            this.syncSelectionWithDetail();
+			this.initRowSelection();
             this.registerControls();
-            this.registerTableLinks();
             this.registerHistoryChanges();
 
         };

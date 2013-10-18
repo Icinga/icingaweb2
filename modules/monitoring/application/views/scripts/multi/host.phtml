@@ -1,0 +1,23 @@
+<?php
+$this->is_service = false;
+$this->hostquery = implode($this->hostnames, ',');
+$this->target = array(
+	'host' => $this->hostquery
+);
+?>
+
+<?= $this->tabs->render($this); ?>
+<div>
+    <div class="panel panel-heading">
+       <b> Hosts </b>
+    </div>
+    <hr class="separator" />
+
+    <div class="panel panel-body">
+        <?= $this->render('multi/components/summary.phtml'); ?>
+    </div>
+</div>
+
+<?= $this->render('multi/components/comments.phtml'); ?>
+<?= $this->render('multi/components/downtimes.phtml'); ?>
+<?= $this->render('multi/components/configuration.phtml'); ?>
