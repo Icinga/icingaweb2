@@ -5,7 +5,7 @@ $viewHelper = $this->getHelper('MonitoringState');
 <?= $this->tabs->render($this); ?>
 <h1>Hosts Status</h1>
 <div data-icinga-component="app/mainDetailGrid" data-icinga-grid-selection-type="multi">
-  <div class="container">
+  <div class="container pull-left">
     <div class="row">
       <div class="col-md-5">
       <?=  $this->filterBox->render($this); ?>
@@ -17,9 +17,11 @@ $viewHelper = $this->getHelper('MonitoringState');
     <div class="row">
     <?=  $this->paginationControl($hosts, null, null, array('preserve' => $this->preserve)); ?>
     </div>
-    Select
-    <a href='?detail=<?= urlencode($this->href('monitoring/multi/host',array( 'host' => '*' )))?>'> All </a>
-    <a href='?'> None </a>
+    <div>
+        Select
+        <a href='<?=$this->href('monitoring/multi/host',array( 'host' => '*' ))?>'> All </a>
+        <a href='#'> None </a>
+    </div>
   </div>
   <table class="table table-condensed">
 

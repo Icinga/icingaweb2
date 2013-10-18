@@ -33,7 +33,8 @@ use \Icinga\Module\Monitoring\Backend;
 use \Icinga\Module\Monitoring\Object\Host;
 use \Icinga\Module\Monitoring\Object\Service;
 use \Icinga\Module\Monitoring\Form\Command\MultiCommandFlagForm;
-use \Icinga\Module\Monitoring\DataView\HostAndServiceStatus as HostAndServiceStatusView;
+use \Icinga\Module\Monitoring\DataView\HostStatus as HostStatusView;
+use \Icinga\Module\Monitoring\DataView\ServiceStatus as ServiceStatusView;
 use \Icinga\Module\Monitoring\DataView\Comment as CommentView;
 
 /**
@@ -50,50 +51,70 @@ class Monitoring_MultiController extends ActionController
 
     public function hostAction()
     {
-        $queries = $this->view->queries;
-        $hosts = array();
+        $filters = $this->view->queries;
         $errors = array();
 
-        if ($this->_getParam('host') === '*') {
-            // fetch all hosts
-            $hosts = HostAndServiceStatusView::fromRequest(
-                $this->_request,
-                array(
-                    'host_name',
-                    'host_in_downtime',
-                    'host_accepts_passive_checks',
-                    'host_does_active_checks',
-                    'host_notifications_enabled',
-
-                    // TODO: flags missing in HostAndServiceStatus:
-                    'host_obsessing',
-                    'host_event_handler_enabled',
-                    'host_flap_detection_enabled'
-                    // <<
-                )
-            )->getQuery()->fetchAll();
-            $comments = array_keys($this->getUniqueValues(
-                CommentView::fromRequest($this->_request)->getQuery()->fetchAll(),
-                'comment_id'
-            ));
-        } else {
-            // fetch specified hosts
-            foreach ($queries as $index => $query) {
-                if (!array_key_exists('host', $query)) {
-                    $errors[] = 'Query ' . $index . ' misses property host.';
-                    continue;
-                }
-                $hosts[] = Host::fetch($this->backend, $query['host']);
-            }
+        // Hosts
+        $backendQuery = HostStatusView::fromRequest(
+            $this->_request,
+            array(
+                'host_name',
+                'host_in_downtime',
+                'host_unhandled_service_count',
+                'host_passive_checks_enabled',
+                'host_obsessing',
+                'host_notifications_enabled',
+                'host_event_handler_enabled',
+                'host_flap_detection_enabled',
+                'host_active_checks_enabled'
+            )
+        )->getQuery();
+        if ($this->_getParam('host') !== '*') {
+            $this->applyQueryFilter($backendQuery, $filters);
         }
+        $hosts = $backendQuery->fetchAll();
+
+        // Comments
+        $commentQuery = CommentView::fromRequest($this->_request)->getQuery();
+        $this->applyQueryFilter($commentQuery, $filters);
+        $comments = array_keys($this->getUniqueValues($commentQuery->fetchAll(), 'comment_id'));
+
         $this->view->objects = $this->view->hosts = $hosts;
+        $this->view->problems = $this->getProblems($hosts);
         $this->view->comments = isset($comments) ? $comments : $this->getComments($hosts);
         $this->view->hostnames = $this->getProperties($hosts, 'host_name');
         $this->view->downtimes = $this->getDowntimes($hosts);
         $this->view->errors = $errors;
 
-        $this->handleConfigurationForm();
+        $this->handleConfigurationForm(array(
+            'host_passive_checks_enabled' => 'Passive Checks',
+            'host_active_checks_enabled' => 'Active Checks',
+            'host_obsessing' => 'Obsessing',
+            'host_notifications_enabled' => 'Notifications',
+            'host_event_handler_enabled' => 'Event Handler',
+            'host_flap_detection_enabled' => 'Flap Detection'
+        ));
         $this->view->form->setAction('/icinga2-web/monitoring/multi/host');
+    }
+
+    /**
+     * @param $backendQuery BaseQuery   The query to apply the filter to
+     * @param $filter       array       Containing the filter expressions from the request
+     */
+    private function applyQueryFilter($backendQuery, $filter)
+    {
+        // fetch specified hosts
+        foreach ($filter as $index => $expr) {
+            if (!array_key_exists('host', $expr)) {
+                $errors[] = 'Query ' . $index . ' misses property host.';
+                continue;
+            }
+            // apply filter expressions from query
+            $backendQuery->orWhere('host_name', $expr['host']);
+            if (array_key_exists('service', $expr)) {
+                $backendQuery->andWhere('service_description', $expr['service']);
+            }
+        }
     }
 
     /**
@@ -116,6 +137,28 @@ class Monitoring_MultiController extends ActionController
 			}
         }
         return $unique;
+    }
+
+    /**
+     * Get the numbers of problems in the given objects
+     *
+     * @param $object   array   The hosts or services
+     */
+    private function getProblems(array $objects)
+    {
+        $problems = 0;
+        foreach ($objects as $object) {
+            if (property_exists($object, 'host_unhandled_service_count')) {
+                $problems += $object->{'host_unhandled_service_count'};
+            } else if (
+                property_exists($object, 'service_handled') &&
+                !$object->service_handled &&
+                $object->service_state > 0
+            ) {
+                $problems++;
+            }
+        }
+        return $problems;
     }
 
     private function getComments($objects)
@@ -142,8 +185,8 @@ class Monitoring_MultiController extends ActionController
         foreach ($objects as $object)
         {
             if (
-                isset($object->host_in_downtime) && $object->host_in_downtime ||
-                isset($object->service_in_downtime) && $object->host_in_downtime
+                (property_exists($object, 'host_in_downtime') && $object->host_in_downtime) ||
+                (property_exists($object, 'service_in_downtime') && $object->service_in_downtime)
             ) {
                 $downtimes[] = true;
             }
@@ -153,72 +196,61 @@ class Monitoring_MultiController extends ActionController
 
     public function serviceAction()
     {
-        $queries = $this->view->queries;
-		$services = array();
+        $filters = $this->view->queries;
         $errors = array();
 
-        if ($this->_getParam('service') === '*' && $this->_getParam('host') === '*') {
-            $services = HostAndServiceStatusView::fromRequest(
-                $this->_request,
-                array(
-                    'host_name',
-                    'service_name',
-                    'service_in_downtime',
-                    'service_accepts_passive_checks',
-                    'service_does_active_checks',
-                    'service_notifications_enabled',
+        $backendQuery = ServiceStatusView::fromRequest(
+            $this->_request,
+            array(
+                'host_name',
+                'service_description',
+                'service_handled',
+                'service_state',
+                'service_in_downtime',
 
-                    // TODO: Flag misses in HostAndServiceStatus
-                    'service_obsessing',
-                    'service_event_handler_enabled',
-                    'service_flap_detection_enabled'
-                    // <<
-                )
-            )->getQuery()->fetchAll();
-            $comments = array_keys($this->getUniqueValues(
-                CommentView::fromRequest($this->_request)->getQuery()->fetchAll(),
-                'comment_id'
-            ));
-        } else {
-            // fetch specified hosts
-            foreach ($queries as $index => $query) {
-                if (!array_key_exists('host', $query)) {
-				    $errors[] = 'Query ' . $index . ' misses property host.';
-				    continue;
-			    }
-			    if (!array_key_exists('service', $query)) {
-				    $errors[] = 'Query ' . $index . ' misses property service.';
-				    continue;
-			    }
-                $services[] = Service::fetch($this->backend, $query['host'], $query['service']);
-            }
+                'service_passive_checks_enabled',
+                'service_notifications_enabled',
+                'service_event_handler_enabled',
+                'service_flap_detection_enabled',
+                'service_active_checks_enabled'
+            )
+        )->getQuery();
+        if ($this->_getParam('service') !== '*' && $this->_getParam('host') !== '*') {
+            $this->applyQueryFilter($backendQuery, $filters);
         }
+        $services = $backendQuery->fetchAll();
+
+        // Comments
+        $commentQuery = CommentView::fromRequest($this->_request)->getQuery();
+        $this->applyQueryFilter($commentQuery, $filters);
+        $comments = array_keys($this->getUniqueValues($commentQuery->fetchAll(), 'comment_id'));
+
         $this->view->objects = $this->view->services = $services;
+        $this->view->problems = $this->getProblems($services);
         $this->view->comments = isset($comments) ? $comments : $this->getComments($services);
         $this->view->hostnames = $this->getProperties($services, 'host_name');
         $this->view->servicenames = $this->getProperties($services, 'service_description');
         $this->view->downtimes = $this->getDowntimes($services);
         $this->view->errors = $errors;
 
-        $this->handleConfigurationForm();
+        $this->handleConfigurationForm(array(
+            'service_passive_checks_enabled' => 'Passive Checks',
+            'service_active_checks_enabled' => 'Active Checks',
+            'service_notifications_enabled' => 'Notifications',
+            'service_event_handler_enabled' => 'Event Handler',
+            'service_flap_detection_enabled' => 'Flap Detection'
+        ));
         $this->view->form->setAction('/icinga2-web/monitoring/multi/service');
     }
 
     /**
-     * Handle the form to configure configuration flags.
+     * Handle the form to edit configuration flags.
+     *
+     * @param $flags array  The used flags.
      */
-    private function handleConfigurationForm()
+    private function handleConfigurationForm(array $flags)
     {
-        $this->view->form = $form = new MultiCommandFlagForm(
-            array(
-                'passive_checks_enabled' => 'Passive Checks',
-                'active_checks_enabled' => 'Active Checks',
-                'obsessing' => 'Obsessing',
-                'notifications_enabled' => 'Notifications',
-                'event_handler_enabled' => 'Event Handler',
-                'flap_detection_enabled' => 'Flap Detection'
-            )
-        );
+        $this->view->form = $form = new MultiCommandFlagForm($flags);
         $form->setRequest($this->_request);
         if ($form->isSubmittedAndValid()) {
             // TODO: Handle commands

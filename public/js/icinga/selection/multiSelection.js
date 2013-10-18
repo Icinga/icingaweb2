@@ -40,7 +40,7 @@ function($, URI, Selectable) {
      *
      * @param {HtmlElement}     The table that contains the selectable rows.
      *
-     * @param {Object}          The query that contains the selected rows.
+     * @param {URI}          The query that contains the selected rows.
      */
     return function MultiSelection(table, detailUrl) {
         var self = this;
@@ -162,9 +162,6 @@ function($, URI, Selectable) {
         var restoreSelectionStateUrl = function(url) {
             if (!url) {
                 return [];
-            }
-            if (!url.query) {
-                url = new URI(url);
             }
             var segments = url.segment();
             var parts;

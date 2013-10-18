@@ -3,8 +3,7 @@
 $cf = $this->getHelper('CommandForm');
 $servicequery = isset($this->servicequery) ? $this->servicequery : '';
 ?>
-
-<h4> Selected <?= count($objects) ?> objects. </h4>
+Selected <?= count($objects) ?> objects.
 
 <div class="panel-row">
 <a href="<?=
@@ -26,24 +25,23 @@ $this->href(
 </div>
 
 <div class="panel-row">
+The selected objects have <?= $this->problems ?> service problems. <br />
+
 <a href="<?=
 $this->href(
     'monitoring/command/acknowledgeproblem',
 	$this->target
 );
-?>" class="button btn-cta btn-wide">
-    Acknowledge Problems
+?>" class="button btn-cta btn-half-left">
+    Acknowledge
 </a>
-
-</div>
-<div class="panel-row">
 
 <a href="<?=
 $this->href(
     'monitoring/command/scheduledowntimes',
 	$this->target
 );
-?>" class="button btn-cta btn-common btn-wide">
+?>" class="button btn-cta btn-half-right">
     Schedule Downtimes
 </a>
 

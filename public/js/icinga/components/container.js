@@ -197,7 +197,7 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
                     if (response.statusCode.toString()[0] === '4') {
                         errorReason = 'The Requested View Couldn\'t Be Found<br/>';
                     } else {
-                        errorReason = 'An Internal Error Occured';
+                        errorReason = response.responseText;
                     }
                     this.replaceDom(
                         $('<div class="alert alert-danger">').text(errorReason)

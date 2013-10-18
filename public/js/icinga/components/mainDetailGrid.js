@@ -25,19 +25,8 @@
  * @author     Icinga Development Team <info@icinga.org>
  */
 // {{{ICINGA_LICENSE_HEADER}}}
-define(['components/app/container', 'jquery', 'logging', 'URIjs/URI', 'URIjs/URITemplate', 'icinga/util/url'],
-function(Container, $, logger, URI, tpl, urlMgr) {
-define(
-    [
-        'components/app/container',
-        'jquery',
-        'logging',
-        'icinga/selection/selectable',
-        'icinga/selection/multiSelection',
-        'URIjs/URI',
-        'URIjs/URITemplate'
-    ],
-function(Container, $, logger, Selectable, TableMultiSelection, URI) {
+define(['components/app/container', 'jquery', 'logging', 'URIjs/URI', 'URIjs/URITemplate', 'icinga/util/url', 'icinga/selection/selectable', 'icinga/selection/multiSelection'],
+function(Container, $, logger, URI, tpl, urlMgr, Selectable, TableMultiSelection) {
     "use strict";
 
     /**
@@ -142,7 +131,7 @@ function(Container, $, logger, Selectable, TableMultiSelection, URI) {
 		this.showMousePointerOnRow = function(domContext) {
 			domContext = domContext || contentNode;
 			$('tbody tr', domContext).css('cursor' ,'pointer');
-		}
+		};
 
         /**
          * Activate a hover effect on all table rows, to indicate that
@@ -230,11 +219,11 @@ function(Container, $, logger, Selectable, TableMultiSelection, URI) {
                 } else if (selection.size() > 1 && segments.length > 3) {
                     // open detail view for multiple objects
                     segments[2] = 'multi';
-                    url.pathname(segments.join('/'));
+                    url.pathname('/' + segments.join('/'));
                     url.search('?');
                     url.setSearch(selection.toQuery());
                 }
-                Container.getDetailContainer().replaceDomFromUrl(url);
+                urlMgr.setDetailUrl(url);
                 return false;
             });
         };
@@ -279,29 +268,17 @@ function(Container, $, logger, Selectable, TableMultiSelection, URI) {
                 return false;
             });
         };
-        
-        /*
-        var getSelectedRows = function() {
-            return $('a[href="' + urlMgr.getDetailUrl() + '"]', determineContentTable()).
-                parentsUntil('table', 'tr');
-        };
-        */
 
         /**
-         * Synchronize the current selection with the url displayed in the detail box
+         * Create a new TableMultiSelection, attach it to the content node, and use the
+         * current detail url to restore the selection state
          */
-        /*
-        this.syncSelectionWithDetail = function() {
-            $('tr', contentNode).removeClass('active');
-            getSelectedRows().addClass('active');
-        };
-        */
-
-        /**
-         * Register listener for history changes in the detail box
-         */
-        this.registerHistoryChanges = function() {
-            Container.getDetailContainer().registerOnUpdate(this.syncSelectionWithDetail.bind(this));
+        this.initSelection = function() {
+            var detail = urlMgr.getDetailUrl();
+            if (typeof detail !== 'string') {
+                detail = detail[0] || '';
+            }
+            selection = new TableMultiSelection(contentNode,new URI(detail));
         };
 
 		/**
@@ -317,13 +294,10 @@ function(Container, $, logger, Selectable, TableMultiSelection, URI) {
 				// indicate selectable rows
 				this.showMousePointerOnRow();
                 this.activateRowHovering();
-                selection = new TableMultiSelection(
-                    contentNode,
-                    Container.getDetailContainer().getContainerHref()
-                );
+                this.initSelection();
             }
             this.registerTableLinks();
-		}
+		};
 
         /**
          * Create this component, setup listeners and behaviour
