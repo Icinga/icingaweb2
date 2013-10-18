@@ -28,7 +28,7 @@ namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 /**
  * Query program status out of database
  */
-class ProgramstatusQuery extends AbstractQuery
+class ProgramstatusQuery extends IdoQuery
 {
     protected $columnMap = array(
         'programstatus' => array(

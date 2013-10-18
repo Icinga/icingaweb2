@@ -30,7 +30,7 @@ use \Zend_Db_Select;
 /**
  * Query check summaries out of database
  */
-class RuntimesummaryQuery extends AbstractQuery
+class RuntimesummaryQuery extends IdoQuery
 {
     protected $columnMap = array(
         'runtimesummary' => array(

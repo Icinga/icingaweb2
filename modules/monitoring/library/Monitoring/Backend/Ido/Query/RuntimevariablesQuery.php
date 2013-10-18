@@ -28,7 +28,7 @@ namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 /**
  * Query for runtimevariables table
  */
-class RuntimevariablesQuery extends AbstractQuery
+class RuntimevariablesQuery extends IdoQuery
 {
     protected $columnMap = array(
         'runtimevariables' => array(
