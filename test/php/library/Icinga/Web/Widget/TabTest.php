@@ -152,6 +152,7 @@ class TabTest extends PHPUnit_Framework_TestCase
             )
         );
         $html = $tab->render(new ViewMock());
+        
         $this->assertEquals(
             1,
             preg_match(
