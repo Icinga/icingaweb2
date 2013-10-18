@@ -1,7 +1,6 @@
 <?php
 /** @var Zend_View_Helper_CommandForm $cf */
 $cf = $this->getHelper('CommandForm');
-
 $servicequery = isset($this->servicequery) ? $this->servicequery : '';
 ?>
 
@@ -89,20 +88,22 @@ $this->href(
           </li>
       <?php } ?>
   </ul>
-  <?php if (count($objects) > 10) {
-      if (!$this->is_service) {
+  <?php
+  if (count($objects) > 10) {
+     $text = ' and ' . (count($objects) - 10) . ' more ...';
+  } else {
+     $text = ' show all ...';
+  }
+  if ($this->is_service) {
+     $link = 'monitoring/list/hosts';
+     $target = array(
+        'host' => implode(',', $hostnames)
+     );
+  } else {
+      $link = 'monitoring/list/services';
+      // TODO: Show multiple targets for services
+      $target = array();
+  }
   ?>
-    <a href="
-          <?= $this->href('monitoring/list/hosts', array(
-            'host' => implode(',', $hostnames)
-          )
-      );?>">
-    <?php } else { ?>
-      <a href="
-          <?= $this->href('monitoring/list/services', array(
-          )
-      );?>">
-    <?php } ?>
-    and <?= count($objects) - 10 ?> more ... </a>
-  <?php } ?>
+  <a class="pull-right" href="<?= $this->href($link, $target); ?>"> <?= $text ?></a>
 </div>

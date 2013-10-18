@@ -28,6 +28,7 @@
 
 use \Icinga\Web\Form;
 use \Icinga\Web\Controller\ActionController;
+use \Icinga\Web\Widget\Tabextension\OutputFormat;
 use \Icinga\Module\Monitoring\Backend;
 use \Icinga\Module\Monitoring\Object\Host;
 use \Icinga\Module\Monitoring\Object\Service;
@@ -44,6 +45,7 @@ class Monitoring_MultiController extends ActionController
     {
         $this->view->queries = $this->getDetailQueries();
         $this->backend = Backend::createBackend($this->_getParam('backend'));
+        $this->createTabs();
     }
 
     public function hostAction()
@@ -250,5 +252,16 @@ class Monitoring_MultiController extends ActionController
             }
         }
         return $objects;
+    }
+
+    /**
+     * Return all tabs for this controller
+     *
+     * @return Tabs
+     */
+    private function createTabs()
+    {
+        $tabs = $this->getTabs();
+        $tabs->extend(new OutputFormat());
     }
 }

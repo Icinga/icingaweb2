@@ -8,11 +8,13 @@ $this->target = array(
 );
 ?>
 
-<div class="panel-heading">
+<?= $this->tabs->render($this); ?>
+<div>
 
     <div class="panel-heading">
-        <h1>Services</h1>
+        <b> Services </b>
     </div>
+    <hr class="separator" />
 
     <div class="panel-body">
         <?= $this->render('multi/components/summary.phtml'); ?>
