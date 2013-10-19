@@ -64,6 +64,13 @@ abstract class Command
     protected $onlyServices = false;
 
     /**
+     * Whether it is a global command or not
+     *
+     * @var bool
+     */
+    protected $globalCommand = false;
+
+    /**
      * Set whether this command should only affect the services of a host- or servicegroup
      *
      * @param   bool    $state
@@ -109,6 +116,15 @@ abstract class Command
     {
         $this->onlyServices = (bool) $state;
         return $this;
+    }
+
+    /**
+     * Getter for flag whether a command is global
+     * @return bool
+     */
+    public function provideGlobalCommand()
+    {
+        return (bool) $this->globalCommand;
     }
 
     /**
@@ -159,5 +175,18 @@ abstract class Command
     public function getServicegroupCommand($servicegroup)
     {
         throw new ProgrammingError(get_class($this) . ' does not provide a servicegroup command');
+    }
+
+    /**
+     * Return the command as a string for the whole instance
+     *
+     * @param   string $instance
+     *
+     * @return  string
+     * @throws  ProgrammingError
+     */
+    public function getGlobalCommand($instance = null)
+    {
+        throw new ProgrammingError(getclass($this) . ' does not provide a global command');
     }
 }

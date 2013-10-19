@@ -29,6 +29,7 @@
 namespace Icinga\Module\Monitoring\Form\Command;
 
 use Zend_Config;
+use Zend_Controller_Request_Abstract;
 use Zend_Form_Element_Hidden;
 use Icinga\Module\Monitoring\Command\AcknowledgeCommand;
 use Icinga\Web\Form;
@@ -38,6 +39,33 @@ use Icinga\Web\Form;
  */
 abstract class CommandForm extends Form
 {
+    /**
+     * If the form is for a global command
+     *
+     * @var bool
+     */
+    protected $globalCommand = false;
+
+    /**
+     * Set command program wide
+     *
+     * @param bool $flag
+     */
+    public function setProvideGlobalCommand($flag = true)
+    {
+        $this->globalCommand = (boolean) $flag;
+    }
+
+    /**
+     * Getter for globalCommand
+     *
+     * @return bool
+     */
+    public function provideGlobalCommand()
+    {
+        return (boolean) $this->globalCommand;
+    }
+
     /**
      * Create an instance name containing hidden field
      *
@@ -127,6 +155,21 @@ abstract class CommandForm extends Form
             )
         );
     }
+
+    /**
+     * Sets the form to global if we have data in the request
+     *
+     * @param Zend_Controller_Request_Abstract $request
+     */
+    public function setRequest(Zend_Controller_Request_Abstract $request)
+    {
+        parent::setRequest($request);
+
+        if ($request->getParam('global')) {
+            $this->setProvideGlobalCommand(true);
+        }
+    }
+
 
     /**
      * Create command object for CommandPipe protocol
