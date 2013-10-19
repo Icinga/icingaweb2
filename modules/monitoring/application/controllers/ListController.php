@@ -218,20 +218,7 @@ class Monitoring_ListController extends MonitoringController
      */
     public function notificationsAction()
     {
-        $query = NotificationView::fromRequest(
-            $this->_request,
-            array(
-                'host_name',
-                'service_description',
-                'notification_type',
-                'notification_reason',
-                'notification_start_time',
-                'notification_contact',
-                'notification_information',
-                'notification_command',
-                'notification_internal_id'
-            )
-        )->getQuery();
+        $query = NotificationView::fromRequest($this->_request)->getQuery();
         $this->view->notifications = $query->paginate();
         $this->setupSortControl(array(
             'notification_start_time' => 'Notification Start'

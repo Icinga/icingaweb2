@@ -14,17 +14,13 @@ class Notification extends DataView
     public function getColumns()
     {
         return array(
-            'host_name',
-            'service_description',
-            'notification_type',
-            'notification_reason',
+            'host',
+            'service',
+            'notification_state',
             'notification_start_time',
             'notification_contact',
-            'notification_information',
-            'notification_command',
-            'host',
-            'service'
-            'notification_internal_id'
+            'notification_output',
+            'notification_command'
         );
     }
 

@@ -37,23 +37,19 @@ class NotificationQuery extends IdoQuery
      */
     protected $columnMap = array(
         'notification' => array(
-            'notification_type'         => 'n.notification_type',
-            'notification_reason'       => 'n.notification_reason',
-            'notification_start_time'   => 'n.start_time',
-            'notification_information'  => 'n.output',
-            'notification_internal_id'  => 'n.notification_id'
+            'notification_output'       => 'n.output',
+            'notification_start_time'   => 'UNIX_TIMESTAMP(n.start_time)',
+            'notification_state'        => 'n.state'
         ),
         'objects' => array(
-            'host_name'             => 'o.name1',
-            'service_description'   => 'o.name2',
-            'service'               => 'o.name2',
-            'host_name'             => 'o.name1'
+            'host'                      => 'o.name1',
+            'service'                   => 'o.name2'
         ),
         'contact' => array(
-            'notification_contact'  => 'c_o.name1'
+            'notification_contact'      => 'c_o.name1'
         ),
         'command' => array(
-            'notification_command'  => 'cmd_o.name1'
+            'notification_command'      => 'cmd_o.name1'
         )
     );
 

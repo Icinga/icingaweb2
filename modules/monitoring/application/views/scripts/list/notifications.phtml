@@ -1,71 +1,56 @@
-<?= $this->tabs->render($this); ?>
+<h1>Notifications</h1>
 
-<?php
-  $formatter = $this->getHelper('MonitoringProperties');
-?>
-<div data-icinga-component="app/mainDetailGrid" data-icinga-grid-selection-type="multi">
-  <?= $this->sortControl->render($this); ?>
-
-  <?= $this->paginationControl($notifications, null, null, array('preserve' => $this->preserve)); ?>
-  <table class="table table-condensed" >
-    <thead>
-      <tr>
-        <th>Host</th>
-        <th>Service</th>
-        <th>Type</th>
-        <th>Time</th>
-        <th>Contact</th>
-        <th>Notification Command</th>
-        <th>Information</th>
-      </tr>
-    </thead>
-    <tbody>
-    <?php foreach ($notifications as $notification): ?>
-      <?php
-          if (empty($notification->service_description)) {
-              $detailLink = $this->href('monitoring/show/host', array('host' => $notification->host_name));
-          } else {
-              $detailLink = $this->href('monitoring/show/host', array(
-                      'host'    =>  $notification->host_name,
-                      'service' =>  $notification->service_description,
-                      'notification_id'    =>  $notification->notification_internal_id
-                  )
-              );
-          }
-      ?>
-      <tr <?= ($this->activeRowHref === $detailLink) ? 'class="active"' : ''; ?>>
-        <td>
-        <a href="<?= $detailLink; ?>" style="visibility:hidden"></a>
-        <a href="<?= $this->href('monitoring/show/host', array('host' => $notification->host_name)); ?>">
-          <?= $notification->host_name ?>
-        </a>
-      </td>
-      <td>
-        <a href="<?= $this->href('monitoring/show/host', array(
-                          'host'    =>  $notification->host_name,
-                          'service' =>  $notification->service_description
-                          )
-                      ); ?>">
-          <?= empty($notification->service_description) ? '' : $notification->service_description; ?>
-          </a>
-      </td>
-      <td><?= $formatter->getNotificationType($notification); ?>
-      </td>
-      <td>
-        <?= $notification->notification_start_time ?>
-      </td>
-      <td>
-        <?= $notification->notification_contact ?>
-      </td>
-      <td>
-        <?= $notification->notification_command ?>
-      </td>
-      <td>
-        <?= $this->escape(substr(strip_tags($notification->notification_information), 0, 10000)); ?>
-      </td>
-    </tr>
-  <?php endforeach; ?>
-  </tbody>
-</table>
-
+<?php if (!empty($notifications)): ?>
+<div data-icinga-component="app/mainDetailGrid" data-icinga-grid-selection-type="single">
+    <?= $this->sortControl->render($this); ?>
+    <?= $this->paginationControl($notifications, null, null, array('preserve' => $this->preserve)); ?>
+    <table class="table table-condensed" >
+        <tbody>
+        <?php foreach ($notifications as $notification): ?>
+            <?php
+            if (isset($notification->service)) {
+                $isService = true;
+                $href = $this->href('monitoring/show/service', array(
+                    'host'    => $notification->host,
+                    'service' => $notification->service
+                ));
+                $stateName = strtolower($this->util()->getServiceStateName($notification->notification_state));
+            } else {
+                $isService = false;
+                $href = $this->href('monitoring/show/host', array(
+                    'host'    => $notification->host
+                ));
+                $stateName = strtolower($this->util()->getHostStateName($notification->notification_state));
+            }
+            ?>
+            <tr>
+                <td class="border-status-<?= $stateName ?>"><?= date('d.m. H:i', $notification->notification_start_time); ?></td>
+                <td>
+                    <?php if ($isService): ?>
+                        <a href="<?= $href ?>"><?= $notification->service ?></a>
+                        <small>
+                            on <?= $notification->host ?>
+                        </small>
+                        <?php $isService = true; ?>
+                    <?php else: ?>
+                        <a href="<?= $href ?>"><?= $notification->host ?></a>
+                    <?php endif; ?>
+                    <br />
+                    <?= $this->escape(substr(strip_tags($notification->notification_output), 0, 10000)); ?>
+                    <br />
+                    <small>
+                        Sent to
+                        <a href="<?= $this->href('monitoring/show/contact', array('contact' => $notification->notification_contact)); ?>">
+                            <?= $notification->notification_contact ?>
+                        </a>
+                    </small>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+    <?= $this->paginationControl($notifications, null, null, array('preserve' => $this->preserve)); ?>
 </div>
+<?php else: ?>
+No notifications yet
+<?php endif; ?>
