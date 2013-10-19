@@ -37,6 +37,7 @@ class Controller extends ActionController
             'service_acknowledged',
             'service_handled',
             'service_output',
+            'service_attempt',
             'service_last_state_change',
             'service_icon_image',
             'service_long_output',

@@ -97,6 +97,7 @@ class Reader implements IReader, DatasourceInterface
         }
         $this->config = $config;
         $this->parser = $parser;
+
         if (!$this->noCache) {
             $this->cache = $this->initializeCaches($config);
             if ($this->fromCache()) {
@@ -104,6 +105,7 @@ class Reader implements IReader, DatasourceInterface
                 return;
             }
         }
+
         if (!$this->lastState) {
             $this->parseObjectsCacheFile();
         }
@@ -112,7 +114,7 @@ class Reader implements IReader, DatasourceInterface
         }
         $this->parseStatusDatFile();
         if (!$noCache && $this->newState) {
-            $this->statusCache->save($this->parser->getRuntimeState(), 'objects' . md5($this->config->objects_file));
+            $this->statusCache->save($this->parser->getRuntimeState(), 'object' . md5($this->config->object_file));
         }
         $this->createHostServiceConnections();
 
@@ -136,8 +138,8 @@ class Reader implements IReader, DatasourceInterface
         $backendOptions = array(
             'cache_dir' => $cachePath
         );
-        // the objects cache might exist for months and is still valid
-        $this->objectCache = $this->initCache($this->config->objects_file, $backendOptions, null);
+        // the object cache might exist for months and is still valid
+        $this->objectCache = $this->initCache($this->config->object_file, $backendOptions, null);
         $this->statusCache = $this->initCache($this->config->status_file, $backendOptions, $maxCacheLifetime);
 
     }
@@ -180,7 +182,7 @@ class Reader implements IReader, DatasourceInterface
      */
     private function readObjectsCache()
     {
-        $this->lastState = $this->objectCache->load('objects' . md5($this->config->objects_file));
+        $this->lastState = $this->objectCache->load('object' . md5($this->config->object_file));
         if ($this->lastState == false) {
             return false;
         }
@@ -215,9 +217,12 @@ class Reader implements IReader, DatasourceInterface
         if (!isset($this->lastState["service"])) {
             return;
         }
-
+        foreach ($this->lastState["host"] as &$host) {
+            $host->host = $host;
+        }
         foreach ($this->lastState["service"] as &$service) {
-            $host = & $this->lastState["host"][$service->host_name];
+            $service->service = &$service; // allow easier querying
+            $host = &$this->lastState["host"][$service->host_name];
             if (!isset($host->services)) {
                 $host->services = array();
             }
@@ -231,13 +236,13 @@ class Reader implements IReader, DatasourceInterface
      */
     private function parseObjectsCacheFile()
     {
-        if (!is_readable($this->config->objects_file)) {
+        if (!is_readable($this->config->object_file)) {
             throw new Exception\ConfigurationError(
-                "Can't read objects-file {$this->config->objects_file}, check your configuration"
+                'Can\'t read object-file "' . $this->config->object_file . '", check your configuration'
             );
         }
         if (!$this->parser) {
-            $this->parser = new Parser(fopen($this->config->objects_file, "r"));
+            $this->parser = new Parser(fopen($this->config->object_file, "r"));
         }
         $this->parser->parseObjectsFile();
         $this->lastState = $this->parser->getRuntimeState();
@@ -259,7 +264,7 @@ class Reader implements IReader, DatasourceInterface
         $this->parser->parseRuntimeState(fopen($this->config->status_file, "r"));
         $this->lastState = $this->parser->getRuntimeState();
         if (!$this->noCache) {
-            $this->statusCache->save(array("true" => true), "state" . md5($this->config->objects_file));
+            $this->statusCache->save(array("true" => true), "state" . md5($this->config->object_file));
         }
     }
 

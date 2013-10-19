@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Monitoring;
 
+use Icinga\Module\Monitoring\Exception\UnsupportedBackendException;
 use Zend_Config;
 use Icinga\Application\Config as IcingaConfig;
 use Icinga\Exception\ConfigurationError;
@@ -80,6 +81,13 @@ class Backend implements ConfigAwareFactory, DatasourceInterface
             . '\\Query\\'
             . ucfirst($table)
             . 'Query';
+        if (!class_exists($queryClass)) {
+            throw new UnsupportedBackendException('Query '
+                . ucfirst($table)
+                . ' Is Not Available For Backend '
+                . ucfirst($this->config->type)
+            );
+        }
         return new $queryClass($this->resource, $columns);
     }
 
@@ -142,6 +150,7 @@ class Backend implements ConfigAwareFactory, DatasourceInterface
         }
 
         $config = self::$backendConfigs[$name];
+
         self::$backendInstances[$name] = $backend = new self($config, ResourceFactory::getResourceConfig($config->resource));
         switch (strtolower($config->type)) {
             case 'ido':

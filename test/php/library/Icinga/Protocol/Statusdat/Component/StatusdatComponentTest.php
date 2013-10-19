@@ -17,7 +17,7 @@ class StatusdatComponentTest extends \PHPUnit_Framework_TestCase
         StatusdatTestLoader::requireLibrary();
         $reader = new SD\Reader(new \Zend_Config(array(
             "status_file" => dirname(__FILE__)."/status.dat",
-            "objects_file" => dirname(__FILE__)."/objects.cache"
+            "object_file" => dirname(__FILE__)."/objects.cache"
         )),null,true);
         return $reader;
     }
@@ -26,7 +26,8 @@ class StatusdatComponentTest extends \PHPUnit_Framework_TestCase
         $r = $this->getReader();
         $group = array(array('a1','b2'));
         $result = $r->select()->from("services")->where("group IN ?",$group)->getResult();
-        $this->assertCount(2,$result);
+
+        $this->assertCount(9, $result, 'Assert items to be returned in a servicegroup filter');
         foreach($result as $obj) {
             $this->assertTrue(is_object($obj));
         }
@@ -36,7 +37,7 @@ class StatusdatComponentTest extends \PHPUnit_Framework_TestCase
         $r = $this->getReader();
         $group = array(array('a1','b2'));
         $result = $r->select()->from("hosts")->where("services.group IN ?",$group)->getResult();
-        $this->assertCount(2,$result);
+        $this->assertCount(3, $result);
         foreach($result as $obj) {
             $this->assertTrue(is_object($obj));
         }
@@ -46,7 +47,7 @@ class StatusdatComponentTest extends \PHPUnit_Framework_TestCase
         $r = $this->getReader();
         $group = array(array('exc-hostb'));
         $result = $r->select()->from("hosts")->where("group IN ?",$group)->getResult();
-        $this->assertCount(2,$result);
+        $this->assertCount(3, $result);
         foreach($result as $obj) {
             $this->assertTrue(is_object($obj));
         }
@@ -57,7 +58,7 @@ class StatusdatComponentTest extends \PHPUnit_Framework_TestCase
         $group = array(array('exc-hostb'));
         $result = $r->select()->from("services")->where("host.group IN ?",$group)->getResult();
 
-        $this->assertCount(6,$result);
+        $this->assertCount(9, $result);
         foreach($result as $obj) {
             $this->assertTrue(is_object($obj));
         }

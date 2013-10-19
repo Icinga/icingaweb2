@@ -41,6 +41,7 @@ class ServiceStatus extends DataView
             'service_last_comment',
             'service_last_check',
             'service_next_check',
+            'service_attempt',
             'service_last_notification',
             'service_check_command',
             'host_icon_image',

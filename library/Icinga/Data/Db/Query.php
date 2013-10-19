@@ -287,32 +287,6 @@ class Query extends BaseQuery
         return strval($this->getSelectQuery());
     }
 
-    /**
-     * Parse a backend specific filter expression and return a Query\Node object
-     *
-     * @param $expression       The expression to parse
-     * @param $parameters       Optional parameters for the expression
-     *
-     * @return Node             A query node or null if it's an invalid expression
-     */
-    protected function parseFilterExpression($expression, $parameter = null)
-    {
-        $splitted = explode(' ', $expression, 3);
-        if (count($splitted) === 1 && $parameter) {
-            return Node::createOperatorNode(Node::OPERATOR_EQUALS, $splitted[0], $parameter);
-        } elseif (count($splitted) === 2 && $parameter) {
-            Node::createOperatorNode($splitted[0], $splitted[1], is_string($parameter));
-            return Node::createOperatorNode(Node::OPERATOR_EQUALS, $splitted[0], $parameter);
-        } elseif (count($splitted) === 3) {
-            if (trim($splitted[2]) === '?' && is_string($parameter)) {
-                return Node::createOperatorNode($splitted[1], $splitted[0], $parameter);
-            } else {
-                return Node::createOperatorNode($splitted[1], $splitted[0], $splitted[2]);
-            }
-        }
-        return null;
-    }
-
     public function applyFilter()
     {
         $parser = new TreeToSqlParser($this);

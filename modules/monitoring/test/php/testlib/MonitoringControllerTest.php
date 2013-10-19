@@ -110,7 +110,7 @@ abstract class MonitoringControllerTest extends Zend_Test_PHPUnit_ControllerTest
                 'statusdat-unittest' => array(
                     'type'          => 'statusdat',
                     'status_file'   => '/tmp/teststatus.dat',
-                    'objects_file'  => '/tmp/testobjects.cache',
+                    'object_file'  => '/tmp/testobjects.cache',
                     'no_cache'      => true
                 ),
                 'ido-mysql-unittest' => array(
@@ -203,11 +203,9 @@ abstract class MonitoringControllerTest extends Zend_Test_PHPUnit_ControllerTest
      */
     private function requireStatusDatQueries()
     {
-        require_once(realpath($this->moduleDir.'/library/Monitoring/Backend/Statusdat/Query/Query.php'));
+        require_once(realpath($this->moduleDir.'/library/Monitoring/Backend/Statusdat/Query/StatusdatQuery.php'));
         $this->requireFolder('library/Monitoring/Backend/Statusdat');
-        $this->requireFolder('library/Monitoring/Backend/Statusdat/Criteria');
         $this->requireFolder('library/Monitoring/Backend/Statusdat/Query');
-        $this->requireFolder('library/Monitoring/Backend/Statusdat/DataView');
     }
 
     /**
@@ -300,7 +298,7 @@ abstract class MonitoringControllerTest extends Zend_Test_PHPUnit_ControllerTest
                 array(
                     'type'          => 'statusdat',
                     'status_file'   => '/tmp/teststatus.dat',
-                    'objects_file'  => '/tmp/testobjects.cache',
+                    'object_file'  => '/tmp/testobjects.cache',
                     'no_cache'      => true
                 )
             );

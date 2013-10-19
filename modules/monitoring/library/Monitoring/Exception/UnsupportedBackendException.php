@@ -26,21 +26,10 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Module\Monitoring\Backend\Statusdat\Query;
 
-/**
- * Class HostgroupsummaryQuery
- * @package Icinga\Backend\Statusdat
- */
-class HostgroupsummaryQuery extends GroupsummaryQuery
+namespace Icinga\Module\Monitoring\Exception;
+use \Exception;
+
+class UnsupportedBackendException extends Exception
 {
-    /**
-     * @var string
-     */
-    protected $groupType = "hostgroup";
-
-    /**
-     * @var string
-     */
-    protected $base     = "hosts";
 }

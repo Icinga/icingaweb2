@@ -28,11 +28,12 @@
 
 namespace Icinga\Protocol\Statusdat;
 
-use Icinga\Data\Optional;
-use Icinga\Data\The;
+use Exception;
 use Icinga\Filter\Query\Node;
 use Icinga\Protocol;
 use Icinga\Data\BaseQuery;
+use Icinga\Protocol\Statusdat\View\MonitoringObjectList;
+use Icinga\Protocol\Statusdat\Query\IQueryPart;
 
 /**
  * Class Query
@@ -44,22 +45,18 @@ class Query extends BaseQuery
      * @var array
      */
     public static $VALID_TARGETS = array(
-        "hosts" => array("host"),
-        "services" => array("service"),
-        "downtimes" => array("hostdowntime", "servicedowntime"),
-        "hostdowntimes" => array("hostdowntime"),
-        "servicedowntimes" => array("servicedowntime"),
-        "hostgroups" => array("hostgroup"),
+        "hosts"         => array("host"),
+        "services"      => array("service"),
+        "downtimes"     => array("downtime"),
+        "groups"        => array("hostgroup", "servicegroup"),
+        "hostgroups"    => array("hostgroup"),
         "servicegroups" => array("servicegroup"),
-        "comments" => array("servicecomment", "hostcomment"),
-        "hostcomments" => array("hostcomment"),
-        "servicecomments" => array("servicecomment")
+        "comments"      => array("comment"),
+        "contacts"      => array("contact"),
+        "contactgroups" => array("contactgroup")
     );
 
-    /**
-     * @var IReader|null
-     */
-    private $reader = null;
+    private $queryFilter = null;
 
     /**
      * @var string
@@ -94,7 +91,12 @@ class Query extends BaseQuery
     /**
      * @var array
      */
-    private $filter = array();
+    private $filter = null;
+
+    /**
+     * @var array
+     */
+    private $attributes = array();
 
     /**
      *
@@ -123,7 +125,10 @@ class Query extends BaseQuery
         return !empty($columns);
     }
 
-
+    public function setQueryFilter($filter)
+    {
+        $this->queryFilter = $filter;
+    }
 
     /**
      * @return bool
@@ -158,33 +163,26 @@ class Query extends BaseQuery
     }
 
     /**
-     * @param $key
-     * @param null $val
-     * @return $this
-     */
-    public function where($key, $val = null)
-    {
-        $this->filter[] = array($key, $val);
-        return $this;
-    }
-
-    /**
      * @param $columns
      * @param null $dir
      * @return $this
      */
-    public function order($columns, $dir = null)
+    public function order($columns, $dir = null, $isFunction = false)
     {
         if ($dir && strtolower($dir) == "desc") {
             $dir = self::SORT_DESC;
         } else {
             $dir = self::SORT_ASC;
         }
+        if ($isFunction) {
+            $this->orderColumns[] = array($columns, $dir);
+            return $this;
+        }
         if (!is_array($columns)) {
             $columns = array($columns);
         }
-        foreach ($columns as $col) {
 
+        foreach ($columns as $col) {
             if (($pos = strpos($col, ' ')) !== false) {
                 $dir = strtoupper(substr($col, $pos + 1));
                 if ($dir === 'DESC') {
@@ -200,6 +198,11 @@ class Query extends BaseQuery
             $this->orderColumns[] = array($col, $dir);
         }
         return $this;
+    }
+
+    public function orderByFn(array $callBack, $dir = null)
+    {
+        $this->order($callBack, $dir, true);
     }
 
     /**
@@ -228,6 +231,9 @@ class Query extends BaseQuery
      */
     public function from($table, array $attributes = null)
     {
+        if (!$this->getColumns() && $attributes) {
+            $this->setColumns($attributes);
+        }
         if (isset(self::$VALID_TARGETS[$table])) {
             $this->source = $table;
         } else {
@@ -242,21 +248,20 @@ class Query extends BaseQuery
      */
     private function getFilteredIndices($classType = "\Icinga\Protocol\Statusdat\Query\Group")
     {
-        $baseGroup = null;
-        if (!empty($this->filter)) {
-            $baseGroup = new $classType();
+        $baseGroup = $this->queryFilter;
 
-            foreach ($this->filter as $values) {
-                $baseGroup->addItem(new $classType($values[0], $values[1]));
-            }
-        }
 
         $state = $this->ds->getObjects();
         $result = array();
         $source = self::$VALID_TARGETS[$this->source];
+
         foreach ($source as $target) {
+            if (! isset($state[$target])) {
+                continue;
+            }
             $indexes = array_keys($state[$target]);
             if ($baseGroup) {
+                $baseGroup->setQuery($this);
                 $indexes = $baseGroup->filter($state[$target]);
             }
             if (!isset($result[$target])) {
@@ -275,10 +280,15 @@ class Query extends BaseQuery
     {
         if (!empty($this->orderColumns)) {
             foreach ($indices as $type => &$subindices) {
-                $this->currentType = $type; // we're singlethreaded, so let's do it a bit dirty
+                $this->currentType = $type;
                 usort($subindices, array($this, "orderResult"));
             }
         }
+    }
+
+    public function select()
+    {
+        return $this;
     }
 
     /**
@@ -291,16 +301,17 @@ class Query extends BaseQuery
         $o1 = $this->ds->getObjectByName($this->currentType, $a);
         $o2 = $this->ds->getObjectByName($this->currentType, $b);
         $result = 0;
-        foreach ($this->orderColumns as $col) {
-            $result += $col[1] * strnatcasecmp($o1->{$col[0]}, $o2->{$col[0]});
+
+        foreach ($this->orderColumns as &$col) {
+            if (is_array($col[0])) {
+                $result += $col[1] * strnatcasecmp($col[0][0]->$col[0][1]($o1), $col[0][0]->$col[0][1]($o2));
+            } else {
+                if (is_string($o1->{$col[0]}) && is_string($o2->{$col[0]}) ) {
+                    $result += $col[1] * strnatcasecmp($o1->{$col[0]}, $o2->{$col[0]});
+                }
+            }
         }
-        if ($result > 0) {
-            return 1;
-        }
-        if ($result < 0) {
-            return -1;
-        }
-        return 0;
+        return $result;
     }
 
     /**
@@ -387,7 +398,6 @@ class Query extends BaseQuery
         $result = array();
         $state = $this->ds->getObjects();
         foreach ($indices as $type => $subindices) {
-
             foreach ($subindices as $index) {
                 $result[] = & $state[$type][$index];
             }
@@ -395,21 +405,81 @@ class Query extends BaseQuery
         return $result;
     }
 
+ 
     /**
-     * Parse a backend specific filter expression and return a Query\Node object
-     *
-     * @param $expression       The expression to parse
-     * @param $parameters       Optional parameters for the expression
-     * @return Node             A query node or null if it's an invalid expression
+     * Apply all filters of this filterable on the datasource
      */
-    protected function parseFilterExpression($expression, $parameters = null)
-    {
-        // TODO: Implement parseFilterExpression() method.
-    }
-
     public function applyFilter()
     {
-        // TODO: Implement applyFilter() method.
+        $parser = new TreeToStatusdatQueryParser();
+        if ($this->getFilter()) {
+            $query = $parser->treeToQuery($this->getFilter());
+            $this->setQueryFilter($query);
+        }
+
+    }
+
+    /**
+     * @return mixed
+     */
+    public function fetchRow()
+    {
+        $result =  $this->fetchAll();
+        return $result;
+    }
+
+    /**
+     * @return mixed|void
+     */
+    public function fetchPairs()
+    {
+        $result = array();
+        if (count($this->getColumns()) < 2) {
+            throw new Exception(
+                'Status.dat "fetchPairs()" query expects at least' .
+                ' columns to be set in the query expression'
+            );
+        }
+        $attributes = $this->getColumns();
+
+        $param1 = $attributes[0];
+        $param2 = $attributes[1];
+        foreach ($this->fetchAll() as $resultList) {
+            $result[$resultList->$param1] = $resultList->$param2;
+        }
+
+        return $result;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function fetchOne()
+    {
+        return next($this->fetchAll());
+    }
+
+    /**
+     * @return MList|mixed|null
+     */
+    public function fetchAll()
+    {
+        $this->applyFilter();
+        if (!isset($this->cursor)) {
+            $result = $this->getResult();
+            $this->cursor = new MonitoringObjectList($result, $this);
+        }
+        return $this->cursor;
+    }
+
+    /**
+     * @return int|mixed
+     */
+    public function count()
+    {
+        $q = clone $this;
+        $q->limit(null, null);
+        return count($q->fetchAll());
     }
 
 

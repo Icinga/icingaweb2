@@ -26,49 +26,91 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Protocol\Statusdat\View;
+namespace Icinga\Module\Monitoring\Backend\Statusdat\Query;
+
+use Icinga\Application\Logger;
+use Icinga\Data\Optional;
+use Icinga\Data\The;
+use Icinga\Filter\Query\Node;
+use Icinga\Filter\Query\Tree;
+use Icinga\Protocol\Statusdat;
+use Icinga\Exception;
+use Icinga\Data\BaseQuery;
+use Icinga\Protocol\Statusdat\Query as Query;
+use Icinga\Protocol\Statusdat\View\AccessorStrategy;
+use Icinga\Filter\Filterable;
 
 /**
- * Class ObjectRemappingView
- *
- * Dataview that maps generic field names to storage specific fields or requests them via handlers.
- *
- * When accessing objects, every storage api returns them with other names. You can't simply say
- * $object->service_state, because this field is, e.g. under status.current_state in the status.dat
- * view, while IDO uses servicestate->current_state.
- *
- * This view is intended for normalizing these changes, so a request of service_state returns the
- * right field for the backend. When implementing it, you have to fill the mappedParameters and/or
- * the handlerParameters array. While mappedParameters simply translate logic field names to
- * storage specific ones, handlerParameters determins functions that handle data retrieval for
- * the specific fields.
- *
+ * Class Query
+ * @package Icinga\Backend\Statusdat
  */
-
-class ObjectRemappingView implements AccessorStrategy
+abstract class StatusdatQuery extends Query implements Filterable, AccessorStrategy
 {
-
     /**
-     * When implementing your own Mapper, this contains the static mapping rules.
-     * @see Icinga\Module\Monitoring\Backend\Statusdat\DataView\StatusdatServiceView for an example
+     * An array containing the mappi
      *
+     * When implementing your own Mapper, this contains the static mapping rules.
+     *
+     * @see Icinga\Module\Monitoring\Backend\Statusdat\DataView\StatusdatServiceView for an example
      * @var array
      */
     public static $mappedParameters = array();
+
+    /**
+     * An array containing all properties that are retrieved by a function
+     *
+     * When implementing your own Mapper, this contains the handler for specific fields and allows you to lazy load
+     * different fields if necessary. The methods are strings that will be mapped to methods of this class
+     *
+     * @var array
+     * @see Icinga\Backend\Statusdat\DataView\StatusdatServiceView for an example
+     */
+    public static $handlerParameters = array();
+
+
+    /**
+     * @var null
+     */
+    private $cursor = null;
+
+
+    public function init()
+    {
+        parent::init();
+        $this->selectBase();
+    }
+
+    abstract public function selectBase();
+
+    /**
+     * Orders the resultset
+     *
+     * @param string $column    Either a string in the 'FIELD ASC/DESC format or only the field
+     * @param null $dir 'asc' or 'desc'
+     * @return Query            Returns this query,for fluent interface
+     */
+    public function order($column, $dir = null, $isFunction = false)
+    {
+
+        if ($column) {
+            if (isset(static::$mappedParameters[$column])) {
+                parent::order(static::$mappedParameters[$column], strtolower($dir));
+            } elseif (isset(static::$handlerParameters[$column])) {
+                parent::orderByFn(array($this, static::$handlerParameters[$column]), strtolower($dir));
+            } else {
+                Logger::info("Tried to sort by unknown column  %s", $column);
+            }
+        }
+        return $this;
+    }
+
+
 
     private $functionMap = array(
         "TO_DATE" => "toDateFormat"
     );
 
-    /**
-     * When implementing your own Mapper, this contains the handler for specific fields and allows you to lazy load
-     * different fields if necessary. The methods are strings that will be mapped to methods of this class
-     *
-     * @see Icinga\Backend\Statusdat\DataView\StatusdatServiceView for an example
-     *
-     * @var array
-     */
-    protected $handlerParameters = array();
+
 
     /**
      *
@@ -89,11 +131,11 @@ class ObjectRemappingView implements AccessorStrategy
             return $this->getMappedParameter($item, $field);
         }
 
-        if (isset($this->handlerParameters[$field])) {
-            $hdl = $this->handlerParameters[$field];
+        if (isset(static::$handlerParameters[$field])) {
+            $hdl = static::$handlerParameters[$field];
             return $this->$hdl($item);
         }
-        throw new \InvalidArgumentException("Field $field does not exist for status.dat services");
+        return null;
     }
 
     private function applyPropertyFunction($function, $value)
@@ -119,6 +161,7 @@ class ObjectRemappingView implements AccessorStrategy
     {
         $matches = array();
         $fieldDef = static::$mappedParameters[$field];
+
         $function = false;
         if (preg_match_all('/(?P<FUNCTION>\w+)\((?P<PARAMETER>.*)\)/', $fieldDef, $matches)) {
             $function = $matches["FUNCTION"][0];
@@ -128,11 +171,23 @@ class ObjectRemappingView implements AccessorStrategy
         $res = $item;
 
         foreach ($mapped as $map) {
-            if (!isset($res->$map)) {
-                return "";
+            if (is_array($res)) {
+                $subResult = array();
+                foreach ($res as $subitem) {
+                    if (!isset($subitem->$map)) {
+                        continue;
+                    }
+                    $subResult[] = $subitem->$map;
+                }
+                $res = join(',', $subResult);
+            } else {
+                if (!isset($res->$map)) {
+                    return "";
+                }
+                $res = $res->$map;
             }
-            $res = $res->$map;
         }
+
         if ($function) {
             return $this->applyPropertyFunction($function, $res);
         }
@@ -146,7 +201,7 @@ class ObjectRemappingView implements AccessorStrategy
      * @param The $field
      * @return The|string
      */
-    public function getNormalizedFieldName($field)
+    public function getMappedField($field)
     {
         if (isset(static::$mappedParameters[$field])) {
             return static::$mappedParameters[$field];
@@ -166,7 +221,16 @@ class ObjectRemappingView implements AccessorStrategy
     {
         return (isset($item->$field)
             || isset(static::$mappedParameters[$field])
-            || isset($this->handlerParameters[$field])
+            || isset(static::$handlerParameters[$field])
         );
     }
+
+
+    public function isValidFilterTarget($field)
+    {
+        return true;
+    }
+
+
 }
+

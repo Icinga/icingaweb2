@@ -65,13 +65,13 @@ class StatusdatSetupStrategy implements SetupStrategy {
         if ($resource == null) {
             $resource = array(
                 "status_file" => "/tmp/teststatus.dat",
-                "objects_file" => "/tmp/testobjects.cache"
+                "object_file" => "/tmp/testobjects.cache"
             );
         }
         $this->requireStatusDat();
         $this->teardown($resource);
         touch($resource["status_file"]);
-        touch($resource["objects_file"]);
+        touch($resource["object_file"]);
         return $resource;
     }
 
@@ -88,14 +88,14 @@ class StatusdatSetupStrategy implements SetupStrategy {
         if ($resource == null) {
             $resource = array(
                 "status_file" => "/tmp/teststatus.dat",
-                "objects_file" => "/tmp/testobjects.cache"
+                "object_file" => "/tmp/testobjects.cache"
             );
         }
         if (file_exists($resource["status_file"])) {
             unlink($resource["status_file"]);
         }
-        if (file_exists($resource["objects_file"])) {
-            unlink($resource["objects_file"]);
+        if (file_exists($resource["object_file"])) {
+            unlink($resource["object_file"]);
         }
     }
 }

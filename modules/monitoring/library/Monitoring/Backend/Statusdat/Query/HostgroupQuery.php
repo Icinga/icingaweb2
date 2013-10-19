@@ -28,27 +28,22 @@
 
 namespace Icinga\Module\Monitoring\Backend\Statusdat\Query;
 
-use Icinga\Protocol\Statusdat;
-use Icinga\Exception;
-
 /**
- * Class ServicelistQuery
+ * Class HostgroupsummaryQuery
  * @package Icinga\Backend\Statusdat
  */
-class ServicelistQuery extends StatusdatQuery
+class HostgroupQuery extends StatusdatQuery
 {
-    /**
-     * @var \Icinga\Protocol\Statusdat\Query
-     */
-    protected $query;
-
-    /**
-     * @var string
-     */
-    protected $view = 'Icinga\Backend\Statusdat\DataView\StatusdatServiceView';
+    public static $mappedParameters = array(
+        'hostgroups'      => 'hostgroup_name',
+        'hostgroup_name'  => 'hostgroup_name',
+        'hostgroup_alias' => 'alias',
+        'host'            => 'hosts.host_name',
+        'host_name'       => 'hosts.host_name'
+    );
 
     public function selectBase()
     {
-        $this->select()->from("services", array());
+        $this->select()->from("hostgroups", array());
     }
 }

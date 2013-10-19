@@ -21,11 +21,9 @@ require_once 'library/Icinga/Protocol/Statusdat/StatusdatTestLoader.php';
 
 StatusdatTestLoader::requireLibrary();
 
-require_once '../../modules/monitoring/library/Monitoring/Backend/Statusdat/Criteria/Order.php';
 require_once '../../modules/monitoring/library/Monitoring/Backend.php';
-require_once '../../modules/monitoring/library/Monitoring/Backend/Statusdat/Query/Query.php';
+require_once '../../modules/monitoring/library/Monitoring/Backend/Statusdat/Query/StatusdatQuery.php';
 require_once '../../modules/monitoring/library/Monitoring/Backend/Statusdat/Query/StatusQuery.php';
-require_once '../../modules/monitoring/library/Monitoring/Backend/Statusdat/DataView/HostStatusView.php';
 require_once '../../library/Icinga/Web/Paginator/ScrollingStyle/SlidingWithBorder.php';
 
 class TestPaginatorAdapter implements Zend_Paginator_Adapter_Interface
@@ -103,7 +101,7 @@ class SlidingwithborderTest extends \PHPUnit_Framework_TestCase
         $this->resourceConfig = new Zend_Config(
             array(
                 'status_file'   => $statusdatFile,
-                'objects_file'  => $cacheFile,
+                'object_file'  => $cacheFile,
                 'type'          => 'statusdat'
             )
         );

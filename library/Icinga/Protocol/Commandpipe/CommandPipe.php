@@ -142,7 +142,7 @@ class CommandPipe
      * @param Command   $command
      * @param array     $objects
      */
-    public function sendCommand(Command $command, array $objects)
+    public function sendCommand(Command $command, array $objects = array())
     {
         if ($command->provideGlobalCommand() === true) {
             $this->transport->send($command->getGlobalCommand());

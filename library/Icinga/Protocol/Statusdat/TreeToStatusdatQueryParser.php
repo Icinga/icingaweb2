@@ -26,48 +26,46 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
+
 namespace Icinga\Protocol\Statusdat;
 
-/**
- * Class ObjectContainer
- * @package Icinga\Protocol\Statusdat
- */
-class ObjectContainer extends \stdClass
+
+use Icinga\Filter\Query\Node;
+use Icinga\Filter\Query\Tree;
+use Icinga\Protocol\Statusdat\Query\Expression;
+use Icinga\Protocol\Statusdat\Query\Group;
+
+class TreeToStatusdatQueryParser
 {
-    /**
-     * @var \stdClass
-     */
-    public $ref;
 
-    /**
-     * @var IReader
-     */
-    public $reader;
-
-    /**
-     * @param \stdClass $obj
-     * @param IReader $reader
-     */
-    public function __construct(\stdClass &$obj, IReader &$reader)
+    private function nodeToQuery(Node $node)
     {
-        $this->ref = & $obj;
-        $this->reader = & $reader;
+        if ($node->type === Node::TYPE_OPERATOR) {
+            $op = $node->operator;
+            $value = $node->right;
+            if (stripos($node->right, '*') !== false) {
+                $op = 'LIKE';
+                $value = str_replace('*', '%', $value);
+            }
+
+            return new Expression($node->left . ' ' . $op . ' ?', $value);
+        } else {
+            $group = new Group();
+            $group->setType(($node->type === Node::TYPE_OR) ? Group::TYPE_OR  : Group::TYPE_AND);
+            $group->addItem($this->nodeToQuery($node->left));
+            $group->addItem($this->nodeToQuery($node->right));
+            return $group;
+        }
     }
 
-    /**
-     * @param $attribute
-     * @return \stdClass
-     */
-    public function __get($attribute)
-    {
-        $exploded = explode(".", $attribute);
-        $result = $this->ref;
 
-        foreach ($exploded as $elem) {
-            if (isset($result->$elem)) {
-                $result = $result->$elem;
-            }
+    public function treeToQuery(Tree $tree)
+    {
+
+        if ($tree->root !== null) {
+            $tree->root = $tree->normalizeTree($tree->root);
+            return $this->nodeToQuery($tree->root);
         }
-        return $result;
+        return null;
     }
 }

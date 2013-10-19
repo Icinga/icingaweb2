@@ -58,9 +58,9 @@ class Monitoring_ShowController extends MonitoringController
 
         if ($this->getRequest()->getActionName() === 'host') {
             $this->view->object = new Host($this->getRequest());
-        } elseif ($this->getRequest()->getActionName() === 'service') {
+        } elseif ($this->getRequest()->getActionName() === 'service'
+            || $this->getRequest()->getActionName() === 'services' ) {
             $this->view->object = new Service($this->getRequest());
-
         } else {
             $this->view->object = AbstractObject::fromRequest($this->getRequest());
         }

@@ -10,7 +10,7 @@ class Host extends AbstractObject
 
     public $type        = self::TYPE_HOST;
     public $prefix      = 'host_';
-    private $view   = null;
+    private $view       = null;
 
 
     public function populate()

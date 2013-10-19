@@ -89,7 +89,6 @@ class Parser
      */
     public function parseObjectsFile()
     {
-        Logger::debug("Reading new objects file");
         $DEFINE = strlen("define ");
         $filehandle = $this->filehandle;
         $this->icingaState = array();
@@ -138,7 +137,6 @@ class Parser
             $this->currentStateType = trim(substr($line, 0, -1));
             $this->readCurrentState();
         }
-
     }
 
     /**
@@ -169,7 +167,6 @@ class Parser
     }
 
     /**
-     * TODO: Discard old runtime data
      * @throws Exception\ParsingException
      */
     private function readCurrentState()
@@ -206,12 +203,23 @@ class Parser
         if ($type == "status") {
             $base[$name]->status = & $statusdatObject;
         } else {
+
             if (!isset($base[$name]->$type) || !in_array($base[$name]->$type, $this->overwrites)) {
                 $base[$name]->$type = array();
                 $this->overwrites[] = & $base[$name]->$type;
             }
             array_push($base[$name]->$type, $statusdatObject);
+            $this->currentObjectType = $type;
+            if (!isset($this->icingaState[$type])) {
+                $this->icingaState[$type] = array();
+            }
+            $this->icingaState[$type][] = &$statusdatObject;
+            $id = $this->getObjectIdentifier($statusdatObject);
+            if ($id !== false && isset($this->icingaState[$objectType][$id])) {
+                $statusdatObject->$objectType = $this->icingaState[$objectType][$id];
+            }
         }
+
         return;
 
     }
@@ -266,9 +274,8 @@ class Parser
     {
 
         $name = $this->getObjectIdentifier($object);
-
         if ($name !== false) {
-            $this->icingaState[$this->currentObjectType][$name] = & $object;
+            $this->icingaState[$this->currentObjectType][$name] = &$object;
         }
         $this->registerObjectAsProperty($object);
     }
@@ -278,24 +285,31 @@ class Parser
      */
     protected function registerObjectAsProperty(&$object)
     {
-        if ($this->currentObjectType == "service" || $this->currentObjectType == "host") {
+        if ($this->currentObjectType == 'service'
+            || $this->currentObjectType == 'host'
+            || $this->currentObjectType == 'contact') {
             return null;
         }
         $isService = strpos($this->currentObjectType, "service") !== false;
         $isHost = strpos($this->currentObjectType, "host") !== false;
-
+        $isContact = strpos($this->currentObjectType, "contact") !== false;
         $name = $this->getObjectIdentifier($object);
-        if ($isService === false && $isHost === false) { // this would be error in the parser implementation
+
+        if ($isService === false && $isHost === false && $isContact === false) { // this would be error in the parser implementation
             return null;
         }
         $property = $this->currentObjectType;
         if ($isService) {
             $this->currentObjectType = "service";
             $property = substr($property, strlen("service"));
-        } else {
+        } elseif ($isHost) {
             $this->currentObjectType = "host";
             $property = substr($property, strlen("host"));
+        } elseif ($isContact) {
+            $this->currentObjectType = "contact";
+            $property = substr($property, strlen("contact"));
         }
+
         if (!isset($this->icingaState[$this->currentObjectType])) {
             return $this->deferRegistration($object, $this->currentObjectType . $property);
         }
@@ -308,6 +322,13 @@ class Parser
                 if (!isset($source->$property)) {
                     $source->$property = array();
                 }
+                $type = $this->currentObjectType;
+                if (!isset($object->$type)) {
+                    $object->$type = array();
+                }
+                // add the member to the group object
+                array_push($object->$type, $source);
+                // add the group to the member object
                 array_push($source->$property, $name);
             }
         } else {
@@ -315,6 +336,7 @@ class Parser
             if (!isset($source->$property)) {
                 $source->$property = array();
             }
+
             array_push($source->$property, $object);
         }
 
@@ -371,12 +393,21 @@ class Parser
      */
     protected function getObjectIdentifier(&$object)
     {
+        if ($this->currentObjectType == 'contact') {
+            return $object->contact_name;
+        }
+
         if ($this->currentObjectType == "service") {
             return $object->host_name . ";" . $object->service_description;
         }
         $name = $this->currentObjectType . "_name";
         if (isset($object->{$name})) {
             return $object->{$name};
+        }
+        if (isset($object->service_description)) {
+            return $object->host_name . ";" . $object->service_description;
+        } elseif (isset($object->host_name)) {
+            return $object->host_name;
         }
         return false;
 

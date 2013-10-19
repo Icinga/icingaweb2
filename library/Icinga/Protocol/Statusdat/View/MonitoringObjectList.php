@@ -1,5 +1,12 @@
 <?php
 
+namespace Icinga\Protocol\Statusdat\View;
+
+use \Iterator;
+use \Countable;
+use \ArrayAccess;
+use \Exception;
+
 /**
  * Wrapper around an array of monitoring objects that can be enhanced with an optional
  * object that extends AccessorStrategy. This will act as a dataview and provide
@@ -11,14 +18,6 @@
  * If the dataset contains arrays instead of objects, they will be cast to objects.
  *
  */
-
-namespace Icinga\Protocol\Statusdat\View;
-
-use \Iterator;
-use \Countable;
-use \ArrayAccess;
-use \Exception;
-
 class MonitoringObjectList implements Iterator, Countable, ArrayAccess
 {
     private $dataSet = array();
@@ -53,6 +52,7 @@ class MonitoringObjectList implements Iterator, Countable, ArrayAccess
         if ($this->dataView) {
             return $this;
         }
+
         return $this->dataSet[$this->position];
     }
 

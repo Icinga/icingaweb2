@@ -56,13 +56,6 @@ interface AccessorStrategy
     public function get(&$item, $field);
 
     /**
-     * Returns the name that the field has in the specific backend. Might not be available for every field/view
-     * @param $field    The field name that should be translated
-     * @return string   The real name of this field
-     */
-    public function getNormalizedFieldName($field);
-
-    /**
      * Returns true if the field exists on the specific item, otherwise false
      *
      * @param $item     The item to access

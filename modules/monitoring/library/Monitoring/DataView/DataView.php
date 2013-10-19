@@ -71,7 +71,6 @@ abstract class DataView implements Filterable
      */
     public static function fromRequest($request, array $columns = null)
     {
-
         $view = new static(Backend::createBackend($request->getParam('backend')), $columns);
         $parser = new UrlViewFilter($view);
         $view->getQuery()->setFilter($parser->fromRequest($request));
@@ -108,6 +107,7 @@ abstract class DataView implements Filterable
                 $view->getQuery()->where($key, $value);
             }
         }
+
         $order = isset($params['order']) ? $params['order'] : null;
         if ($order !== null) {
             if (strtolower($order) === 'desc') {
@@ -154,6 +154,7 @@ abstract class DataView implements Filterable
     public function sort($column = null, $order = null)
     {
         $sortRules = $this->getSortRules();
+
         if ($column === null) {
             $sortColumns = reset($sortRules);
             if (!isset($sortColumns['columns'])) {

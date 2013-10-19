@@ -32,17 +32,13 @@ abstract class AbstractObject
     public $customvars     = array();
     public $events         = array();
 
+    private $properties = array();
     private $request    = null;
 
     public function __construct(Request $request)
     {
         $this->request = $request;
-        $properties = $this->getProperties();
-        if ($properties) {
-            foreach ($properties as $key => $value) {
-                $this->$key = $value;
-            }
-        }
+        $this->properties = $this->getProperties();
     }
 
     abstract protected function getProperties();
@@ -81,6 +77,7 @@ abstract class AbstractObject
                 'hostgroup_alias'
             )
         )->getQuery()->fetchPairs();
+
         return $this;
     }
 
@@ -147,6 +144,12 @@ abstract class AbstractObject
 
     public function __get($param)
     {
+
+        if (isset($this->properties->$param)) {
+            return $this->properties->$param;
+        } elseif (isset($this->$param)) {
+            return $this->$param;
+        }
         if (substr($param, 0, strlen($this->prefix)) === $this->prefix) {
             return false;
         }
@@ -159,8 +162,6 @@ abstract class AbstractObject
         return $this->request;
     }
 
-    abstract public function populate();
-
     public static function fromRequest(Request $request)
     {
         if ($request->has('service') && $request->has('host')) {
@@ -169,4 +170,6 @@ abstract class AbstractObject
             return new Host($request);
         }
     }
+
+    abstract public function populate();
 }
