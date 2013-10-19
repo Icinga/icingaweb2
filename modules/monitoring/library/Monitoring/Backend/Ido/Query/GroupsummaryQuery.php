@@ -8,21 +8,21 @@ class GroupsummaryQuery extends IdoQuery
         'hoststatus'    => array(
             'host_state'                        => 'CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL THEN 99 ELSE hs.current_state END',
             'cnt_hosts_up'                      => 'SUM(CASE WHEN hs.has_been_checked != 0 AND hs.has_been_checked IS NOT NULL AND hs.current_state = 0 THEN 1 ELSE 0 END)',
-            'cnt_hosts_unreachable'             => 'SUM(CASE WHEN hs.has_been_checked != 0 AND hs.has_been_checked IS NOT NULL AND hs.current_state = 2 AND hs.problem_has_been_acknowledged + hs.scheduled_downtime_depth = 0 THEN 1 ELSE 0 END)',
-            'cnt_hosts_unreachable_unhandled'   => 'SUM(CASE WHEN hs.has_been_checked != 0 AND hs.has_been_checked IS NOT NULL AND hs.current_state = 2 AND hs.problem_has_been_acknowledged + hs.scheduled_downtime_depth != 0 THEN 1 ELSE 0 END)',
-            'cnt_hosts_down'                    => 'SUM(CASE WHEN hs.has_been_checked != 0 AND hs.has_been_checked IS NOT NULL AND hs.current_state = 1 AND hs.problem_has_been_acknowledged + hs.scheduled_downtime_depth = 0 THEN 1 ELSE 0 END)',
-            'cnt_hosts_down_unhandled'          => 'SUM(CASE WHEN hs.has_been_checked != 0 AND hs.has_been_checked IS NOT NULL AND hs.current_state = 1 AND hs.problem_has_been_acknowledged + hs.scheduled_downtime_depth != 0 THEN 1 ELSE 0 END)',
+            'cnt_hosts_unreachable'             => 'SUM(CASE WHEN hs.has_been_checked != 0 AND hs.has_been_checked IS NOT NULL AND hs.current_state = 2 AND hs.problem_has_been_acknowledged + hs.scheduled_downtime_depth != 0 THEN 1 ELSE 0 END)',
+            'cnt_hosts_unreachable_unhandled'   => 'SUM(CASE WHEN hs.has_been_checked != 0 AND hs.has_been_checked IS NOT NULL AND hs.current_state = 2 AND hs.problem_has_been_acknowledged + hs.scheduled_downtime_depth = 0 THEN 1 ELSE 0 END)',
+            'cnt_hosts_down'                    => 'SUM(CASE WHEN hs.has_been_checked != 0 AND hs.has_been_checked IS NOT NULL AND hs.current_state = 1 AND hs.problem_has_been_acknowledged + hs.scheduled_downtime_depth != 0 THEN 1 ELSE 0 END)',
+            'cnt_hosts_down_unhandled'          => 'SUM(CASE WHEN hs.has_been_checked != 0 AND hs.has_been_checked IS NOT NULL AND hs.current_state = 1 AND hs.problem_has_been_acknowledged + hs.scheduled_downtime_depth = 0 THEN 1 ELSE 0 END)',
             'cnt_hosts_pending'                 => 'SUM(CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL THEN 1 ELSE 0 END)'
         ),
         'servicestatus' => array(
             'service_state'                     => 'CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL THEN 99 ELSE ss.current_state END',
             'cnt_services_ok'                   => 'SUM(CASE WHEN ss.has_been_checked != 0 AND ss.has_been_checked IS NOT NULL AND ss.current_state = 0 THEN 1 ELSE 0 END)',
-            'cnt_services_unknown'              => 'SUM(CASE WHEN ss.has_been_checked != 0 AND ss.has_been_checked IS NOT NULL AND ss.current_state = 3 AND ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth = 0 THEN 1 ELSE 0 END)',
-            'cnt_services_unknown_unhandled'    => 'SUM(CASE WHEN ss.has_been_checked != 0 AND ss.has_been_checked IS NOT NULL AND ss.current_state = 3 AND ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth != 0 THEN 1 ELSE 0 END)',
-            'cnt_services_critical'             => 'SUM(CASE WHEN ss.has_been_checked != 0 AND ss.has_been_checked IS NOT NULL AND ss.current_state = 2 AND ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth = 0 THEN 1 ELSE 0 END)',
-            'cnt_services_critical_unhandled'   => 'SUM(CASE WHEN ss.has_been_checked != 0 AND ss.has_been_checked IS NOT NULL AND ss.current_state = 2 AND ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth != 0 THEN 1 ELSE 0 END)',
-            'cnt_services_warning'              => 'SUM(CASE WHEN ss.has_been_checked != 0 AND ss.has_been_checked IS NOT NULL AND ss.current_state = 1 AND ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth = 0 THEN 1 ELSE 0 END)',
-            'cnt_services_warning_unhandled'    => 'SUM(CASE WHEN ss.has_been_checked != 0 AND ss.has_been_checked IS NOT NULL AND ss.current_state = 1 AND ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth != 0 THEN 1 ELSE 0 END)',
+            'cnt_services_unknown'              => 'SUM(CASE WHEN ss.has_been_checked != 0 AND ss.has_been_checked IS NOT NULL AND ss.current_state = 3 AND ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth != 0 THEN 1 ELSE 0 END)',
+            'cnt_services_unknown_unhandled'    => 'SUM(CASE WHEN ss.has_been_checked != 0 AND ss.has_been_checked IS NOT NULL AND ss.current_state = 3 AND ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth = 0 THEN 1 ELSE 0 END)',
+            'cnt_services_critical'             => 'SUM(CASE WHEN ss.has_been_checked != 0 AND ss.has_been_checked IS NOT NULL AND ss.current_state = 2 AND ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth != 0 THEN 1 ELSE 0 END)',
+            'cnt_services_critical_unhandled'   => 'SUM(CASE WHEN ss.has_been_checked != 0 AND ss.has_been_checked IS NOT NULL AND ss.current_state = 2 AND ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth = 0 THEN 1 ELSE 0 END)',
+            'cnt_services_warning'              => 'SUM(CASE WHEN ss.has_been_checked != 0 AND ss.has_been_checked IS NOT NULL AND ss.current_state = 1 AND ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth != 0 THEN 1 ELSE 0 END)',
+            'cnt_services_warning_unhandled'    => 'SUM(CASE WHEN ss.has_been_checked != 0 AND ss.has_been_checked IS NOT NULL AND ss.current_state = 1 AND ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth = 0 THEN 1 ELSE 0 END)',
             'cnt_services_pending'              => 'SUM(CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL THEN 1 ELSE 0 END)'
         ),
         'hostgroups'    => array(
