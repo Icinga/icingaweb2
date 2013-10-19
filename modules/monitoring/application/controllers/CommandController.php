@@ -30,6 +30,7 @@
 use Icinga\Application\Icinga;
 use Icinga\Application\Config;
 use Icinga\Application\Logger;
+use Icinga\Module\Monitoring\Form\Command\DisableNotificationWithExpireForm;
 use Icinga\Module\Monitoring\Form\Command\SingleArgumentCommandForm;
 use Icinga\Web\Form;
 use Icinga\Web\Controller\ActionController;
@@ -73,9 +74,9 @@ class Monitoring_CommandController extends ActionController
     /**
      * Setter for form
      *
-     * @param Form $form
+     * @param CommandForm $form
      */
-    public function setForm($form)
+    public function setForm(CommandForm $form)
     {
         $this->form = $form;
     }
@@ -97,6 +98,7 @@ class Monitoring_CommandController extends ActionController
      */
     public function postDispatch()
     {
+
         if ($this->issetForm()) {
             if ($this->form->isSubmittedAndValid()) {
                 $this->_helper->viewRenderer->setNoRender(true);
@@ -125,7 +127,6 @@ class Monitoring_CommandController extends ActionController
     public function init()
     {
         if ($this->_request->isPost()) {
-
             $instance = $this->_request->getPost("instance");
             $targetConfig = Config::module('monitoring', 'instances');
             if ($instance) {
@@ -148,6 +149,8 @@ class Monitoring_CommandController extends ActionController
         if ($this->getRequest()->getActionName() !== 'list') {
             $this->_helper->viewRenderer->setRender(self::DEFAULT_VIEW_SCRIPT);
         }
+
+        $this->view->objects = array();
     }
 
     /**
@@ -289,13 +292,29 @@ class Monitoring_CommandController extends ActionController
      */
     public function disableactivechecksAction()
     {
-        $this->setSupportedParameters(array('host', 'service'));
+        $this->setSupportedParameters(array('host', 'service', 'global'));
+
         $form = new SingleArgumentCommandForm();
-        $form->setCommand('DISABLE_HOST_CHECK', 'DISABLE_SVC_CHECK');
+
+        $form->setCommand(
+            'DISABLE_HOST_CHECK',
+            'DISABLE_SVC_CHECK'
+        );
+
+        $form->setGlobalCommands(
+            'STOP_EXECUTING_HOST_CHECKS',
+            'STOP_EXECUTING_SVC_CHECKS'
+        );
 
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Disable Active Checks'));
-        $form->addNote(t('Disable active checks for this object.'));
+
+        if ($form->provideGlobalCommand()) {
+            $form->addNote(t('Disable active checks on a program-wide basis.'));
+        } else {
+            $form->addNote(t('Disable active checks for this object.'));
+        }
+
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
@@ -308,13 +327,18 @@ class Monitoring_CommandController extends ActionController
      */
     public function enableactivechecksAction()
     {
-        $this->setSupportedParameters(array('host', 'service'));
+        $this->setSupportedParameters(array('host', 'service', 'global'));
         $form = new SingleArgumentCommandForm();
         $form->setCommand('ENABLE_HOST_CHECK', 'ENABLE_SVC_CHECK');
+        $form->setGlobalCommands('START_EXECUTING_HOST_CHECKS', 'START_EXECUTING_SVC_CHECKS');
 
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Enable Active Checks'));
-        $form->addNote(t('Enable active checks for this object.'));
+        if ($form->provideGlobalCommand()) {
+            $form->addNote(t('Enable active checks on a program-wide basis.'));
+        } else {
+            $form->addNote(t('Enable active checks for this object.'));
+        }
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
@@ -366,12 +390,27 @@ class Monitoring_CommandController extends ActionController
      */
     public function stopobsessingAction()
     {
-        $this->setSupportedParameters(array('host', 'service'));
+        $this->setSupportedParameters(array('host', 'service', 'global'));
         $form = new SingleArgumentCommandForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Stop obsessing'));
-        $form->addNote(t('Stop obsessing over this object.'));
-        $form->setCommand('STOP_OBSESSING_OVER_HOST', 'STOP_OBSESSING_OVER_SVC');
+
+        if ($form->provideGlobalCommand() === true) {
+            $form->addNote(t('Disable obsessing on a program-wide basis.'));
+        } else {
+            $form->addNote(t('Stop obsessing over this object.'));
+        }
+
+        $form->setCommand(
+            'STOP_OBSESSING_OVER_HOST',
+            'STOP_OBSESSING_OVER_SVC'
+        );
+
+        $form->setGlobalCommands(
+            'STOP_OBSESSING_OVER_HOST_CHECKS',
+            'STOP_OBSESSING_OVER_SVC_CHECKS'
+        );
+
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
@@ -384,12 +423,27 @@ class Monitoring_CommandController extends ActionController
      */
     public function startobsessingAction()
     {
-        $this->setSupportedParameters(array('host', 'service'));
+        $this->setSupportedParameters(array('host', 'service', 'global'));
         $form = new SingleArgumentCommandForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Start obsessing'));
-        $form->addNote(t('Start obsessing over this object.'));
-        $form->setCommand('START_OBSESSING_OVER_HOST', 'START_OBSESSING_OVER_SVC');
+
+        if ($form->provideGlobalCommand() === true) {
+            $form->addNote(t('Enable obsessing on a program-wide basis.'));
+        } else {
+            $form->addNote(t('Start obsessing over this object.'));
+        }
+
+        $form->setCommand(
+            'START_OBSESSING_OVER_HOST',
+            'START_OBSESSING_OVER_SVC'
+        );
+
+        $form->setGlobalCommands(
+            'START_OBSESSING_OVER_HOST_CHECKS',
+            'START_OBSESSING_OVER_SVC_CHECKS'
+        );
+
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
@@ -402,12 +456,27 @@ class Monitoring_CommandController extends ActionController
      */
     public function stopacceptingpassivechecksAction()
     {
-        $this->setSupportedParameters(array('host', 'service'));
+        $this->setSupportedParameters(array('host', 'service', 'global'));
         $form = new SingleArgumentCommandForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Stop Accepting Passive Checks'));
-        $form->addNote(t('Passive checks for this object will be omitted.'));
-        $form->setCommand('STOP_ACCEPTING_PASSIVE_HOST_CHECKS', 'STOP_ACCEPTING_PASSIVE_SVC_CHECKS');
+
+        if ($form->provideGlobalCommand() === true) {
+            $form->addNote(t('Disable passive checks on a program-wide basis.'));
+        } else {
+            $form->addNote(t('Passive checks for this object will be omitted.'));
+        }
+
+        $form->setCommand(
+            'STOP_ACCEPTING_PASSIVE_HOST_CHECKS',
+            'STOP_ACCEPTING_PASSIVE_SVC_CHECKS'
+        );
+
+        $form->setGlobalCommands(
+            'STOP_ACCEPTING_PASSIVE_HOST_CHECKS',
+            'STOP_ACCEPTING_PASSIVE_SVC_CHECKS'
+        );
+
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
@@ -420,12 +489,43 @@ class Monitoring_CommandController extends ActionController
      */
     public function startacceptingpassivechecksAction()
     {
-        $this->setSupportedParameters(array('host', 'service'));
+        $this->setSupportedParameters(array('host', 'service', 'global'));
         $form = new SingleArgumentCommandForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Start Accepting Passive Checks'));
-        $form->addNote(t('Passive checks for this object will be accepted.'));
-        $form->setCommand('START_ACCEPTING_PASSIVE_HOST_CHECKS', 'START_ACCEPTING_PASSIVE_SVC_CHECKS');
+
+        if ($form->provideGlobalCommand() === true) {
+            $form->addNote(t('Enable passive checks on a program-wide basis.'));
+        } else {
+            $form->addNote(t('Passive checks for this object will be accepted.'));
+        }
+
+        $form->setCommand(
+            'START_ACCEPTING_PASSIVE_HOST_CHECKS',
+            'START_ACCEPTING_PASSIVE_SVC_CHECKS'
+        );
+
+        $form->setGlobalCommands(
+            'START_ACCEPTING_PASSIVE_HOST_CHECKS',
+            'START_ACCEPTING_PASSIVE_SVC_CHECKS'
+        );
+        $this->setForm($form);
+
+        if ($form->IsSubmittedAndValid() === true) {
+            $this->target->sendCommand($form->createCommand(), $this->view->objects);
+        }
+    }
+
+    /**
+     * Disable notifications with expiration
+     *
+     * This is a global command only
+     */
+    public function disablenotificationswithexpireAction()
+    {
+        $this->setParam('global', 1);
+        $form = new DisableNotificationWithExpireForm();
+        $form->setRequest($this->_request);
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
@@ -438,17 +538,27 @@ class Monitoring_CommandController extends ActionController
      */
     public function disablenotificationsAction()
     {
-        $this->setSupportedParameters(array('host', 'service'));
+        $this->setSupportedParameters(array('host', 'service', 'global'));
         $form = new SingleArgumentCommandForm();
         $form->setRequest($this->getRequest());
+
         $form->setSubmitLabel(t('Disable Notifications'));
-        $form->addNote(t('Notifications for this object will be disabled.'));
+
+        if ($form->provideGlobalCommand() === true) {
+            $form->addNote(t('Disable notifications on a program-wide basis.'));
+        } else {
+            $form->addNote(t('Notifications for this object will be disabled.'));
+        }
+
         $form->setCommand('DISABLE_HOST_NOTIFICATIONS', 'DISABLE_SVC_NOTIFICATIONS');
+        $form->setGlobalCommands('DISABLE_NOTIFICATIONS');
+
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
         }
+
     }
 
     /**
@@ -456,12 +566,21 @@ class Monitoring_CommandController extends ActionController
      */
     public function enablenotificationsAction()
     {
-        $this->setSupportedParameters(array('host', 'service'));
+        $this->setSupportedParameters(array('host', 'service', 'global'));
         $form = new SingleArgumentCommandForm();
         $form->setRequest($this->getRequest());
+
         $form->setSubmitLabel(t('Enable Notifications'));
-        $form->addNote(t('Notifications for this object will be enabled.'));
+
+        if ($form->provideGlobalCommand() === true) {
+            $form->addNote(t('Enable notifications on a program-wide basis.'));
+        } else {
+            $form->addNote(t('Notifications for this object will be enabled.'));
+        }
+
         $form->setCommand('ENABLE_HOST_NOTIFICATIONS', 'ENABLE_SVC_NOTIFICATIONS');
+        $form->setGlobalCommands('ENABLE_NOTIFICATIONS');
+
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
@@ -638,12 +757,24 @@ class Monitoring_CommandController extends ActionController
      */
     public function disableeventhandlerAction()
     {
-        $this->setSupportedParameters(array('host', 'service'));
+        $this->setSupportedParameters(array('host', 'service', 'global'));
         $form = new SingleArgumentCommandForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Disable Event Handler'));
-        $form->addNote(t('Disable event handler for this object.'));
-        $form->setCommand('DISABLE_HOST_EVENT_HANDLER', 'DISABLE_SVC_EVENT_HANDLER');
+
+        if ($form->provideGlobalCommand() === true) {
+            $form->addNote(t('Disable event handler for the whole system.'));
+        } else {
+            $form->addNote(t('Disable event handler for this object.'));
+        }
+
+        $form->setCommand(
+            'DISABLE_HOST_EVENT_HANDLER',
+            'DISABLE_SVC_EVENT_HANDLER'
+        );
+
+        $form->setGlobalCommands('DISABLE_EVENT_HANDLERS');
+
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
@@ -656,12 +787,25 @@ class Monitoring_CommandController extends ActionController
      */
     public function enableeventhandlerAction()
     {
-        $this->setSupportedParameters(array('host', 'service'));
+        $this->setSupportedParameters(array('host', 'service', 'global'));
+
         $form = new SingleArgumentCommandForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Enable Event Handler'));
-        $form->addNote(t('Enable event handler for this object.'));
-        $form->setCommand('ENABLE_HOST_EVENT_HANDLER', 'ENABLE_SVC_EVENT_HANDLER');
+
+        if ($form->provideGlobalCommand() === true) {
+            $form->addNote(t('Enable event handlers on the whole system.'));
+        } else {
+            $form->addNote(t('Enable event handler for this object.'));
+        }
+
+        $form->setCommand(
+            'ENABLE_HOST_EVENT_HANDLER',
+            'ENABLE_SVC_EVENT_HANDLER'
+        );
+
+        $form->setGlobalCommands('ENABLE_EVENT_HANDLERS');
+
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
@@ -674,12 +818,26 @@ class Monitoring_CommandController extends ActionController
      */
     public function disableflapdetectionAction()
     {
-        $this->setSupportedParameters(array('host', 'service'));
+        $this->setSupportedParameters(array('host', 'service', 'global'));
         $form = new SingleArgumentCommandForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Disable Flapping Detection'));
-        $form->addNote(t('Disable flapping detection for this object.'));
-        $form->setCommand('DISABLE_HOST_FLAP_DETECTION', 'DISABLE_SVC_FLAP_DETECTION');
+
+        if ($form->provideGlobalCommand() === true) {
+            $form->addNote(t('Disable flapping detection on a program-wide basis.'));
+        } else {
+            $form->addNote(t('Disable flapping detection for this object.'));
+        }
+
+        $form->setCommand(
+            'DISABLE_HOST_FLAP_DETECTION',
+            'DISABLE_SVC_FLAP_DETECTION'
+        );
+
+        $form->setGlobalCommands(
+            'DISABLE_FLAP_DETECTION'
+        );
+
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
@@ -692,12 +850,26 @@ class Monitoring_CommandController extends ActionController
      */
     public function enableflapdetectionAction()
     {
-        $this->setSupportedParameters(array('host', 'service'));
+        $this->setSupportedParameters(array('host', 'service', 'global'));
         $form = new SingleArgumentCommandForm();
         $form->setRequest($this->getRequest());
         $form->setSubmitLabel(t('Enable Flapping Detection'));
-        $form->addNote(t('Enable flapping detection for this object.'));
-        $form->setCommand('ENABLE_HOST_FLAP_DETECTION', 'ENABLE_SVC_FLAP_DETECTION');
+
+        if ($form->provideGlobalCommand() === true) {
+            $form->addNote(t('Enable flapping detection on a program-wide basis.'));
+        } else {
+            $form->addNote(t('Enable flapping detection for this object.'));
+        }
+
+        $form->setCommand(
+            'ENABLE_HOST_FLAP_DETECTION',
+            'ENABLE_SVC_FLAP_DETECTION'
+        );
+
+        $form->setGlobalCommands(
+            'ENABLE_FLAP_DETECTION'
+        );
+
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
@@ -830,6 +1002,86 @@ class Monitoring_CommandController extends ActionController
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
         }
     }
-}
 
+    /**
+     * Shutdown the icinga process
+     */
+    public function shutdownprocessAction()
+    {
+        $this->setParam('global', '1');
+        $form = new SingleArgumentCommandForm();
+        $form->setRequest($this->_request);
+
+        $form->setSubmitLabel(t('Shutdown monitoring process'));
+        $form->addNote(t('Stop monitoring instance. You have to start it again from command line.'));
+        $form->setGlobalCommands('SHUTDOWN_PROCESS');
+        $this->setForm($form);
+
+        if ($form->IsSubmittedAndValid() === true) {
+            $this->target->sendCommand($form->createCommand(), $this->view->objects);
+        }
+    }
+
+    /**
+     * Restart the icinga process
+     */
+    public function restartprocessAction()
+    {
+        $this->setParam('global', '1');
+        $form = new SingleArgumentCommandForm();
+        $form->setRequest($this->_request);
+
+        $form->setSubmitLabel(t('Restart monitoring process'));
+        $form->addNote(t('Restart the monitoring process.'));
+        $form->setGlobalCommands('RESTART_PROCESS');
+
+        $this->setForm($form);
+
+        if ($form->IsSubmittedAndValid() === true) {
+            $this->target->sendCommand($form->createCommand(), $this->view->objects);
+        }
+    }
+
+    /**
+     * Disable processing of performance data
+     */
+    public function disableperformancedataAction()
+    {
+        $this->setParam('global', 1);
+        $form = new SingleArgumentCommandForm();
+        $form->setRequest($this->_request);
+
+        $form->setSubmitLabel(t('Disable Performance Data'));
+        $form->addNote(t('Disable processing of performance data on a program-wide basis.'));
+
+        $form->setGlobalCommands('DISABLE_PERFORMANCE_DATA');
+
+        $this->setForm($form);
+
+        if ($form->IsSubmittedAndValid() === true) {
+            $this->target->sendCommand($form->createCommand(), $this->view->objects);
+        }
+    }
+
+    /**
+     * Enable processing of performance data
+     */
+    public function enableperformancedataAction()
+    {
+        $this->setParam('global', 1);
+        $form = new SingleArgumentCommandForm();
+        $form->setRequest($this->_request);
+
+        $form->setSubmitLabel(t('Enable Performance Data'));
+        $form->addNote(t('Enable processing of performance data on a program-wide basis.'));
+
+        $form->setGlobalCommands('ENABLE_PERFORMANCE_DATA');
+
+        $this->setForm($form);
+
+        if ($form->IsSubmittedAndValid() === true) {
+            $this->target->sendCommand($form->createCommand(), $this->view->objects);
+        }
+    }
+}
 // @codingStandardsIgnoreStop

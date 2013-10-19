@@ -359,7 +359,7 @@ class Form extends Zend_Form
             array(
                 'name'  => 'btn_submit',
                 'label' => $this->submitLabel,
-                'class' => 'btn btn-primary pull-right'
+                'class' => 'button btn btn-cta'
             )
         );
         $this->addElement($submitButton);

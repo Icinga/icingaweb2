@@ -45,6 +45,15 @@ http://localhost:8080/icinga2-web/monitoring/command/scheduledowntime
 http://localhost:8080/icinga2-web/monitoring/command/addcomment
 ```
 
+# Provide a global command for host or service checks
+
+http://localhost:8080/icinga2-web/monitoring/command/disableactivechecks?global=host
+http://localhost:8080/icinga2-web/monitoring/command/disableactivechecks?global=service
+
+# Provide a object command globally
+
+http://localhost:8080/icinga2-web/monitoring/command/disablenotifications?global=1
+
 ## List of commands
 
 *Please note that the list is not complete yet, more commands will follow*

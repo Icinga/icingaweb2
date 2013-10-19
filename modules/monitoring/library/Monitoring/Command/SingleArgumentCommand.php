@@ -28,6 +28,7 @@
 
 namespace Icinga\Module\Monitoring\Command;
 
+use Icinga\Exception\ProgrammingError;
 use Icinga\Protocol\Commandpipe\Command;
 
 /**
@@ -57,6 +58,13 @@ class SingleArgumentCommand extends Command
     private $serviceCommand;
 
     /**
+     * Name of global command
+     *
+     * @var array
+     */
+    private $globalCommands = array();
+
+    /**
      * Ignore host in command string
      *
      * @var bool
@@ -76,13 +84,24 @@ class SingleArgumentCommand extends Command
     /**
      * Setter for command names
      *
-     * @param string $hostCommand
-     * @param string $serviceCommand
+     * @param   string  $hostCommand
+     * @param   string  $serviceCommand
      */
     public function setCommand($hostCommand, $serviceCommand)
     {
         $this->hostCommand = $hostCommand;
         $this->serviceCommand = $serviceCommand;
+    }
+
+    /**
+     * Set a bunch of global commands
+     *
+     * @param array $commands One or more commands to control global parameters
+     */
+    public function setGlobalCommands(array $commands)
+    {
+        $this->globalCommands = $commands;
+        $this->globalCommand = true;
     }
 
     /**
@@ -153,5 +172,36 @@ class SingleArgumentCommand extends Command
         return strtoupper($this->serviceCommand)
         . ';'
         . $this->getArgumentString(array($hostname, $servicename));
+    }
+
+    /**
+     * Getter for global command if configured
+     *
+     * @param string $instance
+     *
+     * @throws ProgrammingError
+     * @return string
+     */
+    public function getGlobalCommand($instance = null)
+    {
+        if (!count($this->globalCommands)) {
+            // This throws exception for us that globalCommand
+            // is not implemented properly
+            parent::getGlobalCommand();
+        }
+
+        if ($this->value === 'host') {
+            return strtoupper($this->globalCommands[0]);
+        }
+
+        if ($this->value === 'service') {
+            if (count($this->globalCommands) < 2) {
+                throw new ProgrammingError('If use global values you need at least 2 global commands');
+            }
+
+            return strtoupper($this->globalCommands[1]);
+        }
+
+        return strtoupper(implode(';', $this->globalCommands));
     }
 }

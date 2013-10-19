@@ -28,6 +28,7 @@
 
 namespace Icinga\Module\Monitoring\Form\Command;
 
+use Zend_Controller_Request_Abstract;
 use \Zend_Form_Element_Hidden;
 use Icinga\Module\Monitoring\Command\AcknowledgeCommand;
 use Icinga\Module\Monitoring\Command\SingleArgumentCommand;
@@ -50,6 +51,13 @@ class SingleArgumentCommandForm extends CommandForm
      * @var string
      */
     private $serviceCommand;
+
+    /**
+     * Name of global command
+     *
+     * @var array
+     */
+    private $globalCommands = array();
 
     /**
      * Name of the parameter used as value
@@ -81,8 +89,24 @@ class SingleArgumentCommandForm extends CommandForm
     public function setCommand($hostCommand, $serviceCommand = null)
     {
         $this->hostCommand = $hostCommand;
+
         if ($serviceCommand !== null) {
             $this->serviceCommand = $serviceCommand;
+        }
+    }
+
+    /**
+     * Setter for global commands
+     *
+     * @param string $hostOrGenericGlobalCommand    Generic command or one for host
+     * @param string $serviceGlobalCommand          If any (leave blank if you need a global global)
+     */
+    public function setGlobalCommands($hostOrGenericGlobalCommand, $serviceGlobalCommand = null)
+    {
+        $this->globalCommands[] = $hostOrGenericGlobalCommand;
+
+        if ($serviceGlobalCommand !== null) {
+            $this->globalCommands[] = $serviceGlobalCommand;
         }
     }
 
@@ -106,6 +130,11 @@ class SingleArgumentCommandForm extends CommandForm
         $this->parameterName = $parameterName;
     }
 
+    /**
+     * Flag to ignore every objects
+     *
+     * @param bool $flag
+     */
     public function setObjectIgnoreFlag($flag = true)
     {
         $this->ignoreObject = (bool) $flag;
@@ -125,6 +154,15 @@ class SingleArgumentCommandForm extends CommandForm
         parent::create();
     }
 
+    public function setRequest(Zend_Controller_Request_Abstract $request)
+    {
+        parent::setRequest($request);
+
+        if ($this->globalCommand === true) {
+            $this->setParameterName('global');
+        }
+    }
+
 
     /**
      * Create command object for CommandPipe protocol
@@ -134,12 +172,18 @@ class SingleArgumentCommandForm extends CommandForm
     public function createCommand()
     {
         $command = new SingleArgumentCommand();
-        $command->setCommand($this->hostCommand, $this->serviceCommand);
 
         if ($this->parameterValue !== null) {
             $command->setValue($this->parameterValue);
         } else {
             $command->setValue($this->getValue($this->parameterName));
+        }
+
+        if ($this->provideGlobalCommand() == true) {
+            $command->setGlobalCommands($this->globalCommands);
+            $this->ignoreObject = true;
+        } else {
+            $command->setCommand($this->hostCommand, $this->serviceCommand);
         }
 
         $command->setObjectIgnoreFlag($this->ignoreObject);
