@@ -52,12 +52,12 @@ define(['components/app/container', 'jquery'], function(Container, $) {
      * @param {Event} e
      */
     var submitHandler = function(e) {
+        e.preventDefault();
+
         var form = $(this);
         var url = form.attr('action');
         var submit = form.find('button[type="submit"]', 'input[type="submit"]');
         var data = form.serialize();
-
-        e.preventDefault();
 
         // Submit name is missing for valid submission
         if (data) {
