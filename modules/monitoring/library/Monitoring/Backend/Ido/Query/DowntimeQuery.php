@@ -36,27 +36,21 @@ class DowntimeQuery extends IdoQuery
      */
     protected $columnMap = array(
         'downtime' => array(
-            'downtime_type' => 'sd.downtime_type',
-            'downtime_author_name' => 'sd.author_name',
-            'downtime_comment_data' => 'sd.comment_data',
-            'downtime_entry_time' => 'sd.entry_time',
-            'downtime_is_fixed' => 'sd.is_fixed',
-            'downtime_duration' => 'sd.duration',
-            'downtime_scheduled_start_time' => 'sd.scheduled_start_time',
-            'downtime_scheduled_end_time' => 'sd.scheduled_end_time',
-            'downtime_was_started' => 'sd.was_started',
-            'downtime_actual_start_time' => 'sd.actual_start_time',
-            'downtime_actual_start_time_usec' => 'sd.actual_start_time_usec',
-            'downtime_is_in_effect' => 'sd.is_in_effect',
-            'downtime_trigger_time' => 'sd.trigger_time',
-            'downtime_triggered_by_id' => 'sd.triggered_by_id',
-            'downtime_internal_downtime_id' => 'sd.internal_downtime_id'
+            'downtime_author'               => 'sd.author_name',
+            'downtime_comment'              => 'sd.comment_data',
+            'downtime_entry_time'           => 'sd.entry_time',
+            'downtime_is_fixed'             => 'sd.is_fixed',
+            'downtime_is_flexible'          => 'CASE WHEN sd.is_fixed = 0 THEN 1 ELSE 0 END',
+            'downtime_start'                => "UNIX_TIMESTAMP(CASE WHEN sd.trigger_time != '0000-00-00 00:00:00' then sd.trigger_time ELSE sd.scheduled_start_time END)",
+            'downtime_end'                  => 'UNIX_TIMESTAMP(sd.scheduled_end_time)',
+            'downtime_duration'             => 'sd.duration',
+            'downtime_is_in_effect'         => 'sd.is_in_effect',
+            'downtime_triggered_by_id'      => 'sd.triggered_by_id',
+            'downtime_internal_downtime_id' => 'sd.internal_downtime_id',
         ),
         'objects' => array(
-            'host_name' => 'o.name1 COLLATE latin1_general_ci',
-            'service_host_name' => 'o.name1 COLLATE latin1_general_ci',
-            'service_description' => 'o.name2 COLLATE latin1_general_ci',
-            'object_type' => "CASE o.objecttype_id WHEN 1 THEN 'host' ELSE 'service' END",
+            'host'      => 'o.name1 COLLATE latin1_general_ci',
+            'service'   => 'o.name2 COLLATE latin1_general_ci'
         )
     );
 

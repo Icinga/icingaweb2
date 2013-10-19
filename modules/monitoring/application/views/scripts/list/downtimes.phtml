@@ -1,135 +1,63 @@
 <?php
-/**
- * Create a DateTime from a string and use the util helper to
- * format it
- *
- * @param $self Reference to the current view that contains the helper.
- * @param $dateString The String that will be converted.
- * @return String The formatted string.
- */
-function formatDateString($self,$dateString){
-    $d = new DateTime($dateString);
-    return $self->util()->showTime($d->getTimestamp());
-}
-
 $commandHelper = $this->getHelper('CommandForm');
 ?>
 
-<?= $this->tabs->render($this); ?>
-
-<div data-icinga-component="app/mainDetailGrid" data-icinga-grid-selection-type="none">
+<div data-icinga-component="app/mainDetailGrid" data-icinga-grid-selection-type="single">
   <div>
     <?=  $this->sortControl->render($this); ?>
   </div>
   <div>
-    <?=  $this->paginationControl(
-            $this->downtimes,
-            null,
-            array(
-                'mixedPagination.phtml',
-                'default'
-            ),
-            array('preserve' => $this->preserve)
-         );
-    ?>
+    <?= $this->paginationControl($downtimes, null, null, array('preserve' => $this->preserve)); ?>
     <table class="table table-condensed">
-      <thead>
-        <tr>
-          <th>Is In Effect</th>
-          <th>Object</th>
-          <th>Host Name</th>
-          <th>Service Name</th>
-          <th>Entry Time</th>
-          <th>Author</th>
-          <th>Comment</th>
-          <th>Start Time</th>
-          <th>End Time</th>
-          <th>Type</th>
-          <th>Trigger Time</th>
-          <th>Downtime ID</th>
-          <th>Trigger ID</th>
-          <th>Duration</th>
-          <th>&nbsp;</th>
-        </tr>
-      </thead>
-
+      <tbody>
       <?php foreach ($downtimes as $downtime): ?>
-
       <tr>
         <td>
-          <?= ($downtime->downtime_is_in_effect == 0 ? 'False' : '<b>True</b>'); ?>
+          <?= $this->dateFormat()->formatDateTime((int) $downtime->downtime_start); ?> -
+          <?= $this->dateFormat()->formatDateTime((int) $downtime->downtime_end); ?>
+          <br />
+          <small>Duration: <?= $this->util()->showHourMin((int) $downtime->downtime_duration); ?></small>
+          <br />
+          <small>The <?php if($downtime->downtime_is_flexible): ?>flexible<?php else: ?>fixed<?php endif; ?> downtime is <?php if(!$downtime->downtime_is_in_effect): ?>not <?php endif; ?>in effect</small>
         </td>
         <td>
-          <div>
-            <?php if ($downtime->object_type == 'service'): ?>
-              {{SERVICE_ICON}}
-            <?php endif; ?>
-
-            <?php if ($downtime->object_type == 'host'): ?>
-              {{HOST_ICON}}
-            <?php endif; ?>
-          </div>
-        </td>
-        <td>
-          <?= $downtime->host_name ?>
-        </td>
-        <td>
-          <?= $downtime->service_description ?>
-        </td>
-        <td>
-          <?= formatDateString($this,$downtime->downtime_entry_time); ?>
-        </td>
-        <td>
-          <?= $downtime->downtime_author_name ?>
-        </td>
-        <td>
-          <?= $downtime->downtime_comment_data ?>
-        </td>
-        <td>
-          <?= formatDateString($this,$downtime->downtime_scheduled_start_time); ?>
-        </td>
-        <td>
-          <?= formatDateString($this,$downtime->downtime_scheduled_end_time); ?>
-        </td>
-        <td>
-          <?= $downtime->downtime_is_fixed == 1 ? 'Fixed' : 'Not Fixed' ?>
-        </td>
-        <td>
-          <?php
-            $date = formatDateString($this,$downtime->downtime_trigger_time);
-            echo $date != 'undef' ? $date : 'N/A';
-          ?>
-        </td>
-        <td>
-          <?= $downtime->downtime_internal_downtime_id ?>
-        </td>
-        <td>
-          <?= $downtime->downtime_triggered_by_id == 0 ?
-          'N/A' : $downtime->downtime_triggered_by_id ?>
-        </td>
-        <td>
-          <?= $this->util()->showHourMin(intval($downtime->downtime_duration)); ?>
-        </td>
+          <?php if (isset($downtime->service)): ?>
+            <a href="<?= $this->href('monitoring/show/service', array(
+              'host'    => $downtime->host,
+              'service' => $downtime->service
+            )); ?>"><?= $downtime->service ?></a>
+            <small>on <?= $downtime->host ?></small>
+          <?php else: ?>
+            <a href="<?= $this->href('monitoring/show/host', array(
+              'host'    => $downtime->host
+            )); ?>"><?= $downtime->host ?></a>
+          <?php endif; ?>
+          <br />
+          <?= $downtime->downtime_author ?>: <?= $downtime->downtime_comment ?>
+          <br />
+          <small>Entry Time: <?= $downtime->downtime_entry_time ?></small>
         <td>
             <?php
               $data = array(
-                  'downtimeid' => $downtime->downtime_internal_downtime_id,
-                  'host' => $downtime->host_name
+                'downtimeid'    => $downtime->downtime_internal_downtime_id,
+                'host'          => $downtime->host
               );
-
-              if ($downtime->object_type == 'service') {
-                $data['service'] = $downtime->service_description;
+              if (isset($downtime->service)) {
+                $data['service'] = $downtime->service;
               }
-
-              echo $commandHelper->simpleForm(
-                'removedowntime',
+              echo $commandHelper->iconSubmitForm(
+                'icinga-icon-remove',
                 'Remove Downtime',
+                'btn-small',
+                'removedowntime',
                 $data
               );
             ?>
         </td>
       </tr>
       <?php endforeach ?>
+      </tbody>
     </table>
+    <?= $this->paginationControl($downtimes, null, null, array('preserve' => $this->preserve)); ?>
   </div>
 </div>

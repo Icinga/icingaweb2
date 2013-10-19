@@ -68,23 +68,7 @@ abstract class AbstractObject
 
     public function fetchDowntimes()
     {
-        $this->downtimes = Downtime::fromRequest(
-            $this->request,
-            array(
-                'downtime_type',
-                'downtime_author_name',
-                'downtime_comment_data',
-                'downtime_is_fixed',
-                'downtime_duration',
-                'downtime_entry_time',
-                'downtime_scheduled_start_time',
-                'downtime_scheduled_end_time',
-                'downtime_was_started',
-                'downtime_actual_start_time',
-                'downtime_is_in_effect',
-                'downtime_triggered_by_id',
-            )
-        )->getQuery()->fetchAll();
+        $this->downtimes = Downtime::fromRequest($this->request)->getQuery()->fetchAll();
         return $this;
     }
 

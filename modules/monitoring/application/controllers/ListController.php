@@ -175,25 +175,7 @@ class Monitoring_ListController extends MonitoringController
      */
     public function downtimesAction()
     {
-        $query = DowntimeView::fromRequest(
-            $this->_request,
-            array(
-                'host_name',
-                'object_type',
-                'service_description',
-                'downtime_entry_time',
-                'downtime_internal_downtime_id',
-                'downtime_author_name',
-                'downtime_comment_data',
-                'downtime_duration',
-                'downtime_scheduled_start_time',
-                'downtime_scheduled_end_time',
-                'downtime_is_fixed',
-                'downtime_is_in_effect',
-                'downtime_triggered_by_id',
-                'downtime_trigger_time'
-            )
-        )->getQuery();
+        $query = DowntimeView::fromRequest($this->_request)->getQuery();
 
         $this->view->downtimes = $query->paginate();
         $this->setupSortControl(array(

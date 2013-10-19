@@ -1,33 +1,3 @@
-<?php if (!empty($this->downtimes)): ?>
-<?php
-    $list = array();
-    foreach ($this->downtimes as $downtime) {
-        $row = array();
-        if ($downtime->downtime_is_in_effect === '1') {
-            $row[] = 'Running<br />since '. $this->timeSince($downtime->downtime_actual_start_time);
-        } else {
-            if ($downtime->downtime_is_fixed) {
-                $row[] = 'Scheduled<br />for '. $downtime->downtime_scheduled_start_time;
-            } else {
-                $row[] = 'Waiting';
-            }
-        }
-
-        $row[] = sprintf(
-            'Triggered by %s: <em>%s</em>',
-            $downtime->downtime_author_name,
-            $downtime->downtime_comment_data
-        );
-
-        $row[] = '<button type="button" data-target="command" class="btn btn-warning"'
-            . ' data-command-id="29" data-command-info="'. $downtime->downtime_internal_downtime_id. '"'
-            . '>{{REMOVE_ICON}} Remove'
-            . '</button>';
-
-        $list[] = '<td>'. implode('</td><td>', $row). '</td>';
-    }
-?>
-<?php endif; ?>
 <div>
     <div class="panel-heading">
         <div class="panel-hostname">
@@ -61,30 +31,30 @@
                 <tr>
                     <td>
                         <div class="pull-right">
-                            <form action="<?= $this->href('monitoring/command/removeDowntime'); ?>" data-icinga-component="app/ajaxPostSubmitForm">
-                                <button type="submit" class="button btn-common btn-small" name="btn_submit" value="1">
-                                    <i class="icinga-icon-remove"></i>
-                                </button>
-                                <input type="hidden" name="host" value="<?= $downtime->host_name; ?>" />
-                                <input type="hidden" name="service" value="<?= $downtime->service_description; ?>" />
-                                <input type="hidden" name="downtimeid" value="<?= $downtime->downtime_internal_downtime_id; ?>" />
-                                <input type="hidden" name="CSRFToken" value="" />
-                            </form>
+                        <?= $this->getHelper('CommandForm')->iconSubmitForm(
+                            'icinga-icon-remove',
+                            'Remove Downtime',
+                            'btn-small',
+                            'removedowntime',
+                            array(
+                                'downtimeid'    => $downtime->downtime_internal_downtime_id,
+                                'host'          => $downtime->host,
+                                'service'       => $downtime->service
+                            )
+                        ); ?>
                         </div>
                         <?php if ($downtime->downtime_is_in_effect === '1'): ?>
-                            Running since <?= $this->timeSince($downtime->downtime_actual_start_time); ?>
+                            In scheduled downtime since <?= $this->timeSince($downtime->downtime_start); ?>
                         <?php else: ?>
                             <?php if ($downtime->downtime_is_fixed): ?>
-                                Scheduled for <?= $downtime->downtime_scheduled_start_time; ?>
+                                Downtime scheduled for <?= $downtime->downtime_start; ?>
                             <?php else: ?>
                                 Waiting
                             <?php endif; ?>
                         <?php endif; ?>
 
-                        Triggered by <?= $downtime->downtime_author_name; ?>
-
                         <div class="small-row">
-                            <?= $downtime->downtime_comment_data; ?>
+                            <?= $downtime->downtime_author; ?>: <?= $downtime->downtime_comment; ?>
                         </div>
                     </td>
                 </tr>
