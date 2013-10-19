@@ -94,6 +94,40 @@ class Zend_View_Helper_CommandForm extends Zend_View_Helper_Abstract
         return $form;
     }
 
+    public function toggleSubmitForm($label, $checkValue, $enabledCommand, $disabledCommand, array $arguments = array())
+    {
+        if ($checkValue === '1') {
+            $commandName = $disabledCommand;
+        } else {
+            $commandName = $enabledCommand;
+        }
+
+        $form = $this->simpleForm($commandName, $arguments);
+        $form->setAttrib('class', 'pull-right');
+
+        $uniqueName = uniqid('check');
+
+        $checkBox = new Zend_Form_Element_Checkbox($uniqueName);
+
+        if ($checkValue === '1') {
+            $checkBox->setChecked(true);
+        }
+
+        $form->addElement($checkBox);
+        $form->enableAutoSubmit(array($uniqueName));
+
+        $checkBox->setDecorators(array('ViewHelper'));
+        $checkBox->setAttrib('class', '');
+        $checkBox->setAttrib('id', $uniqueName);
+
+        $submit_identifier = new Zend_Form_Element_Hidden('btn_submit');
+        $submit_identifier->setValue('1');
+        $form->addElement($submit_identifier);
+        $form->getElement('btn_submit')->setDecorators(array('ViewHelper'));
+
+        return '<label class="label-horizontal" for="' . $uniqueName . '">' . $label . '</label>' . $form;
+    }
+
     /**
      * Merges css class names together
      *

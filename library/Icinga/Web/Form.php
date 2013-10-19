@@ -402,7 +402,7 @@ class Form extends Zend_Form
         foreach ($triggerElements as $elementName) {
             $element = $this->getElement($elementName);
             if ($element !== null) {
-                $element->setAttrib('onchange', 'this.form.submit()');
+                $element->setAttrib('onchange', '$(this.form).submit();');
                 $element->setAttrib('data-icinga-form-autosubmit', true);
             } else {
                 throw new ProgrammingError(

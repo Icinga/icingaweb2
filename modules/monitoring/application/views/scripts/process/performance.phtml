@@ -1,8 +1,9 @@
 <?php
     $rv = $this->runtimevariables;
     $ps = $this->programstatus;
-
     $cp = $this->checkPerformance()->create($this->checkperformance);
+    /** @var Zend_View_Helper_CommandForm $ch */
+    $ch = $this->getHelper('CommandForm');
 ?>
 <h1>Process Information</h1>
 
@@ -180,6 +181,195 @@
         </table>
     </div>
     <div class="col-md-5">
-        <h6>Global commands goes here</h6>
+        <h4>Commands</h4>
+
+        <?=
+            $ch->labelSubmitForm(
+                'Shutdown monitoring process',
+                'Shutdown the monitoring process',
+                'btn-cta',
+                'shutdownprocess'
+            );
+        ?>
+
+        <br />
+
+        <?=
+            $ch->labelSubmitForm(
+                'Restart monitoring process',
+                'Restart the monitoring process',
+                'btn-cta',
+                'restartprocess'
+            );
+        ?>
+
+        <?php if ($ps->notifications_enabled === '1'): ?>
+
+            <br />
+
+            <a
+                href="<?= $this->href('monitoring/command/disablenotificationswithexpire'); ?>"
+                class="button btn-cta btn-full-width">
+                Dislable notification with expire
+            </a>
+
+        <?php endif; ?>
+
+        <br />
+
+        <table class="table">
+            <tbody>
+            <tr>
+                <td>
+                    <?=
+                        $ch->toggleSubmitForm(
+                            'Notifications enabled',
+                            $ps->notifications_enabled,
+                            'enablenotifications',
+                            'disablenotifications',
+                            array(
+                                'global' => '1'
+                            )
+                        );
+                    ?>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <?=
+                        $ch->toggleSubmitForm(
+                            'Execute active service checks',
+                            $ps->active_service_checks_enabled,
+                            'enableactivechecks',
+                            'disableactivechecks',
+                            array(
+                                'global' => 'service'
+                            )
+                        );
+                    ?>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <?=
+                    $ch->toggleSubmitForm(
+                        'Accept passive service checks',
+                        $ps->passive_service_checks_enabled,
+                        'startacceptingpassivechecks',
+                        'stopacceptingpassivechecks',
+                        array(
+                            'global' => 'service'
+                        )
+                    );
+                    ?>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <?=
+                    $ch->toggleSubmitForm(
+                        'Execute active host checks',
+                        $ps->active_host_checks_enabled,
+                        'enableactivechecks',
+                        'disableactivechecks',
+                        array(
+                            'global' => 'host'
+                        )
+                    );
+                    ?>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <?=
+                    $ch->toggleSubmitForm(
+                        'Accept passive host checks',
+                        $ps->passive_host_checks_enabled,
+                        'startacceptingpassivechecks',
+                        'stopacceptingpassivechecks',
+                        array(
+                            'global' => 'host'
+                        )
+                    );
+                    ?>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <?=
+                    $ch->toggleSubmitForm(
+                        'Eventhandlers enabled',
+                        $ps->event_handlers_enabled,
+                        'enableeventhandler',
+                        'disableeventhandler',
+                        array(
+                            'global' => '1'
+                        )
+                    );
+                    ?>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <?=
+                    $ch->toggleSubmitForm(
+                        'Obsessing over host checks',
+                        $ps->obsess_over_hosts,
+                        'startobsessing',
+                        'stopobsessing',
+                        array(
+                            'global' => 'host'
+                        )
+                    );
+                    ?>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <?=
+                    $ch->toggleSubmitForm(
+                        'Obsessing over service checks',
+                        $ps->obsess_over_services,
+                        'startobsessing',
+                        'stopobsessing',
+                        array(
+                            'global' => 'service'
+                        )
+                    );
+                    ?>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <?=
+                    $ch->toggleSubmitForm(
+                        'Flap detection enabled',
+                        $ps->flap_detection_enabled,
+                        'enableflapdetection',
+                        'disableflapdetection',
+                        array(
+                            'global' => '1'
+                        )
+                    );
+                    ?>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <?=
+                    $ch->toggleSubmitForm(
+                        'Process performance data',
+                        $ps->process_performance_data,
+                        'enableperformancedata',
+                        'disableperformancedata',
+                        array(
+                            'global' => '1'
+                        )
+                    );
+                    ?>
+                </td>
+            </tr>
+            </tbody>
+        </table>
     </div>
 </div>
