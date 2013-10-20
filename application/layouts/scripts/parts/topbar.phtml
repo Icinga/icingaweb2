@@ -10,15 +10,6 @@ use Icinga\Web\Topbar;
         echo $this->partial($partial['viewScriptName'], $partial['moduleName'], $partial['data']);
     } ?>
 
-    <form class="navbar-form navbar-left">
-        <div class="form-group">
-            <input type="text" class="form-control" placeholder="Search">
-        </div>
-        <button type="button" class="button btn btn-small">
-            <i class="icinga-icon-search"></i>
-        </button>
-    </form>
-
   <?php if ($this->auth()->isAuthenticated()): ?>
   <ul class="nav navbar-nav pull-right" >
 <!--        Remove component as of #4583 since it's not working-->
