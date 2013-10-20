@@ -35,6 +35,7 @@ class ServiceStatus extends DataView
             'service_severity',
             'service_last_check',
             'service_notifications_enabled',
+            'service_notifications_enabled_changed',
             'service_action_url',
             'service_notes_url',
             'service_last_comment',
@@ -67,11 +68,14 @@ class ServiceStatus extends DataView
             'host_last_time_up',
             'host_last_time_down',
             'host_last_time_unreachable',
+            'host_modified_host_attributes',
             'service',
             'service_hard_state',
             'service_perfdata',
             'service_active_checks_enabled',
+            'service_active_checks_enabled_changed',
             'service_passive_checks_enabled',
+            'service_passive_checks_enabled_changed',
             'service_last_hard_state',
             'service_last_hard_state_change',
             'service_last_time_ok',
@@ -79,7 +83,14 @@ class ServiceStatus extends DataView
             'service_last_time_critical',
             'service_last_time_unknown',
             'service_current_check_attempt',
-            'service_max_check_attempts'
+            'service_max_check_attempts',
+            'service_obsessing',
+            'service_obsessing_changed',
+            'service_event_handler_enabled',
+            'service_event_handler_enabled_changed',
+            'service_flap_detection_enabled',
+            'service_flap_detection_enabled_changed',
+            'service_modified_service_attributes',
         );
     }
 

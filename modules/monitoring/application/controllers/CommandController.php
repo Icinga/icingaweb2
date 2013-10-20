@@ -468,8 +468,8 @@ class Monitoring_CommandController extends ActionController
         }
 
         $form->setCommand(
-            'STOP_ACCEPTING_PASSIVE_HOST_CHECKS',
-            'STOP_ACCEPTING_PASSIVE_SVC_CHECKS'
+            'DISABLE_PASSIVE_HOST_CHECKS',
+            'DISABLE_PASSIVE_SVC_CHECKS'
         );
 
         $form->setGlobalCommands(
@@ -501,8 +501,8 @@ class Monitoring_CommandController extends ActionController
         }
 
         $form->setCommand(
-            'START_ACCEPTING_PASSIVE_HOST_CHECKS',
-            'START_ACCEPTING_PASSIVE_SVC_CHECKS'
+            'ENABLE_PASSIVE_HOST_CHECKS',
+            'ENABLE_PASSIVE_SVC_CHECKS'
         );
 
         $form->setGlobalCommands(

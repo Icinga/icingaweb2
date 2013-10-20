@@ -134,8 +134,6 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
          * @private
          */
         var createDefaultLoadIndicator = function() {
-
-            this.showDetail();
             if (this.containerDom.find('div.load-indicator').length === 0) {
                 var content = '<div class="load-indicator">' +
                     '<div class="mask"></div>' +
@@ -173,11 +171,11 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
         };
 
         this.replaceDomAsync = function(url) {
-            if (url === '') {
-                this.containerDom.empty();
+            urlMgr.syncWithUrl();
+            if (urlMgr.detailUrl === '') {
                 this.hideDetail();
-                return;
             }
+
             if (pendingDetailRequest) {
                 pendingDetailRequest.abort();
             }
@@ -331,7 +329,15 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
             } else {
                 urlMgr.setDetailUrl(url.href());
             }
-        }
+        };
+
+        this.refresh = function() {
+            if (this.containerType === CONTAINER_TYPES.MAIN) {
+                Container.getMainContainer().replaceDomAsync(urlMgr.mainUrl);
+            } else {
+                Container.getDetailContainer().replaceDomAsync(urlMgr.detailUrl);
+            }
+        };
 
         this.construct(target);
     };

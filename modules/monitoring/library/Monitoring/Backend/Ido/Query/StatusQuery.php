@@ -38,7 +38,12 @@ class StatusQuery extends IdoQuery
             'host_check_execution_time'   => 'hs.execution_time',
             'host_check_latency'          => 'hs.latency',
             'host_problem'                => 'CASE WHEN hs.current_state = 0 THEN 0 ELSE 1 END',
+
             'host_notifications_enabled'  => 'hs.notifications_enabled',
+
+            'host_notifications_enabled_changed'  => 'CASE WHEN hs.notifications_enabled=h.notifications_enabled
+                THEN 0 ELSE 1 END',
+
             'host_last_time_up'           => 'UNIX_TIMESTAMP(hs.last_time_up)',
             'host_last_time_down'         => 'UNIX_TIMESTAMP(hs.last_time_down)',
             'host_last_time_unreachable'  => 'UNIX_TIMESTAMP(hs.last_time_unreachable)',
@@ -54,15 +59,36 @@ class StatusQuery extends IdoQuery
             'host_acknowledgement_type' => 'hs.acknowledgement_type',
             'host_current_notification_number' => 'hs.current_notification_number',
             'host_passive_checks_enabled' => 'hs.passive_checks_enabled',
+
+            'host_passive_checks_enabled_changed' => 'CASE WHEN hs.passive_checks_enabled=h.passive_checks_enabled
+                THEN 0 ELSE 1 END',
+
             'host_active_checks_enabled' => 'hs.active_checks_enabled',
+
+            'host_active_checks_enabled_changed' => 'CASE WHEN hs.active_checks_enabled=h.active_checks_enabled
+                THEN 0 ELSE 1 END',
+
             'host_event_handler_enabled' => 'hs.event_handler_enabled',
+
+            'host_event_handler_enabled_changed' => 'CASE WHEN hs.event_handler_enabled=h.event_handler_enabled
+                THEN 0 ELSE 1 END',
+
             'host_flap_detection_enabled' => 'hs.flap_detection_enabled',
+
+            'host_flap_detection_enabled_changed' => 'CASE WHEN hs.flap_detection_enabled=h.flap_detection_enabled
+                THEN 0 ELSE 1 END',
+
             'host_is_flapping' => 'hs.is_flapping',
             'host_percent_state_change' => 'hs.percent_state_change',
             'host_scheduled_downtime_depth' => 'hs.scheduled_downtime_depth',
             'host_failure_prediction_enabled' => 'hs.failure_prediction_enabled',
             'host_process_performance_data' => 'hs.process_performance_data',
+
             'host_obsessing' => 'hs.obsess_over_host',
+
+            'host_obsessing_changed' => 'CASE WHEN hs.obsess_over_host=h.obsess_over_host
+                THEN 0 ELSE 1 END',
+
             'host_modified_host_attributes' => 'hs.modified_host_attributes',
             'host_event_handler' => 'hs.event_handler',
             'host_check_command' => 'hs.check_command',
@@ -145,14 +171,37 @@ class StatusQuery extends IdoQuery
             'service_last_notification' => 'ss.last_notification',
             'service_next_notification' => 'ss.next_notification',
             'service_no_more_notifications' => 'ss.no_more_notifications',
+
             'service_notifications_enabled' => 'ss.notifications_enabled',
+
+            'service_notifications_enabled_changed' => 'CASE WHEN ss.notifications_enabled=s.notifications_enabled
+                THEN 0 ELSE 1 END',
+
             'service_problem_has_been_acknowledged' => 'ss.problem_has_been_acknowledged',
             'service_acknowledgement_type' => 'ss.acknowledgement_type',
             'service_current_notification_number' => 'ss.current_notification_number',
+
             'service_passive_checks_enabled' => 'ss.passive_checks_enabled',
+
+            'service_passive_checks_enabled_changed' => 'CASE WHEN ss.passive_checks_enabled=s.passive_checks_enabled
+                THEN 0 ELSE 1 END',
+
             'service_active_checks_enabled' => 'ss.active_checks_enabled',
+
+            'service_active_checks_enabled_changed' => 'CASE WHEN ss.active_checks_enabled=s.active_checks_enabled
+                THEN 0 ELSE 1 END',
+
             'service_event_handler_enabled' => 'ss.event_handler_enabled',
+
+            'service_event_handler_enabled_changed' => 'CASE WHEN ss.event_handler_enabled=s.event_handler_enabled
+                THEN 0 ELSE 1 END',
+
+
             'service_flap_detection_enabled' => 'ss.flap_detection_enabled',
+
+            'service_flap_detection_enabled_changed' => 'CASE WHEN ss.flap_detection_enabled=s.flap_detection_enabled
+                THEN 0 ELSE 1 END',
+
             'service_is_flapping' => 'ss.is_flapping',
             'service_percent_state_change' => 'ss.percent_state_change',
             'service_check_latency' => 'ss.latency',
@@ -160,10 +209,14 @@ class StatusQuery extends IdoQuery
             'service_scheduled_downtime_depth' => 'ss.scheduled_downtime_depth',
             'service_failure_prediction_enabled' => 'ss.failure_prediction_enabled',
             'service_process_performance_data' => 'ss.process_performance_data',
+
             'service_obsessing' => 'ss.obsess_over_service',
+
+            'service_obsessing_changed' => 'CASE WHEN ss.obsess_over_service=s.obsess_over_service
+                THEN 0 ELSE 1 END',
+
             'service_modified_service_attributes' => 'ss.modified_service_attributes',
             'service_event_handler' => 'ss.event_handler',
-            'service_check_command' => 'ss.check_command',
             'service_normal_check_interval' => 'ss.normal_check_interval',
             'service_retry_check_interval' => 'ss.retry_check_interval',
             'service_check_timeperiod_object_id' => 'ss.check_timeperiod_object_id',

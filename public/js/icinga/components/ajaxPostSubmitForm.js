@@ -35,18 +35,7 @@
 define(['components/app/container', 'jquery'], function(Container, $) {
     "use strict";
 
-    /**
-     * Returns owner container
-     *
-     * @param {Element} targetElement
-     * @returns {Container}
-     */
-    var getOwnerContainer = function(targetElement) {
-        var me = new Container(targetElement);
-        return new Container(me.findNearestContainer(targetElement));
-    };
-
-    /**
+    /**;
      * Handler for ajax post submit
      *
      * @param {Event} e
@@ -73,8 +62,8 @@ define(['components/app/container', 'jquery'], function(Container, $) {
                 submit.attr('disabled', true);
             }
         }).done(function() {
-            var container = getOwnerContainer(form);
-            container.setUrl(container.getUrl());
+                var c = new Container(form);
+                c.refresh();
         }).error(function() {
             submit.removeAttr('disabled');
         });
