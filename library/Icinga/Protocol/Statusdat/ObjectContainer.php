@@ -48,7 +48,7 @@ class ObjectContainer extends \stdClass
      * @param \stdClass $obj
      * @param IReader $reader
      */
-    public function __construct(\stdClass &$obj, IReader &$reader)
+    public function __construct(&$obj, IReader &$reader)
     {
         $this->ref = & $obj;
         $this->reader = & $reader;
@@ -62,10 +62,13 @@ class ObjectContainer extends \stdClass
     {
         $exploded = explode(".", $attribute);
         $result = $this->ref;
-        foreach ($exploded as $elem) {
 
-            $result = $result->$elem;
+        foreach ($exploded as $elem) {
+            if (isset($result->$elem)) {
+                $result = $result->$elem;
+            }
         }
+
         return $result;
     }
 }

@@ -36,7 +36,7 @@
 
                 <span class="panel-header-status">
                     - <?= $this->util()->getServiceStateName($object->service_state); ?>
-                    since <?= $this->timeSince($object->service_last_state_change); ?>
+                    since <?= $this->timeSince($object->service_slast_state_change); ?>
                 </span>
             <?php endif; ?>
 

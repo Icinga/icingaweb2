@@ -23,14 +23,14 @@ $commandHelper = $this->getHelper('CommandForm');
         <td>
           <?php if (isset($downtime->service)): ?>
             <a href="<?= $this->href('monitoring/show/service', array(
-              'host'    => $downtime->host,
-              'service' => $downtime->service
+              'host'    => $downtime->host_name,
+              'service' => $downtime->service_description
             )); ?>"><?= $downtime->service ?></a>
             <small>on <?= $downtime->host ?></small>
           <?php else: ?>
             <a href="<?= $this->href('monitoring/show/host', array(
-              'host'    => $downtime->host
-            )); ?>"><?= $downtime->host ?></a>
+              'host'    => $downtime->host_name
+            )); ?>"><?= $downtime->host ?> </a>
           <?php endif; ?>
           <br />
           <?= $downtime->downtime_author ?>: <?= $downtime->downtime_comment ?>

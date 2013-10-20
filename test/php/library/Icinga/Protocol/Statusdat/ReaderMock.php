@@ -17,6 +17,12 @@ class ReaderMock implements IReader, DatasourceInterface
 
     public function getState()
     {
+        return $this->objects;
+    }
+
+    public function getInternalState()
+    {
+
         return array(
             "objects" => $this->objects,
             "indices" => $this->indices

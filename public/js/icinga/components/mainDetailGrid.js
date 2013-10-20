@@ -309,8 +309,6 @@ function(Container, $, logger, URI, tpl, urlMgr, Selectable, TableMultiSelection
             contentNode = determineContentTable();
 			this.initRowSelection();
             this.registerControls();
-            this.registerHistoryChanges();
-
         };
 
         this.construct(gridDomNode);

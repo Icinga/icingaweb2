@@ -125,7 +125,7 @@ class Monitoring_MultiController extends ActionController
      *
      * @return array
      */
-    private function getUniqueValues(array $values, $key)
+    private function getUniqueValues($values, $key)
     {
         $unique = array();
         foreach ($values as $value)
@@ -144,7 +144,7 @@ class Monitoring_MultiController extends ActionController
      *
      * @param $object   array   The hosts or services
      */
-    private function getProblems(array $objects)
+    private function getProblems($objects)
     {
         $problems = 0;
         foreach ($objects as $object) {

@@ -25,7 +25,7 @@ class ResourceFactory implements ConfigAwareFactory
     public static function getResourceConfig($resourceName)
     {
         if (($resourceConfig = self::$resources->get($resourceName)) === null) {
-            throw new ConfigurationError('BLUBB?!');
+            throw new ConfigurationError('Resource "' . $resourceName . '" couldn\'t be retrieved');
         }
         return $resourceConfig;
     }
@@ -40,7 +40,7 @@ class ResourceFactory implements ConfigAwareFactory
                 $resource = new StatusdatReader($config);
                 break;
             default:
-                throw new ConfigurationError('BLUBB2?!');
+                throw new ConfigurationError('Unsupported Backend "' + $config->type + '"');
 
         }
         return $resource;

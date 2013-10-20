@@ -35,7 +35,7 @@ use Icinga\Exception;
  * Class ServicelistQuery
  * @package Icinga\Backend\Statusdat
  */
-class ServicelistQuery extends Query
+class ServicelistQuery extends StatusdatQuery
 {
     /**
      * @var \Icinga\Protocol\Statusdat\Query
@@ -47,9 +47,8 @@ class ServicelistQuery extends Query
      */
     protected $view = 'Icinga\Backend\Statusdat\DataView\StatusdatServiceView';
 
-    public function init()
+    public function selectBase()
     {
-        $this->reader = $this->backend->getReader();
-        $this->query = $this->reader->select()->from("services", array());
+        $this->select()->from("services", array());
     }
 }

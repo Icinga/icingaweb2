@@ -26,21 +26,19 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Module\Monitoring\Backend\Statusdat\Query;
+namespace Icinga\Protocol\Statusdat;
 
-/**
- * Class HostgroupsummaryQuery
- * @package Icinga\Backend\Statusdat
- */
-class HostgroupsummaryQuery extends GroupsummaryQuery
+class PrintableObject
 {
-    /**
-     * @var string
-     */
-    protected $groupType = "hostgroup";
-
-    /**
-     * @var string
-     */
-    protected $base     = "hosts";
+    public function __toString()
+    {
+        if (isset($this->contact_name)) {
+            return $this->contact_name;
+        } else if (isset($this->service_description)) {
+            return $this->service_description;
+        } else if (isset($this->host_name)) {
+            return $this->host_name;
+        }
+        return '';
+    }
 }

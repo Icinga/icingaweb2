@@ -25,6 +25,11 @@ class Zend_View_Helper_ContactFlags extends Zend_View_Helper_Abstract
      */
     public function contactFlags($contact, $type, $glue = ', ')
     {
+
+        $optionName = 'contact_' . $type . '_notification_options';
+        if (isset($contact->$optionName)) {
+            return $contact->$optionName;
+        }
         $out = array();
         foreach ($contact as $key => $value) {
             if (preg_match('/^contact_notify_' . $type . '_.*/', $key) && $value == True) {

@@ -110,6 +110,13 @@ class Group implements IQueryPart
     private $subExpressionLength = 0;
 
     /**
+     * Optional query to use
+     *
+     * @var Query
+     */
+    private $query = null;
+
+    /**
      * @var
      */
     private $value;
@@ -380,6 +387,7 @@ class Group implements IQueryPart
             $idx = array();
             foreach ($this->items as &$subFilter) {
                 $baseKeys = array_keys($base);
+                $subFilter->setQuery($this->query);
                 $idx += $subFilter->filter($base, $baseKeys);
             }
         } else {
@@ -387,10 +395,24 @@ class Group implements IQueryPart
                 $idx = array_keys($base);
             }
             foreach ($this->items as $subFilter) {
+                $subFilter->setQuery($this->query);
                 $idx = array_intersect($idx, $subFilter->filter($base, $idx));
             }
         }
 
         return $idx;
     }
+
+    /**
+     * Add additional information about the query this filter belongs to
+     *
+     * @param $query
+     * @return mixed
+     */
+    public function setQuery($query)
+    {
+        $this->query = $query;
+    }
+
+
 }

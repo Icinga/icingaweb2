@@ -19,7 +19,7 @@ class Zend_View_Helper_CommandForm extends Zend_View_Helper_Abstract
      *
      * @return  Form                    Form to modify
      */
-    private function simpleForm($commandName, array $arguments = array())
+    public function simpleForm($commandName, array $arguments = array())
     {
         $form = new Form();
         $form->setIgnoreChangeDiscarding(true);

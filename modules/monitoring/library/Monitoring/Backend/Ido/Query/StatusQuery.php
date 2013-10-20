@@ -23,6 +23,7 @@ class StatusQuery extends IdoQuery
         ),
         'hoststatus' => array(
             'host_state'                  => 'CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL THEN 99 ELSE hs.current_state END',
+            'host_hard_state'             => 'CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL THEN 99 ELSE CASE WHEN hs.state_type = 1 THEN hs.current_state ELSE hs.last_hard_state END END',
             'host_output'                 => 'hs.output',
             'host_long_output'            => 'hs.long_output',
             'host_perfdata'               => 'hs.perfdata',
@@ -220,7 +221,40 @@ class StatusQuery extends IdoQuery
             'service_normal_check_interval' => 'ss.normal_check_interval',
             'service_retry_check_interval' => 'ss.retry_check_interval',
             'service_check_timeperiod_object_id' => 'ss.check_timeperiod_object_id',
-            'service_status_update_time' => 'ss.status_update_time'
+            'service_status_update_time' => 'ss.status_update_time',
+            'service_problem'  => 'CASE WHEN ss.current_state = 0 THEN 0 ELSE 1 END',
+            'service_severity'  => 'CASE WHEN ss.current_state = 0
+                THEN
+                    CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL
+                         THEN 16
+                         ELSE 0
+                    END
+                    +
+                    CASE WHEN ss.problem_has_been_acknowledged = 1
+                         THEN 2
+                         ELSE
+                            CASE WHEN ss.scheduled_downtime_depth > 0
+                                THEN 1
+                                ELSE 4
+                            END
+                    END
+                ELSE
+                    CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL THEN 16
+                         WHEN ss.current_state = 1 THEN 32
+                         WHEN ss.current_state = 2 THEN 128
+                         WHEN ss.current_state = 3 THEN 64
+                         ELSE 256
+                    END
+                    +
+                    CASE WHEN ss.problem_has_been_acknowledged = 1
+                         THEN 2
+                         ELSE
+                            CASE WHEN ss.scheduled_downtime_depth > 0
+                                THEN 1
+                                ELSE 4
+                            END
+                    END
+                END'
         ),
         'serviceproblemsummary' => array(
             'host_unhandled_service_count' => 'sps.unhandled_service_count'
@@ -230,44 +264,7 @@ class StatusQuery extends IdoQuery
         ),
         'lastservicecomment' => array(
             'service_last_comment' => 'slc.comment_id'
-        ),
-        'status' => array(
-            'service_problems'  => 'CASE WHEN ss.current_state = 0 THEN 0 ELSE 1 END',
-            'service_handled'   => 'CASE WHEN ss.problem_has_been_acknowledged = 1 OR ss.scheduled_downtime_depth > 0 THEN 1 ELSE 0 END',
-            'service_unhandled' => 'CASE WHEN ss.problem_has_been_acknowledged = 0 AND ss.scheduled_downtime_depth = 0 THEN 1 ELSE 0 END',
-            'service_severity'  => 'CASE WHEN ss.current_state = 0
-            THEN
-                CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL
-                     THEN 16
-                     ELSE 0
-                END
-                +
-                CASE WHEN ss.problem_has_been_acknowledged = 1
-                     THEN 2
-                     ELSE
-                        CASE WHEN ss.scheduled_downtime_depth > 0
-                            THEN 1
-                            ELSE 4
-                        END
-                END
-            ELSE
-                CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL THEN 16
-                     WHEN ss.current_state = 1 THEN 32
-                     WHEN ss.current_state = 2 THEN 128
-                     WHEN ss.current_state = 3 THEN 64
-                     ELSE 256
-                END
-                +
-                CASE WHEN ss.problem_has_been_acknowledged = 1
-                     THEN 2
-                     ELSE
-                        CASE WHEN ss.scheduled_downtime_depth > 0
-                            THEN 1
-                            ELSE 4
-                        END
-                END
-            END',
-        ),
+        )
     );
 
     protected function joinBaseTables()

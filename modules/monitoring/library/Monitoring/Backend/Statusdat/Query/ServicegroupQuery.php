@@ -26,19 +26,27 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Protocol\Statusdat;
+namespace Icinga\Module\Monitoring\Backend\Statusdat\Query;
 
-interface IReader
+/**
+ * Class HostgroupsummaryQuery
+ * @package Icinga\Backend\Statusdat
+ */
+class ServicegroupQuery extends StatusdatQuery
 {
-    /**
-     * @return mixed
-     */
-    public function getState();
+    public static $mappedParameters = array(
+        'servicegroups'      => 'servicegroup_name',
+        'servicegroup_name'  => 'servicegroup_name',
+        'servicegroup_alias' => 'alias',
+        'host'               => 'service.host_name',
+        'host_name'          => 'service.host_name',
+        'service'            => 'service.service_description',
+        'service_description'=> 'service.service_description'
 
-    /**
-     * @param $type
-     * @param $name
-     * @return mixed
-     */
-    public function getObjectByName($type, $name);
+    );
+
+    public function selectBase()
+    {
+        $this->select()->from("servicegroups", array());
+    }
 }

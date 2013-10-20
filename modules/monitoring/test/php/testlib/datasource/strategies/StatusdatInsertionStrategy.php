@@ -65,7 +65,7 @@ class StatusdatInsertionStrategy implements InsertionStrategy {
     public function setConnection($ressource)
     {
         $this->statusDatFile = $ressource['status_file'];
-        $this->objectsCacheFile = $ressource['objects_file'];
+        $this->objectsCacheFile = $ressource['object_file'];
     }
 
     /**

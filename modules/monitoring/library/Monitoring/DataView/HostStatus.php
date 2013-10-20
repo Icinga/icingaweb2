@@ -85,8 +85,7 @@ class HostStatus extends DataView
             ),
             'host_address' => array(
                 'columns' => array(
-                    'host_ipv4',
-                    'service_description'
+                    'host_ipv4'
                 ),
                 'order' => self::SORT_ASC
             ),

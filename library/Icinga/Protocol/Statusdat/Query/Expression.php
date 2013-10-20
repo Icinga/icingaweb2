@@ -76,6 +76,13 @@ class Expression implements IQueryPart
     private $operator = null;
 
     /**
+     * Optional query information
+     *
+     * @var null
+     */
+    private $query = null;
+
+    /**
      * @var null
      */
     private $name = null;
@@ -154,6 +161,7 @@ class Expression implements IQueryPart
 
         $this->fields = explode(".", trim($tokenized[0]));
         $this->field = $this->fields[count($this->fields) - 1];
+
         $this->getOperatorType(trim($tokenized[1]));
         $tokenized[2] = trim($tokenized[2]);
 
@@ -189,6 +197,9 @@ class Expression implements IQueryPart
     public function __construct($expression = null, &$values = array())
     {
         if ($expression) {
+            if (!is_array($values)) {
+                $values = array($values);
+            }
             $this->fromString($expression, $values);
         }
 
@@ -205,6 +216,7 @@ class Expression implements IQueryPart
             $idx = array_keys($base);
         }
         $this->basedata = $base;
+
         return array_filter($idx, array($this, "filterFn"));
     }
 
@@ -249,11 +261,20 @@ class Expression implements IQueryPart
             }
         }
         foreach ($values as $val) {
+
+            if (!is_string($val) && !is_numeric($val) && is_object($val)) {
+                if (isset($val->service_description)) {
+                    $val = $val->service_description;
+                } elseif(isset($val->host_name)) {
+                    $val = $val->host_name;
+                } else {
+                    return false;
+                }
+            }
             if ($this->{$this->CB}($val)) {
                 return true;
             }
         }
-
         return false;
     }
 
@@ -264,8 +285,14 @@ class Expression implements IQueryPart
     private function getFieldValues($idx)
     {
         $res = $this->basedata[$idx];
+
         foreach ($this->fields as $field) {
             if (!is_array($res)) {
+                if ($this->query) {
+                    $res = $this->query->get($res, $field);
+                    continue;
+                }
+
                 if (!isset($res->$field)) {
                     $res = array();
                     break;
@@ -279,6 +306,10 @@ class Expression implements IQueryPart
             // array that contains the values/objects we're searching
             $swap = array();
             foreach ($res as $sub) {
+                if ($this->query) {
+                    $swap[] = $this->query->get($sub, $field);
+                    continue;
+                }
                 if (!isset($sub->$field)) {
                     continue;
                 }
@@ -293,6 +324,7 @@ class Expression implements IQueryPart
         if (!is_array($res)) {
             return array($res);
         }
+
         return $res;
     }
 
@@ -361,4 +393,17 @@ class Expression implements IQueryPart
     {
         return $value <= $this->value;
     }
+
+    /**
+     * Add additional information about the query this filter belongs to
+     *
+     * @param $query
+     * @return mixed
+     */
+    public function setQuery($query)
+    {
+        $this->query = $query;
+    }
+
+
 }

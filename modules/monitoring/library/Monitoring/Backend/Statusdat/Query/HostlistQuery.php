@@ -35,7 +35,7 @@ use Icinga\Exception;
  * Class HostListQuery
  * @package Icinga\Backend\Statusdat
  */
-class HostListQuery extends Query
+class HostListQuery extends StatusdatQuery
 {
     /**
      * @var \Icinga\Protocol\Statusdat\Query
@@ -50,9 +50,8 @@ class HostListQuery extends Query
     /**
      * @return mixed|void
      */
-    public function init()
+    public function selectBase()
     {
-        $this->reader = $this->backend->getReader();
-        $this->query = $this->reader->select()->from("hosts", array());
+        $this->select()->from("hosts", array());
     }
 }

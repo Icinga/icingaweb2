@@ -26,19 +26,10 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Protocol\Statusdat;
 
-interface IReader
+namespace Icinga\Module\Monitoring\Exception;
+use \Exception;
+
+class UnsupportedBackendException extends Exception
 {
-    /**
-     * @return mixed
-     */
-    public function getState();
-
-    /**
-     * @param $type
-     * @param $name
-     * @return mixed
-     */
-    public function getObjectByName($type, $name);
 }

@@ -29,6 +29,19 @@ class QueryExpressionMock implements Statusdat\Query\IQueryPart
     {
         return array_intersect(array_values($idx), array_values($this->filter));
     }
+
+    /**
+     * Add additional information about the query this filter belongs to
+     *
+     * @param $query
+     * @return mixed
+     */
+    public function setQuery($query)
+    {
+        // TODO: Implement setQuery() method.
+    }
+
+
 }
 
 class GroupTest extends \PHPUnit_Framework_TestCase

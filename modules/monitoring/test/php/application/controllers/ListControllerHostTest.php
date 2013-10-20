@@ -44,12 +44,14 @@ class ListControllerHostMySQLTest  extends MonitoringControllerTest
         $firstHostFlags = ObjectFlags::PASSIVE_ONLY();
         $firstHostFlags->acknowledged = 1;
         $firstHostFlags->in_downtime = 1;
+        $firstHostFlags->has_been_checked = 1;
         $firstHostFlags->notifications = 0;
         $firstHostFlags->flapping = 1;
         $firstHostFlags->time = $checkTime;
 
         $fixture->addHost('host1', 1, $firstHostFlags, array(
             "address" => "10.92.1.5",
+            "has_been_checked" => 1,
             "icon_image" => "myIcon.png",
             "notes_url" => "note1.html",
             "action_url" => "action.html"))->
@@ -90,7 +92,6 @@ class ListControllerHostMySQLTest  extends MonitoringControllerTest
         $persistedLastCheck = explode("+", $hostToTest->host_last_check);
         $persistedLastCheck = $persistedLastCheck[0];
         $this->assertEquals("10.92.1.5", $hostToTest->host_address, "Testing for correct host address field (backend ".$backend.")");
-        $this->assertEquals(1, $hostToTest->host_state, "Testing for status being DOWN (backend ".$backend.")");
         // commented out due to failing tests when delay is too long
         // $this->assertEquals(date("Y-m-d H:i:s", intval($checkTime)), $persistedLastCheck, "Testing for correct last check time format (backend ".$backend.")");
         //$this->assertEquals($checkTime, $hostToTest->host_last_state_change, "Testing for correct last state change (backend ".$backend.")");

@@ -34,45 +34,59 @@ use Icinga\Exception\ProgrammingError;
 use Icinga\Protocol\Statusdat\Exception\ParsingException as ParsingException;
 
 /**
- * Class Parser
- * @package Icinga\Protocol\Statusdat
+ * Status.dat and object.cache parser implementation
  */
 class Parser
 {
     /**
+     * An array of objects that couldn't be resolved yet due to missing dependencies
+     *
      * @var array
      */
     private $deferred = array();
 
     /**
-     * @var null|resource
+     * The resource pointing to the currently read  file
+     *
+     * @var resource
      */
-    private $filehandle = null;
+    private $filehandle;
 
     /**
-     * @var null
+     * String representation of the currently parsed object type
+     *
+     * @var string
      */
-    private $currentObjectType = null;
+    private $currentObjectType;
 
     /**
-     * @var null
+     * The current state type (host, service)
+     *
+     * @var string
      */
-    private $currentStateType = null;
+    private $currentStateType;
 
     /**
-     * @var null
+     * The internal representation of the icinga statue
+     *
+     * @var array
      */
-    private $icingaState = null;
+    private $icingaState;
 
     /**
+     * The current line being read
+     *
      * @var int
      */
     private $lineCtr = 0;
 
     /**
-     * @param null $filehandle
-     * @param null $baseState
-     * @throws \Icinga\Exception\ConfigurationError
+     * Create a new parser using the given file
+     *
+     * @param resource $filehandle                      The file handle to usefor parsing
+     * @param array $baseState                          The state using for the base
+     *
+     * @throws ConfigurationError                       When the file can't be used
      */
     public function __construct($filehandle = null, $baseState = null)
     {
@@ -85,11 +99,10 @@ class Parser
     }
 
     /**
-     *
+     * Parse the given file handle as an objects file and read object information
      */
     public function parseObjectsFile()
     {
-        Logger::debug("Reading new objects file");
         $DEFINE = strlen("define ");
         $filehandle = $this->filehandle;
         $this->icingaState = array();
@@ -111,8 +124,7 @@ class Parser
     }
 
     /**
-     * @param null $filehandle
-     * @throws ProgrammingError
+     * Parse the given file handle as an status.dat file and read runtime information
      */
     public function parseRuntimeState($filehandle = null)
     {
@@ -127,27 +139,25 @@ class Parser
         }
         $this->overwrites = array();
         while (!feof($filehandle)) {
-
             $line = trim(fgets($filehandle));
-
             $this->lineCtr++;
             if ($line === "" || $line[0] === "#") {
                 continue;
             }
-
             $this->currentStateType = trim(substr($line, 0, -1));
             $this->readCurrentState();
         }
-
     }
 
     /**
-     * @throws Exception\ParsingException
+     * Read the next object from the object.cache file handle
+     *
+     * @throws ParsingException
      */
     private function readCurrentObject()
     {
         $filehandle = $this->filehandle;
-        $monitoringObject = new \stdClass();
+        $monitoringObject = new PrintableObject();
         while (!feof($filehandle)) {
             $line = explode("\t", trim(fgets($filehandle)), 2);
             $this->lineCtr++;
@@ -169,7 +179,8 @@ class Parser
     }
 
     /**
-     * TODO: Discard old runtime data
+     * Read the next state from the status.dat file handler
+     *
      * @throws Exception\ParsingException
      */
     private function readCurrentState()
@@ -204,6 +215,7 @@ class Parser
         $type = substr($this->currentStateType, strlen($objectType));
 
         if ($type == "status") {
+            // directly set the status to the status field of the given object
             $base[$name]->status = & $statusdatObject;
         } else {
             if (!isset($base[$name]->$type) || !in_array($base[$name]->$type, $this->overwrites)) {
@@ -211,13 +223,25 @@ class Parser
                 $this->overwrites[] = & $base[$name]->$type;
             }
             array_push($base[$name]->$type, $statusdatObject);
+            $this->currentObjectType = $type;
+            if (!isset($this->icingaState[$type])) {
+                $this->icingaState[$type] = array();
+            }
+            $this->icingaState[$type][] = &$statusdatObject;
+            $id = $this->getObjectIdentifier($statusdatObject);
+            if ($id !== false && isset($this->icingaState[$objectType][$id])) {
+                $statusdatObject->$objectType = $this->icingaState[$objectType][$id];
+            }
         }
+
         return;
 
     }
 
     /**
-     * @return null|string
+     * Get the corresponding object type name for the given state
+     *
+     * @return string
      */
     private function getObjectTypeForState()
     {
@@ -241,8 +265,10 @@ class Parser
     }
 
     /**
-     * @param bool $returnString
-     * @return string
+     * Skip the current object definition
+     *
+     * @param bool $returnString        If true, the object string will be returned
+     * @return string                   The skipped object if $returnString is true
      */
     protected function skipObject($returnString = false)
     {
@@ -260,42 +286,54 @@ class Parser
     }
 
     /**
-     * @param $object
+     * Register the given object in the icinga state
+     *
+     * @param object $object        The monitoring object to register
      */
     protected function registerObject(&$object)
     {
 
         $name = $this->getObjectIdentifier($object);
-
         if ($name !== false) {
-            $this->icingaState[$this->currentObjectType][$name] = & $object;
+            $this->icingaState[$this->currentObjectType][$name] = &$object;
         }
         $this->registerObjectAsProperty($object);
     }
 
     /**
-     * @param $object
+     * Register the given object as a property in related objects
+     *
+     * This registers for example hosts underneath their hostgroup and vice cersa
+     *
+     * @param object $object        The object to register as a property
      */
     protected function registerObjectAsProperty(&$object)
     {
-        if ($this->currentObjectType == "service" || $this->currentObjectType == "host") {
+        if ($this->currentObjectType == 'service'
+            || $this->currentObjectType == 'host'
+            || $this->currentObjectType == 'contact') {
             return null;
         }
         $isService = strpos($this->currentObjectType, "service") !== false;
         $isHost = strpos($this->currentObjectType, "host") !== false;
-
+        $isContact = strpos($this->currentObjectType, "contact") !== false;
         $name = $this->getObjectIdentifier($object);
-        if ($isService === false && $isHost === false) { // this would be error in the parser implementation
+
+        if ($isService === false && $isHost === false && $isContact === false) { // this would be error in the parser implementation
             return null;
         }
         $property = $this->currentObjectType;
         if ($isService) {
             $this->currentObjectType = "service";
             $property = substr($property, strlen("service"));
-        } else {
+        } elseif ($isHost) {
             $this->currentObjectType = "host";
             $property = substr($property, strlen("host"));
+        } elseif ($isContact) {
+            $this->currentObjectType = "contact";
+            $property = substr($property, strlen("contact"));
         }
+
         if (!isset($this->icingaState[$this->currentObjectType])) {
             return $this->deferRegistration($object, $this->currentObjectType . $property);
         }
@@ -308,6 +346,13 @@ class Parser
                 if (!isset($source->$property)) {
                     $source->$property = array();
                 }
+                $type = $this->currentObjectType;
+                if (!isset($object->$type)) {
+                    $object->$type = array();
+                }
+                // add the member to the group object
+                array_push($object->$type, $source);
+                // add the group to the member object
                 array_push($source->$property, $name);
             }
         } else {
@@ -315,6 +360,7 @@ class Parser
             if (!isset($source->$property)) {
                 $source->$property = array();
             }
+
             array_push($source->$property, $object);
         }
 
@@ -322,8 +368,10 @@ class Parser
     }
 
     /**
-     * @param $object
-     * @param $objType
+     * Defer registration of the given object
+     *
+     * @param object $object        The object to defer
+     * @param String $objType       The name of the object type
      */
     protected function deferRegistration($object, $objType)
     {
@@ -331,7 +379,7 @@ class Parser
     }
 
     /**
-     *
+     * Process deferred objects
      */
     protected function processDeferred()
     {
@@ -342,8 +390,10 @@ class Parser
     }
 
     /**
-     * @param $object
-     * @return array
+     * Return the resolved members directive of an object
+     *
+     * @param  object $object       The object to get the members from
+     * @return array                An array of member names
      */
     protected function getMembers(&$object)
     {
@@ -366,11 +416,17 @@ class Parser
     }
 
     /**
-     * @param $object
-     * @return bool|string
+     * Return the unique name of the given object
+     *
+     * @param  object $object   The object to retrieve the name from
+     * @return string           The name of the object or null if no name can be retrieved
      */
     protected function getObjectIdentifier(&$object)
     {
+        if ($this->currentObjectType == 'contact') {
+            return $object->contact_name;
+        }
+
         if ($this->currentObjectType == "service") {
             return $object->host_name . ";" . $object->service_description;
         }
@@ -378,11 +434,18 @@ class Parser
         if (isset($object->{$name})) {
             return $object->{$name};
         }
-        return false;
+        if (isset($object->service_description)) {
+            return $object->host_name . ";" . $object->service_description;
+        } elseif (isset($object->host_name)) {
+            return $object->host_name;
+        }
+        return null;
 
     }
 
     /**
+     * Return the internal state of the parser
+     *
      * @return null
      */
     public function getRuntimeState()
