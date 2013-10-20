@@ -1,6 +1,17 @@
 
 # Installation
 
+## Requirements
+
+* Apache2 with PHP >= 5.3.0 enabled
+* PHP Zend Framework
+* PHP with MySQL or PostgreSQL libraries
+* MySQL or PostgreSQL server and client software 
+* Icinga 1.x or Icinga 2 as backend providers
+
+RHEL/CentOS requires the EPEL repository enabled (which provides the `php-ZendFramework`
+package). OpenSUSE requires the [server monitoring](https://build.opensuse.org/project/show/server:monitoring) repository (which provides the `php5-ZendFramework` package) enabled.
+
 ## configure && make
 
 ### Basic installation
