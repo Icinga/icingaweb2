@@ -30,9 +30,18 @@ AC_CHECK_PHP_MODULE([sockets json])
 #   Configuration files
 #
 AC_ARG_WITH([icingaweb_config_path],
-    AS_HELP_STRING([--with-icingaweb-config-path=PATH], [Configuration path for icinga web]),
+    AS_HELP_STRING([--with-icingaweb-config-path=PATH], [Configuration path for icinga web (default $prefix/config)]),
     icingaweb_config_path="'$withval'",
     icingaweb_config_path="'$prefix/config/'"
+)
+
+#
+#   Log files
+#
+AC_ARG_WITH([icingaweb_log_path],
+    AS_HELP_STRING([--with-icingaweb-log-path=PATH], [Log path for icinga web (default $prefix/var/log)]),
+    icingaweb_log_path=$withval,
+    icingaweb_log_path=$prefix/var/log
 )
 
 #
@@ -378,6 +387,7 @@ AC_SUBST(httpd_config_path)
 AC_SUBST(bin_user)
 AC_SUBST(bin_group)
 AC_SUBST(icingaweb_config_path)
+AC_SUBST(icingaweb_log_path)
 
 # Internal db setup
 AC_SUBST(internal_db_type)
@@ -437,6 +447,7 @@ AC_SUBST(INSTALL_OPTS_WEB)
 AC_CONFIG_FILES([
     Makefile
     config/authentication.ini
+    config/config.ini
     config/resources.ini
     config/modules/monitoring/backends.ini
     config/modules/monitoring/instances.ini

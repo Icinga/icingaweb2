@@ -9,6 +9,7 @@ exec_prefix=@exec_prefix@
 
 HTTPD_CONFIG_PATH=@httpd_config_path@
 ICINGAWEB_CONFIG_PATH=@icingaweb_config_path@
+ICINGAWEB_LOG_PATH=@icingaweb_log_path@
 
 INSTALL=@INSTALL@
 INSTALL_OPTS=@INSTALL_OPTS@
@@ -114,7 +115,7 @@ copy-folder-%:
 
 ensure-writable-folders:
 	$(INSTALL) -m 775 $(INSTALL_OPTS_WEB) -d $(DESTDIR)$(prefix)/var/
-	$(INSTALL) -m 775 $(INSTALL_OPTS_WEB) -d $(DESTDIR)$(prefix)/var/log
+	$(INSTALL) -m 775 $(INSTALL_OPTS_WEB) -d $(DESTDIR)$(ICINGAWEB_LOG_PATH)
 	chmod -R 775 $(DESTDIR)$(ICINGAWEB_CONFIG_PATH)
 
 

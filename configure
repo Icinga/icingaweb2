@@ -635,6 +635,7 @@ internal_db_port
 internal_db_host
 internal_db_name
 internal_db_type
+icingaweb_log_path
 icingaweb_config_path
 bin_group
 bin_user
@@ -690,6 +691,7 @@ ac_subst_files=''
 ac_user_opts='
 enable_option_checking
 with_icingaweb_config_path
+with_icingaweb_log_path
 with_web_user
 with_web_group
 with_web_path
@@ -1351,7 +1353,10 @@ Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
   --with-icingaweb-config-path=PATH
-                          Configuration path for icinga web
+                          Configuration path for icinga web (default
+                          $prefix/config)
+  --with-icingaweb-log-path=PATH
+                          Log path for icinga web (default $prefix/var/log)
   --with-web-user=USER    username for web writable files (default www-data)
   --with-web-group=GROUP  group for web writable files (default www-data)
   --with-web-path=PATH    web sub path (default /icingaweb)
@@ -2277,6 +2282,19 @@ fi
 
 
 #
+#   Log files
+#
+
+# Check whether --with-icingaweb_log_path was given.
+if test "${with_icingaweb_log_path+set}" = set; then
+  withval=$with_icingaweb_log_path; icingaweb_log_path=$withval
+else
+  icingaweb_log_path=$prefix/var/log
+
+fi
+
+
+#
 #   Users for webfiles
 #
 
@@ -2977,6 +2995,7 @@ fi
 
 
 
+
 # Internal db setup
 
 
@@ -3032,7 +3051,7 @@ fi
 #
 #   Create config files
 #
-ac_config_files="$ac_config_files Makefile config/authentication.ini config/resources.ini config/modules/monitoring/backends.ini config/modules/monitoring/instances.ini etc/apache/icingaweb.conf public/.htaccess public/index.php"
+ac_config_files="$ac_config_files Makefile config/authentication.ini config/config.ini config/resources.ini config/modules/monitoring/backends.ini config/modules/monitoring/instances.ini etc/apache/icingaweb.conf public/.htaccess public/index.php"
 
 
 #
@@ -3649,6 +3668,7 @@ do
   case $ac_config_target in
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "config/authentication.ini") CONFIG_FILES="$CONFIG_FILES config/authentication.ini" ;;
+    "config/config.ini") CONFIG_FILES="$CONFIG_FILES config/config.ini" ;;
     "config/resources.ini") CONFIG_FILES="$CONFIG_FILES config/resources.ini" ;;
     "config/modules/monitoring/backends.ini") CONFIG_FILES="$CONFIG_FILES config/modules/monitoring/backends.ini" ;;
     "config/modules/monitoring/instances.ini") CONFIG_FILES="$CONFIG_FILES config/modules/monitoring/instances.ini" ;;

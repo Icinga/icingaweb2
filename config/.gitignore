@@ -1,4 +1,5 @@
 authentication.ini
+config.ini
 modules/monitoring/backends.ini
 modules/monitoring/instances.ini
 resources.ini
