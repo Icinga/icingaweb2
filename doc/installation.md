@@ -52,7 +52,7 @@ your backend, take a look at the various options described in `./configure --hel
 It is required to set up all used Databases correctly, which basically means to create all needed user accounts and to
 create all database tables. You will find the installation guides for the different databases in the sections below:
 
-*IMPORTANT*: Select a secure password instead of "icinga" and alter the config/authentication.ini accordingly.
+*IMPORTANT*: Select a secure password instead of "icingaweb" and alter the config/authentication.ini accordingly.
 
 
 #### MySQL
@@ -61,7 +61,7 @@ create all database tables. You will find the installation guides for the differ
 
 
     mysql -u root -p
-    mysql> CREATE USER `icingaweb`@`localhost` IDENTIFIED BY 'icinga';
+    mysql> CREATE USER `icingaweb`@`localhost` IDENTIFIED BY 'icingaweb';
     mysql> CREATE DATABASE `icingaweb`;
     mysql> GRANT ALL PRIVILEGES ON `icingaweb`.* TO `icingaweb`@`localhost`;
     mysql> FLUSH PRIVILEGES;
@@ -81,7 +81,7 @@ create all database tables. You will find the installation guides for the differ
 
     sudo su postgres
     psql
-    postgres=#  CREATE USER icingaweb WITH PASSWORD 'icinga';
+    postgres=#  CREATE USER icingaweb WITH PASSWORD 'icingaweb';
     postgres=#  CREATE DATABASE icingaweb;
     postgres=#  \q
 
