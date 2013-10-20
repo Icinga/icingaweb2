@@ -44,17 +44,17 @@ class DowntimeQuery extends StatusdatQuery
         'downtime_is_in_effect'             => 'is_in_effect',
         'downtime_trigger_time'             => 'trigger_time',
         'downtime_triggered_by_id'          => 'triggered_by_id',
-        'downtime_internal_downtime_id'     => 'internal_downtime_id',
+        'downtime_internal_downtime_id'     => 'downtime_id',
         'host'                              => 'host_name',
         'host_name'                         => 'host_name',
-        'service_host_name'                 => 'host_name',
-        'service_description'               => 'service_description',
+        'service_host_name'                 => 'host_name'
     );
 
     public static $handlerParameters = array(
         'object_type'                       => 'getObjectType',
         'downtime_start'                    => 'getDowntimeStart',
-        'downtime_is_flexible'              => 'getFlexibleFlag'
+        'downtime_is_flexible'              => 'getFlexibleFlag',
+        'service_description'               => 'getServiceDescription'
     );
 
     public static $fieldTypes = array(
@@ -62,6 +62,14 @@ class DowntimeQuery extends StatusdatQuery
         'downtime_trigger_time' => self::TIMESTAMP,
         'downtime_start'        => self::TIMESTAMP
     );
+
+    public function getServiceDescription(&$obj)
+    {
+        if (isset ($obj->service_description)) {
+            return $obj->service_description;
+        }
+        return '';
+    }
 
 
     public function getDowntimeStart(&$obj)

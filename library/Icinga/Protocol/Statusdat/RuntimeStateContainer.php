@@ -93,4 +93,5 @@ class RuntimeStateContainer extends \stdClass
 
         return $this->$attr;
     }
+
 }

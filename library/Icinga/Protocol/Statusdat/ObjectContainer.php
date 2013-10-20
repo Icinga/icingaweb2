@@ -66,9 +66,10 @@ class ObjectContainer extends \stdClass
         foreach ($exploded as $elem) {
             if (isset($result->$elem)) {
                 $result = $result->$elem;
+            } else {
+                return null;
             }
         }
-
         return $result;
     }
 }

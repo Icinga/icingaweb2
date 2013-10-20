@@ -38,7 +38,7 @@ class DowntimeQuery extends IdoQuery
         'downtime' => array(
             'downtime_author'               => 'sd.author_name',
             'downtime_comment'              => 'sd.comment_data',
-            'downtime_entry_time'           => 'sd.entry_time',
+            'downtime_entry_time'           => 'UNIX_TIMESTAMP(sd.entry_time)',
             'downtime_is_fixed'             => 'sd.is_fixed',
             'downtime_is_flexible'          => 'CASE WHEN sd.is_fixed = 0 THEN 1 ELSE 0 END',
             'downtime_start'                => "UNIX_TIMESTAMP(CASE WHEN sd.trigger_time != '0000-00-00 00:00:00' then sd.trigger_time ELSE sd.scheduled_start_time END)",

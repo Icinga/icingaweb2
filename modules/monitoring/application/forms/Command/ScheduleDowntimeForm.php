@@ -92,9 +92,9 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
             ->from(
                 'downtime',
                 array(
-                    'host_name',
-                    'service_description',
-                    'downtime_scheduled_start_time',
+                    'host',
+                    'service',
+                    'downtime_start',
                     'downtime_internal_downtime_id'
                 )
             )->fetchAll();
@@ -107,7 +107,7 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
             $label = sprintf(
                 'ID %s: %s%s Starting @ %s',
                 $downtime->downtime_internal_downtime_id,
-                $downtime->host_name,
+                $downtime->host,
                 !empty($downtime->service_description) ? ' (' . $downtime->service_description . ')' : '',
                 $dateFormat->formatDateTime($downtime->downtime_scheduled_start_time)
             );
