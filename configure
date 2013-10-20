@@ -3032,7 +3032,7 @@ fi
 #
 #   Create config files
 #
-ac_config_files="$ac_config_files Makefile config/authentication.ini config/resources.ini config/modules/monitoring/backends.ini config/modules/monitoring/instances.ini etc/apache/icingaweb.conf public/.htaccess"
+ac_config_files="$ac_config_files Makefile config/authentication.ini config/resources.ini config/modules/monitoring/backends.ini config/modules/monitoring/instances.ini etc/apache/icingaweb.conf public/.htaccess public/index.php"
 
 
 #
@@ -3654,6 +3654,7 @@ do
     "config/modules/monitoring/instances.ini") CONFIG_FILES="$CONFIG_FILES config/modules/monitoring/instances.ini" ;;
     "etc/apache/icingaweb.conf") CONFIG_FILES="$CONFIG_FILES etc/apache/icingaweb.conf" ;;
     "public/.htaccess") CONFIG_FILES="$CONFIG_FILES public/.htaccess" ;;
+    "public/index.php") CONFIG_FILES="$CONFIG_FILES public/index.php" ;;
 
   *) { { $as_echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5
 $as_echo "$as_me: error: invalid argument: $ac_config_target" >&2;}

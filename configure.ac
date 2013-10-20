@@ -442,6 +442,7 @@ AC_CONFIG_FILES([
     config/modules/monitoring/instances.ini
     etc/apache/icingaweb.conf
     public/.htaccess
+    public/index.php
 ])
 
 #
