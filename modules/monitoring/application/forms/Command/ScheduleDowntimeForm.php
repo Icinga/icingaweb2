@@ -95,6 +95,7 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
                     'host',
                     'service',
                     'downtime_start',
+                    'downtime_scheduled_start_time',
                     'downtime_internal_downtime_id'
                 )
             )->fetchAll();

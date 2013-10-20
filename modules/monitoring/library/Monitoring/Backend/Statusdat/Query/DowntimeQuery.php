@@ -45,6 +45,7 @@ class DowntimeQuery extends StatusdatQuery
         'downtime_trigger_time'             => 'trigger_time',
         'downtime_triggered_by_id'          => 'triggered_by_id',
         'downtime_internal_downtime_id'     => 'downtime_id',
+        'downtime_scheduled_start_time'     => 'start_time',
         'host'                              => 'host_name',
         'host_name'                         => 'host_name',
         'service_host_name'                 => 'host_name'
