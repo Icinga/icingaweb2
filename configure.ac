@@ -30,7 +30,7 @@ AC_CHECK_PHP_MODULE([sockets json])
 #   Configuration files
 #
 AC_ARG_WITH([icingaweb_config_path],
-    AS_HELP_STRING([--with-icingaweb-config-path], [Configuration path for icinga web]),
+    AS_HELP_STRING([--with-icingaweb-config-path=PATH], [Configuration path for icinga web]),
     icingaweb_config_path="'$withval'",
     icingaweb_config_path="'$prefix/config/'"
 )
@@ -57,10 +57,10 @@ AC_ARG_WITH([web_path],
     web_path=/icingaweb
 )
 
-AC_ARG_WITH([www_conf_path],
-    AS_HELP_STRING([--with-http-configuration-path=PATH], [Include folder apache2 (default /etc/apache2/conf.d)]),
-    www_conf_path=$withval,
-    www_conf_path=AC_PATH_GUESS([/etc/httpd/conf.d /etc/apache2/conf-available /etc/apache2/conf.d /etc/apache/conf.d], [www_conf_path], [/etc/apache2/conf.d])
+AC_ARG_WITH([httpd_config_path],
+    AS_HELP_STRING([--with-httpd-config-path=PATH], [Include folder apache2 (default /etc/apache2/conf.d)]),
+    httpd_config_path=$withval,
+    httpd_config_path=AC_PATH_GUESS([/etc/httpd/conf.d /etc/apache2/conf-available /etc/apache2/conf.d /etc/apache/conf.d], [httpd_config_path], [/etc/apache2/conf.d])
 )
 
 #
@@ -374,7 +374,7 @@ AC_SUBST(app_name)
 AC_SUBST(web_user)
 AC_SUBST(web_group)
 AC_SUBST(web_path)
-AC_SUBST(www_conf_path)
+AC_SUBST(httpd_config_path)
 AC_SUBST(bin_user)
 AC_SUBST(bin_group)
 AC_SUBST(icingaweb_config_path)
@@ -439,6 +439,7 @@ AC_CONFIG_FILES([
     config/authentication.ini
     config/resources.ini
     config/modules/monitoring/backends.ini
+    config/modules/monitoring/instances.ini
     etc/apache/icingaweb.conf
     public/.htaccess
 ])

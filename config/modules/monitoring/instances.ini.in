@@ -1,0 +1,2 @@
+[icinga]
+path                = "@icinga_commandpipe@"

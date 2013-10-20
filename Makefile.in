@@ -1,7 +1,15 @@
+SHELL=/bin/sh
+
+PACKAGE_TARNAME=@PACKAGE_TARNAME@
+PACKAGE_NAME=@PACKAGE_NAME@
+PACKAGE_VERSION=@PACKAGE_VERSION@
+
 prefix=@prefix@
 exec_prefix=@exec_prefix@
 
-WWW_CONF_PATH=@www_conf_path@
+HTTPD_CONFIG_PATH=@httpd_config_path@
+ICINGAWEB_CONFIG_PATH=@icingaweb_config_path@
+
 INSTALL=@INSTALL@
 INSTALL_OPTS=@INSTALL_OPTS@
 INSTALL_OPTS_WEB=@INSTALL_OPTS_WEB@
@@ -15,9 +23,18 @@ default:
 #
 # Installs the whole application w\o httpd configurations
 #
-install: install-static-files install-runtime-dirs ensure-writable-folders
+install: install-config install-basic
 
+#
+# Installs the whole application w\o configuration
+#
+install-basic: install-static-files install-runtime-dirs ensure-writable-folders
+
+#
+# Updates only the application
+#
 update: install-application
+
 #
 # Removes files created by ./configure
 #
@@ -33,8 +50,26 @@ clean:
 #
 # Installs/copies all static files (executables, scripts, html, etc)
 #
-install-static-files: install-application copy-web-files-public copy-web-files-config copy-web-files-modules
+install-static-files: install-application copy-web-files-public copy-web-files-modules
 	$(INSTALL) -m 644 $(INSTALL_OPTS) "./public/.htaccess"  $(DESTDIR)$(prefix)/public/.htaccess;
+
+#
+# Installs all configuration files
+#
+install-config:
+	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(ICINGAWEB_CONFIG_PATH)
+
+	@dirs=`cd ./config ; find . -mindepth 1 -type d `;\
+	for dir in $$dirs; do \
+		$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(ICINGAWEB_CONFIG_PATH)/"$$dir"; \
+	done;
+
+	@files=`cd ./config ; find . -mindepth 1 -type f \
+		-and ! -name ".*" -and ! -name "*.in"`; \
+		for file in $$files; do \
+			$(INSTALL) -m 644 $(INSTALL_OPTS) "./config/$$file"  $(DESTDIR)$(ICINGAWEB_CONFIG_PATH)/"$$file"; \
+		done
+
 
 #
 # Installs runtime directories like the application cache
@@ -51,7 +86,8 @@ install-tests: copy-folder-tests
 # Install configurations for apache2
 #
 install-apache-config:
-	$(INSTALL) -m 644 $(INSTALL_OPTS) "./etc/apache/icingaweb.conf"  $(WWW_CONF_PATH)/icingaweb.conf;
+	$(INSTALL) -m 755 -d $(INSTALL_OPTS) $(DESTDIR)$(HTTPD_CONFIG_PATH)
+	$(INSTALL) -m 644 $(INSTALL_OPTS) "./etc/apache/icingaweb.conf"  $(DESTDIR)$(HTTPD_CONFIG_PATH)/icingaweb.conf;
 
 #
 # Installs the php files to the prefix
@@ -59,7 +95,7 @@ install-apache-config:
 install-application: copy-web-files-application copy-web-files-library 
 
 #
-# Rule for coying folders and containing files (arbitary types), hidden files are excluded
+# Rule for copying folders and containing files (arbitary types), hidden files are excluded
 #
 copy-folder-%:
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(prefix)/$*
@@ -79,7 +115,7 @@ copy-folder-%:
 ensure-writable-folders:
 	$(INSTALL) -m 775 $(INSTALL_OPTS_WEB) -d $(DESTDIR)$(prefix)/var/
 	$(INSTALL) -m 775 $(INSTALL_OPTS_WEB) -d $(DESTDIR)$(prefix)/var/log
-	chmod -R 775 $(DESTDIR)$(prefix)/config
+	chmod -R 775 $(DESTDIR)$(ICINGAWEB_CONFIG_PATH)
 
 
 #
@@ -103,4 +139,11 @@ copy-web-files-%:
 			$(INSTALL) -m 644 $(INSTALL_OPTS_WEB) "$$file"  $(DESTDIR)$(prefix)/"$$file"; \
 		done
 
+#
+# Create release or snapshot tarball
+#
+create-tarball:
+	@./bin/make-tarball --prefix $(PACKAGE_TARNAME)-$(PACKAGE_VERSION)/
 
+create-tarball-nightly:
+	./bin/make-tarball --prefix $(PACKAGE_TARNAME)-$(PACKAGE_VERSION)-`date +%Y%m%d`-`git rev-parse --short HEAD`/
