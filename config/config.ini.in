@@ -7,7 +7,7 @@ indexController     = "dashboard"
 ; via the frontend and this file. With feature #4607 moduleFolder will
 ; be replaced with a configuration directive for locations of
 ; installed modules
-moduleFolder        = "/etc/icinga2-web/enabledModules"
+moduleFolder        = "@icingaweb_config_path@/enabledModules"
 dateFormat          = "d/m/Y"
 timeFormat          = "g:i A"
 
