@@ -71,6 +71,7 @@ abstract class DataView implements Filterable
      */
     public static function fromRequest($request, array $columns = null)
     {
+
         $view = new static(Backend::createBackend($request->getParam('backend')), $columns);
         $parser = new UrlViewFilter($view);
         $view->getQuery()->setFilter($parser->fromRequest($request));
@@ -107,7 +108,6 @@ abstract class DataView implements Filterable
                 $view->getQuery()->where($key, $value);
             }
         }
-
         $order = isset($params['order']) ? $params['order'] : null;
         if ($order !== null) {
             if (strtolower($order) === 'desc') {
@@ -154,31 +154,32 @@ abstract class DataView implements Filterable
     public function sort($column = null, $order = null)
     {
         $sortRules = $this->getSortRules();
-
-        if ($column === null) {
-            $sortColumns = reset($sortRules);
-            if (!isset($sortColumns['columns'])) {
-                $sortColumns['columns'] = array(key($sortRules));
-            }
-        } else {
-            if (isset($sortRules[$column])) {
-                $sortColumns = $sortRules[$column];
+        if ($sortRules !== null) {
+            if ($column === null) {
+                $sortColumns = reset($sortRules);
                 if (!isset($sortColumns['columns'])) {
-                    $sortColumns['columns'] = array($column);
+                    $sortColumns['columns'] = array(key($sortRules));
                 }
             } else {
-                $sortColumns = array(
-                    'columns' => array($column),
-                    'order' => $order
-                );
-            };
-        }
+                if (isset($sortRules[$column])) {
+                    $sortColumns = $sortRules[$column];
+                    if (!isset($sortColumns['columns'])) {
+                        $sortColumns['columns'] = array($column);
+                    }
+                } else {
+                    $sortColumns = array(
+                        'columns' => array($column),
+                        'order' => $order
+                    );
+                };
+            }
 
-        $order = $order === null ? (isset($sortColumns['order']) ? $sortColumns['order'] : self::SORT_ASC) : $order;
-        $order = ($order === self::SORT_ASC) ? 'ASC' : 'DESC';
+            $order = $order === null ? (isset($sortColumns['order']) ? $sortColumns['order'] : self::SORT_ASC) : $order;
+            $order = ($order === self::SORT_ASC) ? 'ASC' : 'DESC';
 
-        foreach ($sortColumns['columns'] as $column) {
-            $this->query->order($column, $order);
+            foreach ($sortColumns['columns'] as $column) {
+                $this->query->order($column, $order);
+            }
         }
         return $this;
     }
@@ -188,7 +189,10 @@ abstract class DataView implements Filterable
      *
      * @return array
      */
-    abstract public function getSortRules();
+    public function getSortRules()
+    {
+        return null;
+    }
 
     public function getMappedField($field)
     {

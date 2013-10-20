@@ -15,7 +15,9 @@ class Downtime extends DataView
     {
         return array(
             'host',
+            'host_name',
             'service',
+            'service_description',
             'downtime_author',
             'downtime_comment',
             'downtime_entry_time',

@@ -41,6 +41,7 @@ class DowntimeQuery extends IdoQuery
             'downtime_entry_time'           => 'UNIX_TIMESTAMP(sd.entry_time)',
             'downtime_is_fixed'             => 'sd.is_fixed',
             'downtime_is_flexible'          => 'CASE WHEN sd.is_fixed = 0 THEN 1 ELSE 0 END',
+            'downtime_scheduled_start_time' => 'UNIX_TIMESTAMP(sd.scheduled_start_time)',
             'downtime_start'                => "UNIX_TIMESTAMP(CASE WHEN sd.trigger_time != '0000-00-00 00:00:00' then sd.trigger_time ELSE sd.scheduled_start_time END)",
             'downtime_end'                  => 'UNIX_TIMESTAMP(sd.scheduled_end_time)',
             'downtime_duration'             => 'sd.duration',
@@ -49,8 +50,11 @@ class DowntimeQuery extends IdoQuery
             'downtime_internal_downtime_id' => 'sd.internal_downtime_id',
         ),
         'objects' => array(
-            'host'      => 'o.name1 COLLATE latin1_general_ci',
-            'service'   => 'o.name2 COLLATE latin1_general_ci'
+            'host'                  => 'o.name1 COLLATE latin1_general_ci',
+            'host_name'             => 'o.name1 COLLATE latin1_general_ci',
+            'service'               => 'o.name2 COLLATE latin1_general_ci',
+            'service_description'   => 'o.name2 COLLATE latin1_general_ci'
+
         )
     );
 

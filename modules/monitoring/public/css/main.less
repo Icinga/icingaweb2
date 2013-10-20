@@ -197,40 +197,24 @@
   padding-left: 25px !important;
 }
 
-.icinga-navbar-pills-mixin (@color) {
-  border-color: @color;
-  color: @color;
+.topbar-status-summary-mixin (@backgroundImage) {
+  background-image: url(@backgroundImage);
+  background-repeat: no-repeat;
+  background-position: 5px 50%;
+  padding-left: 30px !important;
+  margin-top: 15px;
+  span:not(:last-child) {
+    margin-right: 5px;
+  }
+}
+.topbar-host-status-summary {
+  .topbar-status-summary-mixin('../../img/icons/host.png');
+}
+.topbar-service-status-summary {
+  .topbar-status-summary-mixin('../../img/icons/service.png');
 }
 
-.icinga-navbar-pills-critical {
-  .icinga-navbar-pills-mixin(@colorCritical);
-}
-
-.icinga-navbar-pills-ok {
-  .icinga-navbar-pills-mixin(@colorOk);
-}
-
-.icinga-navbar-pills-warning {
-  .icinga-navbar-pills-mixin(@colorWarning);
-}
-
-.icinga-navbar-pills-unknown {
-  .icinga-navbar-pills-mixin(@colorWarning);
-}
-
-.icinga-navbar-pills-unreachable {
-  .icinga-navbar-pills-mixin(@colorUnreachable);
-}
-
-.icinga-navbar-pills-down {
-  .icinga-navbar-pills-mixin(@colorDown);
-}
-
-.icinga-navbar-pills-up {
-  .icinga-navbar-pills-mixin(@colorUp);
-}
-
-.state-tile (@color) {
+.topbar-status-mixin (@color) {
   border-style: solid;
   border-width: 1px;
   padding: 3px 5px 3px 5px;
@@ -238,20 +222,39 @@
   font-size: 13px;
   border-color: @color;
   color: @color;
+  a {
+    color: inherit;
+  }
 }
 
-.state-tile-up {
-  .navigation-tile-mixin(@colorUp);
+.topbar-status-up {
+  .topbar-status-mixin(@colorUp);
 }
 
-.state-tile-unreachable {
-  .navigation-tile-mixin(@colorUnreachable);
+.topbar-status-down {
+  .topbar-status-mixin(@colorDown);
 }
 
-.state-tile-down {
-  .navigation-tile-mixin(@colorDown);
+.topbar-status-unreachable {
+  .topbar-status-mixin(@colorUnreachable);
 }
 
-.state-tile-pending {
-  .navigation-tile-mixin(@colorPending);
+.topbar-status-pending {
+  .topbar-status-mixin(@colorPending);
+}
+
+.topbar-status-ok {
+  .topbar-status-mixin(@colorOk);
+}
+
+.topbar-status-critical {
+  .topbar-status-mixin(@colorCritical);
+}
+
+.topbar-status-warning {
+  .topbar-status-mixin(@colorWarning);
+}
+
+.topbar-status-unknown {
+  .topbar-status-mixin(@colorUnknown);
 }

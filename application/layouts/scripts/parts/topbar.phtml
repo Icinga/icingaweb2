@@ -1,26 +1,14 @@
+<?php
+use Icinga\Web\Topbar;
+?>
 <nav class="navbar navbar-default navbar-fixed-top" id="icingatopbar" role="navigation">
     <div class="navbar-header">
         <a href="<?= $this->baseUrl('/') ?>" class="navbar-brand icinga-logo">Icinga</a>
     </div>
 
-    <div class="nav navbar-nav icinga-navbar-hosts-container">
-        <span class="icinga-navbar-pills icinga-navbar-pills-up">999/999</span>
-        <span class="icinga-navbar-pills icinga-navbar-pills-unreachable">999/999</span>
-        <span class="icinga-navbar-pills icinga-navbar-pills-down">999/999</span>
-    </div>
-
-    <div class="nav navbar-nav icinga-navbar-services-container">
-        <span class="icinga-navbar-pills icinga-navbar-pills-ok">999/999</span>
-        <span class="icinga-navbar-pills icinga-navbar-pills-critical">999/999</span>
-        <span class="icinga-navbar-pills icinga-navbar-pills-warning">999/999</span>
-        <span class="icinga-navbar-pills icinga-navbar-pills-unknown">999/999</span>
-    </div>
-
-    <div class="nav navbar-nav icinga-navbar-reload">
-        <a class="button btn-common btn-small" href="#">
-            <i class="icinga-icon-refresh"></i>
-        </a>
-    </div>
+    <?php foreach (Topbar::getPartials() as $partial) {
+        echo $this->partial($partial['viewScriptName'], $partial['moduleName'], $partial['data']);
+    } ?>
 
     <form class="navbar-form navbar-left">
         <div class="form-group">

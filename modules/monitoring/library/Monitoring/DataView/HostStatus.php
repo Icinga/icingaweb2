@@ -58,7 +58,8 @@ class HostStatus extends DataView
             'host_action_url',
             'host_notes_url',
             'host_percent_state_change',
-            'host_modified_host_attributes'
+            'host_modified_host_attributes',
+            'host_severity'
         );
     }
 

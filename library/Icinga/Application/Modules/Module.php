@@ -28,6 +28,7 @@
 
 namespace Icinga\Application\Modules;
 
+use \Exception;
 use \Icinga\Application\ApplicationBootstrap;
 use \Icinga\Application\Config;
 use \Icinga\Application\Icinga;
@@ -133,8 +134,12 @@ class Module
     public function register()
     {
         $this->registerAutoloader()
-             ->registerWebIntegration()
-             ->runRegisterScript();
+             ->registerWebIntegration();
+        try {
+            $this->runRegisterScript();
+        } catch (Exception $e) {
+            return false;
+        }
         return true;
     }
 
