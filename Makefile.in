@@ -133,7 +133,7 @@ copy-web-files-%:
 		-name "*.php" -or -name "*.ini" -or -name "*.*html" \
 		-or -name "*.js" -or -name "*.css" -or -name "*.less"  \
 		-or -name "*.otf" -or -name "*.ttf" -or -name "*.otf" \
-		-or -name "*.svg" -or -name "*.woff" \
+		-or -name "*.svg" -or -name "*.woff" -or -name "*.png" \
 		-and ! -name ".*"`; \
 		for file in $$files; do \
 			$(INSTALL) -m 644 $(INSTALL_OPTS_WEB) "$$file"  $(DESTDIR)$(prefix)/"$$file"; \
