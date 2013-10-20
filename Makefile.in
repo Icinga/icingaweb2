@@ -58,17 +58,17 @@ install-static-files: install-application copy-web-files-public copy-web-files-m
 # Installs all configuration files
 #
 install-config:
-	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(ICINGAWEB_CONFIG_PATH)
+	$(INSTALL) -m 755 $(INSTALL_OPTS_WEB) -d $(DESTDIR)$(ICINGAWEB_CONFIG_PATH)
 
 	@dirs=`cd ./config ; find . -mindepth 1 -type d `;\
 	for dir in $$dirs; do \
-		$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(ICINGAWEB_CONFIG_PATH)/"$$dir"; \
+		$(INSTALL) -m 755 $(INSTALL_OPTS_WEB) -d $(DESTDIR)$(ICINGAWEB_CONFIG_PATH)/"$$dir"; \
 	done;
 
 	@files=`cd ./config ; find . -mindepth 1 -type f \
 		-and ! -name ".*" -and ! -name "*.in"`; \
 		for file in $$files; do \
-			$(INSTALL) -m 644 $(INSTALL_OPTS) "./config/$$file"  $(DESTDIR)$(ICINGAWEB_CONFIG_PATH)/"$$file"; \
+			$(INSTALL) -m 644 $(INSTALL_OPTS_WEB) "./config/$$file"  $(DESTDIR)$(ICINGAWEB_CONFIG_PATH)/"$$file"; \
 		done
 
 
