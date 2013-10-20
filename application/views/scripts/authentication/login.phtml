@@ -1,4 +1,3 @@
-
 <div class="well">
   <h1>Login</h1>
 
@@ -10,3 +9,16 @@
   <?php endif ?>
 
 </div>
+
+<script type="text/javascript">
+    /*
+     * Preserve the html anchor when redirecting to the originally called link. This
+     * is useful for preserving the detail view and the selection in that case.
+     *
+     * refs #4833
+     *
+     * TODO: Copy this snipped into the new login.phtml
+     */
+    var url = document.URL.match(/(^[^#]*)/)[0] + encodeURIComponent(window.location.hash);
+    document.getElementById('form_login').action = url;
+</script>

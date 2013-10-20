@@ -58,8 +58,8 @@ class AuthenticationController extends ActionController
      */
     public function loginAction()
     {
-        $this->replaceLayout = true;
         $credentials = new Credential();
+        $this->_helper->layout->setLayout('inline');
         $this->view->form = new LoginForm();
         $this->view->form->setRequest($this->_request);
         $this->view->title = "Icinga Web Login";
@@ -98,10 +98,10 @@ class AuthenticationController extends ActionController
      */
     public function logoutAction()
     {
+        $this->_helper->layout->setLayout('inline');
         $auth = AuthManager::getInstance(null, array(
             'writeSession' => $this->modifiesSession
         ));
-        $this->replaceLayout = true;
         $auth->removeAuthorization();
         $this->redirectToLogin();
     }
