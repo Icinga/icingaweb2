@@ -102,16 +102,14 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
         $options = array(
             '0' =>  'No Triggered Downtime'
         );
+        $dateFormat = $this->getView()->dateFormat();
         foreach ($downtimes as $downtime) {
-            $dt = DateTimeFactory::create($downtime->downtime_scheduled_start_time);
-            $date_format = $preferences->get('app.dateFormat', $cfg->get('app.dateFormat', 'd/m/Y'));
-            $time_format = $preferences->get('app.timeFormat', $cfg->get('app.timeFormat', 'g:i A'));
             $label = sprintf(
                 'ID %s: %s%s Starting @ %s',
                 $downtime->downtime_internal_downtime_id,
                 $downtime->host_name,
                 !empty($downtime->service_description) ? ' (' . $downtime->service_description . ')' : '',
-                $dt->format($date_format . ' ' . $time_format)
+                $dateFormat->formatDateTime($downtime->downtime_scheduled_start_time)
             );
             $options[$downtime->downtime_internal_downtime_id] = $label;
         }
@@ -170,6 +168,7 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
         );
 
         $now = DateTimeFactory::create();
+
         $this->addElement(
             new DateTimePicker(
                 array(
@@ -338,10 +337,11 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
                 $this->getRequest()->getUser()->getUsername(),
                 $this->getValue('comment')
                 ),
-            $this->getValue('type') === self::TYPE_FLEXIBLE,
+            $this->getValue('type') === self::TYPE_FIXED,
             $this->getValue('hours') * 3600 + $this->getValue('minutes') * 60,
             $this->getValue('triggered')
         );
+
         return $command->includeChildren(
             $this->getWithChildren(),
             $this->getValue('childobjects') === 1
