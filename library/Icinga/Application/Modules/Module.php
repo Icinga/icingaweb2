@@ -29,11 +29,12 @@
 namespace Icinga\Application\Modules;
 
 use \Exception;
-use \Icinga\Application\ApplicationBootstrap;
-use \Icinga\Application\Config;
-use \Icinga\Application\Icinga;
-use \Icinga\Web\Hook;
 use \Zend_Controller_Router_Route as Route;
+use Icinga\Application\ApplicationBootstrap;
+use Icinga\Application\Config;
+use Icinga\Application\Icinga;
+use Icinga\Application\Logger;
+use Icinga\Web\Hook;
 
 /**
  * Module handling
@@ -138,6 +139,12 @@ class Module
         try {
             $this->runRegisterScript();
         } catch (Exception $e) {
+            Logger::warn(
+                'Running the register script %s for module %s failed with the following exception: %s',
+                $this->registerscript,
+                $this->name,
+                $e->getMessage()
+            );
             return false;
         }
         return true;
