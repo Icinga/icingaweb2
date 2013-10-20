@@ -5,12 +5,10 @@
 
 %define revision 0
 
-# FIXME logdir must be set to /var/log/icingaweb
-#%define logdir %{_localstatedir}/log/%{name}
-%define logdir %{_datadir}/icingaweb/var/log 
+%define configdir %{_sysconfdir}/icingaweb
+%define logdir %{_localstatedir}/log/icingaweb
 %define sharedir %{_datadir}/icingaweb
 %define prefixdir %{_datadir}/icingaweb
-%define configdir %{_sysconfdir}/icingaweb
 
 %if "%{_vendor}" == "suse"
 %define phpname php5
@@ -30,15 +28,15 @@
 %define apacheconfdir  %{_sysconfdir}/apache2/conf.d
 %define apacheuser wwwrun
 %define apachegroup www
-%define extcmdfile-1x %{_localstatedir}/icinga/rw/icinga.cmd
-%define livestatussocket-1x %{_localstatedir}/icinga/rw/live
+%define extcmdfile1x %{_localstatedir}/icinga/rw/icinga.cmd
+%define livestatussocket1x %{_localstatedir}/icinga/rw/live
 %endif
 %if "%{_vendor}" == "redhat"
 %define apacheconfdir %{_sysconfdir}/httpd/conf.d
 %define apacheuser apache
 %define apachegroup apache
 %define extcmdfile-1x %{_localstatedir}/spool/icinga/cmd/icinga.cmd
-%define livestatussocket-1x %{_localstatedir}/spool/icinga/cmd/live
+%define livestatussocket1x %{_localstatedir}/spool/icinga/cmd/live
 %endif
 
 Summary:        Open Source host, service and network monitoring Web UI
@@ -100,15 +98,6 @@ Requires:	%{name}-doc
 %description
 IcingaWeb for Icinga 2 or Icinga 1.x using status data,
 IDOUtils or Livestatus as backend provider.
-
-%package doc
-Summary:        documentation for IcingaWeb 
-Group:          Applications/System
-Requires:       %{name} = %{version}-%{release}
-
-
-%description doc
-Documentation for IcingaWeb.
 
 %package config-internal-mysql
 Summary:        config for internal mysql database
@@ -191,13 +180,28 @@ Icinga 1.x
     --datarootdir="%{sharedir}" \
     --sysconfdir="%{configdir}" \
     --with-icingaweb-config-path='%{configdir}' \
+    --with-icingaweb-log-path='%{logdir}' \
     --with-web-path='/icingaweb' \
     --with-httpd-config-path=%{apacheconfdir} \
     --with-web-user='%{apacheuser}' \
     --with-web-group='%{apachegroup}' \
-    --with-icinga-commandpipe='%{extcmdfile-1x}' \
-    --with-livestatus-socket='%{livestatussocket-1x}'
-    # TODO --with-log-dir='%{logdir}'
+    --with-internal-db-type='mysql' \
+    --with-internal-db-name='icingaweb' \
+    --with-internal-db-host='localhost' \
+    --with-internal-db-port='3306' \
+    --with-internal-db-pass='icingaweb' \
+    --with-internal-db-user='icingaweb' \
+    --with-internal-authentication=yes \
+    --with-icinga-commandpipe='%{extcmdfile1x}' \
+    --with-livestatus-socket='%{livestatussocket1x}'
+
+cat > README.RHEL.SUSE <<"EOF"
+IcingaWeb for RHEL and SUSE
+===========================
+
+Please check ./doc/installation.md
+for requirements and database setup. 
+EOF
 
 %install
 [ "%{buildroot}" != "/" ] && [ -d "%{buildroot}" ] && rm -rf %{buildroot}
@@ -211,6 +215,7 @@ Icinga 1.x
     INIT_OPTS=""
 
 # prepare configuration for sub packages
+
 
 %pre
 # Add apacheuser in the icingacmd group
@@ -238,12 +243,7 @@ fi
 %files
 # main dirs
 %defattr(-,root,root)
-%if "%{_vendor}" == "redhat"
-%doc etc/schema doc
-%endif
-%if "%{_vendor}" == "suse"
-%doc etc/schema doc
-%endif
+%doc etc/schema doc README.RHEL.SUSE
 %{_datadir}/%{name}/application
 %{_datadir}/%{name}/library
 %{_datadir}/%{name}/public
@@ -255,10 +255,6 @@ fi
 %config(noreplace) %attr(775,%{apacheuser},%{apachegroup}) %{configdir}
 # logs
 %attr(2775,%{apacheuser},%{apachegroup}) %dir %{logdir}
-
-%files doc
-%defattr(-,root,root)
-%doc doc
 
 %changelog
 * Sun Oct 20 2013 Michael Friedrich <michael.friedrich@netways.de> - 0.0.1
