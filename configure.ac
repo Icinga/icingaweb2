@@ -30,7 +30,7 @@ AC_CHECK_PHP_MODULE([sockets json])
 #   Configuration files
 #
 AC_ARG_WITH([icingaweb_config_path],
-    AS_HELP_STRING([--with-icingaweb-config-path], [Configuration path for icinga ]),
+    AS_HELP_STRING([--with-icingaweb-config-path], [Configuration path for icinga web]),
     icingaweb_config_path="'$withval'",
     icingaweb_config_path="'$prefix/config/'"
 )
@@ -60,7 +60,7 @@ AC_ARG_WITH([web_path],
 AC_ARG_WITH([www_conf_path],
     AS_HELP_STRING([--with-http-configuration-path=PATH], [Include folder apache2 (default /etc/apache2/conf.d)]),
     www_conf_path=$withval,
-    www_conf_path=AC_PATH_GUESS([/etc/httpd/conf.d /etc/apache2/conf.d /etc/apache/conf.d], [www_conf_path], [/etc/apache2/conf.d])
+    www_conf_path=AC_PATH_GUESS([/etc/httpd/conf.d /etc/apache2/conf-available /etc/apache2/conf.d /etc/apache/conf.d], [www_conf_path], [/etc/apache2/conf.d])
 )
 
 #
