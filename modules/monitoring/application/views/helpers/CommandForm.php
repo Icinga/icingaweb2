@@ -24,6 +24,7 @@ class Zend_View_Helper_CommandForm extends Zend_View_Helper_Abstract
         $form = new Form();
         $form->setIgnoreChangeDiscarding(true);
         $form->setAttrib('data-icinga-component', 'app/ajaxPostSubmitForm');
+        $form->setAttrib('class', 'inline-form');
 
         $form->setRequest(Zend_Controller_Front::getInstance()->getRequest());
         $form->setAction($this->view->href('monitoring/command/' . $commandName));
@@ -94,7 +95,19 @@ class Zend_View_Helper_CommandForm extends Zend_View_Helper_Abstract
         return $form;
     }
 
-    public function toggleSubmitForm($label, $checkValue, $enabledCommand, $disabledCommand, array $arguments = array())
+    /**
+     * Create a toggle form for switch between commands
+     *
+     * @param   string  $label
+     * @param   string  $checkValue
+     * @param   string  $enabledCommand
+     * @param   string  $disabledCommand
+     * @param   bool    $changed
+     * @param   array   $arguments
+     *
+     * @return  string
+     */
+    public function toggleSubmitForm($label, $checkValue, $enabledCommand, $disabledCommand, $changed = false, array $arguments = array())
     {
         if ($checkValue === '1') {
             $commandName = $disabledCommand;
@@ -103,7 +116,6 @@ class Zend_View_Helper_CommandForm extends Zend_View_Helper_Abstract
         }
 
         $form = $this->simpleForm($commandName, $arguments);
-        $form->setAttrib('class', 'pull-right');
 
         $uniqueName = uniqid('check');
 
@@ -125,7 +137,29 @@ class Zend_View_Helper_CommandForm extends Zend_View_Helper_Abstract
         $form->addElement($submit_identifier);
         $form->getElement('btn_submit')->setDecorators(array('ViewHelper'));
 
-        return '<label class="label-horizontal" for="' . $uniqueName . '">' . $label . '</label>' . $form;
+        $out = '<label class="label-horizontal label-configuration" for="' . $uniqueName . '">'
+            . $label
+            . '</label>'
+            . '<div class="pull-right">';
+
+        if ($changed === true) {
+            $out .= '<span class="config-changed">'
+                . '<i class="icinga-icon-edit"></i> (modified)'
+                . '</span>';
+        }
+
+        $formCode = (string) $form;
+        
+        $jsLessSubmit = '<noscript>'
+            . '<input type="submit" value="Change" class="button btn btn-cta" />'
+            . '</noscript></form>';
+
+        $formCode = str_replace('</form>', $jsLessSubmit, $formCode);
+
+        $out .= $formCode
+            . '</div>';
+
+        return $out;
     }
 
     /**

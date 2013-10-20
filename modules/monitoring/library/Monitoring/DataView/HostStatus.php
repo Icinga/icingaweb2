@@ -37,11 +37,17 @@ class HostStatus extends DataView
             'host_check_command',
             'host_perfdata',
             'host_passive_checks_enabled',
+            'host_passive_checks_enabled_changed',
             'host_obsessing',
+            'host_obsessing_changed',
             'host_notifications_enabled',
+            'host_notifications_enabled_changed',
             'host_event_handler_enabled',
+            'host_event_handler_enabled_changed',
             'host_flap_detection_enabled',
+            'host_flap_detection_enabled_changed',
             'host_active_checks_enabled',
+            'host_active_checks_enabled_changed',
             'host_current_check_attempt',
             'host_max_check_attempts',
             'host_last_notification',
@@ -51,7 +57,8 @@ class HostStatus extends DataView
             'host_last_comment',
             'host_action_url',
             'host_notes_url',
-            'host_percent_state_change'
+            'host_percent_state_change',
+            'host_modified_host_attributes'
         );
     }
 

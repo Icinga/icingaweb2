@@ -227,6 +227,7 @@
                             $ps->notifications_enabled,
                             'enablenotifications',
                             'disablenotifications',
+                            false,
                             array(
                                 'global' => '1'
                             )
@@ -242,6 +243,7 @@
                             $ps->active_service_checks_enabled,
                             'enableactivechecks',
                             'disableactivechecks',
+                            false,
                             array(
                                 'global' => 'service'
                             )
@@ -257,6 +259,7 @@
                         $ps->passive_service_checks_enabled,
                         'startacceptingpassivechecks',
                         'stopacceptingpassivechecks',
+                        false,
                         array(
                             'global' => 'service'
                         )
@@ -272,6 +275,7 @@
                         $ps->active_host_checks_enabled,
                         'enableactivechecks',
                         'disableactivechecks',
+                        false,
                         array(
                             'global' => 'host'
                         )
@@ -287,6 +291,7 @@
                         $ps->passive_host_checks_enabled,
                         'startacceptingpassivechecks',
                         'stopacceptingpassivechecks',
+                        false,
                         array(
                             'global' => 'host'
                         )
@@ -302,6 +307,7 @@
                         $ps->event_handlers_enabled,
                         'enableeventhandler',
                         'disableeventhandler',
+                        false,
                         array(
                             'global' => '1'
                         )
@@ -317,6 +323,7 @@
                         $ps->obsess_over_hosts,
                         'startobsessing',
                         'stopobsessing',
+                        false,
                         array(
                             'global' => 'host'
                         )
@@ -332,6 +339,7 @@
                         $ps->obsess_over_services,
                         'startobsessing',
                         'stopobsessing',
+                        false,
                         array(
                             'global' => 'service'
                         )
@@ -347,6 +355,7 @@
                         $ps->flap_detection_enabled,
                         'enableflapdetection',
                         'disableflapdetection',
+                        false,
                         array(
                             'global' => '1'
                         )
@@ -362,6 +371,7 @@
                         $ps->process_performance_data,
                         'enableperformancedata',
                         'disableperformancedata',
+                        false,
                         array(
                             'global' => '1'
                         )

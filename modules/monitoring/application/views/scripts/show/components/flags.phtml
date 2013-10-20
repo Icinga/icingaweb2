@@ -3,6 +3,32 @@
 
     /** @var Zend_View_Helper_CommandForm $cf */
     $cf = $this->getHelper('CommandForm');
+
+    $data = array(
+        'host'      => $o->host_name,
+        'service'   => $o->service_description
+    );
+
+    $modified_attributes = false;
+
+    if ($o->service_description && $o->service_modified_service_attributes) {
+        $modified_attributes = true;
+    } elseif ($o->host_modified_host_attributes) {
+        $modified_attributes = true;
+    }
+
+    $test_db_modified = (
+        ($o->passive_checks_enabled_changed === '0')
+        && ($o->active_checks_enabled_changed === '0')
+        && ($o->obsessing_changed === '0')
+        && ($o->notifications_enabled_changed === '0')
+        && ($o->event_handler_enabled_changed === '0')
+        && ($o->flap_detection_enabled_changed === '0')
+    ) ? false : true;
+
+    if ($modified_attributes && !$test_db_modified) {
+        $modified_attributes = false;
+    }
 ?>
 <div>
     <div class="panel-heading">
@@ -14,42 +40,109 @@
     <hr class="separator" />
 
     <div class="panel-body">
-        <table class="table table-condensed table-detail">
+        <table class="table table-bordered">
             <tbody>
                 <tr>
-                    <td>Passive Checks</td>
-                    <td><div class="icon-table-hint icon-edit pull-left"></div></td>
                     <td>
-                        <input type="checkbox" id="#" name="#" class="pull-right" <?= ($o->passive_checks_enabled === '1') ? 'checked="true"' : '' ?> />
+                        <?=
+                            $cf->toggleSubmitForm(
+                                'Passive Checks enabled',
+                                $o->passive_checks_enabled,
+                                'startacceptingpassivechecks',
+                                'stopacceptingpassivechecks',
+                                (($o->passive_checks_enabled_changed === '1') ? true : false),
+                                $data
+                            );
+                        ?>
                     </td>
                 </tr>
 
                 <tr>
-                    <td>Active Checks</td>
-                    <td></td>
-                    <td><input type="checkbox" id="#" name="#" class="pull-right" <?= ($o->active_checks_enabled === '1') ? 'checked="true"' : '' ?> /></td>
+                    <td>
+                        <?=
+                            $cf->toggleSubmitForm(
+                                'Active Checks enabled',
+                                $o->active_checks_enabled,
+                                'enableactivechecks',
+                                'disableactivechecks',
+                                (($o->active_checks_enabled_changed === '1') ? true : false),
+                                $data
+                            );
+                        ?>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <?=
+                            $cf->toggleSubmitForm(
+                                'Obsessing enabled',
+                                $o->obsessing,
+                                'startobsessing',
+                                'stopobsessing',
+                                (($o->obsessing_changed === '1') ? true : false),
+                                $data
+                            );
+                        ?>
+                    </td>
                 </tr>
                 <tr>
-                    <td>Obsessing</td>
-                    <td></td>
-                    <td><input type="checkbox" id="#" name="#" class="pull-right" <?= ($o->obsessing === '1') ? 'checked="true"' : '' ?> /></td>
+                    <td>
+                        <?=
+                            $cf->toggleSubmitForm(
+                                'Notifications enabled',
+                                $o->notifications_enabled,
+                                'enablenotifications',
+                                'disablenotifications',
+                                (($o->notifications_enabled_changed === '1') ? true : false),
+                                $data
+                            );
+                        ?>
+                    </td>
                 </tr>
                 <tr>
-                    <td>Notifications</td>
-                    <td></td>
-                    <td><input type="checkbox" id="#" name="#" class="pull-right" <?= ($o->notifications_enabled === '1') ? 'checked="true"' : '' ?> /></td>
+                    <td>
+                        <?=
+                            $cf->toggleSubmitForm(
+                                'Eventhandler enabled',
+                                $o->event_handler_enabled,
+                                'enableeventhandler',
+                                'disableeventhandler',
+                                (($o->event_handler_enabled_changed === '1') ? true : false),
+                                $data
+                            );
+                        ?>
+                    </td>
                 </tr>
                 <tr>
-                    <td>Event Handler</td>
-                    <td></div></td>
-                    <td><input type="checkbox" id="#" name="#" class="pull-right" <?= ($o->event_handler_enabled === '1') ? 'checked="true"' : '' ?> /></td>
-                </tr>
-                <tr>
-                    <td>Flap Detection</td>
-                    <td></td>
-                    <td><input type="checkbox" id="#" name="#" class="pull-right" <?= ($o->flap_detection_enabled === '1') ? 'checked="true"' : '' ?> /></td>
+                    <td>
+                        <?=
+                            $cf->toggleSubmitForm(
+                                'Flap Detection enabled',
+                                $o->flap_detection_enabled,
+                                'enableflapdetection',
+                                'disableflapdetection',
+                                (($o->flap_detection_enabled_changed === '1') ? true : false),
+                                $data
+                            );
+                        ?>
+                    </td>
                 </tr>
             </tbody>
         </table>
+
+        <?php if ($modified_attributes === true): ?>
+
+        <?=
+            $cf->labelSubmitForm(
+                'Reset modified attributes',
+                'Reset configuration to initial values after a system restart',
+                'btn-cta',
+                'resetattributes',
+                $data
+            );
+        ?>
+
+        <?php endif; ?>
     </div>
 </div>
