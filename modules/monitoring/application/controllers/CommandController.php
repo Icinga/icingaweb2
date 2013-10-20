@@ -189,15 +189,20 @@ class Monitoring_CommandController extends ActionController
 
             $query = Backend::createBackend($this->_getParam('backend'))->select()->from("status", $fields);
             $data = $query->fetchAll();
+
             $out = array();
 
             foreach ($data as $o) {
-                $test = (array)$o;
-                if ($test['host_name'] === $hostname) {
+                if ($o->host_name === $hostname) {
                     if (!$servicename) {
-                        $out[] = (object) $o;
-                    } elseif ($servicename && strtolower($test['service_description']) === strtolower($servicename)) {
-                        $out[] = (object) $o;
+                        $out[] = (object) array(
+                            "host_name" => $o->host_name
+                        );
+                    } elseif ($servicename && strtolower($o->service_description) === strtolower($servicename)) {
+                        $out[] = (object) array(
+                            "host_name" => $o->host_name,
+                            "service_description" => $o->service_description
+                        );
                     }
                 }
             }
@@ -208,6 +213,7 @@ class Monitoring_CommandController extends ActionController
                 "CommandController: SQL Query '%s' failed (message %s) ",
                 $query ? (string) $query->getQuery()->dump() : '--', $e->getMessage()
             );
+
             return array();
         }
     }

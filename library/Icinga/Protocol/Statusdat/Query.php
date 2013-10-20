@@ -36,87 +36,77 @@ use Icinga\Protocol\Statusdat\View\MonitoringObjectList;
 use Icinga\Protocol\Statusdat\Query\IQueryPart;
 
 /**
- * Class Query
- * @package Icinga\Protocol\Statusdat
+ * Base implementation for Statusdat queries.
+ *
  */
 class Query extends BaseQuery
 {
     /**
+     * An array denoting valid targets by mapping the query target to
+     * the 'define' directives found in the status.dat/objects.cache files
+     * 
      * @var array
      */
     public static $VALID_TARGETS = array(
-        "hosts"         => array("host"),
-        "services"      => array("service"),
-        "downtimes"     => array("downtime"),
-        "groups"        => array("hostgroup", "servicegroup"),
-        "hostgroups"    => array("hostgroup"),
-        "servicegroups" => array("servicegroup"),
-        "comments"      => array("comment"),
-        "contacts"      => array("contact"),
-        "contactgroups" => array("contactgroup")
+        'hosts'         => array('host'),
+        'services'      => array('service'),
+        'downtimes'     => array('downtime'),
+        'groups'        => array('hostgroup', 'servicegroup'),
+        'hostgroups'    => array('hostgroup'),
+        'servicegroups' => array('servicegroup'),
+        'comments'      => array('comment'),
+        'contacts'      => array('contact'),
+        'contactgroups' => array('contactgroup')
     );
 
+    /**
+     * The current StatusDat query that will be applied upon calling fetchAll
+     *
+     * @var IQueryPart
+     */
     private $queryFilter = null;
 
     /**
+     * The current query source being used
+     *
      * @var string
      */
-    private $source = "";
+    private $source = '';
 
     /**
-     * @var null
-     */
-    private $limit = null;
-
-    /**
-     * @var int
-     */
-    private $offset = 0;
-
-    /**
+     * An array containing all columns used for sorting
+     *
      * @var array
      */
     protected $orderColumns = array();
 
     /**
+     * An array containig all columns used for (simple) grouping
+     *
      * @var array
      */
     private $groupColumns = array();
 
     /**
-     * @var null
+     * An optional function callback to use for more specific grouping
+     *
+     * @var array
      */
     private $groupByFn = null;
 
     /**
-     * @var array
-     */
-    private $filter = null;
-
-    /**
-     * @var array
-     */
-    private $attributes = array();
-
-    /**
-     *
+     * The scope index for the callback function
      */
     const FN_SCOPE = 0;
 
     /**
-     *
+     * The name index for the callback function
      */
     const FN_NAME = 1;
 
     /**
-     * @return bool
-     */
-    public function hasOrder()
-    {
-        return !empty($this->orderColumns);
-    }
-
-    /**
+     * Return true if columns are set for this query
+     *
      * @return bool
      */
     public function hasColumns()
@@ -125,58 +115,30 @@ class Query extends BaseQuery
         return !empty($columns);
     }
 
+    /**
+     * Set the status.dat specific IQueryPart filter to use
+     *
+     * @param IQueryPart $filter
+     */
     public function setQueryFilter($filter)
     {
         $this->queryFilter = $filter;
     }
 
     /**
-     * @return bool
-     */
-    public function hasLimit()
-    {
-        return $this->limit !== false;
-    }
-
-    /**
-     * @return bool
-     */
-    public function hasOffset()
-    {
-        return $this->offset !== false;
-    }
-
-    /**
-     * @return null
-     */
-    public function getLimit()
-    {
-        return $this->limit;
-    }
-
-    /**
-     * @return int|null
-     */
-    public function getOffset()
-    {
-        return $this->offset;
-    }
-
-    /**
-     * @param $columns
-     * @param null $dir
-     * @return $this
+     * Order the query result by the given columns
+     *
+     * @param String|array  $columns    An array of columns to order by
+     * @param String        $dir        The direction (asc or desc) in string form
+     *
+     * @return $this                    Fluent interface
      */
     public function order($columns, $dir = null, $isFunction = false)
     {
-        if ($dir && strtolower($dir) == "desc") {
+        if ($dir && strtolower($dir) == 'desc') {
             $dir = self::SORT_DESC;
         } else {
             $dir = self::SORT_ASC;
-        }
-        if ($isFunction) {
-            $this->orderColumns[] = array($columns, $dir);
-            return $this;
         }
         if (!is_array($columns)) {
             $columns = array($columns);
@@ -200,34 +162,34 @@ class Query extends BaseQuery
         return $this;
     }
 
+    /**
+     * Order the query result using the callback to retrieve values for items
+     *
+     * @param array  $columns    A scope, function array to use for retrieving the values when ordering
+     * @param String $dir        The direction (asc or desc) in string form
+     *
+     * @return $this             Fluent interface
+     */
     public function orderByFn(array $callBack, $dir = null)
     {
-        $this->order($callBack, $dir, true);
-    }
-
-    /**
-     * @param null $count
-     * @param int $offset
-     * @return $this
-     * @throws Exception
-     */
-    public function limit($count = null, $offset = 0)
-    {
-        if ((is_null($count) || is_integer($count)) && (is_null($offset) || is_integer($offset))) {
-            $this->offset = $offset;
-            $this->limit = $count;
+        if ($dir && strtolower($dir) == 'desc') {
+            $dir = self::SORT_DESC;
         } else {
-            throw new Exception("Got invalid limit $count, $offset");
+            $dir = self::SORT_ASC;
         }
-        return $this;
+        $this->orderColumns[] = array($callBack, $dir);
     }
 
 
+
     /**
-     * @param $table
-     * @param null $columns
-     * @return $this
-     * @throws \Exception
+     * Set the query target
+     *
+     * @param String $table     The table/target to select the query from
+     * @param array  $columns   An array of attributes to use (required for fetchPairs())
+     *
+     * @return $this            Fluent interface
+     * @throws \Exception       If the target is unknonw
      */
     public function from($table, array $attributes = null)
     {
@@ -237,28 +199,29 @@ class Query extends BaseQuery
         if (isset(self::$VALID_TARGETS[$table])) {
             $this->source = $table;
         } else {
-            throw new \Exception("Unknown from target for status.dat :" . $table);
+            throw new \Exception('Unknown from target for status.dat :' . $table);
         }
         return $this;
     }
 
     /**
+     * Return an index of all objects matching the filter of this query
      *
-     * @throws Exception
+     * This index will be used for ordering, grouping and limiting
      */
-    private function getFilteredIndices($classType = "\Icinga\Protocol\Statusdat\Query\Group")
+    private function getFilteredIndices($classType = '\Icinga\Protocol\Statusdat\Query\Group')
     {
         $baseGroup = $this->queryFilter;
-
-
-        $state = $this->ds->getObjects();
+        $state = $this->ds->getState();
         $result = array();
         $source = self::$VALID_TARGETS[$this->source];
 
         foreach ($source as $target) {
+
             if (! isset($state[$target])) {
                 continue;
             }
+
             $indexes = array_keys($state[$target]);
             if ($baseGroup) {
                 $baseGroup->setQuery($this);
@@ -274,27 +237,38 @@ class Query extends BaseQuery
     }
 
     /**
-     * @param array $indices
+     * Order the given result set
+     *
+     * @param array $indices        The result set of the query that should be ordered
      */
     private function orderIndices(array &$indices)
     {
         if (!empty($this->orderColumns)) {
             foreach ($indices as $type => &$subindices) {
                 $this->currentType = $type;
-                usort($subindices, array($this, "orderResult"));
+                usort($subindices, array($this, 'orderResult'));
             }
         }
     }
 
+    /**
+     * Start a query
+     *
+     * This is just a dummy function to allow a more convenient syntax
+     *
+     * @return self         Fluent interface
+     */
     public function select()
     {
         return $this;
     }
 
     /**
-     * @param $a
-     * @param $b
-     * @return int
+     * Order implementation called by usort
+     *
+     * @param String $a     The left object index
+     * @param Strinv $b     The right object index
+     * @return int          0, 1 or -1, see usort for detail
      */
     private function orderResult($a, $b)
     {
@@ -304,30 +278,37 @@ class Query extends BaseQuery
 
         foreach ($this->orderColumns as &$col) {
             if (is_array($col[0])) {
-                $result += $col[1] * strnatcasecmp($col[0][0]->$col[0][1]($o1), $col[0][0]->$col[0][1]($o2));
+                // sort by function
+                $result += $col[1] * strnatcasecmp(
+                    $col[0][0]->$col[0][1]($o1),
+                    $col[0][0]->$col[0][1]($o2)
+                );
             } else {
-                if (is_string($o1->{$col[0]}) && is_string($o2->{$col[0]}) ) {
-                    $result += $col[1] * strnatcasecmp($o1->{$col[0]}, $o2->{$col[0]});
-                }
+                $result += $col[1] * strnatcasecmp($o1->{$col[0]}, $o2->{$col[0]});
             }
         }
         return $result;
     }
 
     /**
-     * @param array $indices
+     * Limit the given resultset
+     *
+     * @param array $indices    The filtered, ordered indices
      */
     private function limitIndices(array &$indices)
     {
         foreach ($indices as $type => $subindices) {
-            $indices[$type] = array_slice($subindices, $this->offset, $this->limit);
+            $indices[$type] = array_slice($subindices, $this->getOffset(), $this->getLimit());
         }
     }
 
     /**
-     * @param $fn
-     * @param null $scope
-     * @return $this
+     * Register the given function for grouping the result
+     *
+     * @param String $fn    The function to use for grouping
+     * @param Object $scope An optional scope to use instead of $this
+     *
+     * @return self         Fluent interface
      */
     public function groupByFunction($fn, $scope = null)
     {
@@ -336,8 +317,11 @@ class Query extends BaseQuery
     }
 
     /**
-     * @param $columns
-     * @return $this
+     * Group by the given column
+     *
+     * @param  array|string $columns    The columns to use for grouping
+     * @return self                     Fluent interface
+     * @see    Query::columnGroupFn()   The implementation used for grouping
      */
     public function groupByColumns($columns)
     {
@@ -345,13 +329,15 @@ class Query extends BaseQuery
             $columns = array($columns);
         }
         $this->groupColumns = $columns;
-        $this->groupByFn = array($this, "columnGroupFn");
+        $this->groupByFn = array($this, 'columnGroupFn');
         return $this;
     }
 
     /**
-     * @param array $indices
-     * @return array
+     * The internal handler function used by the group function
+     *
+     * @param array $indices        The indices to group
+     * @return array                The grouped result set
      */
     private function columnGroupFn(array &$indices)
     {
@@ -360,7 +346,7 @@ class Query extends BaseQuery
         foreach ($indices as $type => $subindices) {
             foreach ($subindices as $objectIndex) {
                 $r = $this->ds->getObjectByName($type, $objectIndex);
-                $hash = "";
+                $hash = '';
                 $cols = array();
                 foreach ($this->groupColumns as $col) {
                     $hash = md5($hash . $r->$col);
@@ -368,8 +354,8 @@ class Query extends BaseQuery
                 }
                 if (!isset($result[$hash])) {
                     $result[$hash] = (object)array(
-                        "columns" => (object)$cols,
-                        "count" => 0
+                        'columns' => (object)$cols,
+                        'count' => 0
                     );
                 }
                 $result[$hash]->count++;
@@ -379,11 +365,12 @@ class Query extends BaseQuery
     }
 
     /**
-     * @return array
+     * Query Filter, Order, Group, Limit and return the result set
+     *
+     * @return array    The resultset matching this query
      */
     public function getResult()
     {
-
         $indices = $this->getFilteredIndices();
         $this->orderIndices($indices);
         if ($this->groupByFn) {
@@ -396,7 +383,8 @@ class Query extends BaseQuery
         $this->limitIndices($indices);
 
         $result = array();
-        $state = $this->ds->getObjects();
+        $state = $this->ds->getState();
+
         foreach ($indices as $type => $subindices) {
             foreach ($subindices as $index) {
                 $result[] = & $state[$type][$index];
@@ -413,14 +401,16 @@ class Query extends BaseQuery
     {
         $parser = new TreeToStatusdatQueryParser();
         if ($this->getFilter()) {
-            $query = $parser->treeToQuery($this->getFilter());
+            $query = $parser->treeToQuery($this->getFilter(), $this);
             $this->setQueryFilter($query);
         }
 
     }
 
     /**
-     * @return mixed
+     * Fetch the first result row
+     *
+     * @return MonitoringObjectList     The monitoring object matching this query
      */
     public function fetchRow()
     {
@@ -429,7 +419,10 @@ class Query extends BaseQuery
     }
 
     /**
-     * @return mixed|void
+     * Fetch the result as an associative array using the first column as the key and the second as the value
+     *
+     * @return array        An associative array with the result
+     * @throws \Exception   If no attributes are defined
      */
     public function fetchPairs()
     {
@@ -452,15 +445,9 @@ class Query extends BaseQuery
     }
 
     /**
-     * @return mixed
-     */
-    public function fetchOne()
-    {
-        return next($this->fetchAll());
-    }
-
-    /**
-     * @return MList|mixed|null
+     * Fetch all results
+     *
+     * @return MonitoringObjectList     An MonitoringObjectList wrapping the given resultset
      */
     public function fetchAll()
     {
@@ -473,7 +460,19 @@ class Query extends BaseQuery
     }
 
     /**
-     * @return int|mixed
+     * Fetch one result
+     *
+     * @return mixed
+     */
+    public function fetchOne()
+    {
+        return next($this->fetchAll());
+    }
+
+    /**
+     * Count the number of results
+     *
+     * @return int
      */
     public function count()
     {

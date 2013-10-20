@@ -20,6 +20,7 @@ class StatusdatTestLoader extends LibraryLoader
         require_once($libPath . '/Data/DatasourceInterface.php');
         $statusdat = realpath($libPath . '/Protocol/Statusdat/');
         require_once($statusdat . '/View/AccessorStrategy.php');
+        require_once($statusdat . '/PrintableObject.php');
         require_once($statusdat . '/View/MonitoringObjectList.php');
         require_once($statusdat . '/ObjectContainer.php');
         require_once($statusdat . '/IReader.php');

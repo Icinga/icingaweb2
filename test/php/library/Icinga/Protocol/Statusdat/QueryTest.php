@@ -21,20 +21,19 @@ class QueryTest extends \PHPUnit_Framework_TestCase
     {
         $readerMock = $this->getServiceTestReader();
         $query = new Statusdat\Query($readerMock);
-
-        $result = $query->from("services")->getResult();
         $objects = $readerMock->getObjects();
-        $this->assertCount(count($objects["service"]), $result);
 
+        $result = $query->select()->from("services")->getResult();
+        $this->assertCount(count($objects["service"]), $result);
     }
 
     public function testSimpleHostSelect()
     {
         $readerMock = $this->getServiceTestReader();
         $query = new Statusdat\Query($readerMock);
+        $objects = $readerMock->getObjects();
 
         $result = $query->from("hosts")->getResult();
-        $objects = $readerMock->getObjects();
         $this->assertCount(count($objects["host"]), $result);
 
     }

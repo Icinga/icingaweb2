@@ -48,7 +48,7 @@ class ObjectContainer extends \stdClass
      * @param \stdClass $obj
      * @param IReader $reader
      */
-    public function __construct(\stdClass &$obj, IReader &$reader)
+    public function __construct(&$obj, IReader &$reader)
     {
         $this->ref = & $obj;
         $this->reader = & $reader;
@@ -68,6 +68,7 @@ class ObjectContainer extends \stdClass
                 $result = $result->$elem;
             }
         }
+
         return $result;
     }
 }

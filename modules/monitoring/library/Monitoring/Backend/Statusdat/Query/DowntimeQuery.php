@@ -35,30 +35,49 @@ class DowntimeQuery extends StatusdatQuery
      * @var array
      */
     public static $mappedParameters = array(
-
-        'downtime_type'                     => 'downtime_type',
-        'downtime_author_name'              => 'author',
-        'downtime_comment_data'             => 'comment',
-        'downtime_entry_time'               => 'entry_time',
-        'downtime_is_fixed'                 => 'is_fixed',
+        'downtime_author'                   => 'author',
+        'downtime_comment'                  => 'comment',
         'downtime_duration'                 => 'duration',
-        'downtime_scheduled_start_time'     => 'start_time',
-        'downtime_scheduled_end_time'       => 'end_time',
+        'downtime_end'                      => 'end_time',
         'downtime_was_started'              => 'was_started',
-        'downtime_actual_start_time'        => 'start_time',
-        'downtime_actual_start_time_usec'   => 'end_time',
+        'downtime_is_fixed'                 => 'fixed',
         'downtime_is_in_effect'             => 'is_in_effect',
         'downtime_trigger_time'             => 'trigger_time',
         'downtime_triggered_by_id'          => 'triggered_by_id',
         'downtime_internal_downtime_id'     => 'internal_downtime_id',
+        'host'                              => 'host_name',
         'host_name'                         => 'host_name',
         'service_host_name'                 => 'host_name',
         'service_description'               => 'service_description',
     );
 
     public static $handlerParameters = array(
-        'object_type'                       => 'getObjectType'
+        'object_type'                       => 'getObjectType',
+        'downtime_start'                    => 'getDowntimeStart',
+        'downtime_is_flexible'              => 'getFlexibleFlag'
     );
+
+    public static $fieldTypes = array(
+        'downtime_end'          => self::TIMESTAMP,
+        'downtime_trigger_time' => self::TIMESTAMP,
+        'downtime_start'        => self::TIMESTAMP
+    );
+
+
+    public function getDowntimeStart(&$obj)
+    {
+        if ($obj->trigger_time != '0') {
+            return $obj->trigger_time;
+        } else {
+            return $obj->start_time;
+        }
+    }
+
+
+    public function getFlexibleFlag(&$obj)
+    {
+        return $obj->fixed ? 0 : 1;
+    }
 
     public function getObjectType(&$obj)
     {

@@ -20,7 +20,6 @@ class StatusQuery extends StatusdatQuery
      */
     public static $mappedParameters = array(
         'host'                                  => 'host.host_name',
-
         'host_name'                             => 'host.host_name',
         'host_display_name'                     => 'host.host_name',
         'host_alias'                            => 'host.alias',
@@ -140,7 +139,6 @@ class StatusQuery extends StatusdatQuery
         'host_unhandled_service_count'  => 'getNrOfUnhandledServices',
         'host_last_comment'             => 'getLastComment',
         'service_last_comment'          => 'getLastComment',
-
         'host_state'                    => 'getStateForHost',
         'host_hard_state'               => 'getHardStateForHost',
         'host_handled'                  => 'isHandledForHost',
@@ -148,7 +146,6 @@ class StatusQuery extends StatusdatQuery
         'host_in_downtime'              => 'isInDowntimeForHost',
         'host_problem'                  => 'isProblemForHost',
         'host_attempt'                  => 'getAttemptStringForHost',
-        
         'service_state'                 => 'getState',
         'service_hard_state'            => 'getHardState',
         'service_handled'               => 'isHandled',
@@ -158,6 +155,25 @@ class StatusQuery extends StatusdatQuery
         'service_attempt'               => 'getAttemptString'
     );
 
+    public static $fieldTypes = array(
+        'host_last_state_change'            => self::TIMESTAMP,
+        'host_last_hard_state_change'       => self::TIMESTAMP,
+        'host_last_check'                   => self::TIMESTAMP,
+        'host_next_check'                   => self::TIMESTAMP,
+        'host_last_time_up'                 => self::TIMESTAMP,
+        'host_last_time_down'               => self::TIMESTAMP,
+        'host_last_time_unreachable'        => self::TIMESTAMP,
+        'host_status_update_time'           => self::TIMESTAMP,
+        'service_last_state_change'         => self::TIMESTAMP,
+        'service_last_hard_state_change'    => self::TIMESTAMP,
+        'service_last_check'                => self::TIMESTAMP,
+        'service_next_check'                => self::TIMESTAMP,
+        'service_last_time_ok'              => self::TIMESTAMP,
+        'service_last_time_warning'         => self::TIMESTAMP,
+        'service_last_time_critical'        => self::TIMESTAMP,
+        'service_last_time_unknown'         => self::TIMESTAMP,
+        'service_status_update_time'        => self::TIMESTAMP
+    );
 
     public function selectBase()
     {
@@ -187,12 +203,15 @@ class StatusQuery extends StatusdatQuery
 
     public function getState(&$obj)
     {
-        return ($obj->status->has_been_checked == 1) ? $obj->status->current_state : 99;
+        if (!$obj->status->has_been_checked) {
+            return 99;
+        }
+        return $obj->status->current_state;
     }
 
     public function getHardState(&$obj)
     {
-        if (!$obj->status->has_been_checked == 1) {
+        if (!$obj->status->has_been_checked) {
             return 99;
         } else {
             if ($obj->status->state_type == 1) {
@@ -209,13 +228,15 @@ class StatusQuery extends StatusdatQuery
         $status = $host->status;
         $severity = 0;
 
-        if (!$status->has_been_checked == 1) {
+        if (!$status->has_been_checked) {
             $severity += 16;
-        } else if ($status->current_state == 1) {
+        } elseif($status->current_state == 0) {
+            return $severity;
+        } elseif ($status->current_state == 1) {
             $severity += 32;
         } elseif ($status->current_state == 2) {
             $severity += 64;
-        } else if ($status->current_state > 0) {
+        } else {
             $severity += 256;
         }
 
@@ -232,6 +253,7 @@ class StatusQuery extends StatusdatQuery
 
     public function isHandled(&$host)
     {
+
         return $host->status->current_state == 0 ||
             $host->status->problem_has_been_acknowledged ||
             $host->status->scheduled_downtime_depth;

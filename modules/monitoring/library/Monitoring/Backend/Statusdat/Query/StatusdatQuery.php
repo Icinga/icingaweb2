@@ -46,6 +46,8 @@ use Icinga\Filter\Filterable;
  */
 abstract class StatusdatQuery extends Query implements Filterable, AccessorStrategy
 {
+    const TIMESTAMP = 'timestamp';
+
     /**
      * An array containing the mappi
      *
@@ -67,6 +69,7 @@ abstract class StatusdatQuery extends Query implements Filterable, AccessorStrat
      */
     public static $handlerParameters = array();
 
+    public static $fieldTypes = array();
 
     /**
      * @var null
@@ -93,6 +96,7 @@ abstract class StatusdatQuery extends Query implements Filterable, AccessorStrat
     {
 
         if ($column) {
+            $column = strval($column);
             if (isset(static::$mappedParameters[$column])) {
                 parent::order(static::$mappedParameters[$column], strtolower($dir));
             } elseif (isset(static::$handlerParameters[$column])) {
@@ -123,19 +127,17 @@ abstract class StatusdatQuery extends Query implements Filterable, AccessorStrat
      */
     public function get(&$item, $field)
     {
-
+        $result = null;
         if (isset($item->$field)) {
-            return $item->$field;
-        }
-        if (isset(static::$mappedParameters[$field])) {
-            return $this->getMappedParameter($item, $field);
+            $result = $item->$field;
+        } elseif (isset(static::$mappedParameters[$field])) {
+            $result = $this->getMappedParameter($item, $field);
+        } elseif (isset(static::$handlerParameters[$field])) {
+            $hdl = static::$handlerParameters[$field];
+            $result = $this->$hdl($item);
         }
 
-        if (isset(static::$handlerParameters[$field])) {
-            $hdl = static::$handlerParameters[$field];
-            return $this->$hdl($item);
-        }
-        return null;
+        return $result;
     }
 
     private function applyPropertyFunction($function, $value)
@@ -231,6 +233,10 @@ abstract class StatusdatQuery extends Query implements Filterable, AccessorStrat
         return true;
     }
 
+    public function isTimestamp($field)
+    {
+        return isset(static::$fieldTypes[$field]) && static::$fieldTypes[$field] === self::TIMESTAMP;
+    }
 
 }
 

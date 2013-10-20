@@ -38,8 +38,8 @@ class HostgroupQuery extends StatusdatQuery
         'hostgroups'      => 'hostgroup_name',
         'hostgroup_name'  => 'hostgroup_name',
         'hostgroup_alias' => 'alias',
-        'host'            => 'hosts.host_name',
-        'host_name'       => 'hosts.host_name'
+        'host'            => 'host.host_name',
+        'host_name'       => 'host.host_name'
     );
 
     public function selectBase()

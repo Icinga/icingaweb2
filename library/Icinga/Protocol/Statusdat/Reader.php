@@ -29,6 +29,7 @@
 namespace Icinga\Protocol\Statusdat;
 
 use Icinga\Data\DatasourceInterface;
+use Icinga\Exception\ConfigurationError;
 use Icinga\Exception;
 use Icinga\Benchmark;
 use Icinga\Protocol\Statusdat\View\MonitoringObjectList;
@@ -40,54 +41,70 @@ use Icinga\Protocol\Statusdat\View\MonitoringObjectList;
 class Reader implements IReader, DatasourceInterface
 {
     /**
-     *
+     *  The default lifetime of the cache in milliseconds
      */
-    const DEFAULT_CACHE_LIFETIME = 300;
+    const DEFAULT_CACHE_LIFETIME = 30;
 
     /**
+     *  The folder for the statusdat cache
      *
      */
     const STATUSDAT_DEFAULT_CACHE_PATH = "/cache";
 
     /**
-     * @var null
+     * The last state from the cache
+     *
+     * @var array
      */
-    private $lastState = null;
+    private $lastState;
 
     /**
+     * True when this reader has already acquired the current runtime state (i.e. Status.dat)
+     *
      * @var bool
      */
     private $hasRuntimeState = false;
 
     /**
-     * @var null
+     * The representation of the object.cache file
+     *
+     * @var array
      */
-    private $objectCache = null;
+    private $objectCache ;
 
     /**
-     * @var null
+     * The representation of the status.dat file
+     * @var array
      */
-    private $statusCache = null;
+    private $statusCache;
 
     /**
+     * True when the icinga state differs from the cache
+     *
      * @var bool
      */
     private $newState = false;
 
     /**
-     * @var null
+     * The Parser object to use for parsing
+     *
+     * @var Parser
      */
-    private $parser = null;
+    private $parser;
 
     /**
+     * Whether to disable the cache
+     *
      * @var bool
      */
-    private $noCache = false;
+    private $noCache;
 
     /**
-     * @param $config
-     * @param null $parser
-     * @param bool $noCache
+     * Create a new Reader from the given configuraion
+     *
+     * @param Zend_Config $config   The configuration to read the status.dat information from
+     * @param Parser $parser        The parser to use (for testing)
+     * @param bool $noCache         Whether to disable the cache
      */
     public function __construct($config = \Zend_Config, $parser = null, $noCache = false)
     {
@@ -121,7 +138,9 @@ class Reader implements IReader, DatasourceInterface
     }
 
     /**
-     * @throws Exception\ConfigurationError
+     * Initialize the internal caches if enabled
+     *
+     * @throws ConfigurationError
      */
     private function initializeCaches()
     {
@@ -130,7 +149,7 @@ class Reader implements IReader, DatasourceInterface
         $cachePath = $this->config->get('cache_path', $defaultCachePath);
         $maxCacheLifetime = intval($this->config->get('cache_path', self::DEFAULT_CACHE_LIFETIME));
         if (!is_writeable($cachePath)) {
-            throw new Exception\ConfigurationError(
+            throw new ConfigurationError(
                 "Cache path $cachePath is not writable, check your configuration"
             );
         }
@@ -145,9 +164,12 @@ class Reader implements IReader, DatasourceInterface
     }
 
     /**
-     * @param $file
-     * @param $backend
-     * @param $lifetime
+     * Init the Cache backend in Zend
+     *
+     * @param String        $file       The file to use as the cache master file
+     * @param Zend_Config   $backend    The backend configuration to use
+     * @param integer       $lifetime  The lifetime of the cache
+     *
      * @return \Zend_Cache_Core|\Zend_Cache_Frontend
      */
     private function initCache($file, $backend, $lifetime)
@@ -161,7 +183,9 @@ class Reader implements IReader, DatasourceInterface
     }
 
     /**
-     * @return bool
+     * Read the current cache state
+     *
+     * @return bool     True if the state is the same as the icinga state
      */
     private function fromCache()
     {
@@ -173,12 +197,13 @@ class Reader implements IReader, DatasourceInterface
             $this->newState = true;
             return false;
         }
-
         return true;
     }
 
     /**
-     * @return bool
+     * Read the object.cache file from the Zend_Cache backend
+     *
+     * @return bool     True if the file could be loaded from cache
      */
     private function readObjectsCache()
     {
@@ -191,16 +216,16 @@ class Reader implements IReader, DatasourceInterface
     }
 
     /**
-     * @return bool
+     * Read the status.dat file from the Zend_Cache backend
+     *
+     * @return bool     True if the file could be loaded from cache
      */
     private function readStatusCache()
     {
         if (!isset($this->stateCache)) {
             return true;
         }
-
         $statusInfo = $this->stateCache->load('state' . md5($this->config->status_file));
-
         if ($statusInfo == false) {
             return false;
         }
@@ -210,6 +235,7 @@ class Reader implements IReader, DatasourceInterface
     }
 
     /**
+     * Take the status.dat and objects.cache and connect all services to hosts
      *
      */
     private function createHostServiceConnections()
@@ -232,12 +258,14 @@ class Reader implements IReader, DatasourceInterface
     }
 
     /**
-     * @throws Exception\ConfigurationError
+     * Parse the object.cache file and update the current state
+     *
+     * @throws ConfigurationError   If the object.cache couldn't be read
      */
     private function parseObjectsCacheFile()
     {
         if (!is_readable($this->config->object_file)) {
-            throw new Exception\ConfigurationError(
+            throw new ConfigurationError(
                 'Can\'t read object-file "' . $this->config->object_file . '", check your configuration'
             );
         }
@@ -249,12 +277,14 @@ class Reader implements IReader, DatasourceInterface
     }
 
     /**
-     * @throws Exception\ConfigurationError
+     * Parse the status.dat file and update the current state
+     *
+     * @throws ConfigurationError   If the status.dat couldn't be read
      */
     private function parseStatusDatFile()
     {
         if (!is_readable($this->config->status_file)) {
-            throw new Exception\ConfigurationError(
+            throw new ConfigurationError(
                 "Can't read status-file {$this->config->status_file}, check your configuration"
             );
         }
@@ -269,7 +299,9 @@ class Reader implements IReader, DatasourceInterface
     }
 
     /**
-     * @return Query
+     * Create a new Query
+     *
+     * @return Query        The query to operate on
      */
     public function select()
     {
@@ -277,34 +309,23 @@ class Reader implements IReader, DatasourceInterface
     }
 
     /**
-     * @param Query $query
-     * @return MonitoringObjectList
-     */
-    public function fetchAll(Query $query)
-    {
-        return $query->getResult();
-    }
-
-    /**
-     * @return mixed|null
+     * Return the internal state of the status.dat
+     *
+     * @return mixed        The internal status.dat representation
      */
     public function getState()
     {
         return $this->lastState;
     }
 
-    /**
-     * @return mixed|null
-     */
-    public function getObjects()
-    {
-        return $this->lastState;
-    }
 
     /**
-     * @param $type
-     * @param $name
-     * @return ObjectContainer|mixed|null
+     * Return the object with the given name and type
+     *
+     * @param  String $type                 The type of the object to return (service, host, servicegroup...)
+     * @param  String $name                 The name of the object
+     *
+     * @return ObjectContainer              An object container wrapping the result or null if the object doesn't exist
      */
     public function getObjectByName($type, $name)
     {
@@ -315,8 +336,10 @@ class Reader implements IReader, DatasourceInterface
     }
 
     /**
-     * @param $type
-     * @return array|null
+     * Get an array containing all names of monitoring objects with the given type
+     *
+     * @param   String $type                The type of object to get the names for
+     * @return  array                       An array of names or null if the type does not exist
      */
     public function getObjectNames($type)
     {

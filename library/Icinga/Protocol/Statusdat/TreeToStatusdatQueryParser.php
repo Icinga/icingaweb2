@@ -30,6 +30,7 @@
 namespace Icinga\Protocol\Statusdat;
 
 
+use Icinga\Filter\Filterable;
 use Icinga\Filter\Query\Node;
 use Icinga\Filter\Query\Tree;
 use Icinga\Protocol\Statusdat\Query\Expression;
@@ -38,33 +39,34 @@ use Icinga\Protocol\Statusdat\Query\Group;
 class TreeToStatusdatQueryParser
 {
 
-    private function nodeToQuery(Node $node)
+    private function nodeToQuery(Node $node,  Filterable $source)
     {
         if ($node->type === Node::TYPE_OPERATOR) {
             $op = $node->operator;
             $value = $node->right;
+            $node->left = $source->getMappedField($node->left);
             if (stripos($node->right, '*') !== false) {
                 $op = 'LIKE';
                 $value = str_replace('*', '%', $value);
             }
-
             return new Expression($node->left . ' ' . $op . ' ?', $value);
         } else {
             $group = new Group();
             $group->setType(($node->type === Node::TYPE_OR) ? Group::TYPE_OR  : Group::TYPE_AND);
-            $group->addItem($this->nodeToQuery($node->left));
-            $group->addItem($this->nodeToQuery($node->right));
+            $group->addItem($this->nodeToQuery($node->left, $source));
+            $group->addItem($this->nodeToQuery($node->right, $source));
             return $group;
         }
     }
 
 
-    public function treeToQuery(Tree $tree)
+    public function treeToQuery(Tree $tree, Filterable $source)
     {
 
+        $tree = $tree->getCopyForFilterable($source);
         if ($tree->root !== null) {
             $tree->root = $tree->normalizeTree($tree->root);
-            return $this->nodeToQuery($tree->root);
+            return $this->nodeToQuery($tree->root, $source);
         }
         return null;
     }

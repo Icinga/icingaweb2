@@ -28,17 +28,17 @@
 
 namespace Icinga\Protocol\Statusdat;
 
-interface IReader
+class PrintableObject
 {
-    /**
-     * @return mixed
-     */
-    public function getState();
-
-    /**
-     * @param $type
-     * @param $name
-     * @return mixed
-     */
-    public function getObjectByName($type, $name);
+    public function __toString()
+    {
+        if (isset($this->contact_name)) {
+            return $this->contact_name;
+        } else if (isset($this->service_description)) {
+            return $this->service_description;
+        } else if (isset($this->host_name)) {
+            return $this->host_name;
+        }
+        return '';
+    }
 }
