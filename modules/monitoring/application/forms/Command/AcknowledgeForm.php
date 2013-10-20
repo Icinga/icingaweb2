@@ -103,7 +103,8 @@ class AcknowledgeForm extends CommandForm
                         'helptext'  => t(
                             'Enter the expire date/time for this acknowledgement here. Icinga will '
                             . ' delete the acknowledgement after this date expired.'
-                        )
+                        ),
+                        'jspicker'  => true
                     )
                 )
             );

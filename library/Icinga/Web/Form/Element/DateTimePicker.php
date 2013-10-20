@@ -42,6 +42,19 @@ use \Icinga\Util\DateTimeFactory;
 class DateTimePicker extends Zend_Form_Element_Text
 {
     /**
+     * Defautl format used my js picker
+     *
+     * @var string
+     */
+    public $defaultFormat = 'Y-m-d H:i:s';
+
+    /**
+     * JS picker support on or off
+     * @var bool
+     */
+    public $jspicker = true;
+
+    /**
      * View helper to use
      * @var string
      */
@@ -57,7 +70,7 @@ class DateTimePicker extends Zend_Form_Element_Text
      * Valid formats to check user input against
      * @var array
      */
-    public $patterns;
+    public $patterns = array();
 
     /**
      * Create a new DateTimePicker
@@ -69,9 +82,11 @@ class DateTimePicker extends Zend_Form_Element_Text
     public function __construct($spec, $options = null)
     {
         parent::__construct($spec, $options);
+
+        $this->patterns[] = $this->defaultFormat;
+
         $this->dateValidator = new DateTimeValidator($this->patterns);
         $this->addValidator($this->dateValidator);
-
     }
 
     /**
@@ -98,5 +113,15 @@ class DateTimePicker extends Zend_Form_Element_Text
         }
         $this->setValue(DateTimeFactory::parse($value, $pattern)->getTimestamp());
         return true;
+    }
+
+    public function enableJsPicker()
+    {
+        $this->jspicker = true;
+    }
+
+    public function disableJsPicker()
+    {
+        $this->jspicker = false;
     }
 }

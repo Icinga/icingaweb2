@@ -45,29 +45,40 @@ class Zend_View_Helper_FormDateTime extends Zend_View_Helper_FormElement
     {
         $info = $this->_getInfo($name, $value, $attribs);
         extract($info); // name, value, attribs, options, listsep, disable
-
         // Is it disabled?
         $disabled = '';
         if ($disabled) {
             $disabled = ' disabled="disabled"';
         }
 
+        $jspicker = (isset($attribs['jspicker']) && $attribs['jspicker'] === true) ? true : false;
+
         // Do we have a value?
         if (isset($value) && !empty($value)) {
-            $value = ' value="' . $this->view->dateFormat()->formatDateTime($value) . '"';
+            if ($jspicker) {
+                $value = ' value="' . $this->view->dateFormat()->format($value, $attribs['defaultFormat']) . '"';
+            } else {
+                $value = ' value="' . $this->view->dateFormat()->formatDateTime($value) . '"';
+            }
         } else {
             $value = '';
         }
 
         // Build the element
         $xhtml = '<div class="datetime">'
-            . '<input type="text" name="' . $this->view->escape($name) . '"'
-            . ' id="' . $this->view->escape($name) . '"'
+            . '<input type="text" name="' . $name . '"'
+            . ' id="' . $name . '"'
             . $value
             . $disabled
-            . $this->_htmlAttribs($attribs)
-            . $this->getClosingBracket()
+            . $this->_htmlAttribs($attribs);
+
+        if ($jspicker === true) {
+            $xhtml .= 'data-icinga-component="app/datetime"';
+        }
+
+        $xhtml .= $this->getClosingBracket()
             . '</div>';
+
         return $xhtml;
     }
 }
