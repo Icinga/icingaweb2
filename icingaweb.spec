@@ -257,6 +257,6 @@ fi
 %attr(2775,%{apacheuser},%{apachegroup}) %dir %{logdir}
 
 %changelog
-* Sun Oct 20 2013 Michael Friedrich <michael.friedrich@netways.de> - 0.0.1
+* Sun Oct 20 2013 Michael Friedrich <michael.friedrich@netways.de> - 1.0.0-1
 - initial creation
 
