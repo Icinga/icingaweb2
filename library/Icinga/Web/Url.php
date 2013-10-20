@@ -32,6 +32,13 @@ class Url
     private $params = array();
 
     /**
+     * The site anchor after the '#'
+     *
+     * @var string
+     */
+    private $anchor = '';
+
+    /**
      * The relative path of this Url, without query parameters
      *
      * @var string
@@ -108,7 +115,16 @@ class Url
         }
         $urlObject->setBaseUrl($request->getBaseUrl());
 
+        /*
+         * Fetch fragment manually and remove it from the url, to 'help' the parse_url() function
+         * parsing the url properly. Otherwise calling the function with a fragment, but without a
+         * query will cause unpredictable behaviour.
+         */
+        $fragment = self::getUrlFragment($url);
+        $url = self::stripUrlFragment($url);
+
         $urlParts = parse_url($url);
+
         if (isset($urlParts["path"])) {
             $urlObject->setPath($urlParts["path"]);
         }
@@ -117,9 +133,41 @@ class Url
             parse_str($urlParts["query"], $urlParams);
             $params = array_merge($urlParams, $params);
         }
+        if ($fragment !== '') {
+            $urlObject->setAnchor($fragment);
+        }
 
         $urlObject->setParams($params);
         return $urlObject;
+    }
+
+    /**
+     * Get the fragment of a given url
+     *
+     * @param   $url    The url containing the fragment.
+     *
+     * @return  string  The fragment without the '#'
+     */
+    private static function getUrlFragment($url)
+    {
+        $url = parse_url($url);
+        if (isset($url['fragment'])) {
+            return $url['fragment'];
+        } else {
+            return '';
+        }
+    }
+
+    /**
+     * Remove the fragment-part of a given url
+     *
+     * @param $url  string  The url to strip from its fragment
+     *
+     * @return      string  The url without the fragment.
+     */
+    private static function stripUrlFragment($url)
+    {
+        return preg_replace('/#.*$/', '', $url);
     }
 
     /**
@@ -179,9 +227,9 @@ class Url
     public function getRelativeUrl()
     {
         if (empty($this->params)) {
-            return ltrim($this->path, '/');
+            return ltrim($this->path, '/') . $this->anchor;
         }
-        return ltrim($this->path, '/').'?'.http_build_query($this->params);
+        return ltrim($this->path, '/') . '?' . http_build_query($this->params) . $this->anchor;
     }
 
     /**
@@ -278,6 +326,16 @@ class Url
     {
         $this->params[$key] = $value;
         return $this;
+    }
+
+    /**
+     * Set the url anchor-part
+     *
+     * @param $anchor   The site's anchor string without the '#'
+     */
+    public function setAnchor($anchor)
+    {
+        $this->anchor = '#' . $anchor;
     }
 
     /**

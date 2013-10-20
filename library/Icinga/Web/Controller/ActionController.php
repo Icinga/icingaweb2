@@ -51,13 +51,6 @@ use \Icinga\Web\Request;
 class ActionController extends Zend_Controller_Action
 {
     /**
-     * True to mark this layout to not render the full layout
-     *
-     * @var bool
-     */
-    protected $replaceLayout = false;
-
-    /**
      * Whether the controller requires the user to be authenticated
      *
      * @var bool
@@ -171,13 +164,14 @@ class ActionController extends Zend_Controller_Action
     /**
      * Return the URI that can be used to request the current action
      *
-     * @return string   return the path to this action: <Module>/<Controller>/<Action>
+     * @return string   return the path to this action: <Module>/<Controller>/<Action>?<Query>
      */
     public function getRequestUrl()
     {
-        return $this->_request->getModuleName() . '/' .
-         $this->_request->getControllerName() . '/' .
-         $this->_request->getActionName();
+         $base = $this->_request->getModuleName() . '/' .
+            $this->_request->getControllerName() . '/' .
+            $this->_request->getActionName();
+         return $_SERVER['QUERY_STRING'] !== '' ? $base . '?' . $_SERVER['QUERY_STRING'] : $base;
     }
 
     /**
