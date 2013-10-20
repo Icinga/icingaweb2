@@ -24,7 +24,7 @@ default:
 #
 # Installs the whole application w\o httpd configurations
 #
-install: install-config install-basic
+install: install-config install-basic ensure-writable-folders
 
 #
 # Installs the whole application w\o configuration
