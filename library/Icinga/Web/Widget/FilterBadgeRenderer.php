@@ -48,6 +48,29 @@ class FilterBadgeRenderer implements Widget
     private $conjunctionCellar = '';
     private $urlFilter;
 
+    private $tpl =<<<'EOT'
+<div class="btn-group">
+  <a title="Click To Remove"  class="btn btn-default btn-xs dropdown-toggle" href="{{REMOVE_FILTER}}" data-icinga-target="self">
+    {{FILTER_SUM}}
+  </a>
+  {{SUBLIST}}
+</div>
+EOT;
+
+    private $subTpl =<<<'EOT'
+  <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown">
+    <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu" role="menu">
+    {{SUBFILTER_LIST}}
+  </ul>
+EOT;
+
+    private $subItemTpl =<<<'EOT'
+    <li><a title="Click To Remove" href="{{REMOVE_FILTER}}"  data-icinga-target="self">{{FILTER_TEXT}}</a></li>
+EOT;
+
+
     /**
      * Create a new badge renderer for this tree
      *
@@ -56,6 +79,41 @@ class FilterBadgeRenderer implements Widget
     public function __construct(Tree $tree)
     {
         $this->tree = $tree;
+    }
+
+    private function getSummarizedText($node)
+    {
+
+        if (count($node->right) === 1) {
+            $value = $node->right[0];
+        } else {
+            $value = join(',', $node->right);
+            if(strlen($value) > 15) {
+                $value = substr($value, 0, 13) . '..';
+            }
+        }
+        return $this->conjunctionCellar . ' '. ucfirst($node->left) . $node->operator . $value ;
+    }
+
+    private function getSubEntries(Node $node)
+    {
+        $liItems = "";
+        $basePath = $this->baseUrl->getAbsoluteUrl();
+        $allParams = $this->baseUrl->getParams();
+
+        foreach ($node->right as $value) {
+            $newTree = $this->tree->createCopy();
+            $affectedNode = $newTree->findNode($node);
+            $affectedNode->right = array_diff($affectedNode->right, array($value));
+            $url = $this->urlFilter->fromTree($newTree);
+            $url = $basePath . (empty($allParams) ? '?' : '&') . $url;
+
+            $liItem = str_replace('{{REMOVE_FILTER}}', $url, $this->subItemTpl);
+            $liItem = str_replace('{{FILTER_TEXT}}', ucfirst($node->left) . $node->operator . $value , $liItem);
+            $liItems .= $liItem;
+        }
+
+        return str_replace('{{SUBFILTER_LIST}}', $liItems, $this->subTpl);
     }
 
     /**
@@ -74,15 +132,18 @@ class FilterBadgeRenderer implements Widget
             $newTree = $this->tree->withoutNode($node);
             $url = $this->urlFilter->fromTree($newTree);
             $url = $basePath . (empty($allParams) ? '?' : '&') . $url;
+            $sumText = $this->getSummarizedText($node);
 
-            return  ' <a class="filter-badge btn btn-default btn-xs" href="' . $url . '">'
-                    . $this->conjunctionCellar .  ' '
-                    . ucfirst($node->left) . ' '
-                    . $node->operator . ' '
-                    . $node->right . '</a>';
+            $tpl = str_replace('{{FILTER_SUM}}', $sumText, $this->tpl);
+            $tpl = str_replace('{{REMOVE_FILTER}}', $url, $tpl);
+            if (count($node->right) > 1) {
+                $tpl = str_replace('{{SUBLIST}}', $this->getSubEntries($node), $tpl);
+            } else {
+                $tpl = str_replace('{{SUBLIST}}', '', $tpl);
+            }
+            return  $tpl;
         }
         $result = '';
-
         $result .= $this->nodeToBadge($node->left);
         $this->conjunctionCellar = $node->type;
         $result .= $this->nodeToBadge($node->right);

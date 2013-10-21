@@ -60,7 +60,7 @@ class StatusFilter extends FilterType
         'Is'        => Node::OPERATOR_EQUALS,
         '='         => Node::OPERATOR_EQUALS,
         '!='        => Node::OPERATOR_EQUALS_NOT,
-        'Is not'    => Node::OPERATOR_EQUALS_NOT
+        'Is Not'    => Node::OPERATOR_EQUALS_NOT
     );
 
     /**
@@ -214,12 +214,7 @@ class StatusFilter extends FilterType
     private function getOperatorValueArray($query)
     {
         $result = array(null, null, null);
-        foreach ($this->getOperators() as $operator) {
-            if (stripos($query, $operator) === 0) {
-                $result[0] = $operator;
-                break;
-            }
-        }
+        $result[0] = self::getMatchingOperatorForQuery($query);
         if ($result[0] === null) {
             return $result;
         }
@@ -234,6 +229,7 @@ class StatusFilter extends FilterType
         if ($result[2] && !$this->subFilter->isValidQuery($result[2])) {
             return array(null, null, null);
         }
+
         return $result;
     }
 

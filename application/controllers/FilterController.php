@@ -72,7 +72,6 @@ class FilterController extends ActionController
                 $this->getParam('filter_module')
             );
             $urlTarget = $this->parse($query, $target);
-            die(print_r($urlTarget,true));
             $this->redirect($urlTarget['urlParam']);
         }
 
@@ -108,7 +107,8 @@ class FilterController extends ActionController
             return array(
                 'state'     => 'success',
                 'proposals' => $this->registry->getProposalsForQuery($text),
-                'urlParam'  => $registry::getUrlForTarget($target, $queryTree)
+                'urlParam'  => $registry::getUrlForTarget($target, $queryTree),
+                'valid'     => count($this->registry->getIgnoredQueryParts()) === 0
             );
         } catch (\Exception $exc) {
             Logger::error($exc);

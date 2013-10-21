@@ -113,6 +113,7 @@ EOT;
         $form->setIgnoreChangeDiscarding(true);
         $badges = new FilterBadgeRenderer($this->initialFilter);
         $html = str_replace('{{FORM}}', $form->render($view), self::$TPL);
+        $html = '<div class="input-append">' . $html . '</div>';
         return str_replace('{{BADGES}}', $badges->render($view), $html);
     }
 }

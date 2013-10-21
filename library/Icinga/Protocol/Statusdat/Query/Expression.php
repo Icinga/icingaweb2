@@ -28,6 +28,8 @@
 
 namespace Icinga\Protocol\Statusdat\Query;
 
+use Icinga\Protocol\Ldap\Exception;
+
 class Expression implements IQueryPart
 {
     /**
@@ -117,11 +119,17 @@ class Expression implements IQueryPart
             case "LIKE":
                 $this->CB = "isLike";
                 break;
+            case "NOT_LIKE":
+                $this->CB = "isNotLike";
+                break;
             case "!=":
                 $this->CB = "isNotEqual";
                 break;
             case "IN":
                 $this->CB = "isIn";
+                break;
+            case "NOT_IN":
+                $this->CB = "isNotIn";
                 break;
             default:
                 throw new \Exception("Unknown operator $token in expression $this->expression !");
@@ -216,7 +224,6 @@ class Expression implements IQueryPart
             $idx = array_keys($base);
         }
         $this->basedata = $base;
-
         return array_filter($idx, array($this, "filterFn"));
     }
 
@@ -248,12 +255,24 @@ class Expression implements IQueryPart
             return false;
         }
 
-        if ($this->CB == "isIn") {
-            return count(array_intersect($values, $this->value)) > 0;
+        if ($this->CB == "isIn" || $this->CB == "isNotIn") {
+            $cmpValues = is_array($this->value) ? $this->value : array($this->value);
+            foreach ($cmpValues as $cmpValue) {
+                $this->value = $cmpValue;
+                foreach ($values as $value) {
+                    if ($this->CB == "isIn" && $this->isLike($value)) {
+                        $this->value = $cmpValues;
+                        return true;
+                    } elseif ($this->CB == "isNotIn" && $this->isNotLike($value)) {
+                        $this->value = $cmpValues;
+                        return true;
+                    }
+                }
+            }
+            $this->value = $cmpValues;
+            return false;
         }
-        if ($this->CB == "isNotIn") {
-            return count(array_intersect($values, $this->value)) == 0;
-        }
+
         if ($this->function) {
             $values = call_user_func($this->function, $values);
             if (!is_array($values)) {
@@ -353,6 +372,15 @@ class Expression implements IQueryPart
     public function isLike($value)
     {
         return preg_match("/^" . str_replace("%", ".*", $this->value) . "$/", $value) ? true : false;
+    }
+
+    /**
+     * @param $value
+     * @return bool
+     */
+    public function isNotLike($value)
+    {
+        return !preg_match("/^" . str_replace("%", ".*", $this->value) . "$/", $value) ? true : false;
     }
 
     /**

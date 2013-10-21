@@ -186,7 +186,7 @@ class Filter extends QueryProposer
             }
             $proposals = array_merge($proposals, $this->getDefaultDomain()->getProposalsForQuery($query));
         }
-        return $proposals;
+        return array_unique($proposals);
     }
 
     /**
@@ -197,7 +197,7 @@ class Filter extends QueryProposer
      */
     private function splitQueryAtNextConjunction($query)
     {
-        $delimiter = array('AND', 'OR');
+        $delimiter = array('AND'/*, 'OR'*/); // or is not supported currently
         $inStr = false;
         for ($i = 0; $i < strlen($query); $i++) {
             // Skip strings

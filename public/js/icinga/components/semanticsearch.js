@@ -93,7 +93,7 @@ define(['jquery', 'logging', 'URIjs/URI', 'components/app/container'], function(
          * @param {String} state    The HTTP state as a string
          */
         this.showError = function(error, state) {
-            if (state === 'abort') {
+            if (!error.message || state === 'abort') {
                 return;
             }
             this.inputDom.popover('destroy').popover({
@@ -136,7 +136,12 @@ define(['jquery', 'logging', 'URIjs/URI', 'components/app/container'], function(
                 return;
             }
 
-            var list = $('<ul>').addClass('nav nav-stacked nav-pills');
+            if (response.valid) {
+                this.inputDom.parent('div').removeClass('has-error').addClass('has-success');
+            } else {
+                this.inputDom.parent('div').removeClass('has-success').addClass('has-error');
+            }
+            var list = $('<ul>').addClass('nav nav-stacked');
             $.each(response.proposals, (function(idx, token) {
                 var displayToken = token.replace(/(\{|\})/g, '');
                 var proposal = $('<li>').
@@ -165,7 +170,7 @@ define(['jquery', 'logging', 'URIjs/URI', 'components/app/container'], function(
          */
         this.updateFilter = function() {
             var query = $.trim(this.inputDom.val());
-            this.pendingRequest = $.ajax(this.getRequestParams(query))
+            $.ajax(this.getRequestParams(query))
                 .done((function(response) {
                     var domContainer = new Container(this.inputDom);
                     var url = response.urlParam;
@@ -217,7 +222,7 @@ define(['jquery', 'logging', 'URIjs/URI', 'components/app/container'], function(
             if (this.lastQueuedEvent) {
                 window.clearTimeout(this.lastQueuedEvent);
             }
-            this.lastQueuedEvent = window.setTimeout(this.getProposal.bind(this), 200);
+            this.lastQueuedEvent = window.setTimeout(this.getProposal.bind(this), 500);
         };
 
         this.construct();

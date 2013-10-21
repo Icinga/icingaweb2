@@ -66,13 +66,22 @@ class TreeToSqlParser
      * @param  String $operator     The operator from the query node
      * @return string               The operator for the sql query part
      */
-    private function getSqlOperator($operator)
+    private function getSqlOperator($operator, array $right)
     {
+
         switch($operator) {
             case Node::OPERATOR_EQUALS:
-                return 'LIKE';
+                if (count($right) > 1) {
+                    return 'IN';
+                } else {
+                    return 'LIKE';
+                }
             case Node::OPERATOR_EQUALS_NOT:
-                return 'NOT LIKE';
+                if (count($right) > 1) {
+                    return 'NOT IN';
+                } else {
+                    return 'NOT LIKE';
+                }
             default:
                 return $operator;
         }
@@ -125,14 +134,14 @@ class TreeToSqlParser
             return '';
         }
         $this->query->requireColumn($node->left);
-        $queryString = $this->query->getMappedField($node->left);
+        $queryString = '(' . $this->query->getMappedField($node->left) . ')';
 
         if ($this->query->isAggregateColumn($node->left)) {
             $this->type = 'HAVING';
         }
         $queryString .= ' ' . (is_integer($node->right) ?
-                $node->operator : $this->getSqlOperator($node->operator)) . ' ';
-        $queryString .= $this->getParameterValue($node);
+                $node->operator : $this->getSqlOperator($node->operator, $node->right)) . ' ';
+        $queryString = $this->addValueToQuery($node, $queryString);
         return $queryString;
     }
 
@@ -145,18 +154,27 @@ class TreeToSqlParser
      * @param Node $node                The node to retrieve the sql string value from
      * @return String|int               The converted and quoted value
      */
-    private function getParameterValue(Node $node) {
-        $value = $node->right;
-        if ($node->operator === Node::OPERATOR_EQUALS || $node->operator === Node::OPERATOR_EQUALS_NOT) {
-            $value = str_replace('*', '%', $value);
+    private function addValueToQuery(Node $node, $query) {
+        $values = array();
+
+        foreach ($node->right as $value)  {
+            if ($node->operator === Node::OPERATOR_EQUALS || $node->operator === Node::OPERATOR_EQUALS_NOT) {
+                $value = str_replace('*', '%', $value);
+            }
+            if ($this->query->isTimestamp($node->left)) {
+                $node->context = Node::CONTEXT_TIMESTRING;
+            }
+            if ($node->context === Node::CONTEXT_TIMESTRING) {
+                $value = strtotime($value);
+            }
+            $values[] = $this->query->getDatasource()->getConnection()->quote($value);
         }
-        if ($this->query->isTimestamp($node->left)) {
-            $node->context = Node::CONTEXT_TIMESTRING;
+        $valueString = join(',', $values);
+
+        if (count($values) > 1) {
+            return '( '. $valueString . ')';
         }
-        if ($node->context === Node::CONTEXT_TIMESTRING) {
-            $value = strtotime($value);
-        }
-        return $this->query->getDatasource()->getConnection()->quote($value);
+        return $query . $valueString;
     }
 
     /**
