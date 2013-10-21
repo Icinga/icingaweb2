@@ -99,7 +99,7 @@ class Registry implements FilterRegistry
 
         $domain->registerAttribute(
             FilterAttribute::create(new TextFilter())
-                ->setHandledAttributes('Name', 'Hostname')
+                ->setHandledAttributes('Name', 'Host', 'Hostname')
                 ->setField('host_name')
         )->registerAttribute(
             FilterAttribute::create(StatusFilter::createForHost())
@@ -173,6 +173,10 @@ class Registry implements FilterRegistry
                 FilterAttribute::create(self::getNextCheckFilterType())
                     ->setHandledAttributes('Next Check')
                     ->setField('service_next_check')
+            )->registerAttribute(
+                FilterAttribute::create(new TextFilter())
+                    ->setHandledAttributes('Hostname', 'Host')
+                    ->setField('host_name')
             );
         return $domain;
     }
@@ -211,11 +215,11 @@ class Registry implements FilterRegistry
 
         parse_str($lastQuery, $lastParameters);
         if ($lastFilter->root) {
-            $filter->insert($lastFilter->root);
+            $filter->insertTree($lastFilter);
         }
         $params = array();
         foreach ($lastParameters as $key => $param) {
-            if (!$filter->hasNodeWithAttribute($key)) {
+            if (!$filter->hasNodeWithAttribute($key) && $view->isValidFilterTarget($key)) {
                 $params[$key] = $param;
             }
         }
@@ -229,5 +233,10 @@ class Registry implements FilterRegistry
         }
         $urlString .= $urlParser->fromTree($filter);
         return '/' . $urlString;
+    }
+
+    public function isValid($query)
+    {
+
     }
 }

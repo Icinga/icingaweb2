@@ -113,6 +113,14 @@ class Node
         $node->type = self::TYPE_OPERATOR;
         $node->operator = $operator;
         $node->left = $left;
+        if ($right === null) {
+            $right = array();
+        } elseif (!is_array($right)) {
+            $right = array($right);
+        }
+        foreach($right as &$value) {
+            $value = trim($value);
+        }
         $node->right = $right;
         return $node;
     }

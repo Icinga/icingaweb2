@@ -52,6 +52,9 @@ class UrlViewFilter
      */
     private $target;
 
+    private $supportedConjunctions = array('&'/*, '|'*/);
+
+
     /**
      * Create a new ViewFilter
      *
@@ -77,7 +80,41 @@ class UrlViewFilter
         if ($this->target) {
             $filter = $filter->getCopyForFilterable($this->target);
         }
+        $filter = $this->normalizeTreeNode($filter->root);
+        $filter->root = $filter->normalizeTree($filter->root);
         return $this->convertNodeToUrlString($filter->root);
+    }
+
+    private function insertNormalizedOperatorNode($node, Tree $subTree = null)
+    {
+
+        $searchNode = $subTree->findNode(Node::createOperatorNode($node->operator, $node->left, null));
+        if ( $searchNode !== null) {
+            $result = array();
+            foreach ($node->right as $item) {
+                if (stripos($item, '*')) {
+                    $subTree->insert(Node::createOperatorNode($node->operator, $node->left, $item));
+                } else {
+                    $result = $result + $node->right;
+                }
+            }
+            $searchNode->right = array_merge($searchNode->right, $result);
+        } else {
+            $subTree->insert($node);
+        }
+    }
+
+    public function normalizeTreeNode($node, Tree $subTree = null)
+    {
+        $subTree = $subTree ? $subTree : new Tree();
+        if ($node->type === Node::TYPE_OPERATOR) {
+            $this->insertNormalizedOperatorNode($node, $subTree);
+        } else {
+            $subTree->insert($node->type === Node::TYPE_AND ? Node::createAndNode() : Node::createOrNode());
+            $subTree = $this->normalizeTreeNode($node->left, $subTree);
+            $subTree = $this->normalizeTreeNode($node->right, $subTree);
+        }
+        return $subTree;
     }
 
     /**
@@ -103,8 +140,8 @@ class UrlViewFilter
             } elseif (is_array($token)) {
                 $tree->insert(
                     Node::createOperatorNode(
-                        $token[self::FILTER_OPERATOR],
-                        $token[self::FILTER_TARGET],
+                        trim($token[self::FILTER_OPERATOR]),
+                        trim($token[self::FILTER_TARGET]),
                         $token[self::FILTER_VALUE]
                     )
                 );
@@ -133,12 +170,16 @@ class UrlViewFilter
     {
         $left = null;
         $right = null;
-
         if ($node->type === Node::TYPE_OPERATOR) {
             if ($this->target && !$this->target->isValidFilterTarget($node->left)) {
                 return null;
             }
-            return urlencode($node->left) . $node->operator . urlencode($node->right);
+            $values = array();
+            foreach ($node->right as $item) {
+                $values[] = urlencode($item);
+
+            }
+            return urlencode($node->left) . $node->operator . join(',', $values);
         }
         if ($node->left) {
             $left = $this->convertNodeToUrlString($node->left);
@@ -167,7 +208,7 @@ class UrlViewFilter
      * array(
      *      self::FILTER_TARGET   => 'Attribute',
      *      self::FILTER_OPERATOR => '!=',
-     *      self::FILTER_VALUE    => 'Value'
+     *      self::FILTER_VALUE    => array('Value')
      * )
      *
      * @param  String $query        The query to tokenize
@@ -233,7 +274,6 @@ class UrlViewFilter
      */
     private function parseTarget($query, $currentPos, array &$tokenList)
     {
-        $conjunctions = array('&', '|');
         $i = $currentPos;
 
         for ($i; $i < strlen($query); $i++) {
@@ -254,7 +294,7 @@ class UrlViewFilter
             }
 
             // Implicit value token (test=1|2)
-            if (in_array($currentChar, $conjunctions) || $i + 1 == strlen($query)) {
+            if (in_array($currentChar, $this->supportedConjunctions) || $i + 1 == strlen($query)) {
                 $nrOfSymbols = count($tokenList);
                 if ($nrOfSymbols <= 2) {
                     return array($i, self::FILTER_TARGET);
@@ -292,7 +332,6 @@ class UrlViewFilter
     {
 
         $i = $currentPos;
-        $conjunctions = array('&', '|');
         $nrOfSymbols = count($tokenList);
 
         if ($nrOfSymbols == 0) {
@@ -301,7 +340,7 @@ class UrlViewFilter
         $lastState = &$tokenList[$nrOfSymbols-1];
         for ($i; $i < strlen($query); $i++) {
             $currentChar = $query[$i];
-            if (in_array($currentChar, $conjunctions)) {
+            if (in_array($currentChar,  $this->supportedConjunctions)) {
                 break;
             }
         }
@@ -312,9 +351,9 @@ class UrlViewFilter
             array_pop($tokenList);
             return array($currentPos, self::FILTER_TARGET);
         }
-        $lastState[self::FILTER_VALUE] = substr($query, $currentPos, $length);
+        $lastState[self::FILTER_VALUE] = explode(',', substr($query, $currentPos, $length));
 
-        if (in_array($currentChar, $conjunctions)) {
+        if (in_array($currentChar,  $this->supportedConjunctions)) {
             $tokenList[] = $currentChar;
         }
         return array($i, self::FILTER_TARGET);
@@ -331,10 +370,9 @@ class UrlViewFilter
      */
     private function skip($query, $currentPos)
     {
-        $conjunctions = array('&', '|');
         for ($i = $currentPos; strlen($query); $i++) {
             $currentChar = $query[$i];
-            if (in_array($currentChar, $conjunctions)) {
+            if (in_array($currentChar, $this->supportedConjunctions)) {
                 return array($i, self::FILTER_TARGET);
             }
         }

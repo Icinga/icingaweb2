@@ -225,7 +225,8 @@ class Query extends BaseQuery
             $indexes = array_keys($state[$target]);
             if ($baseGroup) {
                 $baseGroup->setQuery($this);
-                $indexes = $baseGroup->filter($state[$target]);
+                $idx = array_keys($state[$target]);
+                $indexes = $baseGroup->filter($state[$target], $idx );
             }
             if (!isset($result[$target])) {
                 $result[$target] = $indexes;

@@ -26,30 +26,48 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-
 namespace Icinga\Protocol\Statusdat;
-
 
 use Icinga\Filter\Filterable;
 use Icinga\Filter\Query\Node;
 use Icinga\Filter\Query\Tree;
 use Icinga\Protocol\Statusdat\Query\Expression;
 use Icinga\Protocol\Statusdat\Query\Group;
+use Icinga\Protocol\Statusdat\Query\IQueryPart;
 
+/**
+ * Parser to create statusdat filter expressions from query trees
+ *
+ */
 class TreeToStatusdatQueryParser
 {
 
-    private function nodeToQuery(Node $node,  Filterable $source)
+    /**
+     * Create a Statusdat expression from a Tree node
+     *
+     * @param Node $node            The node to convert to an expression
+     * @param Filterable $source    The filterable to use for field mapping
+     *
+     * @return IQueryPart           Either a statusdat expression or an expression group
+     */
+    private function nodeToQuery(Node $node, Filterable $source)
     {
         if ($node->type === Node::TYPE_OPERATOR) {
             $op = $node->operator;
-            $value = $node->right;
+
             $node->left = $source->getMappedField($node->left);
-            if (stripos($node->right, '*') !== false) {
-                $op = 'LIKE';
+            $op = 'IN';
+            $values = $node->right;
+
+            if ($node->operator === NODE::OPERATOR_EQUALS_NOT) {
+                $op = 'NOT_' . $op;
+
+            }
+            foreach ($values as &$value) {
                 $value = str_replace('*', '%', $value);
             }
-            return new Expression($node->left . ' ' . $op . ' ?', $value);
+            $values = array($values);
+            return new Expression($node->left . ' ' . $op . ' ? ', $values);
         } else {
             $group = new Group();
             $group->setType(($node->type === Node::TYPE_OR) ? Group::TYPE_OR  : Group::TYPE_AND);
@@ -60,6 +78,14 @@ class TreeToStatusdatQueryParser
     }
 
 
+    /**
+     * Create a statusdat specific filter expression for the given query tree and filterable
+     *
+     * @param Tree $tree            The tree to convert to a query
+     * @param Filterable $source    The filterable to use for tree conversion
+     *
+     * @return IQueryPart           A statusdat query object
+     */
     public function treeToQuery(Tree $tree, Filterable $source)
     {
 

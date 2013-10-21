@@ -54,6 +54,23 @@ class Tree
      */
     private $lastNode;
 
+    public function insertTree(Tree $tree)
+    {
+        $this->insertSubTree($tree->root);
+        $this->root = $this->normalizeTree($this->root);
+    }
+
+    private function insertSubTree(Node $node)
+    {
+        if ($node->type === Node::TYPE_OPERATOR) {
+            $this->insert($node);
+        } else {
+            $this->insert($node->type === Node::TYPE_AND ? Node::createAndNode() : Node::createOrNode());
+            $this->insertSubTree($node->left);
+            $this->insertSubTree($node->right);
+        }
+    }
+
     /**
      * Insert a node into this tree, recognizing type and insert position
      *
@@ -77,7 +94,6 @@ class Tree
                         $this->insert(Node::createAndNode());
                     }
                     $node->parent = $this->lastNode;
-
                     if ($this->lastNode->left == null) {
                         $this->lastNode->left = $node;
                     } elseif ($this->lastNode->right == null) {
@@ -86,6 +102,7 @@ class Tree
                     break;
             }
         }
+
         $this->lastNode = $node;
     }
 
@@ -350,16 +367,23 @@ class Tree
         if ($ctx === null) {
             return null;
         }
-        if ($ctx->type === Node::TYPE_OPERATOR) {
-            if ($ctx->left == $node->left && $ctx->right == $node->right && $ctx->operator == $node->operator) {
-                return $ctx;
+
+        if ($ctx->type == Node::TYPE_OPERATOR) {
+            if ($ctx->left == $node->left  && $ctx->operator == $node->operator) {
+                if(empty($node->right) || $ctx->right == $node->right) {
+                    return $ctx;
+                }
             }
             return null;
         } else {
-            $result = $this->findNode($node, $ctx->left);
-            if ($result === null) {
+            $result = null;
+            if ($ctx->left) {
+                $result = $this->findNode($node, $ctx->left);
+            } if ($result == null && $ctx->right) {
                 $result = $this->findNode($node, $ctx->right);
+
             }
+
             return $result;
         }
     }
@@ -367,21 +391,25 @@ class Tree
     /**
      * Return true if A node with the given attribute on the left side exists
      *
-     * @param String $name         The attribute to test for existence
-     * @param Node   $ctx          The current root node
+     * @param String $name          The attribute to test for existence
+     * @param Node   $ctx           The current root node
+     * @oaram bool   $isRecursive   Internal flag to disable null nodes being replaced with the tree root
      *
      * @return bool                 True if a node contains $name on the left side, otherwise false
      */
-    public function hasNodeWithAttribute($name, $ctx = null)
+    public function hasNodeWithAttribute($name, $ctx = null, $isRecursive = false)
     {
-        $ctx = $ctx ? $ctx : $this->root;
+        if (!$isRecursive) {
+            $ctx = $ctx ? $ctx : $this->root;
+        }
         if ($ctx === null) {
             return false;
         }
         if ($ctx->type === Node::TYPE_OPERATOR) {
             return $ctx->left === $name;
         } else {
-            return $this->hasNodeWithAttribute($name, $ctx->left) || $this->hasNodeWithAttribute($name, $ctx->right);
+            return $this->hasNodeWithAttribute($name, $ctx->left, true)
+                    || $this->hasNodeWithAttribute($name, $ctx->right, true);
         }
     }
 }
