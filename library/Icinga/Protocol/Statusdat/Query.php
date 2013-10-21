@@ -29,6 +29,7 @@
 namespace Icinga\Protocol\Statusdat;
 
 use Exception;
+use Icinga\Exception\ProgrammingError;
 use Icinga\Filter\Query\Node;
 use Icinga\Protocol;
 use Icinga\Data\BaseQuery;
@@ -37,14 +38,13 @@ use Icinga\Protocol\Statusdat\Query\IQueryPart;
 
 /**
  * Base implementation for Statusdat queries.
- *
  */
 class Query extends BaseQuery
 {
     /**
      * An array denoting valid targets by mapping the query target to
      * the 'define' directives found in the status.dat/objects.cache files
-     * 
+     *
      * @var array
      */
     public static $VALID_TARGETS = array(
@@ -394,7 +394,7 @@ class Query extends BaseQuery
         return $result;
     }
 
- 
+
     /**
      * Apply all filters of this filterable on the datasource
      */
@@ -409,14 +409,15 @@ class Query extends BaseQuery
     }
 
     /**
-     * Fetch the first result row
+     * Return only the first row fetched from the result set
      *
      * @return MonitoringObjectList     The monitoring object matching this query
      */
     public function fetchRow()
     {
-        $result =  $this->fetchAll();
-        return $result;
+        $rs = $this->fetchAll();
+        $rs->rewind();
+        return $rs->current();
     }
 
     /**
@@ -461,13 +462,11 @@ class Query extends BaseQuery
     }
 
     /**
-     * Fetch one result
-     *
-     * @return mixed
+     * Return the value of the first column for the first row fetched from the result set
      */
     public function fetchOne()
     {
-        return next($this->fetchAll());
+        throw new ProgrammingError('Statusdat/Query::fetchOne not yet implemented');
     }
 
     /**
@@ -481,6 +480,4 @@ class Query extends BaseQuery
         $q->limit(null, null);
         return count($q->fetchAll());
     }
-
-
 }
