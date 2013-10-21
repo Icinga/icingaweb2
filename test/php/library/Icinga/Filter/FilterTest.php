@@ -135,6 +135,7 @@ class FilterTest extends BaseTestCase
 
     public function testSingleOrQueryTreeCreation()
     {
+        $this->markTestSkipped('OR queries are disabled for now');
         $searchEngine = new Filter();
         $searchEngine->createFilterDomain('host')
             ->registerAttribute(
@@ -171,6 +172,7 @@ class FilterTest extends BaseTestCase
 
     public function testMultipleOrQueries()
     {
+        $this->markTestSkipped('OR queries are disabled');
         $searchEngine = new Filter();
         $searchEngine->createFilterDomain('host')
             ->registerAttribute(
@@ -222,6 +224,7 @@ class FilterTest extends BaseTestCase
 
     public function testComplexQueryTreeCreation()
     {
+        $this->markTestSkipped('OR queries are disabled for now');
         $searchEngine = new Filter();
         $searchEngine->createFilterDomain('host')
             ->registerAttribute(

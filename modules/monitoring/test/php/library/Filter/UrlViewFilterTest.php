@@ -86,6 +86,7 @@ class UrlViewFilterTest extends BaseTestCase
 {
     public function testUrlParamCreation()
     {
+        $this->markTestSkipped('Or queries are disabled');
         $searchEngine = new Filter();
         $searchEngine->createFilterDomain('host')
             ->registerAttribute(
@@ -140,7 +141,7 @@ class UrlViewFilterTest extends BaseTestCase
             'Assert the field to be set correctly'
         );
         $this->assertEquals(
-            $tree->root->right,
+            $tree->root->right[0],
             'Hans Wurst',
             'Assert the value to be set correctly'
         );
@@ -148,6 +149,8 @@ class UrlViewFilterTest extends BaseTestCase
 
     public function testConjunctionFilterInUrl()
     {
+        $this->markTestSkipped("OR queries are disabled");
+
         $filterFactory = new UrlViewFilter(new FilterMock());
         $query = 'attr1!=Hans+Wurst&test=test123|bla=1';
         $tree = $filterFactory->parseUrl($query);
@@ -157,6 +160,7 @@ class UrlViewFilterTest extends BaseTestCase
 
     public function testImplicitConjunctionInUrl()
     {
+        $this->markTestSkipped("OR queries are disabled");
         $filterFactory = new UrlViewFilter(new FilterMock());
         $query = 'attr1!=Hans+Wurst&test=test123|bla=1|2|3';
         $tree = $filterFactory->parseUrl($query);

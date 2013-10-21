@@ -121,13 +121,13 @@ class BooleanFilterTest extends BaseTestCase
         $node = $filter->createTreeNode('is with problem', 'host_status');
         $this->assertEquals('host_problem', $node->left, 'Assert the left part of the node to be host_problem');
         $this->assertEquals(Node::OPERATOR_EQUALS, $node->operator, 'Assert the operator to be equals');
-        $this->assertEquals(1, $node->right, 'Assert the value to be 1');
+        $this->assertEquals(1, $node->right[0], 'Assert the value to be 1');
 
 
         $node = $filter->createTreeNode('is not with problem', 'host_status');
         $this->assertEquals('host_problem', $node->left, 'Assert the left part of the node to be host_problem');
         $this->assertEquals(Node::OPERATOR_EQUALS, $node->operator, 'Assert the operator to be equals');
-        $this->assertEquals(0, $node->right, 'Assert the value to be 0 for not equals');
+        $this->assertEquals(0, $node->right[0], 'Assert the value to be 0 for not equals');
     }
 
     public function testTimeQueryNodeCreation()
@@ -143,11 +143,11 @@ class BooleanFilterTest extends BaseTestCase
 
         $this->assertEquals('time_node', $node->left->left, 'Assert the left part of the node to be time filter');
         $this->assertEquals(Node::OPERATOR_GREATER_EQ, $node->left->operator, 'Assert the operator to be greater eq');
-        $this->assertEquals('-1 hour', $node->left->right, 'Assert the value to be the strotime info');
+        $this->assertEquals('-1 hour', $node->left->right[0], 'Assert the value to be the strotime info');
 
         $this->assertEquals('host_problem', $node->right->left, 'Assert the right part of the node to be host_problem');
         $this->assertEquals(Node::OPERATOR_EQUALS, $node->right->operator, 'Assert the operator to be equals');
-        $this->assertEquals(1, $node->right->right, 'Assert the value to be 1');
+        $this->assertEquals(1, $node->right->right[0], 'Assert the value to be 1');
 
     }
 }

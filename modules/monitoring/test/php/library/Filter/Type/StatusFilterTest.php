@@ -93,7 +93,7 @@ class StatusFilterTest extends BaseTestCase
         );
         $this->assertEquals(
             1,
-            $treeNode->right,
+            $treeNode->right[0],
             'Assert the right treenode to contain the numeric status for "Down"'
         );
         $this->assertEquals(
