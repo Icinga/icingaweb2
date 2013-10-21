@@ -42,7 +42,7 @@ use \Icinga\Util\DateTimeFactory;
 class DateTimePicker extends Zend_Form_Element_Text
 {
     /**
-     * Defautl format used my js picker
+     * Default format used my js picker
      *
      * @var string
      */

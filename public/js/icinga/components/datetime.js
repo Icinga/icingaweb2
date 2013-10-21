@@ -40,6 +40,11 @@ define(['jquery', 'datetimepicker'], function($) {
             todayBtn: true,
             todayHighlight: true
         });
+
+        $(target).parent().find('a').click(function(e) {
+            e.preventDefault();
+            $(target).datetimepicker('show');
+        });
     };
 
     return DateTimePicker;
