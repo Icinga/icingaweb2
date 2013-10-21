@@ -93,7 +93,7 @@ $viewHelper = $this->getHelper('MonitoringState');
           <div>
             <?php if ($host->host_unhandled_service_count): ?>
               <span class="badge pull-right" title="<?= $host->host_unhandled_service_count; ?> Service Problems on Host">
-              <a href="<?= $this->href('monitoring/list/services', array('host' => $host->host_name, 'service_problems' => 1)); ?>">
+              <a data-icinga-target="detail" href="<?= $this->href('monitoring/list/services', array('host' => $host->host_name, 'service_problem' => 1)); ?>">
                 <?= $host->host_unhandled_service_count; ?>
               </a>
             </span>

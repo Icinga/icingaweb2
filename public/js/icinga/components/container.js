@@ -291,11 +291,11 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
                 return true;
             }
             var url = URI($(target).attr('href'));
+
             var explicitTarget = $(target).attr('data-icinga-target');
 
             var isHash = ('#' + url.fragment() === url.href());
             if (isHash) {
-
                 explicitTarget = this.containerType === CONTAINER_TYPES.MAIN ? 'main' : 'detail';
             }
             if (explicitTarget) {

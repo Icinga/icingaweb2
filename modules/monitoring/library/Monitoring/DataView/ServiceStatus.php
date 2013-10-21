@@ -72,6 +72,7 @@ class ServiceStatus extends DataView
             'host_modified_host_attributes',
             'service',
             'service_hard_state',
+            'service_problem',
             'service_perfdata',
             'service_active_checks_enabled',
             'service_active_checks_enabled_changed',
@@ -130,7 +131,7 @@ class ServiceStatus extends DataView
 
     public function getFilterColumns()
     {
-        return array('hostgroups', 'servicegroups', 'service_problems');
+        return array('hostgroups', 'servicegroups', 'service_problem');
     }
 
     public function isValidFilterTarget($column)

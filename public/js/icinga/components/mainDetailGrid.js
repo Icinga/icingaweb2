@@ -210,8 +210,10 @@ function(Container, $, logger, URI, tpl, urlMgr, Selectable, TableMultiSelection
                         // don't open the link
                         return;
                 }
-
                 var url = URI($('a', this).attr('href'));
+                if (targetEl.tagName.toLowerCase() === 'a') {
+                    url = URI($(targetEl).attr('href'));
+                }
                 var segments = url.segment();
                 if (selection.size() === 0) {
                     // don't open anything
