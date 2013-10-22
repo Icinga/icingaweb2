@@ -590,8 +590,8 @@ ac_subst_vars='LTLIBOBJS
 LIBOBJS
 INSTALL_OPTS_WEB
 INSTALL_OPTS
-use_internal_auth
-use_ldap_auth
+internal_auth_disabled
+ldap_auth_disabled
 icinga_commandpipe
 livestatus_enabled
 livestatus_socket
@@ -2832,7 +2832,7 @@ case $icinga_backend in #(
     statusdat_enabled="" ;;
 esac
 
-use_ldap_auth=";"
+ldap_auth_disabled="disabled    = \"1\""
 if test "x$ldap_authentication" != xno; then :
 
   for x in ldap;do
@@ -2846,11 +2846,11 @@ else
 fi
   done
 
-    use_ldap_auth=""
+    ldap_auth_disabled=""
 
 fi
 
-use_internal_auth=";"
+internal_auth_disabled="disabled    = \"1\""
 if test "x$internal_authentication" != xno; then :
 
   for x in ldap;do
@@ -2864,7 +2864,7 @@ else
 fi
   done
 
-    use_internal_auth=""
+    internal_auth_disabled=""
 
 fi
 

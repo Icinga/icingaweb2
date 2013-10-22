@@ -348,16 +348,16 @@ AS_CASE([$icinga_backend],
     ["livestatus"], [livestatus_enabled=""],
     [statusdat_enabled=""])
 
-use_ldap_auth=";"
+ldap_auth_disabled="disabled    = \"1\""
 AS_IF([test "x$ldap_authentication" != xno],
     AC_CHECK_PHP_MODULE([ldap])
-    use_ldap_auth=""
+    ldap_auth_disabled=""
 )
 
-use_internal_auth=";"
+internal_auth_disabled="disabled    = \"1\""
 AS_IF([test "x$internal_authentication" != xno],
     AC_CHECK_PHP_MODULE([ldap])
-    use_internal_auth=""
+    internal_auth_disabled=""
 )
 
 #
@@ -419,8 +419,8 @@ AC_SUBST(icinga_commandpipe)
 
 # Comment placeholders for toggling backends
 
-AC_SUBST(use_ldap_auth)
-AC_SUBST(use_internal_auth)
+AC_SUBST(ldap_auth_disabled)
+AC_SUBST(internal_auth_disabled)
 
 # Application and installation
 AC_SUBST(PHP)

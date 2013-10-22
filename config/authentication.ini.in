@@ -12,22 +12,24 @@
 ; priority.
 
 
-@use_ldap_auth@[ldap_authentication]
-@use_ldap_auth@backend     = "ldap"
-@use_ldap_auth@target      = "user"
-@use_ldap_auth@hostname    = "@ldap_host@"
-@use_ldap_auth@port        = "@ldap_port@"
-@use_ldap_auth@root_dn     = "@ldap_rootdn@"
-@use_ldap_auth@bind_dn     = "@ldap_binddn@"
-@use_ldap_auth@bind_pw     = "@ldap_bindpass@"
+[ldap_authentication]
+@ldap_auth_disabled@
+backend     = "ldap"
+target      = "user"
+hostname    = "@ldap_host@"
+port        = "@ldap_port@"
+root_dn     = "@ldap_rootdn@"
+bind_dn     = "@ldap_binddn@"
+bind_pw     = "@ldap_bindpass@"
 
 ; Object class of the user
-@use_ldap_auth@user_class              = "@ldap_user_objectclass@"
+user_class              = "@ldap_user_objectclass@"
 
 ; Attribute name for username
-@use_ldap_auth@user_name_attribute     = "@ldap_attribute_username@"
+user_name_attribute     = "@ldap_attribute_username@"
 
-@use_internal_auth@[internal_authentication]
-@use_internal_auth@backend     = db
-@use_internal_auth@target      = "user"
-@use_internal_auth@resource    = "internal_db"
+[internal_authentication]
+@internal_auth_disabled@
+backend     = db
+target      = "user"
+resource    = "internal_db"
