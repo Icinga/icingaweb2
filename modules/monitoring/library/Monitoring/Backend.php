@@ -149,7 +149,13 @@ class Backend implements ConfigAwareFactory, DatasourceInterface
             $name = self::getDefaultBackendName();
         }
 
-        $config = self::$backendConfigs[$name];
+        if (isset(self::$backendConfigs[$name])) {
+            $config = self::$backendConfigs[$name];
+        } else {
+            throw new ConfigurationError(
+                'No configuration for backend' . $name
+            );
+        }
 
         self::$backendInstances[$name] = $backend = new self($config, ResourceFactory::getResourceConfig($config->resource));
         switch (strtolower($config->type)) {
