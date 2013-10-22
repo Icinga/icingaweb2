@@ -30,7 +30,7 @@ class PerfdataSet
 
     public function getAll()
     {
-        return $this->perfdata;
+        return $this->perfdata === null ? array() : $this->perfdata;
     }
 
     protected function readLabel()

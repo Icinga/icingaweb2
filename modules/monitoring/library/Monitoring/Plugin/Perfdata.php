@@ -36,6 +36,22 @@ class Perfdata
         }
     }
 
+    public function hasMax()
+    {
+        return $this->max !== null && $this->max > 0;
+    }
+
+    public function getPercentage()
+    {
+        if ($this->unit === self::PERCENT) {
+            return $this->val;
+        }
+        if ($this->hasMax()) {
+            return $this->val / $this->max * 100;
+        }
+        return false;
+    }
+
     public function getValue()
     {
         return $this->val;
