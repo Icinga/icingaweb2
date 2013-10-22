@@ -3,6 +3,7 @@ namespace Tests\Icinga\Protocol\Ldap;
 require_once '../../library/Icinga/Protocol/Ldap/Query.php';
 require_once '../../library/Icinga/Protocol/Ldap/Connection.php';
 require_once '../../library/Icinga/Protocol/Ldap/LdapUtils.php';
+require_once('Zend/Config.php');
 /**
 *
 * Test class for Query
@@ -13,12 +14,16 @@ class QueryTest extends \PHPUnit_Framework_TestCase
 {
     private function emptySelect()
     {
-        $connection = new \Icinga\Protocol\Ldap\Connection((object) array(
-            'hostname' => 'localhost',
-            'root_dn'  => 'dc=example,dc=com',
-            'bind_dn'  => 'cn=user,ou=users,dc=example,dc=com',
-            'bind_pw'  => '***'
-        ));
+        $config = new \Zend_Config(
+            array(
+                'hostname' => 'localhost',
+                'root_dn'  => 'dc=example,dc=com',
+                'bind_dn'  => 'cn=user,ou=users,dc=example,dc=com',
+                'bind_pw'  => '***'
+            )
+        );
+
+        $connection = new \Icinga\Protocol\Ldap\Connection($config);
         return $connection->select();
     }
 
