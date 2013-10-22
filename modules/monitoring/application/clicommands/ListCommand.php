@@ -9,33 +9,9 @@ use Icinga\Cli\Command;
 use Icinga\File\Csv;
 
 /**
- * List and filter monitored objects
+ * Icinga monitoring objects
  *
- * This command allows you to search and visualize your monitored objects in
- * different ways.
- *
- * USAGE
- *
- * icingaweb monitoring list [<type>] [options]
- *
- * OPTIONS
- *
- *   --verbose  Show detailled output
- *   --showsql  Dump generated SQL query (DB backend only)
- *
- *   --format <csv|json|<custom>>
- *     Dump columns in the given format. <custom> format allows $column$
- *     placeholders, e.g. --format '$host$: $service$'
- *
- *   --<column> [filter]
- *     Filter given column by optional filter. Boolean (1/0) columns are true
- *     if no filter value is given.
- *
- * EXAMPLES
- *
- * icingaweb monitoring list --unhandled
- * icingaweb monitoring list --host local* --service *disk*
- * icingaweb monitoring list --format '$host_name$: $service_description$'
+ * This module is your interface to the Icinga monitoring application.  
  */
 class ListCommand extends Command
 {
@@ -128,6 +104,35 @@ class ListCommand extends Command
         exit;
     }
 
+    /**
+     * List and filter monitored objects
+     *
+     * This command allows you to search and visualize your monitored objects in
+     * different ways.
+     *
+     * USAGE
+     *
+     * icingaweb monitoring list [<type>] [options]
+     *
+     * OPTIONS
+     *
+     *   --verbose  Show detailled output
+     *   --showsql  Dump generated SQL query (DB backend only)
+     *
+     *   --format <csv|json|<custom>>
+     *     Dump columns in the given format. <custom> format allows $column$
+     *     placeholders, e.g. --format '$host$: $service$'
+     *
+     *   --<column> [filter]
+     *     Filter given column by optional filter. Boolean (1/0) columns are
+     *     true if no filter value is given.
+     *
+     * EXAMPLES
+     *
+     *   icingaweb monitoring list --unhandled
+     *   icingaweb monitoring list --host local* --service *disk*
+     *   icingaweb monitoring list --format '$host$: $service$'
+     */
     public function statusAction()
     {
         $columns = array(
@@ -147,10 +152,10 @@ class ListCommand extends Command
         );
         $query = $this->getQuery('status', $columns)
             ->order('host_name');
-        echo $this->renderQuery($query);
+        echo $this->renderStatusQuery($query);
     }
     
-    protected function renderQuery($query)
+    protected function renderStatusQuery($query)
     {
         $out = '';
         $last_host = null;
