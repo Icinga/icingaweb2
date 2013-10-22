@@ -11,16 +11,26 @@ use Icinga\Cli\Command;
  */
 class ConferenceCommand extends Command
 {
+    protected static $flipflop = 0;
+
     /**
      * Give them a warm welcome
      *
-     * Use this command in case you feel that you should be friendly
+     * Use this command in case you feel that you should be friendly. Should
+     * be executed as follows:
+     *
+     * icingaweb monitoring conference welcome --watch 1
      */
     public function welcomeAction()
     {
-        $scr = $this->screen;
+        self::$flipflop = (int) ! self::$flipflop;
+        $signs    = array('☺', '❤');
+        $bgcolors = array('blue', 'red');
+        $scr      = $this->screen;
+        $sign     = $signs[self::$flipflop];
+        $bgcolor  = $bgcolors[self::$flipflop];
         echo $scr->clear() . $scr->newlines(10) . $scr->center(
-            $scr->colorize(' ❤ Welcome OSMC 2013 ❤ ', 'white', 'red')
+            $scr->colorize(" $sign  Welcome OSMC 2013 $sign  ", 'white', $bgcolor)
         ) . $scr->newlines(10);
     }
 }
