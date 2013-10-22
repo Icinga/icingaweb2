@@ -31,8 +31,8 @@ AC_CHECK_PHP_MODULE([sockets json])
 #
 AC_ARG_WITH([icingaweb_config_path],
     AS_HELP_STRING([--with-icingaweb-config-path=PATH], [Configuration path for icinga web (default $prefix/config)]),
-    icingaweb_config_path="'$withval'",
-    icingaweb_config_path="'$prefix/config/'"
+    icingaweb_config_path=$withval,
+    icingaweb_config_path=$prefix/config
 )
 
 #
