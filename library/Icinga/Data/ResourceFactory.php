@@ -8,6 +8,7 @@ use Zend_Config;
 use Icinga\Util\ConfigAwareFactory;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Data\Db\Connection as DbConnection;
+use Icinga\Protocol\Livestatus\Connection as LivestatusConnection;
 use Icinga\Protocol\Statusdat\Reader as StatusdatReader;
 
 class ResourceFactory implements ConfigAwareFactory
@@ -38,6 +39,9 @@ class ResourceFactory implements ConfigAwareFactory
                 break;
             case 'statusdat':
                 $resource = new StatusdatReader($config);
+                break;
+            case 'livestatus':
+                $resource = new LivestatusConnection($config->socket);
                 break;
             default:
                 throw new ConfigurationError('Unsupported resource type "' . $config->type . '"');
