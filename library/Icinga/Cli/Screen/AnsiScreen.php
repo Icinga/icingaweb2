@@ -70,6 +70,28 @@ class AnsiScreen extends Screen
         return $rows;
     }
 
+    public function strlen($string)
+    {
+        return strlen($this->stripAnsiCodes($string));
+    }
+
+    public function stripAnsiCodes($string)
+    {
+        return preg_replace('/\e\[?.*?[\@-~]/', '', $string);
+    }
+
+    public function newlines($count = 1)
+    {
+        return str_repeat("\n", $count);
+    }
+
+    public function center($txt)
+    {
+        $len = $this->strlen($txt);
+        $width = floor(($this->getColumns() + $len) / 2) - $len;
+        return str_repeat(' ', $width) . $txt;
+    }
+
     public function hasUtf8()
     {
         if ($this->isUtf8 === null) {
