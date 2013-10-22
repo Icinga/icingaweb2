@@ -69,11 +69,11 @@ class Connection
         } else {
             $uri = sprintf('tcp://%s:%d', $this->host, $this->port);
         }
-        $this->connection = stream_socket_client(
+        $this->connection = @stream_socket_client(
             $uri,
             $errno,
             $errstr,
-            60,
+            10,
             STREAM_CLIENT_CONNECT,
             $ctx
         );
@@ -92,7 +92,7 @@ class Connection
 
     protected function disconnect()
     {
-        if ($this->connection !== null) {
+        if (is_resource($this->connection)) {
             fclose($this->connection);
             $this->connection = null;
         }
