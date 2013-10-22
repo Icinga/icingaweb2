@@ -7,6 +7,8 @@ use Icinga\Module\Monitoring\Cli\CliUtils;
 use Icinga\Util\Format;
 use Icinga\Cli\Command;
 use Icinga\File\Csv;
+use Icinga\Module\Monitoring\Plugin\PerfdataSet;
+use Exception;
 
 /**
  * Icinga monitoring objects
@@ -148,6 +150,7 @@ class ListCommand extends Command
             'service_in_downtime',
             'service_handled',
             'service_output',
+            'service_perfdata',
             'service_last_state_change'
         );
         $query = $this->getQuery('status', $columns)
@@ -256,6 +259,33 @@ class ListCommand extends Command
                        . $emptySpace
                        . ' ' . $straight . '  ';
 
+            $perf = '';
+            try {
+                $pset = PerfdataSet::fromString($row->service_perfdata);
+                $perfs = array();
+                foreach ($pset->getAll() as $perfName => $p) {
+                    if ($percent = $p->getPercentage()) {
+                        if ($percent < 0 || $percent > 300) {
+                            continue;
+                        }
+                        $perfs[] = ' '
+                                 . $perfName
+                                 . ': '
+                                 . $this->getPercentageSign($percent)
+                                 . '  '
+                                 . number_format($percent, 2, ',', '.')
+                                 . '%';
+                    }
+                }
+                if (! empty($perfs)) {
+                    $perf = ', ' . implode($perfs);
+                }
+                // TODO: fix wordwarp, then remove this line:
+                $perf = '';
+            } catch (Exception $e) {
+                 // Ignoring perfdata errors right now, we could show some hint
+            }
+
             $wrappedOutput = wordwrap(
                     preg_replace('~\@{3,}~', '@@@', $row->service_output),
                     $maxCols - 13
@@ -264,7 +294,7 @@ class ListCommand extends Command
                 " %1s─ %s%s (since %s)",
                 $leaf,
                 $screen->underline($row->service_description),
-                $screen->colorize($utils->objectStateFlags('service', $row), 'lightblue'),
+                $screen->colorize($utils->objectStateFlags('service', $row) . $perf, 'lightblue'),
                 Format::timeSince($row->service_last_state_change)
             );
             if ($this->isVerbose) {
@@ -281,5 +311,24 @@ class ListCommand extends Command
         $out .= "\n";
         return $out;
     }
+
+    protected function getPercentageSign($percent)
+    {
+        $circles = array(
+            0 => '○',
+            15 => '◔',
+            40 => '◑',
+            65 => '◕',
+            90 => '●',
+        );
+        $last = $circles[0];
+        foreach ($circles as $cur => $circle) {
+            if ($percent < $cur) {
+                return $last;
+            }
+            $last = $circle;
+        }
+    }
+
 }
 
