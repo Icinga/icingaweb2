@@ -13,23 +13,12 @@ $viewHelper = $this->getHelper('MonitoringState');
 <h1>Comments</h1>
 
 <div data-icinga-component="app/mainDetailGrid" data-icinga-grid-selection-type="single">
+
   <?=  $this->sortControl->render($this); ?>
+
   <?=  $this->paginationControl($comments, null, null, array('preserve' => $this->preserve)); ?>
 
   <table class="table table-condensed">
-    <thead>
-    <tr>
-      <th colspan="2">Comment Id</th>
-      <th>Type</th>
-      <th>Host</th>
-      <th>Service</th>
-      <th>Entry Time</th>
-      <th>Author</th>
-      <th>Comment</th>
-      <th>Persistent</th>
-      <th colspan="2">Expires</th>
-    </tr>
-    </thead>
     <tbody>
     <?php foreach ($comments as $comment): ?>
       <?php
@@ -55,55 +44,75 @@ $viewHelper = $this->getHelper('MonitoringState');
           )
         );
       ?>
-    <tr <?= ($this->activeRowHref === $detailLink) ? 'class="active"' : ''; ?>>
+    <tr>
+        <td>
+            <?= date('d.m. H:i', $comment->comment_timestamp); ?>
+        </td>
+
+        <td>
+            <?php if ($comment->comment_objecttype_id === '1'): ?>
+                <i class="icinga-icon-host" rel="tooltip" title="Host comment" ></i>
+            <?php elseif ($comment->comment_objecttype_id === '2'): ?>
+                <i class="icinga-icon-service" rel="tooltip" title="Service comment"></i>
+            <?php endif; ?>
+            <small>
+                <?php
+                switch ($comment->comment_type) {
+                    case 'flapping':
+                        $icon = 'icinga-icon-flapping';
+                        $tooltip = 'Comment was caused by a flapping host or service.';
+                        break;
+                    case 'comment':
+                        $icon = 'icinga-icon-user';
+                        $tooltip = 'Comment was created by an user.';
+                        break;
+                    case 'downtime':
+                        $icon = 'icinga-icon-down';
+                        $tooltip = 'Comment was caused by a downtime.';
+                    case 'ack':
+                        $icon = 'icinga-icon-acknowledgement';
+                        $tooltip = 'Comment was caused by an acknowledgement.';
+                }
+                ?>
+                <i class="<?= $icon ?>" rel="tooltip" title="<?= $tooltip ?>"> </i>
+            </small>
+        </td>
+
         <td>
           <a class="hidden" href="<?= $detailLink; ?>"></a>
-          <?php if ($comment->comment_objecttype_id === '1'): ?>
-            {{{ICON_HOST}}}
-          <?php elseif ($comment->comment_objecttype_id === '2'): ?>
-            {{{ICON_SERVICE}}}
-          <?php endif; ?>
-        </td>
-        <td>
-          <?= $comment->comment_id; ?>
-        </td>
-        <td>
-          <?= $comment->comment_type; ?>
-        </td>
-        <td>
-          <a href="<?= $hostLink ?>">
-            <?= $comment->host_name; ?>
-          </a>
-        </td>
-        <td>
-          <?php if ($comment->service_name): ?>
-            <a href="<?= $detailLink ?>">
-              <?= $comment->service_name ?>
-            </a>
-          <?php else: ?>
-            &nbsp;
-          <?php endif; ?>
-        </td>
-        <td>
-          <?= $dateHelper->formatDateTime($comment->comment_timestamp); ?>
-        </td>
-        <td>
-          <?= $comment->comment_author; ?>
-        </td>
-        <td>
-          <span data-icinga-component="app/ellipsisText">
-          <?= $comment->comment_data; ?>
-          </span>
-        </td>
-        <td>
-          <?= ($comment->comment_is_persistent === '1') ? 'Yes' : 'No'; ?>
-        </td>
-        <td>
-          <?=
-            ($comment->comment_expiration_timestamp) ?
-            $dateHelper->formatDateTime($comment->comment_expiration_timestamp) :
-            'Never';
-          ?>
+
+            <div rel="tooltip" title="Comment #<?=$comment->comment_id ?>">
+            For
+            <?php if ($comment->service_name): ?>
+                <a href="<?= $detailLink ?>">
+                    <?= $comment->service_name ?>
+                    on
+                    <?= $comment->host_name; ?>
+                </a>
+            <?php else: ?>
+                <a href="<?= $hostLink ?>">
+                    <?= $comment->host_name; ?>
+                </a>
+            <?php endif; ?>
+            by
+            <?= $comment->comment_author; ?>
+          <div class="small-row">
+             <?= $comment->comment_data; ?>
+          </div>
+
+          <small>
+            <span>
+               <b>Persists: </b><?= ($comment->comment_is_persistent === '1') ? 'Yes' : 'No'; ?>
+            </span>
+            <span>
+              <b>Expires: </b> <?=
+                ($comment->comment_expiration_timestamp) ?
+                    'at ' . date('d.m H:i', $comment->comment_expiration_timestamp) :
+                    'Never';
+                ?>
+            </span>
+          </small>
+
         </td>
         <td>
           <?php
@@ -125,6 +134,7 @@ $viewHelper = $this->getHelper('MonitoringState');
             );
           ?>
         </td>
+        </div>
       </tr>
     <?php endforeach; ?>
     </tbody>
