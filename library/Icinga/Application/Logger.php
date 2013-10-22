@@ -194,7 +194,7 @@ final class Logger
             $writer = new $writerClass($target);
             $writer->addFilter(new Zend_Log_Filter_Priority($priority));
             // Make sure the permissions for log target file are correct
-            if ($type === 'Stream' && !file_exists($target)) {
+            if ($type === 'Stream' && substr($target, 0, 6) !== 'php://' && !file_exists($target)) {
                 touch($target);
                 chmod($target, 0664);
             }
