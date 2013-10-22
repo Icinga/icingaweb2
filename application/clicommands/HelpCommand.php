@@ -3,6 +3,7 @@
 namespace Icinga\Clicommands;
 
 use Icinga\Cli\Command;
+use Icinga\Cli\Loader;
 use Icinga\Cli\Documentation;
 
 /**
@@ -30,31 +31,12 @@ class HelpCommand extends Command
         $module  = null;
         $command = null;
         $action  = null;
-        $loader = $this->app->cliLoader();
-        $command = $this->params->shift();
-        
-        if ($loader->hasCommand($command)) {
-            $action = $this->params->shift();
-            if (! $loader->getCommandInstance($command)->hasActionName($action)) {
-                $action = null;
-            }
-        } else {
-            if ($loader->hasModule($command)) {
-                $module = $command;
-                $command = $this->params->shift();
-                if ($loader->hasModuleCommand($module, $command)) {
-                    $action = $this->params->shift();
-                    $mod = $loader->getModuleCommandInstance($module, $command);
-                    if (! $mod->hasActionName($action)) {
-                        $action = null;
-                    }
-                } else {
-                    $command = null;
-                }
-            } else {
-                $command = null;
-            }
-        }
-        echo $this->docs()->usage($module, $command, $action);
+        $loader = new Loader($this->app);
+        $loader->parseParams();
+        echo $this->docs()->usage(
+            $loader->getModuleName(),
+            $loader->getCommandName(),
+            $loader->getActionName()
+        );
     }
 }
