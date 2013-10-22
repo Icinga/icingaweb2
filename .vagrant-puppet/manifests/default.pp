@@ -15,7 +15,7 @@ exec { 'create-mysql-icinga-db':
 
 exec{ 'create-pgsql-icinga-db':
   unless  => 'sudo -u postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname=\'icinga\'" | grep -q 1',
-  command => 'sudo -u postgres psql -c "CREATE ROLE icinga WITH LOGIN PASSWORD \'icinga\';" && \
+  command => 'sudo -u postgres psql -c "CREATE ROLE icinga WITH LOGIN PASSWORD \'icingaweb\';" && \
               sudo -u postgres createdb -O icinga -E UTF8 icinga && \
               sudo -u postgres createlang plpgsql icinga',
   require => Service['postgresql']
@@ -340,7 +340,10 @@ configure { 'icingaweb':
   flags => '--prefix=/vagrant \
             --with-icinga-commandpipe="/usr/local/icinga-mysql/var/rw/icinga.cmd" \
             --with-statusdat-file="/usr/local/icinga-mysql/var/status.dat" \
-            --with-httpd-config-path="/etc/httpd/conf.d"'
+            --with-httpd-config-path="/etc/httpd/conf.d" \
+            --with-ldap-authentication \
+            --with-internal-authentication \
+            --with-livestatus-socket="/usr/local/icinga-mysql/var/rw/live"'
 }
 
 file { 'icingaweb-public':
@@ -468,7 +471,7 @@ populate_monitoring_test_config_plugins{ ['test_hostcheck.pl', 'test_servicechec
 # Following section creates and populates MySQL and PostgreSQL Icinga 2 Web databases
 #
 exec { 'create-mysql-icingaweb-db':
-  unless  => 'mysql -uicingaweb -picinga icingaweb',
+  unless  => 'mysql -uicingaweb -picingaweb icingaweb',
   command => 'mysql -uroot -e "CREATE DATABASE icingaweb; \
               GRANT ALL ON icingaweb.* TO icingaweb@localhost \
               IDENTIFIED BY \'icingaweb\';"',
@@ -484,8 +487,8 @@ exec { 'create-pgsql-icingaweb-db':
 }
 
 exec { 'populate-icingaweb-mysql-db-accounts':
-  unless  => 'mysql -uicingaweb -picinga icingaweb -e "SELECT * FROM account;" &> /dev/null',
-  command => 'mysql -uicingaweb -picinga icingaweb < /vagrant/etc/schema/accounts.mysql.sql',
+  unless  => 'mysql -uicingaweb -picingaweb icingaweb -e "SELECT * FROM account;" &> /dev/null',
+  command => 'mysql -uicingaweb -picingaweb icingaweb < /vagrant/etc/schema/accounts.mysql.sql',
   require => [ Exec['create-mysql-icingaweb-db'] ]
 }
 
@@ -496,8 +499,8 @@ exec { 'populate-icingweba-pgsql-db-accounts':
 }
 
 exec { 'populate-icingaweb-mysql-db-preferences':
-  unless  => 'mysql -uicingaweb -picinga icingaweb -e "SELECT * FROM preference;" &> /dev/null',
-  command => 'mysql -uicingaweb -picinga icingaweb < /vagrant/etc/schema/preferences.mysql.sql',
+  unless  => 'mysql -uicingaweb -picingaweb icingaweb -e "SELECT * FROM preference;" &> /dev/null',
+  command => 'mysql -uicingaweb -picingaweb icingaweb < /vagrant/etc/schema/preferences.mysql.sql',
   require => [ Exec['create-mysql-icingaweb-db'] ]
 }
 
