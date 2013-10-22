@@ -64,8 +64,8 @@ class FilterBox implements Widget
      */
     private static $TPL = <<<'EOT'
 <div class="row">
-    <div class="col-md-12">{{FORM}}</div>
-    <div class="col-md-12">{{BADGES}}</div>
+    {{FORM}}
+    {{BADGES}}
 </div>
 EOT;
 

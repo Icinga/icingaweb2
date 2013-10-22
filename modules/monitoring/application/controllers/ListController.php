@@ -63,7 +63,6 @@ class Monitoring_ListController extends MonitoringController
      * @var Backend
      */
     protected $backend;
-
     /**
      * Compact layout name
      *
@@ -72,7 +71,7 @@ class Monitoring_ListController extends MonitoringController
      *
      * @var string
      */
-    private $compactView;
+    protected $compactView;
 
     /**
      * Retrieve backend and hooks for this controller
@@ -168,6 +167,7 @@ class Monitoring_ListController extends MonitoringController
             'host_address'          =>  'Host Address',
             'host_last_check'       =>  'Last Host Check'
         ));
+
     }
 
     /**
@@ -380,39 +380,6 @@ class Monitoring_ListController extends MonitoringController
     }
 
     /**
-     * Handle the 'format' and 'view' parameter
-     *
-     * @param Query $query The current query
-     */
-    private function handleFormatRequest($query)
-    {
-        if ($this->compactView !== null && ($this->_getParam('view', false) === 'compact')) {
-            $this->_helper->viewRenderer($this->compactView);
-        }
-
-
-        if ($this->getParam('format') === 'sql'
-            && IcingaConfig::app()->global->get('environment', 'production') === 'development') {
-            echo '<pre>'
-                . htmlspecialchars(wordwrap($query->dump()))
-                . '</pre>';
-            exit;
-        }
-        if ($this->_getParam('format') === 'json'
-            || $this->_request->getHeader('Accept') === 'application/json')
-        {
-            header('Content-type: application/json');
-            echo json_encode($query->fetchAll());
-            exit;
-        }
-        if ($this->_getParam('format') === 'csv'
-            || $this->_request->getHeader('Accept') === 'text/csv') {
-            Csv::fromQuery($query)->dump();
-            exit;
-        }
-    }
-
-    /**
      * Create a sort control box at the 'sortControl' view parameter
      *
      * @param array $columns    An array containing the sort columns, with the
@@ -446,7 +413,7 @@ class Monitoring_ListController extends MonitoringController
     private function createTabs()
     {
         $tabs = $this->getTabs();
-        $tabs->extend(new OutputFormat())
+        $tabs//->extend(new OutputFormat())
             ->extend(new DashboardAction());
     }
 }

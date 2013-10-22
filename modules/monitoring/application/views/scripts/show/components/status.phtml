@@ -1,6 +1,6 @@
 <?php
-    $object = $this->object;
-    $type = (isset($object->service_description) === true) ? 'service' : 'host';
+
+    $type = $object->type === 2 ? 'service' : 'host';
 
     /** @var Zend_View_Helper_CommandForm $cf */
     $cf = $this->getHelper('CommandForm');
@@ -16,6 +16,7 @@
 <div>
     <div class="panel-heading border-status-<?= $objectStateName ?>">
         <div class="panel-hostname">
+          <?= $type ; ?>
             <?php if ($type === 'host'): ?>
                 <a title="View all services for this host"
                    href="<?= $this->href('monitoring/list/services', array('host' => $object->host_name)); ?>">

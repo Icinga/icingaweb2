@@ -1,3 +1,12 @@
+<div class="row">
+  <div class="pull-left">
+    <h1>Servicegroups</h1>
+  </div>
+  <div class="pull-right">
+    <?= $this->tabs->render($this); ?>
+  </div>
+</div>
+
 <div data-icinga-component="app/mainDetailGrid" data-icinga-grid-selection-type="single">
     <?= $this->sortControl->render($this); ?>
     <?= $this->paginationControl($servicegroups, null, null, array('preserve' => $this->preserve)); ?>

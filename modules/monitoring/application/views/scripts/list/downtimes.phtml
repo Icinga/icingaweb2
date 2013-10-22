@@ -1,7 +1,14 @@
 <?php
 $commandHelper = $this->getHelper('CommandForm');
 ?>
-
+<div class="row">
+  <div class="pull-left">
+    <h1>Downtimes</h1>
+  </div>
+  <div class="pull-right">
+    <?= $this->tabs->render($this); ?>
+  </div>
+</div>
 <div data-icinga-component="app/mainDetailGrid" data-icinga-grid-selection-type="single">
   <div>
     <?=  $this->sortControl->render($this); ?>

@@ -1,9 +1,14 @@
 <?php
 $viewHelper = $this->getHelper('MonitoringState');
 ?>
-
-<?= $this->tabs->render($this); ?>
-<h1>Services Status</h1>
+<div class="row">
+  <div class="pull-left">
+    <h1>Services Status</h1>
+  </div>
+  <div class="pull-right">
+    <?= $this->tabs->render($this); ?>
+  </div>
+</div>
 <div data-icinga-component="app/mainDetailGrid" data-icinga-grid-selection-type="multi">
 
   <div class="container pull-left">

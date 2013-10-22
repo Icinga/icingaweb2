@@ -52,7 +52,8 @@ class DashboardAction implements Tabextension
         $tabs->addAsDropdown(
             'dashboard',
             array(
-                'title'     => '{{DASHBOARD_ICON}} Add To Dashboard',
+                'iconCls'   => 'icinga-icon-dashboard',
+                'title'     => 'Add To Dashboard',
                 'url'       => Url::fromPath('dashboard/addurl'),
                 'urlParams' => array(
                     'url' => Url::fromRequest()->getRelativeUrl()

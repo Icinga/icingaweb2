@@ -1,4 +1,11 @@
-<h1>History</h1>
+<div class="row">
+  <div class="pull-left">
+    <h1>History</h1>
+  </div>
+  <div class="pull-right">
+    <?= $this->tabs->render($this); ?>
+  </div>
+</div>
 <?php if (!empty($history)): ?>
     <div data-icinga-component="app/mainDetailGrid">
         <?=  $this->paginationControl($history, null, null, array('preserve' => $this->preserve)); ?>

@@ -71,8 +71,13 @@ class Controller extends ActionController
         return $query->paginate();
     }
 
-    private function handleFormatRequest($query)
+    protected function handleFormatRequest($query)
     {
+        if ($this->compactView !== null && ($this->_getParam('view', false) === 'compact')) {
+            $this->_helper->viewRenderer($this->compactView);
+        }
+
+
         if ($this->_getParam('format') === 'sql'
             && IcingaConfig::app()->global->get('environment', 'production') === 'development') {
             echo '<pre>'
