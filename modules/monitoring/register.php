@@ -5,6 +5,10 @@ use Icinga\Application\Icinga;
 use Icinga\Module\Monitoring\DataView\StatusSummary as StatusSummaryView;
 use Icinga\Web\Topbar;
 
+if (Icinga::app()->isCli()) {
+    return;
+}
+
 $request = Icinga::app()->getFrontController()->getRequest();
 
 if (AuthManager::getInstance()->isAuthenticated()) {
