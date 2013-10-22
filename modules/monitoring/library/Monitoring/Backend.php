@@ -159,7 +159,7 @@ class Backend implements ConfigAwareFactory, DatasourceInterface
         }
 
         $config = null;
-
+        self::getBackendConfigs();
         if (isset(self::$backendConfigs[$name])) {
             /** @var Zend_Config $config */
             $config = self::$backendConfigs[$name];
@@ -174,7 +174,10 @@ class Backend implements ConfigAwareFactory, DatasourceInterface
             );
         }
 
-        self::$backendInstances[$name] = $backend = new self($config, ResourceFactory::getResourceConfig($config->resource));
+        self::$backendInstances[$name] = $backend = new self(
+            $config,
+            ResourceFactory::getResourceConfig($config->resource)
+        );
         switch (strtolower($config->type)) {
             case 'ido':
                 if ($backend->getResource()->getDbType() !== 'oracle') {
