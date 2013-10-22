@@ -17,6 +17,7 @@
 type                = db
 db                  = @internal_db_type@
 host                = @internal_db_host@
+port                = @internal_db_port@
 password            = @internal_db_pass@
 username            = @internal_db_user@
 dbname              = @internal_db_name@
@@ -25,7 +26,7 @@ dbname              = @internal_db_name@
 type                = db
 db                  = @ido_db_type@
 host                = @ido_host@
+port                = @ido_port@
 password            = @ido_user@
 username            = @ido_user@
-port                = @ido_port@
 dbname              = @ido_database@
