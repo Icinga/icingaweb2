@@ -14,36 +14,36 @@ class Groupsummary extends DataView
     public function getColumns()
     {
         return array(
-            'servicegroup_name',
-            'hostgroup_name',
-            'cnt_hosts_up',
-            'cnt_hosts_unreachable',
-            'cnt_hosts_unreachable_unhandled',
-            'cnt_hosts_down',
-            'cnt_hosts_down_unhandled',
-            'cnt_hosts_pending',
-            'cnt_services_ok',
-            'cnt_services_unknown',
-            'cnt_services_unknown_unhandled',
-            'cnt_services_critical',
-            'cnt_services_critical_unhandled',
-            'cnt_services_warning',
-            'cnt_services_warning_unhandled',
-            'cnt_services_pending'
+            'servicegroup',
+            'hostgroup',
+            'hosts_up',
+            'hosts_unreachable_handled',
+            'hosts_unreachable_unhandled',
+            'hosts_down_handled',
+            'hosts_down_unhandled',
+            'hosts_pending',
+            'services_ok',
+            'services_unknown_handled',
+            'services_unknown_unhandled',
+            'services_critical_handled',
+            'services_critical_unhandled',
+            'services_warning_handled',
+            'services_warning_unhandled',
+            'services_pending'
         );
     }
 
     public function getSortRules()
     {
-        if (in_array('servicegroup_name', $this->getQuery()->getColumns())) {
+        if (in_array('servicegroup', $this->getQuery()->getColumns())) {
             return array(
-                'servicegroup_name' => array(
+                'servicegroup' => array(
                     'order' => self::SORT_ASC
                 )
             );
         }
         return array(
-            'hostgroup_name' => array(
+            'hostgroup' => array(
                 'order' => self::SORT_ASC
             )
         );

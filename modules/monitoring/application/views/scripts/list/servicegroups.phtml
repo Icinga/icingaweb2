@@ -6,25 +6,76 @@
         <?php foreach($servicegroups as $servicegroup): ?>
             <tr>
                 <td>
-                    <a href="<?= $this->href('monitoring/list/services', array('servicegroups' => $servicegroup->servicegroup_name)); ?>">
-                        <?= $servicegroup->servicegroup_name; ?>
+                    <a href="<?= $this->href('monitoring/list/services', array('servicegroup' => $servicegroup->servicegroup)); ?>">
+                        <?= $servicegroup->servicegroup; ?>
                     </a>
                 </td>
                 <td>
-                    <div>
-                    <span><?= $servicegroup->cnt_hosts_up; ?></span>
-                    <span><?= $servicegroup->cnt_hosts_unreachable; ?>/<?= $servicegroup->cnt_hosts_unreachable_unhandled; ?></span>
-                    <span><?= $servicegroup->cnt_hosts_down; ?>/<?= $servicegroup->cnt_hosts_down_unhandled; ?></span>
-                    <span><?= $servicegroup->cnt_hosts_pending; ?></span>
+                    <div class="nav navbar-nav topbar-host-status-summary">
+                        <span class="topbar-status-up">
+                            <a href="<?= $this->href('monitoring/list/hosts', array('host_state' => 0, 'servicegroup' => $servicegroup->servicegroup)); ?>" title="Hosts Up">
+                                <?= $servicegroup->hosts_up ?>
+                            </a>
+                        </span>
+                        <span class="topbar-status-down">
+                            <a href="<?= $this->href('monitoring/list/hosts', array('host_state' => 1, 'host_unhandled' => 1, 'servicegroup' => $servicegroup->servicegroup)); ?>" title="Hosts Down Unhandled">
+                                <?= $servicegroup->hosts_down_unhandled ?>
+                            </a>/
+                            <a href="<?= $this->href('monitoring/list/hosts', array('host_state' => 1, 'host_handled' => 1, 'servicegroup' => $servicegroup->servicegroup)); ?>" title="Hosts Down Handled">
+                                <?= $servicegroup->hosts_down_handled ?>
+                            </a>
+                        </span>
+                        <span class="topbar-status-unreachable">
+                            <a href="<?= $this->href('monitoring/list/hosts', array('host_state' => 2, 'host_unhandled' => 1, 'servicegroup' => $servicegroup->servicegroup)); ?>" title="Hosts Unreachable Unhandled">
+                                <?= $servicegroup->hosts_unreachable_unhandled ?>
+                            </a>/
+                            <a href="<?= $this->href('monitoring/list/hosts', array('host_state' => 2, 'host_handled' => 1, 'servicegroup' => $servicegroup->servicegroup)); ?>" title="Hosts Unreachable Handled">
+                                <?= $servicegroup->hosts_unreachable_handled ?>
+                            </a>
+                        </span>
+                        <span class="topbar-status-pending">
+                            <a href="<?= $this->href('monitoring/list/hosts', array('host_state' => 99)); ?>" title="Hosts Pending">
+                                <?= $servicegroup->hosts_pending ?>
+                            </a>
+                        </span>
                     </div>
                 </td>
                 <td>
-                    <div>
-                        <span><?= $servicegroup->cnt_services_ok; ?></span>
-                        <span><?= $servicegroup->cnt_services_unknown; ?>/<?= $servicegroup->cnt_services_unknown_unhandled; ?></span>
-                        <span><?= $servicegroup->cnt_services_critical; ?>/<?= $servicegroup->cnt_services_critical_unhandled; ?></span>
-                        <span><?= $servicegroup->cnt_services_warning; ?>/<?= $servicegroup->cnt_services_warning_unhandled; ?></span>
-                        <span><?= $servicegroup->cnt_services_pending; ?></span>
+                    <div class="nav navbar-nav topbar-service-status-summary">
+                        <span class="topbar-status-ok">
+                            <a href="<?= $this->href('monitoring/list/services', array('service_state' => 0, 'servicegroup' => $servicegroup->servicegroup)); ?>" title="Services Ok">
+                                <?= $servicegroup->services_ok ?>
+                            </a>
+                        </span>
+                        <span class="topbar-status-critical">
+                            <a href="<?= $this->href('monitoring/list/services', array('service_state' => 2, 'service_unhandled' => 1, 'servicegroup' => $servicegroup->servicegroup)); ?>" title="Services Critical Unhandled">
+                                <?= $servicegroup->services_critical_unhandled ?>
+                            </a>/
+                            <a href="<?= $this->href('monitoring/list/services', array('service_state' => 2, 'service_handled' => 1, 'servicegroup' => $servicegroup->servicegroup)); ?>" title="Services Critical Handled">
+                                <?= $servicegroup->services_critical_handled ?>
+                            </a>
+                        </span>
+                        <span class="topbar-status-warning">
+                            <a href="<?= $this->href('monitoring/list/services', array('service_state' => 1, 'service_unhandled' => 1, 'servicegroup' => $servicegroup->servicegroup)); ?>" title="Services Warning Unhandled">
+                                <?= $servicegroup->services_warning_unhandled ?>
+                            </a>/
+                            <a href="<?= $this->href('monitoring/list/services', array('service_state' => 1, 'service_handled' => 1, 'servicegroup' => $servicegroup->servicegroup)); ?>" title="Services Warning Handled">
+                                <?= $servicegroup->services_warning_handled ?>
+                            </a>
+                        </span>
+                        <span class="topbar-status-unknown">
+                            <a href="<?= $this->href('monitoring/list/services', array('service_state' => 3, 'service_unhandled' => 1, 'servicegroup' => $servicegroup->servicegroup)); ?>" title="Services Unknown Unhandled">
+                                <?= $servicegroup->services_unknown_unhandled ?>
+                            </a>/
+                            <a href="<?= $this->href('monitoring/list/services', array('service_state' => 3, 'service_handled' => 1, 'servicegroup' => $servicegroup->servicegroup)); ?>" title="Services Unknown Handled">
+                                <?= $servicegroup->services_unknown_handled ?>
+                            </a>
+                        </span>
+                        <span class="topbar-status-pending">
+                            <a href="<?= $this->href('monitoring/list/services', array('service_state' => 99, 'servicegroup' => $servicegroup->servicegroup)); ?>" title="Services Pending">
+                                <?= $servicegroup->services_pending ?>
+                            </a>
+                        </span>
                     </div>
                 </td>
             </tr>

@@ -28,53 +28,51 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
+/**
+ *
+ */
 class HoststatusQuery extends IdoQuery
 {
     protected $allowCustomVars = true;
     protected $columnMap = array(
         'hosts' => array(
-            'host' => 'ho.name1 COLLATE latin1_general_ci',
-            'host_name' => 'ho.name1 COLLATE latin1_general_ci',
+            'host'              => 'ho.name1 COLLATE latin1_general_ci',
+            'host_name'         => 'ho.name1 COLLATE latin1_general_ci',
             'host_display_name' => 'h.display_name',
-            'host_alias' => 'h.alias',
-            'host_address' => 'h.address',
-            'host_ipv4' => 'INET_ATON(h.address)',
-            'host_icon_image' => 'h.icon_image',
-            'hosts_up'                      => 'SUM(CASE WHEN hs.has_been_checked != 0 AND hs.has_been_checked IS NOT NULL AND hs.current_state = 0 THEN 1 ELSE 0 END)',
-            'hosts_unreachable_handled'     => 'SUM(CASE WHEN hs.has_been_checked != 0 AND hs.has_been_checked IS NOT NULL AND hs.current_state = 2 AND hs.problem_has_been_acknowledged + hs.scheduled_downtime_depth != 0 THEN 1 ELSE 0 END)',
-            'hosts_unreachable_unhandled'   => 'SUM(CASE WHEN hs.has_been_checked != 0 AND hs.has_been_checked IS NOT NULL AND hs.current_state = 2 AND hs.problem_has_been_acknowledged + hs.scheduled_downtime_depth = 0 THEN 1 ELSE 0 END)',
-            'hosts_down_handled'            => 'SUM(CASE WHEN hs.has_been_checked != 0 AND hs.has_been_checked IS NOT NULL AND hs.current_state = 1 AND hs.problem_has_been_acknowledged + hs.scheduled_downtime_depth != 0 THEN 1 ELSE 0 END)',
-            'hosts_down_unhandled'          => 'SUM(CASE WHEN hs.has_been_checked != 0 AND hs.has_been_checked IS NOT NULL AND hs.current_state = 1 AND hs.problem_has_been_acknowledged + hs.scheduled_downtime_depth = 0 THEN 1 ELSE 0 END)',
-            'hosts_pending'                 => 'SUM(CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL THEN 1 ELSE 0 END)'
+            'host_alias'        => 'h.alias',
+            'host_address'      => 'h.address',
+            'host_ipv4'         => 'INET_ATON(h.address)',
+            'host_icon_image'   => 'h.icon_image',
+            'object_type'       => '(\'host\')'
         ),
         'hoststatus' => array(
-            'problems' => 'CASE WHEN hs.current_state = 0 THEN 0 ELSE 1 END',
-            'handled' => 'CASE WHEN (hs.problem_has_been_acknowledged + hs.scheduled_downtime_depth) > 0 THEN 1 ELSE 0 END',
-            'unhandled' => 'CASE WHEN (hs.problem_has_been_acknowledged + hs.scheduled_downtime_depth) = 0 THEN 1 ELSE 0 END',
-            'host_state' => 'CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL THEN 99 ELSE hs.current_state END',
-            'host_output' => 'hs.output',
-            'host_long_output' => 'hs.long_output',
-            'host_perfdata' => 'hs.perfdata',
-            'host_problem' => 'CASE WHEN hs.current_state = 0 THEN 0 ELSE 1 END',
-            'host_acknowledged' => 'hs.problem_has_been_acknowledged',
-            'host_in_downtime' => 'CASE WHEN (hs.scheduled_downtime_depth = 0) THEN 0 ELSE 1 END',
-            'host_handled' => 'CASE WHEN (hs.problem_has_been_acknowledged + hs.scheduled_downtime_depth) > 0 THEN 1 ELSE 0 END',
-            'host_does_active_checks' => 'hs.active_checks_enabled',
-            'host_accepts_passive_checks' => 'hs.passive_checks_enabled',
-            'host_last_state_change' => 'UNIX_TIMESTAMP(hs.last_state_change)',
-            'host_last_hard_state' => 'hs.last_hard_state',
-            'host_check_command' => 'hs.check_command',
-            'host_last_check' => 'UNIX_TIMESTAMP(hs.last_check)',
-            'host_next_check' => 'CASE WHEN hs.should_be_scheduled THEN UNIX_TIMESTAMP(hs.next_check) ELSE NULL END',
-            'host_check_execution_time' => 'hs.execution_time',
-            'host_check_latency' => 'hs.latency',
-            'host_notifications_enabled' => 'hs.notifications_enabled',
-            'host_last_time_up' => 'hs.last_time_up',
-            'host_last_time_down' => 'hs.last_time_down',
-            'host_last_time_unreachable' => 'hs.last_time_unreachable',
-            'host_current_check_attempt' => 'hs.current_check_attempt',
-            'host_max_check_attempts' => 'hs.max_check_attempts',
-            'host_severity' => 'CASE WHEN hs.current_state = 0
+            'problems'                      => 'CASE WHEN hs.current_state = 0 THEN 0 ELSE 1 END',
+            'handled'                       => 'CASE WHEN (hs.problem_has_been_acknowledged + hs.scheduled_downtime_depth) > 0 THEN 1 ELSE 0 END',
+            'unhandled'                     => 'CASE WHEN (hs.problem_has_been_acknowledged + hs.scheduled_downtime_depth) = 0 THEN 1 ELSE 0 END',
+            'host_state'                    => 'CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL THEN 99 ELSE hs.current_state END',
+            'host_output'                   => 'hs.output',
+            'host_long_output'              => 'hs.long_output',
+            'host_perfdata'                 => 'hs.perfdata',
+            'host_problem'                  => 'CASE WHEN hs.current_state = 0 THEN 0 ELSE 1 END',
+            'host_acknowledged'             => 'hs.problem_has_been_acknowledged',
+            'host_in_downtime'              => 'CASE WHEN (hs.scheduled_downtime_depth = 0) THEN 0 ELSE 1 END',
+            'host_handled'                  => 'CASE WHEN (hs.problem_has_been_acknowledged + hs.scheduled_downtime_depth) > 0 THEN 1 ELSE 0 END',
+            'host_does_active_checks'       => 'hs.active_checks_enabled',
+            'host_accepts_passive_checks'   => 'hs.passive_checks_enabled',
+            'host_last_state_change'        => 'UNIX_TIMESTAMP(hs.last_state_change)',
+            'host_last_hard_state'          => 'hs.last_hard_state',
+            'host_check_command'            => 'hs.check_command',
+            'host_last_check'               => 'UNIX_TIMESTAMP(hs.last_check)',
+            'host_next_check'               => 'CASE WHEN hs.should_be_scheduled THEN UNIX_TIMESTAMP(hs.next_check) ELSE NULL END',
+            'host_check_execution_time'     => 'hs.execution_time',
+            'host_check_latency'            => 'hs.latency',
+            'host_notifications_enabled'    => 'hs.notifications_enabled',
+            'host_last_time_up'             => 'hs.last_time_up',
+            'host_last_time_down'           => 'hs.last_time_down',
+            'host_last_time_unreachable'    => 'hs.last_time_unreachable',
+            'host_current_check_attempt'    => 'hs.current_check_attempt',
+            'host_max_check_attempts'       => 'hs.max_check_attempts',
+            'host_severity'                 => 'CASE WHEN hs.current_state = 0
             THEN
                 CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL
                      THEN 16
@@ -104,16 +102,19 @@ class HoststatusQuery extends IdoQuery
                             ELSE 4
                         END
                 END
-            END',
+            END'
         ),
         'hostgroups' => array(
-            'hostgroup' => 'hgo.name1 COLLATE latin1_general_ci',
+            'hostgroup'     => 'hgo.name1 COLLATE latin1_general_ci',
+        ),
+        'servicegroups' => array(
+            'servicegroup'  => 'sgo.name1 COLLATE latin1_general_ci',
         ),
         'contactgroups' => array(
-            'contactgroup' => 'contactgroup',
+            'contactgroup'  => 'contactgroup',
         ),
         'contacts' => array(
-            'contact' => 'hco.name1 COLLATE latin1_general_ci',
+            'contact'       => 'hco.name1 COLLATE latin1_general_ci',
         ),
         'services' => array(
             'services_cnt' => 'SUM(1)',
@@ -125,12 +126,12 @@ class HoststatusQuery extends IdoQuery
             'services_problem' => 'SUM(CASE WHEN ss.current_state > 0 THEN 1 ELSE 0 END)',
             'services_problem_handled' => 'SUM(CASE WHEN ss.current_state > 0 AND (ss.problem_has_been_acknowledged = 1 OR ss.scheduled_downtime_depth > 0) THEN 1 ELSE 0 END)',
             'services_problem_unhandled' => 'SUM(CASE WHEN ss.current_state > 0 AND (ss.problem_has_been_acknowledged = 0 AND ss.scheduled_downtime_depth = 0) THEN 1 ELSE 0 END)',
-            'services_warning_handled' => 'SUM(CASE WHEN ss.current_state = 1 AND (ss.problem_has_been_acknowledged = 1 OR ss.scheduled_downtime_depth > 0) THEN 1 ELSE 0 END)',
-            'services_critical_handled' => 'SUM(CASE WHEN ss.current_state = 2 AND (ss.problem_has_been_acknowledged = 1 OR ss.scheduled_downtime_depth > 0) THEN 1 ELSE 0 END)',
-            'services_unknown_handled' => 'SUM(CASE WHEN ss.current_state = 3 AND (ss.problem_has_been_acknowledged = 1 OR ss.scheduled_downtime_depth > 0) THEN 1 ELSE 0 END)',
-            'services_warning_unhandled' => 'SUM(CASE WHEN ss.current_state = 1 AND (ss.problem_has_been_acknowledged = 0 AND ss.scheduled_downtime_depth = 0) THEN 1 ELSE 0 END)',
-            'services_critical_unhandled' => 'SUM(CASE WHEN ss.current_state = 2 AND (ss.problem_has_been_acknowledged = 0 AND ss.scheduled_downtime_depth = 0) THEN 1 ELSE 0 END)',
-            'services_unknown_unhandled' => 'SUM(CASE WHEN ss.current_state = 3 AND (ss.problem_has_been_acknowledged = 0 AND ss.scheduled_downtime_depth = 0) THEN 1 ELSE 0 END)',
+            'services_warning_handled' => 'SUM(CASE WHEN ss.current_state = 1 AND (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth + COALESCE(hs.current_state, 0)) > 0 THEN 1 ELSE 0 END)',
+            'services_critical_handled' => 'SUM(CASE WHEN ss.current_state = 2 AND (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth + COALESCE(hs.current_state, 0)) > 0 THEN 1 ELSE 0 END)',
+            'services_unknown_handled' => 'SUM(CASE WHEN ss.current_state = 3 AND (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth + COALESCE(hs.current_state, 0)) > 0 THEN 1 ELSE 0 END)',
+            'services_warning_unhandled' => 'SUM(CASE WHEN ss.current_state = 1 AND (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth + COALESCE(hs.current_state, 0)) = 0 THEN 1 ELSE 0 END)',
+            'services_critical_unhandled' => 'SUM(CASE WHEN ss.current_state = 2 AND (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth + COALESCE(hs.current_state, 0)) = 0 THEN 1 ELSE 0 END)',
+            'services_unknown_unhandled' => 'SUM(CASE WHEN ss.current_state = 3 AND (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth + COALESCE(hs.current_state, 0)) = 0 THEN 1 ELSE 0 END)',
         ),
     );
     protected $aggregateColumnIdx = array(

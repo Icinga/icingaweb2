@@ -1,7 +1,7 @@
 <?php
 $servicegroups = array();
 foreach ($object->servicegroups as $name => $alias) {
-    $servicegroups[] = '<a href="' . $this->href('monitoring/list/service', array('servicegroup' => $name)) . '">'
+    $servicegroups[] = '<a href="' . $this->href('monitoring/list/services', array('servicegroup' => $name)) . '">'
         . $alias
         . '</a>';
 }

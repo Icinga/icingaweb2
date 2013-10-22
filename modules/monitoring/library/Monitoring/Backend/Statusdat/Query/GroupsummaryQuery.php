@@ -5,25 +5,25 @@ namespace Icinga\Module\Monitoring\Backend\Statusdat\Query;
 class GroupsummaryQuery extends StatusdatQuery
 {
     public static $mappedParameters = array(
-        'hostgroup_name'                    => 'hostgroup_name',
-        'servicegroup_name'                 => 'servicegroup_name'
+        'hostgroup'                    => 'hostgroup_name',
+        'servicegroup'                 => 'servicegroup_name'
     );
 
     public static $handlerParameters = array(
-        'cnt_hosts_up'                      => 'getHostUpSum',
-        'cnt_hosts_unreachable'             => 'getHostUnreachableSum',
-        'cnt_hosts_unreachable_unhandled'   => 'getHostUnreachableUnhandledSum',
-        'cnt_hosts_down'                    => 'getHostDownSum',
-        'cnt_hosts_down_unhandled'          => 'getHostDownUnhandledSum',
-        'cnt_hosts_pending'                 => 'getHostPendingSum',
-        'cnt_services_ok'                   => 'getServiceOkSum',
-        'cnt_services_unknown'              => 'getServiceUnknownSum',
-        'cnt_services_unknown_unhandled'    => 'getServiceUnknownUnhandledSum',
-        'cnt_services_critical'             => 'getServiceCriticalSum',
-        'cnt_services_critical_unhandled'   => 'getServiceCriticalUnhandledSum',
-        'cnt_services_warning'              => 'getServiceWarningSum',
-        'cnt_services_warning_unhandled'    => 'getServiceWarningUnhandledSum',
-        'cnt_services_pending'              => 'getServicePendingSum',
+        'hosts_up'                      => 'getHostUpSum',
+        'hosts_unreachable_handled'     => 'getHostUnreachableSum',
+        'hosts_unreachable_unhandled'   => 'getHostUnreachableUnhandledSum',
+        'hosts_down_handled'            => 'getHostDownSum',
+        'hosts_down_unhandled'          => 'getHostDownUnhandledSum',
+        'hosts_pending'                 => 'getHostPendingSum',
+        'services_ok'                   => 'getServiceOkSum',
+        'services_unknown_handled'      => 'getServiceUnknownSum',
+        'services_unknown_unhandled'    => 'getServiceUnknownUnhandledSum',
+        'services_critical_handled'     => 'getServiceCriticalSum',
+        'services_critical_unhandled'   => 'getServiceCriticalUnhandledSum',
+        'services_warning_handled'      => 'getServiceWarningSum',
+        'services_warning_unhandled'    => 'getServiceWarningUnhandledSum',
+        'services_pending'              => 'getServicePendingSum',
 
     );
 
@@ -233,10 +233,10 @@ class GroupsummaryQuery extends StatusdatQuery
 
     private function getTarget()
     {
-        if (in_array('servicegroup_name', $this->getColumns())) {
+        if (in_array('servicegroup', $this->getColumns())) {
             return 'servicegroups';
         }
-        return "hostgroups";
+        return 'hostgroups';
     }
 
     public function selectBase()

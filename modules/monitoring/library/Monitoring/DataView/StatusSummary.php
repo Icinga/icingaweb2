@@ -30,9 +30,4 @@ class StatusSummary extends DataView
             'services_pending'
         );
     }
-
-    public static function getTableName()
-    {
-        return 'hoststatus';
-    }
 }

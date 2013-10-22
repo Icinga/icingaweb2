@@ -122,8 +122,8 @@ class StatusQuery extends StatusdatQuery
         'service_retry_check_interval'          => 'service.status.retry_check_interval',
         'service_check_timeperiod_object_id'    => 'service.status.check_timeperiod_object_id',
         'service_status_update_time'            => 'service.status.status_update_time',
-        'hostgroups'                            => 'host.group',
-        'servicegroups'                         => 'service.group'
+        'hostgroup'                             => 'host.group',
+        'servicegroup'                          => 'service.group'
     );
 
     /**
