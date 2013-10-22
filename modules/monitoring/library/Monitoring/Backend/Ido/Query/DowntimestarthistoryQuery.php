@@ -10,7 +10,7 @@ class DowntimestarthistoryQuery extends IdoQuery
             'timestamp'     => 'UNIX_TIMESTAMP(actual_start_time)',
             'raw_timestamp' => 'actual_start_time',
             'object_id'     => 'object_id',
-            'type'          => "('dt_end')",
+            'type'          => "('dt_start')",
             'state'         => '(NULL)',
             'state_type'    => '(NULL)',
             'output'        => "('[' || author_name || '] ' || comment_data)",

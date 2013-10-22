@@ -41,7 +41,7 @@ class TreeToSqlParser
     /**
      * The query class to use as the base for converting
      *
-     * @var AbstractQuery
+     * @var BaseQuery
      */
     private $query;
 
@@ -54,7 +54,7 @@ class TreeToSqlParser
     /**
      * Create a new converter from this query
      *
-     * @param AbstractQuery $query      The query to use for conversion
+     * @param   BaseQuery   $query      The query to use for conversion
      */
     public function __construct(BaseQuery $query)
     {
