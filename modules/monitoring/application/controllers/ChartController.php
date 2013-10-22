@@ -33,8 +33,11 @@ use Icinga\Web\Form;
 use Icinga\Web\Controller\ActionController;
 use Icinga\Chart\SVGRenderer;
 use Icinga\Chart\GridChart;
+use Icinga\Module\Monitoring\DataView\Groupsummary as GroupsummaryView;
 use Icinga\Module\Monitoring\Backend;
+use Icinga\Chart\Palette;
 use Icinga\Chart\Axis;
+use Icinga\Chart\PieChart;
 
 /**
  * Class Monitoring_CommandController
@@ -65,7 +68,7 @@ class Monitoring_ChartController extends ActionController
      */
     public function init()
     {
-        $this->backend = Backend::getInstance($this->_getParam('backend'));
+
     }
 
     public function testAction() {
@@ -100,7 +103,7 @@ class Monitoring_ChartController extends ActionController
         $this->chart->drawBars(
             array(
                 'label' => 'Some other line',
-                'color' => 'black',
+                'color' => 'green',
                 'data'  =>  $data3,
                 'showPoints' => true
             )
@@ -111,11 +114,72 @@ class Monitoring_ChartController extends ActionController
                 'label' => 'Nr of outtakes',
                 'color' => 'yellow',
                 'width' => '5',
-
                 'data'  => $data2
             )
         );
 
         $this->view->svg = $this->chart;
+    }
+
+    public function hostgroupAction()
+    {
+        $query = GroupsummaryView::fromRequest(
+            $this->_request,
+            array(
+                'hostgroup_name',
+                'cnt_hosts_up',
+                'cnt_hosts_unreachable',
+                'cnt_hosts_unreachable_unhandled',
+                'cnt_hosts_down',
+                'cnt_hosts_down_unhandled',
+                'cnt_hosts_pending',
+                'cnt_services_ok',
+                'cnt_services_unknown',
+                'cnt_services_unknown_unhandled',
+                'cnt_services_critical',
+                'cnt_services_critical_unhandled',
+                'cnt_services_warning',
+                'cnt_services_warning_unhandled',
+                'cnt_services_pending'
+            )
+        )->getQuery()->fetchRow();
+
+        $this->view->chart = new PieChart();
+        $this->view->chart->drawPie(
+            array(
+                'data' => array(
+                    (int) $query->cnt_hosts_up,
+                    (int) $query->cnt_hosts_down,
+                    (int) $query->cnt_hosts_unreachable,
+                    (int) $query->cnt_hosts_pending
+                ),
+                'colors' => array('00ff00', 'ff0000', 'ffff00', 'fefefe'),
+                'labels'=> array(
+                    (int) $query->cnt_hosts_up . ' Up Hosts',
+                    (int) $query->cnt_hosts_down . ' Down Hosts',
+                    (int) $query->cnt_hosts_unreachable . ' Unreachable Hosts',
+                    (int) $query->cnt_hosts_pending . ' Pending Hosts'
+                )
+            ),
+            array(
+                'data' => array(
+                    (int) $query->cnt_services_ok,
+                    (int) $query->cnt_services_warning,
+                    (int) $query->cnt_services_critical,
+                    (int) $query->cnt_services_unknown,
+                    (int) $query->cnt_services_pending
+                ),
+                'colors' => array('00ff00', 'ffff00','ff0000', 'efef00', 'fefefe'),
+                'labels'=> array(
+                    $query->cnt_services_ok . ' Up Services',
+                    $query->cnt_services_warning . ' Warning Services',
+                    $query->cnt_services_critical . ' Down Services',
+                    $query->cnt_services_unknown . '  Unreachable Services',
+                    $query->cnt_services_pending . ' Pending Services'
+                )
+            )
+
+        );
+
     }
 }

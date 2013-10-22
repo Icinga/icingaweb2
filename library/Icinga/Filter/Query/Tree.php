@@ -250,6 +250,7 @@ class Tree
      */
     public static function normalizeTree($node)
     {
+
         if ($node->type === Node::TYPE_OPERATOR) {
             return $node;
         }

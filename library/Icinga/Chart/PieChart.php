@@ -112,6 +112,9 @@ class PieChart extends Chart
         if ($total === 100) {
             return;
         }
+        if ($total == 0) {
+            return;
+        }
         foreach ($pie['data'] as &$slice) {
             $slice = $slice/$total * 100;
         }
@@ -181,7 +184,7 @@ class PieChart extends Chart
     private function getColorForPieSlice(array $pie, $dataIdx)
     {
         if (isset($pie['colors']) && is_array($pie['colors']) && isset($pie['colors'][$dataIdx])) {
-            return $pie['colors']['dataIdx'];
+            return $pie['colors'][$dataIdx];
         }
         $type = Palette::NEUTRAL;
         if (isset($pie['palette']) && is_array($pie['palette']) && isset($pie['palette'][$dataIdx])) {
@@ -203,6 +206,7 @@ class PieChart extends Chart
         foreach ($this->pies as $pie) {
             $labelPos = 0;
             $lastRadius = 0;
+
             foreach ($pie['data'] as $idx => $dataset) {
                 $slice = new PieSlice($radius, $dataset, $lastRadius);
                 $slice->setX($x)
@@ -244,13 +248,21 @@ class PieChart extends Chart
             $offset = isset($this->pies[$i+1]) ? $radius - $shrinkStep : 0;
             $labelPos = 0;
             $lastRadius = 0;
-            foreach ($pie['data'] as $idx => $dataset) {
+            foreach ($pie['data'] as  $idx => $dataset) {
+                $color = $this->getColorForPieSlice($pie, $idx);
+                if ($dataset === 100) {
+                    $dataset = 99.9;
+                }
+                if ($dataset == 0) {
+                    $labelPos++;
+                    continue;
+                }
                 $slice = new PieSlice($radius, $dataset, $lastRadius);
                 $slice->setY(50)
                     ->setX($x)
                     ->setStrokeColor('#000')
                     ->setStrokeWidth(1)
-                    ->setFill($this->getColorForPieSlice($pie, $idx))
+                    ->setFill($color)
                     ->setLabelGroup($labelBox);
 
                 if (!$this->noCaption && isset($pie['labels'])) {
