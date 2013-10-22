@@ -30,14 +30,34 @@ class Cli extends ApplicationBootstrap
 
     protected $cliLoader;
 
+    protected $verbose;
+
+    protected $debug;
+
     protected function bootstrap()
     {
         $this->assertRunningOnCli();
-        return $this->setupConfig()
-                    ->setupErrorHandling()
-                    ->setupResourceFactory()
-                    ->setupModules()
-                    ->parseParams();
+        $this->setupConfig()
+             ->parseBasicParams()
+             ->fixLoggingConfig()
+             ->setupErrorHandling()
+             ->setupResourceFactory()
+             ->setupModules()
+             ;
+    }
+
+    protected function fixLoggingConfig()
+    {
+        $conf = & $this->getConfig()->logging;
+        if ($conf->type === 'stream') {
+            $conf->verbose = $this->verbose;
+            $conf->target = 'php://stderr';
+        }
+        if ($conf->debug && $conf->debug->type === 'stream') {
+            $conf->debug->target = 'php://stderr';
+            $conf->debug->enable = $this->debug;
+        }
+        return $this;
     }
 
     public function cliLoader()
@@ -76,7 +96,7 @@ class Cli extends ApplicationBootstrap
         return $this->moduleManager;
     }
 
-    protected function parseParams()
+    protected function parseBasicParams()
     {
         $this->params = Params::parse();
         if ($this->params->shift('help')) {
@@ -89,6 +109,9 @@ class Cli extends ApplicationBootstrap
         if (preg_match('~^\d+$~', $watch)) {
             $this->watchTimeout = (int) $watch;
         }
+
+        $this->debug = (int) $this->params->get('debug');
+        $this->verbose = (int) $this->params->get('verbose');
 
         $this->showBenchmark = (bool) $this->params->shift('benchmark');
         return $this;
