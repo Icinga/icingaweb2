@@ -16,7 +16,6 @@ $viewHelper = $this->getHelper('MonitoringState');
 
   <?=  $this->sortControl->render($this); ?>
 
-
   <?=  $this->paginationControl($comments, null, null, array('preserve' => $this->preserve)); ?>
 
   <table class="table table-condensed">
@@ -47,63 +46,72 @@ $viewHelper = $this->getHelper('MonitoringState');
       ?>
     <tr>
         <td>
+            <?= date('d.m. H:i', $comment->comment_timestamp); ?>
+        </td>
+
+        <td>
+            <?php if ($comment->comment_objecttype_id === '1'): ?>
+                <i class="icinga-icon-host" rel="tooltip" title="Host comment" ></i>
+            <?php elseif ($comment->comment_objecttype_id === '2'): ?>
+                <i class="icinga-icon-service" rel="tooltip" title="Service comment"></i>
+            <?php endif; ?>
+            <small>
+                <?php
+                switch ($comment->comment_type) {
+                    case 'flapping':
+                        $icon = 'icinga-icon-flapping';
+                        $tooltip = 'Comment was caused by a flapping host or service.';
+                        break;
+                    case 'comment':
+                        $icon = 'icinga-icon-user';
+                        $tooltip = 'Comment was created by an user.';
+                        break;
+                    case 'downtime':
+                        $icon = 'icinga-icon-down';
+                        $tooltip = 'Comment was caused by a downtime.';
+                    case 'ack':
+                        $icon = 'icinga-icon-acknowledgement';
+                        $tooltip = 'Comment was caused by an acknowledgement.';
+                }
+                ?>
+                <i class="<?= $icon ?>" rel="tooltip" title="<?= $tooltip ?>"> </i>
+            </small>
+        </td>
+
+        <td>
           <a class="hidden" href="<?= $detailLink; ?>"></a>
-          <?php if ($comment->comment_objecttype_id === '1'): ?>
-            <i class="icinga-icon-host" rel="tooltip" title="Host comment" ></i>
-          <?php elseif ($comment->comment_objecttype_id === '2'): ?>
-            <i class="icinga-icon-service" rel="tooltip" title="Service comment"></i>
-          <?php endif; ?>
-        </td>
 
-        <td>
-          <small>
-              <?php
-              switch ($comment->comment_type) {
-                  case 'flapping':
-                      $icon = 'icinga-icon-flapping';
-                      $tooltip = 'Comment is caused by a flapping host or service.';
-                      break;
-              }
-              ?>
-              <i class="<?= $icon ?>" rel="tooltip" title="<?= $tooltip ?>"> </i>
-          </small>
-        </td>
-
-        <div rel="tooltip" title="Comment #<?=$comment->comment_id ?>">
-        <td>
+            <div rel="tooltip" title="Comment #<?=$comment->comment_id ?>">
+            For
             <?php if ($comment->service_name): ?>
                 <a href="<?= $detailLink ?>">
                     <?= $comment->service_name ?>
+                    on
+                    <?= $comment->host_name; ?>
                 </a>
-                on
             <?php else: ?>
-                &nbsp;
+                <a href="<?= $hostLink ?>">
+                    <?= $comment->host_name; ?>
+                </a>
             <?php endif; ?>
-            <a href="<?= $hostLink ?>">
-                <?= $comment->host_name; ?>
-            </a>
-        </td>
-        <td>
-          <?= date('d.m. H:i', $comment->comment_timestamp); ?>
-        </td>
-        <td>
-          <?= $comment->comment_author; ?>
-        </td>
-        <td>
+            by
+            <?= $comment->comment_author; ?>
           <div class="small-row">
              <?= $comment->comment_data; ?>
           </div>
-        </td>
-        <td>
-          <?= ($comment->comment_is_persistent === '1') ? 'Yes' : 'No'; ?>
-        </td>
-        <td>
+
           <small>
-           expires <br /> <?=
-            ($comment->comment_expiration_timestamp) ?
-            'at ' . date('d.m H:i', $comment->comment_expiration_timestamp) :
-            'Never';
-          ?>          </small>
+            <span>
+               <b>Persists: </b><?= ($comment->comment_is_persistent === '1') ? 'Yes' : 'No'; ?>
+            </span>
+            <span>
+              <b>Expires: </b> <?=
+                ($comment->comment_expiration_timestamp) ?
+                    'at ' . date('d.m H:i', $comment->comment_expiration_timestamp) :
+                    'Never';
+                ?>
+            </span>
+          </small>
 
         </td>
         <td>

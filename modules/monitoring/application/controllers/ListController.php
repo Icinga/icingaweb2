@@ -288,7 +288,8 @@ class Monitoring_ListController extends MonitoringController
                 'comment_timestamp' => 'Comment Timestamp',
                 'host_service'      => 'Host and Service',
                 'comment_id'        => 'Comment Id',
-                'comment_expires'   => 'Expiration Timestamp'
+                'comment_expires'   => 'Expiration Timestamp',
+                'comment_type'      => 'Comment Type'
             )
         );
         $this->handleFormatRequest($query);
