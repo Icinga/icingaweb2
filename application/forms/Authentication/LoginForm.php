@@ -62,13 +62,7 @@ class LoginForm extends Form
             )
         );
 
-        $this->addElement(
-            'submit',
-            'submit',
-            array(
-                'label' => t('Login'),
-                'class' => 'pull-right'
-            )
-        );
+            $this->setSubmitLabel('Login');
+
     }
 }

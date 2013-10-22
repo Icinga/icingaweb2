@@ -59,8 +59,9 @@ class AuthenticationController extends ActionController
     public function loginAction()
     {
         $credentials = new Credential();
-        $this->_helper->layout->setLayout('inline');
+        $this->_helper->layout->setLayout('login');
         $this->view->form = new LoginForm();
+
         $this->view->form->setRequest($this->_request);
         $this->view->title = "Icinga Web Login";
         try {
