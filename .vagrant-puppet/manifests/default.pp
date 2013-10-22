@@ -471,7 +471,7 @@ exec { 'create-mysql-icingaweb-db':
   unless  => 'mysql -uicingaweb -picinga icingaweb',
   command => 'mysql -uroot -e "CREATE DATABASE icingaweb; \
               GRANT ALL ON icingaweb.* TO icingaweb@localhost \
-              IDENTIFIED BY \'icinga\';"',
+              IDENTIFIED BY \'icingaweb\';"',
   require => Service['mysqld']
 }
 

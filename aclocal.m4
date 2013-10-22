@@ -52,7 +52,6 @@ AC_DEFUN([AC_CHECK_BIN], [
    test "XX${$1}" == "XXnot found" && $1=""
 ])
 
-
 AC_DEFUN([AC_PATH_GUESS], [
     $2=$3
     for x in $1; do
@@ -62,4 +61,14 @@ AC_DEFUN([AC_PATH_GUESS], [
               [AC_MSG_RESULT([not found])]
         )
     done
+])
+
+# ICINGA_CHECK_DBTYPE(DBTYPE, ARGUMENT_NAME)
+# ------------------------------------------
+AC_DEFUN([ICINGA_CHECK_DBTYPE], [
+    AC_MSG_CHECKING([Testing database type for $2])
+    AS_IF(echo "$1" | $GREP -q "^\(my\|pg\)sql$",
+        AC_MSG_RESULT([OK ($1)]),
+        AC_MSG_ERROR([$1])
+    )
 ])

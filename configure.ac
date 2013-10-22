@@ -98,6 +98,8 @@ AC_ARG_WITH([internal_db_type],
     internal_db_type=mysql
 )
 
+ICINGA_CHECK_DBTYPE($internal_db_type, [--with-internal-db-type])
+
 AC_ARG_WITH([internal_db_name],
     AS_HELP_STRING([--with-internal-db-name=NAME], [database name to use for internal database (default icingaweb)]),
     internal_db_name=$withval,
@@ -227,6 +229,8 @@ AC_ARG_WITH([ido_db_type],
     ido_db_type=$withval,
     ido_db_type="mysql"
 )
+
+ICINGA_CHECK_DBTYPE($ido_db_type, [--with-ido-db-type])
 
 AC_ARG_WITH([ido_host],
     AS_HELP_STRING([--with-ido-host=HOST], [host to use for retrieving data from the ido db (default: localhost)]),

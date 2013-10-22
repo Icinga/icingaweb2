@@ -2358,6 +2358,18 @@ fi
 
 
 
+    { $as_echo "$as_me:${as_lineno-$LINENO}: checking Testing database type for --with-internal-db-type" >&5
+$as_echo_n "checking Testing database type for --with-internal-db-type... " >&6; }
+    if echo "$internal_db_type" | $GREP -q "^\(my\|pg\)sql$"; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: OK ($internal_db_type)" >&5
+$as_echo "OK ($internal_db_type)" >&6; }
+else
+  as_fn_error $? "$internal_db_type" "$LINENO" 5
+
+fi
+
+
+
 # Check whether --with-internal_db_name was given.
 if test "${with_internal_db_name+set}" = set; then :
   withval=$with_internal_db_name; internal_db_name=$withval
@@ -2559,6 +2571,18 @@ if test "${with_ido_db_type+set}" = set; then :
   withval=$with_ido_db_type; ido_db_type=$withval
 else
   ido_db_type="mysql"
+
+fi
+
+
+
+    { $as_echo "$as_me:${as_lineno-$LINENO}: checking Testing database type for --with-ido-db-type" >&5
+$as_echo_n "checking Testing database type for --with-ido-db-type... " >&6; }
+    if echo "$ido_db_type" | $GREP -q "^\(my\|pg\)sql$"; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: OK ($ido_db_type)" >&5
+$as_echo "OK ($ido_db_type)" >&6; }
+else
+  as_fn_error $? "$ido_db_type" "$LINENO" 5
 
 fi
 
