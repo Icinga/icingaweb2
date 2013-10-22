@@ -593,15 +593,18 @@ INSTALL_OPTS
 use_internal_auth
 use_ldap_auth
 icinga_commandpipe
+livestatus_enabled
 livestatus_socket
 objects_cache_file
 statusdat_file
+statusdat_enabled
 ido_password
 ido_user
 ido_database
 ido_port
 ido_host
 ido_db_type
+ido_enabled
 icinga_backend
 ldap_attribute_username
 ldap_attribute_basedn
@@ -1394,7 +1397,7 @@ Optional Packages:
                           location of the status.dat file when retrieving data
                           from status.dat (default:
                           /usr/local/icinga/var/status.dat)
-  --with-objects-file=FILE
+  --with-objects-cache-file=FILE
                           location of the objects.cache file when retrieving
                           data from status.dat (default:
                           /usr/local/icinga/var/objects.cache)
@@ -1405,6 +1408,10 @@ Optional Packages:
                           location of the command pipe used for sending
                           commands (default:
                           /usr/local/icinga/var/rw/icinga.cmd)
+  --with-objects-file=FILE
+                          location of the objects.cache file when retrieving
+                          data from status.dat (default:
+                          /usr/local/icinga/var/objects.cache)
 
 Some influential environment variables:
   PHP         php cli binary
@@ -2810,9 +2817,9 @@ fi
 #   Comment out the disabled backends per default
 #
 
-ido_enabled="disable=1"
-statusdat_enabled="disable=1"
-livestatus_enabled="disable=1"
+ido_enabled="disabled        = \"1\""
+statusdat_enabled="disabled        = \"1\""
+livestatus_enabled="disabled        = \"1\""
 
 case $icinga_backend in #(
   "ido") :
@@ -2905,11 +2912,14 @@ fi
 
 
 
+
 # status.dat backend
 
 
 
+
 # livestatus backend
+
 
 
 # command pipe

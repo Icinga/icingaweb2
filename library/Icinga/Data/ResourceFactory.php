@@ -40,7 +40,7 @@ class ResourceFactory implements ConfigAwareFactory
                 $resource = new StatusdatReader($config);
                 break;
             default:
-                throw new ConfigurationError('Unsupported Backend "' + $config->type + '"');
+                throw new ConfigurationError('Unsupported resource type "' . $config->type . '"');
 
         }
         return $resource;

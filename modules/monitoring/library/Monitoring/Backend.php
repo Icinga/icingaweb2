@@ -128,8 +128,17 @@ class Backend implements ConfigAwareFactory, DatasourceInterface
                 'Cannot get default backend as no backend has been configured'
             );
         }
-        reset($configs);
-        return key($configs);
+
+        // We won't have disabled backends
+        foreach ($configs as $name => $config) {
+            if (!$config->get('disabled') == '1') {
+                return $name;
+            }
+        }
+
+        throw new ConfigurationError(
+            'All backends are disabled'
+        );
     }
 
     /**
@@ -149,11 +158,19 @@ class Backend implements ConfigAwareFactory, DatasourceInterface
             $name = self::getDefaultBackendName();
         }
 
+        $config = null;
+
         if (isset(self::$backendConfigs[$name])) {
+            /** @var Zend_Config $config */
             $config = self::$backendConfigs[$name];
-        } else {
+            if ($config->get('disabled') == '1') {
+                $config = null;
+            }
+        }
+
+        if ($config === null) {
             throw new ConfigurationError(
-                'No configuration for backend' . $name
+                'No configuration for backend:' . $name
             );
         }
 

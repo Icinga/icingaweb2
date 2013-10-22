@@ -30,3 +30,12 @@ port                = @ido_port@
 password            = @ido_user@
 username            = @ido_user@
 dbname              = @ido_database@
+
+[statusdat]
+type                = statusdat
+status_file         = /usr/local/icinga-mysql/var/status.dat
+object_file         = /usr/local/icinga-mysql/var/objects.cache
+
+[livestatus]
+type                = livestatus
+socket              = @livestatus_socket@

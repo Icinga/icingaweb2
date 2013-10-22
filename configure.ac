@@ -255,7 +255,7 @@ AC_ARG_WITH([statusdat_file],
 )
 
 AC_ARG_WITH([objects_cache_file],
-    AS_HELP_STRING([--with-objects-file=FILE], [location of the objects.cache file when retrieving data from status.dat (default: /usr/local/icinga/var/objects.cache)]),
+    AS_HELP_STRING([--with-objects-cache-file=FILE], [location of the objects.cache file when retrieving data from status.dat (default: /usr/local/icinga/var/objects.cache)]),
     objects_cache_file=$withval,
     objects_cache_file="/usr/local/icinga/var/objects.cache"
 )
@@ -338,9 +338,9 @@ AS_IF([test "x$ido_db_type" = xpgsql], [
 #   Comment out the disabled backends per default
 #
 
-ido_enabled="disable=1" 
-statusdat_enabled="disable=1" 
-livestatus_enabled="disable=1" 
+ido_enabled="disabled        = \"1\""
+statusdat_enabled="disabled        = \"1\""
+livestatus_enabled="disabled        = \"1\""
 
 AS_CASE([$icinga_backend],
     ["ido"], [ido_enabled=""],
@@ -397,6 +397,7 @@ AC_SUBST(ldap_attribute_username)
 AC_SUBST(icinga_backend)
 
 # ido backend variables
+AC_SUBST(ido_enabled)
 AC_SUBST(ido_db_type)
 AC_SUBST(ido_host)
 AC_SUBST(ido_port)
@@ -405,11 +406,13 @@ AC_SUBST(ido_user)
 AC_SUBST(ido_password)
 
 # status.dat backend
+AC_SUBST(statusdat_enabled)
 AC_SUBST(statusdat_file)
 AC_SUBST(objects_cache_file)
 
 # livestatus backend
 AC_SUBST(livestatus_socket)
+AC_SUBST(livestatus_enabled)
 
 # command pipe
 AC_SUBST(icinga_commandpipe)

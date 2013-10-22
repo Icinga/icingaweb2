@@ -1,15 +1,17 @@
 [localdb]
-type = ido
-resource = "ido"
+@ido_enabled@
+type            = ido
+resource        = "ido"
 
 [locallive]
-type = livestatus
-socket = @livestatus_socket@
+@livestatus_enabled@
+type            = livestatus
+resource        = livestatus
 
 [localfile]
-type = statusdat
-status_file = @statusdat_file@
-objects_file = @objects_cache_file@
+@statusdat_enabled@
+type            = statusdat
+resource        = statusdat
 
 ;[localfailsafe]
 ;enabled=false
