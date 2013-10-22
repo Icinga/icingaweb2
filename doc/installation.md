@@ -1,6 +1,17 @@
 
 # Installation
 
+## Requirements
+
+* Apache2 with PHP >= 5.3.0 enabled
+* PHP Zend Framework
+* PHP with MySQL or PostgreSQL libraries
+* MySQL or PostgreSQL server and client software 
+* Icinga 1.x or Icinga 2 as backend providers
+
+RHEL/CentOS requires the EPEL repository enabled (which provides the `php-ZendFramework`
+package). OpenSUSE requires the [server monitoring](https://build.opensuse.org/project/show/server:monitoring) repository (which provides the `php5-ZendFramework` package) enabled.
+
 ## configure && make
 
 ### Basic installation
@@ -41,7 +52,7 @@ your backend, take a look at the various options described in `./configure --hel
 It is required to set up all used Databases correctly, which basically means to create all needed user accounts and to
 create all database tables. You will find the installation guides for the different databases in the sections below:
 
-*IMPORTANT*: Select a secure password instead of "icinga" and alter the config/authentication.ini accordingly.
+*IMPORTANT*: Select a secure password instead of "icingaweb" and alter the config/authentication.ini accordingly.
 
 
 #### MySQL
@@ -50,7 +61,7 @@ create all database tables. You will find the installation guides for the differ
 
 
     mysql -u root -p
-    mysql> CREATE USER `icingaweb`@`localhost` IDENTIFIED BY 'icinga';
+    mysql> CREATE USER `icingaweb`@`localhost` IDENTIFIED BY 'icingaweb';
     mysql> CREATE DATABASE `icingaweb`;
     mysql> GRANT ALL PRIVILEGES ON `icingaweb`.* TO `icingaweb`@`localhost`;
     mysql> FLUSH PRIVILEGES;
@@ -59,8 +70,11 @@ create all database tables. You will find the installation guides for the differ
 
 2. Create all tables (You need to be in the icinga2-web folder)
 
+> **Note**
+>
+> RPM packages install the schema into /usr/share/doc/icingaweb-<version>/schema
 
-   bash$  mysql -u root -p icingaweb < etc/schema/users.mysql.sql
+   bash$  mysql -u root -p icingaweb < etc/schema/accounts.mysql.sql
 
 
 #### PostgreSQL
@@ -70,7 +84,7 @@ create all database tables. You will find the installation guides for the differ
 
     sudo su postgres
     psql
-    postgres=#  CREATE USER icingaweb WITH PASSWORD 'icinga';
+    postgres=#  CREATE USER icingaweb WITH PASSWORD 'icingaweb';
     postgres=#  CREATE DATABASE icingaweb;
     postgres=#  \q
 
@@ -89,7 +103,11 @@ And restart your database ('service postgresql restart' or '/etc/init.d/postgres
 
 3. Create all tables (You need to be in the icinga2-web folder)
 
-    bash$  psql -U icingaweb -a -f etc/schema/users.pgsql.sql
+> **Note**
+>
+> RPM packages install the schema into /usr/share/doc/icingaweb-<version>/schema
+
+    bash$  psql -U icingaweb -a -f etc/schema/accounts.pgsql.sql
 
 
 

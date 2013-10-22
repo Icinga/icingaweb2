@@ -7,7 +7,7 @@ indexController     = "dashboard"
 ; via the frontend and this file. With feature #4607 moduleFolder will
 ; be replaced with a configuration directive for locations of
 ; installed modules
-moduleFolder        = "/etc/icinga2-web/enabledModules"
+moduleFolder        = "@icingaweb_config_path@/enabledModules"
 dateFormat          = "d/m/Y"
 timeFormat          = "g:i A"
 
@@ -17,13 +17,13 @@ timeFormat          = "g:i A"
 enable              = "1"
 type                = "stream"
 verbose             = "1"
-target              = "{app}/var/log/icinga.log"
+target              = "@icingaweb_log_path@/icingaweb.log"
 
 ; For development and debug purposes: Logs additional (non critical) events to a
 ; seperate log
 debug.enable        = "1"
 debug.type          = "stream"
-debug.target        = "{app}/var/log/icinga.debug.log"
+debug.target        = "@icingaweb_log_path@/icingaweb.debug.log"
 
 
 ; Use ini store to store preferences on local disk
@@ -35,4 +35,4 @@ type                = "ini"
 ;type=db
 ;resource=icingaweb-mysql
 
-configPath          = "{app}/config/preferences"
+configPath          = "@icingaweb_config_path@/preferences"

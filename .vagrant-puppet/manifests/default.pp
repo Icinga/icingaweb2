@@ -309,6 +309,12 @@ exec { 'install npm/should':
   require => Exec['install nodejs']
 }
 
+exec { 'install npm/URIjs':
+  command => 'npm install -g URIjs',
+  creates => '/usr/lib/node_modules/URIjs',
+  require => Exec['install nodejs']
+}
+
 exec { 'install ZendFramework':
   command => 'yum -d 0 -e 0 -y --enablerepo=epel install php-ZendFramework',
   unless  => 'rpm -qa | grep php-ZendFramework',
@@ -329,14 +335,22 @@ cmmi { 'icinga2':
   make_timeout => 900
 }
 
-file { 'icinga2-web-public':
+configure { 'icingaweb':
+  path  => '/vagrant',
+  flags => '--prefix=/vagrant \
+            --with-icinga-commandpipe="/usr/local/icinga-mysql/var/rw/icinga.cmd" \
+            --with-statusdat-file="/usr/local/icinga-mysql/var/status.dat" \
+            --with-httpd-config-path="/etc/httpd/conf.d"'
+}
+
+file { 'icingaweb-public':
   ensure  => '/vagrant/public',
-  path    => '/var/www/html/icinga2-web',
+  path    => '/var/www/html/icingaweb',
   require => Class['apache']
 }
 
-file { '/etc/httpd/conf.d/icinga2-web.conf':
-  source  => 'puppet:////vagrant/.vagrant-puppet/files/etc/httpd/conf.d/icinga2-web.conf',
+file { '/etc/httpd/conf.d/icingaweb.conf':
+  source  => 'puppet:////vagrant/.vagrant-puppet/files/etc/httpd/conf.d/icingaweb.conf',
   require => Package['apache'],
   notify  => Service['apache']
 }

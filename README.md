@@ -21,7 +21,7 @@ have to do is install Vagrant and run:
 > you'll download a plain CentOS base box and Vagrant will automatically
 > provision the environment on the first go.
 
-After you should be able to browse [localhost:8080/icinga2-web](http://localhost:8080/icinga2-web).
+After you should be able to browse [localhost:8080/icingaweb](http://localhost:8080/icingaweb).
 
 ### Environment
 
