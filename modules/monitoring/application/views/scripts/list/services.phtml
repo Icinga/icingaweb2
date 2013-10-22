@@ -24,9 +24,7 @@ $viewHelper = $this->getHelper('MonitoringState');
       <?=  $this->paginationControl($services, null, null, array('preserve' => $this->preserve)); ?>
     </div>
     <div class="row">
-      Select
-      <a href='<?=$this->href('monitoring/multi/service',array( 'host' => '*', 'service' => '*' ))?>'> All </a>
-      <a href='#'> None </a>
+      <?= $this->selectionToolbar('multi', $this->href('monitoring/multi/service', array( 'service' => '*', 'host' => '*' ))); ?>
     </div>
   </div>
 

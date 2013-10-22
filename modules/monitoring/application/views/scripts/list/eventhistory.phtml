@@ -7,9 +7,18 @@
   </div>
 </div>
 <?php if (!empty($history)): ?>
-    <div data-icinga-component="app/mainDetailGrid">
-        <?=  $this->paginationControl($history, null, null, array('preserve' => $this->preserve)); ?>
-        <table class="table table-condensed">
+    <div data-icinga-component="app/mainDetailGrid" data-icinga-grid-selection-type="single">
+
+        <div class="container pull-left">
+            <div class="row">
+                <?=  $this->paginationControl($history, null, null, array('preserve' => $this->preserve)); ?>
+            </div>
+            <div class="row">
+                <?= $this->selectionToolbar('single'); ?>
+            </div>
+        </div>
+
+        <table class="table table-condensed pull-left">
             <tbody>
             <?php foreach ($history as $event): ?>
                 <?php
@@ -106,6 +115,10 @@
             <? endforeach; ?>
             </tbody>
         </table>
-        <?=  $this->paginationControl($history, null, null, array('preserve' => $this->preserve)); ?>
+
+        <div class="container pull-left">
+            <?=  $this->paginationControl($history, null, null, array('preserve' => $this->preserve)); ?>
+        </div>
+
     </div>
 <?php endif; ?>

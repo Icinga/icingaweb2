@@ -167,9 +167,11 @@ function(Container, $, logger, URI, tpl, urlMgr, Selectable, TableMultiSelection
         this.registerTableLinks = function(domContext) {
             domContext = domContext || contentNode;
 
-            $('tbody tr', domContext).on('click', function(ev) {
+            $('tbody tr', domContext).click(function(ev) {
                 var targetEl = ev.target || ev.toElement || ev.relatedTarget,
                     a = $(targetEl).closest('a');
+                ev.preventDefault();
+                ev.stopPropagation();
 
                 var nodeNames = [];
                 nodeNames.push($(targetEl).prop('nodeName').toLowerCase());
@@ -189,15 +191,13 @@ function(Container, $, logger, URI, tpl, urlMgr, Selectable, TableMultiSelection
 
                 switch (selectionMode) {
                     case 'multi':
-                        var selectable = new Selectable(this);
                         if (ev.ctrlKey || ev.metaKey) {
-                            selection.toggle(selectable);
+                            selection.toggle(new Selectable(this));
                         } else if (ev.shiftKey) {
-                            // select range ?
-                            selection.add(selectable);
+                            selection.add(new Selectable(this));
                         } else {
                             selection.clear();
-                            selection.add(selectable);
+                            selection.add(new Selectable(this));
                         }
                         break;
 
@@ -217,7 +217,8 @@ function(Container, $, logger, URI, tpl, urlMgr, Selectable, TableMultiSelection
                 var segments = url.segment();
                 if (selection.size() === 0) {
                     // don't open anything
-                    url.search('?');
+                    urlMgr.setDetailUrl('');
+                    return false;
                 } else if (selection.size() > 1 && segments.length > 3) {
                     // open detail view for multiple objects
                     segments[2] = 'multi';
@@ -227,6 +228,18 @@ function(Container, $, logger, URI, tpl, urlMgr, Selectable, TableMultiSelection
                 }
                 urlMgr.setDetailUrl(url);
                 return false;
+            });
+
+            /*
+             * Clear the URL when deselected or when a wildcard is used
+             */
+            $(window).on('hashchange', function(){
+                if (
+                    !location.hash ||
+                    location.hash.match(/(host=%2A)|(service=%2A)/)
+                ) {
+                    selection.clear();
+                }
             });
         };
 

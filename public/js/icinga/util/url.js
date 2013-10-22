@@ -25,7 +25,7 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-define(['jquery', 'URIjs/URI'], function($, URI, Container) {
+define(['jquery', 'logging', 'URIjs/URI'], function($, log, URI, Container) {
     "use strict";
 
     var currentUrl = URI(window.location.href);
@@ -126,7 +126,6 @@ define(['jquery', 'URIjs/URI'], function($, URI, Container) {
                 this.detailUrl = url.clone().fragment('').href();
             }
             this.detailAnchor = this.getMainAnchor(url);
-
             window.location.hash = this.getUrlHash();
         };
 

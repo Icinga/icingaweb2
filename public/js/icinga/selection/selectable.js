@@ -72,12 +72,27 @@ define(['jquery', 'URIjs/URI'], function($, URI) {
             return href.query(true);
         };
 
+        /**
+         * Set the current selection state
+         *
+         * @param {boolean}     The new state
+         */
         this.setActive = function(value) {
             if (value) {
                 $(tableRow).addClass('active');
             } else {
                 $(tableRow).removeClass('active');
             }
+        };
+
+        /**
+         * Return the current selection state
+         *
+         * @returns {boolean}   True when the object is selected
+         */
+        this.isActive = function()
+        {
+            return $(tableRow).hasClass('active');
         };
     };
 });

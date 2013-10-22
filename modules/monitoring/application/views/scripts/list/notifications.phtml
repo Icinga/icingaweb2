@@ -9,9 +9,24 @@
 
 <?php if (!empty($notifications)): ?>
 <div data-icinga-component="app/mainDetailGrid" data-icinga-grid-selection-type="single">
-    <?= $this->sortControl->render($this); ?>
-    <?= $this->paginationControl($notifications, null, null, array('preserve' => $this->preserve)); ?>
-    <table class="table table-condensed" >
+
+    <div class="container pull-left">
+      <div class="row">
+        <div class="col-md-12">
+            <?=  $this->sortControl->render($this); ?>
+        </div>
+      </div>
+
+      <div class="row">
+          <?=  $this->paginationControl($notifications, null, null, array('preserve' => $this->preserve)); ?>
+      </div>
+
+      <div class="row">
+          <?= $this->selectionToolbar('single'); ?>
+      </div>
+    </div>
+
+    <table class="table table-condensed pull-left">
         <tbody>
         <?php foreach ($notifications as $notification): ?>
             <?php
@@ -56,7 +71,10 @@
         <?php endforeach; ?>
         </tbody>
     </table>
-    <?= $this->paginationControl($notifications, null, null, array('preserve' => $this->preserve)); ?>
+
+    <div class="container pull-left">
+        <?= $this->paginationControl($notifications, null, null, array('preserve' => $this->preserve)); ?>
+    </div>
 </div>
 <?php else: ?>
 No notifications yet
