@@ -153,7 +153,7 @@ class StatusQuery extends IdoQuery
             'service_long_output'    => 'ss.long_output',
             'service_perfdata'       => 'ss.perfdata',
             'service_acknowledged'   => 'ss.problem_has_been_acknowledged',
-            'service_in_downtime'    => 'CASE WHEN (ss.scheduled_downtime_depth = 0) THEN 0 ELSE 1 END',
+            'service_in_downtime'    => 'CASE WHEN (ss.scheduled_downtime_depth = 0 OR ss.scheduled_downtime_depth IS NULL) THEN 0 ELSE 1 END',
             'service_handled'        => 'CASE WHEN (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth + COALESCE(hs.current_state, 0)) > 0 THEN 1 ELSE 0 END',
             'service_last_state_change'      => 'UNIX_TIMESTAMP(ss.last_state_change)',
             'service_check_command'          => 'ss.check_command',
