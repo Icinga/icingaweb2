@@ -23,9 +23,15 @@
  * @author    Icinga Development Team <info@icinga.org>
  */
 
+@white:      #ffffff;
+@lightgrey : #dddddd;
+
 /* =========================================================================
    Icinga Navigation
    ========================================================================= */
+.navbar {
+  background-image: linear-gradient(to bottom, #444444, #333333);
+}
 
 .navigation-tile-mixin {
   border-style: solid;
@@ -41,7 +47,6 @@
 }
 
 .nav-stacked {
-  background-color: @lightgrey;
 }
 
 .icinga-subnavigation {
@@ -49,26 +54,34 @@
 }
 
 .nav-stacked > li {
-  padding-left: 8px;
-  padding-top: 1px;
-  padding-bottom: 1px;
-  border-bottom: 1px dotted @petrol;
-  border-right: 1px dotted @petrol;
-
+  padding-left: 4px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid @lightgrey;
+  border-right: 1px solid @lightgrey;
+  font-size: 11px;
+  background-color: rgb(248, 248, 248);
+  background-image: linear-gradient(rgb(255, 255, 255) 0px, rgb(248, 248, 248) 100%);
 }
+
+.nav-stacked > li > a {
+  letter-spacing: 1px;
+  padding-top: 0px;
+  padding-bottom: 3px;
+}
+
 .nav-stacked > li:first-child {
-  border-top: 1px dotted @petrol;
 }
 
 .icinga-subnavigation > li {
   padding-top: 8px;
   padding-bottom: 8px;
-  border-bottom: 1px dotted @petrol;
-  border-right: 1px dotted @petrol;
+  border-bottom: 1px solid @lightgrey;
+  border-right: 1px solid @lightgrey;
 }
 
 ul.icinga-subnavigation {
-  border-bottom: 1px dotted @petrol;
+  border-bottom: 1px solid @lightgrey;
   margin-left: 0;
   padding-left: 15px;
 }
@@ -81,9 +94,9 @@ ul.icinga-subnavigation {
 
 .nav-stacked > li > a,
 .icinga-subnavigation > li > a {
-  padding-left: 40px;
+  padding-left: 20px;
   padding-right: 3px;
-  border-left: 6px solid @petrol;
+  /* border-left: 6px solid @petrol; */
   display: inline-block;
 }
 
@@ -108,8 +121,8 @@ ul.icinga-subnavigation {
 
 .nav-stacked > li.active,
 .icinga-subnavigation > li.active {
-  background-color: @white;
-  border-right: 0;
+  background: none;
+  border-right: none;
 }
 
 .badge-container-nav {
