@@ -309,6 +309,12 @@ exec { 'install npm/should':
   require => Exec['install nodejs']
 }
 
+exec { 'install npm/URIjs':
+  command => 'npm install -g URIjs',
+  creates => '/usr/lib/node_modules/URIjs',
+  require => Exec['install nodejs']
+}
+
 exec { 'install ZendFramework':
   command => 'yum -d 0 -e 0 -y --enablerepo=epel install php-ZendFramework',
   unless  => 'rpm -qa | grep php-ZendFramework',
