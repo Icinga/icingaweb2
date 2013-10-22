@@ -1,7 +1,7 @@
 <?php
 $hostgroups = array();
 foreach ($object->hostgroups as $name => $alias) {
-    $hostgroups[] = '<a href="' . $this->href('monitoring/list/hosts', array('hostgroups' => $name)) . '">'
+    $hostgroups[] = '<a href="' . $this->href('monitoring/list/hosts', array('hostgroup' => $name)) . '">'
         . $alias
         . '</a>';
 }

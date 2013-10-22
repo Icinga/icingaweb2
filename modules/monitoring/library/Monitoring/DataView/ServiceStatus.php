@@ -26,6 +26,7 @@ class ServiceStatus extends DataView
             'service_in_downtime',
             'service_acknowledged',
             'service_handled',
+            'service_unhandled',
             'service_output',
             'service_last_state_change',
             'service_icon_image',
@@ -131,7 +132,7 @@ class ServiceStatus extends DataView
 
     public function getFilterColumns()
     {
-        return array('hostgroups', 'servicegroups', 'service_problem');
+        return array('hostgroup', 'servicegroup', 'service_problems');
     }
 
     public function isValidFilterTarget($column)

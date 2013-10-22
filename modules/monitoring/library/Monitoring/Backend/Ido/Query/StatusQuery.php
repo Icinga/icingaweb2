@@ -30,6 +30,7 @@ class StatusQuery extends IdoQuery
             'host_acknowledged'           => 'hs.problem_has_been_acknowledged',
             'host_in_downtime'            => 'CASE WHEN (hs.scheduled_downtime_depth = 0) THEN 0 ELSE 1 END',
             'host_handled'                => 'CASE WHEN (hs.problem_has_been_acknowledged + hs.scheduled_downtime_depth) > 0 THEN 1 ELSE 0 END',
+            'host_unhandled'              => 'CASE WHEN (hs.problem_has_been_acknowledged + hs.scheduled_downtime_depth) = 0 THEN 1 ELSE 0 END',
             'host_last_state_change'      => 'UNIX_TIMESTAMP(hs.last_state_change)',
             'host_last_hard_state'        => 'hs.last_hard_state',
             'host_last_hard_state_change' => 'UNIX_TIMESTAMP(hs.last_hard_state_change)',
@@ -127,13 +128,13 @@ class StatusQuery extends IdoQuery
                             ELSE 4
                         END
                 END
-            END',
+            END'
         ),
         'hostgroups' => array(
-            'hostgroups' => 'hgo.name1',
+            'hostgroup' => 'hgo.name1',
         ),
         'servicegroups' => array(
-            'servicegroups' => 'sgo.name1',
+            'servicegroup' => 'sgo.name1',
         ),
         'services' => array(
             'service_host_name'      => 'so.name1 COLLATE latin1_general_ci',
@@ -142,8 +143,8 @@ class StatusQuery extends IdoQuery
             'service_display_name'   => 's.display_name',
             'service_icon_image'     => 's.icon_image',
             'service_action_url'     => 's.action_url',
-            'service_notes_url'      => 's.notes_url'
-
+            'service_notes_url'      => 's.notes_url',
+            'object_type'            => '(\'service\')'
         ),
         'servicestatus' => array(
             'service_state'          => 'CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL THEN 99 ELSE ss.current_state END',
@@ -155,6 +156,7 @@ class StatusQuery extends IdoQuery
             'service_acknowledged'   => 'ss.problem_has_been_acknowledged',
             'service_in_downtime'    => 'CASE WHEN (ss.scheduled_downtime_depth = 0 OR ss.scheduled_downtime_depth IS NULL) THEN 0 ELSE 1 END',
             'service_handled'        => 'CASE WHEN (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth + COALESCE(hs.current_state, 0)) > 0 THEN 1 ELSE 0 END',
+            'service_unhandled'      => 'CASE WHEN (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth + COALESCE(hs.current_state, 0)) = 0 THEN 1 ELSE 0 END',
             'service_last_state_change'      => 'UNIX_TIMESTAMP(ss.last_state_change)',
             'service_check_command'          => 'ss.check_command',
             'service_last_time_ok'           => 'ss.last_time_ok',

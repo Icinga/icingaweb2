@@ -142,6 +142,7 @@ class StatusQuery extends StatusdatQuery
         'host_state'                    => 'getStateForHost',
         'host_hard_state'               => 'getHardStateForHost',
         'host_handled'                  => 'isHandledForHost',
+        'host_unhandled'                => 'isHostUnhandled',
         'host_severity'                 => 'getSeverityForHost',
         'host_in_downtime'              => 'isInDowntimeForHost',
         'host_problem'                  => 'isProblemForHost',
@@ -149,6 +150,7 @@ class StatusQuery extends StatusdatQuery
         'service_state'                 => 'getState',
         'service_hard_state'            => 'getHardState',
         'service_handled'               => 'isHandled',
+        'service_unhandled'             => 'isUnhandled',
         'service_severity'              => 'getSeverity',
         'service_in_downtime'           => 'isInDowntime',
         'service_problem'               => 'isProblem',
@@ -253,10 +255,14 @@ class StatusQuery extends StatusdatQuery
 
     public function isHandled(&$host)
     {
-
         return $host->status->current_state == 0 ||
             $host->status->problem_has_been_acknowledged ||
             $host->status->scheduled_downtime_depth;
+    }
+
+    public function isUnhandled(&$hostOrService)
+    {
+        return !$this->isHandled($hostOrService);
     }
 
     public function getNrOfUnhandledServices(&$obj)
@@ -327,6 +333,11 @@ class StatusQuery extends StatusdatQuery
     public function isHandledForHost(&$obj)
     {
         return $this->isHandled($obj->host);
+    }
+
+    public function isHostUnhandled(&$obj)
+    {
+        return $this->isUnhandled($obj->host);
     }
 
     public function getSeverityForHost(&$obj)

@@ -23,6 +23,7 @@ class HostStatus extends DataView
             'host_state',
             'host_state_type',
             'host_handled',
+            'host_unhandled',
             'host_in_downtime',
             'host_acknowledged',
             'host_last_state_change',
@@ -105,7 +106,7 @@ class HostStatus extends DataView
 
     public function getFilterColumns()
     {
-        return array('hostgroups', 'servicegroups', 'service_problem');
+        return array('hostgroup', 'servicegroup', 'service_problems');
     }
 
     public function isValidFilterTarget($column)
