@@ -1,0 +1,399 @@
+<?php
+
+namespace Icinga\Cli;
+
+use Icinga\Application\ApplicationBootstrap as App;
+use Icinga\Exception\ProgrammingError;
+use Icinga\Cli\Params;
+use Icinga\Cli\Screen;
+use Icinga\Cli\Documentation;
+use Exception;
+
+/**
+ * 
+ */
+class Loader
+{
+    protected $app;
+
+    protected $docs;
+
+    protected $commands;
+
+    protected $modules;
+
+    protected $moduleCommands = array();
+
+    protected $coreAppDir;
+
+    protected $screen;
+
+    protected $moduleName;
+
+    protected $commandName;
+
+    protected $actionName; // Should this better be moved to the Command?
+
+    /**
+     * [$command] = $class;
+     */
+    protected $commandClassMap = array();
+
+    /**
+     * [$command] = $file;
+     */
+    protected $commandFileMap = array();
+
+    /**
+     * [$module][$command] = $class;
+     */
+    protected $moduleClassMap = array();
+
+    /**
+     * [$module][$command] = $file;
+     */
+    protected $moduleFileMap = array();
+
+    protected $commandInstances = array();
+
+    protected $moduleInstances = array();
+
+    protected $lastSuggestions = array();
+
+    public function __construct(App $app)
+    {
+        $this->app = $app;
+        $this->coreAppDir = ICINGA_APPDIR . '/clicommands';
+    }
+
+    /**
+     * Screen shortcut
+     *
+     * @return Screen
+     */
+    protected function screen()
+    {
+        if ($this->screen === null) {
+            $this->screen = Screen::instance();
+        }
+        return $this->screen;
+    }
+
+    /**
+     * Documentation shortcut
+     *
+     * @return Documentation
+     */
+    protected function docs()
+    {
+        if ($this->docs === null) {
+            $this->docs = new Documentation($this->app);
+        }
+        return $this->docs;
+    }
+
+    /**
+     * Show given message and exit
+     *
+     * @param  string $msg message to show
+     */
+    public function fail($msg)
+    {
+        printf("%s: %s\n", $this->screen()->colorize('ERROR', 'red'), $msg);
+        exit(1);
+    }
+
+    public function getCommandInstance($command)
+    {
+        if (! array_key_exists($command, $this->commandInstances)) {
+            $this->assertCommandExists($command);
+            require_once $this->commandFileMap[$command];
+            $className = $this->commandClassMap[$command];
+            $this->commandInstances[$command] = new $className(
+                $this->app,
+                null,
+                $command,
+                null,
+                false
+            );    
+        }
+        return $this->commandInstances[$command];
+    }
+
+    public function getModuleCommandInstance($module, $command)
+    {
+        if (! array_key_exists($command, $this->moduleInstances[$module])) {
+            $this->assertModuleCommandExists($module, $command);
+            require_once $this->moduleFileMap[$module][$command];
+            $className = $this->moduleClassMap[$module][$command];
+            $this->moduleInstances[$module][$command] = new $className(
+                $this->app,
+                $module,
+                $command,
+                null,
+                false
+            );
+        }
+        return $this->moduleInstances[$module][$command];
+    }
+
+    public function showLastSuggestions()
+    {
+        if (! empty($this->lastSuggestions)) {
+            foreach ($this->lastSuggestions as & $s) {
+                $s = $this->screen()->colorize($s, 'lightblue');
+            }
+            printf(
+                "Did you mean %s?\n",
+                implode(" or ", $this->lastSuggestions)
+            );
+        }
+    }
+
+    public function parseParams(Params $params = null)
+    {
+        if ($params === null) {
+            $params = $this->app->getParams();
+        }
+        $first = $params->shift();
+        if (! $first) {
+            return;
+        }
+        $found = $this->resolveName($first);
+        if (! $found) {
+            $msg = "There is no such module or command: '$first'";
+            printf("%s: %s\n", $this->screen()->colorize('ERROR', 'red'), $msg);
+            $this->showLastSuggestions();
+            echo "\n";
+        }
+
+        $obj = null;
+        if ($this->hasCommand($found)) {
+            $this->commandName = $found;
+            $obj = $this->getCommandInstance($this->commandName);
+        } elseif ($this->hasModule($found)) {
+            $this->moduleName = $found;
+            $command = $this->resolveModuleCommandName($found, $params->shift());
+            if ($command) {
+                $this->commandName = $command;
+                $obj = $this->getModuleCommandInstance(
+                    $this->moduleName,
+                    $this->commandName
+                );
+            }
+        }
+        if ($obj !== null) {
+            $action = $this->resolveObjectActionName(
+                $obj,
+                $params->getStandalone()
+            );
+            if ($obj->hasActionName($action)) {
+                $this->actionName = $action;
+                $params->shift();
+            } elseif ($obj->hasDefaultActionName()) {
+                $this->actionName = $obj->getDefaultActionName();
+            }
+        }
+        return $this;
+    }
+
+    public function handleParams(Params $params = null)
+    {
+        $this->parseParams($params);
+        $this->dispatch();
+    }
+
+    public function dispatch()
+    {
+        if ($this->commandName === null) {
+            echo $this->docs()->usage($this->moduleName);
+            return false;
+        } elseif ($this->actionName === null) {
+            echo $this->docs()->usage($this->moduleName, $this->commandName);
+            return false;
+        }
+
+        try {
+            if ($this->moduleName) {
+                $this->app->getModuleManager()->loadModule($this->moduleName);
+                $obj = $this->getModuleCommandInstance(
+                    $this->moduleName,
+                    $this->commandName
+                );
+            } else {
+                $obj = $this->getCommandInstance($this->commandName);
+            }
+            $obj->init();
+            return $obj->{$this->actionName . 'Action'}();
+        } catch (Exception $e) {
+            $this->fail($e->getMessage());
+        }
+    }
+
+    protected function searchMatch($needle, $haystack)
+    {
+        $stack = $haystack;
+        $search = $needle;
+        $this->lastSuggestions = array();
+        while (strlen($search) > 0) {
+            $len = strlen($search);
+            foreach ($stack as & $s) {
+                $s = substr($s, 0, $len);
+            }
+
+            $res = array_keys($stack, $search, true);
+            if (count($res) === 1) {
+                $found = $haystack[$res[0]];
+                if (substr($found, 0, strlen($needle)) === $needle) {
+                    return $found;
+                } else {
+                    return false;
+                }
+            } elseif (count($res) > 1) {
+                foreach ($res as $key) {
+                    $this->lastSuggestions[] = $haystack[$key];
+                }
+                return false;
+            }
+            $search = substr($search, 0, -1);
+        }
+        return false;
+    }
+
+    public function resolveName($name)
+    {
+        return $this->searchMatch(
+            $name,
+            array_merge($this->listCommands(), $this->listModules())
+        );
+    }
+
+    public function resolveCommandName($name)
+    {
+        return $this->searchMatch($name, $this->listCommands());
+    }
+
+    public function resolveModuleName($name)
+    {
+        return $this->searchMatch($name, $this->listModules());
+    }
+
+    public function resolveModuleCommandName($module, $name)
+    {
+        return $this->searchMatch($name, $this->listModuleCommands($module));
+    }
+
+    public function resolveObjectActionName($obj, $name)
+    {
+        return $this->searchMatch($name, $obj->listActions());
+    }
+
+    protected function assertModuleExists($module)
+    {
+        if (! $this->hasModule($module)) {
+            throw new ProgrammingError(
+                sprintf('There is no such module: %s', $module)
+            );
+        }
+    }
+
+    protected function assertCommandExists($command)
+    {
+        if (! $this->hasCommand($command)) {
+            throw new ProgrammingError(
+                sprintf('There is no such command: %s', $command)
+            );
+        }
+    }
+
+    protected function assertModuleCommandExists($module, $command)
+    {
+        $this->assertModuleExists($module);
+        if (! $this->hasModuleCommand($module, $command)) {
+            throw new ProgrammingError(
+                sprintf("The module '%s' has no such command: %s", $module, $command)
+            );
+        }
+    }
+
+    public function hasCommand($name)
+    {
+        return in_array($name, $this->listCommands());
+    }
+
+    public function hasModule($name)
+    {
+        return in_array($name, $this->listModules());
+    }
+
+    public function hasModuleCommand($module, $name)
+    {
+        return in_array($name, $this->listModuleCommands($module));
+    }
+
+    public function listModules()
+    {
+        if ($this->modules === null) {
+            $this->modules = array();
+            $this->modules = $this->app->getModuleManager()->listEnabledModules();
+            sort($this->modules);
+        }
+        return $this->modules;
+    }
+
+    protected function retrieveCommandsFromDir($dirname)
+    {
+        $commands = array();
+        if (! @file_exists($dirname) || ! is_readable($dirname)) {
+            return $commands;
+        }
+
+        $base = opendir($dirname);
+        if ($base === false) {
+            return $commands;
+        }
+        while (false !== ($dir = readdir($base))) {
+            if ($dir[0] === '.') {
+                continue;
+            }
+            if (preg_match('~^([A-Za-z0-9]+)Command\.php$~', $dir, $m)) {
+                $cmd = strtolower($m[1]);
+                $commands[] = $cmd;
+            }
+        }
+        sort($commands);
+        return $commands;
+    }
+
+    public function listCommands()
+    {
+        if ($this->commands === null) {
+            $this->commands = array();
+            $ns = 'Icinga\\Clicommands\\';
+            $this->commands = $this->retrieveCommandsFromDir($this->coreAppDir);
+            foreach ($this->commands as $cmd) {
+                $this->commandClassMap[$cmd] = $ns . ucfirst($cmd) . 'Command';
+                $this->commandFileMap[$cmd] = $this->coreAppDir . '/' . ucfirst($cmd) . 'Command.php';
+            }
+        }
+        return $this->commands;
+    }
+
+    public function listModuleCommands($module)
+    {
+        if (! array_key_exists($module, $this->moduleCommands)) {
+            $ns = 'Icinga\\Module\\' . ucfirst($module) . '\\Clicommands\\';
+            $this->assertModuleExists($module);
+            $manager = $this->app->getModuleManager();
+            $manager->enableModule($module);
+            $dir = $manager->getModuleDir($module) . '/application/clicommands';
+            $this->moduleCommands[$module] = $this->retrieveCommandsFromDir($dir);
+            $this->moduleInstances[$module] = array();
+            foreach ($this->moduleCommands[$module] as $cmd) {
+                $this->moduleClassMap[$module][$cmd] = $ns . ucfirst($cmd) . 'Command';
+                $this->moduleFileMap[$module][$cmd] = $dir . '/' . ucfirst($cmd) . 'Command.php';
+            }
+        }
+        return $this->moduleCommands[$module];
+    }
+}
