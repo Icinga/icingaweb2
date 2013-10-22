@@ -103,6 +103,21 @@ class Loader
         exit(1);
     }
 
+    public function getModuleName()
+    {
+        return $this->moduleName;
+    }
+
+    public function getCommandName()
+    {
+        return $this->commandName;
+    }
+
+    public function getActionName()
+    {
+        return $this->actionName;
+    }
+
     public function getCommandInstance($command)
     {
         if (! array_key_exists($command, $this->commandInstances)) {
