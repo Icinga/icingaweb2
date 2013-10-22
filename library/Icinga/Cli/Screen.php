@@ -8,7 +8,7 @@ class Screen
 {
     protected static $instance;
 
-    public function instance()
+    public static function instance()
     {
         if (self::$instance === null) {
             self::$instance = new AnsiScreen();
