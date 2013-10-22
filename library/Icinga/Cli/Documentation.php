@@ -19,10 +19,12 @@ class Documentation
 
     public function usage($module = null, $command = null, $action = null)
     {
-        if ($module !== null) {
+        if ($module) {
+            $module = $this->loader->resolveModuleName($module);
             return $this->moduleUsage($module, $command, $action);
         }
-        if ($command !== null) {
+        if ($command) {
+            $command = $this->loader->resolveCommandName($command);
             return $this->commandUsage($command, $action);
         }
         return $this->globalUsage();
@@ -47,6 +49,7 @@ class Documentation
         $d .= "\nGlobal options:\n\n"
             . "  --verbose    Be verbose\n"
             . "  --debug      Show debug output\n"
+            . "  --help       Show help\n"
             . "  --benchmark  Show benchmark summary\n"
             . "  --watch [s]  Refresh output each <s> seconds (default: 5)\n"
             ;
@@ -77,6 +80,7 @@ class Documentation
         } elseif ($action === null) {
             $d .= $this->showCommandActions($obj, $command);
         } else {
+            $action = $this->loader->resolveObjectActionName($obj, $action);
             $d .= $this->getMethodDocumentation($obj, $action);
         }
         return $d;
@@ -101,11 +105,13 @@ class Documentation
     public function commandUsage($command, $action = null)
     {
         $obj = $this->loader->getCommandInstance($command);
+        $action = $this->loader->resolveObjectActionName($obj, $action);
+
         $d = "\n";
-        if ($action === null) {
-            $d .= $this->showCommandActions($obj, $command);
-        } else {
+        if ($action) {
             $d .= $this->getMethodDocumentation($obj, $action);
+        } else {
+            $d .= $this->showCommandActions($obj, $command);
         }
         return $d;
     }
