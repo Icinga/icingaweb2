@@ -40,7 +40,7 @@
 %endif
 
 Summary:        Open Source host, service and network monitoring Web UI
-Name:           icingaweb
+Name:           icingaweb2
 Version:        1.0.0
 Release:        %{revision}%{?dist}
 License:        GPLv2
@@ -244,10 +244,10 @@ fi
 # main dirs
 %defattr(-,root,root)
 %doc etc/schema doc README.RHEL.SUSE
-%{_datadir}/%{name}/application
-%{_datadir}/%{name}/library
-%{_datadir}/%{name}/public
-%{_datadir}/%{name}/modules
+%{sharedir}/application
+%{sharedir}/library
+%{sharedir}/public
+%{sharedir}/modules
 # configs
 %defattr(-,root,root)
 %config(noreplace) %attr(-,root,root) %{apacheconfdir}/icingaweb.conf

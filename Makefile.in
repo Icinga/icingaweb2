@@ -40,7 +40,6 @@ update: install-application
 # Removes files created by ./configure
 #
 clean:
-	fi; \
 	if [ -f ./Makefile ];then \
 		rm ./Makefile; \
 	fi; \

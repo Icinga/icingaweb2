@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.61])
-AC_INIT([IcingaWeb], [1.0.0], [info@icinga.org])
+AC_INIT([IcingaWeb2], [1.0.0], [info@icinga.org])
 AC_PREFIX_DEFAULT(/usr/local/icingaweb)
 
 if test "x$prefix" = "xNONE" ; then
