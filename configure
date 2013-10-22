@@ -2426,7 +2426,7 @@ fi
 
 # Check whether --with-internal_authentication was given.
 if test "${with_internal_authentication+set}" = set; then :
-  withval=$with_internal_authentication; internal_authentication=yes
+  withval=$with_internal_authentication; internal_authentication=$withval
 else
   internal_authentication=yes
 
@@ -2436,7 +2436,7 @@ fi
 
 # Check whether --with-ldap_authentication was given.
 if test "${with_ldap_authentication+set}" = set; then :
-  withval=$with_ldap_authentication; ldap_authentication=yes
+  withval=$with_ldap_authentication; ldap_authentication=$withval
 else
   ldap_authentication=no
 

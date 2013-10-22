@@ -136,13 +136,13 @@ AC_ARG_WITH([internal_db_user],
 
 AC_ARG_WITH([internal_authentication], 
     AC_HELP_STRING([--with-internal-authentication], [use the internal database for authentication (default: yes)]),
-    internal_authentication=yes,
+    internal_authentication=$withval,
     internal_authentication=yes
 )
 
 AC_ARG_WITH([ldap_authentication], 
     AC_HELP_STRING([--with-ldap-authentication], [use a ldap server for authentication (default: no)]),
-    ldap_authentication=yes,
+    ldap_authentication=$withval,
     ldap_authentication=no
 )
 
