@@ -340,6 +340,8 @@ configure { 'icingaweb':
   flags => '--prefix=/vagrant \
             --with-icinga-commandpipe="/usr/local/icinga-mysql/var/rw/icinga.cmd" \
             --with-statusdat-file="/usr/local/icinga-mysql/var/status.dat" \
+            --with-objects-cache-file=/usr/local/icinga-mysql/var/objects.cache \
+            --with-icinga-backend=ido \
             --with-httpd-config-path="/etc/httpd/conf.d" \
             --with-ldap-authentication \
             --with-internal-authentication \
