@@ -102,7 +102,7 @@ class Manager
     {
         $this->app = $app;
         if (empty($availableDirs)) {
-            $availableDirs = array(ICINGA_APPDIR . '/../modules');
+            $availableDirs = array(realpath(ICINGA_APPDIR . '/../modules'));
         }
         $this->modulePaths = $availableDirs;
         if ($enabledDir === null) {
