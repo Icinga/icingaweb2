@@ -192,24 +192,6 @@ AC_ARG_WITH([ldap_attribute_username],
     ldap_attribute_username="uid"
 )
 
-AC_ARG_WITH([ldap_attribute_password],
-    AS_HELP_STRING([--with-ldap-attribute-password=LDAP_ATTRIBUTE], [user attribute to use for the password (default: password)]),
-    ldap_attribute_password=$withval,
-    ldap_attribute_password="password"
-)
-
-AC_ARG_WITH([ldap_group_objectclass], 
-    AS_HELP_STRING([--with-ldap-group-objectclass=LDAP_ATTRIBUTE], [ldap object type to use for group authentication (default: inetOrgPerson)]),
-    ldap_group_objectclass=$withval,
-    ldap_group_objectclass="group"
-)
-
-AC_ARG_WITH([ldap_attribute_groupname], 
-    AS_HELP_STRING([--with-ldap-attribute-groupname=LDAP_OBJECT_CLASS], [user object type to use for the authentication (default: inetOrgPerson)]),
-    ldap_attribute_groupname=$withval,
-    ldap_attribute_groupname="guid"
-)
-
 #
 #   Icinga backend selection
 #
@@ -410,9 +392,6 @@ AC_SUBST(ldap_bindpass)
 AC_SUBST(ldap_user_objectclass)
 AC_SUBST(ldap_attribute_basedn)
 AC_SUBST(ldap_attribute_username)
-AC_SUBST(ldap_attribute_password)
-AC_SUBST(ldap_group_objectclass)
-AC_SUBST(ldap_attribute_groupname)
 
 # backend setup
 AC_SUBST(icinga_backend)

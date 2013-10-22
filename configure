@@ -603,9 +603,6 @@ ido_port
 ido_host
 ido_db_type
 icinga_backend
-ldap_attribute_groupname
-ldap_group_objectclass
-ldap_attribute_password
 ldap_attribute_username
 ldap_attribute_basedn
 ldap_user_objectclass
@@ -699,9 +696,6 @@ with_ldap_bindpass
 with_ldap_rootdn
 with_ldap_user_objectclass
 with_ldap_attribute_username
-with_ldap_attribute_password
-with_ldap_group_objectclass
-with_ldap_attribute_groupname
 with_icinga_backend
 with_ido_db_type
 with_ido_host
@@ -1379,15 +1373,6 @@ Optional Packages:
   --with-ldap-attribute-username=LDAP_ATTRIBUTE
                           user attribute to use for the username (default:
                           uid)
-  --with-ldap-attribute-password=LDAP_ATTRIBUTE
-                          user attribute to use for the password (default:
-                          password)
-  --with-ldap-group-objectclass=LDAP_ATTRIBUTE
-                          ldap object type to use for group authentication
-                          (default: inetOrgPerson)
-  --with-ldap-attribute-groupname=LDAP_OBJECT_CLASS
-                          user object type to use for the authentication
-                          (default: inetOrgPerson)
   --with-icinga-backend=(ido, statusdat, livestatus)
                           backend to use for rb (default: statusdat)
   --with-ido-db-type=(mysql, pgsql)
@@ -2517,36 +2502,6 @@ else
 fi
 
 
-
-# Check whether --with-ldap_attribute_password was given.
-if test "${with_ldap_attribute_password+set}" = set; then :
-  withval=$with_ldap_attribute_password; ldap_attribute_password=$withval
-else
-  ldap_attribute_password="password"
-
-fi
-
-
-
-# Check whether --with-ldap_group_objectclass was given.
-if test "${with_ldap_group_objectclass+set}" = set; then :
-  withval=$with_ldap_group_objectclass; ldap_group_objectclass=$withval
-else
-  ldap_group_objectclass="group"
-
-fi
-
-
-
-# Check whether --with-ldap_attribute_groupname was given.
-if test "${with_ldap_attribute_groupname+set}" = set; then :
-  withval=$with_ldap_attribute_groupname; ldap_attribute_groupname=$withval
-else
-  ldap_attribute_groupname="guid"
-
-fi
-
-
 #
 #   Icinga backend selection
 #
@@ -2930,9 +2885,6 @@ fi
 
 
 # ldap setup
-
-
-
 
 
 
