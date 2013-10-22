@@ -401,6 +401,7 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
 
         mainDom.addClass('col-xs-pull-12 col-sm-pull-12 col-md-pull-12 col-lg-7');
         detailDom.addClass('col-xs-push-12 col-sm-push-12 col-md-push-12 col-lg-5');
+        $(window).trigger('layoutchange');
     };
 
     /**
@@ -426,6 +427,7 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
         mainDom.addClass('col-sm-12');
         detailDom.addClass('hidden-sm');
         detailDom.removeAttr('data-icinga-href');
+        $(window).trigger('layoutchange');
     };
     /**
      * Injects the icinga object into the Container class

@@ -201,6 +201,9 @@ class ActionController extends Zend_Controller_Action
 
         if ($this->_request->isXmlHttpRequest()) {
             $target = ($this->getParam('render') === 'detail') ? 'inline' : 'body';
+            if ($target !== 'inline') {
+                $target = ($this->getParam('view') === 'compact') ? 'inline' : 'body';
+            }
             $this->_helper->layout()->setLayout($target);
         }
     }

@@ -74,13 +74,13 @@ class LinearUnit implements AxisUnit
      *
      * @var int
      */
-    private $currentTick = 0;
+    protected $currentTick = 0;
 
     /**
      * The currently displayed value
      * @var int
      */
-    private $currentValue = 0;
+    protected $currentValue = 0;
 
     /**
      * Create and initialize this AxisUnit

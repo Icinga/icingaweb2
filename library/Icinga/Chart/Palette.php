@@ -59,10 +59,10 @@ class Palette
      * @var array
      */
     public $colorSets = array(
-        self::OK      => array('#00FF00','#00C90D', '#008209', '#238C47', '#00BB3F', '#37DD6F'),
-        self::PROBLEM => array('#FF0000','#FF1300', '#FF4E40', '#A60C00', '#FF4500', '#A62D00'),
-        self::WARNING => array('#FFFF00', 'B4B400' , '#A6A600', '#F5FF73', '#FFB300', '#BFA730'),
-        self::NEUTRAL => array('#232323', '#009999', '#1D7373', '#ACACFF', '#8F9ABF', '#356AA6')
+        self::OK      => array('#00FF00'),
+        self::PROBLEM => array('#FF0000'),
+        self::WARNING => array('#FFFF00'),
+        self::NEUTRAL => array('#f3f3f3')
     );
 
     /**
@@ -79,8 +79,10 @@ class Palette
         }
 
         $color = current($this->colorSets[$type]);
+        echo $type;
         if ($color === false) {
             reset($this->colorSets[$type]);
+
             $color = current($this->colorSets[$type]);
         }
         next($this->colorSets[$type]);

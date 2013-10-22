@@ -107,6 +107,9 @@ class UrlViewFilter
     public function normalizeTreeNode($node, Tree $subTree = null)
     {
         $subTree = $subTree ? $subTree : new Tree();
+        if (!$node) {
+            return $subTree;
+        }
         if ($node->type === Node::TYPE_OPERATOR) {
             $this->insertNormalizedOperatorNode($node, $subTree);
         } else {

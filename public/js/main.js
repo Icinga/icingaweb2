@@ -4,6 +4,7 @@ requirejs.config({
     'paths': {
         'jquery':           'vendor/jquery-1.8.3',
         'jquery_scrollto':  'vendor/jquery.scrollto',
+        'freetile':         'vendor/freetile',
         'bootstrap':        'vendor/bootstrap/bootstrap.min',
         'logging':          'icinga/util/logging',
         'URIjs':            'vendor/uri',
@@ -13,8 +14,12 @@ requirejs.config({
         'datetimepicker': {
             'exports': 'datetimepicker'
         },
+
         'jquery_scrollto': {
             exports: 'jquery_scrollto'
+        },
+        'freetile': {
+            exports: 'freetile'
         },
         'jquery' : {
             exports: 'jquery'
@@ -26,7 +31,7 @@ define(['jquery'], function ($, history) {
     window.$ = $;
     window.jQuery = $;
 
-    requirejs(['bootstrap','jquery_scrollto'], function() {
+    requirejs(['bootstrap','vendor/imagesLoaded','jquery_scrollto', 'freetile'], function() {
         requirejs(['datetimepicker']);
     });
     requirejs(['icinga/icinga'], function (Icinga) {

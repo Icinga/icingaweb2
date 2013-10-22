@@ -56,7 +56,8 @@ class AddUrlForm extends Form
             array(
                 'label'     => 'Dashboard',
                 'required'  => true,
-                'style'     => 'display:inline-block',
+                'style'     => 'display:inline-block;',
+
                 'multiOptions' => $dashboard->getPaneKeyTitleArray()
             )
         );
@@ -64,8 +65,9 @@ class AddUrlForm extends Form
         $newDashboardBtn = new Zend_Form_Element_Submit(
             'create_new_pane',
             array(
-                'label'     => '+',
+                'label'     => 'Create A New Pane',
                 'required'  => false,
+                'class'     => 'btn btn-default',
                 'style'     => 'display:inline-block'
             )
         );
@@ -83,7 +85,7 @@ class AddUrlForm extends Form
      *  Add a textfield for creating a new pane to this form
      *
      */
-    private function addNewPaneTextField()
+    private function addNewPaneTextField($showExistingButton = true)
     {
         $txtCreatePane = new Zend_Form_Element_Text(
             'pane',
@@ -106,18 +108,22 @@ class AddUrlForm extends Form
         $cancelDashboardBtn = new Zend_Form_Element_Submit(
             'use_existing_dashboard',
             array(
-                'label'     => '{{REMOVE_ICON}}',
-                'required'  => false,
-                'style'     => 'display:inline-block'
+                'class'     => 'btn',
+                'escape'    => false,
+                'label'     => 'Use An Existing Dashboard',
+                'required'  => false
             )
         );
+
 
         $cancelDashboardBtn->removeDecorator('DtDdWrapper');
         $txtCreatePane->removeDecorator('DtDdWrapper');
         $txtCreatePane->removeDecorator('htmlTag');
 
         $this->addElement($txtCreatePane);
-        $this->addElement($cancelDashboardBtn);
+        if ($showExistingButton) {
+            $this->addElement($cancelDashboardBtn);
+        }
         $this->addElement($markAsNewPane);
     }
 
@@ -146,7 +152,7 @@ class AddUrlForm extends Form
             !$this->getRequest()->getPost('use_existing_dashboard', '0')) // and the user didn't click the 'use
                                                                           // existing' button
         ) {
-            $this->addNewPaneTextField();
+            $this->addNewPaneTextField(!empty($elems));
         } else {
             $this->addPaneSelectionBox($dashboard);
         }
@@ -159,7 +165,7 @@ class AddUrlForm extends Form
                 'required' => true,
             )
         );
-        $this->setSubmitLabel("{{CREATE_ICON}} Add To Dashboard");
+        $this->setSubmitLabel("Add To Dashboard");
 
     }
 }

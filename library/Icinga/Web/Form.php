@@ -612,7 +612,9 @@ class Form extends Zend_Form
             $el->removeDecorator('Label');
             $el->removeDecorator('DtDdWrapper');
             $el->addDecorator(new BootstrapForm());
-            $el->setAttrib('class', $el->getAttrib('class') . ' form-control input-sm');
+            if ($el->getId() === 'btn_submit' || stripos($el->getAttrib('class'), 'btn') === false) {
+                $el->setAttrib('class', $el->getAttrib('class') . ' form-control input-sm');
+            }
         }
 
         return $this;

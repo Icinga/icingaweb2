@@ -29,9 +29,13 @@
 namespace Icinga\Web\Widget\Dashboard;
 
 use Icinga\Util\Dimension;
+use Icinga\Web\Form;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Widget;
+use Zend_View_Abstract;
 use Zend_Config;
+use Zend_Form_Element_Submit;
+use Zend_Form_Element_Button;
 
 /**
  * A dashboard pane component
@@ -81,18 +85,16 @@ class Component implements Widget
      */
     private $template =<<<'EOD'
 
-    <div class="panel panel-default" style="{DIMENSION}">
-        <div class="panel-heading panel-title">
-            <a href="{URL}"> {TITLE}</a>
-            <button class="btn btn-danger btn-sm pull-right">
-                <a href="{REMOVE_URL}" style="color:black">{{REMOVE_ICON}}</a>
-            </button>
+    <div data-icinga-component="app/dashboard" class="dashboard-component" data-icinga-url="{URL}">
+        <h1 class="pull-left"><a  data-icinga-target="self" href="{FULL_URL}"> {TITLE}</a></h1>
+        {REMOVE_BTN}
+        <div class="container">
+
         </div>
-        <div class="panel-body">
-            <noscript>
-                <iframe src="{URL}" style="height:100%; width:99%" frameborder="no"></iframe>
-            </noscript>
-        </div>
+        <noscript>
+            <iframe src="{URL}" style="height:100%; width:99%" frameborder="no"></iframe>
+        </noscript>
+
     </div>
 EOD;
 
@@ -194,11 +196,27 @@ EOD;
     /**
      * @see Widget::render()
      */
-    public function render(\Zend_View_Abstract $view)
+    public function render(Zend_View_Abstract $view)
     {
         $url = clone($this->url);
         $url->addParams(array('view' => 'compact'));
 
+        $html = str_replace('{URL}', $url->getAbsoluteUrl(), $this->template);
+        $html = str_replace('{FULL_URL}', $url->getUrlWithout('view')->getAbsoluteUrl(), $html);
+        $html = str_replace('{REMOVE_BTN}', $this->getRemoveForm($view), $html);
+        $html = str_replace('{DIMENSION}', $this->getBoxSizeAsCSS(), $html);
+        $html = str_replace('{TITLE}', htmlentities($this->getTitle()), $html);
+        return $html;
+    }
+
+    /**
+     * Render the form for removing a dashboard elemetn
+     *
+     * @param  Zend_View_Abstract $view     The view to use for rendering
+     * @return string                       The html representation of the form
+     */
+    public function getRemoveForm(Zend_View_Abstract $view)
+    {
         $removeUrl = Url::fromPath(
             '/dashboard/removecomponent',
             array(
@@ -206,12 +224,18 @@ EOD;
                 'component' => $this->getTitle()
             )
         );
-
-        $html = str_replace('{URL}', $url->getAbsoluteUrl(), $this->template);
-        $html = str_replace('{REMOVE_URL}', $removeUrl, $html);
-        $html = str_replace('{DIMENSION}', $this->getBoxSizeAsCSS(), $html);
-        $html = str_replace('{TITLE}', htmlentities($this->getTitle()), $html);
-        return $html;
+        $form = new Form();
+        $form->setMethod('POST');
+        $form->setAction($removeUrl);
+        $form->addElement(new Zend_Form_Element_Button(
+            'remove_pane_btn',
+            array(
+                'class'=> 'btn btn-danger pull-right',
+                'type' => 'submit',
+                'label' => 'Remove'
+            )
+        ));
+        return $form->render($view);
     }
 
     /**
