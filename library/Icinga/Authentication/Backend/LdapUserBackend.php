@@ -70,7 +70,7 @@ class LdapUserBackend implements UserBackend
      */
     public function __construct(Zend_Config $config)
     {
-        $this->connection = new Ldap\Connection($config);
+        $this->connection = new Connection($config);
         $this->config = $config;
         $this->name = $config->name;
     }
