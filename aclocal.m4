@@ -72,3 +72,13 @@ AC_DEFUN([ICINGA_CHECK_DBTYPE], [
         AC_MSG_ERROR([$1])
     )
 ])
+
+# ICINGA_CHECK_BACKENDTYPE(BACKENDTYPE, ARGUMENT_NAME)
+# ------------------------------------------
+AC_DEFUN([ICINGA_CHECK_BACKENDTYPE], [
+    AC_MSG_CHECKING([Testing backend type for $2])
+    AS_IF(echo "$1" | $GREP -q "^\(ido\|statusdat\|livestatus\)$",
+        AC_MSG_RESULT([OK ($1)]),
+        AC_MSG_ERROR([$1])
+    )
+])

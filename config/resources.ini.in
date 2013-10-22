@@ -18,7 +18,7 @@ type                = db
 db                  = @internal_db_type@
 host                = @internal_db_host@
 port                = @internal_db_port@
-password            = @internal_db_pass@
+password            = @internal_db_password@
 username            = @internal_db_user@
 dbname              = @internal_db_name@
 
@@ -27,14 +27,14 @@ type                = db
 db                  = @ido_db_type@
 host                = @ido_host@
 port                = @ido_port@
-password            = @ido_user@
+password            = @ido_password@
 username            = @ido_user@
-dbname              = @ido_database@
+dbname              = @ido_db_name@
 
 [statusdat]
 type                = statusdat
-status_file         = /usr/local/icinga-mysql/var/status.dat
-object_file         = /usr/local/icinga-mysql/var/objects.cache
+status_file         = @statusdat_file@
+object_file         = @objects_cache_file@
 
 [livestatus]
 type                = livestatus

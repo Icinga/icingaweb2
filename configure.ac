@@ -118,10 +118,10 @@ AC_ARG_WITH([internal_db_port],
     internal_db_port=db_default_port
 )
 
-AC_ARG_WITH([internal_db_pass],
-    AS_HELP_STRING([--with-internal-db-pass=PASS], [database pass to use for internal database (default icingaweb)]),
-    internal_db_pass=$withval,
-    internal_db_pass=icingaweb
+AC_ARG_WITH([internal_db_password],
+    AS_HELP_STRING([--with-internal-db-password=PASS], [database pass to use for internal database (default icingaweb)]),
+    internal_db_password=$withval,
+    internal_db_password=icingaweb
 )
 
 AC_ARG_WITH([internal_db_user],
@@ -202,6 +202,8 @@ AC_ARG_WITH([icinga_backend],
     icinga_backend="statusdat"
 )
 
+ICINGA_CHECK_BACKENDTYPE($icinga_backend, [--with-icinga-backend])
+
 #
 #   Ido settings
 #
@@ -226,14 +228,14 @@ AC_ARG_WITH([ido_port],
     ido_port=db_default_port
 )
 
-AC_ARG_WITH([ido_database],
-    AS_HELP_STRING([--with-ido-database=DATABASE], [database name to use for retrieving data from the ido db (default: icinga)]),
-    ido_database=$withval,
-    ido_database="icinga"
+AC_ARG_WITH([ido_db_name],
+    AS_HELP_STRING([--with-ido-db-name=DATABASE], [database name to use for retrieving data from the ido db (default: icinga)]),
+    ido_db_name=$withval,
+    ido_db_name="icinga"
 )
 
 AC_ARG_WITH([ido_user],
-    AS_HELP_STRING([--with-ido-host=USER], [user to use for retrieving data from the ido db (default: icinga)]),
+    AS_HELP_STRING([--with-ido-user=USER], [user to use for retrieving data from the ido db (default: icinga)]),
     ido_user=$withval,
     ido_user="icinga"
 )
@@ -335,7 +337,7 @@ AS_IF([test "x$ido_db_type" = xpgsql], [
 ])
 
 #
-#   Comment out the disabled backends per default
+#   Disable authentication backends
 #
 
 ido_enabled="disabled        = \"1\""
@@ -381,7 +383,7 @@ AC_SUBST(internal_db_name)
 AC_SUBST(internal_db_host)
 AC_SUBST(internal_db_port)
 AC_SUBST(internal_db_user)
-AC_SUBST(internal_db_pass)
+AC_SUBST(internal_db_password)
 
 # ldap setup 
 AC_SUBST(ldap_host)
@@ -401,7 +403,7 @@ AC_SUBST(ido_enabled)
 AC_SUBST(ido_db_type)
 AC_SUBST(ido_host)
 AC_SUBST(ido_port)
-AC_SUBST(ido_database)
+AC_SUBST(ido_db_name)
 AC_SUBST(ido_user)
 AC_SUBST(ido_password)
 
