@@ -590,22 +590,22 @@ ac_subst_vars='LTLIBOBJS
 LIBOBJS
 INSTALL_OPTS_WEB
 INSTALL_OPTS
-use_internal_auth
-use_ldap_auth
+internal_auth_disabled
+ldap_auth_disabled
 icinga_commandpipe
+livestatus_enabled
 livestatus_socket
 objects_cache_file
 statusdat_file
+statusdat_enabled
 ido_password
 ido_user
-ido_database
+ido_db_name
 ido_port
 ido_host
 ido_db_type
+ido_enabled
 icinga_backend
-ldap_attribute_groupname
-ldap_group_objectclass
-ldap_attribute_password
 ldap_attribute_username
 ldap_attribute_basedn
 ldap_user_objectclass
@@ -614,7 +614,7 @@ ldap_binddn
 ldap_rootdn
 ldap_port
 ldap_host
-internal_db_pass
+internal_db_password
 internal_db_user
 internal_db_port
 internal_db_host
@@ -688,7 +688,7 @@ with_internal_db_type
 with_internal_db_name
 with_internal_db_host
 with_internal_db_port
-with_internal_db_pass
+with_internal_db_password
 with_internal_db_user
 with_internal_authentication
 with_ldap_authentication
@@ -699,14 +699,11 @@ with_ldap_bindpass
 with_ldap_rootdn
 with_ldap_user_objectclass
 with_ldap_attribute_username
-with_ldap_attribute_password
-with_ldap_group_objectclass
-with_ldap_attribute_groupname
 with_icinga_backend
 with_ido_db_type
 with_ido_host
 with_ido_port
-with_ido_database
+with_ido_db_name
 with_ido_user
 with_ido_password
 with_statusdat_file
@@ -1350,7 +1347,7 @@ Optional Packages:
   --with-internal-db-port=PORT
                           database port to use for internal database (default:
                           3306 for mysql, 5432 for pgsql)
-  --with-internal-db-pass=PASS
+  --with-internal-db-password=PASS
                           database pass to use for internal database (default
                           icingaweb)
   --with-internal-db-user=USER
@@ -1379,15 +1376,6 @@ Optional Packages:
   --with-ldap-attribute-username=LDAP_ATTRIBUTE
                           user attribute to use for the username (default:
                           uid)
-  --with-ldap-attribute-password=LDAP_ATTRIBUTE
-                          user attribute to use for the password (default:
-                          password)
-  --with-ldap-group-objectclass=LDAP_ATTRIBUTE
-                          ldap object type to use for group authentication
-                          (default: inetOrgPerson)
-  --with-ldap-attribute-groupname=LDAP_OBJECT_CLASS
-                          user object type to use for the authentication
-                          (default: inetOrgPerson)
   --with-icinga-backend=(ido, statusdat, livestatus)
                           backend to use for rb (default: statusdat)
   --with-ido-db-type=(mysql, pgsql)
@@ -1397,10 +1385,10 @@ Optional Packages:
                           (default: localhost)
   --with-ido-port=PORT    backend to use for retrieving data from the ido db
                           (default: 3306 for mysql. 5432 for pgsql)
-  --with-ido-database=DATABASE
+  --with-ido-db-name=DATABASE
                           database name to use for retrieving data from the
                           ido db (default: icinga)
-  --with-ido-host=USER    user to use for retrieving data from the ido db
+  --with-ido-user=USER    user to use for retrieving data from the ido db
                           (default: icinga)
   --with-ido-password=PASSWORD
                           password to use for retrieving data from the ido db
@@ -1409,7 +1397,7 @@ Optional Packages:
                           location of the status.dat file when retrieving data
                           from status.dat (default:
                           /usr/local/icinga/var/status.dat)
-  --with-objects-file=FILE
+  --with-objects-cache-file=FILE
                           location of the objects.cache file when retrieving
                           data from status.dat (default:
                           /usr/local/icinga/var/objects.cache)
@@ -1420,6 +1408,10 @@ Optional Packages:
                           location of the command pipe used for sending
                           commands (default:
                           /usr/local/icinga/var/rw/icinga.cmd)
+  --with-objects-file=FILE
+                          location of the objects.cache file when retrieving
+                          data from status.dat (default:
+                          /usr/local/icinga/var/objects.cache)
 
 Some influential environment variables:
   PHP         php cli binary
@@ -2358,6 +2350,18 @@ fi
 
 
 
+    { $as_echo "$as_me:${as_lineno-$LINENO}: checking Testing database type for --with-internal-db-type" >&5
+$as_echo_n "checking Testing database type for --with-internal-db-type... " >&6; }
+    if echo "$internal_db_type" | $GREP -q "^\(my\|pg\)sql$"; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: OK ($internal_db_type)" >&5
+$as_echo "OK ($internal_db_type)" >&6; }
+else
+  as_fn_error $? "$internal_db_type" "$LINENO" 5
+
+fi
+
+
+
 # Check whether --with-internal_db_name was given.
 if test "${with_internal_db_name+set}" = set; then :
   withval=$with_internal_db_name; internal_db_name=$withval
@@ -2388,11 +2392,11 @@ fi
 
 
 
-# Check whether --with-internal_db_pass was given.
-if test "${with_internal_db_pass+set}" = set; then :
-  withval=$with_internal_db_pass; internal_db_pass=$withval
+# Check whether --with-internal_db_password was given.
+if test "${with_internal_db_password+set}" = set; then :
+  withval=$with_internal_db_password; internal_db_password=$withval
 else
-  internal_db_pass=icingaweb
+  internal_db_password=icingaweb
 
 fi
 
@@ -2414,7 +2418,7 @@ fi
 
 # Check whether --with-internal_authentication was given.
 if test "${with_internal_authentication+set}" = set; then :
-  withval=$with_internal_authentication; internal_authentication=yes
+  withval=$with_internal_authentication; internal_authentication=$withval
 else
   internal_authentication=yes
 
@@ -2424,7 +2428,7 @@ fi
 
 # Check whether --with-ldap_authentication was given.
 if test "${with_ldap_authentication+set}" = set; then :
-  withval=$with_ldap_authentication; ldap_authentication=yes
+  withval=$with_ldap_authentication; ldap_authentication=$withval
 else
   ldap_authentication=no
 
@@ -2505,36 +2509,6 @@ else
 fi
 
 
-
-# Check whether --with-ldap_attribute_password was given.
-if test "${with_ldap_attribute_password+set}" = set; then :
-  withval=$with_ldap_attribute_password; ldap_attribute_password=$withval
-else
-  ldap_attribute_password="password"
-
-fi
-
-
-
-# Check whether --with-ldap_group_objectclass was given.
-if test "${with_ldap_group_objectclass+set}" = set; then :
-  withval=$with_ldap_group_objectclass; ldap_group_objectclass=$withval
-else
-  ldap_group_objectclass="group"
-
-fi
-
-
-
-# Check whether --with-ldap_attribute_groupname was given.
-if test "${with_ldap_attribute_groupname+set}" = set; then :
-  withval=$with_ldap_attribute_groupname; ldap_attribute_groupname=$withval
-else
-  ldap_attribute_groupname="guid"
-
-fi
-
-
 #
 #   Icinga backend selection
 #
@@ -2549,6 +2523,18 @@ else
 fi
 
 
+
+    { $as_echo "$as_me:${as_lineno-$LINENO}: checking Testing backend type for --with-icinga-backend" >&5
+$as_echo_n "checking Testing backend type for --with-icinga-backend... " >&6; }
+    if echo "$icinga_backend" | $GREP -q "^\(ido\|statusdat\|livestatus\)$"; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: OK ($icinga_backend)" >&5
+$as_echo "OK ($icinga_backend)" >&6; }
+else
+  as_fn_error $? "$icinga_backend" "$LINENO" 5
+
+fi
+
+
 #
 #   Ido settings
 #
@@ -2559,6 +2545,18 @@ if test "${with_ido_db_type+set}" = set; then :
   withval=$with_ido_db_type; ido_db_type=$withval
 else
   ido_db_type="mysql"
+
+fi
+
+
+
+    { $as_echo "$as_me:${as_lineno-$LINENO}: checking Testing database type for --with-ido-db-type" >&5
+$as_echo_n "checking Testing database type for --with-ido-db-type... " >&6; }
+    if echo "$ido_db_type" | $GREP -q "^\(my\|pg\)sql$"; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: OK ($ido_db_type)" >&5
+$as_echo "OK ($ido_db_type)" >&6; }
+else
+  as_fn_error $? "$ido_db_type" "$LINENO" 5
 
 fi
 
@@ -2584,11 +2582,11 @@ fi
 
 
 
-# Check whether --with-ido_database was given.
-if test "${with_ido_database+set}" = set; then :
-  withval=$with_ido_database; ido_database=$withval
+# Check whether --with-ido_db_name was given.
+if test "${with_ido_db_name+set}" = set; then :
+  withval=$with_ido_db_name; ido_db_name=$withval
 else
-  ido_database="icinga"
+  ido_db_name="icinga"
 
 fi
 
@@ -2828,12 +2826,12 @@ fi
 fi
 
 #
-#   Comment out the disabled backends per default
+#   Disable authentication backends
 #
 
-ido_enabled="disable=1"
-statusdat_enabled="disable=1"
-livestatus_enabled="disable=1"
+ido_enabled="disabled        = \"1\""
+statusdat_enabled="disabled        = \"1\""
+livestatus_enabled="disabled        = \"1\""
 
 case $icinga_backend in #(
   "ido") :
@@ -2846,7 +2844,7 @@ case $icinga_backend in #(
     statusdat_enabled="" ;;
 esac
 
-use_ldap_auth=";"
+ldap_auth_disabled="disabled    = \"1\""
 if test "x$ldap_authentication" != xno; then :
 
   for x in ldap;do
@@ -2860,11 +2858,11 @@ else
 fi
   done
 
-    use_ldap_auth=""
+    ldap_auth_disabled=""
 
 fi
 
-use_internal_auth=";"
+internal_auth_disabled="disabled    = \"1\""
 if test "x$internal_authentication" != xno; then :
 
   for x in ldap;do
@@ -2878,7 +2876,7 @@ else
 fi
   done
 
-    use_internal_auth=""
+    internal_auth_disabled=""
 
 fi
 
@@ -2915,9 +2913,6 @@ fi
 
 
 
-
-
-
 # backend setup
 
 
@@ -2929,11 +2924,14 @@ fi
 
 
 
+
 # status.dat backend
 
 
 
+
 # livestatus backend
+
 
 
 # command pipe

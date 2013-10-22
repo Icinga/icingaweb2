@@ -1,13 +1,37 @@
 <?php
-
+// {{{ICINGA_LICENSE_HEADER}}}
 /**
- * LDAP connection handler
+ * This file is part of Icinga 2 Web.
+ *
+ * Icinga 2 Web - Head for multiple monitoring backends.
+ * Copyright (C) 2013 Icinga Development Team
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ * @copyright 2013 Icinga Development Team <info@icinga.org>
+ * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
+ * @author    Icinga Development Team <info@icinga.org>
  */
+// {{{ICINGA_LICENSE_HEADER}}}
+
 namespace Icinga\Protocol\Ldap;
 
 use Icinga\Application\Platform;
-use \Icinga\Application\Config;
+use Icinga\Application\Config;
 use Icinga\Application\Logger as Log;
+use \Zend_Config;
 
 /**
  * Backend class managing all the LDAP stuff for you.
@@ -89,14 +113,15 @@ class Connection
      *
      * TODO: Allow to pass port and SSL options
      *
-     * @param array LDAP connection credentials
+     * @param Zend_Config $config
      */
-    public function __construct($config)
+    public function __construct(Zend_Config $config)
     {
         $this->hostname = $config->hostname;
         $this->bind_dn  = $config->bind_dn;
         $this->bind_pw  = $config->bind_pw;
         $this->root_dn  = $config->root_dn;
+        $this->port = $config->get('port', $this->port);
 
     }
 

@@ -17,7 +17,8 @@
 type                = db
 db                  = @internal_db_type@
 host                = @internal_db_host@
-password            = @internal_db_pass@
+port                = @internal_db_port@
+password            = @internal_db_password@
 username            = @internal_db_user@
 dbname              = @internal_db_name@
 
@@ -25,7 +26,16 @@ dbname              = @internal_db_name@
 type                = db
 db                  = @ido_db_type@
 host                = @ido_host@
-password            = @ido_user@
-username            = @ido_user@
 port                = @ido_port@
-dbname              = @ido_database@
+password            = @ido_password@
+username            = @ido_user@
+dbname              = @ido_db_name@
+
+[statusdat]
+type                = statusdat
+status_file         = @statusdat_file@
+object_file         = @objects_cache_file@
+
+[livestatus]
+type                = livestatus
+socket              = @livestatus_socket@

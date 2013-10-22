@@ -219,8 +219,10 @@ class DbAdapterFactory implements ConfigAwareFactory
         );
         switch ($config->db) {
             case 'mysql':
+                $options['port'] = $config->get('port', 3306);
                 return self::callFactory('Pdo_Mysql', $options);
             case 'pgsql':
+                $options['port'] = $config->get('port', 5432);
                 return self::callFactory('Pdo_Pgsql', $options);
             default:
                 if (!$config->db) {

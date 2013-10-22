@@ -163,6 +163,11 @@ class Manager
     private function setupBackends(Zend_Config $config)
     {
         foreach ($config as $name => $backendConfig) {
+            // We won't initialize disabled backends
+            if ($backendConfig->get('disabled') == '1') {
+                continue;
+            }
+
             if ($backendConfig->name === null) {
                 $backendConfig->name = $name;
             }

@@ -49,12 +49,12 @@ final class Logger
     /**
      * Default log target
      */
-    const DEFAULT_LOG_TARGET = "./var/log/icinga.log";
+    const DEFAULT_LOG_TARGET = "./var/log/icingaweb.log";
 
     /**
      * Default debug target
      */
-    const DEFAULT_DEBUG_TARGET = "./var/log/icinga.debug.log";
+    const DEFAULT_DEBUG_TARGET = "./var/log/icingaweb.debug.log";
 
     /**
      * Array of writers

@@ -46,10 +46,13 @@ namespace Tests\Icinga\Regression
         {
             $request = $this->getRequest();
 
-            $request->setMethod("POST")->setPost(array(
-                "username" => "test",
-                "password" => "test"
-            ));
+            $request->setMethod("POST")->setPost(
+                array(
+                    "username"      => "test",
+                    "password"      => "test",
+                    "btn_submit"    => "1"
+                )
+            );
 
             $view = new \Zend_View();
             $form = new LoginForm();

@@ -98,6 +98,8 @@ AC_ARG_WITH([internal_db_type],
     internal_db_type=mysql
 )
 
+ICINGA_CHECK_DBTYPE($internal_db_type, [--with-internal-db-type])
+
 AC_ARG_WITH([internal_db_name],
     AS_HELP_STRING([--with-internal-db-name=NAME], [database name to use for internal database (default icingaweb)]),
     internal_db_name=$withval,
@@ -116,10 +118,10 @@ AC_ARG_WITH([internal_db_port],
     internal_db_port=db_default_port
 )
 
-AC_ARG_WITH([internal_db_pass],
-    AS_HELP_STRING([--with-internal-db-pass=PASS], [database pass to use for internal database (default icingaweb)]),
-    internal_db_pass=$withval,
-    internal_db_pass=icingaweb
+AC_ARG_WITH([internal_db_password],
+    AS_HELP_STRING([--with-internal-db-password=PASS], [database pass to use for internal database (default icingaweb)]),
+    internal_db_password=$withval,
+    internal_db_password=icingaweb
 )
 
 AC_ARG_WITH([internal_db_user],
@@ -134,13 +136,13 @@ AC_ARG_WITH([internal_db_user],
 
 AC_ARG_WITH([internal_authentication], 
     AC_HELP_STRING([--with-internal-authentication], [use the internal database for authentication (default: yes)]),
-    internal_authentication=yes,
+    internal_authentication=$withval,
     internal_authentication=yes
 )
 
 AC_ARG_WITH([ldap_authentication], 
     AC_HELP_STRING([--with-ldap-authentication], [use a ldap server for authentication (default: no)]),
-    ldap_authentication=yes,
+    ldap_authentication=$withval,
     ldap_authentication=no
 )
 
@@ -190,24 +192,6 @@ AC_ARG_WITH([ldap_attribute_username],
     ldap_attribute_username="uid"
 )
 
-AC_ARG_WITH([ldap_attribute_password],
-    AS_HELP_STRING([--with-ldap-attribute-password=LDAP_ATTRIBUTE], [user attribute to use for the password (default: password)]),
-    ldap_attribute_password=$withval,
-    ldap_attribute_password="password"
-)
-
-AC_ARG_WITH([ldap_group_objectclass], 
-    AS_HELP_STRING([--with-ldap-group-objectclass=LDAP_ATTRIBUTE], [ldap object type to use for group authentication (default: inetOrgPerson)]),
-    ldap_group_objectclass=$withval,
-    ldap_group_objectclass="group"
-)
-
-AC_ARG_WITH([ldap_attribute_groupname], 
-    AS_HELP_STRING([--with-ldap-attribute-groupname=LDAP_OBJECT_CLASS], [user object type to use for the authentication (default: inetOrgPerson)]),
-    ldap_attribute_groupname=$withval,
-    ldap_attribute_groupname="guid"
-)
-
 #
 #   Icinga backend selection
 #
@@ -218,6 +202,8 @@ AC_ARG_WITH([icinga_backend],
     icinga_backend="statusdat"
 )
 
+ICINGA_CHECK_BACKENDTYPE($icinga_backend, [--with-icinga-backend])
+
 #
 #   Ido settings
 #
@@ -227,6 +213,8 @@ AC_ARG_WITH([ido_db_type],
     ido_db_type=$withval,
     ido_db_type="mysql"
 )
+
+ICINGA_CHECK_DBTYPE($ido_db_type, [--with-ido-db-type])
 
 AC_ARG_WITH([ido_host],
     AS_HELP_STRING([--with-ido-host=HOST], [host to use for retrieving data from the ido db (default: localhost)]),
@@ -240,14 +228,14 @@ AC_ARG_WITH([ido_port],
     ido_port=db_default_port
 )
 
-AC_ARG_WITH([ido_database],
-    AS_HELP_STRING([--with-ido-database=DATABASE], [database name to use for retrieving data from the ido db (default: icinga)]),
-    ido_database=$withval,
-    ido_database="icinga"
+AC_ARG_WITH([ido_db_name],
+    AS_HELP_STRING([--with-ido-db-name=DATABASE], [database name to use for retrieving data from the ido db (default: icinga)]),
+    ido_db_name=$withval,
+    ido_db_name="icinga"
 )
 
 AC_ARG_WITH([ido_user],
-    AS_HELP_STRING([--with-ido-host=USER], [user to use for retrieving data from the ido db (default: icinga)]),
+    AS_HELP_STRING([--with-ido-user=USER], [user to use for retrieving data from the ido db (default: icinga)]),
     ido_user=$withval,
     ido_user="icinga"
 )
@@ -269,7 +257,7 @@ AC_ARG_WITH([statusdat_file],
 )
 
 AC_ARG_WITH([objects_cache_file],
-    AS_HELP_STRING([--with-objects-file=FILE], [location of the objects.cache file when retrieving data from status.dat (default: /usr/local/icinga/var/objects.cache)]),
+    AS_HELP_STRING([--with-objects-cache-file=FILE], [location of the objects.cache file when retrieving data from status.dat (default: /usr/local/icinga/var/objects.cache)]),
     objects_cache_file=$withval,
     objects_cache_file="/usr/local/icinga/var/objects.cache"
 )
@@ -349,12 +337,12 @@ AS_IF([test "x$ido_db_type" = xpgsql], [
 ])
 
 #
-#   Comment out the disabled backends per default
+#   Disable authentication backends
 #
 
-ido_enabled="disable=1" 
-statusdat_enabled="disable=1" 
-livestatus_enabled="disable=1" 
+ido_enabled="disabled        = \"1\""
+statusdat_enabled="disabled        = \"1\""
+livestatus_enabled="disabled        = \"1\""
 
 AS_CASE([$icinga_backend],
     ["ido"], [ido_enabled=""],
@@ -362,16 +350,16 @@ AS_CASE([$icinga_backend],
     ["livestatus"], [livestatus_enabled=""],
     [statusdat_enabled=""])
 
-use_ldap_auth=";"
+ldap_auth_disabled="disabled    = \"1\""
 AS_IF([test "x$ldap_authentication" != xno],
     AC_CHECK_PHP_MODULE([ldap])
-    use_ldap_auth=""
+    ldap_auth_disabled=""
 )
 
-use_internal_auth=";"
+internal_auth_disabled="disabled    = \"1\""
 AS_IF([test "x$internal_authentication" != xno],
     AC_CHECK_PHP_MODULE([ldap])
-    use_internal_auth=""
+    internal_auth_disabled=""
 )
 
 #
@@ -395,7 +383,7 @@ AC_SUBST(internal_db_name)
 AC_SUBST(internal_db_host)
 AC_SUBST(internal_db_port)
 AC_SUBST(internal_db_user)
-AC_SUBST(internal_db_pass)
+AC_SUBST(internal_db_password)
 
 # ldap setup 
 AC_SUBST(ldap_host)
@@ -406,35 +394,35 @@ AC_SUBST(ldap_bindpass)
 AC_SUBST(ldap_user_objectclass)
 AC_SUBST(ldap_attribute_basedn)
 AC_SUBST(ldap_attribute_username)
-AC_SUBST(ldap_attribute_password)
-AC_SUBST(ldap_group_objectclass)
-AC_SUBST(ldap_attribute_groupname)
 
 # backend setup
 AC_SUBST(icinga_backend)
 
 # ido backend variables
+AC_SUBST(ido_enabled)
 AC_SUBST(ido_db_type)
 AC_SUBST(ido_host)
 AC_SUBST(ido_port)
-AC_SUBST(ido_database)
+AC_SUBST(ido_db_name)
 AC_SUBST(ido_user)
 AC_SUBST(ido_password)
 
 # status.dat backend
+AC_SUBST(statusdat_enabled)
 AC_SUBST(statusdat_file)
 AC_SUBST(objects_cache_file)
 
 # livestatus backend
 AC_SUBST(livestatus_socket)
+AC_SUBST(livestatus_enabled)
 
 # command pipe
 AC_SUBST(icinga_commandpipe)
 
 # Comment placeholders for toggling backends
 
-AC_SUBST(use_ldap_auth)
-AC_SUBST(use_internal_auth)
+AC_SUBST(ldap_auth_disabled)
+AC_SUBST(internal_auth_disabled)
 
 # Application and installation
 AC_SUBST(PHP)
