@@ -43,6 +43,7 @@ function($, URI, Selectable) {
      * @param {URI}          The query that contains the selected rows.
      */
     return function MultiSelection(table, detailUrl) {
+
         var self = this;
         /**
          * Contains all selected selectables

@@ -6,11 +6,25 @@
     <?= $this->tabs->render($this); ?>
   </div>
 </div>
-
 <div data-icinga-component="app/mainDetailGrid" data-icinga-grid-selection-type="single">
-    <?= $this->sortControl->render($this); ?>
-    <?= $this->paginationControl($servicegroups, null, null, array('preserve' => $this->preserve)); ?>
-    <table>
+
+    <div class="container pull-left">
+        <div class="row">
+            <div class="col-md-12">
+                <?=  $this->sortControl->render($this); ?>
+            </div>
+        </div>
+
+        <div class="row">
+            <?=  $this->paginationControl($servicegroups, null, null, array('preserve' => $this->preserve)); ?>
+        </div>
+
+        <div class="row">
+            <?= $this->selectionToolbar('single'); ?>
+        </div>
+    </div>
+
+    <table class="table table-condensed pull-left">
         <tbody>
         <?php foreach($servicegroups as $servicegroup): ?>
             <tr>
@@ -91,5 +105,8 @@
         <?php endforeach; ?>
         </tbody>
     </table>
-    <?= $this->paginationControl($servicegroups, null, null, array('preserve' => $this->preserve)); ?>
+
+    <div class="container pull-left">
+        <?= $this->paginationControl($servicegroups, null, null, array('preserve' => $this->preserve)); ?>
+    </div>
 </div>

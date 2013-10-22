@@ -15,19 +15,19 @@ $viewHelper = $this->getHelper('MonitoringState');
   <div class="container pull-left">
     <div class="row">
       <div class="col-md-5">
-      <?=  $this->filterBox->render($this); ?>
+        <?=  $this->filterBox->render($this); ?>
       </div>
       <div class="col-md-7">
       <?=  $this->sortControl->render($this); ?>
       </div>
     </div>
+
     <div class="row">
     <?=  $this->paginationControl($hosts, null, null, array('preserve' => $this->preserve)); ?>
     </div>
+
     <div class="row">
-        Select
-        <a href='<?=$this->href('monitoring/multi/host',array( 'host' => '*' ))?>'> All </a>
-        <a href='#'> None </a>
+       <?= $this->selectionToolbar('multi', $this->href('monitoring/multi/host',array( 'host' => '*' ))); ?>
     </div>
   </div>
 

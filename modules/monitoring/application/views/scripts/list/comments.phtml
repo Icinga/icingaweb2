@@ -15,15 +15,26 @@
   </div>
 </div>
 
-
-
 <div data-icinga-component="app/mainDetailGrid" data-icinga-grid-selection-type="single">
 
-  <?=  $this->sortControl->render($this); ?>
+  <div class="container pull-left">
 
-  <?=  $this->paginationControl($comments, null, null, array('preserve' => $this->preserve)); ?>
+    <div class="row">
+      <div class="col-md-12">
+        <?=  $this->sortControl->render($this); ?>
+      </div>
+    </div>
 
-  <table class="table table-condensed">
+    <div class="row">
+        <?=  $this->paginationControl($comments, null, null, array('preserve' => $this->preserve)); ?>
+    </div>
+
+    <div class="row">
+        <?= $this->selectionToolbar('single'); ?>
+    </div>
+  </div>
+
+  <table class="table table-condensed pull-left">
     <tbody>
     <?php foreach ($comments as $comment): ?>
       <?php
@@ -145,5 +156,7 @@
     </tbody>
   </table>
 
-  <?=  $this->paginationControl($comments, null, null, array('preserve' => $this->preserve)); ?>
+  <div class="container pull-left">
+    <?=  $this->paginationControl($comments, null, null, array('preserve' => $this->preserve)); ?>
+  </div>
 </div>

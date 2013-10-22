@@ -455,7 +455,12 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
 
     $(window).on('hashchange', (function() {
         urlMgr.syncWithUrl();
-        Container.getDetailContainer().replaceDomAsync(urlMgr.detailUrl);
+        if (urlMgr.detailUrl) {
+            Container.getDetailContainer().replaceDomAsync(urlMgr.detailUrl);
+        } else {
+             Container.hideDetail();
+        }
+
     }));
 
 
