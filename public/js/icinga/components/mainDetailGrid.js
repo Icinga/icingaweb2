@@ -213,7 +213,7 @@ function(Container, $, logger, URI, tpl, urlMgr, Selectable, TableMultiSelection
                         }
                         break;
 
-                    case 'none':
+                    default:
                         // don't open the link
                         return;
                 }
@@ -332,7 +332,8 @@ function(Container, $, logger, URI, tpl, urlMgr, Selectable, TableMultiSelection
 			this.initRowSelection();
             this.registerControls();
         };
-
-        this.construct(gridDomNode);
+        if (typeof $(gridDomNode).attr('id') === 'undefined') {
+            this.construct(gridDomNode);
+        }
     };
 });

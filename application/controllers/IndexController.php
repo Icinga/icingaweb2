@@ -43,7 +43,7 @@ class IndexController extends ActionController
     public function preDispatch()
     {
         if ($this->getRequest()->getActionName() !== 'welcome') {
-            $this->redirect('index/welcome');
+            $this->redirect('dashboard/index');
         }
     }
 

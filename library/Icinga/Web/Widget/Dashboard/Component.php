@@ -53,6 +53,13 @@ class Component implements Widget
     private $url;
 
     /**
+     * Determines whether this spans a complete row
+     *
+     * @var bool
+     */
+    private $fullsize = false;
+
+    /**
      * The title being displayed on top of the component
      * @var
      */
@@ -85,7 +92,7 @@ class Component implements Widget
      */
     private $template =<<<'EOD'
 
-    <div data-icinga-component="app/dashboard" style="overflow:hidden" class="dashboard-component" data-icinga-url="{URL}">
+    <div data-icinga-component="app/dashboard" style="overflow:hidden" class="dashboard-component {{IS_FULL}}" data-icinga-url="{URL}">
         <h1 class="pull-left"><a  data-icinga-target="self" href="{FULL_URL}"> {TITLE}</a></h1>
         {REMOVE_BTN}
         <div class="container" >
@@ -205,6 +212,7 @@ EOD;
         $html = str_replace('{FULL_URL}', $url->getUrlWithout('view')->getAbsoluteUrl(), $html);
         $html = str_replace('{REMOVE_BTN}', $this->getRemoveForm($view), $html);
         $html = str_replace('{DIMENSION}', $this->getBoxSizeAsCSS(), $html);
+        $html = str_replace('{{IS_FULL}}', $this->fullsize ? 'row' : '' , $html);
         $html = str_replace('{TITLE}', htmlentities($this->getTitle()), $html);
         return $html;
     }
@@ -236,6 +244,11 @@ EOD;
             )
         ));
         return $form->render($view);
+    }
+
+    public function setFullsize($bool)
+    {
+        $this->fullsize = $bool;
     }
 
     /**
@@ -283,6 +296,9 @@ EOD;
         }
 
         $cmp = new Component($title, Url::fromPath($url, $parameters), $pane);
+        if (isset($parameters['row'])) {
+            $cmp->setFullsize(true);
+        }
         $cmp->setHeight($height);
         $cmp->setWidth($width);
         return $cmp;
