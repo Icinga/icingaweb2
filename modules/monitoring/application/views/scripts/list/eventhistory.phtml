@@ -24,9 +24,68 @@
                 <?php
                     $class = null;
                     $isService = false;
-                ?>
+                    switch ($event->type) {
+                        case 'notify':
+                            $icon   = 'notification';
+                            $title  = 'Notification';
+                            $msg    = $event->output;
+                            break;
+                        case 'comment':
+                            $icon   = 'comment';
+                            $title  = 'Comment';
+                            $msg    = $event->output;
+                            break;
+                        case 'ack':
+                            $icon   = 'acknowledgement';
+                            $title  = 'Acknowledgement';
+                            $msg    = $event->output;
+                            break;
+                        case 'dt_comment':
+                            $icon   = 'in-downtime';
+                            $title  = 'In Downtime';
+                            $msg    = $event->output;
+                            break;
+                        case 'flapping':
+                            $icon   = 'flapping';
+                            $title  = 'Flapping';
+                            $msg    = $event->output;
+                            break;
+                        case 'hard_state':
+                            $icon   = '{{HARDSTATE_ICON}}';
+                            $title  = 'Hard State';
+                            $msg    = $event->output . '<br /><small>Attempt ' . $event->attempt . '/' . $event->max_attempts . ' (Hard)</small>';
+                            $class  = 'border-status-' . (
+                                $isService ?
+                                    strtolower($this->util()->getServiceStateName($event->state)) :
+                                    strtolower($this->util()->getHostStateName($event->state))
+                                );
+                            break;
+                        case 'soft_state':
+                            $icon   = '{{SOFTSTATE_ICON}}';
+                            $title  = 'Soft State';
+                            $msg    = $event->output . '<br /><small>Attempt ' . $event->attempt . '/' . $event->max_attempts . ' (Soft)</small>';
+                            $class  = 'border-status-' . (
+                                $isService ?
+                                    strtolower($this->util()->getServiceStateName($event->state)) :
+                                    strtolower($this->util()->getHostStateName($event->state))
+                                );
+                            break;
+                        case 'dt_start':
+                            $icon   = 'downtime-start';
+                            $title  = 'Downtime Start';
+                            $msg    = $event->output;
+                            break;
+                        case 'dt_end':
+                            $icon   = 'downtime-end';
+                            $title  = 'Downtime End';
+                            $msg    = $event->output;
+                            break;
+                    }
+                    ?>
                 <tr>
-                    <td><?= date('d.m. H:i', $event->timestamp); ?></td>
+                    <td <?= !empty($class) ? 'class="' . $class . '"' : '' ?>">
+                        <?= date('d.m. H:i', $event->timestamp); ?>
+                    </td>
                     <td>
                         <?php if (isset($event->service)): ?>
                             <a href="<?= $this->href('monitoring/show/service', array(
@@ -47,66 +106,7 @@
                             </a>
                         <?php endif; ?>
                         <br />
-                        <?php
-                        switch ($event->type) {
-                            case 'notify':
-                                $icon   = 'notification';
-                                $title  = 'Notification';
-                                $msg    = $event->output;
-                                break;
-                            case 'comment':
-                                $icon   = 'comment';
-                                $title  = 'Comment';
-                                $msg    = $event->output;
-                                break;
-                            case 'ack':
-                                $icon   = 'acknowledgement';
-                                $title  = 'Acknowledgement';
-                                $msg    = $event->output;
-                                break;
-                            case 'dt_comment':
-                                $icon   = 'in-downtime';
-                                $title  = 'In Downtime';
-                                $msg    = $event->output;
-                                break;
-                            case 'flapping':
-                                $icon   = 'flapping';
-                                $title  = 'Flapping';
-                                $msg    = $event->output;
-                                break;
-                            case 'hard_state':
-                                $icon   = '{{HARDSTATE_ICON}}';
-                                $title  = 'Hard State';
-                                $msg    = $event->output . '<br /><small>Attempt ' . $event->attempt . '/' . $event->max_attempts . ' (Hard)</small>';
-                                $class  = 'border-status-' . (
-                                    $isService ?
-                                    strtolower($this->util()->getServiceStateName($event->state)) :
-                                    strtolower($this->util()->getHostStateName($event->state))
-                                );
-                                break;
-                            case 'soft_state':
-                                $icon   = '{{SOFTSTATE_ICON}}';
-                                $title  = 'Soft State';
-                                $msg    = $event->output . '<br /><small>Attempt ' . $event->attempt . '/' . $event->max_attempts . ' (Soft)</small>';
-                                $class  = 'border-status-' . (
-                                    $isService ?
-                                    strtolower($this->util()->getServiceStateName($event->state)) :
-                                    strtolower($this->util()->getHostStateName($event->state))
-                                );
-                                break;
-                            case 'dt_start':
-                                $icon   = 'downtime-start';
-                                $title  = 'Downtime Start';
-                                $msg    = $event->output;
-                                break;
-                            case 'dt_end':
-                                $icon   = 'downtime-end';
-                                $title  = 'Downtime End';
-                                $msg    = $event->output;
-                                break;
-                        }
-                        ?>
-                        <div<?php if (!empty($class)): ?> class="<?= $class ?>"<?php endif; ?>>
+                        <div>
                             <i title="<?= $title ?>" class="icinga-icon-<?= $icon ?>"></i>
                             <?php if (!empty($msg)) { echo $msg; } ?>
                         </div>
