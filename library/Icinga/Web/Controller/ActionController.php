@@ -149,7 +149,7 @@ class ActionController extends Zend_Controller_Action
      *
      * @throws  \Exception
      */
-    protected function redirectToLogin($afterLogin = '/index/welcome')
+    protected function redirectToLogin($afterLogin = '/index')
     {
         if ($this->getRequest()->isXmlHttpRequest()) {
 
