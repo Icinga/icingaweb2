@@ -205,15 +205,17 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
                 }).bind(this)
             ).fail(
                 (function(response, reason) {
+                    if (reason === 'abort') {
+                        return;
+                    }
+
                     var errorReason;
                     if (response.statusCode.toString()[0] === '4') {
                         errorReason = 'The Requested View Couldn\'t Be Found<br/>';
                     } else {
                         errorReason = response.responseText;
                     }
-                    this.replaceDom(
-                        $('<div class="alert alert-danger">').text(errorReason)
-                    );
+                    this.replaceDom(response.responseText);
                 }).bind(this)
             ).always((function() {
                 this.containerDom.trigger('hideLoadIndicator');

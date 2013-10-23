@@ -48,7 +48,9 @@ define(['jquery', 'logging', 'icinga/componentRegistry'], function ($, log, regi
                 function (Cmp) {
                     var cmp;
                     try {
-                        cmp = new Cmp(target);
+                        if (typeof $(target).attr('id') === 'undefined') {
+                            cmp = new Cmp(target);
+                        }
                     } catch (e) {
                         log.emergency('Error in component "' + cmpType + '" : "' + e + '"');
                         err(e);
