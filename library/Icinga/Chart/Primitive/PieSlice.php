@@ -179,7 +179,7 @@ class PieSlice extends Animatable implements Drawable
         $path->append(array($midX, $midY))->toAbsolute();
 
         $midX += intval($r/2 * sin(M_PI/9)) * ($midRadius > M_PI ? -1 : 1);
-        $midY -= intval($r/2 * cos(M_PI/7)) * ($midRadius < M_PI*1.5 && $midRadius > M_PI/2 ? -1 : 1);
+        $midY -= intval($r/2 * cos(M_PI/3) ) * ($midRadius < M_PI*1.4 && $midRadius > M_PI/3 ? -1 : 1);
 
         if ($ctx->ytoRelative($midY) > 100) {
             $midY = $ctx->yToAbsolute(100);

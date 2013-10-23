@@ -47,11 +47,13 @@ define(['jquery', 'logging', 'URIjs/URI', 'icinga/componentLoader'], function($,
             $.ajax({
                 url: this.dashboardUrl
             }).done((function(response) {
+                this.container.empty();
                 this.container.html(response);
                 dashboardContainer.freetile('layout');
                 $(window).on('layoutchange', function() {
                     dashboardContainer.freetile('layout');
                 });
+
                 this.triggerRefresh();
                 components.load();
             }).bind(this)).fail((function(response, reason) {

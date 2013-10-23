@@ -93,14 +93,14 @@ class BarGraph extends Styleable implements Drawable
             $rect->setAttribute('data-icinga-graph-index', $idx++);
             $rect->setAttribute('data-icinga-graph-type', 'bar');
             $rect->setAdditionalStyle('clip-path: url(#clip);');
-            $rect->setAnimation(
+            /*$rect->setAnimation(
                 new Animation(
                     'y',
                     $ctx->yToAbsolute(100),
                     $ctx->yToAbsolute($point[1]),
                     rand(1, 1.5)/2
                 )
-            );
+            );*/
             $group->appendChild($rect->toSvg($ctx));
         }
         return $group;

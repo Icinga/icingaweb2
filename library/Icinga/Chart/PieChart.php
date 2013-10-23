@@ -236,8 +236,11 @@ class PieChart extends Chart
      */
     private function renderStackedPie(Canvas $innerBox, DOMElement $labelBox)
     {
-        $radius = 50;
+        $radius = 40;
         $minRadius = 20;
+        if (count($this->pies) == 0) {
+            return;
+        }
         $shrinkStep = ($radius - $minRadius) / count($this->pies);
         $x = $radius;
 

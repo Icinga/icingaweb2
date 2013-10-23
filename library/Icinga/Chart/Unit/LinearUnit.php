@@ -168,7 +168,7 @@ class LinearUnit implements AxisUnit
      */
     public function key()
     {
-        return (string) $this->currentValue;
+        return (string) intval($this->currentValue);
     }
 
     /**

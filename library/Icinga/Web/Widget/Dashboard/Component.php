@@ -85,10 +85,10 @@ class Component implements Widget
      */
     private $template =<<<'EOD'
 
-    <div data-icinga-component="app/dashboard" class="dashboard-component" data-icinga-url="{URL}">
+    <div data-icinga-component="app/dashboard" style="overflow:hidden" class="dashboard-component" data-icinga-url="{URL}">
         <h1 class="pull-left"><a  data-icinga-target="self" href="{FULL_URL}"> {TITLE}</a></h1>
         {REMOVE_BTN}
-        <div class="container">
+        <div class="container" >
 
         </div>
         <noscript>
