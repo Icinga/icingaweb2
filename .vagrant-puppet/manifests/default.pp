@@ -47,8 +47,8 @@ user { 'apache':
 }
 
 cmmi { 'icinga-mysql':
-  url     => 'http://sourceforge.net/projects/icinga/files/icinga/1.9.3/icinga-1.9.3.tar.gz/download',
-  output  => 'icinga-1.9.3.tar.gz',
+  url     => 'http://sourceforge.net/projects/icinga/files/icinga/1.10.0-beta/icinga-1.10.0-beta.tar.gz/download',
+  output  => 'icinga-1.10.0-beta.tar.gz',
   flags   => '--prefix=/usr/local/icinga-mysql --with-command-group=icinga-cmd \
               --enable-idoutils --with-init-dir=/usr/local/icinga-mysql/etc/init.d \
               --with-htmurl=/icinga-mysql --with-httpd-conf-file=/etc/httpd/conf.d/icinga-mysql.conf \
@@ -99,7 +99,7 @@ file { '/etc/init.d/ido2db-pgsql':
 
 exec { 'populate-icinga-mysql-db':
   unless  => 'mysql -uicinga -picinga icinga -e "SELECT * FROM icinga_dbversion;" &> /dev/null',
-  command => 'mysql -uicinga -picinga icinga < /usr/local/src/icinga-mysql/icinga-1.9.3/module/idoutils/db/mysql/mysql.sql',
+  command => 'mysql -uicinga -picinga icinga < /usr/local/src/icinga-mysql/icinga-1.10.0-beta/module/idoutils/db/mysql/mysql.sql',
   require => [ Cmmi['icinga-mysql'], Exec['create-mysql-icinga-db'] ]
 }
 
@@ -541,4 +541,28 @@ file { '/etc/init.d/icinga_command_proxy':
 service { 'icinga_command_proxy':
   ensure  => running,
   require => [ File['/etc/init.d/icinga_command_proxy'], Service['icinga-mysql'], Service['icinga-pgsql'] ]
+}
+
+exec { 'create-mysql-icinga_web-db':
+  unless  => 'mysql -uicinga_web -picinga_web icinga_web',
+  command => 'mysql -uroot -e "CREATE DATABASE icinga_web; \
+              GRANT ALL ON icinga_web.* TO icinga_web@localhost \
+              IDENTIFIED BY \'icinga_web\';"',
+  require => Service['mysqld']
+}
+
+cmmi { 'icinga-web':
+  url     => 'http://sourceforge.net/projects/icinga/files/icinga-web/1.10.0-beta/icinga-web-1.10.0-beta.tar.gz/download',
+  output  => 'icinga-web-1.10.0-beta.tar.gz',
+  flags   => '--prefix=/usr/local/icinga-web',
+  creates => '/usr/local/icinga-web',
+  make    => 'make install && make install-apache-config',
+  require => Service['icinga_command_proxy'],
+  notify  => Service['apache']
+}
+
+exec { 'populate-icinga_web-mysql-db':
+  unless  => 'mysql -uicinga_web -picinga_web icinga_web -e "SELECT * FROM nsm_user;" &> /dev/null',
+  command => 'mysql -uicinga_web -picinga_web icinga_web < /usr/local/src/icinga-web/icinga-web-1.10.0-beta/etc/schema/mysql.sql',
+  require => [ Exec['create-mysql-icinga_web-db'], Cmmi['icinga-web'] ]
 }
