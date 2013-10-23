@@ -1,6 +1,9 @@
 <?= $this->tabs->render($this); ?>
 
-<h4>{{CREATE_ICON}} Edit Backend "<?= $this->escape($this->name); ?>"</h4>
+<h4>
+    <i class="icinga-icon-edit"></i>
+    Edit Backend "<?= $this->escape($this->name); ?>"
+</h4>
 
 <?php if ($this->errorMessage || $this->form->getErrorMessages()): ?>
 <div class="alert alert-danger">

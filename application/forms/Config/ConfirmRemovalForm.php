@@ -77,6 +77,17 @@ class ConfirmRemovalForm extends Form
                 'required'  => true
             )
         );
-        $this->setSubmitLabel('{{REMOVE_ICON}} Confirm Removal');
+
+        $this->addElement(
+            'button',
+            'btn_submit',
+            array(
+                'type'      => 'submit',
+                'escape'    => false,
+                'value'     => '1',
+                'class'     => 'btn btn-cta btn-common',
+                'label'     => '<i class="icinga-icon-remove"></i> Confirm Removal'
+            )
+        );
     }
 }

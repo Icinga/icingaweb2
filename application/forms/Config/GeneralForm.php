@@ -348,7 +348,17 @@ class GeneralForm extends Form
         $this->addDateFormatSettings($global);
         $this->addUserPreferencesDialog($preferences);
 
-        $this->setSubmitLabel('{{SAVE_ICON}} Save Changes');
+        $this->addElement(
+            'button',
+            'btn_submit',
+            array(
+                'type'      => 'submit',
+                'escape'    => false,
+                'value'     => '1',
+                'class'     => 'btn btn-cta btn-common',
+                'label'     => '<i class="icinga-icon-save"></i> Save Changes'
+            )
+        );
     }
 
     /**

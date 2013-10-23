@@ -108,12 +108,15 @@ class ReorderForm extends Form
                 )
             );
             $this->upForm->addElement(
-                'submit',
+                'button',
                 'btn_' . $this->getBackendName() . '_reorder_up',
                 array(
+                    'type'      => 'submit',
+                    'escape'    => false,
+                    'class'     => 'btn btn-cta btn-wide',
+                    'value'     => 'btn_' . $this->getBackendName() . '_reorder_up',
                     'name'      =>  'btn_' . $this->getBackendName() . '_reorder_up',
-                    'label'     =>  '{{ICON_UP}} Move up in authentication order',
-
+                    'label'     =>  '<i class="icinga-icon-up"></i> Move up in authentication order',
                 )
             );
         }
@@ -128,11 +131,15 @@ class ReorderForm extends Form
                 )
             );
             $this->downForm->addElement(
-                'submit',
+                'button',
                 'btn_' . $this->getBackendName() . '_reorder_down',
                 array(
+                    'type'      => 'submit',
+                    'escape'    => false,
+                    'class'     => 'btn btn-cta btn-wide',
+                    'value'     => 'btn_' . $this->getBackendName() . '_reorder_down',
                     'name'      =>  'btn_' . $this->getBackendName() . '_reorder_down',
-                    'label'     =>  '{{ICON_UP}} Move down in authentication order',
+                    'label'     =>  '<i class="icinga-icon-down"></i> Move down in authentication order',
 
                 )
             );

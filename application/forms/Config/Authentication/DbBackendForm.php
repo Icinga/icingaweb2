@@ -90,7 +90,17 @@ class DbBackendForm extends BaseBackendForm
             )
         );
 
-        $this->setSubmitLabel('{{SAVE_ICON}} Save Backend');
+        $this->addElement(
+            'button',
+            'btn_submit',
+            array(
+                'type'      => 'submit',
+                'value'     => '1',
+                'escape'    => false,
+                'class'     => 'btn btn-cta btn-wide',
+                'label'     => '<i class="icinga-icon-save"></i> Save Backend'
+            )
+        );
     }
 
     /**

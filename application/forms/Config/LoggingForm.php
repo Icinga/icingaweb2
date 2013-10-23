@@ -168,7 +168,17 @@ class LoggingForm extends Form
 
         $this->enableAutoSubmit(array('logging_debug_enable'));
 
-        $this->setSubmitLabel('{{SAVE_ICON}} Save Changes');
+        $this->addElement(
+            'button',
+            'btn_submit',
+            array(
+                'type'      => 'submit',
+                'escape'    => false,
+                'value'     => '1',
+                'class'     => 'btn btn-cta btn-common',
+                'label'     => '<i class="icinga-icon-save"></i> Save Changes'
+            )
+        );
     }
 
     /**

@@ -2,14 +2,13 @@
 use Icinga\Web\Url;
 $createLdapBackend = $this->href('/config/createAuthenticationBackend', array('type' => 'ldap'));
 $createDbBackend = $this->href('/config/createAuthenticationBackend', array('type' => 'db'));
-
 ?>
 
 <?= $this->tabs->render($this); ?>
 
 <?php if ($this->errorMessage): ?>
 <div class="alert alert-danger">
-  <i>{{ERROR_ICON}}</i>
+  <i class="icinga-icon-error"></i>
   <strong><?= $this->escape($this->errorMessage); ?></strong>
 </div>
 <?php endif; ?>
@@ -17,7 +16,7 @@ $createDbBackend = $this->href('/config/createAuthenticationBackend', array('typ
 
 <?php if ($this->successMessage): ?>
 <div class="alert alert-success">
-  <i>{{OK_ICON}}</i>
+  <i class="icinga-icon-success"></i>
   <strong><?= $this->escape($this->successMessage); ?></strong>
 </div>
 <?php endif; ?>
@@ -27,10 +26,9 @@ $createDbBackend = $this->href('/config/createAuthenticationBackend', array('typ
     Create Authentication Provider
   </div>
   <div class="panel-body">
-    <a href="<?= $createLdapBackend ?>">{{CREATE_ICON}} Create A New LDAP Authentication Backend</a><br/>
-    <a href="<?= $createDbBackend ?>">{{CREATE_ICON}} Create A New DB Authentication Backend</a>
+    <a href="<?= $createLdapBackend ?>"><i class="icinga-icon-create"></i> Create A New LDAP Authentication Backend</a><br/>
+    <a href="<?= $createDbBackend ?>"><i class="icinga-icon-create"></i> Create A New DB Authentication Backend</a>
   </div>
-
 </div>
 
 <?php foreach ($this->backends as $backend): ?>
@@ -42,12 +40,12 @@ $createDbBackend = $this->href('/config/createAuthenticationBackend', array('typ
   </div>
   <div class="panel-body">
     <a href="<?= $this->href('config/editAuthenticationBackend', array('auth_backend' => $backend->name));?>">
-      {{EDIT_ICON}} Edit This Authentication Provider
+        <i class="icinga-icon-edit"></i> Edit This Authentication Provider
     </a>
     <br/>
     <?php if (count($this->backends) > 1): ?>
     <a href="<?= $this->href('config/removeAuthenticationBackend', array('auth_backend' => $backend->name));?>">
-      {{REMOVE_ICON}} Remove This Authentication Provider
+        <i class="icinga-icon-remove"></i> Remove This Authentication Provider
     </a>
     <br/>
     <?php endif; ?>

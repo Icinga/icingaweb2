@@ -11,7 +11,7 @@ $modules = $this->modules->paginate();
 
 <?php if ($this->successMessage): ?>
 <div class="alert alert-success">
-  <i>{{OK_ICON}}</i>
+  <i class="icinga-icon-success"></i>
   <strong><?= $this->escape($this->successMessage); ?></strong>
 </div>
 <?php endif; ?>
@@ -30,10 +30,10 @@ $modules = $this->modules->paginate();
     <tr>
       <td>
       <? if ($module->enabled): ?>
-        <i>{{OK_ICON}}</i>
+        <i class="icinga-icon-success"></i>
         <a href="<?= $disableUrl ?>" data-icinga-target="main"><?= $this->escape($module->name); ?></a>
       <? else: ?>
-        <i>{{REMOVE_ICON}}</i>
+        <i class="icinga-icon-remove"></i>
         <a href="<?= $enableUrl ?>" data-icinga-target="main"><?= $this->escape($module->name); ?></a>
       <? endif ?>
       (<?=
