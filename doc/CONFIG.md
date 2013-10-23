@@ -3,8 +3,8 @@
 ## Basic usage
 
 The \Icinga\Application\Config class is a general purpose service to help you find, load and save
-configuration data. It is used both by the Icinga 2 Web modules and the framework itself. With
-INI files as source it enables you to store configuration in a familiar format. Icinga 2 Web
+configuration data. It is used both by the Icinga Web 2 modules and the framework itself. With
+INI files as source it enables you to store configuration in a familiar format. Icinga Web 2
 defines some configuration files for its own purposes. Please note that both modules and framework
 keep their main configuration in the INI file called config.ini. Here's some example code:
 

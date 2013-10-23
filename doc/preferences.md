@@ -1,6 +1,6 @@
 # Preferences
 
-Preferences are user based configuration for Icinga 2 Web. For example max page
+Preferences are user based configuration for Icinga Web 2. For example max page
 items, languages or date time settings can controlled by users.
 
 # Architecture

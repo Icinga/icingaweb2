@@ -470,7 +470,7 @@ populate_monitoring_test_config_plugins{ ['test_hostcheck.pl', 'test_servicechec
 }
 
 #
-# Following section creates and populates MySQL and PostgreSQL Icinga 2 Web databases
+# Following section creates and populates MySQL and PostgreSQL Icinga Web 2 databases
 #
 exec { 'create-mysql-icingaweb-db':
   unless  => 'mysql -uicingaweb -picingaweb icingaweb',

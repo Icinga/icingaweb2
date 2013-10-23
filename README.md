@@ -1,4 +1,4 @@
-# Icinga 2 Web
+# Icinga Web 2
 
 ## Table of Contents
 
@@ -9,7 +9,7 @@
 > **Note** that the deployment of the virtual machine is tested against Vagrant starting with version 1.1.
 > Unfortunately older versions will not work.
 
-The Icinga 2 Web project ships with a Vagrant virtual machine that integrates
+The Icinga Web 2 project ships with a Vagrant virtual machine that integrates
 the source code with various services and example data in a controlled
 environment. This enables developers and users to test Livestatus, status.dat,
 MySQL and PostgreSQL backends as well as the LDAP authentication. All you
@@ -203,7 +203,7 @@ code style issues.
     cd /usr/local/icinga2
     ./sbin/icinga2 -c etc/icinga2/icinga2.conf.dist
 
-## Log into Icinga 2 Web
+## Log into Icinga Web 2
 
 If you've configure LDAP as authentication backend (which is the default) use the following login credentials:
 

@@ -2,13 +2,13 @@
 
 ## Abstract
 
-This document describe how to develop forms in Icinga 2 Web. This is important
-if you want to write modules or extend Icinga 2 Web with your flavour of code.
+This document describe how to develop forms in Icinga Web 2. This is important
+if you want to write modules or extend Icinga Web 2 with your flavour of code.
 
 ## Architecture
 
 Forms are basically Zend_Form classes with Zend_Form_Element items as controls.
-To ensure common functionallity and control dependent fields Icinga 2 Web
+To ensure common functionallity and control dependent fields Icinga Web 2
 provides sub classes to build forms on that.
 
 ### Key design

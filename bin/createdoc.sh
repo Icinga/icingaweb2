@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # {{{ICINGA_LICENSE_HEADER}}}
-# Icinga 2 Web - Head for multiple monitoring frontends
+# Icinga Web 2 - Head for multiple monitoring frontends
 # Copyright (C) %(YEAR)s Icinga Development Team
 #
 # This program is free software; you can redistribute it and/or

@@ -2,9 +2,9 @@
 <?php
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
- * This file is part of Icinga 2 Web.
+ * This file is part of Icinga Web 2.
  *
- * Icinga 2 Web - Head for multiple monitoring backends.
+ * Icinga Web 2 - Head for multiple monitoring backends.
  * Copyright (C) 2013 Icinga Development Team
  *
  * This program is free software; you can redistribute it and/or
@@ -21,9 +21,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * @copyright 2013 Icinga Development Team <info@icinga.org>
- * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author    Icinga Development Team <info@icinga.org>
+ * @copyright  2013 Icinga Development Team <info@icinga.org>
+ * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
+ * @author     Icinga Development Team <info@icinga.org>
+ *
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 

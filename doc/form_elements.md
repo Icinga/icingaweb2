@@ -1,6 +1,6 @@
-# Form Elements Shipped With Icinga 2 Web
+# Form Elements Shipped With Icinga Web 2
 
-On top of the elements provided by the Zend Framework, Icinga 2 Web ships its own to offer additional functionality.
+On top of the elements provided by the Zend Framework, Icinga Web 2 ships its own to offer additional functionality.
 The following is a list of these classes, as well as descriptions of the functionality they offer.
 
 ## Elements

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <phpdoc>
-    <title>Icinga 2 Web</title>
+    <title>Icinga Web 2</title>
     <parser>
         <target>./api</target>
         <extensions>

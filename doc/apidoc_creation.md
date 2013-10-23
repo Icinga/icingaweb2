@@ -17,7 +17,7 @@ If you generated the documentation already, you can follow [this link](apidoc/id
 
 ## Generation
 
-Change to Icinga 2 Web root directory (source tree) and run:
+Change to Icinga Web 2 root directory (source tree) and run:
 
     bin/createapidoc.sh
 
