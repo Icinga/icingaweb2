@@ -167,7 +167,10 @@ function(Container, $, logger, URI, tpl, urlMgr, Selectable, TableMultiSelection
          */
         this.registerTableLinks = function(domContext) {
             domContext = domContext || contentNode;
-
+            $('tbody tr button[type=submit], tbody tr submit', domContext).click(function(ev) {
+                ev.stopPropagation();
+                return true;
+            });
             $('tbody tr', domContext).click(function(ev) {
                 var targetEl = ev.target || ev.toElement || ev.relatedTarget,
                     a = $(targetEl).closest('a');
@@ -177,15 +180,9 @@ function(Container, $, logger, URI, tpl, urlMgr, Selectable, TableMultiSelection
                 var nodeNames = [];
                 nodeNames.push($(targetEl).prop('nodeName').toLowerCase());
                 nodeNames.push($(targetEl).parent().prop('nodeName').toLowerCase());
-
                 if (a.length) {
                     // test if the URL is on the current server, if not open it directly
                     if (Container.isExternalLink(a.attr('href'))) {
-                        return true;
-                    }
-                } else if ($.inArray('input', nodeNames) > -1 || $.inArray('button', nodeNames) > -1) {
-                    var type = $(targetEl).attr('type') || $(targetEl).parent().attr('type');
-                    if (type === 'submit') {
                         return true;
                     }
                 }
