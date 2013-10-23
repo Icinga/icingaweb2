@@ -113,10 +113,13 @@ class TreeToSqlParser
         $queryString =  '';
         $leftQuery = $this->nodeToSqlQuery($node->left);
         $rightQuery = $this->nodeToSqlQuery($node->right);
+
         if ($leftQuery != '') {
             $queryString .= $leftQuery . ' ';
         }
+
         if ($rightQuery != '') {
+
             $queryString .= (($queryString !== '') ? $node->type . ' ' : ' ') . $rightQuery;
         }
         return $queryString;
@@ -133,6 +136,7 @@ class TreeToSqlParser
         if (!$this->query->isValidFilterTarget($node->left) && $this->query->getMappedField($node->left)) {
             return '';
         }
+
         $this->query->requireColumn($node->left);
         $queryString = '(' . $this->query->getMappedField($node->left) . ')';
 
@@ -172,7 +176,7 @@ class TreeToSqlParser
         $valueString = join(',', $values);
 
         if (count($values) > 1) {
-            return '( '. $valueString . ')';
+            return $query . '( '. $valueString . ')';
         }
         return $query . $valueString;
     }
@@ -190,6 +194,7 @@ class TreeToSqlParser
         }
         $tree->root = $tree->normalizeTree($tree->root);
         $sql = $this->nodeToSqlQuery($tree->root);
+
         if ($this->filtersAggregate()) {
             $baseQuery->having($sql);
         } else {

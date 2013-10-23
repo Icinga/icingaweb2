@@ -175,45 +175,21 @@ class Monitoring_CommandController extends ActionController
             if (!$hostname && !$servicename) {
                 throw new MissingParameterException("No target given for this command");
             }
+
             if ($hostname) {
-                $filter["host_name"] = $hostname;
+                $view = \Icinga\Module\Monitoring\DataView\HostStatus::fromRequest($this->getRequest());
             }
             if ($servicename && !$hostOnly) {
-                $filter["service_description"] = $servicename;
-                $fields[] = "service_description";
-                $fields[] = "service_state";
+                $view = \Icinga\Module\Monitoring\DataView\ServiceStatus::fromRequest($this->getRequest());
             }
+            $query = $view->getQuery()->from("status", $fields);
+            return $data = $query->fetchAll();
 
-            // Implemented manuall search because api is not ready.
-            // @TODO Implement this using the database api #4663 (mh)
-
-            $query = Backend::createBackend($this->_getParam('backend'))->select()->from("status", $fields);
-            $data = $query->fetchAll();
-
-            $out = array();
-
-            foreach ($data as $o) {
-                if ($o->host_name === $hostname) {
-                    if (!$servicename) {
-                        $out[] = (object) array(
-                            "host_name" => $o->host_name
-                        );
-                    } elseif ($servicename && strtolower($o->service_description) === strtolower($servicename)) {
-                        $out[] = (object) array(
-                            "host_name" => $o->host_name,
-                            "service_description" => $o->service_description
-                        );
-                    }
-                }
-            }
-
-            return $out;
         } catch (\Exception $e) {
             Logger::error(
                 "CommandController: SQL Query '%s' failed (message %s) ",
-                $query ? (string) $query->getQuery()->dump() : '--', $e->getMessage()
+                $query ? (string) $query->dump() : '--', $e->getMessage()
             );
-
             return array();
         }
     }
