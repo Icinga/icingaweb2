@@ -38,6 +38,15 @@ use Icinga\Web\Controller\ActionController;
  */
 class Controller extends ActionController
 {
+    /**
+     * Compact layout name
+     *
+     * Set to a string containing the compact layout name to use when
+     * 'compact' is set as the layout parameter, otherwise null
+     *
+     * @var string
+     */
+    protected $compactView;
 
     /**
      * Retrieve services from either given parameters or request
