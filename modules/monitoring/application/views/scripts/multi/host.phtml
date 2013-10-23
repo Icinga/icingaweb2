@@ -9,7 +9,17 @@ $this->target = array(
 <?= $this->tabs->render($this); ?>
 <div>
     <div class="panel panel-heading">
-       <b> Hosts </b>
+       <b> Hosts </b> (<?= count($objects) ?> objects)
+       <div class="pull-right">
+            <a rel="tooltip" title="Submit passive checkresults" href="<?=
+            $this->href(
+                'monitoring/command/submitpassivecheckresult',
+                $this->target
+            );
+            ?>" class="button btn-cta btn-common btn-small">
+                <i class="icinga-icon-submit"></i>
+            </a>
+       </div>
     </div>
     <hr class="separator" />
 

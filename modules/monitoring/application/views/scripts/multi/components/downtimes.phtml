@@ -1,6 +1,16 @@
 <div>
     <div class="panel-heading">
-       <b>Downtimes</b>
+        <b>Downtimes</b>
+
+        <a rel="tooltip" title="Schedule downtimes for all selected hosts or services" href="<?=
+            $this->href(
+                'monitoring/command/scheduledowntime',
+                $this->target
+            );
+        ?>" class="button btn-common btn-small input-sm pull-right">
+            <i class="icinga-icon-in-downtime"></i>
+        </a>
+
     </div>
     <hr class="separator" >
     <div class="panel-body">
@@ -26,7 +36,8 @@
 				0 Selected items are currently in downtime.
 			<?php } ?>
 		</div>
-			<a href="<?=
+
+            <a rel="tooltip" title="Remove all acknowledgements from all selected hosts or services" href="<?=
 			$this->href(
 			    'monitoring/command/removedowntime',
 				$target

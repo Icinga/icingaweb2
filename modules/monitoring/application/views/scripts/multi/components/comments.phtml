@@ -1,6 +1,26 @@
 <div>
   <div class="panel-heading">
     <span> <b> Comments </b> </span>
+    <div class="pull-right">
+        <a rel="tooltip" title="Create new comments for all selected hosts or services" href="<?=
+            $this->href(
+                'monitoring/command/addcomment',
+                $this->target
+            );
+        ?>" class="btn-common btn-small button">
+            <i class="icinga-icon-comment"></i>
+        </a>
+
+        <a rel="tooltip" title="Send custom notifications for all selected hosts or services" href="<?=
+            $this->href(
+                'monitoring/command/sendcustomnotification',
+                $this->target
+            );
+        ?>" class="btn-common btn-small button">
+            <i class="icinga-icon-notification"></i>
+		</a>
+    </div>
+
   </div>
   <hr class="separator">
   <div class="panel-body">
@@ -15,7 +35,7 @@
 				)
 			);
 			?>">
-			<?= count($comments);?> comments in the selected items.
+			There are <?= count($comments);?>  comments assigned to the selected items.
 			</a>
 			<a href="<?=
 				$this->href(
@@ -26,39 +46,16 @@
 				<i class="icinga-icon-remove"></i>
 			</a>
 		<?php } else { ?>
-			0 comments in the selected items.
+			There are 0 comments assigned to the selected items.
 		<?php } ?>
-	  </div>
-
-      <div class="panel-row">
-         <a href="<?=
-         $this->href(
-             'monitoring/command/sendcustomnotification',
-             $this->target
-         );
-         ?>" class="button btn-cta btn-common btn-wide">
-             Add Comments
-         </a>
       </div>
-
-      <div class="panel-row">
-		<a href="<?=
-		$this->href(
-		    'monitoring/command/sendcustomnotification',
-			$this->target
-		);
-		?>" class="button btn-cta btn-common btn-half-left">
-		    Send Notifications
-		</a>
-
-		<a href="<?=
+		<a rel="tooltip" title="Delay the noficiations on all selected hosts or services" href="<?=
 		$this->href(
 		    'monitoring/command/delaynotification',
 			$this->target
 		);
-		?>" class="button btn-cta btn-common btn-half-right">
+		?>" class="button btn-cta btn-common btn-half-wide">
 		    Delay Notifications
 		</a>
-      </div>
   </div>
 </div>

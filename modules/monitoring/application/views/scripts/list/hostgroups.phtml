@@ -16,9 +16,12 @@
         </div>
 
         <div class="row">
+          <div class="col-md-12">
             <?=  $this->paginationControl($hostgroups, null, null, array('preserve' => $this->preserve)); ?>
+          </div>
         </div>
 
+        <br />
         <div class="row">
             <?= $this->selectionToolbar('single'); ?>
         </div>
