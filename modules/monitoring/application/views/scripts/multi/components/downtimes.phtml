@@ -14,36 +14,36 @@
     </div>
     <hr class="separator" >
     <div class="panel-body">
-		<div class="panel-row">
-			<?php if (count($downtimes) > 0) { ?>
-				<a href="
-					<?= $this->href(
-						'monitoring/list/downtimes',
-						array()
-					);?>
-				">
-					<?= count($downtimes); ?> Selected items are currently in downtime.
-				</a>
-				<a href="<?=
-					$this->href(
-						'monitoring/command/removedowntime',
-						$this->target
-					);
-					?>" class="button btn-common btn-small input-sm pull-right">
-					<i class="icinga-icon-remove"></i>
-				</a>
-			<?php } else { ?>
-				0 Selected items are currently in downtime.
-			<?php } ?>
-		</div>
+        <div class="panel-row">
+            <?php if (count($downtimes) > 0) { ?>
+                <a href="
+                    <?= $this->href(
+                        'monitoring/list/downtimes',
+                        array()
+                    );?>
+                ">
+                    <?= count($downtimes); ?> Selected items are currently in downtime.
+                </a>
+                <a href="<?=
+                    $this->href(
+                        'monitoring/command/removedowntime',
+                        $this->target
+                    );
+                    ?>" class="button btn-common btn-small input-sm pull-right">
+                    <i class="icinga-icon-remove"></i>
+                </a>
+            <?php } else { ?>
+                0 Selected items are currently in downtime.
+            <?php } ?>
+        </div>
 
             <a rel="tooltip" title="Remove all acknowledgements from all selected hosts or services" href="<?=
-			$this->href(
-			    'monitoring/command/removedowntime',
-				$target
-			);
-			?>" class="button btn-cta btn-common btn-wide">
-			    Remove Acknowledgements
-			</a>
+            $this->href(
+                'monitoring/command/removeacknowledgement',
+                $target
+            );
+            ?>" class="button btn-cta btn-common btn-wide">
+                Remove Acknowledgements
+            </a>
     </div>
 </div>
