@@ -89,7 +89,7 @@
                             )
                         ) ?>
                 <?php else: ?>
-                    <a href="<?=
+                    <a rel="tooltip" title="Acknowledge Problems" href="<?=
                     $this->href(
                         'monitoring/command/acknowledgeproblem',
                         array(
@@ -157,7 +157,7 @@
                 <?= $this->dateFormat()->formatDateTime($object->next_check); ?>
             </div>
             <div class="panel-button">
-                <a href="<?=
+                <a rel="tooltip" title="Reschedule the next check" href="<?=
                     $this->href(
                         'monitoring/command/reschedulenextcheck',
                         array(
