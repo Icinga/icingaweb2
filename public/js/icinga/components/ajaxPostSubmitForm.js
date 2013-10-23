@@ -43,6 +43,7 @@ define(['components/app/container', 'jquery'], function(Container, $) {
     var submitHandler = function(e) {
         e.preventDefault();
 
+
         var form = $(this);
         var url = form.attr('action');
         var submit = form.find('button[type="submit"]', 'input[type="submit"]');
@@ -67,6 +68,7 @@ define(['components/app/container', 'jquery'], function(Container, $) {
         }).error(function() {
             submit.removeAttr('disabled');
         });
+        return false;
     };
 
     /**
