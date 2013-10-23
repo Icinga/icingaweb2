@@ -30,6 +30,8 @@
 use Icinga\Application\Icinga;
 use Icinga\Application\Config;
 use Icinga\Application\Logger;
+use Icinga\Module\Monitoring\DataView\HostStatus;
+use Icinga\Module\Monitoring\DataView\ServiceStatus;
 use Icinga\Module\Monitoring\Form\Command\DisableNotificationWithExpireForm;
 use Icinga\Module\Monitoring\Form\Command\SingleArgumentCommandForm;
 use Icinga\Web\Form;
@@ -164,25 +166,31 @@ class Monitoring_CommandController extends ActionController
     private function selectCommandTargets($hostOnly = false)
     {
         $query = null;
+
         $fields = array(
             'host_name',
             'host_state'
         );
+
         try {
             $hostname    =  $this->getParam('host', null);
             $servicename =  $this->getParam('service', null);
-            $filter = array();
+
             if (!$hostname && !$servicename) {
                 throw new MissingParameterException("No target given for this command");
             }
 
             if ($hostname) {
-                $view = \Icinga\Module\Monitoring\DataView\HostStatus::fromRequest($this->getRequest());
+                $view = HostStatus::fromRequest($this->_request);
             }
+
             if ($servicename && !$hostOnly) {
-                $view = \Icinga\Module\Monitoring\DataView\ServiceStatus::fromRequest($this->getRequest());
+                $fields[] = 'service_description';
+                $view = ServiceStatus::fromRequest($this->_request);
             }
+
             $query = $view->getQuery()->from("status", $fields);
+
             return $data = $query->fetchAll();
 
         } catch (\Exception $e) {

@@ -11,6 +11,14 @@ use Icinga\Web\Form;
  */
 class Zend_View_Helper_CommandForm extends Zend_View_Helper_Abstract
 {
+    private static $getArguments = array(
+        'host',
+        'service',
+        'global',
+        'commentid',
+        'downtimeid'
+    );
+
     /**
      * Creates a simple form without additional input fields
      *
@@ -27,7 +35,21 @@ class Zend_View_Helper_CommandForm extends Zend_View_Helper_Abstract
         $form->setAttrib('class', 'inline-form');
 
         $form->setRequest(Zend_Controller_Front::getInstance()->getRequest());
-        $form->setAction($this->view->href('monitoring/command/' . $commandName));
+
+        // Filter work only from get parts. Put important
+        // fields in the action URL
+        $getParts = array();
+        foreach (self::$getArguments as $argumentName) {
+            if (array_key_exists($argumentName, $arguments) === true) {
+                if ($arguments[$argumentName]) {
+                    $getParts[$argumentName] = $arguments[$argumentName];
+                }
+
+                unset($arguments[$argumentName]);
+            }
+        }
+
+        $form->setAction($this->view->href('monitoring/command/' . $commandName, $getParts));
 
         foreach ($arguments as $elementName => $elementValue) {
             $hiddenField = new Zend_Form_Element_Hidden($elementName);
