@@ -134,7 +134,9 @@ class Perfdata
 
         $unit = null;
         if (! preg_match('~^(\-?[\d+\.]+(?:E\-?\d+)?)([^\d]+)?$~', $this->val, $m)) {
-            throw new \Exception('Got invalid perfdata: ' . $perfdata);
+            return $perfdata;
+            // Numbers with an exponential base will be rendered invalid using the regex above
+//            throw new \Exception('Got invalid perfdata: ' . $perfdata);
         }
         $this->val  = $m[1];
         if (isset($m[2])) {
