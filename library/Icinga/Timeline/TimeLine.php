@@ -29,7 +29,9 @@
 namespace Icinga\Timeline;
 
 use \DateInterval;
+use \Zend_View_Interface;
 use \Icinga\Web\Form;
+use \Icinga\Web\Form\Element\Note;
 
 /**
  * Represents a set of events in a specific time range
@@ -112,7 +114,7 @@ class TimeLine extends Form
      */
     public function getInterval()
     {
-        switch ($this->getRequest()->getPost('interval', '4h'))
+        switch ($this->getRequest()->getPost('timelineInterval', '4h'))
         {
             case '4h':
                 return new DateInterval('PT4H');
@@ -138,10 +140,132 @@ class TimeLine extends Form
     }
 
     /**
-     * Build the timeline
+     * Render the form and timeline to HTML
+     *
+     * @param   Zend_View_Interface     $view
+     * @return  string
+     */
+    public function render(Zend_View_Interface $view = null)
+    {
+        $this->buildForm();
+        $this->postCreate();
+        return parent::render($view);
+    }
+
+    /**
+     * Add form elements
      */
     public function create()
     {
-        
+        if (!$this->hideOuterElements) {
+            $this->addElement(
+                'select',
+                'timelineInterval',
+                array(
+                    'multiOptions'  => array(
+                        '4h'    => t('4 Hours'),
+                        '1d'    => t('One day'),
+                        '1w'    => t('One week'),
+                        '1m'    => t('One month'),
+                        '1y'    => t('One year')
+                    )
+                )
+            );
+            $this->enableAutoSubmit(array('timelineInterval'));
+            $this->setIgnoreChangeDiscarding(false);
+        }
+    }
+
+    /**
+     * Add timeline elements
+     */
+    private function postCreate()
+    {
+        $timeline = new Note(
+            'timeline',
+            array(
+                'value' => '<div id="timeline">' . $this->buildTimeline() . '</div>'
+            )
+        );
+        $this->addElement($timeline); // Form::addElement adjusts the element's decorators
+        $timeline->clearDecorators();
+        $timeline->addDecorator('ViewHelper');
+
+        $legend = new Note(
+            'legend',
+            array(
+                'value' => '<div id="timelineLegend">' . $this->buildLegend() . '</div>'
+            )
+        );
+        $this->addElement($legend);
+        $legend->clearDecorators();
+        $legend->addDecorator('ViewHelper');
+    }
+
+    /**
+     * Build the legend
+     */
+    private function buildLegend()
+    {
+        // TODO: Put this in some sort of dedicated stylesheet
+        $circleStyle = 'width:100%;height:90px;border-radius:50%;box-shadow:4px 4px 8px grey;border:2px solid;';
+        $labelStyle = 'font-size:12px;margin-top:10px;text-align:center;';
+        $titleStyle = 'margin-left:25px;';
+
+        $elements = array();
+        foreach ($this->getGroups() as $groupName => $groupInfo) {
+            $groupColor = $groupInfo['color'] ? $groupInfo['color'] :
+                ('#' . str_pad(dechex(rand(256,16777215)), 6, '0', STR_PAD_LEFT)); // TODO: This should be kind of cached!
+            $elements[] = '' .
+                '<div style="' . $circleStyle . 'background-color: ' . $groupColor . '"></div>' .
+                '<p style="' . $labelStyle . '">' . $groupName . '</p>';
+        }
+
+        $legend = '' .
+            '<h2 style="' . $titleStyle . '">' . t('Shown event groups') . '</h2>' .
+            '<div class="row">' .
+            '  <div class="col-sm-12 col-xs-12 col-md-12 col-lg-12">' .
+            implode(
+                '',
+                array_map(
+                    function ($e) { return '<div class="col-sm-6 col-xs-3 col-md-2 col-lg-1">' . $e . '</div>'; },
+                    $elements
+                )
+            ) .
+            '  </div>' .
+            '</div>';
+
+        return $legend;
+    }
+
+    /**
+     * Build the timeline
+     */
+    private function buildTimeline()
+    {
+        return '';
+    }
+
+    /**
+     * Return contextless attributes of all available distinct group types
+     *
+     * Returns an associative array where each key refers to the name
+     * and the value to the attributes of a specific group type.
+     *
+     * @return  array
+     */
+    private function getGroups()
+    {
+        $groups = array();
+        foreach ($this->displayData as $group) {
+            if (!array_key_exists($group->getName(), $groups)) {
+                $groups[$group->getName()] = array(
+                    'color'     => $group->getColor(),
+                    'weight'    => $group->getWeight()
+                );
+            }
+        }
+
+        return $groups;
     }
 }
