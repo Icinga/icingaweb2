@@ -29,6 +29,7 @@
 namespace Icinga\Timeline;
 
 use \DateTime;
+use \Icinga\Exception\ProgrammingError;
 
 /**
  * An event group that is part of a timeline
@@ -71,18 +72,44 @@ class TimeEntry
     private $weight = 1.0;
 
     /**
-     * Initialize a new event group
+     * The color of this group
      *
-     * @param   string      $name       The name of the group
-     * @param   int         $value      The amount of events
-     * @param   DateTime    $dateTime   The date and time of the group
-     * @param   string      $detailUrl  The url to the detail view
+     * @var string
      */
-    public function __construct($name, $value, DateTime $dateTime, $detailUrl)
+    private $color;
+
+    /**
+     * Return a new TimeEntry object with the given attributes being set
+     *
+     * @param   array       $attributes     The attributes to set
+     * @return  TimeEntry                   The resulting TimeEntry object
+     * @throws  ProgrammingError            If one of the given attributes cannot be set
+     */
+    public static function fromArray(array $attributes)
     {
-        $this->detailUrl = $detailUrl;
-        $this->dateTime = $dateTime;
-        $this->value = $value;
+        $entry = new TimeEntry();
+
+        foreach ($attributes as $name => $value) {
+            $methodName = 'set' . ucfirst($name);
+            if (method_exists($entry, $methodName)) {
+                $entry->{$methodName}($value);
+            } else {
+                throw new ProgrammingError(
+                    'Method "' . $methodName . '" does not exist on object of type "' . __CLASS__ . '"'
+                );
+            }
+        }
+
+        return $entry;
+    }
+
+    /**
+     * Set this group's name
+     *
+     * @param   string  $name   The name to set
+     */
+    public function setName($name)
+    {
         $this->name = $name;
     }
 
@@ -97,6 +124,16 @@ class TimeEntry
     }
 
     /**
+     * Set this group's amount of events
+     *
+     * @param   int     $value  The value to set
+     */
+    public function setValue($value)
+    {
+        $this->value = intval($value);
+    }
+
+    /**
      * Return the amount of events in this group
      *
      * @return  int
@@ -104,6 +141,16 @@ class TimeEntry
     public function getValue()
     {
         return $this->value;
+    }
+
+    /**
+     * Set this group's date and time
+     *
+     * @param   DateTime    $dateTime   The date and time to set
+     */
+    public function setDateTime(DateTime $dateTime)
+    {
+        $this->dateTime = $dateTime;
     }
 
     /**
@@ -117,6 +164,16 @@ class TimeEntry
     }
 
     /**
+     * Set the url to this group's detail view
+     *
+     * @param   string  $detailUrl  The url to set
+     */
+    public function setDetailUrl($detailUrl)
+    {
+        $this->detailUrl = $detailUrl;
+    }
+
+    /**
      * Return the url to this group's detail view
      *
      * @return  string
@@ -124,6 +181,16 @@ class TimeEntry
     public function getDetailUrl()
     {
         return $this->detailUrl;
+    }
+
+    /**
+     * Set this group's weight
+     *
+     * @param   float   $weight     The weight for this group
+     */
+    public function setWeight($weight)
+    {
+        $this->weight = floatval($weight);
     }
 
     /**
@@ -137,12 +204,22 @@ class TimeEntry
     }
 
     /**
-     * Set the weight of this group
+     * Set this group's color
      *
-     * @param   float   $weight     The weight for this group
+     * @param   string  $color  The color to set. (The css name or hex-code)
      */
-    public function setWeight($weight)
+    public function setColor($color)
     {
-        $this->weight = floatval($weight);
+        $this->color = $color;
+    }
+
+    /**
+     * Get the color of this group
+     *
+     * @return  string
+     */
+    public function getColor()
+    {
+        return $this->color;
     }
 }

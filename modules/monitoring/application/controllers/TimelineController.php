@@ -42,7 +42,10 @@ class Monitoring_TimelineController extends ActionController
     public function showAction()
     {
         $timeline = new TimeLine();
+        $timeline->setName('Timeline');
         $timeline->setRequest($this->_request);
+        $timeline->buildForm(); // Necessary in order to populate request parameters
+        $timeline->populate($this->_request->getParams());
         list($displayRange, $forecastRange) = $this->buildTimeRanges($timeline->getInterval());
         $timeline->setTimeRange($displayRange);
         $timeline->setDisplayData($this->loadData($displayRange));
@@ -166,16 +169,17 @@ class Monitoring_TimelineController extends ActionController
     /**
      * Groups a set of elements based on a specific range of time
      *
-     * @param   TimeRange   $range      The range of time represented by the timeline
-     * @param   array       $elements   The elements to group. Each element need to have a ´time´ property
-     *                                  that defines its position in the given range of time
-     * @param   string      $groupName  The name of each group
-     * @param   string      $groupUrl   The url to the detailview of this group's type. Need to contain
-     *                                  placeholders for both the start- and end time of a specific timeframe
-     * @return  array                   A list of event groups suitable to pass to the timeline
-     * @throws  ProgrammingError        If an element is found that does not match the given range of time
+     * @param   TimeRange   $range          The range of time represented by the timeline
+     * @param   array       $elements       The elements to group. Each element need to have a ´time´ property
+     *                                      that defines its position in the given range of time
+     * @param   array       $attributes     The attributes to set on each event group. Need to contain at least
+     *                                      a ´name´ and a ´detailUrl´. The detailUrl need also to contain
+     *                                      placeholders for both the start- and end time of a specific timeframe
+     * @return  array                       A list of event groups suitable to pass to the timeline
+     * @throws  ProgrammingError            If an element is found that does not match the given range of time
+     *                                      or one of the required attributes is missing
      */
-    private function groupResults(TimeRange $range, array $elements, $groupName, $groupUrl)
+    private function groupResults(TimeRange $range, array $elements, array $attributes)
     {
         $groupCounts = array();
         foreach ($elements as $element) {
@@ -199,34 +203,24 @@ class Monitoring_TimelineController extends ActionController
             }
         }
 
+        if (!array_key_exists('name', $attributes) || !array_key_exists('detailUrl', $attributes)) {
+            throw new ProgrammingError('Missing required event group attribute. Either ´name´ or ´detailUrl´');
+        }
+
         $groups = array();
+        $urlTemplate = $attributes['detailUrl'];
         foreach ($groupCounts as $timeframeIdentifier => $groupCount) {
             $timeframe = $range->getTimeframe($timeframeIdentifier);
-            $groups[] = new TimeEntry(
-                $groupName,
-                $groupCount,
-                $timeframe->start,
-                sprintf(
-                    $groupUrl,
-                    $timeframe->start->getTimestamp(),
-                    $timeframe->end->getTimestamp()
-                )
+            $attributes['value'] = $groupCount;
+            $attributes['detailUrl'] = sprintf(
+                $urlTemplate,
+                $timeframe->start->getTimestamp(),
+                $timeframe->end->getTimestamp()
             );
+            $groups[] = TimeEntry::fromArray($attributes);
         }
 
         return $groups;
-    }
-
-    /**
-     * Set the given weight on each passed in event group
-     *
-     * @param   array   $groups     A set of event groups for which to set the weight
-     * @param   float   $weight     The weight to set
-     * @return  array               The set of adjusted event groups
-     */
-    private function applyWeight(array $groups, $weight)
-    {
-        return array_map(function ($group) use ($weight) { $group->setWeight($weight); }, $groups);
     }
 
     /**
@@ -237,7 +231,6 @@ class Monitoring_TimelineController extends ActionController
      */
     private function loadData(TimeRange $timeRange)
     {
-        // TODO: Should a specific weight for a specific type of group(s) be set here?
         $entries = array_merge(
             $this->loadInitiatedDowntimes($timeRange),
             $this->loadFinishedDowntimes($timeRange),
@@ -278,8 +271,14 @@ class Monitoring_TimelineController extends ActionController
             ->where('state != 0')
             ->fetchAll();
 
-        $urlFilter = 'timestamp<=%s&timestamp>%s&type=notify&state!=0';
-        return $this->groupResults($range, $result, 'Notifications', 'monitoring/list/eventhistory?' . $urlFilter);
+        return $this->groupResults(
+            $range,
+            $result,
+            array(
+                'name'      => t('Notifications'),
+                'detailUrl' => 'monitoring/list/eventhistory?timestamp<=%s&timestamp>%s&type=notify&state!=0'
+            )
+        );
     }
 
     /**
@@ -303,8 +302,14 @@ class Monitoring_TimelineController extends ActionController
             ->where('state != 0')
             ->fetchAll();
 
-        $urlFilter = 'timestamp<=%s&timestamp>%s&type=hard_state&state!=0';
-        return $this->groupResults($range, $result, 'Hard states', 'monitoring/list/eventhistory?' . $urlFilter);
+        return $this->groupResults(
+            $range,
+            $result,
+            array(
+                'name'      => t('Hard states'),
+                'detailUrl' => 'monitoring/list/eventhistory?timestamp<=%s&timestamp>%s&type=hard_state&state!=0'
+            )
+        );
     }
 
     /**
@@ -327,8 +332,14 @@ class Monitoring_TimelineController extends ActionController
             ->where('type = comment')
             ->fetchAll();
 
-        $urlFilter = 'timestamp<=%s&timestamp>%s&type=comment';
-        return $this->groupResults($range, $result, 'Comments', 'monitoring/list/eventhistory?' . $urlFilter);
+        return $this->groupResults(
+            $range,
+            $result,
+            array(
+                'name'      => t('Comments'),
+                'detailUrl' => 'monitoring/list/eventhistory?timestamp<=%s&timestamp>%s&type=comment'
+            )
+        );
     }
 
     /**
@@ -351,8 +362,14 @@ class Monitoring_TimelineController extends ActionController
             ->where('type = ack')
             ->fetchAll();
 
-        $urlFilter = 'timestamp<=%s&timestamp>%s&type=ack';
-        return $this->groupResults($range, $result, 'Acknowledgements', 'monitoring/list/eventhistory?' . $urlFilter);
+        return $this->groupResults(
+            $range,
+            $result,
+            array(
+                'name'      => t('Acknowledgements'),
+                'detailUrl' => 'monitoring/list/eventhistory?timestamp<=%s&timestamp>%s&type=ack'
+            )
+        );
     }
 
     /**
@@ -375,12 +392,13 @@ class Monitoring_TimelineController extends ActionController
             ->where('type = dt_start')
             ->fetchAll();
 
-        $urlFilter = 'timestamp<=%s&timestamp>%s&type=dt_start';
         return $this->groupResults(
             $range,
             $result,
-            'Initiated downtimes',
-            'monitoring/list/eventhistory?' . $urlFilter
+            array(
+                'name'      => t('Initiated downtimes'),
+                'detailUrl' => 'monitoring/list/eventhistory?timestamp<=%s&timestamp>%s&type=dt_start'
+            )
         );
     }
 
@@ -404,12 +422,13 @@ class Monitoring_TimelineController extends ActionController
             ->where('type = dt_end')
             ->fetchAll();
 
-        $urlFilter = 'timestamp<=%s&timestamp>%s&type=dt_end';
         return $this->groupResults(
             $range,
             $result,
-            'Finished downtimes',
-            'monitoring/list/eventhistory?' . $urlFilter
+            array(
+                'name'      => t('Finished downtimes'),
+                'detailUrl' => 'monitoring/list/eventhistory?timestamp<=%s&timestamp>%s&type=dt_end'
+            )
         );
     }
 }
