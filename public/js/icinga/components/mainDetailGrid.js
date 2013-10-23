@@ -189,21 +189,28 @@ function(Container, $, logger, URI, tpl, urlMgr, Selectable, TableMultiSelection
                     }
                 }
 
+                var selected = new Selectable(this);
                 switch (selectionMode) {
                     case 'multi':
                         if (ev.ctrlKey || ev.metaKey) {
-                            selection.toggle(new Selectable(this));
+                            selection.toggle(selected);
                         } else if (ev.shiftKey) {
-                            selection.add(new Selectable(this));
+                            selection.add(selected);
                         } else {
+                            var oldState = selected.isActive();
                             selection.clear();
-                            selection.add(new Selectable(this));
+                            if (!oldState) {
+                                selection.add(selected);
+                            }
                         }
                         break;
 
                     case 'single':
+                        oldState = selected.isActive();
                         selection.clear();
-                        selection.add(new Selectable(this));
+                        if (!oldState) {
+                            selection.add(selected);
+                        }
                         break;
 
                     case 'none':

@@ -57,7 +57,22 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
      */
     var detailContainer = null;
 
+    /**
+     * Contains currently pending requests
+     *
+     * @type {jqAJAX}
+     */
     var pendingDetailRequest = null;
+
+    /**
+     * Cancel the pending request, if one exists
+     */
+    var cancelPendingRequest = function() {
+        if (pendingDetailRequest) {
+            pendingDetailRequest.abort();
+        }
+    };
+
     /**
      * A handler for accessing icinga containers, i.e. the #icingamain, #icingadetail containers and specific 'app/container'
      * components.
@@ -175,18 +190,17 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
             if (urlMgr.detailUrl === '') {
                 this.hideDetail();
             }
-
-            if (pendingDetailRequest) {
-                pendingDetailRequest.abort();
-            }
+            cancelPendingRequest();
             this.containerDom.trigger('showLoadIndicator');
             pendingDetailRequest = $.ajax({
                 'url'  : url,
                 'data' : {
                     'render' : 'detail'
                 }
-            }).done(
+            });
+            pendingDetailRequest.done(
                 (function(response) {
+                    pendingDetailRequest = null;
                     this.replaceDom($(response));
                 }).bind(this)
             ).fail(
@@ -258,7 +272,6 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
          */
         this.registerOnShowLoadIndicator = function(fn) {
             this.containerDom.on('showLoadIndicator', fn);
-
         };
 
         /**
@@ -412,6 +425,7 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
      * Available as a static method on the Container object or as an instance method
      */
     Container.prototype.hideDetail = Container.hideDetail = function() {
+        cancelPendingRequest();
         urlMgr.setDetailUrl('');
         var mainDom = Container.getMainContainer().containerDom,
             detailDom = Container.getDetailContainer().containerDom;
@@ -458,9 +472,8 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
         if (urlMgr.detailUrl) {
             Container.getDetailContainer().replaceDomAsync(urlMgr.detailUrl);
         } else {
-             Container.hideDetail();
+            Container.hideDetail();
         }
-
     }));
 
 
