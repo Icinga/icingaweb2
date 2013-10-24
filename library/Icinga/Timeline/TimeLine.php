@@ -28,10 +28,12 @@
 
 namespace Icinga\Timeline;
 
+use \Zend_Config;
 use \DateInterval;
 use \Zend_View_Interface;
 use \Icinga\Web\Form;
 use \Icinga\Web\Form\Element\Note;
+use \Icinga\Timeline\TimeEntry;
 
 /**
  * Represents a set of events in a specific time range
@@ -67,6 +69,27 @@ class TimeLine extends Form
      * @var bool
      */
     private $hideOuterElements = false;
+
+    /**
+     * The maximum diameter each circle can have
+     *
+     * @var int
+     */
+    private $circleDiameter = 250;
+
+    /**
+     * The unit of a circle's diameter
+     *
+     * @var string
+     */
+    private $diameterUnit = 'px';
+
+    /**
+     * The base that is used to calculate each circle's diameter
+     *
+     * @var float
+     */
+    private $calculationBase;
 
     /**
      * Set the range of time to represent
@@ -107,6 +130,23 @@ class TimeLine extends Form
     }
 
     /**
+     * Set the maximum diameter each circle can have
+     *
+     * @param   string  $width  The diameter to set, suffixed with its unit
+     * @throws  Exception       If the given diameter is invalid
+     */
+    public function setMaximumCircleWidth($width)
+    {
+        $matches = array();
+        if (preg_match('#([\d]+)([a-z]+|%)#', $width, $matches)) {
+            $this->circleDiameter = intval($matches[1]);
+            $this->diameterUnit = $matches[2];
+        } else {
+            throw new Exception('Width "' . $width . '" is not a valid width');
+        }
+    }
+
+    /**
      * Return the chosen interval
      *
      * @return  DateInterval    The chosen interval
@@ -114,7 +154,7 @@ class TimeLine extends Form
      */
     public function getInterval()
     {
-        switch ($this->getRequest()->getPost('timelineInterval', '4h'))
+        switch ($this->getRequest()->getParam('timelineInterval', '4h'))
         {
             case '4h':
                 return new DateInterval('PT4H');
@@ -208,14 +248,13 @@ class TimeLine extends Form
     private function buildLegend()
     {
         // TODO: Put this in some sort of dedicated stylesheet
-        $circleStyle = 'width:100%;height:90px;border-radius:50%;box-shadow:4px 4px 8px grey;border:2px solid;';
+        $circleStyle = 'width:75px;height:75px;border-radius:50%;box-shadow:4px 4px 8px grey;border:2px solid;margin:auto;';
         $labelStyle = 'font-size:12px;margin-top:10px;text-align:center;';
         $titleStyle = 'margin-left:25px;';
 
         $elements = array();
         foreach ($this->getGroups() as $groupName => $groupInfo) {
-            $groupColor = $groupInfo['color'] ? $groupInfo['color'] :
-                ('#' . str_pad(dechex(rand(256,16777215)), 6, '0', STR_PAD_LEFT)); // TODO: This should be kind of cached!
+            $groupColor = $groupInfo['color'] !== null ? $groupInfo['color'] : $this->getRandomCssColor();
             $elements[] = '' .
                 '<div style="' . $circleStyle . 'background-color: ' . $groupColor . '"></div>' .
                 '<p style="' . $labelStyle . '">' . $groupName . '</p>';
@@ -224,7 +263,6 @@ class TimeLine extends Form
         $legend = '' .
             '<h2 style="' . $titleStyle . '">' . t('Shown event groups') . '</h2>' .
             '<div class="row">' .
-            '  <div class="col-sm-12 col-xs-12 col-md-12 col-lg-12">' .
             implode(
                 '',
                 array_map(
@@ -232,7 +270,6 @@ class TimeLine extends Form
                     $elements
                 )
             ) .
-            '  </div>' .
             '</div>';
 
         return $legend;
@@ -243,7 +280,53 @@ class TimeLine extends Form
      */
     private function buildTimeline()
     {
-        return '';
+        $timelineGroups = array();
+        foreach ($this->displayData as $group) {
+            $timestamp = $group->getDateTime()->getTimestamp();
+
+            if (!array_key_exists($timestamp, $timelineGroups)) {
+                $timelineGroups[$timestamp] = array();
+            }
+
+            $timelineGroups[$timestamp][] = $group;
+        }
+
+        $elements = array();
+        foreach ($this->range as $timestamp => $timeframe) {
+            $elementGroups = array();
+
+            if (array_key_exists($timestamp, $timelineGroups)) {
+                foreach ($timelineGroups[$timestamp] as $group) {
+                    $eventCount = empty($elements) ? $this->extrapolateEventCount($group, 4) : $group->getValue();
+                    $groupColor = $group->getColor() !== null ? $group->getColor() : $this->getRandomCssColor();
+                    $elementGroups[] = sprintf(
+                        '<div class="col-sm-1 col-xs-1 col-md-1 col-lg-1">' .
+                        '  <a href="%2$s" data-icinga-target="detail">' .
+                        '    <div style="width:%1$s%3$s;height:%1$s%3$s;border-radius:50%%;' . // TODO: Put this in some sort of dedicated stylesheet
+                                        'box-shadow:4px 4px 8px grey;border:2px solid black;' .
+                                        'margin:auto;background-color:%5$s;text-align:center;' .
+                                        'padding-top:25%%;color:black;">' .
+                        '      %4$s' .
+                        '    </div>' .
+                        '  </a>' .
+                        '</div>',
+                        $this->calculateCircleWidth($eventCount),
+                        $group->getDetailUrl(),
+                        $this->diameterUnit,
+                        $group->getValue(),
+                        $groupColor
+                    );
+                }
+            }
+
+            $timeframeUrl = $this->getRequest()->getBaseUrl() . '/monitoring/list/eventhistory?timestamp<=' .
+                            $timeframe->start->getTimestamp() . '&timestamp>=' . $timeframe->end->getTimestamp();
+            $elements[] = '<div class="row" style="margin:10px 0;">' . implode('', $elementGroups) . '</div>';
+            $elements[] = '<div><a href="' . $timeframeUrl . '" data-icinga-target="detail">' .
+                          $timeframe->end->format($this->getIntervalFormat()) . '</a></div>';
+        }
+
+        return implode('', $elements);
     }
 
     /**
@@ -257,7 +340,7 @@ class TimeLine extends Form
     private function getGroups()
     {
         $groups = array();
-        foreach ($this->displayData as $group) {
+        foreach (array_merge($this->displayData, $this->forecastData) as $group) {
             if (!array_key_exists($group->getName(), $groups)) {
                 $groups[$group->getName()] = array(
                     'color'     => $group->getColor(),
@@ -267,5 +350,138 @@ class TimeLine extends Form
         }
 
         return $groups;
+    }
+
+    /**
+     * Return the circle's diameter for the given amount of events
+     *
+     * @param   int     $eventCount     The amount of events represented by the circle
+     * @return  int
+     */
+    private function calculateCircleWidth($eventCount)
+    {
+        if (!isset($this->calculationBase)) {
+            $highestValue = max(
+                array_map(
+                    function ($g) { return $g->getValue(); },
+                    array_merge($this->displayData, $this->forecastData)
+                )
+            );
+
+            $this->calculationBase = $this->getRequest()->getParam('calculationBase', 1);
+            while (log($highestValue, $this->calculationBase) > 100) {
+                $this->calculationBase += 0.01;
+            }
+
+            $this->addElement(
+                'hidden',
+                'calculationBase',
+                array(
+                    'value' => $this->calculationBase
+                )
+            );
+        }
+
+        return intval($this->circleDiameter * (log($eventCount, $this->calculationBase) / 100));
+    }
+
+    /**
+     * Return an extrapolated event count for the given event group
+     *
+     * @param   TimeEntry   $eventGroup     The event group for which to return an extrapolated event count
+     * @param   int         $offset         The amount of intervals to consider for the extrapolation
+     * @return  int
+     */
+    private function extrapolateEventCount(TimeEntry $eventGroup, $offset)
+    {
+        $start = $eventGroup->getDateTime();
+        $end = clone $start;
+
+        for ($i = 0; $i < $offset; $i++) {
+            $end->sub($this->range->getInterval());
+        }
+
+        $eventCount = 0;
+        foreach ($this->displayData as $group) {
+            if ($group->getDateTime() <= $start && $group->getDateTime() > $end) {
+                $eventCount += $group->getValue();
+            }
+        }
+
+        $extrapolatedCount = (int) $eventCount / $offset;
+        return $extrapolatedCount > $eventGroup->getValue() ? $extrapolatedCount : $eventGroup->getValue();
+    }
+
+    /**
+     * Return a random generated CSS color hex code
+     *
+     * @return  string
+     */
+    private function getRandomCssColor()
+    {
+        return '#' . str_pad(dechex(rand(256,16777215)), 6, '0', STR_PAD_LEFT);
+    }
+
+    /**
+     * Get an appropriate datetime format string for the current interval
+     *
+     * @return  string
+     */
+    private function getIntervalFormat()
+    {
+        $interval = $this->range->getInterval();
+
+        if ($interval->h == 4) {
+            return $this->getDateFormat() . ' ' . $this->getTimeFormat();
+        } elseif ($interval->d == 1) {
+            return $this->getDateFormat();
+        } elseif ($interval->d == 7) {
+            return '\W\e\ek #W \of Y';
+        } elseif ($interval->m == 1) {
+            return 'F Y';
+        } else { // $interval->y == 1
+            return 'Y';
+        }
+    }
+
+    /**
+     * Get the application's global configuration or an empty one
+     *
+     * @return  Zend_Config
+     */
+    private function getGlobalConfiguration()
+    {
+        $config = $this->getConfiguration();
+        $global = $config->global;
+
+        if ($global === null) {
+            $global = new Zend_Config(array());
+        }
+
+        return $global;
+    }
+
+    /**
+     * Get the user's preferred time format or the application's default
+     *
+     * @return  string
+     */
+    private function getTimeFormat()
+    {
+        $globalConfig = $this->getGlobalConfiguration();
+        $preferences = $this->getUserPreferences();
+        return $preferences->get('app.timeFormat', $globalConfig->get('timeFormat', 'g:i A'));
+    }
+
+    /**
+     * Get the user's preferred date format or the application's default
+     *
+     * @return  string
+     */
+    private function getDateFormat()
+    {
+        $globalConfig = $this->getGlobalConfiguration();
+        $preferences = $this->getUserPreferences();
+        return $preferences->get('app.dateFormat', $globalConfig->get('dateFormat', 'd/m/Y'));
     }
 }

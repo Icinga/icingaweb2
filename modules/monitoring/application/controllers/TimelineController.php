@@ -33,6 +33,7 @@ use \Icinga\Web\Hook;
 use \Icinga\Timeline\TimeLine;
 use \Icinga\Timeline\TimeEntry;
 use \Icinga\Timeline\TimeRange;
+use \Icinga\Application\Config;
 use \Icinga\Exception\ProgrammingError;
 use \Icinga\Web\Controller\ActionController;
 use \Icinga\Module\Monitoring\DataView\EventHistory as EventHistoryView;
@@ -44,6 +45,7 @@ class Monitoring_TimelineController extends ActionController
         $timeline = new TimeLine();
         $timeline->setName('Timeline');
         $timeline->setRequest($this->_request);
+        $timeline->setConfiguration(Config::app());
         $timeline->buildForm(); // Necessary in order to populate request parameters
         $timeline->populate($this->_request->getParams());
         list($displayRange, $forecastRange) = $this->buildTimeRanges($timeline->getInterval());
@@ -58,6 +60,7 @@ class Monitoring_TimelineController extends ActionController
         $timeline = new TimeLine();
         $timeline->showLineOnly();
         $timeline->setRequest($this->_request);
+        $timeline->setConfiguration(Config::app());
         list($displayRange, $forecastRange) = $this->buildTimeRanges($timeline->getInterval());
         $timeline->setTimeRange($displayRange);
         $timeline->setDisplayData($this->loadData($displayRange));
