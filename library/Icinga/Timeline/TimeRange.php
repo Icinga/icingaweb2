@@ -128,41 +128,40 @@ class TimeRange implements Iterator
      */
     public function findTimeframe(DateTime $dateTime, $asTimestamp = false)
     {
-        foreach ($this as $timeframeIdentifier => $timeframeStart) {
-            $timeframeEnd = clone $timeframeStart;
-
+        foreach ($this as $timeframeIdentifier => $timeframe) {
             if ($this->negative) {
-                $timeframeEnd->sub($this->interval);
-
-                if ($dateTime <= $timeframeStart && $dateTime > $timeframeEnd) {
-                    return $asTimestamp ? $timeframeIdentifier : $this->buildTimeframe($timeframeStart, $timeframeEnd);
+                if ($dateTime <= $timeframe->start && $dateTime > $timeframe->end) {
+                    return $asTimestamp ? $timeframeIdentifier : $timeframe;
                 }
-            } else {
-                $timeframeEnd->add($this->interval);
-
-                if ($dateTime >= $timeframeStart && $dateTime < $timeframeEnd) {
-                    return $asTimestamp ? $timeframeIdentifier : $this->buildTimeframe($timeframeStart, $timeframeEnd);
-                }
+            } elseif ($dateTime >= $timeframe->start && $dateTime < $timeframe->end) {
+                return $asTimestamp ? $timeframeIdentifier : $timeframe;
             }
         }
     }
 
     /**
-     * Return the appropriate timeframe for the given timestamp
+     * Return the appropriate timeframe for the given timeframe start
      *
-     * @param   int         $timestamp  The timestamp for which to return the timeframe
+     * @param   int|DateTime    $time   The timestamp or date and time for which to return the timeframe
      * @return  StdClass                An object with a ´start´ and ´end´ property
      */
-    public function getTimeframe($timestamp)
+    public function getTimeframe($time)
     {
-        $startTime = new DateTime();
-        $startTime->setTimestamp($timestamp);
+        if ($time instanceof DateTime) {
+            $startTime = $time;
+        } else {
+            $startTime = new DateTime();
+            $startTime->setTimestamp($time);
+        }
+
         $endTime = clone $startTime;
 
         if ($this->negative) {
             $endTime->sub($this->interval);
+            $endTime->add(new DateInterval('PT1S'));
         } else {
             $endTime->add($this->interval);
+            $endTime->sub(new DateInterval('PT1S'));
         }
 
         return $this->buildTimeframe($startTime, $endTime);
@@ -209,11 +208,11 @@ class TimeRange implements Iterator
     /**
      * Return the current value in the iteration
      *
-     * @return  DateTime
+     * @return  StdClass
      */
     public function current()
     {
-        return $this->current;
+        return $this->getTimeframe($this->current);
     }
 
     /**
