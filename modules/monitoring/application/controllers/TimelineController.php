@@ -211,6 +211,7 @@ class Monitoring_TimelineController extends ActionController
         $urlTemplate = $attributes['detailUrl'];
         foreach ($groupCounts as $timeframeIdentifier => $groupCount) {
             $timeframe = $range->getTimeframe($timeframeIdentifier);
+            $attributes['dateTime'] = $timeframe->start;
             $attributes['value'] = $groupCount;
             $attributes['detailUrl'] = sprintf(
                 $urlTemplate,
@@ -276,7 +277,9 @@ class Monitoring_TimelineController extends ActionController
             $result,
             array(
                 'name'      => t('Notifications'),
-                'detailUrl' => 'monitoring/list/eventhistory?timestamp<=%s&timestamp>%s&type=notify&state!=0'
+                'detailUrl' => $this->view->baseUrl(
+                    'monitoring/list/eventhistory?timestamp<=%s&timestamp>=%s&type=notify&state>0'
+                )
             )
         );
     }
@@ -307,7 +310,9 @@ class Monitoring_TimelineController extends ActionController
             $result,
             array(
                 'name'      => t('Hard states'),
-                'detailUrl' => 'monitoring/list/eventhistory?timestamp<=%s&timestamp>%s&type=hard_state&state!=0'
+                'detailUrl' => $this->view->baseUrl(
+                    'monitoring/list/eventhistory?timestamp<=%s&timestamp>=%s&type=hard_state&state>0'
+                )
             )
         );
     }
@@ -337,7 +342,9 @@ class Monitoring_TimelineController extends ActionController
             $result,
             array(
                 'name'      => t('Comments'),
-                'detailUrl' => 'monitoring/list/eventhistory?timestamp<=%s&timestamp>%s&type=comment'
+                'detailUrl' => $this->view->baseUrl(
+                    'monitoring/list/eventhistory?timestamp<=%s&timestamp>=%s&type=comment'
+                )
             )
         );
     }
@@ -367,7 +374,9 @@ class Monitoring_TimelineController extends ActionController
             $result,
             array(
                 'name'      => t('Acknowledgements'),
-                'detailUrl' => 'monitoring/list/eventhistory?timestamp<=%s&timestamp>%s&type=ack'
+                'detailUrl' => $this->view->baseUrl(
+                    'monitoring/list/eventhistory?timestamp<=%s&timestamp>=%s&type=ack'
+                )
             )
         );
     }
@@ -397,7 +406,9 @@ class Monitoring_TimelineController extends ActionController
             $result,
             array(
                 'name'      => t('Initiated downtimes'),
-                'detailUrl' => 'monitoring/list/eventhistory?timestamp<=%s&timestamp>%s&type=dt_start'
+                'detailUrl' => $this->view->baseUrl(
+                    'monitoring/list/eventhistory?timestamp<=%s&timestamp>=%s&type=dt_start'
+                )
             )
         );
     }
@@ -427,7 +438,9 @@ class Monitoring_TimelineController extends ActionController
             $result,
             array(
                 'name'      => t('Finished downtimes'),
-                'detailUrl' => 'monitoring/list/eventhistory?timestamp<=%s&timestamp>%s&type=dt_end'
+                'detailUrl' => $this->view->baseUrl(
+                    'monitoring/list/eventhistory?timestamp<=%s&timestamp>=%s&type=dt_end'
+                )
             )
         );
     }
