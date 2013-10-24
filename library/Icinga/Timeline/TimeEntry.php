@@ -136,11 +136,12 @@ class TimeEntry
     /**
      * Return the amount of events in this group
      *
+     * @param   bool    $raw    Whether to ignore the set weight
      * @return  int
      */
-    public function getValue()
+    public function getValue($raw = false)
     {
-        return $this->value;
+        return $raw ? $this->value : $this->value * $this->weight;
     }
 
     /**
