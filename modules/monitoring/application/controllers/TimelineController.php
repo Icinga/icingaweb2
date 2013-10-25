@@ -48,6 +48,7 @@ class Monitoring_TimelineController extends ActionController
         $timeline->setConfiguration(Config::app());
         $timeline->buildForm(); // Necessary in order to populate request parameters
         $timeline->populate($this->_request->getParams());
+        $timeline->setAttrib('data-icinga-component', 'monitoring/timelineComponent');
         list($displayRange, $forecastRange) = $this->buildTimeRanges($timeline->getInterval());
         $timeline->setTimeRange($displayRange);
         $timeline->setDisplayData($this->loadData($displayRange));

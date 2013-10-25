@@ -340,6 +340,7 @@ class TimeLine extends Form
                           '<hr style="margin-top:0;"></div>';
         }
 
+        $elements[] = '<span id="TimelineEnd"></span>';
         return implode('', $elements);
     }
 

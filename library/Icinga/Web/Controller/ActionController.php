@@ -335,9 +335,9 @@ class ActionController extends Zend_Controller_Action
     /**
      * Detect whether the current request requires changes in the layout and apply them before rendering
      *
-     * @see Zend_Controller_Action::postDispatch()
+     * @see Zend_Controller_Action::preDispatch()
      */
-    public function postDispatch()
+    public function preDispatch()
     {
         Benchmark::measure('Action::postDispatch()');
 
