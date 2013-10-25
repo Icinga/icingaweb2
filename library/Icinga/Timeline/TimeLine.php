@@ -294,36 +294,50 @@ class TimeLine extends Form
         $elements = array();
         foreach ($this->range as $timestamp => $timeframe) {
             $elementGroups = array();
+            $biggestWidth = 0;
 
             if (array_key_exists($timestamp, $timelineGroups)) {
                 foreach ($timelineGroups[$timestamp] as $group) {
-                    $eventCount = empty($elements) ? $this->extrapolateEventCount($group, 4) : $group->getValue();
+                    $circleWidth = $this->calculateCircleWidth(
+                        empty($elements) ? $this->extrapolateEventCount($group, 4) : $group->getValue()
+                    );
                     $groupColor = $group->getColor() !== null ? $group->getColor() : $this->getRandomCssColor();
                     $elementGroups[] = sprintf(
-                        '<div class="col-sm-1 col-xs-1 col-md-1 col-lg-1">' .
-                        '  <a href="%2$s" data-icinga-target="detail">' .
-                        '    <div style="width:%1$s%3$s;height:%1$s%3$s;border-radius:50%%;' . // TODO: Put this in some sort of dedicated stylesheet
+                        '<div class="col-sm-12 col-xs-12 col-md-6 col-lg-3" style="width:%4$s%2$s;margin:10px 10px;float:left;">' .
+                        '  <a href="%1$s" data-icinga-target="detail">' .
+                        '    <div style="width:%4$s%2$s;height:%4$s%2$s;border-radius:50%%;' . // TODO: Put this in some sort of dedicated stylesheet
                                         'box-shadow:4px 4px 8px grey;border:2px solid black;' .
                                         'margin:auto;background-color:%5$s;text-align:center;' .
                                         'padding-top:25%%;color:black;">' .
-                        '      %4$s' .
+                        '      %3$s' .
                         '    </div>' .
                         '  </a>' .
                         '</div>',
-                        $this->calculateCircleWidth($eventCount),
                         $group->getDetailUrl(),
                         $this->diameterUnit,
                         $group->getValue(),
+                        $circleWidth,
                         $groupColor
                     );
+
+                    if ($circleWidth > $biggestWidth) {
+                        $biggestWidth = $circleWidth;
+                    }
                 }
             }
 
             $timeframeUrl = $this->getRequest()->getBaseUrl() . '/monitoring/list/eventhistory?timestamp<=' .
                             $timeframe->start->getTimestamp() . '&timestamp>=' . $timeframe->end->getTimestamp();
-            $elements[] = '<div class="row" style="margin:10px 0;">' . implode('', $elementGroups) . '</div>';
+            $elements[] = sprintf(
+                '<div class="row" style="height:%3$s%2$s;">%1$s</div>',
+                implode('', $elementGroups),
+                $this->diameterUnit,
+                $biggestWidth
+            );
+            $elements[] = '<br style="clear:all;" />';
             $elements[] = '<div><a href="' . $timeframeUrl . '" data-icinga-target="detail">' .
-                          $timeframe->end->format($this->getIntervalFormat()) . '</a></div>';
+                          $timeframe->end->format($this->getIntervalFormat()) . '</a>' .
+                          '<hr style="margin-top:0;"></div>';
         }
 
         return implode('', $elements);
