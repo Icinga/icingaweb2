@@ -417,7 +417,8 @@ class TimeLine extends Form
 
         $eventCount = 0;
         foreach ($this->displayData as $group) {
-            if ($group->getDateTime() <= $start && $group->getDateTime() > $end) {
+            if ($group->getName() === $eventGroup->getName() &&
+                $group->getDateTime() <= $start && $group->getDateTime() > $end) {
                 $eventCount += $group->getValue();
             }
         }
