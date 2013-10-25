@@ -154,7 +154,7 @@ class StatusQuery extends StatusdatQuery
         'service_severity'              => 'getSeverity',
         'service_in_downtime'           => 'isInDowntime',
         'service_problem'               => 'isProblem',
-        'service_attempt'               => 'getAttemptString'
+        'service_attempt'               => 'getAttemptString',
     );
 
     public static $fieldTypes = array(
@@ -190,12 +190,12 @@ class StatusQuery extends StatusdatQuery
 
     public function isProblem(&$obj)
     {
-        return $obj->status->current_state > 0;
+        return $obj->status->current_state > 0 ? 1 : 0;
     }
 
     public function isInDowntime(&$obj)
     {
-        return $obj->status->scheduled_downtime_depth > 0;
+        return $obj->status->scheduled_downtime_depth > 0 ? 1 : 0;
     }
 
     public function getAddress(&$obj)
@@ -255,14 +255,14 @@ class StatusQuery extends StatusdatQuery
 
     public function isHandled(&$host)
     {
-        return $host->status->current_state == 0 ||
-            $host->status->problem_has_been_acknowledged ||
-            $host->status->scheduled_downtime_depth;
+        return ($host->status->current_state == 0 ||
+            $host->status->problem_has_been_acknowledged == 1 ||
+            $host->status->scheduled_downtime_depth > 0) ? 1 : 0;
     }
 
     public function isUnhandled(&$hostOrService)
     {
-        return !$this->isHandled($hostOrService);
+        return +!$this->isHandled($hostOrService);
     }
 
     public function getNrOfUnhandledServices(&$obj)
