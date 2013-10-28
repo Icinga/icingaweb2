@@ -29,6 +29,7 @@
 
 namespace Icinga\Protocol\Statusdat;
 
+use Icinga\Application\Logger;
 use Icinga\Data\DatasourceInterface;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception;
@@ -48,9 +49,8 @@ class Reader implements IReader, DatasourceInterface
 
     /**
      *  The folder for the statusdat cache
-     *
      */
-    const STATUSDAT_DEFAULT_CACHE_PATH = "/cache";
+    const STATUSDAT_DEFAULT_CACHE_PATH = '/tmp';
 
     /**
      * The last state from the cache
@@ -145,22 +145,26 @@ class Reader implements IReader, DatasourceInterface
      */
     private function initializeCaches()
     {
-        $defaultCachePath = "/tmp" . self::STATUSDAT_DEFAULT_CACHE_PATH;
-
-        $cachePath = $this->config->get('cache_path', $defaultCachePath);
-        $maxCacheLifetime = intval($this->config->get('cache_path', self::DEFAULT_CACHE_LIFETIME));
+        $defaultCachePath   = self::STATUSDAT_DEFAULT_CACHE_PATH;
+        $cachePath          = $this->config->get('cache_path', $defaultCachePath);
+        $maxCacheLifetime   = intval($this->config->get('cache_path', self::DEFAULT_CACHE_LIFETIME));
+        $cachingEnabled     = true;
         if (!is_writeable($cachePath)) {
-            throw new ConfigurationError(
-                "Cache path $cachePath is not writable, check your configuration"
+            Logger::warn(
+                'Can\'t cache Status.dat backend; make sure cachepath %s is writable by the web user. '
+                . 'Caching is now disabled',
+                $cachePath
             );
+            $cachePath = null;
         }
-
         $backendOptions = array(
             'cache_dir' => $cachePath
         );
         // the object cache might exist for months and is still valid
-        $this->objectCache = $this->initCache($this->config->object_file, $backendOptions, null);
-        $this->statusCache = $this->initCache($this->config->status_file, $backendOptions, $maxCacheLifetime);
+        $this->objectCache = $this->initCache($this->config->object_file, $backendOptions, null, $cachingEnabled);
+        $this->statusCache = $this->initCache(
+            $this->config->status_file, $backendOptions, $maxCacheLifetime, $cachingEnabled
+        );
 
     }
 
@@ -173,14 +177,14 @@ class Reader implements IReader, DatasourceInterface
      *
      * @return \Zend_Cache_Core|\Zend_Cache_Frontend
      */
-    private function initCache($file, $backend, $lifetime)
+    private function initCache($file, $backendConfig, $lifetime)
     {
         $frontendOptions = array(
-            'lifetime' => $lifetime,
-            'automatic_serialization' => true,
-            'master_files' => array($file)
+            'lifetime'                  => $lifetime,
+            'automatic_serialization'   => true,
+            'master_files'              => array($file)
         );
-        return \Zend_Cache::factory('Core', 'File', $frontendOptions, $backend);
+        return \Zend_Cache::factory('Core', 'File', $frontendOptions, $backendConfig);
     }
 
     /**
