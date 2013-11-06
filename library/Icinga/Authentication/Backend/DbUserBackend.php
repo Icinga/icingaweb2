@@ -34,13 +34,14 @@ use \stdClass;
 use \Zend_Config;
 use \Zend_Db;
 use \Zend_Db_Adapter_Abstract;
-use \Icinga\Application\DbAdapterFactory;
-use \Icinga\Exception\ProgrammingError;
+use \Icinga\Data\ResourceFactory;
+use \Icinga\Data\Db\Connection as DbConnection;
 use \Icinga\User;
 use \Icinga\Authentication\UserBackend;
 use \Icinga\Authentication\Credential;
 use \Icinga\Authentication;
 use \Icinga\Application\Logger;
+use \Icinga\Exception\ProgrammingError;
 use \Icinga\Exception\ConfigurationError;
 
 /**
@@ -103,22 +104,22 @@ class DbUserBackend implements UserBackend
     private $name;
 
     /**
-     * Create a DbUserBackend
+     * Create a new DbUserBackend
      *
-     * @param   Zend_Config $config The database that provides the authentication data
-     * @throws  ConfigurationError
+     * @param DbConnection  $resource    The db connection to use for the authentication.
+     * @param Zend_Config   $config      The configuration for this authentication backend.
+     *
+     * @throws Exception                 When connection to the resource is not possible.
      */
-    public function __construct(Zend_Config $config)
+    public function __construct(DbConnection $resource = null, Zend_Config $config)
     {
         $this->name = $config->name;
-
         if ($config->resource instanceof Zend_Db_Adapter_Abstract) {
             $this->db = $config->resource;
         } else {
-            $this->db = DbAdapterFactory::getDbAdapter($config->resource);
+            $this->db = $resource->getConnection();
         }
-
-        // Throw any errors for Authentication/Manager
+        // will throw an exception when connecting is not possible
         $this->db->getConnection();
     }
 

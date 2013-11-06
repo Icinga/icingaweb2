@@ -35,7 +35,7 @@ use \Icinga\User;
 use \Icinga\Authentication\UserBackend;
 use \Icinga\Authentication\Credential;
 use \Icinga\Protocol\Ldap;
-use \Icinga\Protocol\Ldap\Connection;
+use \Icinga\Protocol\Ldap\Connection as LdapConnection;
 use \Icinga\Application\Config as IcingaConfig;
 
 /**
@@ -67,13 +67,19 @@ class LdapUserBackend implements UserBackend
     /**
      * Create new Ldap User backend
      *
-     * @param Zend_Config $config Configuration to create instance
+     * @param Zend_Config $connection   Connection to use
+     * @param Zend_Config $config       Configuration for authentication
+     *
+     * @throws Exception                When connection to the resource is not possible.
      */
-    public function __construct(Zend_Config $config)
+    public function __construct(LdapConnection $connection, Zend_Config $config)
     {
-        $this->connection = new Connection($config);
+        $this->connection = $connection;
         $this->config = $config;
         $this->name = $config->name;
+
+        // will throw an exception, when the connection is not possible.
+        $connection->connect();
     }
 
     /**
@@ -170,6 +176,5 @@ class LdapUserBackend implements UserBackend
                 )
             )
         );
-
     }
 }

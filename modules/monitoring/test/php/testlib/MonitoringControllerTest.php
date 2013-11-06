@@ -176,7 +176,6 @@ abstract class MonitoringControllerTest extends Zend_Test_PHPUnit_ControllerTest
      */
     private function requireIDOQueries()
     {
-        require_once('Application/DbAdapterFactory.php');
         require_once('library/Monitoring/Backend/Ido/Query/IdoQuery.php');
         $this->requireFolder('library/Monitoring/Backend/Ido/Query');
     }
