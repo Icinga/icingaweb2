@@ -56,7 +56,6 @@ use \PDO;
 use \Zend_Db_Adapter_Pdo_Abstract;
 use \Zend_Config;
 use \Icinga\Authentication\Backend\DbUserBackend;
-use \Icinga\Application\DbAdapterFactory;
 use \Icinga\Authentication\Credential;
 use \Icinga\User;
 use \Icinga\Application\Config;

@@ -29,10 +29,11 @@
 
 namespace Icinga\Form\Config\Authentication;
 
-use \Icinga\Authentication\Backend\LdapUserBackend;
 use \Exception;
 use \Zend_Config;
 use \Icinga\Web\Form;
+use \Icinga\Authentication\Backend\LdapUserBackend;
+use \Icinga\Protocol\Ldap\Connection as LdapConnection;
 
 /**
  * Form for adding or modifying LDAP authentication backends
@@ -182,8 +183,9 @@ class LdapBackendForm extends BaseBackendForm
         try {
             $cfg = $this->getConfig();
             $backendName = 'backend_' . $this->filterName($this->getBackendName()) . '_name';
+            $backendConfig = new Zend_Config($cfg[$this->getValue($backendName)]);
             $testConn = new LdapUserBackend(
-                new Zend_Config($cfg[$this->getValue($backendName)])
+                new LdapConnection($backendConfig), $backendConfig
             );
 
             if ($testConn->getUserCount() === 0) {

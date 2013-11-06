@@ -59,7 +59,6 @@ namespace Icinga\Test {
     use Zend_Db_Adapter_Pdo_Mysql;
     use Zend_Db_Adapter_Pdo_Pgsql;
     use Zend_Db_Adapter_Pdo_Oci;
-    use Icinga\Application\DbAdapterFactory;
     use Icinga\Data\ResourceFactory;
     use Icinga\User\Preferences;
     use Icinga\Web\Form;
@@ -113,7 +112,7 @@ namespace Icinga\Test {
         public static $moduleDir;
 
         /**
-         * DbAdapterFactory configuration for different database types
+         * Resource configuration for different database types
          *
          * @var array
          */
@@ -210,7 +209,6 @@ namespace Icinga\Test {
             $this->requireDbLibraries();
 
             try {
-                //$adapter = DbAdapterFactory::createDbAdapter($this->createDbConfigFor($name));
                 $adapter = ResourceFactory::createResource($this->createDbConfigFor($name))->getConnection();
             } catch (Exception $e) {
                 $adapter = $e->getMessage();

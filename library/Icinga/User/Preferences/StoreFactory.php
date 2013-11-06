@@ -32,7 +32,7 @@ namespace Icinga\User\Preferences;
 use \Zend_Config;
 use \Icinga\User;
 use \Icinga\Exception\ProgrammingError;
-use \Icinga\Application\DbAdapterFactory;
+use \Icinga\Data\ResourceFactory;
 
 /**
  * Create preference stores from zend config
@@ -75,7 +75,7 @@ final class StoreFactory
             $items = $config->toArray();
 
             if ($items['type'] == 'db') {
-                $items['dbAdapter'] = DbAdapterFactory::getDbAdapter($items['resource']);
+                $items['dbAdapter'] = ResourceFactory::createResource($items['resource']);
             }
             unset($items['type']);
 
