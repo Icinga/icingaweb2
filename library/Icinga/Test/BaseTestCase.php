@@ -60,6 +60,7 @@ namespace Icinga\Test {
     use Zend_Db_Adapter_Pdo_Pgsql;
     use Zend_Db_Adapter_Pdo_Oci;
     use Icinga\Application\DbAdapterFactory;
+    use Icinga\Data\ResourceFactory;
     use Icinga\User\Preferences;
     use Icinga\Web\Form;
     // @codingStandardsIgnoreEnd
@@ -209,7 +210,8 @@ namespace Icinga\Test {
             $this->requireDbLibraries();
 
             try {
-                $adapter = DbAdapterFactory::createDbAdapter($this->createDbConfigFor($name));
+                //$adapter = DbAdapterFactory::createDbAdapter($this->createDbConfigFor($name));
+                $adapter = ResourceFactory::createResource($this->createDbConfigFor($name))->getConnection();
             } catch (Exception $e) {
                 $adapter = $e->getMessage();
             }
@@ -385,7 +387,9 @@ namespace Icinga\Test {
 
             require_once self::$libDir . '/Exception/ConfigurationError.php';
             require_once self::$libDir . '/Util/ConfigAwareFactory.php';
-            require_once self::$libDir . '/Application/DbAdapterFactory.php';
+            require_once self::$libDir . '/Data/DatasourceInterface.php';
+            require_once self::$libDir . '/Data/ResourceFactory.php';
+            require_once self::$libDir . '/Data/Db/Connection.php';
             require_once self::$libDir . '/Application/Logger.php';
         }
     }

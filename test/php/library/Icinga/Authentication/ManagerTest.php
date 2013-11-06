@@ -43,6 +43,7 @@ require_once BaseTestCase::$libDir . '/Application/Logger.php';
 require_once BaseTestCase::$libDir . '/Authentication/Manager.php';
 require_once BaseTestCase::$libDir . '/Authentication/Credential.php';
 require_once BaseTestCase::$libDir . '/Exception/ConfigurationError.php';
+require_once BaseTestCase::$libDir . '/Exception/ProgrammingError.php';
 require_once 'BackendMock.php';
 require_once 'ErrorProneBackendMock.php';
 require_once 'SessionMock.php';

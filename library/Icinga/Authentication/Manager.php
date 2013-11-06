@@ -30,13 +30,19 @@
 namespace Icinga\Authentication;
 
 use \Exception;
+use Icinga\Exception\ConfigurationError;
 use \Zend_Config;
+use \Icinga\User;
+use \Icinga\Data\ResourceFactory;
+use \Icinga\Data\Db\Connection as DbConnection;
 use \Icinga\Application\Logger;
 use \Icinga\Application\Config as IcingaConfig;
-use \Icinga\Application\DbAdapterFactory;
+use \Icinga\Protocol\Ldap\Connection as LdapConnection;
+use \Icinga\Authentication\Backend\DbUserBackend;
+use \Icinga\Authentication\Backend\LdapUserBackend;
+use \Icinga\Exception\ProgrammingError;
 use \Icinga\Exception\ConfigurationError as ConfigError;
-use \Icinga\User;
-use \Icinga\Exception\ConfigurationError;
+
 
 /**
  *   The authentication manager allows to identify users and
@@ -56,20 +62,6 @@ use \Icinga\Exception\ConfigurationError;
  **/
 class Manager
 {
-    /**
-     * Backend type user
-     *
-     * @var string
-     */
-    const BACKEND_TYPE_USER =  'user';
-
-    /**
-     * Backend type group
-     *
-     * @var string
-     */
-    const BACKEND_TYPE_GROUP = 'group';
-
     /**
      * Singleton instance
      *
@@ -172,11 +164,11 @@ class Manager
             if ($backendConfig->name === null) {
                 $backendConfig->name = $name;
             }
-
             $backend = $this->createBackend($backendConfig);
 
             if ($backend instanceof UserBackend) {
                 $this->userBackends[$backend->getName()] = $backend;
+
             } elseif ($backend instanceof GroupBackend) {
                 $this->groupBackends[$backend->getName()] = $backend;
             }
@@ -192,38 +184,39 @@ class Manager
      */
     private function createBackend(Zend_Config $backendConfig)
     {
-        $type = ucwords(strtolower($backendConfig->backend));
         $target = ucwords(strtolower($backendConfig->target));
         $name = $backendConfig->name;
 
-        if (!$type && !$backendConfig->class) {
-            Logger::warn('AuthManager: Backend "%s" has no backend type configuration. (e.g. backend=ldap)', $name);
-            return null;
-        }
-
-        if (!$target && !$backendConfig->class) {
+        // TODO: implement support for groups (#4624) and remove OR-Clause
+        if ((!$target || strtolower($target) != "user") && !$backendConfig->class) {
             Logger::warn('AuthManager: Backend "%s" has no target configuration. (e.g. target=user|group)', $name);
             return null;
         }
-
         try {
-            // Allow vendor and test classes in configuration
-            if ($backendConfig->class) {
-                $class = $backendConfig->class;
-            } else {
-                $class = '\\Icinga\\Authentication\\Backend\\' . $type . $target . 'Backend';
-            }
+            if (isset($backendConfig->class)) {
+                // use custom backend class, this is only useful for testing
+                if (!class_exists($backendConfig->class)) {
+                    Logger::error('AuthManager: Class not found (%s) for backend %s', $backendConfig->class, $name);
+                    return null;
+                }
 
-            if (!class_exists($class)) {
-                Logger::error('AuthManager: Class not found (%s) for backend %s', $class, $name);
-                return null;
-            } else {
+                $class = $backendConfig->class;
                 return new $class($backendConfig);
+
+            } else {
+                $resource = ResourceFactory::createResource(ResourceFactory::getResourceConfig($backendConfig->resource));
+                if ($resource instanceof DbConnection) {
+                    return new DbUserBackend($resource, $backendConfig);
+                } else if ($resource instanceof LdapConnection) {
+                    return new LdapUserBackend($resource, $backendConfig);
+                } else {
+                    Logger::warn('AuthManager: Resource class ' . get_class($resource) . ' cannot be used as backend.');
+                }
             }
         } catch (\Exception $e) {
             Logger::warn('AuthManager: Not able to create backend. Exception was thrown: %s', $e->getMessage());
-            return null;
         }
+        return null;
     }
 
     /**
@@ -303,7 +296,6 @@ class Manager
                 );
 
                 $authErrors++;
-
                 continue;
             }
 

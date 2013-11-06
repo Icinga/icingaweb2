@@ -39,13 +39,6 @@ use Icinga\Authentication\Credential;
 interface UserBackend
 {
     /**
-     * Create a new object
-     *
-     * @param Zend_Config $config Object to configure instance
-     */
-    public function __construct(Zend_Config $config);
-
-    /**
      * Test if the username exists
      *
      * @param   Credential $credentials

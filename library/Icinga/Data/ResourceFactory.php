@@ -29,12 +29,14 @@
 
 namespace Icinga\Data;
 
+use Icinga\Exception\ProgrammingError;
 use Zend_Config;
 use Icinga\Util\ConfigAwareFactory;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Data\Db\Connection as DbConnection;
 use Icinga\Protocol\Livestatus\Connection as LivestatusConnection;
 use Icinga\Protocol\Statusdat\Reader as StatusdatReader;
+use Icinga\Protocol\Ldap\Connection as LdapConnection;
 
 class ResourceFactory implements ConfigAwareFactory
 {
@@ -50,6 +52,11 @@ class ResourceFactory implements ConfigAwareFactory
 
     public static function getResourceConfig($resourceName)
     {
+        if (!isset(self::$resources)) {
+            throw new ProgrammingError(
+                "The ResourceFactory must be initialised by setting a config, before it can be used"
+            );
+        }
         if (($resourceConfig = self::$resources->get($resourceName)) === null) {
             throw new ConfigurationError('Resource "' . $resourceName . '" couldn\'t be retrieved');
         }
@@ -61,6 +68,9 @@ class ResourceFactory implements ConfigAwareFactory
         switch (strtolower($config->type)) {
             case 'db':
                 $resource = new DbConnection($config);
+                break;
+            case 'ldap':
+                $resource = new LdapConnection($config);
                 break;
             case 'statusdat':
                 $resource = new StatusdatReader($config);
