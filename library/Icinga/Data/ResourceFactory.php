@@ -68,14 +68,26 @@ class ResourceFactory implements ConfigAwareFactory
     }
 
     /**
-     * Return the configuration of all existing resources.
+     * Return the configuration of all existing resources, or get all resources of a given type.
      *
-     * @return Zend_Config  The configuration containing all resources
+     * @param  String|null  $type   Fetch only resources that have the given type.
+     *
+     * @return Zend_Config          The configuration containing all resources
      */
-    public static function getResourceConfigs()
+    public static function getResourceConfigs($type = null)
     {
         self::assertResourcesExist();
-        return self::$resources;
+        if (!isset($type)) {
+            return self::$resources;
+        } else {
+            $resources = array();
+            foreach (self::$resources as $name => $resource) {
+                if (strtolower($resource->type) === $type) {
+                    $resources[$name] = $resource;
+                }
+            }
+            return new Zend_Config($resources);
+        }
     }
 
     /**
@@ -123,5 +135,10 @@ class ResourceFactory implements ConfigAwareFactory
                 throw new ConfigurationError('Unsupported resource type "' . $config->type . '"');
         }
         return $resource;
+    }
+
+    public static function getBackendType($resource)
+    {
+
     }
 }

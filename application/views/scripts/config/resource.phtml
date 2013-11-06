@@ -1,0 +1,56 @@
+<?php
+use Icinga\Web\Url;
+$createResource = $this->href('/config/createresource');
+?>
+
+<?= $this->tabs->render($this); ?>
+
+<?php if ($this->errorMessage): ?>
+<div class="alert alert-danger">
+  <i class="icinga-icon-error"></i>
+  <strong><?= $this->escape($this->errorMessage); ?></strong>
+</div>
+<?php endif; ?>
+
+
+<?php if ($this->successMessage): ?>
+<div class="alert alert-success">
+  <i class="icinga-icon-success"></i>
+  <strong><?= $this->escape($this->successMessage); ?></strong>
+</div>
+<?php endif; ?>
+
+<div class="panel panel-default">
+  <div class="panel-heading panel-title">
+    Create Resource
+  </div>
+  <div class="panel-body">
+    <a href="<?= $createResource ?>"><i class="icinga-icon-create"></i> Create A New Resource</a><br/>
+  </div>
+</div>
+
+<?php foreach ($this->resources as $name => $resource): ?>
+<div class="panel panel-default">
+
+  <div class="panel-heading panel-title">
+    <b>Resource: </b>  <?= $this->escape($name); ?>
+    <br/>
+  </div>
+  <div class="panel-body">
+
+    <a href="<?= $this->href('config/editresource', array('resource' => $name));?>">
+        <i class="icinga-icon-edit"></i> Edit This Resource
+    </a>
+    <br/>
+
+    <?php if (count($this->resources) > 1): ?>
+    <a href="<?= $this->href('config/removeresource', array('resource' => $name));?>">
+        <i class="icinga-icon-remove"></i> Remove This Resource
+    </a>
+    <br/>
+    <?php endif; ?>
+
+  </div>
+
+</div>
+<?php endforeach; ?>
