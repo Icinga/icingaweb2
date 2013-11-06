@@ -130,7 +130,7 @@ class DbUserBackendTest extends BaseTestCase
     public function testCorrectUserLoginForPgsql($db)
     {
         $this->setupDbProvider($db);
-        $backend = new DbUserBackend(null, $this->createDbBackendConfig($db));
+        $backend = new DbUserBackend($this->createDbBackendConfig($db));
         $this->runBackendAuthentication($backend);
         $this->runBackendUsername($backend);
     }
@@ -143,7 +143,7 @@ class DbUserBackendTest extends BaseTestCase
     public function testCorrectUserLoginForMySQL($db)
     {
         $this->setupDbProvider($db);
-        $backend = new DbUserBackend(null, $this->createDbBackendConfig($db));
+        $backend = new DbUserBackend($this->createDbBackendConfig($db));
         $this->runBackendAuthentication($backend);
         $this->runBackendUsername($backend);
     }
@@ -280,7 +280,7 @@ class DbUserBackendTest extends BaseTestCase
         $this->setupDbProvider($db);
 
         $testName = 'test-name-123123';
-        $backend = new DbUserBackend(null, $this->createDbBackendConfig($db, $testName));
+        $backend = new DbUserBackend($this->createDbBackendConfig($db, $testName));
 
         $this->assertSame($testName, $backend->getName());
     }
@@ -292,7 +292,7 @@ class DbUserBackendTest extends BaseTestCase
     {
         $this->setupDbProvider($db);
         $testName = 'test-name-123123';
-        $backend = new DbUserBackend(null, $this->createDbBackendConfig($db, $testName));
+        $backend = new DbUserBackend($this->createDbBackendConfig($db, $testName));
 
         $this->assertGreaterThan(0, $backend->getUserCount());
     }
@@ -304,7 +304,7 @@ class DbUserBackendTest extends BaseTestCase
     {
         $this->setupDbProvider($db);
         $testName = 'test-name-123123';
-        $backend = new DbUserBackend(null, $this->createDbBackendConfig($db, $testName));
+        $backend = new DbUserBackend($this->createDbBackendConfig($db, $testName));
 
         $this->assertGreaterThan(0, $backend->getUserCount());
     }

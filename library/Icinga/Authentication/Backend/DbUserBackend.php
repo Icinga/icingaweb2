@@ -106,20 +106,27 @@ class DbUserBackend implements UserBackend
     /**
      * Create a new DbUserBackend
      *
-     * @param DbConnection  $resource    The db connection to use for the authentication.
      * @param Zend_Config   $config      The configuration for this authentication backend.
+     *                                    'resource' => The name of the resource to use, or an actual
+     *                                                  instance of Zend_Db_Adapter_Abstract
+     *                                    'name'     => The name of this authentication backend
      *
-     * @throws Exception                 When connection to the resource is not possible.
+     * @throws Exception                 When the connection to the resource is not possible.
      */
-    public function __construct(DbConnection $resource = null, Zend_Config $config)
+    public function __construct(Zend_Config $config)
     {
+        if (!isset($config->resource)) {
+            throw new ConfigurationError('An authentication backend must provide a resource.');
+        }
         $this->name = $config->name;
         if ($config->resource instanceof Zend_Db_Adapter_Abstract) {
             $this->db = $config->resource;
         } else {
+            $resource = ResourceFactory::createResource(ResourceFactory::getResourceConfig($config->resource));
             $this->db = $resource->getConnection();
         }
-        // will throw an exception when connecting is not possible
+
+        // test the connection
         $this->db->getConnection();
     }
 

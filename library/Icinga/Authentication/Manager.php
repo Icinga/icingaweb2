@@ -186,7 +186,6 @@ class Manager
     {
         $target = ucwords(strtolower($backendConfig->target));
         $name = $backendConfig->name;
-
         // TODO: implement support for groups (#4624) and remove OR-Clause
         if ((!$target || strtolower($target) != "user") && !$backendConfig->class) {
             Logger::warn('AuthManager: Backend "%s" has no target configuration. (e.g. target=user|group)', $name);
@@ -194,24 +193,22 @@ class Manager
         }
         try {
             if (isset($backendConfig->class)) {
-                // use custom backend class, this is only useful for testing
+                // use a custom backend class, this is probably only useful for testing
                 if (!class_exists($backendConfig->class)) {
                     Logger::error('AuthManager: Class not found (%s) for backend %s', $backendConfig->class, $name);
                     return null;
                 }
-
                 $class = $backendConfig->class;
                 return new $class($backendConfig);
+            }
 
-            } else {
-                $resource = ResourceFactory::createResource(ResourceFactory::getResourceConfig($backendConfig->resource));
-                if ($resource instanceof DbConnection) {
-                    return new DbUserBackend($resource, $backendConfig);
-                } else if ($resource instanceof LdapConnection) {
-                    return new LdapUserBackend($resource, $backendConfig);
-                } else {
-                    Logger::warn('AuthManager: Resource class ' . get_class($resource) . ' cannot be used as backend.');
-                }
+            switch (ResourceFactory::getResourceConfig($backendConfig->resource)->type) {
+                case 'db':
+                    return new DbUserBackend($backendConfig);
+                case 'ldap':
+                    return new LdapUserBackend($backendConfig);
+                default:
+                    Logger::warn('AuthManager: Resource type ' . $backendConfig->type . ' not available.');
             }
         } catch (\Exception $e) {
             Logger::warn('AuthManager: Not able to create backend. Exception was thrown: %s', $e->getMessage());
