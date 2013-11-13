@@ -31,6 +31,7 @@
 use \Icinga\Web\Controller\BaseConfigController;
 use \Icinga\Web\Widget\Tab;
 use \Icinga\Web\Url;
+use \Icinga\Web\Widget\Tabs;
 use \Icinga\Web\Hook\Configuration\ConfigurationTabBuilder;
 use \Icinga\Application\Icinga;
 use \Icinga\Application\Config as IcingaConfig;
@@ -39,6 +40,7 @@ use \Icinga\Form\Config\GeneralForm;
 use \Icinga\Form\Config\Authentication\ReorderForm;
 use \Icinga\Form\Config\Authentication\LdapBackendForm;
 use \Icinga\Form\Config\Authentication\DbBackendForm;
+use \Icinga\Form\Config\Resource\EditResourceForm;
 use \Icinga\Form\Config\LoggingForm;
 use \Icinga\Form\Config\ConfirmRemovalForm;
 use \Icinga\Config\PreservingIniWriter;
@@ -240,7 +242,11 @@ class ConfigController extends BaseConfigController
 
         if ($form->isSubmittedAndValid()) {
             $backendCfg = IcingaConfig::app('authentication')->toArray();
+            foreach ($backendCfg as $backendName => $settings) {
+                unset($backendCfg[$backendName]['name']);
+            }
             foreach ($form->getConfig() as $backendName => $settings) {
+                unset($settings->{'name'});
                 if (isset($backendCfg[$backendName])) {
                     $this->view->errorMessage = 'Backend name already exists';
                     $this->view->form = $form;
@@ -308,6 +314,7 @@ class ConfigController extends BaseConfigController
                 if ($backendName != $authBackend) {
                     unset($backendCfg[$authBackend]);
                 }
+                unset($settings['name']);
             }
             if ($this->writeAuthenticationFile($backendCfg)) {
                 // redirect to overview with success message
@@ -356,45 +363,100 @@ class ConfigController extends BaseConfigController
         }
 
         $this->view->form = $form;
-
         $this->view->name = $authBackend;
         $this->render('authentication/remove');
     }
 
     public function resourceAction($showOnly = false)
     {
-        $this->view->resources = ResourceFactory::getResourceConfigs()->toArray();
-        $this->view->createActions = array();
+
+        $this->view->resources = IcingaConfig::app('resources', true)->toArray();
         $this->render('resource');
     }
 
     public function createresourceAction()
     {
         $this->view->resourceTypes = $this->resourceTypes;
+        $resources = IcingaConfig::app('resources', true);
+        $form = new EditResourceForm();
+        $form->setRequest($this->_request);
+        if ($form->isSubmittedAndValid()) {
+            $name = $form->getName();
+            if (isset($resources->{$name})) {
+                $this->view->errorMessage = 'Resource name "' . $name .'" already in use.';
+                $this->view->form = $form;
+                $this->render('resource/create');
+                return;
+            }
+            $resources->{$name} = $form->getConfig();
+            if ($this->writeConfigFile($resources, 'resources')) {
+                $this->view->successMessage = 'Resource "' . $name . '" created.';
+                $this->resourceAction(true);
+            }
+            return;
+        }
+        $this->view->form = $form;
         $this->render('resource/create');
     }
 
     public function editresourceAction()
     {
-        $resources = ResourceFactory::getResourceConfigs()->toArray();
-        $name =  $resources[$this->getParam('resource')];
-        if (!isset($resources[$name])) {
+        $resources = ResourceFactory::getResourceConfigs();
+        $name =  $this->getParam('resource');
+        if ($resources->get($name) === null) {
             $this->view->errorMessage = 'Can\'t edit: Unknown Resource Provided';
             $this->resourceAction(true);
             return;
         }
+        $form = new EditResourceForm();
+        if ($this->_request->isPost() === false) {
+            $form->setOldName($name);
+            $form->setName($name);
+        }
+        $form->setRequest($this->_request);
+        $form->setResource($resources->get($name));
+        if ($form->isSubmittedAndValid()) {
+            $oldName = $form->getOldName();
+            $name = $form->getName();
+            if ($oldName !== $name) {
+                unset($resources->{$oldName});
+            }
+            $resources->{$name} = $form->getConfig();
+            if ($this->writeConfigFile($resources, 'resources')) {
+                $this->view->successMessage = 'Resource "' . $name . '" created.';
+                $this->resourceAction(true);
+            }
+            return;
+        }
+        $this->view->form = $form;
+        $this->view->name = $name;
         $this->render('resource/modify');
     }
 
     public function removeresourceAction()
     {
         $resources = ResourceFactory::getResourceConfigs()->toArray();
-        $name =  $resources[$this->getParam('resource')];
+        $name =  $this->getParam('resource');
         if (!isset($resources[$name])) {
-            $this->view->errorMessage = 'Can\'t remove: Unknown Resource Provided';
+            $this->view->errorMessage = 'Can\'t remove: Unknown resource provided';
             $this->resourceAction(true);
             return;
         }
+
+        $form = new ConfirmRemovalForm();
+        $form->setRequest($this->getRequest());
+        $form->setRemoveTarget('resource', $name);
+        if ($form->isSubmittedAndValid()) {
+            unset($resources[$name]);
+            if ($this->writeConfigFile($resources, 'resources')) {
+                $this->view->successMessage = 'Resource "' . $name . '" removed';
+                $this->resourceAction(true);
+            }
+            return;
+        }
+
+        $this->view->name = $name;
+        $this->view->form = $form;
         $this->render('resource/remove');
     }
 

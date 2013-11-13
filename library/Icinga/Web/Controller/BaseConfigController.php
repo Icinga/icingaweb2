@@ -42,6 +42,11 @@ use \Icinga\Application\Icinga;
  */
 class BaseConfigController extends ActionController
 {
+    /**
+     * @var Zend_Controller_Action_Helper_FlashMessenger
+     */
+    protected $flashManager;
+
     /*
      * Return an array of tabs provided by this configuration controller.
      *
@@ -63,5 +68,6 @@ class BaseConfigController extends ActionController
     {
         parent::init();
         $this->view->tabs = ControllerTabCollector::collectControllerTabs('ConfigController');
+        $this->view->flashMessages = $this->_request->getParam('flash_message');
     }
 }

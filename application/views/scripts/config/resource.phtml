@@ -12,13 +12,18 @@ $createResource = $this->href('/config/createresource');
 </div>
 <?php endif; ?>
 
-
 <?php if ($this->successMessage): ?>
 <div class="alert alert-success">
   <i class="icinga-icon-success"></i>
   <strong><?= $this->escape($this->successMessage); ?></strong>
 </div>
+<?php elseif ($this->flashMessages): ?>
+ <div class="alert alert-success">
+    <i class="icinga-icon-success"></i>
+    <strong><?= $this->escape($this->flashMessages); ?></strong>
+ </div>
 <?php endif; ?>
+
 
 <div class="panel panel-default">
   <div class="panel-heading panel-title">

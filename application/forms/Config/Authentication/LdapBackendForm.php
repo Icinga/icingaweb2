@@ -130,12 +130,6 @@ class LdapBackendForm extends BaseBackendForm
             'resource'            =>  $this->getValue($prefix . 'resource'),
             'user_class'          =>  $this->getValue($prefix . 'user_class'),
             'user_name_attribute' =>  $this->getValue($prefix . 'user_name_attribute')
-            /*
-            'hostname'              =>  $this->getValue($prefix . 'hostname'),
-            'root_dn'               =>  $this->getValue($prefix . 'root_dn'),
-            'bind_dn'               =>  $this->getValue($prefix . 'bind_dn'),
-            'bind_pw'               =>  $this->getValue($prefix . 'bind_pw'),
-            */
         );
         return array(
             $section => $cfg
