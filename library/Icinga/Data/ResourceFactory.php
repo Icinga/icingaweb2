@@ -50,19 +50,72 @@ class ResourceFactory implements ConfigAwareFactory
         self::$resources = $config;
     }
 
+    /**
+     * Get the configuration for a specific resource
+     *
+     * @param $resourceName String      The resources name
+     *
+     * @return              Zend_Config The configuration of the resource
+     * @throws \Icinga\Exception\ConfigurationError
+     */
     public static function getResourceConfig($resourceName)
     {
-        if (!isset(self::$resources)) {
-            throw new ProgrammingError(
-                "The ResourceFactory must be initialised by setting a config, before it can be used"
-            );
-        }
+        self::assertResourcesExist();
         if (($resourceConfig = self::$resources->get($resourceName)) === null) {
             throw new ConfigurationError('Resource "' . $resourceName . '" couldn\'t be retrieved');
         }
         return $resourceConfig;
     }
 
+    /**
+     * Return the configuration of all existing resources, or get all resources of a given type.
+     *
+     * @param  String|null  $type   Fetch only resources that have the given type.
+     *
+     * @return Zend_Config          The configuration containing all resources
+     */
+    public static function getResourceConfigs($type = null)
+    {
+        self::assertResourcesExist();
+        if (!isset($type)) {
+            return self::$resources;
+        } else {
+            $resources = array();
+            foreach (self::$resources as $name => $resource) {
+                if (strtolower($resource->type) === $type) {
+                    $resources[$name] = $resource;
+                }
+            }
+            return new Zend_Config($resources);
+        }
+    }
+
+    /**
+     * Check if the existing resources are set. If not, throw an error.
+     *
+     * @throws \Icinga\Exception\ProgrammingError
+     */
+    private static function assertResourcesExist()
+    {
+        if (!isset(self::$resources)) {
+            throw new ProgrammingError(
+                "The ResourceFactory must be initialised by setting a config, before it can be used"
+            );
+        }
+    }
+
+    /**
+     * Create a single resource from the given configuration.
+     *
+     * NOTE: The factory does not test if the given configuration is valid and the resource is accessible, this
+     * depends entirely on the implementation of the returned resource.
+     *
+     * @param Zend_Config $config                   The configuration for the created resource.
+     *
+     * @return DbConnection|LdapConnection|LivestatusConnection|StatusdatReader An objects that can be used to access
+     *         the given resource. The returned class depends on the configuration property 'type'.
+     * @throws \Icinga\Exception\ConfigurationError When an unsupported type is given
+     */
     public static function createResource(Zend_Config $config)
     {
         switch (strtolower($config->type)) {
@@ -80,8 +133,12 @@ class ResourceFactory implements ConfigAwareFactory
                 break;
             default:
                 throw new ConfigurationError('Unsupported resource type "' . $config->type . '"');
-
         }
         return $resource;
+    }
+
+    public static function getBackendType($resource)
+    {
+
     }
 }

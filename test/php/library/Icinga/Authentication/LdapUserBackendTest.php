@@ -48,7 +48,7 @@ require_once BaseTestCase::$libDir . '/Authentication/Backend/LdapUserBackend.ph
 use \Exception;
 use \Zend_Config;
 use Icinga\Authentication\Backend\LdapUserBackend;
-use Icinga\Protocol\Ldap\Connection;
+use Icinga\Protocol\Ldap\Connection as LdapConnection;
 
 /**
 *
@@ -161,22 +161,31 @@ class LdapUserBackendTest extends BaseTestCase
         ldap_close($conn);
     }
 
+    /**
+     * Create a backend config and initialise the LdapConnection to the testing backend manually,
+     * to prevent the LdapUserBackend from calling the unitialised ResourceFactory
+     *
+     * @return Zend_Config  The authentication backend configuration
+     */
     private function createBackendConfig()
     {
-        $config = new Zend_Config(
+        $resourceConfig = new Zend_Config(
             array(
-                'backend'               => 'ldap',
-                'target'                => 'user',
                 'hostname'              => 'localhost',
                 'root_dn'               => 'ou=icinga-unittest,dc=icinga,dc=org',
                 'bind_dn'               => 'cn=admin,cn=config',
-                'bind_pw'               => 'admin',
+                'bind_pw'               => 'admin'
+            )
+        );
+        $backendConfig = new Zend_Config(
+            array(
+                'resource' => new LdapConnection($resourceConfig),
+                'target' => 'user',
                 'user_class'            => 'inetOrgPerson',
                 'user_name_attribute'   => 'uid'
             )
         );
-
-        return $config;
+        return $backendConfig;
     }
 
     /**
@@ -184,8 +193,7 @@ class LdapUserBackendTest extends BaseTestCase
      **/
     public function testHasUsername()
     {
-        $config = $this->createBackendConfig();
-        $backend = new LdapUserBackend(new Connection($config), $config);
+        $backend = new LdapUserBackend($this->createBackendConfig());
         $this->assertTrue($backend->hasUsername(new Credential('jwoe')));
         $this->assertTrue($backend->hasUsername(new Credential('rmiles')));
         $this->assertFalse($backend->hasUsername(new Credential('DoesNotExist')));
@@ -196,8 +204,7 @@ class LdapUserBackendTest extends BaseTestCase
      */
     public function testAuthenticate()
     {
-        $config = $this->createBackendConfig();
-        $backend = new LdapUserBackend(new Connection($config), $config);
+        $backend = new LdapUserBackend($this->createBackendConfig());
 
         $this->assertInstanceOf(
             '\Icinga\User',
@@ -220,8 +227,7 @@ class LdapUserBackendTest extends BaseTestCase
      */
     public function testAuthenticateUnknownUser()
     {
-        $config = $this->createBackendConfig();
-        $backend = new LdapUserBackend(new Connection($config), $config);
+        $backend = new LdapUserBackend($this->createBackendConfig());
         $this->assertFalse($backend->authenticate(new Credential('unknown123', 'passunknown123')));
     }
 }

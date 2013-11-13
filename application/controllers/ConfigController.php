@@ -31,13 +31,16 @@
 use \Icinga\Web\Controller\BaseConfigController;
 use \Icinga\Web\Widget\Tab;
 use \Icinga\Web\Url;
+use \Icinga\Web\Widget\Tabs;
 use \Icinga\Web\Hook\Configuration\ConfigurationTabBuilder;
 use \Icinga\Application\Icinga;
 use \Icinga\Application\Config as IcingaConfig;
+use \Icinga\Data\ResourceFactory;
 use \Icinga\Form\Config\GeneralForm;
 use \Icinga\Form\Config\Authentication\ReorderForm;
 use \Icinga\Form\Config\Authentication\LdapBackendForm;
 use \Icinga\Form\Config\Authentication\DbBackendForm;
+use \Icinga\Form\Config\Resource\EditResourceForm;
 use \Icinga\Form\Config\LoggingForm;
 use \Icinga\Form\Config\ConfirmRemovalForm;
 use \Icinga\Config\PreservingIniWriter;
@@ -47,6 +50,12 @@ use \Icinga\Config\PreservingIniWriter;
  */
 class ConfigController extends BaseConfigController
 {
+    /**
+     * The resource types that are available.
+     *
+     * @var array
+     */
+    private $resourceTypes = array('livestatus', 'ido', 'statusdat', 'ldap');
 
     /**
      * Create tabs for this configuration controller
@@ -72,7 +81,13 @@ class ConfigController extends BaseConfigController
                     'url'       =>  Url::fromPath('/config/authentication')
                 )
             ),
-
+            'resources' => new Tab(
+                array(
+                    'name'      => 'resource',
+                    'title'     => 'Resources',
+                    'url'       => Url::fromPath('/config/resource')
+                )
+            ),
             'logging' => new Tab(
                 array(
                     'name'      => 'logging',
@@ -211,40 +226,6 @@ class ConfigController extends BaseConfigController
     }
 
     /**
-     * Action for removing a backend from the authentication list.
-     *
-     * Redirects to the overview after removal is finished
-     */
-    public function removeauthenticationbackendAction()
-    {
-        $configArray = IcingaConfig::app('authentication', true)->toArray();
-        $authBackend =  $this->getParam('auth_backend');
-        if (!isset($configArray[$authBackend])) {
-            $this->view->errorMessage = 'Can\'t perform removal: Unknown Authentication Backend Provided';
-            $this->authenticationAction(true);
-            return;
-        }
-
-        $form = new ConfirmRemovalForm();
-        $form->setRequest($this->getRequest());
-        $form->setRemoveTarget('auth_backend', $authBackend);
-
-        if ($form->isSubmittedAndValid()) {
-            unset($configArray[$authBackend]);
-            if ($this->writeAuthenticationFile($configArray)) {
-                $this->view->successMessage = 'Authentication Backend "' . $authBackend . '" Removed';
-                $this->authenticationAction(true);
-            }
-            return;
-        }
-
-        $this->view->form = $form;
-
-        $this->view->name = $authBackend;
-        $this->render('authentication/remove');
-    }
-
-    /**
      * Action for creating a new authentication backend
      */
     public function createauthenticationbackendAction()
@@ -261,7 +242,11 @@ class ConfigController extends BaseConfigController
 
         if ($form->isSubmittedAndValid()) {
             $backendCfg = IcingaConfig::app('authentication')->toArray();
+            foreach ($backendCfg as $backendName => $settings) {
+                unset($backendCfg[$backendName]['name']);
+            }
             foreach ($form->getConfig() as $backendName => $settings) {
+                unset($settings->{'name'});
                 if (isset($backendCfg[$backendName])) {
                     $this->view->errorMessage = 'Backend name already exists';
                     $this->view->form = $form;
@@ -281,6 +266,7 @@ class ConfigController extends BaseConfigController
         $this->render('authentication/create');
     }
 
+
     /**
      *  Form for editing backends
      *
@@ -296,11 +282,24 @@ class ConfigController extends BaseConfigController
             $this->authenticationAction(true);
             return;
         }
+        if (!array_key_exists('resource', $configArray[$authBackend])) {
+            $this->view->errorMessage = 'Configuration error: Backend "' . $authBackend . '" has no Resource';
+            $this->authenticationAction(true);
+            return;
+        }
 
-        if ($configArray[$authBackend]['backend'] === 'ldap') {
-            $form = new LdapBackendForm();
-        } else {
-            $form = new DbBackendForm();
+        $type = ResourceFactory::getResourceConfig($configArray[$authBackend]['resource'])->type;
+        switch ($type) {
+            case 'ldap':
+                $form = new LdapBackendForm();
+                break;
+            case 'db':
+                $form = new DbBackendForm();
+                break;
+            default:
+                $this->view->errorMessage = 'Can\'t edit: backend type "' . $type . '" of given resource not supported.';
+                $this->authenticationAction(true);
+                return;
         }
 
         $form->setBackendName($this->getParam('auth_backend'));
@@ -315,6 +314,7 @@ class ConfigController extends BaseConfigController
                 if ($backendName != $authBackend) {
                     unset($backendCfg[$authBackend]);
                 }
+                unset($settings['name']);
             }
             if ($this->writeAuthenticationFile($backendCfg)) {
                 // redirect to overview with success message
@@ -327,6 +327,137 @@ class ConfigController extends BaseConfigController
         $this->view->name = $authBackend;
         $this->view->form = $form;
         $this->render('authentication/modify');
+    }
+
+    /**
+     * Action for removing a backend from the authentication list.
+     *
+     * Redirects to the overview after removal is finished
+     */
+    public function removeauthenticationbackendAction()
+    {
+        $configArray = IcingaConfig::app('authentication', true)->toArray();
+        $authBackend =  $this->getParam('auth_backend');
+        if (!isset($configArray[$authBackend])) {
+            $this->view->errorMessage = 'Can\'t perform removal: Unknown Authentication Backend Provided';
+            $this->authenticationAction(true);
+            return;
+        }
+        if (!array_key_exists('resource', $configArray[$authBackend])) {
+            $this->view->errorMessage = 'Configuration error: Backend "' . $authBackend . '" has no Resource';
+            $this->authenticationAction(true);
+            return;
+        }
+
+        $form = new ConfirmRemovalForm();
+        $form->setRequest($this->getRequest());
+        $form->setRemoveTarget('auth_backend', $authBackend);
+
+        if ($form->isSubmittedAndValid()) {
+            unset($configArray[$authBackend]);
+            if ($this->writeAuthenticationFile($configArray)) {
+                $this->view->successMessage = 'Authentication Backend "' . $authBackend . '" Removed';
+                $this->authenticationAction(true);
+            }
+            return;
+        }
+
+        $this->view->form = $form;
+        $this->view->name = $authBackend;
+        $this->render('authentication/remove');
+    }
+
+    public function resourceAction($showOnly = false)
+    {
+
+        $this->view->resources = IcingaConfig::app('resources', true)->toArray();
+        $this->render('resource');
+    }
+
+    public function createresourceAction()
+    {
+        $this->view->resourceTypes = $this->resourceTypes;
+        $resources = IcingaConfig::app('resources', true);
+        $form = new EditResourceForm();
+        $form->setRequest($this->_request);
+        if ($form->isSubmittedAndValid()) {
+            $name = $form->getName();
+            if (isset($resources->{$name})) {
+                $this->view->errorMessage = 'Resource name "' . $name .'" already in use.';
+                $this->view->form = $form;
+                $this->render('resource/create');
+                return;
+            }
+            $resources->{$name} = $form->getConfig();
+            if ($this->writeConfigFile($resources, 'resources')) {
+                $this->view->successMessage = 'Resource "' . $name . '" created.';
+                $this->resourceAction(true);
+            }
+            return;
+        }
+        $this->view->form = $form;
+        $this->render('resource/create');
+    }
+
+    public function editresourceAction()
+    {
+        $resources = ResourceFactory::getResourceConfigs();
+        $name =  $this->getParam('resource');
+        if ($resources->get($name) === null) {
+            $this->view->errorMessage = 'Can\'t edit: Unknown Resource Provided';
+            $this->resourceAction(true);
+            return;
+        }
+        $form = new EditResourceForm();
+        if ($this->_request->isPost() === false) {
+            $form->setOldName($name);
+            $form->setName($name);
+        }
+        $form->setRequest($this->_request);
+        $form->setResource($resources->get($name));
+        if ($form->isSubmittedAndValid()) {
+            $oldName = $form->getOldName();
+            $name = $form->getName();
+            if ($oldName !== $name) {
+                unset($resources->{$oldName});
+            }
+            $resources->{$name} = $form->getConfig();
+            if ($this->writeConfigFile($resources, 'resources')) {
+                $this->view->successMessage = 'Resource "' . $name . '" created.';
+                $this->resourceAction(true);
+            }
+            return;
+        }
+        $this->view->form = $form;
+        $this->view->name = $name;
+        $this->render('resource/modify');
+    }
+
+    public function removeresourceAction()
+    {
+        $resources = ResourceFactory::getResourceConfigs()->toArray();
+        $name =  $this->getParam('resource');
+        if (!isset($resources[$name])) {
+            $this->view->errorMessage = 'Can\'t remove: Unknown resource provided';
+            $this->resourceAction(true);
+            return;
+        }
+
+        $form = new ConfirmRemovalForm();
+        $form->setRequest($this->getRequest());
+        $form->setRemoveTarget('resource', $name);
+        if ($form->isSubmittedAndValid()) {
+            unset($resources[$name]);
+            if ($this->writeConfigFile($resources, 'resources')) {
+                $this->view->successMessage = 'Resource "' . $name . '" removed';
+                $this->resourceAction(true);
+            }
+            return;
+        }
+
+        $this->view->name = $name;
+        $this->view->form = $form;
+        $this->render('resource/remove');
     }
 
     /**

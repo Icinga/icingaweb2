@@ -31,7 +31,7 @@ namespace Icinga\Form\Config\Authentication;
 
 use \Zend_Config;
 use \Icinga\Web\Form\Decorator\HelpText;
-use \Icinga\Application\DbAdapterFactory;
+use \Icinga\Data\ResourceFactory;
 use \Icinga\Web\Form;
 
 /**
@@ -121,7 +121,7 @@ abstract class BaseBackendForm extends Form
     public function getResources()
     {
         if ($this->resources === null) {
-            return DbAdapterFactory::getResources();
+            return ResourceFactory::getResourceConfigs()->toArray();
         } else {
             return $this->resources;
         }

@@ -32,7 +32,7 @@ namespace Icinga\Module\Monitoring\Form\Config\Backend;
 use \Zend_Config;
 use \Icinga\Web\Form;
 use \Icinga\Application\Icinga;
-use \Icinga\Application\DbAdapterFactory;
+use Icinga\Data\ResourceFactory;
 
 /**
  * Form for modifying a monitoring backend
@@ -40,7 +40,7 @@ use \Icinga\Application\DbAdapterFactory;
 class EditBackendForm extends Form
 {
     /**
-     * Database resources to use instead of the one's from DBAdapterFactory (used for testing)
+     * Database resources to use instead of the one's from ResourceFactory (used for testing)
      *
      * @var array
      */
@@ -82,7 +82,7 @@ class EditBackendForm extends Form
     }
 
     /**
-     * Set a custom array of resources to be used in this form instead of the ones from DbAdapterFactory
+     * Set a custom array of resources to be used in this form instead of the ones from ResourceFactory
      * (used for testing)
      */
     public function setResources($resources)
@@ -98,7 +98,7 @@ class EditBackendForm extends Form
     public function getResources()
     {
         if ($this->resources === null) {
-            return DbAdapterFactory::getResources();
+            return ResourceFactory::getResourceConfigs()->toArray();
         } else {
             return $this->resources;
         }

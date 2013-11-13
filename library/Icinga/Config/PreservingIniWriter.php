@@ -50,9 +50,8 @@ class PreservingIniWriter extends Zend_Config_Writer_FileAbstract
     /**
      * Create a new PreservingIniWriter
      *
-     * @param array $options    Contains the options that should be used for the ConfigWriter
-     *                          in an associative array. Supports all options of Zend_Config_Writer and additional
-     *                          options for setting the formatting for the internal IniEditor:
+     * @param array $options   Supports all options of Zend_Config_Writer and additional
+     *                         options for the internal IniEditor:
      *                          * valueIndentation:     The indentation level of the values
      *                          * commentIndentation:   The indentation level of the comments
      *                          * sectionSeparators:    The amount of newlines between sections

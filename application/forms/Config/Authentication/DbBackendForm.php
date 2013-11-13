@@ -30,7 +30,6 @@
 namespace Icinga\Form\Config\Authentication;
 
 use \Icinga\Authentication\Backend\DbUserBackend;
-use \Icinga\Application\DbAdapterFactory;
 use \Zend_Config;
 
 /**

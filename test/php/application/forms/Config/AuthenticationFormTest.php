@@ -100,17 +100,13 @@ class AuthenticationFormTest extends BaseTestCase
             array(
                 'backend'               => 'ldap',
                 'target'                => 'user',
-                'hostname'              => 'test host',
-                'root_dn'               => 'ou=test,dc=icinga,dc=org',
-                'bind_dn'               => 'cn=testuser,cn=config',
-                'bind_pw'               => 'password',
                 'user_class'            => 'testClass',
                 'user_name_attribute'   => 'testAttribute'
             )
         );
         $form->setBackendName('testldap');
         $form->setBackend($config);
-        $form->create();
+        $form->create(array('resources' => array()));
 
         // parameters to be hidden
         $notShown = array('backend', 'target');

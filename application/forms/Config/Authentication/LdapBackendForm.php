@@ -29,10 +29,12 @@
 
 namespace Icinga\Form\Config\Authentication;
 
-use \Icinga\Authentication\Backend\LdapUserBackend;
 use \Exception;
+use Icinga\Data\ResourceFactory;
 use \Zend_Config;
 use \Icinga\Web\Form;
+use \Icinga\Authentication\Backend\LdapUserBackend;
+use \Icinga\Protocol\Ldap\Connection as LdapConnection;
 
 /**
  * Form for adding or modifying LDAP authentication backends
@@ -42,9 +44,12 @@ class LdapBackendForm extends BaseBackendForm
     /**
      * Create this form and add all required elements
      *
+     * @param $options      Only useful for testing purposes:
+     *                          'resources' => All available resources.
+     *
      * @see Form::create()
      */
-    public function create()
+    public function create($options = array())
     {
         $this->setName('form_modify_backend');
         $name = $this->filterName($this->getBackendName());
@@ -63,48 +68,16 @@ class LdapBackendForm extends BaseBackendForm
         );
 
         $this->addElement(
-            'text',
-            'backend_' . $name . '_hostname',
+            'select',
+            'backend_' . $name . '_resource',
             array(
-                'label'         => 'LDAP Server Host',
+                'label'         =>  'Database Connection',
+                'required'      =>  true,
                 'allowEmpty'    =>  false,
-                'value'         => $backend->get('hostname', 'localhost'),
-                'helptext'      => 'The hostname or address of the LDAP server to use for authentication',
-                'required'      => true
-            )
-        );
-
-        $this->addElement(
-            'text',
-            'backend_' . $name . '_root_dn',
-            array(
-                'label'     => 'LDAP Root DN',
-                'value'     => $backend->get('root_dn', 'ou=people,dc=icinga,dc=org'),
-                'helptext'  => 'The path where users can be found on the ldap server',
-                'required'  => true
-            )
-        );
-
-        $this->addElement(
-            'text',
-            'backend_' . $name . '_bind_dn',
-            array(
-                'label'     => 'LDAP Bind DN',
-                'value'     => $backend->get('bind_dn', 'cn=admin,cn=config'),
-                'helptext'  => 'The user dn to use for querying the ldap server',
-                'required'  => true
-            )
-        );
-
-        $this->addElement(
-            'password',
-            'backend_' . $name . '_bind_pw',
-            array(
-                'label'             => 'LDAP Bind Password',
-                'renderPassword'    => true,
-                'value'             => $backend->get('bind_pw', 'admin'),
-                'helptext'          => 'The password to use for querying the ldap server',
-                'required'          => true
+                'helptext'      => 'The database connection to use for authenticating with this provider',
+                'value'         =>  $this->getBackend()->get('resource'),
+                'multiOptions'  =>  array_key_exists('resources', $options) ?
+                                        $options['resources'] : $this->getLdapResources()
             )
         );
 
@@ -157,14 +130,10 @@ class LdapBackendForm extends BaseBackendForm
 
         $section = $this->getValue($prefix . 'name');
         $cfg = array(
-            'backend'               =>  'ldap',
-            'target'                =>  'user',
-            'hostname'              =>  $this->getValue($prefix . 'hostname'),
-            'root_dn'               =>  $this->getValue($prefix . 'root_dn'),
-            'bind_dn'               =>  $this->getValue($prefix . 'bind_dn'),
-            'bind_pw'               =>  $this->getValue($prefix . 'bind_pw'),
-            'user_class'            =>  $this->getValue($prefix . 'user_class'),
-            'user_name_attribute'   =>  $this->getValue($prefix . 'user_name_attribute')
+            'target'              =>  'user',
+            'resource'            =>  $this->getValue($prefix . 'resource'),
+            'user_class'          =>  $this->getValue($prefix . 'user_class'),
+            'user_name_attribute' =>  $this->getValue($prefix . 'user_name_attribute')
         );
         return array(
             $section => $cfg
@@ -182,21 +151,26 @@ class LdapBackendForm extends BaseBackendForm
         try {
             $cfg = $this->getConfig();
             $backendName = 'backend_' . $this->filterName($this->getBackendName()) . '_name';
-            $testConn = new LdapUserBackend(
-                new Zend_Config($cfg[$this->getValue($backendName)])
-            );
-
+            $backendConfig = new Zend_Config($cfg[$this->getValue($backendName)]);
+            $testConn = new LdapUserBackend($backendConfig);
             if ($testConn->getUserCount() === 0) {
                 throw new Exception('No Users Found On Directory Server');
             }
         } catch (Exception $exc) {
-
             $this->addErrorMessage(
-                'Connection Validation Failed:'.
-                $exc->getMessage()
+                'Connection Validation Failed:' . $exc->getMessage()
             );
             return false;
         }
         return true;
+    }
+
+    private function getLdapResources()
+    {
+        $res = ResourceFactory::getResourceConfigs('ldap')->toArray();
+        foreach ($res as $key => $value) {
+            $res[$key] = $key;
+        }
+        return $res;
     }
 }

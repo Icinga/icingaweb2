@@ -35,7 +35,7 @@ use \Zend_Form_Element_Text;
 use \Zend_Form_Element_Select;
 use \Zend_View_Helper_DateFormat;
 use \Icinga\Application\Config as IcingaConfig;
-use \Icinga\Application\DbAdapterFactory;
+use \Icinga\Data\ResourceFactory;
 use \Icinga\Web\Form;
 use \Icinga\Web\Form\Validator\WritablePathValidator;
 use \Icinga\Web\Form\Validator\TimeFormatValidator;
@@ -132,7 +132,7 @@ class GeneralForm extends Form
     public function getResources()
     {
         if ($this->resources === null) {
-            return DbAdapterFactory::getResources();
+            return ResourceFactory::getResourceConfigs()->toArray();
         } else {
             return $this->resources;
         }

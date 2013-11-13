@@ -29,6 +29,7 @@
 
 namespace Icinga\Authentication\Backend;
 
+use Icinga\Data\ResourceFactory;
 use \stdClass;
 use \Zend_Config;
 use \Icinga\User;
@@ -37,6 +38,7 @@ use \Icinga\Authentication\Credential;
 use \Icinga\Protocol\Ldap;
 use \Icinga\Protocol\Ldap\Connection as LdapConnection;
 use \Icinga\Application\Config as IcingaConfig;
+use \Icinga\Exception\ConfigurationError;
 
 /**
  * User authentication backend
@@ -65,21 +67,32 @@ class LdapUserBackend implements UserBackend
     private $name;
 
     /**
-     * Create new Ldap User backend
+     * Create a new LdapUserBackend
      *
-     * @param Zend_Config $connection   Connection to use
-     * @param Zend_Config $config       Configuration for authentication
+     * @param Zend_Config   $config      The configuration for this authentication backend.
+     *                                    'resource' => The name of the resource to use, or an actual
+     *                                                  instance of \Icinga\Protocol\Ldap\Connection.
+     *                                    'name'     => The name of this authentication backend.
      *
-     * @throws Exception                When connection to the resource is not possible.
+     * @throws \Exception                 When the connection to the resource is not possible.
      */
-    public function __construct(LdapConnection $connection, Zend_Config $config)
+    public function __construct(Zend_Config $config)
     {
-        $this->connection = $connection;
+        if (!isset($config->resource)) {
+            throw new ConfigurationError('An authentication backend must provide a resource.');
+        }
         $this->config = $config;
         $this->name = $config->name;
 
+        if ($config->resource instanceof LdapConnection) {
+            $this->connection = $config->resource;
+        } else {
+            $this->connection = ResourceFactory::createResource(
+                ResourceFactory::getResourceConfig($config->resource)
+            );
+        }
         // will throw an exception, when the connection is not possible.
-        $connection->connect();
+        $this->connection->connect();
     }
 
     /**
