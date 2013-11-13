@@ -44,9 +44,12 @@ class LdapBackendForm extends BaseBackendForm
     /**
      * Create this form and add all required elements
      *
+     * @param $options      Only useful for testing purposes:
+     *                          'resources' => All available resources.
+     *
      * @see Form::create()
      */
-    public function create()
+    public function create($options = array())
     {
         $this->setName('form_modify_backend');
         $name = $this->filterName($this->getBackendName());
@@ -73,7 +76,8 @@ class LdapBackendForm extends BaseBackendForm
                 'allowEmpty'    =>  false,
                 'helptext'      => 'The database connection to use for authenticating with this provider',
                 'value'         =>  $this->getBackend()->get('resource'),
-                'multiOptions'  =>  $this->getLdapResources()
+                'multiOptions'  =>  array_key_exists('resources', $options) ?
+                                        $options['resources'] : $this->getLdapResources()
             )
         );
 
