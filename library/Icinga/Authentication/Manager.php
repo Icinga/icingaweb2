@@ -121,15 +121,9 @@ class Manager
         }
 
         if (!isset($options['sessionClass'])) {
-            $this->session = new PhpSession($config->session);
+            $this->session = new PhpSession();
         } else {
             $this->session = $options['sessionClass'];
-        }
-
-        if (isset($options['writeSession']) && $options['writeSession'] === true) {
-            $this->session->read(true);
-        } else {
-            $this->session->read();
         }
     }
 
@@ -353,6 +347,7 @@ class Manager
             return false;
         }
 
+        $this->user->sendMessage("Hallo ich bin nachricht.");
         if ($persist == true) {
             $this->persistCurrentUser();
             $this->session->write();

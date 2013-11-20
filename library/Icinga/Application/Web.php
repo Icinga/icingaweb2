@@ -232,12 +232,7 @@ class Web extends ApplicationBootstrap
      */
     private function setupUser()
     {
-        $authenticationManager = AuthenticationManager::getInstance(
-            null,
-            array(
-                'writeSession' => true
-            )
-        );
+        $authenticationManager = AuthenticationManager::getInstance();
 
         if ($authenticationManager->isAuthenticated() === true) {
             $user = $authenticationManager->getUser();

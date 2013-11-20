@@ -51,21 +51,7 @@ class PhpSession extends Session
      *
      * @var string
      */
-    const SESSION_NAME = 'Icinga2Web';
-
-    /**
-     * Flag if session is open
-     *
-     * @var bool
-     */
-    private $isOpen = false;
-
-    /**
-     * Flag if session is flushed
-     *
-     * @var bool
-     */
-    private $isFlushed = false;
+    private $sessionName = 'Icingaweb2';
 
     /**
      * Configuration for cookie options
@@ -96,8 +82,12 @@ class PhpSession extends Session
         } else {
             $options = PhpSession::$defaultCookieOptions;
         }
+        if (array_key_exists('test_session_name', $options)) {
+            $this->sessionName = $options['test_session_name'];
+            unset($options['test_session_name']);
+        }
         foreach ($options as $sessionVar => $value) {
-            if (ini_set("session.".$sessionVar, $value) === false) {
+            if (ini_set("session." . $sessionVar, $value) === false) {
                 Logger::warn(
                     'Could not set php.ini setting %s = %s. This might affect your sessions behaviour.',
                     $sessionVar,
@@ -108,129 +98,38 @@ class PhpSession extends Session
         if (!is_writable(session_save_path())) {
             throw new ConfigurationError('Can\'t save session');
         }
+        $this->read();
     }
 
     /**
-     * Return true when the session has not yet been closed
-     *
-     * @return bool
+     * Open a PHP session
      */
-    private function sessionCanBeChanged()
+    private function open()
     {
-        if ($this->isFlushed) {
-            Logger::error('Tried to work on a closed session, session changes will be ignored');
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * Return true when the session has not yet been opened
-     *
-     * @return bool
-     */
-    private function sessionCanBeOpened()
-    {
-        if ($this->isOpen) {
-            Logger::warn('Tried to open a session more than once');
-            return false;
-        }
-        return $this->sessionCanBeChanged();
-    }
-
-    /**
-     * Open a PHP session when possible
-     *
-     * @return bool True on success
-     */
-    public function open()
-    {
-        if (!$this->sessionCanBeOpened()) {
-            return false;
-        }
-
-        session_name(self::SESSION_NAME);
+        session_name($this->sessionName);
         session_start();
-        $this->isOpen = true;
+    }
+
+    /**
+     * Read all values written to the underling session and make them accessible.
+     */
+    public function read()
+    {
+        $this->open();
         $this->setAll($_SESSION);
-        return true;
-    }
-
-    /**
-     * Ensure that the session is open modifiable
-     *
-     * @return bool True on success
-     */
-    private function ensureOpen()
-    {
-        // try to open first
-        if (!$this->isOpen) {
-            if (!$this->open()) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Read all values written to the underling session and
-     * makes them accessible. if keepOpen is not set, the session
-     * is immediately closed again
-     *
-     * @param   bool $keepOpen  Set to true when modifying the session
-     *
-     * @return  bool            True on success
-     */
-    public function read($keepOpen = false)
-    {
-        if (!$this->ensureOpen()) {
-            return false;
-        }
-        if ($keepOpen) {
-            return true;
-        }
-        $this->close();
-        return true;
+        session_write_close();
     }
 
     /**
      * Write all values of this session object to the underlying session implementation
-     *
-     * If keepOpen is not set, the session is closed
-     *
-     * @param   bool $keepOpen  Set to true when modifying the session further
-     *
-     * @return  bool            True on success
      */
-    public function write($keepOpen = false)
+    public function write()
     {
-        if (!$this->ensureOpen()) {
-            return false;
-        }
+        $this->open();
         foreach ($this->getAll() as $key => $value) {
             $_SESSION[$key] = $value;
         }
-        if ($keepOpen) {
-            return null;
-        }
-        $this->close();
-
-        return null;
-    }
-
-    /**
-     * Close and writes the session
-     *
-     * Only call this if you want the session to be closed without any changes.
-     *
-     * @see PHPSession::write
-     */
-    public function close()
-    {
-        if (!$this->isFlushed) {
-            session_write_close();
-        }
-        $this->isFlushed = true;
+        session_write_close();
     }
 
     /**
@@ -238,12 +137,12 @@ class PhpSession extends Session
      */
     public function purge()
     {
-        if ($this->ensureOpen()) {
-            $_SESSION = array();
-            session_destroy();
-            $this->clearCookies();
-            $this->close();
-        }
+        $this->open();
+        $_SESSION = array();
+        $this->setAll(array(), true);
+        session_destroy();
+        $this->clearCookies();
+        session_write_close();
     }
 
     /**

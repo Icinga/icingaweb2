@@ -42,28 +42,14 @@ abstract class Session
     private $sessionValues = array();
 
     /**
-     * Open a session or creates a new one if not exists
-     */
-    abstract public function open();
-
-    /**
      * Read all values from the underlying session implementation
-     *
-     * @param bool $keepOpen True to keep the session open
      */
-    abstract public function read($keepOpen = false);
+    abstract public function read();
 
     /**
      * Persists changes to the underlying session implementation
-     *
-     * @param bool $keepOpen True to keep the session open
      */
-    abstract public function write($keepOpen = false);
-
-    /**
-     * Close session
-     */
-    abstract public function close();
+    abstract public function write();
 
     /**
      * Purge session

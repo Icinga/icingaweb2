@@ -49,15 +49,6 @@ class AuthenticationController extends ActionController
     protected $requiresAuthentication = false;
 
     /**
-     * This controller modifies the session
-     *
-     * @var bool
-     *
-     * @see \Icinga\Web\Controller\ActionController::$modifiesSession
-     */
-    protected $modifiesSession = true;
-
-    /**
      * Log into the application
      */
     public function loginAction()
@@ -69,9 +60,7 @@ class AuthenticationController extends ActionController
         $this->view->form->setRequest($this->_request);
         $this->view->title = "Icinga Web Login";
         try {
-            $auth = AuthManager::getInstance(null, array(
-                'writeSession' => $this->modifiesSession
-            ));
+            $auth = AuthManager::getInstance();
 
             if ($auth->isAuthenticated()) {
                 $this->redirectNow('index?_render=body');
@@ -104,9 +93,7 @@ class AuthenticationController extends ActionController
     public function logoutAction()
     {
         $this->_helper->layout->setLayout('inline');
-        $auth = AuthManager::getInstance(null, array(
-            'writeSession' => $this->modifiesSession
-        ));
+        $auth = AuthManager::getInstance();
         $auth->removeAuthorization();
         $this->redirectToLogin();
     }

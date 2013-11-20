@@ -59,17 +59,6 @@ class ActionController extends Zend_Controller_Action
     protected $requiresAuthentication = true;
 
     /**
-     * Set true when this controller modifies the session
-     *
-     * otherwise the session will be written back to disk and closed before the controller
-     * action is executed, leading to every modification in the session to be lost after
-     * the response is submitted
-     *
-     * @var bool
-     */
-    protected $modifiesSession = false;
-
-    /**
      * The constructor starts benchmarking, loads the configuration and sets
      * other useful controller properties
      *
@@ -114,10 +103,7 @@ class ActionController extends Zend_Controller_Action
             return false;
         }
 
-        return !AuthManager::getInstance(
-            null,
-            array('writeSession' => $this->modifiesSession)
-        )->isAuthenticated();
+        return !AuthManager::getInstance()->isAuthenticated();
     }
 
     /**

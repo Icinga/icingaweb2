@@ -31,7 +31,8 @@ namespace Icinga;
 
 use \DateTimeZone;
 use \InvalidArgumentException;
-use Icinga\User\Preferences;
+use \Icinga\User\Preferences;
+use \Icinga\Authentication\PhpSession;
 
 /**
  *  This class represents an authorized user
@@ -104,6 +105,13 @@ class User
      * @var Preferences
      */
     private $preferences;
+
+    /**
+     * Queued notifications for this user.
+     *
+     * @var array()
+     */
+    private $messages;
 
     /**
      * Creates a user object given the provided information
@@ -333,5 +341,20 @@ class User
             $tz = date_default_timezone_get();
         }
         return new DateTimeZone($tz);
+    }
+
+    /**
+     * Send a message to this user that can be accessed in other requests.
+     *
+     * @param $msg
+     */
+    public function sendMessage($msg)
+    {
+        $this->messages[] = $msg;
+    }
+
+    public function getMessages()
+    {
+        return $this->messages;
     }
 }
