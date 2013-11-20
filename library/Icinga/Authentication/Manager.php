@@ -347,7 +347,6 @@ class Manager
             return false;
         }
 
-        $this->user->sendMessage("Hallo ich bin nachricht.");
         if ($persist == true) {
             $this->persistCurrentUser();
             $this->session->write();
@@ -399,9 +398,9 @@ class Manager
     }
 
     /**
-     *   Returns the current user or null if no user is authenticated
+     * Returns the current user or null if no user is authenticated
      *
-     *   @return User
+     * @return User
      **/
     public function getUser()
     {

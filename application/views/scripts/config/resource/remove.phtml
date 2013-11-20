@@ -2,4 +2,9 @@
     <i class="icinga-icon-remove"></i>
     Remove Resource "<?= $this->escape($this->name); ?>"
 </h4>
+
+<?php if (isset($this->messageBox)): ?>
+    <?= $this->messageBox->render() ?>
+<?php endif ?>
+
 <?= $this->form ?>

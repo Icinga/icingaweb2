@@ -180,17 +180,6 @@ class ManagerTest extends BaseTestCase
     }
 
     /**
-     * @expectedException Exception
-     * @expectedExceptionMessage Session write after close
-     */
-    public function testWriteSessionTwice()
-    {
-        $auth = $this->getManagerInstance($session, false);
-        $this->assertFalse($auth->isAuthenticated(true));
-        $auth->authenticate(new Credential("jdoe", "passjdoe"));
-    }
-
-    /**
      * @expectedException Icinga\Exception\ConfigurationError
      * @expectedExceptionMessage No authentication backend set
      */

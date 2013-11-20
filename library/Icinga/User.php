@@ -32,14 +32,15 @@ namespace Icinga;
 use \DateTimeZone;
 use \InvalidArgumentException;
 use \Icinga\User\Preferences;
+use \Icinga\User\Message;
 use \Icinga\Authentication\PhpSession;
+
 
 /**
  *  This class represents an authorized user
  *
  *  You can retrieve authorization information (@TODO: Not implemented yet) or
  *  to retrieve user information
- *
  */
 class User
 {
@@ -344,17 +345,34 @@ class User
     }
 
     /**
-     * Send a message to this user that can be accessed in other requests.
+     * Add a message that can be accessed from future requests, to this user.
      *
-     * @param $msg
+     * This function does NOT automatically write to the session, messages will not be persisted until you do.
+     *
+     * @param Message $msg  The message
      */
-    public function sendMessage($msg)
+    public function addMessage(Message $msg)
     {
         $this->messages[] = $msg;
     }
 
+    /**
+     * Get all currently pending messages
+     *
+     * @return array    the messages
+     */
     public function getMessages()
     {
-        return $this->messages;
+        return isset($this->messages) ? $this->messages : array();
+    }
+
+    /**
+     * Remove all messages from this user
+     *
+     * This function does NOT automatically write the session, messages will not be persisted until you do.
+     */
+    public function clearMessages()
+    {
+        $this->messages = null;
     }
 }

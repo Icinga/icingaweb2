@@ -2,6 +2,10 @@
 
 <?php $errors = $this->form->getErrorMessages(); ?>
 
+<?php if (isset($this->messageBox)): ?>
+  <?= $this->messageBox->render() ?>
+<?php endif ?>
+
 <?php if ($this->successMessage): ?>
 <div class="alert alert-success">
   <i class="icinga-icon-success"></i>

@@ -390,6 +390,9 @@ class EditResourceForm extends Form
                         !file_exists($config->object_file) ||
                         !file_exists($config->status_file)
                     ) {
+                        $this->addErrorMessage(
+                            'Connectivity validation failed, the provided file or socket does not exist.'
+                        );
                         return false;
                     }
                     break;
@@ -402,6 +405,7 @@ class EditResourceForm extends Form
                     break;
             }
         } catch (\Exception $exc) {
+            $this->addErrorMessage('Connectivity validation failed, connection to the given resource not possible.');
             return false;
         }
         return true;

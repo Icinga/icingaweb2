@@ -2,28 +2,11 @@
 use Icinga\Web\Url;
 $createResource = $this->href('/config/createresource');
 ?>
-
 <?= $this->tabs->render($this); ?>
 
-<?php if ($this->errorMessage): ?>
-<div class="alert alert-danger">
-  <i class="icinga-icon-error"></i>
-  <strong><?= $this->escape($this->errorMessage); ?></strong>
-</div>
-<?php endif; ?>
-
-<?php if ($this->successMessage): ?>
-<div class="alert alert-success">
-  <i class="icinga-icon-success"></i>
-  <strong><?= $this->escape($this->successMessage); ?></strong>
-</div>
-<?php elseif ($this->flashMessages): ?>
- <div class="alert alert-success">
-    <i class="icinga-icon-success"></i>
-    <strong><?= $this->escape($this->flashMessages); ?></strong>
- </div>
-<?php endif; ?>
-
+<?php if (isset($this->messageBox)): ?>
+  <?= $this->messageBox->render() ?>
+<?php endif ?>
 
 <div class="panel panel-default">
   <div class="panel-heading panel-title">

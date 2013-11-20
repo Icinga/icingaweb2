@@ -1,8 +1,8 @@
-<?= $this->tabs->render($this); ?>
+
 <?php if ($this->name): ?>
-  <h4><i>{{EDIT_ICON}} Edit Backend "<?= $this->escape($this->name) ?>"</h4>
+  <h4><i> <i class="icinga-icon-edit"></i> Edit Backend "<?= $this->escape($this->name) ?>"</h4>
 <?php else: ?>
-  <h4>{{CREATE_ICON}} Create New Backend</h4>
+  <h4> <i class="icinga-icon-create"></i> Create New Backend</h4>
 <?php endif; ?>
 
 <?php if ($this->error): ?>

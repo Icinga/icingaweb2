@@ -9,12 +9,9 @@ $modules = $this->modules->paginate();
 
 <h3>Installed Modules</h3>
 
-<?php if ($this->successMessage): ?>
-<div class="alert alert-success">
-  <i class="icinga-icon-success"></i>
-  <strong><?= $this->escape($this->successMessage); ?></strong>
-</div>
-<?php endif; ?>
+<?php if (isset($this->messageBox)): ?>
+  <?= $this->messageBox->render() ?>
+<?php endif ?>
 
 <?= $this->paginationControl($modules, null, null, array(
     'preserve' => $this->preserve

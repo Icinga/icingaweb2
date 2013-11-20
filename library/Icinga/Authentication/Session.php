@@ -64,10 +64,13 @@ abstract class Session
      * @see     self::persist
      * @param   string    $key    Name of value
      * @param   mixed     $value  Value
+     *
+     * @returns PhpSession this
      */
     public function set($key, $value)
     {
         $this->sessionValues[$key] = $value;
+        return $this;
     }
 
     /**

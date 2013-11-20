@@ -3,16 +3,13 @@
 
 <h3>Monitoring Backends</h3>
 
-<?php if ($this->successMessage): ?>
-<div class="alert alert-success">
-  <i>{{OK_ICON}}</i>
-  <strong><?= $this->escape($this->successMessage); ?></strong>
-</div>
-<?php endif; ?>
+<?php if (isset($this->messageBox)): ?>
+  <?= $this->messageBox->render() ?>
+<?php endif ?>
 
 <div>
   <a href="<?= Url::fromPath('/monitoring/config/createbackend')->getAbsoluteUrl();?>">
-    {{CREATE_ICON}} Create New Monitoring Backend
+      <i class="icinga-icon-create"></i> Create New Monitoring Backend
   </a>
 </div>
 <br/>
@@ -24,8 +21,8 @@
   <b><?= $this->escape($backendName); ?></b>
   <small>(Type: <?= $this->escape($config['type'] === 'ido' ? 'IDO' : ucfirst($config['type'])); ?>)</small>
   <div>
-    <a href="<?= $removeUrl; ?>">{{REMOVE_ICON}} Remove This Backend</a><br/>
-    <a href="<?= $editUrl; ?>">{{EDIT_ICON}} Edit This Backend</a>
+    <a href="<?= $removeUrl; ?>"><i class="icinga-icon-remove"></i> Remove This Backend</a><br/>
+    <a href="<?= $editUrl; ?>"><i class="icinga-icon-edit"></i>  Edit This Backend</a>
   </div>
 </div>
 <br/>
@@ -37,7 +34,7 @@
 
 <div>
   <a href="<?= Url::fromPath('/monitoring/config/createinstance')->getAbsoluteUrl();?>">
-    {{CREATE_ICON}} Create New Instance
+      <i class="icinga-icon-create"></i> Create New Instance
   </a>
 </div>
 
@@ -50,8 +47,8 @@
   <small>(Type: <?= isset($config['host']) ? 'Remote' : 'Local'; ?>)</small>
 
   <div>
-    <a href="<?= $removeUrl; ?>">{{REMOVE_ICON}} Remove This Instance</a><br/>
-    <a href="<?= $editUrl; ?>">{{EDIT_ICON}} Edit This Instance</a>
+    <a href="<?= $removeUrl; ?>"><i class="icinga-icon-remove"></i> Remove This Instance</a><br/>
+    <a href="<?= $editUrl; ?>"><i class="icinga-icon-edit"></i>  Edit This Instance</a>
   </div>
 </div>
 <br/>

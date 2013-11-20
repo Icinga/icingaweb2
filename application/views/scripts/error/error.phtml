@@ -1,26 +1,9 @@
+<?= $this->tabs->render($this); ?>
+
 <div class="alert alert-error">
   <h1>An error occurred</h1>
-  <p>
-    <?php echo $this->message ?>
-  </p>
 
-  <?php if (isset($this->exception)): ?>
-  <div style="text-align:left;">
-    <h3>Exception information:</h3>
-
-    <p>
-      <b>Message:</b>
-      <?= $this->exception->getMessage(); ?>
-    </p>
-
-    <h3>Stack trace:</h3>
-    <pre>
-      <?= $this->exception->getTraceAsString(); ?>
-    </pre>
-
-    <h3>Request Parameters:</h3>
-      <pre><?= var_export(\Zend_Controller_Front::getInstance()->getParams(), true); ?>
-    </pre>
-  </div>
-  <?php endif; ?>
+  <?php if (isset($this->messageBox)) : ?>
+      <?= $this->messageBox->render() ?>
+  <? endif ?>
 </div>
