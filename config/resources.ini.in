@@ -47,7 +47,3 @@ port                = @ldap_port@
 root_dn             = "@ldap_rootdn@"
 bind_dn             = "@ldap_binddn@"
 bind_pw             = @ldap_bindpass@
-; Object class of the user
-user_class          = @ldap_user_objectclass@
-; Attribute name for username
-user_name_attribute = @ldap_attribute_username@
