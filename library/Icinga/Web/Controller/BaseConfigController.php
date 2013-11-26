@@ -45,27 +45,6 @@ use \Icinga\User\Message;
 class BaseConfigController extends ActionController
 {
     /**
-     * @var Zend_Controller_Action_Helper_FlashMessenger
-     */
-    protected $flashManager;
-
-    /**
-     * Remove all messages from the current user, return them and commit
-     * changes to the underlying session.
-     *
-     * @return array    The messages
-     */
-    protected function getAndClearMessages()
-    {
-        // empty all messages
-        $user = AuthenticationManager::getInstance()->getUser();
-        $messages = $user->getMessages();
-        $user->clearMessages();
-        AuthenticationManager::getInstance()->getSession()->write();
-        return $messages;
-    }
-
-    /**
      * Send a message with the logging level Zend_Log::INFO to the current user and
      * commit the changes to the underlying session.
      *

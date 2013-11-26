@@ -5,7 +5,6 @@
  * This file is part of Icinga Web 2.
  *
  * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -58,7 +57,6 @@ class ConfigController extends BaseConfigController
      * @var array
      */
     private $resourceTypes = array('livestatus', 'ido', 'statusdat', 'ldap');
-
 
     /**
      * Create tabs for this configuration controller
@@ -113,8 +111,7 @@ class ConfigController extends BaseConfigController
      */
     public function indexAction()
     {
-        $this->view->messageBox = new AlertMessageBox($this->getAndClearMessages());
-
+        $this->view->messageBox = new AlertMessageBox(true);
         $form = new GeneralForm();
         $form->setConfiguration(IcingaConfig::app());
         $form->setRequest($this->_request);
@@ -134,7 +131,7 @@ class ConfigController extends BaseConfigController
      */
     public function loggingAction()
     {
-        $this->view->messageBox = new AlertMessageBox($this->getAndClearMessages());
+        $this->view->messageBox = new AlertMessageBox(true);
 
         $form = new LoggingForm();
         $form->setConfiguration(IcingaConfig::app());
@@ -155,9 +152,8 @@ class ConfigController extends BaseConfigController
      */
     public function moduleoverviewAction()
     {
-        $this->view->messageBox = new AlertMessageBox($this->getAndClearMessages());
+        $this->view->messageBox = new AlertMessageBox(true);
 
-        $this->view->messages = $this->getAndClearMessages();
         $this->view->modules = Icinga::app()->getModuleManager()->select()
             ->from('modules')
             ->order('name');
@@ -213,7 +209,7 @@ class ConfigController extends BaseConfigController
         $config = IcingaConfig::app('authentication', true);
         $order = array_keys($config->toArray());
         $this->view->backends = array();
-        $this->view->messageBox = new AlertMessageBox($this->getAndClearMessages());
+        $this->view->messageBox = new AlertMessageBox(true);
 
         foreach ($config as $backend=>$backendConfig) {
             $form = new ReorderForm();
@@ -243,7 +239,7 @@ class ConfigController extends BaseConfigController
      */
     public function createauthenticationbackendAction()
     {
-        $this->view->messageBox = new AlertMessageBox();
+        $this->view->messageBox = new AlertMessageBox(true);
 
         if ($this->getRequest()->getParam('type') === 'ldap') {
             $form = new LdapBackendForm();
@@ -263,7 +259,7 @@ class ConfigController extends BaseConfigController
             foreach ($form->getConfig() as $backendName => $settings) {
                 unset($settings->{'name'});
                 if (isset($backendCfg[$backendName])) {
-                    $this->view->messageBox->addError('Backend name already exists');
+                    $this->addErrorMessage('Backend name already exists');
                     $this->view->form = $form;
                     $this->render('authentication/create');
                     return;
@@ -292,6 +288,8 @@ class ConfigController extends BaseConfigController
      */
     public function editauthenticationbackendAction()
     {
+        $this->view->messageBox = new AlertMessageBox(true);
+
         $configArray = IcingaConfig::app('authentication', true)->toArray();
         $authBackend =  $this->getParam('auth_backend');
         if (!isset($configArray[$authBackend])) {
@@ -354,21 +352,12 @@ class ConfigController extends BaseConfigController
      */
     public function removeauthenticationbackendAction()
     {
-        $this->view->messageBox = new AlertMessageBox();
+        $this->view->messageBox = new AlertMessageBox(true);
 
         $configArray = IcingaConfig::app('authentication', true)->toArray();
         $authBackend =  $this->getParam('auth_backend');
         if (!isset($configArray[$authBackend])) {
-            $this->view->messageBox->addMessage(
-                new Message('Can\'t perform removal: Unknown Authentication Backend Provided', Zend_Log::ERR)
-            );
-            $this->render('authentication/remove');
-            return;
-        }
-        if (!array_key_exists('resource', $configArray[$authBackend])) {
-            $this->view->messageBox->addMessage(
-                new Message('Configuration error: Backend "' . $authBackend . '" has no Resource', Zend_Log::ERR)
-            );
+            $this->addSuccessMessage('Can\'t perform removal: Unknown Authentication Backend Provided');
             $this->render('authentication/remove');
             return;
         }
@@ -393,8 +382,7 @@ class ConfigController extends BaseConfigController
 
     public function resourceAction($showOnly = false)
     {
-        $this->view->messageBox = new AlertMessageBox($this->getAndClearMessages());
-
+        $this->view->messageBox = new AlertMessageBox(true);
         $this->view->resources = IcingaConfig::app('resources', true)->toArray();
         $this->render('resource');
     }
@@ -418,7 +406,7 @@ class ConfigController extends BaseConfigController
             }
         }
 
-        $this->view->messageBox = new AlertMessageBox($this->getAndClearMessages());
+        $this->view->messageBox = new AlertMessageBox(true);
         $this->view->messageBox->addForm($form);
         $this->view->form = $form;
         $this->render('resource/create');
@@ -426,14 +414,12 @@ class ConfigController extends BaseConfigController
 
     public function editresourceAction()
     {
-        $this->view->messageBox = new AlertMessageBox();
+        $this->view->messageBox = new AlertMessageBox(true);
 
         $resources = ResourceFactory::getResourceConfigs();
         $name =  $this->getParam('resource');
         if ($resources->get($name) === null) {
-            $this->view->messageBox->addMessage(
-                new Message('Can\'t edit: Unknown Resource Provided', Zend_Log::ERR)
-            );
+            $this->addErrorMessage('Can\'t edit: Unknown Resource Provided');
             $this->render('resource/modify');
             return;
         }
@@ -466,14 +452,12 @@ class ConfigController extends BaseConfigController
 
     public function removeresourceAction()
     {
-        $this->view->messageBox = new AlertMessageBox();
+        $this->view->messageBox = new AlertMessageBox(true);
 
         $resources = ResourceFactory::getResourceConfigs()->toArray();
         $name =  $this->getParam('resource');
         if (!isset($resources[$name])) {
-            $this->view->messageBox->addMessage(
-                new Message('Can\'t remove: Unknown resource provided', Zend_Log::ERR)
-            );
+            $this->addSuccessMessage('Can\'t remove: Unknown resource provided');
             $this->render('resource/remove');
             return;
         }
@@ -481,6 +465,18 @@ class ConfigController extends BaseConfigController
         $form = new ConfirmRemovalForm();
         $form->setRequest($this->getRequest());
         $form->setRemoveTarget('resource', $name);
+	    
+        // Check if selected resource is currently used for authentication
+        $authConfig = IcingaConfig::app('authentication', true)->toArray();
+        foreach ($authConfig as $backendName => $config) {
+           if (array_key_exists('resource', $config) && $config['resource'] === $name) { 
+              $this->addErrorMessage(
+				'Warning: The resource "' . $name . '" is currently used for user authentication by "' . $backendName  . '". ' .
+				' Deleting it could eventally make login impossible.'
+              );
+           }
+        }
+
         if ($form->isSubmittedAndValid()) {
             unset($resources[$name]);
             if ($this->writeConfigFile($resources, 'resources')) {
@@ -504,7 +500,7 @@ class ConfigController extends BaseConfigController
      */
     public function configurationerrorAction()
     {
-        $this->view->messageBox = new AlertMessageBox($this->getAndClearMessages());
+        $this->view->messageBox = new AlertMessageBox(true);
         $this->render('error/error');
     }
 

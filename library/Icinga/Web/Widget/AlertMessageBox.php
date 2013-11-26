@@ -4,17 +4,33 @@ namespace Icinga\Web\Widget;
 
 use \Zend_Log;
 use \Zend_Form;
+use \Icinga\User;
 use \Icinga\User\Message;
 use \Zend_View_Abstract;
+use \Icinga\Authentication\Manager as AuthenticationManager;
 
 /**
- * Class AlertMessageBox
+ * Displays a set of alert messages to the user. 
  *
- * Displays a set of alert messages to the user.
- *
- * @package Icinga\Web\Widget
+ * The messages are fetched automatically from the current AuthenticationManager, 
+ * but this is done lazily when render() is called, to ensure that messages will 
+ * always be displayed before they are cleared. 
  */
 class AlertMessageBox implements \Icinga\Web\Widget\Widget {
+
+    /**
+     * Remove all messages from the current user, return them and commit
+     * changes to the underlying session.
+     *
+     * @return array    The messages
+     */
+    protected function getAndClearMessages()
+    {
+        $messages = $this->user->getMessages();
+        $this->user->clearMessages();
+        AuthenticationManager::getInstance()->getSession()->write();
+        return $messages;
+    }
 
     /**
      * The displayed alert messages
@@ -22,6 +38,13 @@ class AlertMessageBox implements \Icinga\Web\Widget\Widget {
      * @var array
      */
     private $messages = array();
+    
+    /**
+     * The user to fetch the messages from
+     *
+     * @var User
+     */
+    private $user;
 
     /**
      * The available states.
@@ -50,24 +73,13 @@ class AlertMessageBox implements \Icinga\Web\Widget\Widget {
     /**
      * Create a new AlertBox
      *
-     * @param Message|array $messages     The message(s) to display
+     * @param boolean showUserMessages 	If the current user messages should be displayed 
+	 *									in this	AlertMessageBox. Defaults to false
      */
-    public function __construct($messages = array()) {
-        if (!is_array($messages)) {
-            $this->messages = array($messages);
-        } else {
-            $this->messages = $messages;
+    public function __construct($showUserMessages = false) {
+		if ($showUserMessages) {
+            $this->user = AuthenticationManager::getInstance()->getUser();
         }
-    }
-
-    /**
-     * Add a new message.
-     *
-     * @param Message $message
-     */
-    public function addMessage(Message $message)
-    {
-        $this->messages[] = $message;
     }
 
     /**
@@ -97,6 +109,9 @@ class AlertMessageBox implements \Icinga\Web\Widget\Widget {
      */
     public function render(Zend_View_Abstract $view = null) {
         $html = '';
+        if (isset($this->user)) {
+           $this->messages = array_merge($this->messages, $this->getAndClearMessages());
+        }
         foreach ($this->messages as $message) {
             $level = $message->getLevel();
             if (!array_key_exists($level, $this->states)) {

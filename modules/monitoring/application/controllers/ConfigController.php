@@ -70,7 +70,7 @@ class Monitoring_ConfigController extends BaseConfigController {
      */
     public function indexAction()
     {
-        $this->view->messageBox = new AlertMessageBox($this->getAndClearMessages());
+        $this->view->messageBox = new AlertMessageBox(true);
         $this->view->backends  = IcingaConfig::module('monitoring', 'backends')->toArray();
         $this->view->instances = IcingaConfig::module('monitoring', 'instances')->toArray();
         $this->render('index');
