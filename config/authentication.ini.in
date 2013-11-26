@@ -12,23 +12,13 @@
 ; priority.
 
 
-[ldap_authentication]
+[internal_ldap_authentication]
 @ldap_auth_disabled@
-backend     = "ldap"
-target      = "user"
-hostname    = "@ldap_host@"
-port        = "@ldap_port@"
-root_dn     = "@ldap_rootdn@"
-bind_dn     = "@ldap_binddn@"
-bind_pw     = "@ldap_bindpass@"
+backend     = ldap
+target      = user
+resource    = internal_ldap
 
-; Object class of the user
-user_class              = "@ldap_user_objectclass@"
-
-; Attribute name for username
-user_name_attribute     = "@ldap_attribute_username@"
-
-[internal_authentication]
+[internal_db_authentication]
 @internal_auth_disabled@
 backend     = db
 target      = "user"
