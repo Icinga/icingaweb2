@@ -1,12 +1,12 @@
-<?= $this->tabs->render($this); ?>
-<h4>{{REMOVE_ICON}} Remove Instance "<?= $this->escape($this->name) ?>"</h4>
+
+<h4><i class="icinga-icon-remove"></i> Remove Instance "<?= $this->escape($this->name) ?>"</h4>
 
 <p>
   Are you sure you want to remove the instance <?= $this->escape($this->name) ?>?
 </p>
 
 <p>
-  {{WARNING_ICON}} If you have still any environments or views refering to this instance, you won't be able to send commands anymore
+  <i class="icinga-icon-warning"></i> If you have still any environments or views refering to this instance, you won't be able to send commands anymore
   after deletion.
 </p>
 

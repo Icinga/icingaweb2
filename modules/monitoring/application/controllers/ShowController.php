@@ -56,7 +56,6 @@ class Monitoring_ShowController extends MonitoringController
      */
     public function init()
     {
-
         if ($this->getRequest()->getActionName() === 'host') {
             $this->view->object = new Host($this->getRequest());
         } elseif ($this->getRequest()->getActionName() === 'service'

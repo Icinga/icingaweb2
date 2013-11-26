@@ -30,6 +30,9 @@
 namespace Icinga\Web\Controller;
 
 use \Icinga\Application\Icinga;
+use \Icinga\Authentication\Manager as AuthenticationManager;
+use \Zend_Log;
+use \Icinga\User\Message;
 
 /**
  *  Base class for Configuration Controllers
@@ -38,14 +41,36 @@ use \Icinga\Application\Icinga;
  *  added to the application's configuration dialog. If you create a subclass of
  *  BasePreferenceController and overwrite @see init(), make sure you call
  *  parent::init(), otherwise you won't have the $tabs property in your view.
- *
  */
 class BaseConfigController extends ActionController
 {
     /**
-     * @var Zend_Controller_Action_Helper_FlashMessenger
+     * Send a message with the logging level Zend_Log::INFO to the current user and
+     * commit the changes to the underlying session.
+     *
+     * @param $msg      The message content
      */
-    protected $flashManager;
+    protected function addSuccessMessage($msg)
+    {
+        AuthenticationManager::getInstance()->getUser()->addMessage(
+            new Message($msg, Zend_Log::INFO)
+        );
+        AuthenticationManager::getInstance()->getSession()->write();
+    }
+
+    /**
+     * Send a message with the logging level Zend_Log::ERR to the current user and
+     * commit the changes to the underlying session.
+     *
+     * @param $msg      The message content
+     */
+    protected function addErrorMessage($msg)
+    {
+        AuthenticationManager::getInstance()->getUser()->addMessage(
+            new Message($msg, Zend_Log::ERR)
+        );
+        AuthenticationManager::getInstance()->getSession()->write();
+    }
 
     /*
      * Return an array of tabs provided by this configuration controller.
@@ -68,6 +93,5 @@ class BaseConfigController extends ActionController
     {
         parent::init();
         $this->view->tabs = ControllerTabCollector::collectControllerTabs('ConfigController');
-        $this->view->flashMessages = $this->_request->getParam('flash_message');
     }
 }

@@ -121,15 +121,9 @@ class Manager
         }
 
         if (!isset($options['sessionClass'])) {
-            $this->session = new PhpSession($config->session);
+            $this->session = new PhpSession();
         } else {
             $this->session = $options['sessionClass'];
-        }
-
-        if (isset($options['writeSession']) && $options['writeSession'] === true) {
-            $this->session->read(true);
-        } else {
-            $this->session->read();
         }
     }
 
@@ -404,9 +398,9 @@ class Manager
     }
 
     /**
-     *   Returns the current user or null if no user is authenticated
+     * Returns the current user or null if no user is authenticated
      *
-     *   @return User
+     * @return User
      **/
     public function getUser()
     {

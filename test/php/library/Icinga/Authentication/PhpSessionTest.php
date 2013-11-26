@@ -49,67 +49,54 @@ class PhpSessionTest extends BaseTestCase
 {
     private function getSession()
     {
-
         if (!is_writable('/tmp')) {
             $this->markTestSkipped('Could not write to session directory');
         }
         return new PhpSession(
             array(
                 'use_cookies'   => false,
-                'save_path'     => '/tmp'
+                'save_path'     => '/tmp',
+                'test_session_name' => 'IcingawebUnittest'
             )
         );
-
     }
     /**
-    *   Test the creation of a PhpSession object
-    *
-    *   @runInSeparateProcess
-    **/
+     * Test the creation of a PhpSession object
+     *
+     * @runInSeparateProcess
+     */
     public function testSessionCreation()
     {
         $this->getSession();
     }
 
     /**
-     *   Test PhpSession::open()
+     * Test PhpSession::open()
      *
-     *   @runInSeparateProcess
+     * @runInSeparateProcess
      */
-    public function testOpenSession()
+    public function testSessionReadWrite()
     {
-        $this->assertEquals(session_id(), '', 'Asserting test precondition: session not being setup yet ');
         $session = $this->getSession();
-        $session->open();
-        $this->assertNotEquals(session_id(), '', 'Asserting a Session ID being available after PhpSession::open()');
+        $session->purge();
+        $this->assertEquals(null, $session->get('key'));
+        $session->set('key', 'value');
+        $session->write();
+        $session->read();
+        $this->assertEquals('value', $session->get('key'));
     }
 
     /**
-     *  Test a session being closed by PhpSession::close()
+     * Test a session being closed by PhpSession::close()
      *
-     *  @runInSeparateProcess
-     **/
-    public function testCloseSession()
-    {
-        $this->assertEquals(session_id(), '', 'Asserting test precondition: session not being setup yet ');
-        $session = $this->getSession();
-        $session->open();
-        $this->assertNotEquals(session_id(), '', 'Asserting a Session ID being available after PhpSession::open()');
-        $session->close();
-    }
-
-    /**
-     *  Test if a session is correctly purged when calling PhpSession::purge()
-     *
-     *  @runInSeparateProcess
+     * @runInSeparateProcess
      */
     public function testPurgeSession()
     {
-        $this->assertEquals(session_id(), '', 'Asserting test precondition: session not being setup yet ');
         $session = $this->getSession();
-        $session->open();
-        $this->assertNotEquals(session_id(), '', 'Asserting a Session ID being available after PhpSession::open()');
+        $session->set('key2', 'value2');
         $session->purge();
-        $this->assertEquals(session_id(), '', 'Asserting no Session ID being available after PhpSession::purge()');
+        $session->read();
+        $this->assertEquals(null, $session->get('key2'));
     }
 }

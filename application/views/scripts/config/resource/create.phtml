@@ -3,14 +3,12 @@
     Create New Resource
 </h4>
 
-<?php if ($this->errorMessage): ?>
-<div class="alert alert-danger">
-  <?= $this->escape($this->errorMessage); ?>
-</div>
-<?php endif; ?>
+<?php if (isset($this->messageBox)): ?>
+  <?= $this->messageBox->render() ?>
+<?php endif ?>
 
 <p>
-  Create a new resource to describes a data sourc
+  Resources are entities that provide data to Icingaweb.
 </p>
 
 <?= $this->form ?>

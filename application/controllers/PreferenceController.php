@@ -41,15 +41,6 @@ class PreferenceController extends BasePreferenceController
 {
 
     /**
-     * This controller modifies the session
-     *
-     * @var bool
-     *
-     * @see \Icinga\Web\Controller\ActionController::$modifiesSession
-     */
-    protected $modifiesSession = true;
-
-    /**
      * Create tabs for this preference controller
      *
      * @return  array
