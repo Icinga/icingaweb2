@@ -18,7 +18,7 @@ INSERT INTO account (
   )
   VALUES (
     'icingaadmin',
-    'IepKgTTShC',
-    '52deddb5cc7a5769484fcb0fbc5981a7c62cd9f3ddbb8ff3ddb1b89ea324ad16',
+    '57cfd5746224be4f60c25d4e8514bec35ad2d01810723a138756b285898e71b2',
+    '43f8e0588eb39f1a41383b48def0b1fdc45e79b8f67194cccee4453eb3f4ea13',
     1
   );

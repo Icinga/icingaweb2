@@ -169,8 +169,8 @@ class DbUserBackendTest extends BaseTestCase
                 self::USER_NAME_COLUMN  => $usr[self::USER_NAME_COLUMN],
                 self::PASSWORD_COLUMN   => hash_hmac(
                     'sha256',
-                    $usr[self::SALT_COLUMN],
-                    $usr[self::PASSWORD_COLUMN]
+                    $usr[self::PASSWORD_COLUMN],
+                    $usr[self::SALT_COLUMN]
                 ),
                 self::ACTIVE_COLUMN => $usr[self::ACTIVE_COLUMN],
                 self::SALT_COLUMN   => $usr[self::SALT_COLUMN]
