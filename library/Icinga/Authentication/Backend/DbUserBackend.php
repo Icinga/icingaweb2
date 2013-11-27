@@ -55,34 +55,6 @@ use \Icinga\Exception\ConfigurationError;
 class DbUserBackend implements UserBackend
 {
     /**
-     * Table map for column username
-     *
-     * @var string
-     */
-    const USER_NAME_COLUMN = 'username';
-
-    /**
-     * Table map for column salt
-     *
-     * @var string
-     */
-    const SALT_COLUMN = 'salt';
-
-    /**
-     * Table map for column password
-     *
-     * @var string
-     */
-    const PASSWORD_COLUMN = 'password';
-
-    /**
-     * Table map for column active
-     *
-     * @var string
-     */
-    const ACTIVE_COLUMN = 'active';
-
-    /**
      * The database connection that will be used for fetching users
      *
      * @var Zend_Db
@@ -95,6 +67,34 @@ class DbUserBackend implements UserBackend
      * @var String
      */
     private $userTable = 'account';
+
+    /**
+     * Column name to identify active users
+     *
+     * @var string
+     */
+    private $activeColumnName = 'active';
+
+    /**
+     * Column name to fetch the password
+     *
+     * @var string
+     */
+    private $passwordColumnName = 'password';
+
+    /**
+     * Column name for password salt
+     *
+     * @var string
+     */
+    private $saltColumnName = 'salt';
+
+    /**
+     * Column name for user name
+     *
+     * @var string
+     */
+    private $userColumnName = 'username';
 
     /**
      * Name of the backend
@@ -128,6 +128,58 @@ class DbUserBackend implements UserBackend
 
         // test the connection
         $this->db->getConnection();
+    }
+
+    /**
+     * Setter for password column
+     *
+     * @param string $passwordColumnName
+     */
+    public function setPasswordColumnName($passwordColumnName)
+    {
+        $this->passwordColumnName = $passwordColumnName;
+    }
+
+    /**
+     * Setter for password salt column
+     *
+     * @param string $saltColumnName
+     */
+    public function setSaltColumnName($saltColumnName)
+    {
+        $this->saltColumnName = $saltColumnName;
+    }
+
+    /**
+     * Setter for usernamea column
+     *
+     * @param string $userColumnName
+     */
+    public function setUserColumnName($userColumnName)
+    {
+        $this->userColumnName = $userColumnName;
+    }
+
+    /**
+     * Setter for database table
+     *
+     * @param String $userTable
+     */
+    public function setUserTable($userTable)
+    {
+        $this->userTable = $userTable;
+    }
+
+    /**
+     * Setter for column identifying an active user
+     *
+     * Set this to null if no active column exists.
+     *
+     * @param string $activeColumnName
+     */
+    public function setActiveColumnName($activeColumnName)
+    {
+        $this->activeColumnName = $activeColumnName;
     }
 
     /**
@@ -172,19 +224,20 @@ class DbUserBackend implements UserBackend
             );
             return null;
         }
-        $res = $this->db
+        $sth = $this->db
             ->select()->from($this->userTable)
-                ->where(self::USER_NAME_COLUMN . ' = ?', $credential->getUsername())
-                ->where(self::ACTIVE_COLUMN . ' = ?', true)
-                ->where(
-                    self::PASSWORD_COLUMN . ' = ?',
-                    hash_hmac(
-                        'sha256',
-                        $salt,
-                        $credential->getPassword()
-                    )
-                )
-                ->query()->fetch();
+            ->where($this->userColumnName . ' = ?', $credential->getUsername())
+            ->where(
+                $this->passwordColumnName . ' = ?',
+                $this->createPasswordHash($credential->getPassword(), $salt)
+            );
+
+        if ($this->activeColumnName !== null) {
+            $sth->where($this->activeColumnName . ' = ?', true);
+        }
+
+        $res = $sth->query()->fetch();
+
         if ($res !== false) {
             return $this->createUserFromResult($res);
         }
@@ -203,14 +256,26 @@ class DbUserBackend implements UserBackend
     private function getUserSalt($username)
     {
         $res = $this->db->select()
-            ->from($this->userTable, self::SALT_COLUMN)
-            ->where(self::USER_NAME_COLUMN.' = ?', $username)
+            ->from($this->userTable, $this->saltColumnName)
+            ->where($this->userColumnName . ' = ?', $username)
             ->query()->fetch();
         if ($res !== false) {
-            return $res->{self::SALT_COLUMN};
+            return $res->{$this->saltColumnName};
         } else {
             throw new ProgrammingError('No Salt found for user "' . $username . '"');
         }
+    }
+
+    /**
+     * Create password hash at this place
+     *
+     * @param   string $password
+     * @param   string $salt
+     *
+     * @return  string
+     */
+    protected function createPasswordHash($password, $salt) {
+        return hash_hmac('sha256', $password, $salt);
     }
 
     /**
@@ -223,11 +288,16 @@ class DbUserBackend implements UserBackend
     private function getUserByName($username)
     {
         $this->db->getConnection();
-        $res = $this->db->
-            select()->from($this->userTable)
-                ->where(self::USER_NAME_COLUMN .' = ?', $username)
-                ->where(self::ACTIVE_COLUMN .' = ?', true)
-                ->query()->fetch();
+        $sth = $this->db->select()
+            ->from($this->userTable)
+            ->where($this->userColumnName .' = ?', $username);
+
+        if ($this->activeColumnName !== null) {
+            $sth->where($this->activeColumnName .' = ?', true);
+        }
+
+        $res = $sth->query()->fetch();
+
         if ($res !== false) {
             return $this->createUserFromResult($res);
         }
@@ -245,7 +315,7 @@ class DbUserBackend implements UserBackend
     private function createUserFromResult(stdClass $resultRow)
     {
         $usr = new User(
-            $resultRow->{self::USER_NAME_COLUMN}
+            $resultRow->{$this->userColumnName}
         );
         return $usr;
     }
