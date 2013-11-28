@@ -277,7 +277,7 @@ class User
     public function setEmail($mail)
     {
         if (filter_var($mail, FILTER_VALIDATE_EMAIL)) {
-            $this->mail = $mail;
+            $this->email = $mail;
         } else {
             throw new InvalidArgumentException("Invalid mail given for user $this->username: $mail");
         }
