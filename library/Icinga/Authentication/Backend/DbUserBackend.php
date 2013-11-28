@@ -97,6 +97,13 @@ class DbUserBackend implements UserBackend
     private $userColumnName = 'username';
 
     /**
+     * Column name of email
+     *
+     * @var string
+     */
+    private $emailColumnName = null;
+
+    /**
      * Name of the backend
      *
      * @var string
@@ -180,6 +187,18 @@ class DbUserBackend implements UserBackend
     public function setActiveColumnName($activeColumnName)
     {
         $this->activeColumnName = $activeColumnName;
+    }
+
+    /**
+     * Setter for email column
+     *
+     * Set to null if not needed
+     *
+     * @param string $emailColumnName
+     */
+    public function setEmailColumnName($emailColumnName)
+    {
+        $this->emailColumnName = $emailColumnName;
     }
 
     /**
@@ -312,10 +331,13 @@ class DbUserBackend implements UserBackend
      *
      * @return  User                    The created instance of User.
      */
-    private function createUserFromResult(stdClass $resultRow)
+    protected function createUserFromResult(stdClass $resultRow)
     {
         $usr = new User(
-            $resultRow->{$this->userColumnName}
+            $resultRow->{$this->userColumnName},
+            null,
+            null,
+            (isset($resultRow->{$this->emailColumnName})) ? $resultRow->{$this->emailColumnName} : null
         );
         return $usr;
     }
