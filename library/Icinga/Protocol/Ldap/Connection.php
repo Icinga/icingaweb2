@@ -486,6 +486,53 @@ class Connection
         }
     }
 
+    /**
+     * Create an ldap entry
+     *
+     * @param   string  $dn     DN to add
+     * @param   array   $entry  Entry description
+     *
+     * @return bool             True on success
+     */
+    public function addEntry($dn, array $entry)
+    {
+        return ldap_add($this->ds, $dn, $entry);
+    }
+
+    /**
+     * Modify a ldap entry
+     *
+     * @param string $dn    DN of the entry to change
+     * @param array $entry  Change values
+     *
+     * @return bool         True on success
+     */
+    public function modifyEntry($dn, array $entry)
+    {
+        return ldap_modify($this->ds, $dn, $entry);
+    }
+
+    /**
+     * Move entry to a new DN
+     *
+     * @param   string $dn          DN of the object
+     * @param   string $newRdn      Relative DN identifier
+     * @param   string $newParentDn Parent or superior entry
+     * @throws  \Exception          Thrown then rename failed
+     *
+     * @return bool                 True on success
+     */
+    public function moveEntry($dn, $newRdn, $newParentDn)
+    {
+        $returnValue = ldap_rename($this->ds, $dn, $newRdn, $newParentDn, false);
+
+        if ($returnValue === false) {
+            throw new \Exception('Could not move entry: ' . ldap_error($this->ds));
+        }
+
+        return $returnValue;
+    }
+
     public function __destruct()
     {
         putenv('LDAPRC');
