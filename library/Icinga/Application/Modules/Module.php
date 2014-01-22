@@ -154,6 +154,7 @@ class Module
         $this->formdir        = $basedir. '/application/forms';
         $this->controllerdir  = $basedir. '/application/controllers';
         $this->runScript      = $basedir. '/register.php';
+        $this->configScript   = $basedir. '/configuration.php';
     }
 
     /**
