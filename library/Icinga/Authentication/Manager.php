@@ -95,6 +95,20 @@ class Manager
     private $session = null;
 
     /**
+     * The configuration
+     *
+     * @var Zend_Config
+     */
+    private $config = null;
+
+    /**
+     * If the backends are already created.
+     *
+     * @var Boolean
+     */
+    private $initialized = false;
+
+    /**
      * Creates a new authentication manager using the provided config (or the
      * configuration provided in the authentication.ini if no config is given)
      * and with the given options.
@@ -112,16 +126,12 @@ class Manager
         if ($config === null && !(isset($options['noDefaultConfig']) && $options['noDefaultConfig'] == true)) {
                 $config = IcingaConfig::app('authentication');
         }
-
-        if ($config !== null) {
-            $this->setupBackends($config);
-        }
-
         if (!isset($options['sessionClass'])) {
             $this->session = new PhpSession();
         } else {
             $this->session = $options['sessionClass'];
         }
+        $this->config = $config;
     }
 
     /**
@@ -226,6 +236,7 @@ class Manager
      */
     public function getUserBackend($name)
     {
+        $this->initBackends();
         return (isset($this->userBackends[$name])) ?
             $this->userBackends[$name] : null;
     }
@@ -249,6 +260,7 @@ class Manager
      */
     public function getGroupBackend($name)
     {
+        $this->initBackends();
         return (isset($this->groupBackends[$name])) ?
             $this->groupBackends[$name] : null;
     }
@@ -263,8 +275,9 @@ class Manager
      */
     private function getBackendForCredential(Credential $credentials)
     {
-        $authErrors = 0;
+        $this->initBackends();
 
+        $authErrors = 0;
         foreach ($this->userBackends as $userBackend) {
 
             $flag = false;
@@ -310,6 +323,17 @@ class Manager
     }
 
     /**
+     * Ensures that all backends are initialized
+     */
+    private function initBackends()
+    {
+        if (!$this->initialized) {
+            $this->setupBackends($this->config);
+            $this->initialized = true;
+        }
+    }
+
+    /**
      * Try to authenticate the current user with the Credential (@see Credential).
      *
      * @param   Credential $credentials        The credentials to use for authentication
@@ -321,6 +345,7 @@ class Manager
      */
     public function authenticate(Credential $credentials, $persist = true)
     {
+        $this->initBackends();
         if (count($this->userBackends) === 0) {
             Logger::error('AuthManager: No authentication backend provided, your users will never be able to login.');
             throw new ConfigError(
