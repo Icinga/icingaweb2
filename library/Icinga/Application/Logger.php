@@ -193,12 +193,16 @@ final class Logger
 
             $target = Config::resolvePath($target);
             // Make sure the permissions for log target file are correct
-            if ($type === 'Stream' && substr($target, 0, 6) !== 'php://' && !file_exists($target)) {
-                touch($target);
-                chmod($target, 0664);
+            if ($type === 'Stream') {
                 $writer = new $writerClass($target);
+                if (substr($target, 0, 6) !== 'php://' && !file_exists($target)) {
+                    touch($target);
+                    chmod($target, 0664);
+                }
             } elseif ($type === 'Syslog') {
                 $writer = new $writerClass();
+            } else {
+                self::fatal('Got invalid lot type "%s"', $type);
             }
             $writer->addFilter(new Zend_Log_Filter_Priority($priority));
 
