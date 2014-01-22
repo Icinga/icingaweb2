@@ -131,6 +131,7 @@ class DbUserBackendTest extends BaseTestCase
     {
         $this->setupDbProvider($db);
         $backend = new DbUserBackend($this->createDbBackendConfig($db));
+        $backend->connect();
         $this->runBackendAuthentication($backend);
         $this->runBackendUsername($backend);
     }
@@ -144,6 +145,7 @@ class DbUserBackendTest extends BaseTestCase
     {
         $this->setupDbProvider($db);
         $backend = new DbUserBackend($this->createDbBackendConfig($db));
+        $backend->connect();
         $this->runBackendAuthentication($backend);
         $this->runBackendUsername($backend);
     }
@@ -281,7 +283,7 @@ class DbUserBackendTest extends BaseTestCase
 
         $testName = 'test-name-123123';
         $backend = new DbUserBackend($this->createDbBackendConfig($db, $testName));
-
+        $backend->connect();
         $this->assertSame($testName, $backend->getName());
     }
 
@@ -293,6 +295,7 @@ class DbUserBackendTest extends BaseTestCase
         $this->setupDbProvider($db);
         $testName = 'test-name-123123';
         $backend = new DbUserBackend($this->createDbBackendConfig($db, $testName));
+        $backend->connect();
 
         $this->assertGreaterThan(0, $backend->getUserCount());
     }
@@ -305,6 +308,7 @@ class DbUserBackendTest extends BaseTestCase
         $this->setupDbProvider($db);
         $testName = 'test-name-123123';
         $backend = new DbUserBackend($this->createDbBackendConfig($db, $testName));
+        $backend->connect();
 
         $this->assertGreaterThan(0, $backend->getUserCount());
     }

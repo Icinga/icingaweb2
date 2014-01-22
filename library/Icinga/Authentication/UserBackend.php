@@ -69,4 +69,11 @@ interface UserBackend
      * @return int
      */
     public function getUserCount();
+
+    /**
+     * Establish the connection to this authentication backend
+     *
+     * @throws ConfigurationError   When the backend is not reachable with the given configuration.
+     */
+    public function connect();
 }

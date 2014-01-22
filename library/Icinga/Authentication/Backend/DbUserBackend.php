@@ -35,7 +35,6 @@ use \Zend_Config;
 use \Zend_Db;
 use \Zend_Db_Adapter_Abstract;
 use \Icinga\Data\ResourceFactory;
-use \Icinga\Data\Db\Connection as DbConnection;
 use \Icinga\User;
 use \Icinga\Authentication\UserBackend;
 use \Icinga\Authentication\Credential;
@@ -118,7 +117,7 @@ class DbUserBackend implements UserBackend
      *                                                  instance of Zend_Db_Adapter_Abstract
      *                                    'name'     => The name of this authentication backend
      *
-     * @throws Exception                 When the connection to the resource is not possible.
+     * @throws ConfigurationError        When the given resource does not exist.
      */
     public function __construct(Zend_Config $config)
     {
@@ -132,9 +131,6 @@ class DbUserBackend implements UserBackend
             $resource = ResourceFactory::createResource(ResourceFactory::getResourceConfig($config->resource));
             $this->db = $resource->getConnection();
         }
-
-        // test the connection
-        $this->db->getConnection();
     }
 
     /**
@@ -354,5 +350,15 @@ class DbUserBackend implements UserBackend
     {
         $query = $this->db->select()->from($this->userTable, 'COUNT(*) as count')->query();
         return $query->fetch()->count;
+    }
+
+    /**
+     * Try to connect to the underlying database.
+     *
+     * @throws ConfigurationError   When the backend is not reachable with the given configuration.
+     */
+    public function connect()
+    {
+        $this->db->getConnection();
     }
 }

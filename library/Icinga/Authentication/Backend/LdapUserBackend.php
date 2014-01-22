@@ -69,12 +69,12 @@ class LdapUserBackend implements UserBackend
     /**
      * Create a new LdapUserBackend
      *
-     * @param Zend_Config   $config      The configuration for this authentication backend.
-     *                                    'resource' => The name of the resource to use, or an actual
+     * @param Zend_Config   $config     The configuration for this authentication backend.
+     *                                   'resource' => The name of the resource to use, or an actual
      *                                                  instance of \Icinga\Protocol\Ldap\Connection.
-     *                                    'name'     => The name of this authentication backend.
+     *                                   'name'     => The name of this authentication backend.
      *
-     * @throws \Exception                 When the connection to the resource is not possible.
+     * @throws ConfigurationError       When the given resource does not exist.
      */
     public function __construct(Zend_Config $config)
     {
@@ -83,7 +83,6 @@ class LdapUserBackend implements UserBackend
         }
         $this->config = $config;
         $this->name = $config->name;
-
         if ($config->resource instanceof LdapConnection) {
             $this->connection = $config->resource;
         } else {
@@ -91,8 +90,6 @@ class LdapUserBackend implements UserBackend
                 ResourceFactory::getResourceConfig($config->resource)
             );
         }
-        // will throw an exception, when the connection is not possible.
-        $this->connection->connect();
     }
 
     /**
@@ -189,5 +186,16 @@ class LdapUserBackend implements UserBackend
                 )
             )
         );
+    }
+
+    /**
+     *
+     * Establish the connection to this authentication backend
+     *
+     * @throws \Exception   When the connection to the resource is not possible.
+     */
+    public function connect()
+    {
+        $this->connection->connect();
     }
 }

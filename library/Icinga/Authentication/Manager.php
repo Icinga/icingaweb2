@@ -34,13 +34,10 @@ use Icinga\Exception\ConfigurationError;
 use \Zend_Config;
 use \Icinga\User;
 use \Icinga\Data\ResourceFactory;
-use \Icinga\Data\Db\Connection as DbConnection;
 use \Icinga\Application\Logger;
 use \Icinga\Application\Config as IcingaConfig;
-use \Icinga\Protocol\Ldap\Connection as LdapConnection;
 use \Icinga\Authentication\Backend\DbUserBackend;
 use \Icinga\Authentication\Backend\LdapUserBackend;
-use \Icinga\Exception\ProgrammingError;
 use \Icinga\Exception\ConfigurationError as ConfigError;
 
 
@@ -159,11 +156,11 @@ class Manager
                 $backendConfig->name = $name;
             }
             $backend = $this->createBackend($backendConfig);
-
             if ($backend instanceof UserBackend) {
+                $backend->connect();
                 $this->userBackends[$backend->getName()] = $backend;
-
             } elseif ($backend instanceof GroupBackend) {
+                $backend->connect();
                 $this->groupBackends[$backend->getName()] = $backend;
             }
         }
