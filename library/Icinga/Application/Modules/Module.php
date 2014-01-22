@@ -29,8 +29,8 @@
 
 namespace Icinga\Application\Modules;
 
-use \Exception;
-use \Zend_Controller_Router_Route as Route;
+use Exception;
+use Zend_Controller_Router_Route as Route;
 use Icinga\Application\ApplicationBootstrap;
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
@@ -98,7 +98,7 @@ class Module
      *
      * @var string
      */
-    private $registerscript;
+    private $runScript;
 
     /**
      * Icinga application
@@ -125,7 +125,7 @@ class Module
         $this->localedir      = $basedir. '/application/locale';
         $this->formdir        = $basedir. '/application/forms';
         $this->controllerdir  = $basedir. '/application/controllers';
-        $this->registerscript = $basedir. '/register.php';
+        $this->runScript      = $basedir. '/register.php';
     }
 
     /**
@@ -138,11 +138,11 @@ class Module
         $this->registerAutoloader()
              ->registerWebIntegration();
         try {
-            $this->runRegisterScript();
+            $this->launchRunScript();
         } catch (Exception $e) {
             Logger::warn(
-                'Running the register script %s for module %s failed with the following exception: %s',
-                $this->registerscript,
+                'Launching the run script %s for module %s failed with the following exception: %s',
+                $this->runScript,
                 $this->name,
                 $e->getMessage()
             );
@@ -390,11 +390,11 @@ class Module
      *
      * @return self
      */
-    protected function runRegisterScript()
+    protected function launchRunScript()
     {
-        if (file_exists($this->registerscript)
-         && is_readable($this->registerscript)) {
-            include($this->registerscript);
+        if (file_exists($this->runScript)
+         && is_readable($this->runScript)) {
+            include($this->runScript);
         }
         return $this;
     }
