@@ -410,7 +410,9 @@ class Connection
         if (! $result) {
             throw new Exception(
                 sprintf(
-                    'Capability query failed: %s',
+                    'Capability query failed (%s:%d): %s',
+                    $this->hostname,
+                    $this->port,
                     ldap_error($ds)
                 )
             );
