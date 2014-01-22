@@ -86,7 +86,6 @@ class StaticController extends ActionController
         ) . ' GMT');
 
         readfile($filePath);
-        return;
     }
 
     /**
@@ -132,7 +131,6 @@ class StaticController extends ActionController
         );
 
         readfile($filePath);
-        return;
     }
 
     /**
@@ -176,8 +174,6 @@ class StaticController extends ActionController
         $this->setCacheHeader(3600);
 
         $lessCompiler->printStack();
-
-        return;
     }
 }
 // @codingStandardsIgnoreEnd
