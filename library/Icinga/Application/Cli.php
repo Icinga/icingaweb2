@@ -67,7 +67,7 @@ class Cli extends ApplicationBootstrap
              ->fixLoggingConfig()
              ->setupErrorHandling()
              ->setupResourceFactory()
-             ->setupModules()
+             ->setupModuleManager()
              ;
     }
 
@@ -91,34 +91,6 @@ class Cli extends ApplicationBootstrap
             $this->cliLoader = new Loader($this);
         }
         return $this->cliLoader;
-    }
-
-    /**
-     * Setup module loader
-     *
-     * TODO: This can be removed once broken bootstrapping has been fixed
-     *       Loading the module manager and enabling all modules have former
-     *       been two different tasks. CLI does NOT enable any module by default.
-     *
-     * @return self
-     */
-    protected function setupModules()
-    {
-        $this->moduleManager = new ModuleManager($this, $this->getConfigDir('enabledModules'));
-        return $this;
-    }
-
-    /**
-     * Getter for module manager
-     *
-     * TODO: This can also be removed once fixed. Making everything private
-     *       made this duplication necessary
-     *
-     * @return ModuleManager
-     */
-    public function getModuleManager()
-    {
-        return $this->moduleManager;
     }
 
     protected function parseBasicParams()

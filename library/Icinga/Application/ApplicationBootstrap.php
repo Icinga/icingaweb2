@@ -337,14 +337,23 @@ abstract class ApplicationBootstrap
     }
 
     /**
-     * Setup module loader and all enabled modules
+     * Setup module manager
      *
      * @return self
      */
-    protected function setupModules()
+    protected function setupModuleManager()
     {
         $this->moduleManager = new ModuleManager($this, $this->configDir . '/enabledModules');
+        return $this;
+    }
 
+    /**
+     * Load all enabled modules
+     *
+     * @return self
+     */
+    protected function loadEnabledModules()
+    {
         try {
             $this->moduleManager->loadEnabledModules();
         } catch (Exception $e) {

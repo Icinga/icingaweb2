@@ -110,7 +110,8 @@ class Web extends ApplicationBootstrap
             ->setupRequest()
             ->setupZendMvc()
             ->setupTranslation()
-            ->setupModules()
+            ->setupModuleManager()
+            ->loadEnabledModules()
             ->setupRoute()
             ->setupPagination();
     }
