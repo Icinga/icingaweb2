@@ -145,6 +145,7 @@ class DbBackendForm extends BaseBackendForm
                     )
                 )
             );
+            $dbBackend->connect();
             if ($dbBackend->getUserCount() < 1) {
                 $this->addErrorMessage("No users found under the specified database backend");
                 return false;

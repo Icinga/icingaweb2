@@ -121,4 +121,9 @@ class BackendMock implements UserBackend
     {
         $this->allowedCredentials = $credentials;
     }
+
+    public function connect()
+    {
+
+    }
 }
