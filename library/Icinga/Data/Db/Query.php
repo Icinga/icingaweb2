@@ -29,8 +29,6 @@
 
 namespace Icinga\Data\Db;
 
-use Icinga\Data\Optional;
-use Icinga\Data\The;
 use Icinga\Filter\Query\Node;
 use Icinga\Filter\Query\Tree;
 use Zend_Db_Select;
