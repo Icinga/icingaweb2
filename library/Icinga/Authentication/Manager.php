@@ -369,6 +369,12 @@ class Manager
             return false;
         }
 
+        // TODO: We want to separate permissions and restrictions from
+        //       the user object. This will be possible once session
+        //       had been refactored.
+        $this->user->loadPermissions();
+        $this->user->loadRestrictions();
+
         if ($persist == true) {
             $this->persistCurrentUser();
             $this->session->write();
@@ -408,6 +414,47 @@ class Manager
             $this->authenticateFromSession();
         }
         return is_object($this->user);
+    }
+
+    /**
+     * Whether an authenticated user has a given permission
+     *
+     * This is true if the user owns this permission, false if not.
+     * Also false if there is no authenticated user
+     *
+     * TODO: I'd like to see wildcard support, e.g. module/*
+     *
+     * @param  string  $permission  Permission name
+     * @return bool
+     */
+    public function hasPermission($permission)
+    {
+        if (! $this->isAuthenticated()) {
+            return false;
+        }
+        foreach ($this->user->getPermissions() as $p) {
+            if ($p === $permission) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Get applied restrictions matching a given restriction name
+     *
+     * Returns a list of applied restrictions, empty if no user is
+     * authenticated
+     *
+     * @param  string  $restriction  Restriction name
+     * @return array
+     */
+    public function getRestrictions($restriction)
+    {
+        if (! $this->isAuthenticated()) {
+            return array();
+        }
+        return $this->user->getRestrictions($restriction);
     }
 
     /**

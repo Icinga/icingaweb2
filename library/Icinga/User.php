@@ -29,12 +29,13 @@
 
 namespace Icinga;
 
-use \DateTimeZone;
-use \InvalidArgumentException;
-use \Icinga\User\Preferences;
-use \Icinga\User\Message;
-use \Icinga\Authentication\PhpSession;
-
+use DateTimeZone;
+use Exception;
+use InvalidArgumentException;
+use Icinga\User\Preferences;
+use Icinga\User\Message;
+use Icinga\Authentication\PhpSession;
+use Icinga\Application\Config;
 
 /**
  *  This class represents an authorized user
@@ -92,6 +93,13 @@ class User
      * @var array
      */
     private $permissions = array();
+
+    /**
+     * Set of restrictions
+     *
+     * @var array
+     */
+    private $restrictions = array();
 
     /**
      * Groups for this user
@@ -199,6 +207,19 @@ class User
     }
 
     /**
+     * Return restriction information for this user
+     *
+     * @return Array
+     */
+    public function getRestrictions($name)
+    {
+        if (array_key_exists($name, $this->restrictions)) {
+            return $this->restrictions[$name];
+        }
+        return array();
+    }
+
+    /**
      * Getter for username
      *
      * @return string
@@ -301,6 +322,66 @@ class User
     public function getDomain()
     {
         return $this->domain;
+    }
+
+    /**
+     * Load permissions for this user from permissions.ini
+     *
+     * TODO: - Separate this from the user object once possible
+     *       - Support group permissions once groups are available
+     *
+     * @return self
+     */
+    public function loadPermissions()
+    {
+        try {
+          // TODO: Config::app should gracefully handle missing files
+          $config = Config::app('permissions');
+        } catch (Exception $e) {
+          return $this;
+        }
+        foreach ($config as $section) {
+            if ($section->get('user') !== $this->username) {
+                continue;
+            }
+            foreach ($section->toArray() as $key => $val) {
+                if (false !== ($pos = strpos($key, '_'))
+                    && substr($key, 0, $pos) === 'permission')
+                {
+                    $this->permissions[] = $val;
+                }
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * Load restrictions for this user from restrictions.ini
+     *
+     * TODO: - Separate this from the user object once possible
+     *       - Support group restrictions once groups are available
+     *
+     * @return self
+     */
+    public function loadRestrictions()
+    {
+        try {
+            // TODO: Config::app should gracefully handle missing files
+            $config = Config::app('permissions');
+        } catch (Exception $e) {
+            return $this;
+        }
+        $config = Config::app('restrictions');
+        foreach ($config as $section) {
+            if ($section->get('user') !== $this->username) {
+                continue;
+            }
+            if (! array_key_exists($section->name, $this->restrictions)) {
+                $this->restrictions[$section->name] = array();
+            }
+            $this->restrictions[$section->name][] = $section->restriction;
+        }
+        return $this;
     }
 
     /**

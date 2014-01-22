@@ -89,6 +89,41 @@ class ActionController extends Zend_Controller_Action
         }
     }
 
+    /**
+     * Return restriction information for an eventually authenticated user
+     *
+     * @param  string  $name Permission name
+     * @return Array
+     */
+    public function getRestrictions($name)
+    {
+        return AuthManager::getInstance()->getRestrictions($name);
+    }
+
+    /**
+     * Whether the user currently authenticated has the given permission
+     *
+     * @param  string  $name Permission name
+     * @return bool
+     */
+    public function hasPermission($name)
+    {
+        return AuthManager::getInstance()->hasPermission($name);
+    }
+
+    /**
+     * Throws an exception if user lacks the given permission
+     *
+     * @param  string  $name Permission name
+     * @throws Exception
+     */
+    public function assertPermission($name)
+    {
+        if (! AuthManager::getInstance()->hasPermission($name)) {
+            // TODO: Shall this be an Auth Exception? Or a 404?
+            throw new Exception(sprintf('Auth error, no permission for "%s"', $name));
+        }
+    }
 
     /**
      * Check whether the controller requires a login. That is when the controller requires authentication and the
