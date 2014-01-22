@@ -104,11 +104,16 @@ class Manager
         $this->app = $app;
         if (empty($availableDirs)) {
             $availableDirs = array(realpath(ICINGA_APPDIR . '/../modules'));
+        } else {
+            foreach($availableDirs as $key => $dir) {
+                $dir[$key] = realpath($dir);
+            }
         }
         $this->modulePaths = $availableDirs;
         if ($enabledDir === null) {
             $enabledDir = $this->app->getConfigDir() . '/enabledModules';
         }
+        $enabledDir = realpath($enabledDir);
 
         $this->enableDir = $enabledDir;
     }
@@ -293,7 +298,7 @@ class Manager
                 'Could not disable module. The module "' . $name . '" is not a symlink. '
                 . 'It looks like you have installed this module manually and moved it to your module folder. '
                 . 'In order to dynamically enable and disable modules, you have to create a symlink to '
-                . 'the enabled_modules folder'
+                . 'the enabled_modules folder.'
             );
         }
 
@@ -424,15 +429,21 @@ class Manager
      */
     public function getModuleInfo()
     {
-        $installed = $this->listInstalledModules();
-
         $info = array();
-        if ($installed === null) {
-            return $info;
+
+        $enabled = $this->listEnabledModules();
+        foreach ($enabled as $name) {
+            $info[$name] = (object) array(
+                'name'    => $name,
+                'path'    => $this->enabledDirs[$name],
+                'enabled' => true,
+                'loaded'  => $this->hasLoaded($name)
+            );
         }
 
+        $installed = $this->listInstalledModules();
         foreach ($installed as $name) {
-            $info[] = (object) array(
+            $info[$name] = (object) array(
                 'name'    => $name,
                 'path'    => $this->installedBaseDirs[$name],
                 'enabled' => $this->hasEnabled($name),
@@ -496,17 +507,28 @@ class Manager
     public function detectInstalledModules()
     {
         foreach ($this->modulePaths as $basedir) {
+            if (!file_exists($basedir)) {
+                Logger::warn('Module path "%s" does not exist.', $basedir);
+                continue;
+            }
             $fh = opendir($basedir);
             if ($fh === false) {
                 return $this;
             }
-
             while ($name = readdir($fh)) {
                 if ($name[0] === '.') {
                     continue;
                 }
                 if (is_dir($basedir . '/' . $name)) {
-                    $this->installedBaseDirs[$name] = $basedir . '/' . $name;
+                    if (!array_key_exists($name, $this->installedBaseDirs)) {
+                        $this->installedBaseDirs[$name] = $basedir . '/' . $name;
+                    } else {
+                        Logger::warn(
+                            'Module "%s" already exists in installation path "%s" and is ignored.',
+                            $basedir . '/' . $name,
+                            $this->installedBaseDirs[$name]
+                        );
+                    }
                 }
             }
         }
