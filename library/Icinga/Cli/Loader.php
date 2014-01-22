@@ -152,6 +152,11 @@ class Loader
         return $this->moduleInstances[$module][$command];
     }
 
+    public function getLastSuggestions()
+    {
+        return $this->lastSuggestions;
+    }
+
     public function showLastSuggestions()
     {
         if (! empty($this->lastSuggestions)) {

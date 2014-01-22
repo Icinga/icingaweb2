@@ -127,6 +127,9 @@ class Cli extends ApplicationBootstrap
         if ($this->params->shift('help')) {
             $this->params->unshift('help');
         }
+        if ($this->params->shift('autocomplete')) {
+            $this->params->unshift('autocomplete');
+        }
         $watch = $this->params->shift('watch');
         if ($watch === true) {
             $watch = 5;

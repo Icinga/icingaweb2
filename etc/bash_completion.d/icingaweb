@@ -1,0 +1,13 @@
+
+_icingaweb_completion()
+{
+  local cur opts
+  opts="${COMP_WORDS[*]}"
+  cur="${COMP_WORDS[COMP_CWORD]}"
+  COMPREPLY=($($opts --autocomplete --autoindex $COMP_CWORD))
+  return 0
+}
+
+complete -F _icingaweb_completion icingaweb
+
+
