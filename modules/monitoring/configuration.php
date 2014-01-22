@@ -5,4 +5,5 @@
 $this->providePermission('commands/all', 'Allow to send all commands');
 $this->providePermission('commands/safe', 'Allow to to send a subset of "safe" commands');
 $this->providePermission('log', 'Allow full log access');
+$this->provideRestriction('filter', 'Filter accessible object');
 
