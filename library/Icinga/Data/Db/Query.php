@@ -33,6 +33,7 @@ use Icinga\Filter\Query\Node;
 use Icinga\Filter\Query\Tree;
 use Zend_Db_Select;
 use Icinga\Data\BaseQuery;
+use Icinga\Application\Benchmark;
 
 /**
  * Db/Query class for implementing database queries
@@ -230,7 +231,9 @@ class Query extends BaseQuery
     public function count()
     {
         if ($this->countCache === null) {
+            Benchmark::measure('DB is counting');
             $this->countCache = $this->db->fetchOne($this->getCountQuery());
+            Benchmark::measure('DB finished count');
         }
         return $this->countCache;
     }
@@ -242,7 +245,10 @@ class Query extends BaseQuery
      */
     public function fetchAll()
     {
-        return $this->db->fetchAll($this->getSelectQuery());
+        Benchmark::measure('DB is fetching All');
+        $result = $this->db->fetchAll($this->getSelectQuery());
+        Benchmark::measure('DB fetch done');
+        return $result;
     }
 
     /**
