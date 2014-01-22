@@ -192,13 +192,15 @@ final class Logger
         try {
 
             $target = Config::resolvePath($target);
-            $writer = new $writerClass($target);
-            $writer->addFilter(new Zend_Log_Filter_Priority($priority));
             // Make sure the permissions for log target file are correct
             if ($type === 'Stream' && substr($target, 0, 6) !== 'php://' && !file_exists($target)) {
                 touch($target);
                 chmod($target, 0664);
+                $writer = new $writerClass($target);
+            } elseif ($type === 'Syslog') {
+                $writer = new $writerClass();
             }
+            $writer->addFilter(new Zend_Log_Filter_Priority($priority));
 
             $this->logger->addWriter($writer);
             $this->writers[] = $writer;
