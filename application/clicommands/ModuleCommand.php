@@ -112,6 +112,54 @@ class ModuleCommand extends Command
     }
 
     /**
+     * Show all restrictions provided by your modules
+     *
+     * Asks each enabled module for all available restriction names and
+     * descriptions and shows a quick overview
+     *
+     * Usage: icingaweb module restrictions
+     */
+    public function restrictionsAction()
+    {
+        printf("%-14s %-16s %s\n", 'MODULE', 'RESTRICTION', 'DESCRIPTION');
+        foreach ($this->modules->listEnabledModules() as $moduleName) {
+            $module = $this->modules->loadModule($moduleName)->getModule($moduleName);
+            foreach ($module->getProvidedRestrictions() as $restriction) {
+                printf(
+                    "%-14s %-16s %s\n",
+                    $moduleName,
+                    $restriction->name,
+                    $restriction->description
+                );
+            }
+        }
+    }
+
+    /**
+     * Show all permissions provided by your modules
+     *
+     * Asks each enabled module for it's available permission names and
+     * descriptions and shows a quick overview
+     *
+     * Usage: icingaweb module permissions
+     */
+    public function permissionsAction()
+    {
+        printf("%-14s %-24s %s\n", 'MODULE', 'PERMISSION', 'DESCRIPTION');
+        foreach ($this->modules->listEnabledModules() as $moduleName) {
+            $module = $this->modules->loadModule($moduleName)->getModule($moduleName);
+            foreach ($module->getProvidedPermissions() as $restriction) {
+                printf(
+                    "%-14s %-24s %s\n",
+                    $moduleName,
+                    $restriction->name,
+                    $restriction->description
+                );
+            }
+        }
+    }
+
+    /**
      * Search for a given module
      *
      * Does a lookup against your configured IcingaWeb app stores and tries to

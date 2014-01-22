@@ -101,6 +101,34 @@ class Module
     private $runScript;
 
     /**
+     * Module configuration script
+     *
+     * @var string
+     */
+    private $configScript;
+
+    /**
+     * Whether we already tried to include the module configuration script
+     *
+     * @var bool
+     */
+    private $triedToLaunchConfigScript = false;
+
+    /**
+     * Provided permissions
+     *
+     * @var array
+     */
+    private $permissionList = array();
+
+    /**
+     * Provided restrictions
+     *
+     * @var array
+     */
+    private $restrictionList = array();
+
+    /**
      * Icinga application
      *
      * @var \Icinga\Application\Web
@@ -275,6 +303,94 @@ class Module
     }
 
     /**
+     * Retrieve provided permissions
+     *
+     * @param  string  $name Permission name
+     * @return array
+     */
+    public function getProvidedPermissions()
+    {
+        $this->launchConfigScript();
+        return $this->permissionList;
+    }
+
+    /**
+     * Retrieve provided restrictions
+     *
+     * @param  string  $name Restriction name
+     * @return array
+     */
+    public function getProvidedRestrictions()
+    {
+        $this->launchConfigScript();
+        return $this->restrictionList;
+    }
+
+    /**
+     * Whether the given permission name is supported
+     *
+     * @param  string  $name Permission name
+     * @return bool
+     */
+    public function providesPermission($name)
+    {
+        $this->launchConfigScript();
+        return array_key_exists($name, $this->permissionList);
+    }
+
+    /**
+     * Whether the given restriction name is supported
+     *
+     * @param  string  $name Restriction name
+     * @return bool
+     */
+    public function providesRestriction($name)
+    {
+        $this->launchConfigScript();
+        return array_key_exists($name, $this->restrictionList);
+    }
+
+    /**
+     * Provide a named permission
+     *
+     * @param   string $name Unique permission name
+     * @param   string $name Permission description
+     * @return  void
+     */
+    protected function providePermission($name, $description)
+    {
+        if ($this->providesPermission($name)) {
+            throw new Exception(
+                sprintf('Cannot provide permission "%s" twice', $name)
+            );
+        }
+        $this->permissionList[$name] = (object) array(
+            'name'        => $name,
+            'description' => $description
+        );
+    }
+
+    /**
+     * Provide a named restriction
+     *
+     * @param   string $name Unique restriction name
+     * @param   string $name Restriction description
+     * @return  void
+     */
+    protected function provideRestriction($name, $description)
+    {
+        if ($this->providesRestriction($name)) {
+            throw new Exception(
+                sprintf('Cannot provide restriction "%s" twice', $name)
+            );
+        }
+        $this->restrictionList[$name] = (object) array(
+            'name'        => $name,
+            'description' => $description
+        );
+    }
+
+    /**
      * Register new namespaces on the autoloader
      *
      * @return self
@@ -397,6 +513,22 @@ class Module
             include($this->runScript);
         }
         return $this;
+    }
+
+    /**
+     * Run module config script
+     */
+    protected function launchConfigScript()
+    {
+        if ($this->triedToLaunchConfigScript) {
+            return;
+        }
+        $this->triedToLaunchConfigScript = true;
+        if (! file_exists($this->configScript)
+         || ! is_readable($this->configScript)) {
+            return;
+        }
+        include($this->configScript);
     }
 
     /**
