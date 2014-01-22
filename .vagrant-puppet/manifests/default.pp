@@ -189,7 +189,7 @@ exec { 'icinga-htpasswd':
 }
 
 cmmi { 'icinga-plugins':
-  url     => 'https://www.nagios-plugins.org/download/nagios-plugins-1.5.tar.gz',
+  url     => 'https://www.monitoring-plugins.org/download/nagios-plugins-1.5.tar.gz',
   output  => 'nagios-plugins-1.5.tar.gz',
   flags   => '--prefix=/usr/lib64/nagios/plugins \
               --with-nagios-user=icinga --with-nagios-group=icinga \
