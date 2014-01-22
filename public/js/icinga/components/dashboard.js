@@ -44,22 +44,26 @@ define(['jquery', 'logging', 'URIjs/URI', 'icinga/componentLoader'], function($,
         /**
          * Refresh the container content and layout
          */
-        this.refresh = function() {
+        this.refresh = function () {
             $.ajax({
-                url: this.dashboardUrl
-            }).done((function(response) {
-                this.container.empty();
-                this.container.html(response);
-                dashboardContainer.freetile('layout');
-                $(window).on('layoutchange', function() {
+                url: this.dashboardUrl,
+                context: this
+            })
+                .done(function (response) {
+                    this.container.empty();
+                    this.container.html(response);
+                    components.load();
+                })
+                .fail(function (response, reason) {
+                    this.container.html(response.responseText);
+                })
+                .always(function () {
                     dashboardContainer.freetile('layout');
-                });
-
-                this.triggerRefresh();
-                components.load();
-            }).bind(this)).fail((function(response, reason) {
-                this.container.html(response);
-            }).bind(this));
+                    $(window).on('layoutchange', function() {
+                        dashboardContainer.freetile('layout');
+                    });
+                    this.triggerRefresh();
+                })
         };
 
         this.triggerRefresh = function() {
