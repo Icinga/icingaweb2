@@ -1,9 +1,12 @@
 <?= $this->tabs->render($this); ?>
-
-<div class="alert alert-error">
-  <h1>An error occurred</h1>
-
-  <?php if (isset($this->messageBox)) : ?>
-      <?= $this->messageBox->render() ?>
-  <? endif ?>
+<div class="alert alert-danger">
+    <p><?= $message ?></p>
+</div>
+<?php if (isset($stackTrace)) : ?>
+  <hr />
+  <pre><?= $stackTrace ?></pre>
+<?php endif ?>
+<?php if (isset($this->messageBox)) : ?>
+  <?= $this->messageBox->render(); ?>
+<? endif ?>
 </div>
