@@ -400,7 +400,7 @@ class Loader
             $ns = 'Icinga\\Module\\' . ucfirst($module) . '\\Clicommands\\';
             $this->assertModuleExists($module);
             $manager = $this->app->getModuleManager();
-            $manager->enableModule($module);
+            $manager->loadModule($module);
             $dir = $manager->getModuleDir($module) . '/application/clicommands';
             $this->moduleCommands[$module] = $this->retrieveCommandsFromDir($dir);
             $this->moduleInstances[$module] = array();
