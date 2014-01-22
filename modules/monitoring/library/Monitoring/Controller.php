@@ -102,7 +102,7 @@ class Controller extends ActionController
             )->getQuery();
         }
         $this->handleFormatRequest($query);
-        return $query->paginate();
+        return $query;
     }
 
     protected function handleFormatRequest($query)

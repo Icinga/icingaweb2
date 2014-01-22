@@ -121,6 +121,8 @@ class Monitoring_ListController extends MonitoringController
             )
         );
         $query = $dataview->getQuery();
+        $this->applyRestrictions($query);
+
         $this->setupFilterControl($dataview, 'host');
 
         $this->setupSortControl(array(
@@ -142,7 +144,9 @@ class Monitoring_ListController extends MonitoringController
     public function servicesAction()
     {
         $this->compactView = 'services-compact';
-        $this->view->services = $this->fetchServices();
+        $query = $this->fetchServices();
+        $this->applyRestrictions($query);
+        $this->view->services = $query->paginate();
 
         $this->setupFilterControl(ServiceStatus::fromRequest($this->getRequest()), 'service');
         $this->setupSortControl(array(
@@ -367,6 +371,27 @@ class Monitoring_ListController extends MonitoringController
         $this->setupSortControl(
             array()
         );
+    }
+
+    /**
+     * Apply current users monitoring/filter restrictions to the given query
+     *
+     * @param $query  Filterable  Query that should be filtered
+     * @return Filterable
+     */
+    protected function applyRestrictions(Filterable $query)
+    {
+        foreach ($this->getRestrictions('monitoring/filter') as $restriction) {
+            parse_str($restriction, $filter);
+            foreach ($filter as $k => $v) {
+    //            if ($query->isValidFilterTarget($k)) {
+                    // TODO: This is NOT enough. We need to fix filters and get
+                    // applyAuthFilters back.
+                    $query->where($k, $v);
+      //          }
+            }
+        }
+        return $query;
     }
 
     /**

@@ -367,11 +367,11 @@ class User
     {
         try {
             // TODO: Config::app should gracefully handle missing files
-            $config = Config::app('permissions');
+            $config = Config::app('restrictions');
         } catch (Exception $e) {
             return $this;
         }
-        $config = Config::app('restrictions');
+
         foreach ($config as $section) {
             if ($section->get('user') !== $this->username) {
                 continue;

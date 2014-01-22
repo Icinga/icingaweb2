@@ -96,7 +96,7 @@ class Monitoring_ShowController extends MonitoringController
     {
         $params = $this->_request->getParams();
         unset($params['service']);
-        $this->view->services = $this->fetchServices($params);
+        $this->view->services = $this->fetchServices($params)->paginate();
     }
 
 
