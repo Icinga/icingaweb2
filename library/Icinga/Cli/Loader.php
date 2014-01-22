@@ -6,6 +6,7 @@ use Icinga\Application\ApplicationBootstrap as App;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Cli\Params;
 use Icinga\Cli\Screen;
+use Icinga\Cli\Command;
 use Icinga\Cli\Documentation;
 use Exception;
 
@@ -246,6 +247,9 @@ class Loader
             $obj->init();
             return $obj->{$this->actionName . 'Action'}();
         } catch (Exception $e) {
+            if ($obj && $obj instanceof Command && $obj->showTrace()) {
+                echo $this->formatTrace($e->getTrace());
+            }
             $this->fail($e->getMessage());
         }
     }
@@ -334,6 +338,61 @@ class Loader
                 sprintf("The module '%s' has no such command: %s", $module, $command)
             );
         }
+    }
+
+    protected function formatTrace($trace)
+    {
+        $output = array();
+        foreach($trace as $i => $step)
+        {
+            $object = '';
+            if (isset($step['object']) && is_object($step['object'])) {
+                $object = sprintf('[%s]', get_class($step['object'])) . $step['type'];
+            } elseif (! empty($step['object'])) {
+                $object = (string) $step['object'] . $step['type'];
+            }
+            if (is_array($step['args']))
+            {
+                foreach ($step['args'] as & $arg)
+                {
+                    if (is_object($arg))
+                    {
+                        $arg = sprintf('[%s]', get_class($arg));
+                    }
+                    if (is_string($arg)) {
+                        $arg = preg_replace('~\n~', '\n', $arg);
+                        if (strlen($arg) > 50) $arg = substr($arg, 0, 47) . '...';
+                        $arg = "'" . $arg . "'";
+                    }
+                    if ($arg === null) $arg = 'NULL';
+                    if (is_bool($arg)) $arg = $arg ? 'TRUE' : 'FALSE';
+                }
+            } else {
+                $step['args'] = array();
+            }
+            $args = $step['args'];
+            foreach ($args as & $v) {
+                if (is_array($v)) {
+                    $v = var_export($v, 1);
+                } else {
+                    $v = (string) $v;
+                }
+            }
+            $output[$i] = sprintf(
+                '#%d %s:%d %s%s(%s)',
+                $i,
+                isset($step['file']) ? preg_replace(
+                    '~.+/library/~',
+                    'library/',
+                    $step['file']
+                ) : '[unknown file]',
+                isset($step['line']) ? $step['line'] : '0',
+                $object,
+                $step['function'],
+                implode(', ', $args)
+            );
+        }
+        return implode(PHP_EOL, $output) . PHP_EOL;
     }
 
     public function hasCommand($name)

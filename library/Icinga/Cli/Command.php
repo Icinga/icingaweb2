@@ -28,8 +28,9 @@ abstract class Command
         $this->moduleName  = $moduleName;
         $this->commandName = $commandName;
         $this->actionName  = $actionName;
-        $this->params  = $app->getParams();
-        $this->screen  = Screen::instance($app);
+        $this->params     = $app->getParams();
+        $this->screen     = Screen::instance($app);
+        $this->trace      = $this->params->shift('trace', false);
         $this->isVerbose  = $this->params->shift('verbose', false);
         $this->isDebuging = $this->params->shift('debug', false);
         if ($initialize) {
@@ -40,6 +41,11 @@ abstract class Command
     public function hasRemainingParams()
     {
         return $this->params->count() > 0;
+    }
+
+    public function showTrace()
+    {
+        return $this->trace;
     }
 
     public function fail($msg)
