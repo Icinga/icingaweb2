@@ -340,6 +340,7 @@ class Monitoring_ListController extends MonitoringController
                 'services_pending'
             )
         )->getQuery();
+        $this->applyRestrictions($query);
         $this->handleFormatRequest($query);
         $this->view->hostgroups = $query->paginate();
         $this->setupSortControl(array(
@@ -384,11 +385,11 @@ class Monitoring_ListController extends MonitoringController
         foreach ($this->getRestrictions('monitoring/filter') as $restriction) {
             parse_str($restriction, $filter);
             foreach ($filter as $k => $v) {
-    //            if ($query->isValidFilterTarget($k)) {
+                if ($query->isValidFilterTarget($k)) {
                     // TODO: This is NOT enough. We need to fix filters and get
                     // applyAuthFilters back.
                     $query->where($k, $v);
-      //          }
+                }
             }
         }
         return $query;
