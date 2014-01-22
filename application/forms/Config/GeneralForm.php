@@ -203,11 +203,20 @@ class GeneralForm extends Form
             array(
                 'label'     => 'Module Folder',
                 'required'  => true,
-                'helptext'  => 'The moduleFolder directive is currently not used anywhere but '
-                    . 'configureable via the frontend and INI. With feature #4607 moduleFolder '
-                    . 'will be replaced with a configuration directive for locations of '
-                    . 'installed modules',
+                'helptext'  => 'The directory that contains the symlink to all enabled directories.',
                 'value'     => $cfg->get('moduleFolder', $this->getConfigDir() . '/config/enabledModules')
+            )
+        );
+        $this->addElement(
+            'text',
+            'module_path',
+            array(
+                'label'     => 'Module Path',
+                'required'  => true,
+                'helptext'  => 'Contains the directories that will be searched for available modules, separated by ' .
+                    ' colons. Modules  that don\'t exist in these directories can still be symlinked in the module ' .
+                    ' folder, but won\'t show up in the list of disabled modules.',
+                'value'     => $cfg->get('modulePath', realpath(ICINGA_APPDIR . '/../modules'))
             )
         );
     }
@@ -382,8 +391,10 @@ class GeneralForm extends Form
         $cfg->global->environment  = ($values['environment'] == 1) ? 'development' : 'production';
         $cfg->global->timezone     = $values['timezone'];
         $cfg->global->moduleFolder = $values['module_folder'];
+        $cfg->global->modulePath   = $values['module_path'];
         $cfg->global->dateFormat   = $values['date_format'];
         $cfg->global->timeFormat   = $values['time_format'];
+
 
         $cfg->preferences->type = $values['preferences_type'];
         if ($cfg->preferences->type === 'ini') {

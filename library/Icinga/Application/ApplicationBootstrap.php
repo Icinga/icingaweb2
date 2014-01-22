@@ -354,6 +354,11 @@ abstract class ApplicationBootstrap
      */
     protected function loadEnabledModules()
     {
+        $this->moduleManager = new ModuleManager(
+            $this,
+            $this->config->global->get('moduleFolder', $this->getConfigDir() . '/enabledModules'),
+            explode(':', $this->config->global->get('modulePath', ICINGA_APPDIR . '/../modules'))
+        );
         try {
             $this->moduleManager->loadEnabledModules();
         } catch (Exception $e) {
@@ -362,7 +367,6 @@ abstract class ApplicationBootstrap
                 $e->getMessage()
             );
         }
-
         return $this;
     }
 
