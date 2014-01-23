@@ -411,6 +411,7 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
      * Available as a static method on the Container object or as an instance method
      */
     Container.prototype.showDetail = Container.showDetail = function() {
+        $('#icingadetailClose').removeClass('hidden');
         var mainDom = Container.getMainContainer().containerDom,
             detailDom = Container.getDetailContainer().containerDom;
 
@@ -435,6 +436,7 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
      * Available as a static method on the Container object or as an instance method
      */
     Container.prototype.hideDetail = Container.hideDetail = function() {
+        $('#icingadetailClose').addClass('hidden');
         cancelPendingRequest();
         urlMgr.setDetailUrl('');
         var mainDom = Container.getMainContainer().containerDom,
@@ -490,6 +492,10 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
     if (urlMgr.detailUrl) {
         Container.getDetailContainer().replaceDomAsync(urlMgr.detailUrl);
     }
+
+    $('#icingadetailClose').click(function(){
+        detailContainer.hideDetail();
+    });
 
     return Container;
 });

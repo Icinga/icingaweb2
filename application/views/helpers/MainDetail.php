@@ -46,6 +46,15 @@ class Zend_View_Helper_MainDetail extends Zend_View_Helper_Abstract
         {{MAIN_CONTENT}}
     </div>
 
+    <p id="icingadetailClose" align="right" class="hidden">
+        <a
+            rel="tooltip"
+            title="Close"
+            class="button btn-common btn-small"
+        >
+            <i class="icinga-icon-remove"></i>
+        </a>
+    </p>
     <div id='icingadetail' class='{{DETAIL_CLASS}}'>
         {{DETAIL_CONTENT}}
     </div>
