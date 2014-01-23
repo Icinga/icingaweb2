@@ -42,7 +42,8 @@ class ErrorController extends ActionController
      */
     public function errorAction()
     {
-        $error = $this->_getParam('error_handler');
+        $error      = $this->_getParam('error_handler');
+        $exception  = $error->exception;
         switch ($error->type) {
             case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_ROUTE:
             case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_CONTROLLER:
@@ -52,11 +53,11 @@ class ErrorController extends ActionController
                 break;
             default:
                 $this->getResponse()->setHttpResponseCode(500);
-                $this->view->message = $error->exception->getMessage();
+                $this->view->message = $exception->getMessage();
                 break;
         }
         if ($this->getInvokeArg('displayExceptions') == true) {
-            $this->view->stackTrace = $error->exception->getTraceAsString();
+            $this->view->stackTrace = $exception->getTraceAsString();
         }
         $this->view->request = $error->request;
     }

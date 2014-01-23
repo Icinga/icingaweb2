@@ -36,13 +36,13 @@ use \Zend_Controller_Front;
 use \Zend_Controller_Response_Abstract;
 use \Zend_Controller_Action_HelperBroker;
 use \Zend_Layout;
-use \Icinga\Authentication\Manager as AuthManager;
-use \Icinga\Application\Benchmark;
-use \Icinga\Application\Config;
-use \Icinga\Web\Notification;
-use \Icinga\Web\Widget\Tabs;
-use \Icinga\Web\Url;
-use \Icinga\Web\Request;
+use Icinga\Authentication\Manager as AuthManager;
+use Icinga\Application\Benchmark;
+use Icinga\Application\Config;
+use Icinga\Web\Notification;
+use Icinga\Web\Widget\Tabs;
+use Icinga\Web\Url;
+use Icinga\Web\Request;
 
 /**
  * Base class for all core action controllers
@@ -173,14 +173,15 @@ class ActionController extends Zend_Controller_Action
     protected function redirectToLogin($afterLogin = '/index')
     {
         if ($this->getRequest()->isXmlHttpRequest()) {
-
-            $this->getResponse()->setHttpResponseCode(401);
-            $this->getResponse()->sendHeaders();
-            throw new Exception("You are not logged in");
+            $this->_response->setHttpResponseCode(401);
+            $this->_helper->json(array(
+                'exception'     => 'You are not logged in',
+                'redirectTo'    => Url::fromPath('/authentication/login')->getAbsoluteUrl()
+            ));
         }
         $url = Url::fromPath('/authentication/login');
         $url->setParam('redirect', $afterLogin);
-        $this->redirectNow($url->getRelativeUrl());
+        $this->redirectNow($url);
     }
 
     /**

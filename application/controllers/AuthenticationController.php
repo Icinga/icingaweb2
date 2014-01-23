@@ -30,11 +30,11 @@
 
 # namespace Icinga\Application\Controllers;
 
-use \Icinga\Web\Controller\ActionController;
-use \Icinga\Authentication\Credential;
-use \Icinga\Authentication\Manager as AuthManager;
-use \Icinga\Form\Authentication\LoginForm;
-use \Icinga\Exception\ConfigurationError;
+use Icinga\Web\Controller\ActionController;
+use Icinga\Authentication\Credential;
+use Icinga\Authentication\Manager as AuthManager;
+use Icinga\Form\Authentication\LoginForm;
+use Icinga\Exception\ConfigurationError;
 
 /**
  * Application wide controller for authentication
@@ -42,7 +42,7 @@ use \Icinga\Exception\ConfigurationError;
 class AuthenticationController extends ActionController
 {
     /**
-     * This controller handles authentication
+     * This controller does not require authentication
      *
      * @var bool
      */
@@ -53,33 +53,26 @@ class AuthenticationController extends ActionController
      */
     public function loginAction()
     {
-        $credentials = new Credential();
         $this->_helper->layout->setLayout('login');
         $this->view->form = new LoginForm();
-
         $this->view->form->setRequest($this->_request);
-        $this->view->title = "Icinga Web Login";
+        $this->view->title = 'Icinga Web Login';
         try {
+            $redirectUrl = $this->_request->getParam('redirect', 'index?_render=body');
             $auth = AuthManager::getInstance();
-
             if ($auth->isAuthenticated()) {
-                $this->redirectNow('index?_render=body');
+                $this->redirectNow($redirectUrl);
             }
-
             if ($this->view->form->isSubmittedAndValid()) {
-                $credentials->setUsername($this->view->form->getValue('username'));
-                $credentials->setPassword($this->view->form->getValue('password'));
-
+                $credentials = new Credential(
+                    $this->view->form->getValue('username'),
+                    $this->view->form->getValue('password')
+                );
                 if (!$auth->authenticate($credentials)) {
                     $this->view->form->getElement('password')
                         ->addError(t('Please provide a valid username and password'));
                 } else {
-                    $redirectUrl = $this->_request->getParam('redirect');
-                    if ($redirectUrl == null) {
-                        $this->redirectNow('index?_render=body');
-                    } else {
-                        $this->redirectNow($redirectUrl);
-                    }
+                    $this->redirectNow($redirectUrl);
                 }
             }
         } catch (ConfigurationError $configError) {

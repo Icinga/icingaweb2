@@ -29,7 +29,7 @@
 
 define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITemplate', 'icinga/util/url'],
     function($, logger, componentLoader, URI, Tpl, urlMgr) {
-    "use strict";
+    'use strict';
 
     var Icinga;
 
@@ -194,22 +194,29 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
             cancelPendingRequest();
             this.containerDom.trigger('showLoadIndicator');
             pendingDetailRequest = $.ajax({
-                'url'  : url,
-                'data' : {
-                    'render' : 'detail'
-                }
-            });
-            pendingDetailRequest.done(
-                (function(response) {
+                'url': url,
+                'data': {
+                    'render': 'detail'
+                },
+                'context': this
+            })
+                .done(function (response) {
                     pendingDetailRequest = null;
                     this.replaceDom($(response));
-                }).bind(this)
-            ).fail(
-                (function(response, reason) {
+                })
+                .fail(function (response, reason) {
                     if (reason === 'abort') {
                         return;
                     }
-
+                    if (response.statusCode().status === 401) {
+                        var error = JSON.parse(response.responseText);
+                        window.location.replace(
+                            URI(error.redirectTo).search({
+                                redirect: URI(urlMgr.getUrl()).resource().replace(new RegExp('^' + window.base_url), '')
+                            })
+                        );
+                        return;
+                    }
                     var errorReason;
                     if (response.statusCode.toString()[0] === '4') {
                         errorReason = 'The Requested View Couldn\'t Be Found<br/>';
@@ -217,10 +224,10 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
                         errorReason = response.responseText;
                     }
                     this.replaceDom(response.responseText);
-                }).bind(this)
-            ).always((function() {
-                this.containerDom.trigger('hideLoadIndicator');
-            }).bind(this));
+                })
+                .always(function () {
+                    this.containerDom.trigger('hideLoadIndicator');
+                });
         };
 
         this.getUrl = function() {

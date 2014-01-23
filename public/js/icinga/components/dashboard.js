@@ -31,7 +31,8 @@
  * Dashboard container, uses freetile for layout
  *
  */
-define(['jquery', 'logging', 'URIjs/URI', 'icinga/componentLoader'], function($, log, URI, components) {
+define(['jquery', 'logging', 'URIjs/URI', 'icinga/componentLoader', 'icinga/util/url'],
+    function($, log, URI, components, urlMgr) {
     'use strict';
     return function(parent) {
         this.dom = $(parent);
@@ -55,6 +56,15 @@ define(['jquery', 'logging', 'URIjs/URI', 'icinga/componentLoader'], function($,
                     components.load();
                 })
                 .fail(function (response, reason) {
+                    if (response.statusCode().status === 401) {
+                        var error = JSON.parse(response.responseText);
+                        window.location.replace(
+                            URI(error.redirectTo).search({
+                                redirect: URI(urlMgr.getUrl()).resource().replace(new RegExp('^' + window.base_url), '')
+                            })
+                        );
+                        return;
+                    }
                     this.container.html(response.responseText);
                 })
                 .always(function () {
