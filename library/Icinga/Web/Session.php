@@ -4,7 +4,7 @@
  * This file is part of Icinga Web 2.
  *
  * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
+ * Copyright (C) 2014 Icinga Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,55 +20,61 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
+ * @copyright  2014 Icinga Development Team <info@icinga.org>
  * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
  * @author     Icinga Development Team <info@icinga.org>
  *
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Tests\Icinga\Authentication;
+namespace Icinga\Web;
 
-require_once("../../library/Icinga/Session/Session.php");
+use Icinga\Session\PhpSession;
+use Icinga\Session\Session as BaseSession;
+use Icinga\Exception\ProgrammingError;
 
-use Icinga\Session\Session;
 
-class SessionMock extends Session
+/**
+ * Session container
+ */
+class Session
 {
-    public $isOpen = false;
-    public $isWritten = false;
+    /**
+     * The current session
+     *
+     * @var BaseSession $session
+     */
+    private static $session;
 
-    public function open()
+    /**
+     * Create the session
+     *
+     * @param   BaseSession  $session
+     *
+     * @return  BaseSession
+     */
+    public static function create(BaseSession $session = null)
     {
-        if (!$this->isOpen && $this->isWritten) {
-            throw new \Exception("Session write after close");
+        if ($session === null) {
+            self::$session = new PhpSession();
+        } else {
+            self::$session = $session;
         }
-        $this->isOpen = true;
+
+        return self::$session;
     }
 
-    public function read($keepOpen = false)
+    /**
+     * Return the current session
+     *
+     * @return  BaseSession
+     */
+    public static function getSession()
     {
-        $this->open();
-        if (!$keepOpen) {
-            $this->close();
+        if (self::$session === null) {
+            throw new ProgrammingError('No session created yet');
         }
-    }
 
-    public function write($keepOpen = false)
-    {
-        $this->open();
-        if (!$keepOpen) {
-            $this->close();
-        }
-    }
-
-    public function close()
-    {
-        $this->isOpen = false;
-        $this->isWritten = true;
-    }
-
-    public function purge()
-    {
+        return self::$session;
     }
 }

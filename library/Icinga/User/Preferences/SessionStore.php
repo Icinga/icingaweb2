@@ -29,7 +29,7 @@
 
 namespace Icinga\User\Preferences;
 
-use Icinga\Authentication\Session;
+use Icinga\Session\Session;
 use \SplObserver;
 use \SplSubject;
 use Icinga\User\Preferences;

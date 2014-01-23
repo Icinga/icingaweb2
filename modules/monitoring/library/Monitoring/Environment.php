@@ -2,10 +2,6 @@
 
 namespace Icinga\Module\Monitoring;
 
-use \Icinga\Application\Config;
-use Icinga\Web\Session;
-use Exception;
-
 class Environment
 {
     protected static $envs = array(

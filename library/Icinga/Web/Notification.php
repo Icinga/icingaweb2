@@ -32,7 +32,7 @@ namespace Icinga\Web;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Application\Platform;
 use Icinga\Application\Logger as Log;
-use Icinga\Authentication\Manager as AuthManager;
+use Icinga\Web\Session;
 
 /**
  * // @TODO(eL): Use Notification not as Singleton but within request:
@@ -108,28 +108,31 @@ class Notification
         );
 
         // Get, change, set - just to be on the safe side:
-        $msgs = $this->session->messages;
+        $session = Session::getSession();
+        $msgs = $session->messages;
         $msgs[] = $mo;
-        $this->session->messages = $msgs;
+        $session->messages = $msgs;
     }
 
     public function hasMessages()
     {
-        return ! empty($this->session->messages);
+        $session = Session::getSession();
+        return !empty($session->messages);
     }
 
     public function getMessages()
     {
-        $msgs = $this->session->messages;
-        $this->session->messages = array();
+        $session = Session::getSession();
+        $msgs = $session->messages;
+        $session->messages = array();
         return $msgs;
     }
 
     final private function __construct()
     {
-        $this->session = AuthManager::getInstance()->getSession();
-        if (!is_array($this->session->get('messages'))) {
-            $this->session->messages = array();
+        $session = Session::getSession();
+        if (!is_array($session->get('messages'))) {
+            $session->messages = array();
         }
 
         if (Platform::isCli()) {

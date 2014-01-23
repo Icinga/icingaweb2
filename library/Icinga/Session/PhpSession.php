@@ -4,7 +4,7 @@
  * This file is part of Icinga Web 2.
  *
  * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
+ * Copyright (C) 2014 Icinga Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,29 +20,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
+ * @copyright  2014 Icinga Development Team <info@icinga.org>
  * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
  * @author     Icinga Development Team <info@icinga.org>
  *
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Authentication;
+namespace Icinga\Session;
 
 use Icinga\Application\Logger;
 use \Icinga\Exception\ConfigurationError;
 
 /**
  * Session implementation in PHP
- *
- * Standard PHP Session handling
- * You have to call read() first in order to start the session. If
- * no parameter is given to read, the session is closed immediately
- * after reading the persisted variables, in order to avoid concurrent
- * requests to be blocked. Otherwise, you can call write() (again with
- * no parameter in order to auto-close it) to persist all values previously
- * set with the set() method
- *
  */
 class PhpSession extends Session
 {
@@ -70,7 +61,7 @@ class PhpSession extends Session
     /**
      * Create a new PHPSession object using the provided options (if any)
      *
-     * @param   array $options An optional array of ini options to set,
+     * @param   array   $options    An optional array of ini options to set
      *
      * @throws  ConfigurationError
      * @see     http://php.net/manual/en/session.configuration.php
@@ -78,14 +69,16 @@ class PhpSession extends Session
     public function __construct(array $options = null)
     {
         if ($options !== null) {
-            $options = array_merge(PhpSession::$defaultCookieOptions, $options);
+            $options = array_merge(self::$defaultCookieOptions, $options);
         } else {
-            $options = PhpSession::$defaultCookieOptions;
+            $options = self::$defaultCookieOptions;
         }
+
         if (array_key_exists('test_session_name', $options)) {
             $this->sessionName = $options['test_session_name'];
             unset($options['test_session_name']);
         }
+
         foreach ($options as $sessionVar => $value) {
             if (ini_set("session." . $sessionVar, $value) === false) {
                 Logger::warn(
@@ -95,9 +88,11 @@ class PhpSession extends Session
                 );
             }
         }
+
         if (!is_writable(session_save_path())) {
             throw new ConfigurationError('Can\'t save session');
         }
+
         $this->read();
     }
 
@@ -139,7 +134,7 @@ class PhpSession extends Session
     {
         $this->open();
         $_SESSION = array();
-        $this->setAll(array(), true);
+        $this->clear();
         session_destroy();
         $this->clearCookies();
         session_write_close();

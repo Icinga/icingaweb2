@@ -29,10 +29,10 @@
 
 namespace Icinga\Web\Controller;
 
-use \Icinga\Application\Icinga;
-use \Icinga\Authentication\Manager as AuthenticationManager;
 use \Zend_Log;
-use \Icinga\User\Message;
+use Icinga\Web\Session;
+use Icinga\User\Message;
+use Icinga\Authentication\Manager as AuthenticationManager;
 
 /**
  *  Base class for Configuration Controllers
@@ -55,7 +55,7 @@ class BaseConfigController extends ActionController
         AuthenticationManager::getInstance()->getUser()->addMessage(
             new Message($msg, Zend_Log::INFO)
         );
-        AuthenticationManager::getInstance()->getSession()->write();
+        Session::getSession()->write();
     }
 
     /**
@@ -69,7 +69,7 @@ class BaseConfigController extends ActionController
         AuthenticationManager::getInstance()->getUser()->addMessage(
             new Message($msg, Zend_Log::ERR)
         );
-        AuthenticationManager::getInstance()->getSession()->write();
+        Session::getSession()->write();
     }
 
     /*
