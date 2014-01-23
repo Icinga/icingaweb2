@@ -46,6 +46,13 @@ class PhpSession extends Session
     const NAMESPACE_PREFIX = 'ns.';
 
     /**
+     * Whether the session has already been closed
+     *
+     * @var bool
+     */
+    private $hasBeenTouched = false;
+
+    /**
      * Name of the session
      *
      * @var string
@@ -110,7 +117,21 @@ class PhpSession extends Session
     private function open()
     {
         session_name($this->sessionName);
+
+        if ($this->hasBeenTouched) {
+            $cacheLimiter = ini_get('session.cache_limiter');
+            ini_set('session.use_cookies', false);
+            ini_set('session.use_only_cookies', false);
+            ini_set('session.cache_limiter', null);
+        }
+
         session_start();
+
+        if ($this->hasBeenTouched) {
+            ini_set('session.use_cookies', true);
+            ini_set('session.use_only_cookies', true);
+            ini_set('session.cache_limiter', $cacheLimiter);
+        }
     }
 
     /**
@@ -131,6 +152,7 @@ class PhpSession extends Session
         }
 
         session_write_close();
+        $this->hasBeenTouched = true;
     }
 
     /**
@@ -148,6 +170,7 @@ class PhpSession extends Session
         }
 
         session_write_close();
+        $this->hasBeenTouched = true;
     }
 
     /**
@@ -161,6 +184,7 @@ class PhpSession extends Session
         session_destroy();
         $this->clearCookies();
         session_write_close();
+        $this->hasBeenTouched = true;
     }
 
     /**
