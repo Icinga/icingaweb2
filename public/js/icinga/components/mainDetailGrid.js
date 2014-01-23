@@ -196,8 +196,8 @@ function(Container, $, logger, URI, tpl, urlMgr, Selectable, TableMultiSelection
                             selection.add(selected);
                         } else {
                             var oldState = selected.isActive();
-                            selection.clear();
                             if (!oldState) {
+                                selection.clear();
                                 selection.add(selected);
                             }
                         }
@@ -205,8 +205,8 @@ function(Container, $, logger, URI, tpl, urlMgr, Selectable, TableMultiSelection
 
                     case 'single':
                         oldState = selected.isActive();
-                        selection.clear();
                         if (!oldState) {
+                            selection.clear();
                             selection.add(selected);
                         }
                         break;
