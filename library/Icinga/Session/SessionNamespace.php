@@ -31,54 +31,67 @@ namespace Icinga\Session;
 
 
 /**
- * Base class for handling sessions
+ * Container for session values
  */
-abstract class Session extends SessionNamespace
+class SessionNamespace
 {
     /**
-     * Container for session namespaces
+     * The actual values stored in this container
      *
      * @var array
      */
-    protected $namespaces = array();
+    protected $values = array();
 
     /**
-     * Read all values from the underlying session implementation
-     */
-    abstract public function read();
-
-    /**
-     * Persists changes to the underlying session implementation
-     */
-    abstract public function write();
-
-    /**
-     * Purge session
-     */
-    abstract public function purge();
-
-    /**
-     * Get or create a new session namespace
+     * Setter for session values
      *
-     * @param   string      $identifier     The namespace's identifier
+     * @param   string      $key        Name of value
+     * @param   mixed       $value      Value to set
      *
-     * @return  SessionNamespace
+     * @return  self
      */
-    public function getNamespace($identifier)
+    public function set($key, $value)
     {
-        if (!isset($this->namespaces[$identifier])) {
-            $this->namespaces[$identifier] = new SessionNamespace();
-        }
-
-        return $this->namespaces[$identifier];
+        $this->values[$key] = $value;
+        return $this;
     }
 
     /**
-     * Clear all values and namespaces from the session cache
+     * Getter for session values
+     *
+     * @param   string  $key        Name of the value to return
+     * @param   mixed   $default    Default value to return
+     *
+     * @return  mixed
      */
-    public function clear()
+    public function get($key, $default = null)
     {
-        $this->values = array();
-        $this->namespaces = array();
+        return isset($this->values[$key]) ? $this->values[$key] : $default;
+    }
+
+    /**
+     * Getter for all session values
+     *
+     * @return array
+     */
+    public function getAll()
+    {
+        return $this->values;
+    }
+
+    /**
+     * Put an array into the session
+     *
+     * @param   array   $values     Values to set
+     * @param   bool    $overwrite  Overwrite existing values
+     */
+    public function setAll(array $values, $overwrite = false)
+    {
+        foreach ($values as $key => $value) {
+            if (isset($this->values[$key]) && !$overwrite) {
+                continue;
+            }
+            $this->values[$key] = $value;
+        }
     }
 }

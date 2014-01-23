@@ -99,4 +99,23 @@ class PhpSessionTest extends BaseTestCase
         $session->read();
         $this->assertEquals(null, $session->get('key2'));
     }
+
+    /**
+     * Test whether session namespaces are properly written and loaded
+     *
+     * @runInSeparateProcess
+     */
+    public function testNamespaceReadWrite()
+    {
+        $session = $this->getSession();
+        $namespace = $session->getNamespace('test');
+        $namespace->set('some_key', 'some_val');
+        $namespace->set('an_array', array(1, 2, 3));
+        $session->write();
+        $session->clear();
+        $session->read();
+        $namespace = $session->getNamespace('test');
+        $this->assertEquals($namespace->get('some_key'), 'some_val');
+        $this->assertEquals($namespace->get('an_array'), array(1, 2, 3));
+    }
 }

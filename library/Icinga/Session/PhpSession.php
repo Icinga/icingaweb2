@@ -32,11 +32,19 @@ namespace Icinga\Session;
 use Icinga\Application\Logger;
 use \Icinga\Exception\ConfigurationError;
 
+
 /**
  * Session implementation in PHP
  */
 class PhpSession extends Session
 {
+    /**
+     * The namespace prefix
+     *
+     * Used to differentiate between standard session keys and namespace identifiers
+     */
+    const NAMESPACE_PREFIX = 'ns.';
+
     /**
      * Name of the session
      *
@@ -111,7 +119,17 @@ class PhpSession extends Session
     public function read()
     {
         $this->open();
-        $this->setAll($_SESSION);
+
+        foreach ($_SESSION as $key => $value) {
+            if (strpos($key, self::NAMESPACE_PREFIX) === 0) {
+                $namespace = new SessionNamespace();
+                $namespace->setAll($value);
+                $this->namespaces[substr($key, strlen(self::NAMESPACE_PREFIX))] = $namespace;
+            } else {
+                $this->set($key, $value);
+            }
+        }
+
         session_write_close();
     }
 
@@ -121,9 +139,14 @@ class PhpSession extends Session
     public function write()
     {
         $this->open();
-        foreach ($this->getAll() as $key => $value) {
+
+        foreach ($this->values as $key => $value) {
             $_SESSION[$key] = $value;
         }
+        foreach ($this->namespaces as $identifier => $namespace) {
+            $_SESSION[self::NAMESPACE_PREFIX . $identifier] = $namespace->getAll();
+        }
+
         session_write_close();
     }
 

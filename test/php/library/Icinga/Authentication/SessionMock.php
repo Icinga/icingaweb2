@@ -29,6 +29,7 @@
 
 namespace Tests\Icinga\Authentication;
 
+require_once("../../library/Icinga/Session/SessionNamespace.php");
 require_once("../../library/Icinga/Session/Session.php");
 
 use Icinga\Session\Session;
