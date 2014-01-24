@@ -343,7 +343,11 @@ abstract class ApplicationBootstrap
      */
     protected function setupModuleManager()
     {
-        $this->moduleManager = new ModuleManager($this, $this->configDir . '/enabledModules');
+        $this->moduleManager = new ModuleManager(
+            $this,
+            $this->configDir . '/enabledModules',
+            explode(':', $this->config->global->get('modulePath', ICINGA_APPDIR . '/../modules'))
+        );
         return $this;
     }
 
@@ -354,11 +358,6 @@ abstract class ApplicationBootstrap
      */
     protected function loadEnabledModules()
     {
-        $this->moduleManager = new ModuleManager(
-            $this,
-            $this->config->global->get('moduleFolder', $this->getConfigDir() . '/enabledModules'),
-            explode(':', $this->config->global->get('modulePath', ICINGA_APPDIR . '/../modules'))
-        );
         try {
             $this->moduleManager->loadEnabledModules();
         } catch (Exception $e) {

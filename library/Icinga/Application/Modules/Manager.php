@@ -181,6 +181,7 @@ class Manager
             }
 
             $this->enabledDirs[$file] = $dir;
+            ksort($this->enabledDirs);
         }
     }
 
@@ -520,7 +521,7 @@ class Manager
                     continue;
                 }
                 if (is_dir($basedir . '/' . $name)) {
-                    if (!array_key_exists($name, $this->installedBaseDirs)) {
+                    if (! array_key_exists($name, $this->installedBaseDirs)) {
                         $this->installedBaseDirs[$name] = $basedir . '/' . $name;
                     } else {
                         Logger::warn(
@@ -532,6 +533,7 @@ class Manager
                 }
             }
         }
+        ksort($this->installedBaseDirs);
         return $this;
     }
 }
