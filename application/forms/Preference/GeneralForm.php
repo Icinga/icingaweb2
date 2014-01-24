@@ -214,6 +214,15 @@ class GeneralForm extends Form
         $this->addDateFormatSettings($global);
 
         $this->setSubmitLabel('{{SAVE_ICON}} Save Changes');
+
+        $this->addElement(
+            'checkbox',
+            'showBenchmark',
+            array(
+                'label' => 'Use benchmark',
+                'value' => $this->getUserPreferences()->get('app.showBenchmark')
+            )
+        );
     }
 
     /**
@@ -227,7 +236,8 @@ class GeneralForm extends Form
         return array(
             'app.timezone'      => $values['timezone'],
             'app.dateFormat'    => $values['date_format'],
-            'app.timeFormat'    => $values['time_format']
+            'app.timeFormat'    => $values['time_format'],
+            'app.showBenchmark' => $values['showBenchmark'] === '1' ? true : false
         );
     }
 }

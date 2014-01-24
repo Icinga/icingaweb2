@@ -30,8 +30,8 @@
 
 # namespace Icinga\Application\Controllers;
 
-use \Icinga\Web\Controller\ActionController;
-use \Icinga\Application\Icinga;
+use Icinga\Web\Controller\ActionController;
+use Icinga\Application\Benchmark;
 
 /**
  * Application wide index controller

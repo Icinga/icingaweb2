@@ -229,6 +229,21 @@ class ActionController extends Zend_Controller_Action
             }
             $this->_helper->layout()->setLayout($target);
         }
+        $userPreferences = $this->getRequest()->getUser()->getPreferences();
+        if ($userPreferences->get('app.showBenchmark') === true) {
+            Benchmark::measure('Response ready');
+            $this->_helper->layout()->benchmark = $this->renderBenchmark();
+        }
+    }
+
+    /**
+     * Render the benchmark
+     *
+     * @return string Benchmark HTML
+     */
+    protected function renderBenchmark()
+    {
+        return Benchmark::renderToHtml();
     }
 
     /**
