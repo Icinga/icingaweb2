@@ -20,6 +20,7 @@
 
   <script type="text/javascript">
     var base_url = '<?= $this->baseUrl() ?>';
+    var request_id = '<?= $this->requestId(); ?>';
     ICINGA_DEBUG = true;
   </script>
   <? if (isset($_GET['iframe']) && $_GET['iframe'] === 'true'): ?>

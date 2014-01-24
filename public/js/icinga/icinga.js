@@ -48,6 +48,24 @@ define([
          */
         var initialize = function () {
             components.load();
+
+            // qd, wip, wrong, the nastiest piece of JS code you've ever seen..
+            if (window.name === '') {
+                window.name = request_id; // The request id should survive page reloads..
+            }
+            $(document).on('click', 'a', function() {
+                // TODO: The intention of these lines is sending the "request_id" every
+                //       time a request is made, though this approach does not work for
+                //       XHR requests and it is also hijacking external links.
+                //       An alternative is required, once someone reworked the Javascript
+                //       implementation so we have some sort of centralized place to handle
+                //       stuff like that properly.
+                var href = $(this).attr('href');
+                window.location.href = URI(href).addSearch('request_id', window.name);
+                return false;
+            });
+            // qd, wip, wrong, the nastiest piece of JS code you've ever seen..
+
             log.debug("Initialization finished");
         };
 

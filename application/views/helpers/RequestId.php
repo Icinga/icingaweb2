@@ -4,7 +4,7 @@
  * This file is part of Icinga Web 2.
  *
  * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
+ * Copyright (C) 2014 Icinga Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,63 +20,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
+ * @copyright  2014 Icinga Development Team <info@icinga.org>
  * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
  * @author     Icinga Development Team <info@icinga.org>
  *
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Web;
+use \Zend_Controller_Front;
+use \Zend_View_Helper_Abstract;
 
-use Zend_Controller_Request_Http;
-use Icinga\User;
 
-/**
- * Request to handle special attributes
- */
-class Request extends Zend_Controller_Request_Http
+class Zend_View_Helper_RequestId extends Zend_View_Helper_Abstract
 {
-    /**
-     * User object
-     *
-     * @var User
-     */
-    private $user;
-
-    /**
-     * Setter for user
-     *
-     * @param User $user
-     */
-    public function setUser(User $user)
+    public function requestId()
     {
-        $this->user = $user;
-    }
-
-    /**
-     * Getter for user
-     *
-     * @return User
-     */
-    public function getUser()
-    {
-        return $this->user;
-    }
-
-    /**
-     * Return a identifier to uniquely identify the request's source
-     *
-     * @return  string
-     */
-    public function getId()
-    {
-        $requestId = $this->getParam('request_id');
-
-        if ($requestId === null) {
-            $requestId = substr('abcdefghijklmnopqrstuvwxyz', mt_rand(0, 25), 1) . substr(md5(time()), -7);
-        }
-
-        return $requestId;
+        return Zend_Controller_Front::getInstance()->getRequest()->getId();
     }
 }
