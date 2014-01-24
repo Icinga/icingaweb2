@@ -37,17 +37,19 @@ use \Zend_View_Helper_PaginationControl;
 use \Zend_Controller_Action_HelperBroker;
 use \Zend_Controller_Router_Route;
 use \Zend_Controller_Front;
-use \Icinga\Application\Logger;
-use \Icinga\Authentication\Manager as AuthenticationManager;
-use \Icinga\Exception\ConfigurationError;
-use \Icinga\User\Preferences;
-use \Icinga\User\Preferences\LoadInterface;
-use \Icinga\User;
-use \Icinga\Web\Request;
-use \Icinga\Web\View;
-use \Icinga\User\Preferences\StoreFactory;
-use \Icinga\User\Preferences\SessionStore;
-use \Icinga\Util\DateTimeFactory;
+use Icinga\Application\Logger;
+use Icinga\Authentication\Manager as AuthenticationManager;
+use Icinga\Exception\ConfigurationError;
+use Icinga\User\Preferences;
+use Icinga\User\Preferences\LoadInterface;
+use Icinga\User;
+use Icinga\Web\Request;
+use Icinga\Web\View;
+use Icinga\User\Preferences\StoreFactory;
+use Icinga\User\Preferences\SessionStore;
+use Icinga\Util\DateTimeFactory;
+use Icinga\Session\Session as BaseSession;
+use Icinga\Web\Session;
 
 /**
  * Use this if you want to make use of Icinga functionality in other web projects
@@ -82,6 +84,13 @@ class Web extends ApplicationBootstrap
     private $request;
 
     /**
+     * Session object
+     *
+     * @var BaseSession
+     */
+    private $session;
+
+    /**
      * User object
      *
      * @var User
@@ -105,6 +114,7 @@ class Web extends ApplicationBootstrap
         return $this->setupConfig()
             ->setupErrorHandling()
             ->setupResourceFactory()
+            ->setupSession()
             ->setupUser()
             ->setupTimezone()
             ->setupRequest()
@@ -239,7 +249,7 @@ class Web extends ApplicationBootstrap
             $user = $authenticationManager->getUser();
 
             // Needed to update values in user session
-            $sessionStore = new SessionStore($authenticationManager->getSession());
+            $sessionStore = new SessionStore($this->session);
 
             // Performance: Do not ask provider if we've preferences
             // stored in session
@@ -320,6 +330,17 @@ class Web extends ApplicationBootstrap
             $this->user = $user;
         }
 
+        return $this;
+    }
+
+    /**
+     * Initialize a session provider
+     *
+     * @return  self
+     */
+    private function setupSession()
+    {
+        $this->session = Session::create();
         return $this;
     }
 

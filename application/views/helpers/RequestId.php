@@ -4,7 +4,7 @@
  * This file is part of Icinga Web 2.
  *
  * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
+ * Copyright (C) 2014 Icinga Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,56 +20,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
+ * @copyright  2014 Icinga Development Team <info@icinga.org>
  * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
  * @author     Icinga Development Team <info@icinga.org>
  *
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Tests\Icinga\Authentication;
+use \Zend_Controller_Front;
+use \Zend_View_Helper_Abstract;
 
-require_once("../../library/Icinga/Session/SessionNamespace.php");
-require_once("../../library/Icinga/Session/Session.php");
 
-use Icinga\Session\Session;
-
-class SessionMock extends Session
+class Zend_View_Helper_RequestId extends Zend_View_Helper_Abstract
 {
-    public $isOpen = false;
-    public $isWritten = false;
-
-    public function open()
+    public function requestId()
     {
-        if (!$this->isOpen && $this->isWritten) {
-            throw new \Exception("Session write after close");
-        }
-        $this->isOpen = true;
-    }
-
-    public function read($keepOpen = false)
-    {
-        $this->open();
-        if (!$keepOpen) {
-            $this->close();
-        }
-    }
-
-    public function write($keepOpen = false)
-    {
-        $this->open();
-        if (!$keepOpen) {
-            $this->close();
-        }
-    }
-
-    public function close()
-    {
-        $this->isOpen = false;
-        $this->isWritten = true;
-    }
-
-    public function purge()
-    {
+        return Zend_Controller_Front::getInstance()->getRequest()->getId();
     }
 }

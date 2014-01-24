@@ -36,14 +36,14 @@ require_once realpath(__DIR__ . '/../../../../../library/Icinga/Test/BaseTestCas
 use Icinga\Test\BaseTestCase;
 
 // @codingStandardsIgnoreStart
-require_once BaseTestCase::$libDir . '/Authentication/Session.php';
-require_once BaseTestCase::$libDir . '/Authentication/PhpSession.php';
+require_once BaseTestCase::$libDir . '/Session/Session.php';
+require_once BaseTestCase::$libDir . '/Session/PhpSession.php';
 require_once BaseTestCase::$libDir . '/Application/Logger.php';
 require_once BaseTestCase::$libDir . '/Exception/ConfigurationError.php';
 require_once 'Zend/Log.php';
 // @codingStandardsIgnoreEnd
 
-use Icinga\Authentication\PhpSession;
+use Icinga\Session\PhpSession;
 
 class PhpSessionTest extends BaseTestCase
 {
@@ -98,5 +98,24 @@ class PhpSessionTest extends BaseTestCase
         $session->purge();
         $session->read();
         $this->assertEquals(null, $session->get('key2'));
+    }
+
+    /**
+     * Test whether session namespaces are properly written and loaded
+     *
+     * @runInSeparateProcess
+     */
+    public function testNamespaceReadWrite()
+    {
+        $session = $this->getSession();
+        $namespace = $session->getNamespace('test');
+        $namespace->set('some_key', 'some_val');
+        $namespace->set('an_array', array(1, 2, 3));
+        $session->write();
+        $session->clear();
+        $session->read();
+        $namespace = $session->getNamespace('test');
+        $this->assertEquals($namespace->get('some_key'), 'some_val');
+        $this->assertEquals($namespace->get('an_array'), array(1, 2, 3));
     }
 }

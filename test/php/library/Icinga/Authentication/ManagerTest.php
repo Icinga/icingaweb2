@@ -44,15 +44,17 @@ require_once BaseTestCase::$libDir . '/Authentication/Manager.php';
 require_once BaseTestCase::$libDir . '/Authentication/Credential.php';
 require_once BaseTestCase::$libDir . '/Exception/ConfigurationError.php';
 require_once BaseTestCase::$libDir . '/Exception/ProgrammingError.php';
+require_once BaseTestCase::$libDir . '/Web/Session.php';
 require_once 'BackendMock.php';
 require_once 'ErrorProneBackendMock.php';
 require_once 'SessionMock.php';
 // @codingStandardsIgnoreEnd
 
 use \Zend_Config;
-use \Icinga\Authentication\Manager as AuthManager;
-use \Icinga\Authentication\Credential;
-use \Icinga\Exception\ConfigurationError;
+use Icinga\Web\Session;
+use Icinga\Authentication\Manager as AuthManager;
+use Icinga\Authentication\Credential;
+use Icinga\Exception\ConfigurationError;
 
 /**
  * @backupStaticAttributes enabled
@@ -83,11 +85,10 @@ class ManagerTest extends BaseTestCase
         }
 
         $managerOptions = array(
-            'sessionClass'      => $session,
-            'writeSession'      => $write,
             'noDefaultConfig'   => true
         );
 
+        Session::create($session);
         $manager = AuthManager::getInstance($managerConfig, $managerOptions);
 
         if ($nobackend === false) {
@@ -124,11 +125,7 @@ class ManagerTest extends BaseTestCase
         $this->assertInstanceOf('Icinga\User', $authMgr->getUser());
         $this->assertSame('Username', $authMgr->getUser()->getUsername());
 
-        $this->assertInstanceOf(
-            'Tests\Icinga\Authentication\SessionMock',
-            $authMgr->getSession()
-        );
-
+        $session->isOpen = true;
         $authMgr->removeAuthorization();
 
         $this->assertNull($authMgr->getUser());

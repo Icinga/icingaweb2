@@ -29,12 +29,11 @@
 
 namespace Icinga;
 
-use DateTimeZone;
-use Exception;
-use InvalidArgumentException;
+use \DateTimeZone;
+use \Exception;
+use \InvalidArgumentException;
 use Icinga\User\Preferences;
 use Icinga\User\Message;
-use Icinga\Authentication\PhpSession;
 use Icinga\Application\Config;
 
 /**

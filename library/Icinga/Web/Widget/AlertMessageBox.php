@@ -4,17 +4,18 @@ namespace Icinga\Web\Widget;
 
 use \Zend_Log;
 use \Zend_Form;
-use \Icinga\User;
-use \Icinga\User\Message;
 use \Zend_View_Abstract;
-use \Icinga\Authentication\Manager as AuthenticationManager;
+use Icinga\User;
+use Icinga\User\Message;
+use Icinga\Web\Session;
+use Icinga\Authentication\Manager as AuthenticationManager;
 
 /**
- * Displays a set of alert messages to the user. 
+ * Displays a set of alert messages to the user.
  *
- * The messages are fetched automatically from the current AuthenticationManager, 
- * but this is done lazily when render() is called, to ensure that messages will 
- * always be displayed before they are cleared. 
+ * The messages are fetched automatically from the current AuthenticationManager,
+ * but this is done lazily when render() is called, to ensure that messages will
+ * always be displayed before they are cleared.
  */
 class AlertMessageBox implements \Icinga\Web\Widget\Widget {
 
@@ -28,7 +29,7 @@ class AlertMessageBox implements \Icinga\Web\Widget\Widget {
     {
         $messages = $this->user->getMessages();
         $this->user->clearMessages();
-        AuthenticationManager::getInstance()->getSession()->write();
+        Session::getSession()->write();
         return $messages;
     }
 
@@ -77,7 +78,7 @@ class AlertMessageBox implements \Icinga\Web\Widget\Widget {
 	 *									in this	AlertMessageBox. Defaults to false
      */
     public function __construct($showUserMessages = false) {
-		if ($showUserMessages) {
+        if ($showUserMessages) {
             $this->user = AuthenticationManager::getInstance()->getUser();
         }
     }
