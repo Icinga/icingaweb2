@@ -1,0 +1,14 @@
+<div class="row">
+    <div class="col-sm-12 col-xs-12 col-md-2 col-lg-2">
+        <ul class="nav nav-pills nav-stacked" role="navigation">
+        <?php foreach ($toc as $i): ?>
+            <li class="toc-h<?= $i['level'] ?>">
+                <a href="#<?= $i['fragment'] ?>"><?= $this->escape($i['heading']); ?></a>
+            </li>
+        <?php endforeach; ?>
+        </ul>
+    </div>
+  <div class="col-sm-12 col-xs-12 col-md-10 col-lg-10">
+      <?= $html ?>
+  </div>
+</div>

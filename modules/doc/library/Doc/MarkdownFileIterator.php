@@ -6,6 +6,9 @@ namespace Icinga\Module\Doc;
 
 use \RecursiveFilterIterator;
 
+/**
+ * Iterator over Markdown files recursively
+ */
 class MarkdownFileIterator extends RecursiveFilterIterator
 {
     /**

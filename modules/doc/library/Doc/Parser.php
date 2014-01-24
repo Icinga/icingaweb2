@@ -4,21 +4,20 @@
 
 namespace Icinga\Module\Doc;
 
-require_once 'vendor/Michelf/Markdown.php';
-require_once 'vendor/Michelf/MarkdownExtra.php';
+require_once 'vendor/Parsedown/Parsedown.php';
 
 use \RecursiveIteratorIterator;
 use \RecursiveDirectoryIterator;
 use \Exception;
-use Michelf\MarkdownExtra;
+use \Parsedown;
 
 /**
- * Markdown parser
+ * Parser for documentation written in Markdown
  */
 class Parser
 {
     /**
-     * Retrieve table of contents and HTML converted from all markdown files in the given directory sorted by filename
+     * Retrieve table of contents and HTML converted from all Markdown files in the given directory sorted by filename
      *
      * @param   $dir
      *
@@ -87,7 +86,7 @@ class Parser
             }
             $fileObject->flock(LOCK_UN);
         }
-        $html   = MarkdownExtra::defaultTransform(implode('', $cat));
+        $html = Parsedown::instance()->parse(implode('', $cat));
         return array($html, $toc);
     }
 }
