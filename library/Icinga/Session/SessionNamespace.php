@@ -29,6 +29,8 @@
 
 namespace Icinga\Session;
 
+use \Exception;
+
 
 /**
  * Container for session values
@@ -41,6 +43,51 @@ class SessionNamespace
      * @var array
      */
     protected $values = array();
+
+    /**
+     * Set a session value by property access
+     *
+     * @param   string  $key    The value's name
+     * @param   mixed   $value  The value
+     */
+    public function __set($key, $value) {
+        $this->set($key, $value);
+    }
+
+    /**
+     * Return a session value by property access
+     *
+     * @param   string  $key    The value's name
+     *
+     * @return  mixed           The value
+     * @throws  Exception       When the given value-name is not found
+     */
+    public function __get($key) {
+        if (!array_key_exists($key, $this->values)) {
+            throw new Exception('Cannot access non-existent session value "' + $key + '"');
+        }
+
+        return $this->get($key);
+    }
+
+    /**
+     * Return whether the given session value is set
+     *
+     * @param   string  $key    The value's name
+     * @return  bool
+     */
+    public function __isset($key) {
+        return isset($this->values[$key]);
+    }
+
+    /**
+     * Unset the given session value
+     *
+     * @param   string  $key    The value's name
+     */
+    public function __unset($key) {
+        unset($this->values[$key]);
+    }
 
     /**
      * Setter for session values
