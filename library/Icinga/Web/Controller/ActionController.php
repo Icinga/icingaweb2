@@ -229,10 +229,11 @@ class ActionController extends Zend_Controller_Action
             }
             $this->_helper->layout()->setLayout($target);
         }
-        $userPreferences = $this->getRequest()->getUser()->getPreferences();
-        if ($userPreferences->get('app.showBenchmark') === true) {
-            Benchmark::measure('Response ready');
-            $this->_helper->layout()->benchmark = $this->renderBenchmark();
+        if ($user = $this->getRequest()->getUser()) {
+            if ($user->getPreferences()->get('app.showBenchmark') === true) {
+                Benchmark::measure('Response ready');
+                $this->_helper->layout()->benchmark = $this->renderBenchmark();
+            }
         }
     }
 
