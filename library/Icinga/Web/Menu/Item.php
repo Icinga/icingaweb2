@@ -236,16 +236,28 @@ class Item
      *
      * @return  self
      */
-    public function addChild($id, $itemConfig)
+    public function addChild($id, $itemConfig = null)
     {
         if (false === ($pos = strpos($id, '.'))) {
+            // Root item
             $menuItem = new self($id, $itemConfig);
             $this->children[$id] = $menuItem;
         } else {
+            // Submenu item
             list($parentId, $id) = explode('.', $id, 2);
-            $this->getChild($parentId)->addChild($id, $itemConfig);
+            $parent = $this->getChild($parentId);
+            if ($parent !== null) {
+                $menuItem = $parent->addChild($id, $itemConfig);
+            } else {
+                // Parent does not exist, auto-generate a knot to inform the user
+                $autoId = 'Auto-generated knot because submenu items refer to a non-existent parent menu item';
+                if (($auto = $this->getChild($autoId)) === null) {
+                    $auto = $this->addChild($autoId);
+                }
+                $menuItem = $auto->addChild($id, $itemConfig);
+            }
         }
-        return $this;
+        return $menuItem;
     }
 
     /**
@@ -273,13 +285,17 @@ class Item
     /**
      * Get child by its id
      *
-     * @param   string $id
+     * @param   string  $id
+     * @param   mixed   $default
      *
-     * @return  self
+     * @return  self|$default
      */
-    public function getChild($id)
+    public function getChild($id, $default = null)
     {
-        return $this->children[$id];
+        if (array_key_exists($id, $this->children)) {
+            return $this->children[$id];
+        }
+        return $default;
     }
 
 
