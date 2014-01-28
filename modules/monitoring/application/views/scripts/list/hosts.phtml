@@ -33,7 +33,10 @@ $viewHelper = $this->getHelper('MonitoringState');
 
   <table class="table table-condensed pull-left">
     <tbody>
+     <?php $i = 1; ?>
     <?php foreach($hosts as $host): ?>
+      <?php ($i == 1) ? $host->action_url = 'http://$HOSTNAME$/$HOSTADDRESS$/BANA/$HOSTNAME$/$_HOSTMACADDRESS$' : $host->action_url = "test"; ($i == 1) ? $i++ : $i = $i + 1;?>
+      
       <?php $hostStateName = strtolower($this->util()->getHostStateName($host->host_state)); ?>
       <?php $hostLink = $this->href('monitoring/show/host', array('host' => $host->host_name)); ?>
       <tr>
@@ -119,6 +122,7 @@ $viewHelper = $this->getHelper('MonitoringState');
 
         <!-- Host / Status / Output -->
         <td>
+            <?= $this->makroResolver($host->action_url, $host, false); ?>
           <?php if ($host->host_icon_image) : ?>
             <div class="pull-left" style="margin-right: 2px;">
               <i class="inline-image" style="background-image: url(<?= $host->host_icon_image; ?>);"></i>
