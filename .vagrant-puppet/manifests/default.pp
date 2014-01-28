@@ -5,6 +5,9 @@ include openldap
 
 Exec { path => '/bin:/usr/bin:/sbin' }
 
+$icingaVersion = '1.9.4'
+$icinga2Version = '0.0.6'
+
 exec { 'create-mysql-icinga-db':
   unless  => 'mysql -uicinga -picinga icinga',
   command => 'mysql -uroot -e "CREATE DATABASE icinga; \
@@ -47,8 +50,8 @@ user { 'apache':
 }
 
 cmmi { 'icinga-mysql':
-  url     => 'http://sourceforge.net/projects/icinga/files/icinga/1.10.0-beta/icinga-1.10.0-beta.tar.gz/download',
-  output  => 'icinga-1.10.0-beta.tar.gz',
+  url     => "https://github.com/Icinga/icinga-core/releases/download/v${icingaVersion}/icinga-${icingaVersion}.tar.gz",
+  output  => "icinga-${icingaVersion}.tar.gz",
   flags   => '--prefix=/usr/local/icinga-mysql --with-command-group=icinga-cmd \
               --enable-idoutils --with-init-dir=/usr/local/icinga-mysql/etc/init.d \
               --with-htmurl=/icinga-mysql --with-httpd-conf-file=/etc/httpd/conf.d/icinga-mysql.conf \
@@ -72,8 +75,8 @@ file { '/etc/init.d/ido2db-mysql':
 }
 
 cmmi { 'icinga-pgsql':
-  url     => 'http://sourceforge.net/projects/icinga/files/icinga/1.9.3/icinga-1.9.3.tar.gz/download',
-  output  => 'icinga-1.9.3.tar.gz',
+  url     => "https://github.com/Icinga/icinga-core/releases/download/v${icingaVersion}/icinga-${icingaVersion}.tar.gz",
+  output  => "icinga-${icingaVersion}.tar.gz",
   flags   => '--prefix=/usr/local/icinga-pgsql \
               --with-command-group=icinga-cmd --enable-idoutils \
               --with-init-dir=/usr/local/icinga-pgsql/etc/init.d \
@@ -99,13 +102,13 @@ file { '/etc/init.d/ido2db-pgsql':
 
 exec { 'populate-icinga-mysql-db':
   unless  => 'mysql -uicinga -picinga icinga -e "SELECT * FROM icinga_dbversion;" &> /dev/null',
-  command => 'mysql -uicinga -picinga icinga < /usr/local/src/icinga-mysql/icinga-1.10.0-beta/module/idoutils/db/mysql/mysql.sql',
+  command => "mysql -uicinga -picinga icinga < /usr/local/src/icinga-mysql/icinga-${icingaVersion}/module/idoutils/db/mysql/mysql.sql",
   require => [ Cmmi['icinga-mysql'], Exec['create-mysql-icinga-db'] ]
 }
 
 exec { 'populate-icinga-pgsql-db':
   unless  => 'psql -U icinga -d icinga -c "SELECT * FROM icinga_dbversion;" &> /dev/null',
-  command => 'sudo -u postgres psql -U icinga -d icinga < /usr/local/src/icinga-pgsql/icinga-1.9.3/module/idoutils/db/pgsql/pgsql.sql',
+  command => "sudo -u postgres psql -U icinga -d icinga < /usr/local/src/icinga-pgsql/icinga-${icingaVersion}/module/idoutils/db/pgsql/pgsql.sql",
   require => [ Cmmi['icinga-pgsql'], Exec['create-pgsql-icinga-db'] ]
 }
 
@@ -315,29 +318,29 @@ exec { 'install npm/URIjs':
   require => Exec['install nodejs']
 }
 
-exec { 'install ZendFramework':
+exec { 'install php-ZendFramework':
   command => 'yum -d 0 -e 0 -y --enablerepo=epel install php-ZendFramework',
   unless  => 'rpm -qa | grep php-ZendFramework',
   require => Class['epel']
 }
 
-package { 'boost-devel':
+package { ['cmake', 'boost-devel', 'bison', 'flex']:
   ensure => installed
 }
 
 cmmi { 'icinga2':
-  url          => 'http://sourceforge.net/projects/icinga/files/icinga2/0.0.2/icinga2-0.0.2.tar.gz/download',
-  output       => 'icinga2-0.0.2.tar.gz',
-  flags        => '--prefix=/usr/local/icinga2',
-  creates      => '/usr/local/icinga2',
-  make         => 'make && make install',
-  require      => Package['boost-devel'],
-  make_timeout => 900
+  url               => "https://github.com/Icinga/icinga2/releases/download/v${icinga2Version}/icinga2-${icinga2Version}.tar.gz",
+  output            => "icinga2-${icinga2Version}.tar.gz",
+  configure_command => 'mkdir build &> /dev/null || true && cd build && sudo cmake ..',
+  creates           => '/usr/local/sbin/icinga2',
+  make              => 'true && cd build/ && make && make install',
+  require           => Package[ ['cmake', 'boost-devel', 'bison', 'flex'] ],
+  make_timeout      => 900
 }
 
 configure { 'icingaweb':
-  path  => '/vagrant',
-  flags => '--prefix=/vagrant \
+  path    => '/vagrant',
+  flags   => '--prefix=/vagrant \
             --with-icinga-commandpipe="/usr/local/icinga-mysql/var/rw/icinga.cmd" \
             --with-statusdat-file="/usr/local/icinga-mysql/var/status.dat" \
             --with-objects-cache-file=/usr/local/icinga-mysql/var/objects.cache \
@@ -345,7 +348,8 @@ configure { 'icingaweb':
             --with-httpd-config-path="/etc/httpd/conf.d" \
             --with-ldap-authentication \
             --with-internal-authentication \
-            --with-livestatus-socket="/usr/local/icinga-mysql/var/rw/live"'
+            --with-livestatus-socket="/usr/local/icinga-mysql/var/rw/live"',
+  require => Exec['install php-ZendFramework']
 }
 
 file { 'icingaweb-public':
@@ -363,7 +367,7 @@ file { '/etc/httpd/conf.d/icingaweb.conf':
 exec { 'install php-ZendFramework-Db-Adapter-Pdo-Mysql':
   command => 'yum -d 0 -e 0 -y --enablerepo=epel install php-ZendFramework-Db-Adapter-Pdo-Mysql',
   unless  => 'rpm -qa | grep php-ZendFramework-Db-Adapter-Pdo-Mysql',
-  require => Exec['install ZendFramework']
+  require => Exec['install php-ZendFramework']
 }
 
 file { '/etc/motd':
@@ -396,7 +400,7 @@ exec{ 'create-pgsql-icinga_unittest-db':
 exec { 'install php-ZendFramework-Db-Adapter-Pdo-Pgsql':
   command => 'yum -d 0 -e 0 -y --enablerepo=epel install php-ZendFramework-Db-Adapter-Pdo-Pgsql',
   unless  => 'rpm -qa | grep php-ZendFramework-Db-Adapter-Pdo-Pgsql',
-  require => Exec['install ZendFramework']
+  require => Exec['install php-ZendFramework']
 }
 
 

@@ -31,10 +31,11 @@
 define cmmi(
   $url,
   $output,
-  $flags,
+  $flags='',
   $creates,
   $make,
-  $make_timeout=300
+  $make_timeout=300,
+  $configure_command='sh ./configure'
 ) {
 
   Exec { path => '/bin:/usr/bin' }
@@ -64,7 +65,7 @@ define cmmi(
 
   exec { "configure-${name}":
     cwd     => $src,
-    command => "sh ./configure ${flags}",
+    command => "${configure_command} ${flags}",
     creates => "${src}/Makefile",
     require => Exec["extract-${name}"]
   }
