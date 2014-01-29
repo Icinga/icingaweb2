@@ -45,7 +45,10 @@ class Menu extends MenuItem
         $manager =  Icinga::app()->getModuleManager();
         $menuConfigs = array(Config::app('menu'));
         foreach ($manager->listEnabledModules() as $moduleName) {
-            $menuConfigs[] = Config::module($moduleName, 'menu');
+            $moduleMenuConfig = Config::module($moduleName, 'menu');
+            if ($moduleMenuConfig) {
+                $menuConfigs[] = $moduleMenuConfig;
+            }
         }
         return $menu->loadMenuItems($menu->flattenConfigs($menuConfigs));
     }
