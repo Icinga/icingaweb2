@@ -40,6 +40,9 @@ use Icinga\Util\Translator;
 use Icinga\Web\Widget\Tabs;
 use Icinga\Web\Url;
 
+use Icinga\File\Pdf;
+use \DOMDocument;
+
 /**
  * Base class for all core action controllers
  *
@@ -71,6 +74,7 @@ class ActionController extends Zend_Controller_Action
             ->setResponse($response)
             ->_setInvokeArgs($invokeArgs);
         $this->_helper = new Zend_Controller_Action_HelperBroker($this);
+        $this->_helper->addPath('../application/controllers/helpers');
 
         // when noInit is set (e.g. for testing), authentication and init is skipped
         if (isset($invokeArgs['noInit'])) {
@@ -233,6 +237,38 @@ class ActionController extends Zend_Controller_Action
                 Benchmark::measure('Response ready');
                 $this->_helper->layout()->benchmark = $this->renderBenchmark();
             }
+        }
+        if ($this->_request->getParam('format') === 'pdf' && $this->_request->getControllerName() !== 'static') {
+            $html = $this->view->render(
+                $this->_request->getControllerName() . '/' . $this->_request->getActionName() . '.phtml'
+            );
+            $this->sendAsPdf($html);
+        }
+    }
+
+    protected function sendAsPdf($body)
+    {
+        $css = $this->view->getHelper('action')->action('stylesheet', 'static', 'application');
+        $css = <<<EOF
+
+
+EOF;
+        $html = '<html><head></head><body><style>' . $css . '</style>' . $body . '</body></html>';
+        $pdf = new PDF();
+        $pdf->AddPage();
+        $pdf->writeHTML($html);
+        $pdf->Output($this->getRequest()->getActionName() . '.pdf', 'I');
+    }
+
+    /**
+     * @param DOMDocument $doc
+     * @param             $tag
+     */
+    private function removeNodeByTagName(DOMDocument $doc, $tag)
+    {
+        $forms = $doc->getElementsByTagName($tag);
+        foreach ($forms as $form) {
+            $form->parentNode->removeChild($form);;
         }
     }
 

@@ -74,6 +74,16 @@ class Monitoring_ListController extends MonitoringController
         $this->view->grapher = Hook::get('grapher');
         $this->createTabs();
         $this->view->activeRowHref = $this->getParam('detail');
+
+        /*
+        $contextSwitch = $this->_helper->getHelper('DataFormatSwitch');
+        $contextSwitch = $this->_helper->getHelper('ContextSwitch');
+        $contextSwitch->addActionContext(true, 'json');
+        $contextSwitch->setAutoJsonSerialization(true);
+        $contextSwitch->initContext();
+        $contextSwitch->addActionContext(true, 'xml');
+        $contextSwitch->addActionContext(true, 'pdf');
+        */
     }
 
     /**
@@ -135,7 +145,6 @@ class Monitoring_ListController extends MonitoringController
         ));
         $this->handleFormatRequest($query);
         $this->view->hosts = $query->paginate();
-
     }
 
     /**
