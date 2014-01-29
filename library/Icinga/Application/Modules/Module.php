@@ -35,6 +35,7 @@ use Icinga\Application\ApplicationBootstrap;
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
+use Icinga\Util\Translator;
 use Icinga\Web\Hook;
 
 /**
@@ -422,7 +423,7 @@ class Module
     protected function registerLocales()
     {
         if (file_exists($this->localedir) && is_dir($this->localedir)) {
-            bindtextdomain($this->name, $this->localedir);
+            Translator::registerDomain($this->name, $this->localedir);
         }
         return $this;
     }

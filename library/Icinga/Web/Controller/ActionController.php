@@ -32,17 +32,13 @@ namespace Icinga\Web\Controller;
 use \Exception;
 use \Zend_Controller_Action;
 use \Zend_Controller_Request_Abstract;
-use \Zend_Controller_Front;
 use \Zend_Controller_Response_Abstract;
 use \Zend_Controller_Action_HelperBroker;
-use \Zend_Layout;
 use Icinga\Authentication\Manager as AuthManager;
 use Icinga\Application\Benchmark;
-use Icinga\Application\Config;
-use Icinga\Web\Notification;
+use Icinga\Util\Translator;
 use Icinga\Web\Widget\Tabs;
 use Icinga\Web\Url;
-use Icinga\Web\Request;
 
 /**
  * Base class for all core action controllers
@@ -152,15 +148,19 @@ class ActionController extends Zend_Controller_Action
     }
 
     /**
-     * Translate the given string with the global translation catalog
+     * Translate a string
      *
-     * @param   string $string The string that should be translated
+     * Autoselects the module domain, if any, and falls back to the global one if no translation could be found.
      *
-     * @return  string
+     * @param   string  $text   The string to translate
+     *
+     * @return  string          The translated string
      */
-    public function translate($string)
+    public function translate($text)
     {
-        return t($string);
+        $module = $this->getRequest()->getModuleName();
+        $domain = $module === 'default' ? 'icinga' : $module;
+        return Translator::translate($text, $domain);
     }
 
     /**
@@ -211,7 +211,6 @@ class ActionController extends Zend_Controller_Action
         }
         $this->_helper->Redirector->gotoUrlAndExit($url);
     }
-
 
     /**
      * Detect whether the current request requires changes in the layout and apply them before rendering

@@ -2,8 +2,8 @@
 
 namespace Icinga\Cli;
 
-use Icinga\Cli\Loader;
 use Icinga\Cli\Screen;
+use Icinga\Util\Translator;
 use Icinga\Application\ApplicationBootstrap as App;
 use Exception;
 
@@ -46,6 +46,21 @@ abstract class Command
     public function showTrace()
     {
         return $this->trace;
+    }
+
+    /**
+     * Translate a string
+     *
+     * Autoselects the module domain, if any, and falls back to the global one if no translation could be found.
+     *
+     * @param   string  $text   The string to translate
+     *
+     * @return  string          The translated string
+     */
+    public function translate($text)
+    {
+        $domain = $this->moduleName === null ? 'icinga' : $this->moduleName;
+        return Translator::translate($text, $domain);
     }
 
     public function fail($msg)

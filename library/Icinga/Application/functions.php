@@ -27,31 +27,25 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-if (function_exists('_')) {
-    function t($messageId = null)
+use \Icinga\Util\Translator;
+
+if (extension_loaded('gettext')) {
+    function t($messageId)
     {
-        $msg = _($messageId);
-        if (! $msg) {
-            return $messageId;
-        }
-        return $msg;
+        return Translator::translate($messageId, 'icinga');
     }
 
-    function mt($domain, $messageId = null)
+    function mt($domain, $messageId)
     {
-        $msg = dgettext($domain, $messageId);
-        if (! $msg) {
-            return $messageId;
-        }
-        return $msg;
+        return Translator::translate($messageId, $domain);
     }
 } else {
-    function t($messageId = null)
+    function t($messageId)
     {
         return $messageId;
     }
 
-    function mt($domain, $messageId = null)
+    function mt($domain, $messageId)
     {
         return $messageId;
     }
