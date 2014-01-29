@@ -211,14 +211,14 @@ class LdapUserBackendTest extends BaseTestCase
             $backend->authenticate(new Credential('jwoe', 'passjwoe'))
         );
 
-        $this->assertFalse($backend->authenticate(new Credential('jwoe', 'passjwoe22')));
+        $this->assertNull($backend->authenticate(new Credential('jwoe', 'passjwoe22')));
 
         $this->assertInstanceOf(
             '\Icinga\User',
             $backend->authenticate(new Credential('rmiles', 'passrmiles'))
         );
 
-        $this->assertFalse($backend->authenticate(new Credential('rmiles', 'passrmiles33')));
+        $this->assertNull($backend->authenticate(new Credential('rmiles', 'passrmiles33')));
     }
 
     /**

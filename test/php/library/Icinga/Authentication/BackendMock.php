@@ -111,7 +111,7 @@ class BackendMock implements UserBackend
     public function authenticate(Credential $credentials)
     {
         if (!in_array($credentials, $this->allowedCredentials)) {
-            return false;
+            return;
         }
 
         return self::getDummyUser();
