@@ -50,6 +50,7 @@ use Icinga\User\Preferences\SessionStore;
 use Icinga\Util\DateTimeFactory;
 use Icinga\Session\Session as BaseSession;
 use Icinga\Web\Session;
+use Icinga\Util\Translator;
 
 /**
  * Use this if you want to make use of Icinga functionality in other web projects
@@ -116,10 +117,10 @@ class Web extends ApplicationBootstrap
             ->setupResourceFactory()
             ->setupSession()
             ->setupUser()
+            ->setupInternationalization()
             ->setupTimezone()
             ->setupRequest()
             ->setupZendMvc()
-            ->setupTranslation()
             ->setupModuleManager()
             ->loadEnabledModules()
             ->setupRoute()
@@ -166,25 +167,6 @@ class Web extends ApplicationBootstrap
     public function getViewRenderer()
     {
         return $this->viewRenderer;
-    }
-
-    /**
-     * Load translations
-     *
-     * @return self
-     */
-    private function setupTranslation()
-    {
-        // AuthManager::getInstance()->getSession()->language;
-        $locale = null;
-        if (!$locale) {
-            $locale = 'en_US';
-        }
-        putenv('LC_ALL=' . $locale . '.UTF-8');
-        setlocale(LC_ALL, $locale . '.UTF-8');
-        bindtextdomain('icinga', $this->getApplicationDir() . '/locale');
-        textdomain('icinga');
-        return $this;
     }
 
     /**
@@ -447,6 +429,32 @@ class Web extends ApplicationBootstrap
 
         date_default_timezone_set($userTimeZone);
         DateTimeFactory::setConfig(array('timezone' => $tz));
+        return $this;
+    }
+
+    /**
+     * Setup internationalization using gettext
+     *
+     * Uses the preferred user language or the configured default and system default, respectively.
+     *
+     * @return  self
+     */
+    protected function setupInternationalization()
+    {
+        parent::setupInternationalization();
+        $userLocale = $this->user === null ? null : $this->user->getPreferences()->get('app.language');
+
+        if ($userLocale) {
+            try {
+                Translator::setupLocale($userLocale);
+            } catch (Exception $error) {
+                Logger::error(
+                    'Cannot set locale "' . $userLocale . '" configured in ' .
+                    'preferences of user "' . $this->user->getUsername() . '"'
+                );
+            }
+        }
+
         return $this;
     }
 }

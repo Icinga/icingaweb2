@@ -31,7 +31,6 @@ namespace Icinga\Application;
 
 use Icinga\Application\Platform;
 use Icinga\Application\ApplicationBootstrap;
-use Icinga\Application\Modules\Manager as ModuleManager;
 use Icinga\Cli\Params;
 use Icinga\Cli\Loader;
 use Icinga\Cli\Screen;
@@ -63,12 +62,12 @@ class Cli extends ApplicationBootstrap
     {
         $this->assertRunningOnCli();
         $this->setupConfig()
-             ->parseBasicParams()
-             ->fixLoggingConfig()
-             ->setupErrorHandling()
-             ->setupResourceFactory()
-             ->setupModuleManager()
-             ;
+            ->setupInternationalization()
+            ->parseBasicParams()
+            ->fixLoggingConfig()
+            ->setupErrorHandling()
+            ->setupResourceFactory()
+            ->setupModuleManager();
     }
 
     protected function fixLoggingConfig()

@@ -31,13 +31,11 @@ namespace Icinga\Application;
 
 use \DateTimeZone;
 use \Exception;
-use \Zend_Loader_Autoloader;
 use \Icinga\Application\Modules\Manager as ModuleManager;
-use \Icinga\Application\Platform;
 use \Icinga\Application\Config;
-use \Icinga\Exception\ProgrammingError;
 use \Icinga\Exception\ConfigurationError;
 use \Icinga\Util\DateTimeFactory;
+use \Icinga\Util\Translator;
 
 use Icinga\Data\ResourceFactory;
 
@@ -425,6 +423,25 @@ abstract class ApplicationBootstrap
         }
         date_default_timezone_set($timeZoneString);
         DateTimeFactory::setConfig(array('timezone' => $tz));
+        return $this;
+    }
+
+    /**
+     * Setup internationalization using gettext
+     *
+     * Uses the language defined in the global config or the default one
+     *
+     * @return  self
+     */
+    protected function setupInternationalization()
+    {
+        Translator::setupLocale($this->config->global->get('language', Translator::DEFAULT_LOCALE));
+
+        $localeDir = $this->getApplicationDir('locale');
+        if (file_exists($localeDir) && is_dir($localeDir)) {
+            Translator::registerDomain('icinga', $localeDir);
+        }
+
         return $this;
     }
 }
