@@ -435,7 +435,7 @@ abstract class ApplicationBootstrap
      */
     protected function setupInternationalization()
     {
-        Translator::setupLocale($this->config->global->get('language', 'en_US'));
+        Translator::setupLocale($this->config->global->get('language', Translator::DEFAULT_LOCALE));
 
         $localeDir = $this->getApplicationDir('locale');
         if (file_exists($localeDir) && is_dir($localeDir)) {

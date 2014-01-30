@@ -42,7 +42,12 @@ class Translator
     const DEFAULT_DOMAIN = 'icinga';
 
     /**
-     * Known gettext domains
+     * The locale code that is used in the project
+     */
+    const DEFAULT_LOCALE = 'en_US';
+
+    /**
+     * Known gettext domains and directories
      *
      * @var array
      */
@@ -62,7 +67,7 @@ class Translator
      */
     public static function translate($text, $domain)
     {
-        if ($domain !== self::DEFAULT_DOMAIN && !in_array($domain, self::$knownDomains)) {
+        if ($domain !== self::DEFAULT_DOMAIN && !array_key_exists($domain, self::$knownDomains)) {
             throw new Exception("Cannot translate string '$text' with unknown domain '$domain'");
         }
 
@@ -87,7 +92,7 @@ class Translator
             throw new Exception("Cannot register domain '$name' with path '$directory'");
         }
         bind_textdomain_codeset($name, 'UTF-8');
-        self::$knownDomains[] = $name;
+        self::$knownDomains[$name] = $directory;
     }
 
     /**
@@ -104,5 +109,26 @@ class Translator
         }
         putenv('LC_ALL=' . $localeName . '.UTF-8'); // Failsafe, Win and Unix
         putenv('LANG=' . $localeName . '.UTF-8'); // Windows fix, untested
+    }
+
+    /**
+     * Return a list of all locale codes currently available in the known domains
+     *
+     * @return  array
+     */
+    public static function getAvailableLocaleCodes()
+    {
+        $codes = array();
+
+        foreach (array_values(self::$knownDomains) as $directory) {
+            $dh = opendir($directory);
+            while (false !== ($name = readdir($dh))) {
+                if (!preg_match('@\.|\.\.@', $name) && is_dir($directory . DIRECTORY_SEPARATOR . $name)) {
+                    $codes[] = $name;
+                }
+            }
+        }
+
+        return $codes;
     }
 }

@@ -37,6 +37,7 @@ use \Zend_View_Helper_DateFormat;
 use \Icinga\Application\Config as IcingaConfig;
 use \Icinga\Data\ResourceFactory;
 use \Icinga\Web\Form;
+use \Icinga\Util\Translator;
 use \Icinga\Web\Form\Validator\WritablePathValidator;
 use \Icinga\Web\Form\Validator\TimeFormatValidator;
 use \Icinga\Web\Form\Validator\DateFormatValidator;
@@ -159,6 +160,35 @@ class GeneralForm extends Form
             )
         );
 
+    }
+
+    /**
+     * Add a select field for setting the default language
+     *
+     * Possible values are determined by Translator::getAvailableLocaleCodes.
+     *
+     * @param   Zend_Config     $cfg    The "global" section of the config.ini
+     */
+    private function addLanguageSelection(Zend_Config $cfg)
+    {
+        $languages = array();
+        foreach (Translator::getAvailableLocaleCodes() as $language) {
+            $languages[$language] = $language;
+        }
+        $languages[Translator::DEFAULT_LOCALE] = Translator::DEFAULT_LOCALE;
+
+        $this->addElement(
+            'select',
+            'language',
+            array(
+                'label'         => t('Default Language'),
+                'required'      => true,
+                'multiOptions'  => $languages,
+                'helptext'      => t('Select the language to use by default. Can be'
+                                     . ' overwritten by a user in his preferences.'),
+                'value'         => $cfg->get('language', Translator::DEFAULT_LOCALE)
+            )
+        );
     }
 
     /**
@@ -353,6 +383,7 @@ class GeneralForm extends Form
         }
         $this->setName('form_config_general');
         $this->addDevelopmentCheckbox($global);
+        $this->addLanguageSelection($global);
         $this->addTimezoneSelection($global);
         $this->addModuleSettings($global);
         $this->addDateFormatSettings($global);
@@ -389,6 +420,7 @@ class GeneralForm extends Form
         $values = $this->getValues();
         $cfg = clone $config;
         $cfg->global->environment  = ($values['environment'] == 1) ? 'development' : 'production';
+        $cfg->global->language     = $values['language'];
         $cfg->global->timezone     = $values['timezone'];
         $cfg->global->moduleFolder = $values['module_folder'];
         $cfg->global->modulePath   = $values['module_path'];

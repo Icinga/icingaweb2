@@ -37,6 +37,7 @@ use \Zend_View_Helper_DateFormat;
 use \Icinga\Web\Form;
 use \Icinga\Web\Form\Validator\TimeFormatValidator;
 use \Icinga\Web\Form\Validator\DateFormatValidator;
+use \Icinga\Util\Translator;
 
 /**
  * General user preferences
@@ -74,12 +75,53 @@ class GeneralForm extends Form
     }
 
     /**
+     * Add a select field for setting the user's language
+     *
+     * Possible values are determined by Translator::getAvailableLocaleCodes.
+     * Also, a 'use default format' checkbox is added in order to allow a user to discard his overwritten setting
+     *
+     * @param   Zend_Config     $cfg    The "global" section of the config.ini to be used as default value
+     */
+    private function addLanguageSelection(Zend_Config $cfg)
+    {
+        $languages = array();
+        foreach (Translator::getAvailableLocaleCodes() as $language) {
+            $languages[$language] = $language;
+        }
+        $languages[Translator::DEFAULT_LOCALE] = Translator::DEFAULT_LOCALE;
+        $prefs = $this->getUserPreferences();
+        $useDefaultLanguage = $this->getRequest()->getParam('default_language', !$prefs->has('app.language'));
+
+        $this->addElement(
+            'checkbox',
+            'default_language',
+            array(
+                'label'     => t('Use Default Language'),
+                'value'     => !$prefs->has('app.language'),
+                'required'  => true
+            )
+        );
+        $selectOptions = array(
+            'label'         => t('Your Current Language'),
+            'required'      => !$useDefaultLanguage,
+            'multiOptions'  => $languages,
+            'helptext'      => t('Use the following language to display texts and messages'),
+            'value'         => $prefs->get('app.language', $cfg->get('language', Translator::DEFAULT_LOCALE))
+        );
+        if ($useDefaultLanguage) {
+            $selectOptions['disabled'] = 'disabled';
+        }
+        $this->addElement('select', 'language', $selectOptions);
+        $this->enableAutoSubmit(array('default_language'));
+    }
+
+    /**
      * Add a select field for setting the user's timezone.
      *
      * Possible values are determined by DateTimeZone::listIdentifiers
      * Also, a 'use default format' checkbox is added in order to allow a user to discard his overwritten setting
      *
-     * @param Zend_Config $cfg The "global" section of the config.ini to be used as default valuse
+     * @param Zend_Config $cfg The "global" section of the config.ini to be used as default value
      */
     private function addTimezoneSelection(Zend_Config $cfg)
     {
@@ -210,6 +252,7 @@ class GeneralForm extends Form
             $global = new Zend_Config(array());
         }
 
+        $this->addLanguageSelection($global);
         $this->addTimezoneSelection($global);
         $this->addDateFormatSettings($global);
 
@@ -234,6 +277,7 @@ class GeneralForm extends Form
     {
         $values = $this->getValues();
         return array(
+            'app.language'      => $values['language'],
             'app.timezone'      => $values['timezone'],
             'app.dateFormat'    => $values['date_format'],
             'app.timeFormat'    => $values['time_format'],
