@@ -2,17 +2,14 @@
 
 namespace Icinga\Module\Monitoring\Object;
 
-use Icinga\Data\BaseQuery as Query;
-use \Icinga\Module\Monitoring\Backend;
 use Icinga\Module\Monitoring\DataView\Contact;
 use Icinga\Module\Monitoring\DataView\Contactgroup;
 use Icinga\Module\Monitoring\DataView\Downtime;
 use Icinga\Module\Monitoring\DataView\EventHistory;
 use Icinga\Module\Monitoring\DataView\Hostgroup;
-use Icinga\Module\Monitoring\DataView\HostStatus;
 use Icinga\Module\Monitoring\DataView\Comment;
 use Icinga\Module\Monitoring\DataView\Servicegroup;
-use Icinga\Module\Monitoring\DataView\ServiceStatus;
+use Icinga\Module\Monitoring\DataView\Customvar;
 use Icinga\Web\Request;
 
 abstract class AbstractObject
@@ -78,6 +75,29 @@ abstract class AbstractObject
             )
         )->getQuery()->fetchPairs();
 
+        return $this;
+    }
+
+    public function fetchCustomvars()
+    {
+        $query = Customvar::fromRequest(
+            $this->request,
+            array(
+                'varname',
+                'varvalue'
+            )
+        )->getQuery();
+
+        if ($this->type === self::TYPE_HOST) {
+            $query->where('host_name', $this->host_name)
+                ->where('object_type', 'host');
+        } else {
+            $query->where('host_name', $this->host_name)
+                ->where('object_type', 'service')
+                ->where('service_description', $this->service_description);
+        }
+
+        $this->customvars = $query->fetchPairs();
         return $this;
     }
 
