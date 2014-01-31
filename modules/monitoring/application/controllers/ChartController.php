@@ -195,25 +195,25 @@ class Monitoring_ChartController extends ActionController
         $this->view->chart->drawBars(
             array(
                 'label' => 'Services ok',
-                'color' => '00ff00',
+                'color' => '#00ff00',
                 'stack' => 'stack1',
                 'data'  => $okBars
             ),
             array(
                 'label' => 'Services warning',
-                'color' => 'ffff00',
+                'color' => '#ffff00',
                 'stack' => 'stack1',
                 'data'  => $warningBars
             ),
             array(
                 'label' => 'Services critical',
-                'color' => 'ff0000',
+                'color' => '#ff0000',
                 'stack' => 'stack1',
                 'data'  => $critBars
             ),
             array(
                 'label' => 'Services unknown',
-                'color' => 'E066FF',
+                'color' => '#E066FF',
                 'stack' => 'stack1',
                 'data'  => $unknownBars
             )
@@ -236,19 +236,19 @@ class Monitoring_ChartController extends ActionController
         $this->view->chart->drawBars(
             array(
                 'label' => 'Hosts up',
-                'color' => '00ff00',
+                'color' => '#00ff00',
                 'stack' => 'stack1',
                 'data'  => $upBars
             ),
             array(
                 'label' => 'Hosts down',
-                'color' => 'ff0000',
+                'color' => '#ff0000',
                 'stack' => 'stack1',
                 'data'  => $downBars
             ),
             array(
                 'label' => 'Hosts unreachable',
-                'color' => 'E066FF',
+                'color' => '#E066FF',
                 'stack' => 'stack1',
                 'data'  => $unreachableBars
             )
@@ -268,7 +268,7 @@ class Monitoring_ChartController extends ActionController
                     (int) $query->hosts_unreachable_unhandled,
                     (int) $query->hosts_pending
                 ),
-                'colors' => array( 'ff4444', 'ff0000', 'E066FF', 'f099FF', 'fefefe'),
+                'colors' => array( '#ff4444', '#ff0000', '#E066FF', '#f099FF', '#fefefe'),
                 'labels'=> array(
       //              (int) $query->hosts_up . ' Up Hosts',
                     (int) $query->hosts_down_handled . ' Down Hosts (Handled)',
@@ -288,7 +288,7 @@ class Monitoring_ChartController extends ActionController
                 (int) $query->services_unknown_handled,
                 (int) $query->services_pending
             ),
-            'colors' => array( 'ff4444', 'ff0000', 'ffff00', 'ffff33', 'E066FF', 'f099FF', 'fefefe'),
+            'colors' => array('#ff4444', '#ff0000', '#ffff00', '#ffff33', '#E066FF', '#f099FF', '#fefefe'),
             'labels'=> array(
        //         $query->services_ok . ' Up Services',
                 $query->services_warning_handled . ' Warning Services (Handled)',
