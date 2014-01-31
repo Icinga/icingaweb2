@@ -2,7 +2,6 @@
 
 namespace Icinga\Module\Monitoring\Object;
 
-use Icinga\Data\BaseQuery as Query;
 use Icinga\Module\Monitoring\DataView\ServiceStatus;
 
 class Service extends AbstractObject
@@ -19,7 +18,8 @@ class Service extends AbstractObject
             ->fetchHostgroups()
             ->fetchServicegroups()
             ->fetchContacts()
-            ->fetchContactGroups();
+            ->fetchContactGroups()
+            ->fetchCustomvars();
     }
 
     protected function getProperties()

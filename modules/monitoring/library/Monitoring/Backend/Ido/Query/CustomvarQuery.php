@@ -4,8 +4,6 @@ namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
 class CustomvarQuery extends IdoQuery
 {
-    protected $object_id = 'object_id';
-
     protected $columnMap = array(
         'customvars' => array(
             'varname'  => 'cvs.varname',
@@ -24,12 +22,11 @@ class CustomvarQuery extends IdoQuery
     protected function joinBaseTables()
     {
         $this->baseQuery = $this->db->select()->from(
-            array('cvs' => $this->prefix . 'customvariablestatus'),
+            array('cvs' => $this->prefix . 'customvariables'),
             array()
         )->join(
             array('cvo' => $this->prefix . 'objects'),
-            'cvs.object_id = cvo.' . $this->object_id
-          . ' AND cvo.is_active = 1',
+            'cvs.object_id = cvo.object_id AND cvo.is_active = 1',
             array()
         );
 
