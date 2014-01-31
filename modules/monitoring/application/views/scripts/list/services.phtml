@@ -121,7 +121,7 @@ $viewHelper = $this->getHelper('MonitoringState');
         <td title="<?= $viewHelper->getStateTitle($service, 'host'); ?>">
           <?php if ($service->service_icon_image): ?>
             <div class="pull-left" style="margin-right: 2px;">
-                <i class="inline-image" style="background-image: url(<?= $service->service_icon_image; ?>);"></i>
+                <i class="inline-image" style="background-image: url(<?= $this->escape($this->resolveMacros($service->service_icon_image, $service)); ?>);"></i>
             </div>
           <?php endif; ?>
             <strong> <?= $service->service_display_name; ?></strong>

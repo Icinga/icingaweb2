@@ -59,10 +59,26 @@
                 <?php if ($object->action_url || $object->notes_url): ?>
                         <br />
                         <?php if ($object->notes_url): ?>
-                            <a target="_new" href='<?= $object->notes_url ?>'>Notes</a>
+                            <?php if (strpos($object->notes_url, "' ") === false): ?>
+                                <a target="_new" href='<?= $this->escape($this->resolveMacros($object->notes_url, $object)); ?>'>Notes</a>
+                            <?php else: ?>
+                                <?php foreach(explode("' ", $object->notes_url) as $url): ?>
+                                    <?php $url = strpos($url, "'") === 0 ? substr($url, 1) : $url; ?>
+                                    <?php $url = strrpos($url, "'") === strlen($url) - 1 ? substr($url, 0, strlen($url) - 1) : $url; ?>
+                                    <a target="_new" href='<?= $this->escape($this->resolveMacros($url, $object)); ?>'>Notes</a>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         <?php endif; ?>
                         <?php if ($object->action_url): ?>
-                            <a target="_new" href='<?= $this->object->action_url ?>'>Action</a>
+                            <?php if (strpos($object->action_url, "' ") === false): ?>
+                                <a target="_new" href='<?= $this->escape($this->resolveMacros($this->object->action_url, $object)); ?>'>Action</a>
+                            <?php else: ?>
+                                <?php foreach(explode("' ", $object->action_url) as $url): ?>
+                                    <?php $url = strpos($url, "'") === 0 ? substr($url, 1) : $url; ?>
+                                    <?php $url = strrpos($url, "'") === strlen($url) - 1 ? substr($url, 0, strlen($url) - 1) : $url; ?>
+                                    <a target="_new" href='<?= $this->escape($this->resolveMacros($url, $object)); ?>'>Action</a>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         <?php endif; ?>
                 <?php endif; ?>
             </div>
