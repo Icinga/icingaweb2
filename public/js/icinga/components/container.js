@@ -192,7 +192,14 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
                 this.hideDetail();
             }
             cancelPendingRequest();
-            this.containerDom.trigger('showLoadIndicator');
+            var loadingTimeout = window.setTimeout(
+                (function(containerDom) {
+                    return function() {
+                        containerDom.trigger('showLoadIndicator');
+                    }
+                })(this.containerDom),
+                500
+            );
             pendingDetailRequest = $.ajax({
                 'url': url,
                 'data': {
@@ -226,6 +233,7 @@ define(['jquery', 'logging', 'icinga/componentLoader', 'URIjs/URI', 'URIjs/URITe
                     this.replaceDom(response.responseText);
                 })
                 .always(function () {
+                    window.clearTimeout(loadingTimeout);
                     this.containerDom.trigger('hideLoadIndicator');
                 });
         };
