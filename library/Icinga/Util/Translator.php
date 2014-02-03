@@ -43,8 +43,11 @@ class Translator
 
     /**
      * The locale code that is used in the project
+     *
+     * We are actually using en_US. "C" refers to "whatever is hardcoded"
+     * and is used because en_US might not be available though.
      */
-    const DEFAULT_LOCALE = 'en_US';
+    const DEFAULT_LOCALE = 'C';
 
     /**
      * Known gettext domains and directories
