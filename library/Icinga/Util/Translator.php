@@ -43,11 +43,8 @@ class Translator
 
     /**
      * The locale code that is used in the project
-     *
-     * We are actually using en_US. "C" refers to "whatever is hardcoded"
-     * and is used because en_US might not be available though.
      */
-    const DEFAULT_LOCALE = 'C';
+    const DEFAULT_LOCALE = 'en_US';
 
     /**
      * Known gettext domains and directories
@@ -108,10 +105,14 @@ class Translator
     public static function setupLocale($localeName)
     {
         if (setlocale(LC_ALL, $localeName . '.UTF-8') === false) {
-            throw new Exception("Cannot set locale '$localeName.UTF-8' for category 'LC_ALL'");
+            setlocale(LC_ALL, 'C'); // C == "use whatever is hardcoded"
+            if ($localeName !== self::DEFAULT_LOCALE) {
+                throw new Exception("Cannot set locale '$localeName.UTF-8' for category 'LC_ALL'");
+            }
+        } else {
+            putenv('LC_ALL=' . $localeName . '.UTF-8'); // Failsafe, Win and Unix
+            putenv('LANG=' . $localeName . '.UTF-8'); // Windows fix, untested
         }
-        putenv('LC_ALL=' . $localeName . '.UTF-8'); // Failsafe, Win and Unix
-        putenv('LANG=' . $localeName . '.UTF-8'); // Windows fix, untested
     }
 
     /**

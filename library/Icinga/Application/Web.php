@@ -448,7 +448,7 @@ class Web extends ApplicationBootstrap
             try {
                 Translator::setupLocale($userLocale);
             } catch (Exception $error) {
-                Logger::error(
+                Logger::info(
                     'Cannot set locale "' . $userLocale . '" configured in ' .
                     'preferences of user "' . $this->user->getUsername() . '"'
                 );
