@@ -3,15 +3,13 @@
 $url = Icinga\Web\Url::fromRequest()->getRelativeUrl();
 $menu = Icinga\Web\Menu::fromConfig();
 
-if ($this->auth()->isAuthenticated()): 
+if ($this->auth()->isAuthenticated()) {
     echo $this->partial(
        'parts/menu.phtml',
         array(
             'items' => $menu->getChildren(),
-            'sub'   => false,
             'url'   => $url
         )
     );
-endif;
+}
 
-?>
