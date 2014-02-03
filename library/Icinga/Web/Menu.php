@@ -31,7 +31,7 @@ namespace Icinga\Web;
 
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
-use Icinga\Web\Menu\Item as MenuItem;
+use Icinga\Web\MenuItem;
 
 class Menu extends MenuItem
 {

@@ -2,9 +2,11 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Web\Menu;
+namespace Icinga\Web;
 
-class Item
+use Icinga\Exception\ProgrammingError;
+
+class MenuItem
 {
     /**
      * Item id
@@ -245,17 +247,12 @@ class Item
         } else {
             // Submenu item
             list($parentId, $id) = explode('.', $id, 2);
-            $parent = $this->getChild($parentId);
-            if ($parent !== null) {
-                $menuItem = $parent->addChild($id, $itemConfig);
+            if ($this->hasChild($parentId)) {
+                $parent = $this->getChild($parentId);
             } else {
-                // Parent does not exist, auto-generate a knot to inform the user
-                $autoId = 'Auto-generated knot because submenu items refer to a non-existent parent menu item';
-                if (($auto = $this->getChild($autoId)) === null) {
-                    $auto = $this->addChild($autoId);
-                }
-                $menuItem = $auto->addChild($id, $itemConfig);
+                $parent = $this->addChild($parentId);
             }
+            $menuItem = $parent->addChild($id, $itemConfig);
         }
         return $menuItem;
     }
@@ -283,19 +280,32 @@ class Item
     }
 
     /**
+     * Whether a given child id exists
+     *
+     * @param   string  $id
+     *
+     * @return  self|$default
+     */
+    public function hasChild($id)
+    {
+        return array_key_exists($id, $this->children);
+    }
+
+    /**
      * Get child by its id
      *
      * @param   string  $id
      * @param   mixed   $default
      *
-     * @return  self|$default
+     * @return  MenuItem
+     * @throws  ProgrammingError
      */
-    public function getChild($id, $default = null)
+    public function getChild($id)
     {
-        if (array_key_exists($id, $this->children)) {
+        if ($this->hasChild($id)) {
             return $this->children[$id];
         }
-        return $default;
+        throw new ProgrammingError(sprintf('Trying to get invalid Menu child "%s"', $id));
     }
 
 
