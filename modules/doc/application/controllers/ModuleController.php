@@ -4,22 +4,26 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 
 use Icinga\Application\Icinga;
-use Icinga\Web\Controller\ActionController;
+use Icinga\Module\Doc\Controller as DocController;
 
-class Doc_ModuleController extends ActionController
+class Doc_ModuleController extends DocController
 {
     /**
      * Display module documentations index
      */
     public function indexAction()
     {
+        $this->view->enabledModules = Icinga::app()->getModuleManager()->listEnabledModules();
     }
 
     /**
      * Display a module's documentation
      */
-    public function moduleAction()
+    public function viewAction()
     {
+        $this->populateViewFromDocDirectory(
+            Icinga::app()->getModuleManager()->getModuleDir($this->getParam('name'), '/doc')
+        );
     }
 
     /**
@@ -39,6 +43,7 @@ class Doc_ModuleController extends ActionController
             // TODO(el): Throw a not found exception once the code has been moved to the moduleAction (see TODO above)
             return parent::__call($methodName, $args);
         }
+        $this->_helper->redirector->gotoSimpleAndExit('view', null, null, array('name' => $moduleName));
     }
 }
 // @codingStandardsIgnoreEnd

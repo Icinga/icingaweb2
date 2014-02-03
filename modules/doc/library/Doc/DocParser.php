@@ -14,7 +14,7 @@ use \Parsedown;
 /**
  * Parser for documentation written in Markdown
  */
-class Parser
+class DocParser
 {
     /**
      * Retrieve table of contents and HTML converted from all Markdown files in the given directory sorted by filename
