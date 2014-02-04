@@ -328,15 +328,15 @@ package { ['cmake', 'boost-devel', 'bison', 'flex']:
   ensure => installed
 }
 
-cmmi { 'icinga2':
-  url               => "https://github.com/Icinga/icinga2/releases/download/v${icinga2Version}/icinga2-${icinga2Version}.tar.gz",
-  output            => "icinga2-${icinga2Version}.tar.gz",
-  configure_command => 'mkdir build &> /dev/null || true && cd build && sudo cmake ..',
-  creates           => '/usr/local/sbin/icinga2',
-  make              => 'true && cd build/ && make && make install',
-  require           => Package[ ['cmake', 'boost-devel', 'bison', 'flex'] ],
-  make_timeout      => 900
-}
+#cmmi { 'icinga2':
+#  url               => "https://github.com/Icinga/icinga2/releases/download/v${icinga2Version}/icinga2-${icinga2Version}.tar.gz",
+#  output            => "icinga2-${icinga2Version}.tar.gz",
+#  configure_command => 'mkdir build &> /dev/null || true && cd build && sudo cmake ..',
+#  creates           => '/usr/local/sbin/icinga2',
+#  make              => 'true && cd build/ && make && make install',
+#  require           => Package[ ['cmake', 'boost-devel', 'bison', 'flex'] ],
+#  make_timeout      => 900
+#}
 
 configure { 'icingaweb':
   path    => '/vagrant',
