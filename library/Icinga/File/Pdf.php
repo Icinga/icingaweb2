@@ -2,84 +2,75 @@
 
 namespace Icinga\File;
 
-use TCPDF;
-use Icinga\Web\Url;
-use Icinga\Application\Icinga;
+use \DOMPDF;
 
-define('K_TCPDF_EXTERNAL_CONFIG', true);
-define('K_PATH_URL', (string) Url::fromPath('/'));
-define('K_PATH_MAIN', dirname(ICINGA_LIBDIR) . '/public');
-define('K_PATH_FONTS', ICINGA_LIBDIR . '/vendor/tcpdf/fonts/');
-// define('K_PATH_CACHE', ICINGA_LIBDIR . '/vendor/tcpdf/cache/');
-// define('K_PATH_URL_CACHE', ICINGA_LIBDIR . '/vendor/tcpdf/cache/');
-define('K_PATH_CACHE', '/tmp/');
-define('K_PATH_URL_CACHE', '/tmp/');
-//define('K_PATH_IMAGES', K_PATH_MAIN . 'images/'); // ???
-define('K_PATH_IMAGES', dirname(ICINGA_LIBDIR) . '/public'); // ???
-define('K_BLANK_IMAGE', K_PATH_IMAGES.'_blank.png');  // COULD be anything?
+require_once 'vendor/dompdf/dompdf_config.inc.php';
 
-// define('K_CELL_HEIGHT_RATIO', 1.25);
-define('K_SMALL_RATIO', 2/3);
-define('K_TCPDF_CALLS_IN_HTML', false); // SECURITY: is false better?
-define('K_TCPDF_THROW_EXCEPTION_ERROR', true);
-define('K_THAI_TOPCHARS', false);
+spl_autoload_register("DOMPDF_autoload");
 
-require_once 'vendor/tcpdf/tcpdf.php';
-
-class Pdf extends TCPDF
+class Pdf extends DOMPDF
 {
-    protected $cell_height_ratio = 1.25;
-    public function __construct(
-        $orientation = 'P',
-        $unit = 'mm',
-        $format = 'A4',
-        $unicode = true,
-        $encoding = 'UTF-8',
-        $diskcache = false,
-        $pdfa = false
-    ) {
-        unset($_SERVER['DOCUMENT_ROOT']);
-        parent::__construct(
-            $orientation,
-            $unit,
-            $format,
-            $unicode,
-            $encoding,
-            $diskcache,
-            $pdfa
-        );
+    public function __construct() {
+        $this->set_paper(DOMPDF_DEFAULT_PAPER_SIZE, "portrait");
+        parent::__construct();
+    }
 
-        $this->SetCreator('IcingaWeb');
-        $this->SetAuthor('IcingaWeb Team');
-        $this->SetTitle('IcingaWeb Sample PDF - Title');
-        $this->SetSubject('IcingaWeb Sample PDF - Subject');
-        $this->SetKeywords('IcingaWeb, Monitoring');
+    /**
+     * @param $body
+     * @param $css
+     */
+    public function renderPage($body, $css)
+    {
+        $html =
+          '<html><head></head>'
+            . '<body>'
+               . '<style>' . Pdf::prepareCss($css) . '</style>'
+               . $body
+            . '</body>'
+          . '</html>';
+        $this->load_html($html);
+        $this->render();
+    }
 
-        // set default header data
-        // $pdf->SetHeaderData('tcpdf_logo.jpg', 30, 'Header title',
-        // 'Header string', array(0,64,255), array(0,64,128));
-        // $pdf->setFooterData($tc=array(0,64,0), $lc=array(0,64,128));
+    /**
+     * Prepare the given css for rendering with DOMPDF, by removing or hiding all incompatible
+     * styles
+     *
+     * @param $css  The css-string
+     *
+     * @return string   A css-string that is ready to use for DOMPDF
+     */
+    public static function prepareCss($css)
+    {
+        $css = preg_replace('/\*:\s*before\s*,\s*/', '', $css);
+        $css = preg_replace('/\*\s*:\s*after\s*\{[^\}]*\}/', '', $css);
 
-        $this->setHeaderFont(array('helvetica', '', 10));
-        $this->setFooterFont(array('helvetica', '', 8));
-        $this->SetDefaultMonospacedFont('courier');
+        // TODO: Move into own .css file that is loaded when requesting a pdf
+        return $css . "\n"
+          . 'form { display: none; }' . "\n"
 
-        $this->SetMargins(15, 27, 15); // left, top, right
-        $this->SetHeaderMargin(5);
-        $this->SetFooterMargin(10);
+          // Don't show any link outline
+          . 'a { outline: 0; }' . "\n"
 
-        $this->SetAutoPageBreak(true, 25); // margin bottom
-        $this->setImageScale(1.75);
+          // Fix badge positioning  TODO: Badge should be at the right border
+          . 'span.badge { float: right; max-width: 5px; }'
 
-        $lang = array(
-            'a_meta_charset'  => 'UTF-8',
-            'a_meta_dir'      => 'ltr',
-            'a_meta_language' => 'de',
-            'w_page'          => 'Seite',
-        );
-        $this->setLanguageArray($lang);
+          // prevent table rows from growing too big on page breaks
+          . 'tr { max-height: 30px; height: 30px; } ' . "\n"
 
-        $this->setFontSubsetting(true);
-        $this->SetFont('dejavusans', '', 16, '', true);
+          // Hide buttons
+          . '*.button { display: none; }' . "\n"
+          . 'button > i { display: none; }' . "\n"
+
+          // Hide navigation
+          . '*.nav {display: none; }' . "\n"
+          . '*.nav > li { display: none; }' . "\n"
+          . '*.nav > li > a { display: none; }' . "\n"
+
+          // Hide pagination
+          . '*.pagination { display: none; }' . "\n"
+          . '*.pagination > li { display: none; }' . "\n"
+          . '*.pagination > li > a { display: none; }' . "\n"
+          . '*.pagination > li > span { display: none; }' . "\n";
     }
 }

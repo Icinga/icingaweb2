@@ -438,8 +438,8 @@ class Monitoring_ListController extends MonitoringController
     private function createTabs()
     {
         $tabs = $this->getTabs();
-        $tabs//->extend(new OutputFormat())
-            ->extend(new DashboardAction());
+        $tabs->extend(new OutputFormat())
+             ->extend(new DashboardAction());
     }
 }
 // @codingStandardsIgnoreEnd
