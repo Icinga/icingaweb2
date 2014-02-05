@@ -37,21 +37,46 @@ class StatusSummaryQuery extends IdoQuery
     protected $columnMap = array(
         'hoststatussummary'     => array(
             'hosts_up'                      => 'SUM(CASE WHEN object_type = \'host\' AND state = 0 THEN 1 ELSE 0 END)',
-            'hosts_unreachable_handled'     => 'SUM(CASE WHEN object_type = \'host\' AND state = 2 AND acknowledged + in_downtime != 0 THEN 1 ELSE 0 END)',
-            'hosts_unreachable_unhandled'   => 'SUM(CASE WHEN object_type = \'host\' AND state = 2 AND acknowledged + in_downtime = 0 THEN 1 ELSE 0 END)',
+            'hosts_up_disabled'             => 'SUM(CASE WHEN object_type = \'host\' AND state = 0 AND is_active_checked = 0 AND is_passive_checked = 0 THEN 1 ELSE 0 END)',
+            'hosts_down'                    => 'SUM(CASE WHEN object_type = \'host\' AND state = 1 THEN 1 ELSE 0 END)',
             'hosts_down_handled'            => 'SUM(CASE WHEN object_type = \'host\' AND state = 1 AND acknowledged + in_downtime != 0 THEN 1 ELSE 0 END)',
             'hosts_down_unhandled'          => 'SUM(CASE WHEN object_type = \'host\' AND state = 1 AND acknowledged + in_downtime = 0 THEN 1 ELSE 0 END)',
-            'hosts_pending'                 => 'SUM(CASE WHEN object_type = \'host\' AND state = 99 THEN 1 ELSE 0 END)'
+            'hosts_down_disabled'           => 'SUM(CASE WHEN object_type = \'host\' AND state = 1 AND is_active_checked = 0 AND is_passive_checked = 0 THEN 1 ELSE 0 END)',
+            'hosts_unreachable'             => 'SUM(CASE WHEN object_type = \'host\' AND state = 2 THEN 1 ELSE 0 END)',
+            'hosts_unreachable_handled'     => 'SUM(CASE WHEN object_type = \'host\' AND state = 2 AND acknowledged + in_downtime != 0 THEN 1 ELSE 0 END)',
+            'hosts_unreachable_unhandled'   => 'SUM(CASE WHEN object_type = \'host\' AND state = 2 AND acknowledged + in_downtime = 0 THEN 1 ELSE 0 END)',
+            'hosts_unreachable_disabled'    => 'SUM(CASE WHEN object_type = \'host\' AND state = 2 AND is_active_checked = 0 AND is_passive_checked = 0 THEN 1 ELSE 0 END)',
+            'hosts_pending'                 => 'SUM(CASE WHEN object_type = \'host\' AND state = 99 THEN 1 ELSE 0 END)',
+            'hosts_pending_disabled'        => 'SUM(CASE WHEN object_type = \'host\' AND state = 99 AND is_active_checked = 0 AND is_passive_checked = 0 THEN 1 ELSE 0 END)',
+            'hosts_active_checked'          => 'SUM(CASE WHEN object_type = \'host\' AND is_active_checked = 1 THEN 1 ELSE 0 END)',
+            'hosts_not_active_checked'      => 'SUM(CASE WHEN object_type = \'host\' AND is_active_checked = 0 THEN 1 ELSE 0 END)',
+            'hosts_passive_checked'         => 'SUM(CASE WHEN object_type = \'host\' AND is_passive_checked = 1 THEN 1 ELSE 0 END)',
+            'hosts_not_passive_checked'     => 'SUM(CASE WHEN object_type = \'host\' AND is_passive_checked = 0 THEN 1 ELSE 0 END)'
         ),
         'servicestatussummary'  => array(
-            'services_ok'                   => 'SUM(CASE WHEN object_type = \'service\' AND state = 0 THEN 1 ELSE 0 END)',
-            'services_pending'              => 'SUM(CASE WHEN object_type = \'service\' AND state = 99 THEN 1 ELSE 0 END)',
-            'services_warning_handled'      => 'SUM(CASE WHEN object_type = \'service\' AND state = 1 AND (acknowledged + in_downtime + COALESCE(host_state, 0)) > 0 THEN 1 ELSE 0 END)',
-            'services_critical_handled'     => 'SUM(CASE WHEN object_type = \'service\' AND state = 2 AND (acknowledged + in_downtime + COALESCE(host_state, 0)) > 0 THEN 1 ELSE 0 END)',
-            'services_unknown_handled'      => 'SUM(CASE WHEN object_type = \'service\' AND state = 3 AND (acknowledged + in_downtime + COALESCE(host_state, 0)) > 0 THEN 1 ELSE 0 END)',
-            'services_warning_unhandled'    => 'SUM(CASE WHEN object_type = \'service\' AND state = 1 AND (acknowledged + in_downtime + COALESCE(host_state, 0)) = 0 THEN 1 ELSE 0 END)',
-            'services_critical_unhandled'   => 'SUM(CASE WHEN object_type = \'service\' AND state = 2 AND (acknowledged + in_downtime + COALESCE(host_state, 0)) = 0 THEN 1 ELSE 0 END)',
-            'services_unknown_unhandled'    => 'SUM(CASE WHEN object_type = \'service\' AND state = 3 AND (acknowledged + in_downtime + COALESCE(host_state, 0)) = 0 THEN 1 ELSE 0 END)'
+            'services_ok'                           => 'SUM(CASE WHEN object_type = \'service\' AND state = 0 THEN 1 ELSE 0 END)',
+            'services_ok_disabled'                  => 'SUM(CASE WHEN object_type = \'service\' AND state = 0 AND is_active_checked = 0 AND is_passive_checked = 0 THEN 1 ELSE 0 END)',
+            'services_warning'                      => 'SUM(CASE WHEN object_type = \'service\' AND state = 1 THEN 1 ELSE 0 END)',
+            'services_warning_handled'              => 'SUM(CASE WHEN object_type = \'service\' AND state = 1 AND (acknowledged + in_downtime + COALESCE(host_state, 0)) > 0 THEN 1 ELSE 0 END)',
+            'services_warning_unhandled'            => 'SUM(CASE WHEN object_type = \'service\' AND state = 1 AND (acknowledged + in_downtime + COALESCE(host_state, 0)) = 0 THEN 1 ELSE 0 END)',
+            'services_warning_on_problem_hosts'     => 'SUM(CASE WHEN object_type = \'service\' AND state = 1 AND host_state != 99 AND host_state != 0 THEN 1 ELSE 0 END)',
+            'services_warning_disabled'             => 'SUM(CASE WHEN object_type = \'service\' AND state = 1 AND is_active_checked = 0 AND is_passive_checked = 0 THEN 1 ELSE 0 END)',
+            'services_critical'                     => 'SUM(CASE WHEN object_type = \'service\' AND state = 2 THEN 1 ELSE 0 END)',
+            'services_critical_handled'             => 'SUM(CASE WHEN object_type = \'service\' AND state = 2 AND (acknowledged + in_downtime + COALESCE(host_state, 0)) > 0 THEN 1 ELSE 0 END)',
+            'services_critical_unhandled'           => 'SUM(CASE WHEN object_type = \'service\' AND state = 2 AND (acknowledged + in_downtime + COALESCE(host_state, 0)) = 0 THEN 1 ELSE 0 END)',
+            'services_critical_on_problem_hosts'    => 'SUM(CASE WHEN object_type = \'service\' AND state = 2 AND host_state != 99 AND host_state != 0 THEN 1 ELSE 0 END)',
+            'services_critical_disabled'            => 'SUM(CASE WHEN object_type = \'service\' AND state = 2 AND is_active_checked = 0 AND is_passive_checked = 0 THEN 1 ELSE 0 END)',
+            'services_unknown'                      => 'SUM(CASE WHEN object_type = \'service\' AND state = 3 THEN 1 ELSE 0 END)',
+            'services_unknown_handled'              => 'SUM(CASE WHEN object_type = \'service\' AND state = 3 AND (acknowledged + in_downtime + COALESCE(host_state, 0)) > 0 THEN 1 ELSE 0 END)',
+            'services_unknown_unhandled'            => 'SUM(CASE WHEN object_type = \'service\' AND state = 3 AND (acknowledged + in_downtime + COALESCE(host_state, 0)) = 0 THEN 1 ELSE 0 END)',
+            'services_unknown_on_problem_hosts'     => 'SUM(CASE WHEN object_type = \'service\' AND state = 3 AND host_state != 99 AND host_state != 0 THEN 1 ELSE 0 END)',
+            'services_unknown_disabled'             => 'SUM(CASE WHEN object_type = \'service\' AND state = 3 AND is_active_checked = 0 AND is_passive_checked = 0 THEN 1 ELSE 0 END)',
+            'services_pending'                      => 'SUM(CASE WHEN object_type = \'service\' AND state = 99 THEN 1 ELSE 0 END)',
+            'services_pending_disabled'             => 'SUM(CASE WHEN object_type = \'service\' AND state = 99 AND is_active_checked = 0 AND is_passive_checked = 0 THEN 1 ELSE 0 END)',
+            'services_active_checked'               => 'SUM(CASE WHEN object_type = \'service\' AND is_active_checked = 1 THEN 1 ELSE 0 END)',
+            'services_not_active_checked'           => 'SUM(CASE WHEN object_type = \'service\' AND is_active_checked = 0 THEN 1 ELSE 0 END)',
+            'services_passive_checked'              => 'SUM(CASE WHEN object_type = \'service\' AND is_passive_checked = 1 THEN 1 ELSE 0 END)',
+            'services_not_passive_checked'          => 'SUM(CASE WHEN object_type = \'service\' AND is_passive_checked = 0 THEN 1 ELSE 0 END)'
         )
     );
 
@@ -86,17 +111,21 @@ class StatusSummaryQuery extends IdoQuery
             array()
         );
         $hosts->columns(array(
-            'state'         => 'CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL THEN 99 ELSE hs.current_state END',
-            'acknowledged'  => 'hs.problem_has_been_acknowledged',
-            'in_downtime'   => 'CASE WHEN (hs.scheduled_downtime_depth = 0) THEN 0 ELSE 1 END',
-            'host_state'    => 'CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL THEN 99 ELSE hs.current_state END',
-            'object_type'   => '(\'host\')'
+            'state'                 => 'CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL THEN 99 ELSE hs.current_state END',
+            'acknowledged'          => 'hs.problem_has_been_acknowledged',
+            'in_downtime'           => 'CASE WHEN (hs.scheduled_downtime_depth = 0) THEN 0 ELSE 1 END',
+            'host_state'            => 'CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL THEN 99 ELSE hs.current_state END',
+            'is_active_checked'     => 'CASE WHEN hs.active_checks_enabled  = 1 THEN 1 ELSE 0 END',
+            'is_passive_checked'    => 'CASE WHEN hs.passive_checks_enabled = 1 THEN 1 ELSE 0 END',
+            'object_type'           => '(\'host\')'
         ));
         $services->columns(array(
             'state'         => 'CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL THEN 99 ELSE ss.current_state END',
             'acknowledged'  => 'ss.problem_has_been_acknowledged',
             'in_downtime'   => 'CASE WHEN (ss.scheduled_downtime_depth = 0) THEN 0 ELSE 1 END',
             'host_state'    => 'CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL THEN 99 ELSE hs.current_state END',
+            'is_active_checked'     => 'CASE WHEN ss.active_checks_enabled  = 1 THEN 1 ELSE 0 END',
+            'is_passive_checked'    => 'CASE WHEN ss.passive_checks_enabled = 1 THEN 1 ELSE 0 END',
             'object_type'   => '(\'service\')'
         ));
         $union = $this->db->select()->union(array($hosts, $services), Zend_Db_Select::SQL_UNION_ALL);

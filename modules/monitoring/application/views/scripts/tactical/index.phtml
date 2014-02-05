@@ -1,0 +1,120 @@
+<?php
+$summary = $this->statusSummary;
+$state = array(
+    'host'    => array(
+        'up'          =>  0,
+        'down'        =>  1,
+        'unreachable' =>  2,
+        'pending'     => 99
+    ),
+    'service' => array(
+        'ok'       =>  0,
+        'warning'  =>  1,
+        'critical' =>  2,
+        'unknown'  =>  3,
+        'pending'  => 99
+    )
+);
+function init_upper($string) {
+    return mb_strtoupper(substr($string, 0, 1)) . substr($string, 1);
+}
+$tacticalTables = array();
+foreach (array(
+    'host'    => array('up', 'down', 'unreachable', 'pending'),
+    'service' => array('ok', 'critical', 'warning', 'unknown', 'pending')
+) as $key => $value) {
+    $tacticalTables[$key] = array();
+    foreach ($value as $valueState) {
+        $tacticalTables[$key][$valueState] = array();
+        $value_2_ref = $key . 's_' . $valueState;
+        $tacticalTables[$key][$valueState][$valueState] = (int)$summary->{$value_2_ref};
+        foreach (array('disabled', 'unhandled', 'on_problem_hosts') as $value_3) {
+            $value_3_ref = $value_2_ref . '_' . $value_3;
+            if (isset($summary->{$value_3_ref})) {
+                $tacticalTables[$key][$valueState][$value_3] = (int)$summary->{$value_3_ref};
+            }
+        }
+    }
+}
+foreach ($tacticalTables as $key => $value) {
+    printf(
+        '<table class="tacticalTable"><tr><td colspan="%d"><h1>%ss</h1></td></tr><tr>',
+        count($value),
+        init_upper($key)
+    );
+    foreach ($value as $keyState => $valueState) {
+        printf(
+            '<td class="topbar-status-%s"><a style="font-weight: bold; color: black" href="%s" title="%ss %s">%s: %d</a>',
+            $keyState,
+            $this->href(
+                'monitoring/list/' . $key . 's',
+                array($key . '_state' => $state[$key][$keyState])
+            ),
+            init_upper($key),
+            $keyState,
+            init_upper($keyState),
+            $valueState[$keyState]
+        );
+        foreach ($valueState as $keyStateDetail => $valueStateDetail) {
+            if ($keyStateDetail !== $keyState && $valueStateDetail !== 0) {
+                $strReplaced = str_replace('_', ' ', $keyStateDetail);
+                printf(
+                    '<br /><a href="%s" title="%ss %s %s"%s>%s: %d</a>',
+                    $this->href(
+                        'monitoring/list/' . $key . 's',
+                        array(
+                            $key . '_state' => $state[$key][$keyState],
+                            $key . '_' . $keyStateDetail => 1
+                        )
+                    ),
+                    init_upper($key),
+                    $keyState,
+                    $strReplaced,
+                    ($strReplaced === 'unhandled' ? '' : ' style="color: #f5a9a9"'),
+                    $strReplaced,
+                    $valueStateDetail
+                );
+            }
+        }
+        echo '</td>';
+    }
+    echo '</tr></table>';
+}
+?>
+<table class="tacticalTable">
+    <tr>
+        <td colspan="2"><h1>Host Checks</h1></td>
+        <td colspan="2"><h1>Service Checks</h1></td>
+    </tr>
+    <tr>
+        <td>Active</td><td>Passive</td>
+        <td>Active</td><td>Passive</td>
+    </tr>
+    <?php
+        foreach (array(true, false) as $check_enabled) {
+            echo '<tr>';
+            foreach (array('host', 'service') as $hst_srv) {
+                foreach (array('act', 'pass') as $act_pass) {
+                    $var_ref = $this->statusSummary->{sprintf(
+                            '%ss%s_%sive_checked',
+                            $hst_srv,
+                            ($check_enabled ? '' : '_not'),
+                            $act_pass
+                        )};
+                    if ($var_ref === '0') {
+                        echo '<td>';
+                    } else {
+                        printf(
+                            '<td class="topbar-status-%s">%sabled: %s',
+                            ($check_enabled ? 'up' : 'down'),
+                            ($check_enabled ? 'en' : 'dis'),
+                            $var_ref
+                        );
+                    }
+                    echo '</td>';
+                }
+            }
+            echo '</tr>';
+        }
+    ?>
+</table>
