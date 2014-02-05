@@ -6,10 +6,12 @@ namespace Icinga\Module\Doc;
 
 require_once 'vendor/Parsedown/Parsedown.php';
 
+use \Exception;
+use \SplStack;
 use \RecursiveIteratorIterator;
 use \RecursiveDirectoryIterator;
-use \Exception;
 use \Parsedown;
+use Icinga\Web\Menu;
 
 /**
  * Parser for documentation written in Markdown
@@ -33,8 +35,9 @@ class DocParser
         );
         $fileInfos = iterator_to_array($iter);
         natcasesort($fileInfos);
-        $cat = array();
-        $toc = array();
+        $cat    = array();
+        $toc    = new Menu('doc');
+        $stack  = new SplStack();
         foreach ($fileInfos as $fileInfo) {
             try {
                 $fileObject = $fileInfo->openFile();
@@ -52,14 +55,24 @@ class DocParser
                 ) {
                     // Atx-style
                     $level      = strlen($match[0]);
-                    $heading    = trim(strip_tags(substr($line, $level)));
+                    $heading    = str_replace('.', '&#46;', trim(strip_tags(substr($line, $level))));
                     $fragment   = urlencode($heading);
-                    $toc[]      = array(
-                        'heading'   => $heading,
-                        'level'     => $level,
-                        'fragment'  => $fragment
-                    );
-                    $line = '<span id="' . $fragment . '">' . "\n" . $line;
+                    $line       = '<span id="' . $fragment . '">' . "\n" . $line;
+                    $stack->rewind();
+                    while ($stack->valid() && $stack->current()->level >= $level) {
+                        $stack->pop();
+                        $stack->next();
+                    }
+                    $parent = $stack->current();
+                    if ($parent === null) {
+                        $item = $toc->addChild($heading, array('url' => '#' . $fragment));
+                    } else {
+                        $item = $parent->item->addChild($heading, array('url' => '#' . $fragment));
+                    }
+                    $stack->push((object) array(
+                        'level' => $level,
+                        'item'  => $item
+                    ));
                 } elseif (
                     $line &&
                     ($line[0] === '=' || $line[0] === '-') &&
@@ -70,17 +83,27 @@ class DocParser
                         // H1
                         $level = 1;
                     } else {
-                        // H2
+                        // H
                         $level = 2;
                     }
                     $heading    = trim(strip_tags(end($cat)));
                     $fragment   = urlencode($heading);
-                    $toc[]      = array(
-                        'heading'   => $heading,
-                        'level'     => $level,
-                        'fragment'  => $fragment
-                    );
-                    $line = '<span id="' . $fragment . '">' . "\n" . $line;
+                    $line       = '<span id="' . $fragment . '">' . "\n" . $line;
+                    $stack->rewind();
+                    while ($stack->valid() && $stack->current()->level >= $level) {
+                        $stack->pop();
+                        $stack->next();
+                    }
+                    $parent = $stack->current();
+                    if ($parent === null) {
+                        $item = $toc->addChild($heading, array('url' => '#' . $fragment));
+                    } else {
+                        $item = $parent->item->addChild($heading,  array('url' => '#' . $fragment));
+                    }
+                    $stack->push((object) array(
+                        'level' => $level,
+                        'item'  => $item
+                    ));
                 }
                 $cat[] = $line;
             }

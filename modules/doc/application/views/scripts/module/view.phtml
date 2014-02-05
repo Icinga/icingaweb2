@@ -3,13 +3,16 @@
 <?php else: ?>
 <div class="row">
     <div class="col-sm-12 col-xs-12 col-md-2 col-lg-2">
-        <ul class="nav nav-pills nav-stacked" role="navigation">
-            <?php foreach ($toc as $i): ?>
-                <li class="toc-h<?= $i['level'] ?>">
-                    <a href="#<?= $i['fragment'] ?>"><?= $this->escape($i['heading']); ?></a>
-                </li>
-            <?php endforeach; ?>
-        </ul>
+        <?= $this->partial(
+            'layout/menu.phtml',
+            'default',
+            array(
+                'items' => $toc->getChildren(),
+                'sub'   => false,
+                'url'   => ''
+            )
+        );
+        ?>
     </div>
     <div class="col-sm-12 col-xs-12 col-md-10 col-lg-10">
         <?= $html ?>

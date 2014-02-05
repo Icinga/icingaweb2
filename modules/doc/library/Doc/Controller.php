@@ -6,6 +6,7 @@ namespace Icinga\Module\Doc;
 
 use Icinga\Module\Doc\DocParser;
 use Icinga\Web\Controller\ActionController;
+use Icinga\Web\Menu;
 
 class Controller extends ActionController
 {

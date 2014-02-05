@@ -1,7 +1,5 @@
 <?php
-// determine current key
-$url = Icinga\Web\Url::fromRequest()->getRelativeUrl();
-$menu = Icinga\Web\Menu::fromConfig();
+
 
 if ($this->auth()->isAuthenticated()) {
     echo $this->partial(
