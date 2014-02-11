@@ -46,6 +46,11 @@ use \Icinga\Exception\ProgrammingError;
 class Hook
 {
     /**
+     * Hook name
+     */
+    const TARGET_LAYOUT_TOPBAR = 'Layout\\TopBar';
+
+    /**
      * Our hook name registry
      *
      * @var array
