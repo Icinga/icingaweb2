@@ -241,21 +241,40 @@ class ActionController extends Zend_Controller_Action
             }
         }
         if ($this->_request->getParam('format') === 'pdf' && $this->_request->getControllerName() !== 'static') {
-            $html = $this->view->render(
-                $this->_request->getControllerName() . '/' . $this->_request->getActionName() . '.phtml'
-            );
-            $this->sendAsPdf($html);
+            $this->sendAsPdf();
             die();
         }
     }
 
-    protected function sendAsPdf($body)
+    protected function sendAsPdf()
     {
+        $body = $this->view->render(
+            $this->_request->getControllerName() . '/' . $this->_request->getActionName() . '.phtml'
+        );
         if (!headers_sent()) {
             $css = $this->view->getHelper('action')->action('stylesheet', 'static', 'application');
             $pdf = new PDF();
+
+            if ($this->_request->getControllerName() === 'list') {
+                switch ($this->_request->getActionName()) {
+                    case 'notifications':
+                        $pdf->rowsPerPage = 8;
+                        break;
+                    case 'comments':
+                        $pdf->rowsPerPage = 8;
+                        break;
+                    default:
+                        $pdf->rowsPerPage = 12;
+                        break;
+                }
+            } else {
+                $pdf->paginateTable = false;
+            }
+
             $pdf->renderPage($body, $css);
-            $pdf->stream($this->_request->getControllerName() . '-' . $this->_request->getActionName() . '.pdf');
+            $pdf->stream(
+                $this->_request->getControllerName() . '-' . $this->_request->getActionName() . '-' . time() . '.pdf'
+            );
         } else {
             Logger::error('Could not send pdf-response, content already written to output.');
             die();
