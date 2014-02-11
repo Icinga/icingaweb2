@@ -126,7 +126,24 @@ class DocParser
             $fileObject->flock(LOCK_UN);
         }
         $html = Parsedown::instance()->parse(implode('', $cat));
+        $html = preg_replace_callback(
+            '#<pre><code class="language-php">(.*?)\</code></pre>#s',
+            array($this, 'highlight'),
+            $html
+        );
         return array($html, $toc[0]->item);
+    }
+
+    /**
+     * Syntax highlighting for PHP code
+     *
+     * @param   $match
+     *
+     * @return  string
+     */
+    protected function highlight($match)
+    {
+        return highlight_string(htmlspecialchars_decode($match[1]), true);
     }
 
     /**
