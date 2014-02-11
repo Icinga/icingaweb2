@@ -29,188 +29,168 @@
 
 namespace Tests\Icinga\Application;
 
-require_once 'Zend/Log.php';
-require_once 'Zend/Config.php';
-require_once 'Zend/Log/Writer/Mock.php';
-require_once 'Zend/Log/Writer/Null.php';
-require_once 'Zend/Log/Filter/Priority.php';
+// @codingStandardsIgnoreStart
+require_once realpath(__DIR__ . '/../../../../../library/Icinga/Test/BaseTestCase.php');
+// @codingStandardsIgnoreEnd
 
-require_once realpath(__DIR__  . '/../../../../../library/Icinga/Application/Logger.php');
-require_once realpath(__DIR__  . '/../../../../../library/Icinga/Exception/ConfigurationError.php');
-
-use \Icinga\Application\Logger;
+use \Zend_Config;
+use Icinga\Application\Logger;
+use Icinga\Test\BaseTestCase;
 
 /**
  * Test class for Logger
  *
  * @backupStaticAttributes enabled
  **/
-class LoggerTest extends \PHPUnit_Framework_TestCase
+class LoggerTest extends BaseTestCase
 {
-    private $timeZone;
+    private $tempDir;
 
-    protected function setUp()
+    private $logTarget;
+
+    private $debugTarget;
+
+    public function setUp()
     {
-        date_default_timezone_set('GMT');
+        $this->tempDir = tempnam(sys_get_temp_dir(), 'icingaweb-log');
+        unlink($this->tempDir); // tempnam create the file automatically
+
+        if (!is_dir($this->tempDir)) {
+            mkdir($this->tempDir, 0755);
+        }
+
+        $this->debugTarget = $this->tempDir . '/debug.log';
+        $this->logTarget = $this->tempDir . '/application.log';
+
+        $loggingConfigurationArray = array(
+            'enable'    => 1,
+            'type'      => 'stream',
+            'verbose'   => 1,
+            'target'    => $this->logTarget,
+
+            'debug'     => array(
+                'enable'    => 1,
+                'type'      => 'stream',
+                'target'    => $this->debugTarget
+            )
+        );
+
+        $loggingConfiguration = new Zend_Config($loggingConfigurationArray);
+
         Logger::reset();
-    }
-
-    public function testOverwrite()
-    {
-        $cfg1 = new \Zend_Config(
-            array(
-                'debug'     => array('enable' => 0),
-                'type'      => 'mock',
-                'target'    => 'target2'
-            )
-        );
-        $cfg2 = new \Zend_Config(
-            array(
-                'debug'     => array(
-                    'enable' => 1,
-                    'type'=>'mock',
-                    'target'=>'target3'
-                ),
-                'type'      => 'mock',
-                'target'    => 'target4'
-            )
-        );
-
-        $logger = new Logger($cfg1);
-        $writers = $logger->getWriters();
-        $this->assertEquals(1, count($writers));
-
-        $logger = new Logger($cfg1);
-        $writers2 = $logger->getWriters();
-        $this->assertEquals(1, count($writers));
-        $this->assertNotEquals($writers[0], $writers2[0]);
-
-        $logger = new Logger($cfg2);
-        $writers2 = $logger->getWriters();
-        $this->assertEquals(2, count($writers2));
-    }
-
-    public function testFormatMessage()
-    {
-        $message = Logger::formatMessage(array('Testmessage'));
-        $this->assertEquals('Testmessage', $message);
-
-        $message = Logger::formatMessage(array('Testmessage %s %s', 'test1', 'test2'));
-        $this->assertEquals('Testmessage test1 test2', $message);
-
-        $message = Logger::formatMessage(array('Testmessage %s', array('test1', 'test2')));
-        $this->assertEquals('Testmessage '.json_encode(array('test1', 'test2')), $message);
-    }
-
-    public function testLoggingOutput()
-    {
-        $cfg1 = new \Zend_Config(
-            array(
-                'debug'     => array('enable' => 0),
-                'type'      => 'mock',
-                'target'    => 'target2'
-            )
-        );
-
-        $logger = Logger::create($cfg1);
-        $writers = $logger->getWriters();
-
-        $logger->warn('Warning');
-        $logger->error('Error');
-        $logger->info('Info');
-        $logger->debug('Debug');
-
-        $writer = $writers[0];
-        $this->assertEquals(2, count($writer->events));
-        $this->assertEquals($writer->events[0]['message'], 'Warning');
-        $this->assertEquals($writer->events[1]['message'], 'Error');
+        Logger::create($loggingConfiguration);
 
     }
 
-    public function testLogQueuing()
+    public function tearDown()
     {
-        $cfg1 = new \Zend_Config(
-            array(
-                'debug'     => array('enable' => 0),
-                'type'      => 'mock',
-                'target'    => 'target2'
-            )
-        );
+        if (file_exists($this->debugTarget)) {
+            unlink($this->debugTarget);
+        }
 
-        Logger::warn('Warning');
-        Logger::error('Error');
-        Logger::info('Info');
-        Logger::debug('Debug');
+        if (file_exists($this->logTarget)) {
+            unlink($this->logTarget);
+        }
 
-        $logger = Logger::create($cfg1);
-        $writers = $logger->getWriters();
-        $writer = $writers[0];
-
-        $this->assertEquals(2, count($writer->events));
-        $this->assertEquals($writer->events[0]['message'], 'Warning');
-        $this->assertEquals($writer->events[1]['message'], 'Error');
+        rmdir($this->tempDir);
     }
 
-    public function testDebugLogErrorCatching()
+    private function getLogData()
     {
-        $cfg1 = new \Zend_Config(
-            array(
-                'debug'     => array(
-                    'enable'   => 1,
-                    'type'      => 'Invalid',
-                    'target'    => '...'
-                ),
-                'type'      => 'mock',
-                'target'    => 'target2'
-            )
-        );
-
-        $logger = Logger::create($cfg1);
-        $writers = $logger->getWriters();
-        $this->assertEquals(1, count($writers));
-        $this->assertEquals(1, count($writers[0]->events));
-        $this->assertEquals(
-            'Could not add log writer of type "Invalid". Type does not exist.',
-            $writers[0]->events[0]['message']
+        return array(
+            explode(PHP_EOL, file_get_contents($this->logTarget)),
+            explode(PHP_EOL, file_get_contents($this->debugTarget))
         );
     }
 
-    public function testNotLoggedMessagesQueue()
+    /**
+     * Test error messages
+     */
+    public function testLoggingErrorMessages()
     {
-        $cfg1 = new \Zend_Config(
-            array(
-                'debug'     => array(
-                    'enable'   => 0,
-                    'type'      => 'Invalid',
-                    'target'    => '...'
-                ),
-                'type'      => 'invalid',
-                'target'    => 'target2'
-            )
-        );
+        Logger::error('test-error-1');
+        Logger::error('test-error-2');
 
-        $logger = Logger::create($cfg1);
+        $this->assertFileExists($this->logTarget);
+        $this->assertFileExists($this->debugTarget);
+
+        list($main, $debug) = $this->getLogData();
+
+        $this->assertCount(3, $main);
+        $this->assertCount(3, $debug);
+
+        $this->assertContains(' ERR (3): test-error-1', $main[0]);
+        $this->assertContains(' ERR (3): test-error-2', $main[1]);
+
+        $this->assertContains(' ERR (3): test-error-1', $debug[0]);
+        $this->assertContains(' ERR (3): test-error-2', $debug[1]);
+    }
+
+    /**
+     * Test debug log and difference between error and debug messages
+     */
+    public function testLoggingDebugMessages()
+    {
+        Logger::debug('test-debug-1');
+        Logger::error('test-error-1');
+        Logger::debug('test-debug-2');
+
+        $this->assertFileExists($this->logTarget);
+        $this->assertFileExists($this->debugTarget);
+
+        list($main, $debug) = $this->getLogData();
+
+        $this->assertCount(2, $main);
+        $this->assertCount(4, $debug);
+
+        $this->assertContains(' ERR (3): test-error-1', $main[0]);
+
+        $this->assertContains(' DEBUG (7): test-debug-1', $debug[0]);
+        $this->assertContains(' ERR (3): test-error-1', $debug[1]);
+        $this->assertContains(' DEBUG (7): test-debug-2', $debug[2]);
+    }
+
+    public function testLoggingQueueIfNoWriterAvailable()
+    {
+        Logger::reset();
+
+        Logger::error('test-error-1');
+        Logger::debug('test-debug-1');
+        Logger::error('test-error-2');
+
+        list($main, $debug) = $this->getLogData();
+
+        $this->assertCount(1, $main);
+        $this->assertCount(1, $debug);
 
         $this->assertTrue(Logger::hasErrorsOccurred());
 
         $queue = Logger::getQueue();
 
-        $this->assertCount(2, $queue);
+        $this->assertCount(3, $queue);
 
-        $this->assertSame(
-            'Could not add log writer of type "Invalid". Type does not exist.',
-            $queue[0][0],
-            'Log message of an invalid writer'
+        $this->assertEquals(
+            array(
+                'test-error-1',
+                3
+            ),
+            $queue[0]
         );
 
-        $this->assertSame(0, $queue[0][1], 'Log level "fatal"');
-
-        $this->assertSame(
-            'Could not flush logs to output. An exception was thrown: No writers were added',
-            $queue[1][0],
-            'Log message that no writer was added to logger'
+        $this->assertEquals(
+            array(
+                'test-debug-1',
+                7
+            ),
+            $queue[1]
         );
 
-        $this->assertSame(0, $queue[1][1], 'Log level "fatal"');
+        $this->assertEquals(
+            array(
+                'test-error-2',
+                3
+            ),
+            $queue[2]
+        );
     }
 }
