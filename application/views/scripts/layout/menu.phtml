@@ -12,7 +12,7 @@
         ?>
         <li <?php if (!empty($itemClass)): ?>class="<?= $itemClass ?>"<?php endif ?>>
             <?php if($item->getUrl()): ?>
-                <a href="<?= $this->href($item->getUrl()); ?>">
+                <a href="<?= $this->href($item->getUrl()); ?>" <?php foreach($item->getAttribs() as $attrib => $value): ?> <?= $attrib ?>="<?= $value ?>"<?php endforeach?>>
             <?php endif; ?>
             <?php
             if ($icon = $item->getIcon()) {

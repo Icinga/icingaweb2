@@ -21,9 +21,7 @@ class Doc_ModuleController extends DocController
      */
     public function viewAction()
     {
-        $this->populateViewFromDocDirectory(
-            Icinga::app()->getModuleManager()->getModuleDir($this->getParam('name'), '/doc')
-        );
+        $this->populateView($this->getParam('name'));
     }
 
     /**

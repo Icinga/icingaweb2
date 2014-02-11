@@ -61,6 +61,8 @@ class MenuItem
      */
     private $children = array();
 
+    private $attribs = array();
+
 
     /**
      * Create a new MenuItem
@@ -308,6 +310,28 @@ class MenuItem
         throw new ProgrammingError(sprintf('Trying to get invalid Menu child "%s"', $id));
     }
 
+    /**
+     * Set HTML a tag attributes
+     *
+     * @param   array $attribs
+     *
+     * @return  self
+     */
+    public function setAttribs(array $attribs)
+    {
+        $this->attribs = $attribs;
+        return $this;
+    }
+
+    /**
+     * Get HTML a tag attributes
+     *
+     * @return array
+     */
+    public function getAttribs()
+    {
+        return $this->attribs;
+    }
 
     /**
      * Compare children based on priority and title

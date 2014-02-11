@@ -4,26 +4,20 @@
 
 namespace Icinga\Module\Doc;
 
-use Icinga\Module\Doc\DocParser;
 use Icinga\Web\Controller\ActionController;
-use Icinga\Web\Menu;
 
 class Controller extends ActionController
 {
     /**
      * Set HTML and toc
      *
-     * @param string $dir
+     * @param string $module
      */
-    protected function populateViewFromDocDirectory($dir)
+    protected function populateView($module = null)
     {
-        if (!@is_dir($dir)) {
-            $this->view->html = null;
-        } else {
-            $parser             = new DocParser();
-            list($html, $toc)   = $parser->parseDirectory($dir);
-            $this->view->html   = $html;
-            $this->view->toc    = $toc;
-        }
+        $parser             = new DocParser($module);
+        list($html, $toc)   = $parser->getDocumentation();
+        $this->view->html   = $html;
+        $this->view->toc    = $toc;
     }
 }
