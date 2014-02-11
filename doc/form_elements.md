@@ -101,7 +101,7 @@ is a timestamp. The above DateTimePicker utilizes this validator and should be u
 ### ConditionalHidden Decorator
 
 The `Icinga\Web\Form\Decorator\ConditionalHidden` allows you to hide a form element with the 'conditional' attribute for
-users that don't have JavaScript enabled (the form is rendered in a \<noscript> tag when conditional is 1). Users with
+users that don't have JavaScript enabled (the form is rendered in a &lt;noscript&gt; tag when conditional is 1). Users with
 javascript won't see the elements, users with javascript will see it. This is useful in a lot of cases to allow icingaweb
 to be fully functional without JavaScript: Forms can show only sensible forms for most users (and, for example hide the
 debug log filepath input when debugging is disabled) and automatically reload the form as soon as the forms should be
@@ -133,6 +133,6 @@ the 'helptext' property in your form elements.
 ### BootstrapForm Decorator
 
 `Icinga\Web\Form\Decorator\BoostrapForm` is the decorator we use for our forms.
-It causes the forms to be rendered in a bootstrap friendly manner instead of the \<dd> \<dt> encapsulated way Zend normally
+It causes the forms to be rendered in a bootstrap friendly manner instead of the &lt;dd&gt; &lt;dt&gt; encapsulated way Zend normally
 renders the forms. You usually don't have to work with this decorator as our Form implementation automatically uses it,
 but it's always good to know why forms look how they look.

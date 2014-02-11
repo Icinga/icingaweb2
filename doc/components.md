@@ -95,7 +95,7 @@ with right time-format available.
 ### Component ids
 
 When an ID is assigned to the HTML element, it will be used by the component loader to reference this
-component. Otherwise an ID in the form "icinga-component-<ID>" will be created and the ID attribute in the
+component. Otherwise an ID in the form "icinga-component-&lt;ID&gt;" will be created and the ID attribute in the
 HTML Element will be updated accordingly.
 
 

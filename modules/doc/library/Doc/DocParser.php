@@ -70,6 +70,7 @@ class DocParser
             'level' => 0,
             'item'  => new Menu('doc')
         ));
+        $itemPriority = 1;
         foreach ($fileInfos as $fileInfo) {
             try {
                 $fileObject = $fileInfo->openFile();
@@ -79,8 +80,7 @@ class DocParser
             if ($fileObject->flock(LOCK_SH) === false) {
                 throw new DocException('Couldn\'t get the lock');
             }
-            $itemPriority   = 1;
-            $line           = null;
+            $line = null;
             while (!$fileObject->eof()) {
                 // Save last line for setext-style headers
                 $lastLine   = $line;
@@ -100,7 +100,7 @@ class DocParser
                         $id             = implode('-', $path);
                         $attribs['rel'] = 'nofollow';
                     }
-                    $id     = str_replace('.', '&#46;', strip_tags($id));
+                    $id     = urlencode(str_replace('.', '&#46;', strip_tags($id)));
                     $item   = end($toc)->item->addChild(
                         $id,
                         array(
@@ -109,7 +109,7 @@ class DocParser
                                 array(
                                     'name' => $this->module
                                 )
-                            )->setAnchor(urlencode($id))->getRelativeUrl(),
+                            )->setAnchor($id)->getRelativeUrl(),
                             'title'     => htmlspecialchars($header),
                             'priority'  => $itemPriority++,
                             'attribs'   => $attribs

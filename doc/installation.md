@@ -72,7 +72,7 @@ create all database tables. You will find the installation guides for the differ
 
 > **Note**
 >
-> RPM packages install the schema into /usr/share/doc/icingaweb-<version>/schema
+> RPM packages install the schema into /usr/share/doc/icingaweb-&lt;version&gt;/schema
 
    bash$  mysql -u root -p icingaweb < etc/schema/accounts.mysql.sql
 
@@ -105,7 +105,7 @@ And restart your database ('service postgresql restart' or '/etc/init.d/postgres
 
 > **Note**
 >
-> RPM packages install the schema into /usr/share/doc/icingaweb-<version>/schema
+> RPM packages install the schema into /usr/share/doc/icingaweb-&lt;version&gt;/schema
 
     bash$  psql -U icingaweb -a -f etc/schema/accounts.pgsql.sql
 

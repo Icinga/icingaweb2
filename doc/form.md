@@ -73,15 +73,15 @@ code from special directories:
 <table>
     <tr>
         <th>Class name</th>
-        <th>File path</tg>
+        <th>File path</th>
     </tr>
     <tr>
         <td>\Icinga\Form\Test\MyForm</td>
-        </td>application/forms/Test/MyForm.php</td>
+        <td>application/forms/Test/MyForm.php</td>
     </tr>
     <tr>
         <td>\MyModule\Form\Test</td>
-        </td>modules/forms/Test.php</td>
+        <td>modules/forms/Test.php</td>
     </tr>
 </table>
 

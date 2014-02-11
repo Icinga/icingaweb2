@@ -1,5 +1,4 @@
-<ul>
-<?= $sub ? '<ul>' : '<ul class="nav nav-stacked" role="navigation" id="icinganavigation">' ?>
+<?= $sub ? '<ul>' : '<ul class="nav nav-stacked">' ?>
     <?php foreach ($items as $item): ?>
         <?php
         $itemClass = '';
@@ -16,7 +15,7 @@
             <?php endif; ?>
             <?php
             if ($icon = $item->getIcon()) {
-                echo $this->img($icon, array('height' => '16px', 'width' => '16px'));
+                echo $this->img($icon, array('height' => 16, 'width' => 16));
             }
             ?>
             <?php if ($iconClass = $item->getIconClass()): ?>
