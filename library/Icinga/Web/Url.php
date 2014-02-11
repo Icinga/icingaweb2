@@ -358,11 +358,14 @@ class Url
     /**
      * Set the url anchor-part
      *
-     * @param $anchor   The site's anchor string without the '#'
+     * @param   $anchor The site's anchor string without the '#'
+     *
+     * @return  self
      */
     public function setAnchor($anchor)
     {
         $this->anchor = '#' . $anchor;
+        return $this;
     }
 
     /**

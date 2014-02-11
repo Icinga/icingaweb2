@@ -44,6 +44,7 @@ require_once BaseTestCase::$appDir . '/forms/Config/GeneralForm.php';
 require_once BaseTestCase::$appDir . '/views/helpers/DateFormat.php';
 require_once BaseTestCase::$libDir . '/Util/ConfigAwareFactory.php';
 require_once BaseTestCase::$libDir . '/Util/DateTimeFactory.php';
+require_once BaseTestCase::$libDir . '/Util/Translator.php';
 // @codingStandardsIgnoreEnd
 
 use \DateTimeZone;

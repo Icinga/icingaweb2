@@ -27,23 +27,23 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Web;
+namespace Icinga\Web\Hook\Layout;
 
-class Topbar
+use \Icinga\Web\Request;
+use \Zend_View;
+
+/**
+ * Hook to extend topbar items
+ */
+interface TopBar
 {
-    private static $partials = array();
-
-    public static function addPartial($viewScriptName, $moduleName, $data)
-    {
-        self::$partials[] = array(
-            'viewScriptName'    => $viewScriptName,
-            'moduleName'        => $moduleName,
-            'data'              => $data
-        );
-    }
-
-    public static function getPartials()
-    {
-        return self::$partials;
-    }
+    /**
+     * Function to generate top bar content
+     *
+     * @param   Request     $request
+     * @param   Zend_View   $view
+     *
+     * @return  string
+     */
+    public function getHtml($request, $view);
 }

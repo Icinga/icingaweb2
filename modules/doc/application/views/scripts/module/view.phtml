@@ -1,0 +1,21 @@
+<?php if ($html === null): ?>
+    <p>No documentation available.</p>
+<?php else: ?>
+<div class="row">
+    <div class="col-sm-12 col-xs-12 col-md-2 col-lg-2">
+        <?= $this->partial(
+            'layout/menu.phtml',
+            'default',
+            array(
+                'items' => $toc->getChildren(),
+                'sub'   => false,
+                'url'   => ''
+            )
+        );
+        ?>
+    </div>
+    <div class="col-sm-12 col-xs-12 col-md-10 col-lg-10">
+        <?= $html ?>
+    </div>
+</div>
+<?php endif ?>

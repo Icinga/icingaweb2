@@ -1,14 +1,15 @@
-<?php
-use Icinga\Web\Topbar;
-?>
 <nav class="navbar-fixed-top" id="icingatopbar" role="navigation">
     <div class="navbar-header">
         <a href="<?= $this->baseUrl('/') ?>" class="navbar-brand icinga-logo">Icinga</a>
     </div>
 
-    <?php foreach (Topbar::getPartials() as $partial) {
-        echo $this->partial($partial['viewScriptName'], $partial['moduleName'], $partial['data']);
-    } ?>
+    <?php if (count($this->topbarHtmlParts)): ?>
+        <ul class="nav navbar-nav">
+        <?php foreach ($this->topbarHtmlParts as $part): ?>
+            <li><?= $part; ?></li>
+        <?php endforeach; ?>
+        </ul>
+    <?php endif; ?>
 
   <?php if ($this->auth()->isAuthenticated()): ?>
   <ul class="nav navbar-nav pull-right" >

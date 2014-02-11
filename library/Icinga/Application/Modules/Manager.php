@@ -244,18 +244,22 @@ class Manager
                 )
             );
         }
+
         clearstatcache(true);
         $target = $this->installedBaseDirs[$name];
         $link = $this->enableDir . '/' . $name;
+
         if (!is_writable($this->enableDir)) {
             throw new SystemPermissionException(
                 'Can not enable module "' . $name . '". '
                 . 'Insufficient system permissions for enabling modules.'
             );
         }
+
         if (file_exists($link) && is_link($link)) {
             return $this;
         }
+
         if (!@symlink($target, $link)) {
             $error = error_get_last();
             if (strstr($error["message"], "File exists") === false) {
@@ -266,7 +270,12 @@ class Manager
                 );
             }
         }
+
         $this->enabledDirs[$name] = $link;
+
+        $this->loadModule($name);
+        $this->getModule($name)->launchRegisterScript();
+
         return $this;
     }
 

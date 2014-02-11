@@ -29,7 +29,7 @@ A component name consists of two parts: the namespace and the name of the compon
 is named exactly like its JavaScript file, while the namespace is the name of the Icinga2-Web module that contains
 the component. Each Icinga2-Web module can contain its own components in the folder *public/js*.
 
-   <module>/<component>
+    <module>/<component>
 
 
 NOTE: The namespace used for modules defined in the Icinga2-Web core application is "app". In opposition to
@@ -45,10 +45,10 @@ The full name for the component *modules/monitoring/public/js/someComponent.js* 
     "monitoring/someComponent"
 
 
-The full component name for the component *public/js/icinga/components/datetime.js* in the Icinga2-Web
- core application would:
+The full component name for the component *public/js/icinga/components/datetime.js* in the Icinga2-Web core application
+would:
 
-   "app/datetime"
+    "app/datetime"
 
 
 ## Creating a component
@@ -95,7 +95,7 @@ with right time-format available.
 ### Component ids
 
 When an ID is assigned to the HTML element, it will be used by the component loader to reference this
-component. Otherwise an ID in the form "icinga-component-<ID>" will be created and the ID attribute in the
+component. Otherwise an ID in the form "icinga-component-&lt;ID&gt;" will be created and the ID attribute in the
 HTML Element will be updated accordingly.
 
 
