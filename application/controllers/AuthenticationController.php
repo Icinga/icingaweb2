@@ -34,7 +34,7 @@ use Icinga\Web\Controller\ActionController;
 use Icinga\Authentication\Credential;
 use Icinga\Authentication\Manager as AuthManager;
 use Icinga\Form\Authentication\LoginForm;
-use Icinga\Exception\ConfigurationError;
+use Exception;
 
 /**
  * Application wide controller for authentication
@@ -75,8 +75,8 @@ class AuthenticationController extends ActionController
                     $this->redirectNow($redirectUrl);
                 }
             }
-        } catch (ConfigurationError $configError) {
-            $this->view->errorInfo = $configError->getMessage();
+        } catch (Exception $e) {
+            $this->view->errorInfo = $e->getMessage();
         }
     }
 
