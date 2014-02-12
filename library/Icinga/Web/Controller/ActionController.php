@@ -254,11 +254,9 @@ class ActionController extends Zend_Controller_Action
         if (!headers_sent()) {
             $css = $this->view->getHelper('action')->action('stylesheet', 'static', 'application');
 
-            // fix css for pdf
-            require_once 'vendor/lessphp/lessc.inc.php';
-            $lessc = new \lessc();
+            // load css fixes for pdf formatting mode
             $publicDir = realpath(dirname($_SERVER['SCRIPT_FILENAME']));
-            $css .= $lessc->compile($publicDir . '/css/icinga/pdf.less');
+            $css .= file_get_contents($publicDir . '/css/pdf/pdf.css');
 
             $pdf = new PDF();
             if ($this->_request->getControllerName() === 'list') {

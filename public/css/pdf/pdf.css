@@ -24,7 +24,8 @@
  * @author     Icinga Development Team <info@icinga.org>
  *
  */
-// {{{ICINGA_LICENSE_HEADER}}}
+/* {{{ICINGA_LICENSE_HEADER}}} */
+
 
 *, html {
   font-size: 100%;
@@ -34,7 +35,6 @@ form {
   display: none;
 }
 
-// Insert page breaks
 div.pdf-page {
   page-break-before: always;
 }
@@ -46,24 +46,20 @@ div.selection-toolbar > a {
   display: none;
 }
 
-// Dont show any link outline
 a {
   outline: 0;
 }
 
-// Fix badge positioning
 span.badge {
   float: right;
   max-width: 5px;
 }
 
-// prevent table rows from growing too big on page breaks
 tr {
   max-height: 30px;
   height: 30px;
 }
 
-// Hide buttons
 *.button {
   display: none;
 }
@@ -74,7 +70,6 @@ button > i {
   display: none;
 }
 
-// Hide navigation
 *.nav {
   display: none;
 }
@@ -85,7 +80,6 @@ button > i {
   display: none;
 }
 
-// Hide pagination
 *.pagination {
   display: none;
 }
