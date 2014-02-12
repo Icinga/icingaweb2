@@ -61,7 +61,9 @@ class Cli extends ApplicationBootstrap
     protected function bootstrap()
     {
         $this->assertRunningOnCli();
-        $this->setupConfig()
+        $this
+            ->loadConfig()
+            ->setupTimezone()
             ->setupInternationalization()
             ->parseBasicParams()
             ->fixLoggingConfig()

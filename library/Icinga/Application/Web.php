@@ -116,13 +116,14 @@ class Web extends ApplicationBootstrap
      */
     protected function bootstrap()
     {
-        return $this->setupConfig()
-            ->setupErrorHandling()
-            ->setupResourceFactory()
+        return $this
+            ->loadConfig()
             ->setupSession()
             ->setupUser()
-            ->setupInternationalization()
             ->setupTimezone()
+            ->setupErrorHandling()
+            ->setupResourceFactory()
+            ->setupInternationalization()
             ->setupRequest()
             ->setupZendMvc()
             ->setupModuleManager()

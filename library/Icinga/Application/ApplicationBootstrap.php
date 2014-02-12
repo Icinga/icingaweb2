@@ -32,7 +32,6 @@ namespace Icinga\Application;
 use \DateTimeZone;
 use \Exception;
 use \Icinga\Application\Modules\Manager as ModuleManager;
-use \Icinga\Application\Config;
 use \Icinga\Exception\ConfigurationError;
 use \Icinga\Util\DateTimeFactory;
 use \Icinga\Util\Translator;
@@ -124,7 +123,7 @@ abstract class ApplicationBootstrap
      */
     protected function __construct($configDir)
     {
-        $this->libDir = realpath(__DIR__. '/../..');
+        $this->libDir = realpath(__DIR__ . '/../..');
 
         if (!defined('ICINGA_LIBDIR')) {
             define('ICINGA_LIBDIR', $this->libDir);
@@ -257,9 +256,7 @@ abstract class ApplicationBootstrap
      */
     public static function start($configDir)
     {
-        $class = get_called_class();
-        /** @var ApplicationBootstrap $obj */
-        $application = new $class($configDir);
+        $application = new static($configDir);
         $application->bootstrap();
 
         if (Logger::hasErrorsOccurred()) {
@@ -302,7 +299,7 @@ abstract class ApplicationBootstrap
      */
     public function setupAutoloader()
     {
-        require $this->libDir. '/Icinga/Application/Loader.php';
+        require $this->libDir . '/Icinga/Application/Loader.php';
 
         $this->loader = new Loader();
         $this->loader->registerNamespace('Icinga', $this->libDir. '/Icinga');
@@ -368,11 +365,11 @@ abstract class ApplicationBootstrap
     }
 
     /**
-     * Load Configuration
+     * Load configuration
      *
      * @return self
      */
-    protected function setupConfig()
+    protected function loadConfig()
     {
         Config::$configDir = $this->configDir;
         $this->config = Config::app();

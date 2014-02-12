@@ -29,18 +29,17 @@
 
 namespace Icinga\Application;
 
-use Icinga\Protocol\Ldap\Exception;
 use \Zend_Config;
 use \Zend_Log;
 use \Zend_Log_Filter_Priority;
 use \Zend_Log_Writer_Abstract;
 use \Zend_Log_Exception;
-use \Icinga\Exception\ConfigurationError;
+use Icinga\Exception\ConfigurationError;
 
 /**
- * Singleton logger
+ * Zend_Log wrapper
  */
-final class Logger
+class Logger
 {
     /**
      * Default log type
