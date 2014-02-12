@@ -2,84 +2,158 @@
 
 namespace Icinga\File;
 
-use TCPDF;
-use Icinga\Web\Url;
-use Icinga\Application\Icinga;
+use \DOMPDF;
+use \DOMDocument;
+use \DOMXPath;
+use \DOMNode;
 
-define('K_TCPDF_EXTERNAL_CONFIG', true);
-define('K_PATH_URL', (string) Url::fromPath('/'));
-define('K_PATH_MAIN', dirname(ICINGA_LIBDIR) . '/public');
-define('K_PATH_FONTS', ICINGA_LIBDIR . '/vendor/tcpdf/fonts/');
-// define('K_PATH_CACHE', ICINGA_LIBDIR . '/vendor/tcpdf/cache/');
-// define('K_PATH_URL_CACHE', ICINGA_LIBDIR . '/vendor/tcpdf/cache/');
-define('K_PATH_CACHE', '/tmp/');
-define('K_PATH_URL_CACHE', '/tmp/');
-//define('K_PATH_IMAGES', K_PATH_MAIN . 'images/'); // ???
-define('K_PATH_IMAGES', dirname(ICINGA_LIBDIR) . '/public'); // ???
-define('K_BLANK_IMAGE', K_PATH_IMAGES.'_blank.png');  // COULD be anything?
+require_once 'vendor/dompdf/dompdf_config.inc.php';
 
-// define('K_CELL_HEIGHT_RATIO', 1.25);
-define('K_SMALL_RATIO', 2/3);
-define('K_TCPDF_CALLS_IN_HTML', false); // SECURITY: is false better?
-define('K_TCPDF_THROW_EXCEPTION_ERROR', true);
-define('K_THAI_TOPCHARS', false);
+spl_autoload_register("DOMPDF_autoload");
 
-require_once 'vendor/tcpdf/tcpdf.php';
-
-class Pdf extends TCPDF
+class Pdf extends DOMPDF
 {
-    protected $cell_height_ratio = 1.25;
-    public function __construct(
-        $orientation = 'P',
-        $unit = 'mm',
-        $format = 'A4',
-        $unicode = true,
-        $encoding = 'UTF-8',
-        $diskcache = false,
-        $pdfa = false
-    ) {
-        unset($_SERVER['DOCUMENT_ROOT']);
-        parent::__construct(
-            $orientation,
-            $unit,
-            $format,
-            $unicode,
-            $encoding,
-            $diskcache,
-            $pdfa
-        );
+    /**
+     * The amount of table rows that fit on one page before a page-break is inserted.
+     *
+     * @var int
+     */
+    public $rowsPerPage = 10;
 
-        $this->SetCreator('IcingaWeb');
-        $this->SetAuthor('IcingaWeb Team');
-        $this->SetTitle('IcingaWeb Sample PDF - Title');
-        $this->SetSubject('IcingaWeb Sample PDF - Subject');
-        $this->SetKeywords('IcingaWeb, Monitoring');
+    /**
+     * If tables should only start at new pages.
+     *
+     * @var bool
+     */
+    public $tableInitialPageBreak = false;
 
-        // set default header data
-        // $pdf->SetHeaderData('tcpdf_logo.jpg', 30, 'Header title',
-        // 'Header string', array(0,64,255), array(0,64,128));
-        // $pdf->setFooterData($tc=array(0,64,0), $lc=array(0,64,128));
+    /**
+     * If occurring tables should be split up into smaller tables to avoid errors in the document layout.
+     *
+     * @var bool
+     */
+    public $paginateTable = true;
 
-        $this->setHeaderFont(array('helvetica', '', 10));
-        $this->setFooterFont(array('helvetica', '', 8));
-        $this->SetDefaultMonospacedFont('courier');
+    public function __construct() {
+        $this->set_paper(DOMPDF_DEFAULT_PAPER_SIZE, "portrait");
+        parent::__construct();
+    }
 
-        $this->SetMargins(15, 27, 15); // left, top, right
-        $this->SetHeaderMargin(5);
-        $this->SetFooterMargin(10);
+    /**
+     * @param $body
+     * @param $css
+     */
+    public function renderPage($body, $css)
+    {
+        $html =
+          '<html><head></head>'
+            . '<body>'
+               . '<style>' . Pdf::prepareCss($css) . '</style>'
+               . $body
+            . '</body>'
+          . '</html>';
+        if ($this->paginateTable === true) {
+            $doc = new DOMDocument();
+            @$doc->loadHTML($html);
+            $this->paginateHtmlTables($doc);
+            $html = $doc->saveHtml();
+        }
+        $this->load_html($html);
+        $this->render();
+    }
 
-        $this->SetAutoPageBreak(true, 25); // margin bottom
-        $this->setImageScale(1.75);
+    /**
+     * Split up tables into multiple elements that each contain $rowsPerPage of all original rows
+     *
+     * NOTE: This is a workaround to fix the buggy page-break on table-rows in dompdf.
+     *
+     * @param DOMDocument   $doc    The html document containing the tables.
+     *
+     * @return array    All paginated tables from the document.
+     */
+    private function paginateHtmlTables(DOMDocument $doc)
+    {
+        $xpath     = new DOMXPath($doc);
+        $tables    = $xpath->query('.//table');
+        $paginated = array();
+        $j         = 0;
 
-        $lang = array(
-            'a_meta_charset'  => 'UTF-8',
-            'a_meta_dir'      => 'ltr',
-            'a_meta_language' => 'de',
-            'w_page'          => 'Seite',
-        );
-        $this->setLanguageArray($lang);
+        foreach ($tables as $table) {
+            $containerType  = null;
+            $rows           = $xpath->query('.//tr', $table);
+            $rowCnt         = $rows->length;
+            $tableCnt       = (Integer)ceil($rowCnt / $this->rowsPerPage);
+            $paginated[$j]  = array();
+            if ($rowCnt <= $this->rowsPerPage) {
+                continue;
+            }
+            // remove all rows from the original parent
+            foreach ($rows as $row) {
+                if (!isset($containerType)) {
+                    $containerType = $row->parentNode->nodeName;
+                }
+                $row->parentNode->removeChild($row);
+            }
 
-        $this->setFontSubsetting(true);
-        $this->SetFont('dejavusans', '', 16, '', true);
+            // clone table for each additional page and fetch the row containers
+            $containers = array();
+            $pages = array();
+
+            if ($this->tableInitialPageBreak) {
+                $this->pageBreak($doc, $table);
+            }
+            for ($i = 0; $i < $tableCnt; $i++) {
+                // clone table
+                $currentPage = $table->cloneNode(true);
+                $pages[$i] = $currentPage;
+                $table->parentNode->insertBefore($currentPage, $table);
+
+                // put it in current paginated table
+                $paginated[$j] = $currentPage;
+
+                // insert page-break
+                if ($i < $tableCnt - 1) {
+                    $this->pageBreak($doc, $table);
+                }
+
+                // fetch row container
+                $container = $xpath->query('.//' . $containerType, $currentPage)->item(0);
+                $containers[$i] = $container;
+            }
+
+            $i = 0;
+            foreach ($rows as $row) {
+                $p = (Integer)floor($i / $this->rowsPerPage);
+                $containers[$p]->appendChild($row);
+                $i++;
+            }
+
+            // remove original table
+            $table->parentNode->removeChild($table);
+            $j++;
+        }
+        return $paginated;
+    }
+
+    private function pageBreak($doc, $before)
+    {
+        $div = $doc->createElement('div');
+        $div->setAttribute('style', 'page-break-before: always;');
+        $before->parentNode->insertBefore($div, $before);
+    }
+
+    /**
+     * Prepare the given css for rendering with DOMPDF, by removing or hiding all incompatible
+     * styles
+     *
+     * @param $css  The css-string
+     *
+     * @return string   A css-string that is ready to use for DOMPDF
+     */
+    public static function prepareCss($css)
+    {
+        $css = preg_replace('/\*:\s*before\s*,\s*/', '', $css);
+        $css = preg_replace('/\*\s*:\s*after\s*\{[^\}]*\}/', '', $css);
+        return $css;
     }
 }

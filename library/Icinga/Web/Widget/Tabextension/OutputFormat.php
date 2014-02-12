@@ -65,19 +65,21 @@ class OutputFormat implements Tabextension
     private $supportedTypes = array(
         self::TYPE_PDF => array(
             'name'      => 'pdf',
-            'title'     => '{{PDF_ICON}} PDF',
-            'urlParams' => array('filetype' => 'pdf')
+            'title'     => '<i class="icinga-icon-pdf"></i> PDF',
+            'urlParams' => array('format' => 'pdf')
         ),
+        /*
         self::TYPE_CSV => array(
             'name'      => 'csv',
-            'title'     => '{{CSV_ICON}} CSV',
-            'urlParams' => array('filetype' => 'csv')
+            'title'     => '<i class="icinga-icon-csv"></i> CSV',
+            'urlParams' => array('format' => 'csv')
         ),
         self::TYPE_JSON => array(
             'name'      => 'json',
-            'title'     => '{{JSON_ICON}} JSON',
-            'urlParams' => array('filetype' => 'json')
+            'title'     => '<i class="icinga-icon-json"></i> JSON',
+            'urlParams' => array('format' => 'json')
         )
+        */
     );
 
     /**

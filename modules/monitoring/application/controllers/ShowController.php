@@ -199,7 +199,7 @@ class Monitoring_ShowController extends MonitoringController
             )
         );
         $tabs->extend(new OutputFormat())
-            ->extend(new DashboardAction());
+             ->extend(new DashboardAction());
     }
 }
 // @codingStandardsIgnoreEnd

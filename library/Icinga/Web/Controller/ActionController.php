@@ -39,6 +39,11 @@ use Icinga\Application\Benchmark;
 use Icinga\Util\Translator;
 use Icinga\Web\Widget\Tabs;
 use Icinga\Web\Url;
+use Icinga\Application\Logger;
+use Icinga\Web\Request;
+
+use Icinga\File\Pdf;
+use \DOMDocument;
 
 /**
  * Base class for all core action controllers
@@ -71,6 +76,7 @@ class ActionController extends Zend_Controller_Action
             ->setResponse($response)
             ->_setInvokeArgs($invokeArgs);
         $this->_helper = new Zend_Controller_Action_HelperBroker($this);
+        $this->_helper->addPath('../application/controllers/helpers');
 
         // when noInit is set (e.g. for testing), authentication and init is skipped
         if (isset($invokeArgs['noInit'])) {
@@ -234,6 +240,50 @@ class ActionController extends Zend_Controller_Action
                 $this->_helper->layout()->benchmark = $this->renderBenchmark();
             }
         }
+        if ($this->_request->getParam('format') === 'pdf' && $this->_request->getControllerName() !== 'static') {
+            $this->sendAsPdfAndDie();
+        }
+    }
+
+    protected function sendAsPdfAndDie()
+    {
+        $this->_helper->layout()->setLayout('inline');
+        $body = $this->view->render(
+            $this->_request->getControllerName() . '/' . $this->_request->getActionName() . '.phtml'
+        );
+        if (!headers_sent()) {
+            $css = $this->view->getHelper('action')->action('stylesheet', 'static', 'application');
+
+            // fix css for pdf
+            require_once 'vendor/lessphp/lessc.inc.php';
+            $lessc = new \lessc();
+            $publicDir = realpath(dirname($_SERVER['SCRIPT_FILENAME']));
+            $css .= $lessc->compile($publicDir . '/css/icinga/pdf.less');
+
+            $pdf = new PDF();
+            if ($this->_request->getControllerName() === 'list') {
+                switch ($this->_request->getActionName()) {
+                    case 'notifications':
+                        $pdf->rowsPerPage = 7;
+                        break;
+                    case 'comments':
+                        $pdf->rowsPerPage = 7;
+                        break;
+                    default:
+                        $pdf->rowsPerPage = 11;
+                        break;
+                }
+            } else {
+                $pdf->paginateTable = false;
+            }
+            $pdf->renderPage($body, $css);
+            $pdf->stream(
+                $this->_request->getControllerName() . '-' . $this->_request->getActionName() . '-' . time() . '.pdf'
+            );
+        } else {
+            Logger::error('Could not send pdf-response, content already written to output.');
+        }
+        die();
     }
 
     /**
