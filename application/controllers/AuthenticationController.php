@@ -30,11 +30,11 @@
 
 # namespace Icinga\Application\Controllers;
 
+use \Exception;
 use Icinga\Web\Controller\ActionController;
 use Icinga\Authentication\Credential;
 use Icinga\Authentication\Manager as AuthManager;
 use Icinga\Form\Authentication\LoginForm;
-use Exception;
 
 /**
  * Application wide controller for authentication
