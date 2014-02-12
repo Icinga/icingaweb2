@@ -27,7 +27,7 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Web\Hook\Layout;
+namespace Icinga\Web\Hook;
 
 use \Icinga\Web\Request;
 use \Zend_View;

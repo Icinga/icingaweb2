@@ -29,7 +29,7 @@
 
 namespace Icinga\Module\Monitoring\Web\Hook;
 
-use Icinga\Web\Hook\Layout\TopBar as IcingaTopBar;
+use Icinga\Web\Hook\TopBar as IcingaTopBar;
 use Icinga\Module\Monitoring\DataView\StatusSummary as StatusSummaryView;
 use Icinga\Web\Request;
 use Zend_View;

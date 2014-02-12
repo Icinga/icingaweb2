@@ -33,7 +33,7 @@ class LayoutController extends ActionController
         /** @var Hook\Layout\TopBar $hook */
         $hook = null;
 
-        foreach (Hook::all(Hook::TARGET_LAYOUT_TOPBAR) as $hook) {
+        foreach (Hook::all('TopBar') as $hook) {
             $topbarHtmlParts[] = $hook->getHtml($this->getRequest(), $this->view);
         }
 

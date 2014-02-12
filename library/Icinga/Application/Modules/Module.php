@@ -573,9 +573,14 @@ class Module
      *
      * @return  self
      */
-    protected function registerHook($name, $key, $class)
+    protected function registerHook($name, $class, $key = null)
     {
+        if ($key === null) {
+            $key = $this->name;
+        }
+
         Hook::register($name, $key, $class);
+
         return $this;
     }
 }
