@@ -29,6 +29,10 @@
 
 namespace Icinga\Application;
 
+// @codingStandardsIgnoreStart
+require_once dirname(__FILE__) . '/ApplicationBootstrap.php';
+// @codingStandardsIgnoreStop
+
 use \DateTimeZone;
 use \Exception;
 use \Zend_Layout;
