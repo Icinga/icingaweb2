@@ -241,44 +241,49 @@ class ActionController extends Zend_Controller_Action
             }
         }
         if ($this->_request->getParam('format') === 'pdf' && $this->_request->getControllerName() !== 'static') {
-            $this->sendAsPdf();
-            die();
+            $this->sendAsPdfAndDie();
         }
     }
 
-    protected function sendAsPdf()
+    protected function sendAsPdfAndDie()
     {
+        $this->_helper->layout()->setLayout('inline');
         $body = $this->view->render(
             $this->_request->getControllerName() . '/' . $this->_request->getActionName() . '.phtml'
         );
         if (!headers_sent()) {
             $css = $this->view->getHelper('action')->action('stylesheet', 'static', 'application');
-            $pdf = new PDF();
 
+            // fix css for pdf
+            require_once 'vendor/lessphp/lessc.inc.php';
+            $lessc = new \lessc();
+            $publicDir = realpath(dirname($_SERVER['SCRIPT_FILENAME']));
+            $css .= $lessc->compile($publicDir . '/css/icinga/pdf.less');
+
+            $pdf = new PDF();
             if ($this->_request->getControllerName() === 'list') {
                 switch ($this->_request->getActionName()) {
                     case 'notifications':
-                        $pdf->rowsPerPage = 8;
+                        $pdf->rowsPerPage = 7;
                         break;
                     case 'comments':
-                        $pdf->rowsPerPage = 8;
+                        $pdf->rowsPerPage = 7;
                         break;
                     default:
-                        $pdf->rowsPerPage = 12;
+                        $pdf->rowsPerPage = 11;
                         break;
                 }
             } else {
                 $pdf->paginateTable = false;
             }
-
             $pdf->renderPage($body, $css);
             $pdf->stream(
                 $this->_request->getControllerName() . '-' . $this->_request->getActionName() . '-' . time() . '.pdf'
             );
         } else {
             Logger::error('Could not send pdf-response, content already written to output.');
-            die();
         }
+        die();
     }
 
     /**
