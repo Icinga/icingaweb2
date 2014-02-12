@@ -206,9 +206,20 @@ class User
     }
 
     /**
+     * Setter for permissions
+     *
+     * @param array $permissions
+     */
+    public function setPermissions(array $permissions)
+    {
+        $this->permissions = $permissions;
+    }
+
+    /**
      * Return restriction information for this user
      *
-     * @return Array
+     * @param   string    $name
+     * @return  array
      */
     public function getRestrictions($name)
     {
@@ -216,6 +227,16 @@ class User
             return $this->restrictions[$name];
         }
         return array();
+    }
+
+    /**
+     * Settter for restrictions
+     *
+     * @param array $restrictions
+     */
+    public function setRestrictions(array $restrictions)
+    {
+        $this->restrictions = $restrictions;
     }
 
     /**
@@ -323,65 +344,6 @@ class User
         return $this->domain;
     }
 
-    /**
-     * Load permissions for this user from permissions.ini
-     *
-     * TODO: - Separate this from the user object once possible
-     *       - Support group permissions once groups are available
-     *
-     * @return self
-     */
-    public function loadPermissions()
-    {
-        try {
-          // TODO: Config::app should gracefully handle missing files
-          $config = Config::app('permissions');
-        } catch (Exception $e) {
-          return $this;
-        }
-        foreach ($config as $section) {
-            if ($section->get('user') !== $this->username) {
-                continue;
-            }
-            foreach ($section->toArray() as $key => $val) {
-                if (false !== ($pos = strpos($key, '_'))
-                    && substr($key, 0, $pos) === 'permission')
-                {
-                    $this->permissions[] = $val;
-                }
-            }
-        }
-        return $this;
-    }
-
-    /**
-     * Load restrictions for this user from restrictions.ini
-     *
-     * TODO: - Separate this from the user object once possible
-     *       - Support group restrictions once groups are available
-     *
-     * @return self
-     */
-    public function loadRestrictions()
-    {
-        try {
-            // TODO: Config::app should gracefully handle missing files
-            $config = Config::app('restrictions');
-        } catch (Exception $e) {
-            return $this;
-        }
-
-        foreach ($config as $section) {
-            if ($section->get('user') !== $this->username) {
-                continue;
-            }
-            if (! array_key_exists($section->name, $this->restrictions)) {
-                $this->restrictions[$section->name] = array();
-            }
-            $this->restrictions[$section->name][] = $section->restriction;
-        }
-        return $this;
-    }
 
     /**
      * Set additional information about user

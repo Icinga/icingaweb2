@@ -40,7 +40,6 @@ use Icinga\Application\Config as IcingaConfig;
 use Icinga\Authentication\Backend\DbUserBackend;
 use Icinga\Authentication\Backend\LdapUserBackend;
 
-
 /**
  * The authentication manager allows to identify users and
  * to persist authentication information in a session.
@@ -345,11 +344,22 @@ class Manager
             return false;
         }
 
-        // TODO: We want to separate permissions and restrictions from
-        //       the user object. This will be possible once session
-        //       had been refactored.
-        $this->user->loadPermissions();
-        $this->user->loadRestrictions();
+        $username = $credentials->getUsername();
+
+        $membership = new Membership();
+
+        $groups = $membership->getGroupsByUsername($username);
+        $this->user->setGroups($groups);
+
+        $admissionLoader = new AdmissionLoader();
+
+        $this->user->setPermissions(
+            $admissionLoader->getPermissions($username, $groups)
+        );
+
+        $this->user->setRestrictions(
+            $admissionLoader->getRestrictions($username, $groups)
+        );
 
         if ($persist == true) {
             $this->persistCurrentUser();
