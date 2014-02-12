@@ -1,1 +1,5 @@
-lib/fonts/log.htm
+# ignore all files 
+*
+
+# except of gitignore
+!.gitignore
