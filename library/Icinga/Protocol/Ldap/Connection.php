@@ -235,9 +235,10 @@ class Connection
         // We do not support pagination right now, and there is no chance to
         // do so for PHP < 5.4. Warnings about "Sizelimit exceeded" will
         // therefore not be hidden right now.
+        $base = $query->hasBase() ? $query->getBase() : $this->root_dn;
         $results = @ldap_search(
             $this->ds,
-            $this->root_dn,
+            $base,
             (string) $query,
             $fields,
             0, // Attributes and values

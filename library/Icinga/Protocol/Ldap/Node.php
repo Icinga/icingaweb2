@@ -90,6 +90,6 @@ class Node extends Root
      */
     public function getDN()
     {
-        return $this->parent->getDN() . '.' . $this->getRDN();
+        return $this->getRDN() . ',' . $this->parent->getDN();
     }
 }

@@ -30,6 +30,7 @@ class Query
     protected $limit_offset;
     protected $sort_columns = array();
     protected $count;
+    protected $base;
 
     /**
      * Constructor
@@ -40,6 +41,22 @@ class Query
     public function __construct(Connection $connection)
     {
         $this->connection = $connection;
+    }
+
+    public function setBase($base)
+    {
+        $this->base = $base;
+        return $this;
+    }
+
+    public function hasBase()
+    {
+        return $this->base !== null;
+    }
+
+    public function getBase()
+    {
+        return $this->base;
     }
 
     /**
