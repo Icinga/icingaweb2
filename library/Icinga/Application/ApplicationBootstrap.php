@@ -81,7 +81,7 @@ abstract class ApplicationBootstrap
      *
      * @var Config
      */
-    private $config;
+    protected $config;
 
     /**
      * Configuration directory
@@ -258,38 +258,7 @@ abstract class ApplicationBootstrap
     {
         $application = new static($configDir);
         $application->bootstrap();
-
-        if (Logger::hasErrorsOccurred()) {
-            $application->stopApplication(Logger::getQueue());
-        }
-
         return $application;
-    }
-
-    /**
-     * Stop application and show information about errors
-     *
-     * @param array $errors
-     */
-    public function stopApplication(array $errors = array())
-    {
-        $msg = "Application could not be started!\n\n";
-
-        if (count($errors)) {
-            foreach ($errors as $error) {
-                $msg .= $error[0]. "\n";
-            }
-        } else {
-            $msg .= "Further information about the error may have been written to the application's log file.\n"
-                . 'Please check it in order to analyse the problem.';
-        }
-
-        if ($this->isWeb()) {
-            $msg = nl2br($msg);
-        }
-
-        echo $msg;
-        die();
     }
 
     /**
@@ -383,11 +352,19 @@ abstract class ApplicationBootstrap
      */
     protected function setupErrorHandling()
     {
-        if ($this->config->get('global', 'environment') == 'development') {
-            error_reporting(E_ALL | E_NOTICE);
-            ini_set('display_startup_errors', 1);
-            ini_set('display_errors', 1);
-        }
+        error_reporting(E_ALL | E_NOTICE);
+        ini_set('display_startup_errors', 1);
+        ini_set('display_errors', 1);
+        return $this;
+    }
+
+    /**
+     * Set up logger
+     *
+     * @return self
+     */
+    protected function setupLogger()
+    {
         Logger::create($this->config->logging);
         return $this;
     }

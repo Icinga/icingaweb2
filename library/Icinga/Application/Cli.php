@@ -62,12 +62,13 @@ class Cli extends ApplicationBootstrap
     {
         $this->assertRunningOnCli();
         $this
+            ->setupErrorHandling()
             ->loadConfig()
             ->setupTimezone()
             ->setupInternationalization()
             ->parseBasicParams()
             ->fixLoggingConfig()
-            ->setupErrorHandling()
+            ->setupLogger()
             ->setupResourceFactory()
             ->setupModuleManager();
     }

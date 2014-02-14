@@ -117,12 +117,13 @@ class Web extends ApplicationBootstrap
     protected function bootstrap()
     {
         return $this
+            ->setupErrorHandling()
             ->loadConfig()
+            ->setupResourceFactory()
             ->setupSession()
             ->setupUser()
             ->setupTimezone()
-            ->setupErrorHandling()
-            ->setupResourceFactory()
+            ->setupLogger()
             ->setupInternationalization()
             ->setupRequest()
             ->setupZendMvc()
@@ -139,7 +140,6 @@ class Web extends ApplicationBootstrap
      */
     private function setupRoute()
     {
-
         $this->frontController->getRouter()->addRoute(
             'module_javascript',
             new Zend_Controller_Router_Route(
@@ -204,25 +204,6 @@ class Web extends ApplicationBootstrap
     }
 
     /**
-     * Registers a NullStore as the preference provider
-     *
-     * @param Preferences   $preferences    The preference registry to attach the NullStore to
-     * @param User          $user           The user, required for API compliance
-     *
-     * @see   NullStore
-     */
-    private function registerFallbackPreferenceProvider($preferences, $user)
-    {
-        $this->getConfig()->preferences->type = 'null';
-        $preferenceStore = StoreFactory::create(
-            $this->getConfig()->preferences,
-            $user
-        );
-
-        $preferences->attach($preferenceStore);
-    }
-
-    /**
      * Create user object and inject preference interface
      *
      * @return  self
@@ -231,92 +212,9 @@ class Web extends ApplicationBootstrap
     private function setupUser()
     {
         $authenticationManager = AuthenticationManager::getInstance();
-
         if ($authenticationManager->isAuthenticated() === true) {
-            $user = $authenticationManager->getUser();
-
-            // Needed to update values in user session
-            $sessionStore = new SessionStore($this->session);
-
-            // Performance: Do not ask provider if we've preferences
-            // stored in session
-            $initialPreferences = array();
-            $preferencesLoaded = false;
-            if (count($sessionStore->load())) {
-                $initialPreferences = $sessionStore->load();
-                $preferencesLoaded = true;
-            }
-
-            $preferences = new Preferences($initialPreferences);
-
-            $preferences->attach($sessionStore);
-
-            if ($this->getConfig()->preferences !== null) {
-                if (!$this->getConfig()->preferences->type) {
-                    Logger::info(
-                        'Preferences provider configuration error. No type was omitted. For convenience we enable '
-                        . 'file based ini provider for you.'
-                    );
-
-                    $this->getConfig()->preferences->type = 'ini';
-                }
-
-                $path = Config::resolvePath($this->getConfig()->preferences->configPath);
-                if (is_dir($path) === false) {
-                    Logger::warn(
-                        'Path for preferences not found (IniStore, "%s"). Using default one: "%s"',
-                        $this->getConfig()->preferences->configPath,
-                        $this->getConfigDir('preferences')
-                    );
-
-                    $this->getConfig()->preferences->configPath = $this->getConfigDir('preferences');
-                }
-
-                $preferenceStore = null;
-
-                try {
-                    $preferenceStore = StoreFactory::create(
-                        $this->getConfig()->preferences,
-                        $user
-                    );
-                    $preferences->attach($preferenceStore);
-                } catch (Exception $e) {
-                    Logger::warn(
-                        'Could not create create preferences provider, preferences will be discarded: '
-                        . '"%s"',
-                        $e->getMessage()
-                    );
-                    $this->registerFallbackPreferenceProvider($preferences, $user);
-                }
-
-                if ($preferencesLoaded === false && $preferenceStore instanceof LoadInterface) {
-                    try {
-                        $initialPreferences = $preferenceStore->load();
-                    } catch (Exception $e) {
-                        Logger::warn(
-                            '%s::%s: Could not load preferences from provider. '
-                            . 'An exception during bootstrap was thrown: %s',
-                            __CLASS__,
-                            __FUNCTION__,
-                            $e->getMessage()
-                        );
-                        $this->registerFallbackPreferenceProvider($preferences, $user);
-                    }
-
-                    $sessionStore->writeAll($initialPreferences);
-                }
-            } else {
-                Logger::error(
-                    'Preferences are not configured. Refer to the documentation to setup a valid provider. '
-                    . 'We will use session store only. Preferences are not persisted after logout'
-                );
-            }
-
-            $user->setPreferences($preferences);
-
-            $this->user = $user;
+            $this->user = $authenticationManager->getUser();
         }
-
         return $this;
     }
 
