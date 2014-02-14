@@ -2,20 +2,6 @@
 
 namespace Tests\Application\Controller;
 
-require 'Zend/Test/PHPUnit/ControllerTestCase.php';
-require 'Zend/Config.php';
-require 'Zend/Application.php';
-require 'Zend/Config/Ini.php';
-require 'Zend/Controller/Action.php';
-
-require '../../library/Icinga/Exception/ProgrammingError.php';
-require '../../library/Icinga/Application/Benchmark.php';
-require '../../library/Icinga/Application/Config.php';
-require '../../library/Icinga/Application/Icinga.php';
-require '../../library/Icinga/Web/Controller/ActionController.php';
-require '../../library/Icinga/Web/Notification.php';
-require '../../library/Icinga/Application/Platform.php';
-
 use Icinga\Application\Icinga;
 
 class IndexControllerTest extends \Zend_Test_PHPUnit_ControllerTestCase {

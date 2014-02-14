@@ -2,7 +2,6 @@
 
 namespace Tests\Icinga\Util;
 
-require_once("../../library/Icinga/Util/Dimension.php");
 use Icinga\Util\Dimension;
 
 /**

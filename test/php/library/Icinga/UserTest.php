@@ -2,46 +2,12 @@
 
 namespace Tests\Icinga;
 
-require_once __DIR__ . '/../../../../library/Icinga/User.php';
-require_once __DIR__ . '/../../../../library/Icinga/User/Preferences.php';
-
 use \DateTimeZone;
 use Icinga\User as IcingaUser;
 use Icinga\User\Preferences as UserPreferences;
 
 class UserTest extends \PHPUnit_Framework_TestCase
 {
-
-    public function testListGroups()
-    {
-        $this->markTestIncomplete('testListGroups is not implemented yet');
-    }
-
-    public function testIsMemberOf()
-    {
-        $this->markTestIncomplete('testIsMemberOf is not implemented yet');
-    }
-
-    public function testGetPermissionList()
-    {
-        $this->markTestIncomplete('testGetPermissionList is not implemented yet');
-    }
-
-    public function testHasPermission()
-    {
-        $this->markTestIncomplete('testHasPermission is not implemented yet');
-    }
-
-    public function testGrantPermission()
-    {
-        $this->markTestIncomplete('testGrantPermission is not implemented yet');
-    }
-
-    public function testRevokePermission()
-    {
-        $this->markTestIncomplete('testRevokePermission is not implemented yet');
-    }
-
     public function testGetDefaultTimezoneIfTimezoneNotSet()
     {
         $defaultTz = 'UTC';

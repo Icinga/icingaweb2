@@ -29,27 +29,7 @@
 
 namespace Test\Icinga\Form\Config;
 
-// @codingStandardsIgnoreStart
-require_once realpath(__DIR__ . '/../../../../../library/Icinga/Test/BaseTestCase.php');
-// @codingStandardsIgnoreEnd
-
 use Icinga\Test\BaseTestCase;
-
-// @codingStandardsIgnoreStart
-require_once 'Zend/Form.php';
-require_once 'Zend/Config.php';
-require_once 'Zend/Config/Ini.php';
-
-require_once BaseTestCase::$testDir . '/library/Icinga/Web/RequestMock.php';
-
-require_once BaseTestCase::$libDir . '/Web/Form.php';
-require_once BaseTestCase::$libDir . '/Web/Url.php';
-
-require_once BaseTestCase::$appDir . '/forms/Config/Authentication/BaseBackendForm.php';
-require_once BaseTestCase::$appDir . '/forms/Config/Authentication/DbBackendForm.php';
-require_once BaseTestCase::$appDir . '/forms/Config/Authentication/LdapBackendForm.php';
-require_once BaseTestCase::$appDir . '/forms/Config/Authentication/ReorderForm.php';
-// @codingStandardsIgnoreEnd
 
 use \Zend_Config;
 use \Icinga\Web\Url;
