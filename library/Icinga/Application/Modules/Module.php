@@ -225,6 +225,11 @@ class Module
         return file_exists($this->getCssFilename());
     }
 
+    public function getCssFilename()
+    {
+        return $this->cssdir . '/module.less';
+    }
+
     /**
      * Getter for module name
      *
