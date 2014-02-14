@@ -88,13 +88,6 @@ class Manager
     private $config = null;
 
     /**
-     * If the backends are already created.
-     *
-     * @var Boolean
-     */
-    private $initialized = false;
-
-    /**
      * Creates a new authentication manager using the provided config (or the
      * configuration provided in the authentication.ini if no config is given)
      * and with the given options.
@@ -110,7 +103,10 @@ class Manager
         if ($config === null && !(isset($options['noDefaultConfig']) && $options['noDefaultConfig'] == true)) {
             $config = IcingaConfig::app('authentication');
         }
-        $this->config = $config;
+
+        if ($config !== null) {
+            $this->setupBackends($config);
+        }
     }
 
     /**
@@ -215,7 +211,6 @@ class Manager
      */
     public function getUserBackend($name)
     {
-        $this->initBackends();
         return (isset($this->userBackends[$name])) ? $this->userBackends[$name] : null;
     }
 
@@ -238,7 +233,6 @@ class Manager
      */
     public function getGroupBackend($name)
     {
-        $this->initBackends();
         return (isset($this->groupBackends[$name])) ? $this->groupBackends[$name] : null;
     }
 
@@ -252,9 +246,8 @@ class Manager
      */
     private function getBackendForCredential(Credential $credentials)
     {
-        $this->initBackends();
-
         $authErrors = 0;
+
         foreach ($this->userBackends as $userBackend) {
 
             $flag = false;
@@ -299,17 +292,6 @@ class Manager
     }
 
     /**
-     * Ensures that all backends are initialized
-     */
-    private function initBackends()
-    {
-        if (!$this->initialized) {
-            $this->setupBackends($this->config);
-            $this->initialized = true;
-        }
-    }
-
-    /**
      * Try to authenticate a user with the given credentials
      *
      * @param   Credential  $credentials    The credentials to use for authentication
@@ -320,13 +302,12 @@ class Manager
      */
     public function authenticate(Credential $credentials, $persist = true)
     {
-        $this->initBackends();
         if (count($this->userBackends) === 0) {
             Logger::error('AuthManager: No authentication backend provided, your users will never be able to login.');
             throw new ConfigurationError(
-                'No authentication backend set - login will never succeed as icinga-web ' .
-                'doesn\'t know how to determine your user. ' . "\n" .
-                'To fix this error, setup your authentication.ini with at least one valid authentication backend.'
+                'No authentication backend set - login will never succeed as icinga-web'
+                . ' doesn\'t know how to determine your user. ' . "\n"
+                . ' To fix this error, setup your authentication.ini with at least one valid authentication backend.'
             );
         }
 
