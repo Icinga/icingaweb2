@@ -109,6 +109,20 @@ class Module
     private $configScript;
 
     /**
+     * Module metadata filename
+     *
+     * @var string
+     */
+    private $metadataFile;
+
+    /**
+     * Module metadata (version...)
+     *
+     * @var stdClass
+     */
+    private $metadata;
+
+    /**
      * Whether we already tried to include the module configuration script
      *
      * @var bool
@@ -156,6 +170,7 @@ class Module
         $this->controllerdir  = $basedir . '/application/controllers';
         $this->runScript      = $basedir . '/run.php';
         $this->configScript   = $basedir . '/configuration.php';
+        $this->metadataFile   = $basedir . '/module.info';
     }
 
     /**
@@ -243,6 +258,104 @@ class Module
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * Getter for module version
+     *
+     * @return string
+     */
+    public function getVersion()
+    {
+        return $this->metadata()->version;
+    }
+
+    /**
+     * Get short description
+     *
+     * @return string
+     */
+    public function getShortDescription()
+    {
+        return $this->metadata()->shortDescription;
+    }
+
+    /**
+     * Getter for module version
+     *
+     * @return Array
+     */
+    public function getDependencies()
+    {
+        
+        return $this->metadata()->depends;
+    }
+
+    /**
+     * Fetch module metadata
+     *
+     * @return object
+     */
+    protected function metadata()
+    {
+        if ($this->metadata === null) {
+            $metadata = (object) array(
+                'name'             => $this->getName(),
+                'version'          => '0.0.0',
+                'shortDescription' => '',
+                'description'      => '',
+                'depends'          => array(),
+            );
+
+            if (file_exists($this->metadataFile)) {
+
+                $fh = fopen($this->metadataFile, 'r');
+                $key = null;
+
+                while (false !== ($line = fgets($fh))) {
+                    $line = rtrim($line);
+
+                    if ($key === 'description' && $line[0] === ' ') {
+                        $metadata->{$key} .= "\n" . ltrim($line);
+                        continue;
+                    }
+
+                    list($key, $val) = preg_split('/:\s+/', $line, 2);
+                    $key = lcfirst($key);
+
+                    switch ($key) {
+
+                        case 'depends':
+                            if (strpos($val, ' ') === false) {
+                                $metadata->depends[$val] = true;
+                                continue;
+                            }
+
+                            $parts = preg_split('/,\s+/', $val);
+                            foreach ($parts as $part) {
+                                if (preg_match('/^(\w+)\s+\((.+)\)$/', $part, $m)) {
+                                    $metadata->depends[$m[1]] = $m[2];
+                                } else {
+                                    // TODO: FAIL?
+                                    continue;
+                                }
+                            }
+                            break;
+
+                        case 'description':
+                            $metadata->shortDescription = $val;
+                            // YES, no break here
+
+                        default:
+                            $metadata->{$key} = $val;
+
+                    }
+                }
+            }
+
+            $this->metadata = $metadata;
+        }
+        return $this->metadata;
     }
 
     /**
