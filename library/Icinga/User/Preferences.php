@@ -29,99 +29,51 @@
 
 namespace Icinga\User;
 
-use \SplObjectStorage;
-use \SplObserver;
-use \SplSubject;
-use Icinga\User\Preferences\ChangeSet;
-use Icinga\Exception\ProgrammingError;
+use \Countable;
 
 /**
- * Handling retrieve and persist of user preferences
+ * User preferences container
+ *
+ * Usage example:
+ * <code>
+ * <?php
+ *
+ * use Icinga\User\Preferences;
+ *
+ * $preferences = new Preferences(); // Start with empty preferences
+ *
+ * $preferences = new Preferences(array('aPreference' => 'value')); // Start with initial preferences
+ *
+ * $preferences->aNewPreference = 'value'; // Set a preference
+ *
+ * unset($preferences['aPreference']); // Unset a preference
+ *
+ * // Retrieve a preference and return a default value if the preference does not exist
+ * $anotherPreference = $preferences->get('anotherPreference', 'defaultValue');
  */
-class Preferences implements SplSubject, \Countable
+class Preferences implements Countable
 {
     /**
-     * Container for all preferences
+     * Preferences key-value array
      *
      * @var array
      */
     private $preferences = array();
 
     /**
-     * All observers for changes
+     * Constructor
      *
-     * @var SplObserver[]
+     * @param array $preferences Preferences key-value array
      */
-    private $observer = array();
-
-    /**
-     * Current change set
-     *
-     * @var ChangeSet
-     */
-    private $changeSet;
-
-    /**
-     * Flag how commits are handled
-     *
-     * @var bool
-     */
-    private $autoCommit = true;
-
-    /**
-     * Create a new instance
-     * @param array $initialPreferences
-     */
-    public function __construct(array $initialPreferences)
+    public function __construct(array $preferences = array())
     {
-        $this->preferences = $initialPreferences;
-        $this->changeSet = new ChangeSet();
+        $this->preferences = $preferences;
     }
 
     /**
-     * Attach an SplObserver
+     * Count all preferences
      *
-     * @link http://php.net/manual/en/splsubject.attach.php
-     * @param SplObserver $observer
-     */
-    public function attach(SplObserver $observer)
-    {
-        $this->observer[] = $observer;
-    }
-
-    /**
-     * Detach an observer
-     *
-     * @link http://php.net/manual/en/splsubject.detach.php
-     * @param SplObserver $observer
-     */
-    public function detach(SplObserver $observer)
-    {
-        $key = array_search($observer, $this->observer, true);
-        if ($key !== false) {
-            unset($this->observer[$key]);
-        }
-    }
-
-    /**
-     * Notify an observer
-     *
-     * @link http://php.net/manual/en/splsubject.notify.php
-     */
-    public function notify()
-    {
-        /** @var SplObserver $observer */
-        $observer = null;
-        foreach ($this->observer as $observer) {
-            $observer->update($this);
-        }
-    }
-
-    /**
-     * Count elements of an object
-     *
-     * @link http://php.net/manual/en/countable.count.php
-     * @return int The custom count as an integer
+     * @return int The number of preferences
      */
     public function count()
     {
@@ -129,93 +81,84 @@ class Preferences implements SplSubject, \Countable
     }
 
     /**
-     * Getter for change set
-     * @return ChangeSet
+     * Determine whether a preference exists
+     *
+     * @param   string $name
+     *
+     * @return  bool
      */
-    public function getChangeSet()
+    public function has($name)
     {
-        return $this->changeSet;
+        return array_key_exists($name, $this->preferences);
     }
 
-    public function has($key)
+    /**
+     * Write data to a preference
+     *
+     * @param  string $name
+     * @param  mixed  $value
+     */
+    public function __set($name, $value)
     {
-        return array_key_exists($key, $this->preferences);
+        $this->preferences[$name] = $value;
     }
 
-    public function set($key, $value)
+    /**
+     * Retrieve a preference and return $default if the preference is not set
+     *
+     * @param   string  $name
+     * @param   mixed   $default
+     *
+     * @return  mixed
+     */
+    public function get($name, $default = null)
     {
-        if ($this->has($key)) {
-            $oldValue = $this->get($key);
-
-            // Do not notify useless writes
-            if ($oldValue !== $value) {
-                $this->changeSet->appendUpdate($key, $value);
-            }
-        } else {
-            $this->changeSet->appendCreate($key, $value);
+        if (array_key_exists($name, $this->preferences)) {
+            return $this->preferences[$name];
         }
-
-        $this->processCommit();
-    }
-
-    public function get($key, $default = null)
-    {
-        if ($this->has($key)) {
-            return $this->preferences[$key];
-        }
-
         return $default;
     }
 
-    public function remove($key)
+    /**
+     * Magic method so that $obj->value will work.
+     *
+     * @param   string $name
+     *
+     * @return  mixed
+     */
+    public function __get($name)
     {
-        if ($this->has($key)) {
-            $this->changeSet->appendDelete($key);
-            $this->processCommit();
-            return true;
-        }
-
-        return false;
+        return $this->get($name);
     }
 
-    public function startTransaction()
+    /**
+     * Remove a given preference
+     *
+     * @param string $name Preference name
+     */
+    public function remove($name)
     {
-        $this->autoCommit = false;
+        unset($this->preferences[$name]);
     }
 
-    public function commit()
+    /**
+     * Determine if a preference is set and is not NULL
+     *
+     * @param   string $name Preference name
+     * @return  bool
+     */
+    public function __isset($name)
     {
-        $changeSet = $this->changeSet;
-
-        if ($this->autoCommit === false) {
-            $this->autoCommit = true;
-        }
-
-        if ($changeSet->hasChanges() === true) {
-            foreach ($changeSet->getCreate() as $key => $value) {
-                $this->preferences[$key] = $value;
-            }
-
-            foreach ($changeSet->getUpdate() as $key => $value) {
-                $this->preferences[$key] = $value;
-            }
-
-            foreach ($changeSet->getDelete() as $key) {
-                unset($this->preferences[$key]);
-            }
-
-            $this->notify();
-
-            $this->changeSet->clear();
-        } else {
-            throw new ProgrammingError('Nothing to commit');
-        }
+        return isset($this->preferences[$name]);
     }
 
-    private function processCommit()
+    /**
+     * Unset a given preference
+     *
+     * @param string $name Preference name
+     */
+    public function __unset($name)
     {
-        if ($this->autoCommit === true) {
-            $this->commit();
-        }
+        $this->remove($name);
     }
 }

@@ -44,13 +44,10 @@ use \Zend_Controller_Front;
 use Icinga\Application\Logger;
 use Icinga\Authentication\Manager as AuthenticationManager;
 use Icinga\Exception\ConfigurationError;
-use Icinga\User\Preferences;
-use Icinga\User\Preferences\LoadInterface;
 use Icinga\User;
 use Icinga\Web\Request;
 use Icinga\Web\View;
-use Icinga\User\Preferences\StoreFactory;
-use Icinga\User\Preferences\SessionStore;
+
 use Icinga\Util\DateTimeFactory;
 use Icinga\Session\Session as BaseSession;
 use Icinga\Web\Session;
@@ -322,15 +319,19 @@ class Web extends ApplicationBootstrap
      */
     protected function setupTimezone()
     {
-        $userTimeZone = $this->user === null ? null : $this->user->getPreferences()->get('app.timezone');
+        if ($this->user !== null && $this->user->getPreferences() !== null) {
+            $userTimezone = $this->user->getPreferences()->get('app.timezone');
+        } else {
+            $userTimezone = null;
+        }
 
         try {
-            $tz = new DateTimeZone($userTimeZone);
+            $tz = new DateTimeZone($userTimezone);
         } catch (Exception $e) {
             return parent::setupTimezone();
         }
 
-        date_default_timezone_set($userTimeZone);
+        date_default_timezone_set($userTimezone);
         DateTimeFactory::setConfig(array('timezone' => $tz));
         return $this;
     }
@@ -345,19 +346,18 @@ class Web extends ApplicationBootstrap
     protected function setupInternationalization()
     {
         parent::setupInternationalization();
-        $userLocale = $this->user === null ? null : $this->user->getPreferences()->get('app.language');
-
-        if ($userLocale) {
+        if ($this->user !== null && $this->user->getPreferences() !== null
+            && ($locale = $this->user->getPreferences()->get('app.language') !== null)
+        ) {
             try {
-                Translator::setupLocale($userLocale);
+                Translator::setupLocale($locale);
             } catch (Exception $error) {
                 Logger::info(
-                    'Cannot set locale "' . $userLocale . '" configured in ' .
+                    'Cannot set locale "' . $locale . '" configured in ' .
                     'preferences of user "' . $this->user->getUsername() . '"'
                 );
             }
         }
-
         return $this;
     }
 }

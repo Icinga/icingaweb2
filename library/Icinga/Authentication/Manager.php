@@ -29,8 +29,8 @@
 
 namespace Icinga\Authentication;
 
-use \Exception;
-use \Zend_Config;
+use Exception;
+use Zend_Config;
 use Icinga\User;
 use Icinga\Web\Session;
 use Icinga\Data\ResourceFactory;
@@ -39,6 +39,9 @@ use Icinga\Exception\ConfigurationError;
 use Icinga\Application\Config as IcingaConfig;
 use Icinga\Authentication\Backend\DbUserBackend;
 use Icinga\Authentication\Backend\LdapUserBackend;
+use Icinga\User\Preferences;
+use Icinga\User\Preferences\PreferencesStore;
+use Icinga\Exception\NotReadableError;
 
 /**
  * The authentication manager allows to identify users and
@@ -331,6 +334,22 @@ class Manager
         $this->user->setRestrictions(
             $admissionLoader->getRestrictions($username, $groups)
         );
+
+        if (($preferencesConfig = IcingaConfig::app()->preferences) !== null) {
+            try {
+                $preferencesStore = PreferencesStore::create(
+                    $preferencesConfig,
+                    $this->user
+                );
+                $preferences = new Preferences($preferencesStore->load());
+            } catch (NotReadableError $e) {
+                Logger::error($e);
+                $preferences = new Preferences();
+            }
+        } else {
+            $preferences = new Preferences();
+        }
+        $this->user->setPreferences($preferences);
 
         if ($persist == true) {
             $this->persistCurrentUser();
