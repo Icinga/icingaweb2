@@ -163,6 +163,7 @@ class Connection implements DatasourceInterface
         }
         $this->conn = Zend_Db::factory($adapter, $adapterParamaters);
         $this->conn->setFetchMode(Zend_Db::FETCH_OBJ);
+        $this->conn->getProfiler()->setEnabled(false);
     }
 
     public function getConnection()
