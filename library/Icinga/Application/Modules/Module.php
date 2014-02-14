@@ -216,7 +216,7 @@ class Module
     }
 
     /**
-     * Test if module provide css
+     * Test if module provides css
      *
      * @return bool
      */
@@ -225,6 +225,11 @@ class Module
         return file_exists($this->getCssFilename());
     }
 
+    /**
+     * Returns the complete less file name
+     *
+     * @return string
+     */
     public function getCssFilename()
     {
         return $this->cssdir . '/module.less';
