@@ -35,6 +35,7 @@ class Documentation
         $d = "USAGE: icingaweb [module] <command> [action] [options]\n\n"
            . "Available commands:\n\n";
         foreach ($this->loader->listCommands() as $command) {
+            if ($command === 'autocomplete') continue;
             $obj = $this->loader->getCommandInstance($command);
             $d .= sprintf(
                 "  %-14s  %s\n",

@@ -149,12 +149,12 @@ class Cli extends ApplicationBootstrap
         $loader = new Loader($this);
         $loader->parseParams();
         $screen = Screen::instance();
+
         while (true) {
             Benchmark::measure('Watch mode - loop begins');
             ob_start();
-            echo $screen->clear();
             $params = clone($this->params);
-            $loader->dispatch();
+            $loader->dispatch($params);
             Benchmark::measure('Dispatch done');
             if ($this->showBenchmark) {
                 Benchmark::dump();
@@ -163,7 +163,6 @@ class Cli extends ApplicationBootstrap
             $out = ob_get_contents();
             ob_end_clean();
             echo $screen->clear() . $out;
-            $this->params = $params;
             sleep($this->watchTimeout);
         }
     }

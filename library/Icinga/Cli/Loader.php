@@ -224,7 +224,7 @@ class Loader
         $this->dispatch();
     }
 
-    public function dispatch()
+    public function dispatch(Params $overrideParams = null)
     {
         if ($this->commandName === null) {
             echo $this->docs()->usage($this->moduleName);
@@ -243,6 +243,9 @@ class Loader
                 );
             } else {
                 $obj = $this->getCommandInstance($this->commandName);
+            }
+            if ($overrideParams !== null) {
+                $obj->setParams($overrideParams);
             }
             $obj->init();
             return $obj->{$this->actionName . 'Action'}();

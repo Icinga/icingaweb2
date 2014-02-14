@@ -4,6 +4,7 @@ namespace Icinga\Cli;
 
 use Icinga\Cli\Screen;
 use Icinga\Util\Translator;
+use Icinga\Cli\Params;
 use Icinga\Application\ApplicationBootstrap as App;
 use Exception;
 
@@ -36,6 +37,11 @@ abstract class Command
         if ($initialize) {
             $this->init();
         }
+    }
+
+    public function setParams(Params $params)
+    {
+        $this->params = $params;
     }
 
     public function hasRemainingParams()
