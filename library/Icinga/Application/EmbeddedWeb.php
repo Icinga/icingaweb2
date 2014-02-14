@@ -57,6 +57,7 @@ class EmbeddedWeb extends ApplicationBootstrap
         return $this->setupConfig()
             ->setupErrorHandling()
             ->setupTimezone()
-            ->setupModules();
+            ->setupModuleManager()
+            ->loadEnabledModules();
     }
 }
