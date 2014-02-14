@@ -52,6 +52,8 @@ use Icinga\Session\Session as BaseSession;
 use Icinga\Web\Session;
 use Icinga\Util\Translator;
 
+require_once __DIR__ . '/ApplicationBootstrap.php';
+
 /**
  * Use this if you want to make use of Icinga functionality in other web projects
  *
