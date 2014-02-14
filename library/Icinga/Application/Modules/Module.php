@@ -489,7 +489,7 @@ class Module
                 array(
                     'controller'    => 'static',
                     'action'        =>'javascript',
-                    'moduleName'    => $this->name
+                    'module_name'    => $this->name
                 )
             )
         );
@@ -500,7 +500,7 @@ class Module
                 array(
                     'controller'    => 'static',
                     'action'        => 'img',
-                    'moduleName'    => $this->name
+                    'module_name'   => $this->name
                 )
             )
         );
