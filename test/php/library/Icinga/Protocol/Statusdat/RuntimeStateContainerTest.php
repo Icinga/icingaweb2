@@ -1,8 +1,6 @@
 <?php
 
-namespace Tests\Icinga\Protocol\Statusdat;
-
-require_once("../../library/Icinga/Protocol/Statusdat/RuntimeStateContainer.php");
+namespace Icinga\Tests\Protocol\Statusdat;
 
 class RuntimestatecontainerTest extends \PHPUnit_Framework_TestCase
 {

@@ -27,7 +27,7 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Test\Icinga\Form\Preference;
+namespace Icinga\Test\Form\Preference;
 
 // @codingStandardsIgnoreStart
 require_once realpath(__DIR__ . '/../../../../../library/Icinga/Test/BaseTestCase.php');

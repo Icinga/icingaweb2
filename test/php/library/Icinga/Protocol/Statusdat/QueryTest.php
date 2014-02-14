@@ -1,10 +1,6 @@
 <?php
 
-namespace Tests\Icinga\Protocol\Statusdat;
-require_once('../../library/Icinga/Filter/Filterable.php');
-require_once('../../library/Icinga/Data/BaseQuery.php');
-require_once('../../library/Icinga/Protocol/Statusdat/Query.php');
-require_once(dirname(__FILE__)."/ReaderMock.php");
+namespace Icinga\Tests\Protocol\Statusdat;
 
 use Icinga\Protocol\Statusdat as Statusdat;
 
@@ -93,6 +89,7 @@ class QueryTest extends \PHPUnit_Framework_TestCase
 
     private function getServiceTestReader()
     {
+        require_once('ReaderMock.php');
         $readerMock = new ReaderMock(array(
             "host" => array(
                 "hosta" => (object) array(

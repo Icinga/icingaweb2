@@ -27,7 +27,7 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Test\Icinga\Web\Form\Validator;
+namespace Icinga\Test\Web\Form\Validator;
 
 require_once('Zend/Validate/Abstract.php');
 require_once(realpath('../../library/Icinga/Web/Form/Validator/WritablePathValidator.php'));

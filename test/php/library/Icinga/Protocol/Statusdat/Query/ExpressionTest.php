@@ -1,9 +1,6 @@
 <?php
 
-namespace Tests\Icinga\Protocol\Statusdat\Query;
-
-require_once("../../library/Icinga/Protocol/Statusdat/Query/IQueryPart.php");
-require_once("../../library/Icinga/Protocol/Statusdat/Query/Expression.php");
+namespace Icinga\Tests\Protocol\Statusdat\Query;
 
 use Icinga\Protocol\Statusdat\Query\Expression;
 

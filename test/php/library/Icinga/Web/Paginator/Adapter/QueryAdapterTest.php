@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Icinga\Web\Paginator\Adapter;
+namespace Icinga\Tests\Web\Paginator\Adapter;
 
 use PHPUnit_Framework_TestCase;
 use Zend_Config;
@@ -8,19 +8,6 @@ use Icinga\Protocol\Statusdat\Reader;
 use Icinga\Web\Paginator\Adapter\QueryAdapter;
 use Icinga\Module\Monitoring\Backend;
 use Tests\Icinga\Protocol\Statusdat\StatusdatTestLoader;
-
-require_once 'Zend/Paginator/Adapter/Interface.php';
-
-require_once '../../library/Icinga/Web/Paginator/Adapter/QueryAdapter.php';
-require_once 'library/Icinga/Protocol/Statusdat/StatusdatTestLoader.php';
-StatusdatTestLoader::requireLibrary();
-
-require_once '../../modules/monitoring/library/Monitoring/Backend/Statusdat/Query/StatusdatQuery.php';
-require_once '../../modules/monitoring/library/Monitoring/Backend/Statusdat/Query/StatusQuery.php';
-require_once '../../modules/monitoring/library/Monitoring/Backend.php';
-
-require_once '../../library/Icinga/Data/BaseQuery.php';
-require_once '../../library/Icinga/Data/ResourceFactory.php';
 
 class QueryAdapterTest extends PHPUnit_Framework_TestCase
 {

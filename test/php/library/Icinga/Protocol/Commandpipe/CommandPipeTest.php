@@ -27,13 +27,10 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Tests\Icinga\Protocol\Commandpipe;
+namespace Icinga\Tests\Protocol\Commandpipe;
 
-require_once(realpath(__DIR__ . '/CommandPipeLoader.php'));
-CommandPipeLoader::requireLibrary();
-
-use Zend_Config;
-use PHPUnit_Framework_TestCase;
+use \Zend_Config;
+use \PHPUnit_Framework_TestCase;
 use Icinga\Protocol\Commandpipe\Comment;
 use Icinga\Protocol\Commandpipe\Commandpipe as Commandpipe;
 use Icinga\Protocol\Commandpipe\PropertyModifier as MONFLAG;

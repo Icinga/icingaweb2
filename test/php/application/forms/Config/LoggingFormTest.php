@@ -27,23 +27,10 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Test\Icinga\Form\Config;
-
-// @codingStandardsIgnoreStart
-require_once realpath(__DIR__ . '/../../../../../library/Icinga/Test/BaseTestCase.php');
-// @codingStandardsIgnoreEnd
-
-use Icinga\Test\BaseTestCase;
-// @codingStandardsIgnoreStart
-require_once 'Zend/Form.php';
-require_once 'Zend/Config.php';
-require_once 'Zend/Config/Ini.php';
-require_once BaseTestCase::$libDir . '/Web/Form.php';
-require_once BaseTestCase::$appDir . '/forms/Config/GeneralForm.php';
-require_once BaseTestCase::$appDir . '/forms/Config/LoggingForm.php';
-// @codingStandardsIgnoreEnd
+namespace Icinga\Test\Form\Config;
 
 use \Zend_Config;
+Use Icinga\Test\BaseTestCase;
 
 /**
  * Test for the authentication provider form

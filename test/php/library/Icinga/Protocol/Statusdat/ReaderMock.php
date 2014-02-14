@@ -1,7 +1,6 @@
 <?php
-namespace Tests\Icinga\Protocol\Statusdat;
-require_once("../../library/Icinga/Protocol/Statusdat/IReader.php");
-require_once(realpath("../../library/Icinga/Data/DatasourceInterface.php"));
+namespace Icinga\Tests\Protocol\Statusdat;
+
 use Icinga\Data\DatasourceInterface;
 use Icinga\Protocol\Statusdat\IReader;
 

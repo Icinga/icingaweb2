@@ -1,6 +1,6 @@
 <?php
 
-namespace Test\Icinga\Web\Form\Element;
+namespace Icinga\Test\Web\Form\Element;
 use Icinga\Test\BaseTestCase;
 
 require_once 'Zend/Form/Element/Text.php';

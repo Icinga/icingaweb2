@@ -27,26 +27,14 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Tests\Icinga\Chart;
+namespace Icinga\Tests\Chart;
 
-use DOMXPath;
-use DOMDocument;
+use \DOMXPath;
+use \DOMDocument;
 
 use Icinga\Chart\GridChart;
 use Icinga\Chart\PieChart;
 use Icinga\Test\BaseTestCase;
-use Test\Icinga\LibraryLoader;
-
-// TODO: Use autoloader #4673
-require_once realpath(__DIR__ . '/../../../../../library/Icinga/Test/BaseTestCase.php');
-require_once realpath(BaseTestCase::$testDir . '/library/Icinga/LibraryLoader.php');
-
-require_once realpath(BaseTestCase::$libDir . '/Chart/Primitive/Drawable.php');
-require_once realpath(BaseTestCase::$libDir . '/Chart/Primitive/Styleable.php');
-require_once realpath(BaseTestCase::$libDir . '/Chart/Primitive/Animatable.php');
-require_once realpath(BaseTestCase::$libDir . '/Chart/Unit/AxisUnit.php');
-require_once realpath(BaseTestCase::$libDir . '/Chart/Unit/LinearUnit.php');
-LibraryLoader::loadFolder(realpath(BaseTestCase::$libDir . '/Chart'));
 
 class PieChartTest extends BaseTestCase
 {

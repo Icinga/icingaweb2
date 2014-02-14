@@ -30,7 +30,7 @@ class TestInit
             }
 
             $baseNs = 'Icinga\\Module\\' . ucfirst($module);
-            $moduleLibraryPath = $modulePath . '/' . $module . '/library';
+            $moduleLibraryPath = $modulePath . '/' . $module . '/library/' . ucfirst($module);
 
             if (is_dir($moduleLibraryPath)) {
                 $loader->registerNamespace($baseNs, $moduleLibraryPath);

@@ -1,6 +1,8 @@
 <?php
 
-namespace Tests\Icinga\Web\Paginator\ScrollingStyle;
+namespace Icinga\Tests\Web\Paginator\ScrollingStyle;
+
+require_once('Icinga/Web/Paginator/ScrollingStyle/SlidingWithBorder.php');
 
 use Zend_Config;
 use Zend_Paginator_Adapter_Interface;
@@ -9,22 +11,6 @@ use Icinga\Protocol\Statusdat\Reader;
 use Icinga\Web\Paginator\Adapter\QueryAdapter;
 use Tests\Icinga\Protocol\Statusdat\StatusdatTestLoader;
 use Icinga\Module\Monitoring\Backend;
-
-require_once 'Zend/Paginator/Adapter/Interface.php';
-require_once 'Zend/Paginator/ScrollingStyle/Interface.php';
-require_once 'Zend/Paginator.php';
-require_once 'Zend/Config.php';
-require_once 'Zend/Cache.php';
-
-require_once '../../library/Icinga/Web/Paginator/Adapter/QueryAdapter.php';
-require_once 'library/Icinga/Protocol/Statusdat/StatusdatTestLoader.php';
-
-StatusdatTestLoader::requireLibrary();
-
-require_once '../../modules/monitoring/library/Monitoring/Backend.php';
-require_once '../../modules/monitoring/library/Monitoring/Backend/Statusdat/Query/StatusdatQuery.php';
-require_once '../../modules/monitoring/library/Monitoring/Backend/Statusdat/Query/StatusQuery.php';
-require_once '../../library/Icinga/Web/Paginator/ScrollingStyle/SlidingWithBorder.php';
 
 class TestPaginatorAdapter implements Zend_Paginator_Adapter_Interface
 {

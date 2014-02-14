@@ -27,7 +27,7 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Test\Icinga\Form\Config;
+namespace Icinga\Test\Form\Config;
 
 use Icinga\Test\BaseTestCase;
 

@@ -1,8 +1,6 @@
 <?php
 
 namespace Tests\Icinga\Protocol\Statusdat;
-require_once("Zend/Config.php");;
-require_once("Zend/Log.php");;
 
 use  \Icinga\Protocol\Statusdat as SD;
 
@@ -13,8 +11,6 @@ use  \Icinga\Protocol\Statusdat as SD;
 class StatusdatComponentTest extends \PHPUnit_Framework_TestCase
 {
     public function getReader() {
-        require_once(dirname(__FILE__)."/../StatusdatTestLoader.php");
-        StatusdatTestLoader::requireLibrary();
         $reader = new SD\Reader(new \Zend_Config(array(
             "status_file" => dirname(__FILE__)."/status.dat",
             "object_file" => dirname(__FILE__)."/objects.cache"

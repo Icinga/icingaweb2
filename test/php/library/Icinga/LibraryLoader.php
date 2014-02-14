@@ -1,5 +1,5 @@
 <?php
-namespace Test\Icinga;
+namespace Icinga\Test;
 
 abstract class LibraryLoader {
 
