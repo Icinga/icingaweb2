@@ -42,6 +42,7 @@ require_once 'Zend/Config.php';
 require_once BaseTestCase::$libDir . '/Application/Logger.php';
 require_once BaseTestCase::$libDir . '/Authentication/Manager.php';
 require_once BaseTestCase::$libDir . '/Authentication/Credential.php';
+require_once BaseTestCase::$libDir . '/Authentication/Membership.php';
 require_once BaseTestCase::$libDir . '/Exception/ConfigurationError.php';
 require_once BaseTestCase::$libDir . '/Exception/ProgrammingError.php';
 require_once BaseTestCase::$libDir . '/Web/Session.php';
@@ -84,12 +85,8 @@ class ManagerTest extends BaseTestCase
             $managerConfig = new Zend_Config(array());
         }
 
-        $managerOptions = array(
-            'noDefaultConfig'   => true
-        );
-
         Session::create($session);
-        $manager = AuthManager::getInstance($managerConfig, $managerOptions);
+        $manager = AuthManager::getInstance($managerConfig);
 
         if ($nobackend === false) {
             $backend = new BackendMock();

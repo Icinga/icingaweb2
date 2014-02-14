@@ -89,39 +89,29 @@ class Manager
 
     /**
      * Creates a new authentication manager using the provided config (or the
-     * configuration provided in the authentication.ini if no config is given)
-     * and with the given options.
+     * configuration provided in the authentication.ini if no config is given).
      *
      * @param  Zend_Config      $config     The configuration to use for authentication
      *                                      instead of the authentication.ini
-     * @param  array            $options    Additional options that affect the managers behaviour.
-     *                                      Supported values:
-     *                                      * noDefaultConfig: Disable default configuration from authentication.ini
      **/
-    private function __construct(Zend_Config $config = null, array $options = array())
+    private function __construct(Zend_Config $config = null)
     {
-        if ($config === null && !(isset($options['noDefaultConfig']) && $options['noDefaultConfig'] == true)) {
-            $config = IcingaConfig::app('authentication');
-        }
-
-        if ($config !== null) {
-            $this->setupBackends($config);
-        }
+        $this->config = $config === null ? IcingaConfig::app('authentication') : $config;
+        $this->setupBackends($this->config);
     }
 
     /**
-     * Get a singleton instance of our self
+     * Get the authentication manager
      *
-     * @param   Zend_Config     $config
-     * @param   array           $options
+     * @param   Zend_Config $config
      *
      * @return  self
      * @see     Manager:__construct
      */
-    public static function getInstance(Zend_Config $config = null, array $options = array())
+    public static function getInstance(Zend_Config $config = null)
     {
         if (self::$instance === null) {
-            self::$instance = new Manager($config, $options);
+            self::$instance = new static($config);
         }
         return self::$instance;
     }
