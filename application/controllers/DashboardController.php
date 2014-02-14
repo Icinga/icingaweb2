@@ -117,6 +117,8 @@ class DashboardController extends ActionController
         if ($this->_getParam('pane')) {
             $pane = $this->_getParam('pane');
             $dashboard->activate($pane);
+        } else {
+            $dashboard->determineActivePane();
         }
         $this->view->tabs = $dashboard->getTabs();
         $this->view->tabs->add(
