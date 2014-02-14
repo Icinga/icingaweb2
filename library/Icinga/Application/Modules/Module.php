@@ -399,9 +399,13 @@ class Module
      */
     protected function registerAutoloader()
     {
-        if (is_dir($this->getBaseDir()) && is_dir($this->getLibDir())) {
-            $moduleName = ucfirst($this->getName());
-            $moduleLibraryDir = $this->getLibDir(). '/'. $moduleName;
+        $moduleName = ucfirst($this->getName());
+        $moduleLibraryDir = $this->getLibDir(). '/'. $moduleName;
+        if (
+            is_dir($this->getBaseDir()) &&
+            is_dir($this->getLibDir()) &&
+            is_dir($moduleLibraryDir)
+        ) {
 
             $this->app->getLoader()->registerNamespace('Icinga\\Module\\' . $moduleName, $moduleLibraryDir);
             if (is_dir($this->getFormDir())) {
