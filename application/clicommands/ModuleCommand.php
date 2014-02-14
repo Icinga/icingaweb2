@@ -57,19 +57,21 @@ class ModuleCommand extends Command
             return;
         }
         if ($this->isVerbose) {
-            printf("%-14s %-9s DIRECTORY\n", 'MODULE', 'STATE');
+            printf("%-14s %-9s %-9s DIRECTORY\n", 'MODULE', 'VERSION', 'STATE');
         } else {
-            printf("%-14s %-9s\n", 'MODULE', 'STATE');
+            printf("%-14s %-9s %-9s %s\n", 'MODULE', 'VERSION', 'STATE', 'DESCRIPTION');
         }
         foreach ($modules as $module) {
+            $mod = $this->modules->loadModule($module)->getModule($module);
             if ($this->isVerbose) {
                 $dir = ' ' . $this->modules->getModuleDir($module);
             } else {
-                $dir = '';
+                $dir = $mod->getShortDescription();
             }
             printf(
-                "%-14s %-9s%s\n",
+                "%-14s %-9s %-9s %s\n",
                 $module,
+                $mod->getVersion(),
                 ($type === 'enabled' || $this->modules->hasEnabled($module))
               ? 'enabled'
               : 'disabled',
