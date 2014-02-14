@@ -274,7 +274,6 @@ class Manager
         $this->enabledDirs[$name] = $link;
 
         $this->loadModule($name);
-        $this->getModule($name)->launchRegisterScript();
 
         return $this;
     }

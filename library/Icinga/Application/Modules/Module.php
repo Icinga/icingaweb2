@@ -102,13 +102,6 @@ class Module
     private $runScript;
 
     /**
-     * Module initialization script
-     *
-     * @var string
-     */
-    private $registerScript;
-
-    /**
      * Module configuration script
      *
      * @var string
@@ -152,18 +145,17 @@ class Module
      */
     public function __construct(ApplicationBootstrap $app, $name, $basedir)
     {
-        $this->app              = $app;
-        $this->name             = $name;
-        $this->basedir          = $basedir;
-        $this->cssdir           = $basedir . '/public/css';
-        $this->libdir           = $basedir . '/library';
-        $this->configdir        = $basedir . '/config';
-        $this->localedir        = $basedir . '/application/locale';
-        $this->formdir          = $basedir . '/application/forms';
-        $this->controllerdir    = $basedir . '/application/controllers';
-        $this->runScript        = $basedir . '/run.php';
-        $this->registerScript   = $basedir . '/register.php';
-        $this->configScript     = $basedir . '/configuration.php';
+        $this->app            = $app;
+        $this->name           = $name;
+        $this->basedir        = $basedir;
+        $this->cssdir         = $basedir . '/public/css';
+        $this->libdir         = $basedir . '/library';
+        $this->configdir      = $basedir . '/config';
+        $this->localedir      = $basedir . '/application/locale';
+        $this->formdir        = $basedir . '/application/forms';
+        $this->controllerdir  = $basedir . '/application/controllers';
+        $this->runScript      = $basedir . '/run.php';
+        $this->configScript   = $basedir . '/configuration.php';
     }
 
     /**
@@ -512,16 +504,6 @@ class Module
     }
 
     /**
-     * Run module registration script
-     *
-     * @return self
-     */
-    public function launchRegisterScript()
-    {
-        return $this->includeScript($this->registerScript);
-    }
-
-    /**
      * Run module bootstrap script
      *
      * @return self
@@ -540,13 +522,12 @@ class Module
      */
     protected function includeScript($file)
     {
-        if (is_readable($file) === true) {
+        if (file_exists($file) && is_readable($file) === true) {
             include($file);
         }
 
         return $this;
     }
-
 
     /**
      * Run module config script
