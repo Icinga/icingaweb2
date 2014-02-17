@@ -235,7 +235,9 @@ class ActionController extends Zend_Controller_Action
             $this->_helper->layout()->setLayout($target);
         }
         if ($user = $this->getRequest()->getUser()) {
-            if ($user->getPreferences()->get('app.showBenchmark') === true) {
+            // Cast preference app.showBenchmark to bool because preferences loaded from a preferences storage are
+            // always strings
+            if ((bool) $user->getPreferences()->get('app.showBenchmark', false) === true) {
                 Benchmark::measure('Response ready');
                 $this->_helper->layout()->benchmark = $this->renderBenchmark();
             }

@@ -51,11 +51,11 @@ use Icinga\User\Preferences;
  *         'type'       => 'ini',
  *         'configPath' => '/path/to/preferences'
  *     ),
- *     $user // Instance of Icinga\User
+ *     $user // Instance of \Icinga\User
  * );
  *
  * $preferences = new Preferences($store->load());
- * $prefereces->aPreference = 'value';
+ * $preferences->aPreference = 'value';
  * $store->save($preferences);
  */
 abstract class PreferencesStore
@@ -130,10 +130,13 @@ abstract class PreferencesStore
     public function save(Preferences $preferences)
     {
         $storedPreferences = $this->load();
-        $deletedPreferences = array_keys(array_diff_key($storedPreferences, $preferences));
+        $preferences = $preferences->toArray();
         $newPreferences = array_diff_key($preferences, $storedPreferences);
         $updatedPreferences = array_diff_assoc($preferences, $storedPreferences);
-        $this->cud($newPreferences, $updatedPreferences, $deletedPreferences);
+        $deletedPreferences = array_keys(array_diff_key($storedPreferences, $preferences));
+        if (count($newPreferences) || count($updatedPreferences) || count($deletedPreferences)) {
+            $this->cud($newPreferences, $updatedPreferences, $deletedPreferences);
+        }
     }
 
     /**

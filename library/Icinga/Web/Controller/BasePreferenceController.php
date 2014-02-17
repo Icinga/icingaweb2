@@ -29,6 +29,12 @@
 
 namespace Icinga\Web\Controller;
 
+use Icinga\Application\Config as IcingaConfig;
+use Icinga\Exception\ConfigurationError;
+use Icinga\Web\Session;
+use Icinga\User\Preferences;
+use Icinga\User\Preferences\PreferencesStore;
+
 /**
  *  Base class for Preference Controllers
  *
@@ -61,5 +67,25 @@ class BasePreferenceController extends ActionController
     {
         parent::init();
         $this->view->tabs = ControllerTabCollector::collectControllerTabs('PreferenceController');
+    }
+
+    protected function savePreferences(array $preferences)
+    {
+        $currentPreferences = $this->_request->getUser()->getPreferences();
+        foreach ($preferences as $key => $value) {
+            if ($value === null) {
+                unset($currentPreferences->{$key});
+            } else {
+                $currentPreferences->{$key} = $value;
+            }
+        }
+        Session::getSession()->write();
+        if (($preferencesConfig = IcingaConfig::app()->preferences) === null) {
+            throw new ConfigurationError(
+                'Cannot save preferences changes since you\'ve not configured a preferences backend'
+            );
+        }
+        $store = PreferencesStore::create($preferencesConfig, $this->_request->getUser());
+        $store->save($currentPreferences);
     }
 }

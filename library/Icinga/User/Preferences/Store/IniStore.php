@@ -4,7 +4,7 @@
 
 namespace Icinga\User\Preferences\Store;
 
-use Zend_Config_Ini;
+use Zend_Config;
 use Icinga\Application\Config as IcingaConfig;
 use Icinga\Config\PreservingIniWriter;
 use Icinga\Exception\NotReadableError;
@@ -25,13 +25,13 @@ use Icinga\Util\File;
  * use Icinga\User\Preferences\PreferencesStore;
  * use Icinga\User\Preferences\Store\IniStore;
  *
- * // Create the store from the factory (prefered approach)
+ * // Create the store from the factory (preferred approach)
  * $store = new PreferencesStore(
  *     new Zend_Config(
  *         'type'       => 'ini',
  *         'configPath' => '/path/to/preferences'
  *     ),
- *     $user // Instance of Icinga\User
+ *     $user // Instance of \Icinga\User
  * );
  *
  * // Create the store directly
@@ -39,11 +39,11 @@ use Icinga\Util\File;
  *     new Zend_Config(
  *         'configPath' => '/path/to/preferences'
  *     ),
- *     $user // Instance of Icinga\User
+ *     $user // Instance of \Icinga\User
  * );
  *
  * $preferences = new Preferences($store->load());
- * $prefereces->aPreference = 'value';
+ * $preferences->aPreference = 'value';
  * $store->save($preferences);
  * </code>
  */
@@ -59,9 +59,9 @@ class IniStore extends PreferencesStore
     /**
      * Stored preferences
      *
-     * @var Zend_Config_Ini
+     * @var array
      */
-    private $config;
+    private $preferences;
 
     /**
      * Writer which stores the preferences
@@ -87,7 +87,7 @@ class IniStore extends PreferencesStore
                 throw new NotReadableError('Preferences INI file ' . $this->preferencesFile . ' for user '
                     . $this->getUser()->getUsername() . ' is not readable');
             } else {
-                $this->config = new Zend_Config_Ini($this->preferencesFile);
+                $this->preferences = parse_ini_file($this->preferencesFile);
             }
         }
     }
@@ -99,7 +99,7 @@ class IniStore extends PreferencesStore
      */
     public function load()
     {
-        return $this->config !== null ? $this->config->toArray() : array();
+        return $this->preferences !== null ? $this->preferences : array();
     }
 
     /**
@@ -114,32 +114,32 @@ class IniStore extends PreferencesStore
      */
     public function cud($newPreferences, $updatedPreferences, $deletedPreferences)
     {
-        if ($this->config === null) {
+        if ($this->preferences === null) {
             // Preferences INI file does not yet exist
             if (!is_writable($this->getStoreConfig()->configPath)) {
                 throw new NotWritableError('Path to the preferences INI files ' . $this->getStoreConfig()->configPath
                     . ' is not writable');
             }
             File::create($this->preferencesFile);
-            $this->config = new Zend_Config_Ini($this->preferencesFile);
-        }
-        foreach ($newPreferences as $name => $value) {
-            $this->config->{$name} = $value;
-        }
-        foreach ($updatedPreferences as $name => $value) {
-            $this->config->{$name} = $value;
-        }
-        foreach ($deletedPreferences as $name) {
-            unset($this->config->{$name});
-        }
-        if ($this->writer === null) {
-            $this->writer = new PreservingIniWriter(
-                array('config' => $this->config)
-            );
+            $this->preferences = array();
         }
         if (!is_writable($this->preferencesFile)) {
             throw new NotWritableError('Preferences INI file ' . $this->preferencesFile . ' for user '
                 . $this->getUser()->getUsername() . ' is not writable');
+        }
+        foreach ($newPreferences as $name => $value) {
+            $this->preferences[$name] = $value;
+        }
+        foreach ($updatedPreferences as $name => $value) {
+            $this->preferences[$name] = $value;
+        }
+        foreach ($deletedPreferences as $name) {
+            unset($this->preferences[$name]);
+        }
+        if ($this->writer === null) {
+            $this->writer = new PreservingIniWriter(
+                array('config' => new Zend_Config($this->preferences), 'filename' => $this->preferencesFile)
+            );
         }
         $this->writer->write();
     }

@@ -29,7 +29,7 @@
 
 namespace Icinga\User;
 
-use \Countable;
+use Countable;
 
 /**
  * User preferences container
@@ -44,9 +44,11 @@ use \Countable;
  *
  * $preferences = new Preferences(array('aPreference' => 'value')); // Start with initial preferences
  *
+ * $prefrences = $user->getPreferences(); // Retrieve preferences from a \Icinga\User instance
+ *
  * $preferences->aNewPreference = 'value'; // Set a preference
  *
- * unset($preferences['aPreference']); // Unset a preference
+ * unset($preferences->aPreference); // Unset a preference
  *
  * // Retrieve a preference and return a default value if the preference does not exist
  * $anotherPreference = $preferences->get('anotherPreference', 'defaultValue');
@@ -160,5 +162,15 @@ class Preferences implements Countable
     public function __unset($name)
     {
         $this->remove($name);
+    }
+
+    /**
+     * Get preferences as array
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        return $this->preferences;
     }
 }
