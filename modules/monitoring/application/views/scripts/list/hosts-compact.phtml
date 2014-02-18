@@ -1,23 +1,26 @@
+<h1><?= $this->escape($this->title) ?></h1>
 <?php
-$viewHelper = $this->getHelper('MonitoringState');
+
+if ($hosts->count() === 0) {
+    echo '<p>No host found</p>';
+    return;
+}
+
+?><table class="action">
+<tbody>
+<?php
+
+$helper = $this->getHelper('MonitoringState');
+foreach($hosts as $host):
+
+    $hostStateName = strtolower($this->util()->getHostStateName($host->host_state));
+    $hostLink = $this->href('monitoring/show/host', array('host' => $host->host_name));
+
 ?>
-<div data-icinga-component="app/mainDetailGrid" data-icinga-grid-selection-type="multi">
-  <table class="table table-condensed" style="font-size:9pt" >
-
-    <tbody>
-
-    <?php foreach($hosts as $host): ?>
-    <?php $hostStateName = strtolower($this->util()->getHostStateName($host->host_state)); ?>
-    <?php $hostLink = $this->href('monitoring/show/host', array('host' => $host->host_name)); ?>
-    <tr <?= ($this->activeRowHref === $hostLink) ? 'class="active"' : ''; ?> >
-
-    <!-- Color column -->
-    <td class="tacheader-status-<?= $hostStateName; ?>">
-      <a style="visibility:hidden" href="<?= $hostLink; ?>"></a>
-    </td>
+  <tr class="state <?= $hostStateName ?><?= $host->host_handled ? ' handled' : '' ?>">
 
     <!-- Icons -->
-    <td>
+<!--    <td>
       <?php if (!$host->host_handled && $host->host_state > 0): ?>
       <a href="#" title="Unhandled">
         <i class="icon-table icinga-icon-unhandled"></i>
@@ -60,28 +63,22 @@ $viewHelper = $this->getHelper('MonitoringState');
       <?php endif; ?>
       <?php endif; ?>
 
-      <?php if ($host->host_last_comment !== null): ?>
+      <?php if (isset($host->host_last_comment) && $host->host_last_comment !== null): ?>
       <a href="#" title="Comments">
         <i class="icon-table icinga-icon-comment"></i>
       </a>
       <?php endif; ?>
     </td>
-
+-->
     <!-- State -->
-    <td title="<?= $viewHelper->getStateTitle($host, 'host'); ?>">
-      <a href="<?= $this->href('monitoring/list/services', array('host' => $host->host_name)) ?>">
-        <strong><?= $host->host_name ?></strong>
-      </a>
+    <td title="<?= $helper->getStateTitle($host, 'host') ?>" class="state">
+      <?= $this->timeSince($host->host_last_state_change) ?>
     </td>
     <td>
-      <div class="output-text">
-        <?= $this->escape(substr(strip_tags($host->host_output), 0, 10000)); ?>
-      </div>
+      <a href="<?= $hostLink ?>"><?= $host->host_name ?></a><br />
+      <?= $this->escape(substr(strip_tags($host->host_output), 0, 10000)); ?>
     </td>
-
-
-    </tr>
-    <?php endforeach; ?>
-    </tbody>
-  </table>
-</div>
+  </tr>
+<?php endforeach ?>
+</tbody>
+</table>

@@ -1,33 +1,27 @@
 <?php
-    /** @var Zend_View_Helper_CommandForm $cf */
-    $cf = $this->getHelper('CommandForm');
+
+/** @var Zend_View_Helper_CommandForm $cf */
+$cf = $this->getHelper('CommandForm');
+
+$data = array('host' => $object->host_name);
+if ($object->service_description) {
+    $data['service'] = $object->service_description;
+}
+
 ?>
 <div>
   <div class="panel-heading">
     <div class="panel-hostname">
         Comments
         <?php
-            $data = array(
-                'host' => $object->host_name
-            );
-            if ($object->service_description) {
-                $data['service'] = $object->service_description;
-            }
-            $addCommentHref = $this->href(
-                'monitoring/command/addComment',
-                $data
-            );
-            $sendNotificationHref = $this->href(
-                'monitoring/command/sendCustomNotification',
-                $data
-            );
         ?>
         <div class="pull-right">
-        <a rel="tooltip" title="Add a comment" href="<?= $addCommentHref; ?>" class="btn-common btn-small button">
-            <i class="icinga-icon-comment"></i>
-        </a>
-        <a rel="tooltip" title="Send custom notification" href="<?= $sendNotificationHref; ?>" class="btn-common btn-small button">
-            <i class="icinga-icon-notification"></i>
+        <a rel="tooltip" title="Add a comment" href="<?= $this->href('monitoring/command/addComment', $data) ?>" class="btn-common btn-small button"><?=
+   $this->img('img/icons/comment.png')
+?></a>
+        <a rel="tooltip" title="Send custom notification" href="<?= $this->href('monitoring/command/sendCustomNotification', $data
+) ?>" class="btn-common btn-small button">
+            <?= $this->img('img/icons/notification.png') ?>
         </a>
         </div>
     </div>
@@ -50,7 +44,7 @@
                                 $deleteData['commentid'] = $comment->comment_internal_id;
 
                                 echo $cf->iconSubmitForm(
-                                    'icinga-icon-remove',
+                                    'img/icons/remove.png',
                                     'Remove comment',
                                     'btn-small',
                                     'removecomment',

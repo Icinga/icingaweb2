@@ -12,7 +12,7 @@
                     $scheduleDowntimeHref = $this->href('monitoring/command/scheduleDowntime', $scheduleDowntimeData);
                 ?>
                 <a href="<?= $scheduleDowntimeHref; ?>" class="btn-common btn-small button" title="Schedule downtime">
-                    <i class="icinga-icon-in-downtime"></i>
+                    <?= $this->img('img/icons/in_downtime.png') ?>
                 </a>
             </div>
             Downtimes
@@ -32,7 +32,7 @@
                     <td>
                         <div class="pull-right">
                         <?= $this->getHelper('CommandForm')->iconSubmitForm(
-                            'icinga-icon-remove',
+                            'img/icons/remove.png',
                             'Remove Downtime',
                             'btn-small',
                             'removedowntime',

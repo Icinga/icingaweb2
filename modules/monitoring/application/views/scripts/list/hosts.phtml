@@ -1,50 +1,36 @@
 <?php
+
 $viewHelper = $this->getHelper('MonitoringState');
 ?>
-<div class="row">
-  <div class="pull-left">
-    <h1>Hosts Status</h1>
-  </div>
-  <div class="pull-right">
-    <?= $this->tabs->render($this); ?>
-  </div>
+<div class="controls">
+<?= $this->tabs ?>
+<?= $this->filterBox->render($this); ?>
+<?= $this->sortControl->render($this); ?><br />
+<?= $this->paginationControl($hosts, null, null, array('preserve' => $this->preserve)); ?>
+<?= $this->selectionToolbar('multi', $this->href('monitoring/multi/host',array( 'host' => '*' ))); ?>
 </div>
+<div class="content">
+<?php
+if ($hosts->count() === 0) {
+    echo '<p>No host found</p>';
+    return;
+}
+?>
 
-<div data-icinga-component="app/mainDetailGrid" data-icinga-grid-selection-type="multi">
-
-  <div class="container pull-left">
-    <div class="row">
-      <div class="col-md-5">
-        <?=  $this->filterBox->render($this); ?>
-      </div>
-      <div class="col-md-7">
-      <?=  $this->sortControl->render($this); ?>
-      </div>
-    </div>
-
-    <div class="row">
-    <?=  $this->paginationControl($hosts, null, null, array('preserve' => $this->preserve)); ?>
-    </div>
-
-    <div class="row">
-       <?= $this->selectionToolbar('multi', $this->href('monitoring/multi/host',array( 'host' => '*' ))); ?>
-    </div>
-  </div>
-
-  <table class="table table-condensed pull-left">
+<table class="action multiselect">
     <tbody>
     <?php foreach($hosts as $host): ?>
       <?php $hostStateName = strtolower($this->util()->getHostStateName($host->host_state)); ?>
       <?php $hostLink = $this->href('monitoring/show/host', array('host' => $host->host_name)); ?>
-      <tr>
-
+      <!--<tr> -->
+       <tr class="state <?= $hostStateName ?><?= $host->host_handled ? ' handled' : '' ?>">
         <!-- Color column -->
-        <td class="tacheader-status-<?= $hostStateName; ?>">
+<!--        <td class="tacheader-status-<?= $hostStateName; ?>">
           <a style="visibility:hidden" href="<?= $hostLink; ?>"></a>
         </td>
-
+-->
         <!-- Icons -->
-        <td>
+<!--        <td>
           <?php if (!$host->host_handled && $host->host_state > 0): ?>
           <a href="#" title="Unhandled">
             <i class="icon-table icinga-icon-unhandled"></i>
@@ -87,17 +73,17 @@ $viewHelper = $this->getHelper('MonitoringState');
             <?php endif; ?>
           <?php endif; ?>
 
-          <?php if ($host->host_last_comment !== null): ?>
+          <?php if (isset($host->host_last_comment) && $host->host_last_comment !== null): ?>
           <a href="#" title="Comments">
               <i class="icon-table icinga-icon-comment"></i>
           </a>
           <?php endif; ?>
         </td>
-
+-->
         <!-- State -->
-        <td title="<?= $viewHelper->getStateTitle($host, 'host'); ?>">
+        <td class="state" title="<?= $viewHelper->getStateTitle($host, 'host'); ?>">
           <div>
-            <?php if ($host->host_unhandled_service_count): ?>
+            <?php if (isset($host->host_unhandled_service_count) && $host->host_unhandled_service_count > 0): ?>
               <span class="badge pull-right" title="<?= $host->host_unhandled_service_count; ?> Service Problems on Host">
               <a data-icinga-target="detail" href="<?= $this->href('monitoring/list/services', array('host' => $host->host_name, 'service_problem' => 1)); ?>">
                 <?= $host->host_unhandled_service_count; ?>
@@ -110,8 +96,7 @@ $viewHelper = $this->getHelper('MonitoringState');
             Since <?= $this->timeSince($host->host_last_state_change); ?>
             <?php if ($host->host_state > 0): ?>
               <br />
-              <strong>Attempt:</strong> <?= $host->host_current_check_attempt; ?>/<?= $host->host_max_check_attempts; ?>
-              (<?= ($host->host_state_type === '1') ? 'Hard' : 'Soft'; ?>)
+              <strong><?= ($host->host_state_type === '1') ? 'Hard' : 'Soft'; ?> </strong> <?= $host->host_current_check_attempt; ?>/<?= $host->host_max_check_attempts; ?>
             <?php endif; ?>
             </div>
           </div>
@@ -136,8 +121,4 @@ $viewHelper = $this->getHelper('MonitoringState');
     <?php endforeach; ?>
     </tbody>
   </table>
-
-  <div class="pull-left">
-      <?= $this->paginationControl($hosts, null, null, array('preserve' => $this->preserve)); ?>
-  </div>
 </div>

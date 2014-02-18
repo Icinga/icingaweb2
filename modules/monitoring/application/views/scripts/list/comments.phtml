@@ -67,30 +67,30 @@
 
         <td>
             <?php if ($comment->comment_objecttype_id === '1'): ?>
-                <i class="icinga-icon-host" rel="tooltip" title="Host comment" ></i>
+                <?= $this->img('img/icons/host.png', array('title' => 'Host comment')) ?>
             <?php elseif ($comment->comment_objecttype_id === '2'): ?>
-                <i class="icinga-icon-service" rel="tooltip" title="Service comment"></i>
+                <?= $this->img('img/icons/service.png', array('title' => 'Service comment')) ?>
             <?php endif; ?>
             <small>
                 <?php
                 switch ($comment->comment_type) {
                     case 'flapping':
-                        $icon = 'icinga-icon-flapping';
+                        $icon = 'flapping';
                         $tooltip = 'Comment was caused by a flapping host or service.';
                         break;
                     case 'comment':
-                        $icon = 'icinga-icon-user';
+                        $icon = 'user';
                         $tooltip = 'Comment was created by an user.';
                         break;
                     case 'downtime':
-                        $icon = 'icinga-icon-down';
+                        $icon = 'down';
                         $tooltip = 'Comment was caused by a downtime.';
                     case 'ack':
-                        $icon = 'icinga-icon-acknowledgement';
+                        $icon = 'acknowledgement';
                         $tooltip = 'Comment was caused by an acknowledgement.';
                 }
                 ?>
-                <i class="<?= $icon ?>" rel="tooltip" title="<?= $tooltip ?>"> </i>
+                <?= $this->img('img/icons/' . $icon . '.png', array('title' => $tooltip)) ?>
             </small>
         </td>
 
