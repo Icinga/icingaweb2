@@ -125,14 +125,14 @@ class HostStatus extends DataView
                     'host_severity',
                     'host_last_state_change',
                 ),
-                'order' => self::SORT_ASC
+                'order' => self::SORT_DESC
             )
         );
     }
 
     public function getFilterColumns()
     {
-        return array('hostgroup', 'servicegroup', 'service_problems');
+        return array('hostgroup', 'service_problems');
     }
 
     public function isValidFilterTarget($column)

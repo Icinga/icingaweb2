@@ -15,7 +15,7 @@ class Service extends AbstractObject
     {
         $this->fetchComments()
             ->fetchDowntimes()
-            ->fetchHostgroups()
+            //->fetchHostgroups()
             ->fetchServicegroups()
             ->fetchContacts()
             ->fetchContactGroups()

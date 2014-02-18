@@ -151,6 +151,13 @@ class ServiceStatus extends DataView
                     'host_last_state_change',
                 ),
                 'order' => self::SORT_ASC
+            ),
+            'service_severity' => array(
+                'columns' => array(
+                    'service_severity',
+                    'service_last_state_change',
+                ),
+                'order' => self::SORT_DESC
             )
         );
     }
