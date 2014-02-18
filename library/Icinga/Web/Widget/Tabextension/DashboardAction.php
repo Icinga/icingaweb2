@@ -45,15 +45,13 @@ class DashboardAction implements Tabextension
      * Applies the dashboard actions to the provided tabset
      *
      * @param   Tabs $tabs The tabs object to extend with
-     *
-     * @see     \Icinga\Web\Widget\Tabextension::apply()
      */
     public function apply(Tabs $tabs)
     {
         $tabs->addAsDropdown(
             'dashboard',
             array(
-                'iconCls'   => 'icinga-icon-dashboard',
+                'icon'      => 'img/icons/dashboard.png',
                 'title'     => 'Add To Dashboard',
                 'url'       => Url::fromPath('dashboard/addurl'),
                 'urlParams' => array(
