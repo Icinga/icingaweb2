@@ -240,7 +240,7 @@ class Tab implements Widget
                 }
             }
             $tab = '<a' . $tagParams .' href="' . $this->url->getAbsoluteUrl()
-                . '" data-icinga-target="self">' . $caption . '</a>';
+                . '">' . $caption . '</a>';
         } else {
             $tab = $caption;
         }
