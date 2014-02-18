@@ -338,31 +338,25 @@ package { ['cmake', 'boost-devel', 'bison', 'flex']:
 #  make_timeout      => 900
 #}
 
-configure { 'icingaweb':
-  path    => '/vagrant',
-  flags   => '--prefix=/vagrant \
-            --with-icinga-commandpipe="/usr/local/icinga-mysql/var/rw/icinga.cmd" \
-            --with-statusdat-file="/usr/local/icinga-mysql/var/status.dat" \
-            --with-objects-cache-file=/usr/local/icinga-mysql/var/objects.cache \
-            --with-icinga-backend=ido \
-            --with-httpd-config-path="/etc/httpd/conf.d" \
-            --with-ldap-authentication \
-            --with-internal-authentication \
-            --with-livestatus-socket="/usr/local/icinga-mysql/var/rw/live"',
-  require => Exec['install php-ZendFramework']
-}
+#configure { 'icingaweb':
+#  path    => '/vagrant',
+#  flags   => '--prefix=/vagrant \
+#            --with-icinga-commandpipe="/usr/local/icinga-mysql/var/rw/icinga.cmd" \
+#            --with-statusdat-file="/usr/local/icinga-mysql/var/status.dat" \
+#            --with-objects-cache-file=/usr/local/icinga-mysql/var/objects.cache \
+#            --with-icinga-backend=ido \
+#            --with-httpd-config-path="/etc/httpd/conf.d" \
+#            --with-ldap-authentication \
+#            --with-internal-authentication \
+#            --with-livestatus-socket="/usr/local/icinga-mysql/var/rw/live"',
+#  require => Exec['install php-ZendFramework']
+#}
 
-file { 'icingaweb-public':
-  ensure  => '/vagrant/public',
-  path    => '/var/www/html/icingaweb',
-  require => Class['apache']
-}
-
-file { '/etc/httpd/conf.d/icingaweb.conf':
-  source  => 'puppet:////vagrant/.vagrant-puppet/files/etc/httpd/conf.d/icingaweb.conf',
-  require => Package['apache'],
-  notify  => Service['apache']
-}
+#file { 'icingaweb-public':
+#  ensure  => '/vagrant/public',
+#  path    => '/var/www/html/icingaweb',
+#  require => Class['apache']
+#}
 
 exec { 'install php-ZendFramework-Db-Adapter-Pdo-Mysql':
   command => 'yum -d 0 -e 0 -y --enablerepo=epel install php-ZendFramework-Db-Adapter-Pdo-Mysql',
@@ -569,4 +563,57 @@ exec { 'populate-icinga_web-mysql-db':
   unless  => 'mysql -uicinga_web -picinga_web icinga_web -e "SELECT * FROM nsm_user;" &> /dev/null',
   command => 'mysql -uicinga_web -picinga_web icinga_web < /usr/local/src/icinga-web/icinga-web-1.10.0-beta/etc/schema/mysql.sql',
   require => [ Exec['create-mysql-icinga_web-db'], Cmmi['icinga-web'] ]
+}
+
+#
+# Development environment (Feature #5554)
+#
+file { '/var/www/html/icingaweb':
+  ensure    => 'directory',
+  owner     => 'apache',
+  group     => 'apache'
+}
+
+file { '/var/www/html/icingaweb/css':
+  ensure    => 'link',
+  target    => '/vagrant/public/css',
+  owner     => 'apache',
+  group     => 'apache',
+  require   => File['/var/www/html/icingaweb']
+}
+
+file { '/var/www/html/icingaweb/img':
+  ensure    => 'link',
+  target    => '/vagrant/public/css',
+  owner     => 'apache',
+  group     => 'apache',
+  require   => File['/var/www/html/icingaweb']
+}
+
+file { '/var/www/html/icingaweb/js':
+  ensure    => 'link',
+  target    => '/vagrant/public/css',
+  owner     => 'apache',
+  group     => 'apache',
+  require   => File['/var/www/html/icingaweb']
+}
+
+file { '/var/www/html/icingaweb/index.php':
+  source    => 'puppet:////vagrant/.vagrant-puppet/files/var/www/html/icingaweb/index.php',
+  owner     => 'apache',
+  group     => 'apache',
+  require   => File['/var/www/html/icingaweb']
+}
+
+file { '/var/www/html/icingaweb/.htaccess':
+  source    => 'puppet:////vagrant/.vagrant-puppet/files/var/www/html/icingaweb/.htaccess',
+  owner     => 'apache',
+  group     => 'apache',
+  require   => File['/var/www/html/icingaweb']
+}
+
+file { '/etc/httpd/conf.d/icingaweb.conf':
+  source    => 'puppet:////vagrant/.vagrant-puppet/files/etc/httpd/conf.d/icingaweb.conf',
+  require   => Package['apache'],
+  notify    => Service['apache']
 }
