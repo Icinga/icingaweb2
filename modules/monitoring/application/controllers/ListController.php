@@ -55,6 +55,7 @@ use Icinga\Module\Monitoring\DataView\EventHistory as EventHistoryView;
 use Icinga\Module\Monitoring\Filter\UrlViewFilter;
 use Icinga\Module\Monitoring\DataView\ServiceStatus;
 use Icinga\Filter\Filterable;
+use Icinga\Web\Url;
 
 class Monitoring_ListController extends MonitoringController
 {
@@ -102,7 +103,13 @@ class Monitoring_ListController extends MonitoringController
      */
     public function hostsAction()
     {
+        $this->getTabs()->add('hosts', array(
+            'title' => 'Hosts Status',
+            'url' => Url::fromPath('monitoring/list/hosts')
+        ))->activate('hosts');
 
+        header('X-Icinga-Refresh: 30');
+        $this->view->title = 'Host Status';
         $this->compactView = 'hosts-compact';
         $dataview = HostStatusView::fromRequest(
             $this->_request,
@@ -113,7 +120,7 @@ class Monitoring_ListController extends MonitoringController
                 'host_address',
                 'host_acknowledged',
                 'host_output',
-                'host_long_output',
+                // 'host_long_output',
                 'host_in_downtime',
                 'host_is_flapping',
                 'host_state_type',
@@ -121,10 +128,10 @@ class Monitoring_ListController extends MonitoringController
                 'host_last_check',
                 'host_last_state_change',
                 'host_notifications_enabled',
-                'host_unhandled_service_count',
+                // 'host_unhandled_service_count',
                 'host_action_url',
                 'host_notes_url',
-                'host_last_comment',
+                // 'host_last_comment',
                 'host_active_checks_enabled',
                 'host_passive_checks_enabled',
                 'host_current_check_attempt',
@@ -146,6 +153,7 @@ class Monitoring_ListController extends MonitoringController
         ));
         $this->handleFormatRequest($query);
         $this->view->hosts = $query->paginate();
+
     }
 
     /**
@@ -153,6 +161,12 @@ class Monitoring_ListController extends MonitoringController
      */
     public function servicesAction()
     {
+        $this->getTabs()->add('services', array(
+            'title' => 'Services Status',
+            'url' => Url::fromPath('monitoring/list/services')
+        ))->activate('services');
+        $this->view->title = 'Service Status';
+        header('X-Icinga-Refresh: 30');
         $this->compactView = 'services-compact';
         $query = $this->fetchServices();
         $this->applyRestrictions($query);
@@ -181,6 +195,10 @@ class Monitoring_ListController extends MonitoringController
      */
     public function downtimesAction()
     {
+        $this->getTabs()->add('downtimes', array(
+            'title' => 'Downtimes',
+            'url' => Url::fromPath('monitoring/list/downtimes')
+        ))->activate('downtimes');
         $query = DowntimeView::fromRequest($this->_request)->getQuery();
 
         $this->view->downtimes = $query->paginate();
@@ -206,6 +224,11 @@ class Monitoring_ListController extends MonitoringController
      */
     public function notificationsAction()
     {
+        $this->getTabs()->add('notifications', array(
+            'title' => 'Notifications',
+            'url' => Url::fromPath('monitoring/list/notifications')
+        ))->activate('notifications');
+
         $query = NotificationView::fromRequest($this->_request)->getQuery();
         $this->view->notifications = $query->paginate();
         $this->setupSortControl(array(
@@ -332,21 +355,31 @@ class Monitoring_ListController extends MonitoringController
 
     public function hostgroupsAction()
     {
+        $this->getTabs()->add('hostgroups', array(
+            'title' => 'Hostgroup Summary',
+            'url' => Url::fromPath('monitoring/list/hostgroups')
+        ))->activate('hostgroups');
+
         $query = GroupsummaryView::fromRequest(
             $this->_request,
             array(
                 'hostgroup',
                 'hosts_up',
+                'hosts_unreachable',
                 'hosts_unreachable_handled',
                 'hosts_unreachable_unhandled',
+                'hosts_down',
                 'hosts_down_handled',
                 'hosts_down_unhandled',
                 'hosts_pending',
                 'services_ok',
+                'services_unknown',
                 'services_unknown_handled',
                 'services_unknown_unhandled',
+                'services_critical',
                 'services_critical_handled',
                 'services_critical_unhandled',
+                'services_warning',
                 'services_warning_handled',
                 'services_warning_unhandled',
                 'services_pending'
@@ -448,7 +481,7 @@ class Monitoring_ListController extends MonitoringController
     {
         $tabs = $this->getTabs();
         $tabs->extend(new OutputFormat())
-             ->extend(new DashboardAction());
+            ->extend(new DashboardAction());
     }
 }
 // @codingStandardsIgnoreEnd
