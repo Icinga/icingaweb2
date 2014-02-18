@@ -228,7 +228,11 @@ class ActionController extends Zend_Controller_Action
          $base = $this->_request->getModuleName() . '/' .
             $this->_request->getControllerName() . '/' .
             $this->_request->getActionName();
-         return $_SERVER['QUERY_STRING'] !== '' ? $base . '?' . $_SERVER['QUERY_STRING'] : $base;
+         // TODO: We should NOT fiddle with Querystring here in the middle of nowhere
+         if (isset($_SERVER['QUERY_STRING']) && $_SERVER['QUERY_STRING'] !== '') {
+             return $base . '?' . $_SERVER['QUERY_STRING'];
+         }
+         return $base;
     }
 
     /**
