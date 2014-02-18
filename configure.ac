@@ -442,6 +442,7 @@ AC_CONFIG_FILES([
     etc/apache/icingaweb.conf
     public/.htaccess
     public/index.php
+    public/css.php
 ])
 
 #
