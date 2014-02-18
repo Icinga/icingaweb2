@@ -58,7 +58,7 @@ class Zend_View_Helper_TimeSince extends Zend_View_Helper_Abstract
             }
             return date('m.Y', $timestamp);
         }
-        return $prefix . $this->showHourMin($duration);
+        return '<span class="timesince">' . $prefix . $this->showHourMin($duration) . '</span>';
     }
 
     public static function showHourMin($sec)
