@@ -93,6 +93,13 @@ class Text extends Styleable implements Drawable
     private $fontSize = '1.5em';
 
     /**
+     * The weight of the font
+     *
+     * @var string
+     */
+    private $fontWeight = 'normal';
+
+    /**
      * The default fill color
      *
      * @var string
@@ -105,6 +112,11 @@ class Text extends Styleable implements Drawable
      * @var string
      */
     private $alignment = self::ALIGN_START;
+
+    /**
+     * Set the font-stretch property of the text
+     */
+    private $fontStretch = 'ultra-condensed';
 
     /**
      * Construct a new text drawable
@@ -149,6 +161,19 @@ class Text extends Styleable implements Drawable
     }
 
     /**
+     * Set the weight of the current font
+     *
+     * @param string $weight    The weight of the string
+     *
+     * @return self             Fluid interface
+     */
+    public function setFontWeight($weight)
+    {
+        $this->fontWeight = $weight;
+        return $this;
+    }
+
+    /**
      * Create the SVG representation from this Drawable
      *
      * @param   RenderContext $ctx  The context to use for rendering
@@ -164,8 +189,10 @@ class Text extends Styleable implements Drawable
             'style',
             $this->getStyle()
             . ';font-size:' . $this->fontSize
-            . '; font-family: Verdana, serif;'
-            . 'font-weight: normal; font-style: normal;'
+            . '; font-family: Verdana, serif'
+            . ';font-weight: ' . $this->fontWeight
+            . ';font-stretch: ' . $this->fontStretch
+            . '; font-style: normal;'
             .  'text-anchor: ' . $this->alignment
         );
 

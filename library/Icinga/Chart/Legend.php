@@ -87,7 +87,7 @@ class Legend implements Drawable
      */
     public function toSvg(RenderContext $ctx)
     {
-        $outer = new Canvas('legend', new LayoutBox(0, 90, 100, 100));
+        $outer = new Canvas('legend', new LayoutBox(0, 0, 100, 100));
         $outer->getLayout()->setPadding(2, 2, 2, 2);
         $nrOfColumns = 4;
 

@@ -42,6 +42,13 @@ use \Icinga\Chart\Render\RenderContext;
 class BarGraph extends Styleable implements Drawable
 {
     /**
+     * The width of the bars.
+     *
+     * @var int
+     */
+    private $barWidth = 4;
+
+    /**
      * The dataset to use for this bar graph
      *
      * @var array
@@ -87,7 +94,7 @@ class BarGraph extends Styleable implements Drawable
         $group = $doc->createElement('g');
         $idx = 0;
         foreach ($this->dataSet as $point) {
-            $rect = new Rect($point[0]-1, $point[1], 2, 100- $point[1]);
+            $rect = new Rect($point[0]-1, $point[1], $this->barWidth, 100- $point[1]);
             $rect->setFill($this->fill);
             $rect->setStrokeWidth($this->strokeWidth);
             $rect->setStrokeColor('black');

@@ -190,29 +190,29 @@ class Monitoring_ChartController extends ActionController
             $unknownBars[] = array($servicegroup->servicegroup, $servicegroup->services_unknown_unhandled);
         }
         $this->view->chart = new GridChart();
-        $this->view->chart->setAxisLabel("X axis label", "Y axis label")
+        $this->view->chart->setAxisLabel('', 'Services')
             ->setXAxis(new \Icinga\Chart\Unit\StaticAxis());
         $this->view->chart->drawBars(
             array(
-                'label' => 'Services ok',
+                'label' => 'Ok',
                 'color' => '#00ff00',
                 'stack' => 'stack1',
                 'data'  => $okBars
             ),
             array(
-                'label' => 'Services warning',
-                'color' => '#ffff00',
+                'label' => 'Warning',
+                'color' => 'ffff00',
                 'stack' => 'stack1',
                 'data'  => $warningBars
             ),
             array(
-                'label' => 'Services critical',
+                'label' => 'Critical',
                 'color' => '#ff0000',
                 'stack' => 'stack1',
                 'data'  => $critBars
             ),
             array(
-                'label' => 'Services unknown',
+                'label' => 'Unknown',
                 'color' => '#E066FF',
                 'stack' => 'stack1',
                 'data'  => $unknownBars
@@ -231,23 +231,23 @@ class Monitoring_ChartController extends ActionController
             $unreachableBars[] = array($hostgroup->hostgroup, $hostgroup->hosts_unreachable_unhandled);
         }
         $this->view->chart = new GridChart();
-        $this->view->chart->setAxisLabel("X axis label", "Y axis label")
+        $this->view->chart->setAxisLabel('', 'Hosts')
             ->setXAxis(new \Icinga\Chart\Unit\StaticAxis());
         $this->view->chart->drawBars(
             array(
-                'label' => 'Hosts up',
+                'label' => 'Up',
                 'color' => '#00ff00',
                 'stack' => 'stack1',
                 'data'  => $upBars
             ),
             array(
-                'label' => 'Hosts down',
+                'label' => 'Down',
                 'color' => '#ff0000',
                 'stack' => 'stack1',
                 'data'  => $downBars
             ),
             array(
-                'label' => 'Hosts unreachable',
+                'label' => 'Unreachable',
                 'color' => '#E066FF',
                 'stack' => 'stack1',
                 'data'  => $unreachableBars

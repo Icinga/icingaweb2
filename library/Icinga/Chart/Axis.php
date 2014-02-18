@@ -50,6 +50,16 @@ use \Icinga\Chart\Unit\LinearUnit;
 class Axis implements Drawable
 {
     /**
+     * Draw the label text horizontally
+     */
+    const LABEL_ROTATE_HORIZONTAL = 'normal';
+
+    /**
+     * Draw the label text diagonally
+     */
+    const LABEL_ROTATE_DIAGONAL = 'diagonal';
+
+    /**
      * Whether to draw the horizontal lines for the background grid
      *
      * @var bool
@@ -90,6 +100,26 @@ class Axis implements Drawable
      * @var AxisUnit
      */
     private $yUnit = null;
+
+    /**
+     * If the displayed labels should be aligned horizontally or diagonally
+     */
+    private $labelRotationStyle = self::LABEL_ROTATE_DIAGONAL;
+
+    /**
+     * Set the label rotation style for the horizontal axis
+     *
+     * <ul>
+     *   <li><b>LABEL_ROTATE_HORIZONTAL</b>: Labels will be displayed horizontally </li>
+     *   <li><b>LABEL_ROTATE_DIAGONAL</b>: Labels will be rotated by 45° </li>
+     * </ul>
+     *
+     * @param $style    The rotation mode
+     */
+    public function setHorizontalLabelRotationStyle($style)
+    {
+        $this->labelRotationStyle = $style;
+    }
 
     /**
      * Inform the axis about an added dataset
@@ -163,21 +193,32 @@ class Axis implements Drawable
         $shift = 0;
 
         foreach ($this->xUnit as $label => $pos) {
-            // If the  last label would overlap this label we shift the y axis a bit
-            if ($lastLabelEnd > $pos) {
-                $shift = ($shift + 5) % 10;
-            } else {
-                $shift = 0;
+            if ($this->labelRotationStyle === self::LABEL_ROTATE_HORIZONTAL) {
+                // If the  last label would overlap this label we shift the y axis a bit
+                if ($lastLabelEnd > $pos) {
+                    $shift = ($shift + 5) % 10;
+                } else {
+                    $shift = 0;
+                }
             }
 
             $tick = new Line($pos, 100, $pos, 102);
             $group->appendChild($tick->toSvg($ctx));
 
-            $labelField = new Text($pos + 0.5, 105 + $shift, $label);
-            $labelField->setAlignment(Text::ALIGN_MIDDLE)
-                ->setFontSize('1.8em');
+            $labelField = new Text($pos + 0.5, ($this->xLabel ? 107 : 105) + $shift, $label);
+            if ($this->labelRotationStyle === self::LABEL_ROTATE_HORIZONTAL) {
+                $labelField->setAlignment(Text::ALIGN_MIDDLE)
+                    ->setFontSize('1.8em');
+            } else {
+                $labelField->setFontSize('2.5em');
+            }
 
-            $group->appendChild($labelField->toSvg($ctx));
+            $labelField = $labelField->toSvg($ctx);
+
+            if ($this->labelRotationStyle === self::LABEL_ROTATE_DIAGONAL) {
+                $labelField = $this->rotate($ctx, $labelField, 45);
+            }
+            $group->appendChild($labelField);
 
             if ($this->drawYGrid) {
                 $bgLine = new Line($pos, 0, $pos, 100);
@@ -185,16 +226,45 @@ class Axis implements Drawable
                     ->setStrokeColor('#232');
                 $group->appendChild($bgLine->toSvg($ctx));
             }
-            $lastLabelEnd = $pos + strlen($label);
+            $lastLabelEnd = $pos + strlen($label) * 1.2;
         }
 
         // render the label for this axis
         if ($this->xLabel) {
-            $axisLabel = new Text(50, 115, $this->xLabel);
+            $axisLabel = new Text(50, 104, $this->xLabel);
             $axisLabel->setFontSize('2em')
+                ->setFontWeight('bold')
                 ->setAlignment(Text::ALIGN_MIDDLE);
             $group->appendChild($axisLabel->toSvg($ctx));
         }
+    }
+
+    /**
+     * Rotate the given element.
+     *
+     * @param RenderContext $ctx        The rendering context
+     * @param DOMElement    $el         The element to rotate
+     * @param               $degrees    The rotation degrees
+     *
+     * @return DOMElement
+     */
+    private function rotate(RenderContext $ctx, DOMElement $el, $degrees)
+    {
+        // Create a box containing the rotated element relative to the original text position
+        $container = $ctx->getDocument()->createElement('g');
+        $x = $el->getAttribute('x');
+        $y = $el->getAttribute('y');
+        $container->setAttribute('transform', 'translate(' . $x . ',' . $y . ')');
+        $el->removeAttribute('x');
+        $el->removeAttribute('y');
+
+        // Create a rotated box containing the text
+        $rotate = $ctx->getDocument()->createElement('g');
+        $rotate->setAttribute('transform', 'rotate(' . $degrees . ')');
+        $rotate->appendChild($el);
+
+        $container->appendChild($rotate);
+        return $container;
     }
 
     /**
@@ -228,9 +298,10 @@ class Axis implements Drawable
         }
 
         if ($this->yLabel) {
-            $axisLabel = new Text(-10, 50, $this->yLabel);
+            $axisLabel = new Text(-8, 50, $this->yLabel);
             $axisLabel->setFontSize('2em')
                 ->setAdditionalStyle(Text::ORIENTATION_VERTICAL)
+                ->setFontWeight('bold')
                 ->setAlignment(Text::ALIGN_MIDDLE);
 
             $group->appendChild($axisLabel->toSvg($ctx));
