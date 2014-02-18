@@ -74,7 +74,6 @@ class AuthenticationFormTest extends BaseTestCase
      */
     public function testLdapProvider()
     {
-        $this->requireFormLibraries();
         $form = $this->createForm('Icinga\Form\Config\Authentication\LdapBackendForm');
         $config = new Zend_Config(
             array(
@@ -107,7 +106,6 @@ class AuthenticationFormTest extends BaseTestCase
      */
     public function testDbProvider()
     {
-        $this->requireFormLibraries();
         $form = $this->createForm('Icinga\Form\Config\Authentication\DbBackendForm');
         $config = new Zend_Config(
             array(
@@ -150,7 +148,6 @@ class AuthenticationFormTest extends BaseTestCase
     public function testModifyOrder()
     {
         Url::$overwrittenRequest = new RequestMock();
-        $this->requireFormLibraries();
         $form = $this->createForm('Icinga\Form\Config\Authentication\ReorderForm');
         $form->setAuthenticationBackend('backend2');
         $form->setCurrentOrder(array('backend1', 'backend2', 'backend3', 'backend4'));
@@ -191,7 +188,6 @@ class AuthenticationFormTest extends BaseTestCase
     public function testInvalidOrderingNotShown()
     {
         Url::$overwrittenRequest = new RequestMock();
-        $this->requireFormLibraries();
         $form = $this->createForm('Icinga\Form\Config\Authentication\ReorderForm');
         $form->setAuthenticationBackend('backend1');
         $form->setCurrentOrder(array('backend1', 'backend2', 'backend3', 'backend4'));

@@ -59,7 +59,7 @@ class TestInit
 
         require_once 'Zend/Loader/Autoloader.php';
         \Zend_Loader_Autoloader::getInstance();
-
+        
         Icinga\Application\Config::$configDir = $configPath;
     }
 }

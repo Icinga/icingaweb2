@@ -63,7 +63,6 @@ class GeneralFormTest extends BaseTestCase
     public function testCorrectFieldPopulation()
     {
         DateTimeFactory::setConfig(array('timezone' => new DateTimeZone('UTC')));
-        $this->requireFormLibraries();
         $form = $this->createForm('Icinga\Form\Config\GeneralForm');
         $form->setDateFormatter(new Zend_View_Helper_DateFormat($this->getRequest()));
         $form->setConfiguration(
@@ -140,7 +139,6 @@ class GeneralFormTest extends BaseTestCase
     public function testCorrectConditionalIniFieldRendering()
     {
         DateTimeFactory::setConfig(array('timezone' => new DateTimeZone('UTC')));
-        $this->requireFormLibraries();
         $form = $this->createForm('Icinga\Form\Config\GeneralForm');
         $form->setDateFormatter(new Zend_View_Helper_DateFormat($this->getRequest()));
         $form->setConfiguration(
@@ -178,7 +176,6 @@ class GeneralFormTest extends BaseTestCase
     public function testCorrectConditionalDbFieldRendering()
     {
         DateTimeFactory::setConfig(array('timezone' => new DateTimeZone('UTC')));
-        $this->requireFormLibraries();
         $form = $this->createForm('Icinga\Form\Config\GeneralForm');
         $form->setDateFormatter(new Zend_View_Helper_DateFormat($this->getRequest()));
         $form->setConfiguration(

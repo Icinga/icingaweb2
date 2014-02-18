@@ -19,7 +19,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
+ *#
  * @copyright  2013 Icinga Development Team <info@icinga.org>
  * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
  * @author     Icinga Development Team <info@icinga.org>
@@ -29,22 +29,7 @@
 
 namespace Icinga\Test\Form\Preference;
 
-// @codingStandardsIgnoreStart
-require_once realpath(__DIR__ . '/../../../../../library/Icinga/Test/BaseTestCase.php');
-// @codingStandardsIgnoreEnd
-
 use Icinga\Test\BaseTestCase;
-
-// @codingStandardsIgnoreStart
-require_once 'Zend/Form/Element/Select.php';
-require_once 'Zend/View/Helper/Abstract.php';
-require_once BaseTestCase::$libDir . '/User/Preferences.php';
-require_once BaseTestCase::$libDir . '/Web/Form.php';
-require_once BaseTestCase::$appDir . '/forms/Preference/GeneralForm.php';
-require_once BaseTestCase::$appDir . '/views/helpers/DateFormat.php';
-require_once BaseTestCase::$libDir . '/Util/ConfigAwareFactory.php';
-require_once BaseTestCase::$libDir . '/Util/DateTimeFactory.php';
-// @codingStandardsIgnoreEnd
 
 use \DateTimeZone;
 use \Icinga\User\Preferences;
@@ -63,7 +48,6 @@ class GeneralFormTest extends BaseTestCase
     public function testDisableFormIfUsingDefault()
     {
         DateTimeFactory::setConfig(array('timezone' => new DateTimeZone('UTC')));
-        $this->requireFormLibraries();
         $form = $this->createForm('Icinga\Form\Preference\GeneralForm');
         $form->setDateFormatter(new Zend_View_Helper_DateFormat($this->getRequest()));
         $form->setRequest($this->getRequest());
@@ -82,7 +66,6 @@ class GeneralFormTest extends BaseTestCase
     public function testEnableFormIfUsingPreference()
     {
         DateTimeFactory::setConfig(array('timezone' => new DateTimeZone('UTC')));
-        $this->requireFormLibraries();
         $form = $this->createForm('Icinga\Form\Preference\GeneralForm');
         $form->setDateFormatter(new Zend_View_Helper_DateFormat($this->getRequest()));
         $form->setRequest($this->getRequest());

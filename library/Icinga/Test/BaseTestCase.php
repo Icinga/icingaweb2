@@ -46,11 +46,6 @@ namespace {
 
 namespace Icinga\Test {
 
-    require_once 'Zend/Test/PHPUnit/ControllerTestCase.php';
-    require_once 'Zend/Db/Adapter/Pdo/Abstract.php';
-    require_once 'DbTest.php';
-    require_once 'FormTest.php';
-    // @codingStandardsIgnoreStart
     use \Exception;
     use \RuntimeException;
     use Zend_Test_PHPUnit_ControllerTestCase;
@@ -62,7 +57,6 @@ namespace Icinga\Test {
     use Icinga\Data\ResourceFactory;
     use Icinga\User\Preferences;
     use Icinga\Web\Form;
-    // @codingStandardsIgnoreEnd
 
     /**
      * Class BaseTestCase
@@ -206,8 +200,6 @@ namespace Icinga\Test {
          */
         private function createDbAdapterFor($name)
         {
-            $this->requireDbLibraries();
-
             try {
                 $adapter = ResourceFactory::createResource($this->createDbConfigFor($name))->getConnection();
             } catch (Exception $e) {
@@ -339,59 +331,7 @@ namespace Icinga\Test {
             );
             return $form;
         }
-
-        /**
-         * Require all libraries to instantiate forms
-         */
-        public static function requireFormLibraries()
-        {
-            require_once 'Zend/Form/Decorator/Abstract.php';
-            require_once 'Zend/Validate/Abstract.php';
-            require_once 'Zend/Form/Element/Xhtml.php';
-            require_once 'Zend/Form/Element/Text.php';
-            require_once 'Zend/Form/Element/Submit.php';
-            require_once 'Zend/Form/Element/Checkbox.php';
-            require_once 'Zend/Form.php';
-            require_once 'Zend/View.php';
-
-            require_once self::$libDir . '/Web/Form/InvalidCSRFTokenException.php';
-
-            require_once self::$libDir . '/Web/Form/Element/DateTimePicker.php';
-            require_once self::$libDir . '/Web/Form/Element/Note.php';
-            require_once self::$libDir . '/Web/Form/Element/Number.php';
-
-            require_once self::$libDir . '/Web/Form/Decorator/ConditionalHidden.php';
-            require_once self::$libDir . '/Web/Form/Decorator/HelpText.php';
-            require_once self::$libDir . '/Web/Form/Decorator/BootstrapForm.php';
-
-            require_once self::$libDir . '/Web/Form/Validator/DateFormatValidator.php';
-            require_once self::$libDir . '/Web/Form/Validator/TimeFormatValidator.php';
-            require_once self::$libDir . '/Web/Form/Validator/WritablePathValidator.php';
-
-            require_once self::$libDir . '/Web/Form.php';
-
-            require_once self::$libDir . '/User/Preferences.php';
-        }
-
-        /**
-         * Require all classes for database adapter creation
-         */
-        public static function requireDbLibraries()
-        {
-            require_once 'Zend/Config.php';
-            require_once 'Zend/Db.php';
-            require_once 'Zend/Log.php';
-
-            require_once self::$libDir . '/Exception/ConfigurationError.php';
-            require_once self::$libDir . '/Util/ConfigAwareFactory.php';
-            require_once self::$libDir . '/Data/DatasourceInterface.php';
-            require_once self::$libDir . '/Data/ResourceFactory.php';
-            require_once self::$libDir . '/Data/Db/Connection.php';
-            require_once self::$libDir . '/Application/Logger.php';
-        }
     }
 
     BaseTestCase::setupDirectories();
-    BaseTestCase::requireFormLibraries();
-    BaseTestcase::requireDbLibraries();
 }

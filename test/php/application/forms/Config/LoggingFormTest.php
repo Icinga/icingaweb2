@@ -44,7 +44,6 @@ class LoggingFormTest extends BaseTestCase
      */
     public function testLoggingFormPopulation()
     {
-        $this->requireFormLibraries();
         $form = $this->createForm('Icinga\Form\Config\LoggingForm');
         $config = new Zend_Config(
             array(
@@ -93,7 +92,6 @@ class LoggingFormTest extends BaseTestCase
      */
     public function testCorrectConfigCreation()
     {
-        $this->requireFormLibraries();
         $form = $this->createForm(
             'Icinga\Form\Config\LoggingForm',
             array(
