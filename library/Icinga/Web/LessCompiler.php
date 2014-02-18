@@ -29,12 +29,14 @@
 
 namespace Icinga\Web;
 
-use \Exception;
-use \RecursiveDirectoryIterator;
-use \RecursiveIteratorIterator;
-use \RegexIterator;
-use \RecursiveRegexIterator;
-use \Zend_Controller_Front;
+use Exception;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use RegexIterator;
+use RecursiveRegexIterator;
+use Zend_Controller_Front;
+use Icinga\Application\Icinga;
+use lessc;
 
 /**
  * Less compiler prints files or directories to stdout
@@ -56,6 +58,8 @@ class LessCompiler
     private $lessc;
 
     private $baseUrl;
+    
+    private $source;
 
     /**
      * Create a new instance
@@ -63,13 +67,20 @@ class LessCompiler
     public function __construct()
     {
         require_once 'vendor/lessphp/lessc.inc.php';
-        $this->lessc = new \lessc();
+        $this->lessc = new lessc();
 
         $this->lessc->setVariables(
             array(
                 'baseurl' => '\'' . Zend_Controller_Front::getInstance()->getBaseUrl(). '\''
             )
         );
+    }
+
+    public function compress()
+    {
+        $this->lessc->setPreserveComments(false);
+        $this->lessc->setFormatter('compressed');
+        return $this;
     }
 
     /**
@@ -80,6 +91,51 @@ class LessCompiler
     public function addItem($item)
     {
         $this->items[] = $item;
+    }
+
+    public function addLoadedModules()
+    {
+        foreach (Icinga::app()->getModuleManager()->getLoadedModules() as $name => $module) {
+            $this->addModule($name, $module);
+        }
+        return $this;
+    }
+
+    public function addFile($filename)
+    {
+        $this->source .= "\n/* CSS: $filename */\n"
+            . file_get_contents($filename)
+            . "\n\n";
+        return $this;
+    }
+
+    public function compile()
+    {
+        //TODO:
+/*        $tmpfile = '/tmp/icinga.less';
+        $cssfile = '/tmp/icinga.css';
+        if (! file_exists($tmpfile)) {
+            file_put_contents($tmpfile, $this->source);
+        }
+        if ($this->lessc->checkedCompile($tmpfile, $cssfile)) {
+        }
+        return file_get_contents($cssfile);
+*/
+        return $this->lessc->compile($this->source);
+    }
+
+    public function addModule($name, $module)
+    {
+        if ($module->hasCss()) {
+            $this->source .= "\n/* CSS: modules/$name/module.less */\n"
+                . '.icinga-module.module-'
+                . $name
+                . " {\n"
+                . file_get_contents($module->getCssFilename())
+                . "}\n\n"
+            ;
+        }
+        return $this;
     }
 
     /**
