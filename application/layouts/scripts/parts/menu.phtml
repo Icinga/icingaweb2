@@ -1,0 +1,28 @@
+<ul>
+<?php
+
+foreach ($this->items as $item) {
+
+    printf(
+        '  <li%s><a href="%s">%s%s</a>',
+        $this->href($this->url) === $this->href($item->getUrl()) ? ' class="active"' : '',
+        $item->getUrl() ? $this->href($item->getUrl()) : '#',
+        $item->getIcon() ? $this->img(
+            $item->getIcon(),
+            array('height' => '16px', 'width' => '16px')
+        ) . ' ' : '',
+        $item->getTitle()
+    );
+
+    if ($item->hasChildren()) {
+        echo $this->partial(
+            'parts/menu.phtml',
+            array('items' => $item->getChildren(), 'url' => $this->url)
+        );
+    }
+
+    echo "</li>\n";
+}
+
+?>
+</ul>
