@@ -1,0 +1,53 @@
+
+code {
+  background-color: #eee;
+  border: 1px solid #ddd;
+  padding: 1em;
+  display: block;
+}
+
+p code {
+  display: inline;
+  padding: 0.3em;
+}
+
+a {
+  color: #39a;
+}
+
+/** Notifications **/
+
+#notifications {
+  margin: 0;
+  padding: 0;
+}
+
+#notifications > li {
+  list-style-type: none;
+  display: block;
+  border-bottom: 1px solid #999;
+  color: white;
+  line-height: 2.5em;
+  padding-left: 3em;
+}
+
+#notifications > li.warning {
+  background-color: @colorWarningHandled;
+}
+#notifications > li.error {
+  background-color: @colorCritical;
+  background-image: url(../img/icons/error_inv.png);
+  background-repeat: no-repeat;
+  background-position: 1em center;
+}
+/** END of Notifications **/
+
+/* TODO: Remove once there is no more module container */
+.container > div > pre {
+  margin: 1em;
+}
+
+.pull-right {
+  float: right;
+}
+

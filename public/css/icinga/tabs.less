@@ -1,0 +1,81 @@
+
+ul.tabs {
+  margin: 0;
+  padding: 1em 0 0 0;
+
+  background: -moz-linear-gradient(top, #777, #666);
+  background: -webkit-linear-gradient(top, #777, #666);
+  background: -o-linear-gradient(top, #777, #666);
+  background: -ms-linear-gradient(top, #777, #666);
+  background: linear-gradient(top, #777, #666);
+
+  list-style-type: inside;
+}
+
+.impact ul.tabs {
+  border-bottom-color: white;
+}
+
+ul.tabs li {
+  display: inline-block;
+}
+
+ul.tabs li a {
+  text-decoration: none;
+  display: block;
+  padding: 0 1em;
+  line-height: 2.6em;
+  white-space: nowrap;
+  color: #ddd;
+  outline: 0;
+  margin-right: 0.5em;
+}
+
+ul.tabs li.active a, ul.tabs li.dropdown:hover {
+  background-color: white;
+  color: #333;
+}
+
+.impact ul.tabs li.active a, .impact ul.tabs li.dropdown:hover {
+  background: white;
+}
+
+ul.tabs li a:hover {
+  text-decoration: underline;
+}
+
+ul.dropdown-menu {
+  background-color: white;
+  position: absolute;
+  overflow: hidden;
+  z-index: 1000;
+  border: 1px solid #555;
+  border-top: none;
+}
+
+ul.dropdown-menu li {
+  display: block;
+}
+
+ul.tabs ul.dropdown-menu {
+  display: none;
+}
+
+ul.tabs ul.dropdown-menu li a {
+  color: #555;
+}
+
+ul.tabs li.dropdown {
+
+/*  text-align: right; */
+}
+
+ul.tabs li.dropdown:hover a {
+  text-decoration: none;
+  color: #555;
+}
+
+ul.tabs li.dropdown:hover ul.dropdown-menu {
+  display: block;
+}
+

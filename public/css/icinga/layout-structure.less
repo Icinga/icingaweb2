@@ -1,0 +1,178 @@
+
+
+#layout {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  min-width: 19em;
+}
+
+#header {
+
+}
+
+#sidebar {
+/*  position: fixed;
+  width: 13em;
+  left: 0;
+  top: 3em;
+  bottom: 0;
+*/
+  width: 13em;
+  float: left;
+  height: 100%;
+}
+
+#main {
+  margin-left: 13em;
+  height: 100%;
+/*
+  position: fixed;
+  left: 13em;
+  top: 3em;
+  right: 0;
+  bottom: 0;
+*/
+}
+
+#layout.fullscreen #header {
+  display: none;
+}
+
+#layout.fullscreen #sidebar {
+  display: none;
+}
+
+#layout.fullscreen #main {
+  left: 0;
+  top: 0;
+}
+
+/* tmp */
+#main > .container {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  float: left;
+}
+
+#layout.twocols #main > .container {
+  width: 50%;
+}
+/*#layout.twocols #main > .container {*/
+#layout.twocols #main .container {
+ /* width: 100%;*/
+/*  font-size: 0.9em; */
+}
+
+/* #layout.twocols #main > .container > .controls {*/
+#layout.twocols #main .container > .controls {
+  width: 100%;
+/*  font-size: 0.9em; */
+}
+
+/* Not growing larger than 1920px at 1em=16px right now */
+@media screen and (min-width: 120em) {
+  #main {
+    width: 107em;
+  }
+  #header {
+    width: 120em;
+  }
+/*
+  .container {
+    background-color: red;
+  }
+*/
+}
+
+@media screen and (min-width: 48em) and (max-width: 62em) {
+  /* #main > .container { */
+  #main .container {
+    font-size: 0.9em;
+  }
+/* TEST
+  .container {
+    background-color: blue;
+  }
+*/
+}
+
+.container > div {
+/*  padding: 0 1.5% 0 1.5%; */
+  padding: 0;
+}
+
+.container .controls {
+  top: 0;
+  z-index: 1;
+  background-color: white;
+  padding: 0;
+}
+
+.controls h1 {
+  font-size: 1.5em;
+  margin-bottom: 0.2em;
+  border-bottom: 1px solid black;
+}
+
+.container .fake-controls {
+  padding: 0;
+}
+
+.container .controls .pagination {
+  display: inline;
+}
+
+#main .dashboard {
+  padding: 0;
+}
+
+.dashboard > div.container {
+  font-size: 0.9em;
+  vertical-align: top;
+  width: 48%;
+  display: inline-block;
+  padding: 0;
+  margin-left: 1%;
+}
+
+.dashboard > div.container td.state {
+  font-size: 1em;
+  width: 4em;
+}
+
+.dashboard > div.container h1 {
+  line-height: 2em;
+  font-size: 1em;
+  padding-left: 1em;
+  background-color: #555;
+  color: white;
+  border: none;
+}
+
+.dashboard > div.container h1 a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.dashboard > div.container h1 a:hover {
+  text-decoration: underline;
+}
+
+#layout.twocols .dashboard > div.container {
+  width: 96%;
+  margin-left: 2%;
+  margin-right: 2%;
+}
+.content {
+  padding: 0.5em 1em 0.5em 1em;
+}
+
+#inner-layout {
+  position: fixed;
+  height: 100%;
+  width: 100%;
+}

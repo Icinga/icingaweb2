@@ -1,0 +1,302 @@
+
+/* Special tables and states */
+
+table.colors {
+  font-size: 0.8em;
+  width: 98%;
+  margin: 0 1%;
+}
+
+table.colors td {
+  text-align: center;
+  vertical-align: middle;
+  width:  10%;
+  height: 1.6em;
+  font-weight: normal;
+  border: 0.079em solid white;
+}
+
+/* Action table */
+table.action {
+  border-collapse: separate;
+  width: 98%;
+  table-layout: fixed;
+  margin: 0;
+}
+
+table.action tr {
+  /*border-bottom: 0.079em solid transparent;*/
+}
+
+table.action th {
+  text-align: left;
+  overflow: hidden;
+}
+
+table.action.wide td {
+  line-height: 2.5em;
+}
+
+table.action td {
+  line-height: 1.5em;
+  padding: 0 0.5em 0 0.5em;
+  font-size: 0.8em;
+  border-bottom: 1px solid #dde;
+  overflow: hidden;
+}
+
+table.action td a {
+  color: inherit;
+  text-decoration: none;
+}
+
+table.action td a:hover {
+  text-decoration: underline;
+}
+
+
+/* END of Action table */
+
+
+/* Table behaviour */
+
+tr[href] {
+  cursor: pointer;
+}
+
+/* End of table behaviour */
+
+
+table.action td.state {
+  font-size: 0.7em;
+}
+
+table.action td.timesince {
+  width: 3.5em;
+}
+
+
+/* State row behaviour */
+
+tr.state img.icon {
+  /* TODO: 1em? */
+  height: 16px;
+  width: 16px;
+  float: right;
+}
+
+tr.state a {
+  font-weight: bold;
+}
+
+tr.state a.active {
+  text-decoration: underline;
+}
+
+tr.state.new td.state {
+  font-weight: bold;
+}
+
+tr.state td.state {
+  width: 7em;
+  padding-left: 2em; /* 1.5 border + 0.5padding */
+  color: white;
+  border-radius: 0.5em 0 0 0.5em;
+  -moz-border-radius: 0.5em 0 0 0.5em;
+}
+
+tr.state.handled td.state, tr.state.ok td.state, tr.state.up td.state {
+  border-left-style: solid;
+  border-left-width: 1.5em;
+  padding-left: 0.5em;
+  color: black;
+  background-color: transparent;
+}
+
+tr[href]:hover, tr[href].active {
+  background-color: #eee;
+  color: black;
+}
+
+tr.state.ok td.state, tr.state.up td.state {
+  border-left-color: @colorOk;
+}
+
+tr.state.warning td.state {
+  background-color: @colorWarning;
+}
+
+tr.state.warning.handled td.state {
+  border-left-color: @colorWarningHandled;
+}
+
+tr.state.critical td.state, tr.state.down td.state {
+  background-color: @colorCritical;
+}
+
+tr.state.critical.handled td.state, tr.state.down.handled td.state {
+  border-left-color: @colorCriticalHandled;
+}
+
+tr.state.unknown td.state {
+  background-color: @colorUnknown;
+}
+
+tr.state.unknown.handled td.state {
+  border-left-color: @colorUnknownHandled;
+}
+
+tr.state.pending td.state {
+  border-left-color: @colorPending;
+}
+
+tr.state.invalid td.state {
+  background-color: @colorInvalid;
+}
+
+tr.state.handled td.state {
+  color: inherit;
+  background-color: transparent;
+}
+
+/* END of special tables and states */
+
+
+/* Generic colors */
+
+a.critical {
+  color: @colorCritical;
+}
+
+/* END of Generic colors */
+
+
+
+
+/* Been here before: */
+/*
+
+.state .ok, td.state.ok {
+  background-color: #44BB77;
+  color: white;
+}
+.state .ok:hover, td.state.ok:hover {
+  color: #44BB77;
+  background-color: white;
+  cursor: pointer;
+}
+.state .warning, td.state.warning {
+  color: white;
+  background-color: #FF8844;
+}
+.state .warning:hover, td.state.warning:hover {
+  color: #FF8844;
+  background-color: white;
+  cursor: pointer;
+}
+.state .warning.handled, td.state.warning.handled {
+  color: white;
+  background-color: #FFBB55;
+}
+.state .warning.handled:hover, td.state.warning.handled:hover {
+  color: #FF8855;
+  background-color: white;
+  cursor: pointer;
+}
+.state .critical, td.state.critical {
+  color: white;
+  background-color: #FF5566;
+}
+.state .critical.handled, td.state.critical.handled {
+  background-color: #FF99aa;
+}
+.state .unknown, td.state.unknown {
+  color: white;
+  background-color: #DD66FF;
+}
+.state .unknown.handled, td.state.unknown.handled {
+  background-color: #EE99FF;
+}
+
+.state .pending, td.state.pending {
+  color: white;
+  background-color: #77AAFF;
+}
+*/
+
+
+/* Generic span.state */
+span.state {
+  color: white;
+  border-radius: 0.5em;
+  -moz-border-radius: 0.5em;
+  padding: 0.3em 0.5em 0.3em 0.5em;
+  margin: 0.2em 0.5em 0.2em 0.5em;
+}
+
+
+span.state.ok, span.state.up {
+  background-color: @colorOk;
+}
+
+span.state.warning {
+  background-color: @colorWarning;
+}
+
+span.state.warning.handled {
+  background-color: @colorWarningHandled;
+}
+
+span.state.critical, span.state.down {
+  background-color: @colorCritical;
+}
+
+span.state.critical.handled, span.state.down.handled {
+  background-color: @colorCriticalHandled;
+}
+
+span.state.unknown, span.state.unreachable {
+  background-color: @colorUnknown;
+}
+
+span.state.unknown.handled, span.state.unreachable.handled {
+  background-color: @colorUnknownHandled;
+}
+
+span.state.invalid {
+  background-color: @colorInvalid;
+}
+
+table.action td.summary {
+  vertical-align: top;
+  text-align: center;
+}
+
+span.state {
+}
+
+.summary span.state {
+  width: 10em;
+  text-align: center;
+  float: left;
+  display: inline-block;
+}
+
+.summary span.state span.state {
+  width: 8em;
+}
+
+span.state a {
+  white-space: nowrap;
+}
+
+span.state.handled {
+  color: #333;
+}
+
+span.state a.active {
+  text-decoration: underline;
+}
+
+/* End of generic span.state */
+

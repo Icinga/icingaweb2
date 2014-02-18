@@ -1,0 +1,91 @@
+/* TODO: not here!! */
+.controls {
+/*  font-size: 0.8em; */
+}
+
+
+@petrol : #049baf;
+@black : #262625;
+/* END */
+
+/* =======================================================
+   Forms   ========================================================= */
+
+.form-inline .form-group {
+  display: inline-block;
+  margin-bottom: 0;
+  vertical-align: middle;
+}
+.form-group {
+  margin-bottom: 1em;
+}
+
+label {
+  display: inline-block;
+  font-weight: bold;
+  margin-bottom: 0.3em;
+}
+
+.input-sm {
+  border-radius: 0.2em;
+  font-size: 1em;
+  padding: 0.3em;
+}
+.form-control {
+  background-color: white;
+  border: 1px solid lightgrey;
+  border-radius: 4px;
+  padding: 5px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+  color: darkgrey;
+  display: block;
+  vertical-align: middle;
+  width: 100%;
+}
+
+
+
+
+
+/* ==========================================================================
+   Buttons
+   ========================================================================== */
+
+.button {
+  text-align: center;
+  padding: 3px;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 3px;
+}
+
+.btn-common {
+  border-color: @lightgrey;
+  color: @black;
+  background: rgb(255,255,255); /* Old browsers */
+  background: -moz-linear-gradient(top, rgb(255,255,255) 1%, rgb(245,245,245) 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(1%,rgb(255,255,255)), color-stop(100%,rgb(245,245,245))); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top, rgb(255,255,255) 1%,rgb(245,245,245) 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top, rgb(255,255,255) 1%,rgb(245,245,245) 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top, rgb(255,255,255) 1%,rgb(245,245,245) 100%); /* IE10+ */
+  background: linear-gradient(to bottom, rgb(255,255,255) 1%,rgb(245,245,245) 100%); /* W3C */
+}
+
+.panel-row > a:hover,
+.btn-common:hover {
+  border-color: @black !important;
+  color: @black !important;
+  text-decoration: none;
+}
+
+.btn-cta {
+  border-color: @petrol;
+  color: @petrol;
+  background: rgb(255,255,255); /* Old browsers */
+  background: -moz-linear-gradient(top, rgb(255,255,255) 1%, rgb(245,245,245) 100%); /* FF3.6+ */
+  background: -webkit-linear-gradient(top, rgb(255,255,255) 1%,rgb(245,245,245) 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top, rgb(255,255,255) 1%,rgb(245,245,245) 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top, rgb(255,255,255) 1%,rgb(245,245,245) 100%); /* IE10+ */
+  background: linear-gradient(to bottom, rgb(255,255,255) 1%,rgb(245,245,245) 100%); /* W3C */
+}
+

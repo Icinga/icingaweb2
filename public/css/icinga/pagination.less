@@ -1,0 +1,57 @@
+ul.pagination {
+  font-size: 0.68em;
+  padding: 0;
+  display: inline;
+}
+
+#layout.twocols u.pagination {
+  font-size: 0.5em;
+}
+
+.pagination > li {
+  list-style-type: none;
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+}
+
+.pagination > li > a, .pagination > li.disabled > span {
+  display: block;
+  padding: 0em 1em 0em 1em;
+  line-height: 2em;
+  border: 1px solid #ddd;
+  border-right-width: 0;
+}
+
+.pagination > li > a {
+  color: #39a;
+  text-decoration: none; 
+  outline: 0;
+}
+
+.pagination li.disabled span {
+  cursor: no-drop;
+  color: #ddd;
+}
+
+.pagination > li:last-child > a, .pagination > li:last-child > span {
+  border-radius: 0 0.5em 0.5em 0;
+  border-right-width: 1px;
+}
+
+.pagination > li:first-child > a, .pagination > li:first-child > span {
+  border-radius: 0.5em 0 0 0.5em;
+}
+
+.pagination > li > a:hover {
+    color: #000;
+    background-color: #eee;
+}
+
+.pagination > li.active > a {
+  background-color: #39a;
+  border-color: #39a;
+  color: #fff;
+  cursor: default;
+}
+
