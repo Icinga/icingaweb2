@@ -124,8 +124,7 @@ class DashboardController extends ActionController
         $this->view->tabs->add(
             'Add',
             array(
-                'title' => 'Add Url',
-                'iconCls' => 'plus',
+                'title' => '+',
                 'url' => Url::fromPath('dashboard/addurl')
             )
         );
