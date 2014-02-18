@@ -86,7 +86,7 @@ class ConfirmRemovalForm extends Form
                 'escape'    => false,
                 'value'     => '1',
                 'class'     => 'btn btn-cta btn-common',
-                'label'     => '<i class="icinga-icon-remove"></i> Confirm Removal'
+                'label'     => $this->view->img('img/icons/remove.png') . ' Confirm Removal'
             )
         );
     }
