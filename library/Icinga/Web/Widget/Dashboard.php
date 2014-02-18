@@ -29,16 +29,15 @@
 
 namespace Icinga\Web\Widget;
 
-use \Icinga\Application\Icinga;
-use \Icinga\Application\Config as IcingaConfig;
-use \Icinga\Application\Logger;
-use \Icinga\Exception\ConfigurationError;
-use \Icinga\Web\Widget\Widget;
-use \Icinga\Web\Widget\Dashboard\Pane;
-use \Icinga\Web\Widget\Dashboard\Component as DashboardComponent;
-
-use \Icinga\Web\Url;
-use \Zend_View_Abstract;
+use Icinga\Application\Icinga;
+use Icinga\Application\Config as IcingaConfig;
+use Icinga\Application\Logger;
+use Icinga\Exception\ConfigurationError;
+use Icinga\Web\Widget\AbstractWidget;
+use Icinga\Web\Widget\Dashboard\Pane;
+use Icinga\Web\Widget\Dashboard\Component as DashboardComponent;
+use Icinga\Web\Url;
+use Zend_View_Abstract;
 
 /**
  * Dashboards display multiple views on a single page
@@ -326,7 +325,7 @@ class Dashboard implements Widget
     public function determineActivePane()
     {
         $active = $this->getTabs()->getActiveName();
-        if (!$active) {
+        if (! $active) {
             if ($active = Url::fromRequest()->getParam($this->tabParam)) {
                 if ($this->isEmptyPane($active)) {
                     $active = $this->setDefaultPane();
