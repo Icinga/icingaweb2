@@ -172,7 +172,8 @@ class Monitoring_ListController extends MonitoringController
         $this->applyRestrictions($query);
         $this->view->services = $query->paginate();
 
-        $this->setupFilterControl(ServiceStatus::fromRequest($this->getRequest()), 'service');
+        //$this->setupFilterControl(ServiceStatus::fromRequest($this->getRequest()), 'service');
+        $this->setupFilterControl($query, 'service');
         $this->setupSortControl(array(
             'service_last_check'    =>  'Last Service Check',
             'service_severity'      =>  'Severity',

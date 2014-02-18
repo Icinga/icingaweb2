@@ -8,7 +8,7 @@
                 $this->target
             );
         ?>" class="button btn-common btn-small input-sm pull-right">
-            <i class="icinga-icon-in-downtime"></i>
+            <?= $this->img('img/icons/in_downtime.png') ?>
         </a>
 
     </div>
@@ -30,7 +30,7 @@
                         $this->target
                     );
                     ?>" class="button btn-common btn-small input-sm pull-right">
-                    <i class="icinga-icon-remove"></i>
+                    <?= $this->img('img/icons/remove.png') ?>
                 </a>
             <?php } else { ?>
                 0 Selected items are currently in downtime.

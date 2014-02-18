@@ -8,7 +8,7 @@
                 $this->target
             );
         ?>" class="btn-common btn-small button">
-            <i class="icinga-icon-comment"></i>
+            <?= $this->img('img/icons/comment.png') ?>
         </a>
 
         <a rel="tooltip" title="Send custom notifications for all selected hosts or services" href="<?=
@@ -17,7 +17,7 @@
                 $this->target
             );
         ?>" class="btn-common btn-small button">
-            <i class="icinga-icon-notification"></i>
+            <?= $this->img('img/icons/notification.png') ?>"></i>
 		</a>
     </div>
 
@@ -43,7 +43,7 @@
 					$this->target
 				);
 				?>" class="button btn-common btn-small input-sm pull-right">
-				<i class="icinga-icon-remove"></i>
+				<?= $this->img('img/icons/remove.png') ?>"></i>
 			</a>
 		<?php } else { ?>
 			There are 0 comments assigned to the selected items.
