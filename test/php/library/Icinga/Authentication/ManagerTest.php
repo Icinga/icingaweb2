@@ -27,39 +27,22 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Tests\Icinga\Authentication;
+namespace Icinga\Tests\Authentication;
 
-// @codingStandardsIgnoreStart
-require_once realpath(__DIR__ . '/../../../../../library/Icinga/Test/BaseTestCase.php');
-// @codingStandardsIgnoreEnd
-
-use \Icinga\Test\BaseTestCase;
-
-// @codingStandardsIgnoreStart
-require_once 'Zend/Log.php';
-require_once 'Zend/Config.php';
-require_once BaseTestCase::$libDir . '/Logger/Logger.php';
-require_once BaseTestCase::$libDir . '/Authentication/Manager.php';
-require_once BaseTestCase::$libDir . '/Authentication/Membership.php';
-require_once BaseTestCase::$libDir . '/Authentication/Credential.php';
-require_once BaseTestCase::$libDir . '/Authentication/Membership.php';
-require_once BaseTestCase::$libDir . '/Exception/ConfigurationError.php';
-require_once BaseTestCase::$libDir . '/Exception/ProgrammingError.php';
-require_once BaseTestCase::$libDir . '/Exception/NotReadableError.php';
-require_once BaseTestCase::$libDir . '/Web/Session.php';
-require_once 'BackendMock.php';
-require_once 'ErrorProneBackendMock.php';
-require_once 'SessionMock.php';
-// @codingStandardsIgnoreEnd
+use Icinga\Test\BaseTestCase;
 
 use \Zend_Config;
 use Icinga\Web\Session;
 use Icinga\Authentication\Manager as AuthManager;
 use Icinga\Authentication\Credential;
 use Icinga\Exception\ConfigurationError;
+use Icinga\Test\Authentication\ErrorProneBackendMock;
+use Icinga\Test\Authentication\SessionMock;
+use Icinga\Test\Authentication\BackendMock;
 
 /**
  * @backupStaticAttributes enabled
+ * @runTestsInSeparateProcesses
  */
 class ManagerTest extends BaseTestCase
 {
@@ -76,6 +59,7 @@ class ManagerTest extends BaseTestCase
         &$session = null,
         $write = false,
         $nobackend = false,
+
         Zend_Config $managerConfig = null
     ) {
         if ($session == null) {
@@ -152,28 +136,6 @@ class ManagerTest extends BaseTestCase
         );
     }
 
-    public function testPersistAuthInSession()
-    {
-        $session = new SessionMock();
-        $auth = $this->getManagerInstance($session, true);
-        $this->assertFalse($auth->isAuthenticated(true));
-        $auth->authenticate(new Credential("jdoe", "passjdoe"));
-        $this->assertNotEquals(null, $session->get("user"));
-        $user = $session->get("user");
-        $this->assertEquals("Username", $user->getUsername());
-        $this->assertTrue($auth->isAuthenticated(true));
-    }
-
-    public function testAuthenticateFromSession()
-    {
-        $session = new SessionMock();
-        $session->set("user", BackendMock::getDummyUser());
-        $auth = $this->getManagerInstance($session, false);
-        $this->assertFalse($auth->isAuthenticated(true));
-        $this->assertTrue($auth->isAuthenticated());
-        $this->assertTrue($auth->isAuthenticated());
-    }
-
     /**
      * @expectedException Icinga\Exception\ConfigurationError
      * @expectedExceptionMessage No authentication backend set
@@ -183,7 +145,7 @@ class ManagerTest extends BaseTestCase
         $managerConfig = new Zend_Config(
             array(
                 'provider1' => array(
-                    'class' => 'Tests\Icinga\Authentication\ErrorProneBackendMock'
+                    'class' => 'Icinga\Test\Authentication\ErrorProneBackendMock'
                 )
             ),
             true
@@ -211,10 +173,10 @@ class ManagerTest extends BaseTestCase
         $managerConfig = new Zend_Config(
             array(
                 'provider1' => array(
-                    'class' => 'Tests\Icinga\Authentication\ErrorProneBackendMock'
+                    'class' => 'Icinga\Test\Authentication\ErrorProneBackendMock'
                 ),
                 'provider2' => array(
-                    'class' => 'Tests\Icinga\Authentication\ErrorProneBackendMock'
+                    'class' => 'Icinga\Test\Authentication\ErrorProneBackendMock'
                 )
             ),
             true
@@ -225,12 +187,12 @@ class ManagerTest extends BaseTestCase
         $authManager = $this->getManagerInstance($session, false, true, $managerConfig);
 
         $this->assertInstanceOf(
-            'Tests\Icinga\Authentication\ErrorProneBackendMock',
+            'Icinga\Test\Authentication\ErrorProneBackendMock',
             $authManager->getUserBackend('provider1')
         );
 
         $this->assertInstanceOf(
-            'Tests\Icinga\Authentication\ErrorProneBackendMock',
+            'Icinga\Test\Authentication\ErrorProneBackendMock',
             $authManager->getUserBackend('provider2')
         );
 
@@ -244,10 +206,12 @@ class ManagerTest extends BaseTestCase
         $managerConfig = new Zend_Config(
             array(
                 'provider1' => array(
-                    'class' => 'Tests\Icinga\Authentication\BackendMock'
+                    'name'  => 'provider1',
+                    'class' => 'Icinga\Test\Authentication\BackendMock'
                 ),
                 'provider2' => array(
-                    'class' => 'Tests\Icinga\Authentication\BackendMock'
+                    'name'  => 'provider2',
+                    'class' => 'Icinga\Test\Authentication\BackendMock'
                 )
             ),
             true
@@ -279,16 +243,16 @@ class ManagerTest extends BaseTestCase
         $managerConfig = new Zend_Config(
             array(
                 'provider1' => array(
-                    'class' => 'Tests\Icinga\Authentication\ErrorProneBackendMock'
+                    'class' => 'Icinga\Test\Authentication\ErrorProneBackendMock'
                 ),
                 'provider2' => array(
-                    'class' => 'Tests\Icinga\Authentication\ErrorProneBackendMock'
+                    'class' => 'Icinga\Test\Authentication\ErrorProneBackendMock'
                 ),
                 'provider3' => array(
-                    'class' => 'Tests\Icinga\Authentication\ErrorProneBackendMock'
+                    'class' => 'Icinga\Test\Authentication\ErrorProneBackendMock'
                 ),
                 'provider4' => array(
-                    'class' => 'Tests\Icinga\Authentication\BackendMock'
+                    'class' => 'Icinga\Test\Authentication\BackendMock'
                 )
             ),
             true
@@ -297,12 +261,12 @@ class ManagerTest extends BaseTestCase
         $authManager = $this->getManagerInstance($session, false, true, $managerConfig);
 
         $this->assertInstanceOf(
-            'Tests\Icinga\Authentication\ErrorProneBackendMock',
+            'Icinga\Test\Authentication\ErrorProneBackendMock',
             $authManager->getUserBackend('provider1')
         );
 
         $this->assertInstanceOf(
-            'Tests\Icinga\Authentication\BackendMock',
+            'Icinga\Test\Authentication\BackendMock',
             $authManager->getUserBackend('provider4')
         );
 

@@ -6,6 +6,12 @@ class TestInit
     {
         $libaryPath = realpath(dirname(__FILE__) . '/../../library/');
 
+        if (!defined('ICINGA_APPDIR')) {
+            define('ICINGA_APPDIR', realpath($libaryPath . '/../application'));
+        }
+
+        $configPath = realpath($libaryPath . '/../config');
+
         $modulePath = realpath(dirname(__FILE__) . '/../../modules/');
 
         $applicationPath = realpath(dirname(__FILE__) . '/../../application/');
@@ -53,6 +59,8 @@ class TestInit
 
         require_once 'Zend/Loader/Autoloader.php';
         \Zend_Loader_Autoloader::getInstance();
+
+        Icinga\Application\Config::$configDir = $configPath;
     }
 }
 

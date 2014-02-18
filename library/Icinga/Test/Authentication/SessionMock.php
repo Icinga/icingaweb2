@@ -27,32 +27,50 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Test\Monitoring\Testlib\Datasource\Strategies;
-use \Test\Monitoring\Testlib\DataSource\TestFixture;
+namespace Icinga\Test\Authentication;
 
-/**
- * Generic interface for Fixture insertion implementations
- *
- * These implementations can create Icinga-compatible Datatsources
- * from TestFixture classes and are therefore rather free in their
- * implementation
- *
- */
-interface InsertionStrategy {
-    /**
-     * Tell the class to use the given ressource as the
-     * connection identifier
-     *
-     * @param $connection   A generic connection identifier,
-     *                      the concrete class depends on the implementation
-     */
-    public function setConnection($connection);
+use Icinga\Web\Session\Session;
 
-    /**
-     * Insert the passed fixture into the datasource and allow
-     * the icinga backends to query it.
-     *
-     * @param TestFixture $fixture
-     */
-    public function insert(TestFixture $fixture);
+class SessionMock extends Session
+{
+    public $isOpen = false;
+    public $isWritten = false;
+
+    public function open()
+    {
+        if (!$this->isOpen && $this->isWritten) {
+            throw new \Exception("Session write after close");
+        }
+        $this->isOpen = true;
+    }
+
+    public function read($keepOpen = false)
+    {
+        $this->open();
+        if (!$keepOpen) {
+            $this->close();
+        }
+    }
+
+    public function write($keepOpen = false)
+    {
+        $this->open();
+        if (!$keepOpen) {
+            $this->close();
+        }
+    }
+
+    public function close()
+    {
+        $this->isOpen = false;
+        $this->isWritten = true;
+    }
+
+    public function purge()
+    {
+    }
+
+    public function refreshId()
+    {
+    }
 }

@@ -27,20 +27,10 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Tests\Icinga\Authentication;
-
-// @codingStandardsIgnoreStart
-require_once realpath(__DIR__ . '/../../../../../library/Icinga/Test/BaseTestCase.php');
-// @codingStandardsIgnoreEnd
+namespace Icinga\Test\Authentication;
 
 use Icinga\Test\BaseTestCase;
 
-// @codingStandardsIgnoreStart
-require_once 'Zend/Config.php';
-require_once BaseTestCase::$libDir . '/Authentication/Credential.php';
-require_once BaseTestCase::$libDir . '/Authentication/UserBackend.php';
-require_once BaseTestCase::$libDir . '/User.php';
-// @codingStandardsIgnoreEnd
 
 use \Zend_Config;
 use \Icinga\Authentication\Credential;
