@@ -29,13 +29,14 @@
 
 namespace Icinga\Web\Controller;
 
-use \Exception;
-use \Zend_Controller_Action;
-use \Zend_Controller_Request_Abstract;
-use \Zend_Controller_Response_Abstract;
-use \Zend_Controller_Action_HelperBroker;
+use Exception;
+use Zend_Controller_Action;
+use Zend_Controller_Request_Abstract;
+use Zend_Controller_Response_Abstract;
+use Zend_Controller_Action_HelperBroker;
 use Icinga\Authentication\Manager as AuthManager;
 use Icinga\Application\Benchmark;
+use Icinga\Application\Config;
 use Icinga\Util\Translator;
 use Icinga\Web\Widget\Tabs;
 use Icinga\Web\Url;
@@ -264,6 +265,7 @@ class ActionController extends Zend_Controller_Action
             if ($target !== 'inline') {
                 $target = ($this->getParam('view') === 'compact') ? 'inline' : 'body';
             }
+            $target = 'inline';
             $this->_helper->layout()->setLayout($target);
         }
         if ($user = $this->getRequest()->getUser()) {
