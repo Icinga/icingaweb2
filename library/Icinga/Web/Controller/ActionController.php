@@ -59,6 +59,32 @@ class ActionController extends Zend_Controller_Action
      */
     protected $requiresAuthentication = true;
 
+    private $config;
+
+    private $configs = array();
+
+    // TODO: This would look better if we had a ModuleActionController
+    public function Config($file = null)
+    {
+        if ($this->config === null) {
+            $module = $this->getRequest()->getModuleName();
+            if ($module === 'default') {
+                if ($file === null) {
+                    $this->config = Config::app();
+                } else {
+                    $this->config = Config::app($file);
+                }
+            } else {
+                if ($file === null) {
+                    $this->config = Config::module($module);
+                } else {
+                    $this->config = Config::module($module, $file);
+                }
+            }
+        }
+        return $this->config;
+    }
+
     /**
      * The constructor starts benchmarking, loads the configuration and sets
      * other useful controller properties
