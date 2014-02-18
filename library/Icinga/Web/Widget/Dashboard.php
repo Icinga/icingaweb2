@@ -48,7 +48,7 @@ use Zend_View_Abstract;
  * - Dashboard:     Shows all panes
  *
  */
-class Dashboard implements Widget
+class Dashboard extends AbstractWidget
 {
     /**
      * The configuration containing information about this dashboard
