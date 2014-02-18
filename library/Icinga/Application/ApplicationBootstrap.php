@@ -29,14 +29,13 @@
 
 namespace Icinga\Application;
 
-use \DateTimeZone;
-use \Exception;
-use \Icinga\Application\Modules\Manager as ModuleManager;
-use \Icinga\Exception\ConfigurationError;
-use \Icinga\Util\DateTimeFactory;
-use \Icinga\Util\Translator;
-
+use DateTimeZone;
+use Exception;
+use Icinga\Application\Modules\Manager as ModuleManager;
 use Icinga\Data\ResourceFactory;
+use Icinga\Exception\ConfigurationError;
+use Icinga\Util\DateTimeFactory;
+use Icinga\Util\Translator;
 
 /**
  * This class bootstraps a thin Icinga application layer
@@ -325,10 +324,7 @@ abstract class ApplicationBootstrap
         try {
             $this->moduleManager->loadEnabledModules();
         } catch (Exception $e) {
-            Logger::fatal(
-                'Could not load modules. An exception was thrown during bootstrap: %s',
-                $e->getMessage()
-            );
+            Logger::exception(new Exception('Cannot load enabled modules. An exception was thrown:', 0, $e));
         }
         return $this;
     }

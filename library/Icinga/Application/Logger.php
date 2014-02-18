@@ -29,12 +29,14 @@
 
 namespace Icinga\Application;
 
-use \Zend_Config;
-use \Zend_Log;
-use \Zend_Log_Filter_Priority;
-use \Zend_Log_Writer_Abstract;
-use \Zend_Log_Exception;
+use Exception;
+use Zend_Config;
+use Zend_Log;
+use Zend_Log_Exception;
+use Zend_Log_Filter_Priority;
+use Zend_Log_Writer_Abstract;
 use Icinga\Exception\ConfigurationError;
+use Icinga\Util\File;
 
 /**
  * Zend_Log wrapper
@@ -42,22 +44,7 @@ use Icinga\Exception\ConfigurationError;
 class Logger
 {
     /**
-     * Default log type
-     */
-    const DEFAULT_LOG_TYPE = "stream";
-
-    /**
-     * Default log target
-     */
-    const DEFAULT_LOG_TARGET = "./var/log/icingaweb.log";
-
-    /**
-     * Default debug target
-     */
-    const DEFAULT_DEBUG_TARGET = "./var/log/icingaweb.debug.log";
-
-    /**
-     * Array of writers
+     * Writers attached to the instance of Zend_Log
      *
      * @var array
      */
@@ -71,37 +58,39 @@ class Logger
     private $logger;
 
     /**
-     * Singleton instance
+     * Singleton Logger instance
      *
-     * @var Logger
+     * @var self
      */
     private static $instance;
 
     /**
-     * Queue of unwritten messages
-     *
-     * @var array
+     * Format for logging exceptions
      */
-    private static $queue = array();
+    const LOG_EXCEPTION_FORMAT = <<<'EOD'
+%s: %s
+
+Stacktrace
+----------
+%s
+EOD;
 
     /**
-     * Flag indicate that errors occurred in the past
-     *
-     * @var bool
-     */
-    private static $errorsOccurred = false;
-
-    /**
-     * Create a new logger object
+     * Create a new Logger
      *
      * @param Zend_Config $config
      */
     public function __construct(Zend_Config $config)
     {
-        $this->overwrite($config);
+        $this->logger = new Zend_Log();
+        if ((bool) $config->get('enable', true) === true) {
+            $this->addWriter($config);
+        }
     }
 
     /**
+     * Get the writers attached to the instance of Zend_Log
+     *
      * @return array
      */
     public function getWriters()
@@ -110,131 +99,59 @@ class Logger
     }
 
     /**
-     * Overwrite config to initiated logger
+     * Add writer to the Zend_Log instance
      *
      * @param   Zend_Config $config
      *
-     * @return  self
-     */
-    public function overwrite(Zend_Config $config)
-    {
-        $this->clearLog();
-        try {
-            if ($config->debug && $config->debug->enable == '1') {
-                $this->setupDebugLog($config);
-            }
-        } catch (ConfigurationError $e) {
-            $this->warn('Could not create debug log: ' . $e->getMessage());
-        }
-        if ($config->get('enable', '1') != '0') {
-            $this->setupLog($config);
-        }
-        $this->flushQueue();
-
-        return $this;
-    }
-
-    /**
-     * Configure debug log
-     *
-     * @param Zend_Config $config
-     */
-    private function setupDebugLog(Zend_Config $config)
-    {
-        $type = $config->debug->get("type", self::DEFAULT_LOG_TYPE);
-        $target = $config->debug->get("target", self::DEFAULT_LOG_TARGET);
-        if ($target == self::DEFAULT_LOG_TARGET) {
-            $type = self::DEFAULT_LOG_TYPE;
-        }
-        $this->addWriter($type, $target, Zend_Log::DEBUG);
-    }
-
-    /**
-     * Configure log
-     *
-     * @param Zend_Config $config
-     */
-    private function setupLog(Zend_Config $config)
-    {
-        $type = $config->get("type", self::DEFAULT_LOG_TYPE);
-        $target = $config->get("target", self::DEFAULT_DEBUG_TARGET);
-        if ($target == self::DEFAULT_DEBUG_TARGET) {
-            $type = self::DEFAULT_LOG_TYPE;
-        }
-        $level = Zend_Log::WARN;
-        if ($config->get("verbose", 0) == 1) {
-            $level = Zend_Log::INFO;
-        }
-        $this->addWriter($type, $target, $level);
-    }
-
-    /**
-     * Add writer to log instance
-     *
-     * @param   string  $type       Type, e.g. stream
-     * @param   string  $target     Target, e.g. filename
-     * @param   int     $priority   Value of Zend::* constant
      * @throws  ConfigurationError
      */
-    private function addWriter($type, $target, $priority)
+    public function addWriter($config)
     {
-        $type[0] = strtoupper($type[0]);
-        $writerClass = "Zend_Log_Writer_" . $type;
-
+        if (($type = $config->type) === null) {
+            throw new ConfigurationError('Logger configuration is missing the type directive');
+        }
+        $type = ucfirst(strtolower($type));
+        $writerClass = 'Zend_Log_Writer_' . $type;
         if (!@class_exists($writerClass)) {
-            self::fatal(
-                'Could not add log writer of type "%s". Type does not exist.',
-                $type
-            );
-            return;
+            throw new ConfigurationError('Cannot add log writer of type "' . $type . '". Type does not exist');
         }
         try {
-
-            $target = Config::resolvePath($target);
-            // Make sure the permissions for log target file are correct
-            if ($type === 'Stream') {
-                $writer = new $writerClass($target);
-                if (substr($target, 0, 6) !== 'php://' && !file_exists($target)) {
-                    touch($target);
-                    chmod($target, 0664);
-                }
-            } elseif ($type === 'Syslog') {
-                $writer = new $writerClass();
+            switch ($type) {
+                case 'Stream':
+                    if (($target = $config->target) === null) {
+                        throw new ConfigurationError(
+                            'Logger configuration is missing the target directive for type stream'
+                        );
+                    }
+                    $target = Config::resolvePath($target);
+                    $writer = new $writerClass($target);
+                    if (substr($target, 0, 6) !== 'php://' && !file_exists($target)) {
+                        File::create($target);
+                    }
+                    break;
+                case 'Syslog':
+                    $writer = new $writerClass($config->toArray());
+                    break;
+                default:
+                    throw new ConfigurationError('Logger configuration defines an invalid log type "' . $type . '"');
+            }
+            if (($priority = $config->priority) === null) {
+                $priority = Zend_Log::WARN;
             } else {
-                self::fatal('Got invalid lot type "%s"', $type);
+                $priority = (int) $priority;
             }
             $writer->addFilter(new Zend_Log_Filter_Priority($priority));
-
             $this->logger->addWriter($writer);
             $this->writers[] = $writer;
         } catch (Zend_Log_Exception $e) {
-            self::fatal(
-                'Could not add log writer of type %s. An exception was thrown: %s',
-                $type,
-                $e->getMessage()
+            throw new ConfigurationError(
+                'Cannot not add log writer of type "' . $type . '". An exception was thrown: '.  $e->getMessage()
             );
         }
     }
 
     /**
-     * Flush pending messages to writer
-     */
-    public function flushQueue()
-    {
-        try {
-            foreach (self::$queue as $msgTypePair) {
-                $this->logger->log($msgTypePair[0], $msgTypePair[1]);
-            }
-        } catch (Zend_Log_Exception $e) {
-            self::fatal(
-                'Could not flush logs to output. An exception was thrown: %s',
-                $e->getMessage()
-            );
-        }
-    }
-
-    /**
-     * Format output message
+     * Format a message
      *
      * @param   array $argv
      *
@@ -260,28 +177,13 @@ class Logger
     }
 
     /**
-     * Reset object configuration
-     */
-    public function clearLog()
-    {
-        $this->logger = null;
-        $this->writers = array();
-        $this->logger = new Zend_Log();
-    }
-
-    /**
-     * Create an instance
+     * Create/overwrite the internal Logger instance
      *
-     * @param   Zend_Config $config
-     *
-     * @return  Logger
+     * @param Zend_Config $config
      */
     public static function create(Zend_Config $config)
     {
-        if (self::$instance) {
-            return self::$instance->overwrite($config);
-        }
-        return self::$instance = new Logger($config);
+        self::$instance = new static($config);
     }
 
     /**
@@ -317,63 +219,36 @@ class Logger
     }
 
     /**
-     * Log message with severity fatal
-     */
-    public static function fatal()
-    {
-        self::log(self::formatMessage(func_get_args()), Zend_Log::EMERG);
-    }
-
-    /**
-     * Log message
+     * Log a message at a priority
      *
-     * @param string    $msg    Message
-     * @param int       $level  Log level
+     * @param  string   $message   Message to log
+     * @param  int      $priority  Priority of message
      */
-    private static function log($msg, $level = Zend_Log::INFO)
+    private static function log($message, $priority = Zend_Log::INFO)
     {
-        $logger = self::$instance;
-
-        if ($level < Zend_Log::WARN && self::$errorsOccurred === false) {
-            self::$errorsOccurred =true;
+        // Swallow messages if the Logger hast not been created
+        if (self::$instance !== null && count(self::$instance->getWriters()) > 0) {
+            self::$instance->logger->log($message, $priority);
         }
-
-        if (!$logger || !count($logger->getWriters())) {
-            array_push(self::$queue, array($msg, $level));
-            return;
-        }
-
-        $logger->logger->log($msg, $level);
     }
 
     /**
-     * Flag if messages > warning occurred
+     * Log a exception at a priority
      *
-     * @return bool
+     * @param  Exception    $e   Exception to log
+     * @param  int          $priority  Priority of message
      */
-    public static function hasErrorsOccurred()
+    public static function exception(Exception $e, $priority = Zend_Log::ERR)
     {
-        return self::$errorsOccurred;
-    }
-
-    /**
-     * Access the log queue
-     *
-     * The log queue holds messages that could not be written to output
-     *
-     * @return array
-     */
-    public static function getQueue()
-    {
-        return self::$queue;
-    }
-
-    /**
-     * Reset object state
-     */
-    public static function reset()
-    {
-        self::$queue = array();
-        self::$instance = null;
+        $message = array();
+        do {
+            $message[] = self::formatMessage(
+                array(self::LOG_EXCEPTION_FORMAT, get_class($e), $e->getMessage(), $e->getTraceAsString())
+            );
+        } while($e = $e->getPrevious());
+        self::log(
+            implode(PHP_EOL, $message),
+            $priority
+        );
     }
 }

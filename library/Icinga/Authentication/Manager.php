@@ -310,7 +310,7 @@ class Manager
             $this->persistCurrentUser();
         }
 
-        Logger::info('User "%s" logged in successfully', $credentials->getUsername());
+        Logger::info('User "%s" logged in', $credentials->getUsername());
 
         return true;
     }
