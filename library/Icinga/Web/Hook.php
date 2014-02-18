@@ -29,9 +29,9 @@
 
 namespace Icinga\Web;
 
-use \stdClass;
-use \Icinga\Application\Logger as Log;
-use \Icinga\Exception\ProgrammingError;
+use Icinga\Application\Logger as Log;
+use Icinga\Exception\ProgrammingError;
+use stdClass;
 
 /**
  * Icinga Web Hook registry
