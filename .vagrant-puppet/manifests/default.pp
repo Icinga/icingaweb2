@@ -584,7 +584,7 @@ file { '/var/www/html/icingaweb/css':
 
 file { '/var/www/html/icingaweb/img':
   ensure    => 'link',
-  target    => '/vagrant/public/css',
+  target    => '/vagrant/public/img',
   owner     => 'apache',
   group     => 'apache',
   require   => File['/var/www/html/icingaweb']
@@ -592,7 +592,7 @@ file { '/var/www/html/icingaweb/img':
 
 file { '/var/www/html/icingaweb/js':
   ensure    => 'link',
-  target    => '/vagrant/public/css',
+  target    => '/vagrant/public/js',
   owner     => 'apache',
   group     => 'apache',
   require   => File['/var/www/html/icingaweb']
