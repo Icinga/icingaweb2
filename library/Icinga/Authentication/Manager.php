@@ -50,8 +50,6 @@ use Icinga\Exception\NotReadableError;
  * Direct instantiation is not permitted, the AuthenticationManager
  * must be created using the getInstance method. Subsequent getInstance
  * calls return the same object and ignore any additional configuration.
- *
- * @TODO(mh): Group support is not implemented yet (#4624)
  **/
 class Manager
 {
@@ -75,13 +73,6 @@ class Manager
      * @var array
      **/
     private $userBackends = array();
-
-    /**
-     * Array of group backends
-     *
-     * @var array
-     **/
-    private $groupBackends = array();
 
     /**
      * The configuration
@@ -125,64 +116,55 @@ class Manager
     private function setupBackends(Zend_Config $config)
     {
         foreach ($config as $name => $backendConfig) {
-            // We won't initialize disabled backends
-            if ($backendConfig->get('disabled') == '1') {
+            if ((bool) $backendConfig->get('disabled', false) === true) {
                 continue;
             }
-
             if ($backendConfig->name === null) {
                 $backendConfig->name = $name;
             }
             $backend = $this->createBackend($backendConfig);
-            if ($backend instanceof UserBackend) {
-                $backend->connect();
-                $this->userBackends[$backend->getName()] = $backend;
-            } elseif ($backend instanceof GroupBackend) {
-                $backend->connect();
-                $this->groupBackends[$backend->getName()] = $backend;
-            }
+            $this->userBackends[$backend->getName()] = $backend;
         }
     }
 
     /**
-     * Create a single backend from the given Zend_Config
+     * Create a backend from the given Zend_Config
      *
-     * @param   Zend_Config     $backendConfig
+     * @param   Zend_Config $backendConfig
      *
-     * @return  null|UserBackend
+     * @return  UserBackend
+     * @throws  ConfigurationError
      */
     private function createBackend(Zend_Config $backendConfig)
     {
-        $target = ucwords(strtolower($backendConfig->target));
-        $name = $backendConfig->name;
-        // TODO: implement support for groups (#4624) and remove OR-Clause
-        if ((!$target || strtolower($target) != "user") && !$backendConfig->class) {
-            Logger::warn('AuthManager: Backend "%s" has no target configuration. (e.g. target=user|group)', $name);
-            return null;
-        }
-        try {
-            if (isset($backendConfig->class)) {
-                // use a custom backend class, this is probably only useful for testing
-                if (!class_exists($backendConfig->class)) {
-                    Logger::error('AuthManager: Class not found (%s) for backend %s', $backendConfig->class, $name);
-                    return null;
-                }
-                $class = $backendConfig->class;
-                return new $class($backendConfig);
+        if (isset($backendConfig->class)) {
+            // Use a custom backend class, this is only useful for testing
+            if (!class_exists($backendConfig->class)) {
+                throw new ConfigurationError(
+                    'Authentication configuration for backend "' . $backendConfig->name . '" defines an invalid backend'
+                    . ' class. Backend class "' . $backendConfig->class. '" not found'
+                );
             }
-
-            switch (ResourceFactory::getResourceConfig($backendConfig->resource)->type) {
-                case 'db':
-                    return new DbUserBackend($backendConfig);
-                case 'ldap':
-                    return new LdapUserBackend($backendConfig);
-                default:
-                    Logger::warn('AuthManager: Resource type ' . $backendConfig->type . ' not available.');
-            }
-        } catch (Exception $e) {
-            Logger::warn('AuthManager: Not able to create backend. Exception was thrown: %s', $e->getMessage());
+            return new $backendConfig->class($backendConfig);
         }
-        return null;
+        if (($type = ResourceFactory::getResourceConfig($backendConfig->resource)->type) === null) {
+            throw new ConfigurationError(
+                'Authentication configuration for backend "%s" is missing the type directive',
+                $backendConfig->name,
+                $backendConfig->class
+            );
+        }
+        switch (strtolower($type)) {
+            case 'db':
+                return new DbUserBackend($backendConfig);
+            case 'ldap':
+                return new LdapUserBackend($backendConfig);
+            default:
+                throw new ConfigurationError(
+                    'Authentication configuration for backend "' . $backendConfig->name. '" defines an invalid backend'
+                    . ' type. Backend type "' . $type . '" is not supported'
+                );
+        }
     }
 
     /**
@@ -208,79 +190,65 @@ class Manager
     }
 
     /**
-     * Add a group backend to the stack
+     * Find the backend which provides the user with the given credentials
      *
-     * @param   GroupBackend    $groupBackend
-     */
-    public function addGroupBackend(GroupBackend $groupBackend)
-    {
-        $this->groupBackends[$groupBackend->getName()] = $groupBackend;
-    }
-
-    /**
-     * Get a group backend by name
-     *
-     * @param   string  $name
-     *
-     * @return  GroupBackend|null
-     */
-    public function getGroupBackend($name)
-    {
-        return (isset($this->groupBackends[$name])) ? $this->groupBackends[$name] : null;
-    }
-
-    /**
-     * Find a backend for the given credentials
-     *
-     * @param   Credential  $credentials
+     * @param   Credential $credentials
      *
      * @return  UserBackend|null
      * @throws  ConfigurationError
      */
-    private function getBackendForCredential(Credential $credentials)
+    private function revealBackend(Credential $credentials)
     {
-        $authErrors = 0;
-
-        foreach ($this->userBackends as $userBackend) {
-
-            $flag = false;
-
-            try {
-                Logger::debug(
-                    'AuthManager: Try backend %s for user %s',
-                    $userBackend->getName(),
-                    $credentials->getUsername()
-                );
-                $flag = $userBackend->hasUsername($credentials);
-            } catch (Exception $e) {
-                Logger::error(
-                    'AuthManager: Backend "%s" has errors. Exception was thrown: %s',
-                    $userBackend->getName(),
-                    $e->getMessage()
-                );
-
-                $authErrors++;
-                continue;
-            }
-
-            if ($flag === true) {
-                Logger::debug(
-                    'AuthManager: Backend %s has user %s',
-                    $userBackend->getName(),
-                    $credentials->getUsername()
-                );
-                return $userBackend;
-            }
-        }
-
-        if ($authErrors >= count($this->userBackends)) {
-            Logger::fatal('AuthManager: No working backend found, unable to authenticate any user');
+        if (count($this->userBackends) === 0) {
             throw new ConfigurationError(
-                'No working backend found. Unable to authenticate any user.' .
-                "\nPlease examine the logs for more information."
+                'No authentication methods available. It seems that none authentication method has been set up. '
+                . ' Please contact your Icinga Web administrator'
             );
         }
-
+        $backendsWithError = 0;
+        // TODO(el): Currently the user is only notified about authentication backend problems when all backends
+        // have errors. It may be the case that the authentication backend which provides the user has errors but other
+        // authentication backends work. In that scenario the user is presented an error message saying "Incorrect
+        // username or password". We must inform the user that not all authentication methods are available.
+        foreach ($this->userBackends as $backend) {
+            Logger::debug(
+                'Asking authentication backend "%s" for user "%s"',
+                $backend->getName(),
+                $credentials->getUsername()
+            );
+            try {
+                $hasUser = $backend->hasUsername($credentials);
+            } catch (Exception $e) {
+                Logger::error(
+                    'Cannot ask authentication backend "%s" for user "%s". An exception was thrown: %s',
+                    $backend->getName(),
+                    $credentials->getUsername(),
+                    $e->getMessage()
+                );
+                ++$backendsWithError;
+                continue;
+            }
+            if ($hasUser === true) {
+                Logger::debug(
+                    'Authentication backend "%s" provides user "%s"',
+                    $backend->getName(),
+                    $credentials->getUsername()
+                );
+                return $backend;
+            } else {
+                Logger::debug(
+                    'Authentication backend "%s" does not provide user "%s"',
+                    $backend->getName(),
+                    $credentials->getUsername()
+                );
+            }
+        }
+        if ($backendsWithError === count($this->userBackends)) {
+            throw new ConfigurationError(
+                'No authentication methods available. It seems that all set up authentication methods have errors. '
+                . ' Please contact your Icinga Web administrator'
+            );
+        }
         return null;
     }
 
@@ -295,26 +263,13 @@ class Manager
      */
     public function authenticate(Credential $credentials, $persist = true)
     {
-        if (count($this->userBackends) === 0) {
-            Logger::error('AuthManager: No authentication backend provided, your users will never be able to login.');
-            throw new ConfigurationError(
-                'No authentication backend set - login will never succeed as icinga-web'
-                . ' doesn\'t know how to determine your user. ' . "\n"
-                . ' To fix this error, setup your authentication.ini with at least one valid authentication backend.'
-            );
-        }
-
-        $userBackend = $this->getBackendForCredential($credentials);
-
+        $userBackend = $this->revealBackend($credentials);
         if ($userBackend === null) {
-            Logger::info('AuthManager: Unknown user %s tried to log in', $credentials->getUsername());
+            Logger::info('Unknown user "%s" tried to log in', $credentials->getUsername());
             return false;
         }
-
-        $this->user = $userBackend->authenticate($credentials);
-
-        if ($this->user === null) {
-            Logger::info('AuthManager: Invalid credentials for user %s provided', $credentials->getUsername());
+        if (($user = $userBackend->authenticate($credentials)) === null) {
+            Logger::info('User "%s" tried to log in with an incorrect password', $credentials->getUsername());
             return false;
         }
 
@@ -323,15 +278,15 @@ class Manager
         $membership = new Membership();
 
         $groups = $membership->getGroupsByUsername($username);
-        $this->user->setGroups($groups);
+        $user->setGroups($groups);
 
         $admissionLoader = new AdmissionLoader();
 
-        $this->user->setPermissions(
+        $user->setPermissions(
             $admissionLoader->getPermissions($username, $groups)
         );
 
-        $this->user->setRestrictions(
+        $user->setRestrictions(
             $admissionLoader->getRestrictions($username, $groups)
         );
 
@@ -339,7 +294,7 @@ class Manager
             try {
                 $preferencesStore = PreferencesStore::create(
                     $preferencesConfig,
-                    $this->user
+                    $user
                 );
                 $preferences = new Preferences($preferencesStore->load());
             } catch (NotReadableError $e) {
@@ -349,13 +304,13 @@ class Manager
         } else {
             $preferences = new Preferences();
         }
-        $this->user->setPreferences($preferences);
-
+        $user->setPreferences($preferences);
+        $this->user = $user;
         if ($persist == true) {
             $this->persistCurrentUser();
         }
 
-        Logger::info('AuthManager: User successfully logged in: %s', $credentials->getUsername());
+        Logger::info('User "%s" logged in successfully', $credentials->getUsername());
 
         return true;
     }

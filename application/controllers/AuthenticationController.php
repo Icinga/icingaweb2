@@ -70,7 +70,7 @@ class AuthenticationController extends ActionController
                 );
                 if (!$auth->authenticate($credentials)) {
                     $this->view->form->getElement('password')
-                        ->addError(t('Please provide a valid username and password'));
+                        ->addError(t('Incorrect username or password'));
                 } else {
                     $this->redirectNow($redirectUrl);
                 }

@@ -1,21 +1,15 @@
 ; authentication.ini
 ;
-; Each section listed in this configuration represents a single backend
-; that can be used to authenticate users or groups. Each databse backend must refer
-; to a resource defined in resources.ini,
+; Each section listed in this configuration represents a backend used to authenticate users. The backend configurations
+: must define a resource referring to a configured database or LDAP connection in the INI file resources.ini.
 ;
-; The order of entries in this configuration is used to determine the fallback
-; priority in case of an error. If the resource referenced in the first
-; entry is not reachable, the next lower entry will be used for authentication.
-; Please be aware that this behaviour is not valid for the authentication itself.
-; The authentication will only be done against the one available resource with the highest
-; priority.
+; The backends will be processed from top to bottom using the first backend for authentication which reports that
+; the user trying to log in is available.
 
 
 [internal_ldap_authentication]
 @ldap_auth_disabled@
 backend             = ldap
-target              = user
 resource            = internal_ldap
 ; Object class of the user
 user_class          = @ldap_user_objectclass@
@@ -25,5 +19,4 @@ user_name_attribute = @ldap_attribute_username@
 [internal_db_authentication]
 @internal_auth_disabled@
 backend     = db
-target      = "user"
 resource    = "internal_db"
