@@ -275,6 +275,16 @@ class ActionController extends Zend_Controller_Action
         if ($this->_request->getParam('format') === 'pdf' && $this->_request->getControllerName() !== 'static') {
             $this->sendAsPdfAndDie();
         }
+
+        // Module container
+        $module_name = $this->_request->getModuleName();
+        $this->_helper->layout()->moduleStart =
+        '<div class="icinga-module module-'
+          . $module_name
+          . '" data-icinga-module="' . $module_name . '">'
+          . "\n"
+          ;
+        $this->_helper->layout()->moduleEnd = "</div>\n";
     }
 
     protected function sendAsPdfAndDie()
