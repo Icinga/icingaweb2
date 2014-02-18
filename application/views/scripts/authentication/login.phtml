@@ -1,31 +1,18 @@
-  <?php if (isset($this->errorInfo)): ?>
-  <div class="row">
-    <br/>
-    <div class="md-offset-2 col-md-8 col-sm-8 col-sm-offset-2">
-      <div class="alert alert-danger">
-        <?= $this->errorInfo ?>
-      </div>
-    </div>
+<div class="layout fullscreen login">
+ <div class="main">
+  <div class="logo">
+   <div class="image">
+    <img src="<?= $this->baseUrl('img/logo_icinga_big.png') ?>" width="400px">
+   </div>
   </div>
-<?php endif ?>
-  <div class="row">
-    <div class="col-md-4 col-md-offset-4 col-sm-6 col-sm-offset-3">
-      <div class="container">
-        <?= $this->form; ?>
-      </div>
+  <div class="form">
+   <?php if (isset($this->errorInfo)): ?>
+    <div class="error">
+    <?= $this->errorInfo ?>
     </div>
+   <?php endif ?>
+   <?= $this->form ?>
   </div>
-
-
-<script type="text/javascript">
-    /*
-     * Preserve the html anchor when redirecting to the originally called link. This
-     * is useful for preserving the detail view and the selection in that case.
-     *
-     * refs #4833
-     *
-     * TODO: Copy this snipped into the new login.phtml
-     */
-    var url = document.URL.match(/(^[^#]*)/)[0] + encodeURIComponent(window.location.hash);
-    document.getElementById('form_login').action = url;
-</script>
+  <div class="footer">Icinga Web 2 &copy; 2013-2014 Icinga Team</div>
+ </div>
+</div>
