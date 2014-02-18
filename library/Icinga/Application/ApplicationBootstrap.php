@@ -263,7 +263,7 @@ abstract class ApplicationBootstrap
         $application->bootstrap();
 
         if (Logger::hasErrorsOccurred()) {
-            $application->stopApplication(Logger::getQueue());
+        //    $application->stopApplication(Logger::getQueue());
         }
 
         return $application;
