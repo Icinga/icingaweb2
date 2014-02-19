@@ -80,7 +80,6 @@ class SVGRenderer
      */
     private $height = 100;
 
-
     /**
      * Create the root document and the SVG root node
      */
@@ -96,9 +95,7 @@ class SVGRenderer
         $this->document = $implementation->createDocument(null, null, $docType);
         $this->svg = $this->createOuterBox();
         $this->document->appendChild($this->svg);
-
     }
-
 
     /**
      * Create the outer SVG box  containing the root svg element and namespace and return it
@@ -111,8 +108,8 @@ class SVGRenderer
         $svg = $this->document->createElement('svg');
         $svg->setAttribute('xmlns', 'http://www.w3.org/2000/svg');
         $svg->setATtribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
-        $svg->setAttribute("width", "100%");
-        $svg->setAttribute("height", "100%");
+        $svg->setAttribute('width', $this->width . '%');
+        $svg->setAttribute('height', $this->width . '%');
         $svg->setAttribute(
             'viewBox',
             sprintf(
