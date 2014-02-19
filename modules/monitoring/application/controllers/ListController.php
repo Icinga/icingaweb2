@@ -36,6 +36,7 @@ use Icinga\Web\Hook;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
 use Icinga\Web\Widget\Tabextension\OutputFormat;
 use Icinga\Web\Widget\Tabs;
+use Icinga\Web\Widget\Chart\PieChart;
 use Icinga\Module\Monitoring\Backend;
 use Icinga\Web\Widget\SortBox;
 use Icinga\Web\Widget\FilterBox;
@@ -171,6 +172,8 @@ class Monitoring_ListController extends MonitoringController
             'host_last_check'       =>  'Last Host Check'
         ));
 
+        $this->view->piechart =
+            new PieChart(array(1,3,4,2));
     }
 
     /**

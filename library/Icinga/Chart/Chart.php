@@ -40,7 +40,6 @@ use \Icinga\Chart\SVGRenderer;
  */
 abstract class Chart implements Drawable
 {
-
     /**
      * SVG renderer that handles
      *

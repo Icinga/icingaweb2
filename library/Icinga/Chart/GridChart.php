@@ -254,7 +254,7 @@ class GridChart extends Chart
      */
     protected function init()
     {
-        $this->renderer = new SVGRenderer(13, 10);
+        $this->renderer = new SVGRenderer(100, 100);
         $this->setAxis(Axis::createLinearAxis());
     }
 
