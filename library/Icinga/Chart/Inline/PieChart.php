@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga Web 2.
@@ -27,26 +28,21 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use Icinga\Chart\Inline\PieChart;
-use Icinga\Application\Loader;
+namespace Icinga\Chart\Inline;
 
+use Icinga\Chart\PieChart as PieChartRenderer;
 
-/*
- * Use only autoloader and do not bootstrap EmbeddedWeb to improve performance
- * of svg rendering
+/**
+ * Draw an inline pie-chart directly from the available request parameters.
  */
-require_once dirname(__FILE__) . '/../../library/Icinga/Application/Loader.php';
-$loader = new Loader();
-$loader->registerNamespace('Icinga', dirname(__FILE__) . '/../../library/Icinga');
-$loader->register();
-
-if (!array_key_exists('data', $_GET)) {
-    die;
-}
-header('Content-Type: image/svg+xml');
-
-
-$pie = new PieChart();
-$pie->initFromRequest();
-echo $pie->render();
-
+class PieChart extends Inline {
+    public function render()
+    {
+        $pie = new PieChartRenderer();
+        $pie->drawPie(array(
+            'data' => $this->data, 'colors' => $this->colors, 'labels' => $this->labels
+        ));
+        $pie->setWidth($this->width)->setHeight($this->height);
+        echo $pie->render();
+    }
+} 
