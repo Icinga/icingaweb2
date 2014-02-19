@@ -223,7 +223,7 @@ class Tab implements Widget
     public function render(Zend_View_Abstract $view)
     {
         $class = $this->active ? ' class="active" ' : '';
-        $caption = $this->title;
+        $caption = $view->escape($this->title);
 
         if ($this->icon !== null) {
             $caption = '<img src="' . $this->icon->getAbsoluteUrl()

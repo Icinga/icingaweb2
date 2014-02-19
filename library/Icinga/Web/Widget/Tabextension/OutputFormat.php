@@ -67,19 +67,19 @@ class OutputFormat implements Tabextension
             'name'      => 'pdf',
             'title'     => 'PDF',
             'icon'      => 'img/icons/pdf.png',
-            'urlParams' => array('filetype' => 'pdf')
+            'urlParams' => array('format' => 'pdf'),
         ),
         self::TYPE_CSV => array(
             'name'      => 'csv',
             'title'     => 'CSV',
             'icon'      => 'img/icons/csv.png',
-            'urlParams' => array('filetype' => 'csv')
+            'urlParams' => array('format' => 'csv')
         ),
         self::TYPE_JSON => array(
             'name'      => 'json',
             'title'     => 'JSON',
             'icon'      => 'img/icons/json.png',
-            'urlParams' => array('filetype' => 'json')
+            'urlParams' => array('format' => 'json')
         )
     );
 
@@ -110,7 +110,10 @@ class OutputFormat implements Tabextension
                 continue;
             }
             $tabConfig = $this->supportedTypes[$type];
-            $tabConfig["url"] = Url::fromRequest();
+            $tabConfig['url'] = Url::fromRequest();
+            $tabConfig['tagParams'] = array(
+                'target' => '_blank'
+            );
             $this->tabs[] = new Tab($tabConfig);
         }
     }
