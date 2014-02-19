@@ -1,6 +1,5 @@
 <?php
 $viewHelper = $this->getHelper('MonitoringState');
-$j = 1;
 ?>
 <div class="row">
   <div class="pull-left">
@@ -137,19 +136,6 @@ $j = 1;
           <div class="output-text">
           <?= $this->escape(substr(strip_tags($service->service_output), 0, 10000)); ?>
           </div>
-        </td>
-
-        <td>
-            <?php
-                $piechart->setData(array($j, 2*$j,4,5));
-                echo $piechart->render($this);
-                $piechart->setData(array($j + 3,2*$j,4,2));
-                echo $piechart->render($this);
-                $piechart->setData(array($j + 7,2*$j,4,3));
-                echo $piechart->render($this);
-                $piechart->setColors(array('#111111', '#546345', '#434211', '#312312'));
-                $j++;
-            ?>
         </td>
       </tr>
     <?php endforeach; ?>
