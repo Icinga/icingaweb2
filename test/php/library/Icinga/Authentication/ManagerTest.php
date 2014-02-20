@@ -45,6 +45,7 @@ require_once BaseTestCase::$libDir . '/Authentication/Credential.php';
 require_once BaseTestCase::$libDir . '/Authentication/Membership.php';
 require_once BaseTestCase::$libDir . '/Exception/ConfigurationError.php';
 require_once BaseTestCase::$libDir . '/Exception/ProgrammingError.php';
+require_once BaseTestCase::$libDir . '/Exception/NotReadableError.php';
 require_once BaseTestCase::$libDir . '/Web/Session.php';
 require_once 'BackendMock.php';
 require_once 'ErrorProneBackendMock.php';
