@@ -35,8 +35,6 @@ abstract class AbstractWidget implements Widget
      */
     protected static $view;
 
-    abstract public function render(Zend_View_Abstract $view);
-
     /**
      * Getter for widget properties
      *
