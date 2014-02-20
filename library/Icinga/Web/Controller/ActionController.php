@@ -260,7 +260,7 @@ class ActionController extends Zend_Controller_Action
     {
         Benchmark::measure('Action::postDispatch()');
 
-        if ($this->_request->isXmlHttpRequest()) {
+        if ($this->_request->isXmlHttpRequest() || $this->getParam('view') === 'compact') {
             $this->_helper->layout()->setLayout('inline');
         }
         if ($user = $this->_request->getUser()) {
