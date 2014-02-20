@@ -261,14 +261,9 @@ class ActionController extends Zend_Controller_Action
         Benchmark::measure('Action::postDispatch()');
 
         if ($this->_request->isXmlHttpRequest()) {
-            $target = ($this->getParam('render') === 'detail') ? 'inline' : 'body';
-            if ($target !== 'inline') {
-                $target = ($this->getParam('view') === 'compact') ? 'inline' : 'body';
-            }
-            $target = 'inline';
-            $this->_helper->layout()->setLayout($target);
+            $this->_helper->layout()->setLayout('inline');
         }
-        if ($user = $this->getRequest()->getUser()) {
+        if ($user = $this->_request->getUser()) {
             if ($user->getPreferences()->get('app.showBenchmark') === true) {
                 Benchmark::measure('Response ready');
                 $this->_helper->layout()->benchmark = $this->renderBenchmark();
