@@ -105,7 +105,7 @@ tr.state td.state {
   -moz-border-radius: 0.5em 0 0 0.5em;
 }
 
-tr.state.handled td.state, tr.state.ok td.state, tr.state.up td.state {
+tr.state.handled td.state, tr.state.ok td.state, tr.state.up td.state, tr.state.pending td.state {
   border-left-style: solid;
   border-left-width: 1.5em;
   padding-left: 0.5em;
@@ -157,6 +157,14 @@ tr.state.invalid td.state {
 tr.state.handled td.state {
   color: inherit;
   background-color: transparent;
+}
+
+tr.state.unreachable td.state {
+  background-color: @colorUnreachable;
+}
+
+tr.state.unreachable.handled td.state {
+  border-left-color: @colorUnreachableHandled;
 }
 
 /* END of special tables and states */
