@@ -37,6 +37,7 @@ use Icinga\Data\DataArray\Query as ArrayQuery;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\SystemPermissionException;
 use Icinga\Exception\ProgrammingError;
+use Icinga\Exception\NotReadableError;
 
 /**
  * Module manager that handles detecting, enabling and disabling of modules
@@ -99,22 +100,10 @@ class Manager
      *                                              the given path
      *  @param array                $availableDirs  Installed modules location
      **/
-    public function __construct($app, $enabledDir = null, array $availableDirs = array())
+    public function __construct($app, $enabledDir, array $availableDirs)
     {
         $this->app = $app;
-        if (empty($availableDirs)) {
-            $availableDirs = array(realpath(ICINGA_APPDIR . '/../modules'));
-        } else {
-            foreach($availableDirs as $key => $dir) {
-                $dir[$key] = realpath($dir);
-            }
-        }
         $this->modulePaths = $availableDirs;
-        if ($enabledDir === null) {
-            $enabledDir = $this->app->getConfigDir() . '/enabledModules';
-        }
-        $enabledDir = realpath($enabledDir);
-
         $this->enableDir = $enabledDir;
     }
 
@@ -134,54 +123,59 @@ class Manager
      *
      * Update the internal $enabledDirs property with the enabled modules.
      *
-     * @throws ConfigurationError If module dir is not a directory or not readable
+     * @throws ConfigurationError If module dir does not exist, is not a directory or not readable
      */
     private function detectEnabledModules()
     {
+        $canonical = $this->enableDir;
+        if ($canonical === false) {
+            throw new NotReadableError(
+                'Cannot read enabled modules. Module directory "' . $this->enableDir . '" does not exist'
+            );
+        }
         if (!is_dir($this->enableDir)) {
-            throw new ConfigurationError(
-                'Could not read enabled modules: Module directory is not a directory: ' . $this->enableDir
+            throw new NotReadableError(
+                'Cannot read enabled modules. Module directory "' . $this->enableDir . '" is not a directory'
             );
         }
-
         if (!is_readable($this->enableDir)) {
-            throw new ConfigurationError(
-                'Could not read enabled modules: Module directory is not readable: ' . $this->enableDir
+            throw new NotReadableError(
+                'Cannot read enabled modules. Module directory "' . $this->enableDir . '" is not readable'
             );
         }
+        if (($dh = opendir($canonical)) !== false) {
+            $this->enabledDirs = array();
+            while (($file = readdir($dh)) !== false) {
 
-        $fh = opendir($this->enableDir);
+                if ($file[0] === '.' || $file === 'README') {
+                    continue;
+                }
 
-        $this->enabledDirs = array();
-        while (false !== ($file = readdir($fh))) {
+                $link = $this->enableDir . '/' . $file;
+                if (! is_link($link)) {
+                    Logger::warn(
+                        'Found invalid module in enabledModule directory "%s": "%s" is not a symlink',
+                        $this->enableDir,
+                        $link
+                    );
+                    continue;
+                }
 
-            if ($file[0] === '.' || $file === 'README') {
-                continue;
+                $dir = realpath($link);
+                if (!file_exists($dir) || !is_dir($dir)) {
+                    Logger::warn(
+                        'Found invalid module in enabledModule directory "%s": "%s" points to non existing path "%s"',
+                        $this->enableDir,
+                        $link,
+                        $dir
+                    );
+                    continue;
+                }
+
+                $this->enabledDirs[$file] = $dir;
+                ksort($this->enabledDirs);
             }
-
-            $link = $this->enableDir . '/' . $file;
-            if (! is_link($link)) {
-                Logger::warn(
-                    'Found invalid module in enabledModule directory "%s": "%s" is not a symlink',
-                    $this->enableDir,
-                    $link
-                );
-                continue;
-            }
-
-            $dir = realpath($link);
-            if (!file_exists($dir) || !is_dir($dir)) {
-                Logger::warn(
-                    'Found invalid module in enabledModule directory "%s": "%s" points to non existing path "%s"',
-                    $this->enableDir,
-                    $link,
-                    $dir
-                );
-                continue;
-            }
-
-            $this->enabledDirs[$file] = $dir;
-            ksort($this->enabledDirs);
+            closedir($dh);
         }
     }
 
@@ -517,29 +511,37 @@ class Manager
     public function detectInstalledModules()
     {
         foreach ($this->modulePaths as $basedir) {
-            if (!file_exists($basedir)) {
-                Logger::warn('Module path "%s" does not exist.', $basedir);
+            $canonical = realpath($basedir);
+            if ($canonical === false) {
+                Logger::warn('Module path "%s" does not exist', $basedir);
                 continue;
             }
-            $fh = opendir($basedir);
-            if ($fh === false) {
-                return $this;
+            if (!is_dir($canonical)) {
+                Logger::err('Module path "%s" is not a directory', $canonical);
+                continue;
             }
-            while ($name = readdir($fh)) {
-                if ($name[0] === '.') {
-                    continue;
-                }
-                if (is_dir($basedir . '/' . $name)) {
-                    if (! array_key_exists($name, $this->installedBaseDirs)) {
-                        $this->installedBaseDirs[$name] = $basedir . '/' . $name;
-                    } else {
-                        Logger::warn(
-                            'Module "%s" already exists in installation path "%s" and is ignored.',
-                            $basedir . '/' . $name,
-                            $this->installedBaseDirs[$name]
-                        );
+            if (!is_readable($canonical)) {
+                Logger::err('Module path "%s" is not readable', $canonical);
+                continue;
+            }
+            if (($dh = opendir($canonical)) !== false) {
+                while (($file = readdir($dh)) !== false) {
+                    if ($file[0] === '.') {
+                        continue;
+                    }
+                    if (is_dir($canonical . '/' . $file)) {
+                        if (! array_key_exists($file, $this->installedBaseDirs)) {
+                            $this->installedBaseDirs[$file] = $canonical . '/' . $file;
+                        } else {
+                            Logger::warn(
+                                'Module "%s" already exists in installation path "%s" and is ignored.',
+                                $canonical . '/' . $file,
+                                $this->installedBaseDirs[$file]
+                            );
+                        }
                     }
                 }
+                closedir($dh);
             }
         }
         ksort($this->installedBaseDirs);

@@ -40,6 +40,8 @@ use Icinga\Util\File;
 
 /**
  * Zend_Log wrapper
+ *
+ * TODO(el): This is subject to change (Feature #5683)
  */
 class Logger
 {
@@ -63,17 +65,6 @@ class Logger
      * @var self
      */
     private static $instance;
-
-    /**
-     * Format for logging exceptions
-     */
-    const LOG_EXCEPTION_FORMAT = <<<'EOD'
-%s: %s
-
-Stacktrace
-----------
-%s
-EOD;
 
     /**
      * Create a new Logger
@@ -135,17 +126,17 @@ EOD;
                 default:
                     throw new ConfigurationError('Logger configuration defines an invalid log type "' . $type . '"');
             }
-            if (($priority = $config->priority) === null) {
+            if ($config->priority === null) {
                 $priority = Zend_Log::WARN;
             } else {
-                $priority = (int) $priority;
+                $priority = (int) $config->priority;
             }
             $writer->addFilter(new Zend_Log_Filter_Priority($priority));
             $this->logger->addWriter($writer);
             $this->writers[] = $writer;
         } catch (Zend_Log_Exception $e) {
             throw new ConfigurationError(
-                'Cannot not add log writer of type "' . $type . '". An exception was thrown: '.  $e->getMessage()
+                'Cannot not add log writer of type "' . $type . '". An exception was thrown: ', 0, $e
             );
         }
     }
@@ -235,19 +226,19 @@ EOD;
     /**
      * Log a exception at a priority
      *
-     * @param  Exception    $e   Exception to log
-     * @param  int          $priority  Priority of message
+     * @param  Exception    $e          Exception to log
+     * @param  int          $priority   Priority of message
      */
     public static function exception(Exception $e, $priority = Zend_Log::ERR)
     {
         $message = array();
         do {
             $message[] = self::formatMessage(
-                array(self::LOG_EXCEPTION_FORMAT, get_class($e), $e->getMessage(), $e->getTraceAsString())
+                array('%s in %s:%d %s', get_class($e), $e->getFile(), $e->getLine(), $e->getMessage())
             );
         } while($e = $e->getPrevious());
         self::log(
-            implode(PHP_EOL, $message),
+            implode(' ', $message),
             $priority
         );
     }

@@ -6,9 +6,6 @@ indexController     = "dashboard"
 dateFormat          = "d/m/Y"
 timeFormat          = "g:i A"
 
-; The directory that contains the symlinks to all enabled directories
-moduleFolder        = "@icingaweb_config_path@/enabledModules"
-
 ; Contains the directories that will be searched for available modules. Modules that
 ; don't exist in these directories can still be symlinked in the module folder, but
 ; won't show up in the list of disabled modules

@@ -31,7 +31,8 @@ namespace Icinga\Web;
 
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
-use Icinga\Web\MenuItem;
+use Icinga\Application\Logger;
+use Icinga\Exception\NotReadableError;
 
 class Menu extends MenuItem
 {
@@ -43,12 +44,22 @@ class Menu extends MenuItem
     public static function fromConfig() {
         $menu = new static('menu');
         $manager =  Icinga::app()->getModuleManager();
-        $menuConfigs = array(Config::app('menu'));
-        foreach ($manager->listEnabledModules() as $moduleName) {
-            $moduleMenuConfig = Config::module($moduleName, 'menu');
-            if ($moduleMenuConfig) {
-                $menuConfigs[] = $moduleMenuConfig;
+        try {
+            $menuConfigs = array(Config::app('menu'));
+        } catch (NotReadableError $e) {
+            Logger::exception($e);
+            $menuConfigs = array();
+        }
+        try {
+
+            foreach ($manager->listEnabledModules() as $moduleName) {
+                $moduleMenuConfig = Config::module($moduleName, 'menu');
+                if ($moduleMenuConfig) {
+                    $menuConfigs[] = $moduleMenuConfig;
+                }
             }
+        } catch (NotReadableError $e) {
+            Logger::exception($e);
         }
         return $menu->loadMenuItems($menu->flattenConfigs($menuConfigs));
     }

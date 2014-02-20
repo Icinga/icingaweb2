@@ -31,9 +31,12 @@ namespace Icinga\Application;
 
 use DateTimeZone;
 use Exception;
+use Zend_Config;
+use Icinga\Application\Logger;
 use Icinga\Application\Modules\Manager as ModuleManager;
 use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
+use Icinga\Exception\NotReadableError;
 use Icinga\Util\DateTimeFactory;
 use Icinga\Util\Translator;
 
@@ -78,7 +81,7 @@ abstract class ApplicationBootstrap
     /**
      * Config object
      *
-     * @var Config
+     * @var Zend_Config
      */
     protected $config;
 
@@ -256,6 +259,13 @@ abstract class ApplicationBootstrap
     public static function start($configDir)
     {
         $application = new static($configDir);
+        // TODO(el): This is subject to change (Feature #5683)
+        date_default_timezone_set('UTC');
+        // Log to the System Log
+        Logger::create(new Zend_Config(array(
+            'type'          => 'syslog',
+            'application'   => 'Icinga Web'
+        )));
         $application->bootstrap();
         return $application;
     }
@@ -309,7 +319,12 @@ abstract class ApplicationBootstrap
         $this->moduleManager = new ModuleManager(
             $this,
             $this->configDir . '/enabledModules',
-            explode(':', $this->config->global->get('modulePath', ICINGA_APPDIR . '/../modules'))
+            explode(
+                ':',
+                $this->config->global !== null
+                    ? $this->config->global->get('modulePath', ICINGA_APPDIR . '/../modules')
+                    : ICINGA_APPDIR . '/../modules'
+            )
         );
         return $this;
     }
@@ -323,21 +338,26 @@ abstract class ApplicationBootstrap
     {
         try {
             $this->moduleManager->loadEnabledModules();
-        } catch (Exception $e) {
+        } catch (NotReadableError $e) {
             Logger::exception(new Exception('Cannot load enabled modules. An exception was thrown:', 0, $e));
         }
         return $this;
     }
 
     /**
-     * Load configuration
+     * Load application configuration
      *
      * @return self
      */
     protected function loadConfig()
     {
         Config::$configDir = $this->configDir;
-        $this->config = Config::app();
+        try {
+            $this->config = Config::app();
+        } catch (NotReadableError $e) {
+            Logger::exception(new Exception('Cannot load application configuration. An exception was thrown:', 0, $e));
+            $this->config = new Zend_Config(array());
+        }
         return $this;
     }
 
@@ -361,19 +381,28 @@ abstract class ApplicationBootstrap
      */
     protected function setupLogger()
     {
-        Logger::create($this->config->logging);
+        if ($this->config->logging !== null) {
+            Logger::create($this->config->logging);
+        }
         return $this;
     }
 
     /**
-     * Setup factories that provide access to the resources
+     * Set up the resource factory
      *
      * @return self
      */
     protected function setupResourceFactory()
     {
-        $config = Config::app('resources');
-        ResourceFactory::setConfig($config);
+        try {
+            $config = Config::app('resources');
+            ResourceFactory::setConfig($config);
+        } catch (NotReadableError $e) {
+            Logger::exception(
+                new Exception('Cannot load resource configuration. An exception was thrown:', 0, $e)
+            );
+        }
+
         return $this;
     }
 
@@ -385,7 +414,7 @@ abstract class ApplicationBootstrap
      */
     protected function setupTimezone()
     {
-        $timeZoneString = $this->config->global->get('timezone', 'UTC');
+        $timeZoneString = $this->config->global !== null ? $this->config->global->get('timezone', 'UTC') : 'UTC';
         try {
             $tz = new DateTimeZone($timeZoneString);
         } catch (Exception $e) {
@@ -406,7 +435,10 @@ abstract class ApplicationBootstrap
     protected function setupInternationalization()
     {
         try {
-            Translator::setupLocale($this->config->global->get('language', Translator::DEFAULT_LOCALE));
+            Translator::setupLocale(
+                $this->config->global !== null ? $this->config->global->get('language', Translator::DEFAULT_LOCALE)
+                    : Translator::DEFAULT_LOCALE
+            );
         } catch (Exception $error) {
             Logger::info($error->getMessage());
         }

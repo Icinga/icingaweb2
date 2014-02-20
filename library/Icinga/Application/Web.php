@@ -44,6 +44,7 @@ use \Zend_Controller_Front;
 use Icinga\Application\Logger;
 use Icinga\Authentication\Manager as AuthenticationManager;
 use Icinga\Exception\ConfigurationError;
+use Icinga\Exception\NotReadableError;
 use Icinga\User;
 use Icinga\Web\Request;
 use Icinga\Web\View;
@@ -208,7 +209,15 @@ class Web extends ApplicationBootstrap
      */
     private function setupUser()
     {
-        $authenticationManager = AuthenticationManager::getInstance();
+        try {
+            $config = Config::app('authentication');
+        } catch (NotReadableError $e) {
+            Logger::exception(
+                new Exception('Cannot load authentication configuration. An exception was thrown:', 0, $e)
+            );
+            $config = null;
+        }
+        $authenticationManager = AuthenticationManager::getInstance($config);
         if ($authenticationManager->isAuthenticated() === true) {
             $this->user = $authenticationManager->getUser();
         }
@@ -279,11 +288,10 @@ class Web extends ApplicationBootstrap
 
         $view->view->setEncoding('UTF-8');
         $view->view->headTitle()->prepend(
-            $this->getConfig()->{'global'}->get('project', 'Icinga')
+            $this->config->global !== null ? $this->config->global->get('project', 'Icinga') : 'Icinga'
         );
 
         $view->view->headTitle()->setSeparator(' :: ');
-        $view->view->navigation = $this->getConfig()->app('menu');
 
         $this->viewRenderer = $view;
 

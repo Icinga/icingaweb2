@@ -25,7 +25,7 @@ ICINGA_MYSQL_CMD=${ICINGA_MYSQL_CMD:-"/usr/local/icinga-mysql/var/rw/icinga.cmd"
 ICINGA_PGSQL_CMD=${ICINGA_PGSQL_CMD:-"/usr/local/icinga-pgsql/var/rw/icinga.cmd"}
 
 LOCKFILE=${LOCKFILE:-/var/lock/subsys/$PROG}
-PIDFILE=${PIDFILE:-/var/lock/subsys/$PROG/$PROD.pid}
+PIDFILE=${PIDFILE:-/var/lock/subsys/$PROG/$PROG.pid}
 
 RETVAL=0
 

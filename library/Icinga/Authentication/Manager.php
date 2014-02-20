@@ -36,12 +36,12 @@ use Icinga\Web\Session;
 use Icinga\Data\ResourceFactory;
 use Icinga\Application\Logger;
 use Icinga\Exception\ConfigurationError;
+use Icinga\Exception\NotReadableError;
 use Icinga\Application\Config as IcingaConfig;
 use Icinga\Authentication\Backend\DbUserBackend;
 use Icinga\Authentication\Backend\LdapUserBackend;
 use Icinga\User\Preferences;
 use Icinga\User\Preferences\PreferencesStore;
-use Icinga\Exception\NotReadableError;
 
 /**
  * The authentication manager allows to identify users and
@@ -90,8 +90,10 @@ class Manager
      **/
     private function __construct(Zend_Config $config = null)
     {
-        $this->config = $config === null ? IcingaConfig::app('authentication') : $config;
-        $this->setupBackends($this->config);
+        if ($config !== null) {
+            $this->setupBackends($config);
+            $this->config = $config;
+        }
     }
 
     /**

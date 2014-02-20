@@ -29,8 +29,9 @@
 
 namespace Icinga\Application;
 
-use \Icinga\Exception\ProgrammingError;
-use \Zend_Config_Ini;
+use Zend_Config_Ini;
+use Icinga\Exception\NotReadableError;
+use Icinga\Exception\ProgrammingError;
 
 /**
  * Global registry of application and module configuration.
@@ -68,22 +69,25 @@ class Config extends Zend_Config_Ini
     /**
      * Load configuration from the config file $filename
      *
-     * @param   string      $filename       The filename to parse
+     * @param   string $filename    The filename to parse
 
-     * @see     Zend_Config_Ini::__construct
-     * @throws  Exception                   When the file can't be read
+     * @throws  NotReadableError    When the file does not exist or cannot be read
      */
     public function __construct($filename)
     {
-        if (!@is_readable($filename)) {
-            throw new \Exception('Cannot read config file: ' . $filename);
+        $canonical = realpath($filename);
+        if ($canonical === false) {
+            throw new NotReadableError('Cannot read config file "' . $filename . '". Config file does not exist');
+        }
+        if (!is_readable($canonical)) {
+            throw new NotReadableError('Cannot read config file "' . $filename . '". Permission denied');
         };
-        $this->configFile = $filename;
+        $this->configFile = $canonical;
         $section = null;
         $options = array(
             'allowModifications' => true
         );
-        parent::__construct($filename, $section, $options);
+        parent::__construct($canonical, $section, $options);
     }
 
     /**
@@ -99,7 +103,7 @@ class Config extends Zend_Config_Ini
     {
         if (!isset(self::$app[$configname]) || $fromDisk) {
             $filename = self::$configDir . '/' . $configname . '.ini';
-            self::$app[$configname] = new Config(realpath($filename));
+            self::$app[$configname] = new Config($filename);
         }
         return self::$app[$configname];
     }
