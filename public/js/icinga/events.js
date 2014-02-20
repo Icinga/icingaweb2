@@ -22,7 +22,7 @@
         $('.dashboard > div', el).each(function(idx, el) {
             var url = $(el).attr('data-icinga-url');
             if (typeof url === 'undefined') return;
-            icinga.loader.loadUrl(url, $(el));
+            icinga.loader.loadUrl(url, $(el)).autorefresh = true;
         });
         // Set first links href in a action table tr as row href:
         $('table.action tr', el).each(function(idx, el) {
@@ -104,7 +104,7 @@
     },
 
     /**
-     * 
+     *
      */
     submitForm: function (event)
     {
@@ -143,14 +143,14 @@
     linkClicked: function(event)
     {
       var icinga = event.data.self.icinga;
-      
+
       var $a = $(this);
       var href = $a.attr('href');
       event.stopPropagation();
       event.preventDefault();
       if (href === '#') {
           if ($a.closest('#menu')) {
-              var $li = $a.closest('li'); 
+              var $li = $a.closest('li');
               $li.siblings('li.active').removeClass('active');
               $li.addClass('active');
           }
