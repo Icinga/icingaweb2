@@ -473,6 +473,14 @@ class Monitoring_ListController extends MonitoringController
 
     }
 
+    protected function addTitleTab($action)
+    {
+        $this->getTabs()->add($action, array(
+            'title' => ucfirst($action),
+            'url' => Url::fromPath('monitoring/list/' . $action)
+        ))->activate($action);
+    }
+
     /**
      * Return all tabs for this controller
      *
