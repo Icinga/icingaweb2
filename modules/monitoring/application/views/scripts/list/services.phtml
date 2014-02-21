@@ -9,7 +9,8 @@ $helper = $this->getHelper('MonitoringState');
 <div style="display: inline-block; margin: 1em; vertical-align: top;">
 <?= $this->sortControl->render($this); ?>
 </div><br />
-<?= $this->selectionToolbar('multi', $this->href('monitoring/multi/service', array( 'service' => '*', 'host' => '*' ))); ?> <?=  $this->paginationControl($services, null, null, array('preserve' => $this->preserve)); ?>
+<div style="display: inline-block; margin: 1em; vertical-align: top;">
+<?= $this->selectionToolbar('multi', $this->href('monitoring/multi/service', array( 'service' => '*', 'host' => '*' ))); ?></div> <?=  $this->paginationControl($services, null, null, array('preserve' => $this->preserve)); ?>
 </div>
 
 <div class="content">
@@ -92,7 +93,7 @@ foreach ($services as $service):
         </td>
 -->
         <td class="state" title="<?= $helper->getStateTitle($service, 'service'); ?>">
-            <strong><?= ucfirst($helper->monitoringState($service, 'service')); ?></strong><br />
+            <strong><?= strtoupper($helper->monitoringState($service, 'service')); ?></strong><br />
 
             <div class="small-row">
               Since <?= $this->timeSince($service->service_last_state_change); ?>
@@ -106,6 +107,7 @@ foreach ($services as $service):
         </td>
 
         <td title="<?= $helper->getStateTitle($service, 'host'); ?>">
+        <?= $this->perfdata($service->service_perfdata, true) ?>
 <!--          <?php if ($service->service_icon_image): ?>
             <div class="pull-left" style="margin-right: 2px;">
                 <i class="inline-image" style="background-image: url(<?= $this->escape($this->resolveMacros($service->service_icon_image, $service)); ?>);"></i>
@@ -116,7 +118,7 @@ foreach ($services as $service):
   (<?= ucfirst($helper->monitoringState($service, 'host')); ?>)
 <?php endif; ?>
 </a><br />
-          <?= $this->escape(substr(strip_tags($service->service_output), 0, 10000)); ?>
+          <p class="pluginoutput"><?= $this->escape(substr(strip_tags($service->service_output), 0, 10000)); ?></p>
         </td>
       </tr>
 <?php endforeach; ?>

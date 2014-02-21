@@ -1,29 +1,22 @@
 <div class="controls">
 <?= $this->tabs ?>
-<?=  $this->paginationControl($hostgroups, null, null, array('preserve' => $this->preserve)); ?>
-<table class="action wide">
-<thead>
-  <tr>
-    <th style="width: 40%; padding-left: 1em;">Hosts</th>
-    <th style="width: 60%; padding-left: 1em;">Services</th>
-  </tr>
-</thead>
-</table>
 </div>
-
-<table class="action wide">
-<tbody>
+<div class="content">
+<div class="summary" data-base-target="col2">
 <?php foreach($hostgroups as $h): ?>
-  <tr>
-    <td style="width: 40%" class="summary">
-      <a href="<?= $this->href(
+<span class="state">
+
+<table><tr><td>
+ <strong><a href="<?= $this->href(
       'monitoring/list/services',
       array('hostgroup' => $h->hostgroup))
-      ?>"><?= $h->hostgroup; ?></a>
+      ?>"><?= $h->hostgroup; ?></a></strong>
 
 <?php if ($h->hosts_up): ?>
       <!-- Hosts UP -->
       <span class="state up">
+
+
         <a href="<?= $this->href(
           'monitoring/list/hosts',
           array('host_state' => 0, 'hostgroup' => $h->hostgroup)
@@ -75,8 +68,9 @@
       </span>
       <!-- End of hosts PENDING -->
 <?php endif ?>
-    </td>
-    <td style="width: 60%" class="summary">
+
+</td><td>
+  Services
 <?php if ($h->services_ok): ?>
       <!-- Services OK -->
       <span class="state ok">
@@ -97,7 +91,8 @@
           'monitoring/list/services',
           array(
             'service_state' => 2,
-            'hostgroup' => $h->hostgroup
+            'hostgroup' => $h->hostgroup,
+            'sort' => 'service_severity'
         )) ?>" title="Services Critical"><?= $h->services_critical ?> CRITICAL: </a>
 
 <?php if ($h->services_critical_unhandled): ?>
@@ -106,7 +101,8 @@
           array(
             'service_state' => 2,
             'service_unhandled' => 1,
-            'hostgroup' => $h->hostgroup
+            'hostgroup' => $h->hostgroup,
+            'sort' => 'service_severity'
           )
         ) ?>" title="Services Critical Unhandled"><?= $h->services_critical_unhandled ?> Unhandled</a>
 <?php endif ?>
@@ -178,8 +174,8 @@
           ) ?>" title="Services Pending"><?= $h->services_pending ?></a>
       </span>
 <?php endif ?>
-    </td>
-</tr>
+</td></tr></table>
+</span><!-- end of services -->
 <?php endforeach; ?>
-  </tbody>
-</table>
+</div>
+</div>
