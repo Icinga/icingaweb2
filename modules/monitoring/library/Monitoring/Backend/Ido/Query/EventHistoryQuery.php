@@ -3,7 +3,6 @@
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
 use \Zend_Db_Select;
-use Icinga\Exception\ProgrammingError;
 
 class EventHistoryQuery extends IdoQuery
 {
@@ -37,17 +36,9 @@ class EventHistoryQuery extends IdoQuery
     );
 
     protected $useSubqueryCount = true;
-    protected $maxCount = 1000;
 
     protected function joinBaseTables()
     {
-
-//        $start = date('Y-m-d H:i:s', time() - 3600 * 24 * 1);
-        $start = date('Y-m-d H:i:s', time() - 3600 * 24 * 2);
-        $end   = date('Y-m-d H:i:s');
-        // TODO: $this->dbTime(...)
-        //$start = null;
-        //$end  = null;
         $columns = array(
             'raw_timestamp',
             'timestamp',
@@ -68,16 +59,6 @@ class EventHistoryQuery extends IdoQuery
             $this->createSubQuery('Notificationhistory', $columns)
         );
 
-        if ($start) {
-            foreach ($this->subQueries as $query) {
-                $query->where('timestamp > ?', $start);
-            }
-        }
-        if ($end) {
-            foreach ($this->subQueries as $query) {
-                $query->where('timestamp < ? ', $end);
-            }
-        }
         $sub = $this->db->select()->union($this->subQueries, Zend_Db_Select::SQL_UNION_ALL);
         $this->baseQuery = $this->db->select()->from(
             array('eho' => $this->prefix . 'objects'),
