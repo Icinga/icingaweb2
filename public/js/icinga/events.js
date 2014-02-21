@@ -39,6 +39,14 @@
                 // NOT YET, the applyOnloadDings: module.applyEventHandlers(mod);
             }
         });
+
+        $('.inlinepie', el).sparkline('html', {
+            type:        'pie',
+            sliceColors: ['#44bb77', '#ffaa44', '#ff5566', '#dcd'],
+            width:       '2em',
+            height:      '2em',
+        });
+
     },
     /**
      * Global default event handlers
