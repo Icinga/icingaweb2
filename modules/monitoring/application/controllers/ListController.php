@@ -225,10 +225,7 @@ class Monitoring_ListController extends MonitoringController
      */
     public function notificationsAction()
     {
-        $this->getTabs()->add('notifications', array(
-            'title' => 'Notifications',
-            'url' => Url::fromPath('monitoring/list/notifications')
-        ))->activate('notifications');
+        $this->addTitleTab('notifications');
 
         $query = NotificationView::fromRequest($this->_request)->getQuery();
         $this->view->notifications = $query->paginate();
@@ -240,6 +237,7 @@ class Monitoring_ListController extends MonitoringController
 
     public function contactsAction()
     {
+        $this->addTitleTab('contactgroups');
         $query = ContactView::fromRequest(
             $this->_request,
             array(
@@ -295,6 +293,10 @@ class Monitoring_ListController extends MonitoringController
 
     public function commentsAction()
     {
+        $this->getTabs()->add('comments', array(
+            'title' => 'Comments',
+            'url' => Url::fromPath('monitoring/list/comments')
+        ))->activate('comments');
         $query = CommentView::fromRequest(
             $this->_request,
             array(
@@ -356,10 +358,7 @@ class Monitoring_ListController extends MonitoringController
 
     public function hostgroupsAction()
     {
-        $this->getTabs()->add('hostgroups', array(
-            'title' => 'Hostgroup Summary',
-            'url' => Url::fromPath('monitoring/list/hostgroups')
-        ))->activate('hostgroups');
+        $this->addTitleTab('hostgroups');
 
         $query = GroupsummaryView::fromRequest(
             $this->_request,
