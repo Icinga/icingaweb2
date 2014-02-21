@@ -2,13 +2,13 @@
 
 namespace Icinga\File;
 
-use \DOMPDF;
-use \DOMDocument;
-use \DOMXPath;
+use DOMPDF;
+use DOMDocument;
+use DOMXPath;
 
 require_once 'vendor/dompdf/dompdf_config.inc.php';
 
-spl_autoload_register("DOMPDF_autoload");
+spl_autoload_register('DOMPDF_autoload');
 
 class Pdf extends DOMPDF
 {
@@ -20,18 +20,19 @@ class Pdf extends DOMPDF
     public $rowsPerPage = 10;
 
     /**
-     * If tables should only start at new pages.
+     * Wether tables should only start at new pages.
      *
      * @var bool
      */
     public $tableInitialPageBreak = false;
 
     /**
-     * If occurring tables should be split up into smaller tables to avoid errors in the document layout.
+     * Whether occurring tables should be split up into smaller tables to avoid
+     * errors in the document layout.
      *
      * @var bool
      */
-    public $paginateTable = true;
+    public $paginateTable = false;
 
     public function __construct()
     {
