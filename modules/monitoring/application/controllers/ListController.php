@@ -52,6 +52,7 @@ use Icinga\Module\Monitoring\DataView\ServiceStatus as ServiceStatusView;
 use Icinga\Module\Monitoring\DataView\Comment as CommentView;
 use Icinga\Module\Monitoring\DataView\Groupsummary as GroupsummaryView;
 use Icinga\Module\Monitoring\DataView\EventHistory as EventHistoryView;
+use Icinga\Module\Monitoring\DataView\StateHistorySummary;
 use Icinga\Module\Monitoring\Filter\UrlViewFilter;
 use Icinga\Module\Monitoring\DataView\ServiceStatus;
 use Icinga\Filter\Filterable;
@@ -270,6 +271,17 @@ class Monitoring_ListController extends MonitoringController
             'contact_notify_service_timeperiod' => 'Service Notification Timeperiod',
             'contact_notify_host_timeperiod' => 'Host Notification Timeperiod'
         ));
+        $this->handleFormatRequest($query);
+    }
+
+    public function statehistorysummaryAction()
+    {
+        $this->addTitleTab('statehistorysummary');
+
+         $query = StateHistorySummary::fromRequest(
+            $this->_request, array('day', 'cnt_events')
+        )->getQuery();
+        $this->view->summary = $query->fetchAll();
         $this->handleFormatRequest($query);
     }
 
