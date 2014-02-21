@@ -200,7 +200,7 @@ class Monitoring_ListController extends MonitoringController
             'title' => 'Downtimes',
             'url' => Url::fromPath('monitoring/list/downtimes')
         ))->activate('downtimes');
-        $query = DowntimeView::fromRequest($this->_request)->getQuery();
+        $query = DowntimeView::fromRequest($this->_request)->getQuery()->order('downtime_is_in_effect', 'DESC')->order('downtime_scheduled_start_time', 'DESC');
 
         $this->view->downtimes = $query->paginate();
         $this->setupSortControl(array(
