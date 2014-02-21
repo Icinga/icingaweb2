@@ -151,14 +151,14 @@ abstract class AbstractObject
                 'host_name',
                 'service_description',
                 'timestamp',
-                'raw_timestamp',
+//                'raw_timestamp',
                 'state',
                 'attempt',
                 'max_attempts',
                 'output',
                 'type'
             )
-        )->sort('timestamp', 'DESC')->getQuery();
+        )->sort('raw_timestamp', 'DESC')->getQuery();
         return $this;
     }
 
