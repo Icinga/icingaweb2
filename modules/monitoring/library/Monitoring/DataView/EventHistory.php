@@ -63,10 +63,10 @@ class EventHistory extends DataView
     {
         return array(
             'raw_timestamp' => array(
-                'default_dir' => self::SORT_DESC
+                'order' => self::SORT_DESC
             ),
             'timestamp' => array(
-                'default_dir' => self::SORT_DESC
+                'order' => self::SORT_DESC
             )
         );
     }

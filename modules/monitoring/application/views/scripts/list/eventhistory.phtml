@@ -11,6 +11,15 @@
 
         <div class="container pull-left">
             <div class="row">
+                <div class="col-md-5">
+                    <?=  $this->filterBox->render($this); ?>
+                </div>
+                <div class="col-md-7">
+                    <?=  $this->sortControl->render($this); ?>
+                </div>
+            </div>
+
+            <div class="row">
                 <?=  $this->paginationControl($history, null, null, array('preserve' => $this->preserve)); ?>
             </div>
             <div class="row">

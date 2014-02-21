@@ -362,7 +362,7 @@ class Monitoring_ListController extends MonitoringController
 
     public function eventhistoryAction()
     {
-        $query = EventHistoryView::fromRequest(
+        $dataview = EventHistoryView::fromRequest(
             $this->getRequest(),
             array(
                 'host_name',
@@ -378,12 +378,18 @@ class Monitoring_ListController extends MonitoringController
                 'host',
                 'service'
             )
-        )->getQuery();
+        );
+
+        $this->setupFilterControl($dataview, 'eventhistory');
+        $this->setupSortControl(
+            array(
+                'raw_timestamp' => 'Occurence'
+            )
+        );
+
+        $query = $dataview->getQuery();
         $this->handleFormatRequest($query);
         $this->view->history = $query->paginate();
-        $this->setupSortControl(
-            array()
-        );
     }
 
     /**

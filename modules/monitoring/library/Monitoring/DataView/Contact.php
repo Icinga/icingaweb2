@@ -55,7 +55,6 @@ class Contact extends DataView
     {
         return array(
             'contact_alias' => array(
-                'default_dir' => self::SORT_ASC,
                 'order' => self::SORT_DESC
             )
         );
