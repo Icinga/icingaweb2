@@ -38,11 +38,22 @@ table.action.wide td {
 }
 
 table.action td {
+  padding: 0.5em 1em 1em 1em;
   line-height: 1.5em;
-  padding: 0 0.5em 0 0.5em;
-  font-size: 0.8em;
   border-bottom: 1px solid #dde;
   overflow: hidden;
+}
+
+.dashboard table.action td {
+  line-height: 1.2em;
+  padding: 0.3 0.7em 0.3em 0.7em;
+}
+
+table.action td .pluginoutput {
+  font-size: 0.8em;
+  line-height: 1.2em;
+  padding: 0;
+  margin: 0;
 }
 
 table.action td a {
@@ -52,6 +63,10 @@ table.action td a {
 
 table.action td a:hover {
   text-decoration: underline;
+}
+
+table.action div.inlinepie {
+  margin-top: 0.5em;
 }
 
 
@@ -97,12 +112,18 @@ tr.state.new td.state {
   font-weight: bold;
 }
 
+tr.state td.state strong {
+  font-size: 1.2em;
+}
+
 tr.state td.state {
   width: 7em;
   padding-left: 2em; /* 1.5 border + 0.5padding */
   color: white;
+/*
   border-radius: 0.5em 0 0 0.5em;
   -moz-border-radius: 0.5em 0 0 0.5em;
+*/
 }
 
 tr.state.handled td.state, tr.state.ok td.state, tr.state.up td.state, tr.state.pending td.state {
@@ -275,23 +296,47 @@ span.state.invalid {
   background-color: @colorInvalid;
 }
 
-table.action td.summary {
-  vertical-align: top;
-  text-align: center;
+.summary a {
+  color: white;
+  text-decoration: none;
 }
 
-span.state {
+.summary {
+  font-size: 0.85em;
+  vertical-align: top;
+  text-align: left;
+}
+
+.summary td {
+  vertical-align: top;
+}
+.summary > span.state {
+  border: 1px solid #555;
+  color: black;
+}
+
+.summary strong a {
+  color: black;
+}
+
+.summary span.state.handled a {
+  color: #333;
 }
 
 .summary span.state {
-  width: 10em;
+  width: 26em;
+  vertical-align: top;
   text-align: center;
-  float: left;
   display: inline-block;
 }
 
 .summary span.state span.state {
-  width: 8em;
+  width: 12em;
+  font-size: 0.9em;
+}
+
+.summary span.state span.state span.state {
+  width: 12em;
 }
 
 span.state a {
@@ -308,3 +353,10 @@ span.state a.active {
 
 /* End of generic span.state */
 
+
+.controls {
+  font-size: 0.9em;
+}
+.controls a {
+  color: black;
+}
