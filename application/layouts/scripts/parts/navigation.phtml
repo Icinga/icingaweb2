@@ -1,5 +1,6 @@
 <div id="menu-header"><img src="<?= $this->href('img/logo_icinga-inv.png') ?>" style="height: 2em; width:6em; float: left; margin-left: 1.5em; margin-right: 9em; margin-top: 0.5em;" alt="" /></div>
 <div id="menu">
+<input type="text" style="width: 9em; margin: 0.5em;background-color: #999; background-image: url('<?= $this->href('img/icons/search.png') ?>'); background-repeat: no-repeat; background-position: 0.8em center; padding: 0.3em; padding-left: 2.5em; border: none; color: #F5F5F5; text-shadow: -1px 1px 0 #555555;" placeholder="Search..." />
 <?php
 // determine current key
 $url = Icinga\Web\Url::fromRequest()->getRelativeUrl();
