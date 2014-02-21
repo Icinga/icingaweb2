@@ -15,7 +15,6 @@ class Host extends AbstractObject
     public function populate()
     {
         $this->fetchComments()
-            ->fetchDowntimes()
             ->fetchHostgroups()
             ->fetchContacts()
             ->fetchContactGroups()
