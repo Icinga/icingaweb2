@@ -29,6 +29,8 @@
 
 namespace Icinga\Util;
 
+use Icinga\Exception\ProgrammingError;
+
 class Format
 {
     const STANDARD_IEC = 0;
@@ -98,6 +100,9 @@ class Format
     {
         if (! $timestamp) {
             return '-';
+        }
+        if (! preg_match('~^\d+$~', $timestamp)) {
+            throw new ProgrammingError(sprintf('"%s" is not a number', $timestamp));
         }
         $duration = time() - $timestamp;
         $prefix = '';
