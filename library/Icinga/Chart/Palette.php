@@ -80,7 +80,6 @@ class Palette
         }
 
         $color = current($this->colorSets[$type]);
-        echo $type;
         if ($color === false) {
             reset($this->colorSets[$type]);
 
