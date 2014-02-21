@@ -56,7 +56,9 @@
       // We catch resize events
       $(window).on('resize', { self: this }, this.onWindowResize);
 
+      // Destroy Icinga, clean up and interrupt pending requests on unload
       $( window ).on('unload', { self: this }, this.onUnload);
+      $( window ).on('beforeunload', { self: this }, this.onUnload);
 
       // We catch scroll events in our containers
       $('.container').on('scroll', icinga.events.onContainerScroll);
@@ -246,6 +248,7 @@
       $(window).off('popstate', this.historyChanged);
       $(window).off('resize', this.onWindowResize);
       $(window).off('unload', this.onUnload);
+      $(window).off('beforeunload', this.onUnload);
       $(document).off('scroll', '.container', this.onContainerScroll);
       $(document).off('click', 'a', this.linkClicked);
       $(document).off('click', 'tr[href]', this.linkClicked);
