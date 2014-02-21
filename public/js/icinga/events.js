@@ -48,6 +48,8 @@
       // We catch resize events
       $(window).on('resize', { self: this }, this.onWindowResize);
 
+      $( window ).on('unload', { self: this }, this.onUnload);
+
       // We catch scroll events in our containers
       $('.container').on('scroll', icinga.events.onContainerScroll);
 
@@ -69,6 +71,13 @@
       // $(document).on('keyup', 'form.auto input', this.formChangeDelayed);
       // $(document).on('change', 'form.auto input', this.formChanged);
       // $(document).on('change', 'form.auto select', this.submitForm);
+    },
+
+    onUnload: function(event)
+    {
+        var icinga = event.data.self.icinga;
+        icinga.logger.info('Unloading Icinga');
+        icinga.destroy();
     },
 
     historyChanged: function(event)
@@ -228,6 +237,7 @@
     {
       $(window).off('popstate', this.historyChanged);
       $(window).off('resize', this.onWindowResize);
+      $(window).off('unload', this.onUnload);
       $(document).off('scroll', '.container', this.onContainerScroll);
       $(document).off('click', 'a', this.linkClicked);
       $(document).off('click', 'tr[href]', this.linkClicked);
