@@ -146,6 +146,9 @@
 
       var $a = $(this);
       var href = $a.attr('href');
+      if ($a.attr('target') === '_blank') {
+          return true;
+      }
       event.stopPropagation();
       event.preventDefault();
       if (href === '#') {
@@ -158,6 +161,9 @@
       }
       var $target = $('#col1');
       var $container = $a.closest('.container');
+      if ($container.length) {
+        $target = $container;
+      }
 // If link is hash tag...
       if ($a.closest('table').length) {
           $target = $('#col2');
@@ -165,7 +171,7 @@
           icinga.ui.fixControls();
       }
       if ($a.closest('[data-base-target]').length) {
-          $target = $('#' + $a.closest('[data-base-target]').data('base-target'));
+          $target = $('#' + $a.closest('[data-base-target]').data('baseTarget'));
           $('#layout').addClass('twocols');
           icinga.ui.fixControls();
       }
