@@ -414,6 +414,4 @@ class Group implements IQueryPart
     {
         $this->query = $query;
     }
-
-
 }

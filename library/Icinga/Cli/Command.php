@@ -126,4 +126,3 @@ abstract class Command
     {
     }
 }
-

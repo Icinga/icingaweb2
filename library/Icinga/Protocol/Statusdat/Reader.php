@@ -32,9 +32,6 @@ namespace Icinga\Protocol\Statusdat;
 use Icinga\Application\Logger;
 use Icinga\Data\DatasourceInterface;
 use Icinga\Exception\ConfigurationError;
-use Icinga\Exception;
-use Icinga\Benchmark;
-use Icinga\Protocol\Statusdat\View\MonitoringObjectList;
 
 /**
  * Class Reader
@@ -163,9 +160,11 @@ class Reader implements IReader, DatasourceInterface
         // the object cache might exist for months and is still valid
         $this->objectCache = $this->initCache($this->config->object_file, $backendOptions, null, $cachingEnabled);
         $this->statusCache = $this->initCache(
-            $this->config->status_file, $backendOptions, $maxCacheLifetime, $cachingEnabled
+            $this->config->status_file,
+            $backendOptions,
+            $maxCacheLifetime,
+            $cachingEnabled
         );
-
     }
 
     /**

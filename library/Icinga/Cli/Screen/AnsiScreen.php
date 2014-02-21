@@ -101,11 +101,11 @@ class AnsiScreen extends Screen
             $parts = preg_split('/;/', $current);
             $lc_parts = array();
             foreach ($parts as $part) {
-              if (strpos($part, '=') === false) {
-                continue;
-              }
-              list($key, $val) = preg_split('/=/', $part, 2);
-              $lc_parts[$key] = $val;
+                if (strpos($part, '=') === false) {
+                    continue;
+                }
+                list($key, $val) = preg_split('/=/', $part, 2);
+                $lc_parts[$key] = $val;
             }
 
             $this->isUtf8 = array_key_exists('LC_CTYPE', $lc_parts)

@@ -184,8 +184,9 @@ class GeneralForm extends Form
                 'label'         => t('Default Language'),
                 'required'      => true,
                 'multiOptions'  => $languages,
-                'helptext'      => t('Select the language to use by default. Can be'
-                                     . ' overwritten by a user in his preferences.'),
+                'helptext'      => t(
+                    'Select the language to use by default. Can be overwritten by a user in his preferences.'
+                ),
                 'value'         => $cfg->get('language', Translator::DEFAULT_LOCALE)
             )
         );

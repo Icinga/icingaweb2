@@ -31,8 +31,6 @@ namespace Icinga\Protocol\Statusdat;
 
 use Exception;
 use Icinga\Exception\ProgrammingError;
-use Icinga\Filter\Query\Node;
-use Icinga\Protocol;
 use Icinga\Data\BaseQuery;
 use Icinga\Protocol\Statusdat\View\MonitoringObjectList;
 use Icinga\Protocol\Statusdat\Query\IQueryPart;
@@ -227,7 +225,7 @@ class Query extends BaseQuery
             if ($baseGroup) {
                 $baseGroup->setQuery($this);
                 $idx = array_keys($state[$target]);
-                $indexes = $baseGroup->filter($state[$target], $idx );
+                $indexes = $baseGroup->filter($state[$target], $idx);
             }
             if (!isset($result[$target])) {
                 $result[$target] = $indexes;

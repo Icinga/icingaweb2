@@ -40,7 +40,8 @@ class Menu extends MenuItem
      *
      * @return Menu
      */
-    public static function fromConfig() {
+    public static function fromConfig()
+    {
         $menu = new static('menu');
         $manager =  Icinga::app()->getModuleManager();
         $menuConfigs = array(Config::app('menu'));
@@ -81,5 +82,4 @@ class Menu extends MenuItem
         }
         return $this;
     }
-
 }

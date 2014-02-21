@@ -372,7 +372,7 @@ class Tree
 
         if ($ctx->type == Node::TYPE_OPERATOR) {
             if ($ctx->left == $node->left  && $ctx->operator == $node->operator) {
-                if(empty($node->right) || $ctx->right == $node->right) {
+                if (empty($node->right) || $ctx->right == $node->right) {
                     return $ctx;
                 }
             }

@@ -35,13 +35,14 @@ class Documentation
         $d = "USAGE: icingaweb [module] <command> [action] [options]\n\n"
            . "Available commands:\n\n";
         foreach ($this->loader->listCommands() as $command) {
-            if ($command === 'autocomplete') continue;
-            $obj = $this->loader->getCommandInstance($command);
-            $d .= sprintf(
-                "  %-14s  %s\n",
-                $command,
-                $this->getClassTitle($obj)
-            );
+            if ($command !== 'autocomplete') {
+                $obj = $this->loader->getCommandInstance($command);
+                $d .= sprintf(
+                    "  %-14s  %s\n",
+                    $command,
+                    $this->getClassTitle($obj)
+                );
+            }
         }
         $d .= "\nAvailable modules:\n\n";
         foreach ($this->loader->listModules() as $module) {

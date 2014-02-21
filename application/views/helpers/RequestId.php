@@ -1,4 +1,6 @@
 <?php
+// @codingStandardsIgnoreStart
+
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga Web 2.
@@ -30,7 +32,6 @@
 use \Zend_Controller_Front;
 use \Zend_View_Helper_Abstract;
 
-
 class Zend_View_Helper_RequestId extends Zend_View_Helper_Abstract
 {
     public function requestId()
@@ -38,3 +39,5 @@ class Zend_View_Helper_RequestId extends Zend_View_Helper_Abstract
         return Zend_Controller_Front::getInstance()->getRequest()->getId();
     }
 }
+
+// @codingStandardsIgnoreStop

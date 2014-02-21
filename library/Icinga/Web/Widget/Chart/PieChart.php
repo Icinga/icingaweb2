@@ -34,8 +34,8 @@ use Icinga\Web\Url;
 
 use \Zend_View_Abstract;
 
-class PieChart implements Widget {
-
+class PieChart implements Widget
+{
      /**
      * The template string used for rendering this widget
      *
@@ -123,4 +123,4 @@ EOD;
         $template = preg_replace('{{height}}', $this->height, $template);
         return $template;
     }
-} 
+}

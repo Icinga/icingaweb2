@@ -131,7 +131,7 @@ class Loader
                 $command,
                 null,
                 false
-            );    
+            );
         }
         return $this->commandInstances[$command];
     }
@@ -346,29 +346,31 @@ class Loader
     protected function formatTrace($trace)
     {
         $output = array();
-        foreach($trace as $i => $step)
-        {
+        foreach ($trace as $i => $step) {
             $object = '';
             if (isset($step['object']) && is_object($step['object'])) {
                 $object = sprintf('[%s]', get_class($step['object'])) . $step['type'];
             } elseif (! empty($step['object'])) {
                 $object = (string) $step['object'] . $step['type'];
             }
-            if (is_array($step['args']))
-            {
-                foreach ($step['args'] as & $arg)
-                {
-                    if (is_object($arg))
-                    {
+            if (is_array($step['args'])) {
+                foreach ($step['args'] as & $arg) {
+                    if (is_object($arg)) {
                         $arg = sprintf('[%s]', get_class($arg));
                     }
                     if (is_string($arg)) {
                         $arg = preg_replace('~\n~', '\n', $arg);
-                        if (strlen($arg) > 50) $arg = substr($arg, 0, 47) . '...';
+                        if (strlen($arg) > 50) {
+                            $arg = substr($arg, 0, 47) . '...';
+                        }
                         $arg = "'" . $arg . "'";
                     }
-                    if ($arg === null) $arg = 'NULL';
-                    if (is_bool($arg)) $arg = $arg ? 'TRUE' : 'FALSE';
+                    if ($arg === null) {
+                        $arg = 'NULL';
+                    }
+                    if (is_bool($arg)) {
+                        $arg = $arg ? 'TRUE' : 'FALSE';
+                    }
                 }
             } else {
                 $step['args'] = array();

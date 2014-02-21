@@ -105,7 +105,7 @@ class Manager
         if (empty($availableDirs)) {
             $availableDirs = array(realpath(ICINGA_APPDIR . '/../modules'));
         } else {
-            foreach($availableDirs as $key => $dir) {
+            foreach ($availableDirs as $key => $dir) {
                 $dir[$key] = realpath($dir);
             }
         }

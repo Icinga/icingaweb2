@@ -3,7 +3,6 @@
 namespace Icinga\User;
 
 use \Zend_Log;
-use \DateTime;
 
 /**
  * Class Message
@@ -12,8 +11,8 @@ use \DateTime;
  *
  * @package Icinga\User
  */
-class Message {
-
+class Message
+{
     /**
      * The content of this message
      *
@@ -34,7 +33,8 @@ class Message {
      *                            * Zend_Log::INFO
      *                            * Zend_Log::ERR
      */
-    public function __construct($message, $level = Zend_Log::INFO) {
+    public function __construct($message, $level = Zend_Log::INFO)
+    {
         $this->message = $message;
         $this->level = $level;
     }

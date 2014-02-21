@@ -180,10 +180,12 @@ class ActionController extends Zend_Controller_Action
     {
         if ($this->getRequest()->isXmlHttpRequest()) {
             $this->_response->setHttpResponseCode(401);
-            $this->_helper->json(array(
-                'exception'     => 'You are not logged in',
-                'redirectTo'    => Url::fromPath('/authentication/login')->getAbsoluteUrl()
-            ));
+            $this->_helper->json(
+                array(
+                    'exception'     => 'You are not logged in',
+                    'redirectTo'    => Url::fromPath('/authentication/login')->getAbsoluteUrl()
+                )
+            );
         }
         $url = Url::fromPath('/authentication/login');
         $url->setParam('redirect', $afterLogin);

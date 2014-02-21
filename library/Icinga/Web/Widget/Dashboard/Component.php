@@ -213,7 +213,7 @@ EOD;
         $html = str_replace('{FULL_URL}', $url->getUrlWithout('view')->getAbsoluteUrl(), $html);
         $html = str_replace('{REMOVE_BTN}', $this->getRemoveForm($view), $html);
         $html = str_replace('{DIMENSION}', $this->getBoxSizeAsCSS(), $html);
-        $html = str_replace('{{IS_FULL}}', $this->fullsize ? 'row' : '' , $html);
+        $html = str_replace('{{IS_FULL}}', $this->fullsize ? 'row' : '', $html);
         $html = str_replace('{TITLE}', htmlentities($this->getTitle()), $html);
         return $html;
     }
@@ -236,14 +236,16 @@ EOD;
         $form = new Form();
         $form->setMethod('POST');
         $form->setAction($removeUrl);
-        $form->addElement(new Zend_Form_Element_Button(
-            'remove_pane_btn',
-            array(
-                'class'=> 'btn btn-danger pull-right',
-                'type' => 'submit',
-                'label' => 'Remove'
+        $form->addElement(
+            new Zend_Form_Element_Button(
+                'remove_pane_btn',
+                array(
+                    'class'=> 'btn btn-danger pull-right',
+                    'type' => 'submit',
+                    'label' => 'Remove'
+                )
             )
-        ));
+        );
         return $form->render($view);
     }
 

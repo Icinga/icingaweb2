@@ -51,7 +51,7 @@ class FilterBadgeRenderer implements Widget
 
     private $tpl =<<<'EOT'
 <div class="btn-group">
-  <a title="Click To Remove"  class="btn btn-default btn-xs dropdown-toggle" href="{{REMOVE_FILTER}}" data-icinga-target="self">
+  <a title="Click To Remove" class="btn btn-default btn-xs dropdown-toggle" href="{{REMOVE_FILTER}}" data-icinga-target="self">
     {{FILTER_SUM}}
   </a>
   {{SUBLIST}}
@@ -89,7 +89,7 @@ EOT;
             $value = $node->right[0];
         } else {
             $value = join(',', $node->right);
-            if(strlen($value) > 15) {
+            if (strlen($value) > 15) {
                 $value = substr($value, 0, 13) . '..';
             }
         }
@@ -110,7 +110,7 @@ EOT;
             $url = $basePath . (empty($allParams) ? '?' : '&') . $url;
 
             $liItem = str_replace('{{REMOVE_FILTER}}', $url, $this->subItemTpl);
-            $liItem = str_replace('{{FILTER_TEXT}}', ucfirst($node->left) . $node->operator . $value , $liItem);
+            $liItem = str_replace('{{FILTER_TEXT}}', ucfirst($node->left) . $node->operator . $value, $liItem);
             $liItems .= $liItem;
         }
 

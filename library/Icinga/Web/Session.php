@@ -34,7 +34,6 @@ use Icinga\Session\SessionNamespace;
 use Icinga\Session\Session as BaseSession;
 use Icinga\Exception\ProgrammingError;
 
-
 /**
  * Session container
  */

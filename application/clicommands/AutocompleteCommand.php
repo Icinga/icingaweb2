@@ -4,7 +4,6 @@ namespace Icinga\Clicommands;
 
 use Icinga\Cli\Command;
 use Icinga\Cli\Loader;
-use Icinga\Cli\Documentation;
 
 /**
  * Autocomplete for modules, commands and actions
@@ -22,11 +21,11 @@ class AutocompleteCommand extends Command
     {
         if ($suggestions) {
             $key = array_search('autocomplete', $suggestions);
-            if ($key !== false){
+            if ($key !== false) {
                 unset($suggestions[$key]);
             }
             echo implode("\n", $suggestions)
-           // . serialize($GLOBALS['argv'])
+            //. serialize($GLOBALS['argv'])
             . "\n";
         }
     }
@@ -41,7 +40,6 @@ class AutocompleteCommand extends Command
      */
     public function completeAction()
     {
-        // TODO: 
         $module  = null;
         $command = null;
         $action  = null;
@@ -54,16 +52,11 @@ class AutocompleteCommand extends Command
         $search_word = $bare_params[$cword];
         if ($search_word === '--') {
             // TODO: Unfinished, completion missing
-            return $this->suggest(array(
-                '--verbose',
-                '--help',
-                '--debug'
-            ));
+            return $this->suggest(array('--verbose', '--help', '--debug'));
         }
 
         $search = $params->shift();
-        // TODO: 
-        if (! $search) {
+        if (!$search) {
             return $this->suggest(
                 array_merge($loader->listCommands(), $loader->listModules())
             );

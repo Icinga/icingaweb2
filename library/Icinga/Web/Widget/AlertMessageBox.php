@@ -17,8 +17,8 @@ use Icinga\Authentication\Manager as AuthenticationManager;
  * but this is done lazily when render() is called, to ensure that messages will
  * always be displayed before they are cleared.
  */
-class AlertMessageBox implements \Icinga\Web\Widget\Widget {
-
+class AlertMessageBox implements \Icinga\Web\Widget\Widget
+{
     /**
      * Remove all messages from the current user, return them and commit
      * changes to the underlying session.
@@ -74,10 +74,11 @@ class AlertMessageBox implements \Icinga\Web\Widget\Widget {
     /**
      * Create a new AlertBox
      *
-     * @param boolean showUserMessages 	If the current user messages should be displayed 
-	 *									in this	AlertMessageBox. Defaults to false
+     * @param boolean showUserMessages 	If the current user messages should be displayed
+     *                                  in this AlertMessageBox. Defaults to false
      */
-    public function __construct($showUserMessages = false) {
+    public function __construct($showUserMessages = false)
+    {
         if ($showUserMessages) {
             $this->user = AuthenticationManager::getInstance()->getUser();
         }
@@ -108,10 +109,11 @@ class AlertMessageBox implements \Icinga\Web\Widget\Widget {
      *
      * @return string
      */
-    public function render(Zend_View_Abstract $view = null) {
+    public function render(Zend_View_Abstract $view = null)
+    {
         $html = '';
         if (isset($this->user)) {
-           $this->messages = array_merge($this->messages, $this->getAndClearMessages());
+            $this->messages = array_merge($this->messages, $this->getAndClearMessages());
         }
         foreach ($this->messages as $message) {
             $level = $message->getLevel();

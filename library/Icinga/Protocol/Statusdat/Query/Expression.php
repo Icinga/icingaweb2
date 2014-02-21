@@ -29,8 +29,6 @@
 
 namespace Icinga\Protocol\Statusdat\Query;
 
-use Icinga\Protocol\Ldap\Exception;
-
 class Expression implements IQueryPart
 {
     /**
@@ -285,7 +283,7 @@ class Expression implements IQueryPart
             if (!is_string($val) && !is_numeric($val) && is_object($val)) {
                 if (isset($val->service_description)) {
                     $val = $val->service_description;
-                } elseif(isset($val->host_name)) {
+                } elseif (isset($val->host_name)) {
                     $val = $val->host_name;
                 } else {
                     return false;
@@ -433,6 +431,4 @@ class Expression implements IQueryPart
     {
         $this->query = $query;
     }
-
-
 }

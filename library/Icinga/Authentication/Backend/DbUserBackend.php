@@ -289,7 +289,8 @@ class DbUserBackend implements UserBackend
      *
      * @return  string
      */
-    protected function createPasswordHash($password, $salt) {
+    protected function createPasswordHash($password, $salt)
+    {
         return hash_hmac('sha256', $password, $salt);
     }
 

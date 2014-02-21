@@ -29,13 +29,10 @@
 
 namespace Icinga\Form\Config\Resource;
 
-use Icinga\Exception\ProgrammingError;
-use Icinga\Protocol\Ldap\Exception;
 use \Zend_Config;
 use \Icinga\Web\Form;
 use \Icinga\Web\Form\Decorator\HelpText;
 use \Icinga\Application\Logger;
-use \Icinga\Application\Icinga;
 use Icinga\Data\ResourceFactory;
 
 /**
@@ -168,7 +165,7 @@ class EditResourceForm extends Form
 
     private function addStatusdatForm()
     {
-         $this->addElement(
+        $this->addElement(
             'text',
             'resource_statusdat_status_file',
             array(
@@ -192,7 +189,7 @@ class EditResourceForm extends Form
 
     private function addLivestatusForm()
     {
-         $this->addElement(
+        $this->addElement(
             'text',
             'resource_livestatus_socket',
             array(
@@ -386,10 +383,7 @@ class EditResourceForm extends Form
                     $resource->getConnection()->getConnection();
                     break;
                 case 'statusdat':
-                    if (
-                        !file_exists($config->object_file) ||
-                        !file_exists($config->status_file)
-                    ) {
+                    if (!file_exists($config->object_file) || !file_exists($config->status_file)) {
                         $this->addErrorMessage(
                             'Connectivity validation failed, the provided file or socket does not exist.'
                         );
@@ -443,11 +437,7 @@ class EditResourceForm extends Form
         $type = $values['resource_type'];
         $result = array('type' => $type);
         foreach ($values as $key => $value) {
-            if (
-                $key !== 'resource_type' &&
-                $key !== 'resource_all_name' &&
-                $key !== 'resource_all_name_old'
-            ) {
+            if ($key !== 'resource_type' && $key !== 'resource_all_name' && $key !== 'resource_all_name_old') {
                 $configKey = explode('_', $key, 3);
                 if (sizeof($configKey) < 3) {
                     Logger::warn('EditResourceForm: invalid form key "' . $key . '" was ignored.');

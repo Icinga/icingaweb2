@@ -32,7 +32,6 @@ namespace Icinga\Session;
 use Icinga\Application\Logger;
 use \Icinga\Exception\ConfigurationError;
 
-
 /**
  * Session implementation in PHP
  */

@@ -119,7 +119,7 @@ class Node
         } elseif (!is_array($right)) {
             $right = array($right);
         }
-        foreach($right as &$value) {
+        foreach ($right as &$value) {
             $value = trim($value);
         }
         $node->right = $right;

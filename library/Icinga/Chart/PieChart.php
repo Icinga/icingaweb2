@@ -136,7 +136,10 @@ class PieChart extends Chart
      */
     protected function build()
     {
-        $this->renderer = new SVGRenderer(($this->type === self::STACKED) ? $this->width : count($this->pies)*$this->width, $this->width);
+        $this->renderer = new SVGRenderer(
+            $this->type === self::STACKED ? $this->width : count($this->pies) * $this->width,
+            $this->width
+        );
         foreach ($this->pies as &$pie) {
             $this->normalizeDataSet($pie);
         }
@@ -292,7 +295,7 @@ class PieChart extends Chart
             $offset = isset($this->pies[$i+1]) ? $radius - $shrinkStep : 0;
             $labelPos = 0;
             $lastRadius = 0;
-            foreach ($pie['data'] as  $idx => $dataset) {
+            foreach ($pie['data'] as $idx => $dataset) {
                 $color = $this->getColorForPieSlice($pie, $idx);
                 if ($dataset === 100) {
                     $dataset = 99.9;

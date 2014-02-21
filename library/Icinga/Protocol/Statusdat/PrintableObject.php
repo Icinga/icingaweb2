@@ -35,9 +35,9 @@ class PrintableObject
     {
         if (isset($this->contact_name)) {
             return $this->contact_name;
-        } else if (isset($this->service_description)) {
+        } elseif (isset($this->service_description)) {
             return $this->service_description;
-        } else if (isset($this->host_name)) {
+        } elseif (isset($this->host_name)) {
             return $this->host_name;
         }
         return '';

@@ -29,7 +29,6 @@
 
 namespace Icinga\Protocol\Statusdat;
 
-use Icinga\Application\Logger;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Protocol\Statusdat\Exception\ParsingException as ParsingException;
@@ -320,7 +319,8 @@ class Parser
         $isContact = strpos($this->currentObjectType, "contact") !== false;
         $name = $this->getObjectIdentifier($object);
 
-        if ($isService === false && $isHost === false && $isContact === false) { // this would be error in the parser implementation
+        if ($isService === false && $isHost === false && $isContact === false) {
+            // this would be error in the parser implementation
             return null;
         }
         $property = $this->currentObjectType;

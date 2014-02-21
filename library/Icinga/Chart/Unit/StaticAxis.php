@@ -140,5 +140,4 @@ class StaticAxis implements AxisUnit
     {
         return reset($this->items);
     }
-
 }

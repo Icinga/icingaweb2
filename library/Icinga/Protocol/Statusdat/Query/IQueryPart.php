@@ -58,5 +58,4 @@ interface IQueryPart
      * @return mixed
      */
     public function setQuery($query);
-
 }

@@ -5,7 +5,6 @@ namespace Icinga\File;
 use \DOMPDF;
 use \DOMDocument;
 use \DOMXPath;
-use \DOMNode;
 
 require_once 'vendor/dompdf/dompdf_config.inc.php';
 
@@ -34,7 +33,8 @@ class Pdf extends DOMPDF
      */
     public $paginateTable = true;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->set_paper(DOMPDF_DEFAULT_PAPER_SIZE, "portrait");
         parent::__construct();
     }
