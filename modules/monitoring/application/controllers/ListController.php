@@ -287,19 +287,20 @@ class Monitoring_ListController extends MonitoringController
 
     public function contactgroupsAction()
     {
+        $this->addTitleTab('contactgroups');
+
          $query = ContactgroupView::fromRequest(
             $this->_request,
             array(
                 'contactgroup_name',
                 'contactgroup_alias',
-                'contact_name'
+                'contact_name',
+                'contact_alias',
+                'contact_email',
+                'contact_pager',
             )
-        )->getQuery();
-        $this->view->contactgroups = $query->paginate();
-        $this->setupSortControl(array(
-            'contactgroup_name' => 'Group Name',
-            'contactgroup_alias' => 'Group Alias'
-        ));
+        )->getQuery()->order('contactgroup_alias');
+        $this->view->contactgroups = $query->fetchAll();
         $this->handleFormatRequest($query);
     }
 

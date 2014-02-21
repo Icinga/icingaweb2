@@ -1,51 +1,52 @@
 <?php
 $viewHelper = $this->getHelper('MonitoringState');
-$knownGroups = array()
+$knownGroups = array();
+$contactgroups;
 ?>
 
-<div class="row">
-  <div class="pull-left">
-    <h1>Contact Groups</h1>
-  </div>
-  <div class="pull-right">
-    <?= $this->tabs->render($this); ?>
-  </div>
+<div class="controls">
+  <?= $this->tabs ?>
 </div>
 
-<div data-icinga-component="app/mainDetailGrid" data-icinga-grid-selection-type="none">
-    <?= $this->sortControl->render($this); ?>
-    <?= $this->paginationControl($contactgroups, null, null, array('preserve' => $this->preserve)); ?>
-    <table class="table table-condensed">
-        <thead>
-            <tr>
-                <th> Group Name </th>
-                <th> Description </th>
-                <th> Member Name </th>
-            </tr>
-        </thead>
-        <tbody>
+<div class="content">
+<div class="summary">
+<?php
 
+foreach($contactgroups as $c):
+    $group = $c->contactgroup_name;
+    $periodLink = $this->href('monitoring/show/contacts', array('contact' => $c->contact_name));
+    if (! array_key_exists($group, $knownGroups)) {
+        $knownGroups[$group] = true;
+        $newRow = true;
+        if (! empty($knownGroups)) {
+            echo '</span>';
+        }
+        echo '<span class="state" style="background: #555; color: white">' . $this->escape($c->contactgroup_alias) . '<br />';
+        if ($c->contactgroup_alias !== $group) {
+            echo '(' . $this->escape($group) . ')';
+        } else {
+            echo '&nbsp;';
+        }
+    }
 
-          <?php foreach($contactgroups as $contact): ?>
-                <?php $periodLink = $this->href('monitoring/show/contacts', array('contact' => $contact->contact_name)); ?>
-                <tr>
-                    <?php
-                        $groupName = $contact->contactgroup_name;
-                        if (!array_key_exists($groupName, $knownGroups)) {
-                            echo '<td>' . $groupName . '</td><td>' . $contact->contactgroup_alias . '</td>';
-                            $knownGroups[$groupName] = True;
-                        } else {
-                            echo '<td></td><td></td>';
-                        }
-                    ?>
-                    <td>
-                        <a href="<?= $periodLink ?>">
-                            <?= $contact->contact_name ?>
-                        </a>
-                    </td>
-                </tr>
+    $methods = array();
+    foreach (array('email', 'pager') as $method) {
+        $prop = 'contact_' . $method;
+        if (isset($c->$prop) && ! empty($c->$prop)) {
+            $methods[] = $c->$prop;
+        }
+    }
+
+?>
+  <span class="state" style="display:block; width: 90%; height: 80px; text-align: left; background: #eee; color: black; margin: 1em;">
+    <img style="border: 3px solid white; margin: 0.5em;" src="<?= $this->href('/static/gravatar', array('email' => $c->contact_email )) ?>" width="60" height="60" align="left" />
+    <a style="color: black; font-size: 1.1em; font-weight: bold;" href="<?= $periodLink ?>"><?= $this->escape($c->contact_alias) ?></a>
+    <p class="pluginoutput"><?= implode('<br />', $methods) ?></p>
+    </span>
+
             <?php endforeach; ?>
-        </tbody>
-    </table>
-    <?= $this->paginationControl($contactgroups, null, null, array('preserve' => $this->preserve)); ?>
+<?php if (! empty($knownGroups)): ?>
+</span>
+<? endif ?>
+</div>
 </div>
