@@ -617,3 +617,23 @@ file { '/etc/httpd/conf.d/icingaweb.conf':
   require   => Package['apache'],
   notify    => Service['apache']
 }
+
+file { '/etc/icingaweb':
+  ensure    => 'directory',
+  owner     => 'apache',
+  group     => 'apache'
+}
+
+file { '/etc/icingaweb/authentication.ini':
+  source    => 'puppet:////vagrant/.vagrant-puppet/files/etc/icingaweb/authentication.ini',
+  owner     => 'apache',
+  group     => 'apache',
+  require   => File['/etc/icingaweb']
+}
+
+file { '/etc/icingaweb/resources.ini':
+  source    => 'puppet:////vagrant/.vagrant-puppet/files/etc/icingaweb/resources.ini',
+  owner     => 'apache',
+  group     => 'apache',
+  require   => File['/etc/icingaweb']
+}

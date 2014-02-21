@@ -37,6 +37,7 @@ use Icinga\Data\ResourceFactory;
 use Icinga\Application\Logger;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\NotReadableError;
+use Icinga\Exception\ProgrammingError;
 use Icinga\Application\Config as IcingaConfig;
 use Icinga\Authentication\Backend\DbUserBackend;
 use Icinga\Authentication\Backend\LdapUserBackend;
@@ -149,7 +150,21 @@ class Manager
             }
             return new $backendConfig->class($backendConfig);
         }
-        if (($type = ResourceFactory::getResourceConfig($backendConfig->resource)->type) === null) {
+        if ($backendConfig->resource === null) {
+            throw new ConfigurationError(
+                'Authentication configuration for backend "' . $backendConfig->name
+                . '" is missing the resource directive'
+            );
+        }
+        try {
+            $type = ResourceFactory::getResourceConfig($backendConfig->resource)->type;
+        } catch (ProgrammingError $e) {
+            throw new ConfigurationError(
+                'No authentication methods available. It seems that none resources have been set up. '
+                . ' Please contact your Icinga Web administrator'
+            );
+        }
+        if ($type === null) {
             throw new ConfigurationError(
                 'Authentication configuration for backend "%s" is missing the type directive',
                 $backendConfig->name,

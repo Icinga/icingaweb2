@@ -53,7 +53,7 @@ class ResourceFactory implements ConfigAwareFactory
     /**
      * Get the configuration for a specific resource
      *
-     * @param $resourceName String      The resources name
+     * @param $resourceName String      The resource's name
      *
      * @return              Zend_Config The configuration of the resource
      * @throws \Icinga\Exception\ConfigurationError
@@ -62,7 +62,9 @@ class ResourceFactory implements ConfigAwareFactory
     {
         self::assertResourcesExist();
         if (($resourceConfig = self::$resources->get($resourceName)) === null) {
-            throw new ConfigurationError('Resource "' . $resourceName . '" couldn\'t be retrieved');
+            throw new ConfigurationError(
+                'Cannot load resource config "' . $resourceName . '". Resource does not exist'
+            );
         }
         return $resourceConfig;
     }
