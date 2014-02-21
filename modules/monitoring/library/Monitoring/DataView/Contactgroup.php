@@ -33,7 +33,10 @@ class Contactgroup extends DataView
     {
         return array(
             'contactgroup_name' => array(
-                'order' => self::SORT_DESC
+                'order' => self::SORT_ASC
+            ),
+            'contactgroup_alias' => array(
+                'order' => self::SORT_ASC
             )
         );
     }
