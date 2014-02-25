@@ -112,6 +112,7 @@ class ConfigController extends BaseConfigController
     public function indexAction()
     {
         $this->view->messageBox = new AlertMessageBox(true);
+        $this->view->tabs->activate('index');
         $form = new GeneralForm();
         $form->setConfiguration(IcingaConfig::app());
         $form->setRequest($this->_request);
@@ -132,6 +133,7 @@ class ConfigController extends BaseConfigController
     public function loggingAction()
     {
         $this->view->messageBox = new AlertMessageBox(true);
+        $this->view->tabs->activate('logging');
 
         $form = new LoggingForm();
         $form->setConfiguration(IcingaConfig::app());
@@ -153,6 +155,7 @@ class ConfigController extends BaseConfigController
     public function moduleoverviewAction()
     {
         $this->view->messageBox = new AlertMessageBox(true);
+        $this->view->tabs->activate('modules');
 
         $this->view->modules = Icinga::app()->getModuleManager()->select()
             ->from('modules')
@@ -207,6 +210,8 @@ class ConfigController extends BaseConfigController
     public function authenticationAction($showOnly = false)
     {
         $config = IcingaConfig::app('authentication', true);
+        $this->view->tabs->activate('authentication');
+
         $order = array_keys($config->toArray());
         $this->view->backends = array();
         $this->view->messageBox = new AlertMessageBox(true);
@@ -382,6 +387,8 @@ class ConfigController extends BaseConfigController
 
     public function resourceAction($showOnly = false)
     {
+        $this->view->tabs->activate('resources');
+
         $this->view->messageBox = new AlertMessageBox(true);
         $this->view->resources = IcingaConfig::app('resources', true)->toArray();
         $this->render('resource');
