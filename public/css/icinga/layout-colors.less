@@ -9,6 +9,12 @@
 
 #header {
   background-color: #555;
+  background-image: -moz-linear-gradient(top, #777, #555);
+  background-image: -webkit-linear-gradient(top, #777, #555);
+  background-image: -o-linear-gradient(top, #777, #555);
+  background-image: -ms-linear-gradient(top, #777, #555);
+  background-image: linear-gradient(top, #777, #555);
+  color: #ddd;
   color: #d0d0d0;
 }
 
@@ -31,6 +37,8 @@
   }
 }
 
+@colorLinkDefault: #049baf;
+@colorTextDefault: #222222;
 @colorOk: #44bb77;
 @colorWarning: #ffaa44;
 @colorWarningHandled: #ffcc66;
