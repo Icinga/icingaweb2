@@ -2,14 +2,13 @@
 ul.tabs {
   margin: 0;
   padding: 1em 0 0 0;
-
-  background: -moz-linear-gradient(top, #777, #666);
-  background: -webkit-linear-gradient(top, #777, #666);
-  background: -o-linear-gradient(top, #777, #666);
-  background: -ms-linear-gradient(top, #777, #666);
-  background: linear-gradient(top, #777, #666);
-
   list-style-type: inside;
+}
+
+.controls ul.tabs {
+  margin-top: -3.5em;
+  height: 2.6em;
+  overflow: hidden;
 }
 
 .impact ul.tabs {
@@ -63,6 +62,12 @@ ul.tabs ul.dropdown-menu {
 
 ul.tabs ul.dropdown-menu li a {
   color: #555;
+  margin: 0;
+}
+
+ul.tabs ul.dropdown-menu li a:hover {
+  background-color: #ccc;
+  color: #333;
 }
 
 ul.tabs li.dropdown {
