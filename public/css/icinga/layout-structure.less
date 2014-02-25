@@ -1,40 +1,33 @@
 
-
 #layout {
   position: fixed;
   left: 0;
   top: 0;
   right: 0;
   bottom: 0;
-  min-width: 19em;
 }
 
 #header {
-
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
 }
 
 #sidebar {
-/*  position: fixed;
   width: 13em;
+  position: fixed;
   left: 0;
-  top: 3em;
+  top: 3.6em;
   bottom: 0;
-*/
-  width: 13em;
-  float: left;
-  height: 100%;
 }
 
 #main {
-  margin-left: 13em;
-  height: 100%;
-/*
   position: fixed;
   left: 13em;
-  top: 3em;
+  top: 3.6em;
   right: 0;
   bottom: 0;
-*/
 }
 
 #layout.fullscreen #header {
@@ -73,33 +66,6 @@
 /*  font-size: 0.9em; */
 }
 
-/* Not growing larger than 1920px at 1em=16px right now */
-@media screen and (min-width: 120em) {
-  #main {
-    width: 107em;
-  }
-  #header {
-    width: 120em;
-  }
-/*
-  .container {
-    background-color: red;
-  }
-*/
-}
-
-@media screen and (min-width: 48em) and (max-width: 62em) {
-  /* #main > .container { */
-  #main .container {
-    font-size: 0.9em;
-  }
-/* TEST
-  .container {
-    background-color: blue;
-  }
-*/
-}
-
 .container > div {
 /*  padding: 0 1.5% 0 1.5%; */
   padding: 0;
@@ -133,7 +99,7 @@
 .dashboard > div.container {
   font-size: 0.9em;
   vertical-align: top;
-  width: 48%;
+  width: 48.5%;
   display: inline-block;
   padding: 0;
   margin-top: 1em;
@@ -142,7 +108,7 @@
 
 .dashboard > div.container td.state {
   font-size: 1em;
-  width: 4em;
+  width: 5em;
 }
 
 .dashboard > div.container h1 {
@@ -152,6 +118,9 @@
   background-color: #555;
   color: white;
   border: none;
+  border-radius: 0.2em;
+  -moz-border-radius: 0.2em;
+  -webkit-border-radius: 0.2em;
 }
 
 .dashboard > div.container h1 a {
@@ -168,12 +137,101 @@
   margin-left: 2%;
   margin-right: 2%;
 }
+
 .content {
   padding: 1em;
 }
 
-#inner-layout {
-  position: fixed;
-  height: 100%;
-  width: 100%;
+
+
+/* Not growing larger than 3840px at 1em=16px right now */
+@media screen and (min-width: 240em) {
+  #main {
+    width: 227em;
+  }
+  #header {
+    width: 240em;
+  }
+/*
+  .container {
+    background-color: red;
+  }
+*/
 }
+
+@media screen and (min-width: 100em) {
+
+  .dashboard > div.container {
+    width: 32%;
+    margin-left: 1%;
+    margin-right: 0;
+  }
+
+}
+
+@media screen and (max-width:72em) {
+   #layout {
+     font-size: 0.8em;
+   }
+}
+
+@media screen and (max-width: 47em) {
+
+  .dashboard > div.container {
+    width: 98%;
+    margin-left: 1%;
+    margin-right: 1%;
+  }
+
+  #layout.twocols {
+    #main > .container {
+      width: 99%;
+    }
+    #col1 {
+      display: none;
+    }
+  }
+
+}
+
+@media screen and (max-width: 36em) {
+  #sidebar {
+    display: none;
+  }
+  #logo img {
+    /* TODO: Quickfix, this needs improvement */
+    width: 0 !important;
+    top: -100px;
+    position: absolute;
+  }
+  #main {
+    left: 0;
+  }
+}
+
+@media screen and (min-width: 24em) and (max-width: 62em) {
+/*
+  #layout .dashboard > div.container {
+    width: 96%;
+    margin-left: 2%;
+    margin-right: 2%;
+  }
+*/
+}
+
+@media screen and (min-width: 48em) and (max-width: 62em) {
+  /* #main > .container { */
+/*
+  #main .container {
+    font-size: 0.9em;
+  }
+*/
+
+/* TEST
+  .container {
+    background-color: blue;
+  }
+*/
+}
+
+
