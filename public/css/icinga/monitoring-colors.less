@@ -19,7 +19,7 @@ table.colors td {
 /* Action table */
 table.action {
   border-collapse: separate;
-  border-spacing: 0.5em;
+  border-spacing: 0.3em;
   width: 98%;
   table-layout: fixed;
   margin: 0;
@@ -39,7 +39,7 @@ table.action.wide td {
 }
 
 table.action td {
-  padding: 0.5em 1em 1em 1em;
+  padding: 0.3em 0.5em 0.3em 0.5em;
   line-height: 1.5em;
   border-bottom: 1px solid #dde;
   overflow: hidden;
@@ -47,7 +47,7 @@ table.action td {
 
 .dashboard table.action td {
   line-height: 1.2em;
-  padding: 0.3 0.7em 0.3em 0.7em;
+  padding: 0.2 0.4em 0.2em 0.5em;
 }
 
 table.action td .pluginoutput {
@@ -70,6 +70,9 @@ table.action div.inlinepie {
   margin: 0.5em 0.25em 0.5em 0.25em;
 }
 
+.dashboard table.action div.inlinepie {
+  margin: 0em 0.25em 0em 0.25em;
+}
 
 /* END of Action table */
 
@@ -85,6 +88,7 @@ tr[href] {
 
 table.action td.state {
   font-size: 0.7em;
+  text-align: center;
 }
 
 table.action td.timesince {
@@ -118,26 +122,27 @@ tr.state td.state strong {
 }
 
 tr.state td.state {
-  width: 7em;
-  padding-left: 2em; /* 1.5 border + 0.5padding */
+  width: 9em;
   color: white;
-/*
-  border-radius: 0.5em 0 0 0.5em;
-  -moz-border-radius: 0.5em 0 0 0.5em;
-*/
+  border-bottom: none;
 }
 
 tr.state.handled td.state, tr.state.ok td.state, tr.state.up td.state, tr.state.pending td.state {
   border-left-style: solid;
   border-left-width: 1.5em;
-  padding-left: 0.5em;
+  padding-left: 0em;
+  padding-right: 0.5em;
   color: black;
   background-color: transparent;
 }
 
 tr[href]:hover, tr[href].active {
-  background-color: #eee;
+  background-color: #ddd;
   color: black;
+}
+
+tr.state[href]:hover, tr.state[href].active td.state {
+
 }
 
 tr.state.ok td.state, tr.state.up td.state {
@@ -150,6 +155,7 @@ tr.state.warning td.state {
 
 tr.state.warning.handled td.state {
   border-left-color: @colorWarningHandled;
+  background-image: none;
 }
 
 tr.state.critical td.state, tr.state.down td.state {
@@ -158,6 +164,7 @@ tr.state.critical td.state, tr.state.down td.state {
 
 tr.state.critical.handled td.state, tr.state.down.handled td.state {
   border-left-color: @colorCriticalHandled;
+  background-image: none;
 }
 
 tr.state.unknown td.state {
@@ -166,6 +173,7 @@ tr.state.unknown td.state {
 
 tr.state.unknown.handled td.state {
   border-left-color: @colorUnknownHandled;
+  background-image: none;
 }
 
 tr.state.pending td.state {
@@ -187,6 +195,7 @@ tr.state.unreachable td.state {
 
 tr.state.unreachable.handled td.state {
   border-left-color: @colorUnreachableHandled;
+  background-image: none;
 }
 
 /* END of special tables and states */
