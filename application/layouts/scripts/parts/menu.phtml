@@ -11,7 +11,7 @@ foreach ($this->items as $item) {
             $item->getIcon(),
             array('height' => '16px', 'width' => '16px')
         ) . ' ' : '',
-        $item->getTitle()
+        $this->escape($item->getTitle())
     );
 
     if ($item->hasChildren()) {
