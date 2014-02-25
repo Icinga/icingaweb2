@@ -2,17 +2,20 @@
  <div class="main">
   <div class="logo">
    <div class="image">
-    <img src="<?= $this->baseUrl('img/logo_icinga_big.png') ?>" width="400px">
+    <img src="<?= $this->baseUrl('img/logo_icinga_big.png') ?>" >
    </div>
   </div>
   <div class="form">
-   <?php if (isset($this->errorInfo)): ?>
+   <h1>Icinga Users Login</h1>
+   <?php
+   /* TODO: remove this as soon as notifications and forms are ready */
+   if (isset($this->errorInfo)): ?>
     <div class="error">
     <?= $this->errorInfo ?>
     </div>
    <?php endif ?>
    <?= $this->form ?>
+   <div class="footer">Icinga Web 2 &copy; 2013-2014 Icinga Team</div>
   </div>
-  <div class="footer">Icinga Web 2 &copy; 2013-2014 Icinga Team</div>
  </div>
 </div>

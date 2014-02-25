@@ -1,53 +1,67 @@
 
-.login {
- .logo {
-    background-color: #666666;
-    background-image: linear-gradient(to bottom, #444444, #666666);
-    -ms-background-image: linear-gradient(to bottom, #444444, #666666);
-    -webkit-background-image: linear-gradient(to bottom, #444444, #666666);
-    -moz-background-image: linear-gradient(to bottom, #444444, #666666);
-    -o-background-image: linear-gradient(to bottom, #444444, #666666);
-    position:absolute;
-    top: 0;
-    left: 0;
-    bottom:60%;
-    right: 0;
-    border-bottom:1px solid black;
-    text-align: center;
-
-    .image {
-      position:absolute;
-      bottom:1em;
-      left:0px;
-      right:0px;
-      text-align:center;
-    }
-  }
-
-  .form {
-    position: absolute;
-    top:45%;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    overflow:auto;
-    overflow-x:hidden;
-    form {
-      margin-left: auto;
-      margin-right: auto;
-      width: 18em;
-    }
-    form input {
-      width: 16em;
-    }
-  }
-
-  .footer {
-    position: absolute;
-    bottom: 1em;
-    left: 0;
-    right: 0;
-    font-size: 0.7em;
-    text-align: center;
-  }
+.login .logo {
+  background-color: #555;
+  -moz-background-image: linear-gradient(to bottom, #333, #555);
+  -ms-background-image: linear-gradient(to bottom, #333, #555);
+  -o-background-image: linear-gradient(to bottom, #333, #555);
+  -webkit-background-image: linear-gradient(to bottom, #333, #555);
+  background-image: linear-gradient(to bottom, #333, #555);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 60%;
+  border-bottom: 1px solid #333;
+  text-align: center;
 }
+
+.login .image {
+  position: absolute;
+  bottom: 1em;
+  left: 0px;
+  right: 0px;
+  text-align: center;
+}
+
+.login .image img {
+  width: 400px;
+}
+
+.login .form {
+  position: absolute;
+  font-size: 0.9em;
+  top: 42%;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+.login .form h1 {
+  text-align: left;
+  font-size: 1.5em;
+  margin-left: auto;
+  margin-right: auto;
+  width: 12em;
+  color: @colorTextDefault;
+}
+
+.login .form label {
+  display: none;
+}
+
+.login form {
+  margin-left: auto;
+  margin-right: auto;
+  width: 20em;
+}
+
+.login form input {
+  width: 100%;
+  padding: 0.5em;
+}
+
+.login .footer {
+  font-size: 0.9em;
+  text-align: center;
+}
+
