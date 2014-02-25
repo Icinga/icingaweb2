@@ -1,5 +1,8 @@
+<div class="controls">
 <?= $this->tabs->render($this); ?>
+</div>
 
+<div class="content">
 <?php $errors = $this->form->getErrorMessages(); ?>
 
 <?php if (isset($this->messageBox)): ?>
@@ -28,3 +31,5 @@
 
 <?php endif; ?>
 <?= $this->form ?>
+</div>
+

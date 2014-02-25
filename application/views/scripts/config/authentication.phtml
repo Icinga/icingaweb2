@@ -3,9 +3,11 @@ use Icinga\Web\Url;
 $createLdapBackend = $this->href('/config/createAuthenticationBackend', array('type' => 'ldap'));
 $createDbBackend = $this->href('/config/createAuthenticationBackend', array('type' => 'db'));
 ?>
-
+<div class="controls">
 <?= $this->tabs->render($this); ?>
+</div>
 
+<div class="content">
 <?php if (isset($this->messageBox)): ?>
   <?= $this->messageBox->render() ?>
 <?php endif ?>
@@ -41,3 +43,4 @@ $createDbBackend = $this->href('/config/createAuthenticationBackend', array('typ
   </div>
 </div>
 <?php endforeach; ?>
+</div>

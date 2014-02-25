@@ -2,8 +2,11 @@
 use Icinga\Web\Url;
 $createResource = $this->href('/config/createresource');
 ?>
+<div class="controls">
 <?= $this->tabs->render($this); ?>
+</div>
 
+<div class="content">
 <?php if (isset($this->messageBox)): ?>
   <?= $this->messageBox->render() ?>
 <?php endif ?>
@@ -42,3 +45,5 @@ $createResource = $this->href('/config/createresource');
 
 </div>
 <?php endforeach; ?>
+</div>
+
