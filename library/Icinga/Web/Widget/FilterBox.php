@@ -102,11 +102,9 @@ EOT;
             'text',
             'query',
             array(
-                'label'  => 'Filter Results',
+//                'label'  => 'Filter Results',
                 'name'   => 'query',
-                'data-icinga-component' => 'app/semanticsearch',
-                'data-icinga-filter-domain'    => $this->domain,
-                'data-icinga-filter-module'    => $this->module
+                'placeholder' => 'Add filter'
             )
         );
         $form->removeAttrib('data-icinga-component');
