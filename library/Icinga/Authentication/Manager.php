@@ -34,7 +34,7 @@ use \Zend_Config;
 use Icinga\User;
 use Icinga\Web\Session;
 use Icinga\Data\ResourceFactory;
-use Icinga\Application\Logger;
+use Icinga\Logger\Logger;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Application\Config as IcingaConfig;
 use Icinga\Authentication\Backend\DbUserBackend;
@@ -168,7 +168,7 @@ class Manager
         $name = $backendConfig->name;
         // TODO: implement support for groups (#4624) and remove OR-Clause
         if ((!$target || strtolower($target) != "user") && !$backendConfig->class) {
-            Logger::warn('AuthManager: Backend "%s" has no target configuration. (e.g. target=user|group)', $name);
+            Logger::warning('AuthManager: Backend "%s" has no target configuration. (e.g. target=user|group)', $name);
             return null;
         }
         try {
@@ -188,10 +188,10 @@ class Manager
                 case 'ldap':
                     return new LdapUserBackend($backendConfig);
                 default:
-                    Logger::warn('AuthManager: Resource type ' . $backendConfig->type . ' not available.');
+                    Logger::warning('AuthManager: Resource type ' . $backendConfig->type . ' not available.');
             }
         } catch (Exception $e) {
-            Logger::warn('AuthManager: Not able to create backend. Exception was thrown: %s', $e->getMessage());
+            Logger::warning('AuthManager: Not able to create backend. Exception was thrown: %s', $e->getMessage());
         }
         return null;
     }
@@ -288,7 +288,6 @@ class Manager
         }
 
         if ($authErrors >= count($this->userBackends)) {
-            Logger::fatal('AuthManager: No working backend found, unable to authenticate any user');
             throw new ConfigurationError(
                 'No working backend found. Unable to authenticate any user.' .
                 "\nPlease examine the logs for more information."

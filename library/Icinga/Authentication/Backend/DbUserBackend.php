@@ -39,7 +39,7 @@ use \Icinga\User;
 use \Icinga\Authentication\UserBackend;
 use \Icinga\Authentication\Credential;
 use \Icinga\Authentication;
-use \Icinga\Application\Logger;
+use \Icinga\Logger\Logger;
 use \Icinga\Exception\ProgrammingError;
 use \Icinga\Exception\ConfigurationError;
 

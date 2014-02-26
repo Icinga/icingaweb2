@@ -61,11 +61,12 @@ class Cli extends ApplicationBootstrap
     protected function bootstrap()
     {
         $this->assertRunningOnCli();
-        $this->setupConfig()
-            ->setupInternationalization()
-            ->parseBasicParams()
+        $this->setupLogging()
+            ->setupConfig()
             ->fixLoggingConfig()
             ->setupErrorHandling()
+            ->setupInternationalization()
+            ->parseBasicParams()
             ->setupResourceFactory()
             ->setupModuleManager();
     }
@@ -74,12 +75,8 @@ class Cli extends ApplicationBootstrap
     {
         $conf = & $this->getConfig()->logging;
         if ($conf->type === 'stream') {
-            $conf->verbose = $this->verbose;
+            $conf->level = $this->verbose;
             $conf->target = 'php://stderr';
-        }
-        if ($conf->debug && $conf->debug->type === 'stream') {
-            $conf->debug->target = 'php://stderr';
-            $conf->debug->enable = $this->debug;
         }
         return $this;
     }

@@ -30,7 +30,7 @@
 
 use Icinga\Application\Icinga;
 use Icinga\Application\Config;
-use Icinga\Application\Logger;
+use Icinga\Logger\Logger;
 use Icinga\Module\Monitoring\DataView\HostStatus;
 use Icinga\Module\Monitoring\DataView\ServiceStatus;
 use Icinga\Module\Monitoring\Form\Command\DisableNotificationWithExpireForm;

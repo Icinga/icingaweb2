@@ -31,7 +31,7 @@ namespace Icinga\Protocol\Commandpipe\Transport;
 
 use \RuntimeException;
 use \Zend_Config;
-use \Icinga\Application\Logger;
+use \Icinga\Logger\Logger;
 
 /**
  * Command pipe transport class that uses ssh for connecting to a remote filesystem with the icinga.cmd pipe

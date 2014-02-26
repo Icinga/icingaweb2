@@ -34,7 +34,7 @@ use Zend_Controller_Router_Route as Route;
 use Icinga\Application\ApplicationBootstrap;
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
-use Icinga\Application\Logger;
+use Icinga\Logger\Logger;
 use Icinga\Util\Translator;
 use Icinga\Web\Hook;
 
@@ -185,7 +185,7 @@ class Module
         try {
             $this->launchRunScript();
         } catch (Exception $e) {
-            Logger::warn(
+            Logger::warning(
                 'Launching the run script %s for module %s failed with the following exception: %s',
                 $this->runScript,
                 $this->name,

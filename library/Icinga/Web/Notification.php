@@ -31,7 +31,7 @@ namespace Icinga\Web;
 
 use Icinga\Exception\ProgrammingError;
 use Icinga\Application\Platform;
-use Icinga\Application\Logger as Log;
+use Icinga\Logger\Logger;
 use Icinga\Web\Session;
 
 /**
@@ -90,13 +90,13 @@ class Notification
             switch ($type) {
                 case 'info':
                 case 'success':
-                    Log::info($msg);
+                    Logger::info($msg);
                     break;
                 case 'warning':
-                    Log::warn($msg);
+                    Logger::warn($msg);
                     break;
                 case 'error':
-                    Log::error($msg);
+                    Logger::error($msg);
                     break;
             }
             return;

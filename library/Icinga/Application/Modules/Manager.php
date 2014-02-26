@@ -31,7 +31,7 @@ namespace Icinga\Application\Modules;
 
 use Icinga\Application\ApplicationBootstrap;
 use Icinga\Application\Icinga;
-use Icinga\Application\Logger;
+use Icinga\Logger\Logger;
 use Icinga\Data\DataArray\Datasource as ArrayDatasource;
 use Icinga\Data\DataArray\Query as ArrayQuery;
 use Icinga\Exception\ConfigurationError;
@@ -161,7 +161,7 @@ class Manager
 
             $link = $this->enableDir . '/' . $file;
             if (! is_link($link)) {
-                Logger::warn(
+                Logger::warning(
                     'Found invalid module in enabledModule directory "%s": "%s" is not a symlink',
                     $this->enableDir,
                     $link
@@ -171,7 +171,7 @@ class Manager
 
             $dir = realpath($link);
             if (!file_exists($dir) || !is_dir($dir)) {
-                Logger::warn(
+                Logger::warning(
                     'Found invalid module in enabledModule directory "%s": "%s" points to non existing path "%s"',
                     $this->enableDir,
                     $link,
@@ -517,7 +517,7 @@ class Manager
     {
         foreach ($this->modulePaths as $basedir) {
             if (!file_exists($basedir)) {
-                Logger::warn('Module path "%s" does not exist.', $basedir);
+                Logger::warning('Module path "%s" does not exist.', $basedir);
                 continue;
             }
             $fh = opendir($basedir);
@@ -532,7 +532,7 @@ class Manager
                     if (! array_key_exists($name, $this->installedBaseDirs)) {
                         $this->installedBaseDirs[$name] = $basedir . '/' . $name;
                     } else {
-                        Logger::warn(
+                        Logger::warning(
                             'Module "%s" already exists in installation path "%s" and is ignored.',
                             $basedir . '/' . $name,
                             $this->installedBaseDirs[$name]

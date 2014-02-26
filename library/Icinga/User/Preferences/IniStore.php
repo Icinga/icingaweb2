@@ -29,9 +29,8 @@
 
 namespace Icinga\User\Preferences;
 
-use Icinga\Application\Logger;
+use Icinga\Logger\Logger;
 use Icinga\Protocol\Ldap\Exception;
-use \SplObserver;
 use \SplSubject;
 use \Icinga\User;
 use \Icinga\User\Preferences;

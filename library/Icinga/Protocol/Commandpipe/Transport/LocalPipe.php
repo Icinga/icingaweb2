@@ -29,7 +29,7 @@
 
 namespace Icinga\Protocol\Commandpipe\Transport;
 
-use Icinga\Application\Logger;
+use Icinga\Logger\Logger;
 
 /**
  * CommandPipe Transport class that writes to a file accessible by the filesystem

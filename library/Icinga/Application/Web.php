@@ -37,7 +37,7 @@ use \Zend_View_Helper_PaginationControl;
 use \Zend_Controller_Action_HelperBroker;
 use \Zend_Controller_Router_Route;
 use \Zend_Controller_Front;
-use Icinga\Application\Logger;
+use Icinga\Logger\Logger;
 use Icinga\Authentication\Manager as AuthenticationManager;
 use Icinga\Exception\ConfigurationError;
 use Icinga\User\Preferences;
@@ -114,7 +114,8 @@ class Web extends ApplicationBootstrap
      */
     protected function bootstrap()
     {
-        return $this->setupConfig()
+        return $this->setupLogging()
+            ->setupConfig()
             ->setupErrorHandling()
             ->setupResourceFactory()
             ->setupSession()
@@ -260,7 +261,7 @@ class Web extends ApplicationBootstrap
 
                 $path = Config::resolvePath($this->getConfig()->preferences->configPath);
                 if (is_dir($path) === false) {
-                    Logger::warn(
+                    Logger::warning(
                         'Path for preferences not found (IniStore, "%s"). Using default one: "%s"',
                         $this->getConfig()->preferences->configPath,
                         $this->getConfigDir('preferences')
@@ -278,7 +279,7 @@ class Web extends ApplicationBootstrap
                     );
                     $preferences->attach($preferenceStore);
                 } catch (Exception $e) {
-                    Logger::warn(
+                    Logger::warning(
                         'Could not create create preferences provider, preferences will be discarded: '
                         . '"%s"',
                         $e->getMessage()
@@ -290,7 +291,7 @@ class Web extends ApplicationBootstrap
                     try {
                         $initialPreferences = $preferenceStore->load();
                     } catch (Exception $e) {
-                        Logger::warn(
+                        Logger::warning(
                             '%s::%s: Could not load preferences from provider. '
                             . 'An exception during bootstrap was thrown: %s',
                             __CLASS__,

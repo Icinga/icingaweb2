@@ -34,7 +34,6 @@ use Icinga\Filter\Query\Tree;
 use Icinga\Filter\Query\Node;
 use Icinga\Web\Request;
 use Icinga\Web\Url;
-use Icinga\Application\Logger;
 
 /**
  * Converter class that allows to create Query Trees from an request query and vice versa

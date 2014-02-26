@@ -30,9 +30,9 @@
 namespace Icinga\Form\Config\Resource;
 
 use \Zend_Config;
-use \Icinga\Web\Form;
-use \Icinga\Web\Form\Decorator\HelpText;
-use \Icinga\Application\Logger;
+use Icinga\Web\Form;
+use Icinga\Logger\Logger;
+use Icinga\Web\Form\Decorator\HelpText;
 use Icinga\Data\ResourceFactory;
 
 /**
@@ -440,7 +440,7 @@ class EditResourceForm extends Form
             if ($key !== 'resource_type' && $key !== 'resource_all_name' && $key !== 'resource_all_name_old') {
                 $configKey = explode('_', $key, 3);
                 if (sizeof($configKey) < 3) {
-                    Logger::warn('EditResourceForm: invalid form key "' . $key . '" was ignored.');
+                    Logger::warning('EditResourceForm: invalid form key "' . $key . '" was ignored.');
                     continue;
                 }
                 $result[$configKey[2]] = $value;
