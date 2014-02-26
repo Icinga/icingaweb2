@@ -35,6 +35,8 @@ use Icinga\Test\BaseTestCase;
 
 // @codingStandardsIgnoreStart
 require_once BaseTestCase::$libDir . '/Logger/Logger.php';
+require_once BaseTestCase::$libDir . '/Logger/LogWriter.php';
+require_once BaseTestCase::$libDir . '/Logger/Writer/StreamWriter.php';
 // @codingStandardsIgnoreEnd
 
 use \Zend_Config;
