@@ -230,6 +230,11 @@ class Web extends ApplicationBootstrap
     {
         $authenticationManager = AuthenticationManager::getInstance();
 
+
+        if ($this->getConfig()->get('global')->get('authenticationMode', 'internal') === 'external') {
+            $authenticationManager->authenticateFromRemoteUser();
+        }
+
         if ($authenticationManager->isAuthenticated() === true) {
             $user = $authenticationManager->getUser();
 

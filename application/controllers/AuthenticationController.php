@@ -85,10 +85,16 @@ class AuthenticationController extends ActionController
      */
     public function logoutAction()
     {
-        $this->_helper->layout->setLayout('inline');
         $auth = AuthManager::getInstance();
         $auth->removeAuthorization();
-        $this->redirectToLogin();
+
+        if ($auth->isAuthenticatedFromRemoteUser()) {
+            $this->_helper->layout->setLayout('login');
+            $this->_response->setHttpResponseCode(401);
+        } else {
+            $this->_helper->layout->setLayout('inline');
+            $this->redirectToLogin();
+        }
     }
 }
 // @codingStandardsIgnoreEnd

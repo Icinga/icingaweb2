@@ -52,12 +52,20 @@ use Icinga\Authentication\Backend\LdapUserBackend;
  **/
 class Manager
 {
+
     /**
      * Singleton instance
      *
      * @var self
      */
     private static $instance;
+
+    /**
+     * If the user was authenticated from the REMOTE_USER server variable
+     *
+     * @var Boolean
+     */
+    private $fromRemoteUser = false;
 
     /**
      * Instance of authenticated user
@@ -388,6 +396,27 @@ class Manager
     }
 
     /**
+     * Tries to authenticate the user from the session, and then from the REMOTE_USER superglobal, that can be set by
+     * an external authentication provider.
+     */
+    public function authenticateFromRemoteUser()
+    {
+        $this->fromRemoteUser = true;
+        $this->authenticateFromSession();
+        if ($this->user !== null) {
+            if ($this->user->getUsername() !== $_SERVER["REMOTE_USER"]) {
+                // Remote user has changed, clear all sessions
+                $this->removeAuthorization();
+            }
+            return;
+        }
+        if ($_SERVER["REMOTE_USER"] !== null) {
+            $this->user = new User($_SERVER["REMOTE_USER"]);
+            $this->persistCurrentUser();
+        }
+    }
+
+    /**
      * Returns true when the user is currently authenticated
      *
      * @param  Boolean  $ignoreSession  Set to true to prevent authentication by session
@@ -471,5 +500,13 @@ class Manager
     public function getGroups()
     {
         return $this->user->getGroups();
+    }
+
+    /**
+     * If the session was established from the REMOTE_USER server variable.
+     */
+    public function isAuthenticatedFromRemoteUser()
+    {
+        return $this->fromRemoteUser;
     }
 }
