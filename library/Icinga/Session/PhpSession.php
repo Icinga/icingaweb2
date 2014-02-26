@@ -205,4 +205,14 @@ class PhpSession extends Session
             );
         }
     }
+
+    /**
+     * Assign a new sessionId to the currently active session
+     */
+    public function refreshId()
+    {
+        $this->open();
+        session_regenerate_id();
+        session_write_close();
+    }
 }

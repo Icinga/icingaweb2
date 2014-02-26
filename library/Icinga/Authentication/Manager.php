@@ -369,6 +369,9 @@ class Manager
         );
 
         if ($persist == true) {
+            // Refresh the used session ID on each login, to offer protection against session fixation
+            $session = Session::getSession();
+            $session->refreshId();
             $this->persistCurrentUser();
         }
 

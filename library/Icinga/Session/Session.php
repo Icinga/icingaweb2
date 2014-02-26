@@ -58,6 +58,11 @@ abstract class Session extends SessionNamespace
     abstract public function purge();
 
     /**
+     * Assign a new session id to this session.
+     */
+    abstract public function refreshId();
+
+    /**
      * Get or create a new session namespace
      *
      * @param   string      $identifier     The namespace's identifier
