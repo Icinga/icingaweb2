@@ -43,7 +43,7 @@ class PieChart implements Widget
      */
     private $template =<<<'EOD'
 
-    <div data-icinga-component="app/piechart">
+    <div>
         <img class='inlinepie' src="{url}" width={width} height={height}> </img>
     </div>
 EOD;
