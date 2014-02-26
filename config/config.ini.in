@@ -15,18 +15,30 @@ moduleFolder        = "@icingaweb_config_path@/enabledModules"
 ; modulePath          = "/vagrant/modules:/usr/share/icingaweb/modules"
 
 [logging]
-; General log
-enable              = "1"
+enable              = true
+; Writing to a Stream
 type                = "stream"
-verbose             = "1"
+; Write data to the following file
 target              = "@icingaweb_log_path@/icingaweb.log"
+; Write data to a PHP stream
+;target              = "php://output"
 
-; For development and debug purposes: Logs additional (non critical) events to a
-; seperate log
-debug.enable        = "1"
-debug.type          = "stream"
-debug.target        = "@icingaweb_log_path@/icingaweb.debug.log"
+; Writing to the System Log
+;type                = "syslog"
+; Prefix all syslog messages generated with the string "Icinga Web"
+;application         = "Icinga Web"
+;facility            = "LOG_USER"
 
+level               = 1
+; The default level is WARNING, which means that only events of this level and
+; above will be tracked. Level numbers descend in order of importance where
+; ERROR (0) is the most important level and DEBUG (3) is the least important
+; level:
+;
+; ERROR   = 0 - Error: error conditions
+; WARNING = 1 - Warning: warning conditions
+; INFO    = 2 - Informational: informational messages
+; DEBUG   = 3 - Debug: debug messages
 
 ; Use ini store to store preferences on local disk
 [preferences]

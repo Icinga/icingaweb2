@@ -29,7 +29,7 @@
 
 namespace Icinga\Protocol\Statusdat;
 
-use Icinga\Application\Logger;
+use Icinga\Logger\Logger;
 use Icinga\Data\DatasourceInterface;
 use Icinga\Exception\ConfigurationError;
 
@@ -147,7 +147,7 @@ class Reader implements IReader, DatasourceInterface
         $maxCacheLifetime   = intval($this->config->get('cache_path', self::DEFAULT_CACHE_LIFETIME));
         $cachingEnabled     = true;
         if (!is_writeable($cachePath)) {
-            Logger::warn(
+            Logger::warning(
                 'Can\'t cache Status.dat backend; make sure cachepath %s is writable by the web user. '
                 . 'Caching is now disabled',
                 $cachePath

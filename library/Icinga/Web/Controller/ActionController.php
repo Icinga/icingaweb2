@@ -39,7 +39,7 @@ use Icinga\Application\Benchmark;
 use Icinga\Util\Translator;
 use Icinga\Web\Widget\Tabs;
 use Icinga\Web\Url;
-use Icinga\Application\Logger;
+use Icinga\Logger\Logger;
 use Icinga\Web\Request;
 
 use Icinga\File\Pdf;

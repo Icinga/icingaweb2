@@ -29,7 +29,7 @@
 
 namespace Icinga\Module\Monitoring\Backend\Statusdat\Query;
 
-use Icinga\Application\Logger;
+use Icinga\Logger\Logger;
 use Icinga\Data\Optional;
 use Icinga\Data\The;
 use Icinga\Filter\Query\Node;

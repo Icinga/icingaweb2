@@ -31,7 +31,7 @@ namespace Icinga\Protocol\Ldap;
 
 use Icinga\Application\Platform;
 use Icinga\Application\Config;
-use Icinga\Application\Logger as Log;
+use Icinga\Logger\Logger;
 use \Zend_Config;
 
 /**
@@ -273,14 +273,14 @@ class Connection
 
         $r = @ldap_bind($ds, $username, $password);
         if ($r) {
-            log::debug(
+            Logger::debug(
                 'Successfully tested LDAP credentials (%s / %s)',
                 $username,
                 '***'
             );
             return true;
         } else {
-            log::debug(
+            Logger::debug(
                 'Testing LDAP credentials (%s / %s) failed: %s',
                 $username,
                 '***',
@@ -321,9 +321,9 @@ class Connection
         if ($use_tls) {
             if ($cap->starttls) {
                 if (@ldap_start_tls($ds)) {
-                    Log::debug('LDAP STARTTLS succeeded');
+                    Logger::debug('LDAP STARTTLS succeeded');
                 } else {
-                    Log::debug('LDAP STARTTLS failed: %s', ldap_error($ds));
+                    Logger::debug('LDAP STARTTLS failed: %s', ldap_error($ds));
                     throw new \Exception(
                         sprintf(
                             'LDAP STARTTLS failed: %s',
@@ -352,7 +352,7 @@ class Connection
             // TODO: remove this -> FORCING v3 for now
             ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
 
-            Log::warn('No LDAPv3 support detected');
+            Logger::warn('No LDAPv3 support detected');
         }
 
         // Not setting this results in "Operations error" on AD when using the

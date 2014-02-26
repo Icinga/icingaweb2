@@ -29,7 +29,7 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
-use Icinga\Application\Logger;
+use Icinga\Logger\Logger;
 use Icinga\Data\Db\Query;
 use Icinga\Application\Benchmark;
 use Icinga\Exception\ProgrammingError;
@@ -211,7 +211,7 @@ abstract class IdoQuery extends Query
         } elseif ($this->hasAliasName($columnOrAlias)) {
             $columnOrAlias = $this->aliasToColumnName($columnOrAlias);
         } else {
-            Logger::info('Can\'t order by column '.$columnOrAlias);
+            Logger::info('Can\'t order by column ' . $columnOrAlias);
             return $this;
         }
         return parent::order($columnOrAlias, $dir);

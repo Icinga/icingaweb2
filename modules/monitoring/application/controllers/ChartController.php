@@ -29,7 +29,7 @@
 
 use Icinga\Application\Icinga;
 use Icinga\Application\Config;
-use Icinga\Application\Logger;
+use Icinga\Logger\Logger;
 use Icinga\Web\Form;
 use Icinga\Web\Controller\ActionController;
 use Icinga\Chart\SVGRenderer;

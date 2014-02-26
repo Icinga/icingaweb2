@@ -29,10 +29,9 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 
 use \Zend_Controller_Action_Exception as ActionException;
-use \Icinga\Web\Controller\ActionController;
-use \Icinga\Application\Icinga;
-use \Icinga\Application\Config as IcingaConfig;
-use \Icinga\Application\Logger;
+use Icinga\Web\Controller\ActionController;
+use Icinga\Application\Icinga;
+use Icinga\Logger\Logger;
 
 /**
  * Delivery static content to clients
@@ -104,7 +103,8 @@ class StaticController extends ActionController
             if (!Icinga::app()->getModuleManager()->hasEnabled($module)) {
                 Logger::error(
                     'Non-existing frontend component "' . $module . '/' . $file
-                    . '" was requested. The module "' . $module . '" does not exist or is not active.');
+                    . '" was requested. The module "' . $module . '" does not exist or is not active.'
+                );
                 echo "/** Module not enabled **/";
                 return;
             }
@@ -115,7 +115,8 @@ class StaticController extends ActionController
         if (!file_exists($filePath)) {
             Logger::error(
                 'Non-existing frontend component "' . $module . '/' . $file
-                . '" was requested, which would resolve to the the path: ' . $filePath);
+                . '" was requested, which would resolve to the the path: ' . $filePath
+            );
             echo '/** Module has no js files **/';
             return;
         }

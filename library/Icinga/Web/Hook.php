@@ -30,7 +30,7 @@
 namespace Icinga\Web;
 
 use \stdClass;
-use \Icinga\Application\Logger as Log;
+use \Icinga\Logger\Logger;
 use \Icinga\Exception\ProgrammingError;
 
 /**
@@ -110,7 +110,7 @@ class Hook
                 $obj = new $class();
             } catch (\Exception $e) {
                 // TODO: Persist unloading for "some time" or "current session"
-                Log::debug(
+                Logger::debug(
                     'Hook "%s" (%s) failed, will be unloaded: %s',
                     $name,
                     $class,
@@ -155,7 +155,7 @@ class Hook
         try {
             $instance = new $class();
         } catch (\Exception $e) {
-            Log::debug(
+            Logger::debug(
                 'Hook "%s" (%s) (%s) failed, will be unloaded: %s',
                 $name,
                 $key,

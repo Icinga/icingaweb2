@@ -28,13 +28,9 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // @codingStandardsIgnoreStart
 
-use Icinga\Web\Form;
 use Icinga\Web\Controller\ActionController;
 use Icinga\Filter\Filter;
-use Icinga\Filter\FilterAttribute;
-use Icinga\Filter\Type\TextFilter;
-use Icinga\Application\Logger;
-use Icinga\Web\Url;
+use Icinga\Logger\Logger;
 
 /**
  * Application wide interface for filtering

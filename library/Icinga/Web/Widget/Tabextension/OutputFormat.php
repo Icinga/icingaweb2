@@ -29,7 +29,7 @@
 
 namespace Icinga\Web\Widget\Tabextension;
 
-use \Icinga\Application\Logger;
+use \Icinga\Logger\Logger;
 use \Icinga\Web\Widget\Tab;
 use \Icinga\Web\Widget\Tabs;
 use \Icinga\Web\Url;

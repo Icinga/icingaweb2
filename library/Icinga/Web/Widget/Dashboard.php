@@ -31,7 +31,7 @@ namespace Icinga\Web\Widget;
 
 use \Icinga\Application\Icinga;
 use \Icinga\Application\Config as IcingaConfig;
-use \Icinga\Application\Logger;
+use \Icinga\Logger\Logger;
 use \Icinga\Exception\ConfigurationError;
 use \Icinga\Web\Widget\Widget;
 use \Icinga\Web\Widget\Dashboard\Pane;

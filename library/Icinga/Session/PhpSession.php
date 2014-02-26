@@ -29,7 +29,7 @@
 
 namespace Icinga\Session;
 
-use Icinga\Application\Logger;
+use Icinga\Logger\Logger;
 use \Icinga\Exception\ConfigurationError;
 
 /**
@@ -95,7 +95,7 @@ class PhpSession extends Session
 
         foreach ($options as $sessionVar => $value) {
             if (ini_set("session." . $sessionVar, $value) === false) {
-                Logger::warn(
+                Logger::warning(
                     'Could not set php.ini setting %s = %s. This might affect your sessions behaviour.',
                     $sessionVar,
                     $value

@@ -30,7 +30,7 @@
 namespace Icinga\Module\Monitoring\Filter;
 
 use Icinga\Application\Icinga;
-use Icinga\Application\Logger;
+use Icinga\Logger\Logger;
 use Icinga\Filter\Domain;
 use Icinga\Filter\FilterAttribute;
 use Icinga\Filter\Query\Node;

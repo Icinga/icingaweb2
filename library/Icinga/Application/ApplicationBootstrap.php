@@ -29,13 +29,15 @@
 
 namespace Icinga\Application;
 
-use \DateTimeZone;
 use \Exception;
-use \Icinga\Application\Modules\Manager as ModuleManager;
-use \Icinga\Application\Config;
-use \Icinga\Exception\ConfigurationError;
-use \Icinga\Util\DateTimeFactory;
-use \Icinga\Util\Translator;
+use \DateTimeZone;
+use \Zend_Config;
+use Icinga\Application\Modules\Manager as ModuleManager;
+use Icinga\Application\Config;
+use Icinga\Exception\ConfigurationError;
+use Icinga\Util\DateTimeFactory;
+use Icinga\Util\Translator;
+use Icinga\Logger\Logger;
 
 use Icinga\Data\ResourceFactory;
 
@@ -262,10 +264,6 @@ abstract class ApplicationBootstrap
         $application = new $class($configDir);
         $application->bootstrap();
 
-        if (Logger::hasErrorsOccurred()) {
-            $application->stopApplication(Logger::getQueue());
-        }
-
         return $application;
     }
 
@@ -359,11 +357,30 @@ abstract class ApplicationBootstrap
         try {
             $this->moduleManager->loadEnabledModules();
         } catch (Exception $e) {
-            Logger::fatal(
-                'Could not load modules. An exception was thrown during bootstrap: %s',
-                $e->getMessage()
-            );
+            
         }
+        return $this;
+    }
+
+    /**
+     * Setup default logging
+     *
+     * @return  self
+     */
+    protected function setupLogging()
+    {
+        Logger::create(
+            new Zend_Config(
+                array(
+                    'enable'        => true,
+                    'level'         => Logger::$ERROR,
+                    'type'          => 'syslog',
+                    'facility'      => 'LOG_USER',
+                    'application'   => 'Icinga Web'
+                )
+            )
+        );
+
         return $this;
     }
 
@@ -391,7 +408,13 @@ abstract class ApplicationBootstrap
             ini_set('display_startup_errors', 1);
             ini_set('display_errors', 1);
         }
-        Logger::create($this->config->logging);
+
+        try {
+            Logger::create($this->config->logging);
+        } catch (ConfigurationError $e) {
+            Logger::error($e);
+        }
+
         return $this;
     }
 
@@ -438,7 +461,7 @@ abstract class ApplicationBootstrap
         try {
             Translator::setupLocale($this->config->global->get('language', Translator::DEFAULT_LOCALE));
         } catch (Exception $error) {
-            Logger::info($error->getMessage());
+            Logger::error($error);
         }
 
         $localeDir = $this->getApplicationDir('locale');

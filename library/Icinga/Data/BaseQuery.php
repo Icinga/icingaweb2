@@ -2,7 +2,7 @@
 
 namespace Icinga\Data;
 
-use Icinga\Application\Logger;
+use Icinga\Logger\Logger;
 use Icinga\Exception;
 use Icinga\Filter\Filterable;
 use Icinga\Filter\Query\Node;
