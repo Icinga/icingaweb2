@@ -33,13 +33,12 @@ namespace Tests\Icinga\Authentication;
 require_once realpath(__DIR__ . '/../../../../../library/Icinga/Test/BaseTestCase.php');
 // @codingStandardsIgnoreEnd
 
-use Icinga\Application\Logger;
 use \Icinga\Test\BaseTestCase;
 
 // @codingStandardsIgnoreStart
 require_once 'Zend/Log.php';
 require_once 'Zend/Config.php';
-require_once BaseTestCase::$libDir . '/Application/Logger.php';
+require_once BaseTestCase::$libDir . '/Logger/Logger.php';
 require_once BaseTestCase::$libDir . '/Authentication/Manager.php';
 require_once BaseTestCase::$libDir . '/Authentication/Membership.php';
 require_once BaseTestCase::$libDir . '/Authentication/Credential.php';

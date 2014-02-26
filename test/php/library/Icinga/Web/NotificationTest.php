@@ -14,7 +14,7 @@ require_once "Zend/Session.php";
 require_once "Zend/Log/Writer/Abstract.php";
 require_once "Zend/Log/Writer/Stream.php";
 
-use Icinga\Application\Logger;
+use Icinga\Logger\Logger;
 use Icinga\Web\Notification;
 
 class NotificationTest extends \PHPUnit_Framework_TestCase
