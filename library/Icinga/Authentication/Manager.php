@@ -404,13 +404,13 @@ class Manager
         $this->fromRemoteUser = true;
         $this->authenticateFromSession();
         if ($this->user !== null) {
-            if ($this->user->getUsername() !== $_SERVER["REMOTE_USER"]) {
+            if (array_key_exists('REMOTE_USER', $_SERVER) && $this->user->getUsername() !== $_SERVER["REMOTE_USER"]) {
                 // Remote user has changed, clear all sessions
                 $this->removeAuthorization();
             }
             return;
         }
-        if ($_SERVER["REMOTE_USER"] !== null) {
+        if (array_key_exists('REMOTE_USER', $_SERVER) && $_SERVER["REMOTE_USER"]) {
             $this->user = new User($_SERVER["REMOTE_USER"]);
             $this->persistCurrentUser();
         }
