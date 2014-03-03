@@ -371,7 +371,6 @@ namespace Icinga\Test {
             require_once self::$libDir . '/Web/Form.php';
 
             require_once self::$libDir . '/User/Preferences.php';
-            require_once self::$libDir . '/User/Preferences/ChangeSet.php';
         }
 
         /**

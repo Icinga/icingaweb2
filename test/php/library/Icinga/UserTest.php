@@ -4,7 +4,6 @@ namespace Tests\Icinga;
 
 require_once __DIR__ . '/../../../../library/Icinga/User.php';
 require_once __DIR__ . '/../../../../library/Icinga/User/Preferences.php';
-require_once __DIR__ . '/../../../../library/Icinga/User/Preferences/ChangeSet.php';
 
 use \DateTimeZone;
 use Icinga\User as IcingaUser;

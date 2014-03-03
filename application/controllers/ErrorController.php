@@ -37,6 +37,8 @@ use \Icinga\Web\Controller\ActionController;
  */
 class ErrorController extends ActionController
 {
+    protected $requiresAuthentication = false;
+
     /**
      * Display exception
      */

@@ -29,30 +29,18 @@
 
 namespace Icinga\Authentication;
 
-use \Exception;
-use \Zend_Config;
+use Exception;
+use Zend_Config;
 use Icinga\User;
 use Icinga\Web\Session;
-use Icinga\Data\ResourceFactory;
 use Icinga\Logger\Logger;
-use Icinga\Exception\ConfigurationError;
+use Icinga\Exception\NotReadableError;
 use Icinga\Application\Config as IcingaConfig;
-use Icinga\Authentication\Backend\DbUserBackend;
-use Icinga\Authentication\Backend\LdapUserBackend;
+use Icinga\User\Preferences;
+use Icinga\User\Preferences\PreferencesStore;
 
-/**
- * The authentication manager allows to identify users and
- * to persist authentication information in a session.
- *
- * Direct instantiation is not permitted, the AuthenticationManager
- * must be created using the getInstance method. Subsequent getInstance
- * calls return the same object and ignore any additional configuration.
- *
- * @TODO(mh): Group support is not implemented yet (#4624)
- **/
 class Manager
 {
-
     /**
      * Singleton instance
      *
@@ -61,323 +49,82 @@ class Manager
     private static $instance;
 
     /**
-     * If the user was authenticated from the REMOTE_USER server variable
-     *
-     * @var Boolean
-     */
-    private $fromRemoteUser = false;
-
-    /**
-     * Instance of authenticated user
+     * Authenticated user
      *
      * @var User
      **/
     private $user;
 
     /**
-     * Array of user backends
-     *
-     * @var array
-     **/
-    private $userBackends = array();
-
-    /**
-     * Array of group backends
-     *
-     * @var array
-     **/
-    private $groupBackends = array();
-
-    /**
-     * The configuration
-     *
-     * @var Zend_Config
-     */
-    private $config = null;
-
-    /**
-     * If the backends are already created.
+     * If the user was authenticated from the REMOTE_USER server variable
      *
      * @var Boolean
      */
-    private $initialized = false;
+    private $fromRemoteUser = false;
 
-    /**
-     * Creates a new authentication manager using the provided config (or the
-     * configuration provided in the authentication.ini if no config is given)
-     * and with the given options.
-     *
-     * @param  Zend_Config      $config     The configuration to use for authentication
-     *                                      instead of the authentication.ini
-     * @param  array            $options    Additional options that affect the managers behaviour.
-     *                                      Supported values:
-     *                                      * noDefaultConfig: Disable default configuration from authentication.ini
-     **/
-    private function __construct(Zend_Config $config = null, array $options = array())
+    private function __construct()
     {
-        if ($config === null && !(isset($options['noDefaultConfig']) && $options['noDefaultConfig'] == true)) {
-            $config = IcingaConfig::app('authentication');
-        }
-        $this->config = $config;
     }
 
     /**
-     * Get a singleton instance of our self
+     * Get the authentication manager
      *
-     * @param   Zend_Config     $config
-     * @param   array           $options
-     *
-     * @return  self
-     * @see     Manager:__construct
+     * @return self
      */
-    public static function getInstance(Zend_Config $config = null, array $options = array())
+    public static function getInstance()
     {
         if (self::$instance === null) {
-            self::$instance = new Manager($config, $options);
+            self::$instance = new static();
         }
         return self::$instance;
     }
 
-    /**
-     * Initialize multiple backends from Zend Config
-     */
-    private function setupBackends(Zend_Config $config)
+    public function setAuthenticated(User $user, $persist = true)
     {
-        foreach ($config as $name => $backendConfig) {
-            // We won't initialize disabled backends
-            if ($backendConfig->get('disabled') == '1') {
-                continue;
-            }
-
-            if ($backendConfig->name === null) {
-                $backendConfig->name = $name;
-            }
-            $backend = $this->createBackend($backendConfig);
-            if ($backend instanceof UserBackend) {
-                $backend->connect();
-                $this->userBackends[$backend->getName()] = $backend;
-            } elseif ($backend instanceof GroupBackend) {
-                $backend->connect();
-                $this->groupBackends[$backend->getName()] = $backend;
-            }
-        }
-    }
-
-    /**
-     * Create a single backend from the given Zend_Config
-     *
-     * @param   Zend_Config     $backendConfig
-     *
-     * @return  null|UserBackend
-     */
-    private function createBackend(Zend_Config $backendConfig)
-    {
-        $target = ucwords(strtolower($backendConfig->target));
-        $name = $backendConfig->name;
-        // TODO: implement support for groups (#4624) and remove OR-Clause
-        if ((!$target || strtolower($target) != "user") && !$backendConfig->class) {
-            Logger::warning('AuthManager: Backend "%s" has no target configuration. (e.g. target=user|group)', $name);
-            return null;
-        }
+        $username = $user->getUsername();
         try {
-            if (isset($backendConfig->class)) {
-                // use a custom backend class, this is probably only useful for testing
-                if (!class_exists($backendConfig->class)) {
-                    Logger::error('AuthManager: Class not found (%s) for backend %s', $backendConfig->class, $name);
-                    return null;
-                }
-                $class = $backendConfig->class;
-                return new $class($backendConfig);
-            }
-
-            switch (ResourceFactory::getResourceConfig($backendConfig->resource)->type) {
-                case 'db':
-                    return new DbUserBackend($backendConfig);
-                case 'ldap':
-                    return new LdapUserBackend($backendConfig);
-                default:
-                    Logger::warning('AuthManager: Resource type ' . $backendConfig->type . ' not available.');
-            }
-        } catch (Exception $e) {
-            Logger::warning('AuthManager: Not able to create backend. Exception was thrown: %s', $e->getMessage());
+            $config = IcingaConfig::app();
+        } catch (NotReadableError $e) {
+            Logger::error(
+                new Exception('Cannot load preferences for user "' . $username . '". An exception was thrown', 0, $e)
+            );
+            $config = new Zend_Config(array());
         }
-        return null;
-    }
-
-    /**
-     * Add a user backend to the stack
-     *
-     * @param   UserBackend   $userBackend
-     */
-    public function addUserBackend(UserBackend $userBackend)
-    {
-        $this->userBackends[$userBackend->getName()] = $userBackend;
-    }
-
-    /**
-     * Get a user backend by name
-     *
-     * @param   string  $name
-     *
-     * @return  UserBackend|null
-     */
-    public function getUserBackend($name)
-    {
-        $this->initBackends();
-        return (isset($this->userBackends[$name])) ? $this->userBackends[$name] : null;
-    }
-
-    /**
-     * Add a group backend to the stack
-     *
-     * @param   GroupBackend    $groupBackend
-     */
-    public function addGroupBackend(GroupBackend $groupBackend)
-    {
-        $this->groupBackends[$groupBackend->getName()] = $groupBackend;
-    }
-
-    /**
-     * Get a group backend by name
-     *
-     * @param   string  $name
-     *
-     * @return  GroupBackend|null
-     */
-    public function getGroupBackend($name)
-    {
-        $this->initBackends();
-        return (isset($this->groupBackends[$name])) ? $this->groupBackends[$name] : null;
-    }
-
-    /**
-     * Find a backend for the given credentials
-     *
-     * @param   Credential  $credentials
-     *
-     * @return  UserBackend|null
-     * @throws  ConfigurationError
-     */
-    private function getBackendForCredential(Credential $credentials)
-    {
-        $this->initBackends();
-
-        $authErrors = 0;
-        foreach ($this->userBackends as $userBackend) {
-
-            $flag = false;
-
+        if (($preferencesConfig = $config->preferences) !== null) {
             try {
-                Logger::debug(
-                    'AuthManager: Try backend %s for user %s',
-                    $userBackend->getName(),
-                    $credentials->getUsername()
+                $preferencesStore = PreferencesStore::create(
+                    $preferencesConfig,
+                    $user
                 );
-                $flag = $userBackend->hasUsername($credentials);
-            } catch (Exception $e) {
+                $preferences = new Preferences($preferencesStore->load());
+            } catch (NotReadableError $e) {
                 Logger::error(
-                    'AuthManager: Backend "%s" has errors. Exception was thrown: %s',
-                    $userBackend->getName(),
-                    $e->getMessage()
+                    new Exception(
+                        'Cannot load preferences for user "' . $username . '". An exception was thrown', 0, $e
+                    )
                 );
-
-                $authErrors++;
-                continue;
+                $preferences = new Preferences();
             }
-
-            if ($flag === true) {
-                Logger::debug(
-                    'AuthManager: Backend %s has user %s',
-                    $userBackend->getName(),
-                    $credentials->getUsername()
-                );
-                return $userBackend;
-            }
+        } else {
+            $preferences = new Preferences();
         }
-
-        if ($authErrors >= count($this->userBackends)) {
-            throw new ConfigurationError(
-                'No working backend found. Unable to authenticate any user.' .
-                "\nPlease examine the logs for more information."
-            );
-        }
-
-        return null;
-    }
-
-    /**
-     * Ensures that all backends are initialized
-     */
-    private function initBackends()
-    {
-        if (!$this->initialized) {
-            $this->setupBackends($this->config);
-            $this->initialized = true;
-        }
-    }
-
-    /**
-     * Try to authenticate a user with the given credentials
-     *
-     * @param   Credential  $credentials    The credentials to use for authentication
-     * @param   Boolean     $persist        Whether to persist the authentication result in the current session
-     *
-     * @return  Boolean                     Whether the authentication was successful or not
-     * @throws  ConfigurationError
-     */
-    public function authenticate(Credential $credentials, $persist = true)
-    {
-        $this->initBackends();
-        if (count($this->userBackends) === 0) {
-            Logger::error('AuthManager: No authentication backend provided, your users will never be able to login.');
-            throw new ConfigurationError(
-                'No authentication backend set - login will never succeed as icinga-web ' .
-                'doesn\'t know how to determine your user. ' . "\n" .
-                'To fix this error, setup your authentication.ini with at least one valid authentication backend.'
-            );
-        }
-
-        $userBackend = $this->getBackendForCredential($credentials);
-
-        if ($userBackend === null) {
-            Logger::info('AuthManager: Unknown user %s tried to log in', $credentials->getUsername());
-            return false;
-        }
-
-        $this->user = $userBackend->authenticate($credentials);
-
-        if ($this->user === null) {
-            Logger::info('AuthManager: Invalid credentials for user %s provided', $credentials->getUsername());
-            return false;
-        }
-
-        $username = $credentials->getUsername();
-
+        $user->setPreferences($preferences);
         $membership = new Membership();
-
         $groups = $membership->getGroupsByUsername($username);
-        $this->user->setGroups($groups);
-
+        $user->setGroups($groups);
         $admissionLoader = new AdmissionLoader();
-
-        $this->user->setPermissions(
+        $user->setPermissions(
             $admissionLoader->getPermissions($username, $groups)
         );
-
-        $this->user->setRestrictions(
+        $user->setRestrictions(
             $admissionLoader->getRestrictions($username, $groups)
         );
-
+        $this->user = $user;
         if ($persist == true) {
-            // Refresh the used session ID on each login, to offer protection against session fixation
             $session = Session::getSession();
             $session->refreshId();
             $this->persistCurrentUser();
         }
-
-        Logger::info('AuthManager: User successfully logged in: %s', $credentials->getUsername());
-
-        return true;
     }
 
     /**
@@ -396,27 +143,6 @@ class Manager
     public function authenticateFromSession()
     {
         $this->user = Session::getSession()->get('user');
-    }
-
-    /**
-     * Tries to authenticate the user from the session, and then from the REMOTE_USER superglobal, that can be set by
-     * an external authentication provider.
-     */
-    public function authenticateFromRemoteUser()
-    {
-        $this->fromRemoteUser = true;
-        $this->authenticateFromSession();
-        if ($this->user !== null) {
-            if (array_key_exists('REMOTE_USER', $_SERVER) && $this->user->getUsername() !== $_SERVER["REMOTE_USER"]) {
-                // Remote user has changed, clear all sessions
-                $this->removeAuthorization();
-            }
-            return;
-        }
-        if (array_key_exists('REMOTE_USER', $_SERVER) && $_SERVER["REMOTE_USER"]) {
-            $this->user = new User($_SERVER["REMOTE_USER"]);
-            $this->persistCurrentUser();
-        }
     }
 
     /**
@@ -503,6 +229,27 @@ class Manager
     public function getGroups()
     {
         return $this->user->getGroups();
+    }
+
+    /**
+     * Tries to authenticate the user from the session, and then from the REMOTE_USER superglobal, that can be set by
+     * an external authentication provider.
+     */
+    public function authenticateFromRemoteUser()
+    {
+        $this->fromRemoteUser = true;
+        $this->authenticateFromSession();
+        if ($this->user !== null) {
+            if (array_key_exists('REMOTE_USER', $_SERVER) && $this->user->getUsername() !== $_SERVER["REMOTE_USER"]) {
+                // Remote user has changed, clear all sessions
+                $this->removeAuthorization();
+            }
+            return;
+        }
+        if (array_key_exists('REMOTE_USER', $_SERVER) && $_SERVER["REMOTE_USER"]) {
+            $this->user = new User($_SERVER["REMOTE_USER"]);
+            $this->persistCurrentUser();
+        }
     }
 
     /**

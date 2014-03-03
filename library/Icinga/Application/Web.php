@@ -29,6 +29,10 @@
 
 namespace Icinga\Application;
 
+// @codingStandardsIgnoreStart
+require_once dirname(__FILE__) . '/ApplicationBootstrap.php';
+// @codingStandardsIgnoreStop
+
 use \DateTimeZone;
 use \Exception;
 use \Zend_Layout;
@@ -40,19 +44,15 @@ use \Zend_Controller_Front;
 use Icinga\Logger\Logger;
 use Icinga\Authentication\Manager as AuthenticationManager;
 use Icinga\Exception\ConfigurationError;
-use Icinga\User\Preferences;
-use Icinga\User\Preferences\LoadInterface;
+use Icinga\Exception\NotReadableError;
 use Icinga\User;
 use Icinga\Web\Request;
 use Icinga\Web\View;
-use Icinga\User\Preferences\StoreFactory;
-use Icinga\User\Preferences\SessionStore;
+
 use Icinga\Util\DateTimeFactory;
 use Icinga\Session\Session as BaseSession;
 use Icinga\Web\Session;
 use Icinga\Util\Translator;
-
-require_once __DIR__ . '/ApplicationBootstrap.php';
 
 /**
  * Use this if you want to make use of Icinga functionality in other web projects
@@ -114,14 +114,16 @@ class Web extends ApplicationBootstrap
      */
     protected function bootstrap()
     {
-        return $this->setupLogging()
-            ->setupConfig()
+        return $this
+            ->setupLogging()
             ->setupErrorHandling()
+            ->loadConfig()
             ->setupResourceFactory()
             ->setupSession()
             ->setupUser()
-            ->setupInternationalization()
             ->setupTimezone()
+            ->setupLogger()
+            ->setupInternationalization()
             ->setupRequest()
             ->setupZendMvc()
             ->setupModuleManager()
@@ -137,7 +139,6 @@ class Web extends ApplicationBootstrap
      */
     private function setupRoute()
     {
-
         $this->frontController->getRouter()->addRoute(
             'module_javascript',
             new Zend_Controller_Router_Route(
@@ -202,25 +203,6 @@ class Web extends ApplicationBootstrap
     }
 
     /**
-     * Registers a NullStore as the preference provider
-     *
-     * @param Preferences   $preferences    The preference registry to attach the NullStore to
-     * @param User          $user           The user, required for API compliance
-     *
-     * @see   NullStore
-     */
-    private function registerFallbackPreferenceProvider($preferences, $user)
-    {
-        $this->getConfig()->preferences->type = 'null';
-        $preferenceStore = StoreFactory::create(
-            $this->getConfig()->preferences,
-            $user
-        );
-
-        $preferences->attach($preferenceStore);
-    }
-
-    /**
      * Create user object and inject preference interface
      *
      * @return  self
@@ -228,98 +210,21 @@ class Web extends ApplicationBootstrap
      */
     private function setupUser()
     {
-        $authenticationManager = AuthenticationManager::getInstance();
-
-
-        if ($this->getConfig()->get('global')->get('authenticationMode', 'internal') === 'external') {
+        try {
+            $config = Config::app('authentication');
+        } catch (NotReadableError $e) {
+            Logger::error(
+                new Exception('Cannot load authentication configuration. An exception was thrown:', 0, $e)
+            );
+            $config = null;
+        }
+        $authenticationManager = AuthenticationManager::getInstance($config);
+        if ($config !== null && $config->global !== null && $config->global->get('authenticationMode', 'internal') === 'external') {
             $authenticationManager->authenticateFromRemoteUser();
         }
-
         if ($authenticationManager->isAuthenticated() === true) {
-            $user = $authenticationManager->getUser();
-
-            // Needed to update values in user session
-            $sessionStore = new SessionStore($this->session);
-
-            // Performance: Do not ask provider if we've preferences
-            // stored in session
-            $initialPreferences = array();
-            $preferencesLoaded = false;
-            if (count($sessionStore->load())) {
-                $initialPreferences = $sessionStore->load();
-                $preferencesLoaded = true;
-            }
-
-            $preferences = new Preferences($initialPreferences);
-
-            $preferences->attach($sessionStore);
-
-            if ($this->getConfig()->preferences !== null) {
-                if (!$this->getConfig()->preferences->type) {
-                    Logger::info(
-                        'Preferences provider configuration error. No type was omitted. For convenience we enable '
-                        . 'file based ini provider for you.'
-                    );
-
-                    $this->getConfig()->preferences->type = 'ini';
-                }
-
-                $path = Config::resolvePath($this->getConfig()->preferences->configPath);
-                if (is_dir($path) === false) {
-                    Logger::warning(
-                        'Path for preferences not found (IniStore, "%s"). Using default one: "%s"',
-                        $this->getConfig()->preferences->configPath,
-                        $this->getConfigDir('preferences')
-                    );
-
-                    $this->getConfig()->preferences->configPath = $this->getConfigDir('preferences');
-                }
-
-                $preferenceStore = null;
-
-                try {
-                    $preferenceStore = StoreFactory::create(
-                        $this->getConfig()->preferences,
-                        $user
-                    );
-                    $preferences->attach($preferenceStore);
-                } catch (Exception $e) {
-                    Logger::warning(
-                        'Could not create create preferences provider, preferences will be discarded: '
-                        . '"%s"',
-                        $e->getMessage()
-                    );
-                    $this->registerFallbackPreferenceProvider($preferences, $user);
-                }
-
-                if ($preferencesLoaded === false && $preferenceStore instanceof LoadInterface) {
-                    try {
-                        $initialPreferences = $preferenceStore->load();
-                    } catch (Exception $e) {
-                        Logger::warning(
-                            '%s::%s: Could not load preferences from provider. '
-                            . 'An exception during bootstrap was thrown: %s',
-                            __CLASS__,
-                            __FUNCTION__,
-                            $e->getMessage()
-                        );
-                        $this->registerFallbackPreferenceProvider($preferences, $user);
-                    }
-
-                    $sessionStore->writeAll($initialPreferences);
-                }
-            } else {
-                Logger::error(
-                    'Preferences are not configured. Refer to the documentation to setup a valid provider. '
-                    . 'We will use session store only. Preferences are not persisted after logout'
-                );
-            }
-
-            $user->setPreferences($preferences);
-
-            $this->user = $user;
+            $this->user = $authenticationManager->getUser();
         }
-
         return $this;
     }
 
@@ -387,11 +292,10 @@ class Web extends ApplicationBootstrap
 
         $view->view->setEncoding('UTF-8');
         $view->view->headTitle()->prepend(
-            $this->getConfig()->{'global'}->get('project', 'Icinga')
+            $this->config->global !== null ? $this->config->global->get('project', 'Icinga') : 'Icinga'
         );
 
         $view->view->headTitle()->setSeparator(' :: ');
-        $view->view->navigation = $this->getConfig()->app('menu');
 
         $this->viewRenderer = $view;
 
@@ -427,15 +331,19 @@ class Web extends ApplicationBootstrap
      */
     protected function setupTimezone()
     {
-        $userTimeZone = $this->user === null ? null : $this->user->getPreferences()->get('app.timezone');
+        if ($this->user !== null && $this->user->getPreferences() !== null) {
+            $userTimezone = $this->user->getPreferences()->get('app.timezone');
+        } else {
+            $userTimezone = null;
+        }
 
         try {
-            $tz = new DateTimeZone($userTimeZone);
+            $tz = new DateTimeZone($userTimezone);
         } catch (Exception $e) {
             return parent::setupTimezone();
         }
 
-        date_default_timezone_set($userTimeZone);
+        date_default_timezone_set($userTimezone);
         DateTimeFactory::setConfig(array('timezone' => $tz));
         return $this;
     }
@@ -450,19 +358,18 @@ class Web extends ApplicationBootstrap
     protected function setupInternationalization()
     {
         parent::setupInternationalization();
-        $userLocale = $this->user === null ? null : $this->user->getPreferences()->get('app.language');
-
-        if ($userLocale) {
+        if ($this->user !== null && $this->user->getPreferences() !== null
+            && ($locale = $this->user->getPreferences()->get('app.language') !== null)
+        ) {
             try {
-                Translator::setupLocale($userLocale);
+                Translator::setupLocale($locale);
             } catch (Exception $error) {
                 Logger::info(
-                    'Cannot set locale "' . $userLocale . '" configured in ' .
+                    'Cannot set locale "' . $locale . '" configured in ' .
                     'preferences of user "' . $this->user->getUsername() . '"'
                 );
             }
         }
-
         return $this;
     }
 }

@@ -242,11 +242,14 @@ class Form extends Zend_Form
     /**
      * Set the configuration to be used for this form when no preferences are set yet
      *
-     * @param IcingaConfig $cfg
+     * @param   IcingaConfig $cfg
+     *
+     * @return  self
      */
     public function setConfiguration($cfg)
     {
         $this->config = $cfg;
+        return $this;
     }
 
     /**

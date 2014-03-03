@@ -30,6 +30,7 @@
 namespace Icinga\Authentication;
 
 use Icinga\Application\Config;
+use Icinga\Exception\NotReadableError;
 use Icinga\Util\String;
 
 /**
@@ -47,10 +48,14 @@ class Membership
     public function getGroupsByUsername($username)
     {
         $groups = array();
-        foreach (Config::app('membership') as $section) {
+        try {
+            $config = Config::app('memberships');
+        } catch (NotReadableError $e) {
+            return $groups;
+        }
+        foreach ($config as $section) {
             $users = String::trimSplit($section->users);
-
-            if (in_array($username, $users) === true) {
+            if (in_array($username, $users)) {
                 $groups = array_merge($groups, String::trimSplit($section->groups));
             }
         }

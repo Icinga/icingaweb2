@@ -28,18 +28,17 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use \Icinga\Web\Controller\BasePreferenceController;
-use \Icinga\Web\Widget\Tab;
-use \Icinga\Application\Config as IcingaConfig;
-use \Icinga\Web\Url;
-use \Icinga\Form\Preference\GeneralForm;
+use Icinga\Web\Controller\BasePreferenceController;
+use Icinga\Web\Widget\Tab;
+use Icinga\Application\Config as IcingaConfig;
+use Icinga\Web\Url;
+use Icinga\Form\Preference\GeneralForm;
 
 /**
  * Application wide preference controller for user preferences
  */
 class PreferenceController extends BasePreferenceController
 {
-
     /**
      * Create tabs for this preference controller
      *
@@ -66,34 +65,21 @@ class PreferenceController extends BasePreferenceController
     public function indexAction()
     {
         $form = new GeneralForm();
-        $form->setConfiguration(IcingaConfig::app());
-        $form->setRequest($this->getRequest());
+        $form->setConfiguration(IcingaConfig::app())
+            ->setRequest($this->getRequest());
         if ($form->isSubmittedAndValid()) {
-            $preferences = $form->getPreferences();
-            $userPreferences = $this->getRequest()->getUser()->getPreferences();
-
-            $userPreferences->startTransaction();
-            foreach ($preferences as $key => $value) {
-                if (!$value) {
-                    $userPreferences->remove($key);
-                } else {
-                    $userPreferences->set($key, $value);
-                }
-            }
             try {
-                $userPreferences->commit();
-                $this->view->successMessage = "Preferences Updated Successfully";
-
-                // recreate form to show new values
+                $this->savePreferences($form->getPreferences());
+                $this->view->successMessage = 'Preferences Updated Successfully';
+                // Recreate form to show new values
+                // TODO(el): It must sufficient to call $form->populate(...)
                 $form = new GeneralForm();
                 $form->setConfiguration(IcingaConfig::app());
                 $form->setRequest($this->getRequest());
-
             } catch (Exception $e) {
                 $this->view->exceptionMessage = $e->getMessage();
             }
         }
-
         $this->view->form = $form;
     }
 }

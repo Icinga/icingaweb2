@@ -31,9 +31,9 @@ namespace Icinga\User\Preferences;
 
 use Icinga\User;
 use SplSubject;
-use Zend_Db_Adapter_Abstract;
 use Icinga\Exception\ProgrammingError;
 use Icinga\User\Preferences;
+use Icinga\Data\ResourceFactory;
 
 /**
  * Store user preferences in database
@@ -84,6 +84,9 @@ class DbStore implements LoadInterface, FlushObserverInterface
     public function setUser(User $user)
     {
         $this->user = $user;
+        ResourceFactory::createResource(
+            ResourceFactory::getResourceConfig($config->resource)
+        );
     }
 
     /**
@@ -91,7 +94,7 @@ class DbStore implements LoadInterface, FlushObserverInterface
      *
      * @param Zend_Db_Adapter_Abstract $db
      */
-    public function setDbAdapter(Zend_Db_Adapter_Abstract $db)
+    public function setDbAdapter( $db)
     {
         $this->db = $db;
 
@@ -115,8 +118,7 @@ class DbStore implements LoadInterface, FlushObserverInterface
     public function load()
     {
         $res = $this->db->select()->from($this->table)
-            ->where('username=?', $this->user->getUsername())
-            ->query();
+            ->where('username=?', $this->user->getUsername());
 
         $out = array();
 

@@ -6,12 +6,9 @@ indexController     = "dashboard"
 dateFormat          = "d/m/Y"
 timeFormat          = "g:i A"
 
-; The directory that contains the symlinks to all enabled directories.
-moduleFolder        = "@icingaweb_config_path@/enabledModules"
-
 ; Contains the directories that will be searched for available modules. Modules that
 ; don't exist in these directories can still be symlinked in the module folder, but
-; won't show up in the list of disabled modules.
+; won't show up in the list of disabled modules
 ; modulePath          = "/vagrant/modules:/usr/share/icingaweb/modules"
 
 ; The used authentication-mode can be either "internal" to handle the authentication in IcingaWeb
@@ -19,7 +16,7 @@ moduleFolder        = "@icingaweb_config_path@/enabledModules"
 authenticationMode  = "internal"
 
 [logging]
-enable              = true
+;enable              = false
 ; Writing to a Stream
 type                = "stream"
 ; Write data to the following file
@@ -44,13 +41,13 @@ level               = 1
 ; INFO    = 2 - Informational: informational messages
 ; DEBUG   = 3 - Debug: debug messages
 
-; Use ini store to store preferences on local disk
 [preferences]
+; Use INI file storage to save preferences to a local disk
 type                = "ini"
-
-; Use database to store preference into mysql or postgres
-;[preferences]
-;type=db
-;resource=icingaweb-mysql
-
 configPath          = "@icingaweb_config_path@/preferences"
+
+; Use database storage to save preferences in either a MySQL or PostgreSQL database
+;type        = db
+;resource    = icingaweb-mysql
+
+

@@ -29,17 +29,17 @@
 
 namespace Icinga\Application;
 
-use \Exception;
-use \DateTimeZone;
-use \Zend_Config;
+use DateTimeZone;
+use Exception;
+use Zend_Config;
 use Icinga\Application\Modules\Manager as ModuleManager;
 use Icinga\Application\Config;
+use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
+use Icinga\Exception\NotReadableError;
+use Icinga\Logger\Logger;
 use Icinga\Util\DateTimeFactory;
 use Icinga\Util\Translator;
-use Icinga\Logger\Logger;
-
-use Icinga\Data\ResourceFactory;
 
 /**
  * This class bootstraps a thin Icinga application layer
@@ -82,9 +82,9 @@ abstract class ApplicationBootstrap
     /**
      * Config object
      *
-     * @var Config
+     * @var Zend_Config
      */
-    private $config;
+    protected $config;
 
     /**
      * Configuration directory
@@ -126,7 +126,7 @@ abstract class ApplicationBootstrap
      */
     protected function __construct($configDir)
     {
-        $this->libDir = realpath(__DIR__. '/../..');
+        $this->libDir = realpath(__DIR__ . '/../..');
 
         if (!defined('ICINGA_LIBDIR')) {
             define('ICINGA_LIBDIR', $this->libDir);
@@ -259,38 +259,9 @@ abstract class ApplicationBootstrap
      */
     public static function start($configDir)
     {
-        $class = get_called_class();
-        /** @var ApplicationBootstrap $obj */
-        $application = new $class($configDir);
+        $application = new static($configDir);
         $application->bootstrap();
-
         return $application;
-    }
-
-    /**
-     * Stop application and show information about errors
-     *
-     * @param array $errors
-     */
-    public function stopApplication(array $errors = array())
-    {
-        $msg = "Application could not be started!\n\n";
-
-        if (count($errors)) {
-            foreach ($errors as $error) {
-                $msg .= $error[0]. "\n";
-            }
-        } else {
-            $msg .= "Further information about the error may have been written to the application's log file.\n"
-                . 'Please check it in order to analyse the problem.';
-        }
-
-        if ($this->isWeb()) {
-            $msg = nl2br($msg);
-        }
-
-        echo $msg;
-        die();
     }
 
     /**
@@ -300,7 +271,7 @@ abstract class ApplicationBootstrap
      */
     public function setupAutoloader()
     {
-        require $this->libDir. '/Icinga/Application/Loader.php';
+        require $this->libDir . '/Icinga/Application/Loader.php';
 
         $this->loader = new Loader();
         $this->loader->registerNamespace('Icinga', $this->libDir. '/Icinga');
@@ -342,7 +313,12 @@ abstract class ApplicationBootstrap
         $this->moduleManager = new ModuleManager(
             $this,
             $this->configDir . '/enabledModules',
-            explode(':', $this->config->global->get('modulePath', ICINGA_APPDIR . '/../modules'))
+            explode(
+                ':',
+                $this->config->global !== null
+                    ? $this->config->global->get('modulePath', ICINGA_APPDIR . '/../modules')
+                    : ICINGA_APPDIR . '/../modules'
+            )
         );
         return $this;
     }
@@ -356,8 +332,8 @@ abstract class ApplicationBootstrap
     {
         try {
             $this->moduleManager->loadEnabledModules();
-        } catch (Exception $e) {
-            
+        } catch (NotReadableError $e) {
+            Logger::error(new Exception('Cannot load enabled modules. An exception was thrown:', 0, $e));
         }
         return $this;
     }
@@ -380,7 +356,6 @@ abstract class ApplicationBootstrap
                 )
             )
         );
-
         return $this;
     }
 
@@ -389,10 +364,15 @@ abstract class ApplicationBootstrap
      *
      * @return self
      */
-    protected function setupConfig()
+    protected function loadConfig()
     {
         Config::$configDir = $this->configDir;
-        $this->config = Config::app();
+        try {
+            $this->config = Config::app();
+        } catch (NotReadableError $e) {
+            Logger::error(new Exception('Cannot load application configuration. An exception was thrown:', 0, $e));
+            $this->config = new Zend_Config(array());
+        }
         return $this;
     }
 
@@ -403,30 +383,45 @@ abstract class ApplicationBootstrap
      */
     protected function setupErrorHandling()
     {
-        if ($this->config->get('global', 'environment') == 'development') {
-            error_reporting(E_ALL | E_NOTICE);
-            ini_set('display_startup_errors', 1);
-            ini_set('display_errors', 1);
-        }
-
-        try {
-            Logger::create($this->config->logging);
-        } catch (ConfigurationError $e) {
-            Logger::error($e);
-        }
-
+        error_reporting(E_ALL | E_NOTICE);
+        ini_set('display_startup_errors', 1);
+        ini_set('display_errors', 1);
         return $this;
     }
 
     /**
-     * Setup factories that provide access to the resources
+     * Set up logger
+     *
+     * @return self
+     */
+    protected function setupLogger()
+    {
+        if ($this->config->logging !== null) {
+            try {
+                Logger::create($this->config->logging);
+            } catch (ConfigurationError $e) {
+                Logger::error($e);
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * Set up the resource factory
      *
      * @return self
      */
     protected function setupResourceFactory()
     {
-        $config = Config::app('resources');
-        ResourceFactory::setConfig($config);
+        try {
+            $config = Config::app('resources');
+            ResourceFactory::setConfig($config);
+        } catch (NotReadableError $e) {
+            Logger::error(
+                new Exception('Cannot load resource configuration. An exception was thrown:', 0, $e)
+            );
+        }
+
         return $this;
     }
 
@@ -438,7 +433,7 @@ abstract class ApplicationBootstrap
      */
     protected function setupTimezone()
     {
-        $timeZoneString = $this->config->global->get('timezone', 'UTC');
+        $timeZoneString = $this->config->global !== null ? $this->config->global->get('timezone', 'UTC') : 'UTC';
         try {
             $tz = new DateTimeZone($timeZoneString);
         } catch (Exception $e) {
@@ -459,7 +454,10 @@ abstract class ApplicationBootstrap
     protected function setupInternationalization()
     {
         try {
-            Translator::setupLocale($this->config->global->get('language', Translator::DEFAULT_LOCALE));
+            Translator::setupLocale(
+                $this->config->global !== null ? $this->config->global->get('language', Translator::DEFAULT_LOCALE)
+                    : Translator::DEFAULT_LOCALE
+            );
         } catch (Exception $error) {
             Logger::error($error);
         }

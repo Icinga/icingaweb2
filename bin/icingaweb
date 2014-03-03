@@ -11,6 +11,5 @@ set_include_path(
 );
 
 require_once 'Icinga/Application/Cli.php';
-date_default_timezone_set('UTC');
 $app = Cli::start(dirname(__FILE__) . '/../config/')->dispatch();
 

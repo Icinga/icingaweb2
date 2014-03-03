@@ -568,25 +568,7 @@ class Module
         }
 
         $this->registerLocales()
-             ->registerRoutes()
-             ->registerMenuEntries();
-        return $this;
-    }
-
-    /**
-     * Register menu entries
-     *
-     * @return self
-     */
-    protected function registerMenuEntries()
-    {
-        $cfg = $this->app
-            ->getConfig()
-            ->module($this->name, 'menu');
-        $view = $this->app->getViewRenderer();
-        if ($cfg) {
-            $view->view->navigation = $cfg->merge($view->view->navigation);
-        }
+             ->registerRoutes();
         return $this;
     }
 
