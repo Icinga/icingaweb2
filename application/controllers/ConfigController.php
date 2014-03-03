@@ -113,7 +113,7 @@ class ConfigController extends BaseConfigController
     {
         $this->view->messageBox = new AlertMessageBox(true);
         $form = new GeneralForm();
-        $form->setConfiguration(IcingaConfig::app());
+        //$form->setConfiguration(IcingaConfig::app());
         $form->setRequest($this->_request);
         if ($form->isSubmittedAndValid()) {
             if (!$this->writeConfigFile($form->getConfig(), 'config'))  {
@@ -465,11 +465,11 @@ class ConfigController extends BaseConfigController
         $form = new ConfirmRemovalForm();
         $form->setRequest($this->getRequest());
         $form->setRemoveTarget('resource', $name);
-	    
+
         // Check if selected resource is currently used for authentication
         $authConfig = IcingaConfig::app('authentication', true)->toArray();
         foreach ($authConfig as $backendName => $config) {
-           if (array_key_exists('resource', $config) && $config['resource'] === $name) { 
+           if (array_key_exists('resource', $config) && $config['resource'] === $name) {
               $this->addErrorMessage(
 				'Warning: The resource "' . $name . '" is currently used for user authentication by "' . $backendName  . '". ' .
 				' Deleting it could eventally make login impossible.'

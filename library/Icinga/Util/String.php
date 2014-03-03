@@ -44,6 +44,6 @@ class String
      */
     public static function trimSplit($value, $delimiter = ',')
     {
-        return array_map('trim', explode(',', $value));
+        return array_map('trim', explode($delimiter, $value));
     }
 }

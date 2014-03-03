@@ -28,13 +28,14 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use \Icinga\Web\Controller\ActionController;
-use \Icinga\Web\Url;
-use \Icinga\Application\Icinga;
-use \Icinga\Web\Widget\Dashboard;
-use \Icinga\Application\Config as IcingaConfig;
-use \Icinga\Form\Dashboard\AddUrlForm;
-use \Icinga\Exception\ConfigurationError;
+use Icinga\Web\Controller\ActionController;
+use Icinga\Web\Url;
+use Icinga\Web\Widget\Dashboard;
+use Icinga\Application\Config as IcingaConfig;
+use Icinga\Form\Dashboard\AddUrlForm;
+use Icinga\Exception\ConfigurationError;
+use Icinga\Exception\NotReadableError;
+use Icinga\Application\Logger;
 
 /**
  * Handle creation, removal and displaying of dashboards, panes and components
@@ -53,7 +54,12 @@ class DashboardController extends ActionController
     private function getDashboard($config = 'dashboard/dashboard')
     {
         $dashboard = new Dashboard();
-        $dashboard->readConfig(IcingaConfig::app($config));
+        try {
+            $dashboardConfig = IcingaConfig::app($config);
+            $dashboard->readConfig($dashboardConfig);
+        } catch (NotReadableError $e) {
+            Logger::exception(new Exception('Cannot load dashboard configuration. An exception was thrown:', 0, $e));
+        }
         return $dashboard;
     }
 

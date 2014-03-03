@@ -637,3 +637,45 @@ file { '/etc/icingaweb/resources.ini':
   group     => 'apache',
   require   => File['/etc/icingaweb']
 }
+
+file { '/etc/icingaweb/enabledModules':
+  ensure    => 'directory',
+  owner     => 'apache',
+  group     => 'apache',
+  require   => File['/etc/icingaweb']
+}
+
+file { '/etc/icingaweb/modules':
+  ensure    => 'directory',
+  owner     => 'apache',
+  group     => 'apache',
+  require   => File['/etc/icingaweb']
+}
+
+file { '/etc/icingaweb/modules/monitoring':
+  ensure    => 'directory',
+  owner     => 'apache',
+  group     => 'apache',
+  require   => File['/etc/icingaweb/modules']
+}
+
+file { '/etc/icingaweb/modules/monitoring/backends.ini':
+   source    => 'puppet:////vagrant/.vagrant-puppet/files/etc/icingaweb/modules/monitoring/backends.ini',
+   owner     => 'apache',
+   group     => 'apache',
+   require   => File['/etc/icingaweb/modules/monitoring']
+}
+
+file { '/etc/icingaweb/modules/monitoring/instances.ini':
+  source    => 'puppet:////vagrant/.vagrant-puppet/files/etc/icingaweb/modules/monitoring/instances.ini',
+  owner     => 'apache',
+  group     => 'apache',
+  require   => File['/etc/icingaweb/modules/monitoring']
+}
+
+file { '/etc/icingaweb/modules/monitoring/menu.ini':
+  source    => 'puppet:////vagrant/.vagrant-puppet/files/etc/icingaweb/modules/monitoring/menu.ini',
+  owner     => 'apache',
+  group     => 'apache',
+  require   => File['/etc/icingaweb/modules/monitoring']
+}
