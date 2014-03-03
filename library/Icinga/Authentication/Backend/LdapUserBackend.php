@@ -29,170 +29,98 @@
 
 namespace Icinga\Authentication\Backend;
 
-use Icinga\Data\ResourceFactory;
-use \stdClass;
-use \Zend_Config;
-use \Icinga\User;
-use \Icinga\Authentication\UserBackend;
-use \Icinga\Authentication\Credential;
-use \Icinga\Protocol\Ldap;
-use \Icinga\Protocol\Ldap\Connection as LdapConnection;
-use \Icinga\Application\Config as IcingaConfig;
-use \Icinga\Exception\ConfigurationError;
+use Icinga\User;
+use Icinga\Authentication\UserBackend;
+use Icinga\Protocol\Ldap\Connection;
 
-/**
- * User authentication backend
- */
-class LdapUserBackend implements UserBackend
+class LdapUserBackend extends UserBackend
 {
     /**
-     * Ldap resource
+     * Connection to the LDAP server
      *
      * @var Connection
      **/
-    protected $connection;
+    protected $conn;
 
-    /**
-     * The ldap connection information
-     *
-     * @var Zend_Config
-     */
-    private $config;
+    protected $userClass;
 
-    /**
-     * Name of the backend
-     *
-     * @var string
-     */
-    private $name;
+    protected $userNameAttribute;
 
-    /**
-     * Create a new LdapUserBackend
-     *
-     * @param Zend_Config   $config     The configuration for this authentication backend.
-     *                                   'resource' => The name of the resource to use, or an actual
-     *                                                  instance of \Icinga\Protocol\Ldap\Connection.
-     *                                   'name'     => The name of this authentication backend.
-     *
-     * @throws ConfigurationError       When the given resource does not exist.
-     */
-    public function __construct(Zend_Config $config)
+    public function __construct(Connection $conn, $userClass, $userNameAttribute)
     {
-        if (!isset($config->resource)) {
-            throw new ConfigurationError('An authentication backend must provide a resource.');
-        }
-        $this->config = $config;
-        $this->name = $config->name;
-        if ($config->resource instanceof LdapConnection) {
-            $this->connection = $config->resource;
-        } else {
-            $this->connection = ResourceFactory::createResource(
-                ResourceFactory::getResourceConfig($config->resource)
+        $this->conn = $conn;
+        $this->userClass = $userClass;
+        $this->userNameAttribute = $userNameAttribute;
+    }
+
+    /**
+     * Create query
+     *
+     * @param   string $username
+     *
+     * @return  \Icinga\Protocol\Ldap\Query
+     **/
+    protected function createQuery($username)
+    {
+        return $this->conn->select()
+            ->from(
+                $this->userClass,
+                array($this->userNameAttribute)
+            )
+            ->where(
+                $this->userNameAttribute,
+                str_replace('*', '', $username)
             );
-        }
     }
 
     /**
-     * Name of the backend
+     * Test whether the given user exists
      *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * Test if the username exists
-     *
-     * @param   Credential $credential Credential to find user in database
+     * @param   User $user
      *
      * @return  bool
      */
-    public function hasUsername(Credential $credential)
+    public function hasUser(User $user)
     {
-        return $this->connection->fetchOne(
-            $this->selectUsername($credential->getUsername())
-        ) === $credential->getUsername();
-    }
-
-    /**
-     * Removes the '*' character from $string
-     *
-     * @param string $string Input string
-     *
-     * @return string
-     **/
-    protected function stripAsterisks($string)
-    {
-        return str_replace('*', '', $string);
-    }
-
-    /**
-     * Tries to fetch the username
-     *
-     * @param  string   $username The username to select
-     *
-     * @return stdClass $result
-     **/
-    protected function selectUsername($username)
-    {
-        return $this->connection->select()
-            ->from(
-                $this->config->user_class,
-                array(
-                    $this->config->user_name_attribute
-                )
-            )
-            ->where(
-                $this->config->user_name_attribute,
-                $this->stripAsterisks($username)
-            );
+        $username = $user->getUsername();
+        return $this->conn->fetchOne($this->createQuery($username)) === $username;
     }
 
     /**
      * Authenticate
      *
-     * @param   Credential $credentials Credential to authenticate
+     * @param   User    $user
+     * @param   string  $password
      *
-     * @return  User
+     * @return  bool
      */
-    public function authenticate(Credential $credentials)
+    public function authenticate(User $user, $password)
     {
-        if ($this->connection->testCredentials(
-            $this->connection->fetchDN($this->selectUsername($credentials->getUsername())),
-            $credentials->getPassword()
-        )) {
-            return new User($credentials->getUsername());
+        if ($this->conn->testCredentials(
+                $this->conn->fetchDN($this->createQuery($user->getUsername())),
+                $password
+            )
+        ) {
+            return true;
         }
+        return false;
     }
 
     /**
-     * Return number of users in this backend
+     * Get the number of users available
      *
-     * @return  int The number of users set in this backend
-     * @see     UserBackend::getUserCount
+     * @return int
      */
-    public function getUserCount()
+    public function count()
     {
-        return $this->connection->count(
-            $this->connection->select()->from(
-                $this->config->user_class,
+        return $this->conn->count(
+            $this->conn->select()->from(
+                $this->userClass,
                 array(
-                    $this->config->user_name_attribute
+                    $this->userNameAttribute
                 )
             )
         );
     }
-
-    /**
-     *
-     * Establish the connection to this authentication backend
-     *
-     * @throws \Exception   When the connection to the resource is not possible.
-     */
-    public function connect()
-    {
-        $this->connection->connect();
-    }
 }
+

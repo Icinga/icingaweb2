@@ -30,6 +30,7 @@
 namespace Icinga\Authentication;
 
 use Icinga\Application\Config;
+use Icinga\Exception\NotReadableError;
 use Icinga\Util\String;
 
 /**
@@ -70,7 +71,12 @@ class AdmissionLoader
     public function getPermissions($username, array $groups)
     {
         $permissions = array();
-        foreach (Config::app('permissions') as $section) {
+        try {
+            $config = Config::app('permissions');
+        } catch (NotReadableError $e) {
+            return $permissions;
+        }
+        foreach ($config as $section) {
             if ($this->match($section, $username, $groups)) {
                 foreach ($section as $key => $value) {
                     if (strpos($key, 'permission') === 0) {
@@ -79,7 +85,6 @@ class AdmissionLoader
                 }
             }
         }
-
         return $permissions;
     }
 
@@ -94,15 +99,19 @@ class AdmissionLoader
     public function getRestrictions($username, array $groups)
     {
         $restrictions = array();
-        foreach (Config::app('restrictions') as $section) {
+        try {
+            $config = Config::app('restrictions');
+        } catch (NotReadableError $e) {
+            return $restrictions;
+        }
+        foreach ($config as $section) {
             if ($this->match($section, $username, $groups)) {
-                if (array_key_exists($section->name, $restrictions) === false) {
+                if (!array_key_exists($section->name, $restrictions)) {
                     $restrictions[$section->name] = array();
                 }
                 $restrictions[$section->name][] = $section->restriction;
             }
         }
-
         return $restrictions;
     }
 }

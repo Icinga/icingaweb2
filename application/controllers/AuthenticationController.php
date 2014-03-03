@@ -30,11 +30,14 @@
 
 # namespace Icinga\Application\Controllers;
 
-use \Exception;
 use Icinga\Web\Controller\ActionController;
-use Icinga\Authentication\Credential;
 use Icinga\Authentication\Manager as AuthManager;
 use Icinga\Form\Authentication\LoginForm;
+use Icinga\Authentication\AuthChain;
+use Icinga\Application\Config;
+use Icinga\Exception\NotReadableError;
+use Icinga\Exception\ConfigurationError;
+use Icinga\User;
 
 /**
  * Application wide controller for authentication
@@ -64,16 +67,52 @@ class AuthenticationController extends ActionController
                 $this->redirectNow($redirectUrl);
             }
             if ($this->view->form->isSubmittedAndValid()) {
-                $credentials = new Credential(
-                    $this->view->form->getValue('username'),
-                    $this->view->form->getValue('password')
+                $user = new User(
+                    $this->view->form->getValue('username')
                 );
-                if (!$auth->authenticate($credentials)) {
-                    $this->view->form->getElement('password')
-                        ->addError(t('Incorrect username or password'));
-                } else {
-                    $this->redirectNow($redirectUrl);
+                try {
+                    $config = Config::app('authentication');
+                } catch (NotReadableError $e) {
+                    Logger::exception(
+                        new Exception('Cannot load authentication configuration. An exception was thrown:', 0, $e)
+                    );
+                    throw new ConfigurationError(
+                        'No authentication methods available. It seems that none authentication method has been set'
+                        . ' up. Please contact your Icinga Web administrator'
+                    );
                 }
+                $backendsWithError = 0;
+                // TODO(el): Currently the user is only notified about authentication backend problems when all backends
+                // have errors. It may be the case that the authentication backend which provides the user has errors
+                // but other authentication backends work. In that scenario the user is presented an error message
+                // saying "Incorrect username or password". We must inform the user that not all authentication methods
+                // are available.
+                $backendsTried = 0;
+                $chain = new AuthChain($config);
+                foreach ($chain as $backend) {
+                    ++$backendsTried;
+                    try {
+                        if ($backend->authenticate($user, $this->view->form->getValue('password'))) {
+                            $auth->setAuthenticated($user);
+                            $this->redirectNow($redirectUrl);
+                        }
+                    } catch (Exception $e) {
+                        Logger::exception(
+                            new Exception(
+                                'Cannot authenticate against backend "' . $backend->getName() . '".'
+                                . ' An exception was thrown:', 0, $e
+                            )
+                        );
+                        ++$backendsWithError;
+                    }
+                }
+                if ($backendsWithError === $backendsTried) {
+                    throw new ConfigurationError(
+                        'No authentication methods available. It seems that all set up authentication methods have'
+                        . ' errors. Please contact your Icinga Web administrator'
+                    );
+                }
+                $this->view->form->getElement('password')->addError(t('Incorrect username or password'));
             }
         } catch (Exception $e) {
             $this->view->errorInfo = $e->getMessage();
