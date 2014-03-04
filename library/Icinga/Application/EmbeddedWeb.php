@@ -54,7 +54,7 @@ class EmbeddedWeb extends ApplicationBootstrap
      */
     protected function bootstrap()
     {
-        return $this->setupConfig()
+        return $this->loadConfig()
             ->setupErrorHandling()
             ->setupTimezone()
             ->setupModuleManager()
