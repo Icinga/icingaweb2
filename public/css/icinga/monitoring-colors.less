@@ -167,6 +167,15 @@ tr.state.critical.handled td.state, tr.state.down.handled td.state {
   background-image: none;
 }
 
+tr.state.unreachable td.state {
+  background-color: @colorUnreachable;
+}
+
+tr.state.unreachable.handled td.state {
+  border-left-color: @colorUnreachableHandled;
+  background-image: none;
+}
+
 tr.state.unknown td.state {
   background-color: @colorUnknown;
 }
