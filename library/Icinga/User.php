@@ -163,6 +163,9 @@ class User
      */
     public function getPreferences()
     {
+        if ($this->preferences === null) {
+            $this->preferences = new Preferences();
+        }
         return $this->preferences;
     }
 
