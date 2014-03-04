@@ -3,33 +3,33 @@ use Icinga\Web\Url;
 $createLdapBackend = $this->href('/config/createAuthenticationBackend', array('type' => 'ldap'));
 $createDbBackend = $this->href('/config/createAuthenticationBackend', array('type' => 'db'));
 ?>
-<div>
+<div class="controls">
 <?= $this->tabs->render($this); ?>
 </div>
 
-<div>
+<div class="content">
 <?php if (isset($this->messageBox)): ?>
   <?= $this->messageBox->render() ?>
 <?php endif ?>
 
-<div>
-  <div>
+<div class="panel panel-default">
+  <div class="panel-heading panel-title">
     Create Authentication Provider
   </div>
-  <div>
+  <div class="panel-body">
     <a href="<?= $createLdapBackend ?>"><i class="icinga-icon-create"></i> Create A New LDAP Authentication Backend</a><br/>
     <a href="<?= $createDbBackend ?>"><i class="icinga-icon-create"></i> Create A New DB Authentication Backend</a>
   </div>
 </div>
 
 <?php foreach ($this->backends as $backend): ?>
-<div>
-  <div>
+<div class="panel panel-default">
+  <div class="panel-heading panel-title">
     Backend <?= $this->escape($backend->name); ?>
     <br/>
     <?= $backend->reorderForm; ?>
   </div>
-  <div>
+  <div class="panel-body">
     <a href="<?= $this->href('config/editAuthenticationBackend', array('auth_backend' => $backend->name));?>">
         <i class="icinga-icon-edit"></i> Edit This Authentication Provider
     </a>

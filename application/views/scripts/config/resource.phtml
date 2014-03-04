@@ -2,32 +2,32 @@
 use Icinga\Web\Url;
 $createResource = $this->href('/config/createresource');
 ?>
-<div>
+<div class="controls">
 <?= $this->tabs->render($this); ?>
 </div>
 
-<div>
+<div class="content">
 <?php if (isset($this->messageBox)): ?>
   <?= $this->messageBox->render() ?>
 <?php endif ?>
 
-<div>
-  <div>
+<div class="panel panel-default">
+  <div class="panel-heading panel-title">
     Create Resource
   </div>
-  <div>
+  <div class="panel-body">
     <a href="<?= $createResource ?>"><i class="icinga-icon-create"></i> Create A New Resource</a><br/>
   </div>
 </div>
 
 <?php foreach ($this->resources as $name => $resource): ?>
-<div>
+<div class="panel panel-default">
 
-  <div>
+  <div class="panel-heading panel-title">
     <b>Resource: </b>  <?= $this->escape($name); ?>
     <br/>
   </div>
-  <div>
+  <div class="panel-body">
 
     <a href="<?= $this->href('config/editresource', array('resource' => $name));?>">
         <i class="icinga-icon-edit"></i> Edit This Resource
