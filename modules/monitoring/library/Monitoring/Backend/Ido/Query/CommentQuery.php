@@ -78,6 +78,7 @@ class CommentQuery extends IdoQuery
 
     protected function joinHosts()
     {
+        $this->conflictsWithVirtualTable('services');
         $this->baseQuery->join(
             array('ho' => $this->prefix . 'objects'),
             'co.name1 = ho.name1 AND ho.is_active = 1 AND ho.objecttype_id = 1',
@@ -87,9 +88,10 @@ class CommentQuery extends IdoQuery
 
     protected function joinServices()
     {
+        $this->conflictsWithVirtualTable('hosts');
         $this->baseQuery->joinLeft(
             array('so' => $this->prefix . 'objects'),
-            'co.name1 = so.name1 AND co.name2 = so.name2 AND so.is_active = 1 AND so.objecttype_id = 2',
+            'co.name1 = so.name1 AND co.name2 = so.name2 AND so.is_active = 1 AND co.is_active = 1 AND so.objecttype_id = 2',
             array()
         );
     }
