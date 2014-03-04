@@ -77,7 +77,7 @@ class Monitoring_ListController extends MonitoringController
         $this->view->grapher = Hook::get('grapher');
         $this->createTabs();
         $this->view->activeRowHref = $this->getParam('detail');
-
+		$this->view->compact = ($this->_request->getParam('view') === 'compact');
         /*
         $contextSwitch = $this->_helper->getHelper('DataFormatSwitch');
         $contextSwitch = $this->_helper->getHelper('ContextSwitch');
@@ -109,7 +109,7 @@ class Monitoring_ListController extends MonitoringController
             'url' => Url::fromPath('monitoring/list/hosts')
         ))->activate('hosts');
 
-        header('X-Icinga-Refresh: 30');
+        $this->setAutorefreshInterval(10);
         $this->view->title = 'Host Status';
         $this->compactView = 'hosts-compact';
         $dataview = HostStatusView::fromRequest(
@@ -167,7 +167,7 @@ class Monitoring_ListController extends MonitoringController
             'url' => Url::fromPath('monitoring/list/services')
         ))->activate('services');
         $this->view->title = 'Service Status';
-        header('X-Icinga-Refresh: 30');
+        $this->setAutorefreshInterval(10);
         $this->compactView = 'services-compact';
         $query = $this->fetchServices();
         $this->applyRestrictions($query);
@@ -408,6 +408,7 @@ class Monitoring_ListController extends MonitoringController
 
     public function eventhistoryAction()
     {
+        $this->addTitleTab('eventhistory');
         $dataview = EventHistoryView::fromRequest(
             $this->getRequest(),
             array(

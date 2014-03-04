@@ -74,6 +74,9 @@ class Monitoring_ShowController extends Controller
      */
     public function serviceAction()
     {
+        $this->setAutorefreshInterval(10);
+        $this->view->title = $this->view->object->service_description
+            . ' on ' . $this->view->object->host_name;
         $this->getTabs()->activate('service');
         $this->view->object->populate();
     }
@@ -83,7 +86,9 @@ class Monitoring_ShowController extends Controller
      */
     public function hostAction()
     {
+        $this->setAutorefreshInterval(10);
         $this->getTabs()->activate('host');
+        $this->view->title = $this->view->object->host_name;
         $this->view->object->populate();
     }
 
