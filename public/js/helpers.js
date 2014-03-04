@@ -41,3 +41,36 @@
         }, Function.prototype.bind);
     }
 })(console);
+
+/* Get class list */
+(function ($) {
+
+    'use strict';
+
+    $.fn.classes = function (callback) {
+
+        var classes = [];
+
+        $.each(this, function (i, el) {
+            var c = $(el).attr('class');
+            if (typeof c === 'string') {
+                $.each(c.split(/\s+/), function(i, p) {
+                    if (classes.indexOf(p) === -1) {
+                        classes.push(p);
+                    }
+                });
+            }
+        });
+
+        if (typeof callback === 'function') {
+            for (var i in classes) {
+                if (classes.hasOwnProperty(i)) {
+                    callback(classes[i]);
+                }
+            }
+        }
+
+        return classes;
+    };
+
+})(jQuery);
