@@ -782,6 +782,9 @@ class Parsedown
 					{
 						$element['»'] = str_replace('&', '&amp;', $element['»']);
 						$element['»'] = str_replace('<', '&lt;', $element['»']);
+						// TODO: this should be documented and patched upstream
+						$element['»'] = preg_replace('~ =(\d+)x$~', '" width="$1', $element['»']);
+						$element['»'] = preg_replace('~ =(\d+)x(\d+)$~', '" width="$1" height="$2"', $element['»']);
 
 						if ($element['!'])
 						{

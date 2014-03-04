@@ -1,54 +1,43 @@
 <?php
-$viewHelper = $this->getHelper('MonitoringState');
+$helper = $this->getHelper('MonitoringState');
 ?>
-<div class="row">
-  <div class="pull-left">
-    <h1>Services Status</h1>
-  </div>
-  <div class="pull-right">
-    <?= $this->tabs->render($this); ?>
-  </div>
+<div class="controls">
+<?= $this->tabs ?>
+<div style="display: inline-block; margin: 1em; vertical-align: top;">
+<?= $this->filterBox->render($this); ?>
 </div>
-<div data-icinga-component="app/mainDetailGrid" data-icinga-grid-selection-type="multi">
+<div style="display: inline-block; margin: 1em; vertical-align: top;">
+<?= $this->sortControl->render($this); ?>
+</div><br />
+<div style="display: inline-block; margin: 1em; vertical-align: top;">
+<?= $this->selectionToolbar('multi', $this->href('monitoring/multi/service', array( 'service' => '*', 'host' => '*' ))); ?></div> <?=  $this->paginationControl($services, null, null, array('preserve' => $this->preserve)); ?>
+</div>
 
-  <div class="container pull-left">
-    <div class="row">
-      <div class="col-md-5">
-        <?=  $this->filterBox->render($this); ?>
-      </div>
-      <div class="col-md-7">
-        <?=  $this->sortControl->render($this); ?>
-      </div>
-    </div>
-    <div class="row">
-      <?=  $this->paginationControl($services, null, null, array('preserve' => $this->preserve)); ?>
-    </div>
-    <div class="row">
-      <?= $this->selectionToolbar('multi', $this->href('monitoring/multi/service', array( 'service' => '*', 'host' => '*' ))); ?>
-    </div>
-  </div>
+<div class="content">
+<table class="action multiselect">
+  <tbody>
+<?php
 
-  <table class="table table-condensed pull-left">
-    <tbody>
-    <?php foreach ($services as $service): ?>
-      <?php
-        $serviceLink = $this->href(
-          'monitoring/show/service',
-          array(
-            'host' => $service->host_name,
-            'service' => $service->service_description
-          )
-        );
-        $hostLink = $this->href(
-          'monitoring/show/host',
-          array(
-            'host' => $service->host_name,
-          )
-        );
-        $serviceStateName = strtolower($this->util()->getServiceStateName($service->service_state));
-      ?>
-      <tr <?= ($this->activeRowHref === $serviceLink) ? 'class="active"' : ''; ?>>
+foreach ($services as $service):
+    $serviceLink = $this->href(
+      'monitoring/show/service',
+      array(
+        'host' => $service->host_name,
+        'service' => $service->service_description
+      )
+    );
+    $hostLink = $this->href(
+      'monitoring/show/host',
+      array(
+        'host' => $service->host_name,
+      )
+    );
+    $serviceStateName = strtolower($this->util()->getServiceStateName($service->service_state));
+?>
+<!--      <tr <?= ($this->activeRowHref === $serviceLink) ? 'class="active"' : ''; ?>>-->
+       <tr class="state <?= $serviceStateName ?><?= $service->service_handled ? ' handled' : '' ?>">
         <!-- Color column -->
+<!--
         <td class="tacheader-status-<?= $serviceStateName; ?>">
           <a style="visibility:hidden" href="<?= $serviceLink; ?>"></a>
         </td>
@@ -96,54 +85,43 @@ $viewHelper = $this->getHelper('MonitoringState');
             <?php endif; ?>
           <?php endif; ?>
 
-          <?php if ($service->service_last_comment !== null): ?>
+          <?php if (isset($service->service_last_comment) && $service->service_last_comment !== null): ?>
           <a href="#" title="Comments">
             <i class="icon-table icinga-icon-comment"></i>
           </a>
           <?php endif; ?>
         </td>
-
-        <td title="<?= $viewHelper->getStateTitle($service, 'service'); ?>">
-            <strong><?= ucfirst($viewHelper->monitoringState($service, 'service')); ?></strong><br />
+-->
+        <td class="state" title="<?= $helper->getStateTitle($service, 'service'); ?>">
+            <strong><?= strtoupper($helper->monitoringState($service, 'service')); ?></strong><br />
 
             <div class="small-row">
               Since <?= $this->timeSince($service->service_last_state_change); ?>
               <?php if ($service->service_state): ?>
                 <br />
-                <strong>Attempt:</strong>
+                <strong><?= ($service->service_state_type === '1') ? 'Hard' : 'Soft'; ?> </strong>
                 <?= $service->service_attempt; ?>
-                (<?= ($service->service_state_type === '1') ? 'Hard' : 'Soft'; ?>)
               <?php endif; ?>
             </div>
           </div>
         </td>
 
-        <td title="<?= $viewHelper->getStateTitle($service, 'host'); ?>">
-          <?php if ($service->service_icon_image): ?>
+        <td title="<?= $helper->getStateTitle($service, 'host'); ?>">
+        <?= $this->perfdata($service->service_perfdata, true) ?>
+<!--          <?php if ($service->service_icon_image): ?>
             <div class="pull-left" style="margin-right: 2px;">
                 <i class="inline-image" style="background-image: url(<?= $this->escape($this->resolveMacros($service->service_icon_image, $service)); ?>);"></i>
             </div>
-          <?php endif; ?>
-            <strong> <?= $service->service_display_name; ?></strong>
-            <small>
-              on <a href="<?= $this->href('monitoring/list/services', array('host' => $service->host_name)) ?>">
-              <?= $service->host_name; ?>
-              <?php if ($service->host_state != 0): ?>
-                (<?= ucfirst($viewHelper->monitoringState($service, 'host')); ?>)
-              <?php endif; ?>
-              </a>
-            </small>
-          <div class="output-text">
-          <?= $this->escape(substr(strip_tags($service->service_output), 0, 10000)); ?>
-          </div>
+          <?php endif; ?>-->
+<a href="<?= $serviceLink ?>"><?= $service->service_display_name ?></a> on <a href="<?= $hostLink ?>"><?= $service->host_name; ?>
+<?php if ($service->host_state != 0): ?>
+  (<?= ucfirst($helper->monitoringState($service, 'host')); ?>)
+<?php endif; ?>
+</a><br />
+          <p class="pluginoutput"><?= $this->escape(substr(strip_tags($service->service_output), 0, 10000)); ?></p>
         </td>
       </tr>
-    <?php endforeach; ?>
-    </tbody>
-  </table>
-
-  <div class="pull-left">
-    <?= $this->paginationControl($this->services, null, null, array('preserve' => $this->preserve)); ?>
-  </div>
-
+<?php endforeach; ?>
+  </tbody>
+</table>
 </div>

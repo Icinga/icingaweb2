@@ -1415,6 +1415,18 @@ class Style {
 
     //see __set and __get, on all assignments clear cache, not needed on direct set through __set
     $this->_prop_cache["color"] = null;
+
+    // NETWAYS [tgelf] 2014-02-21: quickfix for inherited/transparent colors.
+    // TODO: Do it right and report it upstream
+    if (is_string($col)) {
+        if ($col === 'inherit') {
+            $col = array('hex' => '#000000');
+        } elseif ($col === 'transparent') {
+            $col = array('hex' => '#ffffff');
+        } else {
+            die(var_export($col, 1));
+        }
+    }
     $this->_props["color"] = $col["hex"];
   }
 

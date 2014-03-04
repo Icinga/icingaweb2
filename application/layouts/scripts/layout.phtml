@@ -1,4 +1,20 @@
-<!DOCTYPE html>
+<?php
+
+$jsfiles = array(
+  'js/vendor/jquery-1.8.3.js',
+  'js/vendor/jquery.sparkline.min.js',
+  'js/helpers.js',
+  'js/icinga.js',
+  'js/icinga/logger.js',
+  'js/icinga/utils.js',
+  'js/icinga/ui.js',
+  'js/icinga/timer.js',
+  'js/icinga/loader.js',
+  'js/icinga/events.js',
+  'js/icinga/module.js',
+);
+
+?><!DOCTYPE html>
 <!--[if lt IE 7]>
 <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>
@@ -11,35 +27,28 @@
   <meta charset="utf-8">
   <meta content="width=320; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"/>
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <title><?= $this->title ? $this->title : 'Icinga Web'; ?></title>
+  <title><?= $this->title ? $this->escape($this->title) : 'Icinga Web'; ?></title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
-  <!--      Bootstrap and components    -->
-  <link rel="stylesheet" href="<?= $this->baseUrl('static/stylesheet') ?>" media="screen">
-
-  <script type="text/javascript">
-    var base_url = '<?= $this->baseUrl() ?>';
-    var request_id = '<?= $this->requestId(); ?>';
-    ICINGA_DEBUG = true;
-  </script>
+  <link rel="stylesheet" href="<?= $this->href('css/icinga.css') ?>" media="screen" type="text/css" />
   <? if (isset($_GET['iframe']) && $_GET['iframe'] === 'true'): ?>
   <base target="_parent"/>
   <? endif ?>
-
-  <script src="<?= $this->baseUrl('js/vendor/modernizr-2.6.2.min.js') ?>"></script>
-
-  <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- Respond.js IE8 support of media queries -->
   <!--[if lt IE 9]>
-  <script src="<?= $this->baseUrl('js/vendor/html5shiv.js');?>"></script>
   <script src="<?= $this->baseUrl('js/vendor/respond.min.js');?>"></script>
-
   <![endif]-->
 
 </head>
-<body>
-  <?= $this->render('body.phtml') ?>
-  <script data-main="<?php echo $this->baseUrl('js/main.js')?>"
-          src="<?php echo $this->baseUrl('js/vendor/require.js') ?>"></script>
+<body id="body">
+<?= $this->render('body.phtml') ?>
+<?php foreach ($jsfiles as $file): ?>
+<script type="text/javascript" src="<?= $this->href($file) ?>"></script>
+<?php endforeach ?>
+<script type="text/javascript">
+var icinga = new Icinga({
+  baseUrl: '<?= $this->href('/') ?>',
+});
+</script>
 </body>
 </html>

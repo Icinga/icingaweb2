@@ -1,13 +1,20 @@
 <?php
 
-
-if ($this->auth()->isAuthenticated()) {
-    echo $this->partial(
-       'parts/menu.phtml',
-        array(
-            'items' => $menu->getChildren(),
-            'url'   => $url
-        )
-    );
+// Don't render a menu for unauthenticated users unless menu is auth aware
+if (! $this->auth()->isAuthenticated()) {
+    return;
 }
 
+// Current url
+$url = Icinga\Web\Url::fromRequest()->getRelativeUrl();
+$menu = Icinga\Web\Menu::fromConfig();
+
+?>
+<div id="menu">
+  <form action="<?= $this->href('search') ?>" method="post"><input type="text" name="q" class="search" placeholder="Search..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" /></form>
+<?= $this->partial('parts/menu.phtml', array(
+    'items' => $menu->getChildren(),
+    'url'   => $url
+))
+?>
+</div>

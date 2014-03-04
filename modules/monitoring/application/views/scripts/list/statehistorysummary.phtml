@@ -1,0 +1,159 @@
+<div class="controls">
+<?= $this->tabs ?>
+</div>
+<style>
+table.colorizedsummary td {
+  width: 1em;
+  height: 1em;
+  margin: 0.5em;
+}
+
+table.colorizedsummary a {
+  margin: 0;
+  display: block;
+  float: left;
+  width: 1em;
+  height: 1em;
+}
+</style>
+<div class="content">
+<?php
+
+if (empty($this->summary)) {
+    echo 'No entries found</div>';
+    return;
+}
+
+$cols = array('cnt_events'/*, 'cnt_up', 'cnt_down', 'cnt_ok', 'cnt_critical'*/);
+$show = array('cnt_events');
+
+$max = (object) array();
+
+foreach ($cols as $col) {
+    $max->$col = 0;
+}
+
+foreach ($this->summary as & $row) {
+    foreach ($cols as $col) {
+        if ($row->$col > $max->$col) {
+            $max->$col = $row->$col;
+        }
+    }
+}
+
+$colors->cnt_events = array(
+    $max->cnt_events * 0.80 => '#0b5',
+    $max->cnt_events * 0.60 => '#2b6',
+    $max->cnt_events * 0.40 => '#4b7',
+    $max->cnt_events * 0.20 => '#7b9',
+    0 => '#9ba',
+);
+
+$colors->cnt_up = array(
+    $max->cnt_up * 0.80 => '#0b5',
+    $max->cnt_up * 0.60 => '#2b6',
+    $max->cnt_up * 0.40 => '#4b7',
+    $max->cnt_up * 0.20 => '#7b9',
+    0 => '#9ba',
+);
+
+$colors->cnt_ok = array(
+    $max->cnt_ok * 0.80 => '#0b5',
+    $max->cnt_ok * 0.60 => '#2b6',
+    $max->cnt_ok * 0.40 => '#4b7',
+    $max->cnt_ok * 0.20 => '#7b9',
+    0 => '#9ba',
+);
+
+$colors->cnt_critical = array(
+    $max->cnt_critical * 0.8 => '#f34',
+    $max->cnt_critical * 0.6 => '#f56',
+    $max->cnt_critical * 0.4 => '#f67',
+    $max->cnt_critical * 0.2 => '#f9a',
+    0 => '#fcd',
+);
+
+$colors->cnt_down = array(
+    $max->cnt_down * 0.8 => '#f34',
+    $max->cnt_down * 0.6 => '#f56',
+    $max->cnt_down * 0.4 => '#f67',
+    $max->cnt_down * 0.2 => '#f9a',
+    0 => '#fcd',
+);
+
+
+function getColor(& $colors, $value, $what = 'cnt_events') {
+    foreach ($colors->$what as $level => $color) {
+        if ($value >= $level) {
+            return $color;
+        }
+    }
+    return 'red';
+}
+$startDay = '2014-20-02';
+$start = strtotime($day);
+$wday = date('w', $start);
+$week = date('w', $start);
+if ($wday === 0) {
+    $wday = 6;
+} else {
+    $wday--;
+}
+
+?>
+<table class="colorizedsummary">
+<tr>
+<th></th>
+<th>M</th>
+<th>T</th>
+<th>W</th>
+<th>T</th>
+<th>F</th>
+<th>S</th>
+<th>S</th>
+</tr>
+<tr>
+<!-- <th><?= $startDay ?></th>-->
+
+<!--
+<tr>
+<?php
+
+
+foreach (array_keys((array) $this->summary[0]) as $title) {
+    echo '<th>' . $this->escape($title) . '</th>';
+}
+
+
+?>
+</tr>
+-->
+<?php
+
+for ($i = 0; $i <= $wday; $i++) {
+    echo '<td></td>';
+}
+
+foreach ($this->summary as $row) {
+    $wday--;
+    if ($wday < 0) {
+        $wday = 6;
+        $week--;
+        echo '</tr><tr><!--<th>' . $row->day  . '</th>-->';
+
+    }
+    echo '<td>';
+    foreach ($show as $col) {
+        echo '<a style="background-color: '
+          . getColor($colors, $row->$col, $col)
+          . '" title="'
+          . $this->escape($row->$col . ' ' . strtoupper(substr($col, 4)) . ' Events on ' . $row->day)
+          . '"></a>';
+    }
+    echo '</td>';
+}
+
+?>
+</tr>
+</table>
+</div>

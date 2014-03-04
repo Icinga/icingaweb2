@@ -142,8 +142,9 @@ copy-web-files-%:
 #
 # Create release or snapshot tarball
 #
-create-tarball:
-	@./bin/make-tarball --prefix $(PACKAGE_TARNAME)-$(PACKAGE_VERSION)/
-
-create-tarball-nightly:
-	./bin/make-tarball --prefix $(PACKAGE_TARNAME)-$(PACKAGE_VERSION)-`date +%Y%m%d`-`git rev-parse --short HEAD`/
+# TODO: Use git-archive
+# create-tarball:
+# 	@./bin/make-tarball --prefix $(PACKAGE_TARNAME)-$(PACKAGE_VERSION)/
+# 
+# create-tarball-nightly:
+# 	./bin/make-tarball --prefix $(PACKAGE_TARNAME)-$(PACKAGE_VERSION)-`date +%Y%m%d`-`git rev-parse --short HEAD`/

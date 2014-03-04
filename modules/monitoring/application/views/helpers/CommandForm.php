@@ -98,11 +98,11 @@ class Zend_View_Helper_CommandForm extends Zend_View_Helper_Abstract
      *
      * @return Form
      */
-    public function iconSubmitForm($iconCls, $submitTitle, $cls, $commandName, array $arguments = array())
+    public function iconSubmitForm($icon, $submitTitle, $cls, $commandName, array $arguments = array())
     {
         $form = $this->labelSubmitForm('', $submitTitle, $cls, $commandName, $arguments);
         $submit = $form->getElement('btn_submit');
-        $submit->setLabel(sprintf('<i class="%s"></i>', $iconCls));
+        $submit->setLabel($this->view->img($icon));
 
         return $form;
     }

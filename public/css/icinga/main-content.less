@@ -1,0 +1,131 @@
+
+code {
+  background-color: #eee;
+  border: 1px solid #ddd;
+  padding: 1em;
+  display: block;
+}
+
+p code {
+  display: inline;
+  padding: 0.3em;
+}
+
+a {
+  color: #39a;
+}
+
+/** Notifications **/
+
+#notifications {
+  margin: 0;
+  padding: 0;
+}
+
+#notifications > li {
+  list-style-type: none;
+  display: block;
+  border-bottom: 1px solid #999;
+  color: white;
+  line-height: 2.5em;
+  padding-left: 3em;
+}
+
+#notifications > li.warning {
+  background-color: @colorWarningHandled;
+}
+#notifications > li.error {
+  background-color: @colorCritical;
+  background-image: url(../img/icons/error_inv.png);
+  background-repeat: no-repeat;
+  background-position: 1em center;
+}
+/** END of Notifications **/
+
+/* TODO: Remove once there is no more module container */
+.container > div > pre {
+  margin: 1em;
+}
+
+.pull-right {
+  float: right;
+}
+
+table.avp {
+  table-layout: fixed;
+  width: 100%;
+  font-size: 0.9em;
+}
+
+table.avp a {
+  color: black;
+  text-decoration: underline;
+}
+
+table.avp th {
+  text-align: right;
+  margin: 0;
+  width: 11em;
+  vertical-align: top;
+  line-height: 2em;
+}
+
+table.avp td {
+  line-height: 2em;
+  margin: 0;
+
+  word-break: break-all;
+  vertical-align: top;
+  padding: 0em 0em 0em 0.5em;
+}
+
+.content table.avp dd, .content table.avp dd {
+  margin: 0;
+  padding: 0;
+}
+
+table.avp a {
+  color: @colorLinkDefault;
+  text-decoration: none;
+}
+
+table.avp a:hover {
+  text-decoration: underline;
+}
+
+/* Definitively monitoring-only: */
+table.objectstate {
+  margin: 1em;
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0.2em;
+}
+
+table.objectstate td {
+  font-size: 1.2em;
+  line-height: 1.5em;
+  padding-left: 1em;
+}
+
+table.objectstate tr.state td.state {
+  font-size: 1em;
+  width: 9em;
+  text-align: center;
+  padding-left: 0;
+  border-radius: 0;
+}
+
+table.objectstate tr.state.handled td.state {
+}
+
+table.perfdata {
+  min-width: 24em;
+  font-size: 0.9em;
+}
+
+table.perfdata th {
+  white-space: nowrap;
+  padding: 0;
+  text-align: left;
+  padding-right: 0.5em;
+}

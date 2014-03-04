@@ -65,21 +65,22 @@ class OutputFormat implements Tabextension
     private $supportedTypes = array(
         self::TYPE_PDF => array(
             'name'      => 'pdf',
-            'title'     => '<i class="icinga-icon-pdf"></i> PDF',
-            'urlParams' => array('format' => 'pdf')
+            'title'     => 'PDF',
+            'icon'      => 'img/icons/pdf.png',
+            'urlParams' => array('format' => 'pdf'),
         ),
-        /*
         self::TYPE_CSV => array(
             'name'      => 'csv',
-            'title'     => '<i class="icinga-icon-csv"></i> CSV',
+            'title'     => 'CSV',
+            'icon'      => 'img/icons/csv.png',
             'urlParams' => array('format' => 'csv')
         ),
         self::TYPE_JSON => array(
             'name'      => 'json',
-            'title'     => '<i class="icinga-icon-json"></i> JSON',
+            'title'     => 'JSON',
+            'icon'      => 'img/icons/json.png',
             'urlParams' => array('format' => 'json')
         )
-        */
     );
 
     /**
@@ -109,7 +110,10 @@ class OutputFormat implements Tabextension
                 continue;
             }
             $tabConfig = $this->supportedTypes[$type];
-            $tabConfig["url"] = Url::fromRequest();
+            $tabConfig['url'] = Url::fromRequest();
+            $tabConfig['tagParams'] = array(
+                'target' => '_blank'
+            );
             $this->tabs[] = new Tab($tabConfig);
         }
     }

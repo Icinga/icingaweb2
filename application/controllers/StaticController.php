@@ -54,6 +54,13 @@ class StaticController extends ActionController
         $this->_helper->layout()->disableLayout();
     }
 
+    public function gravatarAction()
+    {
+        $img = file_get_contents('http://www.gravatar.com/avatar/' . md5(strtolower(trim($this->_request->getParam('email')))) . '?s=200&d=mm');
+        header('image/jpeg');
+        echo $img;
+    }
+
     /**
      * Return an image from the application's or the module's public folder
      */

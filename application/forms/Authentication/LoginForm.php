@@ -52,21 +52,23 @@ class LoginForm extends Form
             'text',
             'username',
             array(
-                'label'    => t('Username'),
-                'required' => true
+                'required' => true,
+                'placeholder' => t('Username'),
+                'class' => 'autofocus'
             )
+            
         );
 
         $this->addElement(
             'password',
             'password',
             array(
-                'label'    => t('Password'),
+                'placeholder'    => t('Password'),
                 'required' => true
             )
         );
 
-            $this->setSubmitLabel('Login');
+        $this->setSubmitLabel('Login');
 
     }
 }

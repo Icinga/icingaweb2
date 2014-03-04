@@ -37,6 +37,7 @@ use Zend_View_Abstract;
 use Zend_Config;
 use Zend_Form_Element_Submit;
 use Zend_Form_Element_Button;
+use Exception;
 
 /**
  * A dashboard pane component
@@ -93,16 +94,11 @@ class Component implements Widget
      */
     private $template =<<<'EOD'
 
-    <div data-icinga-component="app/dashboard" style="overflow:hidden" class="dashboard-component {{IS_FULL}}" data-icinga-url="{URL}">
-        <h1 class="pull-left"><a  data-icinga-target="self" href="{FULL_URL}"> {TITLE}</a></h1>
-        {REMOVE_BTN}
-        <div class="container" >
-
-        </div>
+    <div class="container" data-icinga-url="{URL}">
+        <h1><a href="{FULL_URL}">{TITLE}</a></h1>
         <noscript>
             <iframe src="{URL}" style="height:100%; width:99%" frameborder="no"></iframe>
         </noscript>
-
     </div>
 EOD;
 
@@ -119,8 +115,15 @@ EOD;
         $this->pane = $pane;
         if ($url instanceof Url) {
             $this->url = $url;
-        } else {
+        } elseif ($url) {
             $this->url = Url::fromPath($url);
+        } else {
+            throw new Exception(
+                sprintf(
+                    'Cannot create dashboard component "%s" without valid URL',
+                    $title
+                )
+            );
         }
     }
 

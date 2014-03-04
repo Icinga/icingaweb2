@@ -29,13 +29,14 @@
 
 namespace Icinga\Web\Controller;
 
-use \Exception;
-use \Zend_Controller_Action;
-use \Zend_Controller_Request_Abstract;
-use \Zend_Controller_Response_Abstract;
-use \Zend_Controller_Action_HelperBroker;
+use Exception;
+use Zend_Controller_Action;
+use Zend_Controller_Request_Abstract;
+use Zend_Controller_Response_Abstract;
+use Zend_Controller_Action_HelperBroker;
 use Icinga\Authentication\Manager as AuthManager;
 use Icinga\Application\Benchmark;
+use Icinga\Application\Config;
 use Icinga\Util\Translator;
 use Icinga\Web\Widget\Tabs;
 use Icinga\Web\Url;
@@ -58,6 +59,32 @@ class ActionController extends Zend_Controller_Action
      * @var bool
      */
     protected $requiresAuthentication = true;
+
+    private $config;
+
+    private $configs = array();
+
+    // TODO: This would look better if we had a ModuleActionController
+    public function Config($file = null)
+    {
+        if ($this->config === null) {
+            $module = $this->getRequest()->getModuleName();
+            if ($module === 'default') {
+                if ($file === null) {
+                    $this->config = Config::app();
+                } else {
+                    $this->config = Config::app($file);
+                }
+            } else {
+                if ($file === null) {
+                    $this->config = Config::module($module);
+                } else {
+                    $this->config = Config::module($module, $file);
+                }
+            }
+        }
+        return $this->config;
+    }
 
     /**
      * The constructor starts benchmarking, loads the configuration and sets
@@ -202,7 +229,11 @@ class ActionController extends Zend_Controller_Action
          $base = $this->_request->getModuleName() . '/' .
             $this->_request->getControllerName() . '/' .
             $this->_request->getActionName();
-         return $_SERVER['QUERY_STRING'] !== '' ? $base . '?' . $_SERVER['QUERY_STRING'] : $base;
+         // TODO: We should NOT fiddle with Querystring here in the middle of nowhere
+         if (isset($_SERVER['QUERY_STRING']) && $_SERVER['QUERY_STRING'] !== '') {
+             return $base . '?' . $_SERVER['QUERY_STRING'];
+         }
+         return $base;
     }
 
     /**
@@ -229,12 +260,8 @@ class ActionController extends Zend_Controller_Action
     {
         Benchmark::measure('Action::postDispatch()');
 
-        if ($this->_request->isXmlHttpRequest()) {
-            $target = ($this->getParam('render') === 'detail') ? 'inline' : 'body';
-            if ($target !== 'inline') {
-                $target = ($this->getParam('view') === 'compact') ? 'inline' : 'body';
-            }
-            $this->_helper->layout()->setLayout($target);
+        if ($this->_request->isXmlHttpRequest() || $this->getParam('view') === 'compact') {
+            $this->_helper->layout()->setLayout('inline');
         }
         if ($user = $this->getRequest()->getUser()) {
             // Cast preference app.showBenchmark to bool because preferences loaded from a preferences storage are
@@ -247,6 +274,16 @@ class ActionController extends Zend_Controller_Action
         if ($this->_request->getParam('format') === 'pdf' && $this->_request->getControllerName() !== 'static') {
             $this->sendAsPdfAndDie();
         }
+
+        // Module container
+        $module_name = $this->_request->getModuleName();
+        $this->_helper->layout()->moduleStart =
+        '<div class="icinga-module module-'
+          . $module_name
+          . '" data-icinga-module="' . $module_name . '">'
+          . "\n"
+          ;
+        $this->_helper->layout()->moduleEnd = "</div>\n";
     }
 
     protected function sendAsPdfAndDie()

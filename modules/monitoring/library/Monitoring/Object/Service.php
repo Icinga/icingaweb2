@@ -14,8 +14,6 @@ class Service extends AbstractObject
     public function populate()
     {
         $this->fetchComments()
-            ->fetchDowntimes()
-            ->fetchHostgroups()
             ->fetchServicegroups()
             ->fetchContacts()
             ->fetchContactGroups()

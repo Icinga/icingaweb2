@@ -1,0 +1,372 @@
+
+/* Special tables and states */
+
+table.colors {
+  font-size: 0.8em;
+  width: 98%;
+  margin: 0 1%;
+}
+
+table.colors td {
+  text-align: center;
+  vertical-align: middle;
+  width:  10%;
+  height: 1.6em;
+  font-weight: normal;
+  border: 0.079em solid white;
+}
+
+/* Action table */
+table.action {
+  border-collapse: separate;
+  border-spacing: 0.3em;
+  width: 98%;
+  table-layout: fixed;
+  margin: 0;
+}
+
+table.action tr {
+  /*border-bottom: 0.079em solid transparent;*/
+}
+
+table.action th {
+  text-align: left;
+  overflow: hidden;
+}
+
+table.action.wide td {
+  line-height: 2.5em;
+}
+
+table.action td {
+  padding: 0.3em 0.5em 0.3em 0.5em;
+  line-height: 1.5em;
+  border-bottom: 1px solid #dde;
+  overflow: hidden;
+}
+
+.dashboard table.action td {
+  line-height: 1.2em;
+  padding: 0.2 0.4em 0.2em 0.5em;
+}
+
+table.action td .pluginoutput {
+  font-size: 0.8em;
+  line-height: 1.2em;
+  padding: 0;
+  margin: 0;
+}
+
+table.action td a {
+  color: inherit;
+  text-decoration: none;
+}
+
+table.action td a:hover {
+  text-decoration: underline;
+}
+
+table.action div.inlinepie {
+  margin: 0.5em 0.25em 0.5em 0.25em;
+}
+
+.dashboard table.action div.inlinepie {
+  margin: 0em 0.25em 0em 0.25em;
+}
+
+/* END of Action table */
+
+
+/* Table behaviour */
+
+tr[href] {
+  cursor: pointer;
+}
+
+/* End of table behaviour */
+
+
+table.action td.state {
+  font-size: 0.7em;
+  text-align: center;
+}
+
+table.action td.timesince {
+  width: 3.5em;
+}
+
+
+/* State row behaviour */
+
+tr.state img.icon {
+  /* TODO: 1em? */
+  height: 16px;
+  width: 16px;
+  float: right;
+}
+
+tr.state a {
+  font-weight: bold;
+}
+
+tr.state a.active {
+  text-decoration: underline;
+}
+
+tr.state.new td.state {
+  font-weight: bold;
+}
+
+tr.state td.state strong {
+  font-size: 1.2em;
+}
+
+tr.state td.state {
+  width: 9em;
+  color: white;
+  border-bottom: none;
+}
+
+tr.state.handled td.state, tr.state.ok td.state, tr.state.up td.state, tr.state.pending td.state {
+  border-left-style: solid;
+  border-left-width: 1.5em;
+  padding-left: 0em;
+  padding-right: 0.5em;
+  color: black;
+  background-color: transparent;
+}
+
+tr[href]:hover, tr[href].active {
+  background-color: #ddd;
+  color: black;
+}
+
+tr.state[href]:hover, tr.state[href].active td.state {
+
+}
+
+tr.state.ok td.state, tr.state.up td.state {
+  border-left-color: @colorOk;
+}
+
+tr.state.warning td.state {
+  background-color: @colorWarning;
+}
+
+tr.state.warning.handled td.state {
+  border-left-color: @colorWarningHandled;
+  background-image: none;
+}
+
+tr.state.critical td.state, tr.state.down td.state {
+  background-color: @colorCritical;
+}
+
+tr.state.critical.handled td.state, tr.state.down.handled td.state {
+  border-left-color: @colorCriticalHandled;
+  background-image: none;
+}
+
+tr.state.unknown td.state {
+  background-color: @colorUnknown;
+}
+
+tr.state.unknown.handled td.state {
+  border-left-color: @colorUnknownHandled;
+  background-image: none;
+}
+
+tr.state.pending td.state {
+  border-left-color: @colorPending;
+}
+
+tr.state.invalid td.state {
+  background-color: @colorInvalid;
+}
+
+tr.state.handled td.state {
+  color: inherit;
+  background-color: transparent;
+}
+
+tr.state.unreachable td.state {
+  background-color: @colorUnreachable;
+}
+
+tr.state.unreachable.handled td.state {
+  border-left-color: @colorUnreachableHandled;
+  background-image: none;
+}
+
+/* END of special tables and states */
+
+
+/* Generic colors */
+
+a.critical {
+  color: @colorCritical;
+}
+
+/* END of Generic colors */
+
+
+
+
+/* Been here before: */
+/*
+
+.state .ok, td.state.ok {
+  background-color: #44BB77;
+  color: white;
+}
+.state .ok:hover, td.state.ok:hover {
+  color: #44BB77;
+  background-color: white;
+  cursor: pointer;
+}
+.state .warning, td.state.warning {
+  color: white;
+  background-color: #FF8844;
+}
+.state .warning:hover, td.state.warning:hover {
+  color: #FF8844;
+  background-color: white;
+  cursor: pointer;
+}
+.state .warning.handled, td.state.warning.handled {
+  color: white;
+  background-color: #FFBB55;
+}
+.state .warning.handled:hover, td.state.warning.handled:hover {
+  color: #FF8855;
+  background-color: white;
+  cursor: pointer;
+}
+.state .critical, td.state.critical {
+  color: white;
+  background-color: #FF5566;
+}
+.state .critical.handled, td.state.critical.handled {
+  background-color: #FF99aa;
+}
+.state .unknown, td.state.unknown {
+  color: white;
+  background-color: #DD66FF;
+}
+.state .unknown.handled, td.state.unknown.handled {
+  background-color: #EE99FF;
+}
+
+.state .pending, td.state.pending {
+  color: white;
+  background-color: #77AAFF;
+}
+*/
+
+
+/* Generic span.state */
+span.state {
+  color: white;
+  border-radius: 0.5em;
+  -moz-border-radius: 0.5em;
+  padding: 0.3em 0.5em 0.3em 0.5em;
+  margin: 0.2em 0.5em 0.2em 0.5em;
+}
+
+
+span.state.ok, span.state.up {
+  background-color: @colorOk;
+}
+
+span.state.warning {
+  background-color: @colorWarning;
+}
+
+span.state.warning.handled {
+  background-color: @colorWarningHandled;
+}
+
+span.state.critical, span.state.down {
+  background-color: @colorCritical;
+}
+
+span.state.critical.handled, span.state.down.handled {
+  background-color: @colorCriticalHandled;
+}
+
+span.state.unknown, span.state.unreachable {
+  background-color: @colorUnknown;
+}
+
+span.state.unknown.handled, span.state.unreachable.handled {
+  background-color: @colorUnknownHandled;
+}
+
+span.state.invalid {
+  background-color: @colorInvalid;
+}
+
+.summary a {
+  color: white;
+  text-decoration: none;
+}
+
+.summary {
+  font-size: 0.85em;
+  vertical-align: top;
+  text-align: left;
+}
+
+.summary td {
+  vertical-align: top;
+}
+.summary > span.state {
+  border: 1px solid #555;
+  color: black;
+}
+
+.summary strong a {
+  color: black;
+}
+
+.summary span.state.handled a {
+  color: #333;
+}
+
+.summary span.state {
+  width: 26em;
+  vertical-align: top;
+  text-align: center;
+  display: inline-block;
+}
+
+.summary span.state span.state {
+  width: 12em;
+  font-size: 0.9em;
+}
+
+.summary span.state span.state span.state {
+  width: 12em;
+}
+
+span.state a {
+  white-space: nowrap;
+}
+
+span.state.handled {
+  color: #333;
+}
+
+span.state a.active {
+  text-decoration: underline;
+}
+
+/* End of generic span.state */
+
+
+.controls {
+  font-size: 0.9em;
+}
+.controls a {
+  color: black;
+}

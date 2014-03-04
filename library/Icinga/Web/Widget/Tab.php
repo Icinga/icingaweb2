@@ -223,7 +223,7 @@ class Tab implements Widget
     public function render(Zend_View_Abstract $view)
     {
         $class = $this->active ? ' class="active" ' : '';
-        $caption = $this->title;
+        $caption = $view->escape($this->title);
 
         if ($this->icon !== null) {
             $caption = '<img src="' . $this->icon->getAbsoluteUrl()
@@ -240,7 +240,7 @@ class Tab implements Widget
                 }
             }
             $tab = '<a' . $tagParams .' href="' . $this->url->getAbsoluteUrl()
-                . '" data-icinga-target="self">' . $caption . '</a>';
+                . '">' . $caption . '</a>';
         } else {
             $tab = $caption;
         }

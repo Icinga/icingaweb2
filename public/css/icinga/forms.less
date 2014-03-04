@@ -1,0 +1,79 @@
+
+.form-group {
+  margin-bottom: 1em;
+}
+
+label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.3em;
+}
+
+input, select {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  background: #f5f5f5;
+  padding: 0.2em;
+  border: 1px solid #777;
+  border-left-width:0.3em;
+  border-right-width: 0.3em;
+}
+
+select {
+  /* https://bugzilla.mozilla.org/show_bug.cgi?id=649849 */
+  -moz-appearance: none;
+  text-indent: 5px;
+  padding-right: 5px;
+  text-overflow: '';
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+
+input[type=submit] {
+  font-weight: bold;
+  text-align: center;
+  color: #eee;
+  border-width: 1px;
+  background: #777;
+  outline: 0;
+}
+
+input:focus, select:focus {
+  border-color: #333;
+  background: white;
+  outline: 0;
+}
+
+input[type=submit]:focus {
+  background-color: #333;
+}
+
+input::-moz-focus-inner {
+  border: 0;
+}
+
+select::-moz-focus-inner {
+  border: 0;
+  outline: 0;
+}
+
+
+input[type=submit]:hover, a.button:hover {
+  cursor: pointer;
+  color: white;
+  background: #333;
+}
+
+form ul.errors {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+form ul.errors li { 
+  color: @colorCritical;
+  font-weight: bold;
+  line-height: 1.5em;
+}
+

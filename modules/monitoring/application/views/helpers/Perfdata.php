@@ -44,6 +44,7 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
                 continue;
             }
             if ($unit == 'c') continue; // Counter pie graphs are not useful
+            if ($compact && $val < 0.0001) continue;
             if ($unit == '%') {
                 if (! $min ) $min = 0;
                 if (! $max) $max = 100;
@@ -76,7 +77,7 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
                      . '</td></tr>';
             }
         }
-        if ($result == '') {
+        if ($result == '' && ! $compact) {
             $result = $perfdata;
         }
         if (! $compact && $result !== '') {

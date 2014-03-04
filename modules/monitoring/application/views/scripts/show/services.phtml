@@ -1,7 +1,2 @@
-<?= $this->tabs->render($this); ?>
-<?= $this->partial(
-    'list/services-compact.phtml',
-    'monitoring', array(
-        'services' => $services
-    )
-); ?>
+<?= $this->render('show/components/header.phtml') ?>
+<?= $services ?>

@@ -28,23 +28,23 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 
 // @codingStandardsIgnoreStart
-use \Icinga\Module\Monitoring\Backend;
-use Icinga\Module\Monitoring\Controller as MonitoringController;
-use \Icinga\Web\Hook;
-use \Icinga\Module\Monitoring\Object\Host;
-use \Icinga\Module\Monitoring\Object\Service;
-use \Icinga\Application\Benchmark;
-use \Icinga\Web\Widget\Tabextension\OutputFormat;
+use Icinga\Application\Benchmark;
+use Icinga\Web\Hook;
+use Icinga\Web\Widget\Tabs;
+use Icinga\Web\Widget\Tabextension\OutputFormat;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
+use Icinga\Module\Monitoring\Backend;
+use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Object\AbstractObject;
-use \Icinga\Web\Widget\Tabs;
+use Icinga\Module\Monitoring\Object\Host;
+use Icinga\Module\Monitoring\Object\Service;
 
 /**
  * Class Monitoring_ShowController
  *
  * Actions for show context
  */
-class Monitoring_ShowController extends MonitoringController
+class Monitoring_ShowController extends Controller
 {
     /**
      * @var Backend
@@ -62,6 +62,7 @@ class Monitoring_ShowController extends MonitoringController
             || $this->getRequest()->getActionName() === 'services' ) {
             $this->view->object = new Service($this->getRequest());
         } else {
+            // TODO: Well... this could be done better
             $this->view->object = AbstractObject::fromRequest($this->getRequest());
         }
 
@@ -73,6 +74,7 @@ class Monitoring_ShowController extends MonitoringController
      */
     public function serviceAction()
     {
+        $this->getTabs()->activate('service');
         $this->view->object->populate();
     }
 
@@ -81,15 +83,16 @@ class Monitoring_ShowController extends MonitoringController
      */
     public function hostAction()
     {
+        $this->getTabs()->activate('host');
         $this->view->object->populate();
     }
 
     public function historyAction()
     {
+        $this->getTabs()->activate('history');
         $this->view->object->populate();
         $this->view->object->fetchEventHistory();
         $this->view->history = $this->view->object->eventhistory->limit(10)->paginate();
-
     }
 
     public function servicesAction()
@@ -153,12 +156,9 @@ class Monitoring_ShowController extends MonitoringController
                 'service',
                 array(
                     'title'     => 'Service',
-                    'iconCls'      => 'icinga-icon-service',
+                    'icon'      => 'img/icons/service.png',
                     'url'       => 'monitoring/show/service',
                     'urlParams' => $params,
-                    'tagParams' => array(
-                        'data-icinga-target' => 'detail'
-                    )
                 )
             );
         }
@@ -166,40 +166,31 @@ class Monitoring_ShowController extends MonitoringController
             'host',
             array(
                 'title'     => 'Host',
-                'iconCls'      => 'icinga-icon-host',
+                'icon'      => 'img/icons/host.png',
                 'url'       => 'monitoring/show/host',
                 'urlParams' => $params,
-                'tagParams' => array(
-                    'data-icinga-target' => 'detail'
-                )
             )
         );
         $tabs->add(
             'services',
             array(
                 'title'     => 'Services',
-                'iconCls'      => 'icinga-icon-service',
+                'icon'      => 'img/icons/service.png',
                 'url'       => 'monitoring/show/services',
                 'urlParams' => $params,
-                'tagParams' => array(
-                    'data-icinga-target' => 'detail'
-                )
             )
         );
         $tabs->add(
             'history',
             array(
                 'title'     => 'History',
-                'iconCls'      => 'icinga-icon-history',
+                'icon'      => 'img/icons/history.png',
                 'url'       => 'monitoring/show/history',
                 'urlParams' => $params,
-                'tagParams' => array(
-                    'data-icinga-target' => 'detail'
-                )
             )
         );
         $tabs->extend(new OutputFormat())
-             ->extend(new DashboardAction());
+            ->extend(new DashboardAction());
     }
 }
 // @codingStandardsIgnoreEnd

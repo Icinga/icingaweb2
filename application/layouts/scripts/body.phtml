@@ -1,28 +1,42 @@
-<?= $this->action('topbar', 'layout'); ?>
-
-<div class="row">
-  <!-- Only required for left/right tabs -->
-  <div class="col-sm-12 col-xs-12 col-md-2 col-lg-2">
-      <?= $this->partial('layout/menu.phtml', 'default', array(
-          'url'     => \Icinga\Web\Url::fromRequest()->getRelativeUrl(),
-          'items'   => \Icinga\Web\Menu::fromConfig()->getChildren(),
-          'sub'     => false
-      )); ?>
-  </div>
-
-  <div class="col-sm-12 col-xs-12 col-md-10 col-lg-10">
-    <?= $this->mainDetail($this->render('inline.phtml'), $this->layout()->detailContent); ?>
-  </div>
-
+<?php if (Icinga\Authentication\Manager::getInstance()->isAuthenticated()): ?>
+<div id="layout">
+ <div id="header">
+   <ul id="notifications"></ul>
+<div id="logo"><a href="<?= $this->href('/dashboard') ?>"><img src="<?= $this->href('img/logo_icinga-inv.png') ?>" class="logo" /></a>
 </div>
-<br/>
-<div class="row">
-  <div class="col-md-12">
-    <!-- Make some space at the end of the page -->
-    <div class="panel">
-      <div class="panel-body text-center">
-          Icinga Web 2 &copy; 2014 Icinga Team
-      </div>
-    </div>
+ </div>
+<!--
+  <ul class="tabs" >
+    <li class="dropdown">
+      <a href="#" class="dropdown-toggle">
+      <?= $this->img('icons/user.png') ?>
+      <?= $this->escape($this->auth()->getUser()->getUsername()) ?>
+        <b class="caret"></b>
+      </a>
+      <ul class="dropdown-menu">
+        <li><a href="<?= $this->href('/preference') ?>"><?= $this->translate('Preferences'); ?></a></li>
+        <li><a href="<?= $this->href('/authentication/logout'); ?>" title="Logout"><?= $this->translate('Logout'); ?></a></li>
+      </ul>
+    </li>
+  </ul>
+-->
+
+ <div id="sidebar">
+  <?= $this->layout()->navigation ?>
+  <?php echo $this->render('parts/navigation.phtml') ?>
+ </div>
+ <div id="main">
+  <div id="col1" class="container">
+   <?= $this->render('inline.phtml') ?>
   </div>
-</div>
+  <div id="col2" class="container">
+   <ul class="tabs"></ul>
+  </div>
+  <div id="col3" class="container">
+  </div>
+ </div><!-- END of main -->
+</div><!-- END of layout -->
+<?php else: ?>
+<?= $this->render('inline.phtml') ?>
+<?php endif ?>
+

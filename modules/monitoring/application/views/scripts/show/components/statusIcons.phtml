@@ -1,57 +1,66 @@
 <?php
     $o = $this->object;
     $isService = (isset($o->service_description)) ? true : false;
-    $transitionObject = new \stdClass();
-    $transitionObject->handled =
+    $obj = new \stdClass();
+    $obj->handled =
         ($isService) ? $o->service_handled : $o->host_handled;
-    $transitionObject->state =
+    $obj->state =
         ($isService) ? $o->service_state : $o->host_state;
-    $transitionObject->acknowledged =
+    $obj->acknowledged =
         ($isService) ? $o->service_acknowledged : $o->host_acknowledged;
-    $transitionObject->in_downtime =
+    $obj->in_downtime =
         ($isService) ? $o->in_downtime : $o->host_in_downtime;
-    $transitionObject->is_flapping =
+    $obj->is_flapping =
         ($isService) ? $o->is_flapping : $o->host_is_flapping;
-    $transitionObject->notifications_enabled =
+    $obj->notifications_enabled =
         ($isService) ? $o->notifications_enabled : $o->service_notifications_enabled;
-    $transitionObject->active_checks_enabled =
+    $obj->active_checks_enabled =
         ($isService) ? $o->active_checks_enabled : $o->host_active_checks_enabled;
-    $transitionObject->passive_checks_enabled =
+    $obj->passive_checks_enabled =
         ($isService) ? $o->passive_checks_enabled : $o->host_passive_checks_enabled;
-    $transitionObject->last_comment =
+    $obj->last_comment =
         ($isService) ? $o->last_comment : $o->host_last_comment;
-?>
 
-<span>
-    <?php if (!$transitionObject->handled && $transitionObject->state > 0): ?>
-        <i title="Unhandled" class="icinga-icon-unhandled"></i>
-    <?php endif; ?>
+$i = array();
+if (! $obj->handled && $obj->state > 0) {
+    $i[] = $this->img('img/icons/unhandled.png', array('title' => 'Unhandled'));
+}
 
-    <?php if ($transitionObject->acknowledged && !$transitionObject->in_downtime): ?>
-        <i title="Acknowledged" class="icinga-icon-acknowledgement"></i>
-    <?php endif; ?>
+if ($obj->acknowledged && ! $obj->in_downtime) {
+    $i[] = $this->img('img/icons/acknowledgement.png', array('title' => 'Acknowledged'));
+}
 
-    <?php if ($transitionObject->is_flapping): ?>
-        <i title="Flapping" class="icinga-icon-flapping"></i>
-    <?php endif; ?>
+if ($obj->is_flapping) {
+    $i[] = $this->img('img/icons/flapping.png', array('title' => 'Flapping'));
+}
 
-    <?php if (!$transitionObject->notifications_enabled): ?>
-        <i title="Notifications Disabled" class="icinga-icon-notification-disabled"></i>
-    <?php endif; ?>
+if (!$obj->notifications_enabled) {
+    $i[] = $this->img('img/icons/notification_disabled.png', array('title' => 'Notifications Disabled'));
+}
 
-    <?php if ($transitionObject->in_downtime): ?>
-        <i title="In Downtime" class="icinga-icon-in-downtime"></i>
-    <?php endif; ?>
+if ($obj->in_downtime) {
+    $i[] = $this->img('img/icons/in_downtime.png', array('title' => 'In Downtime'));
+}
 
-    <?php if (!$transitionObject->active_checks_enabled): ?>
-        <?php if (!$transitionObject->passive_checks_enabled): ?>
-            <i title="Active And Passive Checks Disabled" class="icinga-icon-active-passive-checks-disabled"></i>
-        <?php else: ?>
-            <i title="Active Checks Disabled" class="icinga-icon-active-checks-disabled"></i>
-        <?php endif; ?>
-    <?php endif; ?>
+if (! $obj->active_checks_enabled) {
+    if ($obj->passive_checks_enabled) {
+        $i[] = $this->img(
+            'img/icons/active_checks_disabled.png',
+            array('title' => 'Active Checks Disabled')
+        );
+    } else {
+        $i[] = $this->img(
+            'img/icons/active_passive_checks_disabled.png',
+            array('title' => 'Active And Passive Checks Disabled')
+        );
+    }
+}
 
-    <?php if ($transitionObject->last_comment !== null): ?>
-        <i title="Comments" class="icinga-icon-comment"></i>
-    <?php endif; ?>
-            </span>
+if ($obj->last_comment !== null) {
+    $i[] = $this->img('img/icons/comment.png', array('title' => 'Comments'));
+}
+
+?><span>
+      <?= implode("\n      ", $i) . "\n" ?>
+    </span>
+

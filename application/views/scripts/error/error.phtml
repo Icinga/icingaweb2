@@ -1,7 +1,4 @@
-<?= $this->tabs->render($this); ?>
-<div class="alert alert-danger">
-    <p><?= $message ?></p>
-</div>
+<h1 class="alert alert-danger"><?= $message ?></h1>
 <?php if (isset($stackTrace)) : ?>
   <hr />
   <pre><?= $stackTrace ?></pre>

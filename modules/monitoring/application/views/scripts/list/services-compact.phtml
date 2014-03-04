@@ -1,30 +1,30 @@
+<h1><?= $this->escape($this->title) ?></h1>
+<table class="action">
+<tbody>
 <?php
-$viewHelper = $this->getHelper('MonitoringState');
-?>
 
-<div data-icinga-component="app/mainDetailGrid" data-icinga-grid-selection-type="multi">
+$helper = $this->getHelper('MonitoringState');
 
-  <table class="table table-condensed pull-left">
-    <tbody>
-    <?php foreach ($services as $service): ?>
-    <?php
-        $serviceLink = $this->href(
-    'monitoring/show/service',
-    array(
-    'host' => $service->host_name,
-    'service' => $service->service_description
-    )
+foreach ($services as $service):
+
+    $serviceLink = $this->href(
+        'monitoring/show/service',
+        array(
+            'host'    => $service->host_name,
+            'service' => $service->service_description
+        )
     );
     $hostLink = $this->href(
-    'monitoring/show/host',
-    array(
-    'host' => $service->host_name,
-    )
+        'monitoring/show/host',
+        array('host' => $service->host_name)
     );
     $serviceStateName = strtolower($this->util()->getServiceStateName($service->service_state));
-    ?>
-    <tr <?= ($this->activeRowHref === $serviceLink) ? 'class="active"' : ''; ?>>
+?>
+<!--    <tr <?= ($this->activeRowHref === $serviceLink) ? 'class="active"' : ''; ?>>-->
+    <tr class="state <?= $serviceStateName ?><?= $service->service_handled ? ' handled' : '' ?>">
+
     <!-- Color column -->
+<!--
     <td class="tacheader-status-<?= $serviceStateName; ?>">
       <a style="visibility:hidden" href="<?= $serviceLink; ?>"></a>
     </td>
@@ -72,36 +72,26 @@ $viewHelper = $this->getHelper('MonitoringState');
       <?php endif; ?>
       <?php endif; ?>
 
-      <?php if ($service->service_last_comment !== null): ?>
+      <?php if (isset($service->service_last_comment) && $service->service_last_comment !== null): ?>
       <a href="#" title="Comments">
         <i class="icon-table icinga-icon-comment"></i>
       </a>
       <?php endif; ?>
     </td>
-
-    <td title="<?= $viewHelper->getStateTitle($service, 'service'); ?>">
-      <strong><?= ucfirst($viewHelper->monitoringState($service, 'service')); ?></strong><br />
-
-      <div class="small-row">
-        Since <?= $this->timeSince($service->service_last_state_change); ?>
-        <?php if ($service->service_state): ?>
-        <br />
-        <strong>Attempt:</strong>
-        <?= $service->service_attempt; ?>
-        (<?= ($service->service_state_type === '1') ? 'Hard' : 'Soft'; ?>)
-        <?php endif; ?>
-      </div>
+-->
+    <td class="state" title="<?= $helper->getStateTitle($service, 'service'); ?>">
+<?= $this->timeSince($service->service_last_state_change); ?>
 </div>
 </td>
-
-<td title="<?= $viewHelper->getStateTitle($service, 'host'); ?>">
+<td>
+<a href="<?= $serviceLink ?>"><?= $service->service_display_name ?></a> on <a href="<?= $hostLink ?>"><?= $service->host_name; ?></a><br />
   <div class="output-text">
     <?= $this->escape(substr(strip_tags($service->service_output), 0, 10000)); ?>
   </div>
+
 </td>
 </tr>
 <?php endforeach; ?>
 </tbody>
 </table>
 
-</div>

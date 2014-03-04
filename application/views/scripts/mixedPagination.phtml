@@ -1,7 +1,16 @@
 <?php
+
 use Icinga\Web\Url;
 
+// Please note that there is a reason for the strange way of writing ><.
+// It was the best compromise that came to my mind to get rid of whitespaces
+// between inline-block elements. Found no better hack - and table-cell seems
+// to be less supported.
+
 if ($this->pageCount <= 1) return;
+
+?><ul class="pagination"
+<?php
 
 $fromto = $this->translate('%d to %d of %d');
 $total = $this->totalItemCount;
@@ -19,25 +28,27 @@ $title_next = sprintf(
     ($this->current + 1) * $limit,
     $total
 );
+$li = '  ><li%s><a href="%s" title="%s">%s</a></li
+';
 
 ?>
-<ul class="pagination">
-  <!-- Previous page link -->
-
-<?php if (isset($this->previous)): ?>
-  <li>
-    <a href="<?= Url::fromRequest()->overwriteParams(array('page' => $this->previous))->getAbsoluteUrl() ?>"
-         title="<?= $title_prev ?>">« <?= $this->translate('Prev') ?>
-    </a>
-  </li>
-<?php else: ?>
-  <li class="disabled"><span>« <?= $this->translate('Prev') ?></span></li>
-<?php endif ?>
-
-    <!-- Numbered page links -->
 <?php
-foreach ($this->pagesInRange as $page):
 
+if (isset($this->previous)) {
+    printf(
+        $li,
+        '',
+        Url::fromRequest()->overwriteParams(
+            array('page' => $this->previous)
+        )->getAbsoluteUrl(),
+        $title_prev,
+        '« ' . $this->translate('Prev')
+    );
+} else {
+    echo '  ><li class="disabled"><span>« ' . $this->translate('Prev') . '</span></li';
+}
+
+foreach ($this->pagesInRange as $page) {
     $start = ($page - 1) * $limit + 1;
     $end = $page * $limit;
     if ($end > $total) {
@@ -46,26 +57,34 @@ foreach ($this->pagesInRange as $page):
     $title = sprintf($fromto, $start, $end, $total);
     $class = $page === $this->current ? ' class="active"' : '';
 
-    if ($page === '...'): ?>
-    <li class="disabled"><span>...</span></li>
-<?php else: ?>
-    <li <?= $class ?>>
-      <a href="<?= Url::fromRequest()->overwriteParams(array('page' => $page))->getAbsoluteUrl() ?>" title="<?= $title ?>">
-        <?= $page ?>
-      </a>
-    </li>
-<?php
-    endif;
-endforeach;
+    if ($page === '...') {
+      echo '  ><li class="disabled"><span>...</span></li';
+    } else {
+      printf(
+          $li,
+          $class,
+          Url::fromRequest()->overwriteParams(
+              array('page' => $page)
+          )->getAbsoluteUrl(),
+          $title,
+          $page
+      );
+    }
+}
+    
+if (isset($this->next)) {
+    printf(
+        $li,
+        '',
+        Url::fromRequest()->overwriteParams(
+            array('page' => $this->next)
+        )->getAbsoluteUrl(),
+        $title_next,
+        $this->translate('Next') . ' »'
+    );
+} else {
+    echo '  ><li class="disabled"><span>' . $this->translate('Next') . ' »</span></li';
+}
+
 ?>
-<!-- Next page link -->
-<? if (isset($this->next)): ?>
-  <li>
-    <a href="<?= Url::fromRequest()->overwriteParams(array('page' => $this->next))->getAbsoluteUrl() ?>"
-         title="<?= $title_next ?>"><?= t('Next') ?> »
-    </a>
-  </li>
-<? else: ?>
-  <li class="disabled"><span><?= t('Next') ?> »</span></li>
-<? endif ?>
-</ul>
+></ul>

@@ -366,7 +366,6 @@ class Form extends Zend_Form
             array(
                 'name'  => 'btn_submit',
                 'label' => $this->submitLabel,
-                'class' => 'button btn btn-cta'
             )
         );
         $this->addElement($submitButton);
@@ -619,9 +618,6 @@ class Form extends Zend_Form
             $el->removeDecorator('Label');
             $el->removeDecorator('DtDdWrapper');
             $el->addDecorator(new BootstrapForm());
-            if ($el->getId() === 'btn_submit' || stripos($el->getAttrib('class'), 'btn') === false) {
-                $el->setAttrib('class', $el->getAttrib('class') . ' form-control input-sm');
-            }
         }
 
         return $this;

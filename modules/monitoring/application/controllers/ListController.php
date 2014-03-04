@@ -52,9 +52,11 @@ use Icinga\Module\Monitoring\DataView\ServiceStatus as ServiceStatusView;
 use Icinga\Module\Monitoring\DataView\Comment as CommentView;
 use Icinga\Module\Monitoring\DataView\Groupsummary as GroupsummaryView;
 use Icinga\Module\Monitoring\DataView\EventHistory as EventHistoryView;
+use Icinga\Module\Monitoring\DataView\StateHistorySummary;
 use Icinga\Module\Monitoring\Filter\UrlViewFilter;
 use Icinga\Module\Monitoring\DataView\ServiceStatus;
 use Icinga\Filter\Filterable;
+use Icinga\Web\Url;
 
 class Monitoring_ListController extends MonitoringController
 {
@@ -102,7 +104,13 @@ class Monitoring_ListController extends MonitoringController
      */
     public function hostsAction()
     {
+        $this->getTabs()->add('hosts', array(
+            'title' => 'Hosts Status',
+            'url' => Url::fromPath('monitoring/list/hosts')
+        ))->activate('hosts');
 
+        header('X-Icinga-Refresh: 30');
+        $this->view->title = 'Host Status';
         $this->compactView = 'hosts-compact';
         $dataview = HostStatusView::fromRequest(
             $this->_request,
@@ -113,7 +121,7 @@ class Monitoring_ListController extends MonitoringController
                 'host_address',
                 'host_acknowledged',
                 'host_output',
-                'host_long_output',
+                // 'host_long_output',
                 'host_in_downtime',
                 'host_is_flapping',
                 'host_state_type',
@@ -121,10 +129,10 @@ class Monitoring_ListController extends MonitoringController
                 'host_last_check',
                 'host_last_state_change',
                 'host_notifications_enabled',
-                'host_unhandled_service_count',
+                // 'host_unhandled_service_count',
                 'host_action_url',
                 'host_notes_url',
-                'host_last_comment',
+                // 'host_last_comment',
                 'host_active_checks_enabled',
                 'host_passive_checks_enabled',
                 'host_current_check_attempt',
@@ -146,6 +154,7 @@ class Monitoring_ListController extends MonitoringController
         ));
         $this->handleFormatRequest($query);
         $this->view->hosts = $query->paginate();
+
     }
 
     /**
@@ -153,12 +162,19 @@ class Monitoring_ListController extends MonitoringController
      */
     public function servicesAction()
     {
+        $this->getTabs()->add('services', array(
+            'title' => 'Services Status',
+            'url' => Url::fromPath('monitoring/list/services')
+        ))->activate('services');
+        $this->view->title = 'Service Status';
+        header('X-Icinga-Refresh: 30');
         $this->compactView = 'services-compact';
         $query = $this->fetchServices();
         $this->applyRestrictions($query);
         $this->view->services = $query->paginate();
 
-        $this->setupFilterControl(ServiceStatus::fromRequest($this->getRequest()), 'service');
+        //$this->setupFilterControl(ServiceStatus::fromRequest($this->getRequest()), 'service');
+        $this->setupFilterControl($query, 'service');
         $this->setupSortControl(array(
             'service_last_check'    =>  'Last Service Check',
             'service_severity'      =>  'Severity',
@@ -181,7 +197,11 @@ class Monitoring_ListController extends MonitoringController
      */
     public function downtimesAction()
     {
-        $query = DowntimeView::fromRequest($this->_request)->getQuery();
+        $this->getTabs()->add('downtimes', array(
+            'title' => 'Downtimes',
+            'url' => Url::fromPath('monitoring/list/downtimes')
+        ))->activate('downtimes');
+        $query = DowntimeView::fromRequest($this->_request)->getQuery()->order('downtime_is_in_effect', 'DESC')->order('downtime_scheduled_start_time', 'DESC');
 
         $this->view->downtimes = $query->paginate();
         $this->setupSortControl(array(
@@ -206,6 +226,8 @@ class Monitoring_ListController extends MonitoringController
      */
     public function notificationsAction()
     {
+        $this->addTitleTab('notifications');
+
         $query = NotificationView::fromRequest($this->_request)->getQuery();
         $this->view->notifications = $query->paginate();
         $this->setupSortControl(array(
@@ -216,6 +238,7 @@ class Monitoring_ListController extends MonitoringController
 
     public function contactsAction()
     {
+        $this->addTitleTab('contactgroups');
         $query = ContactView::fromRequest(
             $this->_request,
             array(
@@ -251,26 +274,42 @@ class Monitoring_ListController extends MonitoringController
         $this->handleFormatRequest($query);
     }
 
+    public function statehistorysummaryAction()
+    {
+        $this->addTitleTab('statehistorysummary');
+
+         $query = StateHistorySummary::fromRequest(
+            $this->_request, array('day', 'cnt_events')
+        )->getQuery();
+        $this->view->summary = $query->fetchAll();
+        $this->handleFormatRequest($query);
+    }
+
     public function contactgroupsAction()
     {
+        $this->addTitleTab('contactgroups');
+
          $query = ContactgroupView::fromRequest(
             $this->_request,
             array(
                 'contactgroup_name',
                 'contactgroup_alias',
-                'contact_name'
+                'contact_name',
+                'contact_alias',
+                'contact_email',
+                'contact_pager',
             )
-        )->getQuery();
-        $this->view->contactgroups = $query->paginate();
-        $this->setupSortControl(array(
-            'contactgroup_name' => 'Group Name',
-            'contactgroup_alias' => 'Group Alias'
-        ));
+        )->getQuery()->order('contactgroup_alias');
+        $this->view->contactgroups = $query->fetchAll();
         $this->handleFormatRequest($query);
     }
 
     public function commentsAction()
     {
+        $this->getTabs()->add('comments', array(
+            'title' => 'Comments',
+            'url' => Url::fromPath('monitoring/list/comments')
+        ))->activate('comments');
         $query = CommentView::fromRequest(
             $this->_request,
             array(
@@ -332,21 +371,28 @@ class Monitoring_ListController extends MonitoringController
 
     public function hostgroupsAction()
     {
+        $this->addTitleTab('hostgroups');
+
         $query = GroupsummaryView::fromRequest(
             $this->_request,
             array(
                 'hostgroup',
                 'hosts_up',
+                'hosts_unreachable',
                 'hosts_unreachable_handled',
                 'hosts_unreachable_unhandled',
+                'hosts_down',
                 'hosts_down_handled',
                 'hosts_down_unhandled',
                 'hosts_pending',
                 'services_ok',
+                'services_unknown',
                 'services_unknown_handled',
                 'services_unknown_unhandled',
+                'services_critical',
                 'services_critical_handled',
                 'services_critical_unhandled',
+                'services_warning',
                 'services_warning_handled',
                 'services_warning_unhandled',
                 'services_pending'
@@ -439,6 +485,14 @@ class Monitoring_ListController extends MonitoringController
 
     }
 
+    protected function addTitleTab($action)
+    {
+        $this->getTabs()->add($action, array(
+            'title' => ucfirst($action),
+            'url' => Url::fromPath('monitoring/list/' . $action)
+        ))->activate($action);
+    }
+
     /**
      * Return all tabs for this controller
      *
@@ -448,7 +502,7 @@ class Monitoring_ListController extends MonitoringController
     {
         $tabs = $this->getTabs();
         $tabs->extend(new OutputFormat())
-             ->extend(new DashboardAction());
+            ->extend(new DashboardAction());
     }
 }
 // @codingStandardsIgnoreEnd

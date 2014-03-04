@@ -29,10 +29,11 @@
 
 namespace Icinga\Web\Widget;
 
-use \Icinga\Exception\ProgrammingError;
-use \Icinga\Web\Widget\Tabextension\Tabextension;
-use \Zend_View_Abstract;
-use \Countable;
+use Icinga\Exception\ProgrammingError;
+use Icinga\Web\Widget\Tabextension\Tabextension;
+use Icinga\Application\Icinga;
+use Zend_View_Abstract;
+use Countable;
 
 /**
  * Navigation tab widget
@@ -45,9 +46,9 @@ class Tabs implements Countable, Widget
      * @var string
      */
     private $baseTpl = <<< 'EOT'
-<ul class="nav nav-tabs">
-    {TABS}
-    {DROPDOWN}
+<ul class="tabs">
+  {TABS}
+  {DROPDOWN}
 </ul>
 EOT;
 
@@ -57,13 +58,11 @@ EOT;
      * @var string
      */
     private $dropdownTpl = <<< 'EOT'
-<li class="dropdown pull-right ">
-    <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="margin-top:3px">
-        <i style="" class="caret"></i> Actions
-    </a>
-    <ul class="dropdown-menu">
-        {TABS}
-    </ul>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle">⌄</a>
+  <ul class="dropdown-menu">
+    {TABS}
+  </ul>
 </li>
 EOT;
 
@@ -282,6 +281,16 @@ EOT;
         $html = $this->baseTpl;
         $html = str_replace('{TABS}', $this->renderTabs($view), $html);
         $html = str_replace('{DROPDOWN}', $this->renderDropdownTabs($view), $html);
+        return $html;
+    }
+
+    public function __toString()
+    {
+        try {
+          $html = $this->render(Icinga::app()->getViewRenderer()->view);
+        } catch (Exception $e) {
+          return htmlspecialchars($e->getMessage());
+        }
         return $html;
     }
 
