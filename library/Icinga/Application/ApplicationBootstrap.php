@@ -234,6 +234,18 @@ abstract class ApplicationBootstrap
     }
 
     /**
+     * Get the path to the bootstrapping directory.
+     *
+     * This is usually /public for Web and EmbeddedWeb
+     *
+     * @return string
+     */
+    public function getBootstrapDirecory()
+    {
+        return dirname($_SERVER['SCRIPT_FILENAME']);
+    }
+
+    /**
      * Helper to glue directories together
      *
      * @param   string $dir
