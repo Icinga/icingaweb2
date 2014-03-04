@@ -441,7 +441,9 @@ abstract class IdoQuery extends Query
     protected function conflictsWithVirtualTable($name)
     {
         if ($this->hasJoinedVirtualTable($name)) {
-            throw new ProgrammingError('Great work, dude');
+            throw new ProgrammingError(
+                sprintf('IDO query virtual table conflict with "%s"', $name)
+            );
         }
         return $this;
     }
