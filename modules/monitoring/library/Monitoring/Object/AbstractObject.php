@@ -42,6 +42,18 @@ abstract class AbstractObject
 
     public function fetchComments()
     {
+        // WTF???
+        $query = Comment::fromParams(array('backend' => null), array(
+            'comment_timestamp',
+            'comment_author',
+            'comment_data',
+            'comment_type',
+        ))->getQuery();
+        $query->where('comment_objecttype_id', $this->type);
+        $this->applyObjectFilter($query);
+        $this->comments = $query->fetchAll();
+        return $this;
+
         $this->comments = Comment::fromRequest(
             $this->request,
             array(
@@ -52,7 +64,7 @@ abstract class AbstractObject
                 'comment_type',
             )
         )->getQuery()
-            ->where('comment_objecttype_id', 1)
+            //->where('comment_objecttype_id', 1)
 
             ->fetchAll();
 
