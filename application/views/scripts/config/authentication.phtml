@@ -12,24 +12,24 @@ $createDbBackend = $this->href('/config/createAuthenticationBackend', array('typ
   <?= $this->messageBox->render() ?>
 <?php endif ?>
 
-<div class="panel panel-default">
-  <div class="panel-heading panel-title">
+<div>
+  <div>
     Create Authentication Provider
   </div>
-  <div class="panel-body">
+  <div>
     <a href="<?= $createLdapBackend ?>"><i class="icinga-icon-create"></i> Create A New LDAP Authentication Backend</a><br/>
     <a href="<?= $createDbBackend ?>"><i class="icinga-icon-create"></i> Create A New DB Authentication Backend</a>
   </div>
 </div>
 
 <?php foreach ($this->backends as $backend): ?>
-<div class="panel panel-default">
-  <div class="panel-heading panel-title">
+<div>
+  <div>
     Backend <?= $this->escape($backend->name); ?>
     <br/>
     <?= $backend->reorderForm; ?>
   </div>
-  <div class="panel-body">
+  <div>
     <a href="<?= $this->href('config/editAuthenticationBackend', array('auth_backend' => $backend->name));?>">
         <i class="icinga-icon-edit"></i> Edit This Authentication Provider
     </a>

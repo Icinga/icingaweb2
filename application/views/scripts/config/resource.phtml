@@ -11,23 +11,23 @@ $createResource = $this->href('/config/createresource');
   <?= $this->messageBox->render() ?>
 <?php endif ?>
 
-<div class="panel panel-default">
-  <div class="panel-heading panel-title">
+<div>
+  <div>
     Create Resource
   </div>
-  <div class="panel-body">
+  <div>
     <a href="<?= $createResource ?>"><i class="icinga-icon-create"></i> Create A New Resource</a><br/>
   </div>
 </div>
 
 <?php foreach ($this->resources as $name => $resource): ?>
-<div class="panel panel-default">
+<div>
 
-  <div class="panel-heading panel-title">
+  <div>
     <b>Resource: </b>  <?= $this->escape($name); ?>
     <br/>
   </div>
-  <div class="panel-body">
+  <div>
 
     <a href="<?= $this->href('config/editresource', array('resource' => $name));?>">
         <i class="icinga-icon-edit"></i> Edit This Resource
