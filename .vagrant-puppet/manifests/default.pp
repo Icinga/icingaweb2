@@ -579,7 +579,6 @@ file { '/var/www/html/icingaweb/css':
   target    => '/vagrant/public/css',
   owner     => 'apache',
   group     => 'apache',
-  require   => File['/var/www/html/icingaweb']
 }
 
 file { '/var/www/html/icingaweb/img':
@@ -587,7 +586,6 @@ file { '/var/www/html/icingaweb/img':
   target    => '/vagrant/public/img',
   owner     => 'apache',
   group     => 'apache',
-  require   => File['/var/www/html/icingaweb']
 }
 
 file { '/var/www/html/icingaweb/js':
@@ -595,35 +593,30 @@ file { '/var/www/html/icingaweb/js':
   target    => '/vagrant/public/js',
   owner     => 'apache',
   group     => 'apache',
-  require   => File['/var/www/html/icingaweb']
 }
 
 file { '/var/www/html/icingaweb/index.php':
   source    => 'puppet:////vagrant/.vagrant-puppet/files/var/www/html/icingaweb/index.php',
   owner     => 'apache',
   group     => 'apache',
-  require   => File['/var/www/html/icingaweb']
 }
 
 file { '/var/www/html/icingaweb/js.php':
   source    => 'puppet:////vagrant/.vagrant-puppet/files/var/www/html/icingaweb/js.php',
   owner     => 'apache',
   group     => 'apache',
-  require   => File['/var/www/html/icingaweb']
 }
 
 file { '/var/www/html/icingaweb/css.php':
   source    => 'puppet:////vagrant/.vagrant-puppet/files/var/www/html/icingaweb/css.php',
   owner     => 'apache',
   group     => 'apache',
-  require   => File['/var/www/html/icingaweb']
 }
 
 file { '/var/www/html/icingaweb/.htaccess':
   source    => 'puppet:////vagrant/.vagrant-puppet/files/var/www/html/icingaweb/.htaccess',
   owner     => 'apache',
   group     => 'apache',
-  require   => File['/var/www/html/icingaweb']
 }
 
 file { '/etc/httpd/conf.d/icingaweb.conf':
@@ -645,65 +638,57 @@ file { '/etc/icingaweb/authentication.ini':
   require   => File['/etc/icingaweb']
 }
 
+file { '/etc/icingaweb/config.ini':
+  ensure    => file,
+  owner     => 'apache',
+  group     => 'apache',
+}
+
+file { '/etc/icingaweb/menu.ini':
+  source    => 'puppet:////vagrant/.vagrant-puppet/files/etc/icingaweb/menu.ini',
+  owner     => 'apache',
+  group     => 'apache',
+  replace   => false,
+}
+
 file { '/etc/icingaweb/resources.ini':
   source    => 'puppet:////vagrant/.vagrant-puppet/files/etc/icingaweb/resources.ini',
   owner     => 'apache',
   group     => 'apache',
-  require   => File['/etc/icingaweb']
 }
 
-file { '/etc/icingaweb/enabledModules':
+file { ['/etc/icingaweb/enabledModules', '/etc/icingaweb/modules', '/etc/icingaweb/modules/monitoring']:
   ensure    => 'directory',
   owner     => 'apache',
   group     => 'apache',
-  require   => File['/etc/icingaweb']
-}
-
-file { '/etc/icingaweb/modules':
-  ensure    => 'directory',
-  owner     => 'apache',
-  group     => 'apache',
-  require   => File['/etc/icingaweb']
-}
-
-file { '/etc/icingaweb/modules/monitoring':
-  ensure    => 'directory',
-  owner     => 'apache',
-  group     => 'apache',
-  require   => File['/etc/icingaweb/modules']
 }
 
 file { '/etc/icingaweb/modules/monitoring/backends.ini':
    source    => 'puppet:////vagrant/.vagrant-puppet/files/etc/icingaweb/modules/monitoring/backends.ini',
    owner     => 'apache',
    group     => 'apache',
-   require   => File['/etc/icingaweb/modules/monitoring']
 }
 
 file { '/etc/icingaweb/modules/monitoring/instances.ini':
   source    => 'puppet:////vagrant/.vagrant-puppet/files/etc/icingaweb/modules/monitoring/instances.ini',
   owner     => 'apache',
   group     => 'apache',
-  require   => File['/etc/icingaweb/modules/monitoring']
 }
 
 file { '/etc/icingaweb/modules/monitoring/menu.ini':
   source    => 'puppet:////vagrant/.vagrant-puppet/files/etc/icingaweb/modules/monitoring/menu.ini',
   owner     => 'apache',
   group     => 'apache',
-  require   => File['/etc/icingaweb/modules/monitoring']
 }
 
 file { '/etc/icingaweb/dashboard':
   ensure    => 'directory',
   owner     => 'apache',
   group     => 'apache',
-  require   => File['/etc/icingaweb']
 }
 
 file { '/etc/icingaweb/dashboard/dashboard.ini':
    source    => 'puppet:////vagrant/.vagrant-puppet/files/etc/icingaweb/dashboard/dashboard.ini',
    owner     => 'apache',
    group     => 'apache',
-   require   => File['/etc/icingaweb/dashboard']
 }
