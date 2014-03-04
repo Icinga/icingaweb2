@@ -45,6 +45,7 @@ use Icinga\Web\Request;
 
 use Icinga\File\Pdf;
 use \DOMDocument;
+use Icinga\Exception\ProgrammingError;
 
 /**
  * Base class for all core action controllers
@@ -63,6 +64,8 @@ class ActionController extends Zend_Controller_Action
     private $config;
 
     private $configs = array();
+
+    private $autorefreshInterval;
 
     // TODO: This would look better if we had a ModuleActionController
     public function Config($file = null)
@@ -114,7 +117,12 @@ class ActionController extends Zend_Controller_Action
             $this->view->tabs = new Tabs();
             $this->init();
         } else {
-            $this->redirectToLogin($this->getRequestUrl());
+            $url = $this->getRequestUrl();
+            if ($url === 'default/index/index') {
+                // TODO: We need our own router :p
+                $url = 'dashboard';
+            }
+            $this->redirectToLogin($url);
         }
     }
 
@@ -196,6 +204,16 @@ class ActionController extends Zend_Controller_Action
         return Translator::translate($text, $domain);
     }
 
+    public function setAutorefreshInterval($interval)
+    {
+        if (! is_int($interval) || $interval < 1) {
+            throw new ProgrammingError(
+                'Setting autorefresh interval smaller than 1 second is not allowed'
+            );
+        }
+        $this->autorefreshInterval = $interval;
+    }
+
     /**
      * Redirect to the login path
      *
@@ -203,9 +221,12 @@ class ActionController extends Zend_Controller_Action
      *
      * @throws  \Exception
      */
-    protected function redirectToLogin($afterLogin = '/index')
+    protected function redirectToLogin($afterLogin = '/dashboard')
     {
+        $url = Url::fromPath('/authentication/login');
         if ($this->getRequest()->isXmlHttpRequest()) {
+            $url->setParam('_render', 'layout');
+/*
             $this->_response->setHttpResponseCode(401);
             $this->_helper->json(
                 array(
@@ -213,8 +234,8 @@ class ActionController extends Zend_Controller_Action
                     'redirectTo'    => Url::fromPath('/authentication/login')->getAbsoluteUrl()
                 )
             );
+*/
         }
-        $url = Url::fromPath('/authentication/login');
         $url->setParam('redirect', $afterLogin);
         $this->redirectNow($url);
     }
@@ -262,6 +283,21 @@ class ActionController extends Zend_Controller_Action
 
         if ($this->_request->isXmlHttpRequest() || $this->getParam('view') === 'compact') {
             $this->_helper->layout()->setLayout('inline');
+        }
+        if ($this->view->title) {
+            if (preg_match('~[\r\n]~', $this->view->title)) {
+                // TODO: Innocent exception and error log for hack attempts
+                throw new Exception('No way, guy');
+            }
+            header('X-Icinga-Title: ' . $this->view->title . ' :: Icinga Web');
+        }
+        // TODO: _render=layout?
+        if ($this->getParam('_render') === 'layout') {
+            $this->_helper->layout()->setLayout('body');
+            header('X-Icinga-Container: layout');
+        }
+        if ($this->autorefreshInterval !== null) {        
+            header('X-Icinga-Refresh: ' . $this->autorefreshInterval);
         }
         if ($user = $this->getRequest()->getUser()) {
             // Cast preference app.showBenchmark to bool because preferences loaded from a preferences storage are
