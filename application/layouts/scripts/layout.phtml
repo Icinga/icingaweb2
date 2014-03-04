@@ -41,7 +41,10 @@ $jsfiles = array(
 
 </head>
 <body id="body">
+<pre id="responsive-debug"></pre>
+<div id="layout" class="default-layout">
 <?= $this->render('body.phtml') ?>
+</div>
 <?php foreach ($jsfiles as $file): ?>
 <script type="text/javascript" src="<?= $this->href($file) ?>"></script>
 <?php endforeach ?>

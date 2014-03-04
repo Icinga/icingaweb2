@@ -1,9 +1,8 @@
 <?php if (Icinga\Authentication\Manager::getInstance()->isAuthenticated()): ?>
-<div id="layout">
  <div id="header">
    <ul id="notifications"></ul>
-<div id="logo"><a href="<?= $this->href('/dashboard') ?>"><img src="<?= $this->href('img/logo_icinga-inv.png') ?>" class="logo" /></a>
-</div>
+   <div id="logo"><a href="<?= $this->href('/dashboard') ?>"><img src="<?= $this->href('img/logo_icinga-inv.png') ?>" class="logo" /></a>
+ </div>
  </div>
 <!--
   <ul class="tabs" >
@@ -35,8 +34,6 @@
   <div id="col3" class="container">
   </div>
  </div><!-- END of main -->
-</div><!-- END of layout -->
 <?php else: ?>
 <?= $this->render('inline.phtml') ?>
 <?php endif ?>
-

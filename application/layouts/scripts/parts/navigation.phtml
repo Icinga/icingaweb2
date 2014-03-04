@@ -1,20 +1,24 @@
 <?php
 
+use Icinga\Web\Url;
+use Icinga\Web\Menu;
+
 // Don't render a menu for unauthenticated users unless menu is auth aware
 if (! $this->auth()->isAuthenticated()) {
     return;
 }
 
 // Current url
-$url = Icinga\Web\Url::fromRequest()->getRelativeUrl();
-$menu = Icinga\Web\Menu::fromConfig();
-
+$url = Url::fromRequest()->remove('_render')->getRelativeUrl();
+$menu = Menu::fromConfig();
 ?>
-<div id="menu">
-  <form action="<?= $this->href('search') ?>" method="post"><input type="text" name="q" class="search" placeholder="Search..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" /></form>
+<div id="menu" data-base-target="col1">
+  <form action="<?= $this->href('search') ?>" method="post">
+    <input type="text" name="q" class="search" placeholder="Search..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+  </form>
 <?= $this->partial('parts/menu.phtml', array(
     'items' => $menu->getChildren(),
     'url'   => $url
-))
-?>
+)) ?>
+<br /><a href="<?= Url::fromPath('authentication/logout') ?>" data-base-target="layout" style="display: block; padding-left: 2.5em; color: white; text-decoration: none; font-style: italic;">Temporary Logout</a>
 </div>
