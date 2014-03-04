@@ -6,14 +6,18 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
 
     public function pluginOutput($output)
     {
+        if (empty($output)) {
+            return '';
+        }
+        $output = preg_replace('~<br[^>]+>~', "\n", $output);
         if (preg_match('~<\w+[^>]*>~', $output)) {
             // HTML
-            $output = preg_replace('~<table~', '<table style="font-size: 0.65em"',
+            $output = preg_replace('~<table~', '<table style="font-size: 0.75em"',
                 $this->getPurifier()->purify($output)
             );
         } elseif (preg_match('~\\\n~', $output)) {
             // Plaintext
-            $output = '<pre style="font-family: monospace; font-size: 0.95em;'
+            $output = '<pre style="font-family: monospace; font-size: 1em;'
                     . ' width: 90%; overflow: auto;">'
                . preg_replace(
               '~\\\n~', "\n", preg_replace(
@@ -22,14 +26,16 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
                  preg_replace('~\[WARNING\]~', '<span class="warning">[WARNING]</span>',
                   preg_replace('~\[CRITICAL\]~', '<span class="error">[CRITICAL]</span>',
                    preg_replace('~\@{6,}~', '@@@@@@',
-                     $this->view->escape(wordwrap($output, 72, ' ', true))
+                     $this->view->escape(wordwrap($output, 80, "\n", true))
                 ))))
               )
             ) . '</pre>';
         } else {
-            $output = preg_replace('~\@{6,}~', '@@@@@@',
-                $this->view->escape(wordwrap($output, 72, ' ', true))
-            );
+            $output = '<pre style="font-family: monospace; font-size: 1em;'
+                    . ' width: 90%; overflow: auto;">'
+               . preg_replace('~\@{6,}~', '@@@@@@',
+                $this->view->escape(wordwrap($output, 80, "\n", true))
+            ) . '</pre>';
         }
         $output = $this->fixLinks($output);
         return $output;

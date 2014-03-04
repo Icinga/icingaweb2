@@ -1,6 +1,6 @@
 <?php
 
-use \Icinga\Module\Monitoring\Plugin\PerfdataSet;
+use Icinga\Module\Monitoring\Plugin\PerfdataSet;
 
 class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
 {
@@ -67,11 +67,11 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
                      . implode(',', array($green, $orange, $red, $gray))
                      . '</div>';
             } else {
-                $result .= '<tr><td><div class="inlinepie" title="' . htmlspecialchars($name) . '">'
+                $result .= '<tr><th><div class="inlinepie" title="' . htmlspecialchars($name) . '" style="float: left; margin: 0.2em 0.5em 0.2em 0;">'
                      . implode(',', array($green, $orange, $red, $gray))
-                     . '</div></td><td>'
+                     . '</div>'
                      . htmlspecialchars($name)
-                     . '</td><td>'
+                     . '</th><td>'
                      . htmlspecialchars($ps[$name]->getFormattedValue() /* $val*/)
                      //. htmlspecialchars($unit)
                      . '</td></tr>';
@@ -81,7 +81,7 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
             $result = $perfdata;
         }
         if (! $compact && $result !== '') {
-            $result = '<table style="width: 100%; border: none;">' . $result . '</table>';
+            $result = '<table class="perfdata">' . $result . '</table>';
         }
 
         return $result;
