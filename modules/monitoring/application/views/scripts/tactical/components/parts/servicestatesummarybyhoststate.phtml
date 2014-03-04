@@ -1,0 +1,437 @@
+<?php
+
+$services_warning_handled = $services_warning_handled_active + $services_warning_handled_passive + $services_warning_handled_not_checked;
+$services_warning_unhandled = $services_warning_unhandled_active + $services_warning_unhandled_passive + $services_warning_unhandled_not_checked;
+$services_critical_handled = $services_critical_handled_active + $services_critical_handled_passive + $services_critical_handled_not_checked;
+$services_critical_unhandled = $services_critical_unhandled_active + $services_critical_unhandled_passive + $services_critical_unhandled_not_checked;
+$services_unknown_handled = $services_unknown_handled_active + $services_unknown_handled_passive + $services_unknown_handled_not_checked;
+$services_unknown_unhandled = $services_unknown_unhandled_active + $services_unknown_unhandled_passive + $services_unknown_unhandled_not_checked;
+
+$services_warning = $services_warning_handled + $services_warning_unhandled;
+$services_critical = $services_critical_handled + $services_critical_unhandled;
+$services_unknown = $services_unknown_handled + $services_unknown_unhandled;
+
+?>
+
+<?php if ($services_critical): ?>
+<span class="state critical">
+    <a href="<?= $this->href(
+        'monitoring/list/services',
+        array('host_state' => $hostState, 'service_state' => 2)
+    ); ?>">
+        <?= $services_critical; ?> CRITICAL
+    </a>
+<?php if ($services_critical_unhandled): ?>
+    <span class="state critical unhandled">
+        <a href="<?= $this->href(
+            'monitoring/list/services',
+            array('host_state' => $hostState, 'service_state' => 2, 'service_handled' => 0)
+        ); ?>">
+            <?= $services_critical_unhandled; ?> unhandled
+        </a>
+<?php if ($services_critical_unhandled_active): ?>
+        <span class="state critical unhandled active">
+            <a href="<?= $this->href(
+                'monitoring/list/services',
+                array(
+                    'service_state' => 2,
+                    'service_handled' => 0,
+                    'host_state' => $hostState,
+                    'service_active_checks_enabled' => 1
+                )
+            ); ?>">
+                <?= $services_critical_unhandled_active; ?> Active
+            </a>
+        </span>
+<?php endif ?>
+<?php if ($services_critical_unhandled_passive): ?>
+        <span class="state critical unhandled passive">
+            <a href="<?= $this->href(
+                'monitoring/list/services',
+                array(
+                    'service_state' => 2,
+                    'service_handled' => 0,
+                    'host_state' => $hostState,
+                    'service_active_checks_enabled' => 0,
+                    'service_passive_checks_enabled' => 1
+                )
+            ); ?>">
+                <?= $services_critical_unhandled_passive; ?> Passive
+            </a>
+        </span>
+<?php endif ?>
+<?php if ($services_critical_unhandled_not_checked): ?>
+        <span class="state critical unhandled not_checked">
+            <a href="<?= $this->href(
+                'monitoring/list/services',
+                array(
+                    'service_state' => 2,
+                    'service_handled' => 0,
+                    'host_state' => $hostState,
+                    'service_active_checks_enabled' => 0,
+                    'service_passive_checks_enabled' => 0
+                )
+            ); ?>">
+                <?= $services_critical_unhandled_not_checked; ?> Not checked
+            </a>
+        </span>
+<?php endif ?>
+    </span>
+<?php endif ?>
+<?php if ($services_critical_handled): ?>
+    <span class="state critical handled">
+        <a href="<?= $this->href(
+            'monitoring/list/services',
+            array('host_state' => $hostState, 'service_state' => 2, 'service_handled' => 1)
+        ); ?>">
+            <?= $services_critical_handled; ?> handled
+        </a>
+<?php if ($services_critical_handled_active): ?>
+        <span class="state critical handled active">
+            <a href="<?= $this->href(
+                'monitoring/list/services',
+                array(
+                    'service_state' => 2,
+                    'service_handled' => 1,
+                    'host_state' => $hostState,
+                    'service_active_checks_enabled' => 1
+                )
+            ); ?>">
+                <?= $services_critical_handled_active; ?> Active
+            </a>
+        </span>
+<?php endif ?>
+<?php if ($services_critical_handled_passive): ?>
+        <span class="state critical handled passive">
+            <a href="<?= $this->href(
+                'monitoring/list/services',
+                array(
+                    'service_state' => 2,
+                    'service_handled' => 1,
+                    'host_state' => $hostState,
+                    'service_active_checks_enabled' => 0,
+                    'service_passive_checks_enabled' => 1
+                )
+            ); ?>">
+                <?= $services_critical_handled_passive; ?> Passive
+            </a>
+        </span>
+<?php endif ?>
+<?php if ($services_critical_handled_not_checked): ?>
+        <span class="state critical handled not_checked">
+            <a href="<?= $this->href(
+                'monitoring/list/services',
+                array(
+                    'service_state' => 2,
+                    'service_handled' => 1,
+                    'host_state' => $hostState,
+                    'service_active_checks_enabled' => 0,
+                    'service_passive_checks_enabled' => 0
+                )
+            ); ?>">
+                <?= $services_critical_handled_not_checked; ?> Not checked
+            </a>
+        </span>
+<?php endif ?>
+    </span>
+<?php endif ?>
+</span>
+<?php endif ?>
+<?php if ($services_warning): ?>
+<span class="state warning">
+    <a href="<?= $this->href(
+        'monitoring/list/services',
+        array('host_state' => $hostState, 'service_state' => 1)
+    ); ?>">
+        <?= $services_warning; ?> WARNING
+    </a>
+<?php if ($services_warning_unhandled): ?>
+    <span class="state warning unhandled">
+        <a href="<?= $this->href(
+            'monitoring/list/services',
+            array('host_state' => $hostState, 'service_state' => 1, 'service_handled' => 0)
+        ); ?>">
+            <?= $services_warning_unhandled; ?> unhandled
+        </a>
+<?php if ($services_warning_unhandled_active): ?>
+        <span class="state warning unhandled active">
+            <a href="<?= $this->href(
+                'monitoring/list/services',
+                array(
+                    'service_state' => 1,
+                    'service_handled' => 0,
+                    'host_state' => $hostState,
+                    'service_active_checks_enabled' => 1
+                )
+            ); ?>">
+                <?= $services_warning_unhandled_active; ?> Active
+            </a>
+        </span>
+<?php endif ?>
+<?php if ($services_warning_unhandled_passive): ?>
+        <span class="state warning unhandled passive">
+            <a href="<?= $this->href(
+                'monitoring/list/services',
+                array(
+                    'service_state' => 1,
+                    'service_handled' => 0,
+                    'host_state' => $hostState,
+                    'service_active_checks_enabled' => 0,
+                    'service_passive_checks_enabled' => 1
+                )
+            ); ?>">
+                <?= $services_warning_unhandled_passive; ?> Passive
+            </a>
+        </span>
+<?php endif ?>
+<?php if ($services_warning_unhandled_not_checked): ?>
+        <span class="state warning unhandled not_checked">
+            <a href="<?= $this->href(
+                'monitoring/list/services',
+                array(
+                    'service_state' => 1,
+                    'service_handled' => 0,
+                    'host_state' => $hostState,
+                    'service_active_checks_enabled' => 0,
+                    'service_passive_checks_enabled' => 0
+                )
+            ); ?>">
+                <?= $services_warning_unhandled_not_checked; ?> Not checked
+            </a>
+        </span>
+<?php endif ?>
+    </span>
+<?php endif ?>
+<?php if ($services_warning_handled): ?>
+    <span class="state warning handled">
+        <a href="<?= $this->href(
+            'monitoring/list/services',
+            array('host_state' => $hostState, 'service_state' => 1, 'service_handled' => 1)
+        ); ?>">
+            <?= $services_warning_handled; ?> handled
+        </a>
+<?php if ($services_warning_handled_active): ?>
+        <span class="state warning handled active">
+            <a href="<?= $this->href(
+                'monitoring/list/services',
+                array(
+                    'service_state' => 1,
+                    'service_handled' => 1,
+                    'host_state' => $hostState,
+                    'service_active_checks_enabled' => 1
+                )
+            ); ?>">
+                <?= $services_warning_handled_active; ?> Active
+            </a>
+        </span>
+<?php endif ?>
+<?php if ($services_warning_handled_passive): ?>
+        <span class="state warning handled passive">
+            <a href="<?= $this->href(
+                'monitoring/list/services',
+                array(
+                    'service_state' => 1,
+                    'service_handled' => 1,
+                    'host_state' => $hostState,
+                    'service_active_checks_enabled' => 0,
+                    'service_passive_checks_enabled' => 1
+                )
+            ); ?>">
+                <?= $services_warning_handled_passive; ?> Passive
+            </a>
+        </span>
+<?php endif ?>
+<?php if ($services_warning_handled_not_checked): ?>
+        <span class="state warning handled not_checked">
+            <a href="<?= $this->href(
+                'monitoring/list/services',
+                array(
+                    'service_state' => 1,
+                    'service_handled' => 1,
+                    'host_state' => $hostState,
+                    'service_active_checks_enabled' => 0,
+                    'service_passive_checks_enabled' => 0
+                )
+            ); ?>">
+                <?= $services_warning_handled_not_checked; ?> Not checked
+            </a>
+        </span>
+<?php endif ?>
+    </span>
+<?php endif ?>
+</span>
+<?php endif ?>
+<?php if ($services_unknown): ?>
+<span class="state unknown">
+    <a href="<?= $this->href(
+        'monitoring/list/services',
+        array('host_state' => $hostState, 'service_state' => 3)
+    ); ?>">
+        <?= $services_unknown; ?> UNKNOWN
+    </a>
+<?php if ($services_unknown_unhandled): ?>
+    <span class="state unknown unhandled">
+        <a href="<?= $this->href(
+            'monitoring/list/services',
+            array('host_state' => $hostState, 'service_state' => 3, 'service_handled' => 0)
+        ); ?>">
+            <?= $services_unknown_unhandled; ?> unhandled
+        </a>
+<?php if ($services_unknown_unhandled_active): ?>
+        <span class="state unknown unhandled active">
+            <a href="<?= $this->href(
+                'monitoring/list/services',
+                array(
+                    'service_state' => 3,
+                    'service_handled' => 0,
+                    'host_state' => $hostState,
+                    'service_active_checks_enabled' => 1
+                )
+            ); ?>">
+                <?= $services_unknown_unhandled_active; ?> Active
+            </a>
+        </span>
+<?php endif ?>
+<?php if ($services_unknown_unhandled_passive): ?>
+        <span class="state unknown unhandled passive">
+            <a href="<?= $this->href(
+                'monitoring/list/services',
+                array(
+                    'service_state' => 3,
+                    'service_handled' => 0,
+                    'host_state' => $hostState,
+                    'service_active_checks_enabled' => 0,
+                    'service_passive_checks_enabled' => 1
+                )
+            ); ?>">
+                <?= $services_unknown_unhandled_passive; ?> Passive
+            </a>
+        </span>
+<?php endif ?>
+<?php if ($services_unknown_unhandled_not_checked): ?>
+        <span class="state unknown unhandled not_checked">
+            <a href="<?= $this->href(
+                'monitoring/list/services',
+                array(
+                    'service_state' => 3,
+                    'service_handled' => 0,
+                    'host_state' => $hostState,
+                    'service_active_checks_enabled' => 0,
+                    'service_passive_checks_enabled' => 0
+                )
+            ); ?>">
+                <?= $services_unknown_unhandled_not_checked; ?> Not checked
+            </a>
+        </span>
+<?php endif ?>
+    </span>
+<?php endif ?>
+<?php if ($services_unknown_handled): ?>
+    <span class="state unknown handled">
+        <a href="<?= $this->href(
+            'monitoring/list/services',
+            array('host_state' => $hostState, 'service_state' => 3, 'service_handled' => 1)
+        ); ?>">
+            <?= $services_unknown_handled; ?> handled
+        </a>
+<?php if ($services_unknown_handled_active): ?>
+        <span class="state unknown handled not_checked">
+            <a href="<?= $this->href(
+                'monitoring/list/services',
+                array(
+                    'service_state' => 3,
+                    'service_handled' => 1,
+                    'host_state' => $hostState,
+                    'service_active_checks_enabled' => 1,
+                )
+            ); ?>">
+                <?= $services_unknown_handled_active; ?> Active
+            </a>
+        </span>
+<?php endif ?>
+<?php if ($services_unknown_handled_passive): ?>
+        <span class="state unknown handled not_checked">
+            <a href="<?= $this->href(
+                'monitoring/list/services',
+                array(
+                    'service_state' => 3,
+                    'service_handled' => 1,
+                    'host_state' => $hostState,
+                    'service_active_checks_enabled' => 0,
+                    'service_passive_checks_enabled' => 1
+                )
+            ); ?>">
+                <?= $services_unknown_handled_passive; ?> Passive
+            </a>
+        </span>
+<?php endif ?>
+<?php if ($services_unknown_handled_not_checked): ?>
+        <span class="state unknown handled not_checked">
+            <a href="<?= $this->href(
+                'monitoring/list/services',
+                array(
+                    'service_state' => 3,
+                    'service_handled' => 1,
+                    'host_state' => $hostState,
+                    'service_active_checks_enabled' => 0,
+                    'service_passive_checks_enabled' => 0
+                )
+            ); ?>">
+                <?= $services_unknown_handled_not_checked; ?> Not checked
+            </a>
+        </span>
+<?php endif ?>
+    </span>
+<?php endif ?>
+</span>
+<?php endif ?>
+<?php if ($services_ok): ?>
+<span class="state ok">
+    <a href="<?= $this->href(
+        'monitoring/list/services',
+        array('host_state' => $hostState, 'service_state' => 0)
+    ); ?>">
+        <?= $services_ok; ?> OK
+    </a>
+<?php if ($services_ok_not_checked): ?>
+    <span class="state ok not_checked">
+        <a href="<?= $this->href(
+            'monitoring/list/services',
+            array(
+                'service_state' => 0,
+                'host_state' => $hostState,
+                'service_active_checks_enabled' => 0,
+                'service_passive_checks_enabled' => 0
+            )
+        ); ?>">
+            <?= $services_ok_not_checked; ?> Not checked
+        </a>
+    </span>
+<?php endif ?>
+</span>
+<?php endif ?>
+<?php if ($services_pending): ?>
+<span class="state pending">
+    <a href="<?= $this->href(
+        'monitoring/list/services',
+        array('host_state' => $hostState, 'service_state' => 99)
+    ); ?>">
+        <?= $services_pending; ?> PENDING
+    </a>
+<?php if ($services_pending_not_checked): ?>
+    <span class="state pending not_checked">
+        <a href="<?= $this->href(
+            'monitoring/list/services',
+            array(
+                'service_state' => 99,
+                'host_state' => $hostState,
+                'service_active_checks_enabled' => 0,
+                'service_passive_checks_enabled' => 0
+            )
+        ); ?>">
+            <?= $services_pending_not_checked; ?> Not checked
+        </a>
+    </span>
+<?php endif ?>
+</span>
+<?php endif ?>

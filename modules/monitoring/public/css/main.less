@@ -39,6 +39,12 @@
 @colorWarning : #FFA500;
 @colorUnreachable : #E066FF;
 
+table.tacticalTable {
+  border: 0px;
+  border-collapse: separate;
+  border-spacing: 5px;
+}
+
 .host-name {
   display: block;
   margin-top: 5px;
@@ -89,6 +95,18 @@
 /* ==========================================================================
    Status colors
    ========================================================================== */
+
+.status-ok {
+  background-color: @colorOk!important;
+}
+
+.status-down {
+  background-color: @colorDown!important;
+}
+
+.status-unreachable {
+  background-color: @colorUnreachable!important;
+}
 
 .status-up {
   background-color: @colorUp!important;
