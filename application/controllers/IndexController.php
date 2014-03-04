@@ -32,6 +32,7 @@
 
 use Icinga\Web\Controller\ActionController;
 use Icinga\Application\Benchmark;
+use Icinga\Web\Url;
 
 /**
  * Application wide index controller
@@ -44,7 +45,12 @@ class IndexController extends ActionController
     public function preDispatch()
     {
         if ($this->getRequest()->getActionName() !== 'welcome') {
-            $this->redirect('dashboard/index');
+            $url = Url::fromPath('dashboard');
+            $render = $this->_request->getParam('_render');
+            if ($render) {
+                $url->setParam('_render', $render);
+            }
+            $this->redirectNow($url);
         }
     }
 
