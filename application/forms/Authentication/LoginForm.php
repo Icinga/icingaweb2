@@ -54,9 +54,7 @@ class LoginForm extends Form
             array(
                 'required' => true,
                 'placeholder' => t('Username'),
-                'class' => 'autofocus'
             )
-            
         );
 
         $this->addElement(
@@ -67,7 +65,13 @@ class LoginForm extends Form
                 'required' => true
             )
         );
-
+        $user = $this->getElement('username');
+        // TODO: We need a place to intercept filled forms before rendering
+        if (isset($_POST['username'])) {
+            $this->getElement('password')->setAttrib('class', 'autofocus');
+        } else {
+            $user->setAttrib('class', 'autofocus');
+        }
         $this->setSubmitLabel('Login');
 
     }
