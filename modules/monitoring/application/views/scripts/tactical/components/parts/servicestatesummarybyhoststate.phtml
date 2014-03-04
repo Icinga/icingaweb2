@@ -30,7 +30,7 @@ $services_unknown = $services_unknown_handled + $services_unknown_unhandled;
             <?= $services_critical_unhandled; ?> unhandled
         </a>
 <?php if ($services_critical_unhandled_active): ?>
-        <span class="state critical unhandled active">
+        <span class="state critical unhandled check_active">
             <a href="<?= $this->href(
                 'monitoring/list/services',
                 array(
@@ -45,7 +45,7 @@ $services_unknown = $services_unknown_handled + $services_unknown_unhandled;
         </span>
 <?php endif ?>
 <?php if ($services_critical_unhandled_passive): ?>
-        <span class="state critical unhandled passive">
+        <span class="state critical unhandled check_passive">
             <a href="<?= $this->href(
                 'monitoring/list/services',
                 array(
@@ -61,7 +61,7 @@ $services_unknown = $services_unknown_handled + $services_unknown_unhandled;
         </span>
 <?php endif ?>
 <?php if ($services_critical_unhandled_not_checked): ?>
-        <span class="state critical unhandled not_checked">
+        <span class="state critical unhandled check_disabled">
             <a href="<?= $this->href(
                 'monitoring/list/services',
                 array(
@@ -87,7 +87,7 @@ $services_unknown = $services_unknown_handled + $services_unknown_unhandled;
             <?= $services_critical_handled; ?> handled
         </a>
 <?php if ($services_critical_handled_active): ?>
-        <span class="state critical handled active">
+        <span class="state critical handled check_active">
             <a href="<?= $this->href(
                 'monitoring/list/services',
                 array(
@@ -102,7 +102,7 @@ $services_unknown = $services_unknown_handled + $services_unknown_unhandled;
         </span>
 <?php endif ?>
 <?php if ($services_critical_handled_passive): ?>
-        <span class="state critical handled passive">
+        <span class="state critical handled check_passive">
             <a href="<?= $this->href(
                 'monitoring/list/services',
                 array(
@@ -118,7 +118,7 @@ $services_unknown = $services_unknown_handled + $services_unknown_unhandled;
         </span>
 <?php endif ?>
 <?php if ($services_critical_handled_not_checked): ?>
-        <span class="state critical handled not_checked">
+        <span class="state critical handled check_disabled">
             <a href="<?= $this->href(
                 'monitoring/list/services',
                 array(
@@ -154,7 +154,7 @@ $services_unknown = $services_unknown_handled + $services_unknown_unhandled;
             <?= $services_warning_unhandled; ?> unhandled
         </a>
 <?php if ($services_warning_unhandled_active): ?>
-        <span class="state warning unhandled active">
+        <span class="state warning unhandled check_active">
             <a href="<?= $this->href(
                 'monitoring/list/services',
                 array(
@@ -169,7 +169,7 @@ $services_unknown = $services_unknown_handled + $services_unknown_unhandled;
         </span>
 <?php endif ?>
 <?php if ($services_warning_unhandled_passive): ?>
-        <span class="state warning unhandled passive">
+        <span class="state warning unhandled check_passive">
             <a href="<?= $this->href(
                 'monitoring/list/services',
                 array(
@@ -185,7 +185,7 @@ $services_unknown = $services_unknown_handled + $services_unknown_unhandled;
         </span>
 <?php endif ?>
 <?php if ($services_warning_unhandled_not_checked): ?>
-        <span class="state warning unhandled not_checked">
+        <span class="state warning unhandled check_disabled">
             <a href="<?= $this->href(
                 'monitoring/list/services',
                 array(
@@ -211,7 +211,7 @@ $services_unknown = $services_unknown_handled + $services_unknown_unhandled;
             <?= $services_warning_handled; ?> handled
         </a>
 <?php if ($services_warning_handled_active): ?>
-        <span class="state warning handled active">
+        <span class="state warning handled check_active">
             <a href="<?= $this->href(
                 'monitoring/list/services',
                 array(
@@ -226,7 +226,7 @@ $services_unknown = $services_unknown_handled + $services_unknown_unhandled;
         </span>
 <?php endif ?>
 <?php if ($services_warning_handled_passive): ?>
-        <span class="state warning handled passive">
+        <span class="state warning handled check_passive">
             <a href="<?= $this->href(
                 'monitoring/list/services',
                 array(
@@ -242,7 +242,7 @@ $services_unknown = $services_unknown_handled + $services_unknown_unhandled;
         </span>
 <?php endif ?>
 <?php if ($services_warning_handled_not_checked): ?>
-        <span class="state warning handled not_checked">
+        <span class="state warning handled check_disabled">
             <a href="<?= $this->href(
                 'monitoring/list/services',
                 array(
@@ -278,7 +278,7 @@ $services_unknown = $services_unknown_handled + $services_unknown_unhandled;
             <?= $services_unknown_unhandled; ?> unhandled
         </a>
 <?php if ($services_unknown_unhandled_active): ?>
-        <span class="state unknown unhandled active">
+        <span class="state unknown unhandled check_active">
             <a href="<?= $this->href(
                 'monitoring/list/services',
                 array(
@@ -293,7 +293,7 @@ $services_unknown = $services_unknown_handled + $services_unknown_unhandled;
         </span>
 <?php endif ?>
 <?php if ($services_unknown_unhandled_passive): ?>
-        <span class="state unknown unhandled passive">
+        <span class="state unknown unhandled check_passive">
             <a href="<?= $this->href(
                 'monitoring/list/services',
                 array(
@@ -309,7 +309,7 @@ $services_unknown = $services_unknown_handled + $services_unknown_unhandled;
         </span>
 <?php endif ?>
 <?php if ($services_unknown_unhandled_not_checked): ?>
-        <span class="state unknown unhandled not_checked">
+        <span class="state unknown unhandled check_disabled">
             <a href="<?= $this->href(
                 'monitoring/list/services',
                 array(
@@ -335,7 +335,7 @@ $services_unknown = $services_unknown_handled + $services_unknown_unhandled;
             <?= $services_unknown_handled; ?> handled
         </a>
 <?php if ($services_unknown_handled_active): ?>
-        <span class="state unknown handled not_checked">
+        <span class="state unknown handled check_disabled">
             <a href="<?= $this->href(
                 'monitoring/list/services',
                 array(
@@ -350,7 +350,7 @@ $services_unknown = $services_unknown_handled + $services_unknown_unhandled;
         </span>
 <?php endif ?>
 <?php if ($services_unknown_handled_passive): ?>
-        <span class="state unknown handled not_checked">
+        <span class="state unknown handled check_disabled">
             <a href="<?= $this->href(
                 'monitoring/list/services',
                 array(
@@ -366,7 +366,7 @@ $services_unknown = $services_unknown_handled + $services_unknown_unhandled;
         </span>
 <?php endif ?>
 <?php if ($services_unknown_handled_not_checked): ?>
-        <span class="state unknown handled not_checked">
+        <span class="state unknown handled check_disabled">
             <a href="<?= $this->href(
                 'monitoring/list/services',
                 array(
@@ -394,7 +394,7 @@ $services_unknown = $services_unknown_handled + $services_unknown_unhandled;
         <?= $services_ok; ?> OK
     </a>
 <?php if ($services_ok_not_checked): ?>
-    <span class="state ok not_checked">
+    <span class="state ok check_disabled">
         <a href="<?= $this->href(
             'monitoring/list/services',
             array(
@@ -419,7 +419,7 @@ $services_unknown = $services_unknown_handled + $services_unknown_unhandled;
         <?= $services_pending; ?> PENDING
     </a>
 <?php if ($services_pending_not_checked): ?>
-    <span class="state pending not_checked">
+    <span class="state pending check_disabled">
         <a href="<?= $this->href(
             'monitoring/list/services',
             array(
