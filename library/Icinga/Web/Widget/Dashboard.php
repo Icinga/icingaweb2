@@ -33,6 +33,7 @@ use Icinga\Application\Icinga;
 use Icinga\Application\Config as IcingaConfig;
 use Icinga\Logger\Logger;
 use Icinga\Exception\ConfigurationError;
+use Icinga\Exception\ProgrammingError;
 use Icinga\Web\Widget\AbstractWidget;
 use Icinga\Web\Widget\Dashboard\Pane;
 use Icinga\Web\Widget\Dashboard\Component as DashboardComponent;
@@ -279,16 +280,19 @@ class Dashboard extends AbstractWidget
     }
 
     /**
-     * Return the pane with the provided name or null if it doesn't exit
+     * Return the pane with the provided name
      *
      * @param string $name      The name of the pane to return
      *
-     * @return null|Pane        The pane or null if no pane with the given name exists
+     * @return Pane        The pane or null if no pane with the given name exists
+     * @throws ProgrammingError
      */
     public function getPane($name)
     {
-        if (!isset($this->panes[$name])) {
-            return null;
+        if (! array_key_exists($name, $this->panes)) {
+            throw new ProgrammingError(
+                sprintf('Trying to retrieve invalid dashboard pane "%s"', $name)
+            );
         }
         return $this->panes[$name];
     }
@@ -315,6 +319,14 @@ class Dashboard extends AbstractWidget
         $active = key($this->panes);
         $this->activate($active);
         return $active;
+    }
+
+    public function getActivePane()
+    {
+        if ($active = $this->getTabs()->getActiveName()) {
+            return $this->getPane($active);
+        }
+        return $this->determineActivePane();
     }
 
     /**
