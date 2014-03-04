@@ -153,7 +153,7 @@ class Manager
 
                 $link = $this->enableDir . '/' . $file;
                 if (! is_link($link)) {
-                    Logger::warn(
+                    Logger::warning(
                         'Found invalid module in enabledModule directory "%s": "%s" is not a symlink',
                         $this->enableDir,
                         $link
@@ -163,7 +163,7 @@ class Manager
 
                 $dir = realpath($link);
                 if (!file_exists($dir) || !is_dir($dir)) {
-                    Logger::warn(
+                    Logger::warning(
                         'Found invalid module in enabledModule directory "%s": "%s" points to non existing path "%s"',
                         $this->enableDir,
                         $link,
@@ -268,7 +268,6 @@ class Manager
         $this->enabledDirs[$name] = $link;
 
         $this->loadModule($name);
-        $this->getModule($name)->launchRegisterScript();
 
         return $this;
     }
@@ -513,15 +512,15 @@ class Manager
         foreach ($this->modulePaths as $basedir) {
             $canonical = realpath($basedir);
             if ($canonical === false) {
-                Logger::warn('Module path "%s" does not exist', $basedir);
+                Logger::warning('Module path "%s" does not exist', $basedir);
                 continue;
             }
             if (!is_dir($canonical)) {
-                Logger::err('Module path "%s" is not a directory', $canonical);
+                Logger::error('Module path "%s" is not a directory', $canonical);
                 continue;
             }
             if (!is_readable($canonical)) {
-                Logger::err('Module path "%s" is not readable', $canonical);
+                Logger::error('Module path "%s" is not readable', $canonical);
                 continue;
             }
             if (($dh = opendir($canonical)) !== false) {
@@ -533,7 +532,7 @@ class Manager
                         if (! array_key_exists($file, $this->installedBaseDirs)) {
                             $this->installedBaseDirs[$file] = $canonical . '/' . $file;
                         } else {
-                            Logger::warn(
+                            Logger::warning(
                                 'Module "%s" already exists in installation path "%s" and is ignored.',
                                 $canonical . '/' . $file,
                                 $this->installedBaseDirs[$file]
