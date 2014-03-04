@@ -2,14 +2,5 @@
 <?php
 
 use Icinga\Application\Cli;
-use Icinga\Cli\Params as CliParams;
-use Icinga\Application\Benchmark;
-
-set_include_path(
-    realpath(dirname(__FILE__) . '/../library/')
-  . ':' . get_include_path()
-);
-
-require_once 'Icinga/Application/Cli.php';
-$app = Cli::start(dirname(__FILE__) . '/../config/')->dispatch();
-
+require_once dirname(__DIR__) . '/library/Icinga/Application/Cli.php';
+Cli::start('@icingaweb_config_path@')->dispatch();
