@@ -1,4 +1,9 @@
 
+/** Default layout **/
+html {
+  font-family: 'default-layout';
+}
+
 #layout {
   position: fixed;
   left: 0;
@@ -48,17 +53,30 @@
   opacity: 0.9;
 }
 
-#layout.fullscreen #header {
-  display: none;
+#layout.minimal-layout #responsive-debug {
+  font-size: 0.6em;
+}
+#layout.poor-layout #responsive-debug {
+  font-size: 0.7em;
+}
+#layout.compact-layout #responsive-debug {
+  font-size: 0.8em;
 }
 
-#layout.fullscreen #sidebar {
-  display: none;
+#layout.wide-layout #responsive-debug {
+  font-size: 1em;
 }
 
-#layout.fullscreen #main {
-  left: 0;
-  top: 0;
+/** Fullscreen layout **/
+#layout.fullscreen-layout {
+  #header, #sidebar, .controls > .tabs {
+    display: none;
+  }
+
+  #main {
+    left: 0;
+    top: 0;
+  }
 }
 
 /* tmp */
@@ -72,26 +90,20 @@
 #layout.twocols #main > .container {
   width: 50%;
 }
-/*#layout.twocols #main > .container {*/
-#layout.twocols #main .container {
- /* width: 100%;*/
-/*  font-size: 0.9em; */
-}
+
 
 /* #layout.twocols #main > .container > .controls {*/
-#layout.twocols #main .container > .controls {
+/*#layout.twocols #main .container > .controls {
   width: 100%;
-/*  font-size: 0.9em; */
 }
 
 .container > div {
-/*  padding: 0 1.5% 0 1.5%; */
   padding: 0;
 }
-
+*/
 .container .controls {
   top: 0;
-  z-index: 1;
+  /*z-index: 1;*/
   background-color: white;
   padding: 0;
 }
@@ -160,8 +172,6 @@
   padding: 1em;
 }
 
-
-
 /* Not growing larger than 3840px at 1em=16px right now */
 @media screen and (min-width: 240em) {
   #main {
@@ -170,31 +180,51 @@
   #header {
     width: 240em;
   }
-/*
-  .container {
-    background-color: red;
-  }
-*/
 }
 
+/** More than 100em, that's usually 1600px **/
 @media screen and (min-width: 100em) {
+  html {
+    font-family: 'wide-layout';
+  }
+}
 
+/** Up to 72em, that's usually 1152px on desktops **/
+@media screen and (max-width:72em) {
+  html {
+    font-family: 'compact-layout';
+  }
+}
+
+/** Up to 752px, poor boy **/
+@media screen and (max-width: 47em) {
+  html {
+    font-family: 'poor-layout';
+  }
+}
+
+/* Up to 576px for 1em=16px, should fit 320px devices */
+@media screen and (max-width: 36em) {
+  html {
+    font-family: 'minimal-layout';
+  }
+}
+
+/* 100em */
+#layout.wide-layout {
   .dashboard > div.container {
     width: 32%;
     margin-left: 1%;
     margin-right: 0;
   }
-
 }
 
-@media screen and (max-width:72em) {
-   #layout {
-     font-size: 0.8em;
-   }
+/* 72em */
+#layout.compact-layout {
+  font-size: 0.8em;
 }
 
-@media screen and (max-width: 47em) {
-
+#layout.poor-layout {
   .dashboard > div.container {
     width: 98%;
     margin-left: 1%;
@@ -209,10 +239,9 @@
       display: none;
     }
   }
-
 }
 
-@media screen and (max-width: 36em) {
+#layout.minimal-layout {
   #sidebar {
     display: none;
   }
@@ -226,30 +255,3 @@
     left: 0;
   }
 }
-
-@media screen and (min-width: 24em) and (max-width: 62em) {
-/*
-  #layout .dashboard > div.container {
-    width: 96%;
-    margin-left: 2%;
-    margin-right: 2%;
-  }
-*/
-}
-
-@media screen and (min-width: 48em) and (max-width: 62em) {
-  /* #main > .container { */
-/*
-  #main .container {
-    font-size: 0.9em;
-  }
-*/
-
-/* TEST
-  .container {
-    background-color: blue;
-  }
-*/
-}
-
-
