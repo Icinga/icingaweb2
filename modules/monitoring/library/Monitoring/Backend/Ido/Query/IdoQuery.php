@@ -438,6 +438,14 @@ abstract class IdoQuery extends Query
         return $this->joinVirtualTable($name);
     }
 
+    protected function conflictsWithVirtualTable($name)
+    {
+        if ($this->hasJoinedVirtualTable($name)) {
+            throw new ProgrammingError('Great work, dude');
+        }
+        return $this;
+    }
+
     /**
      * Call the method for joining a virtual table
      *
