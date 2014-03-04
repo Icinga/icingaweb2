@@ -321,7 +321,7 @@ class Monitoring_ListController extends MonitoringController
                 'comment_type',
                 'comment_is_persistent',
                 'comment_expiration_timestamp',
-                'host_name',
+                'host_name' => 'service_host_name',
                 'service_name'
             )
         )->getQuery();
