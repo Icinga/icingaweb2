@@ -1,7 +1,7 @@
 <?php
 
 $jsfiles = array(
-  'js/vendor/jquery-2.1.0.js',
+  'js/vendor/jquery-2.1.0.min.js',
   'js/vendor/jquery.sparkline.min.js',
   'js/helpers.js',
   'js/icinga.js',
@@ -27,8 +27,8 @@ $jsfiles = array(
   <meta charset="utf-8">
   <meta content="width=320; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"/>
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <title><?= $this->title ? $this->escape($this->title) : 'Icinga Web'; ?></title>
-  <meta name="description" content="">
+  <title><?= $this->title ? $this->escape($this->title) : 'Icinga Web' ?></title>
+  <!-- TODO: viewport and scale settings make no sense for us, fix this -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <link rel="stylesheet" href="<?= $this->href('css/icinga.css') ?>" media="screen" type="text/css" />
   <? if (isset($_GET['iframe']) && $_GET['iframe'] === 'true'): ?>
