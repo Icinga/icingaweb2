@@ -166,7 +166,7 @@ class Pane implements Widget
     {
         $html = PHP_EOL;
         foreach ($this->components as $component) {
-            $html .= PHP_EOL.$component->render($view);
+            $html .= PHP_EOL . $component->render($view);
         }
         return $html;
     }
