@@ -65,6 +65,9 @@ class Monitoring_ShowController extends Controller
             // TODO: Well... this could be done better
             $this->view->object = AbstractObject::fromRequest($this->getRequest());
         }
+        if (Hook::has('ticket')) {
+            $this->view->tickets = Hook::first('ticket');
+        }
 
         $this->createTabs();
     }
