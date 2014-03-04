@@ -101,7 +101,7 @@ foreach ($services as $service):
                 <br />
                 <strong><?= ($service->service_state_type === '1') ? 'Hard' : 'Soft'; ?> </strong>
                 <?= $service->service_attempt; ?>
-              <?php endif; ?>
+              <?php endif ?>
             </div>
           </div>
         </td>
