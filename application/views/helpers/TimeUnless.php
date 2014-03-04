@@ -38,6 +38,7 @@ class Zend_View_Helper_TimeUnless extends Zend_View_Helper_Abstract
 {
     public function timeUnless($timestamp)
     {
+        if (! $timestamp) return '';
         return '<span class="timeunless">'
             . Format::timeUntil($timestamp)
             . '</span>';
