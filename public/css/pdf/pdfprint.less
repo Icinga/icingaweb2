@@ -1,0 +1,50 @@
+.controls, .dontprint, .inlinepie {
+  display: none;
+}
+
+@page {
+	margin: 2cm;
+}
+
+#page-header, #page-footer {
+  position: fixed;
+  left: 0;
+	right: 0;
+	color: #aaa;
+	font-size: 0.9em;
+}
+
+#page-header table, #page-footer table {
+	width: 100%;
+	border-collapse: collapse;
+	border: none;
+}
+
+#page-header td, #page-footer td {
+  padding: 0;
+	width: 50%;
+}
+
+#page-header {
+  top: 0;
+	border-bottom: 0.1pt solid #aaa;
+}
+
+#page-footer {
+  bottom: 0;
+  border-top: 0.1pt solid #aaa;
+}
+
+.page-number {
+  text-align: center;
+}
+
+.page-number:before {
+  content: "Page " counter(page);
+}
+
+hr {
+  page-break-after: always;
+  border: 0;
+}
+
