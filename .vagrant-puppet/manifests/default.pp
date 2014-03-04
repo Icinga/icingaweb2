@@ -605,6 +605,20 @@ file { '/var/www/html/icingaweb/index.php':
   require   => File['/var/www/html/icingaweb']
 }
 
+file { '/var/www/html/icingaweb/js.php':
+  source    => 'puppet:////vagrant/.vagrant-puppet/files/var/www/html/icingaweb/js.php',
+  owner     => 'apache',
+  group     => 'apache',
+  require   => File['/var/www/html/icingaweb']
+}
+
+file { '/var/www/html/icingaweb/css.php':
+  source    => 'puppet:////vagrant/.vagrant-puppet/files/var/www/html/icingaweb/css.php',
+  owner     => 'apache',
+  group     => 'apache',
+  require   => File['/var/www/html/icingaweb']
+}
+
 file { '/var/www/html/icingaweb/.htaccess':
   source    => 'puppet:////vagrant/.vagrant-puppet/files/var/www/html/icingaweb/.htaccess',
   owner     => 'apache',

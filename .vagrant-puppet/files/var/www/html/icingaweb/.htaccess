@@ -1,6 +1,7 @@
 RewriteEngine on
 RewriteBase /icingaweb
 RewriteRule ^css/icinga.css css.php
+RewriteRule ^js/icinga.min.js js.php
 RewriteCond %{REQUEST_FILENAME} -s [OR]
 RewriteCond %{REQUEST_FILENAME} -l [OR]
 RewriteCond %{REQUEST_FILENAME} -d
