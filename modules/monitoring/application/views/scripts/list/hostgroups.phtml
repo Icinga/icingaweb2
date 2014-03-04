@@ -1,6 +1,8 @@
+<?php if (! $this->compact): ?>
 <div class="controls">
 <?= $this->tabs ?>
 </div>
+<?php endif ?>
 <div class="content">
 <div class="summary" data-base-target="col2">
 <?php foreach($hostgroups as $h): ?>
