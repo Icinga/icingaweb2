@@ -5,11 +5,11 @@ $this->modules->limit(10);
 $modules = $this->modules->paginate();
 
 ?>
-<div class="controls">
+<div>
 <?= $this->tabs->render($this); ?>
 </div>
 
-<div class="content">
+<div>
 <h3>Installed Modules</h3>
 
 <?php if (isset($this->messageBox)): ?>
@@ -20,7 +20,7 @@ $modules = $this->modules->paginate();
     'preserve' => $this->preserve
 ));
 ?>
-<table class="action">
+<table>
   <tbody>
   <? foreach ($modules as $module): ?>
     <?php
