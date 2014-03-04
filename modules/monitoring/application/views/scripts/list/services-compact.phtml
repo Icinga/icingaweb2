@@ -1,4 +1,3 @@
-<h1><?= $this->escape($this->title) ?></h1>
 <table class="action">
 <tbody>
 <?php
@@ -84,8 +83,9 @@ foreach ($services as $service):
 </div>
 </td>
 <td>
+        <?= $this->perfdata($service->service_perfdata, true) ?>
 <a href="<?= $serviceLink ?>"><?= $service->service_display_name ?></a> on <a href="<?= $hostLink ?>"><?= $service->host_name; ?></a><br />
-  <div class="output-text">
+  <div class="pluginoutput">
     <?= $this->escape(substr(strip_tags($service->service_output), 0, 10000)); ?>
   </div>
 
