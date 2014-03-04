@@ -276,14 +276,18 @@ class StatusQuery extends IdoQuery
                          ELSE 256
                     END
                     +
-                    CASE WHEN ss.problem_has_been_acknowledged = 1
-                         THEN 2
+                    CASE WHEN hs.current_state > 0
+                         THEN 1024
                          ELSE
-                            CASE WHEN ss.scheduled_downtime_depth > 0
-                                THEN 1
-                                ELSE 4
-                            END
-                    END
+                             CASE WHEN ss.problem_has_been_acknowledged = 1
+                                  THEN 512
+                                  ELSE
+                                     CASE WHEN ss.scheduled_downtime_depth > 0
+                                         THEN 256
+                                         ELSE 2048
+                                     END
+                             END
+                         END
                 END'
         ),
         'serviceproblemsummary' => array(
