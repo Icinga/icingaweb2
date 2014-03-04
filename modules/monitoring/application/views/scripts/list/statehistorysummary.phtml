@@ -27,6 +27,7 @@ if (empty($this->summary)) {
 $cols = array('cnt_events'/*, 'cnt_up', 'cnt_down', 'cnt_ok', 'cnt_critical'*/);
 $show = array('cnt_events');
 
+$colors = (object) array();
 $max = (object) array();
 
 foreach ($cols as $col) {
@@ -48,7 +49,7 @@ $colors->cnt_events = array(
     $max->cnt_events * 0.20 => '#7b9',
     0 => '#9ba',
 );
-
+/*
 $colors->cnt_up = array(
     $max->cnt_up * 0.80 => '#0b5',
     $max->cnt_up * 0.60 => '#2b6',
@@ -81,7 +82,7 @@ $colors->cnt_down = array(
     0 => '#fcd',
 );
 
-
+*/
 function getColor(& $colors, $value, $what = 'cnt_events') {
     foreach ($colors->$what as $level => $color) {
         if ($value >= $level) {
@@ -91,7 +92,7 @@ function getColor(& $colors, $value, $what = 'cnt_events') {
     return 'red';
 }
 $startDay = '2014-20-02';
-$start = strtotime($day);
+$start = strtotime($startDay);
 $wday = date('w', $start);
 $week = date('w', $start);
 if ($wday === 0) {
