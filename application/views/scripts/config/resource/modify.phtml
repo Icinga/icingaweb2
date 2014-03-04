@@ -8,7 +8,7 @@
 <?php endif ?>
 
 <?php if ($this->form->getErrorMessages()): ?>
-<div>
+<div class="alert alert-danger">
   <?php foreach ($this->form->getErrorMessages() as $error): ?>
     <?= $this->escape($error); ?><br/>
   <?php endforeach; ?>

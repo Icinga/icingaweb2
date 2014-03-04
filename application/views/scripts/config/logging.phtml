@@ -10,14 +10,14 @@
 <?php endif ?>
 
 <?php if ($this->successMessage): ?>
-<div>
+<div class="alert alert-success">
   <i class="icinga-icon-success"></i>
   <strong><?= $this->escape($this->successMessage); ?></strong>
 </div>
 <?php endif; ?>
 
 <?php if (!empty($errors)) : ?>
-<div>
+<div class="alert alert-danger">
   <h4>Errors occured when trying to save the project.</h4>
   <p>
       The following errors occured when trying to save the configuration:
