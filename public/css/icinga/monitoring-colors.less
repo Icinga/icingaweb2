@@ -273,9 +273,22 @@ span.state {
   margin: 0.2em 0.5em 0.2em 0.5em;
 }
 
+/* span.state title element */
+span.state caption {
+  font-size: 125%;
+}
+
+/* span.state Subtitle element */
+span.state.subtitle {
+  color: black;
+}
 
 span.state.ok, span.state.up {
   background-color: @colorOk;
+}
+
+span.state.pending {
+  background-color: @colorPending;
 }
 
 span.state.warning {
@@ -306,6 +319,30 @@ span.state.invalid {
   background-color: @colorInvalid;
 }
 
+span.state.check_active {
+  background-color: @colorActiveCheck;
+}
+
+span.state.check_passive {
+  background-color: @colorPassiveCheck;
+}
+
+span.state.check_disabled {
+  background-color: @colorDisabledCheck;
+}
+
+span.state.enabled {
+  background-color: @colorEnabled;
+}
+
+span.state.disabled {
+  background-color: @colorDisabled;
+}
+
+span.state.flapping {
+  background-color: @colorFlapping;
+}
+
 .summary a {
   color: white;
   text-decoration: none;
@@ -330,6 +367,10 @@ span.state.invalid {
 }
 
 .summary span.state.handled a {
+  color: #333;
+}
+
+.summary span.state.disabled > a {
   color: #333;
 }
 

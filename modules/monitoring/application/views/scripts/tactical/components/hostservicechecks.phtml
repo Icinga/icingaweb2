@@ -8,7 +8,7 @@
             <tr>
                 <td>
 <?php if ($this->statusSummary->hosts_active): ?>
-                    <span class="state active">
+                    <span class="state check_active">
                         <a href="<?= $this->href(
                             'monitoring/list/hosts',
                             array('host_active_checks_enabled' => 1)
@@ -18,7 +18,7 @@
                     </span>
 <?php endif ?>
 <?php if ($this->statusSummary->hosts_passive): ?>
-                    <span class="state passive">
+                    <span class="state check_passive">
                         <a href="<?= $this->href(
                             'monitoring/list/hosts',
                             array('host_active_checks_enabled' => 0, 'host_passive_checks_enabled' => 1)
@@ -28,7 +28,7 @@
                     </span>
 <?php endif ?>
 <?php if ($this->statusSummary->hosts_not_checked): ?>
-                    <span class="state not_checked">
+                    <span class="state check_disabled">
                         <a href="<?= $this->href(
                             'monitoring/list/hosts',
                             array('host_active_checks_enabled' => 0, 'host_passive_checks_enabled' => 0)
@@ -40,7 +40,7 @@
                 </td>
                 <td>
 <?php if ($this->statusSummary->services_active): ?>
-                    <span class="state active">
+                    <span class="state check_active">
                         <a href="<?= $this->href(
                             'monitoring/list/services',
                             array('service_active_checks_enabled' => 1)
@@ -50,7 +50,7 @@
                     </span>
 <?php endif ?>
 <?php if ($this->statusSummary->services_passive): ?>
-                    <span class="state passive">
+                    <span class="state check_passive">
                         <a href="<?= $this->href(
                             'monitoring/list/services',
                             array('service_active_checks_enabled' => 0, 'service_passive_checks_enabled' => 1)
@@ -60,7 +60,7 @@
                     </span>
 <?php endif ?>
 <?php if ($this->statusSummary->services_not_checked): ?>
-                    <span class="state not_checked">
+                    <span class="state check_disabled">
                         <a href="<?= $this->href(
                             'monitoring/list/services',
                             array('service_active_checks_enabled' => 0, 'service_passive_checks_enabled' => 0)
