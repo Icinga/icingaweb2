@@ -1,112 +1,124 @@
 /**
  * This is how we bootstrap JS code in our modules
  */
-(function(Icinga) {
+(function(Icinga, $) {
 
-  Icinga.Module = function(icinga, name, prototyp) {
+    'use strict';
 
-    // The Icinga instance
-    this.icinga = icinga;
+    Icinga.Module = function (icinga, name, prototyp) {
 
-    // Event handlers registered by this module
-    this.handlers = [];
+        // The Icinga instance
+        this.icinga = icinga;
 
-    this.registeredHandlers = {};
+        // Event handlers registered by this module
+        this.handlers = [];
 
-    // The module name
-    this.name = name;
+        this.registeredHandlers = {};
 
-    // The JS prototype for this module
-    this.prototyp = prototyp;
+        // The module name
+        this.name = name;
 
-    // Once initialized, this will be an instance of the modules prototype
-    this.object = {};
+        // The JS prototype for this module
+        this.prototyp = prototyp;
 
-    // Initialize this module
-    this.initialize();
-  };
+        // Once initialized, this will be an instance of the modules prototype
+        this.object = {};
 
-  Icinga.Module.prototype = {
+        // Initialize this module
+        this.initialize();
+    };
 
-    initialize: function()
-    {
-      try {
-        // The constructor of the modules prototype must be prepared to get an
-        // instance of Icinga.Module
-        this.object = new this.prototyp(this);
-        this.applyRegisteredEventHandlers();
-      } catch(e) {
-        this.icinga.logger.error('Failed to load module ', this.name, ': ', e);
-        return false;
-      }
+    Icinga.Module.prototype = {
 
-      // That's all, the module is ready
-      this.icinga.logger.debug('Module ' + this.name + ' has been initialized');
-      return true;
-    },
+        initialize: function () {
 
-    /**
-     * Globally register this modules event handlers
-     */
-    registerEventHandlers: function(handlers)
-    {
-      this.registeredHandlers = handlers;
-      return this;
-    },
+            try {
 
-    applyRegisteredEventHandlers: function()
-    {
-      var self = this;
-      $.each(this.registeredHandlers, function(filter, events) {
-        $.each(events, function (event, handler) {
-          // TODO: if (event[1] === 'each') {
-          // $(event[0], $(el)).each(event[2]);
-          self.bindEventHandler(
-            event,
-            '.module-' + self.name + ' ' + filter,
-            handler
-          );
-        });
-      });
-      self = null;
-      return this;
-    },
+                // The constructor of the modules prototype must be prepared to get an
+                // instance of Icinga.Module
+                this.object = new this.prototyp(this);
+                this.applyRegisteredEventHandlers();
+            } catch(e) {
+                this.icinga.logger.error(
+                    'Failed to load module ' + this.name + ': ',
+                    e
+                );
 
-    /**
-     * Effectively bind the given event handler
-     */
-    bindEventHandler: function(event, filter, handler)
-    {
-      var self = this;
-      this.icinga.logger.debug('Bound ' + filter + ' .' + event + '()');
-      this.handlers.push([event, filter, handler]);
-      $(document).on(event, filter, handler.bind(self.object));
-    },
+                return false;
+            }
 
-    /**
-     * Unbind all event handlers bound by this module
-     */
-    unbindEventHandlers: function()
-    {
-        $.each(this.handlers, function(idx, handler) {
-            $(document).off(handler[0], handler[1], handler[2]);
-        });
-    },
+            // That's all, the module is ready
+            this.icinga.logger.debug(
+                'Module ' + this.name + ' has been initialized'
+            );
 
-    /**
-     * Allow to destroy and clean up this module
-     */
-    destroy: function()
-    {
-      this.unbindEventHandlers();
-      if (typeof this.object.destroy === 'function') {
-        this.object.destroy();
-      }
-      this.object = null;
-      this.icinga = null;
-      this.prototyp = null;
-    }
+            return true;
+        },
 
-  };
+        /**
+         * Globally register this modules event handlers
+         */
+        registerEventHandlers: function (handlers) {
+            this.registeredHandlers = handlers;
+            return this;
+        },
 
-}(Icinga));
+        applyRegisteredEventHandlers: function () {
+
+            var self = this;
+
+            $.each(this.registeredHandlers, function (filter, events) {
+
+                $.each(events, function (event, handler) {
+                    // TODO: if (event[1] === 'each') {
+                    // $(event[0], $(el)).each(event[2]);
+                    self.bindEventHandler(
+                        event,
+                        '.module-' + self.name + ' ' + filter,
+                        handler
+                    );
+                });
+            });
+            self = null;
+
+            return this;
+        },
+
+        /**
+         * Effectively bind the given event handler
+         */
+        bindEventHandler: function (event, filter, handler) {
+            var self = this;
+            this.icinga.logger.debug('Bound ' + filter + ' .' + event + '()');
+            this.handlers.push([event, filter, handler]);
+            $(document).on(event, filter, handler.bind(self.object));
+        },
+
+        /**
+         * Unbind all event handlers bound by this module
+         */
+        unbindEventHandlers: function () {
+            $.each(this.handlers, function (idx, handler) {
+                $(document).off(handler[0], handler[1], handler[2]);
+            });
+        },
+
+        /**
+         * Allow to destroy and clean up this module
+         */
+        destroy: function () {
+
+            this.unbindEventHandlers();
+
+            if (typeof this.object.destroy === 'function') {
+              this.object.destroy();
+            }
+
+            this.object = null;
+            this.icinga = null;
+            this.prototyp = null;
+        }
+
+    };
+
+}(Icinga, jQuery));

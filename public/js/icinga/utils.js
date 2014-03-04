@@ -3,95 +3,113 @@
  */
 (function(Icinga) {
 
-  Icinga.Utils = function(icinga) {
+    'use strict';
 
-    /**
-     * Utility functions may need access to their Icinga instance
-     */
-    this.icinga = icinga;
+    Icinga.Utils = function (icinga) {
 
-    /**
-     * We will use this to create an URL helper only once
-     */
-    this.url_helper = null;
-  };
+        /**
+         * Utility functions may need access to their Icinga instance
+         */
+        this.icinga = icinga;
 
-  Icinga.Utils.prototype = {
+        /**
+         * We will use this to create an URL helper only once
+         */
+        this.urlHelper = null;
+    };
 
-    timeWithMs: function(now)
-    {
-      if (typeof now === 'undefined') {
-        now = new Date();
-      }
-      var ms = now.getMilliseconds() + '';
-      while (ms.length < 3) {
-          ms = '0' + ms;
-      }
-      return now.toLocaleTimeString() + '.' + ms;
-    },
+    Icinga.Utils.prototype = {
 
-    timeShort: function(now)
-    {
-      if (typeof now === 'undefined') {
-        now = new Date();
-      }
-      return now.toLocaleTimeString().replace(/:\d{2}$/, '');
-    },
+        timeWithMs: function (now) {
 
-    /**
-     * Parse a given Url and return an object 
-     */
-    parseUrl: function(url)
-    {
-      if (this.url_helper === null) {
-        this.url_helper = document.createElement('a');
-      }
-      var a = this.url_helper;
-      a.href = url;
+            if (typeof now === 'undefined') {
+                now = new Date();
+            }
 
-      var result = {
-        source  : url,
-        protocol: a.protocol.replace(':', ''),
-        host    : a.hostname,
-        port    : a.port,
-        query   : a.search,
-        file    : (a.pathname.match(/\/([^\/?#]+)$/i) || [,''])[1],
-        hash    : a.hash.replace('#',''),
-        path    : a.pathname.replace(/^([^\/])/,'/$1'),
-        relative: (a.href.match(/tps?:\/\/[^\/]+(.+)/) || [,''])[1],
-        segments: a.pathname.replace(/^\//,'').split('/'),
-        params  : this.parseParams(a),
-      };
-      a = null;
+            var ms = now.getMilliseconds() + '';
+            while (ms.length < 3) {
+                ms = '0' + ms;
+            }
 
-      return result;
-    },
+            return now.toLocaleTimeString() + '.' + ms;
+        },
 
-    /**
-     * Parse url params
-     */
-    parseParams: function(a) {
-      var params = {},
-          segment = a.search.replace(/^\?/,'').split('&'),
-          len = segment.length,
-          i = 0,
-          s;
-      for (; i < len; i++) {
-        if (! segment[i]) { continue; }
-        s = segment[i].split('=');
-        params[s[0]] = decodeURIComponent(s[1]);
-      }
-      return params;
-    },
+        timeShort: function (now) {
 
-    /**
-     * Cleanup
-     */
-    destroy: function()
-    {
-      this.url_helper = null;
-      this.icinga = null;
-    }
-  };
+            if (typeof now === 'undefined') {
+                now = new Date();
+            }
+
+            return now.toLocaleTimeString().replace(/:\d{2}$/, '');
+        },
+
+        formatHHiiss: function (date) {
+            var hours = date.getHours();
+            var minutes = date.getMinutes();
+            var seconds = date.getSeconds();
+            if (hours < 10) hours = '0' + hours;
+            if (minutes < 10) minutes = '0' + minutes;
+            if (seconds < 10) seconds = '0' + seconds;
+            return hours + ':' + minutes + ':' + seconds;
+        },
+
+        /**
+         * Parse a given Url and return an object 
+         */
+        parseUrl: function (url) {
+
+            if (this.urlHelper === null) {
+                this.urlHelper = document.createElement('a');
+            }
+
+            var a = this.urlHelper;
+            a.href = url;
+
+            var result = {
+                source  : url,
+                protocol: a.protocol.replace(':', ''),
+                host    : a.hostname,
+                port    : a.port,
+                query   : a.search,
+                file    : (a.pathname.match(/\/([^\/?#]+)$/i) || [,''])[1],
+                hash    : a.hash.replace('#',''),
+                path    : a.pathname.replace(/^([^\/])/,'/$1'),
+                relative: (a.href.match(/tps?:\/\/[^\/]+(.+)/) || [,''])[1],
+                segments: a.pathname.replace(/^\//,'').split('/'),
+                params  : this.parseParams(a),
+            };
+            a = null;
+
+            return result;
+        },
+
+        /**
+         * Parse url params
+         */
+        parseParams: function (a) {
+            var params = {},
+                segment = a.search.replace(/^\?/,'').split('&'),
+                len = segment.length,
+                i = 0,
+                s;
+
+            for (; i < len; i++) {
+                if (!segment[i]) {
+                    continue;
+                }
+                s = segment[i].split('=');
+                params[s[0]] = decodeURIComponent(s[1]);
+            }
+            return params;
+        },
+
+        /**
+         * Cleanup
+         */
+        destroy: function () {
+            this.urlHelper = null;
+            this.icinga = null;
+        }
+    };
 
 }(Icinga));

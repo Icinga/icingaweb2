@@ -1,96 +1,117 @@
-(function(Icinga) {
+/**
+ * Icinga.Logger
+ *
+ * Well, log output. Rocket science.
+ */
+(function (Icinga) {
 
-  Icinga.Logger = function(icinga) {
+    'use strict';
 
-    // Well... we don't really need Icinga right now
-    this.icinga = icinga;
+    Icinga.Logger = function (icinga) {
 
-    this.logLevel = 'info';
+        this.icinga = icinga;
 
-    this.logLevels = {
-      'debug': 0,
-      'info' : 1,
-      'warn' : 2,
-      'error': 3
+        this.logLevel = 'info';
+
+        this.logLevels = {
+            'debug': 0,
+            'info' : 1,
+            'warn' : 2,
+            'error': 3
+        };
+
     };
 
-    // Let's get started
-    this.initialize();
-  };
+    Icinga.Logger.prototype = {
 
-  Icinga.Logger.prototype = {
+        /**
+         * Whether the browser has a console object
+         */
+        hasConsole: function () {
+            return 'undefined' !== typeof console;
+        },
 
-    /**
-     * Logger initialization
-     */
-    initialize: function()
-    {
-    },
+        /**
+         * Raise or lower current log level
+         *
+         * Messages blow this threshold will be silently discarded
+         */
+        setLevel: function (level) {
+            if ('undefined' !== typeof this.numericLevel(level)) {
+                this.logLevel = level;
+            }
+            return this;
+        },
 
-    /**
-     * Whether the browser has a console object
-     */
-    hasConsole: function()
-    {
-      return typeof console !== 'undefined';
-    },
+        /**
+         * Log a debug message
+         */
+        debug: function () {
+            return this.writeToConsole('debug', arguments);
+        },
 
-    debug: function(msg)
-    {
-      this.writeToConsole('debug', arguments);
-    },
+        /**
+         * Log an informational message
+         */
+        info: function () {
+            return this.writeToConsole('info', arguments);
+        },
 
-    setLevel: function(level)
-    {
-      if (this.numericLevel(level) !== 'undefined') {
-        this.logLevel = level;
-      }
-    },
+        /**
+         * Log a warning message
+         */
+        warn: function () {
+            return this.writeToConsole('warn', arguments);
+        },
 
-    info: function()
-    {
-      this.writeToConsole('info', arguments);
-    },
+        /**
+         * Log an error message
+         */
+        error: function () {
+            return this.writeToConsole('error', arguments);
+        },
 
-    warn: function()
-    {
-      this.writeToConsole('warn', arguments);
-    },
+        /**
+         * Write a log message with the given level to the console 
+         */
+        writeToConsole: function (level, args) {
 
-    error: function()
-    {
-      this.writeToConsole('error', arguments);
-    },
+            args = Array.prototype.slice.call(args);
 
-    writeToConsole: function(level, args) {
-      args = Array.prototype.slice.call(args);
-      args.unshift(this.icinga.utils.timeWithMs());
-      if (this.hasConsole() && this.hasLogLevel(level)) {
-        console[level].apply(console, args);
-      }
-    },
+            // We want our log messages to carry precise timestamps
+            args.unshift(this.icinga.utils.timeWithMs());
 
-    numericLevel: function(level)
-    {
-      var ret = this.logLevels[level];
-      if (typeof ret === 'undefined') {
-        throw 'Got invalid log level ' + level;
-      }
-      return ret;
-    },
+            if (this.hasConsole() && this.hasLogLevel(level)) {
+                console[level].apply(console, args);
+            }
+            return this;
+        },
 
-    hasLogLevel: function(level)
-    {
-      return this.numericLevel(level) >= this.numericLevel(this.logLevel);
-    },
+        /**
+         * Return the numeric identifier fot a given log level
+         */
+        numericLevel: function (level) {
+            var ret = this.logLevels[level];
+            if ('undefined' === typeof ret) {
+                throw 'Got invalid log level ' + level;
+            }
+            return ret;
+        },
 
-    /**
-     * There isn't much to clean up here
-     */
-    destroy: function() {
-      this.enabled = false;
-      this.icinga = null;
-    }
-  };
+        /**
+         * Whether a given log level exists
+         */
+        hasLogLevel: function (level) {
+            return this.numericLevel(level) >= this.numericLevel(this.logLevel);
+        },
+
+        /**
+         * There isn't much to clean up here
+         */
+        destroy: function () {
+            this.enabled = false;
+            this.icinga = null;
+        }
+    };
 
 }(Icinga));
