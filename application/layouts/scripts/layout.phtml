@@ -1,19 +1,6 @@
 <?php
 
-$jsfiles = array(
-  'js/vendor/jquery-2.1.0.min.js',
-  'js/vendor/jquery.sparkline.min.js',
-  'js/helpers.js',
-  'js/icinga.js',
-  'js/icinga/logger.js',
-  'js/icinga/utils.js',
-  'js/icinga/ui.js',
-  'js/icinga/timer.js',
-  'js/icinga/loader.js',
-  'js/icinga/events.js',
-  'js/icinga/history.js',
-  'js/icinga/module.js',
-);
+use Icinga\Web\JavaScript;
 
 ?><!DOCTYPE html>
 <!--[if lt IE 7]>
@@ -46,7 +33,7 @@ $jsfiles = array(
 <div id="layout" class="default-layout">
 <?= $this->render('body.phtml') ?>
 </div>
-<?php foreach ($jsfiles as $file): ?>
+<?php foreach (JavaScript::listFiles() as $file): ?>
 <script type="text/javascript" src="<?= $this->href($file) ?>"></script>
 <?php endforeach ?>
 <script type="text/javascript">

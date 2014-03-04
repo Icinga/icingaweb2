@@ -1,8 +1,8 @@
 <?php
 
 use Icinga\Application\EmbeddedWeb;
-use Icinga\Web\StyleSheet;
+use Icinga\Web\JavaScript;
 
 require_once dirname(__FILE__). '/../library/Icinga/Application/EmbeddedWeb.php';
-EmbeddedWeb::start('@icingaweb_config_path@');
-Stylesheet::send();
+$app = EmbeddedWeb::start('@icingaweb_config_path@');
+JavaScript::sendMinified();

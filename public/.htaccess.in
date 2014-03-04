@@ -3,6 +3,7 @@ SetEnv APPLICATION_ENV development
 RewriteEngine on
 RewriteBase @web_path@
 RewriteRule ^css/icinga.css css.php
+RewriteRule ^js/icinga.min.js js.php
 RewriteCond %{REQUEST_FILENAME} -s [OR]
 RewriteCond %{REQUEST_FILENAME} -l [OR]
 RewriteCond %{REQUEST_FILENAME} -d
