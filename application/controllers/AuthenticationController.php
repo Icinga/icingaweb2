@@ -35,6 +35,7 @@ use Icinga\Authentication\Manager as AuthManager;
 use Icinga\Form\Authentication\LoginForm;
 use Icinga\Authentication\AuthChain;
 use Icinga\Application\Config;
+use Icinga\Logger\Logger;
 use Icinga\Exception\NotReadableError;
 use Icinga\Exception\ConfigurationError;
 use Icinga\User;
