@@ -14,11 +14,9 @@ $createDbBackend = $this->href('/config/createAuthenticationBackend', array('typ
 
     <h1>Create Authentication Provider</h1>
     <p>
-        <a href="<?= $createLdapBackend ?>"><?= $this->img('img/icons/create.png', array('title' => 'Create A New LDAP Authentication Backend'));
-                                                                                                  ?> Create A New LDAP Authentication Backend</a>
+        <a href="<?= $createLdapBackend ?>"><?= $this->img('img/icons/create.png'); ?> Create A New LDAP Authentication Backend</a>
         <br />
-        <a href="<?= $createDbBackend   ?>"><?= $this->img('img/icons/create.png', array('title' => 'Create A New DB Authentication Backend'));
-                                                                                                  ?> Create A New DB Authentication Backend</a>
+        <a href="<?= $createDbBackend   ?>"><?= $this->img('img/icons/create.png'); ?> Create A New DB Authentication Backend</a>
     </p>
 
     <table class="configTable">
@@ -33,10 +31,10 @@ $createDbBackend = $this->href('/config/createAuthenticationBackend', array('typ
                             <?= $backend->reorderForm; ?>
                         </div>
                         <a href="<?= $this->href('config/editAuthenticationBackend', array('auth_backend' => $backend->name));?>">
-                            <?= $this->img('img/icons/edit.png', array('title' => 'Edit')); ?> Edit</a>&emsp;
+                            <?= $this->img('img/icons/edit.png'); ?> Edit</a>&emsp;
                         <?php if (count($this->backends) > 1): ?>
                             <a href="<?= $this->href('config/removeAuthenticationBackend', array('auth_backend' => $backend->name));?>">
-                                <?= $this->img('img/icons/remove.png', array('title' => 'Remove')); ?> Remove</a>&emsp;
+                                <?= $this->img('img/icons/remove.png'); ?> Remove</a>&emsp;
                         <?php endif; ?>
                     </div>
                 </td>
