@@ -134,6 +134,8 @@ class DbBackendForm extends BaseBackendForm
      */
     public function isValidAuthenticationBackend()
     {
+        // @TODO fix validation of authentication backends (AK #5712)
+        //return true;
         try {
             $name = $this->getBackendName();
             $dbBackend = new DbUserBackend(
