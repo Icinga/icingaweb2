@@ -40,6 +40,7 @@ use Icinga\Web\Widget\Chart\PieChart;
 use Icinga\Module\Monitoring\Backend;
 use Icinga\Web\Widget\SortBox;
 use Icinga\Web\Widget\FilterBox;
+use Icinga\Web\Widget\Chart\HistoryColorGrid;
 use Icinga\Application\Config as IcingaConfig;
 
 use Icinga\Module\Monitoring\DataView\DataView;
@@ -277,11 +278,12 @@ class Monitoring_ListController extends MonitoringController
     public function statehistorysummaryAction()
     {
         $this->addTitleTab('statehistorysummary');
-
-         $query = StateHistorySummary::fromRequest(
-            $this->_request, array('day', 'cnt_events')
-        )->getQuery();
+        $query = StateHistorySummary::fromRequest(
+           $this->_request, array('day', 'cnt_critical')
+        )->getQuery()->order('day');
+        $query->paginate(365);
         $this->view->summary = $query->fetchAll();
+        $this->view->grid = new HistoryColorGrid();
         $this->handleFormatRequest($query);
     }
 
@@ -483,7 +485,6 @@ class Monitoring_ListController extends MonitoringController
             $domain,
             'monitoring'
         );
-
     }
 
     protected function addTitleTab($action)

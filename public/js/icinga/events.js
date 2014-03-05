@@ -58,7 +58,6 @@
                 width:       '2em',
                 height:      '2em',
             });
-
         },
 
         /**
@@ -89,6 +88,9 @@
 
             $(document).on('keyup', '#menu input.search', {self: this}, this.submitForm);
 
+            $('.historycolorgrid td').on('mouseenter', this.historycolorgridHover);
+            $('.historycolorgrid td').on('mouseleave', this.historycolorgidUnhover);
+
             // TBD: a global autocompletion handler
             // $(document).on('keyup', 'form.auto input', this.formChangeDelayed);
             // $(document).on('change', 'form.auto input', this.formChanged);
@@ -107,6 +109,14 @@
         onContainerScroll: function (event) {
             // Ugly. And PLEASE, not so often
             icinga.ui.fixControls();
+        },
+
+        historycolorgridHover: function () {
+            $(this).addClass('hover');
+        },
+
+        historycolorgidUnhover: function() {
+            $(this).removeClass('hover');
         },
 
         /**
@@ -260,6 +270,8 @@
             $(document).off('click', 'tr[href]', this.linkClicked);
             $(document).off('submit', 'form', this.submitForm);
             $(document).off('change', 'form select.autosubmit', this.submitForm);
+            $(document).off('mouseenter', '.historycolorgrid td', this.historycolorgridHover);
+            $(document).off('mouseenter', '.historycolorgrid td', this.historycolorgidUnhover);
         },
 
         destroy: function() {
