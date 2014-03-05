@@ -29,7 +29,9 @@ $createDbBackend = $this->href('/config/createAuthenticationBackend', array('typ
                         <b>Backend:</b>&ensp;<?= $this->escape($backend->name); ?>
                     </div>
                     <div>
-                        <?= $backend->reorderForm; ?>
+                        <div class="config-form-group">
+                            <?= $backend->reorderForm; ?>
+                        </div>
                         <a href="<?= $this->href('config/editAuthenticationBackend', array('auth_backend' => $backend->name));?>">
                             <?= $this->img('img/icons/edit.png', array('title' => 'Edit')); ?> Edit</a>&emsp;
                         <?php if (count($this->backends) > 1): ?>
