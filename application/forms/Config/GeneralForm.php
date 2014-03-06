@@ -397,7 +397,8 @@ class GeneralForm extends Form
                 'type'      => 'submit',
                 'escape'    => false,
                 'value'     => '1',
-                'label'     => '<img src="/icingaweb/img/icons/save.png" title="Save Changes" /> Save Changes'
+                'label'     => $this->getView()->img('img/icons/save.png', array('title' => 'Save Changes'))
+                    . ' Save changes',
             )
         );
     }

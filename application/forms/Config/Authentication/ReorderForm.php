@@ -115,8 +115,8 @@ class ReorderForm extends Form
                     'type'      => 'submit',
                     'escape'    => false,
                     'value'     => 'btn_' . $this->getBackendName() . '_reorder_up',
-                    'name'      =>  'btn_' . $this->getBackendName() . '_reorder_up',
-                    'label'     =>  '<img src="/icingaweb/img/icons/up.png" title="Move up in authentication order" />',
+                    'name'      => 'btn_' . $this->getBackendName() . '_reorder_up',
+                    'label'     => $this->getView()->img('img/icons/up.png', array('title' => 'Move up in authentication order')),
                 )
             );
         }
@@ -137,8 +137,8 @@ class ReorderForm extends Form
                     'type'      => 'submit',
                     'escape'    => false,
                     'value'     => 'btn_' . $this->getBackendName() . '_reorder_down',
-                    'name'      =>  'btn_' . $this->getBackendName() . '_reorder_down',
-                    'label'     =>  '<img src="/icingaweb/img/icons/down.png" title="Move down in authentication order" />',
+                    'name'      => 'btn_' . $this->getBackendName() . '_reorder_down',
+                    'label'     => $this->getView()->img('img/icons/down.png', array('title' => 'Move down in authentication order')),
 
                 )
             );
