@@ -100,11 +100,12 @@ class Monitoring_ShowController extends Controller
         $this->getTabs()->activate('history');
         $this->view->object->populate();
         $this->view->object->fetchEventHistory();
-        $this->view->history = $this->view->object->eventhistory->limit(10)->paginate();
+        $this->view->history = $this->view->object->eventhistory->limit(20)->paginate();
     }
 
     public function servicesAction()
     {
+        $this->getTabs()->activate('services');
         $params = $this->_request->getParams();
         unset($params['service']);
         $this->view->services = $this->fetchServices($params)->paginate();
