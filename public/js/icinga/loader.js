@@ -255,8 +255,6 @@
                 active = $('[href].active', req.$target).attr('href');
             }
 
-            req.$target.attr('data-icinga-url', url);
-
             //
             var target = req.getResponseHeader('X-Icinga-Container');
             var newBody = false;
@@ -290,22 +288,6 @@
                 this.icinga.ui.setWindowId(windowId);
             }
 
-            // Update history when necessary. Don't do so for requests triggered
-            // by history or autorefresh events
-            if (! req.historyTriggered && ! req.autorefresh) {
-
-                // We only want to care about top-level containers
-                if (req.$target.parent().closest('.container').length === 0) {
-                    this.icinga.history.pushCurrentState();
-                    /*
-                    this.icinga.logger.debug('Pushing ', req.url, ' to history');
-                    if (typeof window.history.pushState !== 'undefined') {
-                      window.history.pushState({icinga: true}, null, req.url);
-                    }
-                    */
-                }
-            }
-
             // Handle search requests, still hardcoded
             if (req.url === '/search' &&
                 req.$target.data('icingaUrl') === '/search')
@@ -333,6 +315,16 @@
 
             req.$target.attr('data-icinga-url', req.url);
             req.$target.data('icingaUrl', req.url);
+
+            // Update history when necessary. Don't do so for requests triggered
+            // by history or autorefresh events
+            if (! req.historyTriggered && ! req.autorefresh) {
+
+                // We only want to care about top-level containers
+                if (req.$target.parent().closest('.container').length === 0) {
+                    this.icinga.history.pushCurrentState();
+                }
+            }
 
             /* Should we try to fiddle with responses containing full HTML? */
             /*
