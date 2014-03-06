@@ -1,7 +1,8 @@
-<h1>
-    State History Summary for all Hosts
-</h1>
-
+<div class="controls">
+<?= $this->tabs ?>
+<h1>Host History Summary</h1>
+</div>
+<div class="content" data-base-target="col2">
 <?php
 
 $grid->setColor('#FC0707');
@@ -24,4 +25,6 @@ foreach ($summary as $entry) {
     );
 }
 $grid->setData($data);
-echo $grid->render($this);
+?>
+<?= $grid ?>
+</div>
