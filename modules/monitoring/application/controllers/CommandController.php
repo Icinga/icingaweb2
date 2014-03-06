@@ -139,7 +139,7 @@ class Monitoring_CommandController extends ActionController
     public function init()
     {
         if ($this->_request->isPost()) {
-            $instance = $this->_request->getPost("instance");
+            $instance = $this->_request->getPost('instance');
             $targetConfig = Config::module('monitoring', 'instances');
             if ($instance) {
                 if ($targetConfig->get($instance)) {
@@ -148,12 +148,11 @@ class Monitoring_CommandController extends ActionController
                     throw new ConfigurationError('Instance is not configured: '. $instance);
                 }
             } else {
-                $targetInfo = $targetConfig->current(); // Take the very first section
-
-                if ($targetInfo === false) {
-                    throw new ConfigurationError("No instances are configured yet");
-                } else {
+                if ($targetConfig && $targetInfo = $targetConfig->current()) {
+                    // Take the very first section
                     $this->target = new CommandPipe($targetInfo);
+                } else {
+                    throw new ConfigurationError('No instances are configured yet');
                 }
             }
         }
@@ -351,6 +350,7 @@ class Monitoring_CommandController extends ActionController
      */
     public function reschedulenextcheckAction()
     {
+        $this->addTitleTab('Reschedule Next Check');
         $this->setSupportedParameters(array('host', 'service'));
         $form = new RescheduleNextCheckForm();
         $form->setRequest($this->getRequest());
