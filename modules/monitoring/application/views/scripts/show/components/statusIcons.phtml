@@ -14,8 +14,6 @@ use Icinga\Module\Monitoring\Object\Service;
         ($isService) ? $o->service_acknowledged : $o->host_acknowledged;
     $obj->in_downtime =
         ($isService) ? $o->in_downtime : $o->host_in_downtime;
-    $obj->is_flapping =
-        ($isService) ? $o->is_flapping : $o->host_is_flapping;
     $obj->notifications_enabled =
         ($isService) ? $o->notifications_enabled : $o->service_notifications_enabled;
     $obj->active_checks_enabled =
@@ -30,10 +28,6 @@ if (! $obj->handled && $obj->state > 0) {
 
 if ($obj->acknowledged && ! $obj->in_downtime) {
     $i[] = $this->icon('acknowledgement.png', 'Acknowledged');
-}
-
-if ($obj->is_flapping) {
-    $i[] = $this->icon('flapping.png', 'Flapping');
 }
 
 if (!$obj->notifications_enabled) {
