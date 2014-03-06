@@ -34,6 +34,7 @@ use Zend_Db_Expr;
 use Icinga\Authentication\UserBackend;
 use Icinga\Data\Db\Connection;
 use Icinga\User;
+use \Zend_Db_Select;
 
 class DbUserBackend extends UserBackend
 {
@@ -58,19 +59,22 @@ class DbUserBackend extends UserBackend
      */
     public function hasUser(User $user)
     {
-        $row = $this->conn->select()->from('account', array(new Zend_Db_Expr(1)))
+        $select = new Zend_Db_Select($this->conn->getConnection());
+        $row = $select->from('account', array(new Zend_Db_Expr(1)))
             ->where('username = ?', $user->getUsername())
-            ->fetch();
-        return $row !== false ? true : false;
+            ->query()->fetchObject();
+
+        return ($row !== false) ? true : false;
     }
 
     /**
      * Authenticate
      *
-     * @param   User    $user
-     * @param   string  $password
+     * @param   User        $user
+     * @param   string      $password
      *
      * @return  bool
+     * @throws  \Exception              If we can not fetch the salt
      */
     public function authenticate(User $user, $password)
     {
@@ -81,12 +85,15 @@ class DbUserBackend extends UserBackend
         if ($salt === '') {
             throw new Exception();
         }
-        $row = $this->conn->select()->from('account', array(new Zend_Db_Expr(1)))
+
+        $select = new Zend_Db_Select($this->conn->getConnection());
+        $row = $select->from('account', array(new Zend_Db_Expr(1)))
             ->where('username = ?', $user->getUsername())
             ->where('active = ?', true)
             ->where('password = ?', $this->hashPassword($password, $salt))
-            ->fetchRow();
-        return $row !== false ? true : false;
+            ->query()->fetchObject();
+
+        return ($row !== false) ? true : false;
     }
 
     /**
@@ -98,8 +105,9 @@ class DbUserBackend extends UserBackend
      */
     private function getSalt($username)
     {
-        $row = $this->conn->select()->from('account', array('salt'))->where('username = ?', $username)->fetchRow();
-        return $row !== false ? $row->salt : null;
+        $select = new Zend_Db_Select($this->conn->getConnection());
+        $row = $select->from('account', array('salt'))->where('username = ?', $username)->query()->fetchObject();
+        return ($row !== false) ? $row->salt : null;
     }
 
     /**
@@ -121,6 +129,12 @@ class DbUserBackend extends UserBackend
      */
     public function count()
     {
-        return $this->conn->select()->from('account', array('count' => 'COUNT(*)'))->fetch()->count();
+        $select = new Zend_Db_Select($this->conn->getConnection());
+        $row = $select->from(
+            'account',
+            array('count' => 'COUNT(*)')
+        )->query()->fetchObject();
+
+        return ($row !== false) ? $row->count : 0;
     }
 }
