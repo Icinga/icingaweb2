@@ -278,21 +278,21 @@ a.critical {
 }
 
 .boxview > div.box {
-  width: 28em;
   text-align: center;
   vertical-align: top;
   display: inline-block;
-  padding: 0.5em;
-  margin: 0.5em;
+  padding: 0.4em;
+  margin: 0.4em;
 
   background: #555;
-  border-radius: 0.5em;
-  -moz-border-radius: 0.5em;
+  border-radius: 0.4em;
+  -moz-border-radius: 0.4em;
 }
 
 /* Box caption */
 .boxview div.box h2 {
-  margin: 0.5em 0 1em;
+  margin-top: 0;
+  margin-bottom: 0.4em;
 
   color: white;
   font-weight: bold;
@@ -301,8 +301,8 @@ a.critical {
 /* Box body of contents */
 .boxview div.box.contents {
   background: #eee;
-  border-radius: 0.5em;
-  -moz-border-radius: 0.5em;
+  border-radius: 0.4em;
+  -moz-border-radius: 0.4em;
 }
 
 .boxview div.box.contents table {
@@ -310,7 +310,7 @@ a.critical {
 }
 
 .boxview div.box.contents td {
-  width: 13em;
+  width: 11.1em;
   vertical-align: top;
 }
 
@@ -318,10 +318,10 @@ a.critical {
 .boxview div.box-separator:first-child {
   border-top-width: 0;
 
-  border-top-left-radius: 0.5em;
-  border-top-right-radius: 0.5em;
-  -moz-border-top-left-radius: 0.5em;
-  -moz-border-top-right-radius: 0.5em;
+  border-top-left-radius: 0.4em;
+  border-top-right-radius: 0.4em;
+  -moz-border-top-left-radius: 0.4em;
+  -moz-border-top-right-radius: 0.4em;
 }
 
 .boxview div.box-separator {
@@ -336,8 +336,8 @@ a.critical {
 
 /* Box entry */
 .boxview div.box.entry {
-  min-height: 3em;
-  margin: 0.25em;
+  min-height: 2.7em;
+  margin: 0.2em;
   font-size: 0.9em;
   white-space: nowrap;
   
@@ -359,7 +359,7 @@ a.critical {
 
 /* First line of a box entry */
 .boxview div.box.entry a:first-child {
-  font-size: 1.1em;
+  font-size: 1em;
 }
 
 /* End of generic box element */
@@ -368,27 +368,27 @@ a.critical {
 /* Monitoring box element styles */
 
 div.box.entry.state_up, div.box.entry.state_ok {
-  border-left: 0.8em solid @colorOk;
+  border-left: 0.5em solid @colorOk;
 }
 
 div.box.entry.state_pending {
-  border-left: 0.8em solid @colorPending;
+  border-left: 0.5em solid @colorPending;
 }
 
 div.box.entry.state_down, div.box.entry.state_critical {
-  border-left: 0.8em solid @colorCritical;
+  border-left: 0.5em solid @colorCritical;
   background-color: @colorCritical;
   color: white;
 }
 
 div.box.entry.state_warning {
-  border-left: 0.8em solid @colorWarning;
+  border-left: 0.5em solid @colorWarning;
   background-color: @colorWarning;
   color: white;
 }
 
 div.box.entry.state_unreachable, div.box.entry.state_unknown {
-  border-left: 0.8em solid @colorUnknown;
+  border-left: 0.5em solid @colorUnknown;
   background-color: @colorUnknown;
   color: white;
 }
