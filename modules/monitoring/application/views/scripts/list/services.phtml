@@ -52,49 +52,38 @@ foreach ($services as $service):
         <?= $this->perfdata($service->service_perfdata, true) ?>
 
         <?php if (!$service->service_handled && $service->service_state > 0): ?>
-        <?= $this->img('img/icons/unhandled.png', array(
-          'title' => 'Unhandled',
-        )) ?>
+        <?= $this->icon('unhandled.png', 'Unhandled') ?>
         <?php endif ?>
 
         <?php if ($service->service_acknowledged && !$service->service_in_downtime): ?>
-        <?= $this->img('img/icons/acknowledgement.png', array(
-          'title' => 'Acknowledged',
-        )) ?>
+        <?= $this->icon('acknowledgement.png', 'Acknowledged') ?>
         <?php endif ?>
 
         <?php if ($service->service_is_flapping): ?>
-        <?= $this->img('img/icons/flapping.png', array(
-          'title' => 'Flapping',
-        )) ?>
+        <?= $this->icon('flapping.png', 'Flapping') ?>
         <?php endif ?>
 
         <?php if (!$service->service_notifications_enabled): ?>
-        <?= $this->img('img/icons/notification_disabled.png', array(
-          'title' => 'Notifications Disabled',
-        )) ?>
+        <?= $this->icon('notification_disabled.png', 'Notifications Disabled') ?>
         <?php endif ?>
 
         <?php if ($service->service_in_downtime): ?>
-        <?= $this->img('img/icons/in_downtime.png', array(
-          'title' => 'In Downtime',
-        )) ?>
+        <?= $this->icon('in_downtime.png', 'In Downtime') ?>
         <?php endif ?>
 
         <?php if (!$service->service_active_checks_enabled): ?>
           <?php if (!$service->service_passive_checks_enabled): ?>
-            <?= $this->img('img/icons/active_passive_checks_disabled.png', array(
-              'title' => 'Active And Passive Checks Disabled',
-            )) ?>
+            <?= $this->icon(
+                'active_passive_checks_disabled.png',
+                'Active And Passive Checks Disabled'
+            ) ?>
           <?php else: ?>
-            <?= $this->img('img/icons/active_checks_disabled.png', array(
-              'title' => 'Active Checks Disabled',
-            )) ?>
+            <?= $this->icon('active_checks_disabled.png',  'Active Checks Disabled') ?>
           <?php endif ?>
         <?php endif ?>
 
       <?php if ($service->service_icon_image): ?>
-      <?= $this->img($this->resolveMacros($service->service_icon_image, $service), array('align' => 'left')) ?>
+      <?= $this->icon($this->resolveMacros($service->service_icon_image, $service)) ?>
       <?php endif ?>
 <a href="<?= $serviceLink ?>"><?= $service->service_display_name ?></a> on <a href="<?= $hostLink ?>"><?= $service->host_name; ?>
 <?php if ($service->host_state != 0): ?>
