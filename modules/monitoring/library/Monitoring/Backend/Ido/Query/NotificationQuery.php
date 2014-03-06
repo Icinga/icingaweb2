@@ -118,7 +118,7 @@ class NotificationQuery extends IdoQuery
             'n.notification_id = cmd_c.notification_id',
             array()
         );
-        $this->baseQuery->join(
+        $this->baseQuery->joinLeft(
             array(
                 'cmd_m' => $this->prefix . 'contactnotificationmethods'
             ),
