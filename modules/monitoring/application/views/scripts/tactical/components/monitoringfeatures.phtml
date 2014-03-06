@@ -14,175 +14,165 @@ $hosts_not_processing_event_handlers = $total_hosts - $summary->hosts_processing
 $services_not_processing_event_handlers = $total_services - $summary->services_processing_event_handlers;
 
 ?>
-<span class="state">
-    <table>
-        <caption>Monitoring features</caption>
-        <thead>
-            <th>Hosts</th>
-            <th>Services</th>
-        </thead>
-        <tbody>
-            <tr>
-                <td colspan="2">
-                    <span class="state subtitle">Flap detection</span>
-                </td>
-            </tr>
-            <tr>
-                <td>
+<div class="box monitoringfeatures">
+    <h2><?= $this->translate('Monitoring Features'); ?></h2>
+    <div class="box contents">
+        <div class="box-separator"><?= $this->translate('Flap detection'); ?></div>
+        <table>
+            <tbody>
+                <tr>
+                    <td>
 <?php if ($hosts_without_flap_detection): ?>
-                    <span class="state disabled">
-                        <a href="<?= $this->href(
-                            'monitoring/list/hosts',
-                            array('host_flap_detection_enabled' => 0)
-                        ); ?>">
-                            <?= $hosts_without_flap_detection; ?> hosts disabled
-                        </a>
+                        <div class="box entry feature_disabled">
+                            <a href="<?= $this->href(
+                                'monitoring/list/hosts',
+                                array('host_flap_detection_enabled' => 0)
+                            ); ?>">
+                                <?= sprintf('%d hosts disabled', $hosts_without_flap_detection); ?>
+                            </a>
 <?php else: ?>
-                    <span class="state enabled">
-                        <a href="<?= $this->href(
-                            'monitoring/list/hosts',
-                            array('host_flap_detection_enabled' => 1)
-                        ); ?>">
-                            All hosts enabled
-                        </a>
+                        <div class="box entry feature_enabled">
+                            <a href="<?= $this->href(
+                                'monitoring/list/hosts',
+                                array('host_flap_detection_enabled' => 1)
+                            ); ?>">
+                                <?= $this->translate('All hosts enabled'); ?>
+                            </a>
 <?php endif ?>
 <?php if ($summary->hosts_flapping): ?>
-                        <span class="state flapping">
                             <a href="<?= $this->href(
                                 'monitoring/list/hosts',
                                 array('host_is_flapping' => 1)
-                            ); ?>">
-                                <?= $summary->hosts_flapping; ?> hosts flapping
+                            ); ?>" style="color: red;">
+                                <?= sprintf('%d hosts flapping', $summary->hosts_flapping); ?>
                             </a>
-                        </span>
 <?php endif ?>
-                    </span>
-                </td>
-                <td>
+                        </div>
+                    </td>
+                    <td>
 <?php if ($services_without_flap_detection): ?>
-                    <span class="state disabled">
-                        <a href="<?= $this->href(
-                            'monitoring/list/services',
-                            array('service_flap_detection_enabled' => 0)
-                        ); ?>">
-                            <?= $services_without_flap_detection; ?> services disabled
-                        </a>
+                        <div class="box entry feature_disabled">
+                            <a href="<?= $this->href(
+                                'monitoring/list/services',
+                                array('service_flap_detection_enabled' => 0)
+                            ); ?>">
+                                <?= sprintf('%d services disabled', $services_without_flap_detection); ?>
+                            </a>
 <?php else: ?>
-                    <span class="state enabled">
-                        <a href="<?= $this->href(
-                            'monitoring/list/services',
-                            array('service_flap_detection_enabled' => 1)
-                        ); ?>">
-                            All services enabled
-                        </a>
+                        <div class="box entry feature_enabled">
+                            <a href="<?= $this->href(
+                                'monitoring/list/services',
+                                array('service_flap_detection_enabled' => 1)
+                            ); ?>">
+                                <?= $this->translate('All services enabled'); ?>
+                            </a>
 <?php endif ?>
 <?php if ($summary->services_flapping): ?>
-                        <span class="state flapping">
                             <a href="<?= $this->href(
                                 'monitoring/list/services',
                                 array('service_is_flapping' => 1)
-                            ); ?>">
-                                <?= $summary->services_flapping; ?> services flapping
+                            ); ?>" style="color: red;">
+                                <?= sprintf('%d services flapping', $summary->services_flapping); ?>
                             </a>
-                        </span>
 <?php endif ?>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <span class="state subtitle">Notifications</span>
-                </td>
-            </tr>
-            <tr>
-                <td>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="box-separator"><?= $this->translate('Notifications'); ?></div>
+        <table>
+            <tbody>
+                <tr>
+                    <td>
 <?php if ($hosts_not_triggering_notifications): ?>
-                    <span class="state disabled">
-                        <a href="<?= $this->href(
-                            'monitoring/list/hosts',
-                            array('host_notifications_enabled' => 0)
-                        ); ?>">
-                            <?= $hosts_not_triggering_notifications; ?> hosts disabled
-                        </a>
+                        <div class="box entry feature_disabled">
+                            <a href="<?= $this->href(
+                                'monitoring/list/hosts',
+                                array('host_notifications_enabled' => 0)
+                            ); ?>">
+                                <?= sprintf('%d hosts disabled', $hosts_not_triggering_notifications); ?>
+                            </a>
 <?php else: ?>
-                    <span class="state enabled">
-                        <a href="<?= $this->href(
-                            'monitoring/list/hosts',
-                            array('host_notifications_enabled' => 1)
-                        ); ?>">
-                            All hosts enabled
-                        </a>
+                        <div class="box entry feature_enabled">
+                            <a href="<?= $this->href(
+                                'monitoring/list/hosts',
+                                array('host_notifications_enabled' => 1)
+                            ); ?>">
+                                <?= $this->translate('All hosts enabled'); ?>
+                            </a>
 <?php endif ?>
-                    </span>
-                </td>
-                <td>
+                        </div>
+                    </td>
+                    <td>
 <?php if ($services_not_triggering_notifications): ?>
-                    <span class="state disabled">
-                        <a href="<?= $this->href(
-                            'monitoring/list/services',
-                            array('service_notifications_enabled' => 0)
-                        ); ?>">
-                            <?= $services_not_triggering_notifications; ?> hosts disabled
-                        </a>
+                        <div class="box entry feature_disabled">
+                            <a href="<?= $this->href(
+                                'monitoring/list/services',
+                                array('service_notifications_enabled' => 0)
+                            ); ?>">
+                                <?= sprintf('%d services disabled', $services_not_triggering_notifications); ?>
+                            </a>
 <?php else: ?>
-                    <span class="state enabled">
-                        <a href="<?= $this->href(
-                            'monitoring/list/services',
-                            array('service_notifications_enabled' => 1)
-                        ); ?>">
-                            All services enabled
-                        </a>
+                        <div class="box entry feature_enabled">
+                            <a href="<?= $this->href(
+                                'monitoring/list/services',
+                                array('service_notifications_enabled' => 1)
+                            ); ?>">
+                                <?= $this->translate('All services enabled'); ?>
+                            </a>
 <?php endif ?>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <span class="state subtitle">Event handlers</span>
-                </td>
-            </tr>
-            <tr>
-                <td>
+                        </div>
+                    </td> 
+                </tr>
+            </tbody>
+        </table>
+        <div class="box-separator"><?= $this->translate('Event handlers'); ?></div>
+        <table>
+            <tbody>
+                <tr>
+                    <td>
 <?php if ($hosts_not_processing_event_handlers): ?>
-                    <span class="state disabled">
-                        <a href="<?= $this->href(
-                            'monitoring/list/hosts',
-                            array('host_event_handler_enabled' => 0)
-                        ); ?>">
-                            <?= $hosts_not_processing_event_handlers; ?> hosts disabled
-                        </a>
+                        <div class="box entry feature_disabled">
+                            <a href="<?= $this->href(
+                                'monitoring/list/hosts',
+                                array('host_event_handler_enabled' => 0)
+                            ); ?>">
+                                <?= sprintf('%d hosts disabled', $hosts_not_processing_event_handlers); ?>
+                            </a>
 <?php else: ?>
-                    <span class="state enabled">
-                        <a href="<?= $this->href(
-                            'monitoring/list/hosts',
-                            array('host_event_handler_enabled' => 1)
-                        ); ?>">
-                            All hosts enabled
-                        </a>
+                        <div class="box entry feature_enabled">
+                            <a href="<?= $this->href(
+                                'monitoring/list/hosts',
+                                array('host_event_handler_enabled' => 1)
+                            ); ?>">
+                                <?= $this->translate('All hosts enabled'); ?>
+                            </a>
 <?php endif ?>
-                    </span>
-                </td>
-                <td>
+                        </div>
+                    </td>
+                    <td>
 <?php if ($services_not_processing_event_handlers): ?>
-                    <span class="state disabled">
-                        <a href="<?= $this->href(
-                            'monitoring/list/services',
-                            array('service_event_handler_enabled' => 0)
-                        ); ?>">
-                            <?= $services_not_processing_event_handlers; ?> hosts disabled
-                        </a>
+                        <div class="box entry feature_disabled">
+                            <a href="<?= $this->href(
+                                'monitoring/list/services',
+                                array('service_event_handler_enabled' => 0)
+                            ); ?>">
+                                <?= sprintf('%d services disabled', $services_not_processing_event_handlers); ?>
+                            </a>
 <?php else: ?>
-                    <span class="state enabled">
-                        <a href="<?= $this->href(
-                            'monitoring/list/services',
-                            array('service_event_handler_enabled' => 1)
-                        ); ?>">
-                            All services enabled
-                        </a>
+                        <div class="box entry feature_enabled">
+                            <a href="<?= $this->href(
+                                'monitoring/list/services',
+                                array('service_event_handler_enabled' => 1)
+                            ); ?>">
+                                <?= $this->translate('All services enabled'); ?>
+                            </a>
 <?php endif ?>
-                    </span>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</span>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

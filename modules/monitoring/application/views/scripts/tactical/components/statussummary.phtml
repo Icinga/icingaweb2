@@ -1,0 +1,351 @@
+<div class="box statussummary">
+    <h2><?= $this->translate('Status Summary'); ?></h2>
+    <div class="box contents">
+        <table>
+            <thead>
+                <tr>
+                    <th><?= $this->translate('Hosts'); ?></th>
+                    <th><?= $this->translate('Services'); ?></th>
+                </tr>
+            </thead>
+            <tbody>
+<?php if ($this->statusSummary->hosts_up): ?>
+                <tr>
+                    <td>
+                        <div class="box entry state_up">
+                            <a href="<?= $this->href(
+                                'monitoring/list/hosts',
+                                array('host_state' => 0)
+                            ); ?>">
+                                <?= $this->statusSummary->hosts_up; ?> UP
+                            </a>
+<?php if ($this->statusSummary->hosts_up_not_checked): ?>
+                            <a href="<?= $this->href(
+                                'monitoring/list/hosts',
+                                array(
+                                    'host_state'                    => 0,
+                                    'host_active_checks_enabled'    => 0,
+                                    'host_passive_checks_enabled'   => 0
+                                )
+                            ); ?>">
+                                <?php
+                                    if ($this->statusSummary->hosts_up_not_checked > 1) {
+                                        printf(
+                                            $this->translate('%d are not checked at all'),
+                                            $this->statusSummary->hosts_up_not_checked
+                                        );
+                                    } else {
+                                        printf(
+                                            $this->translate('%d is not checked at all'),
+                                            $this->statusSummary->hosts_up_not_checked
+                                        );
+                                    }
+                                ?>
+                            </a>
+<?php endif ?>
+                        </div>
+                    </td>
+                    <td>
+                        <?= $this->partial(
+                            'tactical/components/parts/servicestatesummarybyhoststate.phtml',
+                            array(
+                                'hostState'                                 => 0,
+                                'services_ok'                               => $this->statusSummary->services_ok_on_up_hosts,
+                                'services_ok_not_checked'                   => $this->statusSummary->services_ok_not_checked_on_up_hosts,
+                                'services_pending'                          => $this->statusSummary->services_pending_on_up_hosts,
+                                'services_pending_not_checked'              => $this->statusSummary->services_pending_not_checked_on_up_hosts,
+                                'services_warning_handled_active'           => $this->statusSummary->services_warning_handled_active_on_up_hosts,
+                                'services_warning_handled_passive'          => $this->statusSummary->services_warning_handled_passive_on_up_hosts,
+                                'services_warning_handled_not_checked'      => $this->statusSummary->services_warning_handled_not_checked_on_up_hosts,
+                                'services_warning_unhandled_active'         => $this->statusSummary->services_warning_unhandled_active_on_up_hosts,
+                                'services_warning_unhandled_passive'        => $this->statusSummary->services_warning_unhandled_passive_on_up_hosts,
+                                'services_warning_unhandled_not_checked'    => $this->statusSummary->services_warning_unhandled_not_checked_on_up_hosts,
+                                'services_critical_handled_active'          => $this->statusSummary->services_critical_handled_active_on_up_hosts,
+                                'services_critical_handled_passive'         => $this->statusSummary->services_critical_handled_passive_on_up_hosts,
+                                'services_critical_handled_not_checked'     => $this->statusSummary->services_critical_handled_not_checked_on_up_hosts,
+                                'services_critical_unhandled_active'        => $this->statusSummary->services_critical_unhandled_active_on_up_hosts,
+                                'services_critical_unhandled_passive'       => $this->statusSummary->services_critical_unhandled_passive_on_up_hosts,
+                                'services_critical_unhandled_not_checked'   => $this->statusSummary->services_critical_unhandled_not_checked_on_up_hosts,
+                                'services_unknown_handled_active'           => $this->statusSummary->services_unknown_handled_active_on_up_hosts,
+                                'services_unknown_handled_passive'          => $this->statusSummary->services_unknown_handled_passive_on_up_hosts,
+                                'services_unknown_handled_not_checked'      => $this->statusSummary->services_unknown_handled_not_checked_on_up_hosts,
+                                'services_unknown_unhandled_active'         => $this->statusSummary->services_unknown_unhandled_active_on_up_hosts,
+                                'services_unknown_unhandled_passive'        => $this->statusSummary->services_unknown_unhandled_passive_on_up_hosts,
+                                'services_unknown_unhandled_not_checked'    => $this->statusSummary->services_unknown_unhandled_not_checked_on_up_hosts
+                            )
+                        ); ?>
+                    </td>
+                </tr>
+<?php endif ?>
+<?php if ($this->statusSummary->hosts_pending): ?>
+                <tr>
+                    <td>
+                        <div class="box entry state_pending">
+                            <a href="<?= $this->href(
+                                'monitoring/list/hosts',
+                                array('host_state' => 99)
+                            ); ?>">
+                                <?= $this->statusSummary->hosts_pending; ?> PENDING
+                            </a>
+<?php if ($this->statusSummary->hosts_pending_not_checked): ?>
+                            <a href="<?= $this->href(
+                                'monitoring/list/hosts',
+                                array(
+                                    'host_state'                    => 99,
+                                    'host_active_checks_enabled'    => 0,
+                                    'host_passive_checks_enabled'   => 0
+                                )
+                            ); ?>">
+                                <?php
+                                    if ($this->statusSummary->hosts_pending_not_checked > 1) {
+                                        printf(
+                                            $this->translate('%d are not checked at all'),
+                                            $this->statusSummary->hosts_pending_not_checked
+                                        );
+                                    } else {
+                                        printf(
+                                            $this->translate('%d is not checked at all'),
+                                            $this->statusSummary->hosts_pending_not_checked
+                                        );
+                                    }
+                                ?>
+                            </a>
+<?php endif ?>
+                        </div>
+                    </td>
+                    <td>
+                        <?= $this->partial(
+                            'tactical/components/parts/servicestatesummarybyhoststate.phtml',
+                            array(
+                                'hostState'                                 => 99,
+                                'services_ok'                               => $this->statusSummary->services_ok_on_pending_hosts,
+                                'services_ok_not_checked'                   => $this->statusSummary->services_ok_not_checked_on_pending_hosts,
+                                'services_pending'                          => $this->statusSummary->services_pending_on_pending_hosts,
+                                'services_pending_not_checked'              => $this->statusSummary->services_pending_not_checked_on_pending_hosts,
+                                'services_warning_handled_active'           => $this->statusSummary->services_warning_handled_active_on_pending_hosts,
+                                'services_warning_handled_passive'          => $this->statusSummary->services_warning_handled_passive_on_pending_hosts,
+                                'services_warning_handled_not_checked'      => $this->statusSummary->services_warning_handled_not_checked_on_pending_hosts,
+                                'services_warning_unhandled_active'         => $this->statusSummary->services_warning_unhandled_active_on_pending_hosts,
+                                'services_warning_unhandled_passive'        => $this->statusSummary->services_warning_unhandled_passive_on_pending_hosts,
+                                'services_warning_unhandled_not_checked'    => $this->statusSummary->services_warning_unhandled_not_checked_on_pending_hosts,
+                                'services_critical_handled_active'          => $this->statusSummary->services_critical_handled_active_on_pending_hosts,
+                                'services_critical_handled_passive'         => $this->statusSummary->services_critical_handled_passive_on_pending_hosts,
+                                'services_critical_handled_not_checked'     => $this->statusSummary->services_critical_handled_not_checked_on_pending_hosts,
+                                'services_critical_unhandled_active'        => $this->statusSummary->services_critical_unhandled_active_on_pending_hosts,
+                                'services_critical_unhandled_passive'       => $this->statusSummary->services_critical_unhandled_passive_on_pending_hosts,
+                                'services_critical_unhandled_not_checked'   => $this->statusSummary->services_critical_unhandled_not_checked_on_pending_hosts,
+                                'services_unknown_handled_active'           => $this->statusSummary->services_unknown_handled_active_on_pending_hosts,
+                                'services_unknown_handled_passive'          => $this->statusSummary->services_unknown_handled_passive_on_pending_hosts,
+                                'services_unknown_handled_not_checked'      => $this->statusSummary->services_unknown_handled_not_checked_on_pending_hosts,
+                                'services_unknown_unhandled_active'         => $this->statusSummary->services_unknown_unhandled_active_on_pending_hosts,
+                                'services_unknown_unhandled_passive'        => $this->statusSummary->services_unknown_unhandled_passive_on_pending_hosts,
+                                'services_unknown_unhandled_not_checked'    => $this->statusSummary->services_unknown_unhandled_not_checked_on_pending_hosts
+                            )
+                        ); ?>
+                    </td>
+                </tr>
+<?php endif ?>
+<?php if ($this->statusSummary->hosts_unreachable): ?>
+                <tr>
+                    <td>
+                        <div class="box entry state_unreachable <?= $this->statusSummary->hosts_unreachable_unhandled ? '' : 'handled'; ?>">
+                            <a href="<?= $this->href(
+                                'monitoring/list/hosts',
+                                array('host_state' => 2)
+                            ); ?>">
+                                <?= $this->statusSummary->hosts_unreachable; ?> UNREACHABLE
+                            </a>
+<?php if ($this->statusSummary->hosts_unreachable_unhandled): ?>
+                            <a href="<?= $this->href(
+                                'monitoring/list/hosts',
+                                array('host_state' => 2, 'host_unhandled' => 1)
+                            ); ?>">
+                                <?= $this->statusSummary->hosts_unreachable_unhandled . ' ' . $this->translate('Unhandled'); ?>
+                            </a>
+<?php endif ?>
+<?php if ($this->statusSummary->hosts_unreachable_unhandled_passive): ?>
+                            <a href="<?= $this->href(
+                                'monitoring/list/hosts',
+                                array(
+                                    'host_state'                    => 2,
+                                    'host_active_checks_enabled'    => 0,
+                                    'host_passive_checks_enabled'   => 1
+                                )
+                            ); ?>">
+                                <?php
+                                    if ($this->statusSummary->hosts_unreachable_unhandled_passive > 1) {
+                                        printf(
+                                            $this->translate('%d are passively checked'),
+                                            $this->statusSummary->hosts_unreachable_unhandled_passive
+                                        );
+                                    } else {
+                                        printf(
+                                            $this->translate('%d is passively checked'),
+                                            $this->statusSummary->hosts_unreachable_unhandled_passive
+                                        );
+                                    }
+                                ?>
+                            </a>
+<?php endif ?>
+<?php if ($this->statusSummary->hosts_unreachable_unhandled_not_checked): ?>
+                            <a href="<?= $this->href(
+                                'monitoring/list/hosts',
+                                array(
+                                    'host_state'                    => 2,
+                                    'host_active_checks_enabled'    => 0,
+                                    'host_passive_checks_enabled'   => 0
+                                )
+                            ); ?>">
+                                <?php
+                                    if ($this->statusSummary->hosts_unreachable_unhandled_not_checked > 1) {
+                                        printf(
+                                            $this->translate('%d are not checked at all'),
+                                            $this->statusSummary->hosts_unreachable_unhandled_not_checked
+                                        );
+                                    } else {
+                                        printf(
+                                            $this->translate('%d is not checked at all'),
+                                            $this->statusSummary->hosts_unreachable_unhandled_not_checked
+                                        );
+                                    }
+                                ?>
+                            </a>
+<?php endif ?>
+                        </div>
+                    </td>
+                    <td>
+                        <?= $this->partial(
+                            'tactical/components/parts/servicestatesummarybyhoststate.phtml',
+                            array(
+                                'hostState'                                 => 2,
+                                'services_ok'                               => $this->statusSummary->services_ok_on_unreachable_hosts,
+                                'services_ok_not_checked'                   => $this->statusSummary->services_ok_not_checked_on_unreachable_hosts,
+                                'services_pending'                          => $this->statusSummary->services_pending_on_unreachable_hosts,
+                                'services_pending_not_checked'              => $this->statusSummary->services_pending_not_checked_on_unreachable_hosts,
+                                'services_warning_handled_active'           => $this->statusSummary->services_warning_handled_active_on_unreachable_hosts,
+                                'services_warning_handled_passive'          => $this->statusSummary->services_warning_handled_passive_on_unreachable_hosts,
+                                'services_warning_handled_not_checked'      => $this->statusSummary->services_warning_handled_not_checked_on_unreachable_hosts,
+                                'services_warning_unhandled_active'         => $this->statusSummary->services_warning_unhandled_active_on_unreachable_hosts,
+                                'services_warning_unhandled_passive'        => $this->statusSummary->services_warning_unhandled_passive_on_unreachable_hosts,
+                                'services_warning_unhandled_not_checked'    => $this->statusSummary->services_warning_unhandled_not_checked_on_unreachable_hosts,
+                                'services_critical_handled_active'          => $this->statusSummary->services_critical_handled_active_on_unreachable_hosts,
+                                'services_critical_handled_passive'         => $this->statusSummary->services_critical_handled_passive_on_unreachable_hosts,
+                                'services_critical_handled_not_checked'     => $this->statusSummary->services_critical_handled_not_checked_on_unreachable_hosts,
+                                'services_critical_unhandled_active'        => $this->statusSummary->services_critical_unhandled_active_on_unreachable_hosts,
+                                'services_critical_unhandled_passive'       => $this->statusSummary->services_critical_unhandled_passive_on_unreachable_hosts,
+                                'services_critical_unhandled_not_checked'   => $this->statusSummary->services_critical_unhandled_not_checked_on_unreachable_hosts,
+                                'services_unknown_handled_active'           => $this->statusSummary->services_unknown_handled_active_on_unreachable_hosts,
+                                'services_unknown_handled_passive'          => $this->statusSummary->services_unknown_handled_passive_on_unreachable_hosts,
+                                'services_unknown_handled_not_checked'      => $this->statusSummary->services_unknown_handled_not_checked_on_unreachable_hosts,
+                                'services_unknown_unhandled_active'         => $this->statusSummary->services_unknown_unhandled_active_on_unreachable_hosts,
+                                'services_unknown_unhandled_passive'        => $this->statusSummary->services_unknown_unhandled_passive_on_unreachable_hosts,
+                                'services_unknown_unhandled_not_checked'    => $this->statusSummary->services_unknown_unhandled_not_checked_on_unreachable_hosts
+                            )
+                        ); ?>
+                    </td>
+                </tr>
+<?php endif ?>
+<?php if ($this->statusSummary->hosts_down): ?>
+                <tr>
+                    <td>
+                        <div class="box entry state_down <?= $this->statusSummary->hosts_down_unhandled ? '' : 'handled'; ?>">
+                            <a href="<?= $this->href(
+                                'monitoring/list/hosts',
+                                array('host_state' => 1)
+                            ); ?>">
+                                <?= $this->statusSummary->hosts_down; ?> DOWN
+                            </a>
+<?php if ($this->statusSummary->hosts_down_unhandled): ?>
+                            <a href="<?= $this->href(
+                                'monitoring/list/hosts',
+                                array('host_state' => 1, 'host_unhandled' => 1)
+                            ); ?>">
+                                <?= $this->statusSummary->hosts_down_unhandled . ' ' . $this->translate('Unhandled'); ?>
+                            </a>
+<?php endif ?>
+<?php if ($this->statusSummary->hosts_down_unhandled_passive): ?>
+                            <a href="<?= $this->href(
+                                'monitoring/list/hosts',
+                                array(
+                                    'host_state'                    => 1,
+                                    'host_active_checks_enabled'    => 0,
+                                    'host_passive_checks_enabled'   => 1
+                                )
+                            ); ?>">
+                                <?php
+                                    if ($this->statusSummary->hosts_down_unhandled_passive > 1) {
+                                        printf(
+                                            $this->translate('%d are passively checked'),
+                                            $this->statusSummary->hosts_down_unhandled_passive
+                                        );
+                                    } else {
+                                        printf(
+                                            $this->translate('%d is passively checked'),
+                                            $this->statusSummary->hosts_down_unhandled_passive
+                                        );
+                                    }
+                                ?>
+                            </a>
+<?php endif ?>
+<?php if ($this->statusSummary->hosts_down_unhandled_not_checked): ?>
+                            <a href="<?= $this->href(
+                                'monitoring/list/hosts',
+                                array(
+                                    'host_state'                    => 1,
+                                    'host_active_checks_enabled'    => 0,
+                                    'host_passive_checks_enabled'   => 0
+                                )
+                            ); ?>">
+                                <?php
+                                    if ($this->statusSummary->hosts_down_unhandled_not_checked > 1) {
+                                        printf(
+                                            $this->translate('%d are not checked at all'),
+                                            $this->statusSummary->hosts_down_unhandled_not_checked
+                                        );
+                                    } else {
+                                        printf(
+                                            $this->translate('%d is not checked at all'),
+                                            $this->statusSummary->hosts_down_unhandled_not_checked
+                                        );
+                                    }
+                                ?>
+                            </a>
+<?php endif ?>
+                        </div>
+                    </td>
+                    <td>
+                        <?= $this->partial(
+                            'tactical/components/parts/servicestatesummarybyhoststate.phtml',
+                            array(
+                                'hostState'                                 => 1,
+                                'services_ok'                               => $this->statusSummary->services_ok_on_down_hosts,
+                                'services_ok_not_checked'                   => $this->statusSummary->services_ok_not_checked_on_down_hosts,
+                                'services_pending'                          => $this->statusSummary->services_pending_on_down_hosts,
+                                'services_pending_not_checked'              => $this->statusSummary->services_pending_not_checked_on_down_hosts,
+                                'services_warning_handled_active'           => $this->statusSummary->services_warning_handled_active_on_down_hosts,
+                                'services_warning_handled_passive'          => $this->statusSummary->services_warning_handled_passive_on_down_hosts,
+                                'services_warning_handled_not_checked'      => $this->statusSummary->services_warning_handled_not_checked_on_down_hosts,
+                                'services_warning_unhandled_active'         => $this->statusSummary->services_warning_unhandled_active_on_down_hosts,
+                                'services_warning_unhandled_passive'        => $this->statusSummary->services_warning_unhandled_passive_on_down_hosts,
+                                'services_warning_unhandled_not_checked'    => $this->statusSummary->services_warning_unhandled_not_checked_on_down_hosts,
+                                'services_critical_handled_active'          => $this->statusSummary->services_critical_handled_active_on_down_hosts,
+                                'services_critical_handled_passive'         => $this->statusSummary->services_critical_handled_passive_on_down_hosts,
+                                'services_critical_handled_not_checked'     => $this->statusSummary->services_critical_handled_not_checked_on_down_hosts,
+                                'services_critical_unhandled_active'        => $this->statusSummary->services_critical_unhandled_active_on_down_hosts,
+                                'services_critical_unhandled_passive'       => $this->statusSummary->services_critical_unhandled_passive_on_down_hosts,
+                                'services_critical_unhandled_not_checked'   => $this->statusSummary->services_critical_unhandled_not_checked_on_down_hosts,
+                                'services_unknown_handled_active'           => $this->statusSummary->services_unknown_handled_active_on_down_hosts,
+                                'services_unknown_handled_passive'          => $this->statusSummary->services_unknown_handled_passive_on_down_hosts,
+                                'services_unknown_handled_not_checked'      => $this->statusSummary->services_unknown_handled_not_checked_on_down_hosts,
+                                'services_unknown_unhandled_active'         => $this->statusSummary->services_unknown_unhandled_active_on_down_hosts,
+                                'services_unknown_unhandled_passive'        => $this->statusSummary->services_unknown_unhandled_passive_on_down_hosts,
+                                'services_unknown_unhandled_not_checked'    => $this->statusSummary->services_unknown_unhandled_not_checked_on_down_hosts
+                            )
+                        ); ?>
+                    </td>
+                </tr>
+<?php endif ?>
+            </tbody>
+        </table>
+    </div>
+</div>
