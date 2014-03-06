@@ -648,7 +648,7 @@ file { '/etc/icingaweb/menu.ini':
   source    => 'puppet:////vagrant/.vagrant-puppet/files/etc/icingaweb/menu.ini',
   owner     => 'apache',
   group     => 'apache',
-  replace   => false,
+  # replace   => false,
 }
 
 file { '/etc/icingaweb/resources.ini':
