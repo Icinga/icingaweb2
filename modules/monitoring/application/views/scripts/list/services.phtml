@@ -54,35 +54,30 @@ foreach ($services as $service):
         <?php if (!$service->service_handled && $service->service_state > 0): ?>
         <?= $this->img('img/icons/unhandled.png', array(
           'title' => 'Unhandled',
-          'align' => 'right'
         )) ?>
         <?php endif ?>
 
         <?php if ($service->service_acknowledged && !$service->service_in_downtime): ?>
         <?= $this->img('img/icons/acknowledgement.png', array(
           'title' => 'Acknowledged',
-          'align' => 'right'
         )) ?>
         <?php endif ?>
 
         <?php if ($service->service_is_flapping): ?>
         <?= $this->img('img/icons/flapping.png', array(
           'title' => 'Flapping',
-          'align' => 'right'
         )) ?>
         <?php endif ?>
 
         <?php if (!$service->service_notifications_enabled): ?>
         <?= $this->img('img/icons/notification_disabled.png', array(
           'title' => 'Notifications Disabled',
-          'align' => 'right'
         )) ?>
         <?php endif ?>
 
         <?php if ($service->service_in_downtime): ?>
         <?= $this->img('img/icons/in_downtime.png', array(
           'title' => 'In Downtime',
-          'align' => 'right'
         )) ?>
         <?php endif ?>
 
@@ -90,12 +85,10 @@ foreach ($services as $service):
           <?php if (!$service->service_passive_checks_enabled): ?>
             <?= $this->img('img/icons/active_passive_checks_disabled.png', array(
               'title' => 'Active And Passive Checks Disabled',
-              'align' => 'right'
             )) ?>
           <?php else: ?>
             <?= $this->img('img/icons/active_checks_disabled.png', array(
               'title' => 'Active Checks Disabled',
-              'align' => 'right'
             )) ?>
           <?php endif ?>
         <?php endif ?>
