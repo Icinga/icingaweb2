@@ -189,11 +189,6 @@ tr.state.invalid td.state {
   background-color: @colorInvalid;
 }
 
-tr.state.handled td.state {
-  color: inherit;
-  background-color: transparent;
-}
-
 tr.state.unreachable td.state {
   background-color: @colorUnreachable;
 }
@@ -202,6 +197,15 @@ tr.state.unreachable.handled td.state {
   border-left-color: @colorUnreachableHandled;
 }
 
+tr.state.handled td.state {
+  color: inherit;
+  background-color: transparent;
+}
+
+
+table.compact tr.state td.state strong {
+  font-size: 0.8em;
+}
 /* END of special tables and states */
 
 
