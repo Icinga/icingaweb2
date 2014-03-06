@@ -1,6 +1,5 @@
 <?php
 
-/** @var Zend_View_Helper_CommandForm $cf */
 $cf = $this->getHelper('CommandForm');
 
 $data = array('host' => $object->host_name);
@@ -8,59 +7,43 @@ if ($object->service_description) {
     $data['service'] = $object->service_description;
 }
 
-?>
-<div>
-  <div class="panel-heading">
-    <div class="panel-hostname">
-        Comments
-        <?php
-        ?>
-        <div class="pull-right">
-        <a rel="tooltip" title="Add a comment" href="<?= $this->href('monitoring/command/addComment', $data) ?>" class="btn-common btn-small button"><?=
-   $this->img('img/icons/comment.png')
-?></a>
-        <a rel="tooltip" title="Send custom notification" href="<?= $this->href('monitoring/command/sendCustomNotification', $data
-) ?>" class="btn-common btn-small button">
-            <?= $this->img('img/icons/notification.png') ?>
-        </a>
-        </div>
-    </div>
-  </div>
-  <hr class="separator" />
-  <div class="panel-body">
-      <table class="table table-condensed table-detail">
-          <tbody>
-            <?php if (empty($object->comments)): ?>
-                <tr>
-                    <td>No comments</td>
-                </tr>
-            <?php endif; ?>
-            <?php foreach ($object->comments as $comment): ?>
-                <tr>
-                    <td>
-                        <div class="pull-right">
-                            <?php
-                                $deleteData = $data;
-                                $deleteData['commentid'] = $comment->comment_internal_id;
+$list = array();
+foreach ($object->comments as $comment) {
 
-                                echo $cf->iconSubmitForm(
-                                    'img/icons/remove.png',
-                                    'Remove comment',
-                                    'btn-small',
-                                    'removecomment',
-                                    $deleteData
-                                );
-                            ?>
-                        </div>
-                        <?= $this->escape($comment->comment_author); ?>, <?= $comment->comment_type; ?>
-                        (<?= $this->format()->timeSince($comment->comment_timestamp); ?>)
-                        <div class="small-row">
-                            <?= $this->escape($comment->comment_data); ?>
-                        </div>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
-          </tbody>
-      </table>
-  </div>
-</div>
+    // Ticket hook sample
+    $text = $this->tickets ? preg_replace_callback(
+        $this->tickets->getPattern(),
+        array($this->tickets, 'createLink'),
+        $this->escape($comment->comment_data)
+    ) : $this->escape($comment->comment_data);
+
+    $deleteData = $data;
+    $deleteData['commentid'] = $object->comment_internal_id;
+
+    $iconForm = $cf->iconSubmitForm(
+        'img/icons/remove.png',
+        'Remove comment',
+        'btn-small',
+        'removecomment',
+        $deleteData
+    );
+
+    $list[] = sprintf(
+        "<br />%s [%s] %s (%s): %s\n",
+        //'<input type="submit" value="x" style="width: 2em" />',
+        '<a href="#">' . $this->icon('remove_petrol.png') . '</a>' . $iconForm, // Test
+        $this->escape($comment->comment_author),
+        $this->timeSince($comment->comment_timestamp),
+        $comment->comment_type,
+        $text
+    );
+}
+
+?>
+<tr>
+  <th><?= $this->translate('Comments') ?></th>
+  <td>
+    <a href="<?= $this->href('monitoring/command/addComment', $data) ?>"><?= $this->icon('comment_petrol.png') ?> <?= $this->translate('Add comment') ?></a>
+    <?= implode('', $list) ?>
+  </td>
+</tr>
