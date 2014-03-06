@@ -88,8 +88,8 @@
 
             $(document).on('keyup', '#menu input.search', {self: this}, this.submitForm);
 
-            $('.historycolorgrid td').on('mouseenter', this.historycolorgridHover);
-            $('.historycolorgrid td').on('mouseleave', this.historycolorgidUnhover);
+            $(document).on('mouseenter', '.historycolorgrid td', this.historycolorgridHover);
+            $(document).on('mouseleave', '.historycolorgrid td', this.historycolorgidUnhover);
 
             // TBD: a global autocompletion handler
             // $(document).on('keyup', 'form.auto input', this.formChangeDelayed);
