@@ -1,22 +1,16 @@
-<div>
-    <div class="panel-heading">
-        <div class="panel-hostname">
-            Custom Variables
-        </div>
-    </div>
+<?php
 
-    <hr class="separator" />
+if (! $object->customvars) { return; }
 
-    <div class="panel-body">
-        <?php if (empty($this->object->customvars)): ?>
-        No customvars
-        <?php else: ?>
-        <dl class="dl-horizontal">
-        <?php foreach ($this->object->customvars as $varname => $varvalue): ?>
-            <dt><?= $varname; ?></dt>
-            <dd><?= $varvalue; ?></dd>
-        <?php endforeach; ?>
-        </dl>
-        <?php endif; ?>
-    </div>
-</div>
+foreach ($object->customvars as $name => $value) {
+    $name = ucwords(str_replace('_', ' ', strtolower($name)));
+    if (preg_match('~(?:pw|pass|community)~', strtolower($name))) {
+        $value = '***';
+    }
+    printf(
+        "<tr><th>%s</th><td>%s</td></tr>\n",
+        $this->escape($name),
+        $this->escape($value)
+    );
+}
+

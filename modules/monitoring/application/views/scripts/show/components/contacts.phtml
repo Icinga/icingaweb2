@@ -1,65 +1,39 @@
 <?php
-$contacts = array();
-foreach ($object->contacts as $contact) {
-    $contacts[] = '<a href="'
-        . $this->href(
-            'monitoring/show/contact',
-            array(
-                'contact_name' => $contact->contact_name
-            )
-        )
-        . '">'
-        . $contact->contact_alias
-        . '</a>';
+
+if (! empty($object->contacts)) {
+
+    $list = array();
+    foreach ($object->contacts as $contact) {
+        $list[] = $this->qlink($contact->contact_alias, 'monitoring/show/contact', array(
+            'contact_name' => $contact->contact_name
+        ));
+    }
+
+    printf(
+        "<tr><th>%s</th><td>%s %s</td></tr>\n",
+        $this->translate('Contacts'),
+        $this->img('img/icons/user_petrol.png'),
+        implode(', ', $list)
+    );
+
 }
-?>
-<div>
-    <div class="panel-heading">
-        <div class="panel-hostname">
-            Contacts
-        </div>
-    </div>
 
-    <hr class="separator" />
-
-    <div class="panel-body">
-        <?php if (!count($contacts)): ?>
-            No Contacts
-        <?php else: ?>
-            <?= implode(', ', $contacts); ?>
-        <?php endif; ?>
-    </div>
-</div>
-
-<?php
-$contactgroups = array();
-foreach ($object->contactgroups as $contactgroup) {
-    $contactgroups[] = '<a href="'
-        . $this->href(
+if (! empty($object->contactgroups)) {
+    $list = array();
+    foreach ($object->contactgroups as $contactgroup) {
+        $list[] = $this->qlink(
+            $contactgroup->contactgroup_alias,
             'monitoring/show/contactgroup',
-            array(
-                'contactgroup_name' => $contactgroup->contactgroup_name
-            )
-        )
-        . '">'
-        . $contactgroup->contactgroup_alias
-        . '</a>';
+            array('contactgroup_name' => $contactgroup->contactgroup_name)
+        );
+    }
+
+    printf(
+        "<tr><th>%s</th><td>%s %s</td></tr>\n",
+        $this->translate('Contactgroups'),
+        $this->img('img/icons/user_petrol.png'),
+        implode(', ', $list)
+    );
+
 }
-?>
-<div>
-    <div class="panel-heading">
-        <div class="panel-hostname">
-            Contactgroups
-        </div>
-    </div>
 
-    <hr class="separator" />
-
-    <div class="panel-body">
-        <?php if (!count($contactgroups)): ?>
-            No Contactgroups
-        <?php else: ?>
-            <?= implode(', ', $contactgroups); ?>
-        <?php endif; ?>
-    </div>
-</div>

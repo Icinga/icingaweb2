@@ -1,25 +1,17 @@
 <?php
-$hostgroups = array();
+
+if (empty($object->hostgroups)) return;
+
+$list = array();
 foreach ($object->hostgroups as $name => $alias) {
-    $hostgroups[] = '<a href="' . $this->href('monitoring/list/hosts', array('hostgroup' => $name)) . '">'
-        . $alias
-        . '</a>';
+    $list[] = $this->qlink($alias, 'monitoring/list/services', array(
+        'hostgroup' => $name
+    ));
 }
-?>
-<div>
-    <div class="panel-heading">
-        <div class="panel-hostname">
-            Hostgroups
-        </div>
-    </div>
+printf(
+    "<tr><th>%s</th><td>%s %s</td></tr>\n",
+    $this->translate('Hostgroups'),
+    $this->img('img/icons/hostgroup_petrol.png'),
+    implode(', ', $list)
+);
 
-    <hr class="separator" />
-
-    <div class="panel-body">
-        <?php if (!count($hostgroups)): ?>
-            No Hostgroups
-        <?php else: ?>
-            <?= implode(', ', $hostgroups); ?>
-        <?php endif; ?>
-    </div>
-</div>

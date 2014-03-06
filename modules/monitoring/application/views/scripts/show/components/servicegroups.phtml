@@ -1,25 +1,18 @@
 <?php
-$servicegroups = array();
+
+if (empty($object->servicegroups)) return;
+
+$list = array();
 foreach ($object->servicegroups as $name => $alias) {
-    $servicegroups[] = '<a href="' . $this->href('monitoring/list/services', array('servicegroup' => $name)) . '">'
-        . $alias
-        . '</a>';
+    $list[] = $this->qlink($alias, 'monitoring/list/services', array(
+        'servicegroup' => $name
+    ));
 }
-?>
-<div>
-    <div class="panel-heading">
-        <div class="panel-hostname">
-            Servicegroups
-        </div>
-    </div>
 
-    <hr class="separator" />
+printf(
+    "<tr><th>%s</th><td>%s %s</td></tr>\n",
+    $this->translate('Servicegroups'),
+    $this->img('img/icons/servicegroup_petrol.png'),
+    implode(', ', $list)
+);
 
-    <div class="panel-body">
-        <?php if (!count($servicegroups)): ?>
-            No Servicegroups
-        <?php else: ?>
-            <?= implode(', ', $servicegroups); ?>
-        <?php endif; ?>
-    </div>
-</div>
