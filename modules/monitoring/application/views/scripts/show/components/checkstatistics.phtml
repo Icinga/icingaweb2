@@ -1,0 +1,27 @@
+<tr>
+  <th><?= $this->translate('Last check') ?></th>
+  <td><a href="#"><?= $this->img('img/icons/refresh_petrol.png') ?> <?= $this->translate('Check now') ?></a> <?= $this->timeSince($object->last_check) ?></td>
+</tr>
+<tr>
+  <th><?= $this->translate('Next check') ?></th>
+  <td><!--<input type="submit" value="Reschedule" style="width: 7em;" /> --><a href="<?= $this->href(
+        'monitoring/command/reschedulenextcheck',
+        array(
+            'host'      => $object->host_name,
+            'service'   => $object->service_description
+        )
+    ) ?>"><?= $this->img('img/icons/reschedule_petrol.png') ?> <?= $this->translate('Reschedule') ?></a> <?= $this->timeUnless($object->next_check) ?></td>
+</tr>
+<?php if ($object->check_execution_time): ?>
+<tr>
+  <th><?= $this->translate('Check execution time') ?></th>
+  <td><?= $object->check_execution_time ?>s</td>
+</tr>
+<?php endif ?>
+<?php if ($object->check_latency): ?>
+<tr>
+ <th><?= $this->translate('Check latency') ?></th>
+ <td><?= $object->check_latency ?>s</td>
+</tr>
+<?php endif ?>
+

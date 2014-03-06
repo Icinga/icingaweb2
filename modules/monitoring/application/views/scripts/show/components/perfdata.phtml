@@ -1,0 +1,7 @@
+<?php if (! $object->perfdata) return ?>
+<tr>
+  <th><?= $this->translate('Performance data') ?></th>
+  <td>
+      <?= $this->perfdata($object->perfdata) ?>
+  </td>
+</tr>
