@@ -22,6 +22,18 @@ class StyleSheet
         'css/icinga/login.less',
     );
 
+    public static function compileForPdf()
+    {
+        $less = new LessCompiler();
+        $basedir = Icinga::app()->getBootstrapDirecory();
+        foreach (self::$lessFiles as $file) {
+          $less->addFile($basedir . '/' . $file);
+        }
+        $less->addLoadedModules();
+        $less->addFile($basedir . '/css/pdf/pdfprint.less');
+        return $less->compile();
+    }
+
     public static function send()
     {
         header('Content-Type: text/css');
