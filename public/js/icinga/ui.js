@@ -23,6 +23,7 @@
 
       initialize: function () {
           $('html').removeClass('no-js').addClass('js');
+          this.icinga.timer.register(this.refreshTimeSince, this, 1000);
           this.triggerWindowResize();
       },
 
