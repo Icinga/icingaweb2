@@ -882,6 +882,7 @@ class Monitoring_CommandController extends ActionController
      */
     public function addcommentAction()
     {
+        $this->addTitleTab('Add comment');
         $this->setSupportedParameters(array('host', 'service'));
         $form = new CommentForm();
         $form->setRequest($this->_request);
@@ -898,6 +899,7 @@ class Monitoring_CommandController extends ActionController
      */
     public function removecommentAction()
     {
+        $this->addTitleTab('Remove Comment');
         $this->setSupportedParameters(array('commentid', 'host', 'service'));
         $form = new SingleArgumentCommandForm();
         $form->setRequest($this->_request);
@@ -954,6 +956,7 @@ class Monitoring_CommandController extends ActionController
      */
     public function removeacknowledgementAction()
     {
+        $this->addTitleTab('Remove Acknowledgement');
         $this->setSupportedParameters(array('host', 'service'));
         $form = new SingleArgumentCommandForm();
         $form->setRequest($this->getRequest());
