@@ -98,12 +98,13 @@
               if (matched[1] === this.currentLayout &&
                   $('#layout').hasClass(layout)
               ) {
-
                   return false;
               } else {
-                  $('#layout').attr('class', layout);
+                  $('#layout').removeClass(this.currentLayout + '-layout').addClass(layout);
                   this.currentLayout = matched[1];
-
+                  if (this.currentLayout === 'poor' || this.currentLayout === 'minimal') {
+                      this.icinga.events.layout1col();
+                  }
                   return true;
               }
           }
