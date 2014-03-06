@@ -20,7 +20,7 @@ abstract class Command
     protected $moduleName;
     protected $commandName;
     protected $actionName;
-    
+
     protected $defaultActionName = 'default';
 
     public function __construct(App $app, $moduleName, $commandName, $actionName, $initialize = true)

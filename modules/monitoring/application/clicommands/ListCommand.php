@@ -13,7 +13,7 @@ use Exception;
 /**
  * Icinga monitoring objects
  *
- * This module is your interface to the Icinga monitoring application.  
+ * This module is your interface to the Icinga monitoring application.
  */
 class ListCommand extends Command
 {
@@ -157,7 +157,7 @@ class ListCommand extends Command
             ->order('host_name');
         echo $this->renderStatusQuery($query);
     }
-    
+
     protected function renderStatusQuery($query)
     {
         $out = '';
@@ -217,7 +217,7 @@ class ListCommand extends Command
                     );
                 }
             }
-            
+
             $last_host = $row->host_name;
             if (! isset($row->service_description)) {
                 continue;

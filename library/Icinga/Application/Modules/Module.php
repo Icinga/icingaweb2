@@ -287,7 +287,7 @@ class Module
      */
     public function getDependencies()
     {
-        
+
         return $this->metadata()->depends;
     }
 

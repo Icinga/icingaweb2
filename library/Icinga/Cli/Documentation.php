@@ -64,7 +64,7 @@ class Documentation
     public function moduleUsage($module, $command = null, $action = null)
     {
         $commands = $this->loader->listModuleCommands($module);
-        
+
         if (empty($commands)) {
             return "The '$module' module does not provide any CLI commands\n";
         }

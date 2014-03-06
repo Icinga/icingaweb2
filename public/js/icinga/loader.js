@@ -173,7 +173,7 @@
                 }
                 interval = interval * 1000;
 
-                // TODO: 
+                // TODO:
                 if ((lastUpdate + interval) > (new Date()).getTime()) {
                     // self.icinga.logger.info(
                     //     'Skipping refresh',
@@ -402,7 +402,7 @@
                             this.icinga.utils.timeShort() +
                             '.'
                         );
-                        
+
                         this.icinga.ui.fixControls();
                     }
 

@@ -44,7 +44,7 @@ class CommentParser
             if ($p === null && empty($this->paragraphs)) {
                 $p = & $this->paragraphs[];
             }
-            
+
             if ($line === '') {
                 if ($p !== null) {
                     $p = & $this->paragraphs[];

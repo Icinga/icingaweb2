@@ -62,7 +62,7 @@ class AllcontactsQuery extends IdoQuery
             array($this->contacts, $this->contactgroups),
             Zend_Db_Select::SQL_UNION_ALL
         );
-        
+
         $this->baseQuery = $this->db->select()->distinct()->from(
             array('c' => $sub),
             array()

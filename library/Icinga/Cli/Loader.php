@@ -11,7 +11,7 @@ use Icinga\Cli\Documentation;
 use Exception;
 
 /**
- * 
+ *
  */
 class Loader
 {

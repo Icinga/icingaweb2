@@ -72,7 +72,7 @@
         },
 
         /**
-         * Write a log message with the given level to the console 
+         * Write a log message with the given level to the console
          */
         writeToConsole: function (level, args) {
 

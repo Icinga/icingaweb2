@@ -196,7 +196,7 @@ class Zend_View_Helper_CommandForm extends Zend_View_Helper_Abstract
         }
 
         $formCode = (string) $form;
-        
+
         $jsLessSubmit = '<noscript>'
             . '<input type="submit" value="Change" class="button btn btn-cta" />'
             . '</noscript></form>';

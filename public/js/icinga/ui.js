@@ -133,7 +133,7 @@
               $('#main > .container').css({
                   width: '100%'
               });
-          } 
+          }
       },
 
       setTitle: function (title) {

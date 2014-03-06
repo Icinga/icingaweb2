@@ -58,7 +58,7 @@ class LessCompiler
     private $lessc;
 
     private $baseUrl;
-    
+
     private $source;
 
     /**

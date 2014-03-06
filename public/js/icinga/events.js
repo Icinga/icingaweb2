@@ -234,16 +234,16 @@
                     icinga.events.layout2col();
                 }
             }
- 
+
             icinga.loader.loadUrl(href, $target);
             event.stopPropagation();
             event.preventDefault();
- 
+
             if ($a.closest('#menu').length) {
                 icinga.events.layout1col();
                 return false;
             }
- 
+
             if ($a.closest('table.action').length) {
                 if ($('#layout').hasClass('twocols')) {
                     if ($target.attr('id') === 'col2') {

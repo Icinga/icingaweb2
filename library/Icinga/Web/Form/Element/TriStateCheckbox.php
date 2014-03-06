@@ -34,7 +34,7 @@ use \Zend_Form_Element_Xhtml;
 
 /**
  * A checkbox that can display three different states:
- * true, false and mixed. When there is no JavaScript 
+ * true, false and mixed. When there is no JavaScript
  * available to display the checkbox properly, a radio
  * button-group with all three possible states will be
  * displayed.

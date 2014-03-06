@@ -256,10 +256,10 @@ select.input-sm {
    ========================================================================== */
 
 .pagination > .active > a,
-.pagination > .active > span, 
-.pagination > .active > a:hover, 
-.pagination > .active > span:hover, 
-.pagination > .active > a:focus, 
+.pagination > .active > span,
+.pagination > .active > a:hover,
+.pagination > .active > span:hover,
+.pagination > .active > a:focus,
 .pagination > .active > span:focus {
 
   background-color: #049baf !important;
@@ -410,27 +410,27 @@ select.input-sm {
 .icon-flapping {
   background-image: url('images/flapping.png');
   background-repeat: no-repeat;
-}  
+}
 .icon-comment {
   background-image: url('images/comment.png');
   background-repeat: no-repeat;
-}  
+}
 .icon-unhandled {
   background-image: url('images/unhandled.png');
   background-repeat: no-repeat;
-} 
+}
 .icon-host {
   background-image: url('images/host.png');
   background-repeat: no-repeat;
-} 
+}
 .icon-acknowledgement {
   background-image: url('images/acknowledgement.png');
   background-repeat: no-repeat;
-} 
+}
 .icon-remove {
   background-image: url('images/remove.png');
   background-repeat: no-repeat;
-} 
+}
 .icon-submit {
   background-image: url('images/submit.png');
   background-repeat: no-repeat;
@@ -438,35 +438,35 @@ select.input-sm {
 .icon-create {
   background-image: url('images/create.png');
   background-repeat: no-repeat;
-} 
+}
 .icon-dashboard {
   background-image: url('images/dashboard.png');
   background-repeat: no-repeat;
-} 
+}
 .icon-disable {
   background-image: url('images/disable.png');
   background-repeat: no-repeat;
-} 
+}
 .icon-edit {
   background-image: url('images/edit.png');
   background-repeat: no-repeat;
-} 
+}
 .icon-error {
   background-image: url('images/error.png');
   background-repeat: no-repeat;
-} 
+}
 .icon-downtime {
   background-image: url('images/in_downtime.png');
   background-repeat: no-repeat;
-} 
+}
 .icon-save {
   background-image: url('images/save.png');
   background-repeat: no-repeat;
-} 
+}
 .icon-service {
   background-image: url('images/service.png');
   background-repeat: no-repeat;
-} 
+}
 .icon-user {
   background-image: url('images/user.png');
   background-repeat: no-repeat;
@@ -474,11 +474,11 @@ select.input-sm {
 .icon-reschedule {
   background-image: url('images/reschedule.png');
   background-repeat: no-repeat;
-}  
+}
 .icon-refresh {
   background-image: url('images/refresh.png');
   background-repeat: no-repeat;
-} 
+}
 
 
 /* ==========================================================================
@@ -525,7 +525,7 @@ select.input-sm {
   padding-right: 10px;
   width: 30%;
   clear: left;
-  
+
 }
 .panel-content {
   float: left;
@@ -679,16 +679,16 @@ ul.icinga-subnavigation {
   border-left: 6px solid red !important;
 }
 
-.nav-stacked > li > a:hover, 
+.nav-stacked > li > a:hover,
 .icinga-subnavigation > li > a:focus {
 /*  font-weight: bold;*/
   background-color: transparent; !important;
   display: inline-block;
 }
 
-.nav-stacked > li:hover, 
+.nav-stacked > li:hover,
 .nav-stacked > li:focus,
-.icinga-subnavigation > li:hover, 
+.icinga-subnavigation > li:hover,
 .icinga-subnavigation > li:focus {
 background-color: #fff;
 
@@ -707,45 +707,45 @@ background-color: #fff;
   background-image: url('images/host_petrol.png');
   background-repeat: no-repeat;
   background-position: 19px 50%;
-} 
+}
 
 .nav-icon-services {
   background-image: url('images/service_petrol.png');
   background-repeat: no-repeat;
   background-position: 19px 50%;
-} 
+}
 .nav-icon-downtimes {
   background-image: url('images/in_downtime_petrol.png');
   background-repeat: no-repeat;
   background-position: 19px 50%;
-} 
+}
 .nav-icon-notifications {
   background-image: url('images/notification_petrol.png');
   background-repeat: no-repeat;
   background-position: 19px 20px;
-} 
+}
 .nav-icon-comments {
   background-image: url('images/comment_petrol.png');
   background-repeat: no-repeat;
   background-position: 19px 50%;
-} 
+}
 .nav-icon-dashboard {
   background-image: url('images/dashboard_petrol.png');
   background-repeat: no-repeat;
   background-position: 19px 50%;
-} 
+}
 .nav-icon-configuration {
   background-image: url('images/configuration_petrol.png');
   background-repeat: no-repeat;
   background-position: 19px 50%;
-} 
+}
 
 
 .subnav-icon-configuration {
   background-image: url('images/configuration_petrol.png');
   background-repeat: no-repeat;
   background-position: 19px 50%;
-} 
+}
 
 
 

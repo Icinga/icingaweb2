@@ -11,7 +11,7 @@ class PivotTable
     protected $horizontalColumn;
 
     protected $limit;
-    
+
     protected $offset;
 
     protected $verticalLimit;

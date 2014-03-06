@@ -14,7 +14,7 @@ $viewHelper = $this->getHelper('MonitoringState');
 <div class="content">
 <table class="action">
 <tbody>
-<?php foreach ($comments as $comment): 
+<?php foreach ($comments as $comment):
 
     $objectType = ($comment->comment_objecttype_id === '1') ? 'host' : 'service';
     $objectName = ($objectType === 'host') ? $comment->host_name : $comment->service_name;

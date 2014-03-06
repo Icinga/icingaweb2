@@ -39,7 +39,7 @@ class AlertMessageBox implements \Icinga\Web\Widget\Widget
      * @var array
      */
     private $messages = array();
-    
+
     /**
      * The user to fetch the messages from
      *

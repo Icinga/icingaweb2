@@ -45,4 +45,4 @@ class PieChart extends Inline {
         $pie->setWidth($this->width)->setHeight($this->height);
         echo $pie->render();
     }
-} 
+}

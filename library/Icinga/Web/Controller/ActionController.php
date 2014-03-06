@@ -311,7 +311,7 @@ class ActionController extends Zend_Controller_Action
             $this->_helper->layout()->setLayout('body');
             header('X-Icinga-Container: layout');
         }
-        if ($this->autorefreshInterval !== null) {        
+        if ($this->autorefreshInterval !== null) {
             header('X-Icinga-Refresh: ' . $this->autorefreshInterval);
         }
     }
