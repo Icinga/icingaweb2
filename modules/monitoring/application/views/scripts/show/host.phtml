@@ -1,6 +1,7 @@
 <div class="controls">
-<?= $this->tabs ?>
+<?= $this->render('show/components/header.phtml') ?>
 </div>
+<div class="content">
 <?= $this->render('show/components/status.phtml'); ?>
 <?= $this->render('show/components/comments.phtml'); ?>
 <?= $this->render('show/components/downtime.phtml'); ?>
@@ -10,3 +11,4 @@
 <?= $this->render('show/components/hostgroups.phtml'); ?>
 <?= $this->render('show/components/contacts.phtml'); ?>
 <?= $this->render('show/components/command.phtml') ?>
+</div>
