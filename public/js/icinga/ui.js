@@ -34,7 +34,6 @@
               this,
               1000
           );
-          this.icinga.timer.register(this.refreshTimeSince, this, 1000);
           this.fixDebugVisibility();
 
           return this;
