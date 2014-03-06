@@ -16,45 +16,9 @@
 <div>
     <div class="panel-heading border-status-<?= $objectStateName ?>">
         <div class="panel-hostname">
-          <?= $type ; ?>
-            <?php if ($type === 'host'): ?>
-                <a title="View all services for this host"
-                   href="<?= $this->href('monitoring/list/services', array('host' => $object->host_name)); ?>">
-                    <?= $this->escape($object->host_name); ?>
-                </a><?= ($object->host_name !== $object->host_alias) ? ',' : ''; ?>
 
-                <?php if ($object->host_name !== $object->host_alias): ?>
-                    <?= $object->host_alias ?>
-                <?php endif; ?>
 
-                <span class="panel-header-status">
-                    - <?= $this->util()->getHostStateName($this->object->host_state); ?>
-                    since <?= $this->timeSince($this->object->host_last_state_change); ?>
-                </span>
-
-            <?php else: ?>
-                <?= $this->escape($object->service_description); ?>
-
-                <span class="panel-header-status">
-                    - <?= $this->util()->getServiceStateName($object->service_state); ?>
-                    since <?= $this->timeSince($object->service_slast_state_change); ?>
-                </span>
-            <?php endif; ?>
-
-            <?= $this->render('show/components/statusIcons.phtml'); ?>
-
-            <?php if ($object->service_display_name && $object->service_description !== $object->service_display_name): ?>
-                <div class="small-row">
-                    (<?= $object->service_display_name; ?>)
-                </div>
-            <?php endif; ?>
             <div class="small-row">
-                <?php if ($type === 'service'): ?>
-                    On <?= $object->host_name; ?>
-                    <?php if ($object->host_state > 0): ?>
-                        (<?= $this->util()->getHostStateName($this->object->host_state); ?>)
-                    <?php endif; ?>
-                <?php endif; ?>
 
                 <?php if ($object->action_url || $object->notes_url): ?>
                         <br />
@@ -90,7 +54,6 @@
     <div class="panel-body">
 
         <div class="panel-row">
-            <p><?= $this->pluginOutput($object->output); ?></p>
 
                 <?php if ($objectState > 0): ?>
                 <?php if ($this->object->host_acknowledged || $this->object->service_acknowledged): ?>
@@ -130,61 +93,6 @@
                         'forcecheck'    => '1'
                     )
                 ) ?>
-        </div>
-
-        <div class="panel-row">
-            <?php if ($object->perfdata): ?>
-                <div class="small-row">
-                    <?= $this->perfdata($this->object->perfdata); ?>
-                </div>
-            <?php endif; ?>
-            <?php if ($object->long_output): ?>
-                <div class="small-row">
-                    <?= $this->pluginOutput($object->long_output); ?>
-                </div>
-            <?php endif; ?>
-        </div>
-
-        <?php if ($object->is_flapping): ?>
-        <div class="panel-row">
-            <div class="panel-label">
-                Flapping
-            </div>
-            <div class="panel-content">
-                <?= sprintf('%.2f', $object->percent_state_change) ?>% state change
-            </div>
-        </div>
-        <?php endif; ?>
-
-        <div class="panel-row">
-            <div class="panel-label">
-                Last Check
-            </div>
-            <div class="panel-content">
-                <?= $this->dateFormat()->formatDateTime($object->last_check); ?>
-            </div>
-        </div>
-
-        <div class="panel-row">
-            <div class="panel-label">
-                Next Check
-            </div>
-            <div class="panel-content">
-                <?= $this->dateFormat()->formatDateTime($object->next_check); ?>
-            </div>
-            <div class="panel-button">
-                <a rel="tooltip" title="Reschedule the next check" href="<?=
-                    $this->href(
-                        'monitoring/command/reschedulenextcheck',
-                        array(
-                            'host'      => $this->object->host_name,
-                            'service'   => $this->object->serivce_description
-                        )
-                    );
-                ?>" class="button btn-common btn-small">
-                    <i class="icinga-icon-reschedule"></i>
-                </a>
-            </div>
         </div>
 
         <?php if ($objectState > 0): ?>
