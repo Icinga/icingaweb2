@@ -39,6 +39,7 @@ use Icinga\Logger\Logger;
 use Icinga\Exception\NotReadableError;
 use Icinga\Exception\ConfigurationError;
 use Icinga\User;
+use Icinga\Web\Url;
 
 /**
  * Application wide controller for authentication
@@ -61,7 +62,10 @@ class AuthenticationController extends ActionController
         $this->view->form->setRequest($this->_request);
         $this->view->title = 'Icinga Web Login';
         try {
-            $redirectUrl = $this->_request->getParam('redirect', 'index?_render=body');
+            $redirectUrl = Url::fromPath($this->_request->getParam('redirect', 'dashboard'));
+            if ($this->_request->isXmlHttpRequest()) {
+                $redirectUrl->setParam('_render', 'layout');
+            }
             $auth = AuthManager::getInstance();
             if ($auth->isAuthenticated()) {
                 $this->redirectNow($redirectUrl);
