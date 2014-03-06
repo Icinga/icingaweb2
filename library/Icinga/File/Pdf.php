@@ -5,6 +5,11 @@ namespace Icinga\File;
 use DOMPDF;
 use DOMDocument;
 use DOMXPath;
+use Font_Metrics;
+use Icinga\Application\Icinga;
+use Icinga\Web\StyleSheet;
+use Icinga\Web\Url;
+use Icinga\Exception\ProgrammingError;
 
 require_once 'vendor/dompdf/dompdf_config.inc.php';
 
@@ -36,20 +41,71 @@ class Pdf extends DOMPDF
 
     public function __construct()
     {
-        $this->set_paper(DOMPDF_DEFAULT_PAPER_SIZE, "portrait");
+        $this->set_paper('A4', 'portrait');
         parent::__construct();
+    }
+
+    protected function assertNoHeadersSent()
+    {
+        if (headers_sent()) {
+            throw new ProgrammingError(
+                'Could not send pdf-response, content already written to output.'
+            );
+        }
+    }
+
+    public function renderControllerAction($controller)
+    {
+        $this->assertNoHeadersSent();
+
+        ini_set('memory_limit', '384M');
+        ini_set('max_execution_time', 300);
+
+        $request = $controller->getRequest();
+        $layout = $controller->getHelper('layout')->setLayout('pdf');
+        $controller->render();
+        $layout->content = $controller->getResponse();
+        $html = $layout->render();
+
+        $imgDir = Url::fromPath('img');
+        
+        $html = preg_replace('~src="' . $imgDir . '/~', 'src="' . Icinga::app()->getBootstrapDirecory() . $imgDir . '/', $html);
+         //echo $html; exit;
+        $this->load_html($html);
+
+		/*
+		// TODO: We need to find a solution for page footers
+		$font = Font_Metrics::get_font("helvetica", "bold");
+		$canvas = $this->get_canvas();
+		$canvas->page_text(555, 750, "{PAGE_NUM}/{PAGE_COUNT}", $font, 10, array(0,0,0));
+		$dompdf->page_script('
+		  // $pdf is the variable containing a reference to the canvas object provided by dompdf
+		  $pdf->line(10,730,800,730,array(0,0,0),1);
+		');
+		*/
+        $this->render();
+        $this->stream(
+            sprintf(
+                '%s-%s-%d.pdf',
+                $request->getControllerName(),
+                $request->getActionName(),
+                time()
+            )
+        );
     }
 
     /**
      * @param $body
      * @param $css
      */
-    public function renderPage($body, $css)
+/*    public function renderPage($body, $css)
     {
         $html =
           '<html><head></head>'
             . '<body>'
-               . '<style>' . Pdf::prepareCss($css) . '</style>'
+               . '<style>' . $css
+               // . Pdf::prepareCss($css)
+               . '</style>'
                . $body
             . '</body>'
           . '</html>';
@@ -61,7 +117,7 @@ class Pdf extends DOMPDF
         }
         $this->load_html($html);
         $this->render();
-    }
+    }*/
 
     /**
      * Split up tables into multiple elements that each contain $rowsPerPage of all original rows
@@ -72,7 +128,7 @@ class Pdf extends DOMPDF
      *
      * @return array    All paginated tables from the document.
      */
-    private function paginateHtmlTables(DOMDocument $doc)
+/*    private function paginateHtmlTables(DOMDocument $doc)
     {
         $xpath     = new DOMXPath($doc);
         $tables    = $xpath->query('.//table');
@@ -142,7 +198,7 @@ class Pdf extends DOMPDF
         $div->setAttribute('style', 'page-break-before: always;');
         $before->parentNode->insertBefore($div, $before);
     }
-
+*/
     /**
      * Prepare the given css for rendering with DOMPDF, by removing or hiding all incompatible
      * styles
@@ -151,10 +207,12 @@ class Pdf extends DOMPDF
      *
      * @return string   A css-string that is ready to use for DOMPDF
      */
-    public static function prepareCss($css)
-    {
-        $css = preg_replace('/\*:\s*before\s*,\s*/', '', $css);
-        $css = preg_replace('/\*\s*:\s*after\s*\{[^\}]*\}/', '', $css);
-        return $css;
-    }
+
+//    public static function prepareCss($css)
+//    {
+//        $css = preg_replace('/\*:\s*before\s*,\s*/', '', $css);
+//        $css = preg_replace('/\*\s*:\s*after\s*\{[^\}]*\}/', '', $css);
+//        return $css;
+//    }
+
 }

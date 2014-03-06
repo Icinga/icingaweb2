@@ -1,0 +1,43 @@
+<?php
+
+use Icinga\Web\StyleSheet;
+
+?><!DOCTYPE html>
+<html>
+<head>
+<style>
+<?= StyleSheet::compileForPdf() ?>
+</style>
+
+</head>
+<body>
+<script type="text/php">
+// This attempt doesn't work :(
+if ( isset($pdf) ) 
+{
+	$w = $pdf->get_width();
+	$h = $pdf->get_height();
+	$font = Font_Metrics::get_font("helvetica");
+	$pdf->page_text($w -100, $h - 40, "Page {PAGE_NUM} of {PAGE_COUNT}", $font, 10, array(0,0,0));
+}
+
+</script>
+<?= $this->img('img/logo_icinga_big_dark.png', array('align' => 'right', 'width' => '150')) ?>
+<!--<div id="page-header">
+  <table>
+    <tr>
+      <td><?= $this->escape($this->title) ?></td>
+      <td style="text-align: right;"></td>
+    </tr>
+  </table>
+</div>-->
+<h1><?= $this->escape($this->title) ?></h1>
+<div id="col1" class="container">
+ <?= $this->render('inline.phtml') ?>
+</div>
+
+<div id="page-footer">
+  <div class="page-number"></div>
+</div>
+</body>
+</html>

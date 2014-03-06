@@ -42,9 +42,7 @@ use Icinga\Web\Widget\Tabs;
 use Icinga\Web\Url;
 use Icinga\Logger\Logger;
 use Icinga\Web\Request;
-
 use Icinga\File\Pdf;
-use \DOMDocument;
 use Icinga\Exception\ProgrammingError;
 
 /**
@@ -332,40 +330,8 @@ class ActionController extends Zend_Controller_Action
 
     protected function sendAsPdf()
     {
-        $this->_helper->layout()->setLayout('inline');
-        $body = $this->view->render(
-            $this->_request->getControllerName() . '/' . $this->_request->getActionName() . '.phtml'
-        );
-        if (!headers_sent()) {
-            $css = $this->view->getHelper('action')->action('stylesheet', 'static', 'application');
-
-            // load css fixes for pdf formatting mode
-            $publicDir = realpath(dirname($_SERVER['SCRIPT_FILENAME']));
-            $css .= file_get_contents($publicDir . '/css/pdf/pdf.css');
-
-            $pdf = new PDF();
-            if ($this->_request->getControllerName() === 'list') {
-                switch ($this->_request->getActionName()) {
-                    case 'notifications':
-                        $pdf->rowsPerPage = 7;
-                        break;
-                    case 'comments':
-                        $pdf->rowsPerPage = 7;
-                        break;
-                    default:
-                        $pdf->rowsPerPage = 11;
-                        break;
-                }
-            } else {
-                $pdf->paginateTable = false;
-            }
-            $pdf->renderPage($body, $css);
-            $pdf->stream(
-                $this->_request->getControllerName() . '-' . $this->_request->getActionName() . '-' . time() . '.pdf'
-            );
-        } else {
-            Logger::error('Could not send pdf-response, content already written to output.');
-        }
+        $pdf = new Pdf();
+        $pdf->renderControllerAction($this);
     }
 
     /**
