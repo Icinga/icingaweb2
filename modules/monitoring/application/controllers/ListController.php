@@ -188,9 +188,6 @@ class Monitoring_ListController extends MonitoringController
             'host_address'          =>  'Host Address',
             'host_last_check'       =>  'Last Host Check'
         ));
-
-        $this->view->piechart =
-            new PieChart(array(1,3,4,2));
     }
 
     /**
@@ -279,9 +276,9 @@ class Monitoring_ListController extends MonitoringController
     {
         $this->addTitleTab('statehistorysummary');
         $query = StateHistorySummary::fromRequest(
-           $this->_request, array('day', 'cnt_critical')
+            $this->_request, array('day', 'cnt_critical')
         )->getQuery()->order('day');
-        $query->paginate(365);
+        $query->limit(365);
         $this->view->summary = $query->fetchAll();
         $this->view->grid = new HistoryColorGrid();
         $this->handleFormatRequest($query);
