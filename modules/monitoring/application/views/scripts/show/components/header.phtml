@@ -20,7 +20,11 @@
       <?= $this->util()->getServiceStateName($object->service_state); ?><br />
       since <?= $this->timeSince($object->service_last_state_change) ?>
     </td>
-    <td><b>Service: <?= $this->escape($object->service_description) ?></b></td>
+    <td><b>Service: <?= $this->escape($object->service_description) ?></b>
+
+    <?= $this->render('show/components/statusIcons.phtml') ?>
+
+</td>
   </tr>
 <?php else: ?>
   <tr><td><!--<b>Host state</b>-->&nbsp;</td></tr>
