@@ -1,4 +1,8 @@
-<?php if (Icinga\Authentication\Manager::getInstance()->isAuthenticated()): ?>
+<?php
+
+use Icinga\Web\Url;
+
+if (Icinga\Authentication\Manager::getInstance()->isAuthenticated()): ?>
  <div id="header">
    <ul id="notifications"></ul>
    <div id="logo"><a href="<?= $this->href('/dashboard') ?>"><img src="<?= $this->href('img/logo_icinga-inv.png') ?>" class="logo" /></a>
@@ -25,7 +29,7 @@
   <?php echo $this->render('parts/navigation.phtml') ?>
  </div>
  <div id="main">
-  <div id="col1" class="container">
+  <div id="col1" class="container" data-icinga-url="<?= Url::fromRequest() ?>">
    <?= $this->render('inline.phtml') ?>
   </div>
   <div id="col2" class="container">
