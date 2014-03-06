@@ -566,6 +566,7 @@ class Monitoring_CommandController extends ActionController
      */
     public function enablenotificationsAction()
     {
+        $this->addTitleTab('Enable Notifications');
         $this->setSupportedParameters(array('host', 'service', 'global'));
         $form = new SingleArgumentCommandForm();
         $form->setRequest($this->getRequest());
@@ -608,6 +609,7 @@ class Monitoring_CommandController extends ActionController
      */
     public function scheduledowntimeAction()
     {
+        $this->addTitleTab('Schedule Downtime');
         $this->setSupportedParameters(array('host', 'service'));
         $form = new ScheduleDowntimeForm();
         $form->setRequest($this->getRequest());
