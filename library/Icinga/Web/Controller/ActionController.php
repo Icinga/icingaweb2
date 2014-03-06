@@ -310,7 +310,8 @@ class ActionController extends Zend_Controller_Action
             }
         }
         if ($this->_request->getParam('format') === 'pdf' && $this->_request->getControllerName() !== 'static') {
-            $this->sendAsPdfAndDie();
+            $this->sendAsPdf();
+            exit;
         }
 
 
@@ -328,7 +329,7 @@ class ActionController extends Zend_Controller_Action
         $this->_helper->layout()->moduleEnd = "</div>\n";
     }
 
-    protected function sendAsPdfAndDie()
+    protected function sendAsPdf()
     {
         $this->_helper->layout()->setLayout('inline');
         $body = $this->view->render(
@@ -364,7 +365,6 @@ class ActionController extends Zend_Controller_Action
         } else {
             Logger::error('Could not send pdf-response, content already written to output.');
         }
-        die();
     }
 
     /**
