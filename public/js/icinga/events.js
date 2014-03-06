@@ -186,6 +186,7 @@
             var $a = $(this);
             var href = $a.attr('href');
             var $li;
+            var targetId;
             if ($a.attr('target') === '_blank') {
                 return true;
             }
@@ -207,13 +208,16 @@
                $target = $container;
             }
 
-            if ($a.closest('table').length) {
+            if ($a.closest('table.action').length) {
                 $target = $('#col2');
                 icinga.events.layout2col();
             }
             if ($a.closest('[data-base-target]').length) {
-                $target = $('#' + $a.closest('[data-base-target]').data('baseTarget'));
-                icinga.events.layout2col();
+                targetId = $a.closest('[data-base-target]').data('baseTarget');
+                $target = $('#' + targetId);
+                if (targetId === 'col2') {
+                    icinga.events.layout2col();
+                }
             }
             if ($a.closest('.tree').length) {
                 $li = $a.closest('li');
