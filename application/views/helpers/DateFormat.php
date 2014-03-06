@@ -133,7 +133,7 @@ class Zend_View_Helper_DateFormat extends Zend_View_Helper_Abstract
     public function getDateFormat()
     {
         return $this->request->getUser()->getPreferences()->get(
-            'app.dateFormat', Config::app()->global->get('dateFormat', 'd/m/Y')
+            'app.dateFormat', Config::app()->global !== null ? Config::app()->global->get('dateFormat', 'd/m/Y') : 'd/m/Y'
         );
     }
 
@@ -145,7 +145,7 @@ class Zend_View_Helper_DateFormat extends Zend_View_Helper_Abstract
     public function getTimeFormat()
     {
         return $this->request->getUser()->getPreferences()->get(
-            'app.timeFormat', Config::app()->global->get('timeFormat', 'g:i A')
+            'app.timeFormat', Config::app()->global !== null ? Config::app()->global->get('timeFormat', 'g:i A') : 'g:i A'
         );
     }
 
