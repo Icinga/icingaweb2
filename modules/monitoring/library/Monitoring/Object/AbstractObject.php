@@ -163,7 +163,6 @@ abstract class AbstractObject
                 'host_name',
                 'service_description',
                 'timestamp',
-//                'raw_timestamp',
                 'state',
                 'attempt',
                 'max_attempts',
