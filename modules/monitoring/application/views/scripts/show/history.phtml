@@ -32,21 +32,21 @@ $states = array(
 
 
 ?><div class="controls">
-<?= $this->tabs->render($this); ?>
-<a href="<?= $this->href('monitoring/list/eventhistory', $params); ?>">All events for <?= $title ?></a>
-<h1>History</h1>
+<?= $this->render('show/components/header.phtml') ?>
+<a href="<?= $this->href('monitoring/list/eventhistory', $params); ?>">All events for <?= $title ?></a><br />
+<?=  $this->paginationControl($this->history, null, null, array('preserve' => $this->preserve)); ?>
 </div>
 
-<?php if($history->count() === 0): ?>
+<?php if($this->history->count() === 0): ?>
 No History Available For This Object
 </div>
 <?php return; endif ?>
 
-<?=  $this->paginationControl($history, null, null, array('preserve' => $this->preserve)); ?>
+
 <table class="action">
 <tbody>
 
-<?php foreach ($history as $event):
+<?php foreach ($this->history as $event):
 if (array_key_exists($event->state, $states[$event->object_type])) {
     $state_class = $states[$event->object_type][$event->state];
 } else {
@@ -54,15 +54,15 @@ if (array_key_exists($event->state, $states[$event->object_type])) {
 }
 ?>
   <tr class="state <?= $state_class ?>">
-    <td class="state"><?= $this->timeSince($event->raw_timestamp) ?></td>
+    <td class="state"><?= $this->timeSince($event->timestamp) ?></td>
     <td>
 <?php
 
 $output = $this->ticket_pattern ? preg_replace(
     $this->ticket_pattern,
     $ticket_link,
-    $this->pluginOutput($event->output)
-) : $this->pluginOutput($event->output);
+    $this->escape($event->output)
+) : $this->escape($event->output);
 
 
 switch ($event->type) {
@@ -103,7 +103,7 @@ switch ($event->type) {
         $title  = 'Downtime End';
         break;
 }
-echo $this->img('img/icons/' . $icon . '.png', array('title' => $title)) . ' ';
+echo $this->icon($icon . '.png', $title) . ' ';
 
 if ($object instanceof Service): ?>
   <a href="<?= $this->href('monitoring/show/service', array(
