@@ -283,6 +283,21 @@ class ActionController extends Zend_Controller_Action
 
         $this->addModuleContainer();
 
+        if ($user = $this->getRequest()->getUser()) {
+            // Cast preference app.showBenchmark to bool because preferences loaded from a preferences storage are
+            // always strings
+            if ((bool) $user->getPreferences()->get('app.showBenchmark', false) === true) {
+                Benchmark::measure('Response ready');
+                $this->_helper->layout()->benchmark = $this->renderBenchmark();
+            }
+        }
+
+        if ($this->_request->getParam('format') === 'pdf') {
+            $this->_helper->layout()->setLayout('pdf');
+            $this->sendAsPdf();
+            exit;
+        }
+
         if ($this->_request->isXmlHttpRequest() || $this->getParam('view') === 'compact') {
             $this->_helper->layout()->setLayout('inline');
         }
@@ -301,20 +316,6 @@ class ActionController extends Zend_Controller_Action
         if ($this->autorefreshInterval !== null) {        
             header('X-Icinga-Refresh: ' . $this->autorefreshInterval);
         }
-        if ($user = $this->getRequest()->getUser()) {
-            // Cast preference app.showBenchmark to bool because preferences loaded from a preferences storage are
-            // always strings
-            if ((bool) $user->getPreferences()->get('app.showBenchmark', false) === true) {
-                Benchmark::measure('Response ready');
-                $this->_helper->layout()->benchmark = $this->renderBenchmark();
-            }
-        }
-        if ($this->_request->getParam('format') === 'pdf' && $this->_request->getControllerName() !== 'static') {
-            $this->sendAsPdf();
-            exit;
-        }
-
-
     }
 
     protected function addModuleContainer()
