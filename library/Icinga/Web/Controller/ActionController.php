@@ -281,6 +281,8 @@ class ActionController extends Zend_Controller_Action
     {
         Benchmark::measure('Action::postDispatch()');
 
+        $this->addModuleContainer();
+
         if ($this->_request->isXmlHttpRequest() || $this->getParam('view') === 'compact') {
             $this->_helper->layout()->setLayout('inline');
         }
@@ -311,7 +313,11 @@ class ActionController extends Zend_Controller_Action
             $this->sendAsPdfAndDie();
         }
 
-        // Module container
+
+    }
+
+    protected function addModuleContainer()
+    {
         $module_name = $this->_request->getModuleName();
         $this->_helper->layout()->moduleStart =
         '<div class="icinga-module module-'
