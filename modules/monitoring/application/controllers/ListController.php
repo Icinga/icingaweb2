@@ -169,7 +169,6 @@ class Monitoring_ListController extends MonitoringController
         ))->activate('services');
         $this->view->title = 'Service Status';
         $this->setAutorefreshInterval(10);
-        $this->compactView = 'services-compact';
         $query = $this->fetchServices();
         $this->applyRestrictions($query);
         $this->view->services = $query->paginate();
