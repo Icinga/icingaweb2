@@ -397,8 +397,7 @@ class GeneralForm extends Form
                 'type'      => 'submit',
                 'escape'    => false,
                 'value'     => '1',
-                'class'     => 'btn btn-cta btn-common',
-                'label'     => '<i class="icinga-icon-save"></i> Save Changes'
+                'label'     => '<img src="/icingaweb/img/icons/save.png" title="Save Changes" /> Save Changes'
             )
         );
     }

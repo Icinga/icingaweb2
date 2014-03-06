@@ -114,10 +114,9 @@ class ReorderForm extends Form
                 array(
                     'type'      => 'submit',
                     'escape'    => false,
-                    'class'     => 'btn btn-cta btn-wide',
                     'value'     => 'btn_' . $this->getBackendName() . '_reorder_up',
                     'name'      =>  'btn_' . $this->getBackendName() . '_reorder_up',
-                    'label'     =>  '<i class="icinga-icon-up"></i> Move up in authentication order',
+                    'label'     =>  '<img src="/icingaweb/img/icons/up.png" title="Move up in authentication order" />',
                 )
             );
         }
@@ -137,10 +136,9 @@ class ReorderForm extends Form
                 array(
                     'type'      => 'submit',
                     'escape'    => false,
-                    'class'     => 'btn btn-cta btn-wide',
                     'value'     => 'btn_' . $this->getBackendName() . '_reorder_down',
                     'name'      =>  'btn_' . $this->getBackendName() . '_reorder_down',
-                    'label'     =>  '<i class="icinga-icon-down"></i> Move down in authentication order',
+                    'label'     =>  '<img src="/icingaweb/img/icons/down.png" title="Move down in authentication order" />',
 
                 )
             );

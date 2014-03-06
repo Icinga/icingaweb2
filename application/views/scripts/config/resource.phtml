@@ -3,47 +3,35 @@ use Icinga\Web\Url;
 $createResource = $this->href('/config/createresource');
 ?>
 <div class="controls">
-<?= $this->tabs->render($this); ?>
+    <?= $this->tabs->render($this); ?>
 </div>
 
 <div class="content">
-<?php if (isset($this->messageBox)): ?>
-  <?= $this->messageBox->render() ?>
-<?php endif ?>
+    <?php if (isset($this->messageBox)): ?>
+        <?= $this->messageBox->render() ?>
+    <?php endif ?>
 
-<div class="panel panel-default">
-  <div class="panel-heading panel-title">
-    Create Resource
-  </div>
-  <div class="panel-body">
-    <a href="<?= $createResource ?>"><i class="icinga-icon-create"></i> Create A New Resource</a><br/>
-  </div>
-</div>
+    <h1>Create Resource</h1>
+    <p><a href="<?= $createResource ?>"><?= $this->img('img/icons/create.png'); ?> Create A New Resource</a></p>
 
-<?php foreach ($this->resources as $name => $resource): ?>
-<div class="panel panel-default">
-
-  <div class="panel-heading panel-title">
-    <b>Resource: </b>  <?= $this->escape($name); ?>
-    <br/>
-  </div>
-  <div class="panel-body">
-
-    <a href="<?= $this->href('config/editresource', array('resource' => $name));?>">
-        <i class="icinga-icon-edit"></i> Edit This Resource
-    </a>
-    <br/>
-
-    <?php if (count($this->resources) > 1): ?>
-    <a href="<?= $this->href('config/removeresource', array('resource' => $name));?>">
-        <i class="icinga-icon-remove"></i> Remove This Resource
-    </a>
-    <br/>
-    <?php endif; ?>
-
-  </div>
-
-</div>
-<?php endforeach; ?>
+    <table class="configTable">
+        <?php foreach ($this->resources as $name => $resource): ?>
+            <tr>
+                <td class="configTable">
+                    <div>
+                        <b>Resource:</b>&ensp;<?= $this->escape($name); ?>
+                    </div>
+                    <div>
+                        <a href="<?= $this->href('config/editresource', array('resource' => $name));?>">
+                            <?= $this->img('img/icons/edit.png'); ?> Edit</a>&emsp;
+                        <?php if (count($this->resources) > 1): ?>
+                            <a href="<?= $this->href('config/removeresource', array('resource' => $name));?>">
+                                <?= $this->img('img/icons/remove.png'); ?> Remove</a>&emsp;
+                        <?php endif; ?>
+                    </div>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+    </table>
 </div>
 
