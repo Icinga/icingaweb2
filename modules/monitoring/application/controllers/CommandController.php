@@ -36,6 +36,7 @@ use Icinga\Module\Monitoring\DataView\ServiceStatus;
 use Icinga\Module\Monitoring\Form\Command\DisableNotificationWithExpireForm;
 use Icinga\Module\Monitoring\Form\Command\SingleArgumentCommandForm;
 use Icinga\Web\Form;
+use Icinga\Web\Url;
 use Icinga\Web\Controller\ActionController;
 use Icinga\Protocol\Commandpipe\CommandPipe;
 use Icinga\Exception\ConfigurationError;
@@ -92,6 +93,14 @@ class Monitoring_CommandController extends ActionController
     public function issetForm()
     {
         return $this->form !== null && ($this->form instanceof Form);
+    }
+
+    protected function addTitleTab($action)
+    {
+        $this->getTabs()->add($action, array(
+            'title' => ucfirst($action),
+            'url' => Url::fromRequest()
+        ))->activate($action);
     }
 
     /**
@@ -927,6 +936,7 @@ class Monitoring_CommandController extends ActionController
      */
     public function acknowledgeproblemAction()
     {
+        $this->addTitleTab('Acknowledge Problem');
         $this->setSupportedParameters(array('host', 'service'));
         $form = new AcknowledgeForm();
         $form->setRequest($this->getRequest());

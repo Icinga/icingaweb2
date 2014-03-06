@@ -1,35 +1,25 @@
-
+<div class="controls">
+<?= $this->tabs ?>
+</div>
+<div class="content">
 <?php if (isset($this->objects) && !empty($this->objects) && isset($this->objects[0]->host_name)): ?>
-<table class="table table-bordered table-striped table-condensed">
-  <legend>Affected Objects</legend>
+<table class="objectlist">
   <thead>
     <tr>
-      <th>
-          <i class="icinga-icon-host"></i>
-          Host Name
-      </th>
-      <th>
-          <i class="icinga-icon-service"></i>
-          Service Name
-      </th>
+      <th><?= $this->img('img/icons/host.png') ?> Host</th>
+      <th><?= $this->img('img/icons/service.png') ?> Service</th>
     </tr>
   </thead>
     <tbody>
 <?php foreach ($this->objects as $object): ?>
       <tr>
         <td><?= $object->host_name; ?></td>
-        <td><?= (isset($object->service_description) ? $object->service_description : ''); ?></td>
+        <td><?= (isset($object->service_description) ? $object->service_description : '') ?></td>
       </tr>
 <?php endforeach; ?>
     </tbody>
 </table>
 
-<?php endif; ?>
-
-<?php if ($this->form): ?>
-<div>
-  <?= $this->form; ?>
-  <div class="clearfix"></div>
+<?php endif ?>
+<?= $this->form ?>
 </div>
-<?php endif; ?>
-
