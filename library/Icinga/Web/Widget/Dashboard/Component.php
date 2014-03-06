@@ -95,7 +95,7 @@ class Component implements Widget
     private $template =<<<'EOD'
 
     <div class="container" data-icinga-url="{URL}">
-        <h1><a href="{FULL_URL}">{TITLE}</a></h1>
+        <h1><a href="{FULL_URL}" data-base-target="col1">{TITLE}</a></h1>
         <noscript>
             <iframe src="{URL}" style="height:100%; width:99%" frameborder="no"></iframe>
         </noscript>
