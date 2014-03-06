@@ -287,6 +287,11 @@
             if (windowId) {
                 this.icinga.ui.setWindowId(windowId);
             }
+            
+            // Remove 'impact' class if there was such
+            if (req.$target.hasClass('impact')) {
+                req.$target.removeClass('impact');
+            }
 
             // Handle search requests, still hardcoded
             if (req.url === '/search' &&
