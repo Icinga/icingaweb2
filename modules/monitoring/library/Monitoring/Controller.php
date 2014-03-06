@@ -112,9 +112,7 @@ class Controller extends ActionController
             $this->_helper->viewRenderer($this->compactView);
         }
 
-
-        if ($this->_getParam('format') === 'sql'
-            && IcingaConfig::app()->global->get('environment', 'production') === 'development') {
+        if ($this->_getParam('format') === 'sql') {
             echo '<pre>'
                 . htmlspecialchars(wordwrap($query->dump()))
                 . '</pre>';
