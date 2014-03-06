@@ -31,15 +31,15 @@ namespace Icinga\Web\Widget\Chart;
 
 use Icinga\Util\DateTimeFactory;
 use Icinga\Util\Color;
-use Icinga\Web\Widget\Widget;
-use \DateInterval;
-use \Zend_View_Abstract;
+use Icinga\Web\Widget\AbstractWidget;
+use DateInterval;
+use Zend_View_Abstract;
 
 /**
  * Display a colored grid that visualizes a set of values for each day
  * on a given time-frame.
  */
-class HistoryColorGrid implements Widget {
+class HistoryColorGrid extends AbstractWidget {
 
     const ORIENTATION_VERTICAL = 'vertical';
 
@@ -130,13 +130,13 @@ class HistoryColorGrid implements Widget {
             $entry = $this->data[$day];
             return'<a ' .
                 'style="background-color:' . $this->calculateColor($entry['value']) . ';" ' .
-                'title="' . $entry['caption'] . '"; ' .
+                'title="' . $entry['caption'] . '" ' .
                 'href="'  . $entry['url'] . '"' .
-            '></a>';
+            '>&nbsp;</a>';
         } else {
             return '<a ' .
                 'style="background-color:' . $this->calculateColor(0) . ';" ' .
-                'title="No entries for ' . $day . '"; ' .
+                'title="No entries for ' . $day . '" ' .
             '></a>';
         }
     }
