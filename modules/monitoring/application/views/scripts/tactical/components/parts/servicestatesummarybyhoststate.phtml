@@ -1,18 +1,3 @@
-<?php
-
-$services_warning_handled = $services_warning_handled_active + $services_warning_handled_passive + $services_warning_handled_not_checked;
-$services_warning_unhandled = $services_warning_unhandled_active + $services_warning_unhandled_passive + $services_warning_unhandled_not_checked;
-$services_critical_handled = $services_critical_handled_active + $services_critical_handled_passive + $services_critical_handled_not_checked;
-$services_critical_unhandled = $services_critical_unhandled_active + $services_critical_unhandled_passive + $services_critical_unhandled_not_checked;
-$services_unknown_handled = $services_unknown_handled_active + $services_unknown_handled_passive + $services_unknown_handled_not_checked;
-$services_unknown_unhandled = $services_unknown_unhandled_active + $services_unknown_unhandled_passive + $services_unknown_unhandled_not_checked;
-
-$services_warning = $services_warning_handled + $services_warning_unhandled;
-$services_critical = $services_critical_handled + $services_critical_unhandled;
-$services_unknown = $services_unknown_handled + $services_unknown_unhandled;
-
-?>
-
 <?php if ($services_critical): ?>
 <div class="box entry state_critical <?= $services_critical_unhandled ? '' : 'handled'; ?>">
     <a href="<?= $this->href(
@@ -29,7 +14,7 @@ $services_unknown = $services_unknown_handled + $services_unknown_unhandled;
         <?= $services_critical_unhandled . ' ' . $this->translate('Unhandled'); ?>
     </a>
 <?php endif ?>
-<?php if ($services_critical_unhandled_passive): ?>
+<?php if ($services_critical_passive): ?>
     <a href="<?= $this->href(
         'monitoring/list/services',
         array(
@@ -40,21 +25,21 @@ $services_unknown = $services_unknown_handled + $services_unknown_unhandled;
         )
     ); ?>">
         <?php
-            if ($services_critical_unhandled_passive > 1) {
+            if ($services_critical_passive > 1) {
                 printf(
                     $this->translate('%d are passively checked'),
-                    $services_critical_unhandled_passive
+                    $services_critical_passive
                 );
             } else {
                 printf(
                     $this->translate('%d is passively checked'),
-                    $services_critical_unhandled_passive
+                    $services_critical_passive
                 );
             }
         ?>
     </a>
 <?php endif ?>
-<?php if ($services_critical_unhandled_not_checked): ?>
+<?php if ($services_critical_not_checked): ?>
     <a href="<?= $this->href(
         'monitoring/list/services',
         array(
@@ -65,15 +50,15 @@ $services_unknown = $services_unknown_handled + $services_unknown_unhandled;
         )
     ); ?>">
         <?php
-            if ($services_critical_unhandled_not_checked > 1) {
+            if ($services_critical_not_checked > 1) {
                 printf(
                     $this->translate('%d are not checked at all'),
-                    $services_critical_unhandled_not_checked
+                    $services_critical_not_checked
                 );
             } else {
                 printf(
                     $this->translate('%d is not checked at all'),
-                    $services_critical_unhandled_not_checked
+                    $services_critical_not_checked
                 );
             }
         ?>
@@ -97,7 +82,7 @@ $services_unknown = $services_unknown_handled + $services_unknown_unhandled;
         <?= $services_warning_unhandled . ' ' . $this->translate('Unhandled'); ?>
     </a>
 <?php endif ?>
-<?php if ($services_warning_unhandled_passive): ?>
+<?php if ($services_warning_passive): ?>
     <a href="<?= $this->href(
         'monitoring/list/services',
         array(
@@ -108,21 +93,21 @@ $services_unknown = $services_unknown_handled + $services_unknown_unhandled;
         )
     ); ?>">
         <?php
-            if ($services_warning_unhandled_passive > 1) {
+            if ($services_warning_passive > 1) {
                 printf(
                     $this->translate('%d are passively checked'),
-                    $services_warning_unhandled_passive
+                    $services_warning_passive
                 );
             } else {
                 printf(
                     $this->translate('%d is passively checked'),
-                    $services_warning_unhandled_passive
+                    $services_warning_passive
                 );
             }
         ?>
     </a>
 <?php endif ?>
-<?php if ($services_warning_unhandled_not_checked): ?>
+<?php if ($services_warning_not_checked): ?>
     <a href="<?= $this->href(
         'monitoring/list/services',
         array(
@@ -133,15 +118,15 @@ $services_unknown = $services_unknown_handled + $services_unknown_unhandled;
         )
     ); ?>">
         <?php
-            if ($services_warning_unhandled_not_checked > 1) {
+            if ($services_warning_not_checked > 1) {
                 printf(
                     $this->translate('%d are not checked at all'),
-                    $services_warning_unhandled_not_checked
+                    $services_warning_not_checked
                 );
             } else {
                 printf(
                     $this->translate('%d is not checked at all'),
-                    $services_warning_unhandled_not_checked
+                    $services_warning_not_checked
                 );
             }
         ?>
@@ -165,7 +150,7 @@ $services_unknown = $services_unknown_handled + $services_unknown_unhandled;
         <?= $services_unknown_unhandled . ' ' . $this->translate('Unhandled'); ?>
     </a>
 <?php endif ?>
-<?php if ($services_unknown_unhandled_passive): ?>
+<?php if ($services_unknown_passive): ?>
     <a href="<?= $this->href(
         'monitoring/list/services',
         array(
@@ -176,21 +161,21 @@ $services_unknown = $services_unknown_handled + $services_unknown_unhandled;
         )
     ); ?>">
         <?php
-            if ($services_unknown_unhandled_passive > 1) {
+            if ($services_unknown_passive > 1) {
                 printf(
                     $this->translate('%d are passively checked'),
-                    $services_unknown_unhandled_passive
+                    $services_unknown_passive
                 );
             } else {
                 printf(
                     $this->translate('%d is passively checked'),
-                    $services_unknown_unhandled_passive
+                    $services_unknown_passive
                 );
             }
         ?>
     </a>
 <?php endif ?>
-<?php if ($services_unknown_unhandled_not_checked): ?>
+<?php if ($services_unknown_not_checked): ?>
     <a href="<?= $this->href(
         'monitoring/list/services',
         array(
@@ -201,15 +186,15 @@ $services_unknown = $services_unknown_handled + $services_unknown_unhandled;
         )
     ); ?>">
         <?php
-            if ($services_unknown_unhandled_not_checked > 1) {
+            if ($services_unknown_not_checked > 1) {
                 printf(
                     $this->translate('%d are not checked at all'),
-                    $services_unknown_unhandled_not_checked
+                    $services_unknown_not_checked
                 );
             } else {
                 printf(
                     $this->translate('%d is not checked at all'),
-                    $services_unknown_unhandled_not_checked
+                    $services_unknown_not_checked
                 );
             }
         ?>
