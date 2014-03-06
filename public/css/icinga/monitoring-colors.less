@@ -271,150 +271,131 @@ a.critical {
 }
 */
 
+/* Generic box element */
 
-/* Generic span.state */
-span.state {
-  color: white;
-  border-radius: 0.5em;
-  -moz-border-radius: 0.5em;
-  padding: 0.3em 0.5em 0.3em 0.5em;
-  margin: 0.2em 0.5em 0.2em 0.5em;
-}
-
-/* span.state title element */
-span.state caption {
-  font-size: 125%;
-}
-
-/* span.state Subtitle element */
-span.state.subtitle {
-  color: black;
-}
-
-span.state.ok, span.state.up {
-  background-color: @colorOk;
-}
-
-span.state.pending {
-  background-color: @colorPending;
-}
-
-span.state.warning {
-  background-color: @colorWarning;
-}
-
-span.state.warning.handled {
-  background-color: @colorWarningHandled;
-}
-
-span.state.critical, span.state.down {
-  background-color: @colorCritical;
-}
-
-span.state.critical.handled, span.state.down.handled {
-  background-color: @colorCriticalHandled;
-}
-
-span.state.unknown, span.state.unreachable {
-  background-color: @colorUnknown;
-}
-
-span.state.unknown.handled, span.state.unreachable.handled {
-  background-color: @colorUnknownHandled;
-}
-
-span.state.invalid {
-  background-color: @colorInvalid;
-}
-
-span.state.check_active {
-  background-color: @colorActiveCheck;
-}
-
-span.state.check_passive {
-  background-color: @colorPassiveCheck;
-}
-
-span.state.check_disabled {
-  background-color: @colorDisabledCheck;
-}
-
-span.state.enabled {
-  background-color: @colorEnabled;
-}
-
-span.state.disabled {
-  background-color: @colorDisabled;
-}
-
-span.state.flapping {
-  background-color: @colorFlapping;
-}
-
-.summary a {
-  color: white;
+.boxview a {
   text-decoration: none;
 }
 
-.summary {
-  font-size: 0.85em;
-  vertical-align: top;
-  text-align: left;
-}
-
-.summary td {
-  vertical-align: top;
-}
-.summary > span.state {
-  border: 1px solid #555;
-  color: black;
-}
-
-.summary strong a {
-  color: black;
-}
-
-.summary span.state.handled a {
-  color: #333;
-}
-
-.summary span.state.disabled > a {
-  color: #333;
-}
-
-.summary span.state.check_disabled > a {
-  color: #333;
-}
-
-.summary span.state {
-  width: 26em;
-  vertical-align: top;
+.boxview > div.box {
+  width: 28em;
   text-align: center;
+  vertical-align: top;
   display: inline-block;
+  padding: 0.5em;
+  margin: 0.5em;
+  
+  background: #555;
+  border-radius: 0.5em;
+  -moz-border-radius: 0.5em;
 }
 
-.summary span.state span.state {
-  width: 12em;
+/* Box caption */
+.boxview div.box h2 {
+  margin: 0.5em 0 1em;
+  
+  color: white;
+  font-weight: bold;
+}
+
+/* Box body of contents */
+.boxview div.box.contents {
+  background: #eee;
+  border-radius: 0.5em;
+  -moz-border-radius: 0.5em;
+}
+
+.boxview div.box.contents table {
+  width: 100%;
+}
+
+.boxview div.box.contents td {
+  width: 13em;
+  vertical-align: top;
+}
+
+/* Box separator */
+.boxview div.box-separator:first-child {
+  border-top-width: 0;
+  
+  border-top-left-radius: 0.5em;
+  border-top-right-radius: 0.5em;
+  -moz-border-top-left-radius: 0.5em;
+  -moz-border-top-right-radius: 0.5em;
+}
+
+.boxview div.box-separator {
+  border-style: solid;
+  border-color: #555;
+  border-top-width: 1px;
+  border-bottom-width: 1px;
+  border-left-width: 0;
+  border-right-width: 0;
+  background-color: #bbb;
+}
+
+/* Box entry */
+.boxview div.box.entry {
+  min-height: 3em;
+  margin: 0.25em;
   font-size: 0.9em;
-}
-
-.summary span.state span.state span.state {
-  width: 12em;
-}
-
-span.state a {
   white-space: nowrap;
+  color: black;
 }
 
-span.state.handled {
-  color: #333;
+/* Any line of a box entry */
+.boxview div.box.entry a {
+  display: block;
+  
+  color: inherit;
 }
 
-span.state a.active {
-  text-decoration: underline;
+.boxview div.box.entry a:hover {
+  color: #666;
 }
 
-/* End of generic span.state */
+/* First line of a box entry */
+.boxview div.box.entry a:first-child {
+  font-size: 1.1em;
+}
+
+/* End of generic box element */
+
+
+/* Monitoring box element styles */
+
+div.box.entry.state_up, div.box.entry.state_ok {
+  border-left: 0.8em solid @colorOk;
+}
+
+div.box.entry.state_pending {
+  border-left: 0.8em solid @colorPending;
+}
+
+div.box.entry.state_down, div.box.entry.state_critical {
+  border-left: 0.8em solid @colorCritical;
+  background-color: @colorCritical;
+  color: white;
+}
+
+div.box.entry.state_warning {
+  border-left: 0.8em solid @colorWarning;
+  background-color: @colorWarning;
+  color: white;
+}
+
+div.box.entry.state_unreachable, div.box.entry.state_unknown {
+  border-left: 0.8em solid @colorUnknown;
+  background-color: @colorUnknown;
+  color: white;
+}
+
+div.box.entry.handled {
+  background-color: transparent;
+  color: inherit;
+}
+
+/* End of monitoring box element styles */
 
 
 .controls {
