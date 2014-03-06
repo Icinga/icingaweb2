@@ -98,7 +98,7 @@ foreach ($services as $service):
       <?php endif ?>
 <a href="<?= $serviceLink ?>"><?= $service->service_display_name ?></a> on <a href="<?= $hostLink ?>"><?= $service->host_name; ?>
 <?php if ($service->host_state != 0): ?>
-(<?= ucfirst($helper->monitoringState($service, 'host')); ?>)
+ (<?= ucfirst($helper->monitoringState($service, 'host')); ?>)
 <?php endif ?>
 </a><br />
         <p class="pluginoutput"><?= $this->escape(substr(strip_tags($service->service_output), 0, 10000)); ?></p>
