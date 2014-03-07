@@ -237,7 +237,12 @@ class Monitoring_ConfigController extends BaseConfigController {
         $form = new CreateInstanceForm();
         $form->setRequest($this->getRequest());
         if ($form->isSubmittedAndValid()) {
-            $instanceConfig = IcingaConfig::module('monitoring', 'instances')->toArray();
+            $instanceConfig = IcingaConfig::module('monitoring', 'instances');
+            if ($instanceConfig === null) {
+                $instanceConfig = array();
+            } else {
+                $instanceConfig = $instanceConfig->toArray();
+            }
             $instanceConfig[$form->getInstanceName()] = $form->getConfig()->toArray();
             if ($this->writeConfiguration(new Zend_Config($instanceConfig), 'instances')) {
                 $this->addSuccessMessage('Instance Creation Succeeded');
@@ -256,8 +261,14 @@ class Monitoring_ConfigController extends BaseConfigController {
      */
     private function writeConfiguration($config, $file)
     {
+        $configFile = IcingaConfig::module('monitoring', $file);
+        if ($configFile === null) {
+            throw new Exception('Configuration file is missing!');
+        } else {
+            $configFile = $configFile->getConfigFile();
+        }
         $writer = new PreservingIniWriter(array(
-            'filename'  => IcingaConfig::module('monitoring', $file)->getConfigFile(),
+            'filename'  => $configFile,
             'config'    => $config
         ));
 
