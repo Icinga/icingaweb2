@@ -237,8 +237,8 @@ a.critical {
 
 /* Box caption */
 .boxview div.box h2 {
-  margin-top: 0;
-  margin-bottom: 0.4em;
+  margin-top: 0.2em;
+  margin-bottom: 0.6em;
 
   color: white;
   font-weight: bold;
@@ -246,7 +246,7 @@ a.critical {
 
 .boxview div.box h3 {
   margin-top: 0;
-  margin-bottom: 0.4em;
+  margin-bottom: 0.6em;
   font-size: 0.8em;
   
   color: #eee;
@@ -254,7 +254,7 @@ a.critical {
 
 /* Box body of contents */
 .boxview div.box.contents {
-  background: #eee;
+  background: #fbfbfb;
   border-radius: 0.4em;
   -moz-border-radius: 0.4em;
 }
@@ -279,12 +279,17 @@ a.critical {
 }
 
 .boxview div.box-separator {
-  border-style: solid;
-  border-color: #555;
+  font-size: 0.8em;
+  padding: 0.4em 0 0.4em;
   border-top-width: 1px;
   border-bottom-width: 1px;
   border-left-width: 0;
   border-right-width: 0;
+  
+  font-weight: bold;
+  letter-spacing: 0.1em;
+  border-style: solid;
+  border-color: #555;
   background-color: #bbb;
 }
 
@@ -321,28 +326,30 @@ a.critical {
 
 /* Monitoring box element styles */
 
+/* Host- and Servicegroup element styles */
+
 div.box.entry.state_up, div.box.entry.state_ok {
-  border-left: 0.5em solid @colorOk;
+  border-left: 1em solid @colorOk;
 }
 
 div.box.entry.state_pending {
-  border-left: 0.5em solid @colorPending;
+  border-left: 1em solid @colorPending;
 }
 
 div.box.entry.state_down, div.box.entry.state_critical {
-  border-left: 0.5em solid @colorCritical;
+  border-left: 1em solid @colorCritical;
   background-color: @colorCritical;
   color: white;
 }
 
 div.box.entry.state_warning {
-  border-left: 0.5em solid @colorWarning;
+  border-left: 1em solid @colorWarning;
   background-color: @colorWarning;
   color: white;
 }
 
 div.box.entry.state_unreachable, div.box.entry.state_unknown {
-  border-left: 0.5em solid @colorUnknown;
+  border-left: 1em solid @colorUnknown;
   background-color: @colorUnknown;
   color: white;
 }
@@ -351,6 +358,27 @@ div.box.entry.handled {
   background-color: transparent;
   color: inherit;
 }
+
+/* Tactical overview element styles */
+
+div.tactical div.box {
+  min-height: 15em;
+}
+
+div.box.monitoringfeatures div.box-separator {
+  color: white;
+  background-color: @colorOk;
+}
+
+div.box.monitoringfeatures div.feature-highlight {
+  background-color: @colorCritical;
+}
+
+div.box.monitoringfeatures a.feature-highlight {
+  font-weight: bold;
+}
+
+/* Contactgroup element styles */
 
 div.box.contactgroup {
   width: 18em;
@@ -367,7 +395,7 @@ div.box.contactgroup div.box.entry img {
   margin: 0.4em;
   float: left;
   
-  border: 2px solid white;
+  border: 2px solid LightGrey;
 }
 
 div.box.contactgroup div.box.entry a {

@@ -1,7 +1,8 @@
+<?php if (!$this->compact): ?>
 <div class="controls">
-  <?= $this->tabs ?>
+    <?= $this->tabs ?>
 </div>
-
+<?php endif ?>
 <div class="content">
     <div class="boxview" data-base-target="col2">
 <?php foreach ($groupData as $groupName => $groupInfo): ?>

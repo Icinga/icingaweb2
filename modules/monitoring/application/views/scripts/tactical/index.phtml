@@ -1,4 +1,9 @@
-<div class="content">
+<?php if (!$this->compact): ?>
+<div class="controls">
+    <?= $this->tabs ?>
+</div>
+<?php endif ?>
+<div class="content tactical">
     <div class="boxview" data-base-target="col2">
         <?= $this->render('tactical/components/problem_hosts.phtml'); ?>
         <?= $this->render('tactical/components/ok_hosts.phtml'); ?>

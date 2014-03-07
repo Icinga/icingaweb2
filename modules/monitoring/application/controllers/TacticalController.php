@@ -4,11 +4,20 @@
 
 use Icinga\Module\Monitoring\Controller as MonitoringController;
 use Icinga\Module\Monitoring\DataView\StatusSummary;
+use Icinga\Web\Url;
 
 class Monitoring_TacticalController extends MonitoringController
 {
     public function indexAction()
     {
+        $this->getTabs()->add(
+            'tactical_overview',
+            array(
+                'title' => 'Tactical Overview',
+                'url'   => Url::fromPath('monitoring/tactical')
+            )
+        )->activate('tactical_overview');
+
         $this->view->statusSummary = StatusSummary::fromRequest(
             $this->_request,
             array(
