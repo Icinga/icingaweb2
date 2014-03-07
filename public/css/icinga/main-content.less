@@ -29,6 +29,8 @@ a {
   color: white;
   line-height: 2.5em;
   padding-left: 3em;
+  background-repeat: no-repeat;
+  background-position: 1em center;
 }
 
 #notifications > li.warning {
@@ -36,9 +38,13 @@ a {
 }
 #notifications > li.error {
   background-color: @colorCritical;
-  background-image: url(../img/icons/error_inv.png);
-  background-repeat: no-repeat;
-  background-position: 1em center;
+  background-image: url(../img/icons/error_white.png);
+}
+
+#notifications > li.success {
+  background-color: #fe6;
+  background-image: url(../img/icons/success.png);
+  color: #333;
 }
 /** END of Notifications **/
 
