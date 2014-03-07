@@ -18,8 +18,11 @@ foreach ($summary as $entry) {
         'url'     => $this->href(
             'monitoring/list/eventhistory',
             array(
-                'timestamp<' => strtotime($day . ' 23:59:59'),
-                'timestamp>' => strtotime($day . ' 00:00:00')
+                'timestamp<'  => strtotime($day . ' 23:59:59'),
+                'timestamp>'  => strtotime($day . ' 00:00:00'),
+                'object_type' => 'service',
+                'state'       => '2',
+                'type'        => 'hard_state,soft_state'
             )
         )
     );

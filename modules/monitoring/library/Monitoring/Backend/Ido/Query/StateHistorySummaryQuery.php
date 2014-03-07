@@ -34,8 +34,6 @@ class StateHistorySummaryQuery extends IdoQuery
             'sh.object_id = sho.object_id AND sho.is_active = 1',
             array()
         )->where('sh.state_time >= ?', '2013-11-20 00:00:00')
-        ->where('sh.state_type = 1')
-        ->where('sh.state = 2')
         ->group('DATE(sh.state_time)');
         $this->joinedVirtualTables = array('statehistory' => true);
     }
