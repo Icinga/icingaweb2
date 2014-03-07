@@ -342,10 +342,18 @@ div.box.entry.state_down, div.box.entry.state_critical {
   color: white;
 }
 
+div.box.entry.state_down a:hover, div.box.entry.state_critical a:hover {
+  color: #dcdcdc;
+}
+
 div.box.entry.state_warning {
   border-left: 1em solid @colorWarning;
   background-color: @colorWarning;
   color: white;
+}
+
+div.box.entry.state_warning a:hover {
+  color: #dcdcdc;
 }
 
 div.box.entry.state_unreachable, div.box.entry.state_unknown {
@@ -354,9 +362,17 @@ div.box.entry.state_unreachable, div.box.entry.state_unknown {
   color: white;
 }
 
+div.box.entry.state_unreachable a:hover, div.box.entry.state_unknown a:hover {
+  color: #dcdcdc;
+}
+
 div.box.entry.handled {
   background-color: transparent;
   color: inherit;
+}
+
+div.box.entry.handled a:hover {
+  color: #666;
 }
 
 /* Tactical overview element styles */
