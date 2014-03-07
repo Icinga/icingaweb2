@@ -275,6 +275,7 @@
             $(document).off('click', 'a', this.linkClicked);
             $(document).off('click', 'tr[href]', this.linkClicked);
             $(document).off('submit', 'form', this.submitForm);
+            $(document).off('click', 'button', this.submitForm);
             $(document).off('change', 'form select.autosubmit', this.submitForm);
             $(document).off('mouseenter', '.historycolorgrid td', this.historycolorgridHover);
             $(document).off('mouseenter', '.historycolorgrid td', this.historycolorgidUnhover);
