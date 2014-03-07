@@ -1,81 +1,65 @@
-<div class="row">
-  <div class="pull-left">
-    <h1>Notifications</h1>
-  </div>
-  <div class="pull-right">
-    <?= $this->tabs->render($this); ?>
-  </div>
+<div class="controls">
+<?= $this->tabs ?>
+<?=  $this->sortControl->render($this) ?>
+<?= $this->selectionToolbar('single') ?>
+<?=  $this->paginationControl($notifications, null, null, array('preserve' => $this->preserve)) ?>
 </div>
 
-<?php if (!empty($notifications)): ?>
-<div data-icinga-component="app/mainDetailGrid" data-icinga-grid-selection-type="single">
+<div class="content">
+<?php
 
-    <div class="container pull-left">
-      <div class="row">
-        <div class="col-md-12">
-            <?=  $this->sortControl->render($this); ?>
-        </div>
-      </div>
+if (empty($this->notifications)) {
+    echo 'No notifications yet</div>';
+    return;
+}
+?>
 
-      <div class="row">
-          <?=  $this->paginationControl($notifications, null, null, array('preserve' => $this->preserve)); ?>
-      </div>
+<table class="action">
+<tbody>
+<?php
 
-      <div class="row">
-          <?= $this->selectionToolbar('single'); ?>
-      </div>
-    </div>
+foreach ($notifications as $notification):
 
-    <table class="table table-condensed pull-left">
-        <tbody>
-        <?php foreach ($notifications as $notification): ?>
-            <?php
-            if (isset($notification->service)) {
-                $isService = true;
-                $href = $this->href('monitoring/show/service', array(
-                    'host'    => $notification->host,
-                    'service' => $notification->service
-                ));
-                $stateName = strtolower($this->util()->getServiceStateName($notification->notification_state));
-            } else {
-                $isService = false;
-                $href = $this->href('monitoring/show/host', array(
-                    'host'    => $notification->host
-                ));
-                $stateName = strtolower($this->util()->getHostStateName($notification->notification_state));
-            }
-            ?>
-            <tr>
-                <td class="border-status-<?= $stateName ?>"><?= date('d.m. H:i', $notification->notification_start_time); ?></td>
-                <td>
-                    <?php if ($isService): ?>
-                        <a href="<?= $href ?>"><?= $notification->service ?></a>
-                        <small>
-                            on <?= $notification->host ?>
-                        </small>
-                        <?php $isService = true; ?>
-                    <?php else: ?>
-                        <a href="<?= $href ?>"><?= $notification->host ?></a>
-                    <?php endif; ?>
-                    <br />
-                    <?= $this->escape(substr(strip_tags($notification->notification_output), 0, 10000)); ?>
-                    <br />
-                    <small>
-                        Sent to
-                        <a href="<?= $this->href('monitoring/show/contact', array('contact' => $notification->notification_contact)); ?>">
-                            <?= $notification->notification_contact ?>
-                        </a>
-                    </small>
-                </td>
-            </tr>
-        <?php endforeach; ?>
-        </tbody>
-    </table>
+  if (isset($notification->service)) {
+      $isService = true;
+      $href = $this->href('monitoring/show/service', array(
+          'host'    => $notification->host,
+          'service' => $notification->service
+      ));
+      $stateName = strtolower($this->util()->getServiceStateName($notification->notification_state));
+  } else {
+      $isService = false;
+      $href = $this->href('monitoring/show/host', array(
+          'host'    => $notification->host
+      ));
+      $stateName = strtolower($this->util()->getHostStateName($notification->notification_state));
+  }
+  ?>
+  <tr class="state <?= $stateName ?>">
+      <td class="state"><?= $this->timeSince($notification->notification_start_time) ?></td>
+      <td>
+          <?php if ($isService): ?>
+              <a href="<?= $href ?>"><?= $notification->service ?></a>
+              <small>
+                  on <?= $notification->host ?>
+              </small>
+              <?php $isService = true; ?>
+          <?php else: ?>
+              <a href="<?= $href ?>"><?= $notification->host ?></a>
+          <?php endif; ?>
+          <br />
+          <?= $this->escape(substr(strip_tags($notification->notification_output), 0, 10000)); ?>
+          <br />
+          <small>
+              Sent to
+              <a href="<?= $this->href('monitoring/show/contact', array('contact' => $notification->notification_contact)); ?>">
+                  <?= $notification->notification_contact ?>
+              </a>
+          </small>
+      </td>
+  </tr>
+<?php endforeach ?>
+</tbody>
+</table>
 
-    <div class="container pull-left">
-        <?= $this->paginationControl($notifications, null, null, array('preserve' => $this->preserve)); ?>
-    </div>
 </div>
-<?php else: ?>
-No notifications yet
-<?php endif; ?>
