@@ -85,7 +85,7 @@ class Notification
             );
         }
 
-        if ($this->is_cli) {
+        if ($this->isCli) {
             $msg = sprintf('[%s] %s', $type, $message);
             switch ($type) {
                 case 'info':
