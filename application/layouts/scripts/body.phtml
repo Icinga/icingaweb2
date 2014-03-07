@@ -1,10 +1,20 @@
 <?php
 
 use Icinga\Web\Url;
+use Icinga\Web\Notification;
+use Icinga\Authentication\Manager as Auth;
 
-if (Icinga\Authentication\Manager::getInstance()->isAuthenticated()): ?>
+if (Auth::getInstance()->isAuthenticated()): ?>
  <div id="header">
-   <ul id="notifications"></ul>
+   <ul id="notifications"><?php
+
+$notifications = Notification::getInstance();
+if ($notifications->hasMessages()) {
+    foreach ($notifications->getMessages() as $m) {
+        echo '<li class="' . $m->type . '">' . $this->escape($m->message) . '</li>';
+    }
+}
+   ?></ul>
    <div id="logo"><a href="<?= $this->href('/dashboard') ?>"><img src="<?= $this->href('img/logo_icinga-inv.png') ?>" class="logo" /></a>
  </div>
  </div>

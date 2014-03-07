@@ -40,6 +40,7 @@ use Icinga\Application\Config;
 use Icinga\Util\Translator;
 use Icinga\Web\Widget\Tabs;
 use Icinga\Web\Url;
+use Icinga\Web\Notification;
 use Icinga\Logger\Logger;
 use Icinga\Web\Request;
 use Icinga\File\Pdf;
@@ -299,6 +300,14 @@ class ActionController extends Zend_Controller_Action
         if ($this->_request->isXmlHttpRequest() || $this->getParam('view') === 'compact') {
             $this->_helper->layout()->setLayout('inline');
         }
+
+        $notifications = Notification::getInstance();
+        if ($this->_request->isXmlHttpRequest() && $notifications->hasMessages()) {
+            foreach ($notifications->getMessages() as $m) {
+                header('X-Icinga-Notification: ' . $m->type . ' ' . $m->message);
+            }
+        }
+
         if ($this->view->title) {
             if (preg_match('~[\r\n]~', $this->view->title)) {
                 // TODO: Innocent exception and error log for hack attempts
