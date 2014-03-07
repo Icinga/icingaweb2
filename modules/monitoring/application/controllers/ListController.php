@@ -352,6 +352,8 @@ class Monitoring_ListController extends MonitoringController
 
     public function servicegroupsAction()
     {
+        $this->addTitleTab('servicegroups');
+
         $query = GroupsummaryView::fromRequest(
             $this->_request,
             array(
