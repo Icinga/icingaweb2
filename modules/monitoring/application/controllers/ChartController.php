@@ -195,25 +195,25 @@ class Monitoring_ChartController extends ActionController
         $this->view->chart->drawBars(
             array(
                 'label' => 'Ok',
-                'color' => '#00ff00',
+                'color' => '#44bb77',
                 'stack' => 'stack1',
                 'data'  => $okBars
             ),
             array(
                 'label' => 'Warning',
-                'color' => 'ffff00',
+                'color' => '#ffaa44',
                 'stack' => 'stack1',
                 'data'  => $warningBars
             ),
             array(
                 'label' => 'Critical',
-                'color' => '#ff0000',
+                'color' => '#ff5566',
                 'stack' => 'stack1',
                 'data'  => $critBars
             ),
             array(
                 'label' => 'Unknown',
-                'color' => '#E066FF',
+                'color' => '#dd66ff',
                 'stack' => 'stack1',
                 'data'  => $unknownBars
             )
@@ -236,19 +236,19 @@ class Monitoring_ChartController extends ActionController
         $this->view->chart->drawBars(
             array(
                 'label' => 'Up',
-                'color' => '#00ff00',
+                'color' => '#44bb77',
                 'stack' => 'stack1',
                 'data'  => $upBars
             ),
             array(
                 'label' => 'Down',
-                'color' => '#ff0000',
+                'color' => '#ff5566',
                 'stack' => 'stack1',
                 'data'  => $downBars
             ),
             array(
                 'label' => 'Unreachable',
-                'color' => '#E066FF',
+                'color' => '#dd66ff',
                 'stack' => 'stack1',
                 'data'  => $unreachableBars
             )
