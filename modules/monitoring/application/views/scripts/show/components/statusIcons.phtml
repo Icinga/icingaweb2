@@ -1,66 +1,49 @@
 <?php
-    $o = $this->object;
-    $isService = (isset($o->service_description)) ? true : false;
-    $obj = new \stdClass();
-    $obj->handled =
-        ($isService) ? $o->service_handled : $o->host_handled;
-    $obj->state =
-        ($isService) ? $o->service_state : $o->host_state;
-    $obj->acknowledged =
-        ($isService) ? $o->service_acknowledged : $o->host_acknowledged;
-    $obj->in_downtime =
-        ($isService) ? $o->in_downtime : $o->host_in_downtime;
-    $obj->is_flapping =
-        ($isService) ? $o->is_flapping : $o->host_is_flapping;
-    $obj->notifications_enabled =
-        ($isService) ? $o->notifications_enabled : $o->service_notifications_enabled;
-    $obj->active_checks_enabled =
-        ($isService) ? $o->active_checks_enabled : $o->host_active_checks_enabled;
-    $obj->passive_checks_enabled =
-        ($isService) ? $o->passive_checks_enabled : $o->host_passive_checks_enabled;
-    $obj->last_comment =
-        ($isService) ? $o->last_comment : $o->host_last_comment;
+
+use Icinga\Module\Monitoring\Object\Service;
+
+$o = $this->object;
+
+$isService = $o instanceof Service;
+$obj = new \stdClass();
+$obj->handled =
+    ($isService) ? $o->service_handled : $o->host_handled;
+$obj->state =
+    ($isService) ? $o->service_state : $o->host_state;
+$obj->acknowledged =
+    ($isService) ? $o->service_acknowledged : $o->host_acknowledged;
+$obj->in_downtime =
+    ($isService) ? $o->in_downtime : $o->host_in_downtime;
+$obj->notifications_enabled =
+    ($isService) ? $o->notifications_enabled : $o->service_notifications_enabled;
+$obj->active_checks_enabled =
+    ($isService) ? $o->active_checks_enabled : $o->host_active_checks_enabled;
+$obj->passive_checks_enabled =
+    ($isService) ? $o->passive_checks_enabled : $o->host_passive_checks_enabled;
 
 $i = array();
 if (! $obj->handled && $obj->state > 0) {
-    $i[] = $this->img('img/icons/unhandled.png', array('title' => 'Unhandled'));
+    $i[] = $this->icon('unhandled.png', 'Unhandled');
 }
 
 if ($obj->acknowledged && ! $obj->in_downtime) {
     $i[] = $this->icon('acknowledgement.png', 'Acknowledged');
 }
 
-if ($obj->is_flapping) {
-    $i[] = $this->icon('flapping.png', 'Flapping');
-}
-
 if (!$obj->notifications_enabled) {
-    $i[] = $this->img('img/icons/notification_disabled.png', array('title' => 'Notifications Disabled'));
+    $i[] = $this->icon('notification_disabled.png', 'Notifications Disabled');
 }
 
 if ($obj->in_downtime) {
-    $i[] = $this->img('img/icons/in_downtime.png', array('title' => 'In Downtime'));
+    $i[] = $this->icon('in_downtime.png', 'In Downtime');
 }
 
 if (! $obj->active_checks_enabled) {
     if ($obj->passive_checks_enabled) {
-        $i[] = $this->img(
-            'img/icons/active_checks_disabled.png',
-            array('title' => 'Active Checks Disabled')
-        );
+        $i[] = $this->icon('active_checks_disabled.png', 'Active Checks Disabled');
     } else {
-        $i[] = $this->img(
-            'img/icons/active_passive_checks_disabled.png',
-            array('title' => 'Active And Passive Checks Disabled')
-        );
+        $i[] = $this->icon('active_passive_checks_disabled.png', 'Active And Passive Checks Disabled');
     }
 }
 
-if ($obj->last_comment !== null) {
-    $i[] = $this->icon('comment.png', 'Comments');
-}
-
-?><span>
-      <?= implode("\n      ", $i) . "\n" ?>
-    </span>
-
+?><?= implode("\n", $i) ?>

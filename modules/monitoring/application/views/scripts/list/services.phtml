@@ -80,7 +80,7 @@ foreach ($services as $service):
         <?php endif ?>
 
       <?php if ($service->service_icon_image): ?>
-      <?= $this->img($this->resolveMacros($service->service_icon_image, $service), array('align' => 'left')) ?>
+      <?= $this->icon($this->resolveMacros($service->service_icon_image, $service)) ?>
       <?php endif ?>
 <a href="<?= $serviceLink ?>"><?= $service->service_display_name ?></a> on <a href="<?= $hostLink ?>"><?= $service->host_name; ?>
 <?php if ($service->host_state != 0): ?>
