@@ -37,6 +37,7 @@ use Icinga\Module\Monitoring\Form\Command\DisableNotificationWithExpireForm;
 use Icinga\Module\Monitoring\Form\Command\SingleArgumentCommandForm;
 use Icinga\Web\Form;
 use Icinga\Web\Url;
+use Icinga\Web\Notification;
 use Icinga\Web\Controller\ActionController;
 use Icinga\Protocol\Commandpipe\CommandPipe;
 use Icinga\Exception\ConfigurationError;
@@ -893,6 +894,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
+            Notification::success('New comment has been sent');
         }
     }
 
@@ -948,6 +950,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
+            Notification::success('Acknowledgement has been sent');
         }
 
         $this->setForm($form);
