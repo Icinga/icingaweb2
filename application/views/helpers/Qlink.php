@@ -15,11 +15,6 @@ class Zend_View_Helper_Qlink extends Zend_View_Helper_Abstract
         $attributes = array();
         $baseUrl = null;
         foreach ($properties as $key => $val) {
-            if ($key === 'baseUrl' ) {
-                // $baseUrl = filter_var($val, FILTER_SANITIZE_URL) . '/';
-                $baseUrl = $val; //rawurlencode($val) . '/';
-                continue;
-            }
             if ($key === 'quote') {
                 $quote = $val;
                 continue;
@@ -50,10 +45,9 @@ class Zend_View_Helper_Qlink extends Zend_View_Helper_Abstract
         } else {
             $url = Url::fromPath($urlFormat);
         }
-        $url->setParams($uriParams)->setBaseUrl($baseUrl);
+        $url->setParams($uriParams);
         return sprintf(
             '<a href="%s"%s>%s</a>',
-//            $this->getFormattedUrl($urlFormat, $uriParams, $baseUrl),
             $url,
             !empty($attributes) ? ' ' . implode(' ', $attributes) : '',
             $quote
@@ -66,24 +60,5 @@ class Zend_View_Helper_Qlink extends Zend_View_Helper_Abstract
           : $htmlContent
         );
     }
-/*
-    public function getFormattedUrl($urlFormat, $uriParams, $baseUrl = null)
-    {
-        $params = $args = array();
-        foreach ($uriParams as $name => $value) {
-            if (is_int($name)) {
-                $params[] = rawurlencode($value);
-            } else {
-                $args[] = rawurlencode($name) . '=' . rawurlencode($value);
-            }
-        }
-        $url = $urlFormat;
-        $url = vsprintf($url, $params);
-        if (! empty($args)) {
-            $url .= '?' . implode('&amp;', $args);
-        }
-        return is_null($baseUrl) ? $this->view->baseUrl($url) : $baseUrl.$url;
-    }
-*/
 }
 
