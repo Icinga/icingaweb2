@@ -1,15 +1,7 @@
+<div class="controls">
 <?= $this->tabs->render($this); ?>
-
-<?php if (isset($this->successMessage)) : ?>
-<div class="alert alert-success">
-  <h4>{{SUCCESS_ICON}} <?= $this->successMessage ?></h4>
 </div>
-<?php endif; ?>
 
-<?php if (isset($this->exceptionMessage)): ?>
-<div class="alert alert-danger">
-  <h4>Could not update preferences due to an internal exception (<?= $this->exceptionMessage ?>)</h4>
-</div>
-<?php endif; ?>
-
+<div class="content">
 <?= $this->form ?>
+</div>

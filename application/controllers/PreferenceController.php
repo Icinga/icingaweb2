@@ -49,9 +49,8 @@ class PreferenceController extends BasePreferenceController
     public static function createProvidedTabs()
     {
         return array(
-            'preference' => new Tab(
+            'general' => new Tab(
                 array(
-                    'name'      => 'general',
                     'title'     => 'General settings',
                     'url'       => Url::fromPath('/preference')
                 )
@@ -65,6 +64,7 @@ class PreferenceController extends BasePreferenceController
     public function indexAction()
     {
         $form = new GeneralForm();
+        $this->getTabs()->activate('general');
         $form->setConfiguration(IcingaConfig::app())
             ->setRequest($this->getRequest());
         if ($form->isSubmittedAndValid()) {

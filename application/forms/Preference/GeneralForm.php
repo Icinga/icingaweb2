@@ -256,7 +256,7 @@ class GeneralForm extends Form
         $this->addTimezoneSelection($global);
         $this->addDateFormatSettings($global);
 
-        $this->setSubmitLabel('{{SAVE_ICON}} Save Changes');
+        $this->setSubmitLabel('Save Changes');
 
         $this->addElement(
             'checkbox',
