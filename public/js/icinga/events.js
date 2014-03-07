@@ -80,6 +80,8 @@
             // We treat tr's with a href attribute like links
             $(document).on('click', 'tr[href]', { self: this }, this.linkClicked);
 
+            $(document).on('click', 'button', { self: this }, this.submitForm);
+
             // We catch all form submit events
             $(document).on('submit', 'form', { self: this }, this.submitForm);
 
