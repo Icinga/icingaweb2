@@ -287,7 +287,7 @@ class Monitoring_ListController extends MonitoringController
     {
         $this->addTitleTab('contactgroups');
 
-         $query = ContactgroupView::fromRequest(
+        $query = ContactgroupView::fromRequest(
             $this->_request,
             array(
                 'contactgroup_name',
@@ -298,8 +298,20 @@ class Monitoring_ListController extends MonitoringController
                 'contact_pager',
             )
         )->getQuery()->order('contactgroup_alias');
-        $this->view->contactgroups = $query->fetchAll();
+        $contactgroups = $query->fetchAll();
         $this->handleFormatRequest($query);
+
+        $groupData = array();
+        foreach ($contactgroups as $c) {
+            if (!array_key_exists($c->contactgroup_name, $groupData)) {
+                $groupData[$c->contactgroup_name] = array(
+                    'alias'     => $c->contactgroup_alias,
+                    'contacts'  => array()
+                );
+            }
+            $groupData[$c->contactgroup_name]['contacts'][] = $c;
+        }
+        $this->view->groupData = $groupData;
     }
 
     public function commentsAction()

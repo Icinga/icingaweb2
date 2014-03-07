@@ -1,52 +1,38 @@
-<?php
-$viewHelper = $this->getHelper('MonitoringState');
-$knownGroups = array();
-$contactgroups;
-?>
-
 <div class="controls">
   <?= $this->tabs ?>
 </div>
 
 <div class="content">
-<div class="summary">
-<?php
-
-foreach($contactgroups as $c):
-    $group = $c->contactgroup_name;
-    $periodLink = $this->href('monitoring/show/contacts', array('contact' => $c->contact_name));
-    if (! array_key_exists($group, $knownGroups)) {
-        $knownGroups[$group] = true;
-        $newRow = true;
-        if (! empty($knownGroups)) {
-            echo '</span>';
-        }
-        echo '<span class="state" style="background: #555; color: white">' . $this->escape($c->contactgroup_alias) . '<br />';
-        if ($c->contactgroup_alias !== $group) {
-            echo '(' . $this->escape($group) . ')';
-        } else {
-            echo '&nbsp;';
-        }
-    }
-
-    $methods = array();
-    foreach (array('email', 'pager') as $method) {
-        $prop = 'contact_' . $method;
-        if (isset($c->$prop) && ! empty($c->$prop)) {
-            $methods[] = $c->$prop;
-        }
-    }
-
-?>
-  <span class="state" style="display:block; width: 90%; height: 80px; text-align: left; background: #eee; color: black; margin: 1em;">
-    <img style="border: 3px solid white; margin: 0.5em;" src="<?= $this->href('/static/gravatar', array('email' => $c->contact_email )) ?>" width="60" height="60" align="left" />
-    <a style="color: black; font-size: 1.1em; font-weight: bold;" href="<?= $periodLink ?>"><?= $this->escape($c->contact_alias) ?></a>
-    <p class="pluginoutput"><?= implode('<br />', $methods) ?></p>
-    </span>
-
-            <?php endforeach; ?>
-<?php if (! empty($knownGroups)): ?>
-</span>
-<? endif ?>
-</div>
+    <div class="boxview" data-base-target="col2">
+<?php foreach ($groupData as $groupName => $groupInfo): ?>
+        <div class="box contactgroup">
+            <h2><?= $groupInfo['alias']; ?></h2>
+<?php if ($groupInfo['alias'] !== $groupName): ?>
+            <h3><?= $groupName; ?></h3>
+<?php endif ?>
+            <div class="box contents">
+<?php foreach ($groupInfo['contacts'] as $c): ?>
+                <div class="box entry">
+                    <img src="<?= $this->href('/static/gravatar', array('email' => $c->contact_email )) ?>" />
+                    <a href="<?= $this->href(
+                        'monitoring/show/contacts',
+                        array('contact' => $c->contact_name)
+                    ); ?>">
+                        <?= $this->escape($c->contact_alias) ?>
+                    </a>
+                    <p>
+<?php if ($c->contact_email): ?>
+                        <?= $c->contact_email; ?>
+<?php endif ?>
+<?php if ($c->contact_pager): ?>
+                        <br />
+                        <?= $c->contact_pager; ?>
+<?php endif ?>
+                    </p>
+                </div>
+<?php endforeach ?>
+            </div>
+        </div>
+<?php endforeach ?>
+    </div>
 </div>

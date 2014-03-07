@@ -296,6 +296,14 @@ a.critical {
   font-weight: bold;
 }
 
+.boxview div.box h3 {
+  margin-top: 0;
+  margin-bottom: 0.4em;
+  font-size: 0.8em;
+  
+  color: #eee;
+}
+
 /* Box body of contents */
 .boxview div.box.contents {
   background: #eee;
@@ -394,6 +402,34 @@ div.box.entry.state_unreachable, div.box.entry.state_unknown {
 div.box.entry.handled {
   background-color: transparent;
   color: inherit;
+}
+
+div.box.contactgroup {
+  width: 18em;
+}
+
+div.box.contactgroup div.box.entry {
+  overflow: hidden;
+  clear: left;
+}
+
+div.box.contactgroup div.box.entry img {
+  width: 60px;
+  height: 60px;
+  margin: 0.4em;
+  float: left;
+  
+  border: 2px solid white;
+}
+
+div.box.contactgroup div.box.entry a {
+  margin-top: 0.4em;
+  
+  font-weight: bold;
+}
+
+div.box.contactgroup div.box.entry p {
+  margin: 0.4em 0 0;
 }
 
 /* End of monitoring box element styles */
