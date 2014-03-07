@@ -12,7 +12,7 @@ $createResource = $this->href('/config/createresource');
     <?php endif ?>
 
     <h1>Create Resource</h1>
-    <p><a href="<?= $createResource ?>"><?= $this->img('img/icons/create.png'); ?> Create A New Resource</a></p>
+    <p><a href="<?= $createResource ?>"><?= $this->icon('create.png'); ?> Create A New Resource</a></p>
 
     <table class="configTable">
         <?php foreach ($this->resources as $name => $resource): ?>
@@ -23,10 +23,10 @@ $createResource = $this->href('/config/createresource');
                     </div>
                     <div>
                         <a href="<?= $this->href('config/editresource', array('resource' => $name));?>">
-                            <?= $this->img('img/icons/edit.png'); ?> Edit</a>&emsp;
+                            <?= $this->icon('edit.png'); ?> Edit</a>&emsp;
                         <?php if (count($this->resources) > 1): ?>
                             <a href="<?= $this->href('config/removeresource', array('resource' => $name));?>">
-                                <?= $this->img('img/icons/remove.png'); ?> Remove</a>&emsp;
+                                <?= $this->icon('remove.png'); ?> Remove</a>&emsp;
                         <?php endif; ?>
                     </div>
                 </td>

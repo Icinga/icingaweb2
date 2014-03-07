@@ -397,7 +397,7 @@ class GeneralForm extends Form
                 'type'      => 'submit',
                 'escape'    => false,
                 'value'     => '1',
-                'label'     => $this->getView()->img('img/icons/save.png', array('title' => 'Save Changes'))
+                'label'     => $this->getView()->icon('save.png', 'Save Changes')
                     . ' Save changes',
             )
         );

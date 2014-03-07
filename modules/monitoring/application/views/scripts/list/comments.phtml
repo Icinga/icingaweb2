@@ -45,9 +45,9 @@ $viewHelper = $this->getHelper('MonitoringState');
 
     <td>
         <?php if ($comment->comment_objecttype_id === '1'): ?>
-            <?= $this->img('img/icons/host.png', array('title' => 'Host comment')) ?>
+            <?= $this->icon('host.png', 'Host comment') ?>
         <?php elseif ($comment->comment_objecttype_id === '2'): ?>
-            <?= $this->img('img/icons/service.png', array('title' => 'Service comment')) ?>
+            <?= $this->icon('service.png', 'Service comment') ?>
         <?php endif; ?>
         <small>
             <?php
@@ -68,7 +68,7 @@ $viewHelper = $this->getHelper('MonitoringState');
                     $tooltip = 'Comment was caused by an acknowledgement.';
             }
             ?>
-            <?= $this->img('img/icons/' . $icon . '.png', array('title' => $tooltip)) ?>
+            <?= $this->icon($icon . '.png', $tooltip) ?>
         </small>
     </td>
 

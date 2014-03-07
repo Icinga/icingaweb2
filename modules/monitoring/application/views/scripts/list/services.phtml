@@ -73,21 +73,18 @@ foreach ($services as $service):
 
         <?php if (!$service->service_active_checks_enabled): ?>
           <?php if (!$service->service_passive_checks_enabled): ?>
-            <?= $this->icon(
-                'active_passive_checks_disabled.png',
-                'Active And Passive Checks Disabled'
-            ) ?>
+            <?= $this->icon('active_passive_checks_disabled.png', 'Active And Passive Checks Disabled') ?>
           <?php else: ?>
-            <?= $this->icon('active_checks_disabled.png',  'Active Checks Disabled') ?>
+            <?= $this->icon('active_checks_disabled.png', 'Active Checks Disabled') ?>
           <?php endif ?>
         <?php endif ?>
 
       <?php if ($service->service_icon_image): ?>
-      <?= $this->icon($this->resolveMacros($service->service_icon_image, $service)) ?>
+      <?= $this->img($this->resolveMacros($service->service_icon_image, $service), array('align' => 'left')) ?>
       <?php endif ?>
 <a href="<?= $serviceLink ?>"><?= $service->service_display_name ?></a> on <a href="<?= $hostLink ?>"><?= $service->host_name; ?>
 <?php if ($service->host_state != 0): ?>
- (<?= ucfirst($helper->monitoringState($service, 'host')); ?>)
+(<?= ucfirst($helper->monitoringState($service, 'host')); ?>)
 <?php endif ?>
 </a><br />
         <p class="pluginoutput"><?= $this->escape(substr(strip_tags($service->service_output), 0, 10000)); ?></p>

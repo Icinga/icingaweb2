@@ -32,52 +32,36 @@ if ($hosts->count() === 0) {
 
     $icons = array();
     if (!$host->host_handled && $host->host_state > 0){
-        $icons[] = $this->img('img/icons/unhandled.png', array(
-            'title' => 'Unhandled'
-        ));
+        $icons[] = $this->icon('unhandled.png', 'Unhandled');
     }
 
     if ($host->host_acknowledged && !$host->host_in_downtime) {
-        $icons[] = $this->img('img/icons/acknowledgement.png', array(
-            'title' => 'Acknowledged'
-        ));
+        $icons[] = $this->icon('acknowledgement.png', 'Acknowledged');
     }
 
     if ($host->host_is_flapping) {
-        $icons[] = $this->img('img/icons/flapping.png', array(
-            'title' => 'Flapping'
-        ));
+        $icons[] = $this->icon('flapping.png', 'Flapping');
     }
 
     if (!$host->host_notifications_enabled) {
-        $icons[] = $this->img('img/icons/notification_disabled.png', array(
-            'title' => 'Notifications Disabled'
-        ));
+        $icons[] = $this->icon('notification_disabled.png', 'Notifications Disabled');
     }
 
     if (!$host->host_in_downtime) {
-        $icons[] = $this->img('img/icons/in_downtime.png', array(
-            'title' => 'In Downtime'
-        ));
+        $icons[] = $this->icon('in_downtime.png', 'In Downtime');
     }
 
     if (!$host->host_active_checks_enabled) {
         if (!$host->host_passive_checks_enabled) {
-            $icons[] = $this->img('img/icons/active_passive_checks_disabled.png', array(
-                'title' => 'Active And Passive Checks Disabled'
-            ));
+            $icons[] = $this->icon('active_passive_checks_disabled.png', 'Active And Passive Checks Disabled');
         } else {
-            $icons[] = $this->img('img/icons/active_checks_disabled.png', array(
-                'title' => 'Active Checks Disabled'
-            ));
+            $icons[] = $this->icon('active_checks_disabled.png', 'Active Checks Disabled');
         }
     }
 
     // Not available right now:
     if (isset($host->host_last_comment) && $host->host_last_comment !== null) {
-        $icons[] = $this->img('img/icons/comment.png', array(
-            'title' => 'Comments'
-        ));
+        $icons[] = $this->icon('comment.png', 'Comments');
     }
 ?>
    <tr class="state <?= $hostStateName ?><?= $host->host_handled ? ' handled' : '' ?>">

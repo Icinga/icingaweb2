@@ -12,7 +12,7 @@
 
     <p>
         <a href="<?= Url::fromPath('/monitoring/config/createbackend')->getAbsoluteUrl();?>">
-            <?= $this->img('img/icons/create.png'); ?> Create New Monitoring Backend
+            <?= $this->icon('create.png'); ?> Create New Monitoring Backend
         </a>
     </p>
 
@@ -27,8 +27,8 @@
                     <b><?= $this->escape($backendName); ?></b>
                     <small>(Type: <?= $this->escape($config['type'] === 'ido' ? 'IDO' : ucfirst($config['type'])); ?>)</small>
                     <div>
-                        <a href="<?= $removeUrl; ?>"><?= $this->img('img/icons/remove.png'); ?> Remove</a>&emsp;
-                        <a href="<?= $editUrl; ?>"><?= $this->img('img/icons/edit.png'); ?> Edit</a>
+                        <a href="<?= $removeUrl; ?>"><?= $this->icon('remove.png'); ?> Remove</a>&emsp;
+                        <a href="<?= $editUrl; ?>"><?= $this->icon('edit.png'); ?> Edit</a>
                     </div>
                 </td>
             </tr>
@@ -39,7 +39,7 @@
 
     <p>
         <a href="<?= Url::fromPath('/monitoring/config/createinstance')->getAbsoluteUrl();?>">
-            <?= $this->img('img/icons/create.png'); ?> Create New Instance
+            <?= $this->icon('create.png'); ?> Create New Instance
         </a>
     </p>
 
@@ -55,8 +55,8 @@
                         <b><?= $this->escape($instanceName); ?></b>
                         <small>(Type: <?= isset($config['host']) ? 'Remote' : 'Local'; ?>)</small>
                         <div>
-                            <a href="<?= $removeUrl; ?>"><?= $this->img('img/icons/remove.png'); ?> Remove</a>&emsp;
-                            <a href="<?= $editUrl; ?>"><?= $this->img('img/icons/edit.png'); ?> Edit</a>
+                            <a href="<?= $removeUrl; ?>"><?= $this->icon('remove.png'); ?> Remove</a>&emsp;
+                            <a href="<?= $editUrl; ?>"><?= $this->icon('edit.png'); ?> Edit</a>
                         </div>
                     </div>
                 </td>
