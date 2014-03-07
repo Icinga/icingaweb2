@@ -165,8 +165,7 @@ class Benchmark
         $data = self::prepareDataForRendering($what);
 
         // TODO: Move formatting to CSS file
-        $style = 'font-family: monospace; font-size: 1.5em; width: 100%';
-        $html = '<table style="' . $style . '">' . "\n" . '<tr>';
+        $html = '<table class="benchmark">' . "\n" . '<tr>';
         foreach ($data->columns as & $col) {
             $html .= sprintf(
                 '<td align="%s">%s</td>',
