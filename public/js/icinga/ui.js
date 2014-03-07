@@ -25,6 +25,23 @@
           $('html').removeClass('no-js').addClass('js');
           this.icinga.timer.register(this.refreshTimeSince, this, 1000);
           this.triggerWindowResize();
+          this.fadeNotificationsAway();
+      },
+
+      fadeNotificationsAway: function()
+      {
+          var icinga = this.icinga;
+          $('#notifications li')
+              .not('.fading-out')
+              .not('.persist')
+              .addClass('fading-out')
+              .delay(7000)
+              .fadeOut('slow',
+          function() {
+              icinga.ui.fixControls();
+              this.remove();
+          });
+
       },
 
       enableDebug: function () {

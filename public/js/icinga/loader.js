@@ -287,7 +287,16 @@
             if (windowId) {
                 this.icinga.ui.setWindowId(windowId);
             }
-            
+
+            var notifications = req.getResponseHeader('X-Icinga-Notification');
+            if (notifications) {
+                var parts = notifications.split(' ');
+                this.createNotice(
+                    parts.shift(),
+                    parts.join(' ')
+                );
+            }
+
             // Remove 'impact' class if there was such
             if (req.$target.hasClass('impact')) {
                 req.$target.removeClass('impact');
@@ -364,6 +373,7 @@
 
         onComplete: function (req, textStatus) {
             delete this.requests[req.$target.attr('id')];
+            this.icinga.ui.fadeNotificationsAway();
             this.icinga.ui.refreshDebug();
         },
 
@@ -379,7 +389,8 @@
 
                     this.exception = this.createNotice(
                         'error',
-                        $('h1', $(req.responseText)).first().html()
+                        $('h1', $(req.responseText)).first().html(),
+                        true
                     );
                     this.icinga.ui.fixControls();
                 }
@@ -405,7 +416,8 @@
                             'error',
                             'The connection to the Icinga web server has been lost at ' +
                             this.icinga.utils.timeShort() +
-                            '.'
+                            '.',
+                            true
                         );
 
                         this.icinga.ui.fixControls();
@@ -421,9 +433,13 @@
             }
         },
 
-        createNotice: function (severity, message) {
+        createNotice: function (severity, message, persist = false) {
+            var c = severity;
+            if (persist) {
+                c += ' persist';
+            }
             return $(
-                '<li class="' + severity + '">' + message + '</li>'
+                '<li class="' + c + '">' + message + '</li>'
             ).appendTo($('#notifications'));
         },
 
