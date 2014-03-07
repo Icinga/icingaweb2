@@ -103,7 +103,6 @@ html {
 */
 .container .controls {
   top: 0;
-  /*z-index: 1;*/
   background-color: white;
   padding: 0;
 }
@@ -219,6 +218,8 @@ html {
 }
 
 #layout.poor-layout {
+  font-size: 0.8em;
+
   .dashboard > div.container {
     width: 98%;
     margin-left: 1%;
@@ -239,6 +240,13 @@ html {
   #sidebar {
     display: none;
   }
+
+  .dashboard > div.container {
+    width: 98%;
+    margin-left: 1%;
+    margin-right: 1%;
+  }
+
   #logo img {
     /* TODO: Quickfix, this needs improvement */
     width: 0 !important;
