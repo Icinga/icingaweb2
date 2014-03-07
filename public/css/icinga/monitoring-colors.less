@@ -101,6 +101,7 @@ table.action td.timesince {
 tr.state img.icon {
   height: 16px;
   width: 16px;
+  margin-right: 2px;
 }
 
 tr.state a {
@@ -197,7 +198,7 @@ tr.state.unreachable.handled td.state {
 
 tr.state.handled td.state {
   color: inherit;
-  background-color: transparent;
+  background-color: transparent !important;
 }
 
 
@@ -215,59 +216,6 @@ a.critical {
 
 /* END of Generic colors */
 
-
-
-
-/* Been here before: */
-/*
-
-.state .ok, td.state.ok {
-  background-color: #44BB77;
-  color: white;
-}
-.state .ok:hover, td.state.ok:hover {
-  color: #44BB77;
-  background-color: white;
-  cursor: pointer;
-}
-.state .warning, td.state.warning {
-  color: white;
-  background-color: #FF8844;
-}
-.state .warning:hover, td.state.warning:hover {
-  color: #FF8844;
-  background-color: white;
-  cursor: pointer;
-}
-.state .warning.handled, td.state.warning.handled {
-  color: white;
-  background-color: #FFBB55;
-}
-.state .warning.handled:hover, td.state.warning.handled:hover {
-  color: #FF8855;
-  background-color: white;
-  cursor: pointer;
-}
-.state .critical, td.state.critical {
-  color: white;
-  background-color: #FF5566;
-}
-.state .critical.handled, td.state.critical.handled {
-  background-color: #FF99aa;
-}
-.state .unknown, td.state.unknown {
-  color: white;
-  background-color: #DD66FF;
-}
-.state .unknown.handled, td.state.unknown.handled {
-  background-color: #EE99FF;
-}
-
-.state .pending, td.state.pending {
-  color: white;
-  background-color: #77AAFF;
-}
-*/
 
 /* Generic box element */
 
