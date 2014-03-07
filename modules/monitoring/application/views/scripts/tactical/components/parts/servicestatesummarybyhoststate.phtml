@@ -2,14 +2,14 @@
 <div class="box entry state_critical <?= $services_critical_unhandled ? '' : 'handled'; ?>">
     <a href="<?= $this->href(
         'monitoring/list/services',
-        array('host_state' => $hostState, 'service_state' => 2)
+        array('host_problem' => $host_problem, 'service_state' => 2)
     ); ?>">
         <?= $services_critical; ?> CRITICAL
     </a>
 <?php if ($services_critical_unhandled): ?>
     <a href="<?= $this->href(
         'monitoring/list/services',
-        array('host_state' => $hostState, 'service_state' => 2, 'service_handled' => 0)
+        array('host_problem' => $host_problem, 'service_state' => 2, 'service_handled' => 0)
     ); ?>">
         <?= $services_critical_unhandled . ' ' . $this->translate('Unhandled'); ?>
     </a>
@@ -19,7 +19,7 @@
         'monitoring/list/services',
         array(
             'service_state'                     => 2,
-            'host_state'                        => $hostState,
+            'host_problem'                      => $host_problem,
             'service_active_checks_enabled'     => 0,
             'service_passive_checks_enabled'    => 1
         )
@@ -44,7 +44,7 @@
         'monitoring/list/services',
         array(
             'service_state'                     => 2,
-            'host_state'                        => $hostState,
+            'host_problem'                      => $host_problem,
             'service_active_checks_enabled'     => 0,
             'service_passive_checks_enabled'    => 0
         )
@@ -70,14 +70,14 @@
 <div class="box entry state_warning <?= $services_warning_unhandled ? '' : 'handled'; ?>">
     <a href="<?= $this->href(
         'monitoring/list/services',
-        array('host_state' => $hostState, 'service_state' => 1)
+        array('host_problem' => $host_problem, 'service_state' => 1)
     ); ?>">
         <?= $services_warning; ?> WARNING
     </a>
 <?php if ($services_warning_unhandled): ?>
     <a href="<?= $this->href(
         'monitoring/list/services',
-        array('host_state' => $hostState, 'service_state' => 1, 'service_handled' => 0)
+        array('host_problem' => $host_problem, 'service_state' => 1, 'service_handled' => 0)
     ); ?>">
         <?= $services_warning_unhandled . ' ' . $this->translate('Unhandled'); ?>
     </a>
@@ -87,7 +87,7 @@
         'monitoring/list/services',
         array(
             'service_state'                     => 1,
-            'host_state'                        => $hostState,
+            'host_problem'                      => $host_problem,
             'service_active_checks_enabled'     => 0,
             'service_passive_checks_enabled'    => 1
         )
@@ -112,7 +112,7 @@
         'monitoring/list/services',
         array(
             'service_state'                     => 1,
-            'host_state'                        => $hostState,
+            'host_problem'                      => $host_problem,
             'service_active_checks_enabled'     => 0,
             'service_passive_checks_enabled'    => 0
         )
@@ -138,14 +138,14 @@
 <div class="box entry state_unknown <?= $services_unknown_unhandled ? '' : 'handled'; ?>">
     <a href="<?= $this->href(
         'monitoring/list/services',
-        array('host_state' => $hostState, 'service_state' => 3)
+        array('host_problem' => $host_problem, 'service_state' => 3)
     ); ?>">
         <?= $services_unknown; ?> UNKNOWN
     </a>
 <?php if ($services_unknown_unhandled): ?>
     <a href="<?= $this->href(
         'monitoring/list/services',
-        array('host_state' => $hostState, 'service_state' => 3, 'service_handled' => 0)
+        array('host_problem' => $host_problem, 'service_state' => 3, 'service_handled' => 0)
     ); ?>">
         <?= $services_unknown_unhandled . ' ' . $this->translate('Unhandled'); ?>
     </a>
@@ -155,7 +155,7 @@
         'monitoring/list/services',
         array(
             'service_state'                     => 3,
-            'host_state'                        => $hostState,
+            'host_problem'                      => $host_problem,
             'service_active_checks_enabled'     => 0,
             'service_passive_checks_enabled'    => 1
         )
@@ -180,7 +180,7 @@
         'monitoring/list/services',
         array(
             'service_state'                     => 3,
-            'host_state'                        => $hostState,
+            'host_problem'                      => $host_problem,
             'service_active_checks_enabled'     => 0,
             'service_passive_checks_enabled'    => 0
         )
@@ -206,7 +206,7 @@
 <div class="box entry state_ok">
     <a href="<?= $this->href(
         'monitoring/list/services',
-        array('host_state' => $hostState, 'service_state' => 0)
+        array('host_problem' => $host_problem, 'service_state' => 0)
     ); ?>">
         <?= $services_ok; ?> OK
     </a>
@@ -215,7 +215,7 @@
         'monitoring/list/services',
         array(
             'service_state'                     => 0,
-            'host_state'                        => $hostState,
+            'host_problem'                      => $host_problem,
             'service_active_checks_enabled'     => 0,
             'service_passive_checks_enabled'    => 0
         )
@@ -241,7 +241,7 @@
 <div class="box entry state_pending">
     <a href="<?= $this->href(
         'monitoring/list/services',
-        array('host_state' => $hostState, 'service_state' => 99)
+        array('host_problem' => $host_problem, 'service_state' => 99)
     ); ?>">
         <?= $services_pending; ?> PENDING
     </a>
@@ -250,7 +250,7 @@
         'monitoring/list/services',
         array(
             'service_state'                     => 99,
-            'host_state'                        => $hostState,
+            'host_problem'                      => $host_problem,
             'service_active_checks_enabled'     => 0,
             'service_passive_checks_enabled'    => 0
         )
