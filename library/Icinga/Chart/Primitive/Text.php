@@ -116,7 +116,7 @@ class Text extends Styleable implements Drawable
     /**
      * Set the font-stretch property of the text
      */
-    private $fontStretch = 'ultra-condensed';
+    private $fontStretch = 'semi-condensed';
 
     /**
      * Construct a new text drawable
@@ -189,7 +189,7 @@ class Text extends Styleable implements Drawable
             'style',
             $this->getStyle()
             . ';font-size:' . $this->fontSize
-            . '; font-family: Verdana, serif'
+            . '; font-family: Ubuntu, Calibri, Trebuchet MS, Helvetica, Verdana, sans-serif'
             . ';font-weight: ' . $this->fontWeight
             . ';font-stretch: ' . $this->fontStretch
             . '; font-style: normal;'
