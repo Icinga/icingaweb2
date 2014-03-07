@@ -14,25 +14,16 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>Hosts</th>
-                            <th>Services</th>
+                            <th><?= $this->translate('Hosts'); ?></th>
+                            <th><?= $this->translate('Services'); ?></th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <td>
-<?php if ($h->hosts_down): ?>
+<?php if ($h->hosts_down_handled || $h->hosts_down_unhandled): ?>
                                 <!-- Hosts DOWN -->
                                 <div class="box entry state_down <?= $h->hosts_down_unhandled ? '' : 'handled'; ?>">
-                                    <a href="<?= $this->href(
-                                        'monitoring/list/hosts',
-                                        array(
-                                            'host_state'    => 1,
-                                            'hostgroup'     => $h->hostgroup
-                                        )
-                                    ); ?>" title="Hosts DOWN">
-                                        <?= $h->hosts_down ?> DOWN
-                                    </a>
 <?php if ($h->hosts_down_unhandled): ?>
                                     <a href="<?= $this->href(
                                         'monitoring/list/hosts',
@@ -42,24 +33,27 @@
                                             'hostgroup'         => $h->hostgroup
                                         )
                                     ); ?>" title="Hosts DOWN Unhandled">
-                                        <?= $h->hosts_down_unhandled ?> Unhandled
+                                        <?= $h->hosts_down_unhandled; ?> DOWN
+                                    </a>
+<?php endif ?>
+<?php if ($h->hosts_down_handled): ?>
+                                    <a href="<?= $this->href(
+                                        'monitoring/list/hosts',
+                                        array(
+                                            'host_state'    => 1,
+                                            'host_handled'  => 1,
+                                            'hostgroup'     => $h->hostgroup
+                                        )
+                                    ); ?>" title="Hosts DOWN Handled">
+                                        <?= $h->hosts_down_handled . ' ' . ($h->hosts_down_unhandled ? $this->translate('Acknowledged') : 'DOWN'); ?>
                                     </a>
 <?php endif ?>
                                 </div>
                                 <!-- End of Hosts DOWN -->
 <?php endif ?>
-<?php if ($h->hosts_unreachable): ?>
+<?php if ($h->hosts_unreachable_handled || $h->hosts_unreachable_unhandled): ?>
                                 <!-- Hosts UNREACHABLE -->
                                 <div class="box entry state_unreachable <?= $h->hosts_unreachable_unhandled ? '' : 'handled'; ?>">
-                                    <a href="<?= $this->href(
-                                        'monitoring/list/hosts',
-                                        array(
-                                            'host_state'    => 2,
-                                            'hostgroup'     => $h->hostgroup
-                                        )
-                                    ); ?>" title="Hosts UNREACHABLE">
-                                        <?= $h->hosts_unreachable ?> UNREACHABLE
-                                    </a>
 <?php if ($h->hosts_unreachable_unhandled): ?>
                                     <a href="<?= $this->href(
                                         'monitoring/list/hosts',
@@ -69,7 +63,19 @@
                                             'hostgroup'         => $h->hostgroup
                                         )
                                     ); ?>" title="Hosts UNREACHABLE Unhandled">
-                                        <?= $h->hosts_unreachable_unhandled ?> Unhandled
+                                        <?= $h->hosts_unreachable_unhandled; ?> UNREACHABLE
+                                    </a>
+<?php endif ?>
+<?php if ($h->hosts_unreachable_handled): ?>
+                                    <a href="<?= $this->href(
+                                        'monitoring/list/hosts',
+                                        array(
+                                            'host_state'    => 2,
+                                            'host_handled'  => 1,
+                                            'hostgroup'     => $h->hostgroup
+                                        )
+                                    ); ?>" title="Hosts UNREACHABLE Handled">
+                                        <?= $h->hosts_unreachable_handled . ' ' . ($h->hosts_unreachable_unhandled ? $this->translate('Acknowledged') : 'UNREACHABLE'); ?>
                                     </a>
 <?php endif ?>
                                 </div>
@@ -85,7 +91,7 @@
                                             'hostgroup'     => $h->hostgroup
                                         )
                                     ); ?>" title="Hosts UP">
-                                        <?= $h->hosts_up ?> UP
+                                        <?= $h->hosts_up; ?> UP
                                     </a>
                                 </div>
                                 <!-- End of Hosts UP -->
@@ -100,91 +106,110 @@
                                             'hostgroup'     => $h->hostgroup
                                         )
                                     ); ?>" title="Hosts PENDING">
-                                        <?= $h->hosts_pending ?> PENDING
+                                        <?= $h->hosts_pending; ?> PENDING
                                     </a>
                                 </div>
                                 <!-- End of Hosts PENDING -->
 <?php endif ?>
                             </td>
                             <td>
-<?php if ($h->services_critical): ?>
+<?php if ($h->services_critical_handled || $h->services_critical_unhandled): ?>
                                 <!-- Services CRITICAL -->
                                 <div class="box entry state_critical <?= $h->services_critical_unhandled ? '' : 'handled'; ?>">
-                                    <a href="<?= $this->href(
-                                        'monitoring/list/services',
-                                        array(
-                                            'service_state' => 2,
-                                            'hostgroup'     => $h->hostgroup,
-                                            'sort'          => 'service_severity'
-                                        )
-                                    ); ?>" title="Services CRITICAL">
-                                        <?= $h->services_critical ?> CRITICAL
-                                    </a>
 <?php if ($h->services_critical_unhandled): ?>
                                     <a href="<?= $this->href(
                                         'monitoring/list/services',
                                         array(
+                                            'service_state'         => 2,
+                                            'service_acknowledged'  => 0,
+                                            'service_in_downtime'   => 0,
+                                            'host_problem'          => 0,
+                                            'hostgroup'             => $h->hostgroup,
+                                            'sort'                  => 'service_severity'
+                                        )
+                                    ); ?>" title="Services CRITICAL Unhandled">
+                                        <?= $h->services_critical_unhandled; ?> CRITICAL
+                                    </a>
+<?php endif ?>
+<?php if ($h->services_critical_handled): ?>
+                                    <a href="<?= $this->href(
+                                        'monitoring/list/services',
+                                        array(
                                             'service_state'     => 2,
-                                            'service_unhandled' => 1,
+                                            'service_handled'   => 1,
                                             'hostgroup'         => $h->hostgroup,
                                             'sort'              => 'service_severity'
                                         )
-                                    ); ?>" title="Services CRITICAL Unhandled">
-                                        <?= $h->services_critical_unhandled ?> Unhandled
+                                    ); ?>" title="Services CRITICAL Handled">
+                                        <?= $h->services_critical_handled . ' ' . ($h->services_critical_unhandled ? $this->translate('Acknowledged') : 'CRITICAL'); ?>
                                     </a>
 <?php endif ?>
                                 </div>
                                 <!-- End of Services CRITICAL -->
 <?php endif ?>
-<?php if ($h->services_warning): ?>
+<?php if ($h->services_warning_handled || $h->services_warning_unhandled): ?>
                                 <!-- Services WARNING -->
                                 <div class="box entry state_warning <?= $h->services_warning_unhandled ? '' : 'handled'; ?>">
-                                    <a href="<?= $this->href(
-                                        'monitoring/list/services',
-                                        array(
-                                            'service_state' => 1,
-                                            'hostgroup'     => $h->hostgroup
-                                        )
-                                    ); ?>" title="Services WARNING">
-                                        <?= $h->services_warning ?> WARNING
-                                    </a>
 <?php if ($h->services_warning_unhandled): ?>
                                     <a href="<?= $this->href(
                                         'monitoring/list/services',
                                         array(
-                                            'service_state'     => 1,
-                                            'service_unhandled' => 1,
-                                            'hostgroup'         => $h->hostgroup
+                                            'service_state'         => 1,
+                                            'service_acknowledged'  => 0,
+                                            'service_in_downtime'   => 0,
+                                            'host_problem'          => 0,
+                                            'hostgroup'             => $h->hostgroup,
+                                            'sort'                  => 'service_severity'
                                         )
                                     ); ?>" title="Services WARNING Unhandled">
-                                        <?= $h->services_warning_unhandled ?> Unhandled
+                                        <?= $h->services_warning_unhandled; ?> WARNING
+                                    </a>
+<?php endif ?>
+<?php if ($h->services_warning_handled): ?>
+                                    <a href="<?= $this->href(
+                                        'monitoring/list/services',
+                                        array(
+                                            'service_state'     => 1,
+                                            'service_handled'   => 1,
+                                            'hostgroup'         => $h->hostgroup,
+                                            'sort'              => 'service_severity'
+                                        )
+                                    ); ?>" title="Services WARNING Handled">
+                                        <?= $h->services_warning_handled . ' ' . ($h->services_warning_unhandled ? $this->translate('Acknowledged') : 'WARNING'); ?>
                                     </a>
 <?php endif ?>
                                 </div>
                                 <!-- End of Services WARNING -->
 <?php endif ?>
-<?php if ($h->services_unknown): ?>
+<?php if ($h->services_unknown_handled || $h->services_unknown_unhandled): ?>
                                 <!-- Services UNKNOWN -->
-                                <div class="box entry state_unknown">
-                                    <a href="<?= $this->href(
-                                        'monitoring/list/services',
-                                        array(
-                                            'service_state' => 3,
-                                            'hostgroup'     => $h->hostgroup
-                                        )
-                                    ); ?>" title="Services UNKNOWN">
-                                        <?= $h->services_unknown ?> UNKNOWN
-                                    </a>
+                                <div class="box entry state_unknown <?= $h->services_unknown_unhandled ? '' : 'handled'; ?>">
 <?php if ($h->services_unknown_unhandled): ?>
                                     <a href="<?= $this->href(
                                         'monitoring/list/services',
                                         array(
-                                            'service_state'     => 3,
-                                            'service_unhandled' => 1,
-                                            'hostgroup'         => $h->hostgroup
+                                            'service_state'         => 3,
+                                            'service_acknowledged'  => 0,
+                                            'service_in_downtime'   => 0,
+                                            'host_problem'          => 0,
+                                            'hostgroup'             => $h->hostgroup,
+                                            'sort'                  => 'service_severity'
                                         )
                                     ); ?>" title="Services UNKNOWN Unhandled">
-                                        <?= $h->services_unknown_unhandled ?> Unhandled
+                                        <?= $h->services_unknown_unhandled; ?> UNKNOWN
+                                    </a>
+<?php endif ?>
+<?php if ($h->services_unknown_handled): ?>
+                                    <a href="<?= $this->href(
+                                        'monitoring/list/services',
+                                        array(
+                                            'service_state'     => 3,
+                                            'service_handled'   => 1,
+                                            'hostgroup'         => $h->hostgroup,
+                                            'sort'              => 'service_severity'
+                                        )
+                                    ); ?>" title="Services UNKNOWN Handled">
+                                        <?= $h->services_unknown_handled . ' ' . ($h->services_unknown_unhandled ? $this->translate('Acknowledged') : 'UNKNOWN'); ?>
                                     </a>
 <?php endif ?>
                                 </div>
@@ -197,10 +222,11 @@
                                         'monitoring/list/services',
                                         array(
                                             'service_state' => 0,
-                                            'hostgroup'     => $h->hostgroup
+                                            'hostgroup'     => $h->hostgroup,
+                                            'sort'          => 'service_severity'
                                         )
                                     ); ?>" title="Services OK">
-                                        <?= $h->services_ok ?> OK
+                                        <?= $h->services_ok; ?> OK
                                     </a>
                                 </div>
                                 <!-- End of Services OK -->
@@ -212,10 +238,11 @@
                                         'monitoring/list/services',
                                         array(
                                             'service_state' => 99,
-                                            'hostgroup'     => $h->hostgroup
+                                            'hostgroup'     => $h->hostgroup,
+                                            'sort'          => 'service_severity'
                                         )
                                     ); ?>" title="Services PENDING">
-                                        <?= $h->services_pending ?> PENDING
+                                        <?= $h->services_pending; ?> PENDING
                                     </a>
                                 </div>
                                 <!-- End of Services PENDING -->

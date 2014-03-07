@@ -11,20 +11,22 @@
             <tbody>
                 <tr>
                     <td>
-<?php if ($this->statusSummary->hosts_down): ?>
+<?php if ($this->statusSummary->hosts_down_handled || $this->statusSummary->hosts_down_unhandled): ?>
                         <div class="box entry state_down <?= $this->statusSummary->hosts_down_unhandled ? '' : 'handled'; ?>">
-                            <a href="<?= $this->href(
-                                'monitoring/list/hosts',
-                                array('host_state' => 1)
-                            ); ?>">
-                                <?= $this->statusSummary->hosts_down; ?> DOWN
-                            </a>
 <?php if ($this->statusSummary->hosts_down_unhandled): ?>
                             <a href="<?= $this->href(
                                 'monitoring/list/hosts',
                                 array('host_state' => 1, 'host_unhandled' => 1)
                             ); ?>">
-                                <?= $this->statusSummary->hosts_down_unhandled . ' ' . $this->translate('Unhandled'); ?>
+                                <?= $this->statusSummary->hosts_down_unhandled; ?> DOWN
+                            </a>
+<?php endif ?>
+<?php if ($this->statusSummary->hosts_down_handled): ?>
+                            <a href="<?= $this->href(
+                                'monitoring/list/hosts',
+                                array('host_state' => 1, 'host_handled' => 1)
+                            ); ?>">
+                                <?= $this->statusSummary->hosts_down_handled . ' ' . $this->statusSummary->hosts_down_unhandled ? $this->translate('Acknowledged') : 'DOWN'; ?>
                             </a>
 <?php endif ?>
 <?php if ($this->statusSummary->hosts_down_passive): ?>
@@ -77,20 +79,22 @@
 <?php endif ?>
                         </div>
 <?php endif ?>
-<?php if ($this->statusSummary->hosts_unreachable): ?>
+<?php if ($this->statusSummary->hosts_unreachable_handled || $this->statusSummary->hosts_unreachable_unhandled): ?>
                         <div class="box entry state_unreachable <?= $this->statusSummary->hosts_unreachable_unhandled ? '' : 'handled'; ?>">
-                            <a href="<?= $this->href(
-                                'monitoring/list/hosts',
-                                array('host_state' => 2)
-                            ); ?>">
-                                <?= $this->statusSummary->hosts_unreachable; ?> UNREACHABLE
-                            </a>
 <?php if ($this->statusSummary->hosts_unreachable_unhandled): ?>
                             <a href="<?= $this->href(
                                 'monitoring/list/hosts',
                                 array('host_state' => 2, 'host_unhandled' => 1)
                             ); ?>">
-                                <?= $this->statusSummary->hosts_unreachable_unhandled . ' ' . $this->translate('Unhandled'); ?>
+                                <?= $this->statusSummary->hosts_unreachable_unhandled; ?> UNREACHABLE
+                            </a>
+<?php endif ?>
+<?php if ($this->statusSummary->hosts_unreachable_handled): ?>
+                            <a href="<?= $this->href(
+                                'monitoring/list/hosts',
+                                array('host_state' => 2, 'host_handled' => 1)
+                            ); ?>">
+                                <?= $this->statusSummary->hosts_unreachable . ' ' . $this->statusSummary->hosts_unreachable_unhandled ? $this->translate('Acknowledged') : 'UNREACHABLE'; ?>
                             </a>
 <?php endif ?>
 <?php if ($this->statusSummary->hosts_unreachable_passive): ?>
@@ -153,15 +157,15 @@
                                 'services_ok_not_checked'           => $this->statusSummary->services_ok_not_checked_on_problem_hosts,
                                 'services_pending'                  => $this->statusSummary->services_pending_on_problem_hosts,
                                 'services_pending_not_checked'      => $this->statusSummary->services_pending_not_checked_on_problem_hosts,
-                                'services_warning'                  => $this->statusSummary->services_warning_on_problem_hosts,
+                                'services_warning_handled'          => $this->statusSummary->services_warning_handled_on_problem_hosts,
                                 'services_warning_unhandled'        => $this->statusSummary->services_warning_unhandled_on_problem_hosts,
                                 'services_warning_passive'          => $this->statusSummary->services_warning_passive_on_problem_hosts,
                                 'services_warning_not_checked'      => $this->statusSummary->services_warning_not_checked_on_problem_hosts,
-                                'services_critical'                 => $this->statusSummary->services_critical_on_problem_hosts,
+                                'services_critical_handled'         => $this->statusSummary->services_critical_handled_on_problem_hosts,
                                 'services_critical_unhandled'       => $this->statusSummary->services_critical_unhandled_on_problem_hosts,
                                 'services_critical_passive'         => $this->statusSummary->services_critical_passive_on_problem_hosts,
                                 'services_critical_not_checked'     => $this->statusSummary->services_critical_not_checked_on_problem_hosts,
-                                'services_unknown'                  => $this->statusSummary->services_unknown_on_problem_hosts,
+                                'services_unknown_handled'          => $this->statusSummary->services_unknown_handled_on_problem_hosts,
                                 'services_unknown_unhandled'        => $this->statusSummary->services_unknown_unhandled_on_problem_hosts,
                                 'services_unknown_passive'          => $this->statusSummary->services_unknown_passive_on_problem_hosts,
                                 'services_unknown_not_checked'      => $this->statusSummary->services_unknown_not_checked_on_problem_hosts
