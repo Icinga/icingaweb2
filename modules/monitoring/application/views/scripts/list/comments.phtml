@@ -39,11 +39,11 @@ $viewHelper = $this->getHelper('MonitoringState');
     );
   ?>
 <tr>
-    <td>
+    <td style="width: 100px;">
         <?= date('d.m. H:i', $comment->comment_timestamp); ?>
     </td>
 
-    <td>
+    <td style="width: 80px;">
         <?php if ($comment->comment_objecttype_id === '1'): ?>
             <?= $this->icon('host.png', 'Host comment') ?>
         <?php elseif ($comment->comment_objecttype_id === '2'): ?>
@@ -76,7 +76,8 @@ $viewHelper = $this->getHelper('MonitoringState');
       <a class="hidden" href="<?= $detailLink; ?>"></a>
 
         <div rel="tooltip" title="Comment #<?=$comment->comment_id ?>">
-        For
+
+        <strong>
         <?php if ($comment->service_name): ?>
             <a href="<?= $detailLink ?>">
                 <?= $comment->service_name ?>
@@ -88,6 +89,7 @@ $viewHelper = $this->getHelper('MonitoringState');
                 <?= $comment->host_name; ?>
             </a>
         <?php endif; ?>
+        </strong>
         by
         <?= $comment->comment_author; ?>
       <div class="small-row">
@@ -108,7 +110,7 @@ $viewHelper = $this->getHelper('MonitoringState');
       </small>
 
     </td>
-    <td>
+    <td style="width: 40px;" href="#">
       <?php
         $data = array(
           'commentid' => $comment->comment_id,
