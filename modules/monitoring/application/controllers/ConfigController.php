@@ -71,8 +71,18 @@ class Monitoring_ConfigController extends BaseConfigController {
     public function indexAction()
     {
         $this->view->messageBox = new AlertMessageBox(true);
-        $this->view->backends  = IcingaConfig::module('monitoring', 'backends')->toArray();
-        $this->view->instances = IcingaConfig::module('monitoring', 'instances')->toArray();
+        $monitoring_backends  = IcingaConfig::module('monitoring', 'backends');
+        $monitoring_instances = IcingaConfig::module('monitoring', 'instances');
+        if ($monitoring_backends === null) {
+            $this->view->backends = array();
+        } else {
+            $this->view->backends = $monitoring_backends->toArray();
+        }
+        if ($monitoring_instances === null) {
+            $this->view->instances = array();
+        } else {
+            $this->view->instances = $monitoring_instances->toArray();
+        }
         $this->render('index');
     }
 
