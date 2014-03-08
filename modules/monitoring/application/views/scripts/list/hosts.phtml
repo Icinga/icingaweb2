@@ -90,7 +90,7 @@ if ($hosts->count() === 0) {
       <?php if ($host->host_icon_image) : ?>
       <?= $this->img($this->resolveMacros($host->host_icon_image, $host), array('align' => 'right')) ?>
       <?php endif ?>
-      <a href="<?= $this->href('monitoring/list/services', array('host' => $host->host_name)) ?>"><?= $host->host_name ?></a><br />
+      <a href="<?= $this->href('monitoring/show/host', array('host' => $host->host_name)) ?>"><?= $host->host_name ?></a><br />
         <?= $this->escape(substr(strip_tags($host->host_output), 0, 10000)); ?>
     </td>
   </tr>
