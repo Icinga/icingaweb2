@@ -66,7 +66,7 @@
                 return;
             }
 
-            this.icinga.logger.info('Pushing current state to history');
+            this.icinga.logger.debug('Pushing current state to history');
             var url = '';
 
             // We only store URLs of containers sitting directly under #main:
