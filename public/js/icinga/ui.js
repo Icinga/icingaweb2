@@ -333,7 +333,9 @@
                 $el.css({
                     position : 'fixed',
                     top      : $parent.offset().top,
-                    width    : $fake.css('width')
+                    // Firefox gives 1px too much depending on total width.
+                    // TODO: find a better solution for -1
+                    width    : ($fake.width() - 1) + 'px'
                 });
 
                 $fake.css({
