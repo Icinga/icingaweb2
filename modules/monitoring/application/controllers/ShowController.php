@@ -98,7 +98,7 @@ class Monitoring_ShowController extends Controller
     public function historyAction()
     {
         $this->getTabs()->activate('history');
-        $this->view->object->populate();
+        //$this->view->object->populate();
         $this->view->object->fetchEventHistory();
         $this->handleFormatRequest($this->view->object->eventhistory);
         $this->view->history = $this->view->object->eventhistory->limit(20)->paginate();
@@ -107,11 +107,14 @@ class Monitoring_ShowController extends Controller
     public function servicesAction()
     {
         $this->getTabs()->activate('services');
-        $this->_setParam('service', null);
+        $this->_setParam('service', '');
+        // WTF???? UrlViewFilter is messing with $_SERVER['QUERY_STRING'], great!
+        $_SERVER['QUERY_STRING'] = preg_replace('~&service=[^&]+(?:&|$)~', '', $_SERVER['QUERY_STRING']);
         $this->view->services = $this->view->action('services', 'list', 'monitoring', array(
             'view'  => 'compact',
             'limit' => '',
             'sort'  => 'service_description',
+            'service' => ''
         ));
     }
 
@@ -163,12 +166,7 @@ class Monitoring_ShowController extends Controller
             $params['service'] = $object->service_description;
         } elseif ($service = $this->_getParam('service')) {
             $params['service'] = $service;
-        } elseif ($service = $this->_getParam('active_service')) {
-            $params['service'] = $service;
         }
-        $servicesParams = $params;
-        $servicesParams['active_service'] = $servicesParams['service'];
-        unset($servicesParams['service']);
         $tabs->add(
             'host',
             array(
@@ -195,7 +193,7 @@ class Monitoring_ShowController extends Controller
                 'title'     => 'Services',
                 'icon'      => 'img/icons/service.png',
                 'url'       => 'monitoring/show/services',
-                'urlParams' => $servicesParams,
+                'urlParams' => $params,
             )
         );
         $tabs->add(
