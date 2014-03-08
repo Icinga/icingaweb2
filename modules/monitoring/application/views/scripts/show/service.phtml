@@ -3,11 +3,11 @@
 <h1>This service's current state</h1>
 </div>
 <div class="content" data-base-target="col1">
-<?= $this->render('show/components/status.phtml') ?>
 <?= $this->render('show/components/output.phtml') ?>
 
 <table class="avp">
  <tbody>
+<?= $this->render('show/components/acknowledgement.phtml') ?>
 <?= $this->render('show/components/comments.phtml') ?>
 <?= $this->render('show/components/notifications.phtml') ?>
 <?= $this->render('show/components/downtime.phtml') ?>

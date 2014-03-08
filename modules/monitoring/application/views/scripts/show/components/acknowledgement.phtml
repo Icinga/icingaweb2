@@ -1,0 +1,40 @@
+<?php
+
+use Icinga\Module\Monitoring\Object\Host;
+use Icinga\Module\Monitoring\Object\Service;
+
+if (in_array((int) $object->state, array(0, 99))) {
+    return;
+}
+
+$cf = $this->getHelper('CommandForm');
+
+$data = array('host' => $object->host_name);
+if ($object->service_description) {
+    $data['service'] = $object->service_description;
+}
+
+?>
+<tr>
+<?php
+
+if ($object instanceof Host && $object->host_acknowledged
+    || $object instanceof Service && $object->service_acknowledged): ?>
+  <th>Issue acknowledged</th>
+  <td><?= $cf->labelSubmitForm(
+        'Remove Acknowledgement',
+        'Remove problem acknowledgement',
+        'link-like',
+        'removeacknowledgement',
+        $data
+    ) ?>
+<?php else: ?>
+  <th>Not acknowledged</th>
+  <td>
+    <a href="<?= $this->href(
+        'monitoring/command/acknowledgeproblem',
+        $data
+    ) ?>"><?= $this->icon('acknowledgement_petrol.png') ?> Acknowledge now</a>
+  </td>
+<?php endif ?>
+</tr>
