@@ -107,9 +107,12 @@ class Monitoring_ShowController extends Controller
     public function servicesAction()
     {
         $this->getTabs()->activate('services');
-        $params = $this->_request->getParams();
-        unset($params['service']);
-        $this->view->services = $this->fetchServices($params)->paginate();
+        $this->_setParam('service', null);
+        $this->view->services = $this->view->action('services', 'list', 'monitoring', array(
+            'view'  => 'compact',
+            'limit' => '',
+            'sort'  => 'service_description',
+        ));
     }
 
 
@@ -160,7 +163,21 @@ class Monitoring_ShowController extends Controller
             $params['service'] = $object->service_description;
         } elseif ($service = $this->_getParam('service')) {
             $params['service'] = $service;
+        } elseif ($service = $this->_getParam('active_service')) {
+            $params['service'] = $service;
         }
+        $servicesParams = $params;
+        $servicesParams['active_service'] = $servicesParams['service'];
+        unset($servicesParams['service']);
+        $tabs->add(
+            'host',
+            array(
+                'title'     => 'Host',
+                'icon'      => 'img/icons/host.png',
+                'url'       => 'monitoring/show/host',
+                'urlParams' => $params,
+            )
+        );
         if (isset($params['service'])) {
             $tabs->add(
                 'service',
@@ -173,21 +190,12 @@ class Monitoring_ShowController extends Controller
             );
         }
         $tabs->add(
-            'host',
-            array(
-                'title'     => 'Host',
-                'icon'      => 'img/icons/host.png',
-                'url'       => 'monitoring/show/host',
-                'urlParams' => $params,
-            )
-        );
-        $tabs->add(
             'services',
             array(
                 'title'     => 'Services',
                 'icon'      => 'img/icons/service.png',
                 'url'       => 'monitoring/show/services',
-                'urlParams' => $params,
+                'urlParams' => $servicesParams,
             )
         );
         $tabs->add(

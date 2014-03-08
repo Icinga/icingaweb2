@@ -167,6 +167,12 @@ class Monitoring_ListController extends MonitoringController
             'title' => 'Services Status',
             'url' => Url::fromPath('monitoring/list/services')
         ))->activate('services');
+        $this->view->showHost = true;
+        if ($host = $this->_getParam('host')) {
+            if (strpos($host, '*') === false) {
+                $this->view->showHost = false;
+            }
+        }
         $this->view->title = 'Service Status';
         $this->setAutorefreshInterval(10);
         $query = $this->fetchServices();
