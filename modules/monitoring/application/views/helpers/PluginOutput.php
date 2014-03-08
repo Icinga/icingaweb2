@@ -18,7 +18,7 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
         } elseif (preg_match('~\\\n~', $output)) {
             // Plaintext
             $output = '<pre style="font-family: monospace; font-size: 1em;'
-                    . ' width: 90%; overflow: auto;">'
+                    . ' width: 100%; overflow: auto; white-space: pre-wrap;">'
                . preg_replace(
               '~\\\n~', "\n", preg_replace(
                 '~\\\n\\\n~', "\n",
@@ -26,15 +26,15 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
                  preg_replace('~\[WARNING\]~', '<span class="warning">[WARNING]</span>',
                   preg_replace('~\[CRITICAL\]~', '<span class="error">[CRITICAL]</span>',
                    preg_replace('~\@{6,}~', '@@@@@@',
-                     $this->view->escape(wordwrap($output, 80, "\n", true))
+                     $this->view->escape($output)
                 ))))
               )
             ) . '</pre>';
         } else {
             $output = '<pre style="font-family: monospace; font-size: 1em;'
-                    . ' width: 90%; overflow: auto;">'
+                    . ' width: 100%; overflow: auto; white-space: pre-wrap;">'
                . preg_replace('~\@{6,}~', '@@@@@@',
-                $this->view->escape(wordwrap($output, 80, "\n", true))
+                $this->view->escape($output)
             ) . '</pre>';
         }
         $output = $this->fixLinks($output);
