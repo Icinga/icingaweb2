@@ -1,8 +1,9 @@
 <div class="controls">
 <?= $this->render('show/components/header.phtml') ?>
+<h1>This service's current state</h1>
 </div>
 <div class="content" data-base-target="col1">
-<?= $this->render('show/components/status.phtml'); ?>
+<?= $this->render('show/components/status.phtml') ?>
 <?= $this->render('show/components/output.phtml') ?>
 
 <?= $this->render('show/components/downtime.phtml') ?>
@@ -15,8 +16,8 @@
 <?= $this->render('show/components/command.phtml') ?>
 <?= $this->render('show/components/servicegroups.phtml') ?>
 <?= $this->render('show/components/contacts.phtml') ?>
-<?= $this->render('show/components/customvars.phtml') ?>
 <?= $this->render('show/components/checkstatistics.phtml') ?>
+<?= $this->render('show/components/customvars.phtml') ?>
 <?= $this->render('show/components/flags.phtml') ?>
 </table>
 </div>

@@ -33,7 +33,7 @@ $states = array(
 
 ?><div class="controls">
 <?= $this->render('show/components/header.phtml') ?>
-<a href="<?= $this->href('monitoring/list/eventhistory', $params); ?>">All events for <?= $title ?></a><br />
+<h1>This object's event history</h1>
 <?=  $this->paginationControl($this->history, null, null, array('preserve' => $this->preserve)); ?>
 </div>
 
@@ -42,7 +42,7 @@ No History Available For This Object
 </div>
 <?php return; endif ?>
 
-
+<div class="content">
 <table class="action">
 <tbody>
 
@@ -127,4 +127,4 @@ echo $output;
 <? endforeach; ?>
 </tbody>
 </table>
-
+</div>

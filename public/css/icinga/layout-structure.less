@@ -140,7 +140,7 @@ html {
   width: 6em;
 }
 
-.dashboard > div.container h1 {
+.dashboard > div.container h1, .container .content h1, .container .controls h1 {
   line-height: 2em;
   font-size: 1em;
   padding-left: 1em;
@@ -150,6 +150,15 @@ html {
   border-radius: 0.2em;
   -moz-border-radius: 0.2em;
   -webkit-border-radius: 0.2em;
+}
+
+.container .controls h1 {
+  margin-left: 1em;
+  margin-right: 1em;
+}
+
+.container .controls .pagination {
+  margin-left: 1.2em;
 }
 
 .dashboard > div.container h1 a {
