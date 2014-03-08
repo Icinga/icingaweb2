@@ -82,7 +82,8 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
             $result = $perfdata;
         }
         if (! empty($table)) {
-            $result = '<table class="perfdata">' . implode("\n", $table) . '</table>' . $result;
+            // TODO: What if we have both? And should we trust sprintf-style placeholders in perfdata titles?
+            $result = '<table class="perfdata">' . implode("\n", $table) . '</table>';
         }
 
         return $result;
