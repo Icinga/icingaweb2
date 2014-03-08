@@ -322,7 +322,8 @@
                 return;
             }
 
-            self.icinga.logger.debug('Fixing controls for ', $parent);
+            // Enable this only in case you want to track down UI problems
+            // self.icinga.logger.debug('Fixing controls for ', $parent);
 
             $('.controls', $parent).each(function (idx, el) {
                 var $el = $(el);
