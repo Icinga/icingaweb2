@@ -1,6 +1,21 @@
-<tr>
+<?php
+
+$cf = $this->getHelper('CommandForm');
+
+?><tr>
   <th><?= $this->translate('Last check') ?></th>
-  <td><a href="#"><?= $this->img('img/icons/refresh_petrol.png') ?> <?= $this->translate('Check now') ?></a> <?= $this->timeSince($object->last_check) ?></td>
+  <td><?= $this->img('img/icons/refresh_petrol.png') ?> <?= $cf->labelSubmitForm(
+                    'Check now',
+                    'Reschedule next check immediately',
+                    'link-like',
+                    'reschedulenextcheck',
+                    array(
+                        'host'          => $this->object->host_name,
+                        'service'       => $this->object->service_description,
+                        'checktime'     => time(),
+                        'forcecheck'    => '1'
+                    )
+                ) ?> <?= $this->timeSince($object->last_check) ?></td>
 </tr>
 <tr>
   <th><?= $this->translate('Next check') ?></th>

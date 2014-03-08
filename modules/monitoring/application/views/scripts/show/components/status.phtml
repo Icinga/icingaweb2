@@ -81,18 +81,7 @@
                     </a>
                 <?php endif; ?>
                 <?php endif; ?>
-                <?= $cf->labelSubmitForm(
-                    'Recheck',
-                    'Reschedule next check immediately',
-                    'btn-cta ' . (($objectState > 0) ? 'btn-half-right' : 'btn-wide'),
-                    'reschedulenextcheck',
-                    array(
-                        'host'          => $this->object->host_name,
-                        'service'       => $this->object->service_description,
-                        'checktime'     => time(),
-                        'forcecheck'    => '1'
-                    )
-                ) ?>
+                
         </div>
 
         <?php if ($objectState > 0): ?>
