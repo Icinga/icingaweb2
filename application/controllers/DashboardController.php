@@ -126,6 +126,7 @@ class DashboardController extends ActionController
         }
         $this->view->title = $dashboard->getActivePane()->getTitle() . ' :: Dashboard';
         $this->view->tabs = $dashboard->getTabs();
+        /* Temporarily removed
         $this->view->tabs->add(
             'Add',
             array(
@@ -133,6 +134,7 @@ class DashboardController extends ActionController
                 'url' => Url::fromPath('dashboard/addurl')
             )
         );
+        */
         $this->view->dashboard = $dashboard;
     }
 }
