@@ -189,6 +189,10 @@
             var href = $a.attr('href');
             var $li;
             var targetId;
+            var isMenuLink = $a.closest('#menu').length > 0;
+
+            // TODO: Let remote links pass through. Right now they only work
+            //       combined with target="_blank"
             if ($a.attr('target') === '_blank') {
                 return true;
             }
@@ -197,30 +201,46 @@
 
             // If link is hash tag...
             if (href === '#') {
-                if ($a.closest('#menu')) {
+                // ...it may be a menu section without a dedicated link:
+                if (isMenuLink) {
                     $li = $a.closest('li');
                     $('#menu .active').removeClass('active');
                     $li.addClass('active');
                 }
+
+                // Stop here for all hash tags
                 return;
             }
+
+            // If everything else fails, our target is the first column...
             var $target = $('#col1');
+
+            // ...but usually we will use our own container...
             var $container = $a.closest('.container');
             if ($container.length) {
-               $target = $container;
+                $target = $container;
             }
 
+            // ...the only exception are class="action" tables...
             if ($a.closest('table.action').length) {
                 $target = $('#col2');
-                icinga.events.layout2col();
             }
+
+            // ...and you can of course override the default behaviour...
             if ($a.closest('[data-base-target]').length) {
                 targetId = $a.closest('[data-base-target]').data('baseTarget');
-                $target = $('#' + targetId);
-                if (targetId === 'col2') {
-                    icinga.events.layout2col();
+
+                // Simulate _next to prepare migration to dynamic column layout
+                if (targetId === '_next') {
+                    targetId = 'col2';
                 }
+
+                $target = $('#' + targetId);
             }
+
+            // Tree handler
+            // TODO: We should move this somewhere else and "register" such
+            //       handlers
             if ($a.closest('.tree').length) {
                 $li = $a.closest('li');
                 if ($li.find('li').length) {
@@ -233,30 +253,22 @@
                     return false;
                 } else {
                     $target = $('#col2');
-                    icinga.events.layout2col();
                 }
             }
 
+            // Load link URL
             icinga.loader.loadUrl(href, $target);
-            event.stopPropagation();
-            event.preventDefault();
 
-            if ($a.closest('#menu').length) {
+            // Menu links should remove all but the first layout column
+            if (isMenuLink) {
                 icinga.events.layout1col();
-                return false;
             }
 
-            if ($a.closest('table.action').length) {
-                if ($('#layout').hasClass('twocols')) {
-                    if ($target.attr('id') === 'col2') {
-                        return;
-                    }
-                    icinga.events.layout1col();
-                } else {
-                    icinga.events.layout2col();
-                }
-                return false;
+            // Hardcoded layout switch unless columns are dynamic
+            if ($target.attr('id') === 'col2') {
+                icinga.events.layout2col();
             }
+            return false;
         },
 
     /*
