@@ -29,13 +29,13 @@
 
 namespace Icinga\Form\Config;
 
-use \Zend_Config;
-use \Zend_Form_Element_Text;
-use \Icinga\Application\Config as IcingaConfig;
-use \Icinga\Application\Icinga;
-use \Icinga\Web\Form;
-use \Icinga\Web\Form\Validator\WritablePathValidator;
-use \Icinga\Web\Form\Decorator\ConditionalHidden;
+use Zend_Config;
+use Zend_Form_Element_Text;
+use Icinga\Application\Config;
+use Icinga\Application\Icinga;
+use Icinga\Web\Form;
+use Icinga\Web\Form\Validator\WritablePathValidator;
+use Icinga\Web\Form\Decorator\ConditionalHidden;
 
 /**
  * Form class for setting the application wide logging configuration
@@ -108,12 +108,13 @@ class LoggingForm extends Form
 
         $config = $this->getConfiguration();
         $logging = $config->logging;
+
         if ($logging === null) {
-            $logging = new IcingaConfig(array());
+            $logging = new Zend_Config(array());
         }
-        $debug = $config->logging->debug;
+        $debug = $logging->debug;
         if ($debug === null) {
-            $debug = new IcingaConfig(array());
+            $debug = new Zend_Config(array());
         }
 
         $txtLogPath = new Zend_Form_Element_Text(
@@ -191,10 +192,10 @@ class LoggingForm extends Form
     {
         $config = $this->getConfiguration();
         if ($config->logging === null) {
-            $config->logging = new IcingaConfig(array());
+            $config->logging = new Zend_Config(array());
         }
         if ($config->logging->debug === null) {
-            $config->logging->debug = new IcingaConfig(array());
+            $config->logging->debug = new Zend_Config(array());
         }
 
         $values = $this->getValues();
