@@ -117,10 +117,7 @@ class Monitoring_CommandController extends ActionController
                 $this->_helper->viewRenderer->setNoRender(true);
                 $this->_helper->layout()->disableLayout();
 
-                $requested = strtolower($this->_request->getHeader('x-requested-with'));
-                $ajaxRequest = $requested === 'xmlhttprequest' ? true : false;
-
-                if ($this->_request->getHeader('referer') && $ajaxRequest === false) {
+                if ($this->_request->getHeader('referer') && ! $this->getRequest()->isXmlHttpRequest()) {
                     $this->redirect($this->_request->getHeader('referer'));
                 }
 
