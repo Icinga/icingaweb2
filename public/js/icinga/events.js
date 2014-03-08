@@ -155,20 +155,22 @@
         linkClicked: function (event) {
             var self   = event.data.self;
             var icinga = self.icinga;
-
             var $a = $(this);
             var href = $a.attr('href');
+            var linkTarget = $a.attr('target');
             var $li;
             var $target;
             var isMenuLink = $a.closest('#menu').length > 0;
 
             // TODO: Let remote links pass through. Right now they only work
             //       combined with target="_blank" or target="_self"
-            if ($a.attr('target') === '_blank' || $a.attr('target') === '_self') {
-                return true;
+            // window.open is used as return true; didn't work reliable
+            if (linkTarget === '_blank' || linkTarget === '_self') {
+                window.open(href, linkTarget);
+                return false;
             }
 
-            // All other links are handled as XHR requests
+            // Handle all other links as XHR requests
             event.stopPropagation();
             event.preventDefault();
 
