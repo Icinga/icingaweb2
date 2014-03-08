@@ -21,17 +21,16 @@ foreach ($object->comments as $comment) {
     $deleteData['commentid'] = $object->comment_internal_id;
 
     $iconForm = $cf->iconSubmitForm(
-        'img/icons/remove.png',
+        'img/icons/remove_petrol.png',
         'Remove comment',
-        'btn-small',
+        'link-like',
         'removecomment',
         $deleteData
     );
 
     $list[] = sprintf(
         "<br />%s [%s] %s (%s): %s\n",
-        //'<input type="submit" value="x" style="width: 2em" />',
-        '<a href="#">' . $this->icon('remove_petrol.png') . '</a>' . $iconForm, // Test
+        $iconForm,
         $this->escape($comment->comment_author),
         $this->timeSince($comment->comment_timestamp),
         $comment->comment_type,

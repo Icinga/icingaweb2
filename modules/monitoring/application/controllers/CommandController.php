@@ -923,6 +923,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
+            Notification::success('Comment removal has been requested');
         }
     }
 
