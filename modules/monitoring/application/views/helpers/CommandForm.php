@@ -181,8 +181,9 @@ class Zend_View_Helper_CommandForm extends Zend_View_Helper_Abstract
         $form->addElement($submit_identifier);
         $form->getElement('btn_submit')->setDecorators(array('ViewHelper'));
 
+        $out = '';
         if ($label) {
-            $out = '<label for="' . $uniqueName . '">'
+            $out .= '<label for="' . $uniqueName . '">'
                 . $label
                 . '</label>';
         }
