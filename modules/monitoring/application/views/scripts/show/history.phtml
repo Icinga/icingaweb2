@@ -106,14 +106,9 @@ switch ($event->type) {
 echo $this->icon($icon . '.png', $title) . ' ';
 
 if ($object instanceof Service): ?>
-  <a href="<?= $this->href('monitoring/show/service', array(
-      'host'    => $object->host_name,
-      'service' => $event->service_description
-  )); ?>"><?= $this->escape($event->service_description) ?></a>
+  <?= $this->escape($event->service_description) ?>
 <?php else: ?>
-  <a href="<?= $this->href('monitoring/show/host', array(
-      'host'    => $object->host_name
-  )); ?>"><?= $this->escape($event->host_name) ?></a>
+  <?= $this->escape($event->host_name) ?>
 <?php endif;
 
 if ($event->attempt !== null) {
