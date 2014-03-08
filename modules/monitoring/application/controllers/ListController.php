@@ -30,13 +30,11 @@
 
 use Icinga\Application\Benchmark;
 use Icinga\Data\Db\Query;
-use Icinga\File\Csv;
-use Icinga\Module\Monitoring\Controller as MonitoringController;
+use Icinga\Module\Monitoring\Controller;
 use Icinga\Web\Hook;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
 use Icinga\Web\Widget\Tabextension\OutputFormat;
 use Icinga\Web\Widget\Tabs;
-use Icinga\Web\Widget\Chart\PieChart;
 use Icinga\Module\Monitoring\Backend;
 use Icinga\Web\Widget\SortBox;
 use Icinga\Web\Widget\FilterBox;
@@ -44,6 +42,7 @@ use Icinga\Web\Widget\Chart\HistoryColorGrid;
 use Icinga\Application\Config as IcingaConfig;
 
 use Icinga\Module\Monitoring\DataView\DataView;
+// TODO: Naming! There WAS a reason they used to carry 'View' in their name
 use Icinga\Module\Monitoring\DataView\Notification as NotificationView;
 use Icinga\Module\Monitoring\DataView\Downtime as DowntimeView;
 use Icinga\Module\Monitoring\DataView\Contact as ContactView;
@@ -59,7 +58,7 @@ use Icinga\Module\Monitoring\DataView\ServiceStatus;
 use Icinga\Filter\Filterable;
 use Icinga\Web\Url;
 
-class Monitoring_ListController extends MonitoringController
+class Monitoring_ListController extends Controller
 {
     /**
      * The backend used for this controller
@@ -79,15 +78,6 @@ class Monitoring_ListController extends MonitoringController
         $this->createTabs();
         $this->view->activeRowHref = $this->getParam('detail');
 		$this->view->compact = ($this->_request->getParam('view') === 'compact');
-        /*
-        $contextSwitch = $this->_helper->getHelper('DataFormatSwitch');
-        $contextSwitch = $this->_helper->getHelper('ContextSwitch');
-        $contextSwitch->addActionContext(true, 'json');
-        $contextSwitch->setAutoJsonSerialization(true);
-        $contextSwitch->initContext();
-        $contextSwitch->addActionContext(true, 'xml');
-        $contextSwitch->addActionContext(true, 'pdf');
-        */
     }
 
     /**
