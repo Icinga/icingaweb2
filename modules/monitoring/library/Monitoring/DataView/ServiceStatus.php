@@ -71,6 +71,7 @@ class ServiceStatus extends DataView
             'service_attempt',
             'service_last_notification',
             'service_check_command',
+            'service_current_notification_number',
             'host_icon_image',
             'host_acknowledged',
             'host_output',

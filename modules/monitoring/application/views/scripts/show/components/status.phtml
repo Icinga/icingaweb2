@@ -47,43 +47,5 @@
                 
         </div>
 
-        <?php if ($objectState > 0): ?>
-        <?php
-            if ($object->service_description) {
-                $notificationsHref = $this->href(
-                    'monitoring/list/notifications',
-                    array(
-                        'host'      => $object->host_name,
-                        'service'   => $object->service_description
-                    )
-                    );
-            } else {
-                $notificationsHref = $this->href(
-                    'monitoring/list/notifications',
-                    array(
-                        'host'      => $object->host_name
-                    )
-                );
-            }
-        ?>
-        <div class="panel-row">
-            <div class="panel-label">
-                Last Notification
-            </div>
-            <div class="panel-content">
-                <a href="<?= $notificationsHref ?>">
-                    <?php if ($object->last_notification === '0000-00-00 00:00:00'): ?>
-                        N/A
-                    <?php else: ?>
-                        <?= $object->last_notification ?>
-                        <?php if ($object->current_notification_number > 0): ?>
-                            <br />
-                            <?= $object->current_notification_number ?> notifications sent during current problem state
-                        <?php endif ;?>
-                    <?php endif; ?>
-                </a>
-            </div>
-        </div>
-        <?php endif; ?>
     </div>
 </div>

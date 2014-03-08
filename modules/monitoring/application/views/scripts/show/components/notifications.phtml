@@ -1,0 +1,35 @@
+<?php
+
+// We are not interested in notifications for OK or pending objects
+if (in_array((int) $object->state, array(0, 99))) {
+    return;
+}
+
+?>
+<tr>
+  <th>Notifications</th>
+  <td>
+<?php
+
+if ($object->current_notification_number > 0) {
+    if ((int) $object->current_notification_number === 1) {
+        $msg = sprintf(
+            $this->translate('A notication has been sent for this issue %s ago'),
+            $this->timeSince($object->last_notification)
+        );
+    } else {
+        $msg = sprintf(
+            $this->translate('%s notications have been sent for this issue'),
+            $object->current_notification_number
+        ) . '<br />' . sprintf(
+            'The last one occured %s ago',
+            $this->timeSince($object->last_notification)
+        );
+    }
+    echo $msg;
+} else {
+    echo $this->translate('No notification has been sent for this issue');
+}
+?>
+  </td>
+</tr>
