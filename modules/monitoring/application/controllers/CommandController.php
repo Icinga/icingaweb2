@@ -624,6 +624,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
+            Notification::success('Downtime scheduling requested, result should be shown soon');
         }
     }
 
@@ -641,6 +642,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
+            Notification::success('Downtime scheduling requested, result should be shown soon');
         }
     }
 
@@ -659,6 +661,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
+            Notification::success('Downtime removal requested, result should be shown soon');
         }
     }
 

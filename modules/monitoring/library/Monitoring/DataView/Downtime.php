@@ -43,6 +43,7 @@ class Downtime extends DataView
             'host_name',
             'service',
             'service_description',
+            'downtime_objecttype_id',
             'downtime_author',
             'downtime_comment',
             'downtime_entry_time',

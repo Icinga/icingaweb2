@@ -40,6 +40,7 @@ class DowntimeQuery extends IdoQuery
      */
     protected $columnMap = array(
         'downtime' => array(
+            'downtime_objecttype_id'        => 'sdo.objecttype_id',
             'downtime_author'               => 'sd.author_name',
             'downtime_comment'              => 'sd.comment_data',
             'downtime_entry_time'           => 'UNIX_TIMESTAMP(sd.entry_time)',
@@ -53,12 +54,16 @@ class DowntimeQuery extends IdoQuery
             'downtime_triggered_by_id'      => 'sd.triggered_by_id',
             'downtime_internal_downtime_id' => 'sd.internal_downtime_id',
         ),
-        'objects' => array(
-            'host'                  => 'o.name1 COLLATE latin1_general_ci',
-            'host_name'             => 'o.name1 COLLATE latin1_general_ci',
-            'service'               => 'o.name2 COLLATE latin1_general_ci',
-            'service_description'   => 'o.name2 COLLATE latin1_general_ci'
+        'hosts' => array(
+            'host_name' => 'ho.name1 COLLATE latin1_general_ci',
+            'host'      => 'ho.name1 COLLATE latin1_general_ci',
 
+        ),
+        'services' => array(
+            'service_host_name'     => 'so.name1 COLLATE latin1_general_ci',
+            'service'               => 'so.name2 COLLATE latin1_general_ci',
+            'service_name'          => 'so.name2 COLLATE latin1_general_ci',
+            'service_description'   => 'so.name2 COLLATE latin1_general_ci',
         )
     );
 
@@ -72,17 +77,32 @@ class DowntimeQuery extends IdoQuery
             array()
         );
 
-        $this->joinedVirtualTables = array('downtime' => true, 'services' => true);
+        $this->baseQuery->join(
+            array(
+                'sdo' => $this->prefix . 'objects'
+            ),
+            'sd.object_id = sdo.' . $this->object_id . ' AND sdo.is_active = 1'
+        );
+
+        $this->joinedVirtualTables = array('downtime' => true);
     }
 
-    /**
-     * Join if host needed
-     */
-    protected function joinObjects()
+    protected function joinHosts()
     {
+        $this->conflictsWithVirtualTable('services');
         $this->baseQuery->join(
-            array('o' => $this->prefix . 'objects'),
-            'sd.object_id = o.object_id AND o.is_active = 1 AND o.objecttype_id IN (1, 2)',
+            array('ho' => $this->prefix . 'objects'),
+            'sdo.name1 = ho.name1 AND ho.is_active = 1 AND ho.objecttype_id = 1',
+            array()
+        );
+    }
+
+    protected function joinServices()
+    {
+        $this->conflictsWithVirtualTable('hosts');
+        $this->baseQuery->joinLeft(
+            array('so' => $this->prefix . 'objects'),
+            'sdo.name1 = so.name1 AND sdo.name2 = so.name2 AND so.is_active = 1 AND sdo.is_active = 1 AND so.objecttype_id = 2',
             array()
         );
     }

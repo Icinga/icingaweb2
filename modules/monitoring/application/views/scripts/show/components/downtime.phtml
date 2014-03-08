@@ -1,66 +1,51 @@
-<div>
-    <div class="panel-heading">
-        <div class="panel-hostname">
+<?php
 
-            <div class="pull-right">
-                <?php
-                    $scheduleDowntimeData = array(
-                        'host'      => $this->object->host_name,
-                        'service'   => $this->object->service_description
-                    );
+$cf = $this->getHelper('CommandForm');
 
-                    $scheduleDowntimeHref = $this->href('monitoring/command/scheduleDowntime', $scheduleDowntimeData);
-                ?>
-                <a href="<?= $scheduleDowntimeHref; ?>" class="btn-common btn-small button" title="Schedule downtime">
-                    <?= $this->icon('in_downtime.png') ?>
-                </a>
-            </div>
-            Downtimes
-        </div>
-    </div>
-    <hr class="separator" />
-    <div class="panel-body">
-        <table class="table table-condensed table-detail">
-            <tbody>
-                <?php if (empty($this->object->downtimes)): ?>
-                <tr>
-                    <td>No Downtimes</td>
-                </tr>
-                <?php else: ?>
-                <?php foreach ($this->object->downtimes as $downtime): ?>
-                <tr>
-                    <td>
-                        <div class="pull-right">
-                        <?= $this->getHelper('CommandForm')->iconSubmitForm(
-                            'img/icons/remove.png',
-                            'Remove Downtime',
-                            'btn-small',
-                            'removedowntime',
-                            array(
-                                'downtimeid'    => $downtime->downtime_internal_downtime_id,
-                                'host'          => $downtime->host,
-                                'service'       => $downtime->service
-                            )
-                        ); ?>
-                        </div>
-                        <?php if ($downtime->downtime_is_in_effect === '1'): ?>
-                            In scheduled downtime since <?= $this->timeSince($downtime->downtime_start); ?>
-                        <?php else: ?>
-                            <?php if ($downtime->downtime_is_fixed): ?>
-                                Downtime scheduled for <?= $downtime->downtime_start; ?>
-                            <?php else: ?>
-                                Waiting
-                            <?php endif; ?>
-                        <?php endif; ?>
+$data = array('host' => $object->host_name);
+if ($object->service_description) {
+    $data['service'] = $object->service_description;
+}
 
-                        <div class="small-row">
-                            <?= $downtime->downtime_author; ?>: <?= $downtime->downtime_comment; ?>
-                        </div>
-                    </td>
-                </tr>
-                <?php endforeach; ?>
-                <?php endif; ?>
-            </tbody>
-        </table>
-    </div>
-</div>
+
+$list = array();
+foreach ($object->downtimes as $downtime) {
+    $deleteData = $data;
+    $deleteData['downtimeid'] = $object->downtime_internal_downtime_id;
+
+    // TODO: This needs improvement
+    if ((int) $downtime->downtime_is_in_effect) {
+        $state = 'in downtime since ' . $this->timeSince($downtime->downtime_start);
+    } else {
+        if ($downtime->downtime_is_fixed) {
+            $state = 'scheduled ' . $this->timeUnless($downtime->downtime_start);
+        } else {
+            $state = 'scheduled flexible ' . $this->timeUnless($downtime->downtime_start);
+        }
+    }
+
+    $iconForm = $cf->iconSubmitForm(
+        'img/icons/remove_petrol.png',
+        'Remove Downtime',
+        'link-like',
+        'removedowntime',
+        $deleteData
+    );
+
+    $list[] = sprintf(
+        "<br />%s [%s] (%s): %s\n",
+        $iconForm,
+        $this->escape($downtime->downtime_author),
+        $state,
+        $this->escape($downtime->downtime_comment)
+    );
+}
+
+?>
+<tr>
+  <th><?= $this->translate('Downtimes') ?></th>
+  <td>
+    <a href="<?= $this->href('monitoring/command/scheduleDowntime', $data) ?>"><?= $this->icon('in_downtime_petrol.png') ?> <?= $this->translate('Schedule downtime') ?></a>
+    <?= implode('', $list) ?>
+  </td>
+</tr>

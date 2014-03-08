@@ -44,11 +44,13 @@ abstract class AbstractObject
     {
         // WTF???
         $query = Comment::fromParams(array('backend' => null), array(
+            'comment_internal_id',
             'comment_timestamp',
             'comment_author',
             'comment_data',
             'comment_type',
         ))->getQuery();
+        $query->where('comment_type', array('comment', 'ack'));
         $query->where('comment_objecttype_id', $this->type);
         $this->applyObjectFilter($query);
         $this->comments = $query->fetchAll();
@@ -73,6 +75,28 @@ abstract class AbstractObject
 
     public function fetchDowntimes()
     {
+        // TODO: We want to check for objecttype = 'host', not type_id = 1
+
+        // WTF???
+        $query = Downtime::fromParams(array('backend' => null), array(
+            'downtime_author',
+            'downtime_comment',
+            'downtime_entry_time',
+            'downtime_is_fixed',
+            'downtime_is_flexible',
+            'downtime_scheduled_start_time',
+            'downtime_start',
+            'downtime_end',
+            'downtime_duration',
+            'downtime_is_in_effect',
+            'downtime_triggered_by_id',
+            'downtime_internal_downtime_id'
+        ))->getQuery();
+        $query->where('downtime_objecttype_id', $this->type);
+        $this->applyObjectFilter($query);
+        $this->downtimes = $query->fetchAll();
+        return $this;
+
         $this->downtimes = Downtime::fromRequest($this->request)->getQuery()->fetchAll();
         return $this;
     }

@@ -37,6 +37,8 @@ use Icinga\Protocol\Commandpipe\Comment;
 use Icinga\Util\DateTimeFactory;
 use Icinga\Module\Monitoring\Backend;
 use Icinga\Module\Monitoring\Command\ScheduleDowntimeCommand;
+use Icinga\Module\Monitoring\Object\AbstractObject;
+use Icinga\Module\Monitoring\Object\Service;
 
 /**
  * Form for scheduling downtimes
@@ -89,6 +91,11 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
 
         $cfg = $this->getConfiguration();
         $preferences = $this->getUserPreferences();
+        $object = AbstractObject::fromRequest($this->getRequest());
+        $object->fetchDowntimes();
+        $downtimes = $object->downtimes;
+/*
+
         $downtimes = Backend::createBackend($this->getRequest()->getParam('backend'))->select()
             ->from(
                 'downtime',
@@ -100,7 +107,7 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
                     'downtime_internal_downtime_id'
                 )
             )->fetchAll();
-
+*/
         $options = array(
             '0' =>  'No Triggered Downtime'
         );
@@ -109,8 +116,8 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
             $label = sprintf(
                 'ID %s: %s%s Starting @ %s',
                 $downtime->downtime_internal_downtime_id,
-                $downtime->host,
-                !empty($downtime->service_description) ? ' (' . $downtime->service_description . ')' : '',
+                $object->host_name,
+                $object instanceof Service ? ' (' . $object->service_description . ')' : '',
                 $dateFormat->formatDateTime($downtime->downtime_scheduled_start_time)
             );
             $options[$downtime->downtime_internal_downtime_id] = $label;

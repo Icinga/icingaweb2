@@ -23,7 +23,8 @@ class Host extends AbstractObject
             ->fetchHostgroups()
             ->fetchContacts()
             ->fetchContactGroups()
-            ->fetchCustomvars();
+            ->fetchCustomvars()
+            ->fetchDowntimes();
     }
 
     protected function getProperties()

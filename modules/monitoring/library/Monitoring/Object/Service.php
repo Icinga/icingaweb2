@@ -24,7 +24,8 @@ class Service extends AbstractObject
             ->fetchServicegroups()
             ->fetchContacts()
             ->fetchContactGroups()
-            ->fetchCustomvars();
+            ->fetchCustomvars()
+            ->fetchDowntimes();
     }
 
     protected function getProperties()
