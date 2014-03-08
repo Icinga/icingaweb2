@@ -255,10 +255,22 @@
                 active = $('[href].active', req.$target).attr('href');
             }
 
+            var notifications = req.getResponseHeader('X-Icinga-Notification');
+            if (notifications) {
+                var parts = notifications.split(' ');
+                this.createNotice(
+                    parts.shift(),
+                    parts.join(' ')
+                );
+            }
+
             //
             var target = req.getResponseHeader('X-Icinga-Container');
             var newBody = false;
             if (target) {
+                if (target === 'ignore') {
+                    return;
+                }
                 req.$target = $('#' + target);
                 newBody = true;
             }
@@ -286,15 +298,6 @@
             var windowId = req.getResponseHeader('X-Icinga-WindowId');
             if (windowId) {
                 this.icinga.ui.setWindowId(windowId);
-            }
-
-            var notifications = req.getResponseHeader('X-Icinga-Notification');
-            if (notifications) {
-                var parts = notifications.split(' ');
-                this.createNotice(
-                    parts.shift(),
-                    parts.join(' ')
-                );
             }
 
             // Remove 'impact' class if there was such
@@ -438,9 +441,11 @@
             if (persist) {
                 c += ' persist';
             }
-            return $(
+            var $notice = $(
                 '<li class="' + c + '">' + message + '</li>'
             ).appendTo($('#notifications'));
+            this.icinga.ui.fixControls();
+            return $notice;
         },
 
         /**
