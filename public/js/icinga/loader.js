@@ -277,6 +277,10 @@
                 if (target === 'ignore') {
                     return;
                 }
+                // If we change the target, oncomplete will fail to clean up
+                // This fixes the problem, not using req.$target would be better
+                delete this.requests[req.$target.attr('id')];
+
                 req.$target = $('#' + target);
                 newBody = true;
             }
