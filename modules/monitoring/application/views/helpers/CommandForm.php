@@ -56,9 +56,6 @@ class Zend_View_Helper_CommandForm extends Zend_View_Helper_Abstract
     {
         $form = new Form();
         $form->setIgnoreChangeDiscarding(true);
-        $form->setAttrib('data-icinga-component', 'app/ajaxPostSubmitForm');
-        $form->setAttrib('class', 'inline-form');
-
         $form->setRequest(Zend_Controller_Front::getInstance()->getRequest());
 
         // Filter work only from get parts. Put important
@@ -184,15 +181,14 @@ class Zend_View_Helper_CommandForm extends Zend_View_Helper_Abstract
         $form->addElement($submit_identifier);
         $form->getElement('btn_submit')->setDecorators(array('ViewHelper'));
 
-        $out = '<label class="label-horizontal label-configuration" for="' . $uniqueName . '">'
-            . $label
-            . '</label>'
-            . '<div class="pull-right">';
+        if ($label) {
+            $out = '<label for="' . $uniqueName . '">'
+                . $label
+                . '</label>';
+        }
 
         if ($changed === true) {
-            $out .= '<span class="config-changed">'
-                . '<i class="icinga-icon-edit"></i> (modified)'
-                . '</span>';
+            $out .= $this->getView()->icon('config_changed.png') . ' (modified)';
         }
 
         $formCode = (string) $form;
@@ -203,8 +199,7 @@ class Zend_View_Helper_CommandForm extends Zend_View_Helper_Abstract
 
         $formCode = str_replace('</form>', $jsLessSubmit, $formCode);
 
-        $out .= $formCode
-            . '</div>';
+        $out .= $formCode;
 
         return $out;
     }

@@ -1,148 +1,77 @@
 <?php
-    $o = $this->object;
 
-    /** @var Zend_View_Helper_CommandForm $cf */
-    $cf = $this->getHelper('CommandForm');
+$o = $this->object;
+$cf = $this->getHelper('CommandForm');
 
-    $data = array(
-        'host'      => $o->host_name,
-        'service'   => $o->service_description
-    );
+$data = array(
+    'host'      => $o->host_name,
+    'service'   => $o->service_description
+);
 
-    $modified_attributes = false;
-
-    if ($o->service_description && $o->service_modified_service_attributes) {
-        $modified_attributes = true;
-    } elseif ($o->host_modified_host_attributes) {
-        $modified_attributes = true;
-    }
-
-    $test_db_modified = (
-        ($o->passive_checks_enabled_changed === '0')
-        && ($o->active_checks_enabled_changed === '0')
-        && ($o->obsessing_changed === '0')
-        && ($o->notifications_enabled_changed === '0')
-        && ($o->event_handler_enabled_changed === '0')
-        && ($o->flap_detection_enabled_changed === '0')
-    ) ? false : true;
-
-    if ($modified_attributes && !$test_db_modified) {
-        $modified_attributes = false;
-    }
 ?>
-<div>
-    <div class="panel-heading">
-        <div class="panel-hostname">
-            Configuration
-        </div>
-    </div>
-
-    <hr class="separator" />
-
-    <div class="panel-body">
-        <table class="table table-bordered">
-            <tbody>
-                <tr>
-                    <td>
-                        <?=
-                            $cf->toggleSubmitForm(
-                                'Passive Checks enabled',
-                                $o->passive_checks_enabled,
-                                'startacceptingpassivechecks',
-                                'stopacceptingpassivechecks',
-                                (($o->passive_checks_enabled_changed === '1') ? true : false),
-                                $data
-                            );
-                        ?>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>
-                        <?=
-                            $cf->toggleSubmitForm(
-                                'Active Checks enabled',
-                                $o->active_checks_enabled,
-                                'enableactivechecks',
-                                'disableactivechecks',
-                                (($o->active_checks_enabled_changed === '1') ? true : false),
-                                $data
-                            );
-                        ?>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>
-                        <?=
-                            $cf->toggleSubmitForm(
-                                'Obsessing enabled',
-                                $o->obsessing,
-                                'startobsessing',
-                                'stopobsessing',
-                                (($o->obsessing_changed === '1') ? true : false),
-                                $data
-                            );
-                        ?>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <?=
-                            $cf->toggleSubmitForm(
-                                'Notifications enabled',
-                                $o->notifications_enabled,
-                                'enablenotifications',
-                                'disablenotifications',
-                                (($o->notifications_enabled_changed === '1') ? true : false),
-                                $data
-                            );
-                        ?>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <?=
-                            $cf->toggleSubmitForm(
-                                'Eventhandler enabled',
-                                $o->event_handler_enabled,
-                                'enableeventhandler',
-                                'disableeventhandler',
-                                (($o->event_handler_enabled_changed === '1') ? true : false),
-                                $data
-                            );
-                        ?>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <?=
-                            $cf->toggleSubmitForm(
-                                'Flap Detection enabled',
-                                $o->flap_detection_enabled,
-                                'enableflapdetection',
-                                'disableflapdetection',
-                                (($o->flap_detection_enabled_changed === '1') ? true : false),
-                                $data
-                            );
-                        ?>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-
-        <?php if ($modified_attributes === true): ?>
-
-        <?=
-            $cf->labelSubmitForm(
-                'Reset modified attributes',
-                'Reset configuration to initial values after a system restart',
-                'btn-cta',
-                'resetattributes',
-                $data
-            );
-        ?>
-
-        <?php endif; ?>
-    </div>
-</div>
+  <tr>
+    <th>Passive Checks</th>
+    <td><?= $cf->toggleSubmitForm(
+        '',
+        $o->passive_checks_enabled,
+        'startacceptingpassivechecks',
+        'stopacceptingpassivechecks',
+        $o->passive_checks_enabled_changed === '1',
+        $data
+    ) ?></td>
+  </tr>
+  <tr>
+    <th>Active Checks</th>
+    <td><?= $cf->toggleSubmitForm(
+        '',
+        $o->active_checks_enabled,
+        'enableactivechecks',
+        'disableactivechecks',
+        $o->active_checks_enabled_changed === '1',
+        $data
+    ) ?></td>
+  </tr>
+  <tr>
+    <th>Notifications</th>
+    <td><?= $cf->toggleSubmitForm(
+        '',
+        $o->notifications_enabled,
+        'enablenotifications',
+        'disablenotifications',
+        $o->notifications_enabled_changed === '1',
+        $data
+    ) ?></td>
+  </tr>
+  <tr>
+    <th>Event Handler</th>
+    <td><?= $cf->toggleSubmitForm(
+        '',
+        $o->event_handler_enabled,
+        'enableeventhandler',
+        'disableeventhandler',
+        $o->event_handler_enabled_changed === '1',
+        $data
+    ) ?></td>
+  </tr>
+  <tr>
+    <th>Flap Detection</th>
+    <td><?= $cf->toggleSubmitForm(
+        '',
+        $o->flap_detection_enabled,
+        'enableflapdetection',
+        'disableflapdetection',
+        $o->flap_detection_enabled_changed === '1',
+        $data
+     ) ?></td>
+  </tr>
+  <tr>
+    <th>Obsessing</th>
+    <td><?= $cf->toggleSubmitForm(
+        '',
+        $o->obsessing,
+        'startobsessing',
+        'stopobsessing',
+        $o->obsessing_changed === '1',
+        $data
+    ) ?></td>
+  </tr>
