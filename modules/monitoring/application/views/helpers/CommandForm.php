@@ -189,7 +189,7 @@ class Zend_View_Helper_CommandForm extends Zend_View_Helper_Abstract
         }
 
         if ($changed === true) {
-            $out .= $this->getView()->icon('config_changed.png') . ' (modified)';
+            $out .= $this->view->icon('config_changed.png') . ' (modified)';
         }
 
         $formCode = (string) $form;
