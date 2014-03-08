@@ -1,37 +1,30 @@
-<?php
-use Icinga\Web\Url;
-$createResource = $this->href('/config/createresource');
-?>
 <div class="controls">
-    <?= $this->tabs->render($this); ?>
+<?= $this->tabs ?>
 </div>
 
-<div class="content">
-    <?php if (isset($this->messageBox)): ?>
-        <?= $this->messageBox->render() ?>
-    <?php endif ?>
+<div class="content" data-base-target="col2">
+<?php
 
-    <h1>Create Resource</h1>
-    <p><a href="<?= $createResource ?>"><?= $this->icon('create.png'); ?> Create A New Resource</a></p>
+if (isset($this->messageBox)) {
+    // TODO: Get rid of messageBoxes in favour of notifications
+    echo $this->messageBox->render();
+}
 
-    <table class="configTable">
-        <?php foreach ($this->resources as $name => $resource): ?>
-            <tr>
-                <td class="configTable">
-                    <div>
-                        <b>Resource:</b>&ensp;<?= $this->escape($name); ?>
-                    </div>
-                    <div>
-                        <a href="<?= $this->href('config/editresource', array('resource' => $name));?>">
-                            <?= $this->icon('edit.png'); ?> Edit</a>&emsp;
-                        <?php if (count($this->resources) > 1): ?>
-                            <a href="<?= $this->href('config/removeresource', array('resource' => $name));?>">
-                                <?= $this->icon('remove.png'); ?> Remove</a>&emsp;
-                        <?php endif; ?>
-                    </div>
-                </td>
-            </tr>
-        <?php endforeach; ?>
-    </table>
+?>
+<p><a href="<?= $this->href('/config/createresource') ?>"><?= $this->icon('create.png'); ?> Create A New Resource</a></p>
+
+<table class="action">
+ <thead>
+  <th>Resource</th>
+  <th style="width: 5em">Remove</th>
+ </thead>
+ <tbody>
+<?php foreach ($this->resources as $name => $resource): ?>
+  <tr>
+    <td><a href="<?= $this->href('config/editresource', array('resource' => $name)) ?>"><?= $this->icon('edit.png') ?> <?= $this->escape($name); ?></td>
+    <td style="text-align: center"><a href="<?= $this->href('config/removeresource', array('resource' => $name)) ?>"><?= $this->icon('remove.png'); ?></a></td>
+  </tr>
+<?php endforeach; ?>
+</table>
 </div>
 
