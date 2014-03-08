@@ -193,10 +193,16 @@
             });
         },
 
+        /**
+         * Disable the autorefresh mechanism
+         */
         disableAutorefresh: function () {
             this.autorefreshEnabled = false;
         },
 
+        /**
+         * Enable the autorefresh mechanism
+         */
         enableAutorefresh: function () {
             this.autorefreshEnabled = true;
         },
@@ -374,6 +380,9 @@
             }
         },
 
+        /**
+         * Regardless of whether a request succeeded of failed, clean up
+         */
         onComplete: function (req, textStatus) {
             delete this.requests[req.$target.attr('id')];
             this.icinga.ui.fadeNotificationsAway();
@@ -436,6 +445,9 @@
             }
         },
 
+        /**
+         * Create a notification. Can be improved.
+         */
         createNotice: function (severity, message, persist) {
             var c = severity;
             if (persist) {
