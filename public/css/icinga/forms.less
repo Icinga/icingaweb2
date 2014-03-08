@@ -77,6 +77,24 @@ select::-moz-focus-inner {
   outline: 0;
 }
 
+form.inline {
+  margin: 0;
+  padding: 0;
+  display: inline;
+}
+
+button.link-like {
+  color: @colorLinkDefault;
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 1em;
+  cursor: pointer;
+}
+
+button.link-like:hover {
+  text-decoration: underline;
+}
 
 input[type=submit]:hover, a.button:hover {
   cursor: pointer;

@@ -55,6 +55,7 @@ class Zend_View_Helper_CommandForm extends Zend_View_Helper_Abstract
     public function simpleForm($commandName, array $arguments = array())
     {
         $form = new Form();
+        $form->setAttrib('class', 'inline');
         $form->setIgnoreChangeDiscarding(true);
         $form->setRequest(Zend_Controller_Front::getInstance()->getRequest());
 
@@ -115,14 +116,14 @@ class Zend_View_Helper_CommandForm extends Zend_View_Helper_Abstract
      *
      * @return Form
      */
-    public function labelSubmitForm($submitLabel, $submitTitle, $cls, $commandName, array $arguments = array())
+    public function labelSubmitForm($submitLabel, $submitTitle, $cls = '', $commandName, array $arguments = array())
     {
         $form = $this->simpleForm($commandName, $arguments);
 
         $button = new Zend_Form_Element_Button(
             array(
                 'name'      => 'btn_submit',
-                'class'     => $this->mergeClass('button btn-common', $cls),
+                'class'     => $cls,
                 'escape'    => false,
                 'value'     => '1',
                 'type'      => 'submit',
@@ -189,7 +190,7 @@ class Zend_View_Helper_CommandForm extends Zend_View_Helper_Abstract
         }
 
         if ($changed === true) {
-            $out .= $this->view->icon('config_changed.png') . ' (modified)';
+            $out .= ' (modified)';
         }
 
         $formCode = (string) $form;
