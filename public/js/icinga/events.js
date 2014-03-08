@@ -201,7 +201,8 @@
 
             // If link is hash tag...
             if (href === '#') {
-                // ...it may be a menu section without a dedicated link:
+                // ...it may be a menu section without a dedicated link.
+                // Switch the active menu item:
                 if (isMenuLink) {
                     $li = $a.closest('li');
                     $('#menu .active').removeClass('active');
