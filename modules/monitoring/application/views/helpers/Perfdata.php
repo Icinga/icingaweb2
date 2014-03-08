@@ -21,6 +21,7 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
         $perfdata = preg_replace('~\'([^\']+)\'~e', "str_replace(' ', '\'', '$1')", $perfdata);
         $parts = preg_split('~\s+~', $perfdata, -1, PREG_SPLIT_NO_EMPTY);
 
+        $table = array();
         $result = '';
         if ($compact === true) {
             $compact = 5;
@@ -67,7 +68,7 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
                      . implode(',', array($green, $orange, $red, $gray))
                      . '</div>';
             } else {
-                $result .= '<tr><th><div class="inlinepie" title="' . htmlspecialchars($name) . '" style="float: left; margin: 0.2em 0.5em 0.2em 0;">'
+                $table[] = '<tr><th><div class="inlinepie" title="' . htmlspecialchars($name) . '" style="float: left; margin: 0.2em 0.5em 0.2em 0;">'
                      . implode(',', array($green, $orange, $red, $gray))
                      . '</div>'
                      . htmlspecialchars($name)
@@ -80,8 +81,8 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
         if ($result == '' && ! $compact) {
             $result = $perfdata;
         }
-        if (! $compact && $result !== '') {
-            $result = '<table class="perfdata">' . $result . '</table>';
+        if (! empty($table)) {
+            $result = '<table class="perfdata">' . implode("\n", $table) . '</table>' . $result;
         }
 
         return $result;
