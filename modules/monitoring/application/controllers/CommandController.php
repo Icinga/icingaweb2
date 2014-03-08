@@ -358,6 +358,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
+            Notification::success('Check has been rescheduled, result should be visible soon');
         }
     }
 
