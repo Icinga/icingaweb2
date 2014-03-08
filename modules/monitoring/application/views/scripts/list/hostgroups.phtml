@@ -4,7 +4,7 @@
 </div>
 <?php endif ?>
 <div class="content">
-    <div class="boxview" data-base-target="col2">
+    <div class="boxview" data-base-target="_next">
 <?php foreach($hostgroups as $h): ?>
         <div class="box hostgroup">
             <a href="<?= $this->href('monitoring/list/services', array('hostgroup' => $h->hostgroup)); ?>">
