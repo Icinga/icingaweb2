@@ -1,44 +1,45 @@
-<?php
-use Icinga\Web\Url;
-$createLdapBackend = $this->href('/config/createAuthenticationBackend', array('type' => 'ldap'));
-$createDbBackend = $this->href('/config/createAuthenticationBackend', array('type' => 'db'));
-?>
 <div class="controls">
-    <?= $this->tabs->render($this); ?>
+<?= $this->tabs ?>
 </div>
 
 <div class="content">
-    <?php if (isset($this->messageBox)): ?>
-        <?= $this->messageBox->render() ?>
-    <?php endif ?>
+<?php
 
-    <h1>Create Authentication Provider</h1>
-    <p>
-        <a href="<?= $createLdapBackend ?>"><?= $this->icon('create.png'); ?> Create A New LDAP Authentication Backend</a>
-        <br />
-        <a href="<?= $createDbBackend   ?>"><?= $this->icon('create.png'); ?> Create A New DB Authentication Backend</a>
-    </p>
+if (isset($this->messageBox)) {
+    // TODO: Get rid of such boxes -> notifications?
+    echo $this->messageBox->render();
+}
+?>
 
-    <table class="configTable">
-        <?php foreach ($this->backends as $backend): ?>
-            <tr>
-                <td class="configTable">
-                    <div>
-                        <b>Backend:</b>&ensp;<?= $this->escape($backend->name); ?>
-                    </div>
-                    <div class="config-form-buttons">
-                        <div class="config-form-group">
-                            <?= $backend->reorderForm; ?>
-                        </div>
-                        <a href="<?= $this->href('config/editAuthenticationBackend', array('auth_backend' => $backend->name));?>">
-                            <?= $this->icon('edit.png'); ?> Edit</a>&emsp;
-                        <?php if (count($this->backends) > 1): ?>
-                            <a href="<?= $this->href('config/removeAuthenticationBackend', array('auth_backend' => $backend->name));?>">
-                                <?= $this->icon('remove.png'); ?> Remove</a>&emsp;
-                        <?php endif; ?>
-                    </div>
-                </td>
-            </tr>
-        <?php endforeach; ?>
-    </table>
+<p>
+  <a href="<?= $this->href('/config/createAuthenticationBackend', array('type' => 'ldap')) ?>"><?= $this->icon('create.png'); ?> Create A New LDAP Authentication Backend</a>
+  <br />
+  <a href="<?= $this->href('/config/createAuthenticationBackend', array('type' => 'db'))   ?>"><?= $this->icon('create.png'); ?> Create A New DB Authentication Backend</a>
+</p>
+
+<table class="action">
+ <thead>
+  <th>Resource</th>
+  <th style="width: 5em">Remove</th>
+  <th style="width: 5em">Order</th>
+ </thead>
+ <tbody>
+  <?php foreach ($this->backends as $backend): ?>
+    <tr>
+      <td class="action">
+        <a href="<?= $this->href('config/editAuthenticationBackend', array('auth_backend' => $backend->name)) ?>">
+          <?= $this->icon('edit.png') ?> <?= $this->escape($backend->name); ?>
+        </a>
+      </td>
+      <td>
+        <a href="<?= $this->href('config/removeAuthenticationBackend', array('auth_backend' => $backend->name)) ?>">
+          <?= $this->icon('remove.png', 'Remove') ?>
+        </a>
+      </td>
+      <td>
+        <?= $backend->reorderForm; ?>
+      </td>
+    </tr>
+  <?php endforeach; ?>
+  </table>
 </div>
