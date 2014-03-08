@@ -314,6 +314,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
+            Notification::success('Command has been sent, result should be visible soon');
         }
     }
 
@@ -338,6 +339,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
+            Notification::success('Command has been sent, result should be visible soon');
         }
     }
 
