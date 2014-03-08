@@ -125,36 +125,27 @@
          *
          */
         submitForm: function (event) {
-            var icinga = event.data.self.icinga;
-            event.stopPropagation();
-            event.preventDefault();
+            var self   = event.data.self;
+            var icinga = self.icinga;
 
             // .closest is not required unless subelements to trigger this
             var $form = $(event.currentTarget).closest('form');
             var url = $form.attr('action');
             var method = $form.attr('method');
-
+            var $target;
             var data = $form.serializeArray();
+
+            event.stopPropagation();
+            event.preventDefault();
+
             // TODO: Check button
             data.push({ name: 'btn_submit', value: 'yesss' });
 
             icinga.logger.debug('Submitting form: ' + method + ' ' + url);
 
-            // We should move this to a generic target-finder:
-            var $target = null;
-            if ($form.closest('[data-base-target]').length) {
-                $target = $(
-                    '#' + $form.closest('[data-base-target]').data('baseTarget')
-                );
-            } else if ($form.closest('.container').length) {
-                $target = $form.closest('.container');
-            } else {
-                icinga.logger.error('No form target found, stopping here');
-                return false;
-            }
-
+            $target = self.getLinkTargetFor($form);
             icinga.loader.loadUrl(url, $target, data, method);
-            // TODO: Do we really need to return false with stop/preventDefault?
+
             return false;
         },
 
@@ -162,19 +153,22 @@
          * Someone clicked a link or tr[href]
          */
         linkClicked: function (event) {
-            var icinga = event.data.self.icinga;
+            var self   = event.data.self;
+            var icinga = self.icinga;
 
             var $a = $(this);
             var href = $a.attr('href');
             var $li;
-            var targetId;
+            var $target;
             var isMenuLink = $a.closest('#menu').length > 0;
 
             // TODO: Let remote links pass through. Right now they only work
-            //       combined with target="_blank"
-            if ($a.attr('target') === '_blank') {
+            //       combined with target="_blank" or target="_self"
+            if ($a.attr('target') === '_blank' || $a.attr('target') === '_self') {
                 return true;
             }
+
+            // All other links are handled as XHR requests
             event.stopPropagation();
             event.preventDefault();
 
@@ -189,34 +183,11 @@
                 }
 
                 // Stop here for all hash tags
-                return;
+                // TODO: handle anchors
+                return false;
             }
 
-            // If everything else fails, our target is the first column...
-            var $target = $('#col1');
-
-            // ...but usually we will use our own container...
-            var $container = $a.closest('.container');
-            if ($container.length) {
-                $target = $container;
-            }
-
-            // ...the only exception are class="action" tables...
-            if ($a.closest('table.action').length) {
-                $target = $('#col2');
-            }
-
-            // ...and you can of course override the default behaviour...
-            if ($a.closest('[data-base-target]').length) {
-                targetId = $a.closest('[data-base-target]').data('baseTarget');
-
-                // Simulate _next to prepare migration to dynamic column layout
-                if (targetId === '_next') {
-                    targetId = 'col2';
-                }
-
-                $target = $('#' + targetId);
-            }
+            $target = self.getLinkTargetFor($a);
 
             // Tree handler
             // TODO: We should move this somewhere else and "register" such
@@ -244,11 +215,48 @@
                 icinga.ui.layout1col();
             }
 
+            return false;
+        },
+
+        /**
+         * Detect the link/form target for a given element (link, form, whatever)
+         */
+        getLinkTargetFor: function($el)
+        {
+            var targetId;
+
+            // If everything else fails, our target is the first column...
+            var $target = $('#col1');
+
+            // ...but usually we will use our own container...
+            var $container = $el.closest('.container');
+            if ($container.length) {
+                $target = $container;
+            }
+
+            // ...the only exception are class="action" tables...
+            if ($el.closest('table.action').length) {
+                $target = $('#col2');
+            }
+
+            // ...and you can of course override the default behaviour:
+            if ($el.closest('[data-base-target]').length) {
+                targetId = $el.closest('[data-base-target]').data('baseTarget');
+
+                // Simulate _next to prepare migration to dynamic column layout
+                if (targetId === '_next') {
+                    targetId = 'col2';
+                }
+
+                $target = $('#' + targetId);
+            }
+
             // Hardcoded layout switch unless columns are dynamic
             if ($target.attr('id') === 'col2') {
                 icinga.ui.layout2col();
             }
-            return false;
+
+            return $target;
         },
 
     /*
