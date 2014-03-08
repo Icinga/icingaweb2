@@ -116,15 +116,13 @@ class Monitoring_CommandController extends ActionController
             if ($this->form->isSubmittedAndValid()) {
                 $this->_helper->viewRenderer->setNoRender(true);
                 $this->_helper->layout()->disableLayout();
-
+                $this->ignoreXhrBody();
                 if ($this->_request->getHeader('referer') && ! $this->getRequest()->isXmlHttpRequest()) {
                     $this->redirect($this->_request->getHeader('referer'));
                 }
-
-                return;
+            } else {
+                $this->view->form = $this->form;
             }
-
-            $this->view->form = $this->form;
         }
         parent::postDispatch();
     }
