@@ -34,6 +34,8 @@ php::extension { ['php-mysql', 'php-pgsql', 'php-ldap']:
   require => [ Class['mysql'], Class['pgsql'], Class['openldap'] ]
 }
 
+php::extension { 'php-gd': }
+
 group { 'icinga-cmd':
   ensure => present
 }
