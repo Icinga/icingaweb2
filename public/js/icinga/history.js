@@ -139,11 +139,11 @@
                 }
 
                 // TODO: Replace with dynamic columns
-                icinga.events.layout2col();
+                icinga.ui.layout2col();
 
             } else {
                 // TODO: Replace with dynamic columns
-                icinga.events.layout1col();
+                icinga.ui.layout1col();
             }
 
         },

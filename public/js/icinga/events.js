@@ -158,27 +158,6 @@
             return false;
         },
 
-        layout1col: function () {
-            if (! $('#layout').hasClass('twocols')) { return; }
-            var $col2 = $('#col2');
-            icinga.logger.debug('Switching to single col');
-            $('#layout').removeClass('twocols');
-            $col2.removeAttr('data-icinga-url');
-            $col2.removeAttr('data-icinga-refresh');
-            $col2.removeData('icingaUrl');
-            $col2.removeData('icingaRefresh');
-            this.icinga.loader.stopPendingRequestsFor($col2);
-            $col2.html('');
-            this.icinga.ui.fixControls();
-        },
-
-        layout2col: function () {
-            if ($('#layout').hasClass('twocols')) { return; }
-            icinga.logger.debug('Switching to double col');
-            $('#layout').addClass('twocols');
-            this.icinga.ui.fixControls();
-        },
-
         /**
          * Someone clicked a link or tr[href]
          */
@@ -262,12 +241,12 @@
 
             // Menu links should remove all but the first layout column
             if (isMenuLink) {
-                icinga.events.layout1col();
+                icinga.ui.layout1col();
             }
 
             // Hardcoded layout switch unless columns are dynamic
             if ($target.attr('id') === 'col2') {
-                icinga.events.layout2col();
+                icinga.ui.layout2col();
             }
             return false;
         },

@@ -134,6 +134,27 @@
             return false;
         },
 
+        layout1col: function () {
+            if (! $('#layout').hasClass('twocols')) { return; }
+            var $col2 = $('#col2');
+            icinga.logger.debug('Switching to single col');
+            $('#layout').removeClass('twocols');
+            $col2.removeAttr('data-icinga-url');
+            $col2.removeAttr('data-icinga-refresh');
+            $col2.removeData('icingaUrl');
+            $col2.removeData('icingaRefresh');
+            this.icinga.loader.stopPendingRequestsFor($col2);
+            $col2.html('');
+            this.fixControls();
+        },
+
+        layout2col: function () {
+            if ($('#layout').hasClass('twocols')) { return; }
+            icinga.logger.debug('Switching to double col');
+            $('#layout').addClass('twocols');
+            this.fixControls();
+        },
+
         getAvailableColumnSpace: function () {
             return $('#main').width() / this.getDefaultFontSize();
         },
