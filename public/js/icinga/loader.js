@@ -436,7 +436,7 @@
             }
         },
 
-        createNotice: function (severity, message, persist = false) {
+        createNotice: function (severity, message, persist) {
             var c = severity;
             if (persist) {
                 c += ' persist';
