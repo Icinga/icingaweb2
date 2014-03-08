@@ -66,6 +66,8 @@ class ActionController extends Zend_Controller_Action
 
     private $autorefreshInterval;
 
+    private $noXhrBody = false;
+
     // TODO: This would look better if we had a ModuleActionController
     public function Config($file = null)
     {
@@ -203,6 +205,11 @@ class ActionController extends Zend_Controller_Action
         return Translator::translate($text, $domain);
     }
 
+    protected function ignoreXhrBody()
+    {
+        $this->noXhrBody = true;
+    }
+
     public function setAutorefreshInterval($interval)
     {
         if (! is_int($interval) || $interval < 1) {
@@ -306,6 +313,11 @@ class ActionController extends Zend_Controller_Action
             foreach ($notifications->getMessages() as $m) {
                 header('X-Icinga-Notification: ' . $m->type . ' ' . $m->message);
             }
+        }
+
+        if ($this->_request->isXmlHttpRequest() && $this->noXhrBody) {
+            header('X-Icinga-Container: ignore');
+            return;
         }
 
         if ($this->view->title) {
