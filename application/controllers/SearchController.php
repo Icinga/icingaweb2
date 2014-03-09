@@ -18,7 +18,7 @@ class SearchController extends ActionController
 {
     public function indexAction()
     {
-        $this->setAutorefreshInterval(10);
+        // $this->setAutorefreshInterval(10);
         $search = $this->_request->getParam('q');
         $dashboard = Widget::create('dashboard')->createPane('Search');
         $pane = $dashboard->getPane('Search');
