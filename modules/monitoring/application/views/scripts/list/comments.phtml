@@ -1,136 +1,89 @@
-<?php
-$dateHelper = $this->getHelper('DateFormat');
-$commandHelper = $this->getHelper('CommandForm');
-$viewHelper = $this->getHelper('MonitoringState');
-
-?>
 <div class="controls">
 <?= $this->tabs ?>
 <?=  $this->sortControl->render($this); ?>
 <?=  $this->paginationControl($comments, null, null, array('preserve' => $this->preserve)); ?>
 </div>
 
-
 <div class="content">
 <table class="action">
 <tbody>
-<?php foreach ($comments as $comment):
+<?php
 
-    $objectType = ($comment->comment_objecttype_id === '1') ? 'host' : 'service';
-    $objectName = ($objectType === 'host') ? $comment->host_name : $comment->service_name;
-    $hrefParameters = array(
-      $objectType   => $objectName,
-      'comment_id'  => $comment->comment_id
+$cf = $this->getHelper('CommandForm');
+
+foreach ($comments as $comment):
+
+    $objectType = (int) $comment->comment_objecttype_id === 1 ? 'host' : 'service';
+
+?>
+<tr>
+  <td style="width: 5em; text-align: center;">
+    <?php
+    switch ($comment->comment_type) {
+        case 'flapping':
+            $icon = 'flapping';
+            $tooltip = 'Comment was caused by a flapping host or service.';
+            break;
+        case 'comment':
+            $icon = 'user';
+            $tooltip = 'Comment was created by an user.';
+            break;
+        case 'downtime':
+            $icon = 'down';
+            $tooltip = 'Comment was caused by a downtime.';
+        case 'ack':
+            $icon = 'acknowledgement';
+            $tooltip = 'Comment was caused by an acknowledgement.';
+    }
+    ?>
+    <?= $this->icon($icon . '.png', $tooltip) ?><br />
+    <?= $this->timeSince($comment->comment_timestamp) ?>
+    </td>
+    <td>
+    <?php if ($objectType === 'service'): ?><?= $this->icon('service.png', 'Service comment') ?> <?= $this->qlink(
+        $comment->service_name,
+        'monitoring/show/service',
+        array(
+            'host'    => $comment->host_name,
+            'service' => $comment->service_name,
+        )
+    ) ?> on<?php else: ?><?= $this->icon('host.png', 'Host comment') ?> <?php endif ?> <?= $this->qlink(
+        $comment->service_name,
+        'monitoring/show/host',
+        array(
+            'host'    => $comment->host_name
+        )
+    ) ?> by <strong><?= $this->escape($comment->comment_author) ?></strong><br />
+      <?= $this->escape($comment->comment_data) ?><br />
+        <?php if ($comment->comment_is_persistent): ?>Comment is persistent<br /><?php endif ?>
+        <b>Expires: </b> <?=
+            ($comment->comment_expiration_timestamp) ?
+                $this->timeUnless($comment->comment_expiration_timestamp) :
+                'Never'
+        ?>
+    </td>
+    <td style="width: 2em">
+<?php
+
+    $data = array(
+      'commentid' => $comment->comment_id,
+      'host'      => $comment->host_name
     );
+
     if ($objectType === 'service') {
-      $hrefParameters['host'] = $comment->host_name;
+        $data['service'] = $comment->service_name;
     }
 
-    $detailLink = $this->href(
-      'monitoring/show/' . $objectType,
-      $hrefParameters
+    echo $cf->iconSubmitForm(
+        'img/icons/remove.png',
+        'Remove comment',
+        'link-like',
+        'removecomment',
+        $data
     );
 
-    $hostLink = $this->href(
-      'monitoring/show/host',
-      array(
-        'host' => $comment->host_name
-      )
-    );
-  ?>
-<tr>
-    <td style="width: 100px;">
-        <?= date('d.m. H:i', $comment->comment_timestamp); ?>
+?>
     </td>
-
-    <td style="width: 80px;">
-        <?php if ($comment->comment_objecttype_id === '1'): ?>
-            <?= $this->icon('host.png', 'Host comment') ?>
-        <?php elseif ($comment->comment_objecttype_id === '2'): ?>
-            <?= $this->icon('service.png', 'Service comment') ?>
-        <?php endif; ?>
-        <small>
-            <?php
-            switch ($comment->comment_type) {
-                case 'flapping':
-                    $icon = 'flapping';
-                    $tooltip = 'Comment was caused by a flapping host or service.';
-                    break;
-                case 'comment':
-                    $icon = 'user';
-                    $tooltip = 'Comment was created by an user.';
-                    break;
-                case 'downtime':
-                    $icon = 'down';
-                    $tooltip = 'Comment was caused by a downtime.';
-                case 'ack':
-                    $icon = 'acknowledgement';
-                    $tooltip = 'Comment was caused by an acknowledgement.';
-            }
-            ?>
-            <?= $this->icon($icon . '.png', $tooltip) ?>
-        </small>
-    </td>
-
-    <td>
-      <a class="hidden" href="<?= $detailLink; ?>"></a>
-
-        <div rel="tooltip" title="Comment #<?=$comment->comment_id ?>">
-
-        <strong>
-        <?php if ($comment->service_name): ?>
-            <a href="<?= $detailLink ?>">
-                <?= $comment->service_name ?>
-                on
-                <?= $comment->host_name; ?>
-            </a>
-        <?php else: ?>
-            <a href="<?= $hostLink ?>">
-                <?= $comment->host_name; ?>
-            </a>
-        <?php endif; ?>
-        </strong>
-        by
-        <?= $comment->comment_author; ?>
-      <div class="small-row">
-         <?= $comment->comment_data; ?>
-      </div>
-
-      <small>
-        <span>
-           <b>Persists: </b><?= ($comment->comment_is_persistent === '1') ? 'Yes' : 'No'; ?>
-        </span>
-        <span>
-          <b>Expires: </b> <?=
-            ($comment->comment_expiration_timestamp) ?
-                'at ' . date('d.m H:i', $comment->comment_expiration_timestamp) :
-                'Never';
-            ?>
-        </span>
-      </small>
-
-    </td>
-    <td style="width: 40px;" href="#">
-      <?php
-        $data = array(
-          'commentid' => $comment->comment_id,
-          'host'      => $comment->host_name
-        );
-
-        if ($objectType === 'service') {
-          $data['service'] = $comment->service_name;
-        }
-
-        echo $commandHelper->iconSubmitForm(
-            'img/icons/remove.png',
-            'Remove comment',
-            'btn-small',
-            'removecomment',
-            $data
-        );
-      ?>
-    </td>
-    </div>
   </tr>
 <?php endforeach; ?>
 </tbody>
