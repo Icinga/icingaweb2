@@ -277,10 +277,13 @@
                     } else if (nm == 0 && ns == 0) {
                         signed = '-';    
                         sec = 1;
-                    } else if (nm == 0) {
+                    } else if (nm == 0 && m[1][0] == '-') {
                         signed = '-';    
                         sec = ns;
                         sec++;
+                    } else if (nm == 0 && m[1][0] != '-') {
+                        sec = ns;
+                        sec--;
                     } else {
                         signed = '';    
                         sec = nm * 60 + ns;
