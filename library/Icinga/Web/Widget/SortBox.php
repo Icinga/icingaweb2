@@ -159,8 +159,8 @@ class SortBox extends AbstractWidget
                 'multiOptions'  => array(
                     'desc'      => 'Desc',
                     'asc'       => 'Asc',
+                ),
                 'class' => 'autosubmit'
-                )
 
             )
         );
