@@ -14,11 +14,11 @@ foreach ($object->comments as $comment) {
     $text = $this->tickets ? preg_replace_callback(
         $this->tickets->getPattern(),
         array($this->tickets, 'createLink'),
-        $this->escape($comment->comment_data)
-    ) : $this->escape($comment->comment_data);
+        $this->escape($comment->comment)
+    ) : $this->escape($comment->comment);
 
     $deleteData = $data;
-    $deleteData['commentid'] = $object->comment_internal_id;
+    $deleteData['commentid'] = $comment->id;
 
     $iconForm = $cf->iconSubmitForm(
         'img/icons/remove_petrol.png',
@@ -31,9 +31,9 @@ foreach ($object->comments as $comment) {
     $list[] = sprintf(
         "<br />%s [%s] %s (%s): %s\n",
         $iconForm,
-        $this->escape($comment->comment_author),
-        $this->timeSince($comment->comment_timestamp),
-        $comment->comment_type,
+        $this->escape($comment->author),
+        $this->timeSince($comment->timestamp),
+        $comment->type,
         $text
     );
 }

@@ -7,10 +7,9 @@ use Icinga\Data\Db\Query;
 
 class Service extends AbstractObject
 {
-
-    public $type        = self::TYPE_SERVICE;
-    public $prefix      = 'service_';
-    private $view       = null;
+    public $type   = 'service';
+    public $prefix = 'service_';
+    private $view  = null;
 
     protected function applyObjectFilter(Query $query)
     {

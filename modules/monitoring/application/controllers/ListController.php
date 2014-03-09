@@ -319,16 +319,16 @@ class Monitoring_ListController extends Controller
         $query = CommentView::fromRequest(
             $this->_request,
             array(
-                'comment_objecttype_id',
-                'comment_id',
-                'comment_data',
-                'comment_author',
-                'comment_timestamp',
-                'comment_type',
-                'comment_is_persistent',
-                'comment_expiration_timestamp',
-                'host_name' => 'service_host_name',
-                'service_name'
+                'id'         => 'comment_internal_id',
+                'objecttype' => 'comment_objecttype',
+                'comment'    => 'comment_data',
+                'author'     => 'comment_author',
+                'timestamp'  => 'comment_timestamp',
+                'type'       => 'comment_type',
+                'persistent' => 'comment_is_persistent',
+                'expiration' => 'comment_expiration_timestamp',
+                'host',
+                'service'
             )
         )->getQuery();
 
@@ -336,11 +336,10 @@ class Monitoring_ListController extends Controller
 
         $this->setupSortControl(
             array(
-                'comment_timestamp' => 'Comment Timestamp',
-                'host_service'      => 'Host and Service',
-                'comment_id'        => 'Comment Id',
-                'comment_expires'   => 'Expiration Timestamp',
-                'comment_type'      => 'Comment Type'
+                'timestamp'  => 'Comment Timestamp',
+                'host'       => 'Host / Service',
+                'type'       => 'Comment Type',
+                'expiration' => 'Expiration',
             )
         );
         $this->handleFormatRequest($query);

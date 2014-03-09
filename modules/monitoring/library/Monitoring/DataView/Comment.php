@@ -42,8 +42,8 @@ class Comment extends DataView
     public function getColumns()
     {
         return array(
-            'comment_objecttype_id',
-            'comment_id',
+            'comment_objecttype',
+            'comment_internal_id',
             'comment_data',
             'comment_author',
             'comment_timestamp',
@@ -51,10 +51,7 @@ class Comment extends DataView
             'comment_is_persistent',
             'comment_expiration_timestamp',
             'host_name',
-            'service_host_name',
-            'service_name',
-            'host',
-            'service'
+            'service_description',
         );
     }
 
@@ -67,21 +64,15 @@ class Comment extends DataView
     {
         return array(
             'comment_timestamp' => array(
-                'order'     => self::SORT_DESC
+                'order' => self::SORT_DESC
             ),
-            'host_service'      => array(
-                'columns'   => array(
+            'host_name' => array(
+                'columns' => array(
                     'host_name',
                     'service_name'
                 ),
-                'order'     => self::SORT_ASC
+                'order' => self::SORT_ASC
             ),
-            'comment_id'    => array(
-                'order'     => self::SORT_ASC
-            ),
-            'comment_expires'       => array(
-                'order'     => self::SORT_DESC
-            )
         );
     }
 }

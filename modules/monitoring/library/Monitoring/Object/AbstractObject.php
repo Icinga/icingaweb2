@@ -14,11 +14,8 @@ use Icinga\Web\Request;
 
 abstract class AbstractObject
 {
-    const TYPE_HOST = 1;
-    const TYPE_SERVICE = 2;
-
-    public $type           = self::TYPE_HOST;
-    public $prefix         = 'host_';
+    public $type;
+    public $prefix;
 
     public $comments       = array();
     public $downtimes      = array();
@@ -44,32 +41,19 @@ abstract class AbstractObject
     {
         // WTF???
         $query = Comment::fromParams(array('backend' => null), array(
-            'comment_internal_id',
-            'comment_timestamp',
-            'comment_author',
-            'comment_data',
-            'comment_type',
+            'id'        => 'comment_internal_id',
+            'timestamp' => 'comment_timestamp',
+            'author'    => 'comment_author',
+            'comment'   => 'comment_data',
+            'type'      => 'comment_type',
         ))->getQuery();
         $query->where('comment_type', array('comment', 'ack'));
-        $query->where('comment_objecttype_id', $this->type);
-        $this->applyObjectFilter($query);
+        $query->where('comment_objecttype', $this->type);
+        $query->where('host_name', $this->host_name);
+        if ($this->type === 'service') {
+            $query->where('service_description', $this->service_description);
+        }
         $this->comments = $query->fetchAll();
-        return $this;
-
-        $this->comments = Comment::fromRequest(
-            $this->request,
-            array(
-                'comment_internal_id',
-                'comment_timestamp',
-                'comment_author',
-                'comment_data',
-                'comment_type',
-            )
-        )->getQuery()
-            //->where('comment_objecttype_id', 1)
-
-            ->fetchAll();
-
         return $this;
     }
 
@@ -124,7 +108,7 @@ abstract class AbstractObject
             )
         )->getQuery();
 
-        if ($this->type === self::TYPE_HOST) {
+        if ($this->type === 'host') {
             $query->where('host_name', $this->host_name)
                 ->where('object_type', 'host');
         } else {

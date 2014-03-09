@@ -7,10 +7,9 @@ use Icinga\Data\Db\Query;
 
 class Host extends AbstractObject
 {
-
-    public $type        = self::TYPE_HOST;
-    public $prefix      = 'host_';
-    private $view       = null;
+    public $typ    = 'host';
+    public $prefix = 'host_';
+    private $view  = null;
 
     protected function applyObjectFilter(Query $query)
     {

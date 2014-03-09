@@ -15,13 +15,11 @@ $cf = $this->getHelper('CommandForm');
 
 foreach ($comments as $comment):
 
-    $objectType = (int) $comment->comment_objecttype_id === 1 ? 'host' : 'service';
-
 ?>
 <tr>
   <td style="width: 5em; text-align: center;">
     <?php
-    switch ($comment->comment_type) {
+    switch ($comment->type) {
         case 'flapping':
             $icon = 'flapping';
             $tooltip = 'Comment was caused by a flapping host or service.';
@@ -39,28 +37,28 @@ foreach ($comments as $comment):
     }
     ?>
     <?= $this->icon($icon . '.png', $tooltip) ?><br />
-    <?= $this->timeSince($comment->comment_timestamp) ?>
+    <?= $this->timeSince($comment->timestamp) ?>
     </td>
     <td>
-    <?php if ($objectType === 'service'): ?><?= $this->icon('service.png', 'Service comment') ?> <?= $this->qlink(
-        $comment->service_name,
+    <?php if ($comment->objecttype === 'service'): ?><?= $this->icon('service.png', 'Service comment') ?> <?= $this->qlink(
+        $comment->service,
         'monitoring/show/service',
         array(
-            'host'    => $comment->host_name,
-            'service' => $comment->service_name,
+            'host'    => $comment->host,
+            'service' => $comment->service,
         )
     ) ?> on<?php else: ?><?= $this->icon('host.png', 'Host comment') ?> <?php endif ?> <?= $this->qlink(
-        $comment->host_name,
+        $comment->host,
         'monitoring/show/host',
         array(
-            'host'    => $comment->host_name
+            'host' => $comment->host
         )
-    ) ?> by <strong><?= $this->escape($comment->comment_author) ?></strong><br />
-      <p><?= $this->escape($comment->comment_data) ?></p>
-        <?php if ($comment->comment_is_persistent): ?>Comment is persistent<br /><?php endif ?>
+    ) ?> by <strong><?= $this->escape($comment->author) ?></strong><br />
+      <p><?= $this->escape($comment->comment) ?></p>
+        <?php if ($comment->persistent): ?>Comment is persistent<br /><?php endif ?>
         <b>Expires: </b> <?=
-            ($comment->comment_expiration_timestamp) ?
-                $this->timeUnless($comment->comment_expiration_timestamp) :
+            ($comment->expiration) ?
+                $this->timeUnless($comment->expiration) :
                 'Never'
         ?>
     </td>
@@ -68,12 +66,12 @@ foreach ($comments as $comment):
 <?php
 
     $data = array(
-      'commentid' => $comment->comment_id,
-      'host'      => $comment->host_name
+      'commentid' => $comment->id,
+      'host'      => $comment->host
     );
 
-    if ($objectType === 'service') {
-        $data['service'] = $comment->service_name;
+    if ($comment->objecttype === 'service') {
+        $data['service'] = $comment->service;
     }
 
     echo $cf->iconSubmitForm(
