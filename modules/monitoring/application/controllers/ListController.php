@@ -337,10 +337,10 @@ class Monitoring_ListController extends Controller
 
         $this->setupSortControl(
             array(
-                'timestamp'  => 'Comment Timestamp',
-                'host'       => 'Host / Service',
-                'type'       => 'Comment Type',
-                'expiration' => 'Expiration',
+                'comment_timestamp'  => 'Comment Timestamp',
+                'host_name'          => 'Host / Service',
+                'comment_type'       => 'Comment Type',
+                'comment_expiration_timestamp' => 'Expiration',
             )
         );
         $this->handleFormatRequest($query);

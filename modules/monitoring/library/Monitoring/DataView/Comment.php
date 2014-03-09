@@ -69,7 +69,7 @@ class Comment extends DataView
             'host_name' => array(
                 'columns' => array(
                     'host_name',
-                    'service_name'
+                    'service_description'
                 ),
                 'order' => self::SORT_ASC
             ),
