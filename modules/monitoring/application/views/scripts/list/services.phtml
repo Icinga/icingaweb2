@@ -46,7 +46,7 @@ foreach ($services as $service):
             <?php endif ?>
       </td>
 
-      <td title="<?= $helper->getStateTitle($service, 'host'); ?>">
+      <td>
 
         <?= $this->perfdata($service->service_perfdata, true) ?>
 
