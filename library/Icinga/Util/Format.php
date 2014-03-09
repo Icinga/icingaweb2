@@ -96,32 +96,36 @@ class Format
         return floor($hour / 24) . 'd ' . ($hour % 24) . 'h';
     }
 
-    public static function timeSince($timestamp)
+    protected static function smartTimeDiff($diff, $timestamp)
     {
-	if ($timestamp === null || $timestamp === false) {
+        if ($timestamp === null || $timestamp === false) {
             return '-';
         }
         if (! preg_match('~^\d+$~', $timestamp)) {
             throw new ProgrammingError(sprintf('"%s" is not a number', $timestamp));
         }
-        $duration = time() - $timestamp;
         $prefix = '';
-        if ($duration < 0) {
+        if ($diff < 0) {
             $prefix = '-';
-            $duration *= -1;
+            $diff *= -1;
         }
-        if ($duration > 3600 * 24 * 3) {
+        if ($diff > 3600 * 24 * 3) {
             if (date('Y') === date('Y', $timestamp)) {
                 return date('d.m.', $timestamp);
             }
             return date('m.Y', $timestamp);
         }
-        return $prefix . self::showHourMin($duration);
+        return $prefix . self::showHourMin($diff);
+    }
+
+    public static function timeSince($timestamp)
+    {
+        return self::smartTimeDiff(time() - $timestamp, $timestamp);
     }
 
     public static function timeUntil($timestamp)
     {
-        return self::duration($timestamp - time());
+        return self::smartTimeDiff($timestamp - time(), $timestamp);
     }
 
     protected static function formatForUnits($value, & $units, $base)
