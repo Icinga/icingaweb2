@@ -9,6 +9,7 @@ use Icinga\Exception\ProgrammingError;
 use Zend_Controller_Action_HelperBroker as ZfActionHelper;
 use Zend_View_Abstract;
 use Icinga\Web\Widget\Widget;
+use Exception;
 
 /**
  * Web widgets MUST extend this class
@@ -126,6 +127,6 @@ abstract class AbstractWidget implements Widget
         } catch (Exception $e) {
             return htmlspecialchars($e->getMessage());
         }
-        return $html;
+        return (string) $html;
     }
 }
