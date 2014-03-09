@@ -46,6 +46,7 @@ class Downtime extends DataView
             'downtime_is_fixed',
             'downtime_is_flexible',
             'downtime_start',
+            'downtime_scheduled_start',
             'downtime_end',
             'downtime_duration',
             'downtime_is_in_effect',
@@ -64,7 +65,14 @@ class Downtime extends DataView
             ),
             'downtime_start' => array(
                 'order' => self::SORT_DESC
-            )
+            ),
+            'downtime_host' => array(
+                'columns' => array(
+                    'downtime_host',
+                    'downtime_service'
+                ),
+                'order' => self::SORT_ASC
+            ),
         );
     }
 }

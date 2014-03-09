@@ -115,12 +115,12 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
         foreach ($downtimes as $downtime) {
             $label = sprintf(
                 'ID %s: %s%s Starting @ %s',
-                $downtime->downtime_internal_downtime_id,
+                $downtime->id,
                 $object->host_name,
                 $object instanceof Service ? ' (' . $object->service_description . ')' : '',
-                $dateFormat->formatDateTime($downtime->downtime_scheduled_start_time)
+                $dateFormat->formatDateTime($downtime->scheduled_start)
             );
-            $options[$downtime->downtime_internal_downtime_id] = $label;
+            $options[$downtime->id] = $label;
         }
         return $options;
     }

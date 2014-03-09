@@ -198,34 +198,33 @@ class Monitoring_ListController extends Controller
         $query = DowntimeView::fromRequest(
             $this->_request,
             array(
-                'id'         => 'downtime_internal_id',
-                'objecttype' => 'downtime_objecttype',
-                'comment'    => 'downtime_comment',
-                'author'     => 'downtime_author',
-                'start'      => 'downtime_start',
-                'end'        => 'downtime_end',
-                'duration'   => 'downtime_duration',
-                'is_flexible' => 'downtime_is_flexible',
-                'is_in_effect' => 'downtime_is_in_effect',
-                'entry_time' => 'downtime_entry_time',
-                'host'       => 'downtime_host',
-                'service'    => 'downtime_service'
+                'id'              => 'downtime_internal_id',
+                'objecttype'      => 'downtime_objecttype',
+                'comment'         => 'downtime_comment',
+                'author'          => 'downtime_author',
+                'start'           => 'downtime_start',
+                'scheduled_start' => 'downtime_scheduled_start',
+                'end'             => 'downtime_end',
+                'duration'        => 'downtime_duration',
+                'is_flexible'     => 'downtime_is_flexible',
+                'is_fixed'        => 'downtime_is_fixed',
+                'is_in_effect'    => 'downtime_is_in_effect',
+                'entry_time'      => 'downtime_entry_time',
+                'host'            => 'downtime_host',
+                'service'         => 'downtime_service'
             )
-        )->getQuery()->order('downtime_is_in_effect', 'DESC')->order('downtime_scheduled_start_time', 'DESC');
+        )->getQuery()->order('downtime_is_in_effect', 'DESC')->order('downtime_scheduled_start', 'DESC');
 
         $this->view->downtimes = $query->paginate();
         $this->setupSortControl(array(
             'downtime_is_in_effect'         => 'Is In Effect',
-            'object_type'                   => 'Service/Host',
-            'host_name'                     => 'Host Name',
-            'service_description'           => 'Service Name',
+            'downtime_host'                 => 'Host / Service',
             'downtime_entry_time'           => 'Entry Time',
-            'downtime_author_name'          => 'Author',
-            'downtime_comment_data'         => 'Comment',
-            'downtime_scheduled_start_time' => 'Start',
-            'downtime_scheduled_end_time'   => 'End',
-            'downtime_trigger_time'         => 'Trigger Time',
-            'downtime_internal_downtime_id' => 'Downtime ID',
+            'downtime_author'               => 'Author',
+            'downtime_start'                => 'Start Time',
+            'downtime_start'                => 'End Time',
+            'downtime_scheduled_start_time' => 'Scheduled Start',
+            'downtime_scheduled_end_time'   => 'Scheduled End',
             'downtime_duration'             => 'Duration',
         ));
         $this->handleFormatRequest($query);
