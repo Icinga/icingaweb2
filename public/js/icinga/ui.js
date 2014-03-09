@@ -266,21 +266,24 @@
                 if (m !== null) {
                     var nm = parseInt(m[1]);
                     var ns = parseInt(m[2]);
-                    if (nm >= 0) {
+                    if (nm > 0) {
                         if (ns > 0) {
                             ns--;
-                        } else {
+                        } else if (ns == 0) {
                             ns = 59;
                             nm--;
-                        }
-                    } else {
-                        if (ns < 59) {
-                            ns++;
+                        } else { //negative means recalculate against 1m
+			    ns = (60 - ns - 1);
+			    nm--; 
+			}
+		    } else if (nm <= 0) {
+                        if (ns == -59) {
+			    ns = 0;
+			    nm--;
                         } else {
-                            ns = 0;
-                            nm--;
-                        }
-                    }
+			    ns--;
+			}
+		    }
                     $(el).html(nm + 'm ' + ns + 's');
                 }
             });
