@@ -39,11 +39,7 @@ class Downtime extends DataView
     public function getColumns()
     {
         return array(
-            'host',
-            'host_name',
-            'service',
-            'service_description',
-            'downtime_objecttype_id',
+            'downtime_objecttype',
             'downtime_author',
             'downtime_comment',
             'downtime_entry_time',
@@ -54,7 +50,9 @@ class Downtime extends DataView
             'downtime_duration',
             'downtime_is_in_effect',
             'downtime_triggered_by_id',
-            'downtime_internal_downtime_id'
+            'downtime_internal_id',
+            'downtime_host',
+            'downtime_service',
         );
     }
 

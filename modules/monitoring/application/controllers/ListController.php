@@ -194,7 +194,24 @@ class Monitoring_ListController extends Controller
             'title' => 'Downtimes',
             'url' => Url::fromPath('monitoring/list/downtimes')
         ))->activate('downtimes');
-        $query = DowntimeView::fromRequest($this->_request)->getQuery()->order('downtime_is_in_effect', 'DESC')->order('downtime_scheduled_start_time', 'DESC');
+        $this->setAutorefreshInterval(12);
+        $query = DowntimeView::fromRequest(
+            $this->_request,
+            array(
+                'id'         => 'downtime_internal_id',
+                'objecttype' => 'downtime_objecttype',
+                'comment'    => 'downtime_comment',
+                'author'     => 'downtime_author',
+                'start'      => 'downtime_start',
+                'end'        => 'downtime_end',
+                'duration'   => 'downtime_duration',
+                'is_flexible' => 'downtime_is_flexible',
+                'is_in_effect' => 'downtime_is_in_effect',
+                'entry_time' => 'downtime_entry_time',
+                'host'       => 'downtime_host',
+                'service'    => 'downtime_service'
+            )
+        )->getQuery()->order('downtime_is_in_effect', 'DESC')->order('downtime_scheduled_start_time', 'DESC');
 
         $this->view->downtimes = $query->paginate();
         $this->setupSortControl(array(

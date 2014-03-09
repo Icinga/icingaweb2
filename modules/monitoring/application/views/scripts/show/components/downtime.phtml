@@ -11,16 +11,16 @@ if ($object->service_description) {
 $list = array();
 foreach ($object->downtimes as $downtime) {
     $deleteData = $data;
-    $deleteData['downtimeid'] = $object->downtime_internal_downtime_id;
+    $deleteData['downtimeid'] = $downtime->id;
 
     // TODO: This needs improvement
-    if ((int) $downtime->downtime_is_in_effect) {
-        $state = 'in downtime since ' . $this->timeSince($downtime->downtime_start);
+    if ((int) $downtime->is_in_effect) {
+        $state = 'in downtime since ' . $this->timeSince($downtime->start);
     } else {
-        if ($downtime->downtime_is_fixed) {
-            $state = 'scheduled ' . $this->timeUnless($downtime->downtime_start);
+        if ($downtime->is_fixed) {
+            $state = 'scheduled ' . $this->timeUnless($downtime->start);
         } else {
-            $state = 'scheduled flexible ' . $this->timeUnless($downtime->downtime_start);
+            $state = 'scheduled flexible ' . $this->timeUnless($downtime->start);
         }
     }
 
@@ -35,9 +35,9 @@ foreach ($object->downtimes as $downtime) {
     $list[] = sprintf(
         "<br />%s [%s] (%s): %s\n",
         $iconForm,
-        $this->escape($downtime->downtime_author),
+        $this->escape($downtime->author),
         $state,
-        $this->escape($downtime->downtime_comment)
+        $this->escape($downtime->comment)
     );
 }
 

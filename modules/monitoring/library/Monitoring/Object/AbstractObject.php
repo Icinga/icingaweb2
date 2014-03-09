@@ -66,21 +66,26 @@ abstract class AbstractObject
 
         // WTF???
         $query = Downtime::fromParams(array('backend' => null), array(
-            'downtime_author',
-            'downtime_comment',
-            'downtime_entry_time',
-            'downtime_is_fixed',
-            'downtime_is_flexible',
-            'downtime_scheduled_start_time',
-            'downtime_start',
-            'downtime_end',
-            'downtime_duration',
-            'downtime_is_in_effect',
-            'downtime_triggered_by_id',
-            'downtime_internal_downtime_id'
+            'id'           => 'downtime_internal_id',
+            'objecttype'   => 'downtime_objecttype',
+            'comment'      => 'downtime_comment',
+            'author'       => 'downtime_author',
+            'start'        => 'downtime_start',
+            'end'          => 'downtime_end',
+            'duration'     => 'downtime_duration',
+            'is_flexible'  => 'downtime_is_flexible',
+            'is_in_effect' => 'downtime_is_in_effect',
+            'entry_time'   => 'downtime_entry_time',
+            'host'         => 'downtime_host',
+            'service'      => 'downtime_service'
         ))->getQuery();
-        $query->where('downtime_objecttype_id', $this->type);
-        $this->applyObjectFilter($query);
+
+        $query->where('downtime_objecttype', $this->type);
+        $query->where('downtime_host', $this->host_name);
+        if ($this->type === 'service') {
+            $query->where('downtime_service', $this->service_description);
+        }
+
         $this->downtimes = $query->fetchAll();
         return $this;
 
