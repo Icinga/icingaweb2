@@ -316,6 +316,7 @@ class Monitoring_ListController extends Controller
             'title' => 'Comments',
             'url' => Url::fromPath('monitoring/list/comments')
         ))->activate('comments');
+        $this->setAutorefreshInterval(12);
         $query = CommentView::fromRequest(
             $this->_request,
             array(
