@@ -46,5 +46,5 @@ interface Widget
      * @param \Zend_View_Abstract $view
      * @return string
      */
-    public function render(Zend_View_Abstract $view);
+    // public function render(Zend_View_Abstract $view);
 }
