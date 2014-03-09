@@ -63,20 +63,4 @@ class Request extends Zend_Controller_Request_Http
     {
         return $this->user;
     }
-
-    /**
-     * Return a identifier to uniquely identify the request's source
-     *
-     * @return  string
-     */
-    public function getId()
-    {
-        $requestId = $this->getParam('request_id');
-
-        if ($requestId === null) {
-            $requestId = substr('abcdefghijklmnopqrstuvwxyz', mt_rand(0, 25), 1) . substr(md5(time()), -7);
-        }
-
-        return $requestId;
-    }
 }
