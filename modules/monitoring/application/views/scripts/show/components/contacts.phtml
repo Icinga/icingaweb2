@@ -23,7 +23,7 @@ if (! empty($object->contactgroups)) {
     foreach ($object->contactgroups as $contactgroup) {
         $list[] = $this->qlink(
             $contactgroup->contactgroup_alias,
-            'monitoring/show/contactgroup',
+            'monitoring/list/contactgroups',
             array('contactgroup_name' => $contactgroup->contactgroup_name)
         );
     }
