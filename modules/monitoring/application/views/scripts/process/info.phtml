@@ -1,0 +1,172 @@
+<div class="controls">
+<?= $this->tabs ?>
+</div>
+<?php
+
+$ps = $this->programstatus;
+$cf = $this->getHelper('CommandForm');
+
+?>
+
+<div class="content processinfo">
+<p>Backend <strong><?= $this->backendName; ?></strong> is
+<?= $ps->is_currently_running === '1' ? sprintf('running with pid %d', $ps->process_id) : 'not running'; ?>
+ since <?= $this->timeSince($ps->program_start_time); ?>.
+
+<table class="avp">
+  <tbody>
+    <tr>
+      <th>Last status update</th>
+      <td><?= $this->timeSince($ps->status_update_time) ?> ago</td>
+    </tr>
+    <tr>
+      <th>Last check command</th>
+      <td><?= $this->timeSince($ps->last_command_check) ?> ago</td>
+    </tr>
+    <tr>
+      <th>Global host event handler</th>
+      <td><?= $ps->global_host_event_handler ? $ps->global_host_event_handler : 'Not set' ?></td>
+    </tr>
+    <tr>
+      <th>Global service event handler</th>
+      <td><?= $ps->global_service_event_handler ? $ps->global_service_event_handler : 'Not set' ?></td>
+    </tr>
+    <tr>
+      <th>Notifications enabled</th>
+      <td><?= $cf->toggleSubmitForm(
+          '',
+          $ps->notifications_enabled,
+          'enablenotifications',
+          'disablenotifications',
+          false,
+          array('global' => '1')
+      ) ?>
+<?php if ($ps->notifications_enabled === '1'): ?>
+ <a rel="tooltip" title="Disable notifications for a specific time on a program-wide basis" href="<?= $this->href('monitoring/command/disablenotificationswithexpire') ?>" data-base-target="_next">Temporarily disable</a>
+<?php elseif ($ps->disable_notif_expire_time): ?>
+Will be re-enabled in <strong><?= $this->timeUnless($ps->disable_notif_expire_time) ?></strong>
+</div>
+<?php endif; ?>
+      </td>
+    </tr>
+    <tr>
+      <th>Execute active service checks</th>
+      <td><?= $cf->toggleSubmitForm(
+          '',
+          $ps->active_service_checks_enabled,
+          'enableactivechecks',
+          'disableactivechecks',
+          false,
+          array('global' => 'service')
+      ) ?></td>
+    </tr>
+    <tr>
+      <th>Accept passive service checks</th>
+      <td><?= $cf->toggleSubmitForm(
+          '',
+          $ps->passive_service_checks_enabled,
+          'startacceptingpassivechecks',
+          'stopacceptingpassivechecks',
+          false,
+          array('global' => 'service')
+      ) ?></td>
+    </tr>
+    <tr>
+      <th>Execute active host checks</th>
+      <td><?= $cf->toggleSubmitForm(
+          '',
+          $ps->active_host_checks_enabled,
+          'enableactivechecks',
+          'disableactivechecks',
+          false,
+          array('global' => 'host')
+      ) ?></td>
+    </tr>
+    <tr>
+      <th>Accept passive host checks</th>
+      <td><?= $cf->toggleSubmitForm(
+          '',
+          $ps->passive_host_checks_enabled,
+          'startacceptingpassivechecks',
+          'stopacceptingpassivechecks',
+          false,
+          array('global' => 'host')
+      ) ?></td>
+    </tr>
+    <tr>
+      <th>Eventhandlers enabled</th>
+      <td><?= $cf->toggleSubmitForm(
+          '',
+          $ps->event_handlers_enabled,
+          'enableeventhandler',
+          'disableeventhandler',
+          false,
+          array('global' => '1')
+      ) ?></td>
+    </tr>
+    <tr>
+      <th>Obsessing over host checks</th>
+      <td><?= $cf->toggleSubmitForm(
+          '',
+          $ps->obsess_over_hosts,
+          'startobsessing',
+          'stopobsessing',
+          false,
+          array('global' => 'host')
+      ) ?></td>
+    </tr>
+    <tr>
+      <th>Obsessing over service checks</th>
+      <td><?= $cf->toggleSubmitForm(
+          '',
+          $ps->obsess_over_services,
+          'startobsessing',
+          'stopobsessing',
+          false,
+          array('global' => 'service')
+      ) ?></td>
+    </tr>
+    <tr>
+      <th>Flap detection enabled</th>
+      <td><?= $cf->toggleSubmitForm(
+          '',
+          $ps->flap_detection_enabled,
+          'enableflapdetection',
+          'disableflapdetection',
+          false,
+          array('global' => '1')
+      ) ?></td>
+    </tr>
+    <tr>
+      <th>Process performance data</th>
+      <td><?= $cf->toggleSubmitForm(
+          '',
+          $ps->process_performance_data,
+          'enableperformancedata',
+          'disableperformancedata',
+          false,
+          array('global' => '1')
+      ) ?></td>
+    </tr>
+    <tr>
+      <th>Monitoring Process</th>
+      <td><?= $cf->labelSubmitForm(
+          'Restart',
+          'Restart the monitoring process',
+          '',
+          'restartprocess'
+      ) ?>
+      <!--<?=
+      $cf->labelSubmitForm(
+          'Shutdown monitoring process',
+          'Shutdown the monitoring process',
+          'btn-cta',
+          'shutdownprocess'
+      );
+      ?>-->
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+</div>

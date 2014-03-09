@@ -52,26 +52,39 @@ class Monitoring_ProcessController extends MonitoringController
     public function init()
     {
         $this->backend = Backend::createBackend($this->_getParam('backend'));
+        $this->getTabs()->add('info', array(
+            'title' => 'Process Info',
+            'url' =>'monitoring/process/info'
+        ))->add('performance', array(
+            'title' => 'Performance Info',
+            'url' =>'monitoring/process/performance'
+        ));
     }
 
-    public function performanceAction()
+    public function infoAction()
     {
-        $this->view->runtimevariables = (object)RuntimevariablesView::fromRequest(
-            $this->_request,
-            array('varname', 'varvalue')
-        )->getQuery()->fetchPairs();
+        $this->getTabs()->activate('info');
+        $this->setAutorefreshInterval(10);
 
         $this->view->programstatus = ProgramstatusView::fromRequest(
             $this->_request
         )->getQuery()->fetchRow();
 
+        $this->view->backendName = $this->backend->getDefaultBackendName();
+    }
+
+    public function performanceAction()
+    {
+        $this->getTabs()->activate('performance');
+        $this->setAutorefreshInterval(10);
+        $this->view->runtimevariables = (object) RuntimevariablesView::fromRequest(
+            $this->_request,
+            array('varname', 'varvalue')
+        )->getQuery()->fetchPairs();
+
         $this->view->checkperformance = $query = RuntimesummaryView::fromRequest(
             $this->_request
         )->getQuery()->fetchAll();
-
-
-
-        $this->view->backendName = $this->backend->getDefaultBackendName();
     }
 }
 
