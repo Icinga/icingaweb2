@@ -1,5 +1,5 @@
 <?php
-    $rv = $this->runtimevariables;
+    $rv = $this->runtimeVariables()->create($this->runtimevariables);
     $ps = $this->programstatus;
     $cp = $this->checkPerformance()->create($this->checkperformance);
     /** @var Zend_View_Helper_CommandForm $ch */
