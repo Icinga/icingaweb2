@@ -317,7 +317,7 @@ class Form extends Zend_Form
             $this->addElementDecorators();
             $this->created = true;
             if (!$this->ignoreChangeDiscarding) {
-                $this->setAttrib('data-icinga-component', 'app/form');
+                //$this->setAttrib('data-icinga-component', 'app/form');
             }
         }
     }
