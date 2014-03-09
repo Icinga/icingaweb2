@@ -223,8 +223,8 @@ class Monitoring_ListController extends Controller
             'downtime_author'               => 'Author',
             'downtime_start'                => 'Start Time',
             'downtime_start'                => 'End Time',
-            'downtime_scheduled_start_time' => 'Scheduled Start',
-            'downtime_scheduled_end_time'   => 'Scheduled End',
+            'downtime_scheduled_start' => 'Scheduled Start',
+            'downtime_scheduled_end'   => 'Scheduled End',
             'downtime_duration'             => 'Duration',
         ));
         $this->handleFormatRequest($query);

@@ -47,6 +47,7 @@ class DowntimeQuery extends IdoQuery
             'downtime_is_flexible'          => 'CASE WHEN sd.is_fixed = 0 THEN 1 ELSE 0 END',
             'downtime_triggered_by_id'      => 'sd.triggered_by_id',
             'downtime_scheduled_start' => 'UNIX_TIMESTAMP(sd.scheduled_start_time)',
+            'downtime_scheduled_end' => 'UNIX_TIMESTAMP(sd.scheduled_end_time)',
             'downtime_start'                => "UNIX_TIMESTAMP(CASE WHEN sd.trigger_time != '0000-00-00 00:00:00' then sd.trigger_time ELSE sd.scheduled_start_time END)",
             'downtime_end'                  => 'UNIX_TIMESTAMP(sd.scheduled_end_time)',
             'downtime_duration'             => 'sd.duration',

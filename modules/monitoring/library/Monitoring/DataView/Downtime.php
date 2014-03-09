@@ -47,6 +47,7 @@ class Downtime extends DataView
             'downtime_is_flexible',
             'downtime_start',
             'downtime_scheduled_start',
+            'downtime_scheduled_end',
             'downtime_end',
             'downtime_duration',
             'downtime_is_in_effect',
