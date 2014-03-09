@@ -1,8 +1,10 @@
 <div class="controls">
 <?= $this->tabs->render($this); ?>
+<div style="margin: 1em">
 <?=  $this->filterBox->render($this); ?>
 <?=  $this->sortControl->render($this); ?>
-<?= $this->selectionToolbar('single'); ?>
+<!--<?= $this->selectionToolbar('single'); ?>-->
+</div>
 <?=  $this->paginationControl($history, null, null, array('preserve' => $this->preserve)); ?>
 </div>
 
