@@ -29,6 +29,9 @@ abstract class AbstractObject
     private $properties = array();
     private $request    = null;
 
+    // TODO: Fetching parent states if any would be nice
+    //       Same goes for host/service dependencies
+
     public function __construct(Request $request)
     {
         $this->request = $request;
