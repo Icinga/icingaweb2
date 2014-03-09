@@ -7,7 +7,7 @@ use Icinga\Data\Db\Query;
 
 class Host extends AbstractObject
 {
-    public $typ    = 'host';
+    public $type   = 'host';
     public $prefix = 'host_';
     private $view  = null;
 

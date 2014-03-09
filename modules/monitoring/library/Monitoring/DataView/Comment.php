@@ -49,9 +49,9 @@ class Comment extends DataView
             'comment_timestamp',
             'comment_type',
             'comment_is_persistent',
-            'comment_expiration_timestamp',
-            'host_name',
-            'service_description',
+            'comment_expiration',
+            'comment_host',
+            'comment_service',
         );
     }
 
@@ -66,10 +66,10 @@ class Comment extends DataView
             'comment_timestamp' => array(
                 'order' => self::SORT_DESC
             ),
-            'host_name' => array(
+            'comment_host' => array(
                 'columns' => array(
-                    'host_name',
-                    'service_description'
+                    'comment_host',
+                    'comment_service'
                 ),
                 'order' => self::SORT_ASC
             ),

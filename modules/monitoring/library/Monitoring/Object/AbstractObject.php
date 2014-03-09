@@ -52,9 +52,9 @@ abstract class AbstractObject
         ))->getQuery();
         $query->where('comment_type', array('comment', 'ack'));
         $query->where('comment_objecttype', $this->type);
-        $query->where('host_name', $this->host_name);
+        $query->where('comment_host', $this->host_name);
         if ($this->type === 'service') {
-            $query->where('service_description', $this->service_description);
+            $query->where('comment_service', $this->service_description);
         }
         $this->comments = $query->fetchAll();
         return $this;

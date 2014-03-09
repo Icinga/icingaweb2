@@ -327,9 +327,9 @@ class Monitoring_ListController extends Controller
                 'timestamp'  => 'comment_timestamp',
                 'type'       => 'comment_type',
                 'persistent' => 'comment_is_persistent',
-                'expiration' => 'comment_expiration_timestamp',
-                'host',
-                'service'
+                'expiration' => 'comment_expiration',
+                'host'       => 'comment_host',
+                'service'    => 'comment_service'
             )
         )->getQuery();
 
@@ -338,9 +338,9 @@ class Monitoring_ListController extends Controller
         $this->setupSortControl(
             array(
                 'comment_timestamp'  => 'Comment Timestamp',
-                'host_name'          => 'Host / Service',
+                'comment_host'       => 'Host / Service',
                 'comment_type'       => 'Comment Type',
-                'comment_expiration_timestamp' => 'Expiration',
+                'comment_expiration' => 'Expiration',
             )
         );
         $this->handleFormatRequest($query);
