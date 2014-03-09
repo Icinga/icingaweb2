@@ -266,25 +266,31 @@
                 if (m !== null) {
                     var nm = parseInt(m[1]);
                     var ns = parseInt(m[2]);
-                    if (nm > 0) {
-                        if (ns > 0) {
-                            ns--;
-                        } else if (ns == 0) {
-                            ns = 59;
-                            nm--;
-                        } else { //negative means recalculate against 1m
-                            ns = (60 - ns - 1);
-                            nm--; 
-                        }
-                    } else if (nm <= 0) {
-                        if (ns == -59) {
-                            ns = 0;
-                            nm--;
-                        } else {
-                            ns--;
-                        }
-                    }
-                    $(el).html(nm + 'm ' + ns + 's');
+                    var signed = '';
+                    var sec = 0;
+
+                    if (nm < 0) {
+                        signed = '-';    
+                        nm = nm * -1;
+                        sec = nm * 60 + ns;
+                        sec++;
+                    } else if (nm == 0 && ns == 0) {
+                        signed = '-';    
+                        sec = 1;
+                    } else if (nm == 0) {
+                        signed = '-';    
+                        sec = ns;
+                        sec++;
+                    } else {
+                        signed = '';    
+                        sec = nm * 60 + ns;
+                        sec--;
+                    }    
+
+                    nm = Math.floor(sec/60);
+                    ns = sec - nm * 60;
+
+                    $(el).html(signed + nm + 'm ' + ns + 's');
                 }
             });
         },
