@@ -86,7 +86,7 @@
             $(document).on('submit', 'form', { self: this }, this.submitForm);
 
             // We support an 'autosubmit' class on dropdown form elements
-            $(document).on('change', 'form select.autosubmit', { self: this }, this.submitForm);
+            $(document).on('change', 'form select.autosubmit', { self: this }, this.autoSubmitForm);
 
             $(document).on('keyup', '#menu input.search', {self: this}, this.submitForm);
 
@@ -121,10 +121,14 @@
             $(this).removeClass('hover');
         },
 
+        autoSubmitForm: function (event) {
+            return event.data.self.submitForm(event, true);
+        },
+
         /**
          *
          */
-        submitForm: function (event) {
+        submitForm: function (event, autosubmit) {
             var self   = event.data.self;
             var icinga = self.icinga;
 
@@ -139,7 +143,9 @@
             event.preventDefault();
 
             // TODO: Check button
-            data.push({ name: 'btn_submit', value: 'yesss' });
+            if (typeof autosubmit === 'undefined' || ! autosubmit) {
+                data.push({ name: 'btn_submit', value: 'yesss' });
+            }
 
             icinga.logger.debug('Submitting form: ' + method + ' ' + url);
 
