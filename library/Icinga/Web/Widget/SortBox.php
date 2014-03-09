@@ -58,7 +58,7 @@ use Zend_Form_Element_Submit;
  * By default the sortBox uses the GET parameter 'sort' for the sorting key and 'dir' for the sorting direction
  *
  */
-class SortBox implements Widget
+class SortBox extends AbstractWidget
 {
 
     /**
@@ -118,7 +118,7 @@ class SortBox implements Widget
             array(
                 'name'      => 'submit_' . $this->name,
                 'label'     => 'Sort',
-                'class'     => 'btn btn-default',
+                'class'     => '',
                 'condition' => 0,
                 'value'     => '{{SUBMIT_ICON}}'
             )
@@ -139,7 +139,7 @@ class SortBox implements Widget
     public function render(Zend_View_Abstract $view)
     {
         $form = new Form();
-        $form->setAttrib('class', 'form-inline');
+        $form->setAttrib('class', 'inline');
         $form->setMethod('GET');
         $form->setTokenDisabled();
         $form->setName($this->name);
@@ -148,7 +148,8 @@ class SortBox implements Widget
             'sort',
             array(
                 'label'         => 'Sort By',
-                'multiOptions'  => $this->sortFields
+                'multiOptions'  => $this->sortFields,
+                'class' => 'autosubmit'
             )
         );
         $form->addElement(
@@ -157,19 +158,21 @@ class SortBox implements Widget
             array(
                 'multiOptions'  => array(
                     'desc'      => 'Desc',
-                    'asc'       => 'Asc'
+                    'asc'       => 'Asc',
+                'class' => 'autosubmit'
                 )
 
             )
         );
-
-        $form->enableAutoSubmit(array('sort', 'dir'));
-        $form->addElement($this->createFallbackSubmitButton());
+        $sort = $form->getElement('sort')->setDecorators(array('ViewHelper'));
+        $dir = $form->getElement('dir')->setDecorators(array('ViewHelper'));
+        // $form->enableAutoSubmit(array('sort', 'dir'));
+        // $form->addElement($this->createFallbackSubmitButton());
 
         if ($this->request) {
             $form->setAction($this->request->getRequestUri());
             $form->populate($this->request->getParams());
         }
-        return $form->render($view);
+        return $form;
     }
 }

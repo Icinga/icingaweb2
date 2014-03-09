@@ -3,15 +3,11 @@ $helper = $this->getHelper('MonitoringState');
 ?>
 <div class="controls">
 <?= $this->tabs ?>
-<div style="display: inline-block; margin: 1em; vertical-align: top;">
-<?= $this->filterBox->render($this); ?>
+<div style="margin: 1em;">
+<?= $this->filterBox ?> <?= $this->sortControl->render($this); ?>
 </div>
-<div style="display: inline-block; margin: 1em; vertical-align: top;">
-<?= $this->sortControl->render($this); ?>
-</div><br />
-<div style="display: inline-block; margin: 1em; vertical-align: top;">
-<?= $this->selectionToolbar('multi', $this->href('monitoring/multi/host',array( 'host' => '*' ))); ?>
-</div>
+<!--<?= $this->selectionToolbar('multi', $this->href('monitoring/multi/host',array( 'host' => '*' ))); ?>-->
+<div style="margin: 1em;">
 <?= $this->paginationControl($hosts, null, null, array('preserve' => $this->preserve)); ?>
 </div>
 <div class="content">

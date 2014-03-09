@@ -31,6 +31,7 @@ namespace Icinga\Web\Widget;
 
 use Zend_View_Abstract;
 
+use Icinga\Web\Widget\AbstractWidget;
 use Icinga\Web\Form;
 use Icinga\Web\Url;
 use Icinga\Filter\Query\Tree;
@@ -38,7 +39,7 @@ use Icinga\Filter\Query\Tree;
 /**
  * Widget that renders a filter input box together with an FilterBadgeRenderer widget
  */
-class FilterBox implements Widget
+class FilterBox extends AbstractWidget
 {
     /**
      * An optional initial filter to use
@@ -94,7 +95,7 @@ EOT;
     {
 
         $form = new Form();
-        $form->setAttrib('class', 'form-inline');
+        $form->setAttrib('class', 'inline');
         $form->setMethod('GET');
         $form->setAction(Url::fromPath('/filter'));
         $form->setTokenDisabled();
@@ -107,10 +108,11 @@ EOT;
                 'placeholder' => 'Add filter'
             )
         );
-        $form->removeAttrib('data-icinga-component');
+        $query = $form->getElement('query')->setDecorators(array('ViewHelper'));
 
-        $form->setIgnoreChangeDiscarding(true);
         $badges = new FilterBadgeRenderer($this->initialFilter);
+        $form->setIgnoreChangeDiscarding(true);
+        return '<div class="pull-right">' . $badges->render($view) . '</div>' . $form;
         $html = str_replace('{{FORM}}', $form->render($view), self::$TPL);
         $html = '<div class="input-append">' . $html . '</div>';
         return str_replace('{{BADGES}}', $badges->render($view), $html);

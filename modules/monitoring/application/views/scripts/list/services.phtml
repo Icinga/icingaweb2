@@ -4,14 +4,13 @@ $helper = $this->getHelper('MonitoringState');
 if (!$this->compact): ?>
 <div class="controls">
 <?= $this->tabs ?>
-<div style="display: inline-block; margin: 1em; vertical-align: top;">
-<?= $this->filterBox->render($this); ?>
+<div style="margin: 1em;">
+<?= $this->filterBox ?>
+<?= $this->sortControl ?>
 </div>
-<div style="display: inline-block; margin: 1em; vertical-align: top;">
-<?= $this->sortControl->render($this); ?>
-</div><br />
-<div style="display: inline-block; margin: 1em; vertical-align: top;">
-<?= $this->selectionToolbar('multi', $this->href('monitoring/multi/service', array( 'service' => '*', 'host' => '*' ))); ?></div> <?=  $this->paginationControl($services, null, null, array('preserve' => $this->preserve)); ?>
+<div style="margin: 1em;">
+<?=  $this->paginationControl($services, null, null, array('preserve' => $this->preserve)); ?>
+</div>
 </div>
 
 <div class="content">
