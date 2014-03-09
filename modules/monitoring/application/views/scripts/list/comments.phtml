@@ -1,11 +1,13 @@
 <div class="controls">
+<div style="margin: 1em">
 <?= $this->tabs ?>
 <?=  $this->sortControl->render($this); ?>
+</div>
 <?=  $this->paginationControl($comments, null, null, array('preserve' => $this->preserve)); ?>
 </div>
 
 <div class="content">
-<table class="action">
+<table class="action comments">
 <tbody>
 <?php
 
@@ -54,7 +56,7 @@ foreach ($comments as $comment):
             'host'    => $comment->host_name
         )
     ) ?> by <strong><?= $this->escape($comment->comment_author) ?></strong><br />
-      <?= $this->escape($comment->comment_data) ?><br />
+      <p><?= $this->escape($comment->comment_data) ?></p>
         <?php if ($comment->comment_is_persistent): ?>Comment is persistent<br /><?php endif ?>
         <b>Expires: </b> <?=
             ($comment->comment_expiration_timestamp) ?
