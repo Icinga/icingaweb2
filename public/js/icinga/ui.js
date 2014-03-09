@@ -17,13 +17,14 @@
 
         this.debugTimer = null;
 
+        this.timeCounterTimer = null;
     };
 
     Icinga.UI.prototype = {
 
         initialize: function () {
             $('html').removeClass('no-js').addClass('js');
-            this.icinga.timer.register(this.refreshTimeSince, this, 1000);
+            this.enableTimeCounters();
             this.triggerWindowResize();
             this.fadeNotificationsAway();
         },
@@ -72,6 +73,21 @@
             this.icinga.timer.unregister(this.debugTimer);
             this.debugTimer = null;
             this.fixDebugVisibility();
+            return this;
+        },
+
+        enableTimeCounters: function () {
+            this.timeCounterTimer = this.icinga.timer.register(
+                this.refreshTimeSince,
+                this,
+                1000
+            );
+            return this;
+        },
+
+        disableTimeCounters: function () {
+            this.icinga.timer.unregister(this.timeCounterTimer);
+            this.timeCounterTimer = null;
             return this;
         },
 
@@ -370,6 +386,8 @@
         destroy: function () {
             // This is gonna be hard, clean up the mess
             this.icinga = null;
+            this.debugTimer = null;
+            this.timeCounterTimer = null;
         }
 
     };
