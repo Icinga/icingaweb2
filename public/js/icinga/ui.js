@@ -273,17 +273,17 @@
                             ns = 59;
                             nm--;
                         } else { //negative means recalculate against 1m
-			    ns = (60 - ns - 1);
-			    nm--; 
-			}
-		    } else if (nm <= 0) {
+                            ns = (60 - ns - 1);
+                            nm--; 
+                        }
+                    } else if (nm <= 0) {
                         if (ns == -59) {
-			    ns = 0;
-			    nm--;
+                            ns = 0;
+                            nm--;
                         } else {
-			    ns--;
-			}
-		    }
+                            ns--;
+                        }
+                    }
                     $(el).html(nm + 'm ' + ns + 's');
                 }
             });

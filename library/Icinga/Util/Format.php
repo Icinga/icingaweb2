@@ -77,7 +77,7 @@ class Format
 
     public static function duration($duration)
     {
-	if ($duration === null || $duration === false) {
+        if ($duration === null || $duration === false) {
             return '-';
         }
         return self::showHourMin($duration);
