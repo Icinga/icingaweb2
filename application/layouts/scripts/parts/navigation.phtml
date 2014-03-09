@@ -12,7 +12,7 @@ if (! $this->auth()->isAuthenticated()) {
 $url = Url::fromRequest()->remove('_render')->getRelativeUrl();
 $menu = Menu::fromConfig();
 ?>
-<div id="menu" data-base-target="col1">
+<div id="menu" data-base-target="_main">
   <form action="<?= $this->href('search') ?>" method="post">
     <input type="text" name="q" class="search" placeholder="Search..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
   </form>

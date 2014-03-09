@@ -250,6 +250,11 @@
                     targetId = 'col2';
                 }
 
+                if (targetId === '_main') {
+                    targetId = 'col1';
+                    icinga.ui.layout1col();
+                }
+
                 $target = $('#' + targetId);
             }
 
