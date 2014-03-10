@@ -7,12 +7,14 @@
     <div class="boxview" data-base-target="_next">
 <?php foreach($servicegroups as $servicegroup): ?>
         <div class="box servicegroup">
-            <a href="<?= $this->href(
-                'monitoring/list/services',
-                array('servicegroup' => $servicegroup->servicegroup)
-            ); ?>">
-                <h2><?= $servicegroup->servicegroup; ?></h2>
-            </a>
+            <h2>
+                <a href="<?= $this->href(
+                    'monitoring/list/services',
+                    array('servicegroup' => $servicegroup->servicegroup)
+                ); ?>">
+                    <?= $servicegroup->servicegroup; ?>
+                </a>
+            </h2>
             <div class="box contents">
                 <table>
                     <thead>

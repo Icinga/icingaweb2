@@ -237,23 +237,36 @@ a.critical {
 
 /* Box caption */
 .boxview div.box h2 {
-  margin-top: 0.2em;
-  margin-bottom: 0.6em;
-
-  color: white;
-  font-weight: bold;
-}
-
-.boxview div.box h3 {
   margin-top: 0;
   margin-bottom: 0.6em;
   font-size: 0.8em;
-  
+
   color: #eee;
+}
+
+.boxview div.box h2:first-child {
+  margin-top: 0.2em;
+  font-size: inherit;
+
+  color: white;
+}
+
+.boxview div.box h2 > a {
+  color: inherit;
+}
+
+.boxview div.box h2 > a:hover {
+  color: #fafafa;
+}
+
+.boxview div.box h2:first-child > a:hover {
+  color: #dfdfdf;
 }
 
 /* Box body of contents */
 .boxview div.box.contents {
+  padding: 0.2em;
+
   background: #fbfbfb;
   border-radius: 0.4em;
   -moz-border-radius: 0.4em;
@@ -377,8 +390,64 @@ div.box.entry.handled a:hover {
 
 /* Tactical overview element styles */
 
-div.tactical div.box {
-  min-height: 15em;
+.tactical > .boxview > div.box {
+  min-height: 17em;
+}
+
+.tactical div.box.contents {
+  min-height: 14.5em;
+}
+
+div.box.contents.zero {
+  min-width: 11.1em;
+
+  background-color: transparent;
+}
+
+div.box.contents.zero span {
+  font-weight: bold;
+
+  color: white;
+}
+
+div.box.contents.zero h3 {
+  margin: 0;
+  font-size: 12em;
+  line-height: 1em;
+
+  color: white;
+}
+
+div.box.ok_hosts.state_up {
+  background-color: @colorOk;
+}
+
+div.box.ok_hosts.state_pending {
+  background-color: @colorPending;
+}
+
+div.box.problem_hosts.state_down {
+  background-color: @colorCritical;
+}
+
+div.box.problem_hosts.state_down.handled {
+  background-color: @colorCriticalHandled;
+}
+
+div.box.problem_hosts.state_unreachable {
+  background-color: @colorUnreachable;
+}
+
+div.box.problem_hosts.state_unreachable.handled {
+  background-color: @colorUnreachableHandled;
+}
+
+div.box.ok_hosts div.box.entry, div.box.problem_hosts div.box.entry {
+  min-width: 11.1em;
+}
+
+div.box.monitoringfeatures div.box.contents {
+  padding: 0 0 0.4em;
 }
 
 div.box.monitoringfeatures div.box-separator {

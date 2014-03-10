@@ -1,113 +1,57 @@
-<div class="box ok_hosts">
-    <h2><?= $this->translate('OK Hosts'); ?></h2>
-    <div class="box contents">
-        <table>
-            <thead>
-                <tr>
-                    <th><?= $this->translate('Hosts'); ?></th>
-                    <th><?= $this->translate('Services'); ?></th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>
+<?php
+$service_problems = (
+    $this->statusSummary->services_warning_handled_on_ok_hosts ||
+    $this->statusSummary->services_warning_unhandled_on_ok_hosts ||
+    $this->statusSummary->services_critical_handled_on_ok_hosts ||
+    $this->statusSummary->services_critical_unhandled_on_ok_hosts ||
+    $this->statusSummary->services_unknown_handled_on_ok_hosts ||
+    $this->statusSummary->services_unknown_unhandled_on_ok_hosts
+);
+?>
+<div class="box ok_hosts state_<?= $this->statusSummary->hosts_up ? 'up' : 'pending'; ?>">
 <?php if ($this->statusSummary->hosts_up): ?>
-                        <div class="box entry state_up">
-                            <a href="<?= $this->href(
-                                'monitoring/list/hosts',
-                                array('host_state' => 0)
-                            ); ?>">
-                                <?= $this->statusSummary->hosts_up; ?> UP
-                            </a>
-<?php if ($this->statusSummary->hosts_up_not_checked): ?>
-                            <a href="<?= $this->href(
-                                'monitoring/list/hosts',
-                                array(
-                                    'host_state'                    => 0,
-                                    'host_active_checks_enabled'    => 0,
-                                    'host_passive_checks_enabled'   => 0
-                                )
-                            ); ?>">
-                                <?php
-                                    if ($this->statusSummary->hosts_up_not_checked > 1) {
-                                        printf(
-                                            $this->translate('%d are not checked at all'),
-                                            $this->statusSummary->hosts_up_not_checked
-                                        );
-                                    } else {
-                                        printf(
-                                            $this->translate('%d is not checked at all'),
-                                            $this->statusSummary->hosts_up_not_checked
-                                        );
-                                    }
-                                ?>
-                            </a>
-<?php endif ?>
-                        </div>
+    <h2>
+        <a href="<?= $this->href('monitoring/list/hosts', array('host_state' => 0)); ?>">
+            <?= sprintf($this->translate('%d Hosts UP'), $this->statusSummary->hosts_up); ?>
+        </a>
+    </h2>
 <?php endif ?>
 <?php if ($this->statusSummary->hosts_pending): ?>
-                        <div class="box entry state_pending">
-                            <a href="<?= $this->href(
-                                'monitoring/list/hosts',
-                                array('host_state' => 99)
-                            ); ?>">
-                                <?= $this->statusSummary->hosts_pending; ?> PENDING
-                            </a>
-<?php if ($this->statusSummary->hosts_pending_not_checked): ?>
-                            <a href="<?= $this->href(
-                                'monitoring/list/hosts',
-                                array(
-                                    'host_state'                    => 99,
-                                    'host_active_checks_enabled'    => 0,
-                                    'host_passive_checks_enabled'   => 0
-                                )
-                            ); ?>">
-                                <?php
-                                    if ($this->statusSummary->hosts_pending_not_checked > 1) {
-                                        printf(
-                                            $this->translate('%d are not checked at all'),
-                                            $this->statusSummary->hosts_pending_not_checked
-                                        );
-                                    } else {
-                                        printf(
-                                            $this->translate('%d is not checked at all'),
-                                            $this->statusSummary->hosts_pending_not_checked
-                                        );
-                                    }
-                                ?>
-                            </a>
+    <h2>
+        <a href="<?= $this->href('monitoring/list/hosts', array('host_state' => 99)); ?>">
+            <?= sprintf($this->translate('%d Hosts PENDING'), $this->statusSummary->hosts_pending); ?>
+        </a>
+    </h2>
 <?php endif ?>
-                        </div>
+<?php if ($service_problems || $this->statusSummary->hosts_down || $this->statusSummary->hosts_unreachable): ?>
+    <div class="box contents">
+        <strong><?= $this->translate('Services'); ?></strong>
+        <?= $this->partial(
+            'tactical/components/parts/servicestatesummarybyhoststate.phtml',
+            array(
+                'host_problem'                  => 0,
+                'services_ok'                   => $this->statusSummary->services_ok_on_ok_hosts,
+                'services_ok_not_checked'       => $this->statusSummary->services_ok_not_checked_on_ok_hosts,
+                'services_pending'              => $this->statusSummary->services_pending_on_ok_hosts,
+                'services_pending_not_checked'  => $this->statusSummary->services_pending_not_checked_on_ok_hosts,
+                'services_warning_handled'      => $this->statusSummary->services_warning_handled_on_ok_hosts,
+                'services_warning_unhandled'    => $this->statusSummary->services_warning_unhandled_on_ok_hosts,
+                'services_warning_passive'      => $this->statusSummary->services_warning_passive_on_ok_hosts,
+                'services_warning_not_checked'  => $this->statusSummary->services_warning_not_checked_on_ok_hosts,
+                'services_critical_handled'     => $this->statusSummary->services_critical_handled_on_ok_hosts,
+                'services_critical_unhandled'   => $this->statusSummary->services_critical_unhandled_on_ok_hosts,
+                'services_critical_passive'     => $this->statusSummary->services_critical_passive_on_ok_hosts,
+                'services_critical_not_checked' => $this->statusSummary->services_critical_not_checked_on_ok_hosts,
+                'services_unknown_handled'      => $this->statusSummary->services_unknown_handled_on_ok_hosts,
+                'services_unknown_unhandled'    => $this->statusSummary->services_unknown_unhandled_on_ok_hosts,
+                'services_unknown_passive'      => $this->statusSummary->services_unknown_passive_on_ok_hosts,
+                'services_unknown_not_checked'  => $this->statusSummary->services_unknown_not_checked_on_ok_hosts
+            )
+        ); ?>
+<?php else: ?>
+    <div class="box contents zero">
+        <h3>0</h3>
+        <span><?= $this->translate('Service Problems'); ?></span>
 <?php endif ?>
-                    </td>
-                    <td>
-<?php if ($this->statusSummary->hosts_up || $this->statusSummary->hosts_pending): ?>
-                        <?= $this->partial(
-                            'tactical/components/parts/servicestatesummarybyhoststate.phtml',
-                            array(
-                                'host_problem'                      => 0,
-                                'services_ok'                       => $this->statusSummary->services_ok_on_ok_hosts,
-                                'services_ok_not_checked'           => $this->statusSummary->services_ok_not_checked_on_ok_hosts,
-                                'services_pending'                  => $this->statusSummary->services_pending_on_ok_hosts,
-                                'services_pending_not_checked'      => $this->statusSummary->services_pending_not_checked_on_ok_hosts,
-                                'services_warning_handled'          => $this->statusSummary->services_warning_handled_on_ok_hosts,
-                                'services_warning_unhandled'        => $this->statusSummary->services_warning_unhandled_on_ok_hosts,
-                                'services_warning_passive'          => $this->statusSummary->services_warning_passive_on_ok_hosts,
-                                'services_warning_not_checked'      => $this->statusSummary->services_warning_not_checked_on_ok_hosts,
-                                'services_critical_handled'         => $this->statusSummary->services_critical_handled_on_ok_hosts,
-                                'services_critical_unhandled'       => $this->statusSummary->services_critical_unhandled_on_ok_hosts,
-                                'services_critical_passive'         => $this->statusSummary->services_critical_passive_on_ok_hosts,
-                                'services_critical_not_checked'     => $this->statusSummary->services_critical_not_checked_on_ok_hosts,
-                                'services_unknown_handled'          => $this->statusSummary->services_unknown_handled_on_ok_hosts,
-                                'services_unknown_unhandled'        => $this->statusSummary->services_unknown_unhandled_on_ok_hosts,
-                                'services_unknown_passive'          => $this->statusSummary->services_unknown_passive_on_ok_hosts,
-                                'services_unknown_not_checked'      => $this->statusSummary->services_unknown_not_checked_on_ok_hosts
-                            )
-                        ); ?>
-<?php endif ?>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
     </div>
 </div>
