@@ -88,6 +88,10 @@ class DashboardController extends ActionController
      */
     public function addurlAction()
     {
+        $this->getTabs()->add('addurl', array(
+            'title' => 'Add Dashboard URL',
+            'url' => Url::fromRequest()
+        ))->activate('addurl');
         $form = new AddUrlForm();
         $form->setRequest($this->_request);
         $this->view->form = $form;
