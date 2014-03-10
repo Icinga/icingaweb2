@@ -520,8 +520,14 @@ class Monitoring_ListController extends Controller
     private function createTabs()
     {
         $tabs = $this->getTabs();
-        $tabs->extend(new OutputFormat())
-            ->extend(new DashboardAction());
+        if (in_array($this->_request->getActionName(), array(
+            'hosts',
+            'services',
+            'eventhistory',
+            'notifications'
+        ))) {
+            $tabs->extend(new OutputFormat())->extend(new DashboardAction());
+        }
     }
 }
 // @codingStandardsIgnoreEnd
