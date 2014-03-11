@@ -3,7 +3,7 @@
     <?= $this->tabs->render($this); ?>
 </div>
 
-<div class="content">
+<div class="content" data-base-target="_next">
     <h1>Monitoring Backends</h1>
 
     <?php if (isset($this->messageBox)): ?>
@@ -16,23 +16,28 @@
         </a>
     </p>
 
-    <table class="configTable">
-        <?php foreach ($this->backends as $backendName => $config): ?>
-            <tr>
-                <td class="configTable">
-                    <?php
-                    $removeUrl = Url::fromPath('/monitoring/config/removebackend', array('backend' => $backendName));
-                    $editUrl = Url::fromPath('/monitoring/config/editbackend', array('backend' => $backendName));
-                    ?>
-                    <b><?= $this->escape($backendName); ?></b>
-                    <small>(Type: <?= $this->escape($config['type'] === 'ido' ? 'IDO' : ucfirst($config['type'])); ?>)</small>
-                    <div>
-                        <a href="<?= $removeUrl; ?>"><?= $this->icon('remove.png'); ?> Remove</a>&emsp;
-                        <a href="<?= $editUrl; ?>"><?= $this->icon('edit.png'); ?> Edit</a>
-                    </div>
-                </td>
-            </tr>
-        <?php endforeach; ?>
+    <table class="action">
+        <thead>
+            <th>Monitoring Backend</th>
+            <th style="width: 5em">Remove</th>
+        </thead>
+        <tbody>
+            <?php foreach ($this->backends as $backendName => $config): ?>
+                <?php
+                $removeUrl = Url::fromPath('/monitoring/config/removebackend', array('backend' => $backendName));
+                $editUrl = Url::fromPath('/monitoring/config/editbackend', array('backend' => $backendName));
+                ?>
+                <tr>
+                    <td>
+                        <a href="<?= $editUrl; ?>"><?= $this->icon('edit.png'); ?> <?= $this->escape($backendName); ?></a>
+                        <small>(Type: <?= $this->escape($config['type'] === 'ido' ? 'IDO' : ucfirst($config['type'])); ?>)</small>
+                    </td>
+                    <td>
+                        <a href="<?= $removeUrl; ?>"><?= $this->icon('remove.png'); ?></a>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
     </table>
 
     <h1>Monitoring Instances</h1>
@@ -43,24 +48,27 @@
         </a>
     </p>
 
-    <table class="configTable">
-        <?php foreach ($this->instances as $instanceName => $config): ?>
-            <tr>
-                <td class="configTable">
-                    <?php
-                    $removeUrl = Url::fromPath('/monitoring/config/removeinstance', array('instance' => $instanceName));
-                    $editUrl = Url::fromPath('/monitoring/config/editinstance', array('instance' => $instanceName));
-                    ?>
-                    <div>
-                        <b><?= $this->escape($instanceName); ?></b>
+    <table class="action">
+        <thead>
+            <th>Instance</th>
+            <th style="width: 5em">Remove</th>
+        </thead>
+        <tbody>
+            <?php foreach ($this->instances as $instanceName => $config): ?>
+                <?php
+                $removeUrl = Url::fromPath('/monitoring/config/removeinstance', array('instance' => $instanceName));
+                $editUrl = Url::fromPath('/monitoring/config/editinstance', array('instance' => $instanceName));
+                ?>
+                <tr>
+                    <td>
+                        <a href="<?= $editUrl; ?>"><?= $this->icon('edit.png'); ?> <?= $this->escape($instanceName); ?></a>
                         <small>(Type: <?= isset($config['host']) ? 'Remote' : 'Local'; ?>)</small>
-                        <div>
-                            <a href="<?= $removeUrl; ?>"><?= $this->icon('remove.png'); ?> Remove</a>&emsp;
-                            <a href="<?= $editUrl; ?>"><?= $this->icon('edit.png'); ?> Edit</a>
-                        </div>
-                    </div>
-                </td>
-            </tr>
-        <?php endforeach; ?>
+                    </td>
+                    <td>
+                        <a href="<?= $removeUrl; ?>"><?= $this->icon('remove.png'); ?></a>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
     </table>
 </div>
