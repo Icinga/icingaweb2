@@ -5,9 +5,12 @@
 <?php endif ?>
 <div class="content tactical">
     <div class="boxview" data-base-target="_next">
+<?php if ($this->statusSummary->hosts_down || $this->statusSummary->hosts_unreachable): ?>
         <?= $this->render('tactical/components/problem_hosts.phtml'); ?>
+<?php endif ?>
+<?php if ($this->statusSummary->hosts_up || $this->statusSummary->hosts_pending): ?>
         <?= $this->render('tactical/components/ok_hosts.phtml'); ?>
-        <br />
+<?php endif ?>
         <?= $this->render('tactical/components/hostservicechecks.phtml'); ?>
         <?= $this->render('tactical/components/monitoringfeatures.phtml'); ?>
     </div>

@@ -49,6 +49,7 @@
             ) {
                 this.enabled = true;
                 this.icinga.logger.debug('History API enabled');
+                this.applyLocationBar();
                 $(window).on('popstate', { self: this }, this.onHistoryChange);
             }
 
@@ -98,9 +99,7 @@
 
             var self   = event.data.self,
                 icinga = self.icinga,
-                onload,
-                main,
-                parts;
+                onload;
 
             icinga.logger.debug('Got a history change');
 
@@ -116,6 +115,15 @@
             } else {
                 icinga.logger.debug('History state', event.originalEvent.state);
             }
+
+            self.applyLocationBar();
+
+        },
+
+        applyLocationBar: function () {
+            var icinga = this.icinga,
+                main,
+                parts;
 
             // TODO: Still hardcoding col1/col2, shall be dynamic soon
             main = document.location.pathname + document.location.search;
@@ -145,7 +153,6 @@
                 // TODO: Replace with dynamic columns
                 icinga.ui.layout1col();
             }
-
         },
 
         /**
