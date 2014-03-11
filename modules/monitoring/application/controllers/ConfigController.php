@@ -261,18 +261,11 @@ class Monitoring_ConfigController extends BaseConfigController {
      */
     private function writeConfiguration($config, $file)
     {
-        $configFile = IcingaConfig::module('monitoring', $file);
-        if ($configFile === null) {
-            throw new Exception('Configuration file is missing!');
-        } else {
-            $configFile = $configFile->getConfigFile();
-        }
-        $writer = new PreservingIniWriter(array(
-            'filename'  => $configFile,
-            'config'    => $config
-        ));
-
         try {
+            $writer = new PreservingIniWriter(array(
+                'filename'  => IcingaConfig::module('monitoring', $file)->getConfigFile(),
+                'config'    => $config
+            ));
             $writer->write();
             return true;
         } catch (Exception $exc) {

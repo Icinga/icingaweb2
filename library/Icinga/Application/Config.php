@@ -29,6 +29,7 @@
 
 namespace Icinga\Application;
 
+use Zend_Config;
 use Zend_Config_Ini;
 use Icinga\Exception\NotReadableError;
 use Icinga\Exception\ProgrammingError;
@@ -36,7 +37,7 @@ use Icinga\Exception\ProgrammingError;
 /**
  * Global registry of application and module configuration.
  */
-class Config extends Zend_Config_Ini
+class Config extends Zend_Config
 {
     /**
      * Configuration directory where ALL (application and module) configuration is located
@@ -66,6 +67,8 @@ class Config extends Zend_Config_Ini
      */
     protected static $modules = array();
 
+    private $instance;
+
     /**
      * Load configuration from the config file $filename
      *
@@ -75,19 +78,16 @@ class Config extends Zend_Config_Ini
      */
     public function __construct($filename)
     {
-        $canonical = realpath($filename);
-        if ($canonical === false) {
-            throw new NotReadableError('Cannot read config file "' . $filename . '". Config file does not exist');
-        }
-        if (!is_readable($canonical)) {
+        parent::__construct(array(), true);
+        $filepath = realpath($filename);
+        if ($filepath === false) {
+            $this->configFile = $filename;
+        } else if (is_readable($filepath)) {
+            $this->configFile = $filepath;
+            $this->merge(new Zend_Config_Ini($filepath));
+        } else {
             throw new NotReadableError('Cannot read config file "' . $filename . '". Permission denied');
-        };
-        $this->configFile = $canonical;
-        $section = null;
-        $options = array(
-            'allowModifications' => true
-        );
-        parent::__construct($canonical, $section, $options);
+        }
     }
 
     /**
@@ -124,12 +124,9 @@ class Config extends Zend_Config_Ini
         }
         $moduleConfigs = self::$modules[$modulename];
         if (!isset($moduleConfigs[$configname]) || $fromDisk) {
-            $filename = self::$configDir . '/modules/' . $modulename . '/' . $configname . '.ini';
-            if (file_exists($filename)) {
-                $moduleConfigs[$configname] = new Config(realpath($filename));
-            } else {
-                $moduleConfigs[$configname] = null;
-            }
+            $moduleConfigs[$configname] = new Config(
+                self::$configDir . '/modules/' . $modulename . '/' . $configname . '.ini'
+            );
         }
         return $moduleConfigs[$configname];
     }

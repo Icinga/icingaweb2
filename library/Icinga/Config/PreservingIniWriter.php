@@ -71,7 +71,11 @@ class PreservingIniWriter extends Zend_Config_Writer_FileAbstract
      */
     public function render()
     {
-        $oldconfig = new Zend_Config_Ini($this->_filename);
+        if (file_exists($this->_filename)) {
+            $oldconfig = new Zend_Config_Ini($this->_filename);
+        } else {
+            $oldconfig = new Zend_Config(array());
+        }
         $newconfig = $this->_config;
         $editor = new IniEditor(file_get_contents($this->_filename), $this->options);
         $this->diffConfigs($oldconfig, $newconfig, $editor);
