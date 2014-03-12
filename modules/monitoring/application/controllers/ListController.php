@@ -458,6 +458,33 @@ class Monitoring_ListController extends Controller
         $this->view->history = $query->paginate();
     }
 
+    public function servicematrixAction()
+    {
+        $this->view->title = 'Servicematrix';
+        $this->addTitleTab('servicematrix');
+        $dataview = ServiceStatusView::fromRequest(
+            $this->getRequest(),
+            array(
+                'host_name',
+                'service_description',
+                'service_state',
+                'service_output',
+                'service_handled'
+            )
+        );
+
+        $this->setupFilterControl($dataview, 'servicematrix');
+        $this->setupSortControl(
+            array(
+                'service_state'         => 'Service status',
+                'service_description'   => 'Service description',
+                'host_name'             => 'Hostname'
+            )
+        );
+
+        $this->view->matrix = $dataview->pivot('service_description', 'host_name')->toArray();
+    }
+
     /**
      * Apply current users monitoring/filter restrictions to the given query
      *

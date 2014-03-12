@@ -30,6 +30,7 @@
 namespace Icinga\Module\Monitoring\DataView;
 
 use Icinga\Data\BaseQuery;
+use Icinga\Data\PivotTable;
 use Icinga\Filter\Filterable;
 use Icinga\Filter\Query\Tree;
 use Icinga\Module\Monitoring\Backend;
@@ -165,6 +166,19 @@ abstract class DataView implements Filterable
     public function getFilterColumns()
     {
         return array();
+    }
+
+    /**
+     * Return a pivot table for the given columns based on the current query
+     *
+     * @param   string  $xAxisColumn    The column to use for the x axis
+     * @param   string  $yAxisColumn    The column to use for the y axis
+     *
+     * @return  PivotTable
+     */
+    public function pivot($xAxisColumn, $yAxisColumn)
+    {
+        return new PivotTable($this->query, $xAxisColumn, $yAxisColumn);
     }
 
     /**

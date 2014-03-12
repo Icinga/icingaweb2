@@ -1,14 +1,19 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Data;
+
+use \stdClass;
+use Icinga\Data\BaseQuery;
 
 class PivotTable
 {
     protected $query;
 
-    protected $verticalColumn;
+    protected $xAxisColumn;
 
-    protected $horizontalColumn;
+    protected $yAxisColumn;
 
     protected $limit;
 
@@ -18,11 +23,18 @@ class PivotTable
 
     protected $horizontalLimit;
 
-    public function __construct(QueryInterface $query, $verticalColumn, $horizontalColumn)
+    /**
+     * Create a new pivot table
+     *
+     * @param   BaseQuery   $query          The query to fetch as pivot table
+     * @param   string      $xAxisColumn    The column to use for the x axis
+     * @param   string      $yAxisColumn    The column to use for the y axis
+     */
+    public function __construct(BaseQuery $query, $xAxisColumn, $yAxisColumn)
     {
         $this->query = $query;
-        $this->verticalColumn   = $verticalColumn;
-        $this->horizontalColumn = $horizontalColumn;
+        $this->xAxisColumn = $xAxisColumn;
+        $this->yAxisColumn = $yAxisColumn;
     }
 
     public function limit($limit = null, $offset = null)
@@ -85,51 +97,59 @@ class PivotTable
     }
 
     /**
-     * Fetch all columns
+     * Fetch the values to label the x axis with
      */
-    public function fetchAll()
+    protected function fetchXAxis()
     {
-        $xcol = $this->horizontalColumn;
-        $ycol = $this->verticalColumn;
-        $queryX = clone($this->query);
-        $queryX->columns($xcol);
-        if ($this->limit !== null) {
-            $queryX->limit($this->getLimit(), $this->getOffset());
-        }
-        $queryX->limit(40);
-        $listX = $queryX->fetchColumn();
-        $queryY = clone($this->query);
+        $queryClass = get_class($this->query);
+        $query = new $queryClass($this->query->getDatasource(), array($this->xAxisColumn));
+        return $query->fetchColumn();
+    }
 
-        $queryY->columns($ycol);
-        if ($this->verticalLimit !== null) {
-            $queryY->limit($this->getVerticalLimit(), $this->getVerticalOffset());
-        }
-        $queryY->limit(50);
-        $listY = $queryY->fetchColumn();
+    /**
+     * Fetch the values to label the y axis with
+     */
+    protected function fetchYAxis()
+    {
+        $queryClass = get_class($this->query);
+        $query = new $queryClass($this->query->getDatasource(), array($this->yAxisColumn));
+        return $query->fetchColumn();
+    }
 
-        // TODO: resetOrder
-        $this->query
-            ->where($ycol, $listY)
-            ->where($xcol, $listX)
-            ->order($ycol)
-            ->order($xcol);
+    /**
+     * Return the pivot table as array
+     *
+     * @return  array
+     */
+    public function toArray()
+    {
+        $xAxis = $this->fetchXAxis();
+        $yAxis = $this->fetchYAxis();
+
+        $this->query->where($this->xAxisColumn, $xAxis)->where($this->yAxisColumn, $yAxis);
+        if (!$this->query->hasOrder()) {
+            $this->query->order($this->xAxisColumn)->order($this->yAxisColumn);
+        }
+
+        $emptyrow = new stdClass();
+        foreach ($this->query->getColumns() as $col) {
+            $emptyrow->{$col} = null;
+        }
+
         $pivot = array();
-        $emptyrow = (object) array();
-        foreach ($this->query->listColumns() as $col) {
-            $emptyrow->$col = null;
-        }
-        foreach ($listY as $y) {
-            foreach ($listX as $x) {
+        foreach ($xAxis as $x) {
+            foreach ($yAxis as $y) {
                 $row = clone($emptyrow);
-                $row->$xcol = $x;
-                $row->$ycol = $y;
+                $row->{$this->xAxisColumn} = $x;
+                $row->{$this->yAxisColumn} = $y;
                 $pivot[$y][$x] = $row;
             }
         }
 
         foreach ($this->query->fetchAll() as $row) {
-            $pivot[$row->$ycol][$row->$xcol] = $row;
+            $pivot[$row->{$this->yAxisColumn}][$row->{$this->xAxisColumn}] = $row;
         }
+
         return $pivot;
     }
 }

@@ -1,0 +1,51 @@
+<?php if (!$this->compact): ?>
+<div class="controls">
+    <?= $this->tabs; ?>
+    <div style="margin: 1em;" class="dontprint">
+        <!--<?= $this->filterBox; ?>-->Sort by <?= $this->sortControl->render($this); ?>
+    </div>
+</div>
+<?php endif ?>
+<div class="content" data-base-target="_next">
+    <table class="pivot servicestates">
+<?php $hasHeader = false; ?>
+<?php foreach ($this->matrix as $host_name => $serviceStates): ?>
+<?php if (!$hasHeader): ?>
+        <thead>
+            <tr>
+                <th>&nbsp;</th>
+<?php foreach (array_keys($serviceStates) as $service_description): ?>
+                <th><span><?= $service_description; ?></span></th>
+<?php endforeach ?>
+            </tr>
+        </thead>
+        <tbody>
+<?php $hasHeader = true; ?>
+<?php endif ?>
+            <tr>
+                <th>
+                    <a href="<?= $this->href('monitoring/show/host', array('host' => $host_name)); ?>">
+                        <?= $host_name; ?>
+                    </a>
+                </th>
+<?php foreach (array_values($serviceStates) as $service): ?>
+<?php if ($service->service_state !== null): ?>
+                <td class="state_<?= $this->monitoringState($service, 'service'); ?> <?= $service->service_handled ? 'handled' : ''; ?>">
+                    <a href="<?= $this->href(
+                        'monitoring/show/service',
+                        array(
+                            'host'      => $service->host_name,
+                            'service'   => $service->service_description
+                        )
+                    ); ?>" title="<?= $this->escape($service->service_output); ?>"></a>
+<?php else: ?>
+                <td>
+                    &centerdot;
+<?php endif ?>
+                </td>
+<?php endforeach ?>
+            </tr>
+<?php endforeach ?>
+        </tbody>
+    </table>
+</div>
