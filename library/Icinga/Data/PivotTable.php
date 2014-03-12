@@ -9,10 +9,25 @@ use Icinga\Data\BaseQuery;
 
 class PivotTable
 {
+    /**
+     * The query to fetch as pivot table
+     *
+     * @var BaseQuery
+     */
     protected $query;
 
+    /**
+     * The column to use for the x axis
+     *
+     * @var string
+     */
     protected $xAxisColumn;
 
+    /**
+     * The column to use for the y axis
+     *
+     * @var string
+     */
     protected $yAxisColumn;
 
     protected $limit;
@@ -101,8 +116,8 @@ class PivotTable
      */
     protected function fetchXAxis()
     {
-        $queryClass = get_class($this->query);
-        $query = new $queryClass($this->query->getDatasource(), array($this->xAxisColumn));
+        $query = clone $this->query;
+        $query->setColumns(array($this->xAxisColumn));
         return $query->fetchColumn();
     }
 
@@ -111,8 +126,8 @@ class PivotTable
      */
     protected function fetchYAxis()
     {
-        $queryClass = get_class($this->query);
-        $query = new $queryClass($this->query->getDatasource(), array($this->yAxisColumn));
+        $query = clone $this->query;
+        $query->setColumns(array($this->yAxisColumn));
         return $query->fetchColumn();
     }
 

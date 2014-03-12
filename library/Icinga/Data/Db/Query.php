@@ -80,6 +80,13 @@ class Query extends BaseQuery
         $this->baseQuery = $this->db->select();
     }
 
+    public function __clone()
+    {
+        if ($this->baseQuery !== null) {
+            $this->baseQuery = clone $this->baseQuery;
+        }
+    }
+
     /**
      * Return the raw base query
      *

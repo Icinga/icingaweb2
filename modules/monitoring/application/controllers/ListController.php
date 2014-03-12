@@ -476,9 +476,8 @@ class Monitoring_ListController extends Controller
         $this->setupFilterControl($dataview, 'servicematrix');
         $this->setupSortControl(
             array(
-                'service_state'         => 'Service status',
-                'service_description'   => 'Service description',
-                'host_name'             => 'Hostname'
+                'host_name'             => 'Hostname',
+                'service_description'   => 'Service description'
             )
         );
 
