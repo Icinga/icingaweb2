@@ -29,7 +29,7 @@
                     </a>
                 </th>
 <?php foreach (array_values($serviceStates) as $service): ?>
-<?php if ($service->service_state !== null): ?>
+<?php if ($service !== null): ?>
                 <td class="state_<?= $this->monitoringState($service, 'service'); ?> <?= $service->service_handled ? 'handled' : ''; ?>">
                     <a href="<?= $this->href(
                         'monitoring/show/service',

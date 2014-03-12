@@ -4,7 +4,6 @@
 
 namespace Icinga\Data;
 
-use \stdClass;
 use Icinga\Data\BaseQuery;
 
 class PivotTable
@@ -142,26 +141,17 @@ class PivotTable
         $yAxis = $this->fetchYAxis();
 
         $this->query->where($this->xAxisColumn, $xAxis)->where($this->yAxisColumn, $yAxis);
-        if (!$this->query->hasOrder()) {
-            $this->query->order($this->xAxisColumn)->order($this->yAxisColumn);
-        }
-
-        $emptyrow = new stdClass();
-        foreach ($this->query->getColumns() as $col) {
-            $emptyrow->{$col} = null;
-        }
 
         $pivot = array();
-        foreach ($xAxis as $x) {
-            foreach ($yAxis as $y) {
-                $row = clone($emptyrow);
-                $row->{$this->xAxisColumn} = $x;
-                $row->{$this->yAxisColumn} = $y;
-                $pivot[$y][$x] = $row;
-            }
-        }
-
         foreach ($this->query->fetchAll() as $row) {
+            if (!array_key_exists($row->{$this->yAxisColumn}, $pivot)) {
+                $defaults = array();
+                foreach ($xAxis as $label) {
+                    $defaults[$label] = null;
+                }
+                $pivot[$row->{$this->yAxisColumn}] = $defaults;
+            }
+
             $pivot[$row->{$this->yAxisColumn}][$row->{$this->xAxisColumn}] = $row;
         }
 
