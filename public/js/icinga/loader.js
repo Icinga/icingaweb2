@@ -252,6 +252,8 @@
                             $el.closest('li').addClass('active');
                             $el.parents('li').addClass('active');
                         }
+                        // Interrupt .each, only on menu item shall be active
+                        return false;
                     } else if ($(el).closest('table.action').length) {
                         $el.addClass('active');
                     }

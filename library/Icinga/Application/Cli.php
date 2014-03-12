@@ -75,8 +75,8 @@ class Cli extends ApplicationBootstrap
 
     protected function fixLoggingConfig()
     {
-        $conf = & $this->getConfig()->logging;
-        if ($conf->type === 'stream') {
+        $conf = $this->config->logging;
+        if (! isset($conf->type) || $conf->type === 'stream') {
             $conf->level = $this->verbose;
             $conf->target = 'php://stderr';
         }
