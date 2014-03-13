@@ -481,7 +481,9 @@ class Monitoring_ListController extends Controller
             )
         );
 
-        $this->view->matrix = $dataview->pivot('service_description', 'host_name')->toArray();
+        $this->view->pivot = $dataview->pivot('service_description', 'host_name');
+        $this->view->horizontalPaginator = $this->view->pivot->paginateXAxis();
+        $this->view->verticalPaginator = $this->view->pivot->paginateYAxis();
     }
 
     /**

@@ -9,7 +9,7 @@
 <div class="content" data-base-target="_next">
     <table class="pivot servicestates">
 <?php $hasHeader = false; ?>
-<?php foreach ($this->matrix as $host_name => $serviceStates): ?>
+<?php foreach ($this->pivot->toArray() as $host_name => $serviceStates): ?>
 <?php if (!$hasHeader): ?>
         <thead>
             <tr>
