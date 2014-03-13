@@ -423,7 +423,7 @@ abstract class BaseQuery implements Filterable
      */
     public function paginate($limit = null, $page = null)
     {
-        if ($page === null && $limit === null) {
+        if ($page === null || $limit === null) {
             $request = \Zend_Controller_Front::getInstance()->getRequest();
 
             if ($page === null) {
