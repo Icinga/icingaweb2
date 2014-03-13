@@ -44,6 +44,8 @@ use Icinga\Module\Monitoring\Form\Config\Backend\CreateBackendForm;
 use Icinga\Module\Monitoring\Form\Config\Instance\EditInstanceForm;
 use Icinga\Module\Monitoring\Form\Config\Instance\CreateInstanceForm;
 
+use Icinga\Exception\NotReadableError;
+
 /**
  * Configuration controller for editing monitoring resources
  */
@@ -71,17 +73,17 @@ class Monitoring_ConfigController extends BaseConfigController {
     public function indexAction()
     {
         $this->view->messageBox = new AlertMessageBox(true);
-        $monitoring_backends  = IcingaConfig::module('monitoring', 'backends');
-        $monitoring_instances = IcingaConfig::module('monitoring', 'instances');
-        if ($monitoring_backends === null) {
-            $this->view->backends = array();
-        } else {
-            $this->view->backends = $monitoring_backends->toArray();
-        }
-        if ($monitoring_instances === null) {
-            $this->view->instances = array();
-        } else {
-            $this->view->instances = $monitoring_instances->toArray();
+        foreach (array('backends', 'instances') as $element) {
+            try {
+                $elementConfig = IcingaConfig::module('monitoring', $element);
+                if ($elementConfig === null) {
+                    $this->view->{$element} = array();
+                } else {
+                    $this->view->{$element} = $elementConfig->toArray();
+                }
+            } catch (NotReadableError $e) {
+                $this->view->{$element} = $e;
+            }
         }
         $this->render('index');
     }
