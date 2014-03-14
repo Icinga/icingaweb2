@@ -4,6 +4,14 @@
     <div style="margin: 1em;" class="dontprint">
         <!--<?= $this->filterBox; ?>-->Sort by <?= $this->sortControl->render($this); ?>
     </div>
+    <?= $this->partial(
+        'pivottablePagination.phtml',
+        'default',
+        array(
+            'xAxisPaginator' => $this->horizontalPaginator,
+            'yAxisPaginator' => $this->verticalPaginator
+        )
+    ); ?>
 </div>
 <?php endif ?>
 <div class="content" data-base-target="_next">

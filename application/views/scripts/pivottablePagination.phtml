@@ -1,0 +1,33 @@
+<?php
+
+use Icinga\Web\Url;
+
+if ($xAxisPaginator->count() <= 1 && $yAxisPaginator->count() <= 1) {
+    return; // Display this pagination only if there are multiple pages
+}
+
+$xAxisPages = $xAxisPaginator->getPages('all');
+$yAxisPages = $yAxisPaginator->getPages('all');
+
+?>
+
+<div class="pivot-pagination">
+    <span><?= $this->translate('Navigation'); ?></span>
+    <table>
+        <tbody>
+<?php foreach ($yAxisPages->pagesInRange as $yAxisPage): ?>
+            <tr>
+<?php foreach ($xAxisPages->pagesInRange as $xAxisPage): ?>
+                <td<?= $xAxisPage === $xAxisPages->current && $yAxisPage === $yAxisPages->current ? ' class="active"' : ''; ?>>
+<?php if ($xAxisPage !== $xAxisPages->current || $yAxisPage !== $yAxisPages->current): ?>
+                    <a href="<?= Url::fromRequest()->overwriteParams(
+                        array('page' => $xAxisPage . ',' . $yAxisPage)
+                    )->getAbsoluteUrl(); ?>" title="<?= $xAxisPage . ',' . $yAxisPage; ?>"></a>
+<?php endif ?>
+                </td>
+<?php endforeach ?>
+            </tr>
+<?php endforeach ?>
+        </tbody>
+    </table>
+</div>

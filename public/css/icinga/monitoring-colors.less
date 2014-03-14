@@ -503,6 +503,34 @@ div.box.contactgroup div.box.entry p {
 
 /* Monitoring pivot table styles */
 
+div.pivot-pagination {
+  margin: 1em;
+
+  table {
+    width: 1px; // Ensures that its cells are really of fixed width
+    table-layout: fixed;
+    border-spacing: 0.2em;
+    border-collapse: separate;
+    border: 1px solid LightGrey;
+    border-radius: 0.3em;
+
+    td {
+      padding: 0;
+      width: 1.7em;
+      height: 1.7em;
+      background-color: #fbfbfb;
+
+      &:hover, &.active {
+        background-color: #e5e5e5;
+      }
+
+      a {
+        padding: 10% 50%;
+      }
+    }
+  }
+}
+
 table.pivot {
   width: 1px; // Ensures that its cells are really of fixed width
   table-layout: fixed;
