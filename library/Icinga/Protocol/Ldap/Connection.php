@@ -352,7 +352,7 @@ class Connection
             // TODO: remove this -> FORCING v3 for now
             ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
 
-            Logger::warn('No LDAPv3 support detected');
+            Logger::warning('No LDAPv3 support detected');
         }
 
         // Not setting this results in "Operations error" on AD when using the
