@@ -9,7 +9,7 @@ foreach ($this->items as $item) {
         $item->getUrl() ? $this->href($item->getUrl()) : '#',
         $item->getIcon() ? $this->img(
             $item->getIcon(),
-            array('height' => '16px', 'width' => '16px')
+            array('class' => 'icon')
         ) . ' ' : '',
         $this->escape($item->getTitle())
     );
