@@ -32,13 +32,12 @@ namespace Icinga\Web\Widget;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Web\Widget\Tabextension\Tabextension;
 use Icinga\Application\Icinga;
-use Zend_View_Abstract;
 use Countable;
 
 /**
  * Navigation tab widget
  */
-class Tabs implements Countable, Widget
+class Tabs extends AbstractWidget implements Countable
 {
     /**
      * Template used for the base tabs
@@ -227,11 +226,9 @@ EOT;
     /**
      * Render the dropdown area with it's tabs and return the resulting HTML
      *
-     * @param   Zend_View_Abstract $view The view used for rendering
-     *
      * @return  mixed|string
      */
-    private function renderDropdownTabs(Zend_View_Abstract $view)
+    private function renderDropdownTabs()
     {
         if (empty($this->dropdownTabs)) {
             return '';
@@ -242,7 +239,7 @@ EOT;
             if ($tab === null) {
                 continue;
             }
-            $tabs .= $tab->render($view);
+            $tabs .= $tab;
         }
         return str_replace('{TABS}', $tabs, $this->dropdownTpl);
     }
@@ -250,11 +247,9 @@ EOT;
     /**
      * Render all tabs, except the ones in dropdown area and return the resulting HTML
      *
-     * @param   Zend_View_Abstract $view The view used for rendering
-     *
      * @return  string
      */
-    private function renderTabs(Zend_View_Abstract $view)
+    private function renderTabs()
     {
         $tabs = '';
         foreach ($this->tabs as $name => $tab) {
@@ -262,7 +257,7 @@ EOT;
             if (in_array($name, $this->dropdownTabs)) {
                 continue;
             }
-            $tabs .= $tab->render($view);
+            $tabs .= $tab;
         }
         return $tabs;
     }
@@ -272,15 +267,15 @@ EOT;
      *
      * @see Widget::render
      */
-    public function render(Zend_View_Abstract $view)
+    public function render()
     {
         if (empty($this->tabs)) {
             return '';
         }
 
         $html = $this->baseTpl;
-        $html = str_replace('{TABS}', $this->renderTabs($view), $html);
-        $html = str_replace('{DROPDOWN}', $this->renderDropdownTabs($view), $html);
+        $html = str_replace('{TABS}', $this->renderTabs(), $html);
+        $html = str_replace('{DROPDOWN}', $this->renderDropdownTabs(), $html);
         return $html;
     }
 

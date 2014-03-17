@@ -6,9 +6,7 @@
 namespace Icinga\Web\Widget;
 
 use Icinga\Exception\ProgrammingError;
-use Zend_Controller_Action_HelperBroker as ZfActionHelper;
-use Zend_View_Abstract;
-use Icinga\Web\Widget\Widget;
+use Icinga\Application\Icinga;
 use Exception;
 
 /**
@@ -26,7 +24,7 @@ use Exception;
  * @author     Icinga-Web Team <info@icinga.org>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License
  */
-abstract class AbstractWidget implements Widget
+abstract class AbstractWidget
 {
     /**
      * If you are going to access the current view with the view() function,
@@ -89,6 +87,8 @@ abstract class AbstractWidget implements Widget
         );
     }
 
+    abstract public function render();
+
     /**
      * Access the current view
      *
@@ -100,16 +100,7 @@ abstract class AbstractWidget implements Widget
     protected function view()
     {
         if (self::$view === null) {
-
-            $renderer = ZfActionHelper::getStaticHelper(
-                'viewRenderer'
-            );
-
-            if (null === $renderer->view) {
-                $renderer->initView();
-            }
-
-            self::$view = $renderer->view;
+            self::$view = Icinga::app()->getViewRenderer()->view;
         }
 
         return self::$view;

@@ -88,12 +88,11 @@ EOT;
     /**
      * Render this widget
      *
-     * @param Zend_View_Abstract $view  The view to use for rendering the widget
      * @return string                   The HTML of the widget as a string
      */
-    public function render(Zend_View_Abstract $view)
+    public function render()
     {
-
+        $view = $this->view();
         $form = new Form();
         $form->setAttrib('class', 'inline');
         $form->setMethod('GET');

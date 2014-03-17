@@ -300,12 +300,12 @@ class Dashboard extends AbstractWidget
     /**
      * @see Icinga\Web\Widget::render
      */
-    public function render(Zend_View_Abstract $view)
+    public function render()
     {
         if (empty($this->panes)) {
             return '';
         }
-        return $this->determineActivePane()->render($view);
+        return $this->determineActivePane()->render();
     }
 
     /**

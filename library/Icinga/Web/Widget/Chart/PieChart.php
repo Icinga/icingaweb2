@@ -29,12 +29,10 @@
 
 namespace Icinga\Web\Widget\Chart;
 
-use Icinga\Web\Widget\Widget;
+use Icinga\Web\Widget\AbstractWidget;
 use Icinga\Web\Url;
 
-use \Zend_View_Abstract;
-
-class PieChart implements Widget
+class PieChart extends AbstractWidget
 {
      /**
      * The template string used for rendering this widget
@@ -49,7 +47,7 @@ class PieChart implements Widget
 EOD;
 
     /**
-     * @var \Icinga\Web\Url
+     * @var Url
      */
     private $url;
 
@@ -112,13 +110,12 @@ EOD;
      * Renders this widget via the given view and returns the
      * HTML as a string
      *
-     * @param \Zend_View_Abstract $view
      * @return string
      */
-    public function render(Zend_View_Abstract $view)
+    public function render()
     {
         $template = $this->template;
-        $template = preg_replace('{{url}}', $this->url->getAbsoluteUrl(), $template);
+        $template = preg_replace('{{url}}', $this->url, $template);
         $template = preg_replace('{{width}}', $this->width, $template);
         $template = preg_replace('{{height}}', $this->height, $template);
         return $template;

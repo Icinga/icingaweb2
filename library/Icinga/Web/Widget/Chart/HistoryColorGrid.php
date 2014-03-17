@@ -329,11 +329,9 @@ class HistoryColorGrid extends AbstractWidget {
     }
 
     /**
-     * @param Zend_View_Abstract $view
-     *
      * @return string
      */
-    public function render(Zend_View_Abstract $view)
+    public function render()
     {
         if (empty($this->data)) {
             return '<div>No entries</div>';

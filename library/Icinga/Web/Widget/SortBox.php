@@ -132,11 +132,9 @@ class SortBox extends AbstractWidget
      * Renders this widget via the given view and returns the
      * HTML as a string
      *
-     * @param   Zend_View_Abstract $view
-     *
      * @return  string
      */
-    public function render(Zend_View_Abstract $view)
+    public function render()
     {
         $form = new Form();
         $form->setAttrib('class', 'inline');

@@ -29,8 +29,7 @@
 
 namespace Icinga\Web\Widget;
 
-use \Icinga\Web\Url;
-use \Zend_View_Abstract;
+use Icinga\Web\Url;
 
 /**
  * A single tab, usually used through the tabs widget
@@ -46,7 +45,7 @@ use \Zend_View_Abstract;
  * @property string $urlParams Action URL Parameters
  *
  */
-class Tab implements Widget
+class Tab extends AbstractWidget
 {
     /**
      * Whether this tab is currently active
@@ -220,31 +219,30 @@ class Tab implements Widget
     /**
      * @see Widget::render()
      */
-    public function render(Zend_View_Abstract $view)
+    public function render()
     {
+        $view = $this->view();
         $class = $this->active ? ' class="active" ' : '';
         $caption = $view->escape($this->title);
 
         if ($this->icon !== null) {
-            $caption = '<img src="' . $this->icon->getAbsoluteUrl()
-                . '" style="width:16px;height:16px"/> ' . $caption;
-        } elseif ($this->iconCls !== null) {
-            $caption = '<i class="' . $this->iconCls . '"></i> ' . $caption;
+            $caption = $view->img($this->icon, array('class' => 'icon')) . ' ' . $caption;
         }
         if ($this->url !== null) {
             $this->url->overwriteParams($this->urlParams);
             $tagParams = '';
             if ($this->tagParams !== null) {
-                foreach ($this->tagParams as $key => $value) {
-                    $tagParams .= ' ' . $key . '="' . $value . '"';
-                }
+                $tagParams = $view->propertiesToString($this->tagParams);
             }
-            $tab = '<a' . $tagParams .' href="' . $this->url->getAbsoluteUrl()
-                . '">' . $caption . '</a>';
+            $tab = sprintf(
+                '<a href="%s"%s>%s</a>',
+                $this->url,
+                $tagParams,
+                $caption
+            );
         } else {
             $tab = $caption;
         }
-
-        return '<li ' . $class . '>' . $tab . '</li>' . PHP_EOL;
+        return '<li ' . $class . '>' . $tab . "</li>\n";
     }
 }

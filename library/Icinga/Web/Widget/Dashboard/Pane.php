@@ -31,7 +31,7 @@ namespace Icinga\Web\Widget\Dashboard;
 
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\ProgrammingError;
-use Icinga\Web\Widget\Widget;
+use Icinga\Web\Widget\AbstractWidget;
 use Zend_Config;
 use Zend_View_Abstract;
 
@@ -39,7 +39,7 @@ use Zend_View_Abstract;
  * A pane, displaying different Dashboard components
  *
  */
-class Pane implements Widget
+class Pane extends AbstractWidget
 {
     /**
      * The name of this pane, as defined in the ini file
@@ -162,13 +162,9 @@ class Pane implements Widget
     /**
      * @see Widget::render
      */
-    public function render(Zend_View_Abstract $view)
+    public function render()
     {
-        $html = PHP_EOL;
-        foreach ($this->components as $component) {
-            $html .= PHP_EOL . $component->render($view);
-        }
-        return $html;
+        return implode("\n", $this->components) . "\n";
     }
 
     /**
