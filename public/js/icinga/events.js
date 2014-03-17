@@ -94,10 +94,16 @@
             $(document).on('mouseenter', '.historycolorgrid td', this.historycolorgridHover);
             $(document).on('mouseleave', '.historycolorgrid td', this.historycolorgidUnhover);
 
+            $(document).on('click', '.tree .handle', { self: this }, this.treeNodeToggle);
+
             // TBD: a global autocompletion handler
             // $(document).on('keyup', 'form.auto input', this.formChangeDelayed);
             // $(document).on('change', 'form.auto input', this.formChanged);
             // $(document).on('change', 'form.auto select', this.submitForm);
+        },
+
+        treeNodeToggle: function (event) {
+          $(this).closest('li').toggleClass('collapsed');
         },
 
         onUnload: function (event) {
@@ -197,24 +203,6 @@
             }
 
             $target = self.getLinkTargetFor($a);
-
-            // Tree handler
-            // TODO: We should move this somewhere else and "register" such
-            //       handlers
-            if ($a.closest('.tree').length) {
-                $li = $a.closest('li');
-                if ($li.find('li').length) {
-                    if ($li.hasClass('collapsed')) {
-                        $li.removeClass('collapsed');
-                    } else {
-                        $li.addClass('collapsed');
-                        $li.find('li').addClass('collapsed');
-                    }
-                    return false;
-                } else {
-                    $target = $('#col2');
-                }
-            }
 
             // Load link URL
             icinga.loader.loadUrl(href, $target);
