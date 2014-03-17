@@ -278,6 +278,30 @@ html {
   margin-right: 2%;
 }
 
+#layout.twocols.wide-layout #col1 {
+  width: 33.333%;
+}
+
+#layout.twocols.wide-layout #col2 {
+  width: 66.667%;
+}
+
+#layout.threecols.wide-layout #main > .container {
+  width: 33.333%;
+}
+
+#layout #col2, #layout #col3 {
+  display: none;
+}
+
+#layout.twocols #col2 {
+  display: block;
+}
+
+#layout.threecols #col3 {
+  display: block;
+}
+
 .fileNotReadable {
   padding: 0.5em;
   background-color: @colorCritical;
