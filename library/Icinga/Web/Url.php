@@ -256,7 +256,7 @@ class Url
         if (empty($this->params)) {
             return ltrim($this->path, '/') . $this->anchor;
         }
-        return ltrim($this->path, '/') . '?' . http_build_query($this->params) . $this->anchor;
+        return ltrim($this->path, '/') . '?' . http_build_query($this->params, '', '&amp;') . $this->anchor;
     }
 
     /**
