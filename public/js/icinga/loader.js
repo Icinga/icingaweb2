@@ -45,12 +45,15 @@
          * @param {object} data    Optional parameters, usually for POST requests
          * @param {string} method  HTTP method, default is 'GET'
          */
-        loadUrl: function (url, $target, data, method, autorefresh = false) {
+        loadUrl: function (url, $target, data, method, autorefresh) {
             var id = null;
 
             // Default method is GET
             if ('undefined' === typeof method) {
                 method = 'GET';
+            }
+            if ('undefined' === typeof autorefresh) {
+                autorefresh = false;
             }
 
             this.icinga.logger.debug('Loading ', url, ' to ', $target);
