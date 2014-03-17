@@ -64,7 +64,7 @@ class Connection implements DatasourceInterface
     );
 
     private static $driverOptions = array(
-        PDO::ATTR_TIMEOUT   => 2,
+        PDO::ATTR_TIMEOUT   => 5,
         PDO::ATTR_CASE      => PDO::CASE_LOWER,
         PDO::ATTR_ERRMODE   => PDO::ERRMODE_EXCEPTION
     );
