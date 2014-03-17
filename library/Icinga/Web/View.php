@@ -29,9 +29,9 @@
 
 namespace Icinga\Web;
 
-use \Zend_View_Abstract;
-use \Icinga\Web\Url;
-use \Icinga\Util\Format;
+use Icinga\Exception\ProgrammingError;
+use Zend_View_Abstract;
+use Closure;
 
 /**
  * Icinga view
@@ -39,11 +39,26 @@ use \Icinga\Util\Format;
 class View extends Zend_View_Abstract
 {
     /**
+     * Charset to be used - we only support UTF-8
+     */
+    const CHARSET = 'UTF-8';
+
+    /**
+     * The flags we use for htmlspecialchars depend on our PHP version
+     */
+    private $replaceFlags;
+
+    /**
      * Flag to register stream wrapper
      *
      * @var bool
      */
     private $useViewStream = false;
+
+    /**
+     * Registered helper functions
+     */
+    private $helperFunctions = array();
 
     /**
      * Create a new view object
@@ -59,6 +74,13 @@ class View extends Zend_View_Abstract
                 stream_wrapper_register('zend.view', '\Icinga\Web\ViewStream');
             }
         }
+
+        if (version_compare(PHP_VERSION, '5.4.0') >= 0) {
+            $this->replaceFlags = ENT_COMPAT | ENT_SUBSTITUTE | ENT_HTML5;
+        } else {
+            $this->replaceFlags = ENT_COMPAT | ENT_IGNORE;
+        }
+
         parent::__construct($config);
     }
 
@@ -70,6 +92,62 @@ class View extends Zend_View_Abstract
     public function init()
     {
         $this->loadGlobalHelpers();
+    }
+
+    /**
+     * Escape the given value top be safely used in view scripts
+     *
+     * @param  string $value  The output to be escaped
+     * @return string
+     */
+    public function escape($value) {
+        return htmlspecialchars($value, $this->replaceFlags, self::CHARSET, true);
+    }
+
+    /**
+     * Whether a specific helper (closure) has been registered
+     *
+     * @param  string $name The desired function name
+     * @return boolean
+     */
+    public function hasHelperFunction($name)
+    {
+        return array_key_exists($name, $this->helperFunctions);
+    }
+
+    /**
+     * Add a new helper function
+     *
+     * @param  string  $name     The desired function name
+     * @param  Closure $function An anonymous function
+     * @return self
+     */
+    public function addHelperFunction($name, Closure $function)
+    {
+        if ($this->hasHelperFunction($name)) {
+            throw new ProgrammingError(
+                sprintf('Cannot assign the same helper function twice: "%s"',
+                $name
+            ));
+        }
+
+        $this->helperFunctions[$name] = $function;
+        return $this;
+    }
+
+    /**
+     * Call a helper function
+     *
+     * @param  string  $name The desired function name
+     * @param  Array   $args Function arguments
+     * @return mixed
+     */
+    public function callHelperFunction($name, $args)
+    {
+        return call_user_func_array(
+            $this->helperFunctions[$name],
+            $args
+        );
     }
 
     /**
@@ -117,12 +195,8 @@ class View extends Zend_View_Abstract
      */
     public function __call($name, $args)
     {
-        $namespaced = '\\Icinga\\Web\\View\\' . $name;
-        if (function_exists($namespaced)) {
-            return call_user_func_array(
-                $namespaced,
-                $args
-            );
+        if ($this->hasHelperFunction($name)) {
+            return $this->callHelperFunction($name, $args);
         } else {
             return parent::__call($name, $args);
         }
