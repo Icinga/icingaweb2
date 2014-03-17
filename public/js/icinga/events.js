@@ -28,7 +28,7 @@
             var icinga = this.icinga;
 
             $('.dashboard > div', el).each(function(idx, el) {
-                var url = $(el).attr('data-icinga-url');
+                var url = $(el).data('icingaUrl');
                 if (typeof url === 'undefined') return;
                 icinga.loader.loadUrl(url, $(el)).autorefresh = true;
             });
@@ -37,13 +37,14 @@
             $('table.action tr', el).each(function(idx, el) {
                 var $a = $('a[href]', el).first();
                 if ($a.length) {
+                    // TODO: Find out whether we leak memory on IE with this:
                     $(el).attr('href', $a.attr('href'));
                 }
             });
 
             $('.icinga-module', el).each(function(idx, mod) {
                 var $mod = $(mod);
-                var moduleName = $mod.data('icinga-module');
+                var moduleName = $mod.data('icingaModule');
                 if (icinga.hasModule(moduleName)) {
                     var module = icinga.module(moduleName);
                     // NOT YET, the applyOnloadDings: module.applyEventHandlers(mod);
@@ -134,7 +135,7 @@
 
             // .closest is not required unless subelements to trigger this
             var $form = $(event.currentTarget).closest('form');
-            var url = $form.attr('action');
+            var url = $form.attr('action').replace('&amp;', '&'); // WHY??
             var method = $form.attr('method');
             var $target;
             var data = $form.serializeArray();
@@ -244,6 +245,9 @@
 
             // ...the only exception are class="action" tables...
             if ($el.closest('table.action').length) {
+                if ($el.closest('#col2').length) {
+                    this.icinga.ui.moveToLeft();
+                }
                 $target = $('#col2');
             }
 
@@ -253,6 +257,9 @@
 
                 // Simulate _next to prepare migration to dynamic column layout
                 if (targetId === '_next') {
+                    if ($el.closest('#col2').length) {
+                        this.icinga.ui.moveToLeft();
+                    }
                     targetId = 'col2';
                 }
 

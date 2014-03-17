@@ -45,7 +45,7 @@
          * @param {object} data    Optional parameters, usually for POST requests
          * @param {string} method  HTTP method, default is 'GET'
          */
-        loadUrl: function (url, $target, data, method) {
+        loadUrl: function (url, $target, data, method, autorefresh = false) {
             var id = null;
 
             // Default method is GET
@@ -60,18 +60,11 @@
                 id = $target.attr('id');
             }
 
-            if (typeof $target !== 'undefined') {
-                // TODO: We shouldn't use data but keep this information somewhere else.
-                if ($target.data('icingaUrl') !== url) {
-                    $target.removeAttr('data-icinga-url');
-                    $target.removeAttr('data-icinga-refresh');
-                    $target.removeData('icingaUrl');
-                    $target.removeData('icingaRefresh');
-                }
-            }
-
             // If we have a pending request for the same target...
             if (id in this.requests) {
+                if (autorefresh) {
+                    return false;
+                }
                 // ...ignore the new request if it is already pending with the same URL
                 if (this.requests[id].url === url) {
                     this.icinga.logger.debug('Request to ', url, ' is already running for ', $target);
@@ -113,7 +106,7 @@
             req.fail(this.onFailure);
             req.complete(this.onComplete);
             req.historyTriggered = false;
-            req.autorefresh = false;
+            req.autorefresh = autorefresh;
             if (id) {
                 this.requests[id] = req;
             }
@@ -144,17 +137,21 @@
             }
         },
 
+        filterAutorefreshingContainers: function () {
+            return $(this).data('icingaRefresh') > 0;
+        },
+
         autorefresh: function () {
             var self = this;
             if (self.autorefreshEnabled !== true) {
                 return;
             }
 
-            $('.container[data-icinga-refresh]').each(function (idx, el) {
+            $('.container').filter(this.filterAutorefreshingContainers).each(function (idx, el) {
                 var $el = $(el);
                 var id = $el.attr('id');
                 if (id in self.requests) {
-                    self.icinga.logger.debug('No refresh, request pending', id);
+                    self.icinga.logger.debug('No refresh, request pending for ', id);
                     return;
                 }
 
@@ -185,10 +182,15 @@
                     return;
                 }
 
-                self.icinga.logger.info(
-                    'Autorefreshing ' + id + ' ' + interval + ' ms passed'
-                );
-                self.loadUrl($el.data('icingaUrl'), $el).autorefresh = true;
+                if (self.loadUrl($el.data('icingaUrl'), $el, undefined, undefined, true) === false) {
+                    self.icinga.logger.debug(
+                        'NOT autorefreshing ' + id + ', even if ' + interval + ' ms passed. Request pending?'
+                    );
+                } else {
+                    self.icinga.logger.debug(
+                        'Autorefreshing ' + id + ' ' + interval + ' ms passed'
+                    );
+                }
                 el = null;
             });
         },
@@ -287,6 +289,17 @@
                 newBody = true;
             }
 
+            var moduleName = req.getResponseHeader('X-Icinga-Module');
+            if (moduleName) {
+                req.$target.addClass('icinga-module');
+                req.$target.data('icingaModule', moduleName);
+                req.$target.addClass('module-' + moduleName);
+            } else {
+                req.$target.removeClass('icinga-module');
+                req.$target.removeData('icingaModule');
+                req.$target.attr('class', 'container'); // TODO: remove module-$name
+            }
+
             var title = req.getResponseHeader('X-Icinga-Title');
             if (title && req.$target.closest('.dashboard').length === 0) {
                 this.icinga.ui.setTitle(title);
@@ -295,13 +308,9 @@
             var refresh = req.getResponseHeader('X-Icinga-Refresh');
             if (refresh) {
                 // Hmmmm... .data() doesn't work here?
-                req.$target.attr('data-icinga-refresh', refresh);
-                req.$target.attr('data-last-update', (new Date()).getTime());
                 req.$target.data('lastUpdate', (new Date()).getTime());
                 req.$target.data('icingaRefresh', refresh);
             } else {
-                req.$target.removeAttr('data-icinga-refresh');
-                req.$target.removeAttr('data-last-update');
                 req.$target.removeData('icingaRefresh');
                 req.$target.removeData('lastUpdate');
             }
@@ -342,7 +351,6 @@
                 return;
             }
 
-            req.$target.attr('data-icinga-url', req.url);
             req.$target.data('icingaUrl', req.url);
 
             // Update history when necessary. Don't do so for requests triggered

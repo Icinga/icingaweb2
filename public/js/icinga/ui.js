@@ -40,7 +40,7 @@
                 .fadeOut('slow',
             function() {
                 icinga.ui.fixControls();
-                this.remove();
+                $(this).remove();
             });
 
         },
@@ -91,15 +91,33 @@
             return this;
         },
 
-        flipContent: function () {
-            var col1 = $('#col1 > div').detach();
-            var col2 = $('#col2 > div').detach();
-            $('#col2').html('');
-            $('#col1').html('');
-
-            col1.appendTo('#col2');
-            col2.appendTo('#col1');
+        moveToLeft: function () {
+            var col2 = this.cutContainer($('#col2'));
+            var kill = this.cutContainer($('#col1'));
+            this.pasteContainer($('#col1'), col2);
             this.fixControls();
+        },
+
+        cutContainer: function ($col) {
+            return {
+              'elements': $('#' + $col.attr('id') + ' > div').detach(),
+              'data': {
+                'data-icinga-url': $col.data('icingaUrl'),
+                'data-icinga-refresh': $col.data('icingaRefresh'),
+                'data-last-update': $col.data('lastUpdate'),
+                'data-icinga-module': $col.data('icingaModule')
+              },
+              'class': $col.attr('class')
+            }
+        },
+
+        pasteContainer: function ($col, backup) {
+            backup['elements'].appendTo($col);
+            $col.attr('class', backup['class']); // TODO: ie memleak? remove first?
+            $col.data('icingaUrl', backup['data']['data-icinga-url']);
+            $col.data('icingaRefresh', backup['data']['data-icinga-refresh']);
+            $col.data('lastUpdate', backup['data']['data-last-update']);
+            $col.data('icingaModule', backup['data']['data-icinga-module']);
         },
 
         triggerWindowResize: function () {
@@ -136,7 +154,7 @@
                     $('#layout').removeClass(this.currentLayout + '-layout').addClass(layout);
                     this.currentLayout = matched[1];
                     if (this.currentLayout === 'poor' || this.currentLayout === 'minimal') {
-                        this.icinga.events.layout1col();
+                        this.layout1col();
                     }
                     return true;
                 }
@@ -155,10 +173,10 @@
             var $col2 = $('#col2');
             icinga.logger.debug('Switching to single col');
             $('#layout').removeClass('twocols');
-            $col2.removeAttr('data-icinga-url');
-            $col2.removeAttr('data-icinga-refresh');
             $col2.removeData('icingaUrl');
             $col2.removeData('icingaRefresh');
+            $col2.removeData('lastUpdate');
+            $col2.removeData('icingaModule');
             this.icinga.loader.stopPendingRequestsFor($col2);
             $col2.html('');
             this.fixControls();
