@@ -232,12 +232,12 @@ class Tree
         $node->left = $this->removeInvalidFilter($node->left, $filter);
         $node->right = $this->removeInvalidFilter($node->right, $filter);
 
-        if ($node->left && $node->right) {
+        if ($node->left || $node->right) {
+            if (!$node->left) {
+                $node->left = $node->right;
+                $node->right = null;
+            }
             return $node;
-        } elseif ($node->left) {
-            return $node->left;
-        } elseif ($node->right) {
-            return $node->right;
         }
 
         return null;

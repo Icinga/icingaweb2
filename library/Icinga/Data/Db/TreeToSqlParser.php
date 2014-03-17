@@ -193,8 +193,7 @@ class TreeToSqlParser
         if ($tree->root == null) {
             return;
         }
-        $tree->root = $tree->normalizeTree($tree->root);
-        $sql = $this->nodeToSqlQuery($tree->root);
+        $sql = $this->nodeToSqlQuery($tree->normalizeTree($tree->root));
 
         if ($this->filtersAggregate()) {
             $baseQuery->having($sql);
