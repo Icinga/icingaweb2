@@ -4,9 +4,17 @@ use Icinga\Web\Url;
 use Icinga\Web\Notification;
 use Icinga\Authentication\Manager as Auth;
 
+
 if (Auth::getInstance()->isAuthenticated()): ?>
  <div id="header">
    <ul id="notifications"><?php
+
+$moduleName = $this->layout()->moduleName;
+if ($moduleName) {
+    $moduleClass = ' icinga-module module-' . $moduleName;
+} else {
+    $moduleClass = '';
+}
 
 $notifications = Notification::getInstance();
 if ($notifications->hasMessages()) {
@@ -35,15 +43,13 @@ if ($notifications->hasMessages()) {
 -->
 
  <div id="sidebar">
-  <?= $this->layout()->navigation ?>
   <?php echo $this->render('parts/navigation.phtml') ?>
  </div>
  <div id="main">
-  <div id="col1" class="container" data-icinga-url="<?= Url::fromRequest() ?>">
+  <div id="col1" class="container<?= $moduleClass ?>"<?php if ($moduleName): ?> data-icinga-module="<?= $moduleName ?>" <?php endif ?> data-icinga-url="<?= Url::fromRequest() ?>" style="display: block">
    <?= $this->render('inline.phtml') ?>
   </div>
   <div id="col2" class="container">
-   <ul class="tabs"></ul>
   </div>
   <div id="col3" class="container">
   </div>
