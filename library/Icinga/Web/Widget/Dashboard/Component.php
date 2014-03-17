@@ -55,31 +55,10 @@ class Component extends AbstractWidget
     private $url;
 
     /**
-     * Determines whether this spans a complete row
-     *
-     * @var bool
-     */
-    private $fullsize = false;
-
-    /**
      * The title being displayed on top of the component
      * @var
      */
     private $title;
-
-    /**
-     * The width of the component, if set
-     *
-     * @var Dimension|null
-     */
-    private $width = null;
-
-    /**
-     * The height of the component, if set
-     *
-     * @var Dimension|null
-     */
-    private $height = null;
 
     /**
      * The pane containing this component, needed for the 'remove button'
@@ -125,26 +104,6 @@ EOD;
                 )
             );
         }
-    }
-
-    /**
-     * Set the with for this component or use the default width if null is provided
-     *
-     * @param Dimension|null $width     The width to use or null to use the default width
-     */
-    public function setWidth(Dimension $width = null)
-    {
-        $this->width = $width;
-    }
-
-    /**
-     * Set the with for this component or use the default height if null is provided
-     *
-     * @param Dimension|null $height     The height to use or null to use the default height
-     */
-    public function setHeight(Dimension $height = null)
-    {
-        $this->height = $height;
     }
 
     /**
@@ -195,12 +154,6 @@ EOD;
         foreach ($this->url->getParams() as $key => $val) {
             $ini .= $key.' = "' . $val . '"' . PHP_EOL;
         }
-        if ($this->height !== null) {
-            $ini .= 'height = "' . ((string) $this->height) . '"' . PHP_EOL;
-        }
-        if ($this->width !== null) {
-            $ini .= 'width = "' . ((string) $this->width) . '"' . PHP_EOL;
-        }
         return $ini;
     }
 
@@ -216,8 +169,6 @@ EOD;
         $html = str_replace('{URL}', $url, $this->template);
         $html = str_replace('{FULL_URL}', $url->getUrlWithout('view'), $html);
         $html = str_replace('{REMOVE_BTN}', $this->getRemoveForm($view), $html);
-        $html = str_replace('{DIMENSION}', $this->getBoxSizeAsCSS(), $html);
-        $html = str_replace('{{IS_FULL}}', $this->fullsize ? 'row' : '', $html);
         $html = str_replace('{TITLE}', $view->escape($this->getTitle()), $html);
         $html = str_replace('{REMOVE}', $this->getRemoveForm(), $html);
         return $html;
@@ -254,28 +205,6 @@ EOD;
         return $form;
     }
 
-    public function setFullsize($bool)
-    {
-        $this->fullsize = $bool;
-    }
-
-    /**
-     * Return the height and width deifnition (if given) in CSS format
-     *
-     * @return string
-     */
-    private function getBoxSizeAsCSS()
-    {
-        $style = '';
-        if ($this->height) {
-            $style .= 'height:' . (string) $this->height . ';';
-        }
-        if ($this->width) {
-            $style .= 'width:' . (string) $this->width . ';';
-        }
-        return $style;
-    }
-
     /**
      * Create a @see Component instance from the given Zend config, using the provided title
      *
@@ -293,22 +222,7 @@ EOD;
         $parameters = $config->toArray();
         unset($parameters['url']); // otherwise there's an url = parameter in the Url
 
-        if (isset($parameters['height'])) {
-            $height = Dimension::fromString($parameters['height']);
-            unset($parameters['height']);
-        }
-
-        if (isset($parameters['width'])) {
-            $width = Dimension::fromString($parameters['width']);
-            unset($parameters['width']);
-        }
-
         $cmp = new Component($title, Url::fromPath($url, $parameters), $pane);
-        if (isset($parameters['row'])) {
-            $cmp->setFullsize(true);
-        }
-        $cmp->setHeight($height);
-        $cmp->setWidth($width);
         return $cmp;
     }
 }
