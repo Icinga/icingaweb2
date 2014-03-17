@@ -287,35 +287,43 @@ class ActionController extends Zend_Controller_Action
     {
         Benchmark::measure('Action::postDispatch()');
 
-        $this->addModuleContainer();
+        $layout = $this->_helper->layout();
+        // $this->addModuleContainer();
+        $isXhr = $this->_request->isXmlHttpRequest();
+        $layout->moduleName = $this->_request->getModuleName();
+        if ($layout->moduleName === 'default') {
+            $layout->moduleName = false;
+        } elseif ($isXhr) {
+            header('X-Icinga-Module: ' . $layout->moduleName);
+        }
 
         if ($user = $this->getRequest()->getUser()) {
             // Cast preference app.showBenchmark to bool because preferences loaded from a preferences storage are
             // always strings
             if ((bool) $user->getPreferences()->get('app.showBenchmark', false) === true) {
                 Benchmark::measure('Response ready');
-                $this->_helper->layout()->benchmark = $this->renderBenchmark();
+                $layout->benchmark = $this->renderBenchmark();
             }
         }
 
         if ($this->_request->getParam('format') === 'pdf') {
-            $this->_helper->layout()->setLayout('pdf');
+            $layout->setLayout('pdf');
             $this->sendAsPdf();
             exit;
         }
 
-        if ($this->_request->isXmlHttpRequest() || $this->getParam('view') === 'compact') {
-            $this->_helper->layout()->setLayout('inline');
+        if ($isXhr || $this->getParam('view') === 'compact') {
+            $layout->setLayout('inline');
         }
 
         $notifications = Notification::getInstance();
-        if ($this->_request->isXmlHttpRequest() && $notifications->hasMessages()) {
+        if ($isXhr && $notifications->hasMessages()) {
             foreach ($notifications->getMessages() as $m) {
                 header('X-Icinga-Notification: ' . $m->type . ' ' . $m->message);
             }
         }
 
-        if ($this->_request->isXmlHttpRequest() && $this->noXhrBody) {
+        if ($isXhr && $this->noXhrBody) {
             header('X-Icinga-Container: ignore');
             return;
         }
@@ -329,7 +337,7 @@ class ActionController extends Zend_Controller_Action
         }
         // TODO: _render=layout?
         if ($this->getParam('_render') === 'layout') {
-            $this->_helper->layout()->setLayout('body');
+            $layout->setLayout('body');
             header('X-Icinga-Container: layout');
         }
         if ($this->autorefreshInterval !== null) {
