@@ -112,15 +112,14 @@ class TreeToSqlParser
     private function parseConjunctionNode(Node $node)
     {
         $queryString =  '';
-        $leftQuery = $this->nodeToSqlQuery($node->left);
-        $rightQuery = $this->nodeToSqlQuery($node->right);
+        $leftQuery = $node->left !== null ? $this->nodeToSqlQuery($node->left) : '';
+        $rightQuery = $node->right !== null ? $this->nodeToSqlQuery($node->right) : '';
 
         if ($leftQuery != '') {
             $queryString .= $leftQuery . ' ';
         }
 
         if ($rightQuery != '') {
-
             $queryString .= (($queryString !== '') ? $node->type . ' ' : ' ') . $rightQuery;
         }
         return $queryString;
