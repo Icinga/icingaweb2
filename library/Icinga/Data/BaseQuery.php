@@ -60,6 +60,13 @@ abstract class BaseQuery implements Filterable
     private $limitOffset;
 
     /**
+     * Whether its a distinct query or not
+     *
+     * @var bool
+     */
+    private $distinct = false;
+
+    /**
      * The backend independent filter to use for this query
      *
      * @var Tree
@@ -295,6 +302,30 @@ abstract class BaseQuery implements Filterable
     }
 
     /**
+     * Return only distinct results
+     *
+     * @param   bool    $distinct   Whether the query should be distinct or not
+     *
+     * @return  BaseQuery
+     */
+    public function distinct($distinct = true)
+    {
+        $this->distinct = $distinct;
+
+        return $this;
+    }
+
+    /**
+     * Determine whether this query returns only distinct results
+     *
+     * @return  bool    True in case its a distinct query otherwise false
+     */
+    public function isDistinct()
+    {
+        return $this->distinct;
+    }
+
+    /**
      * Determine whether this query will be ordered explicitly
      *
      * @return bool     True when an order column has been set
@@ -392,7 +423,7 @@ abstract class BaseQuery implements Filterable
      */
     public function paginate($limit = null, $page = null)
     {
-        if ($page === null && $limit === null) {
+        if ($page === null || $limit === null) {
             $request = \Zend_Controller_Front::getInstance()->getRequest();
 
             if ($page === null) {

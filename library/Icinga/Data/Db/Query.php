@@ -80,6 +80,21 @@ class Query extends BaseQuery
         $this->baseQuery = $this->db->select();
     }
 
+    public function __clone()
+    {
+        if ($this->baseQuery !== null) {
+            $this->baseQuery = clone $this->baseQuery;
+        }
+
+        if ($this->selectQuery !== null) {
+            $this->selectQuery = clone $this->selectQuery;
+        }
+
+        if ($this->countQuery !== null) {
+            $this->countQuery = clone $this->countQuery;
+        }
+    }
+
     /**
      * Return the raw base query
      *
@@ -141,6 +156,7 @@ class Query extends BaseQuery
     {
         $this->selectQuery = clone($this->baseQuery);
         $this->selectQuery->columns($this->getColumns());
+        $this->selectQuery->distinct($this->isDistinct());
         if ($this->hasOrder()) {
             foreach ($this->getOrderColumns() as $col) {
                 $this->selectQuery->order(
@@ -193,8 +209,8 @@ class Query extends BaseQuery
      */
     private function createCountQuery()
     {
-        if ($this->useSubqueryCount) {
-            $this->countQuery = $this->createCountAsSubquery();
+        if ($this->isDistinct() || $this->useSubqueryCount) {
+            $this->countQuery = $this->createCountAsSubQuery();
         } else {
             $this->countQuery = $this->createCustomCountQuery();
         }

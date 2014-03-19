@@ -1,135 +1,188 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Data;
 
+use \Zend_Paginator;
+use Icinga\Data\BaseQuery;
+use Icinga\Application\Icinga;
+use Icinga\Web\Paginator\Adapter\QueryAdapter;
+
 class PivotTable
 {
-    protected $query;
+    /**
+     * The query to fetch as pivot table
+     *
+     * @var BaseQuery
+     */
+    protected $baseQuery;
 
-    protected $verticalColumn;
+    /**
+     * The query to fetch the x axis labels
+     *
+     * @var BaseQuery
+     */
+    protected $xAxisQuery;
 
-    protected $horizontalColumn;
+    /**
+     * The query to fetch the y axis labels
+     *
+     * @var BaseQuery
+     */
+    protected $yAxisQuery;
 
-    protected $limit;
+    /**
+     * The column that contains the labels for the x axis
+     *
+     * @var string
+     */
+    protected $xAxisColumn;
 
-    protected $offset;
+    /**
+     * The column that contains the labels for the y axis
+     *
+     * @var string
+     */
+    protected $yAxisColumn;
 
-    protected $verticalLimit;
-
-    protected $horizontalLimit;
-
-    public function __construct(QueryInterface $query, $verticalColumn, $horizontalColumn)
+    /**
+     * Create a new pivot table
+     *
+     * @param   BaseQuery   $query          The query to fetch as pivot table
+     * @param   string      $xAxisColumn    The column that contains the labels for the x axis
+     * @param   string      $yAxisColumn    The column that contains the labels for the y axis
+     */
+    public function __construct(BaseQuery $query, $xAxisColumn, $yAxisColumn)
     {
-        $this->query = $query;
-        $this->verticalColumn   = $verticalColumn;
-        $this->horizontalColumn = $horizontalColumn;
-    }
-
-    public function limit($limit = null, $offset = null)
-    {
-        $this->limit = $limit;
-        $this->offset = $offset;
-        return $this;
-    }
-
-    public function getLimit()
-    {
-        if ($this->limit === null) {
-            return 20;
-        }
-        return $this->limit;
-    }
-
-    public function getOffset()
-    {
-        if ($this->limit === null) {
-            return 20;
-        }
-        return $this->offset;
-    }
-
-    public function verticalLimit($limit = null, $offset = null)
-    {
-        // TODO: Trigger limit by calling $this->limit()?
-        if ($limit === null) {
-            $limit = $this->getLimit();
-        }
-        if ($offset === null) {
-            $offset = $this->getOffset();
-        }
-        $this->verticalLimit = $limit;
-        $this->verticalOffset = $offset;
-        return $this;
-    }
-
-    public function paginateVertical($limit = null, $offset = null)
-    {
-        $this->verticalLimit($limit, $offset);
-        return Paginator($this);
-    }
-
-    public function getVerticalLimit()
-    {
-        if ($this->verticalLimit === null) {
-            return 20;
-        }
-        return $this->verticalLimit;
-    }
-
-    public function getVerticalOffset()
-    {
-        if ($this->verticalLimit === null) {
-            return 20;
-        }
-        return $this->verticalOffset;
+        $this->baseQuery = $query;
+        $this->xAxisColumn = $xAxisColumn;
+        $this->yAxisColumn = $yAxisColumn;
+        $this->prepareQueries();
     }
 
     /**
-     * Fetch all columns
+     * Prepare the queries used for the pre processing
      */
-    public function fetchAll()
+    protected function prepareQueries()
     {
-        $xcol = $this->horizontalColumn;
-        $ycol = $this->verticalColumn;
-        $queryX = clone($this->query);
-        $queryX->columns($xcol);
-        if ($this->limit !== null) {
-            $queryX->limit($this->getLimit(), $this->getOffset());
-        }
-        $queryX->limit(40);
-        $listX = $queryX->fetchColumn();
-        $queryY = clone($this->query);
+        $this->xAxisQuery = clone $this->baseQuery;
+        $this->xAxisQuery->distinct();
+        $this->xAxisQuery->setColumns(array($this->xAxisColumn));
+        $this->yAxisQuery = clone $this->baseQuery;
+        $this->yAxisQuery->distinct();
+        $this->yAxisQuery->setColumns(array($this->yAxisColumn));
+    }
 
-        $queryY->columns($ycol);
-        if ($this->verticalLimit !== null) {
-            $queryY->limit($this->getVerticalLimit(), $this->getVerticalOffset());
-        }
-        $queryY->limit(50);
-        $listY = $queryY->fetchColumn();
+    /**
+     * Return the value for the given request parameter
+     *
+     * @param   string  $axis       The axis for which to return the parameter ('x' or 'y')
+     * @param   string  $param      The parameter name to return
+     * @param   int     $default    The default value to return
+     *
+     * @return int
+     */
+    protected function getPaginationParameter($axis, $param, $default = null)
+    {
+        $request = Icinga::app()->getFrontController()->getRequest();
 
-        // TODO: resetOrder
-        $this->query
-            ->where($ycol, $listY)
-            ->where($xcol, $listX)
-            ->order($ycol)
-            ->order($xcol);
-        $pivot = array();
-        $emptyrow = (object) array();
-        foreach ($this->query->listColumns() as $col) {
-            $emptyrow->$col = null;
+        $value = $request->getParam($param, '');
+        if (strpos($value, ',') > 0) {
+            $parts = explode(',', $value, 2);
+            return intval($parts[$axis === 'x' ? 0 : 1]);
         }
-        foreach ($listY as $y) {
-            foreach ($listX as $x) {
-                $row = clone($emptyrow);
-                $row->$xcol = $x;
-                $row->$ycol = $y;
-                $pivot[$y][$x] = $row;
+
+        return $default !== null ? $default : 0;
+    }
+
+    /**
+     * Return a pagination adapter for the x axis query
+     *
+     * $limit and $page are taken from the current request if not given.
+     *
+     * @param   int     $limit  The maximum amount of entries to fetch
+     * @param   int     $page   The page to set as current one
+     *
+     * @return  Zend_Paginator
+     */
+    public function paginateXAxis($limit = null, $page = null)
+    {
+        if ($limit === null || $page === null) {
+            if ($limit === null) {
+                $limit = $this->getPaginationParameter('x', 'limit', 20);
+            }
+
+            if ($page === null) {
+                $page = $this->getPaginationParameter('x', 'page', 1);
             }
         }
 
-        foreach ($this->query->fetchAll() as $row) {
-            $pivot[$row->$ycol][$row->$xcol] = $row;
+        $this->xAxisQuery->limit($limit, $page > 0 ? ($page - 1) * $limit : 0);
+
+        $paginator = new Zend_Paginator(new QueryAdapter($this->xAxisQuery));
+        $paginator->setItemCountPerPage($limit);
+        $paginator->setCurrentPageNumber($page);
+        return $paginator;
+    }
+
+    /**
+     * Return a pagination adapter for the y axis query
+     *
+     * $limit and $page are taken from the current request if not given.
+     *
+     * @param   int     $limit  The maximum amount of entries to fetch
+     * @param   int     $page   The page to set as current one
+     *
+     * @return  Zend_Paginator
+     */
+    public function paginateYAxis($limit = null, $page = null)
+    {
+        if ($limit === null || $page === null) {
+            if ($limit === null) {
+                $limit = $this->getPaginationParameter('y', 'limit', 20);
+            }
+
+            if ($page === null) {
+                $page = $this->getPaginationParameter('y', 'page', 1);
+            }
         }
+
+        $this->yAxisQuery->limit($limit, $page > 0 ? ($page - 1) * $limit : 0);
+
+        $paginator = new Zend_Paginator(new QueryAdapter($this->yAxisQuery));
+        $paginator->setItemCountPerPage($limit);
+        $paginator->setCurrentPageNumber($page);
+        return $paginator;
+    }
+
+    /**
+     * Return the pivot table as array
+     *
+     * @return  array
+     */
+    public function toArray()
+    {
+        $xAxis = $this->xAxisQuery->fetchColumn();
+        $yAxis = $this->yAxisQuery->fetchColumn();
+
+        $pivot = array();
+        if (!empty($xAxis) && !empty($yAxis)) {
+            $this->baseQuery->where($this->xAxisColumn, $xAxis)->where($this->yAxisColumn, $yAxis);
+
+            foreach ($this->baseQuery->fetchAll() as $row) {
+                if (!array_key_exists($row->{$this->yAxisColumn}, $pivot)) {
+                    $defaults = array();
+                    foreach ($xAxis as $label) {
+                        $defaults[$label] = null;
+                    }
+                    $pivot[$row->{$this->yAxisColumn}] = $defaults;
+                }
+
+                $pivot[$row->{$this->yAxisColumn}][$row->{$this->xAxisColumn}] = $row;
+            }
+        }
+
         return $pivot;
     }
 }

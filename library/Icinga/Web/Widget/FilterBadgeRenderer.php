@@ -182,6 +182,6 @@ EOT;
             return '';
         }
         $this->buildBaseUrl();
-        return $this->nodeToBadge($this->tree->root);
+        return $this->nodeToBadge(Tree::normalizeTree($this->tree->root));
     }
 }

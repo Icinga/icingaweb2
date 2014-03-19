@@ -501,6 +501,143 @@ div.box.contactgroup div.box.entry p {
 /* End of monitoring box element styles */
 
 
+/* Monitoring pivot table styles */
+
+div.pivot-pagination {
+  margin: 1em;
+
+  table {
+    border-spacing: 0.2em;
+    border-collapse: separate;
+    border: 1px solid LightGrey;
+    border-radius: 0.3em;
+
+    td {
+      padding: 0;
+      line-height: 1em;
+      background-color: #fbfbfb;
+
+      &:hover, &.active {
+        background-color: #e5e5e5;
+      }
+
+      a {
+        width: 16px;
+        height: 16px;
+        display: block;
+      }
+    }
+  }
+}
+
+table.pivot {
+  thead {
+    th {
+      height: 6em;
+      padding: 2px;
+      position: relative;
+
+      div {
+        top: 2px;
+        left: 2px;
+        right: -1.5em;
+        position: absolute;
+        padding-left: 1.2em;
+
+        span {
+          width: 1.5em;
+          margin-right: 4px;
+          margin-top: 4em;
+          line-height: 2em;
+          white-space: nowrap;
+          display: block;
+          float: left;
+
+          transform: rotate(-45deg);
+          transform-origin: bottom left;
+          -o-transform: rotate(-45deg);
+          -o-transform-origin: bottom left;
+          -ms-transform: rotate(-45deg);
+          -ms-transform-origin: bottom left;
+          -moz-transform: rotate(-45deg);
+          -moz-transform-origin: bottom left;
+          -webkit-transform: rotate(-45deg);
+          -webkit-transform-origin: bottom left;
+          filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+
+          abbr {
+            font-size: 0.8em;
+          }
+        }
+      }
+    }
+  }
+
+  tbody {
+    th {
+      padding: 0 14px 0 0;
+
+      a {
+        font-size: 0.8em;
+        text-decoration: none;
+        color: black;
+
+        &:hover {
+          color: #666;
+        }
+      }
+    }
+
+    td {
+      min-width: 1.5em;
+      min-height: 1.5em;
+      padding: 2px;
+      text-align: center;
+
+      a {
+        width: 1.5em;
+        height: 1.5em;
+        display: block;
+        border-radius: 0.5em;
+
+        &.state_ok {
+          background-color: @colorOk;
+        }
+
+        &.state_pending {
+          background-color: @colorPending;
+        }
+
+        &.state_warning {
+          background-color: @colorWarning;
+
+          &.handled {
+            background-color: @colorWarningHandled;
+          }
+        }
+
+        &.state_critical {
+          background-color: @colorCritical;
+
+          &.handled {
+            background-color: @colorCriticalHandled;
+          }
+        }
+
+        &.state_unknown {
+          background-color: @colorUnknown;
+
+          &.handled {
+            background-color: @colorUnknownHandled;
+          }
+        }
+      }
+    }
+  }
+}
+
+/* End of monitoring pivot table styles */
+
 .controls {
   font-size: 0.9em;
 }
