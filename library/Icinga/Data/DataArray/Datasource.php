@@ -56,8 +56,7 @@ class Datasource implements DatasourceInterface
 
     public function fetchAll(Query $query)
     {
-        $result = $this->getResult($query);
-        return $result;
+        return $this->getResult($query);
     }
 
     public function count(Query $query)

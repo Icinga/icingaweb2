@@ -57,6 +57,7 @@ use Icinga\Module\Monitoring\Filter\UrlViewFilter;
 use Icinga\Module\Monitoring\DataView\ServiceStatus;
 use Icinga\Filter\Filterable;
 use Icinga\Web\Url;
+use Icinga\Data\ResourceFactory;
 
 class Monitoring_ListController extends Controller
 {
@@ -626,6 +627,60 @@ class Monitoring_ListController extends Controller
         ))) {
             $tabs->extend(new OutputFormat())->extend(new DashboardAction());
         }
+    }
+
+    public function applicationlogAction()
+    {
+        $this->addTitleTab('application log');
+        $config_ini = IcingaConfig::app()->toArray();
+        if (!in_array('logging', $config_ini) || (
+                in_array('type', $config_ini['logging']) &&
+                    $config_ini['logging']['type'] === 'stream' &&
+                in_array('target', $config_ini['logging']) &&
+                    file_exists($config_ini['logging']['target'])
+            )
+        ) {
+            $config = ResourceFactory::getResourceConfig('logfile');
+            $resource = ResourceFactory::createResource($config);
+
+            $resource->select()->andWhere('error')->order('desc')->limit(200, 50)->fetchAll();
+
+            var_dump($config, $resource);
+            die;
+            $log = new LogFile($config_ini['logging']['target']);
+            $this->view->logLines = $log->count();
+            $this->view->logData = $log->readFromEnd(1, 38);
+        } else {
+            $this->view->logData = null;
+        }
+        /*$dataview = EventHistoryView::fromRequest(
+            $this->getRequest(),
+            array(
+                'host_name',
+                'service_description',
+                'object_type',
+                'timestamp',
+                'raw_timestamp',
+                'state',
+                'attempt',
+                'max_attempts',
+                'output',
+                'type',
+                'host',
+                'service'
+            )
+        );
+
+        $this->setupFilterControl($dataview, 'eventhistory');
+        $this->setupSortControl(
+            array(
+                'raw_timestamp' => 'Occurence'
+            )
+        );
+
+        $query = $dataview->getQuery();
+        $this->handleFormatRequest($query);
+        $this->view->history = $query->paginate();*/
     }
 }
 // @codingStandardsIgnoreEnd

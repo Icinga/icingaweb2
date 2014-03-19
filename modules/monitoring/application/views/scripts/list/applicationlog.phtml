@@ -1,0 +1,36 @@
+<?php
+$logData = $this->logData;
+foreach ($logData as $key => $value) {
+    list($datetime, $remaining) = explode(' ', $value, 2);
+    list($loglevel, $msg) = explode(': ', $remaining, 2);
+    $loglevel = explode(' ', $loglevel, 2);
+    $logData[$key] = array(
+        new DateTime($datetime),
+        $loglevel[0],
+        $msg
+    );
+    $logData[$key][0] = $logData[$key][0]->format('d.m. H:i');
+}
+?>
+
+<div class="controls">
+    <?= $this->tabs->render($this); ?>
+</div>
+
+<div class="content">
+    <table class="action">
+        <tbody>
+            <?php foreach ($logData as $value): ?>
+                <tr class="state">
+                    <td style="width: 6em; text-align: center">
+                        <?= $this->escape($value[0]) ?><br />
+                        <?= $this->escape($value[1]) ?>
+                    </td>
+                    <td>
+                        <?= $this->escape($value[2]) ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>
