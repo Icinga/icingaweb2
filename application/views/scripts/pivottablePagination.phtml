@@ -6,6 +6,7 @@ if ($xAxisPaginator->count() <= 1 && $yAxisPaginator->count() <= 1) {
     return; // Display this pagination only if there are multiple pages
 }
 
+$fromTo = $this->translate('%s: %d to %d of %d');
 $xAxisPages = $xAxisPaginator->getPages('all');
 $yAxisPages = $yAxisPaginator->getPages('all');
 
@@ -22,7 +23,21 @@ $yAxisPages = $yAxisPaginator->getPages('all');
 <?php if ($xAxisPage !== $xAxisPages->current || $yAxisPage !== $yAxisPages->current): ?>
                     <a href="<?= Url::fromRequest()->overwriteParams(
                         array('page' => $xAxisPage . ',' . $yAxisPage)
-                    )->getAbsoluteUrl(); ?>" title="<?= $xAxisPage . ',' . $yAxisPage; ?>"></a>
+                    )->getAbsoluteUrl(); ?>" title="<?= sprintf(
+                        $fromTo,
+                        $this->translate('Hosts'),
+                        ($yAxisPage - 1) * $yAxisPages->itemCountPerPage + 1,
+                        $yAxisPage === $yAxisPages->last ? $yAxisPages->totalItemCount : $yAxisPage * $yAxisPages->itemCountPerPage,
+                        $yAxisPages->totalItemCount
+                    ) . '; ' . sprintf(
+                        $fromTo,
+                        $this->translate('Services'),
+                        ($xAxisPage - 1) * $xAxisPages->itemCountPerPage + 1,
+                        $xAxisPage === $xAxisPages->last ? $xAxisPages->totalItemCount : $xAxisPage * $xAxisPages->itemCountPerPage,
+                        $xAxisPages->totalItemCount
+                    ); ?>"></a>
+<?php else: ?>
+                    &nbsp;
 <?php endif ?>
                 </td>
 <?php endforeach ?>

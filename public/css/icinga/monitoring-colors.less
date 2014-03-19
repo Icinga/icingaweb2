@@ -507,8 +507,6 @@ div.pivot-pagination {
   margin: 1em;
 
   table {
-    width: 1px; // Ensures that its cells are really of fixed width
-    table-layout: fixed;
     border-spacing: 0.2em;
     border-collapse: separate;
     border: 1px solid LightGrey;
@@ -516,8 +514,7 @@ div.pivot-pagination {
 
     td {
       padding: 0;
-      width: 1.7em;
-      height: 1.7em;
+      line-height: 1em;
       background-color: #fbfbfb;
 
       &:hover, &.active {
@@ -525,63 +522,65 @@ div.pivot-pagination {
       }
 
       a {
-        padding: 10% 50%;
+        width: 16px;
+        height: 16px;
+        display: block;
       }
     }
   }
 }
 
 table.pivot {
-  width: 1px; // Ensures that its cells are really of fixed width
-  table-layout: fixed;
-  border-spacing: 0.2em;
-  border-collapse: separate;
-
-  th, td {
-    width: 0.5em;
-  }
-
   thead {
     th {
       height: 6em;
-      padding: 0 0 1em 1.4em;
-      vertical-align: bottom;
+      padding: 2px;
+      position: relative;
 
-      &:first-of-type {
-        width: 4em;
-      }
+      div {
+        top: 2px;
+        left: 2px;
+        right: -1.5em;
+        position: absolute;
+        padding-left: 1.2em;
 
-      span {
-        font-size: 0.8em;
-        line-height: 2.4em;
-        white-space: nowrap;
-        display: inline-block;
+        span {
+          width: 1.5em;
+          margin-right: 4px;
+          margin-top: 4em;
+          line-height: 2em;
+          white-space: nowrap;
+          display: block;
+          float: left;
 
-        transform: rotate(-45deg);
-        transform-origin: bottom left;
-        -o-transform: rotate(-45deg);
-        -o-transform-origin: bottom left;
-        -ms-transform: rotate(-45deg);
-        -ms-transform-origin: bottom left;
-        -moz-transform: rotate(-45deg);
-        -moz-transform-origin: bottom left;
-        -webkit-transform: rotate(-45deg);
-        -webkit-transform-origin: bottom left;
-        filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+          transform: rotate(-45deg);
+          transform-origin: bottom left;
+          -o-transform: rotate(-45deg);
+          -o-transform-origin: bottom left;
+          -ms-transform: rotate(-45deg);
+          -ms-transform-origin: bottom left;
+          -moz-transform: rotate(-45deg);
+          -moz-transform-origin: bottom left;
+          -webkit-transform: rotate(-45deg);
+          -webkit-transform-origin: bottom left;
+          filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+
+          abbr {
+            font-size: 0.8em;
+          }
+        }
       }
     }
   }
 
   tbody {
     th {
-      width: 4em;
-      font-size: 0.8em;
-      line-height: 2.2em;
-      padding-right: 1.2em;
+      padding: 0 14px 0 0;
 
       a {
-        color: black;
+        font-size: 0.8em;
         text-decoration: none;
+        color: black;
 
         &:hover {
           color: #666;
@@ -590,43 +589,47 @@ table.pivot {
     }
 
     td {
-      padding: 0;
+      min-width: 1.5em;
+      min-height: 1.5em;
+      padding: 2px;
       text-align: center;
-      border-radius: 0.5em;
 
       a {
-        padding: 20% 50%;
-      }
+        width: 1.5em;
+        height: 1.5em;
+        display: block;
+        border-radius: 0.5em;
 
-      &.state_ok {
-        background-color: @colorOk;
-      }
-
-      &.state_pending {
-        background-color: @colorPending;
-      }
-
-      &.state_warning {
-        background-color: @colorWarning;
-
-        &.handled {
-          background-color: @colorWarningHandled;
+        &.state_ok {
+          background-color: @colorOk;
         }
-      }
 
-      &.state_critical {
-        background-color: @colorCritical;
-
-        &.handled {
-          background-color: @colorCriticalHandled;
+        &.state_pending {
+          background-color: @colorPending;
         }
-      }
 
-      &.state_unknown {
-        background-color: @colorUnknown;
+        &.state_warning {
+          background-color: @colorWarning;
 
-        &.handled {
-          background-color: @colorUnknownHandled;
+          &.handled {
+            background-color: @colorWarningHandled;
+          }
+        }
+
+        &.state_critical {
+          background-color: @colorCritical;
+
+          &.handled {
+            background-color: @colorCriticalHandled;
+          }
+        }
+
+        &.state_unknown {
+          background-color: @colorUnknown;
+
+          &.handled {
+            background-color: @colorUnknownHandled;
+          }
         }
       }
     }

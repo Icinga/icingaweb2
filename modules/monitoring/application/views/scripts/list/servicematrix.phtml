@@ -22,9 +22,17 @@
         <thead>
             <tr>
                 <th>&nbsp;</th>
+                <th colspan="<?= count($serviceStates); ?>">
+                    <div>
 <?php foreach (array_keys($serviceStates) as $service_description): ?>
-                <th><span><?= $service_description; ?></span></th>
+                        <span>
+                            <abbr title="<?= $service_description; ?>">
+                                <?= strlen($service_description) > 18 ? substr($service_description, 0, 18) . '...' : $service_description; ?>
+                            </abbr>
+                        </span>
 <?php endforeach ?>
+                    </div>
+                </th>
             </tr>
         </thead>
         <tbody>
@@ -39,14 +47,14 @@
                 </th>
 <?php foreach (array_values($serviceStates) as $service): ?>
 <?php if ($service !== null): ?>
-                <td class="state_<?= $this->monitoringState($service, 'service'); ?> <?= $service->service_handled ? 'handled' : ''; ?>">
+                <td>
                     <a href="<?= $this->href(
                         'monitoring/show/service',
                         array(
                             'host'      => $service->host_name,
                             'service'   => $service->service_description
                         )
-                    ); ?>" title="<?= $this->escape($service->service_output); ?>"></a>
+                    ); ?>" title="<?= $this->escape($service->service_output); ?>" class="state_<?= $this->monitoringState($service, 'service'); ?> <?= $service->service_handled ? 'handled' : ''; ?>"></a>
 <?php else: ?>
                 <td>
                     &centerdot;
