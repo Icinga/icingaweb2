@@ -11,7 +11,7 @@ use Icinga\Cli\Loader;
  * The autocomplete command shows help for a given command, module and also for a
  * given module's command or a specific command's action.
  *
- * Usage: icingaweb autocomplete [<module>] [<command> [<action>]]
+ * Usage: icingacli autocomplete [<module>] [<command> [<action>]]
  */
 class AutocompleteCommand extends Command
 {
@@ -36,7 +36,7 @@ class AutocompleteCommand extends Command
      * The help command shows help for a given command, module and also for a
      * given module's command or a specific command's action.
      *
-     * Usage: icingaweb autocomplete [<module>] [<command> [<action>]]
+     * Usage: icingacli autocomplete [<module>] [<command> [<action>]]
      */
     public function completeAction()
     {

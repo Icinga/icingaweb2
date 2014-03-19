@@ -19,7 +19,7 @@ class ConferenceCommand extends Command
      * Use this command in case you feel that you should be friendly. Should
      * be executed as follows:
      *
-     * icingaweb monitoring conference welcome --watch 1
+     * icingacli monitoring conference welcome --watch 1
      */
     public function welcomeAction()
     {

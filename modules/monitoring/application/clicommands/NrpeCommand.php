@@ -22,11 +22,11 @@ class NrpeCommand extends Command
      *
      * USAGE
      *
-     * icingaweb monitoring nrpe <host> <command> [--ssl] [nrpe options]
+     * icingacli monitoring nrpe <host> <command> [--ssl] [nrpe options]
      *
      * EXAMPLE
      *
-     * icingaweb monitoring nrpe 127.0.0.1 CheckMEM --ssl --MaxWarn 80% \
+     * icingacli monitoring nrpe 127.0.0.1 CheckMEM --ssl --MaxWarn 80% \
      *   --MaxCrit 90% --type physical
      */
     public function checkAction()
