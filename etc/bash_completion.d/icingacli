@@ -1,5 +1,5 @@
 
-_icingaweb_completion()
+_icingacli_completion()
 {
   local cur opts
   opts="${COMP_WORDS[*]}"
@@ -8,6 +8,6 @@ _icingaweb_completion()
   return 0
 }
 
-complete -F _icingaweb_completion icingaweb
+complete -F _icingacli_completion icingacli
 
 

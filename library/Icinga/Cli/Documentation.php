@@ -32,7 +32,7 @@ class Documentation
 
     public function globalUsage()
     {
-        $d = "USAGE: icingaweb [module] <command> [action] [options]\n\n"
+        $d = "USAGE: icingacli [module] <command> [action] [options]\n\n"
            . "Available commands:\n\n";
         foreach ($this->loader->listCommands() as $command) {
             if ($command !== 'autocomplete') {
@@ -55,8 +55,8 @@ class Documentation
             . "  --benchmark  Show benchmark summary\n"
             . "  --watch [s]  Refresh output each <s> seconds (default: 5)\n"
             ;
-        $d .= "\nShow help on a specific command : icingaweb help <command>"
-            . "\nShow help on a specific module  : icingaweb help <module>"
+        $d .= "\nShow help on a specific command : icingacli help <command>"
+            . "\nShow help on a specific module  : icingacli help <module>"
             . "\n";
         return $d;
     }
@@ -73,12 +73,12 @@ class Documentation
             $obj = $this->loader->getModuleCommandInstance($module, $command);
         }
         if ($command === null) {
-            $d = "USAGE: icingaweb $module <command> [<action>] [options]\n\n"
+            $d = "USAGE: icingacli $module <command> [<action>] [options]\n\n"
                . "Available commands:\n\n";
             foreach ($commands as $command) {
                 $d .= '  ' . $command . "\n";
             }
-            $d .= "\nShow help on a specific command: icingaweb help $module <command>\n";
+            $d .= "\nShow help on a specific command: icingacli help $module <command>\n";
         } elseif ($action === null) {
             $d .= $this->showCommandActions($obj, $command);
         } else {
@@ -100,7 +100,7 @@ class Documentation
                 $this->getMethodTitle($command, $action)
             );
         }
-        $d .= "\nShow help on a specific action: icingaweb help $name <action>\n";
+        $d .= "\nShow help on a specific action: icingacli help $name <action>\n";
         return $d;
     }
 

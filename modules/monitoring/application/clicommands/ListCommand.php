@@ -114,7 +114,7 @@ class ListCommand extends Command
      *
      * USAGE
      *
-     * icingaweb monitoring list [<type>] [options]
+     * icingacli monitoring list [<type>] [options]
      *
      * OPTIONS
      *
@@ -131,9 +131,9 @@ class ListCommand extends Command
      *
      * EXAMPLES
      *
-     *   icingaweb monitoring list --unhandled
-     *   icingaweb monitoring list --host local* --service *disk*
-     *   icingaweb monitoring list --format '$host$: $service$'
+     *   icingacli monitoring list --unhandled
+     *   icingacli monitoring list --host local* --service *disk*
+     *   icingacli monitoring list --format '$host$: $service$'
      */
     public function statusAction()
     {

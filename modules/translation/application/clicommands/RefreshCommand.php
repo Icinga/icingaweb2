@@ -53,12 +53,12 @@ class RefreshCommand extends TranslationCommand
      *
      * USAGE:
      *
-     *   icingaweb translation refresh icinga <locale>
+     *   icingacli translation refresh icinga <locale>
      *
      * EXAMPLES:
      *
-     *   icingaweb translation refresh icinga de_DE
-     *   icingaweb translation refresh icinga fr_FR
+     *   icingacli translation refresh icinga de_DE
+     *   icingacli translation refresh icinga fr_FR
      */
     public function icingaAction()
     {
@@ -75,12 +75,12 @@ class RefreshCommand extends TranslationCommand
      *
      * USAGE:
      *
-     *   icingaweb translation refresh module <module> <locale>
+     *   icingacli translation refresh module <module> <locale>
      *
      * EXAMPLES:
      *
-     *   icingaweb translation refresh module monitoring de_DE
-     *   icingaweb translation refresh module monitoring fr_FR
+     *   icingacli translation refresh module monitoring de_DE
+     *   icingacli translation refresh module monitoring fr_FR
      */
     public function moduleAction()
     {

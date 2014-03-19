@@ -53,12 +53,12 @@ class CompileCommand extends TranslationCommand
      *
      * USAGE:
      *
-     *   icingaweb translation compile icinga <locale>
+     *   icingacli translation compile icinga <locale>
      *
      * EXAMPLES:
      *
-     *   icingaweb translation compile icinga de_DE
-     *   icingaweb translation compile icinga fr_FR
+     *   icingacli translation compile icinga de_DE
+     *   icingacli translation compile icinga fr_FR
      */
     public function icingaAction()
     {
@@ -75,12 +75,12 @@ class CompileCommand extends TranslationCommand
      *
      * USAGE:
      *
-     *   icingaweb translation compile <module> <locale>
+     *   icingacli translation compile <module> <locale>
      *
      * EXAMPLES:
      *
-     *   icingaweb translation compile monitoring de_DE
-     *   icingaweb trnslations compile monitoring de_DE
+     *   icingacli translation compile monitoring de_DE
+     *   icingacli trnslations compile monitoring de_DE
      */
     public function moduleAction()
     {

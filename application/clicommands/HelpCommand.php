@@ -12,7 +12,7 @@ use Icinga\Cli\Documentation;
  * The help command shows help for a given command, module and also for a
  * given module's command or a specific command's action.
  *
- * Usage: icingaweb help [<module>] [<command> [<action>]]
+ * Usage: icingacli help [<module>] [<command> [<action>]]
  */
 class HelpCommand extends Command
 {
@@ -24,7 +24,7 @@ class HelpCommand extends Command
      * The help command shows help for a given command, module and also for a
      * given module's command or a specific command's action.
      *
-     * Usage: icingaweb help [<module>] [<command> [<action>]]
+     * Usage: icingacli help [<module>] [<command> [<action>]]
      */
     public function showAction()
     {
