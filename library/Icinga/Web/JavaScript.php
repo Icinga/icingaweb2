@@ -31,7 +31,18 @@ class JavaScript
 
     public static function listFiles()
     {
-        return array_merge(self::$vendorFiles, self::$jsFiles);
+        return array_merge(self::$vendorFiles, self::$jsFiles, self::listModuleFiles());
+    }
+
+    public static function listModuleFiles()
+    {
+        $list = array();
+        foreach (Icinga::app()->getModuleManager()->getLoadedModules() as $name => $module) {
+            if ($module->hasJs()) {
+                $list[] = 'js/' . $name . '/module.js';
+            }
+        }
+        return $list;
     }
 
     public static function sendMinified()

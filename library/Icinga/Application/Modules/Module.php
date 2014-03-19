@@ -163,6 +163,7 @@ class Module
         $this->name           = $name;
         $this->basedir        = $basedir;
         $this->cssdir         = $basedir . '/public/css';
+        $this->jsdir          = $basedir . '/public/js';
         $this->libdir         = $basedir . '/library';
         $this->configdir      = $basedir . '/config';
         $this->localedir      = $basedir . '/application/locale';
@@ -248,6 +249,26 @@ class Module
     public function getCssFilename()
     {
         return $this->cssdir . '/module.less';
+    }
+
+    /**
+     * Test if module provides js
+     *
+     * @return bool
+     */
+    public function hasJs()
+    {
+        return file_exists($this->getJsFilename());
+    }
+
+    /**
+     * Returns the complete js file name
+     *
+     * @return string
+     */
+    public function getJsFilename()
+    {
+        return $this->jsdir . '/module.js';
     }
 
     /**
