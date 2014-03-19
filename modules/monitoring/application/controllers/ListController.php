@@ -642,45 +642,12 @@ class Monitoring_ListController extends Controller
         ) {
             $config = ResourceFactory::getResourceConfig('logfile');
             $resource = ResourceFactory::createResource($config);
+            $this->view->logData = $resource->select()->paginate();
 
-            $resource->select()->andWhere('error')->order('desc')->limit(200, 50)->fetchAll();
-
-            var_dump($config, $resource);
-            die;
-            $log = new LogFile($config_ini['logging']['target']);
-            $this->view->logLines = $log->count();
-            $this->view->logData = $log->readFromEnd(1, 38);
+            //$resource->select()->andWhere('error')->order('desc')->limit(200, 50)->fetchAll();
         } else {
             $this->view->logData = null;
         }
-        /*$dataview = EventHistoryView::fromRequest(
-            $this->getRequest(),
-            array(
-                'host_name',
-                'service_description',
-                'object_type',
-                'timestamp',
-                'raw_timestamp',
-                'state',
-                'attempt',
-                'max_attempts',
-                'output',
-                'type',
-                'host',
-                'service'
-            )
-        );
-
-        $this->setupFilterControl($dataview, 'eventhistory');
-        $this->setupSortControl(
-            array(
-                'raw_timestamp' => 'Occurence'
-            )
-        );
-
-        $query = $dataview->getQuery();
-        $this->handleFormatRequest($query);
-        $this->view->history = $query->paginate();*/
     }
 }
 // @codingStandardsIgnoreEnd

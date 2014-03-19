@@ -10,15 +10,10 @@ class Reader implements DatasourceInterface
 
     private $config;
 
-    private $queryCache = null;
-
     public function __construct($config)
     {
         $this->config = $config;
         $this->filename = $config->filename;
-        var_dump($this->readFromStart());//NO!
-        //var_dump($this->fetchOne(new Query($this)));
-        die;//NO!
     }
 
     public function select()
@@ -75,14 +70,14 @@ class Reader implements DatasourceInterface
         return $this->read($query);
     }
 
-    public function validateLine($line)
+    public function validateLine($line, Query $query)
     {
         $data = array();
         $PCRE_result = @preg_match($this->config->fields, $line, $data);
         if ($PCRE_result === false) {
             throw new \Exception('Failed parsing regular expression!');
         } else if ($PCRE_result === 1) {
-            foreach ($this->queryCache->getFilters() as $filter) {
+            foreach ($query->getFilters() as $filter) {
                 if (strpos($line, $filter) === false) {
                     return false;
                 }
@@ -104,17 +99,13 @@ class Reader implements DatasourceInterface
         if ($skip_lines === null) {
             $skip_lines = 0;
         }
-        $this->queryCache = $query;
         if ($query->sortDesc()) {
-            $data = $this->readFromEnd($skip_lines, $read_lines);
-        } else {
-            $data = $this->readFromStart($skip_lines, $read_lines);
+            return $this->readFromEnd($skip_lines, $read_lines, $query);
         }
-        $this->queryCache = null;
-        return $data;
+        return $this->readFromStart($skip_lines, $read_lines, $query);
     }
 
-    public function readFromEnd($skip_lines = null, $read_lines = null)
+    public function readFromEnd($skip_lines = null, $read_lines = null, Query $query)
     {
         $PHP_EOL_len = strlen(PHP_EOL);
         $lines = array();
@@ -126,7 +117,7 @@ class Reader implements DatasourceInterface
             fseek($f, --$pos);
             $c = fgetc($f);
             if ($c === false || $pos < 0) {
-                $l = $this->validateLine($s);
+                $l = $this->validateLine($s, $query);
                 if (!($l === false || $skip_lines)) {
                     $lines[] = $l;
                 }
@@ -134,7 +125,7 @@ class Reader implements DatasourceInterface
             }
             $s = $c . $s;
             if (strpos($s, PHP_EOL) === 0) {
-                $l = $this->validateLine((string)substr($s, $PHP_EOL_len));
+                $l = $this->validateLine((string)substr($s, $PHP_EOL_len), $query);
                 if ($l !== false) {
                     if ($skip_lines) {
                         $skip_lines--;
@@ -148,7 +139,7 @@ class Reader implements DatasourceInterface
         return $lines;
     }
 
-    public function readFromStart($skip_lines = null, $read_lines = null)
+    public function readFromStart($skip_lines = null, $read_lines = null, Query $query)
     {
         $PHP_EOL_len = strlen(PHP_EOL);
         $lines = array();
@@ -157,7 +148,7 @@ class Reader implements DatasourceInterface
         while ($read_lines === null || count($lines) < $read_lines) {
             $c = fgetc($f);
             if ($c === false) {
-                $l = $this->validateLine($s);
+                $l = $this->validateLine($s, $query);
                 if (!($l === false || $skip_lines)) {
                     $lines[] = $l;
                 }
@@ -165,7 +156,7 @@ class Reader implements DatasourceInterface
             }
             $s .= $c;
             if (strpos($s, PHP_EOL) !== false) {
-                $l = $this->validateLine((string)substr($s, 0, strlen($s) - $PHP_EOL_len));
+                $l = $this->validateLine((string)substr($s, 0, strlen($s) - $PHP_EOL_len), $query);
                 if ($l !== false) {
                     if ($skip_lines) {
                         $skip_lines--;
@@ -179,7 +170,7 @@ class Reader implements DatasourceInterface
         return $lines;
     }
 
-    public function count() {
+    public function count(Query $query) {
         $PHP_EOL_len = strlen(PHP_EOL);
         $lines = 0;
         $s = '';
@@ -190,14 +181,14 @@ class Reader implements DatasourceInterface
             fseek($f, --$pos);
             $c = fgetc($f);
             if ($c === false || $pos < 0) {
-                if ($this->validateLine($s) !== false) {
+                if ($this->validateLine($s, $query) !== false) {
                     $lines++;
                 }
                 break;
             }
             $s = $c . $s;
             if (strpos($s, PHP_EOL) === 0) {
-                if ($this->validateLine((string)substr($s, $PHP_EOL_len)) !== false) {
+                if ($this->validateLine((string)substr($s, $PHP_EOL_len), $query) !== false) {
                     $lines++;
                 }
                 $s = '';

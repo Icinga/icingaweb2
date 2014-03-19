@@ -13,11 +13,6 @@ class Query extends BaseQuery
     public function applyFilter()
     {}// ?
 
-    public function count()
-    {
-        return $this->ds->count();
-    }
-
     public function order($dir)
     {
         $this->sortDir = ($dir === null || strtoupper(trim($dir)) === 'DESC') ? self::SORT_DESC : self::SORT_ASC;
