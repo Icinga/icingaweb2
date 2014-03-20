@@ -120,6 +120,18 @@
             $col.data('icingaModule', backup['data']['data-icinga-module']);
         },
 
+        scrollContainerToAnchor: function ($container, anchorName) {
+            // TODO: Generic issue -> we probably should escape attribute value selectors!?
+            var $anchor = $("a[name='" + anchorName + "']", $container);
+            if ($anchor.length) {
+                $container.scrollTop(0);
+                $container.scrollTop($anchor.first().position().top);
+                this.icinga.logger.debug('Scrolling ', $container, ' to ', anchorName);
+            } else {
+                this.icinga.logger.info('Anchor "' + anchorName + '" not found in ', $container);
+            }
+        },
+
         triggerWindowResize: function () {
             this.onWindowResize({data: {self: this}});
         },

@@ -388,6 +388,9 @@
             */
 
             this.renderContentToContainer($resp, req.$target);
+            if (url.match(/#/)) {
+                this.icinga.ui.scrollContainerToAnchor(req.$target, url.split(/#/)[1]);
+            }
             if (newBody) {
                 this.icinga.ui.fixDebugVisibility().triggerWindowResize();
             }
@@ -515,6 +518,7 @@
                     $container.html(content);
                 }
             }
+
             if (scrollPos !== false) {
                 $container.scrollTop(scrollPos);
             }

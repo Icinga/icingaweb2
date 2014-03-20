@@ -188,6 +188,7 @@
             var $li;
             var $target;
             var isMenuLink = $a.closest('#menu').length > 0;
+            var formerUrl;
 
             // TODO: Let remote links pass through. Right now they only work
             //       combined with target="_blank" or target="_self"
@@ -201,8 +202,8 @@
             event.stopPropagation();
             event.preventDefault();
 
-            // If link is hash tag...
-            if (href === '#') {
+            // If link has hash tag...
+            if (href.match(/#/)) {
                 // ...it may be a menu section without a dedicated link.
                 // Switch the active menu item:
                 if (isMenuLink) {
@@ -210,13 +211,24 @@
                     $('#menu .active').removeClass('active');
                     $li.addClass('active');
                 }
+                if (href === '#') {
+                    return false;
+                }
 
-                // Stop here for all hash tags
-                // TODO: handle anchors
-                return false;
+                $target = self.getLinkTargetFor($a);
+
+                formerUrl = $target.data('icingaUrl');
+                if (typeof formerUrl !== 'undefined' && formerUrl.split(/#/)[0] === href.split(/#/)[0]) {
+                    icinga.ui.scrollContainerToAnchor($target, href.split(/#/)[1]);
+                    $target.data('icingaUrl', href);
+                    if (formerUrl !== href) {
+                        icinga.history.pushCurrentState();
+                    }
+                    return false;
+                }
+            } else {
+                $target = self.getLinkTargetFor($a);
             }
-
-            $target = self.getLinkTargetFor($a);
 
             // Load link URL
             icinga.loader.loadUrl(href, $target);
