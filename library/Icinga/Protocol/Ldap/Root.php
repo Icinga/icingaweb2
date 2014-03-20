@@ -143,6 +143,11 @@ class Root
         return $this->children;
     }
 
+    public function countChildren()
+    {
+        return count($this->children);
+    }
+
     /**
      * @return bool
      */
