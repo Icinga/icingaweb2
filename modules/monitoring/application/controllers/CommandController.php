@@ -314,7 +314,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Command has been sent, result should be visible soon');
+            Notification::success('Command has been sent, active checks will be disabled');
         }
     }
 
@@ -339,7 +339,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Command has been sent, result should be visible soon');
+            Notification::success('Command has been sent, active checks will be enabled');
         }
     }
 
@@ -358,7 +358,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Check has been rescheduled, result should be visible soon');
+            Notification::success('Command has been sent, check will be rescheduled');
         }
     }
 
@@ -415,7 +415,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Command has been sent, result should be visible soon');
+            Notification::success('Command has been sent, obsessing will be disabled');
         }
     }
 
@@ -449,7 +449,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Command has been sent, result should be visible soon');
+            Notification::success('Command has been sent, obsessing will be enabled');
         }
     }
 
@@ -483,7 +483,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Command has been sent, result should be visible soon');
+            Notification::success('Command has been sent, passive check results will be refused');
         }
     }
 
@@ -516,7 +516,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Command has been sent, result should be visible soon');
+            Notification::success('Command has been sent, passive check results will be accepted');
         }
     }
 
@@ -534,7 +534,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Command has been sent, result should be visible soon');
+            Notification::success('Command has been sent, notifications will be disabled');
         }
     }
 
@@ -562,7 +562,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Command has been sent, result should be visible soon');
+            Notification::success('Command has been sent, notifications will be disabled');
         }
 
     }
@@ -592,7 +592,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Command has been sent, result should be visible soon');
+            Notification::success('Command has been sent, notifications will be enabled');
         }
     }
 
@@ -608,7 +608,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Command has been sent, result should be visible soon');
+            Notification::success('Custom notification has been sent');
         }
     }
 
@@ -627,7 +627,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Downtime scheduling requested, result should be shown soon');
+            Notification::success('Downtime scheduling requested');
         }
     }
 
@@ -645,7 +645,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Downtime scheduling requested, result should be shown soon');
+            Notification::success('Downtime scheduling requested');
         }
     }
 
@@ -664,7 +664,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Downtime removal requested, result should be shown soon');
+            Notification::success('Downtime removal requested');
         }
     }
 
@@ -685,7 +685,7 @@ class Monitoring_CommandController extends ActionController
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
             $form->setCommand('DISABLE_HOST_NOTIFICATIONS', 'DISABLE_SVC_NOTIFICATIONS');
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Command has been sent, result should be visible soon');
+            Notification::success('Command has been sent, notifications will be disabled');
         }
     }
 
@@ -706,7 +706,7 @@ class Monitoring_CommandController extends ActionController
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
             $form->setCommand('ENABLE_HOST_NOTIFICATIONS', 'ENABLE_SVC_NOTIFICATIONS');
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Command has been sent, result should be visible soon');
+            Notification::success('Command has been sent, notifications will be enabled');
         }
     }
 
@@ -725,7 +725,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Command has been sent, result should be visible soon');
+            Notification::success('Command has been sent, checks will be rescheduled');
         }
     }
 
@@ -745,7 +745,7 @@ class Monitoring_CommandController extends ActionController
         if ($form->IsSubmittedAndValid() === true) {
             // @TODO(mh): Missing child command
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Command has been sent, result should be visible soon');
+            Notification::success('Command has been sent, active checks will be disabled');
         }
     }
 
@@ -765,7 +765,7 @@ class Monitoring_CommandController extends ActionController
         if ($form->IsSubmittedAndValid() === true) {
             // @TODO(mh): Missing child command
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Command has been sent, result should be visible soon');
+            Notification::success('Command has been sent, active checks will be enabled');
         }
     }
 
@@ -796,7 +796,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Command has been sent, result should be visible soon');
+            Notification::success('Command has been sent, event handlers will be disabled');
         }
     }
 
@@ -828,7 +828,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Command has been sent, result should be visible soon');
+            Notification::success('Command has been sent, event handlers will be enabled');
         }
     }
 
@@ -861,7 +861,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Command has been sent, result should be visible soon');
+            Notification::success('Command has been sent, flap detection will be disabled');
         }
     }
 
@@ -894,7 +894,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Command has been sent, result should be visible soon');
+            Notification::success('Command has been sent, flap detection will be enabled');
         }
     }
 
@@ -912,7 +912,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('New comment has been sent');
+            Notification::success('Your new comment has been submitted');
         }
     }
 
@@ -991,7 +991,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Acknowledgement removal request has been requested');
+            Notification::success('Acknowledgement removal has been requested');
         }
     }
 
@@ -1008,6 +1008,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
+            Notification::success('Notification delay has been requested');
         }
     }
 
@@ -1092,7 +1093,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Command has been sent, result should be visible soon');
+            Notification::success('Command has been sent, performance data processing will be disabled');
         }
     }
 
@@ -1114,7 +1115,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Command has been sent, result should be visible soon');
+            Notification::success('Command has been sent, performance data processing will be enabled');
         }
     }
 }
