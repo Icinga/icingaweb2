@@ -534,19 +534,17 @@ table.pivot {
   thead {
     th {
       height: 6em;
-      padding: 2px;
       position: relative;
 
       div {
-        top: 2px;
-        left: 2px;
-        right: -1.5em;
+        margin-top: -3em;
+        margin-right: -1.5em;
+        padding-left: 1.3em;
         position: absolute;
-        padding-left: 1.2em;
 
         span {
           width: 1.5em;
-          margin-right: 4px;
+          margin-right: 0.25em;
           margin-top: 4em;
           line-height: 2em;
           white-space: nowrap;
@@ -563,9 +561,10 @@ table.pivot {
           -moz-transform-origin: bottom left;
           -webkit-transform: rotate(-45deg);
           -webkit-transform-origin: bottom left;
-          filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+          //filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
 
           abbr {
+            border: 0; // Remove highlighting in firefox
             font-size: 0.8em;
           }
         }
