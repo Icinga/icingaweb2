@@ -149,6 +149,61 @@ class Connection
         return array_shift($row);
     }
 
+    public function hasDN($dn)
+    {
+        $this->connect();
+        $result = ldap_read($this->ds, $dn, '(objectClass=*)', array('objectClass'));
+        return ldap_count_entries($this->ds, $result) > 0;
+    }
+
+    public function deleteRecursively($dn)
+    {
+        $this->connect();
+        $result = @ldap_list($this->ds, $dn, '(objectClass=*)', array('objectClass'));
+        if ($result === false) {
+            if (ldap_errno($this->ds) === self::LDAP_NO_SUCH_OBJECT) {
+                return false;
+            }
+            throw new \Exception(
+                sprintf(
+                    'LDAP list for "%s" failed: %s',
+                    $dn,
+                    ldap_error($this->ds)
+                )
+            );
+        }
+        $children = ldap_get_entries($this->ds, $result);
+        for($i = 0; $i < $children['count']; $i++) {
+            $result = $this->deleteRecursively($children[$i]['dn']);
+            if (!$result) {
+                //return result code, if delete fails
+                throw new \Exception(sprintf('Recursively deleting "%s" failed', $dn));
+            }
+        }
+        return $this->deleteDN($dn);
+    }
+
+    public function deleteDN($dn)
+    {
+        $this->connect();
+
+        $result = @ldap_delete($this->ds, $dn);
+        if ($result === false) {
+            if (ldap_errno($this->ds) === self::LDAP_NO_SUCH_OBJECT) {
+                return false;
+            }
+            throw new \Exception(
+                sprintf(
+                    'LDAP delete for "%s" failed: %s',
+                    $dn,
+                    ldap_error($this->ds)
+                )
+            );
+        }
+
+        return true;
+    }
+
     public function fetchDN($query, $fields = array())
     {
         $rows = $this->fetchAll($query, $fields);
@@ -256,7 +311,6 @@ class Connection
                     ldap_error($this->ds)
                 )
             );
-            die('Query failed');
         }
         $list = array();
         if ($query instanceof Query) {
