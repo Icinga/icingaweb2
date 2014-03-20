@@ -122,7 +122,7 @@
 
         scrollContainerToAnchor: function ($container, anchorName) {
             // TODO: Generic issue -> we probably should escape attribute value selectors!?
-            var $anchor = $("a[name='" + anchorName + "']", $container);
+            var $anchor = $("a[name='" + anchorName.replace(/'/, '\\\'') + "']", $container);
             if ($anchor.length) {
                 $container.scrollTop(0);
                 $container.scrollTop($anchor.first().position().top);
