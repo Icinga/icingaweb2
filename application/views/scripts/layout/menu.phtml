@@ -1,9 +1,9 @@
-<?= $sub ? '<ul>' : '<ul class="nav nav-stacked">' ?>
+<ul>
     <?php foreach ($items as $item): ?>
         <?php
         $itemClass = '';
         if ($sub) {
-            $itemClass .= 'submenu ';
+            // $itemClass .= 'submenu ';
         }
         if ($this->href($url) === $this->href($item->getUrl())) {
             $itemClass .= 'active ';
