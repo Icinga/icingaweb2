@@ -458,6 +458,7 @@ class Monitoring_ListController extends Controller
         $this->view->history = $query->paginate();
     }
 
+    // TODO: Should be able to identify hosts that have not a single service (without compromising the pagination)
     public function servicematrixAction()
     {
         $this->view->title = 'Servicematrix';

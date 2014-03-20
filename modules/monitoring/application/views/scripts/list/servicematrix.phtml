@@ -50,7 +50,6 @@ $hostFilter = implode(',', array_keys($pivotData));
         <tbody>
 <?php $hasHeader = true; ?>
 <?php endif ?>
-<?php if (count(array_filter(array_values($serviceStates)))): ?>
             <tr>
                 <th>
                     <a href="<?= $this->href('monitoring/show/host', array('host' => $host_name)); ?>">
@@ -74,7 +73,6 @@ $hostFilter = implode(',', array_keys($pivotData));
                 </td>
 <?php endforeach ?>
             </tr>
-<?php endif ?>
 <?php endforeach ?>
         </tbody>
     </table>

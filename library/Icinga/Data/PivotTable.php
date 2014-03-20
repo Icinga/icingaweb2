@@ -163,22 +163,20 @@ class PivotTable
      */
     public function toArray()
     {
+        $pivot = array();
         $xAxis = $this->xAxisQuery->fetchColumn();
         $yAxis = $this->yAxisQuery->fetchColumn();
 
-        $pivot = array();
         if (!empty($xAxis) && !empty($yAxis)) {
             $this->baseQuery->where($this->xAxisColumn, $xAxis)->where($this->yAxisColumn, $yAxis);
 
-            foreach ($this->baseQuery->fetchAll() as $row) {
-                if (!array_key_exists($row->{$this->yAxisColumn}, $pivot)) {
-                    $defaults = array();
-                    foreach ($xAxis as $label) {
-                        $defaults[$label] = null;
-                    }
-                    $pivot[$row->{$this->yAxisColumn}] = $defaults;
+            foreach ($yAxis as $yLabel) {
+                foreach ($xAxis as $xLabel) {
+                    $pivot[$yLabel][$xLabel] = null;
                 }
+            }
 
+            foreach ($this->baseQuery->fetchAll() as $row) {
                 $pivot[$row->{$this->yAxisColumn}][$row->{$this->xAxisColumn}] = $row;
             }
         }
