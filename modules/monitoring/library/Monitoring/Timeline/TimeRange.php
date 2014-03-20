@@ -26,7 +26,7 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Timeline;
+namespace Icinga\Module\Monitoring\Timeline;
 
 use \StdClass;
 use \Iterator;

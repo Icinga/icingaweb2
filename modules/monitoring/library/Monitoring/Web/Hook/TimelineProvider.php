@@ -26,10 +26,10 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Web\Hook;
+namespace Icinga\Module\Monitoring\Web\Hook;
 
 use \Zend_Controller_Request_Abstract;
-use \Icinga\Timeline\TimeRange;
+use Icinga\Module\Monitoring\Timeline\TimeRange;
 
 /**
  * Base class for TimeEntry providers

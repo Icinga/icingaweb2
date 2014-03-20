@@ -29,14 +29,14 @@
 use \DateTime;
 use \Exception;
 use \DateInterval;
-use \Icinga\Web\Hook;
-use \Icinga\Timeline\TimeLine;
-use \Icinga\Timeline\TimeEntry;
-use \Icinga\Timeline\TimeRange;
-use \Icinga\Application\Config;
-use \Icinga\Exception\ProgrammingError;
-use \Icinga\Web\Controller\ActionController;
-use \Icinga\Module\Monitoring\DataView\EventHistory as EventHistoryView;
+use Icinga\Web\Hook;
+use Icinga\Application\Config;
+use Icinga\Exception\ProgrammingError;
+use Icinga\Web\Controller\ActionController;
+use Icinga\Module\Monitoring\Timeline\TimeLine;
+use Icinga\Module\Monitoring\Timeline\TimeEntry;
+use Icinga\Module\Monitoring\Timeline\TimeRange;
+use Icinga\Module\Monitoring\DataView\EventHistory as EventHistoryView;
 
 class Monitoring_TimelineController extends ActionController
 {

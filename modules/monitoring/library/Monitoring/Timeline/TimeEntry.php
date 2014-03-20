@@ -26,10 +26,10 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Timeline;
+namespace Icinga\Module\Monitoring\Timeline;
 
 use \DateTime;
-use \Icinga\Exception\ProgrammingError;
+use Icinga\Exception\ProgrammingError;
 
 /**
  * An event group that is part of a timeline

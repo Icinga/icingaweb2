@@ -26,14 +26,13 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Timeline;
+namespace Icinga\Module\Monitoring\Timeline;
 
 use \Zend_Config;
 use \DateInterval;
 use \Zend_View_Interface;
-use \Icinga\Web\Form;
-use \Icinga\Web\Form\Element\Note;
-use \Icinga\Timeline\TimeEntry;
+use Icinga\Web\Form;
+use Icinga\Web\Form\Element\Note;
 
 /**
  * Represents a set of events in a specific time range
