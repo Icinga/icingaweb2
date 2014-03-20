@@ -42,9 +42,17 @@
                 }
             });
 
+            var moduleName
+            if (moduleName = el.data('icingaModule')) {
+                if (icinga.hasModule(moduleName)) {
+                    var module = icinga.module(moduleName);
+                    // NOT YET, the applyOnloadDings: module.applyEventHandlers(mod);
+                }
+            }
+
             $('.icinga-module', el).each(function(idx, mod) {
                 var $mod = $(mod);
-                var moduleName = $mod.data('icingaModule');
+                moduleName = $mod.data('icingaModule');
                 if (icinga.hasModule(moduleName)) {
                     var module = icinga.module(moduleName);
                     // NOT YET, the applyOnloadDings: module.applyEventHandlers(mod);
@@ -103,7 +111,13 @@
         },
 
         treeNodeToggle: function (event) {
-          $(this).closest('li').toggleClass('collapsed');
+            var $parent = $(this).closest('li');
+            if ($parent.hasClass('collapsed')) {
+                $('li', $parent).addClass('collapsed');
+                $parent.removeClass('collapsed');
+            } else {
+                $parent.addClass('collapsed');
+            }
         },
 
         onUnload: function (event) {
