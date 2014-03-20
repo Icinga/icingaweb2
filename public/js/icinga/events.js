@@ -270,19 +270,24 @@
                 targetId = $el.closest('[data-base-target]').data('baseTarget');
 
                 // Simulate _next to prepare migration to dynamic column layout
+                // YES, there are duplicate lines right now.
                 if (targetId === '_next') {
                     if ($el.closest('#col2').length) {
                         this.icinga.ui.moveToLeft();
                     }
                     targetId = 'col2';
-                }
-
-                if (targetId === '_main') {
+                    $target = $('#' + targetId);
+                } else if (targetId === '_self') {
+                    $target = $el.closest('.container');
+                    targetId = $target.attr('id');
+                } else if (targetId === '_main') {
                     targetId = 'col1';
+                    $target = $('#' + targetId);
                     icinga.ui.layout1col();
+                } else {
+                    $target = $('#' + targetId);
                 }
 
-                $target = $('#' + targetId);
             }
 
             // Hardcoded layout switch unless columns are dynamic

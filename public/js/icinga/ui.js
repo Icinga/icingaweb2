@@ -99,7 +99,7 @@
         },
 
         cutContainer: function ($col) {
-            return {
+            var props = {
               'elements': $('#' + $col.attr('id') + ' > div').detach(),
               'data': {
                 'data-icinga-url': $col.data('icingaUrl'),
@@ -108,7 +108,14 @@
                 'data-icinga-module': $col.data('icingaModule')
               },
               'class': $col.attr('class')
-            }
+            };
+            this.icinga.loader.stopPendingRequestsFor($col);
+            $col.removeData('icingaUrl');
+            $col.removeData('icingaRefresh');
+            $col.removeData('lastUpdate');
+            $col.removeData('icingaModule');
+            $col.removeAttr('class').attr('class', 'container');
+            return props;
         },
 
         pasteContainer: function ($col, backup) {
