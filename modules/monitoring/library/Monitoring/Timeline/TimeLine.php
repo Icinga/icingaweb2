@@ -63,13 +63,6 @@ class TimeLine extends Form
     private $forecastData;
 
     /**
-     * Whether only the timeline is shown
-     *
-     * @var bool
-     */
-    private $hideOuterElements = false;
-
-    /**
      * The maximum diameter each circle can have
      *
      * @var int
@@ -121,14 +114,6 @@ class TimeLine extends Form
     }
 
     /**
-     * Define that only the timeline itself should be rendered
-     */
-    public function showLineOnly()
-    {
-        $this->hideOuterElements = true;
-    }
-
-    /**
      * Set the maximum diameter each circle can have
      *
      * @param   string  $width  The diameter to set, suffixed with its unit
@@ -142,31 +127,6 @@ class TimeLine extends Form
             $this->diameterUnit = $matches[2];
         } else {
             throw new Exception('Width "' . $width . '" is not a valid width');
-        }
-    }
-
-    /**
-     * Return the chosen interval
-     *
-     * @return  DateInterval    The chosen interval
-     * @throws  Exception       If an invalid interval is given in the current request
-     */
-    public function getInterval()
-    {
-        switch ($this->getRequest()->getParam('timelineInterval', '4h'))
-        {
-            case '4h':
-                return new DateInterval('PT4H');
-            case '1d':
-                return new DateInterval('P1D');
-            case '1w':
-                return new DateInterval('P1W');
-            case '1m':
-                return new DateInterval('P1M');
-            case '1y':
-                return new DateInterval('P1Y');
-            default:
-                throw new Exception('Invalid interval given in request');
         }
     }
 
@@ -189,30 +149,6 @@ class TimeLine extends Form
         $this->buildForm();
         $this->postCreate();
         return parent::render($view);
-    }
-
-    /**
-     * Add form elements
-     */
-    public function create()
-    {
-        if (!$this->hideOuterElements) {
-            $this->addElement(
-                'select',
-                'timelineInterval',
-                array(
-                    'multiOptions'  => array(
-                        '4h'    => t('4 Hours'),
-                        '1d'    => t('One day'),
-                        '1w'    => t('One week'),
-                        '1m'    => t('One month'),
-                        '1y'    => t('One year')
-                    )
-                )
-            );
-            $this->enableAutoSubmit(array('timelineInterval'));
-            $this->setIgnoreChangeDiscarding(false);
-        }
     }
 
     /**

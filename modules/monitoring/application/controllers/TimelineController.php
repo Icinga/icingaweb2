@@ -36,12 +36,14 @@ use Icinga\Web\Controller\ActionController;
 use Icinga\Module\Monitoring\Timeline\TimeLine;
 use Icinga\Module\Monitoring\Timeline\TimeEntry;
 use Icinga\Module\Monitoring\Timeline\TimeRange;
+use Icinga\Module\Monitoring\Web\Widget\TimelineIntervalBox;
 use Icinga\Module\Monitoring\DataView\EventHistory as EventHistoryView;
 
 class Monitoring_TimelineController extends ActionController
 {
     public function showAction()
     {
+        $this->setupIntervalBox();
         $timeline = new TimeLine();
         $timeline->setName('Timeline');
         $timeline->setRequest($this->_request);
@@ -49,7 +51,7 @@ class Monitoring_TimelineController extends ActionController
         $timeline->buildForm(); // Necessary in order to populate request parameters
         $timeline->populate($this->_request->getParams());
         $timeline->setAttrib('data-icinga-component', 'monitoring/timelineComponent');
-        list($displayRange, $forecastRange) = $this->buildTimeRanges($timeline->getInterval());
+        list($displayRange, $forecastRange) = $this->buildTimeRanges($this->getTimelineInterval());
         $timeline->setTimeRange($displayRange);
         $timeline->setDisplayData($this->loadData($displayRange));
         $timeline->setForecastData($this->loadData($forecastRange));
@@ -58,11 +60,11 @@ class Monitoring_TimelineController extends ActionController
 
     public function extendAction()
     {
+        $this->setupIntervalBox();
         $timeline = new TimeLine();
-        $timeline->showLineOnly();
         $timeline->setRequest($this->_request);
         $timeline->setConfiguration(Config::app());
-        list($displayRange, $forecastRange) = $this->buildTimeRanges($timeline->getInterval());
+        list($displayRange, $forecastRange) = $this->buildTimeRanges($this->getTimelineInterval());
         $timeline->setTimeRange($displayRange);
         $timeline->setDisplayData($this->loadData($displayRange));
         $timeline->setForecastData($this->loadData($forecastRange));
@@ -70,6 +72,47 @@ class Monitoring_TimelineController extends ActionController
 
         // Disable layout as this is an AJAX request
         $this->_helper->layout()->disableLayout();
+    }
+
+    /**
+     * Create a select box the user can choose the timeline interval from
+     */
+    private function setupIntervalBox()
+    {
+        $box = new TimelineIntervalBox(
+            'intervalBox',
+            array(
+                '4h' => t('4 Hours'),
+                '1d' => t('One day'),
+                '1w' => t('One week'),
+                '1m' => t('One month'),
+                '1y' => t('One year')
+            )
+        );
+        $box->applyRequest($this->getRequest());
+        $this->view->intervalBox = $box;
+    }
+
+    /**
+     * Return the chosen interval
+     *
+     * @return  DateInterval    The chosen interval
+     */
+    private function getTimelineInterval()
+    {
+        switch ($this->view->intervalBox->getInterval())
+        {
+            case '1d':
+                return new DateInterval('P1D');
+            case '1w':
+                return new DateInterval('P1W');
+            case '1m':
+                return new DateInterval('P1M');
+            case '1y':
+                return new DateInterval('P1Y');
+            default:
+                return new DateInterval('PT4H');
+        }
     }
 
     /**

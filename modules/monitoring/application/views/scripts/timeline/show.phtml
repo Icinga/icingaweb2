@@ -1,1 +1,8 @@
-<?= $this->timeline ?>
+<?php if (!$this->compact): ?>
+<div class="controls">
+    <div style="margin: 1em;" class="dontprint">
+        <?= $this->intervalBox; ?>
+    </div>
+</div>
+<?php endif ?>
+<?= $this->timeline; ?>
