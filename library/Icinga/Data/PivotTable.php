@@ -58,11 +58,13 @@ class PivotTable
         $this->baseQuery = $query;
         $this->xAxisColumn = $xAxisColumn;
         $this->yAxisColumn = $yAxisColumn;
-        $this->prepareQueries();
+        $this->prepareQueries()->adjustSorting();
     }
 
     /**
      * Prepare the queries used for the pre processing
+     *
+     * @return  self
      */
     protected function prepareQueries()
     {
@@ -72,6 +74,35 @@ class PivotTable
         $this->yAxisQuery = clone $this->baseQuery;
         $this->yAxisQuery->distinct();
         $this->yAxisQuery->setColumns(array($this->yAxisColumn));
+
+        return $this;
+    }
+
+    /**
+     * Set a default sorting for the x- and y-axis without losing any existing rules
+     *
+     * @return  self
+     */
+    protected function adjustSorting()
+    {
+        $currentOrderColumns = $this->baseQuery->getOrderColumns();
+        $xAxisOrderColumns = array(array($this->baseQuery->getMappedField($this->xAxisColumn), BaseQuery::SORT_ASC));
+        $yAxisOrderColumns = array(array($this->baseQuery->getMappedField($this->yAxisColumn), BaseQuery::SORT_ASC));
+
+        foreach ($currentOrderColumns as $orderInfo) {
+            if ($orderInfo[0] === $xAxisOrderColumns[0][0]) {
+                $xAxisOrderColumns[0] = $orderInfo;
+            } elseif ($orderInfo[0] === $yAxisOrderColumns[0][0]) {
+                $yAxisOrderColumns[0] = $orderInfo;
+            } else {
+                $xAxisOrderColumns[] = $orderInfo;
+                $yAxisOrderColumns[] = $orderInfo;
+            }
+        }
+
+        $this->xAxisQuery->setOrderColumns($xAxisOrderColumns);
+        $this->yAxisQuery->setOrderColumns($yAxisOrderColumns);
+        return $this;
     }
 
     /**

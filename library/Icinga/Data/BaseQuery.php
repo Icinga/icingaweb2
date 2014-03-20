@@ -275,6 +275,16 @@ abstract class BaseQuery implements Filterable
     }
 
     /**
+     * Set the columns used for ordering
+     *
+     * @param   array   $orderColumns
+     */
+    public function setOrderColumns(array $orderColumns)
+    {
+        $this->orderColumns = $orderColumns;
+    }
+
+    /**
      * Determine the default sort direction constant for the given column
      *
      * @param  String $col      The column to get the sort direction for
