@@ -45,12 +45,8 @@ class Monitoring_TimelineController extends ActionController
     {
         $this->setupIntervalBox();
         $timeline = new TimeLine();
-        $timeline->setName('Timeline');
-        $timeline->setRequest($this->_request);
         $timeline->setConfiguration(Config::app());
-        $timeline->buildForm(); // Necessary in order to populate request parameters
-        $timeline->populate($this->_request->getParams());
-        $timeline->setAttrib('data-icinga-component', 'monitoring/timelineComponent');
+        //$timeline->setAttrib('data-icinga-component', 'monitoring/timelineComponent');
         list($displayRange, $forecastRange) = $this->buildTimeRanges($this->getTimelineInterval());
         $timeline->setTimeRange($displayRange);
         $timeline->setDisplayData($this->loadData($displayRange));
@@ -62,7 +58,6 @@ class Monitoring_TimelineController extends ActionController
     {
         $this->setupIntervalBox();
         $timeline = new TimeLine();
-        $timeline->setRequest($this->_request);
         $timeline->setConfiguration(Config::app());
         list($displayRange, $forecastRange) = $this->buildTimeRanges($this->getTimelineInterval());
         $timeline->setTimeRange($displayRange);

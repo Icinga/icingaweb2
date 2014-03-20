@@ -29,17 +29,11 @@
 namespace Icinga\Module\Monitoring\Timeline;
 
 use \Zend_Config;
-use \DateInterval;
-use \Zend_View_Interface;
-use Icinga\Web\Form;
-use Icinga\Web\Form\Element\Note;
 
 /**
  * Represents a set of events in a specific time range
- *
- * @see Form
  */
-class TimeLine extends Form
+class TimeLine
 {
     /**
      * The range of time represented by this timeline
@@ -131,53 +125,6 @@ class TimeLine extends Form
     }
 
     /**
-     * Disable the CSRF token
-     */
-    public function init()
-    {
-        $this->setTokenDisabled();
-    }
-
-    /**
-     * Render the form and timeline to HTML
-     *
-     * @param   Zend_View_Interface     $view
-     * @return  string
-     */
-    public function render(Zend_View_Interface $view = null)
-    {
-        $this->buildForm();
-        $this->postCreate();
-        return parent::render($view);
-    }
-
-    /**
-     * Add timeline elements
-     */
-    private function postCreate()
-    {
-        $timeline = new Note(
-            'timeline',
-            array(
-                'value' => '<div id="timeline">' . $this->buildTimeline() . '</div>'
-            )
-        );
-        $this->addElement($timeline); // Form::addElement adjusts the element's decorators
-        $timeline->clearDecorators();
-        $timeline->addDecorator('ViewHelper');
-
-        $legend = new Note(
-            'legend',
-            array(
-                'value' => '<div id="timelineLegend">' . $this->buildLegend() . '</div>'
-            )
-        );
-        $this->addElement($legend);
-        $legend->clearDecorators();
-        $legend->addDecorator('ViewHelper');
-    }
-
-    /**
      * Build the legend
      */
     private function buildLegend()
@@ -213,7 +160,7 @@ class TimeLine extends Form
     /**
      * Build the timeline
      */
-    private function buildTimeline()
+    public function buildTimeline()
     {
         $timelineGroups = array();
         foreach ($this->displayData as $group) {
@@ -261,8 +208,8 @@ class TimeLine extends Form
                 }
             }
 
-            $timeframeUrl = $this->getRequest()->getBaseUrl() . '/monitoring/list/eventhistory?timestamp<=' .
-                            $timeframe->start->getTimestamp() . '&timestamp>=' . $timeframe->end->getTimestamp();
+            $timeframeUrl = '';/*$this->getRequest()->getBaseUrl() . '/monitoring/list/eventhistory?timestamp<=' .
+                            $timeframe->start->getTimestamp() . '&timestamp>=' . $timeframe->end->getTimestamp();*/
             $elements[] = sprintf(
                 '<div class="row" style="height:%3$s%2$s;">%1$s</div>',
                 implode('', $elementGroups),
@@ -318,18 +265,18 @@ class TimeLine extends Form
                 )
             );
 
-            $this->calculationBase = $this->getRequest()->getParam('calculationBase', 1);
+            $this->calculationBase = 1;//$this->getRequest()->getParam('calculationBase', 1);
             while (log($highestValue, $this->calculationBase) > 100) {
                 $this->calculationBase += 0.01;
             }
 
-            $this->addElement(
+            /*$this->addElement(
                 'hidden',
                 'calculationBase',
                 array(
                     'value' => $this->calculationBase
                 )
-            );
+            );*/
         }
 
         return intval($this->circleDiameter * (log($eventCount, $this->calculationBase) / 100));
@@ -395,6 +342,16 @@ class TimeLine extends Form
         }
     }
 
+    public function setConfiguration($config)
+    {
+        $this->config = $config;
+    }
+
+    public function getConfiguration()
+    {
+        return $this->config;
+    }
+
     /**
      * Get the application's global configuration or an empty one
      *
@@ -419,6 +376,7 @@ class TimeLine extends Form
      */
     private function getTimeFormat()
     {
+        return 'g:i A';
         $globalConfig = $this->getGlobalConfiguration();
         $preferences = $this->getUserPreferences();
         return $preferences->get('app.timeFormat', $globalConfig->get('timeFormat', 'g:i A'));
@@ -431,6 +389,7 @@ class TimeLine extends Form
      */
     private function getDateFormat()
     {
+        return 'd/m/Y';
         $globalConfig = $this->getGlobalConfiguration();
         $preferences = $this->getUserPreferences();
         return $preferences->get('app.dateFormat', $globalConfig->get('dateFormat', 'd/m/Y'));
