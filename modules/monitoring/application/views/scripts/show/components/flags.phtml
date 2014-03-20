@@ -11,7 +11,7 @@ $data = array(
 ?>
   <tr>
     <th>Passive Checks</th>
-    <td><?= $cf->toggleSubmitForm(
+    <td data-base-target="_self"><?= $cf->toggleSubmitForm(
         '',
         $o->passive_checks_enabled,
         'startacceptingpassivechecks',
@@ -22,7 +22,7 @@ $data = array(
   </tr>
   <tr>
     <th>Active Checks</th>
-    <td><?= $cf->toggleSubmitForm(
+    <td data-base-target="_self"><?= $cf->toggleSubmitForm(
         '',
         $o->active_checks_enabled,
         'enableactivechecks',
@@ -33,7 +33,7 @@ $data = array(
   </tr>
   <tr>
     <th>Notifications</th>
-    <td><?= $cf->toggleSubmitForm(
+    <td data-base-target="_self"><?= $cf->toggleSubmitForm(
         '',
         $o->notifications_enabled,
         'enablenotifications',
@@ -44,7 +44,7 @@ $data = array(
   </tr>
   <tr>
     <th>Event Handler</th>
-    <td><?= $cf->toggleSubmitForm(
+    <td data-base-target="_self"><?= $cf->toggleSubmitForm(
         '',
         $o->event_handler_enabled,
         'enableeventhandler',
@@ -55,7 +55,7 @@ $data = array(
   </tr>
   <tr>
     <th>Flap Detection</th>
-    <td><?= $cf->toggleSubmitForm(
+    <td data-base-target="_self"><?= $cf->toggleSubmitForm(
         '',
         $o->flap_detection_enabled,
         'enableflapdetection',
@@ -66,7 +66,7 @@ $data = array(
   </tr>
   <tr>
     <th>Obsessing</th>
-    <td><?= $cf->toggleSubmitForm(
+    <td data-base-target="_self"><?= $cf->toggleSubmitForm(
         '',
         $o->obsessing,
         'startobsessing',

@@ -21,7 +21,7 @@ if ($object->service_description) {
 if ($object instanceof Host && $object->host_acknowledged
     || $object instanceof Service && $object->service_acknowledged): ?>
   <th>Issue acknowledged</th>
-  <td><?= $cf->labelSubmitForm(
+  <td data-base-target="_self"><?= $cf->labelSubmitForm(
         'Remove Acknowledgement',
         'Remove problem acknowledgement',
         'link-like',
@@ -34,7 +34,7 @@ if ($object instanceof Host && $object->host_acknowledged
     <a href="<?= $this->href(
         'monitoring/command/acknowledgeproblem',
         $data
-    ) ?>"><?= $this->icon('acknowledgement_petrol.png') ?> Acknowledge now</a>
+    ) ?>"><?= $this->icon('acknowledgement_petrol.png') ?> Acknowledge</a>
   </td>
 <?php endif ?>
 </tr>
