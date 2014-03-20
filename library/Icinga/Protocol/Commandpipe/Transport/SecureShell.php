@@ -29,9 +29,9 @@
 
 namespace Icinga\Protocol\Commandpipe\Transport;
 
-use \RuntimeException;
-use \Zend_Config;
-use \Icinga\Logger\Logger;
+use RuntimeException;
+use Zend_Config;
+use Icinga\Logger\Logger;
 
 /**
  * Command pipe transport class that uses ssh for connecting to a remote filesystem with the icinga.cmd pipe
@@ -103,24 +103,18 @@ class SecureShell implements Transport
             $this->path
         );
         $hostConnector = $this->user ? $this->user . "@" . $this->host : $this->host;
-        exec(
-            'ssh -o BatchMode=yes -o KbdInteractiveAuthentication=no'
-            . $hostConnector.' -p'.$this->port.' "echo \'['. time() .'] '
-            . escapeshellcmd(
-                $command
-            )
-            . '\' > '.$this->path.'" > /dev/null 2> /dev/null & ',
-            $output,
-            $retCode
+        $command = escapeshellarg('['. time() .'] ' . $command);
+        $sshCommand = sprintf(
+            'ssh -o BatchMode=yes -o KbdInteractiveAuthentication=no %s -p %d'
+          . ' "echo %s > %s" 2>&1',
+            $hostConnector,
+            $this->port,
+            $command,
+            $this->path
         );
-        Logger::debug(
-            'ssh '.$hostConnector.' -p'.$this->port.' "echo \'['. time() .'] '
-            . escapeshellcmd(
-                $command
-            )
-            . '\' > '.$this->path.'"'
-        );
-        Logger::debug("Return code %s: %s ", $retCode, $output);
+
+        exec($sshCommand, $output, $retCode);
+        Logger::debug("Command '%s' exited with %d: %s", $sshCommand, $retCode, $output);
 
         if ($retCode != 0) {
             $msg =  'Could not send command to remote Icinga host: '
