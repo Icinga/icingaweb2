@@ -130,10 +130,10 @@ class TimeRange implements Iterator
     {
         foreach ($this as $timeframeIdentifier => $timeframe) {
             if ($this->negative) {
-                if ($dateTime <= $timeframe->start && $dateTime > $timeframe->end) {
+                if ($dateTime <= $timeframe->start && $dateTime >= $timeframe->end) {
                     return $asTimestamp ? $timeframeIdentifier : $timeframe;
                 }
-            } elseif ($dateTime >= $timeframe->start && $dateTime < $timeframe->end) {
+            } elseif ($dateTime >= $timeframe->start && $dateTime <= $timeframe->end) {
                 return $asTimestamp ? $timeframeIdentifier : $timeframe;
             }
         }
