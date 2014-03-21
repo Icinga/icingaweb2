@@ -29,11 +29,11 @@ foreach ($object->comments as $comment) {
     );
 
     $list[] = sprintf(
-        "<br />%s [%s] %s (%s): %s\n",
-        $iconForm,
+        '<tr><th>%s (%s)</th><td>%s (%s) %s</td></tr>',
         $this->escape($comment->author),
         $this->timeSince($comment->timestamp),
-        $comment->type,
+        $iconForm,
+        ucfirst($comment->type),
         $text
     );
 }
@@ -43,6 +43,6 @@ foreach ($object->comments as $comment) {
     <th><?= $this->translate('Comments') ?></th>
     <td>
         <a href="<?= $this->href('monitoring/command/addComment', $data) ?>"><?= $this->icon('comment_petrol.png') ?> <?= $this->translate('Add comment') ?></a>
-        <?= implode('', $list) ?>
     </td>
 </tr>
+<?= implode("\n", $list) ?>

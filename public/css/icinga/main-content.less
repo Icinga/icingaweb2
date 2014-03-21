@@ -58,7 +58,7 @@ a {
 }
 
 table.avp {
-  table-layout: fixed;
+  table-layout: auto;
   width: 100%;
   font-size: 0.9em;
 }
@@ -83,6 +83,10 @@ table.avp > tbody > tr > td {
   word-break: break-all;
   vertical-align: top;
   padding: 0em 0em 0em 0.5em;
+}
+
+table.avp.newsection, table.avp tr.newsection {
+  border-top: 1px solid #555;
 }
 
 .content table.avp dd, .content table.avp dd {

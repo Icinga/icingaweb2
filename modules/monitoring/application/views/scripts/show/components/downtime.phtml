@@ -32,12 +32,14 @@ foreach ($object->downtimes as $downtime) {
         $deleteData
     );
 
+    $text = $this->escape($downtime->comment);
+
     $list[] = sprintf(
-        "<br />%s [%s] (%s): %s\n",
-        $iconForm,
+        '<tr><th>%s</th><td>%s %s: %s</td></tr>',
         $this->escape($downtime->author),
+        $iconForm,
         $state,
-        $this->escape($downtime->comment)
+        $text
     );
 }
 
@@ -46,6 +48,6 @@ foreach ($object->downtimes as $downtime) {
   <th><?= $this->translate('Downtimes') ?></th>
   <td>
     <a href="<?= $this->href('monitoring/command/scheduleDowntime', $data) ?>"><?= $this->icon('in_downtime_petrol.png') ?> <?= $this->translate('Schedule downtime') ?></a>
-    <?= implode('', $list) ?>
   </td>
 </tr>
+<?= implode("\n", $list) ?>

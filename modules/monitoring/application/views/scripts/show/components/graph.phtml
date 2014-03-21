@@ -1,0 +1,49 @@
+<?php
+
+if (! $object->customvars || ! $object->customvars['GRAPHITEPREFIX']) { return; }
+
+//    [GRAPHITEPOSTFIX] => win-mem physical
+//    [GRAPHITEPREFIX] => monitoring.icinga-private-demo
+// Graphitepostfix	all-ping
+// Graphiteprefix	monitoring.icinga-private-demo
+
+/*
+
+  
+  monitoring.icinga-private-demo.
+  
+  c1-dns-1
+  
+  .all-ping.
+  
+  rta
+  
+*/
+
+$host = 'graphite.demo.netways.de';
+$width = 450;  // 586
+$height = 100; // 308
+$objectName = $object->host_name;
+if ($object->service_description) {
+    $objectName .= '.' . $object->service_description;
+}
+
+$target = sprintf(
+  '%s.%s.%s.%s',
+  $object->customvars['GRAPHITEPREFIX'],
+  $object->host_name,
+  $object->customvars['GRAPHITEPOSTFIX'],
+  '*' // 'rta'
+);
+// hideAxes=false&hideYAxis=false&hideGrid=false&uniqueLegend=true&hideLegend=true
+echo sprintf(
+  '<img src="http://%s/render/?width=%d&height=%d&_salt=%d&target=%s&lineMode=connected&graphOnly=false&lineWidth=1&from=-36hours&hideLegend=true&hideGrid=true&xFormat=%%25a+%%25H%%3A%%25M" height="%d" width="%d" />',
+  $host,
+  $width,
+  $height,
+  time(),
+  urlencode($target),
+  $height,
+  $width
+);
+  
