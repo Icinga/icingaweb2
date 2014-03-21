@@ -472,7 +472,7 @@ abstract class BaseQuery implements Filterable
             Node::createOperatorNode($splitted[0], $splitted[1], is_string($parameter));
             return Node::createOperatorNode(Node::OPERATOR_EQUALS, $splitted[0], $parameter);
         } elseif (count($splitted) === 3) {
-            if (trim($splitted[2]) === '?' && is_string($parameter)) {
+            if (trim($splitted[2]) === '?') {
                 return Node::createOperatorNode($splitted[1], $splitted[0], $parameter);
             } else {
                 return Node::createOperatorNode($splitted[1], $splitted[0], $splitted[2]);

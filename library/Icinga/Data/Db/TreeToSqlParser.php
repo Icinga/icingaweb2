@@ -168,7 +168,7 @@ class TreeToSqlParser
             if ($this->query->isTimestamp($node->left)) {
                 $node->context = Node::CONTEXT_TIMESTRING;
             }
-            if ($node->context === Node::CONTEXT_TIMESTRING) {
+            if ($node->context === Node::CONTEXT_TIMESTRING && !is_numeric($value)) {
                 $value = strtotime($value);
             }
             $values[] = $this->query->getDatasource()->getConnection()->quote($value);
