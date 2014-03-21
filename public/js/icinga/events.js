@@ -257,15 +257,7 @@
                 $target = $container;
             }
 
-            // ...the only exception are class="action" tables...
-            if ($el.closest('table.action').length) {
-                if ($el.closest('#col2').length) {
-                    this.icinga.ui.moveToLeft();
-                }
-                $target = $('#col2');
-            }
-
-            // ...and you can of course override the default behaviour:
+            // You can of course override the default behaviour:
             if ($el.closest('[data-base-target]').length) {
                 targetId = $el.closest('[data-base-target]').data('baseTarget');
 
