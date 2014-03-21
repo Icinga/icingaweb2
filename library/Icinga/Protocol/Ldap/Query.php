@@ -313,8 +313,8 @@ class Query
     protected function render()
     {
         $parts = array();
-        if ($this->filters['objectClass'] === null) {
-            throw new Exception('Object class is mandatory');
+        if (! isset($this->filters['objectClass']) || $this->filters['objectClass'] === null) {
+            // throw new Exception('Object class is mandatory');
         }
         foreach ($this->filters as $key => $value) {
             $parts[] = sprintf(
@@ -323,7 +323,11 @@ class Query
                 LdapUtils::quoteForSearch($value, true)
             );
         }
-        return '(&(' . implode(')(', $parts) . '))';
+        if (count($parts) > 1) {
+            return '(&(' . implode(')(', $parts) . '))';
+        } else {
+            return '(' . $parts[0] . ')';
+        }
     }
 
     /**
