@@ -416,19 +416,19 @@
         },
 
         getWindowId: function () {
-            var res = window.name.match(/^Icinga_([a-zA-Z0-9])$/);
-            if (res) {
-                return res[1];
+            if (! this.hasWindowId()) {
+                return undefined;
             }
-            return null;
+            return window.name.match(/^Icinga_([a-zA-Z0-9]+)$/)[1];
         },
 
         hasWindowId: function () {
-            var res = window.name.match(/^Icinga_([a-zA-Z0-9])$/);
-            return typeof res === 'object';
+            var res = window.name.match(/^Icinga_([a-zA-Z0-9]+)$/);
+            return typeof res === 'object' && null !== res;
         },
 
         setWindowId: function (id) {
+            this.icinga.logger.debug('Setting new window id', id);
             window.name = 'Icinga_' + id;
         },
 

@@ -68,6 +68,8 @@ class ActionController extends Zend_Controller_Action
 
     private $noXhrBody = false;
 
+    private $windowId;
+
     // TODO: This would look better if we had a ModuleActionController
     public function Config($file = null)
     {
@@ -111,7 +113,12 @@ class ActionController extends Zend_Controller_Action
 
         // when noInit is set (e.g. for testing), authentication and init is skipped
         if (isset($invokeArgs['noInit'])) {
+            // TODO: Find out whether this still makes sense?
             return;
+        }
+
+        if ($this->_request->isXmlHttpRequest()) {
+            $this->windowId = $this->_request->getHeader('X-Icinga-WindowId', null);
         }
 
         if ($this->requiresLogin() === false) {
@@ -125,6 +132,21 @@ class ActionController extends Zend_Controller_Action
             }
             $this->redirectToLogin($url);
         }
+    }
+
+    protected function getWindowId()
+    {
+        if ($this->windowId === null) {
+            return 'undefined';
+        }
+        return $this->windowId;
+    }
+
+    protected function generateWindowId()
+    {
+        $letters = 'abcefghijklmnopqrstuvwxyz';
+        $this->windowId = substr(str_shuffle($letters), 0, 12);
+        return $this->windowId;
     }
 
     /**
@@ -326,6 +348,10 @@ class ActionController extends Zend_Controller_Action
         if ($isXhr && $this->noXhrBody) {
             header('X-Icinga-Container: ignore');
             return;
+        }
+
+        if ($isXhr && $this->getWindowId() === 'undefined') {
+            header('X-Icinga-WindowId: ' . $this->generateWindowId());
         }
 
         if ($this->view->title) {
