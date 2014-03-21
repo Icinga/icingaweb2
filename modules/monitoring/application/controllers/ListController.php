@@ -80,6 +80,18 @@ class Monitoring_ListController extends Controller
 		$this->view->compact = ($this->_request->getParam('view') === 'compact');
     }
 
+    protected function extraColumns()
+    {
+        $columns = preg_split(
+            '~,~',
+            $this->_request->getParam('addcolumns', ''),
+            -1,
+            PREG_SPLIT_NO_EMPTY
+        );
+        $this->view->extraColumns = $columns;
+        return $columns;
+    }
+
     /**
      * Overwrite the backend to use (used for testing)
      *
@@ -458,7 +470,6 @@ class Monitoring_ListController extends Controller
         $this->view->history = $query->paginate();
     }
 
-    // TODO: Should be able to identify hosts that have not a single service (without compromising the pagination)
     public function servicematrixAction()
     {
         $this->view->title = 'Servicematrix';
@@ -505,6 +516,64 @@ class Monitoring_ListController extends Controller
                 }
             }
         }
+        return $query;
+    }
+
+    /**
+     * Retrieve services from either given parameters or request
+     *
+     * @param   array $params
+     *
+     * @return  \Zend_Paginator
+     */
+    protected function fetchServices(array $params = null)
+    {
+        $columns = array_merge(array(
+            'host_name',
+            'host_state',
+            'host_state_type',
+            'host_last_state_change',
+            'host_address',
+            'host_handled',
+            'service_description',
+            'service_display_name',
+            'service_state',
+            'service_in_downtime',
+            'service_acknowledged',
+            'service_handled',
+            'service_output',
+            'service_perfdata',
+            'service_attempt',
+            'service_last_state_change',
+            'service_icon_image',
+            // 'service_long_output',
+            'service_is_flapping',
+            'service_state_type',
+            'service_handled',
+            'service_severity',
+            'service_last_check',
+            'service_notifications_enabled',
+            'service_action_url',
+            'service_notes_url',
+            // 'service_last_comment',
+            'service_active_checks_enabled',
+            'service_passive_checks_enabled',
+            'current_check_attempt' => 'service_current_check_attempt',
+            'max_check_attempts'    => 'service_max_check_attempts'
+        ), $this->extraColumns());
+        if ($params === null) {
+            $query = ServiceStatusView::fromRequest(
+                $this->_request,
+                $columns
+            )->getQuery();
+        } else {
+            $params['backend'] = $this->_request->getParam('backend');
+            $query = ServiceStatusView::fromParams(
+                $params,
+                $columns
+            )->getQuery();
+        }
+        $this->handleFormatRequest($query);
         return $query;
     }
 

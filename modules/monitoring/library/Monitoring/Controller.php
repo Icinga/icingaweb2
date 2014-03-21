@@ -49,64 +49,6 @@ class Controller extends ActionController
      */
     protected $compactView;
 
-    /**
-     * Retrieve services from either given parameters or request
-     *
-     * @param   array $params
-     *
-     * @return  \Zend_Paginator
-     */
-    protected function fetchServices(array $params = null)
-    {
-        $columns = array(
-            'host_name',
-            'host_state',
-            'host_state_type',
-            'host_last_state_change',
-            'host_address',
-            'host_handled',
-            'service_description',
-            'service_display_name',
-            'service_state',
-            'service_in_downtime',
-            'service_acknowledged',
-            'service_handled',
-            'service_output',
-            'service_perfdata',
-            'service_attempt',
-            'service_last_state_change',
-            'service_icon_image',
-            // 'service_long_output',
-            'service_is_flapping',
-            'service_state_type',
-            'service_handled',
-            'service_severity',
-            'service_last_check',
-            'service_notifications_enabled',
-            'service_action_url',
-            'service_notes_url',
-            // 'service_last_comment',
-            'service_active_checks_enabled',
-            'service_passive_checks_enabled',
-            'current_check_attempt' => 'service_current_check_attempt',
-            'max_check_attempts'    => 'service_max_check_attempts'
-        );
-        if ($params === null) {
-            $query = ServiceStatusView::fromRequest(
-                $this->_request,
-                $columns
-            )->getQuery();
-        } else {
-            $params['backend'] = $this->_request->getParam('backend');
-            $query = ServiceStatusView::fromParams(
-                $params,
-                $columns
-            )->getQuery();
-        }
-        $this->handleFormatRequest($query);
-        return $query;
-    }
-
     protected function handleFormatRequest($query)
     {
         if ($this->compactView !== null && ($this->_getParam('view', false) === 'compact')) {
