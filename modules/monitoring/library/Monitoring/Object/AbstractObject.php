@@ -1,5 +1,12 @@
 <?php
 
+/*
+CREATE INDEX tgelf_comments ON icinga_comments (object_id, comment_type, comment_time);
+
+CREATE INDEX tgelf_scheduleddowntime ON icinga_scheduleddowntime (object_id, is_in_effect, scheduled_start_time);
+
+*/
+
 namespace Icinga\Module\Monitoring\Object;
 
 use Icinga\Module\Monitoring\DataView\Contact;
@@ -87,6 +94,7 @@ abstract class AbstractObject
         if ($this->type === 'service') {
             $query->where('downtime_service', $this->service_description);
         }
+        $query->order('downtime_is_in_effect', 'DESC')->order('downtime_scheduled_start', 'ASC');
 
         $this->downtimes = $query->fetchAll();
         return $this;
@@ -97,14 +105,15 @@ abstract class AbstractObject
 
     public function fetchHostgroups()
     {
-        $this->hostgroups = Hostgroup::fromRequest(
+        $query = Hostgroup::fromRequest(
             $this->request,
             array(
                 'hostgroup_name',
                 'hostgroup_alias'
             )
-        )->getQuery()->fetchPairs();
+        )->getQuery();
 
+        $this->hostgroups = $query->fetchPairs();
         return $this;
     }
 
@@ -133,7 +142,7 @@ abstract class AbstractObject
 
     public function fetchContacts()
     {
-        $this->contacts = Contact::fromRequest(
+        $query = Contact::fromRequest(
             $this->request,
             array(
                 'contact_name',
@@ -142,39 +151,44 @@ abstract class AbstractObject
                 'contact_pager',
             )
         )->getQuery()
-            ->where('host_name', $this->host_name)
-            ->fetchAll();
+            ->where('host_name', $this->host_name);
+
+        $this->contacts = $query->fetchAll();
         return $this;
     }
 
     public function fetchServicegroups()
     {
-        $this->servicegroups = Servicegroup::fromRequest(
+        $query = Servicegroup::fromRequest(
             $this->request,
             array(
                 'servicegroup_name',
                 'servicegroup_alias',
             )
-        )->getQuery()->fetchPairs();
+        )->getQuery();
+
+        $this->servicegroups = $query->fetchPairs();
         return $this;
     }
 
     public function fetchContactgroups()
     {
-        $this->contactgroups = Contactgroup::fromRequest(
+        $query = Contactgroup::fromRequest(
             $this->request,
             array(
                 'contactgroup_name',
                 'contactgroup_alias'
             )
-        )->getQuery()->fetchAll();
+        )->getQuery();
+
+        $this->contactgroups = $query->fetchAll();
 
         return $this;
     }
 
     public function fetchEventHistory()
     {
-        $this->eventhistory = EventHistory::fromRequest(
+        $query = EventHistory::fromRequest(
             $this->request,
             array(
                 'object_type',
@@ -188,6 +202,8 @@ abstract class AbstractObject
                 'type'
             )
         )->sort('raw_timestamp', 'DESC')->getQuery();
+
+        $this->eventhistory = $query;
         return $this;
     }
 
