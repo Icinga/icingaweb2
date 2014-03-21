@@ -22,7 +22,7 @@ class CustomvarQuery extends IdoQuery
     protected function joinBaseTables()
     {
         $this->baseQuery = $this->db->select()->from(
-            array('cvs' => $this->prefix . 'customvariables'),
+            array('cvs' => $this->prefix . 'customvariablestatus'),
             array()
         )->join(
             array('cvo' => $this->prefix . 'objects'),
