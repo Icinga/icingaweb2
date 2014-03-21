@@ -13,7 +13,7 @@ Sort by <?= $this->sortControl ?>
 
 <div class="content">
 <?php endif ?>
-<table class="action multiselect<?php if ($this->compact): ?> compact<?php endif ?>">
+<table class="action multiselect<?php if ($this->compact): ?> compact<?php endif ?>" style="table-layout: auto;">
   <tbody>
 <?php
 
@@ -86,6 +86,9 @@ foreach ($services as $service):
 </a><?php endif ?><br />
         <p class="pluginoutput"><?= $this->escape(substr(strip_tags($service->service_output), 0, 10000)); ?></p>
       </td>
+<?php foreach($this->extraColumns as $col): ?>
+      <td><?= $this->escape($service->$col) ?></td>
+<?php endforeach ?>
     </tr>
 <?php endforeach ?>
   </tbody>
