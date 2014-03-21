@@ -3,5 +3,5 @@
 <h1>All services configured on this host</h1>
 </div>
 <div class="content">
-<?= $services ?>
+<?= preg_replace('~<table data-base-target="_next"~', '<table data-base-target="_self"', $services) /* TODO: find an elegant solution for this */ ?>
 </div>
