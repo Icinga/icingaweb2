@@ -583,6 +583,13 @@ file { '/var/www/html/icingaweb/css':
   group     => 'apache',
 }
 
+file { '/var/www/html/icingaweb/svg':
+  ensure    => 'link',
+  target    => '/vagrant/public/svg',
+  owner     => 'apache',
+  group     => 'apache',
+}
+
 file { '/var/www/html/icingaweb/img':
   ensure    => 'link',
   target    => '/vagrant/public/img',
