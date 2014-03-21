@@ -1,0 +1,14 @@
+<div class="controls">
+<h1>Module documentations</h1>
+</div>
+<div class="content" data-base-target="_next">
+<?= $this->partial(
+    'layout/menu.phtml',
+    'default',
+    array(
+        'items' => $toc->getChildren(),
+        'sub'   => false,
+        'url'   => ''
+    )
+) ?>
+</div>

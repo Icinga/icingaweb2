@@ -4,14 +4,14 @@
 
 namespace Icinga\Module\Doc;
 
-require_once 'vendor/Parsedown/Parsedown.php';
-
-use \RecursiveIteratorIterator;
-use \RecursiveDirectoryIterator;
-use \Parsedown;
+use RecursiveIteratorIterator;
+use RecursiveDirectoryIterator;
+use Parsedown;
 use Icinga\Application\Icinga;
 use Icinga\Web\Menu;
 use Icinga\Web\Url;
+
+require_once 'vendor/Parsedown/Parsedown.php';
 
 /**
  * Parser for documentation written in Markdown
@@ -119,7 +119,7 @@ class DocParser
                         'level' => $level,
                         'item'  => $item
                     ));
-                    $line = '<span id="' . $id . '"></span>' . PHP_EOL . $line;
+                    $line = '<a name="' . $id . '"></a>' . PHP_EOL . $line;
                 }
                 $cat[] = $line;
             }
