@@ -1,29 +1,5 @@
 <?php
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga 2 Web.
- *
- * Icinga 2 Web - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright 2013 Icinga Development Team <info@icinga.org>
- * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author    Icinga Development Team <info@icinga.org>
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Module\Monitoring\Timeline;
@@ -41,42 +17,49 @@ class TimeEntry
      *
      * @var string
      */
-    private $name;
+    protected $name;
 
     /**
      * The amount of events that are part of this group
      *
      * @var int
      */
-    private $value;
+    protected $value;
 
     /**
      * The date and time of this group
      *
      * @var DateTime
      */
-    private $dateTime;
+    protected $dateTime;
 
     /**
      * The url to this group's detail view
      *
      * @var string
      */
-    private $detailUrl;
+    protected $detailUrl;
 
     /**
      * The weight of this group
      *
      * @var float
      */
-    private $weight = 1.0;
+    protected $weight = 1.0;
+
+    /**
+     * The label of this group
+     *
+     * @var string
+     */
+    protected $label;
 
     /**
      * The color of this group
      *
      * @var string
      */
-    private $color;
+    protected $color;
 
     /**
      * Return a new TimeEntry object with the given attributes being set
@@ -136,12 +119,11 @@ class TimeEntry
     /**
      * Return the amount of events in this group
      *
-     * @param   bool    $raw    Whether to ignore the set weight
      * @return  int
      */
-    public function getValue($raw = false)
+    public function getValue()
     {
-        return $raw ? $this->value : $this->value * $this->weight;
+        return $this->value;
     }
 
     /**
@@ -202,6 +184,26 @@ class TimeEntry
     public function getWeight()
     {
         return $this->weight;
+    }
+
+    /**
+     * Set this group's label
+     *
+     * @param   string  $label   The label to set
+     */
+    public function setLabel($label)
+    {
+        $this->label = $label;
+    }
+
+    /**
+     * Return the label of this group
+     *
+     * @return  string
+     */
+    public function getLabel()
+    {
+        return $this->label;
     }
 
     /**

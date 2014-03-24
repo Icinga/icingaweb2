@@ -1,47 +1,38 @@
 <?php
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright 2013 Icinga Development Team <info@icinga.org>
- * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author    Icinga Development Team <info@icinga.org>
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Module\Monitoring\Web\Hook;
 
-use \Zend_Controller_Request_Abstract;
 use Icinga\Module\Monitoring\Timeline\TimeRange;
 
 /**
- * Base class for TimeEntry providers
+ * Base class for TimeLine providers
  */
 abstract class TimelineProvider
 {
     /**
-     * Return a set of TimeEntry objects for the given range of time
+     * Return the names by which to group entries
      *
-     * @param   TimeRange                           $range      The range of time for which to fetch entries
-     * @param   Zend_Controller_Request_Abstract    $request    The current request
-     * @return  array
+     * @return  array   An array with the names as keys and their attribute-lists as values
      */
-    abstract public function fetchTimeEntries(TimeRange $range, Zend_Controller_Request_Abstract $request);
+    abstract public function getIdentifiers();
+
+    /**
+     * Return the visible entries supposed to be shown on the timeline
+     *
+     * @param   TimeRange   $range      The range of time for which to fetch entries
+     *
+     * @return  array                   The entries to display on the timeline
+     */
+    abstract public function fetchEntries(TimeRange $range);
+
+    /**
+     * Return the entries supposed to be used to calculate forecasts
+     *
+     * @param   TimeRange   $range      The range of time for which to fetch forecasts
+     *
+     * @return  array                   The entries to calculate forecasts with
+     */
+    abstract public function fetchForecasts(TimeRange $range);
 }

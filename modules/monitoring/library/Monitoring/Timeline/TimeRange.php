@@ -1,29 +1,5 @@
 <?php
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright 2013 Icinga Development Team <info@icinga.org>
- * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author    Icinga Development Team <info@icinga.org>
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Module\Monitoring\Timeline;
@@ -45,35 +21,35 @@ class TimeRange implements Iterator
      *
      * @var DateTime
      */
-    private $start;
+    protected $start;
 
     /**
      * The end of this time range
      *
      * @var DateTime
      */
-    private $end;
+    protected $end;
 
     /**
      * The interval by which this time range is split
      *
      * @var DateInterval
      */
-    private $interval;
+    protected $interval;
 
     /**
      * The current date in the iteration
      *
      * @var DateTime
      */
-    private $current;
+    protected $current;
 
     /**
      * Whether the date iteration is negative
      *
      * @var bool
      */
-    private $negative;
+    protected $negative;
 
     /**
      * Initialize a new time range
@@ -87,6 +63,7 @@ class TimeRange implements Iterator
         $this->interval = $interval;
         $this->start = $start;
         $this->end = $end;
+        $this->negative = $this->start > $this->end;
     }
 
     /**
@@ -140,6 +117,24 @@ class TimeRange implements Iterator
     }
 
     /**
+     * Return whether the given time is within this range of time
+     *
+     * @param   int|DateTime    $time   The timestamp or date and time to check
+     */
+    public function validateTime($time)
+    {
+        if ($time instanceof DateTime) {
+            $dateTime = $time;
+        } else {
+            $dateTime = new DateTime();
+            $dateTime->setTimestamp($time);
+        }
+
+        return ($this->negative && ($dateTime <= $this->start && $dateTime >= $this->end)) ||
+            (!$this->negative && ($dateTime >= $this->start && $dateTime <= $this->end));
+    }
+
+    /**
      * Return the appropriate timeframe for the given timeframe start
      *
      * @param   int|DateTime    $time   The timestamp or date and time for which to return the timeframe
@@ -148,7 +143,7 @@ class TimeRange implements Iterator
     public function getTimeframe($time)
     {
         if ($time instanceof DateTime) {
-            $startTime = $time;
+            $startTime = clone $time;
         } else {
             $startTime = new DateTime();
             $startTime->setTimestamp($time);
@@ -174,7 +169,7 @@ class TimeRange implements Iterator
      * @param   DateTime    $end    The end of the timeframe
      * @return  StdClass
      */
-    private function buildTimeframe(DateTime $start, DateTime $end)
+    protected function buildTimeframe(DateTime $start, DateTime $end)
     {
         $timeframe = new StdClass();
         $timeframe->start = $start;
@@ -188,7 +183,6 @@ class TimeRange implements Iterator
     public function rewind()
     {
         $this->current = clone $this->start;
-        $this->negative = $this->start > $this->end;
     }
 
     /**
