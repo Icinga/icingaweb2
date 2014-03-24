@@ -101,8 +101,11 @@
 
             $(document).on('mouseenter', '.historycolorgrid td', this.historycolorgridHover);
             $(document).on('mouseleave', '.historycolorgrid td', this.historycolorgidUnhover);
+            $(document).on('mouseenter', 'li.dropdown', this.dropdownHover);
+            $(document).on('mouseleave', 'li.dropdown', this.dropdownLeave);
 
             $(document).on('click', '.tree .handle', { self: this }, this.treeNodeToggle);
+
 
             // TBD: a global autocompletion handler
             // $(document).on('keyup', 'form.auto input', this.formChangeDelayed);
@@ -110,7 +113,20 @@
             // $(document).on('change', 'form.auto select', this.submitForm);
         },
 
-        treeNodeToggle: function (event) {
+        dropdownHover: function () {
+            $(this).addClass('hover');
+        },
+
+        dropdownLeave: function () {
+            var $li = $(this);
+            setTimeout(function () {
+                if (! $li.is('li:hover')) {
+                    $li.removeClass('hover');
+                }
+            }, 300);
+        },
+
+        treeNodeToggle: function () {
             var $parent = $(this).closest('li');
             if ($parent.hasClass('collapsed')) {
                 $('li', $parent).addClass('collapsed');
@@ -309,7 +325,9 @@
             $(document).off('click', 'button', this.submitForm);
             $(document).off('change', 'form select.autosubmit', this.submitForm);
             $(document).off('mouseenter', '.historycolorgrid td', this.historycolorgridHover);
-            $(document).off('mouseenter', '.historycolorgrid td', this.historycolorgidUnhover);
+            $(document).off('mouseleave', '.historycolorgrid td', this.historycolorgidUnhover);
+            $(document).off('mouseenter', 'li.dropdown', this.dropdownHover);
+            $(document).off('mouseleave', 'li.dropdown', this.dropdownLeave);
         },
 
         destroy: function() {
