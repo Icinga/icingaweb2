@@ -8,6 +8,9 @@ use Icinga\Web\Form;
 use Icinga\Web\Request;
 use Icinga\Web\Widget\AbstractWidget;
 
+/**
+ * @todo Might be better if this is a generic selection widget.
+ */
 class TimelineIntervalBox extends AbstractWidget
 {
     /**
@@ -67,7 +70,7 @@ class TimelineIntervalBox extends AbstractWidget
         }
 
         if ($request) {
-            return $request->getParam('timelineInterval');
+            return $request->getParam('interval');
         }
     }
 
@@ -85,7 +88,7 @@ class TimelineIntervalBox extends AbstractWidget
         $form->setName($this->name);
         $form->addElement(
             'select',
-            'timelineInterval',
+            'interval',
             array(
                 'label'         => 'Timeline Interval',
                 'multiOptions'  => $this->values,
