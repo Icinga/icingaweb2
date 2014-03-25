@@ -30,7 +30,8 @@
 
 # namespace Icinga\Application\Controllers;
 
-use \Icinga\Web\Controller\ActionController;
+use Icinga\Web\Controller\ActionController;
+use Icinga\Application\Icinga;
 
 /**
  * Application wide controller for displaying exceptions
@@ -50,16 +51,28 @@ class ErrorController extends ActionController
             case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_ROUTE:
             case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_CONTROLLER:
             case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_ACTION:
+                $modules = Icinga::app()->getModuleManager();
+                $path = ltrim($this->_request->get('PATH_INFO'), '/');
+                $path = preg_split('~/~', $path);
+                $path = array_shift($path);
                 $this->getResponse()->setHttpResponseCode(404);
-                $this->view->message = 'Page not found';
+                $this->view->message = $this->translate('Page not found.');
+                if ($modules->hasInstalled($path) && ! $modules->hasEnabled($path)) {
+                    $this->view->message .= ' ' . sprintf(
+                        $this->translate('Enabling the "%s" module might help!'),
+                        $path
+                    );
+                }
+
                 break;
             default:
                 $this->getResponse()->setHttpResponseCode(500);
+                $this->view->title = 'Server error';
                 $this->view->message = $exception->getMessage();
+                if ($this->getInvokeArg('displayExceptions') == true) {
+                    $this->view->stackTrace = $exception->getTraceAsString();
+                }
                 break;
-        }
-        if ($this->getInvokeArg('displayExceptions') == true) {
-            $this->view->stackTrace = $exception->getTraceAsString();
         }
         $this->view->request = $error->request;
     }

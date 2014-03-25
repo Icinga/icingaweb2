@@ -1,7 +1,13 @@
-<h1 class="alert alert-danger"><?= $message ?></h1>
+<?php if ($this->title): ?>
+<div class="controls">
+<h1><?= $this->escape($title) ?></h1>
+</div>
+<?php endif ?>
+<div class="content">
+  <p><strong><?= $this->escape($message) ?></strong></p>
 <?php if (isset($stackTrace)) : ?>
   <hr />
-  <pre><?= $stackTrace ?></pre>
+  <pre><?= $this->escape($stackTrace) ?></pre>
 <?php endif ?>
 <?php if (isset($this->messageBox)) : ?>
   <?= $this->messageBox->render(); ?>
