@@ -29,7 +29,7 @@ foreach ($object->comments as $comment) {
     );
 
     $list[] = sprintf(
-        '<tr><th>%s (%s)</th><td>%s (%s) %s</td></tr>',
+        '<tr><th>%s (%s)</th><td data-base-target="_self">%s (%s) %s</td></tr>',
         $this->escape($comment->author),
         $this->timeSince($comment->timestamp),
         $iconForm,
