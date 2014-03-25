@@ -34,11 +34,11 @@ require_once realpath(__DIR__ . '/../../../../../library/Icinga/Test/BaseTestCas
 use Icinga\Test\BaseTestCase;
 
 // @codingStandardsIgnoreStart
-require_once BaseTestCase::$libDir . '/Session/SessionNamespace.php';
+require_once BaseTestCase::$libDir . '/Web/Session/SessionNamespace.php';
 // @codingStandardsIgnoreEnd
 
 use \Exception;
-use Icinga\Session\SessionNamespace;
+use Icinga\Web\Session\SessionNamespace;
 
 
 class SessionNamespaceTest extends BaseTestCase

@@ -27,8 +27,7 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Session;
-
+namespace Icinga\Web\Session;
 
 /**
  * Base class for handling sessions

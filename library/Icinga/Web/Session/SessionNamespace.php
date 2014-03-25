@@ -27,7 +27,7 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Session;
+namespace Icinga\Web\Session;
 
 use \Exception;
 use \ArrayIterator;

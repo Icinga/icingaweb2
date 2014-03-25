@@ -36,14 +36,15 @@ require_once realpath(__DIR__ . '/../../../../../library/Icinga/Test/BaseTestCas
 use Icinga\Test\BaseTestCase;
 
 // @codingStandardsIgnoreStart
-require_once BaseTestCase::$libDir . '/Session/Session.php';
-require_once BaseTestCase::$libDir . '/Session/PhpSession.php';
-require_once BaseTestCase::$libDir . '/Application/Logger.php';
+require_once BaseTestCase::$libDir . '/Web/Session/SessionNamespace.php';
+require_once BaseTestCase::$libDir . '/Web/Session/Session.php';
+require_once BaseTestCase::$libDir . '/Web/Session/PhpSession.php';
+require_once BaseTestCase::$libDir . '/Logger/Logger.php';
 require_once BaseTestCase::$libDir . '/Exception/ConfigurationError.php';
 require_once 'Zend/Log.php';
 // @codingStandardsIgnoreEnd
 
-use Icinga\Session\PhpSession;
+use Icinga\Web\Session\PhpSession;
 
 class PhpSessionTest extends BaseTestCase
 {

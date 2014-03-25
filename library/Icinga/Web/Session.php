@@ -29,8 +29,8 @@
 
 namespace Icinga\Web;
 
-use Icinga\Session\PhpSession;
-use Icinga\Session\Session as BaseSession;
+use Icinga\Web\Session\PhpSession;
+use Icinga\Web\Session\Session as BaseSession;
 use Icinga\Exception\ProgrammingError;
 
 /**

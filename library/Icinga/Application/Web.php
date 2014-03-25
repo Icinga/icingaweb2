@@ -50,7 +50,7 @@ use Icinga\Web\Request;
 use Icinga\Web\View;
 
 use Icinga\Util\DateTimeFactory;
-use Icinga\Session\Session as BaseSession;
+use Icinga\Web\Session\Session as BaseSession;
 use Icinga\Web\Session;
 use Icinga\Util\Translator;
 

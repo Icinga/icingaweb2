@@ -27,7 +27,7 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Session;
+namespace Icinga\Web\Session;
 
 use Icinga\Logger\Logger;
 use \Icinga\Exception\ConfigurationError;

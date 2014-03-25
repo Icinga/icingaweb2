@@ -32,7 +32,7 @@ namespace Tests\Icinga\Authentication;
 require_once("../../library/Icinga/Session/SessionNamespace.php");
 require_once("../../library/Icinga/Session/Session.php");
 
-use Icinga\Session\Session;
+use Icinga\Web\Session\Session;
 
 class SessionMock extends Session
 {
@@ -70,6 +70,10 @@ class SessionMock extends Session
     }
 
     public function purge()
+    {
+    }
+
+    public function refreshId()
     {
     }
 }
