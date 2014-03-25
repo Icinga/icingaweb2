@@ -171,7 +171,9 @@
 
             // .closest is not required unless subelements to trigger this
             var $form = $(event.currentTarget).closest('form');
-            var url = $form.attr('action').replace('&amp;', '&'); // WHY??
+
+            var regex = new RegExp('&amp;', 'g');
+            var url = $form.attr('action').replace(regex, '&'); // WHY??
             var method = $form.attr('method');
             var $target;
             var data = $form.serializeArray();
