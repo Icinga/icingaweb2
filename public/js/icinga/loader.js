@@ -235,6 +235,7 @@
 
             var $resp = $(req.responseText);
             var active = false;
+            var rendered = false;
 
             if (! req.autorefresh) {
                 // TODO: Hook for response/url?
@@ -329,29 +330,29 @@
                 req.$target.removeClass('impact');
             }
 
-            // Handle search requests, still hardcoded
-            if (req.url === '/search' &&
-                req.$target.data('icingaUrl') === '/search')
+            // Handle search requests, still hardcoded.
+            if (req.url.match(/^\/search/) &&
+                req.$target.data('icingaUrl').match(/^\/search/))
             {
                 // TODO: We need dashboard pane and container identifiers (not ids)
                 var targets = [];
-                $('.dashboard .container').each(function (idx, el) {
+                $('.dashboard .container', req.$target).each(function (idx, el) {
                     targets.push($(el));
                 });
 
                 var i = 0;
-                $('.dashboard .container', $resp).each(function (idx, el) {
+                // Searching for '.dashboard .container' in $resp doesn't dork?!
+                $('.container', $resp).each(function (idx, el) {
                     var $el = $(el);
                     var url = $el.data('icingaUrl');
                     targets[i].data('icingaUrl', url);
-
                     var title = $('h1', $el).first();
                     $('h1', targets[i]).first().replaceWith(title);
 
                     self.loadUrl(url, targets[i]);
                     i++;
                 });
-                return;
+                rendered = true;
             }
 
             req.$target.data('icingaUrl', req.url);
@@ -386,6 +387,10 @@
                     el = null;
                   });
             */
+
+            if (rendered) {
+                return;
+            }
 
             this.renderContentToContainer($resp, req.$target);
             if (url.match(/#/)) {
@@ -427,10 +432,9 @@
                     this.icinga.ui.fixControls();
                 }
             } else if (req.status > 0) {
-                this.icinga.logger.debug(req.responseText.slice(0, 100));
+                this.icinga.logger.error(req.status, errorThrown, req.responseText.slice(0, 100));
                 this.renderContentToContainer(
-                    '<h1>' + req.status + ' ' + errorThrown + '</h1> ' +
-                        req.responseText,
+                    req.responseText,
                     req.$target
                 );
 

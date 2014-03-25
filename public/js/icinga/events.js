@@ -97,7 +97,7 @@
             // We support an 'autosubmit' class on dropdown form elements
             $(document).on('change', 'form select.autosubmit', { self: this }, this.autoSubmitForm);
 
-            $(document).on('keyup', '#menu input.search', {self: this}, this.submitForm);
+            $(document).on('keyup', '#menu input.search', {self: this}, this.autoSubmitForm);
 
             $(document).on('mouseenter', '.historycolorgrid td', this.historycolorgridHover);
             $(document).on('mouseleave', '.historycolorgrid td', this.historycolorgidUnhover);
@@ -171,12 +171,17 @@
 
             // .closest is not required unless subelements to trigger this
             var $form = $(event.currentTarget).closest('form');
-
             var regex = new RegExp('&amp;', 'g');
             var url = $form.attr('action').replace(regex, '&'); // WHY??
             var method = $form.attr('method');
             var $target;
             var data = $form.serializeArray();
+
+            if (typeof method === 'undefined') {
+                method = 'POST';
+            } else {
+                method = method.toUpperCase();
+            }
 
             event.stopPropagation();
             event.preventDefault();
@@ -186,10 +191,15 @@
                 data.push({ name: 'btn_submit', value: 'yesss' });
             }
 
-            icinga.logger.debug('Submitting form: ' + method + ' ' + url);
+            icinga.logger.debug('Submitting form: ' + method + ' ' + url, method);
 
             $target = self.getLinkTargetFor($form);
-            icinga.loader.loadUrl(url, $target, data, method);
+
+            if (method === 'GET') {
+                icinga.loader.loadUrl(icinga.utils.addUrlParams(url, data), $target, undefined, method);
+            } else {
+                icinga.loader.loadUrl(url, $target, data, method);
+            }
 
             return false;
         },
