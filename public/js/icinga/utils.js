@@ -53,16 +53,20 @@
             return hours + ':' + minutes + ':' + seconds;
         },
 
+        getUrlHelper: function () {
+            if (this.urlHelper === null) {
+                this.urlHelper = document.createElement('a');
+            }
+
+            return this.urlHelper;
+        },
+
         /**
          * Parse a given Url and return an object
          */
         parseUrl: function (url) {
 
-            if (this.urlHelper === null) {
-                this.urlHelper = document.createElement('a');
-            }
-
-            var a = this.urlHelper;
+            var a = this.getUrlHelper();
             a.href = url;
 
             var result = {
@@ -80,6 +84,33 @@
             };
             a = null;
 
+            return result;
+        },
+
+        // Local URLs only
+        addUrlParams: function (url, params) {
+            var parts = this.parseUrl(url);
+            var result = parts.path;
+            var newparams = parts.params;
+            var idx, p;
+            $.each(params, function (idx, p) {
+              // We overwrite existing params
+              newparams[p.name] = p.value;
+            });
+
+            if (Object.keys(newparams).length > 0) {
+              var queryString = '?';
+              $.each(newparams, function (key, value) {
+                  if (queryString !== '?') {
+                      queryString += '&';
+                  }
+                  queryString += encodeURIComponent(key) + '=' + encodeURIComponent(value);
+              });
+              result += queryString;
+            }
+            if (parts.hash.length > 0) {
+                result += '#' + parts.hash;
+            }
             return result;
         },
 
