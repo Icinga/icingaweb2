@@ -38,6 +38,7 @@ class Monitoring_TimelineController extends ActionController
         );
         $timeline->setDisplayRange($displayRange);
         $timeline->setForecastRange($forecastRange);
+        $timeline->setSession($this->getWindowSession('timeline'));
 
         $this->view->timeline = $timeline;
         $this->view->intervalFormat = $this->getIntervalFormat();

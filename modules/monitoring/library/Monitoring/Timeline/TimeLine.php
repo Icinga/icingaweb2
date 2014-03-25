@@ -9,6 +9,8 @@ use \Exception;
 use \ArrayIterator;
 use \IteratorAggregate;
 use Icinga\Web\Hook;
+use Icinga\Web\Session;
+use Icinga\Web\Session\SessionNamespace;
 use Icinga\Module\Monitoring\DataView\DataView;
 
 /**
@@ -29,6 +31,13 @@ class TimeLine implements IteratorAggregate
      * @var array
      */
     private $displayGroups;
+
+    /**
+     * The session to use
+     *
+     * @var SessionNamespace
+     */
+    protected $session;
 
     /**
      * The base that is used to calculate each circle's diameter
@@ -103,6 +112,16 @@ class TimeLine implements IteratorAggregate
     {
         $this->dataview = $dataview;
         $this->identifiers = $identifiers;
+    }
+
+    /**
+     * Set the session to use
+     *
+     * @param   SessionNamespace    $session    The session to use
+     */
+    public function setSession(SessionNamespace $session)
+    {
+        $this->session = $session;
     }
 
     /**
@@ -201,12 +220,20 @@ class TimeLine implements IteratorAggregate
     public function getCalculationBase($create)
     {
         if ($this->calculationBase === null) {
-            // TODO: get base from session
+            if ($this->session !== null) {
+                // TODO: Do not use this if the interval has changed or the user did a reload
+                $this->calculationBase = $this->session->get('calculationBase');
+            }
+
             if ($create) {
                 $new = $this->generateCalculationBase();
                 if ($new > $this->calculationBase) {
-                    // TODO: save base in session
                     $this->calculationBase = $new;
+
+                    if ($this->session !== null) {
+                        $this->session->calculationBase = $new;
+                        Session::getSession()->write(); // TODO: Should it be possible to call write() on the namespace?
+                    }
                 }
             }
         }
@@ -242,7 +269,7 @@ class TimeLine implements IteratorAggregate
             }
         }
 
-        return pow($highestValue, 1 / 100);
+        return pow($highestValue, 1 / 100); // 100 == 100%
     }
 
     /**
