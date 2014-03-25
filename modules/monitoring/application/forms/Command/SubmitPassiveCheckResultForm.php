@@ -164,6 +164,7 @@ class SubmitPassiveCheckResultForm extends CommandForm
             array(
                 'label'    => t('Check Output'),
                 'rows'     => 2,
+                'cols'     => 72,
                 'required' => true,
                 'helptext' => t('Fill in the check output string which should be send to Icinga.')
             )
@@ -175,6 +176,7 @@ class SubmitPassiveCheckResultForm extends CommandForm
             array(
                 'label'    => t('Performance Data'),
                 'rows'     => 2,
+                'cols'     => 72,
                 'helptext' => t('Fill in the performance data string which should be send to Icinga.')
             )
         );

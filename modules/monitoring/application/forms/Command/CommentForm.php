@@ -54,6 +54,7 @@ class CommentForm extends CommandForm
             array(
                 'label'    => t('Comment'),
                 'rows'     => 4,
+                'cols'     => 72,
                 'required' => true,
                 'helptext' => t(
                     'If you work with other administrators, you may find it useful to share information '
