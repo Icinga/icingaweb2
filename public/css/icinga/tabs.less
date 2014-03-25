@@ -6,7 +6,7 @@ ul.tabs {
 }
 
 .controls ul.tabs {
-  margin-top: -3.5em;
+  margin-top: -3.6em;
   height: 2.6em;
   overflow: hidden;
 }
@@ -30,7 +30,7 @@ ul.tabs li a {
   margin-right: 0.5em;
 }
 
-ul.tabs li.active a, ul.tabs li.dropdown:hover {
+ul.tabs li.active a, ul.tabs li.dropdown:hover, ul.tabs li.dropdown.hover {
   background-color: white;
   color: #333;
 }
@@ -46,12 +46,29 @@ ul.tabs li a:hover {
 ul.dropdown-menu {
   margin: 0;
   padding: 0;
-  background-color: white;
+  background-color: #555;
   position: absolute;
   overflow: hidden;
   z-index: 1000;
   border: 1px solid #555;
   border-top: none;
+  margin-left: -1px;
+}
+
+/* Dropdown tabs after the fourth title should be right-aligned */
+ul.tabs li:nth-child(n+5) ul.dropdown-menu {
+  width: 13em;
+  margin-left: -9em;
+}
+
+ul.dropdown-menu {
+  -moz-box-shadow: 0.2em 0.2em 0.3em -0.2em #555;
+  -webkit-box-shadow: 0.2em 0.2em 0.3em -0.2em #555;
+  box-shadow: 0.2em 0.2em 0.3em -0.2em #555;
+}
+
+ul.dropdown-menu li {
+  background-color: white;
 }
 
 ul.dropdown-menu li {
@@ -72,17 +89,20 @@ ul.tabs ul.dropdown-menu li a:hover {
   color: #333;
 }
 
-ul.tabs li.dropdown {
-
-/*  text-align: right; */
-}
-
 ul.tabs li.dropdown:hover a {
   text-decoration: none;
   color: #555;
 }
 
-ul.tabs li.dropdown:hover ul.dropdown-menu {
+li.dropdown:hover ul.dropdown-menu, li.dropdown.hover ul.dropdown-menu {
   display: block;
+}
+
+ul.tabs img.icon {
+    height: 16px;
+    margin-right: 4px;
+    margin-top: -4px;
+    vertical-align: middle;
+    width: 16px;
 }
 
