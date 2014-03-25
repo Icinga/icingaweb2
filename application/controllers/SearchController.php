@@ -20,6 +20,10 @@ class SearchController extends ActionController
     {
         $this->setAutorefreshInterval(10);
         $search = $this->_request->getParam('q');
+        if (! $search) {
+            $this->view->hint = $this->translate('Ready to search, waiting for your input');
+            return;
+        }
         $dashboard = Widget::create('dashboard')->createPane('Search');
         $pane = $dashboard->getPane('Search');
         $suffix = strlen($search) ? ': ' . rtrim($search, '*') . '*' : '';
@@ -35,6 +39,10 @@ class SearchController extends ActionController
         )));
         $pane->addComponent('Hostgroups' . $suffix, Url::fromPath('monitoring/list/hostgroups', array(
             'hostgroup' => $search . '*',
+            'limit' => 10,
+        )));
+        $pane->addComponent('Servicegroups' . $suffix, Url::fromPath('monitoring/list/servicegroups', array(
+            'servicegroup' => $search . '*',
             'limit' => 10,
         )));
         $dashboard->activate('Search');
