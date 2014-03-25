@@ -148,7 +148,6 @@
          */
         onWindowResize: function (event) {
             var self = event.data.self;
-            self.fixControls();
 
             if (self.layoutHasBeenChanged()) {
                 self.icinga.logger.info(
@@ -156,6 +155,7 @@
                     self.currentLayout
                 );
             }
+            self.fixControls();
             self.refreshDebug();
         },
 
