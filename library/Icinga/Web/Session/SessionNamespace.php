@@ -52,7 +52,7 @@ class SessionNamespace implements IteratorAggregate
      */
     public function getIterator()
     {
-        return ArrayIterator($this->values);
+        return new ArrayIterator($this->values);
     }
 
     /**
