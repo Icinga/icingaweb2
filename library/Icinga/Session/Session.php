@@ -79,6 +79,28 @@ abstract class Session extends SessionNamespace
     }
 
     /**
+     * Return whether the given session namespace exists
+     *
+     * @param   string      $identifier     The namespace's identifier to check
+     *
+     * @return  bool
+     */
+    public function hasNamespace($identifier)
+    {
+        return isset($this->namespaces[$identifier]);
+    }
+
+    /**
+     * Remove the given session namespace
+     *
+     * @param   string      $identifier     The identifier of the namespace to remove
+     */
+    public function removeNamespace($identifier)
+    {
+        unset($this->namespaces[$identifier]);
+    }
+
+    /**
      * Clear all values and namespaces from the session cache
      */
     public function clear()

@@ -30,7 +30,6 @@
 namespace Icinga\Web;
 
 use Icinga\Session\PhpSession;
-use Icinga\Session\SessionNamespace;
 use Icinga\Session\Session as BaseSession;
 use Icinga\Exception\ProgrammingError;
 
@@ -77,22 +76,5 @@ class Session
         }
 
         return self::$session;
-    }
-
-    /**
-     * Get or create a new session namespace
-     *
-     * @param   string      $identifier     The namespace's identifier
-     *
-     * @return  SessionNamespace
-     * @throws  ProgrammingError
-     */
-    public static function getNamespace($identifier)
-    {
-        if (self::$session === null) {
-            throw new ProgrammingError('No session created yet');
-        }
-
-        return self::$session->getNamespace($identifier);
     }
 }

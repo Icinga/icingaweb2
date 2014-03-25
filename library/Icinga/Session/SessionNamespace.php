@@ -30,11 +30,13 @@
 namespace Icinga\Session;
 
 use \Exception;
+use \ArrayIterator;
+use \IteratorAggregate;
 
 /**
  * Container for session values
  */
-class SessionNamespace
+class SessionNamespace implements IteratorAggregate
 {
     /**
      * The actual values stored in this container
@@ -42,6 +44,16 @@ class SessionNamespace
      * @var array
      */
     protected $values = array();
+
+    /**
+     * Return an iterator for all values in this namespace
+     *
+     * @return  ArrayIterator
+     */
+    public function getIterator()
+    {
+        return ArrayIterator($this->values);
+    }
 
     /**
      * Set a session value by property access

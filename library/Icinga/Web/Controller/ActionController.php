@@ -41,10 +41,10 @@ use Icinga\Util\Translator;
 use Icinga\Web\Widget\Tabs;
 use Icinga\Web\Url;
 use Icinga\Web\Notification;
-use Icinga\Logger\Logger;
-use Icinga\Web\Request;
 use Icinga\File\Pdf;
 use Icinga\Exception\ProgrammingError;
+use Icinga\Web\Session;
+use Icinga\Session\SessionNamespace;
 
 /**
  * Base class for all core action controllers
@@ -147,6 +147,31 @@ class ActionController extends Zend_Controller_Action
         $letters = 'abcefghijklmnopqrstuvwxyz';
         $this->windowId = substr(str_shuffle($letters), 0, 12);
         return $this->windowId;
+    }
+
+    /**
+     * Return a window-aware session by using the given prefix
+     *
+     * @param   string      $prefix     The prefix to use
+     *
+     * @return  SessionNamespace
+     */
+    public function getWindowSession($prefix)
+    {
+        $session = Session::getSession();
+        $windowId = $this->getWindowId();
+        $namespace = $session->getNamespace($prefix . '_' . $windowId);
+
+        if ($windowId !== 'undefined' && $session->hasNamespace($prefix . '_undefined')) {
+            // We do not have any window-id on the very first request. Now we add all values from the
+            // namespace, that has been created in this case, to the new one and remove it afterwards.
+            foreach ($session->getNamespace($prefix . '_undefined') as $name => $value) {
+                $namespace->set($name, $value);
+            }
+            $session->removeNamespace($prefix . '_undefined');
+        }
+
+        return $namespace;
     }
 
     /**
