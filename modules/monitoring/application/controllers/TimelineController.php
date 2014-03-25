@@ -41,7 +41,8 @@ class Monitoring_TimelineController extends ActionController
 
         $this->view->timeline = $timeline;
         $this->view->intervalFormat = $this->getIntervalFormat();
-        $this->view->switchedContext = $timeline->getCalculationBase(false) !== $timeline->getCalculationBase(true);
+        $oldBase = $timeline->getCalculationBase(false);
+        $this->view->switchedContext = $oldBase !== null && $oldBase !== $timeline->getCalculationBase(true);
     }
 
     /**
