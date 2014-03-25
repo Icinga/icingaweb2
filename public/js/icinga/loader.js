@@ -239,7 +239,7 @@
 
             if (! req.autorefresh) {
                 // TODO: Hook for response/url?
-                var $forms = $('[action="' + url + '"]');
+                var $forms = $('[action="' + this.icinga.utils.parseUrl(url).path + '"]');
                 var $matches = $.merge($('[href="' + url + '"]'), $forms);
                 $matches.each(function (idx, el) {
                     if ($(el).closest('#menu').length) {
@@ -332,7 +332,8 @@
 
             // Handle search requests, still hardcoded.
             if (req.url.match(/^\/search/) &&
-                req.$target.data('icingaUrl').match(/^\/search/))
+                req.$target.data('icingaUrl').match(/^\/search/)
+                && $('.dashboard', $resp).length > 0)
             {
                 // TODO: We need dashboard pane and container identifiers (not ids)
                 var targets = [];
