@@ -304,6 +304,11 @@
                 req.$target.attr('class', 'container'); // TODO: remove module-$name
             }
 
+            var cssreload = req.getResponseHeader('X-Icinga-CssReload');
+            if (cssreload) {
+                this.icinga.ui.reloadCss();
+            }
+
             var title = req.getResponseHeader('X-Icinga-Title');
             if (title && req.$target.closest('.dashboard').length === 0) {
                 this.icinga.ui.setTitle(title);

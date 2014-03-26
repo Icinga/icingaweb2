@@ -76,6 +76,21 @@
             return this;
         },
 
+        reloadCss: function () {
+            var utils = this.icinga.utils;
+            $('link').each(function() {
+                if ($(this).attr('type').indexOf('css') > -1) {
+                    $(this).attr(
+                        'href',
+                        utils.addUrlParams(
+                            $(this).attr('href'),
+                            [ { name: 'id', value: new Date().getTime() } ]
+                        )
+                    );
+                }
+            });
+        },
+
         enableTimeCounters: function () {
             this.timeCounterTimer = this.icinga.timer.register(
                 this.refreshTimeSince,
