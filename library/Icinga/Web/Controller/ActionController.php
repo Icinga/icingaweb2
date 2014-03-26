@@ -68,6 +68,8 @@ class ActionController extends Zend_Controller_Action
 
     private $noXhrBody = false;
 
+    private $reloadCss = false;
+
     private $windowId;
 
     // TODO: This would look better if we had a ModuleActionController
@@ -147,6 +149,11 @@ class ActionController extends Zend_Controller_Action
         $letters = 'abcefghijklmnopqrstuvwxyz';
         $this->windowId = substr(str_shuffle($letters), 0, 12);
         return $this->windowId;
+    }
+
+    protected function reloadCss()
+    {
+        $this->reloadCss = true;
     }
 
     /**
@@ -368,6 +375,10 @@ class ActionController extends Zend_Controller_Action
             foreach ($notifications->getMessages() as $m) {
                 header('X-Icinga-Notification: ' . $m->type . ' ' . $m->message);
             }
+        }
+
+        if ($isXhr && ($this->reloadCss || $this->getParam('_reload') === 'css')) {
+            header('X-Icinga-CssReload: now');
         }
 
         if ($isXhr && $this->noXhrBody) {
