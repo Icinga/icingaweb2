@@ -54,6 +54,8 @@ class JavaScript
 
         // TODO: Cache header
         header('Content-Type: text/css');
+
+        // We do not minify vendor files
         foreach (self::$vendorFiles as $file) {
             $out .= file_get_contents($basedir . '/' . $file);
         }
@@ -61,6 +63,13 @@ class JavaScript
         foreach (self::$jsFiles as $file) {
           $js .= file_get_contents($basedir . '/' . $file);
         }
+
+        foreach (Icinga::app()->getModuleManager()->getLoadedModules() as $name => $module) {
+            if ($module->hasJs()) {
+                $js .= file_get_contents($module->getJsFilename());
+            }
+        }
+
         $out .= Minifier::minify($js, array('flaggedComments' => false));
         echo $out;
     }
