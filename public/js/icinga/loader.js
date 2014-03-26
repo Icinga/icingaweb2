@@ -316,11 +316,8 @@
 
             var refresh = req.getResponseHeader('X-Icinga-Refresh');
             if (refresh) {
-                // Hmmmm... .data() doesn't work here?
-                req.$target.data('lastUpdate', (new Date()).getTime());
                 req.$target.data('icingaRefresh', refresh);
             } else {
-                req.$target.removeData('icingaRefresh');
                 req.$target.removeData('lastUpdate');
             }
 
@@ -415,6 +412,7 @@
          * Regardless of whether a request succeeded of failed, clean up
          */
         onComplete: function (req, textStatus) {
+            req.$target.data('lastUpdate', (new Date()).getTime());
             delete this.requests[req.$target.attr('id')];
             this.icinga.ui.fadeNotificationsAway();
             this.icinga.ui.refreshDebug();
