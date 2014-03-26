@@ -81,7 +81,7 @@
             $( window ).on('beforeunload', { self: this }, this.onUnload);
 
             // We catch scroll events in our containers
-            $('.container').on('scroll', icinga.events.onContainerScroll);
+            $('.container').on('scroll', this.icinga.events.onContainerScroll);
 
             // We want to catch each link click
             $(document).on('click', 'a', { self: this }, this.linkClicked);
