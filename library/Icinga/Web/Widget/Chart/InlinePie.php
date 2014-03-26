@@ -71,16 +71,16 @@ EOD;
     /**
      * The width of the rendered chart
      *
-     * @var int The value in percent
+     * @var int The value in px
      */
-    private $width = 30;
+    private $width = 31;
 
     /**
      * The height of the rendered chart
      *
-     * @var int The value in perecent
+     * @var int The value in px
      */
-    private $height = 30;
+    private $height = 31;
 
     /**
      * The title of the chart

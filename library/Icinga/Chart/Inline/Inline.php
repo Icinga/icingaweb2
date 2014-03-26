@@ -74,14 +74,14 @@ class Inline {
      *
      * @var int
      */
-    protected $height = 20;
+    protected $height = 100;
 
     /**
      * The width in percent
      *
      * @var int
      */
-    protected $width = 20;
+    protected $width = 100;
 
     protected function sanitizeStringArray(array $arr)
     {

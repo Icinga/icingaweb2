@@ -132,10 +132,10 @@ class PieSlice extends Animatable implements Drawable
         $pathString =  'M ' . $x . ' ' . $y . ' ';
 
         // The coordinate system is mirrored on the Y axis, so we have to flip cos and sin
-        $xStart = $x + intval($r * sin($this->startRadian));
-        $yStart = $y - intval($r * cos($this->startRadian));
-        $xEnd = $x + intval($r * sin($this->endRadian));
-        $yEnd = $y - intval($r * cos($this->endRadian));
+        $xStart = $x + ($r * sin($this->startRadian));
+        $yStart = $y - ($r * cos($this->startRadian));
+        $xEnd = $x + ($r * sin($this->endRadian));
+        $yEnd = $y - ($r * cos($this->endRadian));
 
         // Draw a straight line to the upper part of the arc
         $pathString .= 'L ' . $xStart . ' ' . $yStart;

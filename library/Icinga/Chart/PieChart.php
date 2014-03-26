@@ -193,7 +193,9 @@ class PieChart extends Chart
         $outerBox = new Canvas('outerGraph', new LayoutBox(0, 0, 100, 100));
         $innerBox = new Canvas('graph', new LayoutBox(0, 0, 100, 100));
         $labelBox = $ctx->getDocument()->createElement('g');
-        $innerBox->getLayout()->setPadding(10, 10, 10, 10);
+        if (!$this->noCaption) {
+            $innerBox->getLayout()->setPadding(10, 10, 10, 10);
+        }
         $this->createContentClipBox($innerBox);
         $this->renderPies($innerBox, $labelBox);
         $innerBox->addElement(new RawElement($labelBox));
