@@ -42,11 +42,12 @@
     }
 })(console);
 
-/* Get class list */
+/* jQuery Plugins */
 (function ($) {
 
     'use strict';
 
+    /* Get class list */
     $.fn.classes = function (callback) {
 
         var classes = [];
@@ -71,6 +72,24 @@
         }
 
         return classes;
+    };
+
+    /* Serialize form elements to an object */
+    $.fn.serializeObject = function()
+    {
+        var o = {};
+        var a = this.serializeArray();
+        $.each(a, function() {
+            if (o[this.name] !== undefined) {
+                if (!o[this.name].push) {
+                    o[this.name] = [o[this.name]];
+                }
+                o[this.name].push(this.value || '');
+            } else {
+                o[this.name] = this.value || '';
+            }
+        });
+        return o;
     };
 
 })(jQuery);
