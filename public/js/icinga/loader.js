@@ -319,7 +319,7 @@
             if (refresh) {
                 req.$target.data('icingaRefresh', refresh);
             } else {
-                req.$target.removeData('lastRefresh');
+                req.$target.removeData('icingaRefresh');
             }
 
             // Set a window identifier if the server asks us to do so
