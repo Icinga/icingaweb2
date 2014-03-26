@@ -77,16 +77,21 @@
         },
 
         reloadCss: function () {
-            var utils = this.icinga.utils;
+            var icinga = this.icinga;
             $('link').each(function() {
-                if ($(this).attr('type').indexOf('css') > -1) {
-                    $(this).attr(
+                var $oldLink = $(this);
+                if ($oldLink.attr('type').indexOf('css') > -1) {
+                    var $newLink = $oldLink.clone().attr(
                         'href',
-                        utils.addUrlParams(
+                        icinga.utils.addUrlParams(
                             $(this).attr('href'),
-                            [ { name: 'id', value: new Date().getTime() } ]
+                            { id: new Date().getTime() }
                         )
-                    );
+                    ).on('load', function() {
+                        icinga.ui.fixControls();
+                        $oldLink.remove();
+                    });
+                    $newLink.appendTo($('head'));
                 }
             });
         },
