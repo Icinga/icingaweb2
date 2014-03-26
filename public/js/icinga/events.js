@@ -175,7 +175,7 @@
             var url = $form.attr('action').replace(regex, '&'); // WHY??
             var method = $form.attr('method');
             var $target;
-            var data = $form.serializeArray();
+            var data;
 
             if (typeof method === 'undefined') {
                 method = 'POST';
@@ -186,20 +186,21 @@
             event.stopPropagation();
             event.preventDefault();
 
-            // TODO: Check button
-            if (typeof autosubmit === 'undefined' || ! autosubmit) {
-                data.push({ name: 'btn_submit', value: 'yesss' });
-            }
-
             icinga.logger.debug('Submitting form: ' + method + ' ' + url, method);
 
             $target = self.getLinkTargetFor($form);
 
             if (method === 'GET') {
-                icinga.loader.loadUrl(icinga.utils.addUrlParams(url, data), $target, undefined, method);
+                url = icinga.utils.addUrlParams(url, $form.serializeObject());
             } else {
-                icinga.loader.loadUrl(url, $target, data, method);
+                data = $form.serializeArray();
+
+                // TODO: Check button
+                if (typeof autosubmit === 'undefined' || ! autosubmit) {
+                    data.push({ name: 'btn_submit', value: 'yesss' });
+                }
             }
+            icinga.loader.loadUrl(url, $target, data, method);
 
             return false;
         },

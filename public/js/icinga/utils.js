@@ -89,13 +89,13 @@
 
         // Local URLs only
         addUrlParams: function (url, params) {
-            var parts = this.parseUrl(url);
-            var result = parts.path;
-            var newparams = parts.params;
-            var idx, p;
-            $.each(params, function (idx, p) {
+            var parts = this.parseUrl(url),
+                result = parts.path,
+                newparams = parts.params;
+
+            $.each(params, function (key, value) {
               // We overwrite existing params
-              newparams[p.name] = p.value;
+              newparams[key] = value;
             });
 
             if (Object.keys(newparams).length > 0) {
