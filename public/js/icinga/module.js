@@ -32,6 +32,13 @@
 
         initialize: function () {
 
+            if (typeof this.prototyp !== 'function') {
+                this.icinga.logger.error(
+                    'Unable to load module "' + this.name + '", constructor is missing'
+                );
+                return false;
+            }
+
             try {
 
                 // The constructor of the modules prototype must be prepared to get an
