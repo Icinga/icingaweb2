@@ -105,7 +105,7 @@ class Inline {
             $this->labels[] = '';
         }
 
-        if (array_key_exists('this->colors', $_GET)) {
+        if (array_key_exists('colors', $_GET)) {
             $this->colors = $this->sanitizeStringArray(explode(',', $_GET['colors']));
         }
         while (sizeof($this->colors) < sizeof($this->data)) {

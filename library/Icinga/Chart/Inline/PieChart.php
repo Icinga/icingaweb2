@@ -39,6 +39,7 @@ class PieChart extends Inline {
     public function render()
     {
         $pie = new PieChartRenderer();
+        $pie->disableLegend();
         $pie->drawPie(array(
             'data' => $this->data, 'colors' => $this->colors, 'labels' => $this->labels
         ));

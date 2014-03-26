@@ -1,6 +1,7 @@
 <?php
 
 use Icinga\Module\Monitoring\Plugin\PerfdataSet;
+use Icinga\Web\Widget\Chart\InlinePie;
 
 class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
 {
@@ -11,7 +12,7 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
             return '';
         }
         if ($float) {
-            $float = ' style="float: ' . $float . '"';
+            $float = ' float: ' . $float . ';';
         } else {
             $float = '';
         }
@@ -61,21 +62,19 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
             if ($val < $warn) $green = $val;
             elseif ($val < $crit) $orange = $val;
             else $red = $val;
+            $inlinePie = new InlinePie(array($green, $orange, $red, $gray));
             if ($compact) {
-                $result .= '<div class="inlinepie" title="' . htmlspecialchars($name) . ': ' .  htmlspecialchars($ps[$name]->getFormattedValue() /* $val*/)
-                     // . htmlspecialchars($unit)
-                     . '"' . $float . '>'
-                     . implode(',', array($green, $orange, $red, $gray))
-                     . '</div>';
+                $inlinePie->setTitle(htmlspecialchars($name) . ': ' . htmlspecialchars($ps[$name]->getFormattedValue()));
+                $inlinePie->setStyle('float: right;');
+                $result .= $inlinePie->render();
             } else {
-                $table[] = '<tr><th><div class="inlinepie" title="' . htmlspecialchars($name) . '" style="float: left; margin: 0.2em 0.5em 0.2em 0;">'
-                     . implode(',', array($green, $orange, $red, $gray))
-                     . '</div>'
-                     . htmlspecialchars($name)
-                     . '</th><td>'
-                     . htmlspecialchars($ps[$name]->getFormattedValue() /* $val*/)
-                     //. htmlspecialchars($unit)
-                     . '</td></tr>';
+                $inlinePie->setTitle(htmlspecialchars($name));
+                $inlinePie->setStyle('float: left; margin: 0.2em 0.5em 0.2em 0;');
+                $table[] = '<tr><th>' . $inlinePie->render()
+                    . htmlspecialchars($name)
+                    . '</th><td>'
+                    . htmlspecialchars($ps[$name]->getFormattedValue()) .
+                    '</td></tr>';
             }
         }
         if ($result == '' && ! $compact) {

@@ -370,6 +370,19 @@
                 }
             }
 
+
+            /*
+             * Replace SVG piecharts with jQuery-Sparkline
+             */
+            $('.inlinepie', $resp).each(function(){
+                var   title = $(this).attr('title'),
+                    style = $(this).attr('style'),
+                    values = $(this).data('icinga-values');
+                var html = '<div class="inlinepie" style="' + style + '" title="' + title + '">' + values + '</div>';
+                $(this).replaceWith(html);
+            });
+
+
             /* Should we try to fiddle with responses containing full HTML? */
             /*
             if ($('body', $resp).length) {
