@@ -233,7 +233,8 @@
                 'Got response for ', req.$target, ', URL was ' + url
             );
 
-            var $resp = $(req.responseText);
+            // div helps getting an XML tree
+            var $resp = $('<div>' + req.responseText + '</div>');
             var active = false;
             var rendered = false;
 
@@ -334,8 +335,9 @@
 
             // Handle search requests, still hardcoded.
             if (req.url.match(/^\/search/) &&
-                req.$target.data('icingaUrl').match(/^\/search/)
-                && $('.dashboard', $resp).length > 0)
+                req.$target.data('icingaUrl').match(/^\/search/) &&
+                $('.dashboard', $resp).length > 0 &&
+                $('.dashboard .container', req.$target).length > 0)
             {
                 // TODO: We need dashboard pane and container identifiers (not ids)
                 var targets = [];
@@ -345,8 +347,13 @@
 
                 var i = 0;
                 // Searching for '.dashboard .container' in $resp doesn't dork?!
-                $('.container', $resp).each(function (idx, el) {
+                $('.dashboard .container', $resp).each(function (idx, el) {
                     var $el = $(el);
+                    if ($el.hasClass('dashboard')) {
+                        return;
+                    } else {
+
+                    }
                     var url = $el.data('icingaUrl');
                     targets[i].data('icingaUrl', url);
                     var title = $('h1', $el).first();
@@ -408,7 +415,8 @@
                 return;
             }
 
-            this.renderContentToContainer($resp, req.$target);
+            // .html() removes outer div we added above
+            this.renderContentToContainer($resp.html(), req.$target);
             if (url.match(/#/)) {
                 this.icinga.ui.scrollContainerToAnchor(req.$target, url.split(/#/)[1]);
             }
