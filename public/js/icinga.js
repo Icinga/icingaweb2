@@ -149,7 +149,36 @@
             this.modules = [];
             this.timer = this.events = this.loader = this.ui = this.logger =
                 this.utils = null;
+        },
+
+        reload: function () {
+            setTimeout(function () {
+                var oldjQuery = window.jQuery;
+                var oldConfig = window.icinga.config;
+                var oldIcinga = window.Icinga;
+                window.icinga.destroy();
+                window.Icinga = undefined;
+                window.$ = undefined;
+                window.jQuery = undefined;
+
+                oldjQuery.getScript(
+                    oldConfig.baseUrl + 'js/icinga.min.js'
+                ).done(function () {
+                    window.jQuery = oldjQuery;
+                    window.$ = window.jQuery;
+                    window.Icinga = oldIcinga;
+                    window.icinga = new Icinga(oldConfig);
+                    window.icinga.ui.reloadCss();
+                    oldjQuery = undefined;
+                    oldConfig = undefined;
+                    oldIcinga = undefined;
+                }).fail(function () {
+                    window.icinga = new Icinga(oldConfig);
+                    window.icinga.ui.reloadCss();
+                });
+            }, 0);
         }
+
     };
 
     window.Icinga = Icinga;
