@@ -15,6 +15,8 @@
 
     var Icinga = function (config) {
 
+        this.initialized = false;
+
         /**
          * Our config object
          */
@@ -73,6 +75,9 @@
          * Icinga startup, will be triggerd once the document is ready
          */
         initialize: function () {
+            if (this.initialized) {
+                return false;
+            }
 
             this.utils   = new Icinga.Utils(this);
             this.logger  = new Icinga.Logger(this);
@@ -87,7 +92,8 @@
             this.history.initialize();
             this.ui.initialize();
             this.loader.initialize();
-            this.logger.info('Icinga is ready');
+            this.logger.info('Icinga is ready, running on jQuery ', $().jquery);
+            this.initialized = true;
         },
 
         /**
@@ -149,6 +155,7 @@
             this.modules = [];
             this.timer = this.events = this.loader = this.ui = this.logger =
                 this.utils = null;
+            this.initialized = false;
         },
 
         reload: function () {
@@ -160,19 +167,23 @@
                 window.Icinga = undefined;
                 window.$ = undefined;
                 window.jQuery = undefined;
+                jQuery = undefined;
+                $ = undefined;
 
                 oldjQuery.getScript(
                     oldConfig.baseUrl + 'js/icinga.min.js'
                 ).done(function () {
-                    window.jQuery = oldjQuery;
-                    window.$ = window.jQuery;
-                    window.Icinga = oldIcinga;
-                    window.icinga = new Icinga(oldConfig);
+                    var jQuery = window.jQuery;
+                    window.icinga = new window.Icinga(oldConfig);
+                    window.icinga.initialize();
                     window.icinga.ui.reloadCss();
                     oldjQuery = undefined;
                     oldConfig = undefined;
                     oldIcinga = undefined;
                 }).fail(function () {
+                    window.jQuery = oldjQuery;
+                    window.$ = window.jQuery;
+                    window.Icinga = oldIcinga;
                     window.icinga = new Icinga(oldConfig);
                     window.icinga.ui.reloadCss();
                 });
@@ -185,4 +196,4 @@
 
     Icinga.availableModules = {};
 
-})(window, window.jQuery);
+})(window, jQuery);
