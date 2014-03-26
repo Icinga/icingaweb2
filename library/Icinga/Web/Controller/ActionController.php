@@ -322,7 +322,7 @@ class ActionController extends Zend_Controller_Action
         } else {
             $url = Url::fromPath($url)->getRelativeUrl();
         }
-        $this->_helper->Redirector->gotoUrlAndExit($url);
+        $this->_helper->Redirector->gotoUrlAndExit(preg_replace('~&amp;~', '&', $url));
     }
 
     /**
