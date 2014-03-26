@@ -1,7 +1,7 @@
 /**
  * Icinga utility functions
  */
-(function(Icinga) {
+(function(Icinga, $) {
 
     'use strict';
 
@@ -143,4 +143,4 @@
         }
     };
 
-}(Icinga));
+}(Icinga, jQuery));
