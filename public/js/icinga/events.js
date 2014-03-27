@@ -294,6 +294,9 @@
                     $li = $a.closest('li');
                     $('#menu .active').removeClass('active');
                     $li.addClass('active');
+                    if ($li.hasClass('hover')) {
+                        $li.removeClass('hover');
+                    }
                 }
                 if (href === '#') {
                     return false;
