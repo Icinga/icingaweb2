@@ -25,7 +25,12 @@ if (substr($ruri, 0, strlen($remove)) !== $remove) {
 }
 
 $ruri = substr($ruri, strlen($remove));
-list($path, $params) = preg_split('/\?/', $ruri, 2);
+if (strpos($ruri, '?') === false) {
+    $params = '';
+    $path = $ruri;
+} else {
+    list($path, $params) = preg_split('/\?/', $ruri, 2);
+}
 $ruriParts = preg_split('~/~', ltrim($ruri, '/'));
 if (count($ruriParts) === 2 &&
     ($ruriParts[0] === 'css' || $ruriParts[0] === 'js')
