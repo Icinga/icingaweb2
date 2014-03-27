@@ -16,12 +16,17 @@ if (array_key_exists('ICINGAWEB_CONFIGDIR', $_ENV)) {
     $configDir = '/etc/icingaweb';
 }
 
-// TODO: Detect aliases!
 $baseDir = $_SERVER['DOCUMENT_ROOT'];
 $ruri = $_SERVER['REQUEST_URI'];
+$remove = dirname($_SERVER['PHP_SELF']);
+
+if (substr($ruri, 0, strlen($remove)) !== $remove) {
+  return false;
+}
+
+$ruri = substr($ruri, strlen($remove));
 list($path, $params) = preg_split('/\?/', $ruri, 2);
 $ruriParts = preg_split('~/~', ltrim($ruri, '/'));
-
 if (count($ruriParts) === 2 &&
     ($ruriParts[0] === 'css' || $ruriParts[0] === 'js')
 ) {
