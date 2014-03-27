@@ -42,7 +42,7 @@
                 }
             });
 
-            var moduleName
+            var moduleName;
             if (moduleName = el.data('icingaModule')) {
                 if (icinga.hasModule(moduleName)) {
                     var module = icinga.module(moduleName);
@@ -103,7 +103,8 @@
             $(document).on('mouseleave', '.historycolorgrid td', this.historycolorgidUnhover);
             $(document).on('mouseenter', 'li.dropdown', this.dropdownHover);
             $(document).on('mouseleave', 'li.dropdown', this.dropdownLeave);
-
+            $(document).on('mouseenter', '#menu > ul > li', this.menuTitleHovered);
+            $(document).on('mouseleave', '#sidebar', this.leaveSidebar);
             $(document).on('click', '.tree .handle', { self: this }, this.treeNodeToggle);
 
 
@@ -111,6 +112,60 @@
             // $(document).on('keyup', 'form.auto input', this.formChangeDelayed);
             // $(document).on('change', 'form.auto input', this.formChanged);
             // $(document).on('change', 'form.auto select', this.submitForm);
+        },
+
+        menuTitleHovered: function () {
+            var $li = $(this),
+                delay = 800;
+
+            if ($li.hasClass('active')) {
+                return;
+            }
+            if ($li.children('ul').children('li').length === 0) {
+                return;
+            }
+
+            if ($('#layout').hasClass('hoveredmenu')) {
+                delay = 0;
+            }
+
+            setTimeout(function () {
+                if (! $li.is('li:hover')) {
+                    return;
+                }
+                if ($li.hasClass('active')) {
+                    return;
+                }
+
+                $li.siblings().each(function () {
+                    var $sibling = $(this);
+                    if ($sibling.is('li:hover')) {
+                        return;
+                    }
+                    if ($sibling.hasClass('hover')) {
+                        $sibling.removeClass('hover');
+                    }
+                });
+
+                $('#layout').addClass('hoveredmenu');
+                $li.addClass('hover');
+            }, delay);
+        },
+
+        leaveSidebar: function () {
+            var $sidebar = $(this);
+            var $li = $sidebar.find('li.hover');
+            if (! $li.length) {
+                return;
+            }
+
+            setTimeout(function () {
+                if ($li.is('li:hover') || $sidebar.is('sidebar:hover') ) {
+                    return;
+                }
+                $li.removeClass('hover');
+                $('#layout').removeClass('hoveredmenu');
+            }, 800);
         },
 
         dropdownHover: function () {

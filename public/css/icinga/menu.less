@@ -107,11 +107,80 @@
   box-shadow: none;
 }
 
+/* BEGIN OF Hoverable menu */
+
+#menu li.hover {
+  width: 26em;
+  padding-left: 0.5em;
+  margin-left: 0;
+  margin-right: 0;
+  position: relative;
+}
+
+#menu li.hover > ul {
+  position: absolute;
+  display: block;
+  left: 13em;
+  right: 0;
+  top: -2em;
+  padding-top: 1em;
+  padding-bottom: 0.5em;
+  height: auto;
+  background-color: #333;
+}
+
+#menu li.hover > a {
+  color: white;
+}
+
+#menu li.hover > ul a {
+  width: 100%;
+  display: block;
+  color: white;
+}
+
+#menu li.hover > ul a:hover {
+  text-decoration: underline;
+}
+
+#menu li.hover > ul > li.active > a {
+  font-weight: bold;
+  color: white;
+}
+
+#menu li.hover li {
+  padding: 0;
+}
+
+#menu li.hover > a:after {
+  border: 0.5em solid rgba(0, 0, 0, 0);
+  border-right-color: #333;
+  content: " ";
+  margin-top: 0.8em;
+  pointer-events: none;
+  position: absolute;
+  left: 12em;
+  height: 0;
+  width: 0;
+}
+
+#layout.hoveredmenu {
+  #main {
+    z-index: 2;
+  }
+  #sidebar {
+    z-index: 3;
+  }
+}
+
+/* END of Hoverable menu */
+
+
 #menu input.search {
   margin: 0 0 0 0.5em;
   padding: 0 0.5em 0 2.5em;
   border: none;
-  width: 13em;
+  width: 12.5em;
   border-radius: 0;
   height: 2.5em;
   display: block;
@@ -141,6 +210,7 @@
 #menu input.search.active {
   background-color: white;
   color: #121212;
+  width: 13em;
   text-shadow: none;
   padding-left: 3em;
   margin-left: 0;
