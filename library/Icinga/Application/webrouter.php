@@ -24,10 +24,10 @@ if (substr($ruri, 0, strlen($remove)) !== $remove) {
   return false;
 }
 
-$ruri = substr($ruri, strlen($remove));
+$ruri = ltrim(substr($ruri, strlen($remove)), '/');
 if (strpos($ruri, '?') === false) {
     $params = '';
-    $path = ltrim($ruri, '/');
+    $path = $ruri;
 } else {
     list($path, $params) = preg_split('/\?/', $ruri, 2);
 }
