@@ -27,7 +27,7 @@ if (substr($ruri, 0, strlen($remove)) !== $remove) {
 $ruri = substr($ruri, strlen($remove));
 if (strpos($ruri, '?') === false) {
     $params = '';
-    $path = $ruri;
+    $path = ltrim($ruri, '/');
 } else {
     list($path, $params) = preg_split('/\?/', $ruri, 2);
 }
