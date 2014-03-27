@@ -297,7 +297,7 @@ class Monitoring_ListController extends Controller
 
     public function statehistorysummaryAction()
     {
-        $this->addTitleTab('statehistorysummary');
+        $this->addTitleTab('statehistorysummary', 'Critical Events');
         $query = StateHistorySummary::fromRequest(
             $this->_request, array('day', 'cnt_critical')
         )->getQuery()->order('day');
@@ -602,10 +602,10 @@ class Monitoring_ListController extends Controller
         );
     }
 
-    protected function addTitleTab($action)
+    protected function addTitleTab($action, $title = false)
     {
         $this->getTabs()->add($action, array(
-            'title' => ucfirst($action),
+            'title' => $title ?: ucfirst($action),
             'url' => Url::fromPath('monitoring/list/' . $action)
         ))->activate($action);
     }
