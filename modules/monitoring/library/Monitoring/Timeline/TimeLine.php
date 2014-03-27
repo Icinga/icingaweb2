@@ -270,7 +270,6 @@ class TimeLine implements IteratorAggregate
     {
         if ($this->calculationBase === null) {
             if ($this->session !== null) {
-                // TODO: Do not use this if the interval has changed or the user did a reload
                 $this->calculationBase = $this->session->get('calculationBase');
             }
 
