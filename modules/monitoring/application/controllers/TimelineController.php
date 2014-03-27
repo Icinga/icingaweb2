@@ -16,6 +16,7 @@ class Monitoring_TimelineController extends ActionController
 {
     public function indexAction()
     {
+        // TODO: filter for hard_states (precedence adjustments necessary!)
         $this->setupIntervalBox();
         list($displayRange, $forecastRange) = $this->buildTimeRanges();
 
@@ -62,6 +63,7 @@ class Monitoring_TimelineController extends ActionController
             )
         );
         $timeline->setMaximumCircleWidth('6em');
+        $timeline->setMinimumCircleWidth('0.15em');
         $timeline->setDisplayRange($displayRange);
         $timeline->setForecastRange($forecastRange);
         $timeline->setSession($this->getWindowSession('timeline'));

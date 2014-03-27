@@ -82,6 +82,13 @@ class TimeLine implements IteratorAggregate
     protected $circleDiameter = 100.0;
 
     /**
+     * The minimum diameter each circle can have
+     *
+     * @var float
+     */
+    protected $minCircleDiameter = 1.0;
+
+    /**
      * The unit of a circle's diameter
      *
      * @var string
@@ -154,9 +161,30 @@ class TimeLine implements IteratorAggregate
     public function setMaximumCircleWidth($width)
     {
         $matches = array();
-        if (preg_match('#([\d]+)([a-z]+|%)#', $width, $matches)) {
-            $this->circleDiameter = intval($matches[1]);
+        if (preg_match('#([\d|\.]+)([a-z]+|%)#', $width, $matches)) {
+            $this->circleDiameter = floatval($matches[1]);
             $this->diameterUnit = $matches[2];
+        } else {
+            throw new Exception('Width "' . $width . '" is not a valid width');
+        }
+    }
+
+    /**
+     * Set the minimum diameter each circle can have
+     *
+     * @param   string      $width      The diameter to set, suffixed with its unit
+     *
+     * @throws  Exception               If the given diameter is invalid or its unit differs from the maximum
+     */
+    public function setMinimumCircleWidth($width)
+    {
+        $matches = array();
+        if (preg_match('#([\d|\.]+)([a-z]+|%)#', $width, $matches)) {
+            if ($matches[2] === $this->diameterUnit) {
+                $this->minCircleDiameter = floatval($matches[1]);
+            } else {
+                throw new Exception('Unit needs to be in "' . $this->diameterUnit . '"');
+            }
         } else {
             throw new Exception('Width "' . $width . '" is not a valid width');
         }
@@ -190,7 +218,12 @@ class TimeLine implements IteratorAggregate
     {
         $base = $this->getCalculationBase(true);
         $factor = log($group->getValue() * $group->getWeight(), $base) / 100;
-        return sprintf('%.' . $precision . 'F%s', $this->circleDiameter * $factor, $this->diameterUnit);
+        $width = $this->circleDiameter * $factor;
+        return sprintf(
+            '%.' . $precision . 'F%s',
+            $width > $this->minCircleDiameter ? $width : $this->minCircleDiameter,
+            $this->diameterUnit
+        );
     }
 
     /**
