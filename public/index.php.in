@@ -1,9 +1,4 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
 
-require_once dirname(__FILE__). '/../library/Icinga/Application/Web.php';
-
-use Icinga\Application\Web;
-
-Web::start('@icingaweb_config_path@')->dispatch();
+$_ENV['ICINGAWEB_CONFIGDIR'] = '@icingaweb_config_path@';
+require_once dirname(__DIR__). '/library/Icinga/Application/webrouter.php';

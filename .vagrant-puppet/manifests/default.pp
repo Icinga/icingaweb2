@@ -611,15 +611,11 @@ file { '/var/www/html/icingaweb/index.php':
 }
 
 file { '/var/www/html/icingaweb/js.php':
-  source    => 'puppet:////vagrant/.vagrant-puppet/files/var/www/html/icingaweb/js.php',
-  owner     => 'apache',
-  group     => 'apache',
+  ensure => absent,
 }
 
 file { '/var/www/html/icingaweb/css.php':
-  source    => 'puppet:////vagrant/.vagrant-puppet/files/var/www/html/icingaweb/css.php',
-  owner     => 'apache',
-  group     => 'apache',
+  ensure => absent,
 }
 
 file { '/var/www/html/icingaweb/.htaccess':
