@@ -31,15 +31,16 @@ if (strpos($ruri, '?') === false) {
 } else {
     list($path, $params) = preg_split('/\?/', $ruri, 2);
 }
-$ruriParts = preg_split('~/~', ltrim($ruri, '/'));
-if (count($ruriParts) === 2 &&
-    ($ruriParts[0] === 'css' || $ruriParts[0] === 'js')
+
+$pathParts = preg_split('~/~', $path);
+if (count($pathParts) === 2 &&
+    ($pathParts[0] === 'css' || $pathParts[0] === 'js')
 ) {
 
     require_once __DIR__ . '/EmbeddedWeb.php';
     EmbeddedWeb::start($configDir);
 
-    switch($ruriParts[1]) {
+    switch($pathParts[1]) {
 
         case 'icinga.css':
             Stylesheet::send();
@@ -60,7 +61,7 @@ if (count($ruriParts) === 2 &&
             return false;
     }
 
-} elseif ($path === '/svg/chart.php') {
+} elseif ($path === 'svg/chart.php') {
     if (!array_key_exists('data', $_GET)) {
         return false;
     }
