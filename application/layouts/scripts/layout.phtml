@@ -18,7 +18,7 @@ use Icinga\Web\JavaScript;
   <title><?= $this->title ? $this->escape($this->title) : 'Icinga Web' ?></title>
   <!-- TODO: viewport and scale settings make no sense for us, fix this -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <link rel="stylesheet" href="<?= $this->href('css/icinga.css') ?>" media="screen" type="text/css" />
+  <link rel="stylesheet" href="<?= $this->href('css/icinga.min.css') ?>" media="screen" type="text/css" />
   <? if (isset($_GET['iframe']) && $_GET['iframe'] === 'true'): ?>
   <base target="_parent"/>
   <? endif ?>
@@ -33,9 +33,7 @@ use Icinga\Web\JavaScript;
 <div id="layout" class="default-layout">
 <?= $this->render('body.phtml') ?>
 </div>
-<?php foreach (JavaScript::listFiles() as $file): ?>
-<script type="text/javascript" src="<?= $this->href($file) ?>"></script>
-<?php endforeach ?>
+<script type="text/javascript" src="<?= $this->href('js/icinga.min.js') ?>"></script>
 <script type="text/javascript">
 var icinga = new Icinga({
   baseUrl: '<?= $this->href('/') ?>',
