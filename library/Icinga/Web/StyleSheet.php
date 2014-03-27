@@ -34,14 +34,35 @@ class StyleSheet
         return $less->compile();
     }
 
-    public static function send()
+    public static function sendMinified()
+    {
+        self::send(true);
+    }
+
+    public static function send($minified = false)
     {
         header('Content-Type: text/css');
+
+        $min = $minified ? '.min' : '';
+        $cacheFile = '/tmp/cache_icinga' . $min . '.css';
+        if (file_exists($cacheFile)) {
+            readfile($cacheFile);
+            exit;
+        }
+
         $less = new LessCompiler();
         $basedir = Icinga::app()->getBootstrapDirecory();
         foreach (self::$lessFiles as $file) {
           $less->addFile($basedir . '/' . $file);
         }
-        echo $less->addLoadedModules()->compile();
+        $less->addLoadedModules();
+        if ($minified) {
+            $less->compress();
+        }
+        $out = $less->compile();
+        // Not yet, this is for tests only. Waiting for Icinga\Web\Cache
+        // file_put_contents($cacheFile, $out);
+        echo $out;
+
     }
 }

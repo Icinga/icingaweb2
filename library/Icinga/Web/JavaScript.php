@@ -25,14 +25,10 @@ class JavaScript
     );
 
     protected static $vendorFiles = array(
-        'js/vendor/jquery-2.1.0.min.js',
-        'js/vendor/jquery.sparkline.min.js'
+        // 'js/vendor/jquery-1.11.0',
+        'js/vendor/jquery-2.1.0',
+        'js/vendor/jquery.sparkline'
     );
-
-    public static function listFiles()
-    {
-        return array_merge(self::$vendorFiles, self::$jsFiles, self::listModuleFiles());
-    }
 
     public static function listModuleFiles()
     {
@@ -47,17 +43,28 @@ class JavaScript
 
     public static function sendMinified()
     {
+        return self::send(true);
+    }
+
+    public static function send($minified = false)
+    {
         header('Content-Type: application/javascript');
         $basedir = Icinga::app()->getBootstrapDirecory();
 
         $js = $out = '';
+        $min = $minified ? '.min' : '';
 
         // TODO: Cache header
-        header('Content-Type: text/css');
+        header('Content-Type: application/javascript');
+        $cacheFile = '/tmp/cache_icinga' . $min . '.js';
+        if (file_exists($cacheFile)) {
+            readfile($cacheFile);
+            exit;
+        }
 
         // We do not minify vendor files
         foreach (self::$vendorFiles as $file) {
-            $out .= file_get_contents($basedir . '/' . $file);
+            $out .= file_get_contents($basedir . '/' . $file . $min . '.js');
         }
 
         foreach (self::$jsFiles as $file) {
@@ -69,8 +76,13 @@ class JavaScript
                 $js .= file_get_contents($module->getJsFilename());
             }
         }
-
-        $out .= Minifier::minify($js, array('flaggedComments' => false));
+        if ($minified) {
+            $out .= Minifier::minify($js, array('flaggedComments' => false));
+        } else {
+            $out .= $js;
+        }
+        // Not yet, this is for tests only. Waiting for Icinga\Web\Cache
+        // file_put_contents($cacheFile, $out);
         echo $out;
     }
 }
