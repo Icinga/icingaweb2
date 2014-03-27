@@ -1,8 +1,85 @@
-<?php if (!$this->compact): ?>
+<?php
+use Icinga\Util\Color;
+
+$groupInfo = $timeline->getGroupInfo();
+$firstRow = true;
+?>
 <div class="controls">
     <div style="margin: 1em;" class="dontprint">
-        <?= $this->intervalBox; ?>
+        <?= $intervalBox; ?>
+    </div>
+    <div style="margin: 1em;" class="timeline-legend">
+        <h2><?= $this->translate('Legend'); ?></h2>
+<?php foreach ($groupInfo as $labelAndColor): ?>
+        <span style="background-color: <?= $labelAndColor['color']; ?>;">
+            <span><?= $labelAndColor['label']; ?></span>
+        </span>
+<?php endforeach ?>
     </div>
 </div>
+<div class="content" data-base-target="_next">
+    <table class="timeline">
+        <tbody>
+<?php foreach ($timeline as $timeInfo): ?>
+            <tr>
+                <th>
+                    <a href="<?= $this->href(
+                        '/monitoring/list/eventhistory',
+                        array(
+                            'raw_timestamp<' => $timeInfo[0]->start->getTimestamp(),
+                            'raw_timestamp>' => $timeInfo[0]->end->getTimestamp()
+                        )
+                    ); ?>">
+                        <?= $timeInfo[0]->end->format($intervalFormat); ?>
+                    </a>
+                </th>
+<?php foreach ($groupInfo as $groupName => $labelAndColor): ?>
+                <td>
+                    <div class="circle-box">
+<?php if (array_key_exists($groupName, $timeInfo[1])): ?>
+<?php
+$circleWidth = $timeline->calculateCircleWidth($timeInfo[1][$groupName], 2);
+$extrapolatedCircleWidth = $timeline->getExtrapolatedCircleWidth($timeInfo[1][$groupName], 2);
+?>
+<?php if ($firstRow && $extrapolatedCircleWidth !== $circleWidth): ?>
+<?php
+$inlineStyle = sprintf(
+    'width: %3$s; height: %3$s; background-color: %1$s; margin-top: -%2$s; margin-left: -%2$s;',
+    Color::changeBrightness($timeInfo[1][$groupName]->getColor(), 0.25),
+    ((float) substr($extrapolatedCircleWidth, 0, -2) / 2) . 'em',
+    $extrapolatedCircleWidth
+);
+?>
+                        <div class="outer-circle extrapolated" style="<?= $inlineStyle; ?>">
+<?php else: ?>
+                        <div class="outer-circle">
 <?php endif ?>
-<?= $this->timeline->buildTimeline(); ?>
+<?php
+$inlineStyle = sprintf(
+    'width: %3$s; height: %3$s; background-color: %2$s; margin-top: -%1$s; margin-left: -%1$s;',
+    ((float) substr($circleWidth, 0, -2) / 2) . 'em',
+    $timeInfo[1][$groupName]->getColor(),
+    $circleWidth
+);
+?>
+                            <a class="inner-circle" style="<?= $inlineStyle; ?>" href="<?= $this->href(
+                                sprintf(
+                                    $timeInfo[1][$groupName]->getDetailUrl(),
+                                    $timeInfo[0]->start->getTimestamp(),
+                                    $timeInfo[0]->end->getTimestamp(),
+                                    $groupName
+                                )
+                            ); ?>" title="<?= $timeInfo[1][$groupName]->getValue(); ?> <?= $labelAndColor['label']; ?>"></a>
+                        </div>
+<?php else: ?>
+                        &nbsp;
+<?php endif ?>
+                    </div>
+                </td>
+<?php endforeach ?>
+            </tr>
+            <?php $firstRow = false; ?>
+<?php endforeach ?>
+        </tbody>
+    </table>
+</div>

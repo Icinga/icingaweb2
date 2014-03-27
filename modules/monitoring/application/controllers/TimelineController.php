@@ -19,6 +19,7 @@ class Monitoring_TimelineController extends ActionController
         $this->setupIntervalBox();
         list($displayRange, $forecastRange) = $this->buildTimeRanges();
 
+        $detailUrl = '/monitoring/list/eventhistory?raw_timestamp<=%s&raw_timestamp>=%s&type=%s';
         $timeline = new TimeLine(
             EventHistoryView::fromRequest(
                 $this->getRequest(),
@@ -28,14 +29,39 @@ class Monitoring_TimelineController extends ActionController
                 )
             ),
             array(
-                'notify'        => array('label' => t('Notifications'), 'color' => 'red'),
-                'hard_state'    => array('label' => t('Hard state changes'), 'color' => 'green'),
-                'comment'       => array('label' => t('Comments'), 'color' => 'blue'),
-                'ack'           => array('label' => t('Acknowledgements'), 'color' => 'black'),
-                'dt_start'      => array('label' => t('Started downtimes'), 'color' => 'grey'),
-                'dt_end'        => array('label' => t('Ended downtimes'), 'color' => 'white')
+                'notify'        => array(
+                    'detailUrl' => $detailUrl,
+                    'label'     => t('Notifications'),
+                    'color'     => '#3a71ea'
+                ),
+                'hard_state'    => array(
+                    'detailUrl' => $detailUrl,
+                    'label'     => t('Hard state changes'),
+                    'color'     => '#ff7000'
+                ),
+                'comment'       => array(
+                    'detailUrl' => $detailUrl,
+                    'label'     => t('Comments'),
+                    'color'     => '#79bdba'
+                ),
+                'ack'           => array(
+                    'detailUrl' => $detailUrl,
+                    'label'     => t('Acknowledgements'),
+                    'color'     => '#a2721d'
+                ),
+                'dt_start'      => array(
+                    'detailUrl' => $detailUrl,
+                    'label'     => t('Started downtimes'),
+                    'color'     => '#8e8e8e'
+                ),
+                'dt_end'        => array(
+                    'detailUrl' => $detailUrl,
+                    'label'     => t('Ended downtimes'),
+                    'color'     => '#d5d6ad'
+                )
             )
         );
+        $timeline->setMaximumCircleWidth('6em');
         $timeline->setDisplayRange($displayRange);
         $timeline->setForecastRange($forecastRange);
         $timeline->setSession($this->getWindowSession('timeline'));
@@ -99,13 +125,13 @@ class Monitoring_TimelineController extends ActionController
             case '1d':
                 return $this->getDateFormat();
             case '1w':
-                return '\W\e\ek #W \of Y';
+                return '\W\e\ek #W\<b\r\>\of Y';
             case '1m':
                 return 'F Y';
             case '1y':
                 return 'Y';
             default:
-                return $this->getDateFormat() . ' ' . $this->getTimeFormat();
+                return $this->getDateFormat() . '\<b\r\>' . $this->getTimeFormat();
         }
     }
 

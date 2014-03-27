@@ -30,7 +30,6 @@ namespace Icinga\Util;
  * Provide functions to change and convert colors.
  */
 class Color {
-
     /**
      * Convert a given color string to an rgb-array containing
      * each color as a decimal value.
@@ -71,7 +70,6 @@ class Color {
             . (strlen($b) > 1 ? $b : '0' . $b);
     }
 
-
     /**
      * Change the saturation for a given color.
      *
@@ -85,10 +83,20 @@ class Color {
      */
     public static function changeSaturation($color, $change)
     {
-        $rgb = self::rgbAsArray($color);
-        $rgb = self::changeRgbSaturation($rgb, $change);
-        $col = self::arrayToRgb($rgb);
-        return $col;
+        return self::arrayToRgb(self::changeRgbSaturation(self::rgbAsArray($color), $change));
+    }
+
+    /**
+     * Change the brightness for a given color
+     *
+     * @param $color    string  The color to change
+     * @param $change   float   The change in percent
+     *
+     * @return string
+     */
+    public static function changeBrightness($color, $change)
+    {
+        return self::arrayToRgb(self::changeRgbBrightness(self::rgbAsArray($color), $change));
     }
 
     /**
@@ -113,6 +121,23 @@ class Color {
         $rgb[0] = (int)($p + ($r - $p) * $change);
         $rgb[1] = (int)($p + ($g - $p) * $change);
         $rgb[2] = (int)($p + ($b - $p) * $change);
+        return $rgb;
+    }
+
+    /**
+     * @param $rgb      array   The rgb-array to change
+     * @param $change   float   The factor
+     *
+     * @return array    The updated rgb-array
+     */
+    private static function changeRgbBrightness(array $rgb, $change)
+    {
+        $red = $rgb[0] + (255 * $change);
+        $green = $rgb[1] + (255 * $change);
+        $blue = $rgb[2] + (255 * $change);
+        $rgb[0] = $red < 255 ? (int) $red : 255;
+        $rgb[1] = $green < 255 ? (int) $green : 255;
+        $rgb[2] = $blue < 255 ? (int) $blue : 255;
         return $rgb;
     }
 }

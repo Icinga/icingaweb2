@@ -630,6 +630,101 @@ table.pivot {
 
 /* End of monitoring pivot table styles */
 
+/* Monitoring timeline styles */
+
+div.timeline-legend {
+  float: left;
+  padding: 0.5em;
+  border: 1px solid #ccc;
+  border-radius: 0.5em;
+  background-color: #eee;
+
+  &:after {
+    clear: left;
+  }
+
+  h2 {
+    margin: 0;
+    margin-left: 0.5em;
+    line-height: 1.1em;
+  }
+
+  & > span {
+    display: inline-block;
+    padding: 0.5em;
+    margin: 0.5em;
+    border-radius: 0.5em;
+
+    span {
+      color: white;
+      font-size: 0.8em;
+      font-weight: bold;
+      white-space: nowrap;
+    }
+  }
+}
+
+table.timeline {
+  th {
+    padding-right: 1.5em;
+
+    a {
+      color: black;
+      font-size: 0.8em;
+      text-decoration: none;
+      white-space: nowrap;
+
+      &:hover {
+        color: #666;
+      }
+    }
+  }
+
+  td {
+    padding: 0.5em;
+
+    div.circle-box {
+      width: 6em;
+      height: 6em;
+      position: relative;
+
+      div.outer-circle {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+
+        &.extrapolated {
+          // width: inline-style;
+          // height: inline-style;
+          top: 49%; // Compensate border
+          left: 49%; // Compensate border
+          // margin-top: inline-style;
+          // margin-left: inline-style;
+          border: 1px dashed #666;
+          border-radius: 100%;
+          // background-color: inline-style;
+        }
+
+        a.inner-circle {
+          // width: inline-style;
+          // height: inline-style;
+          display: block;
+          position: absolute;
+          top: 49%; // Compensate border
+          left: 49%; // Compensate border
+          // margin-top: inline-style;
+          // margin-left: inline-style;
+          border: 1px solid black;
+          border-radius: 100%;
+          // background-color: inline-style;
+        }
+      }
+    }
+  }
+}
+
+/* End of monitoring timeline styles */
+
 .controls {
   font-size: 0.9em;
 }
