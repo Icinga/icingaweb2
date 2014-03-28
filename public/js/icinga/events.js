@@ -229,6 +229,7 @@
             var regex = new RegExp('&amp;', 'g');
             var url = $form.attr('action').replace(regex, '&'); // WHY??
             var method = $form.attr('method');
+            var $button = $('input[type=submit]:focus', $form);
             var $target;
             var data;
 
@@ -236,6 +237,10 @@
                 method = 'POST';
             } else {
                 method = method.toUpperCase();
+            }
+
+            if ($button.length === 0) {
+                $button = $('input[type=submit]', $form).first();
             }
 
             event.stopPropagation();
@@ -250,9 +255,13 @@
             } else {
                 data = $form.serializeArray();
 
-                // TODO: Check button
                 if (typeof autosubmit === 'undefined' || ! autosubmit) {
-                    data.push({ name: 'btn_submit', value: 'yesss' });
+                    if ($button.length) {
+                        data.push({
+                            name: $button.attr('name'),
+                            value: $button.attr('value')
+                        });
+                    }
                 }
             }
             icinga.loader.loadUrl(url, $target, data, method);
