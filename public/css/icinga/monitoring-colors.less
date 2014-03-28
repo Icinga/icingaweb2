@@ -660,45 +660,44 @@ div.timeline-legend {
   }
 }
 
-table.timeline {
-  clear: left;
+div.timeline {
+  div.timeframe {
+    height: 7em;
+    margin-bottom: 1em;
+    clear: left;
 
-  th {
-    width: 8em;
-    padding-right: 1.5em;
+    span {
+      width: 8em;
+      margin-top: 2.3em;
+      margin-right: 1.5em;
+      display: block;
+      float: left;
+      text-align: center;
 
-    a {
-      color: black;
-      font-size: 0.8em;
-      text-decoration: none;
-      white-space: nowrap;
+      a {
+        color: black;
+        font-size: 0.8em;
+        font-weight: bold;
+        text-decoration: none;
+        white-space: nowrap;
 
-      &:hover {
-        color: #666;
+        &:hover {
+          color: #666;
+        }
       }
     }
-  }
 
-  td {
-    padding: 0.5em;
-
-    div.circle-box {
-      width: 6em;
-      height: 6em;
-      position: relative;
+    div.circles {
+      float: left;
 
       div.outer-circle {
-        width: 100%;
-        height: 100%;
-        position: absolute;
+        // width: inline-style;
+        // height: inline-style;
+        margin: 0.5em;
+        position: relative;
+        float: left;
 
         &.extrapolated {
-          // width: inline-style;
-          // height: inline-style;
-          top: 48%; // Compensate border
-          left: 48%; // Compensate border
-          // margin-top: inline-style;
-          // margin-left: inline-style;
           border-width: 2px;
           border-style: dotted;
           //border-color: inline-style;

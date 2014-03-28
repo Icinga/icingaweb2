@@ -3,6 +3,7 @@ use Icinga\Util\Color;
 
 $groupInfo = $timeline->getGroupInfo();
 $firstRow = true;
+
 ?>
 <div class="controls">
     <div style="margin: 1em;" class="dontprint">
@@ -18,69 +19,56 @@ $firstRow = true;
     </div>
 </div>
 <div class="content" data-base-target="_next">
-    <table class="timeline">
-        <tbody>
+    <div class="timeline">
 <?php foreach ($timeline as $timeInfo): ?>
-            <tr>
-                <th>
-                    <a href="<?= $this->href(
-                        '/monitoring/list/eventhistory',
-                        array(
-                            'raw_timestamp<' => $timeInfo[0]->start->getTimestamp(),
-                            'raw_timestamp>' => $timeInfo[0]->end->getTimestamp()
-                        )
-                    ); ?>">
-                        <?= $timeInfo[0]->end->format($intervalFormat); ?>
-                    </a>
-                </th>
+        <div class="timeframe">
+            <span>
+                <a href="<?= $this->href(
+                    '/monitoring/list/eventhistory',
+                    array(
+                        'raw_timestamp<' => $timeInfo[0]->start->getTimestamp(),
+                        'raw_timestamp>' => $timeInfo[0]->end->getTimestamp()
+                    )
+                ); ?>">
+                    <?= $timeInfo[0]->end->format($intervalFormat); ?>
+                </a>
+            </span>
+            <div class="circles">
 <?php foreach ($groupInfo as $groupName => $labelAndColor): ?>
-                <td>
-                    <div class="circle-box">
 <?php if (array_key_exists($groupName, $timeInfo[1])): ?>
 <?php
 $circleWidth = $timeline->calculateCircleWidth($timeInfo[1][$groupName], 2);
 $extrapolatedCircleWidth = $timeline->getExtrapolatedCircleWidth($timeInfo[1][$groupName], 2);
 ?>
 <?php if ($firstRow && $extrapolatedCircleWidth !== $circleWidth): ?>
-<?php
-$inlineStyle = sprintf(
-    'width: %4$s; height: %4$s; margin-top: -%2$s; margin-left: -%2$s; border-color: %3$s; background-color: %1$s;',
-    Color::changeBrightness($timeInfo[1][$groupName]->getColor(), 0.7),
-    ((float) substr($extrapolatedCircleWidth, 0, -2) / 2) . 'em',
-    $timeInfo[1][$groupName]->getColor(),
-    $extrapolatedCircleWidth
-);
-?>
-                        <div class="outer-circle extrapolated" style="<?= $inlineStyle; ?>">
+                <div class="outer-circle extrapolated" style="<?= sprintf(
+                    'width: %3$s; height: %3$s; border-color: %2$s; background-color: %1$s;',
+                    Color::changeBrightness($timeInfo[1][$groupName]->getColor(), 0.7),
+                    $timeInfo[1][$groupName]->getColor(),
+                    $extrapolatedCircleWidth
+                ); ?>">
 <?php else: ?>
-                        <div class="outer-circle">
+                <div class="outer-circle" style="<?= sprintf('width: %1$s; height: %1$s;', $circleWidth); ?>">
 <?php endif ?>
-<?php
-$inlineStyle = sprintf(
-    'width: %3$s; height: %3$s; background-color: %2$s; margin-top: -%1$s; margin-left: -%1$s;',
-    ((float) substr($circleWidth, 0, -2) / 2) . 'em',
-    $timeInfo[1][$groupName]->getColor(),
-    $circleWidth
-);
-?>
-                            <a class="inner-circle" style="<?= $inlineStyle; ?>" href="<?= $this->href(
-                                sprintf(
-                                    $timeInfo[1][$groupName]->getDetailUrl(),
-                                    $timeInfo[0]->start->getTimestamp(),
-                                    $timeInfo[0]->end->getTimestamp(),
-                                    $groupName
-                                )
-                            ); ?>" title="<?= $timeInfo[1][$groupName]->getValue(); ?> <?= $labelAndColor['label']; ?>"></a>
-                        </div>
-<?php else: ?>
-                        &nbsp;
+                    <a class="inner-circle" style="<?= sprintf(
+                        'width: %3$s; height: %3$s; background-color: %2$s; margin-top: -%1$s; margin-left: -%1$s;',
+                        ((float) substr($circleWidth, 0, -2) / 2) . 'em',
+                        $timeInfo[1][$groupName]->getColor(),
+                        $circleWidth
+                    ); ?>" href="<?= $this->href(
+                        sprintf(
+                            $timeInfo[1][$groupName]->getDetailUrl(),
+                            $timeInfo[0]->start->getTimestamp(),
+                            $timeInfo[0]->end->getTimestamp(),
+                            $groupName
+                        )
+                    ); ?>" title="<?= $timeInfo[1][$groupName]->getValue(); ?> <?= $labelAndColor['label']; ?>"></a>
+                </div>
 <?php endif ?>
-                    </div>
-                </td>
 <?php endforeach ?>
-            </tr>
-            <?php $firstRow = false; ?>
+            </div>
+        </div>
+        <?php $firstRow = false; ?>
 <?php endforeach ?>
-        </tbody>
-    </table>
+    </div>
 </div>
