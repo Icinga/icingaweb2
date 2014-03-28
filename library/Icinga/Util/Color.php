@@ -132,9 +132,9 @@ class Color {
      */
     private static function changeRgbBrightness(array $rgb, $change)
     {
-        $red = $rgb[0] + (255 * $change);
-        $green = $rgb[1] + (255 * $change);
-        $blue = $rgb[2] + (255 * $change);
+        $red = $rgb[0] + ($rgb[0] * $change);
+        $green = $rgb[1] + ($rgb[1] * $change);
+        $blue = $rgb[2] + ($rgb[2] * $change);
         $rgb[0] = $red < 255 ? (int) $red : 255;
         $rgb[1] = $green < 255 ? (int) $green : 255;
         $rgb[2] = $blue < 255 ? (int) $blue : 255;
