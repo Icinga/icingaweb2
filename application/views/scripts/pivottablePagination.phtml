@@ -36,8 +36,6 @@ $yAxisPages = $yAxisPaginator->getPages('all');
                         $xAxisPage === $xAxisPages->last ? $xAxisPages->totalItemCount : $xAxisPage * $xAxisPages->itemCountPerPage,
                         $xAxisPages->totalItemCount
                     ); ?>"></a>
-<?php else: ?>
-                    &nbsp;
 <?php endif ?>
                 </td>
 <?php endforeach ?>

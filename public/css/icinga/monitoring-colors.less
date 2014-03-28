@@ -497,14 +497,16 @@ div.pivot-pagination {
   margin: 1em;
 
   table {
+    table-layout: fixed;
     border-spacing: 0.2em;
     border-collapse: separate;
     border: 1px solid LightGrey;
     border-radius: 0.3em;
 
     td {
+      width: 16px;
+      height: 16px;
       padding: 0;
-      line-height: 1em;
       background-color: #fbfbfb;
 
       &:hover, &.active {
