@@ -29,12 +29,13 @@
 
 namespace Icinga\Authentication\Backend;
 
-use Exception;
-use Zend_Db_Expr;
+use \Exception;
+use \Zend_Db_Expr;
+use \Zend_Db_Select;
 use Icinga\Authentication\UserBackend;
 use Icinga\Data\Db\Connection;
+use Icinga\Logger\Logger;
 use Icinga\User;
-use \Zend_Db_Select;
 
 class DbUserBackend extends UserBackend
 {
@@ -68,32 +69,42 @@ class DbUserBackend extends UserBackend
     }
 
     /**
-     * Authenticate
+     * Authenticate the given user and return true on success, false on failure and null on error
      *
      * @param   User        $user
      * @param   string      $password
      *
-     * @return  bool
-     * @throws  \Exception              If we can not fetch the salt
+     * @return  bool|null
      */
     public function authenticate(User $user, $password)
     {
-        $salt = $this->getSalt($user->getUsername());
-        if ($salt === null) {
-            return false;
-        }
-        if ($salt === '') {
-            throw new Exception();
-        }
+        try {
+            $salt = $this->getSalt($user->getUsername());
+            if ($salt === null) {
+                return false;
+            }
+            if ($salt === '') {
+                throw new Exception('Cannot find salt for user ' . $user->getUsername());
+            }
 
-        $select = new Zend_Db_Select($this->conn->getConnection());
-        $row = $select->from('account', array(new Zend_Db_Expr(1)))
-            ->where('username = ?', $user->getUsername())
-            ->where('active = ?', true)
-            ->where('password = ?', $this->hashPassword($password, $salt))
-            ->query()->fetchObject();
+            $select = new Zend_Db_Select($this->conn->getConnection());
+            $row = $select->from('account', array(new Zend_Db_Expr(1)))
+                ->where('username = ?', $user->getUsername())
+                ->where('active = ?', true)
+                ->where('password = ?', $this->hashPassword($password, $salt))
+                ->query()->fetchObject();
 
-        return ($row !== false) ? true : false;
+            return ($row !== false) ? true : false;
+        } catch (Exception $e) {
+            Logger::error(
+                sprintf(
+                    'Failed to authenticate user "%s" with backend "%s". Exception occured: %s',
+                    $user->getUsername(),
+                    $this->getName(),
+                    $e->getMessage()
+                )
+            );
+        }
     }
 
     /**

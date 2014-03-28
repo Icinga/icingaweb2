@@ -29,7 +29,9 @@
 
 namespace Icinga\Authentication\Backend;
 
+use \Exception;
 use Icinga\User;
+use Icinga\Logger\Logger;
 use Icinga\Authentication\UserBackend;
 use Icinga\Protocol\Ldap\Connection;
 
@@ -87,23 +89,30 @@ class LdapUserBackend extends UserBackend
     }
 
     /**
-     * Authenticate
+     * Authenticate the given user and return true on success, false on failure and null on error
      *
      * @param   User    $user
      * @param   string  $password
      *
-     * @return  bool
+     * @return  bool|null
      */
     public function authenticate(User $user, $password)
     {
-        if ($this->conn->testCredentials(
+        try {
+            return $this->conn->testCredentials(
                 $this->conn->fetchDN($this->createQuery($user->getUsername())),
                 $password
-            )
-        ) {
-            return true;
+            );
+        } catch (Exception $e) {
+            Logger::error(
+                sprintf(
+                    'Failed to authenticate user "%s" with backend "%s". Exception occured: %s',
+                    $user->getUsername(),
+                    $this->getName(),
+                    $e->getMessage()
+                )
+            );
         }
-        return false;
     }
 
     /**
