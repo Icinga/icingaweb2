@@ -166,7 +166,7 @@
                 }
                 $li.removeClass('hover');
                 $('#layout').removeClass('hoveredmenu');
-            }, 800);
+            }, 500);
         },
 
         dropdownHover: function () {
