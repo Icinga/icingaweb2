@@ -12,19 +12,39 @@ error_reporting(E_ALL | E_STRICT);
 
 if (array_key_exists('ICINGAWEB_CONFIGDIR', $_ENV)) {
     $configDir = $_ENV['ICINGAWEB_CONFIGDIR'];
+} elseif (array_key_exists('ICINGAWEB_CONFIGDIR', $_SERVER)) {
+    $configDir = $_SERVER['ICINGAWEB_CONFIGDIR'];
 } else {
     $configDir = '/etc/icingaweb';
 }
 
-$baseDir = $_SERVER['DOCUMENT_ROOT'];
-$ruri = $_SERVER['REQUEST_URI'];
-$remove = dirname($_SERVER['PHP_SELF']);
+if (isset($_SERVER['REQUEST_URI'])) {
+    $ruri = $_SERVER['REQUEST_URI'];
+} else {
+    return false;
+}
 
+// Workaround, PHPs internal Webserver seems to mess up SCRIPT_FILENAME
+// as it prefixes it's absolute path with DOCUMENT_ROOT
+if (preg_match('/^PHP .* Development Server/', $_SERVER['SERVER_SOFTWARE'])) {
+    $script = basename($_SERVER['SCRIPT_FILENAME']);
+    $_SERVER['PHP_SELF'] = $_SERVER['SCRIPT_NAME'] = '/' . $script;
+    $_SERVER['SCRIPT_FILENAME'] = $_SERVER['DOCUMENT_ROOT']
+      . DIRECTORY_SEPARATOR
+      . $script;
+}
+
+$baseDir = $_SERVER['DOCUMENT_ROOT'];
+$baseDir = dirname($_SERVER['SCRIPT_FILENAME']);
+
+// Fix aliases
+$remove = dirname($_SERVER['PHP_SELF']);
 if (substr($ruri, 0, strlen($remove)) !== $remove) {
   return false;
 }
 
 $ruri = ltrim(substr($ruri, strlen($remove)), '/');
+
 if (strpos($ruri, '?') === false) {
     $params = '';
     $path = $ruri;
@@ -32,28 +52,32 @@ if (strpos($ruri, '?') === false) {
     list($path, $params) = preg_split('/\?/', $ruri, 2);
 }
 
-$pathParts = preg_split('~/~', $path);
-if (count($pathParts) === 2 &&
-    ($pathParts[0] === 'css' || $pathParts[0] === 'js')
-) {
+$special = array(
+    'css/icinga.css',
+    'css/icinga.min.css',
+    'js/icinga.dev.js',
+    'js/icinga.min.js'
+);
+
+if (in_array($path, $special)) {
 
     require_once __DIR__ . '/EmbeddedWeb.php';
     EmbeddedWeb::start($configDir);
 
-    switch($pathParts[1]) {
+    switch($path) {
 
-        case 'icinga.css':
+        case 'css/icinga.css':
             Stylesheet::send();
             exit;
-        case 'icinga.min.css':
+        case 'css/icinga.min.css':
             Stylesheet::sendMinified();
             exit;
 
-        case 'icinga.dev.js':
+        case 'js/icinga.dev.js':
             JavaScript::send();
             exit;
 
-        case 'icinga.min.js':
+        case 'js/icinga.min.js':
             JavaScript::sendMinified();
             break;
 
