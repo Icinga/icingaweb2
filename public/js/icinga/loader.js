@@ -237,6 +237,7 @@
             var $resp = $('<div>' + req.responseText + '</div>');
             var active = false;
             var rendered = false;
+            var classes;
 
             if (! req.autorefresh) {
                 // TODO: Hook for response/url?
@@ -295,15 +296,22 @@
             }
 
             var moduleName = req.getResponseHeader('X-Icinga-Module');
+            classes = $.grep(req.$target.classes(), function (el) {
+               if (el === 'icinga-module' || el.match(/^module\-/)) {
+                   return false;
+               }
+               return true;
+            });
             if (moduleName) {
-                req.$target.addClass('icinga-module');
                 req.$target.data('icingaModule', moduleName);
-                req.$target.addClass('module-' + moduleName);
+                classes.push('icinga-module');
+                classes.push('module-' + moduleName);
+                req.$target.attr('class', classes);
             } else {
-                req.$target.removeClass('icinga-module');
                 req.$target.removeData('icingaModule');
-                req.$target.attr('class', 'container'); // TODO: remove module-$name
+                // req.$target.attr('class', 'container'); // TODO: remove module-$name
             }
+            req.$target.attr('class', classes.join(' '));
 
             var cssreload = req.getResponseHeader('X-Icinga-CssReload');
             if (cssreload) {
