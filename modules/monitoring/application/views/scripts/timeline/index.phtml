@@ -44,9 +44,10 @@ $extrapolatedCircleWidth = $timeline->getExtrapolatedCircleWidth($timeInfo[1][$g
 <?php if ($firstRow && $extrapolatedCircleWidth !== $circleWidth): ?>
 <?php
 $inlineStyle = sprintf(
-    'width: %3$s; height: %3$s; background-color: %1$s; margin-top: -%2$s; margin-left: -%2$s;',
-    Color::changeBrightness($timeInfo[1][$groupName]->getColor(), 0.25),
+    'width: %4$s; height: %4$s; margin-top: -%2$s; margin-left: -%2$s; border-color: %3$s; background-color: %1$s;',
+    Color::changeBrightness($timeInfo[1][$groupName]->getColor(), 0.7),
     ((float) substr($extrapolatedCircleWidth, 0, -2) / 2) . 'em',
+    $timeInfo[1][$groupName]->getColor(),
     $extrapolatedCircleWidth
 );
 ?>

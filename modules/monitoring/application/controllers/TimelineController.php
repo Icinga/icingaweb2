@@ -63,7 +63,7 @@ class Monitoring_TimelineController extends ActionController
             )
         );
         $timeline->setMaximumCircleWidth('6em');
-        $timeline->setMinimumCircleWidth('0.15em');
+        $timeline->setMinimumCircleWidth('0.3em');
         $timeline->setDisplayRange($displayRange);
         $timeline->setForecastRange($forecastRange);
         $timeline->setSession($this->getWindowSession('timeline', $this->getRequest()->getParam('extend') != 1));

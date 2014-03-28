@@ -664,6 +664,7 @@ table.timeline {
   clear: left;
 
   th {
+    width: 8em;
     padding-right: 1.5em;
 
     a {
@@ -694,11 +695,13 @@ table.timeline {
         &.extrapolated {
           // width: inline-style;
           // height: inline-style;
-          top: 49%; // Compensate border
-          left: 49%; // Compensate border
+          top: 48%; // Compensate border
+          left: 48%; // Compensate border
           // margin-top: inline-style;
           // margin-left: inline-style;
-          border: 1px dashed #666;
+          border-width: 2px;
+          border-style: dotted;
+          //border-color: inline-style;
           border-radius: 100%;
           // background-color: inline-style;
         }
@@ -708,11 +711,10 @@ table.timeline {
           // height: inline-style;
           display: block;
           position: absolute;
-          top: 49%; // Compensate border
-          left: 49%; // Compensate border
+          top: 50%;
+          left: 50%;
           // margin-top: inline-style;
           // margin-left: inline-style;
-          border: 1px solid black;
           border-radius: 100%;
           // background-color: inline-style;
         }
