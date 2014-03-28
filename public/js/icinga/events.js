@@ -119,6 +119,7 @@
                 delay = 800;
 
             if ($li.hasClass('active')) {
+                $li.siblings().removeClass('hover');
                 return;
             }
             if ($li.children('ul').children('li').length === 0) {
