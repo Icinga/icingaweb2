@@ -37,10 +37,7 @@ use Icinga\Cli\Screen;
 use Icinga\Application\Benchmark;
 use Icinga\Exception\ProgrammingError;
 
-// @codingStandardsIgnoreStart
-require_once dirname(__FILE__) . '/ApplicationBootstrap.php';
-require_once dirname(__FILE__). '/../Exception/ProgrammingError.php';
-// @codingStandardsIgnoreStop
+require_once __DIR__ . '/ApplicationBootstrap.php';
 
 class Cli extends ApplicationBootstrap
 {

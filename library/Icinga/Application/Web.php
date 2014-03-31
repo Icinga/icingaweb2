@@ -29,30 +29,27 @@
 
 namespace Icinga\Application;
 
-// @codingStandardsIgnoreStart
-require_once dirname(__FILE__) . '/ApplicationBootstrap.php';
-// @codingStandardsIgnoreStop
+require_once __DIR__ . '/ApplicationBootstrap.php';
 
-use \DateTimeZone;
-use \Exception;
-use \Zend_Layout;
-use \Zend_Paginator;
-use \Zend_View_Helper_PaginationControl;
-use \Zend_Controller_Action_HelperBroker;
-use \Zend_Controller_Router_Route;
-use \Zend_Controller_Front;
-use Icinga\Logger\Logger;
 use Icinga\Authentication\Manager as AuthenticationManager;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\NotReadableError;
-use Icinga\User;
+use Icinga\Logger\Logger;
 use Icinga\Web\Request;
 use Icinga\Web\View;
-
-use Icinga\Util\DateTimeFactory;
 use Icinga\Web\Session\Session as BaseSession;
 use Icinga\Web\Session;
+use Icinga\User;
 use Icinga\Util\Translator;
+use Icinga\Util\DateTimeFactory;
+use DateTimeZone;
+use Exception;
+use Zend_Layout;
+use Zend_Paginator;
+use Zend_View_Helper_PaginationControl;
+use Zend_Controller_Action_HelperBroker;
+use Zend_Controller_Router_Route;
+use Zend_Controller_Front;
 
 /**
  * Use this if you want to make use of Icinga functionality in other web projects
@@ -219,7 +216,9 @@ class Web extends ApplicationBootstrap
             $config = null;
         }
         $authenticationManager = AuthenticationManager::getInstance($config);
-        if ($config !== null && $config->global !== null && $config->global->get('authenticationMode', 'internal') === 'external') {
+        if ($config !== null && $config->global !== null &&
+            $config->global->get('authenticationMode', 'internal') === 'external'
+        ) {
             $authenticationManager->authenticateFromRemoteUser();
         }
         if ($authenticationManager->isAuthenticated() === true) {
