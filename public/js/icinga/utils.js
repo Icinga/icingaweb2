@@ -114,6 +114,32 @@
             return result;
         },
 
+        // Local URLs only
+        removeUrlParams: function (url, params) {
+            var parts = this.parseUrl(url),
+                result = parts.path,
+                newparams = parts.params;
+
+            $.each(params, function (idx, key) {
+                delete newparams[key];
+            });
+
+            if (Object.keys(newparams).length > 0) {
+              var queryString = '?';
+              $.each(newparams, function (key, value) {
+                  if (queryString !== '?') {
+                      queryString += '&';
+                  }
+                  queryString += encodeURIComponent(key) + '=' + encodeURIComponent(value);
+              });
+              result += queryString;
+            }
+            if (parts.hash.length > 0) {
+                result += '#' + parts.hash;
+            }
+            return result;
+        },
+
         /**
          * Parse url params
          */

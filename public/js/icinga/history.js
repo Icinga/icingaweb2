@@ -49,7 +49,7 @@
             ) {
                 this.enabled = true;
                 this.icinga.logger.debug('History API enabled');
-                this.applyLocationBar();
+                this.applyLocationBar(true);
                 $(window).on('popstate', { self: this }, this.onHistoryChange);
             }
 
@@ -62,13 +62,16 @@
          */
         pushCurrentState: function () {
 
+            var icinga = this.icinga;
+
             // No history API, no action
             if (!this.enabled) {
                 return;
             }
 
-            this.icinga.logger.debug('Pushing current state to history');
+            icinga.logger.debug('Pushing current state to history');
             var url = '';
+            var blacklist = ['_render', '_reload'];
 
             // We only store URLs of containers sitting directly under #main:
             $('#main > .container').each(function (idx, container) {
@@ -76,6 +79,7 @@
 
                 // TODO: I'd prefer to have the rightmost URL first
                 if ('undefined' !== typeof cUrl) {
+                    cUrl = icinga.utils.removeUrlParams(cUrl, blacklist);
                     if (url === '') {
                         url = cUrl;
                     } else {
@@ -120,14 +124,18 @@
 
         },
 
-        applyLocationBar: function () {
+        applyLocationBar: function (onload) {
             var icinga = this.icinga,
                 main,
                 parts;
 
+            if (typeof onload === 'undefined') {
+                onload = false;
+            }
+
             // TODO: Still hardcoding col1/col2, shall be dynamic soon
             main = document.location.pathname + document.location.search;
-            if ($('#col1').data('icingaUrl') !== main) {
+            if (! onload && $('#col1').data('icingaUrl') !== main) {
                 icinga.loader.loadUrl(
                     main,
                     $('#col1')
