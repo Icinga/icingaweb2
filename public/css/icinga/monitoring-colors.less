@@ -687,15 +687,19 @@ div.timeline {
       }
     }
 
-    div.circles {
+    div.circle-box {
+      // width: inline-style;
+      height: 100%;
+      margin-right: 0.5em;
+      position: relative;
       float: left;
 
       div.outer-circle {
         // width: inline-style;
         // height: inline-style;
-        margin: 0.5em;
-        position: relative;
-        float: left;
+        position: absolute;
+        top: 50%;
+        // margin-top: inline-style;
 
         &.extrapolated {
           border-width: 2px;

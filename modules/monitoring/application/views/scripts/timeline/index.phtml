@@ -33,7 +33,6 @@ $firstRow = true;
                     <?= $timeInfo[0]->end->format($intervalFormat); ?>
                 </a>
             </span>
-            <div class="circles">
 <?php foreach ($groupInfo as $groupName => $labelAndColor): ?>
 <?php if (array_key_exists($groupName, $timeInfo[1])): ?>
 <?php
@@ -41,14 +40,21 @@ $circleWidth = $timeline->calculateCircleWidth($timeInfo[1][$groupName], 2);
 $extrapolatedCircleWidth = $timeline->getExtrapolatedCircleWidth($timeInfo[1][$groupName], 2);
 ?>
 <?php if ($firstRow && $extrapolatedCircleWidth !== $circleWidth): ?>
+            <div class="circle-box" style="width: <?= $extrapolatedCircleWidth; ?>;">
                 <div class="outer-circle extrapolated" style="<?= sprintf(
-                    'width: %3$s; height: %3$s; border-color: %2$s; background-color: %1$s;',
+                    'width: %4$s; height: %4$s; border-color: %3$s; background-color: %1$s; margin-top: -%2$s;',
                     Color::changeBrightness($timeInfo[1][$groupName]->getColor(), 0.7),
+                    ((float) substr($extrapolatedCircleWidth, 0, -2) / 2) . 'em',
                     $timeInfo[1][$groupName]->getColor(),
                     $extrapolatedCircleWidth
                 ); ?>">
 <?php else: ?>
-                <div class="outer-circle" style="<?= sprintf('width: %1$s; height: %1$s;', $circleWidth); ?>">
+            <div class="circle-box" style="width: <?= $circleWidth; ?>;">
+                <div class="outer-circle" style="<?= sprintf(
+                    'width: %2$s; height: %2$s; margin-top: -%1$s;',
+                    ((float) substr($circleWidth, 0, -2) / 2) . 'em',
+                    $circleWidth
+                ); ?>">
 <?php endif ?>
                     <a class="inner-circle" style="<?= sprintf(
                         'width: %3$s; height: %3$s; background-color: %2$s; margin-top: -%1$s; margin-left: -%1$s;',
@@ -64,9 +70,9 @@ $extrapolatedCircleWidth = $timeline->getExtrapolatedCircleWidth($timeInfo[1][$g
                         )
                     ); ?>" title="<?= $timeInfo[1][$groupName]->getValue(); ?> <?= $labelAndColor['label']; ?>"></a>
                 </div>
+            </div>
 <?php endif ?>
 <?php endforeach ?>
-            </div>
         </div>
         <?php $firstRow = false; ?>
 <?php endforeach ?>
