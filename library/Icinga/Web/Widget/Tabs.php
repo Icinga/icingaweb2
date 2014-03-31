@@ -282,9 +282,9 @@ EOT;
     public function __toString()
     {
         try {
-          $html = $this->render(Icinga::app()->getViewRenderer()->view);
+            $html = $this->render(Icinga::app()->getViewRenderer()->view);
         } catch (Exception $e) {
-          return htmlspecialchars($e->getMessage());
+            return htmlspecialchars($e->getMessage());
         }
         return $html;
     }
