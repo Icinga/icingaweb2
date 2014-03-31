@@ -100,7 +100,8 @@ class View extends Zend_View_Abstract
      * @param  string $value  The output to be escaped
      * @return string
      */
-    public function escape($value) {
+    public function escape($value)
+    {
         return htmlspecialchars($value, $this->replaceFlags, self::CHARSET, true);
     }
 
@@ -126,9 +127,11 @@ class View extends Zend_View_Abstract
     {
         if ($this->hasHelperFunction($name)) {
             throw new ProgrammingError(
-                sprintf('Cannot assign the same helper function twice: "%s"',
-                $name
-            ));
+                sprintf(
+                    'Cannot assign the same helper function twice: "%s"',
+                    $name
+                )
+            );
         }
 
         $this->helperFunctions[$name] = $function;
