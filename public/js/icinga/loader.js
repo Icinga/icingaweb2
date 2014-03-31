@@ -435,6 +435,7 @@
             if (active) {
                 $('[href="' + active + '"]', req.$target).addClass('active');
             }
+            req.$target.trigger('rendered');
         },
 
         /**

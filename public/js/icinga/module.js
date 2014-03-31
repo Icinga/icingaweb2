@@ -10,10 +10,11 @@
         // The Icinga instance
         this.icinga = icinga;
 
-        // Event handlers registered by this module
+        // Applied event handlers
         this.handlers = [];
 
-        this.registeredHandlers = {};
+        // Event handlers registered by this module
+        this.registeredHandlers = [];
 
         // The module name
         this.name = name;
@@ -44,7 +45,7 @@
                 // The constructor of the modules prototype must be prepared to get an
                 // instance of Icinga.Module
                 this.object = new this.prototyp(this);
-                this.applyRegisteredEventHandlers();
+                this.applyHandlers();
             } catch(e) {
                 this.icinga.logger.error(
                     'Failed to load module ' + this.name + ': ',
@@ -63,28 +64,28 @@
         },
 
         /**
-         * Globally register this modules event handlers
+         * Register this modules event handlers
          */
-        registerEventHandlers: function (handlers) {
-            this.registeredHandlers = handlers;
-            return this;
+        on: function (event, filter, handler) {
+            if (typeof handler === 'undefined') {
+                handler = filter;
+                filter = '.module-' + this.name;
+            } else {
+                filter = '.module-' + this.name + ' ' + filter;
+            }
+            this.registeredHandlers.push({event: event, filter: filter, handler: handler});
+
         },
 
-        applyRegisteredEventHandlers: function () {
-
+        applyHandlers: function () {
             var self = this;
 
-            $.each(this.registeredHandlers, function (filter, events) {
-
-                $.each(events, function (event, handler) {
-                    // TODO: if (event[1] === 'each') {
-                    // $(event[0], $(el)).each(event[2]);
-                    self.bindEventHandler(
-                        event,
-                        '.module-' + self.name + ' ' + filter,
-                        handler
-                    );
-                });
+            $.each(this.registeredHandlers, function (key, on) {
+                self.bindEventHandler(
+                    on.event,
+                    on.filter,
+                    on.handler
+                );
             });
             self = null;
 
