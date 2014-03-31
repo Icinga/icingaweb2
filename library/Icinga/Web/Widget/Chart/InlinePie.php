@@ -66,7 +66,7 @@ EOD;
      *
      * @var array
      */
-    private $colors = array('44bb77', 'ffaa44', 'ff5566', 'ddccdd');
+    private $colors = array('#44bb77', '#ffaa44', '#ff5566', '#ddccdd');
 
     /**
      * The width of the rendered chart
