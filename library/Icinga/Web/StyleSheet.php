@@ -27,7 +27,7 @@ class StyleSheet
         $less = new LessCompiler();
         $basedir = Icinga::app()->getBootstrapDirecory();
         foreach (self::$lessFiles as $file) {
-          $less->addFile($basedir . '/' . $file);
+            $less->addFile($basedir . '/' . $file);
         }
         $less->addLoadedModules();
         $less->addFile($basedir . '/css/pdf/pdfprint.less');
@@ -53,7 +53,7 @@ class StyleSheet
         $less = new LessCompiler();
         $basedir = Icinga::app()->getBootstrapDirecory();
         foreach (self::$lessFiles as $file) {
-          $less->addFile($basedir . '/' . $file);
+            $less->addFile($basedir . '/' . $file);
         }
         $less->addLoadedModules();
         if ($minified) {

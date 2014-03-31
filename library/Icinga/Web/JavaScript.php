@@ -5,10 +5,6 @@ namespace Icinga\Web;
 use Icinga\Application\Icinga;
 use JShrink\Minifier;
 
-// @codingStandardsIgnoreStart
-require_once ICINGA_LIBDIR . '/vendor/JShrink/Minifier.php';
-// @codingStandardsIgnoreStop
-
 class JavaScript
 {
     protected static $jsFiles = array(
@@ -68,7 +64,7 @@ class JavaScript
         }
 
         foreach (self::$jsFiles as $file) {
-          $js .= file_get_contents($basedir . '/' . $file);
+            $js .= file_get_contents($basedir . '/' . $file);
         }
 
         foreach (Icinga::app()->getModuleManager()->getLoadedModules() as $name => $module) {
@@ -77,6 +73,7 @@ class JavaScript
             }
         }
         if ($minified) {
+            require_once ICINGA_LIBDIR . '/vendor/JShrink/Minifier.php';
             $out .= Minifier::minify($js, array('flaggedComments' => false));
         } else {
             $out .= $js;
