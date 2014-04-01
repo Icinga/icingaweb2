@@ -132,7 +132,7 @@ class ListController extends Controller
         ) {
             $config = ResourceFactory::getResourceConfig('logfile');
             $resource = ResourceFactory::createResource($config);
-            $this->view->logData = $resource->select()->paginate();
+            $this->view->logData = $resource->select()->order('DESC')->paginate();
         } else {
             $this->view->logData = null;
         }
