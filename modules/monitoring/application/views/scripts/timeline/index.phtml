@@ -23,6 +23,9 @@ $firstRow = !$beingExtended;
 <div class="content" data-base-target="_next">
     <div class="timeline">
 <?php endif ?>
+<?php if ($switchedContext): ?>
+        <hr>
+<?php endif ?>
 <?php foreach ($timeline as $timeInfo): ?>
         <div class="timeframe">
             <span>
