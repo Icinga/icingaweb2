@@ -76,6 +76,9 @@
             // We catch resize events
             $(window).on('resize', { self: this.icinga.ui }, this.icinga.ui.onWindowResize);
 
+            // Trigger 'rendered' event also on page loads
+            $(window).on('load', { self: this }, this.onLoad);
+
             // Destroy Icinga, clean up and interrupt pending requests on unload
             $( window ).on('unload', { self: this }, this.onUnload);
             $( window ).on('beforeunload', { self: this }, this.onUnload);
@@ -190,6 +193,10 @@
             } else {
                 $parent.addClass('collapsed');
             }
+        },
+
+        onLoad: function (event) {
+            $('.container').trigger('rendered');
         },
 
         onUnload: function (event) {
@@ -397,6 +404,7 @@
 
         unbindGlobalHandlers: function () {
             $(window).off('resize', this.onWindowResize);
+            $(window).off('load', this.onLoad);
             $(window).off('unload', this.onUnload);
             $(window).off('beforeunload', this.onUnload);
             $(document).off('scroll', '.container', this.onContainerScroll);
