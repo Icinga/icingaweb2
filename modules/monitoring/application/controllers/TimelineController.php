@@ -210,14 +210,16 @@ class Monitoring_TimelineController extends ActionController
     private function buildTimeRanges()
     {
         $startTime = new DateTime();
-        $startTimestamp = strtotime($this->_request->getParam('start'));
+        $startParam = $this->_request->getParam('start');
+        $startTimestamp = is_numeric($startParam) ? intval($startParam) : strtotime($startParam);
         if ($startTimestamp !== false) {
             $startTime->setTimestamp($startTimestamp);
         }
         $this->extrapolateDateTime($startTime);
 
         $endTime = clone $startTime;
-        $endTimestamp = strtotime($this->_request->getParam('end'));
+        $endParam = $this->_request->getParam('end');
+        $endTimestamp = is_numeric($endParam) ? intval($endParam) : strtotime($endParam);
         if ($endTimestamp !== false) {
             $endTime->setTimestamp($endTimestamp);
         } else {
