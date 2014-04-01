@@ -269,20 +269,22 @@ class TimeLine implements IteratorAggregate
     public function getCalculationBase($create)
     {
         if ($this->calculationBase === null) {
-            if ($this->session !== null) {
-                $this->calculationBase = $this->session->get('calculationBase');
-            }
+            $calculationBase = $this->session !== null ? $this->session->get('calculationBase') : null;
 
             if ($create) {
                 $new = $this->generateCalculationBase();
-                if ($new > $this->calculationBase) {
+                if ($new > $calculationBase) {
                     $this->calculationBase = $new;
 
                     if ($this->session !== null) {
                         $this->session->calculationBase = $new;
                         Session::getSession()->write(); // TODO: Should it be possible to call write() on the namespace?
                     }
+                } else {
+                    $this->calculationBase = $calculationBase;
                 }
+            } else {
+                return $calculationBase;
             }
         }
 
