@@ -53,6 +53,30 @@
             return hours + ':' + minutes + ':' + seconds;
         },
 
+        /**
+        * Return whether the given element is visible in the users view
+        *
+        * Borrowed from: http://stackoverflow.com/q/487073
+        *
+        * @param   {selector}   element     The element to check
+        * @returns {Boolean}
+        */
+        isVisible: function(element)
+        {
+          var $element = $(element);
+          if (!$element.length) {
+            return false;
+          }
+
+          var docViewTop = $(window).scrollTop();
+          var docViewBottom = docViewTop + $(window).height();
+          var elemTop = $element.offset().top;
+          var elemBottom = elemTop + $element.height();
+
+          return ((elemBottom >= docViewTop) && (elemTop <= docViewBottom)
+                  && (elemBottom <= docViewBottom) && (elemTop >= docViewTop));
+        },
+
         getUrlHelper: function () {
             if (this.urlHelper === null) {
                 this.urlHelper = document.createElement('a');

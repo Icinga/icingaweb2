@@ -66,9 +66,12 @@ class Monitoring_TimelineController extends ActionController
         $timeline->setMinimumCircleWidth('0.3em');
         $timeline->setDisplayRange($displayRange);
         $timeline->setForecastRange($forecastRange);
-        $timeline->setSession($this->getWindowSession('timeline', $this->getRequest()->getParam('extend') != 1));
+        $beingExtended = $this->getRequest()->getParam('extend') == 1;
+        $timeline->setSession($this->getWindowSession('timeline', !$beingExtended));
 
         $this->view->timeline = $timeline;
+        $this->view->nextRange = $forecastRange;
+        $this->view->beingExtended = $beingExtended;
         $this->view->intervalFormat = $this->getIntervalFormat();
         $oldBase = $timeline->getCalculationBase(false);
         $this->view->switchedContext = $oldBase !== null && $oldBase !== $timeline->getCalculationBase(true);

@@ -1,10 +1,12 @@
 <?php
+use Icinga\Web\Url;
 use Icinga\Util\Color;
 
 $groupInfo = $timeline->getGroupInfo();
-$firstRow = true;
+$firstRow = !$beingExtended;
 
 ?>
+<?php if (!$beingExtended): ?>
 <div class="controls">
     <div style="margin: 1em;" class="dontprint">
         <?= $intervalBox; ?>
@@ -20,6 +22,7 @@ $firstRow = true;
 </div>
 <div class="content" data-base-target="_next">
     <div class="timeline">
+<?php endif ?>
 <?php foreach ($timeline as $timeInfo): ?>
         <div class="timeframe">
             <span>
@@ -76,5 +79,19 @@ $extrapolatedCircleWidth = $timeline->getExtrapolatedCircleWidth($timeInfo[1][$g
         </div>
         <?php $firstRow = false; ?>
 <?php endforeach ?>
+        <a id="end" href="<?= Url::fromRequest()->getUrlWithout(
+            array(
+                'raw_timestamp<',
+                'raw_timestamp>'
+            )
+        )->overwriteParams(
+            array(
+                'start'     => $nextRange->getStart()->getTimestamp(),
+                'end'       => $nextRange->getEnd()->getTimestamp(),
+                'extend'    => 1
+            )
+        ); ?>"></a>
+<?php if (!$beingExtended): ?>
     </div>
 </div>
+<?php endif ?>
