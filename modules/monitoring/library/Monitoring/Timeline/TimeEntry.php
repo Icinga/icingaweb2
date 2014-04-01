@@ -5,6 +5,7 @@
 namespace Icinga\Module\Monitoring\Timeline;
 
 use \DateTime;
+use Icinga\Web\Url;
 use Icinga\Exception\ProgrammingError;
 
 /**
@@ -36,7 +37,7 @@ class TimeEntry
     /**
      * The url to this group's detail view
      *
-     * @var string
+     * @var Url
      */
     protected $detailUrl;
 
@@ -149,9 +150,9 @@ class TimeEntry
     /**
      * Set the url to this group's detail view
      *
-     * @param   string  $detailUrl  The url to set
+     * @param   Url     $detailUrl      The url to set
      */
-    public function setDetailUrl($detailUrl)
+    public function setDetailUrl(Url $detailUrl)
     {
         $this->detailUrl = $detailUrl;
     }
@@ -159,7 +160,7 @@ class TimeEntry
     /**
      * Return the url to this group's detail view
      *
-     * @return  string
+     * @return  Url
      */
     public function getDetailUrl()
     {

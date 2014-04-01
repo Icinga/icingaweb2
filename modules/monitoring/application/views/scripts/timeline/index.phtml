@@ -67,12 +67,11 @@ $extrapolatedCircleWidth = $timeline->getExtrapolatedCircleWidth($timeInfo[1][$g
                         ((float) substr($circleWidth, 0, -2) / 2) . 'em',
                         $timeInfo[1][$groupName]->getColor(),
                         $circleWidth
-                    ); ?>" href="<?= $this->href(
-                        sprintf(
-                            $timeInfo[1][$groupName]->getDetailUrl(),
-                            $timeInfo[0]->start->getTimestamp(),
-                            $timeInfo[0]->end->getTimestamp(),
-                            $groupName
+                    ); ?>" href="<?= $timeInfo[1][$groupName]->getDetailUrl()->overwriteParams(
+                        array(
+                            'start' => $timeInfo[0]->start->getTimestamp(),
+                            'end'   => $timeInfo[0]->end->getTimestamp(),
+                            'name'  => $groupName
                         )
                     ); ?>" title="<?= $timeInfo[1][$groupName]->getValue(); ?> <?= $labelAndColor['label']; ?>"></a>
                 </div>
@@ -82,7 +81,7 @@ $extrapolatedCircleWidth = $timeline->getExtrapolatedCircleWidth($timeInfo[1][$g
         </div>
         <?php $firstRow = false; ?>
 <?php endforeach ?>
-        <a id="end" href="<?= Url::fromRequest()->getUrlWithout(
+        <a id="end" href="<?= Url::fromRequest()->remove(
             array(
                 'raw_timestamp<',
                 'raw_timestamp>'

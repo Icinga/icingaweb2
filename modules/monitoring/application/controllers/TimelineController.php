@@ -5,6 +5,7 @@
 use \DateTime;
 use \DateInterval;
 use \Zend_Config;
+use Icinga\Web\Url;
 use Icinga\Application\Config;
 use Icinga\Web\Controller\ActionController;
 use Icinga\Module\Monitoring\Timeline\TimeLine;
@@ -20,7 +21,17 @@ class Monitoring_TimelineController extends ActionController
         $this->setupIntervalBox();
         list($displayRange, $forecastRange) = $this->buildTimeRanges();
 
-        $detailUrl = '/monitoring/list/eventhistory?raw_timestamp<=%s&raw_timestamp>=%s&type=%s';
+        $detailUrl = Url::fromPath(
+            '/monitoring/list/eventhistory',
+            Url::fromRequest()->getParams()
+        )->setAliases(
+            array(
+                'name'  => 'type',
+                'end'   => 'raw_timestamp>',
+                'start' => 'raw_timestamp<'
+            )
+        )->remove(array('start', 'end', 'extend', 'interval'));
+
         $timeline = new TimeLine(
             EventHistoryView::fromRequest(
                 $this->getRequest(),

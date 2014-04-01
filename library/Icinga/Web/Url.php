@@ -59,6 +59,13 @@ class Url
     private $params = array();
 
     /**
+     * An array to map aliases to valid parameters
+     *
+     * @var array
+     */
+    private $aliases = array();
+
+    /**
      * The site anchor after the '#'
      *
      * @var string
@@ -198,6 +205,31 @@ class Url
     }
 
     /**
+     * Set the array to be used to map aliases to valid parameters
+     *
+     * @param   array   $aliases    The array to be used (alias => param)
+     *
+     * @return  self
+     */
+    public function setAliases(array $aliases)
+    {
+        $this->aliases = $aliases;
+        return $this;
+    }
+
+    /**
+     * Return the parameter for the given alias
+     *
+     * @param   string      $alias      The alias to translate
+     *
+     * @return  string                  The parameter name
+     */
+    public function translateAlias($alias)
+    {
+        return array_key_exists($alias, $this->aliases) ? $this->aliases[$alias] : $alias;
+    }
+
+    /**
      * Overwrite the baseUrl.
      *
      * If an empty Url is given '/' is used as the base
@@ -256,7 +288,11 @@ class Url
         if (empty($this->params)) {
             return ltrim($this->path, '/') . $this->anchor;
         }
-        return ltrim($this->path, '/') . '?' . http_build_query($this->params, '', '&amp;') . $this->anchor;
+        $params = array();
+        foreach ($this->params as $param => $value) {
+            $params[$this->translateAlias($param)] = $value;
+        }
+        return ltrim($this->path, '/') . '?' . http_build_query($params, '', '&amp;') . $this->anchor;
     }
 
     /**
