@@ -57,7 +57,6 @@ use Icinga\Module\Monitoring\Filter\UrlViewFilter;
 use Icinga\Module\Monitoring\DataView\ServiceStatus;
 use Icinga\Filter\Filterable;
 use Icinga\Web\Url;
-use Icinga\Data\ResourceFactory;
 
 class Monitoring_ListController extends Controller
 {
@@ -626,27 +625,6 @@ class Monitoring_ListController extends Controller
             'notifications'
         ))) {
             $tabs->extend(new OutputFormat())->extend(new DashboardAction());
-        }
-    }
-
-    public function applicationlogAction()
-    {
-        $this->addTitleTab('application log');
-        $config_ini = IcingaConfig::app()->toArray();
-        if (!in_array('logging', $config_ini) || (
-                in_array('type', $config_ini['logging']) &&
-                    $config_ini['logging']['type'] === 'stream' &&
-                in_array('target', $config_ini['logging']) &&
-                    file_exists($config_ini['logging']['target'])
-            )
-        ) {
-            $config = ResourceFactory::getResourceConfig('logfile');
-            $resource = ResourceFactory::createResource($config);
-            $this->view->logData = $resource->select()->paginate();
-
-            //$resource->select()->andWhere('error')->order('desc')->limit(200, 50)->fetchAll();
-        } else {
-            $this->view->logData = null;
         }
     }
 }
