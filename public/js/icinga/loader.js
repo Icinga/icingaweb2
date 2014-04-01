@@ -44,13 +44,17 @@
          * @param {object} target  Target jQuery element
          * @param {object} data    Optional parameters, usually for POST requests
          * @param {string} method  HTTP method, default is 'GET'
+         * @param {string} action  How to handle the response ('replace' or 'append'), default is 'replace'
          */
-        loadUrl: function (url, $target, data, method, autorefresh) {
+        loadUrl: function (url, $target, data, method, action, autorefresh) {
             var id = null;
 
             // Default method is GET
             if ('undefined' === typeof method) {
                 method = 'GET';
+            }
+            if ('undefined' === typeof action) {
+                action = 'replace';
             }
             if ('undefined' === typeof autorefresh) {
                 autorefresh = false;
@@ -110,6 +114,7 @@
             req.complete(this.onComplete);
             req.historyTriggered = false;
             req.autorefresh = autorefresh;
+            req.action = action;
             if (id) {
                 this.requests[id] = req;
             }
@@ -185,7 +190,7 @@
                     return;
                 }
 
-                if (self.loadUrl($el.data('icingaUrl'), $el, undefined, undefined, true) === false) {
+                if (self.loadUrl($el.data('icingaUrl'), $el, undefined, undefined, undefined, true) === false) {
                     self.icinga.logger.debug(
                         'NOT autorefreshing ' + id + ', even if ' + interval + ' ms passed. Request pending?'
                     );
@@ -424,7 +429,7 @@
             }
 
             // .html() removes outer div we added above
-            this.renderContentToContainer($resp.html(), req.$target);
+            this.renderContentToContainer($resp.html(), req.$target, req.action);
             if (url.match(/#/)) {
                 this.icinga.ui.scrollContainerToAnchor(req.$target, url.split(/#/)[1]);
             }
@@ -469,7 +474,8 @@
                 this.icinga.logger.error(req.status, errorThrown, req.responseText.slice(0, 100));
                 this.renderContentToContainer(
                     req.responseText,
-                    req.$target
+                    req.$target,
+                    req.action
                 );
 
                 // Header example:
@@ -521,7 +527,7 @@
         /**
          * Smoothly render given HTML to given container
          */
-        renderContentToContainer: function (content, $container) {
+        renderContentToContainer: function (content, $container, action) {
             // Disable all click events while rendering
             $('*').click(function (event) {
                 event.stopImmediatePropagation();
@@ -552,8 +558,10 @@
                     var title = $('h1', $container).first().detach();
                     $('h1', $content).first().detach();
                     $container.html(title).append(content);
-                } else {
+                } else if (action === 'replace') {
                     $container.html(content);
+                } else {
+                    $container.append(content);
                 }
             }
 
