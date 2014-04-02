@@ -49,5 +49,3 @@ configPath          = "@icingaweb_config_path@/preferences"
 ; Use database storage to save preferences in either a MySQL or PostgreSQL database
 ;type        = db
 ;resource    = icingaweb-mysql
-
-

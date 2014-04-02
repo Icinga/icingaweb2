@@ -37,6 +37,7 @@ use Icinga\Data\Db\Connection as DbConnection;
 use Icinga\Protocol\Livestatus\Connection as LivestatusConnection;
 use Icinga\Protocol\Statusdat\Reader as StatusdatReader;
 use Icinga\Protocol\Ldap\Connection as LdapConnection;
+use Icinga\Protocol\File\Reader as FileReader;
 
 class ResourceFactory implements ConfigAwareFactory
 {
@@ -132,6 +133,9 @@ class ResourceFactory implements ConfigAwareFactory
                 break;
             case 'livestatus':
                 $resource = new LivestatusConnection($config->socket);
+                break;
+            case 'file':
+                $resource = new FileReader($config);
                 break;
             default:
                 throw new ConfigurationError('Unsupported resource type "' . $config->type . '"');
