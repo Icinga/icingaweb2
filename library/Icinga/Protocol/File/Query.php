@@ -6,10 +6,27 @@ namespace Icinga\Protocol\File;
 
 use Icinga\Data\BaseQuery;
 
+/**
+ * Class Query
+ *
+ * Query for Datasource Icinga\Protocol\File\Reader
+ *
+ * @package Icinga\Protocol\File
+ */
 class Query extends BaseQuery
 {
+    /**
+     * Sort direction
+     *
+     * @var int
+     */
     private $sortDir;
 
+    /**
+     * Filters to apply on result
+     *
+     * @var array
+     */
     private $filters = array();
 
     /**

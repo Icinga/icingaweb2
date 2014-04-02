@@ -28,7 +28,7 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-# namespace Icinga\Application\Controllers;
+// namespace Icinga\Application\Controllers;
 
 use Icinga\Web\Controller\ActionController;
 use Icinga\Application\Icinga;

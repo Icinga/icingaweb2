@@ -6,12 +6,32 @@ namespace Icinga\Protocol\File;
 
 use Icinga\Data\DatasourceInterface;
 
+/**
+ * Class Reader
+ *
+ * Read file line by line
+ *
+ * @package Icinga\Protocol\File
+ */
 class Reader implements DatasourceInterface
 {
+    /**
+     * Name of the file to read
+     *
+     * @var string
+     */
     private $filename;
 
+    /**
+     * Configuration for this Datasource
+     *
+     * @var \Zend_Config
+     */
     private $config;
 
+    /**
+     * @param \Zend_Config $config
+     */
     public function __construct($config)
     {
         $this->config = $config;
@@ -157,6 +177,7 @@ class Reader implements DatasourceInterface
 
     /**
      * Backend for $this->read
+     * Direction: LIFO
      */
     public function readFromEnd($skip_lines, $read_lines, Query $query)
     {
@@ -194,6 +215,7 @@ class Reader implements DatasourceInterface
 
     /**
      * Backend for $this->read
+     * Direction: FIFO
      */
     public function readFromStart($skip_lines, $read_lines, Query $query)
     {

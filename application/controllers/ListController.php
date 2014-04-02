@@ -34,16 +34,32 @@ use Icinga\Application\Config as IcingaConfig;
 use Icinga\Web\Url;
 use Icinga\Data\ResourceFactory;
 
+/**
+ * Class ListController
+ *
+ * Application wide controller for various listing actions
+ */
 class ListController extends Controller
 {
+    /**
+     * Add title tab
+     *
+     * @param string $action
+     */
     protected function addTitleTab($action)
     {
         $this->getTabs()->add($action, array(
             'title' => ucfirst($action),
-            'url' => Url::fromPath('monitoring/list/' . $action)
+            'url' => Url::fromPath(
+                    'list/'
+                    . str_replace(' ', '', $action)
+                )
         ))->activate($action);
     }
 
+    /**
+     * Display the application log
+     */
     public function applicationlogAction()
     {
         $this->addTitleTab('application log');
