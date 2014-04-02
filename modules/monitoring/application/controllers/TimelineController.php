@@ -7,6 +7,7 @@ use \DateInterval;
 use \Zend_Config;
 use Icinga\Web\Url;
 use Icinga\Application\Config;
+use Icinga\Util\DateTimeFactory;
 use Icinga\Web\Controller\ActionController;
 use Icinga\Module\Monitoring\Timeline\TimeLine;
 use Icinga\Module\Monitoring\Timeline\TimeRange;
@@ -152,11 +153,13 @@ class Monitoring_TimelineController extends ActionController
     }
 
     /**
-     * Return a preload interval based on the chosen timeline interval
+     * Return a preload interval based on the chosen timeline interval and the given date and time
      *
-     * @return  DateInterval    The interval to pre-load
+     * @param   DateTime    $dateTime   The date and time to use
+     *
+     * @return  DateInterval            The interval to pre-load
      */
-    private function getPreloadInterval()
+    private function getPreloadInterval(DateTime $dateTime)
     {
         switch ($this->view->intervalBox->getInterval())
         {
@@ -165,9 +168,17 @@ class Monitoring_TimelineController extends ActionController
             case '1w':
                 return DateInterval::createFromDateString('8 weeks -1 second');
             case '1m':
-                return DateInterval::createFromDateString('6 months -1 second');
+                $dateCopy = clone $dateTime;
+                for ($i = 0; $i < 6; $i++) {
+                    $dateCopy->sub(new DateInterval('PT' . DateTimeFactory::getSecondsByMonth($dateCopy) . 'S'));
+                }
+                return $dateCopy->add(new DateInterval('PT1S'))->diff($dateTime);
             case '1y':
-                return DateInterval::createFromDateString('4 years -1 second');
+                $dateCopy = clone $dateTime;
+                for ($i = 0; $i < 4; $i++) {
+                    $dateCopy->sub(new DateInterval('PT' . DateTimeFactory::getSecondsByYear($dateCopy) . 'S'));
+                }
+                return $dateCopy->add(new DateInterval('PT1S'))->diff($dateTime);
             default:
                 return DateInterval::createFromDateString('1 day -1 second');
         }
@@ -223,13 +234,14 @@ class Monitoring_TimelineController extends ActionController
      */
     private function buildTimeRanges()
     {
-        $startTime = new DateTime();
+        $startTime = DateTimeFactory::create();
         $startParam = $this->_request->getParam('start');
         $startTimestamp = is_numeric($startParam) ? intval($startParam) : strtotime($startParam);
         if ($startTimestamp !== false) {
             $startTime->setTimestamp($startTimestamp);
+        } else {
+            $this->extrapolateDateTime($startTime);
         }
-        $this->extrapolateDateTime($startTime);
 
         $endTime = clone $startTime;
         $endParam = $this->_request->getParam('end');
@@ -237,13 +249,13 @@ class Monitoring_TimelineController extends ActionController
         if ($endTimestamp !== false) {
             $endTime->setTimestamp($endTimestamp);
         } else {
-            $endTime->sub($this->getPreloadInterval());
+            $endTime->sub($this->getPreloadInterval($startTime));
         }
 
         $forecastStart = clone $endTime;
         $forecastStart->sub(new DateInterval('PT1S'));
         $forecastEnd = clone $forecastStart;
-        $forecastEnd->sub($endTime->diff($startTime));
+        $forecastEnd->sub($this->getPreloadInterval($forecastStart));
 
         $timelineInterval = $this->getTimelineInterval();
         return array(

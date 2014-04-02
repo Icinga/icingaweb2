@@ -8,6 +8,7 @@ use \StdClass;
 use \Iterator;
 use \DateTime;
 use \DateInterval;
+use Icinga\Util\DateTimeFactory;
 
 /**
  * A range of time split into a specific interval
@@ -149,17 +150,44 @@ class TimeRange implements Iterator
             $startTime->setTimestamp($time);
         }
 
-        $endTime = clone $startTime;
+        return $this->buildTimeframe($startTime, $this->applyInterval(clone $startTime, 1));
+    }
 
-        if ($this->negative) {
-            $endTime->sub($this->interval);
-            $endTime->add(new DateInterval('PT1S'));
-        } else {
-            $endTime->add($this->interval);
-            $endTime->sub(new DateInterval('PT1S'));
+    /**
+     * Apply the current interval to the given date and time
+     *
+     * @param   DateTime    $dateTime   The date and time to apply the interval to
+     * @param   int         $adjustBy   By how much seconds the resulting date and time should be adjusted
+     *
+     * @return  DateTime
+     */
+    protected function applyInterval(DateTime $dateTime, $adjustBy)
+    {
+        if (!$this->interval->y && !$this->interval->m) {
+            if ($this->negative) {
+                return $dateTime->sub($this->interval)->add(new DateInterval('PT' . $adjustBy . 'S'));
+            } else {
+                return $dateTime->add($this->interval)->sub(new DateInterval('PT' . $adjustBy . 'S'));
+            }
+        } elseif ($this->interval->m) {
+            for ($i = 0; $i < $this->interval->m; $i++) {
+                if ($this->negative) {
+                    $dateTime->sub(new DateInterval('PT' . DateTimeFactory::getSecondsByMonth($dateTime) . 'S'));
+                } else {
+                    $dateTime->add(new DateInterval('PT' . DateTimeFactory::getSecondsByMonth($dateTime) . 'S'));
+                }
+            }
+        } elseif ($this->interval->y) {
+            for ($i = 0; $i < $this->interval->y; $i++) {
+                if ($this->negative) {
+                    $dateTime->sub(new DateInterval('PT' . DateTimeFactory::getSecondsByYear($dateTime) . 'S'));
+                } else {
+                    $dateTime->add(new DateInterval('PT' . DateTimeFactory::getSecondsByYear($dateTime) . 'S'));
+                }
+            }
         }
-
-        return $this->buildTimeframe($startTime, $endTime);
+        $adjustment = new DateInterval('PT' . $adjustBy . 'S');
+        return $this->negative ? $dateTime->add($adjustment) : $dateTime->sub($adjustment);
     }
 
     /**
@@ -224,10 +252,6 @@ class TimeRange implements Iterator
      */
     public function next()
     {
-        if ($this->negative) {
-            $this->current->sub($this->interval);
-        } else {
-            $this->current->add($this->interval);
-        }
+        $this->applyInterval($this->current, 0);
     }
 }
