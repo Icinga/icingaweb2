@@ -31,12 +31,12 @@ use \Icinga\Web\Form;
 use \Icinga\Web\Controller\ActionController;
 use \Icinga\Web\Widget\Tabextension\OutputFormat;
 use \Icinga\Module\Monitoring\Backend;
-use \Icinga\Module\Monitoring\Object\Host;
-use \Icinga\Module\Monitoring\Object\Service;
+use \Icinga\Data\BaseQuery;
+use \Icinga\Module\Monitoring\Backend\Ido\Query\StatusQuery;
 use \Icinga\Module\Monitoring\Form\Command\MultiCommandFlagForm;
-use \Icinga\Module\Monitoring\DataView\HostStatus as HostStatusView;
+use \Icinga\Module\Monitoring\DataView\HostStatus    as HostStatusView;
 use \Icinga\Module\Monitoring\DataView\ServiceStatus as ServiceStatusView;
-use \Icinga\Module\Monitoring\DataView\Comment as CommentView;
+use \Icinga\Module\Monitoring\DataView\Comment       as CommentView;
 
 /**
  * Displays aggregations collections of multiple objects.
@@ -45,7 +45,7 @@ class Monitoring_MultiController extends ActionController
 {
     public function init()
     {
-        $this->view->queries = $this->getDetailQueries();
+        $this->view->queries = $this->getAllParamsAsArray();
         $this->backend = Backend::createBackend($this->_getParam('backend'));
         $this->createTabs();
     }
@@ -53,10 +53,10 @@ class Monitoring_MultiController extends ActionController
     public function hostAction()
     {
         $filters = $this->view->queries;
-        $errors = array();
+        $errors  = array();
 
-        // Hosts
-        $backendQuery = HostStatusView::fromRequest(
+        // Fetch Hosts
+        $hostQuery = HostStatusView::fromRequest(
             $this->_request,
             array(
                 'host_name',
@@ -71,51 +71,69 @@ class Monitoring_MultiController extends ActionController
             )
         )->getQuery();
         if ($this->_getParam('host') !== '*') {
-            $this->applyQueryFilter($backendQuery, $filters);
+            $this->applyQueryFilter($hostQuery, $filters);
         }
-        $hosts = $backendQuery->fetchAll();
+        $hosts = $hostQuery->fetchAll();
 
-        // Comments
-        $commentQuery = CommentView::fromRequest($this->_request)->getQuery();
-        $this->applyQueryFilter($commentQuery, $filters);
-        $comments = array_keys($this->getUniqueValues($commentQuery->fetchAll(), 'comment_id'));
+        // Fetch comments
+        $commentQuery = $this->applyQueryFilter(
+            CommentView::fromRequest($this->_request)->getQuery(),
+            $filters,
+            'comment_host'
+        );
+        $comments = array_keys($this->getUniqueValues($commentQuery->fetchAll(), 'comment_internal_id'));
 
-        $this->view->objects = $this->view->hosts = $hosts;
-        $this->view->problems = $this->getProblems($hosts);
-        $this->view->comments = isset($comments) ? $comments : $this->getComments($hosts);
+        // Populate view
+        $this->view->objects   = $this->view->hosts = $hosts;
+        $this->view->problems  = $this->getProblems($hosts);
+        $this->view->comments  = isset($comments) ? $comments : $this->getComments($hosts);
         $this->view->hostnames = $this->getProperties($hosts, 'host_name');
         $this->view->downtimes = $this->getDowntimes($hosts);
-        $this->view->errors = $errors;
+        $this->view->errors    = $errors;
 
+        // Handle configuration changes
         $this->handleConfigurationForm(array(
             'host_passive_checks_enabled' => 'Passive Checks',
-            'host_active_checks_enabled' => 'Active Checks',
-            'host_obsessing' => 'Obsessing',
-            'host_notifications_enabled' => 'Notifications',
-            'host_event_handler_enabled' => 'Event Handler',
+            'host_active_checks_enabled'  => 'Active Checks',
+            'host_obsessing'              => 'Obsessing',
+            'host_notifications_enabled'  => 'Notifications',
+            'host_event_handler_enabled'  => 'Event Handler',
             'host_flap_detection_enabled' => 'Flap Detection'
         ));
         $this->view->form->setAction('/icinga2-web/monitoring/multi/host');
     }
 
     /**
-     * @param $backendQuery BaseQuery   The query to apply the filter to
-     * @param $filter       array       Containing the filter expressions from the request
+     * Apply the query-filter received
+     *
+     * @param $backendQuery  BaseQuery  The query to apply the filter to
+     * @param $filter        array      Containing the queries of the current request, converted into an
+     *                                      array-structure.
+     * @param $hostColumn    string     The name of the host-column in the BaseQuery, defaults to 'host_name'
+     * @param $serviceColumn string     The name of the service-column in the BaseQuery, defaults to 'service-description'
+     *
+     * @return BaseQuery    The given BaseQuery
      */
-    private function applyQueryFilter($backendQuery, $filter)
-    {
+    private function applyQueryFilter(
+        BaseQuery $backendQuery,
+        array $filter,
+        $hostColumn = 'host_name',
+        $serviceColumn = 'service_description'
+    ) {
         // fetch specified hosts
         foreach ($filter as $index => $expr) {
+            // Every query entry must define at least the host.
             if (!array_key_exists('host', $expr)) {
                 $errors[] = 'Query ' . $index . ' misses property host.';
                 continue;
             }
             // apply filter expressions from query
-            $backendQuery->orWhere('host_name', $expr['host']);
+            $backendQuery->orWhere($hostColumn, $expr['host']);
             if (array_key_exists('service', $expr)) {
-                $backendQuery->andWhere('service_description', $expr['service']);
+                $backendQuery->andWhere($serviceColumn, $expr['service']);
             }
         }
+        return $backendQuery;
     }
 
     /**
@@ -134,23 +152,25 @@ class Monitoring_MultiController extends ActionController
 			if (is_array($value)) {
 				$unique[$value[$key]] = $value[$key];
 			} else {
-            	$unique[$value->{$key}] = $value->{$key};
+            	$unique[$value->$key] = $value->$key;
 			}
         }
         return $unique;
     }
 
     /**
-     * Get the numbers of problems in the given objects
+     * Get the numbers of problems of the given objects
      *
-     * @param $object   array   The hosts or services
+     * @param $objects  The objects containing the problems
+     *
+     * @return int  The problem count
      */
     private function getProblems($objects)
     {
         $problems = 0;
         foreach ($objects as $object) {
             if (property_exists($object, 'host_unhandled_service_count')) {
-                $problems += $object->{'host_unhandled_service_count'};
+                $problems += $object->host_unhandled_service_count;
             } else if (
                 property_exists($object, 'service_handled') &&
                 !$object->service_handled &&
@@ -175,7 +195,7 @@ class Monitoring_MultiController extends ActionController
     {
         $objectnames = array();
         foreach ($objects as $object) {
-            $objectnames[] = $object->{$property};
+            $objectnames[] = $object->$property;
         }
         return $objectnames;
     }
@@ -224,7 +244,7 @@ class Monitoring_MultiController extends ActionController
         // Comments
         $commentQuery = CommentView::fromRequest($this->_request)->getQuery();
         $this->applyQueryFilter($commentQuery, $filters);
-        $comments = array_keys($this->getUniqueValues($commentQuery->fetchAll(), 'comment_id'));
+        $comments = array_keys($this->getUniqueValues($commentQuery->fetchAll(), 'comment_internal_id'));
 
         $this->view->objects = $this->view->services = $services;
         $this->view->problems = $this->getProblems($services);
@@ -236,9 +256,9 @@ class Monitoring_MultiController extends ActionController
 
         $this->handleConfigurationForm(array(
             'service_passive_checks_enabled' => 'Passive Checks',
-            'service_active_checks_enabled' => 'Active Checks',
-            'service_notifications_enabled' => 'Notifications',
-            'service_event_handler_enabled' => 'Event Handler',
+            'service_active_checks_enabled'  => 'Active Checks',
+            'service_notifications_enabled'  => 'Notifications',
+            'service_event_handler_enabled'  => 'Event Handler',
             'service_flap_detection_enabled' => 'Flap Detection'
         ));
         $this->view->form->setAction('/icinga2-web/monitoring/multi/service');
@@ -263,28 +283,37 @@ class Monitoring_MultiController extends ActionController
     }
 
     /**
-     * Fetch all requests from the 'detail' parameter.
+     * "Flips" the structure of the objects created by _getAllParams
      *
-     * @return array    An array of request that contain
-     *                  the filter arguments as properties.
+     * Regularly, _getAllParams would return queries like <b>host[0]=value1&service[0]=value2</b> as
+     * two entirely separate arrays. Instead, we want it as one single array, containing one single object
+     * for each index, containing all of its members as keys.
+     *
+     * @return array    An array of all query parameters (See example above)
+     *                  <b>
+     *                      array( <br />
+     *                          0 => array(host => value1, service => value2), <br />
+     *                          ... <br />
+     *                      )
+     *                  </b>
      */
-    private function getDetailQueries()
+    private function getAllParamsAsArray()
     {
         $details = $this->_getAllParams();
-        $objects = array();
+        $queries = array();
 
         foreach ($details as $property => $values) {
             if (!is_array($values)) {
                 continue;
             }
             foreach ($values as $index => $value) {
-                if (!array_key_exists($index, $objects)) {
-                    $objects[$index] = array();
+                if (!array_key_exists($index, $queries)) {
+                    $queries[$index] = array();
                 }
-                $objects[$index][$property] = $value;
+                $queries[$index][$property] = $value;
             }
         }
-        return $objects;
+        return $queries;
     }
 
     /**

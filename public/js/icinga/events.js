@@ -13,6 +13,12 @@
 
     Icinga.Events.prototype = {
 
+        keyboard: {
+            ctrlKey:    false,
+            altKey:     false,
+            shiftKey:   false
+        },
+
         /**
          * Icinga will call our initialize() function once it's ready
          */
@@ -65,7 +71,7 @@
                 type:        'pie',
                 sliceColors: ['#44bb77', '#ffaa44', '#ff5566', '#dcd'],
                 width:       '2em',
-                height:      '2em',
+                height:      '2em'
             });
         },
 
@@ -90,7 +96,10 @@
             $(document).on('click', 'a', { self: this }, this.linkClicked);
 
             // We treat tr's with a href attribute like links
-            $(document).on('click', 'tr[href]', { self: this }, this.linkClicked);
+            $(document).on('click', ':not(table) tr[href]', { self: this }, this.linkClicked);
+
+            // When tables have the class 'multiselect', multiple selection is possible.
+            $(document).on('click', 'table tr[href]', { self: this }, this.rowSelected);
 
             $(document).on('click', 'button', { self: this }, this.submitForm);
 
@@ -275,6 +284,151 @@
             icinga.loader.loadUrl(url, $target, data, method);
 
             return false;
+        },
+
+        handleExternalTarget: function($node) {
+            var linkTarget = $node.attr('target');
+
+            // TODO: Let remote links pass through. Right now they only work
+            //       combined with target="_blank" or target="_self"
+            // window.open is used as return true; didn't work reliable
+            if (linkTarget === '_blank' || linkTarget === '_self') {
+                window.open(href, linkTarget);
+                return true;
+            }
+            return false;
+        },
+
+        /**
+         * Handle table selection.
+         */
+        rowSelected: function(event) {
+            var self     = event.data.self;
+            var icinga   = self.icinga;
+            var $tr      = $(this);
+            var $table   = $tr.closest('table.multiselect');
+            var data     = $table.data('icinga-multiselect-data').split(',');
+            var multisel = $table.hasClass('multiselect');
+            var url      = $table.data('icinga-multiselect-url');
+            var $trs, $target;
+            event.stopPropagation();
+            event.preventDefault();
+            if (icinga.events.handleExternalTarget($tr)) {
+                // link handled externally
+                return false;
+            }
+            if (!data) {
+                icinga.logger.error('A table with multiselection must define the attribute "data-icinga-multiselect-data"');
+                return;
+            }
+            if (!url) {
+                icinga.logger.error('A table with multiselection must define the attribute "data-icinga-multiselect-url"');
+                return;
+            }
+
+            // Update selection
+            if (event.ctrlKey && multisel) {
+                // multi selection
+                if ($tr.hasClass('active')) {
+                    $tr.removeClass('active');
+                } else {
+                    $tr.addClass('active');
+                }
+            } else if (event.shiftKey && multisel) {
+                // range selection
+
+                var $rows = $table.find('tr[href]'),
+                    from, to;
+                var selected = this;
+
+                // TODO: find a better place for this
+                $rows.find('td').attr('unselectable', 'on')
+                    .css('user-select', 'none')
+                    .css('-webkit-user-select', 'none')
+                    .css('-moz-user-select', 'none')
+                    .css('-ms-user-select', 'none');
+
+                $rows.each(function(i, el) {
+                    if ($(el).hasClass('active') || el === selected) {
+                        if (!from) {
+                            from = el;
+                        }
+                        to = el;
+                    }
+                });
+                var inRange = false;
+                $rows.each(function(i, el){
+                    if (el === from) {
+                        inRange = true;
+                    }
+                    if (inRange) {
+                        $(el).addClass('active');
+                    }
+                    if (el === to) {
+                        inRange = false;
+                    }
+                });
+            } else {
+                // single selection
+                if ($tr.hasClass('active')) {
+                    return false;
+                }
+                $table.find('tr[href].active').removeClass('active');
+                $tr.addClass('active');
+            }
+            $trs = $table.find('tr[href].active');
+
+            // Update url
+            $target = self.getLinkTargetFor($tr);
+            if ($trs.length > 1) {
+                // display multiple rows
+                var query = icinga.events.selectionToQuery($trs, data, icinga);
+                icinga.loader.loadUrl(url + '?' + query, $target);
+            } else if ($trs.length === 1) {
+                // display a single row
+                icinga.loader.loadUrl($tr.attr('href'), $target);
+            } else {
+                // display nothing
+                icinga.loader.loadUrl('#');
+            }
+            return false;
+        },
+
+        selectionToQuery: function ($selection, data, icinga) {
+            var selections = [], queries = [];
+            if ($selection.length === 0) {
+                return '';
+            }
+
+            // read all current selections
+            $selection.each(function(ind, selected) {
+                var url    = $(selected).attr('href');
+                var params = icinga.utils.parseUrl(url).params;
+                var tuple  = {};
+                for (var i = 0; i < data.length; i++) {
+                    var key = data[i];
+                    if (params[key]) {
+                        tuple[key] = params[key];
+                    }
+                }
+                selections.push(tuple);
+            });
+
+            // create new url
+            if (selections.length < 2) {
+                // single-selection
+                $.each(selections[0], function(key, value){
+                    queries.push(key + '=' + encodeURIComponent(value));
+                });
+            } else {
+                // multi-selection
+                $.each(selections, function(i, el){
+                    $.each(el, function(key, value) {
+                        queries.push(key + '[' + i + ']=' + encodeURIComponent(value));
+                    });
+                });
+            }
+            return queries.join('&');
         },
 
         /**

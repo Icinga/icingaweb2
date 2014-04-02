@@ -104,7 +104,7 @@
                 path    : a.pathname.replace(/^([^\/])/,'/$1'),
                 relative: (a.href.match(/tps?:\/\/[^\/]+(.+)/) || [,''])[1],
                 segments: a.pathname.replace(/^\//,'').split('/'),
-                params  : this.parseParams(a),
+                params  : this.parseParams(a)
             };
             a = null;
 

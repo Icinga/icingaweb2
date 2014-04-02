@@ -19,12 +19,17 @@ if ($hosts->count() === 0) {
 }
 ?>
 
-<table data-base-target="_next" class="action multiselect">
+<table
+    data-base-target="_next"
+    class="action multiselect"
+    data-icinga-multiselect-url="<?= $this->href("/monitoring/multi/host") ?>"
+    data-icinga-multiselect-data="host"
+>
 <tbody>
 <?php foreach($hosts as $host):
 
     $hostStateName = strtolower($this->util()->getHostStateName($host->host_state));
-    $hostLink = $this->href('monitoring/show/host', array('host' => $host->host_name));
+    $hostLink = $this->href('/monitoring/show/host', array('host' => $host->host_name));
 
     $icons = array();
     if (!$host->host_handled && $host->host_state > 0){
