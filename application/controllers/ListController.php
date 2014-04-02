@@ -30,93 +30,18 @@
 
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Web\Hook;
-use Icinga\Web\Widget\Tabextension\DashboardAction;
-use Icinga\Web\Widget\Tabextension\OutputFormat;
-use Icinga\Web\Widget\Tabs;
-use Icinga\Module\Monitoring\Backend;
 use Icinga\Application\Config as IcingaConfig;
-
-use Icinga\Filter\Filterable;
 use Icinga\Web\Url;
 use Icinga\Data\ResourceFactory;
 
 class ListController extends Controller
 {
-    /**
-     * The backend used for this controller
-     *
-     * @var Backend
-     */
-    protected $backend;
-    /**
-     * Retrieve backend and hooks for this controller
-     *
-     * @see ActionController::init
-     */
-    public function init()
-    {
-        $this->backend = Backend::createBackend($this->_getParam('backend'));
-        $this->view->grapher = Hook::get('grapher');
-        $this->createTabs();
-        $this->view->activeRowHref = $this->getParam('detail');
-		$this->view->compact = ($this->_request->getParam('view') === 'compact');
-    }
-
-    /**
-     * Overwrite the backend to use (used for testing)
-     *
-     * @param Backend $backend      The Backend that should be used for querying
-     */
-    public function setBackend($backend)
-    {
-        $this->backend = $backend;
-    }
-
-    /**
-     * Apply current users monitoring/filter restrictions to the given query
-     *
-     * @param $query  Filterable  Query that should be filtered
-     * @return Filterable
-     */
-    protected function applyRestrictions(Filterable $query)
-    {
-        foreach ($this->getRestrictions('monitoring/filter') as $restriction) {
-            parse_str($restriction, $filter);
-            foreach ($filter as $k => $v) {
-                if ($query->isValidFilterTarget($k)) {
-                    // TODO: This is NOT enough. We need to fix filters and get
-                    // applyAuthFilters back.
-                    $query->where($k, $v);
-                }
-            }
-        }
-        return $query;
-    }
-
     protected function addTitleTab($action)
     {
         $this->getTabs()->add($action, array(
             'title' => ucfirst($action),
             'url' => Url::fromPath('monitoring/list/' . $action)
         ))->activate($action);
-    }
-
-    /**
-     * Return all tabs for this controller
-     *
-     * @return Tabs
-     */
-    private function createTabs()
-    {
-        $tabs = $this->getTabs();
-        if (in_array($this->_request->getActionName(), array(
-            'hosts',
-            'services',
-            'eventhistory',
-            'notifications'
-        ))) {
-            $tabs->extend(new OutputFormat())->extend(new DashboardAction());
-        }
     }
 
     public function applicationlogAction()
