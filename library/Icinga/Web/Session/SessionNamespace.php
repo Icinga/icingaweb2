@@ -46,13 +46,20 @@ class SessionNamespace implements IteratorAggregate
     protected $values = array();
 
     /**
+     * The names of all values removed from this container
+     *
+     * @var array
+     */
+    protected $removed = array();
+
+    /**
      * Return an iterator for all values in this namespace
      *
      * @return  ArrayIterator
      */
     public function getIterator()
     {
-        return new ArrayIterator($this->values);
+        return new ArrayIterator($this->getAll());
     }
 
     /**
@@ -77,7 +84,7 @@ class SessionNamespace implements IteratorAggregate
     public function __get($key)
     {
         if (!array_key_exists($key, $this->values)) {
-            throw new Exception('Cannot access non-existent session value "' + $key + '"');
+            throw new Exception('Cannot access non-existent session value "' . $key . '"');
         }
 
         return $this->get($key);
@@ -101,6 +108,7 @@ class SessionNamespace implements IteratorAggregate
      */
     public function __unset($key)
     {
+        $this->removed[] = $key;
         unset($this->values[$key]);
     }
 
@@ -115,6 +123,11 @@ class SessionNamespace implements IteratorAggregate
     public function set($key, $value)
     {
         $this->values[$key] = $value;
+
+        if (in_array($key, $this->removed)) {
+            unset($this->removed[array_search($key, $this->values)]);
+        }
+
         return $this;
     }
 
@@ -150,10 +163,10 @@ class SessionNamespace implements IteratorAggregate
     public function setAll(array $values, $overwrite = false)
     {
         foreach ($values as $key => $value) {
-            if (isset($this->values[$key]) && !$overwrite) {
+            if ($this->get($key) !== $value && !$overwrite) {
                 continue;
             }
-            $this->values[$key] = $value;
+            $this->set($key, $value);
         }
     }
 }

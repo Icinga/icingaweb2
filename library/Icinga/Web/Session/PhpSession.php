@@ -138,6 +138,7 @@ class PhpSession extends Session
      */
     public function read()
     {
+        $this->clear();
         $this->open();
 
         foreach ($_SESSION as $key => $value) {
@@ -161,8 +162,14 @@ class PhpSession extends Session
     {
         $this->open();
 
+        foreach ($this->removed as $key) {
+            unset($_SESSION[$key]);
+        }
         foreach ($this->values as $key => $value) {
             $_SESSION[$key] = $value;
+        }
+        foreach ($this->removedNamespaces as $identifier) {
+            unset($_SESSION[self::NAMESPACE_PREFIX . $identifier]);
         }
         foreach ($this->namespaces as $identifier => $namespace) {
             $_SESSION[self::NAMESPACE_PREFIX . $identifier] = $namespace->getAll();

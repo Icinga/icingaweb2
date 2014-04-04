@@ -42,6 +42,13 @@ abstract class Session extends SessionNamespace
     protected $namespaces = array();
 
     /**
+     * The identifiers of all namespaces removed from this session
+     *
+     * @var array
+     */
+    protected $removedNamespaces = array();
+
+    /**
      * Read all values from the underlying session implementation
      */
     abstract public function read();
@@ -71,6 +78,10 @@ abstract class Session extends SessionNamespace
     public function getNamespace($identifier)
     {
         if (!isset($this->namespaces[$identifier])) {
+            if (in_array($identifier, $this->removedNamespaces)) {
+                unset($this->removedNamespaces[array_search($identifier, $this->removedNamespaces)]);
+            }
+
             $this->namespaces[$identifier] = new SessionNamespace();
         }
 
@@ -97,6 +108,7 @@ abstract class Session extends SessionNamespace
     public function removeNamespace($identifier)
     {
         unset($this->namespaces[$identifier]);
+        $this->removedNamespaces[] = $identifier;
     }
 
     /**
@@ -105,6 +117,8 @@ abstract class Session extends SessionNamespace
     public function clear()
     {
         $this->values = array();
+        $this->removed = array();
         $this->namespaces = array();
+        $this->removedNamespaces = array();
     }
 }
