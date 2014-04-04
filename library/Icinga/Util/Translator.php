@@ -104,14 +104,14 @@ class Translator
      */
     public static function setupLocale($localeName)
     {
-        if (setlocale(LC_ALL, $localeName . '.UTF-8') === false) {
+        if (setlocale(LC_ALL, $localeName . '.UTF-8') === false && setlocale(LC_ALL, $localeName) === false) {
             setlocale(LC_ALL, 'C'); // C == "use whatever is hardcoded"
             if ($localeName !== self::DEFAULT_LOCALE) {
-                throw new Exception("Cannot set locale '$localeName.UTF-8' for category 'LC_ALL'");
+                throw new Exception("Cannot set locale '$localeName' for category 'LC_ALL'");
             }
         } else {
-            putenv('LC_ALL=' . $localeName . '.UTF-8'); // Failsafe, Win and Unix
-            putenv('LANG=' . $localeName . '.UTF-8'); // Windows fix, untested
+            putenv('LC_ALL=' . setlocale(LC_ALL, 0)); // Failsafe, Win and Unix
+            putenv('LANG=' . setlocale(LC_ALL, 0)); // Windows fix, untested
         }
     }
 

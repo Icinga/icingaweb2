@@ -363,7 +363,7 @@ class Web extends ApplicationBootstrap
             try {
                 Translator::setupLocale($locale);
             } catch (Exception $error) {
-                Logger::info(
+                Logger::warning(
                     'Cannot set locale "' . $locale . '" configured in ' .
                     'preferences of user "' . $this->user->getUsername() . '"'
                 );
