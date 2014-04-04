@@ -29,6 +29,8 @@
 
 namespace Icinga\Web\Session;
 
+use Icinga\Exception\NotImplementedError;
+
 /**
  * Base class for handling sessions
  */
@@ -56,7 +58,9 @@ abstract class Session extends SessionNamespace
     /**
      * Persists changes to the underlying session implementation
      */
-    abstract public function write();
+    public function write() {
+        throw new NotImplementedError('You are required to implement write() in your session implementation');
+    }
 
     /**
      * Purge session
@@ -82,7 +86,7 @@ abstract class Session extends SessionNamespace
                 unset($this->removedNamespaces[array_search($identifier, $this->removedNamespaces)]);
             }
 
-            $this->namespaces[$identifier] = new SessionNamespace();
+            $this->namespaces[$identifier] = new SessionNamespace($this);
         }
 
         return $this->namespaces[$identifier];
