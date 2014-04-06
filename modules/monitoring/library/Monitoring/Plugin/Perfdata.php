@@ -100,6 +100,7 @@ class Perfdata
             }
             $step = $key;
         }
+	if ($step <= 0) $step = 1;
         return $prefix
              . number_format($val / $step, 1, ',', '.')
             . ' '
