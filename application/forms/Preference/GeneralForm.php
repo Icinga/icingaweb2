@@ -97,7 +97,7 @@ class GeneralForm extends Form
             'default_language',
             array(
                 'label'     => t('Use Default Language'),
-                'value'     => !$prefs->has('app.language'),
+                'value'     => $useDefaultLanguage,
                 'required'  => true
             )
         );
@@ -148,7 +148,7 @@ class GeneralForm extends Form
             'default_timezone',
             array(
                 'label'         => 'Use Default Timezone',
-                'value'         => !$prefs->has('app.timezone'),
+                'value'         => $useGlobalTimezone,
                 'required'      => true
             )
         );
@@ -180,7 +180,7 @@ class GeneralForm extends Form
             'default_date_format',
             array(
                 'label'         => 'Use Default Date Format',
-                'value'         => !$prefs->has('app.dateFormat'),
+                'value'         => $useGlobalDateFormat,
                 'required'      => true
             )
         );
@@ -210,7 +210,7 @@ class GeneralForm extends Form
             'default_time_format',
             array(
                 'label'         => 'Use Default Time Format',
-                'value'         => !$prefs->has('app.timeFormat'),
+                'value'         => $useGlobalTimeFormat,
                 'required'      => !$useGlobalTimeFormat
             )
         );
@@ -277,10 +277,10 @@ class GeneralForm extends Form
     {
         $values = $this->getValues();
         return array(
-            'app.language'      => $values['language'],
-            'app.timezone'      => $values['timezone'],
-            'app.dateFormat'    => $values['date_format'],
-            'app.timeFormat'    => $values['time_format'],
+            'app.language'      => $values['default_language'] ? null : $values['language'],
+            'app.timezone'      => $values['default_timezone'] ? null : $values['timezone'],
+            'app.dateFormat'    => $values['default_date_format'] ? null : $values['date_format'],
+            'app.timeFormat'    => $values['default_time_format'] ? null : $values['time_format'],
             'app.showBenchmark' => $values['showBenchmark'] === '1' ? true : false
         );
     }
