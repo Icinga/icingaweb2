@@ -262,7 +262,7 @@ class Form extends Zend_Form
     public function getConfiguration()
     {
         if ($this->config === null) {
-            $this->config = new Zend_Config(array());
+            $this->config = new Zend_Config(array(), true);
         }
         return $this->config;
     }

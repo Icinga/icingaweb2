@@ -412,10 +412,10 @@ class GeneralForm extends Form
     {
         $config = $this->getConfiguration();
         if ($config->global === null) {
-            $config->global = new Zend_Config(array());
+            $config->global = new Zend_Config(array(), true);
         }
         if ($config->preferences === null) {
-            $config->preferences = new Zend_Config(array());
+            $config->preferences = new Zend_Config(array(), true);
         }
 
         $values = $this->getValues();

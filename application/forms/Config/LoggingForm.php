@@ -192,10 +192,10 @@ class LoggingForm extends Form
     {
         $config = $this->getConfiguration();
         if ($config->logging === null) {
-            $config->logging = new Zend_Config(array());
+            $config->logging = new Zend_Config(array(), true);
         }
         if ($config->logging->debug === null) {
-            $config->logging->debug = new Zend_Config(array());
+            $config->logging->debug = new Zend_Config(array(), true);
         }
 
         $values = $this->getValues();
