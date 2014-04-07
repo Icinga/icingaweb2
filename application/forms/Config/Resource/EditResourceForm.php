@@ -141,6 +141,17 @@ class EditResourceForm extends Form
 
         $this->addElement(
             'text',
+            'resource_db_dbname',
+            array(
+                'label'     => 'Database Name',
+                'value'     => $this->getResource()->get('dbname', ''),
+                'required'  => true,
+                'helptext'  => 'The name of the database to use'
+            )
+        );
+
+        $this->addElement(
+            'text',
             'resource_db_username',
             array (
                 'label'     =>  'Username',
