@@ -2,6 +2,16 @@
 
 use Icinga\Web\JavaScript;
 
+if (array_key_exists('_dev', $_GET)) {
+  $jsfile  = 'js/icinga.dev.js';
+  $cssfile = 'css/icinga.css';
+} else {
+  $jsfile  = 'js/icinga.min.js';
+  $cssfile = 'css/icinga.min.css';
+}
+
+$isIframe = isset($_GET['_render']) && $_GET['_render'] === 'iframe';
+
 ?><!DOCTYPE html>
 <!--[if lt IE 7]>
 <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
@@ -10,7 +20,7 @@ use Icinga\Web\JavaScript;
 <!--[if IE 8]>
 <html class="no-js lt-ie9"> <![endif]-->
 <!--[if gt IE 8]><!-->
-<html class="no-js"> <!--<![endif]-->
+<html class="no-js<?= $isIframe ? ' iframe' : '' ?>"> <!--<![endif]-->
 <head>
   <meta charset="utf-8">
   <meta content="width=320; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"/>
@@ -18,8 +28,8 @@ use Icinga\Web\JavaScript;
   <title><?= $this->title ? $this->escape($this->title) : 'Icinga Web' ?></title>
   <!-- TODO: viewport and scale settings make no sense for us, fix this -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <link rel="stylesheet" href="<?= $this->href('css/icinga.min.css') ?>" media="screen" type="text/css" />
-  <? if (isset($_GET['iframe']) && $_GET['iframe'] === 'true'): ?>
+  <link rel="stylesheet" href="<?= $this->href($cssfile) ?>" media="screen" type="text/css" />
+  <? if ($isIframe): ?>
   <base target="_parent"/>
   <? endif ?>
   <!-- Respond.js IE8 support of media queries -->
@@ -33,7 +43,7 @@ use Icinga\Web\JavaScript;
 <div id="layout" class="default-layout">
 <?= $this->render('body.phtml') ?>
 </div>
-<script type="text/javascript" src="<?= $this->href('js/icinga.min.js') ?>"></script>
+<script type="text/javascript" src="<?= $this->href($jsfile) ?>"></script>
 <script type="text/javascript">
 var icinga = new Icinga({
   baseUrl: '<?= $this->href('/') ?>',
