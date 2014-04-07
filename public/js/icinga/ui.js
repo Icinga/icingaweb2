@@ -271,6 +271,88 @@
             */
         },
 
+        /**
+         * Prepare all multiselectable tables for multi-selection by
+         * removing the regular text selection.
+         */
+        prepareMultiselectTables: function () {
+            var $rows = $('table.multiselect tr[href]');
+            $rows.find('td').attr('unselectable', 'on')
+                .css('user-select', 'none')
+                .css('-webkit-user-select', 'none')
+                .css('-moz-user-select', 'none')
+                .css('-ms-user-select', 'none');
+        },
+
+        /**
+         * Add the given table-row to the selection of the closest
+         * table
+         *
+         * @param $tr {jQuery}  The selected table row.
+         * @returns {boolean}   If the selection was changed.
+         */
+        setTableRowSelection: function ($tr) {
+            var $table   = $tr.closest('table.multiselect');
+            if ($tr.hasClass('active')) {
+                return false;
+            }
+            $table.find('tr[href].active').removeClass('active');
+            $tr.addClass('active');
+            return true;
+        },
+
+        /**
+         * Toggle the given table row to "on" when not selected, or to "off" when
+         * currently selected.
+         *
+         * @param $tr {jQuery}  The table row.
+         * @returns {boolean}   If the selection was changed.
+         */
+        toogleTableRowSelection: function ($tr) {
+            // multi selection
+            if ($tr.hasClass('active')) {
+                $tr.removeClass('active');
+            } else {
+                $tr.addClass('active');
+            }
+            return true;
+        },
+
+        /**
+         * Add a new selection range to the closest table, using the selected row as
+         * range target
+         *
+         * @param $tr {jQuery}  The target of the selected range.
+         * @returns {boolean}   If the selection was changed.
+         */
+        addTableRowRangeSelection: function ($tr) {
+            var $table = $tr.closest('table.multiselect');
+            var $rows  = $table.find('tr[href]'),
+                from, to;
+            var selected = $tr.first().get(0);
+            $rows.each(function(i, el) {
+                if ($(el).hasClass('active') || el === selected) {
+                    if (!from) {
+                        from = el;
+                    }
+                    to = el;
+                }
+            });
+            var inRange = false;
+            $rows.each(function(i, el){
+                if (el === from) {
+                    inRange = true;
+                }
+                if (inRange) {
+                    $(el).addClass('active');
+                }
+                if (el === to) {
+                    inRange = false;
+                }
+            });
+            return false;
+        },
+
         refreshDebug: function () {
 
             var size = this.getDefaultFontSize().toString();

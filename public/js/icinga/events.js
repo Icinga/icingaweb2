@@ -26,6 +26,7 @@
             this.applyGlobalDefaults();
             this.applyHandlers($('#layout'));
             this.icinga.ui.prepareContainers();
+            this.icinga.ui.prepareMultiselectTables();
         },
 
         // TODO: What's this?
@@ -98,7 +99,7 @@
             // We treat tr's with a href attribute like links
             $(document).on('click', ':not(table) tr[href]', { self: this }, this.linkClicked);
 
-            // When tables have the class 'multiselect', multiple selection is possible.
+            // Select a table.
             $(document).on('click', 'table tr[href]', { self: this }, this.rowSelected);
 
             $(document).on('click', 'button', { self: this }, this.submitForm);
@@ -328,53 +329,14 @@
 
             // Update selection
             if (event.ctrlKey && multisel) {
+                icinga.ui.toogleTableRowSelection($tr);
                 // multi selection
-                if ($tr.hasClass('active')) {
-                    $tr.removeClass('active');
-                } else {
-                    $tr.addClass('active');
-                }
             } else if (event.shiftKey && multisel) {
                 // range selection
-
-                var $rows = $table.find('tr[href]'),
-                    from, to;
-                var selected = this;
-
-                // TODO: find a better place for this
-                $rows.find('td').attr('unselectable', 'on')
-                    .css('user-select', 'none')
-                    .css('-webkit-user-select', 'none')
-                    .css('-moz-user-select', 'none')
-                    .css('-ms-user-select', 'none');
-
-                $rows.each(function(i, el) {
-                    if ($(el).hasClass('active') || el === selected) {
-                        if (!from) {
-                            from = el;
-                        }
-                        to = el;
-                    }
-                });
-                var inRange = false;
-                $rows.each(function(i, el){
-                    if (el === from) {
-                        inRange = true;
-                    }
-                    if (inRange) {
-                        $(el).addClass('active');
-                    }
-                    if (el === to) {
-                        inRange = false;
-                    }
-                });
+                icinga.ui.addTableRowRangeSelection($tr);
             } else {
                 // single selection
-                if ($tr.hasClass('active')) {
-                    return false;
-                }
-                $table.find('tr[href].active').removeClass('active');
-                $tr.addClass('active');
+                icinga.ui.setTableRowSelection($tr);
             }
             $trs = $table.find('tr[href].active');
 

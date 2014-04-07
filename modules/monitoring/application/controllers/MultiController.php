@@ -32,7 +32,6 @@ use \Icinga\Web\Controller\ActionController;
 use \Icinga\Web\Widget\Tabextension\OutputFormat;
 use \Icinga\Module\Monitoring\Backend;
 use \Icinga\Data\BaseQuery;
-use \Icinga\Module\Monitoring\Backend\Ido\Query\StatusQuery;
 use \Icinga\Module\Monitoring\Form\Command\MultiCommandFlagForm;
 use \Icinga\Module\Monitoring\DataView\HostStatus    as HostStatusView;
 use \Icinga\Module\Monitoring\DataView\ServiceStatus as ServiceStatusView;
@@ -237,6 +236,7 @@ class Monitoring_MultiController extends ActionController
             )
         )->getQuery();
         if ($this->_getParam('service') !== '*' && $this->_getParam('host') !== '*') {
+            $this->applyQueryFilter($backendQuery, $filters);
             $this->applyQueryFilter($backendQuery, $filters);
         }
         $services = $backendQuery->fetchAll();
