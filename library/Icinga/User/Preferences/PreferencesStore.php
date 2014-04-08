@@ -1,38 +1,16 @@
 <?php
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\User\Preferences;
 
-use Zend_Config;
+use \Zend_Config;
 use Icinga\User;
-use Icinga\Exception\ConfigurationError;
 use Icinga\User\Preferences;
+use Icinga\Data\ResourceFactory;
+use Icinga\Exception\ConfigurationError;
+use Icinga\Data\Db\Connection as DbConnection;
+use Icinga\Application\Config as IcingaConfig;
 
 /**
  * Preferences store factory
@@ -46,7 +24,7 @@ use Icinga\User\Preferences;
  * use Icinga\User\Preferences\PreferencesStore;
  *
  * // Create a INI store
- * $store = new PreferencesStore(
+ * $store = PreferencesStore::create(
  *     new Zend_Config(
  *         'type'       => 'ini',
  *         'configPath' => '/path/to/preferences'
@@ -57,6 +35,7 @@ use Icinga\User\Preferences;
  * $preferences = new Preferences($store->load());
  * $preferences->aPreference = 'value';
  * $store->save($preferences);
+ * </code>
  */
 abstract class PreferencesStore
 {
@@ -65,20 +44,20 @@ abstract class PreferencesStore
      *
      * @var Zend_Config
      */
-    private $config;
+    protected $config;
 
     /**
      * Given user
      *
      * @var User
      */
-    private $user;
+    protected $user;
 
     /**
      * Create a new store
      *
-     * @param Zend_Config   $config
-     * @param User          $user
+     * @param   Zend_Config     $config     The config for this adapter
+     * @param   User            $user       The user to which these preferences belong
      */
     public function __construct(Zend_Config $config, User $user)
     {
@@ -88,19 +67,11 @@ abstract class PreferencesStore
     }
 
     /**
-     * Initialize the sore
-     */
-    public function init()
-    {
-
-    }
-
-    /**
      * Getter for the store config
      *
-     * @return Zend_Config
+     * @return  Zend_Config
      */
-    final public function getStoreConfig()
+    public function getStoreConfig()
     {
         return $this->config;
     }
@@ -108,54 +79,41 @@ abstract class PreferencesStore
     /**
      * Getter for the user
      *
-     * @return User
+     * @return  User
      */
-    final public function getUser()
+    public function getUser()
     {
         return $this->user;
     }
 
     /**
+     * Initialize the store
+     */
+    abstract protected function init();
+
+    /**
      * Load preferences from source
      *
-     * @return array
+     * @return  array
      */
     abstract public function load();
 
     /**
      * Save the given preferences
      *
-     * @param Preferences $preferences
+     * @param   Preferences     $preferences    The preferences to save
      */
-    public function save(Preferences $preferences)
-    {
-        $storedPreferences = $this->load();
-        $preferences = $preferences->toArray();
-        $newPreferences = array_diff_key($preferences, $storedPreferences);
-        $updatedPreferences = array_diff_assoc($preferences, $storedPreferences);
-        $deletedPreferences = array_keys(array_diff_key($storedPreferences, $preferences));
-        if (count($newPreferences) || count($updatedPreferences) || count($deletedPreferences)) {
-            $this->cud($newPreferences, $updatedPreferences, $deletedPreferences);
-        }
-    }
-
-    /**
-     * Create, update and delete the given preferences
-     *
-     * @param   array $newPreferences       Key-value array of preferences to create
-     * @param   array $updatedPreferences   Key-value array of preferences to update
-     * @param   array $deletedPreferences   An array of preference names to delete
-     */
-    abstract public function cud($newPreferences, $updatedPreferences, $deletedPreferences);
+    abstract public function save(Preferences $preferences);
 
     /**
      * Create preferences storage adapter from config
      *
-     * @param  Zend_Config  $config
-     * @param  User         $user
+     * @param   Zend_Config     $config     The config for the adapter
+     * @param   User            $user       The user to which these preferences belong
      *
-     * @return self
-     * @throws ConfigurationError When the configuration defines an invalid storage type
+     * @return  self
+     *
+     * @throws  ConfigurationError          When the configuration defines an invalid storage type
      */
     public static function create(Zend_Config $config, User $user)
     {
@@ -164,6 +122,7 @@ abstract class PreferencesStore
                 'Preferences configuration is missing the type directive'
             );
         }
+
         $type = ucfirst(strtolower($type));
         $storeClass = 'Icinga\\User\\Preferences\\Store\\' . $type . 'Store';
         if (!class_exists($storeClass)) {
@@ -171,6 +130,13 @@ abstract class PreferencesStore
                 'Preferences configuration defines an invalid storage type. Storage type ' . $type . ' not found'
             );
         }
+
+        if ($type === 'Ini') {
+            $config->location = IcingaConfig::resolvePath($config->configPath);
+        } elseif ($type === 'Db') {
+            $config->connection = new DbConnection(ResourceFactory::getResourceConfig($config->resource));
+        }
+
         return new $storeClass($config, $user);
     }
 }
