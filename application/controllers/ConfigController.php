@@ -114,7 +114,7 @@ class ConfigController extends BaseConfigController
         $this->view->messageBox = new AlertMessageBox(true);
         $this->view->tabs->activate('index');
         $form = new GeneralForm();
-        //$form->setConfiguration(IcingaConfig::app());
+        $form->setConfiguration(IcingaConfig::app());
         $form->setRequest($this->_request);
         if ($form->isSubmittedAndValid()) {
             if (!$this->writeConfigFile($form->getConfig(), 'config'))  {
