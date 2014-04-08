@@ -7,7 +7,10 @@ namespace Icinga\User\Preferences;
 use \Zend_Config;
 use Icinga\User;
 use Icinga\User\Preferences;
+use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
+use Icinga\Data\Db\Connection as DbConnection;
+use Icinga\Application\Config as IcingaConfig;
 
 /**
  * Preferences store factory
@@ -120,11 +123,18 @@ abstract class PreferencesStore
             );
         }
 
-        $storeClass = 'Icinga\\User\\Preferences\\Store\\' . ucfirst(strtolower($type)) . 'Store';
+        $type = ucfirst(strtolower($type));
+        $storeClass = 'Icinga\\User\\Preferences\\Store\\' . $type . 'Store';
         if (!class_exists($storeClass)) {
             throw new ConfigurationError(
                 'Preferences configuration defines an invalid storage type. Storage type ' . $type . ' not found'
             );
+        }
+
+        if ($type === 'Ini') {
+            $config->location = IcingaConfig::resolvePath($config->configPath);
+        } elseif ($type === 'Db') {
+            $config->connection = new DbConnection(ResourceFactory::getResourceConfig($config->resource));
         }
 
         return new $storeClass($config, $user);
