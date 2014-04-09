@@ -125,8 +125,7 @@ class SessionNamespace implements IteratorAggregate
      */
     public function __unset($key)
     {
-        $this->removed[] = $key;
-        unset($this->values[$key]);
+        $this->delete($key);
     }
 
     /**
@@ -162,6 +161,17 @@ class SessionNamespace implements IteratorAggregate
     }
 
     /**
+     * Delete the given value from the session
+     *
+     * @param   string  $key    The value's name
+     */
+    public function delete($key)
+    {
+        $this->removed[] = $key;
+        unset($this->values[$key]);
+    }
+
+    /**
      * Getter for all session values
      *
      * @return array
@@ -180,7 +190,7 @@ class SessionNamespace implements IteratorAggregate
     public function setAll(array $values, $overwrite = false)
     {
         foreach ($values as $key => $value) {
-            if ($this->get($key) !== $value && !$overwrite) {
+            if ($this->get($key, $value) !== $value && !$overwrite) {
                 continue;
             }
             $this->set($key, $value);

@@ -88,7 +88,7 @@ class PhpSessionTest extends BaseTestCase
     }
 
     /**
-     * Test whether session namespaces are properly written and loaded
+     * Test whether session namespaces are properly written, cleared and loaded
      *
      * @runInSeparateProcess
      */
@@ -100,9 +100,45 @@ class PhpSessionTest extends BaseTestCase
         $namespace->set('an_array', array(1, 2, 3));
         $session->write();
         $session->clear();
+        $this->assertFalse($session->hasNamespace('test'));
         $session->read();
         $namespace = $session->getNamespace('test');
         $this->assertEquals($namespace->get('some_key'), 'some_val');
         $this->assertEquals($namespace->get('an_array'), array(1, 2, 3));
+    }
+
+    /**
+     * Test whether session values are properly removed
+     *
+     * @runInSeparateProcess
+     */
+    public function testValueRemoval()
+    {
+        $session = $this->getSession();
+        $session->set('key', 'value');
+        $session->write();
+        $session->delete('key');
+        $session->write();
+        $session->clear();
+        $session->read();
+        $this->assertNull($session->get('key'));
+    }
+
+    /**
+     * Test whether session namespaces are properly removed
+     *
+     * @runInSeparateProcess
+     */
+    public function testNamespaceRemoval()
+    {
+        $session = $this->getSession();
+        $namespace = $session->getNamespace('test');
+        $namespace->key = 'value';
+        $session->write();
+        $session->removeNamespace('test');
+        $session->write();
+        $session->clear();
+        $session->read();
+        $this->assertFalse($session->hasNamespace('test'));
     }
 }

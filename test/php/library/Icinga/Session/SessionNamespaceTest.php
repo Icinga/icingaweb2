@@ -98,4 +98,17 @@ class SessionNamespaceTest extends BaseTestCase
         $ns = new SessionNamespace();
         $ns->missing;
     }
+
+    /**
+     * Check whether iterating over session namespaces works
+     */
+    public function testIteration()
+    {
+        $ns = new SessionNamespace();
+        $values = array('key1' => 'val1', 'key2' => 'val2');
+        $ns->setAll($values);
+        foreach ($ns as $key => $value) {
+            $this->assertEquals($value, $values[$key]);
+        }
+    }
 }
