@@ -1,7 +1,35 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: mjentsch
- * Date: 09.04.14
- * Time: 15:29
- */ 
+<?php for ($i = 0; $i < count($objects) && $i < 5; $i++) {
+    $object = $objects[$i]; ?>
+    <a href="<?php
+    if ($this->is_service) {
+        echo $this->href(
+            'monitoring/show/service',
+            array('host' => $object->host_name, 'service' => $object->service_description)
+        );
+    } else {
+        echo $this->href(
+            'monitoring/show/host',
+            array('host' => $object->host_name)
+        );
+    }?>" >
+    <!-- <?= $object->host_name; ?> <?= isset($object->service_description) ? $object->service_description : '' ?> -->
+<?php } ?> <?php
+    if (count($objects) > 5) {
+        $text = ' ' . (count($objects) - 5) . ' more ...';
+    } else {
+        $text = ' show all ... ';
+    }
+    if ($this->is_service) {
+        $link = 'monitoring/list/hosts';
+        $target = array(
+            'host' => $this->hostquery // implode(',', $hostnames)
+        );
+    } else {
+        $link = 'monitoring/list/services';
+        // TODO: Show multiple targets for services
+        $target = array(
+            'host'    => $this->hostquery,
+            'service' => $this->servicequery
+        );
+    }
+?> <a href="<?= $this->href($link, $target); ?>"> <?= $text ?></a>

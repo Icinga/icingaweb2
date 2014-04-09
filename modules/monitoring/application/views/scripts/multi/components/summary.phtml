@@ -1,93 +1,68 @@
 <?php
-/** @var Zend_View_Helper_CommandForm $cf */
-$cf = $this->getHelper('CommandForm');
-$servicequery = isset($this->servicequery) ? $this->servicequery : '';
+    /** @var Zend_View_Helper_CommandForm $cf */
+    $cf = $this->getHelper('CommandForm');
+    $servicequery = isset($this->servicequery) ? $this->servicequery : '';
+    $objectName = $this->is_service ? 'Services' : 'Hosts';
 ?>
 
-<div class="container">
-    <ul class="list-inline">
-        <?php
-        for ($i = 0; $i < count($objects) && $i < 10; $i++) {
-            $object = $objects[$i];
-            ?>
-            <li>
-                <a href="<?php
-                if ($this->is_service) {
-                    echo $this->href(
-                        'monitoring/show/service',
-                        array(
-                            'host' => $object->host_name,
-                            'service' => $object->service_description
-                        )
-                    );
-                } else {
-                    echo $this->href(
-                        'monitoring/show/host', array('host' => $object->host_name)
-                    );
-                }?>" >
-                    <?= $object->host_name; ?>
-                    <?= isset($object->service_description) ? $object->service_description : '' ?>
-                </a>
-            </li>
-        <?php } ?>
-    </ul>
-    <?php
-    if (count($objects) > 10) {
-        $text = ' and ' . (count($objects) - 10) . ' more ...';
-    } else {
-        $text = ' show all ...';
-    }
-    if ($this->is_service) {
-        $link = 'monitoring/list/hosts';
-        $target = array(
-            'host' => implode(',', $hostnames)
-        );
-    } else {
-        $link = 'monitoring/list/services';
-        // TODO: Show multiple targets for services
-        $target = array();
-    }
-    ?>
-    <a class="pull-right" href="<?= $this->href($link, $target); ?>"> <?= $text ?></a>
-</div>
-<br />
-<div class="panel-row">
-<a href="<?=
-$this->href(
-    'monitoring/command/reschedulenextcheck',
-	$this->target
-);
-?>" class="button btn-cta btn-half-left">
-    Recheck
-</a>
-<a href="<?=
-$this->href(
-    'monitoring/command/reschedulenextcheck',
-    $this->target
-);
-?>" class="button btn-cta btn-half-right">
-    Reschedule
-</a>
-</div>
+<tr>
+    <th>
+        <?= $objectName ?>
+    </th>
+    <td>
+        You have selected <?= count($objects) . ' ' . $objectName ?> .
+    </td>
+    <td>
+        <a
+            href="<?=$this->href(
+                'monitoring/command/reschedulenextcheck',
+                array(
+                    'host'       => $this->target['host'],
+                    'service'    => $this->target['service'],
+                    'checktime'  => time(),
+                    'forcecheck' => '1'
+                )
+            ); ?>"
+        >
+            <?= $this->icon('refresh_petrol.png') ?> Recheck
+        </a> <br/>
+        <a href="<?= $this->href('monitoring/command/reschedulenextcheck', $this->target) ?>">
+            <?= $this->icon('reschedule_petrol.png') ?> Reschedule
+        </a>
+    </td>
+</tr>
 
-<div>
-    The selected objects have <span class="badge"> <?= $this->problems ?> </span> service problems. <br /><br />
+<tr>
+    <th>
+        Problems
+    </th>
+    <td>
+        The <?= $objectName ?> have <span> <?= $this->problems ?> </span> problems.
+    </td>
+    <td>
+        <a
+            title="Schedule downtimes for all selected hosts"
+            href="<?= $this->href('monitoring/command/scheduledowntime', $this->target); ?>"
+        >
+            <?= $this->icon('in_downtime_petrol.png') ?> Schedule Downtimes
+        </a>
+    </td>
+</tr>
 
-    <a rel="tooltip" title="Acknowledge all problems on the selected hosts or services" href="<?=
-    $this->href(
-        'monitoring/command/acknowledgeproblem',
-        $this->target
-    );
-    ?>" class="button btn-cta btn-half-left">
-        Acknowledge Problems
-    </a>
 
-    <a rel="tooltip" title="Schedule downtimes for all selected hosts" href="<?=
-    $this->href(
-        'monitoring/command/scheduledowntime',
-        $this->target
-    );
-    ?>" class="button btn-cta btn-half-right">
-        Schedule Downtimes
-    </a>
-</div>
+<tr>
+    <th>
+        Unhandled
+    </th>
+    <td>
+        <span> <?= count($this->unhandled) ?> </span> <?= $objectName ?> are unhandled.
+    </td>
+    <td>
+        <a
+            title="Acknowledge all problems on the selected hosts or services"
+            href="<?= $this->href('monitoring/command/acknowledgeproblem', $this->target);?>"
+            >
+            <?= $this->icon('acknowledgement_petrol.png') ?> Acknowledge
+        </a>
+    </td>
+</tr>

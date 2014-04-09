@@ -26,7 +26,7 @@
             this.applyGlobalDefaults();
             this.applyHandlers($('#layout'));
             this.icinga.ui.prepareContainers();
-            this.icinga.ui.prepareMultiselectTables();
+            this.icinga.ui.prepareMultiselectTables($(document));
         },
 
         // TODO: What's this?
@@ -306,10 +306,9 @@
             var icinga   = self.icinga;
             var $tr      = $(this);
             var $table   = $tr.closest('table.multiselect');
-            var data     = $table.data('icinga-multiselect-data').split(',');
+            var data     = $table.data('icinga-multiselect-data') && $table.data('icinga-multiselect-data').split(',');
             var multisel = $table.hasClass('multiselect');
             var url      = $table.data('icinga-multiselect-url');
-            var $trs, $target;
 
             // When the selection points to a link, select the closest row
             if ($tr.prop('tagName').toLowerCase() === 'a') {
@@ -323,11 +322,11 @@
                 // link handled externally
                 return false;
             }
-            if (!data) {
+            if (multisel && !data) {
                 icinga.logger.error('A table with multiselection must define the attribute "data-icinga-multiselect-data"');
                 return;
             }
-            if (!url) {
+            if (multisel && !url) {
                 icinga.logger.error('A table with multiselection must define the attribute "data-icinga-multiselect-url"');
                 return;
             }
@@ -347,18 +346,22 @@
             icinga.ui.focusTable($table[0]);
 
             // Update url
-            $trs = $table.find('tr[href].active');
-            $target = self.getLinkTargetFor($tr);
-            if ($trs.length > 1) {
-                // display multiple rows
-                var query = icinga.events.selectionToQuery($trs, data, icinga);
-                icinga.loader.loadUrl(url + '?' + query, $target);
-            } else if ($trs.length === 1) {
-                // display a single row
-                icinga.loader.loadUrl($tr.attr('href'), $target);
+            var $target = self.getLinkTargetFor($tr);
+            if (multisel) {
+                var $trs = $table.find('tr[href].active');
+                if ($trs.length > 1) {
+                    // display multiple rows
+                    var query = icinga.events.selectionToQuery($trs, data, icinga);
+                    icinga.loader.loadUrl(url + '?' + query, $target);
+                } else if ($trs.length === 1) {
+                    // display a single row
+                    icinga.loader.loadUrl($tr.attr('href'), $target);
+                } else {
+                    // display nothing
+                    icinga.loader.loadUrl('#');
+                }
             } else {
-                // display nothing
-                icinga.loader.loadUrl('#');
+                icinga.loader.loadUrl($tr.attr('href'), $target);
             }
             return false;
         },

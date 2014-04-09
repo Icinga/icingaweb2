@@ -278,6 +278,7 @@ class Monitoring_MultiController extends ActionController
     private function handleConfigurationForm(array $flags)
     {
         $this->view->form = $form = new MultiCommandFlagForm($flags);
+        $this->view->formElements = $form->buildCheckboxes();
         $form->setRequest($this->_request);
         if ($form->isSubmittedAndValid()) {
             // TODO: Handle commands

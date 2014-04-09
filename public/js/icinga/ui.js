@@ -198,12 +198,10 @@
                     return true;
                 }
             }
-
             this.icinga.logger.error(
                 'Someone messed up our responsiveness hacks, html font-family is',
                 layout
             );
-
             return false;
         },
 

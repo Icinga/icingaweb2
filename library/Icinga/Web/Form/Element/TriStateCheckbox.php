@@ -48,9 +48,9 @@ class TriStateCheckbox extends Zend_Form_Element_Xhtml
      */
     public $helper = 'formTriStateCheckbox';
 
-    public function __construct($spec, $options = null)
+    public function __construct($name, $options = null)
     {
-        parent::__construct($spec, $options);
+        parent::__construct($name, $options);
 
         $this->triStateValidator = new TriStateValidator($this->patterns);
         $this->addValidator($this->triStateValidator);

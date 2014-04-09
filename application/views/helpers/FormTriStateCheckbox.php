@@ -44,20 +44,19 @@ class Zend_View_Helper_FormTriStateCheckbox extends Zend_View_Helper_FormElement
      * @param   array   $attribs    Attributes for the element tag
      *
      * @return  string  The element XHTML
- */
+     */
     public function formTriStateCheckbox($name, $value = null, $attribs = null)
     {
         $class = "";
-        $xhtml = '<div data-icinga-component="app/triStateCheckbox" class="form-group">'
-                . '<div>' . ($value == 1 ? '{{ICON_ENABLED}}' : ($value === 'unchanged' ? '{{ICON_MIXED}}' : '{{ICON_DISABLED}}' )) . '</div>'
-                . '<input class="' . $class . '" type="radio" value=1 name="'
-                    . $name . '" ' . ($value == 1 ? 'checked' : '') . ' ">On</input> '
-                . '<input class="' . $class . '" type="radio" value=0 name="'
-                    . $name . '" ' . ($value == 0 ? 'checked' : '') . ' ">Off</input> ';
-
+        $xhtml = '<div>'
+                    . '<div>' . ($value == 1 ? ' ' : ($value === 'unchanged' ? ' ' : ' ' )) . '</div>'
+                    . '<input class="' . $class . '" type="radio" value=1 name="'
+                        . $name . '" ' . ($value == 1 ? 'checked' : '') . ' ">On</input> '
+                    . '<input class="' . $class . '" type="radio" value=0 name="'
+                        . $name . '" ' . ($value == 0 ? 'checked' : '') . ' ">Off</input> ';
         if ($value === 'unchanged') {
             $xhtml = $xhtml . '<input class="' . $class . '" type="radio" value="unchanged" name="'
-            . $name . '" ' . 'checked "> Mixed </input>';
+            . $name . '" ' . 'checked "> Undefined </input>';
         };
         return $xhtml . '</div>';
     }

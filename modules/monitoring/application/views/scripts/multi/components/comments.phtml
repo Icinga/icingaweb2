@@ -1,61 +1,35 @@
-<div>
-  <div class="panel-heading">
-    <span> <b> Comments </b> </span>
-    <div class="pull-right">
-        <a rel="tooltip" title="Create new comments for all selected hosts or services" href="<?=
-            $this->href(
-                'monitoring/command/addcomment',
-                $this->target
-            );
-        ?>" class="btn-common btn-small button">
-            <?= $this->icon('comment.png') ?>
+<?php
+    $objectName = $this->is_service ? 'Services' : 'Hosts';
+?>
+
+<tr class="newsection">
+    <th>
+        Comments
+    </th>
+    <td>
+        There are <a href=" <?= $this->href(
+            'monitoring/list/comments',
+            array('comment_id' => implode(',', $this->comments))
+        );
+        ?>"> <?= count($comments) ?> </a>
+        comments for the selected <?= $objectName ?>
+    </td>
+    <td>
+        <a
+            href="<?= $this->href('monitoring/command/removecomment', $this->target); ?>"
+        >
+            <?= $this->icon('remove_petrol.png') ?> Remove Comments
+        </a> <br >
+        <a
+            href="<?= $this->href('monitoring/command/delaynotifications', $this->target); ?>"
+            >
+            <?= $this->icon('notification_disabled_petrol.png') ?> Delay Notifications
+        </a> <br >
+        <a
+            title="Acknowledge all problems on the selected hosts or services"
+            href="<?= $this->href('monitoring/command/acknowledgeproblem', $this->target); ?>"
+            >
+            <?= $this->icon('acknowledgement_petrol.png') ?> Acknowledge
         </a>
-
-        <a rel="tooltip" title="Send custom notifications for all selected hosts or services" href="<?=
-            $this->href(
-                'monitoring/command/sendcustomnotification',
-                $this->target
-            );
-        ?>" class="btn-common btn-small button">
-            <?= $this->icon('notification.png') ?>"></i>
-		</a>
-    </div>
-
-  </div>
-  <hr class="separator">
-  <div class="panel-body">
-
-      <div class="panel-row">
-		<?php if (count($comments) > 0) { ?>
-			<a href=" <?=
-			$this->href(
-				'monitoring/list/comments',
-				array(
-					'comment_id' => implode(',', $this->comments)
-				)
-			);
-			?>">
-			There are <?= count($comments);?>  comments assigned to the selected items.
-			</a>
-			<a href="<?=
-				$this->href(
-					'monitoring/command/removecomment',
-					$this->target
-				);
-				?>" class="button btn-common btn-small input-sm pull-right">
-				<?= $this->icon('remove.png') ?>"></i>
-			</a>
-		<?php } else { ?>
-			There are 0 comments assigned to the selected items.
-		<?php } ?>
-      </div>
-		<a rel="tooltip" title="Delay the noficiations on all selected hosts or services" href="<?=
-		$this->href(
-		    'monitoring/command/delaynotification',
-			$this->target
-		);
-		?>" class="button btn-cta btn-common btn-half-wide">
-		    Delay Notifications
-		</a>
-  </div>
-</div>
+    </td>
+</tr>

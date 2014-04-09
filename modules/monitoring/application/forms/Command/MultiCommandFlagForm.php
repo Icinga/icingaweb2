@@ -103,11 +103,6 @@ class MultiCommandFlagForm extends Form {
         return $changed;
     }
 
-    /**
-     * Extract the values from a set of items.
-     *
-     * @param array $items  The items
-     */
     private function valuesFromObjects($items)
     {
         $values = array();
@@ -142,6 +137,21 @@ class MultiCommandFlagForm extends Form {
         return array_merge($values, $old);
     }
 
+    public function buildCheckboxes()
+    {
+        $checkboxes = array();
+        foreach ($this->flags as $flag => $description) {
+            $checkboxes[] = new TriStateCheckbox(
+                $flag,
+                array(
+                    'label' => $description,
+                    'required' => true
+                )
+            );
+        }
+        return $checkboxes;
+    }
+
     /**
      * Create the multi flag form
      *
@@ -150,16 +160,9 @@ class MultiCommandFlagForm extends Form {
     public function create()
     {
         $this->setName('form_flag_configuration');
-        foreach ($this->flags as $flag => $description) {
-            $this->addElement(new TriStateCheckbox(
-                $flag,
-                array(
-                    'label' => $description,
-                    'required' => true
-                )
-            ));
-
-            $old = new Zend_Form_Element_Hidden($flag . self::OLD_VALUE_MARKER);
+        foreach ($this->buildCheckboxes() as $checkbox) {
+            $this->addElement($checkbox);
+            $old = new Zend_Form_Element_Hidden($checkbox->getName() . self::OLD_VALUE_MARKER);
             $this->addElement($old);
         }
         $this->setSubmitLabel('Save Configuration');

@@ -1,10 +1,26 @@
-<div>
-  <div class="panel-heading">
-    <span><b>Configuration</b></span>
-  </div>
-  <hr class="separator">
-  <div class="panel-body">
-    Change configuration for <?= count($this->objects) ?> objects.
-    <?php echo $this->form->render($this); ?>
-  </div>
-</div>
+
+<!--<?php echo $this->form->render($this); ?>-->
+
+<form>
+<?php foreach($this->form->getElements() as $name => $element):
+    if ($element instanceof \Icinga\Web\Form\Element\TriStateCheckbox):
+        $element->setDecorators(array('ViewHelper'));
+        ?>
+        <tr>
+                <th>
+                    <?= $element->getLabel() ?>
+                </th>
+                <td>
+                    <?= $element->render() ?>
+                </td>
+        </tr>
+
+    <?php else: ?>
+        <tr>
+            <td> <?= $element->render() ?></td>
+        </tr>
+    <?php
+        endif;
+        endforeach;
+    ?>
+<form>

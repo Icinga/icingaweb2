@@ -1,49 +1,33 @@
-<div>
-    <div class="panel-heading">
-        <b>Downtimes</b>
+<?php
+    $objectName = $this->is_service ? 'Services' : 'Hosts';
+?>
 
-        <a rel="tooltip" title="Schedule downtimes for all selected hosts or services" href="<?=
-            $this->href(
-                'monitoring/command/scheduledowntime',
-                $this->target
-            );
-        ?>" class="button btn-common btn-small input-sm pull-right">
-            <?= $this->icon('in_downtime.png') ?>
+<tr class="newsection">
+    <th>
+        Downtimes
+    </th>
+    <td>
+        <span> <?= count($downtimes) ?> </span> <?= $objectName ?> Selected items are currently in downtime.
+    </td>
+    <td>
+        <a
+            title="Schedule downtimes for all selected <?= $objectName ?>"
+            href="<?= $this->href('monitoring/command/scheduledowntime', $this->target); ?>"
+        >
+            <?= $this->icon('in_downtime_petrol.png') ?> Schedule Downtimes
+        </a> <br />
+
+        <a
+            href="<?=$this->href('monitoring/command/removedowntime', $this->target); ?>"
+        >
+            <?= $this->icon('remove_petrol.png') ?> Remove Downtimes
+        </a> <br />
+
+        <a
+            title="Remove all acknowledgements from all selected hosts or services"
+            href="<?=$this->href('monitoring/command/removeacknowledgement', $target);?>"
+        >
+            <?= $this->icon('remove_petrol.png') ?> Remove Acknowledgements
         </a>
-
-    </div>
-    <hr class="separator" >
-    <div class="panel-body">
-        <div class="panel-row">
-            <?php if (count($downtimes) > 0) { ?>
-                <a href="
-                    <?= $this->href(
-                        'monitoring/list/downtimes',
-                        array()
-                    );?>
-                ">
-                    <?= count($downtimes); ?> Selected items are currently in downtime.
-                </a>
-                <a href="<?=
-                    $this->href(
-                        'monitoring/command/removedowntime',
-                        $this->target
-                    );
-                    ?>" class="button btn-common btn-small input-sm pull-right">
-                    <?= $this->icon('remove.png') ?>
-                </a>
-            <?php } else { ?>
-                0 Selected items are currently in downtime.
-            <?php } ?>
-        </div>
-
-            <a rel="tooltip" title="Remove all acknowledgements from all selected hosts or services" href="<?=
-            $this->href(
-                'monitoring/command/removeacknowledgement',
-                $target
-            );
-            ?>" class="button btn-cta btn-common btn-wide">
-                Remove Acknowledgements
-            </a>
-    </div>
-</div>
+    </td>
+</tr>

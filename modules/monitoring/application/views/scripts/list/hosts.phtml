@@ -6,8 +6,9 @@ $helper = $this->getHelper('MonitoringState');
 <div style="margin: 1em;" class="dontprint">
 <!--<?= $this->filterBox ?>-->Sort by <?= $this->sortControl->render($this); ?>
 </div>
-<!--<?= $this->selectionToolbar('multi', $this->href('monitoring/multi/host',array( 'host' => '*' ))); ?>-->
+
 <?= $this->paginationControl($hosts, null, null, array('preserve' => $this->preserve)); ?>
+<?= $this->selectionToolbar('multi', $this->href('monitoring/multi/host',array( 'host' => '*' ))); ?>
 
 </div>
 <div class="content">

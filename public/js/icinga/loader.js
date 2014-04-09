@@ -393,13 +393,17 @@
              * Replace SVG piecharts with jQuery-Sparkline
              */
             $('.inlinepie', $resp).each(function(){
-                var   title = $(this).attr('title'),
-                    style = $(this).attr('style'),
-                    values = $(this).data('icinga-values');
-                var html = '<div class="inlinepie" style="' + style + '" title="' + title + '">' + values + '</div>';
+                var title  = $(this).attr('title'),
+                    style  = $(this).attr('style'),
+                    values = $(this).data('icinga-values'),
+                    html   = '<div class="inlinepie" style="' + style + '" title="' + title + '">' + values + '</div>';
                 $(this).replaceWith(html);
             });
 
+            /**
+             * Make multiselection-tables not selectable.
+             */
+            this.icinga.ui.prepareMultiselectTables($resp);
 
             /* Should we try to fiddle with responses containing full HTML? */
             /*
