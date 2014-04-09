@@ -29,9 +29,6 @@
 
 namespace Tests\Icinga\Application;
 
-require_once 'Zend/Config/Ini.php';
-require_once realpath(__DIR__ . '/../../../../../library/Icinga/Application/Config.php');
-
 use \Icinga\Application\Config as IcingaConfig;
 
 class ConfigTest extends \PHPUnit_Framework_TestCase

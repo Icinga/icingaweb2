@@ -2,18 +2,6 @@
 
 namespace Tests\Icinga\Web;
 
-require_once "../../library/Icinga/Exception/ProgrammingError.php";
-require_once "../../library/Icinga/Web/Notification.php";
-require_once "../../library/Icinga/Application/Platform.php";
-require_once "../../library/Icinga/Application/Logger.php";
-
-require_once "Zend/Session/Namespace.php";
-require_once "Zend/Config.php";
-require_once "Zend/Log.php";
-require_once "Zend/Session.php";
-require_once "Zend/Log/Writer/Abstract.php";
-require_once "Zend/Log/Writer/Stream.php";
-
 use Icinga\Logger\Logger;
 use Icinga\Web\Notification;
 

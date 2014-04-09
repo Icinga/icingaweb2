@@ -1,8 +1,6 @@
 <?php
-/**
- * Icinga2-Web regression test
- * (c) 2013 Icinga Development Team
- */
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Tests\Icinga\Regression;
 
@@ -12,7 +10,6 @@ namespace Tests\Icinga\Regression;
  * Bogus regression test
  *
  * @see https://dev.icinga.org/issues/4102
- * @package Tests\Icinga\Regression
  */
 class Bug4102Test extends \PHPUnit_Framework_TestCase
 {

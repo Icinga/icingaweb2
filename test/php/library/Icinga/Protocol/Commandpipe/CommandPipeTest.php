@@ -27,12 +27,12 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Tests\Protocol\Commandpipe;
+namespace Tests\Icinga\Protocol\Commandpipe;
 
 use \Zend_Config;
 use \PHPUnit_Framework_TestCase;
 use Icinga\Protocol\Commandpipe\Comment;
-use Icinga\Protocol\Commandpipe\Commandpipe as Commandpipe;
+use Icinga\Protocol\Commandpipe\CommandPipe;
 use Icinga\Protocol\Commandpipe\PropertyModifier as MONFLAG;
 use Icinga\Protocol\Ldap\Exception;
 use Icinga\Module\Monitoring\Command\AcknowledgeCommand;
@@ -68,7 +68,7 @@ class CommandPipeTest extends PHPUnit_Framework_TestCase
     /**
      * Return a @see Icinga\Protocal\CommandPipe\CommandPipe instance set up for the local test pipe
      *
-     * @return Commandpipe
+     * @return CommandPipe
      */
     private function getLocalTestPipe()
     {
@@ -83,14 +83,14 @@ class CommandPipeTest extends PHPUnit_Framework_TestCase
             )
         );
 
-        return new Commandpipe($cfg);
+        return new CommandPipe($cfg);
     }
 
     /**
      * Return a @see Icinga\Protocal\CommandPipe\CommandPipe instance set up
      * for the local test pipe, but with ssh as the transport layer
      *
-     * @return Commandpipe
+     * @return CommandPipe
      */
     private function getSSHTestPipe()
     {
@@ -109,7 +109,7 @@ class CommandPipeTest extends PHPUnit_Framework_TestCase
             )
         );
 
-        return new Commandpipe($cfg);
+        return new CommandPipe($cfg);
     }
 
     /**

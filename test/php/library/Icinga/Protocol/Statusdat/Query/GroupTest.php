@@ -1,16 +1,11 @@
 <?php
 
-namespace Icinga\Tests\Protocol\Statusdat\Query;
+namespace Tests\Icinga\Protocol\Statusdat\Query;
 
-/**
- *
- * Test class for Group
- * Created Wed, 16 Jan 2013 15:15:16 +0000
- *
- **/
-use Icinga\Protocol\Statusdat as Statusdat;
+use Icinga\Protocol\Statusdat;
+use Icinga\Protocol\Statusdat\Query\IQueryPart;
 
-class QueryExpressionMock implements Statusdat\Query\IQueryPart
+class QueryExpressionMock implements IQueryPart
 {
     public $rawExpression;
     public $value;
@@ -20,7 +15,6 @@ class QueryExpressionMock implements Statusdat\Query\IQueryPart
     {
         $this->value = array_shift($value);
         $this->rawExpression = $expression;
-
     }
 
     public function filter(array &$base, &$idx = null)
@@ -38,8 +32,6 @@ class QueryExpressionMock implements Statusdat\Query\IQueryPart
     {
         // TODO: Implement setQuery() method.
     }
-
-
 }
 
 class GroupTest extends \PHPUnit_Framework_TestCase
@@ -48,7 +40,7 @@ class GroupTest extends \PHPUnit_Framework_TestCase
     {
         $testQuery = new Statusdat\Query\Group();
         $value = array(4);
-        $testQuery->fromString("numeric_val >= ?", $value, "Icinga\Tests\Protocol\Statusdat\Query\QueryExpressionMock");
+        $testQuery->fromString("numeric_val >= ?", $value, "Tests\Icinga\Protocol\Statusdat\Query\QueryExpressionMock");
         $this->assertCount(1, $testQuery->getItems());
         $this->assertCount(0, $value);
 
@@ -57,14 +49,13 @@ class GroupTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals("numeric_val >= ?", $expression->rawExpression);
         $this->assertEquals(4, $expression->value);
-
     }
 
     public function testParsingSimpleAndCondition()
     {
         $testQuery = new Statusdat\Query\Group();
         $value = array(4, 'hosta');
-        $testQuery->fromString("numeric_val >= ? AND host_name = ?", $value, "Icinga\Tests\Protocol\Statusdat\Query\QueryExpressionMock");
+        $testQuery->fromString("numeric_val >= ? AND host_name = ?", $value, "Tests\Icinga\Protocol\Statusdat\Query\QueryExpressionMock");
         $this->assertCount(2, $testQuery->getItems());
         $this->assertCount(0, $value);
         $this->assertEquals("AND", $testQuery->getType());
@@ -83,7 +74,7 @@ class GroupTest extends \PHPUnit_Framework_TestCase
     {
         $testQuery = new Statusdat\Query\Group();
         $value = array(4, 'hosta');
-        $testQuery->fromString("numeric_val >= ? OR host_name = ?", $value, "Icinga\Tests\Protocol\Statusdat\Query\QueryExpressionMock");
+        $testQuery->fromString("numeric_val >= ? OR host_name = ?", $value, "Tests\Icinga\Protocol\Statusdat\Query\QueryExpressionMock");
         $this->assertCount(2, $testQuery->getItems());
         $this->assertCount(0, $value);
         $this->assertEquals("OR", $testQuery->getType());
@@ -102,7 +93,7 @@ class GroupTest extends \PHPUnit_Framework_TestCase
     {
         $testQuery = new Statusdat\Query\Group();
         $value = array(4, 'service1', 'hosta');
-        $testQuery->fromString("numeric_val >= ? AND (service_description = ? OR host_name = ?)", $value, "Icinga\Tests\Protocol\Statusdat\Query\QueryExpressionMock");
+        $testQuery->fromString("numeric_val >= ? AND (service_description = ? OR host_name = ?)", $value, "Tests\Icinga\Protocol\Statusdat\Query\QueryExpressionMock");
         $this->assertCount(2, $testQuery->getItems());
         $this->assertCount(0, $value);
         $this->assertEquals("AND", $testQuery->getType());
@@ -130,7 +121,7 @@ class GroupTest extends \PHPUnit_Framework_TestCase
     {
         $testQuery = new Statusdat\Query\Group();
         $value = array(4, 'service1', 'hosta');
-        $testQuery->fromString("numeric_val >= ? AND service_description = ? OR host_name = ?", $value, "Icinga\Tests\Protocol\Statusdat\Query\QueryExpressionMock");
+        $testQuery->fromString("numeric_val >= ? AND service_description = ? OR host_name = ?", $value, "Tests\Icinga\Protocol\Statusdat\Query\QueryExpressionMock");
         $this->assertCount(2, $testQuery->getItems());
         $this->assertCount(0, $value);
         $this->assertEquals("AND", $testQuery->getType());
@@ -165,7 +156,6 @@ class GroupTest extends \PHPUnit_Framework_TestCase
         $base = array(0, 1, 2, 3, 4, 5, 6, 7, 8);
 
         $this->assertEquals(array(3, 4, 8), array_values($testQuery->addItem($exp1)->addItem($exp2)->filter($base)));
-
     }
 
     public function testOrFilter()

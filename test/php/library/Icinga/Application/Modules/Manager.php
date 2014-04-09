@@ -2,16 +2,10 @@
 
 namespace Tests\Icinga\Application\Module\Manager;
 
-require_once("../../library/Icinga/Application/Modules/Manager.php");
-require_once("../../library/Icinga/Exception/ProgrammingError.php");
-require_once("../../library/Icinga/Exception/ConfigurationError.php");
-require_once("../../library/Icinga/Exception/SystemPermissionException.php");
-
 use Icinga\Application\Modules\Manager as ModuleManager;
 
 class ModuleMock
 {
-
     public $name = "";
     public $dir = "";
 
@@ -105,6 +99,5 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
     {
         $moduleDir = self::MODULE_TARGET;
         exec("rm -r $moduleDir/enabledModules");
-
     }
 }

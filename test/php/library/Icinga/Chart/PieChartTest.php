@@ -27,12 +27,11 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Tests\Chart;
+namespace Tests\Icinga\Chart;
 
 use \DOMXPath;
 use \DOMDocument;
 
-use Icinga\Chart\GridChart;
 use Icinga\Chart\PieChart;
 use Icinga\Test\BaseTestCase;
 

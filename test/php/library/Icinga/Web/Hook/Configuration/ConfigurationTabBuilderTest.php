@@ -2,20 +2,10 @@
 
 namespace Tests\Icinga\Web\Hook\Configuration;
 
-require_once '../../library/Icinga/Web/Hook/Configuration/ConfigurationTabInterface.php';
-require_once '../../library/Icinga/Web/Hook/Configuration/ConfigurationTab.php';
-require_once '../../library/Icinga/Web/Hook/Configuration/ConfigurationTabBuilder.php';
-require_once '../../library/Icinga/Web/Hook.php';
-require_once '../../library/Icinga/Web/Widget/Widget.php';
-require_once '../../library/Icinga/Web/Widget/Tabs.php';
-require_once '../../library/Icinga/Web/Widget/Tab.php';
-require_once '../../library/Icinga/Exception/ProgrammingError.php';
-
 use Icinga\Web\Hook\Configuration\ConfigurationTab;
 use Icinga\Web\Hook;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabs;
-use PHPUnit_Framework_TestResult;
 
 class RequestMock
 {

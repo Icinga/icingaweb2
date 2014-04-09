@@ -1,22 +1,11 @@
 <?php
 
-namespace Icinga\Tests\Protocol\Statusdat\Query;
+namespace Tests\Icinga\Protocol\Statusdat\Query;
 
 use Icinga\Protocol\Statusdat\Query\Expression;
 
-/**
- *
- * Test class for Expression
- * Created Wed, 16 Jan 2013 15:15:16 +0000
- *
- **/
 class ExpressionTest extends \PHPUnit_Framework_TestCase
 {
-
-    /**
-     * Test for Expression::FromString()
-     *
-     **/
     public function testFromStringParsing()
     {
         $assertions = array(
@@ -76,7 +65,6 @@ class ExpressionTest extends \PHPUnit_Framework_TestCase
 
     public function testNestedComparison()
     {
-
         $testArray = array(
             (object)array(
                 "expression" => "atest",
@@ -118,7 +106,6 @@ class ExpressionTest extends \PHPUnit_Framework_TestCase
 
         $result = $expression->filter($testArray);
         $this->assertEquals(1, count($result));
-
     }
 
     public function testCountQuery()
@@ -142,10 +129,6 @@ class ExpressionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(1, count($result));
     }
 
-    /**
-     * Test for Expression::Filter()
-     *
-     **/
     public function testFilter()
     {
         $this->markTestIncomplete('testFilter is not implemented yet');

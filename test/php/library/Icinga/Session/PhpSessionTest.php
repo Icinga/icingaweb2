@@ -27,23 +27,9 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Tests\Icinga\Authentication;
-
-// @codingStandardsIgnoreStart
-require_once realpath(__DIR__ . '/../../../../../library/Icinga/Test/BaseTestCase.php');
-// @codingStandardsIgnoreEnd
+namespace Tests\Icinga\Session;
 
 use Icinga\Test\BaseTestCase;
-
-// @codingStandardsIgnoreStart
-require_once BaseTestCase::$libDir . '/Web/Session/SessionNamespace.php';
-require_once BaseTestCase::$libDir . '/Web/Session/Session.php';
-require_once BaseTestCase::$libDir . '/Web/Session/PhpSession.php';
-require_once BaseTestCase::$libDir . '/Logger/Logger.php';
-require_once BaseTestCase::$libDir . '/Exception/ConfigurationError.php';
-require_once 'Zend/Log.php';
-// @codingStandardsIgnoreEnd
-
 use Icinga\Web\Session\PhpSession;
 
 class PhpSessionTest extends BaseTestCase

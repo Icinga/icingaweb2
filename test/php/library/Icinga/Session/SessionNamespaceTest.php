@@ -27,17 +27,10 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-// @codingStandardsIgnoreStart
-require_once realpath(__DIR__ . '/../../../../../library/Icinga/Test/BaseTestCase.php');
-// @codingStandardsIgnoreEnd
-
-use Icinga\Test\BaseTestCase;
-
-// @codingStandardsIgnoreStart
-require_once BaseTestCase::$libDir . '/Web/Session/SessionNamespace.php';
-// @codingStandardsIgnoreEnd
+namespace Tests\Icinga\Session;
 
 use \Exception;
+use Icinga\Test\BaseTestCase;
 use Icinga\Web\Session\SessionNamespace;
 
 

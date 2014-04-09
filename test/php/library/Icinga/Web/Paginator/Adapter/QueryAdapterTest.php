@@ -1,13 +1,12 @@
 <?php
 
-namespace Icinga\Tests\Web\Paginator\Adapter;
+namespace Tests\Icinga\Web\Paginator\Adapter;
 
-use PHPUnit_Framework_TestCase;
-use Zend_Config;
+use \Zend_Config;
+use \PHPUnit_Framework_TestCase;
 use Icinga\Protocol\Statusdat\Reader;
-use Icinga\Web\Paginator\Adapter\QueryAdapter;
 use Icinga\Module\Monitoring\Backend;
-use Tests\Icinga\Protocol\Statusdat\StatusdatTestLoader;
+use Icinga\Web\Paginator\Adapter\QueryAdapter;
 
 class QueryAdapterTest extends PHPUnit_Framework_TestCase
 {

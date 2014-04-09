@@ -27,7 +27,7 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Test\Form\Config;
+namespace Tests\Icinga\Form\Config;
 
 use \Zend_Config;
 Use Icinga\Test\BaseTestCase;

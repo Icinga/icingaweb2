@@ -4,15 +4,8 @@ namespace Tests\Icinga\Protocol\Statusdat;
 
 use Icinga\Protocol\Statusdat\Parser;
 
-/**
-*
-* Test class for Parser
-* Created Wed, 16 Jan 2013 15:15:16 +0000
-*
-**/
 class ParserTest extends \PHPUnit_Framework_TestCase
 {
-
     private function getStringAsFileHandle($string)
     {
         $maxsize = strlen($string)*2;

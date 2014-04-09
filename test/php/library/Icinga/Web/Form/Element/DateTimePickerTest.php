@@ -1,21 +1,11 @@
 <?php
 
-namespace Icinga\Test\Web\Form\Element;
-use Icinga\Test\BaseTestCase;
-
-require_once 'Zend/Form/Element/Text.php';
-require_once 'Zend/Form/Element/Xhtml.php';
-require_once realpath(__DIR__ . '/../../../../../../../library/Icinga/Test/BaseTestCase.php');
-require_once realpath(BaseTestCase::$libDir . '/Application/Icinga.php');
-require_once realpath(BaseTestCase::$libDir . '/Web/Form/Element/DateTimePicker.php');
-require_once realpath(BaseTestCase::$libDir . '/Web/Form/Validator/DateTimeValidator.php');
-require_once realpath(BaseTestCase::$libDir . '/Util/ConfigAwareFactory.php');
-require_once realpath(BaseTestCase::$libDir . '/Util/DateTimeFactory.php');
+namespace Tests\Icinga\Web\Form\Element;
 
 use \DateTimeZone;
-use Icinga\Form\Config\Authentication\BaseBackendForm;
-use \Icinga\Web\Form\Element\DateTimePicker;
-use \Icinga\Util\DateTimeFactory;
+use Icinga\Test\BaseTestCase;
+use Icinga\Util\DateTimeFactory;
+use Icinga\Web\Form\Element\DateTimePicker;
 
 class DateTimeTest extends BaseTestCase
 {

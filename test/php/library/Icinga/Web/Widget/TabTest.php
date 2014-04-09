@@ -29,32 +29,19 @@
 
 namespace Tests\Icinga\Web\Widget;
 
-require_once('../../library/Icinga/Web/Widget/Widget.php');
-require_once('../../library/Icinga/Web/Widget/Tab.php');
-require_once('../../library/Icinga/Web/Url.php');
-require_once('library/Icinga/Web/RequestMock.php');
-require_once('library/Icinga/Web/ViewMock.php');
-require_once('Zend/View/Abstract.php');
-
-use Icinga\Web\View;
+use \PHPUnit_Framework_TestCase;
+use Tests\Icinga\Web\RequestMock;
+use Tests\Icinga\Web\ViewMock;
 use Icinga\Web\Widget\Tab;
 use Icinga\Web\Url;
-use Tests\Icinga\Web\RequestMock;
-use \Zend_View_Abstract;
-use \PHPUnit_Framework_TestCase;
-
-use Tests\Icinga\Web\ViewMock;
 
 /**
  * Test creation and rendering of tabs
- *
  */
 class TabTest extends PHPUnit_Framework_TestCase
 {
-
     /**
      * Test whether rendering a tab without URL is done correctly
-     *
      */
     public function testRenderWithoutUrl()
     {
@@ -73,7 +60,6 @@ class TabTest extends PHPUnit_Framework_TestCase
 
     /**
      * Test whether rendering an active tab adds the 'class' property
-     *
      */
     public function testActiveTab()
     {
@@ -93,7 +79,6 @@ class TabTest extends PHPUnit_Framework_TestCase
 
     /**
      * Test whether rendering a tab with URL adds a n &gt;a&lt; tag correctly
-     *
      */
     public function testTabWithUrl()
     {
@@ -117,7 +102,6 @@ class TabTest extends PHPUnit_Framework_TestCase
 
     /**
      * Test wheter the 'icon' property adds an img tag
-     *
      */
     public function testTabWithIconImage()
     {
@@ -141,7 +125,6 @@ class TabTest extends PHPUnit_Framework_TestCase
 
     /**
      * Test wheter the iconCls property adds an i tag with the icon
-     *
      */
     public function testTabWithIconClass()
     {

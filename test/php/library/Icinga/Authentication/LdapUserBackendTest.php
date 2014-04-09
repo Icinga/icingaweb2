@@ -29,33 +29,12 @@
 
 namespace Tests\Icinga\Authentication;
 
-// @codingStandardsIgnoreStart
-require_once realpath(__DIR__ . '/../../../../../library/Icinga/Test/BaseTestCase.php');
-// @codingStandardsIgnoreEnd
-
-use Icinga\Authentication\Credential;
-use \Icinga\Test\BaseTestCase;
-
-// @codingStandardsIgnoreStart
-require_once 'Zend/Config.php';
-require_once BaseTestCase::$libDir . '/Protocol/Ldap/Connection.php';
-require_once BaseTestCase::$libDir . '/Protocol/Ldap/Query.php';
-require_once BaseTestCase::$libDir . '/Authentication/Credential.php';
-require_once BaseTestCase::$libDir . '/Authentication/UserBackend.php';
-require_once BaseTestCase::$libDir . '/Authentication/Backend/LdapUserBackend.php';
-// @codingStandardsIgnoreEnd
-
 use \Exception;
 use \Zend_Config;
+use Icinga\Test\BaseTestCase;
 use Icinga\Authentication\Backend\LdapUserBackend;
 use Icinga\Protocol\Ldap\Connection as LdapConnection;
 
-/**
-*
-* Test class for Ldapuserbackend
-* Created Mon, 10 Jun 2013 07:54:34 +0000
-*
-**/
 class LdapUserBackendTest extends BaseTestCase
 {
     // Change this according to your ldap test server

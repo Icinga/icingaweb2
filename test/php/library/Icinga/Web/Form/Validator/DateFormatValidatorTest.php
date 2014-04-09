@@ -27,13 +27,10 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Test\Web\Form\Validator;
-
-require_once('Zend/Validate/Abstract.php');
-require_once(realpath('../../library/Icinga/Web/Form/Validator/DateFormatValidator.php'));
+namespace Tests\Icinga\Web\Form\Validator;
 
 use \PHPUnit_Framework_TestCase;
-use \Icinga\Web\Form\Validator\DateFormatValidator;
+use Icinga\Web\Form\Validator\DateFormatValidator;
 
 class DateFormatValidatorTest extends PHPUnit_Framework_TestCase
 {

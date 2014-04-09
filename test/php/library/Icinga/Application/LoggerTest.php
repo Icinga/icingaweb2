@@ -27,19 +27,11 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-// @codingStandardsIgnoreStart
-require_once realpath(__DIR__ . '/../../../../../library/Icinga/Test/BaseTestCase.php');
-// @codingStandardsIgnoreEnd
+namespace Tests\Icinga\Application;
 
-use Icinga\Test\BaseTestCase;
-
-// @codingStandardsIgnoreStart
-require_once BaseTestCase::$libDir . '/Logger/Logger.php';
-require_once BaseTestCase::$libDir . '/Logger/LogWriter.php';
-require_once BaseTestCase::$libDir . '/Logger/Writer/StreamWriter.php';
-// @codingStandardsIgnoreEnd
 
 use \Zend_Config;
+use Icinga\Test\BaseTestCase;
 use Icinga\Logger\Logger;
 
 class LoggerTest extends BaseTestCase

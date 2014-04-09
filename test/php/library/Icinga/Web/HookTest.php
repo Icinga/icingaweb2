@@ -1,19 +1,8 @@
 <?php
 
 namespace Tests\Icinga\Web;
-/**
-*
-* Test class for Hook
-* Created Fri, 22 Mar 2013 09:44:40 +0000
-*
-**/
-require_once("../../library/Icinga/Exception/ProgrammingError.php");
-require_once("../../library/Icinga/Web/Hook.php");
 
-require_once("Zend/Log.php");
-require_once("../../library/Icinga/Application/Logger.php");
-
-use Icinga\Web\Hook as Hook;
+use Icinga\Web\Hook;
 
 class Base
 {

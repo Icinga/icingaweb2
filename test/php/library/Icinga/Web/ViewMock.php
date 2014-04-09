@@ -30,7 +30,6 @@
 
 namespace Tests\Icinga\Web;
 
-require_once('Zend/View/Abstract.php');
 use \Zend_View_Abstract;
 
 /**

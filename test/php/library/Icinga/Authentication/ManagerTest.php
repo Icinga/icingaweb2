@@ -27,7 +27,7 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Tests\Authentication;
+namespace Tests\Icinga\Authentication;
 
 use Icinga\Test\BaseTestCase;
 
@@ -35,7 +35,6 @@ use \Zend_Config;
 use Icinga\Web\Session;
 use Icinga\Authentication\Manager as AuthManager;
 use Icinga\Authentication\Credential;
-use Icinga\Exception\ConfigurationError;
 use Icinga\Test\Authentication\ErrorProneBackendMock;
 use Icinga\Test\Authentication\SessionMock;
 use Icinga\Test\Authentication\BackendMock;

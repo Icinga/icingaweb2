@@ -2,17 +2,8 @@
 
 namespace Tests\Icinga\Application;
 
-require_once __DIR__. '/../../../../../library/Icinga/Exception/ProgrammingError.php';
-require_once __DIR__. '/../../../../../library/Icinga/Application/Loader.php';
-
 use Icinga\Application\Loader;
 
-/**
-*
-* Test class for Loader
-* Created Thu, 07 Feb 2013 10:07:13 +0000
-*
-**/
 class LoaderTest extends \PHPUnit_Framework_TestCase
 {
     private static $classFile = 'test/My/Library/TestStruct.php';

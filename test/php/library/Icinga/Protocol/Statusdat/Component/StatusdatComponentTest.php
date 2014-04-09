@@ -2,7 +2,8 @@
 
 namespace Tests\Icinga\Protocol\Statusdat;
 
-use  \Icinga\Protocol\Statusdat as SD;
+use \Zend_Config;
+use Icinga\Protocol\Statusdat\Reader;
 
 /**
  * This is a high level test for the whole statusdat component, i.e. all parts put together
@@ -11,7 +12,7 @@ use  \Icinga\Protocol\Statusdat as SD;
 class StatusdatComponentTest extends \PHPUnit_Framework_TestCase
 {
     public function getReader() {
-        $reader = new SD\Reader(new \Zend_Config(array(
+        $reader = new Reader(new Zend_Config(array(
             "status_file" => dirname(__FILE__)."/status.dat",
             "object_file" => dirname(__FILE__)."/objects.cache"
         )),null,true);

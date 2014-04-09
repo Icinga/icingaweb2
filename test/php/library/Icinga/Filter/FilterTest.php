@@ -27,27 +27,13 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-
 namespace Tests\Icinga\Filter;
-use Icinga\Test\BaseTestCase;
 
 use Icinga\Filter\FilterAttribute;
 use Icinga\Filter\Filter;
 use Icinga\Filter\Type\TextFilter;
 use Icinga\Filter\Query\Node;
-
-// @codingStandardsIgnoreStart
-require_once realpath(__DIR__ . '/../../../../../library/Icinga/Test/BaseTestCase.php');
-require_once realpath(BaseTestCase::$libDir . '/Filter/QueryProposer.php');
-require_once realpath(BaseTestCase::$libDir . '/Filter/Filter.php');
-require_once realpath(BaseTestCase::$libDir . '/Filter/FilterAttribute.php');
-require_once realpath(BaseTestCase::$libDir . '/Filter/Domain.php');
-require_once realpath(BaseTestCase::$libDir . '/Filter/Query/Node.php');
-require_once realpath(BaseTestCase::$libDir . '/Filter/Query/Tree.php');
-require_once realpath(BaseTestCase::$libDir . '/Filter/Type/FilterType.php');
-require_once realpath(BaseTestCase::$libDir . '/Filter/Type/TextFilter.php');
-
-// @codingStandardsIgnoreEnd
+use Icinga\Test\BaseTestCase;
 
 class FilterTest extends BaseTestCase
 {
@@ -77,7 +63,6 @@ class FilterTest extends BaseTestCase
             $searchEngine->getProposalsForQuery('Host name Is test and Hostname contains'),
             'Assert only proposals for the last query part being made'
         );
-
     }
 
     public function testSingleQueryTreeCreation()
@@ -245,7 +230,6 @@ class FilterTest extends BaseTestCase
                     ->setHandledAttributes('attr5')
             );
 
-
         $query = 'attr1 is not \'Hans wurst\''
             . ' or attr2 contains something '
             . ' and attr3 starts with bla'
@@ -298,5 +282,4 @@ class FilterTest extends BaseTestCase
             'Assert the root->right->right->type node to be an OPERATOR (query :"' . $query . '")'
         );
     }
-
 }

@@ -1,12 +1,9 @@
 <?php
 
-namespace Icinga\Tests\Protocol\Statusdat;
+namespace Tests\Icinga\Protocol\Statusdat;
 
-use Icinga\Protocol\Statusdat\Reader as Reader;
+use Icinga\Protocol\Statusdat\Reader;
 
-if (!defined('APPLICATION_PATH')) {
-    define("APPLICATION_PATH", "./"); // TODO: test boostrap
-}
 /**
  *
  * Test class for Reader

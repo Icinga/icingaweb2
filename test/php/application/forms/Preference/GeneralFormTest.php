@@ -27,14 +27,13 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Test\Form\Preference;
-
-use Icinga\Test\BaseTestCase;
+namespace Tests\Icinga\Form\Preference;
 
 use \DateTimeZone;
-use \Icinga\User\Preferences;
 use \Zend_View_Helper_DateFormat;
-use \Icinga\Util\DateTimeFactory;
+use Icinga\Test\BaseTestCase;
+use Icinga\User\Preferences;
+use Icinga\Util\DateTimeFactory;
 
 /**
  * Test for general form, mainly testing enable/disable behaviour

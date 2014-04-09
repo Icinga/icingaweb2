@@ -1,15 +1,15 @@
 <?php
 
-namespace Icinga\Tests\Web\Paginator\ScrollingStyle;
+namespace Tests\Icinga\Web\Paginator\ScrollingStyle;
 
-require_once('Icinga/Web/Paginator/ScrollingStyle/SlidingWithBorder.php');
+// @codingStandardsIgnoreStart
+require_once realpath(ICINGA_LIBDIR . '/Icinga/Web/Paginator/ScrollingStyle/SlidingWithBorder.php');
+// @codingStandardsIgnoreEnd
 
-use Zend_Config;
-use Zend_Paginator_Adapter_Interface;
-use Icinga\Module\Monitoring\Backend\Statusdat;
+use \Zend_Config;
+use \Zend_Paginator_Adapter_Interface;
 use Icinga\Protocol\Statusdat\Reader;
 use Icinga\Web\Paginator\Adapter\QueryAdapter;
-use Tests\Icinga\Protocol\Statusdat\StatusdatTestLoader;
 use Icinga\Module\Monitoring\Backend;
 
 class TestPaginatorAdapter implements Zend_Paginator_Adapter_Interface
@@ -54,12 +54,6 @@ class TestPaginatorAdapter implements Zend_Paginator_Adapter_Interface
 
 }
 
-/**
-*
-* Test class for Slidingwithborder
-* Created Wed, 16 Jan 2013 15:15:16 +0000
-*
-**/
 class SlidingwithborderTest extends \PHPUnit_Framework_TestCase
 {
     private $cacheDir;
@@ -145,5 +139,4 @@ class SlidingwithborderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('...', $pages[3]);
         $this->assertEquals('...', $pages[14]);
     }
-
 }

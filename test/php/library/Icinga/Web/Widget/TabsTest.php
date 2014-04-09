@@ -29,32 +29,17 @@
 
 namespace Tests\Icinga\Web\Widget;
 
-require_once('../../library/Icinga/Web/Widget/Widget.php');
-require_once('../../library/Icinga/Web/Widget/Tab.php');
-require_once('../../library/Icinga/Web/Widget/Tabs.php');
-require_once('../../library/Icinga/Web/Url.php');
-
-require_once('library/Icinga/Web/ViewMock.php');
-require_once('Zend/View/Abstract.php');
-
-use Icinga\Web\View;
-use Icinga\Web\Url;
-use Icinga\Web\Widget\Tabs;
-use Tests\Icinga\Web\ViewMock;
-
-use \Zend_View_Abstract;
 use \PHPUnit_Framework_TestCase;
+use Tests\Icinga\Web\ViewMock;
+use Icinga\Web\Widget\Tabs;
 
 /**
  * Test rendering of tabs and corretct tab management
- *
  */
 class TabsTest extends PHPUnit_Framework_TestCase
 {
-
     /**
      * Test adding tabs and asserting for correct count
-     *
      */
     public function testAddTabs()
     {
@@ -77,7 +62,6 @@ class TabsTest extends PHPUnit_Framework_TestCase
 
     /**
      * Test rendering of tabs when no dropdown is requested
-     *
      */
     public function testRenderTabsWithoutDropdown()
     {
@@ -94,7 +78,6 @@ class TabsTest extends PHPUnit_Framework_TestCase
 
     /**
      * Test rendering of tabs when dropdown is requested
-     *
      */
     public function testRenderDropdown()
     {

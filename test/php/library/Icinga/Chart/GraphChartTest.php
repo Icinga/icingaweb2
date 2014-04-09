@@ -29,12 +29,11 @@
 
 namespace Tests\Icinga\Chart;
 
-use DOMXPath;
-use DOMDocument;
+use \DOMXPath;
+use \DOMDocument;
 
 use Icinga\Chart\GridChart;
 use Icinga\Test\BaseTestCase;
-use Test\Icinga\LibraryLoader;
 
 class GraphChartTest extends BaseTestCase
 {

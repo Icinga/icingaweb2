@@ -1,5 +1,5 @@
 <?php
-namespace Icinga\Tests\Protocol\Statusdat;
+namespace Tests\Icinga\Protocol\Statusdat;
 
 use Icinga\Data\DatasourceInterface;
 use Icinga\Protocol\Statusdat\IReader;

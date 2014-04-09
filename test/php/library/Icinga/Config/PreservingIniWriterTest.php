@@ -1,5 +1,4 @@
 <?php
-
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga Web 2.
@@ -30,14 +29,8 @@
 
 namespace Tests\Icinga\PreservingIniWriterTest;
 
-require_once 'Zend/Config.php';
-require_once 'Zend/Config/Ini.php';
-require_once 'Zend/Config/Writer/Ini.php';
-require_once('../../library/Icinga/Config/IniEditor.php');
-require_once('../../library/Icinga/Config/PreservingIniWriter.php');
-
+use \Zend_Config;
 use Icinga\Config\PreservingIniWriter;
-use Zend_Config;
 
 class PreservingIniWriterTest extends \PHPUnit_Framework_TestCase {
 

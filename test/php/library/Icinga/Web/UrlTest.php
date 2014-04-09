@@ -1,20 +1,15 @@
 <?php
 
 namespace Tests\Icinga\Web;
-require_once('../../library/Icinga/Web/Url.php');
-require_once('library/Icinga/Web/RequestMock.php');
 
 use Icinga\Web\Url;
 use Tests\Icinga\Web\RequestMock;
 
 /**
  *  Tests for the Icinga\Web\Url class that provides convenient access to Url manipulation method
- *
- *
  */
 class UrlTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * Tests whether a simple Url without query parameters and baseUrl is correctly parsed and returns correct Urls
      *

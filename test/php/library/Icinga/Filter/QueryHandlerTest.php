@@ -27,21 +27,12 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-
 namespace Tests\Icinga\Filter;
 
 use Icinga\Filter\Query\Node;
 use Icinga\Filter\FilterAttribute;
 use Icinga\Filter\Type\FilterType;
 use Icinga\Test\BaseTestCase;
-
-// @codingStandardsIgnoreStart
-require_once realpath(__DIR__ . '/../../../../../library/Icinga/Test/BaseTestCase.php');
-require_once realpath(BaseTestCase::$libDir .'/Filter/Query/Node.php');
-require_once realpath(BaseTestCase::$libDir .'/Filter/QueryProposer.php');
-require_once realpath(BaseTestCase::$libDir .'/Filter/Domain.php');
-require_once realpath(BaseTestCase::$libDir .'/Filter/FilterAttribute.php');
-require_once realpath(BaseTestCase::$libDir .'/Filter/Type/FilterType.php');
 
 class TypeMock extends FilterType
 {
@@ -119,7 +110,6 @@ class QueryHandlerTest extends BaseTestCase
 
     public function testOperatorProposal()
     {
-
         $handler = new FilterAttribute(new TypeMock());
         $handler->setField('current_status')
             ->setHandledAttributes('status', 'state', 'current state');
@@ -138,5 +128,4 @@ class QueryHandlerTest extends BaseTestCase
         $node = $handler->convertToTreeNode('status is not \’some kind of magic\'');
         $this->assertEquals($node->left, 'current_status', 'Assert status to be set to the field');
     }
-
 }

@@ -2,13 +2,6 @@
 
 namespace Tests\Icinga\Web;
 
-require_once('Zend/Form.php');
-require_once 'Zend/Test/PHPUnit/ControllerTestCase.php';
-
-require_once('../../library/Icinga/Web/Form.php');
-require_once('../../library/Icinga/Exception/ProgrammingError.php');
-require_once('../../library/Icinga/Web/Form/InvalidCSRFTokenException.php');
-
 use Icinga\Web\Form;
 use \Zend_Test_PHPUnit_ControllerTestCase;
 

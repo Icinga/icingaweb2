@@ -34,7 +34,6 @@ namespace Tests\Icinga\Application;
  */
 class ZendDbMock
 {
-
     /**
      * The config that was used in the last call of the factory function
      *

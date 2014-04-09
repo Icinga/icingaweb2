@@ -30,16 +30,7 @@
 namespace Tests\Icinga\Filter;
 
 use Icinga\Filter\Type\TimeRangeSpecifier;
-use Icinga\Filter\Query\Node;
 use Icinga\Test\BaseTestCase;
-
-// @codingStandardsIgnoreStart
-require_once realpath(__DIR__ . '/../../../../../../library/Icinga/Test/BaseTestCase.php');
-require_once realpath(BaseTestCase::$libDir .'/Filter/Query/Node.php');
-require_once realpath(BaseTestCase::$libDir .'/Filter/QueryProposer.php');
-require_once realpath(BaseTestCase::$libDir .'/Filter/Type/FilterType.php');
-require_once realpath(BaseTestCase::$libDir .'/Filter/Type/TimeRangeSpecifier.php');
-// @codingStandardsIgnoreEnd
 
 class TimeRangeSpecifierTest extends BaseTestCase
 {

@@ -1,20 +1,16 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
+
 namespace Tests\Icinga\Protocol\Ldap;
-require_once '../../library/Icinga/Protocol/Ldap/Query.php';
-require_once '../../library/Icinga/Protocol/Ldap/Connection.php';
-require_once '../../library/Icinga/Protocol/Ldap/LdapUtils.php';
-require_once('Zend/Config.php');
-/**
-*
-* Test class for Query
-* Created Wed, 13 Mar 2013 12:57:11 +0000
-*
-**/
+
+use \Zend_Config;
+
 class QueryTest extends \PHPUnit_Framework_TestCase
 {
     private function emptySelect()
     {
-        $config = new \Zend_Config(
+        $config = new Zend_Config(
             array(
                 'hostname' => 'localhost',
                 'root_dn'  => 'dc=example,dc=com',

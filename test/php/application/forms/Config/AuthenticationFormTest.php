@@ -27,13 +27,13 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Test\Form\Config;
+namespace Tests\Icinga\Form\Config;
 
 use Icinga\Test\BaseTestCase;
 
 use \Zend_Config;
 use \Icinga\Web\Url;
-use \Tests\Icinga\Web\RequestMock;
+use Tests\Icinga\Web\RequestMock;
 
 /**
  * Test for the authentication provider form

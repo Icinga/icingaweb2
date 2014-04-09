@@ -35,20 +35,8 @@ use Icinga\Filter\Type\TextFilter;
 use Icinga\Test\BaseTestCase;
 use Icinga\Filter\Domain;
 
-// @codingStandardsIgnoreStart
-require_once realpath(__DIR__ . '/../../../../../library/Icinga/Test/BaseTestCase.php');
-require_once realpath(BaseTestCase::$libDir . '/Filter/QueryProposer.php');
-require_once realpath(BaseTestCase::$libDir . '/Filter/FilterAttribute.php');
-require_once realpath(BaseTestCase::$libDir . '/Filter/Domain.php');
-require_once realpath(BaseTestCase::$libDir . '/Filter/Query/Node.php');
-require_once realpath(BaseTestCase::$libDir . '/Filter/Type/FilterType.php');
-require_once realpath(BaseTestCase::$libDir . '/Filter/Type/TextFilter.php');
-
-// @codingStandardsIgnoreEnd
-
 class DomainTest extends BaseTestCase
 {
-
     public function testDomainRecognitionInQueryString()
     {
         $domain = new Domain('host');
@@ -99,5 +87,4 @@ class DomainTest extends BaseTestCase
         $this->assertEquals($node->right, 'my host', 'Assert a domain to insert the value as the right side of a treenode');
         $this->assertEquals($node->operator, Node::OPERATOR_EQUALS, 'Assert the correct operator to be set in a single query');
     }
-
 }

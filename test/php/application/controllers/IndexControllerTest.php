@@ -2,8 +2,6 @@
 
 namespace Tests\Application\Controller;
 
-use Icinga\Application\Icinga;
-
 class IndexControllerTest extends \Zend_Test_PHPUnit_ControllerTestCase {
     private $applicationPath;
 

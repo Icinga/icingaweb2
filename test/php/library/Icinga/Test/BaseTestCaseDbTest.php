@@ -29,12 +29,6 @@
 
 namespace Tests\Icinga\Test;
 
-require_once 'Zend/Db/Adapter/Pdo/Mysql.php';
-require_once 'Zend/Db/Adapter/Pdo/Pgsql.php';
-require_once realpath(__DIR__ . '/../../../../../library/Icinga/Test/BaseTestCase.php');
-
-use \PDO;
-use \RuntimeException;
 use Icinga\Test\BaseTestCase;
 
 class BaseTestCaseDbTest extends BaseTestCase

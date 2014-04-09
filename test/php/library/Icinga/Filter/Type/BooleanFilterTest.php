@@ -27,26 +27,14 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-
 namespace Tests\Icinga\Filter;
 
 use Icinga\Filter\Type\BooleanFilter;
-use Icinga\Filter\Type\TimeRangeSpecifier;
 use Icinga\Filter\Query\Node;
 use Icinga\Test\BaseTestCase;
 
-// @codingStandardsIgnoreStart
-require_once realpath(__DIR__ . '/../../../../../../library/Icinga/Test/BaseTestCase.php');
-require_once realpath(BaseTestCase::$libDir .'/Filter/Query/Node.php');
-require_once realpath(BaseTestCase::$libDir .'/Filter/QueryProposer.php');
-require_once realpath(BaseTestCase::$libDir .'/Filter/Type/FilterType.php');
-require_once realpath(BaseTestCase::$libDir .'/Filter/Type/BooleanFilter.php');
-require_once realpath(BaseTestCase::$libDir .'/Filter/Type/TimeRangeSpecifier.php');
-// @codingStandardsIgnoreEnd
-
 class BooleanFilterTest extends BaseTestCase
 {
-
     public function testOperatorProposal()
     {
         $filter = new BooleanFilter(array());
@@ -124,7 +112,6 @@ class BooleanFilterTest extends BaseTestCase
         $this->assertEquals(Node::OPERATOR_EQUALS, $node->operator, 'Assert the operator to be equals');
         $this->assertEquals(1, $node->right[0], 'Assert the value to be 1');
 
-
         $node = $filter->createTreeNode('is not with problem', 'host_status');
         $this->assertEquals('host_problem', $node->left, 'Assert the left part of the node to be host_problem');
         $this->assertEquals(Node::OPERATOR_EQUALS, $node->operator, 'Assert the operator to be equals');
@@ -149,6 +136,5 @@ class BooleanFilterTest extends BaseTestCase
         $this->assertEquals('host_problem', $node->right->left, 'Assert the right part of the node to be host_problem');
         $this->assertEquals(Node::OPERATOR_EQUALS, $node->right->operator, 'Assert the operator to be equals');
         $this->assertEquals(1, $node->right->right[0], 'Assert the value to be 1');
-
     }
 }

@@ -29,36 +29,11 @@
 
 namespace Tests\Icinga\Authentication;
 
-// @codingStandardsIgnoreStart
-require_once realpath(__DIR__ . '/../../../../../library/Icinga/Test/BaseTestCase.php');
-// @codingStandardsIgnoreEnd
-
-use \Icinga\Test\BaseTestCase;
-
-// @codingStandardsIgnoreStart
-require_once 'Zend/Config.php';
-require_once 'Zend/Config/Ini.php';
-require_once 'Zend/Db/Adapter/Abstract.php';
-require_once 'Zend/Db.php';
-require_once 'Zend/Log.php';
-require_once BaseTestCase::$libDir . '/Exception/ProgrammingError.php';
-require_once BaseTestCase::$libDir . '/Util/ConfigAwareFactory.php';
-require_once BaseTestCase::$libDir . '/Authentication/UserBackend.php';
-require_once BaseTestCase::$libDir . '/Protocol/Ldap/Exception.php';
-require_once BaseTestCase::$libDir . '/Application/Config.php';
-require_once BaseTestCase::$libDir . '/Authentication/Credential.php';
-require_once BaseTestCase::$libDir . '/Authentication/Backend/DbUserBackend.php';
-require_once BaseTestCase::$libDir . '/User.php';
-require_once BaseTestCase::$libDir . '/Application/Logger.php';
-// @codingStandardsIgnoreEnd
-
 use \PDO;
 use \Zend_Db_Adapter_Pdo_Abstract;
 use \Zend_Config;
-use \Icinga\Authentication\Backend\DbUserBackend;
-use \Icinga\Authentication\Credential;
-use \Icinga\User;
-use \Icinga\Application\Config;
+use Icinga\Test\BaseTestCase;
+use Icinga\Authentication\Backend\DbUserBackend;
 
 /**
  * Test Class fpr DbUserBackend

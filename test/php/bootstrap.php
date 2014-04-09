@@ -3,11 +3,15 @@
 $applicationPath = realpath(dirname(__FILE__) . '/../../application/');
 $modulePath = realpath(dirname(__FILE__) . '/../../modules/');
 $libraryPath = realpath(dirname(__FILE__) . '/../../library/');
+$testLibraryPath = realpath(dirname(__FILE__) . '/library/');
 $configPath = realpath($libraryPath . '/../config');
 
 // Is usually done in the application's bootstrap and is used by some of our internals
 if (!defined('ICINGA_APPDIR')) {
     define('ICINGA_APPDIR', $applicationPath);
+}
+if (!defined('ICINGA_LIBDIR')) {
+    define('ICINGA_LIBDIR', $libraryPath);
 }
 
 // This is needed to get the Zend Plugin loader working
@@ -16,6 +20,7 @@ set_include_path(implode(PATH_SEPARATOR, array($libraryPath, get_include_path())
 require_once($libraryPath . '/Icinga/Application/Loader.php');
 
 $loader = new Icinga\Application\Loader();
+$loader->registerNamespace('Tests', $testLibraryPath);
 $loader->registerNamespace('Icinga', $libraryPath . '/Icinga');
 $loader->registerNamespace('Icinga\\Form', $applicationPath . '/forms');
 

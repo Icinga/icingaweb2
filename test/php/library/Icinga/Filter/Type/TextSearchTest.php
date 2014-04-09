@@ -33,14 +33,6 @@ use Icinga\Filter\Type\TextFilter;
 use Icinga\Filter\Query\Node;
 use Icinga\Test\BaseTestCase;
 
-// @codingStandardsIgnoreStart
-require_once realpath(__DIR__ . '/../../../../../../library/Icinga/Test/BaseTestCase.php');
-require_once realpath(BaseTestCase::$libDir .'/Filter/Query/Node.php');
-require_once realpath(BaseTestCase::$libDir .'/Filter/QueryProposer.php');
-require_once realpath(BaseTestCase::$libDir .'/Filter/Type/FilterType.php');
-require_once realpath(BaseTestCase::$libDir .'/Filter/Type/TextFilter.php');
-// @codingStandardsIgnoreEnd
-
 class TextFilterTest extends BaseTestCase
 {
     public function testOperatorProposal()
@@ -65,13 +57,11 @@ class TextFilterTest extends BaseTestCase
         );
     }
 
-
     public function testGetOperatorAndValueFromQuery()
     {
         $textFilter = new TextFilter();
         list($operator, $value) = $textFilter->getOperatorAndValueFromQuery('is not \'something\'');
         $this->assertEquals(Node::OPERATOR_EQUALS_NOT, $operator, 'Asserting text operators to be split via TextFilter');
         $this->assertEquals('something', $value, 'Asserting quoted values to be recognized in TextFilter');
-
     }
 }
