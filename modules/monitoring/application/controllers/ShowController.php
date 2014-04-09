@@ -157,7 +157,10 @@ class Monitoring_ShowController extends Controller
      */
     protected function createTabs()
     {
-        $object = $this->view->object;
+        if (($object = $this->view->object) === null) {
+            return;
+        }
+
         $tabs = $this->getTabs();
         $params = array(
             'host' => $object->host_name,
