@@ -101,7 +101,7 @@ class UrlTest extends \PHPUnit_Framework_TestCase
         );
         $url->setBaseUrl('path/to');
         $this->assertEquals(
-            '/path/to/my/test/url.html?param1=val1&param2=val2',
+            '/path/to/my/test/url.html?param1=val1&amp;param2=val2',
             $url->getAbsoluteUrl(),
             'Assert additional parameters to be correctly added to the Url'
         );
@@ -124,7 +124,7 @@ class UrlTest extends \PHPUnit_Framework_TestCase
         );
         $url->setBaseUrl('path/to');
         $this->assertEquals(
-            '/path/to/my/test/url.html?param1=val1&param2=val2',
+            '/path/to/my/test/url.html?param1=val1&amp;param2=val2',
             $url->getAbsoluteUrl(),
             'Assert additional parameters to be correctly added to the Url and overwriting existing parameters'
         );
@@ -146,9 +146,9 @@ class UrlTest extends \PHPUnit_Framework_TestCase
         );
         $url->setBaseUrl('path/to');
         $this->assertEquals(
-            '/path/to/my/test/url.html?flatarray'.urlencode('[0]').'=val1&'.
-                'flatarray'.urlencode('[1]').'=val2&'.
-                'param'.urlencode('[value1]').'=val1&'.
+            '/path/to/my/test/url.html?flatarray'.urlencode('[0]').'=val1&amp;'.
+                'flatarray'.urlencode('[1]').'=val2&amp;'.
+                'param'.urlencode('[value1]').'=val1&amp;'.
                 'param'.urlencode('[value2]').'=val2',
             $url->getAbsoluteUrl(),
             'Assert array parameters to be correctly encoded and added to the Url'
@@ -188,8 +188,8 @@ class UrlTest extends \PHPUnit_Framework_TestCase
         );
         $url = Url::fromRequest(array(), $request);
         $this->assertEquals(
-            '/path/to/my/test/url.html?param1=value1&'.
-                'param2'.urlencode('[key1]').'=value1&'.
+            '/path/to/my/test/url.html?param1=value1&amp;'.
+                'param2'.urlencode('[key1]').'=value1&amp;'.
                 'param2'.urlencode('[key2]').'=value2',
             $url->getAbsoluteUrl(),
             'Asserting absolute path resembling the requests path appended by the baseUrl'
