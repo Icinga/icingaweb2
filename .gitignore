@@ -22,6 +22,7 @@ test/php/bin/extcmd_test
 
 # misc test output
 test/frontend/static/public
+test/php/library/Icinga/Protocol/Statusdat/.cache
 
 # Generated API documentation
 doc/api
