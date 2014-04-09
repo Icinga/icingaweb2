@@ -286,7 +286,7 @@
 
         /**
          * Add the given table-row to the selection of the closest
-         * table
+         * table and deselect all other rows of the closest table.
          *
          * @param $tr {jQuery}  The selected table row.
          * @returns {boolean}   If the selection was changed.
@@ -320,7 +320,7 @@
 
         /**
          * Add a new selection range to the closest table, using the selected row as
-         * range target
+         * range target.
          *
          * @param $tr {jQuery}  The target of the selected range.
          * @returns {boolean}   If the selection was changed.
@@ -351,6 +351,20 @@
                 }
             });
             return false;
+        },
+
+        /**
+         * Focus the given table by deselecting all selections on all other tables.
+         *
+         * Focusing a table is important for environments with multiple tables like
+         * the dashboard. It should only be possible to select rows at one table at a time,
+         * when a user selects a row on a table all rows that are not child of the given table
+         * will be removed from the selection.
+         *
+         * @param table {htmlElement}   The table to focus.
+         */
+        focusTable: function (table) {
+            $('table').filter(function(){ return this !== table; }).find('tr[href]').removeClass('active');
         },
 
         refreshDebug: function () {

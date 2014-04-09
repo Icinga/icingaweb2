@@ -13,7 +13,12 @@ Sort by <?= $this->sortControl ?>
 
 <div class="content">
 <?php endif ?>
-<table data-base-target="_next" class="action multiselect<?php if ($this->compact): ?> compact<?php endif ?>" style="table-layout: auto;">
+<table
+    data-base-target="_next"
+    class="action multiselect <?php if ($this->compact): ?> compact<?php endif ?>" style="table-layout: auto;"
+    data-icinga-multiselect-url="<?= $this->href("/monitoring/multi/service") ?>"
+    data-icinga-multiselect-data="service,host"
+>
   <tbody>
 <?php
 

@@ -102,6 +102,61 @@ class Monitoring_MultiController extends ActionController
         $this->view->form->setAction('/icinga2-web/monitoring/multi/host');
     }
 
+
+    public function serviceAction()
+    {
+        $filters = $this->view->queries;
+        $errors = array();
+
+        $backendQuery = ServiceStatusView::fromRequest(
+            $this->_request,
+            array(
+                'host_name',
+                'service_description',
+                'service_handled',
+                'service_state',
+                'service_in_downtime',
+
+                'service_passive_checks_enabled',
+                'service_notifications_enabled',
+                'service_event_handler_enabled',
+                'service_flap_detection_enabled',
+                'service_active_checks_enabled'
+            )
+        )->getQuery();
+        if ($this->_getParam('service') !== '*' && $this->_getParam('host') !== '*') {
+            $this->applyQueryFilter($backendQuery, $filters);
+            $this->applyQueryFilter($backendQuery, $filters);
+        }
+        $services = $backendQuery->fetchAll();
+
+        // Comments
+        $commentQuery = $this->applyQueryFilter(
+            CommentView::fromRequest($this->_request)->getQuery(),
+            $filters,
+            'comment_host',
+            'comment_service'
+        );
+        $comments = array_keys($this->getUniqueValues($commentQuery->fetchAll(), 'comment_internal_id'));
+
+        $this->view->objects = $this->view->services = $services;
+        $this->view->problems = $this->getProblems($services);
+        $this->view->comments = isset($comments) ? $comments : $this->getComments($services);
+        $this->view->hostnames = $this->getProperties($services, 'host_name');
+        $this->view->servicenames = $this->getProperties($services, 'service_description');
+        $this->view->downtimes = $this->getDowntimes($services);
+        $this->view->errors = $errors;
+
+        $this->handleConfigurationForm(array(
+            'service_passive_checks_enabled' => 'Passive Checks',
+            'service_active_checks_enabled'  => 'Active Checks',
+            'service_notifications_enabled'  => 'Notifications',
+            'service_event_handler_enabled'  => 'Event Handler',
+            'service_flap_detection_enabled' => 'Flap Detection'
+        ));
+        $this->view->form->setAction('/icinga2-web/monitoring/multi/service');
+    }
+
     /**
      * Apply the query-filter received
      *
@@ -214,55 +269,6 @@ class Monitoring_MultiController extends ActionController
         return $downtimes;
     }
 
-    public function serviceAction()
-    {
-        $filters = $this->view->queries;
-        $errors = array();
-
-        $backendQuery = ServiceStatusView::fromRequest(
-            $this->_request,
-            array(
-                'host_name',
-                'service_description',
-                'service_handled',
-                'service_state',
-                'service_in_downtime',
-
-                'service_passive_checks_enabled',
-                'service_notifications_enabled',
-                'service_event_handler_enabled',
-                'service_flap_detection_enabled',
-                'service_active_checks_enabled'
-            )
-        )->getQuery();
-        if ($this->_getParam('service') !== '*' && $this->_getParam('host') !== '*') {
-            $this->applyQueryFilter($backendQuery, $filters);
-            $this->applyQueryFilter($backendQuery, $filters);
-        }
-        $services = $backendQuery->fetchAll();
-
-        // Comments
-        $commentQuery = CommentView::fromRequest($this->_request)->getQuery();
-        $this->applyQueryFilter($commentQuery, $filters);
-        $comments = array_keys($this->getUniqueValues($commentQuery->fetchAll(), 'comment_internal_id'));
-
-        $this->view->objects = $this->view->services = $services;
-        $this->view->problems = $this->getProblems($services);
-        $this->view->comments = isset($comments) ? $comments : $this->getComments($services);
-        $this->view->hostnames = $this->getProperties($services, 'host_name');
-        $this->view->servicenames = $this->getProperties($services, 'service_description');
-        $this->view->downtimes = $this->getDowntimes($services);
-        $this->view->errors = $errors;
-
-        $this->handleConfigurationForm(array(
-            'service_passive_checks_enabled' => 'Passive Checks',
-            'service_active_checks_enabled'  => 'Active Checks',
-            'service_notifications_enabled'  => 'Notifications',
-            'service_event_handler_enabled'  => 'Event Handler',
-            'service_flap_detection_enabled' => 'Flap Detection'
-        ));
-        $this->view->form->setAction('/icinga2-web/monitoring/multi/service');
-    }
 
     /**
      * Handle the form to edit configuration flags.
