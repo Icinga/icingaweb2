@@ -4,6 +4,10 @@
 
 namespace Tests\Icinga\Form\Preference;
 
+// @codingStandardsIgnoreStart
+require_once realpath(ICINGA_APPDIR . '/views/helpers/DateFormat.php');
+// @codingStandardsIgnoreEnd
+
 use \DateTimeZone;
 use \Zend_View_Helper_DateFormat;
 use Icinga\Test\BaseTestCase;
