@@ -23,7 +23,7 @@ class BaseTestCaseDbTest extends BaseTestCase
     public function testMySqlProviderAnnotation($resource)
     {
         $this->setupDbProvider($resource);
-        $this->assertInstanceOf('Zend_Db_Adapter_Pdo_Mysql', $resource);
+        $this->assertInstanceOf('Zend_Db_Adapter_Pdo_Mysql', $resource->getConnection());
     }
 
     /**
@@ -32,9 +32,10 @@ class BaseTestCaseDbTest extends BaseTestCase
     public function testMySqlCreateTablePart1($resource)
     {
         $this->setupDbProvider($resource);
-        $resource->exec('CREATE TABLE test(uid INT NOT NULL PRIMARY KEY);');
+        $adapter = $resource->getConnection();
+        $adapter->exec('CREATE TABLE test(uid INT NOT NULL PRIMARY KEY);');
 
-        $tables = $resource->listTables();
+        $tables = $adapter->listTables();
         $this->assertCount(1, $tables);
     }
 
@@ -44,13 +45,12 @@ class BaseTestCaseDbTest extends BaseTestCase
     public function testMySqlCreateTablePart2($resource)
     {
         $this->setupDbProvider($resource);
-        $tables = $resource->listTables();
+        $tables = $resource->getConnection()->listTables();
         $this->assertCount(0, $tables);
     }
 
     private function dbAdapterSqlLoadTable($resource)
     {
-        /** @var $resource \Zend_Db_Adapter_Pdo_Abstract **/
         $this->setupDbProvider($resource);
 
         $sqlContent = array();
@@ -64,7 +64,7 @@ class BaseTestCaseDbTest extends BaseTestCase
 
         $this->loadSql($resource, $tempFile);
 
-        $count = (int)$resource->fetchOne('SELECT COUNT(*) as cntX from dummyData;');
+        $count = (int) $resource->getConnection()->fetchOne('SELECT COUNT(*) as cntX from dummyData;');
         $this->assertSame(20, $count);
 
         $this->assertTrue(unlink($tempFile));
@@ -84,7 +84,7 @@ class BaseTestCaseDbTest extends BaseTestCase
     public function testPgSqlProviderAnnotation($resource)
     {
         $this->setupDbProvider($resource);
-        $this->assertInstanceOf('Zend_Db_Adapter_Pdo_Pgsql', $resource);
+        $this->assertInstanceOf('Zend_Db_Adapter_Pdo_Pgsql', $resource->getConnection());
     }
 
     /**
@@ -93,10 +93,10 @@ class BaseTestCaseDbTest extends BaseTestCase
     public function testPgSqlCreateTablePart1($resource)
     {
         $this->setupDbProvider($resource);
-        /** @var \Zend_Db_Adapter_Pdo_Abstract $resource **/
-        $resource->exec('CREATE TABLE test(uid INT NOT NULL PRIMARY KEY);');
+        $adapter = $resource->getConnection();
+        $adapter->exec('CREATE TABLE test(uid INT NOT NULL PRIMARY KEY);');
 
-        $tables = $resource->listTables();
+        $tables = $adapter->listTables();
         $this->assertCount(1, $tables);
     }
 
@@ -106,7 +106,7 @@ class BaseTestCaseDbTest extends BaseTestCase
     public function testPgSqlCreateTablePart2($resource)
     {
         $this->setupDbProvider($resource);
-        $tables = $resource->listTables();
+        $tables = $resource->getConnection()->listTables();
         $this->assertCount(0, $tables);
     }
 

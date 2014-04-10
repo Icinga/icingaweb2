@@ -5,9 +5,9 @@
 namespace Tests\Icinga\Authentication;
 
 use \PDO;
-use \Zend_Db_Adapter_Pdo_Abstract;
 use \Zend_Config;
 use Icinga\Test\BaseTestCase;
+use Icinga\Data\Db\Connection;
 use Icinga\Authentication\Backend\DbUserBackend;
 
 /**
@@ -56,7 +56,7 @@ class DbUserBackendTest extends BaseTestCase
         )
     );
 
-    private function createDbBackendConfig($resource, $name = null)
+    private function createDbConnection($resource, $name = null)
     {
         if ($name === null) {
             $name = 'TestDbUserBackend-' . uniqid();
@@ -77,11 +77,10 @@ class DbUserBackendTest extends BaseTestCase
      *
      * @dataProvider pgsqlDb
      */
-    public function testCorrectUserLoginForPgsql($db)
+    public function testCorrectUserLoginForPgsql($resource)
     {
-        $this->setupDbProvider($db);
-        $backend = new DbUserBackend($this->createDbBackendConfig($db));
-        $backend->connect();
+        $this->setupDbProvider($resource);
+        $backend = new DbUserBackend($resource);
         $this->runBackendAuthentication($backend);
         $this->runBackendUsername($backend);
     }
@@ -91,23 +90,23 @@ class DbUserBackendTest extends BaseTestCase
      *
      * @dataProvider mysqlDb
      */
-    public function testCorrectUserLoginForMySQL($db)
+    public function testCorrectUserLoginForMySQL($resource)
     {
-        $this->setupDbProvider($db);
-        $backend = new DbUserBackend($this->createDbBackendConfig($db));
-        $backend->connect();
+        $this->setupDbProvider($resource);
+        $backend = new DbUserBackend($resource);
         $this->runBackendAuthentication($backend);
         $this->runBackendUsername($backend);
     }
 
     /**
-     * @param Zend_Db_Adapter_Pdo_Abstract $resource
+     * @param   Connection  $resource
      */
     public function setupDbProvider($resource)
     {
         parent::setupDbProvider($resource);
 
-        $type = $resource->getConnection()->getAttribute(PDO::ATTR_DRIVER_NAME);
+        $adapter = $resource->getConnection();
+        $type = $adapter->getConnection()->getAttribute(PDO::ATTR_DRIVER_NAME);
 
         $dumpFile = BaseTestCase::$etcDir . '/schema/accounts.' . $type . '.sql';
 
@@ -127,7 +126,7 @@ class DbUserBackendTest extends BaseTestCase
                 self::ACTIVE_COLUMN => $usr[self::ACTIVE_COLUMN],
                 self::SALT_COLUMN   => $usr[self::SALT_COLUMN]
             );
-            $resource->insert($this->testTable, $data);
+            $adapter->insert($this->testTable, $data);
         }
     }
 
@@ -229,39 +228,22 @@ class DbUserBackendTest extends BaseTestCase
     /**
      * @dataProvider mysqlDb
      */
-    public function testBackendNameAssignment($db)
+    public function testCountUsersMySql($resource)
     {
-        $this->setupDbProvider($db);
+        $this->setupDbProvider($resource);
+        $backend = new DbUserBackend($resource);
 
-        $testName = 'test-name-123123';
-        $backend = new DbUserBackend($this->createDbBackendConfig($db, $testName));
-        $backend->connect();
-        $this->assertSame($testName, $backend->getName());
-    }
-
-    /**
-     * @dataProvider mysqlDb
-     */
-    public function testCountUsersMySql($db)
-    {
-        $this->setupDbProvider($db);
-        $testName = 'test-name-123123';
-        $backend = new DbUserBackend($this->createDbBackendConfig($db, $testName));
-        $backend->connect();
-
-        $this->assertGreaterThan(0, $backend->getUserCount());
+        $this->assertGreaterThan(0, $backend->count());
     }
 
     /**
      * @dataProvider pgsqlDb
      */
-    public function testCountUsersPgSql($db)
+    public function testCountUsersPgSql($resource)
     {
-        $this->setupDbProvider($db);
-        $testName = 'test-name-123123';
-        $backend = new DbUserBackend($this->createDbBackendConfig($db, $testName));
-        $backend->connect();
+        $this->setupDbProvider($resource);
+        $backend = new DbUserBackend($resource);
 
-        $this->assertGreaterThan(0, $backend->getUserCount());
+        $this->assertGreaterThan(0, $backend->count());
     }
 }

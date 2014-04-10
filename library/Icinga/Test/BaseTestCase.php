@@ -23,13 +23,10 @@ namespace Icinga\Test {
 
     use \Exception;
     use \RuntimeException;
-    use \Zend_Test_PHPUnit_ControllerTestCase;
     use \Zend_Config;
-    use \Zend_Db_Adapter_Pdo_Abstract;
-    use \Zend_Db_Adapter_Pdo_Mysql;
-    use \Zend_Db_Adapter_Pdo_Pgsql;
-    use \Zend_Db_Adapter_Pdo_Oci;
+    use \Zend_Test_PHPUnit_ControllerTestCase;
     use Icinga\Data\ResourceFactory;
+    use Icinga\Data\Db\Connection;
     use Icinga\User\Preferences;
     use Icinga\Web\Form;
 
@@ -167,65 +164,64 @@ namespace Icinga\Test {
         }
 
         /**
-         * Creates an array of Zend Database Adapter
+         * Creates an array of Icinga\Data\Db\Connection
          *
          * @param   string $name
          *
          * @return  array
          */
-        private function createDbAdapterFor($name)
+        private function createDbConnectionFor($name)
         {
             try {
-                $adapter = ResourceFactory::createResource($this->createDbConfigFor($name))->getConnection();
+                $conn = ResourceFactory::createResource($this->createDbConfigFor($name));
             } catch (Exception $e) {
-                $adapter = $e->getMessage();
+                $conn = $e->getMessage();
             }
 
             return array(
-                array($adapter)
+                array($conn)
             );
         }
 
         /**
          * PHPUnit provider for mysql
          *
-         * @return Zend_Db_Adapter_Pdo_Mysql
+         * @return Connection
          */
         public function mysqlDb()
         {
-            return $this->createDbAdapterFor('mysql');
+            return $this->createDbConnectionFor('mysql');
         }
 
         /**
          * PHPUnit provider for pgsql
          *
-         * @return Zend_Db_Adapter_Pdo_Pgsql
+         * @return Connection
          */
         public function pgsqlDb()
         {
-            return $this->createDbAdapterFor('pgsql');
+            return $this->createDbConnectionFor('pgsql');
         }
 
         /**
          * PHPUnit provider for oracle
          *
-         * @return Zend_Db_Adapter_Pdo_Oci
+         * @return Connection
          */
         public function oracleDb()
         {
-            return $this->createDbAdapterFor('oracle');
+            return $this->createDbConnectionFor('oracle');
         }
 
         /**
-         * Executes sql file on PDO object
+         * Executes sql file by using the database connection
          *
-         * @param   Zend_Db_Adapter_Pdo_Abstract    $resource
-         * @param   string                          $filename
+         * @param   Connection      $resource
+         * @param   string          $filename
          *
-         * @return  boolean Operational success flag
          * @throws  RuntimeException
          */
-        public function loadSql(Zend_Db_Adapter_Pdo_Abstract $resource, $filename)
+        public function loadSql(Connection $resource, $filename)
         {
             if (!is_file($filename)) {
                 throw new RuntimeException(
@@ -241,17 +237,17 @@ namespace Icinga\Test {
                 );
             }
 
-            $resource->exec($sqlData);
+            $resource->getConnection()->exec($sqlData);
         }
 
         /**
          * Setup provider for testcase
          *
-         * @param   string|Zend_Db_Adapter_PDO_Abstract|null $resource
+         * @param   string|Connection|null $resource
          */
         public function setupDbProvider($resource)
         {
-            if (!$resource instanceof Zend_Db_Adapter_Pdo_Abstract) {
+            if (!$resource instanceof Connection) {
                 if (is_string($resource)) {
                     $this->markTestSkipped('Could not initialize provider: ' . $resource);
                 } else {
@@ -260,15 +256,17 @@ namespace Icinga\Test {
                 return;
             }
 
+            $adapter = $resource->getConnection();
+
             try {
-                $resource->getConnection();
+                $adapter->getConnection();
             } catch (Exception $e) {
                 $this->markTestSkipped('Could not connect to provider: '. $e->getMessage());
             }
 
-            $tables = $resource->listTables();
+            $tables = $adapter->listTables();
             foreach ($tables as $table) {
-                $resource->exec('DROP TABLE ' . $table . ';');
+                $adapter->exec('DROP TABLE ' . $table . ';');
             }
         }
 
