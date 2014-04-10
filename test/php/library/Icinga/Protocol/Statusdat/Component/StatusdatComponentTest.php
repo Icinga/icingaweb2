@@ -1,15 +1,18 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Tests\Icinga\Protocol\Statusdat;
 
 use \Zend_Config;
+use Icinga\Test\BaseTestCase;
 use Icinga\Protocol\Statusdat\Reader;
 
 /**
  * This is a high level test for the whole statusdat component, i.e. all parts put together
  * and called like they would be in a real situation. This should work when all isolated tests have passed.
  */
-class StatusdatComponentTest extends \PHPUnit_Framework_TestCase
+class StatusdatComponentTest extends BaseTestCase
 {
     public function getReader() {
         $reader = new Reader(new Zend_Config(array(
@@ -53,7 +56,7 @@ class StatusdatComponentTest extends \PHPUnit_Framework_TestCase
     public function testHostgroupFilterFromService() {
         $r = $this->getReader();
         $group = array(array('exc-hostb'));
-        $result = $r->select()->from("services")->where("host.group IN ?",$group)->getResult();
+        $result = $r->select()->from("services")->where("host.group IN ?", $group)->getResult();
 
         $this->assertCount(9, $result);
         foreach($result as $obj) {

@@ -1,10 +1,13 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Tests\Icinga\Application;
 
+use Icinga\Test\BaseTestCase;
 use Icinga\Application\Loader;
 
-class LoaderTest extends \PHPUnit_Framework_TestCase
+class LoaderTest extends BaseTestCase
 {
     private static $classFile = 'test/My/Library/TestStruct.php';
 

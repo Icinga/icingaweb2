@@ -5,8 +5,10 @@
 namespace Tests\Icinga\Protocol\Ldap;
 
 use \Zend_Config;
+use Icinga\Test\BaseTestCase;
+use Icinga\Protocol\Ldap\Connection;
 
-class QueryTest extends \PHPUnit_Framework_TestCase
+class QueryTest extends BaseTestCase
 {
     private function emptySelect()
     {
@@ -19,7 +21,7 @@ class QueryTest extends \PHPUnit_Framework_TestCase
             )
         );
 
-        $connection = new \Icinga\Protocol\Ldap\Connection($config);
+        $connection = new Connection($config);
         return $connection->select();
     }
 
@@ -35,18 +37,6 @@ class QueryTest extends \PHPUnit_Framework_TestCase
         return $select;
     }
 
-    /**
-    * Test for Query::Count() - shall be tested with connection
-    *
-    **/
-    public function testCount()
-    {
-    }
-
-    /**
-    * Test for Query::Limit()
-    *
-    **/
     public function testLimit()
     {
         $select = $this->prepareSelect();
@@ -54,10 +44,6 @@ class QueryTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(4, $select->getOffset());
     }
 
-    /**
-    * Test for Query::HasLimit()
-    *
-    **/
     public function testHasLimit()
     {
         $select = $this->emptySelect();
@@ -66,10 +52,6 @@ class QueryTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($select->hasLimit());
     }
 
-    /**
-    * Test for Query::HasOffset()
-    *
-    **/
     public function testHasOffset()
     {
         $select = $this->emptySelect();
@@ -78,99 +60,39 @@ class QueryTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($select->hasOffset());
     }
 
-    /**
-    * Test for Query::GetLimit()
-    *
-    **/
     public function testGetLimit()
     {
         $select = $this->prepareSelect();
         $this->assertEquals(10, $select->getLimit());
     }
 
-    /**
-    * Test for Query::GetOffset()
-    *
-    **/
     public function testGetOffset()
     {
         $select = $this->prepareSelect();
         $this->assertEquals(10, $select->getLimit());
     }
 
-    /**
-    * Test for Query::FetchTree()
-    *
-    **/
     public function testFetchTree()
     {
         $this->markTestIncomplete('testFetchTree is not implemented yet - requires real LDAP');
     }
 
-    /**
-    * Test for Query::FetchAll() - shall be tested with connection
-    *
-    **/
-    public function testFetchAll()
-    {
-    }
-
-    /**
-    * Test for Query::FetchRow() - shall be tested with connection
-    *
-    **/
-    public function testFetchRow()
-    {
-    }
-
-    /**
-    * Test for Query::FetchOne()
-    *
-    **/
-    public function testFetchOne()
-    {
-    }
-
-    /**
-    * Test for Query::FetchPairs()
-    *
-    **/
-    public function testFetchPairs()
-    {
-    }
-
-    /**
-    * Test for Query::From()
-    *
-    **/
     public function testFrom()
     {
         return $this->testListFields();
     }
 
-    /**
-    * Test for Query::Where()
-    *
-    **/
     public function testWhere()
     {
         $this->markTestIncomplete('testWhere is not implemented yet');
     }
 
-    /**
-    * Test for Query::Order()
-    *
-    **/
     public function testOrder()
     {
         $select = $this->emptySelect()->order('bla');
         // tested by testGetSortColumns
     }
 
-    /**
-    * Test for Query::ListFields()
-    *
-    **/
     public function testListFields()
     {
         $select = $this->prepareSelect();
@@ -180,10 +102,6 @@ class QueryTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-    * Test for Query::GetSortColumns()
-    *
-    **/
     public function testGetSortColumns()
     {
         $select = $this->prepareSelect();
@@ -191,31 +109,10 @@ class QueryTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('testIntColumn', $cols[0][0]);
     }
 
-    /**
-    * Test for Query::Paginate() - requires real result
-    *
-    **/
-    public function testPaginate()
-    {
-    }
-
-    /**
-    * Test for Query::__toString()
-    *
-    **/
     public function test__toString()
     {
         $select = $this->prepareSelect();
         $res = '(&(objectClass=dummyClass)(testIntColumn=1)(testStringColumn=test)(testWildcard=abc*))';
         $this->assertEquals($res, (string) $select);
     }
-
-    /**
-    * Test for Query::__destruct()
-    *
-    **/
-    public function test__destruct()
-    {
-    }
-
 }

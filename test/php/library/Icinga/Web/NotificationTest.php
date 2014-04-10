@@ -1,11 +1,15 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Tests\Icinga\Web;
 
+use \Zend_Session;
+use Icinga\Test\BaseTestCase;
 use Icinga\Logger\Logger;
 use Icinga\Web\Notification;
 
-class NotificationTest extends \PHPUnit_Framework_TestCase
+class NotificationTest extends BaseTestCase
 {
     /**
      * @var Logger
@@ -19,7 +23,7 @@ class NotificationTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        \Zend_Session::$_unitTestEnabled = true;
+        Zend_Session::$_unitTestEnabled = true;
 
         $this->loggerPath = "/tmp/icinga2-web-notify-test";
         $this->dropLog();
@@ -34,8 +38,6 @@ class NotificationTest extends \PHPUnit_Framework_TestCase
         ));
 
         $this->logger = new Logger($logConfig);
-
-        // $this->notification = Notification::getInstance();
     }
 
     protected function dropLog()

@@ -1,10 +1,13 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Tests\Icinga\Protocol\Statusdat;
 
+use Icinga\Test\BaseTestCase;
 use Icinga\Protocol\Statusdat\Query;
 
-class QueryTest extends \PHPUnit_Framework_TestCase
+class QueryTest extends BaseTestCase
 {
     public function testSimpleServiceSelect()
     {
@@ -122,6 +125,7 @@ class QueryTest extends \PHPUnit_Framework_TestCase
                 )
             )
         ));
+
         return $readerMock;
     }
 }

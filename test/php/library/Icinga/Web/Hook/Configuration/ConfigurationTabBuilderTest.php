@@ -1,8 +1,12 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Tests\Icinga\Web\Hook\Configuration;
 
+use Icinga\Test\BaseTestCase;
 use Icinga\Web\Hook\Configuration\ConfigurationTab;
+use Icinga\Web\Hook\Configuration\ConfigurationTabBuilder;
 use Icinga\Web\Hook;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabs;
@@ -16,7 +20,7 @@ class RequestMock
 
 }
 
-class ConfigurationTabBuilderTest extends \PHPUnit_Framework_TestCase
+class ConfigurationTabBuilderTest extends BaseTestCase
 {
     protected function setUp()
     {
@@ -35,7 +39,7 @@ class ConfigurationTabBuilderTest extends \PHPUnit_Framework_TestCase
     public function testDefaultTabs()
     {
         $widget = new Tabs();
-        $builder = new Hook\Configuration\ConfigurationTabBuilder($widget);
+        $builder = new ConfigurationTabBuilder($widget);
 
         $array = $builder->build();
         $tabs = $builder->getTabs();
@@ -46,15 +50,15 @@ class ConfigurationTabBuilderTest extends \PHPUnit_Framework_TestCase
     public function testTabCreation1()
     {
         $widget = new Tabs();
-        $builder = new Hook\Configuration\ConfigurationTabBuilder($widget);
+        $builder = new ConfigurationTabBuilder($widget);
 
         $tab1 = new ConfigurationTab('test1', '/test1', 'TEST1');
         $tab2 = new ConfigurationTab('test2', '/test2', 'TEST2');
         $tab3 = new ConfigurationTab('test3', '/test3', 'TEST3');
 
-        Hook::registerObject(Hook\Configuration\ConfigurationTabBuilder::HOOK_NAMESPACE, 'test1', $tab1);
-        Hook::registerObject(Hook\Configuration\ConfigurationTabBuilder::HOOK_NAMESPACE, 'test2', $tab2);
-        Hook::registerObject(Hook\Configuration\ConfigurationTabBuilder::HOOK_NAMESPACE, 'test3', $tab3);
+        Hook::registerObject(ConfigurationTabBuilder::HOOK_NAMESPACE, 'test1', $tab1);
+        Hook::registerObject(ConfigurationTabBuilder::HOOK_NAMESPACE, 'test2', $tab2);
+        Hook::registerObject(ConfigurationTabBuilder::HOOK_NAMESPACE, 'test3', $tab3);
 
         $builder->build();
 
@@ -68,10 +72,10 @@ class ConfigurationTabBuilderTest extends \PHPUnit_Framework_TestCase
     public function testTabCreation2()
     {
         $widget = new Tabs();
-        $builder = new Hook\Configuration\ConfigurationTabBuilder($widget);
+        $builder = new ConfigurationTabBuilder($widget);
 
         $tab = new \stdClass();
-        Hook::registerObject(Hook\Configuration\ConfigurationTabBuilder::HOOK_NAMESPACE, 'misc', $tab);
+        Hook::registerObject(ConfigurationTabBuilder::HOOK_NAMESPACE, 'misc', $tab);
         $builder->build();
 
         $this->assertCount(5, $builder->getTabs());

@@ -1,15 +1,17 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Tests\Icinga\Protocol\Statusdat;
 
-class RuntimestatecontainerTest extends \PHPUnit_Framework_TestCase
+use Icinga\Test\BaseTestCase;
+use Icinga\Protocol\Statusdat\RuntimeStateContainer;
+
+class RuntimestatecontainerTest extends BaseTestCase
 {
-    /**
-    * Test for RuntimeStateContainer::__get()
-    **/
     public function testPropertyResolving()
     {
-        $container = new \Icinga\Protocol\Statusdat\RuntimeStateContainer("
+        $container = new RuntimeStateContainer("
             host_name=test host
             current_state=0
             plugin_output=test 1234 test test

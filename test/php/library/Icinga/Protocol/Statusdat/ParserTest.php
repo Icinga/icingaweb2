@@ -1,16 +1,18 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Tests\Icinga\Protocol\Statusdat;
 
+use Icinga\Test\BaseTestCase;
 use Icinga\Protocol\Statusdat\Parser;
 
-class ParserTest extends \PHPUnit_Framework_TestCase
+class ParserTest extends BaseTestCase
 {
     private function getStringAsFileHandle($string)
     {
-        $maxsize = strlen($string)*2;
         $fhandle = fopen("php://memory", 'r+');
-        fputs($fhandle,$string);
+        fputs($fhandle, $string);
         rewind($fhandle);
         return $fhandle;
     }
@@ -136,7 +138,6 @@ define servicegroup {
      */
     public function testRuntimeParsingForBigFile()
     {
-        //$this->markTestSkipped('Skipped slow tests');
         $objects = fopen("./res/status/icinga.objects.cache","r");
         $status = fopen("./res/status/icinga.status.dat","r");
         $testParser = new Parser($objects);

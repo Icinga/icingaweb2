@@ -1,10 +1,13 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Tests\Icinga\Protocol\Statusdat\Query;
 
+use Icinga\Test\BaseTestCase;
 use Icinga\Protocol\Statusdat\Query\Expression;
 
-class ExpressionTest extends \PHPUnit_Framework_TestCase
+class ExpressionTest extends BaseTestCase
 {
     public function testFromStringParsing()
     {
@@ -133,5 +136,4 @@ class ExpressionTest extends \PHPUnit_Framework_TestCase
     {
         $this->markTestIncomplete('testFilter is not implemented yet');
     }
-
 }

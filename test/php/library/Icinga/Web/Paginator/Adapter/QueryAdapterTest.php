@@ -1,14 +1,16 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Tests\Icinga\Web\Paginator\Adapter;
 
 use \Zend_Config;
-use \PHPUnit_Framework_TestCase;
+use Icinga\Test\BaseTestCase;
 use Icinga\Protocol\Statusdat\Reader;
 use Icinga\Module\Monitoring\Backend;
 use Icinga\Web\Paginator\Adapter\QueryAdapter;
 
-class QueryAdapterTest extends PHPUnit_Framework_TestCase
+class QueryAdapterTest extends BaseTestCase
 {
     private $cacheDir;
 
@@ -24,8 +26,8 @@ class QueryAdapterTest extends PHPUnit_Framework_TestCase
             mkdir($this->cacheDir);
         }
 
-        $statusdatFile  = dirname(__FILE__) . '/../../../../../res/status/icinga.status.dat';
-        $cacheFile      = dirname(__FILE__) . '/../../../../../res/status/icinga.objects.cache';
+        $statusdatFile  = BaseTestCase::$testDir . '/res/status/icinga.status.dat';
+        $cacheFile      = BaseTestCase::$testDir . '/res/status/icinga.objects.cache';
 
         $this->backendConfig = new Zend_Config(
             array(

@@ -1,32 +1,31 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Tests\Icinga;
 
 use \DateTimeZone;
-use Icinga\User as IcingaUser;
-use Icinga\User\Preferences as UserPreferences;
+use Icinga\User;
+use Icinga\User\Preferences;
+use Icinga\Test\BaseTestCase;
 
-class UserTest extends \PHPUnit_Framework_TestCase
+class UserTest extends BaseTestCase
 {
     public function testGetDefaultTimezoneIfTimezoneNotSet()
     {
-        $defaultTz = 'UTC';
-        date_default_timezone_set($defaultTz);
-        $user = new IcingaUser('unittest');
-        $prefs = new UserPreferences(array());
+        $user = new User('unittest');
+        $prefs = new Preferences(array());
         $user->setPreferences($prefs);
-        $this->assertEquals($user->getTimeZone(), new DateTimeZone($defaultTz),
+        $this->assertEquals($user->getTimeZone(), new DateTimeZone(date_default_timezone_get()),
             'User\'s timezone does not match the default timezone'
         );
     }
 
     public function testGetTimezoneIfTimezoneSet()
     {
-        $defaultTz = 'UTC';
         $explicitTz = 'Europe/Berlin';
-        date_default_timezone_set($defaultTz);
-        $user = new IcingaUser('unittest');
-        $prefs = new UserPreferences(array(
+        $user = new User('unittest');
+        $prefs = new Preferences(array(
             'timezone' => $explicitTz
         ));
         $user->setPreferences($prefs);

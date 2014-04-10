@@ -1,7 +1,10 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Tests\Icinga\Application\Module\Manager;
 
+use Icinga\Test\BaseTestCase;
 use Icinga\Application\Modules\Manager as ModuleManager;
 
 class ModuleMock
@@ -20,7 +23,7 @@ class ModuleMock
     }
 }
 
-class ManagerTest extends \PHPUnit_Framework_TestCase
+class ManagerTest extends BaseTestCase
 {
     const MODULE_TARGET = "/tmp";
 
@@ -31,11 +34,11 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
             $this->markTestSkipped("Temporary folder not writable for this user");
             return;
         }
-        if (is_dir($moduleDir."/enabledModules")) {
+        if (is_dir($moduleDir . "/enabledModules")) {
             exec("rm -r $moduleDir/enabledModules");
         }
 
-        mkdir($moduleDir."/enabledModules");
+        mkdir($moduleDir . "/enabledModules");
     }
 
     public function testDetectEnabledModules()
@@ -43,11 +46,11 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
         $manager = new ModuleManager(null, "/tmp/enabledModules", array("none"));
         $this->assertEmpty($manager->listEnabledModules());
 
-        symlink(getcwd()."/res/testModules/module1", "/tmp/enabledModules/module1");
+        symlink(getcwd() . "/res/testModules/module1", "/tmp/enabledModules/module1");
         $manager = new ModuleManager(null, "/tmp/enabledModules", array("none"));
         $this->assertEquals(array("module1"), $manager->listEnabledModules());
-        symlink(getcwd()."/res/testModules/module2", "/tmp/enabledModules/module2");
-        symlink(getcwd()."/res/???", "/tmp/enabledModules/module3");
+        symlink(getcwd() . "/res/testModules/module2", "/tmp/enabledModules/module2");
+        symlink(getcwd() . "/res/???", "/tmp/enabledModules/module3");
         $manager = new ModuleManager(null, "/tmp/enabledModules", array("none"));
         $this->assertEquals(array("module1", "module2"), $manager->listEnabledModules());
     }
@@ -67,7 +70,7 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testEnableModule()
     {
-        $manager = new ModuleManager(null, "/tmp/enabledModules", array(getcwd()."/res/testModules"));
+        $manager = new ModuleManager(null, "/tmp/enabledModules", array(getcwd() . "/res/testModules"));
         $this->assertEmpty($manager->listEnabledModules());
         $manager->enableModule("module1");
         $elems = $manager->listEnabledModules();
@@ -82,8 +85,8 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
     public function testDisableModule()
     {
         clearstatcache(true);
-        symlink(getcwd()."/res/testModules/module1", "/tmp/enabledModules/module1");
-        $manager = new ModuleManager(null, "/tmp/enabledModules", array(getcwd()."/res/testModules"));
+        symlink(getcwd() . "/res/testModules/module1", "/tmp/enabledModules/module1");
+        $manager = new ModuleManager(null, "/tmp/enabledModules", array(getcwd() . "/res/testModules"));
         $elems = $manager->listEnabledModules();
         $this->assertNotEmpty($elems);
         $this->assertEquals($elems[0], "module1");

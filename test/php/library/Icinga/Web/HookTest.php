@@ -1,8 +1,11 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Tests\Icinga\Web;
 
 use Icinga\Web\Hook;
+use Icinga\Test\BaseTestCase;
 
 class Base
 {
@@ -28,17 +31,11 @@ class ObjectHookImplementation
 {
     private $test;
 
-    /**
-     * @param mixed $test
-     */
     public function setTest($test)
     {
         $this->test = $test;
     }
 
-    /**
-     * @return mixed
-     */
     public function getTest()
     {
         return $this->test;
@@ -50,7 +47,7 @@ class ObjectHookImplementation
     }
 }
 
-class HookTest extends \PHPUnit_Framework_TestCase
+class HookTest extends BaseTestCase
 {
     protected function setUp()
     {
@@ -64,11 +61,6 @@ class HookTest extends \PHPUnit_Framework_TestCase
         Hook::clean();
     }
 
-    /**
-    * Test for Hook::Has()
-    * Note: This method is static!
-    *
-    **/
     public function testHas()
     {
         $this->assertFalse(Hook::has("a"));
@@ -79,11 +71,6 @@ class HookTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(Hook::has("a","b"));
     }
 
-    /**
-    * Test for Hook::CreateInstance()
-    * Note: This method is static!
-    *
-    **/
     public function testCreateInstance()
     {
         Hook::$BASE_NS = "Tests\\Icinga\\Web\\";
@@ -92,12 +79,6 @@ class HookTest extends \PHPUnit_Framework_TestCase
         Hook::clean();
     }
 
-    /**
-     * Test for Hook::CreateInstance()
-     * Note: This method is static!
-     *
-     *
-     **/
     public function testCreateInvalidInstance1()
     {
         $this->setExpectedException('\Icinga\Exception\ProgrammingError');
@@ -122,11 +103,6 @@ class HookTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($test);
     }
 
-    /**
-    * Test for Hook::All()
-    * Note: This method is static!
-    *
-    **/
     public function testAll()
     {
         Hook::$BASE_NS = "Tests\\Icinga\\Web\\";
@@ -137,14 +113,8 @@ class HookTest extends \PHPUnit_Framework_TestCase
         foreach(Hook::all("Base") as $instance) {
             $this->assertInstanceOf("Tests\\Icinga\\Web\\TestHookImplementation",$instance);
         }
-
     }
 
-    /**
-    * Test for Hook::First()
-    * Note: This method is static!
-    *
-    **/
     public function testFirst()
     {
         Hook::$BASE_NS = "Tests\\Icinga\\Web\\";

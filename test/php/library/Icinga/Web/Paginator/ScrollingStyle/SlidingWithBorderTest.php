@@ -1,4 +1,6 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Tests\Icinga\Web\Paginator\ScrollingStyle;
 
@@ -8,6 +10,7 @@ require_once realpath(ICINGA_LIBDIR . '/Icinga/Web/Paginator/ScrollingStyle/Slid
 
 use \Zend_Config;
 use \Zend_Paginator_Adapter_Interface;
+use Icinga\Test\BaseTestCase;
 use Icinga\Protocol\Statusdat\Reader;
 use Icinga\Web\Paginator\Adapter\QueryAdapter;
 use Icinga\Module\Monitoring\Backend;
@@ -54,7 +57,7 @@ class TestPaginatorAdapter implements Zend_Paginator_Adapter_Interface
 
 }
 
-class SlidingwithborderTest extends \PHPUnit_Framework_TestCase
+class SlidingwithborderTest extends BaseTestCase
 {
     private $cacheDir;
 
@@ -70,8 +73,8 @@ class SlidingwithborderTest extends \PHPUnit_Framework_TestCase
             mkdir($this->cacheDir);
         }
 
-        $statusdatFile = dirname(__FILE__). '/../../../../../res/status/icinga.status.dat';
-        $cacheFile = dirname(__FILE__). '/../../../../../res/status/icinga.objects.cache';
+        $statusdatFile = BaseTestCase::$testDir . '/res/status/icinga.status.dat';
+        $cacheFile = BaseTestCase::$testDir . '/res/status/icinga.objects.cache';
 
         $this->backendConfig = new Zend_Config(
             array(

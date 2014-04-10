@@ -1,4 +1,7 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
+
 namespace Tests\Icinga\Protocol\Statusdat;
 
 use Icinga\Data\DatasourceInterface;
@@ -21,7 +24,6 @@ class ReaderMock implements IReader, DatasourceInterface
 
     public function getInternalState()
     {
-
         return array(
             "objects" => $this->objects,
             "indices" => $this->indices
@@ -33,7 +35,7 @@ class ReaderMock implements IReader, DatasourceInterface
         return $this->objects;
     }
 
-    public function __call($arg1,$arg2) {
+    public function __call($arg1, $arg2) {
         return $this;
     }
 
@@ -44,9 +46,9 @@ class ReaderMock implements IReader, DatasourceInterface
 
     public function getObjectByName($type, $idx)
     {
-        if (isset($this->objects[$type]) && isset($this->objects[$type][$idx]))
+        if (isset($this->objects[$type]) && isset($this->objects[$type][$idx])) {
             return $this->objects[$type][$idx];
-        return null;
+        }
     }
 
 }

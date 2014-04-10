@@ -4,6 +4,8 @@
 
 namespace Tests\Icinga\Regression;
 
+use Icinga\Test\BaseTestCase;
+
 /**
  * Class Bug4102
  *
@@ -11,7 +13,7 @@ namespace Tests\Icinga\Regression;
  *
  * @see https://dev.icinga.org/issues/4102
  */
-class Bug4102Test extends \PHPUnit_Framework_TestCase
+class Bug4102Test extends BaseTestCase
 {
     /**
      * Test class name to match definition

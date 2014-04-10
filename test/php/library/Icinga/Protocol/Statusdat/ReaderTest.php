@@ -1,15 +1,12 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Tests\Icinga\Protocol\Statusdat;
 
+use Icinga\Test\BaseTestCase;
 use Icinga\Protocol\Statusdat\Reader;
 
-/**
- *
- * Test class for Reader
- * Created Wed, 16 Jan 2013 15:15:16 +0000
- *
- **/
 class ConfigMock
 {
     function __construct($data)
@@ -27,7 +24,6 @@ class ConfigMock
 
 class ParserMock
 {
-
     public $runtime = array();
     public $objects = array();
 
@@ -47,7 +43,7 @@ class ParserMock
     }
 }
 
-class ReaderTest extends \PHPUnit_Framework_TestCase
+class ReaderTest extends BaseTestCase
 {
     protected function tearDown()
     {
@@ -86,7 +82,6 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
 
     public function testEmptyFileException()
     {
-
         $this->setExpectedException("Icinga\Exception\ConfigurationError");
         $parser = new ParserMock();
         $reader = new Reader(new ConfigMock(array(

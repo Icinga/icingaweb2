@@ -1,10 +1,13 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Tests\Icinga\Web\Hook\Configuration;
 
+use Icinga\Test\BaseTestCase;
 use Icinga\Web\Hook\Configuration\ConfigurationTab;
 
-class ConfigurationTabTest extends \PHPUnit_Framework_TestCase
+class ConfigurationTabTest extends BaseTestCase
 {
     public function testCreate1()
     {

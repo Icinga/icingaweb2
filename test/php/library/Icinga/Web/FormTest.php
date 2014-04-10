@@ -1,9 +1,11 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Tests\Icinga\Web;
 
 use Icinga\Web\Form;
-use \Zend_Test_PHPUnit_ControllerTestCase;
+use Icinga\Test\BaseTestCase;
 
 /**
  * Dummy extension class as Icinga\Web\Form is an abstract one
@@ -12,14 +14,13 @@ class TestForm extends Form
 {
     public function create()
     {
-        // pass
     }
 }
 
 /**
  * Tests for the Icinga\Web\Form class (Base class for all other forms)
  */
-class FormTest extends Zend_Test_PHPUnit_ControllerTestCase
+class FormTest extends BaseTestCase
 {
     /**
      * Tests whether the cancel label will be added to the form

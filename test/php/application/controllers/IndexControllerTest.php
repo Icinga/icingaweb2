@@ -1,16 +1,17 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Tests\Application\Controller;
+namespace Tests\Icinga\Application\Controller;
 
-class IndexControllerTest extends \Zend_Test_PHPUnit_ControllerTestCase {
-    private $applicationPath;
+use Icinga\Test\BaseTestCase;
 
+class IndexControllerTest extends BaseTestCase
+{
     public function setUp()
     {
-        $this->applicationPath = realpath(__DIR__. '/../../../../application');
-
         if (!defined('APPLICATION_PATH')) {
-            define('APPLICATION_PATH', $this->applicationPath);
+            define('APPLICATION_PATH', BaseTestCase::$appDir);
         }
 
         if (!defined('APPLICATION_ENV')) {
@@ -25,7 +26,7 @@ class IndexControllerTest extends \Zend_Test_PHPUnit_ControllerTestCase {
 
     public function appBootstrap()
     {
-        $this->getFrontController()->setControllerDirectory($this->applicationPath. '/controllers');
+        $this->getFrontController()->setControllerDirectory(BaseTestCase::$appDir . '/controllers');
     }
 
     public function testIndexAction()
