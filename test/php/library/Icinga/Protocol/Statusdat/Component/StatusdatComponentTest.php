@@ -24,7 +24,7 @@ class StatusdatComponentTest extends BaseTestCase
 
     public function testServicegroupFilterFromService() {
         $r = $this->getReader();
-        $group = array(array('a1','b2'));
+        $group = array('a1','b2');
         $result = $r->select()->from("services")->where("group IN ?",$group)->getResult();
 
         $this->assertCount(9, $result, 'Assert items to be returned in a servicegroup filter');
@@ -35,7 +35,7 @@ class StatusdatComponentTest extends BaseTestCase
 
     public function testServicegroupFilterFromHost() {
         $r = $this->getReader();
-        $group = array(array('a1','b2'));
+        $group = array('a1','b2');
         $result = $r->select()->from("hosts")->where("services.group IN ?",$group)->getResult();
         $this->assertCount(3, $result);
         foreach($result as $obj) {
@@ -45,7 +45,7 @@ class StatusdatComponentTest extends BaseTestCase
 
     public function testHostgroupFilterFromHost() {
         $r = $this->getReader();
-        $group = array(array('exc-hostb'));
+        $group = array('exc-hostb');
         $result = $r->select()->from("hosts")->where("group IN ?",$group)->getResult();
         $this->assertCount(3, $result);
         foreach($result as $obj) {
@@ -55,7 +55,7 @@ class StatusdatComponentTest extends BaseTestCase
 
     public function testHostgroupFilterFromService() {
         $r = $this->getReader();
-        $group = array(array('exc-hostb'));
+        $group = array('exc-hostb');
         $result = $r->select()->from("services")->where("host.group IN ?", $group)->getResult();
 
         $this->assertCount(9, $result);
