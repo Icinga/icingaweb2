@@ -1,57 +1,17 @@
 <?php
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
 // {{{ICINGA_LICENSE_HEADER}}}
-namespace Test\Modules\Monitoring\Library\Filter;
+
+namespace Tests\Icinga\Module\Monitoring\Library\Filter;
 
 use Icinga\Filter\Filterable;
-use Icinga\Filter\Query\Tree;
 use Icinga\Module\Monitoring\Filter\Type\StatusFilter;
-use Icinga\Filter\Type\TimeRangeSpecifier;
 use Icinga\Filter\Query\Node;
 use Icinga\Filter\Filter;
 use Icinga\Filter\Type\TextFilter;
 use Icinga\Filter\FilterAttribute;
 use Icinga\Module\Monitoring\Filter\UrlViewFilter;
 use Icinga\Test\BaseTestCase;
-
-// @codingStandardsIgnoreStart
-require_once realpath(__DIR__ . '/../../../../../../library/Icinga/Test/BaseTestCase.php');
-require_once realpath(BaseTestCase::$libDir . '/Filter/QueryProposer.php');
-require_once realpath(BaseTestCase::$libDir . '/Filter/Filter.php');
-require_once realpath(BaseTestCase::$libDir . '/Filter/FilterAttribute.php');
-require_once realpath(BaseTestCase::$libDir . '/Filter/Domain.php');
-require_once realpath(BaseTestCase::$libDir . '/Filter/Query/Node.php');
-require_once realpath(BaseTestCase::$libDir . '/Filter/Query/Tree.php');
-require_once realpath(BaseTestCase::$libDir . '/Filter/Type/FilterType.php');
-require_once realpath(BaseTestCase::$libDir . '/Filter/Type/TextFilter.php');
-require_once realpath(BaseTestCase::$libDir .'/Filter/Type/TimeRangeSpecifier.php');
-require_once realpath(BaseTestCase::$moduleDir .'/monitoring/library/Monitoring/Filter/Type/StatusFilter.php');
-require_once realpath(BaseTestCase::$moduleDir .'/monitoring/library/Monitoring/Filter/UrlViewFilter.php');
 
 class FilterMock implements Filterable
 {
@@ -79,8 +39,6 @@ class FilterMock implements Filterable
     {
         // TODO: Implement addFilter() method.
     }
-
-
 }
 
 class UrlViewFilterTest extends BaseTestCase
@@ -209,6 +167,5 @@ class UrlViewFilterTest extends BaseTestCase
             $filter .= str_shuffle('&|ds& wra =!<>|dsgs=,-G');
             $tree = $filterFactory->parseUrl($filter);
         }
-
     }
 }

@@ -37,9 +37,9 @@ foreach ($modules as $module) {
         $loader->registerNamespace($moduleNamespace, $moduleLibraryPath);
     }
 
-    $moduleTestPath = $modulePath . '/' . $module . '/test';
+    $moduleTestPath = $modulePath . '/' . $module . '/test/php';
     if (is_dir($moduleTestPath)) {
-        $loader->registerNamespace($moduleNamespace . '\\Test', $moduleTestPath);
+        $loader->registerNamespace('Tests\\' . $moduleNamespace, $moduleTestPath);
     }
 
     $moduleFormPath = $modulePath . '/' . $module . '/application/forms';

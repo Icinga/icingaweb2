@@ -1,12 +1,17 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Test\Modules\Monitoring\Application\Views\Helpers;
+namespace Tests\Icinga\Module\Monitoring\Application\Views\Helpers;
 
-require_once 'Zend/View/Helper/Abstract.php';
-require_once 'Zend/View.php';
-require_once __DIR__. '/../../../../../application/views/helpers/MonitoringFlags.php';
+use \Zend_View_Helper_MonitoringFlags;
+use Icinga\Test\BaseTestCase;
 
-class MonitoringFlagsTest extends \PHPUnit_Framework_TestCase
+// @codingStandardsIgnoreStart
+require_once realpath(BaseTestCase::$moduleDir . '/monitoring/application/views/helpers/MonitoringFlags.php');
+// @codingStandardsIgnoreEnd
+
+class MonitoringFlagsTest extends BaseTestCase
 {
     public function testHosts1()
     {
@@ -19,7 +24,7 @@ class MonitoringFlagsTest extends \PHPUnit_Framework_TestCase
             'flap_detection_enabled' => '1',
         );
 
-        $monitoringFlags = new \Zend_View_Helper_MonitoringFlags();
+        $monitoringFlags = new Zend_View_Helper_MonitoringFlags();
         $returnArray = $monitoringFlags->monitoringFlags((object)$testArray);
 
         $this->assertCount(6, $returnArray);
@@ -47,7 +52,7 @@ class MonitoringFlagsTest extends \PHPUnit_Framework_TestCase
             'flap_detection_enabled' => '0',
         );
 
-        $monitoringFlags = new \Zend_View_Helper_MonitoringFlags();
+        $monitoringFlags = new Zend_View_Helper_MonitoringFlags();
         $returnArray = $monitoringFlags->monitoringFlags((object)$testArray);
 
         $this->assertCount(6, $returnArray);
