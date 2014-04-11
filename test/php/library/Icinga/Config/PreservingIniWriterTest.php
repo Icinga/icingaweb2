@@ -17,6 +17,8 @@ class PreservingIniWriterTest extends BaseTestCase
      */
     public function setUp()
     {
+        parent::setUp();
+
         $ini =
 '
 trailing1="wert"
@@ -109,6 +111,7 @@ prop2="5"
      */
     public function tearDown()
     {
+        parent::tearDown();
         foreach ($this->tmpfiles as $filename) {
             unlink($filename);
         }

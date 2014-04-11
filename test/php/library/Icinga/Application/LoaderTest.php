@@ -27,16 +27,18 @@ class TestStruct
 
 EOD;
 
-    protected function setUp()
+    public function setUp()
     {
+        parent::setUp();
         $tempDir = sys_get_temp_dir();
         $this->baseDir = tempnam($tempDir, 'icinga2-web');
         system('mkdir -p '. $this->baseDir. dirname(self::$classFile));
         file_put_contents($this->baseDir. self::$classFile, self::$classContent);
     }
 
-    protected function tearDown()
+    public function tearDown()
     {
+        parent::tearDown();
         system('rm -rf '. $this->baseDir);
     }
 

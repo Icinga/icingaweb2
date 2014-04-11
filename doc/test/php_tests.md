@@ -25,31 +25,41 @@ modules/mymodule/library/MyModule/Helper/MyClass.php.
 
 ## Testing Singletons
 
-When test methods **modify static** class properties (which is the case when using singletons), add the PHPUnit
+When test methods **modify static** class properties (which is the case when using singletons), do not add the PHPUnit
 [`@backupStaticAttributes enabled`](http://phpunit.de/manual/3.7/en/appendixes.annotations.html#appendixes.annotations.backupStaticAttributes)
-annotation to their [DockBlock](http://www.phpdoc.org/docs/latest/for-users/phpdoc/basic-syntax.html#what-is-a-docblock)
-in order to backup and restore static attributes before and after the method execution respectively. For reference you
-should **document** that the test interacts with static attributes:
+annotation to their [DocBlock](http://www.phpdoc.org/docs/latest/for-users/phpdoc/basic-syntax.html#what-is-a-docblock)
+in order to backup and restore static attributes before and after the test execution respectively. Use the setUp()
+and tearDown() routines instead to accomplish this task.
 
     <?php
 
     namespace My\Test;
 
-    use \PHPUnit_Framework_TestCase;
+    use Icinga\Test\BaseTestCase;
     use My\CheesecakeFactory;
 
-    class SingletonTest extends PHPUnit_Framework_TestCase
+    class SingletonTest extends BaseTestCase
     {
-        /**
-         * Interact with static attributes
-         *
-         * Utilizes singleton CheesecakeFactory
-         *
-         * @backupStaticAttributes enabled
-         */
+        protected function setUp()
+        {
+            parent::setUp();
+            $this->openingHours = CheesecakeFactory::getOpeningHours();
+        }
+
+        protected function tearDown()
+        {
+            parent::tearDown();
+            CheesecakeFactory::setOpeningHours($this->openingHours);
+        }
+
         public function testThatInteractsWithStaticAttributes()
         {
             CheesecakeFactory::setOpeningHours(24);
             // ...
         }
     }
+
+The reason to avoid using @backupStaticAttributes is the fact that if it is necessary to utilize a
+singleton in your *unit* tests you probably want to rethink what you are going to test and because
+some tests are using the mock framework [`Mockery`](https://github.com/padraic/mockery) which is
+using static class properties to implement its caching mechanics.

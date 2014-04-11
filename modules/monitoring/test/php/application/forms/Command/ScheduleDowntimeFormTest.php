@@ -4,26 +4,12 @@
 
 namespace Tests\Icinga\Module\Monitoring\Application\Forms\Command;
 
-use \DateTimeZone;
 use Icinga\Test\BaseTestCase;
-use Icinga\Util\DateTimeFactory;
 use Icinga\Module\Monitoring\Form\Command\ScheduleDowntimeForm;
 
 class ScheduleDowntimeFormTest extends BaseTestCase
 {
     const FORM_CLASS = 'Icinga\Module\Monitoring\Form\Command\ScheduleDowntimeForm';
-
-    /**
-     * Set up the default time zone
-     *
-     * Utilizes singleton DateTimeFactory
-     *
-     * @backupStaticAttributes enabled
-     */
-    public function setUp()
-    {
-        DateTimeFactory::setConfig(array('timezone' => new DateTimeZone('UTC')));
-    }
 
     public function testCorrectFormElementCreation()
     {

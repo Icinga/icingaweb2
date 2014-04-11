@@ -45,8 +45,9 @@ class ParserMock
 
 class ReaderTest extends BaseTestCase
 {
-    protected function tearDown()
+    public function tearDown()
     {
+        parent::tearDown();
         if (file_exists('./tmp')) {
             @system("rm -rf ./tmp");
         }

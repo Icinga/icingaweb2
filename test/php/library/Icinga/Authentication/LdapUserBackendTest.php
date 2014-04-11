@@ -86,8 +86,10 @@ class LdapUserBackendTest extends BaseTestCase
         }
     }
 
-    protected function setUp()
+    public function setUp()
     {
+        parent::setUp();
+
         $conn = $this->getLDAPConnection();
         $this->clearTestData($conn);
         $this->insertTestData($conn);
@@ -109,6 +111,7 @@ class LdapUserBackendTest extends BaseTestCase
 
     public function tearDown()
     {
+        parent::tearDown();
         $conn = $this->getLDAPConnection();
 
         // $this->clearTestData($conn);

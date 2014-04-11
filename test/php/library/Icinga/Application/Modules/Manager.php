@@ -27,8 +27,10 @@ class ManagerTest extends BaseTestCase
 {
     const MODULE_TARGET = "/tmp";
 
-    protected function setUp()
+    public function setUp()
     {
+        parent::setUp();
+
         $moduleDir = self::MODULE_TARGET;
         if (!is_writable($moduleDir)) {
             $this->markTestSkipped("Temporary folder not writable for this user");
@@ -98,8 +100,9 @@ class ManagerTest extends BaseTestCase
         $this->assertEmpty($manager->listEnabledModules());
     }
 
-    protected function tearDown()
+    public function tearDown()
     {
+        parent::tearDown();
         $moduleDir = self::MODULE_TARGET;
         exec("rm -r $moduleDir/enabledModules");
     }

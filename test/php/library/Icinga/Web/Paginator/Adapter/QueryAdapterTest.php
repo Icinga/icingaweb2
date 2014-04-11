@@ -18,8 +18,9 @@ class QueryAdapterTest extends BaseTestCase
 
     private $resourceConfig;
 
-    protected function setUp()
+    public function setUp()
     {
+        parent::setUp();
         $this->cacheDir = '/tmp'. Reader::STATUSDAT_DEFAULT_CACHE_PATH;
 
         if (!file_exists($this->cacheDir)) {

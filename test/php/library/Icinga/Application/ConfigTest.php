@@ -11,14 +11,21 @@ class ConfigTest extends BaseTestCase
 {
     /**
      * Set up config dir
-     *
-     * Utilizes singleton IcingaConfig
-     *
-     * @backupStaticAttributes  enabled
      */
     public function setUp()
     {
+        parent::setUp();
+        $this->configDir = IcingaConfig::$configDir;
         IcingaConfig::$configDir = dirname(__FILE__) . '/Config/files';
+    }
+
+    /**
+     * Reset config dir
+     */
+    public function tearDown()
+    {
+        parent::tearDown();
+        IcingaConfig::$configDir = $this->configDir;
     }
 
     public function testAppConfig()

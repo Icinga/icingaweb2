@@ -49,13 +49,13 @@ class ObjectHookImplementation
 
 class HookTest extends BaseTestCase
 {
-    protected function setUp()
+    public function setUp()
     {
         parent::setUp();
         Hook::clean();
     }
 
-    protected function tearDown()
+    public function tearDown()
     {
         parent::tearDown();
         Hook::clean();

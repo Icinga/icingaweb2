@@ -21,9 +21,10 @@ class NotificationTest extends BaseTestCase
      */
     private $loggerPath = null;
 
-    protected function setUp()
+    public function setUp()
     {
         Zend_Session::$_unitTestEnabled = true;
+        parent::setUp();
 
         $this->loggerPath = "/tmp/icinga2-web-notify-test";
         $this->dropLog();

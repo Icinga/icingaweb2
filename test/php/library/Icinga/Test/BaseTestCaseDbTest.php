@@ -10,8 +10,9 @@ class BaseTestCaseDbTest extends BaseTestCase
 {
     private $emptySqlDumpFile;
 
-    protected function tearDown()
+    public function tearDown()
     {
+        parent::tearDown();
         if ($this->emptySqlDumpFile) {
             unlink($this->emptySqlDumpFile);
         }

@@ -10,14 +10,11 @@ use Icinga\Test\BaseTestCase;
 
 class LoggerTest extends BaseTestCase
 {
-    /**
-     * @backupStaticAttributes enabled
-     */
     public function testLogfileCreation()
     {
         $target = tempnam(sys_get_temp_dir(), 'log');
         unlink($target);
-        Logger::create(
+        new Logger(
             new Zend_Config(
                 array(
                     'enable'    => true,
@@ -32,14 +29,13 @@ class LoggerTest extends BaseTestCase
     }
 
     /**
-     * @backupStaticAttributes  enabled
      * @depends                 testLogfileCreation
      */
     public function testLoggingErrorMessages()
     {
         $target = tempnam(sys_get_temp_dir(), 'log');
         unlink($target);
-        Logger::create(
+        $logger = new Logger(
             new Zend_Config(
                 array(
                     'enable'    => true,
@@ -49,7 +45,7 @@ class LoggerTest extends BaseTestCase
                 )
             )
         );
-        Logger::error('This is a test error');
+        $logger->log('This is a test error', Logger::$ERROR);
         $log = file_get_contents($target);
         unlink($target);
         $this->assertContains('This is a test error', $log, 'Log does not contain the error "This is a test error"');

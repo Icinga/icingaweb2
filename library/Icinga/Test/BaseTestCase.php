@@ -22,9 +22,12 @@ namespace {
 namespace Icinga\Test {
 
     use \Exception;
+    use \DateTimeZone;
     use \RuntimeException;
+    use \Mockery;
     use \Zend_Config;
     use \Zend_Test_PHPUnit_ControllerTestCase;
+    use Icinga\Util\DateTimeFactory;
     use Icinga\Data\ResourceFactory;
     use Icinga\Data\Db\Connection;
     use Icinga\User\Preferences;
@@ -104,17 +107,12 @@ namespace Icinga\Test {
         );
 
         /**
-         * Constructs a test case with the given name.
-         *
-         * @param   string  $name
-         * @param   array   $data
-         * @param   string  $dataName
-         * @see     PHPUnit_Framework_TestCase::__construct
+         * Setup the default timezone and pass it to DateTimeFactory::setConfig
          */
-        public function __construct($name = null, array $data = array(), $dataName = '')
+        public static function setupTimezone()
         {
-            parent::__construct($name, $data, $dataName);
             date_default_timezone_set('UTC');
+            DateTimeFactory::setConfig(array('timezone' => new DateTimeZone('UTC')));
         }
 
         /**
@@ -124,12 +122,6 @@ namespace Icinga\Test {
          */
         public static function setupDirectories()
         {
-            static $initialized = false;
-
-            if ($initialized === true) {
-                return;
-            }
-
             $baseDir = realpath(__DIR__ . '/../../../');
 
             if ($baseDir === false) {
@@ -142,8 +134,38 @@ namespace Icinga\Test {
             self::$testDir = $baseDir . '/test/php';
             self::$shareDir = $baseDir . '/share/icinga2-web';
             self::$moduleDir = $baseDir . '/modules';
+        }
 
-            $initialized = true;
+        /**
+         * Setup MVC bootstrapping and ensure that the Icinga-Mock gets reinitialized
+         */
+        public function setUp()
+        {
+            parent::setUp();
+            $this->setupIcingaMock();
+        }
+
+        /**
+         * Setup mock object for Icinga\Application\Icinga
+         *
+         * Once done, the original class can never be loaded anymore though one should still be able
+         * to access its properties/methods not covered by any expectations by using the mock object.
+         */
+        protected function setupIcingaMock()
+        {
+            $bootstrapMock = Mockery::mock('Icinga\Application\ApplicationBootstrap')->shouldDeferMissing();
+            $bootstrapMock->shouldReceive('getFrontController->getRequest')->andReturnUsing(
+                function () {
+                    return Mockery::mock('Request')
+                        ->shouldReceive('getPathInfo')->andReturn('')
+                        ->shouldReceive('getBaseUrl')->andReturn('/')
+                        ->shouldReceive('getQuery')->andReturn(array())
+                        ->getMock();
+                }
+            )->shouldReceive('getApplicationDir')->andReturn(self::$appDir);
+
+            Mockery::mock('alias:Icinga\Application\Icinga')
+                ->shouldReceive('app')->andReturnUsing(function () use ($bootstrapMock) { return $bootstrapMock; });
         }
 
         /**
@@ -154,7 +176,7 @@ namespace Icinga\Test {
          * @return  Zend_Config
          * @throws  RuntimeException
          */
-        private function createDbConfigFor($name)
+        protected function createDbConfigFor($name)
         {
             if (array_key_exists($name, self::$dbConfiguration)) {
                 return new Zend_Config(self::$dbConfiguration[$name]);
@@ -170,7 +192,7 @@ namespace Icinga\Test {
          *
          * @return  array
          */
-        private function createDbConnectionFor($name)
+        protected function createDbConnectionFor($name)
         {
             try {
                 $conn = ResourceFactory::createResource($this->createDbConfigFor($name));
@@ -306,5 +328,6 @@ namespace Icinga\Test {
         }
     }
 
+    BaseTestCase::setupTimezone();
     BaseTestCase::setupDirectories();
 }
