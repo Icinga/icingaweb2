@@ -5,6 +5,7 @@
 namespace Tests\Icinga\Session;
 
 use \Exception;
+use \Mockery;
 use Icinga\Test\BaseTestCase;
 use Icinga\Web\Session\SessionNamespace;
 
@@ -84,5 +85,27 @@ class SessionNamespaceTest extends BaseTestCase
         foreach ($ns as $key => $value) {
             $this->assertEquals($value, $values[$key]);
         }
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage Cannot save, session not set
+     */
+    public function testInvalidParentWrite()
+    {
+        $ns = new SessionNamespace();
+        $ns->write();
+    }
+
+    /**
+     * Check whether it is possible to write a namespace's parent
+     */
+    public function testValidParentWrite()
+    {
+        $sessionMock = Mockery::mock('Icinga\Web\Session\Session');
+        $sessionMock->shouldReceive('write')->atLeast()->times(1);
+
+        $ns = new SessionNamespace($sessionMock);
+        $ns->write();
     }
 }
