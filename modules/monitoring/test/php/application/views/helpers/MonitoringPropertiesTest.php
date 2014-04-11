@@ -82,7 +82,6 @@ class MonitoringPropertiesTest extends BaseTestCase
 
     public function testOutput2()
     {
-        date_default_timezone_set("UTC");
         $host = new HostStruct4Properties();
         $host->current_check_attempt = '5';
         $host->active_checks_enabled = '1';

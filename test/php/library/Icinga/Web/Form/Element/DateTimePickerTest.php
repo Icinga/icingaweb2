@@ -11,13 +11,6 @@ use Icinga\Web\Form\Element\DateTimePicker;
 
 class DateTimeTest extends BaseTestCase
 {
-    public function setUp()
-    {
-        // Set default timezone else new DateTime calls will die with the Exception that it's
-        // not safe to rely on the system's timezone
-        date_default_timezone_set('UTC');
-    }
-
     /**
      * Test that DateTimePicker::isValid() returns false if the input is not valid in terms of being a date/time string
      * or a timestamp
