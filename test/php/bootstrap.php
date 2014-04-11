@@ -17,6 +17,11 @@ if (!defined('ICINGA_LIBDIR')) {
 // This is needed to get the Zend Plugin loader working
 set_include_path(implode(PATH_SEPARATOR, array($libraryPath, get_include_path())));
 
+require_once 'Mockery/Loader.php';
+require_once 'Hamcrest/Hamcrest.php';
+$mockeryLoader = new \Mockery\Loader;
+$mockeryLoader->register();
+
 require_once($libraryPath . '/Icinga/Application/Loader.php');
 
 $loader = new Icinga\Application\Loader();

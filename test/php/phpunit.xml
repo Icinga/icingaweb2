@@ -28,4 +28,7 @@
             <directory suffix=".php">/usr/lib</directory>
         </blacklist>
     </filter>
+    <listeners>
+        <listener class="\Mockery\Adapter\Phpunit\TestListener"></listener>
+    </listeners>
 </phpunit>
