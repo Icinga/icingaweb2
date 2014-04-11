@@ -2,7 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Tests\Icinga\Protocol\Statusdat;
+namespace Tests\Icinga\Protocol\Statusdat\Component;
 
 use \Zend_Config;
 use Icinga\Test\BaseTestCase;

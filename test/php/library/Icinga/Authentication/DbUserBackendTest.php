@@ -5,7 +5,6 @@
 namespace Tests\Icinga\Authentication;
 
 use \PDO;
-use \Zend_Config;
 use Icinga\Test\BaseTestCase;
 use Icinga\Data\Db\Connection;
 use Icinga\Authentication\Backend\DbUserBackend;
@@ -55,22 +54,6 @@ class DbUserBackendTest extends BaseTestCase
             self::ACTIVE_COLUMN     => 0
         )
     );
-
-    private function createDbConnection($resource, $name = null)
-    {
-        if ($name === null) {
-            $name = 'TestDbUserBackend-' . uniqid();
-        }
-
-        $config = new Zend_Config(
-            array(
-                'name'      => $name,
-                'resource'  => $resource
-            )
-        );
-
-        return $config;
-    }
 
     /**
      * Test the authentication functions of the DbUserBackend using PostgreSQL as backend.

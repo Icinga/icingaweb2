@@ -8,16 +8,22 @@ namespace Tests\Icinga\Form\Config;
 require_once realpath(ICINGA_APPDIR . '/views/helpers/DateFormat.php');
 // @codingStandardsIgnoreEnd
 
-use \DateTimeZone;
+use \Mockery;
 use \DOMDocument;
 use \Zend_Config;
 use \Zend_View;
 use \Zend_View_Helper_DateFormat;
-use Icinga\Util\DateTimeFactory;
 use Icinga\Test\BaseTestCase;
 
 class GeneralFormTest extends BaseTestCase
 {
+    public function setUp()
+    {
+        parent::setUp();
+        $this->viewMock = Mockery::mock('\Zend_View');
+        $this->viewMock->shouldReceive('icon')->andReturn('');
+    }
+
     private function isHiddenElement($value, $htmlString)
     {
         $html = new DOMDocument();
@@ -36,13 +42,9 @@ class GeneralFormTest extends BaseTestCase
         }
         return false;
     }
-    /**
-     *
-     */
+
     public function testCorrectFieldPopulation()
     {
-        $this->markTestSkipped('GeneralForm uses the url view helper (icon helper function). Set a view mock with setView!');
-        DateTimeFactory::setConfig(array('timezone' => new DateTimeZone('UTC')));
         $form = $this->createForm('Icinga\Form\Config\GeneralForm');
         $form->setDateFormatter(new Zend_View_Helper_DateFormat($this->getRequest()));
         $form->setConfiguration(
@@ -72,8 +74,10 @@ class GeneralFormTest extends BaseTestCase
             )
         );
         $form->setConfigDir('/tmp');
+        $form->setView($this->viewMock);
 
         $form->create();
+
         $this->assertEquals(
             1,
             $form->getValue('environment'),
@@ -118,8 +122,6 @@ class GeneralFormTest extends BaseTestCase
 
     public function testCorrectConditionalIniFieldRendering()
     {
-        $this->markTestSkipped('GeneralForm uses the url view helper (icon helper function). Set a view mock with setView!');
-        DateTimeFactory::setConfig(array('timezone' => new DateTimeZone('UTC')));
         $form = $this->createForm('Icinga\Form\Config\GeneralForm');
         $form->setDateFormatter(new Zend_View_Helper_DateFormat($this->getRequest()));
         $form->setConfiguration(
@@ -140,8 +142,9 @@ class GeneralFormTest extends BaseTestCase
                 )
             )
         );
-        $form->create();
+        $form->setView($this->viewMock);
 
+        $form->create();
         $view = new Zend_View();
 
         $this->assertFalse(
@@ -156,8 +159,6 @@ class GeneralFormTest extends BaseTestCase
 
     public function testCorrectConditionalDbFieldRendering()
     {
-        $this->markTestSkipped('GeneralForm uses the url view helper (icon helper function). Set a view mock with setView!');
-        DateTimeFactory::setConfig(array('timezone' => new DateTimeZone('UTC')));
         $form = $this->createForm('Icinga\Form\Config\GeneralForm');
         $form->setDateFormatter(new Zend_View_Helper_DateFormat($this->getRequest()));
         $form->setConfiguration(
@@ -179,6 +180,8 @@ class GeneralFormTest extends BaseTestCase
                 )
             )
         );
+        $form->setView($this->viewMock);
+
         $form->create();
         $view = new Zend_View();
 

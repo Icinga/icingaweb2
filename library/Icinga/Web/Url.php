@@ -44,14 +44,6 @@ use Icinga\Application\Icinga;
 class Url
 {
     /**
-     * Rather dirty hack as the ApplicationBootstrap isn't an interface right now and can't be mocked
-     * overwrite this to use a specific request for all Urls (so only in tests)
-     *
-     * @var null
-     */
-    public static $overwrittenRequest = null;
-
-    /**
      * An array of all parameters stored in this Url
      *
      * @var array
@@ -123,9 +115,6 @@ class Url
      */
     private static function getRequest()
     {
-        if (self::$overwrittenRequest) {
-            return self::$overwrittenRequest;
-        }
         return Icinga::app()->getFrontController()->getRequest();
     }
 

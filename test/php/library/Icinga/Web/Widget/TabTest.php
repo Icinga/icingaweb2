@@ -5,7 +5,6 @@
 namespace Tests\Icinga\Web\Widget;
 
 use Icinga\Test\BaseTestCase;
-use Tests\Icinga\Web\RequestMock;
 use Tests\Icinga\Web\ViewMock;
 use Icinga\Web\Widget\Tab;
 use Icinga\Web\Url;
@@ -64,7 +63,7 @@ class TabTest extends BaseTestCase
             array(
                 "name"  => "tab",
                 "title" => "Title text",
-                "url"   => Url::fromPath("my/url", array(), new RequestMock())
+                "url"   => Url::fromPath("my/url")
             )
         );
         $html = $tab->render(new ViewMock());
@@ -88,7 +87,7 @@ class TabTest extends BaseTestCase
             array(
                 "name"  => "tab",
                 "title" => "Title text",
-                "icon"   => Url::fromPath("my/url", array(), new RequestMock())
+                "icon"   => Url::fromPath("my/url")
             )
         );
         $html = $tab->render(new ViewMock());

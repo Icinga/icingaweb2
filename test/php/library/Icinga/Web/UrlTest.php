@@ -4,9 +4,9 @@
 
 namespace Tests\Icinga\Web;
 
+use \Mockery;
 use Icinga\Web\Url;
 use Icinga\Test\BaseTestCase;
-use Tests\Icinga\Web\RequestMock;
 
 /**
  * Tests for the Icinga\Web\Url class that provides convenient access to Url manipulation method
@@ -18,7 +18,7 @@ class UrlTest extends BaseTestCase
      */
     function testFromStringWithoutQuery()
     {
-        $url = Url::fromPath('http://myHost/my/test/url.html', array(), new RequestMock());
+        $url = Url::fromPath('http://myHost/my/test/url.html');
         $this->assertEquals(
             '/my/test/url.html',
             $url->getPath(),
@@ -36,7 +36,7 @@ class UrlTest extends BaseTestCase
      */
     function testFromUrlWithBasePath()
     {
-        $url = Url::fromPath('my/test/url.html', array(), new RequestMock());
+        $url = Url::fromPath('my/test/url.html');
         $url->setBaseUrl('the/path/to');
         $this->assertEquals(
             '/the/path/to/my/test/url.html',
@@ -50,7 +50,7 @@ class UrlTest extends BaseTestCase
      */
     function testFromUrlWithKeyValueQuery()
     {
-        $url = Url::fromPath('/my/test/url.html?param1=%25arg1&param2=arg2', array(), new RequestMock());
+        $url = Url::fromPath('/my/test/url.html?param1=%25arg1&param2=arg2');
         $this->assertEquals(
             '/my/test/url.html',
             $url->getPath(),
@@ -71,7 +71,7 @@ class UrlTest extends BaseTestCase
      */
     function testFromUrlWithArrayInQuery()
     {
-        $url = Url::fromPath('/my/test/url.html?param[]=%25val1&param[]=%40val2', array(), new RequestMock());
+        $url = Url::fromPath('/my/test/url.html?param[]=%25val1&param[]=%40val2');
         $this->assertEquals(
             array(
                 'param' => array('%val1', '@val2')
@@ -86,11 +86,7 @@ class UrlTest extends BaseTestCase
      */
     function testFromUrlWithAssociativeArrayInQuery()
     {
-        $url = Url::fromPath(
-            '/my/test/url.html?param[value]=%25val1&param[value2]=%40val2',
-            array(),
-            new RequestMock()
-        );
+        $url = Url::fromPath('/my/test/url.html?param[value]=%25val1&param[value2]=%40val2');
         $this->assertEquals(
             array(
                 'param' => array(
@@ -113,8 +109,7 @@ class UrlTest extends BaseTestCase
             array(
                 'param1' => 'val1',
                 'param2' => 'val2'
-            ),
-            new RequestMock()
+            )
         );
         $url->setBaseUrl('path/to');
         $this->assertEquals(
@@ -135,8 +130,7 @@ class UrlTest extends BaseTestCase
             array(
                 'param1' => 'val1',
                 'param2' => 'val2'
-            ),
-            new RequestMock()
+            )
         );
         $url->setBaseUrl('path/to');
         $this->assertEquals(
@@ -156,8 +150,7 @@ class UrlTest extends BaseTestCase
             array(
                 'flatarray' => array('val1', 'val2'),
                 'param' => array('value1'=>'val1', 'value2' => 'val2')
-            ),
-            new RequestMock()
+            )
         );
         $url->setBaseUrl('path/to');
         $this->assertEquals(
@@ -175,10 +168,11 @@ class UrlTest extends BaseTestCase
      */
     function testUrlFromRequestWithoutQuery()
     {
-        $request = new RequestMock();
-        $request->baseUrl = 'path/to';
-        $request->path = 'my/test/url.html';
-        $request->query = array();
+        $request = Mockery::mock('RequestWithoutQuery');
+        $request->shouldReceive('getPathInfo')->andReturn('my/test/url.html')
+            ->shouldReceive('getBaseUrl')->andReturn('path/to')
+            ->shouldReceive('getQuery')->andReturn(array());
+
         $url = Url::fromRequest(array(), $request);
         $this->assertEquals(
             '/path/to/my/test/url.html',
@@ -192,13 +186,15 @@ class UrlTest extends BaseTestCase
      */
     function testUrlFromRequestWithQuery()
     {
-        $request = new RequestMock();
-        $request->baseUrl = 'path/to';
-        $request->path = 'my/test/url.html';
-        $request->query = array(
-            'param1' => 'value1',
-            'param2' => array('key1' => 'value1', 'key2' => 'value2')
+        $request = Mockery::mock('RequestWithoutQuery');
+        $request->shouldReceive('getPathInfo')->andReturn('my/test/url.html')
+            ->shouldReceive('getBaseUrl')->andReturn('path/to')
+            ->shouldReceive('getQuery')->andReturn(array(
+                'param1' => 'value1',
+                'param2' => array('key1' => 'value1', 'key2' => 'value2')
+            )
         );
+
         $url = Url::fromRequest(array(), $request);
         $this->assertEquals(
             '/path/to/my/test/url.html?param1=value1&amp;'.
@@ -214,7 +210,7 @@ class UrlTest extends BaseTestCase
      */
     function testGetParameterByName()
     {
-        $url = Url::fromPath('/my/test/url.html?param=val&param2=val2', array(), new RequestMock());
+        $url = Url::fromPath('/my/test/url.html?param=val&param2=val2');
         $this->assertEquals(
             "val",
             $url->getParam("param", "wrongval"),
@@ -237,7 +233,7 @@ class UrlTest extends BaseTestCase
      */
     function testRemoveSingleParameter()
     {
-        $url = Url::fromPath('/my/test/url.html?param=val&param2=val2', array(), new RequestMock());
+        $url = Url::fromPath('/my/test/url.html?param=val&param2=val2');
         $url->remove("param");
         $this->assertEquals(
             "val2",
@@ -256,7 +252,7 @@ class UrlTest extends BaseTestCase
      */
     function testRemoveMultipleParameters()
     {
-        $url = Url::fromPath('/my/test/url.html?param=val&param2=val2&param3=val3', array(), new RequestMock());
+        $url = Url::fromPath('/my/test/url.html?param=val&param2=val2&param3=val3');
         $url->remove(array("param", "param2"));
         $this->assertEquals(
             "val3",
@@ -280,7 +276,7 @@ class UrlTest extends BaseTestCase
      */
     function testWithoutCall()
     {
-        $url = Url::fromPath('/my/test/url.html?param=val&param2=val2&param3=val3', array(), new RequestMock());
+        $url = Url::fromPath('/my/test/url.html?param=val&param2=val2&param3=val3');
         $url2 = $url->getUrlWithout(array("param"));
         $this->assertNotEquals(
             $url,
@@ -299,7 +295,7 @@ class UrlTest extends BaseTestCase
 
     function testAddParamAfterCreation()
     {
-        $url = Url::fromPath('/my/test/url.html?param=val&param2=val2&param3=val3', array(), new RequestMock());
+        $url = Url::fromPath('/my/test/url.html?param=val&param2=val2&param3=val3');
         $url->addParams(array(
             "param4" => "val4",
             "param3" => "newval3"
@@ -321,7 +317,7 @@ class UrlTest extends BaseTestCase
      */
     function testToString()
     {
-        $url = Url::fromPath('/my/test/url.html?param=val&param2=val2&param3=val3', array(), new RequestMock());
+        $url = Url::fromPath('/my/test/url.html?param=val&param2=val2&param3=val3');
         $this->assertEquals(
             $url->getAbsoluteUrl(),
             (string) $url,

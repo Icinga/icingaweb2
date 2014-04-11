@@ -4,7 +4,7 @@
 
 namespace Tests\Icinga\Modules\Monitoring\Application\Views\Helpers;
 
-use \stdClass;
+use \Mockery;
 use \Zend_View_Helper_ResolveMacros;
 use Icinga\Test\BaseTestCase;
 
@@ -16,7 +16,7 @@ class ResolveMacrosTest extends BaseTestCase
 {
     public function testHostMacros()
     {
-        $hostMock = new stdClass();
+        $hostMock = Mockery::mock('host');
         $hostMock->host_name = 'test';
         $hostMock->host_address = '1.1.1.1';
 
@@ -27,7 +27,7 @@ class ResolveMacrosTest extends BaseTestCase
 
     public function testServiceMacros()
     {
-        $svcMock = new stdClass();
+        $svcMock = Mockery::mock('service');
         $svcMock->host_name = 'test';
         $svcMock->host_address = '1.1.1.1';
         $svcMock->service_description = 'a service';
@@ -40,7 +40,7 @@ class ResolveMacrosTest extends BaseTestCase
 
     public function testCustomvars()
     {
-        $objectMock = new stdClass();
+        $objectMock = Mockery::mock('object');
         $objectMock->customvars = array(
             'CUSTOMVAR' => 'test'
         );
@@ -51,7 +51,7 @@ class ResolveMacrosTest extends BaseTestCase
 
     public function testFaultyMacros()
     {
-        $hostMock = new stdClass();
+        $hostMock = Mockery::mock('host');
         $hostMock->host_name = 'test';
         $hostMock->customvars = array(
             'HOST' => 'te',
@@ -67,7 +67,7 @@ class ResolveMacrosTest extends BaseTestCase
 
     public function testMacrosWithSpecialCharacters()
     {
-        $objectMock = new stdClass();
+        $objectMock = Mockery::mock('object');
         $objectMock->customvars = array(
             'V€RY_SP3C|@L' => 'not too special!'
         );

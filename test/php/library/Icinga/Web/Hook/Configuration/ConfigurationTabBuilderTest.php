@@ -4,36 +4,25 @@
 
 namespace Tests\Icinga\Web\Hook\Configuration;
 
+use \Mockery;
 use Icinga\Test\BaseTestCase;
 use Icinga\Web\Hook\Configuration\ConfigurationTab;
 use Icinga\Web\Hook\Configuration\ConfigurationTabBuilder;
 use Icinga\Web\Hook;
-use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabs;
-
-class RequestMock
-{
-    public function getBaseUrl()
-    {
-        return "/";
-    }
-
-}
 
 class ConfigurationTabBuilderTest extends BaseTestCase
 {
-    protected function setUp()
+    public function setUp()
     {
         parent::setUp();
         Hook::clean();
-        Url::$overwrittenRequest = new RequestMock();
     }
 
-    protected function tearDown()
+    public function tearDown()
     {
         parent::tearDown();
         Hook::clean();
-        Url::$overwrittenRequest = null;
     }
 
     public function testDefaultTabs()
@@ -74,7 +63,7 @@ class ConfigurationTabBuilderTest extends BaseTestCase
         $widget = new Tabs();
         $builder = new ConfigurationTabBuilder($widget);
 
-        $tab = new \stdClass();
+        $tab = Mockery::mock('Tab');
         Hook::registerObject(ConfigurationTabBuilder::HOOK_NAMESPACE, 'misc', $tab);
         $builder->build();
 

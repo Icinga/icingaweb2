@@ -71,7 +71,7 @@ class LdapUserBackendTest extends BaseTestCase
         }
     }
 
-    private function insertTestdata($connection)
+    private function insertTestData($connection)
     {
         foreach ($this->baseOu as $ou => $info) {
             if (ldap_add($connection, $ou, $info) === false) {

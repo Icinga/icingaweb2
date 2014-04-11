@@ -8,11 +8,9 @@ namespace Tests\Icinga\Form\Preference;
 require_once realpath(ICINGA_APPDIR . '/views/helpers/DateFormat.php');
 // @codingStandardsIgnoreEnd
 
-use \DateTimeZone;
 use \Zend_View_Helper_DateFormat;
 use Icinga\Test\BaseTestCase;
 use Icinga\User\Preferences;
-use Icinga\Util\DateTimeFactory;
 
 /**
  * Test for general form, mainly testing enable/disable behaviour
@@ -24,7 +22,6 @@ class GeneralFormTest extends BaseTestCase
      */
     public function testDisableFormIfUsingDefault()
     {
-        DateTimeFactory::setConfig(array('timezone' => new DateTimeZone('UTC')));
         $form = $this->createForm('Icinga\Form\Preference\GeneralForm');
         $form->setDateFormatter(new Zend_View_Helper_DateFormat($this->getRequest()));
         $form->setRequest($this->getRequest());
@@ -41,7 +38,6 @@ class GeneralFormTest extends BaseTestCase
      */
     public function testEnableFormIfUsingPreference()
     {
-        DateTimeFactory::setConfig(array('timezone' => new DateTimeZone('UTC')));
         $form = $this->createForm('Icinga\Form\Preference\GeneralForm');
         $form->setDateFormatter(new Zend_View_Helper_DateFormat($this->getRequest()));
         $form->setRequest($this->getRequest());

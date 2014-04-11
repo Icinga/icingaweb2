@@ -4,42 +4,30 @@
 
 namespace Tests\Icinga\Filter;
 
+use \Mockery;
 use Icinga\Filter\Query\Node;
 use Icinga\Filter\FilterAttribute;
-use Icinga\Filter\Type\FilterType;
 use Icinga\Test\BaseTestCase;
-
-class TypeMock extends FilterType
-{
-    public function isValidQuery($query)
-    {
-        return true;
-    }
-
-    public function createTreeNode($query, $leftOperand)
-    {
-        $node = new Node();
-        $node->left = $leftOperand;
-        return $node;
-    }
-
-    public function getProposalsForQuery($query)
-    {
-        return $this->getOperators();
-    }
-
-    public function getOperators()
-    {
-        return array('op1', 'is better than', 'is worse than');
-    }
-
-}
 
 class QueryHandlerTest extends BaseTestCase
 {
+    public function setUp()
+    {
+        parent::setUp();
+        $typeMock = Mockery::mock('Icinga\Filter\Type\FilterType');
+        $typeMock->shouldReceive('isValidQuery')->with(Mockery::type('string'))->andReturn(true)
+            ->shouldReceive('getOperators')->andReturn(array('op1', 'is better than', 'is worse than'))
+            ->shouldReceive('getProposalsForQuery')->with(Mockery::type('string'))->andReturnUsing(
+                function ($query) use ($typeMock) { return $typeMock->getOperators(); }
+            )->shouldReceive('createTreeNode')->with(Mockery::type('string'), Mockery::any())->andReturnUsing(
+                function ($query, $leftOperand) { $node = new Node(); $node->left = $leftOperand; return $node; }
+        );
+        $this->typeMock = $typeMock;
+    }
+
     public function testQueryHandlerSetup()
     {
-        $handler = new FilterAttribute(new TypeMock());
+        $handler = new FilterAttribute($this->typeMock);
         $handler->setField('current_status');
         $handler->setHandledAttributes('State', 'Status', 'Current State');
         $this->assertTrue(
@@ -58,7 +46,7 @@ class QueryHandlerTest extends BaseTestCase
 
     public function testQueryProposal()
     {
-        $handler = new FilterAttribute(new TypeMock());
+        $handler = new FilterAttribute($this->typeMock);
 
         $handler->setField('current_status');
         $handler->setHandledAttributes('Status', 'State', 'Current State');
@@ -84,7 +72,7 @@ class QueryHandlerTest extends BaseTestCase
 
     public function testOperatorProposal()
     {
-        $handler = new FilterAttribute(new TypeMock());
+        $handler = new FilterAttribute($this->typeMock);
         $handler->setField('current_status')
             ->setHandledAttributes('status', 'state', 'current state');
         $this->assertEquals(
@@ -96,7 +84,7 @@ class QueryHandlerTest extends BaseTestCase
 
     public function testAttributeRecognition()
     {
-        $handler = new FilterAttribute(new TypeMock());
+        $handler = new FilterAttribute($this->typeMock);
         $handler->setField('current_status')
             ->setHandledAttributes('status', 'state', 'current state');
         $node = $handler->convertToTreeNode('status is not \’some kind of magic\'');

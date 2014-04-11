@@ -4,16 +4,22 @@
 
 namespace Tests\Icinga\Form\Config;
 
+use \Mockery;
 use \Zend_Config;
-use Icinga\Web\Url;
 use Icinga\Test\BaseTestCase;
-use Tests\Icinga\Web\RequestMock;
 
 /**
  * Test for the authentication provider form
  */
 class AuthenticationFormTest extends BaseTestCase
 {
+    public function setUp()
+    {
+        parent::setUp();
+        $this->viewMock = Mockery::mock('\Zend_View');
+        $this->viewMock->shouldReceive('icon')->andReturn('');
+    }
+
     /**
      * Test the ldap provider form population from config
      */
@@ -87,16 +93,13 @@ class AuthenticationFormTest extends BaseTestCase
 
     /**
      * Test whether order modifications via 'priority' are considered
-     *
-     * @backupStaticAttributes enabled
      */
     public function testModifyOrder()
     {
-        $this->markTestSkipped('ReorderForm is broken');
-        Url::$overwrittenRequest = new RequestMock();
         $form = $this->createForm('Icinga\Form\Config\Authentication\ReorderForm');
         $form->setAuthenticationBackend('backend2');
         $form->setCurrentOrder(array('backend1', 'backend2', 'backend3', 'backend4'));
+        $form->setView($this->viewMock);
 
         $form->create();
         $this->assertSame(
@@ -127,17 +130,14 @@ class AuthenticationFormTest extends BaseTestCase
 
     /**
      * Test whether the reorder form doesn't display senseless ordering (like moving the uppermost element up or
-     * the lowermose down)
-     *
-     * @backupStaticAttributes enabled
+     * the lowermost down)
      */
     public function testInvalidOrderingNotShown()
     {
-        $this->markTestSkipped('ReorderForm is broken');
-        Url::$overwrittenRequest = new RequestMock();
         $form = $this->createForm('Icinga\Form\Config\Authentication\ReorderForm');
         $form->setAuthenticationBackend('backend1');
         $form->setCurrentOrder(array('backend1', 'backend2', 'backend3', 'backend4'));
+        $form->setView($this->viewMock);
 
         $form->create();
         $this->assertSame(

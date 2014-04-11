@@ -4,7 +4,7 @@
 
 namespace Tests\Icinga\Module\Monitoring\Library\Filter;
 
-use Icinga\Filter\Filterable;
+use \Mockery;
 use Icinga\Module\Monitoring\Filter\Type\StatusFilter;
 use Icinga\Filter\Query\Node;
 use Icinga\Filter\Filter;
@@ -13,36 +13,19 @@ use Icinga\Filter\FilterAttribute;
 use Icinga\Module\Monitoring\Filter\UrlViewFilter;
 use Icinga\Test\BaseTestCase;
 
-class FilterMock implements Filterable
-{
-    public function isValidFilterTarget($field)
-    {
-        return true;
-    }
-
-    public function getMappedField($field)
-    {
-        return $field;
-    }
-
-    public function applyFilter()
-    {
-        return true;
-    }
-
-    public function clearFilter()
-    {
-        // TODO: Implement clearFilter() method.
-    }
-
-    public function addFilter($filter)
-    {
-        // TODO: Implement addFilter() method.
-    }
-}
-
 class UrlViewFilterTest extends BaseTestCase
 {
+    public function setUp()
+    {
+        parent::setUp();
+        $this->filterMock = Mockery::mock('Icinga\Filter\Filterable');
+        $this->filterMock->shouldReceive('isValidFilterTarget')->with(Mockery::any())->andReturn(true)
+            ->shouldReceive('getMappedField')->andReturnUsing(function ($f) { return $f; })
+            ->shouldReceive('applyFilter')->andReturn(true)
+            ->shouldReceive('clearFilter')->andReturnNull()
+            ->shouldReceive('addFilter')->with(Mockery::any())->andReturnNull();
+    }
+
     public function testUrlParamCreation()
     {
         $this->markTestSkipped('Or queries are disabled');
@@ -71,7 +54,7 @@ class UrlViewFilterTest extends BaseTestCase
             . ' and attr5 is UP';
 
         $tree = $searchEngine->createQueryTreeForFilter($query);
-        $filterFactory = new UrlViewFilter(new FilterMock());
+        $filterFactory = new UrlViewFilter($this->filterMock);
         $uri = $filterFactory->fromTree($tree);
         $this->assertEquals(
             'attr1!=Hans+wurst|attr2=%2Asomething%2A&attr3=bla%2A|attr4=1&host_last_state_change>=yesterday&attr5=0',
@@ -82,7 +65,7 @@ class UrlViewFilterTest extends BaseTestCase
 
     public function testTreeFromSimpleKeyValueUrlCreation()
     {
-        $filterFactory = new UrlViewFilter(new FilterMock());
+        $filterFactory = new UrlViewFilter($this->filterMock);
         $tree = $filterFactory->parseUrl('attr1!=Hans+Wurst');
         $this->assertEquals(
             $tree->root->type,
@@ -110,7 +93,7 @@ class UrlViewFilterTest extends BaseTestCase
     {
         $this->markTestSkipped("OR queries are disabled");
 
-        $filterFactory = new UrlViewFilter(new FilterMock());
+        $filterFactory = new UrlViewFilter($this->filterMock);
         $query = 'attr1!=Hans+Wurst&test=test123|bla=1';
         $tree = $filterFactory->parseUrl($query);
         $this->assertEquals($tree->root->type, Node::TYPE_AND, 'Assert the root of the filter tree to be an AND node');
@@ -120,7 +103,7 @@ class UrlViewFilterTest extends BaseTestCase
     public function testImplicitConjunctionInUrl()
     {
         $this->markTestSkipped("OR queries are disabled");
-        $filterFactory = new UrlViewFilter(new FilterMock());
+        $filterFactory = new UrlViewFilter($this->filterMock);
         $query = 'attr1!=Hans+Wurst&test=test123|bla=1|2|3';
         $tree = $filterFactory->parseUrl($query);
         $this->assertEquals($tree->root->type, Node::TYPE_AND, 'Assert the root of the filter tree to be an AND node');
@@ -133,7 +116,7 @@ class UrlViewFilterTest extends BaseTestCase
 
     public function testMissingValuesInQueries()
     {
-        $filterFactory = new UrlViewFilter(new FilterMock());
+        $filterFactory = new UrlViewFilter($this->filterMock);
         $queryStr = 'attr1!=Hans+Wurst&test=';
         $tree = $filterFactory->parseUrl($queryStr);
         $query = $filterFactory->fromTree($tree);
@@ -142,7 +125,7 @@ class UrlViewFilterTest extends BaseTestCase
 
     public function testErrorInQueries()
     {
-        $filterFactory = new UrlViewFilter(new FilterMock());
+        $filterFactory = new UrlViewFilter($this->filterMock);
         $queryStr = 'test=&attr1!=Hans+Wurst';
         $tree = $filterFactory->parseUrl($queryStr);
         $query = $filterFactory->fromTree($tree);
@@ -151,7 +134,7 @@ class UrlViewFilterTest extends BaseTestCase
 
     public function testSenselessConjunctions()
     {
-        $filterFactory = new UrlViewFilter(new FilterMock());
+        $filterFactory = new UrlViewFilter($this->filterMock);
         $queryStr = 'test=&|/5/|&attr1!=Hans+Wurst';
         $tree = $filterFactory->parseUrl($queryStr);
         $query = $filterFactory->fromTree($tree);
@@ -161,7 +144,7 @@ class UrlViewFilterTest extends BaseTestCase
     public function testRandomString()
     {
         $filter = '';
-        $filterFactory = new UrlViewFilter(new FilterMock());
+        $filterFactory = new UrlViewFilter($this->filterMock);
 
         for ($i=0; $i<10;$i++) {
             $filter .= str_shuffle('&|ds& wra =!<>|dsgs=,-G');
