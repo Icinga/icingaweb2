@@ -27,6 +27,7 @@ namespace Icinga\Test {
     use \Mockery;
     use \Zend_Config;
     use \Zend_Test_PHPUnit_ControllerTestCase;
+    use Icinga\Application\Icinga;
     use Icinga\Util\DateTimeFactory;
     use Icinga\Data\ResourceFactory;
     use Icinga\Data\Db\Connection;
@@ -146,10 +147,7 @@ namespace Icinga\Test {
         }
 
         /**
-         * Setup mock object for Icinga\Application\Icinga
-         *
-         * Once done, the original class can never be loaded anymore though one should still be able
-         * to access its properties/methods not covered by any expectations by using the mock object.
+         * Setup mock object for the application's bootstrap
          */
         protected function setupIcingaMock()
         {
@@ -164,8 +162,7 @@ namespace Icinga\Test {
                 }
             )->shouldReceive('getApplicationDir')->andReturn(self::$appDir);
 
-            Mockery::mock('alias:Icinga\Application\Icinga')
-                ->shouldReceive('app')->andReturnUsing(function () use ($bootstrapMock) { return $bootstrapMock; });
+            Icinga::setApp($bootstrapMock, true);
         }
 
         /**
