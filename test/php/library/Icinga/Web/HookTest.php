@@ -4,6 +4,7 @@
 
 namespace Tests\Icinga\Web;
 
+use \Mockery;
 use Icinga\Web\Hook;
 use Icinga\Test\BaseTestCase;
 
@@ -24,26 +25,6 @@ class ErrorProneHookImplementation
     public function __construct()
     {
         throw new \Exception("HOOK ERROR");
-    }
-}
-
-class ObjectHookImplementation
-{
-    private $test;
-
-    public function setTest($test)
-    {
-        $this->test = $test;
-    }
-
-    public function getTest()
-    {
-        return $this->test;
-    }
-
-    public function __toString()
-    {
-        return $this->getTest();
     }
 }
 
@@ -127,22 +108,20 @@ class HookTest extends BaseTestCase
 
     public function testRegisterObject()
     {
-        $o1 = new ObjectHookImplementation();
-        $o1->setTest('$123123');
+        $o1 = Mockery::mock('Some\\Name\\Space\\ObjectHook');
+        $o1->test = '$123123';
+        $o2 = Mockery::mock('Some\\Name\\Space\\ObjectHook');
+        $o2->test = '#456456';
 
         Hook::registerObject('Test', 'o1', $o1);
-
-        $o2 = new ObjectHookImplementation();
-        $o2->setTest('#456456');
-
         Hook::registerObject('Test', 'o2', $o2);
 
-        $this->assertInstanceOf('Tests\\Icinga\\Web\\ObjectHookImplementation', Hook::createInstance('Test', 'o1'));
-        $this->assertInstanceOf('Tests\\Icinga\\Web\\ObjectHookImplementation', Hook::createInstance('Test', 'o2'));
+        $this->assertInstanceOf('Some\\Name\\Space\\ObjectHook', Hook::createInstance('Test', 'o1'));
+        $this->assertInstanceOf('Some\\Name\\Space\\ObjectHook', Hook::createInstance('Test', 'o2'));
 
         $string = "";
         foreach (Hook::all('Test') as $hook) {
-            $string .= (string)$hook;
+            $string .= $hook->test;
         }
         $this->assertEquals('$123123#456456', $string);
     }
@@ -156,7 +135,7 @@ class HookTest extends BaseTestCase
         Hook::registerObject('Test', 'e1', 'STRING');
     }
 
-    public function testGetNullHooks()
+    public function testGetZeroHooks()
     {
         $nh = Hook::all('DOES_NOT_EXIST');
         $this->assertInternalType('array', $nh);
