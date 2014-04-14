@@ -1,49 +1,10 @@
 <?php
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Tests\Icinga\Authentication;
-
-// @codingStandardsIgnoreStart
-require_once realpath(__DIR__ . '/../../../../../library/Icinga/Test/BaseTestCase.php');
-// @codingStandardsIgnoreEnd
+namespace Tests\Icinga\Session;
 
 use Icinga\Test\BaseTestCase;
-
-// @codingStandardsIgnoreStart
-require_once BaseTestCase::$libDir . '/Web/Session/SessionNamespace.php';
-require_once BaseTestCase::$libDir . '/Web/Session/Session.php';
-require_once BaseTestCase::$libDir . '/Web/Session/PhpSession.php';
-require_once BaseTestCase::$libDir . '/Logger/Logger.php';
-require_once BaseTestCase::$libDir . '/Exception/ConfigurationError.php';
-require_once 'Zend/Log.php';
-// @codingStandardsIgnoreEnd
-
 use Icinga\Web\Session\PhpSession;
 
 class PhpSessionTest extends BaseTestCase
@@ -102,7 +63,7 @@ class PhpSessionTest extends BaseTestCase
     }
 
     /**
-     * Test whether session namespaces are properly written and loaded
+     * Test whether session namespaces are properly written, cleared and loaded
      *
      * @runInSeparateProcess
      */
@@ -114,9 +75,45 @@ class PhpSessionTest extends BaseTestCase
         $namespace->set('an_array', array(1, 2, 3));
         $session->write();
         $session->clear();
+        $this->assertFalse($session->hasNamespace('test'));
         $session->read();
         $namespace = $session->getNamespace('test');
         $this->assertEquals($namespace->get('some_key'), 'some_val');
         $this->assertEquals($namespace->get('an_array'), array(1, 2, 3));
+    }
+
+    /**
+     * Test whether session values are properly removed
+     *
+     * @runInSeparateProcess
+     */
+    public function testValueRemoval()
+    {
+        $session = $this->getSession();
+        $session->set('key', 'value');
+        $session->write();
+        $session->delete('key');
+        $session->write();
+        $session->clear();
+        $session->read();
+        $this->assertNull($session->get('key'));
+    }
+
+    /**
+     * Test whether session namespaces are properly removed
+     *
+     * @runInSeparateProcess
+     */
+    public function testNamespaceRemoval()
+    {
+        $session = $this->getSession();
+        $namespace = $session->getNamespace('test');
+        $namespace->key = 'value';
+        $session->write();
+        $session->removeNamespace('test');
+        $session->write();
+        $session->clear();
+        $session->read();
+        $this->assertFalse($session->hasNamespace('test'));
     }
 }

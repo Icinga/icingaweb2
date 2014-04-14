@@ -1,19 +1,12 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Tests\Icinga\Web;
-/**
-*
-* Test class for Hook
-* Created Fri, 22 Mar 2013 09:44:40 +0000
-*
-**/
-require_once("../../library/Icinga/Exception/ProgrammingError.php");
-require_once("../../library/Icinga/Web/Hook.php");
 
-require_once("Zend/Log.php");
-require_once("../../library/Icinga/Application/Logger.php");
-
-use Icinga\Web\Hook as Hook;
+use \Mockery;
+use Icinga\Web\Hook;
+use Icinga\Test\BaseTestCase;
 
 class Base
 {
@@ -35,51 +28,20 @@ class ErrorProneHookImplementation
     }
 }
 
-class ObjectHookImplementation
+class HookTest extends BaseTestCase
 {
-    private $test;
-
-    /**
-     * @param mixed $test
-     */
-    public function setTest($test)
-    {
-        $this->test = $test;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getTest()
-    {
-        return $this->test;
-    }
-
-    public function __toString()
-    {
-        return $this->getTest();
-    }
-}
-
-class HookTest extends \PHPUnit_Framework_TestCase
-{
-    protected function setUp()
+    public function setUp()
     {
         parent::setUp();
         Hook::clean();
     }
 
-    protected function tearDown()
+    public function tearDown()
     {
         parent::tearDown();
         Hook::clean();
     }
 
-    /**
-    * Test for Hook::Has()
-    * Note: This method is static!
-    *
-    **/
     public function testHas()
     {
         $this->assertFalse(Hook::has("a"));
@@ -90,11 +52,6 @@ class HookTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(Hook::has("a","b"));
     }
 
-    /**
-    * Test for Hook::CreateInstance()
-    * Note: This method is static!
-    *
-    **/
     public function testCreateInstance()
     {
         Hook::$BASE_NS = "Tests\\Icinga\\Web\\";
@@ -103,12 +60,6 @@ class HookTest extends \PHPUnit_Framework_TestCase
         Hook::clean();
     }
 
-    /**
-     * Test for Hook::CreateInstance()
-     * Note: This method is static!
-     *
-     *
-     **/
     public function testCreateInvalidInstance1()
     {
         $this->setExpectedException('\Icinga\Exception\ProgrammingError');
@@ -133,11 +84,6 @@ class HookTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($test);
     }
 
-    /**
-    * Test for Hook::All()
-    * Note: This method is static!
-    *
-    **/
     public function testAll()
     {
         Hook::$BASE_NS = "Tests\\Icinga\\Web\\";
@@ -148,14 +94,8 @@ class HookTest extends \PHPUnit_Framework_TestCase
         foreach(Hook::all("Base") as $instance) {
             $this->assertInstanceOf("Tests\\Icinga\\Web\\TestHookImplementation",$instance);
         }
-
     }
 
-    /**
-    * Test for Hook::First()
-    * Note: This method is static!
-    *
-    **/
     public function testFirst()
     {
         Hook::$BASE_NS = "Tests\\Icinga\\Web\\";
@@ -168,22 +108,20 @@ class HookTest extends \PHPUnit_Framework_TestCase
 
     public function testRegisterObject()
     {
-        $o1 = new ObjectHookImplementation();
-        $o1->setTest('$123123');
+        $o1 = Mockery::mock('Some\\Name\\Space\\ObjectHook');
+        $o1->test = '$123123';
+        $o2 = Mockery::mock('Some\\Name\\Space\\ObjectHook');
+        $o2->test = '#456456';
 
         Hook::registerObject('Test', 'o1', $o1);
-
-        $o2 = new ObjectHookImplementation();
-        $o2->setTest('#456456');
-
         Hook::registerObject('Test', 'o2', $o2);
 
-        $this->assertInstanceOf('Tests\\Icinga\\Web\\ObjectHookImplementation', Hook::createInstance('Test', 'o1'));
-        $this->assertInstanceOf('Tests\\Icinga\\Web\\ObjectHookImplementation', Hook::createInstance('Test', 'o2'));
+        $this->assertInstanceOf('Some\\Name\\Space\\ObjectHook', Hook::createInstance('Test', 'o1'));
+        $this->assertInstanceOf('Some\\Name\\Space\\ObjectHook', Hook::createInstance('Test', 'o2'));
 
         $string = "";
         foreach (Hook::all('Test') as $hook) {
-            $string .= (string)$hook;
+            $string .= $hook->test;
         }
         $this->assertEquals('$123123#456456', $string);
     }
@@ -197,7 +135,7 @@ class HookTest extends \PHPUnit_Framework_TestCase
         Hook::registerObject('Test', 'e1', 'STRING');
     }
 
-    public function testGetNullHooks()
+    public function testGetZeroHooks()
     {
         $nh = Hook::all('DOES_NOT_EXIST');
         $this->assertInternalType('array', $nh);

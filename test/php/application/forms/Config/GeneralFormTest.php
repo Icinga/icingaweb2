@@ -1,61 +1,29 @@
 <?php
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Test\Icinga\Form\Config;
+namespace Tests\Icinga\Form\Config;
 
 // @codingStandardsIgnoreStart
-require_once realpath(__DIR__ . '/../../../../../library/Icinga/Test/BaseTestCase.php');
+require_once realpath(ICINGA_APPDIR . '/views/helpers/DateFormat.php');
 // @codingStandardsIgnoreEnd
 
-use Icinga\Test\BaseTestCase;
-// @codingStandardsIgnoreStart
-require_once 'Zend/Form.php';
-require_once 'Zend/Config.php';
-require_once 'Zend/Config/Ini.php';
-require_once 'Zend/View/Helper/Abstract.php';
-require_once BaseTestCase::$libDir . '/Web/Form.php';
-require_once BaseTestCase::$appDir . '/forms/Config/GeneralForm.php';
-require_once BaseTestCase::$appDir . '/views/helpers/DateFormat.php';
-require_once BaseTestCase::$libDir . '/Util/ConfigAwareFactory.php';
-require_once BaseTestCase::$libDir . '/Util/DateTimeFactory.php';
-require_once BaseTestCase::$libDir . '/Util/Translator.php';
-// @codingStandardsIgnoreEnd
-
-use \DateTimeZone;
+use \Mockery;
 use \DOMDocument;
 use \Zend_Config;
 use \Zend_View;
 use \Zend_View_Helper_DateFormat;
-use \Icinga\Util\DateTimeFactory;
+use Icinga\Test\BaseTestCase;
 
 class GeneralFormTest extends BaseTestCase
 {
+    public function setUp()
+    {
+        parent::setUp();
+        $this->viewMock = Mockery::mock('\Zend_View');
+        $this->viewMock->shouldReceive('icon')->andReturn('');
+    }
+
     private function isHiddenElement($value, $htmlString)
     {
         $html = new DOMDocument();
@@ -74,13 +42,9 @@ class GeneralFormTest extends BaseTestCase
         }
         return false;
     }
-    /**
-     *
-     */
+
     public function testCorrectFieldPopulation()
     {
-        DateTimeFactory::setConfig(array('timezone' => new DateTimeZone('UTC')));
-        $this->requireFormLibraries();
         $form = $this->createForm('Icinga\Form\Config\GeneralForm');
         $form->setDateFormatter(new Zend_View_Helper_DateFormat($this->getRequest()));
         $form->setConfiguration(
@@ -110,8 +74,10 @@ class GeneralFormTest extends BaseTestCase
             )
         );
         $form->setConfigDir('/tmp');
+        $form->setView($this->viewMock);
 
         $form->create();
+
         $this->assertEquals(
             1,
             $form->getValue('environment'),
@@ -156,8 +122,6 @@ class GeneralFormTest extends BaseTestCase
 
     public function testCorrectConditionalIniFieldRendering()
     {
-        DateTimeFactory::setConfig(array('timezone' => new DateTimeZone('UTC')));
-        $this->requireFormLibraries();
         $form = $this->createForm('Icinga\Form\Config\GeneralForm');
         $form->setDateFormatter(new Zend_View_Helper_DateFormat($this->getRequest()));
         $form->setConfiguration(
@@ -178,8 +142,9 @@ class GeneralFormTest extends BaseTestCase
                 )
             )
         );
-        $form->create();
+        $form->setView($this->viewMock);
 
+        $form->create();
         $view = new Zend_View();
 
         $this->assertFalse(
@@ -194,8 +159,6 @@ class GeneralFormTest extends BaseTestCase
 
     public function testCorrectConditionalDbFieldRendering()
     {
-        DateTimeFactory::setConfig(array('timezone' => new DateTimeZone('UTC')));
-        $this->requireFormLibraries();
         $form = $this->createForm('Icinga\Form\Config\GeneralForm');
         $form->setDateFormatter(new Zend_View_Helper_DateFormat($this->getRequest()));
         $form->setConfiguration(
@@ -217,6 +180,8 @@ class GeneralFormTest extends BaseTestCase
                 )
             )
         );
+        $form->setView($this->viewMock);
+
         $form->create();
         $view = new Zend_View();
 

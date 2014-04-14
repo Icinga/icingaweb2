@@ -1,14 +1,13 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Tests\Icinga\Web\Hook\Configuration;
 
-require_once '../../library/Icinga/Web/Hook/Configuration/ConfigurationTabInterface.php';
-require_once '../../library/Icinga/Web/Hook/Configuration/ConfigurationTab.php';
-require_once '../../library/Icinga/Exception/ProgrammingError.php';
-
+use Icinga\Test\BaseTestCase;
 use Icinga\Web\Hook\Configuration\ConfigurationTab;
 
-class ConfigurationTabTest extends \PHPUnit_Framework_TestCase
+class ConfigurationTabTest extends BaseTestCase
 {
     public function testCreate1()
     {

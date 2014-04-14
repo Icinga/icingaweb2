@@ -1,20 +1,14 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Tests\Icinga\Util;
 
-require_once("../../library/Icinga/Util/Dimension.php");
 use Icinga\Util\Dimension;
+use Icinga\Test\BaseTestCase;
 
-/**
- * Tests for the dimension class
- *
- */
-class DimensionTest extends \PHPUnit_Framework_TestCase {
-
-    /**
-     * Test Dimension creation from string
-     *
-     */
+class DimensionTest extends BaseTestCase
+{
     public function testStringFactoryWithValidInput()
     {
         $d = Dimension::fromString("200px");
@@ -34,10 +28,6 @@ class DimensionTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(Dimension::UNIT_PT, $d->getUnit(), "Asserting the unit of pt input to be correctly parsed");
     }
 
-    /**
-     * Test string creation from Dimension
-     *
-     */
     public function testStringCreation()
     {
         $d = new Dimension(1000, Dimension::UNIT_PX);
@@ -47,9 +37,6 @@ class DimensionTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals("40pt", (string) $d, "Asserting float values being truncated by now");
     }
 
-    /**
-     *
-     */
     public function testInvalidDimensions()
     {
         $d = new Dimension(-20, Dimension::UNIT_PX);

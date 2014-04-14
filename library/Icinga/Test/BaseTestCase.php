@@ -1,30 +1,5 @@
 <?php
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace {
@@ -46,23 +21,18 @@ namespace {
 
 namespace Icinga\Test {
 
-    require_once 'Zend/Test/PHPUnit/ControllerTestCase.php';
-    require_once 'Zend/Db/Adapter/Pdo/Abstract.php';
-    require_once 'DbTest.php';
-    require_once 'FormTest.php';
-    // @codingStandardsIgnoreStart
     use \Exception;
+    use \DateTimeZone;
     use \RuntimeException;
-    use Zend_Test_PHPUnit_ControllerTestCase;
-    use Zend_Config;
-    use Zend_Db_Adapter_Pdo_Abstract;
-    use Zend_Db_Adapter_Pdo_Mysql;
-    use Zend_Db_Adapter_Pdo_Pgsql;
-    use Zend_Db_Adapter_Pdo_Oci;
+    use \Mockery;
+    use \Zend_Config;
+    use \Zend_Test_PHPUnit_ControllerTestCase;
+    use Icinga\Application\Icinga;
+    use Icinga\Util\DateTimeFactory;
     use Icinga\Data\ResourceFactory;
+    use Icinga\Data\Db\Connection;
     use Icinga\User\Preferences;
     use Icinga\Web\Form;
-    // @codingStandardsIgnoreEnd
 
     /**
      * Class BaseTestCase
@@ -138,17 +108,12 @@ namespace Icinga\Test {
         );
 
         /**
-         * Constructs a test case with the given name.
-         *
-         * @param   string  $name
-         * @param   array   $data
-         * @param   string  $dataName
-         * @see     PHPUnit_Framework_TestCase::__construct
+         * Setup the default timezone and pass it to DateTimeFactory::setConfig
          */
-        public function __construct($name = null, array $data = array(), $dataName = '')
+        public static function setupTimezone()
         {
-            parent::__construct($name, $data, $dataName);
             date_default_timezone_set('UTC');
+            DateTimeFactory::setConfig(array('timezone' => new DateTimeZone('UTC')));
         }
 
         /**
@@ -158,12 +123,6 @@ namespace Icinga\Test {
          */
         public static function setupDirectories()
         {
-            static $initialized = false;
-
-            if ($initialized === true) {
-                return;
-            }
-
             $baseDir = realpath(__DIR__ . '/../../../');
 
             if ($baseDir === false) {
@@ -176,8 +135,34 @@ namespace Icinga\Test {
             self::$testDir = $baseDir . '/test/php';
             self::$shareDir = $baseDir . '/share/icinga2-web';
             self::$moduleDir = $baseDir . '/modules';
+        }
 
-            $initialized = true;
+        /**
+         * Setup MVC bootstrapping and ensure that the Icinga-Mock gets reinitialized
+         */
+        public function setUp()
+        {
+            parent::setUp();
+            $this->setupIcingaMock();
+        }
+
+        /**
+         * Setup mock object for the application's bootstrap
+         */
+        protected function setupIcingaMock()
+        {
+            $bootstrapMock = Mockery::mock('Icinga\Application\ApplicationBootstrap')->shouldDeferMissing();
+            $bootstrapMock->shouldReceive('getFrontController->getRequest')->andReturnUsing(
+                function () {
+                    return Mockery::mock('Request')
+                        ->shouldReceive('getPathInfo')->andReturn('')
+                        ->shouldReceive('getBaseUrl')->andReturn('/')
+                        ->shouldReceive('getQuery')->andReturn(array())
+                        ->getMock();
+                }
+            )->shouldReceive('getApplicationDir')->andReturn(self::$appDir);
+
+            Icinga::setApp($bootstrapMock, true);
         }
 
         /**
@@ -188,7 +173,7 @@ namespace Icinga\Test {
          * @return  Zend_Config
          * @throws  RuntimeException
          */
-        private function createDbConfigFor($name)
+        protected function createDbConfigFor($name)
         {
             if (array_key_exists($name, self::$dbConfiguration)) {
                 return new Zend_Config(self::$dbConfiguration[$name]);
@@ -198,67 +183,64 @@ namespace Icinga\Test {
         }
 
         /**
-         * Creates an array of Zend Database Adapter
+         * Creates an array of Icinga\Data\Db\Connection
          *
          * @param   string $name
          *
          * @return  array
          */
-        private function createDbAdapterFor($name)
+        protected function createDbConnectionFor($name)
         {
-            $this->requireDbLibraries();
-
             try {
-                $adapter = ResourceFactory::createResource($this->createDbConfigFor($name))->getConnection();
+                $conn = ResourceFactory::createResource($this->createDbConfigFor($name));
             } catch (Exception $e) {
-                $adapter = $e->getMessage();
+                $conn = $e->getMessage();
             }
 
             return array(
-                array($adapter)
+                array($conn)
             );
         }
 
         /**
          * PHPUnit provider for mysql
          *
-         * @return Zend_Db_Adapter_Pdo_Mysql
+         * @return Connection
          */
         public function mysqlDb()
         {
-            return $this->createDbAdapterFor('mysql');
+            return $this->createDbConnectionFor('mysql');
         }
 
         /**
          * PHPUnit provider for pgsql
          *
-         * @return Zend_Db_Adapter_Pdo_Pgsql
+         * @return Connection
          */
         public function pgsqlDb()
         {
-            return $this->createDbAdapterFor('pgsql');
+            return $this->createDbConnectionFor('pgsql');
         }
 
         /**
          * PHPUnit provider for oracle
          *
-         * @return Zend_Db_Adapter_Pdo_Oci
+         * @return Connection
          */
         public function oracleDb()
         {
-            return $this->createDbAdapterFor('oracle');
+            return $this->createDbConnectionFor('oracle');
         }
 
         /**
-         * Executes sql file on PDO object
+         * Executes sql file by using the database connection
          *
-         * @param   Zend_Db_Adapter_Pdo_Abstract    $resource
-         * @param   string                          $filename
+         * @param   Connection      $resource
+         * @param   string          $filename
          *
-         * @return  boolean Operational success flag
          * @throws  RuntimeException
          */
-        public function loadSql(Zend_Db_Adapter_Pdo_Abstract $resource, $filename)
+        public function loadSql(Connection $resource, $filename)
         {
             if (!is_file($filename)) {
                 throw new RuntimeException(
@@ -274,17 +256,17 @@ namespace Icinga\Test {
                 );
             }
 
-            $resource->exec($sqlData);
+            $resource->getConnection()->exec($sqlData);
         }
 
         /**
          * Setup provider for testcase
          *
-         * @param   string|Zend_Db_Adapter_PDO_Abstract|null $resource
+         * @param   string|Connection|null $resource
          */
         public function setupDbProvider($resource)
         {
-            if (!$resource instanceof Zend_Db_Adapter_Pdo_Abstract) {
+            if (!$resource instanceof Connection) {
                 if (is_string($resource)) {
                     $this->markTestSkipped('Could not initialize provider: ' . $resource);
                 } else {
@@ -293,15 +275,17 @@ namespace Icinga\Test {
                 return;
             }
 
+            $adapter = $resource->getConnection();
+
             try {
-                $resource->getConnection();
+                $adapter->getConnection();
             } catch (Exception $e) {
                 $this->markTestSkipped('Could not connect to provider: '. $e->getMessage());
             }
 
-            $tables = $resource->listTables();
+            $tables = $adapter->listTables();
             foreach ($tables as $table) {
-                $resource->exec('DROP TABLE ' . $table . ';');
+                $adapter->exec('DROP TABLE ' . $table . ';');
             }
         }
 
@@ -339,59 +323,8 @@ namespace Icinga\Test {
             );
             return $form;
         }
-
-        /**
-         * Require all libraries to instantiate forms
-         */
-        public static function requireFormLibraries()
-        {
-            require_once 'Zend/Form/Decorator/Abstract.php';
-            require_once 'Zend/Validate/Abstract.php';
-            require_once 'Zend/Form/Element/Xhtml.php';
-            require_once 'Zend/Form/Element/Text.php';
-            require_once 'Zend/Form/Element/Submit.php';
-            require_once 'Zend/Form/Element/Checkbox.php';
-            require_once 'Zend/Form.php';
-            require_once 'Zend/View.php';
-
-            require_once self::$libDir . '/Web/Form/InvalidCSRFTokenException.php';
-
-            require_once self::$libDir . '/Web/Form/Element/DateTimePicker.php';
-            require_once self::$libDir . '/Web/Form/Element/Note.php';
-            require_once self::$libDir . '/Web/Form/Element/Number.php';
-
-            require_once self::$libDir . '/Web/Form/Decorator/ConditionalHidden.php';
-            require_once self::$libDir . '/Web/Form/Decorator/HelpText.php';
-            require_once self::$libDir . '/Web/Form/Decorator/BootstrapForm.php';
-
-            require_once self::$libDir . '/Web/Form/Validator/DateFormatValidator.php';
-            require_once self::$libDir . '/Web/Form/Validator/TimeFormatValidator.php';
-            require_once self::$libDir . '/Web/Form/Validator/WritablePathValidator.php';
-
-            require_once self::$libDir . '/Web/Form.php';
-
-            require_once self::$libDir . '/User/Preferences.php';
-        }
-
-        /**
-         * Require all classes for database adapter creation
-         */
-        public static function requireDbLibraries()
-        {
-            require_once 'Zend/Config.php';
-            require_once 'Zend/Db.php';
-            require_once 'Zend/Log.php';
-
-            require_once self::$libDir . '/Exception/ConfigurationError.php';
-            require_once self::$libDir . '/Util/ConfigAwareFactory.php';
-            require_once self::$libDir . '/Data/DatasourceInterface.php';
-            require_once self::$libDir . '/Data/ResourceFactory.php';
-            require_once self::$libDir . '/Data/Db/Connection.php';
-            require_once self::$libDir . '/Application/Logger.php';
-        }
     }
 
+    BaseTestCase::setupTimezone();
     BaseTestCase::setupDirectories();
-    BaseTestCase::requireFormLibraries();
-    BaseTestcase::requireDbLibraries();
 }

@@ -1,66 +1,31 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Tests\Icinga;
 
-require_once __DIR__ . '/../../../../library/Icinga/User.php';
-require_once __DIR__ . '/../../../../library/Icinga/User/Preferences.php';
-
 use \DateTimeZone;
-use Icinga\User as IcingaUser;
-use Icinga\User\Preferences as UserPreferences;
+use Icinga\User;
+use Icinga\User\Preferences;
+use Icinga\Test\BaseTestCase;
 
-class UserTest extends \PHPUnit_Framework_TestCase
+class UserTest extends BaseTestCase
 {
-
-    public function testListGroups()
-    {
-        $this->markTestIncomplete('testListGroups is not implemented yet');
-    }
-
-    public function testIsMemberOf()
-    {
-        $this->markTestIncomplete('testIsMemberOf is not implemented yet');
-    }
-
-    public function testGetPermissionList()
-    {
-        $this->markTestIncomplete('testGetPermissionList is not implemented yet');
-    }
-
-    public function testHasPermission()
-    {
-        $this->markTestIncomplete('testHasPermission is not implemented yet');
-    }
-
-    public function testGrantPermission()
-    {
-        $this->markTestIncomplete('testGrantPermission is not implemented yet');
-    }
-
-    public function testRevokePermission()
-    {
-        $this->markTestIncomplete('testRevokePermission is not implemented yet');
-    }
-
     public function testGetDefaultTimezoneIfTimezoneNotSet()
     {
-        $defaultTz = 'UTC';
-        date_default_timezone_set($defaultTz);
-        $user = new IcingaUser('unittest');
-        $prefs = new UserPreferences(array());
+        $user = new User('unittest');
+        $prefs = new Preferences(array());
         $user->setPreferences($prefs);
-        $this->assertEquals($user->getTimeZone(), new DateTimeZone($defaultTz),
+        $this->assertEquals($user->getTimeZone(), new DateTimeZone(date_default_timezone_get()),
             'User\'s timezone does not match the default timezone'
         );
     }
 
     public function testGetTimezoneIfTimezoneSet()
     {
-        $defaultTz = 'UTC';
         $explicitTz = 'Europe/Berlin';
-        date_default_timezone_set($defaultTz);
-        $user = new IcingaUser('unittest');
-        $prefs = new UserPreferences(array(
+        $user = new User('unittest');
+        $prefs = new Preferences(array(
             'timezone' => $explicitTz
         ));
         $user->setPreferences($prefs);

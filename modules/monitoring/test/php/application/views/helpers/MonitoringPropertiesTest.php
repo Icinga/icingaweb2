@@ -1,15 +1,17 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Test\Modules\Monitoring\Application\Views\Helpers;
 
-require_once 'Zend/View/Helper/Abstract.php';
-require_once 'Zend/View.php';
-require_once __DIR__. '/../../../../../application/views/helpers/MonitoringProperties.php';
+use \Zend_View_Helper_MonitoringProperties;
+use Icinga\Test\BaseTestCase;
 
-/**
-  * @TODO(el): This test is subject to bug #4679 and
-  */
-class HostStruct4Properties extends \stdClass
+// @codingStandardsIgnoreStart
+require_once realpath(BaseTestCase::$moduleDir . '/monitoring/application/views/helpers/MonitoringProperties.php');
+// @codingStandardsIgnoreEnd
+
+class HostStruct4Properties
 {
     public $host_name = 'localhost';
     public $host_address = '127.0.0.1';
@@ -62,14 +64,17 @@ class HostStruct4Properties extends \stdClass
     public $host_status_update_time = '2013-07-08 10:10:10';
 }
 
-class MonitoringPropertiesTest extends \PHPUnit_Framework_TestCase
+/**
+ * @TODO(el): This test is subject to bug #4679
+ */
+class MonitoringPropertiesTest extends BaseTestCase
 {
     public function testOutput1()
     {
         $host = new HostStruct4Properties();
         $host->current_check_attempt = '5';
 
-        $propertyHelper = new \Zend_View_Helper_MonitoringProperties();
+        $propertyHelper = new Zend_View_Helper_MonitoringProperties();
         $items = $propertyHelper->monitoringProperties($host);
 
         $this->assertEquals('5/10 (HARD state)', $items['Current Attempt']);
@@ -77,14 +82,13 @@ class MonitoringPropertiesTest extends \PHPUnit_Framework_TestCase
 
     public function testOutput2()
     {
-        date_default_timezone_set("UTC");
         $host = new HostStruct4Properties();
         $host->current_check_attempt = '5';
         $host->active_checks_enabled = '1';
         $host->passive_checks_enabled = '0';
         $host->is_flapping = '1';
 
-        $propertyHelper = new \Zend_View_Helper_MonitoringProperties();
+        $propertyHelper = new Zend_View_Helper_MonitoringProperties();
         $items = $propertyHelper->monitoringProperties($host);
 
         $test = array(

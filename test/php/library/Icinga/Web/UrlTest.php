@@ -1,50 +1,61 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Tests\Icinga\Web;
-require_once('../../library/Icinga/Web/Url.php');
-require_once('library/Icinga/Web/RequestMock.php');
 
+use \Mockery;
 use Icinga\Web\Url;
-use Tests\Icinga\Web\RequestMock;
+use Icinga\Test\BaseTestCase;
 
 /**
- *  Tests for the Icinga\Web\Url class that provides convenient access to Url manipulation method
- *
- *
+ * Tests for the Icinga\Web\Url class that provides convenient access to Url manipulation method
  */
-class UrlTest extends \PHPUnit_Framework_TestCase
+class UrlTest extends BaseTestCase
 {
-
     /**
      * Tests whether a simple Url without query parameters and baseUrl is correctly parsed and returns correct Urls
-     *
      */
     function testFromStringWithoutQuery()
     {
-        $url = Url::fromPath('http://myHost/my/test/url.html', array(), new RequestMock());
-        $this->assertEquals('/my/test/url.html', $url->getPath(), 'Assert the parsed url path to be equal to the input path');
-        $this->assertEquals($url->getPath(), '/'.$url->getRelativeUrl(), 'Assert the path of an url without query to be equal the relative path');
+        $url = Url::fromPath('http://myHost/my/test/url.html');
+        $this->assertEquals(
+            '/my/test/url.html',
+            $url->getPath(),
+            'Assert the parsed url path to be equal to the input path'
+        );
+        $this->assertEquals(
+            $url->getPath(),
+            '/' . $url->getRelativeUrl(),
+            'Assert the path of an url without query to be equal the relative path'
+        );
     }
 
     /**
      * Tests whether a simple Url without query parameters and with baseUrl is correctly parsed and returns correct Urls
-     *
      */
     function testFromUrlWithBasePath()
     {
-        $url = Url::fromPath('my/test/url.html', array(), new RequestMock());
+        $url = Url::fromPath('my/test/url.html');
         $url->setBaseUrl('the/path/to');
-        $this->assertEquals('/the/path/to/my/test/url.html', $url->getAbsoluteUrl(), 'Assert the url path to be the base path with the relative path');
+        $this->assertEquals(
+            '/the/path/to/my/test/url.html',
+            $url->getAbsoluteUrl(),
+            'Assert the url path to be the base path with the relative path'
+        );
     }
 
     /**
      *  Tests whether query parameters in Urls are correctly recognized and decoded
-     *
      */
     function testFromUrlWithKeyValueQuery()
     {
-        $url = Url::fromPath('/my/test/url.html?param1=%25arg1&param2=arg2', array(), new RequestMock());
-        $this->assertEquals('/my/test/url.html', $url->getPath(), 'Assert the parsed url path to be equal to the input path');
+        $url = Url::fromPath('/my/test/url.html?param1=%25arg1&param2=arg2');
+        $this->assertEquals(
+            '/my/test/url.html',
+            $url->getPath(),
+            'Assert the parsed url path to be equal to the input path'
+        );
         $this->assertEquals(
             array(
                 'param1' => '%arg1',
@@ -57,11 +68,10 @@ class UrlTest extends \PHPUnit_Framework_TestCase
 
     /**
      *  Tests whether unnamed query parameters in Urls are correctly recognized and decoded
-     *
      */
     function testFromUrlWithArrayInQuery()
     {
-        $url = Url::fromPath('/my/test/url.html?param[]=%25val1&param[]=%40val2', array(), new RequestMock());
+        $url = Url::fromPath('/my/test/url.html?param[]=%25val1&param[]=%40val2');
         $this->assertEquals(
             array(
                 'param' => array('%val1', '@val2')
@@ -73,11 +83,10 @@ class UrlTest extends \PHPUnit_Framework_TestCase
 
     /**
      *  Tests whether named query parameters in Urls are correctly recognized and decoded
-     *
      */
     function testFromUrlWithAssociativeArrayInQuery()
     {
-        $url = Url::fromPath('/my/test/url.html?param[value]=%25val1&param[value2]=%40val2', array(), new RequestMock());
+        $url = Url::fromPath('/my/test/url.html?param[value]=%25val1&param[value2]=%40val2');
         $this->assertEquals(
             array(
                 'param' => array(
@@ -92,7 +101,6 @@ class UrlTest extends \PHPUnit_Framework_TestCase
 
     /**
      *  Tests whether simple query parameters can be correctly added on an existing query and ends up in correct Urls
-     *
      */
     function testAddQueryParameterToUrlWithoutQuery()
     {
@@ -101,21 +109,19 @@ class UrlTest extends \PHPUnit_Framework_TestCase
             array(
                 'param1' => 'val1',
                 'param2' => 'val2'
-            ),
-            new RequestMock()
+            )
         );
         $url->setBaseUrl('path/to');
         $this->assertEquals(
-            '/path/to/my/test/url.html?param1=val1&param2=val2',
+            '/path/to/my/test/url.html?param1=val1&amp;param2=val2',
             $url->getAbsoluteUrl(),
             'Assert additional parameters to be correctly added to the Url'
         );
     }
 
     /**
-     * Test whether parameters are correctly added to existing query parameters and existing ones are correctly overwritten
-     * if they have the same key
-     *
+     * Test whether parameters are correctly added to existing query parameters
+     * and existing ones are correctly overwritten if they have the same key
      */
     function testOverwritePartialQuery()
     {
@@ -124,12 +130,11 @@ class UrlTest extends \PHPUnit_Framework_TestCase
             array(
                 'param1' => 'val1',
                 'param2' => 'val2'
-            ),
-            new RequestMock()
+            )
         );
         $url->setBaseUrl('path/to');
         $this->assertEquals(
-            '/path/to/my/test/url.html?param1=val1&param2=val2',
+            '/path/to/my/test/url.html?param1=val1&amp;param2=val2',
             $url->getAbsoluteUrl(),
             'Assert additional parameters to be correctly added to the Url and overwriting existing parameters'
         );
@@ -137,7 +142,6 @@ class UrlTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test whether array parameters are correctly added to an existing Url and end up in correct Urls
-     *
      */
     function testSetQueryWithArrayParameter()
     {
@@ -146,14 +150,13 @@ class UrlTest extends \PHPUnit_Framework_TestCase
             array(
                 'flatarray' => array('val1', 'val2'),
                 'param' => array('value1'=>'val1', 'value2' => 'val2')
-            ),
-            new RequestMock()
+            )
         );
         $url->setBaseUrl('path/to');
         $this->assertEquals(
-            '/path/to/my/test/url.html?flatarray'.urlencode('[0]').'=val1&'.
-                'flatarray'.urlencode('[1]').'=val2&'.
-                'param'.urlencode('[value1]').'=val1&'.
+            '/path/to/my/test/url.html?flatarray'.urlencode('[0]').'=val1&amp;'.
+                'flatarray'.urlencode('[1]').'=val2&amp;'.
+                'param'.urlencode('[value1]').'=val1&amp;'.
                 'param'.urlencode('[value2]').'=val2',
             $url->getAbsoluteUrl(),
             'Assert array parameters to be correctly encoded and added to the Url'
@@ -162,14 +165,14 @@ class UrlTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test whether Urls from the request are correctly parsed when no query is given
-     *
      */
     function testUrlFromRequestWithoutQuery()
     {
-        $request = new RequestMock();
-        $request->baseUrl = 'path/to';
-        $request->path = 'my/test/url.html';
-        $request->query = array();
+        $request = Mockery::mock('RequestWithoutQuery');
+        $request->shouldReceive('getPathInfo')->andReturn('my/test/url.html')
+            ->shouldReceive('getBaseUrl')->andReturn('path/to')
+            ->shouldReceive('getQuery')->andReturn(array());
+
         $url = Url::fromRequest(array(), $request);
         $this->assertEquals(
             '/path/to/my/test/url.html',
@@ -180,21 +183,22 @@ class UrlTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test whether Urls from the request are correctly parsed when a query is given
-     *
      */
     function testUrlFromRequestWithQuery()
     {
-        $request = new RequestMock();
-        $request->baseUrl = 'path/to';
-        $request->path = 'my/test/url.html';
-        $request->query = array(
-            'param1' => 'value1',
-            'param2' => array('key1' => 'value1', 'key2' => 'value2')
+        $request = Mockery::mock('RequestWithoutQuery');
+        $request->shouldReceive('getPathInfo')->andReturn('my/test/url.html')
+            ->shouldReceive('getBaseUrl')->andReturn('path/to')
+            ->shouldReceive('getQuery')->andReturn(array(
+                'param1' => 'value1',
+                'param2' => array('key1' => 'value1', 'key2' => 'value2')
+            )
         );
+
         $url = Url::fromRequest(array(), $request);
         $this->assertEquals(
-            '/path/to/my/test/url.html?param1=value1&'.
-                'param2'.urlencode('[key1]').'=value1&'.
+            '/path/to/my/test/url.html?param1=value1&amp;'.
+                'param2'.urlencode('[key1]').'=value1&amp;'.
                 'param2'.urlencode('[key2]').'=value2',
             $url->getAbsoluteUrl(),
             'Asserting absolute path resembling the requests path appended by the baseUrl'
@@ -203,11 +207,10 @@ class UrlTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test the @see Url::getParam($name, $default) function
-     *
      */
     function testGetParameterByName()
     {
-        $url = Url::fromPath('/my/test/url.html?param=val&param2=val2', array(), new RequestMock());
+        $url = Url::fromPath('/my/test/url.html?param=val&param2=val2');
         $this->assertEquals(
             "val",
             $url->getParam("param", "wrongval"),
@@ -227,11 +230,10 @@ class UrlTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test the Url::remove function with a single key passed
-     *
      */
     function testRemoveSingleParameter()
     {
-        $url = Url::fromPath('/my/test/url.html?param=val&param2=val2', array(), new RequestMock());
+        $url = Url::fromPath('/my/test/url.html?param=val&param2=val2');
         $url->remove("param");
         $this->assertEquals(
             "val2",
@@ -247,11 +249,10 @@ class UrlTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test the Url::remove function with an array of keys passed
-     *
      */
     function testRemoveMultipleParameters()
     {
-        $url = Url::fromPath('/my/test/url.html?param=val&param2=val2&param3=val3', array(), new RequestMock());
+        $url = Url::fromPath('/my/test/url.html?param=val&param2=val2&param3=val3');
         $url->remove(array("param", "param2"));
         $this->assertEquals(
             "val3",
@@ -272,11 +273,10 @@ class UrlTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test the Url::without call and whether it returns a copy instead of working on the called object
-     *
      */
     function testWithoutCall()
     {
-        $url = Url::fromPath('/my/test/url.html?param=val&param2=val2&param3=val3', array(), new RequestMock());
+        $url = Url::fromPath('/my/test/url.html?param=val&param2=val2&param3=val3');
         $url2 = $url->getUrlWithout(array("param"));
         $this->assertNotEquals(
             $url,
@@ -295,7 +295,7 @@ class UrlTest extends \PHPUnit_Framework_TestCase
 
     function testAddParamAfterCreation()
     {
-        $url = Url::fromPath('/my/test/url.html?param=val&param2=val2&param3=val3', array(), new RequestMock());
+        $url = Url::fromPath('/my/test/url.html?param=val&param2=val2&param3=val3');
         $url->addParams(array(
             "param4" => "val4",
             "param3" => "newval3"
@@ -314,11 +314,14 @@ class UrlTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test whether toString is the same as getAbsoluteUrl
-     *
      */
     function testToString()
     {
-        $url = Url::fromPath('/my/test/url.html?param=val&param2=val2&param3=val3', array(), new RequestMock());
-        $this->assertEquals($url->getAbsoluteUrl(), (string) $url, "Asserting whether toString returns the absolute Url");
+        $url = Url::fromPath('/my/test/url.html?param=val&param2=val2&param3=val3');
+        $this->assertEquals(
+            $url->getAbsoluteUrl(),
+            (string) $url,
+            "Asserting whether toString returns the absolute Url"
+        );
     }
 }

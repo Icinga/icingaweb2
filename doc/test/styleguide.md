@@ -18,11 +18,8 @@ This list summarizes what will be described in the next few chapters:
 - Your assertions should reflect one test scenario, i.e. don't write one test method that tests if something works **and**
   if it correctly detects errors after it works. Write one test to determine the behaviour with correct input and one that
   tests the behaviour with invalid input.
-- When writing unit-tests (like function level tests), try to keep your dependencies as low as possible (best indicator herefor
-  is the number of require calls in your test). Mock external components and inject them into the class you want to test. If
-  your testsubject is not able to use mocked dependencies, it's often a design flaw and should be considered as a bug
-  (and be fixed)
-- When writing component tests with a lot of dependencies, wrap the require calls in a LibraryLoader subclass
+- Mock external components and inject them into the class you want to test. If your testsubject is not able to use mocked
+  dependencies, it's often a design flaw and should be considered as a bug (and be fixed)
 
 
 ## What should be tested
@@ -163,12 +160,6 @@ need much dependency handling. An example for a unittest would be to test the fo
 
 A unit test for this user could, but should not look like this (we'll explain why):
 
-    require_once "../../library/Icinga/MyLibrary/UserManager.php";
-    // needed by UserManager
-    require_once "../../library/Icinga/Authentication/Manager.php"
-    require_once "../../library/Icinga/Authentication/User.php"
-    // .. imagine a few more require_once
-
     use Icinga/MyLibrary/UserManager
 
     class UserManagerTest extends \PHPUnit_Framework_TestCase
@@ -196,7 +187,7 @@ A unit test for this user could, but should not look like this (we'll explain wh
             $this->assertTrue($mgr->isCorrectPassword("hans", "validpasswor"));
     }
 
-This test has obviously a few issues:
+This test has a few issues:
 
 - First, it assert a precondition to apply : A database must exist with the users jdoe and jsmith and the credentials
   must match the ones provided in the test
@@ -238,7 +229,6 @@ It would of course be best to create an Interface like UserSource which the Auth
 we trust our Programmer to provide a suitable object. We now can eliminate all the AuthManager dependencies by mocking the
 AuthManager (lets dumb it down to just providing an array of users):
 
-    require_once "../../library/Icinga/MyLibrary/UserManager.php";
     use Icinga/MyLibrary/UserManager
 
     class AuthManagerMock
@@ -286,7 +276,6 @@ AuthManager (lets dumb it down to just providing an array of users):
 Ok, we might have more code here than before, but our test is now less like prone to fail:
 
 - Our test doesn't assume any preconditions to apply, like having a db server with correct users
-- The require call to the AuthManager is gone, so if there's a bug in the AuthManager implementation our test is not affected
 
 
 
@@ -368,84 +357,3 @@ Also, the assertions should get an error message that will be printed on failure
 
 Now if something fails, we now see what has been tested via the testmethod and what caused the test to fail in the
 assertion error message. You could also leave the comments and everybody knows what you are doing.
-
-## Testing PHP
-
-
-## Requirements and the dependency mess
-
-### spl_autoload_register vs. require
-
-When looking at our test classes, you'll notice that we don't use PHPs autoloader to automatically load dependency, but
-write 'require_once' by ourselfs. This has the following reasons:
-
--   When writing tests, you to be aware of every dependency your testclass includes. With autoloading, it's not directly
-    obvious which classes are included during runtime.
--   When mocking classes, you don't need to tell your autoloader to use this class instead of the one used in production
--   Tests can't be run isolated without an boostrap class initializing the autoloader
-
-### How to avoid require_once massacres: LibraryLoader
-
-The downside of this approach is obvious: Especially when writing compoment tests you end up writing a lot of 'require'
-classes. In the worst case, the PHP require_once method doesn't recognize a path to be already included and ends up
-with an 'Cannot redeclare class XY' issue.
-
-To avoid this, you should implement a LibraryLoader class for your component that handles the require_once calls.
-For example, the status.dat component tests has a TestLoader class that includes all dependencies of the component:
-
-
-    namespace Tests\Icinga\Protocol\Statusdat;
-    use Test\Icinga\LibraryLoader;
-
-    require_once('library/Icinga/LibraryLoader.php');
-
-    /**
-    *   Load all required libraries to use the statusdat
-    *   component in integration tests
-    *
-    **/
-    class StatusdatTestLoader extends LibraryLoader
-    {
-        /**
-        *   @see LibraryLoader::requireLibrary
-        *
-        **/
-        public static function requireLibrary()
-        {
-            // include Zend requirements
-            require_once 'Zend/Config.php';
-            require_once 'Zend/Cache.php';
-            require_once 'Zend/Log.php';
-
-            // retrieve the path to the icinga library
-            $libPath = self::getLibraryPath();
-
-            // require library dependencies
-            require_once($libPath."/Data/AbstractQuery.php");
-            require_once($libPath."/Application/Logger.php");
-            require_once($libPath."/Data/DatasourceInterface.php");
-
-            // shorthand for the folder where the statusdat component can be found
-            $statusdat = realpath($libPath."/Protocol/Statusdat/");
-            require_once($statusdat."/View/AccessorStrategy.php");
-            // ... a few more requires ...
-            require_once($statusdat."/Query/Group.php");
-        }
-    }
-
-Now an component test (like tests/php/library/Icinga/Protocol/Statusdat/ReaderTest.php) can avoid the require calls and
-just use the requireLibrary method:
-
-    use Icinga\Protocol\Statusdat\Reader as Reader;
-
-    // Load library at once
-    require_once("StatusdatTestLoader.php");
-    StatusdatTestLoader::requireLibrary();
-
-**Note**: This should be used for component tests, where you want to test the combination of your classes. When testing
-  a single execution unit, like a method, it's often better to explicitly write your dependencies.
-
-If you compare the first approach with the last one you will notice that, even if we produced more code in the end, our
-test is more verbose in what it is doing. When someone is updating your test, he should easily see what tests are existing
-and what scenarios are missing.
-
