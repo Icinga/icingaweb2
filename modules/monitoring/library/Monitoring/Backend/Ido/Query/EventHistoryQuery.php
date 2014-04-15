@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
-use \Zend_Db_Select;
+use Zend_Db_Select;
 
 class EventHistoryQuery extends IdoQuery
 {
@@ -50,7 +50,6 @@ class EventHistoryQuery extends IdoQuery
             'attempt',
             'max_attempts',
         );
-
         $this->subQueries = array(
             $this->createSubQuery('Statehistory', $columns),
             $this->createSubQuery('Downtimestarthistory', $columns),
@@ -60,14 +59,13 @@ class EventHistoryQuery extends IdoQuery
         );
 
         $sub = $this->db->select()->union($this->subQueries, Zend_Db_Select::SQL_UNION_ALL);
-        $this->baseQuery = $this->db->select()->from(
+
+        $this->select->from(
             array('eho' => $this->prefix . 'objects'),
             array()
         )->join(
             array('eh' => $sub),
-            'eho.' . $this->object_id
-            . ' = eh.' . $this->object_id
-            . ' AND eho.is_active = 1',
+            'eho.' . $this->object_id . ' = eh.' . $this->object_id . ' AND eho.is_active = 1',
             array()
         );
         $this->joinedVirtualTables = array('eventhistory' => true);
@@ -75,21 +73,19 @@ class EventHistoryQuery extends IdoQuery
 
     protected function joinHostgroups()
     {
-        $this->baseQuery->join(
+        $this->select->join(
             array('hgm' => $this->prefix . 'hostgroup_members'),
             'hgm.host_object_id = eho.object_id',
             array()
         )->join(
             array('hg' => $this->prefix . 'hostgroups'),
-            "hgm.hostgroup_id = hg.$this->hostgroup_id",
+            'hgm.hostgroup_id = hg.' . $this->hostgroup_id,
             array()
         )->join(
             array('hgo' => $this->prefix . 'objects'),
-            'hgo.' . $this->object_id. ' = hg.hostgroup_object_id'
-          . ' AND hgo.is_active = 1',
+            'hgo.' . $this->object_id. ' = hg.hostgroup_object_id' . ' AND hgo.is_active = 1',
             array()
         );
-
         return $this;
     }
 
