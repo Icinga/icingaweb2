@@ -35,6 +35,7 @@ use Zend_Db_Select;
 class GroupSummaryQuery extends IdoQuery
 {
     protected $useSubqueryCount = true;
+
     protected $columnMap = array(
         'hoststatussummary'     => array(
             'hosts_up'                      => 'SUM(CASE WHEN object_type = \'host\' AND state = 0 THEN 1 ELSE 0 END)',
@@ -93,7 +94,7 @@ class GroupSummaryQuery extends IdoQuery
             )
         );
         $union = $this->db->select()->union(array($hosts, $services), Zend_Db_Select::SQL_UNION_ALL);
-        $this->baseQuery = $this->db->select()->from(array('statussummary' => $union), array())->group($columns[0]);
+        $this->select->from(array('statussummary' => $union), array())->group($columns[0]);
         $this->joinedVirtualTables = array(
             'servicestatussummary'  => true,
             'hoststatussummary'     => true
