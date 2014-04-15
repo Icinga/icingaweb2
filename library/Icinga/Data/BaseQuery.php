@@ -2,391 +2,54 @@
 
 namespace Icinga\Data;
 
-use Icinga\Logger\Logger;
-use Icinga\Exception;
-use Icinga\Filter\Filterable;
-use Icinga\Filter\Query\Node;
-use Icinga\Filter\Query\Tree;
+use Countable;
+use Zend_Controller_Front;
 use Zend_Paginator;
 use Icinga\Web\Paginator\Adapter\QueryAdapter;
 
-abstract class BaseQuery implements Filterable
+abstract class BaseQuery implements Browsable, Fetchable, Filterable, Limitable, Queryable, Sortable, Countable
 {
-    /**
-     * Sort ascending
-     */
-    const SORT_ASC = 1;
-
-    /**
-     * Sort descending
-     */
-    const SORT_DESC = -1;
-
     /**
      * Query data source
      *
-     * @var DatasourceInterface
+     * @var mixed
      */
     protected $ds;
 
     /**
-     * The target of this query
-     * @var string
-     */
-    protected $table;
-
-    /**
-     * The columns of the target that should be returned
-     * @var array
-     */
-    private $columns;
-
-    /**
      * The columns you're using to sort the query result
+     *
      * @var array
      */
-    private $orderColumns = array();
+    protected $order = array();
 
     /**
-     * Return not more than that many rows
+     * Number of rows to return
+     *
      * @var int
      */
-    private $limitCount;
+    protected $limitCount;
 
     /**
      * Result starts with this row
+     *
      * @var int
      */
-    private $limitOffset;
-
-    /**
-     * Whether its a distinct query or not
-     *
-     * @var bool
-     */
-    private $distinct = false;
-
-    /**
-     * The backend independent filter to use for this query
-     *
-     * @var Tree
-     */
-    private $filter;
+    protected $limitOffset;
 
     /**
      * Constructor
      *
-     * @param DatasourceInterface $ds Your data source
+     * @param mixed $ds
      */
-    public function __construct(DatasourceInterface $ds, array $columns = null)
+    public function __construct($ds)
     {
         $this->ds = $ds;
-        $this->columns = $columns;
-        $this->clearFilter();
         $this->init();
-
-    }
-
-    public function getDatasource()
-    {
-        return $this->ds;
-    }
-
-
-    public function setColumns(array $columns)
-    {
-        $this->columns = $columns;
     }
 
     /**
-     * Define the target and attributes for this query
-     *
-     * The Query will return the default attribute the attributes parameter is omitted
-     *
-     * @param String $target    The target of this query (tablename, objectname, depends on the concrete implementation)
-     * @param array $columns   An optional array of columns to select, if none are given the default
-     *                          columnset is returned
-     *
-     * @return self             Fluent interface
-     */
-    public function from($target, array $attributes = null)
-    {
-        $this->table = $target;
-        if ($attributes !== null) {
-            $this->columns = $attributes;
-        }
-        return $this;
-    }
-
-    /**
-     * Add a filter expression to be applied on this query.
-     *
-     * This is an alias to andWhere()
-     * The syntax of the expression and valid parameters are to be defined by the concrete
-     * backend-specific query implementation.
-     *
-     * @param string $expression    Implementation specific search expression
-     * @param mixed $parameters    Implementation specific search value to use for query placeholders
-     *
-     * @return self                 Fluent Interface
-     * @see BaseQuery::andWhere()   This is an alias to andWhere()
-     */
-    public function where($expression, $parameters = null)
-    {
-        return $this->andWhere($expression, $parameters);
-    }
-
-    /**
-     * Add an mandatory filter expression to be applied on this query
-     *
-     * The syntax of the expression and valid parameters are to be defined by the concrete
-     * backend-specific query implementation.
-     *
-     * @param string $expression    Implementation specific search expression
-     * @param mixed $parameters    Implementation specific search value to use for query placeholders
-     * @return self                 Fluent interface
-     */
-    public function andWhere($expression, $parameters = null)
-    {
-        $node = $this->parseFilterExpression($expression, $parameters);
-        if ($node === null) {
-            Logger::debug('Ignoring invalid filter expression: %s (params: %s)', $expression, $parameters);
-            return $this;
-        }
-        $this->filter->insert(Node::createAndNode());
-        $this->filter->insert($node);
-        return $this;
-    }
-
-    /**
-     * Add an lower priority filter expression to be applied on this query
-     *
-     * The syntax of the expression and valid parameters are to be defined by the concrete
-     * backend-specific query implementation.
-     *
-     * @param string $expression    Implementation specific search expression
-     * @param mixed $parameters    Implementation specific search value to use for query placeholders
-     * @return self                 Fluent interface
-     */
-    public function orWhere($expression, $parameters = null)
-    {
-        $node = $this->parseFilterExpression($expression, $parameters);
-        if ($node === null) {
-            Logger::debug('Ignoring invalid filter expression: %s (params: %s)', $expression, $parameters);
-            return $this;
-        }
-        $this->filter->insert(Node::createOrNode());
-        $this->filter->insert($node);
-        return $this;
-    }
-
-    /**
-     * Determine whether the given field is a valid filter target
-     *
-     * The base implementation always returns true, overwrite it in concrete backend-specific
-     * implementations
-     *
-     * @param   String $field       The field to test for being filterable
-     * @return  bool                True if the field can be filtered, otherwise false
-     */
-    public function isValidFilterTarget($field)
-    {
-        return true;
-    }
-
-    /**
-     * Return the internally used field name for the given alias
-     *
-     * The base implementation just returns the given field, overwrite it in concrete backend-specific
-     * implementations
-     *
-     * @param   String $field       The field to test for being filterable
-     * @return  bool                True if the field can be filtered, otherwise false
-     */
-    public function getMappedField($field)
-    {
-        return $field;
-    }
-
-    /**
-     * Add a filter to this query
-     *
-     * This is the implementation for the Filterable, use where instead
-     *
-     * @param $filter
-     */
-    public function addFilter($filter)
-    {
-        if (is_string($filter)) {
-            $this->addFilter(call_user_func_array(array($this, 'parseFilterExpression'), func_get_args()));
-        } elseif ($filter instanceof Node) {
-            $this->filter->insert($filter);
-        }
-    }
-
-    public function setFilter(Tree $filter)
-    {
-        $this->filter = $filter;
-    }
-
-    /**
-     * Return all default columns
-     *
-     * @return array    An array of default columns to use when none are selected
-     */
-    public function getDefaultColumns()
-    {
-        return array();
-    }
-
-
-    /**
-     * Sort query result by the given column name
-     *
-     * Sort direction can be ascending (self::SORT_ASC, being the default)
-     * or descending (self::SORT_DESC).
-     *
-     * Preferred usage:
-     * <code>
-     * $query->sort('column_name ASC')
-     * </code>
-     *
-     * @param  string $columnOrAlias Column, may contain direction separated by space
-     * @param  int $dir Sort direction
-     *
-     * @return BaseQuery
-     */
-    public function order($columnOrAlias, $dir = null)
-    {
-        if ($dir === null) {
-            $colDirPair = explode(' ', $columnOrAlias, 2);
-            if (count($colDirPair) === 1) {
-                $dir = $this->getDefaultSortDir($columnOrAlias);
-            } else {
-                $dir = $colDirPair[1];
-                $columnOrAlias = $colDirPair[0];
-            }
-        }
-
-        $dir = (strtoupper(trim($dir)) === 'DESC') ? self::SORT_DESC : self::SORT_ASC;
-
-        $this->orderColumns[] = array($columnOrAlias, $dir);
-        return $this;
-    }
-
-    /**
-     * Set the columns used for ordering
-     *
-     * @param   array   $orderColumns
-     */
-    public function setOrderColumns(array $orderColumns)
-    {
-        $this->orderColumns = $orderColumns;
-    }
-
-    /**
-     * Determine the default sort direction constant for the given column
-     *
-     * @param  String $col      The column to get the sort direction for
-     * @return int              Either SORT_ASC or SORT_DESC
-     */
-    protected function getDefaultSortDir($col)
-    {
-        return self::SORT_ASC;
-    }
-
-    /**
-     * Limit the result set
-     *
-     * @param int $count    The numeric maximum limit to apply on the query result
-     * @param int $offset   The offset to use for the result set
-     *
-     * @return BaseQuery
-     */
-    public function limit($count = null, $offset = null)
-    {
-        $this->limitCount = $count !== null ? intval($count) : null;
-        $this->limitOffset = intval($offset);
-
-        return $this;
-    }
-
-    /**
-     * Return only distinct results
-     *
-     * @param   bool    $distinct   Whether the query should be distinct or not
-     *
-     * @return  BaseQuery
-     */
-    public function distinct($distinct = true)
-    {
-        $this->distinct = $distinct;
-
-        return $this;
-    }
-
-    /**
-     * Determine whether this query returns only distinct results
-     *
-     * @return  bool    True in case its a distinct query otherwise false
-     */
-    public function isDistinct()
-    {
-        return $this->distinct;
-    }
-
-    /**
-     * Determine whether this query will be ordered explicitly
-     *
-     * @return bool     True when an order column has been set
-     */
-    public function hasOrder()
-    {
-        return !empty($this->orderColumns);
-    }
-
-    /**
-     * Determine whether this query will be limited explicitly
-     *
-     * @return bool     True when an limit count has been set, otherwise false
-     */
-    public function hasLimit()
-    {
-        return $this->limitCount !== null;
-    }
-
-    /**
-     * Determine whether an offset is set or not
-     *
-     * @return bool     True when an offset > 0 is set
-     */
-    public function hasOffset()
-    {
-        return $this->limitOffset > 0;
-    }
-
-    /**
-     * Get the query limit
-     *
-     * @return int      The query limit or null if none is set
-     */
-    public function getLimit()
-    {
-        return $this->limitCount;
-    }
-
-    /**
-     * Get the query starting offset
-     *
-     * @return int      The query offset or null if none is set
-     */
-    public function getOffset()
-    {
-        return $this->limitOffset;
-    }
-
-    /**
-     * Implementation specific initialization
+     * Initialize query
      *
      * Overwrite this instead of __construct (it's called at the end of the construct) to
      * implement custom initialization logic on construction time
@@ -396,103 +59,188 @@ abstract class BaseQuery implements Filterable
     }
 
     /**
-     * Return all columns set in this query or the default columns if none are set
+     * Get the data source
      *
-     * @return array    An array of columns
+     * @return mixed
      */
-    public function getColumns()
+    public function getDatasource()
     {
-        return ($this->columns !== null) ? $this->columns : $this->getDefaultColumns();
-    }
-
-
-    /**
-     * Return all columns used for ordering
-     *
-     * @return array
-     */
-    public function getOrderColumns()
-    {
-        return $this->orderColumns;
-    }
-
-    public function getFilter()
-    {
-        return $this->filter;
-    }
-
-    public function clearFilter()
-    {
-        $this->filter = new Tree();
+        return $this->ds;
     }
 
     /**
-     * Return a pagination adapter for this query
+     * Add a where condition to the query by and
      *
-     * @return \Zend_Paginator
+     * The syntax of the condition and valid values are defined by the concrete backend-specific query implementation.
+     *
+     * @param   string  $condition
+     * @param   mixed   $value
+     *
+     * @return  self
      */
-    public function paginate($limit = null, $page = null)
-    {
-        if ($page === null || $limit === null) {
-            $request = \Zend_Controller_Front::getInstance()->getRequest();
+    abstract public function where($condition, $value = null);
 
-            if ($page === null) {
-                $page = $request->getParam('page', 0);
+    /**
+     * Add a where condition to the query by or
+     *
+     * The syntax of the condition and valid values are defined by the concrete backend-specific query implementation.
+     *
+     * @param   string  $condition
+     * @param   mixed   $value
+     *
+     * @return  self
+     */
+    abstract public function orWhere($condition, $value = null);
+
+    public function setOrderColumns(array $orderColumns)
+    {
+        throw new \Exception('This function does nothing and will be removed');
+    }
+
+    /**
+     * Sort result set by the given field (and direction)
+     *
+     * Preferred usage:
+     * <code>
+     * $query->order('field, 'ASC')
+     * </code>
+     *
+     * @param  string   $field
+     * @param  int      $direction
+     *
+     * @return self
+     */
+    public function order($field, $direction = null)
+    {
+        if ($direction === null) {
+            $fieldAndDirection = explode(' ', $field, 2);
+            if (count($fieldAndDirection) === 1) {
+                $direction = self::SORT_ASC;
+            } else {
+                $field = $fieldAndDirection[0];
+                $direction = (strtoupper(trim($fieldAndDirection[1])) === 'DESC') ?
+                    Sortable::SORT_DESC : Sortable::SORT_ASC;
             }
-
-            if ($limit === null) {
-                $limit = $request->getParam('limit', 20);
+        } else {
+            switch (($direction = strtoupper($direction))) {
+                case Sortable::SORT_ASC:
+                case Sortable::SORT_DESC:
+                    break;
+                default:
+                    $direction = Sortable::SORT_ASC;
+                    break;
             }
         }
-        $this->limit($limit, $page * $limit);
+        $this->order[] = array($field, $direction);
+        return $this;
+    }
 
+    /**
+     * Whether an order is set
+     *
+     * @return bool
+     */
+    public function hasOrder()
+    {
+        return !empty($this->order);
+    }
+
+    /**
+     * Get the order if any
+     *
+     * @return array|null
+     */
+    public function getOrder()
+    {
+        return $this->order;
+    }
+
+    /**
+     * Set a limit count and offset to the query
+     *
+     * @param   int $count  Number of rows to return
+     * @param   int $offset Start returning after this many rows
+     *
+     * @return  self
+     */
+    public function limit($count = null, $offset = null)
+    {
+        $this->limitCount = $count !== null ? (int) $count : null;
+        $this->limitOffset = (int) $offset;
+        return $this;
+    }
+
+    /**
+     * Whether a limit is set
+     *
+     * @return bool
+     */
+    public function hasLimit()
+    {
+        return $this->limitCount !== null;
+    }
+
+    /**
+     * Get the limit if any
+     *
+     * @return int|null
+     */
+    public function getLimit()
+    {
+        return $this->limitCount;
+    }
+
+    /**
+     * Whether an offset is set
+     *
+     * @return bool
+     */
+    public function hasOffset()
+    {
+        return $this->limitOffset > 0;
+    }
+
+    /**
+     * Get the offset if any
+     *
+     * @return int|null
+     */
+    public function getOffset()
+    {
+        return $this->limitOffset;
+    }
+
+    /**
+     * Paginate data
+     *
+     * Auto-detects pagination parameters from request when unset
+     *
+     * @param   int $itemsPerPage   Number of items per page
+     * @param   int $pageNumber     Current page number
+     *
+     * @return  Zend_Paginator
+     */
+    public function paginate($itemsPerPage = null, $pageNumber = null)
+    {
+        if ($itemsPerPage === null || $pageNumber === null) {
+            // Detect parameters from request
+            $request = Zend_Controller_Front::getInstance()->getRequest();
+            if ($itemsPerPage === null) {
+                $itemsPerPage = $request->getParam('limit', 20);
+            }
+            if ($pageNumber === null) {
+                $pageNumber = $request->getParam('page', 0);
+            }
+        }
+        $this->limit($itemsPerPage, $pageNumber * $itemsPerPage);
         $paginator = new Zend_Paginator(new QueryAdapter($this));
-
-        $paginator->setItemCountPerPage($limit);
-        $paginator->setCurrentPageNumber($page);
-
+        $paginator->setItemCountPerPage($itemsPerPage);
+        $paginator->setCurrentPageNumber($pageNumber);
         return $paginator;
     }
 
-
     /**
-     * Parse a backend specific filter expression and return a Query\Node object
-     *
-     * @param $expression       The expression to parse
-     * @param $parameters       Optional parameters for the expression
-     *
-     * @return Node             A query node or null if it's an invalid expression
-     */
-    protected function parseFilterExpression($expression, $parameter = null)
-    {
-        $splitted = explode(' ', $expression, 3);
-        if (count($splitted) === 1 && $parameter) {
-            return Node::createOperatorNode(Node::OPERATOR_EQUALS, $splitted[0], $parameter);
-        } elseif (count($splitted) === 2 && $parameter) {
-            Node::createOperatorNode($splitted[0], $splitted[1], is_string($parameter));
-            return Node::createOperatorNode(Node::OPERATOR_EQUALS, $splitted[0], $parameter);
-        } elseif (count($splitted) === 3) {
-            if (trim($splitted[2]) === '?') {
-                return Node::createOperatorNode($splitted[1], $splitted[0], $parameter);
-            } else {
-                return Node::createOperatorNode($splitted[1], $splitted[0], $splitted[2]);
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Total result size regardless of limit and offset
-     *
-     * @return int
-     */
-    public function count()
-    {
-        return $this->ds->count($this);
-    }
-
-    /**
-     * Fetch result as an array of objects
+     * Retrieve an array containing all rows of the result set
      *
      * @return array
      */
@@ -502,9 +250,9 @@ abstract class BaseQuery implements Filterable
     }
 
     /**
-     * Fetch first result row
+     * Fetch the first row of the result set
      *
-     * @return object
+     * @return mixed
      */
     public function fetchRow()
     {
@@ -512,19 +260,21 @@ abstract class BaseQuery implements Filterable
     }
 
     /**
-     * Fetch first result column
+     * Fetch a column of all rows of the result set as an array
      *
-     * @return array
+     * @param   int $columnIndex Index of the column to fetch
+     *
+     * @return  array
      */
-    public function fetchColumn()
+    public function fetchColumn($columnIndex = 0)
     {
-        return $this->ds->fetchColumn($this);
+        return $this->ds->fetchColumn($this, $columnIndex);
     }
 
     /**
-     * Fetch first column value from first result row
+     * Fetch the first column of the first row of the result set
      *
-     * @return mixed
+     * @return string
      */
     public function fetchOne()
     {
@@ -532,7 +282,9 @@ abstract class BaseQuery implements Filterable
     }
 
     /**
-     * Fetch result as a key/value pair array
+     * Fetch all rows of the result set as an array of key-value pairs
+     *
+     * The first column is the key, the second column is the value.
      *
      * @return array
      */
@@ -540,4 +292,23 @@ abstract class BaseQuery implements Filterable
     {
         return $this->ds->fetchPairs($this);
     }
+
+    /**
+     * Count all rows of the result set
+     *
+     * @return int
+     */
+    public function count()
+    {
+        return $this->ds->count($this);
+    }
+
+    /**
+     * Set columns
+     *
+     * @param   array $columns
+     *
+     * @return  self
+     */
+    abstract public function columns(array $columns);
 }
