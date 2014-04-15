@@ -32,13 +32,15 @@ namespace Icinga\Data\Db;
 use PDO;
 use Zend_Config;
 use Zend_Db;
-use Icinga\Data\DatasourceInterface;
+use Icinga\Application\Benchmark;
+use Icinga\Data\BaseQuery;
+use Icinga\Data\Selectable;
 use Icinga\Exception\ConfigurationError;
 
 /**
  * Encapsulate database connections and query creation
  */
-class Connection implements DatasourceInterface
+class Connection implements Selectable
 {
     /**
      * Connection config
@@ -200,5 +202,71 @@ class Connection implements DatasourceInterface
     {
         $this->tablePrefix = $prefix;
         return $this;
+    }
+
+    /**
+     * Retrieve an array containing all rows of the result set
+     *
+     * @param   BaseQuery $query
+     *
+     * @return  array
+     */
+    public function fetchAll(BaseQuery $query)
+    {
+        Benchmark::measure('DB is fetching All');
+        $result = $this->dbAdapter->fetchAll($query->getSelectQuery());
+        Benchmark::measure('DB fetch done');
+        return $result;
+    }
+
+    /**
+     * Fetch the first row of the result set
+     *
+     * @param   BaseQuery $query
+     *
+     * @return  mixed
+     */
+    public function fetchRow(BaseQuery $query)
+    {
+        return $this->dbAdapter->fetchRow($query->getSelectQuery());
+    }
+
+    /**
+     * Fetch a column of all rows of the result set as an array
+     *
+     * @param   BaseQuery   $query
+     * @param   int         $columnIndex Index of the column to fetch
+     *
+     * @return  array
+     */
+    public function fetchColumn(BaseQuery $query, $columnIndex = 0)
+    {
+        return $this->dbAdapter->fetchCol($query->getSelectQuery());
+    }
+
+    /**
+     * Fetch the first column of the first row of the result set
+     *
+     * @param   BaseQuery $query
+     *
+     * @return  string
+     */
+    public function fetchOne(BaseQuery $query)
+    {
+        return $this->dbAdapter->fetchOne($query->getSelectQuery());
+    }
+
+    /**
+     * Fetch all rows of the result set as an array of key-value pairs
+     *
+     * The first column is the key, the second column is the value.
+     *
+     * @param   BaseQuery $query
+     *
+     * @return  array
+     */
+    public function fetchPairs(BaseQuery $query)
+    {
+        return $this->dbAdapter->fetchPairs($query->getSelectQuery());
     }
 }
