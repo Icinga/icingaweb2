@@ -54,8 +54,16 @@ class Connection implements DatasourceInterface
      */
     private $dbType;
 
-    private $conn;
+    /**
+     * @var Zend_Db_Adapter_Abstract
+     */
+    private $dbAdapter;
 
+    /**
+     * Table prefix
+     *
+     * @var string
+     */
     private $tablePrefix = '';
 
     private static $genericAdapterOptions = array(
@@ -81,7 +89,7 @@ class Connection implements DatasourceInterface
     }
 
     /**
-     * Prepare query object
+     * Provide a query on this connection
      *
      * @return Query
      */
@@ -101,13 +109,13 @@ class Connection implements DatasourceInterface
     }
 
     /**
-     * Getter for database object
+     * Getter for the Zend_Db_Adapter
      *
      * @return Zend_Db_Adapter_Abstract
      */
-    public function getDb()
+    public function getDbAdapter()
     {
-        return $this->db;
+        return $this->dbAdapter;
     }
 
     /**
@@ -157,21 +165,37 @@ class Connection implements DatasourceInterface
             default:
                 throw new ConfigurationError(sprintf('Backend "%s" is not supported', $this->dbType));
         }
-        $this->conn = Zend_Db::factory($adapter, $adapterParamaters);
-        $this->conn->setFetchMode(Zend_Db::FETCH_OBJ);
-        $this->conn->getProfiler()->setEnabled(false);
+        $this->dbAdapter = Zend_Db::factory($adapter, $adapterParamaters);
+        $this->dbAdapter->setFetchMode(Zend_Db::FETCH_OBJ);
+        // TODO(el/tg): The profiler is disabled per default, why do we disable the profiler explicitly?
+        $this->dbAdapter->getProfiler()->setEnabled(false);
     }
 
+    /**
+     * @deprecated Use Connection::getDbAdapter() instead
+     */
     public function getConnection()
     {
-        return $this->conn;
+        return $this->dbAdapter;
     }
 
+    /**
+     * Getter for the table prefix
+     *
+     * @return string
+     */
     public function getTablePrefix()
     {
         return $this->tablePrefix;
     }
 
+    /**
+     * Setter for the table prefix
+     *
+     * @param   string $prefix
+     *
+     * @return  self
+     */
     public function setTablePrefix($prefix)
     {
         $this->tablePrefix = $prefix;
