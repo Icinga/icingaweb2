@@ -51,17 +51,16 @@ class CommentQuery extends IdoQuery
 
     protected function joinBaseTables()
     {
-        $this->baseQuery = $this->db->select()->from(
+        $this->select->from(
             array('cm' => $this->prefix . 'comments'),
             array()
         );
-        $this->baseQuery->joinLeft(
+        $this->select->joinLeft(
             array('ho' => $this->prefix . 'objects'),
             'cm.object_id = ho.object_id AND ho.is_active = 1 AND ho.objecttype_id = 1',
             array()
         );
-
-        $this->baseQuery->joinLeft(
+        $this->select->joinLeft(
             array('so' => $this->prefix . 'objects'),
             'cm.object_id = so.object_id AND so.is_active = 1 AND so.objecttype_id = 2',
             array()
