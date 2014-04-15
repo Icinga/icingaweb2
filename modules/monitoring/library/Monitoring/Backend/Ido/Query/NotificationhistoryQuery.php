@@ -44,7 +44,7 @@ class NotificationhistoryQuery extends IdoQuery
 
         $this->columnMap['history']['output'] = "('[' || $concattedContacts || '] ' || n.output)";
 
-        $this->baseQuery = $this->db->select()->from(
+        $this->select->from(
             array('n' => $this->prefix . 'notifications'),
             array()
         )->join(
@@ -58,7 +58,7 @@ class NotificationhistoryQuery extends IdoQuery
         )->group('cn.notification_id');
 
         if ($this->ds->getDbType() === 'pgsql') {
-            $this->baseQuery->group('n.object_id')
+            $this->select->group('n.object_id')
                 ->group('n.start_time')
                 ->group('n.output')
                 ->group('n.state');
