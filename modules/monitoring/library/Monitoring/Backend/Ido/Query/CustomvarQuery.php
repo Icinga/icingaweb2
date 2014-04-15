@@ -21,7 +21,7 @@ class CustomvarQuery extends IdoQuery
 
     protected function joinBaseTables()
     {
-        $this->baseQuery = $this->db->select()->from(
+        $this->select->from(
             array('cvs' => $this->prefix . 'customvariablestatus'),
             array()
         )->join(
@@ -29,7 +29,6 @@ class CustomvarQuery extends IdoQuery
             'cvs.object_id = cvo.object_id AND cvo.is_active = 1',
             array()
         );
-
         $this->joinedVirtualTables = array(
             'customvars' => true,
             'objects'    => true
