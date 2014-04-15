@@ -712,3 +712,7 @@ file { '/etc/icingaweb/dashboard/dashboard.ini':
    owner     => 'apache',
    group     => 'apache',
 }
+
+pear::package { 'deepend/Mockery':
+  channel => 'pear.survivethedeepend.com'
+}
