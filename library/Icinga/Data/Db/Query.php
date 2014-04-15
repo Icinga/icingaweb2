@@ -29,289 +29,175 @@
 
 namespace Icinga\Data\Db;
 
-use Icinga\Filter\Query\Node;
-use Icinga\Filter\Query\Tree;
 use Zend_Db_Select;
 use Icinga\Data\BaseQuery;
 use Icinga\Application\Benchmark;
 
 /**
- * Db/Query class for implementing database queries
+ * Database query class
  */
 class Query extends BaseQuery
 {
     /**
-     * Zend_Db_Adapter_Abstract
-     *
-     *
+     * @var Zend_Db_Adapter_Abstract
      */
     protected $db;
 
     /**
-     * Base Query will be prepared here, has tables and cols
-     * shared by full & count query
+     * Columns to select
+     *
+     * @var array
      */
-    protected $baseQuery;
+    protected $columns;
 
     /**
-     * Select object
+     * Select query
+     *
+     * @var Zend_Db_Select
      */
-    private $selectQuery;
+    protected $select;
 
     /**
-     * Select object used for count query
+     * Whether to use a subquery for counting
+     *
+     * When the query is distinct or has a HAVING or GROUP BY clause this must be set to true
+     *
+     * @var bool
      */
-    private $countQuery;
-
-    /**
-     * Allow to override COUNT(*)
-     */
-    protected $countColumns;
-
     protected $useSubqueryCount = false;
 
-    protected $countCache;
-
+    /**
+     * Set the count maximum
+     *
+     * If the count maximum is set, count queries will not count more than that many rows. You should set this
+     * property only for really heavy queries.
+     *
+     * @var int
+     */
     protected $maxCount;
+
+    /**
+     * Count query result
+     *
+     * Count queries are only executed once
+     *
+     * @var int
+     */
+    protected $count;
 
     protected function init()
     {
-        $this->db = $this->ds->getConnection();
-        $this->baseQuery = $this->db->select();
-    }
-
-    public function __clone()
-    {
-        if ($this->baseQuery !== null) {
-            $this->baseQuery = clone $this->baseQuery;
-        }
-
-        if ($this->selectQuery !== null) {
-            $this->selectQuery = clone $this->selectQuery;
-        }
-
-        if ($this->countQuery !== null) {
-            $this->countQuery = clone $this->countQuery;
-        }
+        $this->db = $this->ds->getDbAdapter();
+        $this->select = $this->db->select();
     }
 
     /**
-     * Return the raw base query
+     * Set the table and columns to select
      *
-     * Modifications on this requires a call to Query::refreshQueryObjects()
+     * @param   string  $table
+     * @param   array   $columns
      *
-     * @return Zend_Db_Select
-     *
+     * @return  self
      */
-    public function getRawBaseQuery()
+    public function from($table, array $columns = null)
     {
-        return $this->baseQuery;
+        $this->select->from($table, array());
+        // Don't apply the columns to the select query yet because the count query uses a clone of the select query
+        // but not its columns
+        $this->columns($columns);
+        return $this;
     }
 
     /**
-     * Recreate the select and count queries
+     * Add a where condition to the query by and
      *
-     * Required when external modifications are made in the baseQuery
+     * @param   string  $condition
+     * @param   mixed   $value
+     *
+     * @return  self
      */
-    public function refreshQueryObjects()
+    public function where($condition, $value = null)
     {
-        $this->createQueryObjects();
+        $this->select->where($condition, $value);
+        return $this;
     }
 
+    /**
+     * Add a where condition to the query by or
+     *
+     * @param   string  $condition
+     * @param   mixed   $value
+     *
+     * @return  self
+     */
+    public function orWhere($condition, $value = null)
+    {
+        $this->select->orWhere($condition, $value);
+        return $this;
+    }
 
     /**
-     * Return the select query and initialize it if not done yet
+     * Get the select query
+     *
+     * Applies order and limit if any
      *
      * @return Zend_Db_Select
      */
     public function getSelectQuery()
     {
-        if ($this->selectQuery === null) {
-            $this->createQueryObjects();
+        $select = clone $this->select;
+        $select->columns($this->columns);
+        if ($this->hasLimit() || $this->hasOffset()) {
+            $select->limit($this->getLimit(), $this->getOffset());
         }
-
-        if ($this->hasLimit()) {
-            $this->selectQuery->limit($this->getLimit(), $this->getOffset());
+        if ($this->hasOrder()) {
+            foreach ($this->getOrder() as $fieldAndDirection) {
+                $select->order(
+                    $fieldAndDirection[0] . ' ' . $fieldAndDirection[1]
+                );
+            }
         }
-        return $this->selectQuery;
+        return $select;
     }
 
     /**
-     * Return the current count query and initialize it if not done yet
+     * Get the count query
      *
      * @return Zend_Db_Select
      */
     public function getCountQuery()
     {
-        if ($this->countQuery === null) {
-            $this->createQueryObjects();
+        $count = clone $this->select;
+        $columns = array('cnt' => 'COUNT(*)');
+        if ($this->useSubqueryCount) {
+            return $this->db->select()->from($count, $columns);
         }
-        return $this->countQuery;
-    }
-
-    /**
-     * Create the Zend_Db select query for this query
-     */
-    private function createSelectQuery()
-    {
-        $this->selectQuery = clone($this->baseQuery);
-        $this->selectQuery->columns($this->getColumns());
-        $this->selectQuery->distinct($this->isDistinct());
-        if ($this->hasOrder()) {
-            foreach ($this->getOrderColumns() as $col) {
-                $this->selectQuery->order(
-                    $col[0] . ' ' . (($col[1] === self::SORT_DESC) ? 'DESC' : 'ASC')
-                );
-            }
+        if ($this->maxCount !== null) {
+            return $this->db->select()->from($count->limit($this->maxCount));
         }
+        $count->columns(array('cnt' => 'COUNT(*)'));
+        return $count;
     }
 
     /**
-     * Create a countquery by using the select query as a subselect and count it's result
+     * Count all rows of the result set
      *
-     * This is a rather naive approach and not suitable for complex queries or queries with many results
-     *
-     * @return Zend_Db_Select       The query object representing the count
-     */
-    private function createCountAsSubQuery()
-    {
-        $query = clone($this->selectQuery);
-        if ($this->maxCount === null) {
-            return $this->db->select()->from($query, 'COUNT(*)');
-        } else {
-            return $this->db->select()->from(
-                $query->reset('order')->limit($this->maxCount),
-                'COUNT(*)'
-            );
-        }
-    }
-
-    /**
-     * Create a custom count query based on the columns set in countColumns
-     *
-     * @return Zend_Db_Select       The query object representing the count
-     */
-    private function createCustomCountQuery()
-    {
-        $query = clone($this->baseQuery);
-        if ($this->countColumns === null) {
-            $this->countColumns = array('cnt' => 'COUNT(*)');
-        }
-        $query->columns($this->countColumns);
-        return $query;
-    }
-
-    /**
-     * Create a query using the selected operation
-     *
-     * @see Query::createCountAsSubQuery()      Used when useSubqueryCount is true
-     * @see Query::createCustomCountQuery()     Called when useSubqueryCount is false
-     */
-    private function createCountQuery()
-    {
-        if ($this->isDistinct() || $this->useSubqueryCount) {
-            $this->countQuery = $this->createCountAsSubQuery();
-        } else {
-            $this->countQuery = $this->createCustomCountQuery();
-        }
-    }
-
-
-    protected function beforeQueryCreation()
-    {
-
-    }
-
-    protected function afterQueryCreation()
-    {
-
-    }
-
-    /**
-     * Create the Zend_Db select and count query objects for this instance
-     */
-    private function createQueryObjects()
-    {
-        $this->beforeQueryCreation();
-        $this->applyFilter();
-        $this->createSelectQuery();
-        $this->createCountQuery();
-        $this->afterQueryCreation();
-    }
-
-    /**
-     * Query the database and fetch the result count of this query
-     *
-     * @return int      The result count of this query as returned by the database
+     * @return int
      */
     public function count()
     {
-        if ($this->countCache === null) {
+        if ($this->count === null) {
             Benchmark::measure('DB is counting');
-            $this->countCache = $this->db->fetchOne($this->getCountQuery());
+            $this->count = $this->db->fetchOne($this->getCountQuery());
             Benchmark::measure('DB finished count');
         }
-        return $this->countCache;
-    }
-
-    /**
-     * Query the database and return all results
-     *
-     * @return array        An array containing subarrays with all results contained in the database
-     */
-    public function fetchAll()
-    {
-        Benchmark::measure('DB is fetching All');
-        $result = $this->db->fetchAll($this->getSelectQuery());
-        Benchmark::measure('DB fetch done');
-        return $result;
-    }
-
-    /**
-     * Query the database and return the next result row
-     *
-     * @return array        An array containing the next row of the database result
-     */
-    public function fetchRow()
-    {
-        return $this->db->fetchRow($this->getSelectQuery());
-    }
-
-    /**
-     * Query the database and return a single column of the result
-     *
-     * @return array        An array containing the first column of the result
-     */
-    public function fetchColumn()
-    {
-        return $this->db->fetchCol($this->getSelectQuery());
-    }
-
-    /**
-     * Query the database and return a single result
-     *
-     * @return array       An associative array containing the first result
-     */
-    public function fetchOne()
-    {
-        return $this->db->fetchOne($this->getSelectQuery());
-    }
-
-    /**
-     * Query the database and return key=>value pairs using hte first two columns
-     *
-     * @return array        An array containing key=>value pairs
-     */
-    public function fetchPairs()
-    {
-        return $this->db->fetchPairs($this->getSelectQuery());
+        return $this->count;
     }
 
     /**
      * Return the select and count query as a textual representation
      *
-     * @return string       An String containing the select and count query, using unix style newlines
-     *                      as linebreaks
+     * @return string A string containing the select and count query, using unix style newlines as linebreaks
      */
     public function dump()
     {
@@ -323,21 +209,23 @@ class Query extends BaseQuery
     }
 
     /**
-     * Return the select query
-     *
-     * The paginator expects this, so we can't use debug output here
-     *
-     * @return Zend_Db_Select
+     * @return string
      */
     public function __toString()
     {
-        return strval($this->getSelectQuery());
+        return (string) $this->getSelectQuery();
     }
 
-    public function applyFilter()
+    /**
+     * Set the columns to select
+     *
+     * @param   array $columns
+     *
+     * @return  self
+     */
+    public function columns(array $columns)
     {
-        $parser = new TreeToSqlParser($this);
-        $parser->treeToSql($this->getFilter(), $this->baseQuery);
-        $this->clearFilter();
+        $this->columns = $columns;
+        return $this;
     }
 }
