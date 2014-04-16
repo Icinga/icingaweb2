@@ -68,11 +68,27 @@
 
             $('input.autofocus', el).focus();
 
-            $('.inlinepie', el).sparkline('html', {
-                type:        'pie',
-                sliceColors: ['#44bb77', '#ffaa44', '#ff5566', '#dcd'],
-                width:       '2em',
-                height:      '2em'
+            $('div.inlinepie', el).each(function() {
+                var $img   = $(this).find('img');
+                var title  = $img.attr('title'),
+                    values = $img.data('icinga-values'),
+                    colors = $img.data('icinga-colors'),
+                    width  = $img.css('width'),
+                    height = $img.css('height');
+                if (colors) {
+                    colors = colors.split(',');
+                }
+                $img.replaceWith(values);
+                $(this).sparkline(
+                    'html',
+                    {
+                        type:   'pie',
+                        sliceColors: colors || ['#44bb77', '#ffaa44', '#ff5566', '#dcd'],
+                        width:  width,
+                        height: height,
+                        tooltipChartTitle: title
+                    }
+                );
             });
         },
 
@@ -118,6 +134,8 @@
             $(document).on('mouseleave', '#sidebar', this.leaveSidebar);
             $(document).on('click', '.tree .handle', { self: this }, this.treeNodeToggle);
 
+            // Toggle all triStateButtons
+            $(document).on('click', '.tristate input.tristate', { self: this}, this.clickTriState);
 
             // TBD: a global autocompletion handler
             // $(document).on('keyup', 'form.auto input', this.formChangeDelayed);
@@ -231,6 +249,39 @@
 
         autoSubmitForm: function (event) {
             return event.data.self.submitForm(event, true);
+        },
+
+        clickTriState: function (event) {
+            var $tristate = $(this);
+            var old       = $tristate.data('icinga-old');
+            var triState  = parseInt($tristate.data('icinga-tristate'), 10);
+            var value     = $tristate.data('icinga-value');
+            var self      = event.data.self;
+
+            // update value
+            if (triState) {
+                // 1         => 0
+                // 0         => unchanged
+                // unchanged => 1
+                value = value === '1' ? '0' : (value === '0' ? 'unchanged' : '1');
+            } else {
+                // 1 => 0
+                // 0 => 1
+                value = value === '1' ? '0' : '1';
+            }
+            $tristate.data('icinga-value', value);
+
+            // also set form value
+            $tristate.prop('value', value);
+
+            var $changed = $tristate.parent().find('.tristate-status').first();
+            if (old != value) {
+                $changed.text('changed');
+            } else {
+                $changed.empty();
+            }
+            $tristate.find('.tristate-status').text(value);
+            self.icinga.ui.updateTriState(value.toString(), $tristate);
         },
 
         /**

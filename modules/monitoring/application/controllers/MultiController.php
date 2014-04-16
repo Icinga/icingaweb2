@@ -32,6 +32,7 @@ use \Icinga\Web\Controller\ActionController;
 use \Icinga\Web\Widget\Tabextension\OutputFormat;
 use \Icinga\Module\Monitoring\Backend;
 use \Icinga\Data\BaseQuery;
+use \Icinga\Web\Widget\Chart\InlinePie;
 use \Icinga\Module\Monitoring\Form\Command\MultiCommandFlagForm;
 use \Icinga\Module\Monitoring\DataView\HostStatus    as HostStatusView;
 use \Icinga\Module\Monitoring\DataView\ServiceStatus as ServiceStatusView;
@@ -89,6 +90,8 @@ class Monitoring_MultiController extends ActionController
         $this->view->hostnames = $this->getProperties($hosts, 'host_name');
         $this->view->downtimes = $this->getDowntimes($hosts);
         $this->view->errors    = $errors;
+        $this->view->states    = $this->countStates($hosts);
+        $this->view->pie       = $this->createPie($this->view->states);
 
         // Handle configuration changes
         $this->handleConfigurationForm(array(
@@ -99,7 +102,6 @@ class Monitoring_MultiController extends ActionController
             'host_event_handler_enabled'  => 'Event Handler',
             'host_flap_detection_enabled' => 'Flap Detection'
         ));
-        $this->view->form->setAction('/icinga2-web/monitoring/multi/host');
     }
 
 
@@ -112,11 +114,11 @@ class Monitoring_MultiController extends ActionController
             $this->_request,
             array(
                 'host_name',
+                'host_state',
                 'service_description',
                 'service_handled',
                 'service_state',
                 'service_in_downtime',
-
                 'service_passive_checks_enabled',
                 'service_notifications_enabled',
                 'service_event_handler_enabled',
@@ -139,13 +141,17 @@ class Monitoring_MultiController extends ActionController
         );
         $comments = array_keys($this->getUniqueValues($commentQuery->fetchAll(), 'comment_internal_id'));
 
-        $this->view->objects = $this->view->services = $services;
-        $this->view->problems = $this->getProblems($services);
-        $this->view->comments = isset($comments) ? $comments : $this->getComments($services);
-        $this->view->hostnames = $this->getProperties($services, 'host_name');
-        $this->view->servicenames = $this->getProperties($services, 'service_description');
-        $this->view->downtimes = $this->getDowntimes($services);
-        $this->view->errors = $errors;
+        $this->view->objects        = $this->view->services = $services;
+        $this->view->problems       = $this->getProblems($services);
+        $this->view->comments       = isset($comments) ? $comments : $this->getComments($services);
+        $this->view->hostnames      = $this->getProperties($services, 'host_name');
+        $this->view->servicenames   = $this->getProperties($services, 'service_description');
+        $this->view->downtimes      = $this->getDowntimes($services);
+        $this->view->service_states = $this->countStates($services);
+        $this->view->host_states    =  $this->countStates($services, 'host_name', 'host_state');
+        $this->view->service_pie    = $this->createPie($this->view->service_states);
+        $this->view->host_pie       = $this->createPie($this->view->host_states);
+        $this->view->errors         = $errors;
 
         $this->handleConfigurationForm(array(
             'service_passive_checks_enabled' => 'Passive Checks',
@@ -154,8 +160,8 @@ class Monitoring_MultiController extends ActionController
             'service_event_handler_enabled'  => 'Event Handler',
             'service_flap_detection_enabled' => 'Flap Detection'
         ));
-        $this->view->form->setAction('/icinga2-web/monitoring/multi/service');
     }
+
 
     /**
      * Apply the query-filter received
@@ -235,6 +241,47 @@ class Monitoring_MultiController extends ActionController
         }
         return $problems;
     }
+
+    private function countStates($objects, $unique = null, $state = 'service_state')
+    {
+        $known = array();
+        $states = array(
+            '0'  => 0,
+            '1'  => 0,
+            '2'  => 0,
+            '3'  => 0,
+            '99' => 0
+        );
+        foreach ($objects as $object) {
+            if (isset($unique)) {
+                if (array_key_exists($object->$unique, $known)) {
+                    continue;
+                }
+                $known[$object->$unique] = true;
+            }
+            $states[$object->$state]++;
+        }
+        return array(
+            'up'          => $states['0'],
+            'down'        => $states['1'],
+            'unreachable' => $states['2'],
+            'unknown'     => $states['3'],
+            'pending'     => $states['99']
+        );
+    }
+
+    private function createPie($states)
+    {
+        $chart = new InlinePie(
+            array_values($states),
+            array('#44bb77', '#FF5566', '#FF5566', '#E066FF', '#77AAFF')
+        );
+        $chart->setLabels(array_keys($states))
+            ->setHeight(100)
+            ->setWidth(100);
+        return $chart;
+    }
+
 
     private function getComments($objects)
     {

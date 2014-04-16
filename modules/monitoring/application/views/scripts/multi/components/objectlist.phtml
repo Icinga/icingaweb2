@@ -6,23 +6,24 @@
             'monitoring/show/service',
             array('host' => $object->host_name, 'service' => $object->service_description)
         );
+        echo '">' . $object->host_name . ' ' . $object->service_description . '</a>';
     } else {
         echo $this->href(
             'monitoring/show/host',
             array('host' => $object->host_name)
         );
-    }?>" >
-    <!-- <?= $object->host_name; ?> <?= isset($object->service_description) ? $object->service_description : '' ?> -->
+        echo '">' . $object->host_name . '</a>';
+    }?>,
 <?php } ?> <?php
     if (count($objects) > 5) {
         $text = ' ' . (count($objects) - 5) . ' more ...';
     } else {
         $text = ' show all ... ';
     }
-    if ($this->is_service) {
+    if (!$this->is_service) {
         $link = 'monitoring/list/hosts';
         $target = array(
-            'host' => $this->hostquery // implode(',', $hostnames)
+            'host' => $this->hostquery
         );
     } else {
         $link = 'monitoring/list/services';

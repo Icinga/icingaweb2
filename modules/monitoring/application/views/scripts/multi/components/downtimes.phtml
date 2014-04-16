@@ -4,30 +4,22 @@
 
 <tr class="newsection">
     <th>
-        Downtimes
+        <?= count($downtimes) ?> Downtimes
     </th>
     <td>
-        <span> <?= count($downtimes) ?> </span> <?= $objectName ?> Selected items are currently in downtime.
-    </td>
-    <td>
+        <a href="<?=$this->href('monitoring/command/removedowntime', $this->target); ?>">
+            <?= $this->icon('remove_petrol.png') ?> Remove Downtimes
+        </a> <br />
         <a
             title="Schedule downtimes for all selected <?= $objectName ?>"
             href="<?= $this->href('monitoring/command/scheduledowntime', $this->target); ?>"
-        >
+            >
             <?= $this->icon('in_downtime_petrol.png') ?> Schedule Downtimes
-        </a> <br />
-
-        <a
-            href="<?=$this->href('monitoring/command/removedowntime', $this->target); ?>"
-        >
-            <?= $this->icon('remove_petrol.png') ?> Remove Downtimes
-        </a> <br />
-
-        <a
-            title="Remove all acknowledgements from all selected hosts or services"
-            href="<?=$this->href('monitoring/command/removeacknowledgement', $target);?>"
-        >
-            <?= $this->icon('remove_petrol.png') ?> Remove Acknowledgements
         </a>
+    </td>
+    <td>
+        Change <a href="<?= $this->href('') ?>"
+            > <?= count($downtimes) ?>
+        </a> downtimes.
     </td>
 </tr>

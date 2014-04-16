@@ -49,11 +49,12 @@ class InlinePie extends AbstractWidget
      * @var string
      */
     private $template =<<<'EOD'
+    <div class="inlinepie">
     <img
-        class='inlinepie'
         title="{title}" src="{url}" style="width: {width}px; height: {height}px; {style}"
         data-icinga-colors="{colors}" data-icinga-values="{data}"
     ></img>
+    </div>
 EOD;
 
     /**
@@ -118,10 +119,13 @@ EOD;
      * The labels to be displayed in the pie-chart
      *
      * @param null $labels
+     *
+     * @return $this
      */
     public function setLabels($labels = null)
     {
         $this->url->setParam('labels', implode(',', $labels));
+        return $this;
     }
 
     /**

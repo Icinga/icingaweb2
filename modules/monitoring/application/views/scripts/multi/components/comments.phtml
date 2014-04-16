@@ -4,20 +4,12 @@
 
 <tr class="newsection">
     <th>
-        Comments
+        <?= count($comments) ?> Comments
     </th>
-    <td>
-        There are <a href=" <?= $this->href(
-            'monitoring/list/comments',
-            array('comment_id' => implode(',', $this->comments))
-        );
-        ?>"> <?= count($comments) ?> </a>
-        comments for the selected <?= $objectName ?>
-    </td>
     <td>
         <a
             href="<?= $this->href('monitoring/command/removecomment', $this->target); ?>"
-        >
+            >
             <?= $this->icon('remove_petrol.png') ?> Remove Comments
         </a> <br >
         <a
@@ -31,5 +23,11 @@
             >
             <?= $this->icon('acknowledgement_petrol.png') ?> Acknowledge
         </a>
+    </td>
+    <td>Change <a href=" <?= $this->href(
+            'monitoring/list/comments',
+            array('comment_id' => implode(',', $this->comments))
+        );
+        ?>"> <?= count($comments) ?> </a>  comments.
     </td>
 </tr>

@@ -8,32 +8,66 @@ $this->target = array(
 );
 ?>
 
-<?= $this->tabs; ?>
-
 <div class="controls">
-    <h1> Summary for <?= count($objects) ?> services </h1>
+    <?= $this->tabs; ?>
 </div>
 
 <div class="content">
+    <h1> Summary for <?= count($objects) ?> services </h1>
+
     <?= $this->render('multi/components/objectlist.phtml'); ?>
-    <h3> <?=$this->icon('servicegroup.png')?> Service State </h3>
+    <table class="avp">
+        <tr>
+            <th align="center">
+                <h3><?= array_sum(array_values($service_states)) ?> Services</h3>
+            </th>
+            <th></th>
+            <th align="center">
+                <h3><?= array_sum(array_values($host_states)) ?> Hosts</h3>
+            </th>
+            <th></th>
+        </tr>
+        <tr>
+            <td align="center">
+                <?= $this->service_pie->render(); ?>
+            </td>
+            <td>
+                <?php
+                foreach ($service_states as $state => $count) {
+                    if ($count > 0) {
+                        echo ucfirst($state) . ': ' . $count . '<br />';
+                    }
+                }
+                ?>
+            </td>
+            <td align="center">
+                <?= $this->host_pie->render(); ?>
+            </td>
+            <td>
+                <?php
+                foreach ($host_states as $state => $count) {
+                    if ($count > 0) {
+                        echo ucfirst($state) . ': ' . $count . '<br />';
+                    }
+                }
+                ?>
+            </td>
+            <td></td>
+        </tr>
+    </table>
+
+    <h2> <?=$this->icon('servicegroup.png')?> Service Actions </h2>
 
     <table class="avp newsection">
         <tbody>
-        <?= $this->render('multi/components/summary.phtml'); ?>
-        <?= $this->render('multi/components/comments.phtml'); ?>
-        <?= $this->render('multi/components/downtimes.phtml'); ?>
+            <?= $this->render('multi/components/summary.phtml'); ?>
+            <?= $this->render('multi/components/comments.phtml'); ?>
+            <?= $this->render('multi/components/downtimes.phtml'); ?>
         </tbody>
     </table>
 
-    <h3> <?=$this->icon('configuration.png')?> Options </h3>
-    <table class="avp newsection">
-        <tbody>
-        <?= $this->render('multi/components/configuration.phtml') ?>
-        </tbody>
-    </table>
+    <?= $this->render('multi/components/flags.phtml') ?>
 </div>
-
 
 <a
     rel="tooltip"

@@ -7,11 +7,8 @@
 
 <tr>
     <th>
-        <?= $objectName ?>
+        <?= count($objects) . ' ' . $objectName ?>
     </th>
-    <td>
-        You have selected <?= count($objects) . ' ' . $objectName ?> .
-    </td>
     <td>
         <a
             href="<?=$this->href(
@@ -28,17 +25,18 @@
         </a> <br/>
         <a href="<?= $this->href('monitoring/command/reschedulenextcheck', $this->target) ?>">
             <?= $this->icon('reschedule_petrol.png') ?> Reschedule
-        </a>
+        </a> <br />
+
+    </td>
+    <td>
+         Perform actions on <?=  count($objects) . ' ' . $objectName ?>.
     </td>
 </tr>
 
-<tr>
+<tr class="newsection">
     <th>
-        Problems
+        <?= $this->problems ?> Problems
     </th>
-    <td>
-        The <?= $objectName ?> have <span> <?= $this->problems ?> </span> problems.
-    </td>
     <td>
         <a
             title="Schedule downtimes for all selected hosts"
@@ -47,22 +45,28 @@
             <?= $this->icon('in_downtime_petrol.png') ?> Schedule Downtimes
         </a>
     </td>
+    <td>
+        Handle <?= $this->problems ?> problems on <span> <?= count($this->objects) ?> </span> <?= $objectName ?>.
+    </td>
 </tr>
-
-
 <tr>
     <th>
-        Unhandled
+        <?= count($this->unhandled) ?> Unhandled
     </th>
-    <td>
-        <span> <?= count($this->unhandled) ?> </span> <?= $objectName ?> are unhandled.
-    </td>
     <td>
         <a
             title="Acknowledge all problems on the selected hosts or services"
             href="<?= $this->href('monitoring/command/acknowledgeproblem', $this->target);?>"
-            >
+        >
             <?= $this->icon('acknowledgement_petrol.png') ?> Acknowledge
+        </a>  <br />
+        <a
+            title="Remove all acknowledgements from all selected hosts or services"
+            href="<?=$this->href('monitoring/command/removeacknowledgement', $target);?>"
+            >
+            <?= $this->icon('remove_petrol.png') ?> Remove Acknowledgements
         </a>
+    </td>
+    <td>
     </td>
 </tr>
