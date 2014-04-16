@@ -30,12 +30,10 @@
 namespace Icinga\Form\Config\Authentication;
 
 use \Zend_Config;
-use \Icinga\Web\Form;
-use \Icinga\Web\Url;
+use Icinga\Web\Form;
 
 /**
- * Form for modifying the authentication provider order.
- *
+ * Form for modifying the authentication provider order
  */
 class ReorderForm extends Form
 {
@@ -44,19 +42,20 @@ class ReorderForm extends Form
      *
      * @var string
      */
-    private $backend = null;
+    protected $backend;
 
     /**
      * The current ordering of all backends, required to determine possible changes
      *
      * @var array
      */
-    private $currentOrder = array();
+    protected $currentOrder = array();
 
     /**
      * Set an array with the current order of all backends
      *
-     * @param array $order  An array containing backend names in the order they are defined in the authentication.ini
+     * @param   array   $order      An array containing backend names in the order
+     *                              they are defined in the authentication.ini
      */
     public function setCurrentOrder(array $order)
     {
@@ -66,20 +65,17 @@ class ReorderForm extends Form
     /**
      * Set the name of the authentication backend for which to create the form
      *
-     * @param string $backend   The name of the authentication backend
+     * @param   string      $backend    The name of the authentication backend
      */
-    public function setAuthenticationBackend($backend)
+    public function setBackendName($backend)
     {
         $this->backend = $backend;
     }
 
     /**
-     * Return the name of the currently set backend as it will appear in the forms
+     * Return the name of the currently set backend as it will appear in the form
      *
-     * This calls the Zend Filtername function in order to filter specific chars
-     *
-     * @return string       The filtered name of the backend
-     * @see Form::filterName()
+     * @return  string  The name of the backend
      */
     public function getBackendName()
     {
@@ -87,28 +83,24 @@ class ReorderForm extends Form
     }
 
     /**
-     * Create this form.
-     *
-     * Note: The form action will be set here to the authentication overview
+     * Create this form
      *
      * @see Form::create
      */
     public function create()
     {
-        $this->upForm = new Form();
-        $this->downForm = new Form();
-
         if ($this->moveElementUp($this->backend, $this->currentOrder) !== $this->currentOrder) {
+            $upForm = new Form();
 
-            $this->upForm->addElement(
+            $upForm->addElement(
                 'hidden',
                 'form_backend_order',
                 array(
                     'required'  => true,
-                    'value'     =>  join(',', $this->moveElementUp($this->backend, $this->currentOrder))
+                    'value'     => join(',', $this->moveElementUp($this->backend, $this->currentOrder))
                 )
             );
-            $this->upForm->addElement(
+            $upForm->addElement(
                 'button',
                 'btn_' . $this->getBackendName() . '_reorder_up',
                 array(
@@ -116,21 +108,25 @@ class ReorderForm extends Form
                     'escape'    => false,
                     'value'     => 'btn_' . $this->getBackendName() . '_reorder_up',
                     'name'      => 'btn_' . $this->getBackendName() . '_reorder_up',
-                    'label'     => $this->getView()->icon('up.png', 'Move up in authentication order'),
+                    'label'     => $this->getView()->icon('up.png', t('Move up in authentication order'))
                 )
             );
+
+            $this->addSubForm($upForm, 'btn_reorder_up');
         }
 
         if ($this->moveElementDown($this->backend, $this->currentOrder) !== $this->currentOrder) {
-            $this->downForm->addElement(
+            $downForm = new Form();
+
+            $downForm->addElement(
                 'hidden',
                 'form_backend_order',
                 array(
                     'required'  => true,
-                    'value'     =>  join(',', $this->moveElementDown($this->backend, $this->currentOrder))
+                    'value'     => join(',', $this->moveElementDown($this->backend, $this->currentOrder))
                 )
             );
-            $this->downForm->addElement(
+            $downForm->addElement(
                 'button',
                 'btn_' . $this->getBackendName() . '_reorder_down',
                 array(
@@ -138,72 +134,68 @@ class ReorderForm extends Form
                     'escape'    => false,
                     'value'     => 'btn_' . $this->getBackendName() . '_reorder_down',
                     'name'      => 'btn_' . $this->getBackendName() . '_reorder_down',
-                    'label'     => $this->getView()->icon('down.png', 'Move down in authentication order'),
-
+                    'label'     => $this->getView()->icon('down.png', t('Move down in authentication order'))
                 )
             );
+
+            $this->addSubForm($downForm, 'btn_reorder_down');
         }
-        $this->setAction(Url::fromPath("config/authentication", array())->getAbsoluteUrl());
     }
 
     /**
-     * Return the result of $this->getValues but flatten the result
+     * Return the flattened result of $this->getValues
      *
-     * The result will be a key=>value array without subarrays
+     * @return  array   The currently set values
      *
-     * @param bool $supressArrayNotation        passed to getValues
-     *
-     * @return array                            The currently set values
      * @see Form::getValues()
      */
-    public function getFlattenedValues($supressArrayNotation = false)
+    protected function getFlattenedValues()
     {
-        $values = parent::getValues($supressArrayNotation);
         $result = array();
-        foreach ($values as $key => &$value) {
+        foreach (parent::getValues() as $key => $value) {
             if (is_array($value)) {
                 $result += $value;
             } else {
                 $result[$key] = $value;
             }
         }
+
         return $result;
     }
 
     /**
      * Determine whether this form is submitted by testing the submit buttons of both subforms
      *
-     * @return bool     True when the form is submitted, otherwise false
+     * @return  bool    Whether the form has been submitted or not
      */
     public function isSubmitted()
     {
         $checkData = $this->getRequest()->getParams();
-        return isset ($checkData['btn_' . $this->getBackendName() . '_reorder_up']) ||
-                isset ($checkData['btn_' . $this->getBackendName() . '_reorder_down']);
+        return isset($checkData['btn_' . $this->getBackendName() . '_reorder_up']) ||
+                isset($checkData['btn_' . $this->getBackendName() . '_reorder_down']);
     }
 
     /**
-     * Return the reordered configuration after a reorder button has been submited
+     * Return the reordered configuration after a reorder button has been submitted
      *
-     * @param Zend_Config $config       The configuration to reorder
+     * @param   Zend_Config     $config     The configuration to reorder
      *
-     * @return array                    An array containing the reordered configuration
+     * @return  array                       An array containing the reordered configuration
      */
     public function getReorderedConfig(Zend_Config $config)
     {
         $originalConfig = $config->toArray();
-        $reordered = array();
         $newOrder = $this->getFlattenedValues();
         $order = explode(',', $newOrder['form_backend_order']);
+
+        $reordered = array();
         foreach ($order as $key) {
-            if (!isset($originalConfig[$key])) {
-                continue;
+            if (isset($originalConfig[$key])) {
+                $reordered[$key] = $originalConfig[$key];
             }
-            $reordered[$key] = $originalConfig[$key];
         }
 
         return $reordered;
-
     }
 
     /**
@@ -216,28 +208,27 @@ class ReorderForm extends Form
      * moveElementUp('third', $array); // returns ['first', 'third', 'second']
      * </pre>
      *
-     * @param   string    $key              The key to bubble up one slot
-     * @param   array     $array            The array to work with
+     * @param   string    $key      The key to bubble up one slot
+     * @param   array     $array    The array to work with
      *
-     * @return  array                       The modified array
+     * @return  array               The modified array
      */
-    private static function moveElementUp($key, array $array)
+    protected static function moveElementUp($key, array $array)
     {
-        $swap = null;
-        for ($i=0; $i<count($array)-1; $i++) {
-            if ($array[$i+1] !== $key) {
-                continue;
+        for ($i = 0; $i < count($array) - 1; $i++) {
+            if ($array[$i + 1] === $key) {
+                $swap = $array[$i];
+                $array[$i] = $array[$i + 1];
+                $array[$i + 1] = $swap;
+                return $array;
             }
-            $swap = $array[$i];
-            $array[$i] = $array[$i+1];
-            $array[$i+1] = $swap;
-            return $array;
         }
+
         return $array;
     }
 
     /**
-     * Static helper for moving an element in an array one slot up, if possible
+     * Static helper for moving an element in an array one slot down, if possible
      *
      * Example:
      *
@@ -246,23 +237,22 @@ class ReorderForm extends Form
      * moveElementDown('first', $array); // returns ['second', 'first', 'third']
      * </pre>
      *
-     * @param   string    $key              The key to bubble up one slot
-     * @param   array     $array            The array to work with
+     * @param   string    $key      The key to bubble up one slot
+     * @param   array     $array    The array to work with
      *
-     * @return  array                       The modified array
+     * @return  array               The modified array
      */
-    private static function moveElementDown($key, array $array)
+    protected static function moveElementDown($key, array $array)
     {
-        $swap = null;
-        for ($i=0; $i<count($array)-1; $i++) {
-            if ($array[$i] !== $key) {
-                continue;
+        for ($i = 0; $i < count($array) - 1; $i++) {
+            if ($array[$i] === $key) {
+                $swap = $array[$i + 1];
+                $array[$i + 1] = $array[$i];
+                $array[$i] = $swap;
+                return $array;
             }
-            $swap = $array[$i+1];
-            $array[$i+1] = $array[$i];
-            $array[$i] = $swap;
-            return $array;
         }
+
         return $array;
     }
 }

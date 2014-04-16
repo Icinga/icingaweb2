@@ -30,11 +30,10 @@
 namespace Icinga\Form\Config\Authentication;
 
 use \Exception;
-use Icinga\Data\ResourceFactory;
 use \Zend_Config;
-use \Icinga\Web\Form;
-use \Icinga\Authentication\Backend\LdapUserBackend;
-use \Icinga\Protocol\Ldap\Connection as LdapConnection;
+use Icinga\Web\Form;
+use Icinga\Data\ResourceFactory;
+use Icinga\Authentication\UserBackend;
 
 /**
  * Form for adding or modifying LDAP authentication backends
@@ -42,14 +41,31 @@ use \Icinga\Protocol\Ldap\Connection as LdapConnection;
 class LdapBackendForm extends BaseBackendForm
 {
     /**
-     * Create this form and add all required elements
+     * Return content of the resources.ini or previously set resources
      *
-     * @param $options      Only useful for testing purposes:
-     *                          'resources' => All available resources.
+     * @return  array
+     */
+    public function getResources()
+    {
+        if ($this->resources === null) {
+            $res = ResourceFactory::getResourceConfigs('ldap')->toArray();
+
+            foreach (array_keys($res) as $key) {
+                $res[$key] = $key;
+            }
+
+            return $res;
+        } else {
+            return $this->resources;
+        }
+    }
+
+    /**
+     * Create this form and add all required elements
      *
      * @see Form::create()
      */
-    public function create($options = array())
+    public function create()
     {
         $this->setName('form_modify_backend');
         $name = $this->filterName($this->getBackendName());
@@ -57,12 +73,12 @@ class LdapBackendForm extends BaseBackendForm
 
         $this->addElement(
             'text',
-            'backend_'.$name.'_name',
+            'backend_' . $name . '_name',
             array(
                 'required'      => true,
-                'allowEmpty'    =>  false,
-                'label'         => 'Backend Name',
-                'helptext'      => 'The name of this authentication backend',
+                'allowEmpty'    => false,
+                'label'         => t('Backend Name'),
+                'helptext'      => t('The name of this authentication backend'),
                 'value'         => $this->getBackendName()
             )
         );
@@ -71,13 +87,12 @@ class LdapBackendForm extends BaseBackendForm
             'select',
             'backend_' . $name . '_resource',
             array(
-                'label'         =>  'Database Connection',
-                'required'      =>  true,
-                'allowEmpty'    =>  false,
-                'helptext'      => 'The database connection to use for authenticating with this provider',
-                'value'         =>  $this->getBackend()->get('resource'),
-                'multiOptions'  =>  array_key_exists('resources', $options) ?
-                                        $options['resources'] : $this->getLdapResources()
+                'required'      => true,
+                'allowEmpty'    => false,
+                'label'         => t('LDAP resource'),
+                'helptext'      => t('The resource to use for authenticating with this provider'),
+                'value'         => $this->getBackend()->get('resource'),
+                'multiOptions'  => $this->getResources()
             )
         );
 
@@ -85,10 +100,10 @@ class LdapBackendForm extends BaseBackendForm
             'text',
             'backend_' . $name . '_user_class',
             array(
-                'label'     => 'LDAP User Object Class',
-                'value'     => $backend->get('user_class', 'inetOrgPerson'),
-                'helptext'  => 'The object class used for storing users on the ldap server',
-                'required'  => true
+                'required'  => true,
+                'label'     => t('LDAP User Object Class'),
+                'helptext'  => t('The object class used for storing users on the ldap server'),
+                'value'     => $backend->get('user_class', 'inetOrgPerson')
             )
         );
 
@@ -96,10 +111,10 @@ class LdapBackendForm extends BaseBackendForm
             'text',
             'backend_' . $name . '_user_name_attribute',
             array(
-                'label'     => 'LDAP User Name Attribute',
-                'value'     => $backend->get('user_name_attribute', 'uid'),
-                'helptext'  => 'The attribute name used for storing the user name on the ldap server',
-                'required'  => true
+                'required'  => true,
+                'label'     => t('LDAP User Name Attribute'),
+                'helptext'  => t('The attribute name used for storing the user name on the ldap server'),
+                'value'     => $backend->get('user_name_attribute', 'uid')
             )
         );
 
@@ -125,52 +140,41 @@ class LdapBackendForm extends BaseBackendForm
      */
     public function getConfig()
     {
-        $name = $this->getBackendName();
-        $prefix = 'backend_' . $this->filterName($name) . '_';
-
+        $prefix = 'backend_' . $this->filterName($this->getBackendName()) . '_';
         $section = $this->getValue($prefix . 'name');
         $cfg = array(
-            'target'              =>  'user',
-            'resource'            =>  $this->getValue($prefix . 'resource'),
-            'user_class'          =>  $this->getValue($prefix . 'user_class'),
-            'user_name_attribute' =>  $this->getValue($prefix . 'user_name_attribute')
+            'backend'               => 'ldap',
+            'resource'              => $this->getValue($prefix . 'resource'),
+            'user_class'            => $this->getValue($prefix . 'user_class'),
+            'user_name_attribute'   => $this->getValue($prefix . 'user_name_attribute')
         );
-        return array(
-            $section => $cfg
-        );
+
+        return array($section => $cfg);
     }
 
     /**
      * Validate the current configuration by creating a backend and requesting the user count
      *
-     * @return bool True when the backend is valid, false otherwise
+     * @return  bool    Whether validation succeeded or not
+     *
      * @see BaseBackendForm::isValidAuthenticationBacken
      */
     public function isValidAuthenticationBackend()
     {
         try {
             $cfg = $this->getConfig();
-            $backendName = 'backend_' . $this->filterName($this->getBackendName()) . '_name';
-            $backendConfig = new Zend_Config($cfg[$this->getValue($backendName)]);
-            $testConn = new LdapUserBackend($backendConfig);
-            if ($testConn->getUserCount() === 0) {
-                throw new Exception('No Users Found On Directory Server');
+            $backendName = key($cfg);
+            $testConn = UserBackend::create($backendName, new Zend_Config($cfg[$backendName]));
+
+            if ($testConn->count() === 0) {
+                $this->addErrorMessage(t('No users found on directory server'));
+                return false;
             }
         } catch (Exception $exc) {
-            $this->addErrorMessage(
-                'Connection Validation Failed:' . $exc->getMessage()
-            );
+            $this->addErrorMessage(sprintf(t('Connection validation failed: %s'), $exc->getMessage()));
             return false;
         }
-        return true;
-    }
 
-    private function getLdapResources()
-    {
-        $res = ResourceFactory::getResourceConfigs('ldap')->toArray();
-        foreach ($res as $key => $value) {
-            $res[$key] = $key;
-        }
-        return $res;
+        return true;
     }
 }
