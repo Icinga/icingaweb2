@@ -31,10 +31,7 @@ namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
 use Icinga\Logger\Logger;
 use Icinga\Data\Db\Query;
-use Icinga\Application\Benchmark;
 use Icinga\Exception\ProgrammingError;
-use Icinga\Filter\Query\Tree;
-use Icinga\Module\Monitoring\Filter\UrlViewFilter;
 
 /**
  * Base class for Ido Queries
@@ -317,7 +314,7 @@ abstract class IdoQuery extends Query
         reset($this->columnMap);
         $table = key($this->columnMap);
 
-        $this->baseQuery = $this->db->select()->from(
+        $this->select->from(
             array($table => $this->prefix . $table),
             array()
         );
@@ -339,25 +336,14 @@ abstract class IdoQuery extends Query
     }
 
     /**
-     * Prepare query execution
-     *
-     * @see IdoQuery::resolveColumns()    For column alias resolving
-     */
-    protected function beforeQueryCreation()
-    {
-        $this->resolveColumns();
-        $classParts = explode('\\', get_class($this));
-        Benchmark::measure(sprintf('%s ready to run', array_pop($classParts)));
-    }
-
-    /**
      * Resolve columns aliases to their database field using the columnMap
      *
-     * @return self         Fluent interface
+     * @param   array $columns
+     *
+     * @return  array
      */
-    public function resolveColumns()
+    public function resolveColumns($columns)
     {
-        $columns = $this->getColumns();
         $resolvedColumns = array();
 
         foreach ($columns as $alias => $col) {
@@ -373,9 +359,8 @@ abstract class IdoQuery extends Query
 
             $resolvedColumns[$alias] = preg_replace('|\n|', ' ', $name);
         }
-        $this->setColumns($resolvedColumns);
 
-        return $this;
+        return $resolvedColumns;
     }
 
     /**
@@ -579,5 +564,18 @@ abstract class IdoQuery extends Query
             . ucfirst($queryName) . 'Query';
         $query = new $class($this->ds, $columns);
         return $query;
+    }
+
+    /**
+     * Set columns to select
+     *
+     * @param   array $columns
+     *
+     * @return  self
+     */
+    public function columns(array $columns)
+    {
+        $this->columns = $this->resolveColumns($columns);
+        return $this;
     }
 }
