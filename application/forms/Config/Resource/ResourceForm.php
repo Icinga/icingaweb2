@@ -38,7 +38,7 @@ use Icinga\Data\ResourceFactory;
 /**
  * Form for modifying a monitoring backend
  */
-class EditResourceForm extends Form
+class ResourceForm extends Form
 {
     /**
      * The currently edited resource.

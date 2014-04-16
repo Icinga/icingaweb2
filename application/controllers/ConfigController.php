@@ -37,7 +37,7 @@ use \Icinga\Form\Config\GeneralForm;
 use \Icinga\Form\Config\Authentication\ReorderForm;
 use \Icinga\Form\Config\Authentication\LdapBackendForm;
 use \Icinga\Form\Config\Authentication\DbBackendForm;
-use \Icinga\Form\Config\Resource\EditResourceForm;
+use \Icinga\Form\Config\Resource\ResourceForm;
 use \Icinga\Form\Config\LoggingForm;
 use \Icinga\Form\Config\ConfirmRemovalForm;
 use \Icinga\Config\PreservingIniWriter;
@@ -396,7 +396,7 @@ class ConfigController extends BaseConfigController
     {
         $this->view->resourceTypes = $this->resourceTypes;
         $resources = IcingaConfig::app('resources', true);
-        $form = new EditResourceForm();
+        $form = new ResourceForm();
         $form->setRequest($this->_request);
         if ($form->isSubmittedAndValid()) {
             $name = $form->getName();
@@ -428,7 +428,7 @@ class ConfigController extends BaseConfigController
             $this->render('resource/modify');
             return;
         }
-        $form = new EditResourceForm();
+        $form = new ResourceForm();
         if ($this->_request->isPost() === false) {
             $form->setOldName($name);
             $form->setName($name);
