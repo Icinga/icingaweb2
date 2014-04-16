@@ -29,40 +29,41 @@
 
 namespace Icinga\Form\Config\Resource;
 
-use \Zend_Config;
+use Exception;
+use Zend_Config;
+use Zend_Form_Element_Checkbox;
 use Icinga\Web\Form;
-use Icinga\Logger\Logger;
-use Icinga\Web\Form\Decorator\HelpText;
 use Icinga\Data\ResourceFactory;
+use Icinga\Web\Form\Element\Number;
+use Icinga\Web\Form\Decorator\HelpText;
 
-/**
- * Form for modifying a monitoring backend
- */
 class ResourceForm extends Form
 {
     /**
-     * The currently edited resource.
+     * The resource
      *
      * @var Zend_Config
      */
-    private $resource;
+    protected $resource;
 
     /**
+     * The (new) name of the resource
+     *
      * @var string
      */
-    private $name = '';
+    protected $name;
 
     /**
+     * The old name of the resource
+     *
      * @var string
      */
-    private $oldName = '';
+    protected $oldName;
 
     /**
-     * Return the current resource name.
+     * Set the current resource name
      *
-     * @param string $name
-     *
-     * @return void|\Zend_Form
+     * @param   string      $name   The name to set
      */
     public function setName($name)
     {
@@ -70,18 +71,24 @@ class ResourceForm extends Form
     }
 
     /**
+     * Get the current resource name
+     *
      * @return null|string
      */
     public function getName()
     {
-        return $this->getValue('resource_all_name');
+        $name = $this->getValue('resource_all_name');
+        if (!$name) {
+            return $this->name;
+        }
+
+        return $name;
     }
 
     /**
-     * Set the original name of the resource. This value is persisted using
-     * a hidden field.
+     * Set the original name of the resource
      *
-     * @param $name
+     * @param   string      $name   The name to set
      */
     public function setOldName($name)
     {
@@ -89,24 +96,55 @@ class ResourceForm extends Form
     }
 
     /**
-     * Get the resource name that was initially set.
+     * Get the resource name that was initially set
+     *
+     * @return  null|string
      */
     public function getOldName()
     {
-        return $this->getValue('resource_all_name_old');
+        $oldName = $this->getValue('resource_all_name_old');
+        if (!$oldName) {
+            return $this->oldName;
+        }
+
+        return $oldName;
     }
 
-    private function addDbForm()
+    /**
+     * Set the resource configuration to edit.
+     *
+     * @param   Zend_Config     $resource   The config to set
+     */
+    public function setResource(Zend_Config $resource)
+    {
+        $this->resource = $resource;
+    }
+
+    /**
+     * Get the current resource configuration.
+     *
+     * @return  Zend_Config
+     */
+    public function getResource()
+    {
+        if (!isset($this->resource)) {
+            $this->resource = new Zend_Config(array('type' => 'db'));
+        }
+
+        return $this->resource;
+    }
+
+    protected function addDbForm()
     {
         $this->addElement(
             'select',
             'resource_db_db',
             array(
-                'label'         =>  'Database Type',
-                'value'         =>  $this->getResource()->get('db', 'mysql'),
-                'required'      =>  true,
-                'helptext'      =>  'The type of SQL database you want to create.',
-                'multiOptions'  =>  array(
+                'required'      => true,
+                'label'         => t('Database Type'),
+                'helptext'      => t('The type of SQL database you want to create.'),
+                'value'         => $this->getResource()->get('db', 'mysql'),
+                'multiOptions'  => array(
                     'mysql'         => 'MySQL',
                     'pgsql'         => 'PostgreSQL'
                     //'oracle'        => 'Oracle'
@@ -118,24 +156,22 @@ class ResourceForm extends Form
             'text',
             'resource_db_host',
             array (
-                'label'     =>  'Host',
-                'value'     =>  $this->getResource()->get('host', 'localhost'),
-                'required'  =>  true,
-                'helptext'  =>  'The hostname of the database.'
+                'required'  => true,
+                'label'     => t('Host'),
+                'helptext'  => t('The hostname of the database.'),
+                'value'     => $this->getResource()->get('host', 'localhost')
             )
         );
 
         $this->addElement(
-            'text',
-            'resource_db_port',
-            array(
-                'label'     => 'Port',
-                'value'     => $this->getResource()->get('port', 3306),
-                'required'  => true,
-                'validators' => array(
-                    array('regex', false, '/^[0-9]+$/')
-                ),
-                'helptext'  => 'The port number to use.'
+            new Number(
+                array(
+                    'name'      => 'resource_db_port',
+                    'required'  => true,
+                    'label'     => t('Port'),
+                    'helptext'  => t('The port to use.'),
+                    'value'     => $this->getResource()->get('port', 3306)
+                )
             )
         );
 
@@ -143,10 +179,10 @@ class ResourceForm extends Form
             'text',
             'resource_db_dbname',
             array(
-                'label'     => 'Database Name',
-                'value'     => $this->getResource()->get('dbname', ''),
                 'required'  => true,
-                'helptext'  => 'The name of the database to use'
+                'label'     => t('Database Name'),
+                'helptext'  => t('The name of the database to use'),
+                'value'     => $this->getResource()->get('dbname', '')
             )
         );
 
@@ -154,10 +190,10 @@ class ResourceForm extends Form
             'text',
             'resource_db_username',
             array (
-                'label'     =>  'Username',
-                'value'     =>  $this->getResource()->get('username', ''),
-                'required'  =>  true,
-                'helptext'  =>  'The user name to use for authentication.'
+                'required'  => true,
+                'label'     => t('Username'),
+                'helptext'  => t('The user name to use for authentication.'),
+                'value'     => $this->getResource()->get('username', '')
             )
         );
 
@@ -165,64 +201,65 @@ class ResourceForm extends Form
             'password',
             'resource_db_password',
             array(
-                'label'             => 'Password',
+                'required'          => true,
                 'renderPassword'    => true,
-                'value'             => $this->getResource()->get('password', ''),
-                'helptext'          => 'The password to use for authentication',
-                'required'          => true
+                'label'             => t('Password'),
+                'helptext'          => t('The password to use for authentication'),
+                'value'             => $this->getResource()->get('password', '')
             )
         );
     }
 
-    private function addStatusdatForm()
+    protected function addStatusdatForm()
     {
         $this->addElement(
             'text',
             'resource_statusdat_status_file',
             array(
-                'label'     =>  'Status.dat File',
-                'value'     =>  $this->getResource()->get('status_file', '/usr/local/icinga/var/status.dat'),
-                'required'  =>  true,
-                'helptext'  =>  'Location of your icinga status.dat file'
+                'required'  => true,
+                'label'     => t('Filepath'),
+                'helptext'  => t('Location of your icinga status.dat file'),
+                'value'     => $this->getResource()->get('status_file', '/usr/local/icinga/var/status.dat')
             )
         );
+
         $this->addElement(
             'text',
             'resource_statusdat_object_file',
             array(
-                'label'     => 'Objects.cache File',
-                'value'     =>  $this->getResource()->get('status_file', '/usr/local/icinga/var/objects.cache'),
-                'required'  =>  true,
-                'helptext'  =>  'Location of your icinga objects.cache file'
+                'required'  => true,
+                'label'     => t('Filepath'),
+                'helptext'  => t('Location of your icinga objects.cache file'),
+                'value'     => $this->getResource()->get('status_file', '/usr/local/icinga/var/objects.cache')
             )
         );
     }
 
-    private function addLivestatusForm()
+    protected function addLivestatusForm()
     {
         $this->addElement(
             'text',
             'resource_livestatus_socket',
             array(
-                'label'     => 'Livestatus Socket Location',
-                'required'  =>  true,
-                'helptext'  =>  'The path to your livestatus socket used for querying monitoring data',
-                'value'     =>  $this->getResource()->socket,
+                'required'  => true,
+                'label'     => t('Socket'),
+                'helptext'  => t('The path to your livestatus socket used for querying monitoring data'),
+                'value'     => $this->getResource()->get('socket', '/usr/local/icinga/var/rw/livestatus')
             )
         );
     }
 
-    private function addLdapForm()
+    protected function addLdapForm()
     {
         $this->addElement(
             'text',
             'resource_ldap_hostname',
             array(
-                'label'         => 'LDAP Server Host',
-                'allowEmpty'    =>  false,
-                'value'         => $this->getResource()->get('hostname', 'localhost'),
-                'helptext'      => 'The hostname or address of the LDAP server to use for authentication',
-                'required'      => true
+                'required'      => true,
+                'allowEmpty'    => false,
+                'label'         => t('Host'),
+                'helptext'      => t('The hostname or address of the LDAP server to use for authentication'),
+                'value'         => $this->getResource()->get('hostname', 'localhost')
             )
         );
 
@@ -230,10 +267,10 @@ class ResourceForm extends Form
             'text',
             'resource_ldap_root_dn',
             array(
-                'label'     => 'LDAP Root DN',
-                'value'     => $this->getResource()->get('root_dn', 'ou=people,dc=icinga,dc=org'),
-                'helptext'  => 'The path where users can be found on the ldap server',
-                'required'  => true
+                'required'  => true,
+                'label'     => t('Root DN'),
+                'helptext'  => t('The path where users can be found on the ldap server'),
+                'value'     => $this->getResource()->get('root_dn', 'ou=people,dc=icinga,dc=org')
             )
         );
 
@@ -241,10 +278,10 @@ class ResourceForm extends Form
             'text',
             'resource_ldap_bind_dn',
             array(
-                'label'     => 'LDAP Bind DN',
-                'value'     => $this->getResource()->get('bind_dn', 'cn=admin,cn=config'),
-                'helptext'  => 'The user dn to use for querying the ldap server',
-                'required'  => true
+                'required'  => true,
+                'label'     => t('Bind DN'),
+                'helptext'  => t('The user dn to use for querying the ldap server'),
+                'value'     => $this->getResource()->get('bind_dn', 'cn=admin,cn=config')
             )
         );
 
@@ -252,77 +289,73 @@ class ResourceForm extends Form
             'password',
             'resource_ldap_bind_pw',
             array(
-                'label'             => 'LDAP Bind Password',
+                'required'          => true,
                 'renderPassword'    => true,
-                'value'             => $this->getResource()->get('bind_pw', ''),
-                'helptext'          => 'The password to use for querying the ldap server',
-                'required'          => true
+                'label'             => t('Bind Password'),
+                'helptext'          => t('The password to use for querying the ldap server'),
+                'value'             => $this->getResource()->get('bind_pw', '')
             )
         );
     }
 
-    /**
-     * Set the resource configuration to edit.
-     *
-     * @param Zend_Config $resource
-     */
-    public function setResource(Zend_Config $resource)
+    protected function addFileForm()
     {
-        $this->resource = $resource;
+        $this->addElement(
+            'text',
+            'resource_file_filename',
+            array(
+                'required'  => true,
+                'label'     => t('Filepath'),
+                'helptext'  => t('The filename to fetch information from'),
+                'value'     => $this->getResource()->get('filename', '')
+            )
+        );
+
+        $this->addElement(
+            'text',
+            'resource_file_fields',
+            array(
+                'required'  => true,
+                'label'     => t('Pattern'),
+                'helptext'  => t('The regular expression by which to identify columns'),
+                'value'     => $this->getResource()->get('fields', '')
+            )
+        );
     }
 
-    /**
-     * Get the current resource configuration.
-     *
-     * @return Zend_Config
-     */
-    public function getResource()
-    {
-        if (!isset($this->resource)) {
-            // Init empty resource
-            $this->resource = new Zend_Config(
-                array('type' => 'db')
-            );
-        }
-        return $this->resource;
-    }
-
-    /**
-     * Add a field to change the resource name and one hidden field
-     * to save the previous resource name.
-     */
-    private function addNameFields()
+    protected function addNameFields()
     {
         $this->addElement(
             'text',
             'resource_all_name',
             array(
-                'label'     => 'Resource Name',
-                'value'     => $this->name,
-                'helptext'  => 'The unique name of this resource',
-                'required'  => true
+                'required'  => true,
+                'label'     => t('Resource Name'),
+                'helptext'  => t('The unique name of this resource'),
+                'value'     => $this->getName()
             )
         );
+
         $this->addElement(
             'hidden',
             'resource_all_name_old',
             array(
-                'value' => $this->oldName
+                'value' => $this->getOldName()
             )
         );
     }
 
     /**
-     * Add checkbox at the beginning of the form which allows to skip logic connection validation
+     * Add checkbox at the beginning of the form which allows to skip connection validation
      */
-    private function addForceCreationCheckbox()
+    protected function addForceCreationCheckbox()
     {
-        $checkbox = new \Zend_Form_Element_Checkbox(
+        $checkbox = new Zend_Form_Element_Checkbox(
             array(
-                'name'      =>  'backend_force_creation',
-                'label'     =>  'Force Changes',
-                'helptext'  =>  'Check this box to enforce changes without connectivity validation',
-                'order'     =>  0
+                'order'     => 0,
+                'name'      => 'resource_force_creation',
+                'label'     => t('Force Changes'),
+                'helptext'  => t('Check this box to enforce changes without connectivity validation')
             )
         );
         $checkbox->addDecorator(new HelpText());
@@ -332,21 +365,22 @@ class ResourceForm extends Form
     /**
      * Add a select box for choosing the type to use for this backend
      */
-    private function addTypeSelectionBox()
+    protected function addTypeSelectionBox()
     {
         $this->addElement(
             'select',
             'resource_type',
             array(
-                'label'         =>  'Resource Type',
-                'value'         =>  $this->getResource()->type,
-                'required'      =>  true,
-                'helptext'      =>  'The type of resource.',
-                'multiOptions'  =>  array(
-                    'db'            => 'SQL Database',
-                    'ldap'          => 'Ldap',
+                'required'      => true,
+                'label'         => t('Resource Type'),
+                'helptext'      => t('The type of resource'),
+                'value'         => $this->getResource()->type,
+                'multiOptions'  => array(
+                    'db'            => t('SQL Database'),
+                    'ldap'          => 'LDAP',
                     'statusdat'     => 'Status.dat',
-                    'livestatus'    => 'Livestatus'
+                    'livestatus'    => 'Livestatus',
+                    'file'          => t('File')
                 )
             )
         );
@@ -354,21 +388,21 @@ class ResourceForm extends Form
     }
 
     /**
-     * Validate this form with the Zend validation mechanism and perform a validation of the connection.
+     * Validate this form with the Zend validation mechanism and perform a validation of the connection
      *
-     * If validation fails, the 'backend_force_creation' checkbox is prepended to the form to allow users to
-     * skip the logic connection validation.
+     * If validation fails, the 'resource_force_creation' checkbox is prepended to the form to allow users to
+     * skip the connection validation
      *
-     * @param array $data       The form input to validate
+     * @param   array   $data   The form input to validate
      *
-     * @return bool             True when validation succeeded, false if not
+     * @return  bool            True when validation succeeded, false if not
      */
     public function isValid($data)
     {
         if (!parent::isValid($data)) {
             return false;
         }
-        if ($this->getRequest()->getPost('backend_force_creation')) {
+        if (isset($data['resource_force_creation']) && $data['resource_force_creation']) {
             return true;
         }
         if (!$this->isValidResource()) {
@@ -380,14 +414,15 @@ class ResourceForm extends Form
 
     /**
      * Test if the changed resource is a valid resource, by instantiating it and
-     * checking if connection is possible.
+     * checking if a connection is possible
      *
-     * @return bool     True when connection to the resource is possible.
+     * @return  bool    True when a connection to the resource is possible
      */
-    private function isValidResource()
+    public function isValidResource()
     {
+        $config = $this->getConfig();
+
         try {
-            $config = $this->getConfig();
             switch ($config->type) {
                 case 'db':
                     $resource = ResourceFactory::createResource($config);
@@ -396,23 +431,33 @@ class ResourceForm extends Form
                 case 'statusdat':
                     if (!file_exists($config->object_file) || !file_exists($config->status_file)) {
                         $this->addErrorMessage(
-                            'Connectivity validation failed, the provided file or socket does not exist.'
+                            t('Connectivity validation failed, the provided file does not exist.')
                         );
                         return false;
                     }
                     break;
                 case 'livestatus':
-                    // TODO: Implement check
+                    $resource = ResourceFactory::createResource($config);
+                    $resource->connect()->disconnect();
                     break;
                 case 'ldap':
                     $resource = ResourceFactory::createResource($config);
                     $resource->connect();
                     break;
+                case 'file':
+                    if (!file_exists($config->filename)) {
+                        $this->addErrorMessage(
+                            t('Connectivity validation failed, the provided file does not exist.')
+                        );
+                        return false;
+                    }
+                    break;
             }
-        } catch (\Exception $exc) {
-            $this->addErrorMessage('Connectivity validation failed, connection to the given resource not possible.');
+        } catch (Exception $e) {
+            $this->addErrorMessage(t('Connectivity validation failed, connection to the given resource not possible.'));
             return false;
         }
+
         return true;
     }
 
@@ -420,6 +465,7 @@ class ResourceForm extends Form
     {
         $this->addNameFields();
         $this->addTypeSelectionBox();
+
         switch ($this->getRequest()->getParam('resource_type', $this->getResource()->type)) {
             case 'db':
                 $this->addDbForm();
@@ -433,30 +479,33 @@ class ResourceForm extends Form
             case 'ldap':
                 $this->addLdapForm();
                 break;
+            case 'file':
+                $this->addFileForm();
+                break;
         }
+
         $this->setSubmitLabel('{{SAVE_ICON}} Save Changes');
     }
 
     /**
      * Return a configuration containing the backend settings entered in this form
      *
-     * @return Zend_Config  The updated configuration for this backend
+     * @return  Zend_Config     The updated configuration for this backend
      */
     public function getConfig()
     {
         $values = $this->getValues();
-        $type = $values['resource_type'];
-        $result = array('type' => $type);
+
+        $result = array('type' => $values['resource_type']);
         foreach ($values as $key => $value) {
             if ($key !== 'resource_type' && $key !== 'resource_all_name' && $key !== 'resource_all_name_old') {
                 $configKey = explode('_', $key, 3);
-                if (sizeof($configKey) < 3) {
-                    Logger::warning('EditResourceForm: invalid form key "' . $key . '" was ignored.');
-                    continue;
+                if (count($configKey) === 3) {
+                    $result[$configKey[2]] = $value;
                 }
-                $result[$configKey[2]] = $value;
             }
         }
+
         return new Zend_Config($result);
     }
 }

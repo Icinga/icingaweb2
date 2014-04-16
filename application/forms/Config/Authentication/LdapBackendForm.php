@@ -89,7 +89,7 @@ class LdapBackendForm extends BaseBackendForm
             array(
                 'required'      => true,
                 'allowEmpty'    => false,
-                'label'         => t('LDAP resource'),
+                'label'         => t('LDAP Resource'),
                 'helptext'      => t('The resource to use for authenticating with this provider'),
                 'value'         => $this->getBackend()->get('resource'),
                 'multiOptions'  => $this->getResources()

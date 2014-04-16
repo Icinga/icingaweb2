@@ -273,6 +273,15 @@ class Connection
         }
     }
 
+    public function connect()
+    {
+        if (!$this->connection) {
+            $this->getConnection();
+        }
+
+        return $this;
+    }
+
     public function disconnect()
     {
         if ($this->connection) {
