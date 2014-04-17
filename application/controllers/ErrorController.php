@@ -67,7 +67,7 @@ class ErrorController extends ActionController
                 break;
             default:
                 $this->getResponse()->setHttpResponseCode(500);
-                $this->view->title = 'Server error';
+                $this->view->title = 'Server error: ' . $exception->getMessage();
                 $this->view->message = $exception->getMessage();
                 if ($this->getInvokeArg('displayExceptions') == true) {
                     $this->view->stackTrace = $exception->getTraceAsString();
