@@ -311,10 +311,8 @@
                 req.$target.data('icingaModule', moduleName);
                 classes.push('icinga-module');
                 classes.push('module-' + moduleName);
-                req.$target.attr('class', classes);
             } else {
                 req.$target.removeData('icingaModule');
-                // req.$target.attr('class', 'container'); // TODO: remove module-$name
             }
             req.$target.attr('class', classes.join(' '));
 
