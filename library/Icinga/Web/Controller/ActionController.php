@@ -372,7 +372,7 @@ class ActionController extends Zend_Controller_Action
             exit;
         }
 
-        if ($isXhr || $this->getParam('view') === 'compact') {
+        if ($isXhr) {
             $layout->setLayout('inline');
         }
 
