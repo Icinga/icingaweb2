@@ -124,7 +124,7 @@ abstract class ApplicationBootstrap
     /**
      * Constructor
      */
-    protected function __construct($configDir)
+    protected function __construct($configDir = null)
     {
         $this->libDir = realpath(__DIR__ . '/../..');
 
@@ -139,13 +139,21 @@ abstract class ApplicationBootstrap
             define('ICINGA_APPDIR', $this->appDir);
         }
 
+        if ($configDir === null) {
+            if (array_key_exists('ICINGAWEB_CONFIGDIR', $_SERVER)) {
+                $configDir = $_SERVER['ICINGAWEB_CONFIGDIR'];
+            } else {
+                $configDir = '/etc/icingaweb';
+            }
+        }
+        $this->configDir = realpath($configDir);
+
         $this->setupAutoloader();
         $this->setupZendAutoloader();
 
         Benchmark::measure('Bootstrap, autoloader registered');
 
         Icinga::setApp($this);
-        $this->configDir = realpath($configDir);
 
         require_once dirname(__FILE__) . '/functions.php';
     }
@@ -269,7 +277,7 @@ abstract class ApplicationBootstrap
      *
      * @return  ApplicationBootstrap
      */
-    public static function start($configDir)
+    public static function start($configDir = null)
     {
         $application = new static($configDir);
         $application->bootstrap();
