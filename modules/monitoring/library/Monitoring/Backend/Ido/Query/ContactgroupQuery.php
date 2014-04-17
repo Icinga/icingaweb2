@@ -37,7 +37,7 @@ class ContactgroupQuery extends IdoQuery
         'services' => array(
             'service_object_id'   => 'so.object_id',
             'service_host_name'   => 'so.name1 COLLATE latin1_general_ci',
-            'service'             => 'so.name1 COLLATE latin1_general_ci',
+            'service'             => 'so.name2 COLLATE latin1_general_ci',
             'service_description' => 'so.name2 COLLATE latin1_general_ci',
         )
     );
@@ -96,7 +96,7 @@ class ContactgroupQuery extends IdoQuery
     {
         $scgSub = $this->db->select()->distinct()
             ->from($this->prefix . 'service_contactgroups', array(
-            'contactgroup_object_id', 'service_id'
+            'service_id', 'contactgroup_object_id'
             ));
 
             /*
