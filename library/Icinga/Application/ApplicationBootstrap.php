@@ -372,7 +372,7 @@ abstract class ApplicationBootstrap
                     'level'         => Logger::$ERROR,
                     'type'          => 'syslog',
                     'facility'      => 'LOG_USER',
-                    'application'   => 'Icinga Web'
+                    'application'   => 'icingaweb'
                 )
             )
         );
