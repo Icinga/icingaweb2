@@ -50,16 +50,6 @@ class Hostgroup extends DataView
     }
 
     /**
-     * Return the table name for this view
-     *
-     * @return string
-     */
-    public static function getTableName()
-    {
-        return 'hostgroup';
-    }
-
-    /**
      * Retrieve default sorting rules for particular columns. These involve sort order and potential additional to sort
      *
      * @return array

@@ -90,12 +90,7 @@ class HostStatus extends DataView
         );
     }
 
-    /**
-     * Return the table name
-     *
-     * @return string
-     */
-    public static function getTableName()
+    public static function getQueryName()
     {
         return 'status';
     }

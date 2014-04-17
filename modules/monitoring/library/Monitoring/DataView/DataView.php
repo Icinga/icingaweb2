@@ -65,15 +65,17 @@ abstract class DataView implements Filterable
      */
     public function __construct(Backend $ds, array $columns = null)
     {
-        $this->query = $ds->select()->from(static::getTableName(), $columns === null ? $this->getColumns() : $columns);
+        $this->query = $ds->select()->from(static::getQueryName(), $columns === null ? $this->getColumns() : $columns);
     }
 
     /**
-     * Get the queried table name
+     * Get the query name this data view relies on
+     *
+     * By default this is this class' name without its namespace
      *
      * @return string
      */
-    public static function getTableName()
+    public static function getQueryName()
     {
         $tableName = explode('\\', get_called_class());
         $tableName = end($tableName);

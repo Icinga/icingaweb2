@@ -124,9 +124,7 @@ class ServiceStatus extends DataView
         );
     }
 
-
-
-    public static function getTableName()
+    public static function getQueryName()
     {
         return 'status';
     }
