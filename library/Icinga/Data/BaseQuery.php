@@ -2,12 +2,11 @@
 
 namespace Icinga\Data;
 
-use Countable;
 use Zend_Controller_Front;
 use Zend_Paginator;
 use Icinga\Web\Paginator\Adapter\QueryAdapter;
 
-abstract class BaseQuery implements Browsable, Fetchable, Filterable, Limitable, Queryable, Sortable, Countable
+abstract class BaseQuery implements QueryInterface, Queryable
 {
     /**
      * Query data source
