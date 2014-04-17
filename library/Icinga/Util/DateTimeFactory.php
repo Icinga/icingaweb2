@@ -91,39 +91,4 @@ class DateTimeFactory implements ConfigAwareFactory
     {
         return new DateTime($time, $timeZone !== null ? $timeZone : self::$timeZone);
     }
-
-    /**
-     * Return the amount of seconds based on the given month
-     *
-     * @param   DateTime    $dateTime   The date and time to use
-     *
-     * @return  int
-     */
-    public static function getSecondsByMonth(DateTime $dateTime)
-    {
-        return (int) $dateTime->format('t') * 24 * 3600;
-    }
-
-    /**
-     * Return the amount of seconds based on the given year
-     *
-     * @param   DateTime    $dateTime   The date and time to use
-     *
-     * @return  int
-     */
-    public static function getSecondsByYear(DateTime $dateTime)
-    {
-        return (self::isLeapYear($dateTime) ? 366 : 365) * 24 * 3600;
-    }
-
-    /**
-     * Return whether the given year is a leap year
-     *
-     * @param   DateTime    $dateTime   The date and time to check
-     * @return  bool
-     */
-    public static function isLeapYear(DateTime $dateTime)
-    {
-        return $dateTime->format('L') == 1;
-    }
 }
