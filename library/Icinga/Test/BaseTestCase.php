@@ -22,7 +22,6 @@ namespace {
 namespace Icinga\Test {
 
     use \Exception;
-    use \DateTimeZone;
     use \RuntimeException;
     use \Mockery;
     use \Zend_Config;
@@ -113,7 +112,7 @@ namespace Icinga\Test {
         public static function setupTimezone()
         {
             date_default_timezone_set('UTC');
-            DateTimeFactory::setConfig(array('timezone' => new DateTimeZone('UTC')));
+            DateTimeFactory::setConfig(array('timezone' => 'UTC'));
         }
 
         /**

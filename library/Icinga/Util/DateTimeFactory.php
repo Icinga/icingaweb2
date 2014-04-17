@@ -29,8 +29,9 @@
 
 namespace Icinga\Util;
 
-use \DateTime;
-use \DateTimeZone;
+use Exception;
+use DateTime;
+use DateTimeZone;
 use Icinga\Util\ConfigAwareFactory;
 use Icinga\Exception\ConfigurationError;
 
@@ -55,10 +56,13 @@ class DateTimeFactory implements ConfigAwareFactory
      */
     public static function setConfig($config)
     {
-        if (!array_key_exists('timezone', $config)) {
-            throw new ConfigurationError(t('"DateTimeFactory" expects a valid time zone to be set via "setConfig"'));
+        try {
+            $tz = new DateTimeZone(isset($config['timezone']) ? $config['timezone'] : '');
+        } catch (Exception $e) {
+            throw new ConfigurationError('"DateTimeFactory" expects a valid time zone be set via "setConfig"');
         }
-        self::$timeZone = $config['timezone'];
+
+        self::$timeZone = $tz;
     }
 
     /**

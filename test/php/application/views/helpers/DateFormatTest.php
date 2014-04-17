@@ -5,7 +5,6 @@
 namespace Tests\Icinga\Views\Helper;
 
 use Mockery;
-use DateTimeZone;
 use Zend_View_Helper_DateFormat;
 use Icinga\Test\BaseTestCase;
 use Icinga\Application\Config;
@@ -26,12 +25,12 @@ class DateFormatTest extends BaseTestCase
     {
         parent::tearDown();
         Config::$configDir = $this->oldConfigDir;
-        DateTimeFactory::setConfig(array('timezone' => new DateTimeZone(date_default_timezone_get())));
+        DateTimeFactory::setConfig(array('timezone' => date_default_timezone_get()));
     }
 
     public function testFormatReturnsCorrectDateWithTimezoneApplied()
     {
-        DateTimeFactory::setConfig(array('timezone' => new DateTimeZone('Europe/Berlin')));
+        DateTimeFactory::setConfig(array('timezone' => 'Europe/Berlin'));
         $helper = new Zend_View_Helper_DateFormat($this->getRequestMock());
 
         $this->assertEquals(

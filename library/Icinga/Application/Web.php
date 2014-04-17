@@ -337,13 +337,12 @@ class Web extends ApplicationBootstrap
         }
 
         try {
-            $tz = new DateTimeZone($userTimezone);
-        } catch (Exception $e) {
+            DateTimeFactory::setConfig(array('timezone' => $userTimezone));
+            date_default_timezone_set($userTimezone);
+        } catch (ConfigurationError $e) {
             return parent::setupTimezone();
         }
 
-        date_default_timezone_set($userTimezone);
-        DateTimeFactory::setConfig(array('timezone' => $tz));
         return $this;
     }
 
