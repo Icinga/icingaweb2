@@ -29,7 +29,7 @@
 
 namespace Icinga\Util;
 
-use \Exception;
+use Exception;
 
 /**
  * Helper class to ease internationalization when using gettext
