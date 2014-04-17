@@ -87,7 +87,7 @@ if (in_array($path, $special)) {
     $pie->initFromRequest();
     echo $pie->render();
 
-} elseif (file_exists($baseDir . $ruri) && is_file($baseDir . $ruri)) {
+} elseif (file_exists($baseDir . '/' . $path) && is_file($baseDir . '/' . $path)) {
     return false;
 } else {
     include __DIR__ . '/Web.php';
