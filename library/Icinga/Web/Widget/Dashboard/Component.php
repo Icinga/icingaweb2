@@ -76,7 +76,7 @@ class Component extends AbstractWidget
     <div class="container" data-icinga-url="{URL}">
         <h1>{REMOVE}<a href="{FULL_URL}" data-base-target="col1">{TITLE}</a></h1>
         <noscript>
-            <iframe src="{URL}" style="height:100%; width:99%" frameborder="no"></iframe>
+            <iframe src="{IFRAME_URL}" style="height:100%; width:99%" frameborder="no"></iframe>
         </noscript>
     </div>
 EOD;
@@ -165,8 +165,11 @@ EOD;
         $view = $this->view();
         $url = clone($this->url);
         $url->addParams(array('view' => 'compact'));
+        $iframeUrl = clone($url);
+        $iframeUrl->addParams(array('_render' => 'iframe'));
 
         $html = str_replace('{URL}', $url, $this->template);
+        $html = str_replace('{IFRAME_URL}', $iframeUrl, $html);
         $html = str_replace('{FULL_URL}', $url->getUrlWithout('view'), $html);
         $html = str_replace('{REMOVE_BTN}', $this->getRemoveForm($view), $html);
         $html = str_replace('{TITLE}', $view->escape($this->getTitle()), $html);
@@ -181,6 +184,8 @@ EOD;
      */
     protected function getRemoveForm()
     {
+        // TODO: temporarily disabled, should point to a form asking for confirmal
+        return '';
         $removeUrl = Url::fromPath(
             '/dashboard/removecomponent',
             array(
