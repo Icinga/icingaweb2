@@ -1,6 +1,4 @@
 <?php
-// @codingStandardsIgnoreStart
-
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga Web 2.
@@ -29,10 +27,10 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use \Icinga\Application\Icinga;
-use \Icinga\Application\Config;
-use \Icinga\Util\DateTimeFactory;
-use \Icinga\Web\Form\Validator\DateTimeValidator;
+use Icinga\Application\Icinga;
+use Icinga\Application\Config;
+use Icinga\Util\DateTimeFactory;
+use Icinga\Web\Form\Validator\DateTimeValidator;
 
 /**
  * Helper to format date and time. Utilizes DateTimeFactory to ensure time zone awareness
@@ -46,7 +44,7 @@ class Zend_View_Helper_DateFormat extends Zend_View_Helper_Abstract
      *
      * @var Zend_Controller_Request_Abstract
      */
-    private $request;
+    protected $request;
 
     /**
      * Constructor
@@ -79,6 +77,7 @@ class Zend_View_Helper_DateFormat extends Zend_View_Helper_Abstract
      *
      * @param   int     $timestamp
      * @param   string  $format
+     *
      * @return  string
      */
     public function format($timestamp, $format)
@@ -89,6 +88,7 @@ class Zend_View_Helper_DateFormat extends Zend_View_Helper_Abstract
         } else {
             return $timestamp;
         }
+
         return $dt->format($format);
     }
 
@@ -96,6 +96,7 @@ class Zend_View_Helper_DateFormat extends Zend_View_Helper_Abstract
      * Format date according to user's format
      *
      * @param   int     $timestamp  A unix timestamp
+     *
      * @return  string  The formatted date string
      */
     public function formatDate($timestamp)
@@ -107,6 +108,7 @@ class Zend_View_Helper_DateFormat extends Zend_View_Helper_Abstract
      * Format time according to user's format
      *
      * @param   int     $timestamp  A unix timestamp
+     *
      * @return  string  The formatted time string
      */
     public function formatTime($timestamp)
@@ -133,7 +135,8 @@ class Zend_View_Helper_DateFormat extends Zend_View_Helper_Abstract
     public function getDateFormat()
     {
         return $this->request->getUser()->getPreferences()->get(
-            'app.dateFormat', Config::app()->global !== null ? Config::app()->global->get('dateFormat', 'd/m/Y') : 'd/m/Y'
+            'app.dateFormat',
+            Config::app()->global !== null ? Config::app()->global->get('dateFormat', 'd/m/Y') : 'd/m/Y'
         );
     }
 
@@ -145,7 +148,8 @@ class Zend_View_Helper_DateFormat extends Zend_View_Helper_Abstract
     public function getTimeFormat()
     {
         return $this->request->getUser()->getPreferences()->get(
-            'app.timeFormat', Config::app()->global !== null ? Config::app()->global->get('timeFormat', 'g:i A') : 'g:i A'
+            'app.timeFormat',
+            Config::app()->global !== null ? Config::app()->global->get('timeFormat', 'g:i A') : 'g:i A'
         );
     }
 
@@ -159,5 +163,3 @@ class Zend_View_Helper_DateFormat extends Zend_View_Helper_Abstract
         return $this->getDateFormat() . ' ' . $this->getTimeFormat();
     }
 }
-
-// @codingStandardsIgnoreStop
