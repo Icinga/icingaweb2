@@ -34,8 +34,10 @@ use Icinga\Application\ApplicationBootstrap;
 use Icinga\Cli\Params;
 use Icinga\Cli\Loader;
 use Icinga\Cli\Screen;
+use Icinga\Logger\Logger;
 use Icinga\Application\Benchmark;
 use Icinga\Exception\ProgrammingError;
+use Zend_Config;
 
 require_once __DIR__ . '/ApplicationBootstrap.php';
 
@@ -64,19 +66,23 @@ class Cli extends ApplicationBootstrap
             ->setupTimezone()
             ->setupInternationalization()
             ->parseBasicParams()
-            ->fixLoggingConfig()
             ->setupLogger()
             ->setupResourceFactory()
             ->setupModuleManager();
     }
 
-    protected function fixLoggingConfig()
+    protected function setupLogging()
     {
-        $conf = $this->config->logging;
-        if (! isset($conf->type) || $conf->type === 'stream') {
-            $conf->level = $this->verbose;
-            $conf->target = 'php://stderr';
-        }
+        Logger::create(
+            new Zend_Config(
+                array(
+                    'enable' => true,
+                    'level'  => Logger::$INFO,
+                    'type'   => 'stream',
+                    'target' => 'php://stderr'
+                )
+            )
+        );
         return $this;
     }
 
