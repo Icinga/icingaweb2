@@ -2,10 +2,10 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Tests\Icinga\Session;
+namespace Tests\Icinga\Web\Session;
 
-use \Exception;
-use \Mockery;
+use Exception;
+use Mockery;
 use Icinga\Test\BaseTestCase;
 use Icinga\Web\Session\SessionNamespace;
 
