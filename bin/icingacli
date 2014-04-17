@@ -3,4 +3,4 @@
 
 use Icinga\Application\Cli;
 require_once dirname(__DIR__) . '/library/Icinga/Application/Cli.php';
-Cli::start('@icingaweb_config_path@')->dispatch();
+Cli::start()->dispatch();

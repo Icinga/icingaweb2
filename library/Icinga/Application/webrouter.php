@@ -10,12 +10,6 @@ use Icinga\Chart\Inline\PieChart;
 
 error_reporting(E_ALL | E_STRICT);
 
-if (array_key_exists('ICINGAWEB_CONFIGDIR', $_SERVER)) {
-    $configDir = $_SERVER['ICINGAWEB_CONFIGDIR'];
-} else {
-    $configDir = '/etc/icingaweb';
-}
-
 if (isset($_SERVER['REQUEST_URI'])) {
     $ruri = $_SERVER['REQUEST_URI'];
 } else {
@@ -59,7 +53,7 @@ $special = array(
 if (in_array($path, $special)) {
 
     include_once __DIR__ . '/EmbeddedWeb.php';
-    EmbeddedWeb::start($configDir);
+    EmbeddedWeb::start();
 
     switch($path) {
 
@@ -87,7 +81,7 @@ if (in_array($path, $special)) {
         return false;
     }
     include __DIR__ . '/EmbeddedWeb.php';
-    EmbeddedWeb::start($configDir);
+    EmbeddedWeb::start();
     header('Content-Type: image/svg+xml');
     $pie = new PieChart();
     $pie->initFromRequest();
@@ -97,6 +91,6 @@ if (in_array($path, $special)) {
     return false;
 } else {
     include __DIR__ . '/Web.php';
-    Web::start($configDir)->dispatch();
+    Web::start()->dispatch();
 }
 
