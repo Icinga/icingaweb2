@@ -142,6 +142,7 @@ abstract class AbstractObject
 
     public function fetchContacts()
     {
+/*
         $query = Contact::fromRequest(
             $this->request,
             array(
@@ -152,6 +153,21 @@ abstract class AbstractObject
             )
         )->getQuery()
             ->where('host_name', $this->host_name);
+*/
+
+        $query = Contact::fromParams(array('backend' => null), array(
+                'contact_name',
+                'contact_alias',
+                'contact_email',
+                'contact_pager',
+        ))->getQuery();
+
+        if ($this->type === 'service') {
+            $query->where('service_host_name', $this->host_name);
+            $query->where('service_description', $this->service_description);
+        } else {
+            $query->where('host_name', $this->host_name);
+        }
 
         $this->contacts = $query->fetchAll();
         return $this;
@@ -173,6 +189,19 @@ abstract class AbstractObject
 
     public function fetchContactgroups()
     {
+
+        $query = Contactgroup::fromParams(array('backend' => null), array(
+                'contactgroup_name',
+                'contactgroup_alias'
+        ))->getQuery();
+
+        if ($this->type === 'service') {
+            $query->where('service_host_name', $this->host_name);
+            $query->where('service_description', $this->service_description);
+        } else {
+            $query->where('host_name', $this->host_name);
+        }
+/*
         $query = Contactgroup::fromRequest(
             $this->request,
             array(
@@ -180,7 +209,7 @@ abstract class AbstractObject
                 'contactgroup_alias'
             )
         )->getQuery();
-
+*/
         $this->contactgroups = $query->fetchAll();
 
         return $this;
