@@ -42,17 +42,19 @@ class DateTimeFactory implements ConfigAwareFactory
 {
     /**
      * Time zone used throughout DateTime object creation
+     *
      * @var DateTimeZone
      */
-    private static $timeZone;
+    protected static $timeZone;
 
     /**
      * Set the factory's config
      *
      * Set the factory's time zone via key timezone in the given config array
      *
-     * @param   array   $config
-     * @throws  \Icinga\Exception\ConfigurationError if the given config is not valid
+     * @param   array               $config     An array with key 'timezone'
+     *
+     * @throws  ConfigurationError              if the given array misses the key 'timezone'
      */
     public static function setConfig($config)
     {
@@ -66,14 +68,16 @@ class DateTimeFactory implements ConfigAwareFactory
     }
 
     /**
-     * Return new DateTime object using the given format, time and set time zone
+     * Return new DateTime object using the given format, time and set timezone
      *
      * Wraps DateTime::createFromFormat()
      *
      * @param   string          $format
      * @param   string          $time
      * @param   DateTimeZone    $timeZone
+     *
      * @return  DateTime
+     *
      * @see     DateTime::createFromFormat()
      */
     public static function parse($time, $format, DateTimeZone $timeZone = null)
@@ -88,7 +92,9 @@ class DateTimeFactory implements ConfigAwareFactory
      *
      * @param   string          $time
      * @param   DateTimeZone    $timeZone
+     *
      * @return  DateTime
+     *
      * @see     DateTime::__construct()
      */
     public static function create($time = 'now', DateTimeZone $timeZone = null)
