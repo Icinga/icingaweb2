@@ -10,9 +10,7 @@ use Icinga\Chart\Inline\PieChart;
 
 error_reporting(E_ALL | E_STRICT);
 
-if (array_key_exists('ICINGAWEB_CONFIGDIR', $_ENV)) {
-    $configDir = $_ENV['ICINGAWEB_CONFIGDIR'];
-} elseif (array_key_exists('ICINGAWEB_CONFIGDIR', $_SERVER)) {
+if (array_key_exists('ICINGAWEB_CONFIGDIR', $_SERVER)) {
     $configDir = $_SERVER['ICINGAWEB_CONFIGDIR'];
 } else {
     $configDir = '/etc/icingaweb';
@@ -40,9 +38,8 @@ $baseDir = dirname($_SERVER['SCRIPT_FILENAME']);
 // Fix aliases
 $remove = dirname($_SERVER['PHP_SELF']);
 if (substr($ruri, 0, strlen($remove)) !== $remove) {
-  return false;
+    return false;
 }
-
 $ruri = ltrim(substr($ruri, strlen($remove)), '/');
 
 if (strpos($ruri, '?') === false) {
@@ -61,7 +58,7 @@ $special = array(
 
 if (in_array($path, $special)) {
 
-    require_once __DIR__ . '/EmbeddedWeb.php';
+    include_once __DIR__ . '/EmbeddedWeb.php';
     EmbeddedWeb::start($configDir);
 
     switch($path) {
@@ -89,7 +86,7 @@ if (in_array($path, $special)) {
     if (!array_key_exists('data', $_GET)) {
         return false;
     }
-    require_once __DIR__ . '/EmbeddedWeb.php';
+    include __DIR__ . '/EmbeddedWeb.php';
     EmbeddedWeb::start($configDir);
     header('Content-Type: image/svg+xml');
     $pie = new PieChart();
@@ -99,7 +96,7 @@ if (in_array($path, $special)) {
 } elseif (file_exists($baseDir . $ruri) && is_file($baseDir . $ruri)) {
     return false;
 } else {
-    require_once __DIR__ . '/Web.php';
+    include __DIR__ . '/Web.php';
     Web::start($configDir)->dispatch();
 }
 
