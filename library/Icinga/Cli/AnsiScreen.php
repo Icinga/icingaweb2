@@ -1,6 +1,6 @@
 <?php
 
-namespace Icinga\Cli\Screen;
+namespace Icinga\Cli;
 
 use Icinga\Cli\Screen;
 
@@ -8,8 +8,6 @@ use Icinga\Cli\Screen;
 
 class AnsiScreen extends Screen
 {
-    protected $isUtf8;
-
     protected $fgColors = array(
         'black'       => '30',
         'darkgray'    => '1;30',
@@ -40,36 +38,6 @@ class AnsiScreen extends Screen
         'lightgray' => '47',
     );
 
-    public function __construct()
-    {
-    }
-
-    public function getColumns()
-    {
-        $cols = (int) getenv('COLUMNS');
-        if (! $cols) {
-            // stty -a ?
-            $cols = (int) exec('tput cols');
-        }
-        if (! $cols) {
-            $cols = 80;
-        }
-        return $cols;
-    }
-
-    public function getRows()
-    {
-        $rows = (int) getenv('ROWS');
-        if (! $rows) {
-            // stty -a ?
-            $rows = (int) exec('tput rows');
-        }
-        if (! $rows) {
-            $rows = 25;
-        }
-        return $rows;
-    }
-
     public function strlen($string)
     {
         return strlen($this->stripAnsiCodes($string));
@@ -80,45 +48,25 @@ class AnsiScreen extends Screen
         return preg_replace('/\e\[?.*?[\@-~]/', '', $string);
     }
 
-    public function newlines($count = 1)
-    {
-        return str_repeat("\n", $count);
-    }
-
-    public function center($txt)
-    {
-        $len = $this->strlen($txt);
-        $width = floor(($this->getColumns() + $len) / 2) - $len;
-        return str_repeat(' ', $width) . $txt;
-    }
-
-    public function hasUtf8()
-    {
-        if ($this->isUtf8 === null) {
-            // null should equal 0 here, however seems to equal '' on some systems:
-            $current = setlocale(LC_ALL, 0);
-
-            $parts = preg_split('/;/', $current);
-            $lc_parts = array();
-            foreach ($parts as $part) {
-                if (strpos($part, '=') === false) {
-                    continue;
-                }
-                list($key, $val) = preg_split('/=/', $part, 2);
-                $lc_parts[$key] = $val;
-            }
-
-            $this->isUtf8 = array_key_exists('LC_CTYPE', $lc_parts)
-                && preg_match('~\.UTF-8$~i', $lc_parts['LC_CTYPE']);
-        }
-        return $this->isUtf8;
-    }
-
     public function clear()
     {
         return "\033[2J"   // Clear the whole screen
              . "\033[1;1H" // Move the cursor to row 1, column 1
              . "\033[1S";  // Scroll whole page up by 1 line (why?)
+    }
+
+    public function underline($text)
+    {
+        return "\033[4m"
+          . $text
+          . "\033[0m"; // Reset color codes
+    }
+
+    public function colorize($text, $fgColor = null, $bgColor = null)
+    {
+        return $this->startColor($fgColor, $bgColor)
+            . $text
+            . "\033[0m"; // Reset color codes
     }
 
     protected function fgColor($color)
@@ -162,19 +110,5 @@ class AnsiScreen extends Screen
             return '';
         }
         return "\033[" . implode(';', $parts) . 'm';
-    }
-
-    public function underline($text)
-    {
-        return "\033[4m"
-          . $text
-          . "\033[0m"; // Reset color codes
-    }
-
-    public function colorize($text, $fgColor = null, $bgColor = null)
-    {
-        return $this->startColor($fgColor, $bgColor)
-            . $text
-            . "\033[0m"; // Reset color codes
     }
 }
