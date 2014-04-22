@@ -4,8 +4,8 @@
 
 namespace Icinga\Logger\Writer;
 
-use \Exception;
-use \Zend_Config;
+use Exception;
+use Zend_Config;
 use Icinga\Logger\Logger;
 use Icinga\Logger\LogWriter;
 use Icinga\Exception\ConfigurationError;

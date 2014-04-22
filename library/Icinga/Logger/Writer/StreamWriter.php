@@ -4,7 +4,8 @@
 
 namespace Icinga\Logger\Writer;
 
-use \Zend_Config;
+use Exception;
+use Zend_Config;
 use Icinga\Logger\Logger;
 use Icinga\Logger\LogWriter;
 use Icinga\Application\Config;
@@ -87,11 +88,17 @@ class StreamWriter extends LogWriter
      * Write a message to the stream
      *
      * @param   string  $text   The message to write
+     *
+     * @throws  Exception       In case write acess to the stream failed
      */
     protected function write($text)
     {
         $fd = fopen($this->stream, 'a');
-        fwrite($fd, $text . PHP_EOL);
+
+        if ($fd === false || fwrite($fd, $text . PHP_EOL) === false) {
+            throw new Exception('Failed to write to log file "' . $this->stream . '"');
+        }
+
         fclose($fd);
     }
 }

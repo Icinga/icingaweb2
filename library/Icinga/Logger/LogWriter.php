@@ -4,7 +4,7 @@
 
 namespace Icinga\Logger;
 
-use \Zend_Config;
+use Zend_Config;
 
 /**
  * Abstract class for writers that write messages to a log
