@@ -44,8 +44,6 @@ use Countable;
  *
  * $preferences = new Preferences(array('aPreference' => 'value')); // Start with initial preferences
  *
- * $prefrences = $user->getPreferences(); // Retrieve preferences from a \Icinga\User instance
- *
  * $preferences->aNewPreference = 'value'; // Set a preference
  *
  * unset($preferences->aPreference); // Unset a preference
@@ -60,12 +58,12 @@ class Preferences implements Countable
      *
      * @var array
      */
-    private $preferences = array();
+    protected $preferences = array();
 
     /**
      * Constructor
      *
-     * @param array $preferences Preferences key-value array
+     * @param   array   $preferences    Preferences key-value array
      */
     public function __construct(array $preferences = array())
     {
@@ -75,7 +73,7 @@ class Preferences implements Countable
     /**
      * Count all preferences
      *
-     * @return int The number of preferences
+     * @return  int     The number of preferences
      */
     public function count()
     {
@@ -85,7 +83,7 @@ class Preferences implements Countable
     /**
      * Determine whether a preference exists
      *
-     * @param   string $name
+     * @param   string      $name
      *
      * @return  bool
      */
@@ -97,8 +95,8 @@ class Preferences implements Countable
     /**
      * Write data to a preference
      *
-     * @param  string $name
-     * @param  mixed  $value
+     * @param   string      $name
+     * @param   mixed       $value
      */
     public function __set($name, $value)
     {
@@ -108,8 +106,8 @@ class Preferences implements Countable
     /**
      * Retrieve a preference and return $default if the preference is not set
      *
-     * @param   string  $name
-     * @param   mixed   $default
+     * @param   string      $name
+     * @param   mixed       $default
      *
      * @return  mixed
      */
@@ -118,13 +116,14 @@ class Preferences implements Countable
         if (array_key_exists($name, $this->preferences)) {
             return $this->preferences[$name];
         }
+
         return $default;
     }
 
     /**
      * Magic method so that $obj->value will work.
      *
-     * @param   string $name
+     * @param   string      $name
      *
      * @return  mixed
      */
@@ -136,7 +135,7 @@ class Preferences implements Countable
     /**
      * Remove a given preference
      *
-     * @param string $name Preference name
+     * @param   string      $name   Preference name
      */
     public function remove($name)
     {
@@ -146,7 +145,8 @@ class Preferences implements Countable
     /**
      * Determine if a preference is set and is not NULL
      *
-     * @param   string $name Preference name
+     * @param   string      $name   Preference name
+     *
      * @return  bool
      */
     public function __isset($name)
@@ -157,7 +157,7 @@ class Preferences implements Countable
     /**
      * Unset a given preference
      *
-     * @param string $name Preference name
+     * @param   string      $name   Preference name
      */
     public function __unset($name)
     {
@@ -167,7 +167,7 @@ class Preferences implements Countable
     /**
      * Get preferences as array
      *
-     * @return array
+     * @return  array
      */
     public function toArray()
     {
