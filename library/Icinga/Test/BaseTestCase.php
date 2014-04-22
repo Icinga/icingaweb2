@@ -21,11 +21,11 @@ namespace {
 
 namespace Icinga\Test {
 
-    use \Exception;
-    use \RuntimeException;
-    use \Mockery;
-    use \Zend_Config;
-    use \Zend_Test_PHPUnit_ControllerTestCase;
+    use Exception;
+    use RuntimeException;
+    use Mockery;
+    use Zend_Config;
+    use Zend_Test_PHPUnit_ControllerTestCase;
     use Icinga\Application\Icinga;
     use Icinga\Util\DateTimeFactory;
     use Icinga\Data\ResourceFactory;
@@ -85,7 +85,7 @@ namespace Icinga\Test {
          *
          * @var array
          */
-        private static $dbConfiguration = array(
+        protected static $dbConfiguration = array(
             'mysql' => array(
                 'type'      => 'db',
                 'db'        => 'mysql',
