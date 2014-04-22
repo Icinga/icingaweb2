@@ -4,8 +4,8 @@
 
 namespace Icinga\User\Preferences\Store;
 
-use \Exception;
-use \Zend_Db_Select;
+use Exception;
+use Zend_Db_Select;
 use Icinga\Exception\NotReadableError;
 use Icinga\Exception\NotWritableError;
 use Icinga\User\Preferences;
