@@ -4,9 +4,9 @@
 
 namespace Tests\Icinga;
 
-use \DateTimeZone;
+use Mockery;
+use DateTimeZone;
 use Icinga\User;
-use Icinga\User\Preferences;
 use Icinga\Test\BaseTestCase;
 
 class UserTest extends BaseTestCase
@@ -14,9 +14,13 @@ class UserTest extends BaseTestCase
     public function testGetDefaultTimezoneIfTimezoneNotSet()
     {
         $user = new User('unittest');
-        $prefs = new Preferences(array());
+        $prefs = Mockery::mock('Icinga\User\Preferences');
+        $prefs->shouldReceive('get')->with('timezone')->andReturnNull();
         $user->setPreferences($prefs);
-        $this->assertEquals($user->getTimeZone(), new DateTimeZone(date_default_timezone_get()),
+
+        $this->assertEquals(
+            new DateTimeZone(date_default_timezone_get()),
+            $user->getTimeZone(),
             'User\'s timezone does not match the default timezone'
         );
     }
@@ -25,14 +29,35 @@ class UserTest extends BaseTestCase
     {
         $explicitTz = 'Europe/Berlin';
         $user = new User('unittest');
-        $prefs = new Preferences(array(
-            'timezone' => $explicitTz
-        ));
+        $prefs = Mockery::mock('Icinga\User\Preferences');
+        $prefs->shouldReceive('get')->with('timezone')->andReturn($explicitTz);
         $user->setPreferences($prefs);
 
-        $this->assertEquals($user->getTimeZone(), new DateTimeZone($explicitTz),
+        $this->assertEquals(
+            new DateTimeZone($explicitTz),
+            $user->getTimeZone(),
             'User\'s timezone does not match the timezone set by himself'
         );
     }
 
+    public function testWhetherValidEmailsCanBeSet()
+    {
+        $user = new User('unittest');
+        $user->setEmail('mySampleEmail@someDomain.org');
+
+        $this->assertEquals(
+            $user->getEmail(),
+            'mySampleEmail@someDomain.org',
+            'Valid emails set with setEmail are not returned by getEmail'
+        );
+    }
+
+    /**
+     * @expectedException   \InvalidArgumentException
+     */
+    public function testWhetherInvalidEmailsCannotBeSet()
+    {
+        $user = new User('unittest');
+        $user->setEmail('mySampleEmail at someDomain dot org');
+    }
 }
