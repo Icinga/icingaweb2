@@ -184,32 +184,34 @@ class Reader implements DatasourceInterface
         $PHP_EOL_len = strlen(PHP_EOL);
         $lines = array();
         $s = '';
-        $f = fopen($this->filename, 'rb');
-        $buffer = '';
-        fseek($f, 0, SEEK_END);
-        if (ftell($f) === 0) {
-            return array();
-        }
-        while ($read_lines === null || count($lines) < $read_lines) {
-            $c = $this->fgetc($f, $buffer);
-            if ($c === false) {
-                $l = $this->validateLine($s, $query);
-                if (!($l === false || $skip_lines)) {
-                    $lines[] = $l;
-                }
-                break;
+        $f = @fopen($this->filename, 'rb');
+        if ($f !== false) {
+            $buffer = '';
+            fseek($f, 0, SEEK_END);
+            if (ftell($f) === 0) {
+                return array();
             }
-            $s = $c . $s;
-            if (strpos($s, PHP_EOL) === 0) {
-                $l = $this->validateLine((string)substr($s, $PHP_EOL_len), $query);
-                if ($l !== false) {
-                    if ($skip_lines) {
-                        $skip_lines--;
-                    } else {
+            while ($read_lines === null || count($lines) < $read_lines) {
+                $c = $this->fgetc($f, $buffer);
+                if ($c === false) {
+                    $l = $this->validateLine($s, $query);
+                    if (!($l === false || $skip_lines)) {
                         $lines[] = $l;
                     }
+                    break;
                 }
-                $s = '';
+                $s = $c . $s;
+                if (strpos($s, PHP_EOL) === 0) {
+                    $l = $this->validateLine((string)substr($s, $PHP_EOL_len), $query);
+                    if ($l !== false) {
+                        if ($skip_lines) {
+                            $skip_lines--;
+                        } else {
+                            $lines[] = $l;
+                        }
+                    }
+                    $s = '';
+                }
             }
         }
         return $lines;
@@ -252,31 +254,33 @@ class Reader implements DatasourceInterface
         $PHP_EOL_len = strlen(PHP_EOL);
         $lines = array();
         $s = '';
-        $f = fopen($this->filename, 'rb');
-        $buffer = '';
-        while ($read_lines === null || count($lines) < $read_lines) {
-            if (strlen($buffer) === 0) {
-                $buffer = fread($f, 4096);
+        $f = @fopen($this->filename, 'rb');
+        if ($f !== false) {
+            $buffer = '';
+            while ($read_lines === null || count($lines) < $read_lines) {
                 if (strlen($buffer) === 0) {
-                    $l = $this->validateLine($s, $query);
-                    if (!($l === false || $skip_lines)) {
-                        $lines[] = $l;
-                    }
-                    break;
-                }
-            }
-            $s .= substr($buffer, 0, 1);
-            $buffer = substr($buffer, 1);
-            if (strpos($s, PHP_EOL) !== false) {
-                $l = $this->validateLine((string)substr($s, 0, strlen($s) - $PHP_EOL_len), $query);
-                if ($l !== false) {
-                    if ($skip_lines) {
-                        $skip_lines--;
-                    } else {
-                        $lines[] = $l;
+                    $buffer = fread($f, 4096);
+                    if (strlen($buffer) === 0) {
+                        $l = $this->validateLine($s, $query);
+                        if (!($l === false || $skip_lines)) {
+                            $lines[] = $l;
+                        }
+                        break;
                     }
                 }
-                $s = '';
+                $s .= substr($buffer, 0, 1);
+                $buffer = substr($buffer, 1);
+                if (strpos($s, PHP_EOL) !== false) {
+                    $l = $this->validateLine((string)substr($s, 0, strlen($s) - $PHP_EOL_len), $query);
+                    if ($l !== false) {
+                        if ($skip_lines) {
+                            $skip_lines--;
+                        } else {
+                            $lines[] = $l;
+                        }
+                    }
+                    $s = '';
+                }
             }
         }
         return $lines;
@@ -293,25 +297,27 @@ class Reader implements DatasourceInterface
         $PHP_EOL_len = strlen(PHP_EOL);
         $lines = 0;
         $s = '';
-        $f = fopen($this->filename, 'rb');
-        $buffer = '';
-        while (true) {
-            if (strlen($buffer) === 0) {
-                $buffer = fread($f, 4096);
+        $f = @fopen($this->filename, 'rb');
+        if ($f !== false) {
+            $buffer = '';
+            while (true) {
                 if (strlen($buffer) === 0) {
-                    if ($this->validateLine($s, $query) !== false) {
+                    $buffer = fread($f, 4096);
+                    if (strlen($buffer) === 0) {
+                        if ($this->validateLine($s, $query) !== false) {
+                            $lines++;
+                        }
+                        break;
+                    }
+                }
+                $s .= substr($buffer, 0, 1);
+                $buffer = substr($buffer, 1);
+                if (strpos($s, PHP_EOL) !== false) {
+                    if ($this->validateLine((string)substr($s, 0, strlen($s) - $PHP_EOL_len), $query) !== false) {
                         $lines++;
                     }
-                    break;
+                    $s = '';
                 }
-            }
-            $s .= substr($buffer, 0, 1);
-            $buffer = substr($buffer, 1);
-            if (strpos($s, PHP_EOL) !== false) {
-                if ($this->validateLine((string)substr($s, 0, strlen($s) - $PHP_EOL_len), $query) !== false) {
-                    $lines++;
-                }
-                $s = '';
             }
         }
         return $lines;
