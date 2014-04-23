@@ -135,7 +135,7 @@
             $(document).on('click', '.tree .handle', { self: this }, this.treeNodeToggle);
 
             // Toggle all triStateButtons
-            $(document).on('click', '.tristate input.tristate', { self: this}, this.clickTriState);
+            $(document).on('click', 'div.tristate .tristate-dummy', { self: this }, this.clickTriState);
 
             // TBD: a global autocompletion handler
             // $(document).on('keyup', 'form.auto input', this.formChangeDelayed);
@@ -253,12 +253,13 @@
 
         clickTriState: function (event) {
             var $tristate = $(this);
-            var old       = $tristate.data('icinga-old');
             var triState  = parseInt($tristate.data('icinga-tristate'), 10);
-            var value     = $tristate.data('icinga-value');
-            var self      = event.data.self;
 
-            // update value
+            // load current values
+            var old   = $tristate.data('icinga-old');
+            var value = $tristate.parent().find('input:radio:checked').first().prop('checked', false).val();
+
+            // calculate the new value
             if (triState) {
                 // 1         => 0
                 // 0         => unchanged
@@ -269,19 +270,17 @@
                 // 0 => 1
                 value = value === '1' ? '0' : '1';
             }
-            $tristate.data('icinga-value', value);
+            // update form value
+            $tristate.parent().find('input:radio[value="' + value + '"]').prop('checked', true);
+            // update dummy
 
-            // also set form value
-            $tristate.prop('value', value);
-
-            var $changed = $tristate.parent().find('.tristate-status').first();
-            if (old != value) {
-                $changed.text('changed');
+            console.log(value + ' === ' + old + ' ?');
+            if (value !== old) {
+                $tristate.parent().find('b.tristate-changed').css('visibility', 'visible');
             } else {
-                $changed.empty();
+                $tristate.parent().find('b.tristate-changed').hide();
             }
-            $tristate.find('.tristate-status').text(value);
-            self.icinga.ui.updateTriState(value.toString(), $tristate);
+            self.icinga.ui.setTriState(value.toString(), $tristate);    
         },
 
         /**
@@ -600,6 +599,7 @@
             $(document).off('mouseleave', '.historycolorgrid td', this.historycolorgidUnhover);
             $(document).off('mouseenter', 'li.dropdown', this.dropdownHover);
             $(document).off('mouseleave', 'li.dropdown', this.dropdownLeave);
+            $(document).off('click', 'div.tristate .tristate-dummy', this.clickTriState);
         },
 
         destroy: function() {

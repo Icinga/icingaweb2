@@ -15,7 +15,7 @@
                 'monitoring/command/reschedulenextcheck',
                 array(
                     'host'       => $this->target['host'],
-                    'service'    => $this->target['service'],
+                    'service'    => array_key_exists('service', $this->target) ? $this->target['service'] : null,
                     'checktime'  => time(),
                     'forcecheck' => '1'
                 )

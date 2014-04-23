@@ -64,6 +64,7 @@ class Monitoring_MultiController extends ActionController
                 'host_unhandled_service_count',
                 'host_passive_checks_enabled',
                 'host_obsessing',
+                'host_state',
                 'host_notifications_enabled',
                 'host_event_handler_enabled',
                 'host_flap_detection_enabled',
@@ -90,8 +91,8 @@ class Monitoring_MultiController extends ActionController
         $this->view->hostnames = $this->getProperties($hosts, 'host_name');
         $this->view->downtimes = $this->getDowntimes($hosts);
         $this->view->errors    = $errors;
-        $this->view->states    = $this->countStates($hosts);
-        $this->view->pie       = $this->createPie($this->view->states);
+        $this->view->states    = $this->countStates($hosts, 'host', 'host_name');
+        $this->view->pie       = $this->createPie($this->view->states, $this->view->getHelper('MonitoringState')->getHostStateColors());
 
         // Handle configuration changes
         $this->handleConfigurationForm(array(
@@ -147,10 +148,10 @@ class Monitoring_MultiController extends ActionController
         $this->view->hostnames      = $this->getProperties($services, 'host_name');
         $this->view->servicenames   = $this->getProperties($services, 'service_description');
         $this->view->downtimes      = $this->getDowntimes($services);
-        $this->view->service_states = $this->countStates($services);
-        $this->view->host_states    =  $this->countStates($services, 'host_name', 'host_state');
-        $this->view->service_pie    = $this->createPie($this->view->service_states);
-        $this->view->host_pie       = $this->createPie($this->view->host_states);
+        $this->view->service_states = $this->countStates($services, 'service');
+        $this->view->host_states    = $this->countStates($services, 'host',  'host_name');
+        $this->view->service_pie    = $this->createPie($this->view->service_states, $this->view->getHelper('MonitoringState')->getServiceStateColors());
+        $this->view->host_pie       = $this->createPie($this->view->host_states, $this->view->getHelper('MonitoringState')->getHostStateColors());
         $this->view->errors         = $errors;
 
         $this->handleConfigurationForm(array(
@@ -242,16 +243,14 @@ class Monitoring_MultiController extends ActionController
         return $problems;
     }
 
-    private function countStates($objects, $unique = null, $state = 'service_state')
+    private function countStates($objects, $type = 'host', $unique = null)
     {
-        $known = array();
-        $states = array(
-            '0'  => 0,
-            '1'  => 0,
-            '2'  => 0,
-            '3'  => 0,
-            '99' => 0
-        );
+        $known  = array();
+        if ($type === 'host') {
+            $states = array_fill_keys($this->view->getHelper('MonitoringState')->getHostStateNames(), 0);
+        } else {
+            $states = array_fill_keys($this->view->getHelper('MonitoringState')->getServiceStateNames(), 0);
+        }
         foreach ($objects as $object) {
             if (isset($unique)) {
                 if (array_key_exists($object->$unique, $known)) {
@@ -259,22 +258,16 @@ class Monitoring_MultiController extends ActionController
                 }
                 $known[$object->$unique] = true;
             }
-            $states[$object->$state]++;
+            $states[$this->view->monitoringState($object, $type)]++;
         }
-        return array(
-            'up'          => $states['0'],
-            'down'        => $states['1'],
-            'unreachable' => $states['2'],
-            'unknown'     => $states['3'],
-            'pending'     => $states['99']
-        );
+        return $states;
     }
 
-    private function createPie($states)
+    private function createPie($states, $colors)
     {
         $chart = new InlinePie(
             array_values($states),
-            array('#44bb77', '#FF5566', '#FF5566', '#E066FF', '#77AAFF')
+            $colors
         );
         $chart->setLabels(array_keys($states))
             ->setHeight(100)

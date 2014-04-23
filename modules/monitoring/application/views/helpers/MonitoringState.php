@@ -7,12 +7,31 @@ class Zend_View_Helper_MonitoringState extends Zend_View_Helper_Abstract
 
     public function monitoringState($object, $type = 'service')
     {
-
         if ($type === 'service') {
             return $this->servicestates[$object->service_state];
         } elseif ($type === 'host') {
             return $this->hoststates[$object->host_state];
         }
+    }
+
+    public function getServiceStateColors()
+    {
+        return array('#44bb77', '#FFCC66', '#FF5566', '#E066FF', '#77AAFF');
+    }
+
+    public function getHostStateColors()
+    {
+        return array('#44bb77', '#FF5566', '#E066FF', '#77AAFF');
+    }
+
+    public function getServiceStateNames()
+    {
+        return array_values($this->servicestates);
+    }
+
+    public function getHostStateNames()
+    {
+        return array_values($this->hoststates);
     }
 
     public function getStateFlags($object, $type = 'service')

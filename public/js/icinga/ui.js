@@ -469,35 +469,32 @@
         initializeTriStates: function ($html) {
             var self = this;
             $('div.tristate', $html).each(function(index, item) {
-                var target   = item;
-                var $target  = $(target);
-                var value    = $target.find('input:checked').first().val();
-                var triState = value === 'unchanged' ? true : false;
-                var name     = $('input', target).first().attr('name');
-                var old      = value;
+                var $target  = $(item);
 
-                var getStateDescription = function(value) {
-                    if (value === 'unchanged') {
-                        return '(mixed values)';
-                    }
-                    return '';
-                };
-
-                $target.empty();
-                $target.parent().parent()
-                    .find('label')
-                    .append('&#160;&#160;<span class="tristate-changed"></span>');
+                // hide input boxess and remove text nodes
+                $target.find("input").hide();
+                $target.contents().filter(function() { return this.nodeType == 3; }).remove();
+                
+                // has three states?
+                var triState = $target.find('input[value="unchanged"]').size() > 0 ? 1 : 0;
+                
+                // fetch current value from radiobuttons
+                var value  = $target.find('input:checked').first().val();
+        
                 $target.append(
-                    '<input name="' + name + '" ' +
-                        'class="tristate" type="checkbox" ' +
-                        'data-icinga-old="' + old + '" ' +
-                        'data-icinga-tristate="' + triState + '" ' +
-                        'data-icinga-value="' + value + '" ' +
-                        ( value === 'unchanged' ? 'indeterminate=1 ' : ' ' ) +
-                        ( value === '1' ? 'checked ' : ' ' ) +
-                    '></input>' +
-                    '<div class="tristate-status">' + getStateDescription(value) + '</div>'
-                );
+                  '<input class="tristate-dummy" ' +
+                        ' data-icinga-old="' + value + '" data-icinga-tristate="' + triState + '" type="checkbox" ' +
+                        (value === '1' ? 'checked ' : ( value === 'unchanged' ? 'indeterminate="true" ' : ' ' )) +
+                  '/> <b style="visibility: hidden;" class="tristate-changed"> (changed) </b>'
+                ); 
+                if (triState) {
+                  // TODO: find a better way to activate indeterminate checkboxes after load.
+                  $target.append(
+                    '<script type="text/javascript"> ' +
+                      ' $(\'input.tristate-dummy[indeterminate="true"]\').each(function(i, el){ el.indeterminate = true; }); ' + 
+                    '</script>'
+                  );
+                }
             });
         },
 
@@ -507,20 +504,16 @@
          * @param value     {String}  The value to set, can be '1', '0' and 'unchanged'
          * @param $checkbox {jQuery}  The checkbox
          */
-        updateTriState: function(value, $checkbox)
+        setTriState: function(value, $checkbox)
         {
-            console.log($checkbox);
             switch (value) {
                 case ('1'):
-                    console.log('checked true; indeterminate: false');
                     $checkbox.prop('checked', true).prop('indeterminate', false);
                     break;
                 case ('0'):
-                    console.log('checked false; indeterminate: false');
                     $checkbox.prop('checked', false).prop('indeterminate', false);
                     break;
                 case ('unchanged'):
-                    console.log('checked false; indeterminate: true');
                     $checkbox.prop('checked', false).prop('indeterminate', true);
                     break;
             }
