@@ -16,7 +16,7 @@ class ConfigTest extends BaseTestCase
     {
         parent::setUp();
         $this->configDir = IcingaConfig::$configDir;
-        IcingaConfig::$configDir = dirname(__FILE__) . '/Config/files';
+        IcingaConfig::$configDir = dirname(__FILE__) . '/ConfigTest/files';
     }
 
     /**
