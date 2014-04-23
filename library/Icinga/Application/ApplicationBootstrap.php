@@ -142,6 +142,8 @@ abstract class ApplicationBootstrap
         if ($configDir === null) {
             if (array_key_exists('ICINGAWEB_CONFIGDIR', $_SERVER)) {
                 $configDir = $_SERVER['ICINGAWEB_CONFIGDIR'];
+            } else if (array_key_exists('ICINGAWEB_CONFIGDIR', $_ENV)) {
+                $configDir = $_ENV['ICINGAWEB_CONFIGDIR'];
             } else {
                 $configDir = '/etc/icingaweb';
             }
