@@ -1,4 +1,6 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\File;
 
@@ -10,6 +12,7 @@ class Csv
 
     protected function __construct()
     {
+
     }
 
     public static function fromQuery(BaseQuery $query)
@@ -40,6 +43,7 @@ class Csv
             }
             $csv .= implode(',', $out) . "\r\n";
         }
+
         return $csv;
     }
 }
