@@ -248,8 +248,8 @@
                 // TODO: Hook for response/url?
                 var $forms = $('[action="' + this.icinga.utils.parseUrl(url).path + '"]');
 
-                console.log('Old URL: ' + url);
                 var $matches = $.merge($('[href="' + url + '"]'), $forms);
+
                 $matches.each(function (idx, el) {
                     if ($(el).closest('#menu').length) {
                         $('#menu .active').removeClass('active');
@@ -432,7 +432,39 @@
             }
 
             if (active) {
-                $('[href="' + active + '"]', req.$target).addClass('active');
+                var focusedUrl = this.icinga.ui.getFocusedContainerDataUrl();
+                var oldSelectionData = this.icinga.ui.loadSelectionData();
+                if (typeof oldSelectionData === 'string') {
+                    $('[href="' + oldSelectionData + '"]', req.$target).addClass('active');
+
+                } else if (oldSelectionData !== null) {
+                    var $container;
+                    if (!focusedUrl) {
+                        $container = $('document').first();
+                    } else {
+                        $container = $('.container[data-icinga-url="' + focusedUrl + '"]');;
+                    }
+
+                    var $table = $container.find('table.action').first();
+                    var keys = self.icinga.ui.getSelectionKeys($table);
+
+                    // build map of selected queries
+                    var oldSelectionQueries = {};
+                    $.each(oldSelectionData, function(i, query){
+                        oldSelectionQueries[self.icinga.ui.selectionDataToQueryComp(query)] = true;
+                    });
+
+                    // set all new selections to active
+                    $table.find('tr[href]').filter(function(){
+                            var $tr = $(this);
+                            var rowData = self.icinga.ui.getSelectionData($tr, keys, self.icinga);
+                            var newSelectionQuery = self.icinga.ui.selectionDataToQueryComp(rowData);
+                            if (oldSelectionQueries[newSelectionQuery]) {
+                                return true;
+                            }
+                            return false;
+                        }).addClass('active');
+                }
             }
             req.$target.trigger('rendered');
         },

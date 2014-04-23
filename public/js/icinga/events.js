@@ -113,8 +113,8 @@
             $(document).on('click', 'a', { self: this }, this.linkClicked);
 
             // Select a table row
-            $(document).on('click', 'table tr[href]', { self: this }, this.rowSelected);
-            $(document).on('click', 'table tr a', { self: this }, this.rowSelected);
+            $(document).on('click', 'table.action tr[href]', { self: this }, this.rowSelected);
+            $(document).on('click', 'table.action tr a', { self: this }, this.rowSelected);
 
             $(document).on('click', 'button', { self: this }, this.submitForm);
 
@@ -256,7 +256,7 @@
             var triState  = parseInt($tristate.data('icinga-tristate'), 10);
 
             // load current values
-            var old   = $tristate.data('icinga-old');
+            var old   = $tristate.data('icinga-old').toString();
             var value = $tristate.parent().find('input:radio:checked').first().prop('checked', false).val();
 
             // calculate the new value
@@ -270,15 +270,15 @@
                 // 0 => 1
                 value = value === '1' ? '0' : '1';
             }
+
             // update form value
             $tristate.parent().find('input:radio[value="' + value + '"]').prop('checked', true);
             // update dummy
 
-            console.log(value + ' === ' + old + ' ?');
             if (value !== old) {
                 $tristate.parent().find('b.tristate-changed').css('visibility', 'visible');
             } else {
-                $tristate.parent().find('b.tristate-changed').hide();
+                $tristate.parent().find('b.tristate-changed').css('visibility', 'hidden');
             }
             self.icinga.ui.setTriState(value.toString(), $tristate);    
         },
@@ -356,7 +356,7 @@
             var icinga   = self.icinga;
             var $tr      = $(this);
             var $table   = $tr.closest('table.multiselect');
-            var data     = $table.data('icinga-multiselect-data') && $table.data('icinga-multiselect-data').split(',');
+            var data     = self.icinga.ui.getSelectionKeys($table);
             var multisel = $table.hasClass('multiselect');
             var url      = $table.data('icinga-multiselect-url');
 
@@ -381,7 +381,7 @@
                 return;
             }
 
-            // Update selection
+            // update selection
             if (event.ctrlKey && multisel) {
                 icinga.ui.toogleTableRowSelection($tr);
                 // multi selection
@@ -392,23 +392,27 @@
                 // single selection
                 icinga.ui.setTableRowSelection($tr);
             }
-            // focuse only the current table.
+            // focus only the current table.
             icinga.ui.focusTable($table[0]);
 
-            // Update url
+            // update url
             var $target = self.getLinkTargetFor($tr);
             if (multisel) {
                 var $trs = $table.find('tr[href].active');
                 if ($trs.length > 1) {
-                    // display multiple rows
-                    var query = icinga.events.selectionToQuery($trs, data, icinga);
+                    var queries = [];
+                    var selectionData = icinga.ui.getSelectionSetData($trs, data);
+                    var query = icinga.ui.selectionDataToQuery(selectionData, data, icinga);
                     icinga.loader.loadUrl(url + '?' + query, $target);
+                    icinga.ui.storeSelectionData(selectionData);
                 } else if ($trs.length === 1) {
                     // display a single row
                     icinga.loader.loadUrl($tr.attr('href'), $target);
+                    icinga.ui.storeSelectionData($tr.attr('href'));
                 } else {
                     // display nothing
                     icinga.loader.loadUrl('#');
+                    icinga.ui.storeSelectionData(null);
                 }
             } else {
                 icinga.loader.loadUrl($tr.attr('href'), $target);
@@ -416,42 +420,6 @@
             return false;
         },
 
-        selectionToQuery: function ($selection, data, icinga) {
-            var selections = [], queries = [];
-            if ($selection.length === 0) {
-                return '';
-            }
-
-            // read all current selections
-            $selection.each(function(ind, selected) {
-                var url    = $(selected).attr('href');
-                var params = icinga.utils.parseUrl(url).params;
-                var tuple  = {};
-                for (var i = 0; i < data.length; i++) {
-                    var key = data[i];
-                    if (params[key]) {
-                        tuple[key] = params[key];
-                    }
-                }
-                selections.push(tuple);
-            });
-
-            // create new url
-            if (selections.length < 2) {
-                // single-selection
-                $.each(selections[0], function(key, value){
-                    queries.push(key + '=' + encodeURIComponent(value));
-                });
-            } else {
-                // multi-selection
-                $.each(selections, function(i, el){
-                    $.each(el, function(key, value) {
-                        queries.push(key + '[' + i + ']=' + encodeURIComponent(value));
-                    });
-                });
-            }
-            return queries.join('&');
-        },
 
         /**
          * Someone clicked a link or tr[href]
@@ -590,8 +558,8 @@
             $(window).off('beforeunload', this.onUnload);
             $(document).off('scroll', '.container', this.onContainerScroll);
             $(document).off('click', 'a', this.linkClicked);
-            $(document).off('click', 'table tr[href]', this.rowSelected);
-            $(document).off('click', 'table tr a', this.rowSelected);
+            $(document).off('click', 'table.action tr[href]', this.rowSelected);
+            $(document).off('click', 'table.action tr a', this.rowSelected);
             $(document).off('submit', 'form', this.submitForm);
             $(document).off('click', 'button', this.submitForm);
             $(document).off('change', 'form select.autosubmit', this.submitForm);

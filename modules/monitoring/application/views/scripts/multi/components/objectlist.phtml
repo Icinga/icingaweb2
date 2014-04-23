@@ -1,6 +1,6 @@
 <?php for ($i = 0; $i < count($objects) && $i < 5; $i++) {
     $object = $objects[$i]; ?>
-    <a href="<?php
+    <a data-base-target='_next' href="<?php
     if ($this->is_service) {
         echo $this->href(
             'monitoring/show/service',
@@ -16,10 +16,9 @@
     }?>,
 <?php } ?> <?php
     if (count($objects) > 5) {
-        $text = ' ' . (count($objects) - 5) . ' more ...';
-    } else {
-        $text = ' show all ... ';
+       echo '<i> ... ' . (count($objects) - 5) . ' more ... </i>';
     }
+
     if (!$this->is_service) {
         $link = 'monitoring/list/hosts';
         $target = array(
@@ -27,10 +26,9 @@
         );
     } else {
         $link = 'monitoring/list/services';
-        // TODO: Show multiple targets for services
         $target = array(
             'host'    => $this->hostquery,
             'service' => $this->servicequery
         );
     }
-?> <a href="<?= $this->href($link, $target); ?>"> <?= $text ?></a>
+?> <a data-base-target='_next' href='<?= $this->href($link, $this->query); ?>'><b> list all </b></a>

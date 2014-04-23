@@ -9,7 +9,10 @@ if (!$this->compact): ?>
 Sort by <?= $this->sortControl ?>
 </div>
 
-<?=  $this->paginationControl($services, null, null, array('preserve' => $this->preserve)); ?>
+<?=  $this->paginationControl($services, null, null, array('preserve' => $this->preserve));?>
+
+
+<?= $this->selectionToolbar('multi', $this->href('monitoring/multi/service', $query)); ?>
 </div>
 
 <div class="content">

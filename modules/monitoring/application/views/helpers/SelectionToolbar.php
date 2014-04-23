@@ -14,7 +14,7 @@ class Zend_View_Helper_SelectionToolbar extends Zend_View_Helper_Abstract
     {
         if ($type == 'multi') {
             return '<div class="selection-toolbar">'
-                . '<a href="' . $target . '" data-base-target="_next"> Select All </a> </div>';
+                . '<a href="' . $target . '" data-base-target="_next"> Show All </a> </div>';
         } else {
             return '';
         }

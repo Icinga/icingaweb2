@@ -24,10 +24,10 @@
             <?= $this->icon('acknowledgement_petrol.png') ?> Acknowledge
         </a>
     </td>
-    <td>Change <a href=" <?= $this->href(
+    <td>Change <a data-base-target='_next' href=" <?= $this->href(
             'monitoring/list/comments',
-            array('comment_id' => implode(',', $this->comments))
+            array('comment_internal_id' => implode(',', $this->comments))
         );
-        ?>"> <?= count($comments) ?> </a>  comments.
+        ?>"> <?= count($comments) ?> comments </a>.
     </td>
 </tr>

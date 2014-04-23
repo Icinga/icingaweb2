@@ -45,14 +45,13 @@ class Monitoring_MultiController extends ActionController
 {
     public function init()
     {
-        $this->view->queries = $this->getAllParamsAsArray();
         $this->backend = Backend::createBackend($this->_getParam('backend'));
         $this->createTabs();
     }
 
     public function hostAction()
     {
-        $filters = $this->view->queries;
+        $multiFilter = $this->getAllParamsAsArray();
         $errors  = array();
 
         // Fetch Hosts
@@ -68,18 +67,20 @@ class Monitoring_MultiController extends ActionController
                 'host_notifications_enabled',
                 'host_event_handler_enabled',
                 'host_flap_detection_enabled',
-                'host_active_checks_enabled'
+                'host_active_checks_enabled',
+
+                // columns intended for filter-request
+                'host_problem',
+                'host_handled'
             )
         )->getQuery();
-        if ($this->_getParam('host') !== '*') {
-            $this->applyQueryFilter($hostQuery, $filters);
-        }
+        $this->applyQueryFilter($hostQuery, $multiFilter);
         $hosts = $hostQuery->fetchAll();
 
         // Fetch comments
         $commentQuery = $this->applyQueryFilter(
-            CommentView::fromRequest($this->_request)->getQuery(),
-            $filters,
+            CommentView::fromParams(array('backend' => $this->_request->getParam('backend')))->getQuery(),
+            $multiFilter,
             'comment_host'
         );
         $comments = array_keys($this->getUniqueValues($commentQuery->fetchAll(), 'comment_internal_id'));
@@ -94,23 +95,25 @@ class Monitoring_MultiController extends ActionController
         $this->view->states    = $this->countStates($hosts, 'host', 'host_name');
         $this->view->pie       = $this->createPie($this->view->states, $this->view->getHelper('MonitoringState')->getHostStateColors());
 
+        // need the query content to list all hosts
+        $this->view->query = $this->_request->getQuery();
+
         // Handle configuration changes
         $this->handleConfigurationForm(array(
             'host_passive_checks_enabled' => 'Passive Checks',
             'host_active_checks_enabled'  => 'Active Checks',
-            'host_obsessing'              => 'Obsessing',
             'host_notifications_enabled'  => 'Notifications',
             'host_event_handler_enabled'  => 'Event Handler',
-            'host_flap_detection_enabled' => 'Flap Detection'
+            'host_flap_detection_enabled' => 'Flap Detection',
+            'host_obsessing'              => 'Obsessing'
         ));
     }
 
 
     public function serviceAction()
     {
-        $filters = $this->view->queries;
+        $multiFilter = $this->getAllParamsAsArray();
         $errors = array();
-
         $backendQuery = ServiceStatusView::fromRequest(
             $this->_request,
             array(
@@ -124,24 +127,33 @@ class Monitoring_MultiController extends ActionController
                 'service_notifications_enabled',
                 'service_event_handler_enabled',
                 'service_flap_detection_enabled',
-                'service_active_checks_enabled'
+                'service_active_checks_enabled',
+                'service_obsessing',
+
+                 // also accept all filter-requests from ListView
+                'service_problem',
+                'service_severity',
+                'service_last_check',
+                'service_state_type',
+                'host_severity',
+                'host_address',
+                'host_last_check'
             )
         )->getQuery();
-        if ($this->_getParam('service') !== '*' && $this->_getParam('host') !== '*') {
-            $this->applyQueryFilter($backendQuery, $filters);
-            $this->applyQueryFilter($backendQuery, $filters);
-        }
+
+        $this->applyQueryFilter($backendQuery, $multiFilter);
         $services = $backendQuery->fetchAll();
 
         // Comments
         $commentQuery = $this->applyQueryFilter(
-            CommentView::fromRequest($this->_request)->getQuery(),
-            $filters,
+            CommentView::fromParams(array('backend' => $this->_request->getParam('backend')))->getQuery(),
+            $multiFilter,
             'comment_host',
             'comment_service'
         );
         $comments = array_keys($this->getUniqueValues($commentQuery->fetchAll(), 'comment_internal_id'));
 
+        // populate the view
         $this->view->objects        = $this->view->services = $services;
         $this->view->problems       = $this->getProblems($services);
         $this->view->comments       = isset($comments) ? $comments : $this->getComments($services);
@@ -154,12 +166,16 @@ class Monitoring_MultiController extends ActionController
         $this->view->host_pie       = $this->createPie($this->view->host_states, $this->view->getHelper('MonitoringState')->getHostStateColors());
         $this->view->errors         = $errors;
 
+        // need the query content to list all hosts
+        $this->view->query = $this->_request->getQuery();
+
         $this->handleConfigurationForm(array(
             'service_passive_checks_enabled' => 'Passive Checks',
             'service_active_checks_enabled'  => 'Active Checks',
             'service_notifications_enabled'  => 'Notifications',
             'service_event_handler_enabled'  => 'Event Handler',
-            'service_flap_detection_enabled' => 'Flap Detection'
+            'service_flap_detection_enabled' => 'Flap Detection',
+            'service_obsessing'              => 'Obsessing',
         ));
     }
 
@@ -265,13 +281,8 @@ class Monitoring_MultiController extends ActionController
 
     private function createPie($states, $colors)
     {
-        $chart = new InlinePie(
-            array_values($states),
-            $colors
-        );
-        $chart->setLabels(array_keys($states))
-            ->setHeight(100)
-            ->setWidth(100);
+        $chart = new InlinePie(array_values($states), $colors);
+        $chart->setLabels(array_keys($states))->setHeight(100)->setWidth(100);
         return $chart;
     }
 
