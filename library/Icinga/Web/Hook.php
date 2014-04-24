@@ -29,9 +29,9 @@
 
 namespace Icinga\Web;
 
+use Exception;
 use Icinga\Logger\Logger;
 use Icinga\Exception\ProgrammingError;
-use stdClass;
 
 /**
  * Icinga Web Hook registry
@@ -79,9 +79,9 @@ class Hook
     /**
      * Whether someone registered itself for the given hook name
      *
-     * @param string $name One of the predefined hook names
+     * @param   string  $name   One of the predefined hook names
      *
-     * @return bool
+     * @return  bool
      */
     public static function has($name)
     {
@@ -89,72 +89,29 @@ class Hook
     }
 
     /**
-     * Get the first registered instance for the given hook name
+     * Create or return an instance of a given hook
      *
-     * TODO: Multiple instances are not handled yet
      * TODO: Should return some kind of a hook interface
      *
-     * @param  string $name  One of the predefined hook names
+     * @param   string  $name   One of the predefined hook names
+     * @param   string  $key    The identifier of a specific subtype
      *
-     * @return mixed
-     * @throws ProgrammingError
-     */
-    public static function get($name)
-    {
-        if (! self::has($name)) {
-            return null;
-        }
-        if (! array_key_exists($name, self::$instances)) {
-            $class = self::$hooks[$name];
-            try {
-                $obj = new $class();
-            } catch (\Exception $e) {
-                // TODO: Persist unloading for "some time" or "current session"
-                Logger::debug(
-                    'Hook "%s" (%s) failed, will be unloaded: %s',
-                    $name,
-                    $class,
-                    $e->getMessage()
-                );
-                unset(self::$hooks[$name]);
-                return null;
-            }
-            $base_class = 'Icinga\\Web\\Hook\\' . ucfirst($name);
-            if (! $obj instanceof $base_class) {
-                throw new ProgrammingError(
-                    sprintf(
-                        '%s is not an instance of %s',
-                        get_class($obj),
-                        $base_class
-                    )
-                );
-            }
-            self::$instances[$name] = $obj;
-
-        }
-        return self::$instances[$name];
-    }
-
-    /**
-     * Create or return an instance of the hook
-     *
-     * @param string $name
-     * @param string $key
-     * @return stdClass
-     *
+     * @return  mixed
      */
     public static function createInstance($name, $key)
     {
         if (!self::has($name, $key)) {
             return null;
         }
+
         if (isset(self::$instances[$name][$key])) {
             return self::$instances[$name][$key];
         }
+
         $class = self::$hooks[$name][$key];
         try {
             $instance = new $class();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::debug(
                 'Hook "%s" (%s) (%s) failed, will be unloaded: %s',
                 $name,
@@ -162,9 +119,11 @@ class Hook
                 $class,
                 $e->getMessage()
             );
+            // TODO: Persist unloading for "some time" or "current session"
             unset(self::$hooks[$name][$key]);
             return null;
         }
+
         self::assertValidHook($instance, $name);
         self::$instances[$name][$key] = $instance;
         return $instance;
@@ -173,11 +132,12 @@ class Hook
     /**
      * Test for a valid class name
      *
-     * @param stdClass $instance
-     * @param string $name
-     * @throws ProgrammingError
+     * @param   mixed   $instance
+     * @param   string  $name
+     *
+     * @throws  ProgrammingError
      */
-    private static function assertValidHook(&$instance, $name)
+    private static function assertValidHook($instance, $name)
     {
         $base_class = self::$BASE_NS . ucfirst($name);
         if (!$instance instanceof $base_class) {
@@ -194,43 +154,45 @@ class Hook
     /**
      * Return all instances of a specific name
      *
-     * @param string $name
+     * @param   string  $name   One of the predefined hook names
      *
-     * @return array
+     * @return  array
      */
     public static function all($name)
     {
         if (!self::has($name)) {
             return array();
         }
+
         foreach (self::$hooks[$name] as $key => $hook) {
             if (self::createInstance($name, $key) === null) {
                 return array();
             }
         }
+
         return self::$instances[$name];
     }
 
     /**
      * Get the first hook
      *
-     * @param string $name
+     * @param   string  $name   One of the predefined hook names
      *
-     * @return stdClass
+     * @return  null|mixed
      */
     public static function first($name)
     {
-        return self::createInstance($name, key(self::$hooks[$name]));
+        if (self::has($name)) {
+            return self::createInstance($name, key(self::$hooks[$name]));
+        }
     }
 
     /**
      * Register your hook
      *
-     * @param  string $name  One of the predefined hook names
-     * @param  string $key
-     * @param  string $class Your class name, must inherit one of the classes
-     *                       in the Icinga/Web/Hook folder
+     * Alias for Hook::registerClass()
      *
+     * @see Hook::registerClass()
      */
     public static function register($name, $key, $class)
     {
@@ -240,12 +202,17 @@ class Hook
     /**
      * Register a class
      *
-     * @param string $name
-     * @param string $key
-     * @param string $class
+     * @param   string      $name   One of the predefined hook names
+     * @param   string      $key    The identifier of a specific subtype
+     * @param   string      $class  Your class name, must inherit one of the
+     *                              classes in the Icinga/Web/Hook folder
      */
     public static function registerClass($name, $key, $class)
     {
+        if (!class_exists($class)) {
+            throw new ProgrammingError('"' . $class . '" is not an existing class');
+        }
+
         if (!isset(self::$hooks[$name])) {
             self::$hooks[$name] = array();
         }
@@ -256,23 +223,23 @@ class Hook
     /**
      * Register an object
      *
-     * @param string $name
-     * @param string $key
-     * @param object $object
+     * @param   string      $name   One of the predefined hook names
+     * @param   string      $key    The identifier of a specific subtype
+     * @param   object      $object The instantiated hook to register
      *
-     * @throws ProgrammingError
+     * @throws  ProgrammingError
      */
     public static function registerObject($name, $key, $object)
     {
         if (!is_object($object)) {
-            throw new ProgrammingError('object is not an instantiated class');
+            throw new ProgrammingError('"' . $object . '" is not an instantiated class');
         }
 
         if (!isset(self::$instances[$name])) {
             self::$instances[$name] = array();
         }
 
-        self::$instances[$name][$key] =& $object;
+        self::$instances[$name][$key] = $object;
         self::registerClass($name, $key, get_class($object));
     }
 }

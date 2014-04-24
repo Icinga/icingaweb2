@@ -37,12 +37,12 @@ class Environment
 
     public static function grapher($env = null)
     {
-        return Hook::get('grapher', null, self::config($env, 'grapher'));
+        return Hook::createInstance('grapher', null, self::config($env, 'grapher'));
     }
 
     public static function configBackend($env = null)
     {
-        return Hook::get(
+        return Hook::createInstance(
             'configBackend',
             null,
             self::config($env, 'configBackend')
