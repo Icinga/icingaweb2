@@ -30,7 +30,7 @@ class ConfigTest extends BaseTestCase
 
     public function testAppConfig()
     {
-        $config = IcingaConfig::app();
+        $config = IcingaConfig::app('config', true);
         $this->assertEquals(1, $config->logging->enable, 'Unexpected value retrieved from config file');
         // Test non-existent property where null is the default value
         $this->assertEquals(
@@ -70,28 +70,28 @@ class ConfigTest extends BaseTestCase
             $config->backend->db->toArray()
         );
         // Test singleton
-        $this->assertEquals($config, IcingaConfig::app());
+        $this->assertEquals($config, IcingaConfig::app('config'));
         $this->assertEquals(array('logging', 'backend'), $config->keys());
         $this->assertEquals(array('enable'), $config->keys('logging'));
     }
 
     public function testAppExtraConfig()
     {
-        $extraConfig = IcingaConfig::app('extra');
+        $extraConfig = IcingaConfig::app('extra', true);
         $this->assertEquals(1, $extraConfig->meta->version);
         $this->assertEquals($extraConfig, IcingaConfig::app('extra'));
     }
 
     public function testModuleConfig()
     {
-        $moduleConfig = IcingaConfig::module('amodule');
+        $moduleConfig = IcingaConfig::module('amodule', 'config', true);
         $this->assertEquals(1, $moduleConfig->menu->get('breadcrumb'));
         $this->assertEquals($moduleConfig, IcingaConfig::module('amodule'));
     }
 
     public function testModuleExtraConfig()
     {
-        $moduleExtraConfig = IcingaConfig::module('amodule', 'extra');
+        $moduleExtraConfig = IcingaConfig::module('amodule', 'extra', true);
         $this->assertEquals(
             'inetOrgPerson',
             $moduleExtraConfig->ldap->user->get('ldap_object_class')

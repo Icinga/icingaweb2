@@ -4,6 +4,10 @@
 
 namespace Tests\Icinga\Form\Config\Authentication;
 
+// Necessary as some of these tests disable phpunit's preservation
+// of the global state (e.g. autoloaders are in the global state)
+require_once realpath(dirname(__FILE__) . '/../../../../bootstrap.php');
+
 use Mockery;
 use Icinga\Test\BaseTestCase;
 use Icinga\Form\Config\Authentication\DbBackendForm;
@@ -18,6 +22,7 @@ class DbBackendFormTest extends BaseTestCase
 
     /**
      * @runInSeparateProcess
+     * @preserveGlobalState disabled
      */
     public function testValidBackendIsValid()
     {
@@ -40,6 +45,7 @@ class DbBackendFormTest extends BaseTestCase
 
     /**
      * @runInSeparateProcess
+     * @preserveGlobalState disabled
      */
     public function testInvalidBackendIsNotValid()
     {

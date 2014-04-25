@@ -4,6 +4,10 @@
 
 namespace Tests\Icinga\Form\Config\Resource;
 
+// Necessary as some of these tests disable phpunit's preservation
+// of the global state (e.g. autoloaders are in the global state)
+require_once realpath(dirname(__FILE__) . '/../../../../bootstrap.php');
+
 use Mockery;
 use Zend_Config;
 use Icinga\Test\BaseTestCase;
@@ -64,6 +68,7 @@ class ResourceFormTest extends BaseTestCase
 
     /**
      * @runInSeparateProcess
+     * @preserveGlobalState disabled
      */
     public function testValidDbResourceIsValid()
     {
@@ -80,6 +85,7 @@ class ResourceFormTest extends BaseTestCase
 
     /**
      * @runInSeparateProcess
+     * @preserveGlobalState disabled
      */
     public function testInvalidDbResourceIsNotValid()
     {
@@ -96,6 +102,7 @@ class ResourceFormTest extends BaseTestCase
 
     /**
      * @runInSeparateProcess
+     * @preserveGlobalState disabled
      */
     public function testValidLdapResourceIsValid()
     {
@@ -112,6 +119,7 @@ class ResourceFormTest extends BaseTestCase
 
     /**
      * @runInSeparateProcess
+     * @preserveGlobalState disabled
      */
     public function testInvalidLdapResourceIsNotValid()
     {
@@ -128,6 +136,7 @@ class ResourceFormTest extends BaseTestCase
 
     /**
      * @runInSeparateProcess
+     * @preserveGlobalState disabled
      */
     public function testValidLivestatusResourceIsValid()
     {
@@ -145,6 +154,7 @@ class ResourceFormTest extends BaseTestCase
 
     /**
      * @runInSeparateProcess
+     * @preserveGlobalState disabled
      */
     public function testInvalidLivestatusResourceIsNotValid()
     {
