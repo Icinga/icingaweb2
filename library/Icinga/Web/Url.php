@@ -30,16 +30,16 @@
 namespace Icinga\Web;
 
 use Icinga\Application\Icinga;
+use Icinga\Exception\ProgrammingError;
 
 /**
- *  Url class that provides convenient access to parameters, allows to modify query parameters and
- *  returns Urls reflecting all changes made to the url and to the parameters.
+ * Url class that provides convenient access to parameters, allows to modify query parameters and
+ * returns Urls reflecting all changes made to the url and to the parameters.
  *
- *  Direct instantiation is prohibited and should be done either with @see Url::fromRequest() or
- *  @see Url::fromUrlString()
+ * Direct instantiation is prohibited and should be done either with @see Url::fromRequest() or
+ * @see Url::fromUrlString()
  *
- *  Currently, protocol, host and port are ignored and will be implemented when required
- *
+ * Currently, protocol, host and port are ignored and will be implemented when required
  */
 class Url
 {
@@ -48,28 +48,28 @@ class Url
      *
      * @var array
      */
-    private $params = array();
+    protected $params = array();
 
     /**
      * An array to map aliases to valid parameters
      *
      * @var array
      */
-    private $aliases = array();
+    protected $aliases = array();
 
     /**
      * The site anchor after the '#'
      *
      * @var string
      */
-    private $anchor = '';
+    protected $anchor = '';
 
     /**
      * The relative path of this Url, without query parameters
      *
      * @var string
      */
-    private $path = '';
+    protected $path = '';
 
     /**
      * The baseUrl that will be appended to @see Url::$path in order to
@@ -77,10 +77,11 @@ class Url
      *
      * @var string
      */
-    private $baseUrl = '/';
+    protected $baseUrl = '/';
 
-    private function __construct()
+    protected function __construct()
     {
+
     }
 
     /**
@@ -89,11 +90,10 @@ class Url
      * If $params are given, those will be added to the request's parameters
      * and overwrite any existing parameters
      *
-     * @param string $url           The string representation of the Url to parse
-     * @param array $params         Parameters that should additionally be considered for the Url
-     * @param Zend_Request $request A request to use instead of the default one
+     * @param   array           $params     Parameters that should additionally be considered for the url
+     * @param   Zend_Request    $request    A request to use instead of the default one
      *
-     * @return Url
+     * @return  Url
      */
     public static function fromRequest(array $params = array(), $request = null)
     {
@@ -111,9 +111,9 @@ class Url
     /**
      * Return a request object that should be used for determining the URL
      *
-     * @return Zend_Abstract_Request
+     * @return  Zend_Abstract_Request
      */
-    private static function getRequest()
+    protected static function getRequest()
     {
         return Icinga::app()->getFrontController()->getRequest();
     }
@@ -124,38 +124,45 @@ class Url
      * If $params are given, those will be added to the urls parameters
      * and overwrite any existing parameters
      *
-     * @param string $url               The string representation of the Url to parse
-     * @param array $params             An array of parameters that should additionally be considered for the Url
-     * @param Zend_Request $request A   request to use instead of the default one
+     * @param   string          $url        The string representation of the url to parse
+     * @param   array           $params     An array of parameters that should additionally be considered for the url
+     * @param   Zend_Request    $request    A request to use instead of the default one
      *
-     * @return Url
+     * @return  Url
      */
     public static function fromPath($url, array $params = array(), $request = null)
     {
-        $urlObject = new Url();
         if ($request === null) {
             $request = self::getRequest();
         }
+
+        if (!is_string($url)) {
+            throw new ProgrammingError(sprintf('url "%s" is not a string', $url));
+        }
+
+        $urlObject = new Url();
         $urlObject->setBaseUrl($request->getBaseUrl());
 
-        /*
-         * Fetch fragment manually and remove it from the url, to 'help' the parse_url() function
-         * parsing the url properly. Otherwise calling the function with a fragment, but without a
-         * query will cause unpredictable behaviour.
-         */
-        $fragment = self::getUrlFragment($url);
+        // Fetch fragment manually and remove it from the url, to 'help' the parse_url() function
+        // parsing the url properly. Otherwise calling the function with a fragment, but without a
+        // query will cause unpredictable behaviour.
         $url = self::stripUrlFragment($url);
 
         $urlParts = parse_url($url);
-
         if (isset($urlParts["path"])) {
-            $urlObject->setPath($urlParts["path"]);
+            if (strpos($urlParts["path"], $request->getBaseUrl()) === 0) {
+                $urlObject->setPath(substr($urlParts["path"], strlen($request->getBaseUrl())));
+            } else {
+                $urlObject->setPath($urlParts["path"]);
+            }
         }
         if (isset($urlParts["query"])) {
             $urlParams = array();
             parse_str($urlParts["query"], $urlParams);
             $params = array_merge($urlParams, $params);
         }
+
+        $fragment = self::getUrlFragment($url);
         if ($fragment !== '') {
             $urlObject->setAnchor($fragment);
         }
@@ -167,11 +174,11 @@ class Url
     /**
      * Get the fragment of a given url
      *
-     * @param   $url    The url containing the fragment.
+     * @param   string  $url    The url containing the fragment.
      *
-     * @return  string  The fragment without the '#'
+     * @return  string          The fragment without the '#'
      */
-    private static function getUrlFragment($url)
+    protected static function getUrlFragment($url)
     {
         $url = parse_url($url);
         if (isset($url['fragment'])) {
@@ -184,11 +191,11 @@ class Url
     /**
      * Remove the fragment-part of a given url
      *
-     * @param $url  string  The url to strip from its fragment
+     * @param   string  $url    The url to strip from its fragment
      *
-     * @return      string  The url without the fragment.
+     * @return  string          The url without the fragment
      */
-    private static function stripUrlFragment($url)
+    protected static function stripUrlFragment($url)
     {
         return preg_replace('/#.*$/', '', $url);
     }
@@ -209,9 +216,9 @@ class Url
     /**
      * Return the parameter for the given alias
      *
-     * @param   string      $alias      The alias to translate
+     * @param   string  $alias  The alias to translate
      *
-     * @return  string                  The parameter name
+     * @return  string          The parameter name
      */
     public function translateAlias($alias)
     {
@@ -219,26 +226,28 @@ class Url
     }
 
     /**
-     * Overwrite the baseUrl.
+     * Overwrite the baseUrl
      *
      * If an empty Url is given '/' is used as the base
      *
-     * @param string $baseUrl      The url path to use as the Url Base
-     * @return $this
+     * @param   string  $baseUrl    The url path to use as the Url Base
+     *
+     * @return  self
      */
     public function setBaseUrl($baseUrl)
     {
-        if (trim($baseUrl) ==  '') {
+        if (($baseUrl = rtrim($baseUrl, '/ ')) ===  '') {
             $baseUrl = '/';
         }
+
         $this->baseUrl = $baseUrl;
         return $this;
     }
 
     /**
-     * Return the baseUrl set for this Url
+     * Return the baseUrl set for this url
      *
-     * @return string
+     * @return  string
      */
     public function getBaseUrl()
     {
@@ -248,19 +257,22 @@ class Url
     /**
      * Set the relative path of this url, without query parameters
      *
-     * @param string $path         The path to set
+     * @param   string  $path   The path to set
+     *
+     * @return  self
      */
     public function setPath($path)
     {
-        $this->path = $path;
+        $this->path = ltrim($path, '/');
+        return $this;
     }
 
     /**
-     * Return the relative path of this Url, without query parameters
+     * Return the relative path of this url, without query parameters
      *
      * If you want the relative path with query parameters use getRelativeUrl
      *
-     * @return string
+     * @return  string
      */
     public function getPath()
     {
@@ -270,36 +282,38 @@ class Url
     /**
      * Return the relative url with query parameters as a string
      *
-     * @return string
+     * @return  string
      */
     public function getRelativeUrl()
     {
         if (empty($this->params)) {
-            return ltrim($this->path, '/') . $this->anchor;
+            return $this->path . $this->anchor;
         }
+
         $params = array();
         foreach ($this->params as $param => $value) {
             $params[$this->translateAlias($param)] = $value;
         }
-        return ltrim($this->path, '/') . '?' . http_build_query($params, '', '&amp;') . $this->anchor;
+
+        return $this->path . '?' . http_build_query($params, '', '&amp;') . $this->anchor;
     }
 
     /**
      * Return the absolute url with query parameters as a string
      *
-     * @return string
+     * @return  string
      */
     public function getAbsoluteUrl()
     {
-        $url = $this->getRelativeUrl();
-        return preg_replace('/\/{2,}/', '/', '/'.$this->baseUrl.'/'.$url);
+        return $this->baseUrl . ($this->baseUrl !== '/' ? '/' : '') . $this->getRelativeUrl();
     }
 
     /**
      * Add a set of parameters to the query part if the keys don't exist yet
      *
-     * @param array $params     The parameters to add
-     * @return self
+     * @param   array   $params     The parameters to add
+     *
+     * @return  self
      */
     public function addParams(array $params)
     {
@@ -310,8 +324,9 @@ class Url
     /**
      * Set and overwrite the given params if one if the same key already exists
      *
-     * @param array $params     The parameters to set
-     * @return self
+     * @param   array   $params     The parameters to set
+     *
+     * @return  self
      */
     public function overwriteParams(array $params)
     {
@@ -322,8 +337,9 @@ class Url
     /**
      * Overwrite the parameters used in the query part
      *
-     * @param array $params     The new parameters to use for the query part
-     * @return $this
+     * @param   array   $params     The new parameters to use for the query part
+     *
+     * @return  self
      */
     public function setParams(array $params)
     {
@@ -334,7 +350,7 @@ class Url
     /**
      * Return all parameters that will be used in the query part
      *
-     * @return array        An associative key => value array containing all parameters
+     * @return  array   An associative key => value array containing all parameters
      */
     public function getParams()
     {
@@ -342,48 +358,52 @@ class Url
     }
 
     /**
-     * Return true if the Urls' query parameter with $key exists, otherwise false
+     * Return true if a urls' query parameter exists, otherwise false
      *
-     * @param $key      A key to check for existing
-     * @return bool
+     * @param   string  $param    The url parameter name to check
+     *
+     * @return  bool
      */
-    public function hasParam($key)
+    public function hasParam($param)
     {
-        return array_key_exists($key, $this->params);
+        return array_key_exists($param, $this->params);
     }
 
     /**
-     * Return the Url's query parameter with the name $key if exists, otherwise $default
+     * Return a url's query parameter if it exists, otherwise $default
      *
-     * @param $key              A query parameter name to return if existing
-     * @param mixed $default    A value to return when the parameter doesn't exist
-     * @return mixed
+     * @param   string  $param      A query parameter name to return if existing
+     * @param   mixed   $default    A value to return when the parameter doesn't exist
+     *
+     * @return  mixed
      */
-    public function getParam($key, $default = null)
+    public function getParam($param, $default = null)
     {
-        if ($this->hasParam($key)) {
-            return $this->params[$key];
+        if ($this->hasParam($param)) {
+            return $this->params[$param];
         }
+
         return $default;
     }
 
     /**
-     * Set a single parameter $key, overwriting existing ones with the same key
+     * Set a single parameter, overwriting any existing one with the same name
      *
-     * @param string $key           A string representing the key of the parameter
-     * @param array|string $value   An array or string to set as the parameter value
-     * @return $this
+     * @param   string          $param      The query parameter name
+     * @param   array|string    $value      An array or string to set as the parameter value
+     *
+     * @return  self
      */
-    public function setParam($key, $value)
+    public function setParam($param, $value)
     {
-        $this->params[$key] = $value;
+        $this->params[$param] = $value;
         return $this;
     }
 
     /**
      * Set the url anchor-part
      *
-     * @param   $anchor The site's anchor string without the '#'
+     * @param   string  $anchor     The site's anchor string without the '#'
      *
      * @return  self
      */
@@ -396,9 +416,9 @@ class Url
     /**
      * Remove provided key (if string) or keys (if array of string) from the query parameter array
      *
-     * @param string|array  $keyOrArrayOfKeys       An array of strings or a string representing the key(s)
+     * @param   string|array    $keyOrArrayOfKeys   An array of strings or a string representing the key(s)
      *                                              of the parameters to be removed
-     * @return $this
+     * @return  self
      */
     public function remove($keyOrArrayOfKeys)
     {
@@ -407,45 +427,51 @@ class Url
         } else {
             $this->removeKey($keyOrArrayOfKeys);
         }
+
         return $this;
     }
 
     /**
      * Remove all parameters with the parameter names in the $keys array
      *
-     * @param array $keys   An array of strings containing parameter names to remove
-     * @return $this
+     * @param   array   $keys   An array of strings containing parameter names to remove
+     *
+     * @return  self
      */
     public function removeKeys(array $keys)
     {
         foreach ($keys as $key) {
             $this->removeKey($key);
         }
+
         return $this;
     }
 
     /**
      * Remove a single parameter with the provided parameter name $key
      *
-     * @param string $key   The key to remove from the Url
-     * @return $this
+     * @param   string  $key    The key to remove from the url
+     *
+     * @return  self
      */
     public function removeKey($key)
     {
         if (isset($this->params[$key])) {
             unset($this->params[$key]);
         }
+
         return $this;
     }
 
     /**
      * Return a copy of this url without the parameter given
      *
-     * The argument can either a single query parameter name or an array of parameter names to
+     * The argument can be either a single query parameter name or an array of parameter names to
      * remove from the query list
      *
-     * @param string|array $keyOrArrayOfKeys    A single string or an array containing parameter names
-     * @return Url
+     * @param   string|array    $keyOrArrayOfKeys   A single string or an array containing parameter names
+     *
+     * @return  Url
      */
     public function getUrlWithout($keyOrArrayOfKeys)
     {
@@ -456,7 +482,8 @@ class Url
 
     /**
      * Alias for @see Url::getAbsoluteUrl()
-     * @return mixed
+     *
+     * @return  string
      */
     public function __toString()
     {

@@ -25,6 +25,7 @@ namespace Icinga\Test {
     use RuntimeException;
     use Mockery;
     use Zend_Config;
+    use Zend_Controller_Request_Abstract;
     use Zend_Test_PHPUnit_ControllerTestCase;
     use Icinga\Application\Icinga;
     use Icinga\Util\DateTimeFactory;
@@ -142,23 +143,25 @@ namespace Icinga\Test {
         public function setUp()
         {
             parent::setUp();
-            $this->setupIcingaMock();
+
+            $requestMock = Mockery::mock('Icinga\Web\Request');
+            $requestMock->shouldReceive('getPathInfo')->andReturn('')
+                ->shouldReceive('getBaseUrl')->andReturn('/')
+                ->shouldReceive('getQuery')->andReturn(array());
+            $this->setupIcingaMock($requestMock);
         }
 
         /**
          * Setup mock object for the application's bootstrap
+         *
+         * @param   Zend_Controller_Request_Abstract    $request    The request to be returned by
+         *                                                          Icinga::app()->getFrontController()->getRequest()
          */
-        protected function setupIcingaMock()
+        protected function setupIcingaMock(Zend_Controller_Request_Abstract $request)
         {
             $bootstrapMock = Mockery::mock('Icinga\Application\ApplicationBootstrap')->shouldDeferMissing();
             $bootstrapMock->shouldReceive('getFrontController->getRequest')->andReturnUsing(
-                function () {
-                    return Mockery::mock('Request')
-                        ->shouldReceive('getPathInfo')->andReturn('')
-                        ->shouldReceive('getBaseUrl')->andReturn('/')
-                        ->shouldReceive('getQuery')->andReturn(array())
-                        ->getMock();
-                }
+                function () use ($request) { return $request; }
             )->shouldReceive('getApplicationDir')->andReturn(self::$appDir);
 
             Icinga::setApp($bootstrapMock, true);
