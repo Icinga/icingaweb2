@@ -142,8 +142,7 @@
                 ).historyTriggered = true;
             }
 
-            // && document.location.hash.match(/^#!/) ??
-            if (document.location.hash) {
+            if (document.location.hash && document.location.hash.match(/^#!/)) {
 
                 parts = document.location.hash.split(/#!/);
 
