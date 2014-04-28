@@ -30,6 +30,7 @@
 namespace Icinga\Form\Config\Authentication;
 
 use \Exception;
+use \Icinga\Authentication\Backend\DbUserBackend;
 use \Zend_Config;
 use Icinga\Data\ResourceFactory;
 use Icinga\Authentication\UserBackend;
@@ -68,7 +69,6 @@ class DbBackendForm extends BaseBackendForm
     {
         $this->setName('form_modify_backend');
         $name = $this->filterName($this->getBackendName());
-
         $this->addElement(
             'text',
             'backend_' . $name . '_name',
@@ -136,12 +136,12 @@ class DbBackendForm extends BaseBackendForm
     public function isValidAuthenticationBackend()
     {
         try {
-            $cfg = $this->getConfig();
-            $backendName = key($cfg);
-            $testConn = UserBackend::create($backendName, new Zend_Config($cfg[$backendName]));
-
-            if ($testConn->count() === 0) {
-                $this->addErrorMessage(t('No users found under the specified database backend'));
+            $testConnection = ResourceFactory::createResource(ResourceFactory::getResourceConfig(
+                $this->getValue('backend_' . $this->filterName($this->getBackendName()) . '_resource')
+            ));
+            $dbUserBackend = new DbUserBackend($testConnection);
+            if ($dbUserBackend->count() < 1) {
+                $this->addErrorMessage(t("No users found under the specified database backend"));
                 return false;
             }
         } catch (Exception $e) {

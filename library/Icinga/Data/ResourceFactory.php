@@ -142,4 +142,19 @@ class ResourceFactory implements ConfigAwareFactory
         }
         return $resource;
     }
+
+    public static function ldapAvailable()
+    {
+        return extension_loaded('ldap');
+    }
+
+    public static function pgsqlAvailable()
+    {
+        return extension_loaded('pgsql');
+    }
+
+    public static function mysqlAvailable()
+    {
+        return extension_loaded('mysql');
+    }
 }

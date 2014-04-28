@@ -148,7 +148,6 @@ class LdapBackendForm extends BaseBackendForm
             'user_class'            => $this->getValue($prefix . 'user_class'),
             'user_name_attribute'   => $this->getValue($prefix . 'user_name_attribute')
         );
-
         return array($section => $cfg);
     }
 
@@ -161,17 +160,32 @@ class LdapBackendForm extends BaseBackendForm
      */
     public function isValidAuthenticationBackend()
     {
+        if (!ResourceFactory::ldapAvailable()) {
+            /*
+             * It should be possible to run icingaweb without the php ldap extension, when
+             * no ldap backends are needed. When the user tries to create an ldap backend
+             * without ldap installed we need to show him an error.
+             */
+            $this->addErrorMessage(t('Using ldap is not possible, the php extension "ldap" is not installed.'));
+            return false;
+        }
         try {
             $cfg = $this->getConfig();
-            $backendName = key($cfg);
-            $testConn = UserBackend::create($backendName, new Zend_Config($cfg[$backendName]));
-
+            $backendName = 'backend_' . $this->filterName($this->getBackendName()) . '_name';
+            $backendConfig = new Zend_Config($cfg[$this->getValue($backendName)]);
+            $backend = ResourceFactory::createResource(ResourceFactory::getResourceConfig($backendConfig->resource));
+            $testConn = new LdapUserBackend(
+                $backend,
+                $backendConfig->user_class,
+                $backendConfig->user_name_attribute
+            );
             if ($testConn->count() === 0) {
-                $this->addErrorMessage(t('No users found on directory server'));
-                return false;
+                throw new Exception('No Users Found On Directory Server');
             }
         } catch (Exception $exc) {
-            $this->addErrorMessage(sprintf(t('Connection validation failed: %s'), $exc->getMessage()));
+            $this->addErrorMessage(
+               t('Connection Validation Failed: ' . $exc->getMessage())
+            );
             return false;
         }
 
