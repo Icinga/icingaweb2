@@ -33,7 +33,7 @@ use \Exception;
 use \Zend_Config;
 use Icinga\Web\Form;
 use Icinga\Data\ResourceFactory;
-use Icinga\Authentication\UserBackend;
+use Icinga\Authentication\Backend\LdapUserBackend;
 
 /**
  * Form for adding or modifying LDAP authentication backends
