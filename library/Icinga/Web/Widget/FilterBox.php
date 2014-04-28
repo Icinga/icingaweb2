@@ -1,4 +1,5 @@
 <?php
+// @codeCoverageIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga Web 2.
@@ -116,3 +117,4 @@ EOT;
         return str_replace('{{BADGES}}', $badges->render($view), $html);
     }
 }
+// @codeCoverageIgnoreEnd

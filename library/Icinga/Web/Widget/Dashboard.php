@@ -38,7 +38,6 @@ use Icinga\Web\Widget\AbstractWidget;
 use Icinga\Web\Widget\Dashboard\Pane;
 use Icinga\Web\Widget\Dashboard\Component as DashboardComponent;
 use Icinga\Web\Url;
-use Zend_View_Abstract;
 
 /**
  * Dashboards display multiple views on a single page

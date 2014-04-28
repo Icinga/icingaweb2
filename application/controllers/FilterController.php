@@ -1,4 +1,5 @@
 <?php
+// @codeCoverageIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga Web 2.
@@ -26,7 +27,6 @@
  *
  */
 // {{{ICINGA_LICENSE_HEADER}}}
-// @codingStandardsIgnoreStart
 
 use Icinga\Web\Controller\ActionController;
 use Icinga\Filter\Filter;
@@ -117,4 +117,4 @@ class FilterController extends ActionController
         }
     }
 }
-// @codingStandardsIgnoreEnd
+// @codeCoverageIgnoreEnd

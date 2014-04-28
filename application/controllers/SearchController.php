@@ -1,10 +1,5 @@
 <?php
-/**
- * Icinga (http://www.icinga.org)
- *
- * @copyright  2014 Icinga Development Team <info@icinga.org>
- * @license    http://www.icinga.org/license/gpl2 GPL, version 2
- */
+// @codeCoverageIgnoreStart
 
 use Icinga\Web\Controller\ActionController;
 use Icinga\Application\Icinga;
@@ -50,3 +45,4 @@ class SearchController extends ActionController
         $this->view->tabs = $dashboard->getTabs();
     }
 }
+// @codeCoverageIgnoreEnd

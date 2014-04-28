@@ -1,4 +1,5 @@
 <?php
+// @codeCoverageIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga Web 2.
@@ -231,4 +232,4 @@ EOD;
         return $template;
     }
 }
-
+// @codeCoverageIgnoreEnd

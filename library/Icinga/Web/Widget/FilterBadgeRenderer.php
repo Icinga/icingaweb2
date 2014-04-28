@@ -1,4 +1,5 @@
 <?php
+// @codeCoverageIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga Web 2.
@@ -185,3 +186,4 @@ EOT;
         return $this->nodeToBadge(Tree::normalizeTree($this->tree->root));
     }
 }
+// @codeCoverageIgnoreEnd

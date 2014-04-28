@@ -1,4 +1,5 @@
 <?php
+// @codeCoverageIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
@@ -12,3 +13,4 @@ class File
         chmod($filename, $mode);
     }
 }
+// @codeCoverageIgnoreEnd

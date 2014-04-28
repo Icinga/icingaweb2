@@ -1,4 +1,5 @@
 <?php
+// @codeCoverageIgnoreStart
 
 namespace Icinga\Clicommands;
 
@@ -211,3 +212,4 @@ class ModuleCommand extends Command
         $this->fail("Not implemented yet");
     }
 }
+// @codeCoverageIgnoreEnd

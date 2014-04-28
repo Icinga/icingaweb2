@@ -1,6 +1,5 @@
 <?php
-// @codingStandardsIgnoreStart
-
+// @codeCoverageIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga Web 2.
@@ -55,5 +54,4 @@ class Zend_View_Helper_FormNumber extends \Zend_View_Helper_FormText
              . $this->getClosingBracket();
     }
 }
-
-// @codingStandardsIgnoreStop
+// @codeCoverageIgnoreEnd

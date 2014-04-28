@@ -1,4 +1,5 @@
 <?php
+// @codeCoverageIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga Web 2.
@@ -29,11 +30,10 @@
 
 namespace Icinga\Web\Widget;
 
+use Zend_Form_Element_Submit;
 use Icinga\Web\Form;
 use Icinga\Web\Request;
-use Zend_View_Abstract;
 use Icinga\Web\Form\Decorator\ConditionalHidden;
-use Zend_Form_Element_Submit;
 
 /**
  *  Sortbox widget
@@ -174,3 +174,4 @@ class SortBox extends AbstractWidget
         return $form;
     }
 }
+// @codeCoverageIgnoreEnd

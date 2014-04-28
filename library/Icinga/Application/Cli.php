@@ -1,4 +1,5 @@
 <?php
+// @codeCoverageIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga Web 2.
@@ -183,3 +184,4 @@ class Cli extends ApplicationBootstrap
         throw new ProgrammingError('Icinga is not running on CLI');
     }
 }
+// @codeCoverageIgnoreEnd

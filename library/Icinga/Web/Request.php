@@ -1,4 +1,5 @@
 <?php
+// @codeCoverageIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga Web 2.
@@ -64,3 +65,4 @@ class Request extends Zend_Controller_Request_Http
         return $this->user;
     }
 }
+// @codeCoverageIgnoreEnd
