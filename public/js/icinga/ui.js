@@ -477,7 +477,7 @@
          */
         focusTable: function (table) {
             $('table').filter(function(){ return this !== table; }).find('tr[href]').removeClass('active');
-            var n = $(table).closest('.container').data('icinga-url');
+            var n = $(table).closest('div.container').attr('data-icinga-url');
             focusedTableDataUrl = n;
         },
 

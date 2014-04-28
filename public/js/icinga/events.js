@@ -382,7 +382,7 @@
             }
 
             // update selection
-            if (event.ctrlKey && multisel) {
+            if ((event.ctrlKey || event.metaKey) && multisel) {
                 icinga.ui.toogleTableRowSelection($tr);
                 // multi selection
             } else if (event.shiftKey && multisel) {
