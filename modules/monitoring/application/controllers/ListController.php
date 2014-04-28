@@ -113,6 +113,7 @@ class Monitoring_ListController extends Controller
         ))->activate('hosts');
 
         $this->setAutorefreshInterval(10);
+        $this->view->query = $this->_request->getQuery();
         $this->view->title = 'Host Status';
         $this->compactView = 'hosts-compact';
         $dataview = HostStatusView::fromRequest(
@@ -176,6 +177,7 @@ class Monitoring_ListController extends Controller
             }
         }
         $this->view->title = 'Service Status';
+        $this->view->query = $this->_request->getQuery();
         $this->setAutorefreshInterval(10);
         $query = $this->fetchServices();
         $this->applyRestrictions($query);

@@ -13,6 +13,12 @@
 
     Icinga.Events.prototype = {
 
+        keyboard: {
+            ctrlKey:    false,
+            altKey:     false,
+            shiftKey:   false
+        },
+
         /**
          * Icinga will call our initialize() function once it's ready
          */
@@ -20,6 +26,7 @@
             this.applyGlobalDefaults();
             this.applyHandlers($('#layout'));
             this.icinga.ui.prepareContainers();
+            this.icinga.ui.prepareMultiselectTables($(document));
         },
 
         // TODO: What's this?
@@ -61,11 +68,27 @@
 
             $('input.autofocus', el).focus();
 
-            $('.inlinepie', el).sparkline('html', {
-                type:        'pie',
-                sliceColors: ['#44bb77', '#ffaa44', '#ff5566', '#dcd'],
-                width:       '2em',
-                height:      '2em',
+            $('div.inlinepie', el).each(function() {
+                var $img   = $(this).find('img');
+                var title  = $img.attr('title'),
+                    values = $img.data('icinga-values'),
+                    colors = $img.data('icinga-colors'),
+                    width  = $img.css('width'),
+                    height = $img.css('height');
+                if (colors) {
+                    colors = colors.split(',');
+                }
+                $img.replaceWith(values);
+                $(this).sparkline(
+                    'html',
+                    {
+                        type:   'pie',
+                        sliceColors: colors || ['#44bb77', '#ffaa44', '#ff5566', '#dcd'],
+                        width:  width,
+                        height: height,
+                        tooltipChartTitle: title
+                    }
+                );
             });
         },
 
@@ -89,8 +112,9 @@
             // We want to catch each link click
             $(document).on('click', 'a', { self: this }, this.linkClicked);
 
-            // We treat tr's with a href attribute like links
-            $(document).on('click', 'tr[href]', { self: this }, this.linkClicked);
+            // Select a table row
+            $(document).on('click', 'table.action tr[href]', { self: this }, this.rowSelected);
+            $(document).on('click', 'table.action tr a', { self: this }, this.rowSelected);
 
             $(document).on('click', 'button', { self: this }, this.submitForm);
 
@@ -110,6 +134,8 @@
             $(document).on('mouseleave', '#sidebar', this.leaveSidebar);
             $(document).on('click', '.tree .handle', { self: this }, this.treeNodeToggle);
 
+            // Toggle all triStateButtons
+            $(document).on('click', 'div.tristate .tristate-dummy', { self: this }, this.clickTriState);
 
             // TBD: a global autocompletion handler
             // $(document).on('keyup', 'form.auto input', this.formChangeDelayed);
@@ -225,6 +251,38 @@
             return event.data.self.submitForm(event, true);
         },
 
+        clickTriState: function (event) {
+            var $tristate = $(this);
+            var triState  = parseInt($tristate.data('icinga-tristate'), 10);
+
+            // load current values
+            var old   = $tristate.data('icinga-old').toString();
+            var value = $tristate.parent().find('input:radio:checked').first().prop('checked', false).val();
+
+            // calculate the new value
+            if (triState) {
+                // 1         => 0
+                // 0         => unchanged
+                // unchanged => 1
+                value = value === '1' ? '0' : (value === '0' ? 'unchanged' : '1');
+            } else {
+                // 1 => 0
+                // 0 => 1
+                value = value === '1' ? '0' : '1';
+            }
+
+            // update form value
+            $tristate.parent().find('input:radio[value="' + value + '"]').prop('checked', true);
+            // update dummy
+
+            if (value !== old) {
+                $tristate.parent().find('b.tristate-changed').css('visibility', 'visible');
+            } else {
+                $tristate.parent().find('b.tristate-changed').css('visibility', 'hidden');
+            }
+            self.icinga.ui.setTriState(value.toString(), $tristate);    
+        },
+
         /**
          *
          */
@@ -277,6 +335,92 @@
             return false;
         },
 
+        handleExternalTarget: function($node) {
+            var linkTarget = $node.attr('target');
+
+            // TODO: Let remote links pass through. Right now they only work
+            //       combined with target="_blank" or target="_self"
+            // window.open is used as return true; didn't work reliable
+            if (linkTarget === '_blank' || linkTarget === '_self') {
+                window.open(href, linkTarget);
+                return true;
+            }
+            return false;
+        },
+
+        /**
+         * Handle table selection.
+         */
+        rowSelected: function(event) {
+            var self     = event.data.self;
+            var icinga   = self.icinga;
+            var $tr      = $(this);
+            var $table   = $tr.closest('table.multiselect');
+            var data     = self.icinga.ui.getSelectionKeys($table);
+            var multisel = $table.hasClass('multiselect');
+            var url      = $table.data('icinga-multiselect-url');
+
+            // When the selection points to a link, select the closest row
+            if ($tr.prop('tagName').toLowerCase() === 'a') {
+                $tr = $tr.closest('tr').first();
+            }
+
+            event.stopPropagation();
+            event.preventDefault();
+
+            if (icinga.events.handleExternalTarget($tr)) {
+                // link handled externally
+                return false;
+            }
+            if (multisel && !data) {
+                icinga.logger.error('A table with multiselection must define the attribute "data-icinga-multiselect-data"');
+                return;
+            }
+            if (multisel && !url) {
+                icinga.logger.error('A table with multiselection must define the attribute "data-icinga-multiselect-url"');
+                return;
+            }
+
+            // update selection
+            if ((event.ctrlKey || event.metaKey) && multisel) {
+                icinga.ui.toogleTableRowSelection($tr);
+                // multi selection
+            } else if (event.shiftKey && multisel) {
+                // range selection
+                icinga.ui.addTableRowRangeSelection($tr);
+            } else {
+                // single selection
+                icinga.ui.setTableRowSelection($tr);
+            }
+            // focus only the current table.
+            icinga.ui.focusTable($table[0]);
+
+            // update url
+            var $target = self.getLinkTargetFor($tr);
+            if (multisel) {
+                var $trs = $table.find('tr[href].active');
+                if ($trs.length > 1) {
+                    var queries = [];
+                    var selectionData = icinga.ui.getSelectionSetData($trs, data);
+                    var query = icinga.ui.selectionDataToQuery(selectionData, data, icinga);
+                    icinga.loader.loadUrl(url + '?' + query, $target);
+                    icinga.ui.storeSelectionData(selectionData);
+                } else if ($trs.length === 1) {
+                    // display a single row
+                    icinga.loader.loadUrl($tr.attr('href'), $target);
+                    icinga.ui.storeSelectionData($tr.attr('href'));
+                } else {
+                    // display nothing
+                    icinga.loader.loadUrl('#');
+                    icinga.ui.storeSelectionData(null);
+                }
+            } else {
+                icinga.loader.loadUrl($tr.attr('href'), $target);
+            }
+            return false;
+        },
+
+
         /**
          * Someone clicked a link or tr[href]
          */
@@ -297,6 +441,11 @@
             if (linkTarget === '_blank' || linkTarget === '_self') {
                 window.open(href, linkTarget);
                 return false;
+            }
+
+            // ignore links inside of tables.
+            if ($a.closest('table tr').length > 0) {
+                return;
             }
 
             // Handle all other links as XHR requests
@@ -409,7 +558,8 @@
             $(window).off('beforeunload', this.onUnload);
             $(document).off('scroll', '.container', this.onContainerScroll);
             $(document).off('click', 'a', this.linkClicked);
-            $(document).off('click', 'tr[href]', this.linkClicked);
+            $(document).off('click', 'table.action tr[href]', this.rowSelected);
+            $(document).off('click', 'table.action tr a', this.rowSelected);
             $(document).off('submit', 'form', this.submitForm);
             $(document).off('click', 'button', this.submitForm);
             $(document).off('change', 'form select.autosubmit', this.submitForm);
@@ -417,6 +567,7 @@
             $(document).off('mouseleave', '.historycolorgrid td', this.historycolorgidUnhover);
             $(document).off('mouseenter', 'li.dropdown', this.dropdownHover);
             $(document).off('mouseleave', 'li.dropdown', this.dropdownLeave);
+            $(document).off('click', 'div.tristate .tristate-dummy', this.clickTriState);
         },
 
         destroy: function() {

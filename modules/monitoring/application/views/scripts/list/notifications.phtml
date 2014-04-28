@@ -2,7 +2,8 @@
 <?= $this->tabs ?>
 <div style="margin: 1em" class="dontprint">
 Sort by <?=  $this->sortControl->render($this) ?>
-<!--<?= $this->selectionToolbar('single') ?>-->
+
+<?= $this->selectionToolbar('single') ?>
 </div>
 <?=  $this->paginationControl($notifications, null, null, array('preserve' => $this->preserve)) ?>
 </div>

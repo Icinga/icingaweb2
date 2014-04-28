@@ -247,7 +247,9 @@
             if (! req.autorefresh) {
                 // TODO: Hook for response/url?
                 var $forms = $('[action="' + this.icinga.utils.parseUrl(url).path + '"]');
+
                 var $matches = $.merge($('[href="' + url + '"]'), $forms);
+
                 $matches.each(function (idx, el) {
                     if ($(el).closest('#menu').length) {
                         $('#menu .active').removeClass('active');
@@ -273,6 +275,7 @@
                 });
             } else {
                 // TODO: next container url
+                // Get first container url?
                 active = $('[href].active', req.$target).attr('href');
             }
 
@@ -387,19 +390,12 @@
                     this.icinga.history.pushCurrentState();
                 }
             }
+            this.icinga.ui.initializeTriStates($resp);
 
-
-            /*
-             * Replace SVG piecharts with jQuery-Sparkline
+            /**
+             * Make multiselection-tables not selectable.
              */
-            $('.inlinepie', $resp).each(function(){
-                var   title = $(this).attr('title'),
-                    style = $(this).attr('style'),
-                    values = $(this).data('icinga-values');
-                var html = '<div class="inlinepie" style="' + style + '" title="' + title + '">' + values + '</div>';
-                $(this).replaceWith(html);
-            });
-
+            this.icinga.ui.prepareMultiselectTables($resp);
 
             /* Should we try to fiddle with responses containing full HTML? */
             /*
@@ -436,7 +432,39 @@
             }
 
             if (active) {
-                $('[href="' + active + '"]', req.$target).addClass('active');
+                var focusedUrl = this.icinga.ui.getFocusedContainerDataUrl();
+                var oldSelectionData = this.icinga.ui.loadSelectionData();
+                if (typeof oldSelectionData === 'string') {
+                    $('[href="' + oldSelectionData + '"]', req.$target).addClass('active');
+
+                } else if (oldSelectionData !== null) {
+                    var $container;
+                    if (!focusedUrl) {
+                        $container = $('document').first();
+                    } else {
+                        $container = $('.container[data-icinga-url="' + focusedUrl + '"]');;
+                    }
+
+                    var $table = $container.find('table.action').first();
+                    var keys = self.icinga.ui.getSelectionKeys($table);
+
+                    // build map of selected queries
+                    var oldSelectionQueries = {};
+                    $.each(oldSelectionData, function(i, query){
+                        oldSelectionQueries[self.icinga.ui.selectionDataToQueryComp(query)] = true;
+                    });
+
+                    // set all new selections to active
+                    $table.find('tr[href]').filter(function(){
+                            var $tr = $(this);
+                            var rowData = self.icinga.ui.getSelectionData($tr, keys, self.icinga);
+                            var newSelectionQuery = self.icinga.ui.selectionDataToQueryComp(rowData);
+                            if (oldSelectionQueries[newSelectionQuery]) {
+                                return true;
+                            }
+                            return false;
+                        }).addClass('active');
+                }
             }
             req.$target.trigger('rendered');
         },
