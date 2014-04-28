@@ -1,4 +1,5 @@
 <?php
+// @codeCoverageIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga Web 2.
@@ -29,10 +30,9 @@
 
 namespace Icinga\Web\Widget\Tabextension;
 
-use \Icinga\Logger\Logger;
-use \Icinga\Web\Widget\Tab;
-use \Icinga\Web\Widget\Tabs;
-use \Icinga\Web\Url;
+use Icinga\Web\Url;
+use Icinga\Web\Widget\Tab;
+use Icinga\Web\Widget\Tabs;
 
 /**
  * Tabextension that offers different output formats for the user in the dropdown area
@@ -97,24 +97,17 @@ class OutputFormat implements Tabextension
      * is added, so this class offers to remove specific types instead of adding ones
      *
      * @param array $disabled An array of output types to <b>not</b> show.
-     *
      */
     public function __construct(array $disabled = array())
     {
-        foreach ($this->supportedTypes as $type => $values) {
-            if (in_array($type, $disabled)) {
-                continue;
+        foreach ($this->supportedTypes as $type => $tabConfig) {
+            if (!in_array($type, $disabled)) {
+                $tabConfig['url'] = Url::fromRequest();
+                $tabConfig['tagParams'] = array(
+                    'target' => '_blank'
+                );
+                $this->tabs[] = new Tab($tabConfig);
             }
-            if (!isset($this->supportedTypes[$type])) {
-                Logger::error('Tried to add an unsupported output type: %s', $type);
-                continue;
-            }
-            $tabConfig = $this->supportedTypes[$type];
-            $tabConfig['url'] = Url::fromRequest();
-            $tabConfig['tagParams'] = array(
-                'target' => '_blank'
-            );
-            $this->tabs[] = new Tab($tabConfig);
         }
     }
 
@@ -132,3 +125,4 @@ class OutputFormat implements Tabextension
         }
     }
 }
+// @codeCoverageIgnoreEnd

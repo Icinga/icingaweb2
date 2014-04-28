@@ -1,4 +1,5 @@
 <?php
+// @codeCoverageIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga Web 2.
@@ -29,7 +30,7 @@
 
 namespace Icinga\Web\Form\Decorator;
 
-use \Zend_Form_Decorator_Abstract;
+use Zend_Form_Decorator_Abstract;
 
 /**
  * Decorator that automatically adds a helptext to an input element
@@ -60,3 +61,4 @@ class HelpText extends Zend_Form_Decorator_Abstract
         return $content;
     }
 }
+// @codeCoverageIgnoreEnd

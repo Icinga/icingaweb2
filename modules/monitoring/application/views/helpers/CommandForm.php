@@ -56,7 +56,6 @@ class Zend_View_Helper_CommandForm extends Zend_View_Helper_Abstract
     {
         $form = new Form();
         $form->setAttrib('class', 'inline');
-        $form->setIgnoreChangeDiscarding(true);
         $form->setRequest(Zend_Controller_Front::getInstance()->getRequest());
 
         // Filter work only from get parts. Put important

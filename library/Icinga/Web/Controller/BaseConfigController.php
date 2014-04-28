@@ -1,4 +1,5 @@
 <?php
+// @codeCoverageIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga Web 2.
@@ -29,7 +30,7 @@
 
 namespace Icinga\Web\Controller;
 
-use \Zend_Log;
+use Zend_Log;
 use Icinga\Web\Session;
 use Icinga\User\Message;
 use Icinga\Authentication\Manager as AuthenticationManager;
@@ -95,3 +96,4 @@ class BaseConfigController extends ActionController
         $this->view->tabs = ControllerTabCollector::collectControllerTabs('ConfigController');
     }
 }
+// @codeCoverageIgnoreEnd

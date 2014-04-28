@@ -1,4 +1,5 @@
 <?php
+// @codeCoverageIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga Web 2.
@@ -29,8 +30,8 @@
 
 namespace Icinga\Web\Widget\Tabextension;
 
-use \Icinga\Web\Widget\Tabs;
-use \Icinga\Web\Url;
+use Icinga\Web\Widget\Tabs;
+use Icinga\Web\Url;
 
 /**
  * Tabextension that adds the basket command
@@ -58,3 +59,4 @@ class BasketAction implements Tabextension
         );
     }
 }
+// @codeCoverageIgnoreEnd

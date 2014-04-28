@@ -1,4 +1,5 @@
 <?php
+// @codeCoverageIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga Web 2.
@@ -439,3 +440,4 @@ class GeneralForm extends Form
         return $cfg;
     }
 }
+// @codeCoverageIgnoreEnd

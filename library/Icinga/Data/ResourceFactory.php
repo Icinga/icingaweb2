@@ -142,9 +142,4 @@ class ResourceFactory implements ConfigAwareFactory
         }
         return $resource;
     }
-
-    public static function getBackendType($resource)
-    {
-
-    }
 }

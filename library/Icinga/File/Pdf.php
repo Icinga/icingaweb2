@@ -1,4 +1,5 @@
 <?php
+// @codeCoverageIgnoreStart
 
 namespace Icinga\File;
 
@@ -215,3 +216,4 @@ class Pdf extends DOMPDF
 //    }
 
 }
+// @codeCoverageIgnoreEnd

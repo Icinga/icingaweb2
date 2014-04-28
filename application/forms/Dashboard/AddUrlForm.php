@@ -1,4 +1,5 @@
 <?php
+// @codeCoverageIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga Web 2.
@@ -29,7 +30,7 @@
 
 namespace Icinga\Form\Dashboard;
 
-use \Icinga\Application\Config as IcingaConfig;
+use Icinga\Application\Config as IcingaConfig;
 use Icinga\Web\Form;
 use Icinga\Web\Widget\Dashboard;
 use Zend_Form_Element_Text;
@@ -39,7 +40,6 @@ use Zend_Form_Element_Select;
 
 /**
  * Form to add an url a dashboard pane
- *
  */
 class AddUrlForm extends Form
 {
@@ -51,7 +51,6 @@ class AddUrlForm extends Form
      */
     private function addPaneSelectionBox(Dashboard $dashboard)
     {
-
         $selectPane = new Zend_Form_Element_Select(
             'pane',
             array(
@@ -84,7 +83,6 @@ class AddUrlForm extends Form
 
     /**
      *  Add a textfield for creating a new pane to this form
-     *
      */
     private function addNewPaneTextField($showExistingButton = true)
     {
@@ -130,7 +128,6 @@ class AddUrlForm extends Form
 
     /**
      * Add elements to this form (used by extending classes)
-     *
      */
     protected function create()
     {
@@ -167,6 +164,6 @@ class AddUrlForm extends Form
             )
         );
         $this->setSubmitLabel("Add To Dashboard");
-
     }
 }
+// @codeCoverageIgnoreEnd

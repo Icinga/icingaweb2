@@ -13,7 +13,7 @@ class MenuItem
      *
      * @type string
      */
-    private $id;
+    protected $id;
 
     /**
      * Item title
@@ -22,7 +22,7 @@ class MenuItem
      *
      * @type string
      */
-    private $title;
+    protected $title;
 
     /**
      * Item priority
@@ -31,44 +31,48 @@ class MenuItem
      *
      * @type int
      */
-    private $priority = 100;
+    protected $priority = 100;
 
     /**
      * Item url
      *
      * @type string
      */
-    private $url;
+    protected $url;
 
     /**
      * Item icon path
      *
      * @type string
      */
-    private $icon;
+    protected $icon;
 
     /**
      * Item icon class
      *
      * @type string
      */
-    private $iconClass;
+    protected $iconClass;
 
     /**
      * Item's children
      *
      * @type array
      */
-    private $children = array();
+    protected $children = array();
 
-    private $attribs = array();
-
+    /**
+     * HTML anchor tag attributes
+     *
+     * @var array
+     */
+    protected $attribs = array();
 
     /**
      * Create a new MenuItem
      *
-     * @param int       $id
-     * @param object    $config
+     * @param   int         $id
+     * @param   object      $config
      */
     public function __construct($id, $config = null)
     {
@@ -81,7 +85,7 @@ class MenuItem
     /**
      * Setter for id
      *
-     * @param   string $id
+     * @param   string  $id
      *
      * @return  self
      */
@@ -104,7 +108,7 @@ class MenuItem
     /**
      * Setter for title
      *
-     * @param   string $title
+     * @param   string  $title
      *
      * @return  self
      */
@@ -114,11 +118,10 @@ class MenuItem
         return $this;
     }
 
-
     /**
      * Getter for title
      *
-     * @return string
+     * @return  string
      */
     public function getTitle()
     {
@@ -128,7 +131,7 @@ class MenuItem
     /**
      * Setter for priority
      *
-     * @param   int $priority
+     * @param   int     $priority
      *
      * @return  self
      */
@@ -141,7 +144,7 @@ class MenuItem
     /**
      * Getter for priority
      *
-     * @return int
+     * @return  int
      */
     public function getPriority()
     {
@@ -151,7 +154,7 @@ class MenuItem
     /**
      * Setter for URL
      *
-     * @param   string $url
+     * @param   string  $url
      *
      * @return  self
      */
@@ -164,7 +167,7 @@ class MenuItem
     /**
      * Getter for URL
      *
-     * @return string
+     * @return  string
      */
     public function getUrl()
     {
@@ -174,7 +177,7 @@ class MenuItem
     /**
      * Setter for icon path
      *
-     * @param   string $path
+     * @param   string  $path
      *
      * @return  self
      */
@@ -187,7 +190,7 @@ class MenuItem
     /**
      * Getter for icon path
      *
-     * @return string
+     * @return  string
      */
     public function getIcon()
     {
@@ -197,7 +200,7 @@ class MenuItem
     /**
      * Setter for icon class
      *
-     * @param   string $iconClass
+     * @param   string  $iconClass
      *
      * @return  self
      */
@@ -210,7 +213,7 @@ class MenuItem
     /**
      * Getter for icon class
      *
-     * @return string
+     * @return  string
      */
     public function getIconClass()
     {
@@ -220,7 +223,7 @@ class MenuItem
     /**
      * Set the configuration for the item
      *
-     * @param object $config
+     * @param   Zend_Config     $config
      */
     public function setConfig($config)
     {
@@ -249,18 +252,21 @@ class MenuItem
         } else {
             // Submenu item
             list($parentId, $id) = explode('.', $id, 2);
+
             if ($this->hasChild($parentId)) {
                 $parent = $this->getChild($parentId);
             } else {
                 $parent = $this->addChild($parentId);
             }
+
             $menuItem = $parent->addChild($id, $itemConfig);
         }
+
         return $menuItem;
     }
 
     /**
-     * Check whether the item has children
+     * Check whether the item has any children
      *
      * @return  bool
      */
@@ -270,10 +276,11 @@ class MenuItem
     }
 
     /**
-     * Get children sorted
+     * Get sorted children
      *
      * @return  array
-     * @see     cmpChildren()
+     *
+     * @see     MenuItem::cmpChildren()
      */
     public function getChildren()
     {
@@ -282,11 +289,11 @@ class MenuItem
     }
 
     /**
-     * Whether a given child id exists
+     * Return whether a given child id exists
      *
      * @param   string  $id
      *
-     * @return  self|$default
+     * @return  bool
      */
     public function hasChild($id)
     {
@@ -300,20 +307,22 @@ class MenuItem
      * @param   mixed   $default
      *
      * @return  MenuItem
+     *
      * @throws  ProgrammingError
      */
     public function getChild($id)
     {
-        if ($this->hasChild($id)) {
-            return $this->children[$id];
+        if (!$this->hasChild($id)) {
+            throw new ProgrammingError(sprintf('Trying to get invalid Menu child "%s"', $id));
         }
-        throw new ProgrammingError(sprintf('Trying to get invalid Menu child "%s"', $id));
+
+        return $this->children[$id];
     }
 
     /**
-     * Set HTML a tag attributes
+     * Set HTML anchor tag attributes
      *
-     * @param   array $attribs
+     * @param   array   $attribs
      *
      * @return  self
      */
@@ -324,9 +333,9 @@ class MenuItem
     }
 
     /**
-     * Get HTML a tag attributes
+     * Get HTML anchor tag attributes
      *
-     * @return array
+     * @return  array
      */
     public function getAttribs()
     {
@@ -336,8 +345,8 @@ class MenuItem
     /**
      * Compare children based on priority and title
      *
-     * @param   MenuItem $a
-     * @param   MenuItem $b
+     * @param   MenuItem    $a
+     * @param   MenuItem    $b
      *
      * @return  int
      */
@@ -346,6 +355,7 @@ class MenuItem
         if ($a->priority === $b->priority) {
             return ($a->getTitle() > $b->getTitle()) ? 1 : -1;
         }
+
         return ($a->priority > $b->priority) ? 1 : -1;
     }
 }

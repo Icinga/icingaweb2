@@ -1,4 +1,5 @@
 <?php
+// @codeCoverageIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga Web 2.
@@ -29,18 +30,16 @@
 
 namespace Icinga\Web\Controller;
 
-use \Icinga\Application\Modules\Module;
-use \Icinga\Application\Icinga;
-use \Icinga\Web\Widget\Tabs;
+use Icinga\Application\Modules\Module;
+use Icinga\Application\Icinga;
+use Icinga\Web\Widget\Tabs;
 
 /**
  *  Static helper class that collects tabs provided by the 'createProvidedTabs' method
  *  of controllers.
- *
  */
 class ControllerTabCollector
 {
-
     /**
      * Scan all controllers with the provided name
      * in the application and (loaded) module folders and collects their provided tabs
@@ -124,3 +123,4 @@ class ControllerTabCollector
         return array();
     }
 }
+// @codeCoverageIgnoreEnd

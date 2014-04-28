@@ -29,8 +29,9 @@
 
 namespace Icinga\Util;
 
-use \DateTime;
-use \DateTimeZone;
+use Exception;
+use DateTime;
+use DateTimeZone;
 use Icinga\Util\ConfigAwareFactory;
 use Icinga\Exception\ConfigurationError;
 
@@ -41,35 +42,42 @@ class DateTimeFactory implements ConfigAwareFactory
 {
     /**
      * Time zone used throughout DateTime object creation
+     *
      * @var DateTimeZone
      */
-    private static $timeZone;
+    protected static $timeZone;
 
     /**
      * Set the factory's config
      *
      * Set the factory's time zone via key timezone in the given config array
      *
-     * @param   array   $config
-     * @throws  \Icinga\Exception\ConfigurationError if the given config is not valid
+     * @param   array               $config     An array with key 'timezone'
+     *
+     * @throws  ConfigurationError              if the given array misses the key 'timezone'
      */
     public static function setConfig($config)
     {
-        if (!array_key_exists('timezone', $config)) {
-            throw new ConfigurationError(t('"DateTimeFactory" expects a valid time zone to be set via "setConfig"'));
+        try {
+            $tz = new DateTimeZone(isset($config['timezone']) ? $config['timezone'] : '');
+        } catch (Exception $e) {
+            throw new ConfigurationError('"DateTimeFactory" expects a valid time zone be set via "setConfig"');
         }
-        self::$timeZone = $config['timezone'];
+
+        self::$timeZone = $tz;
     }
 
     /**
-     * Return new DateTime object using the given format, time and set time zone
+     * Return new DateTime object using the given format, time and set timezone
      *
      * Wraps DateTime::createFromFormat()
      *
      * @param   string          $format
      * @param   string          $time
      * @param   DateTimeZone    $timeZone
+     *
      * @return  DateTime
+     *
      * @see     DateTime::createFromFormat()
      */
     public static function parse($time, $format, DateTimeZone $timeZone = null)
@@ -84,46 +92,13 @@ class DateTimeFactory implements ConfigAwareFactory
      *
      * @param   string          $time
      * @param   DateTimeZone    $timeZone
+     *
      * @return  DateTime
+     *
      * @see     DateTime::__construct()
      */
     public static function create($time = 'now', DateTimeZone $timeZone = null)
     {
         return new DateTime($time, $timeZone !== null ? $timeZone : self::$timeZone);
-    }
-
-    /**
-     * Return the amount of seconds based on the given month
-     *
-     * @param   DateTime    $dateTime   The date and time to use
-     *
-     * @return  int
-     */
-    public static function getSecondsByMonth(DateTime $dateTime)
-    {
-        return (int) $dateTime->format('t') * 24 * 3600;
-    }
-
-    /**
-     * Return the amount of seconds based on the given year
-     *
-     * @param   DateTime    $dateTime   The date and time to use
-     *
-     * @return  int
-     */
-    public static function getSecondsByYear(DateTime $dateTime)
-    {
-        return (self::isLeapYear($dateTime) ? 366 : 365) * 24 * 3600;
-    }
-
-    /**
-     * Return whether the given year is a leap year
-     *
-     * @param   DateTime    $dateTime   The date and time to check
-     * @return  bool
-     */
-    public static function isLeapYear(DateTime $dateTime)
-    {
-        return $dateTime->format('L') == 1;
     }
 }

@@ -6,6 +6,7 @@ use \DateTime;
 use \DateInterval;
 use \Zend_Config;
 use Icinga\Web\Url;
+use Icinga\Util\Format;
 use Icinga\Application\Config;
 use Icinga\Util\DateTimeFactory;
 use Icinga\Web\Controller\ActionController;
@@ -170,13 +171,13 @@ class Monitoring_TimelineController extends ActionController
             case '1m':
                 $dateCopy = clone $dateTime;
                 for ($i = 0; $i < 6; $i++) {
-                    $dateCopy->sub(new DateInterval('PT' . DateTimeFactory::getSecondsByMonth($dateCopy) . 'S'));
+                    $dateCopy->sub(new DateInterval('PT' . Format::secondsByMonth($dateCopy) . 'S'));
                 }
                 return $dateCopy->add(new DateInterval('PT1S'))->diff($dateTime);
             case '1y':
                 $dateCopy = clone $dateTime;
                 for ($i = 0; $i < 4; $i++) {
-                    $dateCopy->sub(new DateInterval('PT' . DateTimeFactory::getSecondsByYear($dateCopy) . 'S'));
+                    $dateCopy->sub(new DateInterval('PT' . Format::secondsByYear($dateCopy) . 'S'));
                 }
                 return $dateCopy->add(new DateInterval('PT1S'))->diff($dateTime);
             default:

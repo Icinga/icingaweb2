@@ -29,18 +29,18 @@
 
 namespace Icinga\Web;
 
-use \Zend_Controller_Request_Abstract;
-use \Zend_Form;
-use \Zend_Config;
-use \Zend_Form_Element_Submit;
-use \Zend_Form_Element_Reset;
-use \Zend_View_Interface;
-use \Icinga\Web\Form\Element\Note;
-use \Icinga\Exception\ProgrammingError;
-use \Icinga\Web\Form\Decorator\HelpText;
-use \Icinga\Web\Form\Decorator\BootstrapForm;
-use \Icinga\Web\Form\InvalidCSRFTokenException;
-use \Icinga\Application\Config as IcingaConfig;
+use Zend_Controller_Request_Abstract;
+use Zend_Form;
+use Zend_Config;
+use Zend_Form_Element_Submit;
+use Zend_Form_Element_Reset;
+use Zend_View_Interface;
+use Icinga\Web\Form\Element\Note;
+use Icinga\Exception\ProgrammingError;
+use Icinga\Web\Form\Decorator\HelpText;
+use Icinga\Web\Form\Decorator\BootstrapForm;
+use Icinga\Web\Form\InvalidCSRFTokenException;
+use Icinga\Application\Config as IcingaConfig;
 
 /**
  * Base class for forms providing CSRF protection, confirmation logic and auto submission
@@ -52,7 +52,7 @@ class Form extends Zend_Form
      *
      * @var Zend_Controller_Request_Abstract
      */
-    private $request;
+    protected $request;
 
     /**
      * Main configuration
@@ -61,14 +61,14 @@ class Form extends Zend_Form
      *
      * @var IcingaConfig
      */
-    private $config;
+    protected $config;
 
     /**
      * The preference object to use instead of the one from the user (used for testing)
      *
      * @var Zend_Config
      */
-    private $preferences;
+    protected $preferences;
 
     /**
      * Whether this form should NOT add random generated "challenge" tokens that are associated with the user's current
@@ -84,21 +84,21 @@ class Form extends Zend_Form
      *
      * @var string
      */
-    private $tokenElementName = 'CSRFToken';
+    protected $tokenElementName = 'CSRFToken';
 
     /**
      * Flag to indicate that form is already build
      *
      * @var bool
      */
-    private $created = false;
+    protected $created = false;
 
     /**
      * Session id used for CSRF token generation
      *
      * @var string
      */
-    private $sessionId;
+    protected $sessionId;
 
     /**
      * Label for submit button
@@ -107,7 +107,7 @@ class Form extends Zend_Form
      *
      * @var string
      */
-    private $submitLabel;
+    protected $submitLabel;
 
     /**
      * Label for cancel button
@@ -116,7 +116,7 @@ class Form extends Zend_Form
      *
      * @var string
      */
-    private $cancelLabel;
+    protected $cancelLabel;
 
     /**
      * Last used note-id
@@ -125,21 +125,7 @@ class Form extends Zend_Form
      *
      * @var int
      */
-    private $last_note_id = 0;
-
-    /**
-     * Decorator that replaces the DtDd Zend-Form default
-     *
-     * @var Form\Decorator\BootstrapFormDecorator
-     */
-    private $formDecorator;
-
-    /**
-     * Whether to ignore users leaving the form with unsaved changes
-     *
-     * @var bool
-     */
-    private $ignoreChangeDiscarding = false;
+    protected $last_note_id = 0;
 
     /**
      * Getter for the session ID
@@ -147,26 +133,14 @@ class Form extends Zend_Form
      * If the ID has never been set, the ID from session_id() is returned
      *
      * @return  string
-     *
-     * @see     session_id()
-     * @see     setSessionId()
      */
     public function getSessionId()
     {
         if (!$this->sessionId) {
             $this->sessionId = session_id();
         }
-        return $this->sessionId;
-    }
 
-    /**
-     * Set whether to inform a user when he is about to discard changes (false, default) or not
-     *
-     * @param boolean $bool False to not inform users when they leave modified forms, otherwise true
-     */
-    public function setIgnoreChangeDiscarding($bool)
-    {
-        $this->ignoreChangeDiscarding = (boolean) $bool;
+        return $this->sessionId;
     }
 
     /**
@@ -174,7 +148,7 @@ class Form extends Zend_Form
      *
      * This method should be used for testing purposes only
      *
-     * @param string $sessionId
+     * @param   string      $sessionId
      */
     public function setSessionId($sessionId)
     {
@@ -184,7 +158,7 @@ class Form extends Zend_Form
     /**
      * Return the HTML element name of the CSRF token field
      *
-     * @return string
+     * @return  string
      */
     public function getTokenElementName()
     {
@@ -194,7 +168,7 @@ class Form extends Zend_Form
     /**
      * Render the form to HTML
      *
-     * @param   Zend_View_Interface $view
+     * @param   Zend_View_Interface     $view
      *
      * @return  string
      */
@@ -210,6 +184,7 @@ class Form extends Zend_Form
      */
     protected function create()
     {
+
     }
 
     /**
@@ -217,12 +192,13 @@ class Form extends Zend_Form
      */
     protected function preValidation(array $data)
     {
+
     }
 
     /**
      * Setter for the request
      *
-     * @param Zend_Controller_Request_Abstract $request
+     * @param   Zend_Controller_Request_Abstract    $request
      */
     public function setRequest(Zend_Controller_Request_Abstract $request)
     {
@@ -232,7 +208,7 @@ class Form extends Zend_Form
     /**
      * Getter for the request
      *
-     * @return Zend_Controller_Request_Abstract
+     * @return  Zend_Controller_Request_Abstract
      */
     public function getRequest()
     {
@@ -242,7 +218,7 @@ class Form extends Zend_Form
     /**
      * Set the configuration to be used for this form when no preferences are set yet
      *
-     * @param   IcingaConfig $cfg
+     * @param   IcingaConfig    $cfg
      *
      * @return  self
      */
@@ -257,20 +233,21 @@ class Form extends Zend_Form
      *
      * Returns the set configuration or an empty default one.
      *
-     * @return Zend_Config
+     * @return  Zend_Config
      */
     public function getConfiguration()
     {
         if ($this->config === null) {
             $this->config = new Zend_Config(array(), true);
         }
+
         return $this->config;
     }
 
     /**
      * Set preferences to be used instead of the one from the user object (used for testing)
      *
-     * @param Zend_Config $prefs
+     * @param   Zend_Config     $prefs
      */
     public function setUserPreferences($prefs)
     {
@@ -280,13 +257,14 @@ class Form extends Zend_Form
     /**
      * Return the preferences of the user or the overwritten ones
      *
-     * @return Zend_Config
+     * @return  Zend_Config
      */
     public function getUserPreferences()
     {
         if ($this->preferences) {
             return $this->preferences;
         }
+
         return $this->getRequest()->getUser()->getPreferences();
     }
 
@@ -297,7 +275,6 @@ class Form extends Zend_Form
      */
     public function buildForm()
     {
-
         if ($this->created === false) {
             $this->initCsrfToken();
             $this->create();
@@ -314,18 +291,15 @@ class Form extends Zend_Form
             if (!$this->getAction() && $this->getRequest()) {
                 $this->setAction($this->getRequest()->getRequestUri());
             }
-            $this->addElementDecorators();
+
             $this->created = true;
-            if (!$this->ignoreChangeDiscarding) {
-                //$this->setAttrib('data-icinga-component', 'app/form');
-            }
         }
     }
 
     /**
      * Setter for the cancel label
      *
-     * @param string $cancelLabel
+     * @param   string  $cancelLabel
      */
     public function setCancelLabel($cancelLabel)
     {
@@ -335,22 +309,23 @@ class Form extends Zend_Form
     /**
      * Add cancel button to form
      */
-    private function addCancelButton()
+    protected function addCancelButton()
     {
-        $cancelLabel = new Zend_Form_Element_Reset(
-            array(
-                'name' => 'btn_reset',
-                'label' => $this->cancelLabel,
-                'class' => 'btn pull-right'
+        $this->addElement(
+            new Zend_Form_Element_Reset(
+                array(
+                    'name' => 'btn_reset',
+                    'label' => $this->cancelLabel,
+                    'class' => 'btn pull-right'
+                )
             )
         );
-        $this->addElement($cancelLabel);
     }
 
     /**
      * Setter for the submit label
      *
-     * @param string $submitLabel
+     * @param   string  $submitLabel
      */
     public function setSubmitLabel($submitLabel)
     {
@@ -360,22 +335,23 @@ class Form extends Zend_Form
     /**
      * Add submit button to form
      */
-    private function addSubmitButton()
+    protected function addSubmitButton()
     {
-        $submitButton = new Zend_Form_Element_Submit(
-            array(
-                'name'  => 'btn_submit',
-                'label' => $this->submitLabel,
+        $this->addElement(
+            new Zend_Form_Element_Submit(
+                array(
+                    'name'  => 'btn_submit',
+                    'label' => $this->submitLabel
+                )
             )
         );
-        $this->addElement($submitButton);
     }
 
     /**
      * Add message to form
      *
-     * @param string    $message        The message to be displayed
-     * @param int       $headingType    Whether it should be displayed as heading (1-6) or not (null)
+     * @param   string      $message        The message to be displayed
+     * @param   int         $headingType    Whether it should be displayed as heading (1-6) or not (null)
      */
     public function addNote($message, $headingType = null)
     {
@@ -399,17 +375,16 @@ class Form extends Zend_Form
      *
      * Enables automatic submission of this form once the user edits specific elements
      *
-     * @param   array $triggerElements  The element names which should auto-submit the form
+     * @param   array   $triggerElements    The element names which should auto-submit the form
      *
-     * @throws  ProgrammingError        When an element is found which does not yet exist
+     * @throws  ProgrammingError            When an element is found which does not yet exist
      */
-    final public function enableAutoSubmit($triggerElements)
+    public function enableAutoSubmit($triggerElements)
     {
         foreach ($triggerElements as $elementName) {
             $element = $this->getElement($elementName);
             if ($element !== null) {
                 $element->setAttrib('onchange', '$(this.form).submit();');
-                $element->setAttrib('data-icinga-form-autosubmit', true);
             } else {
                 throw new ProgrammingError(
                     'You need to add the element "' . $elementName . '" to' .
@@ -425,9 +400,7 @@ class Form extends Zend_Form
      * Ensures that the current request method is POST, that the form was manually submitted and that the data provided
      * in the request is valid and gets repopulated in case its invalid.
      *
-     * @return  bool                True when the form is submitted and valid, otherwise false
-     * @see     Form::isValid()
-     * @see     Form::isSubmitted()
+     * @return  bool    True when the form is submitted and valid, otherwise false
      */
     public function isSubmittedAndValid()
     {
@@ -457,7 +430,7 @@ class Form extends Zend_Form
      * Per default, this checks whether the button set with the 'setSubmitLabel' method
      * is being submitted. For custom submission logic, this method must be overwritten
      *
-     * @return bool True when the form is marked as submitted, otherwise false
+     * @return  bool    True when the form is marked as submitted, otherwise false
      */
     public function isSubmitted()
     {
@@ -466,6 +439,7 @@ class Form extends Zend_Form
             $checkData = $this->getRequest()->getParams();
             $submitted = isset($checkData['btn_submit']);
         }
+
         return $submitted;
     }
 
@@ -474,13 +448,13 @@ class Form extends Zend_Form
      *
      * This method should be used for testing purposes only
      *
-     * @param   bool $disabled  Set true in order to disable CSRF tokens in this form (default: true), otherwise false
-     *
-     * @see     tokenDisabled
+     * @param   bool    $disabled   Set true in order to disable CSRF tokens in
+     *                              this form (default: true), otherwise false
      */
-    final public function setTokenDisabled($disabled = true)
+    public function setTokenDisabled($disabled = true)
     {
         $this->tokenDisabled = (boolean) $disabled;
+
         if ($disabled === true) {
             $this->removeElement($this->tokenElementName);
         }
@@ -489,54 +463,47 @@ class Form extends Zend_Form
     /**
      * Add CSRF counter measure field to form
      */
-    final public function initCsrfToken()
+    public function initCsrfToken()
     {
-        if ($this->tokenDisabled || $this->getElement($this->tokenElementName)) {
-            return;
+        if (!$this->tokenDisabled && $this->getElement($this->tokenElementName) === null) {
+            $this->addElement(
+                'hidden',
+                $this->tokenElementName,
+                array(
+                    'value' => $this->generateCsrfTokenAsString()
+                )
+            );
         }
-        $this->addElement(
-            'hidden',
-            $this->tokenElementName,
-            array(
-                'value'         => $this->generateCsrfTokenAsString(),
-                'decorators'    => array('ViewHelper')
-            )
-        );
     }
 
     /**
      * Test the submitted data for a correct CSRF token
      *
-     * @param   array $checkData            The POST data send by the user
+     * @param   array   $checkData          The POST data send by the user
      *
      * @throws  InvalidCSRFTokenException   When CSRF Validation fails
      */
-    final public function assertValidCsrfToken(array $checkData)
+    public function assertValidCsrfToken(array $checkData)
     {
-        if ($this->tokenDisabled) {
-            return;
-        }
-
-        if (!isset($checkData[$this->tokenElementName])
-            || !$this->hasValidCsrfToken($checkData[$this->tokenElementName])
-        ) {
-            throw new InvalidCSRFTokenException();
+        if (!$this->tokenDisabled) {
+            if (!isset($checkData[$this->tokenElementName])
+                || !$this->hasValidCsrfToken($checkData[$this->tokenElementName])
+            ) {
+                throw new InvalidCSRFTokenException();
+            }
         }
     }
 
     /**
      * Check whether the form's CSRF token-field has a valid value
      *
-     * @param   string $elementValue Value from the form element
+     * @param   string  $elementValue   Value from the form element
      *
      * @return  bool
      */
-    private function hasValidCsrfToken($elementValue)
+    protected function hasValidCsrfToken($elementValue)
     {
-        if ($this->getElement($this->tokenElementName) === null) {
-            return false;
-        }
-        if (strpos($elementValue, '|') === false) {
+        if ($this->getElement($this->tokenElementName) === null || strpos($elementValue, '|') === false) {
             return false;
         }
 
@@ -550,25 +517,11 @@ class Form extends Zend_Form
     }
 
     /**
-     * Add element decorators which apply to all elements
-     *
-     * Adds `HelpText` decorator
-     *
-     * @see HelpText
-     */
-    private function addElementDecorators()
-    {
-        foreach ($this->getElements() as $element) {
-            $element->addDecorator(new HelpText());
-        }
-    }
-
-    /**
      * Generate a new (seed, token) pair
      *
-     * @return array
+     * @return  array
      */
-    final public function generateCsrfToken()
+    public function generateCsrfToken()
     {
         $seed = mt_rand();
         $hash = hash('sha256', $this->getSessionId() . $seed);
@@ -579,9 +532,9 @@ class Form extends Zend_Form
     /**
      * Return the string representation of the CSRF seed/token pair
      *
-     * @return string
+     * @return  string
      */
-    final public function generateCsrfTokenAsString()
+    public function generateCsrfTokenAsString()
     {
         list ($seed, $token) = $this->generateCsrfToken($this->getSessionId());
         return sprintf('%s|%s', $seed, $token);
@@ -593,31 +546,29 @@ class Form extends Zend_Form
      * Additionally, all DtDd tags will be removed and the Bootstrap compatible
      * BootstrapForm decorator will be added to the elements
      *
-     *
      * @param   string|Zend_Form_Element    $element    String element type, or an object of type Zend_Form_Element
      * @param   string                      $name       The name of the element to add if $element is a string
      * @param   array                       $options    The settings for the element if $element is a string
      *
-     * @return  Form
+     * @return  self
      * @see     Zend_Form::addElement()
      */
     public function addElement($element, $name = null, $options = null)
     {
         parent::addElement($element, $name, $options);
-        $el = $name ? $this->getElement($name) : $element;
-
-        // Do not add structural elements to invisible elements
-        // which produces ugly views
-        if (strpos(strtolower(get_class($el)), 'hidden') !== false) {
-            $el->setDecorators(array('ViewHelper'));
-            return $this;
-        }
+        $el = $name !== null ? $this->getElement($name) : $element;
 
         if ($el) {
-            $el->removeDecorator('HtmlTag');
-            $el->removeDecorator('Label');
-            $el->removeDecorator('DtDdWrapper');
-            $el->addDecorator(new BootstrapForm());
+            if (strpos(strtolower(get_class($el)), 'hidden') !== false) {
+                // Do not add structural elements to invisible elements which produces ugly views
+                $el->setDecorators(array('ViewHelper'));
+            } else {
+                $el->removeDecorator('HtmlTag');
+                $el->removeDecorator('Label');
+                $el->removeDecorator('DtDdWrapper');
+                $el->addDecorator(new BootstrapForm());
+                $el->addDecorator(new HelpText());
+            }
         }
 
         return $this;
@@ -626,7 +577,9 @@ class Form extends Zend_Form
     /**
      * Load the default decorators
      *
-     * @return Zend_Form
+     * Overwrites Zend_Form::loadDefaultDecorators to avoid having the HtmlTag-Decorator added
+     *
+     * @return  self
      */
     public function loadDefaultDecorators()
     {
@@ -637,8 +590,10 @@ class Form extends Zend_Form
         $decorators = $this->getDecorators();
         if (empty($decorators)) {
             $this->addDecorator('FormElements')
-                 ->addDecorator('Form');
+                //->addDecorator('HtmlTag', array('tag' => 'dl', 'class' => 'zend_form'))
+                ->addDecorator('Form');
         }
+
         return $this;
     }
 }

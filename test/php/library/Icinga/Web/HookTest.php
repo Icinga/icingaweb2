@@ -4,27 +4,16 @@
 
 namespace Tests\Icinga\Web;
 
-use \Mockery;
+use Mockery;
+use Exception;
 use Icinga\Web\Hook;
 use Icinga\Test\BaseTestCase;
-
-class Base
-{
-}
-
-class TestHookImplementation extends Base
-{
-}
-
-class TestBadHookImplementation
-{
-}
 
 class ErrorProneHookImplementation
 {
     public function __construct()
     {
-        throw new \Exception("HOOK ERROR");
+        throw new Exception();
     }
 }
 
@@ -42,103 +31,182 @@ class HookTest extends BaseTestCase
         Hook::clean();
     }
 
-    public function testHas()
+    public function testWhetherHasReturnsTrueIfGivenAKnownHook()
     {
-        $this->assertFalse(Hook::has("a"));
-        $this->assertFalse(Hook::has("a","b"));
+        Hook::registerClass('TestHook', __FUNCTION__, get_class(Mockery::mock(Hook::$BASE_NS . 'TestHook')));
 
-        Hook::registerClass("a","b","c");
-        $this->assertTrue(Hook::has("a"));
-        $this->assertTrue(Hook::has("a","b"));
+        $this->assertTrue(Hook::has('TestHook'), 'Hook::has does not return true if given a known hook');
     }
 
-    public function testCreateInstance()
+    public function testWhetherHasReturnsFalseIfGivenAnUnknownHook()
     {
-        Hook::$BASE_NS = "Tests\\Icinga\\Web\\";
-        Hook::registerClass("Base","b","Tests\\Icinga\\Web\\TestHookImplementation");
-        $this->assertInstanceOf("Tests\\Icinga\\Web\\TestHookImplementation",Hook::createInstance("Base","b"));
-        Hook::clean();
+        $this->assertFalse(Hook::has('not_existing'), 'Hook::has does not return false if given an unknown hook');
     }
 
-    public function testCreateInvalidInstance1()
+    public function testWhetherHooksCanBeRegisteredWithRegisterClass()
     {
-        $this->setExpectedException('\Icinga\Exception\ProgrammingError');
-        Hook::$BASE_NS = "Tests\\Icinga\\Web\\";
-        Hook::registerClass("Base","b","Tests\\Icinga\\Web\\TestBadHookImplementation");
-        Hook::createInstance("Base","b");
-        Hook::clean();
+        Hook::registerClass('TestHook', __FUNCTION__, get_class(Mockery::mock(Hook::$BASE_NS . 'TestHook')));
+
+        $this->assertTrue(Hook::has('TestHook'), 'Hook::registerClass does not properly register a given hook');
     }
 
-    public function testCreateInvalidInstance2()
+    /**
+     * @depends testWhetherHooksCanBeRegisteredWithRegisterClass
+     */
+    public function testWhetherMultipleHooksOfTheSameTypeCanBeRegisteredWithRegisterClass()
     {
-        Hook::$BASE_NS = "Tests\\Icinga\\Web\\";
-        $test = Hook::createInstance("Base","NOTEXIST");
-        $this->assertNull($test);
-    }
+        $firstHook = Mockery::mock(Hook::$BASE_NS . 'TestHook');
+        $secondHook = Mockery::mock('overload:' . get_class($firstHook));
 
-    public function testCreateInvalidInstance3()
-    {
-        Hook::$BASE_NS = "Tests\\Icinga\\Web\\";
-        Hook::register("Base","ErrorProne","Tests\\Icinga\\Web\\ErrorProneHookImplementation");
-        $test = Hook::createInstance("Base","ErrorProne");
-        $this->assertNull($test);
-    }
-
-    public function testAll()
-    {
-        Hook::$BASE_NS = "Tests\\Icinga\\Web\\";
-        Hook::registerClass("Base","a","Tests\\Icinga\\Web\\TestHookImplementation");
-        Hook::registerClass("Base","b","Tests\\Icinga\\Web\\TestHookImplementation");
-        Hook::registerClass("Base","c","Tests\\Icinga\\Web\\TestHookImplementation");
-        $this->assertCount(3,Hook::all("Base"));
-        foreach(Hook::all("Base") as $instance) {
-            $this->assertInstanceOf("Tests\\Icinga\\Web\\TestHookImplementation",$instance);
-        }
-    }
-
-    public function testFirst()
-    {
-        Hook::$BASE_NS = "Tests\\Icinga\\Web\\";
-        Hook::registerClass("Base","a","Tests\\Icinga\\Web\\TestHookImplementation");
-        Hook::registerClass("Base","b","Tests\\Icinga\\Web\\TestHookImplementation");
-        Hook::registerClass("Base","c","Tests\\Icinga\\Web\\TestHookImplementation");
-
-        $this->assertInstanceOf("Tests\\Icinga\\Web\\TestHookImplementation",Hook::first("Base"));
-    }
-
-    public function testRegisterObject()
-    {
-        $o1 = Mockery::mock('Some\\Name\\Space\\ObjectHook');
-        $o1->test = '$123123';
-        $o2 = Mockery::mock('Some\\Name\\Space\\ObjectHook');
-        $o2->test = '#456456';
-
-        Hook::registerObject('Test', 'o1', $o1);
-        Hook::registerObject('Test', 'o2', $o2);
-
-        $this->assertInstanceOf('Some\\Name\\Space\\ObjectHook', Hook::createInstance('Test', 'o1'));
-        $this->assertInstanceOf('Some\\Name\\Space\\ObjectHook', Hook::createInstance('Test', 'o2'));
-
-        $string = "";
-        foreach (Hook::all('Test') as $hook) {
-            $string .= $hook->test;
-        }
-        $this->assertEquals('$123123#456456', $string);
+        Hook::registerClass('TestHook', 'one', get_class($firstHook));
+        Hook::registerClass('TestHook', 'two', get_class($secondHook));
+        $this->assertInstanceOf(
+            get_class($secondHook),
+            Hook::createInstance('TestHook', 'two'),
+            'Hook::registerClass is not able to register different hooks of the same type'
+        );
     }
 
     /**
      * @expectedException Icinga\Exception\ProgrammingError
-     * @expectedExceptionMessage object is not an instantiated class
      */
-    public function testErrorObjectRegistration()
+    public function testWhetherOnlyClassesCanBeRegisteredAsHookWithRegisterClass()
     {
-        Hook::registerObject('Test', 'e1', 'STRING');
+        Hook::registerClass('TestHook', __FUNCTION__, 'nope');
     }
 
-    public function testGetZeroHooks()
+    public function testWhetherHooksCanBeRegisteredWithRegisterObject()
     {
-        $nh = Hook::all('DOES_NOT_EXIST');
-        $this->assertInternalType('array', $nh);
-        $this->assertCount(0, $nh);
+        Hook::registerObject('TestHook', __FUNCTION__, Mockery::mock(Hook::$BASE_NS . 'TestHook'));
+
+        $this->assertTrue(Hook::has('TestHook'), 'Hook::registerObject does not properly register a given hook');
+    }
+
+    /**
+     * @depends testWhetherHooksCanBeRegisteredWithRegisterObject
+     */
+    public function testWhetherMultipleHooksOfTheSameTypeCanBeRegisteredWithRegisterObject()
+    {
+        $firstHook = Mockery::mock(Hook::$BASE_NS . 'TestHook');
+        $secondHook = Mockery::mock('overload:' . get_class($firstHook));
+
+        Hook::registerObject('TestHook', 'one', $firstHook);
+        Hook::registerObject('TestHook', 'two', $secondHook);
+        $this->assertInstanceOf(
+            get_class($secondHook),
+            Hook::createInstance('TestHook', 'two'),
+            'Hook::registerObject is not able to register different hooks of the same type'
+        );
+    }
+
+    /**
+     * @expectedException Icinga\Exception\ProgrammingError
+     */
+    public function testWhetherOnlyObjectsCanBeRegisteredAsHookWithRegisterObject()
+    {
+        Hook::registerObject('TestHook', __FUNCTION__, 'nope');
+    }
+
+    public function testWhetherCreateInstanceReturnsNullIfGivenAnUnknownHookName()
+    {
+        $this->assertNull(
+            Hook::createInstance('not_existing', __FUNCTION__),
+            'Hook::createInstance does not return null if given an unknown hook'
+        );
+    }
+
+    /**
+     * @depends testWhetherHooksCanBeRegisteredWithRegisterClass
+     */
+    public function testWhetherCreateInstanceInitializesHooksInheritingFromAPredefinedAbstractHook()
+    {
+        $baseHook = Mockery::mock(Hook::$BASE_NS . 'TestHook');
+        Hook::registerClass(
+            'TestHook',
+            __FUNCTION__,
+            get_class(Mockery::mock('overload:' . get_class($baseHook)))
+        );
+
+        $this->assertInstanceOf(
+            get_class($baseHook),
+            Hook::createInstance('TestHook', __FUNCTION__),
+            'Hook::createInstance does not initialize hooks inheriting from a predefined abstract hook'
+        );
+    }
+
+    /**
+     * @depends testWhetherHooksCanBeRegisteredWithRegisterClass
+     */
+    public function testWhetherCreateInstanceDoesNotInitializeMultipleHooksForASpecificIdentifier()
+    {
+        Hook::registerClass('TestHook', __FUNCTION__, get_class(Mockery::mock(Hook::$BASE_NS . 'TestHook')));
+        $secondHook = Hook::createInstance('TestHook', __FUNCTION__);
+        $thirdHook = Hook::createInstance('TestHook', __FUNCTION__);
+
+        $this->assertSame(
+            $secondHook,
+            $thirdHook,
+            'Hook::createInstance initializes multiple hooks for a specific identifier'
+        );
+    }
+
+    /**
+     * @depends testWhetherHooksCanBeRegisteredWithRegisterClass
+     */
+    public function testWhetherCreateInstanceReturnsNullIfHookCannotBeInitialized()
+    {
+        Hook::registerClass('TestHook', __FUNCTION__, 'Tests\Icinga\Web\ErrorProneHookImplementation');
+
+        $this->assertNull(Hook::createInstance('TestHook', __FUNCTION__));
+    }
+
+    /**
+     * @expectedException Icinga\Exception\ProgrammingError
+     * @depends testWhetherHooksCanBeRegisteredWithRegisterClass
+     */
+    public function testWhetherCreateInstanceThrowsAnErrorIfGivenAHookNotInheritingFromAPredefinedAbstractHook()
+    {
+        Mockery::mock(Hook::$BASE_NS . 'TestHook');
+        Hook::registerClass('TestHook', __FUNCTION__, get_class(Mockery::mock('TestHook')));
+
+        Hook::createInstance('TestHook', __FUNCTION__);
+    }
+
+    /**
+     * @depends testWhetherHooksCanBeRegisteredWithRegisterObject
+     */
+    public function testWhetherAllReturnsAllRegisteredHooks()
+    {
+        $hook = Mockery::mock(Hook::$BASE_NS . 'TestHook');
+        Hook::registerObject('TestHook', 'one', $hook);
+        Hook::registerObject('TestHook', 'two', $hook);
+        Hook::registerObject('TestHook', 'three', $hook);
+
+        $this->assertCount(3, Hook::all('TestHook'), 'Hook::all does not return all registered hooks');
+    }
+
+    public function testWhetherAllReturnsNothingIfGivenAnUnknownHookName()
+    {
+        $this->assertEmpty(
+            Hook::all('not_existing'),
+            'Hook::all does not return an empty array if given an unknown hook'
+        );
+    }
+
+    /**
+     * @depends testWhetherHooksCanBeRegisteredWithRegisterObject
+     */
+    public function testWhetherFirstReturnsTheFirstRegisteredHook()
+    {
+        $firstHook = Mockery::mock(Hook::$BASE_NS . 'TestHook');
+        $secondHook = Mockery::mock(Hook::$BASE_NS . 'TestHook');
+        Hook::registerObject('TestHook', 'first', $firstHook);
+        Hook::registerObject('TestHook', 'second', $secondHook);
+
+        $this->assertSame(
+            $firstHook,
+            Hook::first('TestHook'),
+            'Hook::first does not return the first registered hook'
+        );
     }
 }

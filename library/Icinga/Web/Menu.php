@@ -29,9 +29,9 @@
 
 namespace Icinga\Web;
 
+use Icinga\Logger\Logger;
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
-use Icinga\Logger\Logger;
 use Icinga\Exception\NotReadableError;
 
 class Menu extends MenuItem
@@ -39,34 +39,49 @@ class Menu extends MenuItem
     /**
      * Create menu from the application's menu config file plus the config files from all enabled modules
      *
-     * @return Menu
+     * @return  self
      */
     public static function fromConfig()
     {
         $menu = new static('menu');
-        $manager =  Icinga::app()->getModuleManager();
+        $manager = Icinga::app()->getModuleManager();
+
         try {
             $menuConfigs = array(Config::app('menu'));
         } catch (NotReadableError $e) {
             Logger::error($e);
             $menuConfigs = array();
         }
-        try {
 
-            foreach ($manager->listEnabledModules() as $moduleName) {
-                $moduleMenuConfig = Config::module($moduleName, 'menu');
-                if ($moduleMenuConfig) {
-                    $menuConfigs[] = $moduleMenuConfig;
-                }
-            }
+        try {
+            $modules = $manager->listEnabledModules();
         } catch (NotReadableError $e) {
             Logger::error($e);
+            $modules = array();
         }
+
+        foreach ($modules as $moduleName) {
+            try {
+                $moduleMenuConfig = Config::module($moduleName, 'menu');
+            } catch (NotReadableError $e) {
+                Logger::error($e);
+                $moduleMenuConfig = array();
+            }
+
+            if (!empty($moduleMenuConfig)) {
+                $menuConfigs[] = $moduleMenuConfig;
+            }
+        }
+
         return $menu->loadMenuItems($menu->flattenConfigs($menuConfigs));
     }
 
     /**
-     * Flatten configs into a key-value array
+     * Flatten configs
+     *
+     * @param   array   $configs    An two dimensional array of menu configurations
+     *
+     * @return  array               The flattened config, as key-value array
      */
     public function flattenConfigs(array $configs)
     {
@@ -79,18 +94,23 @@ class Menu extends MenuItem
                 $flattened[$section] = $itemConfig;
             }
         }
-        ksort($flattened);
+
         return $flattened;
     }
 
     /**
-     * Load menu items from a key-value array
+     * Load menu items
+     *
+     * @param   array   $items  The items to load, as key-value array
+     *
+     * @return  self
      */
-    public function loadMenuItems(array $flattened)
+    public function loadMenuItems(array $items)
     {
-        foreach ($flattened as $id => $itemConfig) {
+        foreach ($items as $id => $itemConfig) {
             $this->addChild($id, $itemConfig);
         }
+
         return $this;
     }
 }

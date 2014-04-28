@@ -1,4 +1,5 @@
 <?php
+// @codeCoverageIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga Web 2.
@@ -456,13 +457,8 @@ abstract class ApplicationBootstrap
     protected function setupTimezone()
     {
         $timeZoneString = $this->config->global !== null ? $this->config->global->get('timezone', 'UTC') : 'UTC';
-        try {
-            $tz = new DateTimeZone($timeZoneString);
-        } catch (Exception $e) {
-            throw new ConfigurationError(t('Invalid timezone') . ' "' . $timeZoneString . '"');
-        }
         date_default_timezone_set($timeZoneString);
-        DateTimeFactory::setConfig(array('timezone' => $tz));
+        DateTimeFactory::setConfig(array('timezone' => $timeZoneString));
         return $this;
     }
 
@@ -492,3 +488,4 @@ abstract class ApplicationBootstrap
         return $this;
     }
 }
+// @codeCoverageIgnoreEnd

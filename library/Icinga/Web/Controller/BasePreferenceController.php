@@ -1,4 +1,5 @@
 <?php
+// @codeCoverageIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga Web 2.
@@ -91,3 +92,4 @@ class BasePreferenceController extends ActionController
         $store->save($currentPreferences);
     }
 }
+// @codeCoverageIgnoreEnd

@@ -29,6 +29,7 @@
 
 namespace Icinga\Util;
 
+use DateTime;
 use Icinga\Exception\ProgrammingError;
 
 class Format
@@ -149,5 +150,51 @@ class Format
             $result,
             $units[$pow]
         );
+    }
+
+    /**
+     * Return the amount of seconds based on the given month
+     *
+     * @param   DateTime|int    $dateTimeOrTimestamp    The date and time to use
+     *
+     * @return  int
+     */
+    public static function secondsByMonth($dateTimeOrTimestamp)
+    {
+        if (!($dt = $dateTimeOrTimestamp) instanceof DateTime) {
+            $dt = new DateTime();
+            $dt->setTimestamp($dateTimeOrTimestamp);
+        }
+
+        return (int) $dt->format('t') * 24 * 3600;
+    }
+
+    /**
+     * Return the amount of seconds based on the given year
+     *
+     * @param   DateTime|int    $dateTimeOrTimestamp    The date and time to use
+     *
+     * @return  int
+     */
+    public static function secondsByYear($dateTimeOrTimestamp)
+    {
+        return (self::isLeapYear($dateTimeOrTimestamp) ? 366 : 365) * 24 * 3600;
+    }
+
+    /**
+     * Return whether the given year is a leap year
+     *
+     * @param   DateTime|int    $dateTimeOrTimestamp    The date and time to use
+     *
+     * @return  bool
+     */
+    public static function isLeapYear($dateTimeOrTimestamp)
+    {
+        if (!($dt = $dateTimeOrTimestamp) instanceof DateTime) {
+            $dt = new DateTime();
+            $dt->setTimestamp($dateTimeOrTimestamp);
+        }
+
+        return $dt->format('L') == 1;
     }
 }
