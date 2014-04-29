@@ -43,7 +43,6 @@ use Zend_Form_Element_Select;
  */
 class AddUrlForm extends Form
 {
-
     /**
      * Add a selection box for different panes to the form
      *
@@ -140,7 +139,7 @@ class AddUrlForm extends Form
             array(
                 'label'    => 'Url',
                 'required' => true,
-                'value'    => $this->getRequest()->getParam('url', null)
+                'value'    => htmlspecialchars_decode($this->getRequest()->getParam('url', ''))
             )
         );
         $elems = $dashboard->getPaneKeyTitleArray();

@@ -29,15 +29,13 @@
 
 namespace Icinga\Web\Widget\Dashboard;
 
-use Icinga\Exception\ConfigurationError;
-use Icinga\Exception\ProgrammingError;
-use Icinga\Web\Widget\AbstractWidget;
 use Zend_Config;
-use Zend_View_Abstract;
+use Icinga\Web\Widget\AbstractWidget;
+use Icinga\Exception\ProgrammingError;
+use Icinga\Exception\ConfigurationError;
 
 /**
  * A pane, displaying different Dashboard components
- *
  */
 class Pane extends AbstractWidget
 {
@@ -190,25 +188,18 @@ class Pane extends AbstractWidget
     }
 
     /**
-     * Return the ini representation of this pane as a string
+     * Return the this pane's structure as array
      *
-     * @return string
+     * @return  array
      */
-    public function toIni()
+    public function toArray()
     {
-        if (empty($this->components)) {
-            return '';
-        }
-        $ini = '[' . $this->getName() . ']' . PHP_EOL.
-               'title = "' . $this->getTitle() . '"' . PHP_EOL;
-
+        $array = array($this->getName() => array('title' => $this->getTitle()));
         foreach ($this->components as $title => $component) {
-            // component header
-            $ini .= '[' . $this->getName() . '.' . $title . ']' . PHP_EOL;
-            // component content
-            $ini .= $component->toIni() . PHP_EOL;
+            $array[$this->getName() . ".$title"] = $component->toArray();
         }
-        return $ini;
+
+        return $array;
     }
 
     /**

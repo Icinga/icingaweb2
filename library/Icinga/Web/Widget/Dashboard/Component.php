@@ -144,17 +144,18 @@ EOD;
     }
 
     /**
-     * Return this component in a suitable format and encoding for ini files
+     * Return this component's structure as array
      *
-     * @return string
+     * @return  array
      */
-    public function toIni()
+    public function toArray()
     {
-        $ini =  'url = "' . $this->url->getRelativeUrl() . '"' . PHP_EOL;
-        foreach ($this->url->getParams() as $key => $val) {
-            $ini .= $key.' = "' . $val . '"' . PHP_EOL;
+        $array = array('url' => $this->url->getPath());
+        foreach ($this->url->getParams() as $key => $value) {
+            $array[$key] = $value;
         }
-        return $ini;
+
+        return $array;
     }
 
     /**

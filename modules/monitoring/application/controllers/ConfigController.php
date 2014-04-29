@@ -263,19 +263,19 @@ class Monitoring_ConfigController extends BaseConfigController {
      */
     private function writeConfiguration($config, $file)
     {
+        $target = IcingaConfig::module('monitoring', $file)->getConfigFile();
+        $writer = new PreservingIniWriter(array('filename' => $target, 'config' => $config));
+
         try {
-            $writer = new PreservingIniWriter(array(
-                'filename'  => IcingaConfig::module('monitoring', $file)->getConfigFile(),
-                'config'    => $config
-            ));
             $writer->write();
-            return true;
         } catch (Exception $exc) {
             $this->view->exceptionMessage = $exc->getMessage();
             $this->view->iniConfigurationString = $writer->render();
-            $this->view->file = IcingaConfig::module('monitoring', $file)->getConfigFile();
+            $this->view->file = $target;
             return false;
         }
+
+        return true;
     }
 
     /**

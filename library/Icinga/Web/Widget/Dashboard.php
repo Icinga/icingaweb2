@@ -31,8 +31,6 @@ namespace Icinga\Web\Widget;
 
 use Icinga\Application\Icinga;
 use Icinga\Application\Config as IcingaConfig;
-use Icinga\Logger\Logger;
-use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Web\Widget\AbstractWidget;
 use Icinga\Web\Widget\Dashboard\Pane;
@@ -112,46 +110,6 @@ class Dashboard extends AbstractWidget
             }
         }
         return $this->tabs;
-    }
-
-    /**
-     * Store the current dashboard with all it's panes and components to the given file (or the default one if none is
-     * given)
-     *
-     *
-     * @param string $file                              The filename to store this dashboard as an ini
-     *
-     * @return $this
-     * @throws \Icinga\Exception\ConfigurationError     If persisting fails, details are written to the log
-     *
-     */
-    public function store($file = null)
-    {
-        if ($file === null) {
-            $file = IcingaConfig::app('dashboard/dashboard')->getConfigFile();
-        }
-
-        if (!is_writable($file)) {
-            Logger::error('Tried to persist dashboard to %s, but path is not writeable', $file);
-            throw new ConfigurationError('Can\'t persist dashboard');
-        }
-        // make sure empty dashboards don't cause errors
-        $iniString = trim($this->toIni());
-        if (!$iniString) {
-            $iniString = ' ';
-        }
-        if (!@file_put_contents($file, $iniString)) {
-            $error = error_get_last();
-            if ($error == null) {
-                $error = 'Unknown Error';
-            } else {
-                $error = $error['message'];
-            }
-            Logger::error('Tried to persist dashboard to %s, but got error: %s', $file, $error);
-            throw new ConfigurationError('Can\'t Persist Dashboard');
-        } else {
-            return $this;
-        }
     }
 
     /**
@@ -351,17 +309,18 @@ class Dashboard extends AbstractWidget
     }
 
     /**
-     * Return the ini string describing this dashboard
+     * Return this dashboard's structure as array
      *
-     * @return string
+     * @return  array
      */
-    public function toIni()
+    public function toArray()
     {
-        $ini = '';
+        $array = array();
         foreach ($this->panes as $pane) {
-            $ini .= $pane->toIni();
+            $array += $pane->toArray();
         }
-        return $ini;
+
+        return $array;
     }
 
     /**
