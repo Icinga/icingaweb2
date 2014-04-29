@@ -141,24 +141,24 @@ class Url
         }
 
         $urlObject = new Url();
-        $urlObject->setBaseUrl($request->getBaseUrl());
+        $baseUrl = $request->getBaseUrl();
+        $urlObject->setBaseUrl($baseUrl);
 
         // Fetch fragment manually and remove it from the url, to 'help' the parse_url() function
         // parsing the url properly. Otherwise calling the function with a fragment, but without a
         // query will cause unpredictable behaviour.
         $url = self::stripUrlFragment($url);
-
         $urlParts = parse_url($url);
-        if (isset($urlParts["path"])) {
-            if (strpos($urlParts["path"], $request->getBaseUrl()) === 0) {
-                $urlObject->setPath(substr($urlParts["path"], strlen($request->getBaseUrl())));
+        if (isset($urlParts['path'])) {
+            if ($baseUrl !== '' && strpos($urlParts['path'], $baseUrl) === 0) {
+                $urlObject->setPath(substr($urlParts['path'], strlen($baseUrl)));
             } else {
-                $urlObject->setPath($urlParts["path"]);
+                $urlObject->setPath($urlParts['path']);
             }
         }
-        if (isset($urlParts["query"])) {
+        if (isset($urlParts['query'])) {
             $urlParams = array();
-            parse_str($urlParts["query"], $urlParams);
+            parse_str($urlParts['query'], $urlParams);
             $params = array_merge($urlParams, $params);
         }
 
