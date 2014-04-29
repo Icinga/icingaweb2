@@ -19,7 +19,7 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
 
         $pset = PerfdataSet::fromString($perfdata);
         $ps = $pset->getAll();
-        $perfdata = preg_replace('~\'([^\']+)\'~e', "str_replace(' ', '\'', '$1')", $perfdata);
+        $perfdata = preg_replace_callback('~\'([^\']+)\'~', function($match) { return str_replace(' ', '\'', $match[1]); }, $perfdata);
         $parts = preg_split('~\s+~', $perfdata, -1, PREG_SPLIT_NO_EMPTY);
 
         $table = array();
