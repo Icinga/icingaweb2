@@ -41,7 +41,7 @@ use Icinga\Web\Form\Validator\WritablePathValidator;
 class LoggingForm extends Form
 {
     /**
-     * Return the default logging directory for type "stream"
+     * Return the default logging directory for type "file"
      *
      * @return  string
      */
@@ -97,30 +97,17 @@ class LoggingForm extends Form
                 'required'      => true,
                 'label'         => t('Logging Type'),
                 'helptext'      => t('The type of logging to utilize.'),
-                'value'         => $loggingConfig->get('type', 'stream'),
+                'value'         => $loggingConfig->get('type', 'file'),
                 'multiOptions'  => array(
-                    'stream'    => t('File'),
+                    'file'      => t('File'),
                     'syslog'    => 'Syslog'
                 )
             )
         );
         $this->enableAutoSubmit(array('logging_type'));
 
-        switch ($this->getRequest()->getParam('logging_type', $loggingConfig->get('type', 'stream')))
+        switch ($this->getRequest()->getParam('logging_type', $loggingConfig->get('type', 'file')))
         {
-            case 'stream':
-                $this->addElement(
-                    'text',
-                    'logging_target',
-                    array(
-                        'required'      => true,
-                        'label'         => t('Filepath'),
-                        'helptext'      => t('The logfile to write messages to.'),
-                        'value'         => $loggingConfig->target ? $loggingConfig->target : $this->getDefaultLogDir(),
-                        'validators'    => array(new WritablePathValidator())
-                    )
-                );
-                break;
             case 'syslog':
                 $this->addElement(
                     'text',
@@ -146,6 +133,19 @@ class LoggingForm extends Form
                     )
                 );
                 break;
+            case 'file':
+            default:
+                $this->addElement(
+                    'text',
+                    'logging_target',
+                    array(
+                        'required'      => true,
+                        'label'         => t('Filepath'),
+                        'helptext'      => t('The logfile to write messages to.'),
+                        'value'         => $loggingConfig->target ? $loggingConfig->target : $this->getDefaultLogDir(),
+                        'validators'    => array(new WritablePathValidator())
+                    )
+                );
         }
 
         $this->setSubmitLabel('{{SAVE_ICON}} Save Changes');
@@ -166,7 +166,7 @@ class LoggingForm extends Form
 
         switch ($values['logging_type'])
         {
-            case 'stream':
+            case 'file':
                 $cfg['logging']['target'] = $values['logging_target'];
                 break;
             case 'syslog':

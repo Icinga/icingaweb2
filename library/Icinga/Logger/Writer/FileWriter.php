@@ -12,23 +12,23 @@ use Icinga\Application\Config;
 use Icinga\Exception\ConfigurationError;
 
 /**
- * Class to write log messages to a stream
+ * Class to write log messages to a file
  */
-class StreamWriter extends LogWriter
+class FileWriter extends LogWriter
 {
     /**
-     * The path to the stream
+     * The path to the file
      *
      * @var string
      */
-    protected $stream;
+    protected $path;
 
     /**
      * Create a new log writer initialized with the given configuration
      */
     public function __construct(Zend_Config $config)
     {
-        $this->stream = Config::resolvePath($config->target);
+        $this->path = Config::resolvePath($config->target);
         $this->setup();
     }
 
@@ -44,17 +44,17 @@ class StreamWriter extends LogWriter
     }
 
     /**
-     * Create the stream if it does not already exist
+     * Create the file if it does not already exist
      */
     protected function setup()
     {
-        if (substr($this->stream, 0, 6) !== 'php://') {
-            if (!file_exists($this->stream) && (!@touch($this->stream) || !@chmod($this->stream, 0664))) {
-                throw new ConfigurationError('Cannot create log file "' . $this->stream . '"');
+        if (substr($this->path, 0, 6) !== 'php://') {
+            if (!file_exists($this->path) && (!@touch($this->path) || !@chmod($this->path, 0664))) {
+                throw new ConfigurationError('Cannot create log file "' . $this->path . '"');
             }
 
-            if (!@is_writable($this->stream)) {
-                throw new ConfigurationError('Cannot write to log file "' . $this->stream . '"');
+            if (!@is_writable($this->path)) {
+                throw new ConfigurationError('Cannot write to log file "' . $this->path . '"');
             }
         }
     }
@@ -85,18 +85,18 @@ class StreamWriter extends LogWriter
     }
 
     /**
-     * Write a message to the stream
+     * Write a message to the path
      *
      * @param   string  $text   The message to write
      *
-     * @throws  Exception       In case write acess to the stream failed
+     * @throws  Exception       In case write acess to the path failed
      */
     protected function write($text)
     {
-        $fd = fopen($this->stream, 'a');
+        $fd = fopen($this->path, 'a');
 
         if ($fd === false || fwrite($fd, $text . PHP_EOL) === false) {
-            throw new Exception('Failed to write to log file "' . $this->stream . '"');
+            throw new Exception('Failed to write to log file "' . $this->path . '"');
         }
 
         fclose($fd);
