@@ -425,6 +425,26 @@ class ResourceForm extends Form
         try {
             switch ($config->type) {
                 case 'db':
+                    /*
+                     * It should be possible to run icingaweb without the pgsql or mysql extension or Zend-Pdo-Classes,
+                     * in case they aren't actually used. When the user tries to create a resource that depends on an
+                     * uninstalled extension, an error should be displayed.
+                     */
+                    if ($config->db === 'mysql' && !ResourceFactory::mysqlAvailable()) {
+                        $this->addErrorMessage(
+                            t('You need to install the php extension "mysql" and the ' .
+                              'Zend_Pdo_Mysql classes to use  MySQL database resources.')
+                        );
+                        return false;
+                    }
+                    if ($config->db === 'pgsql' && !ResourceFactory::pgsqlAvailable()) {
+                        $this->addErrorMessage(
+                            t('You need to install the php extension "pgsql" and the ' .
+                              'Zend_Pdo_Pgsql classes to use  PostgreSQL database resources.')
+                        );
+                        return false;
+                    }
+
                     $resource = ResourceFactory::createResource($config);
                     $resource->getConnection()->getConnection();
                     break;

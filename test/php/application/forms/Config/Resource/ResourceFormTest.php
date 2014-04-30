@@ -11,7 +11,7 @@ require_once realpath(dirname(__FILE__) . '/../../../../bootstrap.php');
 use Mockery;
 use Zend_Config;
 use Icinga\Test\BaseTestCase;
-use Icinga\Form\Config\Resource\ResourceForm;
+use Icinga\Form\Config\ResourceForm;
 
 class TestResourceForm extends ResourceForm
 {

@@ -38,7 +38,7 @@ use \Icinga\Form\Config\GeneralForm;
 use \Icinga\Form\Config\Authentication\ReorderForm;
 use \Icinga\Form\Config\Authentication\LdapBackendForm;
 use \Icinga\Form\Config\Authentication\DbBackendForm;
-use \Icinga\Form\Config\Resource\ResourceForm;
+use \Icinga\Form\Config\ResourceForm;
 use \Icinga\Form\Config\LoggingForm;
 use \Icinga\Form\Config\ConfirmRemovalForm;
 use \Icinga\Config\PreservingIniWriter;
