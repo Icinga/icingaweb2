@@ -128,7 +128,7 @@ class LoggingForm extends Form
                         'helptext'      => t('The Syslog facility to utilize.'),
                         'value'         => $loggingConfig->get('facility', 'LOG_USER'),
                         'multiOptions'  => array(
-                            'LOG_USER'
+                            'LOG_USER' => 'LOG_USER'
                         )
                     )
                 );
@@ -167,9 +167,11 @@ class LoggingForm extends Form
         switch ($values['logging_type'])
         {
             case 'file':
+                $cfg['logging']['type'] = 'file';
                 $cfg['logging']['target'] = $values['logging_target'];
                 break;
             case 'syslog':
+                $cfg['logging']['type'] = 'syslog';
                 $cfg['logging']['application'] = $values['logging_application'];
                 $cfg['logging']['facility'] = $values['logging_facility'];
                 break;
