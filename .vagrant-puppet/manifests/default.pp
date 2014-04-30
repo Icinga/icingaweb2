@@ -660,6 +660,7 @@ file { '/etc/icingaweb/resources.ini':
   source    => 'puppet:////vagrant/.vagrant-puppet/files/etc/icingaweb/resources.ini',
   owner     => 'apache',
   group     => 'apache',
+  replace   => false
 }
 
 file { ['/etc/icingaweb/enabledModules', '/etc/icingaweb/modules', '/etc/icingaweb/modules/monitoring']:
