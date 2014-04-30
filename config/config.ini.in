@@ -16,7 +16,7 @@ timeFormat          = "g:i A"
 authenticationMode  = "internal"
 
 [logging]
-;enable              = false
+enable              = true
 ; Writing to a Stream
 type                = "stream"
 ; Write data to the following file
