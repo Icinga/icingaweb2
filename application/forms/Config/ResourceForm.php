@@ -27,7 +27,7 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Form\Config\Resource;
+namespace Icinga\Form\Config;
 
 use Exception;
 use Zend_Config;
