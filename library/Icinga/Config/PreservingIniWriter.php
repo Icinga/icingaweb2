@@ -130,13 +130,11 @@ class PreservingIniWriter extends Zend_Config_Writer_FileAbstract
     ) {
         // The current section. This value is null when processing the section-less root element
         $section = empty($parents) ? null : $parents[0];
-
         // Iterate over all properties in the new configuration file and search for changes
         foreach ($newconfig as $key => $value) {
             $oldvalue = $oldconfig->get($key);
             $nextParents = array_merge($parents, array($key));
             $keyIdentifier = empty($parents) ? array($key) : array_slice($nextParents, 1, null, true);
-
             if ($value instanceof Zend_Config) {
                 // The value is a nested Zend_Config, handle it recursively
                 if ($section === null) {
@@ -194,6 +192,9 @@ class PreservingIniWriter extends Zend_Config_Writer_FileAbstract
                     // The deleted value is a plain value, use the editor to delete it
                     if (is_numeric($key)) {
                         $editor->resetArrayElement($keyIdentifier, $section);
+                    } elseif (!empty($parents)) {
+                        // Drop nested properties, fixes #5958
+                        $editor->resetArrayElement($nextParents, $section);
                     } else {
                         $editor->reset($keyIdentifier, $section);
                     }
