@@ -26,7 +26,8 @@ namespace Icinga\Test {
     use Mockery;
     use Zend_Config;
     use Zend_Controller_Request_Abstract;
-    use Zend_Test_PHPUnit_ControllerTestCase;
+    use Zend_Controller_Request_HttpTestCase;
+    use PHPUnit_Framework_TestCase;
     use Icinga\Application\Icinga;
     use Icinga\Util\DateTimeFactory;
     use Icinga\Data\ResourceFactory;
@@ -37,7 +38,7 @@ namespace Icinga\Test {
     /**
      * Class BaseTestCase
      */
-    class BaseTestCase extends Zend_Test_PHPUnit_ControllerTestCase implements DbTest, FormTest
+    class BaseTestCase extends PHPUnit_Framework_TestCase implements DbTest, FormTest
     {
         /**
          * Path to application/
@@ -80,6 +81,13 @@ namespace Icinga\Test {
          * @var string
          */
         public static $moduleDir;
+
+        /**
+         * Store request for form tests
+         * 
+         * @var Zend_Controller_Request_HttpTestCase
+         */
+        private $request;
 
         /**
          * Resource configuration for different database types
@@ -324,6 +332,22 @@ namespace Icinga\Test {
                 )
             );
             return $form;
+        }
+
+        /**
+         * Retrieve test case request object
+         *
+         * This is a mock methods borrowed from Zend Controller Test Case to handle form tests properly (#6106)
+         *
+         * @return Zend_Controller_Request_HttpTestCase
+         */
+        public function getRequest()
+        {
+            if (null === $this->request) {
+                require_once 'Zend/Controller/Request/HttpTestCase.php';
+                $this->request = new Zend_Controller_Request_HttpTestCase;
+            }
+            return $this->request;
         }
     }
 
