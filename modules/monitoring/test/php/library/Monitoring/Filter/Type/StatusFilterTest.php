@@ -2,7 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Tests\Icinga\Module\Monitoring\Library\Filter\Type;
+namespace Tests\Icinga\Module\Monitoring\Filter\Type;
 
 use Icinga\Module\Monitoring\Filter\Type\StatusFilter;
 use Icinga\Filter\Type\TimeRangeSpecifier;
