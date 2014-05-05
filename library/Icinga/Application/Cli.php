@@ -79,7 +79,7 @@ class Cli extends ApplicationBootstrap
                 array(
                     'enable' => true,
                     'level'  => Logger::$INFO,
-                    'type'   => 'stream',
+                    'type'   => 'file',
                     'target' => 'php://stderr'
                 )
             )

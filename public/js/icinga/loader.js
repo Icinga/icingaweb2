@@ -508,7 +508,7 @@
                 // Icinga.debug(req.getResponseHeader('X-Icinga-Redirect'));
             } else {
                 if (errorThrown === 'abort') {
-                    this.icinga.logger.info(
+                    this.icinga.logger.debug(
                         'Request to ' + url + ' has been aborted for ',
                         req.$target
                     );
