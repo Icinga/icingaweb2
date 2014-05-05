@@ -50,6 +50,9 @@ class Format
     );
     protected static $byteBase = array(1024, 1000);
 
+    protected static $secondPrefix = array('s', 'ms', 'µs', 'ns', 'ps', 'fs', 'as');
+    protected static $secondBase = 1000;
+
     public static function getInstance()
     {
         if (self::$instance === null) {
@@ -74,6 +77,20 @@ class Format
             self::$bytePrefix[$standard],
             self::$byteBase[$standard]
         );
+    }
+
+    public static function seconds($value)
+    {
+        if ($value < 60) {
+            return self::formatForUnits($value, self::$secondPrefix, self::$secondBase);
+        } elseif ($value < 3600) {
+            return sprintf('0.2f m', $value / 60);
+        } elseif ($value < 86400) {
+            return sprintf('0.2f h', $value / 3600);
+        }
+
+        // TODO: Do we need weeks, months and years?
+        return sprintf('0.2f d', $value / 86400);
     }
 
     public static function duration($duration)
@@ -148,7 +165,7 @@ class Format
             '%s%0.2f %s',
             $sign,
             $result,
-            $units[$pow]
+            $units[abs($pow)]
         );
     }
 

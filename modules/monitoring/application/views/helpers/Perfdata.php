@@ -1,90 +1,82 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
-use Icinga\Module\Monitoring\Plugin\PerfdataSet;
+use Icinga\Util\Format;
 use Icinga\Web\Widget\Chart\InlinePie;
+use Icinga\Module\Monitoring\Plugin\Perfdata;
+use Icinga\Module\Monitoring\Plugin\PerfdataSet;
 
 class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
 {
-    public function perfdata($perfdata, $compact = false, $float = 'right')
+    public function perfdata($perfdataStr, $compact = false)
     {
-
-        if (empty($perfdata)) {
-            return '';
-        }
-        if ($float) {
-            $float = ' float: ' . $float . ';';
-        } else {
-            $float = '';
-        }
-
-        $pset = PerfdataSet::fromString($perfdata);
-        $ps = $pset->getAll();
-        $perfdata = preg_replace_callback('~\'([^\']+)\'~', function($match) { return str_replace(' ', '\'', $match[1]); }, $perfdata);
-        $parts = preg_split('~\s+~', $perfdata, -1, PREG_SPLIT_NO_EMPTY);
-
-        $table = array();
         $result = '';
-        if ($compact === true) {
-            $compact = 5;
-        }
-        if ($compact && count($parts) > $compact) {
-            $parts = array_slice($parts, 0, $compact);
-        }
-        foreach ($parts as $part) {
-            if (strpos($part, '=') === false) continue;
-            list($name, $vals) = preg_split('~=~', $part, 2);
-            $name = str_replace("'", ' ', $name);
-            $parts = preg_split('~;~', $vals, 5);
-            while (count($parts) < 5) $parts[] = null;
-            list($val, $warn, $crit, $min, $max) = $parts;
-
-            $unit = '';
-            if (preg_match('~^([\d+\.]+)([^\d]+)$~', $val, $m)) {
-                $unit = $m[2];
-                $val = $m[1];
-            } else {
+        $table = array();
+        $pset = array_slice(PerfdataSet::fromString($perfdataStr)->asArray(), 0, ($compact ? 5 : null));
+        foreach ($pset as $label => $perfdata) {
+            if (!$perfdata->isPercentage() && $perfdata->getMaximumValue() === null) {
                 continue;
             }
-            if ($unit == 'c') continue; // Counter pie graphs are not useful
-            if ($compact && $val < 0.0001) continue;
-            if ($unit == '%') {
-                if (! $min ) $min = 0;
-                if (! $max) $max = 100;
-            } else {
-                if (! $max && $crit > 0) $max = $crit;
-                //return '';
-            }
-            if (! $max) continue;
-            $green = 0;
-            $orange = 0;
-            $red = 0;
-            $gray = $max - $val;
-            if ($val < $warn) $green = $val;
-            elseif ($val < $crit) $orange = $val;
-            else $red = $val;
-            $inlinePie = new InlinePie(array($green, $orange, $red, $gray));
+
+            $pieChart = new InlinePie($this->calculatePieChartData($perfdata));
             if ($compact) {
-                $inlinePie->setTitle(htmlspecialchars($name) . ': ' . htmlspecialchars($ps[$name]->getFormattedValue()));
-                $inlinePie->setStyle('float: right;');
-                $result .= $inlinePie->render();
+                $pieChart->setTitle(
+                    htmlspecialchars($label) . ': ' . htmlspecialchars($this->formatPerfdataValue($perfdata))
+                );
+                $pieChart->setStyle('float: right;');
+                $result .= $pieChart->render();
             } else {
-                $inlinePie->setTitle(htmlspecialchars($name));
-                $inlinePie->setStyle('float: left; margin: 0.2em 0.5em 0.2em 0;');
-                $table[] = '<tr><th>' . $inlinePie->render()
-                    . htmlspecialchars($name)
+                $pieChart->setTitle(htmlspecialchars($label));
+                $pieChart->setStyle('float: left; margin: 0.2em 0.5em 0.2em 0;');
+                $table[] = '<tr><th>' . $pieChart->render()
+                    . htmlspecialchars($label)
                     . '</th><td>'
-                    . htmlspecialchars($ps[$name]->getFormattedValue()) .
+                    . htmlspecialchars($this->formatPerfdataValue($perfdata)) .
                     '</td></tr>';
             }
         }
-        if ($result == '' && ! $compact) {
-            $result = $perfdata;
+
+        // TODO: What if we have both? And should we trust sprintf-style placeholders in perfdata titles?
+        if (empty($table)) {
+            return $compact ? $result : $perfdataStr;
+        } else {
+            return '<table class="perfdata">' . implode("\n", $table) . '</table>';
         }
-        if (! empty($table)) {
-            // TODO: What if we have both? And should we trust sprintf-style placeholders in perfdata titles?
-            $result = '<table class="perfdata">' . implode("\n", $table) . '</table>';
+    }
+
+    protected function calculatePieChartData(Perfdata $perfdata)
+    {
+        $rawValue = $perfdata->getValue();
+        $minValue = $perfdata->getMinimumValue() !== null ? $perfdata->getMinimumValue() : 0;
+        $maxValue = $perfdata->getMaximumValue();
+        $usedValue = ($rawValue - $minValue);
+        $unusedValue = ($maxValue - $minValue) - $usedValue;
+
+        $gray = $unusedValue;
+        $green = $orange = $red = 0;
+        // TODO(#6122): Add proper treshold parsing.
+        if ($perfdata->getCriticalTreshold() && $perfdata->getValue() > $perfdata->getCriticalTreshold()) {
+            $red = $usedValue;
+        } elseif ($perfdata->getWarningTreshold() && $perfdata->getValue() > $perfdata->getWarningTreshold()) {
+            $orange = $usedValue;
+        } else {
+            $green = $usedValue;
         }
 
-        return $result;
+        return array($green, $orange, $red, $gray);
+    }
+
+    protected function formatPerfdataValue(Perfdata $perfdata)
+    {
+        if ($perfdata->isBytes()) {
+            return Format::bytes($perfdata->getValue());
+        } elseif ($perfdata->isSeconds()) {
+            return Format::seconds($perfdata->getValue());
+        } elseif ($perfdata->isPercentage()) {
+            return $perfdata->getValue() . '%';
+        }
+
+        return $perfdata->getValue();
     }
 }

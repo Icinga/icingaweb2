@@ -2,7 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Tests\Icinga\Module\Monitoring\Library\Filter;
+namespace Tests\Icinga\Module\Monitoring\Filter;
 
 use \Mockery;
 use Icinga\Module\Monitoring\Filter\Type\StatusFilter;

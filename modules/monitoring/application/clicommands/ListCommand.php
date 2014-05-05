@@ -263,9 +263,9 @@ class ListCommand extends Command
             try {
                 $pset = PerfdataSet::fromString($row->service_perfdata);
                 $perfs = array();
-                foreach ($pset->getAll() as $perfName => $p) {
+                foreach ($pset as $perfName => $p) {
                     if ($percent = $p->getPercentage()) {
-                        if ($percent < 0 || $percent > 300) {
+                        if ($percent < 0 || $percent > 100) {
                             continue;
                         }
                         $perfs[] = ' '
