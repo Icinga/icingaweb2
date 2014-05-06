@@ -153,14 +153,19 @@ class Format
             $value = abs($value);
             $sign = '-';
         }
-        $pow = floor(log($value, $base));
-        $result =  $value / pow($base, $pow);
+
+        if ($value == 0) {
+            $pow = $result = 0;
+        } else {
+            $pow = floor(log($value, $base));
+            $result = $value / pow($base, $pow);
+        }
 
         // 1034.23 looks better than 1.03, but 2.03 is fine:
         if ($pow > 0 && $result < 2) {
-            $pow--;
-            $result =  $value / pow($base, $pow);
+            $result = $value / pow($base, --$pow);
         }
+
         return sprintf(
             '%s%0.2f %s',
             $sign,
