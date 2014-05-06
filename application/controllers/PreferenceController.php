@@ -1,5 +1,5 @@
 <?php
-// @codingStandardsIgnoreStart
+// @codeCoverageIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga Web 2.
@@ -83,4 +83,4 @@ class PreferenceController extends BasePreferenceController
         $this->view->form = $form;
     }
 }
-// @codingStandardsIgnoreEnd
+// @codeCoverageIgnoreEnd

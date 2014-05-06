@@ -29,18 +29,15 @@
 
 namespace Icinga;
 
-use \DateTimeZone;
-use \Exception;
-use \InvalidArgumentException;
+use DateTimeZone;
+use InvalidArgumentException;
 use Icinga\User\Preferences;
 use Icinga\User\Message;
-use Icinga\Application\Config;
 
 /**
  *  This class represents an authorized user
  *
- *  You can retrieve authorization information (@TODO: Not implemented yet) or
- *  to retrieve user information
+ *  You can retrieve authorization information (@TODO: Not implemented yet) or user information
  */
 class User
 {
@@ -49,85 +46,85 @@ class User
      *
      * @var string
      */
-    private $username;
+    protected $username;
 
     /**
      * Firstname
      *
      * @var string
      */
-    private $firstname;
+    protected $firstname;
 
     /**
      * Lastname
      *
      * @var string
      */
-    private $lastname;
+    protected $lastname;
 
     /**
      * Users email address
      *
      * @var string
      */
-    private $email;
+    protected $email;
 
     /**
      * Domain
      *
      * @var string
      */
-    private $domain;
+    protected $domain;
 
     /**
-     * More information about user
+     * More information about this user
      *
      * @var array
      */
-    private $additionalInformation = array();
+    protected $additionalInformation = array();
 
     /**
      * Set of permissions
      *
      * @var array
      */
-    private $permissions = array();
+    protected $permissions = array();
 
     /**
      * Set of restrictions
      *
      * @var array
      */
-    private $restrictions = array();
+    protected $restrictions = array();
 
     /**
      * Groups for this user
      *
      * @var array
      */
-    private $groups = array();
+    protected $groups = array();
 
     /**
      * Preferences object
      *
      * @var Preferences
      */
-    private $preferences;
+    protected $preferences;
 
     /**
      * Queued notifications for this user.
      *
      * @var array()
      */
-    private $messages;
+    protected $messages;
 
     /**
      * Creates a user object given the provided information
      *
-     * @param string $username
-     * @param string $firstname
-     * @param string $lastname
-     * @param string $email
+     * @param   string      $username
+     * @param   string      $firstname
+     * @param   string      $lastname
+     * @param   string      $email
      */
     public function __construct($username, $firstname = null, $lastname = null, $email = null)
     {
@@ -149,7 +146,7 @@ class User
     /**
      * Setter for preferences
      *
-     * @param Preferences $preferences
+     * @param   Preferences     $preferences
      */
     public function setPreferences(Preferences $preferences)
     {
@@ -159,20 +156,21 @@ class User
     /**
      * Getter for preferences
      *
-     * @return Preferences
+     * @return  Preferences
      */
     public function getPreferences()
     {
         if ($this->preferences === null) {
             $this->preferences = new Preferences();
         }
+
         return $this->preferences;
     }
 
     /**
      * Return all groups this user belongs to
      *
-     * @return array
+     * @return  array
      */
     public function getGroups()
     {
@@ -181,6 +179,8 @@ class User
 
     /**
      * Set the groups this user belongs to
+     *
+     * @param   array   $groups
      */
     public function setGroups(array $groups)
     {
@@ -190,8 +190,9 @@ class User
     /**
      * Return true if the user is a member of this group
      *
-     * @param  string $group
-     * @return boolean
+     * @param   string  $group
+     *
+     * @return  boolean
      */
     public function isMemberOf($group)
     {
@@ -201,7 +202,7 @@ class User
     /**
      * Return permission information for this user
      *
-     * @return Array
+     * @return  array
      */
     public function getPermissions()
     {
@@ -211,7 +212,7 @@ class User
     /**
      * Setter for permissions
      *
-     * @param array $permissions
+     * @param   array   $permissions
      */
     public function setPermissions(array $permissions)
     {
@@ -222,6 +223,7 @@ class User
      * Return restriction information for this user
      *
      * @param   string    $name
+     *
      * @return  array
      */
     public function getRestrictions($name)
@@ -229,13 +231,14 @@ class User
         if (array_key_exists($name, $this->restrictions)) {
             return $this->restrictions[$name];
         }
+
         return array();
     }
 
     /**
      * Settter for restrictions
      *
-     * @param array $restrictions
+     * @param   array   $restrictions
      */
     public function setRestrictions(array $restrictions)
     {
@@ -245,7 +248,7 @@ class User
     /**
      * Getter for username
      *
-     * @return string
+     * @return  string
      */
     public function getUsername()
     {
@@ -255,7 +258,7 @@ class User
     /**
      * Setter for username
      *
-     * @param string $name
+     * @param   string      $name
      */
     public function setUsername($name)
     {
@@ -265,7 +268,7 @@ class User
     /**
      * Getter for firstname
      *
-     * @return string
+     * @return  string
      */
     public function getFirstname()
     {
@@ -275,7 +278,7 @@ class User
     /**
      * Setter for firstname
      *
-     * @param string $name
+     * @param   string      $name
      */
     public function setFirstname($name)
     {
@@ -285,7 +288,7 @@ class User
     /**
      * Getter for lastname
      *
-     * @return string
+     * @return  string
      */
     public function getLastname()
     {
@@ -295,7 +298,7 @@ class User
     /**
      * Setter for lastname
      *
-     * @param string $name
+     * @param   string      $name
      */
     public function setLastname($name)
     {
@@ -305,7 +308,7 @@ class User
     /**
      * Getter for email
      *
-     * @return string
+     * @return  string
      */
     public function getEmail()
     {
@@ -315,8 +318,9 @@ class User
     /**
      * Setter for mail
      *
-     * @param  string $mail
-     * @throws InvalidArgumentException When an invalid mail is provided
+     * @param   string      $mail
+     *
+     * @throws  InvalidArgumentException    When an invalid mail is provided
      */
     public function setEmail($mail)
     {
@@ -330,7 +334,7 @@ class User
     /**
      * Setter for domain
      *
-     * @param string $domain
+     * @param   string      $domain
      */
     public function setDomain($domain)
     {
@@ -340,7 +344,7 @@ class User
     /**
      * Getter for domain
      *
-     * @return string
+     * @return  string
      */
     public function getDomain()
     {
@@ -351,8 +355,8 @@ class User
     /**
      * Set additional information about user
      *
-     * @param string $key
-     * @param string $value
+     * @param   string      $key
+     * @param   string      $value
      */
     public function setAdditional($key, $value)
     {
@@ -362,14 +366,15 @@ class User
     /**
      * Getter for additional information
      *
-     * @param  string $key
-     * @return mixed|null
+     * @param   string      $key
+     * @return  mixed|null
      */
     public function getAdditional($key)
     {
         if (isset($this->additionalInformation[$key])) {
             return $this->additionalInformation[$key];
         }
+
         return null;
     }
 
@@ -386,6 +391,7 @@ class User
         if ($tz === null) {
             $tz = date_default_timezone_get();
         }
+
         return new DateTimeZone($tz);
     }
 
@@ -394,7 +400,7 @@ class User
      *
      * This function does NOT automatically write to the session, messages will not be persisted until you do.
      *
-     * @param Message $msg  The message
+     * @param   Message     $msg    The message
      */
     public function addMessage(Message $msg)
     {
@@ -404,7 +410,7 @@ class User
     /**
      * Get all currently pending messages
      *
-     * @return array    the messages
+     * @return  array   The messages
      */
     public function getMessages()
     {

@@ -1,28 +1,16 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Tests\Icinga\Web\Paginator\Adapter;
 
-use PHPUnit_Framework_TestCase;
-use Zend_Config;
+use \Zend_Config;
+use Icinga\Test\BaseTestCase;
 use Icinga\Protocol\Statusdat\Reader;
-use Icinga\Web\Paginator\Adapter\QueryAdapter;
 use Icinga\Module\Monitoring\Backend;
-use Tests\Icinga\Protocol\Statusdat\StatusdatTestLoader;
+use Icinga\Web\Paginator\Adapter\QueryAdapter;
 
-require_once 'Zend/Paginator/Adapter/Interface.php';
-
-require_once '../../library/Icinga/Web/Paginator/Adapter/QueryAdapter.php';
-require_once 'library/Icinga/Protocol/Statusdat/StatusdatTestLoader.php';
-StatusdatTestLoader::requireLibrary();
-
-require_once '../../modules/monitoring/library/Monitoring/Backend/Statusdat/Query/StatusdatQuery.php';
-require_once '../../modules/monitoring/library/Monitoring/Backend/Statusdat/Query/StatusQuery.php';
-require_once '../../modules/monitoring/library/Monitoring/Backend.php';
-
-require_once '../../library/Icinga/Data/BaseQuery.php';
-require_once '../../library/Icinga/Data/ResourceFactory.php';
-
-class QueryAdapterTest extends PHPUnit_Framework_TestCase
+class QueryAdapterTest extends BaseTestCase
 {
     private $cacheDir;
 
@@ -30,16 +18,17 @@ class QueryAdapterTest extends PHPUnit_Framework_TestCase
 
     private $resourceConfig;
 
-    protected function setUp()
+    public function setUp()
     {
+        parent::setUp();
         $this->cacheDir = '/tmp'. Reader::STATUSDAT_DEFAULT_CACHE_PATH;
 
         if (!file_exists($this->cacheDir)) {
             mkdir($this->cacheDir);
         }
 
-        $statusdatFile  = dirname(__FILE__) . '/../../../../../res/status/icinga.status.dat';
-        $cacheFile      = dirname(__FILE__) . '/../../../../../res/status/icinga.objects.cache';
+        $statusdatFile  = BaseTestCase::$testDir . '/res/status/icinga.status.dat';
+        $cacheFile      = BaseTestCase::$testDir . '/res/status/icinga.objects.cache';
 
         $this->backendConfig = new Zend_Config(
             array(

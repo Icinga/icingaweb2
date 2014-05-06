@@ -1,4 +1,5 @@
 <?php
+// @codeCoverageIgnoreStart
 
 namespace Icinga\Clicommands;
 
@@ -44,7 +45,7 @@ class WebCommand extends Command
             readlink('/proc/self/exe'),
             $socket,
             $basedir,
-            $basedir . '/index.php'
+            ICINGA_LIBDIR . '/Icinga/Application/webrouter.php'
         );
 
         // TODO: Store webserver log, switch uid, log index.php includes, pid file
@@ -80,3 +81,4 @@ class WebCommand extends Command
         }
     }
 }
+// @codeCoverageIgnoreEnd

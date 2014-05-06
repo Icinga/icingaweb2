@@ -1,223 +1,280 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Module\Monitoring\Plugin;
 
+use Icinga\Exception\ProgrammingError;
+
 class Perfdata
 {
-    const COUNTER = 0x01;
-    const PERCENT = 0x02;
-    const BYTES   = 0x04;
-    const SECONDS = 0x08;
+    /**
+     * The performance data value being parsed
+     *
+     * @var string
+     */
+    protected $perfdataValue;
 
-    protected $byte_map;
-
-    protected $min;
-    protected $max;
-    protected $warn;
-    protected $crit;
-    protected $val;
-
+    /**
+     * Unit of measurement (UOM)
+     *
+     * @var string
+     */
     protected $unit;
 
-    public function getFormattedValue()
-    {
-        switch ($this->unit) {
-            case self::BYTES:
-                return $this->formatBytes() . ' von ' . $this->formatBytes($this->max);
-                break;
-            case self::SECONDS:
-                return $this->formatSeconds();
-                break;
-            case self::PERCENT:
-                return number_format($this->val, 2, ',', '.') . '%';
-                break;
-            default:
-                return $this->val;
-        }
-    }
+    /**
+     * The value
+     *
+     * @var float
+     */
+    protected $value;
 
-    public function hasMax()
-    {
-        return $this->max !== null && $this->max > 0;
-    }
+    /**
+     * The minimum value
+     *
+     * @var float
+     */
+    protected $minValue;
 
-    public function getPercentage()
-    {
-        if ($this->unit === self::PERCENT) {
-            return $this->val;
-        }
-        if ($this->hasMax()) {
-            return $this->val / $this->max * 100;
-        }
-        return false;
-    }
+    /**
+     * The maximum value
+     *
+     * @var float
+     */
+    protected $maxValue;
 
-    public function getValue()
-    {
-        return $this->val;
-    }
+    /**
+     * The WARNING treshold
+     *
+     * @var string
+     */
+    protected $warningTreshold;
 
-    protected function formatBytes($val = null)
-    {
-        $steps = array(
-            1 => 'Byte',
-            1024 => 'KByte',
-            1024 * 1024 => 'MByte',
-            1024 * 1024 * 1024 => 'GByte',
-            1024 * 1024 * 1024 * 1024 => 'TByte'
-        );
-        return $this->formatSpecial($steps, 1, $val);
-    }
+    /**
+     * The CRITICAL treshold
+     *
+     * @var string
+     */
+    protected $criticalTreshold;
 
-    protected function formatSeconds()
+    /**
+     * Create a new Perfdata object based on the given performance data value
+     *
+     * @param   string      $perfdataValue      The value to parse
+     */
+    protected function __construct($perfdataValue)
     {
-        $steps = array(
-            1        => 'us',
-            1000     => 'ms',
-            10000000 => 's',
-        );
-        return $this->formatSpecial($steps, 1000000, $this->val);
-    }
+        $this->perfdataValue = $perfdataValue;
+        $this->parse();
 
-    protected function formatSpecial($steps, $multi = 1, $val = null)
-    {
-        if ($val === null) {
-            $val = abs($this->val);
-        } else {
-            $val = abs($val);
-        }
-        // TODO: Check this, prefix fails if $val is given
-        if ($this->val < 0) {
-            $prefix = '-';
-        } else {
-            $prefix = '';
-        }
-        $val *= $multi;
-        $step = 1;
-        foreach (array_keys($steps) as $key) {
-            if ($key > $val * 1) {
-                break;
+        if ($this->unit === '%') {
+            if ($this->minValue === null) {
+                $this->minValue = 0.0;
             }
-            $step = $key;
-        }
-	if ($step <= 0) $step = 1;
-        return $prefix
-             . number_format($val / $step, 1, ',', '.')
-            . ' '
-            . $steps[$step];
-    }
-
-    protected function __construct(& $perfdata)
-    {
-        $this->byte_map = array(
-            'b' => 1,
-            'kb' => 1024,
-            'mb' => 1024 * 1024,
-            'gb' => 1024 * 1024 * 1024,
-            'tb' => 1024 * 1024 * 1024 * 1024
-        );
-
-        // UGLY, fixes floats using comma:
-        $perfdata = preg_replace('~\,~', '.', $perfdata);
-
-        $parts = preg_split('~;~', $perfdata, 5);
-        while (count($parts) < 5) {
-            $parts[] = null;
-        }
-        list(
-            $this->val,
-            $this->warn,
-            $this->crit,
-            $this->min,
-            $this->max
-        ) = $parts;
-        // TODO: check numbers!
-
-        $unit = null;
-        if (! preg_match('~^(\-?[\d+\.]+(?:E\-?\d+)?)([^\d]+)?$~', $this->val, $m)) {
-            return $perfdata;
-            // Numbers with an exponential base will be rendered invalid using the regex above
-//            throw new \Exception('Got invalid perfdata: ' . $perfdata);
-        }
-        $this->val  = $m[1];
-        if (isset($m[2])) {
-            $unit = strtolower($m[2]);
-        }
-        if ($unit === 'c') {
-            $this->unit = self::COUNTER;
-        }
-
-        if ($unit === '%') {
-            if (! is_numeric($this->min)) {
-                $this->min = 0;
-            }
-            if (! is_numeric($this->max)) {
-                $this->max = 100;
-            }
-            $this->unit = self::PERCENT;
-        } else {
-            if (! is_numeric($this->max) && $this->crit > 0) {
-                $this->max = $this->crit;
-            }
-        }
-
-        if (array_key_exists($unit, $this->byte_map)) {
-            $this->unit = self::BYTES;
-            $this->val = $this->val * $this->byte_map[$unit];
-            $this->min = $this->min * $this->byte_map[$unit];
-            $this->max = $this->max * $this->byte_map[$unit];
-        }
-        if ($unit === 's') {
-            $this->unit = self::SECONDS;
-        }
-        if ($unit === 'ms') {
-            $this->unit = self::SECONDS;
-            $this->val = $this->val / 1000;
-        }
-        if ($unit === '%') {
-            if (! is_numeric($this->min)) {
-                $this->min = 0;
-            }
-            if (! is_numeric($this->max)) {
-                $this->max = 100;
-            }
-        } else {
-            if (! is_numeric($this->max) && $this->crit > 0) {
-                $this->max = $this->crit;
+            if ($this->maxValue === null) {
+                $this->maxValue = 100.0;
             }
         }
     }
 
+    /**
+     * Return a new Perfdata object based on the given performance data value
+     *
+     * @param   string      $perfdataValue      The value to parse
+     *
+     * @return  Perfdata
+     *
+     * @throws  ProgrammingError                In case the given performance data value has no content
+     */
+    public static function fromString($perfdataValue)
+    {
+        if (empty($perfdataValue)) {
+            throw new ProgrammingError('Perfdata::fromString expects a string with content');
+        }
+
+        return new static($perfdataValue);
+    }
+
+    /**
+     * Return whether this performance data value is a number
+     *
+     * @return  bool    True in case it's a number, otherwise False
+     */
+    public function isNumber()
+    {
+        return $this->unit === null;
+    }
+
+    /**
+     * Return whether this performance data value are seconds
+     *
+     * @return  bool    True in case it's seconds, otherwise False
+     */
+    public function isSeconds()
+    {
+        return in_array($this->unit, array('s', 'ms', 'us'));
+    }
+
+    /**
+     * Return whether this performance data value is in percentage
+     *
+     * @return  bool    True in case it's in percentage, otherwise False
+     */
+    public function isPercentage()
+    {
+        return $this->unit === '%';
+    }
+
+    /**
+     * Return whether this performance data value is in bytes
+     *
+     * @return  bool    True in case it's in bytes, otherwise False
+     */
+    public function isBytes()
+    {
+        return in_array($this->unit, array('b', 'kb', 'mb', 'gb', 'tb'));
+    }
+
+    /**
+     * Return whether this performance data value is a counter
+     *
+     * @return  bool    True in case it's a counter, otherwise False
+     */
     public function isCounter()
     {
-        return $this->unit === self::COUNTER;
+        return $this->unit === 'c';
     }
 
-    public static function fromString(& $perfdata)
+    /**
+     * Return the value or null if it is unknown (U)
+     *
+     * @return  null|float
+     */
+    public function getValue()
     {
-        $pdat = new Perfdata($perfdata);
-        return $pdat;
+        return $this->value;
     }
 
-    protected function normalizeNumber($num)
+    /**
+     * Return the value as percentage (0-100)
+     *
+     * @return  null|float
+     */
+    public function getPercentage()
     {
-        return $num;
-        // Bullshit, still TODO
-        /*
-        $dot = strpos($num, '.');
-        $comma = strpos($num, ',');
-
-        if ($dot === false) {
-            // No dot...
-            if ($comma === false) {
-                // ...and no comma, it's an integer:
-                return (int) $num;
-            } else {
-                // just a comma
-            }
-        } else {
-            if ($comma === false) {
+        if ($this->isPercentage()) {
+            return $this->value;
         }
-        */
+
+        if ($this->maxValue !== null) {
+            $minValue = $this->minValue !== null ? $this->minValue : 0;
+
+            if ($this->value > $minValue) {
+                return (($this->value - $minValue) / ($this->maxValue - $minValue)) * 100;
+            }
+        }
+    }
+
+    /**
+     * Return this value's warning treshold or null if it is not available
+     *
+     * @return  null|string
+     */
+    public function getWarningTreshold()
+    {
+        return $this->warningTreshold;
+    }
+
+    /**
+     * Return this value's critical treshold or null if it is not available
+     *
+     * @return  null|string
+     */
+    public function getCriticalTreshold()
+    {
+        return $this->criticalTreshold;
+    }
+
+    /**
+     * Return the minimum value or null if it is not available
+     *
+     * @return  null|float
+     */
+    public function getMinimumValue()
+    {
+        return $this->minValue;
+    }
+
+    /**
+     * Return the maximum value or null if it is not available
+     *
+     * @return  null|float
+     */
+    public function getMaximumValue()
+    {
+        return $this->maxValue;
+    }
+
+    /**
+     * Parse the current performance data value
+     *
+     * @todo    Handle optional min/max if UOM == %
+     */
+    protected function parse()
+    {
+        $parts = explode(';', $this->perfdataValue);
+
+        $matches = array();
+        if (preg_match('@^(\d+(\.\d+)?)([a-zA-Z%]{1,2})$@', $parts[0], $matches)) {
+            $this->unit = strtolower($matches[3]);
+            $this->value = self::convert($matches[1], $this->unit);
+        } else {
+            $this->value = self::convert($parts[0]);
+        }
+
+        switch (count($parts))
+        {
+            case 5:
+                $this->maxValue = self::convert($parts[4], $this->unit);
+            case 4:
+                $this->minValue = self::convert($parts[3], $this->unit);
+            case 3:
+                // TODO(#6123): Tresholds have the same UOM and need to be converted as well!
+                $this->criticalTreshold = trim($parts[2]) ? trim($parts[2]) : null;
+            case 2:
+                // TODO(#6123): Tresholds have the same UOM and need to be converted as well!
+                $this->warningTreshold = trim($parts[1]) ? trim($parts[1]) : null;
+        }
+    }
+
+    /**
+     * Return the given value converted to its smallest supported representation
+     *
+     * @param   string      $value      The value to convert
+     * @param   string      $fromUnit   The unit the value currently represents
+     *
+     * @return  null|float              Null in case the value is not a number
+     */
+    protected static function convert($value, $fromUnit = null)
+    {
+        if (is_numeric($value)) {
+            switch ($fromUnit)
+            {
+                case 'us':
+                    return $value / pow(10, 6);
+                case 'ms':
+                    return $value / pow(10, 3);
+                case 'tb':
+                    return floatval($value) * pow(2, 40);
+                case 'gb':
+                    return floatval($value) * pow(2, 30);
+                case 'mb':
+                    return floatval($value) * pow(2, 20);
+                case 'kb':
+                    return floatval($value) * pow(2, 10);
+                default:
+                    return (float) $value;
+            }
+        }
     }
 }

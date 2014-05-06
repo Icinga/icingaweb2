@@ -1,30 +1,5 @@
 <?php
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Application;
@@ -40,6 +15,7 @@ class Loader
 
     /**
      * List of namespaces
+     *
      * @var array
      */
     private $namespaces = array();
@@ -54,14 +30,16 @@ class Loader
 
     /**
      * Register new namespace for directory
-     * @param string $namespace
-     * @param string $directory
-     * @throws \Icinga\Exception\ProgrammingError
+     *
+     * @param   string  $namespace
+     * @param   string  $directory
+     *
+     * @throws  ProgrammingError
      */
     public function registerNamespace($namespace, $directory)
     {
         if (!is_dir($directory)) {
-            throw new ProgrammingError('Directory does not exist: '. $directory);
+            throw new ProgrammingError('Directory does not exist: ' . $directory);
         }
 
         $this->namespaces[$namespace] = $directory;
@@ -69,8 +47,10 @@ class Loader
 
     /**
      * Test if a namespace exists
-     * @param string $namespace
-     * @return bool
+     *
+     * @param   string  $namespace
+     *
+     * @return  bool
      */
     public function hasNamespace($namespace)
     {
@@ -80,19 +60,19 @@ class Loader
     /**
      * Class loader
      *
-     * Ignores all but classes in the Icinga namespace.
+     * Ignores all but classes in registered namespaces.
      *
-     * @param string $class
-     * @return boolean
+     * @param   string  $class
+     *
+     * @return  boolean
      */
     public function loadClass($class)
     {
         $namespace = $this->getNamespaceForClass($class);
 
         if ($namespace) {
-            $file = $this->namespaces[$namespace]. preg_replace('/^'. preg_quote($namespace). '/', '', $class);
-
-            $file = str_replace(self::NAMESPACE_SEPARATOR, '/', $file). '.php';
+            $file = $this->namespaces[$namespace] . preg_replace('/^' . preg_quote($namespace) . '/', '', $class);
+            $file = str_replace(self::NAMESPACE_SEPARATOR, '/', $file) . '.php';
 
             if (@file_exists($file)) {
                 require_once $file;
@@ -108,16 +88,19 @@ class Loader
      *
      * Return is the longest match in the array found
      *
-     * @param string $className
-     * @return bool|string
+     * @param   string  $className
+     *
+     * @return  bool|string
      */
     private function getNamespaceForClass($className)
     {
         $testNamespace = '';
         $testLength = 0;
 
-        foreach ($this->namespaces as $namespace => $directory) {
-            $stub = preg_replace('/^'. preg_quote($namespace). '/', '', $className);
+        foreach (array_keys($this->namespaces) as $namespace) {
+            $stub = preg_replace(
+                '/^' . preg_quote($namespace) . '(' . preg_quote(self::NAMESPACE_SEPARATOR) . '|$)/', '', $className
+            );
             $length = strlen($className) - strlen($stub);
             if ($length > $testLength) {
                 $testLength = $length;

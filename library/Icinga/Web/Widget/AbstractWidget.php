@@ -1,8 +1,6 @@
 <?php
+// @codeCoverageIgnoreStart
 
-/**
- * Web Widget abstract class
- */
 namespace Icinga\Web\Widget;
 
 use Icinga\Exception\ProgrammingError;
@@ -124,3 +122,4 @@ abstract class AbstractWidget
         return (string) $html;
     }
 }
+// @codeCoverageIgnoreEnd

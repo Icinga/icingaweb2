@@ -1,19 +1,13 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Tests\Icinga\Application;
 
-require_once __DIR__. '/../../../../../library/Icinga/Exception/ProgrammingError.php';
-require_once __DIR__. '/../../../../../library/Icinga/Application/Loader.php';
-
+use Icinga\Test\BaseTestCase;
 use Icinga\Application\Loader;
 
-/**
-*
-* Test class for Loader
-* Created Thu, 07 Feb 2013 10:07:13 +0000
-*
-**/
-class LoaderTest extends \PHPUnit_Framework_TestCase
+class LoaderTest extends BaseTestCase
 {
     private static $classFile = 'test/My/Library/TestStruct.php';
 
@@ -33,16 +27,18 @@ class TestStruct
 
 EOD;
 
-    protected function setUp()
+    public function setUp()
     {
+        parent::setUp();
         $tempDir = sys_get_temp_dir();
         $this->baseDir = tempnam($tempDir, 'icinga2-web');
         system('mkdir -p '. $this->baseDir. dirname(self::$classFile));
         file_put_contents($this->baseDir. self::$classFile, self::$classContent);
     }
 
-    protected function tearDown()
+    public function tearDown()
     {
+        parent::tearDown();
         system('rm -rf '. $this->baseDir);
     }
 

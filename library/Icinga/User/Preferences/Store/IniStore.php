@@ -4,7 +4,7 @@
 
 namespace Icinga\User\Preferences\Store;
 
-use \Zend_Config;
+use Zend_Config;
 use Icinga\Util\File;
 use Icinga\Config\PreservingIniWriter;
 use Icinga\Exception\NotReadableError;

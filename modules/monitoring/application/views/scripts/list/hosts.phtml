@@ -6,8 +6,9 @@ $helper = $this->getHelper('MonitoringState');
 <div style="margin: 1em;" class="dontprint">
 <!--<?= $this->filterBox ?>-->Sort by <?= $this->sortControl->render($this); ?>
 </div>
-<!--<?= $this->selectionToolbar('multi', $this->href('monitoring/multi/host',array( 'host' => '*' ))); ?>-->
+
 <?= $this->paginationControl($hosts, null, null, array('preserve' => $this->preserve)); ?>
+<?= $this->selectionToolbar('multi', $this->href('monitoring/multi/host', $query)); ?>
 
 </div>
 <div class="content">
@@ -19,12 +20,17 @@ if ($hosts->count() === 0) {
 }
 ?>
 
-<table data-base-target="_next" class="action multiselect">
+<table
+    data-base-target="_next"
+    class="action multiselect"
+    data-icinga-multiselect-url="<?= $this->href("/monitoring/multi/host") ?>"
+    data-icinga-multiselect-data="host"
+>
 <tbody>
 <?php foreach($hosts as $host):
 
     $hostStateName = strtolower($this->util()->getHostStateName($host->host_state));
-    $hostLink = $this->href('monitoring/show/host', array('host' => $host->host_name));
+    $hostLink = $this->href('/monitoring/show/host', array('host' => $host->host_name));
 
     $icons = array();
     if (!$host->host_handled && $host->host_state > 0){

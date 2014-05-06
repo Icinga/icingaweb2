@@ -1,73 +1,63 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Tests\Icinga;
 
-require_once __DIR__ . '/../../../../library/Icinga/User.php';
-require_once __DIR__ . '/../../../../library/Icinga/User/Preferences.php';
+use Mockery;
+use DateTimeZone;
+use Icinga\User;
+use Icinga\Test\BaseTestCase;
 
-use \DateTimeZone;
-use Icinga\User as IcingaUser;
-use Icinga\User\Preferences as UserPreferences;
-
-class UserTest extends \PHPUnit_Framework_TestCase
+class UserTest extends BaseTestCase
 {
-
-    public function testListGroups()
-    {
-        $this->markTestIncomplete('testListGroups is not implemented yet');
-    }
-
-    public function testIsMemberOf()
-    {
-        $this->markTestIncomplete('testIsMemberOf is not implemented yet');
-    }
-
-    public function testGetPermissionList()
-    {
-        $this->markTestIncomplete('testGetPermissionList is not implemented yet');
-    }
-
-    public function testHasPermission()
-    {
-        $this->markTestIncomplete('testHasPermission is not implemented yet');
-    }
-
-    public function testGrantPermission()
-    {
-        $this->markTestIncomplete('testGrantPermission is not implemented yet');
-    }
-
-    public function testRevokePermission()
-    {
-        $this->markTestIncomplete('testRevokePermission is not implemented yet');
-    }
-
     public function testGetDefaultTimezoneIfTimezoneNotSet()
     {
-        $defaultTz = 'UTC';
-        date_default_timezone_set($defaultTz);
-        $user = new IcingaUser('unittest');
-        $prefs = new UserPreferences(array());
+        $user = new User('unittest');
+        $prefs = Mockery::mock('Icinga\User\Preferences');
+        $prefs->shouldReceive('get')->with('timezone')->andReturnNull();
         $user->setPreferences($prefs);
-        $this->assertEquals($user->getTimeZone(), new DateTimeZone($defaultTz),
+
+        $this->assertEquals(
+            new DateTimeZone(date_default_timezone_get()),
+            $user->getTimeZone(),
             'User\'s timezone does not match the default timezone'
         );
     }
 
     public function testGetTimezoneIfTimezoneSet()
     {
-        $defaultTz = 'UTC';
         $explicitTz = 'Europe/Berlin';
-        date_default_timezone_set($defaultTz);
-        $user = new IcingaUser('unittest');
-        $prefs = new UserPreferences(array(
-            'timezone' => $explicitTz
-        ));
+        $user = new User('unittest');
+        $prefs = Mockery::mock('Icinga\User\Preferences');
+        $prefs->shouldReceive('get')->with('timezone')->andReturn($explicitTz);
         $user->setPreferences($prefs);
 
-        $this->assertEquals($user->getTimeZone(), new DateTimeZone($explicitTz),
+        $this->assertEquals(
+            new DateTimeZone($explicitTz),
+            $user->getTimeZone(),
             'User\'s timezone does not match the timezone set by himself'
         );
     }
 
+    public function testWhetherValidEmailsCanBeSet()
+    {
+        $user = new User('unittest');
+        $user->setEmail('mySampleEmail@someDomain.org');
+
+        $this->assertEquals(
+            $user->getEmail(),
+            'mySampleEmail@someDomain.org',
+            'Valid emails set with setEmail are not returned by getEmail'
+        );
+    }
+
+    /**
+     * @expectedException   \InvalidArgumentException
+     */
+    public function testWhetherInvalidEmailsCannotBeSet()
+    {
+        $user = new User('unittest');
+        $user->setEmail('mySampleEmail at someDomain dot org');
+    }
 }

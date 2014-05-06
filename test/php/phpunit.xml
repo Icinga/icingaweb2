@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<phpunit>
+<phpunit bootstrap="bootstrap.php">
     <testsuites>
         <!--
             Unit testing
@@ -23,9 +23,18 @@
         </testsuite>
     </testsuites>
     <filter>
-        <blacklist>
-            <directory suffix=".php">/usr/share/php</directory>
-            <directory suffix=".php">/usr/lib</directory>
-        </blacklist>
+        <whitelist addUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">../../application</directory>
+            <directory suffix=".php">../../library/Icinga</directory>
+            <directory suffix=".php">../../modules</directory>
+            <exclude>
+                <file>../../library/Icinga/Application/functions.php</file>
+                <file>../../library/Icinga/Application/webrouter.php</file>
+                <directory>../../library/Icinga/Web/View/helpers</directory>
+            </exclude>
+        </whitelist>
     </filter>
+    <listeners>
+        <listener class="\Mockery\Adapter\Phpunit\TestListener"></listener>
+    </listeners>
 </phpunit>

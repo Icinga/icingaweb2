@@ -133,6 +133,10 @@ class ServiceStatus extends DataView
     {
         return array(
             'host_name' => array(
+                'columns' => array(
+                    'service_host_name',
+                    'service_description'
+                ),
                 'order' => self::SORT_ASC
             ),
             'host_address' => array(

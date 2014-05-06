@@ -29,8 +29,11 @@
 
 namespace Icinga\Form\Config\Authentication;
 
+use \Exception;
 use \Icinga\Authentication\Backend\DbUserBackend;
 use \Zend_Config;
+use Icinga\Data\ResourceFactory;
+use Icinga\Authentication\UserBackend;
 
 /**
  * Form class for adding/modifying database authentication backends
@@ -38,21 +41,23 @@ use \Zend_Config;
 class DbBackendForm extends BaseBackendForm
 {
     /**
-     * Return a list of all database resource ready to be used as the multiOptions
-     * attribute in a Zend_Form_Element_Select object
+     * Return content of the resources.ini or previously set resources
      *
-     * @return array
+     * @return  array
      */
-    private function getDatabaseResources()
+    public function getResources()
     {
-        $backends = array();
-        foreach ($this->getResources() as $resname => $resource) {
-            if ($resource['type'] !== 'db') {
-                continue;
+        if ($this->resources === null) {
+            $res = ResourceFactory::getResourceConfigs('db')->toArray();
+
+            foreach (array_keys($res) as $key) {
+                $res[$key] = $key;
             }
-            $backends[$resname] = $resname;
+
+            return $res;
+        } else {
+            return $this->resources;
         }
-        return $backends;
     }
 
     /**
@@ -64,15 +69,14 @@ class DbBackendForm extends BaseBackendForm
     {
         $this->setName('form_modify_backend');
         $name = $this->filterName($this->getBackendName());
-
         $this->addElement(
             'text',
             'backend_' . $name . '_name',
             array(
                 'required'      => true,
-                'allowEmpty'    =>  false,
-                'label'         => 'Backend Name',
-                'helptext'      => 'The name of this authentication provider',
+                'allowEmpty'    => false,
+                'label'         => t('Backend Name'),
+                'helptext'      => t('The name of this authentication provider'),
                 'value'         => $this->getBackendName()
             )
         );
@@ -81,12 +85,12 @@ class DbBackendForm extends BaseBackendForm
             'select',
             'backend_' . $name . '_resource',
             array(
-                'label'         =>  'Database Connection',
-                'required'      =>  true,
-                'allowEmpty'    =>  false,
-                'helptext'      => 'The database connection to use for authenticating with this provider',
-                'value'         =>  $this->getBackend()->get('resource'),
-                'multiOptions'  =>  $this->getDatabaseResources()
+                'required'      => true,
+                'allowEmpty'    => false,
+                'label'         => t('Database Connection'),
+                'helptext'      => t('The database connection to use for authenticating with this provider'),
+                'value'         => $this->getBackend()->get('resource'),
+                'multiOptions'  => $this->getResources()
             )
         );
 
@@ -112,53 +116,39 @@ class DbBackendForm extends BaseBackendForm
      */
     public function getConfig()
     {
-        $name = $this->getBackendName();
-        $prefix = 'backend_' . $this->filterName($name) . '_';
-
+        $prefix = 'backend_' . $this->filterName($this->getBackendName()) . '_';
         $section = $this->getValue($prefix . 'name');
         $cfg = array(
-            'backend'   =>  'db',
-            'target'    =>  'user',
-            'resource'  =>  $this->getValue($prefix . 'resource'),
+            'backend'   => 'db',
+            'resource'  => $this->getValue($prefix . 'resource'),
         );
-        return array(
-            $section => $cfg
-        );
+
+        return array($section => $cfg);
     }
 
     /**
      * Validate the current configuration by creating a backend and requesting the user count
      *
-     * @return bool True when the backend is valid, false otherwise
+     * @return  bool    Whether validation succeeded or not
+     *
      * @see BaseBackendForm::isValidAuthenticationBackend
      */
     public function isValidAuthenticationBackend()
     {
-        // @TODO fix validation of authentication backends (AK #5712)
-        return true;
         try {
-            $name = $this->getBackendName();
-            $dbBackend = new DbUserBackend(
-                new Zend_Config(
-                    array(
-                        'backend'   =>  'db',
-                        'target'    =>  'user',
-                        'resource'  =>  $this->getValue('backend_' . $this->filterName($name) . '_resource'),
-                    )
-                )
-            );
-            $dbBackend->connect();
-            if ($dbBackend->getUserCount() < 1) {
-                $this->addErrorMessage("No users found under the specified database backend");
+            $testConnection = ResourceFactory::createResource(ResourceFactory::getResourceConfig(
+                $this->getValue('backend_' . $this->filterName($this->getBackendName()) . '_resource')
+            ));
+            $dbUserBackend = new DbUserBackend($testConnection);
+            if ($dbUserBackend->count() < 1) {
+                $this->addErrorMessage(t("No users found under the specified database backend"));
                 return false;
             }
-        } catch (\Exception $e) {
-            $this->addErrorMessage("Using the specified backend failed: " . $e->getMessage());
-            return false;
-        } catch (\Zend_Db_Statement_Exception $e) {
-            $this->addErrorMessage("Using the specified backend failed: " . $e->getMessage());
+        } catch (Exception $e) {
+            $this->addErrorMessage(sprintf(t('Using the specified backend failed: %s'), $e->getMessage()));
             return false;
         }
+
         return true;
     }
 }

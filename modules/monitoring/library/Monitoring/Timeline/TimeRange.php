@@ -4,11 +4,11 @@
 
 namespace Icinga\Module\Monitoring\Timeline;
 
-use \StdClass;
-use \Iterator;
-use \DateTime;
-use \DateInterval;
-use Icinga\Util\DateTimeFactory;
+use StdClass;
+use Iterator;
+use DateTime;
+use DateInterval;
+use Icinga\Util\Format;
 
 /**
  * A range of time split into a specific interval
@@ -172,17 +172,17 @@ class TimeRange implements Iterator
         } elseif ($this->interval->m) {
             for ($i = 0; $i < $this->interval->m; $i++) {
                 if ($this->negative) {
-                    $dateTime->sub(new DateInterval('PT' . DateTimeFactory::getSecondsByMonth($dateTime) . 'S'));
+                    $dateTime->sub(new DateInterval('PT' . Format::secondsByMonth($dateTime) . 'S'));
                 } else {
-                    $dateTime->add(new DateInterval('PT' . DateTimeFactory::getSecondsByMonth($dateTime) . 'S'));
+                    $dateTime->add(new DateInterval('PT' . Format::secondsByMonth($dateTime) . 'S'));
                 }
             }
         } elseif ($this->interval->y) {
             for ($i = 0; $i < $this->interval->y; $i++) {
                 if ($this->negative) {
-                    $dateTime->sub(new DateInterval('PT' . DateTimeFactory::getSecondsByYear($dateTime) . 'S'));
+                    $dateTime->sub(new DateInterval('PT' . Format::secondsByYear($dateTime) . 'S'));
                 } else {
-                    $dateTime->add(new DateInterval('PT' . DateTimeFactory::getSecondsByYear($dateTime) . 'S'));
+                    $dateTime->add(new DateInterval('PT' . Format::secondsByYear($dateTime) . 'S'));
                 }
             }
         }

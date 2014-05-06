@@ -1,68 +1,144 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Module\Monitoring\Plugin;
 
-class PerfdataSet
-{
-    protected $ptr;
-    protected $pos = 0;
-    protected $len;
-    protected $perfdata;
+use ArrayIterator;
+use IteratorAggregate;
 
-    protected function __construct($perfdata)
+class PerfdataSet implements IteratorAggregate
+{
+    /**
+     * The performance data being parsed
+     *
+     * @var string
+     */
+    protected $perfdataStr;
+
+    /**
+     * The current parsing position
+     *
+     * @var int
+     */
+    protected $parserPos = 0;
+
+    /**
+     * A list of Perfdata objects
+     *
+     * @var array
+     */
+    protected $perfdata = array();
+
+    /**
+     * Create a new set of performance data
+     *
+     * @param   string      $perfdataStr    A space separated list of label/value pairs
+     */
+    protected function __construct($perfdataStr)
     {
-        if (empty($perfdata)) return;
-        $this->ptr = & $perfdata;
-        $this->len = strlen($this->ptr);
-        while ($this->pos < $this->len) {
-            $label = $this->readLabel();
-            $perf  = $this->readUntil(' ');
-            if (empty($perf)) continue;
-            $this->perfdata[$label] = Perfdata::fromString($perf);
+        if (($perfdataStr = trim($perfdataStr)) !== '') {
+            $this->perfdataStr = $perfdataStr;
+            $this->parse();
         }
     }
 
-    public static function fromString(& $perfdata)
+    /**
+     * Return a iterator for this set of performance data
+     *
+     * @return  ArrayIterator
+     */
+    public function getIterator()
     {
-        $pset = new PerfdataSet($perfdata);
-        return $pset;
+        return new ArrayIterator($this->asArray());
     }
 
-    public function getAll()
+    /**
+     * Return a new set of performance data
+     *
+     * @param   string      $perfdataStr    A space separated list of label/value pairs
+     *
+     * @return  PerfdataSet
+     */
+    public static function fromString($perfdataStr)
     {
-        return $this->perfdata === null ? array() : $this->perfdata;
+        return new static($perfdataStr);
     }
 
+    /**
+     * Return this set of performance data as array
+     *
+     * @return  array
+     */
+    public function asArray()
+    {
+        return $this->perfdata;
+    }
+
+    /**
+     * Parse the current performance data
+     */
+    protected function parse()
+    {
+        while ($this->parserPos < strlen($this->perfdataStr)) {
+            $label = trim($this->readLabel());
+            $value = trim($this->readUntil(' '));
+
+            if ($label && $value) {
+                $this->perfdata[$label] = Perfdata::fromString($value);
+            }
+        }
+    }
+
+    /**
+     * Return the next label found in the performance data
+     *
+     * @return  string      The label found
+     */
     protected function readLabel()
     {
         $this->skipSpaces();
-        if (in_array($this->ptr[$this->pos], array('"', "'"))) {
-            $this->pos++;
-            $label = $this->readUntil($this->ptr[$this->pos - 1]);
-            $this->pos++; // Skip ' or "
-            $skip = $this->readUntil('=');
-            $this->pos++;
+        if (in_array($this->perfdataStr[$this->parserPos], array('"', "'"))) {
+            $quoteChar = $this->perfdataStr[$this->parserPos++];
+            $label = $this->readUntil('=');
+            $this->parserPos++;
+
+            if (($closingPos = strpos($label, $quoteChar)) > 0) {
+                $label = substr($label, 0, $closingPos);
+            }
         } else {
             $label = $this->readUntil('=');
-            $this->pos++;
+            $this->parserPos++;
         }
+
         $this->skipSpaces();
-        return trim($label);
+        return $label;
     }
 
-    protected function readUntil($stop_char)
+    /**
+     * Return all characters between the current parser position and the given character
+     *
+     * @param   string  $stopChar   The character on which to stop
+     *
+     * @return  string
+     */
+    protected function readUntil($stopChar)
     {
-        $start = $this->pos;
-        while ($this->pos < $this->len && $this->ptr[$this->pos] !== $stop_char) {
-            $this->pos++;
+        $start = $this->parserPos;
+        while ($this->parserPos < strlen($this->perfdataStr) && $this->perfdataStr[$this->parserPos] !== $stopChar) {
+            $this->parserPos++;
         }
-        return substr($this->ptr, $start, $this->pos - $start);
+
+        return substr($this->perfdataStr, $start, $this->parserPos - $start);
     }
 
+    /**
+     * Advance the parser position to the next non-whitespace character
+     */
     protected function skipSpaces()
     {
-        while ($this->pos < $this->len && $this->ptr[$this->pos] === ' ') {
-            $this->pos++;
+        while ($this->parserPos < strlen($this->perfdataStr) && $this->perfdataStr[$this->parserPos] === ' ') {
+            $this->parserPos++;
         }
     }
 }

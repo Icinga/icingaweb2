@@ -1,33 +1,59 @@
 <?php
 $this->is_service = false;
 $this->hostquery = implode($this->hostnames, ',');
-$this->target = array(
-	'host' => $this->hostquery
-);
+$this->target = array('host'	=> $this->hostquery);
 ?>
 
-<?= $this->tabs->render($this); ?>
-<div>
-    <div class="panel panel-heading">
-       <b> Hosts </b> (<?= count($objects) ?> objects)
-       <div class="pull-right">
-            <a rel="tooltip" title="Submit passive checkresults" href="<?=
-            $this->href(
-                'monitoring/command/submitpassivecheckresult',
-                $this->target
-            );
-            ?>" class="button btn-cta btn-common btn-small">
-                <i class="icinga-icon-submit"></i>
-            </a>
-       </div>
-    </div>
-    <hr class="separator" />
-
-    <div class="panel panel-body">
-        <?= $this->render('multi/components/summary.phtml'); ?>
-    </div>
+<div class="controls">
+    <?= $this->tabs; ?>
 </div>
 
-<?= $this->render('multi/components/comments.phtml'); ?>
-<?= $this->render('multi/components/downtimes.phtml'); ?>
-<?= $this->render('multi/components/configuration.phtml'); ?>
+<div class="content">
+    <h1> Summary for <?= count($objects) ?> hosts </h1>
+
+    <?= $this->render('multi/components/objectlist.phtml'); ?>
+    <table class="avp">
+        <tr>
+            <th align="center">
+                <h3><?= array_sum(array_values($states)) ?> Hosts</h3>
+            </th>
+            <th></th>
+        </tr>
+        <tr>
+            <td align="center">
+                <?= $this->pie->render(); ?>
+            </td>
+            <td>
+                <?php
+                foreach ($states as $state => $count) {
+                    if ($count > 0) {
+                        echo ucfirst($state) . ': ' . $count . '<br />';
+                    }
+                }
+                ?>
+            </td>
+            <td></td>
+        </tr>
+    </table>
+
+    <h2> <?=$this->icon('hostgroup.png')?> Host Actions </h2>
+
+    <table class="avp newsection">
+        <tbody>
+            <?= $this->render('multi/components/summary.phtml'); ?>
+            <?= $this->render('multi/components/comments.phtml'); ?>
+            <?= $this->render('multi/components/downtimes.phtml'); ?>
+        </tbody>
+    </table>
+
+    <?= $this->render('multi/components/flags.phtml') ?>
+</div>
+
+<a
+    rel="tooltip"
+    title="Submit passive checkresults"
+    href="<?= $this->href('monitoring/command/submitpassivecheckresult', $this->target); ?>"
+    class="button btn-cta btn-common btn-small"
+>
+    <i class="icinga-icon-submit"></i>
+</a>

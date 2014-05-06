@@ -1,5 +1,5 @@
 <?php
-// @codingStandardsIgnoreStart
+// @codeCoverageIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga Web 2.
@@ -31,17 +31,14 @@ use \Icinga\Web\Controller\BaseConfigController;
 use \Icinga\Web\Widget\Tab;
 use \Icinga\Web\Widget\AlertMessageBox;
 use \Icinga\Web\Url;
-use \Icinga\Web\Hook\Configuration\ConfigurationTabBuilder;
-use \Icinga\User\Message;
 use \Icinga\Application\Icinga;
 use \Icinga\Application\Config as IcingaConfig;
 use \Icinga\Data\ResourceFactory;
 use \Icinga\Form\Config\GeneralForm;
-use \Icinga\Authentication\Manager as AuthenticationManager;
 use \Icinga\Form\Config\Authentication\ReorderForm;
 use \Icinga\Form\Config\Authentication\LdapBackendForm;
 use \Icinga\Form\Config\Authentication\DbBackendForm;
-use \Icinga\Form\Config\Resource\EditResourceForm;
+use \Icinga\Form\Config\ResourceForm;
 use \Icinga\Form\Config\LoggingForm;
 use \Icinga\Form\Config\ConfirmRemovalForm;
 use \Icinga\Config\PreservingIniWriter;
@@ -207,36 +204,38 @@ class ConfigController extends BaseConfigController
     /**
      * Action for creating a new authentication backend
      */
-    public function authenticationAction($showOnly = false)
+    public function authenticationAction()
     {
         $config = IcingaConfig::app('authentication', true);
         $this->view->tabs->activate('authentication');
 
         $order = array_keys($config->toArray());
-        $this->view->backends = array();
         $this->view->messageBox = new AlertMessageBox(true);
 
-        foreach ($config as $backend=>$backendConfig) {
+        $backends = array();
+        foreach ($order as $backend) {
             $form = new ReorderForm();
             $form->setName('form_reorder_backend_' . $backend);
-            $form->setAuthenticationBackend($backend);
+            $form->setBackendName($backend);
             $form->setCurrentOrder($order);
             $form->setRequest($this->_request);
 
-            if (!$showOnly && $form->isSubmittedAndValid()) {
+            if ($form->isSubmittedAndValid()) {
                 if ($this->writeAuthenticationFile($form->getReorderedConfig($config))) {
                     $this->addSuccessMessage('Authentication Order Updated');
                     $this->redirectNow('config/authentication');
                 }
+
                 return;
             }
 
-            $this->view->backends[] = (object) array(
-                'name'          =>  $backend,
-                'reorderForm'   =>  $form
+            $backends[] = (object) array(
+                'name'          => $backend,
+                'reorderForm'   => $form
             );
         }
-        $this->render('authentication');
+
+        $this->view->backends = $backends;
     }
 
     /**
@@ -398,7 +397,7 @@ class ConfigController extends BaseConfigController
     {
         $this->view->resourceTypes = $this->resourceTypes;
         $resources = IcingaConfig::app('resources', true);
-        $form = new EditResourceForm();
+        $form = new ResourceForm();
         $form->setRequest($this->_request);
         if ($form->isSubmittedAndValid()) {
             $name = $form->getName();
@@ -430,7 +429,7 @@ class ConfigController extends BaseConfigController
             $this->render('resource/modify');
             return;
         }
-        $form = new EditResourceForm();
+        $form = new ResourceForm();
         if ($this->_request->isPost() === false) {
             $form->setOldName($name);
             $form->setName($name);
@@ -558,4 +557,4 @@ class ConfigController extends BaseConfigController
         }
     }
 }
-// @codingStandardsIgnoreEnd
+// @codeCoverageIgnoreEnd

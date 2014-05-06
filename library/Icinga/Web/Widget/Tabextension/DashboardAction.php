@@ -1,4 +1,5 @@
 <?php
+// @codeCoverageIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga Web 2.
@@ -29,10 +30,8 @@
 
 namespace Icinga\Web\Widget\Tabextension;
 
-use \Icinga\Web\Url;
-use \Icinga\Config\Config as IcingaConfig;
-use \Icinga\Web\Widget\Tabs;
-use \Icinga\Web\Widget\Dashboard;
+use Icinga\Web\Url;
+use Icinga\Web\Widget\Tabs;
 
 /**
  * Tabextension that allows to add the current URL to a dashboard
@@ -61,3 +60,4 @@ class DashboardAction implements Tabextension
         );
     }
 }
+// @codeCoverageIgnoreEnd

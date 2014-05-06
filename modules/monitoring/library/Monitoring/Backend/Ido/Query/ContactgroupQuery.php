@@ -37,7 +37,7 @@ class ContactgroupQuery extends IdoQuery
         'services' => array(
             'service_object_id'   => 'so.object_id',
             'service_host_name'   => 'so.name1 COLLATE latin1_general_ci',
-            'service'             => 'so.name1 COLLATE latin1_general_ci',
+            'service'             => 'so.name2 COLLATE latin1_general_ci',
             'service_description' => 'so.name2 COLLATE latin1_general_ci',
         )
     );

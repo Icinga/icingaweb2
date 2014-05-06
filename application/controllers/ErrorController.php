@@ -1,5 +1,5 @@
 <?php
-// @codingStandardsIgnoreStart
+// @codeCoverageIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga Web 2.
@@ -67,7 +67,7 @@ class ErrorController extends ActionController
                 break;
             default:
                 $this->getResponse()->setHttpResponseCode(500);
-                $this->view->title = 'Server error';
+                $this->view->title = 'Server error: ' . $exception->getMessage();
                 $this->view->message = $exception->getMessage();
                 if ($this->getInvokeArg('displayExceptions') == true) {
                     $this->view->stackTrace = $exception->getTraceAsString();
@@ -77,4 +77,4 @@ class ErrorController extends ActionController
         $this->view->request = $error->request;
     }
 }
-// @codingStandardsIgnoreEnd
+// @codeCoverageIgnoreEnd

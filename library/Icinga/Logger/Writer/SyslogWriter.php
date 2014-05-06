@@ -1,11 +1,12 @@
 <?php
+// @codeCoverageIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Logger\Writer;
 
-use \Exception;
-use \Zend_Config;
+use Exception;
+use Zend_Config;
 use Icinga\Logger\Logger;
 use Icinga\Logger\LogWriter;
 use Icinga\Exception\ConfigurationError;
@@ -106,3 +107,4 @@ class SyslogWriter extends LogWriter
         closelog();
     }
 }
+// @codeCoverageIgnoreEnd

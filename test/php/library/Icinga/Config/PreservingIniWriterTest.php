@@ -1,393 +1,637 @@
 <?php
-
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Tests\Icinga\PreservingIniWriterTest;
+namespace Tests\Icinga\Config;
 
-require_once 'Zend/Config.php';
-require_once 'Zend/Config/Ini.php';
-require_once 'Zend/Config/Writer/Ini.php';
-require_once('../../library/Icinga/Config/IniEditor.php');
-require_once('../../library/Icinga/Config/PreservingIniWriter.php');
-
-use Icinga\Config\PreservingIniWriter;
 use Zend_Config;
+use Zend_Config_Ini;
+use Icinga\Test\BaseTestCase;
+use Icinga\Config\PreservingIniWriter;
 
-class PreservingIniWriterTest extends \PHPUnit_Framework_TestCase {
+class PreservingIniWriterTest extends BaseTestCase
+{
+    protected $tempFile;
 
-    private $tmpfiles = array();
-
-    /**
-     * Set up the test fixture
-     */
     public function setUp()
     {
-        $ini =
-'
-trailing1="wert"
-arr[]="0"
-arr[]="1"
-arr[]="2"
-arr[]="3"
+        parent::setUp();
 
-Trailing2=
-
-;1
-;2
-;3
-[section]
-property = "some value"         ; Some " ; comment"
-property2 = "some ;value"      ; Some comment with " quotes "
-property3.nest1.nest2 = "value" ; ;
-
-[parent]
-;4
-;5
-;6
-;7
-list[]="zero"
-list[]="one"
-
-;8
-;9
-many.many.nests="value"
-propOne="value1"
-propTwo="2"
-propThree=
-propFour="true"
-
-Prop5="true"
-
-[child : parent]
-PropOne="overwritten"
-;10
-';
-        $this->writeToTmp('orig', $ini);
-
-        $emptyIni = " ";
-        $this->writeToTmp('empty', $emptyIni);
-
-        $editedIni =
-';1
-;2
-;3
-;4
-;5
-trailing1="1"
-
-[parent]
-;6
-;7
-;8
-;9
-;10
-propOne="value1"
-
-[different]
-prop1="1"
-prop2="2"
-
-[nested : different]
-prop2="5"
-';
-        $this->writeToTmp('edited', $editedIni);
+        $this->tempFile = tempnam(sys_get_temp_dir(), 'icinga-ini-writer-test');
     }
 
-    /**
-     * Write a string to a temporary file
-     *
-     * @param string    $name     The name of the temporary file
-     * @param string    $content  The content
-     */
-    private function writeToTmp($name, $content)
-    {
-        $this->tmpfiles[$name] =
-            tempnam(dirname(__FILE__) . '/temp', $name);
-        $file = fopen($this->tmpfiles[$name], 'w');
-        fwrite($file, $content);
-        fflush($file);
-        fclose($file);
-    }
-
-    /**
-     * Tear down the test fixture
-     */
     public function tearDown()
     {
-        foreach ($this->tmpfiles as $filename) {
-            unlink($filename);
-        }
+        parent::tearDown();
+
+        unlink($this->tempFile);
+    }
+
+    public function testWhetherSimplePropertiesAreInsertedInEmptyFiles()
+    {
+        $target = $this->writeConfigToTemporaryFile('');
+        $config = new Zend_Config(array('key' => 'value'));
+        $writer = new PreservingIniWriter(array('config' => $config, 'filename' => $target));
+        $writer->write();
+
+        $newConfig = new Zend_Config_Ini($target);
+        $this->assertEquals('value', $newConfig->get('key'), 'PreservingIniWriter does not insert in empty files');
+    }
+
+    public function testWhetherSimplePropertiesAreInsertedInExistingFiles()
+    {
+        $target = $this->writeConfigToTemporaryFile('key1 = "1"');
+        $config = new Zend_Config(array('key2' => '2'));
+        $writer = new PreservingIniWriter(array('config' => $config, 'filename' => $target));
+        $writer->write();
+
+        $newConfig = new Zend_Config_Ini($target);
+        $this->assertEquals('2', $newConfig->get('key2'), 'PreservingIniWriter does not insert in existing files');
     }
 
     /**
-     * Test if the IniWriter works correctly when writing the changes back to
-     * the same ini file
+     * @depends testWhetherSimplePropertiesAreInsertedInExistingFiles
      */
-    public function testPropertyChangeSameConfig()
+    public function testWhetherSimplePropertiesAreUpdated()
     {
-        $this->changeConfigAndWriteToFile('orig');
-        $config = new \Zend_Config_Ini(
-            $this->tmpfiles['orig'], null, array('allowModifications' => true)
+        $target = $this->writeConfigToTemporaryFile('key = "value"');
+        $config = new Zend_Config(array('key' => 'eulav'));
+        $writer = new PreservingIniWriter(array('config' => $config, 'filename' => $target));
+        $writer->write();
+
+        $newConfig = new Zend_Config_Ini($target);
+        $this->assertEquals('eulav', $newConfig->get('key'), 'PreservingIniWriter does not update simple properties');
+    }
+
+    /**
+     * @depends testWhetherSimplePropertiesAreInsertedInExistingFiles
+     */
+    public function testWhetherSimplePropertiesAreDeleted()
+    {
+        $target = $this->writeConfigToTemporaryFile('key = "value"');
+        $config = new Zend_Config(array());
+        $writer = new PreservingIniWriter(array('config' => $config, 'filename' => $target));
+        $writer->write();
+
+        $newConfig = new Zend_Config_Ini($target);
+        $this->assertNull($newConfig->get('key'), 'PreservingIniWriter does not delete simple properties');
+    }
+
+    public function testWhetherNestedPropertiesAreInserted()
+    {
+        $target = $this->writeConfigToTemporaryFile('');
+        $config = new Zend_Config(array('a' => array('b' => 'c')));
+        $writer = new PreservingIniWriter(array('config' => $config, 'filename' => $target));
+        $writer->write();
+
+        $newConfig = new Zend_Config_Ini($target);
+        $this->assertInstanceOf(
+            '\Zend_Config',
+            $newConfig->get('a'),
+            'PreservingIniWriter does not insert nested properties'
         );
-        $this->checkConfigProperties($config);
-        $this->checkConfigComments($this->tmpfiles['orig']);
-    }
-
-    /**
-     * Test if the IniWriter works correctly when writing to an empty file
-     */
-    public function testPropertyChangeEmptyConfig()
-    {
-        $this->changeConfigAndWriteToFile('empty');
-        $config = new \Zend_Config_Ini(
-            $this->tmpfiles['empty'], null, array('allowModifications' => true)
+        $this->assertEquals(
+            'c',
+            $newConfig->get('a')->get('b'),
+            'PreservingIniWriter does not insert nested properties'
         );
-        $this->checkConfigProperties($config);
     }
 
     /**
-     * Test if the IniWriter works correctly when writing to a file with changes
+     * @depends testWhetherNestedPropertiesAreInserted
      */
-    public function testPropertyChangeEditedConfig()
+    public function testWhetherNestedPropertiesAreUpdated()
     {
-        $original = $this->changeConfigAndWriteToFile('edited');
-        $config = new \Zend_Config_Ini(
-            $this->tmpfiles['edited'], null, array('allowModifications' => true)
+        $target = $this->writeConfigToTemporaryFile('a.b = "c"');
+        $config = new Zend_Config(array('a' => array('b' => 'cc')));
+        $writer = new PreservingIniWriter(array('config' => $config, 'filename' => $target));
+        $writer->write();
+
+        $newConfig = new Zend_Config_Ini($target);
+        $this->assertInstanceOf(
+            '\Zend_Config',
+            $newConfig->get('a'),
+            'PreservingIniWriter does not update nested properties'
         );
-        $this->checkConfigProperties($config);
-        $this->checkConfigComments($this->tmpfiles['edited']);
+        $this->assertEquals(
+            'cc',
+            $newConfig->get('a')->get('b'),
+            'PreservingIniWriter does not update nested properties'
+        );
     }
 
     /**
-     * Test if the order of sections is correctly changed in the config.
+     * @depends testWhetherNestedPropertiesAreInserted
      */
-    public function testSectionOrderChange()
+    public function testWhetherNestedPropertiesAreDeleted()
     {
-        $original = '
-;1
+        $target = $this->writeConfigToTemporaryFile('a.b = "c"');
+        $config = new Zend_Config(array());
+        $writer = new PreservingIniWriter(array('config' => $config, 'filename' => $target));
+        $writer->write();
 
-[section2]
-;3
+        $newConfig = new Zend_Config_Ini($target);
+        $this->assertNull(
+            $newConfig->get('a'),
+            'PreservingIniWriter does not delete nested properties'
+        );
+    }
 
-;4
-[section3]
-;5
+    public function testWhetherSimpleSectionPropertiesAreInserted()
+    {
+        $target = $this->writeConfigToTemporaryFile('');
+        $config = new Zend_Config(array('section' => array('key' => 'value')));
+        $writer = new PreservingIniWriter(array('config' => $config, 'filename' => $target));
+        $writer->write();
 
-;2
-[section1]
-property = "something" ; comment
+        $newConfig = new Zend_Config_Ini($target);
+        $this->assertInstanceOf(
+            '\Zend_Config',
+            $newConfig->get('section'),
+            'PreservingIniWriter does not insert sections'
+        );
+        $this->assertEquals(
+            'value',
+            $newConfig->get('section')->get('key'),
+            'PreservingIniWriter does not insert simple section properties'
+        );
+    }
 
-        ';
-        $this->writeToTmp('section-order',$original);
+    /**
+     * @depends testWhetherSimpleSectionPropertiesAreInserted
+     */
+    public function testWhetherSimpleSectionPropertiesAreUpdated()
+    {
+        $target = $this->writeConfigToTemporaryFile(<<<'EOD'
+[section]
+key = "value"
+EOD
+        );
+        $config = new Zend_Config(array('section' => array('key' => 'eulav')));
+        $writer = new PreservingIniWriter(array('config' => $config, 'filename' => $target));
+        $writer->write();
+
+        $newConfig = new Zend_Config_Ini($target);
+        $this->assertEquals(
+            'eulav',
+            $newConfig->get('section')->get('key'),
+            'PreservingIniWriter does not update simple section properties'
+        );
+    }
+
+    /**
+     * @depends testWhetherSimpleSectionPropertiesAreInserted
+     */
+    public function testWhetherSimpleSectionPropertiesAreDeleted()
+    {
+        $target = $this->writeConfigToTemporaryFile(<<<'EOD'
+[section]
+key = "value"
+EOD
+        );
+        $config = new Zend_Config(array('section' => array()));
+        $writer = new PreservingIniWriter(array('config' => $config, 'filename' => $target));
+        $writer->write();
+
+        $newConfig = new Zend_Config_Ini($target);
+        $this->assertNull(
+            $newConfig->get('section')->get('key'),
+            'PreservingIniWriter does not delete simple section properties'
+        );
+    }
+
+    public function testWhetherNestedSectionPropertiesAreInserted()
+    {
+        $target = $this->writeConfigToTemporaryFile('');
+        $config = new Zend_Config(array('section' => array('a' => array('b' => 'c'))));
+        $writer = new PreservingIniWriter(array('config' => $config, 'filename' => $target));
+        $writer->write();
+
+        $newConfig = new Zend_Config_Ini($target);
+        $this->assertInstanceOf(
+            '\Zend_Config',
+            $newConfig->get('section'),
+            'PreservingIniWriter does not insert sections'
+        );
+        $this->assertInstanceOf(
+            '\Zend_Config',
+            $newConfig->get('section')->get('a'),
+            'PreservingIniWriter does not insert nested section properties'
+        );
+        $this->assertEquals(
+            'c',
+            $newConfig->get('section')->get('a')->get('b'),
+            'PreservingIniWriter does not insert nested section properties'
+        );
+    }
+
+    /**
+     * @depends testWhetherNestedSectionPropertiesAreInserted
+     */
+    public function testWhetherNestedSectionPropertiesAreUpdated()
+    {
+        $target = $this->writeConfigToTemporaryFile(<<<'EOD'
+[section]
+a.b = "c"
+EOD
+        );
+        $config = new Zend_Config(array('section' => array('a' => array('b' => 'cc'))));
+        $writer = new PreservingIniWriter(array('config' => $config, 'filename' => $target));
+        $writer->write();
+
+        $newConfig = new Zend_Config_Ini($target);
+        $this->assertEquals(
+            'cc',
+            $newConfig->get('section')->get('a')->get('b'),
+            'PreservingIniWriter does not update nested section properties'
+        );
+    }
+
+    /**
+     * @depends testWhetherNestedSectionPropertiesAreInserted
+     */
+    public function testWhetherNestedSectionPropertiesAreDeleted()
+    {
+        $target = $this->writeConfigToTemporaryFile(<<<'EOD'
+[section]
+a.b = "c"
+EOD
+        );
+        $config = new Zend_Config(array('section' => array()));
+        $writer = new PreservingIniWriter(array('config' => $config, 'filename' => $target));
+        $writer->write();
+
+        $newConfig = new Zend_Config_Ini($target);
+        $this->assertNull(
+            $newConfig->get('section')->get('a'),
+            'PreservingIniWriter does not delete nested section properties'
+        );
+    }
+
+    public function testWhetherSimplePropertiesOfExtendingSectionsAreInserted()
+    {
+        $target = $this->writeConfigToTemporaryFile('');
         $config = new Zend_Config(
             array(
-                'section1' => array(
-                    'property' => 'something'
-                ),
-                'section2' => array(),
-                'section3' => array()
+                'foo' => array('key1' => '1'),
+                'bar' => array('key2' => '2')
             )
         );
-        $writer = new PreservingIniWriter(
-            array('config' => $config, 'filename' => $this->tmpfiles['section-order'])
-        );
+        $config->setExtend('bar', 'foo');
+        $writer = new PreservingIniWriter(array('config' => $config, 'filename' => $target));
         $writer->write();
-        $changed = new \Zend_Config_Ini(
-            $this->tmpfiles['section-order'],
-            null,
-            array('allowModifications' => true)
-        );
-        $this->assertEquals($config->section1->property, $changed->section1->property);
 
-        /*
-         * IniWriter should move the sections, so that comments
-         * are now in the right order
-         */
-        $this->checkConfigComments(
-            $this->tmpfiles['section-order'],
-            5,
-            'Sections re-ordered correctly'
+        $newConfig = new Zend_Config_Ini($target);
+        $this->assertInstanceOf(
+            '\Zend_Config',
+            $newConfig->get('foo'),
+            'PreservingIniWriter does not insert extended sections'
+        );
+        $this->assertInstanceOf(
+            '\Zend_Config',
+            $newConfig->get('bar'),
+            'PreservingIniWriter does not insert extending sections'
+        );
+        $this->assertEquals(
+            '2',
+            $newConfig->get('bar')->get('key2'),
+            'PreservingIniWriter does not insert simple properties into extending sections'
+        );
+        $this->assertEquals(
+            '1',
+            $newConfig->get('bar')->get('key1'),
+            'PreservingIniWriter does not properly define extending sections'
         );
     }
 
     /**
-     * Change the test config, write the changes to the temporary
-     * file $tmpFile and save the path to the file in the array tmpfiles
-     *
-     * @param string $tmpFile   The name that should be given to the temporary file
+     * @depends testWhetherSimplePropertiesOfExtendingSectionsAreInserted
      */
-    private function changeConfigAndWriteToFile($tmpFile)
+    public function testWhetherSimplePropertiesOfExtendingSectionsAreUpdated()
     {
-        $config = $this->createTestConfig();
-        $this->alterConfig($config);
-        $writer = new PreservingIniWriter(
-            array('config' => $config,'filename' => $this->tmpfiles[$tmpFile])
+        $target = $this->writeConfigToTemporaryFile(<<<'EOD'
+[foo]
+key1 = "1"
+
+[bar : foo]
+key2 = "2"
+EOD
         );
+        $config = new Zend_Config(
+            array(
+                'foo' => array('key1' => '1'),
+                'bar' => array('key2' => '22')
+            )
+        );
+        $config->setExtend('bar', 'foo');
+        $writer = new PreservingIniWriter(array('config' => $config, 'filename' => $target));
         $writer->write();
-        return $config;
-    }
 
-    /**
-     * Check if all comments are present
-     *
-     * @param String    $file       The file to check
-     * @param Number    $count      The amount of comments that should be present
-     * @param String    $assertion  The assertion message that will be displayed on errors
-     */
-    private function checkConfigComments($file,$count = 10,$assertion = 'Comment unchanged')
-    {
-        $i = 0;
-        foreach (explode("\n",file_get_contents($file)) as $line) {
-            if (preg_match('/^;/',$line)) {
-                $i++;
-                $this->assertEquals(
-                    $i,intval(substr($line,1)),
-                    $assertion
-                );
-            }
-        }
-        $this->assertEquals($count, $i, 'All comments exist');
-    }
-
-    /**
-     * Test if all configuration properties are set correctly
-     *
-     * @param mixed $config     The configuration to check
-     */
-    private function checkConfigProperties($config)
-    {
-        $this->assertEquals('val', $config->Trailing2,
-            'Section-less property updated.');
-
-        $this->assertNull($config->trailing1,
-            'Section-less property deleted.');
-
-        $this->assertEquals('value', $config->new,
-            'Section-less property created.');
-
-        $this->assertEquals('0', $config->arr->{0},
-            'Value persisted in array');
-
-        $this->assertEquals('update', $config->arr->{2},
-            'Value changed in array');
-
-        $this->assertEquals('arrvalue', $config->arr->{4},
-            'Value added to array');
-
-        $this->assertEquals('', $config->parent->propOne,
-            'Section property deleted.');
-
-        $this->assertEquals("2", $config->parent->propTwo,
-            'Section property numerical unchanged.');
-
-        $this->assertEquals('update', $config->parent->propThree,
-            'Section property updated.');
-
-        $this->assertEquals("true", $config->parent->propFour,
-            'Section property boolean unchanged.');
-
-        $this->assertEquals("1", $config->parent->new,
-            'Section property numerical created.');
-
-        $this->assertNull($config->parent->list->{0},
-            'Section array deleted');
-
-        $this->assertEquals('new', $config->parent->list->{1},
-            'Section array changed.');
-
-        $this->assertEquals('changed', $config->parent->many->many->nests,
-            'Change strongly nested value.');
-
-        $this->assertEquals('new', $config->parent->many->many->new,
-            'Ccreate strongy nested value.');
-
-        $this->assertEquals('overwritten', $config->child->PropOne,
-            'Overridden inherited property unchanged.');
-
-        $this->assertEquals('somethingNew', $config->child->propTwo,
-            'Inherited property changed.');
-
-        $this->assertEquals('test', $config->child->create,
-            'Non-inherited property created.');
-
-        $this->assertInstanceOf('Zend_Config', $config->newsection,
-            'New section created.');
-
-        $extends = $config->getExtends();
-        $this->assertEquals('child', $extends['newsection'],
-            'New inheritance created.');
-    }
-
-    /**
-     * Change the content of a Zend_Config for testing purposes
-     *
-     * @param Zend_Config $config   The configuration that should be changed
-     */
-    private function alterConfig(\Zend_Config $config)
-    {
-        $config->Trailing2 = 'val';
-        unset($config->trailing1);
-        $config->new = 'value';
-        $config->arr->{2} = "update";
-        $config->arr->{4} = "arrvalue";
-
-        $config->section->property = "updated";
-        unset($config->section->property3);
-        $config->section->property4 = "created";
-
-        $config->parent->propOne = null;
-        $config->parent->propThree = 'update';
-        $config->parent->new = 1;
-        unset($config->parent->list->{0});
-        $config->parent->list->{1} = 'new';
-
-        $config->parent->many->many->nests = "changed";
-        $config->parent->many->many->new = "new";
-
-        $config->child->propTwo = 'somethingNew';
-        $config->child->create = 'test';
-
-        $config->newsection = array();
-        $config->newsection->p1 = "prop";
-        $config->newsection->P2 = "prop";
-        $config->setExtend('newsection', 'child');
-    }
-
-    /**
-     * Create the the configuration that will be used for the tests.
-     */
-    private function createTestConfig()
-    {
-        return new \Zend_Config_Ini(
-            $this->tmpfiles['orig'],
-            null,
-            array('allowModifications' => true)
+        $newConfig = new Zend_Config_Ini($target);
+        $this->assertEquals(
+            '22',
+            $newConfig->get('bar')->get('key2'),
+            'PreservingIniWriter does not update simple properties of extending sections'
         );
+    }
+
+    /**
+     * @depends testWhetherSimplePropertiesOfExtendingSectionsAreInserted
+     */
+    public function testWhetherSimplePropertiesOfExtendingSectionsAreDeleted()
+    {
+        $target = $this->writeConfigToTemporaryFile(<<<'EOD'
+[foo]
+key1 = "1"
+
+[bar : foo]
+key2 = "2"
+EOD
+        );
+        $config = new Zend_Config(
+            array(
+                'foo' => array('key1' => '1'),
+                'bar' => array()
+            )
+        );
+        $config->setExtend('bar', 'foo');
+        $writer = new PreservingIniWriter(array('config' => $config, 'filename' => $target));
+        $writer->write();
+
+        $newConfig = new Zend_Config_Ini($target);
+        $this->assertNull(
+            $newConfig->get('bar')->get('key2'),
+            'PreservingIniWriter does not delete simple properties of extending sections'
+        );
+    }
+
+    public function testWhetherNestedPropertiesOfExtendingSectionsAreInserted()
+    {
+        $target = $this->writeConfigToTemporaryFile('');
+        $config = new Zend_Config(
+            array(
+                'foo' => array('a' => array('b' => 'c')),
+                'bar' => array('d' => array('e' => 'f'))
+            )
+        );
+        $config->setExtend('bar', 'foo');
+        $writer = new PreservingIniWriter(array('config' => $config, 'filename' => $target));
+        $writer->write();
+
+        $newConfig = new Zend_Config_Ini($target);
+        $this->assertInstanceOf(
+            '\Zend_Config',
+            $newConfig->get('foo'),
+            'PreservingIniWriter does not insert extended sections'
+        );
+        $this->assertInstanceOf(
+            '\Zend_Config',
+            $newConfig->get('bar'),
+            'PreservingIniWriter does not insert extending sections'
+        );
+        $this->assertInstanceOf(
+            '\Zend_Config',
+            $newConfig->get('bar')->get('d'),
+            'PreservingIniWriter does not insert nested properties into extending sections'
+        );
+        $this->assertEquals(
+            'f',
+            $newConfig->get('bar')->get('d')->get('e'),
+            'PreservingIniWriter does not insert nested properties into extending sections'
+        );
+        $this->assertEquals(
+            'c',
+            $newConfig->get('bar')->get('a')->get('b'),
+            'PreservingIniWriter does not properly define extending sections with nested properties'
+        );
+    }
+
+    /**
+     * @depends testWhetherNestedPropertiesOfExtendingSectionsAreInserted
+     */
+    public function testWhetherNestedPropertiesOfExtendingSectionsAreUpdated()
+    {
+        $target = $this->writeConfigToTemporaryFile(<<<'EOD'
+[foo]
+a.b = "c"
+
+[bar : foo]
+d.e = "f"
+EOD
+        );
+        $config = new Zend_Config(
+            array(
+                'foo' => array('a' => array('b' => 'c')),
+                'bar' => array('d' => array('e' => 'ff'))
+            )
+        );
+        $config->setExtend('bar', 'foo');
+        $writer = new PreservingIniWriter(array('config' => $config, 'filename' => $target));
+        $writer->write();
+
+        $newConfig = new Zend_Config_Ini($target);
+        $this->assertEquals(
+            'ff',
+            $newConfig->get('bar')->get('d')->get('e'),
+            'PreservingIniWriter does not update nested properties of extending sections'
+        );
+    }
+
+    /**
+     * @depends testWhetherNestedPropertiesOfExtendingSectionsAreInserted
+     */
+    public function testWhetherNestedPropertiesOfExtendingSectionsAreDeleted()
+    {
+        $target = $this->writeConfigToTemporaryFile(<<<'EOD'
+[foo]
+a.b = "c"
+
+[bar : foo]
+d.e = "f"
+EOD
+        );
+        $config = new Zend_Config(
+            array(
+                'foo' => array('a' => array('b' => 'c')),
+                'bar' => array()
+            )
+        );
+        $config->setExtend('bar', 'foo');
+        $writer = new PreservingIniWriter(array('config' => $config, 'filename' => $target));
+        $writer->write();
+
+        $newConfig = new Zend_Config_Ini($target);
+        $this->assertNull(
+            $newConfig->get('bar')->get('d'),
+            'PreservingIniWriter does not delete nested properties of extending sections'
+        );
+    }
+
+    public function testWhetherSectionAndPropertyOrderIsPreserved()
+    {
+        $config = <<<'EOD'
+[one]
+key1                = "1"
+key2                = "2"
+
+
+[two]
+a.b                 = "c"
+d.e                 = "f"
+
+
+[three]
+key                 = "value"
+foo.bar             = "raboof"
+EOD;
+        $target = $this->writeConfigToTemporaryFile($config);
+        $writer = new PreservingIniWriter(
+            array(
+                'config'    => new Zend_Config(
+                    array(
+                        'three' => array(
+                            'foo' => array(
+                                'bar' => 'raboof'
+                            ),
+                            'key' => 'value'
+                        ),
+                        'two'   => array(
+                            'd' => array(
+                                'e' => 'f'
+                            ),
+                            'a' => array(
+                                'b' => 'c'
+                            )
+                        ),
+                        'one'   => array(
+                            'key2' => '2',
+                            'key1' => '1'
+                        )
+                    )
+                ),
+                'filename'  => $target
+            )
+        );
+
+        $this->assertEquals(
+            $config,
+            $writer->render(),
+            'PreservingIniWriter does not preserve section and/or property order'
+        );
+    }
+
+    public function testWhetherCommentsOnEmptyLinesArePreserved()
+    {
+        $config = <<<'EOD'
+; some interesting comment
+key                 = "value"
+; another interesting comment
+; boring comment
+EOD;
+        $target = $this->writeConfigToTemporaryFile($config);
+        $writer = new PreservingIniWriter(
+            array('config' => new Zend_Config(array('key' => 'value')), 'filename' => $target)
+        );
+
+        $this->assertEquals(
+            $config,
+            $writer->render(),
+            'PreservingIniWriter does not preserve comments on empty lines'
+        );
+    }
+
+    public function testWhetherCommentsOnPropertyLinesArePreserved()
+    {
+        $config = <<<'EOD'
+foo                 = 1337                  ; I know what a " and a ' is
+bar                 = 7331                  ; I; tend; to; overact; !1!1!!11!111!                                      ;
+key                 = "value"               ; some comment for a small sized property
+xxl                 = "very loooooooooooooooooooooong" ; my value is very lo...
+EOD;
+        $target = $this->writeConfigToTemporaryFile($config);
+        $writer = new PreservingIniWriter(
+            array(
+                'config' => new Zend_Config(
+                    array(
+                        'foo' => 1337,
+                        'bar' => 7331,
+                        'key' => 'value',
+                        'xxl' => 'very loooooooooooooooooooooong'
+                    )
+                ),
+                'filename' => $target
+            )
+        );
+
+        $this->assertEquals(
+            $config,
+            $writer->render(),
+            'PreservingIniWriter does not preserve comments on property lines'
+        );
+    }
+
+    public function testWhetherCommentsOnEmptySectionLinesArePreserved()
+    {
+        $config = <<<'EOD'
+[section]
+; some interesting comment, in a section
+key                 = "value"
+EOD;
+        $target = $this->writeConfigToTemporaryFile($config);
+        $writer = new PreservingIniWriter(
+            array('config' => new Zend_Config(array('section' => array('key' => 'value'))), 'filename' => $target)
+        );
+
+        $this->assertEquals(
+            $config,
+            $writer->render(),
+            'PreservingIniWriter does not preserve comments on empty section lines'
+        );
+    }
+
+    public function testWhetherCommentsOnSectionPropertyLinesArePreserved()
+    {
+        $config = <<<'EOD'
+[section]
+foo                 = 1337                  ; I know what a " and a ' is
+bar                 = 7331                  ; I; tend; to; overact; !1!1!!11!111!                                      ;
+key                 = "value"               ; some comment for a small sized property
+xxl                 = "very loooooooooooooooooooooong" ; my value is very lo...
+EOD;
+        $target = $this->writeConfigToTemporaryFile($config);
+        $writer = new PreservingIniWriter(
+            array(
+                'config' => new Zend_Config(
+                    array(
+                        'section' => array(
+                            'foo' => 1337,
+                            'bar' => 7331,
+                            'key' => 'value',
+                            'xxl' => 'very loooooooooooooooooooooong'
+                        )
+                    )
+                ),
+                'filename' => $target
+            )
+        );
+
+        $this->assertEquals(
+            $config,
+            $writer->render(),
+            'PreservingIniWriter does not preserve comments on property lines'
+        );
+    }
+
+    /**
+     * Write a INI-configuration string to a temporary file and return it's path
+     *
+     * @param   string      $config     The config string to write
+     *
+     * @return  string                  The path to the temporary file
+     */
+    protected function writeConfigToTemporaryFile($config)
+    {
+        file_put_contents($this->tempFile, $config);
+        return $this->tempFile;
     }
 }

@@ -1,0 +1,31 @@
+<form
+    id="<?= $form->getId() ?>"
+    name="<?= $form->getName() ?>"
+    enctype="<?= $form->getEnctype() ?>"
+    action="<?= $form->getAction() ?>"
+    method="post"
+>
+    <table class="avp">
+        <tr class="newsection"><th></th><td></td></tr>
+    <?php foreach($this->form->getElements() as $name => $element):
+        if ($element instanceof \Icinga\Web\Form\Element\TriStateCheckbox):
+            $element->setDecorators(array('ViewHelper'));
+            ?>
+            <tr>
+                <th>
+                   <label for="<?= $element->getName() ?>"> <?= $element->getLabel() ?> </label>
+                </th>
+                <td>
+                    <?= $element->render() ?>
+                </td>
+            </tr>
+        <?php else: ?>
+            <tr>
+                <td> <?= $element->render() ?></td>
+            </tr>
+        <?php
+        endif;
+    endforeach;
+    ?>
+    </table>
+</form>

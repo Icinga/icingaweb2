@@ -1,5 +1,5 @@
 <?php
-// @codingStandardsIgnoreStart
+// @codeCoverageIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
@@ -43,4 +43,4 @@ class LayoutController extends ActionController
         $this->renderScript('parts/topbar.phtml');
     }
 }
-// @codingStandardsIgnoreEnd
+// @codeCoverageIgnoreEnd

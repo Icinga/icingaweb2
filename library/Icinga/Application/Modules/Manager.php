@@ -128,10 +128,10 @@ class Manager
     private function detectEnabledModules()
     {
         $canonical = $this->enableDir;
-        if ($canonical === false) {
-            throw new NotReadableError(
-                'Cannot read enabled modules. Module directory "' . $this->enableDir . '" does not exist'
-            );
+        if ($canonical === false || ! file_exists($canonical)) {
+            // TODO: I guess the check for false has something to do with a
+            //       call to realpath no longer present
+            return;
         }
         if (!is_dir($this->enableDir)) {
             throw new NotReadableError(

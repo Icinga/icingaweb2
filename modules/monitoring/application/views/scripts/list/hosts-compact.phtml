@@ -5,7 +5,12 @@ if ($hosts->count() === 0) {
     return;
 }
 
-?><table data-base-target="_next" class="action">
+?><table
+    data-base-target="_next"
+    class="action multiselect"
+    data-icinga-multiselect-url="<?= $this->href("/monitoring/multi/host") ?>"
+    data-icinga-multiselect-data="host"
+>
 <tbody>
 <?php
 

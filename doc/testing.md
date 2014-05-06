@@ -50,29 +50,14 @@ password is queried when connecting from the local machine:
 Icinga has it's own base test which lets you easily require libraries, testing database and form functionality. The class resides in
 library/Icinga/Test. If you write a test, just subclass BaseTestCase.
 
-### Default test header
-
-Before writing a test you should include the base test first
-
-    // @codingStandardsIgnoreStart
-    require_once realpath(__DIR__ . '/../../../../../library/Icinga/Test/BaseTestCase.php');
-    // @codingStandardsIgnoreEnd
-
-Now you can simply include dependencies with predefined properties:
-
-    require_once BaseTestCase::$libDir . '/Web/Form.php';
-    require_once BaseTestCase::$appDir . '/forms/Config/AuthenticationForm.php';
-
-BaseTestCase provides static variables for every directory in the project.
-
 ### Writing database tests
 
-The base test uses the PHPUnit dataProvider annotation system to create Zend Database Adapters. Typically a
+The base test uses the PHPUnit dataProvider annotation system to create database connections. Typically a
 database test looks like this:
 
         /**
          * @dataProvider    mysqlDb
-         * @param           Zend_Db_Adapter_PDO_Abstract $mysqlDb
+         * @param           Icinga\Data\Db\Connection    $mysqlDb
          */
         public function testSomethingWithMySql($mysqlDb)
         {
@@ -106,58 +91,3 @@ BaseTestCase holds method to require form libraries and create form classes base
 
 The second parameter of createForm() can be omitted. You can set initial post request data as
 an array if needed.
-
-## Writing tests for controllers
-
-When writing tests for controllers, you can subclass the MonitoringControllerTest class underneath monitoring/test/php/testlib:
-
-    class MyTestclass extends MonitoringControllerTest
-    {
-        // test stuff
-    }
-
-This class handles a lot of depenendency resolving and controller mocking. In order to test your action correctly and
-without side effects, the TestFixture class allows your to define and set up your faked monitoring results in the backend
-you want to test:
-
-    use Test\Monitoring\Testlib\Datasource\TestFixture;
-
-    class MyTestclass extends MonitoringControllerTest
-    {
-        public function testSomething()
-        {
-            $fixture = new TestFixture();
-            // adding a new critical, but acknowledged host
-            $fixture->addHost("hostname", 1, ObjectFlags::ACKNOWLEDGED())
-
-            // add a comment to the host (this has to be done before adding services)
-            ->addComment("author", "comment text")
-
-            // assign to hostgroup
-            ->addToHostgroup("myHosts")
-
-            // and add three services to this host
-            ->addService("svc1", 0) // Service is ok
-            ->addService("svc2", 1, ObjectFlags::PASSIVE) // service is warning and passive
-            ->addService("svc3", 2, null, array("notes_url" => "test.html")) // critical with notes url
-            ->addComment("author", "what a nice service comment") // add a comment to the service
-            ->addToServicegroup("alwaysdown"); // add svc3 to servicegroup
-
-            // Create the datasource from this fixture, here in MySQL
-            $this->setupFixture($fixture, "mysql");
-
-            // ... do the actual testing (discussed now)
-        }
-    }
-
-After the call to setupFixture() your backend should be ready to be tested. Setting up the controller manually would
-force you to go through the whole bootstrap. To avoid this the MonitoringControllerTest class provides a 'requireController'
-method which returns the Controller for you with an already set up backend using your previously defined testdata:
-
-    $controller = $this->requireController('MyController', 'mysql');
-    // controller is now the Zend controller instance, perform an action
-    $controller->myAction();
-    $result = $controller->view->hosts->fetchAll();
-
-This example assumes that the controller populates the 'host' variable in the view, so now you can assert the state of
-the result according to your test plan.

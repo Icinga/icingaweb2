@@ -6,11 +6,10 @@ Tests for the application can be found underneath the test folder:
 
     test/
         php/            PHPUnit tests for backend code
-        js/             mocha tests for JavaScript frontend code unittests
-        frontend/       Integration tests for the frontend using casperjs
+            regression/ PHPUnit regression tests
 
 The same structure applies for modules, which also contain a toplevel test folder and suitable subtests. When you fix
-a bug and write a regression test for it, put the test in the 'regression' and name it %DESCRIPTION%%TicketNumber% (myBug1234.js)
+a bug and write a regression test for it, put it in 'regression' and name it %DESCRIPTION%%TicketNumber% (myBug1234.php)
 
 ## Running tests
 

@@ -30,9 +30,10 @@
 namespace Icinga\Form\Config\Authentication;
 
 use \Zend_Config;
-use \Icinga\Web\Form\Decorator\HelpText;
-use \Icinga\Data\ResourceFactory;
-use \Icinga\Web\Form;
+use \Zend_Form_Element_Checkbox;
+use Icinga\Web\Form;
+use Icinga\Data\ResourceFactory;
+use Icinga\Web\Form\Decorator\HelpText;
 
 /**
  * Base form for authentication backend forms
@@ -46,26 +47,26 @@ abstract class BaseBackendForm extends Form
      *
      * @var string
      */
-    private $backendName = '';
+    protected $backendName = '';
 
     /**
      * The backend configuration as a Zend_Config object
      *
      * @var Zend_Config
      */
-    private $backend;
+    protected $backend;
 
     /**
      * The resources to use instead of the factory provided ones (use for testing)
      *
      * @var Zend_Config
      */
-    private $resources;
+    protected $resources;
 
     /**
      * Set the name of the currently displayed backend
      *
-     * @param string $name The name to be stored as the section when persisting
+     * @param   string  $name   The name to be stored as the section when persisting
      */
     public function setBackendName($name)
     {
@@ -75,7 +76,7 @@ abstract class BaseBackendForm extends Form
     /**
      * Return the backend name of this form
      *
-     * @return string
+     * @return  string
      */
     public function getBackendName()
     {
@@ -85,7 +86,7 @@ abstract class BaseBackendForm extends Form
     /**
      * Return the backend configuration or a empty Zend_Config object if none is given
      *
-     * @return Zend_Config
+     * @return  Zend_Config
      */
     public function getBackend()
     {
@@ -95,7 +96,7 @@ abstract class BaseBackendForm extends Form
     /**
      * Set the backend configuration for initial population
      *
-     * @param Zend_Config $backend The backend to display in this form
+     * @param   Zend_Config     $backend    The backend to display in this form
      */
     public function setBackend(Zend_Config $backend)
     {
@@ -104,9 +105,8 @@ abstract class BaseBackendForm extends Form
 
     /**
      * Set an alternative array of resources that should be used instead of the DBFactory resource set
-     * (used for testing)
      *
-     * @param array $resources The resources to use for populating the db selection field
+     * @param   array   $resources      The resources to use for populating the db selection field
      */
     public function setResources(array $resources)
     {
@@ -114,9 +114,9 @@ abstract class BaseBackendForm extends Form
     }
 
     /**
-     * Return content of the resources.ini or previously set resources for displaying in the database selection field
+     * Return content of the resources.ini or previously set resources
      *
-     * @return array
+     * @return  array
      */
     public function getResources()
     {
@@ -130,13 +130,13 @@ abstract class BaseBackendForm extends Form
     /**
      * Add checkbox at the beginning of the form which allows to skip logic connection validation
      */
-    private function addForceCreationCheckbox()
+    protected function addForceCreationCheckbox()
     {
-        $checkbox = new \Zend_Form_Element_Checkbox(
+        $checkbox = new Zend_Form_Element_Checkbox(
             array(
                 'name'      =>  'backend_force_creation',
-                'label'     =>  'Force Changes',
-                'helptext'  =>  'Check this box to enforce changes without connectivity validation',
+                'label'     =>  t('Force Changes'),
+                'helptext'  =>  t('Check this box to enforce changes without connectivity validation'),
                 'order'     =>  0
             )
         );
@@ -150,16 +150,16 @@ abstract class BaseBackendForm extends Form
      * If logic validation fails, the 'backend_force_creation' checkbox is prepended to the form to allow users to
      * skip the logic connection validation.
      *
-     * @param array $data       The form input to validate
+     * @param   array   $data   The form input to validate
      *
-     * @return bool             True when validation succeeded, false if not
+     * @return  bool            Whether validation succeeded or not
      */
     public function isValid($data)
     {
         if (!parent::isValid($data)) {
             return false;
         }
-        if ($this->getRequest()->getPost('backend_force_creation')) {
+        if (isset($data['backend_force_creation']) && $data['backend_force_creation']) {
             return true;
         }
         if (!$this->isValidAuthenticationBackend()) {
@@ -173,7 +173,7 @@ abstract class BaseBackendForm extends Form
      * Return an array containing all sections defined by this form as the key and all settings
      * as an key-value sub-array
      *
-     * @return array
+     * @return  array
      */
     abstract public function getConfig();
 
@@ -183,7 +183,7 @@ abstract class BaseBackendForm extends Form
      * An implementation should not throw any exception, but use the add/setErrorMessages method of
      * Zend_Form. If the 'backend_force_creation' checkbox is set, this method won't be called.
      *
-     * @return bool         True when validation succeeded, otherwise false
+     * @return  bool    Whether validation succeeded or not
      */
     abstract public function isValidAuthenticationBackend();
 }

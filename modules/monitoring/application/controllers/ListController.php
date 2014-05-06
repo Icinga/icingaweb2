@@ -74,7 +74,7 @@ class Monitoring_ListController extends Controller
     public function init()
     {
         $this->backend = Backend::createBackend($this->_getParam('backend'));
-        $this->view->grapher = Hook::get('grapher');
+        $this->view->grapher = Hook::first('grapher');
         $this->createTabs();
         $this->view->activeRowHref = $this->getParam('detail');
 		$this->view->compact = ($this->_request->getParam('view') === 'compact');
@@ -113,6 +113,7 @@ class Monitoring_ListController extends Controller
         ))->activate('hosts');
 
         $this->setAutorefreshInterval(10);
+        $this->view->query = $this->_request->getQuery();
         $this->view->title = 'Host Status';
         $this->compactView = 'hosts-compact';
         $dataview = HostStatusView::fromRequest(
@@ -176,6 +177,7 @@ class Monitoring_ListController extends Controller
             }
         }
         $this->view->title = 'Service Status';
+        $this->view->query = $this->_request->getQuery();
         $this->setAutorefreshInterval(10);
         $query = $this->fetchServices();
         $this->applyRestrictions($query);

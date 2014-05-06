@@ -1,4 +1,5 @@
 <?php
+// @codeCoverageIgnoreStart
 
 namespace Icinga\Web;
 
@@ -19,6 +20,7 @@ class StyleSheet
         'css/icinga/widgets.less',
         'css/icinga/pagination.less',
         'css/icinga/monitoring-colors.less',
+        'css/icinga/selection-toolbar.less',
         'css/icinga/login.less',
     );
 
@@ -66,3 +68,4 @@ class StyleSheet
 
     }
 }
+// @codeCoverageIgnoreEnd

@@ -1,4 +1,5 @@
 <?php
+// @codeCoverageIgnoreStart
 
 namespace Icinga\Clicommands;
 
@@ -40,3 +41,4 @@ class HelpCommand extends Command
         );
     }
 }
+// @codeCoverageIgnoreEnd

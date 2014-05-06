@@ -30,6 +30,7 @@
 namespace Icinga\Protocol\Commandpipe\Transport;
 
 use Icinga\Logger\Logger;
+use Icinga\Exception\ConfigurationError;
 
 /**
  * CommandPipe Transport class that writes to a file accessible by the filesystem
@@ -66,7 +67,7 @@ class LocalPipe implements Transport
         Logger::debug('Attempting to send external icinga command %s to local command file ', $message, $this->path);
         $file = @fopen($this->path, $this->openMode);
         if (!$file) {
-            throw new \RuntimeException('Could not open icinga pipe at $file : ' . print_r(error_get_last(), true));
+            throw new ConfigurationError(sprintf('Could not open icinga command pipe at "%s"', $this->path));
         }
         fwrite($file, '[' . time() . '] ' . $message . PHP_EOL);
         Logger::debug('Writing [' . time() . '] ' . $message . PHP_EOL);

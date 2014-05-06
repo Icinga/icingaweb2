@@ -90,7 +90,7 @@ class ConfigurationTabBuilder
     {
         /** @var ConfigurationTab $configTab */
         $configTab = null;
-        foreach (Hook::get(self::HOOK_NAMESPACE) as $configTab) {
+        foreach (Hook::all(self::HOOK_NAMESPACE) as $configTab) {
             if (!$configTab instanceof ConfigurationTabInterface) {
                 throw new ProgrammingError('tab not instance of ConfigTabInterface');
             }

@@ -59,12 +59,14 @@ class Icinga
     /**
      * Setter for an application environment
      *
-     * @param ApplicationBootstrap $app
+     * @param   ApplicationBootstrap    $app
+     * @param   bool                    $overwrite
+     *
      * @throws ProgrammingError
      */
-    public static function setApp(ApplicationBootstrap $app)
+    public static function setApp(ApplicationBootstrap $app, $overwrite = false)
     {
-        if (self::$app !== null) {
+        if (self::$app !== null && !$overwrite) {
             throw new ProgrammingError('Cannot start Icinga twice');
         }
 

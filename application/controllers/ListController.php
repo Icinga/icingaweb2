@@ -1,5 +1,5 @@
 <?php
-// @codingStandardsIgnoreStart
+// @codeCoverageIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga Web 2.
@@ -66,7 +66,7 @@ class ListController extends Controller
         $config_ini = IcingaConfig::app()->toArray();
         if (!in_array('logging', $config_ini) || (
                 in_array('type', $config_ini['logging']) &&
-                    $config_ini['logging']['type'] === 'stream' &&
+                    $config_ini['logging']['type'] === 'file' &&
                 in_array('target', $config_ini['logging']) &&
                     file_exists($config_ini['logging']['target'])
             )
@@ -79,4 +79,4 @@ class ListController extends Controller
         }
     }
 }
-// @codingStandardsIgnoreEnd
+// @codeCoverageIgnoreEnd

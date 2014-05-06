@@ -29,48 +29,45 @@
 
 namespace Icinga\Test;
 
-use \Zend_Db_Adapter_Pdo_Abstract;
-use \Zend_Db_Adapter_Pdo_Mysql;
-use \Zend_Db_Adapter_Pdo_Pgsql;
-use \Zend_Db_Adapter_Pdo_Oci;
+use Icinga\Data\Db\Connection;
 
 interface DbTest
 {
     /**
      * PHPUnit provider for mysql
      *
-     * @return Zend_Db_Adapter_Pdo_Mysql
+     * @return Connection
      */
     public function mysqlDb();
 
     /**
      * PHPUnit provider for pgsql
      *
-     * @return Zend_Db_Adapter_Pdo_Pgsql
+     * @return Connection
      */
     public function pgsqlDb();
 
     /**
      * PHPUnit provider for oracle
      *
-     * @return Zend_Db_Adapter_Pdo_Oci
+     * @return Connection
      */
     public function oracleDb();
 
     /**
      * Executes sql file on PDO object
      *
-     * @param   Zend_Db_Adapter_PDO_Abstract    $resource
-     * @param   string                          $filename
+     * @param   Connection      $resource
+     * @param   string          $filename
      *
      * @return  boolean Operational success flag
      */
-    public function loadSql(Zend_Db_Adapter_PDO_Abstract $resource, $filename);
+    public function loadSql(Connection $resource, $filename);
 
     /**
      * Setup provider for testcase
      *
-     * @param   string|Zend_Db_Adapter_PDO_Abstract|null $resource
+     * @param   string|Connection|null $resource
      */
     public function setupDbProvider($resource);
 }

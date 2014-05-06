@@ -637,33 +637,30 @@ file { '/etc/icingaweb':
 }
 
 file { '/etc/icingaweb/authentication.ini':
-  replace   => 'no',
-  source    => 'puppet:////vagrant/config/authentication.ini',
+  source    => 'puppet:////vagrant/.vagrant-puppet/files/etc/icingaweb/authentication.ini',
   owner     => 'apache',
   group     => 'apache',
   require   => File['/etc/icingaweb']
 }
 
 file { '/etc/icingaweb/config.ini':
-  replace   => 'no',
-  source    => 'puppet:////vagrant/config/config.ini',
+  ensure    => file,
   owner     => 'apache',
   group     => 'apache',
-  require   => File['/etc/icingaweb']
 }
 
 file { '/etc/icingaweb/menu.ini':
-  replace   => 'no',
-  source    => 'puppet:////vagrant/config/menu.ini',
+  source    => 'puppet:////vagrant/.vagrant-puppet/files/etc/icingaweb/menu.ini',
   owner     => 'apache',
   group     => 'apache',
+  # replace   => false,
 }
 
 file { '/etc/icingaweb/resources.ini':
-  replace   => 'no',
-  source    => 'puppet:////vagrant/config/resources.ini',
+  source    => 'puppet:////vagrant/.vagrant-puppet/files/etc/icingaweb/resources.ini',
   owner     => 'apache',
   group     => 'apache',
+  replace   => false
 }
 
 file { ['/etc/icingaweb/enabledModules', '/etc/icingaweb/modules', '/etc/icingaweb/modules/monitoring']:
@@ -672,30 +669,20 @@ file { ['/etc/icingaweb/enabledModules', '/etc/icingaweb/modules', '/etc/icingaw
   group     => 'apache',
 }
 
-file { '/etc/icingaweb/enabledModules/monitoring':
-  ensure    => 'link',
-  target    => '/vagrant/modules/monitoring',
-  owner     => 'apache',
-  group     => 'apache',
-}
-
 file { '/etc/icingaweb/modules/monitoring/backends.ini':
-   replace   => 'no',
-   source    => 'puppet:////vagrant/config/modules/monitoring/backends.ini',
+   source    => 'puppet:////vagrant/.vagrant-puppet/files/etc/icingaweb/modules/monitoring/backends.ini',
    owner     => 'apache',
    group     => 'apache',
 }
 
 file { '/etc/icingaweb/modules/monitoring/instances.ini':
-  replace   => 'no',
-  source    => 'puppet:////vagrant/config/modules/monitoring/instances.ini',
+  source    => 'puppet:////vagrant/.vagrant-puppet/files/etc/icingaweb/modules/monitoring/instances.ini',
   owner     => 'apache',
   group     => 'apache',
 }
 
 file { '/etc/icingaweb/modules/monitoring/menu.ini':
-  replace   => 'no',
-  source    => 'puppet:////vagrant/config/modules/monitoring/menu.ini',
+  source    => 'puppet:////vagrant/.vagrant-puppet/files/etc/icingaweb/modules/monitoring/menu.ini',
   owner     => 'apache',
   group     => 'apache',
 }
@@ -707,8 +694,11 @@ file { '/etc/icingaweb/dashboard':
 }
 
 file { '/etc/icingaweb/dashboard/dashboard.ini':
-   replace   => 'no',
-   source    => 'puppet:////vagrant/config/dashboard/dashboard.ini',
+   source    => 'puppet:////vagrant/.vagrant-puppet/files/etc/icingaweb/dashboard/dashboard.ini',
    owner     => 'apache',
    group     => 'apache',
+}
+
+pear::package { 'deepend/Mockery':
+  channel => 'pear.survivethedeepend.com'
 }

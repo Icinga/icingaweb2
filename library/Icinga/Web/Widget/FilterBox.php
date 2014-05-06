@@ -1,4 +1,5 @@
 <?php
+// @codeCoverageIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga Web 2.
@@ -110,10 +111,10 @@ EOT;
         $query = $form->getElement('query')->setDecorators(array('ViewHelper'));
 
         $badges = new FilterBadgeRenderer($this->initialFilter);
-        $form->setIgnoreChangeDiscarding(true);
         return '<div class="pull-right">' . $badges->render($view) . '</div>' . $form;
         $html = str_replace('{{FORM}}', $form->render($view), self::$TPL);
         $html = '<div class="input-append">' . $html . '</div>';
         return str_replace('{{BADGES}}', $badges->render($view), $html);
     }
 }
+// @codeCoverageIgnoreEnd

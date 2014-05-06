@@ -29,8 +29,11 @@
 
 namespace Icinga\Web;
 
-use Zend_View_Stream as ZfViewStream;
+use Zend_View_Stream;
 
-class ViewStream extends ZfViewStream
+/**
+ * Is used in Icinga\Web\View to imitate PHP's short_open_tag
+ */
+class ViewStream extends Zend_View_Stream
 {
 }

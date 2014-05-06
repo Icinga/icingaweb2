@@ -1,8 +1,9 @@
 <?php
+// @codeCoverageIgnoreStart
 
 namespace Icinga\User;
 
-use \Zend_Log;
+use Zend_Log;
 
 /**
  * Class Message
@@ -55,3 +56,4 @@ class Message
         return $this->level;
     }
 }
+// @codeCoverageIgnoreEnd
