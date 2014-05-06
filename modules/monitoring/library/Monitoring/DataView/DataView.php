@@ -30,17 +30,16 @@
 namespace Icinga\Module\Monitoring\DataView;
 
 use Icinga\Data\BaseQuery;
+use Icinga\Data\Browsable;
 use Icinga\Data\PivotTable;
 use Icinga\Filter\Filterable;
-use Icinga\Filter\Query\Tree;
-use Icinga\Module\Monitoring\Backend;
 use Icinga\Module\Monitoring\Filter\UrlViewFilter;
 use Icinga\Web\Request;
 
 /**
  * A read-only view of an underlying Query
  */
-abstract class DataView implements Filterable
+abstract class DataView implements Browsable, Filterable
 {
     /**
      * Sort in ascending order, default
@@ -50,6 +49,7 @@ abstract class DataView implements Filterable
      * Sort in reverse order
      */
     const SORT_DESC = BaseQuery::SORT_DESC;
+
     /**
      * The query used to populate the view
      *
@@ -60,12 +60,13 @@ abstract class DataView implements Filterable
     /**
      * Create a new view
      *
-     * @param Backend $ds         Which backend to query
-     * @param array $columns    Select columns
+     * @param BaseQuery $query      Which backend to query
+     * @param array     $columns    Select columns
      */
-    public function __construct(Backend $ds, array $columns = null)
+    public function __construct(BaseQuery $query, array $columns = null)
     {
-        $this->query = $ds->select()->from(static::getQueryName(), $columns === null ? $this->getColumns() : $columns);
+        $this->query = $query;
+        $this->query->columns($columns === null ? $this->getColumns() : $columns);
     }
 
     /**
@@ -99,7 +100,6 @@ abstract class DataView implements Filterable
      */
     public static function fromRequest($request, array $columns = null)
     {
-
         $view = new static(Backend::createBackend($request->getParam('backend')), $columns);
         $parser = new UrlViewFilter($view);
         $view->getQuery()->setFilter($parser->fromRequest($request));
@@ -266,5 +266,18 @@ abstract class DataView implements Filterable
     {
         $this->query->addFilter($filter);
         return $this;
+    }
+
+    /**
+     * Paginate data
+     *
+     * @param   int $itemsPerPage   Number of items per page
+     * @param   int $pageNumber     Current page number
+     *
+     * @return  Zend_Paginator
+     */
+    public function paginate($itemsPerPage = null, $pageNumber = null)
+    {
+        return $this->query->paginate($itemsPerPage, $pageNumber);
     }
 }
