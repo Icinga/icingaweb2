@@ -74,7 +74,6 @@ class Monitoring_ListController extends Controller
     public function init()
     {
         $this->backend = Backend::createBackend($this->_getParam('backend'));
-        $this->view->grapher = Hook::first('grapher');
         $this->createTabs();
         $this->view->activeRowHref = $this->getParam('detail');
 		$this->view->compact = ($this->_request->getParam('view') === 'compact');
