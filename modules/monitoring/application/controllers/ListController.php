@@ -140,7 +140,7 @@ class Monitoring_ListController extends Controller
                 'host_current_check_attempt',
                 'host_max_check_attempts'
             )
-        );
+        )->order($this->getParam('sort'), $this->getParam('dir'));
         $query = $dataView->getQuery();
         $this->applyRestrictions($dataView);
 
