@@ -105,7 +105,7 @@ abstract class BaseQuery implements QueryInterface, Queryable
      * </code>
      *
      * @param  string   $field
-     * @param  int      $direction
+     * @param  string   $direction
      *
      * @return self
      */

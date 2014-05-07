@@ -26,7 +26,7 @@ interface Sortable
      * </code>
      *
      * @param  string   $field
-     * @param  int      $direction
+     * @param  string   $direction
      *
      * @return self
      */
