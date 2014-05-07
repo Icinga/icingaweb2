@@ -50,12 +50,10 @@ class InlinePie extends AbstractWidget
      * @var string
      */
     private $template =<<<'EOD'
-    <div class="inlinepie">
-    <img
+    <img class="inlinepie"
         title="{title}" src="{url}" style="width: {width}px; height: {height}px; {style}"
         data-icinga-colors="{colors}" data-icinga-values="{data}"
-    ></img>
-    </div>
+    />
 EOD;
 
     /**
@@ -75,14 +73,14 @@ EOD;
      *
      * @var int The value in px
      */
-    private $width = 31;
+    private $width = 28;
 
     /**
      * The height of the rendered chart
      *
      * @var int The value in px
      */
-    private $height = 31;
+    private $height = 28;
 
     /**
      * The title of the chart

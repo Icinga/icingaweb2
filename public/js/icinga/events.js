@@ -68,28 +68,12 @@
 
             $('input.autofocus', el).focus();
 
-            $('div.inlinepie', el).each(function() {
-                var $img   = $(this).find('img');
-                var title  = $img.attr('title'),
-                    values = $img.data('icinga-values'),
-                    colors = $img.data('icinga-colors'),
-                    width  = $img.css('width'),
-                    height = $img.css('height');
-                if (colors) {
-                    colors = colors.split(',');
-                }
-                $img.replaceWith(values);
-                $(this).sparkline(
-                    'html',
-                    {
-                        type:   'pie',
-                        sliceColors: colors || ['#44bb77', '#ffaa44', '#ff5566', '#dcd'],
-                        width:  width,
-                        height: height,
-                        tooltipChartTitle: title
-                    }
-                );
+            $('img.inlinepie', el).each(function() {
+                icinga.ui.initializeSparklines($(this));
             });
+
+            // replace all sparklines
+            $('span.sparkline', el).sparkline('html', { enableTagOptions: true });
         },
 
         /**

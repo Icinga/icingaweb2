@@ -54,8 +54,7 @@ foreach ($services as $service):
       </td>
 
       <td>
-
-        <?= $this->perfdata($service->service_perfdata, true) ?>
+        <?= $this->perfdata($service->service_perfdata, true, true) ?>
 
         <?php if (!$service->service_handled && $service->service_state > 0): ?>
         <?= $this->icon('unhandled.png', 'Unhandled') ?>

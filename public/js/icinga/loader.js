@@ -392,10 +392,13 @@
             }
             this.icinga.ui.initializeTriStates($resp);
 
-            /**
-             * Make multiselection-tables not selectable.
-             */
+            // Make multiselection-tables not selectable.
             this.icinga.ui.prepareMultiselectTables($resp);
+
+            // Replace images with sparklines.
+            $resp.find('img.inlinepie').each(function(){
+                self.icinga.ui.initializeSparklines($(this));
+            });
 
             /* Should we try to fiddle with responses containing full HTML? */
             /*
@@ -442,7 +445,7 @@
                     if (!focusedUrl) {
                         $container = $('document').first();
                     } else {
-                        $container = $('.container[data-icinga-url="' + focusedUrl + '"]');;
+                        $container = $('.container[data-icinga-url="' + focusedUrl + '"]');
                     }
 
                     var $table = $container.find('table.action').first();
