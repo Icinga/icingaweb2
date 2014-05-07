@@ -29,7 +29,7 @@
 
 namespace Icinga\Data\Db;
 
-use Icinga\Data\BaseQuery;
+use Icinga\Data\SimpleQuery;
 use Icinga\Filter\Query\Tree;
 use Icinga\Filter\Query\Node;
 
@@ -41,7 +41,7 @@ class TreeToSqlParser
     /**
      * The query class to use as the base for converting
      *
-     * @var BaseQuery
+     * @var SimpleQuery
      */
     private $query;
 
@@ -54,9 +54,9 @@ class TreeToSqlParser
     /**
      * Create a new converter from this query
      *
-     * @param   BaseQuery   $query      The query to use for conversion
+     * @param   SimpleQuery   $query      The query to use for conversion
      */
-    public function __construct(BaseQuery $query)
+    public function __construct(SimpleQuery $query)
     {
         $this->query = $query;
     }

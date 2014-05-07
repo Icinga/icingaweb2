@@ -6,7 +6,7 @@ use Zend_Controller_Front;
 use Zend_Paginator;
 use Icinga\Web\Paginator\Adapter\QueryAdapter;
 
-abstract class BaseQuery implements QueryInterface, Queryable
+abstract class SimpleQuery implements QueryInterface, Queryable
 {
     /**
      * Query data source

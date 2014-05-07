@@ -4,7 +4,7 @@
 
 namespace Icinga\Protocol\File;
 
-use Icinga\Data\BaseQuery;
+use Icinga\Data\SimpleQuery;
 
 /**
  * Class Query
@@ -13,7 +13,7 @@ use Icinga\Data\BaseQuery;
  *
  * @package Icinga\Protocol\File
  */
-class Query extends BaseQuery
+class Query extends SimpleQuery
 {
     /**
      * Sort direction

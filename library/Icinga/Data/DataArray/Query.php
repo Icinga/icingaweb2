@@ -2,9 +2,9 @@
 
 namespace Icinga\Data\DataArray;
 
-use Icinga\Data\BaseQuery;
+use Icinga\Data\SimpleQuery;
 
-class Query extends BaseQuery
+class Query extends SimpleQuery
 {
     /**
      * Remember the last count

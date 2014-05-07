@@ -30,13 +30,13 @@
 namespace Icinga\Data\Db;
 
 use Zend_Db_Select;
-use Icinga\Data\BaseQuery;
+use Icinga\Data\SimpleQuery;
 use Icinga\Application\Benchmark;
 
 /**
  * Database query class
  */
-class Query extends BaseQuery
+class Query extends SimpleQuery
 {
     /**
      * @var Zend_Db_Adapter_Abstract

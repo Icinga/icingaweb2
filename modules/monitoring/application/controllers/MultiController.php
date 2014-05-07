@@ -31,7 +31,7 @@ use \Icinga\Web\Form;
 use \Icinga\Web\Controller\ActionController;
 use \Icinga\Web\Widget\Tabextension\OutputFormat;
 use \Icinga\Module\Monitoring\Backend;
-use \Icinga\Data\BaseQuery;
+use \Icinga\Data\SimpleQuery;
 use \Icinga\Web\Widget\Chart\InlinePie;
 use \Icinga\Module\Monitoring\Form\Command\MultiCommandFlagForm;
 use \Icinga\Module\Monitoring\DataView\HostStatus    as HostStatusView;
@@ -183,16 +183,16 @@ class Monitoring_MultiController extends ActionController
     /**
      * Apply the query-filter received
      *
-     * @param $backendQuery  BaseQuery  The query to apply the filter to
+     * @param $backendQuery  SimpleQuery  The query to apply the filter to
      * @param $filter        array      Containing the queries of the current request, converted into an
      *                                      array-structure.
-     * @param $hostColumn    string     The name of the host-column in the BaseQuery, defaults to 'host_name'
-     * @param $serviceColumn string     The name of the service-column in the BaseQuery, defaults to 'service-description'
+     * @param $hostColumn    string     The name of the host-column in the SimpleQuery, defaults to 'host_name'
+     * @param $serviceColumn string     The name of the service-column in the SimpleQuery, defaults to 'service-description'
      *
-     * @return BaseQuery    The given BaseQuery
+     * @return SimpleQuery    The given SimpleQuery
      */
     private function applyQueryFilter(
-        BaseQuery $backendQuery,
+        SimpleQuery $backendQuery,
         array $filter,
         $hostColumn = 'host_name',
         $serviceColumn = 'service_description'

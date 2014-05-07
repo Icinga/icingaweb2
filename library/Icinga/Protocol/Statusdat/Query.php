@@ -31,14 +31,14 @@ namespace Icinga\Protocol\Statusdat;
 
 use Exception;
 use Icinga\Exception\ProgrammingError;
-use Icinga\Data\BaseQuery;
+use Icinga\Data\SimpleQuery;
 use Icinga\Protocol\Statusdat\View\MonitoringObjectList;
 use Icinga\Protocol\Statusdat\Query\IQueryPart;
 
 /**
  * Base implementation for Statusdat queries.
  */
-class Query extends BaseQuery
+class Query extends SimpleQuery
 {
     /**
      * An array denoting valid targets by mapping the query target to

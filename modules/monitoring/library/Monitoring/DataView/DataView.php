@@ -29,7 +29,7 @@
 
 namespace Icinga\Module\Monitoring\DataView;
 
-use Icinga\Data\BaseQuery;
+use Icinga\Data\SimpleQuery;
 use Icinga\Data\Browsable;
 use Icinga\Data\PivotTable;
 use Icinga\Data\Sortable;
@@ -45,17 +45,17 @@ abstract class DataView implements Browsable, Filterable, Sortable
     /**
      * The query used to populate the view
      *
-     * @var BaseQuery
+     * @var SimpleQuery
      */
     private $query;
 
     /**
      * Create a new view
      *
-     * @param BaseQuery $query      Which backend to query
+     * @param SimpleQuery $query      Which backend to query
      * @param array     $columns    Select columns
      */
-    public function __construct(BaseQuery $query, array $columns = null)
+    public function __construct(SimpleQuery $query, array $columns = null)
     {
         $this->query = $query;
         $this->query->columns($columns === null ? $this->getColumns() : $columns);

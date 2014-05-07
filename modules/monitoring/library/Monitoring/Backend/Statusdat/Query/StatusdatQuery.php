@@ -36,7 +36,7 @@ use Icinga\Filter\Query\Node;
 use Icinga\Filter\Query\Tree;
 use Icinga\Protocol\Statusdat;
 use Icinga\Exception;
-use Icinga\Data\BaseQuery;
+use Icinga\Data\SimpleQuery;
 use Icinga\Protocol\Statusdat\Query as Query;
 use Icinga\Protocol\Statusdat\View\AccessorStrategy;
 use Icinga\Filter\Filterable;

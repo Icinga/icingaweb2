@@ -2,9 +2,9 @@
 
 namespace \Icinga\Module\Monitoring\Backend\Livestatus\Query;
 
-use Icinga\Data\BaseQuery;
+use Icinga\Data\SimpleQuery;
 
-class StatusQuery extends BaseQuery implements Filterable
+class StatusQuery extends SimpleQuery implements Filterable
 {
     protected $available_columns = array(
         'host_name',
