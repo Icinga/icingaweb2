@@ -9,7 +9,7 @@ use Icinga\Module\Monitoring\Plugin\PerfdataSet;
 
 class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
 {
-    public function perfdata($perfdataStr, $compact = false)
+    public function perfdata($perfdataStr, $compact = false, $float = false)
     {
         $result = '';
         $table = array();
@@ -24,16 +24,19 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
                 $pieChart->setTitle(
                     htmlspecialchars($label) . ': ' . htmlspecialchars($this->formatPerfdataValue($perfdata))
                 );
-                $pieChart->setStyle('float: right;');
-                $result .= $pieChart->render();
+                if (!$float) {
+                    $result .= $pieChart->render();
+                } else {
+                    $result .= '<div style="float: right;">' . $pieChart->render() . '</div>';
+                }
             } else {
                 $pieChart->setTitle(htmlspecialchars($label));
-                $pieChart->setStyle('float: left; margin: 0.2em 0.5em 0.2em 0;');
+                $pieChart->setStyle('float: left; margin: 0.2em 0.5em 0.2em 0.5em;');
                 $table[] = '<tr><th>' . $pieChart->render()
                     . htmlspecialchars($label)
-                    . '</th><td>'
+                    . '</th><td> '
                     . htmlspecialchars($this->formatPerfdataValue($perfdata)) .
-                    '</td></tr>';
+                    ' </td></tr>';
             }
         }
 
