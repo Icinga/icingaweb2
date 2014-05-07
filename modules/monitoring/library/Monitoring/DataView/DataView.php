@@ -32,24 +32,16 @@ namespace Icinga\Module\Monitoring\DataView;
 use Icinga\Data\BaseQuery;
 use Icinga\Data\Browsable;
 use Icinga\Data\PivotTable;
+use Icinga\Data\Sortable;
 use Icinga\Filter\Filterable;
 use Icinga\Module\Monitoring\Filter\UrlViewFilter;
 use Icinga\Web\Request;
 
 /**
- * A read-only view of an underlying Query
+ * A read-only view of an underlying query
  */
-abstract class DataView implements Browsable, Filterable
+abstract class DataView implements Browsable, Filterable, Sortable
 {
-    /**
-     * Sort in ascending order, default
-     */
-    const SORT_ASC = BaseQuery::SORT_ASC;
-    /**
-     * Sort in reverse order
-     */
-    const SORT_DESC = BaseQuery::SORT_DESC;
-
     /**
      * The query used to populate the view
      *
@@ -97,6 +89,7 @@ abstract class DataView implements Browsable, Filterable
      * @param   array $columns
      *
      * @return  static
+     * @deprecated Use $backend->select()->from($viewName) instead
      */
     public static function fromRequest($request, array $columns = null)
     {
@@ -186,11 +179,13 @@ abstract class DataView implements Browsable, Filterable
     /**
      * Sort the rows, according to the specified sort column and order
      *
-     * @param   string $column   Sort column
-     * @param   int $order    Sort order, one of the SORT_ constants
+     * @param   string  $column Sort column
+     * @param   int     $order  Sort order, one of the SORT_ constants
      *
+     * @return  self
      * @see     DataView::SORT_ASC
      * @see     DataView::SORT_DESC
+     * @deprecated Use DataView::order() instead
      */
     public function sort($column = null, $order = null)
     {
@@ -233,6 +228,39 @@ abstract class DataView implements Browsable, Filterable
     public function getSortRules()
     {
         return null;
+    }
+
+    /**
+     * Sort result set either by the given column (and direction) or the sort defaults
+     *
+     * @param  string   $column
+     * @param  string   $direction
+     *
+     * @return self
+     */
+    public function order($column = null, $direction = null)
+    {
+        return $this->sort($column, $direction !== null ? strtoupper($direction) : null);
+    }
+
+    /**
+     * Whether an order is set
+     *
+     * @return bool
+     */
+    public function hasOrder()
+    {
+        return $this->query->hasOrder();
+    }
+
+    /**
+     * Get the order if any
+     *
+     * @return array|null
+     */
+    public function getOrder()
+    {
+        return $this->query->getOrder();
     }
 
     public function getMappedField($field)
