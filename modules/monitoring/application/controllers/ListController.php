@@ -114,8 +114,8 @@ class Monitoring_ListController extends Controller
         $this->view->query = $this->_request->getQuery();
         $this->view->title = 'Host Status';
         $this->compactView = 'hosts-compact';
-        $dataview = HostStatusView::fromRequest(
-            $this->_request,
+        $dataView = $this->backend->select()->from(
+            'hostStatus',
             array(
                 'host_icon_image',
                 'host_name',
@@ -141,10 +141,10 @@ class Monitoring_ListController extends Controller
                 'host_max_check_attempts'
             )
         );
-        $query = $dataview->getQuery();
-        $this->applyRestrictions($query);
+        $query = $dataView->getQuery();
+        $this->applyRestrictions($dataView);
 
-        $this->setupFilterControl($dataview, 'host');
+        $this->setupFilterControl($dataView, 'host');
 
         $this->setupSortControl(array(
             'host_last_check'   => 'Last Host Check',
@@ -155,7 +155,7 @@ class Monitoring_ListController extends Controller
             'host_state'        => 'Hard State'
         ));
         $this->handleFormatRequest($query);
-        $this->view->hosts = $query->paginate();
+        $this->view->hosts = $dataView->paginate();
 
     }
 
@@ -499,24 +499,18 @@ class Monitoring_ListController extends Controller
     }
 
     /**
-     * Apply current users monitoring/filter restrictions to the given query
+     * Apply current user's `monitoring/filter' restrictions on the given data view
      *
-     * @param $query  Filterable  Query that should be filtered
-     * @return Filterable
+     * @param   DataView $dataView
+     *
+     * @return  DataView
      */
-    protected function applyRestrictions(Filterable $query)
+    protected function applyRestrictions(DataView $dataView)
     {
         foreach ($this->getRestrictions('monitoring/filter') as $restriction) {
-            parse_str($restriction, $filter);
-            foreach ($filter as $k => $v) {
-                if ($query->isValidFilterTarget($k)) {
-                    // TODO: This is NOT enough. We need to fix filters and get
-                    // applyAuthFilters back.
-                    $query->where($k, $v);
-                }
-            }
+            // TODO(el): Apply restrictions
         }
-        return $query;
+        return $dataView;
     }
 
     /**
