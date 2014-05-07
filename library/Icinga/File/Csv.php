@@ -4,18 +4,15 @@
 
 namespace Icinga\File;
 
-use Icinga\Data\BaseQuery;
+use Icinga\Data\Fetchable;
 
 class Csv
 {
     protected $query;
 
-    protected function __construct()
-    {
+    protected function __construct() {}
 
-    }
-
-    public static function fromQuery(BaseQuery $query)
+    public static function fromQuery(Fetchable $query)
     {
         $csv = new Csv();
         $csv->query = $query;
