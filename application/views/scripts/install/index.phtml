@@ -1,0 +1,34 @@
+<div class="wizard">
+    <div class="header">
+        <img src="<?= $this->baseUrl('img/logo_icinga-inv.png'); ?>">
+        <h1><?= $wizard->getTitle(); ?></h1>
+    </div>
+    <div class="sidebar">
+        <ul>
+<?php foreach ($wizard->getPages() as $page): ?>
+            <li class="<?= $wizard->isActivePage($page) ? 'active' : (
+                $wizard->isCompletedPage($page) ? 'complete' : 'pending'
+            ); ?>">
+                <?= $page->getTitle(); ?>
+                <ul>
+<?php foreach ($page->getChildPages() as $child): ?>
+                    <li class="child<?= $page->isActiveChild($child) ? ' active' : ''; ?>">
+                        <?= $child->getTitle(); ?>
+                    </li>
+<?php endforeach ?>
+                </ul>
+            </li>
+<?php endforeach ?>
+            <li class="install<?= $wizard->isFinished() ? ' active' : ''; ?>">
+                <?= $this->translate('Installation'); ?>
+            </li>
+        </ul>
+    </div>
+    <div class="panel">
+<?php if ($wizard->isFinished()): ?>
+        <?= $this->partial('install/index/installog.phtml', array('installer' => $installer)); ?>
+<?php else: ?>
+        <?= $wizard->getActivePage(); ?>
+<?php endif ?>
+    </div>
+</div>
