@@ -401,7 +401,7 @@ file { '/etc/icinga2/conf.d/test-config.conf':
   source  => 'puppet:////vagrant/.vagrant-puppet/files/etc/icinga2/conf.d/test-config.conf',
   owner   => 'icinga',
   group   => 'icinga',
-  require => Exec['install icinga2']
+  require => [ Exec['install icinga2'], Exec['create_monitoring_test_config'] ]
 }
 
 file { '/etc/icinga2/conf.d/commands.conf':
@@ -420,7 +420,6 @@ service { 'icinga2':
     File['/etc/icinga2/conf.d/commands.conf']
   ]
 }
-
 
 exec { 'populate-icinga2-mysql-db':
   unless  => 'mysql -uicinga2 -picinga2 icinga2 -e "SELECT * FROM icinga_dbversion;" &> /dev/null',
