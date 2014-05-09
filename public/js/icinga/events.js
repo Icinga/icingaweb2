@@ -95,10 +95,10 @@
 
             // We want to catch each link click
             $(document).on('click', 'a', { self: this }, this.linkClicked);
+            $(document).on('click', 'tr[href]', { self: this }, this.linkClicked);
 
             // Select a table row
-            $(document).on('click', 'table.action tr[href]', { self: this }, this.rowSelected);
-            $(document).on('click', 'table.action tr a', { self: this }, this.rowSelected);
+            $(document).on('click', 'table.multiselect tr[href]', { self: this }, this.rowSelected);
 
             $(document).on('click', 'button', { self: this }, this.submitForm);
 
@@ -114,6 +114,7 @@
             $(document).on('mouseleave', '.historycolorgrid td', this.historycolorgidUnhover);
             $(document).on('mouseenter', 'li.dropdown', this.dropdownHover);
             $(document).on('mouseleave', 'li.dropdown', this.dropdownLeave);
+
             $(document).on('mouseenter', '#menu > ul > li', this.menuTitleHovered);
             $(document).on('mouseleave', '#sidebar', this.leaveSidebar);
             $(document).on('click', '.tree .handle', { self: this }, this.treeNodeToggle);
@@ -189,7 +190,7 @@
         dropdownLeave: function () {
             var $li = $(this);
             setTimeout(function () {
-                if (! $li.is('li:hover')) {
+                if (! $li.is('li:hover') && ! $li.find(':focus')) {
                     $li.removeClass('hover');
                 }
             }, 300);
@@ -418,17 +419,21 @@
             var $target;
             var isMenuLink = $a.closest('#menu').length > 0;
             var formerUrl;
+            var remote = /^(?:[a-z]+:)\/\//;
 
-            // TODO: Let remote links pass through. Right now they only work
-            //       combined with target="_blank" or target="_self"
+            // Let remote links pass through
+            if  (href.match(remote)) {
+                return true;
+            }
+
             // window.open is used as return true; didn't work reliable
             if (linkTarget === '_blank' || linkTarget === '_self') {
                 window.open(href, linkTarget);
                 return false;
             }
 
-            // ignore links inside of tables.
-            if ($a.closest('table tr').length > 0) {
+            // ignore multiselect table row clicks
+            if ($a.is('tr') && $a.closest('table.multiselect').length > 0) {
                 return;
             }
 
@@ -449,6 +454,11 @@
                     }
                 }
                 if (href === '#') {
+                    // Allow to access dropdown menu by keyboard
+                    if ($a.hasClass('dropdown-toggle')) {
+                        $a.closest('li').toggleClass('hover');
+                    }
+                    // Ignore link, no action
                     return false;
                 }
 

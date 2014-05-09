@@ -325,7 +325,7 @@
             }
 
             var title = req.getResponseHeader('X-Icinga-Title');
-            if (title && req.$target.closest('.dashboard').length === 0) {
+            if (title && ! req.autorefresh && req.$target.closest('.dashboard').length === 0) {
                 this.icinga.ui.setTitle(title);
             }
 
@@ -500,7 +500,11 @@
                     this.icinga.ui.fixControls();
                 }
             } else if (req.status > 0) {
-                this.icinga.logger.error(req.status, errorThrown, req.responseText.slice(0, 100));
+                this.icinga.logger.error(
+                    req.status,
+                    errorThrown + ':',
+                    $(req.responseText).text().slice(0, 100)
+                );
                 this.renderContentToContainer(
                     req.responseText,
                     req.$target,
