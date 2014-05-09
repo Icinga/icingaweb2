@@ -418,11 +418,10 @@
             var $target;
             var isMenuLink = $a.closest('#menu').length > 0;
             var formerUrl;
+            var remote = /^(?:[a-z]+:)\/\//;
 
-            // TODO: Let remote links pass through. Right now they only work
-            //       combined with target="_blank" or target="_self"
             // window.open is used as return true; didn't work reliable
-            if (linkTarget === '_blank' || linkTarget === '_self') {
+            if (linkTarget === '_blank' || linkTarget === '_self' || href.match(remote)) {
                 window.open(href, linkTarget);
                 return false;
             }
