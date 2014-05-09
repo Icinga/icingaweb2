@@ -420,8 +420,13 @@
             var formerUrl;
             var remote = /^(?:[a-z]+:)\/\//;
 
+            // Let remote links pass through
+            if  (href.match(remote)) {
+                return true;
+            }
+
             // window.open is used as return true; didn't work reliable
-            if (linkTarget === '_blank' || linkTarget === '_self' || href.match(remote)) {
+            if (linkTarget === '_blank' || linkTarget === '_self') {
                 window.open(href, linkTarget);
                 return false;
             }
