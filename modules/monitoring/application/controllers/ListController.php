@@ -250,6 +250,7 @@ class Monitoring_ListController extends Controller
     public function notificationsAction()
     {
         $this->addTitleTab('notifications');
+        $this->setAutorefreshInterval(15);
 
         $query = NotificationView::fromRequest($this->_request)->getQuery();
         $this->view->notifications = $query->paginate();
@@ -475,6 +476,7 @@ class Monitoring_ListController extends Controller
     public function servicematrixAction()
     {
         $this->view->title = 'Servicematrix';
+        $this->setAutorefreshInterval(15);
         $this->addTitleTab('servicematrix');
         $dataview = ServiceStatusView::fromRequest(
             $this->getRequest(),
