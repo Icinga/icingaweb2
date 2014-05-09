@@ -114,6 +114,7 @@
             $(document).on('mouseleave', '.historycolorgrid td', this.historycolorgidUnhover);
             $(document).on('mouseenter', 'li.dropdown', this.dropdownHover);
             $(document).on('mouseleave', 'li.dropdown', this.dropdownLeave);
+
             $(document).on('mouseenter', '#menu > ul > li', this.menuTitleHovered);
             $(document).on('mouseleave', '#sidebar', this.leaveSidebar);
             $(document).on('click', '.tree .handle', { self: this }, this.treeNodeToggle);
@@ -189,7 +190,7 @@
         dropdownLeave: function () {
             var $li = $(this);
             setTimeout(function () {
-                if (! $li.is('li:hover')) {
+                if (! $li.is('li:hover') && ! $li.find(':focus')) {
                     $li.removeClass('hover');
                 }
             }, 300);
@@ -453,6 +454,11 @@
                     }
                 }
                 if (href === '#') {
+                    // Allow to access dropdown menu by keyboard
+                    if ($a.hasClass('dropdown-toggle')) {
+                        $a.closest('li').toggleClass('hover');
+                    }
+                    // Ignore link, no action
                     return false;
                 }
 
