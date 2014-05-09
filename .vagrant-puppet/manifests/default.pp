@@ -344,7 +344,7 @@ package { ['cmake', 'boost-devel', 'bison', 'flex']:
 }
 
 yumrepo { 'icinga2-repo':
-  baseurl   => "http://packages.icinga.org/epel/6/release/",
+  baseurl   => "http://packages.icinga.org/epel/6/snapshot/",
   enabled   => '0',
   gpgcheck  => '1',
   gpgkey    => 'http://packages.icinga.org/icinga.key',
