@@ -95,10 +95,10 @@
 
             // We want to catch each link click
             $(document).on('click', 'a', { self: this }, this.linkClicked);
+            $(document).on('click', 'tr[href]', { self: this }, this.linkClicked);
 
             // Select a table row
-            $(document).on('click', 'table.action tr[href]', { self: this }, this.rowSelected);
-            $(document).on('click', 'table.action tr a', { self: this }, this.rowSelected);
+            $(document).on('click', 'table.multiselect tr[href]', { self: this }, this.rowSelected);
 
             $(document).on('click', 'button', { self: this }, this.submitForm);
 
@@ -432,8 +432,8 @@
                 return false;
             }
 
-            // ignore links inside of tables.
-            if ($a.closest('table tr').length > 0) {
+            // ignore multiselect table row clicks
+            if ($a.is('tr') && $a.closest('table.multiselect').length > 0) {
                 return;
             }
 
