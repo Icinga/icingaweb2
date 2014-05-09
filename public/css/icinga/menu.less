@@ -53,6 +53,16 @@
 
 #menu > ul > li.active li.active a {
   color: #121212;
+  text-shadow: 1px 1px 0 #555;
+}
+
+#menu > ul > li.active li a:focus {
+  color: #121212;
+}
+
+#menu > ul > li > a:focus {
+  color: #121212;
+  text-shadow: none;
 }
 
 #menu > ul > li.active li a:hover {
@@ -146,6 +156,10 @@
 
 #menu li.hover > ul a:hover {
   text-decoration: underline;
+}
+
+#menu li.hover > ul a:focus {
+  text-shadow: 1px 1px 0 #ddd;
 }
 
 #menu li.hover > ul > li.active > a {

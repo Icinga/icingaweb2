@@ -30,6 +30,22 @@ ul.tabs li a {
   margin-right: 0.5em;
 }
 
+ul.tabs > li > a {
+  border-radius: 3px 3px 0 0;
+  -moz-border-radius: 3px 3px 0 0;
+  -webkit-border-radius: 3px 3px 0 0;
+}
+
+ul.tabs > li > a:focus {
+  color: #eee;
+  text-shadow: 1px 1px 1px #ddd;
+}
+
+ul.tabs > li.active > a:focus {
+  text-shadow: 1px 1px 2px #555;
+  color: #555;
+}
+
 ul.tabs li.active a, ul.tabs li.dropdown:hover, ul.tabs li.dropdown.hover {
   background-color: white;
   color: #333;
@@ -84,7 +100,11 @@ ul.tabs ul.dropdown-menu li a {
   margin: 0;
 }
 
-ul.tabs ul.dropdown-menu li a:hover {
+ul.tabs ul.dropdown-menu li a:focus {
+  color: #333;
+}
+
+ul.tabs ul.dropdown-menu li a:hover, ul.tabs ul.dropdown-menu li a:focus {
   background-color: #ccc;
   color: #333;
 }
