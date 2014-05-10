@@ -1,7 +1,8 @@
 # Exclude all hidden files
 .*
-# But not .gitignore, .vagrant-puppet, .htaccess and .gitkeep
+# But not .gitignore, .gitattributes, .vagrant-puppet, .htaccess and .gitkeep
 !.gitignore
+!.gitattributes
 !.vagrant-puppet
 !public/.htaccess
 !public/.htaccess.in
