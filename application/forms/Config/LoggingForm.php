@@ -163,6 +163,16 @@ class LoggingForm extends Form
         $this->setSubmitLabel('{{SAVE_ICON}} Save Changes');
     }
 
+    public function isValid($data) {
+        foreach ($this->getElements() as $key => $element) {
+            // Initialize all empty elements with their default values.
+            if (!isset($data[$key])) {
+                $data[$key] = $element->getValue();
+            }
+        }
+        return parent::isValid($data);
+    }
+
     /**
      * Return a Zend_Config object containing the state defined in this form
      *
