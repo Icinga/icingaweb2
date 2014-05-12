@@ -30,7 +30,7 @@
 
 namespace Icinga\Form\Config;
 
-use Zend_Config;
+use \Zend_Config;
 use Icinga\Web\Form;
 use Icinga\Application\Icinga;
 use Icinga\Web\Form\Validator\WritablePathValidator;
@@ -116,7 +116,19 @@ class LoggingForm extends Form
                         'required'  => true,
                         'label'     => t('Application Prefix'),
                         'helptext'  => t('The name of the application by which to prefix syslog messages.'),
-                        'value'     => $loggingConfig->get('application', 'icingaweb')
+                        'value'     => $loggingConfig->get('application', 'icingaweb'),
+                        'validators' => array(
+                            array(
+                                'Regex',
+                                false,
+                                array(
+                                    'pattern'  => '/^[^\W]+$/',
+                                    'messages' => array(
+                                        'regexNotMatch' => 'The application prefix cannot contain any whitespaces.'
+                                    )
+                                )
+                            )
+                        )
                     )
                 );
                 $this->addElement(
