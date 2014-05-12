@@ -5,6 +5,7 @@
 !.gitattributes
 !.vagrant-puppet
 !public/.htaccess
+!packages/rhel/usr/share/icingaweb/public/.htaccess
 !public/.htaccess.in
 !.gitkeep
 
