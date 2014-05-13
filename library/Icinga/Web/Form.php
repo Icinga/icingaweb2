@@ -599,7 +599,7 @@ class Form extends Zend_Form
         $decorators = $this->getDecorators();
         if (empty($decorators)) {
             $this->addDecorator('FormElements')
-                //->addDecorator('HtmlTag', array('tag' => 'dl', 'class' => 'zend_form'))
+                ->addDecorator('HtmlTag', array('tag' => 'div')) // Quickfix to get subForms to work
                 ->addDecorator('Form');
         }
 
