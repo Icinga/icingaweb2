@@ -20,6 +20,15 @@ class InstallController extends ActionController
     protected $requiresAuthentication = false;
 
     /**
+     * Whether the controller requires configuration
+     *
+     * The install wizard does not require any configuration.
+     *
+     * @var bool
+     */
+    protected $requiresConfiguration = false;
+
+    /**
      * Show the wizard and run the installation once its finished
      */
     public function indexAction()
