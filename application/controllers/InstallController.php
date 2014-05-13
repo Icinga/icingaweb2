@@ -3,11 +3,9 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-require_once 'Mockery/Loader.php';
-$mockeryLoader = new \Mockery\Loader;
-$mockeryLoader->register();
-
-use \Mockery;
+use Icinga\Web\Session;
+use Icinga\Web\Wizard\Page;
+use Icinga\Web\Wizard\Wizard;
 use Icinga\Web\Controller\ActionController;
 
 class InstallController extends ActionController
@@ -21,24 +19,82 @@ class InstallController extends ActionController
      */
     protected $requiresAuthentication = false;
 
+    /**
+     * Show the wizard and run the installation once its finished
+     */
     public function indexAction()
     {
-        $finished = false;
-        $this->view->installer = 'some log info, as html';
-        $this->view->wizard = Mockery::mock();
-        $this->view->wizard->shouldReceive('isFinished')->andReturn($finished)
-            ->shouldReceive('getTitle')->andReturn('Web')
-            ->shouldReceive('getPages')->andReturnUsing(function () {
-                $a = array(Mockery::mock(array('getTitle' => 'childTest', 'getChildPages' => array(
-                    Mockery::mock(array('getTitle' => 'child1')),
-                    Mockery::mock(array('getTitle' => 'child2'))
-                ), 'isActiveChild' => false))); for ($i=0;$i<10;$i++) { $a[] = Mockery::mock(array('getTitle' => 'title'.$i, 'getChildPages' => array())); } return $a;
-            })
-            ->shouldReceive('isActivePage')->andReturnUsing(function ($p) { return $p->getTitle() == 'title4'; })
-            ->shouldReceive('isCompletedPage')->andReturnUsing(function ($p) { return $p->getTitle() < 'title4'; })
-            ->shouldReceive('getActivePage')->andReturnUsing(function () {
-                return Mockery::mock(array('getTitle' => 'title4', '__toString' => 'teh form elements'));
-            });
+        $wizard = $this->createWizard();
+        $wizard->navigate(); // Needs to be called before isSubmittedAndValid() as this creates the form
+
+        if ($wizard->isSubmittedAndValid() && $wizard->isFinished()) {
+            // TODO: Run the installer (Who creates an installer? How do we handle module installers?)
+            $this->dropConfiguration(); // TODO: Should only be done if the installation has been successfully completed
+            $this->view->installer = '';
+        } else {
+            $this->storeConfiguration($wizard->getConfig());
+        }
+
+        $this->view->wizard = $wizard;
+    }
+
+    /**
+     * Create the wizard and register all pages
+     *
+     * @return  Wizard
+     */
+    protected function createWizard()
+    {
+        $wizard = new Wizard();
+        $wizard->setTitle('Web');
+        $wizard->setRequest($this->getRequest());
+        $wizard->setConfiguration($this->loadConfiguration());
+        $wizard->addPages(
+            array(
+                '1st step' => new Page(),
+                '2nd step' => new Page(),
+                '3rd step' => new Page(),
+                'a wizard' => array(
+                    '4th step' => new Page(),
+                    '5th step' => new Page()
+                ),
+                'last step' => new Page()
+            )
+        );
+
+        return $wizard;
+    }
+
+    /**
+     * Store the given configuration values
+     *
+     * @param   Zend_Config     $config     The configuration
+     */
+    protected function storeConfiguration(Zend_Config $config)
+    {
+        $session = Session::getSession();
+        $session->getNamespace('WebWizard')->setAll($config->toArray(), true);
+        $session->write();
+    }
+
+    /**
+     * Load all configuration values
+     *
+     * @return  Zend_Config
+     */
+    protected function loadConfiguration()
+    {
+        return new Zend_Config(Session::getSession()->getNamespace('WebWizard')->getAll(), true);
+    }
+
+    /**
+     * Clear all stored configuration values
+     */
+    protected function dropConfiguration()
+    {
+        $session = Session::getSession();
+        $session->removeNamespace('WebWizard');
+        $session->write();
     }
 }
 

@@ -6,17 +6,23 @@
     <div class="sidebar">
         <ul>
 <?php foreach ($wizard->getPages() as $page): ?>
-            <li class="<?= $wizard->isActivePage($page) ? 'active' : (
-                $wizard->isCompletedPage($page) ? 'complete' : 'pending'
+            <li class="<?= $wizard->isCompletedPage($page) ? 'complete' : (
+                $wizard->isCurrentPage($page) ? 'active' : 'pending'
             ); ?>">
                 <?= $page->getTitle(); ?>
+<?php if ($wizard->isWizard($page) && $wizard->isCurrentPage($page) && !$wizard->isCompletedPage($page)): ?>
                 <ul>
-<?php foreach ($page->getChildPages() as $child): ?>
-                    <li class="child<?= $page->isActiveChild($child) ? ' active' : ''; ?>">
-                        <?= $child->getTitle(); ?>
+<?php foreach ($page->getPages() as $subPage): ?>
+<?php if ($page->isCurrentPage($subPage)): ?>
+                    <li class="child active">
+<?php else: ?>
+                    <li class="child">
+<?php endif ?>
+                        <?= $subPage->getTitle(); ?>
                     </li>
 <?php endforeach ?>
                 </ul>
+<?php endif ?>
             </li>
 <?php endforeach ?>
             <li class="install<?= $wizard->isFinished() ? ' active' : ''; ?>">
@@ -28,7 +34,7 @@
 <?php if ($wizard->isFinished()): ?>
         <?= $this->partial('install/index/installog.phtml', array('installer' => $installer)); ?>
 <?php else: ?>
-        <?= $wizard->getActivePage(); ?>
+        <?= $wizard; ?>
 <?php endif ?>
     </div>
 </div>
