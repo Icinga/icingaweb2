@@ -166,7 +166,7 @@ install -m0644 packages/rhel/usr/share/icingaweb/public/.htaccess %{buildroot}/%
 sed -i 's/icinga2/icinga/g' %{buildroot}/%{_sysconfdir}/icingaweb/resources.ini
 
 # enable the monitoring module by default
-ln -s %{_sysconfdir}/icingaweb/modules/monitoring %{buildroot}/%{_sysconfdir}/icingaweb/enabledModules/monitoring
+ln -s %{sharedir}/modules/monitoring %{buildroot}/%{_sysconfdir}/icingaweb/enabledModules/monitoring
 
 # install icingacli
 install -D -m0755 bin/icingacli %{buildroot}/usr/bin/icingacli
