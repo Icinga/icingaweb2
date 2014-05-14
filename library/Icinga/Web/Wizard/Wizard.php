@@ -246,6 +246,7 @@ class Wizard extends Page
                     $newStep = $this->getProgress() + 1;
                     if (isset($pages[$newStep]) && $pages[$newStep]->getName() === $pageName) {
                         $this->setProgress($newStep);
+                        $this->reset();
                     }
                 }
             }
@@ -257,6 +258,7 @@ class Wizard extends Page
                 $newStep = $this->getProgress() - 1;
                 if ($pages[$newStep]->getName() === $pageName) {
                     $this->setProgress($newStep);
+                    $this->reset();
                 }
             }
         }
