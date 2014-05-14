@@ -33,9 +33,9 @@ class InstallController extends ActionController
     public function indexAction()
     {
         $wizard = $this->createWizard();
-        $wizard->navigate(); // Needs to be called before isSubmittedAndValid() as this creates the form
 
         if ($wizard->isSubmittedAndValid()) {
+            $wizard->navigate();
             if ($wizard->isFinished()) {
                 // TODO: Run the installer (Who creates an installer? How do we handle module installers?)
                 $this->dropConfiguration(); // TODO: Should only be done if the installation has been successfully completed

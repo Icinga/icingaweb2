@@ -288,6 +288,7 @@ class Wizard extends Page
         $pages = $this->getPages();
         $currentStep = $this->getProgress();
 
+        $page->buildForm(); // Needs to get called manually as it's nothing that Zend knows about
         $this->addSubForm($page, $page->getName());
 
         if (!$this->isFirstPage($page)) {
@@ -326,6 +327,7 @@ class Wizard extends Page
         $isFirstSubPage = $wizard->isFirstPage($currentSubPage);
         $isLastSubPage = $wizard->isLastPage($currentSubPage);
 
+        $currentSubPage->buildForm(); // Needs to get called manually as it's nothing that Zend knows about
         $this->addSubForm($currentSubPage, $currentSubPage->getName());
 
         if (!$isFirstPage || !$isFirstSubPage) {
