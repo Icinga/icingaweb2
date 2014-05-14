@@ -610,4 +610,13 @@ class Form extends Zend_Form
     {
         $this->buttonsHidden = true;
     }
+
+    /**
+     * q&d solution to be able to recreate a form
+     */
+    public function reset()
+    {
+        $this->created = false;
+        $this->clearElements();
+    }
 }
