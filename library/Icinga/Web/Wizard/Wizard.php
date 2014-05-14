@@ -41,16 +41,18 @@ class Wizard extends Page
      */
     public function addPage(Page $page)
     {
-        $ident = $this->generatePageIdentifier($page);
-        $wizardConfig = $this->getConfig();
-        if ($wizardConfig->get($ident) === null) {
-            $wizardConfig->{$ident} = new Zend_Config(array(), true);
+        if (!($pageName = $page->getName())) {
+            throw new ProgrammingError('Wizard page "' . get_class($page) . '" has no unique name');
         }
 
-        $page->setTokenDisabled(); // Usually default for pages, but not for wizards
-        $page->setConfiguration($wizardConfig->{$ident});
+        $wizardConfig = $this->getConfig();
+        if ($wizardConfig->get($pageName) === null) {
+            $wizardConfig->{$pageName} = new Zend_Config(array(), true);
+        }
+
+        $page->setConfiguration($wizardConfig->{$pageName});
         $page->setRequest($this->getRequest());
-        $page->setName($ident);
+        $page->setTokenDisabled(); // Usually default for pages, but not for wizards
         $this->pages[] = $page;
     }
 
@@ -261,30 +263,6 @@ class Wizard extends Page
 
         $config = $this->getConfig();
         $config->{$currentPage->getName()} = $currentPage->getConfig();
-    }
-
-    /**
-     * Return a unique identifier for the given page
-     *
-     * @param   Page    $page   The page for which to return the identifier
-     *
-     * @return  string          The page's unique identifier
-     */
-    protected function generatePageIdentifier(Page $page)
-    {
-        if (($name = $page->getName())) {
-            return $name;
-        }
-
-        $pageClass = get_class($page);
-        $wizardConfig = $this->getConfig();
-
-        if ($wizardConfig->get('page_names') === null || $wizardConfig->page_names->get($pageClass) === null) {
-            $wizardConfig->page_names = $wizardConfig->get('page_names', new Zend_Config(array(), true));
-            $wizardConfig->page_names->{$pageClass} = sprintf('%06x', mt_rand(0, 0xffffff));
-        }
-
-        return $wizardConfig->page_names->{$pageClass};
     }
 
     /**

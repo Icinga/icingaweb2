@@ -23,6 +23,14 @@ class Page extends Form
     protected $title = '';
 
     /**
+     * Overwrite this to initialize this wizard page
+     */
+    public function init()
+    {
+
+    }
+
+    /**
      * Set the title for this wizard page
      *
      * @param   string  $title  The title to set

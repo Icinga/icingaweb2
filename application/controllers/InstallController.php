@@ -4,7 +4,6 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 
 use Icinga\Web\Session;
-use Icinga\Web\Wizard\Page;
 use Icinga\Web\Wizard\Wizard;
 use Icinga\Web\Controller\ActionController;
 
@@ -36,12 +35,14 @@ class InstallController extends ActionController
         $wizard = $this->createWizard();
         $wizard->navigate(); // Needs to be called before isSubmittedAndValid() as this creates the form
 
-        if ($wizard->isSubmittedAndValid() && $wizard->isFinished()) {
-            // TODO: Run the installer (Who creates an installer? How do we handle module installers?)
-            $this->dropConfiguration(); // TODO: Should only be done if the installation has been successfully completed
-            $this->view->installer = '';
-        } else {
-            $this->storeConfiguration($wizard->getConfig());
+        if ($wizard->isSubmittedAndValid()) {
+            if ($wizard->isFinished()) {
+                // TODO: Run the installer (Who creates an installer? How do we handle module installers?)
+                $this->dropConfiguration(); // TODO: Should only be done if the installation has been successfully completed
+                $this->view->installer = '';
+            } else {
+                $this->storeConfiguration($wizard->getConfig());
+            }
         }
 
         $this->view->wizard = $wizard;
@@ -60,14 +61,14 @@ class InstallController extends ActionController
         $wizard->setConfiguration($this->loadConfiguration());
         $wizard->addPages(
             array(
-                '1st step' => new Page(),
-                '2nd step' => new Page(),
-                '3rd step' => new Page(),
-                'a wizard' => array(
-                    '4th step' => new Page(),
-                    '5th step' => new Page()
-                ),
-                'last step' => new Page()
+//                t('Welcome') => 'Icinga\Form\Install\WelcomePage',
+//                t('Requirements') => 'Icinga\Form\Install\RequirementsPage',
+//                t('Authentication') => 'Icinga\Form\Install\AuthenticationPage',
+//                t('Administration') => 'Icinga\Form\Install\AdministrationPage',
+//                t('Preferences') => 'Icinga\Form\Install\PreferencesPage',
+                t('Logging') => 'Icinga\Form\Install\LoggingPage',
+//                t('Database Setup') => 'Icinga\Form\Install\DatabasePage',
+//                t('Summary') => 'Icinga\Form\Install\SummaryPage'
             )
         );
 
