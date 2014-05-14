@@ -35,6 +35,27 @@ class Wizard extends Page
     }
 
     /**
+     * Return a page by its name or null if it's not found
+     *
+     * @param   string  $pageName   The name of the page
+     *
+     * @return  Page|null
+     */
+    public function getPage($pageName)
+    {
+        $candidates = array_filter(
+            $this->pages, // Cannot use getPages() here because I might get called as part of Page::isRequired()
+            function ($page) use ($pageName) { return $page->getName() === $pageName; }
+        );
+
+        if (!empty($candidates)) {
+            return array_shift($candidates);
+        } elseif ($this->wizard !== null) {
+            return $this->wizard->getPage($pageName);
+        }
+    }
+
+    /**
      * Add a new page to this wizard
      *
      * @param   Page    $page   The page to add
@@ -68,17 +89,14 @@ class Wizard extends Page
     {
         foreach ($pages as $title => $pageClassOrArray) {
             if (is_array($pageClassOrArray)) {
-                $wizard = new static();
+                $wizard = new static($this);
                 $wizard->setTitle($title);
                 $this->addPage($wizard);
                 $wizard->addPages($pageClassOrArray);
-            } elseif (is_string($pageClassOrArray)) {
-                $page = new $pageClassOrArray();
+            } else {
+                $page = new $pageClassOrArray($this);
                 $page->setTitle($title);
                 $this->addPage($page);
-            } else {
-                $pageClassOrArray->setTitle($title);
-                $this->addPage($pageClassOrArray);
             }
         }
     }

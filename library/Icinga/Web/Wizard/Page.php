@@ -16,11 +16,30 @@ class Page extends Form
     protected $tokenDisabled = true;
 
     /**
+     * The wizard this page is part of
+     *
+     * @var Wizard
+     */
+    protected $wizard;
+
+    /**
      * The title of this wizard page
      *
      * @var string
      */
     protected $title = '';
+
+    /**
+     * Create a new wizard page
+     *
+     * @param   Wizard  $wizard     The wizard this page is part of
+     * @param   mixed   $options    Zend_Form options
+     */
+    public function __construct(Wizard $wizard = null, $options = null)
+    {
+        parent::__construct($options);
+        $this->wizard = $wizard;
+    }
 
     /**
      * Overwrite this to initialize this wizard page
