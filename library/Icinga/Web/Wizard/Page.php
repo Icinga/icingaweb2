@@ -50,6 +50,18 @@ class Page extends Form
     }
 
     /**
+     * Return whether this page needs to be shown to the user
+     *
+     * Overwrite this to add page specific handling
+     *
+     * @return  bool
+     */
+    public function isRequired()
+    {
+        return true;
+    }
+
+    /**
      * Set the title for this wizard page
      *
      * @param   string  $title  The title to set
@@ -70,7 +82,7 @@ class Page extends Form
     }
 
     /**
-     * Return a config containing all values of this wizard page
+     * Return a config containing all values provided by the user
      *
      * @return  Zend_Config
      */

@@ -8,6 +8,12 @@ use Zend_Config;
 use Icinga\Web\Form;
 use Icinga\Exception\ProgrammingError;
 
+/**
+ * Multistep form with support for nesting and dynamic behaviour
+ *
+ * @todo    Pages that were displayed initially and filled out by the user remain
+ *          currently in the configuration returned by Wizard::getConfig()
+ */
 class Wizard extends Page
 {
     /**
@@ -31,7 +37,7 @@ class Wizard extends Page
      */
     public function getPages()
     {
-        return $this->pages;
+        return array_filter($this->pages, function ($page) { return $page->isRequired(); });
     }
 
     /**
