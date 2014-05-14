@@ -46,6 +46,7 @@ use Icinga\File\Pdf;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Web\Session;
 use Icinga\Session\SessionNamespace;
+use Icinga\Exception\NotReadableError;
 
 /**
  * Base class for all core action controllers
@@ -60,6 +61,13 @@ class ActionController extends Zend_Controller_Action
      * @var bool
      */
     protected $requiresAuthentication = true;
+
+    /**
+     * Whether the controller requires configuration
+     *
+     * @var bool
+     */
+    protected $requiresConfiguration = true;
 
     private $config;
 
@@ -114,26 +122,24 @@ class ActionController extends Zend_Controller_Action
         $this->_helper = new Zend_Controller_Action_HelperBroker($this);
         $this->_helper->addPath('../application/controllers/helpers');
 
-        // when noInit is set (e.g. for testing), authentication and init is skipped
-        if (isset($invokeArgs['noInit'])) {
-            // TODO: Find out whether this still makes sense?
-            return;
-        }
-
         if ($this->_request->isXmlHttpRequest()) {
             $this->windowId = $this->_request->getHeader('X-Icinga-WindowId', null);
         }
 
-        if ($this->requiresLogin() === false) {
-            $this->view->tabs = new Tabs();
-            $this->init();
-        } else {
-            $url = $this->getRequestUrl();
-            if ($url === 'default/index/index') {
-                // TODO: We need our own router :p
-                $url = 'dashboard';
+        if ($this->requiresConfig() === false) {
+            if ($this->requiresLogin() === false) {
+                $this->view->tabs = new Tabs();
+                $this->init();
+            } else {
+                $url = $this->getRequestUrl();
+                if ($url === 'default/index/index') {
+                    // TODO: We need our own router :p
+                    $url = 'dashboard';
+                }
+                $this->redirectToLogin($url);
             }
-            $this->redirectToLogin($url);
+        } else {
+            $this->redirectNow(Url::fromPath('install'));
         }
     }
 
@@ -225,10 +231,38 @@ class ActionController extends Zend_Controller_Action
     }
 
     /**
+     * Check whether the controller requires configuration. That is when no configuration
+     * is available and when it is possible to setup the configuration
+     *
+     * @return  bool
+     *
+     * @see     requiresConfiguration
+     */
+    protected function requiresConfig()
+    {
+        if (!$this->requiresConfiguration) {
+            return false;
+        }
+
+        if (file_exists(Config::$configDir . '/setup.token')) {
+            try {
+                $config = Config::app()->toArray();
+            } catch (NotReadableError $e) {
+                return true;
+            }
+
+            return empty($config);
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * Check whether the controller requires a login. That is when the controller requires authentication and the
      * user is currently not authenticated
      *
      * @return  bool
+     *
      * @see     requiresAuthentication
      */
     protected function requiresLogin()
