@@ -27,7 +27,7 @@ exec { 'create-mysql-icinga2-db':
 exec{ 'create-pgsql-icinga-db':
   unless  => 'sudo -u postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname=\'icinga\'" | grep -q 1',
   command => 'sudo -u postgres psql -c "CREATE ROLE icinga WITH LOGIN PASSWORD \'icingaweb\';" && \
-              sudo -u postgres createdb -O icinga -E UTF8 icinga && \
+              sudo -u postgres createdb -O icinga -E UTF8 -T template0 icinga && \
               sudo -u postgres createlang plpgsql icinga',
   require => Service['postgresql']
 }
@@ -485,7 +485,7 @@ exec { 'create-mysql-icinga_unittest-db':
 exec{ 'create-pgsql-icinga_unittest-db':
   unless  => 'sudo -u postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname=\'icinga_unittest\'" | grep -q 1',
   command => 'sudo -u postgres psql -c "CREATE ROLE icinga_unittest WITH LOGIN PASSWORD \'icinga_unittest\';" && \
-              sudo -u postgres createdb -O icinga_unittest -E UTF8 icinga_unittest && \
+              sudo -u postgres createdb -O icinga_unittest -E UTF8 -T template0 icinga_unittest && \
               sudo -u postgres createlang plpgsql icinga_unittest',
   require => Service['postgresql']
 }
@@ -580,7 +580,7 @@ exec { 'create-mysql-icingaweb-db':
 exec { 'create-pgsql-icingaweb-db':
   unless  => 'sudo -u postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname=\'icingaweb\'" | grep -q 1',
   command => 'sudo -u postgres psql -c "CREATE ROLE icingaweb WITH LOGIN PASSWORD \'icinga\';" && \
-              sudo -u postgres createdb -O icingaweb -E UTF8 icingaweb && \
+              sudo -u postgres createdb -O icingaweb -E UTF8 -T template0 icingaweb && \
               sudo -u postgres createlang plpgsql icingaweb',
   require => Service['postgresql']
 }
