@@ -6,7 +6,7 @@ include openldap
 Exec { path => '/bin:/usr/bin:/sbin' }
 
 $icingaVersion = '1.11.2'
-$icinga2Version = '0.0.10'
+$icinga2Version = '0.0.11'
 
 exec { 'create-mysql-icinga-db':
   unless  => 'mysql -uicinga -picinga icinga',
