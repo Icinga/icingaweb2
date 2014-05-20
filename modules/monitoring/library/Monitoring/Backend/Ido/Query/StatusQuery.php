@@ -305,6 +305,10 @@ class StatusQuery extends IdoQuery
 
     protected function joinBaseTables()
     {
+        if (version_compare($this->getIdoVersion(), '1.10.0', '<')) {
+            $this->columnMap['hoststatus']['host_check_source'] = '(NULL)';
+            $this->columnMap['servicestatus']['service_check_source'] = '(NULL)';
+        }
         $this->baseQuery = $this->db->select()->from(
             array('ho' => $this->prefix . 'objects'),
             array()

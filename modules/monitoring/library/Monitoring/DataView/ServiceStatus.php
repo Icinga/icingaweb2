@@ -103,7 +103,7 @@ class ServiceStatus extends DataView
             'service_hard_state',
             'service_problem',
             'service_perfdata',
-	    'service_check_source',
+            'service_check_source',
             'service_active_checks_enabled',
             'service_active_checks_enabled_changed',
             'service_passive_checks_enabled',

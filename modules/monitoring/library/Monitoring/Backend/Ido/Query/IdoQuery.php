@@ -35,6 +35,8 @@ use Icinga\Application\Benchmark;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Filter\Query\Tree;
 use Icinga\Module\Monitoring\Filter\UrlViewFilter;
+use Icinga\Application\Icinga;
+use Icinga\Web\Session;
 
 /**
  * Base class for Ido Queries
@@ -183,6 +185,18 @@ abstract class IdoQuery extends Query
      * @var bool
      */
     protected $allowCustomVars = false;
+
+    /**
+     * Current IDO version. This is bullshit and needs to be moved somewhere
+     * else. As someone decided that we need no Backend-specific connection
+     * class unfortunately there is no better place right now. And as of the
+     * 'check_source' patch we need a quick fix immediately. So here you go.
+     *
+     * TODO: Fix this.
+     *
+     * @var string
+     */
+    protected static $idoVersion;
 
     /**
      * Return true when the column is an aggregate column
@@ -579,5 +593,30 @@ abstract class IdoQuery extends Query
             . ucfirst($queryName) . 'Query';
         $query = new $class($this->ds, $columns);
         return $query;
+    }
+
+    // TODO: Move this away, see note related to $idoVersion var
+    protected function getIdoVersion()
+    {
+        if (self::$idoVersion === null) {
+            $session = null;
+            if (Icinga::app()->isWeb()) {
+                // TODO: Once we have version per connection we should choose a
+                //       namespace based on resource name
+                $session = Session::getSession()->getNamespace('monitoring/ido');
+                if (isset($session->version)) {
+                    self::$idoVersion = $session->version;
+                    return self::$idoVersion;
+                }
+            }
+            self::$idoVersion = $this->db->fetchOne(
+                $this->db->select()->from($this->prefix . 'dbversion', 'version')
+            );
+            if ($session !== null) {
+                $session->version = self::$idoVersion;
+                $session->write(); // <- WHY? I don't want to care about this!
+            }
+        }
+        return self::$idoVersion;
     }
 }
