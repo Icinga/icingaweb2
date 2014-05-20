@@ -532,7 +532,7 @@ class Manager
                         if (! array_key_exists($file, $this->installedBaseDirs)) {
                             $this->installedBaseDirs[$file] = $canonical . '/' . $file;
                         } else {
-                            Logger::warning(
+                            Logger::debug(
                                 'Module "%s" already exists in installation path "%s" and is ignored.',
                                 $canonical . '/' . $file,
                                 $this->installedBaseDirs[$file]
