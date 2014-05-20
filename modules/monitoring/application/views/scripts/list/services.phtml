@@ -84,7 +84,7 @@ foreach ($services as $service):
           <?php endif ?>
         <?php endif ?>
 
-      <?php if ($service->service_icon_image): ?>
+      <?php if ($service->service_icon_image && ! preg_match('/[\'"]/', $service->service_icon_image)): ?>
       <?= $this->icon($this->resolveMacros($service->service_icon_image, $service)) ?>
       <?php endif ?>
 <a href="<?= $serviceLink ?>"><?= $service->service_display_name ?></a><?php if ($this->showHost): ?> on <a href="<?= $hostLink ?>"><?= $service->host_name; ?>
