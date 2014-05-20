@@ -251,11 +251,6 @@ abstract class AbstractObject
         return $this->$expandedName;
     }
 
-    public function getRequest()
-    {
-        return $this->request;
-    }
-
     public static function fromRequest(Request $request)
     {
         if ($request->has('service') && $request->has('host')) {
