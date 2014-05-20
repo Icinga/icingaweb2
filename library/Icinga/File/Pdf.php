@@ -48,6 +48,7 @@ class Pdf extends DOMPDF
         $html = $layout->render();
         $imgDir = Url::fromPath('img');
         $html = preg_replace('~src="' . $imgDir . '/~', 'src="' . Icinga::app()->getBootstrapDirecory() . '/img/', $html);
+        $html = preg_replace('~src="/svg/chart.php(.*)"~', 'class="icon" src="http://master1.com/png/chart.php$1"', $html);
         $this->load_html($html);
         $this->render();
         $this->stream(

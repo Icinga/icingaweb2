@@ -87,6 +87,17 @@ if (in_array($path, $special)) {
     $pie->initFromRequest();
     echo $pie->render();
 
+} elseif ($path === 'png/chart.php') {
+    if (!array_key_exists('data', $_GET)) {
+        return false;
+    }
+    include __DIR__ . '/EmbeddedWeb.php';
+    EmbeddedWeb::start();
+    header('Content-Type: image/png');
+    $pie = new PieChart();
+    $pie->initFromRequest();
+    $pie->toPng();
+
 } elseif (file_exists($baseDir . '/' . $path) && is_file($baseDir . '/' . $path)) {
     return false;
 } else {
