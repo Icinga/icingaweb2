@@ -75,7 +75,12 @@ class TreeToSqlParser
                 if (count($right) > 1) {
                     return 'IN';
                 } else {
-                    return 'LIKE';
+                    foreach ($right as $r) {
+                        if (strpos($r, '*') !== false) {
+                            return 'LIKE';
+                        }
+                    }
+                    return '=';
                 }
             case Node::OPERATOR_EQUALS_NOT:
                 if (count($right) > 1) {
@@ -171,7 +176,11 @@ class TreeToSqlParser
             if ($node->context === Node::CONTEXT_TIMESTRING && !is_numeric($value)) {
                 $value = strtotime($value);
             }
-            $values[] = $this->query->getDatasource()->getConnection()->quote($value);
+            if (preg_match('/^\d+$/', $value)) {
+                $values[] = $value;
+            } else {
+                $values[] = $this->query->getDatasource()->getConnection()->quote($value);
+            }
         }
         $valueString = join(',', $values);
 

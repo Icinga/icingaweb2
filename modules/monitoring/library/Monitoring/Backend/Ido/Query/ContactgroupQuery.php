@@ -113,9 +113,9 @@ class ContactgroupQuery extends IdoQuery
             +-------------------------+-------------+------------+------------------------+
             */
 
-        $this->baseQuery->join(
-            // array('scg' => $this->prefix . 'service_contactgroups'),
-            array('scg' => $scgSub),
+        $this->baseQuery->distinct()->join(
+            array('scg' => $this->prefix . 'service_contactgroups'),
+            // array('scg' => $scgSub),
             'scg.contactgroup_object_id = cg.contactgroup_object_id',
             array()
         )->join(
