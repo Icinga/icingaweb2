@@ -1,0 +1,7 @@
+<?php if (! $object->check_source) return ?>
+<tr>
+  <th><?= $this->translate('Check Source') ?></th>
+  <td>
+      <?= $this->checkSource($object->check_source) ?>
+  </td>
+</tr>
