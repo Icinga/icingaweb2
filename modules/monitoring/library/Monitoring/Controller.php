@@ -29,8 +29,6 @@
 
 namespace Icinga\Module\Monitoring;
 
-use Icinga\Application\Config as IcingaConfig;
-use Icinga\Module\Monitoring\DataView\ServiceStatus as ServiceStatusView;
 use Icinga\Web\Controller\ActionController;
 use Icinga\File\Csv;
 
