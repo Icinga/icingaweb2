@@ -464,6 +464,25 @@ class Url
     }
 
     /**
+     * Shift a query parameter from this URL if it exists, otherwise $default
+     *
+     * @param string $param   Parameter name
+     * @param mixed  $default Default value in case $param does not exist
+     *
+     * @return  mixed
+     */
+    public function shift($param, $default = null)
+    {
+        if (isset($this->params[$param])) {
+            $ret = $this->params[$param];
+            unset($this->params[$param]);
+        } else {
+            $ret = $default;
+        }
+        return $ret;
+    }
+
+    /**
      * Return a copy of this url without the parameter given
      *
      * The argument can be either a single query parameter name or an array of parameter names to
