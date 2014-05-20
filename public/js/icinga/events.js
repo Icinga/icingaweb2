@@ -190,7 +190,8 @@
         dropdownLeave: function () {
             var $li = $(this);
             setTimeout(function () {
-                if (! $li.is('li:hover') && ! $li.find(':focus')) {
+                // TODO: make this behave well together with keyboard navigation
+                if (! $li.is('li:hover') /*&& ! $li.find('a:focus')*/) {
                     $li.removeClass('hover');
                 }
             }, 300);
