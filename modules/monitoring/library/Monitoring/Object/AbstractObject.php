@@ -33,6 +33,7 @@ abstract class AbstractObject
     public $customvars     = array();
     public $events         = array();
 
+    protected $view;
     private $properties = array();
     private $request    = null;
 

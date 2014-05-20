@@ -9,7 +9,6 @@ class Host extends AbstractObject
 {
     public $type   = 'host';
     public $prefix = 'host_';
-    private $view  = null;
 
     protected function applyObjectFilter(Query $query)
     {

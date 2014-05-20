@@ -9,7 +9,6 @@ class Service extends AbstractObject
 {
     public $type   = 'service';
     public $prefix = 'service_';
-    private $view  = null;
 
     protected function applyObjectFilter(Query $query)
     {
