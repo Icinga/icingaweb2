@@ -2,7 +2,7 @@
 <div class="controls">
     <?= $this->tabs; ?>
     <div style="margin: 1em;" class="dontprint">
-        <!--<?= $this->filterBox; ?>-->Sort by <?= $this->sortControl->render($this); ?>
+        <!--<?= $this->filterBox ?>-->Sort by <?= $this->sortControl ?>
     </div>
     <?= $this->partial(
         'pivottablePagination.phtml',
@@ -15,7 +15,7 @@
 </div>
 <?php endif ?>
 <div class="content" data-base-target="_next">
-    <table class="pivot servicestates">
+  <table class="pivot servicestates">
 <?php
 $hasHeader = false;
 $pivotData = $this->pivot->toArray();
@@ -23,57 +23,57 @@ $hostFilter = implode(',', array_keys($pivotData));
 ?>
 <?php foreach ($pivotData as $host_name => $serviceStates): ?>
 <?php if (!$hasHeader): ?>
-        <thead>
-            <tr>
-                <th>&nbsp;</th>
-                <th colspan="<?= count($serviceStates); ?>">
-                    <div>
+    <thead>
+      <tr>
+        <th>&nbsp;</th>
+        <th colspan="<?= count($serviceStates); ?>">
+          <div>
 <?php foreach (array_keys($serviceStates) as $service_description): ?>
-                        <span>
-                            <a href="<?= $this->href(
-                                'monitoring/list/services',
-                                array(
-                                    'service_description'   => $service_description,
-                                    'host_name'             => $hostFilter
-                                )
-                            ); ?>">
-                                <abbr title="<?= $service_description; ?>">
-                                    <?= strlen($service_description) > 18 ? substr($service_description, 0, 18) . '...' : $service_description; ?>
-                                </abbr>
-                            </a>
-                        </span>
+            <span>
+              <a href="<?= $this->href(
+                    'monitoring/list/services',
+                    array(
+                        'service_description'   => $service_description,
+                        'host_name'             => $hostFilter
+                    )
+                ); ?>">
+              <abbr title="<?= $service_description; ?>"><?=
+                  strlen($service_description) > 18 ?
+                    substr($service_description, 0, 18) . '...' :
+                    $service_description
+              ?></abbr>
+              </a>
+            </span>
 <?php endforeach ?>
-                    </div>
-                </th>
-            </tr>
-        </thead>
-        <tbody>
+          </div>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
 <?php $hasHeader = true; ?>
 <?php endif ?>
-            <tr>
-                <th>
-                    <a href="<?= $this->href('monitoring/show/host', array('host' => $host_name)); ?>">
-                        <?= $host_name; ?>
-                    </a>
-                </th>
+      <tr>
+        <th>
+          <a href="<?=
+            $this->href('monitoring/show/host', array('host' => $host_name))
+          ?>"><?= $host_name ?></a>
+        </th>
 <?php foreach (array_values($serviceStates) as $service): ?>
 <?php if ($service !== null): ?>
-                <td>
-                    <a href="<?= $this->href(
-                        'monitoring/show/service',
-                        array(
-                            'host'      => $service->host_name,
-                            'service'   => $service->service_description
-                        )
-                    ); ?>" title="<?= $this->escape($service->service_output); ?>" class="state_<?= $this->monitoringState($service, 'service'); ?> <?= $service->service_handled ? 'handled' : ''; ?>"></a>
+        <td>
+          <a href="<?= $this->href('monitoring/show/service', array(
+              'host'      => $service->host_name,
+              'service'   => $service->service_description
+          )) ?>" title="<?= $this->escape($service->service_output)
+          ?>" class="state_<?= $this->monitoringState($service, 'service') ?> <?= $service->service_handled ? 'handled' : '' ?>"></a>
+        </td>
 <?php else: ?>
-                <td>
-                    &middot;
+        <td>&middot;</td>
 <?php endif ?>
-                </td>
+        
 <?php endforeach ?>
-            </tr>
+      </tr>
 <?php endforeach ?>
-        </tbody>
-    </table>
+    </tbody>
+  </table>
 </div>
