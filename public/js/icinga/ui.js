@@ -664,8 +664,8 @@
                 '<span sparkTitle="' + title +
                     '" sparkWidth="'  + width  +
                     '" sparkHeight="' + height +
-                    '" sparkType="pie" sparkWidth="20" sparkSliceColors="[' +
-                    colors + ']" sparkHeight="20" values="' +
+                    '" sparkType="pie" sparkSliceColors="[' +
+                    colors + ']" values="' +
                     values + '" class="sparkline"></span>'
             );
         },
