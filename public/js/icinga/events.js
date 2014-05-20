@@ -29,11 +29,6 @@
             this.applyHandlers($('#layout'));
             this.icinga.ui.prepareContainers();
             this.icinga.ui.prepareMultiselectTables($(document));
-
-            // Remember initial search field value if any
-            if ($('#menu input.search').val().length) {
-                this.searchValue = $('#menu input.search').val();
-            }
         },
 
         // TODO: What's this?
@@ -81,6 +76,12 @@
 
             // replace all sparklines
             $('span.sparkline', el).sparkline('html', { enableTagOptions: true });
+
+            var searchField = $('#menu input.search', el);
+            // Remember initial search field value if any
+            if (searchField.length && searchField.val().length) {
+                this.searchValue = searchField.val();
+            }
         },
 
         /**
