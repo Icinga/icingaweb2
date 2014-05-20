@@ -128,6 +128,15 @@ class Form extends Zend_Form
     protected $last_note_id = 0;
 
     /**
+     * Whether buttons are shown or not
+     *
+     * This is just a q&d solution and MUST NOT survive any refactoring!
+     *
+     * @var bool
+     */
+    protected $buttonsHidden = false;
+
+    /**
      * Getter for the session ID
      *
      * If the ID has never been set, the ID from session_id() is returned
@@ -279,11 +288,11 @@ class Form extends Zend_Form
             $this->initCsrfToken();
             $this->create();
 
-            if ($this->submitLabel) {
+            if (!$this->buttonsHidden && $this->submitLabel) {
                 $this->addSubmitButton();
             }
 
-            if ($this->cancelLabel) {
+            if (!$this->buttonsHidden && $this->cancelLabel) {
                 $this->addCancelButton();
             }
 
@@ -595,5 +604,19 @@ class Form extends Zend_Form
         }
 
         return $this;
+    }
+
+    public function hideButtons()
+    {
+        $this->buttonsHidden = true;
+    }
+
+    /**
+     * q&d solution to be able to recreate a form
+     */
+    public function reset()
+    {
+        $this->created = false;
+        $this->clearElements();
     }
 }

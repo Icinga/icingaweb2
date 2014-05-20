@@ -1,14 +1,15 @@
 # $Id$
-# Authority: The icinga devel team <icinga-devel at lists.sourceforge.net>
-# Upstream: The icinga devel team <icinga-devel at lists.sourceforge.net>
+# Authority: The icinga devel team <icinga-devel at lists.icinga.org>
+# Upstream: The icinga devel team <icinga-devel at lists.icinga.org>
 # ExcludeDist: el4 el3
 
 %define revision 0
 
 %define configdir %{_sysconfdir}/icingaweb
-%define logdir %{_localstatedir}/log/icingaweb
 %define sharedir %{_datadir}/icingaweb
 %define prefixdir %{_datadir}/icingaweb
+%define logdir %{sharedir}/log
+#%define logdir %{_localstatedir}/log/icingaweb
 
 %if "%{_vendor}" == "suse"
 %define phpname php5
@@ -41,7 +42,7 @@
 
 Summary:        Open Source host, service and network monitoring Web UI
 Name:           icingaweb2
-Version:        1.0.0
+Version:        0.0.1
 Release:        %{revision}%{?dist}
 License:        GPLv2
 Group:          Applications/System
@@ -52,7 +53,7 @@ BuildArch:      noarch
 AutoReqProv:    Off
 %endif
 
-Source0:        https://downloads.sourceforge.net/project/icinga/%{name}/%{version}/%{name}-%{version}.tar.gz
+Source0:	icingaweb2-%{version}.tar.gz
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root
 
@@ -92,108 +93,44 @@ Requires:       %{phpname}-json
 Requires:       apache2-mod_php5
 %endif
 
-Requires:	%{name}-doc
+Requires:       %{phpzendname}-Db-Adapter-Pdo
+Requires:       %{phpzendname}-Db-Adapter-Pdo-Mysql
+
+Requires:       php-Icinga
 
 
 %description
 IcingaWeb for Icinga 2 or Icinga 1.x using status data,
 IDOUtils or Livestatus as backend provider.
 
-%package config-internal-mysql
-Summary:        config for internal mysql database
+%package -n icingacli
+Summary:        Icinga CLI
 Group:          Applications/System
 Requires:       %{name} = %{version}-%{release}
-Requires:       %{phpzendname}-Db-Adapter-Pdo
-Requires:       %{phpzendname}-Db-Adapter-Pdo-Mysql
+Requires:       php-Icinga
 
-%description config-internal-mysql
-Configuration for internal mysql database.
+%description -n icingacli
+Icinga CLI using php-Icinga Icinga Web 2 backend.
 
-%package config-internal-pgsql
-Summary:        config for internal pgsql database
+%package -n php-Icinga
+Summary:        Icinga Web 2 PHP Libraries
 Group:          Applications/System
 Requires:       %{name} = %{version}-%{release}
-Requires:       %{phpzendname}-Db-Adapter-Pdo
-Requires:       %{phpzendname}-Db-Adapter-Pdo-Pgsql
+Requires:       %{phpname} >= 5.3.0
+Requires:       %{phpzendname}
 
-%description config-internal-pgsql
-Configuration for internal pgsql database.
 
-%package config-backend-statusdata-1x
-Summary:        Backend config for status data 
-Group:          Applications/System
-Requires:       %{name} = %{version}-%{release}
-Provides:	%{name}-config-statusdata
+%description -n php-Icinga
+Icinga Web 2 PHP Libraries shared with icingacli.
 
-%description config-backend-statusdata-1x
-Backend config for status data provided by Icinga 1.x Core.
 
-%package config-backend-ido-mysql-1x
-Summary:        Backend config for icinga 1.x ido mysql database
-Group:          Applications/System
-Requires:       %{name} = %{version}-%{release}
-Requires:	%{phpname}-mysql
-Provides:	%{name}-config-ido-mysql
 
-%description config-backend-ido-mysql-1x
-Backend config for ido mysql database provided by
-Icinga 1.x IDOUtils with MySQL.
-
-%package config-backend-ido-pgsql-1x
-Summary:        Backend config for icinga 1.x ido pgsql database
-Group:          Applications/System
-Requires:       %{name} = %{version}-%{release}
-Requires:	%{phpname}-pgsql
-Provides:	%{name}-config-ido-pgsql
-
-%description config-backend-ido-pgsql-1x
-Backend config for ido mysql database provided by
-Icinga 1.x IDOUtils with PostgreSQL.
-
-%package config-backend-livestatus-1x
-Summary:        Backend config for icinga 1.x livestatus
-Group:          Applications/System
-Requires:       %{name} = %{version}-%{release}
-Provides:	%{name}-config-livestatus
-
-%description config-backend-livestatus-1x
-Backend config for livestatus provided by Icinga 1.x
-with mk_livestatus NEB module.
-
-%package config-backend-commands-1x
-Summary:        Backend config for icinga 1.x commands 
-Group:          Applications/System
-Requires:       %{name} = %{version}-%{release}
-Provides:	%{name}-config-commands
-
-%description config-backend-commands-1x
-Backend config for external command pipe provided by
-Icinga 1.x
 
 %prep
-%setup -q -n %{name}-%{version}
+#%setup -q -n %{name}-%{version}
+%setup -q -n %{name}
 
 %build
-%configure \
-    --prefix="%{prefixdir}" \
-    --datadir="%{sharedir}" \
-    --datarootdir="%{sharedir}" \
-    --sysconfdir="%{configdir}" \
-    --with-icingaweb-config-path='%{configdir}' \
-    --with-icingaweb-log-path='%{logdir}' \
-    --with-web-path='/icingaweb' \
-    --with-httpd-config-path=%{apacheconfdir} \
-    --with-web-user='%{apacheuser}' \
-    --with-web-group='%{apachegroup}' \
-    --with-internal-db-type='mysql' \
-    --with-internal-db-name='icingaweb' \
-    --with-internal-db-host='localhost' \
-    --with-internal-db-port='3306' \
-    --with-internal-db-pass='icingaweb' \
-    --with-internal-db-user='icingaweb' \
-    --with-internal-authentication=yes \
-    --with-icinga-commandpipe='%{extcmdfile1x}' \
-    --with-livestatus-socket='%{livestatussocket1x}'
 
 cat > README.RHEL.SUSE <<"EOF"
 IcingaWeb for RHEL and SUSE
@@ -205,17 +142,40 @@ EOF
 
 %install
 [ "%{buildroot}" != "/" ] && [ -d "%{buildroot}" ] && rm -rf %{buildroot}
-%{__mkdir} -p %{buildroot}/%{apacheconfdir}
-%{__make} install \
-    install-apache-config \
-    DESTDIR="%{buildroot}" \
-    INSTALL_OPTS="" \
-    COMMAND_OPTS="" \
-    INSTALL_OPTS_WEB="" \
-    INIT_OPTS=""
 
 # prepare configuration for sub packages
 
+# install rhel apache config
+install -D -m0644 packages/rhel/etc/httpd/conf.d/icingaweb.conf %{buildroot}/%{apacheconfdir}/icingaweb.conf
+
+# install public, library, modules
+%{__mkdir} -p %{buildroot}/%{sharedir}
+%{__mkdir} -p %{buildroot}/%{logdir}
+%{__mkdir} -p %{buildroot}/%{_sysconfdir}/icingaweb/enabledModules
+
+%{__cp} -r application library modules public %{buildroot}/%{sharedir}/
+
+# install index.php, .htaccess
+install -m0644 packages/rhel/usr/share/icingaweb/public/index.php %{buildroot}/%{sharedir}/public/index.php
+install -m0644 packages/rhel/usr/share/icingaweb/public/.htaccess %{buildroot}/%{sharedir}/public/.htaccess
+
+# use the vagrant config for configuration for now - TODO
+%{__cp} -r .vagrant-puppet/files/etc/icingaweb %{buildroot}/%{_sysconfdir}/
+
+# we use the default 'icinga' database
+sed -i 's/icinga2/icinga/g' %{buildroot}/%{_sysconfdir}/icingaweb/resources.ini
+
+# enable the monitoring module by default
+ln -s %{sharedir}/modules/monitoring %{buildroot}/%{_sysconfdir}/icingaweb/enabledModules/monitoring
+
+# install icingacli
+install -D -m0755 bin/icingacli %{buildroot}/usr/bin/icingacli
+
+# install sql schema files as example
+
+# delete all *.in files
+rm -f %{buildroot}/%{_datadir}/%{name}/public/index.php.in
+rm -f %{buildroot}/%{_datadir}/%{name}/public/.htaccess.in
 
 %pre
 # Add apacheuser in the icingacmd group
@@ -243,11 +203,9 @@ fi
 %files
 # main dirs
 %defattr(-,root,root)
-%doc etc/schema doc README.RHEL.SUSE
-%{sharedir}/application
-%{sharedir}/library
-%{sharedir}/public
-%{sharedir}/modules
+%doc etc/schema doc packages/rhel/README
+%attr(755,%{apacheuser},%{apachegroup}) %{sharedir}/public
+%attr(755,%{apacheuser},%{apachegroup}) %{sharedir}/modules
 # configs
 %defattr(-,root,root)
 %config(noreplace) %attr(-,root,root) %{apacheconfdir}/icingaweb.conf
@@ -256,7 +214,14 @@ fi
 # logs
 %attr(2775,%{apacheuser},%{apachegroup}) %dir %{logdir}
 
+%files -n php-Icinga
+%attr(755,%{apacheuser},%{apachegroup}) %{sharedir}/application
+%attr(755,%{apacheuser},%{apachegroup}) %{sharedir}/library
+
+%files -n icingacli
+%attr(0755,root,root) /usr/bin/icingacli
+
 %changelog
-* Sun Oct 20 2013 Michael Friedrich <michael.friedrich@netways.de> - 1.0.0-1
+* Tue May 11 2014 Michael Friedrich <michael.friedrich@netways.de> - 0.0.1-1
 - initial creation
 

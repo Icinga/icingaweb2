@@ -2,6 +2,15 @@
 
 use Icinga\Web\StyleSheet;
 
+
+$moduleName = $this->layout()->moduleName;
+if ($moduleName) {
+    $moduleClass = ' icinga-module module-' . $moduleName;
+} else {
+    $moduleClass = '';
+}
+
+
 ?><!DOCTYPE html>
 <html>
 <head>
@@ -32,7 +41,7 @@ if ( isset($pdf) )
   </table>
 </div>-->
 <h1><?= $this->escape($this->title) ?></h1>
-<div id="col1" class="container">
+<div id="col1" class="container<?= $moduleClass ?>">
  <?= $this->render('inline.phtml') ?>
 </div>
 

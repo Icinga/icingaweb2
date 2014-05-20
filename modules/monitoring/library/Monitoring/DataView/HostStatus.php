@@ -62,6 +62,7 @@ class HostStatus extends DataView
             'host_long_output',
             'host_check_command',
             'host_perfdata',
+	    'host_check_source',
             'host_passive_checks_enabled',
             'host_passive_checks_enabled_changed',
             'host_obsessing',

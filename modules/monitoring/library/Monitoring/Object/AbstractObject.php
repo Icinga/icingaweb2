@@ -33,6 +33,7 @@ abstract class AbstractObject
     public $customvars     = array();
     public $events         = array();
 
+    protected $view;
     private $properties = array();
     private $request    = null;
 
@@ -249,11 +250,6 @@ abstract class AbstractObject
         }
         $expandedName = $this->prefix . strtolower($param);
         return $this->$expandedName;
-    }
-
-    public function getRequest()
-    {
-        return $this->request;
     }
 
     public static function fromRequest(Request $request)

@@ -29,8 +29,8 @@
 
 namespace Icinga\Module\Monitoring;
 
-use Icinga\File\Csv;
 use Icinga\Web\Controller\ActionController;
+use Icinga\File\Csv;
 
 /**
  * Base class for all monitoring action controller

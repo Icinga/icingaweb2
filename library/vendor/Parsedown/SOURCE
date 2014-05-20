@@ -1,4 +1,4 @@
-RELEASE=1.0.0-rc.4
+RELEASE=1.0.0
 FILENAME=parsedown-$RELEASE
 DESTINATION=.
 wget -O ${FILENAME}.tar.gz https://github.com/erusev/parsedown/archive/${RELEASE}.tar.gz

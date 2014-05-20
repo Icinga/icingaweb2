@@ -1,9 +1,11 @@
 # Exclude all hidden files
 .*
-# But not .gitignore, .vagrant-puppet, .htaccess and .gitkeep
+# But not .gitignore, .gitattributes, .vagrant-puppet, .htaccess and .gitkeep
 !.gitignore
+!.gitattributes
 !.vagrant-puppet
 !public/.htaccess
+!packages/rhel/usr/share/icingaweb/public/.htaccess
 !public/.htaccess.in
 !.gitkeep
 

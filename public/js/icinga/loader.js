@@ -118,6 +118,9 @@
             if (id) {
                 this.requests[id] = req;
             }
+            if (! autorefresh) {
+                req.$target.addClass('impact');
+            }
             this.icinga.ui.refreshDebug();
             return req;
         },

@@ -9,6 +9,8 @@
 
     Icinga.Events = function (icinga) {
         this.icinga = icinga;
+
+        this.searchValue = '';
     };
 
     Icinga.Events.prototype = {
@@ -74,6 +76,12 @@
 
             // replace all sparklines
             $('span.sparkline', el).sparkline('html', { enableTagOptions: true });
+
+            var searchField = $('#menu input.search', el);
+            // Remember initial search field value if any
+            if (searchField.length && searchField.val().length) {
+                this.searchValue = searchField.val();
+            }
         },
 
         /**
@@ -108,7 +116,7 @@
             // We support an 'autosubmit' class on dropdown form elements
             $(document).on('change', 'form select.autosubmit', { self: this }, this.autoSubmitForm);
 
-            $(document).on('keyup', '#menu input.search', {self: this}, this.autoSubmitForm);
+            $(document).on('keyup', '#menu input.search', {self: this}, this.autoSubmitSearch);
 
             $(document).on('mouseenter', '.historycolorgrid td', this.historycolorgridHover);
             $(document).on('mouseleave', '.historycolorgrid td', this.historycolorgidUnhover);
@@ -190,7 +198,8 @@
         dropdownLeave: function () {
             var $li = $(this);
             setTimeout(function () {
-                if (! $li.is('li:hover') && ! $li.find(':focus')) {
+                // TODO: make this behave well together with keyboard navigation
+                if (! $li.is('li:hover') /*&& ! $li.find('a:focus')*/) {
                     $li.removeClass('hover');
                 }
             }, 300);
@@ -230,6 +239,15 @@
 
         historycolorgidUnhover: function() {
             $(this).removeClass('hover');
+        },
+
+        autoSubmitSearch: function(event) {
+            var self = event.data.self;
+            if ($('#menu input.search').val() === self.searchValue) {
+                return;
+            }
+            self.searchValue = $('#menu input.search').val();
+            return self.autoSubmitForm(event);
         },
 
         autoSubmitForm: function (event) {

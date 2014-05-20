@@ -1,0 +1,40 @@
+<div class="wizard">
+    <div class="header">
+        <img src="<?= $this->baseUrl('img/logo_icinga-inv.png'); ?>">
+        <h1><?= $wizard->getTitle(); ?></h1>
+    </div>
+    <div class="sidebar">
+        <ul>
+<?php foreach ($wizard->getPages() as $page): ?>
+            <li class="<?= $wizard->isCompletedPage($page) ? 'complete' : (
+                $wizard->isCurrentPage($page) ? 'active' : 'pending'
+            ); ?>">
+                <?= $page->getTitle(); ?>
+<?php if ($wizard->isWizard($page) && $wizard->isCurrentPage($page) && !$wizard->isCompletedPage($page)): ?>
+                <ul>
+<?php foreach ($page->getPages() as $subPage): ?>
+<?php if ($page->isCurrentPage($subPage)): ?>
+                    <li class="child active">
+<?php else: ?>
+                    <li class="child">
+<?php endif ?>
+                        <?= $subPage->getTitle(); ?>
+                    </li>
+<?php endforeach ?>
+                </ul>
+<?php endif ?>
+            </li>
+<?php endforeach ?>
+            <li class="install<?= $wizard->isFinished() ? ' active' : ''; ?>">
+                <?= $this->translate('Installation'); ?>
+            </li>
+        </ul>
+    </div>
+    <div class="panel">
+<?php if ($wizard->isFinished()): ?>
+        <?= $this->partial('install/index/installog.phtml', array('installer' => $installer)); ?>
+<?php else: ?>
+        <?= $wizard; ?>
+<?php endif ?>
+    </div>
+</div>

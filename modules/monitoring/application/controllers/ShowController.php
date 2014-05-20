@@ -58,8 +58,7 @@ class Monitoring_ShowController extends Controller
     {
         if ($this->getRequest()->getActionName() === 'host') {
             $this->view->object = new Host($this->getRequest());
-        } elseif ($this->getRequest()->getActionName() === 'service'
-            || $this->getRequest()->getActionName() === 'services' ) {
+        } elseif ($this->getRequest()->getActionName() === 'service') {
             $this->view->object = new Service($this->getRequest());
         } else {
             // TODO: Well... this could be done better

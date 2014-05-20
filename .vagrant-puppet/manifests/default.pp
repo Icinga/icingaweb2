@@ -5,21 +5,29 @@ include openldap
 
 Exec { path => '/bin:/usr/bin:/sbin' }
 
-$icingaVersion = '1.9.4'
-$icinga2Version = '0.0.6'
+$icingaVersion = '1.11.2'
+$icinga2Version = '0.0.11'
 
 exec { 'create-mysql-icinga-db':
   unless  => 'mysql -uicinga -picinga icinga',
   command => 'mysql -uroot -e "CREATE DATABASE icinga; \
-              GRANT ALL ON icinga.* TO icinga@localhost \
+              GRANT SELECT,INSERT,UPDATE,DELETE ON icinga.* TO icinga@localhost \
               IDENTIFIED BY \'icinga\';"',
+  require => Service['mysqld']
+}
+
+exec { 'create-mysql-icinga2-db':
+  unless  => 'mysql -uicinga2 -picinga2 icinga2',
+  command => 'mysql -uroot -e "CREATE DATABASE icinga2; \
+              GRANT SELECT,INSERT,UPDATE,DELETE ON icinga2.* to icinga2@localhost \
+              IDENTIFIED BY \'icinga2\';"',
   require => Service['mysqld']
 }
 
 exec{ 'create-pgsql-icinga-db':
   unless  => 'sudo -u postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname=\'icinga\'" | grep -q 1',
   command => 'sudo -u postgres psql -c "CREATE ROLE icinga WITH LOGIN PASSWORD \'icingaweb\';" && \
-              sudo -u postgres createdb -O icinga -E UTF8 icinga && \
+              sudo -u postgres createdb -O icinga -E UTF8 -T template0 icinga && \
               sudo -u postgres createlang plpgsql icinga',
   require => Service['postgresql']
 }
@@ -40,6 +48,11 @@ group { 'icinga-cmd':
   ensure => present
 }
 
+group { 'icingacmd':
+  ensure  => present,
+  require => Exec['install icinga2']
+}
+
 user { 'icinga':
   ensure     => present,
   groups     => 'icinga-cmd',
@@ -47,8 +60,8 @@ user { 'icinga':
 }
 
 user { 'apache':
-  groups  => ['icinga-cmd', 'vagrant'],
-  require => [ Class['apache'], Group['icinga-cmd'] ]
+  groups  => ['icinga-cmd', 'vagrant', 'icingacmd'],
+  require => [ Class['apache'], Group['icinga-cmd'], Group['icingacmd'] ]
 }
 
 cmmi { 'icinga-mysql':
@@ -104,7 +117,7 @@ file { '/etc/init.d/ido2db-pgsql':
 
 exec { 'populate-icinga-mysql-db':
   unless  => 'mysql -uicinga -picinga icinga -e "SELECT * FROM icinga_dbversion;" &> /dev/null',
-  command => "mysql -uicinga -picinga icinga < /usr/local/src/icinga-mysql/icinga-${icingaVersion}/module/idoutils/db/mysql/mysql.sql",
+  command => "mysql -uroot icinga < /usr/local/src/icinga-mysql/icinga-${icingaVersion}/module/idoutils/db/mysql/mysql.sql",
   require => [ Cmmi['icinga-mysql'], Exec['create-mysql-icinga-db'] ]
 }
 
@@ -330,7 +343,91 @@ package { ['cmake', 'boost-devel', 'bison', 'flex']:
   ensure => installed
 }
 
-#cmmi { 'icinga2':
+yumrepo { 'icinga2-repo':
+  baseurl   => "http://packages.icinga.org/epel/6/snapshot/",
+  enabled   => '0',
+  gpgcheck  => '1',
+  gpgkey    => 'http://packages.icinga.org/icinga.key',
+  descr     => "Icinga Repository - ${::architecture}"
+}
+
+exec { 'install icinga2':
+  command => 'yum -d 0 -e 0 -y --enablerepo=icinga2-repo install icinga2',
+  unless  => 'rpm -qa | grep icinga2',
+  require => Yumrepo['icinga2-repo']
+}
+
+exec { 'install icinga2-classicui-config':
+  command => 'yum -d 0 -e 0 -y --enablerepo=icinga2-repo install icinga2-classicui-config',
+  unless  => 'rpm -qa | grep icinga2-classicui-config',
+  require => [ Yumrepo['icinga2-repo'], Exec['install icinga2'], Exec['install icinga2-ido-mysql'] ]
+}
+
+exec { 'install icinga2-ido-mysql':
+  command => 'yum -d 0 -e 0 -y --enablerepo=icinga2-repo install icinga2-ido-mysql',
+  unless  => 'rpm -qa | grep icinga2-ido-mysql',
+  require => [ Yumrepo['icinga2-repo'], Exec['install icinga2']  ],
+}
+
+exec { 'install nagios-plugins-all':
+  command => 'yum -d 0 -e 0 -y --enablerepo=epel install nagios-plugins-all',
+  unless  => 'rpm -qa | grep nagios-plugins-all',
+  require => [ Class['epel'], Exec['install icinga2'] ],
+}
+
+file { '/etc/icinga2/features-enabled/':
+  ensure  => directory,
+  owner   => icinga,
+  group   => icinga,
+  require => Exec['install icinga2-ido-mysql']
+}
+
+file { '/etc/icinga2/features-available/ido-mysql.conf':
+  source  => 'puppet:////vagrant/.vagrant-puppet/files/etc/icinga2/features-available/ido-mysql.conf',
+  owner   => 'icinga',
+  group   => 'icinga',
+  require => Exec['install icinga2-ido-mysql']
+}
+
+file { '/etc/icinga2/features-enabled/ido-mysql.conf':
+  ensure  => 'link',
+  target  => '/etc/icinga2/features-available/ido-mysql.conf',
+  owner   => 'root',
+  group   => 'root',
+  require => Exec['install icinga2-ido-mysql']
+}
+
+file { '/etc/icinga2/conf.d/test-config.conf':
+  source  => 'puppet:////vagrant/.vagrant-puppet/files/etc/icinga2/conf.d/test-config.conf',
+  owner   => 'icinga',
+  group   => 'icinga',
+  require => [ Exec['install icinga2'], Exec['create_monitoring_test_config'] ]
+}
+
+file { '/etc/icinga2/conf.d/commands.conf':
+  source  => 'puppet:////vagrant/.vagrant-puppet/files/etc/icinga2/conf.d/commands.conf',
+  owner   => 'icinga',
+  group   => 'icinga',
+  require => Exec['install icinga2']
+}
+
+service { 'icinga2':
+  ensure  => running,
+  require => [
+    Exec['install icinga2'],
+    File['/etc/icinga2/features-enabled/ido-mysql.conf'],
+    File['/etc/icinga2/conf.d/test-config.conf'],
+    File['/etc/icinga2/conf.d/commands.conf']
+  ]
+}
+
+exec { 'populate-icinga2-mysql-db':
+  unless  => 'mysql -uicinga2 -picinga2 icinga2 -e "SELECT * FROM icinga_dbversion;" &> /dev/null',
+  command => "mysql -uroot icinga2 < /usr/share/doc/icinga2-ido-mysql-$icinga2Version/schema/mysql.sql",
+  require => [ Exec['create-mysql-icinga2-db'], Exec['install icinga2-ido-mysql'] ]
+}
+
+# cmmi { 'icinga2':
 #  url               => "https://github.com/Icinga/icinga2/releases/download/v${icinga2Version}/icinga2-${icinga2Version}.tar.gz",
 #  output            => "icinga2-${icinga2Version}.tar.gz",
 #  configure_command => 'mkdir build &> /dev/null || true && cd build && sudo cmake ..',
@@ -338,7 +435,7 @@ package { ['cmake', 'boost-devel', 'bison', 'flex']:
 #  make              => 'true && cd build/ && make && make install',
 #  require           => Package[ ['cmake', 'boost-devel', 'bison', 'flex'] ],
 #  make_timeout      => 900
-#}
+# }
 
 #configure { 'icingaweb':
 #  path    => '/vagrant',
@@ -388,7 +485,7 @@ exec { 'create-mysql-icinga_unittest-db':
 exec{ 'create-pgsql-icinga_unittest-db':
   unless  => 'sudo -u postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname=\'icinga_unittest\'" | grep -q 1',
   command => 'sudo -u postgres psql -c "CREATE ROLE icinga_unittest WITH LOGIN PASSWORD \'icinga_unittest\';" && \
-              sudo -u postgres createdb -O icinga_unittest -E UTF8 icinga_unittest && \
+              sudo -u postgres createdb -O icinga_unittest -E UTF8 -T template0 icinga_unittest && \
               sudo -u postgres createlang plpgsql icinga_unittest',
   require => Service['postgresql']
 }
@@ -483,7 +580,7 @@ exec { 'create-mysql-icingaweb-db':
 exec { 'create-pgsql-icingaweb-db':
   unless  => 'sudo -u postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname=\'icingaweb\'" | grep -q 1',
   command => 'sudo -u postgres psql -c "CREATE ROLE icingaweb WITH LOGIN PASSWORD \'icinga\';" && \
-              sudo -u postgres createdb -O icingaweb -E UTF8 icingaweb && \
+              sudo -u postgres createdb -O icingaweb -E UTF8 -T template0 icingaweb && \
               sudo -u postgres createlang plpgsql icingaweb',
   require => Service['postgresql']
 }
@@ -699,6 +796,6 @@ file { '/etc/icingaweb/dashboard/dashboard.ini':
    group     => 'apache',
 }
 
-pear::package { 'deepend/Mockery':
-  channel => 'pear.survivethedeepend.com'
-}
+# pear::package { 'deepend/Mockery':
+#  channel => 'pear.survivethedeepend.com'
+# }
