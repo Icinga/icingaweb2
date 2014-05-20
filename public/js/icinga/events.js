@@ -9,6 +9,8 @@
 
     Icinga.Events = function (icinga) {
         this.icinga = icinga;
+
+        this.searchValue = '';
     };
 
     Icinga.Events.prototype = {
@@ -27,6 +29,11 @@
             this.applyHandlers($('#layout'));
             this.icinga.ui.prepareContainers();
             this.icinga.ui.prepareMultiselectTables($(document));
+
+            // Remember initial search field value if any
+            if ($('#menu input.search').val().length) {
+                this.searchValue = $('#menu input.search').val();
+            }
         },
 
         // TODO: What's this?
@@ -108,7 +115,7 @@
             // We support an 'autosubmit' class on dropdown form elements
             $(document).on('change', 'form select.autosubmit', { self: this }, this.autoSubmitForm);
 
-            $(document).on('keyup', '#menu input.search', {self: this}, this.autoSubmitForm);
+            $(document).on('keyup', '#menu input.search', {self: this}, this.autoSubmitSearch);
 
             $(document).on('mouseenter', '.historycolorgrid td', this.historycolorgridHover);
             $(document).on('mouseleave', '.historycolorgrid td', this.historycolorgidUnhover);
@@ -231,6 +238,15 @@
 
         historycolorgidUnhover: function() {
             $(this).removeClass('hover');
+        },
+
+        autoSubmitSearch: function(event) {
+            var self = event.data.self;
+            if ($('#menu input.search').val() === self.searchValue) {
+                return;
+            }
+            self.searchValue = $('#menu input.search').val();
+            return self.autoSubmitForm(event);
         },
 
         autoSubmitForm: function (event) {
