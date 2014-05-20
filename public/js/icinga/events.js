@@ -292,13 +292,12 @@
         submitForm: function (event, autosubmit) {
             var self   = event.data.self;
             var icinga = self.icinga;
-
             // .closest is not required unless subelements to trigger this
             var $form = $(event.currentTarget).closest('form');
             var regex = new RegExp('&amp;', 'g');
             var url = $form.attr('action').replace(regex, '&'); // WHY??
             var method = $form.attr('method');
-            var $button = $('input[type=submit]:focus', $form);
+            var $button = $('input[type=submit]:focus', $form).add('button[type=submit]:focus', $form);
             var $target;
             var data;
 

@@ -233,6 +233,10 @@
             if (this.exception !== null) {
                 this.exception.remove();
                 this.exception = null;
+            }
+
+            // Remove 'impact' class if there was such
+            if (req.$target.hasClass('impact')) {
                 req.$target.removeClass('impact');
             }
 
@@ -343,11 +347,6 @@
             var windowId = req.getResponseHeader('X-Icinga-WindowId');
             if (windowId) {
                 this.icinga.ui.setWindowId(windowId);
-            }
-
-            // Remove 'impact' class if there was such
-            if (req.$target.hasClass('impact')) {
-                req.$target.removeClass('impact');
             }
 
             // Handle search requests, still hardcoded.
