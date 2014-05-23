@@ -35,16 +35,16 @@ class DocParser
             $dir = Icinga::app()->getApplicationDir('/../doc');
         } else {
             $mm = Icinga::app()->getModuleManager();
-            if (!$mm->hasInstalled($module)) {
+            if (! $mm->hasInstalled($module)) {
                 throw new DocException('Module is not installed');
             }
-            if (!$mm->hasEnabled($module)) {
+            if (! $mm->hasEnabled($module)) {
                 throw new DocException('Module is not enabled');
             }
             $dir = $mm->getModuleDir($module, '/doc');
         }
-        if (!is_dir($dir)) {
-            throw new DocException('Doc directory does not exist');
+        if (! is_dir($dir)) {
+            throw new DocException('Doc directory `' . $dir .'\' does not exist');
         }
         $this->dir      = $dir;
         $this->module   = $module;
@@ -81,7 +81,7 @@ class DocParser
                 throw new DocException('Couldn\'t get the lock');
             }
             $line = null;
-            while (!$fileObject->eof()) {
+            while (! $fileObject->eof()) {
                 // Save last line for setext-style headers
                 $lastLine   = $line;
                 $line       = $fileObject->fgets();
@@ -156,7 +156,7 @@ class DocParser
      */
     protected function extractHeader($line, $lastLine)
     {
-        if (!$line) {
+        if (! $line) {
             return null;
         }
         $header = null;
@@ -167,7 +167,7 @@ class DocParser
             // Atx-style
             $level  = strlen($match[0]);
             $header = trim(substr($line, $level));
-            if (!$header) {
+            if (! $header) {
                 return null;
             }
         } elseif (
@@ -177,7 +177,7 @@ class DocParser
         ) {
             // Setext
             $header = trim($lastLine);
-            if (!$header) {
+            if (! $header) {
                 return null;
             }
             if ($match[0][0] === '=') {
