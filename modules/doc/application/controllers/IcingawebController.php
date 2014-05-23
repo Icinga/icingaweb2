@@ -8,6 +8,6 @@ class Doc_IcingawebController extends DocController
 {
     public function indexAction()
     {
-        $this->populateView();
+        $this->renderDocAndToc();
     }
 }
