@@ -799,3 +799,27 @@ file { '/etc/icingaweb/dashboard/dashboard.ini':
 # pear::package { 'deepend/Mockery':
 #  channel => 'pear.survivethedeepend.com'
 # }
+
+# icingacli
+file { '/usr/local/bin/icingacli':
+  ensure  => 'link',
+  target  => '/vagrant/bin/icingacli',
+  owner   => 'apache',
+  group   => 'apache',
+  require => [ File['/etc/icingaweb'], File['/etc/bash_completion.d/icingacli'] ]
+}
+
+exec { 'install bash-completion':
+  command => 'yum -d 0 -e 0 -y --enablerepo=epel install bash-completion',
+  unless  => 'rpm -qa | grep bash-completion',
+  require => Class['epel']
+}
+
+file { '/etc/bash_completion.d/icingacli':
+   source    => 'puppet:////vagrant/etc/bash_completion.d/icingacli',
+   owner     => 'root',
+   group     => 'root',
+   mode      => 755,
+   require   => Exec['install bash-completion']
+}
+
