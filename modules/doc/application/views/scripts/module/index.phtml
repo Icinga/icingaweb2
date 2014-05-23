@@ -1,6 +1,6 @@
 <h1>Module documentations</h1>
 <ul>
 <?php foreach ($enabledModules as $module): ?>
-    <li><a href="<?= $this->href('doc/module/view', array('name' => $module)); ?>"><?= $module ?></a></li>
+  <li><a href="<?= $this->href('doc/module/' . $module); ?>"><?= $module ?></a></li>
 <?php endforeach ?>
 </ul>
