@@ -9,15 +9,15 @@ use Icinga\Web\Controller\ActionController;
 class Controller extends ActionController
 {
     /**
-     * Set HTML and toc
+     * Publish doc HTML and toc to the view
      *
-     * @param string $module
+     * @param string $module Name of the module for which to populate doc and toc. `null` for Icinga Web 2's doc
      */
     protected function populateView($module = null)
     {
-        $parser             = new DocParser($module);
-        list($html, $toc)   = $parser->getDocumentation();
-        $this->view->html   = $html;
-        $this->view->toc    = $toc;
+        $parser = new DocParser($module);
+        list($docHtml, $docToc) = $parser->getDocAndToc();
+        $this->view->docHtml = $docHtml;
+        $this->view->docToc = $docToc;
     }
 }

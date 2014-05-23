@@ -4,14 +4,14 @@
 
 namespace Icinga\Module\Doc;
 
+require_once 'vendor/Parsedown/Parsedown.php';
+
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
 use Parsedown;
 use Icinga\Application\Icinga;
 use Icinga\Web\Menu;
 use Icinga\Web\Url;
-
-require_once 'vendor/Parsedown/Parsedown.php';
 
 /**
  * Parser for documentation written in Markdown
@@ -51,12 +51,12 @@ class DocParser
     }
 
     /**
-     * Retrieve table of contents and HTML converted from markdown files sorted by filename
+     * Retrieve doc as HTML converted from markdown files sorted by filename and the table of contents
      *
      * @return  array
      * @throws  DocException
      */
-    public function getDocumentation()
+    public function getDocAndToc()
     {
         $iter = new RecursiveIteratorIterator(
             new MarkdownFileIterator(
