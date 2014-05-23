@@ -4,7 +4,7 @@
 
 namespace Icinga\Module\Doc;
 
-use \Exception;
+use Exception;
 
 class DocException extends Exception
 {
