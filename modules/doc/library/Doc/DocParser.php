@@ -125,7 +125,7 @@ class DocParser
             }
             $fileObject->flock(LOCK_UN);
         }
-        $html = Parsedown::instance()->parse(implode('', $cat));
+        $html = Parsedown::instance()->text(implode('', $cat));
         $html = preg_replace_callback(
             '#<pre><code class="language-php">(.*?)\</code></pre>#s',
             array($this, 'highlight'),
