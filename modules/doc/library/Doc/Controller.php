@@ -13,11 +13,13 @@ class Controller extends ActionController
      *
      * @param string $module Name of the module for which to populate doc and toc. `null` for Icinga Web 2's doc
      */
-    protected function populateView($module = null)
+    protected function renderDocAndToc($module = null)
     {
         $parser = new DocParser($module);
         list($docHtml, $docToc) = $parser->getDocAndToc();
         $this->view->docHtml = $docHtml;
         $this->view->docToc = $docToc;
+        $this->view->docName = $module === null ? 'Icinga Web 2' : ucfirst($module);
+        $this->_helper->viewRenderer('partials/docandtoc', null, true);
     }
 }
