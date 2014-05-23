@@ -104,14 +104,13 @@ class DocParser
                     $item   = end($toc)->item->addChild(
                         $id,
                         array(
+                            // TODO(el): URL should be generated from a route else we always have to adapt the
+                            // URL here when we change URLs
                             'url' => Url::fromPath(
-                                'doc/module/view',
-                                array(
-                                    'name' => $this->module
-                                )
+                                $this->module === null ? 'doc/icingaweb' : 'doc/module/' . $this->module
                             )->setAnchor($id)->getRelativeUrl(),
                             'title'     => htmlspecialchars($header),
-                            'priority'  => $itemPriority++,
+                            'priority'  => $itemPriority++,  // Post-increment is on purpose
                             'attribs'   => $attribs
                         )
                     );
