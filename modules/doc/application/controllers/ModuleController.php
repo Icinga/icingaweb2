@@ -1,5 +1,4 @@
 <?php
-// @codingStandardsIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
@@ -9,7 +8,7 @@ use Icinga\Module\Doc\Controller as DocController;
 class Doc_ModuleController extends DocController
 {
     /**
-     * Display module documentations index
+     * List available modules
      */
     public function indexAction()
     {
@@ -17,31 +16,21 @@ class Doc_ModuleController extends DocController
     }
 
     /**
-     * Display a module's documentation
-     */
-    public function viewAction()
-    {
-        $this->populateView($this->getParam('name'));
-    }
-
-    /**
      * Provide run-time dispatching of module documentation
      *
-     * @param   string    $methodName
-     * @param   array     $args
+     * @param   string  $methodName
+     * @param   array   $args
      *
      * @return  mixed
      */
     public function __call($methodName, $args)
     {
-        // TODO(el): Setup routing to retrieve module name as param and point route to moduleAction
-        $moduleManager  = Icinga::app()->getModuleManager();
-        $moduleName     = substr($methodName, 0, -6);  // Strip 'Action' suffix
-        if (!$moduleManager->hasEnabled($moduleName)) {
-            // TODO(el): Throw a not found exception once the code has been moved to the moduleAction (see TODO above)
+        $moduleManager = Icinga::app()->getModuleManager();
+        $moduleName = substr($methodName, 0, -6);  // Strip 'Action' suffix
+        if (! $moduleManager->hasEnabled($moduleName)) {
+            // TODO(el): Distinguish between not enabled and not installed
             return parent::__call($methodName, $args);
         }
-        $this->_helper->redirector->gotoSimpleAndExit('view', null, null, array('name' => $moduleName));
+        $this->renderDocAndToc($moduleName);
     }
 }
-// @codingStandardsIgnoreEnd
