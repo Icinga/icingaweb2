@@ -600,18 +600,19 @@ class Module
      */
     protected function registerRoutes()
     {
-        $this->app->getFrontController()->getRouter()->addRoute(
+        $router = $this->app->getFrontController()->getRouter();
+        $router->addRoute(
             $this->name . '_jsprovider',
             new Route(
                 'js/' . $this->name . '/:file',
                 array(
                     'controller'    => 'static',
                     'action'        =>'javascript',
-                    'module_name'    => $this->name
+                    'module_name'   => $this->name
                 )
             )
         );
-        $this->app->getFrontController()->getRouter()->addRoute(
+        $router->addRoute(
             $this->name . '_img',
             new Route(
                 'img/' . $this->name . '/:file',
