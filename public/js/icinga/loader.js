@@ -287,13 +287,6 @@
             }
 
             var notifications = req.getResponseHeader('X-Icinga-Notification');
-            if (notifications) {
-                var parts = notifications.split(' ');
-                this.createNotice(
-                    parts.shift(),
-                    parts.join(' ')
-                );
-            }
 
             //
             var target = req.getResponseHeader('X-Icinga-Container');
@@ -308,6 +301,14 @@
 
                 req.$target = $('#' + target);
                 newBody = true;
+            }
+
+            if (! newBody && notifications) {
+                var parts = notifications.split(' ');
+                this.createNotice(
+                    parts.shift(),
+                    parts.join(' ')
+                );
             }
 
             var moduleName = req.getResponseHeader('X-Icinga-Module');
@@ -424,6 +425,14 @@
             */
 
             if (rendered) {
+
+                if (newBody && notifications) {
+                    var parts = notifications.split(' ');
+                    this.createNotice(
+                        parts.shift(),
+                        parts.join(' ')
+                    );
+                }
                 return;
             }
 
@@ -435,6 +444,14 @@
             if (newBody) {
                 this.icinga.ui.fixDebugVisibility().triggerWindowResize();
             }
+                if (newBody && notifications) {
+                    var parts = notifications.split(' ');
+                    this.createNotice(
+                        parts.shift(),
+                        parts.join(' ')
+                    );
+                }
+
 
             if (active) {
                 var focusedUrl = this.icinga.ui.getFocusedContainerDataUrl();

@@ -81,6 +81,8 @@ class ActionController extends Zend_Controller_Action
 
     private $windowId;
 
+    protected $isRedirect = false;
+
     // TODO: This would look better if we had a ModuleActionController
     public function Config($file = null)
     {
@@ -371,6 +373,7 @@ class ActionController extends Zend_Controller_Action
             $url = Url::fromPath($url)->getRelativeUrl();
         }
         $this->_helper->Redirector->gotoUrlAndExit(preg_replace('~&amp;~', '&', $url));
+        $this->isRedirect = true;
     }
 
     /**
@@ -412,7 +415,7 @@ class ActionController extends Zend_Controller_Action
         }
 
         $notifications = Notification::getInstance();
-        if ($isXhr && $notifications->hasMessages()) {
+        if ($isXhr && ! $this->isRedirect && $notifications->hasMessages()) {
             foreach ($notifications->getMessages() as $m) {
                 header('X-Icinga-Notification: ' . $m->type . ' ' . $m->message);
             }

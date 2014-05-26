@@ -112,6 +112,7 @@ class Notification
         $msgs = $session->messages;
         $msgs[] = $mo;
         $session->messages = $msgs;
+        $session->write();
     }
 
     public function hasMessages()
@@ -125,6 +126,7 @@ class Notification
         $session = Session::getSession();
         $msgs = $session->messages;
         $session->messages = array();
+        $session->write();
         return $msgs;
     }
 
