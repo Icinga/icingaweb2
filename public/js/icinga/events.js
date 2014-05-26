@@ -147,6 +147,9 @@
             if ($li.children('ul').children('li').length === 0) {
                 return;
             }
+            if ($('#menu').scrollTop() > 0) {
+                return;
+            }
 
             if ($('#layout').hasClass('hoveredmenu')) {
                 delay = 0;
@@ -179,6 +182,7 @@
             var $sidebar = $(this);
             var $li = $sidebar.find('li.hover');
             if (! $li.length) {
+                $('#layout').removeClass('hoveredmenu');
                 return;
             }
 

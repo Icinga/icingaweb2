@@ -1,4 +1,13 @@
 
+#menu {
+  max-height: 100%;
+  overflow: auto;
+}
+
+#layout.hoveredmenu #menu {
+  overflow: visible;
+}
+
 #menu, #menu ul {
   margin: 0;
   padding: 0;
@@ -194,12 +203,15 @@
 
 /* END of Hoverable menu */
 
+#menu form {
+  width: 100%;
+}
 
 #menu input.search {
-  margin: 0 0 0 0.5em;
-  padding: 0 0.5em 0 2.5em;
+  margin: 0;
+  padding: 0 0.5em 0 3em;
   border: none;
-  width: 12.5em;
+  width: 100%;
   border-radius: 0;
   height: 2.5em;
   display: block;
@@ -207,7 +219,7 @@
   background-color: transparent;
   background-image: url('../img/icons/search.png');
   background-repeat: no-repeat;
-  background-position: 0.7em center;
+  background-position: 1.2em center;
   color: #f5f5f5;
   text-shadow: -1px 1px 0 #555555;
   border-bottom: 1px solid #888;
@@ -229,11 +241,7 @@
 #menu input.search.active {
   background-color: white;
   color: #121212;
-  width: 13em;
   text-shadow: none;
-  padding-left: 3em;
-  margin-left: 0;
-  background-position: 1.2em center;
 }
 
 #menu input.search.active::-moz-placeholder {
