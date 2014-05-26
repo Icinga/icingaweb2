@@ -292,13 +292,23 @@ class Module
     }
 
     /**
-     * Get short description
+     * Get module description
      *
      * @return string
      */
-    public function getShortDescription()
+    public function getDescription()
     {
-        return $this->metadata()->shortDescription;
+        return $this->metadata()->description;
+    }
+
+    /**
+     * Get module title (short description)
+     *
+     * @return string
+     */
+    public function getTitle()
+    {
+        return $this->metadata()->title;
     }
 
     /**
@@ -308,7 +318,6 @@ class Module
      */
     public function getDependencies()
     {
-
         return $this->metadata()->depends;
     }
 
@@ -321,11 +330,11 @@ class Module
     {
         if ($this->metadata === null) {
             $metadata = (object) array(
-                'name'             => $this->getName(),
-                'version'          => '0.0.0',
-                'shortDescription' => '',
-                'description'      => '',
-                'depends'          => array(),
+                'name'        => $this->getName(),
+                'version'     => '0.0.0',
+                'title'       => null,
+                'description' => '',
+                'depends'     => array(),
             );
 
             if (file_exists($this->metadataFile)) {
@@ -336,15 +345,21 @@ class Module
                 while (false !== ($line = fgets($fh))) {
                     $line = rtrim($line);
 
-                    if ($key === 'description' && $line[0] === ' ') {
-                        $metadata->{$key} .= "\n" . ltrim($line);
-                        continue;
+                    if ($key === 'description') {
+                        if (empty($line)) {
+                            $metadata->description .= "\n";
+                            continue;
+                        } elseif ($line[0] === ' ') {
+                            $metadata->description .= $line;
+                            continue;
+                        }
                     }
 
                     list($key, $val) = preg_split('/:\s+/', $line, 2);
                     $key = lcfirst($key);
 
                     switch ($key) {
+
                         case 'depends':
                             if (strpos($val, ' ') === false) {
                                 $metadata->depends[$val] = true;
@@ -361,14 +376,32 @@ class Module
                                 }
                             }
                             break;
+
                         case 'description':
-                            $metadata->shortDescription = $val;
-                            // YES, no break here
+                            if ($metadata->title === null) {
+                                $metadata->title = $val;
+                            } else {
+                                $metadata->description = $val;
+                            }
+                            break;
+
                         default:
                             $metadata->{$key} = $val;
 
                     }
                 }
+            }
+
+            if ($metadata->title === null) {
+                $metadata->title = $this->getName();
+            }
+
+            if ($metadata->description === '') {
+                // TODO: Check whether the translation module is able to
+                //       extract this
+                $metadata->description = t(
+                    'This module has no description'
+                );
             }
 
             $this->metadata = $metadata;

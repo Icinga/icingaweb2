@@ -67,7 +67,7 @@ class ModuleCommand extends Command
             if ($this->isVerbose) {
                 $dir = ' ' . $this->modules->getModuleDir($module);
             } else {
-                $dir = $mod->getShortDescription();
+                $dir = $mod->getTitle();
             }
             printf(
                 "%-14s %-9s %-9s %s\n",
