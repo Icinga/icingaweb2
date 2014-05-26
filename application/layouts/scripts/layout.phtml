@@ -30,6 +30,12 @@ $isIframe = isset($_GET['_render']) && $_GET['_render'] === 'iframe';
   <!-- TODO: viewport and scale settings make no sense for us, fix this -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <link rel="stylesheet" href="<?= $this->href($cssfile) ?>" media="screen" type="text/css" />
+  <script type="text/javascript">
+  (function() {
+    var html = document.getElementsByTagName('html')[0];
+    html.className = html.className.replace(/no-js/, 'js');
+  }());
+  </script>
   <? if ($isIframe): ?>
   <base target="_parent"/>
   <? endif ?>
