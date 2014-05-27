@@ -6,14 +6,14 @@ if ($xAxisPaginator->count() <= 1 && $yAxisPaginator->count() <= 1) {
     return; // Display this pagination only if there are multiple pages
 }
 
-$fromTo = $this->translate('%s: %d to %d of %d');
+$fromTo = t('%s: %d to %d of %d');
 $xAxisPages = $xAxisPaginator->getPages('all');
 $yAxisPages = $yAxisPaginator->getPages('all');
 
 ?>
 
 <div class="pivot-pagination">
-    <span><?= $this->translate('Navigation'); ?></span>
+    <span><?= t('Navigation'); ?></span>
     <table>
         <tbody>
 <?php foreach ($yAxisPages->pagesInRange as $yAxisPage): ?>
@@ -25,13 +25,13 @@ $yAxisPages = $yAxisPaginator->getPages('all');
                         array('page' => $xAxisPage . ',' . $yAxisPage)
                     )->getAbsoluteUrl(); ?>" title="<?= sprintf(
                         $fromTo,
-                        $this->translate('Hosts'),
+                        t('Hosts'),
                         ($yAxisPage - 1) * $yAxisPages->itemCountPerPage + 1,
                         $yAxisPage === $yAxisPages->last ? $yAxisPages->totalItemCount : $yAxisPage * $yAxisPages->itemCountPerPage,
                         $yAxisPages->totalItemCount
                     ) . '; ' . sprintf(
                         $fromTo,
-                        $this->translate('Services'),
+                        t('Services'),
                         ($xAxisPage - 1) * $xAxisPages->itemCountPerPage + 1,
                         $xAxisPage === $xAxisPages->last ? $xAxisPages->totalItemCount : $xAxisPage * $xAxisPages->itemCountPerPage,
                         $xAxisPages->totalItemCount
