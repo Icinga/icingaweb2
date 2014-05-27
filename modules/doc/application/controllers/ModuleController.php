@@ -2,8 +2,9 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
+use \Zend_Controller_Action_Exception;
 use Icinga\Application\Icinga;
-use Icinga\Module\Doc\Controller as DocController;
+use Icinga\Module\Doc\DocController;
 
 class Doc_ModuleController extends DocController
 {
@@ -16,21 +17,34 @@ class Doc_ModuleController extends DocController
     }
 
     /**
-     * Provide run-time dispatching of module documentation
+     * Assert that the given module is enabled
      *
-     * @param   string  $methodName
-     * @param   array   $args
+     * @param   $moduleName
      *
-     * @return  mixed
+     * @throws  Zend_Controller_Action_Exception
      */
-    public function __call($methodName, $args)
+    protected function assertModuleEnabled($moduleName)
     {
-        $moduleManager = Icinga::app()->getModuleManager();
-        $moduleName = substr($methodName, 0, -6);  // Strip 'Action' suffix
-        if (! $moduleManager->hasEnabled($moduleName)) {
-            // TODO(el): Distinguish between not enabled and not installed
-            return parent::__call($methodName, $args);
+        if ($moduleName === null) {
+            throw new Zend_Controller_Action_Exception('Missing parameter "moduleName"', 404);
         }
-        $this->renderDocAndToc($moduleName);
+        $moduleManager = Icinga::app()->getModuleManager();
+        if (! $moduleManager->hasInstalled($moduleName)) {
+            throw new Zend_Controller_Action_Exception('Module ' . $moduleName . ' is not installed', 404);
+        }
+        if (! $moduleManager->hasEnabled($moduleName)) {
+            throw new Zend_Controller_Action_Exception('Module ' . $moduleName. ' is not enabled', 404);
+        }
+    }
+
+    /**
+     * View toc of a module's documentation
+     */
+    public function tocAction()
+    {
+        $moduleName = $this->getParam('moduleName');
+        $this->assertModuleEnabled($moduleName);
+        $moduleManager = Icinga::app()->getModuleManager();
+        $this->renderToc($moduleManager->getModuleDir($moduleName, '/doc'), $moduleName);
     }
 }
