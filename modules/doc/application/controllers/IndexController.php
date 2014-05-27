@@ -2,7 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use Icinga\Module\Doc\Controller as DocController;
+use Icinga\Module\Doc\DocController;
 
 class Doc_IndexController extends DocController
 {
