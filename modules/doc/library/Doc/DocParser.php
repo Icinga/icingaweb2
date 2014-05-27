@@ -9,7 +9,7 @@ require_once 'vendor/Parsedown/Parsedown.php';
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
 use Parsedown;
-use Icinga\Application\Icinga;
+use Icinga\Exception\NotReadableError;
 use Icinga\Web\Menu;
 use Icinga\Web\Url;
 
@@ -18,36 +18,30 @@ use Icinga\Web\Url;
  */
 class DocParser
 {
-    protected $dir;
-
-    protected $module;
+    /**
+     * Path to the documentation
+     *
+     * @var string
+     */
+    protected $path;
 
     /**
-     * Create a new documentation parser for the given module or the application
+     * Create a new documentation parser for the given path
      *
-     * @param   string $module
+     * @param   string $path Path to the documentation
      *
      * @throws  DocException
+     * @throws  NotReadableError
      */
-    public function __construct($module = null)
+    public function __construct($path)
     {
-        if ($module === null) {
-            $dir = Icinga::app()->getApplicationDir('/../doc');
-        } else {
-            $mm = Icinga::app()->getModuleManager();
-            if (! $mm->hasInstalled($module)) {
-                throw new DocException('Module is not installed');
-            }
-            if (! $mm->hasEnabled($module)) {
-                throw new DocException('Module is not enabled');
-            }
-            $dir = $mm->getModuleDir($module, '/doc');
+        if (! is_dir($path)) {
+            throw new DocException('Doc directory `' . $path .'\' does not exist');
         }
-        if (! is_dir($dir)) {
-            throw new DocException('Doc directory `' . $dir .'\' does not exist');
+        if (! is_readable($path)) {
+            throw new NotReadableError('Doc directory `' . $path .'\' is not readable');
         }
-        $this->dir      = $dir;
-        $this->module   = $module;
+        $this->path = $path;
     }
 
     /**
@@ -60,7 +54,7 @@ class DocParser
     {
         $iter = new RecursiveIteratorIterator(
             new MarkdownFileIterator(
-                new RecursiveDirectoryIterator($this->dir)
+                new RecursiveDirectoryIterator($this->path)
             )
         );
         $fileInfos = iterator_to_array($iter);
@@ -89,7 +83,7 @@ class DocParser
                 if ($header !== null) {
                     list($header, $level)   = $header;
                     $id                     = $this->extractHeaderId($header);
-                    $attribs                = array();
+                    $nofollow               = false;
                     $this->reduceToc($toc, $level);
                     if ($id === null) {
                         $path = array();
@@ -98,20 +92,16 @@ class DocParser
                         }
                         $path[]         = $header;
                         $id             = implode('-', $path);
-                        $attribs['rel'] = 'nofollow';
+                        $nofollow       = true;
                     }
                     $id     = urlencode(str_replace('.', '&#46;', strip_tags($id)));
                     $item   = end($toc)->item->addChild(
                         $id,
                         array(
-                            // TODO(el): URL should be generated from a route else we always have to adapt the
-                            // URL here when we change URLs
-                            'url' => Url::fromPath(
-                                $this->module === null ? 'doc/icingaweb' : 'doc/module/' . $this->module
-                            )->setAnchor($id)->getRelativeUrl(),
-                            'title'     => htmlspecialchars($header),
+                            'id'        => $id,
+                            'title'     => $header,
                             'priority'  => $itemPriority++,  // Post-increment is on purpose
-                            'attribs'   => $attribs
+                            'nofollow'  => $nofollow
                         )
                     );
                     $toc[]  = ((object) array(
