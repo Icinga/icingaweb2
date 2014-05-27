@@ -4,7 +4,7 @@ $helper = $this->getHelper('MonitoringState');
 <div class="controls">
 <?= $this->tabs ?>
 <div style="margin: 1em;" class="dontprint">
-Sort by <?= $this->sortControl->render($this); ?>
+<?= $this->translate('Sort by') ?> <?= $this->sortControl->render($this); ?>
 </div>
 
 <?= $this->paginationControl($hosts, null, null, array('preserve' => $this->preserve)); ?>
@@ -15,7 +15,7 @@ Sort by <?= $this->sortControl->render($this); ?>
 <?php
 
 if ($hosts->count() === 0) {
-    echo 'No host found</div>';
+    echo $this->translate('No host found') . '</div>';
     return;
 }
 ?>
@@ -78,10 +78,10 @@ if ($hosts->count() === 0) {
 
         <strong><?= ucfirst($helper->monitoringState($host, 'host')); ?></strong><br />
         <div class="small-row">
-        Since <?= $this->timeSince($host->host_last_state_change); ?>
+        <?= $this->translate('Since') ?> <?= $this->timeSince($host->host_last_state_change); ?>
         <?php if ($host->host_state > 0): ?>
           <br />
-          <strong><?= ($host->host_state_type === '1') ? 'Hard' : 'Soft'; ?> </strong> <?= $host->host_current_check_attempt; ?>/<?= $host->host_max_check_attempts; ?>
+          <strong><?= ($host->host_state_type === '1') ? $this->translate('Hard') : $this->translate('Soft') ?> </strong> <?= $host->host_current_check_attempt; ?>/<?= $host->host_max_check_attempts; ?>
         <?php endif ?>
         </div>
       </div>

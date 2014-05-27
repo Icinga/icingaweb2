@@ -5,8 +5,8 @@ $cf = $this->getHelper('CommandForm');
 ?><tr>
   <th><?= $this->translate('Last check') ?></th>
   <td data-base-target="_self"><?= $this->img('img/icons/refresh_petrol.png') ?> <?= $cf->labelSubmitForm(
-                    'Check now',
-                    'Reschedule next check immediately',
+                    $this->translate('Check now'),
+                    $this->translate('Reschedule next check immediately'),
                     'link-like',
                     'reschedulenextcheck',
                     array(

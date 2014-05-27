@@ -22,19 +22,19 @@ if ($object instanceof Host && $object->host_acknowledged
     || $object instanceof Service && $object->service_acknowledged): ?>
   <th>Issue acknowledged</th>
   <td data-base-target="_self"><?= $cf->labelSubmitForm(
-        'Remove Acknowledgement',
-        'Remove problem acknowledgement',
+        $this->translate('Remove Acknowledgement'),
+        $this->translate('Remove problem acknowledgement'),
         'link-like',
         'removeacknowledgement',
         $data
     ) ?>
 <?php else: ?>
-  <th>Not acknowledged</th>
+  <th><?= $this->translate('Not acknowledged') ?></th>
   <td>
     <a href="<?= $this->href(
         'monitoring/command/acknowledgeproblem',
         $data
-    ) ?>"><?= $this->icon('acknowledgement_petrol.png') ?> Acknowledge</a>
+    ) ?>"><?= $this->icon('acknowledgement_petrol.png') ?> <?= $this->translate('Acknowledge') ?></a>
   </td>
 <?php endif ?>
 </tr>

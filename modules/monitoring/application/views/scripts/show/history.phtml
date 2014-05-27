@@ -33,12 +33,12 @@ $states = array(
 
 ?><div class="controls">
 <?= $this->render('show/components/header.phtml') ?>
-<h1>This object's event history</h1>
+<h1><?= $this->translate("This object's event history") ?></h1>
 <?=  $this->paginationControl($this->history, null, null, array('preserve' => $this->preserve)); ?>
 </div>
 
 <?php if($this->history->count() === 0): ?>
-No History Available For This Object
+<?= $this->translate('No History Available For This Object' ?>
 </div>
 <?php return; endif ?>
 

@@ -7,7 +7,7 @@ if (in_array((int) $object->state, array(0, 99))) {
 
 ?>
 <tr>
-  <th>Notifications</th>
+  <th><?= $this->translate('Notifications') ?></th>
   <td>
 <?php
 
@@ -22,7 +22,7 @@ if ($object->current_notification_number > 0) {
             $this->translate('%s notications have been sent for this issue'),
             $object->current_notification_number
         ) . '<br />' . sprintf(
-            'The last one occured %s ago',
+            $this->translate('The last one occured %s ago'),
             $this->timeSince($object->last_notification)
         );
     }
