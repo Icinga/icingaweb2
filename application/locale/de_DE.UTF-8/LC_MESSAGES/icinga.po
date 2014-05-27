@@ -1,0 +1,489 @@
+# Icinga Web 2 - Head for multiple monitoring backends.
+# Copyright (C) 2014 Icinga Development Team
+# This file is distributed under the same license as Icinga Web 2.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Icinga Web 2 (0.1)\n"
+"Report-Msgid-Bugs-To: dev@icinga.org\n"
+"POT-Creation-Date: 2014-05-27 20:55+0000\n"
+"PO-Revision-Date: 2014-05-27 22:44+0100\n"
+"Last-Translator: Thomas Gelf <thomas@gelf.net>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: /usr/local/src/bugfix.master/application/views/scripts/mixedPagination.phtml:15
+#, php-format
+msgid "%d to %d of %d"
+msgstr "%d bis %d von %d"
+
+#: /usr/local/src/bugfix.master/application/views/scripts/pivottablePagination.phtml:9
+#, php-format
+msgid "%s: %d to %d of %d"
+msgstr "%s: %d bis %d von %d"
+
+#: /usr/local/src/bugfix.master/application/forms/Config/LoggingForm.php:117
+msgid "Application Prefix"
+msgstr "Anwendungspräfix"
+
+#: /usr/local/src/bugfix.master/application/forms/Config/Authentication/DbBackendForm.php:78
+#: /usr/local/src/bugfix.master/application/forms/Config/Authentication/LdapBackendForm.php:80
+msgid "Backend Name"
+msgstr "Backend-Name"
+
+#: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:282
+msgid "Bind DN"
+msgstr "Bind DN"
+
+#: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:294
+msgid "Bind Password"
+msgstr "Bind Kennwort"
+
+#: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:358
+#: /usr/local/src/bugfix.master/application/forms/Config/Authentication/BaseBackendForm.php:139
+msgid "Check this box to enforce changes without connectivity validation"
+msgstr ""
+"Aktiviere dieses Häkchen um die Änderungen ohne Validierung der Verbindung "
+"zu speichern"
+
+#: /usr/local/src/bugfix.master/application/forms/Config/LoggingForm.php:73
+msgid "Check this to enable logging."
+msgstr "Aktiviere dieses Häkchen um das Logging zu aktivieren."
+
+#: /usr/local/src/bugfix.master/application/forms/Config/Authentication/LdapBackendForm.php:187
+msgid "Connection Validation Failed: "
+msgstr "Überprüfung der Verbindung fehlgeschlagen: "
+
+#: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:477
+msgid ""
+"Connectivity validation failed, connection to the given resource not "
+"possible."
+msgstr ""
+"Überprüfung fehlgeschlagen, konnte keine Verbindung zu der angegebenen "
+"Ressource herstellen."
+
+#: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:454
+#: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:470
+msgid "Connectivity validation failed, the provided file does not exist."
+msgstr "Überprüfung fehlgeschlagen, die angegebene Datei existiert nicht."
+
+#: /usr/local/src/bugfix.master/application/forms/Config/Authentication/DbBackendForm.php:90
+msgid "Database Connection"
+msgstr "Datenbankverbindung"
+
+#: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:183
+msgid "Database Name"
+msgstr "Datenbankname"
+
+#: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:144
+msgid "Database Type"
+msgstr "Datenbanktyp"
+
+#: /usr/local/src/bugfix.master/application/forms/Config/LoggingForm.php:89
+msgid "Debug"
+msgstr "Debug"
+
+#: /usr/local/src/bugfix.master/application/forms/Config/GeneralForm.php:185
+msgid "Default Language"
+msgstr "Standardsprache"
+
+#: /usr/local/src/bugfix.master/application/controllers/ErrorController.php:62
+#, php-format
+msgid "Enabling the \"%s\" module might help!"
+msgstr "Das Modul \"%s\" zu aktivieren könnte helfen!"
+
+#: /usr/local/src/bugfix.master/application/forms/Config/LoggingForm.php:86
+msgid "Error"
+msgstr "Fehler"
+
+#: /usr/local/src/bugfix.master/application/forms/Config/LoggingForm.php:139
+msgid "Facility"
+msgstr "Facility"
+
+#: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:383
+#: /usr/local/src/bugfix.master/application/forms/Config/LoggingForm.php:102
+msgid "File"
+msgstr "Datei"
+
+#: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:220
+#: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:231
+#: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:308
+#: /usr/local/src/bugfix.master/application/forms/Config/LoggingForm.php:155
+msgid "Filepath"
+msgstr "Dateipfad"
+
+#: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:357
+#: /usr/local/src/bugfix.master/application/forms/Config/Authentication/BaseBackendForm.php:138
+msgid "Force Changes"
+msgstr "Änderungen erzwingen"
+
+#: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:160
+#: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:260
+msgid "Host"
+msgstr "Host"
+
+#: /usr/local/src/bugfix.master/application/controllers/SearchController.php:26
+#: /usr/local/src/bugfix.master/application/views/scripts/pivottablePagination.phtml:28
+msgid "Hosts"
+msgstr "Hosts"
+
+#: /usr/local/src/bugfix.master/application/views/scripts/authentication/login.phtml:8
+msgid "Icinga Users Login"
+msgstr "Icinga Benutzeranmeldung"
+
+#: /usr/local/src/bugfix.master/application/controllers/AuthenticationController.php:63
+msgid "Icingaweb Login"
+msgstr "Icingaweb Anmeldung"
+
+#: /usr/local/src/bugfix.master/application/views/scripts/authentication/logout.phtml:17
+msgid ""
+"If this message does not disappear, it might be necessary to quit the "
+"current session manually by clearing the cache, or by closing the current "
+"browser session."
+msgstr ""
+"Wenn diese Nachricht nicht verschwindet könnte es nötig sein die aktuelle "
+"Sitzung manuell zu beenden indem der Cache gelöscht order die Browsersitzung "
+"geschlossen wird."
+
+#: /usr/local/src/bugfix.master/application/controllers/AuthenticationController.php:118
+msgid "Incorrect username or password"
+msgstr "Benutzername oder Kennwort ungültig"
+
+#: /usr/local/src/bugfix.master/application/forms/Config/LoggingForm.php:88
+msgid "Information"
+msgstr "Information"
+
+#: /usr/local/src/bugfix.master/library/Icinga/Web/Wizard/Wizard.php:337
+#: /usr/local/src/bugfix.master/library/Icinga/Web/Wizard/Wizard.php:380
+msgid "Install"
+msgstr ""
+
+#: /usr/local/src/bugfix.master/application/views/scripts/install/index.phtml:29
+msgid "Installation"
+msgstr "Installation"
+
+#: /usr/local/src/bugfix.master/application/forms/Config/Authentication/LdapBackendForm.php:92
+msgid "LDAP Resource"
+msgstr "LDAP Ressource"
+
+#: /usr/local/src/bugfix.master/application/forms/Config/Authentication/LdapBackendForm.php:115
+msgid "LDAP User Name Attribute"
+msgstr "LDAP-Attribut für Benutzername"
+
+#: /usr/local/src/bugfix.master/application/forms/Config/Authentication/LdapBackendForm.php:104
+msgid "LDAP User Object Class"
+msgstr "LDAP Objektklasse für Benutzer"
+
+#: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:232
+msgid "Location of your icinga objects.cache file"
+msgstr "Pfad zur Datei objects.cache von Icinga"
+
+#: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:221
+msgid "Location of your icinga status.dat file"
+msgstr "Pfad zur Datei status.dat von Icinga"
+
+#: /usr/local/src/bugfix.master/application/controllers/InstallController.php:69
+msgid "Logging"
+msgstr "Logging"
+
+#: /usr/local/src/bugfix.master/application/forms/Config/LoggingForm.php:72
+msgid "Logging Enabled"
+msgstr "Logging aktiv"
+
+#: /usr/local/src/bugfix.master/application/forms/Config/LoggingForm.php:82
+msgid "Logging Level"
+msgstr "Log-Level"
+
+#: /usr/local/src/bugfix.master/application/forms/Config/LoggingForm.php:98
+msgid "Logging Type"
+msgstr "Logging-Typ"
+
+#: /usr/local/src/bugfix.master/application/views/scripts/authentication/logout.phtml:15
+msgid "Logging out..."
+msgstr "Abmelden..."
+
+#: /usr/local/src/bugfix.master/application/views/scripts/authentication/logout.phtml:28
+msgid "Login"
+msgstr "Anmelden"
+
+#: /usr/local/src/bugfix.master/application/layouts/scripts/body.phtml:39
+#: /usr/local/src/bugfix.master/application/layouts/scripts/parts/topbar.phtml:35
+msgid "Logout"
+msgstr "Abmelden"
+
+#: /usr/local/src/bugfix.master/application/views/scripts/authentication/logout.phtml:64
+msgid ""
+"Logout not possible, it may be necessary to quit the session manually by "
+"clearing the cache, or closing the current browser session. Error: "
+msgstr ""
+
+#: /usr/local/src/bugfix.master/application/views/scripts/authentication/logout.phtml:69
+msgid "Logout successful!"
+msgstr "Abmelden erfolgreich!"
+
+#: /usr/local/src/bugfix.master/application/forms/Config/Authentication/ReorderForm.php:137
+msgid "Move down in authentication order"
+msgstr ""
+
+#: /usr/local/src/bugfix.master/application/forms/Config/Authentication/ReorderForm.php:111
+msgid "Move up in authentication order"
+msgstr ""
+
+#: /usr/local/src/bugfix.master/application/views/scripts/pivottablePagination.phtml:16
+msgid "Navigation"
+msgstr "Navigation"
+
+#: /usr/local/src/bugfix.master/application/views/scripts/mixedPagination.phtml:83
+#: /usr/local/src/bugfix.master/application/views/scripts/mixedPagination.phtml:86
+#: /usr/local/src/bugfix.master/library/Icinga/Web/Wizard/Wizard.php:337
+#: /usr/local/src/bugfix.master/library/Icinga/Web/Wizard/Wizard.php:380
+msgid "Next"
+msgstr "Weiter"
+
+#: /usr/local/src/bugfix.master/application/forms/Config/Authentication/DbBackendForm.php:144
+msgid "No users found under the specified database backend"
+msgstr ""
+
+#: /usr/local/src/bugfix.master/application/controllers/ErrorController.php:59
+msgid "Page not found."
+msgstr "Seite nicht gefunden."
+
+#: /usr/local/src/bugfix.master/application/forms/Authentication/LoginForm.php:65
+#: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:206
+msgid "Password"
+msgstr "Kennwort"
+
+#: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:319
+msgid "Pattern"
+msgstr "Muster"
+
+#: /usr/local/src/bugfix.master/library/Icinga/Web/Form/Element/Number.php:61
+msgid "Please enter a number."
+msgstr "Bitte eine Nummer eingeben."
+
+#: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:171
+msgid "Port"
+msgstr "Port"
+
+#: /usr/local/src/bugfix.master/application/layouts/scripts/body.phtml:38
+#: /usr/local/src/bugfix.master/application/layouts/scripts/parts/topbar.phtml:32
+msgid "Preferences"
+msgstr "Einstellungen"
+
+#: /usr/local/src/bugfix.master/application/views/scripts/mixedPagination.phtml:45
+#: /usr/local/src/bugfix.master/application/views/scripts/mixedPagination.phtml:48
+msgid "Prev"
+msgstr "Zurück"
+
+#: /usr/local/src/bugfix.master/library/Icinga/Web/Wizard/Wizard.php:326
+#: /usr/local/src/bugfix.master/library/Icinga/Web/Wizard/Wizard.php:367
+msgid "Previous"
+msgstr "Vorheriges"
+
+#: /usr/local/src/bugfix.master/application/controllers/SearchController.php:19
+msgid "Ready to search, waiting for your input"
+msgstr "Bereit zum Suchen, warte auf Eingabe"
+
+#: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:333
+msgid "Resource Name"
+msgstr ""
+
+#: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:375
+msgid "Resource Type"
+msgstr ""
+
+#: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:271
+msgid "Root DN"
+msgstr ""
+
+#: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:379
+msgid "SQL Database"
+msgstr ""
+
+#: /usr/local/src/bugfix.master/application/controllers/SearchController.php:22
+#: /usr/local/src/bugfix.master/application/controllers/SearchController.php:23
+#: /usr/local/src/bugfix.master/application/controllers/SearchController.php:49
+msgid "Search"
+msgstr "Suche"
+
+#: /usr/local/src/bugfix.master/application/layouts/scripts/parts/navigation.phtml:17
+msgid "Search..."
+msgstr "Suche..."
+
+#: /usr/local/src/bugfix.master/application/forms/Config/GeneralForm.php:189
+msgid ""
+"Select the language to use by default. Can be overwritten by a user in his "
+"preferences."
+msgstr ""
+
+#: /usr/local/src/bugfix.master/application/controllers/SearchController.php:34
+#: /usr/local/src/bugfix.master/application/views/scripts/pivottablePagination.phtml:34
+msgid "Services"
+msgstr ""
+
+#: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:245
+msgid "Socket"
+msgstr ""
+
+#: /usr/local/src/bugfix.master/application/forms/Config/LoggingForm.php:140
+msgid "The Syslog facility to utilize."
+msgstr ""
+
+#: /usr/local/src/bugfix.master/application/forms/Config/Authentication/LdapBackendForm.php:116
+msgid "The attribute name used for storing the user name on the ldap server"
+msgstr ""
+
+#: /usr/local/src/bugfix.master/application/forms/Config/Authentication/DbBackendForm.php:91
+msgid "The database connection to use for authenticating with this provider"
+msgstr ""
+
+#: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:309
+msgid "The filename to fetch information from"
+msgstr ""
+
+#: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:161
+msgid "The hostname of the database."
+msgstr ""
+
+#: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:261
+msgid "The hostname or address of the LDAP server to use for authentication"
+msgstr ""
+
+#: /usr/local/src/bugfix.master/application/forms/Config/LoggingForm.php:156
+msgid "The logfile to write messages to."
+msgstr ""
+
+#: /usr/local/src/bugfix.master/application/forms/Config/LoggingForm.php:83
+msgid "The maximum loglevel to emit."
+msgstr ""
+
+#: /usr/local/src/bugfix.master/application/forms/Config/LoggingForm.php:118
+msgid "The name of the application by which to prefix syslog messages."
+msgstr ""
+
+#: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:184
+msgid "The name of the database to use"
+msgstr ""
+
+#: /usr/local/src/bugfix.master/application/forms/Config/Authentication/LdapBackendForm.php:81
+msgid "The name of this authentication backend"
+msgstr ""
+
+#: /usr/local/src/bugfix.master/application/forms/Config/Authentication/DbBackendForm.php:79
+msgid "The name of this authentication provider"
+msgstr ""
+
+#: /usr/local/src/bugfix.master/application/forms/Config/Authentication/LdapBackendForm.php:105
+msgid "The object class used for storing users on the ldap server"
+msgstr ""
+
+#: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:207
+msgid "The password to use for authentication"
+msgstr ""
+
+#: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:295
+msgid "The password to use for querying the ldap server"
+msgstr ""
+
+#: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:246
+msgid "The path to your livestatus socket used for querying monitoring data"
+msgstr ""
+
+#: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:272
+msgid "The path where users can be found on the ldap server"
+msgstr ""
+
+#: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:172
+msgid "The port to use."
+msgstr ""
+
+#: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:320
+msgid "The regular expression by which to identify columns"
+msgstr ""
+
+#: /usr/local/src/bugfix.master/application/forms/Config/Authentication/LdapBackendForm.php:93
+msgid "The resource to use for authenticating with this provider"
+msgstr ""
+
+#: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:145
+msgid "The type of SQL database you want to create."
+msgstr ""
+
+#: /usr/local/src/bugfix.master/application/forms/Config/LoggingForm.php:99
+msgid "The type of logging to utilize."
+msgstr ""
+
+#: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:376
+msgid "The type of resource"
+msgstr ""
+
+#: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:334
+msgid "The unique name of this resource"
+msgstr ""
+
+#: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:283
+msgid "The user dn to use for querying the ldap server"
+msgstr ""
+
+#: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:195
+msgid "The user name to use for authentication."
+msgstr ""
+
+#: /usr/local/src/bugfix.master/application/views/scripts/config/module.phtml:6
+msgid "There is no such module installed."
+msgstr ""
+
+#: /usr/local/src/bugfix.master/application/views/scripts/config/module.phtml:32
+msgid "This module has no dependencies"
+msgstr ""
+
+#: /usr/local/src/bugfix.master/library/Icinga/Application/Modules/Module.php:383
+msgid "This module has no description"
+msgstr ""
+
+#: /usr/local/src/bugfix.master/application/forms/Preference/GeneralForm.php:100
+msgid "Use Default Language"
+msgstr ""
+
+#: /usr/local/src/bugfix.master/application/forms/Preference/GeneralForm.php:109
+msgid "Use the following language to display texts and messages"
+msgstr ""
+
+#: /usr/local/src/bugfix.master/application/forms/Authentication/LoginForm.php:57
+#: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:194
+msgid "Username"
+msgstr "Benutzername"
+
+#: /usr/local/src/bugfix.master/application/forms/Config/Authentication/LdapBackendForm.php:169
+msgid ""
+"Using ldap is not possible, the php extension \"ldap\" is not installed."
+msgstr ""
+
+#: /usr/local/src/bugfix.master/application/forms/Config/Authentication/DbBackendForm.php:148
+#, php-format
+msgid "Using the specified backend failed: %s"
+msgstr ""
+
+#: /usr/local/src/bugfix.master/application/forms/Config/LoggingForm.php:87
+msgid "Warning"
+msgstr "Warnung"
+
+#: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:435
+msgid ""
+"You need to install the php extension \"mysql\" and the Zend_Pdo_Mysql "
+"classes to use  MySQL database resources."
+msgstr ""
+
+#: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:442
+msgid ""
+"You need to install the php extension \"pgsql\" and the Zend_Pdo_Pgsql "
+"classes to use  PostgreSQL database resources."
+msgstr ""
+
+#: /usr/local/src/bugfix.master/application/forms/Preference/GeneralForm.php:106
+msgid "Your Current Language"
+msgstr ""
