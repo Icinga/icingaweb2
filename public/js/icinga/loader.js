@@ -288,11 +288,15 @@
 
             var notifications = req.getResponseHeader('X-Icinga-Notification');
 
-            //
             var target = req.getResponseHeader('X-Icinga-Container');
             var newBody = false;
             if (target) {
                 if (target === 'ignore') {
+                    var parts = notifications.split(' ');
+                    this.createNotice(
+                        parts.shift(),
+                        parts.join(' ')
+                    );
                     return;
                 }
                 // If we change the target, oncomplete will fail to clean up
