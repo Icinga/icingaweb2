@@ -128,6 +128,9 @@ class ActionController extends Zend_Controller_Action
             $this->windowId = $this->_request->getHeader('X-Icinga-WindowId', null);
         }
 
+        $module = $request->getModuleName();
+        $this->view->translationDomain = $module === 'default' ? 'icinga' : $module;
+
         if ($this->requiresConfig() === false) {
             if ($this->requiresLogin() === false) {
                 $this->view->tabs = new Tabs();
