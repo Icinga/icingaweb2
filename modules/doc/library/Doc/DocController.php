@@ -6,7 +6,7 @@ namespace Icinga\Module\Doc;
 
 use Icinga\Web\Controller\ActionController;
 
-class Controller extends ActionController
+class DocController extends ActionController
 {
     /**
      * Publish doc HTML and toc to the view
