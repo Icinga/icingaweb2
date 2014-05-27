@@ -47,4 +47,21 @@ class Doc_ModuleController extends DocController
         $moduleManager = Icinga::app()->getModuleManager();
         $this->renderToc($moduleManager->getModuleDir($moduleName, '/doc'), $moduleName);
     }
+
+    /**
+     * View a chapter of a module's documentation
+     *
+     * @throws Zend_Controller_Action_Exception
+     */
+    public function chapterAction()
+    {
+        $moduleName = $this->getParam('moduleName');
+        $this->assertModuleEnabled($moduleName);
+        $chapterName = $this->getParam('chapterName');
+        if ($chapterName === null) {
+            throw new Zend_Controller_Action_Exception('Missing parameter "chapterName"', 404);
+        }
+        $moduleManager = Icinga::app()->getModuleManager();
+        $this->renderChapter($chapterName, $moduleManager->getModuleDir($moduleName, '/doc'));
+    }
 }
