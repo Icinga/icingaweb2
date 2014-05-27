@@ -2,12 +2,16 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use Icinga\Module\Doc\Controller as DocController;
+use Icinga\Application\Icinga;
+use Icinga\Module\Doc\DocController;
 
 class Doc_IcingawebController extends DocController
 {
-    public function indexAction()
+    /**
+     * View toc of Icinga Web 2's documentation
+     */
+    public function tocAction()
     {
-        $this->renderDocAndToc();
+        $this->renderToc(Icinga::app()->getApplicationDir('/../doc'), 'Icinga Web 2');
     }
 }
