@@ -22,4 +22,19 @@ class DocController extends ActionController
         $this->view->docName = $module === null ? 'Icinga Web 2' : ucfirst($module);
         $this->_helper->viewRenderer('partials/docandtoc', null, true);
     }
+
+    /**
+     * Render a toc
+     *
+     * @param string $path Path to the documentation
+     * @param string
+     */
+    protected function renderToc($path, $name)
+    {
+        $parser = new DocParser($path);
+        list($docHtml, $docToc) = $parser->getDocAndToc();
+        $this->view->docToc = $docToc;
+        $this->view->docName = $name;
+        $this->_helper->viewRenderer('partials/toc', null, true);
+    }
 }
