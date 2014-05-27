@@ -9,25 +9,24 @@ use Icinga\Web\Controller\ActionController;
 class DocController extends ActionController
 {
     /**
-     * Publish doc HTML and toc to the view
+     * Render a chapter
      *
-     * @param string $module Name of the module for which to populate doc and toc. `null` for Icinga Web 2's doc
+     * @param string $chapterName   Name of the chapter
+     * @param string $path          Path to the documentation
      */
-    protected function renderDocAndToc($module = null)
+    protected function renderChapter($chapterName, $path)
     {
-        $parser = new DocParser($module);
+        $parser = new DocParser($path);
         list($docHtml, $docToc) = $parser->getDocAndToc();
-        $this->view->docHtml = $docHtml;
-        $this->view->docToc = $docToc;
-        $this->view->docName = $module === null ? 'Icinga Web 2' : ucfirst($module);
-        $this->_helper->viewRenderer('partials/docandtoc', null, true);
+        $this->view->chapterHtml = $docHtml;
+        $this->_helper->viewRenderer('partials/chapter', null, true);
     }
 
     /**
      * Render a toc
      *
      * @param string $path Path to the documentation
-     * @param string
+     * @param string $name Name of the documentation
      */
     protected function renderToc($path, $name)
     {
