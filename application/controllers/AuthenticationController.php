@@ -60,7 +60,7 @@ class AuthenticationController extends ActionController
     {
         $this->view->form = new LoginForm();
         $this->view->form->setRequest($this->_request);
-        $this->view->title = 'Icinga Web Login';
+        $this->view->title = $this->translate('Icingaweb Login');
 
         try {
             $redirectUrl = Url::fromPath($this->_request->getParam('redirect', 'dashboard'));
