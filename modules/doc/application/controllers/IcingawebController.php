@@ -13,7 +13,7 @@ class Doc_IcingawebController extends DocController
      */
     public function tocAction()
     {
-        $this->renderToc(Icinga::app()->getApplicationDir('/../doc'), 'Icinga Web 2');
+        $this->populateToc(Icinga::app()->getApplicationDir('/../doc'), 'Icinga Web 2');
     }
 
     /**
