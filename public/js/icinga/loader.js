@@ -599,7 +599,10 @@
             }
 
             var origFocus = document.activeElement;
-            var $content = $(content);
+
+            // TODO: We do not want to wrap this twice...
+            var $content = $('<div>' + content + '</div>');
+
             if (false &&
                 $('.dashboard', $content).length > 0 &&
                 $('.dashboard', $container).length === 0
