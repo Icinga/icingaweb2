@@ -341,7 +341,7 @@
 
             var title = req.getResponseHeader('X-Icinga-Title');
             if (title && ! req.autorefresh && req.$target.closest('.dashboard').length === 0) {
-                this.icinga.ui.setTitle(title);
+                this.icinga.ui.setTitle(decodeURIComponent(title));
             }
 
             var refresh = req.getResponseHeader('X-Icinga-Refresh');
