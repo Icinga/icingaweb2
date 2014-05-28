@@ -10,8 +10,6 @@ use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
 use Parsedown;
 use Icinga\Exception\NotReadableError;
-use Icinga\Web\Menu;
-use Icinga\Web\Url;
 
 /**
  * Parser for documentation written in Markdown
@@ -59,10 +57,10 @@ class DocParser
         );
         $fileInfos = iterator_to_array($iter);
         natcasesort($fileInfos);
-        $cat    = array();
-        $toc    = array((object) array(
+        $cat = array();
+        $tocStack = array((object) array(
             'level' => 0,
-            'item'  => new Menu('doc')
+            'node'  => new DocToc()
         ));
         $itemPriority = 1;
         foreach ($fileInfos as $fileInfo) {
@@ -84,30 +82,29 @@ class DocParser
                     list($header, $level)   = $header;
                     $id                     = $this->extractHeaderId($header);
                     $nofollow               = false;
-                    $this->reduceToc($toc, $level);
+                    $this->reduceToc($tocStack, $level);
                     if ($id === null) {
                         $path = array();
-                        foreach (array_slice($toc, 1) as $entry) {
-                            $path[] = $entry->item->getTitle();
+                        foreach (array_slice($tocStack, 1) as $entity) {
+                            $path[] = $entity->node->getValue()->title;
                         }
                         $path[]         = $header;
                         $id             = implode('-', $path);
                         $nofollow       = true;
                     }
                     $id     = urlencode(str_replace('.', '&#46;', strip_tags($id)));
-                    $item   = end($toc)->item->addChild(
-                        $id,
-                        array(
+                    $node   = end($tocStack)->node->appendChild(
+                        (object) array(
                             'id'        => $id,
                             'title'     => $header,
                             'priority'  => $itemPriority++,  // Post-increment is on purpose
                             'nofollow'  => $nofollow
                         )
                     );
-                    $toc[]  = ((object) array(
+                    $tocStack[]  = (object) array(
                         'level' => $level,
-                        'item'  => $item
-                    ));
+                        'node'  => $node
+                    );
                     $line = '<a name="' . $id . '"></a>' . PHP_EOL . $line;
                 }
                 $cat[] = $line;
@@ -120,7 +117,7 @@ class DocParser
             array($this, 'highlight'),
             $html
         );
-        return array($html, $toc[0]->item);
+        return array($html, new DocTocHtmlRenderer($tocStack[0]->node));
     }
 
     /**
@@ -200,14 +197,14 @@ class DocParser
     }
 
     /**
-     * Reduce the toc to the given level
+     * Reduce the toc stack to the given level
      *
-     * @param array &$toc
+     * @param array &$tocStack
      * @param int   $level
      */
-    protected function reduceToc(array &$toc, $level) {
-        while (end($toc)->level >= $level) {
-            array_pop($toc);
+    protected function reduceToc(array &$tocStack, $level) {
+        while (end($tocStack)->level >= $level) {
+            array_pop($tocStack);
         }
     }
 }
