@@ -599,11 +599,13 @@ abstract class IdoQuery extends Query
     protected function getIdoVersion()
     {
         if (self::$idoVersion === null) {
+            $dbconf = $this->db->getConfig();
+            $id = $dbconf['host'] . '/' . $dbconf['dbname'];
             $session = null;
             if (Icinga::app()->isWeb()) {
                 // TODO: Once we have version per connection we should choose a
                 //       namespace based on resource name
-                $session = Session::getSession()->getNamespace('monitoring/ido');
+                $session = Session::getSession()->getNamespace('monitoring/ido/' . $id);
                 if (isset($session->version)) {
                     self::$idoVersion = $session->version;
                     return self::$idoVersion;
