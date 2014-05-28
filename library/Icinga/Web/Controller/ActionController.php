@@ -420,7 +420,7 @@ class ActionController extends Zend_Controller_Action
         $notifications = Notification::getInstance();
         if ($isXhr && ! $this->isRedirect && $notifications->hasMessages()) {
             foreach ($notifications->getMessages() as $m) {
-                header('X-Icinga-Notification: ' . $m->type . ' ' . $m->message);
+                header('X-Icinga-Notification: ' . rawurlencode($m->type . ' ' . $m->message));
             }
         }
 
@@ -442,7 +442,7 @@ class ActionController extends Zend_Controller_Action
                 // TODO: Innocent exception and error log for hack attempts
                 throw new Exception('No way, guy');
             }
-            header('X-Icinga-Title: ' . $this->view->title . ' :: Icinga Web');
+            header('X-Icinga-Title: ' . rawurlencode($this->view->title . ' :: Icinga Web'));
         }
         // TODO: _render=layout?
         if ($this->getParam('_render') === 'layout') {

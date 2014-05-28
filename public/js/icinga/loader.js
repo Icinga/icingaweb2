@@ -287,6 +287,9 @@
             }
 
             var notifications = req.getResponseHeader('X-Icinga-Notification');
+            if (notifications) {
+                notifications = decodeURIComponent(notifications);
+            }
 
             var target = req.getResponseHeader('X-Icinga-Container');
             var newBody = false;
