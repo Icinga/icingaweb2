@@ -45,7 +45,8 @@ class Doc_ModuleController extends DocController
         $moduleName = $this->getParam('moduleName');
         $this->assertModuleEnabled($moduleName);
         $moduleManager = Icinga::app()->getModuleManager();
-        $this->renderToc($moduleManager->getModuleDir($moduleName, '/doc'), $moduleName);
+        $this->populateToc($moduleManager->getModuleDir($moduleName, '/doc'), $moduleName);
+        $this->view->moduleName = $moduleName;
     }
 
     /**
