@@ -192,8 +192,7 @@ class Module
      */
     public function register()
     {
-        $this->registerAutoloader()
-             ->registerWebIntegration();
+        $this->registerAutoloader();
         try {
             $this->launchRunScript();
         } catch (Exception $e) {
@@ -205,6 +204,7 @@ class Module
             );
             return false;
         }
+        $this->registerWebIntegration();
         return true;
     }
 
