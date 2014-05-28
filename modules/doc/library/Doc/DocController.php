@@ -23,17 +23,16 @@ class DocController extends ActionController
     }
 
     /**
-     * Render a toc
+     * Populate toc
      *
      * @param string $path Path to the documentation
      * @param string $name Name of the documentation
      */
-    protected function renderToc($path, $name)
+    protected function populateToc($path, $name)
     {
         $parser = new DocParser($path);
-        list($docHtml, $docToc) = $parser->getDocAndToc();
-        $this->view->docToc = $docToc;
+        list($docHtml, $tocRenderer) = $parser->getDocAndToc();
+        $this->view->tocRenderer = $tocRenderer;
         $this->view->docName = $name;
-        $this->_helper->viewRenderer('partials/toc', null, true);
     }
 }
