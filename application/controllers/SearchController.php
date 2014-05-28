@@ -16,7 +16,14 @@ class SearchController extends ActionController
         $this->setAutorefreshInterval(10);
         $search = $this->_request->getParam('q');
         if (! $search) {
-            $this->view->hint = $this->translate('Ready to search, waiting for your input');
+            $this->view->tabs = Widget::create('tabs')->add(
+                'search',
+                array(
+                    'title' => $this->translate('Search'),
+                    'url'   => '/search',
+                )
+            )->activate('search');
+            $this->render('hint');
             return;
         }
         $dashboard = Widget::create('dashboard')->createPane($this->translate('Search'));
