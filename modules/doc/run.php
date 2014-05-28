@@ -16,4 +16,15 @@ $docModuleChapter = new Zend_Controller_Router_Route(
     )
 );
 
+$docIcingaWebChapter = new Zend_Controller_Router_Route(
+    'doc/icingaweb/chapter/:chapterName',
+    array(
+        'controller'    => 'icingaweb',
+        'action'        => 'chapter',
+        'module'        => 'doc'
+    )
+);
+
 $this->addRoute('doc/module/chapter', $docModuleChapter);
+$this->addRoute('doc/icingaweb/chapter', $docIcingaWebChapter);
+
