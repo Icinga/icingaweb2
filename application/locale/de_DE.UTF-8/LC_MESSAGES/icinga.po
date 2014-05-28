@@ -2,14 +2,13 @@
 # Copyright (C) 2014 Icinga Development Team
 # This file is distributed under the same license as Icinga Web 2.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
-#, fuzzy
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: Icinga Web 2 (0.1)\n"
 "Report-Msgid-Bugs-To: dev@icinga.org\n"
-"POT-Creation-Date: 2014-05-27 20:55+0000\n"
-"PO-Revision-Date: 2014-05-27 22:44+0100\n"
+"POT-Creation-Date: 2014-05-28 11:05+0000\n"
+"PO-Revision-Date: 2014-05-28 13:11+0100\n"
 "Last-Translator: Thomas Gelf <thomas@gelf.net>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -46,9 +45,7 @@ msgstr "Bind Kennwort"
 #: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:358
 #: /usr/local/src/bugfix.master/application/forms/Config/Authentication/BaseBackendForm.php:139
 msgid "Check this box to enforce changes without connectivity validation"
-msgstr ""
-"Aktiviere dieses Häkchen um die Änderungen ohne Validierung der Verbindung "
-"zu speichern"
+msgstr "Aktiviere dieses Häkchen um die Änderungen ohne Validierung der Verbindung zu speichern"
 
 #: /usr/local/src/bugfix.master/application/forms/Config/LoggingForm.php:73
 msgid "Check this to enable logging."
@@ -59,12 +56,8 @@ msgid "Connection Validation Failed: "
 msgstr "Überprüfung der Verbindung fehlgeschlagen: "
 
 #: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:477
-msgid ""
-"Connectivity validation failed, connection to the given resource not "
-"possible."
-msgstr ""
-"Überprüfung fehlgeschlagen, konnte keine Verbindung zu der angegebenen "
-"Ressource herstellen."
+msgid "Connectivity validation failed, connection to the given resource not possible."
+msgstr "Überprüfung fehlgeschlagen, konnte keine Verbindung zu der angegebenen Ressource herstellen."
 
 #: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:454
 #: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:470
@@ -121,33 +114,32 @@ msgstr "Dateipfad"
 msgid "Force Changes"
 msgstr "Änderungen erzwingen"
 
+#: /usr/local/src/bugfix.master/application/views/scripts/search/hint.phtml:7
+msgid "Hint"
+msgstr "Hinweis"
+
 #: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:160
 #: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:260
 msgid "Host"
 msgstr "Host"
 
-#: /usr/local/src/bugfix.master/application/controllers/SearchController.php:26
+#: /usr/local/src/bugfix.master/application/controllers/SearchController.php:33
 #: /usr/local/src/bugfix.master/application/views/scripts/pivottablePagination.phtml:28
 msgid "Hosts"
 msgstr "Hosts"
 
-#: /usr/local/src/bugfix.master/application/views/scripts/authentication/login.phtml:8
-msgid "Icinga Users Login"
-msgstr "Icinga Benutzeranmeldung"
+#: /usr/local/src/bugfix.master/application/views/scripts/search/hint.phtml:6
+msgid "I'm ready to search, waiting for your input"
+msgstr "Ich bin bereit zur Suche, warte auf deine Eingabe"
 
 #: /usr/local/src/bugfix.master/application/controllers/AuthenticationController.php:63
+#: /usr/local/src/bugfix.master/application/views/scripts/authentication/login.phtml:8
 msgid "Icingaweb Login"
 msgstr "Icingaweb Anmeldung"
 
 #: /usr/local/src/bugfix.master/application/views/scripts/authentication/logout.phtml:17
-msgid ""
-"If this message does not disappear, it might be necessary to quit the "
-"current session manually by clearing the cache, or by closing the current "
-"browser session."
-msgstr ""
-"Wenn diese Nachricht nicht verschwindet könnte es nötig sein die aktuelle "
-"Sitzung manuell zu beenden indem der Cache gelöscht order die Browsersitzung "
-"geschlossen wird."
+msgid "If this message does not disappear, it might be necessary to quit the current session manually by clearing the cache, or by closing the current browser session."
+msgstr "Wenn diese Nachricht nicht verschwindet könnte es nötig sein die aktuelle Sitzung manuell zu beenden indem der Cache gelöscht order die Browsersitzung geschlossen wird."
 
 #: /usr/local/src/bugfix.master/application/controllers/AuthenticationController.php:118
 msgid "Incorrect username or password"
@@ -160,7 +152,7 @@ msgstr "Information"
 #: /usr/local/src/bugfix.master/library/Icinga/Web/Wizard/Wizard.php:337
 #: /usr/local/src/bugfix.master/library/Icinga/Web/Wizard/Wizard.php:380
 msgid "Install"
-msgstr ""
+msgstr "Installieren"
 
 #: /usr/local/src/bugfix.master/application/views/scripts/install/index.phtml:29
 msgid "Installation"
@@ -216,9 +208,7 @@ msgid "Logout"
 msgstr "Abmelden"
 
 #: /usr/local/src/bugfix.master/application/views/scripts/authentication/logout.phtml:64
-msgid ""
-"Logout not possible, it may be necessary to quit the session manually by "
-"clearing the cache, or closing the current browser session. Error: "
+msgid "Logout not possible, it may be necessary to quit the session manually by clearing the cache, or closing the current browser session. Error: "
 msgstr ""
 
 #: /usr/local/src/bugfix.master/application/views/scripts/authentication/logout.phtml:69
@@ -265,6 +255,10 @@ msgstr "Muster"
 msgid "Please enter a number."
 msgstr "Bitte eine Nummer eingeben."
 
+#: /usr/local/src/bugfix.master/application/views/scripts/search/hint.phtml:8
+msgid "Please use the asterisk (*) as a placeholder for wildcard searches. For convenience I'll always add a wildcard after the last character you typed."
+msgstr "Bitte benutze das Sternchen (*) als Jokerzeichen für eine Suche mit Platzhaltern. Der Einfachheit halber hänge ich immer einen Platzhalter hinter das letzte von dir getippte Zeichen."
+
 #: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:171
 msgid "Port"
 msgstr "Port"
@@ -284,10 +278,6 @@ msgstr "Zurück"
 msgid "Previous"
 msgstr "Vorheriges"
 
-#: /usr/local/src/bugfix.master/application/controllers/SearchController.php:19
-msgid "Ready to search, waiting for your input"
-msgstr "Bereit zum Suchen, warte auf Eingabe"
-
 #: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:333
 msgid "Resource Name"
 msgstr ""
@@ -298,15 +288,16 @@ msgstr ""
 
 #: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:271
 msgid "Root DN"
-msgstr ""
+msgstr "Wurzel-DN"
 
 #: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:379
 msgid "SQL Database"
-msgstr ""
+msgstr "SQL Datenbank"
 
 #: /usr/local/src/bugfix.master/application/controllers/SearchController.php:22
-#: /usr/local/src/bugfix.master/application/controllers/SearchController.php:23
-#: /usr/local/src/bugfix.master/application/controllers/SearchController.php:49
+#: /usr/local/src/bugfix.master/application/controllers/SearchController.php:29
+#: /usr/local/src/bugfix.master/application/controllers/SearchController.php:30
+#: /usr/local/src/bugfix.master/application/controllers/SearchController.php:56
 msgid "Search"
 msgstr "Suche"
 
@@ -315,15 +306,13 @@ msgid "Search..."
 msgstr "Suche..."
 
 #: /usr/local/src/bugfix.master/application/forms/Config/GeneralForm.php:189
-msgid ""
-"Select the language to use by default. Can be overwritten by a user in his "
-"preferences."
+msgid "Select the language to use by default. Can be overwritten by a user in his preferences."
 msgstr ""
 
-#: /usr/local/src/bugfix.master/application/controllers/SearchController.php:34
+#: /usr/local/src/bugfix.master/application/controllers/SearchController.php:41
 #: /usr/local/src/bugfix.master/application/views/scripts/pivottablePagination.phtml:34
 msgid "Services"
-msgstr ""
+msgstr "Services"
 
 #: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:245
 msgid "Socket"
@@ -435,19 +424,19 @@ msgstr ""
 
 #: /usr/local/src/bugfix.master/application/views/scripts/config/module.phtml:6
 msgid "There is no such module installed."
-msgstr ""
+msgstr "Gegenwärtig ist kein solches Modul installiert."
 
 #: /usr/local/src/bugfix.master/application/views/scripts/config/module.phtml:32
 msgid "This module has no dependencies"
-msgstr ""
+msgstr "Dieses Modul hat keine Abhängigkeiten"
 
 #: /usr/local/src/bugfix.master/library/Icinga/Application/Modules/Module.php:383
 msgid "This module has no description"
-msgstr ""
+msgstr "Dieses Modul hat keine Beschreibung"
 
 #: /usr/local/src/bugfix.master/application/forms/Preference/GeneralForm.php:100
 msgid "Use Default Language"
-msgstr ""
+msgstr "Standardsprache verwenden"
 
 #: /usr/local/src/bugfix.master/application/forms/Preference/GeneralForm.php:109
 msgid "Use the following language to display texts and messages"
@@ -459,8 +448,7 @@ msgid "Username"
 msgstr "Benutzername"
 
 #: /usr/local/src/bugfix.master/application/forms/Config/Authentication/LdapBackendForm.php:169
-msgid ""
-"Using ldap is not possible, the php extension \"ldap\" is not installed."
+msgid "Using ldap is not possible, the php extension \"ldap\" is not installed."
 msgstr ""
 
 #: /usr/local/src/bugfix.master/application/forms/Config/Authentication/DbBackendForm.php:148
@@ -473,17 +461,16 @@ msgid "Warning"
 msgstr "Warnung"
 
 #: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:435
-msgid ""
-"You need to install the php extension \"mysql\" and the Zend_Pdo_Mysql "
-"classes to use  MySQL database resources."
+msgid "You need to install the php extension \"mysql\" and the Zend_Pdo_Mysql classes to use  MySQL database resources."
 msgstr ""
 
 #: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:442
-msgid ""
-"You need to install the php extension \"pgsql\" and the Zend_Pdo_Pgsql "
-"classes to use  PostgreSQL database resources."
+msgid "You need to install the php extension \"pgsql\" and the Zend_Pdo_Pgsql classes to use  PostgreSQL database resources."
 msgstr ""
 
 #: /usr/local/src/bugfix.master/application/forms/Preference/GeneralForm.php:106
 msgid "Your Current Language"
-msgstr ""
+msgstr "Deine aktuelle Sprache"
+
+#~ msgid "Icinga Users Login"
+#~ msgstr "Icinga Benutzeranmeldung"
