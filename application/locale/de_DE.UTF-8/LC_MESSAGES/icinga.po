@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Icinga Web 2 (0.1)\n"
 "Report-Msgid-Bugs-To: dev@icinga.org\n"
-"POT-Creation-Date: 2014-05-28 11:05+0000\n"
-"PO-Revision-Date: 2014-05-28 13:11+0100\n"
+"POT-Creation-Date: 2014-05-29 11:12+0000\n"
+"PO-Revision-Date: 2014-05-29 13:19+0100\n"
 "Last-Translator: Thomas Gelf <thomas@gelf.net>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -97,15 +97,15 @@ msgstr "Fehler"
 msgid "Facility"
 msgstr "Facility"
 
-#: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:383
 #: /usr/local/src/bugfix.master/application/forms/Config/LoggingForm.php:102
+#: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:383
 msgid "File"
 msgstr "Datei"
 
+#: /usr/local/src/bugfix.master/application/forms/Config/LoggingForm.php:155
 #: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:220
 #: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:231
 #: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:308
-#: /usr/local/src/bugfix.master/application/forms/Config/LoggingForm.php:155
 msgid "Filepath"
 msgstr "Dateipfad"
 
@@ -471,6 +471,17 @@ msgstr ""
 #: /usr/local/src/bugfix.master/application/forms/Preference/GeneralForm.php:106
 msgid "Your Current Language"
 msgstr "Deine aktuelle Sprache"
+
+#: /usr/local/src/bugfix.master/library/Icinga/Util/Format.php:108
+#: /usr/local/src/bugfix.master/library/Icinga/Util/Format.php:114
+msgid "for"
+msgstr "für"
+
+#: /usr/local/src/bugfix.master/library/Icinga/Util/Format.php:112
+#: /usr/local/src/bugfix.master/library/Icinga/Util/Format.php:131
+#: /usr/local/src/bugfix.master/library/Icinga/Util/Format.php:133
+msgid "since"
+msgstr "seit"
 
 #~ msgid "Icinga Users Login"
 #~ msgstr "Icinga Benutzeranmeldung"
