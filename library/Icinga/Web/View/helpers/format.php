@@ -18,7 +18,7 @@ $this->addHelperFunction('timeSince', function ($timestamp) {
 $this->addHelperFunction('prefixedTimeSince', function ($timestamp, $ucfirst = false) {
     return '<span class="timesince">'
         . Format::prefixedTimeSince($timestamp, $ucfirst)
-        . ' </span>';
+        . '</span>';
 });
 
 $this->addHelperFunction('timeUntil', function ($timestamp) {
