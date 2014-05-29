@@ -41,7 +41,7 @@ foreach ($services as $service):
       <td class="state" title="<?= $helper->getStateTitle($service, 'service'); ?>">
         <strong><?= $this->translate(strtoupper($helper->monitoringState($service, 'service'))) ?></strong><br />
 
-            <?php if (!$this->compact): ?><?= $this->timeSincePrefix($service->service_last_state_change) ?> <?php endif ?><?= $this->timeSince($service->service_last_state_change); ?>
+            <?php if (!$this->compact): ?><?= $this->prefixedTimeSince($service->service_last_state_change); ?><?php else: ?><?= $this->timeSince($service->service_last_state_change); ?><?php endif ?>
             <?php if ($service->service_state > 0 && (int) $service->service_state_type === 0): ?>
               <br />
               <strong>Soft <?= $service->service_attempt ?></strong>

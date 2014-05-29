@@ -78,7 +78,7 @@ if ($hosts->count() === 0) {
 
         <strong><?= ucfirst($helper->monitoringState($host, 'host')); ?></strong><br />
         <div class="small-row">
-        <?= $this->timeSincePrefix($host->host_last_state_change) ?> <?= $this->timeSince($host->host_last_state_change); ?>
+        <?= $this->prefixedTimeSince($host->host_last_state_change, true) ?>
         <?php if ($host->host_state > 0): ?>
           <br />
           <strong><?= ($host->host_state_type === '1') ? $this->translate('Hard') : $this->translate('Soft') ?> </strong> <?= $host->host_current_check_attempt; ?>/<?= $host->host_max_check_attempts; ?>

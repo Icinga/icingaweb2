@@ -10,7 +10,7 @@ $cf = $this->getHelper('CommandForm');
 
 <div class="content processinfo">
 <p>Backend <strong><?= $this->backendName; ?></strong>
-<?= $ps->is_currently_running === '1' ? sprintf('has been running with PID %d %s ', $ps->process_id, strtolower($this->timeSincePrefix($ps->program_start_time))) . $this->timeSince($ps->program_start_time) : 'is not running'; ?>.
+<?= $ps->is_currently_running === '1' ? sprintf('has been running with PID %d ', $ps->process_id) . $this->prefixedTimeSince($ps->program_start_time) : 'is not running'; ?>.
 
 <table class="avp">
   <tbody>

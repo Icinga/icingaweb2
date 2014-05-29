@@ -15,9 +15,9 @@ $this->addHelperFunction('timeSince', function ($timestamp) {
         . '</span>';
 });
 
-$this->addHelperFunction('timeSincePrefix', function ($timestamp) {
+$this->addHelperFunction('prefixedTimeSince', function ($timestamp, $ucfirst = false) {
     return '<span class="timesince">'
-        . $this->translate(Format::timeSincePrefix($timestamp))
+        . Format::prefixedTimeSince($timestamp, $ucfirst)
         . ' </span>';
 });
 
@@ -28,9 +28,9 @@ $this->addHelperFunction('timeUntil', function ($timestamp) {
         . '</span>';
 });
 
-$this->addHelperFunction('timeUntilPrefix', function ($timestamp) {
+$this->addHelperFunction('prefixedTimeUntil', function ($timestamp, $ucfirst = false) {
     if (! $timestamp) return '';
     return '<span class="timeuntil">'
-        . $this->translate(Format::timeUntilPrefix($timestamp))
+        . Format::prefixedTimeUntil($timestamp, $ucfirst)
         . '</span>';
 });

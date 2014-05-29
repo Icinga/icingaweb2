@@ -295,8 +295,7 @@ class ListCommand extends Command
                 $leaf,
                 $screen->underline($row->service_description),
                 $screen->colorize($utils->objectStateFlags('service', $row) . $perf, 'lightblue'),
-                strtolower(Format::timeSincePrefix($row->service_last_state_change)),
-                Format::timeSince($row->service_last_state_change)
+                Format::prefixedTimeSince($row->service_last_state_change, true)
             );
             if ($this->isVerbose) {
                 $out .= $emptyLine . preg_replace(
