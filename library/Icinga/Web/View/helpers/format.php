@@ -21,16 +21,16 @@ $this->addHelperFunction('timeSincePrefix', function ($timestamp) {
         . ' </span>';
 });
 
-$this->addHelperFunction('timeUnless', function ($timestamp) {
+$this->addHelperFunction('timeUntil', function ($timestamp) {
     if (! $timestamp) return '';
-    return '<span class="timeunless">'
+    return '<span class="timeuntil">'
         . Format::timeUntil($timestamp)
         . '</span>';
 });
 
-$this->addHelperFunction('timeUnlessPrefix', function ($timestamp) {
+$this->addHelperFunction('timeUntilPrefix', function ($timestamp) {
     if (! $timestamp) return '';
-    return '<span class="timeunless">'
+    return '<span class="timeuntil">'
         . $this->translate(Format::timeUntilPrefix($timestamp))
         . '</span>';
 });

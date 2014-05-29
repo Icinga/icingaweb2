@@ -58,7 +58,7 @@ foreach ($comments as $comment):
         <?php if ($comment->persistent): ?>Comment is persistent<br /><?php endif ?>
         <b>Expires: </b> <?=
             ($comment->expiration) ?
-                $this->timeUnless($comment->expiration) :
+                $this->timeUntil($comment->expiration) :
                 'Never'
         ?>
     </td>

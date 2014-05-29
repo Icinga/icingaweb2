@@ -25,7 +25,7 @@ $cf = $this->getHelper('CommandForm');
             'host'      => $object->host_name,
             'service'   => $object->service_description
         )
-    ) ?>"><?= $this->img('img/icons/reschedule_petrol.png') ?> <?= $this->translate('Reschedule') ?></a> <?= $this->timeUnless($object->next_check) ?></td>
+    ) ?>"><?= $this->img('img/icons/reschedule_petrol.png') ?> <?= $this->translate('Reschedule') ?></a> <?= $this->timeUntil($object->next_check) ?></td>
 </tr>
 <?php if ($object->check_execution_time): ?>
 <tr>

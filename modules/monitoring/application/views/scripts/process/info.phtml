@@ -43,7 +43,7 @@ $cf = $this->getHelper('CommandForm');
 <?php if ($ps->notifications_enabled === '1'): ?>
  <a rel="tooltip" title="Disable notifications for a specific time on a program-wide basis" href="<?= $this->href('monitoring/command/disablenotificationswithexpire') ?>" data-base-target="_next">Temporarily disable</a>
 <?php elseif ($ps->disable_notif_expire_time): ?>
-Will be re-enabled in <strong><?= $this->timeUnless($ps->disable_notif_expire_time) ?></strong>
+Will be re-enabled in <strong><?= $this->timeUntil($ps->disable_notif_expire_time) ?></strong>
 </div>
 <?php endif; ?>
       </td>

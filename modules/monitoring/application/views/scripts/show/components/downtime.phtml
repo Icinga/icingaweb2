@@ -18,9 +18,9 @@ foreach ($object->downtimes as $downtime) {
         $state = 'in downtime since ' . $this->timeSince($downtime->start);
     } else {
         if ($downtime->is_fixed) {
-            $state = 'scheduled ' . $this->timeUnless($downtime->start);
+            $state = 'scheduled ' . $this->timeUntil($downtime->start);
         } else {
-            $state = 'scheduled flexible ' . $this->timeUnless($downtime->start);
+            $state = 'scheduled flexible ' . $this->timeUntil($downtime->start);
         }
     }
 
