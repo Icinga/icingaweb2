@@ -101,20 +101,32 @@ class Format
         return self::showHourMin($duration);
     }
 
-    protected static function showHourMin($sec)
+    protected static function showHourMin($sec, $returnPrefix = false)
     {
         $min = floor($sec / 60);
         if ($min < 60) {
-            return $min . 'm ' . ($sec % 60) . 's';
+            if ($returnPrefix) {
+                return 'For';
+            } else {
+                return $min . 'm ' . ($sec % 60) . 's';
+            }
         }
         $hour = floor($min / 60);
         if ($hour < 24) {
-            return date('H:i', time() - $sec);
+            if ($returnPrefix) {
+                return 'Since';
+            } else {
+                return date('H:i', time() - $sec);
+            }
         }
-        return floor($hour / 24) . 'd ' . ($hour % 24) . 'h';
+        if ($returnPrefix) {
+            return 'For';
+        } else {
+            return floor($hour / 24) . 'd ' . ($hour % 24) . 'h';
+        }
     }
 
-    protected static function smartTimeDiff($diff, $timestamp)
+    protected static function smartTimeDiff($diff, $timestamp, $returnPrefix = false)
     {
         if ($timestamp === null || $timestamp === false) {
             return '-';
@@ -125,15 +137,22 @@ class Format
         $prefix = '';
         if ($diff < 0) {
             $prefix = '-';
-            $diff *= -1;
         }
-        if ($diff > 3600 * 24 * 3) {
+        if (abs($diff) > 3600 * 24 * 3) {
             if (date('Y') === date('Y', $timestamp)) {
-                return date('d.m.', $timestamp);
+                if ($returnPrefix) {
+                    return 'Since';
+                } else {
+                    return date('d.m.', $timestamp);
+                }
             }
-            return date('m.Y', $timestamp);
+            if ($returnPrefix) {
+                return 'Since';
+            } else {
+                return date('m.Y', $timestamp);
+            }
         }
-        return $prefix . self::showHourMin($diff);
+        return $prefix . self::showHourMin(abs($diff), $returnPrefix);
     }
 
     public static function timeSince($timestamp)
@@ -141,9 +160,19 @@ class Format
         return self::smartTimeDiff(time() - $timestamp, $timestamp);
     }
 
+    public static function timeSincePrefix($timestamp)
+    {
+        return self::smartTimeDiff(time() - $timestamp, $timestamp, true);
+    }
+
     public static function timeUntil($timestamp)
     {
         return self::smartTimeDiff($timestamp - time(), $timestamp);
+    }
+
+    public static function timeUntilPrefix($timestamp)
+    {
+        return self::smartTimeDiff($timestamp - time(), $timestamp, true);
     }
 
     protected static function formatForUnits($value, & $units, $base)

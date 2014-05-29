@@ -291,10 +291,11 @@ class ListCommand extends Command
                     $maxCols - 13
                 ) . "\n";
             $out .= sprintf(
-                " %1s─ %s%s (since %s)",
+                " %1s─ %s%s (%s %s)",
                 $leaf,
                 $screen->underline($row->service_description),
                 $screen->colorize($utils->objectStateFlags('service', $row) . $perf, 'lightblue'),
+                strtolower(Format::timeSincePrefix($row->service_last_state_change)),
                 Format::timeSince($row->service_last_state_change)
             );
             if ($this->isVerbose) {

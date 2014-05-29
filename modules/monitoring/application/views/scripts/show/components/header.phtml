@@ -6,7 +6,7 @@
   <tr class="state <?= $this->monitoringState($object, 'host') ?><?= $object->host_handled ? ' handled' : '' ?>">
     <td class="state"<?= $showService ? '' : ' rowspan="2"' ?>>
       <?= $this->translate($this->util()->getHostStateName($object->host_state)) ?><br />
-      <?= $this->translate('Since') ?> <?= $this->timeSince($object->host_last_state_change) ?>
+      <?= $this->timeSincePrefix($object->host_last_state_change) ?> <?= $this->timeSince($object->host_last_state_change) ?>
     </td>
     <td><b><?= $this->escape($object->host_name) ?></b><?php
  if ($object->host_address && $object->host_address !== $object->host_name): ?>
@@ -18,7 +18,7 @@
   <tr class="state <?= $this->monitoringState($object, 'service') ?><?= $object->service_handled ? ' handled' : '' ?>">
     <td class="state">
       <?= $this->translate($this->util()->getServiceStateName($object->service_state)) ?><br />
-      <?= $this->translate('Since') ?> <?= $this->timeSince($object->service_last_state_change) ?>
+      <?= $this->timeSincePrefix($object->service_last_state_change) ?> <?= $this->timeSince($object->service_last_state_change) ?>
     </td>
     <td><b><?= $this->translate('Service') ?>: <?= $this->escape($object->service_description) ?></b>
 

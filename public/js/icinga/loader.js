@@ -549,7 +549,7 @@
                     if (this.failureNotice === null) {
                         this.failureNotice = this.createNotice(
                             'error',
-                            'The connection to the Icinga web server has been lost at ' +
+                            'The connection to the Icinga web server was lost at ' +
                             this.icinga.utils.timeShort() +
                             '.',
                             true
