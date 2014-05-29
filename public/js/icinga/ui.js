@@ -537,7 +537,7 @@
                 }
             });
 
-            $('.timeunless').each(function (idx, el) {
+            $('.timeuntil').each(function (idx, el) {
                 var m = el.innerHTML.match(/^(-?\d+)m\s(-?\d+)s/);
                 if (m !== null) {
                     var nm = parseInt(m[1]);
