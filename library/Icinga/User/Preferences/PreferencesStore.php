@@ -27,7 +27,7 @@ use Icinga\Application\Config as IcingaConfig;
  * $store = PreferencesStore::create(
  *     new Zend_Config(
  *         'type'       => 'ini',
- *         'configPath' => '/path/to/preferences'
+ *         'config_path' => '/path/to/preferences'
  *     ),
  *     $user // Instance of \Icinga\User
  * );
@@ -132,7 +132,7 @@ abstract class PreferencesStore
         }
 
         if ($type === 'Ini') {
-            $config->location = IcingaConfig::resolvePath($config->configPath);
+            $config->location = IcingaConfig::resolvePath($config->config_path);
         } elseif ($type === 'Db') {
             $config->connection = new DbConnection(ResourceFactory::getResourceConfig($config->resource));
         }

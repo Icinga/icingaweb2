@@ -44,7 +44,7 @@ level               = 1
 [preferences]
 ; Use INI file storage to save preferences to a local disk
 type                = "ini"
-configPath          = "@icingaweb_config_path@/preferences"
+config_path          = "@icingaweb_config_path@/preferences"
 
 ; Use database storage to save preferences in either a MySQL or PostgreSQL database
 ;type        = db

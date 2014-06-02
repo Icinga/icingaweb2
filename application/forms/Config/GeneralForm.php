@@ -330,7 +330,7 @@ class GeneralForm extends Form
                 'label'     =>  'User Preference Filepath',
                 'required'  =>  $backend === 'ini',
                 'condition' =>  $backend === 'ini',
-                'value'     =>  $cfg->get('configPath')
+                'value'     =>  $cfg->get('config_path')
             )
         );
 
@@ -432,7 +432,7 @@ class GeneralForm extends Form
 
         $cfg->preferences->type = $values['preferences_type'];
         if ($cfg->preferences->type === 'ini') {
-            $cfg->preferences->configPath = $values['preferences_ini_path'];
+            $cfg->preferences->config_path = $values['preferences_ini_path'];
         } elseif ($cfg->preferences->type === 'db') {
             $cfg->preferences->resource = $values['preferences_db_resource'];
         }
