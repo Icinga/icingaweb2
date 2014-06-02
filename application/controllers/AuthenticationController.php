@@ -75,8 +75,6 @@ class AuthenticationController extends ActionController
             }
 
             if ($this->view->form->isSubmittedAndValid()) {
-                $user = new User($this->view->form->getValue('username'));
-
                 try {
                     $config = Config::app('authentication');
                 } catch (NotReadableError $e) {
@@ -88,6 +86,8 @@ class AuthenticationController extends ActionController
                         . ' up. Please contact your Icinga Web administrator'
                     );
                 }
+                $user = new User($this->view->form->getValue('username'));
+                $password = $this->view->form->getValue('password');
 
                 // TODO(el): Currently the user is only notified about authentication backend problems when all backends
                 // have errors. It may be the case that the authentication backend which provides the user has errors
@@ -98,7 +98,7 @@ class AuthenticationController extends ActionController
                 $backendsWithError = 0;
                 $chain = new AuthChain($config);
                 foreach ($chain as $backend) {
-                    $authenticated = $backend->authenticate($user, $this->view->form->getValue('password'));
+                    $authenticated = $backend->authenticate($user, $password);
                     if ($authenticated === true) {
                         $auth->setAuthenticated($user);
                         $this->redirectNow($redirectUrl);
