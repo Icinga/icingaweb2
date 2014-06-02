@@ -81,7 +81,6 @@ class WritablePathValidator extends Zend_Validate_Abstract
         $value = (string) $value;
 
         $this->_setValue($value);
-        $value = IcingaConfig::resolvePath($value);
         if ($this->requireExistence && !file_exists($value)) {
             $this->_error('DOES_NOT_EXIST');
             return false;

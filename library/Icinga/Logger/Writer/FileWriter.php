@@ -28,7 +28,7 @@ class FileWriter extends LogWriter
      */
     public function __construct(Zend_Config $config)
     {
-        $this->path = Config::resolvePath($config->target);
+        $this->path = $config->target;
         $this->setup();
     }
 
