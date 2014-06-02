@@ -399,9 +399,9 @@ class ActionController extends Zend_Controller_Action
         }
 
         if ($user = $this->getRequest()->getUser()) {
-            // Cast preference app.showBenchmark to bool because preferences loaded from a preferences storage are
+            // Cast preference app.show_benchmark to bool because preferences loaded from a preferences storage are
             // always strings
-            if ((bool) $user->getPreferences()->get('app.showBenchmark', false) === true) {
+            if ((bool) $user->getPreferences()->get('app.show_benchmark', false) === true) {
                 Benchmark::measure('Response ready');
                 $layout->benchmark = $this->renderBenchmark();
             }
