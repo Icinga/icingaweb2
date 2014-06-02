@@ -12,7 +12,7 @@ installJquery () {
 
 mountIcinga2webConfd () {
     # Remount /vagrant/config/ with appropriate permissions since the group apache is missing initially
-    mount -t vboxsf -o uid=`id -u vagrant`,gid=`id -g apache` /vagrant/config/ /vagrant/config/
+    mount -t vboxsf -o uid=`id -u vagrant`,gid=`id -g apache`,dmode=775,fmode=775 /vagrant/config/ /vagrant/config/
 }
 
 startServicesWithNonLSBCompliantExitStatusCodes () {
@@ -23,7 +23,7 @@ startServicesWithNonLSBCompliantExitStatusCodes () {
 
 mountIcinga2webVarLog () {
     # Remount /vagrant/var/log/ with appropriate permissions since the group apache is missing initially
-    mount -t vboxsf -o uid=`id -u vagrant`,gid=`id -g apache` /vagrant/var/log/ /vagrant/var/log/
+    mount -t vboxsf -o uid=`id -u vagrant`,gid=`id -g apache`,dmode=775,fmode=775 /vagrant/var/log/ /vagrant/var/log/
 }
 
 installJquery
