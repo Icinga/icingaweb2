@@ -6,7 +6,7 @@ include openldap
 Exec { path => '/bin:/usr/bin:/sbin' }
 
 $icingaVersion = '1.11.2'
-$icinga2Version = '0.0.11'
+$icinga2Version = '2.0.0'
 
 exec { 'create-mysql-icinga-db':
   unless  => 'mysql -uicinga -picinga icinga',
@@ -406,6 +406,13 @@ file { '/etc/icinga2/conf.d/test-config.conf':
 
 file { '/etc/icinga2/conf.d/commands.conf':
   source  => 'puppet:////vagrant/.vagrant-puppet/files/etc/icinga2/conf.d/commands.conf',
+  owner   => 'icinga',
+  group   => 'icinga',
+  require => Exec['install icinga2']
+}
+
+file { '/etc/icinga2/constants.conf':
+  source  => 'puppet:////vagrant/.vagrant-puppet/files/etc/icinga2/constants.conf',
   owner   => 'icinga',
   group   => 'icinga',
   require => Exec['install icinga2']
