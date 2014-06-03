@@ -6,8 +6,62 @@ namespace Icinga\Module\Doc;
 
 require_once 'vendor/Parsedown/Parsedown.php';
 
+use ArrayIterator;
+use RunetimeException;
+
+class FileLockingIterator extends ArrayIterator
+{
+    public function next()
+    {
+        $this->current()->flock(LOCK_UN);
+        parent::next();
+    }
+
+    public function valid()
+    {
+        if (!parent::valid()) {
+            return false;
+        }
+        $fileInfo = $this->current();
+        try {
+            $fileObject = $fileInfo->openFile();
+        } catch (RuntimeException $e) {
+            throw new DocException($e->getMessage());
+        }
+        if ($fileObject->flock(LOCK_SH) === false) {
+            throw new DocException('Couldn\'t get the lock');
+        }
+        $this[$this->key()] = $fileObject;
+        return true;
+    }
+}
+
+use IteratorAggregate;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
+
+class DocIterator implements IteratorAggregate
+{
+    protected $fileInfos;
+
+    public function __construct($path)
+    {
+        $iter = new RecursiveIteratorIterator(
+            new MarkdownFileIterator(
+                new RecursiveDirectoryIterator($path)
+            )
+        );
+        $fileInfos = iterator_to_array($iter);
+        natcasesort($fileInfos);
+        $this->fileInfos = $fileInfos;
+    }
+
+    public function getIterator()
+    {
+        return new FileLockingIterator($this->fileInfos);
+    }
+}
+
 use Parsedown;
 use Icinga\Exception\NotReadableError;
 
@@ -43,6 +97,56 @@ class DocParser
     }
 
     /**
+     * Retrieve the table of contents
+     *
+     * @return  DocTocHtmlRenderer
+     */
+    public function getToc()
+    {
+        $tocStack = array((object) array(
+            'level' => 0,
+            'node'  => new DocToc()
+        ));
+        foreach (new DocIterator($this->path) as $fileObject) {
+            $line = null;
+            while (! $fileObject->eof()) {
+                // Save last line for setext-style headers
+                $lastLine = $line;
+                $line = $fileObject->fgets();
+                $header = $this->extractHeader($line, $lastLine);
+                if ($header !== null) {
+                    list($header, $level) = $header;
+                    $id = $this->extractHeaderId($header);
+                    $nofollow = false;
+                    $this->reduceToc($tocStack, $level);
+                    if ($id === null) {
+                        $path = array();
+                        foreach (array_slice($tocStack, 1) as $entity) {
+                            $path[] = $entity->node->getValue()->title;
+                        }
+                        $path[] = $header;
+                        $id = implode('-', $path);
+                        $nofollow = true;
+                    }
+                    $id = urlencode(str_replace('.', '&#46;', strip_tags($id)));
+                    $node = end($tocStack)->node->appendChild(
+                        (object) array(
+                            'id'        => $id,
+                            'title'     => $header,
+                            'nofollow'  => $nofollow
+                        )
+                    );
+                    $tocStack[] = (object) array(
+                        'level' => $level,
+                        'node'  => $node
+                    );
+                }
+            }
+        }
+        return new DocTocHtmlRenderer($tocStack[0]->node);
+    }
+
+    /**
      * Retrieve doc as HTML converted from markdown files sorted by filename and the table of contents
      *
      * @return  array
@@ -50,27 +154,12 @@ class DocParser
      */
     public function getDocAndToc()
     {
-        $iter = new RecursiveIteratorIterator(
-            new MarkdownFileIterator(
-                new RecursiveDirectoryIterator($this->path)
-            )
-        );
-        $fileInfos = iterator_to_array($iter);
-        natcasesort($fileInfos);
         $cat = array();
         $tocStack = array((object) array(
             'level' => 0,
             'node'  => new DocToc()
         ));
-        foreach ($fileInfos as $fileInfo) {
-            try {
-                $fileObject = $fileInfo->openFile();
-            } catch (RuntimeException $e) {
-                throw new DocException($e->getMessage());
-            }
-            if ($fileObject->flock(LOCK_SH) === false) {
-                throw new DocException('Couldn\'t get the lock');
-            }
+        foreach (new DocIterator($this->path) as $fileObject) {
             $line = null;
             $sectionTitle = null;
             while (! $fileObject->eof()) {
@@ -112,7 +201,6 @@ class DocParser
                 }
                 $cat[] = $line;
             }
-            $fileObject->flock(LOCK_UN);
         }
         $html = Parsedown::instance()->text(implode('', $cat));
         $html = preg_replace_callback(
