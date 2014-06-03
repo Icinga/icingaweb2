@@ -215,10 +215,10 @@ class Web extends ApplicationBootstrap
         }
 
         try {
-            $config = Config::app('authentication');
+            $config = Config::app();
         } catch (NotReadableError $e) {
             Logger::error(
-                new Exception('Cannot load authentication configuration. An exception was thrown:', 0, $e)
+                new Exception('Cannot load global configuration (config.ini). An exception was thrown:', 0, $e)
             );
             $config = null;
         }
@@ -227,6 +227,7 @@ class Web extends ApplicationBootstrap
             $config->global->get('authenticationMode', 'internal') === 'external'
         ) {
             $authenticationManager->authenticateFromRemoteUser();
+            $this->user = $authenticationManager->getUser();
         }
 
         return $this;
