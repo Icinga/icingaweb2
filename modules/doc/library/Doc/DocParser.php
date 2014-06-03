@@ -62,7 +62,6 @@ class DocParser
             'level' => 0,
             'node'  => new DocToc()
         ));
-        $itemPriority = 1;
         foreach ($fileInfos as $fileInfo) {
             try {
                 $fileObject = $fileInfo->openFile();
@@ -97,7 +96,6 @@ class DocParser
                         (object) array(
                             'id'        => $id,
                             'title'     => $header,
-                            'priority'  => $itemPriority++,  // Post-increment is on purpose
                             'nofollow'  => $nofollow
                         )
                     );
