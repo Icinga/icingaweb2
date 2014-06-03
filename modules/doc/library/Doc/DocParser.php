@@ -72,15 +72,20 @@ class DocParser
                 throw new DocException('Couldn\'t get the lock');
             }
             $line = null;
+            $sectionTitle = null;
             while (! $fileObject->eof()) {
                 // Save last line for setext-style headers
                 $lastLine   = $line;
                 $line       = $fileObject->fgets();
                 $header     = $this->extractHeader($line, $lastLine);
                 if ($header !== null) {
-                    list($header, $level)   = $header;
-                    $id                     = $this->extractHeaderId($header);
-                    $nofollow               = false;
+                    list($header, $level) = $header;
+                    if ($sectionTitle === null) {
+                        // The first header is the section's title
+                        $sectionTitle = $header;
+                    }
+                    $id         = $this->extractHeaderId($header);
+                    $nofollow   = false;
                     $this->reduceToc($tocStack, $level);
                     if ($id === null) {
                         $path = array();
