@@ -201,13 +201,19 @@ class Web extends ApplicationBootstrap
     }
 
     /**
-     * Create user object and inject preference interface
+     * Create user object
      *
      * @return  self
-     * @throws  ConfigurationError
      */
     private function setupUser()
     {
+        $authenticationManager = AuthenticationManager::getInstance();
+
+        if ($authenticationManager->isAuthenticated() === true) {
+            $this->user = $authenticationManager->getUser();
+            return $this;
+        }
+
         try {
             $config = Config::app('authentication');
         } catch (NotReadableError $e) {
@@ -216,15 +222,13 @@ class Web extends ApplicationBootstrap
             );
             $config = null;
         }
-        $authenticationManager = AuthenticationManager::getInstance($config);
+
         if ($config !== null && $config->global !== null &&
             $config->global->get('authenticationMode', 'internal') === 'external'
         ) {
             $authenticationManager->authenticateFromRemoteUser();
         }
-        if ($authenticationManager->isAuthenticated() === true) {
-            $this->user = $authenticationManager->getUser();
-        }
+
         return $this;
     }
 
