@@ -11,10 +11,6 @@ timeFormat          = "g:i A"
 ; won't show up in the list of disabled modules
 ; modulePath          = "/vagrant/modules:/usr/share/icingaweb/modules"
 
-; The used authentication-mode can be either "internal" to handle the authentication in IcingaWeb
-; or "external" to delegate the authentication to the used WebServer
-authenticationMode  = "internal"
-
 [logging]
 enable              = true
 ; Writing to a Stream

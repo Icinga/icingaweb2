@@ -211,23 +211,6 @@ class Web extends ApplicationBootstrap
 
         if ($authenticationManager->isAuthenticated() === true) {
             $this->user = $authenticationManager->getUser();
-            return $this;
-        }
-
-        try {
-            $config = Config::app();
-        } catch (NotReadableError $e) {
-            Logger::error(
-                new Exception('Cannot load global configuration (config.ini). An exception was thrown:', 0, $e)
-            );
-            $config = null;
-        }
-
-        if ($config !== null && $config->global !== null &&
-            $config->global->get('authenticationMode', 'internal') === 'external'
-        ) {
-            $authenticationManager->authenticateFromRemoteUser();
-            $this->user = $authenticationManager->getUser();
         }
 
         return $this;

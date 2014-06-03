@@ -30,6 +30,7 @@
 
 # namespace Icinga\Application\Controllers;
 
+use Icinga\Authentication\Backend\AutoLoginBackend;
 use Icinga\Web\Controller\ActionController;
 use Icinga\Authentication\Manager as AuthManager;
 use Icinga\Form\Authentication\LoginForm;
@@ -62,6 +63,8 @@ class AuthenticationController extends ActionController
         $this->view->form = new LoginForm();
         $this->view->form->setRequest($this->_request);
         $this->view->title = $this->translate('Icingaweb Login');
+        $user = new User('');
+        $password = '';
 
         try {
             $redirectUrl = Url::fromPath($this->_request->getParam('redirect', 'dashboard'));
@@ -71,29 +74,49 @@ class AuthenticationController extends ActionController
             }
 
             $auth = AuthManager::getInstance();
+
             if ($auth->isAuthenticated()) {
                 $this->redirectNow($redirectUrl);
             }
 
-            if ($this->view->form->isSubmittedAndValid()) {
-                try {
-                    $config = Config::app('authentication');
-                } catch (NotReadableError $e) {
-                    Logger::error(
-                        new Exception('Cannot load authentication configuration. An exception was thrown:', 0, $e)
-                    );
-                    throw new ConfigurationError(
-                        'No authentication methods available. It seems that none authentication method has been set'
-                        . ' up. Please check the system log or Icinga Web 2 log for more information'
-                    );
+            try {
+                $config = Config::app('authentication');
+            } catch (NotReadableError $e) {
+                Logger::error(
+                    new Exception('Cannot load authentication configuration. An exception was thrown:', 0, $e)
+                );
+                throw new ConfigurationError(
+                    'No authentication methods available. It seems that none authentication method has been set'
+                    . ' up. Please check the system log or Icinga Web 2 log for more information'
+                );
+            }
+
+            $chain = new AuthChain($config);
+
+
+            if ($this->getRequest()->isGet()) {
+                foreach ($chain as $backend) {
+                    if ($backend instanceof AutoLoginBackend) {
+                        $authenticated  = $backend->authenticate($user, $password);
+                        if ($authenticated === true) {
+                            $auth->setAuthenticated($user);
+                            $this->redirectNow($redirectUrl);
+                        }
+                    }
                 }
+            } elseif ($this->view->form->isSubmittedAndValid()) {
                 $user = new User($this->view->form->getValue('username'));
                 $password = $this->view->form->getValue('password');
                 $backendsTried = 0;
                 $backendsWithError = 0;
-                $chain = new AuthChain($config);
+
                 foreach ($chain as $backend) {
                     ++$backendsTried;
+
+                    if ($backend instanceof AutoLoginBackend) {
+                        continue;
+                    }
+
                     try {
                         $authenticated = $backend->authenticate($user, $password);
                     } catch (AuthenticationException $e) {
