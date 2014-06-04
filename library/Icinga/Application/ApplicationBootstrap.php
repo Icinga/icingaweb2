@@ -301,7 +301,6 @@ abstract class ApplicationBootstrap
 
         $this->loader = new Loader();
         $this->loader->registerNamespace('Icinga', $this->libDir. '/Icinga');
-        $this->loader->registerNamespace('Icinga\\Form', $this->appDir. '/forms');
         $this->loader->register();
 
         return $this;

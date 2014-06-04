@@ -124,6 +124,7 @@ class Web extends ApplicationBootstrap
             ->setupInternationalization()
             ->setupRequest()
             ->setupZendMvc()
+			->setupFormNamespace()
             ->setupModuleManager()
             ->loadEnabledModules()
             ->setupRoute()
@@ -357,6 +358,20 @@ class Web extends ApplicationBootstrap
                 );
             }
         }
+        return $this;
+    }
+
+    /**
+     * Setup an autoloader namespace for Icinga\Form
+     *
+     * @return  self
+     */
+    private function setupFormNamespace()
+    {
+        $this->getLoader()->registerNamespace(
+            'Icinga\\Form',
+            $this->getApplicationDir('forms')
+        );
         return $this;
     }
 }
