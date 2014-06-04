@@ -133,8 +133,13 @@ abstract class ApplicationBootstrap
             define('ICINGA_LIBDIR', $this->libDir);
         }
 
-        // TODO: Make appdir configurable for packagers
-        $this->appDir = realpath($this->libDir. '/../application');
+        if (defined('ICINGAWEB_APPDIR')) {
+            $this->appDir = ICINGAWEB_APPDIR;
+        } elseif (array_key_exists('ICINGAWEB_APPDIR', $_SERVER)) {
+            $this->appDir = $_SERVER['ICINGAWEB_APPDIR'];
+        } else {
+            $this->appDir = realpath($this->libDir. '/../application');
+        }
 
         if (!defined('ICINGAWEB_APPDIR')) {
             define('ICINGAWEB_APPDIR', $this->appDir);
