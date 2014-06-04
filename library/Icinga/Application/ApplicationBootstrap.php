@@ -136,8 +136,8 @@ abstract class ApplicationBootstrap
         // TODO: Make appdir configurable for packagers
         $this->appDir = realpath($this->libDir. '/../application');
 
-        if (!defined('ICINGA_APPDIR')) {
-            define('ICINGA_APPDIR', $this->appDir);
+        if (!defined('ICINGAWEB_APPDIR')) {
+            define('ICINGAWEB_APPDIR', $this->appDir);
         }
 
         if ($configDir === null) {
@@ -337,8 +337,8 @@ abstract class ApplicationBootstrap
             explode(
                 ':',
                 $this->config->global !== null
-                    ? $this->config->global->get('modulePath', ICINGA_APPDIR . '/../modules')
-                    : ICINGA_APPDIR . '/../modules'
+                    ? $this->config->global->get('modulePath', ICINGAWEB_APPDIR . '/../modules')
+                    : ICINGAWEB_APPDIR . '/../modules'
             )
         );
         return $this;

@@ -64,7 +64,7 @@ class Loader
     public function __construct(App $app)
     {
         $this->app = $app;
-        $this->coreAppDir = ICINGA_APPDIR . '/clicommands';
+        $this->coreAppDir = ICINGAWEB_APPDIR . '/clicommands';
     }
 
     /**
