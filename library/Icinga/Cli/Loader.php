@@ -109,6 +109,12 @@ class Loader
         return $this->moduleName;
     }
 
+    public function setModuleName($name)
+    {
+        $this->moduleName = $name;
+        return $this;
+    }
+
     public function getCommandName()
     {
         return $this->commandName;
@@ -180,7 +186,13 @@ class Loader
         if (! $first) {
             return;
         }
-        $found = $this->resolveName($first);
+
+        if ($this->moduleName === null) {
+            $found = $this->resolveName($first);
+        } else {
+            $found = $this->moduleName;
+            $params->unshift($first);
+        }
         if (! $found) {
             $msg = "There is no such module or command: '$first'";
             printf("%s: %s\n", $this->screen()->colorize('ERROR', 'red'), $msg);
@@ -419,7 +431,10 @@ class Loader
     {
         if ($this->modules === null) {
             $this->modules = array();
-            $this->modules = $this->app->getModuleManager()->listEnabledModules();
+            $this->modules = array_merge(
+                $this->app->getModuleManager()->listEnabledModules(),
+                $this->app->getModuleManager()->listLoadedModules()
+            );
             sort($this->modules);
         }
         return $this->modules;
