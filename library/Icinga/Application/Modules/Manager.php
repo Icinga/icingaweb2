@@ -331,6 +331,10 @@ class Manager
      */
     public function getModuleDir($name, $subdir = '')
     {
+        if ($this->hasLoaded($name)) {
+            return $this->getModule($name)->getBaseDir() . $subdir;
+        }
+
         if ($this->hasEnabled($name)) {
             return $this->enabledDirs[$name]. $subdir;
         }
