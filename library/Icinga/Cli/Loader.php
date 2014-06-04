@@ -182,16 +182,15 @@ class Loader
         if ($params === null) {
             $params = $this->app->getParams();
         }
-        $first = $params->shift();
-        if (! $first) {
-            return;
-        }
 
         if ($this->moduleName === null) {
+            $first = $params->shift();
+            if (! $first) {
+                return;
+            }
             $found = $this->resolveName($first);
         } else {
             $found = $this->moduleName;
-            $params->unshift($first);
         }
         if (! $found) {
             $msg = "There is no such module or command: '$first'";
@@ -431,11 +430,10 @@ class Loader
     {
         if ($this->modules === null) {
             $this->modules = array();
-            $this->modules = array_merge(
+            $this->modules = array_unique(array_merge(
                 $this->app->getModuleManager()->listEnabledModules(),
                 $this->app->getModuleManager()->listLoadedModules()
-            );
-            sort($this->modules);
+            ));
         }
         return $this->modules;
     }
