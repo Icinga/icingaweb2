@@ -124,6 +124,13 @@ class Cli extends ApplicationBootstrap
         return $this->params;
     }
 
+    public function dispatchModule($name, $basedir = null)
+    {
+        $this->getModuleManager()->loadModule($name, $basedir);
+        $this->cliLoader()->setModuleName($name);
+        $this->dispatch();
+    }
+
     public function dispatch()
     {
         Benchmark::measure('Dispatching CLI command');
