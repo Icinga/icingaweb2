@@ -291,7 +291,7 @@ class ListCommand extends Command
                     $maxCols - 13
                 ) . "\n";
             $out .= sprintf(
-                " %1s─ %s%s (%s %s)",
+                " %1s─ %s%s (%s)",
                 $leaf,
                 $screen->underline($row->service_description),
                 $screen->colorize($utils->objectStateFlags('service', $row) . $perf, 'lightblue'),
