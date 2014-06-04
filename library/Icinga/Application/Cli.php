@@ -138,7 +138,7 @@ class Cli extends ApplicationBootstrap
 
     protected function dispatchOnce()
     {
-        $loader = new Loader($this);
+        $loader = $this->cliLoader();
         $loader->parseParams();
         $loader->dispatch();
         Benchmark::measure('All done');
@@ -149,7 +149,7 @@ class Cli extends ApplicationBootstrap
 
     protected function dispatchEndless()
     {
-        $loader = new Loader($this);
+        $loader = $this->cliLoader();
         $loader->parseParams();
         $screen = Screen::instance();
 
