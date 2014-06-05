@@ -767,12 +767,6 @@ file { '/var/www/html/icingaweb/css.php':
   ensure => absent,
 }
 
-file { '/var/www/html/icingaweb/.htaccess':
-  source    => 'puppet:////vagrant/.vagrant-puppet/files/var/www/html/icingaweb/.htaccess',
-  owner     => 'apache',
-  group     => 'apache',
-}
-
 file { '/etc/httpd/conf.d/icingaweb.conf':
   source    => 'puppet:////vagrant/.vagrant-puppet/files/etc/httpd/conf.d/icingaweb.conf',
   require   => Package['apache'],

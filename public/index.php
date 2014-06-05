@@ -1,4 +1,3 @@
 <?php
 
-$_SERVER['ICINGAWEB_CONFIGDIR'] = '@icingaweb_config_path@';
 require_once dirname(__DIR__). '/library/Icinga/Application/webrouter.php';

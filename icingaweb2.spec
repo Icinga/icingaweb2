@@ -164,9 +164,8 @@ install -D -m0644 packages/rhel/etc/httpd/conf.d/icingaweb.conf %{buildroot}/%{a
 
 %{__cp} -r application library modules public %{buildroot}/%{sharedir}/
 
-# install index.php, .htaccess
+# install index.php
 install -m0644 packages/rhel/usr/share/icingaweb/public/index.php %{buildroot}/%{sharedir}/public/index.php
-install -m0644 packages/rhel/usr/share/icingaweb/public/.htaccess %{buildroot}/%{sharedir}/public/.htaccess
 
 # use the vagrant config for configuration for now - TODO
 %{__cp} -r .vagrant-puppet/files/etc/icingaweb %{buildroot}/%{_sysconfdir}/
@@ -183,8 +182,6 @@ install -D -m0755 bin/icingacli %{buildroot}/usr/bin/icingacli
 # install sql schema files as example
 
 # delete all *.in files
-rm -f %{buildroot}/%{_datadir}/%{name}/public/index.php.in
-rm -f %{buildroot}/%{_datadir}/%{name}/public/.htaccess.in
 
 %pre
 # Add apacheuser in the icingacmd group
