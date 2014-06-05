@@ -67,7 +67,7 @@ class LessCompiler
      */
     public function __construct()
     {
-        require_once 'vendor/lessphp/lessc.inc.php';
+        require_once 'IcingaVendor/lessphp/lessc.inc.php';
         $this->lessc = new lessc();
 
         $this->lessc->setVariables(

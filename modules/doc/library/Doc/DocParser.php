@@ -11,7 +11,7 @@ use Icinga\Application\Icinga;
 use Icinga\Web\Menu;
 use Icinga\Web\Url;
 
-require_once 'vendor/Parsedown/Parsedown.php';
+require_once 'IcingaVendor/Parsedown/Parsedown.php';
 
 /**
  * Parser for documentation written in Markdown
