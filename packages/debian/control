@@ -1,5 +1,6 @@
 Source: icingaweb
-Section: main
+Section: upstream
+Maintainer: Icinga Development Team <info@icinga.org>
 Priority: optional
 Build-Depends: debhelper (>=9)
 Standards-Version: 3.9.4
@@ -13,9 +14,21 @@ Suggests: php5-pgsql
 Description: Icinga PHP libraries
  PHP libraries 
 
+Package: libicinga-vendor-php
+Architecture: any
+Depends: libicinga-php
+Description: Icinga PHP vendor libraries
+ PHP vendor libraries
+
+Package: libicinga-common-php
+Architecture: any
+Depends: libicinga-php, libicinga-vendor-php
+Description: Icinga PHP common libraries
+ PHP common libraries, application and modules
+
 Package: icingacli
 Architecture: any
-Depends: libicingaweb-php (>= 2.0.0~beta1)
+Depends: libicinga-common-php (>= 2.0.0~alpha1)
 Description: Icinga CLI tool
  The Icinga CLI allows one to access it's Icinga monitoring
  system from a terminal. 
@@ -24,8 +37,8 @@ Description: Icinga CLI tool
 
 Package: icingaweb
 Architecture: any
-Depends: libicingaweb-php (>= 2.0.0~beta1)
+Depends: libicinga-common-php (>= 2.0.0~alpha1), libapache2-mod-php5
 Recommends: php5-gd, icingacli
 Suggests: php5-ldap
 Description: Icinga Web Frontend
- Icinga Web is a modular web frontend designed 
+ Icinga Web is a modular web frontend

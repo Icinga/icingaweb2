@@ -1,0 +1,6 @@
+#!/usr/bin/php
+<?php
+
+define('ICINGAWEB_APPDIR', '/usr/share/icingaweb/application');
+require_once 'Icinga/Application/Cli.php';
+Icinga\Application\Cli::start()->dispatch();
