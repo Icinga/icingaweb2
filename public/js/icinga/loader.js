@@ -222,9 +222,20 @@
 
         processNotificationHeader: function(req) {
             var header = req.getResponseHeader('X-Icinga-Notification');
-            if (typeof header === 'undefined' || ! header) return false;
+            if (! header) return false;
             var parts = decodeURIComponent(header).split(' ');
             this.createNotice(parts.shift(), parts.join(' '));
+            return true;
+        },
+
+        processRedirectHeader: function(req) {
+            var redirect = req.getResponseHeader('X-Icinga-Redirect');
+            if (! redirect) return false;
+            this.icinga.logger.debug(
+                'Got redirect for ', req.$target, ', URL was ' + redirect
+            );
+            redirect = decodeURIComponent(redirect);
+            this.loadUrl(redirect, req.$target);
             return true;
         },
 
@@ -255,14 +266,7 @@
             this.processNotificationHeader(req);
 
             var redirect = req.getResponseHeader('X-Icinga-Redirect');
-            if (redirect) {
-                this.icinga.logger.debug(
-                    'Got redirect for ', req.$target, ', URL was ' + redirect
-                );
-                redirect = decodeURIComponent(redirect);
-                this.loadUrl(redirect, req.$target);
-                return;
-            }
+            if (this.processRedirectHeader(req)) return;
 
             // div helps getting an XML tree
             var $resp = $('<div>' + req.responseText + '</div>');
