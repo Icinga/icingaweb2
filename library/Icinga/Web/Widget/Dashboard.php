@@ -305,7 +305,7 @@ class Dashboard extends AbstractWidget
                 $active = $this->setDefaultPane();
             }
         }
-        return $this->panes[$active];
+        return isset($this->panes[$active]) ? $this->panes[$active] : null;
     }
 
     /**

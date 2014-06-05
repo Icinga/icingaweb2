@@ -1,6 +1,20 @@
 <div class="controls">
 <?= $this->tabs ?>
 </div>
-<div class="dashboard content">
-<?= $this->dashboard ?>
-</div>
+<?php if ($this->dashboard): ?>
+    <div class="dashboard content">
+    <?= $this->dashboard ?>
+    </div>
+<?php else: ?>
+    <div class="content">
+        <h1>No dashboard configuration found!</h1>
+        <p>
+            We tried to load a dashboard configuration with no success.
+            Please have look that the configuration does exist:
+
+            <code>
+                <?= $this->configPath ?>.ini
+            </code>
+        </p>
+    </div>
+<?php endif; ?>
