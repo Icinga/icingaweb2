@@ -143,7 +143,7 @@ class DashboardController extends ActionController
             $dashboard->activate($pane);
         }
 
-        $this->view->configPath = IcingaConfig::$configDir . DIRECTORY_SEPARATOR . self::DEFAULT_CONFIG;
+        $this->view->configPath = IcingaConfig::resolvePath(self::DEFAULT_CONFIG);
 
         if ($dashboard === null) {
             $this->view->title = 'Dashboard';

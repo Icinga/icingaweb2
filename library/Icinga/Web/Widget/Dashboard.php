@@ -31,6 +31,7 @@ namespace Icinga\Web\Widget;
 
 use Icinga\Application\Icinga;
 use Icinga\Application\Config as IcingaConfig;
+use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Web\Widget\AbstractWidget;
 use Icinga\Web\Widget\Dashboard\Pane;
@@ -305,7 +306,12 @@ class Dashboard extends AbstractWidget
                 $active = $this->setDefaultPane();
             }
         }
-        return isset($this->panes[$active]) ? $this->panes[$active] : null;
+
+        if (isset($this->panes[$active])) {
+            return $this->panes[$active];
+        }
+
+        throw new ConfigurationError('Could not determine active pane');
     }
 
     /**
