@@ -220,6 +220,14 @@
             this.autorefreshEnabled = true;
         },
 
+        processNotificationHeader: function(req) {
+            var header = req.getResponseHeader('X-Icinga-Notification');
+            if (typeof header === 'undefined' || ! header) return false;
+            var parts = decodeURIComponent(header).split(' ');
+            this.createNotice(parts.shift(), parts.join(' '));
+            return true;
+        },
+
         /**
          * Handle successful XHR response
          */
@@ -244,6 +252,8 @@
             this.icinga.logger.debug(
                 'Got response for ', req.$target, ', URL was ' + url
             );
+            this.processNotificationHeader(req);
+
             var redirect = req.getResponseHeader('X-Icinga-Redirect');
             if (redirect) {
                 this.icinga.logger.debug(
@@ -295,20 +305,11 @@
                 active = $('[href].active', req.$target).attr('href');
             }
 
-            var notifications = req.getResponseHeader('X-Icinga-Notification');
-            if (notifications) {
-                notifications = decodeURIComponent(notifications);
-            }
 
             var target = req.getResponseHeader('X-Icinga-Container');
             var newBody = false;
             if (target) {
                 if (target === 'ignore') {
-                    var parts = notifications.split(' ');
-                    this.createNotice(
-                        parts.shift(),
-                        parts.join(' ')
-                    );
                     return;
                 }
                 // If we change the target, oncomplete will fail to clean up
@@ -317,14 +318,6 @@
 
                 req.$target = $('#' + target);
                 newBody = true;
-            }
-
-            if (! newBody && notifications) {
-                var parts = notifications.split(' ');
-                this.createNotice(
-                    parts.shift(),
-                    parts.join(' ')
-                );
             }
 
             var moduleName = req.getResponseHeader('X-Icinga-Module');
@@ -438,17 +431,7 @@
                   });
             */
 
-            if (rendered) {
-
-                if (newBody && notifications) {
-                    var parts = notifications.split(' ');
-                    this.createNotice(
-                        parts.shift(),
-                        parts.join(' ')
-                    );
-                }
-                return;
-            }
+            if (rendered) return;
 
             // .html() removes outer div we added above
             this.renderContentToContainer($resp.html(), req.$target, req.action);
@@ -458,13 +441,6 @@
             if (newBody) {
                 this.icinga.ui.fixDebugVisibility().triggerWindowResize();
             }
-                if (newBody && notifications) {
-                    var parts = notifications.split(' ');
-                    this.createNotice(
-                        parts.shift(),
-                        parts.join(' ')
-                    );
-                }
 
             if (active) {
                 var focusedUrl = this.icinga.ui.getFocusedContainerDataUrl();
