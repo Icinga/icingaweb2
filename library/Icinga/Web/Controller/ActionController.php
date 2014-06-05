@@ -370,13 +370,19 @@ class ActionController extends Zend_Controller_Action
     **/
     public function redirectNow($url)
     {
-        if ($url instanceof Url) {
-            $url = $url->getRelativeUrl();
-        } else {
-            $url = Url::fromPath($url)->getRelativeUrl();
+        if (! $url instanceof Url) {
+            $url = Url::fromPath($url);
         }
-        $this->_helper->Redirector->gotoUrlAndExit(preg_replace('~&amp;~', '&', $url));
-        $this->isRedirect = true;
+        $url = preg_replace('~&amp;~', '&', $url);
+        if ($this->_request->isXmlHttpRequest()) {
+            header('X-Icinga-Redirect: ' . rawurlencode($url));
+            // $this->getResponse()->sendHeaders() ??
+            // Session shutdown
+            exit; // Really?
+        } else {
+            $this->_helper->Redirector->gotoUrlAndExit($url);
+        }
+        $this->isRedirect = true; // pretty useless right now
     }
 
     /**

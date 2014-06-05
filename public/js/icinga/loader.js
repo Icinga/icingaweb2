@@ -244,6 +244,15 @@
             this.icinga.logger.debug(
                 'Got response for ', req.$target, ', URL was ' + url
             );
+            var redirect = req.getResponseHeader('X-Icinga-Redirect');
+            if (redirect) {
+                this.icinga.logger.debug(
+                    'Got redirect for ', req.$target, ', URL was ' + redirect
+                );
+                redirect = decodeURIComponent(redirect);
+                this.loadUrl(redirect, req.$target);
+                return;
+            }
 
             // div helps getting an XML tree
             var $resp = $('<div>' + req.responseText + '</div>');
@@ -400,6 +409,7 @@
                     this.icinga.history.pushCurrentState();
                 }
             }
+
             this.icinga.ui.initializeTriStates($resp);
 
             // Make multiselection-tables not selectable.
@@ -458,7 +468,6 @@
                         parts.join(' ')
                     );
                 }
-
 
             if (active) {
                 var focusedUrl = this.icinga.ui.getFocusedContainerDataUrl();
