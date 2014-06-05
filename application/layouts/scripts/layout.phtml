@@ -53,7 +53,7 @@ $isIframe = isset($_GET['_render']) && $_GET['_render'] === 'iframe';
 <script type="text/javascript" src="<?= $this->href($jsfile) ?>"></script>
 <script type="text/javascript">
 var icinga = new Icinga({
-  baseUrl: '<?= $this->href('/') ?>',
+  baseUrl: '<?= $this->href('/') ?>'
 });
 </script>
 </body>

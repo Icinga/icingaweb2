@@ -215,7 +215,7 @@
         layout1col: function () {
             if (! $('#layout').hasClass('twocols')) { return; }
             var $col2 = $('#col2');
-            icinga.logger.debug('Switching to single col');
+            this.icinga.logger.debug('Switching to single col');
             $('#layout').removeClass('twocols');
             $col2.removeData('icingaUrl');
             $col2.removeData('icingaRefresh');
@@ -228,7 +228,7 @@
 
         layout2col: function () {
             if ($('#layout').hasClass('twocols')) { return; }
-            icinga.logger.debug('Switching to double col');
+            this.icinga.logger.debug('Switching to double col');
             $('#layout').addClass('twocols');
             this.fixControls();
         },

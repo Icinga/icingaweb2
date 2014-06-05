@@ -51,8 +51,8 @@
                 }
             });
 
-            var moduleName;
-            if (moduleName = el.data('icingaModule')) {
+            var moduleName = el.data('icingaModule');
+            if (moduleName) {
                 if (icinga.hasModule(moduleName)) {
                     var module = icinga.module(moduleName);
                     // NOT YET, the applyOnloadDings: module.applyEventHandlers(mod);
@@ -99,7 +99,7 @@
             $( window ).on('beforeunload', { self: this }, this.onUnload);
 
             // We catch scroll events in our containers
-            $('.container').on('scroll', this.icinga.events.onContainerScroll);
+            $('.container').on('scroll', { self: this }, this.icinga.events.onContainerScroll);
 
             // We want to catch each link click
             $(document).on('click', 'a', { self: this }, this.linkClicked);
@@ -259,6 +259,7 @@
         },
 
         clickTriState: function (event) {
+            var self = event.data.self;
             var $tristate = $(this);
             var triState  = parseInt($tristate.data('icinga-tristate'), 10);
 
@@ -348,7 +349,7 @@
             //       combined with target="_blank" or target="_self"
             // window.open is used as return true; didn't work reliable
             if (linkTarget === '_blank' || linkTarget === '_self') {
-                window.open(href, linkTarget);
+                window.open($node.attr('href'), linkTarget);
                 return true;
             }
             return false;
@@ -543,7 +544,7 @@
                 } else if (targetId === '_main') {
                     targetId = 'col1';
                     $target = $('#' + targetId);
-                    icinga.ui.layout1col();
+                    self.icinga.ui.layout1col();
                 } else {
                     $target = $('#' + targetId);
                 }
@@ -552,7 +553,7 @@
 
             // Hardcoded layout switch unless columns are dynamic
             if ($target.attr('id') === 'col2') {
-                icinga.ui.layout2col();
+                this.icinga.ui.layout2col();
             }
 
             return $target;

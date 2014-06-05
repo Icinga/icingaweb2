@@ -73,8 +73,8 @@
           var elemTop = $element.offset().top;
           var elemBottom = elemTop + $element.height();
 
-          return ((elemBottom >= docViewTop) && (elemTop <= docViewBottom)
-                  && (elemBottom <= docViewBottom) && (elemTop >= docViewTop));
+          return ((elemBottom >= docViewTop) && (elemTop <= docViewBottom) &&
+              (elemBottom <= docViewBottom) && (elemTop >= docViewTop));
         },
 
         getUrlHelper: function () {

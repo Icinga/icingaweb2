@@ -76,7 +76,7 @@
       }
     }
 
-  },
+  };
 
   Icinga.availableModules.monitoring = Monitoring;
 
