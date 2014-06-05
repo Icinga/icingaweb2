@@ -412,9 +412,6 @@
 
             this.icinga.ui.initializeTriStates($resp);
 
-            // Make multiselection-tables not selectable.
-            this.icinga.ui.prepareMultiselectTables($resp);
-
             // Replace images with sparklines.
             $resp.find('img.inlinepie').each(function(){
                 self.icinga.ui.initializeSparklines($(this));

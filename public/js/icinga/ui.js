@@ -277,19 +277,6 @@
         },
 
         /**
-         * Prepare all multiselectable tables for multi-selection by
-         * removing the regular text selection.
-         */
-        prepareMultiselectTables: function () {
-            var $rows = $('table.multiselect tr[href]');
-            $rows.find('td').attr('unselectable', 'on')
-                .css('user-select', 'none')
-                .css('-webkit-user-select', 'none')
-                .css('-moz-user-select', 'none')
-                .css('-ms-user-select', 'none');
-        },
-
-        /**
          * Add the given table-row to the selection of the closest
          * table and deselect all other rows of the closest table.
          *

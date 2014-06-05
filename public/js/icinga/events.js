@@ -28,7 +28,6 @@
             this.applyGlobalDefaults();
             this.applyHandlers($('#layout'));
             this.icinga.ui.prepareContainers();
-            this.icinga.ui.prepareMultiselectTables($(document));
         },
 
         // TODO: What's this?
