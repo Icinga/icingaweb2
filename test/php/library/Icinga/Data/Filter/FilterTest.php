@@ -158,6 +158,8 @@ class FilterTest extends BaseTestCase
     }
 
 */
+
+    // Playing around to get ready for new queryString parser
     public function testFromQueryString()
     {
         $string = 'host_name=localhost&(service_state=1|service_state=2|service_state=3)&service_problem=1';
