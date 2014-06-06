@@ -1,0 +1,38 @@
+<?php
+$urlHelper = $this->getHelper('Url');
+$view = $this;
+?>
+<?= preg_replace_callback(
+    '/<a\s+(?P<attribs>[^>]*?\s+)?href="#(?P<fragment>[^"]+)"/im',
+    function($match) use ($toc, $moduleName, $urlHelper, $view) {
+        if (($node = $toc->findNodeBy(function ($node) use ($match) {
+            $section = $node->getValue();
+            if (($section->id === null && $section->chapterName === $match['fragment'])
+                || $section->id === $match['fragment']
+            ) {
+                return true;
+            }
+            return false;
+        }))) {
+            $section = $node->getValue();
+            $path = $urlHelper->url(
+                array('moduleName' => $moduleName, 'chapterName' => $section->chapterName),
+                'doc/module/chapter',
+                false,
+                false
+            );
+            $url = $view->url($path);
+            if ($section->id) {
+                $url->setAnchor($section->id);
+            }
+            return sprintf(
+                '<a %s%shref="%s"',
+                strlen($match['attribs']) ? trim($match['attribs']) . ' ' : '',
+                $section->nofollow ? 'rel="nofollow" ' : '',
+                $url->getAbsoluteUrl()
+            );
+        }
+        return $match[0];
+    },
+    $chapterHtml
+); ?>

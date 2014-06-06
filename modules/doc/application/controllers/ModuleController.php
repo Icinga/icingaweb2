@@ -63,6 +63,7 @@ class Doc_ModuleController extends DocController
             throw new Zend_Controller_Action_Exception('Missing parameter "chapterName"', 404);
         }
         $moduleManager = Icinga::app()->getModuleManager();
-        $this->renderChapter($chapterName, $moduleManager->getModuleDir($moduleName, '/doc'));
+        $this->populateChapter($chapterName, $moduleManager->getModuleDir($moduleName, '/doc'));
+        $this->view->moduleName = $moduleName;
     }
 }

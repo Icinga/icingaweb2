@@ -4,22 +4,22 @@
 
 namespace Icinga\Module\Doc;
 
+use Icinga\Data\Tree\NodeRenderer;
 use Icinga\Web\Controller\ActionController;
 
 class DocController extends ActionController
 {
     /**
-     * Render a chapter
+     * Populate a chapter
      *
      * @param string $chapterName   Name of the chapter
      * @param string $path          Path to the documentation
      */
-    protected function renderChapter($chapterName, $path)
+    protected function populateChapter($chapterName, $path)
     {
         $parser = new DocParser($path);
-        list($docHtml, $docToc) = $parser->getDocAndToc();
-        $this->view->chapterHtml = $docHtml;
-        $this->_helper->viewRenderer('partials/chapter', null, true);
+        $this->view->chapterHtml = $parser->getChapter($chapterName);
+        $this->view->toc = $parser->getToc();
     }
 
     /**
@@ -31,8 +31,8 @@ class DocController extends ActionController
     protected function populateToc($path, $name)
     {
         $parser = new DocParser($path);
-        list($docHtml, $tocRenderer) = $parser->getDocAndToc();
-        $this->view->tocRenderer = $tocRenderer;
+        $toc = $parser->getToc();
+        $this->view->tocRenderer = new NodeRenderer($toc);
         $this->view->docName = $name;
     }
 }

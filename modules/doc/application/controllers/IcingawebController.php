@@ -27,6 +27,6 @@ class Doc_IcingawebController extends DocController
         if ($chapterName === null) {
             throw new Zend_Controller_Action_Exception('Missing parameter "chapterName"', 404);
         }
-        $this->renderChapter($chapterName, Icinga::app()->getApplicationDir('/../doc'));
+        $this->populateChapter($chapterName, Icinga::app()->getApplicationDir('/../doc'));
     }
 }

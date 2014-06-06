@@ -1,15 +1,23 @@
 <div class="controls">
-  <h1><?= $docName ?> documentation</h1>
+    <h1><?= $docName ?> documentation</h1>
 </div>
 <div class="content" data-base-target="_next">
-  <?php
+    <?php
     $urlHelper = $this->getHelper('Url');
     $view = $this;
-  ?>
-  <?= $tocRenderer->render(function ($section) use ($urlHelper, $view) {
-    // Chapter name is not yet defined
-    $path = $urlHelper->url(array('chapterName' => 'tbd'), 'doc/icingaweb/chapter', false, false);
-    $url = $view->url($path)->setAnchor($section->id);
-    return sprintf('<li><a href="%s">%s</a></li>', $url->getAbsoluteUrl(), $section->title);
-  }); ?>
+    ?>
+    <?= $tocRenderer->render(function ($node) use ($urlHelper, $view) {
+        $section = $node->getValue();
+        $path = $urlHelper->url(array('chapterName' => $section->chapterName), 'doc/icingaweb/chapter', false, false);
+        $url = $view->url($path);
+        if ($section->id) {
+            $url->setAnchor($section->id);
+        }
+        return sprintf(
+            '<li><a %shref="%s">%s</a></li>',
+            $section->nofollow ? 'rel="nofollow" ' : '',
+            $url->getAbsoluteUrl(),
+            $section->title
+        );
+    }); ?>
 </div>

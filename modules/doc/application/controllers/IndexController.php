@@ -8,6 +8,5 @@ class Doc_IndexController extends DocController
 {
     public function indexAction()
     {
-
     }
 }
