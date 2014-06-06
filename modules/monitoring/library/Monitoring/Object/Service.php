@@ -3,14 +3,14 @@
 namespace Icinga\Module\Monitoring\Object;
 
 use Icinga\Module\Monitoring\DataView\ServiceStatus;
-use Icinga\Data\Db\Query;
+use Icinga\Data\Db\DbQuery;
 
 class Service extends AbstractObject
 {
     public $type   = 'service';
     public $prefix = 'service_';
 
-    protected function applyObjectFilter(Query $query)
+    protected function applyObjectFilter(DbQuery $query)
     {
         return $query->where('service_host_name', $this->host_name)
                      ->where('service_description', $this->service_description);

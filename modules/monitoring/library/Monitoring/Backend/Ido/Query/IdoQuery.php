@@ -30,7 +30,7 @@
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
 use Icinga\Logger\Logger;
-use Icinga\Data\Db\Query;
+use Icinga\Data\Db\DbQuery;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Application\Icinga;
 use Icinga\Web\Session;

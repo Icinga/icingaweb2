@@ -3,14 +3,14 @@
 namespace Icinga\Module\Monitoring\Object;
 
 use Icinga\Module\Monitoring\DataView\HostStatus;
-use Icinga\Data\Db\Query;
+use Icinga\Data\Db\DbQuery;
 
 class Host extends AbstractObject
 {
     public $type   = 'host';
     public $prefix = 'host_';
 
-    protected function applyObjectFilter(Query $query)
+    protected function applyObjectFilter(DbQuery $query)
     {
         return $query->where('host_name', $this->host_name);
     }

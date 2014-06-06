@@ -29,7 +29,6 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 
 use Icinga\Application\Benchmark;
-use Icinga\Data\Db\Query;
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Web\Hook;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
