@@ -1,31 +1,4 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
-// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
@@ -34,6 +7,8 @@ use Icinga\Data\Db\DbQuery;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Application\Icinga;
 use Icinga\Web\Session;
+use Icinga\Data\Filter\Filter;
+use Icinga\Data\Filter\FilterWhere;
 
 /**
  * Base class for Ido Queries
@@ -59,7 +34,7 @@ use Icinga\Web\Session;
  *
  * This allows you to select e.g. fieldalias1, which automatically calls the query code for joining 'virtualTable'. If
  * you afterwards select 'host', 'virtualTable2' will be joined. The joining logic is up to you, in order to make the
- * above example work you need to implement the joinVirtualTable() and joinVirtualTable2() method which contain your
+ * above example work you need to implement the joinVirtualTable() method which contain your
  * custom (Zend_Db) logic for joining, filtering and querying the data you want.
  *
  */
@@ -252,7 +227,52 @@ abstract class IdoQuery extends DbQuery
                 return $columnSet[$field];
             }
         }
+        if ($this->isCustomVar($field)) {
+            return $this->getCustomvarColumnName($field);
+        }
         return null;
+    }
+
+    public function distinct()
+    {
+        $this->select->distinct();
+        return $this;
+    }
+
+    protected function requireFilterColumns(Filter $filter)
+    {
+        if ($filter instanceof FilterWhere) {
+            $col = $filter->getColumn();
+            $this->requireColumn($col);
+
+            if ($this->isCustomvar($col)) {
+                $col = $this->getCustomvarColumnName($col);
+            } else {
+                $col = $this->aliasToColumnName($col);
+            }
+
+            $filter->setColumn($col);
+        } else {
+            foreach ($filter->filters() as $filter) {
+                $this->requireFilterColumns($filter);
+            }
+        }
+    }
+
+    public function addFilter(Filter $filter)
+    {
+        $this->requireFilterColumns($filter);
+        parent::addFilter($filter);
+    }
+
+    public function where($condition, $value = null)
+    {
+        $this->requireColumn($condition);
+        $col = $this->getMappedField($condition);
+        if ($col === null) {
+            throw new \Exception("No such field: $condition");
+        }
+        return parent::where($col, $value);
     }
 
     /**
@@ -316,8 +336,20 @@ abstract class IdoQuery extends DbQuery
         } elseif ($this->ds->getDbType() === 'pgsql') {
             $this->initializeForPostgres();
         }
-        $this->joinBaseTables();
+        $this->dbSelect();
+
+        $this->select->columns($this->columns);
+        //$this->joinBaseTables();
         $this->prepareAliasIndexes();
+    }
+
+    protected function dbSelect()
+    {
+        if ($this->select === null) {
+            $this->select = $this->db->select();
+            $this->joinBaseTables();
+        }
+        return clone $this->select;
     }
 
     /**
@@ -524,16 +556,15 @@ abstract class IdoQuery extends DbQuery
         } else {
             $leftcol = 'h.' . $type . '_object_id';
         }
-        $joinOn = $leftcol
-                . ' = '
-                . $alias
-                . '.object_id'
-                . ' AND '
-                . $alias
-                . '.varname = '
-                . $this->db->quote(strtoupper($name));
+        $joinOn = sprintf(
+            '%s = %s.object_id AND %s.varname = %s',
+            $leftcol,
+            $alias,
+            $alias,
+            $this->db->quote(strtoupper($name))
+        );
 
-        $this->baseQuery->joinLeft(
+        $this->select->joinLeft(
             array($alias => $this->prefix . 'customvariablestatus'),
             $joinOn,
             array()
@@ -590,6 +621,8 @@ abstract class IdoQuery extends DbQuery
     public function columns(array $columns)
     {
         $this->columns = $this->resolveColumns($columns);
+        // TODO: we need to refresh our select!
+        // $this->select->columns($columns);
         return $this;
     }
 
