@@ -111,12 +111,10 @@ class AuthenticationController extends ActionController
                 $backendsWithError = 0;
 
                 foreach ($chain as $backend) {
-                    ++$backendsTried;
-
                     if ($backend instanceof AutoLoginBackend) {
                         continue;
                     }
-
+                    ++$backendsTried;
                     try {
                         $authenticated = $backend->authenticate($user, $password);
                     } catch (AuthenticationException $e) {
