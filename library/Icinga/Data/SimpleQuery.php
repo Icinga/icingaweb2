@@ -2,11 +2,13 @@
 
 namespace Icinga\Data;
 
-use Zend_Controller_Front;
-use Zend_Paginator;
+use Icinga\Application\Icinga;
+use Icinga\Data\Filter\Filter;
 use Icinga\Web\Paginator\Adapter\QueryAdapter;
+use Zend_Paginator;
+use Exception;
 
-abstract class SimpleQuery implements QueryInterface, Queryable
+class SimpleQuery implements QueryInterface, Queryable
 {
     /**
      * Query data source
@@ -14,6 +16,29 @@ abstract class SimpleQuery implements QueryInterface, Queryable
      * @var mixed
      */
     protected $ds;
+
+    /**
+     * The table you are going to query
+     */
+    protected $table;
+
+    /**
+     * The columns you asked for
+     *
+     * All columns if null, no column if empty??? Alias handling goes here!
+     *
+     * @var array
+     */
+    protected $desiredColumns = array();
+
+    /**
+     * The columns you are interested in
+     *
+     * All columns if null, no column if empty??? Alias handling goes here!
+     *
+     * @var array
+     */
+    protected $columns = array();
 
     /**
      * The columns you're using to sort the query result
@@ -36,15 +61,24 @@ abstract class SimpleQuery implements QueryInterface, Queryable
      */
     protected $limitOffset;
 
+    protected $filter;
+
     /**
      * Constructor
      *
      * @param mixed $ds
      */
-    public function __construct($ds)
+    public function __construct($ds, $columns = null)
     {
         $this->ds = $ds;
+        $this->filter = Filter::matchAll();
+        if ($columns !== null) {
+            $this->desiredColumns = $columns;
+        }
         $this->init();
+        if ($this->desiredColumns !== null) {
+            $this->columns($this->desiredColumns);
+        }
     }
 
     /**
@@ -53,9 +87,7 @@ abstract class SimpleQuery implements QueryInterface, Queryable
      * Overwrite this instead of __construct (it's called at the end of the construct) to
      * implement custom initialization logic on construction time
      */
-    protected function init()
-    {
-    }
+    protected function init() {}
 
     /**
      * Get the data source
@@ -68,6 +100,22 @@ abstract class SimpleQuery implements QueryInterface, Queryable
     }
 
     /**
+     * Choose a table and the colums you are interested in
+     *
+     * Query will return all available columns if none are given here
+     *
+     * @return self
+     */
+    public function from($target, array $fields = null)
+    {
+        $this->target = $target;
+        if ($fields !== null) {
+            $this->columns($fields);
+        }
+        return $this;
+    }
+
+    /**
      * Add a where condition to the query by and
      *
      * The syntax of the condition and valid values are defined by the concrete backend-specific query implementation.
@@ -77,23 +125,37 @@ abstract class SimpleQuery implements QueryInterface, Queryable
      *
      * @return  self
      */
-    abstract public function where($condition, $value = null);
+    public function where($condition, $value = null)
+    {
+        $this->filter->addFilter(Filter::where($condition, $value));
+        return $this;
+    }
 
-    /**
-     * Add a where condition to the query by or
-     *
-     * The syntax of the condition and valid values are defined by the concrete backend-specific query implementation.
-     *
-     * @param   string  $condition
-     * @param   mixed   $value
-     *
-     * @return  self
-     */
-    abstract public function orWhere($condition, $value = null);
+    public function getFilter()
+    {
+        return $this->filter;
+    }
+
+    public function applyFilter(Filter $filter)
+    {
+        return $this->addFilter($filter);
+    }
+
+    public function addFilter(Filter $filter)
+    {
+        $this->filter->addFilter($filter);
+        return $this;
+    }
+
+    public function setFilter(Filter $filter)
+    {
+        $this->filter = $filter;
+        return $this;
+    }
 
     public function setOrderColumns(array $orderColumns)
     {
-        throw new \Exception('This function does nothing and will be removed');
+        throw new Exception('This function does nothing and will be removed');
     }
 
     /**
@@ -132,6 +194,35 @@ abstract class SimpleQuery implements QueryInterface, Queryable
         }
         $this->order[] = array($field, $direction);
         return $this;
+    }
+
+    public function compare($a, $b, $col_num = 0)
+    {
+        // Last column to sort reached, rows are considered being equal
+        if (! array_key_exists($col_num, $this->order)) {
+            return 0;
+        }
+        $col = $this->order[$col_num][0];
+        $dir = $this->order[$col_num][1];
+// TODO: throw Exception if column is missing
+        //$res = strnatcmp(strtolower($a->$col), strtolower($b->$col));
+        $res = strcmp(strtolower($a->$col), strtolower($b->$col));
+        if ($res === 0) {
+//            return $this->compare($a, $b, $col_num++);
+
+            if (array_key_exists(++$col_num, $this->order)) {
+                return $this->compare($a, $b, $col_num);
+            } else {
+                return 0;
+            }
+
+        }
+
+        if ($dir === self::SORT_ASC) {
+            return $res;
+        } else {
+            return $res * -1;
+        }
     }
 
     /**
