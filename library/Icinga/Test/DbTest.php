@@ -29,45 +29,45 @@
 
 namespace Icinga\Test;
 
-use Icinga\Data\Db\Connection;
+use Icinga\Data\Db\DbConnection;
 
 interface DbTest
 {
     /**
      * PHPUnit provider for mysql
      *
-     * @return Connection
+     * @return DbConnection
      */
     public function mysqlDb();
 
     /**
      * PHPUnit provider for pgsql
      *
-     * @return Connection
+     * @return DbConnection
      */
     public function pgsqlDb();
 
     /**
      * PHPUnit provider for oracle
      *
-     * @return Connection
+     * @return DbConnection
      */
     public function oracleDb();
 
     /**
      * Executes sql file on PDO object
      *
-     * @param   Connection      $resource
+     * @param   DbConnection      $resource
      * @param   string          $filename
      *
      * @return  boolean Operational success flag
      */
-    public function loadSql(Connection $resource, $filename);
+    public function loadSql(DbConnection $resource, $filename);
 
     /**
      * Setup provider for testcase
      *
-     * @param   string|Connection|null $resource
+     * @param   string|DbConnection|null $resource
      */
     public function setupDbProvider($resource);
 }

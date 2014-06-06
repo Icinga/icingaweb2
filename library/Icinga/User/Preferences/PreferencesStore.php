@@ -9,7 +9,7 @@ use Icinga\User;
 use Icinga\User\Preferences;
 use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
-use Icinga\Data\Db\Connection as DbConnection;
+use Icinga\Data\Db\DbConnection;
 use Icinga\Application\Config as IcingaConfig;
 
 /**

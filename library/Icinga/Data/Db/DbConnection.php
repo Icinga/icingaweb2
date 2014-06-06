@@ -29,18 +29,18 @@
 
 namespace Icinga\Data\Db;
 
+use Icinga\Application\Benchmark;
+use Icinga\Data\Db\DbQuery;
+use Icinga\Data\Selectable;
+use Icinga\Exception\ConfigurationError;
 use PDO;
 use Zend_Config;
 use Zend_Db;
-use Icinga\Application\Benchmark;
-use Icinga\Data\SimpleQuery;
-use Icinga\Data\Selectable;
-use Icinga\Exception\ConfigurationError;
 
 /**
  * Encapsulate database connections and query creation
  */
-class Connection implements Selectable
+class DbConnection implements Selectable
 {
     /**
      * Connection config
@@ -207,11 +207,11 @@ class Connection implements Selectable
     /**
      * Retrieve an array containing all rows of the result set
      *
-     * @param   SimpleQuery $query
+     * @param   DbQuery $query
      *
      * @return  array
      */
-    public function fetchAll(SimpleQuery $query)
+    public function fetchAll(DbQuery $query)
     {
         Benchmark::measure('DB is fetching All');
         $result = $this->dbAdapter->fetchAll($query->getSelectQuery());
@@ -222,11 +222,11 @@ class Connection implements Selectable
     /**
      * Fetch the first row of the result set
      *
-     * @param   SimpleQuery $query
+     * @param   DbQuery $query
      *
      * @return  mixed
      */
-    public function fetchRow(SimpleQuery $query)
+    public function fetchRow(DbQuery $query)
     {
         return $this->dbAdapter->fetchRow($query->getSelectQuery());
     }
@@ -234,12 +234,12 @@ class Connection implements Selectable
     /**
      * Fetch a column of all rows of the result set as an array
      *
-     * @param   SimpleQuery   $query
+     * @param   DbQuery   $query
      * @param   int         $columnIndex Index of the column to fetch
      *
      * @return  array
      */
-    public function fetchColumn(SimpleQuery $query, $columnIndex = 0)
+    public function fetchColumn(DbQuery $query, $columnIndex = 0)
     {
         return $this->dbAdapter->fetchCol($query->getSelectQuery());
     }
@@ -247,11 +247,11 @@ class Connection implements Selectable
     /**
      * Fetch the first column of the first row of the result set
      *
-     * @param   SimpleQuery $query
+     * @param   DbQuery $query
      *
      * @return  string
      */
-    public function fetchOne(SimpleQuery $query)
+    public function fetchOne(DbQuery $query)
     {
         return $this->dbAdapter->fetchOne($query->getSelectQuery());
     }
@@ -261,11 +261,11 @@ class Connection implements Selectable
      *
      * The first column is the key, the second column is the value.
      *
-     * @param   SimpleQuery $query
+     * @param   DbQuery $query
      *
      * @return  array
      */
-    public function fetchPairs(SimpleQuery $query)
+    public function fetchPairs(DbQuery $query)
     {
         return $this->dbAdapter->fetchPairs($query->getSelectQuery());
     }
