@@ -309,5 +309,14 @@ abstract class SimpleQuery implements QueryInterface, Queryable
      *
      * @return  self
      */
-    abstract public function columns(array $columns);
+    public function columns(array $columns)
+    {
+        $this->columns = $columns;
+        return $this;
+    }
+
+    public function getColumns()
+    {
+        return $this->columns;
+    }
 }
