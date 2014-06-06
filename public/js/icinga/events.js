@@ -69,10 +69,6 @@
 
             $('input.autofocus', el).focus();
 
-            $('img.inlinepie', el).each(function() {
-                icinga.ui.initializeSparklines($(this));
-            });
-
             // replace all sparklines
             $('span.sparkline', el).sparkline('html', { enableTagOptions: true });
 
