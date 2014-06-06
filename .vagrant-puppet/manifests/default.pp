@@ -716,54 +716,7 @@ exec { 'populate-icinga_web-mysql-db':
   require => [ Exec['create-mysql-icinga_web-db'], Cmmi['icinga-web'] ]
 }
 
-#
-# Development environment (Feature #5554)
-#
 file { '/var/www/html/icingaweb':
-  ensure    => 'directory',
-  owner     => 'apache',
-  group     => 'apache'
-}
-
-file { '/var/www/html/icingaweb/css':
-  ensure    => 'link',
-  target    => '/vagrant/public/css',
-  owner     => 'apache',
-  group     => 'apache',
-}
-
-file { '/var/www/html/icingaweb/svg':
-  ensure    => 'link',
-  target    => '/vagrant/public/svg',
-  owner     => 'apache',
-  group     => 'apache',
-}
-
-file { '/var/www/html/icingaweb/img':
-  ensure    => 'link',
-  target    => '/vagrant/public/img',
-  owner     => 'apache',
-  group     => 'apache',
-}
-
-file { '/var/www/html/icingaweb/js':
-  ensure    => 'link',
-  target    => '/vagrant/public/js',
-  owner     => 'apache',
-  group     => 'apache',
-}
-
-file { '/var/www/html/icingaweb/index.php':
-  source    => 'puppet:////vagrant/.vagrant-puppet/files/var/www/html/icingaweb/index.php',
-  owner     => 'apache',
-  group     => 'apache',
-}
-
-file { '/var/www/html/icingaweb/js.php':
-  ensure => absent,
-}
-
-file { '/var/www/html/icingaweb/css.php':
   ensure => absent,
 }
 
