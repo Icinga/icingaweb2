@@ -53,7 +53,7 @@ class Documentation
             . "  --debug      Show debug output\n"
             . "  --help       Show help\n"
             . "  --benchmark  Show benchmark summary\n"
-            . "  --watch [s]  Refresh output each <s> seconds (default: 5)\n"
+            . "  --watch [s]  Refresh output every <s> seconds (default: 5)\n"
             ;
         $d .= "\nShow help on a specific command : icingacli help <command>"
             . "\nShow help on a specific module  : icingacli help <module>"

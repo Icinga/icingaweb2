@@ -220,6 +220,25 @@
             this.autorefreshEnabled = true;
         },
 
+        processNotificationHeader: function(req) {
+            var header = req.getResponseHeader('X-Icinga-Notification');
+            if (! header) return false;
+            var parts = decodeURIComponent(header).split(' ');
+            this.createNotice(parts.shift(), parts.join(' '));
+            return true;
+        },
+
+        processRedirectHeader: function(req) {
+            var redirect = req.getResponseHeader('X-Icinga-Redirect');
+            if (! redirect) return false;
+            this.icinga.logger.debug(
+                'Got redirect for ', req.$target, ', URL was ' + redirect
+            );
+            redirect = decodeURIComponent(redirect);
+            this.loadUrl(redirect, req.$target);
+            return true;
+        },
+
         /**
          * Handle successful XHR response
          */
@@ -244,9 +263,13 @@
             this.icinga.logger.debug(
                 'Got response for ', req.$target, ', URL was ' + url
             );
+            this.processNotificationHeader(req);
+
+            var redirect = req.getResponseHeader('X-Icinga-Redirect');
+            if (this.processRedirectHeader(req)) return;
 
             // div helps getting an XML tree
-            var $resp = $('<div>' + req.responseText + '</div>');
+            var $resp = $('<div>' + icinga.ui.removeImageSourceFromSparklines(req.responseText) + '</div>');
             var active = false;
             var rendered = false;
             var classes;
@@ -286,16 +309,7 @@
                 active = $('[href].active', req.$target).attr('href');
             }
 
-            var notifications = req.getResponseHeader('X-Icinga-Notification');
-            if (notifications) {
-                var parts = notifications.split(' ');
-                this.createNotice(
-                    parts.shift(),
-                    parts.join(' ')
-                );
-            }
 
-            //
             var target = req.getResponseHeader('X-Icinga-Container');
             var newBody = false;
             if (target) {
@@ -333,7 +347,7 @@
 
             var title = req.getResponseHeader('X-Icinga-Title');
             if (title && ! req.autorefresh && req.$target.closest('.dashboard').length === 0) {
-                this.icinga.ui.setTitle(title);
+                this.icinga.ui.setTitle(decodeURIComponent(title));
             }
 
             var refresh = req.getResponseHeader('X-Icinga-Refresh');
@@ -392,10 +406,8 @@
                     this.icinga.history.pushCurrentState();
                 }
             }
-            this.icinga.ui.initializeTriStates($resp);
 
-            // Make multiselection-tables not selectable.
-            this.icinga.ui.prepareMultiselectTables($resp);
+            this.icinga.ui.initializeTriStates($resp);
 
             // Replace images with sparklines.
             $resp.find('img.inlinepie').each(function(){
@@ -423,9 +435,7 @@
                   });
             */
 
-            if (rendered) {
-                return;
-            }
+            if (rendered) return;
 
             // .html() removes outer div we added above
             this.renderContentToContainer($resp.html(), req.$target, req.action);
@@ -525,7 +535,7 @@
                     if (this.failureNotice === null) {
                         this.failureNotice = this.createNotice(
                             'error',
-                            'The connection to the Icinga web server has been lost at ' +
+                            'The connection to the Icinga web server was lost at ' +
                             this.icinga.utils.timeShort() +
                             '.',
                             true
@@ -578,7 +588,10 @@
             }
 
             var origFocus = document.activeElement;
-            var $content = $(content);
+
+            // TODO: We do not want to wrap this twice...
+            var $content = $('<div>' + content + '</div>');
+
             if (false &&
                 $('.dashboard', $content).length > 0 &&
                 $('.dashboard', $container).length === 0

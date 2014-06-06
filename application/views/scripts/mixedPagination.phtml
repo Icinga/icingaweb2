@@ -12,7 +12,7 @@ if ($this->pageCount <= 1) return;
 ?><ul class="pagination"
 <?php
 
-$fromto = $this->translate('%d to %d of %d');
+$fromto = t('%d to %d of %d');
 $total = $this->totalItemCount;
 $limit = $this->itemCountPerPage;
 $title_prev = sprintf(
@@ -42,10 +42,10 @@ if (isset($this->previous)) {
             array('page' => $this->previous)
         )->getAbsoluteUrl(),
         $title_prev,
-        '« ' . $this->translate('Prev')
+        '« ' . t('Prev')
     );
 } else {
-    echo '  ><li class="disabled"><span>« ' . $this->translate('Prev') . '</span></li';
+    echo '  ><li class="disabled"><span>« ' . t('Prev') . '</span></li';
 }
 
 foreach ($this->pagesInRange as $page) {
@@ -80,10 +80,10 @@ if (isset($this->next)) {
             array('page' => $this->next)
         )->getAbsoluteUrl(),
         $title_next,
-        $this->translate('Next') . ' »'
+        t('Next') . ' »'
     );
 } else {
-    echo '  ><li class="disabled"><span>' . $this->translate('Next') . ' »</span></li';
+    echo '  ><li class="disabled"><span>' . t('Next') . ' »</span></li';
 }
 
 ?>

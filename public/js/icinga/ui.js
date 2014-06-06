@@ -215,7 +215,7 @@
         layout1col: function () {
             if (! $('#layout').hasClass('twocols')) { return; }
             var $col2 = $('#col2');
-            icinga.logger.debug('Switching to single col');
+            this.icinga.logger.debug('Switching to single col');
             $('#layout').removeClass('twocols');
             $col2.removeData('icingaUrl');
             $col2.removeData('icingaRefresh');
@@ -228,7 +228,7 @@
 
         layout2col: function () {
             if ($('#layout').hasClass('twocols')) { return; }
-            icinga.logger.debug('Switching to double col');
+            this.icinga.logger.debug('Switching to double col');
             $('#layout').addClass('twocols');
             this.fixControls();
         },
@@ -274,19 +274,6 @@
                 window.location.pathname + window.location.search
             );
             */
-        },
-
-        /**
-         * Prepare all multiselectable tables for multi-selection by
-         * removing the regular text selection.
-         */
-        prepareMultiselectTables: function () {
-            var $rows = $('table.multiselect tr[href]');
-            $rows.find('td').attr('unselectable', 'on')
-                .css('user-select', 'none')
-                .css('-webkit-user-select', 'none')
-                .css('-moz-user-select', 'none')
-                .css('-ms-user-select', 'none');
         },
 
         /**
@@ -537,7 +524,7 @@
                 }
             });
 
-            $('.timeunless').each(function (idx, el) {
+            $('.timeuntil').each(function (idx, el) {
                 var m = el.innerHTML.match(/^(-?\d+)m\s(-?\d+)s/);
                 if (m !== null) {
                     var nm = parseInt(m[1]);
@@ -668,6 +655,22 @@
                     colors + ']" values="' +
                     values + '" class="sparkline"></span>'
             );
+        },
+
+        /**
+         * Find all svg charts and removes src attributes for sparklines
+         *
+         * @param {string} text
+         * @returns {string}
+         */
+        removeImageSourceFromSparklines: function(text) {
+            var match, sourceMatch;
+            var re = new RegExp(/(src=".+chart.php[^"]+")/g);
+            var reSource = new RegExp(/src="([^"]+)"/);
+            while ((match = re.exec(text))) {
+                text = text.replace(match[0], '');
+            }
+            return text;
         },
 
         initializeControls: function (parent) {

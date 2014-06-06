@@ -70,7 +70,7 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
     protected function getPurifier()
     {
         if (self::$purifier === null) {
-            require_once 'vendor/htmlpurifier-4.6.0-lite/library/HTMLPurifier.auto.php';
+            require_once 'IcingaVendor/htmlpurifier-4.6.0-lite/library/HTMLPurifier.auto.php';
             $config = HTMLPurifier_Config::createDefault();
             $config->set('Core.EscapeNonASCIICharacters', true);
             $config->set('HTML.Allowed', 'p,br,b,a[href],i,table,tr,td[colspan],div[class]');

@@ -133,18 +133,21 @@ abstract class ApplicationBootstrap
             define('ICINGA_LIBDIR', $this->libDir);
         }
 
-        // TODO: Make appdir configurable for packagers
-        $this->appDir = realpath($this->libDir. '/../application');
+        if (defined('ICINGAWEB_APPDIR')) {
+            $this->appDir = ICINGAWEB_APPDIR;
+        } elseif (array_key_exists('ICINGAWEB_APPDIR', $_SERVER)) {
+            $this->appDir = $_SERVER['ICINGAWEB_APPDIR'];
+        } else {
+            $this->appDir = realpath($this->libDir. '/../application');
+        }
 
-        if (!defined('ICINGA_APPDIR')) {
-            define('ICINGA_APPDIR', $this->appDir);
+        if (!defined('ICINGAWEB_APPDIR')) {
+            define('ICINGAWEB_APPDIR', $this->appDir);
         }
 
         if ($configDir === null) {
             if (array_key_exists('ICINGAWEB_CONFIGDIR', $_SERVER)) {
                 $configDir = $_SERVER['ICINGAWEB_CONFIGDIR'];
-            } else if (array_key_exists('ICINGAWEB_CONFIGDIR', $_ENV)) {
-                $configDir = $_ENV['ICINGAWEB_CONFIGDIR'];
             } else {
                 $configDir = '/etc/icingaweb';
             }
@@ -298,7 +301,6 @@ abstract class ApplicationBootstrap
 
         $this->loader = new Loader();
         $this->loader->registerNamespace('Icinga', $this->libDir. '/Icinga');
-        $this->loader->registerNamespace('Icinga\\Form', $this->appDir. '/forms');
         $this->loader->register();
 
         return $this;
@@ -339,8 +341,8 @@ abstract class ApplicationBootstrap
             explode(
                 ':',
                 $this->config->global !== null
-                    ? $this->config->global->get('modulePath', ICINGA_APPDIR . '/../modules')
-                    : ICINGA_APPDIR . '/../modules'
+                    ? $this->config->global->get('modulePath', ICINGAWEB_APPDIR . '/../modules')
+                    : ICINGAWEB_APPDIR . '/../modules'
             )
         );
         return $this;

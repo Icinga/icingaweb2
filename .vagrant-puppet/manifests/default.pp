@@ -6,7 +6,7 @@ include openldap
 Exec { path => '/bin:/usr/bin:/sbin' }
 
 $icingaVersion = '1.11.2'
-$icinga2Version = '0.0.11'
+$icinga2Version = '2.0.0'
 
 exec { 'create-mysql-icinga-db':
   unless  => 'mysql -uicinga -picinga icinga',
@@ -50,7 +50,7 @@ group { 'icinga-cmd':
 
 group { 'icingacmd':
   ensure  => present,
-  require => Exec['install icinga2']
+  require => Package['icinga2']
 }
 
 user { 'icinga':
@@ -343,50 +343,95 @@ package { ['cmake', 'boost-devel', 'bison', 'flex']:
   ensure => installed
 }
 
+# icinga 2
+define icinga2::feature ($feature = $title) {
+  exec { "icinga2-feature-${feature}":
+    path => '/bin:/usr/bin:/sbin:/usr/sbin',
+    unless => "readlink /etc/icinga2/features-enabled/${feature}.conf",
+    command => "icinga2-enable-feature ${feature}",
+    require => [ Package['icinga2'] ],
+    notify => Service['icinga2']
+  }
+}
+
 yumrepo { 'icinga2-repo':
   baseurl   => "http://packages.icinga.org/epel/6/snapshot/",
-  enabled   => '0',
+  enabled   => '1',
   gpgcheck  => '1',
   gpgkey    => 'http://packages.icinga.org/icinga.key',
   descr     => "Icinga Repository - ${::architecture}"
 }
 
-exec { 'install icinga2':
-  command => 'yum -d 0 -e 0 -y --enablerepo=icinga2-repo install icinga2',
-  unless  => 'rpm -qa | grep icinga2',
-  require => Yumrepo['icinga2-repo']
-}
-
-exec { 'install icinga2-classicui-config':
-  command => 'yum -d 0 -e 0 -y --enablerepo=icinga2-repo install icinga2-classicui-config',
-  unless  => 'rpm -qa | grep icinga2-classicui-config',
-  require => [ Yumrepo['icinga2-repo'], Exec['install icinga2'], Exec['install icinga2-ido-mysql'] ]
-}
-
-exec { 'install icinga2-ido-mysql':
-  command => 'yum -d 0 -e 0 -y --enablerepo=icinga2-repo install icinga2-ido-mysql',
-  unless  => 'rpm -qa | grep icinga2-ido-mysql',
-  require => [ Yumrepo['icinga2-repo'], Exec['install icinga2']  ],
-}
-
 exec { 'install nagios-plugins-all':
   command => 'yum -d 0 -e 0 -y --enablerepo=epel install nagios-plugins-all',
   unless  => 'rpm -qa | grep nagios-plugins-all',
-  require => [ Class['epel'], Exec['install icinga2'] ],
+  require => [ Class['epel'], Package['icinga2'] ],
 }
 
-file { '/etc/icinga2/features-enabled/':
-  ensure  => directory,
-  owner   => icinga,
-  group   => icinga,
-  require => Exec['install icinga2-ido-mysql']
+package { 'icinga2':
+  ensure => latest,
+  require => Yumrepo['icinga2-repo'],
+  alias => 'icinga2'
 }
+
+package { 'icinga2-bin':
+  ensure => latest,
+  require => [ Yumrepo['icinga2-repo'], Package['icinga2'] ],
+  alias => 'icinga2-bin'
+}
+
+package { 'icinga2-doc':
+  ensure => latest,
+  require => Yumrepo['icinga2-repo'],
+  alias => 'icinga2-doc'
+}
+
+# icinga 2 classic ui
+package { 'icinga2-classicui-config':
+  ensure => latest,
+  before => Package["icinga-gui"],
+  require => [ Yumrepo['icinga2-repo'], Package['icinga2'] ],
+  notify => Service['apache']
+}
+
+package { 'icinga-gui':
+  ensure => latest,
+  require => Yumrepo['icinga2-repo'],
+  alias => 'icinga-gui'
+}
+
+icinga2::feature { 'statusdata':
+  require => Package['icinga2-classicui-config']
+}
+
+icinga2::feature { 'command':
+  require => Package['icinga2-classicui-config']
+}
+
+icinga2::feature { 'compatlog':
+  require => Package['icinga2-classicui-config']
+}
+
+# icinga 2 ido mysql
+package { 'icinga2-ido-mysql':
+  ensure => latest,
+  require => Yumrepo['icinga2-repo'],
+  alias => 'icinga2-ido-mysql'
+}
+
+exec { 'populate-icinga2-mysql-db':
+  unless  => 'mysql -uicinga2 -picinga2 icinga2 -e "SELECT * FROM icinga_dbversion;" &> /dev/null',
+  command => "mysql -uroot icinga2 < /usr/share/doc/icinga2-ido-mysql-$icinga2Version/schema/mysql.sql",
+  require => [ Exec['create-mysql-icinga2-db'], Package['icinga2-ido-mysql'] ]
+}
+
 
 file { '/etc/icinga2/features-available/ido-mysql.conf':
   source  => 'puppet:////vagrant/.vagrant-puppet/files/etc/icinga2/features-available/ido-mysql.conf',
   owner   => 'icinga',
   group   => 'icinga',
-  require => Exec['install icinga2-ido-mysql']
+  require => Package['icinga2'],
+  notify => Service['icinga2']
 }
 
 file { '/etc/icinga2/features-enabled/ido-mysql.conf':
@@ -394,68 +439,45 @@ file { '/etc/icinga2/features-enabled/ido-mysql.conf':
   target  => '/etc/icinga2/features-available/ido-mysql.conf',
   owner   => 'root',
   group   => 'root',
-  require => Exec['install icinga2-ido-mysql']
+  require => Package['icinga2-ido-mysql']
 }
 
+icinga2::feature { 'ido-mysql':
+  require => Exec['populate-icinga2-mysql-db']
+}
+
+
+# icinga 2 test config
 file { '/etc/icinga2/conf.d/test-config.conf':
   source  => 'puppet:////vagrant/.vagrant-puppet/files/etc/icinga2/conf.d/test-config.conf',
   owner   => 'icinga',
   group   => 'icinga',
-  require => [ Exec['install icinga2'], Exec['create_monitoring_test_config'] ]
+  require => [ Package['icinga2'], Exec['create_monitoring_test_config'] ]
 }
 
 file { '/etc/icinga2/conf.d/commands.conf':
   source  => 'puppet:////vagrant/.vagrant-puppet/files/etc/icinga2/conf.d/commands.conf',
   owner   => 'icinga',
   group   => 'icinga',
-  require => Exec['install icinga2']
+  require => Package['icinga2']
+}
+
+file { '/etc/icinga2/constants.conf':
+  source  => 'puppet:////vagrant/.vagrant-puppet/files/etc/icinga2/constants.conf',
+  owner   => 'icinga',
+  group   => 'icinga',
+  require => Package['icinga2']
 }
 
 service { 'icinga2':
   ensure  => running,
   require => [
-    Exec['install icinga2'],
+    Package['icinga2'],
     File['/etc/icinga2/features-enabled/ido-mysql.conf'],
     File['/etc/icinga2/conf.d/test-config.conf'],
     File['/etc/icinga2/conf.d/commands.conf']
   ]
 }
-
-exec { 'populate-icinga2-mysql-db':
-  unless  => 'mysql -uicinga2 -picinga2 icinga2 -e "SELECT * FROM icinga_dbversion;" &> /dev/null',
-  command => "mysql -uroot icinga2 < /usr/share/doc/icinga2-ido-mysql-$icinga2Version/schema/mysql.sql",
-  require => [ Exec['create-mysql-icinga2-db'], Exec['install icinga2-ido-mysql'] ]
-}
-
-# cmmi { 'icinga2':
-#  url               => "https://github.com/Icinga/icinga2/releases/download/v${icinga2Version}/icinga2-${icinga2Version}.tar.gz",
-#  output            => "icinga2-${icinga2Version}.tar.gz",
-#  configure_command => 'mkdir build &> /dev/null || true && cd build && sudo cmake ..',
-#  creates           => '/usr/local/sbin/icinga2',
-#  make              => 'true && cd build/ && make && make install',
-#  require           => Package[ ['cmake', 'boost-devel', 'bison', 'flex'] ],
-#  make_timeout      => 900
-# }
-
-#configure { 'icingaweb':
-#  path    => '/vagrant',
-#  flags   => '--prefix=/vagrant \
-#            --with-icinga-commandpipe="/usr/local/icinga-mysql/var/rw/icinga.cmd" \
-#            --with-statusdat-file="/usr/local/icinga-mysql/var/status.dat" \
-#            --with-objects-cache-file=/usr/local/icinga-mysql/var/objects.cache \
-#            --with-icinga-backend=ido \
-#            --with-httpd-config-path="/etc/httpd/conf.d" \
-#            --with-ldap-authentication \
-#            --with-internal-authentication \
-#            --with-livestatus-socket="/usr/local/icinga-mysql/var/rw/live"',
-#  require => Exec['install php-ZendFramework']
-#}
-
-#file { 'icingaweb-public':
-#  ensure  => '/vagrant/public',
-#  path    => '/var/www/html/icingaweb',
-#  require => Class['apache']
-#}
 
 exec { 'install php-ZendFramework-Db-Adapter-Pdo-Mysql':
   command => 'yum -d 0 -e 0 -y --enablerepo=epel install php-ZendFramework-Db-Adapter-Pdo-Mysql',
@@ -664,61 +686,8 @@ exec { 'populate-icinga_web-mysql-db':
   require => [ Exec['create-mysql-icinga_web-db'], Cmmi['icinga-web'] ]
 }
 
-#
-# Development environment (Feature #5554)
-#
 file { '/var/www/html/icingaweb':
-  ensure    => 'directory',
-  owner     => 'apache',
-  group     => 'apache'
-}
-
-file { '/var/www/html/icingaweb/css':
-  ensure    => 'link',
-  target    => '/vagrant/public/css',
-  owner     => 'apache',
-  group     => 'apache',
-}
-
-file { '/var/www/html/icingaweb/svg':
-  ensure    => 'link',
-  target    => '/vagrant/public/svg',
-  owner     => 'apache',
-  group     => 'apache',
-}
-
-file { '/var/www/html/icingaweb/img':
-  ensure    => 'link',
-  target    => '/vagrant/public/img',
-  owner     => 'apache',
-  group     => 'apache',
-}
-
-file { '/var/www/html/icingaweb/js':
-  ensure    => 'link',
-  target    => '/vagrant/public/js',
-  owner     => 'apache',
-  group     => 'apache',
-}
-
-file { '/var/www/html/icingaweb/index.php':
-  source    => 'puppet:////vagrant/.vagrant-puppet/files/var/www/html/icingaweb/index.php',
-  owner     => 'apache',
-  group     => 'apache',
-}
-
-file { '/var/www/html/icingaweb/js.php':
   ensure => absent,
-}
-
-file { '/var/www/html/icingaweb/css.php':
-  ensure => absent,
-}
-
-file { '/var/www/html/icingaweb/.htaccess':
-  source    => 'puppet:////vagrant/.vagrant-puppet/files/var/www/html/icingaweb/.htaccess',
-  owner     => 'apache',
-  group     => 'apache',
 }
 
 file { '/etc/httpd/conf.d/icingaweb.conf':

@@ -28,7 +28,6 @@
             this.applyGlobalDefaults();
             this.applyHandlers($('#layout'));
             this.icinga.ui.prepareContainers();
-            this.icinga.ui.prepareMultiselectTables($(document));
         },
 
         // TODO: What's this?
@@ -51,8 +50,8 @@
                 }
             });
 
-            var moduleName;
-            if (moduleName = el.data('icingaModule')) {
+            var moduleName = el.data('icingaModule');
+            if (moduleName) {
                 if (icinga.hasModule(moduleName)) {
                     var module = icinga.module(moduleName);
                     // NOT YET, the applyOnloadDings: module.applyEventHandlers(mod);
@@ -99,7 +98,7 @@
             $( window ).on('beforeunload', { self: this }, this.onUnload);
 
             // We catch scroll events in our containers
-            $('.container').on('scroll', this.icinga.events.onContainerScroll);
+            $('.container').on('scroll', { self: this }, this.icinga.events.onContainerScroll);
 
             // We want to catch each link click
             $(document).on('click', 'a', { self: this }, this.linkClicked);
@@ -121,10 +120,10 @@
             $(document).on('mouseenter', '.historycolorgrid td', this.historycolorgridHover);
             $(document).on('mouseleave', '.historycolorgrid td', this.historycolorgidUnhover);
             $(document).on('mouseenter', 'li.dropdown', this.dropdownHover);
-            $(document).on('mouseleave', 'li.dropdown', this.dropdownLeave);
+            $(document).on('mouseleave', 'li.dropdown', {self: this}, this.dropdownLeave);
 
-            $(document).on('mouseenter', '#menu > ul > li', this.menuTitleHovered);
-            $(document).on('mouseleave', '#sidebar', this.leaveSidebar);
+            $(document).on('mouseenter', '#menu > ul > li', { self: this }, this.menuTitleHovered);
+            $(document).on('mouseleave', '#sidebar', { self: this }, this.leaveSidebar);
             $(document).on('click', '.tree .handle', { self: this }, this.treeNodeToggle);
 
             // Toggle all triStateButtons
@@ -136,9 +135,10 @@
             // $(document).on('change', 'form.auto select', this.submitForm);
         },
 
-        menuTitleHovered: function () {
+        menuTitleHovered: function (event) {
             var $li = $(this),
-                delay = 800;
+                delay = 800,
+                self = event.data.self;
 
             if ($li.hasClass('active')) {
                 $li.siblings().removeClass('hover');
@@ -178,9 +178,10 @@
             }, delay);
         },
 
-        leaveSidebar: function () {
-            var $sidebar = $(this);
-            var $li = $sidebar.find('li.hover');
+        leaveSidebar: function (event) {
+            var $sidebar = $(this),
+                $li = $sidebar.find('li.hover'),
+                self = event.data.self;
             if (! $li.length) {
                 $('#layout').removeClass('hoveredmenu');
                 return;
@@ -199,8 +200,9 @@
             $(this).addClass('hover');
         },
 
-        dropdownLeave: function () {
-            var $li = $(this);
+        dropdownLeave: function (event) {
+            var $li = $(this),
+                self = event.data.self;
             setTimeout(function () {
                 // TODO: make this behave well together with keyboard navigation
                 if (! $li.is('li:hover') /*&& ! $li.find('a:focus')*/) {
@@ -259,6 +261,7 @@
         },
 
         clickTriState: function (event) {
+            var self = event.data.self;
             var $tristate = $(this);
             var triState  = parseInt($tristate.data('icinga-tristate'), 10);
 
@@ -348,7 +351,7 @@
             //       combined with target="_blank" or target="_self"
             // window.open is used as return true; didn't work reliable
             if (linkTarget === '_blank' || linkTarget === '_self') {
-                window.open(href, linkTarget);
+                window.open($node.attr('href'), linkTarget);
                 return true;
             }
             return false;
@@ -543,7 +546,7 @@
                 } else if (targetId === '_main') {
                     targetId = 'col1';
                     $target = $('#' + targetId);
-                    icinga.ui.layout1col();
+                    self.icinga.ui.layout1col();
                 } else {
                     $target = $('#' + targetId);
                 }
@@ -552,7 +555,7 @@
 
             // Hardcoded layout switch unless columns are dynamic
             if ($target.attr('id') === 'col2') {
-                icinga.ui.layout2col();
+                this.icinga.ui.layout2col();
             }
 
             return $target;

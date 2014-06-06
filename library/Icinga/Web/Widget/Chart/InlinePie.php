@@ -220,12 +220,17 @@ EOD;
     public function render()
     {
         $template = $this->template;
+        // Locale-ignorant string cast:
+        $data = array();
+        foreach ($this->data as $dat) {
+            $data[] = sprintf('%F', $dat);
+        }
         $template = preg_replace('{{url}}', $this->url, $template);
         $template = preg_replace('{{width}}', $this->width, $template);
         $template = preg_replace('{{height}}', $this->height, $template);
         $template = preg_replace('{{title}}', $this->title, $template);
         $template = preg_replace('{{style}}', $this->style, $template);
-        $template = preg_replace('{{data}}', implode(',', $this->data), $template);
+        $template = preg_replace('{{data}}', implode(',', $data), $template);
         $template = preg_replace('{{colors}}', implode(',', $this->colors), $template);
         return $template;
     }

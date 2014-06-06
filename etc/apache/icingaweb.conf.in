@@ -1,12 +1,21 @@
-Alias @web_path@ @prefix@/public
+Alias @web_path@ "@prefix@/public"
+
 <Directory "@prefix@/public">
-    Options -Indexes
-
-    AllowOverride All
-
+    Options SymLinksIfOwnerMatch
+    AllowOverride None
     Order allow,deny
     Allow from all
 
+    SetEnv ICINGAWEB_CONFIGDIR @icingaweb_config_path@
+
     EnableSendfile Off
+
+    RewriteEngine on
+    RewriteBase @web_path@/
+    RewriteCond %{REQUEST_FILENAME} -s [OR]
+    RewriteCond %{REQUEST_FILENAME} -l [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^.*$ - [NC,L]
+    RewriteRule ^.*$ index.php [NC,L]
 </Directory>
 

@@ -31,9 +31,9 @@ namespace Icinga\Authentication\Backend;
 
 use \Exception;
 use Icinga\User;
-use Icinga\Logger\Logger;
 use Icinga\Authentication\UserBackend;
 use Icinga\Protocol\Ldap\Connection;
+use Icinga\Exception\AuthenticationException;
 
 class LdapUserBackend extends UserBackend
 {
@@ -95,6 +95,7 @@ class LdapUserBackend extends UserBackend
      * @param   string  $password
      *
      * @return  bool|null
+     * @throws  AuthenticationException
      */
     public function authenticate(User $user, $password)
     {
@@ -104,13 +105,14 @@ class LdapUserBackend extends UserBackend
                 $password
             );
         } catch (Exception $e) {
-            Logger::error(
+            throw new AuthenticationException(
                 sprintf(
-                    'Failed to authenticate user "%s" with backend "%s". Exception occured: %s',
+                    'Failed to authenticate user "%s" against backend "%s". An exception was thrown:',
                     $user->getUsername(),
-                    $this->getName(),
-                    $e->getMessage()
-                )
+                    $this->getName()
+                ),
+                0,
+                $e
             );
         }
     }

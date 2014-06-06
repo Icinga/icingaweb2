@@ -302,19 +302,19 @@ class Monitoring_CommandController extends ActionController
         );
 
         $form->setRequest($this->getRequest());
-        $form->setSubmitLabel(t('Disable Active Checks'));
+        $form->setSubmitLabel($this->translate('Disable Active Checks'));
 
         if ($form->provideGlobalCommand()) {
-            $form->addNote(t('Disable active checks on a program-wide basis.'));
+            $form->addNote($this->translate('Disable active checks on a program-wide basis.'));
         } else {
-            $form->addNote(t('Disable active checks for this object.'));
+            $form->addNote($this->translate('Disable active checks for this object.'));
         }
 
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Command has been sent, active checks will be disabled');
+            Notification::success($this->translate('Command has been sent, active checks will be disabled'));
         }
     }
 
@@ -329,17 +329,17 @@ class Monitoring_CommandController extends ActionController
         $form->setGlobalCommands('START_EXECUTING_HOST_CHECKS', 'START_EXECUTING_SVC_CHECKS');
 
         $form->setRequest($this->getRequest());
-        $form->setSubmitLabel(t('Enable Active Checks'));
+        $form->setSubmitLabel($this->translate('Enable Active Checks'));
         if ($form->provideGlobalCommand()) {
-            $form->addNote(t('Enable active checks on a program-wide basis.'));
+            $form->addNote($this->translate('Enable active checks on a program-wide basis.'));
         } else {
-            $form->addNote(t('Enable active checks for this object.'));
+            $form->addNote($this->translate('Enable active checks for this object.'));
         }
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Command has been sent, active checks will be enabled');
+            Notification::success($this->translate('Command has been sent, active checks will be enabled'));
         }
     }
 
@@ -358,7 +358,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Command has been sent, check will be rescheduled');
+            Notification::success($this->translate('Command has been sent, check will be rescheduled'));
         }
     }
 
@@ -381,7 +381,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Passive check result has been submitted');
+            Notification::success($this->translate('Passive check result has been submitted'));
         }
     }
 
@@ -393,12 +393,12 @@ class Monitoring_CommandController extends ActionController
         $this->setSupportedParameters(array('host', 'service', 'global'));
         $form = new SingleArgumentCommandForm();
         $form->setRequest($this->getRequest());
-        $form->setSubmitLabel(t('Stop obsessing'));
+        $form->setSubmitLabel($this->translate('Stop obsessing'));
 
         if ($form->provideGlobalCommand() === true) {
-            $form->addNote(t('Disable obsessing on a program-wide basis.'));
+            $form->addNote($this->translate('Disable obsessing on a program-wide basis.'));
         } else {
-            $form->addNote(t('Stop obsessing over this object.'));
+            $form->addNote($this->translate('Stop obsessing over this object.'));
         }
 
         $form->setCommand(
@@ -415,7 +415,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Command has been sent, obsessing will be disabled');
+            Notification::success($this->translate('Command has been sent, obsessing will be disabled'));
         }
     }
 
@@ -427,12 +427,12 @@ class Monitoring_CommandController extends ActionController
         $this->setSupportedParameters(array('host', 'service', 'global'));
         $form = new SingleArgumentCommandForm();
         $form->setRequest($this->getRequest());
-        $form->setSubmitLabel(t('Start obsessing'));
+        $form->setSubmitLabel($this->translate('Start obsessing'));
 
         if ($form->provideGlobalCommand() === true) {
-            $form->addNote(t('Enable obsessing on a program-wide basis.'));
+            $form->addNote($this->translate('Enable obsessing on a program-wide basis.'));
         } else {
-            $form->addNote(t('Start obsessing over this object.'));
+            $form->addNote($this->translate('Start obsessing over this object.'));
         }
 
         $form->setCommand(
@@ -449,7 +449,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Command has been sent, obsessing will be enabled');
+            Notification::success($this->translate('Command has been sent, obsessing will be enabled'));
         }
     }
 
@@ -461,12 +461,12 @@ class Monitoring_CommandController extends ActionController
         $this->setSupportedParameters(array('host', 'service', 'global'));
         $form = new SingleArgumentCommandForm();
         $form->setRequest($this->getRequest());
-        $form->setSubmitLabel(t('Stop Accepting Passive Checks'));
+        $form->setSubmitLabel($this->translate('Stop Accepting Passive Checks'));
 
         if ($form->provideGlobalCommand() === true) {
-            $form->addNote(t('Disable passive checks on a program-wide basis.'));
+            $form->addNote($this->translate('Disable passive checks on a program-wide basis.'));
         } else {
-            $form->addNote(t('Passive checks for this object will be omitted.'));
+            $form->addNote($this->translate('Passive checks for this object will be omitted.'));
         }
 
         $form->setCommand(
@@ -483,7 +483,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Command has been sent, passive check results will be refused');
+            Notification::success($this->translate('Command has been sent, passive check results will be refused'));
         }
     }
 
@@ -495,12 +495,12 @@ class Monitoring_CommandController extends ActionController
         $this->setSupportedParameters(array('host', 'service', 'global'));
         $form = new SingleArgumentCommandForm();
         $form->setRequest($this->getRequest());
-        $form->setSubmitLabel(t('Start Accepting Passive Checks'));
+        $form->setSubmitLabel($this->translate('Start Accepting Passive Checks'));
 
         if ($form->provideGlobalCommand() === true) {
-            $form->addNote(t('Enable passive checks on a program-wide basis.'));
+            $form->addNote($this->translate('Enable passive checks on a program-wide basis.'));
         } else {
-            $form->addNote(t('Passive checks for this object will be accepted.'));
+            $form->addNote($this->translate('Passive checks for this object will be accepted.'));
         }
 
         $form->setCommand(
@@ -516,7 +516,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Command has been sent, passive check results will be accepted');
+            Notification::success($this->translate('Command has been sent, passive check results will be accepted'));
         }
     }
 
@@ -534,7 +534,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Command has been sent, notifications will be disabled');
+            Notification::success($this->translate('Command has been sent, notifications will be disabled'));
         }
     }
 
@@ -547,12 +547,12 @@ class Monitoring_CommandController extends ActionController
         $form = new SingleArgumentCommandForm();
         $form->setRequest($this->getRequest());
 
-        $form->setSubmitLabel(t('Disable Notifications'));
+        $form->setSubmitLabel($this->translate('Disable Notifications'));
 
         if ($form->provideGlobalCommand() === true) {
-            $form->addNote(t('Disable notifications on a program-wide basis.'));
+            $form->addNote($this->translate('Disable notifications on a program-wide basis.'));
         } else {
-            $form->addNote(t('Notifications for this object will be disabled.'));
+            $form->addNote($this->translate('Notifications for this object will be disabled.'));
         }
 
         $form->setCommand('DISABLE_HOST_NOTIFICATIONS', 'DISABLE_SVC_NOTIFICATIONS');
@@ -562,7 +562,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Command has been sent, notifications will be disabled');
+            Notification::success($this->translate('Command has been sent, notifications will be disabled'));
         }
 
     }
@@ -577,12 +577,12 @@ class Monitoring_CommandController extends ActionController
         $form = new SingleArgumentCommandForm();
         $form->setRequest($this->getRequest());
 
-        $form->setSubmitLabel(t('Enable Notifications'));
+        $form->setSubmitLabel($this->translate('Enable Notifications'));
 
         if ($form->provideGlobalCommand() === true) {
-            $form->addNote(t('Enable notifications on a program-wide basis.'));
+            $form->addNote($this->translate('Enable notifications on a program-wide basis.'));
         } else {
-            $form->addNote(t('Notifications for this object will be enabled.'));
+            $form->addNote($this->translate('Notifications for this object will be enabled.'));
         }
 
         $form->setCommand('ENABLE_HOST_NOTIFICATIONS', 'ENABLE_SVC_NOTIFICATIONS');
@@ -592,7 +592,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Command has been sent, notifications will be enabled');
+            Notification::success($this->translate('Command has been sent, notifications will be enabled'));
         }
     }
 
@@ -608,7 +608,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Custom notification has been sent');
+            Notification::success($this->translate('Custom notification has been sent'));
         }
     }
 
@@ -627,7 +627,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Downtime scheduling requested');
+            Notification::success($this->translate('Downtime scheduling requested'));
         }
     }
 
@@ -645,7 +645,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Downtime scheduling requested');
+            Notification::success($this->translate('Downtime scheduling requested'));
         }
     }
 
@@ -657,14 +657,14 @@ class Monitoring_CommandController extends ActionController
         $this->setSupportedParameters(array('host'));
         $form = new SingleArgumentCommandForm();
         $form->setRequest($this->getRequest());
-        $form->setSubmitLabel(t('Remove Downtime(s)'));
-        $form->addNote(t('Remove downtime(s) from this host and its services.'));
+        $form->setSubmitLabel($this->translate('Remove Downtime(s)'));
+        $form->addNote($this->translate('Remove downtime(s) from this host and its services.'));
         $form->setCommand('DEL_DOWNTIME_BY_HOST_NAME', 'DEL_DOWNTIME_BY_HOST_NAME');
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Downtime removal requested');
+            Notification::success($this->translate('Downtime removal requested'));
         }
     }
 
@@ -676,8 +676,8 @@ class Monitoring_CommandController extends ActionController
         $this->setSupportedParameters(array('host'));
         $form = new SingleArgumentCommandForm();
         $form->setRequest($this->getRequest());
-        $form->setSubmitLabel(t('Disable Notifications'));
-        $form->addNote(t('Notifications for this host and its services will be disabled.'));
+        $form->setSubmitLabel($this->translate('Disable Notifications'));
+        $form->addNote($this->translate('Notifications for this host and its services will be disabled.'));
         $form->setCommand('DISABLE_ALL_NOTIFICATIONS_BEYOND_HOST');
         $this->setForm($form);
 
@@ -685,7 +685,7 @@ class Monitoring_CommandController extends ActionController
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
             $form->setCommand('DISABLE_HOST_NOTIFICATIONS', 'DISABLE_SVC_NOTIFICATIONS');
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Command has been sent, notifications will be disabled');
+            Notification::success($this->translate('Command has been sent, notifications will be disabled'));
         }
     }
 
@@ -697,8 +697,8 @@ class Monitoring_CommandController extends ActionController
         $this->setSupportedParameters(array('host'));
         $form = new SingleArgumentCommandForm();
         $form->setRequest($this->getRequest());
-        $form->setSubmitLabel(t('Enable Notifications'));
-        $form->addNote(t('Notifications for this host and its services will be enabled.'));
+        $form->setSubmitLabel($this->translate('Enable Notifications'));
+        $form->addNote($this->translate('Notifications for this host and its services will be enabled.'));
         $form->setCommand('ENABLE_ALL_NOTIFICATIONS_BEYOND_HOST');
         $this->setForm($form);
 
@@ -706,7 +706,7 @@ class Monitoring_CommandController extends ActionController
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
             $form->setCommand('ENABLE_HOST_NOTIFICATIONS', 'ENABLE_SVC_NOTIFICATIONS');
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Command has been sent, notifications will be enabled');
+            Notification::success($this->translate('Command has been sent, notifications will be enabled'));
         }
     }
 
@@ -725,7 +725,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Command has been sent, checks will be rescheduled');
+            Notification::success($this->translate('Command has been sent, checks will be rescheduled'));
         }
     }
 
@@ -737,15 +737,15 @@ class Monitoring_CommandController extends ActionController
         $this->setSupportedParameters(array('host'));
         $form = new SingleArgumentCommandForm();
         $form->setRequest($this->getRequest());
-        $form->setSubmitLabel(t('Disable Active Checks'));
-        $form->addNote(t('Disable active checks for this host and its services.'));
+        $form->setSubmitLabel($this->translate('Disable Active Checks'));
+        $form->addNote($this->translate('Disable active checks for this host and its services.'));
         $form->setCommand('DISABLE_HOST_CHECK');
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
             // @TODO(mh): Missing child command
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Command has been sent, active checks will be disabled');
+            Notification::success($this->translate('Command has been sent, active checks will be disabled'));
         }
     }
 
@@ -757,15 +757,15 @@ class Monitoring_CommandController extends ActionController
         $this->setSupportedParameters(array('host'));
         $form = new SingleArgumentCommandForm();
         $form->setRequest($this->getRequest());
-        $form->setSubmitLabel(t('Enable Active Checks'));
-        $form->addNote(t('Enable active checks for this host and its services.'));
+        $form->setSubmitLabel($this->translate('Enable Active Checks'));
+        $form->addNote($this->translate('Enable active checks for this host and its services.'));
         $form->setCommand('ENABLE_HOST_CHECK');
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
             // @TODO(mh): Missing child command
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Command has been sent, active checks will be enabled');
+            Notification::success($this->translate('Command has been sent, active checks will be enabled'));
         }
     }
 
@@ -777,12 +777,12 @@ class Monitoring_CommandController extends ActionController
         $this->setSupportedParameters(array('host', 'service', 'global'));
         $form = new SingleArgumentCommandForm();
         $form->setRequest($this->getRequest());
-        $form->setSubmitLabel(t('Disable Event Handler'));
+        $form->setSubmitLabel($this->translate('Disable Event Handler'));
 
         if ($form->provideGlobalCommand() === true) {
-            $form->addNote(t('Disable event handler for the whole system.'));
+            $form->addNote($this->translate('Disable event handler for the whole system.'));
         } else {
-            $form->addNote(t('Disable event handler for this object.'));
+            $form->addNote($this->translate('Disable event handler for this object.'));
         }
 
         $form->setCommand(
@@ -796,7 +796,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Command has been sent, event handlers will be disabled');
+            Notification::success($this->translate('Command has been sent, event handlers will be disabled'));
         }
     }
 
@@ -809,12 +809,12 @@ class Monitoring_CommandController extends ActionController
 
         $form = new SingleArgumentCommandForm();
         $form->setRequest($this->getRequest());
-        $form->setSubmitLabel(t('Enable Event Handler'));
+        $form->setSubmitLabel($this->translate('Enable Event Handler'));
 
         if ($form->provideGlobalCommand() === true) {
-            $form->addNote(t('Enable event handlers on the whole system.'));
+            $form->addNote($this->translate('Enable event handlers on the whole system.'));
         } else {
-            $form->addNote(t('Enable event handler for this object.'));
+            $form->addNote($this->translate('Enable event handler for this object.'));
         }
 
         $form->setCommand(
@@ -828,7 +828,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Command has been sent, event handlers will be enabled');
+            Notification::success($this->translate('Command has been sent, event handlers will be enabled'));
         }
     }
 
@@ -840,12 +840,12 @@ class Monitoring_CommandController extends ActionController
         $this->setSupportedParameters(array('host', 'service', 'global'));
         $form = new SingleArgumentCommandForm();
         $form->setRequest($this->getRequest());
-        $form->setSubmitLabel(t('Disable Flapping Detection'));
+        $form->setSubmitLabel($this->translate('Disable Flapping Detection'));
 
         if ($form->provideGlobalCommand() === true) {
-            $form->addNote(t('Disable flapping detection on a program-wide basis.'));
+            $form->addNote($this->translate('Disable flapping detection on a program-wide basis.'));
         } else {
-            $form->addNote(t('Disable flapping detection for this object.'));
+            $form->addNote($this->translate('Disable flapping detection for this object.'));
         }
 
         $form->setCommand(
@@ -861,7 +861,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Command has been sent, flap detection will be disabled');
+            Notification::success($this->translate('Command has been sent, flap detection will be disabled'));
         }
     }
 
@@ -873,12 +873,12 @@ class Monitoring_CommandController extends ActionController
         $this->setSupportedParameters(array('host', 'service', 'global'));
         $form = new SingleArgumentCommandForm();
         $form->setRequest($this->getRequest());
-        $form->setSubmitLabel(t('Enable Flapping Detection'));
+        $form->setSubmitLabel($this->translate('Enable Flapping Detection'));
 
         if ($form->provideGlobalCommand() === true) {
-            $form->addNote(t('Enable flapping detection on a program-wide basis.'));
+            $form->addNote($this->translate('Enable flapping detection on a program-wide basis.'));
         } else {
-            $form->addNote(t('Enable flapping detection for this object.'));
+            $form->addNote($this->translate('Enable flapping detection for this object.'));
         }
 
         $form->setCommand(
@@ -894,7 +894,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Command has been sent, flap detection will be enabled');
+            Notification::success($this->translate('Command has been sent, flap detection will be enabled'));
         }
     }
 
@@ -912,7 +912,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Your new comment has been submitted');
+            Notification::success($this->translate('Your new comment has been submitted'));
         }
     }
 
@@ -927,13 +927,13 @@ class Monitoring_CommandController extends ActionController
         $form->setRequest($this->_request);
         $form->setCommand('DEL_HOST_COMMENT', 'DEL_SVC_COMMENT');
         $form->setParameterName('commentid');
-        $form->setSubmitLabel(t('Remove comment'));
+        $form->setSubmitLabel($this->translate('Remove comment'));
         $form->setObjectIgnoreFlag(true);
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Comment removal has been requested');
+            Notification::success($this->translate('Comment removal has been requested'));
         }
     }
 
@@ -945,8 +945,8 @@ class Monitoring_CommandController extends ActionController
         $this->setSupportedParameters(array('host', 'service'));
         $form = new SingleArgumentCommandForm();
         $form->setRequest($this->getRequest());
-        $form->setSubmitLabel(t('Reset Attributes'));
-        $form->addNote(t('Reset modified attributes to its default.'));
+        $form->setSubmitLabel($this->translate('Reset Attributes'));
+        $form->addNote($this->translate('Reset modified attributes to its default.'));
         $form->setCommand('CHANGE_HOST_MODATTR', 'CHANGE_SVC_MODATTR');
         $form->setParameterValue(0);
         $this->setForm($form);
@@ -969,7 +969,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Acknowledgement has been sent');
+            Notification::success($this->translate('Acknowledgement has been sent'));
         }
 
         $this->setForm($form);
@@ -984,14 +984,14 @@ class Monitoring_CommandController extends ActionController
         $this->setSupportedParameters(array('host', 'service'));
         $form = new SingleArgumentCommandForm();
         $form->setRequest($this->getRequest());
-        $form->setSubmitLabel(t('Remove Problem Acknowledgement'));
-        $form->addNote(t('Remove problem acknowledgement for this object.'));
+        $form->setSubmitLabel($this->translate('Remove Problem Acknowledgement'));
+        $form->addNote($this->translate('Remove problem acknowledgement for this object.'));
         $form->setCommand('REMOVE_HOST_ACKNOWLEDGEMENT', 'REMOVE_SVC_ACKNOWLEDGEMENT');
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Acknowledgement removal has been requested');
+            Notification::success($this->translate('Acknowledgement removal has been requested'));
         }
     }
 
@@ -1008,7 +1008,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Notification delay has been requested');
+            Notification::success($this->translate('Notification delay has been requested'));
         }
     }
 
@@ -1021,16 +1021,16 @@ class Monitoring_CommandController extends ActionController
         $form = new SingleArgumentCommandForm();
         $form->setRequest($this->getRequest());
 
-        $form->setSubmitLabel(t('Delete Downtime'));
+        $form->setSubmitLabel($this->translate('Delete Downtime'));
         $form->setParameterName('downtimeid');
-        $form->addNote(t('Delete a single downtime with the id shown above'));
+        $form->addNote($this->translate('Delete a single downtime with the id shown above'));
         $form->setCommand('DEL_HOST_DOWNTIME', 'DEL_SVC_DOWNTIME');
         $form->setObjectIgnoreFlag(true);
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Downtime removal has been requested');
+            Notification::success($this->translate('Downtime removal has been requested'));
         }
     }
 
@@ -1043,14 +1043,14 @@ class Monitoring_CommandController extends ActionController
         $form = new SingleArgumentCommandForm();
         $form->setRequest($this->_request);
 
-        $form->setSubmitLabel(t('Shutdown monitoring process'));
-        $form->addNote(t('Stop monitoring instance. You have to start it again from command line.'));
+        $form->setSubmitLabel($this->translate('Shutdown monitoring process'));
+        $form->addNote($this->translate('Stop monitoring instance. You have to start it again from command line.'));
         $form->setGlobalCommands('SHUTDOWN_PROCESS');
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Command has been sent, process will shut down');
+            Notification::success($this->translate('Command has been sent, process will shut down'));
         }
     }
 
@@ -1063,15 +1063,15 @@ class Monitoring_CommandController extends ActionController
         $form = new SingleArgumentCommandForm();
         $form->setRequest($this->_request);
 
-        $form->setSubmitLabel(t('Restart monitoring process'));
-        $form->addNote(t('Restart the monitoring process.'));
+        $form->setSubmitLabel($this->translate('Restart monitoring process'));
+        $form->addNote($this->translate('Restart the monitoring process.'));
         $form->setGlobalCommands('RESTART_PROCESS');
 
         $this->setForm($form);
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Command has been sent, monitoring process will restart now');
+            Notification::success($this->translate('Command has been sent, monitoring process will restart now'));
         }
     }
 
@@ -1084,8 +1084,8 @@ class Monitoring_CommandController extends ActionController
         $form = new SingleArgumentCommandForm();
         $form->setRequest($this->_request);
 
-        $form->setSubmitLabel(t('Disable Performance Data'));
-        $form->addNote(t('Disable processing of performance data on a program-wide basis.'));
+        $form->setSubmitLabel($this->translate('Disable Performance Data'));
+        $form->addNote($this->translate('Disable processing of performance data on a program-wide basis.'));
 
         $form->setGlobalCommands('DISABLE_PERFORMANCE_DATA');
 
@@ -1093,7 +1093,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Command has been sent, performance data processing will be disabled');
+            Notification::success($this->translate('Command has been sent, performance data processing will be disabled'));
         }
     }
 
@@ -1106,8 +1106,8 @@ class Monitoring_CommandController extends ActionController
         $form = new SingleArgumentCommandForm();
         $form->setRequest($this->_request);
 
-        $form->setSubmitLabel(t('Enable Performance Data'));
-        $form->addNote(t('Enable processing of performance data on a program-wide basis.'));
+        $form->setSubmitLabel($this->translate('Enable Performance Data'));
+        $form->addNote($this->translate('Enable processing of performance data on a program-wide basis.'));
 
         $form->setGlobalCommands('ENABLE_PERFORMANCE_DATA');
 
@@ -1115,7 +1115,7 @@ class Monitoring_CommandController extends ActionController
 
         if ($form->IsSubmittedAndValid() === true) {
             $this->target->sendCommand($form->createCommand(), $this->view->objects);
-            Notification::success('Command has been sent, performance data processing will be enabled');
+            Notification::success($this->translate('Command has been sent, performance data processing will be enabled'));
         }
     }
 }

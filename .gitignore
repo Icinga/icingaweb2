@@ -37,3 +37,7 @@ config/preferences/*.ini
 
 # Application logfiles
 var/log/*.log
+
+/debian
+
+

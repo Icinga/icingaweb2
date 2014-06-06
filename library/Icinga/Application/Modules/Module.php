@@ -1,32 +1,12 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
-// {{{ICINGA_LICENSE_HEADER}}}
 
+/**
+ * Icingaweb 2
+ *
+ * @link https://git.icinga.org/icingaweb2.git/ for the official source repository
+ * @copyright Copyright (c) 2013-2014 Icinga Development Team (https://www.icinga.org)
+ * @license http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
+ */
 namespace Icinga\Application\Modules;
 
 use Exception;
@@ -211,9 +191,9 @@ class Module
     /**
      * Test for an enabled module by name
      *
-     * @param   string $name
+     * @param string $name
      *
-     * @return  boolean
+     * @return boolean
      */
     public static function exists($name)
     {
@@ -223,12 +203,12 @@ class Module
     /**
      * Get module by name
      *
-     * @param   string  $name
-     * @param   bool    $autoload
+     * @param string $name
+     * @param bool   $autoload
      *
-     * @return  mixed
+     * @return mixed
      *
-     * @throws  \Icinga\Exception\ProgrammingError When the module is not yet loaded
+     * @throws ProgrammingError When the module is not yet loaded
      */
     public static function get($name, $autoload = false)
     {
@@ -303,13 +283,23 @@ class Module
     }
 
     /**
-     * Get short description
+     * Get module description
      *
      * @return string
      */
-    public function getShortDescription()
+    public function getDescription()
     {
-        return $this->metadata()->shortDescription;
+        return $this->metadata()->description;
+    }
+
+    /**
+     * Get module title (short description)
+     *
+     * @return string
+     */
+    public function getTitle()
+    {
+        return $this->metadata()->title;
     }
 
     /**
@@ -319,7 +309,6 @@ class Module
      */
     public function getDependencies()
     {
-
         return $this->metadata()->depends;
     }
 
@@ -332,11 +321,11 @@ class Module
     {
         if ($this->metadata === null) {
             $metadata = (object) array(
-                'name'             => $this->getName(),
-                'version'          => '0.0.0',
-                'shortDescription' => '',
-                'description'      => '',
-                'depends'          => array(),
+                'name'        => $this->getName(),
+                'version'     => '0.0.0',
+                'title'       => null,
+                'description' => '',
+                'depends'     => array(),
             );
 
             if (file_exists($this->metadataFile)) {
@@ -347,15 +336,21 @@ class Module
                 while (false !== ($line = fgets($fh))) {
                     $line = rtrim($line);
 
-                    if ($key === 'description' && $line[0] === ' ') {
-                        $metadata->{$key} .= "\n" . ltrim($line);
-                        continue;
+                    if ($key === 'description') {
+                        if (empty($line)) {
+                            $metadata->description .= "\n";
+                            continue;
+                        } elseif ($line[0] === ' ') {
+                            $metadata->description .= $line;
+                            continue;
+                        }
                     }
 
                     list($key, $val) = preg_split('/:\s+/', $line, 2);
                     $key = lcfirst($key);
 
                     switch ($key) {
+
                         case 'depends':
                             if (strpos($val, ' ') === false) {
                                 $metadata->depends[$val] = true;
@@ -372,14 +367,32 @@ class Module
                                 }
                             }
                             break;
+
                         case 'description':
-                            $metadata->shortDescription = $val;
-                            // YES, no break here
+                            if ($metadata->title === null) {
+                                $metadata->title = $val;
+                            } else {
+                                $metadata->description = $val;
+                            }
+                            break;
+
                         default:
                             $metadata->{$key} = $val;
 
                     }
                 }
+            }
+
+            if ($metadata->title === null) {
+                $metadata->title = $this->getName();
+            }
+
+            if ($metadata->description === '') {
+                // TODO: Check whether the translation module is able to
+                //       extract this
+                $metadata->description = t(
+                    'This module has no description'
+                );
             }
 
             $this->metadata = $metadata;
@@ -407,6 +420,11 @@ class Module
         return $this->basedir;
     }
 
+    /**
+     * Get the controller directory
+     *
+     * @return string
+     */
     public function getControllerDir()
     {
         return $this->controllerdir;
@@ -445,21 +463,20 @@ class Module
     /**
      * Getter for module config object
      *
-     * @param   string $file
+     * @param string $file
      *
-     * @return  Config
+     * @return Config
      */
     public function getConfig($file = null)
     {
-        return $this->app
-            ->getConfig()
-            ->module($this->name, $file);
+        return $this->app->getConfig()->module($this->name, $file);
     }
 
     /**
      * Retrieve provided permissions
      *
-     * @param  string  $name Permission name
+     * @param string $name Permission name
+     *
      * @return array
      */
     public function getProvidedPermissions()
@@ -483,7 +500,8 @@ class Module
     /**
      * Whether the given permission name is supported
      *
-     * @param  string  $name Permission name
+     * @param string $name Permission name
+     *
      * @return bool
      */
     public function providesPermission($name)
@@ -495,7 +513,8 @@ class Module
     /**
      * Whether the given restriction name is supported
      *
-     * @param  string  $name Restriction name
+     * @param string $name Restriction name
+     *
      * @return bool
      */
     public function providesRestriction($name)
@@ -507,9 +526,10 @@ class Module
     /**
      * Provide a named permission
      *
-     * @param   string $name Unique permission name
-     * @param   string $name Permission description
-     * @return  void
+     * @param string $name Unique permission name
+     * @param string $name Permission description
+     *
+     * @return void
      */
     protected function providePermission($name, $description)
     {
@@ -527,9 +547,10 @@ class Module
     /**
      * Provide a named restriction
      *
-     * @param   string $name Unique restriction name
-     * @param   string $name Restriction description
-     * @return  void
+     * @param string $name        Unique restriction name
+     * @param string $description Restriction description
+     *
+     * @return void
      */
     protected function provideRestriction($name, $description)
     {
@@ -654,9 +675,9 @@ class Module
     /**
      * Include a php script if it is readable
      *
-     * @param   string  $file File to include
+     * @param string $file File to include
      *
-     * @return  self
+     * @return self
      */
     protected function includeScript($file)
     {
@@ -686,11 +707,11 @@ class Module
     /**
      * Register hook
      *
-     * @param   string $name
-     * @param   string $class
-     * @param   string $key
+     * @param string $name
+     * @param string $class
+     * @param string $key
      *
-     * @return  self
+     * @return self
      */
     protected function registerHook($name, $class, $key = null)
     {

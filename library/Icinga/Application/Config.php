@@ -82,7 +82,7 @@ class Config extends Zend_Config
         $filepath = realpath($filename);
         if ($filepath === false) {
             $this->configFile = $filename;
-        } else if (is_readable($filepath)) {
+        } elseif (is_readable($filepath)) {
             $this->configFile = $filepath;
             $this->merge(new Zend_Config_Ini($filepath));
         } else {
@@ -102,8 +102,7 @@ class Config extends Zend_Config
     public static function app($configname = 'config', $fromDisk = false)
     {
         if (!isset(self::$app[$configname]) || $fromDisk) {
-            $filename = self::$configDir . '/' . $configname . '.ini';
-            self::$app[$configname] = new Config($filename);
+            self::$app[$configname] = new Config(self::resolvePath($configname . '.ini'));
         }
         return self::$app[$configname];
     }
@@ -125,7 +124,7 @@ class Config extends Zend_Config
         $moduleConfigs = self::$modules[$modulename];
         if (!isset($moduleConfigs[$configname]) || $fromDisk) {
             $moduleConfigs[$configname] = new Config(
-                self::$configDir . '/modules/' . $modulename . '/' . $configname . '.ini'
+                self::resolvePath('modules/' . $modulename . '/' . $configname . '.ini')
             );
         }
         return $moduleConfigs[$configname];
@@ -159,21 +158,17 @@ class Config extends Zend_Config
     }
 
     /**
-     * Return the input path with resolved path variables
+     * Prepend configuration base dir if input is relative
      *
-     * Currently only %app% is considered a path variable and points to the application paths
-     *
-     * @param string $path      The path to resolve
-     *
-     * @return string           The resolved path
+     * @param   string  $path   Input path
+     * @return  string          Absolute path
      */
     public static function resolvePath($path)
     {
-        try {
-            $appDir = realpath(Icinga::app()->getApplicationDir() . '/..');
-        } catch (ProgrammingError $appNotStarted) {
-            $appDir = realpath(__DIR__ . '/../../..');
+        if (strpos($path, DIRECTORY_SEPARATOR) === 0) {
+            return $path;
         }
-        return str_replace('{app}', $appDir, $path);
+
+        return self::$configDir . DIRECTORY_SEPARATOR . $path;
     }
 }

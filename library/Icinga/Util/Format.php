@@ -101,20 +101,20 @@ class Format
         return self::showHourMin($duration);
     }
 
-    protected static function showHourMin($sec)
+    protected static function showHourMin($sec, $includePrefix = false)
     {
         $min = floor($sec / 60);
         if ($min < 60) {
-            return $min . 'm ' . ($sec % 60) . 's';
+            return ($includePrefix ? t('for') . ' ' : '') . $min . 'm ' . ($sec % 60) . 's';
         }
         $hour = floor($min / 60);
         if ($hour < 24) {
-            return date('H:i', time() - $sec);
+            return ($includePrefix ? t('since') . ' ' : '') . date('H:i', time() - $sec);
         }
-        return floor($hour / 24) . 'd ' . ($hour % 24) . 'h';
+        return ($includePrefix ? t('for') . ' ' : '') . floor($hour / 24) . 'd ' . ($hour % 24) . 'h';
     }
 
-    protected static function smartTimeDiff($diff, $timestamp)
+    protected static function smartTimeDiff($diff, $timestamp, $includePrefix = false)
     {
         if ($timestamp === null || $timestamp === false) {
             return '-';
@@ -125,15 +125,14 @@ class Format
         $prefix = '';
         if ($diff < 0) {
             $prefix = '-';
-            $diff *= -1;
         }
-        if ($diff > 3600 * 24 * 3) {
+        if (abs($diff) > 3600 * 24 * 3) {
             if (date('Y') === date('Y', $timestamp)) {
-                return date('d.m.', $timestamp);
+                return ($includePrefix ? t('since') . ' ' : '') . date('d.m.', $timestamp);
             }
-            return date('m.Y', $timestamp);
+            return ($includePrefix ? t('since') . ' ' : '') . date('m.Y', $timestamp);
         }
-        return $prefix . self::showHourMin($diff);
+        return $prefix . self::showHourMin(abs($diff), $includePrefix);
     }
 
     public static function timeSince($timestamp)
@@ -141,9 +140,27 @@ class Format
         return self::smartTimeDiff(time() - $timestamp, $timestamp);
     }
 
+    public static function prefixedTimeSince($timestamp, $ucfirst = false)
+    {
+        $result = self::smartTimeDiff(time() - $timestamp, $timestamp, true);
+        if ($ucfirst) {
+            $result = ucfirst($result);
+        }
+        return $result;
+    }
+
     public static function timeUntil($timestamp)
     {
         return self::smartTimeDiff($timestamp - time(), $timestamp);
+    }
+
+    public static function prefixedTimeUntil($timestamp, $ucfirst)
+    {
+        $result = self::smartTimeDiff($timestamp - time(), $timestamp, true);
+        if ($ucfirst) {
+            $result = ucfirst($result);
+        }
+        return $result;
     }
 
     protected static function formatForUnits($value, & $units, $base)

@@ -51,7 +51,6 @@ clean:
 # Installs/copies all static files (executables, scripts, html, etc)
 #
 install-static-files: install-application copy-web-files-public copy-web-files-modules
-	$(INSTALL) -m 644 $(INSTALL_OPTS) "./public/.htaccess"  $(DESTDIR)$(prefix)/public/.htaccess;
 
 #
 # Installs all configuration files

@@ -298,6 +298,11 @@ class Url
         return $this->path . '?' . http_build_query($params, '', '&amp;') . $this->anchor;
     }
 
+    public function getQueryString()
+    {
+        return http_build_query($this->params, '', '&');
+    }
+
     /**
      * Return the absolute url with query parameters as a string
      *
@@ -493,6 +498,11 @@ class Url
      * @return  Url
      */
     public function getUrlWithout($keyOrArrayOfKeys)
+    {
+        return $this->without($keyOrArrayOfKeys);
+    }
+
+    public function without($keyOrArrayOfKeys)
     {
         $url = clone($this);
         $url->remove($keyOrArrayOfKeys);

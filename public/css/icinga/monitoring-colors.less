@@ -19,7 +19,7 @@ table.colors td {
 /* Action table */
 table.action {
   border-collapse: separate;
-  border-spacing: 0.3em;
+  border-spacing: 1px;
   width: 100%;
   table-layout: fixed;
   margin: 0;
@@ -37,7 +37,6 @@ table.action.wide td {
 table.action td {
   padding: 0.3em 0.5em 0.3em 0.5em;
   line-height: 1.5em;
-  border-bottom: 1px solid #dde;
   overflow: hidden;
 }
 
@@ -128,8 +127,7 @@ tr.state.handled td.state, tr.state.ok td.state, tr.state.up td.state, tr.state.
   color: black;
   background-color: transparent;
 }
-
-tr[href]:hover, tr[href].active {
+tr[href].active {
   background-color: #ddd;
   color: black;
 }
@@ -194,6 +192,63 @@ tr.state.handled td.state {
   color: inherit;
   background-color: transparent !important;
 }
+
+/* HOVER colors */
+
+
+tr.state[href]:hover, tr.state[href]:hover td.state {
+  color: white;
+}
+
+tr.state.ok:hover {
+  background-color: @colorOk;
+}
+
+tr.state.handled[href]:hover, tr.state.handled[href]:hover td.state {
+  color: #121212 !important;
+}
+
+tr.state.warning[href]:hover {
+  background-color: @colorWarning;
+}
+
+tr.state.warning.handled[href]:hover {
+  background-color: @colorWarningHandled;
+}
+
+tr.state.critical[href]:hover, tr.state.down[href]:hover {
+  background-color: @colorCritical;
+}
+
+tr.state.critical.handled[href]:hover, tr.state.down.handled[href]:hover {
+  background-color: @colorCriticalHandled;
+  color: #333;
+}
+
+tr.state.unknown[href]:hover {
+  background-color: @colorUnknown;
+}
+
+tr.state.unknown.handled[href]:hover {
+  background-color: @colorUnknownHandled;
+}
+
+tr.state.pending[href]:hover {
+  background-color: @colorPending;
+}
+
+tr.state.invalid[href]:hover {
+  background-color: @colorInvalid;
+}
+
+tr.state.unreachable[href]:hover {
+  background-color: @colorUnreachable;
+}
+
+tr.state.unreachable.handled[href]:hover {
+  background-color: @colorUnreachableHandled;
+}
+/* END of HOVER colors */
 
 /* END of special tables and states */
 
@@ -498,7 +553,7 @@ div.pivot-pagination {
 
   table {
     table-layout: fixed;
-    border-spacing: 0.2em;
+    border-spacing: 1px;
     border-collapse: separate;
     border: 1px solid LightGrey;
     border-radius: 0.3em;

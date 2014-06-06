@@ -4,7 +4,7 @@
 
 namespace Icinga\Module\Doc;
 
-require_once 'vendor/Parsedown/Parsedown.php';
+require_once 'IcingaVendor/Parsedown/Parsedown.php';
 
 use Parsedown;
 use Icinga\Data\Tree\Node;

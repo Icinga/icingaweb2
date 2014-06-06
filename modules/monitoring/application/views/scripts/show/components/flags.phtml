@@ -10,7 +10,7 @@ $data = array(
 
 ?>
   <tr class="newsection">
-    <th>Passive Checks</th>
+    <th><?= $this->translate('Passive Checks') ?></th>
     <td data-base-target="_self"><?= $cf->toggleSubmitForm(
         '',
         $o->passive_checks_enabled,
@@ -21,7 +21,7 @@ $data = array(
     ) ?></td>
   </tr>
   <tr>
-    <th>Active Checks</th>
+    <th><?= $this->translate('Active Checks') ?></th>
     <td data-base-target="_self"><?= $cf->toggleSubmitForm(
         '',
         $o->active_checks_enabled,
@@ -32,7 +32,7 @@ $data = array(
     ) ?></td>
   </tr>
   <tr>
-    <th>Notifications</th>
+    <th><?= $this->translate('Notifications') ?></th>
     <td data-base-target="_self"><?= $cf->toggleSubmitForm(
         '',
         $o->notifications_enabled,
@@ -43,7 +43,7 @@ $data = array(
     ) ?></td>
   </tr>
   <tr>
-    <th>Event Handler</th>
+    <th><?= $this->translate('Event Handler') ?></th>
     <td data-base-target="_self"><?= $cf->toggleSubmitForm(
         '',
         $o->event_handler_enabled,
@@ -54,7 +54,7 @@ $data = array(
     ) ?></td>
   </tr>
   <tr>
-    <th>Flap Detection</th>
+    <th><?= $this->translate('Flap Detection') ?></th>
     <td data-base-target="_self"><?= $cf->toggleSubmitForm(
         '',
         $o->flap_detection_enabled,
@@ -65,7 +65,7 @@ $data = array(
      ) ?></td>
   </tr>
   <tr>
-    <th>Obsessing</th>
+    <th><?= $this->translate('Obsessing') ?></th>
     <td data-base-target="_self"><?= $cf->toggleSubmitForm(
         '',
         $o->obsessing,

@@ -196,23 +196,22 @@ class Manager
     /**
      * Try to load the module and register it in the application
      *
-     * @param   string  $name       The name of the module to load
-     * @param   mixed   $moduleBase Alternative class to use instead of \Icinga\Application\Modules\Module for
-     *                              instantiating modules, used for testing
+     * @param string $name    The name of the module to load
+     * @param mixed  $basedir Optional module base directory
      *
-     * @return  self
+     * @return self
      */
-    public function loadModule($name, $moduleBase = null)
+    public function loadModule($name, $basedir = null)
     {
         if ($this->hasLoaded($name)) {
             return $this;
         }
 
         $module = null;
-        if ($moduleBase === null) {
+        if ($basedir === null) {
             $module = new Module($this->app, $name, $this->getModuleDir($name));
         } else {
-            $module = new $moduleBase($this->app, $name, $this->getModuleDir($name));
+            $module = new Module($this->app, $name, $basedir);
         }
         $module->register();
         $this->loadedModules[$name] = $module;
@@ -332,6 +331,10 @@ class Manager
      */
     public function getModuleDir($name, $subdir = '')
     {
+        if ($this->hasLoaded($name)) {
+            return $this->getModule($name)->getBaseDir() . $subdir;
+        }
+
         if ($this->hasEnabled($name)) {
             return $this->enabledDirs[$name]. $subdir;
         }

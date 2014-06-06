@@ -10,11 +10,6 @@ installJquery () {
     fi
 }
 
-mountIcinga2webConfd () {
-    # Remount /vagrant/config/ with appropriate permissions since the group apache is missing initially
-    mount -t vboxsf -o uid=`id -u vagrant`,gid=`id -g apache`,dmode=775,fmode=775 /vagrant/config/ /vagrant/config/
-}
-
 startServicesWithNonLSBCompliantExitStatusCodes () {
     # Unfortunately the ido2db init script is not LSB compliant and hence not started via puppet
     service ido2db-mysql start || true
@@ -22,12 +17,16 @@ startServicesWithNonLSBCompliantExitStatusCodes () {
 }
 
 mountIcinga2webVarLog () {
-    # Remount /vagrant/var/log/ with appropriate permissions since the group apache is missing initially
-    mount -t vboxsf -o uid=`id -u vagrant`,gid=`id -g apache`,dmode=775,fmode=775 /vagrant/var/log/ /vagrant/var/log/
+    if ! $(/bin/mount | /bin/grep -q "/vagrant/var/log"); then
+        # Remount /vagrant/var/log/ with appropriate permissions since the group apache is missing initially
+        /bin/mount -t vboxsf -o \
+            uid=`id -u vagrant`,gid=`id -g apache`,dmode=775,fmode=664 \
+            /vagrant/var/log/ \
+            /vagrant/var/log/
+    fi
 }
 
 installJquery
-mountIcinga2webConfd
 startServicesWithNonLSBCompliantExitStatusCodes
 mountIcinga2webVarLog
 
