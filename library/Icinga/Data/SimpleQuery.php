@@ -223,7 +223,7 @@ abstract class SimpleQuery implements QueryInterface, Queryable
     {
         if ($itemsPerPage === null || $pageNumber === null) {
             // Detect parameters from request
-            $request = Zend_Controller_Front::getInstance()->getRequest();
+            $request = Icinga::app()->getFrontController()->getRequest();
             if ($itemsPerPage === null) {
                 $itemsPerPage = $request->getParam('limit', 20);
             }
