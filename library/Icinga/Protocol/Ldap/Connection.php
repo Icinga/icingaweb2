@@ -353,12 +353,6 @@ class Connection
         return $dir;
     }
 
-    protected function discoverServerlistForDomain($domain)
-    {
-        $ldaps_records = dns_get_record('_ldaps._tcp.' . $domain, DNS_SRV);
-        $ldap_records  = dns_get_record('_ldap._tcp.' . $domain, DNS_SRV);
-    }
-
     protected function prepareNewConnection()
     {
         $use_tls = false;
