@@ -293,13 +293,16 @@ class StatusQuery extends IdoQuery
                 END'
         ),
         'serviceproblemsummary' => array(
-            'host_unhandled_service_count' => 'sps.unhandled_service_count'
+//            'host_unhandled_service_count' => 'sps.unhandled_service_count'
+            'host_unhandled_service_count' => '(NULL)'
         ),
         'lasthostcomment' => array(
-            'host_last_comment' => 'hlc.comment_id'
+//            'host_last_comment' => 'hlc.comment_id'
+            'host_last_comment' => '(NULL)'
         ),
         'lastservicecomment' => array(
-            'service_last_comment' => 'slc.comment_id'
+//            'service_last_comment' => 'slc.comment_id'
+            'service_last_comment' => '(NULL)'
         )
     );
 
@@ -322,6 +325,9 @@ class StatusQuery extends IdoQuery
         $this->joinedVirtualTables = array(
             'hosts'      => true,
             'hoststatus' => true,
+            'lasthostcomment' => true,
+            'lastservicecomment' => true,
+            'serviceproblemsummary' => true,
         );
     }
 
