@@ -1,68 +1,13 @@
 <?php
 // {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Module\Doc;
 
 require_once 'vendor/Parsedown/Parsedown.php';
 
-use ArrayIterator;
-use RunetimeException;
-
-class FileLockingIterator extends ArrayIterator
-{
-    public function next()
-    {
-        $this->current()->flock(LOCK_UN);
-        parent::next();
-    }
-
-    public function valid()
-    {
-        if (!parent::valid()) {
-            return false;
-        }
-        $fileInfo = $this->current();
-        try {
-            $fileObject = $fileInfo->openFile();
-        } catch (RuntimeException $e) {
-            throw new DocException($e->getMessage());
-        }
-        if ($fileObject->flock(LOCK_SH) === false) {
-            throw new DocException('Couldn\'t get the lock');
-        }
-        $this[$this->key()] = $fileObject;
-        return true;
-    }
-}
-
-use IteratorAggregate;
-use RecursiveIteratorIterator;
-use RecursiveDirectoryIterator;
-
-class DocIterator implements IteratorAggregate
-{
-    protected $fileInfos;
-
-    public function __construct($path)
-    {
-        $iter = new RecursiveIteratorIterator(
-            new MarkdownFileIterator(
-                new RecursiveDirectoryIterator($path)
-            )
-        );
-        $fileInfos = iterator_to_array($iter);
-        natcasesort($fileInfos);
-        $this->fileInfos = $fileInfos;
-    }
-
-    public function getIterator()
-    {
-        return new FileLockingIterator($this->fileInfos);
-    }
-}
-
 use Parsedown;
+use Icinga\Data\Tree\Node;
 use Icinga\Exception\NotReadableError;
 
 /**
@@ -88,10 +33,10 @@ class DocParser
     public function __construct($path)
     {
         if (! is_dir($path)) {
-            throw new DocException('Doc directory `' . $path .'\' does not exist');
+            throw new DocException('Doc directory `' . $path . '\' does not exist');
         }
         if (! is_readable($path)) {
-            throw new NotReadableError('Doc directory `' . $path .'\' is not readable');
+            throw new NotReadableError('Doc directory `' . $path . '\' is not readable');
         }
         $this->path = $path;
     }
@@ -99,16 +44,17 @@ class DocParser
     /**
      * Retrieve the table of contents
      *
-     * @return  DocTocHtmlRenderer
+     * @return Node
      */
     public function getToc()
     {
         $tocStack = array((object) array(
             'level' => 0,
-            'node'  => new DocToc()
+            'node'  => new Node()
         ));
         foreach (new DocIterator($this->path) as $fileObject) {
             $line = null;
+            $currentChapterName = null;
             while (! $fileObject->eof()) {
                 // Save last line for setext-style headers
                 $lastLine = $line;
@@ -129,11 +75,17 @@ class DocParser
                         $nofollow = true;
                     }
                     $id = urlencode(str_replace('.', '&#46;', strip_tags($id)));
+                    if ($currentChapterName === null) {
+                        // The first header is the chapter's name
+                        $currentChapterName = $id;
+                        $id = null;
+                    }
                     $node = end($tocStack)->node->appendChild(
                         (object) array(
-                            'id'        => $id,
-                            'title'     => $header,
-                            'nofollow'  => $nofollow
+                            'id'            => $id,
+                            'title'         => $header,
+                            'nofollow'      => $nofollow,
+                            'chapterName'   => $currentChapterName
                         )
                     );
                     $tocStack[] = (object) array(
@@ -143,72 +95,77 @@ class DocParser
                 }
             }
         }
-        return new DocTocHtmlRenderer($tocStack[0]->node);
+        return $tocStack[0]->node;
     }
 
     /**
-     * Retrieve doc as HTML converted from markdown files sorted by filename and the table of contents
+     * Retrieve a chapter
      *
-     * @return  array
-     * @throws  DocException
+     * @param   string $chapterName
+     *
+     * @return  string
      */
-    public function getDocAndToc()
+    public function getChapter($chapterName)
     {
         $cat = array();
         $tocStack = array((object) array(
             'level' => 0,
-            'node'  => new DocToc()
+            'node'  => new Node()
         ));
+        $chapterFound = false;
         foreach (new DocIterator($this->path) as $fileObject) {
             $line = null;
-            $sectionTitle = null;
+            $currentChapterName = null;
+            $chapter = array();
             while (! $fileObject->eof()) {
                 // Save last line for setext-style headers
-                $lastLine   = $line;
-                $line       = $fileObject->fgets();
-                $header     = $this->extractHeader($line, $lastLine);
+                $lastLine = $line;
+                $line = $fileObject->fgets();
+                $header = $this->extractHeader($line, $lastLine);
                 if ($header !== null) {
                     list($header, $level) = $header;
-                    if ($sectionTitle === null) {
-                        // The first header is the section's title
-                        $sectionTitle = $header;
-                    }
-                    $id         = $this->extractHeaderId($header);
-                    $nofollow   = false;
+                    $id = $this->extractHeaderId($header);
                     $this->reduceToc($tocStack, $level);
                     if ($id === null) {
                         $path = array();
                         foreach (array_slice($tocStack, 1) as $entity) {
                             $path[] = $entity->node->getValue()->title;
                         }
-                        $path[]         = $header;
-                        $id             = implode('-', $path);
-                        $nofollow       = true;
+                        $path[] = $header;
+                        $id = implode('-', $path);
                     }
-                    $id     = urlencode(str_replace('.', '&#46;', strip_tags($id)));
-                    $node   = end($tocStack)->node->appendChild(
+                    $id = urlencode(str_replace('.', '&#46;', strip_tags($id)));
+                    if ($currentChapterName === null) {
+                        $currentChapterName = $id;
+                        $id = null;
+                    }
+                    $node = end($tocStack)->node->appendChild(
                         (object) array(
-                            'id'        => $id,
-                            'title'     => $header,
-                            'nofollow'  => $nofollow
+                            'title' => $header
                         )
                     );
-                    $tocStack[]  = (object) array(
+                    $tocStack[] = (object) array(
                         'level' => $level,
                         'node'  => $node
                     );
                     $line = '<a name="' . $id . '"></a>' . PHP_EOL . $line;
                 }
-                $cat[] = $line;
+                $chapter[] = $line;
+            }
+            if ($currentChapterName === $chapterName) {
+                $chapterFound = true;
+                $cat = $chapter;
+            }
+            if (! $chapterFound) {
+                $cat = array_merge($cat, $chapter);
             }
         }
-        $html = Parsedown::instance()->text(implode('', $cat));
         $html = preg_replace_callback(
             '#<pre><code class="language-php">(.*?)\</code></pre>#s',
             array($this, 'highlight'),
-            $html
+            Parsedown::instance()->text(implode('', $cat))
         );
-        return array($html, new DocTocHtmlRenderer($tocStack[0]->node));
+        return $html;
     }
 
     /**
