@@ -4,10 +4,10 @@
 
 namespace Icinga\Data;
 
-use \Zend_Paginator;
 use Icinga\Data\SimpleQuery;
 use Icinga\Application\Icinga;
 use Icinga\Web\Paginator\Adapter\QueryAdapter;
+use Zend_Paginator;
 
 class PivotTable
 {
@@ -70,10 +70,10 @@ class PivotTable
     {
         $this->xAxisQuery = clone $this->baseQuery;
         $this->xAxisQuery->distinct();
-        $this->xAxisQuery->setColumns(array($this->xAxisColumn));
+        $this->xAxisQuery->columns(array($this->xAxisColumn));
         $this->yAxisQuery = clone $this->baseQuery;
         $this->yAxisQuery->distinct();
-        $this->yAxisQuery->setColumns(array($this->yAxisColumn));
+        $this->yAxisQuery->columns(array($this->yAxisColumn));
 
         return $this;
     }
@@ -85,7 +85,7 @@ class PivotTable
      */
     protected function adjustSorting()
     {
-        $currentOrderColumns = $this->baseQuery->getOrderColumns();
+        $currentOrderColumns = $this->baseQuery->getOrder();
         $xAxisOrderColumns = array(array($this->baseQuery->getMappedField($this->xAxisColumn), SimpleQuery::SORT_ASC));
         $yAxisOrderColumns = array(array($this->baseQuery->getMappedField($this->yAxisColumn), SimpleQuery::SORT_ASC));
 
@@ -99,9 +99,10 @@ class PivotTable
                 $yAxisOrderColumns[] = $orderInfo;
             }
         }
-
-        $this->xAxisQuery->setOrderColumns($xAxisOrderColumns);
-        $this->yAxisQuery->setOrderColumns($yAxisOrderColumns);
+//TODO: simplify this whole function. No need to care about mapping
+//        foreach ($xAxisOrderColumns as 
+//        $this->xAxisQuery->setOrder($xAxisOrderColumns);
+//        $this->yAxisQuery->setOrder($yAxisOrderColumns);
         return $this;
     }
 
