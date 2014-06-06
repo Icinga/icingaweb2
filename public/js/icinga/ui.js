@@ -657,6 +657,22 @@
             );
         },
 
+        /**
+         * Find all svg charts and removes src attributes for sparklines
+         *
+         * @param {string} text
+         * @returns {string}
+         */
+        removeImageSourceFromSparklines: function(text) {
+            var match, sourceMatch;
+            var re = new RegExp(/(src=".+chart.php[^"]+")/g);
+            var reSource = new RegExp(/src="([^"]+)"/);
+            while ((match = re.exec(text))) {
+                text = text.replace(match[0], '');
+            }
+            return text;
+        },
+
         initializeControls: function (parent) {
 
             var self = this;

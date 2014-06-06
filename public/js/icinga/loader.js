@@ -269,7 +269,7 @@
             if (this.processRedirectHeader(req)) return;
 
             // div helps getting an XML tree
-            var $resp = $('<div>' + req.responseText + '</div>');
+            var $resp = $('<div>' + icinga.ui.removeImageSourceFromSparklines(req.responseText) + '</div>');
             var active = false;
             var rendered = false;
             var classes;
