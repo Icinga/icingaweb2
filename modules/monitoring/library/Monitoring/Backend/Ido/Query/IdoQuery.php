@@ -63,7 +63,7 @@ use Icinga\Web\Session;
  * custom (Zend_Db) logic for joining, filtering and querying the data you want.
  *
  */
-abstract class IdoQuery extends Query
+abstract class IdoQuery extends DbQuery
 {
     /**
      * The prefix to use
