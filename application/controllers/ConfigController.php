@@ -156,6 +156,7 @@ class ConfigController extends BaseConfigController
 
         $this->view->modules = Icinga::app()->getModuleManager()->select()
             ->from('modules')
+            ->order('enabled', 'desc')
             ->order('name');
         $this->render('module/overview');
     }

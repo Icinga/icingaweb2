@@ -2,11 +2,14 @@
 
 namespace Icinga\Data\DataArray;
 
-use Icinga\Data\DatasourceInterface;
+use Icinga\Data\Selectable;
+use Icinga\Data\SimpleQuery;
 
-class Datasource implements DatasourceInterface
+class ArrayDatasource implements Selectable
 {
     protected $data;
+    
+    protected $result;
 
     /**
      * Constructor, create a new Datasource for the given Array
@@ -21,14 +24,14 @@ class Datasource implements DatasourceInterface
     /**
      * Instantiate a Query object
      *
-     * @return Query
+     * @return SimpleQuery
      */
     public function select()
     {
-        return new Query($this);
+        return new SimpleQuery($this);
     }
 
-    public function fetchColumn(Query $query)
+    public function fetchColumn(SimpleQuery $query)
     {
         $result = array();
         foreach ($this->getResult($query) as $row) {
@@ -38,7 +41,7 @@ class Datasource implements DatasourceInterface
         return $result;
     }
 
-    public function fetchPairs(Query $query)
+    public function fetchPairs(SimpleQuery $query)
     {
         $result = array();
         $keys = null;
@@ -54,27 +57,31 @@ class Datasource implements DatasourceInterface
         return $result;
     }
 
-    public function fetchAll(Query $query)
+    public function fetchAll(SimpleQuery $query)
     {
         return $this->getResult($query);
     }
 
-    public function count(Query $query)
+    public function count(SimpleQuery $query)
     {
         $this->createResult($query);
-        return $query->getCount();
+        return count($this->result);
     }
 
-    protected function createResult(Query $query)
+    protected function createResult(SimpleQuery $query)
     {
-        if ($query->hasResult()) {
+        if ($this->hasResult()) {
             return $this;
         }
         $result = array();
 
         $columns = $query->getColumns();
+        $filter = $query->getFilter();
         foreach ($this->data as & $row) {
 
+            if (! $filter->matches($row)) {
+                continue;
+            }
 
             // Get only desired columns if asked so
             if (empty($columns)) {
@@ -96,19 +103,44 @@ class Datasource implements DatasourceInterface
         }
 
         // Sort the result
+
         if ($query->hasOrder()) {
             usort($result, array($query, 'compare'));
         }
 
-        $query->setResult($result);
+        $this->setResult($result);
         return $this;
     }
 
-    protected function getResult(Query $query)
+    protected function getLimitedResult($query)
     {
-        if (! $query->hasResult()) {
+        if ($query->hasLimit()) {
+            if ($query->hasOffset()) {
+                $offset = $query->getOffset();
+            } else {
+                $offset = 0;
+            }
+            return array_slice($this->result, $offset, $query->getLimit());
+        } else {
+            return $this->result;
+        }
+    }
+
+    protected function hasResult()
+    {
+        return $this->result !== null;
+    }
+
+    protected function setResult($result)
+    {
+        return $this->result = $result;
+    }
+
+    protected function getResult(SimpleQuery $query)
+    {
+        if (! $this->hasResult()) {
             $this->createResult($query);
         }
-        return $query->getLimitedResult();
+        return $this->getLimitedResult($query);
     }
 }

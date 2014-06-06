@@ -13,7 +13,7 @@ interface Filterable
 
     public function setFilter(Filter $filter);
 
-    public function getFilter(Filter $filter);
+    public function getFilter();
 
     public function addFilter(Filter $filter);
 
