@@ -479,36 +479,6 @@ service { 'icinga2':
   ]
 }
 
-# cmmi { 'icinga2':
-#  url               => "https://github.com/Icinga/icinga2/releases/download/v${icinga2Version}/icinga2-${icinga2Version}.tar.gz",
-#  output            => "icinga2-${icinga2Version}.tar.gz",
-#  configure_command => 'mkdir build &> /dev/null || true && cd build && sudo cmake ..',
-#  creates           => '/usr/local/sbin/icinga2',
-#  make              => 'true && cd build/ && make && make install',
-#  require           => Package[ ['cmake', 'boost-devel', 'bison', 'flex'] ],
-#  make_timeout      => 900
-# }
-
-#configure { 'icingaweb':
-#  path    => '/vagrant',
-#  flags   => '--prefix=/vagrant \
-#            --with-icinga-commandpipe="/usr/local/icinga-mysql/var/rw/icinga.cmd" \
-#            --with-statusdat-file="/usr/local/icinga-mysql/var/status.dat" \
-#            --with-objects-cache-file=/usr/local/icinga-mysql/var/objects.cache \
-#            --with-icinga-backend=ido \
-#            --with-httpd-config-path="/etc/httpd/conf.d" \
-#            --with-ldap-authentication \
-#            --with-internal-authentication \
-#            --with-livestatus-socket="/usr/local/icinga-mysql/var/rw/live"',
-#  require => Exec['install php-ZendFramework']
-#}
-
-#file { 'icingaweb-public':
-#  ensure  => '/vagrant/public',
-#  path    => '/var/www/html/icingaweb',
-#  require => Class['apache']
-#}
-
 exec { 'install php-ZendFramework-Db-Adapter-Pdo-Mysql':
   command => 'yum -d 0 -e 0 -y --enablerepo=epel install php-ZendFramework-Db-Adapter-Pdo-Mysql',
   unless  => 'rpm -qa | grep php-ZendFramework-Db-Adapter-Pdo-Mysql',
