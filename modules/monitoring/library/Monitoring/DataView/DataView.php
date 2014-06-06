@@ -29,13 +29,16 @@
 
 namespace Icinga\Module\Monitoring\DataView;
 
+use Icinga\Data\Filter\Filter;
 use Icinga\Data\SimpleQuery;
 use Icinga\Data\Browsable;
 use Icinga\Data\PivotTable;
 use Icinga\Data\Sortable;
-use Icinga\Filter\Filterable;
-use Icinga\Module\Monitoring\Filter\UrlViewFilter;
+use Icinga\Data\ConnectionInterface;
+use Icinga\Data\Filterable;
 use Icinga\Web\Request;
+use Icinga\Web\Url;
+use Icinga\Module\Monitoring\Backend;
 
 /**
  * A read-only view of an underlying query
@@ -48,6 +51,10 @@ abstract class DataView implements Browsable, Filterable, Sortable
      * @var SimpleQuery
      */
     private $query;
+    
+    protected $filter;
+
+    protected $connection;
 
     /**
      * Create a new view
@@ -55,10 +62,12 @@ abstract class DataView implements Browsable, Filterable, Sortable
      * @param SimpleQuery $query      Which backend to query
      * @param array     $columns    Select columns
      */
-    public function __construct(SimpleQuery $query, array $columns = null)
+    public function __construct(ConnectionInterface $connection, array $columns = null)
     {
-        $this->query = $query;
-        $this->query->columns($columns === null ? $this->getColumns() : $columns);
+        $this->connection = $connection;
+        $queryClass = $connection->getQueryClass($this->getQueryName());
+        $this->query = new $queryClass($this->connection->getResource(), $columns);
+        $this->filter = Filter::matchAll();
     }
 
     /**
@@ -74,6 +83,18 @@ abstract class DataView implements Browsable, Filterable, Sortable
         $tableName = end($tableName);
         return $tableName;
     }
+
+public function where($condition, $value = null)
+{
+    $this->filter->addFilter(Filter::where($condition, $value));
+    $this->query->where($condition, $value);
+    return $this;
+}
+
+public function dump()
+{
+    return $this->query->dump();
+}
 
     /**
      * Retrieve columns provided by this view
@@ -94,22 +115,28 @@ abstract class DataView implements Browsable, Filterable, Sortable
     public static function fromRequest($request, array $columns = null)
     {
         $view = new static(Backend::createBackend($request->getParam('backend')), $columns);
-        $parser = new UrlViewFilter($view);
-        $view->getQuery()->setFilter($parser->fromRequest($request));
+        $view->applyUrlFilter($request);
 
-        $order = $request->getParam('dir');
-        if ($order !== null) {
-            if (strtolower($order) === 'desc') {
-                $order = self::SORT_DESC;
-            } else {
-                $order = self::SORT_ASC;
-            }
-        }
-        $view->sort(
-            $request->getParam('sort'),
-            $order
-        );
         return $view;
+    }
+
+    // TODO: This is not the right place for this, move it away
+    protected function applyUrlFilter($request = null)
+    {
+        $url = Url::fromRequest();
+        $limit = $url->shift('limit');
+        $sort = $url->shift('sort');
+        $dir = $url->shift('dir');
+        $page = $url->shift('page');
+        $format = $url->shift('format');
+        $view = $url->shift('view');
+        $view = $url->shift('backend');
+        foreach ($url->getParams() as $k => $v) {
+            $this->where($k, $v);
+        }
+        if ($sort) {
+            $this->order($sort, $dir);
+        }
     }
 
     /**
@@ -126,9 +153,10 @@ abstract class DataView implements Browsable, Filterable, Sortable
 
         foreach ($params as $key => $value) {
             if ($view->isValidFilterTarget($key)) {
-                $view->getQuery()->where($key, $value);
+                $view->where($key, $value);
             }
         }
+
         $order = isset($params['order']) ? $params['order'] : null;
         if ($order !== null) {
             if (strtolower($order) === 'desc') {
@@ -142,6 +170,7 @@ abstract class DataView implements Browsable, Filterable, Sortable
             isset($params['sort']) ? $params['sort'] : null,
             $order
         );
+
         return $view;
     }
 
@@ -161,6 +190,11 @@ abstract class DataView implements Browsable, Filterable, Sortable
     public function getFilterColumns()
     {
         return array();
+    }
+
+    public function getFilter()
+    {
+        return $this->filter;
     }
 
     /**
@@ -278,10 +312,9 @@ abstract class DataView implements Browsable, Filterable, Sortable
         return $this->query;
     }
 
-    public function applyFilter()
+    public function applyFilter(Filter $filter)
     {
-        $this->query->applyFilter();
-        return $this;
+        return $this->addFilter($filter);
     }
 
     public function clearFilter()
@@ -290,9 +323,16 @@ abstract class DataView implements Browsable, Filterable, Sortable
         return $this;
     }
 
-    public function addFilter($filter)
+    public function setFilter(Filter $filter)
     {
-        $this->query->addFilter($filter);
+        $this->query->setFilter($filter);
+        return $this;
+    }
+
+    public function addFilter(Filter $filter)
+    {
+        $this->query->addFilter(clone($filter));
+        $this->filter = $filter; // TODO: Hmmmm.... and?
         return $this;
     }
 

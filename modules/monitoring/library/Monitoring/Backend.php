@@ -7,6 +7,7 @@ namespace Icinga\Module\Monitoring;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Data\Selectable;
 use Icinga\Data\Queryable;
+use Icinga\Data\ConnectionInterface;
 
 use Icinga\Application\Config as IcingaConfig;
 use Icinga\Data\ResourceFactory;
@@ -15,7 +16,7 @@ use Icinga\Exception\ConfigurationError;
 /**
  * Data view and query loader tied to a backend type
  */
-class Backend implements Selectable, Queryable
+class Backend implements Selectable, Queryable, ConnectionInterface
 {
     /**
      * Resource
@@ -90,6 +91,11 @@ class Backend implements Selectable, Queryable
         return new Backend($resource, $backendConfig->type);
     }
 
+public function getResource()
+{
+    return $this->resource;
+}
+
     /**
      * Backend entry point
      *
@@ -111,8 +117,7 @@ class Backend implements Selectable, Queryable
     public function from($viewName, array $columns = null)
     {
         $viewClass = $this->resolveDataViewName($viewName);
-        $queryClass = $this->resolveQueryName($viewClass::getQueryName());
-        return new $viewClass(new $queryClass($this->resource), $columns);
+        return new $viewClass($this, $columns);
     }
 
     /**
@@ -132,6 +137,11 @@ class Backend implements Selectable, Queryable
         return $viewClass;
     }
 
+    public function getQueryClass($name)
+    {
+        return $this->resolveQueryName($name);
+    }
+
     /**
      * Query name to class name resolution
      *
@@ -149,7 +159,7 @@ class Backend implements Selectable, Queryable
             . 'Query';
         if (!class_exists($queryClass)) {
             throw new ProgrammingError(
-                'Query ' . ucfirst($queryName) . ' does not exist for backend ' . ucfirst($this->type)
+                'Query "' . ucfirst($queryName) . '" does not exist for backend ' . ucfirst($this->type)
             );
         }
         return $queryClass;
