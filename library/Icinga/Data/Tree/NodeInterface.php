@@ -4,7 +4,9 @@
 
 namespace Icinga\Data\Tree;
 
-interface NodeInterface
+use RecursiveIterator;
+
+interface NodeInterface extends RecursiveIterator
 {
     /**
      * Append a child to the node
@@ -21,18 +23,4 @@ interface NodeInterface
      * @return mixed
      */
     public function getValue();
-
-    /**
-     * Whether the node has children
-     *
-     * @return bool
-     */
-    public function hasChildren();
-
-    /**
-     * Get the node's children
-     *
-     * @return array
-     */
-    public function getChildren();
 }
