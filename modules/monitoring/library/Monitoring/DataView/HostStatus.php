@@ -29,8 +29,6 @@
 
 namespace Icinga\Module\Monitoring\DataView;
 
-use Icinga\Module\Monitoring\Filter\MonitoringFilter;
-
 class HostStatus extends DataView
 {
     /**
