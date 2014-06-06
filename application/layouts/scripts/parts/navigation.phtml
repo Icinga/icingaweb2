@@ -14,7 +14,7 @@ $menu = Menu::fromConfig();
 ?>
 <div id="menu" data-base-target="_main">
   <form action="<?= $this->href('search') ?>" method="get">
-    <input type="text" name="q" class="search autofocus" placeholder="Search..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+    <input type="text" name="q" class="search autofocus" placeholder="<?= $this->translate('Search...') ?>" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
   </form>
 <?= $this->partial('parts/menu.phtml', array(
     'items' => $menu->getChildren(),

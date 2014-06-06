@@ -1,0 +1,5 @@
+public/css  usr/share/icingaweb/public
+public/img  usr/share/icingaweb/public
+public/js	  usr/share/icingaweb/public
+packages/files/public/index.php  usr/share/icingaweb/public
+packages/files/icingaweb-apache2.conf etc/apache2/conf.d

@@ -4,7 +4,7 @@ _icingacli_completion()
   local cur opts
   opts="${COMP_WORDS[*]}"
   cur="${COMP_WORDS[COMP_CWORD]}"
-  COMPREPLY=($($opts --autocomplete --autoindex $COMP_CWORD))
+  COMPREPLY=($($opts --autocomplete --autoindex $COMP_CWORD < /dev/null))
   return 0
 }
 

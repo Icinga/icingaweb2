@@ -15,10 +15,22 @@ $this->addHelperFunction('timeSince', function ($timestamp) {
         . '</span>';
 });
 
-$this->addHelperFunction('timeUnless', function ($timestamp) {
+$this->addHelperFunction('prefixedTimeSince', function ($timestamp, $ucfirst = false) {
+    return '<span class="timesince">'
+        . Format::prefixedTimeSince($timestamp, $ucfirst)
+        . '</span>';
+});
+
+$this->addHelperFunction('timeUntil', function ($timestamp) {
     if (! $timestamp) return '';
-    return '<span class="timeunless">'
+    return '<span class="timeuntil">'
         . Format::timeUntil($timestamp)
         . '</span>';
 });
 
+$this->addHelperFunction('prefixedTimeUntil', function ($timestamp, $ucfirst = false) {
+    if (! $timestamp) return '';
+    return '<span class="timeuntil">'
+        . Format::prefixedTimeUntil($timestamp, $ucfirst)
+        . '</span>';
+});

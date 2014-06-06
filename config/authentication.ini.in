@@ -6,6 +6,11 @@
 ; The backends will be processed from top to bottom using the first backend for authentication which reports that
 ; the user trying to log in is available.
 
+[autologin]
+backend                 = autologin
+;
+; If you want to strip the domain
+; strip_username_regexp   = /\@[^$]+$/
 
 [internal_ldap_authentication]
 @ldap_auth_disabled@

@@ -64,7 +64,7 @@ class Loader
     public function __construct(App $app)
     {
         $this->app = $app;
-        $this->coreAppDir = ICINGA_APPDIR . '/clicommands';
+        $this->coreAppDir = ICINGAWEB_APPDIR . '/clicommands';
     }
 
     /**
@@ -107,6 +107,12 @@ class Loader
     public function getModuleName()
     {
         return $this->moduleName;
+    }
+
+    public function setModuleName($name)
+    {
+        $this->moduleName = $name;
+        return $this;
     }
 
     public function getCommandName()
@@ -176,11 +182,16 @@ class Loader
         if ($params === null) {
             $params = $this->app->getParams();
         }
-        $first = $params->shift();
-        if (! $first) {
-            return;
+
+        if ($this->moduleName === null) {
+            $first = $params->shift();
+            if (! $first) {
+                return;
+            }
+            $found = $this->resolveName($first);
+        } else {
+            $found = $this->moduleName;
         }
-        $found = $this->resolveName($first);
         if (! $found) {
             $msg = "There is no such module or command: '$first'";
             printf("%s: %s\n", $this->screen()->colorize('ERROR', 'red'), $msg);
@@ -419,8 +430,10 @@ class Loader
     {
         if ($this->modules === null) {
             $this->modules = array();
-            $this->modules = $this->app->getModuleManager()->listEnabledModules();
-            sort($this->modules);
+            $this->modules = array_unique(array_merge(
+                $this->app->getModuleManager()->listEnabledModules(),
+                $this->app->getModuleManager()->listLoadedModules()
+            ));
         }
         return $this->modules;
     }

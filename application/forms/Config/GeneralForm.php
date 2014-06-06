@@ -248,7 +248,7 @@ class GeneralForm extends Form
                 'helptext'  => 'Contains the directories that will be searched for available modules, separated by ' .
                     ' colons. Modules  that don\'t exist in these directories can still be symlinked in the module ' .
                     ' folder, but won\'t show up in the list of disabled modules.',
-                'value'     => $cfg->get('modulePath', realpath(ICINGA_APPDIR . '/../modules'))
+                'value'     => $cfg->get('modulePath', realpath(ICINGAWEB_APPDIR . '/../modules'))
             )
         );
     }
@@ -330,7 +330,7 @@ class GeneralForm extends Form
                 'label'     =>  'User Preference Filepath',
                 'required'  =>  $backend === 'ini',
                 'condition' =>  $backend === 'ini',
-                'value'     =>  $cfg->get('configPath')
+                'value'     =>  $cfg->get('config_path')
             )
         );
 
@@ -432,7 +432,7 @@ class GeneralForm extends Form
 
         $cfg->preferences->type = $values['preferences_type'];
         if ($cfg->preferences->type === 'ini') {
-            $cfg->preferences->configPath = $values['preferences_ini_path'];
+            $cfg->preferences->config_path = $values['preferences_ini_path'];
         } elseif ($cfg->preferences->type === 'db') {
             $cfg->preferences->resource = $values['preferences_db_resource'];
         }

@@ -34,8 +34,8 @@ use \Zend_Db_Expr;
 use \Zend_Db_Select;
 use Icinga\Authentication\UserBackend;
 use Icinga\Data\Db\Connection;
-use Icinga\Logger\Logger;
 use Icinga\User;
+use Icinga\Exception\AuthenticationException;
 
 class DbUserBackend extends UserBackend
 {
@@ -75,6 +75,7 @@ class DbUserBackend extends UserBackend
      * @param   string      $password
      *
      * @return  bool|null
+     * @throws  AuthenticationException
      */
     public function authenticate(User $user, $password)
     {
@@ -96,13 +97,14 @@ class DbUserBackend extends UserBackend
 
             return ($row !== false) ? true : false;
         } catch (Exception $e) {
-            Logger::error(
+            throw new AuthenticationException(
                 sprintf(
-                    'Failed to authenticate user "%s" with backend "%s". Exception occured: %s',
+                    'Failed to authenticate user "%s" against backend "%s". An exception was thrown:',
                     $user->getUsername(),
-                    $this->getName(),
-                    $e->getMessage()
-                )
+                    $this->getName()
+                ),
+                0,
+                $e
             );
         }
     }

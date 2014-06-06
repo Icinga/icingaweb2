@@ -37,7 +37,9 @@ use Exception;
 /**
  * Draw an inline pie-chart directly from the available request parameters.
  */
-class PieChart extends Inline {
+class PieChart extends Inline
+{
+
     public function render($output = true)
     {
         $pie = new PieChartRenderer();
@@ -55,7 +57,7 @@ class PieChart extends Inline {
 
     public function toPng()
     {
-		if (! class_exists('Imagick')) {
+        if (! class_exists('Imagick')) {
             // TODO: This is quick & dirty. 404?
             throw new Exception('Cannot render PNGs without Imagick');
         }

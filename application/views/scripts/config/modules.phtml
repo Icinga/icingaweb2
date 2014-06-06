@@ -1,0 +1,41 @@
+<?php
+use Icinga\Web\Url;
+
+$this->modules->limit(10);
+$modules = $this->modules->paginate();
+
+?>
+<div class="controls">
+<?= $this->tabs->render($this); ?>
+</div>
+
+<div class="content">
+<h3>Installed Modules</h3>
+
+<?php if (isset($this->messageBox)): ?>
+  <?= $this->messageBox->render() ?>
+<?php endif ?>
+
+<?= $this->paginationControl($modules, null, null, array(
+    'preserve' => $this->preserve
+));
+?>
+<table class="action" data-base-target="_next">
+  <tbody>
+  <?php foreach ($modules as $module): ?>
+    <tr>
+      <td>
+      <?php if ($module->enabled): ?>
+      <?= $this->icon('success.png', 'Module is enabled') ?>
+      <?php else: ?>
+      <?= $this->icon('remove.png', 'Module is disabled') ?>
+      <? endif ?>
+        <a href="<?= $this->url('config/module/', array('name' => $module->name)) ?>"><?= $this->escape($module->name); ?></a>
+      (<?=
+        $module->enabled ? ($module->loaded ? 'enabled' : 'failed') : 'disabled' ?>)
+      </td>
+    </tr>
+  <? endforeach ?>
+  </tbody>
+</table>
+</div>

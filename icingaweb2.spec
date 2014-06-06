@@ -9,13 +9,21 @@
 %define sharedir %{_datadir}/icingaweb
 %define prefixdir %{_datadir}/icingaweb
 %define logdir %{sharedir}/log
+%define usermodparam -a -G
 #%define logdir %{_localstatedir}/log/icingaweb
 
 %if "%{_vendor}" == "suse"
 %define phpname php5
 %define phpzendname php5-ZendFramework
+%define apache2modphpname apache2-mod_php5
 %endif
-%if "%{_vendor}" == "redhat"
+# SLE 11 = 1110
+%if 0%{?suse_version} == 1110
+%define apache2modphpname apache2-mod_php53
+%define usermodparam -A
+%endif
+
+%if "%{_vendor}" == "redhat" || 0%{?suse_version} == 1110
 %define phpname php
 %define phpzendname php-ZendFramework
 %endif
@@ -53,7 +61,7 @@ BuildArch:      noarch
 AutoReqProv:    Off
 %endif
 
-Source0:	icingaweb2-%{version}.tar.gz
+Source0:        icingaweb2-%{version}.tar.gz
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root
 
@@ -62,9 +70,11 @@ BuildRequires:  %{phpname}-devel >= 5.3.0
 BuildRequires:  %{phpname}-ldap
 BuildRequires:  %{phpname}-pdo
 BuildRequires:  %{phpzendname}
+%if "%{_vendor}" != "suse"
 BuildRequires:  %{phpzendname}-Db-Adapter-Pdo
 BuildRequires:  %{phpzendname}-Db-Adapter-Pdo-Mysql
 BuildRequires:  %{phpzendname}-Db-Adapter-Pdo-Pgsql
+%endif
 
 %if "%{_vendor}" == "redhat"
 %endif
@@ -76,11 +86,13 @@ BuildRequires:  %{phpname}-dom
 %endif
 
 Requires:       %{phpname} >= 5.3.0
-Requires:  	%{phpzendname}
+Requires:       %{phpzendname}
 Requires:       %{phpname}-ldap
 Requires:       %{phpname}-pdo
 %if "%{_vendor}" == "redhat"
 Requires:       %{phpname}-common
+Requires:       %{phpzendname}-Db-Adapter-Pdo
+Requires:       %{phpzendname}-Db-Adapter-Pdo-Mysql
 Requires:       php-pear
 %endif
 %if "%{_vendor}" == "suse"
@@ -90,11 +102,8 @@ Requires:       %{phpname}-tokenizer
 Requires:       %{phpname}-gettext
 Requires:       %{phpname}-ctype
 Requires:       %{phpname}-json
-Requires:       apache2-mod_php5
+Requires:       %{apache2modphpname}
 %endif
-
-Requires:       %{phpzendname}-Db-Adapter-Pdo
-Requires:       %{phpzendname}-Db-Adapter-Pdo-Mysql
 
 Requires:       php-Icinga
 
@@ -137,7 +146,7 @@ IcingaWeb for RHEL and SUSE
 ===========================
 
 Please check ./doc/installation.md
-for requirements and database setup. 
+for requirements and database setup.
 EOF
 
 %install
@@ -155,9 +164,8 @@ install -D -m0644 packages/rhel/etc/httpd/conf.d/icingaweb.conf %{buildroot}/%{a
 
 %{__cp} -r application library modules public %{buildroot}/%{sharedir}/
 
-# install index.php, .htaccess
+# install index.php
 install -m0644 packages/rhel/usr/share/icingaweb/public/index.php %{buildroot}/%{sharedir}/public/index.php
-install -m0644 packages/rhel/usr/share/icingaweb/public/.htaccess %{buildroot}/%{sharedir}/public/.htaccess
 
 # use the vagrant config for configuration for now - TODO
 %{__cp} -r .vagrant-puppet/files/etc/icingaweb %{buildroot}/%{_sysconfdir}/
@@ -174,8 +182,6 @@ install -D -m0755 bin/icingacli %{buildroot}/usr/bin/icingacli
 # install sql schema files as example
 
 # delete all *.in files
-rm -f %{buildroot}/%{_datadir}/%{name}/public/index.php.in
-rm -f %{buildroot}/%{_datadir}/%{name}/public/.htaccess.in
 
 %pre
 # Add apacheuser in the icingacmd group
@@ -187,7 +193,7 @@ rm -f %{buildroot}/%{_datadir}/%{name}/public/.htaccess.in
 getent group icingacmd > /dev/null
 
 if [ $? -eq 0 ]; then
-%{_sbindir}/usermod -a -G icingacmd %{apacheuser}
+%{_sbindir}/usermod %{usermodparam} icingacmd %{apacheuser}
 fi
 
 # uncomment if building from git

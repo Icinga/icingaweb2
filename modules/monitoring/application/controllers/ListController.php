@@ -285,6 +285,9 @@ class Monitoring_ListController extends Controller
             )
         )->getQuery();
         $this->view->contacts = $query->paginate();
+
+        file_put_contents('/tmp/query.txt', (string) $query);
+
         $this->setupSortControl(array(
             'contact_name' => 'Name',
             'contact_alias' => 'Alias',

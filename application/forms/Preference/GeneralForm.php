@@ -261,10 +261,10 @@ class GeneralForm extends Form
 
         $this->addElement(
             'checkbox',
-            'showBenchmark',
+            'show_benchmark',
             array(
                 'label' => 'Use benchmark',
-                'value' => $this->getUserPreferences()->get('app.showBenchmark')
+                'value' => $this->getUserPreferences()->get('app.show_benchmark')
             )
         );
     }
@@ -278,11 +278,11 @@ class GeneralForm extends Form
     {
         $values = $this->getValues();
         return array(
-            'app.language'      => $values['default_language'] ? null : $values['language'],
-            'app.timezone'      => $values['default_timezone'] ? null : $values['timezone'],
-            'app.dateFormat'    => $values['default_date_format'] ? null : $values['date_format'],
-            'app.timeFormat'    => $values['default_time_format'] ? null : $values['time_format'],
-            'app.showBenchmark' => $values['showBenchmark'] === '1' ? true : false
+            'app.language'          => $values['default_language'] ? null : $values['language'],
+            'app.timezone'          => $values['default_timezone'] ? null : $values['timezone'],
+            'app.dateFormat'        => $values['default_date_format'] ? null : $values['date_format'],
+            'app.timeFormat'        => $values['default_time_format'] ? null : $values['time_format'],
+            'app.show_benchmark'    => $values['show_benchmark'] === '1' ? true : false
         );
     }
 }

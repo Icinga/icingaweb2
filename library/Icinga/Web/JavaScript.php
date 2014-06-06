@@ -74,7 +74,7 @@ class JavaScript
             }
         }
         if ($minified) {
-            require_once ICINGA_LIBDIR . '/vendor/JShrink/Minifier.php';
+            require_once 'IcingaVendor/JShrink/Minifier.php';
             $out .= Minifier::minify($js, array('flaggedComments' => false));
         } else {
             $out .= $js;

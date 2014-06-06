@@ -1,0 +1,56 @@
+<div class="controls">
+<?= $this->tabs ?>
+</div>
+<div class="content">
+<?php if (! $module): ?>
+<?= $this->translate('There is no such module installed.') ?>
+<? return; endif ?>
+<?php
+$dependencies = $module->getDependencies();
+$restrictions = $module->getProvidedRestrictions();
+$permissions = $module->getProvidedPermissions();
+
+?>
+<h1><?= $this->escape($module->getTitle()) ?></h1>
+<table class="avp">
+<tr>
+  <th><?= $this->escape('Name') ?></th>
+  <td><?= $this->escape($module->getName()) ?></td>
+</tr>
+<tr>
+  <th><?= $this->escape('Version') ?></th>
+  <td><?= $this->escape($module->getVersion()) ?></td></tr>
+<tr>
+  <th><?= $this->escape('Description') ?></th>
+  <td><?= nl2br($this->escape($module->getDescription())) ?></td>
+</tr>
+<tr>
+  <th><?= $this->escape('Dependencies') ?></th>
+  <td><?php
+  
+if (empty($dependencies)):
+    echo $this->translate('This module has no dependencies');
+
+else: foreach ($dependencies as $name => $versionString): ?>
+<strong><?= $this->escape($name) ?></strong><?php if ($versionString !== true): ?>: <?= $this->escape($versionString) ?><?php endif ?><br />
+<?php endforeach; endif ?></td>
+</tr>
+<?php if (! empty($permissions)): ?>
+<tr>
+  <th><?= $this->escape('Permissions') ?></th>
+  <td><?php foreach ($permissions as $permission): ?>
+<strong><?= $this->escape($permission->name) ?></strong>: <?= $this->escape($permission->description) ?><br />
+<?php endforeach ?></td>
+</tr>
+<?php endif ?>
+<?php if (! empty($restrictions)): ?>
+<tr>
+  <th><?= $this->escape('Restrictions') ?></th>
+  <td><?php foreach ($restrictions as $restriction): ?>
+<strong><?= $this->escape($restriction->name) ?></strong>: <?= $this->escape($restriction->description) ?><br />
+<?php endforeach ?></td>
+</tr>
+<?php endif ?>
+</table>
+
+</div>

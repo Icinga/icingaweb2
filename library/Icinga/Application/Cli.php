@@ -124,6 +124,13 @@ class Cli extends ApplicationBootstrap
         return $this->params;
     }
 
+    public function dispatchModule($name, $basedir = null)
+    {
+        $this->getModuleManager()->loadModule($name, $basedir);
+        $this->cliLoader()->setModuleName($name);
+        $this->dispatch();
+    }
+
     public function dispatch()
     {
         Benchmark::measure('Dispatching CLI command');
@@ -138,7 +145,7 @@ class Cli extends ApplicationBootstrap
 
     protected function dispatchOnce()
     {
-        $loader = new Loader($this);
+        $loader = $this->cliLoader();
         $loader->parseParams();
         $loader->dispatch();
         Benchmark::measure('All done');
@@ -149,7 +156,7 @@ class Cli extends ApplicationBootstrap
 
     protected function dispatchEndless()
     {
-        $loader = new Loader($this);
+        $loader = $this->cliLoader();
         $loader->parseParams();
         $screen = Screen::instance();
 

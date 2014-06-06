@@ -81,8 +81,18 @@
             // We want our log messages to carry precise timestamps
             args.unshift(this.icinga.utils.timeWithMs());
 
-            if (this.hasConsole() && this.hasLogLevel(level) && typeof console[level].apply === 'function') {
-                console[level].apply(console, args);
+            if (this.hasConsole() && this.hasLogLevel(level)) {
+                if (typeof console[level] !== 'undefined') {
+                    if (typeof console[level].apply === 'function') {
+                        console[level].apply(console, args);
+                    } else {
+                        args.unshift('[' + level + ']');
+                        console[level](args.join(' '));
+                    }
+                } else if ('undefined' !== typeof console.log) {
+                    args.unshift('[' + level + ']');
+                    console.log(args.join(' '));
+                }
             }
             return this;
         },

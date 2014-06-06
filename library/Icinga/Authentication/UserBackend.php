@@ -30,6 +30,7 @@
 namespace Icinga\Authentication;
 
 use Countable;
+use Icinga\Authentication\Backend\AutoLoginBackend;
 use Zend_Config;
 use Icinga\Authentication\Backend\DbUserBackend;
 use Icinga\Authentication\Backend\LdapUserBackend;
@@ -83,6 +84,11 @@ abstract class UserBackend implements Countable
                 );
             }
             return new $backendConfig->class($backendConfig);
+        }
+        if ($name === 'autologin') {
+            $backend = new AutoLoginBackend($backendConfig);
+            $backend->setName($name);
+            return $backend;
         }
         if ($backendConfig->resource === null) {
             throw new ConfigurationError(

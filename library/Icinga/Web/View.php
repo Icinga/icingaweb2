@@ -31,6 +31,7 @@
 namespace Icinga\Web;
 
 use Icinga\Exception\ProgrammingError;
+use Icinga\Util\Translator;
 use Zend_View_Abstract;
 use Closure;
 
@@ -152,6 +153,11 @@ class View extends Zend_View_Abstract
             $this->helperFunctions[$name],
             $args
         );
+    }
+
+    public function translate($text)
+    {
+        return Translator::translate($text, $this->translationDomain);
     }
 
     /**

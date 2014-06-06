@@ -29,7 +29,7 @@ class WebCommand extends Command
             // throw new Exception('Socket is required');
         }
         if ($basedir === null) {
-            $basedir = dirname(ICINGA_APPDIR) . '/public';
+            $basedir = dirname(ICINGAWEB_APPDIR) . '/public';
             if (! file_exists($basedir) || ! is_dir($basedir)) {
                 throw new Exception('Basedir is required');
             }

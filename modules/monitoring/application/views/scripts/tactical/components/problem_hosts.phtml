@@ -23,6 +23,7 @@
         <?= $this->partial(
             'tactical/components/parts/servicestatesummarybyhoststate.phtml',
             array(
+                'translationDomain'             => $this->translationDomain,
                 'host_problem'                  => 1,
                 'services_ok'                   => $this->statusSummary->services_ok_on_problem_hosts,
                 'services_ok_not_checked'       => $this->statusSummary->services_ok_not_checked_on_problem_hosts,

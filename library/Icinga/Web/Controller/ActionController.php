@@ -81,6 +81,8 @@ class ActionController extends Zend_Controller_Action
 
     private $windowId;
 
+    protected $isRedirect = false;
+
     // TODO: This would look better if we had a ModuleActionController
     public function Config($file = null)
     {
@@ -125,6 +127,9 @@ class ActionController extends Zend_Controller_Action
         if ($this->_request->isXmlHttpRequest()) {
             $this->windowId = $this->_request->getHeader('X-Icinga-WindowId', null);
         }
+
+        $module = $request->getModuleName();
+        $this->view->translationDomain = $module === 'default' ? 'icinga' : $module;
 
         if ($this->requiresConfig() === false) {
             if ($this->requiresLogin() === false) {
@@ -365,12 +370,19 @@ class ActionController extends Zend_Controller_Action
     **/
     public function redirectNow($url)
     {
-        if ($url instanceof Url) {
-            $url = $url->getRelativeUrl();
-        } else {
-            $url = Url::fromPath($url)->getRelativeUrl();
+        if (! $url instanceof Url) {
+            $url = Url::fromPath($url);
         }
-        $this->_helper->Redirector->gotoUrlAndExit(preg_replace('~&amp;~', '&', $url));
+        $url = preg_replace('~&amp;~', '&', $url);
+        if ($this->_request->isXmlHttpRequest()) {
+            header('X-Icinga-Redirect: ' . rawurlencode($url));
+            // $this->getResponse()->sendHeaders() ??
+            // Session shutdown
+            exit; // Really?
+        } else {
+            $this->_helper->Redirector->gotoUrlAndExit($url);
+        }
+        $this->isRedirect = true; // pretty useless right now
     }
 
     /**
@@ -393,9 +405,9 @@ class ActionController extends Zend_Controller_Action
         }
 
         if ($user = $this->getRequest()->getUser()) {
-            // Cast preference app.showBenchmark to bool because preferences loaded from a preferences storage are
+            // Cast preference app.show_benchmark to bool because preferences loaded from a preferences storage are
             // always strings
-            if ((bool) $user->getPreferences()->get('app.showBenchmark', false) === true) {
+            if ((bool) $user->getPreferences()->get('app.show_benchmark', false) === true) {
                 Benchmark::measure('Response ready');
                 $layout->benchmark = $this->renderBenchmark();
             }
@@ -412,9 +424,9 @@ class ActionController extends Zend_Controller_Action
         }
 
         $notifications = Notification::getInstance();
-        if ($isXhr && $notifications->hasMessages()) {
+        if ($isXhr && ! $this->isRedirect && $notifications->hasMessages()) {
             foreach ($notifications->getMessages() as $m) {
-                header('X-Icinga-Notification: ' . $m->type . ' ' . $m->message);
+                header('X-Icinga-Notification: ' . rawurlencode($m->type . ' ' . $m->message));
             }
         }
 
@@ -436,7 +448,7 @@ class ActionController extends Zend_Controller_Action
                 // TODO: Innocent exception and error log for hack attempts
                 throw new Exception('No way, guy');
             }
-            header('X-Icinga-Title: ' . $this->view->title . ' :: Icinga Web');
+            header('X-Icinga-Title: ' . rawurlencode($this->view->title . ' :: Icinga Web'));
         }
         // TODO: _render=layout?
         if ($this->getParam('_render') === 'layout') {

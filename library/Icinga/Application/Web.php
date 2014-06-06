@@ -124,6 +124,7 @@ class Web extends ApplicationBootstrap
             ->setupInternationalization()
             ->setupRequest()
             ->setupZendMvc()
+			->setupFormNamespace()
             ->setupModuleManager()
             ->loadEnabledModules()
             ->setupRoute()
@@ -201,30 +202,18 @@ class Web extends ApplicationBootstrap
     }
 
     /**
-     * Create user object and inject preference interface
+     * Create user object
      *
      * @return  self
-     * @throws  ConfigurationError
      */
     private function setupUser()
     {
-        try {
-            $config = Config::app('authentication');
-        } catch (NotReadableError $e) {
-            Logger::error(
-                new Exception('Cannot load authentication configuration. An exception was thrown:', 0, $e)
-            );
-            $config = null;
-        }
-        $authenticationManager = AuthenticationManager::getInstance($config);
-        if ($config !== null && $config->global !== null &&
-            $config->global->get('authenticationMode', 'internal') === 'external'
-        ) {
-            $authenticationManager->authenticateFromRemoteUser();
-        }
+        $authenticationManager = AuthenticationManager::getInstance();
+
         if ($authenticationManager->isAuthenticated() === true) {
             $this->user = $authenticationManager->getUser();
         }
+
         return $this;
     }
 
@@ -369,6 +358,20 @@ class Web extends ApplicationBootstrap
                 );
             }
         }
+        return $this;
+    }
+
+    /**
+     * Setup an autoloader namespace for Icinga\Form
+     *
+     * @return  self
+     */
+    private function setupFormNamespace()
+    {
+        $this->getLoader()->registerNamespace(
+            'Icinga\\Form',
+            $this->getApplicationDir('forms')
+        );
         return $this;
     }
 }

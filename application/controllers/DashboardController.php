@@ -47,20 +47,29 @@ use Icinga\Web\Controller\ActionController;
 class DashboardController extends ActionController
 {
     /**
+     * Default configuration
+     */
+    const DEFAULT_CONFIG = 'dashboard/dashboard';
+
+    /**
      * Retrieve a dashboard from the provided config
      *
      * @param   string $config The config to read the dashboard from, or 'dashboard/dashboard' if none is given
      *
      * @return  \Icinga\Web\Widget\Dashboard
      */
-    private function getDashboard($config = 'dashboard/dashboard')
+    private function getDashboard($config = self::DEFAULT_CONFIG)
     {
         $dashboard = new Dashboard();
         try {
             $dashboardConfig = IcingaConfig::app($config);
+            if (count($dashboardConfig) === 0) {
+                return null;
+            }
             $dashboard->readConfig($dashboardConfig);
         } catch (NotReadableError $e) {
             Logger::error(new Exception('Cannot load dashboard configuration. An exception was thrown:', 0, $e));
+            return null;
         }
         return $dashboard;
     }
@@ -133,18 +142,28 @@ class DashboardController extends ActionController
             $pane = $this->_getParam('pane');
             $dashboard->activate($pane);
         }
-        $this->view->title = $dashboard->getActivePane()->getTitle() . ' :: Dashboard';
-        $this->view->tabs = $dashboard->getTabs();
-        /* Temporarily removed
-        $this->view->tabs->add(
-            'Add',
-            array(
-                'title' => '+',
-                'url' => Url::fromPath('dashboard/addurl')
-            )
-        );
-        */
-        $this->view->dashboard = $dashboard;
+
+        $this->view->configPath = IcingaConfig::resolvePath(self::DEFAULT_CONFIG);
+
+        if ($dashboard === null) {
+            $this->view->title = 'Dashboard';
+        } else {
+            $this->view->title = $dashboard->getActivePane()->getTitle() . ' :: Dashboard';
+            $this->view->tabs = $dashboard->getTabs();
+
+                /* Temporarily removed
+                $this->view->tabs->add(
+                    'Add',
+                    array(
+                        'title' => '+',
+                        'url' => Url::fromPath('dashboard/addurl')
+                    )
+                );
+                */
+
+            $this->view->dashboard = $dashboard;
+
+        }
     }
 
     /**

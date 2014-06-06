@@ -7,8 +7,8 @@ $testLibraryPath = realpath(dirname(__FILE__) . '/library/');
 $configPath = realpath($libraryPath . '/../config');
 
 // Is usually done in the application's bootstrap and is used by some of our internals
-if (!defined('ICINGA_APPDIR')) {
-    define('ICINGA_APPDIR', $applicationPath);
+if (!defined('ICINGAWEB_APPDIR')) {
+    define('ICINGAWEB_APPDIR', $applicationPath);
 }
 if (!defined('ICINGA_LIBDIR')) {
     define('ICINGA_LIBDIR', $libraryPath);
