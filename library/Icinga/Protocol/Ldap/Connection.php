@@ -353,10 +353,18 @@ class Connection
         return $dir;
     }
 
-    protected function discoverServerlistForDomain($domain)
+    public static function discoverServerlistForDomain($domain)
     {
+        $domains = array();
         $ldaps_records = dns_get_record('_ldaps._tcp.' . $domain, DNS_SRV);
+        foreach ($ldaps_records as $record) {
+            $domains[$record['target']] = true;
+        }
         $ldap_records  = dns_get_record('_ldap._tcp.' . $domain, DNS_SRV);
+        foreach ($ldap_records as $record) {
+            $domains[$record['target']] = true;
+        }
+        return array_keys($domains);
     }
 
     protected function prepareNewConnection()
