@@ -31,13 +31,11 @@ class AutoLoginBackend extends UserBackend
     }
 
     /**
-     * (PHP 5 &gt;= 5.1.0)<br/>
-     * Count elements of an object
-     * @link http://php.net/manual/en/countable.count.php
-     * @return int The custom count as an integer.
-     * </p>
-     * <p>
-     * The return value is cast to an integer.
+     * Count the available users
+     *
+     * Autologin backends will always return 1
+     *
+     * @return int
      */
     public function count()
     {
@@ -73,8 +71,8 @@ class AutoLoginBackend extends UserBackend
     /**
      * Authenticate
      *
-     * @param   User $user
-     * @param   string $password
+     * @param   User    $user
+     * @param   string  $password
      *
      * @return  bool
      */
