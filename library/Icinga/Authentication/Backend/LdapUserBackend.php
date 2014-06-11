@@ -76,11 +76,45 @@ class LdapUserBackend extends UserBackend
     }
 
     /**
+     * Probe the backend to test if authentication is possible
+     *
+     * Try to bind to the backend and query all available users to check if:
+     * <ul>
+     *  <li>User connection credentials are correct and the bind is possible</li>
+     *  <li>At least one user exists</li>
+     *  <li>The specified userClass has the property specified by userNameAttribute</li>
+     * </ul>
+     *
+     * @throws AuthenticationException  When authentication is not possible
+     */
+    protected function assertAuthenticationPossible()
+    {
+        $q = $this->conn->select()->from($this->userClass);
+        $result = $q->fetchRow();
+        if (!isset($result)) {
+            throw new AuthenticationException(
+                sprintf('No users with objectClass="%s" in DN="%s" available',
+                $this->userClass,
+                $this->userNameAttribute
+            ));
+        }
+
+        if (!isset($result->{$this->userNameAttribute})) {
+            throw new AuthenticationException(
+                sprintf('UserNameAttribute "%s" not existing in objectClass="%s"',
+                    $this->userNameAttribute,
+                    $this->userClass
+            ));
+        }
+    }
+
+    /**
      * Test whether the given user exists
      *
      * @param   User $user
      *
      * @return  bool
+     * @throws  AuthenticationException
      */
     public function hasUser(User $user)
     {
@@ -93,12 +127,29 @@ class LdapUserBackend extends UserBackend
      *
      * @param   User    $user
      * @param   string  $password
+     * @param   boolean $healthCheck        Perform additional health checks to generate more useful
+     *                                          exceptions in case of a configuration or backend error
      *
      * @return  bool    True when the authentication was successful, false when the username or password was invalid
-     * @throws  AuthenticationException When an error occurred during authentication
+     * @throws  AuthenticationException     When an error occurred during authentication and authentication is not possible
      */
-    public function authenticate(User $user, $password)
+    public function authenticate(User $user, $password, $healthCheck = true)
     {
+        if ($healthCheck) {
+            try {
+                $this->assertAuthenticationPossible();
+            } catch (AuthenticationException $e) {
+                // Authentication not possible
+                throw new AuthenticationException(
+                    sprintf(
+                        'Authentication against backend "%s" not possible: ',
+                        $this->getName()
+                    ),
+                    0,
+                    $e
+                );
+            }
+        }
         try {
             $userDn = $this->conn->fetchDN($this->createQuery($user->getUsername()));
             if (!$userDn) {
@@ -107,6 +158,7 @@ class LdapUserBackend extends UserBackend
             }
             return $this->conn->testCredentials($userDn, $password);
         } catch (Exception $e) {
+            // Error during authentication of this specific user
             throw new AuthenticationException(
                 sprintf(
                     'Failed to authenticate user "%s" against backend "%s". An exception was thrown:',
@@ -126,6 +178,7 @@ class LdapUserBackend extends UserBackend
      */
     public function count()
     {
+
         return $this->conn->count(
             $this->conn->select()->from(
                 $this->userClass,
