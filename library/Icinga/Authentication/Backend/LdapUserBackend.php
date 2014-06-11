@@ -87,15 +87,15 @@ class LdapUserBackend extends UserBackend
      *
      * @throws AuthenticationException  When authentication is not possible
      */
-    protected function assertAuthenticationPossible()
+    public function assertAuthenticationPossible()
     {
         $q = $this->conn->select()->from($this->userClass);
         $result = $q->fetchRow();
         if (!isset($result)) {
             throw new AuthenticationException(
-                sprintf('No users with objectClass="%s" in DN="%s" available',
+                sprintf('No objects with objectClass="%s" in DN="%s" found.',
                 $this->userClass,
-                $this->userNameAttribute
+                $this->conn->getDN()
             ));
         }
 
