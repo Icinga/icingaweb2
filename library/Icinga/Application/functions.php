@@ -32,7 +32,7 @@ use \Icinga\Util\Translator;
 if (extension_loaded('gettext')) {
     function t($messageId)
     {
-        return Translator::translate($messageId, 'icinga');
+        return Translator::translate($messageId, Translator::DEFAULT_DOMAIN);
     }
 
     function mt($domain, $messageId)

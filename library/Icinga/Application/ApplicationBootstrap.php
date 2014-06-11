@@ -30,7 +30,6 @@
 
 namespace Icinga\Application;
 
-use DateTimeZone;
 use Exception;
 use Zend_Config;
 use Icinga\Application\Modules\Manager as ModuleManager;
@@ -484,7 +483,7 @@ abstract class ApplicationBootstrap
 
         $localeDir = $this->getApplicationDir('locale');
         if (file_exists($localeDir) && is_dir($localeDir)) {
-            Translator::registerDomain('icinga', $localeDir);
+            Translator::registerDomain(Translator::DEFAULT_DOMAIN, $localeDir);
         }
 
         return $this;
