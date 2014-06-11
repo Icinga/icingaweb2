@@ -75,7 +75,7 @@ class AutoLoginBackend extends UserBackend
      *
      * @return  bool
      */
-    public function authenticate(User $user, $password)
+    public function authenticate(User $user, $password = null)
     {
         return $this->hasUser($user);
     }

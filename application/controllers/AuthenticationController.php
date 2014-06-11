@@ -63,8 +63,6 @@ class AuthenticationController extends ActionController
         $this->view->form = new LoginForm();
         $this->view->form->setRequest($this->_request);
         $this->view->title = $this->translate('Icingaweb Login');
-        $user = new User('');
-        $password = '';
 
         try {
             $redirectUrl = Url::fromPath($this->_request->getParam('redirect', 'dashboard'));
@@ -95,9 +93,10 @@ class AuthenticationController extends ActionController
 
 
             if ($this->getRequest()->isGet()) {
+                $user = new User('');
                 foreach ($chain as $backend) {
                     if ($backend instanceof AutoLoginBackend) {
-                        $authenticated  = $backend->authenticate($user, $password);
+                        $authenticated  = $backend->authenticate($user);
                         if ($authenticated === true) {
                             $auth->setAuthenticated($user);
                             $this->redirectNow($redirectUrl);
