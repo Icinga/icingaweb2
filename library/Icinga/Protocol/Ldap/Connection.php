@@ -207,16 +207,19 @@ class Connection
         return true;
     }
 
+    /**
+     * Fetch the distinguished name of the first result of the given query
+     *
+     * @param       $query
+     * @param array $fields
+     *
+     * @return bool|String   Returns the distinguished name, or false when the given query yields no results
+     */
     public function fetchDN($query, $fields = array())
     {
         $rows = $this->fetchAll($query, $fields);
         if (count($rows) !== 1) {
-            throw new \Exception(
-                sprintf(
-                    'Cannot fetch single DN for %s',
-                    $query
-                )
-            );
+            return false;
         }
         return key($rows);
     }

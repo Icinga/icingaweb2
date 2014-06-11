@@ -94,16 +94,18 @@ class LdapUserBackend extends UserBackend
      * @param   User    $user
      * @param   string  $password
      *
-     * @return  bool|null
-     * @throws  AuthenticationException
+     * @return  bool    True when the authentication was successful, false when the username or password was invalid
+     * @throws  AuthenticationException When an error occurred during authentication
      */
     public function authenticate(User $user, $password)
     {
         try {
-            return $this->conn->testCredentials(
-                $this->conn->fetchDN($this->createQuery($user->getUsername())),
-                $password
-            );
+            $userDn = $this->conn->fetchDN($this->createQuery($user->getUsername()));
+            if (!$userDn) {
+                // User does not exist
+                return false;
+            }
+            return $this->conn->testCredentials($userDn, $password);
         } catch (Exception $e) {
             throw new AuthenticationException(
                 sprintf(
