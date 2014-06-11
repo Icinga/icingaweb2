@@ -4,9 +4,9 @@
 
 namespace Icinga\Authentication\Backend;
 
+use Zend_Config;
 use Icinga\Authentication\UserBackend;
 use Icinga\User;
-use \Zend_Config;
 
 /**
  * Test login with external authentication mechanism, e.g. Apache
