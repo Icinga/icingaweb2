@@ -57,11 +57,7 @@ class AutoLoginBackend extends UserBackend
             && isset($_SERVER['AUTH_TYPE'])
             && in_array($_SERVER['AUTH_TYPE'], array('Basic', 'Digest')) === true
         ) {
-            $username = filter_var(
-                $_SERVER['PHP_AUTH_USER'],
-                FILTER_SANITIZE_STRING,
-                FILTER_FLAG_ENCODE_HIGH|FILTER_FLAG_ENCODE_LOW
-            );
+            $username = $_SERVER['PHP_AUTH_USER'];
 
             if ($username !== false) {
                 if ($this->stripUsernameRegexp !== null) {
