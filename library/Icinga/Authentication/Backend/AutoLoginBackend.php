@@ -55,13 +55,16 @@ class AutoLoginBackend extends UserBackend
     {
         if (isset($_SERVER['REMOTE_USER'])) {
             $username = $_SERVER['REMOTE_USER'];
-
-            if ($username !== false) {
-                if ($this->stripUsernameRegexp !== null) {
-                    $username = preg_replace($this->stripUsernameRegexp, '', $username);
+            if ($this->stripUsernameRegexp !== null) {
+                $stripped = preg_replace($this->stripUsernameRegexp, '', $username);
+                if ($stripped !== false) {
+                    // TODO(el): PHP issues a warning when PHP cannot compile the regular expression. Should we log an
+                    // additional message in that case?
+                    $username = $stripped;
                 }
-                return true;
             }
+            $user->setUsername($username);
+            return true;
         }
 
         return false;
