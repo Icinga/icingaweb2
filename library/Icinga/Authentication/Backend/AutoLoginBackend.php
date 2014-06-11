@@ -53,11 +53,8 @@ class AutoLoginBackend extends UserBackend
      */
     public function hasUser(User $user)
     {
-        if (isset($_SERVER['PHP_AUTH_USER'])
-            && isset($_SERVER['AUTH_TYPE'])
-            && in_array($_SERVER['AUTH_TYPE'], array('Basic', 'Digest')) === true
-        ) {
-            $username = $_SERVER['PHP_AUTH_USER'];
+        if (isset($_SERVER['REMOTE_USER'])) {
+            $username = $_SERVER['REMOTE_USER'];
 
             if ($username !== false) {
                 if ($this->stripUsernameRegexp !== null) {
