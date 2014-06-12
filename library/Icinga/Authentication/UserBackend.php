@@ -85,7 +85,14 @@ abstract class UserBackend implements Countable
             }
             return new $backendConfig->class($backendConfig);
         }
-        if ($name === 'autologin') {
+        if (($backendType = $backendConfig->backend) === null) {
+            throw new ConfigurationError(
+                'Authentication configuration for backend "' . $name
+                . '" is missing the backend directive'
+            );
+        }
+        $backendType = strtolower($backendType);
+        if ($backendType === 'autologin') {
             $backend = new AutoLoginBackend($backendConfig);
             $backend->setName($name);
             return $backend;
@@ -96,12 +103,6 @@ abstract class UserBackend implements Countable
                 . '" is missing the resource directive'
             );
         }
-        if (($backendType = $backendConfig->backend) === null) {
-            throw new ConfigurationError(
-                'Authentication configuration for backend "' . $name
-                . '" is missing the backend directive'
-            );
-        }
         try {
             $resourceConfig = ResourceFactory::getResourceConfig($backendConfig->resource);
         } catch (ProgrammingError $e) {
@@ -110,7 +111,7 @@ abstract class UserBackend implements Countable
             );
         }
         $resource = ResourceFactory::createResource($resourceConfig);
-        switch (strtolower($backendType)) {
+        switch ($backendType) {
             case 'db':
                 $backend = new DbUserBackend($resource);
                 break;
