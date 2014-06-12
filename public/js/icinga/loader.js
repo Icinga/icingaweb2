@@ -612,7 +612,7 @@
                 $container.scrollTop(scrollPos);
             }
             if (origFocus) {
-                origFocus.focus();
+                $(origFocus).focus();
             }
 
             // TODO: this.icinga.events.refreshContainer(container);
