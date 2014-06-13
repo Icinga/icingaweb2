@@ -5,7 +5,6 @@
 namespace Icinga\Module\Test\Clicommands;
 
 use Icinga\Cli\Command;
-use Icinga\Util\Process;
 
 /**
  * PHP unit- & style-tests
@@ -72,10 +71,8 @@ class PhpCommand extends Command
             $options[] = $include;
         }
 
-        Process::start(
-            $phpUnit . ' ' . join(' ', array_merge($options, $this->params->getAllStandalone())),
-            realpath(__DIR__ . '/../..')
-        )->wait();
+        chdir(realpath(__DIR__ . '/../..'));
+        passthru($phpUnit . ' ' . join(' ', array_merge($options, $this->params->getAllStandalone())));
     }
 
     /**
@@ -132,7 +129,8 @@ class PhpCommand extends Command
             );
         }
 
-        Process::start(
+        chdir(realpath(__DIR__ . '/../..'));
+        passthru(
             $phpcs . ' ' . join(
                 ' ',
                 array_merge(
@@ -141,9 +139,8 @@ class PhpCommand extends Command
                     $arguments,
                     $this->params->getAllStandalone()
                 )
-            ),
-            realpath(__DIR__ . '/../..')
-        )->wait();
+            )
+        );
     }
 
     /**
