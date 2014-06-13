@@ -10,20 +10,12 @@ class Params
 
     public function __construct($argv)
     {
-        $noOptionFlag = false;
         $this->program = array_shift($argv);
         for ($i = 0; $i < count($argv); $i++) {
-            if ($argv[$i] === '--') {
-                $noOptionFlag = true;
-            } elseif (!$noOptionFlag && substr($argv[$i], 0, 2) === '--') {
+            if (substr($argv[$i], 0, 2) === '--') {
                 $key = substr($argv[$i], 2);
                 if (! isset($argv[$i + 1]) || substr($argv[$i + 1], 0, 2) === '--') {
                     $this->params[$key] = true;
-                } elseif (array_key_exists($key, $this->params)) {
-                    if (!is_array($this->params[$key])) {
-                        $this->params[$key] = array($this->params[$key]);
-                    }
-                    $this->params[$key][] = $argv[++$i];
                 } else {
                     $this->params[$key] = $argv[++$i];
                 }
@@ -49,11 +41,6 @@ class Params
     public function getParams()
     {
         return $this->params;
-    }
-
-    public function getAllStandalone()
-    {
-        return $this->standalone;
     }
 
     public function __get($key)
@@ -108,14 +95,7 @@ class Params
             return $default;
         }
         $result = $this->get($key, $default);
-        if (is_array($result) && !is_array($default)) {
-            $result = array_shift($result) || $default;
-            if ($result === $default) {
-                $this->remove($key);
-            }
-        } else {
-            $this->remove($key);
-        }
+        $this->remove($key);
         return $result;
     }
 
