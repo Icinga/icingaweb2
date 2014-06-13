@@ -9,11 +9,11 @@ use RecursiveIterator;
 interface NodeInterface extends RecursiveIterator
 {
     /**
-     * Append a child to the node
+     * Create a new node from the given value and insert the node as the last child of this node
      *
-     * @param   mixed $value
+     * @param   mixed           $value  The node's value
      *
-     * @return  self
+     * @return  NodeInterface           The appended node
      */
     public function appendChild($value);
 
