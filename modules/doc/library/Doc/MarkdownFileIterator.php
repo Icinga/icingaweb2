@@ -20,7 +20,7 @@ class MarkdownFileIterator extends RecursiveFilterIterator
     public function accept()
     {
         $current = $this->getInnerIterator()->current();
-        if (!$current->isFile()) {
+        if (! $current->isFile()) {
             return false;
         }
         $filename = $current->getFilename();

@@ -160,12 +160,11 @@ class DocParser
                 $cat = array_merge($cat, $chapter);
             }
         }
-        $html = preg_replace_callback(
+        return preg_replace_callback(
             '#<pre><code class="language-php">(.*?)\</code></pre>#s',
             array($this, 'highlight'),
             Parsedown::instance()->text(implode('', $cat))
         );
-        return $html;
     }
 
     /**
@@ -194,9 +193,9 @@ class DocParser
             return null;
         }
         $header = null;
-        if ($line &&
-            $line[0] === '#' &&
-            preg_match('/^#+/', $line, $match) === 1
+        if ($line
+            && $line[0] === '#'
+            && preg_match('/^#+/', $line, $match) === 1
         ) {
             // Atx-style
             $level  = strlen($match[0]);
@@ -205,9 +204,9 @@ class DocParser
                 return null;
             }
         } elseif (
-            $line &&
-            ($line[0] === '=' || $line[0] === '-') &&
-            preg_match('/^[=-]+\s*$/', $line, $match) === 1
+            $line
+            && ($line[0] === '=' || $line[0] === '-')
+            && preg_match('/^[=-]+\s*$/', $line, $match) === 1
         ) {
             // Setext
             $header = trim($lastLine);
@@ -235,8 +234,8 @@ class DocParser
      */
     protected function extractHeaderId(&$header)
     {
-        if ($header[0] === '<' &&
-            preg_match('#(?:<(?P<tag>a|span) id="(?P<id>.+)"></(?P=tag)>)#u', $header, $match)
+        if ($header[0] === '<'
+            && preg_match('#(?:<(?P<tag>a|span) id="(?P<id>.+)"></(?P=tag)>)#u', $header, $match)
         ) {
             $header = str_replace($match[0], '', $header);
             return $match['id'];
