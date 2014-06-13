@@ -4,9 +4,9 @@
 
 namespace Icinga\Authentication\Backend;
 
+use Zend_Config;
 use Icinga\Authentication\UserBackend;
 use Icinga\User;
-use \Zend_Config;
 
 /**
  * Test login with external authentication mechanism, e.g. Apache
@@ -31,13 +31,11 @@ class AutoLoginBackend extends UserBackend
     }
 
     /**
-     * (PHP 5 &gt;= 5.1.0)<br/>
-     * Count elements of an object
-     * @link http://php.net/manual/en/countable.count.php
-     * @return int The custom count as an integer.
-     * </p>
-     * <p>
-     * The return value is cast to an integer.
+     * Count the available users
+     *
+     * Autologin backends will always return 1
+     *
+     * @return int
      */
     public function count()
     {
@@ -53,22 +51,18 @@ class AutoLoginBackend extends UserBackend
      */
     public function hasUser(User $user)
     {
-        if (isset($_SERVER['PHP_AUTH_USER'])
-            && isset($_SERVER['AUTH_TYPE'])
-            && in_array($_SERVER['AUTH_TYPE'], array('Basic', 'Digest')) === true
-        ) {
-            $username = filter_var(
-                $_SERVER['PHP_AUTH_USER'],
-                FILTER_SANITIZE_STRING,
-                FILTER_FLAG_ENCODE_HIGH|FILTER_FLAG_ENCODE_LOW
-            );
-
-            if ($username !== false) {
-                if ($this->stripUsernameRegexp !== null) {
-                    $username = preg_replace($this->stripUsernameRegexp, '', $username);
+        if (isset($_SERVER['REMOTE_USER'])) {
+            $username = $_SERVER['REMOTE_USER'];
+            if ($this->stripUsernameRegexp !== null) {
+                $stripped = preg_replace($this->stripUsernameRegexp, '', $username);
+                if ($stripped !== false) {
+                    // TODO(el): PHP issues a warning when PHP cannot compile the regular expression. Should we log an
+                    // additional message in that case?
+                    $username = $stripped;
                 }
-                return true;
             }
+            $user->setUsername($username);
+            return true;
         }
 
         return false;
@@ -77,12 +71,12 @@ class AutoLoginBackend extends UserBackend
     /**
      * Authenticate
      *
-     * @param   User $user
-     * @param   string $password
+     * @param   User    $user
+     * @param   string  $password
      *
      * @return  bool
      */
-    public function authenticate(User $user, $password)
+    public function authenticate(User $user, $password = null)
     {
         return $this->hasUser($user);
     }

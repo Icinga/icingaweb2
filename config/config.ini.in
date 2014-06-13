@@ -14,7 +14,7 @@ timeFormat          = "g:i A"
 [logging]
 enable              = true
 ; Writing to a Stream
-type                = "stream"
+type                = "file"
 ; Write data to the following file
 target              = "@icingaweb_log_path@/icingaweb.log"
 ; Write data to a PHP stream
@@ -22,8 +22,8 @@ target              = "@icingaweb_log_path@/icingaweb.log"
 
 ; Writing to the System Log
 ;type                = "syslog"
-; Prefix all syslog messages generated with the string "Icinga Web"
-;application         = "Icinga Web"
+; Prefix all syslog messages generated with the string "icingaweb"
+;application         = "icingaweb"
 ;facility            = "LOG_USER"
 
 level               = 1

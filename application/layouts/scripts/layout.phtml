@@ -10,17 +10,16 @@ if (array_key_exists('_dev', $_GET)) {
   $cssfile = 'css/icinga.min.css';
 }
 
+$ie8jsfile  = 'js/icinga.ie8.js';
+
 $isIframe = isset($_GET['_render']) && $_GET['_render'] === 'iframe';
+$iframeClass = $isIframe ? ' iframe' : '';
 
 ?><!DOCTYPE html>
-<!--[if lt IE 7]>
-<html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>
-<html class="no-js lt-ie9 lt-ie8"> <![endif]-->
 <!--[if IE 8]>
-<html class="no-js lt-ie9"> <![endif]-->
+<html class="no-js ie8<?= $iframeClass ?>"> <![endif]-->
 <!--[if gt IE 8]><!-->
-<html class="no-js<?= $isIframe ? ' iframe' : '' ?>"> <!--<![endif]-->
+<html class="no-js<?= $iframeClass ?>"> <!--<![endif]-->
 <head>
   <meta charset="utf-8">
   <meta content="width=320; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"/>
@@ -50,7 +49,12 @@ $isIframe = isset($_GET['_render']) && $_GET['_render'] === 'iframe';
 <div id="layout" class="default-layout">
 <?= $this->render('body.phtml') ?>
 </div>
+<!--[if IE 8]>
+<script type="text/javascript" src="<?= $this->href($ie8jsfile) ?>"></script>
+<![endif]-->
+<!--[if gt IE 8]><!-->
 <script type="text/javascript" src="<?= $this->href($jsfile) ?>"></script>
+<!--<![endif]-->
 <script type="text/javascript">
 var icinga = new Icinga({
   baseUrl: '<?= $this->href('/') ?>'

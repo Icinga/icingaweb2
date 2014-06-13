@@ -22,8 +22,12 @@ class JavaScript
     );
 
     protected static $vendorFiles = array(
-        // 'js/vendor/jquery-1.11.0',
         'js/vendor/jquery-2.1.0',
+        'js/vendor/jquery.sparkline'
+    );
+
+    protected static $ie8VendorFiles = array(
+        'js/vendor/jquery-1.11.0',
         'js/vendor/jquery.sparkline'
     );
 
@@ -41,6 +45,12 @@ class JavaScript
     public static function sendMinified()
     {
         return self::send(true);
+    }
+
+    public static function sendForIe8()
+    {
+        self::$vendorFiles = self::$ie8VendorFiles;
+        return self::send();
     }
 
     public static function send($minified = false)

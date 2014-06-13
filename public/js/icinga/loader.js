@@ -269,7 +269,7 @@
             if (this.processRedirectHeader(req)) return;
 
             // div helps getting an XML tree
-            var $resp = $('<div>' + icinga.ui.removeImageSourceFromSparklines(req.responseText) + '</div>');
+            var $resp = $('<div>' + req.responseText + '</div>');
             var active = false;
             var rendered = false;
             var classes;
@@ -408,11 +408,6 @@
             }
 
             this.icinga.ui.initializeTriStates($resp);
-
-            // Replace images with sparklines.
-            $resp.find('img.inlinepie').each(function(){
-                self.icinga.ui.initializeSparklines($(this));
-            });
 
             /* Should we try to fiddle with responses containing full HTML? */
             /*
@@ -617,7 +612,7 @@
                 $container.scrollTop(scrollPos);
             }
             if (origFocus) {
-                origFocus.focus();
+                $(origFocus).focus();
             }
 
             // TODO: this.icinga.events.refreshContainer(container);

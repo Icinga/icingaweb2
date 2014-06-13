@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<phpunit bootstrap="bootstrap.php">
+<phpunit bootstrap="../../test/php/bootstrap.php">
     <testsuites>
         <!--
             Unit testing
         -->
         <testsuite name="unit">
-            <directory>application/</directory>
-            <directory>bin/</directory>
-            <directory>library/</directory>
+            <directory>../../test/php/application/</directory>
+            <directory>../../test/php/library/</directory>
 
             <!-- Module tests are independent from core tests -->
-            <directory>../../modules/*/test/php</directory>
-            <exclude>../../modules/*/test/php/regression</exclude>
+            <directory>../*/test/php</directory>
+            <exclude>../*/test/php/regression</exclude>
         </testsuite>
 
         <!--
             Regression testing
         -->
         <testsuite name="regression">
-            <directory>regression/</directory>
-            <directory>../../modules/*/test/regression</directory>
+            <directory>../../test/php/regression/</directory>
+            <directory>../*/test/php/regression</directory>
         </testsuite>
     </testsuites>
     <filter>

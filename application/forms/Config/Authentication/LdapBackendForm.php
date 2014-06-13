@@ -179,9 +179,12 @@ class LdapBackendForm extends BaseBackendForm
                 $backendConfig->user_class,
                 $backendConfig->user_name_attribute
             );
+            $testConn->assertAuthenticationPossible();
+            /*
             if ($testConn->count() === 0) {
                 throw new Exception('No Users Found On Directory Server');
             }
+            */
         } catch (Exception $exc) {
             $this->addErrorMessage(
                t('Connection Validation Failed: ' . $exc->getMessage())

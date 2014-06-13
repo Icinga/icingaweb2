@@ -301,7 +301,7 @@ class ActionController extends Zend_Controller_Action
     public function translate($text)
     {
         $module = $this->getRequest()->getModuleName();
-        $domain = $module === 'default' ? 'icinga' : $module;
+        $domain = $module === 'default' ? Translator::DEFAULT_DOMAIN : $module;
         return Translator::translate($text, $domain);
     }
 

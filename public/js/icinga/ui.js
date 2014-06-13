@@ -631,48 +631,6 @@
             }
         },
 
-        /**
-         * Search and replace all inlinepies with html for sparklines.
-         *
-         * @param parent
-         */
-        initializeSparklines: function($container) {
-
-            // replace all remaining images with sparklines
-            var title  = $container.attr('title'),
-                values = $container.data('icinga-values'),
-                colors = $container.data('icinga-colors'),
-                width  = $container.css('width'),
-                height = $container.css('height');
-            if (!values) {
-                return;
-            }
-            $container.replaceWith(
-                '<span sparkTitle="' + title +
-                    '" sparkWidth="'  + width  +
-                    '" sparkHeight="' + height +
-                    '" sparkType="pie" sparkSliceColors="[' +
-                    colors + ']" values="' +
-                    values + '" class="sparkline"></span>'
-            );
-        },
-
-        /**
-         * Find all svg charts and removes src attributes for sparklines
-         *
-         * @param {string} text
-         * @returns {string}
-         */
-        removeImageSourceFromSparklines: function(text) {
-            var match, sourceMatch;
-            var re = new RegExp(/(src=".+chart.php[^"]+")/g);
-            var reSource = new RegExp(/src="([^"]+)"/);
-            while ((match = re.exec(text))) {
-                text = text.replace(match[0], '');
-            }
-            return text;
-        },
-
         initializeControls: function (parent) {
 
             var self = this;

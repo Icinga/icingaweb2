@@ -127,13 +127,10 @@ tr.state.handled td.state, tr.state.ok td.state, tr.state.up td.state, tr.state.
   color: black;
   background-color: transparent;
 }
+
 tr[href].active {
   background-color: #ddd;
   color: black;
-}
-
-tr.state[href]:hover, tr.state[href].active td.state {
-
 }
 
 tr.state.ok td.state, tr.state.up td.state {
@@ -195,12 +192,12 @@ tr.state.handled td.state {
 
 /* HOVER colors */
 
-
-tr.state[href]:hover, tr.state[href]:hover td.state {
+tr[href]:hover, tr.state[href]:hover td.state {
   color: white;
+  background-color: #555;
 }
 
-tr.state.ok:hover {
+tr.state.ok[href]:hover, tr.state.up[href]:hover {
   background-color: @colorOk;
 }
 
@@ -248,6 +245,11 @@ tr.state.unreachable[href]:hover {
 tr.state.unreachable.handled[href]:hover {
   background-color: @colorUnreachableHandled;
 }
+
+tr.state[href]:hover td.state {
+  background-color: inherit !important;
+}
+
 /* END of HOVER colors */
 
 /* END of special tables and states */

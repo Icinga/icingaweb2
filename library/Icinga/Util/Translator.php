@@ -62,15 +62,9 @@ class Translator
      * @param   string  $domain     The primary domain to use
      *
      * @return  string              The translated string
-     *
-     * @throws  Exception           In case the given domain is unknown
      */
     public static function translate($text, $domain)
     {
-        if ($domain !== self::DEFAULT_DOMAIN && !array_key_exists($domain, self::$knownDomains)) {
-            throw new Exception("Cannot translate string '$text' with unknown domain '$domain'");
-        }
-
         $res = dgettext($domain, $text);
         if ($res === $text && $domain !== self::DEFAULT_DOMAIN) {
             return dgettext(self::DEFAULT_DOMAIN, $text);
