@@ -102,6 +102,8 @@ class Service extends AbstractObject
             'service_last_time_warning',
             'service_last_time_critical',
             'service_last_time_unknown',
+            'service_check_execution_time',
+            'service_check_latency',
             'service_current_check_attempt',
             'service_max_check_attempts',
             'service_obsessing',
