@@ -98,7 +98,7 @@ class DbConnection implements Selectable
      */
     public function select()
     {
-        return new Query($this);
+        return new DbQuery($this);
     }
 
     /**
