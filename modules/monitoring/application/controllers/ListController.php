@@ -16,13 +16,6 @@ use Icinga\Web\Widget;
 
 class Monitoring_ListController extends Controller
 {
-    /**
-     * The backend used for this controller
-     *
-     * @var Backend
-     */
-    protected $backend;
-
     protected $url;
 
     /**
@@ -32,7 +25,6 @@ class Monitoring_ListController extends Controller
      */
     public function init()
     {
-        $this->backend = Backend::createBackend($this->_getParam('backend'));
         $this->createTabs();
         $this->view->compact = $this->_request->getParam('view') === 'compact';
         $this->url = Url::fromRequest();
