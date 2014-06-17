@@ -440,7 +440,6 @@ AC_CONFIG_FILES([
     config/modules/monitoring/backends.ini
     config/modules/monitoring/instances.ini
     etc/apache/icingaweb.conf
-    public/index.php
 ])
 
 #

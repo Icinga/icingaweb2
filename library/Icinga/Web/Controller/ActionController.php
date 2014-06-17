@@ -301,7 +301,7 @@ class ActionController extends Zend_Controller_Action
     public function translate($text)
     {
         $module = $this->getRequest()->getModuleName();
-        $domain = $module === 'default' ? 'icinga' : $module;
+        $domain = $module === 'default' ? Translator::DEFAULT_DOMAIN : $module;
         return Translator::translate($text, $domain);
     }
 
@@ -370,17 +370,14 @@ class ActionController extends Zend_Controller_Action
     **/
     public function redirectNow($url)
     {
-        if (! $url instanceof Url) {
-            $url = Url::fromPath($url);
-        }
-        $url = preg_replace('~&amp;~', '&', $url);
+        $url = Url::fromPath(preg_replace('~&amp;~', '&', $url));
         if ($this->_request->isXmlHttpRequest()) {
             header('X-Icinga-Redirect: ' . rawurlencode($url));
             // $this->getResponse()->sendHeaders() ??
             // Session shutdown
             exit; // Really?
         } else {
-            $this->_helper->Redirector->gotoUrlAndExit($url);
+            $this->_helper->Redirector->gotoUrlAndExit($url->getRelativeUrl());
         }
         $this->isRedirect = true; // pretty useless right now
     }

@@ -409,11 +409,6 @@
 
             this.icinga.ui.initializeTriStates($resp);
 
-            // Replace images with sparklines.
-            $resp.find('img.inlinepie').each(function(){
-                self.icinga.ui.initializeSparklines($(this));
-            });
-
             /* Should we try to fiddle with responses containing full HTML? */
             /*
             if ($('body', $resp).length) {
@@ -617,7 +612,7 @@
                 $container.scrollTop(scrollPos);
             }
             if (origFocus) {
-                origFocus.focus();
+                $(origFocus).focus();
             }
 
             // TODO: this.icinga.events.refreshContainer(container);

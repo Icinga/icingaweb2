@@ -26,21 +26,6 @@ if ($notifications->hasMessages()) {
    <div id="logo" data-base-target="_main"><a href="<?= $this->href('/dashboard') ?>"><img src="<?= $this->href('img/logo_icinga-inv.png') ?>" class="logo" /></a>
  </div>
  </div>
-<!--
-  <ul class="tabs" >
-    <li class="dropdown">
-      <a href="#" class="dropdown-toggle">
-      <?= $this->img('icons/user.png') ?>
-      <?= $this->escape($this->auth()->getUser()->getUsername()) ?>
-        <b class="caret"></b>
-      </a>
-      <ul class="dropdown-menu">
-        <li><a href="<?= $this->href('/preference') ?>"><?= $this->translate('Preferences'); ?></a></li>
-        <li><a href="<?= $this->href('/authentication/logout'); ?>" title="Logout"><?= $this->translate('Logout'); ?></a></li>
-      </ul>
-    </li>
-  </ul>
--->
 
  <div id="sidebar">
   <?php echo $this->render('parts/navigation.phtml') ?>

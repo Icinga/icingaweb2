@@ -47,6 +47,7 @@ $special = array(
     'css/icinga.css',
     'css/icinga.min.css',
     'js/icinga.dev.js',
+    'js/icinga.ie8.js',
     'js/icinga.min.js'
 );
 
@@ -70,6 +71,10 @@ if (in_array($path, $special)) {
 
         case 'js/icinga.min.js':
             JavaScript::sendMinified();
+            break;
+
+        case 'js/icinga.ie8.js':
+            JavaScript::sendForIe8();
             break;
 
         default:

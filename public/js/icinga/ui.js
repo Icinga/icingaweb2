@@ -631,32 +631,6 @@
             }
         },
 
-        /**
-         * Search and replace all inlinepies with html for sparklines.
-         *
-         * @param parent
-         */
-        initializeSparklines: function($container) {
-
-            // replace all remaining images with sparklines
-            var title  = $container.attr('title'),
-                values = $container.data('icinga-values'),
-                colors = $container.data('icinga-colors'),
-                width  = $container.css('width'),
-                height = $container.css('height');
-            if (!values) {
-                return;
-            }
-            $container.replaceWith(
-                '<span sparkTitle="' + title +
-                    '" sparkWidth="'  + width  +
-                    '" sparkHeight="' + height +
-                    '" sparkType="pie" sparkSliceColors="[' +
-                    colors + ']" values="' +
-                    values + '" class="sparkline"></span>'
-            );
-        },
-
         initializeControls: function (parent) {
 
             var self = this;

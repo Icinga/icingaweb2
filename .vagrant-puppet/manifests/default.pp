@@ -479,36 +479,6 @@ service { 'icinga2':
   ]
 }
 
-# cmmi { 'icinga2':
-#  url               => "https://github.com/Icinga/icinga2/releases/download/v${icinga2Version}/icinga2-${icinga2Version}.tar.gz",
-#  output            => "icinga2-${icinga2Version}.tar.gz",
-#  configure_command => 'mkdir build &> /dev/null || true && cd build && sudo cmake ..',
-#  creates           => '/usr/local/sbin/icinga2',
-#  make              => 'true && cd build/ && make && make install',
-#  require           => Package[ ['cmake', 'boost-devel', 'bison', 'flex'] ],
-#  make_timeout      => 900
-# }
-
-#configure { 'icingaweb':
-#  path    => '/vagrant',
-#  flags   => '--prefix=/vagrant \
-#            --with-icinga-commandpipe="/usr/local/icinga-mysql/var/rw/icinga.cmd" \
-#            --with-statusdat-file="/usr/local/icinga-mysql/var/status.dat" \
-#            --with-objects-cache-file=/usr/local/icinga-mysql/var/objects.cache \
-#            --with-icinga-backend=ido \
-#            --with-httpd-config-path="/etc/httpd/conf.d" \
-#            --with-ldap-authentication \
-#            --with-internal-authentication \
-#            --with-livestatus-socket="/usr/local/icinga-mysql/var/rw/live"',
-#  require => Exec['install php-ZendFramework']
-#}
-
-#file { 'icingaweb-public':
-#  ensure  => '/vagrant/public',
-#  path    => '/var/www/html/icingaweb',
-#  require => Class['apache']
-#}
-
 exec { 'install php-ZendFramework-Db-Adapter-Pdo-Mysql':
   command => 'yum -d 0 -e 0 -y --enablerepo=epel install php-ZendFramework-Db-Adapter-Pdo-Mysql',
   unless  => 'rpm -qa | grep php-ZendFramework-Db-Adapter-Pdo-Mysql',
@@ -716,54 +686,7 @@ exec { 'populate-icinga_web-mysql-db':
   require => [ Exec['create-mysql-icinga_web-db'], Cmmi['icinga-web'] ]
 }
 
-#
-# Development environment (Feature #5554)
-#
 file { '/var/www/html/icingaweb':
-  ensure    => 'directory',
-  owner     => 'apache',
-  group     => 'apache'
-}
-
-file { '/var/www/html/icingaweb/css':
-  ensure    => 'link',
-  target    => '/vagrant/public/css',
-  owner     => 'apache',
-  group     => 'apache',
-}
-
-file { '/var/www/html/icingaweb/svg':
-  ensure    => 'link',
-  target    => '/vagrant/public/svg',
-  owner     => 'apache',
-  group     => 'apache',
-}
-
-file { '/var/www/html/icingaweb/img':
-  ensure    => 'link',
-  target    => '/vagrant/public/img',
-  owner     => 'apache',
-  group     => 'apache',
-}
-
-file { '/var/www/html/icingaweb/js':
-  ensure    => 'link',
-  target    => '/vagrant/public/js',
-  owner     => 'apache',
-  group     => 'apache',
-}
-
-file { '/var/www/html/icingaweb/index.php':
-  source    => 'puppet:////vagrant/.vagrant-puppet/files/var/www/html/icingaweb/index.php',
-  owner     => 'apache',
-  group     => 'apache',
-}
-
-file { '/var/www/html/icingaweb/js.php':
-  ensure => absent,
-}
-
-file { '/var/www/html/icingaweb/css.php':
   ensure => absent,
 }
 

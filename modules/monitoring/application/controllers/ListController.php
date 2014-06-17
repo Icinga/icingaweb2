@@ -259,6 +259,7 @@ class Monitoring_ListController extends Controller
         ));
         $this->applyFilters($query);
         $this->view->contacts = $query->paginate();
+
         $this->setupSortControl(array(
             'contact_name' => 'Name',
             'contact_alias' => 'Alias',
