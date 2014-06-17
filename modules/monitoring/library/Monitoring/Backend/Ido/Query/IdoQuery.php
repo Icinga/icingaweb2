@@ -8,7 +8,7 @@ use Icinga\Exception\ProgrammingError;
 use Icinga\Application\Icinga;
 use Icinga\Web\Session;
 use Icinga\Data\Filter\Filter;
-use Icinga\Data\Filter\FilterWhere;
+use Icinga\Data\Filter\FilterExpression;
 
 /**
  * Base class for Ido Queries
@@ -241,7 +241,7 @@ abstract class IdoQuery extends DbQuery
 
     protected function requireFilterColumns(Filter $filter)
     {
-        if ($filter instanceof FilterWhere) {
+        if ($filter instanceof FilterExpression) {
             $col = $filter->getColumn();
             $this->requireColumn($col);
 
@@ -285,6 +285,7 @@ abstract class IdoQuery extends DbQuery
     {
         $mapped = $this->getMappedField($field);
         if ($mapped === null) {
+            return stripos($field, 'UNIX_TIMESTAMP') !== false;
             return false;
         }
         return stripos($mapped, 'UNIX_TIMESTAMP') !== false;

@@ -127,7 +127,8 @@ class SimpleQuery implements QueryInterface, Queryable
      */
     public function where($condition, $value = null)
     {
-        $this->filter->addFilter(Filter::where($condition, $value));
+        // TODO: more intelligence please
+        $this->filter->addFilter(Filter::expression($condition, '=', $value));
         return $this;
     }
 

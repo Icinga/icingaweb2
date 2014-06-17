@@ -4,7 +4,8 @@ namespace Icinga\Data\Db;
 
 use Icinga\Data\SimpleQuery;
 use Icinga\Application\Benchmark;
-use Icinga\Data\Filter\FilterOperator;
+use Icinga\Data\Filter\FilterChain;
+use Icinga\Data\Filter\FilterExpression;
 use Icinga\Data\Filter\FilterOr;
 use Icinga\Data\Filter\FilterAnd;
 use Icinga\Data\Filter\FilterNot;
@@ -70,7 +71,7 @@ class DbQuery extends SimpleQuery
     protected function dbSelect()
     {
         if ($this->select === null) {
-            $this->select = $this->db->select()->from($this->table, array());
+            $this->select = $this->db->select()->from($this->target, array());
         }
         return clone $this->select;
     }
@@ -112,7 +113,7 @@ class DbQuery extends SimpleQuery
     protected function renderFilter($filter, $level = 0)
     {
         $str = '';
-        if ($filter instanceof FilterOperator) {
+        if ($filter instanceof FilterChain) {
             if ($filter instanceof FilterAnd) {
                 $op = ' AND ';
             } elseif ($filter instanceof FilterOr) {
@@ -136,7 +137,7 @@ class DbQuery extends SimpleQuery
             }
         } else {
             // TODO: render Filter (Where/like/time...)
-            $str .= $this->whereToSql($filter->getColumn(), $filter->getExpression());
+            $str .= $this->whereToSql($filter->getColumn(), $filter->getSign(), $filter->getExpression());
         }
         return $str;
     }
@@ -164,13 +165,16 @@ class DbQuery extends SimpleQuery
         return preg_replace('/\*/', '%', $value);
     }
 
-    public function whereToSql($col, $expression)
+    public function whereToSql($col, $sign, $expression)
     {
-        if (is_array($expression)) {
+        if ($this->isTimestamp($col)) {
+            $expression = strtotime($expression);
+        }
+        if (is_array($expression) && $sign === '=') {
             // TODO: Should we support this? Doesn't work for blub*
             return $col . ' IN (' . $this->escapeForSql($expression) . ')';
         } elseif (strpos($expression, '*') === false) {
-            return $col . ' = ' . $this->escapeForSql($expression);
+            return $col . ' ' . $sign . ' ' . $this->escapeForSql($expression);
         } else {
             return $col . ' LIKE ' . $this->escapeForSql($this->escapeWildcards($expression));
         }
