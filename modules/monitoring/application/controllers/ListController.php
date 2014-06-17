@@ -451,6 +451,15 @@ class Monitoring_ListController extends Controller
 
         $filter = Filter::fromQueryString((string) $params);
         $query->applyFilter($filter);
+        if ($modifyFilter) {
+            $this->view->filterWidget = Widget::create('filterEditor', array(
+                'filter' => $filter,
+                'query'  => $query
+            ));
+        } else {
+            $this->view->filterWidget = Widget::create('filterWidget', $filter);
+        }
+        $this->view->filter = $filter;
         if ($sort) {
             $query->order($sort, $dir);
         }
