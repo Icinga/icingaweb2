@@ -31,6 +31,7 @@ namespace Icinga\Web;
 
 use Icinga\Application\Icinga;
 use Icinga\Exception\ProgrammingError;
+use Icinga\Web\UrlParams;
 
 /**
  * Url class that provides convenient access to parameters, allows to modify query parameters and
@@ -48,7 +49,7 @@ class Url
      *
      * @var array
      */
-    protected $params = array();
+    protected $params;
 
     /**
      * An array to map aliases to valid parameters
@@ -81,7 +82,7 @@ class Url
 
     protected function __construct()
     {
-
+        $this->params = UrlParams::fromQueryString(''); // TODO: ::create()
     }
 
     /**
@@ -90,22 +91,37 @@ class Url
      * If $params are given, those will be added to the request's parameters
      * and overwrite any existing parameters
      *
-     * @param   array           $params     Parameters that should additionally be considered for the url
+     * @param   UrlParams|array $params     Parameters that should additionally be considered for the url
      * @param   Zend_Request    $request    A request to use instead of the default one
      *
      * @return  Url
      */
-    public static function fromRequest(array $params = array(), $request = null)
+    public static function fromRequest($params = array(), $request = null)
     {
         if ($request === null) {
             $request = self::getRequest();
         }
 
-        $urlObject = new Url();
-        $urlObject->setPath($request->getPathInfo());
-        $urlObject->setParams(array_merge($request->getQuery(), $params));
-        $urlObject->setBaseUrl($request->getBaseUrl());
-        return $urlObject;
+        $url = new Url();
+        $url->setPath($request->getPathInfo());
+
+        // $urlParams = UrlParams::fromQueryString($request->getQuery());
+        if (isset($_SERVER['QUERY_STRING'])) {
+            $urlParams = UrlParams::fromQueryString($_SERVER['QUERY_STRING']);
+        } else {
+            $urlParams = UrlParams::fromQueryString('');
+            foreach ($request->getQuery() as $k => $v) {
+                $urlParams->set($k, $v);
+            }
+        }
+
+        foreach ($params as $k => $v) {
+        echo "Setting $k to $v\n";
+            $urlParams->set($k, $v);
+        }
+        $url->setParams($urlParams);
+        $url->setBaseUrl($request->getBaseUrl());
+        return $url;
     }
 
     /**
@@ -156,6 +172,7 @@ class Url
                 $urlObject->setPath($urlParts['path']);
             }
         }
+        // TODO: This has been used by former filter implementation, remove it:
         if (isset($urlParts['query'])) {
             $urlParams = array();
             parse_str($urlParts['query'], $urlParams);
@@ -202,6 +219,7 @@ class Url
 
     /**
      * Set the array to be used to map aliases to valid parameters
+     * TODO: Kill this
      *
      * @param   array   $aliases    The array to be used (alias => param)
      *
@@ -215,6 +233,7 @@ class Url
 
     /**
      * Return the parameter for the given alias
+     * TODO: Kill this
      *
      * @param   string  $alias  The alias to translate
      *
@@ -286,21 +305,16 @@ class Url
      */
     public function getRelativeUrl()
     {
-        if (empty($this->params)) {
+        if ($this->params->isEmpty()) {
             return $this->path . $this->anchor;
+        } else {
+            return $this->path . '?' . $this->params->setSeparator('&amp;') . $this->anchor;
         }
-
-        $params = array();
-        foreach ($this->params as $param => $value) {
-            $params[$this->translateAlias($param)] = $value;
-        }
-
-        return $this->path . '?' . http_build_query($params, '', '&amp;') . $this->anchor;
     }
 
     public function getQueryString()
     {
-        return http_build_query($this->params, '', '&');
+        return (string) $this->params;
     }
 
     /**
@@ -322,7 +336,10 @@ class Url
      */
     public function addParams(array $params)
     {
-        $this->params += $params;
+        foreach ($params as $k => $v) {
+            $this->params->add($k, $v);
+        }
+
         return $this;
     }
 
@@ -335,20 +352,34 @@ class Url
      */
     public function overwriteParams(array $params)
     {
-        $this->params = array_merge($this->params, $params);
+        foreach ($params as $k => $v) {
+            $this->params->set($k, $v);
+        }
+
         return $this;
     }
 
     /**
      * Overwrite the parameters used in the query part
      *
-     * @param   array   $params     The new parameters to use for the query part
+     * @param   UrlParams|array   $params     The new parameters to use for the query part
      *
      * @return  self
      */
-    public function setParams(array $params)
+    public function setParams($params)
     {
-        $this->params = $params;
+        if ($params instanceof UrlParams) {
+            $this->params = $params;
+        } elseif (is_array($params)) {
+            $urlParams = UrlParams::fromQueryString('');
+            foreach ($params as $k => $v) {
+                $urlParams->set($k, $v);
+            }
+            $this->params = $urlParams;
+        } else {
+            // TODO: ProgrammingError?
+            throw new \Exception('Url, params, WTF');
+        }
         return $this;
     }
 
@@ -371,7 +402,7 @@ class Url
      */
     public function hasParam($param)
     {
-        return array_key_exists($param, $this->params);
+        return $this->params->has($param);
     }
 
     /**
@@ -384,11 +415,7 @@ class Url
      */
     public function getParam($param, $default = null)
     {
-        if ($this->hasParam($param)) {
-            return $this->params[$param];
-        }
-
-        return $default;
+        return $this->params->get($param, $default);
     }
 
     /**
@@ -401,7 +428,7 @@ class Url
      */
     public function setParam($param, $value)
     {
-        $this->params[$param] = $value;
+        $this->params->set($param, $value);
         return $this;
     }
 
@@ -427,44 +454,7 @@ class Url
      */
     public function remove($keyOrArrayOfKeys)
     {
-        if (is_array($keyOrArrayOfKeys)) {
-            $this->removeKeys($keyOrArrayOfKeys);
-        } else {
-            $this->removeKey($keyOrArrayOfKeys);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Remove all parameters with the parameter names in the $keys array
-     *
-     * @param   array   $keys   An array of strings containing parameter names to remove
-     *
-     * @return  self
-     */
-    public function removeKeys(array $keys)
-    {
-        foreach ($keys as $key) {
-            $this->removeKey($key);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Remove a single parameter with the provided parameter name $key
-     *
-     * @param   string  $key    The key to remove from the url
-     *
-     * @return  self
-     */
-    public function removeKey($key)
-    {
-        if (isset($this->params[$key])) {
-            unset($this->params[$key]);
-        }
-
+        $this->params->remove($keyOrArrayOfKeys);
         return $this;
     }
 
@@ -478,13 +468,7 @@ class Url
      */
     public function shift($param, $default = null)
     {
-        if (isset($this->params[$param])) {
-            $ret = $this->params[$param];
-            unset($this->params[$param]);
-        } else {
-            $ret = $default;
-        }
-        return $ret;
+        return $this->params->shift($param, $default);
     }
 
     /**
@@ -507,6 +491,11 @@ class Url
         $url = clone($this);
         $url->remove($keyOrArrayOfKeys);
         return $url;
+    }
+
+    public function __clone()
+    {
+        $this->params = clone $this->params;
     }
 
     /**
