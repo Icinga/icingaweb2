@@ -2,7 +2,7 @@
 
 namespace Icinga\Data\Filter;
 
-class FilterOr extends FilterOperator
+class FilterOr extends FilterChain
 {
     protected $operatorName = 'OR';
 

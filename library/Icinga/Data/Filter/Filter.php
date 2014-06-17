@@ -2,6 +2,7 @@
 
 namespace Icinga\Data\Filter;
 
+use Icinga\Web\UrlParams;
 use Exception;
 
 /**
@@ -9,7 +10,7 @@ use Exception;
  *
  * Base class for filters (why?) and factory for the different FilterOperators
  */
-class Filter
+abstract class Filter
 {
     protected $id = '1';
 
@@ -17,6 +18,13 @@ class Filter
     {
         $this->id = $id;
         return $this;
+    }
+
+    abstract function toQueryString();
+
+    public function getUrlParams()
+    {
+        return UrlParams::fromQueryString($this->toQueryString());
     }
 
     public function getById($id)
@@ -53,7 +61,20 @@ class Filter
      */
     public static function where($col, $filter)
     {
-        return new FilterWhere($col, $filter);
+        return new FilterExpression($col, '=', $filter);
+    }
+
+    public static function expression($col, $op, $expression)
+    {
+        switch ($op) {
+            case '=': return new FilterEqual($col, $op, $expression);
+            case '<': return new FilterLessThan($col, $op, $expression);
+            case '>': return new FilterGreaterThan($col, $op, $expression);
+            case '>=': return new FilterEqualOrGreaterThan($col, $op, $expression);
+            case '<=': return new FilterEqualOrLessThan($col, $op, $expression);
+            case '!=': return new FilterNotEqual($col, $op, $expression);
+            default: throw new \Exception('WTTTTF');
+        }
     }
 
     /**
@@ -65,7 +86,11 @@ class Filter
      */
     public static function matchAny()
     {
-        return new FilterOr(func_get_args());
+        $args = func_get_args();
+        if (count($args) === 1 && is_array($args[0])) {
+            $args = $args[0];
+        }
+        return new FilterOr($args);
     }
 
     /**
@@ -77,7 +102,11 @@ class Filter
      */
     public static function matchAll()
     {
-        return new FilterAnd(func_get_args());
+        $args = func_get_args();
+        if (count($args) === 1 && is_array($args[0])) {
+            $args = $args[0];
+        }
+        return new FilterAnd($args);
     }
 
     /**
@@ -87,9 +116,15 @@ class Filter
      *
      * @return FilterNot
      */
-    public static function not(Filter $filter)
+    public static function not()
     {
-        return new FilterNot(array($filter)); // ??
+        $args = func_get_args();
+        if (count($args) === 1) {
+            if (is_array($args[0])) {
+                $args = $args[0];
+            }
+        }
+        return new FilterNot($args);
     }
 
     /**
@@ -99,82 +134,9 @@ class Filter
      */
     public static function fromQueryString($query)
     {
-        $query = rawurldecode($query);
-        $parts = preg_split('~&~', $query, -1, PREG_SPLIT_NO_EMPTY);
-        $filters = Filter::matchAll();
-        foreach ($parts as $part) {
-            self::parseQueryStringPart($part, $filters);
-        }
-        return $filters;
+        return FilterQueryString::parse($query);
     }
 
-    /**
-     * Parse query string part
-     *
-     */
-    protected static function parseQueryStringPart($part, & $filters)
-    {
-        $negations = 0;
-
-        if (strpos($part, '=') === false) {
-
-            $key = rawurldecode($part);
-
-            while (substr($key, 0, 1) === '!') {
-                if (strlen($key) < 2) {
-                    throw new FilterException(
-                        sprintf('Got invalid filter part: "%s"', $part)
-                    );
-                }
-                $key = substr($key, 1);
-                $negations++;
-            }
-
-            $filter = Filter::where($key, true);
-
-        } else {
-            list($key, $val) = preg_split('/=/', $part, 2);
-            $key = rawurldecode($key);
-            $val = rawurldecode($val);
-
-            while (substr($key, 0, 1) === '!') {
-                if (strlen($key) < 2) {
-                    throw new FilterException(
-                        sprintf('Got invalid filter part: "%s"', $part)
-                    );
-                }
-                $key = substr($key, 1);
-                $negations++;
-            }
-
-            while (substr($key, -1) === '!') {
-                if (strlen($key) < 2) {
-                    throw new FilterException(
-                        sprintf('Got invalid filter part: "%s"', $part)
-                    );
-                }
-                $key = substr($key, 0, -1);
-                $negations++;
-            }
-
-            if (strpos($val, '|') !== false) {
-                $vals = preg_split('/\|/', $val, -1, PREG_SPLIT_NO_EMPTY);
-                $filter = Filter::matchAny();
-                foreach ($vals as $val) {
-                    $filter->addFilter(Filter::where($key, $val));
-                }
-            } else {
-                $filter = Filter::where($key, $val);
-            }
-
-        }
-
-        if ($negations % 2 === 0) {
-            $filters->addFilter($filter);
-        } else {
-            $filters->addFilter(Filter::not($filter));
-        }
-    }
 
     /**
      * We need a new Querystring-Parser

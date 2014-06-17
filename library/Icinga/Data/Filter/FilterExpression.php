@@ -2,20 +2,32 @@
 
 namespace Icinga\Data\Filter;
 
-class FilterWhere extends Filter
+class FilterExpression extends Filter
 {
     protected $column;
+    protected $sign;
     protected $expression;
 
-    public function __construct($column, $expression)
+    public function __construct($column, $sign, $expression)
     {
         $this->column = $column;
+        $this->sign = $sign;
         $this->expression = $expression;
+    }
+
+    public function isEmpty()
+    {
+        return false;
     }
 
     public function getColumn()
     {
         return $this->column;
+    }
+
+    public function getSign()
+    {
+        return $this->sign;
     }
 
     public function setColumn($column)
@@ -31,20 +43,25 @@ class FilterWhere extends Filter
 
     public function __toString()
     {
-        if (is_array($this->expression)) {
-            return $this->column . ' = ( ' . implode(' | ', $this->expression) . ' )';
-        } else {
-            return $this->column . ' = ' . $this->expression;
-        }
+        $expression = is_array($this->expression) ?
+             '( ' . implode(' | ', $this->expression) . ' )' :
+             $this->expression;
+
+        return sprintf(
+            '%s %s %s',
+            $this->column,
+            $this->sign,
+            $expression
+        );
     }
 
     public function toQueryString()
     {
-        if (is_array($this->expression)) {
-            return $this->column . '=' . implode('|', $this->expression);
-        } else {
-            return $this->column . '=' . $this->expression;
-        }
+        $expression = is_array($this->expression) ?
+             '(' . implode('|', $this->expression) . ')' :
+             $this->expression;
+
+        return $this->column . $this->sign . $expression;
     }
 
     public function matches($row)
@@ -61,12 +78,5 @@ class FilterWhere extends Filter
             $pattern = '/^' . implode('.*', $parts) . '$/';
             return (bool) preg_match($pattern, $row->{$this->column});
         }
-
-        foreach ($this->filters as $filter) {
-            if (! $filter->matches($row)) {
-                return false;
-            }
-        }
-        return true;
     }
 }

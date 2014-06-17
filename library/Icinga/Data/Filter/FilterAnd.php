@@ -7,7 +7,7 @@ namespace Icinga\Data\Filter;
  *
  * Binary AND, all contained filters must succeed
  */
-class FilterAnd extends FilterOperator
+class FilterAnd extends FilterChain
 {
     protected $operatorName = 'AND';
 

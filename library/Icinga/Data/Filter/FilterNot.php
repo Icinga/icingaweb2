@@ -2,7 +2,7 @@
 
 namespace Icinga\Data\Filter;
 
-class FilterNot extends FilterOperator
+class FilterNot extends FilterChain
 {
     protected $operatorName = 'NOT';
 
@@ -26,6 +26,7 @@ class FilterNot extends FilterOperator
         if (empty($this->filters)) {
             return '';
         }
+
         foreach ($this->filters() as $filter) {
             $parts[] = $filter->toQueryString();
         }
@@ -38,11 +39,9 @@ class FilterNot extends FilterOperator
 
     public function __toString()
     {
-        $sub = Filter::matchAll();
-        var_dump($this->filters());
-        foreach ($this->filters() as $f) {
-            $sub->addFilter($f);
+        if (count($this->filters) === 1) {
+            return '! ' . $this->filters[0];
         }
-        return '! (' . $sub . ')';
+        return '! (' . implode('&', $this->filters) . ')';
     }
 }

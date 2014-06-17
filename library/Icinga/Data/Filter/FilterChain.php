@@ -3,11 +3,11 @@
 namespace Icinga\Data\Filter;
 
 /**
- * FilterOperator
+ * FilterChain
  *
- * A FilterOperator contains a list ...
+ * A FilterChain contains a list ...
  */
-abstract class FilterOperator extends Filter
+abstract class FilterChain extends Filter
 {
     protected $filters = array();
 
@@ -45,7 +45,7 @@ abstract class FilterOperator extends Filter
         foreach ($this->filters as $key => $filter) {
             if ($filter->getId() === $id) {
                 $remove = $key;
-            } elseif ($filter instanceof FilterOperator) {
+            } elseif ($filter instanceof FilterChain) {
                 $filter->removeId($id);
             }
         }
@@ -115,7 +115,7 @@ abstract class FilterOperator extends Filter
         }
         $parts = array();
         foreach ($this->filters as $filter) {
-            if ($filter instanceof FilterOperator) {
+            if ($filter instanceof FilterChain) {
                 $parts[] = '(' . $filter . ')';
             } else {
                 $parts[] = (string) $filter;
