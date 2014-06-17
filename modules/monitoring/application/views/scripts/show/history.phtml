@@ -43,7 +43,7 @@ $states = array(
 <?php return; endif ?>
 
 <div class="content">
-<table data-base-target="_next" class="action">
+<table data-base-target="_next" class="action objecthistory">
 <tbody>
 
 <?php foreach ($this->history as $event):
@@ -52,63 +52,85 @@ if (array_key_exists($event->state, $states[$event->object_type])) {
 } else {
     $state_class = 'invalid';
 }
-?>
-  <tr class="state <?= $state_class ?>">
-    <td class="state"><?= $this->timeSince($event->timestamp) ?></td>
-    <td>
-<?php
-
-$output = $this->ticket_pattern ? preg_replace(
-    $this->ticket_pattern,
-    $ticket_link,
-    $this->escape($event->output)
-) : $this->escape($event->output);
-
 
 switch ($event->type) {
     case 'notify':
         $icon   = 'notification';
-        $title  = 'Notification';
+        $title  = $this->translate('Notification');
+        $state  = $this->translate('ACK');
         break;
     case 'comment':
         $icon   = 'comment';
-        $title  = 'Comment';
+        $title  = $this->translate('Comment');
+        break;
+    case 'comment_deleted':
+        $icon   = 'remove';
+        $title  = $this->translate('Comment deleted');
         break;
     case 'ack':
         $icon   = 'acknowledgement';
-        $title  = 'Acknowledgement';
+        $title  = $this->translate('Acknowledge');
+        break;
+    case 'ack_deleted':
+        $icon   = 'remove';
+        $title  = $this->translate('Ack removed');
         break;
     case 'dt_comment':
         $icon   = 'in_downtime';
-        $title  = 'In Downtime';
+        $title  = $this->translate('In Downtime');
+        break;
+    case 'dt_comment_deleted':
+        $icon   = 'remove';
+        $title  = $this->translate('Downtime removed');
         break;
     case 'flapping':
         $icon   = 'flapping';
-        $title  = 'Flapping';
+        $title  = $this->translate('Flapping');
+        break;
+    case 'flapping_deleted':
+        $icon   = 'remove';
+        $title  = $this->translate('Flapping stopped');
         break;
     case 'hard_state':
         $icon   = 'submit';
-        $title  = 'Hard State';
+        $title  = $this->translate('Hard State');
         break;
     case 'soft_state':
         $icon   = 'softstate';
-        $title  = 'Soft State';
+        $title  = $this->translate('Soft State');
+        $state_class .= ' handled';
         break;
     case 'dt_start':
         $icon   = 'downtime_start';
-        $title  = 'Downtime Start';
+        $title  = $this->translate('Downtime Start');
         break;
     case 'dt_end':
         $icon   = 'downtime_end';
-        $title  = 'Downtime End';
+        $title  = $this->translate('Downtime End');
         break;
 }
+
+
+
+?>
+  <tr class="state <?= $state_class ?>">
+    <td class="state"><?= $this->timeSince($event->timestamp) ?><br /><strong><?= $this->escape($title) ?></strong></td>
+    <td>
+<?php
+
+$output = $this->tickets ? preg_replace_callback(
+    $this->tickets->getPattern(),
+    array($this->tickets, 'createLink'),
+    $this->escape($event->output)
+) : $this->escape($event->output);
+
 echo $this->icon($icon . '.png', $title) . ' ';
 
-if ($object instanceof Service): ?>
+if ($object instanceof Host): ?>
   <?= $this->escape($event->service_description) ?>
+<?php elseif ($object instanceof Service): ?>
 <?php else: ?>
-  <?= $this->escape($event->host_name) ?>
+  <?= $this->escape($event->service_description) ?> on <?= $this->escape($event->host_name) ?>
 <?php endif;
 
 if ($event->attempt !== null) {
