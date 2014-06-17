@@ -63,11 +63,9 @@ class EventHistory extends DataView
     public function getSortRules()
     {
         return array(
-            'raw_timestamp' => array(
-                'order' => self::SORT_DESC
-            ),
             'timestamp' => array(
-                'order' => self::SORT_DESC
+                'columns' => array('raw_timestamp'),
+                'order' => 'DESC'
             )
         );
     }
