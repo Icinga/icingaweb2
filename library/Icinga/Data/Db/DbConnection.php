@@ -31,6 +31,7 @@ namespace Icinga\Data\Db;
 
 use Icinga\Application\Benchmark;
 use Icinga\Data\Db\DbQuery;
+use Icinga\Data\ResourceFactory;
 use Icinga\Data\Selectable;
 use Icinga\Exception\ConfigurationError;
 use PDO;
@@ -171,6 +172,11 @@ class DbConnection implements Selectable
         $this->dbAdapter->setFetchMode(Zend_Db::FETCH_OBJ);
         // TODO(el/tg): The profiler is disabled per default, why do we disable the profiler explicitly?
         $this->dbAdapter->getProfiler()->setEnabled(false);
+    }
+
+    public static function fromResourceName($name)
+    {
+        return new static(ResourceFactory::getResourceConfig($name));
     }
 
     /**
