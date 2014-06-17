@@ -45,6 +45,7 @@ use Icinga\Web\Notification;
 use Icinga\File\Pdf;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Web\Session;
+use Icinga\Web\UrlParams;
 use Icinga\Session\SessionNamespace;
 use Icinga\Exception\NotReadableError;
 
@@ -83,6 +84,8 @@ class ActionController extends Zend_Controller_Action
 
     protected $isRedirect = false;
 
+    protected $params;
+
     // TODO: This would look better if we had a ModuleActionController
     public function Config($file = null)
     {
@@ -118,6 +121,8 @@ class ActionController extends Zend_Controller_Action
         Zend_Controller_Response_Abstract $response,
         array $invokeArgs = array()
     ) {
+        $this->params = UrlParams::fromQueryString();
+
         $this->setRequest($request)
             ->setResponse($response)
             ->_setInvokeArgs($invokeArgs);
