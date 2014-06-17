@@ -147,7 +147,8 @@ class SortBox extends AbstractWidget
             array(
                 'label'         => 'Sort By',
                 'multiOptions'  => $this->sortFields,
-                'class' => 'autosubmit'
+                'style' => 'width: 12em',
+                'class' => 'autosubmit',
             )
         );
         $form->addElement(
@@ -158,6 +159,7 @@ class SortBox extends AbstractWidget
                     'desc'      => 'Desc',
                     'asc'       => 'Asc',
                 ),
+                'style' => 'width: 4em',
                 'class' => 'autosubmit'
 
             )
