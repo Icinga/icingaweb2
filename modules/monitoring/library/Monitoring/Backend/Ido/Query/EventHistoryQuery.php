@@ -21,7 +21,7 @@ class EventHistoryQuery extends IdoQuery
             'service_description' => 'eho.name2 COLLATE latin1_general_ci',
             'object_type'         => "CASE WHEN eho.objecttype_id = 1 THEN 'host' ELSE 'service' END",
             'timestamp'           => 'eh.timestamp',
-            'raw_timestamp'       => 'UNIX_TIMESTAMP(eh.raw_timestamp)',
+            'raw_timestamp'       => 'eh.raw_timestamp', // TODO: remove this as soon as removed from frontends
             'state'               => 'eh.state',
             'attempt'             => 'eh.attempt',
             'max_attempts'        => 'eh.max_attempts',
