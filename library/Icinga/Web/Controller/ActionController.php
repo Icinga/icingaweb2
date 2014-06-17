@@ -134,6 +134,7 @@ class ActionController extends Zend_Controller_Action
         if ($this->requiresConfig() === false) {
             if ($this->requiresLogin() === false) {
                 $this->view->tabs = new Tabs();
+                $this->moduleInit();
                 $this->init();
             } else {
                 $url = $this->getRequestUrl();
@@ -146,6 +147,10 @@ class ActionController extends Zend_Controller_Action
         } else {
             $this->redirectNow(Url::fromPath('install'));
         }
+    }
+
+    protected function moduleInit()
+    {
     }
 
     protected function getWindowId()

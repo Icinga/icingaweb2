@@ -38,6 +38,13 @@ use Icinga\File\Csv;
 class Controller extends ActionController
 {
     /**
+     * The backend used for this controller
+     *
+     * @var Backend
+     */
+    protected $backend;
+
+    /**
      * Compact layout name
      *
      * Set to a string containing the compact layout name to use when
@@ -46,6 +53,11 @@ class Controller extends ActionController
      * @var string
      */
     protected $compactView;
+
+    protected function moduleInit()
+    {
+        $this->backend = Backend::createBackend($this->_getParam('backend'));
+    }
 
     protected function handleFormatRequest($query)
     {
