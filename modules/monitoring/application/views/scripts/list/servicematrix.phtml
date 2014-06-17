@@ -19,7 +19,7 @@
 <?php
 $hasHeader = false;
 $pivotData = $this->pivot->toArray();
-$hostFilter = implode(',', array_keys($pivotData));
+$hostFilter = '(' . implode('|', array_keys($pivotData)) . ')';
 ?>
 <?php foreach ($pivotData as $host_name => $serviceStates): ?>
 <?php if (!$hasHeader): ?>
@@ -55,7 +55,7 @@ $hostFilter = implode(',', array_keys($pivotData));
       <tr>
         <th>
           <a href="<?=
-            $this->href('monitoring/show/host', array('host' => $host_name))
+            $this->href('monitoring/show/services', array('host' => $host_name))
           ?>"><?= $host_name ?></a>
         </th>
 <?php foreach (array_values($serviceStates) as $service): ?>
