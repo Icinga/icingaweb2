@@ -55,14 +55,14 @@ class EventHistoryQuery extends IdoQuery
             $this->createSubQuery('Downtimestarthistory', $columns),
             $this->createSubQuery('Downtimeendhistory', $columns),
             $this->createSubQuery('Commenthistory', $columns),
+            $this->createSubQuery('Commentdeletionhistory', $columns),
             $this->createSubQuery('Notificationhistory', $columns)
         );
-
         $sub = $this->db->select()->union($this->subQueries, Zend_Db_Select::SQL_UNION_ALL);
 
         $this->select->from(
             array('eho' => $this->prefix . 'objects'),
-            array()
+            '*'
         )->join(
             array('eh' => $sub),
             'eho.' . $this->object_id . ' = eh.' . $this->object_id . ' AND eho.is_active = 1',
@@ -70,6 +70,24 @@ class EventHistoryQuery extends IdoQuery
         );
         $this->joinedVirtualTables = array('eventhistory' => true);
     }
+
+    public function order($columnOrAlias, $dir = null)
+    {
+        foreach ($this->subQueries as $sub) {
+            $sub->requireColumn($columnOrAlias);
+        }
+
+        return parent::order($columnOrAlias, $dir);
+    }
+
+	public function where($condition, $value = null)
+	{
+		$this->requireColumn($condition);
+		foreach ($this->subQueries as $sub) {
+		    $sub->where($condition, $value);
+		}
+		return $this;
+	}
 
     protected function joinHostgroups()
     {
