@@ -9,13 +9,20 @@ class NotificationhistoryQuery extends IdoQuery
             'timestamp'     => 'UNIX_TIMESTAMP(n.start_time)',
             'raw_timestamp' => 'n.start_time',
             'state_time'    => 'n.start_time',
-            'object_id'     => 'object_id',
+            'object_id'     => 'n.object_id',
             'type'          => "('notify')",
-            'state'         => 'state',
+            'state'         => 'n.state',
             'state_type'    => '(NULL)',
             'output'        => null,
             'attempt'       => '(NULL)',
             'max_attempts'  => '(NULL)',
+
+            'host'                => 'o.name1 COLLATE latin1_general_ci',
+            'service'             => 'o.name2 COLLATE latin1_general_ci',
+            'host_name'           => 'o.name1 COLLATE latin1_general_ci',
+            'service_description' => 'o.name2 COLLATE latin1_general_ci',
+            'service_host_name'   => 'o.name1 COLLATE latin1_general_ci',
+            'service_description' => 'o.name2 COLLATE latin1_general_ci'
         )
     );
 
@@ -45,7 +52,11 @@ class NotificationhistoryQuery extends IdoQuery
         $this->columnMap['history']['output'] = "('[' || $concattedContacts || '] ' || n.output)";
 
         $this->select->from(
+            array('o' => $this->prefix . 'objects'),
+            array()
+        )->join(
             array('n' => $this->prefix . 'notifications'),
+            'o.' . $this->object_id . ' = n.' . $this->object_id . ' AND o.is_active = 1',
             array()
         )->join(
             array('cn' => $this->prefix . 'contactnotifications'),
@@ -57,6 +68,7 @@ class NotificationhistoryQuery extends IdoQuery
             array()
         )->group('cn.notification_id');
 
+        // TODO: hmmmm...
         if ($this->ds->getDbType() === 'pgsql') {
             $this->select->group('n.object_id')
                 ->group('n.start_time')

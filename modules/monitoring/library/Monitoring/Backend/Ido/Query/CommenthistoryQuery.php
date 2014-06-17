@@ -6,16 +6,37 @@ class CommenthistoryQuery extends IdoQuery
 {
     protected $columnMap = array(
         'commenthistory' => array(
-            'state_time'    => 'comment_time',
-            'timestamp'     => 'UNIX_TIMESTAMP(comment_time)',
-            'raw_timestamp' => 'comment_time',
-            'object_id'     => 'object_id',
-            'type'          => "(CASE entry_type WHEN 1 THEN 'comment' WHEN 2 THEN 'dt_comment' WHEN 3 THEN 'flapping' WHEN 4 THEN 'ack' END)",
+            'state_time'    => 'h.comment_time',
+            'timestamp'     => 'UNIX_TIMESTAMP(h.comment_time)',
+            'raw_timestamp' => 'h.comment_time',
+            'object_id'     => 'h.object_id',
+            'type'          => "(CASE h.entry_type WHEN 1 THEN 'comment' WHEN 2 THEN 'dt_comment' WHEN 3 THEN 'flapping' WHEN 4 THEN 'ack' END)",
             'state'         => '(NULL)',
             'state_type'    => '(NULL)',
-            'output'        => "('[' || author_name || '] ' || comment_data)",
+            'output'        => "('[' || h.author_name || '] ' || h.comment_data)",
             'attempt'       => '(NULL)',
             'max_attempts'  => '(NULL)',
+
+            'host'                => 'o.name1 COLLATE latin1_general_ci',
+            'service'             => 'o.name2 COLLATE latin1_general_ci',
+            'host_name'           => 'o.name1 COLLATE latin1_general_ci',
+            'service_description' => 'o.name2 COLLATE latin1_general_ci',
+            'service_host_name'   => 'o.name1 COLLATE latin1_general_ci',
+            'service_description' => 'o.name2 COLLATE latin1_general_ci'
         )
     );
+
+    protected function joinBaseTables()
+    {
+        $this->select->from(
+            array('o' => $this->prefix . 'objects'),
+            array()
+        )->join(
+            array('h' => $this->prefix . 'commenthistory'),
+            'o.' . $this->object_id . ' = h.' . $this->object_id . ' AND o.is_active = 1 AND h.entry_type <> 2',
+            array()
+        );
+        $this->joinedVirtualTables = array('commenthistory' => true);
+    }
+
 }

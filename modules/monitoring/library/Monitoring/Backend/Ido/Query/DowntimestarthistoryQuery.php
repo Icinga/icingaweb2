@@ -6,17 +6,37 @@ class DowntimestarthistoryQuery extends IdoQuery
 {
     protected $columnMap = array(
         'downtimehistory' => array(
-            'state_time'    => 'actual_start_time',
-            'timestamp'     => 'UNIX_TIMESTAMP(actual_start_time)',
-            'raw_timestamp' => 'actual_start_time',
-            'object_id'     => 'object_id',
+            'state_time'    => 'h.actual_start_time',
+            'timestamp'     => 'UNIX_TIMESTAMP(h.actual_start_time)',
+            'raw_timestamp' => 'h.actual_start_time',
+            'object_id'     => 'h.object_id',
             'type'          => "('dt_start')",
             'state'         => '(NULL)',
             'state_type'    => '(NULL)',
-            'output'        => "('[' || author_name || '] ' || comment_data)",
+            'output'        => "('[' || h.author_name || '] ' || h.comment_data)",
             'attempt'       => '(NULL)',
             'max_attempts'  => '(NULL)',
+
+            'host'                => 'o.name1 COLLATE latin1_general_ci',
+            'service'             => 'o.name2 COLLATE latin1_general_ci',
+            'host_name'           => 'o.name1 COLLATE latin1_general_ci',
+            'service_description' => 'o.name2 COLLATE latin1_general_ci',
+            'service_host_name'   => 'o.name1 COLLATE latin1_general_ci',
+            'service_description' => 'o.name2 COLLATE latin1_general_ci'
         )
     );
+
+    protected function joinBaseTables()
+    {
+        $this->select->from(
+            array('o' => $this->prefix . 'objects'),
+            array()
+        )->join(
+            array('h' => $this->prefix . 'downtimehistory'),
+            'o.' . $this->object_id . ' = h.' . $this->object_id . ' AND o.is_active = 1',
+            array()
+        )->where('h.actual_start_time > ?', '1970-01-01 00:00:00');
+        $this->joinedVirtualTables = array('downtimehistory' => true);
+    }
 }
 

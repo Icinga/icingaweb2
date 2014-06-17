@@ -2,15 +2,15 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
-class DowntimeendhistoryQuery extends IdoQuery
+class CommentdeletionhistoryQuery extends IdoQuery
 {
     protected $columnMap = array(
-        'downtimehistory' => array(
-            'state_time'    => 'h.actual_end_time',
-            'timestamp'     => 'UNIX_TIMESTAMP(h.actual_end_time)',
-            'raw_timestamp' => 'h.actual_end_time',
+        'commenthistory' => array(
+            'state_time'    => 'h.deletion_time',
+            'timestamp'     => 'UNIX_TIMESTAMP(h.deletion_time)',
+            'raw_timestamp' => 'h.deletion_time',
             'object_id'     => 'h.object_id',
-            'type'          => "('dt_end')",
+            'type'          => "(CASE h.entry_type WHEN 1 THEN 'comment_deleted' WHEN 2 THEN 'dt_comment_deleted' WHEN 3 THEN 'flapping_deleted' WHEN 4 THEN 'ack_deleted' END)",
             'state'         => '(NULL)',
             'state_type'    => '(NULL)',
             'output'        => "('[' || h.author_name || '] ' || h.comment_data)",
@@ -32,11 +32,11 @@ class DowntimeendhistoryQuery extends IdoQuery
             array('o' => $this->prefix . 'objects'),
             array()
         )->join(
-            array('h' => $this->prefix . 'downtimehistory'),
-            'o.' . $this->object_id . ' = h.' . $this->object_id . ' AND o.is_active = 1',
+            array('h' => $this->prefix . 'commenthistory'),
+            'o.' . $this->object_id . ' = h.' . $this->object_id . " AND o.is_active = 1 AND h.deletion_time > '1970-01-01 00:00:00' AND h.entry_type <> 2",
             array()
-        )->where('h.actual_end_time > ?', '1970-01-01 00:00:00');
-        $this->joinedVirtualTables = array('downtimehistory' => true);
+        );
+        $this->joinedVirtualTables = array('commenthistory' => true);
     }
-}
 
+}
