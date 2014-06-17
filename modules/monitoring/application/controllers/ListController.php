@@ -437,28 +437,19 @@ class Monitoring_ListController extends Controller
 
     protected function applyFilters($query)
     {
-        $url     = clone($this->url);
-        $url->shift('_render');
-        $limit   = $url->shift('limit');
-        $sort    = $url->shift('sort');
-        $dir     = $url->shift('dir');
-        $page    = $url->shift('page');
-        $format  = $url->shift('format');
-        $view    = $url->shift('view');
-        $backend = $url->shift('backend');
-        
-//        $filter = Filter::matchAll();
-        $filter = Filter::fromQueryString($url->getQueryString());
-        foreach ($url->getParams() as $k => $v) {
-//            if (strpos($v, ',') !== false) {
-//                $v = preg_split('~,~', $v);
-//            }
-  //          $filter->addFilter(Filter::fromQueryString($k . '=' . $v));
-//            $filter->addFilter(Filter::where($k, $v));
-            //$query->where($k, $v);
-        //    $query->addFilter(Filter::fromQueryString($k . '=' . $v));
-        }
-//var_dump($filter); exit;
+        $params = clone $this->params;
+
+        $params->shift('_render');
+        $limit   = $params->shift('limit');
+        $sort    = $params->shift('sort');
+        $dir     = $params->shift('dir');
+        $page    = $params->shift('page');
+        $format  = $params->shift('format');
+        $view    = $params->shift('view');
+        $backend = $params->shift('backend');
+        $modifyFilter = $params->shift('modifyFilter', false);
+
+        $filter = Filter::fromQueryString((string) $params);
         $query->applyFilter($filter);
         if ($sort) {
             $query->order($sort, $dir);
@@ -475,19 +466,19 @@ class Monitoring_ListController extends Controller
      *
      * @return  DataView
      */
-    protected function applyRestrictions(DataView $dataView)
+    protected function applyRestrictions($query)
     {
         foreach ($this->getRestrictions('monitoring/filter') as $restriction) {
-            // TODO(el): Apply restrictions
+            // TODO: $query->applyFilter(Filter::fromQueryString());
         }
-        return $dataView;
+        return $query;
     }
 
     protected function extraColumns()
     {
         $columns = preg_split(
             '~,~',
-            $this->_request->getParam('addcolumns', ''),
+            $this->params->shift('addcolumns', ''),
             -1,
             PREG_SPLIT_NO_EMPTY
         );
