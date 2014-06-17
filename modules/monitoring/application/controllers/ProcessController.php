@@ -29,11 +29,6 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 
 use Icinga\Module\Monitoring\Controller as MonitoringController;
-use Icinga\Module\Monitoring\Backend;
-
-use Icinga\Module\Monitoring\DataView\Runtimevariables as RuntimevariablesView;
-use Icinga\Module\Monitoring\DataView\Programstatus as ProgramstatusView;
-use Icinga\Module\Monitoring\DataView\Runtimesummary as RuntimesummaryView;
 
 /**
  * Display process information and global commands
@@ -41,17 +36,12 @@ use Icinga\Module\Monitoring\DataView\Runtimesummary as RuntimesummaryView;
 class Monitoring_ProcessController extends MonitoringController
 {
     /**
-     * @var \Icinga\Module\Monitoring\Backend
-     */
-    public $backend;
-    /**
      * Retrieve backend and hooks for this controller
      *
      * @see ActionController::init
      */
     public function init()
     {
-        $this->backend = Backend::createBackend($this->_getParam('backend'));
         $this->getTabs()->add('info', array(
             'title' => 'Process Info',
             'url' =>'monitoring/process/info'
@@ -66,9 +56,10 @@ class Monitoring_ProcessController extends MonitoringController
         $this->getTabs()->activate('info');
         $this->setAutorefreshInterval(10);
 
-        $this->view->programstatus = ProgramstatusView::fromRequest(
-            $this->_request
-        )->getQuery()->fetchRow();
+		// TODO: This one is broken right now, doublecheck default columns
+        $this->view->programstatus = $this->backend->select()
+            ->from('programstatus')
+            ->getQuery()->fetchRow();
 
         $this->view->backendName = $this->backend->getDefaultBackendName();
     }
@@ -77,14 +68,13 @@ class Monitoring_ProcessController extends MonitoringController
     {
         $this->getTabs()->activate('performance');
         $this->setAutorefreshInterval(10);
-        $this->view->runtimevariables = (object) RuntimevariablesView::fromRequest(
-            $this->_request,
-            array('varname', 'varvalue')
-        )->getQuery()->fetchPairs();
+        $this->view->runtimevariables = (object) $this->backend->select()
+            ->from('runtimevariables', array('varname', 'varvalue'))
+            ->getQuery()->fetchPairs();
 
-        $this->view->checkperformance = $query = RuntimesummaryView::fromRequest(
-            $this->_request
-        )->getQuery()->fetchAll();
+        $this->view->checkperformance = $this->backend->select()
+            ->from('runtimesummary')
+            ->getQuery()->fetchAll();
     }
 }
 
