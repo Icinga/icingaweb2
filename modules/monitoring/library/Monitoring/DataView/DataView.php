@@ -224,6 +224,7 @@ public function dump()
     public function sort($column = null, $order = null)
     {
         $sortRules = $this->getSortRules();
+
         if ($sortRules !== null) {
             if ($column === null) {
                 $sortColumns = reset($sortRules);
@@ -274,7 +275,7 @@ public function dump()
      */
     public function order($column = null, $direction = null)
     {
-        return $this->sort($column, $direction !== null ? strtoupper($direction) : null);
+        return $this->sort($column, $direction);
     }
 
     /**
