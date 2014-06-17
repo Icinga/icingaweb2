@@ -68,7 +68,7 @@ class Host extends AbstractObject
             'host_notes_url',
             'host_modified_host_attributes',
             'host_problem'
-        ));
+        ))->where('host_name', $this->params->get('host'));
         return $this->view->getQuery()->fetchRow();
     }
 }
