@@ -107,8 +107,8 @@ class Monitoring_ShowController extends Controller
     {
         $this->getTabs()->activate('services');
         $this->_setParam('service', '');
-        // WTF???? UrlViewFilter is messing with $_SERVER['QUERY_STRING'], great!
-        $_SERVER['QUERY_STRING'] = preg_replace('~&service=[^&]+(?:&|$)~', '', $_SERVER['QUERY_STRING']);
+        // TODO: This used to be a hack and still is. Modifying query string here.
+        $_SERVER['QUERY_STRING'] = (string) $this->params->without('service');
         $this->view->services = $this->view->action('services', 'list', 'monitoring', array(
             'view'  => 'compact',
             'limit' => '',
