@@ -79,7 +79,7 @@
 
                 // TODO: I'd prefer to have the rightmost URL first
                 if ('undefined' !== typeof cUrl) {
-                    cUrl = icinga.utils.removeUrlParams(cUrl, blacklist);
+                    // TODO: solve this on server side cUrl = icinga.utils.removeUrlParams(cUrl, blacklist);
                     if (url === '') {
                         url = cUrl;
                     } else {
