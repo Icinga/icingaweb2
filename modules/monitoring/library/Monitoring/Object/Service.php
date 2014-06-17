@@ -28,7 +28,7 @@ class Service extends AbstractObject
 
     protected function getProperties()
     {
-        $this->view = ServiceStatus::fromRequest($this->request, array(
+        $this->view = ServiceStatus::fromParams(array('backend' => null), array(
             'host_name',
             'host_state',
             'host_state_type',
@@ -111,7 +111,9 @@ class Service extends AbstractObject
             'service_flap_detection_enabled',
             'service_flap_detection_enabled_changed',
             'service_modified_service_attributes',
-        ));
+        ))->where('host_name', $this->params->get('host'))
+          ->where('service_description', $this->params->get('service'));
+
         return $this->view->getQuery()->fetchRow();
     }
 }

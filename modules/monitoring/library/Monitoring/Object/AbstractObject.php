@@ -17,7 +17,8 @@ use Icinga\Module\Monitoring\DataView\Hostgroup;
 use Icinga\Module\Monitoring\DataView\Comment;
 use Icinga\Module\Monitoring\DataView\Servicegroup;
 use Icinga\Module\Monitoring\DataView\Customvar;
-use Icinga\Web\Request;
+use Icinga\Web\UrlParams;
+
 
 abstract class AbstractObject
 {
@@ -35,14 +36,14 @@ abstract class AbstractObject
 
     protected $view;
     private $properties = array();
-    private $request    = null;
+    protected $params;
 
     // TODO: Fetching parent states if any would be nice
     //       Same goes for host/service dependencies
 
-    public function __construct(Request $request)
+    public function __construct(UrlParams $params)
     {
-        $this->request = $request;
+        $this->params = $params;
         $this->properties = $this->getProperties();
     }
 
@@ -117,9 +118,7 @@ abstract class AbstractObject
 
     public function fetchCustomvars()
     {
-        $query = Customvar::fromRequest(
-            $this->request,
-            array(
+        $query = Customvar::fromParams(array('backend' => null), array(
                 'varname',
                 'varvalue'
             )
@@ -173,14 +172,13 @@ abstract class AbstractObject
 
     public function fetchServicegroups()
     {
-        $query = Servicegroup::fromRequest(
-            $this->request,
-            array(
+        $query = Servicegroup::fromParams(array('backend' => null), array(
                 'servicegroup_name',
                 'servicegroup_alias',
             )
         );
-
+        $query->where('service_host_name', $this->host_name);
+        $query->where('service_description', $this->service_description);
         $this->servicegroups = $query->getQuery()->fetchPairs();
         return $this;
     }
@@ -226,7 +224,7 @@ abstract class AbstractObject
                 'output',
                 'type'
             )
-        )->sort('raw_timestamp', 'DESC');
+        )->sort('timestamp', 'DESC');
         if ($this->type === 'service') {
             $query->where('service_host_name', $this->host_name);
             $query->where('service_description', $this->service_description);
@@ -253,12 +251,12 @@ abstract class AbstractObject
         return $this->$expandedName;
     }
 
-    public static function fromRequest(Request $request)
+    public static function fromParams(UrlParams $params)
     {
-        if ($request->has('service') && $request->has('host')) {
-            return new Service($request);
-        } elseif ($request->has('host')) {
-            return new Host($request);
+        if ($params->has('service') && $params->has('host')) {
+            return new Service($params);
+        } elseif ($params->has('host')) {
+            return new Host($params);
         }
     }
 

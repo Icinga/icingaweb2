@@ -57,12 +57,12 @@ class Monitoring_ShowController extends Controller
     public function init()
     {
         if ($this->getRequest()->getActionName() === 'host') {
-            $this->view->object = new Host($this->getRequest());
+            $this->view->object = new Host($this->params);
         } elseif ($this->getRequest()->getActionName() === 'service') {
-            $this->view->object = new Service($this->getRequest());
+            $this->view->object = new Service($this->params);
         } else {
             // TODO: Well... this could be done better
-            $this->view->object = AbstractObject::fromRequest($this->getRequest());
+            $this->view->object = AbstractObject::fromParams($this->params);
         }
         if (Hook::has('ticket')) {
             $this->view->tickets = Hook::first('ticket');

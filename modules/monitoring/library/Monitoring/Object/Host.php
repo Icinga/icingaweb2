@@ -27,7 +27,7 @@ class Host extends AbstractObject
 
     protected function getProperties()
     {
-        $this->view = HostStatus::fromRequest($this->request, array(
+        $this->view = HostStatus::fromParams(array('backend' => null), array(
             'host_name',
             'host_alias',
             'host_address',
