@@ -68,6 +68,7 @@ class InlinePie extends AbstractWidget
         style="{style}"
         labels="{labels}"
         formatted="{formatted}"
+        hideEmptyLabel={hideEmptyLabel}
         values="{data}"
         tooltipFormat="{tooltipFormat}"
         sparkSliceColors="[{colors}]"
@@ -146,7 +147,14 @@ EOD;
      *
      * @var array
      */
-    private $labels;
+    private $labels = array();
+
+    /**
+     * If the tooltip for the "empty" area should be hidden
+     *
+     * @var bool
+     */
+    private $hideEmptyLabel = false;
 
     /**
      * The format string used to display tooltips
@@ -161,6 +169,16 @@ EOD;
      * @var array
      */
     private $format = self::NUMBER_FORMAT_BYTES;
+
+    /**
+     * Set if the tooltip for the empty area should be hidden
+     *
+     * @param bool $hide    Whether to hide the empty area
+     */
+    public function setHideEmptyLabel($hide = true)
+    {
+        $this->hideEmptyLabel = $hide;
+    }
 
     /**
      * Set the data to be displayed.
@@ -355,6 +373,7 @@ EOD;
         $template = preg_replace('{{colors}}', implode(',', $this->colors), $template);
         $template = preg_replace('{{borderWidth}}', htmlspecialchars($this->borderWidth), $template);
         $template = preg_replace('{{borderColor}}', htmlspecialchars($this->borderColor), $template);
+        $template = preg_replace('{{hideEmptyLabel}}', $this->hideEmptyLabel ? 'true' : 'false', $template);
 
         // values
         $formatted = array();

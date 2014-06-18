@@ -77,12 +77,16 @@
                 var formatted         = $spark.attr('formatted').split('|');
                 var tooltipChartTitle = $spark.attr('sparkTooltipChartTitle') || '';
                 var format            = $spark.attr('tooltipformat');
+                var hideEmpty         = $spark.attr('hideEmptyLabel') === 'true';
                 $spark.sparkline(
                     'html',
                     {
                         enableTagOptions: true,
                         tooltipFormatter: function (sparkline, options, fields) {
                             var out       = format;
+                            if (hideEmpty && fields.offset === 3) {
+                                return '';
+                            }
                             var replace   = {
                                 title:     tooltipChartTitle,
                                 label:     labels[fields.offset] ? labels[fields.offset] : fields.offset,
