@@ -217,10 +217,10 @@ EOD;
     }
     
     /**
-     * A format string used to render the content of the piechar tooltips
+     * A format string used to render the content of the piechart tooltips
      *
-     * Placeholders using curly braces '{FOO}' are replace with their specific values. Available
-     * values are:
+     * Placeholders using curly braces '{FOO}' are replace with their specific values. The format
+     * String may contain HTML-Markup. The available replaceable values are:
      * <ul>
      *      <li><b>label</b>:     The description for the current value </li>
      *      <li><b>formatted</b>: A string representing the formatted value </li>
@@ -279,7 +279,7 @@ EOD;
     /**
      * Set the styling of the created HtmlElement
      *
-     * @param $style
+     * @param string $style
      */
     public function setStyle($style)
     {
@@ -287,9 +287,9 @@ EOD;
     }
 
     /**
-     * Set the title of the created HtmlElement
+     * Set the title of the displayed Data
      *
-     * @param $title
+     * @param string $title
      */
     public function setTitle($title)
     {
@@ -299,12 +299,10 @@ EOD;
     /**
      * Create a new InlinePie
      *
-     * @param array  $data   The data displayed by the slices
-     * @param array  $colors The colors displayed by the slices
-     * @param array  $labels The labels to display for each slice
-     * @param string $unit   The number format
+     * @param array  $data      The data displayed by the slices
+     * @param array  $colors    An array of RGB-Color values to use
      */
-    public function __construct(array $data, array $colors = null, array $labels = null, $unit = self::NUMBER_FORMAT_BYTES)
+    public function __construct(array $data, $colors = null)
     {
         $this->url = Url::fromPath('svg/chart.php');
         if (array_key_exists('data', $data)) {
@@ -331,7 +329,11 @@ EOD;
      * @return string   A serialized array of labels
      */
     private function createLabelString () {
-        return isset($this->labels) && is_array($this->labels) ? implode(',', $this->labels) : '';
+        $labels = $this->labels;
+        foreach ($labels as $key => $label) {
+            $labels[$key] = preg_replace('/|/', '', $label);
+        }
+        return isset($this->labels) && is_array($this->labels) ? implode('|', $this->labels) : '';
     }
 
     /**
@@ -346,27 +348,22 @@ EOD;
         $template = preg_replace('{{url}}', $this->url, $template);
 
         // style
-        $template = preg_replace('{{width}}', $this->width, $template);
-        $template = preg_replace('{{height}}', $this->height, $template);
-        $template = preg_replace('{{title}}', $this->title, $template);
+        $template = preg_replace('{{width}}', htmlspecialchars($this->width), $template);
+        $template = preg_replace('{{height}}', htmlspecialchars($this->height), $template);
+        $template = preg_replace('{{title}}', htmlspecialchars($this->title), $template);
         $template = preg_replace('{{style}}', $this->style, $template);
         $template = preg_replace('{{colors}}', implode(',', $this->colors), $template);
-        $template = preg_replace('{{borderWidth}}', $this->borderWidth, $template);
-        $template = preg_replace('{{borderColor}}', $this->borderColor, $template);
+        $template = preg_replace('{{borderWidth}}', htmlspecialchars($this->borderWidth), $template);
+        $template = preg_replace('{{borderColor}}', htmlspecialchars($this->borderColor), $template);
 
         // values
-        $data = array();
-        foreach ($this->data as $dat) {
-            // Locale-ignorant string cast:
-            $data[] = sprintf('%F', $dat);
-        }
         $formatted = array();
         foreach ($this->data as $key => $value) {
             $formatted[$key] = $this->formatValue($value);
         }
-        $template = preg_replace('{{data}}', implode(',', $data), $template);
-        $template = preg_replace('{{formatted}}', implode(',', $formatted), $template);
-        $template = preg_replace('{{labels}}', $this->createLabelString(), $template);
+        $template = preg_replace('{{data}}', htmlspecialchars(implode(',', $this->data)), $template);
+        $template = preg_replace('{{formatted}}', htmlspecialchars(implode('|', $formatted)), $template);
+        $template = preg_replace('{{labels}}', htmlspecialchars($this->createLabelString()), $template);
         $template = preg_replace('{{tooltipFormat}}', $this->tooltipFormat, $template);
         return $template;
     }

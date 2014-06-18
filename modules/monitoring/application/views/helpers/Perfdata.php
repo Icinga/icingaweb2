@@ -88,7 +88,7 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
     protected function createInlinePie(Perfdata $perfdata)
     {
         $pieChart = new InlinePie($this->calculatePieChartData($perfdata));
-        $pieChart->setHeight(32)->setWidth(32);
+        //$pieChart->setHeight(32)->setWidth(32);
         if ($perfdata->isBytes()) {
             $pieChart->setLabels(array(t('Used'), t('Used'), t('Used'), t('Free')));
             $pieChart->setNumberFormat(InlinePie::NUMBER_FORMAT_BYTES);

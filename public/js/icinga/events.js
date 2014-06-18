@@ -73,8 +73,8 @@
             $('span.sparkline', el).each(function(i, element) {
                 // read custom options
                 var $spark            = $(element);
-                var labels            = $spark.attr('labels').split(',');
-                var formatted         = $spark.attr('formatted').split(',');
+                var labels            = $spark.attr('labels').split('|');
+                var formatted         = $spark.attr('formatted').split('|');
                 var tooltipChartTitle = $spark.attr('sparkTooltipChartTitle') || '';
                 var format            = $spark.attr('tooltipformat');
                 $spark.sparkline(
