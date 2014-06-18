@@ -73,6 +73,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # information on available options.
   config.vm.provider "virtualbox" do |vb|
     vb.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate//vagrant/config", "1"]
+    vb.customize ["modifyvm", :id, "--memory", "1024"]
   end
 
   # Enable provisioning with Puppet stand alone.  Puppet manifests
