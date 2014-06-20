@@ -59,8 +59,6 @@ class Monitoring_ListController extends Controller
     {
         $this->addTitleTab('hosts');
         $this->setAutorefreshInterval(10);
-        // TODO: Get rid of query here (multiselect)
-        $this->view->query = $this->_request->getQuery();
         $this->compactView = 'hosts-compact';
         $query = $this->backend->select()->from('hostStatus', array(
             'host_icon_image',
@@ -89,11 +87,11 @@ class Monitoring_ListController extends Controller
         $this->applyFilters($query);
 
         $this->setupSortControl(array(
-            'host_last_check'   => 'Last Host Check',
-            'host_severity'     => 'Host Severity',
-            'host_state'        => 'Current Host State',
-            'host_name'         => 'Host Name',
+            'host_last_check'   => 'Last Check',
+            'host_severity'     => 'Severity',
+            'host_name'         => 'Hostname',
             'host_address'      => 'Address',
+            'host_state'        => 'Current State',
             'host_state'        => 'Hard State'
         ));
         $this->view->hosts = $query->paginate();
