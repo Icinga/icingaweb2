@@ -403,19 +403,17 @@
 
             // create new url
             if (selectionData.length < 2) {
-                // single-selection
-                $.each(selectionData[0], function(key, value){
-                    queries.push(key + '=' + encodeURIComponent(value));
-                });
+                this.icinga.logger.error('Something went wrong, we should never multiselect just one row');
             } else {
-                // multi-selection
                 $.each(selectionData, function(i, el){
+                    var parts = []
                     $.each(el, function(key, value) {
-                        queries.push(key + '[' + i + ']=' + encodeURIComponent(value));
+                        parts.push(encodeURIComponent(key) + '=' + encodeURIComponent(value));
                     });
+                    queries.push('(' + parts.join('&') + ')');
                 });
             }
-            return queries.join('&');
+            return '(' + queries.join('|') + ')';
         },
 
         /**
