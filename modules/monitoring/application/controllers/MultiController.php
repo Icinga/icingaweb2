@@ -28,7 +28,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 
 use \Icinga\Web\Form;
-use \Icinga\Web\Controller\ActionController;
+use Icinga\Module\Monitoring\Controller;
 use \Icinga\Web\Widget\Tabextension\OutputFormat;
 use \Icinga\Module\Monitoring\Backend;
 use \Icinga\Data\SimpleQuery;
@@ -41,14 +41,8 @@ use \Icinga\Module\Monitoring\DataView\Comment       as CommentView;
 /**
  * Displays aggregations collections of multiple objects.
  */
-class Monitoring_MultiController extends ActionController
+class Monitoring_MultiController extends Controller
 {
-    public function init()
-    {
-        $this->backend = Backend::createBackend($this->_getParam('backend'));
-        $this->createTabs();
-    }
-
     public function hostAction()
     {
         $multiFilter = $this->getAllParamsAsArray();
@@ -372,16 +366,5 @@ class Monitoring_MultiController extends ActionController
             }
         }
         return $queries;
-    }
-
-    /**
-     * Return all tabs for this controller
-     *
-     * @return Tabs
-     */
-    private function createTabs()
-    {
-        $tabs = $this->getTabs();
-        $tabs->extend(new OutputFormat());
     }
 }
