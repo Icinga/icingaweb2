@@ -100,7 +100,8 @@ class Monitoring_ShowController extends Controller
         //$this->view->object->populate();
         $this->view->object->fetchEventHistory();
         $this->handleFormatRequest($this->view->object->eventhistory);
-        $this->view->history = $this->view->object->eventhistory->paginate(50);
+        $this->view->history = $this->view->object->eventhistory
+            ->paginate($this->params->get('limit', 50));
     }
 
     public function servicesAction()
@@ -108,12 +109,10 @@ class Monitoring_ShowController extends Controller
         $this->getTabs()->activate('services');
         $this->_setParam('service', '');
         // TODO: This used to be a hack and still is. Modifying query string here.
-        $_SERVER['QUERY_STRING'] = (string) $this->params->without('service');
+        $_SERVER['QUERY_STRING'] = (string) $this->params->without('service')->set('limit', '');
         $this->view->services = $this->view->action('services', 'list', 'monitoring', array(
             'view'  => 'compact',
-            'limit' => '',
             'sort'  => 'service_description',
-            'service' => ''
         ));
     }
 
