@@ -3,7 +3,7 @@
 namespace Icinga\Data\Filter;
 
 use Icinga\Web\UrlParams;
-use Exception;
+use Icinga\Exception\ProgrammingError;
 
 /**
  * Filter
@@ -16,7 +16,7 @@ abstract class Filter
 
     public function setId($id)
     {
-        $this->id = $id;
+        $this->id = (string) $id;
         return $this;
     }
 
@@ -29,11 +29,11 @@ abstract class Filter
 
     public function getById($id)
     {
-        if ($id === $this->getId()) {
+        if ((string) $id === $this->getId()) {
             return $this;
         }
-        throw new Exception(sprintf(
-            'Trying to get invalid filter index "%s" from "%s"', $id, $this
+        throw new ProgrammingError(sprintf(
+            'Trying to get invalid filter index "%s" from "%s" ("%s")', $id, $this, $this->id
         ));
     }
 
@@ -73,7 +73,9 @@ abstract class Filter
             case '>=': return new FilterEqualOrGreaterThan($col, $op, $expression);
             case '<=': return new FilterEqualOrLessThan($col, $op, $expression);
             case '!=': return new FilterNotEqual($col, $op, $expression);
-            default: throw new \Exception('WTTTTF');
+            default: throw new ProgrammingError(
+                sprintf('There is no such filter sign: %s', $op)
+            );
         }
     }
 
@@ -135,16 +137,5 @@ abstract class Filter
     public static function fromQueryString($query)
     {
         return FilterQueryString::parse($query);
-    }
-
-
-    /**
-     * We need a new Querystring-Parser
-     *
-     * Still TBD, should be able to read such syntax:
-     * (host_name=test&(service=ping|(service=http&host=*net*)))
-     */
-    protected static function consumeStringUnless(& $string, $stop)
-    {
     }
 }
