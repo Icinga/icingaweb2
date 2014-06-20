@@ -116,39 +116,6 @@ class Monitoring_ShowController extends Controller
         ));
     }
 
-
-    /**
-     * History entries for objects
-     */
-/*    public function historyAction()
-    {
-        $this->view->history = $this->backend->select()
-            ->from(
-                'eventHistory',
-                array(
-                    'object_type',
-                    'host_name',
-                    'service_description',
-                    'timestamp',
-                    'state',
-                    'attempt',
-                    'max_attempts',
-                    'output',
-                    'type'
-                )
-            )->applyRequest($this->_request);
-
-        $this->view->preserve = $this->view->history->getAppliedFilter()->toParams();
-        if ($this->_getParam('dump') === 'sql') {
-            echo '<pre>' . htmlspecialchars($this->view->history->getQuery()->dump()) . '</pre>';
-            exit;
-        }
-        if ($this->_getParam('sort')) {
-            $this->view->preserve['sort'] = $this->_getParam('sort');
-        }
-        $this->view->preserve = $this->view->history->getAppliedFilter()->toParams();
-    }*/
-
     /**
      * Creating tabs for this controller
      * @return Tabs
