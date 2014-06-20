@@ -393,7 +393,13 @@ class Form extends Zend_Form
         foreach ($triggerElements as $elementName) {
             $element = $this->getElement($elementName);
             if ($element !== null) {
-                $element->setAttrib('onchange', '$(this.form).submit();');
+                $class = $element->getAttrib('class');
+                if ($class === null) {
+                    $class = 'autosubmit';
+                } else {
+                    $class .= ' autosubmit';
+                }
+                $element->setAttrib('class', $class);
             } else {
                 throw new ProgrammingError(
                     'You need to add the element "' . $elementName . '" to' .
@@ -443,13 +449,18 @@ class Form extends Zend_Form
      */
     public function isSubmitted()
     {
-        $submitted = true;
+        // TODO: There are some missunderstandings and missconceptions to be
+        //       found in this class. If populate() etc would have been used as
+        //       designed this function would read as simple as:
+        //       return $this->getElement('btn_submit')->isChecked();
+
         if ($this->submitLabel) {
             $checkData = $this->getRequest()->getParams();
-            $submitted = isset($checkData['btn_submit']);
+            $label = isset($checkData['btn_submit']) ? $checkData['btn_submit'] : null;
+            return $label === $this->submitLabel;
         }
 
-        return $submitted;
+        return true;
     }
 
     /**

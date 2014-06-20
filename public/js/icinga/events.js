@@ -110,6 +110,7 @@
 
             // We support an 'autosubmit' class on dropdown form elements
             $(document).on('change', 'form select.autosubmit', { self: this }, this.autoSubmitForm);
+            $(document).on('change', 'form input.autosubmit', { self: this }, this.autoSubmitForm);
 
             $(document).on('keyup', '#menu input.search', {self: this}, this.autoSubmitSearch);
 
