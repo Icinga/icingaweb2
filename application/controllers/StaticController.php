@@ -85,11 +85,14 @@ class StaticController extends ActionController
             $extension = 'fixme';
         }
 
+        $s = stat($filePath);
         header('Content-Type: image/' . $extension);
-        header('Cache-Control: max-age=3600');
+        header(sprintf('ETag: "%x-%x-%x"', $s['ino'], $s['size'], (float) str_pad($s['mtime'], 16, '0')));
+        header('Cache-Control: public, max-age=3600');
+        header('Pragma: cache');
         header('Last-Modified: ' . gmdate(
             'D, d M Y H:i:s',
-            filemtime($filePath)
+            $s['mtime']
         ) . ' GMT');
 
         readfile($filePath);
