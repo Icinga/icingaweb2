@@ -401,16 +401,6 @@
 
             req.$target.data('icingaUrl', req.url);
 
-            // Update history when necessary. Don't do so for requests triggered
-            // by history or autorefresh events
-            if (! req.historyTriggered && ! req.autorefresh) {
-
-                // We only want to care about top-level containers
-                if (req.$target.parent().closest('.container').length === 0) {
-                    this.icinga.history.pushCurrentState();
-                }
-            }
-
             this.icinga.ui.initializeTriStates($resp);
 
             /* Should we try to fiddle with responses containing full HTML? */
@@ -487,6 +477,15 @@
          * Regardless of whether a request succeeded of failed, clean up
          */
         onComplete: function (req, textStatus) {
+            // Update history when necessary. Don't do so for requests triggered
+            // by history or autorefresh events
+            if (! req.historyTriggered && ! req.autorefresh) {
+                // We only want to care about top-level containers
+                if (req.$target.parent().closest('.container').length === 0) {
+                    this.icinga.history.pushCurrentState();
+                }
+            }
+
             req.$target.data('lastUpdate', (new Date()).getTime());
             delete this.requests[req.$target.attr('id')];
             this.icinga.ui.fadeNotificationsAway();
