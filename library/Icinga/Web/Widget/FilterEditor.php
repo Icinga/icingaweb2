@@ -6,6 +6,7 @@ use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filter\FilterExpression;
 use Icinga\Data\Filter\FilterChain;
 use Icinga\Web\Url;
+use Icinga\Exception\ProgrammingError;
 
 /**
  * Filter
@@ -39,20 +40,35 @@ class FilterEditor extends AbstractWidget
         }
     }
 
-    protected function select($name, $list, $selected)
+    protected function select($name, $list, $selected, $attributes = null)
     {
         $view = $this->view();
-        $html = '<select name="' . $view->escape($name) . '">';
+        if ($attributes === null) {
+            $attributes = '';
+        } else {
+            $attributes = $view->propertiesToString($attributes);
+        }
+        $html = '<select name="' . $view->escape($name) . '"' . $attributes . '>';
+        $beenActive = false;
         foreach ($list as $k => $v) {
             $active = '';
             if ($k === $selected) {
                 $active = ' selected="selected"';
+                $beenActive = true;
             }
             $html .= sprintf(
                 '<option value="%s"%s>%s</option>',
                 $view->escape($k),
                 $active,
-                $v
+                $view->escape($v)
+            );
+        }
+        if (! $beenActive && $selected) {
+            $html .= sprintf(
+                '<option value="%s"%s>%s</option>',
+                $view->escape($k),
+                $active,
+                $view->escape($selected) . ' (unknown)'
             );
         }
         $html .= '</select>';
@@ -81,8 +97,8 @@ class FilterEditor extends AbstractWidget
         $markUrl = clone($url);
         $markUrl->setParam('fIdx', $idx);
 
-        $removeUrl = clone($url);
-        $removeUrl->setParam('removeId', $idx);
+        $removeUrl = clone $url;
+        $removeUrl->setParam('removeFilter', $idx);
         $removeLink = ' <a href="' . $removeUrl . '" title="'
              . $view->escape(t('Click to remove this part of your filter'))
              . '">' . $view->icon('remove.png') .  '</a>';
@@ -90,9 +106,11 @@ class FilterEditor extends AbstractWidget
         $addUrl = clone($url);
         $addUrl->setParam('addToId', $idx);
         $addLink = ' <a href="' . $addUrl . '" title="'
-             . $view->escape(t('Click to add... filter'))
-             . '">' . $view->icon('create.png') .  '</a>';
-
+             . $view->escape(t('Click to add another operator below this one'))
+             . '">' . t('Operator') .  ' (&, !, |)</a>';
+        $addLink .= ' <a href="' . $addUrl . '" title="'
+             . $view->escape(t('Click to add a filter expression to this operator'))
+             . '">' . t('Expression') .  ' (=, &lt;, &gt;, &lt;=, &gt;=)</a>';
 
         $selectedIndex = ($idx === $this->selectedIdx ? ' -&lt;--' : '');
         $selectIndex = ' <a href="' . $markUrl . '">o</a>';
@@ -106,40 +124,43 @@ class FilterEditor extends AbstractWidget
                 $parts[] = $this->renderFilter($f, $level + 1);
             }
 
-            if (empty($parts)) {
-                return $html;
-            }
             $op = $this->select(
-                'operator',
+                'operator_' . $filter->getId(),
                 array(
                     'OR'  => 'OR',
                     'AND' => 'AND',
                     'NOT' => 'NOT'
                 ),
-                $filter->getOperatorName()
-            ) . $addLink . $removeLink;
-             $html .= '<span class="handle"> </span>';
+                $filter->getOperatorName(),
+                array('style' => 'width: 5em')
+            ) . $removeLink . ' ' . t('Add') . ': ' . $addLink;
+            $html .= '<span class="handle"> </span>';
 
             if ($level === 0) {
-                $html .= $op
-                 . '<ul class="datafilter"><li>'
-                 . implode('</li><li>', $parts)
-                 . '</li></ul>';
+                $html .= $op;
+                 if (! empty($parts)) {
+                     $html .= '<ul class="datafilter"><li>'
+                         . implode('</li><li>', $parts)
+                         . '</li></ul>';
+                 }
             } else {
                 $html .= $op . '<ul><li>' . implode('</li><li>', $parts) . '</li></ul>';
             }
             return $html;
+        }
 
-        } elseif ($filter instanceof FilterExpression) {
+        if ($filter instanceof FilterExpression) {
             $u = $url->without($filter->getColumn());
         } else {
-           throw new \Exception('WTF');
+           throw new ProgrammingError('Got a Filter being neither expression nor chain');
         }
         $value = $filter->getExpression();
         if (is_array($value)) {
             $value = implode('|', $value);
         }
-        $html .=  $this->selectColumn($filter) . ' = <input type="text" name="'
+        $html .=  $this->selectColumn($filter) . ' '
+               . $this->selectSign($filter)
+               . ' <input type="text" name="'
                . 'value_' . $idx
                . '" value="'
                . $value
@@ -162,6 +183,24 @@ class FilterEditor extends AbstractWidget
         return $res;
     }
 
+    protected function selectSign($filter)
+    {
+        $name = 'sign_' . $filter->getId();
+        $signs = array(
+            '=' => '=',
+            '>' => '>',
+            '<' => '<',
+            '>=' => '>=',
+            '<=' => '<=',
+        );
+
+        return $this->select(
+            $name,
+            $signs,
+            $filter->getSign(),
+            array('style' => 'width: 4em')
+        );
+    }
     protected function selectColumn($filter)
     {
         $name = 'column_' . $filter->getId();
@@ -183,11 +222,15 @@ class FilterEditor extends AbstractWidget
 
     public function render()
     {
-        return '<form action="'
-              . Url::fromRequest()->without('modifyFilter')
-              . '">'
+        return '<h3>'
+              . t('Modify this filter')
+              . '</h3>'
+              . '<form action="'
+              . Url::fromRequest()
+              . '" class="filterEditor" method="POST">'
+              . '<ul class="tree"><li>'
               . $this->renderFilter($this->filter)
-              . '<input type="submit" name="submit" value="Apply" />'
+              . '</li></ul><br /><input type="submit" name="submit" value="Apply" />'
               . '</form>';
     }
 }

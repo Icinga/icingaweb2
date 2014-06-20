@@ -47,6 +47,48 @@ abstract class Filter
         return false === strpos($this->id, '-');
     }
 
+    public function applyChanges($changes)
+    {
+        $filter = $this;
+        $pairs = array();
+        foreach ($changes as $k => $v) {
+            if (preg_match('/^(column|value|sign|operator)_([\d-]+)$/', $k, $m)) {
+                $pairs[$m[2]][$m[1]] = $v;
+            }
+        }
+        $operators = array();
+        foreach ($pairs as $id => $fs) {
+            if (array_key_exists('operator', $fs)) {
+                $operators[$id] = $fs['operator'];
+            } else {
+                $f = $filter->getById($id);
+                $f->setColumn($fs['column']);
+                if ($f->getSign() !== $fs['sign']) {
+                    if ($f->isRootNode()) {
+                        $filter = $f->setSign($fs['sign']);
+                    } else {
+                        $filter->replaceById($id, $f->setSign($fs['sign']));
+                    }
+                }
+                $f->setExpression($fs['value']);
+            }
+        }
+
+        krsort($operators, SORT_NATURAL);
+        foreach ($operators as $id => $operator) {
+            $f = $filter->getById($id);
+            if ($f->getOperatorName() !== $operator) {
+                if ($f->isRootNode()) {
+                    $filter = $f->setOperatorName($operator);
+                } else {
+                    $filter->replaceById($id, $f->setOperatorName($operator));
+                }
+            }
+        }
+
+        return $filter;
+    }
+
     public function getParentId()
     {
         if ($self->isRootNode()) {
