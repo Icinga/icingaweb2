@@ -72,6 +72,7 @@ class Monitoring_ConfigController extends BaseConfigController {
      */
     public function indexAction()
     {
+        $this->view->tabs->activate('backends');
         $this->view->messageBox = new AlertMessageBox(true);
         foreach (array('backends', 'instances') as $element) {
             try {
