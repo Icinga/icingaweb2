@@ -46,12 +46,23 @@ class FilterQueryString
 
     protected function readNextExpression()
     {
-
         if ('' === ($key = $this->readNextKey())) {
             return false;
         }
 
-        $sign = $this->readChar();
+        foreach (array('<', '>') as $sign) {
+            if (false !== ($pos = strpos($key, $sign))) {
+                if ($this->nextChar() === '=') break;
+                $var = substr($key, $pos + 1);
+                $key = substr($key, 0, $pos);
+                return Filter::expression($key, $sign, $var);
+            }
+        }
+        if (in_array($this->nextChar(), array('=', '>', '<', '!'))) {
+            $sign = $this->readChar();
+        } else {
+            $sign = false;
+        }
         if ($sign === false) {
             return Filter::expression($key, '=', true);
         }
