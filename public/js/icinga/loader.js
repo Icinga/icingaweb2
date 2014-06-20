@@ -222,9 +222,13 @@
 
         processNotificationHeader: function(req) {
             var header = req.getResponseHeader('X-Icinga-Notification');
+            var self = this;
             if (! header) return false;
-            var parts = decodeURIComponent(header).split(' ');
-            this.createNotice(parts.shift(), parts.join(' '));
+            var list = header.split('&');
+            $.each(list, function(idx, el) {
+                var parts = decodeURIComponent(el).split(' ');
+                self.createNotice(parts.shift(), parts.join(' '));
+            });
             return true;
         },
 
