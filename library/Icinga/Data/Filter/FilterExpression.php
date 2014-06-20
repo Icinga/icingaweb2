@@ -41,6 +41,20 @@ class FilterExpression extends Filter
         return $this->expression;
     }
 
+    public function setExpression($expression)
+    {
+        $this->expression = $expression;
+        return $this;
+    }
+
+    public function setSign($sign)
+    {
+        if ($sign !== $this->sign) {
+            return Filter::expression($this->column, $sign, $this->expression);
+        }
+        return $this;
+    }
+
     public function __toString()
     {
         $expression = is_array($this->expression) ?

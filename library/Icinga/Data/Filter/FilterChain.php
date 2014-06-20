@@ -78,6 +78,14 @@ abstract class FilterChain extends Filter
         return $this->operatorName;
     }
 
+    public function setOperatorName($name)
+    {
+        if ($name !== $this->operatorName) {
+            return Filter::chain($name, $this->filters);
+        }
+        return $this;
+    }
+
     public function getOperatorSymbol()
     {
         return $this->operatorSymbol;
