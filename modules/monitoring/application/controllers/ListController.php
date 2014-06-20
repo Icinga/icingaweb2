@@ -213,7 +213,14 @@ class Monitoring_ListController extends Controller
     {
         $this->addTitleTab('notifications');
         $this->setAutorefreshInterval(15);
-        $query = $this->backend->select()->from('notification');
+        $query = $this->backend->select()->from('notification', array(
+            'host',
+            'service',
+            'notification_output',
+            'notification_contact',
+            'notification_start_time',
+            'notification_state'
+        ));
         $this->applyFilters($query);
         $this->view->notifications = $query->paginate();
         $this->setupSortControl(array(
