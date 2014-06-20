@@ -9,7 +9,7 @@ $this->addHelperFunction('auth', function () {
     return Manager::getInstance();
 });
 
-$this->addHelperFunction('widget', function ($name, $options) {
+$this->addHelperFunction('widget', function ($name, $options = null) {
     return Widget::create($name, $options);
 });
 
