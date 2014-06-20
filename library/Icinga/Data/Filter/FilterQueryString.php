@@ -32,13 +32,14 @@ class FilterQueryString
 
     protected function readNextValue()
     {
-        $var = rawurldecode($this->readUnlessSpecialChar());
-        if ($var === '' && $this->nextChar() === '(') {
+        if ($this->nextChar() === '(') {
             $this->readChar();
             $var = preg_split('~\|~', $this->readUnless(')'));
             if ($this->readChar() !== ')') {
                 $this->parseError(null, 'Expected ")"');
             }
+        } else {
+            $var = rawurldecode($this->readUnless(array(')', '&', '|', '>', '<')));
         }
         return $var;
     }
