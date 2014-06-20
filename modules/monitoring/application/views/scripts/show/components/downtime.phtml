@@ -31,8 +31,13 @@ foreach ($object->downtimes as $downtime) {
         'removedowntime',
         $deleteData
     );
-
-    $text = $this->escape($downtime->comment);
+    
+    // Ticket hook sample
+    $text = $this->tickets ? preg_replace_callback(
+        $this->tickets->getPattern(),
+        array($this->tickets, 'createLink'),
+        $this->escape($downtime->comment)
+    ) : $this->escape($downtime->comment);
 
     $list[] = sprintf(
         '<tr><th>%s</th><td data-base-target="_self">%s %s: %s</td></tr>',
