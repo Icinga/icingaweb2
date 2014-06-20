@@ -437,7 +437,7 @@
             if (rendered) return;
 
             // .html() removes outer div we added above
-            this.renderContentToContainer($resp.html(), req.$target, req.action);
+            this.renderContentToContainer($resp.html(), req.$target, req.action, req.autorefresh);
             if (url.match(/#/)) {
                 this.icinga.ui.scrollContainerToAnchor(req.$target, url.split(/#/)[1]);
             }
@@ -519,7 +519,8 @@
                 this.renderContentToContainer(
                     req.responseText,
                     req.$target,
-                    req.action
+                    req.action,
+                    req.autorefresh
                 );
 
                 // Header example:
@@ -571,14 +572,7 @@
         /**
          * Smoothly render given HTML to given container
          */
-        renderContentToContainer: function (content, $container, action) {
-            // Disable all click events while rendering
-            $('*').click(function (event) {
-                event.stopImmediatePropagation();
-                event.stopPropagation();
-                event.preventDefault();
-            });
-
+        renderContentToContainer: function (content, $container, action, autorefresh) {
             // Container update happens here
             var scrollPos = false;
             var containerId = $container.attr('id');
@@ -587,9 +581,21 @@
             }
 
             var origFocus = document.activeElement;
+            if (typeof containerId !== 'undefined' && autorefresh && origFocus && $(origFocus).closest('form').length && $container.has($(origFocus)) && $(origFocus).closest('#' + containerId).length) {
+                this.icinga.logger.debug('Not changing content, form has focus');
+                return;
+            }
 
             // TODO: We do not want to wrap this twice...
             var $content = $('<div>' + content + '</div>');
+
+            // Disable all click events while rendering
+            $('*').click(function (event) {
+                event.stopImmediatePropagation();
+                event.stopPropagation();
+                event.preventDefault();
+            });
+
 
             if (false &&
                 $('.dashboard', $content).length > 0 &&
