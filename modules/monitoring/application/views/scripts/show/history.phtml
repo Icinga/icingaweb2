@@ -34,6 +34,7 @@ $states = array(
 ?><div class="controls">
 <?= $this->render('show/components/header.phtml') ?>
 <h1><?= $this->translate("This object's event history") ?></h1>
+<?= $this->widget('limiter', array('url' => $this->url, 'max' => $this->history->count())) ?>
 <?=  $this->paginationControl($this->history, null, null, array('preserve' => $this->preserve)); ?>
 </div>
 
@@ -52,7 +53,7 @@ if (array_key_exists($event->state, $states[$event->object_type])) {
 } else {
     $state_class = 'invalid';
 }
-
+$extraTitle = false;
 switch ($event->type) {
     case 'notify':
         $icon   = 'notification';
@@ -93,11 +94,12 @@ switch ($event->type) {
         break;
     case 'hard_state':
         $icon   = 'submit';
-        $title  = $this->translate('Hard State');
+        $title  = strtoupper($state_class);
         break;
     case 'soft_state':
         $icon   = 'softstate';
-        $title  = $this->translate('Soft State');
+        $title  = strtoupper($state_class);
+        $extraTitle = $this->translate('Soft State');
         $state_class .= ' handled';
         break;
     case 'dt_start':
@@ -114,7 +116,7 @@ switch ($event->type) {
 
 ?>
   <tr class="state <?= $state_class ?>">
-    <td class="state"><?= $this->timeSince($event->timestamp) ?><br /><strong><?= $this->escape($title) ?></strong></td>
+    <td class="state"><strong><?= $this->escape($title) ?></strong><br /><?= $this->prefixedTimeSince($event->timestamp) ?><?= $extraTitle === false ? '' : '<br />' . $this->escape($extraTitle) ?></td>
     <td>
 <?php
 
