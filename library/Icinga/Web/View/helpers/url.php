@@ -54,6 +54,7 @@ $this->addHelperFunction('icon', function ($img, $title = null, array $propertie
         'class' => 'icon',
     );
     if ($title !== null) {
+        $attributes['alt'] = $title;
         $attributes['title'] = $title;
     }
 
