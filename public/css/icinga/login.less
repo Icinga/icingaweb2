@@ -50,18 +50,43 @@
   }
 
   .form label {
-    display: none;
+    font-weight: normal;
+    display: inline-block;
+    line-height: 2.5em;
+    width: 10em;
+    margin-right: 1em;
+    text-align: right;
+
   }
 
   form {
     margin-left: auto;
     margin-right: auto;
-    width: 20em;
+    width: 40em;
   }
 
   form input {
-    width: 100%;
+    width: 18em;
     padding: 0.5em;
+	background: #ddd;
+	color: #333;
+    border: 1px solid #ddd;
+  }
+
+  form input:focus {
+    background: white;
+  }
+
+  input[type=submit] {
+    color: #eee;
+    border-color: #777;
+    background: #777;
+    margin-left: 11em;
+  }
+
+  input[type=submit]:hover, a.button:hover, input[type=submit]:focus {
+    background-color: #333;
+    border-color: #333;
   }
 
   .footer {
