@@ -2,6 +2,8 @@
 
 namespace Icinga\Data\Filter;
 
+use Icinga\Exception\ProgrammingError;
+
 /**
  * FilterChain
  *
@@ -52,6 +54,28 @@ abstract class FilterChain extends Filter
         if ($remove !== null) {
             unset($this->filters[$remove]);
             $this->filters = array_values($this->filters);
+        }
+        $this->refreshChildIds();
+        return $this;
+    }
+
+    public function replaceById($id, $filter)
+    {
+        $found = false;
+        foreach ($this->filters as $k => $child) {
+            if ($child->getId() == $id) {
+                $this->filters[$k] = $filter;
+                $found = true;
+                break;
+            }
+            if ($child->hasId($id)) {
+                $child->replaceById($id, $filter);
+                $found = true;
+                break;
+            }
+        }
+        if (! $found) {
+            throw new ProgrammingError('You tried to replace an unexistant child filter');
         }
         $this->refreshChildIds();
         return $this;

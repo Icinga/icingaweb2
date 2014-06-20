@@ -42,6 +42,24 @@ abstract class Filter
         return $this->id;
     }
 
+    public function isRootNode()
+    {
+        return false === strpos($this->id, '-');
+    }
+
+    public function getParentId()
+    {
+        if ($self->isRootNode()) {
+            throw new ProgrammingError('Filter root nodes have no parent');
+        }
+        return substr($this->id, 0, strrpos($this->id, '-'));
+    }
+
+    public function getParent()
+    {
+        return $this->getById($this->getParentId());
+    }
+
     public function hasId($id)
     {
         if ($id === $this->getId()) {
@@ -126,7 +144,23 @@ abstract class Filter
                 $args = $args[0];
             }
         }
-        return new FilterNot($args);
+        if (count($args) > 1) { 
+            return new FilterNot(array(new FilterAnd($args)));
+        } else {
+            return new FilterNot($args);
+        }
+    }
+
+    public static function chain($operator, $filters = array())
+    {
+        switch ($operator) {
+            case 'AND': return self::matchAll($filters);
+            case 'OR' : return self::matchAny($filters);
+            case 'NOT': return self::not($filters);
+        }
+        throw new ProgrammingError(
+            sprintf('"%s" is not a valid filter chain operator', $operator)
+        );
     }
 
     /**
