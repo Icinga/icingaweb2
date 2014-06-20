@@ -151,7 +151,6 @@ class FilterQueryString
 
                 if ($next === ')') {
                     if ($nestingLevel > 0) {
-                    echo "Got )<br>";
                         break;
                     }
                     $this->parseError($next);
@@ -162,7 +161,6 @@ class FilterQueryString
                 }
                 $this->parseError($next);
             }
-
         }
 
         if ($nestingLevel === 0 && count($filters) === 1) {
@@ -177,6 +175,7 @@ class FilterQueryString
             case '&': return Filter::matchAll($filters);
             case '|': return Filter::matchAny($filters);
             case '!': return Filter::not($filters);
+            case null: return Filter::matchAll();
             default: $this->parseError($op);
         }
     }
