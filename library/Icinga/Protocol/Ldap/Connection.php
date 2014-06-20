@@ -105,12 +105,20 @@ class Connection
 
     );
 
+    /**
+     * Whether the bind on this connection was already performed
+     *
+     * @var bool
+     */
+    protected $bindDone = false;
+
     protected $root;
 
     protected $supports_v3  = false;
     protected $supports_tls = false;
 
     protected $capabilities;
+    protected $namingContexts;
 
     /**
      * Constructor
@@ -155,6 +163,8 @@ class Connection
     public function hasDN($dn)
     {
         $this->connect();
+        $this->bind();
+
         $result = ldap_read($this->ds, $dn, '(objectClass=*)', array('objectClass'));
         return ldap_count_entries($this->ds, $result) > 0;
     }
@@ -162,6 +172,8 @@ class Connection
     public function deleteRecursively($dn)
     {
         $this->connect();
+        $this->bind();
+
         $result = @ldap_list($this->ds, $dn, '(objectClass=*)', array('objectClass'));
         if ($result === false) {
             if (ldap_errno($this->ds) === self::LDAP_NO_SUCH_OBJECT) {
@@ -176,7 +188,7 @@ class Connection
             );
         }
         $children = ldap_get_entries($this->ds, $result);
-        for($i = 0; $i < $children['count']; $i++) {
+        for ($i = 0; $i < $children['count']; $i++) {
             $result = $this->deleteRecursively($children[$i]['dn']);
             if (!$result) {
                 //return result code, if delete fails
@@ -189,6 +201,7 @@ class Connection
     public function deleteDN($dn)
     {
         $this->connect();
+        $this->bind();
 
         $result = @ldap_delete($this->ds, $dn);
         if ($result === false) {
@@ -213,17 +226,23 @@ class Connection
      * @param       $query
      * @param array $fields
      *
-     * @return bool|String   Returns the distinguished name, or false when the given query yields no results
+     * @return null|string   Returns the distinguished name, or false when the given query yields no results
      */
     public function fetchDN($query, $fields = array())
     {
         $rows = $this->fetchAll($query, $fields);
         if (count($rows) !== 1) {
-            return false;
+            return null;
         }
         return key($rows);
     }
 
+    /**
+     * @param       $query
+     * @param array $fields
+     *
+     * @return mixed
+     */
     public function fetchRow($query, $fields = array())
     {
         // TODO: This is ugly, make it better!
@@ -231,6 +250,11 @@ class Connection
         return array_shift($results);
     }
 
+    /**
+     * @param Query $query
+     *
+     * @return int
+     */
     public function count(Query $query)
     {
         $results = $this->runQuery($query, '+');
@@ -289,6 +313,7 @@ class Connection
     protected function runQuery($query, $fields)
     {
         $this->connect();
+        $this->bind();
         if ($query instanceof Query) {
             $fields = $query->listFields();
         }
@@ -350,6 +375,11 @@ class Connection
         }
     }
 
+    /**
+     * @param null $sub
+     *
+     * @return string
+     */
     protected function getConfigDir($sub = null)
     {
         $dir = Config::getInstance()->getConfigDir() . '/ldap';
@@ -359,6 +389,12 @@ class Connection
         return $dir;
     }
 
+    /**
+     * Connect to the given ldap server and apply settings depending on the discovered capabilities
+     *
+     * @return resource        A positive LDAP link identifier
+     * @throws \Exception      When the connection is not possible
+     */
     protected function prepareNewConnection()
     {
         $use_tls = false;
@@ -370,11 +406,12 @@ class Connection
         }
 
         $ds = ldap_connect($this->hostname, $this->port);
-        $cap = $this->discoverCapabilities($ds);
+        list($cap, $namingContexts) = $this->discoverCapabilities($ds);
         $this->capabilities = $cap;
+        $this->namingContexts = $namingContexts;
 
         if ($use_tls) {
-            if ($cap->starttls) {
+            if ($cap->supports_starttls) {
                 if (@ldap_start_tls($ds)) {
                     Logger::debug('LDAP STARTTLS succeeded');
                 } else {
@@ -398,9 +435,9 @@ class Connection
             }
         }
         // ldap_rename requires LDAPv3:
-        if ($cap->ldapv3) {
+        if ($cap->supports_ldapv3) {
             if (! ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3)) {
-                throw new Exception('LDAPv3 is required');
+                throw new \Exception('LDAPv3 is required');
             }
         } else {
 
@@ -430,17 +467,31 @@ class Connection
             }
             putenv('LDAPRC=' . $ldap_conf);
             if (getenv('LDAPRC') !== $ldap_conf) {
-                throw new Exception('putenv failed');
+                throw new \Exception('putenv failed');
             }
         }
     }
 
-    protected function hasCapabilityStarTSL($cap)
+    /**
+     * Return if the capability object contains support for StartTLS
+     *
+     * @param $cap  The object containing the capabilities
+     *
+     * @return bool Whether StartTLS is supported
+     */
+    protected function hasCapabilityStartTLS($cap)
     {
         $cap = $this->getExtensionCapabilities($cap);
         return isset($cap['1.3.6.1.4.1.1466.20037']);
     }
 
+    /**
+     * Return if the capability objects contains support for LdapV3
+     *
+     * @param $cap
+     *
+     * @return bool
+     */
     protected function hasCapabilityLdapV3($cap)
     {
         if ((is_string($cap->supportedLDAPVersion)
@@ -453,6 +504,13 @@ class Connection
         return false;
     }
 
+    /**
+     * Extract an array of all extension capabilities from the given ldap response
+     *
+     * @param $cap      object  The response returned by a ldap_search discovery query
+     *
+     * @return object           The extracted capabilities.
+     */
     protected function getExtensionCapabilities($cap)
     {
         $extensions = array();
@@ -468,6 +526,13 @@ class Connection
         return $extensions;
     }
 
+    /**
+     * Extract an array of all MSAD capabilities from the given ldap response
+     *
+     * @param $cap      object  The response returned by a ldap_search discovery query
+     *
+     * @return object           The extracted capabilities.
+     */
     protected function getMsCapabilities($cap)
     {
         $ms = array();
@@ -485,6 +550,13 @@ class Connection
         return (object)$ms;
     }
 
+    /**
+     * Convert a single capability name entry into camel-case
+     *
+     * @param   $name   string  The name to convert
+     *
+     * @return          string  The name in camel-case
+     */
     private function convName($name)
     {
         $parts = explode('_', $name);
@@ -508,7 +580,7 @@ class Connection
     /**
      * Get the default naming context of this ldap connection
      *
-     * @return String|null the default naming context, or null when no contexts are available
+     * @return string|null the default naming context, or null when no contexts are available
      */
     public function getDefaultNamingContext()
     {
@@ -527,23 +599,22 @@ class Connection
      */
     public function namingContexts()
     {
-        $cap = $this->capabilities;
-        if (!isset($cap->namingContexts)) {
+        if (!isset($this->namingContexts)) {
             return array();
         }
-        if (!is_array($cap->namingContexts)) {
-            return array($cap->namingContexts);
+        if (!is_array($this->namingContexts)) {
+            return array($this->namingContexts);
         }
-        return $cap->namingContexts;
+        return $this->namingContexts;
     }
 
     /**
      * Discover the capabilities of the given ldap-server
      *
-     * @param $ds   The link identifier of the current ldap connection
+     * @param  resource     $ds     The link identifier of the current ldap connection
      *
-     * @return bool|object  The capabilities or false if the server has none
-     * @throws Exception    When the capability query fails
+     * @return array                The capabilities and naming-contexts
+     * @throws \Exception           When the capability query fails
      */
     protected function discoverCapabilities($ds)
     {
@@ -563,8 +634,6 @@ class Connection
                 '+'
             )
         );
-        $fields = $query->listFields();
-
         $result = @ldap_read(
             $ds,
             '',
@@ -573,7 +642,7 @@ class Connection
         );
 
         if (! $result) {
-            throw new Exception(
+            throw new \Exception(
                 sprintf(
                     'Capability query failed (%s:%d): %s',
                     $this->hostname,
@@ -585,8 +654,8 @@ class Connection
         $entry = ldap_first_entry($ds, $result);
 
         $cap = (object) array(
-            'ldapv3'   => false,
-            'starttls' => false,
+            'supports_ldapv3'   => false,
+            'supports_starttls' => false,
             'msCapabilities' => array()
         );
 
@@ -596,41 +665,51 @@ class Connection
         }
         $ldapAttributes = ldap_get_attributes($ds, $entry);
         $result = $this->cleanupAttributes($ldapAttributes);
-        $cap->ldapv3 = $this->hasCapabilityLdapV3($result);
-        $cap->starttls = $this->hasCapabilityStarTSL($result);
+        $cap->supports_ldapv3 = $this->hasCapabilityLdapV3($result);
+        $cap->supports_starttls = $this->hasCapabilityStartTLS($result);
         $cap->msCapabilities = $this->getMsCapabilities($result);
-        $cap->namingContexts = $result->namingContexts;
-        /*
-        if (isset($result->dnsHostName)) {
-            ldap_set_option($ds, LDAP_OPT_HOST_NAME, $result->dnsHostName);
-        }
-        */
 
-        return $cap;
+        return array($cap,  $result->namingContexts);
     }
 
-    public function connect($anonymous = false)
+    /**
+     * Try to connect to the given ldap server
+     *
+     * @throws \Exception   When connecting is not possible
+     */
+    public function connect()
     {
         if ($this->ds !== null) {
             return;
         }
         $this->ds = $this->prepareNewConnection();
+    }
 
-        if (!$anonymous) {
-            $r = @ldap_bind($this->ds, $this->bind_dn, $this->bind_pw);
-            if (! $r) {
-                throw new \Exception(
-                    sprintf(
-                        'LDAP connection to %s:%s (%s / %s) failed: %s',
-                        $this->hostname,
-                        $this->port,
-                        $this->bind_dn,
-                        '***' /* $this->bind_pw */,
-                        ldap_error($this->ds)
-                    )
-                );
-            }
+    /**
+     * Try to bind to the current ldap domain using the provided bind_dn and bind_pw
+     *
+     * @throws \Exception   When binding is not possible
+     */
+    public function bind()
+    {
+        if ($this->bindDone) {
+            return;
         }
+
+        $r = @ldap_bind($this->ds, $this->bind_dn, $this->bind_pw);
+        if (! $r) {
+            throw new \Exception(
+                sprintf(
+                    'LDAP connection to %s:%s (%s / %s) failed: %s',
+                    $this->hostname,
+                    $this->port,
+                    $this->bind_dn,
+                    '***' /* $this->bind_pw */,
+                    ldap_error($this->ds)
+                )
+            );
+        }
+        $this->bindDone = true;
     }
 
     /**
@@ -649,10 +728,10 @@ class Connection
     /**
      * Modify a ldap entry
      *
-     * @param string $dn    DN of the entry to change
-     * @param array $entry  Change values
+     * @param string $dn        DN of the entry to change
+     * @param array  $entry     Change values
      *
-     * @return bool         True on success
+     * @return bool             True on success
      */
     public function modifyEntry($dn, array $entry)
     {
