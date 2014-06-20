@@ -23,14 +23,14 @@ if ($notifications->hasMessages()) {
     }
 }
    ?></ul>
-   <div id="logo" data-base-target="_main"><a href="<?= $this->href('/dashboard') ?>"><img src="<?= $this->href('img/logo_icinga-inv.png') ?>" class="logo" /></a>
+   <div id="logo" data-base-target="_main"><a href="<?= $this->href('/dashboard') ?>"><img src="<?= $this->href('img/logo_icinga-inv.png') ?>" class="logo" alt="<?= t('Dashboard') ?>" /></a>
  </div>
  </div>
 
  <div id="sidebar">
   <?php echo $this->render('parts/navigation.phtml') ?>
  </div>
- <div id="main">
+ <div id="main" role="main">
   <div id="col1" class="container<?= $moduleClass ?>"<?php if ($moduleName): ?> data-icinga-module="<?= $moduleName ?>" <?php endif ?> data-icinga-url="<?= Url::fromRequest() ?>" style="display: block">
    <?= $this->render('inline.phtml') ?>
   </div>

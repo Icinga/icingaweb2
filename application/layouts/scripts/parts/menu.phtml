@@ -1,4 +1,9 @@
-<ul>
+<?php
+if (! $this->level) {
+    $this->level = 0;
+}
+?>
+<ul<?= $this->level === 0 ? ' role="navigation"' : '' ?>>
 <?php
 
 foreach ($this->items as $item) {
@@ -17,7 +22,7 @@ foreach ($this->items as $item) {
     if ($item->hasChildren()) {
         echo $this->partial(
             'parts/menu.phtml',
-            array('items' => $item->getChildren(), 'url' => $this->url)
+            array('items' => $item->getChildren(), 'url' => $this->url, 'level' => $this->level + 1)
         );
     }
 
