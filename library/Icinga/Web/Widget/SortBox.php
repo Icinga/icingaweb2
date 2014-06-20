@@ -141,34 +141,22 @@ class SortBox extends AbstractWidget
         $form->setMethod('GET');
         $form->setTokenDisabled();
         $form->setName($this->name);
-        $form->addElement(
-            'select',
-            'sort',
-            array(
-                'label'         => 'Sort By',
-                'multiOptions'  => $this->sortFields,
-                'style' => 'width: 12em',
-                'class' => 'autosubmit',
-            )
-        );
-        $form->addElement(
-            'select',
-            'dir',
-            array(
-                'multiOptions'  => array(
-                    'desc'      => 'Desc',
-                    'asc'       => 'Asc',
-                ),
-                'style' => 'width: 4em',
-                'class' => 'autosubmit'
-
-            )
-        );
+        $form->addElement('select', 'sort', array(
+            'label'         => 'Sort By',
+            'multiOptions'  => $this->sortFields,
+            'style'         => 'width: 12em',
+            'class'         => 'autosubmit',
+        ));
+        $form->addElement('select', 'dir', array(
+            'multiOptions'  => array(
+                'asc'       => 'Asc',
+                'desc'      => 'Desc',
+            ),
+            'style' => 'width: 5em',
+            'class' => 'autosubmit'
+        ));
         $sort = $form->getElement('sort')->setDecorators(array('ViewHelper'));
         $dir = $form->getElement('dir')->setDecorators(array('ViewHelper'));
-        // $form->enableAutoSubmit(array('sort', 'dir'));
-        // $form->addElement($this->createFallbackSubmitButton());
-
         if ($this->request) {
             $form->setAction($this->request->getRequestUri());
             $form->populate($this->request->getParams());
