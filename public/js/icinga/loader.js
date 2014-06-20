@@ -28,6 +28,8 @@
          */
         this.requests = {};
 
+        this.iconCache = {};
+
         this.autorefreshEnabled = true;
     };
 
@@ -243,6 +245,22 @@
             return true;
         },
 
+        cacheLoadedIcons: function($container) {
+            // TODO: this is just a prototype, disabled for now
+            return;
+
+            var self = this;
+            $('img.icon', $container).each(function(idx, img) {
+                var src = $(img).attr('src');
+                if (typeof self.iconCache[src] !== 'undefined') {
+                    return;
+                }
+                var cache = new Image();
+                cache.src = src
+                self.iconCache[src] = cache;
+            });
+        },
+
         /**
          * Handle successful XHR response
          */
@@ -434,6 +452,7 @@
             if (newBody) {
                 this.icinga.ui.fixDebugVisibility().triggerWindowResize();
             }
+            self.cacheLoadedIcons(req.$target);
 
             if (active) {
                 var focusedUrl = this.icinga.ui.getFocusedContainerDataUrl();
