@@ -457,7 +457,11 @@ abstract class ApplicationBootstrap
      */
     protected function setupTimezone()
     {
-        $timeZoneString = $this->config->global !== null ? $this->config->global->get('timezone', 'UTC') : 'UTC';
+        $default = @date_default_timezone_get();
+        if (! $default) {
+            $default = 'UTC';
+        }
+        $timeZoneString = $this->config->global !== null ? $this->config->global->get('timezone', $default) : $default;
         date_default_timezone_set($timeZoneString);
         DateTimeFactory::setConfig(array('timezone' => $timeZoneString));
         return $this;
