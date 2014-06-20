@@ -6,19 +6,22 @@ if (!$this->compact): ?>
 <?= $this->tabs ?>
 <div style="margin: 1em;" class="dontprint">
 <?= $this->translate('Sort by') ?> <?= $this->sortControl ?>
-<?= $this->filterWidget ?><br />
+<?php if (! $this->filterEditor): ?>
+<?= $this->filterPreview ?>
+<?php endif ?>
 </div>
 
 <?= $this->widget('limiter')->setCurrentPageCount($this->services->count()) ?>
 <?= $this->paginationControl($services, null, null, array('preserve' => $this->preserve)) ?>
-<?= $this->selectionToolbar('multi', $this->href('monitoring/multi/service', $query)) ?>
+<?= $this->selectionToolbar('multi', $this->href('monitoring/multi/service?' . $this->filter->toQueryString())) ?>
 </div>
 
 <div class="content">
+<?= $this->filterEditor ?>
 <?php endif ?>
 <table data-base-target="_next"
     class="action multiselect <?php if ($this->compact): ?> compact<?php endif ?>" style="table-layout: auto;"
-    data-icinga-multiselect-url="<?= $this->href("/monitoring/multi/service") ?>"
+    data-icinga-multiselect-url="<?= $this->href("monitoring/multi/service") ?>"
     data-icinga-multiselect-data="service,host">
   <tbody>
 <?php
