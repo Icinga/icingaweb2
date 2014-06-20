@@ -1,8 +1,5 @@
 [global]
-environment         = "development"
 timezone            = "Europe/Berlin"
-indexModule         = "monitoring"
-indexController     = "dashboard"
 dateFormat          = "d/m/Y"
 timeFormat          = "g:i A"
 
