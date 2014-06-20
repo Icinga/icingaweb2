@@ -113,10 +113,6 @@ class Monitoring_ListController extends Controller
                 $this->view->showHost = false;
             }
         }
-       // if ($this->view->showHost) {
-            $this->url->shift('service');
-        //}
-        $this->view->query = $this->_request->getQuery();
         $this->setAutorefreshInterval(10);
         
         $columns = array_merge(array(
@@ -446,17 +442,34 @@ class Monitoring_ListController extends Controller
         $view    = $params->shift('view');
         $backend = $params->shift('backend');
         $modifyFilter = $params->shift('modifyFilter', false);
+        $removeFilter = $params->shift('removeFilter', false);
 
         $filter = Filter::fromQueryString((string) $params);
-        $query->applyFilter($filter);
+        $this->view->filterPreview = Widget::create('filterWidget', $filter);
+
+        if ($removeFilter) {
+            $redirect = $this->url->without('page');
+            if ($filter->getById($removeFilter)->isRootNode()) {
+                $redirect->setQueryString('');
+            } else {
+                $filter->removeId($removeFilter);
+                $redirect->setQueryString($filter->toQueryString())
+                    ->getParams()->add('modifyFilter');;
+            }
+            $this->redirectNow($redirect);
+        }
+
         if ($modifyFilter) {
-            $this->view->filterWidget = Widget::create('filterEditor', array(
+            if ($this->_request->isPost()) {
+                $filter = $filter->applyChanges($_POST);
+                $this->redirectNow($this->url->without('page')->setQueryString($filter->toQueryString()));
+            }
+            $this->view->filterEditor = Widget::create('filterEditor', array(
                 'filter' => $filter,
                 'query'  => $query
             ));
-        } else {
-            $this->view->filterWidget = Widget::create('filterWidget', $filter);
         }
+        $query->applyFilter($filter);
         $this->view->filter = $filter;
         if ($sort) {
             $query->order($sort, $dir);
