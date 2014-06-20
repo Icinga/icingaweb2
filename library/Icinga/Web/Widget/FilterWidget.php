@@ -72,11 +72,12 @@ class FilterWidget extends AbstractWidget
     public function render()
     {
         $url = Url::fromRequest();
+        $view = $this->view();
         $html = ' <form method="get" class="inline" action="'
               . $url
               . '"><input type="text" name="q" style="width: 8em" class="search" value="" placeholder="'
               . t('Add filter...')
-              . '" /></form><br />';
+              . '" /></form>';
 
 
         // $html .= $this->renderFilter($this->filter);
@@ -84,8 +85,8 @@ class FilterWidget extends AbstractWidget
         $editorUrl = clone $url;
         $editorUrl->setParam('modifyFilter', true);
         if  ($this->filter->isEmpty()) {
-            $txt = t('Filter');
             $title = t('Filter this list');
+            $txt = $view->icon('create.png', $title);
             $remove = '';
         } else {
             $txt = t('Filtered');
@@ -95,13 +96,26 @@ class FilterWidget extends AbstractWidget
                 . '" title="'
                 . t('Remove this filter')
                 . '">'
-                . t('remove')
+                . $view->icon('remove.png', $title)
                 . '</a>';
         }
         $filter = $this->filter->isEmpty() ? '' : ': ' . $this->filter;
-        $html .= '<a href="' . $editorUrl . '">' . $this->view()->escape($txt) . '</a>'
-             . $filter . $remove;
+        $html .= ($filter ? '<p>' : ' ')
+               . '<a href="' . $editorUrl . '" title="' . $title . '">'
+               . $txt
+               . '</a>'
+               . $this->shorten($filter, 72)
+               . $remove
+               . ($filter ? '</p>' : '');
 
         return $html;
+    }
+
+    protected function shorten($string, $length)
+    {
+        if (strlen($string) > $length) {
+            return substr($string, 0, $length) . '...';
+        }
+        return $string;
     }
 }
