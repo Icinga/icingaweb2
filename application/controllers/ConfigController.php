@@ -30,6 +30,8 @@
 use \Icinga\Web\Controller\BaseConfigController;
 use \Icinga\Web\Widget\Tab;
 use \Icinga\Web\Widget\AlertMessageBox;
+use Icinga\Web\Notification;
+use Icinga\Application\Modules\Module;
 use \Icinga\Web\Url;
 use \Icinga\Application\Icinga;
 use \Icinga\Application\Config as IcingaConfig;
@@ -42,6 +44,7 @@ use \Icinga\Form\Config\ResourceForm;
 use \Icinga\Form\Config\LoggingForm;
 use \Icinga\Form\Config\ConfirmRemovalForm;
 use \Icinga\Config\PreservingIniWriter;
+
 
 /**
  * Application wide controller for application preferences
@@ -97,7 +100,7 @@ class ConfigController extends BaseConfigController
                 array(
                     'name'      => 'modules',
                     'title'     => 'Modules',
-                    'url'       => Url::fromPath('/config/moduleoverview')
+                    'url'       => Url::fromPath('/config/modules')
                 )
             )
         );
@@ -149,16 +152,27 @@ class ConfigController extends BaseConfigController
     /**
      * Display the list of all modules
      */
-    public function moduleoverviewAction()
+    public function modulesAction()
     {
-        $this->view->messageBox = new AlertMessageBox(true);
         $this->view->tabs->activate('modules');
-
         $this->view->modules = Icinga::app()->getModuleManager()->select()
             ->from('modules')
             ->order('enabled', 'desc')
             ->order('name');
         $this->render('module/overview');
+    }
+
+    public function moduleAction()
+    {
+        $name = $this->getParam('name');
+        $app = Icinga::app();
+        $manager = $app->getModuleManager();
+        if ($manager->hasInstalled($name)) {
+            $module = new Module($app, $name, $manager->getModuleDir($name));
+            $this->view->module = $module;
+        } else {
+            $this->view->module = false;
+        }
     }
 
     /**
@@ -171,8 +185,8 @@ class ConfigController extends BaseConfigController
         try {
             $manager->enableModule($module);
             $manager->loadModule($module);
-            $this->addSuccessMessage('Module "' . $module . '" enabled');
-            $this->redirectNow('config/moduleoverview?_render=layout&_reload=css');
+            Notification::success('Module "' . $module . '" enabled');
+            $this->redirectNow('config/modules_render=layout&_reload=css');
             return;
         } catch (Exception $e) {
             $this->view->exceptionMesssage = $e->getMessage();
@@ -191,8 +205,8 @@ class ConfigController extends BaseConfigController
         $manager = Icinga::app()->getModuleManager();
         try {
             $manager->disableModule($module);
-            $this->addSuccessMessage('Module "' . $module . '" disabled');
-            $this->redirectNow('config/moduleoverview?_render=layout&_reload=css');
+            Notification::success('Module "' . $module . '" disabled');
+            $this->redirectNow('config/modules?_render=layout&_reload=css');
             return;
         } catch (Exception $e) {
             $this->view->exceptionMessage = $e->getMessage();

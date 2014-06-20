@@ -16,6 +16,11 @@ if ($moduleName) {
     $moduleClass = '';
 }
 
+$refresh = '';
+if ($this->layout()->autorefreshInterval) {
+    $refresh = ' data-icinga-refresh="' . $this->layout()->autorefreshInterval . '"';
+}
+
 $notifications = Notification::getInstance();
 if ($notifications->hasMessages()) {
     foreach ($notifications->getMessages() as $m) {
@@ -31,7 +36,7 @@ if ($notifications->hasMessages()) {
   <?php echo $this->render('parts/navigation.phtml') ?>
  </div>
  <div id="main" role="main">
-  <div id="col1" class="container<?= $moduleClass ?>"<?php if ($moduleName): ?> data-icinga-module="<?= $moduleName ?>" <?php endif ?> data-icinga-url="<?= Url::fromRequest() ?>" style="display: block">
+  <div id="col1" class="container<?= $moduleClass ?>"<?php if ($moduleName): ?> data-icinga-module="<?= $moduleName ?>" <?php endif ?> data-icinga-url="<?= Url::fromRequest() ?>"<?= $refresh ?> style="display: block">
    <?= $this->render('inline.phtml') ?>
   </div>
   <div id="col2" class="container">
