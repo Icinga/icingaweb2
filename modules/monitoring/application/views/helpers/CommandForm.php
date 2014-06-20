@@ -195,7 +195,7 @@ class Zend_View_Helper_CommandForm extends Zend_View_Helper_Abstract
         $formCode = (string) $form;
 
         $jsLessSubmit = '<noscript>'
-            . '<input type="submit" value="Change" class="button btn btn-cta" />'
+            . '<input type="submit" value="Change" class="button" />'
             . '</noscript></form>';
 
         $formCode = str_replace('</form>', $jsLessSubmit, $formCode);
@@ -203,25 +203,6 @@ class Zend_View_Helper_CommandForm extends Zend_View_Helper_Abstract
         $out .= $formCode;
 
         return $out;
-    }
-
-    /**
-     * Merges css class names together
-     *
-     * @param   string $base
-     * @param   string $additional
-     * @param   string ...
-     *
-     * @return  string
-     */
-    private function mergeClass($base, $additional)
-    {
-        $args = func_get_args();
-        $base = explode(' ', array_shift($args));
-        while (($additional = array_shift($args))) {
-            $base = array_merge($base, explode(' ', $additional));
-        }
-        return implode(' ', $base);
     }
 }
 
