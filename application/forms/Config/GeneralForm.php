@@ -141,29 +141,6 @@ class GeneralForm extends Form
     }
 
     /**
-     * Add the checkbox for using the development environment to this form
-     *
-     * @param Zend_Config   $cfg    The "global" section of the config.ini
-     */
-    private function addDevelopmentCheckbox(Zend_Config $cfg)
-    {
-        $env = $cfg->get('environment', 'development');
-        $this->addElement(
-            'checkbox',
-            'environment',
-            array(
-                'label'     => 'Development Mode',
-                'required'  => true,
-                'helptext'  => 'Set true to show more detailed errors and disable certain optimizations in order to '
-                    . 'make debugging easier.',
-                'tooltip'   => 'More verbose output',
-                'value'     => $env === 'development'
-            )
-        );
-
-    }
-
-    /**
      * Add a select field for setting the default language
      *
      * Possible values are determined by Translator::getAvailableLocaleCodes.
@@ -374,7 +351,6 @@ class GeneralForm extends Form
             $preferences = new Zend_Config(array());
         }
         $this->setName('form_config_general');
-        $this->addDevelopmentCheckbox($global);
         $this->addLanguageSelection($global);
         $this->addTimezoneSelection($global);
         $this->addModuleSettings($global);
@@ -411,7 +387,6 @@ class GeneralForm extends Form
 
         $values = $this->getValues();
         $cfg = clone $config;
-        $cfg->global->environment  = ($values['environment'] == 1) ? 'development' : 'production';
         $cfg->global->language     = $values['language'];
         $cfg->global->timezone     = $values['timezone'];
         $cfg->global->modulePath   = $values['module_path'];
