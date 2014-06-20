@@ -30,6 +30,7 @@
 namespace Icinga\Module\Monitoring;
 
 use Icinga\Web\Controller\ActionController;
+use Icinga\Web\Url;
 use Icinga\File\Csv;
 
 /**
@@ -57,6 +58,7 @@ class Controller extends ActionController
     protected function moduleInit()
     {
         $this->backend = Backend::createBackend($this->_getParam('backend'));
+        $this->view->url = Url::fromRequest();
     }
 
     protected function handleFormatRequest($query)
