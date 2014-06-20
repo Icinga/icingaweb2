@@ -328,6 +328,13 @@ class ActionController extends Zend_Controller_Action
             );
         }
         $this->autorefreshInterval = $interval;
+        return $this;
+    }
+
+    public function disableAutoRefresh()
+    {
+        $this->autorefreshInterval = null;
+        return $this;
     }
 
     /**
