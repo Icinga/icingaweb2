@@ -26,6 +26,15 @@ class CommentdeletionhistoryQuery extends IdoQuery
         )
     );
 
+    public function whereToSql($col, $sign, $expression)
+    {
+        if ($col === 'UNIX_TIMESTAMP(h.deletion_time)') {
+            return 'h.deletion_time ' . $sign . ' ' . $this->timestampForSql(strtotime($expression));
+        } else {
+            return parent::whereToSql($col, $sign, $expression);
+        }
+    }
+
     protected function joinBaseTables()
     {
         $this->select->from(

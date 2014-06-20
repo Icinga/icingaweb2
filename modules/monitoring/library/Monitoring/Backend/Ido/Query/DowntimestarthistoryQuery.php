@@ -26,6 +26,15 @@ class DowntimestarthistoryQuery extends IdoQuery
         )
     );
 
+    public function whereToSql($col, $sign, $expression)
+    {
+        if ($col === 'UNIX_TIMESTAMP(h.actual_start_time)') {
+            return 'h.actual_start_time ' . $sign . ' ' . $this->timestampForSql(strtotime($expression));
+        } else {
+            return parent::whereToSql($col, $sign, $expression);
+        }
+    }
+
     protected function joinBaseTables()
     {
         $this->select->from(

@@ -48,7 +48,6 @@ class EventHistory extends DataView
             'service_description',
             'object_type',
             'timestamp',
-            'raw_timestamp',
             'state',
             'attempt',
             'max_attempts',
@@ -64,7 +63,7 @@ class EventHistory extends DataView
     {
         return array(
             'timestamp' => array(
-                'columns' => array('raw_timestamp'),
+                'columns' => array('timestamp'),
                 'order' => 'DESC'
             )
         );

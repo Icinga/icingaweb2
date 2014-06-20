@@ -136,9 +136,9 @@ class DbQuery extends SimpleQuery
                 }
             }
         } else {
-            // TODO: render Filter (Where/like/time...)
             $str .= $this->whereToSql($filter->getColumn(), $filter->getSign(), $filter->getExpression());
         }
+
         return $str;
     }
 
@@ -163,6 +163,12 @@ class DbQuery extends SimpleQuery
     protected function escapeWildcards($value)
     {
         return preg_replace('/\*/', '%', $value);
+    }
+
+    protected function timestampForSql($value)
+    {
+        // TODO: do this db-aware
+        return $this->escapeForSql(date('Y-m-d H:i:s', $value));
     }
 
     public function whereToSql($col, $sign, $expression)

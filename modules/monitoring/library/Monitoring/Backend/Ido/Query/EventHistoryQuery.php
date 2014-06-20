@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
+use Icinga\Data\Filter\Filter;
 use Zend_Db_Select;
 
 class EventHistoryQuery extends IdoQuery
@@ -21,7 +22,6 @@ class EventHistoryQuery extends IdoQuery
             'service_description' => 'eho.name2 COLLATE latin1_general_ci',
             'object_type'         => "CASE WHEN eho.objecttype_id = 1 THEN 'host' ELSE 'service' END",
             'timestamp'           => 'eh.timestamp',
-            'raw_timestamp'       => 'eh.raw_timestamp', // TODO: remove this as soon as removed from frontends
             'state'               => 'eh.state',
             'attempt'             => 'eh.attempt',
             'max_attempts'        => 'eh.max_attempts',
@@ -40,7 +40,6 @@ class EventHistoryQuery extends IdoQuery
     protected function joinBaseTables()
     {
         $columns = array(
-            'raw_timestamp',
             'timestamp',
             'object_id',
             'type',
@@ -80,14 +79,22 @@ class EventHistoryQuery extends IdoQuery
         return parent::order($columnOrAlias, $dir);
     }
 
-	public function where($condition, $value = null)
-	{
-		$this->requireColumn($condition);
-		foreach ($this->subQueries as $sub) {
-		    $sub->where($condition, $value);
-		}
-		return $this;
-	}
+    public function addFilter(Filter $filter)
+    {
+  	    foreach ($this->subQueries as $sub) {
+		        $sub->applyFilter(clone $filter);
+		    }
+		    return $this;
+    }
+
+	  public function where($condition, $value = null)
+	  {
+		  $this->requireColumn($condition);
+		  foreach ($this->subQueries as $sub) {
+		      $sub->where($condition, $value);
+		  }
+		  return $this;
+	  }
 
     protected function joinHostgroups()
     {
