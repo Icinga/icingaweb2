@@ -1,6 +1,7 @@
 <?php
 
 use Icinga\Web\JavaScript;
+use Icinga\Util\Translator;
 
 if (array_key_exists('_dev', $_GET)) {
   $jsfile  = 'js/icinga.dev.js';
@@ -11,15 +12,15 @@ if (array_key_exists('_dev', $_GET)) {
 }
 
 $ie8jsfile  = 'js/icinga.ie8.js';
-
+$lang = Translator::getLanguage();
 $isIframe = isset($_GET['_render']) && $_GET['_render'] === 'iframe';
 $iframeClass = $isIframe ? ' iframe' : '';
 
 ?><!DOCTYPE html>
 <!--[if IE 8]>
-<html class="no-js ie8<?= $iframeClass ?>"> <![endif]-->
+<html class="no-js ie8<?= $iframeClass ?>" lang="<?= $lang ?>"> <![endif]-->
 <!--[if gt IE 8]><!-->
-<html class="no-js<?= $iframeClass ?>"> <!--<![endif]-->
+<html class="no-js<?= $iframeClass ?>" lang="<?= $lang ?>"> <!--<![endif]-->
 <head>
   <meta charset="utf-8">
   <meta content="width=320; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"/>
