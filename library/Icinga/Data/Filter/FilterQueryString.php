@@ -93,7 +93,7 @@ class FilterQueryString
         ));
     }
 
-    protected function readFilters($nestingLevel = 0, $op = '&')
+    protected function readFilters($nestingLevel = 0, $op = null)
     {
         $filters = array();
         while ($this->pos < $this->length) {
@@ -111,6 +111,11 @@ class FilterQueryString
                     $not = $this->readFilters($nestingLevel + 1, '!');
                     $filters[] = $not;
                     continue;
+                }
+
+                if ($op === null && count($filters > 0) && ($next === '&' || $next === '|')) {
+                    $op = $next;
+                    $next = $this->readChar();
                 }
 
                 if ($next === false) {
