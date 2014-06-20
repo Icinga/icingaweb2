@@ -439,9 +439,11 @@ class ActionController extends Zend_Controller_Action
 
         $notifications = Notification::getInstance();
         if ($isXhr && ! $this->isRedirect && $notifications->hasMessages()) {
+            $notificationList = array();
             foreach ($notifications->getMessages() as $m) {
-                header('X-Icinga-Notification: ' . rawurlencode($m->type . ' ' . $m->message));
+                $notificationList[] = rawurlencode($m->type . ' ' . $m->message);
             }
+            header('X-Icinga-Notification: ' . implode('&', $notificationList));
         }
 
         if ($isXhr && ($this->reloadCss || $this->getParam('_reload') === 'css')) {
