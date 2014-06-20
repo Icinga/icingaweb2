@@ -174,7 +174,7 @@ class Url
         }
         // TODO: This has been used by former filter implementation, remove it:
         if (isset($urlParts['query'])) {
-            $params = UrlParams::fromQueryString($urlParts['query'])->addValues($params);
+            $params = UrlParams::fromQueryString($urlParts['query'])->mergeValues($params);
         }
 
         $fragment = self::getUrlFragment($url);
@@ -381,8 +381,9 @@ class Url
             }
             $this->params = $urlParams;
         } else {
-            // TODO: ProgrammingError?
-            throw new \Exception('Url, params, WTF');
+            throw new ProgrammingError(
+                'Url params needs to be either an array or an UrlParams instance'
+            );
         }
         return $this;
     }

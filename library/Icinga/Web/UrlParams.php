@@ -156,6 +156,33 @@ class UrlParams
         return $this;
     }
 
+    protected function clearValues()
+    {
+        $this->params = array();
+        $this->index = array();
+    }
+
+    public function mergeValues($param, $values = null)
+    {
+        if ($values === null && is_array($param)) {
+            foreach ($param as $k => $v) {
+                $this->set($k, $v);
+            }
+        } else {
+            foreach ($values as $value) {
+                $this->set($param, $value);
+            }
+        }
+
+        return $this;
+    }
+
+    public function setValues($param, $values = null)
+    {
+        $this->clearValues();
+        return $this->addValues($param, $values);
+    }
+
     /**
      * Add the given parameter with the given value in front of all other values
      *
