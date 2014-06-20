@@ -214,15 +214,18 @@
 
         layout1col: function () {
             if (! $('#layout').hasClass('twocols')) { return; }
-            var $col2 = $('#col2');
             this.icinga.logger.debug('Switching to single col');
             $('#layout').removeClass('twocols');
-            $col2.removeData('icingaUrl');
-            $col2.removeData('icingaRefresh');
-            $col2.removeData('lastUpdate');
-            $col2.removeData('icingaModule');
-            this.icinga.loader.stopPendingRequestsFor($col2);
-            $col2.html('');
+            this.closeContainer($('#col2'));
+        },
+
+        closeContainer: function($c) {
+            $c.removeData('icingaUrl');
+            $c.removeData('icingaRefresh');
+            $c.removeData('lastUpdate');
+            $c.removeData('icingaModule');
+            this.icinga.loader.stopPendingRequestsFor($c);
+            $c.html('');
             this.fixControls();
         },
 
