@@ -10,6 +10,7 @@ $helper = $this->getHelper('MonitoringState');
 <?php endif ?>
 </div>
 
+<?= $this->widget('limiter')->setMaxLimit($this->hosts->count()) ?>
 <?= $this->paginationControl($hosts, null, null, array('preserve' => $this->preserve)); ?>
 <?= $this->selectionToolbar('multi', $this->href('monitoring/multi/host?' . $this->filter->toQueryString())); ?>
 </div>

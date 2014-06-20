@@ -9,6 +9,7 @@ if (!$this->compact): ?>
 <?= $this->filterWidget ?><br />
 </div>
 
+<?= $this->widget('limiter')->setCurrentPageCount($this->services->count()) ?>
 <?= $this->paginationControl($services, null, null, array('preserve' => $this->preserve)) ?>
 <?= $this->selectionToolbar('multi', $this->href('monitoring/multi/service', $query)) ?>
 </div>
