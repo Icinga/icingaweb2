@@ -46,6 +46,8 @@ class Translator
      */
     const DEFAULT_LOCALE = 'en_US';
 
+    protected static $locale = 'C';
+
     /**
      * Known gettext domains and directories
      *
@@ -104,9 +106,21 @@ class Translator
                 throw new Exception("Cannot set locale '$localeName' for category 'LC_ALL'");
             }
         } else {
-            putenv('LC_ALL=' . setlocale(LC_ALL, 0)); // Failsafe, Win and Unix
-            putenv('LANG=' . setlocale(LC_ALL, 0)); // Windows fix, untested
+            $locale = setlocale(LC_ALL, 0);
+            self::$locale = $locale;
+            putenv('LC_ALL=' . $locale); // Failsafe, Win and Unix
+            putenv('LANG=' . $locale); // Windows fix, untested
         }
+    }
+
+    public static function getLocale()
+    {
+        return self::$locale;
+    }
+
+    public static function getLanguage()
+    {
+        return self::$locale === 'C' ? 'en' : substr(self::$locale, 0, 2);
     }
 
     /**
