@@ -76,7 +76,7 @@ class Controller extends ActionController
         if ($this->_getParam('format') === 'json'
             || $this->_request->getHeader('Accept') === 'application/json') {
             header('Content-type: application/json');
-            echo json_encode($query->fetchAll());
+            echo json_encode($query->getQuery()->fetchAll());
             exit;
         }
         if ($this->_getParam('format') === 'csv'

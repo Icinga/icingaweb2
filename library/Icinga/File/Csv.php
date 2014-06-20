@@ -4,7 +4,7 @@
 
 namespace Icinga\File;
 
-use Icinga\Data\Fetchable;
+use Icinga\Data\Browsable;
 
 class Csv
 {
@@ -12,7 +12,7 @@ class Csv
 
     protected function __construct() {}
 
-    public static function fromQuery(Fetchable $query)
+    public static function fromQuery(Browsable $query)
     {
         $csv = new Csv();
         $csv->query = $query;
@@ -29,7 +29,7 @@ class Csv
     {
         $first = true;
         $csv = '';
-        foreach ($this->query->fetchAll() as $row) {
+        foreach ($this->query->getQuery()->fetchAll() as $row) {
             if ($first) {
                 $csv .= implode(',', array_keys((array) $row)) . "\r\n";
                 $first = false;
