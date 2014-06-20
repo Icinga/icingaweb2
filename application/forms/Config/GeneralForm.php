@@ -231,16 +231,6 @@ class GeneralForm extends Form
     {
         $this->addElement(
             'text',
-            'module_folder',
-            array(
-                'label'     => 'Module Folder',
-                'required'  => true,
-                'helptext'  => 'The directory that contains the symlink to all enabled directories.',
-                'value'     => $cfg->get('moduleFolder', $this->getConfigDir() . '/config/enabledModules')
-            )
-        );
-        $this->addElement(
-            'text',
             'module_path',
             array(
                 'label'     => 'Module Path',
@@ -424,7 +414,6 @@ class GeneralForm extends Form
         $cfg->global->environment  = ($values['environment'] == 1) ? 'development' : 'production';
         $cfg->global->language     = $values['language'];
         $cfg->global->timezone     = $values['timezone'];
-        $cfg->global->moduleFolder = $values['module_folder'];
         $cfg->global->modulePath   = $values['module_path'];
         $cfg->global->dateFormat   = $values['date_format'];
         $cfg->global->timeFormat   = $values['time_format'];
