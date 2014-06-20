@@ -94,6 +94,14 @@
             }
         },
 
+        pushUrl: function (url) {
+            // No history API, no action
+            if (!this.enabled) {
+                return;
+            }
+            window.history.pushState({icinga: true}, null, url);
+        },
+
         /**
          * Event handler for pop events
          *

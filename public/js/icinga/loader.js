@@ -499,9 +499,16 @@
             // Update history when necessary. Don't do so for requests triggered
             // by history or autorefresh events
             if (! req.historyTriggered && ! req.autorefresh) {
-                // We only want to care about top-level containers
-                if (req.$target.parent().closest('.container').length === 0) {
-                    this.icinga.history.pushCurrentState();
+                if (req.$target.hasClass('container')) {
+                    // We only want to care about top-level containers
+                    if (req.$target.parent().closest('.container').length === 0) {
+                        this.icinga.history.pushCurrentState();
+                        this.icinga.logger.info('Pushing state');
+                    }
+                } else {
+                    // Request wasn't for a container, so it's usually the body
+                    // or the full layout. Push request URL to history:
+                    this.icinga.history.pushUrl(req.url);
                 }
             }
 
