@@ -511,25 +511,25 @@
         refreshTimeSince: function () {
 
             $('.timesince').each(function (idx, el) {
-                var m = el.innerHTML.match(/^(-?\d+)m\s(-?\d+)s/);
+                var m = el.innerHTML.match(/^(.*?)(-?\d+)m\s(-?\d+)s/);
                 if (m !== null) {
-                    var nm = parseInt(m[1]);
-                    var ns = parseInt(m[2]);
+                    var nm = parseInt(m[2]);
+                    var ns = parseInt(m[3]);
                     if (ns < 59) {
                         ns++;
                     } else {
                         ns = 0;
                         nm++;
                     }
-                    $(el).html(nm + 'm ' + ns + 's');
+                    $(el).html(m[1] + nm + 'm ' + ns + 's');
                 }
             });
 
             $('.timeuntil').each(function (idx, el) {
-                var m = el.innerHTML.match(/^(-?\d+)m\s(-?\d+)s/);
+                var m = el.innerHTML.match(/^(.*?)(-?\d+)m\s(-?\d+)s/);
                 if (m !== null) {
-                    var nm = parseInt(m[1]);
-                    var ns = parseInt(m[2]);
+                    var nm = parseInt(m[2]);
+                    var ns = parseInt(m[3]);
                     var signed = '';
                     var sec = 0;
 
@@ -541,11 +541,11 @@
                     } else if (nm == 0 && ns == 0) {
                         signed = '-';    
                         sec = 1;
-                    } else if (nm == 0 && m[1][0] == '-') {
+                    } else if (nm == 0 && m[2][0] == '-') {
                         signed = '-';    
                         sec = ns;
                         sec++;
-                    } else if (nm == 0 && m[1][0] != '-') {
+                    } else if (nm == 0 && m[2][0] != '-') {
                         sec = ns;
                         sec--;
                     } else {
@@ -557,7 +557,7 @@
                     nm = Math.floor(sec/60);
                     ns = sec - nm * 60;
 
-                    $(el).html(signed + nm + 'm ' + ns + 's');
+                    $(el).html(m[1] + signed + nm + 'm ' + ns + 's');
                 }
             });
         },
