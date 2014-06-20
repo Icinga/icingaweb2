@@ -123,7 +123,7 @@ class UrlParams
      *
      * @return self
      */
-    public function add($param, $value)
+    public function add($param, $value = true)
     {
         $this->params[] = array($param, $this->cleanupValue($value));
         $this->indexLastOne();
@@ -145,11 +145,11 @@ class UrlParams
     {
         if ($values === null && is_array($param)) {
             foreach ($param as $k => $v) {
-                $this->addValue($k, $v);
+                $this->add($k, $v);
             }
         } else {
             foreach ($values as $value) {
-                $this->addValue($param, $value);
+                $this->add($param, $value);
             }
         }
 

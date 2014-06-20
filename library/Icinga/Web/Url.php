@@ -174,9 +174,7 @@ class Url
         }
         // TODO: This has been used by former filter implementation, remove it:
         if (isset($urlParts['query'])) {
-            $urlParams = array();
-            parse_str($urlParts['query'], $urlParams);
-            $params = array_merge($urlParams, $params);
+            $params = UrlParams::fromQueryString($urlParts['query'])->addValues($params);
         }
 
         $fragment = self::getUrlFragment($url);
@@ -310,6 +308,12 @@ class Url
         } else {
             return $this->path . '?' . $this->params->setSeparator('&amp;') . $this->anchor;
         }
+    }
+
+    public function setQueryString($queryString)
+    {
+        $this->params = UrlParams::fromQueryString($queryString);
+        return $this;
     }
 
     public function getQueryString()
