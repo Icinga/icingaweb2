@@ -1,72 +1,59 @@
 <?php
-    /** @var Zend_View_Helper_CommandForm $cf */
-    $cf = $this->getHelper('CommandForm');
-    $servicequery = isset($this->servicequery) ? $this->servicequery : '';
-    $objectName = $this->is_service ? 'Services' : 'Hosts';
+
+$cf = $this->getHelper('CommandForm');
+$servicequery = isset($this->servicequery) ? $this->servicequery : '';
+$objectName = $this->is_service ? $this->translate('Services') : $this->translate('Hosts');
+
+$params = array(
+    'host'       => $this->target['host'],
+    'service'    => null,
+    'checktime'  => time(),
+    'forcecheck' => '1'
+);
+if (array_key_exists('service', $this->target)) {
+    $params['service'] = $this->target['service'];
+} else {
+    unset($params['service']);
+}
 ?>
-
-<tr>
-    <th>
-        <?= count($objects) . ' ' . $objectName ?>
-    </th>
-    <td>
-        <a
-            href="<?=$this->href(
-                'monitoring/command/reschedulenextcheck',
-                array(
-                    'host'       => $this->target['host'],
-                    'service'    => array_key_exists('service', $this->target) ? $this->target['service'] : null,
-                    'checktime'  => time(),
-                    'forcecheck' => '1'
-                )
-            ); ?>"
-        >
-            <?= $this->icon('refresh_petrol.png') ?> Recheck
-        </a> <br/>
-        <a href="<?= $this->href('monitoring/command/reschedulenextcheck', $this->target) ?>">
-            <?= $this->icon('reschedule_petrol.png') ?> Reschedule
-        </a> <br />
-
-    </td>
-    <td>
-         Perform actions on <?=  count($objects) . ' ' . $objectName ?>.
-    </td>
+<tr class="newsection">
+  <th><?= count($objects) . ' ' . $objectName ?></th>
+  <td>
+    <a href="<?=
+      $this->href('monitoring/command/reschedulenextcheck', $params) ?>"><?=
+        $this->icon('refresh_petrol.png')
+      ?> Recheck</a><br />
+    <a href="<?= $this->href('monitoring/command/reschedulenextcheck', $this->target) ?>"><?=
+       $this->icon('reschedule_petrol.png')
+    ?> Reschedule</a><br />
+  </td>
+  <td>Perform actions on <?=  count($objects) . ' ' . $objectName ?>.</td>
 </tr>
 
 <tr class="newsection">
-    <th>
-        <?= $this->problems ?> Problems
-    </th>
-    <td>
-        <a
-            title="Schedule downtimes for all selected hosts"
-            href="<?= $this->href('monitoring/command/scheduledowntime', $this->target); ?>"
-        >
-            <?= $this->icon('in_downtime_petrol.png') ?> Schedule Downtimes
-        </a>
-    </td>
-    <td>
-        Handle <?= $this->problems ?> problems on <span> <?= count($this->objects) ?> </span> <?= $objectName ?>.
-    </td>
+  <th><?= $this->problems ?> Problems</th>
+  <td>
+    <a title="Schedule downtimes for all selected hosts" href="<?=
+      $this->href('monitoring/command/scheduledowntime', $this->target) ?>"><?=
+      $this->icon('in_downtime_petrol.png')
+      ?> Schedule Downtimes</a>
+  </td>
+  <td><?= sprintf(
+      'Handle %d problems on %d %s.',
+      $this->problems,
+      count($this->objects),
+      $objectName
+  ) ?></td>
 </tr>
 <tr>
-    <th>
-        <?= count($this->unhandled) ?> Unhandled
-    </th>
-    <td>
-        <a
-            title="Acknowledge all problems on the selected hosts or services"
-            href="<?= $this->href('monitoring/command/acknowledgeproblem', $this->target);?>"
-        >
-            <?= $this->icon('acknowledgement_petrol.png') ?> Acknowledge
-        </a>  <br />
-        <a
-            title="Remove all acknowledgements from all selected hosts or services"
-            href="<?=$this->href('monitoring/command/removeacknowledgement', $target);?>"
-            >
-            <?= $this->icon('remove_petrol.png') ?> Remove Acknowledgements
-        </a>
-    </td>
-    <td>
-    </td>
+  <th><?= count($this->unhandled) ?> Unhandled</th>
+  <td colspan="2">
+    <a title="Acknowledge all problems on the selected hosts or services" href="<?=
+      $this->href('monitoring/command/acknowledgeproblem', $this->target) ?>"><?=
+      $this->icon('acknowledgement_petrol.png')
+      ?> Acknowledge</a><br />
+    <a title="Remove all acknowledgements from all selected hosts or services" href="<?=
+      $this->href('monitoring/command/removeacknowledgement', $target) ?>"><?=
+      $this->icon('remove_petrol.png') ?> Remove Acknowledgements</a>
+  </td>
 </tr>

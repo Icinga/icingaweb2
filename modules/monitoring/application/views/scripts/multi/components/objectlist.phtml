@@ -1,34 +1,65 @@
-<?php for ($i = 0; $i < count($objects) && $i < 5; $i++) {
-    $object = $objects[$i]; ?>
-    <a data-base-target='_next' href="<?php
-    if ($this->is_service) {
-        echo $this->href(
-            'monitoring/show/service',
-            array('host' => $object->host_name, 'service' => $object->service_description)
-        );
-        echo '">' . $object->host_name . ' ' . $object->service_description . '</a>';
-    } else {
-        echo $this->href(
-            'monitoring/show/host',
-            array('host' => $object->host_name)
-        );
-        echo '">' . $object->host_name . '</a>';
-    }?>,
-<?php } ?> <?php
-    if (count($objects) > 5) {
-       echo '<i> ... ' . (count($objects) - 5) . ' more ... </i>';
-    }
+<?php
+  
+$objectCount = count($objects);
 
-    if (!$this->is_service) {
-        $link = 'monitoring/list/hosts';
-        $target = array(
-            'host' => $this->hostquery
+$links = array();
+for ($i = 0; $i < $objectCount && $i < 5; $i++) {
+    $object = $objects[$i];    
+
+    if ($this->is_service) {
+        $links[] = $this->qlink(
+            $object->host_name . ' ' . $object->service_description,
+            'monitoring/show/service',
+            array(
+                'host' => $object->host_name,
+                'service' => $object->service_description
+            )
         );
     } else {
-        $link = 'monitoring/list/services';
-        $target = array(
-            'host'    => $this->hostquery,
-            'service' => $this->servicequery
+        $links[] =  $this->qlink(
+            $object->host_name,
+            'monitoring/show/host',
+            array(
+                'host' => $object->host_name
+            )
         );
     }
-?> <a data-base-target='_next' href='<?= $this->href($link, $this->query); ?>'><b> list all </b></a>
+}
+
+if ($this->is_service) {
+    $objectName = $this->translate('Services');
+    $link = 'monitoring/list/services';
+    $target = array(
+        'host'    => $this->hostquery,
+        'service' => $this->servicequery
+    );
+} else {
+    $objectName = $this->translate('Hosts');
+    $link = 'monitoring/list/hosts';
+    $target = array(
+        'host' => $this->hostquery
+    );
+}
+
+$more = clone $this->url;
+
+
+?><tr class="newsection" data-base-target="_next">
+<th><?= $this->qlink(
+    $this->translate('List all'),
+    $more->setPath($link),
+    null,
+    array('title' => $this->translate('List all selected objects'))
+) ?></th>
+<td colspan="3">
+<?php
+
+echo implode(', ', $links);
+
+if ($objectCount > 5) {
+    echo ' ' . sprintf($this->translate('and %d more'), count($objects) - 5);
+}
+
+?>
+</td>
+</tr>
