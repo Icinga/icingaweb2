@@ -56,12 +56,38 @@ class Monitoring_ProcessController extends MonitoringController
         $this->getTabs()->activate('info');
         $this->setAutorefreshInterval(10);
 
-		// TODO: This one is broken right now, doublecheck default columns
+        // TODO: This one is broken right now, doublecheck default columns
         $this->view->programstatus = $this->backend->select()
-            ->from('programstatus')
+            ->from('programstatus', array(
+                'id',
+                'status_update_time',
+                'program_start_time',
+                'program_end_time',
+                'is_currently_running',
+                'process_id',
+                'daemon_mode',
+                'last_command_check',
+                'last_log_rotation',
+                'notifications_enabled',
+                'disable_notif_expire_time',
+                'active_service_checks_enabled',
+                'passive_service_checks_enabled',
+                'active_host_checks_enabled',
+                'passive_host_checks_enabled',
+                'event_handlers_enabled',
+                'flap_detection_enabled',
+                'failure_prediction_enabled',
+                'process_performance_data',
+                'obsess_over_hosts',
+                'obsess_over_services',
+                'modified_host_attributes',
+                'modified_service_attributes',
+                'global_host_event_handler',
+                'global_service_event_handler'
+            ))
             ->getQuery()->fetchRow();
 
-        $this->view->backendName = $this->backend->getDefaultBackendName();
+        $this->view->backendName = $this->backend->getName();
     }
 
     public function performanceAction()

@@ -32,6 +32,8 @@ class Backend implements Selectable, Queryable, ConnectionInterface
      */
     protected $type;
 
+    protected $name;
+
     /**
      * Create a new backend
      *
@@ -42,6 +44,17 @@ class Backend implements Selectable, Queryable, ConnectionInterface
     {
         $this->resource = $resource;
         $this->type = $type;
+    }
+
+    // Temporary workaround, we have no way to know our name
+    protected function setName($name)
+    {
+        $this->name = $name;
+    }
+
+    public function getName()
+    {
+        return $this->name;
     }
 
     /**
@@ -88,7 +101,9 @@ class Backend implements Selectable, Queryable, ConnectionInterface
             // TODO(el): The resource should set the table prefix
             $resource->setTablePrefix('icinga_');
         }
-        return new Backend($resource, $backendConfig->type);
+        $backend = new Backend($resource, $backendConfig->type);
+        $backend->setName($backendName);
+        return $backend;
     }
 
 public function getResource()
