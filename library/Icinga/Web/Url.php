@@ -52,13 +52,6 @@ class Url
     protected $params;
 
     /**
-     * An array to map aliases to valid parameters
-     *
-     * @var array
-     */
-    protected $aliases = array();
-
-    /**
      * The site anchor after the '#'
      *
      * @var string
@@ -213,33 +206,6 @@ class Url
     protected static function stripUrlFragment($url)
     {
         return preg_replace('/#.*$/', '', $url);
-    }
-
-    /**
-     * Set the array to be used to map aliases to valid parameters
-     * TODO: Kill this
-     *
-     * @param   array   $aliases    The array to be used (alias => param)
-     *
-     * @return  self
-     */
-    public function setAliases(array $aliases)
-    {
-        $this->aliases = $aliases;
-        return $this;
-    }
-
-    /**
-     * Return the parameter for the given alias
-     * TODO: Kill this
-     *
-     * @param   string  $alias  The alias to translate
-     *
-     * @return  string          The parameter name
-     */
-    public function translateAlias($alias)
-    {
-        return array_key_exists($alias, $this->aliases) ? $this->aliases[$alias] : $alias;
     }
 
     /**

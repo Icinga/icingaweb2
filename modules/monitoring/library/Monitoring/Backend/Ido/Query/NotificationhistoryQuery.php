@@ -29,7 +29,7 @@ class NotificationhistoryQuery extends IdoQuery
     public function whereToSql($col, $sign, $expression)
     {
         if ($col === 'UNIX_TIMESTAMP(n.start_time)') {
-            return 'n.start_time ' . $sign . ' ' . $this->timestampForSql(strtotime($expression));
+            return 'n.start_time ' . $sign . ' ' . $this->timestampForSql($this->valueToTimestamp($expression));
         } else {
             return parent::whereToSql($col, $sign, $expression);
         }

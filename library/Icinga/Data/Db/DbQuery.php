@@ -165,6 +165,25 @@ class DbQuery extends SimpleQuery
         return preg_replace('/\*/', '%', $value);
     }
 
+    protected function valueToTimestamp($value)
+    {
+        // We consider integers as valid timestamps. Does not work for URL params
+        if (ctype_digit($value)) {
+            return $value;
+        }
+        $value = strtotime($value);
+        if (! $value) {
+            /*
+            NOTE: It's too late to throw exceptions, we might finish in __toString
+            throw new \Exception(sprintf(
+                '"%s" is not a valid time expression',
+                $value
+            ));
+            */
+        }
+        return $value;
+    }
+
     protected function timestampForSql($value)
     {
         // TODO: do this db-aware
@@ -174,7 +193,7 @@ class DbQuery extends SimpleQuery
     public function whereToSql($col, $sign, $expression)
     {
         if ($this->isTimestamp($col)) {
-            $expression = strtotime($expression);
+            $expression = $this->valueToTimestamp($expression);
         }
         if (is_array($expression) && $sign === '=') {
             // TODO: Should we support this? Doesn't work for blub*

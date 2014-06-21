@@ -9,13 +9,13 @@ use Icinga\Web\Url;
 use Icinga\Util\Format;
 use Icinga\Application\Config;
 use Icinga\Util\DateTimeFactory;
-use Icinga\Web\Controller\ActionController;
+use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Timeline\TimeLine;
 use Icinga\Module\Monitoring\Timeline\TimeRange;
 use Icinga\Module\Monitoring\Web\Widget\TimelineIntervalBox;
 use Icinga\Module\Monitoring\DataView\EventHistory as EventHistoryView;
 
-class Monitoring_TimelineController extends ActionController
+class Monitoring_TimelineController extends Controller
 {
     public function indexAction()
     {
@@ -23,23 +23,13 @@ class Monitoring_TimelineController extends ActionController
         $this->setupIntervalBox();
         list($displayRange, $forecastRange) = $this->buildTimeRanges();
 
-        $detailUrl = Url::fromPath(
-            '/monitoring/list/eventhistory',
-            Url::fromRequest()->getParams()
-        )->setAliases(
-            array(
-                'name'  => 'type',
-                'end'   => 'raw_timestamp>',
-                'start' => 'raw_timestamp<'
-            )
-        )->remove(array('start', 'end', 'extend', 'interval'));
+        $detailUrl = Url::fromPath('monitoring/list/eventhistory');
 
         $timeline = new TimeLine(
-            EventHistoryView::fromRequest(
-                $this->getRequest(),
+            $this->backend->select()->from('eventHistory', 
                 array(
                     'name' => 'type',
-                    'time' => 'raw_timestamp'
+                    'time' => 'timestamp'
                 )
             ),
             array(
