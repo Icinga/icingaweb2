@@ -20,7 +20,7 @@ class EventHistoryQuery extends IdoQuery
             'service'             => 'eho.name2 COLLATE latin1_general_ci',
             'host_name'           => 'eho.name1 COLLATE latin1_general_ci',
             'service_description' => 'eho.name2 COLLATE latin1_general_ci',
-            'object_type'         => "CASE WHEN eho.objecttype_id = 1 THEN 'host' ELSE 'service' END",
+            'object_type'         => 'eh.object_type',
             'timestamp'           => 'eh.timestamp',
             'state'               => 'eh.state',
             'attempt'             => 'eh.attempt',
@@ -46,6 +46,7 @@ class EventHistoryQuery extends IdoQuery
             'output',
             'state',
             'state_type',
+            'object_type',
             'attempt',
             'max_attempts',
         );

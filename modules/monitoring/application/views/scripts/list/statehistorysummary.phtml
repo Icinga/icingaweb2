@@ -22,7 +22,7 @@ foreach ($summary as $entry) {
                 'timestamp>'  => strtotime($day . ' 00:00:00'),
                 'object_type' => 'service',
                 'state'       => '2',
-                'type'        => 'hard_state,soft_state'
+                'type'        => '(hard_state|soft_state)'
             )
         )
     );

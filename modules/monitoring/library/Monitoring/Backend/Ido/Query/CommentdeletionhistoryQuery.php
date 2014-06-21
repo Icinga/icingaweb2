@@ -22,7 +22,8 @@ class CommentdeletionhistoryQuery extends IdoQuery
             'host_name'           => 'o.name1 COLLATE latin1_general_ci',
             'service_description' => 'o.name2 COLLATE latin1_general_ci',
             'service_host_name'   => 'o.name1 COLLATE latin1_general_ci',
-            'service_description' => 'o.name2 COLLATE latin1_general_ci'
+            'service_description' => 'o.name2 COLLATE latin1_general_ci',
+            'object_type'         => "CASE WHEN o.objecttype_id = 1 THEN 'host' ELSE 'service' END"
         )
     );
 

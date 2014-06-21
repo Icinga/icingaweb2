@@ -22,7 +22,8 @@ class StatehistoryQuery extends IdoQuery
             'host_name'           => 'sho.name1 COLLATE latin1_general_ci',
             'service_description' => 'sho.name2 COLLATE latin1_general_ci',
             'service_host_name'   => 'sho.name1 COLLATE latin1_general_ci',
-            'service_description' => 'sho.name2 COLLATE latin1_general_ci'
+            'service_description' => 'sho.name2 COLLATE latin1_general_ci',
+            'object_type'         => "CASE WHEN sho.objecttype_id = 1 THEN 'host' ELSE 'service' END"
         )
     );
 
