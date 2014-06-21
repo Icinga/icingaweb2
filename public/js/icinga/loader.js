@@ -343,6 +343,9 @@
                 delete this.requests[req.$target.attr('id')];
 
                 req.$target = $('#' + target);
+                
+                // We assume target === 'layout' right now. This might not be correct
+                this.icinga.ui.layout1col();
                 newBody = true;
             }
 

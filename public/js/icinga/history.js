@@ -71,7 +71,6 @@
 
             icinga.logger.debug('Pushing current state to history');
             var url = '';
-            var blacklist = ['_render', '_reload'];
 
             // We only store URLs of containers sitting directly under #main:
             $('#main > .container').each(function (idx, container) {
@@ -90,7 +89,7 @@
 
             // Did we find any URL? Then push it!
             if (url !== '') {
-                window.history.pushState({icinga: true}, null, url);
+                window.history.pushState({icinga: true}, null, this.cleanupUrl(url));
             }
         },
 
@@ -99,7 +98,13 @@
             if (!this.enabled) {
                 return;
             }
-            window.history.pushState({icinga: true}, null, url);
+            window.history.pushState({icinga: true}, null, this.cleanupUrl(url));
+        },
+
+        cleanupUrl: function(url) {
+            url = url.replace(/_render=[a-z0-9]+&/, '').replace(/&_render=[a-z0-9]+/, '').replace(/\?_render=[a-z0-9]+$/, '');
+            url = url.replace(/_reload=[a-z0-9]+&/, '').replace(/&_reload=[a-z0-9]+/, '').replace(/\?_reload=[a-z0-9]+$/, '');
+            return url;
         },
 
         /**

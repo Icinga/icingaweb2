@@ -27,23 +27,24 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use \Icinga\Web\Controller\BaseConfigController;
-use \Icinga\Web\Widget\Tab;
-use \Icinga\Web\Widget\AlertMessageBox;
+use Icinga\Web\Controller\BaseConfigController;
+use Icinga\Web\Widget\Tab;
+use Icinga\Web\Widget\AlertMessageBox;
 use Icinga\Web\Notification;
 use Icinga\Application\Modules\Module;
-use \Icinga\Web\Url;
-use \Icinga\Application\Icinga;
-use \Icinga\Application\Config as IcingaConfig;
-use \Icinga\Data\ResourceFactory;
-use \Icinga\Form\Config\GeneralForm;
-use \Icinga\Form\Config\Authentication\ReorderForm;
-use \Icinga\Form\Config\Authentication\LdapBackendForm;
-use \Icinga\Form\Config\Authentication\DbBackendForm;
-use \Icinga\Form\Config\ResourceForm;
-use \Icinga\Form\Config\LoggingForm;
-use \Icinga\Form\Config\ConfirmRemovalForm;
-use \Icinga\Config\PreservingIniWriter;
+use Icinga\Web\Url;
+use Icinga\Web\Widget;
+use Icinga\Application\Icinga;
+use Icinga\Application\Config as IcingaConfig;
+use Icinga\Data\ResourceFactory;
+use Icinga\Form\Config\GeneralForm;
+use Icinga\Form\Config\Authentication\ReorderForm;
+use Icinga\Form\Config\Authentication\LdapBackendForm;
+use Icinga\Form\Config\Authentication\DbBackendForm;
+use Icinga\Form\Config\ResourceForm;
+use Icinga\Form\Config\LoggingForm;
+use Icinga\Form\Config\ConfirmRemovalForm;
+use Icinga\Config\PreservingIniWriter;
 
 
 /**
@@ -158,8 +159,7 @@ class ConfigController extends BaseConfigController
         $this->view->modules = Icinga::app()->getModuleManager()->select()
             ->from('modules')
             ->order('enabled', 'desc')
-            ->order('name');
-        $this->render('module/overview');
+            ->order('name')->paginate();
     }
 
     public function moduleAction()
@@ -168,11 +168,17 @@ class ConfigController extends BaseConfigController
         $app = Icinga::app();
         $manager = $app->getModuleManager();
         if ($manager->hasInstalled($name)) {
+            $this->view->moduleData = Icinga::app()->getModuleManager()->select()
+            ->from('modules')->where('name', $name)->fetchRow();
             $module = new Module($app, $name, $manager->getModuleDir($name));
             $this->view->module = $module;
         } else {
             $this->view->module = false;
         }
+        $this->view->tabs = Widget::create('tabs')->add('info', array(
+            'url' => Url::fromRequest(),
+            'title' => 'Module info'
+        ))->activate('info');
     }
 
     /**
@@ -186,7 +192,10 @@ class ConfigController extends BaseConfigController
             $manager->enableModule($module);
             $manager->loadModule($module);
             Notification::success('Module "' . $module . '" enabled');
-            $this->redirectNow('config/modules_render=layout&_reload=css');
+            $this->redirectNow(Url::fromPath('config/modules', array(
+                '_render' => 'layout',
+                '_reload' => 'css'
+            )));
             return;
         } catch (Exception $e) {
             $this->view->exceptionMesssage = $e->getMessage();
@@ -206,7 +215,10 @@ class ConfigController extends BaseConfigController
         try {
             $manager->disableModule($module);
             Notification::success('Module "' . $module . '" disabled');
-            $this->redirectNow('config/modules?_render=layout&_reload=css');
+            $this->redirectNow(Url::fromPath('config/modules', array(
+                '_render' => 'layout',
+                '_reload' => 'css'
+            )));
             return;
         } catch (Exception $e) {
             $this->view->exceptionMessage = $e->getMessage();

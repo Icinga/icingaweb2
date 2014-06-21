@@ -57,6 +57,15 @@ class ArrayDatasource implements Selectable
         return $result;
     }
 
+    public function fetchRow(SimpleQuery $query)
+    {
+        $result = $this->getResult($query);
+        if (empty($result)) {
+            return false;
+        }
+        return $result[0];
+    }
+
     public function fetchAll(SimpleQuery $query)
     {
         return $this->getResult($query);
