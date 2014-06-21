@@ -51,6 +51,8 @@ class Monitoring_ShowController extends Controller
      */
     protected $backend;
 
+    protected $grapher;
+
     /**
      * Initialize the controller
      */
@@ -67,6 +69,9 @@ class Monitoring_ShowController extends Controller
         if (Hook::has('ticket')) {
             $this->view->tickets = Hook::first('ticket');
         }
+        if (Hook::has('grapher')) {
+            $this->grapher = Hook::first('grapher');
+        }
 
         $this->createTabs();
     }
@@ -76,11 +81,15 @@ class Monitoring_ShowController extends Controller
      */
     public function serviceAction()
     {
+        $o = $this->view->object;
         $this->setAutorefreshInterval(10);
-        $this->view->title = $this->view->object->service_description
-            . ' on ' . $this->view->object->host_name;
+        $this->view->title = $o->service_description
+            . ' on ' . $o->host_name;
         $this->getTabs()->activate('service');
-        $this->view->object->populate();
+        $o->populate();
+        if ($this->grapher && $this->grapher->hasGraph($o->host_name, $o->service_description)) {
+            $this->view->grapherHtml = $this->grapher->getPreviewImage($o->host_name, $o->service_description);
+        }
     }
 
     /**
@@ -88,10 +97,14 @@ class Monitoring_ShowController extends Controller
      */
     public function hostAction()
     {
+        $o = $this->view->object;
         $this->setAutorefreshInterval(10);
         $this->getTabs()->activate('host');
-        $this->view->title = $this->view->object->host_name;
-        $this->view->object->populate();
+        $this->view->title = $o->host_name;
+        $o->populate();
+        if ($this->grapher && $this->grapher->hasGraph($o->host_name)) {
+            $this->view->grapherHtml = $this->grapher->getPreviewImage($o->host_name);
+        }
     }
 
     public function historyAction()
