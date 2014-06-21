@@ -4,7 +4,7 @@ $helper = $this->getHelper('MonitoringState');
 if (!$this->compact): ?>
 <div class="controls">
 <?= $this->tabs ?>
-<div class="dontprint">
+<div style="margin: 1em;" class="dontprint">
 <?= $this->translate('Sort by') ?> <?= $this->sortControl ?>
 <?php if (! $this->filterEditor): ?>
 <?= $this->filterPreview ?>
