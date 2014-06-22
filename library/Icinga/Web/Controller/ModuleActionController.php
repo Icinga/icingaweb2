@@ -2,6 +2,7 @@
 
 namespace Icinga\Web\Controller;
 
+use Icinga\Application\Config;
 use Zend_Controller_Request_Abstract as Request;
 use Zend_Controller_Response_Abstract as Response;
 
@@ -30,7 +31,7 @@ class ModuleActionController extends ActionController
 
         $this->moduleName = $module;
 
-        if ($tile === null) {
+        if ($file === null) {
             if ($this->config === null) {
                 $this->config = Config::module($module);
             }
