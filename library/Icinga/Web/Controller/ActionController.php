@@ -121,7 +121,6 @@ class ActionController extends Zend_Controller_Action
         }
 
         $this->view->tabs = new Tabs();
-        $this->moduleInit();
         $this->init();
     }
 
@@ -169,10 +168,6 @@ class ActionController extends Zend_Controller_Action
                 $this->_response->setHeader('X-Icinga-WindowId', Window::generateId());
             }
         }
-    }
-
-    protected function moduleInit()
-    {
     }
 
     protected function reloadCss()

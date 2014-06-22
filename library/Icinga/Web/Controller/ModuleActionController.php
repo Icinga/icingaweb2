@@ -21,6 +21,7 @@ class ModuleActionController extends ActionController
         parent::__construct($request, $response, $invokeArgs);
         $this->moduleName = $request->getModuleName();
         $this->view->translationDomain = $this->moduleName;
+        $this->moduleInit();
     }
 
     public function Config($file = null)
@@ -40,5 +41,10 @@ class ModuleActionController extends ActionController
             }
             return $this->configs[$file];
         }
+    }
+
+
+    protected function moduleInit()
+    {
     }
 }
