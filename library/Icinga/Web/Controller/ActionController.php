@@ -112,17 +112,17 @@ class ActionController extends Zend_Controller_Action
         $this->handlerBrowserWindows();
         $this->view->translationDomain = 'icinga';
 
-        if ($this->requiresConfig() === false) {
-            if ($this->requiresLogin() === false) {
-                $this->view->tabs = new Tabs();
-                $this->moduleInit();
-                $this->init();
-            } else {
-                $this->redirectToLogin(Url::fromRequest());
-            }
-        } else {
+        if ($this->requiresConfig()) {
             $this->redirectNow(Url::fromPath('install'));
         }
+
+        if ($this->requiresLogin()) {
+            $this->redirectToLogin(Url::fromRequest());
+        }
+
+        $this->view->tabs = new Tabs();
+        $this->moduleInit();
+        $this->init();
     }
 
     public function Config($file = null)
