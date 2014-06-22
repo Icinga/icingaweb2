@@ -122,12 +122,7 @@ class ActionController extends Zend_Controller_Action
                 $this->moduleInit();
                 $this->init();
             } else {
-                $url = $this->getRequestUrl();
-                if ($url === 'default/index/index') {
-                    // TODO: We need our own router :p
-                    $url = 'dashboard';
-                }
-                $this->redirectToLogin($url);
+                $this->redirectToLogin(Url::fromRequest());
             }
         } else {
             $this->redirectNow(Url::fromPath('install'));
@@ -367,23 +362,6 @@ class ActionController extends Zend_Controller_Action
         }
         $url->setParam('redirect', $afterLogin);
         $this->redirectNow($url);
-    }
-
-    /**
-     * Return the URI that can be used to request the current action
-     *
-     * @return string   return the path to this action: <Module>/<Controller>/<Action>?<Query>
-     */
-    public function getRequestUrl()
-    {
-         $base = $this->_request->getModuleName() . '/' .
-            $this->_request->getControllerName() . '/' .
-            $this->_request->getActionName();
-         // TODO: We should NOT fiddle with Querystring here in the middle of nowhere
-         if (isset($_SERVER['QUERY_STRING']) && $_SERVER['QUERY_STRING'] !== '') {
-             return $base . '?' . $_SERVER['QUERY_STRING'];
-         }
-         return $base;
     }
 
     /**
