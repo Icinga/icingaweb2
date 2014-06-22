@@ -361,16 +361,12 @@ class ActionController extends Zend_Controller_Action
     {
         Benchmark::measure('Action::postDispatch()');
 
+        $req = $this->getRequest();
+        $resp = $this->getResponse();
         $layout = $this->_helper->layout();
-        $isXhr = $this->_request->isXmlHttpRequest();
-        $layout->moduleName = $this->_request->getModuleName();
-        if ($layout->moduleName === 'default') {
-            $layout->moduleName = false;
-        } elseif ($isXhr) {
-            header('X-Icinga-Module: ' . $layout->moduleName);
-        }
+        $layout->moduleName = false;
 
-        if ($user = $this->getRequest()->getUser()) {
+        if ($user = $req->getUser()) {
             // Cast preference app.show_benchmark to bool because preferences loaded from a preferences storage are
             // always strings
             if ((bool) $user->getPreferences()->get('app.show_benchmark', false) === true) {
@@ -379,48 +375,52 @@ class ActionController extends Zend_Controller_Action
             }
         }
 
-        if ($this->_request->getParam('format') === 'pdf') {
+        if ($req->getParam('format') === 'pdf') {
             $layout->setLayout('pdf');
             $this->sendAsPdf();
             exit;
         }
 
-        if ($isXhr) {
+        if ($req->isXmlHttpRequest()) {
             $layout->setLayout('inline');
-        }
 
-        $notifications = Notification::getInstance();
-        if ($isXhr && ! $this->isRedirect && $notifications->hasMessages()) {
-            $notificationList = array();
-            foreach ($notifications->getMessages() as $m) {
-                $notificationList[] = rawurlencode($m->type . ' ' . $m->message);
+            $notifications = Notification::getInstance();
+            if ($notifications->hasMessages()) {
+                $notificationList = array();
+                foreach ($notifications->getMessages() as $m) {
+                    $notificationList[] = rawurlencode($m->type . ' ' . $m->message);
+                }
+                $resp->setHeader('X-Icinga-Notification: ' . implode('&', $notificationList));
             }
-            header('X-Icinga-Notification: ' . implode('&', $notificationList));
-        }
 
-        if ($isXhr && ($this->reloadCss || $this->getParam('_reload') === 'css')) {
-            header('X-Icinga-CssReload: now');
-        }
-
-        if ($isXhr && $this->noXhrBody) {
-            header('X-Icinga-Container: ignore');
-            return;
-        }
-
-        if ($this->view->title) {
-            if (preg_match('~[\r\n]~', $this->view->title)) {
-                // TODO: Innocent exception and error log for hack attempts
-                throw new Exception('No way, guy');
+            if ($this->reloadCss || $this->getParam('_reload') === 'css') {
+                $resp->setHeader('X-Icinga-CssReload', 'now');
             }
-            header('X-Icinga-Title: ' . rawurlencode($this->view->title . ' :: Icinga Web'));
-        }
-        // TODO: _render=layout?
-        if ($this->getParam('_render') === 'layout') {
-            $layout->setLayout('body');
-            header('X-Icinga-Container: layout');
-        }
-        if ($this->autorefreshInterval !== null) {
-            header('X-Icinga-Refresh: ' . $this->autorefreshInterval);
+
+            if ($this->noXhrBody) {
+                $resp->setHeader('X-Icinga-Container', 'ignore');
+                return;
+            }
+
+            if ($this->view->title) {
+                if (preg_match('~[\r\n]~', $this->view->title)) {
+                    // TODO: Innocent exception and error log for hack attempts
+                    throw new Exception('No way, guy');
+                }
+                $resp->setHeader(
+                    'X-Icinga-Title',
+                    rawurlencode($this->view->title . ' :: Icinga Web')
+                );
+            }
+
+            if ($this->getParam('_render') === 'layout') {
+                $layout->setLayout('body');
+                $resp->setHeader('X-Icinga-Container', 'layout');
+            }
+
+            if ($this->autorefreshInterval !== null) {
+                $resp->header('X-Icinga-Refresh', $this->autorefreshInterval);
+            }
         }
     }
 

@@ -43,6 +43,20 @@ class ModuleActionController extends ActionController
         }
     }
 
+    public function postDispatch()
+    {
+        $req = $this->getRequest();
+        $resp = $this->getResponse();
+        $layout = $this->_helper->layout();
+
+        $isXhr = $req->isXmlHttpRequest();
+        $layout->moduleName = $this->moduleName;
+        if ($isXhr) {
+            $resp->setHeader('X-Icinga-Module', $layout->moduleName);
+        }
+
+        parent::postDispatch();
+    }
 
     protected function moduleInit()
     {
