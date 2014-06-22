@@ -317,15 +317,6 @@ class ActionController extends Zend_Controller_Action
         $url = Url::fromPath('/authentication/login');
         if ($this->getRequest()->isXmlHttpRequest()) {
             $url->setParam('_render', 'layout');
-/*
-            $this->_response->setHttpResponseCode(401);
-            $this->_helper->json(
-                array(
-                    'exception'     => 'You are not logged in',
-                    'redirectTo'    => Url::fromPath('/authentication/login')->getAbsoluteUrl()
-                )
-            );
-*/
         }
         $url->setParam('redirect', $afterLogin);
         $this->redirectNow($url);
