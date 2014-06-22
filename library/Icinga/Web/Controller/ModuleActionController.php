@@ -49,9 +49,8 @@ class ModuleActionController extends ActionController
         $resp = $this->getResponse();
         $layout = $this->_helper->layout();
 
-        $isXhr = $req->isXmlHttpRequest();
         $layout->moduleName = $this->moduleName;
-        if ($isXhr) {
+        if ($this->isXhr()) {
             $resp->setHeader('X-Icinga-Module', $layout->moduleName);
         }
 
