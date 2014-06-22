@@ -31,14 +31,13 @@ use Icinga\Application\Icinga;
 use Icinga\Application\Config;
 use Icinga\Logger\Logger;
 use Icinga\Web\Form;
-use Icinga\Web\Controller\ActionController;
+use Icinga\Module\Monitoring\Controller;
 use Icinga\Chart\SVGRenderer;
 use Icinga\Chart\GridChart;
-use Icinga\Module\Monitoring\DataView\Groupsummary as GroupsummaryView;
-use Icinga\Module\Monitoring\Backend;
 use Icinga\Chart\Palette;
 use Icinga\Chart\Axis;
 use Icinga\Chart\PieChart;
+use Icinga\Chart\Unit\StaticAxis;
 
 /**
  * Class Monitoring_CommandController
@@ -46,36 +45,11 @@ use Icinga\Chart\PieChart;
  * Interface to send commands and display forms
  */
 
-class Monitoring_ChartController extends ActionController
+class Monitoring_ChartController extends Controller
 {
-    /**
-     * The backend used for this controller
-     *
-     * @var Backend
-     */
-    protected $backend;
-    /**
-     * Set to a string containing the compact layout name to use when
-     * 'compact' is set as the layout parameter, otherwise null
-     *
-     * @var string
-     */
-    private $compactView;
-
-    /**
-     * Retrieve backend and hooks for this controller
-     *
-     * @see ActionController::init
-     */
-    public function init()
-    {
-
-    }
-
     public function testAction() {
         $this->chart = new GridChart();
-        $this->chart->setAxisLabel("X axis label", "Y axis label")
-            ->setXAxis(new \Icinga\Chart\Unit\StaticAxis());
+        $this->chart->setAxisLabel('X axis label', 'Y axis label')->setXAxis(new StaticAxis());
         $data1 = array();
         $data2 = array();
         $data3 = array();
@@ -125,8 +99,8 @@ class Monitoring_ChartController extends ActionController
 
     public function hostgroupAction()
     {
-        $query = GroupsummaryView::fromRequest(
-            $this->_request,
+        $query = $this->backend->select()->from(
+            'groupsummary',
             array(
                 'hostgroup',
                 'hosts_up',
@@ -156,8 +130,8 @@ class Monitoring_ChartController extends ActionController
 
     public function servicegroupAction()
     {
-        $query = GroupsummaryView::fromRequest(
-            $this->_request,
+        $query = $this->backend->select()->from(
+            'groupsummary',
             array(
                 'servicegroup',
                 'services_ok',
@@ -231,8 +205,7 @@ class Monitoring_ChartController extends ActionController
             $unreachableBars[] = array($hostgroup->hostgroup, $hostgroup->hosts_unreachable_unhandled);
         }
         $this->view->chart = new GridChart();
-        $this->view->chart->setAxisLabel('', 'Hosts')
-            ->setXAxis(new \Icinga\Chart\Unit\StaticAxis());
+        $this->view->chart->setAxisLabel('', 'Hosts')->setXAxis(new StaticAxis());
         $this->view->chart->drawBars(
             array(
                 'label' => 'Up',
