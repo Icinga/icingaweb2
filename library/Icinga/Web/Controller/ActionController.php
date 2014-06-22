@@ -88,30 +88,6 @@ class ActionController extends Zend_Controller_Action
 
     private $auth;
 
-    public function Config($file = null)
-    {
-        if ($file === null) {
-            if ($this->config === null) {
-                $this->config = Config::app();
-            }
-            return $this->config;
-        } else {
-            if (! array_key_exists($file, $this->configs)) {
-                $this->configs[$file] = Config::module($module, $file);
-            }
-            return $this->configs[$file];
-        }
-        return $this->config;
-    }
-
-    public function Auth()
-    {
-        if ($this->auth === null) {
-            $this->auth = AuthManager::getInstance();
-        }
-        return $this->auth;
-    }
-
     /**
      * The constructor starts benchmarking, loads the configuration and sets
      * other useful controller properties
@@ -156,6 +132,30 @@ class ActionController extends Zend_Controller_Action
         } else {
             $this->redirectNow(Url::fromPath('install'));
         }
+    }
+
+    public function Config($file = null)
+    {
+        if ($file === null) {
+            if ($this->config === null) {
+                $this->config = Config::app();
+            }
+            return $this->config;
+        } else {
+            if (! array_key_exists($file, $this->configs)) {
+                $this->configs[$file] = Config::module($module, $file);
+            }
+            return $this->configs[$file];
+        }
+        return $this->config;
+    }
+
+    public function Auth()
+    {
+        if ($this->auth === null) {
+            $this->auth = AuthManager::getInstance();
+        }
+        return $this->auth;
     }
 
     protected function moduleInit()
