@@ -512,7 +512,6 @@
                     // We only want to care about top-level containers
                     if (req.$target.parent().closest('.container').length === 0) {
                         this.icinga.history.pushCurrentState();
-                        this.icinga.logger.info('Pushing state');
                     }
                 } else {
                     // Request wasn't for a container, so it's usually the body
