@@ -109,7 +109,6 @@ class Url
         }
 
         foreach ($params as $k => $v) {
-        echo "Setting $k to $v\n";
             $urlParams->set($k, $v);
         }
         $url->setParams($urlParams);
