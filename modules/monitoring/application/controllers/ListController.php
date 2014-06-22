@@ -442,6 +442,7 @@ class Monitoring_ListController extends Controller
         $params = clone $this->params;
 
         $params->shift('_render');
+        $params->shift('isIframe');
         $limit   = $params->shift('limit');
         $sort    = $params->shift('sort');
         $dir     = $params->shift('dir');

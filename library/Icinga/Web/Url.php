@@ -396,7 +396,7 @@ class Url
      *
      * @return  self
      */
-    public function setParam($param, $value)
+    public function setParam($param, $value = true)
     {
         $this->params->set($param, $value);
         return $this;
