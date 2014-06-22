@@ -287,6 +287,11 @@
             );
             this.processNotificationHeader(req);
 
+            var cssreload = req.getResponseHeader('X-Icinga-Reload-Css');
+            if (cssreload) {
+                this.icinga.ui.reloadCss();
+            }
+
             var redirect = req.getResponseHeader('X-Icinga-Redirect');
             if (this.processRedirectHeader(req)) return;
 
@@ -367,11 +372,6 @@
                 req.$target.removeData('icingaModule');
             }
             req.$target.attr('class', classes.join(' '));
-
-            var cssreload = req.getResponseHeader('X-Icinga-CssReload');
-            if (cssreload) {
-                this.icinga.ui.reloadCss();
-            }
 
             var title = req.getResponseHeader('X-Icinga-Title');
             if (title && ! req.autorefresh && req.$target.closest('.dashboard').length === 0) {
