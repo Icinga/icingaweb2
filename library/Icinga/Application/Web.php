@@ -178,7 +178,7 @@ class Web extends ApplicationBootstrap
      */
     public function dispatch()
     {
-        $this->frontController->dispatch(new Request(), new Response());
+        $this->frontController->dispatch($this->request, new Response());
     }
 
     /**
