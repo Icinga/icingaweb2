@@ -77,8 +77,6 @@ class ActionController extends Zend_Controller_Action
 
     private $autorefreshInterval;
 
-    private $noXhrBody = false;
-
     private $reloadCss = false;
 
     private $window;
@@ -283,7 +281,9 @@ class ActionController extends Zend_Controller_Action
 
     protected function ignoreXhrBody()
     {
-        $this->noXhrBody = true;
+        if ($this->getRequest()->isXmlHttpRequest()) {
+            $this->getResponse()->setHeader('X-Icinga-Container', 'ignore');
+        }
     }
 
     public function setAutorefreshInterval($interval)
@@ -393,11 +393,6 @@ class ActionController extends Zend_Controller_Action
 
         if ($this->reloadCss || $this->getParam('_reload') === 'css') {
             $resp->setHeader('X-Icinga-CssReload', 'now');
-        }
-
-        if ($this->noXhrBody) {
-            $resp->setHeader('X-Icinga-Container', 'ignore');
-            return;
         }
 
         if ($this->view->title) {
