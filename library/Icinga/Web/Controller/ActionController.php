@@ -86,6 +86,8 @@ class ActionController extends Zend_Controller_Action
 
     protected $params;
 
+    private $auth;
+
     public function Config($file = null)
     {
         if ($file === null) {
@@ -100,6 +102,14 @@ class ActionController extends Zend_Controller_Action
             return $this->configs[$file];
         }
         return $this->config;
+    }
+
+    public function Auth()
+    {
+        if ($this->auth === null) {
+            $this->auth = AuthManager::getInstance();
+        }
+        return $this->auth;
     }
 
     /**
@@ -211,7 +221,7 @@ class ActionController extends Zend_Controller_Action
      */
     public function getRestrictions($name)
     {
-        return AuthManager::getInstance()->getRestrictions($name);
+        return $this->Auth()->getRestrictions($name);
     }
 
     /**
@@ -222,7 +232,7 @@ class ActionController extends Zend_Controller_Action
      */
     public function hasPermission($name)
     {
-        return AuthManager::getInstance()->hasPermission($name);
+        return $this->Auth()->hasPermission($name);
     }
 
     /**
@@ -233,7 +243,7 @@ class ActionController extends Zend_Controller_Action
      */
     public function assertPermission($name)
     {
-        if (! AuthManager::getInstance()->hasPermission($name)) {
+        if (! $this->Auth()->hasPermission($name)) {
             // TODO: Shall this be an Auth Exception? Or a 404?
             throw new Exception(sprintf('Auth error, no permission for "%s"', $name));
         }
@@ -280,7 +290,7 @@ class ActionController extends Zend_Controller_Action
             return false;
         }
 
-        return !AuthManager::getInstance()->isAuthenticated();
+        return !$this->Auth()->isAuthenticated();
     }
 
     /**
