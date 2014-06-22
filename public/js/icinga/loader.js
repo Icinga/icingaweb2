@@ -334,6 +334,7 @@
 
             var target = req.getResponseHeader('X-Icinga-Container');
             var newBody = false;
+            var oldNotifications = false;
             if (target) {
                 if (target === 'ignore') {
                     return;
@@ -343,7 +344,9 @@
                 delete this.requests[req.$target.attr('id')];
 
                 req.$target = $('#' + target);
-                
+                if (target === 'layout') {
+                    oldNotifications = $('#notifications li').detach();
+                }
                 // We assume target === 'layout' right now. This might not be correct
                 this.icinga.ui.layout1col();
                 newBody = true;
@@ -449,6 +452,9 @@
 
             // .html() removes outer div we added above
             this.renderContentToContainer($resp.html(), req.$target, req.action, req.autorefresh);
+            if (oldNotifications) {
+                oldNotifications.appendTo($('#notifications'));
+            }
             if (url.match(/#/)) {
                 this.icinga.ui.scrollContainerToAnchor(req.$target, url.split(/#/)[1]);
             }
