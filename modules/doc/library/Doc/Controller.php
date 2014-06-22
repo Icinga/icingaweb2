@@ -4,9 +4,9 @@
 
 namespace Icinga\Module\Doc;
 
-use Icinga\Web\Controller\ActionController;
+use Icinga\Web\Controller\ModuleActionController;
 
-class Controller extends ActionController
+class Controller extends ModuleActionController
 {
     /**
      * Set HTML and toc

@@ -29,14 +29,14 @@
 
 namespace Icinga\Module\Monitoring;
 
-use Icinga\Web\Controller\ActionController;
+use Icinga\Web\Controller\ModuleActionController;
 use Icinga\Web\Url;
 use Icinga\File\Csv;
 
 /**
  * Base class for all monitoring action controller
  */
-class Controller extends ActionController
+class Controller extends ModuleActionController
 {
     /**
      * The backend used for this controller
