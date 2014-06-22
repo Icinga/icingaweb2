@@ -40,6 +40,7 @@ use Icinga\Application\Benchmark;
 use Icinga\Application\Config;
 use Icinga\Util\Translator;
 use Icinga\Web\Widget\Tabs;
+use Icinga\Web\Window;
 use Icinga\Web\Url;
 use Icinga\Web\Notification;
 use Icinga\File\Pdf;
@@ -108,10 +109,7 @@ class ActionController extends Zend_Controller_Action
             ->_setInvokeArgs($invokeArgs);
         $this->_helper = new Zend_Controller_Action_HelperBroker($this);
         $this->_helper->addPath('../application/controllers/helpers');
-
-        if ($this->_request->isXmlHttpRequest()) {
-            $this->windowId = $this->_request->getHeader('X-Icinga-WindowId', null);
-        }
+        $this->handleWindowId();
 
         $module = $request->getModuleName();
         $this->view->translationDomain = $module === 'default' ? 'icinga' : $module;
@@ -153,59 +151,23 @@ class ActionController extends Zend_Controller_Action
         return $this->auth;
     }
 
+    protected function handleWindowId()
+    {
+        if ($this->_request->isXmlHttpRequest()) {
+            $windowId = $this->_request->getHeader('X-Icinga-WindowId', null);
+            if ($windowId === Window::UNDEFINED) {
+                $this->_response->setHeader('X-Icinga-WindowId', Window::generateId());
+            }
+        }
+    }
+
     protected function moduleInit()
     {
-    }
-
-    protected function getWindowId()
-    {
-        if ($this->windowId === null) {
-            return 'undefined';
-        }
-        return $this->windowId;
-    }
-
-    protected function generateWindowId()
-    {
-        $letters = 'abcefghijklmnopqrstuvwxyz';
-        $this->windowId = substr(str_shuffle($letters), 0, 12);
-        return $this->windowId;
     }
 
     protected function reloadCss()
     {
         $this->reloadCss = true;
-    }
-
-    /**
-     * Return a window-aware session by using the given prefix
-     *
-     * @param   string      $prefix     The prefix to use
-     * @param   bool        $reset      Whether to reset any existing session-data
-     *
-     * @return  SessionNamespace
-     */
-    public function getWindowSession($prefix, $reset = false)
-    {
-        $session = Session::getSession();
-        $windowId = $this->getWindowId();
-
-        $identifier = $prefix . '_' . $windowId;
-        if ($reset && $session->hasNamespace($identifier)) {
-            $session->removeNamespace($identifier);
-        }
-        $namespace = $session->getNamespace($identifier);
-
-        if (!$reset && $windowId !== 'undefined' && $session->hasNamespace($prefix . '_undefined')) {
-            // We do not have any window-id on the very first request. Now we add all values from the
-            // namespace, that has been created in this case, to the new one and remove it afterwards.
-            foreach ($session->getNamespace($prefix . '_undefined') as $name => $value) {
-                $namespace->set($name, $value);
-            }
-            $session->removeNamespace($prefix . '_undefined');
-        }
-
-        return $namespace;
     }
 
     /**
@@ -373,10 +335,12 @@ class ActionController extends Zend_Controller_Action
     {
         $url = preg_replace('~&amp;~', '&', $url);
         if ($this->_request->isXmlHttpRequest()) {
-            header('X-Icinga-Redirect: ' . rawurlencode($url));
-            // $this->getResponse()->sendHeaders() ??
-            // Session shutdown
-            exit; // Really?
+            $this->getResponse()
+                ->setHeader('X-Icinga-Redirect', rawurlencode($url))
+                ->sendHeaders();
+
+            // TODO: Session shutdown?
+            exit;
         } else {
             $this->_helper->Redirector->gotoUrlAndExit(Url::fromPath($url)->getRelativeUrl());
         }
@@ -438,10 +402,6 @@ class ActionController extends Zend_Controller_Action
             return;
         }
 
-        if ($isXhr && $this->getWindowId() === 'undefined') {
-            header('X-Icinga-WindowId: ' . $this->generateWindowId());
-        }
-
         if ($this->view->title) {
             if (preg_match('~[\r\n]~', $this->view->title)) {
                 // TODO: Innocent exception and error log for hack attempts
@@ -457,6 +417,10 @@ class ActionController extends Zend_Controller_Action
         if ($this->autorefreshInterval !== null) {
             header('X-Icinga-Refresh: ' . $this->autorefreshInterval);
         }
+    }
+
+    protected function Window()
+    {
     }
 
     protected function sendAsPdf()
