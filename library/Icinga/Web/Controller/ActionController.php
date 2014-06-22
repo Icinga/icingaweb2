@@ -81,11 +81,13 @@ class ActionController extends Zend_Controller_Action
 
     private $window;
 
-    protected $isRedirect = false;
+    private $rerenderLayout = false;
 
-    protected $params;
+    private $xhrLayout = 'inline';
 
     private $auth;
+
+    protected $params;
 
     /**
      * The constructor starts benchmarking, loads the configuration and sets
@@ -109,7 +111,10 @@ class ActionController extends Zend_Controller_Action
 
         $this->handlerBrowserWindows();
         $this->view->translationDomain = 'icinga';
-        $this->_helper->layout()->isIframe = (bool) $this->params->shift('isIframe', false);
+        $this->_helper->layout()->isIframe = $this->params->shift('isIframe');
+        if ($this->rerenderLayout = $this->params->shift('renderLayout')) {
+            $this->xhrLayout = 'body';
+        }
         if ($this->requiresConfig()) {
             $this->redirectNow(Url::fromPath('install'));
         }
@@ -171,6 +176,7 @@ class ActionController extends Zend_Controller_Action
     protected function reloadCss()
     {
         $this->reloadCss = true;
+        return $this;
     }
 
     /**
@@ -314,12 +320,16 @@ class ActionController extends Zend_Controller_Action
      */
     protected function redirectToLogin($afterLogin = '/dashboard')
     {
-        $url = Url::fromPath('/authentication/login');
-        if ($this->isXhr()) {
-            $url->setParam('_render', 'layout');
-        }
+        $url = Url::fromPath('authentication/login');
         $url->setParam('redirect', $afterLogin);
-        $this->redirectNow($url);
+        $this->rerenderLayout()->redirectNow($url);
+    }
+
+    protected function rerenderLayout()
+    {
+        $this->rerenderLayout = true;
+        $this->xhrLayout = 'layout';
+        return $this;
     }
 
     public function isXhr()
@@ -334,8 +344,18 @@ class ActionController extends Zend_Controller_Action
     **/
     public function redirectNow($url)
     {
+        if (! $url instanceof Url) {
+            $url = Url::fromPath($url);
+        }
         $url = preg_replace('~&amp;~', '&', $url);
         if ($this->isXhr()) {
+            if ($this->rerenderLayout) {
+                $this->getResponse()->setHeader('X-Icinga-Rerender-Layout', 'yes');
+            }
+            if ($this->reloadCss) {
+                $this->getResponse()->setHeader('X-Icinga-Reload-Css', 'now');
+            }
+
             $this->getResponse()
                 ->setHeader('X-Icinga-Redirect', rawurlencode($url))
                 ->sendHeaders();
@@ -345,7 +365,6 @@ class ActionController extends Zend_Controller_Action
         } else {
             $this->_helper->Redirector->gotoUrlAndExit(Url::fromPath($url)->getRelativeUrl());
         }
-        $this->isRedirect = true; // pretty useless right now
     }
 
     /**
@@ -384,7 +403,7 @@ class ActionController extends Zend_Controller_Action
     protected function postDispatchXhr()
     {
         $layout = $this->_helper->layout();
-        $layout->setLayout('inline');
+        $layout->setLayout($this->xhrLayout);
         $resp = $this->getResponse();
 
         $notifications = Notification::getInstance();
@@ -393,10 +412,10 @@ class ActionController extends Zend_Controller_Action
             foreach ($notifications->getMessages() as $m) {
                 $notificationList[] = rawurlencode($m->type . ' ' . $m->message);
             }
-            $resp->setHeader('X-Icinga-Notification: ' . implode('&', $notificationList));
+            $resp->setHeader('X-Icinga-Notification', implode('&', $notificationList));
         }
 
-        if ($this->reloadCss || $this->getParam('_reload') === 'css') {
+        if ($this->reloadCss) {
             $resp->setHeader('X-Icinga-CssReload', 'now');
         }
 
@@ -411,9 +430,8 @@ class ActionController extends Zend_Controller_Action
             );
         }
 
-        if ($this->getParam('_render') === 'layout') {
-            $layout->setLayout('body');
-            $resp->setHeader('X-Icinga-Container', 'layout');
+        if ($this->rerenderLayout) {
+            $this->getResponse()->setHeader('X-Icinga-Container', 'layout');
         }
 
         if ($this->autorefreshInterval !== null) {

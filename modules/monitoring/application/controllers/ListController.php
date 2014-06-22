@@ -441,7 +441,6 @@ class Monitoring_ListController extends Controller
     {
         $params = clone $this->params;
 
-        $params->shift('_render');
         $limit   = $params->shift('limit');
         $sort    = $params->shift('sort');
         $dir     = $params->shift('dir');
@@ -462,7 +461,7 @@ class Monitoring_ListController extends Controller
             } else {
                 $filter->removeId($removeFilter);
                 $redirect->setQueryString($filter->toQueryString())
-                    ->getParams()->add('modifyFilter');;
+                    ->getParams()->add('modifyFilter');
             }
             $this->redirectNow($redirect);
         }

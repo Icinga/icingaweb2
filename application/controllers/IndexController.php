@@ -45,12 +45,7 @@ class IndexController extends ActionController
     public function preDispatch()
     {
         if ($this->getRequest()->getActionName() !== 'welcome') {
-            $url = Url::fromPath('dashboard');
-            $render = $this->_request->getParam('_render');
-            if ($render) {
-                $url->setParam('_render', $render);
-            }
-            $this->redirectNow($url);
+            $this->redirectNow('dashboard');
         }
     }
 

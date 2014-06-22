@@ -192,11 +192,7 @@ class ConfigController extends BaseConfigController
             $manager->enableModule($module);
             $manager->loadModule($module);
             Notification::success('Module "' . $module . '" enabled');
-            $this->redirectNow(Url::fromPath('config/modules', array(
-                '_render' => 'layout',
-                '_reload' => 'css'
-            )));
-            return;
+            $this->rerenderLayout()->reloadCss()->redirectNow('config/modules');
         } catch (Exception $e) {
             $this->view->exceptionMesssage = $e->getMessage();
             $this->view->moduleName = $module;
@@ -215,11 +211,7 @@ class ConfigController extends BaseConfigController
         try {
             $manager->disableModule($module);
             Notification::success('Module "' . $module . '" disabled');
-            $this->redirectNow(Url::fromPath('config/modules', array(
-                '_render' => 'layout',
-                '_reload' => 'css'
-            )));
-            return;
+            $this->rerenderLayout()->reloadCss()->redirectNow('config/modules');
         } catch (Exception $e) {
             $this->view->exceptionMessage = $e->getMessage();
             $this->view->moduleName = $module;

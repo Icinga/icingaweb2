@@ -234,6 +234,15 @@
             return true;
         },
 
+        addUrlFlag: function(url, flag)
+        {
+            if (url.match(/\?/)) {
+                return url + '&' + flag;
+            } else {
+                return url + '?' + flag;
+            }
+        },
+
         processRedirectHeader: function(req) {
             var redirect = req.getResponseHeader('X-Icinga-Redirect');
             if (! redirect) return false;
@@ -241,7 +250,13 @@
                 'Got redirect for ', req.$target, ', URL was ' + redirect
             );
             redirect = decodeURIComponent(redirect);
-            this.loadUrl(redirect, req.$target);
+
+            if (req.getResponseHeader('X-Icinga-Rerender-Layout')) {
+                var redirectionUrl = this.addUrlFlag(redirect, 'renderLayout');
+                this.loadUrl(redirectionUrl, $('#layout')).url = redirect;
+            } else {
+                this.loadUrl(redirect, req.$target);
+            }
             return true;
         },
 

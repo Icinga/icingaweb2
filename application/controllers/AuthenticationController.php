@@ -65,16 +65,12 @@ class AuthenticationController extends ActionController
         $this->view->title = $this->translate('Icingaweb Login');
 
         try {
-            $redirectUrl = Url::fromPath($this->_request->getParam('redirect', 'dashboard'));
-
-            if ($this->_request->isXmlHttpRequest()) {
-                $redirectUrl->setParam('_render', 'layout');
-            }
+             $redirectUrl = Url::fromPath($this->params->get('redirect', 'dashboard'));
 
             $auth = AuthManager::getInstance();
 
             if ($auth->isAuthenticated()) {
-                $this->redirectNow($redirectUrl);
+                $this->rerenderLayout()->redirectNow($redirectUrl);
             }
 
             try {
@@ -99,7 +95,7 @@ class AuthenticationController extends ActionController
                         $authenticated  = $backend->authenticate($user);
                         if ($authenticated === true) {
                             $auth->setAuthenticated($user);
-                            $this->redirectNow($redirectUrl);
+                            $this->rerenderLayout()->redirectNow($redirectUrl);
                         }
                     }
                 }
@@ -123,7 +119,7 @@ class AuthenticationController extends ActionController
                     }
                     if ($authenticated === true) {
                         $auth->setAuthenticated($user);
-                        $this->redirectNow($redirectUrl);
+                        $this->rerenderLayout()->redirectNow($redirectUrl);
                     }
                 }
                 if ($backendsWithError === $backendsTried) {
@@ -161,8 +157,7 @@ class AuthenticationController extends ActionController
             $this->_helper->layout->setLayout('login');
             $this->_response->setHttpResponseCode(401);
         } else {
-            $this->_helper->layout->setLayout('inline');
-            $this->redirectToLogin();
+            $this->rerenderLayout()->redirectToLogin();
         }
     }
 }

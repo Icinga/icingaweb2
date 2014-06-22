@@ -9,7 +9,7 @@ if (! $this->auth()->isAuthenticated()) {
 }
 
 // Current url
-$url = Url::fromRequest()->remove('_render')->getRelativeUrl();
+$url = Url::fromRequest()->getRelativeUrl();
 $menu = Menu::fromConfig();
 ?>
 <div id="menu" data-base-target="_main">
