@@ -280,9 +280,7 @@ class ActionController extends Zend_Controller_Action
      */
     public function translate($text)
     {
-        $module = $this->getRequest()->getModuleName();
-        $domain = $module === 'default' ? Translator::DEFAULT_DOMAIN : $module;
-        return Translator::translate($text, $domain);
+        return Translator::translate($text, $this->view->translationDomain);
     }
 
     protected function ignoreXhrBody()
