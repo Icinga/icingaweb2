@@ -109,7 +109,7 @@ class ActionController extends Zend_Controller_Action
 
         $this->handlerBrowserWindows();
         $this->view->translationDomain = 'icinga';
-
+        $this->_helper->layout()->isIframe = (bool) $this->params->shift('isIframe', false);
         if ($this->requiresConfig()) {
             $this->redirectNow(Url::fromPath('install'));
         }

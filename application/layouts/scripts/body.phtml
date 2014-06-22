@@ -32,9 +32,11 @@ if ($notifications->hasMessages()) {
  </div>
  </div>
 
+<?php if (!$this->layout()->isIframe): ?>
  <div id="sidebar">
   <?php echo $this->render('parts/navigation.phtml') ?>
  </div>
+<?php endif ?>
  <div id="main" role="main">
   <div id="col1" class="container<?= $moduleClass ?>"<?php if ($moduleName): ?> data-icinga-module="<?= $moduleName ?>" <?php endif ?> data-icinga-url="<?= Url::fromRequest() ?>"<?= $refresh ?> style="display: block">
    <?= $this->render('inline.phtml') ?>

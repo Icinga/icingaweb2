@@ -13,7 +13,7 @@ if (array_key_exists('_dev', $_GET)) {
 
 $ie8jsfile  = 'js/icinga.ie8.js';
 $lang = Translator::getLanguage();
-$isIframe = isset($_GET['isIframe']);
+$isIframe = $this->layout()->isIframe;
 $iframeClass = $isIframe ? ' iframe' : '';
 
 ?><!DOCTYPE html>
@@ -30,15 +30,16 @@ $iframeClass = $isIframe ? ' iframe' : '';
   <!-- TODO: viewport and scale settings make no sense for us, fix this -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <link rel="stylesheet" href="<?= $this->href($cssfile) ?>" media="screen" type="text/css" />
+  <? if ($isIframe): ?>
+  <base target="_parent"/>
+  <?php else: ?>
   <script type="text/javascript">
   (function() {
     var html = document.getElementsByTagName('html')[0];
     html.className = html.className.replace(/no-js/, 'js');
   }());
   </script>
-  <? if ($isIframe): ?>
-  <base target="_parent"/>
-  <? endif ?>
+  <?php endif ?>
   <!-- Respond.js IE8 support of media queries -->
   <!--[if lt IE 9]>
   <script src="<?= $this->baseUrl('js/vendor/respond.min.js');?>"></script>
@@ -50,6 +51,7 @@ $iframeClass = $isIframe ? ' iframe' : '';
 <div id="layout" class="default-layout">
 <?= $this->render('body.phtml') ?>
 </div>
+<?php if (! $isIframe): ?>
 <!--[if IE 8]>
 <script type="text/javascript" src="<?= $this->href($ie8jsfile) ?>"></script>
 <![endif]-->
@@ -61,5 +63,6 @@ var icinga = new Icinga({
   baseUrl: '<?= $this->href('/') ?>'
 });
 </script>
+<?php endif ?>
 </body>
 </html>
