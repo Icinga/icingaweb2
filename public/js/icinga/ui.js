@@ -85,6 +85,7 @@
 
         reloadCss: function () {
             var icinga = this.icinga;
+            icinga.logger.info('Reloading CSS');
             $('link').each(function() {
                 var $oldLink = $(this);
                 if ($oldLink.attr('type').indexOf('css') > -1) {
