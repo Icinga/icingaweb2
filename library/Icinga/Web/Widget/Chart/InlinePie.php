@@ -112,7 +112,7 @@ EOD;
      *
      * @var float
      */
-    private $borderWidth = 1.25;
+    private $borderWidth = 0;
 
     /**
      * The color of the border
