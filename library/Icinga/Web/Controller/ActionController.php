@@ -362,7 +362,6 @@ class ActionController extends Zend_Controller_Action
         Benchmark::measure('Action::postDispatch()');
 
         $req = $this->getRequest();
-        $resp = $this->getResponse();
         $layout = $this->_helper->layout();
         $layout->moduleName = false;
 
@@ -382,45 +381,52 @@ class ActionController extends Zend_Controller_Action
         }
 
         if ($req->isXmlHttpRequest()) {
-            $layout->setLayout('inline');
+            $this->postDispatchXhr();
+        }
+    }
 
-            $notifications = Notification::getInstance();
-            if ($notifications->hasMessages()) {
-                $notificationList = array();
-                foreach ($notifications->getMessages() as $m) {
-                    $notificationList[] = rawurlencode($m->type . ' ' . $m->message);
-                }
-                $resp->setHeader('X-Icinga-Notification: ' . implode('&', $notificationList));
-            }
+    protected function postDispatchXhr()
+    {
+        $layout = $this->_helper->layout();
+        $layout->setLayout('inline');
+        $resp = $this->getResponse();
 
-            if ($this->reloadCss || $this->getParam('_reload') === 'css') {
-                $resp->setHeader('X-Icinga-CssReload', 'now');
+        $notifications = Notification::getInstance();
+        if ($notifications->hasMessages()) {
+            $notificationList = array();
+            foreach ($notifications->getMessages() as $m) {
+                $notificationList[] = rawurlencode($m->type . ' ' . $m->message);
             }
+            $resp->setHeader('X-Icinga-Notification: ' . implode('&', $notificationList));
+        }
 
-            if ($this->noXhrBody) {
-                $resp->setHeader('X-Icinga-Container', 'ignore');
-                return;
-            }
+        if ($this->reloadCss || $this->getParam('_reload') === 'css') {
+            $resp->setHeader('X-Icinga-CssReload', 'now');
+        }
 
-            if ($this->view->title) {
-                if (preg_match('~[\r\n]~', $this->view->title)) {
-                    // TODO: Innocent exception and error log for hack attempts
-                    throw new Exception('No way, guy');
-                }
-                $resp->setHeader(
-                    'X-Icinga-Title',
-                    rawurlencode($this->view->title . ' :: Icinga Web')
-                );
-            }
+        if ($this->noXhrBody) {
+            $resp->setHeader('X-Icinga-Container', 'ignore');
+            return;
+        }
 
-            if ($this->getParam('_render') === 'layout') {
-                $layout->setLayout('body');
-                $resp->setHeader('X-Icinga-Container', 'layout');
+        if ($this->view->title) {
+            if (preg_match('~[\r\n]~', $this->view->title)) {
+                // TODO: Innocent exception and error log for hack attempts
+                throw new Exception('No way, guy');
             }
+            $resp->setHeader(
+                'X-Icinga-Title',
+                rawurlencode($this->view->title . ' :: Icinga Web')
+            );
+        }
 
-            if ($this->autorefreshInterval !== null) {
-                $resp->header('X-Icinga-Refresh', $this->autorefreshInterval);
-            }
+        if ($this->getParam('_render') === 'layout') {
+            $layout->setLayout('body');
+            $resp->setHeader('X-Icinga-Container', 'layout');
+        }
+
+        if ($this->autorefreshInterval !== null) {
+            $resp->setHeader('X-Icinga-Refresh', $this->autorefreshInterval);
         }
     }
 
