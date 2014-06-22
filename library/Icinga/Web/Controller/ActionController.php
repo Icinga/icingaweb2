@@ -158,7 +158,7 @@ class ActionController extends Zend_Controller_Action
 
     protected function handlerBrowserWindows()
     {
-        if ($this->_request->isXmlHttpRequest()) {
+        if ($this->isXhr()) {
             $id = $this->_request->getHeader('X-Icinga-WindowId', null);
 
             if ($id === Window::UNDEFINED) {
@@ -281,7 +281,7 @@ class ActionController extends Zend_Controller_Action
 
     protected function ignoreXhrBody()
     {
-        if ($this->getRequest()->isXmlHttpRequest()) {
+        if ($this->isXhr()) {
             $this->getResponse()->setHeader('X-Icinga-Container', 'ignore');
         }
     }
@@ -315,11 +315,16 @@ class ActionController extends Zend_Controller_Action
     protected function redirectToLogin($afterLogin = '/dashboard')
     {
         $url = Url::fromPath('/authentication/login');
-        if ($this->getRequest()->isXmlHttpRequest()) {
+        if ($this->isXhr()) {
             $url->setParam('_render', 'layout');
         }
         $url->setParam('redirect', $afterLogin);
         $this->redirectNow($url);
+    }
+
+    public function isXhr()
+    {
+        return $this->getRequest()->isXmlHttpRequest();
     }
 
     /**
@@ -330,7 +335,7 @@ class ActionController extends Zend_Controller_Action
     public function redirectNow($url)
     {
         $url = preg_replace('~&amp;~', '&', $url);
-        if ($this->_request->isXmlHttpRequest()) {
+        if ($this->isXhr()) {
             $this->getResponse()
                 ->setHeader('X-Icinga-Redirect', rawurlencode($url))
                 ->sendHeaders();
@@ -371,7 +376,7 @@ class ActionController extends Zend_Controller_Action
             exit;
         }
 
-        if ($req->isXmlHttpRequest()) {
+        if ($this->isXhr()) {
             $this->postDispatchXhr();
         }
     }
