@@ -70,7 +70,7 @@ class Monitoring_TimelineController extends Controller
         $timeline->setDisplayRange($displayRange);
         $timeline->setForecastRange($forecastRange);
         $beingExtended = $this->getRequest()->getParam('extend') == 1;
-        $timeline->setSession($this->getWindowSession('timeline', !$beingExtended));
+        $timeline->setSession($this->Window()->getSessionNamespace('timeline', !$beingExtended));
 
         $this->view->timeline = $timeline;
         $this->view->nextRange = $forecastRange;

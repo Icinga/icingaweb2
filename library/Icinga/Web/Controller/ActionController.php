@@ -81,7 +81,7 @@ class ActionController extends Zend_Controller_Action
 
     private $reloadCss = false;
 
-    private $windowId;
+    private $window;
 
     protected $isRedirect = false;
 
@@ -109,7 +109,7 @@ class ActionController extends Zend_Controller_Action
             ->_setInvokeArgs($invokeArgs);
         $this->_helper = new Zend_Controller_Action_HelperBroker($this);
         $this->_helper->addPath('../application/controllers/helpers');
-        $this->handleWindowId();
+        $this->handlerBrowserWindows();
 
         $module = $request->getModuleName();
         $this->view->translationDomain = $module === 'default' ? 'icinga' : $module;
@@ -151,11 +151,23 @@ class ActionController extends Zend_Controller_Action
         return $this->auth;
     }
 
-    protected function handleWindowId()
+    public function Window()
+    {
+        if ($this->window === null) {
+            $this->window = new Window(
+                $this->_request->getHeader('X-Icinga-WindowId', Window::UNDEFINED)
+            );
+        }
+        return $this->window;
+    }
+
+    protected function handlerBrowserWindows()
     {
         if ($this->_request->isXmlHttpRequest()) {
-            $windowId = $this->_request->getHeader('X-Icinga-WindowId', null);
-            if ($windowId === Window::UNDEFINED) {
+            $id = $this->_request->getHeader('X-Icinga-WindowId', null);
+
+            if ($id === Window::UNDEFINED) {
+                $this->window = new Window($id);
                 $this->_response->setHeader('X-Icinga-WindowId', Window::generateId());
             }
         }
@@ -417,10 +429,6 @@ class ActionController extends Zend_Controller_Action
         if ($this->autorefreshInterval !== null) {
             header('X-Icinga-Refresh: ' . $this->autorefreshInterval);
         }
-    }
-
-    protected function Window()
-    {
     }
 
     protected function sendAsPdf()
