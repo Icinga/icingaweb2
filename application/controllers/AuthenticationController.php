@@ -32,7 +32,6 @@
 
 use Icinga\Authentication\Backend\AutoLoginBackend;
 use Icinga\Web\Controller\ActionController;
-use Icinga\Authentication\Manager as AuthManager;
 use Icinga\Form\Authentication\LoginForm;
 use Icinga\Authentication\AuthChain;
 use Icinga\Application\Config;
@@ -60,14 +59,13 @@ class AuthenticationController extends ActionController
      */
     public function loginAction()
     {
+        $auth = $this->Auth();
         $this->view->form = new LoginForm();
         $this->view->form->setRequest($this->_request);
         $this->view->title = $this->translate('Icingaweb Login');
 
         try {
-             $redirectUrl = Url::fromPath($this->params->get('redirect', 'dashboard'));
-
-            $auth = AuthManager::getInstance();
+            $redirectUrl = Url::fromPath($this->params->get('redirect', 'dashboard'));
 
             if ($auth->isAuthenticated()) {
                 $this->rerenderLayout()->redirectNow($redirectUrl);
@@ -150,7 +148,7 @@ class AuthenticationController extends ActionController
      */
     public function logoutAction()
     {
-        $auth = AuthManager::getInstance();
+        $auth = $this->Auth();
         $auth->removeAuthorization();
 
         if ($auth->isAuthenticatedFromRemoteUser()) {
