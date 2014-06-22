@@ -415,7 +415,6 @@ class ActionController extends Zend_Controller_Action
         Benchmark::measure('Action::postDispatch()');
 
         $layout = $this->_helper->layout();
-        // $this->addModuleContainer();
         $isXhr = $this->_request->isXmlHttpRequest();
         $layout->moduleName = $this->_request->getModuleName();
         if ($layout->moduleName === 'default') {
@@ -480,18 +479,6 @@ class ActionController extends Zend_Controller_Action
         if ($this->autorefreshInterval !== null) {
             header('X-Icinga-Refresh: ' . $this->autorefreshInterval);
         }
-    }
-
-    protected function addModuleContainer()
-    {
-        $module_name = $this->_request->getModuleName();
-        $this->_helper->layout()->moduleStart =
-        '<div class="icinga-module module-'
-          . $module_name
-          . '" data-icinga-module="' . $module_name . '">'
-          . "\n"
-          ;
-        $this->_helper->layout()->moduleEnd = "</div>\n";
     }
 
     protected function sendAsPdf()
