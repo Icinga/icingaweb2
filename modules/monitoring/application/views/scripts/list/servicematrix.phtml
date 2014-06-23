@@ -22,7 +22,7 @@ $pivotData = $this->pivot->toArray();
 $hostFilter = '(' . implode('|', array_keys($pivotData)) . ')';
 ?>
 
-<?php if (sizeof($pivotData) === 0): ?>
+<?php if (count($pivotData) === 0): ?>
     <?= $this->translate('No Service Found'); ?>
 <?php endif ?>
 

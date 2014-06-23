@@ -101,7 +101,7 @@ class Dns
     public static function ipv4($hostname)
     {
         $records = dns_get_record($hostname, DNS_A);
-        if ($records !== false && sizeof($records) > 0) {
+        if ($records !== false && count($records) > 0) {
             return $records[0]['ip'];
         }
         return false;
@@ -117,7 +117,7 @@ class Dns
     public static function ipv6($hostname)
     {
         $records = dns_get_record($hostname, DNS_AAAA);
-        if ($records !== false && sizeof($records) > 0) {
+        if ($records !== false && count($records) > 0) {
             return $records[0]['ip'];
         }
         return false;
