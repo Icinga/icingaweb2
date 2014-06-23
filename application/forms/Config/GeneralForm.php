@@ -357,17 +357,7 @@ class GeneralForm extends Form
         $this->addDateFormatSettings($global);
         $this->addUserPreferencesDialog($preferences);
 
-        $this->addElement(
-            'button',
-            'btn_submit',
-            array(
-                'type'      => 'submit',
-                'escape'    => false,
-                'value'     => '1',
-                'label'     => $this->getView()->icon('save.png', 'Save Changes')
-                    . ' Save changes',
-            )
-        );
+        $this->setSubmitLabel('Save Changes');
     }
 
     /**
