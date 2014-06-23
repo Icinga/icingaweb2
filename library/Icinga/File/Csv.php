@@ -5,6 +5,7 @@
 namespace Icinga\File;
 
 use Icinga\Data\Browsable;
+use Exception;
 
 class Csv
 {
@@ -27,20 +28,24 @@ class Csv
 
     public function __toString()
     {
-        $first = true;
-        $csv = '';
-        foreach ($this->query->getQuery()->fetchAll() as $row) {
-            if ($first) {
-                $csv .= implode(',', array_keys((array) $row)) . "\r\n";
-                $first = false;
+        try {
+            $first = true;
+            $csv = '';
+            foreach ($this->query->getQuery()->fetchAll() as $row) {
+                if ($first) {
+                    $csv .= implode(',', array_keys((array) $row)) . "\r\n";
+                    $first = false;
+                }
+                $out = array();
+                foreach ($row as & $val) {
+                    $out[] = '"' . $val . '"';
+                }
+                $csv .= implode(',', $out) . "\r\n";
             }
-            $out = array();
-            foreach ($row as & $val) {
-                $out[] = '"' . $val . '"';
-            }
-            $csv .= implode(',', $out) . "\r\n";
-        }
 
-        return $csv;
+            return $csv;
+        } catch (Exception $e) {
+            return (string) $e;
+        }
     }
 }
