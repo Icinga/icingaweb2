@@ -20,8 +20,10 @@ foreach ($object->comments as $comment) {
     $deleteData = $data;
     $deleteData['commentid'] = $comment->id;
 
-    $iconForm = $cf->iconSubmitForm(
-        'img/icons/remove_petrol.png',
+    // $iconForm = $cf->iconSubmitForm(
+    //     'img/icons/remove_petrol.png',
+    $iconForm = $cf->labelSubmitForm(
+        'X',
         'Remove comment',
         'link-like',
         'removecomment',

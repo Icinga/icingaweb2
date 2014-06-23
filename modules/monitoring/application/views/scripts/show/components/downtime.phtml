@@ -24,8 +24,10 @@ foreach ($object->downtimes as $downtime) {
         }
     }
 
-    $iconForm = $cf->iconSubmitForm(
-        'img/icons/remove_petrol.png',
+    // $iconForm = $cf->iconSubmitForm(
+    //     'img/icons/remove_petrol.png',
+    $iconForm = $cf->labelSubmitForm(
+        'X',
         'Remove Downtime',
         'link-like',
         'removedowntime',
