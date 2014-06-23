@@ -629,7 +629,7 @@
             }
 
             var origFocus = document.activeElement;
-            if (typeof containerId !== 'undefined' && autorefresh && origFocus && $(origFocus).closest('form').length && $container.has($(origFocus)) && $(origFocus).closest('#' + containerId).length) {
+            if (typeof containerId !== 'undefined' && autorefresh && origFocus && $(origFocus).closest('form').length && $container.has($(origFocus)) && $(origFocus).closest('#' + containerId).length && ! $(origFocus).hasClass('autosubmit')) {
                 this.icinga.logger.debug('Not changing content, form has focus');
                 return;
             }
