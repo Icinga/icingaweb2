@@ -99,17 +99,20 @@ form.inline {
   display: inline;
 }
 
-button.link-like {
+button.link-like, input.link-like {
   color: @colorLinkDefault;
-  background: none;
+  font-weight: normal;
   border: none;
+  background: none;
   padding: 0;
   font-size: 1em;
   cursor: pointer;
 }
 
-button.link-like:hover {
+button.link-like:hover, input.link-like:hover, input.link-like:focus {
   text-decoration: underline;
+  background: none;
+  color: @colorLinkDefault;
 }
 
 form ul.errors {

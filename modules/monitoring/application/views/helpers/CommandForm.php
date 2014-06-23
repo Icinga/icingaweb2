@@ -119,7 +119,7 @@ class Zend_View_Helper_CommandForm extends Zend_View_Helper_Abstract
     {
         $form = $this->simpleForm($commandName, $arguments);
 
-        $button = new Zend_Form_Element_Button(
+        $button = new Zend_Form_Element_Submit(
             array(
                 'name'      => 'btn_submit',
                 'class'     => $cls,
