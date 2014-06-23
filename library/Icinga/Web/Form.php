@@ -456,10 +456,8 @@ class Form extends Zend_Form
 
         if ($this->submitLabel) {
             $checkData = $this->getRequest()->getParams();
-            $label = isset($checkData['btn_submit']) ? $checkData['btn_submit'] : null;
-            return $label === $this->submitLabel;
+            return isset($checkData['btn_submit']) && $checkData['btn_submit'];
         }
-
         return true;
     }
 
