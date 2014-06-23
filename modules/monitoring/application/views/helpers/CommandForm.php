@@ -170,11 +170,10 @@ class Zend_View_Helper_CommandForm extends Zend_View_Helper_Abstract
         }
 
         $form->addElement($checkBox);
-        $form->enableAutoSubmit(array($uniqueName));
 
         $checkBox->setDecorators(array('ViewHelper'));
-        $checkBox->setAttrib('class', '');
         $checkBox->setAttrib('id', $uniqueName);
+        $form->enableAutoSubmit(array($uniqueName));
 
         $submit_identifier = new Zend_Form_Element_Hidden('btn_submit');
         $submit_identifier->setValue('1');
