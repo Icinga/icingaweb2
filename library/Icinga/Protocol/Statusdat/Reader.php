@@ -31,14 +31,13 @@ namespace Icinga\Protocol\Statusdat;
 
 use Icinga\Util\File;
 use Icinga\Logger\Logger;
-use Icinga\Data\DatasourceInterface;
 use Icinga\Exception\ConfigurationError;
 
 /**
  * Class Reader
  * @package Icinga\Protocol\Statusdat
  */
-class Reader implements IReader, DatasourceInterface
+class Reader implements IReader
 {
     /**
      *  The default lifetime of the cache in milliseconds
