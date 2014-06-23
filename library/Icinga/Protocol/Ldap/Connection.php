@@ -223,16 +223,22 @@ class Connection
     /**
      * Fetch the distinguished name of the first result of the given query
      *
-     * @param       $query
-     * @param array $fields
+     * @param       $query   The query returning the result set
+     * @param array $fields  The fields to fetch
      *
-     * @return null|string   Returns the distinguished name, or false when the given query yields no results
+     * @return string        Returns the distinguished name, or false when the given query yields no results
+     * @throws \Exception    When the query result is empty and contains no DN to fetch
      */
     public function fetchDN($query, $fields = array())
     {
         $rows = $this->fetchAll($query, $fields);
         if (count($rows) !== 1) {
-            return null;
+            throw new \Exception(
+                sprintf(
+                    'Cannot fetch single DN for %s',
+                    $query
+                )
+            );
         }
         return key($rows);
     }
