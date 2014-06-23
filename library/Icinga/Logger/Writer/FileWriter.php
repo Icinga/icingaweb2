@@ -6,9 +6,9 @@ namespace Icinga\Logger\Writer;
 
 use Exception;
 use Zend_Config;
+use Icinga\Util\File;
 use Icinga\Logger\Logger;
 use Icinga\Logger\LogWriter;
-use Icinga\Application\Config;
 use Icinga\Exception\ConfigurationError;
 
 /**
@@ -93,12 +93,6 @@ class FileWriter extends LogWriter
      */
     protected function write($text)
     {
-        $fd = fopen($this->path, 'a');
-
-        if ($fd === false || fwrite($fd, $text . PHP_EOL) === false) {
-            throw new Exception('Failed to write to log file "' . $this->path . '"');
-        }
-
-        fclose($fd);
+        File::open($this->path, 'a')->write($text . PHP_EOL)->close();
     }
 }

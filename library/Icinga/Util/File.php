@@ -79,6 +79,21 @@ class File
     }
 
     /**
+     * Read file line by line
+     *
+     * @return  array
+     */
+    public function readlines()
+    {
+        $lines = array();
+        while (($line = fgets($this->handle)) !== false) {
+            $lines[] = $line;
+        }
+
+        return $lines;
+    }
+
+    /**
      * Write contents to file
      *
      * @param   string  $bytes      The contents to write

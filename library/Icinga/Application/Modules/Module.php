@@ -17,6 +17,7 @@ use Icinga\Application\Icinga;
 use Icinga\Logger\Logger;
 use Icinga\Util\Translator;
 use Icinga\Web\Hook;
+use Icinga\Util\File;
 
 /**
  * Module handling
@@ -319,10 +320,12 @@ class Module
 
             if (file_exists($this->metadataFile)) {
 
-                $fh = fopen($this->metadataFile, 'r');
+                $file = File::open($this->metadataFile, 'r');
+                $lines = $file->readlines();
+                $file->close();
                 $key = null;
 
-                while (false !== ($line = fgets($fh))) {
+                foreach ($lines as $line) {
                     $line = rtrim($line);
 
                     if ($key === 'description') {
