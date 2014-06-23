@@ -13,7 +13,6 @@ class SearchController extends ActionController
 {
     public function indexAction()
     {
-        $this->setAutorefreshInterval(10);
         $search = $this->_request->getParam('q');
         if (! $search) {
             $this->view->tabs = Widget::create('tabs')->add(
