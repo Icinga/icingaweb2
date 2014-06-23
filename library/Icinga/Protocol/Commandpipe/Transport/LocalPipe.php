@@ -29,6 +29,8 @@
 
 namespace Icinga\Protocol\Commandpipe\Transport;
 
+use Exception;
+use Icinga\Util\File;
 use Icinga\Logger\Logger;
 use Icinga\Exception\ConfigurationError;
 
@@ -49,7 +51,7 @@ class LocalPipe implements Transport
      *
      * @var string
      */
-    private $openMode = "w";
+    private $openMode = "wn";
 
     /**
      * @see Transport::setEndpoint()
@@ -65,13 +67,20 @@ class LocalPipe implements Transport
     public function send($message)
     {
         Logger::debug('Attempting to send external icinga command %s to local command file ', $message, $this->path);
-        $file = @fopen($this->path, $this->openMode);
-        if (!$file) {
-            throw new ConfigurationError(sprintf('Could not open icinga command pipe at "%s"', $this->path));
+
+        try {
+            File::open($this->path, $this->openMode)->write('[' . time() . '] ' . $message . PHP_EOL)->close();
+        } catch (Exception $e) {
+            throw new ConfigurationError(
+                sprintf(
+                    'Could not open icinga command pipe at "%s" (%s)',
+                    $this->path,
+                    $e->getMessage()
+                )
+            );
         }
-        fwrite($file, '[' . time() . '] ' . $message . PHP_EOL);
-        Logger::debug('Writing [' . time() . '] ' . $message . PHP_EOL);
-        fclose($file);
+
+        Logger::debug('Command sent: [' . time() . '] ' . $message . PHP_EOL);
     }
 
     /**
