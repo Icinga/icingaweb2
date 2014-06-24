@@ -52,7 +52,16 @@
 
         },
 
+        toggleDebug: function() {
+            if (this.debug) {
+                return this.disableDebug();
+            } else {
+                return this.enableDebug();
+            }
+        },
+
         enableDebug: function () {
+            if (this.debug === true) { return this; }
             this.debug = true;
             this.debugTimer = this.icinga.timer.register(
                 this.refreshDebug,
