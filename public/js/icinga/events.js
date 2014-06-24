@@ -459,6 +459,9 @@
             var isMenuLink = $a.closest('#menu').length > 0;
             var formerUrl;
             var remote = /^(?:[a-z]+:)\/\//;
+            if (href.match(/^javascript:/)) {
+                return true;
+            }
 
             // Ignore clicks on multiselect table inner links while key pressed
             if ((event.ctrlKey || event.metaKey || event.shiftKey) &&
