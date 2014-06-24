@@ -33,13 +33,12 @@ use \Exception;
 use \Icinga\Config\PreservingIniWriter;
 use \Icinga\Web\Controller\BaseConfigController;
 use \Icinga\Web\Widget\Tab;
-use \Icinga\Web\Widget\AlertMessageBox;
-use \Icinga\Web\Url;
+use Icinga\Web\Notification;
+use Icinga\Web\Url;
 
 use Icinga\Module\Monitoring\Form\Config\ConfirmRemovalForm;
 use Icinga\Module\Monitoring\Form\Config\Backend\EditBackendForm;
 use Icinga\Module\Monitoring\Form\Config\Backend\CreateBackendForm;
-
 use Icinga\Module\Monitoring\Form\Config\Instance\EditInstanceForm;
 use Icinga\Module\Monitoring\Form\Config\Instance\CreateInstanceForm;
 
@@ -106,7 +105,7 @@ class Monitoring_ConfigController extends BaseConfigController {
             $config = $this->Config('backends');
             $config->$backend = $newConfig;
             if ($this->writeConfiguration($config, 'backends')) {
-                $this->addSuccessMessage('Backend ' . $backend . ' Modified.');
+                Notification::success('Backend ' . $backend . ' Modified.');
                 $this->redirectNow('monitoring/config');
             } else {
                 $this->render('show-configuration');
@@ -129,7 +128,7 @@ class Monitoring_ConfigController extends BaseConfigController {
             $configArray[$form->getBackendName()] = $form->getConfig();
 
             if ($this->writeConfiguration(new Zend_Config($configArray), 'backends')) {
-                $this->addSuccessMessage('Backend Creation Succeeded');
+                Notification::success('Backend Creation Succeeded');
                 $this->redirectNow('monitoring/config');
             } else {
                 $this->render('show-configuration');
@@ -159,7 +158,7 @@ class Monitoring_ConfigController extends BaseConfigController {
             unset($configArray[$backend]);
 
             if ($this->writeConfiguration(new Zend_Config($configArray), 'backends')) {
-                $this->addSuccessMessage('Backend "' . $backend . '" Removed');
+                Notification::success('Backend "' . $backend . '" Removed');
                 $this->redirectNow('monitoring/config');
             } else {
                 $this->render('show-configuration');
@@ -191,7 +190,7 @@ class Monitoring_ConfigController extends BaseConfigController {
             unset($configArray[$instance]);
 
             if ($this->writeConfiguration(new Zend_Config($configArray), 'instances')) {
-                $this->addSuccessMessage('Instance "' . $instance . '" Removed');
+                Notification::success('Instance "' . $instance . '" Removed');
                 $this->redirectNow('monitoring/config');
             } else {
                 $this->render('show-configuration');
@@ -220,7 +219,7 @@ class Monitoring_ConfigController extends BaseConfigController {
             $instanceConfig = $this->Config('instances')->toArray();
             $instanceConfig[$instance] = $form->getConfig();
             if ($this->writeConfiguration(new Zend_Config($instanceConfig), 'instances')) {
-                $this->addSuccessMessage('Instance Modified');
+                Notification::success('Instance Modified');
                 $this->redirectNow('monitoring/config');
             } else {
                 $this->render('show-configuration');
@@ -246,7 +245,7 @@ class Monitoring_ConfigController extends BaseConfigController {
             }
             $instanceConfig[$form->getInstanceName()] = $form->getConfig()->toArray();
             if ($this->writeConfiguration(new Zend_Config($instanceConfig), 'instances')) {
-                $this->addSuccessMessage('Instance Creation Succeeded');
+                Notification::success('Instance Creation Succeeded');
                 $this->redirectNow('monitoring/config');
             } else {
                 $this->render('show-configuration');
