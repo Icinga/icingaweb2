@@ -17,7 +17,9 @@ use Icinga\Application\Icinga;
 use Icinga\Logger\Logger;
 use Icinga\Util\Translator;
 use Icinga\Web\Hook;
+use Icinga\Web\Widget;
 use Icinga\Util\File;
+use Icinga\Exception\ProgrammingError;
 
 /**
  * Module handling
@@ -123,6 +125,13 @@ class Module
      * @var array
      */
     private $restrictionList = array();
+
+    /**
+     * Provided config tabs
+     *
+     * @var array
+     */
+    private $configTabs = array();
 
     /**
      * Icinga application
@@ -516,6 +525,27 @@ class Module
     }
 
     /**
+     * Retrieve this modules configuration tabs
+     *
+     * @return Icinga\Web\Widget\Tabs
+     */
+    public function getConfigTabs()
+    {
+        $this->launchConfigScript();
+        $tabs = Widget::create('tabs');
+        $tabs->add('info', array(
+            'url'       => 'config/module',
+            'urlParams' => array('name' => $this->getName()),
+            'title'     => 'Module: ' . $this->getName()
+        ));
+        foreach ($this->configTabs as $name => $config) {
+            $tabs->add($name, $config);
+        }
+        return $tabs;
+    }
+
+
+    /**
      * Provide a named permission
      *
      * @param string $name Unique permission name
@@ -555,6 +585,24 @@ class Module
             'name'        => $name,
             'description' => $description
         );
+    }
+
+    /**
+     * Provide a module config tab
+     *
+     * @param string $name   Unique tab name
+     * @param string $config Tab config
+     *
+     * @return self
+     */
+    protected function provideConfigTab($name, $config = array())
+    {
+        if (! array_key_exists('url', $config)) {
+            throw new ProgrammingError('A module config tab MUST provide and "url"');
+        }
+        $config['url'] = $this->getName() . '/' . ltrim($config['url'], '/');
+        $this->configTabs[$name] = $config;
+        return $this;
     }
 
     /**
