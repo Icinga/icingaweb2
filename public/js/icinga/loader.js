@@ -141,11 +141,11 @@
 
         stopPendingRequestsFor: function ($el) {
             var id;
-            if (typeof $el !== 'undefined' || ! (id = $el.attr('id'))) {
+            if (typeof $el === 'undefined' || ! (id = $el.attr('id'))) {
                 return;
             }
 
-            if (id in this.requests) {
+            if (typeof this.requests[id] !== 'undefined') {
                 this.requests[id].abort();
             }
         },
@@ -623,6 +623,7 @@
         renderContentToContainer: function (content, $container, action, autorefresh) {
             // Container update happens here
             var scrollPos = false;
+            var self = this;
             var containerId = $container.attr('id');
             if (typeof containerId !== 'undefined') {
                 scrollPos = $container.scrollTop();
@@ -644,6 +645,9 @@
                 event.preventDefault();
             });
 
+            $('.container', $container).each(function() {
+                self.stopPendingRequestsFor($(this));
+            });
 
             if (false &&
                 $('.dashboard', $content).length > 0 &&
