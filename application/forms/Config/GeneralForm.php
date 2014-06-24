@@ -291,16 +291,6 @@ class GeneralForm extends Form
             )
         );
 
-        $txtPreferencesIniPath = new Zend_Form_Element_Text(
-            array(
-                'name'      =>  'preferences_ini_path',
-                'label'     =>  'User Preference Filepath',
-                'required'  =>  $backend === 'ini',
-                'condition' =>  $backend === 'ini',
-                'value'     =>  $cfg->get('config_path')
-            )
-        );
-
         $backends = array();
         foreach ($this->getResources() as $name => $resource) {
             if ($resource['type'] !== 'db') {
@@ -321,11 +311,8 @@ class GeneralForm extends Form
         );
         $validator = new WritablePathValidator();
         $validator->setRequireExistence();
-        $txtPreferencesIniPath->addValidator($validator);
-        $this->addElement($txtPreferencesIniPath);
         $this->addElement($txtPreferencesDbResource);
 
-        $txtPreferencesIniPath->addDecorator(new ConditionalHidden());
         $txtPreferencesDbResource->addDecorator(new ConditionalHidden());
         $this->enableAutoSubmit(
             array(
@@ -385,9 +372,7 @@ class GeneralForm extends Form
 
 
         $cfg->preferences->type = $values['preferences_type'];
-        if ($cfg->preferences->type === 'ini') {
-            $cfg->preferences->config_path = $values['preferences_ini_path'];
-        } elseif ($cfg->preferences->type === 'db') {
+        if ($cfg->preferences->type === 'db') {
             $cfg->preferences->resource = $values['preferences_db_resource'];
         }
 
