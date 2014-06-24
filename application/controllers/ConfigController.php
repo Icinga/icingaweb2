@@ -121,7 +121,7 @@ class ConfigController extends BaseConfigController
             if (!$this->writeConfigFile($form->getConfig(), 'config'))  {
                 return;
             }
-            $this->addSuccessMessage("Configuration Sucessfully Updated");
+            Notification::success("Configuration Sucessfully Updated");
             $form->setConfiguration(IcingaConfig::app(), true);
             $this->redirectNow('config/index');
         }
@@ -143,7 +143,7 @@ class ConfigController extends BaseConfigController
             if (!$this->writeConfigFile($form->getConfig(), 'config')) {
                 return;
             }
-            $this->addSuccessMessage("Configuration Sucessfully Updated");
+            Notification::success("Configuration Sucessfully Updated");
             $form->setConfiguration(IcingaConfig::app(), true);
             $this->redirectNow('config/logging');
         }
@@ -241,7 +241,7 @@ class ConfigController extends BaseConfigController
 
             if ($form->isSubmittedAndValid()) {
                 if ($this->writeAuthenticationFile($form->getReorderedConfig($config))) {
-                    $this->addSuccessMessage('Authentication Order Updated');
+                    Notification::success('Authentication Order Updated');
                     $this->redirectNow('config/authentication');
                 }
 
@@ -291,7 +291,7 @@ class ConfigController extends BaseConfigController
             }
             if ($this->writeAuthenticationFile($backendCfg)) {
                 // redirect to overview with success message
-                $this->addSuccessMessage('Backend Modification Written.');
+                Notification::success('Backend Modification Written.');
                 $this->redirectNow("config/authentication");
             }
             return;
@@ -356,7 +356,7 @@ class ConfigController extends BaseConfigController
             }
             if ($this->writeAuthenticationFile($backendCfg)) {
                 // redirect to overview with success message
-                $this->addSuccessMessage('Backend "' . $authBackend . '" created');
+                Notification::success('Backend "' . $authBackend . '" created');
                 $this->redirectNow("config/authentication");
             }
             return;
@@ -380,7 +380,7 @@ class ConfigController extends BaseConfigController
         $configArray = IcingaConfig::app('authentication', true)->toArray();
         $authBackend =  $this->getParam('auth_backend');
         if (!isset($configArray[$authBackend])) {
-            $this->addSuccessMessage('Can\'t perform removal: Unknown Authentication Backend Provided');
+            Notification::error('Can\'t perform removal: Unknown Authentication Backend Provided');
             $this->render('authentication/remove');
             return;
         }
@@ -392,7 +392,7 @@ class ConfigController extends BaseConfigController
         if ($form->isSubmittedAndValid()) {
             unset($configArray[$authBackend]);
             if ($this->writeAuthenticationFile($configArray)) {
-                $this->addSuccessMessage('Authentication Backend "' . $authBackend . '" Removed');
+                Notification::success('Authentication Backend "' . $authBackend . '" Removed');
                 $this->redirectNow("config/authentication");
             }
             return;
@@ -401,14 +401,6 @@ class ConfigController extends BaseConfigController
         $this->view->form = $form;
         $this->view->name = $authBackend;
         $this->render('authentication/remove');
-    }
-
-    /**
-     * Show developer tools
-     */
-    public function devtoolsAction()
-    {
-        $this->view->tabs = null;
     }
 
     public function resourceAction($showOnly = false)
