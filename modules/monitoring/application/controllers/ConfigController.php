@@ -30,7 +30,6 @@
 
 use \Exception;
 
-use \Icinga\Application\Config as IcingaConfig;
 use \Icinga\Config\PreservingIniWriter;
 use \Icinga\Web\Controller\BaseConfigController;
 use \Icinga\Web\Widget\Tab;
@@ -72,11 +71,11 @@ class Monitoring_ConfigController extends BaseConfigController {
      */
     public function indexAction()
     {
-        $this->view->tabs->activate('backends');
+        $this->view->tabs = $this->Module()->getConfigTabs()->activate('backends');
         $this->view->messageBox = new AlertMessageBox(true);
         foreach (array('backends', 'instances') as $element) {
             try {
-                $elementConfig = IcingaConfig::module('monitoring', $element);
+                $elementConfig = $this->Config($element);
                 if ($elementConfig === null) {
                     $this->view->{$element} = array();
                 } else {
@@ -101,11 +100,11 @@ class Monitoring_ConfigController extends BaseConfigController {
         }
         $backendForm = new EditBackendForm();
         $backendForm->setRequest($this->getRequest());
-        $backendForm->setBackendConfiguration(IcingaConfig::module('monitoring', 'backends')->get($backend));
+        $backendForm->setBackendConfiguration($this->Config('backends')->get($backend));
 
         if ($backendForm->isSubmittedAndValid()) {
             $newConfig = $backendForm->getConfig();
-            $config = IcingaConfig::module('monitoring', 'backends');
+            $config = $this->Config('backends');
             $config->$backend = $newConfig;
             if ($this->writeConfiguration($config, 'backends')) {
                 $this->addSuccessMessage('Backend ' . $backend . ' Modified.');
@@ -127,7 +126,7 @@ class Monitoring_ConfigController extends BaseConfigController {
         $form = new CreateBackendForm();
         $form->setRequest($this->getRequest());
         if ($form->isSubmittedAndValid()) {
-            $configArray  =  IcingaConfig::module('monitoring', 'backends')->toArray();
+            $configArray  =  $this->Config('backends')->toArray();
             $configArray[$form->getBackendName()] = $form->getConfig();
 
             if ($this->writeConfiguration(new Zend_Config($configArray), 'backends')) {
@@ -157,7 +156,7 @@ class Monitoring_ConfigController extends BaseConfigController {
         $form->setRemoveTarget('backend', $backend);
 
         if ($form->isSubmittedAndValid()) {
-            $configArray = IcingaConfig::module('monitoring', 'backends')->toArray();
+            $configArray = $this->Config('backends')->toArray();
             unset($configArray[$backend]);
 
             if ($this->writeConfiguration(new Zend_Config($configArray), 'backends')) {
@@ -189,7 +188,7 @@ class Monitoring_ConfigController extends BaseConfigController {
         $form->setRemoveTarget('instance', $instance);
 
         if ($form->isSubmittedAndValid()) {
-            $configArray = IcingaConfig::module('monitoring', 'instances')->toArray();
+            $configArray = $this->Config('instances')->toArray();
             unset($configArray[$instance]);
 
             if ($this->writeConfiguration(new Zend_Config($configArray), 'instances')) {
@@ -216,10 +215,10 @@ class Monitoring_ConfigController extends BaseConfigController {
             return;
         }
         $form = new EditInstanceForm();
-        $form->setInstanceConfiguration(IcingaConfig::module('monitoring', 'instances')->get($instance));
+        $form->setInstanceConfiguration($this->Config('instances')->get($instance));
         $form->setRequest($this->getRequest());
         if ($form->isSubmittedAndValid()) {
-            $instanceConfig = IcingaConfig::module('monitoring', 'instances')->toArray();
+            $instanceConfig = $this->Config('instances')->toArray();
             $instanceConfig[$instance] = $form->getConfig();
             if ($this->writeConfiguration(new Zend_Config($instanceConfig), 'instances')) {
                 $this->addSuccessMessage('Instance Modified');
@@ -240,7 +239,7 @@ class Monitoring_ConfigController extends BaseConfigController {
         $form = new CreateInstanceForm();
         $form->setRequest($this->getRequest());
         if ($form->isSubmittedAndValid()) {
-            $instanceConfig = IcingaConfig::module('monitoring', 'instances');
+            $instanceConfig = $this->Config('instances');
             if ($instanceConfig === null) {
                 $instanceConfig = array();
             } else {
@@ -264,7 +263,7 @@ class Monitoring_ConfigController extends BaseConfigController {
      */
     private function writeConfiguration($config, $file)
     {
-        $target = IcingaConfig::module('monitoring', $file)->getConfigFile();
+        $target = $this->Config($file)->getConfigFile();
         $writer = new PreservingIniWriter(array('filename' => $target, 'config' => $config));
 
         try {
@@ -288,7 +287,7 @@ class Monitoring_ConfigController extends BaseConfigController {
      */
     private function isExistingBackend($backend)
     {
-        $backendCfg = IcingaConfig::module('monitoring', 'backends');
+        $backendCfg = $this->Config('backends');
         return $backend && $backendCfg->get($backend);
     }
 
@@ -301,7 +300,7 @@ class Monitoring_ConfigController extends BaseConfigController {
      */
     private function isExistingInstance($instance)
     {
-        $instanceCfg = IcingaConfig::module('monitoring', 'instances');
+        $instanceCfg = $this->Config('instances');
         return $instanceCfg && $instanceCfg->get($instance);
     }
 }
