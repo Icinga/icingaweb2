@@ -32,16 +32,12 @@ namespace Icinga\Form\Config;
 
 use \DateTimeZone;
 use \Zend_Config;
-use \Zend_Form_Element_Text;
 use \Zend_Form_Element_Select;
-use \Zend_View_Helper_DateFormat;
 use \Icinga\Application\Config as IcingaConfig;
 use \Icinga\Data\ResourceFactory;
 use \Icinga\Web\Form;
 use \Icinga\Util\Translator;
 use \Icinga\Web\Form\Validator\WritablePathValidator;
-use \Icinga\Web\Form\Validator\TimeFormatValidator;
-use \Icinga\Web\Form\Validator\DateFormatValidator;
 use \Icinga\Web\Form\Decorator\ConditionalHidden;
 
 /**
@@ -64,13 +60,6 @@ class GeneralForm extends Form
     private $resources;
 
     /**
-     * The view helper to format date/time strings
-     *
-     * @var Zend_View_Helper_DateFormat
-     */
-    private $dateHelper;
-
-    /**
      * Set a specific configuration directory to use for configuration specific default paths
      *
      * @param string    $dir
@@ -90,29 +79,6 @@ class GeneralForm extends Form
     public function getConfigDir()
     {
         return $this->configDir === null ? IcingaConfig::$configDir : $this->configDir;
-    }
-
-    /**
-     * Return the view helper to format date/time strings
-     *
-     * @return Zend_View_Helper_DateFormat
-     */
-    public function getDateFormatter()
-    {
-        if ($this->dateHelper === null) {
-            return $this->getView()->dateFormat();
-        }
-        return $this->dateHelper;
-    }
-
-    /**
-     * Set the view helper that is used to format date/time strings (used for testing)
-     *
-     * @param Zend_View_Helper_DateFormat   $dateHelper
-     */
-    public function setDateFormatter(Zend_View_Helper_DateFormat $dateHelper)
-    {
-        $this->dateHelper = $dateHelper;
     }
 
     /**
@@ -221,51 +187,6 @@ class GeneralForm extends Form
     }
 
     /**
-     * Add text fields for the date and time format used in the application
-     *
-     * @param Zend_Config   $cfg    The "global" section of the config.ini
-     */
-    private function addDateFormatSettings(Zend_Config $cfg)
-    {
-        $phpUrl = '<a href="http://php.net/manual/en/function.date.php" target="_new">'
-            . 'the official PHP documentation</a>';
-
-        $dateFormatValue = $this->getRequest()->getParam('date_format', '');
-        if (empty($dateFormatValue)) {
-            $dateFormatValue = $cfg->get('dateFormat', 'd/m/Y');
-        }
-        $txtDefaultDateFormat = new Zend_Form_Element_Text(
-            array(
-                'name'      =>  'date_format',
-                'label'     =>  'Date Format',
-                'helptext'  =>  'Display dates according to this format. (See ' . $phpUrl . ' for possible values.) '
-                                . 'Example result: ' . $this->getDateFormatter()->format(time(), $dateFormatValue),
-                'required'  =>  true,
-                'value'     =>  $dateFormatValue
-            )
-        );
-        $this->addElement($txtDefaultDateFormat);
-        $txtDefaultDateFormat->addValidator(new DateFormatValidator());
-
-        $timeFormatValue = $this->getRequest()->getParam('time_format', '');
-        if (empty($timeFormatValue)) {
-            $timeFormatValue = $cfg->get('timeFormat', 'g:i A');
-        }
-        $txtDefaultTimeFormat = new Zend_Form_Element_Text(
-            array(
-                'name'      =>  'time_format',
-                'label'     =>  'Time Format',
-                'required'  =>  true,
-                'helptext'  =>  'Display times according to this format. (See ' . $phpUrl . ' for possible values.) '
-                                . 'Example result: ' . $this->getDateFormatter()->format(time(), $timeFormatValue),
-                'value'     =>  $timeFormatValue
-            )
-        );
-        $txtDefaultTimeFormat->addValidator(new TimeFormatValidator());
-        $this->addElement($txtDefaultTimeFormat);
-    }
-
-    /**
      * Add form elements for setting the user preference storage backend
      *
      * @param Zend_Config   $cfg    The Zend_config object of preference section
@@ -341,7 +262,6 @@ class GeneralForm extends Form
         $this->addLanguageSelection($global);
         $this->addTimezoneSelection($global);
         $this->addModuleSettings($global);
-        $this->addDateFormatSettings($global);
         $this->addUserPreferencesDialog($preferences);
 
         $this->setSubmitLabel('Save Changes');
@@ -367,10 +287,6 @@ class GeneralForm extends Form
         $cfg->global->language     = $values['language'];
         $cfg->global->timezone     = $values['timezone'];
         $cfg->global->modulePath   = $values['module_path'];
-        $cfg->global->dateFormat   = $values['date_format'];
-        $cfg->global->timeFormat   = $values['time_format'];
-
-
         $cfg->preferences->type = $values['preferences_type'];
         if ($cfg->preferences->type === 'db') {
             $cfg->preferences->resource = $values['preferences_db_resource'];
