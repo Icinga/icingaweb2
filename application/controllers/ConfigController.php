@@ -59,52 +59,24 @@ class ConfigController extends BaseConfigController
      */
     private $resourceTypes = array('livestatus', 'ido', 'statusdat', 'ldap');
 
-    /**
-     * Create tabs for this configuration controller
-     *
-     * @return  array
-     *
-     * @see     BaseConfigController::createProvidedTabs()
-     */
-    public static function createProvidedTabs()
+    public function init()
     {
-        return array(
-            'index' => new Tab(
-                array(
-                    'name'      => 'index',
-                    'title'     => 'Application',
-                    'url'       => Url::fromPath('/config')
-                )
-            ),
-            'authentication' => new Tab(
-                array(
-                    'name'      => 'auth',
-                    'title'     => 'Authentication',
-                    'url'       =>  Url::fromPath('/config/authentication')
-                )
-            ),
-            'resources' => new Tab(
-                array(
-                    'name'      => 'resource',
-                    'title'     => 'Resources',
-                    'url'       => Url::fromPath('/config/resource')
-                )
-            ),
-            'logging' => new Tab(
-                array(
-                    'name'      => 'logging',
-                    'title'     => 'Logging',
-                    'url'       => Url::fromPath('/config/logging')
-                )
-            ),
-            'modules' => new Tab(
-                array(
-                    'name'      => 'modules',
-                    'title'     => 'Modules',
-                    'url'       => Url::fromPath('/config/modules')
-                )
-            )
-        );
+        $this->view->tabs = Widget::create('tabs')->add('index', array(
+            'title' => 'Application',
+            'url'   => 'config'
+        ))->add('authentication', array(
+            'title' => 'Authentication',
+            'url'   => 'config/authentication'
+        ))->add('resources', array(
+            'title' => 'Resources',
+            'url'   => 'config/resource'
+        ))->add('logging', array(
+            'title' => 'Logging',
+            'url'   => 'config/logging'
+        ))->add('modules', array(
+            'title' => 'Modules',
+            'url'   => 'config/modules'
+        ));
     }
 
     /**
@@ -175,10 +147,7 @@ class ConfigController extends BaseConfigController
         } else {
             $this->view->module = false;
         }
-        $this->view->tabs = Widget::create('tabs')->add('info', array(
-            'url' => Url::fromRequest(),
-            'title' => 'Module info'
-        ))->activate('info');
+        $this->view->tabs = $module->getConfigTabs()->activate('info');
     }
 
     /**

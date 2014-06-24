@@ -30,9 +30,8 @@
 
 use \Exception;
 
-use \Icinga\Config\PreservingIniWriter;
-use \Icinga\Web\Controller\BaseConfigController;
-use \Icinga\Web\Widget\Tab;
+use Icinga\Config\PreservingIniWriter;
+use Icinga\Web\Controller\ModuleActionController;
 use Icinga\Web\Notification;
 use Icinga\Web\Url;
 
@@ -47,23 +46,8 @@ use Icinga\Exception\NotReadableError;
 /**
  * Configuration controller for editing monitoring resources
  */
-class Monitoring_ConfigController extends BaseConfigController {
-
-    /**
-     * Create the tabs for being available via the applications 'Config' view
-     *
-     * @return array
-     */
-    static public function createProvidedTabs()
-    {
-        return array(
-            'backends' => new Tab(array(
-                'name'  => 'backends',
-                'title' => 'Monitoring Backends',
-                'url'   => Url::fromPath('/monitoring/config')
-            ))
-        );
-    }
+class Monitoring_ConfigController extends ModuleActionController
+{
 
     /**
      * Display a list of available backends and instances
@@ -71,7 +55,6 @@ class Monitoring_ConfigController extends BaseConfigController {
     public function indexAction()
     {
         $this->view->tabs = $this->Module()->getConfigTabs()->activate('backends');
-        $this->view->messageBox = new AlertMessageBox(true);
         foreach (array('backends', 'instances') as $element) {
             try {
                 $elementConfig = $this->Config($element);

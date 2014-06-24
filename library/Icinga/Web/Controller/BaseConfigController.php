@@ -84,16 +84,5 @@ class BaseConfigController extends ActionController
     {
         return array();
     }
-
-    /**
-     * Initialize the controller and collect all tabs for it from the application and it's modules
-     *
-     * @see ActionController::init
-     */
-    public function init()
-    {
-        parent::init();
-        $this->view->tabs = ControllerTabCollector::collectControllerTabs('ConfigController');
-    }
 }
 // @codeCoverageIgnoreEnd
