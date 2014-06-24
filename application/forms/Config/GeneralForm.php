@@ -30,15 +30,15 @@
 
 namespace Icinga\Form\Config;
 
-use \DateTimeZone;
-use \Zend_Config;
-use \Zend_Form_Element_Select;
-use \Icinga\Application\Config as IcingaConfig;
-use \Icinga\Data\ResourceFactory;
-use \Icinga\Web\Form;
-use \Icinga\Util\Translator;
-use \Icinga\Web\Form\Validator\WritablePathValidator;
-use \Icinga\Web\Form\Decorator\ConditionalHidden;
+use Icinga\Application\Config as IcingaConfig;
+use Icinga\Data\ResourceFactory;
+use Icinga\Web\Form;
+use Icinga\Util\Translator;
+use Icinga\Web\Form\Validator\WritablePathValidator;
+use Icinga\Web\Form\Decorator\ConditionalHidden;
+use DateTimeZone;
+use Zend_Form_Element_Select;
+use Zend_Config;
 
 /**
  * Configuration form for general, application-wide settings
