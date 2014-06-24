@@ -196,6 +196,10 @@
             self.refreshDebug();
         },
 
+        hasOnlyOneColumn: function () {
+            return this.currentLayout === 'poor' || this.currentLayout === 'minimal';
+        },
+
         layoutHasBeenChanged: function () {
 
             var layout = $('html').css('fontFamily').replace(/['",]/g, '');

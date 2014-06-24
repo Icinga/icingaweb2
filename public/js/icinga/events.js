@@ -561,11 +561,16 @@
                 // Simulate _next to prepare migration to dynamic column layout
                 // YES, there are duplicate lines right now.
                 if (targetId === '_next') {
-                    if ($el.closest('#col2').length) {
-                        this.icinga.ui.moveToLeft();
+                    if (this.icinga.ui.hasOnlyOneColumn()) {
+                        targetId = 'col1';
+                        $target = $('#' + targetId);
+                    } else {
+                        if ($el.closest('#col2').length) {
+                            this.icinga.ui.moveToLeft();
+                        }
+                        targetId = 'col2';
+                        $target = $('#' + targetId);
                     }
-                    targetId = 'col2';
-                    $target = $('#' + targetId);
                 } else if (targetId === '_self') {
                     $target = $el.closest('.container');
                     targetId = $target.attr('id');
