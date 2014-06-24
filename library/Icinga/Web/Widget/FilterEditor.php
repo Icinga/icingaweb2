@@ -50,12 +50,14 @@ class FilterEditor extends AbstractWidget
         }
         $html = '<select name="' . $view->escape($name) . '"' . $attributes . '>';
         $beenActive = false;
+        sort($list);
         foreach ($list as $k => $v) {
             $active = '';
             if ($k === $selected) {
                 $active = ' selected="selected"';
                 $beenActive = true;
             }
+            $v = str_replace('_', ' ', ucfirst($v));
             $html .= sprintf(
                 '<option value="%s"%s>%s</option>',
                 $view->escape($k),
@@ -65,10 +67,9 @@ class FilterEditor extends AbstractWidget
         }
         if (! $beenActive && $selected) {
             $html .= sprintf(
-                '<option value="%s"%s>%s</option>',
-                $view->escape($k),
-                $active,
-                $view->escape($selected) . ' (unknown)'
+                '<option value="%s" selected="selected">%s</option>',
+                $view->escape($selected),
+                $view->escape(str_replace('_', ' ', ucfirst(ltrim($selected, '_'))))
             );
         }
         $html .= '</select>';
