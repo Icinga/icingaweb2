@@ -157,7 +157,7 @@ class FilterEditor extends AbstractWidget
         }
         $value = $filter->getExpression();
         if (is_array($value)) {
-            $value = implode('|', $value);
+            $value = '(' . implode('|', $value) . ')';
         }
         $html .=  $this->selectColumn($filter) . ' '
                . $this->selectSign($filter)
