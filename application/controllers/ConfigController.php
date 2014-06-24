@@ -403,6 +403,14 @@ class ConfigController extends BaseConfigController
         $this->render('authentication/remove');
     }
 
+    /**
+     * Show developer tools
+     */
+    public function devtoolsAction()
+    {
+        $this->view->tabs = null;
+    }
+
     public function resourceAction($showOnly = false)
     {
         $this->view->tabs->activate('resources');
