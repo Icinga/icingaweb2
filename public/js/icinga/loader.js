@@ -665,6 +665,7 @@
                     $container.append(content);
                 }
             }
+            this.icinga.ui.assignUniqueContainerIds();
 
             if (scrollPos !== false) {
                 $container.scrollTop(scrollPos);

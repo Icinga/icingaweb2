@@ -479,6 +479,35 @@
             return focusedTableDataUrl;
         },
 
+        /**
+         * Assign a unique ID to each .container without such
+         *
+         * This usually applies to dashlets
+         */
+        assignUniqueContainerIds: function() {
+            var currentMax = 0;
+            $('.container').each(function() {
+                var $el = $(this);
+                var m;
+                if (!$el.attr('id')) {
+                    return;
+                }
+                if (m = $el.attr('id').match(/^ciu_(\d+)$/)) {
+                    if (parseInt(m[1]) > currentMax) {
+                         currentMax = parseInt(m[1]);
+                    }
+                }
+            });
+            $('.container').each(function() {
+                var $el = $(this);
+                if (!!$el.attr('id')) {
+                    return;
+                }
+                currentMax++;
+                $el.attr('id', 'ciu_' + currentMax);
+            });
+        },
+
         refreshDebug: function () {
 
             var size = this.getDefaultFontSize().toString();
