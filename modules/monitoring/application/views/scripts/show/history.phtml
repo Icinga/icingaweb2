@@ -38,12 +38,12 @@ $states = array(
 <?=  $this->paginationControl($this->history, null, null, array('preserve' => $this->preserve)); ?>
 </div>
 
+<div class="content">
 <?php if($this->history->count() === 0): ?>
 <?= $this->translate('No History Available For This Object') ?>
 </div>
 <?php return; endif ?>
 
-<div class="content">
 <table data-base-target="_next" class="action objecthistory">
 <tbody>
 
