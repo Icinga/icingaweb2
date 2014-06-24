@@ -3,6 +3,7 @@
 namespace Icinga\Web\Controller;
 
 use Icinga\Application\Config;
+use Icinga\Application\Icinga;
 use Zend_Controller_Request_Abstract as Request;
 use Zend_Controller_Response_Abstract as Response;
 
@@ -11,6 +12,8 @@ class ModuleActionController extends ActionController
     private $config;
 
     private $configs = array();
+
+    private $module;
 
     protected $moduleName;
 
@@ -42,6 +45,14 @@ class ModuleActionController extends ActionController
             }
             return $this->configs[$file];
         }
+    }
+
+    public function Module()
+    {
+        if ($this->module === null) {
+            $this->module = Icinga::app()->getModuleManager()->getModule($this->moduleName);
+        }
+        return $this->module;
     }
 
     public function postDispatch()
