@@ -173,6 +173,8 @@ class Config extends Zend_Config
             return $path;
         }
 
-        return self::$configDir . DIRECTORY_SEPARATOR . $path;
+        $path = self::$configDir . DIRECTORY_SEPARATOR . $path;
+        $canonical = realpath($path);
+        return ($canonical === false) ? $path : $canonical;
     }
 }
