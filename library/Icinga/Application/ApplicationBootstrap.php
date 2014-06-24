@@ -152,6 +152,9 @@ abstract class ApplicationBootstrap
             }
         }
         $this->configDir = realpath($configDir);
+        if (!$this->configDir) {
+            $this->configDir = '/etc/icingaweb';
+        }
 
         $this->setupAutoloader();
         $this->setupZendAutoloader();

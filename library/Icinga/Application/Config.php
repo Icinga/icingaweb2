@@ -169,7 +169,7 @@ class Config extends Zend_Config
             throw new ProgrammingError('Windows support has not yet been implemented');
         }
 
-        if (strpos($path, DIRECTORY_SEPARATOR) === 0 || self::$configDir === false) {
+        if (strpos(pathinfo($path, PATHINFO_DIRNAME), DIRECTORY_SEPARATOR) === 0) {
             return $path;
         }
 
