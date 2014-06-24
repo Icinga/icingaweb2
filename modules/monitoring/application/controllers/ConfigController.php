@@ -85,7 +85,6 @@ class Monitoring_ConfigController extends BaseConfigController {
                 $this->view->{$element} = $e;
             }
         }
-        $this->render('index');
     }
 
     /**
