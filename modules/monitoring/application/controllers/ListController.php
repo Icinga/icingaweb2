@@ -60,7 +60,7 @@ class Monitoring_ListController extends Controller
         $this->addTitleTab('hosts');
         $this->setAutorefreshInterval(10);
         $this->compactView = 'hosts-compact';
-        $query = $this->backend->select()->from('hostStatus', array(
+        $query = $this->backend->select()->from('hostStatus', array_merge(array(
             'host_icon_image',
             'host_name',
             'host_state',
@@ -82,7 +82,7 @@ class Monitoring_ListController extends Controller
             'host_passive_checks_enabled',
             'host_current_check_attempt',
             'host_max_check_attempts'
-        ));
+        ), $this->extraColumns()));
 
         $this->applyFilters($query);
 
