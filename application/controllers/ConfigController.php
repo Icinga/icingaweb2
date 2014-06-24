@@ -516,7 +516,6 @@ class ConfigController extends BaseConfigController
         $this->render('resource/remove');
     }
 
-
     /**
      * Redirect target only for error-states
      *
@@ -526,7 +525,7 @@ class ConfigController extends BaseConfigController
     public function configurationerrorAction()
     {
         $this->view->messageBox = new AlertMessageBox(true);
-        $this->render('error/error');
+        $this->render('error/error', null, true);
     }
 
     /**

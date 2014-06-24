@@ -5,7 +5,6 @@ namespace Icinga\Web\Widget;
 
 use Zend_Log;
 use Zend_Form;
-use Zend_View_Abstract;
 use Icinga\User;
 use Icinga\User\Message;
 use Icinga\Web\Session;
@@ -18,7 +17,7 @@ use Icinga\Authentication\Manager as AuthenticationManager;
  * but this is done lazily when render() is called, to ensure that messages will
  * always be displayed before they are cleared.
  */
-class AlertMessageBox implements \Icinga\Web\Widget\Widget
+class AlertMessageBox extends AbstractWidget
 {
     /**
      * Remove all messages from the current user, return them and commit
@@ -56,19 +55,19 @@ class AlertMessageBox implements \Icinga\Web\Widget\Widget
     private $states = array(
         Zend_Log::INFO => array(
             'state' => 'alert-success',
-            'icon'  => 'icinga-icon-success'
+            'icon'  => 'success.png'
         ),
         Zend_Log::NOTICE => array(
             'state' => 'alert-info',
-            'icon'  => 'icinga-icon-info'
+            'icon'  => 'info.png'
         ),
         Zend_Log::WARN => array(
             'state' => 'alert-warning',
-            'icon'  => 'icinga-icon-warning'
+            'icon'  => 'warning.png'
         ),
         Zend_Log::ERR =>  array(
             'state' => 'alert-danger',
-            'icon'  => 'icinga-icon-danger'
+            'icon'  => 'error.png'
         )
     );
 
@@ -123,7 +122,7 @@ class AlertMessageBox implements \Icinga\Web\Widget\Widget
             }
             $alert = $this->states[$level];
             $html .= '<div class="alert ' . $alert['state']. '">' .
-                '<i class="' . $alert['icon'] . '"></i>' .
+                $this->view()->icon($alert['icon']) .
                 '<strong>' . htmlspecialchars($message->getMessage()) . '</strong>' .
             '</div>';
         }

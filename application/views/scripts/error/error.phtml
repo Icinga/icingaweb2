@@ -4,7 +4,9 @@
 </div>
 <?php endif ?>
 <div class="content">
+<?php if ($this->message): ?>
   <p><strong><?= $this->escape($message) ?></strong></p>
+<?php endif ?>
 <?php if (isset($stackTrace)) : ?>
   <hr />
   <pre><?= $this->escape($stackTrace) ?></pre>
