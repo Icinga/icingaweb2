@@ -70,7 +70,7 @@
             }
 
             // If we have a pending request for the same target...
-            if (id in this.requests) {
+            if (typeof this.requests[id] !== 'undefined') {
                 if (autorefresh) {
                     return false;
                 }
@@ -163,7 +163,7 @@
             $('.container').filter(this.filterAutorefreshingContainers).each(function (idx, el) {
                 var $el = $(el);
                 var id = $el.attr('id');
-                if (id in self.requests) {
+                if (typeof self.requests[id] !== 'undefined') {
                     self.icinga.logger.debug('No refresh, request pending for ', id);
                     return;
                 }
