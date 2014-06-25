@@ -151,9 +151,9 @@ abstract class ApplicationBootstrap
                 $configDir = '/etc/icingaweb';
             }
         }
-        $canonical = realpath($configDir);
-        if ($canonical) {
-            $this->configDir = $canonical;
+        $this->configDir = realpath($configDir);
+        if (!$this->configDir) {
+            $this->configDir = '/etc/icingaweb';
         }
 
         $this->setupAutoloader();
