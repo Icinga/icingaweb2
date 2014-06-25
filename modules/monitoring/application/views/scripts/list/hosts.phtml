@@ -41,7 +41,7 @@ if ($hosts->count() === 0) {
         $icons[] = $this->icon('unhandled.png', 'Unhandled');
     }
 
-    if ($host->host_acknowledged && !$host->host_in_downtime) {
+    if ($host->host_acknowledged) {
         $icons[] = $this->icon('acknowledgement.png', 'Acknowledged');
     }
 
@@ -53,7 +53,7 @@ if ($hosts->count() === 0) {
         $icons[] = $this->icon('notification_disabled.png', 'Notifications Disabled');
     }
 
-    if (!$host->host_in_downtime) {
+    if ($host->host_in_downtime) {
         $icons[] = $this->icon('in_downtime.png', 'In Downtime');
     }
 
