@@ -133,19 +133,10 @@ class Translator
         $codes = array();
 
         foreach (array_values(self::$knownDomains) as $directory) {
-            if ($directory[0] === '.') continue;
-
-            $dir = realpath($directory);
-            if (!is_dir($dir)) {
-                $dir = realpath($dir . '/LC_MESSAGES');
-                if (!is_dir($dir)) continue;
-            }
-            $dh = opendir($dir);
+            $dh = opendir($directory);
             while (false !== ($name = readdir($dh))) {
-                if (substr($name, 0, 1) === '.') continue;
-                if ($name === 'LC_MESSAGES') continue;
-                if (is_dir($dir . DIRECTORY_SEPARATOR . $name)) {
-                    $codes[] = substr($name, 0, strpos($name, '.'));
+                if (!preg_match('@\.|\.\.@', $name) && is_dir($directory . DIRECTORY_SEPARATOR . $name)) {
+                    $codes[] = $name;
                 }
             }
         }
