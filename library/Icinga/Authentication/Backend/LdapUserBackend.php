@@ -29,11 +29,11 @@
 
 namespace Icinga\Authentication\Backend;
 
-use \Exception;
 use Icinga\User;
 use Icinga\Authentication\UserBackend;
 use Icinga\Protocol\Ldap\Connection;
 use Icinga\Exception\AuthenticationException;
+use Icinga\Protocol\Ldap\Exception as LdapException;
 
 class LdapUserBackend extends UserBackend
 {
@@ -159,7 +159,7 @@ class LdapUserBackend extends UserBackend
                 $this->conn->fetchDN($this->createQuery($user->getUsername())),
                 $password
             );
-        } catch (\Exception $e) {
+        } catch (LdapException $e) {
             // Error during authentication of this specific user
             throw new AuthenticationException(
                 sprintf(
