@@ -70,7 +70,7 @@ class Service extends AbstractObject
             'host_is_flapping',
             'host_last_check',
             'host_notifications_enabled',
-            'host_unhandled_service_count',
+            'host_unhandled_services',
             'host_action_url',
             'host_notes_url',
             'host_display_name',

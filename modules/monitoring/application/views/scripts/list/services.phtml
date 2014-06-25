@@ -64,7 +64,9 @@ foreach ($services as $service):
         <?php endif ?>
 
         <?php if ($service->service_acknowledged && !$service->service_in_downtime): ?>
-        <?= $this->icon('acknowledgement.png', 'Acknowledged') ?>
+        <?= $this->icon('acknowledgement.png', 'Acknowledged' . (
+            $service->service_last_ack ? ': ' . $service->service_last_ack : ''
+        )) ?>
         <?php endif ?>
 
         <?php if ($service->service_is_flapping): ?>
@@ -77,6 +79,10 @@ foreach ($services as $service):
 
         <?php if ($service->service_in_downtime): ?>
         <?= $this->icon('in_downtime.png', 'In Downtime') ?>
+        <?php endif ?>
+
+        <?php if (isset($service->service_last_comment) && $service->service_last_comment !== null): ?>
+        <?= $this->icon('comment.png', 'Comment: ' . $service->service_last_comment) ?>
         <?php endif ?>
 
         <?php if (!$service->service_active_checks_enabled): ?>

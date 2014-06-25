@@ -65,18 +65,17 @@ if ($hosts->count() === 0) {
         }
     }
 
-    // Not available right now:
     if (isset($host->host_last_comment) && $host->host_last_comment !== null) {
-        $icons[] = $this->icon('comment.png', 'Comments');
+        $icons[] = $this->icon('comment.png', 'Comment: ' . $host->host_last_comment);
     }
 ?>
    <tr class="state <?= $hostStateName ?><?= $host->host_handled ? ' handled' : '' ?>">
     <!-- State -->
     <td class="state" title="<?= $helper->getStateTitle($host, 'host'); ?>">
       <div>
-        <?php if (isset($host->host_unhandled_service_count) && $host->host_unhandled_service_count > 0): ?>
-          <span class="badge pull-right" title="<?= $host->host_unhandled_service_count; ?> Service Problems on Host">
-            <a href="<?= $this->href('monitoring/list/services', array('host' => $host->host_name, 'service_problem' => 1)) ?>"><?= $host->host_unhandled_service_count; ?></a>
+        <?php if (isset($host->host_unhandled_services) && $host->host_unhandled_services > 0): ?>
+          <span class="badge pull-right" title="<?= $host->host_unhandled_services ?> Service Problems on Host">
+            <a href="<?= $this->href('monitoring/show/services', array('host' => $host->host_name, 'service_problem' => 1)) ?>"><?= $host->host_unhandled_services ?></a>
           </span>
         <?php endif; ?>
 
@@ -96,6 +95,7 @@ if ($hosts->count() === 0) {
       <?php if ($host->host_icon_image) : ?>
       <?= $this->img($this->resolveMacros($host->host_icon_image, $host), array('align' => 'right')) ?>
       <?php endif ?>
+      <?= implode(' ', $icons) ?>
       <a href="<?= $this->href('monitoring/show/host', array('host' => $host->host_name)) ?>"><?= $host->host_name ?></a><br />
         <?= $this->escape(substr(strip_tags($host->host_output), 0, 10000)); ?>
     </td>
