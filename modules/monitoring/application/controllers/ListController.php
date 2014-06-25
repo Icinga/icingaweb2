@@ -33,7 +33,11 @@ class Monitoring_ListController extends Controller
     protected function hasBetterUrl()
     {
         $url = clone($this->url);
-        $q = $url->shift('q');
+        if ($this->getRequest()->isPost()) {
+            $q = $this->getRequest()->getPost('q');
+        } else {
+            $q = $url->shift('q');
+        }
         if ($q) {
             list($k, $v) = preg_split('/=/', $q);
             $url->addParams(array($k => $v));
@@ -57,6 +61,9 @@ class Monitoring_ListController extends Controller
      */
     public function hostsAction()
     {
+        if ($url = $this->hasBetterUrl()) {
+            return $this->redirectNow($url);
+        }
         $this->addTitleTab('hosts');
         $this->setAutorefreshInterval(10);
         $this->compactView = 'hosts-compact';
@@ -103,7 +110,6 @@ class Monitoring_ListController extends Controller
     public function servicesAction()
     {
         if ($url = $this->hasBetterUrl()) {
-            // TODO: This should NOT render
             return $this->redirectNow($url);
         }
         $this->addTitleTab('services');
