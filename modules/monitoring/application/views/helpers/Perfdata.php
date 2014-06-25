@@ -61,9 +61,9 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
         $gray = $unusedValue;
         $green = $orange = $red = 0;
         // TODO(#6122): Add proper treshold parsing.
-        if ($perfdata->getCriticalTreshold() && $perfdata->getValue() > $perfdata->getCriticalTreshold()) {
+        if ($perfdata->getCriticalThreshold() && $perfdata->getValue() > $perfdata->getCriticalThreshold()) {
             $red = $usedValue;
-        } elseif ($perfdata->getWarningTreshold() && $perfdata->getValue() > $perfdata->getWarningTreshold()) {
+        } elseif ($perfdata->getWarningThreshold() && $perfdata->getValue() > $perfdata->getWarningThreshold()) {
             $orange = $usedValue;
         } else {
             $green = $usedValue;
