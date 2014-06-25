@@ -10,11 +10,11 @@ if (!$this->compact): ?>
 <?= $this->filterPreview ?>
 <?php endif ?>
 </div>
-<?php if ($this->limit): ?>
+<?php if ($this->limit === 0): ?>
+<?= $this->widget('limiter') ?>
+<?php else: ?>
 <?= $this->widget('limiter')->setCurrentPageCount($this->services->count()) ?>
 <?= $this->paginationControl($services, null, null, array('preserve' => $this->preserve)) ?>
-<?php else: ?>
-<?= $this->widget('limiter') ?>
 <?php endif ?>
 <?= $this->selectionToolbar('multi', $this->href('monitoring/multi/service?' . $this->filter->toQueryString())) ?>
 </div>
