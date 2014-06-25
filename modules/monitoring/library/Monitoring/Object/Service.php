@@ -73,7 +73,6 @@ class Service extends AbstractObject
             'host_unhandled_service_count',
             'host_action_url',
             'host_notes_url',
-            'host_last_comment',
             'host_display_name',
             'host_alias',
             'host_ipv4',
