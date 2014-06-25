@@ -165,16 +165,6 @@ class Config extends Zend_Config
      */
     public static function resolvePath($path)
     {
-        if (Platform::isWindows()) {
-            throw new ProgrammingError('Windows support has not yet been implemented');
-        }
-
-        if (strpos(dirname($path), DIRECTORY_SEPARATOR) === 0) {
-            return $path;
-        }
-
-        $path = self::$configDir . DIRECTORY_SEPARATOR . $path;
-        $canonical = realpath($path);
-        return ($canonical === false) ? $path : $canonical;
+        return self::$configDir . DIRECTORY_SEPARATOR . ltrim($path, DIRECTORY_SEPARATOR);
     }
 }
