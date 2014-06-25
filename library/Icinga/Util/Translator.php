@@ -131,16 +131,17 @@ class Translator
     public static function getAvailableLocaleCodes()
     {
         $codes = array();
-
+        $postfix = '.UTF-8';
         foreach (array_values(self::$knownDomains) as $directory) {
             $dh = opendir($directory);
             while (false !== ($name = readdir($dh))) {
-                if (!preg_match('@\.|\.\.@', $name) && is_dir($directory . DIRECTORY_SEPARATOR . $name)) {
-                    $codes[] = $name;
+                if (substr($name, 0, 1) === '.') continue;
+                if (substr($name, -6) !== $postfix) continue;
+                if (is_dir($directory . DIRECTORY_SEPARATOR . $name)) {
+                    $codes[] = substr($name, 0, -6);
                 }
             }
         }
-
         return $codes;
     }
 }
