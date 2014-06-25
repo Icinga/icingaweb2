@@ -246,7 +246,7 @@ public function dump()
             }
 
             $order = $order === null ? (isset($sortColumns['order']) ? $sortColumns['order'] : self::SORT_ASC) : $order;
-            $order = ($order === self::SORT_ASC) ? 'ASC' : 'DESC';
+            $order = (strtoupper($order) === self::SORT_ASC) ? 'ASC' : 'DESC';
 
             foreach ($sortColumns['columns'] as $column) {
                 $this->query->order($column, $order);
