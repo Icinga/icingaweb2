@@ -107,36 +107,6 @@ class GeneralForm extends Form
     }
 
     /**
-     * Add a select field for setting the default language
-     *
-     * Possible values are determined by Translator::getAvailableLocaleCodes.
-     *
-     * @param   Zend_Config     $cfg    The "global" section of the config.ini
-     */
-    private function addLanguageSelection(Zend_Config $cfg)
-    {
-        $languages = array();
-        foreach (Translator::getAvailableLocaleCodes() as $language) {
-            $languages[$language] = $language;
-        }
-        $languages[Translator::DEFAULT_LOCALE] = Translator::DEFAULT_LOCALE;
-
-        $this->addElement(
-            'select',
-            'language',
-            array(
-                'label'         => t('Default Language'),
-                'required'      => true,
-                'multiOptions'  => $languages,
-                'helptext'      => t(
-                    'Select the language to use by default. Can be overwritten by a user in his preferences.'
-                ),
-                'value'         => $cfg->get('language', Translator::DEFAULT_LOCALE)
-            )
-        );
-    }
-
-    /**
      * Add a select field for setting the default timezone.
      *
      * Possible values are determined by DateTimeZone::listIdentifiers
@@ -259,7 +229,6 @@ class GeneralForm extends Form
             $preferences = new Zend_Config(array());
         }
         $this->setName('form_config_general');
-        $this->addLanguageSelection($global);
         $this->addTimezoneSelection($global);
         $this->addModuleSettings($global);
         $this->addUserPreferencesDialog($preferences);
@@ -284,7 +253,6 @@ class GeneralForm extends Form
 
         $values = $this->getValues();
         $cfg = clone $config;
-        $cfg->global->language     = $values['language'];
         $cfg->global->timezone     = $values['timezone'];
         $cfg->global->modulePath   = $values['module_path'];
         $cfg->preferences->type = $values['preferences_type'];
