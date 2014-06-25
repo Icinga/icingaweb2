@@ -34,7 +34,6 @@ require_once __DIR__ . '/ApplicationBootstrap.php';
 
 use Icinga\Authentication\Manager as AuthenticationManager;
 use Icinga\Exception\ConfigurationError;
-use Icinga\Exception\NotReadableError;
 use Icinga\Logger\Logger;
 use Icinga\Web\Request;
 use Icinga\Web\Response;
@@ -44,7 +43,6 @@ use Icinga\Web\Session;
 use Icinga\User;
 use Icinga\Util\Translator;
 use Icinga\Util\DateTimeFactory;
-use DateTimeZone;
 use Exception;
 use Zend_Layout;
 use Zend_Paginator;
@@ -340,25 +338,40 @@ class Web extends ApplicationBootstrap
     /**
      * Setup internationalization using gettext
      *
-     * Uses the preferred user language or the configured default and system default, respectively.
+     * Uses the locale from the session or the user's preferences
      *
      * @return  self
      */
     protected function setupInternationalization()
     {
         parent::setupInternationalization();
-        if ($this->user !== null && $this->user->getPreferences() !== null
-            && ($locale = $this->user->getPreferences()->get('app.language') !== null)
+
+        $locale = Session::getSession()->get('language');
+        if ($locale !== null) {
+            try {
+                Translator::setupLocale($locale);
+            } catch (Exception $e) {
+                Logger::debug(
+                    'Cannot set locale "' . $locale . '" configured in session' .
+                    ' "' . session_id() . '" (' . $e->getMessage() . ')'
+                );
+                $locale = null;
+            }
+        }
+
+        if ($locale === null && $this->user !== null && $this->user->getPreferences() !== null
+            && ($locale = $this->user->getPreferences()->get('app.language')) !== null
         ) {
             try {
                 Translator::setupLocale($locale);
-            } catch (Exception $error) {
+            } catch (Exception $e) {
                 Logger::warning(
-                    'Cannot set locale "' . $locale . '" configured in ' .
-                    'preferences of user "' . $this->user->getUsername() . '"'
+                    'Cannot set locale "' . $locale . '" configured in preferences of ' .
+                    'user "' . $this->user->getUsername() . '" (' . $e->getMessage() . ')'
                 );
             }
         }
+
         return $this;
     }
 
