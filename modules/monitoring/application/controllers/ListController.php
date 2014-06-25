@@ -64,13 +64,25 @@ class Monitoring_ListController extends Controller
         if ($url = $this->hasBetterUrl()) {
             return $this->redirectNow($url);
         }
+
+        // Handle soft and hard states
+        $stateType = $this->params->shift('stateType', 'soft');
+        if ($stateType == 'hard') {
+            $stateColumn = 'host_hard_state';
+            $stateChangeColumn = 'host_last_hard_state_change';
+        } else {
+            $stateColumn = 'host_state';
+            $stateChangeColumn = 'host_last_state_change';
+            $stateType = 'soft';
+        }
+
         $this->addTitleTab('hosts');
         $this->setAutorefreshInterval(10);
         $this->compactView = 'hosts-compact';
         $query = $this->backend->select()->from('hostStatus', array_merge(array(
             'host_icon_image',
             'host_name',
-            'host_state',
+            'host_state' => $stateColumn,
             'host_address',
             'host_acknowledged',
             'host_output',
@@ -79,7 +91,7 @@ class Monitoring_ListController extends Controller
             'host_state_type',
             'host_handled',
             'host_last_check',
-            'host_last_state_change',
+            'host_last_state_change' => $stateChangeColumn,
             'host_notifications_enabled',
             // 'host_unhandled_service_count',
             'host_unhandled_services',
@@ -115,6 +127,18 @@ class Monitoring_ListController extends Controller
         if ($url = $this->hasBetterUrl()) {
             return $this->redirectNow($url);
         }
+
+        // Handle soft and hard states
+        $stateType = $this->params->shift('stateType', 'soft');
+        if ($stateType == 'hard') {
+            $stateColumn = 'service_hard_state';
+            $stateChangeColumn = 'service_last_hard_state_change';
+        } else {
+            $stateColumn = 'service_state';
+            $stateChangeColumn = 'service_last_state_change';
+            $stateType = 'soft';
+        }
+
         $this->addTitleTab('services');
         $this->view->showHost = true;
         if ($host = $this->_getParam('host')) {
@@ -133,14 +157,14 @@ class Monitoring_ListController extends Controller
             'host_handled',
             'service_description',
             'service_display_name',
-            'service_state',
+            'service_state' => $stateColumn,
             'service_in_downtime',
             'service_acknowledged',
             'service_handled',
             'service_output',
             'service_perfdata',
             'service_attempt',
-            'service_last_state_change',
+            'service_last_state_change' => $stateChangeColumn,
             'service_icon_image',
             'service_is_flapping',
             'service_state_type',
@@ -175,11 +199,11 @@ class Monitoring_ListController extends Controller
         ));
         $limit = $this->params->get('limit');
         $this->view->limit = $limit;
-        if ($limit === 0) {
-            $this->view->services = $query->getQuery()->fetchAll();
-        } else {
+        if ($limit) {
             // TODO: Workaround, paginate should be able to fetch limit from new params
-            $this->view->services = $query->paginate($limit);
+            $this->view->services = $query->paginate($this->params->get('limit'));
+        } else {
+            $this->view->services = $query->getQuery()->fetchAll();
         }
     }
 
