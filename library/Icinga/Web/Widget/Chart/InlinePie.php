@@ -353,10 +353,11 @@ EOD;
      *
      * @return string   A serialized array of labels
      */
-    private function createLabelString () {
+    private function createLabelString ()
+    {
         $labels = $this->labels;
         foreach ($labels as $key => $label) {
-            $labels[$key] = preg_replace('/|/', '', $label);
+            $labels[$key] = str_replace('|', '', $label);
         }
         return isset($this->labels) && is_array($this->labels) ? implode('|', $this->labels) : '';
     }
@@ -370,27 +371,27 @@ EOD;
     public function render()
     {
         $template = $this->template;
-        $template = preg_replace('{{url}}', $this->url, $template);
-
+        $template = str_replace('{url}', $this->url, $template);
+        
         // style
-        $template = preg_replace('{{width}}', htmlspecialchars($this->width), $template);
-        $template = preg_replace('{{height}}', htmlspecialchars($this->height), $template);
-        $template = preg_replace('{{title}}', htmlspecialchars($this->title), $template);
-        $template = preg_replace('{{style}}', $this->style, $template);
-        $template = preg_replace('{{colors}}', implode(',', $this->colors), $template);
-        $template = preg_replace('{{borderWidth}}', htmlspecialchars($this->borderWidth), $template);
-        $template = preg_replace('{{borderColor}}', htmlspecialchars($this->borderColor), $template);
-        $template = preg_replace('{{hideEmptyLabel}}', $this->hideEmptyLabel ? 'true' : 'false', $template);
+        $template = str_replace('{width}', $this->width, $template);
+        $template = str_replace('{height}', $this->height, $template);
+        $template = str_replace('{title}', htmlspecialchars($this->title), $template);
+        $template = str_replace('{style}', $this->style, $template);
+        $template = str_replace('{colors}', implode(',', $this->colors), $template);
+        $template = str_replace('{borderWidth}', $this->borderWidth, $template);
+        $template = str_replace('{borderColor}', $this->borderColor, $template);
+        $template = str_replace('{hideEmptyLabel}', $this->hideEmptyLabel ? 'true' : 'false', $template);
 
         // values
         $formatted = array();
         foreach ($this->data as $key => $value) {
             $formatted[$key] = $this->formatValue($value);
         }
-        $template = preg_replace('{{data}}', htmlspecialchars(implode(',', $this->data)), $template);
-        $template = preg_replace('{{formatted}}', htmlspecialchars(implode('|', $formatted)), $template);
-        $template = preg_replace('{{labels}}', htmlspecialchars($this->createLabelString()), $template);
-        $template = preg_replace('{{tooltipFormat}}', $this->tooltipFormat, $template);
+        $template = str_replace('{data}', htmlspecialchars(implode(',', $this->data)), $template);
+        $template = str_replace('{formatted}', htmlspecialchars(implode('|', $formatted)), $template);
+        $template = str_replace('{labels}', htmlspecialchars($this->createLabelString()), $template);
+        $template = str_replace('{tooltipFormat}', $this->tooltipFormat, $template);
         return $template;
     }
 
