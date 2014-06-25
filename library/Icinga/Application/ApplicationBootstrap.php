@@ -471,24 +471,25 @@ abstract class ApplicationBootstrap
     /**
      * Setup internationalization using gettext
      *
-     * Uses the language defined in the global config or the default one
+     * Uses the preferred language sent by the browser or the default one
      *
      * @return  self
      */
     protected function setupInternationalization()
     {
+        $localeDir = $this->getApplicationDir('locale');
+        if (file_exists($localeDir) && is_dir($localeDir)) {
+            Translator::registerDomain(Translator::DEFAULT_DOMAIN, $localeDir);
+        }
+
         try {
             Translator::setupLocale(
-                $this->config->global !== null ? $this->config->global->get('language', Translator::DEFAULT_LOCALE)
+                isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])
+                    ? Translator::getPreferredLocaleCode($_SERVER['HTTP_ACCEPT_LANGUAGE'])
                     : Translator::DEFAULT_LOCALE
             );
         } catch (Exception $error) {
             Logger::error($error);
-        }
-
-        $localeDir = $this->getApplicationDir('locale');
-        if (file_exists($localeDir) && is_dir($localeDir)) {
-            Translator::registerDomain(Translator::DEFAULT_DOMAIN, $localeDir);
         }
 
         return $this;
