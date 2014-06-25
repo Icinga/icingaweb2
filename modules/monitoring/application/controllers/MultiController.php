@@ -193,13 +193,12 @@ class Monitoring_MultiController extends Controller
     private function getUniqueValues($values, $key)
     {
         $unique = array();
-        foreach ($values as $value)
-        {
-			if (is_array($value)) {
-				$unique[$value[$key]] = $value[$key];
-			} else {
-            	$unique[$value->$key] = $value->$key;
-			}
+        foreach ($values as $value) {
+            if (is_array($value)) {
+                $unique[$value[$key]] = $value[$key];
+            } else {
+                $unique[$value->$key] = $value->$key;
+            }
         }
         return $unique;
     }
