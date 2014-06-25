@@ -46,8 +46,6 @@ class Translator
      */
     const DEFAULT_LOCALE = 'en_US';
 
-    protected static $locale = 'C';
-
     /**
      * Known gettext domains and directories
      *
@@ -107,20 +105,32 @@ class Translator
             }
         } else {
             $locale = setlocale(LC_ALL, 0);
-            self::$locale = $locale;
             putenv('LC_ALL=' . $locale); // Failsafe, Win and Unix
             putenv('LANG=' . $locale); // Windows fix, untested
         }
     }
 
-    public static function getLocale()
+    /**
+     * Split and return the language code and country code of the given locale or the current locale
+     *
+     * @param   string  $locale     The locale code to split, or null to split the current locale
+     *
+     * @return  stdClass            An object with a 'language' and 'country' attribute
+     */
+    public static function splitLocaleCode($locale = null)
     {
-        return self::$locale;
-    }
+        $matches = array();
+        $locale = $locale !== null ? $locale : setlocale(LC_ALL, 0);
+        if (preg_match('@([a-z]{2})[_-]([A-Z]{2})@', $locale, $matches)) {
+            list($languageCode, $countryCode) = array_slice($matches, 1);
+        } elseif ($locale === 'C') {
+            list($languageCode, $countryCode) = preg_split('@[_-]@', static::DEFAULT_LOCALE, 2);
+        } else {
+            $languageCode = $locale;
+            $countryCode = null;
+        }
 
-    public static function getLanguage()
-    {
-        return self::$locale === 'C' ? 'en' : substr(self::$locale, 0, 2);
+        return (object) array('language' => $languageCode, 'country' => $countryCode);
     }
 
     /**
@@ -143,5 +153,73 @@ class Translator
             }
         }
         return $codes;
+    }
+
+    /**
+     * Return the preferred locale based on the given HTTP header and the available translations
+     *
+     * @param   string  $header     The HTTP "Accept-Language" header
+     *
+     * @return  string              The browser's preferred locale code
+     */
+    public static function getPreferredLocaleCode($header)
+    {
+        $headerValues = explode(',', $header);
+        for ($i = 0; $i < count($headerValues); $i++) {
+            // In order to accomplish a stable sort we need to take the original
+            // index into account as well during element comparison
+            $headerValues[$i] = array($headerValues[$i], $i);
+        }
+        usort( // Sort DESC but keep equal elements ASC
+            $headerValues,
+            function ($a, $b) {
+                $qValA = (float) (strpos($a[0], ';') > 0 ? substr(array_pop((explode(';', $a[0], 2))), 2) : 1);
+                $qValB = (float) (strpos($b[0], ';') > 0 ? substr(array_pop((explode(';', $b[0], 2))), 2) : 1);
+                return $qValA < $qValB ? 1 : ($qValA > $qValB ? -1 : ($a[1] > $b[1] ? 1 : ($a[1] < $b[1] ? -1 : 0)));
+            }
+        );
+        for ($i = 0; $i < count($headerValues); $i++) {
+            // We need to reset the array to its original structure once it's sorted
+            $headerValues[$i] = $headerValues[$i][0];
+        }
+        $requestedLocales = array();
+        foreach ($headerValues as $headerValue) {
+            if (strpos($headerValue, ';') > 0) {
+                $parts = explode(';', $headerValue, 2);
+                $headerValue = $parts[0];
+            }
+            $requestedLocales[] = str_replace('-', '_', $headerValue);
+        }
+
+        $similarMatch = null;
+        $availableLocales = static::getAvailableLocaleCodes();
+        $perfectMatch = array_shift((array_intersect($requestedLocales, $availableLocales)));
+        foreach ($requestedLocales as $requestedLocale) {
+            if ($perfectMatch === $requestedLocale) {
+                // The perfect match must be preferred when reached before a similar match is found
+                return $perfectMatch;
+            }
+            $similarMatches = array();
+            $localeObj = static::splitLocaleCode($requestedLocale);
+            foreach ($availableLocales as $availableLocale) {
+                if (static::splitLocaleCode($availableLocale)->language === $localeObj->language) {
+                    $similarMatches[] = $availableLocale;
+                }
+            }
+            if (!empty($similarMatches)) {
+                $similarMatch = array_shift($similarMatches); // There is no "best" similar match, just use the first
+                break;
+            }
+        }
+
+        if (!$perfectMatch && $similarMatch) {
+            return $similarMatch;
+        } elseif ($similarMatch && static::splitLocaleCode($similarMatch)->language === static::splitLocaleCode($perfectMatch)->language) {
+            return $perfectMatch;
+        } elseif ($similarMatch) {
+            return $similarMatch;
+        }
+
+        return static::DEFAULT_LOCALE;
     }
 }
