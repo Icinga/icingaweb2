@@ -79,6 +79,11 @@ class ConfigController extends BaseConfigController
         ));
     }
 
+    public function devtoolsAction()
+    {
+        $this->view->tabs = null;
+    }
+
     /**
      * Index action, entry point for configuration
      */
