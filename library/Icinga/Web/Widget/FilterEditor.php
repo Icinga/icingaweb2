@@ -48,31 +48,22 @@ class FilterEditor extends AbstractWidget
         } else {
             $attributes = $view->propertiesToString($attributes);
         }
-        $html = '<select name="' . $view->escape($name) . '"' . $attributes . '>';
-        $beenActive = false;
-        sort($list);
+        $html = '<select name="' . $view->escape($name) . '"' . $attributes . ' class="autosubmit">' . "\n";
+
+        asort($list);
         foreach ($list as $k => $v) {
             $active = '';
             if ($k === $selected) {
                 $active = ' selected="selected"';
-                $beenActive = true;
             }
-            $v = str_replace('_', ' ', ucfirst($v));
             $html .= sprintf(
-                '<option value="%s"%s>%s</option>',
+                '  <option value="%s"%s>%s</option>' . "\n",
                 $view->escape($k),
                 $active,
                 $view->escape($v)
             );
         }
-        if (! $beenActive && $selected) {
-            $html .= sprintf(
-                '<option value="%s" selected="selected">%s</option>',
-                $view->escape($selected),
-                $view->escape(str_replace('_', ' ', ucfirst(ltrim($selected, '_'))))
-            );
-        }
-        $html .= '</select>';
+        $html .= '</select>' . "\n\n";
         return $html;
     }
 
@@ -145,7 +136,7 @@ class FilterEditor extends AbstractWidget
                          . '</li></ul>';
                  }
             } else {
-                $html .= $op . '<ul><li>' . implode('</li><li>', $parts) . '</li></ul>';
+                $html .= $op . "<ul>\n <li>\n" . implode("</li>\n <li>", $parts) . "</li>\n</ul>\n";
             }
             return $html;
         }
@@ -205,6 +196,19 @@ class FilterEditor extends AbstractWidget
     protected function selectColumn($filter)
     {
         $name = 'column_' . $filter->getId();
+        $cols = $this->arrayForSelect($this->query->getColumns());
+        $active = $filter->getColumn();
+        $seen = false;
+        foreach ($cols as $k => & $v) {
+            $v = str_replace('_', ' ', ucfirst($v));
+            if ($k === $active) {
+                $seen = true;
+            }
+        }
+
+        if (!$seen) {
+            $cols[$active] = str_replace('_', ' ', ucfirst(ltrim($active, '_')));
+        }
 
         if ($this->query === null) {
             return sprintf(
@@ -215,8 +219,8 @@ class FilterEditor extends AbstractWidget
         } else {
             return $this->select(
                 $name,
-                $this->arrayForSelect($this->query->getColumns()),
-                $filter->getColumn()
+                $cols,
+                $active
             ); 
         }
     }
