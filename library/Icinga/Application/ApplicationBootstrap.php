@@ -152,7 +152,9 @@ abstract class ApplicationBootstrap
             }
         }
         $canonical = realpath($configDir);
-        $this->configDir = $canonical ? $canonical : $configDir;
+        if ($canonical) {
+            $this->configDir = $canonical;
+        }
 
         $this->setupAutoloader();
         $this->setupZendAutoloader();
