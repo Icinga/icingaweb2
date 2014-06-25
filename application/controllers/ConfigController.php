@@ -93,7 +93,7 @@ class ConfigController extends BaseConfigController
             if (!$this->writeConfigFile($form->getConfig(), 'config'))  {
                 return;
             }
-            Notification::success("Configuration Sucessfully Updated");
+            Notification::success('New configuration has successfully been stored');
             $form->setConfiguration(IcingaConfig::app(), true);
             $this->redirectNow('config/index');
         }
@@ -115,7 +115,7 @@ class ConfigController extends BaseConfigController
             if (!$this->writeConfigFile($form->getConfig(), 'config')) {
                 return;
             }
-            Notification::success("Configuration Sucessfully Updated");
+            Notification::success('New configuration has sucessfully been stored');
             $form->setConfiguration(IcingaConfig::app(), true);
             $this->redirectNow('config/logging');
         }
