@@ -8,10 +8,20 @@ class FilterQueryString
 
     protected $pos;
 
+    protected $debug = array();
+
+    protected $reportDebug = false;
+
     protected $length;
     
     protected function __construct()
     {
+    }
+
+    protected function debug($msg, $level = 0, $op = null)
+    {
+        if ($op === null) $op = 'NULL';
+        $this->debug[] = sprintf('%s[%d=%s] (%s): %s', str_repeat('* ', $level), $this->pos, $this->string[$this->pos - 1], $op, $msg);
     }
 
     public static function parse($string)
@@ -95,6 +105,9 @@ class FilterQueryString
         if ($char === null) {
             $char = $this->string[$this->pos];
         }
+        if ($this->reportDebug) {
+            $extra .= "\n" . implode("\n", $this->debug);
+        }
 
         throw new FilterParseException(sprintf(
             'Invalid filter "%s", unexpected %s at pos %d%s',
@@ -119,12 +132,15 @@ class FilterQueryString
 
             if ($filter === false) {
 
+                $this->debug('Got no next expression, next is ' . $next, $nestingLevel, $op);
                 if ($next === '!') {
                     $not = $this->readFilters($nestingLevel + 1, '!');
                     $filters[] = $not;
                     if (in_array($this->nextChar(), array('|', '&', ')'))) {
                         $next = $this->readChar();
+                        $this->debug('Got NOT, next is now: ' . $next, $nestingLevel, $op);
                     } else {
+                        $this->debug('Breaking after NOT: ' . $not, $nestingLevel, $op);
                         break;
                     }
                 }
@@ -141,6 +157,7 @@ class FilterQueryString
 
                 if ($next === ')') {
                     if ($nestingLevel > 0) {
+                        $this->debug('Closing without filter: ' . $next, $nestingLevel, $op);
                         break;
                     }
                     $this->parseError($next);
@@ -155,9 +172,12 @@ class FilterQueryString
                 $this->parseError($next, "$op level $nestingLevel");
 
             } else {
+                $this->debug('Got new expression: ' . $filter, $nestingLevel, $op);
+
                 $filters[] = $filter;
 
                 if ($next === false) {
+                    $this->debug('Next is false, nothing to read but got filter', $nestingLevel, $op);
                     // Got filter, nothing more to read
                     break;
                 }
@@ -167,16 +187,19 @@ class FilterQueryString
                     break;
                 }
                 if ($next === $op) {
+                    $this->debug('Next matches operator', $nestingLevel, $op);
                     continue; // Break??
                 }
 
                 if ($next === ')') {
                     if ($nestingLevel > 0) {
+                        $this->debug('Closing with filter: ' . $next, $nestingLevel, $op);
                         break;
                     }
                     $this->parseError($next);
                 }
                 if ($op === null && in_array($next, array('&', '|'))) {
+                    $this->debug('Setting op to ' . $next, $nestingLevel, $op);
                     $op = $next;
                     continue;
                 }
@@ -190,12 +213,15 @@ class FilterQueryString
 
         if ($nestingLevel === 0 && count($filters) === 1 && $op !== '!') {
             // There is only one filter expression, no chain
+            $this->debug('Returning first filter only: ' . $filters[0], $nestingLevel, $op);
             return $filters[0];
         }
 
         if ($op === null && count($filters) === 1) {
+            $this->debug('No op, single filter, setting AND', $nestingLevel, $op);
             $op = '&';
         }
+        $this->debug(sprintf('Got %d filters, returning', count($filters)), $nestingLevel, $op);
 
         switch ($op) {
             case '&': return Filter::matchAll($filters);
