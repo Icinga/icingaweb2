@@ -18,14 +18,18 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
             if (!$perfdata->isPercentage() && $perfdata->getMaximumValue() === null) {
                 continue;
             }
-            $pieChart = $this->createInlinePie($perfdata, $label, htmlspecialchars($label));
+            $pieChart = $this->createInlinePie($perfdata, $label);
             if ($compact) {
+                $pieChart->setTitle(
+                    htmlspecialchars($label) /* . ': ' . htmlspecialchars($this->formatPerfdataValue($perfdata) */
+                );
                 if (! $float) {
                     $result .= $pieChart->render();
                 } else {
                     $result .= '<div style="float: right;">' . $pieChart->render() . '</div>';
                 }
             } else {
+                $pieChart->setTitle(htmlspecialchars($label));
                 if (! $perfdata->isPercentage()) {
                     $pieChart->setTooltipFormat('{{label}}: {{formatted}} ({{percent}}%)');
                 }
@@ -57,9 +61,9 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
         $gray = $unusedValue;
         $green = $orange = $red = 0;
         // TODO(#6122): Add proper treshold parsing.
-        if ($perfdata->getCriticalThreshold() && $perfdata->getValue() > $perfdata->getCriticalThreshold()) {
+        if ($perfdata->getCriticalTreshold() && $perfdata->getValue() > $perfdata->getCriticalTreshold()) {
             $red = $usedValue;
-        } elseif ($perfdata->getWarningThreshold() && $perfdata->getValue() > $perfdata->getWarningThreshold()) {
+        } elseif ($perfdata->getWarningTreshold() && $perfdata->getValue() > $perfdata->getWarningTreshold()) {
             $orange = $usedValue;
         } else {
             $green = $usedValue;
@@ -81,10 +85,10 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
         return $perfdata->getValue();
     }
 
-    protected function createInlinePie(Perfdata $perfdata, $title, $label = '')
+    protected function createInlinePie(Perfdata $perfdata, $label = '')
     {
-        $pieChart = new InlinePie($this->calculatePieChartData($perfdata), $title);
-        $pieChart->setLabel($label);
+        $pieChart = new InlinePie($this->calculatePieChartData($perfdata));
+        $pieChart->setLabels(array($label, $label, $label, ''));
         $pieChart->setHideEmptyLabel();
 
         //$pieChart->setHeight(32)->setWidth(32);

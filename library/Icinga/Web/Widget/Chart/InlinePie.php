@@ -46,8 +46,7 @@ use Icinga\Logger\Logger;
  */
 class InlinePie extends AbstractWidget
 {
-    const NUMBER_FORMAT_NONE = 'none';
-    const NUMBER_FORMAT_TIME = 'time';
+    const NUMBER_FORMAT_TIME  = 'time';
     const NUMBER_FORMAT_BYTES = 'bytes';
     const NUMBER_FORMAT_RATIO = 'ratio';
         
@@ -127,7 +126,7 @@ EOD;
      *
      * @var string
      */
-    private $title;
+    private $title = '';
 
     /**
      * The style for the HtmlElement
@@ -169,7 +168,7 @@ EOD;
      *
      * @var array
      */
-    private $format = self::NUMBER_FORMAT_NONE;
+    private $format = self::NUMBER_FORMAT_BYTES;
 
     /**
      * Set if the tooltip for the empty area should be hidden
@@ -195,22 +194,18 @@ EOD;
     /**
      * The labels to be displayed in the pie-chart
      *
-     * @param mixed $label     The label of the displayed value, or null for no labels
+     * @param null $labels
      *
-     * @return $this            Fluent interface
+     * @return $this
      */
-    public function setLabel($label)
+    public function setLabels($labels = null)
     {
-        if (is_array($label)) {
-            $this->url->setParam('labels', implode(',', array_keys($label)));
-        } elseif ($label != null) {
-            $labelArr =  array($label, $label, $label, '');
-            $this->url->setParam('labels', implode(',', $labelArr));
-            $label = $labelArr;
+        if ($labels != null) {
+            $this->url->setParam('labels', implode(',', $labels));
         } else {
             $this->url->removeKey('labels');
         }
-        $this->labels = $label;
+        $this->labels = $labels;
         return $this;
     }
 
@@ -323,12 +318,10 @@ EOD;
      * Create a new InlinePie
      *
      * @param array  $data      The data displayed by the slices
-     * @param string $title     The title of this Pie
      * @param array  $colors    An array of RGB-Color values to use
      */
-    public function __construct(array $data, $title, $colors = null)
+    public function __construct(array $data, $colors = null)
     {
-        $this->title = $title;
         $this->url = Url::fromPath('svg/chart.php');
         if (array_key_exists('data', $data)) {
             $this->data = $data['data'];
@@ -353,11 +346,10 @@ EOD;
      *
      * @return string   A serialized array of labels
      */
-    private function createLabelString ()
-    {
+    private function createLabelString () {
         $labels = $this->labels;
         foreach ($labels as $key => $label) {
-            $labels[$key] = str_replace('|', '', $label);
+            $labels[$key] = preg_replace('/|/', '', $label);
         }
         return isset($this->labels) && is_array($this->labels) ? implode('|', $this->labels) : '';
     }
@@ -371,27 +363,27 @@ EOD;
     public function render()
     {
         $template = $this->template;
-        $template = str_replace('{url}', $this->url, $template);
-        
+        $template = preg_replace('{{url}}', $this->url, $template);
+
         // style
-        $template = str_replace('{width}', $this->width, $template);
-        $template = str_replace('{height}', $this->height, $template);
-        $template = str_replace('{title}', htmlspecialchars($this->title), $template);
-        $template = str_replace('{style}', $this->style, $template);
-        $template = str_replace('{colors}', implode(',', $this->colors), $template);
-        $template = str_replace('{borderWidth}', $this->borderWidth, $template);
-        $template = str_replace('{borderColor}', $this->borderColor, $template);
-        $template = str_replace('{hideEmptyLabel}', $this->hideEmptyLabel ? 'true' : 'false', $template);
+        $template = preg_replace('{{width}}', htmlspecialchars($this->width), $template);
+        $template = preg_replace('{{height}}', htmlspecialchars($this->height), $template);
+        $template = preg_replace('{{title}}', htmlspecialchars($this->title), $template);
+        $template = preg_replace('{{style}}', $this->style, $template);
+        $template = preg_replace('{{colors}}', implode(',', $this->colors), $template);
+        $template = preg_replace('{{borderWidth}}', htmlspecialchars($this->borderWidth), $template);
+        $template = preg_replace('{{borderColor}}', htmlspecialchars($this->borderColor), $template);
+        $template = preg_replace('{{hideEmptyLabel}}', $this->hideEmptyLabel ? 'true' : 'false', $template);
 
         // values
         $formatted = array();
         foreach ($this->data as $key => $value) {
             $formatted[$key] = $this->formatValue($value);
         }
-        $template = str_replace('{data}', htmlspecialchars(implode(',', $this->data)), $template);
-        $template = str_replace('{formatted}', htmlspecialchars(implode('|', $formatted)), $template);
-        $template = str_replace('{labels}', htmlspecialchars($this->createLabelString()), $template);
-        $template = str_replace('{tooltipFormat}', $this->tooltipFormat, $template);
+        $template = preg_replace('{{data}}', htmlspecialchars(implode(',', $this->data)), $template);
+        $template = preg_replace('{{formatted}}', htmlspecialchars(implode('|', $formatted)), $template);
+        $template = preg_replace('{{labels}}', htmlspecialchars($this->createLabelString()), $template);
+        $template = preg_replace('{{tooltipFormat}}', $this->tooltipFormat, $template);
         return $template;
     }
 
@@ -404,13 +396,11 @@ EOD;
      */
     private function formatValue($value)
     {
-        if ($this->format === self::NUMBER_FORMAT_NONE) {
-            return (string)$value;
-        } elseif ($this->format === self::NUMBER_FORMAT_BYTES) {
+        if ($this->format === self::NUMBER_FORMAT_BYTES) {
             return Format::bytes($value);
-        } elseif ($this->format === self::NUMBER_FORMAT_TIME) {
+        } else if ($this->format === self::NUMBER_FORMAT_TIME) {
             return Format::duration($value);
-        } elseif ($this->format === self::NUMBER_FORMAT_RATIO) {
+        } else if ($this->format === self::NUMBER_FORMAT_RATIO) {
             return $value;
         } else {
             Logger::warning('Unknown format string "' . $this->format . '" for InlinePie, value not formatted.');

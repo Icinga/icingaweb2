@@ -19,7 +19,6 @@ class Perfdata
      * Unit of measurement (UOM)
      *
      * @var string
-     * @var string
      */
     protected $unit;
 
@@ -45,18 +44,18 @@ class Perfdata
     protected $maxValue;
 
     /**
-     * The WARNING threshold
+     * The WARNING treshold
      *
      * @var string
      */
-    protected $warningThreshold;
+    protected $warningTreshold;
 
     /**
-     * The CRITICAL threshold
+     * The CRITICAL treshold
      *
      * @var string
      */
-    protected $criticalThreshold;
+    protected $criticalTreshold;
 
     /**
      * Create a new Perfdata object based on the given performance data value
@@ -181,9 +180,9 @@ class Perfdata
      *
      * @return  null|string
      */
-    public function getWarningThreshold()
+    public function getWarningTreshold()
     {
-        return $this->warningThreshold;
+        return $this->warningTreshold;
     }
 
     /**
@@ -191,9 +190,9 @@ class Perfdata
      *
      * @return  null|string
      */
-    public function getCriticalThreshold()
+    public function getCriticalTreshold()
     {
-        return $this->criticalThreshold;
+        return $this->criticalTreshold;
     }
 
     /**
@@ -241,10 +240,10 @@ class Perfdata
                 $this->minValue = self::convert($parts[3], $this->unit);
             case 3:
                 // TODO(#6123): Tresholds have the same UOM and need to be converted as well!
-                $this->criticalThreshold = trim($parts[2]) ? trim($parts[2]) : null;
+                $this->criticalTreshold = trim($parts[2]) ? trim($parts[2]) : null;
             case 2:
                 // TODO(#6123): Tresholds have the same UOM and need to be converted as well!
-                $this->warningThreshold = trim($parts[1]) ? trim($parts[1]) : null;
+                $this->warningTreshold = trim($parts[1]) ? trim($parts[1]) : null;
         }
     }
 

@@ -3,8 +3,8 @@ $this->is_service = true;
 $this->hostquery = implode($this->hostnames, ',');
 $this->servicequery = implode($this->servicenames, ',');
 $this->target = array(
-    'host' => $this->hostquery,
-    'service' => $this->servicequery
+	'host'	=> $this->hostquery,
+	'service' => $this->servicequery
 );
 ?>
 
@@ -24,11 +24,11 @@ $this->target = array(
       <td align="center"><?= $this->service_pie->render() ?></td>
       <td><?php
 
-          foreach ($service_states as $state => $count) {
-              if ($count > 0) {
-                  echo ucfirst($state) . ': ' . $count . '<br />';
-              }
-          }
+        foreach ($service_states as $state => $count) {
+            if ($count > 0) {
+                echo ucfirst($state) . ': ' . $count . '<br />';
+            }
+        }
 
       ?></td>
       <td align="center"><?= $this->host_pie->render() ?></td>
