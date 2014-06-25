@@ -446,10 +446,18 @@ class Monitoring_ListController extends Controller
     protected function applyFilters($query)
     {
         $params = clone $this->params;
+        $request = $this->getRequest();
 
         $limit   = $params->shift('limit');
-        $sort    = $params->shift('sort');
-        $dir     = $params->shift('dir');
+
+        $sort = null;
+        $dir = null;
+        if ($request->isPost()) {
+            $sort = $request->getPost('sort', null);
+            $dir  = $request->getPost('dir', null);
+        }
+        $sort    = $params->shift('sort', $sort);
+        $dir     = $params->shift('dir', $dir);
         $page    = $params->shift('page');
         $format  = $params->shift('format');
         $view    = $params->shift('view');

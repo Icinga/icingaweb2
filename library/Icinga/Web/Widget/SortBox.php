@@ -138,7 +138,7 @@ class SortBox extends AbstractWidget
     {
         $form = new Form();
         $form->setAttrib('class', 'inline');
-        $form->setMethod('GET');
+        $form->setMethod('POST');
         $form->setTokenDisabled();
         $form->setName($this->name);
         $form->addElement('select', 'sort', array(
