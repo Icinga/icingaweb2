@@ -383,12 +383,20 @@ EOD;
         $template = str_replace('{borderColor}', $this->borderColor, $template);
         $template = str_replace('{hideEmptyLabel}', $this->hideEmptyLabel ? 'true' : 'false', $template);
 
+        // Locale-ignorant string cast. Please. Do. NOT. Remove. This. Again.
+        // Problem is that implode respects locales when casting floats. This means
+        // that implode(',', array(1.1, 1.2)) would read '1,1,1,2'.
+        $data = array();
+        foreach ($this->data as $dat) {
+            $data[] = sprintf('%F', $dat);
+        }
+
         // values
         $formatted = array();
         foreach ($this->data as $key => $value) {
             $formatted[$key] = $this->formatValue($value);
         }
-        $template = str_replace('{data}', htmlspecialchars(implode(',', $this->data)), $template);
+        $template = str_replace('{data}', htmlspecialchars(implode(',', $data)), $template);
         $template = str_replace('{formatted}', htmlspecialchars(implode('|', $formatted)), $template);
         $template = str_replace('{labels}', htmlspecialchars($this->createLabelString()), $template);
         $template = str_replace('{tooltipFormat}', $this->tooltipFormat, $template);
