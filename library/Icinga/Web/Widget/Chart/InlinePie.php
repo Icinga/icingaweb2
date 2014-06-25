@@ -46,7 +46,8 @@ use Icinga\Logger\Logger;
  */
 class InlinePie extends AbstractWidget
 {
-    const NUMBER_FORMAT_TIME  = 'time';
+    const NUMBER_FORMAT_NONE = 'none';
+    const NUMBER_FORMAT_TIME = 'time';
     const NUMBER_FORMAT_BYTES = 'bytes';
     const NUMBER_FORMAT_RATIO = 'ratio';
         
@@ -168,7 +169,7 @@ EOD;
      *
      * @var array
      */
-    private $format = self::NUMBER_FORMAT_BYTES;
+    private $format = self::NUMBER_FORMAT_NONE;
 
     /**
      * Set if the tooltip for the empty area should be hidden
@@ -396,11 +397,13 @@ EOD;
      */
     private function formatValue($value)
     {
-        if ($this->format === self::NUMBER_FORMAT_BYTES) {
+        if ($this->format === self::NUMBER_FORMAT_NONE) {
+            return (string)$value;
+        } elseif ($this->format === self::NUMBER_FORMAT_BYTES) {
             return Format::bytes($value);
-        } else if ($this->format === self::NUMBER_FORMAT_TIME) {
+        } elseif ($this->format === self::NUMBER_FORMAT_TIME) {
             return Format::duration($value);
-        } else if ($this->format === self::NUMBER_FORMAT_RATIO) {
+        } elseif ($this->format === self::NUMBER_FORMAT_RATIO) {
             return $value;
         } else {
             Logger::warning('Unknown format string "' . $this->format . '" for InlinePie, value not formatted.');
