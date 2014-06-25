@@ -331,6 +331,46 @@ class StatusQuery extends IdoQuery
         );
     }
 
+    // Tuning experiments
+    public function whereToSql($col, $sign, $expression)
+    {
+        switch ($col) {
+
+            case 'CASE WHEN ss.current_state = 0 THEN 0 ELSE 1 END':
+                if ($sign !== '=') break;
+               
+                if ($expression) {
+                    return 'ss.current_state > 0';
+                } else {
+                    return 'ss.current_state = 0';
+               }
+               break;
+
+            case 'CASE WHEN hs.current_state = 0 THEN 0 ELSE 1 END':
+                if ($sign !== '=') break;
+
+                if ($expression) {
+                    return 'hs.current_state > 0';
+                } else {
+                    return 'hs.current_state = 0';
+               }
+               break;
+
+           case 'CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL THEN 99 ELSE CASE WHEN ss.state_type = 1 THEN ss.current_state ELSE ss.last_hard_state END END':
+               if ($sign !== '=') break;
+               if ($expression == 99) {
+                   return 'ss.has_been_checked = 0 OR ss.has_been_checked IS NULL';
+               }
+               if (in_array($expression, array(0, 1, 2, 3))) {
+                  return sprintf('((ss.state_type = 1 AND ss.current_state = %d) OR (ss.state_type = 0 AND ss.last_hard_state = %d))', $expression, $expression);
+               }
+               break;
+
+        }
+
+        return parent::whereToSql($col, $sign, $expression);
+    }
+
     protected function joinStatus()
     {
         $this->requireVirtualTable('services');
