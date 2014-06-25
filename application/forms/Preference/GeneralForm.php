@@ -30,15 +30,11 @@
 
 namespace Icinga\Form\Preference;
 
-use \DateTimeZone;
-use \Zend_Config;
-use \Zend_Form_Element_Text;
-use \Zend_Form_Element_Select;
-use \Zend_View_Helper_DateFormat;
-use \Icinga\Web\Form;
-use \Icinga\Web\Form\Validator\TimeFormatValidator;
-use \Icinga\Web\Form\Validator\DateFormatValidator;
-use \Icinga\Util\Translator;
+use DateTimeZone;
+use Zend_Config;
+use Zend_Form_Element_Select;
+use Icinga\Web\Form;
+use Icinga\Util\Translator;
 
 /**
  * General user preferences
@@ -49,41 +45,41 @@ class GeneralForm extends Form
      * Add a select field for setting the user's language
      *
      * Possible values are determined by Translator::getAvailableLocaleCodes.
-     * Also, a 'use default format' checkbox is added in order to allow a user to discard his overwritten setting
-     *
-     * @param   Zend_Config     $cfg    The "global" section of the config.ini to be used as default value
+     * Also, a 'use browser language' checkbox is added in order to allow a user to discard his setting
      */
-    private function addLanguageSelection(Zend_Config $cfg)
+    private function addLanguageSelection()
     {
         $languages = array();
         foreach (Translator::getAvailableLocaleCodes() as $language) {
             $languages[$language] = $language;
         }
         $languages[Translator::DEFAULT_LOCALE] = Translator::DEFAULT_LOCALE;
-        $prefs = $this->getUserPreferences();
-        $useDefaultLanguage = $this->getRequest()->getParam('default_language', !$prefs->has('app.language'));
+        $useBrowserLanguage = $this->getRequest()->getParam(
+            'browser_language',
+            !$this->getUserPreferences()->has('app.language')
+        );
 
         $this->addElement(
             'checkbox',
-            'default_language',
+            'browser_language',
             array(
-                'label'     => t('Use Default Language'),
-                'value'     => $useDefaultLanguage,
+                'label'     => t('Use your browser\'s language suggestions'),
+                'value'     => $useBrowserLanguage,
                 'required'  => true
             )
         );
         $selectOptions = array(
             'label'         => t('Your Current Language'),
-            'required'      => !$useDefaultLanguage,
+            'required'      => !$useBrowserLanguage,
             'multiOptions'  => $languages,
             'helptext'      => t('Use the following language to display texts and messages'),
-            'value'         => $prefs->get('app.language', $cfg->get('language', Translator::DEFAULT_LOCALE))
+            'value'         => substr(setlocale(LC_ALL, 0), 0, 5)
         );
-        if ($useDefaultLanguage) {
+        if ($useBrowserLanguage) {
             $selectOptions['disabled'] = 'disabled';
         }
         $this->addElement('select', 'language', $selectOptions);
-        $this->enableAutoSubmit(array('default_language'));
+        $this->enableAutoSubmit(array('browser_language'));
     }
 
     /**
@@ -145,7 +141,7 @@ class GeneralForm extends Form
             $global = new Zend_Config(array());
         }
 
-        $this->addLanguageSelection($global);
+        $this->addLanguageSelection();
         $this->addTimezoneSelection($global);
 
         $this->setSubmitLabel('Save Changes');
@@ -169,7 +165,7 @@ class GeneralForm extends Form
     {
         $values = $this->getValues();
         return array(
-            'app.language'          => $values['default_language'] ? null : $values['language'],
+            'app.language'          => $values['browser_language'] ? null : $values['language'],
             'app.timezone'          => $values['default_timezone'] ? null : $values['timezone'],
             'app.show_benchmark'    => $values['show_benchmark'] === '1' ? true : false
         );
