@@ -168,8 +168,14 @@ class Monitoring_ListController extends Controller
             'host_address'          =>  'Host Address',
             'host_last_check'       =>  'Last Host Check'
         ));
-        // TODO: Workaround, paginate should be able to fetch limit from new params
-        $this->view->services = $query->paginate($this->params->get('limit'));
+        $limit = $this->params->get('limit');
+        $this->view->limit = $limit;
+        if ($limit) {
+            // TODO: Workaround, paginate should be able to fetch limit from new params
+            $this->view->services = $query->paginate($this->params->get('limit'));
+        } else {
+            $this->view->services = $query->getQuery()->fetchAll();
+        }
     }
 
     /**
