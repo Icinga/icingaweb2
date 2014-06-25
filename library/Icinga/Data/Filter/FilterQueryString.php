@@ -122,12 +122,16 @@ class FilterQueryString
                 if ($next === '!') {
                     $not = $this->readFilters($nestingLevel + 1, '!');
                     $filters[] = $not;
-                    continue;
+                    if (in_array($this->nextChar(), array('|', '&', ')'))) {
+                        $next = $this->readChar();
+                    } else {
+                        break;
+                    }
                 }
 
                 if ($op === null && count($filters > 0) && ($next === '&' || $next === '|')) {
                     $op = $next;
-                    $next = $this->readChar();
+                    continue;
                 }
 
                 if ($next === false) {
@@ -180,10 +184,15 @@ class FilterQueryString
             }
         }
 
-        if ($nestingLevel === 0 && count($filters) === 1) {
+        if ($nestingLevel === 0 && $this->pos < $this->length) {
+            $this->parseError($op, 'Did not read full filter');
+        }
+
+        if ($nestingLevel === 0 && count($filters) === 1 && $op !== '!') {
             // There is only one filter expression, no chain
             return $filters[0];
         }
+
         if ($op === null && count($filters) === 1) {
             $op = '&';
         }
@@ -204,6 +213,10 @@ class FilterQueryString
         $this->string = $string;
 
         $this->length = strlen($string);
+
+        if ($this->length === 0) {
+            return Filter::matchAll();
+        }
         return $this->readFilters();
     }
 
