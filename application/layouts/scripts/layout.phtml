@@ -12,7 +12,7 @@ if (array_key_exists('_dev', $_GET)) {
 }
 
 $ie8jsfile  = 'js/icinga.ie8.js';
-$lang = Translator::getLanguage();
+$lang = Translator::splitLocaleCode()->language;
 $isIframe = $this->layout()->isIframe;
 $iframeClass = $isIframe ? ' iframe' : '';
 
