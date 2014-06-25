@@ -73,14 +73,18 @@ class Monitoring_MultiController extends Controller
         $uniqueComments = array_keys($this->getUniqueValues($comments->getQuery()->fetchAll(), 'comment_internal_id'));
 
         // Populate view
-        $this->view->objects   = $this->view->hosts = $hosts;
-        $this->view->problems  = $this->getProblems($hosts);
-        $this->view->comments  = $uniqueComments;
+        $this->view->objects = $this->view->hosts = $hosts;
+        $this->view->problems = $this->getProblems($hosts);
+        $this->view->comments = $uniqueComments;
         $this->view->hostnames = $this->getProperties($hosts, 'host_name');
         $this->view->downtimes = $this->getDowntimes($hosts);
-        $this->view->errors    = $errors;
-        $this->view->states    = $this->countStates($hosts, 'host', 'host_name');
-        $this->view->pie       = $this->createPie($this->view->states, $this->view->getHelper('MonitoringState')->getHostStateColors());
+        $this->view->errors = $errors;
+        $this->view->states = $this->countStates($hosts, 'host', 'host_name');
+        $this->view->pie = $this->createPie(
+            $this->view->states,
+            $this->view->getHelper('MonitoringState')->getHostStateColors(),
+            t('Host State')
+        );
 
         // Handle configuration changes
         $this->handleConfigurationForm(array(
@@ -138,9 +142,17 @@ class Monitoring_MultiController extends Controller
         $this->view->servicenames   = $this->getProperties($services, 'service_description');
         $this->view->downtimes      = $this->getDowntimes($services);
         $this->view->service_states = $this->countStates($services, 'service');
-        $this->view->host_states    = $this->countStates($services, 'host',  'host_name');
-        $this->view->service_pie    = $this->createPie($this->view->service_states, $this->view->getHelper('MonitoringState')->getServiceStateColors());
-        $this->view->host_pie       = $this->createPie($this->view->host_states, $this->view->getHelper('MonitoringState')->getHostStateColors());
+        $this->view->host_states    = $this->countStates($services, 'host', 'host_name');
+        $this->view->service_pie    = $this->createPie(
+            $this->view->service_states,
+            $this->view->getHelper('MonitoringState')->getServiceStateColors(),
+            t('Service State')
+        );
+        $this->view->host_pie       = $this->createPie(
+            $this->view->host_states,
+            $this->view->getHelper('MonitoringState')->getHostStateColors(),
+            t('Host State')
+        );
         $this->view->errors         = $errors;
 
         $this->handleConfigurationForm(array(
@@ -236,10 +248,11 @@ class Monitoring_MultiController extends Controller
         return $states;
     }
 
-    private function createPie($states, $colors)
+    private function createPie($states, $colors, $title)
     {
-        $chart = new InlinePie(array_values($states), $colors);
-        $chart->setLabels(array_keys($states))->setHeight(100)->setWidth(100);
+        $chart = new InlinePie(array_values($states), $title, $colors);
+        $chart->setLabel(array_keys($states))->setHeight(100)->setWidth(100);
+        $chart->setTitle($title);
         return $chart;
     }
 

@@ -127,7 +127,7 @@ EOD;
      *
      * @var string
      */
-    private $title = '';
+    private $title;
 
     /**
      * The style for the HtmlElement
@@ -195,18 +195,22 @@ EOD;
     /**
      * The labels to be displayed in the pie-chart
      *
-     * @param null $labels
+     * @param mixed $label     The label of the displayed value, or null for no labels
      *
-     * @return $this
+     * @return $this            Fluent interface
      */
-    public function setLabels($labels = null)
+    public function setLabel($label)
     {
-        if ($labels != null) {
-            $this->url->setParam('labels', implode(',', $labels));
+        if (is_array($label)) {
+            $this->url->setParam('labels', implode(',', array_keys($label)));
+        } elseif ($label != null) {
+            $labelArr =  array($label, $label, $label, '');
+            $this->url->setParam('labels', implode(',', $labelArr));
+            $label = $labelArr;
         } else {
             $this->url->removeKey('labels');
         }
-        $this->labels = $labels;
+        $this->labels = $label;
         return $this;
     }
 
@@ -319,10 +323,12 @@ EOD;
      * Create a new InlinePie
      *
      * @param array  $data      The data displayed by the slices
+     * @param string $title     The title of this Pie
      * @param array  $colors    An array of RGB-Color values to use
      */
-    public function __construct(array $data, $colors = null)
+    public function __construct(array $data, $title, $colors = null)
     {
+        $this->title = $title;
         $this->url = Url::fromPath('svg/chart.php');
         if (array_key_exists('data', $data)) {
             $this->data = $data['data'];

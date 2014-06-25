@@ -18,18 +18,14 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
             if (!$perfdata->isPercentage() && $perfdata->getMaximumValue() === null) {
                 continue;
             }
-            $pieChart = $this->createInlinePie($perfdata, $label);
+            $pieChart = $this->createInlinePie($perfdata, $label, htmlspecialchars($label));
             if ($compact) {
-                $pieChart->setTitle(
-                    htmlspecialchars($label) /* . ': ' . htmlspecialchars($this->formatPerfdataValue($perfdata) */
-                );
                 if (! $float) {
                     $result .= $pieChart->render();
                 } else {
                     $result .= '<div style="float: right;">' . $pieChart->render() . '</div>';
                 }
             } else {
-                $pieChart->setTitle(htmlspecialchars($label));
                 if (! $perfdata->isPercentage()) {
                     $pieChart->setTooltipFormat('{{label}}: {{formatted}} ({{percent}}%)');
                 }
@@ -85,10 +81,10 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
         return $perfdata->getValue();
     }
 
-    protected function createInlinePie(Perfdata $perfdata, $label = '')
+    protected function createInlinePie(Perfdata $perfdata, $title, $label = '')
     {
-        $pieChart = new InlinePie($this->calculatePieChartData($perfdata));
-        $pieChart->setLabels(array($label, $label, $label, ''));
+        $pieChart = new InlinePie($this->calculatePieChartData($perfdata), $title);
+        $pieChart->setLabel($label);
         $pieChart->setHideEmptyLabel();
 
         //$pieChart->setHeight(32)->setWidth(32);
