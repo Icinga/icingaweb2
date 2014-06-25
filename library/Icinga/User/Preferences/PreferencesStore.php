@@ -132,7 +132,7 @@ abstract class PreferencesStore
         }
 
         if ($type === 'Ini') {
-            $config->location = $config->config_path;
+            $config->location = IcingaConfig::resolvePath('preferences');
         } elseif ($type === 'Db') {
             $config->connection = new DbConnection(ResourceFactory::getResourceConfig($config->resource));
         }
