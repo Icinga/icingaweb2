@@ -51,8 +51,10 @@ class Limiter extends AbstractWidget
             50 => '50',
             100 => '100',
             500 => '500'
-            // 0 => t('all')
         );
+        if ($currentLimit === 0) {
+            $availableLimits[0] = t('all');
+        }
 
         // if ($this->pages === 1 && $currentLimit === 10) return '';
 
