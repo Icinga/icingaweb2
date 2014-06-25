@@ -42,13 +42,13 @@ class Dns
      * @param string    $service    The type of the service, like for example 'ldaps' or 'ldap'
      * @param string    $protocol   The transport protocol used by the service, defaults to 'tcp'
      *
-     * @return array|bool           An array of all service domains
+     * @return array|null           An array of all service domains
      */
     public static function getSrvRecords($domain, $service, $protocol = 'tcp')
     {
         $records = dns_get_record('_' . $service . '._' . $protocol . '.' . $domain, DNS_SRV);
         if ($records === false) {
-            return false;
+            return null;
         }
         $targets = array();
         foreach ($records as $record) {
@@ -66,7 +66,7 @@ class Dns
      * @param   int     $type     The type of DNS-entry to fetch, see
      *                            http://www.php.net/manual/de/function.dns-get-record.php for available types
      *
-     * @return  array|bool        An array of entries
+     * @return  array|null        An array of record entries
      */
     public static function records($query, $type = DNS_ANY)
     {
@@ -79,14 +79,14 @@ class Dns
      * @param   string  $ipAddress
      * @param   int     $type
      *
-     * @return array|bool
+     * @return array|null
      */
     public static function ptr($ipAddress, $type = DNS_ANY)
     {
         $host = gethostbyaddr($ipAddress);
         if ($host === false || $host === $ipAddress) {
             // malformed input or no host found
-            return false;
+            return null;
         }
         return self::records($host, $type);
     }
@@ -96,7 +96,7 @@ class Dns
      *
      * @param   $hostname       The hostname to resolve
      *
-     * @return  string|bool     The IPv4 address of the given hostname, or false when no entry exists.
+     * @return  string|null     The IPv4 address of the given hostname or null, when no entry exists.
      */
     public static function ipv4($hostname)
     {
@@ -104,7 +104,7 @@ class Dns
         if ($records !== false && count($records) > 0) {
             return $records[0]['ip'];
         }
-        return false;
+        return null;
     }
 
     /**
@@ -112,7 +112,7 @@ class Dns
      *
      * @param   $hostname       The hostname to resolve
      *
-     * @return  string|bool     The IPv6 address of the given hostname, or false when no entry exists.
+     * @return  string|null     The IPv6 address of the given hostname or null, when no entry exists.
      */
     public static function ipv6($hostname)
     {
@@ -120,6 +120,6 @@ class Dns
         if ($records !== false && count($records) > 0) {
             return $records[0]['ip'];
         }
-        return false;
+        return null;
     }
 }
