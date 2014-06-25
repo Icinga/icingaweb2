@@ -16,19 +16,15 @@ use Icinga\Data\Filter\Filter;
  *   !!problem
  *   problem=0
  *   problem=1
- *   problem=true
- *   problem=false
  *
  * Text-Search
  *   service=ping
  *   service!=ping
  *   service=*www*
  *   !service=*www*
- *   hostgroup=www1|www2|!db
- *   hostgroup=[www1,www2]
+ *   hostgroup=(www1|www2)
  *   hostgroup=www1&hostgroup=www2
- *   host[community]=public
- *   _hostcommunity=public
+ *   _host_community=public
  *
  * Less/greater than:
  *   state>=1
@@ -37,6 +33,24 @@ use Icinga\Data\Filter\Filter;
  *   state<=2
  *
  * Time
+ *
+ * Some complex filters that should be tested:
+ *
+ * !host=a!*(n  => NOT host = "a!*(n"
+ *
+ * !service_problem&service_handled (regression for #6554)
+ *
+ * Additional nestings just to test a bunch of not/and combinations:
+ *
+ * service_problem=1&!((!((!(service_handled=1)&host_problem=1)))&!host=abc*
+ *
+ * !service_problem=1&(((((service_handled=1)))))
+ *
+ * !service_problem&(((((service_handled)))))&host=abc*
+ *
+ * !service_problem&(((((service_handled))&!service_problem=1)))
+ *
+ * !!(!((host<net*))&!(!(service=srva&host=hosta)|(service=srvb&host=srvb)))
  *
  * What about ~?
  */
@@ -145,61 +159,6 @@ class FilterTest extends BaseTestCase
                 array('nada', 'nothing', 'ping')
             )->matches($this->row(1))
         );
-    }
-/* NOT YET
-    public function testFilterMatchesArrayWithWildcards()
-    {
-        $this->assertTrue(
-            Filter::where(
-                'service',
-                array('nada', 'nothing', 'www*icinga*')
-            )->matches($this->row(1))
-        );
-    }
-
-*/
-
-    // Playing around to get ready for new queryString parser
-    public function testFromQueryString()
-    {
-        $string = 'host_name=localhost&(service_state=1|service_state=2|service_state=3)&service_problem=1';
-        $string = 'host=localhost|(host=none&service=ping)|host=www&limit=10&sort=host';
-
-        echo "Parsing: $string\n";
-        $pos = 0;
-        echo $this->readUnless($string, array('=', '(', '&', '|'), $pos);
-        $sign = $this->readChar($string, $pos);
-        var_dump($sign);
-        echo $this->readUnless($string, array('=', '(', '&', '|'), $pos);
-        echo "\n";
-    }
-
-    protected function readChar($string, & $pos)
-    {
-        if (strlen($string) > $pos) {
-            return $string[$pos++];
-        }
-        return false;
-    }
-
-    protected function readUnless(& $string, $char, & $pos)
-    {
-        $buffer = '';
-        while ($c = $this->readChar($string, $pos)) {
-            if (is_array($char)) {
-                if (in_array($c, $char)) {
-                    $pos--;
-                    break;
-                }
-            } else {
-                if ($c === $char) {
-                    $pos--;
-                    break;
-                }
-            }
-            $buffer .= $c;
-        }
-        return $buffer;
     }
 
     public function testManualFilterCreation()
