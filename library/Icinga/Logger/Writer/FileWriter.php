@@ -93,6 +93,8 @@ class FileWriter extends LogWriter
      */
     protected function write($text)
     {
-        File::open($this->path, 'a')->write($text . PHP_EOL)->close();
+        $file = new File($this->path, 'a');
+        $file->fwrite($text . PHP_EOL);
+        $file->fflush();
     }
 }

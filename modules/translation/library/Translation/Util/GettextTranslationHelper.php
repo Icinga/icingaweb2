@@ -29,7 +29,8 @@
 
 namespace Icinga\Module\Translation\Util;
 
-use \Exception;
+use Exception;
+use Icinga\Util\File;
 use Icinga\Application\Modules\Manager;
 use Icinga\Application\ApplicationBootstrap;
 
@@ -350,36 +351,32 @@ class GettextTranslationHelper
      */
     private function createFileCatalog()
     {
-        $catalogHandle = fopen($this->catalogPath, 'w');
-        if (!$catalogHandle) {
-            throw new Exception('Unable to create ' . $this->catalogPath);
-        }
+        $catalog = new File($this->catalogPath, 'w');
 
         try {
             if ($this->moduleDir) {
-                $this->getSourceFileNames($this->moduleDir, $catalogHandle);
+                $this->getSourceFileNames($this->moduleDir, $catalog);
             } else {
-                $this->getSourceFileNames($this->appDir, $catalogHandle);
-                $this->getSourceFileNames(realpath($this->appDir . '/../library/Icinga'), $catalogHandle);
+                $this->getSourceFileNames($this->appDir, $catalog);
+                $this->getSourceFileNames(realpath($this->appDir . '/../library/Icinga'), $catalog);
             }
         } catch (Exception $error) {
-            fclose($catalogHandle);
             throw $error;
         }
 
-        fclose($catalogHandle);
+        $catalog->fflush();
     }
 
     /**
      * Recursively scan the given directory for translatable source files
      *
      * @param   string      $directory      The directory where to search for sources
-     * @param   resource    $fileHandle     The file where to write the results
+     * @param   File        $file           The file where to write the results
      * @param   array       $blacklist      A list of directories to omit
      *
      * @throws  Exception                   In case the given directory is not readable
      */
-    private function getSourceFileNames($directory, &$fileHandle)
+    private function getSourceFileNames($directory, File $file)
     {
         $directoryHandle = opendir($directory);
         if (!$directoryHandle) {
@@ -390,7 +387,7 @@ class GettextTranslationHelper
         while (($filename = readdir($directoryHandle)) !== false) {
             $filepath = $directory . DIRECTORY_SEPARATOR . $filename;
             if (preg_match('@^[^\.].+\.(' . implode('|', $this->sourceExtensions) . ')$@', $filename)) {
-                fwrite($fileHandle, $filepath . PHP_EOL);
+                $file->fwrite($filepath . PHP_EOL);
             } elseif (is_dir($filepath) && !preg_match('@^(\.|\.\.)$@', $filename)) {
                 $subdirs[] = $filepath;
             }
@@ -398,7 +395,7 @@ class GettextTranslationHelper
         closedir($directoryHandle);
 
         foreach ($subdirs as $subdir) {
-            $this->getSourceFileNames($subdir, $fileHandle);
+            $this->getSourceFileNames($subdir, $file);
         }
     }
 

@@ -47,7 +47,7 @@ class LocalPipe implements Transport
     private $path;
 
     /**
-     * The mode to use for fopen()
+     * The mode to use to access the pipe
      *
      * @var string
      */
@@ -69,7 +69,9 @@ class LocalPipe implements Transport
         Logger::debug('Attempting to send external icinga command %s to local command file ', $message, $this->path);
 
         try {
-            File::open($this->path, $this->openMode)->write('[' . time() . '] ' . $message . PHP_EOL)->close();
+            $file = new File($this->path, $this->openMode);
+            $file->fwrite('[' . time() . '] ' . $message . PHP_EOL);
+            $file->fflush();
         } catch (Exception $e) {
             throw new ConfigurationError(
                 sprintf(
@@ -86,7 +88,7 @@ class LocalPipe implements Transport
     /**
      * Overwrite the open mode (useful for testing)
      *
-     * @param string $mode          A open mode supported by fopen()
+     * @param   string  $mode   The mode to use to access the pipe
      */
     public function setOpenMode($mode)
     {

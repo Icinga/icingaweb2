@@ -329,12 +329,9 @@ class Module
 
             if (file_exists($this->metadataFile)) {
 
-                $file = File::open($this->metadataFile, 'r');
-                $lines = $file->readlines();
-                $file->close();
                 $key = null;
-
-                foreach ($lines as $line) {
+                $file = new File($this->metadataFile, 'r');
+                foreach ($file as $line) {
                     $line = rtrim($line);
 
                     if ($key === 'description') {

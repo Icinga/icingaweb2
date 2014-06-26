@@ -109,7 +109,7 @@ class IniStore extends PreferencesStore
                     );
                 }
 
-                File::open($this->preferencesFile, 'a')->chmod(0664)->close();
+                File::create($this->preferencesFile, 0664);
             }
 
             if (!is_writable($this->preferencesFile)) {

@@ -29,6 +29,7 @@
 
 namespace Icinga\Protocol\Statusdat;
 
+use Icinga\Util\File;
 use Icinga\Logger\Logger;
 use Icinga\Data\DatasourceInterface;
 use Icinga\Exception\ConfigurationError;
@@ -274,7 +275,7 @@ class Reader implements IReader, DatasourceInterface
             );
         }
         if (!$this->parser) {
-            $this->parser = new Parser(fopen($this->config->object_file, "r"));
+            $this->parser = new Parser(new File($this->config->object_file, 'r'));
         }
         $this->parser->parseObjectsFile();
         $this->lastState = $this->parser->getRuntimeState();
@@ -293,9 +294,9 @@ class Reader implements IReader, DatasourceInterface
             );
         }
         if (!$this->parser) {
-            $this->parser = new Parser(fopen($this->config->status_file, "r"), $this->lastState);
+            $this->parser = new Parser(new File($this->config->status_file, 'r'), $this->lastState);
         }
-        $this->parser->parseRuntimeState(fopen($this->config->status_file, "r"));
+        $this->parser->parseRuntimeState(new File($this->config->status_file, 'r'));
         $this->lastState = $this->parser->getRuntimeState();
         if (!$this->noCache) {
             $this->statusCache->save(array("true" => true), "state" . md5($this->config->object_file));

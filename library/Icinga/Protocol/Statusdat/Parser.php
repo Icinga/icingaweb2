@@ -29,7 +29,7 @@
 
 namespace Icinga\Protocol\Statusdat;
 
-use Icinga\Exception\ConfigurationError;
+use Icinga\Util\File;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Protocol\Statusdat\Exception\ParsingException as ParsingException;
 
@@ -46,11 +46,11 @@ class Parser
     private $deferred = array();
 
     /**
-     * The resource pointing to the currently read  file
+     * The currently read file
      *
-     * @var resource
+     * @var File
      */
-    private $filehandle;
+    private $file;
 
     /**
      * String representation of the currently parsed object type
@@ -83,18 +83,12 @@ class Parser
     /**
      * Create a new parser using the given file
      *
-     * @param resource $filehandle                      The file handle to usefor parsing
-     * @param array $baseState                          The state using for the base
-     *
-     * @throws ConfigurationError                       When the file can't be used
+     * @param   File    $file       The file to parse
+     * @param   array   $baseState  The state to use for the base
      */
-    public function __construct($filehandle = null, $baseState = null)
+    public function __construct(File $file, $baseState = null)
     {
-        if (!is_resource($filehandle)) {
-            throw new  ConfigurationError("Statusdat parser can't find $filehandle");
-        }
-
-        $this->filehandle = $filehandle;
+        $this->file = $file;
         $this->icingaState = $baseState;
     }
 
@@ -104,12 +98,9 @@ class Parser
     public function parseObjectsFile()
     {
         $DEFINE = strlen("define ");
-        $filehandle = $this->filehandle;
         $this->icingaState = array();
-        while (!feof($filehandle)) {
-
-            $line = trim(fgets($filehandle));
-
+        foreach ($this->file as $line) {
+            $line = trim($line);
             $this->lineCtr++;
             if ($line === "" || $line[0] === "#") {
                 continue;
@@ -124,22 +115,24 @@ class Parser
     }
 
     /**
-     * Parse the given file handle as an status.dat file and read runtime information
+     * Parse the given file as an status.dat file and read runtime information
+     *
+     * @param   File    $file   The file to parse or null to parse the one passed to the constructor
      */
-    public function parseRuntimeState($filehandle = null)
+    public function parseRuntimeState(File $file = null)
     {
-        if ($filehandle != null) {
-            $this->filehandle = $filehandle;
+        if ($file != null) {
+            $this->file = $file;
         } else {
-            $filehandle = $this->filehandle;
+            $file = $this->file;
         }
 
         if (!$this->icingaState) {
             throw new ProgrammingError("Tried to read runtime state without existing objects data");
         }
         $this->overwrites = array();
-        while (!feof($filehandle)) {
-            $line = trim(fgets($filehandle));
+        foreach ($file as $line) {
+            $line = trim($line);
             $this->lineCtr++;
             if ($line === "" || $line[0] === "#") {
                 continue;
@@ -156,10 +149,9 @@ class Parser
      */
     private function readCurrentObject()
     {
-        $filehandle = $this->filehandle;
         $monitoringObject = new PrintableObject();
-        while (!feof($filehandle)) {
-            $line = explode("\t", trim(fgets($filehandle)), 2);
+        foreach ($this->file as $line) {
+            $line = explode("\t", trim($line), 2);
             $this->lineCtr++;
             if (!$line) {
                 continue;
@@ -185,7 +177,6 @@ class Parser
      */
     private function readCurrentState()
     {
-        $filehandle = $this->filehandle;
         $statusdatObject = new RuntimeStateContainer();
 
         $objectType = $this->getObjectTypeForState();
@@ -273,12 +264,12 @@ class Parser
     protected function skipObject($returnString = false)
     {
         if (!$returnString) {
-            while (trim(fgets($this->filehandle)) !== "}") {
+            while (trim($this->file->fgets()) !== "}") {
             }
             return null;
         } else {
             $str = "";
-            while (($val = trim(fgets($this->filehandle))) !== "}") {
+            while (($val = trim($this->file->fgets())) !== "}") {
                 $str .= $val . "\n";
             }
             return $str;
