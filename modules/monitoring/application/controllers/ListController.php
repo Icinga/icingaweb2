@@ -199,11 +199,11 @@ class Monitoring_ListController extends Controller
         ));
         $limit = $this->params->get('limit');
         $this->view->limit = $limit;
-        if ($limit) {
+        if ($limit === 0) {
+            $this->view->services = $query->getQuery()->fetchAll();
+        } else {
             // TODO: Workaround, paginate should be able to fetch limit from new params
             $this->view->services = $query->paginate($this->params->get('limit'));
-        } else {
-            $this->view->services = $query->getQuery()->fetchAll();
         }
     }
 
