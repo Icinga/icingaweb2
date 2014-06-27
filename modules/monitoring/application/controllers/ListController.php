@@ -78,7 +78,6 @@ class Monitoring_ListController extends Controller
 
         $this->addTitleTab('hosts');
         $this->setAutorefreshInterval(10);
-        $this->compactView = 'hosts-compact';
         $query = $this->backend->select()->from('hostStatus', array_merge(array(
             'host_icon_image',
             'host_name',
