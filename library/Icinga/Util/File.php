@@ -5,6 +5,7 @@
 namespace Icinga\Util;
 
 use SplFileObject;
+use ErrorException;
 use RuntimeException;
 use Icinga\Exception\NotWritableError;
 
@@ -128,9 +129,9 @@ class File extends SplFileObject
     protected function setupErrorHandler()
     {
         set_error_handler(
-            function ($errno, $errstr) {
+            function ($errno, $errstr, $errfile, $errline) {
                 restore_error_handler();
-                throw new RuntimeException($errstr);
+                throw new ErrorException($errno, $errstr, $errfile, $errline);
             },
             E_WARNING
         );
