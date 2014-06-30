@@ -1,5 +1,4 @@
 <?php
-// @codingStandardsIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga Web 2.
@@ -75,4 +74,3 @@ class Zend_View_Helper_CheckPerformance extends Zend_View_Helper_Abstract
         return $out;
     }
 }
-// @codingStandardsIgnoreStop

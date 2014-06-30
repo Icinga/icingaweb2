@@ -171,7 +171,6 @@ class View extends Zend_View_Abstract
         }
     }
 
-    // @codingStandardsIgnoreStart
     /**
      * Use to include the view script in a scope that only allows public
      * members.
@@ -192,7 +191,6 @@ class View extends Zend_View_Abstract
             include func_get_arg(0);
         }
     }
-    // @codingStandardsIgnoreEnd
 
     /**
      * Accesses a helper object from within a script

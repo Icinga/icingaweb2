@@ -29,9 +29,7 @@
 
 namespace Icinga\Application;
 
-// @codingStandardsIgnoreStart
 require_once dirname(__FILE__) . '/ApplicationBootstrap.php';
-// @codingStandardsIgnoreStop
 
 use Icinga\Exception\ProgrammingError;
 

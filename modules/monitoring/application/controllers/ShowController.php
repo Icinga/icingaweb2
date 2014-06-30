@@ -27,7 +27,6 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-// @codingStandardsIgnoreStart
 use Icinga\Application\Benchmark;
 use Icinga\Web\Hook;
 use Icinga\Web\Widget\Tabs;
@@ -190,4 +189,3 @@ class Monitoring_ShowController extends Controller
             ->extend(new DashboardAction());
     }
 }
-// @codingStandardsIgnoreEnd

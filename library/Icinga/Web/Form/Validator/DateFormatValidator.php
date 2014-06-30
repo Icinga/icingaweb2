@@ -61,11 +61,9 @@ class DateFormatValidator extends Zend_Validate_Abstract
      *
      * @see Zend_Validate_Abstract::$_messageTemplates
      */
-    // @codingStandardsIgnoreStart
     protected $_messageTemplates = array(
         'INVALID_CHARACTERS' => 'Invalid date format'
     );
-    // @codingStandardsIgnoreEnd
 
     /**
      * Validate the input value
