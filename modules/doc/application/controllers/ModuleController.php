@@ -2,18 +2,26 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use \Zend_Controller_Action_Exception;
+use Zend_Controller_Action_Exception;
 use Icinga\Application\Icinga;
 use Icinga\Module\Doc\DocController;
 
 class Doc_ModuleController extends DocController
 {
     /**
-     * List available modules
+     * List modules which are enabled and having the 'doc' directory
      */
     public function indexAction()
     {
-        $this->view->enabledModules = Icinga::app()->getModuleManager()->listEnabledModules();
+        $moduleManager = Icinga::app()->getModuleManager();
+        $modules = array();
+        foreach (Icinga::app()->getModuleManager()->listEnabledModules() as $enabledModule) {
+            $docDir = $moduleManager->getModuleDir($enabledModule, '/doc');
+            if (is_dir($docDir)) {
+                $modules[] = $enabledModule;
+            }
+        }
+        $this->view->modules = $modules;
     }
 
     /**

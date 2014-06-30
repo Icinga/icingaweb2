@@ -1,6 +1,6 @@
 <h1>Module documentations</h1>
 <ul>
-    <?php foreach ($enabledModules as $module): ?>
+    <?php foreach ($modules as $module): ?>
         <li>
             <a href="<?= $this->getHelper('Url')->url(array('moduleName' => $module), 'doc/module/toc', false, false); ?>">
                 <?= $module ?>
