@@ -111,7 +111,6 @@ EOD;
 
     /**
      * @expectedException Icinga\Exception\ProgrammingError
-     * @expectedExceptionMessage Directory does not exist: /trullalla/123
      */
     public function testNonexistingDirectory()
     {
