@@ -13,6 +13,10 @@
 
 $cf = $this->getHelper('CommandForm');
 
+if (count($comments) === 0) {
+    echo t('No comments matching the filter');
+}
+
 foreach ($comments as $comment):
 
 ?>

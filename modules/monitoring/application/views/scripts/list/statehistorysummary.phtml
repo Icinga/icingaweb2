@@ -7,6 +7,10 @@
 
 $grid->setColor('#FC0707');
 $data = array();
+
+if (count($summary) === 0) {
+    echo t('No history entry matching the filter');
+}
 foreach ($summary as $entry) {
     $day = $entry->day;
     $value = $entry->cnt_critical;

@@ -22,6 +22,9 @@ if (empty($this->notifications)) {
 <tbody>
 <?php
 
+if (count($notifications) === 0) {
+    echo t('No notifications matching the filter');
+}
 foreach ($notifications as $notification):
 
   if (isset($notification->service)) {
