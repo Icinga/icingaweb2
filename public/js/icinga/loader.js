@@ -244,9 +244,10 @@
         },
 
         processRedirectHeader: function(req) {
+            var icinga = this.icinga;
             var redirect = req.getResponseHeader('X-Icinga-Redirect');
             if (! redirect) return false;
-            this.icinga.logger.debug(
+            icinga.logger.debug(
                 'Got redirect for ', req.$target, ', URL was ' + redirect
             );
             redirect = decodeURIComponent(redirect);
@@ -255,6 +256,13 @@
                 var redirectionUrl = this.addUrlFlag(redirect, 'renderLayout');
                 this.loadUrl(redirectionUrl, $('#layout')).url = redirect;
             } else {
+                if (req.$target.attr('id') === 'col2') { // TODO: multicol
+                    if ($('#col1').data('icingaUrl') === redirect) {
+                        icinga.ui.layout1col();
+                        req.$target = $('#col1');
+                    }
+                }
+
                 this.loadUrl(redirect, req.$target);
             }
             return true;
