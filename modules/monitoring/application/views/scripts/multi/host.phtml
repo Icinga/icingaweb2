@@ -40,16 +40,16 @@ $this->target = array('host'	=> $this->hostquery);
 
     <h2> <?=$this->icon('hostgroup.png')?> Host Actions </h2>
 
-    <table class="avp newsection">
-        <tbody>
-            <?= $this->render('multi/components/summary.phtml'); ?>
-            <?= $this->render('multi/components/comments.phtml'); ?>
-            <?= $this->render('multi/components/downtimes.phtml'); ?>
-        </tbody>
-    </table>
+        <table class="avp newsection">
+            <tbody>
+                <?= $this->render('multi/components/summary.phtml'); ?>
+                <?= $this->render('multi/components/comments.phtml'); ?>
+                <?= $this->render('multi/components/downtimes.phtml'); ?>
+            </tbody>
+        </table>
 
     <?= $this->render('multi/components/flags.phtml') ?>
-<?php endif ?>
+    <?php endif ?>
 </div>
 
 <a

@@ -250,7 +250,7 @@ class Monitoring_ChartController extends Controller
                     (int) $query->hosts_unreachable_unhandled . ' Unreachable Hosts (Unhandled)',
                     (int) $query->hosts_pending . ' Pending Hosts'
                 )
-            ),array(
+            ), array(
             'data' => array(
            //     (int) $query->services_ok,
                 (int) $query->services_warning_unhandled,
