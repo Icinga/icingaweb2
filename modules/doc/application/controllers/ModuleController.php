@@ -2,9 +2,10 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use Zend_Controller_Action_Exception;
+use \Zend_Controller_Action_Exception;
 use Icinga\Application\Icinga;
 use Icinga\Module\Doc\DocController;
+use Icinga\Module\Doc\Exception\DocException;
 
 class Doc_ModuleController extends DocController
 {
@@ -53,7 +54,11 @@ class Doc_ModuleController extends DocController
         $moduleName = $this->getParam('moduleName');
         $this->assertModuleEnabled($moduleName);
         $moduleManager = Icinga::app()->getModuleManager();
-        $this->populateToc($moduleManager->getModuleDir($moduleName, '/doc'), $moduleName);
+        try {
+            $this->populateToc($moduleManager->getModuleDir($moduleName, '/doc'), $moduleName);
+        } catch (DocException $e) {
+            throw new Zend_Controller_Action_Exception($e->getMessage(), 404);
+        }
         $this->view->moduleName = $moduleName;
     }
 
@@ -71,7 +76,11 @@ class Doc_ModuleController extends DocController
             throw new Zend_Controller_Action_Exception('Missing parameter "chapterName"', 404);
         }
         $moduleManager = Icinga::app()->getModuleManager();
-        $this->populateChapter($chapterName, $moduleManager->getModuleDir($moduleName, '/doc'));
+        try {
+            $this->populateChapter($chapterName, $moduleManager->getModuleDir($moduleName, '/doc'));
+        } catch (DocException $e) {
+            throw new Zend_Controller_Action_Exception($e->getMessage(), 404);
+        }
         $this->view->moduleName = $moduleName;
     }
 }
