@@ -58,11 +58,9 @@ class TimeFormatValidator extends Zend_Validate_Abstract
      * @var array
      * @see Zend_Validate_Abstract::$_messageTemplates
      */
-    // @codingStandardsIgnoreStart
     protected $_messageTemplates = array(
         'INVALID_CHARACTERS' => 'Invalid time format'
     );
-    // @codingStandardsIgnoreEnd
 
     /**
      * Validate the input value

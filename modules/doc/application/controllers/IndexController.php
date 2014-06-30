@@ -1,5 +1,4 @@
 <?php
-// @codingStandardsIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
@@ -34,4 +33,3 @@ class Doc_IndexController extends DocController
         $this->populateView();
     }
 }
-// @codingStandardsIgnoreEnd

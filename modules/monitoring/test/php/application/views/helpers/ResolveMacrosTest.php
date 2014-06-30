@@ -8,9 +8,7 @@ use \Mockery;
 use \Zend_View_Helper_ResolveMacros;
 use Icinga\Test\BaseTestCase;
 
-// @codingStandardsIgnoreStart
 require_once realpath(BaseTestCase::$moduleDir . '/monitoring/application/views/helpers/ResolveMacros.php');
-// @codingStandardsIgnoreEnd
 
 class ResolveMacrosTest extends BaseTestCase
 {

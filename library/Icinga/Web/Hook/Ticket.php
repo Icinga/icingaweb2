@@ -1,5 +1,4 @@
 <?php
-// @codeCoverageIgnoreStart
 
 /**
  * Icinga Web Ticket Hook
@@ -43,4 +42,3 @@ abstract class Ticket
     abstract public function createLink($match);
 
 }
-// @codeCoverageIgnoreEnd

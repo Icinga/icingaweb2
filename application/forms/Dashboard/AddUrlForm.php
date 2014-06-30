@@ -1,5 +1,4 @@
 <?php
-// @codeCoverageIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga Web 2.
@@ -165,4 +164,3 @@ class AddUrlForm extends Form
         $this->setSubmitLabel("Add To Dashboard");
     }
 }
-// @codeCoverageIgnoreEnd

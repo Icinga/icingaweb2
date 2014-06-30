@@ -1,5 +1,4 @@
 <?php
-// @codeCoverageIgnoreStart
 
 namespace Icinga\Clicommands;
 
@@ -118,4 +117,3 @@ class AutocompleteCommand extends Command
         }
     }
 }
-// @codeCoverageIgnoreEnd

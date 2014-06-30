@@ -4,9 +4,7 @@
 
 namespace Tests\Icinga\Web\Paginator\ScrollingStyle;
 
-// @codingStandardsIgnoreStart
 require_once realpath(ICINGA_LIBDIR . '/Icinga/Web/Paginator/ScrollingStyle/SlidingWithBorder.php');
-// @codingStandardsIgnoreEnd
 
 use \Mockery;
 use \Zend_Config;

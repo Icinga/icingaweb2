@@ -1,5 +1,4 @@
 <?php
-// @codeCoverageIgnoreStart
 
 /**
  * Web widget class
@@ -51,4 +50,3 @@ class Widget
         return $widget;
     }
 }
-// @codeCoverageIgnoreEnd

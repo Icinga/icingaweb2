@@ -7,9 +7,7 @@ namespace Test\Modules\Monitoring\Application\Views\Helpers;
 use \Zend_View_Helper_MonitoringProperties;
 use Icinga\Test\BaseTestCase;
 
-// @codingStandardsIgnoreStart
 require_once realpath(BaseTestCase::$moduleDir . '/monitoring/application/views/helpers/MonitoringProperties.php');
-// @codingStandardsIgnoreEnd
 
 class HostStruct4Properties
 {
