@@ -34,11 +34,12 @@ class FileLockingIterator extends ArrayIterator
     }
 }
 
+use Countable;
 use IteratorAggregate;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
 
-class DocIterator implements IteratorAggregate
+class DocIterator implements Countable, IteratorAggregate
 {
     protected $fileInfos;
 
@@ -52,6 +53,11 @@ class DocIterator implements IteratorAggregate
         $fileInfos = iterator_to_array($iter);
         natcasesort($fileInfos);
         $this->fileInfos = $fileInfos;
+    }
+
+    public function count()
+    {
+        return count($this->fileInfos);
     }
 
     public function getIterator()
