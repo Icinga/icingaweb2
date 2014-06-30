@@ -9,6 +9,9 @@ require_once 'IcingaVendor/Parsedown/Parsedown.php';
 use Parsedown;
 use Icinga\Data\Tree\Node;
 use Icinga\Exception\NotReadableError;
+use Icinga\Module\Doc\Exception\ChapterNotFoundException;
+use Icinga\Module\Doc\Exception\DocEmptyException;
+use Icinga\Module\Doc\Exception\DocException;
 
 /**
  * Parser for documentation written in Markdown
@@ -23,12 +26,20 @@ class DocParser
     protected $path;
 
     /**
+     * Iterator over documentation files
+     *
+     * @var DocIterator
+     */
+    protected $docIterator;
+
+    /**
      * Create a new documentation parser for the given path
      *
      * @param   string $path Path to the documentation
      *
-     * @throws  DocException
-     * @throws  NotReadableError
+     * @throws  DocException        If the documentation directory does not exist
+     * @throws  NotReadableError    If the documentation directory is not readable
+     * @throws  DocEmptyException   If the documentation directory is empty
      */
     public function __construct($path)
     {
@@ -38,13 +49,18 @@ class DocParser
         if (! is_readable($path)) {
             throw new NotReadableError('Doc directory `' . $path . '\' is not readable');
         }
+        $docIterator = new DocIterator($path);
+        if ($docIterator->count() === 0) {
+            throw new DocEmptyException('Doc directory `' . $path . '\' is empty');
+        }
         $this->path = $path;
+        $this->docIterator = $docIterator;
     }
 
     /**
      * Retrieve the table of contents
      *
-     * @return Node
+     * @return  Node
      */
     public function getToc()
     {
@@ -52,7 +68,7 @@ class DocParser
             'level' => 0,
             'node'  => new Node()
         ));
-        foreach (new DocIterator($this->path) as $fileObject) {
+        foreach ($this->docIterator as $fileObject) {
             $line = null;
             $currentChapterName = null;
             while (! $fileObject->eof()) {
@@ -104,16 +120,15 @@ class DocParser
      * @param   string $chapterName
      *
      * @return  string
+     * @throws  ChapterNotFoundException If the chapter was not found
      */
     public function getChapter($chapterName)
     {
-        $cat = array();
         $tocStack = array((object) array(
             'level' => 0,
             'node'  => new Node()
         ));
-        $chapterFound = false;
-        foreach (new DocIterator($this->path) as $fileObject) {
+        foreach ($this->docIterator as $fileObject) {
             $line = null;
             $currentChapterName = null;
             $chapter = array();
@@ -153,18 +168,14 @@ class DocParser
                 $chapter[] = $line;
             }
             if ($currentChapterName === $chapterName) {
-                $chapterFound = true;
-                $cat = $chapter;
-            }
-            if (! $chapterFound) {
-                $cat = array_merge($cat, $chapter);
+                return preg_replace_callback(
+                    '#<pre><code class="language-php">(.*?)\</code></pre>#s',
+                    array($this, 'highlight'),
+                    Parsedown::instance()->text(implode('', $chapter))
+                );
             }
         }
-        return preg_replace_callback(
-            '#<pre><code class="language-php">(.*?)\</code></pre>#s',
-            array($this, 'highlight'),
-            Parsedown::instance()->text(implode('', $cat))
-        );
+        throw new ChapterNotFoundException('Chapter \'' . $chapterName . '\' not found');
     }
 
     /**
