@@ -1,5 +1,4 @@
 <?php
-// @codeCoverageIgnoreStart
 
 namespace Icinga\Clicommands;
 
@@ -81,4 +80,3 @@ class WebCommand extends Command
         }
     }
 }
-// @codeCoverageIgnoreEnd

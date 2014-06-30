@@ -1,5 +1,4 @@
 <?php
-// @codeCoverageIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
@@ -64,4 +63,3 @@ class LoggingPage extends Page
         return $this->createForm()->getConfig();
     }
 }
-// @codeCoverageIgnoreEnd

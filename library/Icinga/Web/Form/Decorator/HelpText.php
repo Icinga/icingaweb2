@@ -1,5 +1,4 @@
 <?php
-// @codeCoverageIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga Web 2.
@@ -61,4 +60,3 @@ class HelpText extends Zend_Form_Decorator_Abstract
         return $content;
     }
 }
-// @codeCoverageIgnoreEnd

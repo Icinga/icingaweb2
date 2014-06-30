@@ -1,5 +1,4 @@
 <?php
-// @codeCoverageIgnoreStart
 
 namespace Icinga\Web\Widget;
 
@@ -129,4 +128,3 @@ class AlertMessageBox extends AbstractWidget
         return $html;
     }
 }
-// @codeCoverageIgnoreEnd

@@ -1,5 +1,4 @@
 <?php
-// @codeCoverageIgnoreStart
 
 namespace Icinga\Web\Widget;
 
@@ -122,4 +121,3 @@ abstract class AbstractWidget
         return (string) $html;
     }
 }
-// @codeCoverageIgnoreEnd
