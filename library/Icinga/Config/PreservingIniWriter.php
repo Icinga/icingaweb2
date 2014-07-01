@@ -177,42 +177,29 @@ class PreservingIniWriter extends Zend_Config_Writer_FileAbstract
 
         // Iterate over all properties in the old configuration file and search for deleted properties
         foreach ($oldconfig as $key => $value) {
-            if ($newconfig->get($key) === null) {
-                $nextParents = array_merge($parents, array($key));
-                $keyIdentifier = empty($parents) ? array($key) : array_slice($nextParents, 1, null, true);
-                foreach ($this->getPropertyIdentifiers($value, $keyIdentifier) as $propertyIdentifier) {
-                    $editor->reset($propertyIdentifier, $section);
+            $nextParents = array_merge($parents, array($key));
+            $newvalue = $newconfig->get($key);
+            $keyIdentifier = empty($parents) ? array($key) : array_slice($nextParents, 1, null, true);
+
+            if ($newvalue === null) {
+                if ($value instanceof Zend_Config) {
+                    // The deleted value is a nested Zend_Config, handle it recursively
+                    $this->diffConfigs($value, new Zend_Config(array()), $editor, $nextParents);
+                    if ($section === null) {
+                        $editor->removeSection($key);
+                    }
+                } else {
+                    // The deleted value is a plain value, use the editor to delete it
+                    if (is_numeric($key)) {
+                        $editor->resetArrayElement($keyIdentifier, $section);
+                    } elseif (!empty($parents)) {
+                        // Drop nested properties, fixes #5958
+                        $editor->resetArrayElement($nextParents, $section);
+                    } else {
+                        $editor->reset($keyIdentifier, $section);
+                    }
                 }
             }
         }
-    }
-
-    /**
-     * Return all possible combinations of property identifiers for the given value
-     *
-     * @param   mixed   $value  The value to return all combinations for
-     * @param   array   $key    The root property identifier, if any
-     *
-     * @return  array           All property combinations that are possible
-     *
-     * @todo                    Cannot handle array properties yet (e.g. a.b[]='c')
-     */
-    protected function getPropertyIdentifiers($value, array $key = null)
-    {
-        $combinations = array();
-        $rootProperty = $key !== null ? $key : array();
-
-        if ($value instanceof Zend_Config) {
-            foreach ($value as $subProperty => $subValue) {
-                $combinations = array_merge(
-                    $combinations,
-                    $this->getPropertyIdentifiers($subValue, array_merge($rootProperty, array($subProperty)))
-                );
-            }
-        } elseif (is_string($value)) {
-            $combinations[] = $rootProperty;
-        }
-
-        return $combinations;
     }
 }
