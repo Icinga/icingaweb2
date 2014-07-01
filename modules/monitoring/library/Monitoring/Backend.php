@@ -1,90 +1,120 @@
 <?php
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Module\Monitoring;
 
-use Icinga\Module\Monitoring\Exception\UnsupportedBackendException;
-use Zend_Config;
-use Icinga\Application\Config as IcingaConfig;
-use Icinga\Exception\ConfigurationError;
-use Icinga\Data\DatasourceInterface;
-use Icinga\Data\ResourceFactory;
-use Icinga\Util\ConfigAwareFactory;
+use Icinga\Exception\ProgrammingError;
+use Icinga\Data\Selectable;
+use Icinga\Data\Queryable;
+use Icinga\Data\ConnectionInterface;
 
-class Backend implements ConfigAwareFactory, DatasourceInterface
+use Icinga\Application\Config as IcingaConfig;
+use Icinga\Data\ResourceFactory;
+use Icinga\Exception\ConfigurationError;
+
+/**
+ * Data view and query loader tied to a backend type
+ */
+class Backend implements Selectable, Queryable, ConnectionInterface
 {
     /**
-     * Resource config
-     *
-     * @var Zend_config
-     */
-    private $config;
-
-    /**
-     * The resource the backend utilizes
+     * Resource
      *
      * @var mixed
      */
-    private $resource;
-
-    private static $backendInstances = array();
-
-    private static $backendConfigs = array();
+    protected $resource;
 
     /**
-     * Create a new backend from the given resource config
+     * Type
      *
-     * @param Zend_Config $backendConfig
-     * @param Zend_Config $resourceConfig
+     * @var string
      */
-    public function __construct(Zend_Config $backendConfig, Zend_Config $resourceConfig)
+    protected $type;
+
+    protected $name;
+
+    /**
+     * Create a new backend
+     *
+     * @param   mixed   $resource
+     * @param   string  $type
+     */
+    public function __construct($resource, $type)
     {
-        $this->config   = $backendConfig;
-        $this->resource = ResourceFactory::createResource($resourceConfig);
+        $this->resource = $resource;
+        $this->type = $type;
+    }
+
+    // Temporary workaround, we have no way to know our name
+    protected function setName($name)
+    {
+        $this->name = $name;
+    }
+
+    public function getName()
+    {
+        return $this->name;
     }
 
     /**
-     * Set backend configs
+     * Create a backend
      *
-     * @param Zend_Config $backendConfigs
+     * @param   string $backendName Name of the backend or null for creating the default backend which is the first INI
+     *                              configuration entry not being disabled
+     *
+     * @return  Backend
+     * @throws  ConfigurationError  When no backend has been configured or all backends are disabled or the
+     *                              configuration for the requested backend does either not exist or it's disabled
      */
-    public static function setConfig($backendConfigs)
+    public static function createBackend($backendName = null)
     {
-        foreach ($backendConfigs as $name => $config) {
-            self::$backendConfigs[$name] = $config;
+        $allBackends = array();
+        $defaultBackend = null;
+        foreach (IcingaConfig::module('monitoring', 'backends') as $name => $config) {
+            if (!(bool) $config->get('disabled', false) && $defaultBackend === null) {
+                $defaultBackend = $config;
+            }
+            $allBackends[$name] = $config;
         }
+        if (empty($allBackends)) {
+            throw new ConfigurationError('No backend has been configured');
+        }
+        if ($defaultBackend === null) {
+            throw new ConfigurationError('All backends are disabled');
+        }
+        if ($backendName === null) {
+            $backendConfig = $defaultBackend;
+        } else {
+            if (!array_key_exists($backendName, $allBackends)) {
+                throw new ConfigurationError('No configuration for backend ' . $backendName);
+            }
+            $backendConfig = $allBackends[$backendName];
+            if ((bool) $backendConfig->get('disabled', false)) {
+                throw new ConfigurationError(
+                    'Configuration for backend ' . $backendName . ' available but backend is disabled'
+                );
+            }
+        }
+        $resource = ResourceFactory::createResource(ResourceFactory::getResourceConfig($backendConfig->resource));
+        if ($backendConfig->type === 'ido' && $resource->getDbType() !== 'oracle') {
+            // TODO(el): The resource should set the table prefix
+            $resource->setTablePrefix('icinga_');
+        }
+        $backend = new Backend($resource, $backendConfig->type);
+        $backend->setName($backendName);
+        return $backend;
     }
+
+public function getResource()
+{
+    return $this->resource;
+}
 
     /**
      * Backend entry point
      *
-     * return self
+     * @return self
      */
     public function select()
     {
@@ -92,125 +122,61 @@ class Backend implements ConfigAwareFactory, DatasourceInterface
     }
 
     /**
-     * Create query to retrieve columns and rows from the the given table
+     * Create a data view to fetch data from
      *
-     * @param   string  $table
+     * @param   string  $viewName
      * @param   array   $columns
      *
-     * @return  Query
+     * @return  DataView
      */
-    public function from($table, array $columns = null)
+    public function from($viewName, array $columns = null)
     {
-        $queryClass = '\\Icinga\\Module\\Monitoring\\Backend\\'
-            . ucfirst($this->config->type)
-            . '\\Query\\'
-            . ucfirst($table)
-            . 'Query';
-        if (!class_exists($queryClass)) {
-            throw new UnsupportedBackendException('Query '
-                . ucfirst($table)
-                . ' Is Not Available For Backend '
-                . ucfirst($this->config->type)
-            );
-        }
-        return new $queryClass($this->resource, $columns);
+        $viewClass = $this->resolveDataViewName($viewName);
+        return new $viewClass($this, $columns);
     }
 
     /**
-     * Get the resource which was created in the constructor
+     * View name to class name resolution
      *
-     * @return mixed
-     */
-    public function getResource()
-    {
-        return $this->resource;
-    }
-
-    /**
-     * Get backend configs
-     *
-     * @return Zend_Config
-     */
-    public static function getBackendConfigs()
-    {
-        if (empty(self::$backendConfigs)) {
-            self::setConfig(IcingaConfig::module('monitoring', 'backends'));
-        }
-        return self::$backendConfigs;
-    }
-
-    /**
-     * Retrieve the name of the default backend which is the INI's first entry
+     * @param   string $viewName
      *
      * @return  string
-     * @throws  ConfigurationError When no backend has been configured
+     * @throws  ProgrammingError When the view does not exist
      */
-    public static function getDefaultBackendName()
+    protected function resolveDataViewName($viewName)
     {
-        $configs = self::getBackendConfigs();
-        if (empty($configs)) {
-            throw new ConfigurationError(
-                'Cannot get default backend as no backend has been configured'
-            );
+        $viewClass = '\\Icinga\\Module\\Monitoring\\DataView\\' . ucfirst($viewName);
+        if (!class_exists($viewClass)) {
+            throw new ProgrammingError('DataView ' . ucfirst($viewName) . ' does not exist');
         }
+        return $viewClass;
+    }
 
-        // We won't have disabled backends
-        foreach ($configs as $name => $config) {
-            if (!$config->get('disabled') == '1') {
-                return $name;
-            }
-        }
-
-        throw new ConfigurationError(
-            'All backends are disabled'
-        );
+    public function getQueryClass($name)
+    {
+        return $this->resolveQueryName($name);
     }
 
     /**
-     * Create the backend with the given name
+     * Query name to class name resolution
      *
-     * @param   $name
+     * @param   string $queryName
      *
-     * @return  Backend
+     * @return  string
+     * @throws  ProgrammingError When the query does not exist for this backend
      */
-    public static function createBackend($name)
+    protected function resolveQueryName($queryName)
     {
-        if (array_key_exists($name, self::$backendInstances)) {
-            return self::$backendInstances[$name];
-        }
-
-        if ($name === null) {
-            $name = self::getDefaultBackendName();
-        }
-
-        $config = null;
-        self::getBackendConfigs();
-        if (isset(self::$backendConfigs[$name])) {
-            /** @var Zend_Config $config */
-            $config = self::$backendConfigs[$name];
-            if ($config->get('disabled') == '1') {
-                $config = null;
-            }
-        }
-
-        if ($config === null) {
-            throw new ConfigurationError(
-                'No configuration for backend:' . $name
+        $queryClass = '\\Icinga\\Module\\Monitoring\\Backend\\'
+            . ucfirst($this->type)
+            . '\\Query\\'
+            . ucfirst($queryName)
+            . 'Query';
+        if (!class_exists($queryClass)) {
+            throw new ProgrammingError(
+                'Query "' . ucfirst($queryName) . '" does not exist for backend ' . ucfirst($this->type)
             );
         }
-
-        self::$backendInstances[$name] = $backend = new self(
-            $config,
-            ResourceFactory::getResourceConfig($config->resource)
-        );
-        switch (strtolower($config->type)) {
-            case 'ido':
-                if ($backend->getResource()->getDbType() !== 'oracle') {
-                    $backend->getResource()->setTablePrefix('icinga_');
-                }
-                break;
-
-        }
-        return $backend;
+        return $queryClass;
     }
 }

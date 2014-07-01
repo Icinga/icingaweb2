@@ -165,10 +165,6 @@ class Config extends Zend_Config
      */
     public static function resolvePath($path)
     {
-        if (strpos($path, DIRECTORY_SEPARATOR) === 0) {
-            return $path;
-        }
-
-        return self::$configDir . DIRECTORY_SEPARATOR . $path;
+        return self::$configDir . DIRECTORY_SEPARATOR . ltrim($path, DIRECTORY_SEPARATOR);
     }
 }

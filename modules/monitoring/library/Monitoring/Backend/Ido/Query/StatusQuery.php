@@ -1,5 +1,4 @@
 <?php
-// @codingStandardsIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga Web 2.
@@ -29,6 +28,8 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
+
+use Zend_Db_Expr;
 
 class StatusQuery extends IdoQuery
 {
@@ -293,13 +294,19 @@ class StatusQuery extends IdoQuery
                 END'
         ),
         'serviceproblemsummary' => array(
-            'host_unhandled_service_count' => 'sps.unhandled_service_count'
+            'host_unhandled_services' => 'sps.unhandled_services_count'
         ),
         'lasthostcomment' => array(
-            'host_last_comment' => 'hlc.comment_id'
+            'host_last_comment'  => 'hlc.last_comment_data',
+            'host_last_downtime' => 'hlc.last_downtime_data',
+            'host_last_flapping' => 'hlc.last_flapping_data',
+            'host_last_ack'      => 'hlc.last_ack_data',
         ),
         'lastservicecomment' => array(
-            'service_last_comment' => 'slc.comment_id'
+            'service_last_comment'  => 'slc.last_comment_data',
+            'service_last_downtime' => 'slc.last_downtime_data',
+            'service_last_flapping' => 'slc.last_flapping_data',
+            'service_last_ack'      => 'slc.last_ack_data',
         )
     );
 
@@ -309,10 +316,8 @@ class StatusQuery extends IdoQuery
             $this->columnMap['hoststatus']['host_check_source'] = '(NULL)';
             $this->columnMap['servicestatus']['service_check_source'] = '(NULL)';
         }
-        $this->baseQuery = $this->db->select()->from(
-            array('ho' => $this->prefix . 'objects'),
-            array()
-        )->join(
+        $this->select->from(array('ho' => $this->prefix . 'objects'), array())
+        ->join(
             array('hs' => $this->prefix . 'hoststatus'),
             'ho.object_id = hs.host_object_id AND ho.is_active = 1 AND ho.objecttype_id = 1',
             array()
@@ -327,6 +332,46 @@ class StatusQuery extends IdoQuery
         );
     }
 
+    // Tuning experiments
+    public function whereToSql($col, $sign, $expression)
+    {
+        switch ($col) {
+
+            case 'CASE WHEN ss.current_state = 0 THEN 0 ELSE 1 END':
+                if ($sign !== '=') break;
+               
+                if ($expression) {
+                    return 'ss.current_state > 0';
+                } else {
+                    return 'ss.current_state = 0';
+               }
+               break;
+
+            case 'CASE WHEN hs.current_state = 0 THEN 0 ELSE 1 END':
+                if ($sign !== '=') break;
+
+                if ($expression) {
+                    return 'hs.current_state > 0';
+                } else {
+                    return 'hs.current_state = 0';
+               }
+               break;
+
+           case 'CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL THEN 99 ELSE CASE WHEN ss.state_type = 1 THEN ss.current_state ELSE ss.last_hard_state END END':
+               if ($sign !== '=') break;
+               if ($expression == 99) {
+                   return 'ss.has_been_checked = 0 OR ss.has_been_checked IS NULL';
+               }
+               if (in_array($expression, array(0, 1, 2, 3))) {
+                  return sprintf('((ss.state_type = 1 AND ss.current_state = %d) OR (ss.state_type = 0 AND ss.last_hard_state = %d))', $expression, $expression);
+               }
+               break;
+
+        }
+
+        return parent::whereToSql($col, $sign, $expression);
+    }
+
     protected function joinStatus()
     {
         $this->requireVirtualTable('services');
@@ -339,7 +384,7 @@ class StatusQuery extends IdoQuery
 
     protected function joinServices()
     {
-        $this->baseQuery->join(
+        $this->select->join(
             array('s' => $this->prefix . 'services'),
             's.host_object_id = h.host_object_id',
             array()
@@ -365,7 +410,7 @@ class StatusQuery extends IdoQuery
 
     protected function joinHostHostgroups()
     {
-        $this->baseQuery->join(
+        $this->select->join(
             array('hgm' => $this->prefix . 'hostgroup_members'),
             'hgm.host_object_id = h.host_object_id',
             array()
@@ -384,7 +429,7 @@ class StatusQuery extends IdoQuery
 
     protected function joinServiceHostgroups()
     {
-        $this->baseQuery->join(
+        $this->select->join(
             array('hgm' => $this->prefix . 'hostgroup_members'),
             'hgm.host_object_id = s.host_object_id',
             array()
@@ -405,7 +450,7 @@ class StatusQuery extends IdoQuery
     protected function joinServicegroups()
     {
         $this->requireVirtualTable('services');
-        $this->baseQuery->join(
+        $this->select->join(
             array('sgm' => $this->prefix . 'servicegroup_members'),
             'sgm.service_object_id = s.service_object_id',
             array()
@@ -423,11 +468,24 @@ class StatusQuery extends IdoQuery
         return $this;
     }
 
-    // TODO: This will be obsolete once status is based on the new hoststatus, offering much more
-    //       columns in a more efficient way
     protected function joinServiceproblemsummary()
     {
-        $this->baseQuery->joinleft(
+        $sub = new Zend_Db_Expr('(SELECT'
+             . ' SUM(CASE WHEN (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth) > 0 THEN 0 ELSE 1 END) AS unhandled_services_count,'
+             . ' SUM(CASE WHEN (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth) > 0 THEN 1 ELSE 0 END) AS handled_services_count,'
+             . ' s.host_object_id FROM icinga_servicestatus ss'
+             . ' JOIN icinga_services s'
+             . ' ON s.service_object_id = ss.service_object_id'
+             . ' AND ss.current_state > 0'
+             . ' GROUP BY s.host_object_id)');
+        $this->select->joinLeft(
+            array('sps' => $sub),
+            'sps.host_object_id = hs.host_object_id',
+            array()
+        );
+        return;
+
+        $this->select->joinleft(
             array ('sps' => new \Zend_Db_Expr(
                 '(SELECT COUNT(s.service_object_id) as unhandled_service_count, s.host_object_id as host_object_id '.
                 'FROM icinga_services s INNER JOIN icinga_servicestatus ss ON ss.current_state != 0 AND '.
@@ -440,14 +498,30 @@ class StatusQuery extends IdoQuery
         );
     }
 
-    // TODO: Terribly slow. As I have no idea of how to fix this we should remove it.
+    protected function getLastCommentSubQuery()
+    {
+        $sub = '(SELECT'
+            . ' lc.object_id,'
+            . " CASE WHEN lc.entry_type = 1 THEN CONCAT('[' || c.author_name || '] ' || c.comment_data) ELSE NULL END AS last_comment_data,"
+            . " CASE WHEN lc.entry_type = 2 THEN CONCAT('[' || c.author_name || '] ' || c.comment_data) ELSE NULL END AS last_downtime_data,"
+            . " CASE WHEN lc.entry_type = 3 THEN CONCAT('[' || c.author_name || '] ' || c.comment_data) ELSE NULL END AS last_flapping_data,"
+            . " CASE WHEN lc.entry_type = 4 THEN CONCAT('[' || c.author_name || '] ' || c.comment_data) ELSE NULL END AS last_ack_data"
+            . ' FROM icinga_comments c'
+            . ' JOIN (SELECT'
+            . ' MAX(comment_id) as comment_id,'
+            . ' object_id,'
+            . ' entry_type'
+	        . ' FROM icinga_comments'
+            . ' WHERE entry_type = 1 OR entry_type = 4'
+	        . ' GROUP BY object_id, entry_type'
+            . ') lc ON lc.comment_id = c.comment_id GROUP BY lc.object_id)';
+        return new Zend_Db_Expr($sub);
+    }
+
     protected function joinLasthostcomment()
     {
-        $this->baseQuery->joinleft(
-            array ('hlc' => new \Zend_Db_Expr(
-                '(SELECT MAX(c.comment_id) as comment_id, c.object_id '.
-                'FROM icinga_comments c GROUP BY c.object_id)')
-            ),
+        $this->select->joinLeft(
+            array('hlc' => $this->getLastCommentSubQuery()),
             'hlc.object_id = hs.host_object_id',
             array()
         );
@@ -456,14 +530,10 @@ class StatusQuery extends IdoQuery
     // TODO: Terribly slow. As I have no idea of how to fix this we should remove it.
     protected function joinLastservicecomment()
     {
-        $this->baseQuery->joinleft(
-            array ('slc' => new \Zend_Db_Expr(
-                '(SELECT MAX(c.comment_id) as comment_id, c.object_id '.
-                'FROM icinga_comments c GROUP BY c.object_id)')
-            ),
+        $this->select->joinLeft(
+            array('slc' => $this->getLastCommentSubQuery()),
             'slc.object_id = ss.service_object_id',
             array()
         );
     }
 }
-// @codingStandardsIgnoreStop

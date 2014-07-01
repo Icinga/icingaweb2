@@ -6,6 +6,7 @@ PACKAGE_VERSION=@PACKAGE_VERSION@
 
 prefix=@prefix@
 exec_prefix=@exec_prefix@
+bindir=@bindir@
 
 HTTPD_CONFIG_PATH=@httpd_config_path@
 ICINGAWEB_CONFIG_PATH=@icingaweb_config_path@
@@ -24,7 +25,15 @@ default:
 #
 # Installs the whole application w\o httpd configurations
 #
-install: install-config install-basic ensure-writable-folders
+install: install-config install-basic ensure-writable-folders install-cli
+
+#
+# Install icingacli bin
+#
+
+install-cli:
+ $(INSTALL) -m 755 -d $(INSTALL_OPTS) $(bindir) 
+ $(INSTALL) -m 755 $(INSTALL_OPTS) "./bin/icingacli"  $(bindir)/icingacli;
 
 #
 # Installs the whole application w\o configuration
@@ -91,7 +100,7 @@ install-apache-config:
 #
 # Installs the php files to the prefix
 #
-install-application: copy-web-files-application copy-web-files-library 
+install-application: copy-web-files-application copy-web-files-library install-cli
 
 #
 # Rule for copying folders and containing files (arbitary types), hidden files are excluded

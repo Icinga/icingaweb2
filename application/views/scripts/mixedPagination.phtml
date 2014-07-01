@@ -9,10 +9,11 @@ use Icinga\Web\Url;
 
 if ($this->pageCount <= 1) return;
 
-?><ul class="pagination"
+?><p id="paginationlabel" class="audible"><?= t('Pagination') ?></p>
+<ul class="pagination" aria-labelledby="paginationlabel" role="navigation"
 <?php
 
-$fromto = t('%d to %d of %d');
+$fromto = t('Show rows %d to %d of %d');
 $total = $this->totalItemCount;
 $limit = $this->itemCountPerPage;
 $title_prev = sprintf(
@@ -28,7 +29,9 @@ $title_next = sprintf(
     ($this->current + 1) * $limit,
     $total
 );
-$li = '  ><li%s><a href="%s" title="%s">%s</a></li
+$li = '  ><li%s><span class="audible">'
+    . t('Page')
+    . ' </span><a href="%s" title="%s">%s</a></li
 ';
 
 ?>
@@ -65,7 +68,7 @@ foreach ($this->pagesInRange as $page) {
           $class,
           Url::fromRequest()->overwriteParams(
               array('page' => $page)
-          )->getAbsoluteUrl(),
+          ),
           $title,
           $page
       );

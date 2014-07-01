@@ -1,5 +1,4 @@
 <?php
-// @codeCoverageIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga Web 2.
@@ -30,9 +29,7 @@
 
 namespace Icinga\Application;
 
-// @codingStandardsIgnoreStart
 require_once dirname(__FILE__) . '/ApplicationBootstrap.php';
-// @codingStandardsIgnoreStop
 
 use Icinga\Exception\ProgrammingError;
 
@@ -62,4 +59,3 @@ class EmbeddedWeb extends ApplicationBootstrap
             ->loadEnabledModules();
     }
 }
-// @codeCoverageIgnoreEnd

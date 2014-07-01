@@ -10,8 +10,10 @@ class CustomvarQuery extends IdoQuery
             'varvalue' => 'cvs.varvalue',
         ),
         'objects' => array(
+            'host'                => 'cvo.name1 COLLATE latin1_general_ci',
             'host_name'           => 'cvo.name1 COLLATE latin1_general_ci',
             'service_host_name'   => 'cvo.name1 COLLATE latin1_general_ci',
+            'service' => 'cvo.name2 COLLATE latin1_general_ci',
             'service_description' => 'cvo.name2 COLLATE latin1_general_ci',
             'contact_name'        => 'cvo.name1 COLLATE latin1_general_ci',
             'object_type'         => "CASE cvo.objecttype_id WHEN 1 THEN 'host' WHEN 2 THEN 'service' WHEN 10 THEN 'contact' ELSE 'invalid' END",
@@ -33,7 +35,7 @@ class CustomvarQuery extends IdoQuery
 
     protected function joinBaseTables()
     {
-        $this->baseQuery = $this->db->select()->from(
+        $this->select->from(
             array('cvs' => $this->prefix . 'customvariablestatus'),
             array()
         )->join(
@@ -41,7 +43,6 @@ class CustomvarQuery extends IdoQuery
             'cvs.object_id = cvo.object_id AND cvo.is_active = 1',
             array()
         );
-
         $this->joinedVirtualTables = array(
             'customvars' => true,
             'objects'    => true

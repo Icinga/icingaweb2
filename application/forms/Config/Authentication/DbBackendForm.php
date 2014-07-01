@@ -30,10 +30,10 @@
 namespace Icinga\Form\Config\Authentication;
 
 use \Exception;
-use \Icinga\Authentication\Backend\DbUserBackend;
 use \Zend_Config;
 use Icinga\Data\ResourceFactory;
-use Icinga\Authentication\UserBackend;
+use Icinga\Authentication\DbConnection;
+use Icinga\Authentication\Backend\DbUserBackend;
 
 /**
  * Form class for adding/modifying database authentication backends
@@ -148,7 +148,6 @@ class DbBackendForm extends BaseBackendForm
             $this->addErrorMessage(sprintf(t('Using the specified backend failed: %s'), $e->getMessage()));
             return false;
         }
-
         return true;
     }
 }

@@ -10,27 +10,35 @@ $this->addHelperFunction('format', function () {
 });
 
 $this->addHelperFunction('timeSince', function ($timestamp) {
-    return '<span class="timesince">'
-        . Format::timeSince($timestamp)
-        . '</span>';
+    return sprintf(
+        '<span class="timesince" title="%s">%s</span>',
+        date('Y-m-d H:i:s', $timestamp), // TODO: internationalized format
+        Format::timeSince($timestamp)
+    );
 });
 
 $this->addHelperFunction('prefixedTimeSince', function ($timestamp, $ucfirst = false) {
-    return '<span class="timesince">'
-        . Format::prefixedTimeSince($timestamp, $ucfirst)
-        . '</span>';
+    return sprintf(
+        '<span class="timesince" title="%s">%s</span>',
+        date('Y-m-d H:i:s', $timestamp), // TODO: internationalized format
+        Format::prefixedTimeSince($timestamp, $ucfirst)
+    );
 });
 
 $this->addHelperFunction('timeUntil', function ($timestamp) {
     if (! $timestamp) return '';
-    return '<span class="timeuntil">'
-        . Format::timeUntil($timestamp)
-        . '</span>';
+    return sprintf(
+        '<span class="timeuntil" title="%s">%s</span>',
+        date('Y-m-d H:i:s', $timestamp), // TODO: internationalized format
+        Format::timeUntil($timestamp)
+    );
 });
 
 $this->addHelperFunction('prefixedTimeUntil', function ($timestamp, $ucfirst = false) {
     if (! $timestamp) return '';
-    return '<span class="timeuntil">'
-        . Format::prefixedTimeUntil($timestamp, $ucfirst)
-        . '</span>';
+    return sprintf(
+        '<span class="timeuntil" title="%s">%s</span>',
+        date('Y-m-d H:i:s', $timestamp), // TODO: internationalized format
+        Format::prefixedTimeUntil($timestamp, $ucfirst)
+    );
 });

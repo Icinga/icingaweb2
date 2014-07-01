@@ -1,5 +1,4 @@
 <?php
-// @codeCoverageIgnoreStart
 
 use Icinga\Web\Controller\ActionController;
 use Icinga\Application\Icinga;
@@ -13,7 +12,6 @@ class SearchController extends ActionController
 {
     public function indexAction()
     {
-        $this->setAutorefreshInterval(10);
         $search = $this->_request->getParam('q');
         if (! $search) {
             $this->view->tabs = Widget::create('tabs')->add(
@@ -58,4 +56,3 @@ class SearchController extends ActionController
         $this->view->tabs = $dashboard->getTabs();
     }
 }
-// @codeCoverageIgnoreEnd

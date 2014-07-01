@@ -61,27 +61,27 @@ class PerfdataTest extends BaseTestCase
     {
         $this->assertEquals(
             '10',
-            Perfdata::fromString('1;10')->getWarningTreshold(),
+            Perfdata::fromString('1;10')->getWarningThreshold(),
             'Perfdata::getWarningTreshold does not return correct values'
         );
         $this->assertEquals(
             '10:',
-            Perfdata::fromString('1;10:')->getWarningTreshold(),
+            Perfdata::fromString('1;10:')->getWarningThreshold(),
             'Perfdata::getWarningTreshold does not return correct values'
         );
         $this->assertEquals(
             '~:10',
-            Perfdata::fromString('1;~:10')->getWarningTreshold(),
+            Perfdata::fromString('1;~:10')->getWarningThreshold(),
             'Perfdata::getWarningTreshold does not return correct values'
         );
         $this->assertEquals(
             '10:20',
-            Perfdata::fromString('1;10:20')->getWarningTreshold(),
+            Perfdata::fromString('1;10:20')->getWarningThreshold(),
             'Perfdata::getWarningTreshold does not return correct values'
         );
         $this->assertEquals(
             '@10:20',
-            Perfdata::fromString('1;@10:20')->getWarningTreshold(),
+            Perfdata::fromString('1;@10:20')->getWarningThreshold(),
             'Perfdata::getWarningTreshold does not return correct values'
         );
     }
@@ -90,27 +90,27 @@ class PerfdataTest extends BaseTestCase
     {
         $this->assertEquals(
             '10',
-            Perfdata::fromString('1;;10')->getCriticalTreshold(),
+            Perfdata::fromString('1;;10')->getCriticalThreshold(),
             'Perfdata::getCriticalTreshold does not return correct values'
         );
         $this->assertEquals(
             '10:',
-            Perfdata::fromString('1;;10:')->getCriticalTreshold(),
+            Perfdata::fromString('1;;10:')->getCriticalThreshold(),
             'Perfdata::getCriticalTreshold does not return correct values'
         );
         $this->assertEquals(
             '~:10',
-            Perfdata::fromString('1;;~:10')->getCriticalTreshold(),
+            Perfdata::fromString('1;;~:10')->getCriticalThreshold(),
             'Perfdata::getCriticalTreshold does not return correct values'
         );
         $this->assertEquals(
             '10:20',
-            Perfdata::fromString('1;;10:20')->getCriticalTreshold(),
+            Perfdata::fromString('1;;10:20')->getCriticalThreshold(),
             'Perfdata::getCriticalTreshold does not return correct values'
         );
         $this->assertEquals(
             '@10:20',
-            Perfdata::fromString('1;;@10:20')->getCriticalTreshold(),
+            Perfdata::fromString('1;;@10:20')->getCriticalThreshold(),
             'Perfdata::getCriticalTreshold does not return correct values'
         );
     }
@@ -147,7 +147,7 @@ class PerfdataTest extends BaseTestCase
     {
         $perfdata = Perfdata::fromString('1;;3;5');
         $this->assertNull(
-            $perfdata->getWarningTreshold(),
+            $perfdata->getWarningThreshold(),
             'Perfdata objects do not return null for missing warning tresholds'
         );
         $this->assertNull(

@@ -237,7 +237,9 @@ class Manager
      */
     public function authenticateFromRemoteUser()
     {
-        $this->fromRemoteUser = true;
+        if (array_key_exists('REMOTE_USER', $_SERVER)) {
+            $this->fromRemoteUser = true;
+        }
         $this->authenticateFromSession();
         if ($this->user !== null) {
             if (array_key_exists('REMOTE_USER', $_SERVER) && $this->user->getUsername() !== $_SERVER["REMOTE_USER"]) {

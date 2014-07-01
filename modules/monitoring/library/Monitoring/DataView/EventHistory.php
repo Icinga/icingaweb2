@@ -48,25 +48,23 @@ class EventHistory extends DataView
             'service_description',
             'object_type',
             'timestamp',
-            'raw_timestamp',
             'state',
             'attempt',
             'max_attempts',
             'output',
             'type',
             'host',
-            'service'
+            'service',
+            'service_host_name'
         );
     }
 
     public function getSortRules()
     {
         return array(
-            'raw_timestamp' => array(
-                'order' => self::SORT_DESC
-            ),
             'timestamp' => array(
-                'order' => self::SORT_DESC
+                'columns' => array('timestamp'),
+                'order' => 'DESC'
             )
         );
     }

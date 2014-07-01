@@ -10,7 +10,6 @@
 !.gitkeep
 
 build/
-test/js/npm-debug.log
 
 # ./configure output
 config.log
@@ -20,10 +19,9 @@ config.status
 Makefile
 
 # cmd tester
-test/php/bin/extcmd_test
+modules/test/bin/extcmd_test
 
 # misc test output
-test/frontend/static/public
 test/php/library/Icinga/Protocol/Statusdat/.cache
 
 # Generated API documentation

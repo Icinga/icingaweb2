@@ -5,6 +5,12 @@
 <?php endif ?>
 <div class="content">
     <div class="boxview" data-base-target="_next">
+
+<?php
+if (count($hostgroups) === 0) {
+    echo t('No host groups matching the filter');
+}
+?>
 <?php foreach($hostgroups as $h): ?>
         <div class="box hostgroup">
             <h2>

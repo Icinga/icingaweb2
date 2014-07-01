@@ -147,7 +147,7 @@ html {
   margin-left: 1%;
 }
 
-.dashboard > div.container h1, .container .content h1, .container .controls h1 {
+.dashboard > div.container h1, .container .content h1, .container .controls h1, .content h3 {
   line-height: 2em;
   font-size: 1em;
   padding-left: 1em;
@@ -157,6 +157,14 @@ html {
   border-radius: 0.2em;
   -moz-border-radius: 0.2em;
   -webkit-border-radius: 0.2em;
+}
+
+.content h3 {
+  font-size: 0.9em;
+}
+
+.container .controls > * {
+  margin-left: 1em;
 }
 
 .container .controls h1 {
@@ -309,6 +317,12 @@ html {
   display: block;
 }
 
+.audible {
+  left: -999em;
+  position: absolute;
+}
+
+/* TODO: replace this with .error */
 .fileNotReadable {
   padding: 0.5em;
   background-color: @colorCritical;

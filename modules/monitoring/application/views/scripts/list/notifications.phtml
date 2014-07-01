@@ -1,10 +1,11 @@
 <div class="controls">
 <?= $this->tabs ?>
-<div style="margin: 1em" class="dontprint">
+<div class="dontprint">
 <?= $this->translate('Sort by') ?> <?=  $this->sortControl->render($this) ?>
-
 <?= $this->selectionToolbar('single') ?>
 </div>
+<?= $this->widget('limiter') ?>
+<?php if ($notifications->count() >= 100): ?><br /><?php endif ?>
 <?=  $this->paginationControl($notifications, null, null, array('preserve' => $this->preserve)) ?>
 </div>
 
@@ -21,6 +22,9 @@ if (empty($this->notifications)) {
 <tbody>
 <?php
 
+if (count($notifications) === 0) {
+    echo t('No notifications matching the filter');
+}
 foreach ($notifications as $notification):
 
   if (isset($notification->service)) {
@@ -37,29 +41,25 @@ foreach ($notifications as $notification):
       ));
       $stateName = strtolower($this->util()->getHostStateName($notification->notification_state));
   }
-  ?>
+?>
   <tr class="state <?= $stateName ?>">
-      <td class="state"><?= $this->timeSince($notification->notification_start_time) ?></td>
-      <td>
-          <?php if ($isService): ?>
-              <a href="<?= $href ?>"><?= $notification->service ?></a>
-              <small>
-                  on <?= $notification->host ?>
-              </small>
-              <?php $isService = true; ?>
-          <?php else: ?>
-              <a href="<?= $href ?>"><?= $notification->host ?></a>
-          <?php endif; ?>
-          <br />
-          <?= $this->escape(substr(strip_tags($notification->notification_output), 0, 10000)); ?>
-          <br />
-          <small>
-              Sent to
-              <a href="<?= $this->href('monitoring/show/contact', array('contact' => $notification->notification_contact)); ?>">
-                  <?= $notification->notification_contact ?>
-              </a>
-          </small>
-      </td>
+    <td class="state"><?= $this->timeSince($notification->notification_start_time) ?></td>
+    <td>
+      <?php if ($isService): ?>
+        <a href="<?= $href ?>"><?= $notification->service ?></a> on <?= $notification->host ?>
+      <?php else: ?>
+        <a href="<?= $href ?>"><?= $notification->host ?></a>
+      <?php endif; ?>
+      <br />
+      <?= $this->escape(substr(strip_tags($notification->notification_output), 0, 10000)); ?>
+      <br />
+      <small>
+          Sent to <a href="<?= $this->href(
+              'monitoring/show/contact',
+              array('contact' => $notification->notification_contact)
+          ) ?>"><?= $this->escape($notification->notification_contact) ?></a>
+      </small>
+    </td>
   </tr>
 <?php endforeach ?>
 </tbody>

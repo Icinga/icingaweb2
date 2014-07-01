@@ -3,14 +3,14 @@
 namespace Icinga\Module\Monitoring\Object;
 
 use Icinga\Module\Monitoring\DataView\HostStatus;
-use Icinga\Data\Db\Query;
+use Icinga\Data\Db\DbQuery;
 
 class Host extends AbstractObject
 {
     public $type   = 'host';
     public $prefix = 'host_';
 
-    protected function applyObjectFilter(Query $query)
+    protected function applyObjectFilter(DbQuery $query)
     {
         return $query->where('host_name', $this->host_name);
     }
@@ -27,7 +27,7 @@ class Host extends AbstractObject
 
     protected function getProperties()
     {
-        $this->view = HostStatus::fromRequest($this->request, array(
+        $this->view = HostStatus::fromParams(array('backend' => null), array(
             'host_name',
             'host_alias',
             'host_address',
@@ -68,7 +68,7 @@ class Host extends AbstractObject
             'host_notes_url',
             'host_modified_host_attributes',
             'host_problem'
-        ));
+        ))->where('host_name', $this->params->get('host'));
         return $this->view->getQuery()->fetchRow();
     }
 }

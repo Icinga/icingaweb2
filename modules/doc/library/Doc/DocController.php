@@ -5,9 +5,9 @@
 namespace Icinga\Module\Doc;
 
 use Icinga\Data\Tree\NodeRenderer;
-use Icinga\Web\Controller\ActionController;
+use Icinga\Web\Controller\ModuleActionController;
 
-class DocController extends ActionController
+class DocController extends ModuleActionController
 {
     /**
      * Populate a chapter

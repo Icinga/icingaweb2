@@ -1,5 +1,4 @@
 <?php
-// @codingStandardsIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga Web 2.
@@ -35,6 +34,7 @@ use Zend_Db_Select;
 class GroupSummaryQuery extends IdoQuery
 {
     protected $useSubqueryCount = true;
+
     protected $columnMap = array(
         'hoststatussummary'     => array(
             'hosts_up'                      => 'SUM(CASE WHEN object_type = \'host\' AND state = 0 THEN 1 ELSE 0 END)',
@@ -70,8 +70,9 @@ class GroupSummaryQuery extends IdoQuery
             'host_state',
             'host_name'
         );
+
         // Prepend group column since we'll use columns index 0 later for grouping
-        if (in_array('servicegroup', $this->getColumns())) {
+        if (in_array('servicegroup', $this->desiredColumns)) {
             array_unshift($columns, 'servicegroup');
         } else {
             array_unshift($columns, 'hostgroup');
@@ -79,26 +80,25 @@ class GroupSummaryQuery extends IdoQuery
         $hosts = $this->createSubQuery(
             'Hoststatus',
             $columns + array(
-                'state'         => 'host_state',
-                'acknowledged'  => 'host_acknowledged',
-                'in_downtime'   => 'host_in_downtime'
+                'state'        => 'host_state',
+                'acknowledged' => 'host_acknowledged',
+                'in_downtime'  => 'host_in_downtime'
             )
         );
         $services = $this->createSubQuery(
             'Status',
             $columns + array(
-                'state'         => 'service_state',
-                'acknowledged'  => 'service_acknowledged',
-                'in_downtime'   => 'service_in_downtime'
+                'state'        => 'service_state',
+                'acknowledged' => 'service_acknowledged',
+                'in_downtime'  => 'service_in_downtime'
             )
         );
+
         $union = $this->db->select()->union(array($hosts, $services), Zend_Db_Select::SQL_UNION_ALL);
-        $this->baseQuery = $this->db->select()->from(array('statussummary' => $union), array())->group($columns[0]);
+        $this->select->from(array('statussummary' => $union), '*')->group($columns[0]);
         $this->joinedVirtualTables = array(
             'servicestatussummary'  => true,
             'hoststatussummary'     => true
         );
     }
 }
-// @codingStandardsIgnoreStop
-

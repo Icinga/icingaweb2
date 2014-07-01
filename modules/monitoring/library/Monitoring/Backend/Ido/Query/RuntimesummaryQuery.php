@@ -93,7 +93,7 @@ class RuntimesummaryQuery extends IdoQuery
             Zend_Db_Select::SQL_UNION_ALL
         );
 
-        $this->baseQuery = $this->db->select()->from(array('hs' => $union));
+        $this->select->from(array('hs' => $union));
 
         $this->joinedVirtualTables = array('runtimesummary' => true);
     }

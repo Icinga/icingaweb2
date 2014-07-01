@@ -39,6 +39,7 @@ use Icinga\Module\Monitoring\Backend;
 use Icinga\Module\Monitoring\Command\ScheduleDowntimeCommand;
 use Icinga\Module\Monitoring\Object\AbstractObject;
 use Icinga\Module\Monitoring\Object\Service;
+use Icinga\Web\Url;
 
 /**
  * Form for scheduling downtimes
@@ -91,7 +92,7 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
 
         $cfg = $this->getConfiguration();
         $preferences = $this->getUserPreferences();
-        $object = AbstractObject::fromRequest($this->getRequest());
+        $object = AbstractObject::fromParams(Url::fromRequest()->getParams());
         $object->fetchDowntimes();
         $downtimes = $object->downtimes;
 /*

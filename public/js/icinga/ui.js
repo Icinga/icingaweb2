@@ -52,7 +52,16 @@
 
         },
 
+        toggleDebug: function() {
+            if (this.debug) {
+                return this.disableDebug();
+            } else {
+                return this.enableDebug();
+            }
+        },
+
         enableDebug: function () {
+            if (this.debug === true) { return this; }
             this.debug = true;
             this.debugTimer = this.icinga.timer.register(
                 this.refreshDebug,
@@ -85,6 +94,7 @@
 
         reloadCss: function () {
             var icinga = this.icinga;
+            icinga.logger.info('Reloading CSS');
             $('link').each(function() {
                 var $oldLink = $(this);
                 if ($oldLink.attr('type').indexOf('css') > -1) {
@@ -186,6 +196,10 @@
             self.refreshDebug();
         },
 
+        hasOnlyOneColumn: function () {
+            return this.currentLayout === 'poor' || this.currentLayout === 'minimal';
+        },
+
         layoutHasBeenChanged: function () {
 
             var layout = $('html').css('fontFamily').replace(/['",]/g, '');
@@ -214,15 +228,18 @@
 
         layout1col: function () {
             if (! $('#layout').hasClass('twocols')) { return; }
-            var $col2 = $('#col2');
             this.icinga.logger.debug('Switching to single col');
             $('#layout').removeClass('twocols');
-            $col2.removeData('icingaUrl');
-            $col2.removeData('icingaRefresh');
-            $col2.removeData('lastUpdate');
-            $col2.removeData('icingaModule');
-            this.icinga.loader.stopPendingRequestsFor($col2);
-            $col2.html('');
+            this.closeContainer($('#col2'));
+        },
+
+        closeContainer: function($c) {
+            $c.removeData('icingaUrl');
+            $c.removeData('icingaRefresh');
+            $c.removeData('lastUpdate');
+            $c.removeData('icingaModule');
+            this.icinga.loader.stopPendingRequestsFor($c);
+            $c.html('');
             this.fixControls();
         },
 
@@ -400,19 +417,17 @@
 
             // create new url
             if (selectionData.length < 2) {
-                // single-selection
-                $.each(selectionData[0], function(key, value){
-                    queries.push(key + '=' + encodeURIComponent(value));
-                });
+                this.icinga.logger.error('Something went wrong, we should never multiselect just one row');
             } else {
-                // multi-selection
                 $.each(selectionData, function(i, el){
+                    var parts = []
                     $.each(el, function(key, value) {
-                        queries.push(key + '[' + i + ']=' + encodeURIComponent(value));
+                        parts.push(encodeURIComponent(key) + '=' + encodeURIComponent(value));
                     });
+                    queries.push('(' + parts.join('&') + ')');
                 });
             }
-            return queries.join('&');
+            return '(' + queries.join('|') + ')';
         },
 
         /**
@@ -477,6 +492,35 @@
             return focusedTableDataUrl;
         },
 
+        /**
+         * Assign a unique ID to each .container without such
+         *
+         * This usually applies to dashlets
+         */
+        assignUniqueContainerIds: function() {
+            var currentMax = 0;
+            $('.container').each(function() {
+                var $el = $(this);
+                var m;
+                if (!$el.attr('id')) {
+                    return;
+                }
+                if (m = $el.attr('id').match(/^ciu_(\d+)$/)) {
+                    if (parseInt(m[1]) > currentMax) {
+                         currentMax = parseInt(m[1]);
+                    }
+                }
+            });
+            $('.container').each(function() {
+                var $el = $(this);
+                if (!!$el.attr('id')) {
+                    return;
+                }
+                currentMax++;
+                $el.attr('id', 'ciu_' + currentMax);
+            });
+        },
+
         refreshDebug: function () {
 
             var size = this.getDefaultFontSize().toString();
@@ -510,25 +554,25 @@
         refreshTimeSince: function () {
 
             $('.timesince').each(function (idx, el) {
-                var m = el.innerHTML.match(/^(-?\d+)m\s(-?\d+)s/);
+                var m = el.innerHTML.match(/^(.*?)(-?\d+)m\s(-?\d+)s/);
                 if (m !== null) {
-                    var nm = parseInt(m[1]);
-                    var ns = parseInt(m[2]);
+                    var nm = parseInt(m[2]);
+                    var ns = parseInt(m[3]);
                     if (ns < 59) {
                         ns++;
                     } else {
                         ns = 0;
                         nm++;
                     }
-                    $(el).html(nm + 'm ' + ns + 's');
+                    $(el).html(m[1] + nm + 'm ' + ns + 's');
                 }
             });
 
             $('.timeuntil').each(function (idx, el) {
-                var m = el.innerHTML.match(/^(-?\d+)m\s(-?\d+)s/);
+                var m = el.innerHTML.match(/^(.*?)(-?\d+)m\s(-?\d+)s/);
                 if (m !== null) {
-                    var nm = parseInt(m[1]);
-                    var ns = parseInt(m[2]);
+                    var nm = parseInt(m[2]);
+                    var ns = parseInt(m[3]);
                     var signed = '';
                     var sec = 0;
 
@@ -540,11 +584,11 @@
                     } else if (nm == 0 && ns == 0) {
                         signed = '-';    
                         sec = 1;
-                    } else if (nm == 0 && m[1][0] == '-') {
+                    } else if (nm == 0 && m[2][0] == '-') {
                         signed = '-';    
                         sec = ns;
                         sec++;
-                    } else if (nm == 0 && m[1][0] != '-') {
+                    } else if (nm == 0 && m[2][0] != '-') {
                         sec = ns;
                         sec--;
                     } else {
@@ -556,7 +600,7 @@
                     nm = Math.floor(sec/60);
                     ns = sec - nm * 60;
 
-                    $(el).html(signed + nm + 'm ' + ns + 's');
+                    $(el).html(m[1] + signed + nm + 'm ' + ns + 's');
                 }
             });
         },

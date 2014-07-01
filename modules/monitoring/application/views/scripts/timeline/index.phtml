@@ -32,8 +32,8 @@ $firstRow = !$beingExtended;
                 <a href="<?= $this->href(
                     '/monitoring/list/eventhistory',
                     array(
-                        'raw_timestamp<' => $timeInfo[0]->start->getTimestamp(),
-                        'raw_timestamp>' => $timeInfo[0]->end->getTimestamp()
+                        'timestamp<' => $timeInfo[0]->start->getTimestamp(),
+                        'timestamp>' => $timeInfo[0]->end->getTimestamp()
                     )
                 ); ?>">
                     <?= $timeInfo[0]->end->format($intervalFormat); ?>
@@ -69,9 +69,9 @@ $extrapolatedCircleWidth = $timeline->getExtrapolatedCircleWidth($timeInfo[1][$g
                         $circleWidth
                     ); ?>" href="<?= $timeInfo[1][$groupName]->getDetailUrl()->overwriteParams(
                         array(
-                            'start' => $timeInfo[0]->start->getTimestamp(),
-                            'end'   => $timeInfo[0]->end->getTimestamp(),
-                            'name'  => $groupName
+                            'timestamp<' => $timeInfo[0]->start->getTimestamp(),
+                            'timestamp>'   => $timeInfo[0]->end->getTimestamp(),
+                            'type'  => $groupName
                         )
                     ); ?>" title="<?= $timeInfo[1][$groupName]->getValue(); ?> <?= $labelAndColor['label']; ?>"></a>
                 </div>

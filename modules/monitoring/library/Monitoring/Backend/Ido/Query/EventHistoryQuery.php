@@ -2,7 +2,8 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
-use \Zend_Db_Select;
+use Icinga\Data\Filter\Filter;
+use Zend_Db_Select;
 
 class EventHistoryQuery extends IdoQuery
 {
@@ -19,9 +20,8 @@ class EventHistoryQuery extends IdoQuery
             'service'             => 'eho.name2 COLLATE latin1_general_ci',
             'host_name'           => 'eho.name1 COLLATE latin1_general_ci',
             'service_description' => 'eho.name2 COLLATE latin1_general_ci',
-            'object_type'         => "CASE WHEN eho.objecttype_id = 1 THEN 'host' ELSE 'service' END",
+            'object_type'         => 'eh.object_type',
             'timestamp'           => 'eh.timestamp',
-            'raw_timestamp'       => 'UNIX_TIMESTAMP(eh.raw_timestamp)',
             'state'               => 'eh.state',
             'attempt'             => 'eh.attempt',
             'max_attempts'        => 'eh.max_attempts',
@@ -40,56 +40,78 @@ class EventHistoryQuery extends IdoQuery
     protected function joinBaseTables()
     {
         $columns = array(
-            'raw_timestamp',
             'timestamp',
             'object_id',
             'type',
             'output',
             'state',
             'state_type',
+            'object_type',
             'attempt',
             'max_attempts',
         );
-
         $this->subQueries = array(
             $this->createSubQuery('Statehistory', $columns),
             $this->createSubQuery('Downtimestarthistory', $columns),
             $this->createSubQuery('Downtimeendhistory', $columns),
             $this->createSubQuery('Commenthistory', $columns),
+            $this->createSubQuery('Commentdeletionhistory', $columns),
             $this->createSubQuery('Notificationhistory', $columns)
         );
-
         $sub = $this->db->select()->union($this->subQueries, Zend_Db_Select::SQL_UNION_ALL);
-        $this->baseQuery = $this->db->select()->from(
+
+        $this->select->from(
             array('eho' => $this->prefix . 'objects'),
-            array()
+            '*'
         )->join(
             array('eh' => $sub),
-            'eho.' . $this->object_id
-            . ' = eh.' . $this->object_id
-            . ' AND eho.is_active = 1',
+            'eho.' . $this->object_id . ' = eh.' . $this->object_id . ' AND eho.is_active = 1',
             array()
         );
         $this->joinedVirtualTables = array('eventhistory' => true);
     }
 
+    public function order($columnOrAlias, $dir = null)
+    {
+        foreach ($this->subQueries as $sub) {
+            $sub->requireColumn($columnOrAlias);
+        }
+
+        return parent::order($columnOrAlias, $dir);
+    }
+
+    public function addFilter(Filter $filter)
+    {
+  	    foreach ($this->subQueries as $sub) {
+		        $sub->applyFilter(clone $filter);
+		    }
+		    return $this;
+    }
+
+	  public function where($condition, $value = null)
+	  {
+		  $this->requireColumn($condition);
+		  foreach ($this->subQueries as $sub) {
+		      $sub->where($condition, $value);
+		  }
+		  return $this;
+	  }
+
     protected function joinHostgroups()
     {
-        $this->baseQuery->join(
+        $this->select->join(
             array('hgm' => $this->prefix . 'hostgroup_members'),
             'hgm.host_object_id = eho.object_id',
             array()
         )->join(
             array('hg' => $this->prefix . 'hostgroups'),
-            "hgm.hostgroup_id = hg.$this->hostgroup_id",
+            'hgm.hostgroup_id = hg.' . $this->hostgroup_id,
             array()
         )->join(
             array('hgo' => $this->prefix . 'objects'),
-            'hgo.' . $this->object_id. ' = hg.hostgroup_object_id'
-          . ' AND hgo.is_active = 1',
+            'hgo.' . $this->object_id. ' = hg.hostgroup_object_id' . ' AND hgo.is_active = 1',
             array()
         );
-
         return $this;
     }
 

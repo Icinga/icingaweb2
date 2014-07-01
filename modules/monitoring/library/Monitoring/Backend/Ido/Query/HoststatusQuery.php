@@ -29,12 +29,10 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
-/**
- *
- */
 class HoststatusQuery extends IdoQuery
 {
     protected $allowCustomVars = true;
+
     protected $columnMap = array(
         'hosts' => array(
             'host'              => 'ho.name1 COLLATE latin1_general_ci',
@@ -135,12 +133,14 @@ class HoststatusQuery extends IdoQuery
             'services_unknown_unhandled' => 'SUM(CASE WHEN ss.current_state = 3 AND (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth + COALESCE(hs.current_state, 0)) = 0 THEN 1 ELSE 0 END)',
         ),
     );
+
     protected $aggregateColumnIdx = array(
         'services_cnt' => true,
         'services_problem' => true,
         'services_problem_handled' => true,
         'services_problem_unhandled' => true,
     );
+
     protected $hcgSub;
 
     public function getDefaultColumns()
@@ -151,18 +151,18 @@ class HoststatusQuery extends IdoQuery
     protected function joinBaseTables()
     {
         // TODO: Shall we always add hostobject?
-        $this->baseQuery = $this->db->select()->from(
+        $this->select->from(
             array('ho' => $this->prefix . 'objects'),
             array()
         )->join(
-                array('hs' => $this->prefix . 'hoststatus'),
-                'ho.' . $this->object_id . ' = hs.host_object_id AND ho.is_active = 1 AND ho.objecttype_id = 1',
-                array()
-            )->join(
-                array('h' => $this->prefix . 'hosts'),
-                'hs.host_object_id = h.host_object_id',
-                array()
-            );
+            array('hs' => $this->prefix . 'hoststatus'),
+            'ho.' . $this->object_id . ' = hs.host_object_id AND ho.is_active = 1 AND ho.objecttype_id = 1',
+            array()
+        )->join(
+            array('h' => $this->prefix . 'hosts'),
+            'hs.host_object_id = h.host_object_id',
+            array()
+        );
         $this->joinedVirtualTables = array(
             'hosts' => true,
             'hoststatus' => true,
@@ -181,25 +181,25 @@ class HoststatusQuery extends IdoQuery
 
     protected function joinServices()
     {
-        $this->baseQuery->join(
+        $this->select->join(
             array('s' => $this->prefix . 'services'),
             's.host_object_id = h.host_object_id',
             array()
         )->join(
-                array('so' => $this->prefix . 'objects'),
-                "so.$this->object_id = s.service_object_id AND so.is_active = 1",
-                array()
-            )->joinLeft(
-                array('ss' => $this->prefix . 'servicestatus'),
-                "so.$this->object_id = ss.service_object_id",
-                array()
-            );
+            array('so' => $this->prefix . 'objects'),
+            'so.' . $this->object_id . ' = s.service_object_id AND so.is_active = 1',
+            array()
+        )->joinLeft(
+            array('ss' => $this->prefix . 'servicestatus'),
+            'so.' . $this->object_id . ' = ss.service_object_id',
+            array()
+        );
         foreach ($this->getColumns() as $col) {
             $real = $this->aliasToColumnName($col);
             if (substr($real, 0, 4) === 'SUM(') {
                 continue;
             }
-            $this->baseQuery->group($real);
+            $this->select->group($real);
         }
         $this->useSubqueryCount = true;
     }
@@ -215,41 +215,38 @@ class HoststatusQuery extends IdoQuery
 
     protected function joinServiceHostgroups()
     {
-        $this->baseQuery->join(
+        $this->select->join(
             array('hgm' => $this->prefix . 'hostgroup_members'),
             'hgm.host_object_id = s.host_object_id',
             array()
         )->join(
-                array('hg' => $this->prefix . 'hostgroups'),
-                'hgm.hostgroup_id = hg.' . $this->hostgroup_id,
-                array()
-            )->join(
-                array('hgo' => $this->prefix . 'objects'),
-                'hgo.' . $this->object_id . ' = hg.hostgroup_object_id'
-                . ' AND hgo.is_active = 1',
-                array()
-            );
-
+            array('hg' => $this->prefix . 'hostgroups'),
+            'hgm.hostgroup_id = hg.' . $this->hostgroup_id,
+            array()
+        )->join(
+            array('hgo' => $this->prefix . 'objects'),
+            'hgo.' . $this->object_id . ' = hg.hostgroup_object_id'
+            . ' AND hgo.is_active = 1',
+            array()
+        );
         return $this;
     }
 
     protected function joinHostHostgroups()
     {
-        $this->baseQuery->join(
+        $this->select->join(
             array('hgm' => $this->prefix . 'hostgroup_members'),
             'hgm.host_object_id = h.host_object_id',
             array()
         )->join(
-                array('hg' => $this->prefix . 'hostgroups'),
-                "hgm.hostgroup_id = hg.$this->hostgroup_id",
-                array()
-            )->join(
-                array('hgo' => $this->prefix . 'objects'),
-                'hgo.' . $this->object_id . ' = hg.hostgroup_object_id'
-                . ' AND hgo.is_active = 1',
-                array()
-            );
-
+            array('hg' => $this->prefix . 'hostgroups'),
+            'hgm.hostgroup_id = hg.' . $this->hostgroup_id,
+            array()
+        )->join(
+            array('hgo' => $this->prefix . 'objects'),
+            'hgo.' . $this->object_id . ' = hg.hostgroup_object_id' . ' AND hgo.is_active = 1',
+            array()
+        );
         return $this;
     }
 
@@ -259,20 +256,19 @@ class HoststatusQuery extends IdoQuery
             array('hcgc' => $this->prefix . 'host_contactgroups'),
             array('host_name' => 'ho.name1')
         )->join(
-                array('cgo' => $this->prefix . 'objects'),
-                'hcg.contactgroup_object_id = cgo.' . $this->object_id
-                . ' AND cgo.is_active = 1',
-                array()
-            )->join(
-                array('h' => $this->prefix . 'hosts'),
-                'hcg.host_id = h.host_id',
-                array()
-            )->join(
-                array('ho' => $this->prefix . 'objects'),
-                'h.host_object_id = ho.' . $this->object_id . ' AND ho.is_active = 1',
-                array()
-            );
-        $this->baseQuery->join(
+            array('cgo' => $this->prefix . 'objects'),
+            'hcg.contactgroup_object_id = cgo.' . $this->object_id . ' AND cgo.is_active = 1',
+            array()
+        )->join(
+            array('h' => $this->prefix . 'hosts'),
+            'hcg.host_id = h.host_id',
+            array()
+        )->join(
+            array('ho' => $this->prefix . 'objects'),
+            'h.host_object_id = ho.' . $this->object_id . ' AND ho.is_active = 1',
+            array()
+        );
+        $this->select->join(
             array('hcg' => $this->hcgSub),
             'hcg.host_name = ho.name1',
             array()
@@ -295,55 +291,53 @@ class HoststatusQuery extends IdoQuery
     protected function joinContactgroups()
     {
         $this->hcgSub = $this->createContactgroupFilterSubselect();
-        $this->baseQuery->join(
+        $this->select->join(
             array('hcg' => $this->hcgSub),
             'hcg.object_id = ho.object_id',
             array()
         );
-
         return $this;
     }
 
     protected function createContactgroupFilterSubselect()
     {
-        die((string)$this->db->select()->distinct()->from(
+        die((string) $this->db->select()->distinct()->from(
             array('hcg' => $this->prefix . 'host_contactgroups'),
             array('object_id' => 'ho.object_id')
         )->join(
-                array('cgo' => $this->prefix . 'objects'),
-                'hcg.contactgroup_object_id = cgo.' . $this->object_id
-                . ' AND cgo.is_active = 1',
-                array()
-            )->join(
-                array('h' => $this->prefix . 'hosts'),
-                'hcg.host_id = h.host_id',
-                array()
-            )->join(
-                array('ho' => $this->prefix . 'objects'),
-                'h.host_object_id = ho.' . $this->object_id . ' AND ho.is_active = 1',
-                array()
-            ));
+            array('cgo' => $this->prefix . 'objects'),
+            'hcg.contactgroup_object_id = cgo.' . $this->object_id
+            . ' AND cgo.is_active = 1',
+            array()
+        )->join(
+            array('h' => $this->prefix . 'hosts'),
+            'hcg.host_id = h.host_id',
+            array()
+        )->join(
+            array('ho' => $this->prefix . 'objects'),
+            'h.host_object_id = ho.' . $this->object_id . ' AND ho.is_active = 1',
+            array()
+        ));
     }
 
     protected function joinServicegroups()
     {
         // TODO: Only hosts with services having such servicegroups
         $this->requireVirtualTable('services');
-        $this->baseQuery->join(
+        $this->select->join(
             array('sgm' => $this->prefix . 'servicegroup_members'),
             'sgm.service_object_id = s.service_object_id',
             array()
         )->join(
-                array('sg' => $this->prefix . 'servicegroups'),
-                'sgm.servicegroup_id = sg.' . $this->servicegroup_id,
-                array()
-            )->join(
-                array('sgo' => $this->prefix . 'objects'),
-                'sgo.' . $this->object_id . ' = sg.servicegroup_object_id'
-                . ' AND sgo.is_active = 1',
-                array()
-            );
-
+            array('sg' => $this->prefix . 'servicegroups'),
+            'sgm.servicegroup_id = sg.' . $this->servicegroup_id,
+            array()
+        )->join(
+            array('sgo' => $this->prefix . 'objects'),
+            'sgo.' . $this->object_id . ' = sg.servicegroup_object_id'
+            . ' AND sgo.is_active = 1',
+            array()
+        );
         return $this;
     }
 }

@@ -29,24 +29,24 @@
 
 namespace Icinga\Authentication\Backend;
 
-use \Exception;
-use \Zend_Db_Expr;
-use \Zend_Db_Select;
 use Icinga\Authentication\UserBackend;
-use Icinga\Data\Db\Connection;
+use Icinga\Data\Db\DbConnection;
 use Icinga\User;
 use Icinga\Exception\AuthenticationException;
+use Exception;
+use Zend_Db_Expr;
+use Zend_Db_Select;
 
 class DbUserBackend extends UserBackend
 {
     /**
      * Connection to the database
      *
-     * @var Connection
+     * @var DbConnection
      */
     private $conn;
 
-    public function __construct(Connection $conn)
+    public function __construct(DbConnection $conn)
     {
         $this->conn = $conn;
     }

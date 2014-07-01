@@ -31,7 +31,7 @@ namespace Icinga\Test {
     use Icinga\Application\Icinga;
     use Icinga\Util\DateTimeFactory;
     use Icinga\Data\ResourceFactory;
-    use Icinga\Data\Db\Connection;
+    use Icinga\Data\Db\DbConnection;
     use Icinga\User\Preferences;
     use Icinga\Web\Form;
 
@@ -193,7 +193,7 @@ namespace Icinga\Test {
         }
 
         /**
-         * Creates an array of Icinga\Data\Db\Connection
+         * Creates an array of Icinga\Data\Db\DbConnection
          *
          * @param   string $name
          *
@@ -215,7 +215,7 @@ namespace Icinga\Test {
         /**
          * PHPUnit provider for mysql
          *
-         * @return Connection
+         * @return DbConnection
          */
         public function mysqlDb()
         {
@@ -225,7 +225,7 @@ namespace Icinga\Test {
         /**
          * PHPUnit provider for pgsql
          *
-         * @return Connection
+         * @return DbConnection
          */
         public function pgsqlDb()
         {
@@ -235,7 +235,7 @@ namespace Icinga\Test {
         /**
          * PHPUnit provider for oracle
          *
-         * @return Connection
+         * @return DbConnection
          */
         public function oracleDb()
         {
@@ -245,12 +245,12 @@ namespace Icinga\Test {
         /**
          * Executes sql file by using the database connection
          *
-         * @param   Connection      $resource
+         * @param   DbConnection      $resource
          * @param   string          $filename
          *
          * @throws  RuntimeException
          */
-        public function loadSql(Connection $resource, $filename)
+        public function loadSql(DbConnection $resource, $filename)
         {
             if (!is_file($filename)) {
                 throw new RuntimeException(
@@ -272,11 +272,11 @@ namespace Icinga\Test {
         /**
          * Setup provider for testcase
          *
-         * @param   string|Connection|null $resource
+         * @param   string|DbConnection|null $resource
          */
         public function setupDbProvider($resource)
         {
-            if (!$resource instanceof Connection) {
+            if (!$resource instanceof DbConnection) {
                 if (is_string($resource)) {
                     $this->markTestSkipped('Could not initialize provider: ' . $resource);
                 } else {

@@ -16,6 +16,11 @@ if ($moduleName) {
     $moduleClass = '';
 }
 
+$refresh = '';
+if ($this->layout()->autorefreshInterval) {
+    $refresh = ' data-icinga-refresh="' . $this->layout()->autorefreshInterval . '"';
+}
+
 $notifications = Notification::getInstance();
 if ($notifications->hasMessages()) {
     foreach ($notifications->getMessages() as $m) {
@@ -23,15 +28,17 @@ if ($notifications->hasMessages()) {
     }
 }
    ?></ul>
-   <div id="logo" data-base-target="_main"><a href="<?= $this->href('/dashboard') ?>"><img src="<?= $this->href('img/logo_icinga-inv.png') ?>" class="logo" /></a>
+   <div id="logo" data-base-target="_main"><a href="<?= $this->href('/dashboard') ?>"><img src="<?= $this->href('img/logo_icinga-inv.png') ?>" class="logo" alt="<?= t('Dashboard') ?>" /></a>
  </div>
  </div>
 
+<?php if (!$this->layout()->isIframe): ?>
  <div id="sidebar">
   <?php echo $this->render('parts/navigation.phtml') ?>
  </div>
- <div id="main">
-  <div id="col1" class="container<?= $moduleClass ?>"<?php if ($moduleName): ?> data-icinga-module="<?= $moduleName ?>" <?php endif ?> data-icinga-url="<?= Url::fromRequest() ?>" style="display: block">
+<?php endif ?>
+ <div id="main" role="main">
+  <div id="col1" class="container<?= $moduleClass ?>"<?php if ($moduleName): ?> data-icinga-module="<?= $moduleName ?>" <?php endif ?> data-icinga-url="<?= Url::fromRequest() ?>"<?= $refresh ?> style="display: block">
    <?= $this->render('inline.phtml') ?>
   </div>
   <div id="col2" class="container">

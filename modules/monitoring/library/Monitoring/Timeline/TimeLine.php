@@ -8,6 +8,7 @@ use \DateTime;
 use \Exception;
 use \ArrayIterator;
 use \IteratorAggregate;
+use Icinga\Data\Filter\Filter;
 use Icinga\Web\Hook;
 use Icinga\Web\Session;
 use Icinga\Web\Session\SessionNamespace;
@@ -344,15 +345,14 @@ class TimeLine implements IteratorAggregate
             }
         }
 
-        $query = $this->dataview->getQuery();
-        $queryColumns = $query->getColumns();
-        $query->where(
-            $query->isValidFilterTarget('name') ? 'name' : $queryColumns['name'],
-            array_keys($this->identifiers)
-        )->where('raw_timestamp <= ?', $this->displayRange->getStart()->getTimestamp())
-            ->where('raw_timestamp > ?', $this->forecastRange->getEnd()->getTimestamp());
-
-        return array_merge($query->fetchAll(), $hookResults);
+        $query = $this->dataview;
+        $filter = Filter::matchAll(
+            Filter::where('type', array_keys($this->identifiers)),
+            Filter::expression('timestamp', '<=', $this->displayRange->getStart()->getTimestamp()),
+            Filter::expression('timestamp', '>', $this->displayRange->getEnd()->getTimestamp())
+        );
+        $query->applyFilter($filter);
+        return array_merge($query->getQuery()->fetchAll(), $hookResults);
     }
 
     /**

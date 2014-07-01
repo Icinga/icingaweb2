@@ -62,10 +62,8 @@ class NotificationQuery extends IdoQuery
      */
     protected function joinBaseTables()
     {
-        $this->baseQuery = $this->db->select()->from(
-            array(
-                'n' => $this->prefix . 'notifications'
-            ),
+        $this->select->from(
+            array('n' => $this->prefix . 'notifications'),
             array()
         );
         $this->joinedVirtualTables = array('notification' => true);
@@ -76,10 +74,8 @@ class NotificationQuery extends IdoQuery
      */
     protected function joinObjects()
     {
-        $this->baseQuery->join(
-            array(
-                'o' => $this->prefix . 'objects'
-            ),
+        $this->select->join(
+            array('o' => $this->prefix . 'objects'),
             'n.object_id = o.object_id AND o.is_active = 1 AND o.objecttype_id IN (1, 2)',
             array()
         );
@@ -90,17 +86,13 @@ class NotificationQuery extends IdoQuery
      */
     protected function joinContact()
     {
-        $this->baseQuery->join(
-            array(
-                'c' => $this->prefix . 'contactnotifications'
-            ),
+        $this->select->join(
+            array('c' => $this->prefix . 'contactnotifications'),
             'n.notification_id = c.notification_id',
             array()
         );
-        $this->baseQuery->join(
-            array(
-                'c_o' => $this->prefix . 'objects'
-            ),
+        $this->select->join(
+            array('c_o' => $this->prefix . 'objects'),
             'c.contact_object_id = c_o.object_id',
             array()
         );
@@ -111,24 +103,18 @@ class NotificationQuery extends IdoQuery
      */
     protected function joinCommand()
     {
-        $this->baseQuery->join(
-            array(
-                'cmd_c' => $this->prefix . 'contactnotifications'
-            ),
+        $this->select->join(
+            array('cmd_c' => $this->prefix . 'contactnotifications'),
             'n.notification_id = cmd_c.notification_id',
             array()
         );
-        $this->baseQuery->joinLeft(
-            array(
-                'cmd_m' => $this->prefix . 'contactnotificationmethods'
-            ),
+        $this->select->joinLeft(
+            array('cmd_m' => $this->prefix . 'contactnotificationmethods'),
             'cmd_c.contactnotification_id = cmd_m.contactnotification_id',
             array()
         );
-        $this->baseQuery->joinLeft(
-            array(
-                'cmd_o' => $this->prefix . 'objects'
-            ),
+        $this->select->joinLeft(
+            array('cmd_o' => $this->prefix . 'objects'),
             'cmd_m.command_object_id = cmd_o.object_id',
             array()
         );

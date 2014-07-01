@@ -64,23 +64,20 @@ class DowntimeQuery extends IdoQuery
      */
     protected function joinBaseTables()
     {
-        $this->baseQuery = $this->db->select()->from(
+        $this->select->from(
             array('sd' => $this->prefix . 'scheduleddowntime'),
             array()
         );
-
-        $this->baseQuery->joinLeft(
+        $this->select->joinLeft(
             array('ho' => $this->prefix . 'objects'),
             'sd.object_id = ho.object_id AND ho.is_active = 1 AND ho.objecttype_id = 1',
             array()
         );
-
-        $this->baseQuery->joinLeft(
+        $this->select->joinLeft(
             array('so' => $this->prefix . 'objects'),
             'sd.object_id = so.object_id AND so.is_active = 1 AND so.objecttype_id = 2',
             array()
         );
-
         $this->joinedVirtualTables = array('downtime' => true);
     }
 }

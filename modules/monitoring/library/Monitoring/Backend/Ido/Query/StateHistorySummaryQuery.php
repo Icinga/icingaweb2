@@ -26,7 +26,7 @@ class StateHistorySummaryQuery extends IdoQuery
 
     protected function joinBaseTables()
     {
-        $this->baseQuery = $this->db->select()->from(
+        $this->select->from(
             array('sh' => $this->prefix . 'statehistory'),
             array()
         )->join(

@@ -1,5 +1,4 @@
 <?php
-// @codeCoverageIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga Web 2.
@@ -31,22 +30,24 @@
 namespace Icinga\Web\Controller;
 
 use Exception;
-use Zend_Controller_Action;
-use Zend_Controller_Request_Abstract;
-use Zend_Controller_Response_Abstract;
-use Zend_Controller_Action_HelperBroker;
 use Icinga\Authentication\Manager as AuthManager;
 use Icinga\Application\Benchmark;
 use Icinga\Application\Config;
 use Icinga\Util\Translator;
 use Icinga\Web\Widget\Tabs;
+use Icinga\Web\Window;
 use Icinga\Web\Url;
 use Icinga\Web\Notification;
 use Icinga\File\Pdf;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Web\Session;
+use Icinga\Web\UrlParams;
 use Icinga\Session\SessionNamespace;
 use Icinga\Exception\NotReadableError;
+use Zend_Controller_Action;
+use Zend_Controller_Action_HelperBroker as ActionHelperBroker;
+use Zend_Controller_Request_Abstract as Request;
+use Zend_Controller_Response_Abstract as Response;
 
 /**
  * Base class for all core action controllers
@@ -75,128 +76,106 @@ class ActionController extends Zend_Controller_Action
 
     private $autorefreshInterval;
 
-    private $noXhrBody = false;
-
     private $reloadCss = false;
 
-    private $windowId;
+    private $window;
 
-    protected $isRedirect = false;
+    private $rerenderLayout = false;
 
-    // TODO: This would look better if we had a ModuleActionController
-    public function Config($file = null)
-    {
-        if ($this->config === null) {
-            $module = $this->getRequest()->getModuleName();
-            if ($module === 'default') {
-                if ($file === null) {
-                    $this->config = Config::app();
-                } else {
-                    $this->config = Config::app($file);
-                }
-            } else {
-                if ($file === null) {
-                    $this->config = Config::module($module);
-                } else {
-                    $this->config = Config::module($module, $file);
-                }
-            }
-        }
-        return $this->config;
-    }
+    private $xhrLayout = 'inline';
+
+    private $auth;
+
+    protected $params;
 
     /**
      * The constructor starts benchmarking, loads the configuration and sets
      * other useful controller properties
      *
-     * @param Zend_Controller_Request_Abstract     $request
-     * @param Zend_Controller_Response_Abstract    $response
-     * @param array                                $invokeArgs Any additional invocation arguments
+     * @param Request  $request
+     * @param Response $response
+     * @param array    $invokeArgs Any additional invocation arguments
      */
     public function __construct(
-        Zend_Controller_Request_Abstract $request,
-        Zend_Controller_Response_Abstract $response,
+        Request $request,
+        Response $response,
         array $invokeArgs = array()
     ) {
+        $this->params = UrlParams::fromQueryString();
+
         $this->setRequest($request)
             ->setResponse($response)
             ->_setInvokeArgs($invokeArgs);
-        $this->_helper = new Zend_Controller_Action_HelperBroker($this);
-        $this->_helper->addPath('../application/controllers/helpers');
+        $this->_helper = new ActionHelperBroker($this);
 
-        if ($this->_request->isXmlHttpRequest()) {
-            $this->windowId = $this->_request->getHeader('X-Icinga-WindowId', null);
+        $this->handlerBrowserWindows();
+        $this->view->translationDomain = 'icinga';
+        $this->_helper->layout()->isIframe = $this->params->shift('isIframe');
+        if ($this->rerenderLayout = $this->params->shift('renderLayout')) {
+            $this->xhrLayout = 'body';
         }
-
-        $module = $request->getModuleName();
-        $this->view->translationDomain = $module === 'default' ? 'icinga' : $module;
-
-        if ($this->requiresConfig() === false) {
-            if ($this->requiresLogin() === false) {
-                $this->view->tabs = new Tabs();
-                $this->init();
-            } else {
-                $url = $this->getRequestUrl();
-                if ($url === 'default/index/index') {
-                    // TODO: We need our own router :p
-                    $url = 'dashboard';
-                }
-                $this->redirectToLogin($url);
-            }
-        } else {
+        if ($this->requiresConfig()) {
             $this->redirectNow(Url::fromPath('install'));
         }
-    }
 
-    protected function getWindowId()
-    {
-        if ($this->windowId === null) {
-            return 'undefined';
+        if ($this->requiresLogin()) {
+            $this->redirectToLogin(Url::fromRequest());
         }
-        return $this->windowId;
+
+        $this->view->tabs = new Tabs();
+        $this->init();
     }
 
-    protected function generateWindowId()
+    public function Config($file = null)
     {
-        $letters = 'abcefghijklmnopqrstuvwxyz';
-        $this->windowId = substr(str_shuffle($letters), 0, 12);
-        return $this->windowId;
+        if ($file === null) {
+            if ($this->config === null) {
+                $this->config = Config::app();
+            }
+            return $this->config;
+        } else {
+            if (! array_key_exists($file, $this->configs)) {
+                $this->configs[$file] = Config::module($module, $file);
+            }
+            return $this->configs[$file];
+        }
+        return $this->config;
+    }
+
+    public function Auth()
+    {
+        if ($this->auth === null) {
+            $this->auth = AuthManager::getInstance();
+        }
+        return $this->auth;
+    }
+
+    public function Window()
+    {
+        if ($this->window === null) {
+            $this->window = new Window(
+                $this->_request->getHeader('X-Icinga-WindowId', Window::UNDEFINED)
+            );
+        }
+        return $this->window;
+    }
+
+    protected function handlerBrowserWindows()
+    {
+        if ($this->isXhr()) {
+            $id = $this->_request->getHeader('X-Icinga-WindowId', null);
+
+            if ($id === Window::UNDEFINED) {
+                $this->window = new Window($id);
+                $this->_response->setHeader('X-Icinga-WindowId', Window::generateId());
+            }
+        }
     }
 
     protected function reloadCss()
     {
         $this->reloadCss = true;
-    }
-
-    /**
-     * Return a window-aware session by using the given prefix
-     *
-     * @param   string      $prefix     The prefix to use
-     * @param   bool        $reset      Whether to reset any existing session-data
-     *
-     * @return  SessionNamespace
-     */
-    public function getWindowSession($prefix, $reset = false)
-    {
-        $session = Session::getSession();
-        $windowId = $this->getWindowId();
-
-        $identifier = $prefix . '_' . $windowId;
-        if ($reset && $session->hasNamespace($identifier)) {
-            $session->removeNamespace($identifier);
-        }
-        $namespace = $session->getNamespace($identifier);
-
-        if (!$reset && $windowId !== 'undefined' && $session->hasNamespace($prefix . '_undefined')) {
-            // We do not have any window-id on the very first request. Now we add all values from the
-            // namespace, that has been created in this case, to the new one and remove it afterwards.
-            foreach ($session->getNamespace($prefix . '_undefined') as $name => $value) {
-                $namespace->set($name, $value);
-            }
-            $session->removeNamespace($prefix . '_undefined');
-        }
-
-        return $namespace;
+        return $this;
     }
 
     /**
@@ -207,7 +186,7 @@ class ActionController extends Zend_Controller_Action
      */
     public function getRestrictions($name)
     {
-        return AuthManager::getInstance()->getRestrictions($name);
+        return $this->Auth()->getRestrictions($name);
     }
 
     /**
@@ -218,7 +197,7 @@ class ActionController extends Zend_Controller_Action
      */
     public function hasPermission($name)
     {
-        return AuthManager::getInstance()->hasPermission($name);
+        return $this->Auth()->hasPermission($name);
     }
 
     /**
@@ -229,7 +208,7 @@ class ActionController extends Zend_Controller_Action
      */
     public function assertPermission($name)
     {
-        if (! AuthManager::getInstance()->hasPermission($name)) {
+        if (! $this->Auth()->hasPermission($name)) {
             // TODO: Shall this be an Auth Exception? Or a 404?
             throw new Exception(sprintf('Auth error, no permission for "%s"', $name));
         }
@@ -276,7 +255,7 @@ class ActionController extends Zend_Controller_Action
             return false;
         }
 
-        return !AuthManager::getInstance()->isAuthenticated();
+        return !$this->Auth()->isAuthenticated();
     }
 
     /**
@@ -300,14 +279,14 @@ class ActionController extends Zend_Controller_Action
      */
     public function translate($text)
     {
-        $module = $this->getRequest()->getModuleName();
-        $domain = $module === 'default' ? Translator::DEFAULT_DOMAIN : $module;
-        return Translator::translate($text, $domain);
+        return Translator::translate($text, $this->view->translationDomain);
     }
 
     protected function ignoreXhrBody()
     {
-        $this->noXhrBody = true;
+        if ($this->isXhr()) {
+            $this->getResponse()->setHeader('X-Icinga-Container', 'ignore');
+        }
     }
 
     public function setAutorefreshInterval($interval)
@@ -318,6 +297,15 @@ class ActionController extends Zend_Controller_Action
             );
         }
         $this->autorefreshInterval = $interval;
+        $this->_helper->layout()->autorefreshInterval = $interval;
+        return $this;
+    }
+
+    public function disableAutoRefresh()
+    {
+        $this->autorefreshInterval = null;
+        $this->_helper->layout()->autorefreshInterval = null;
+        return $this;
     }
 
     /**
@@ -329,38 +317,21 @@ class ActionController extends Zend_Controller_Action
      */
     protected function redirectToLogin($afterLogin = '/dashboard')
     {
-        $url = Url::fromPath('/authentication/login');
-        if ($this->getRequest()->isXmlHttpRequest()) {
-            $url->setParam('_render', 'layout');
-/*
-            $this->_response->setHttpResponseCode(401);
-            $this->_helper->json(
-                array(
-                    'exception'     => 'You are not logged in',
-                    'redirectTo'    => Url::fromPath('/authentication/login')->getAbsoluteUrl()
-                )
-            );
-*/
-        }
+        $url = Url::fromPath('authentication/login');
         $url->setParam('redirect', $afterLogin);
-        $this->redirectNow($url);
+        $this->rerenderLayout()->redirectNow($url);
     }
 
-    /**
-     * Return the URI that can be used to request the current action
-     *
-     * @return string   return the path to this action: <Module>/<Controller>/<Action>?<Query>
-     */
-    public function getRequestUrl()
+    protected function rerenderLayout()
     {
-         $base = $this->_request->getModuleName() . '/' .
-            $this->_request->getControllerName() . '/' .
-            $this->_request->getActionName();
-         // TODO: We should NOT fiddle with Querystring here in the middle of nowhere
-         if (isset($_SERVER['QUERY_STRING']) && $_SERVER['QUERY_STRING'] !== '') {
-             return $base . '?' . $_SERVER['QUERY_STRING'];
-         }
-         return $base;
+        $this->rerenderLayout = true;
+        $this->xhrLayout = 'layout';
+        return $this;
+    }
+
+    public function isXhr()
+    {
+        return $this->getRequest()->isXmlHttpRequest();
     }
 
     /**
@@ -370,16 +341,27 @@ class ActionController extends Zend_Controller_Action
     **/
     public function redirectNow($url)
     {
-        $url = Url::fromPath(preg_replace('~&amp;~', '&', $url));
-        if ($this->_request->isXmlHttpRequest()) {
-            header('X-Icinga-Redirect: ' . rawurlencode($url));
-            // $this->getResponse()->sendHeaders() ??
-            // Session shutdown
-            exit; // Really?
-        } else {
-            $this->_helper->Redirector->gotoUrlAndExit($url->getRelativeUrl());
+        if (! $url instanceof Url) {
+            $url = Url::fromPath($url);
         }
-        $this->isRedirect = true; // pretty useless right now
+        $url = preg_replace('~&amp;~', '&', $url);
+        if ($this->isXhr()) {
+            if ($this->rerenderLayout) {
+                $this->getResponse()->setHeader('X-Icinga-Rerender-Layout', 'yes');
+            }
+            if ($this->reloadCss) {
+                $this->getResponse()->setHeader('X-Icinga-Reload-Css', 'now');
+            }
+
+            $this->getResponse()
+                ->setHeader('X-Icinga-Redirect', rawurlencode($url))
+                ->sendHeaders();
+
+            // TODO: Session shutdown?
+            exit;
+        } else {
+            $this->_helper->Redirector->gotoUrlAndExit(Url::fromPath($url)->getRelativeUrl());
+        }
     }
 
     /**
@@ -391,53 +373,46 @@ class ActionController extends Zend_Controller_Action
     {
         Benchmark::measure('Action::postDispatch()');
 
+        $req = $this->getRequest();
         $layout = $this->_helper->layout();
-        // $this->addModuleContainer();
-        $isXhr = $this->_request->isXmlHttpRequest();
-        $layout->moduleName = $this->_request->getModuleName();
-        if ($layout->moduleName === 'default') {
-            $layout->moduleName = false;
-        } elseif ($isXhr) {
-            header('X-Icinga-Module: ' . $layout->moduleName);
-        }
+        $layout->moduleName = false;
 
-        if ($user = $this->getRequest()->getUser()) {
+        if ($user = $req->getUser()) {
             // Cast preference app.show_benchmark to bool because preferences loaded from a preferences storage are
             // always strings
             if ((bool) $user->getPreferences()->get('app.show_benchmark', false) === true) {
-                Benchmark::measure('Response ready');
                 $layout->benchmark = $this->renderBenchmark();
             }
         }
 
-        if ($this->_request->getParam('format') === 'pdf') {
+        if ($req->getParam('format') === 'pdf') {
             $layout->setLayout('pdf');
             $this->sendAsPdf();
             exit;
         }
 
-        if ($isXhr) {
-            $layout->setLayout('inline');
+        if ($this->isXhr()) {
+            $this->postDispatchXhr();
         }
+    }
+
+    protected function postDispatchXhr()
+    {
+        $layout = $this->_helper->layout();
+        $layout->setLayout($this->xhrLayout);
+        $resp = $this->getResponse();
 
         $notifications = Notification::getInstance();
-        if ($isXhr && ! $this->isRedirect && $notifications->hasMessages()) {
+        if ($notifications->hasMessages()) {
+            $notificationList = array();
             foreach ($notifications->getMessages() as $m) {
-                header('X-Icinga-Notification: ' . rawurlencode($m->type . ' ' . $m->message));
+                $notificationList[] = rawurlencode($m->type . ' ' . $m->message);
             }
+            $resp->setHeader('X-Icinga-Notification', implode('&', $notificationList));
         }
 
-        if ($isXhr && ($this->reloadCss || $this->getParam('_reload') === 'css')) {
-            header('X-Icinga-CssReload: now');
-        }
-
-        if ($isXhr && $this->noXhrBody) {
-            header('X-Icinga-Container: ignore');
-            return;
-        }
-
-        if ($isXhr && $this->getWindowId() === 'undefined') {
-            header('X-Icinga-WindowId: ' . $this->generateWindowId());
+        if ($this->reloadCss) {
+            $resp->setHeader('X-Icinga-CssReload', 'now');
         }
 
         if ($this->view->title) {
@@ -445,28 +420,19 @@ class ActionController extends Zend_Controller_Action
                 // TODO: Innocent exception and error log for hack attempts
                 throw new Exception('No way, guy');
             }
-            header('X-Icinga-Title: ' . rawurlencode($this->view->title . ' :: Icinga Web'));
+            $resp->setHeader(
+                'X-Icinga-Title',
+                rawurlencode($this->view->title . ' :: Icinga Web')
+            );
         }
-        // TODO: _render=layout?
-        if ($this->getParam('_render') === 'layout') {
-            $layout->setLayout('body');
-            header('X-Icinga-Container: layout');
-        }
-        if ($this->autorefreshInterval !== null) {
-            header('X-Icinga-Refresh: ' . $this->autorefreshInterval);
-        }
-    }
 
-    protected function addModuleContainer()
-    {
-        $module_name = $this->_request->getModuleName();
-        $this->_helper->layout()->moduleStart =
-        '<div class="icinga-module module-'
-          . $module_name
-          . '" data-icinga-module="' . $module_name . '">'
-          . "\n"
-          ;
-        $this->_helper->layout()->moduleEnd = "</div>\n";
+        if ($this->rerenderLayout) {
+            $this->getResponse()->setHeader('X-Icinga-Container', 'layout');
+        }
+
+        if ($this->autorefreshInterval !== null) {
+            $resp->setHeader('X-Icinga-Refresh', $this->autorefreshInterval);
+        }
     }
 
     protected function sendAsPdf()
@@ -482,6 +448,8 @@ class ActionController extends Zend_Controller_Action
      */
     protected function renderBenchmark()
     {
+        $this->render();
+        Benchmark::measure('Response ready');
         return Benchmark::renderToHtml();
     }
 
@@ -508,4 +476,3 @@ class ActionController extends Zend_Controller_Action
         return parent::__call($name, $params);
     }
 }
-// @codeCoverageIgnoreEnd

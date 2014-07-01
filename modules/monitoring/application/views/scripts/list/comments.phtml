@@ -13,6 +13,10 @@
 
 $cf = $this->getHelper('CommandForm');
 
+if (count($comments) === 0) {
+    echo t('No comments matching the filter');
+}
+
 foreach ($comments as $comment):
 
 ?>
@@ -74,8 +78,10 @@ foreach ($comments as $comment):
         $data['service'] = $comment->service;
     }
 
-    echo $cf->iconSubmitForm(
-        'img/icons/remove.png',
+    // echo $cf->iconSubmitForm(
+    //    'img/icons/remove.png',
+    echo $cf->labelSubmitForm(
+        'X',
         'Remove comment',
         'link-like',
         'removecomment',

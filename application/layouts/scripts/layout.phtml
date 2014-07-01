@@ -1,6 +1,7 @@
 <?php
 
 use Icinga\Web\JavaScript;
+use Icinga\Util\Translator;
 
 if (array_key_exists('_dev', $_GET)) {
   $jsfile  = 'js/icinga.dev.js';
@@ -11,15 +12,15 @@ if (array_key_exists('_dev', $_GET)) {
 }
 
 $ie8jsfile  = 'js/icinga.ie8.js';
-
-$isIframe = isset($_GET['_render']) && $_GET['_render'] === 'iframe';
+$lang = Translator::splitLocaleCode()->language;
+$isIframe = $this->layout()->isIframe;
 $iframeClass = $isIframe ? ' iframe' : '';
 
 ?><!DOCTYPE html>
 <!--[if IE 8]>
-<html class="no-js ie8<?= $iframeClass ?>"> <![endif]-->
+<html class="no-js ie8<?= $iframeClass ?>" lang="<?= $lang ?>"> <![endif]-->
 <!--[if gt IE 8]><!-->
-<html class="no-js<?= $iframeClass ?>"> <!--<![endif]-->
+<html class="no-js<?= $iframeClass ?>" lang="<?= $lang ?>"> <!--<![endif]-->
 <head>
   <meta charset="utf-8">
   <meta content="width=320; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"/>
@@ -29,15 +30,16 @@ $iframeClass = $isIframe ? ' iframe' : '';
   <!-- TODO: viewport and scale settings make no sense for us, fix this -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <link rel="stylesheet" href="<?= $this->href($cssfile) ?>" media="screen" type="text/css" />
+  <? if ($isIframe): ?>
+  <base target="_parent"/>
+  <?php else: ?>
   <script type="text/javascript">
   (function() {
     var html = document.getElementsByTagName('html')[0];
     html.className = html.className.replace(/no-js/, 'js');
   }());
   </script>
-  <? if ($isIframe): ?>
-  <base target="_parent"/>
-  <? endif ?>
+  <?php endif ?>
   <!-- Respond.js IE8 support of media queries -->
   <!--[if lt IE 9]>
   <script src="<?= $this->baseUrl('js/vendor/respond.min.js');?>"></script>
@@ -49,6 +51,7 @@ $iframeClass = $isIframe ? ' iframe' : '';
 <div id="layout" class="default-layout">
 <?= $this->render('body.phtml') ?>
 </div>
+<?php if (! $isIframe): ?>
 <!--[if IE 8]>
 <script type="text/javascript" src="<?= $this->href($ie8jsfile) ?>"></script>
 <![endif]-->
@@ -60,5 +63,6 @@ var icinga = new Icinga({
   baseUrl: '<?= $this->href('/') ?>'
 });
 </script>
+<?php endif ?>
 </body>
 </html>

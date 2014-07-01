@@ -27,7 +27,6 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-// @codingStandardsIgnoreStart
 use Icinga\Application\Benchmark;
 use Icinga\Web\Hook;
 use Icinga\Web\Widget\Tabs;
@@ -51,21 +50,26 @@ class Monitoring_ShowController extends Controller
      */
     protected $backend;
 
+    protected $grapher;
+
     /**
      * Initialize the controller
      */
     public function init()
     {
         if ($this->getRequest()->getActionName() === 'host') {
-            $this->view->object = new Host($this->getRequest());
+            $this->view->object = new Host($this->params);
         } elseif ($this->getRequest()->getActionName() === 'service') {
-            $this->view->object = new Service($this->getRequest());
+            $this->view->object = new Service($this->params);
         } else {
             // TODO: Well... this could be done better
-            $this->view->object = AbstractObject::fromRequest($this->getRequest());
+            $this->view->object = AbstractObject::fromParams($this->params);
         }
         if (Hook::has('ticket')) {
             $this->view->tickets = Hook::first('ticket');
+        }
+        if (Hook::has('grapher')) {
+            $this->grapher = Hook::first('grapher');
         }
 
         $this->createTabs();
@@ -76,11 +80,15 @@ class Monitoring_ShowController extends Controller
      */
     public function serviceAction()
     {
+        $o = $this->view->object;
         $this->setAutorefreshInterval(10);
-        $this->view->title = $this->view->object->service_description
-            . ' on ' . $this->view->object->host_name;
+        $this->view->title = $o->service_description
+            . ' on ' . $o->host_name;
         $this->getTabs()->activate('service');
-        $this->view->object->populate();
+        $o->populate();
+        if ($this->grapher && $this->grapher->hasGraph($o->host_name, $o->service_description)) {
+            $this->view->grapherHtml = $this->grapher->getPreviewImage($o->host_name, $o->service_description);
+        }
     }
 
     /**
@@ -88,10 +96,14 @@ class Monitoring_ShowController extends Controller
      */
     public function hostAction()
     {
+        $o = $this->view->object;
         $this->setAutorefreshInterval(10);
         $this->getTabs()->activate('host');
-        $this->view->title = $this->view->object->host_name;
-        $this->view->object->populate();
+        $this->view->title = $o->host_name;
+        $o->populate();
+        if ($this->grapher && $this->grapher->hasGraph($o->host_name)) {
+            $this->view->grapherHtml = $this->grapher->getPreviewImage($o->host_name);
+        }
     }
 
     public function historyAction()
@@ -100,55 +112,21 @@ class Monitoring_ShowController extends Controller
         //$this->view->object->populate();
         $this->view->object->fetchEventHistory();
         $this->handleFormatRequest($this->view->object->eventhistory);
-        $this->view->history = $this->view->object->eventhistory->limit(20)->paginate();
+        $this->view->history = $this->view->object->eventhistory
+            ->paginate($this->params->get('limit', 50));
     }
 
     public function servicesAction()
     {
         $this->getTabs()->activate('services');
         $this->_setParam('service', '');
-        // WTF???? UrlViewFilter is messing with $_SERVER['QUERY_STRING'], great!
-        $_SERVER['QUERY_STRING'] = preg_replace('~&service=[^&]+(?:&|$)~', '', $_SERVER['QUERY_STRING']);
+        // TODO: This used to be a hack and still is. Modifying query string here.
+        $_SERVER['QUERY_STRING'] = (string) $this->params->without('service')->set('limit', '');
         $this->view->services = $this->view->action('services', 'list', 'monitoring', array(
             'view'  => 'compact',
-            'limit' => '',
             'sort'  => 'service_description',
-            'service' => ''
         ));
     }
-
-
-    /**
-     * History entries for objects
-     */
-/*    public function historyAction()
-    {
-        $this->view->history = $this->backend->select()
-            ->from(
-                'eventHistory',
-                array(
-                    'object_type',
-                    'host_name',
-                    'service_description',
-                    'timestamp',
-                    'state',
-                    'attempt',
-                    'max_attempts',
-                    'output',
-                    'type'
-                )
-            )->applyRequest($this->_request);
-
-        $this->view->preserve = $this->view->history->getAppliedFilter()->toParams();
-        if ($this->_getParam('dump') === 'sql') {
-            echo '<pre>' . htmlspecialchars($this->view->history->getQuery()->dump()) . '</pre>';
-            exit;
-        }
-        if ($this->_getParam('sort')) {
-            $this->view->preserve['sort'] = $this->_getParam('sort');
-        }
-        $this->view->preserve = $this->view->history->getAppliedFilter()->toParams();
-    }*/
 
     /**
      * Creating tabs for this controller
@@ -211,4 +189,3 @@ class Monitoring_ShowController extends Controller
             ->extend(new DashboardAction());
     }
 }
-// @codingStandardsIgnoreEnd

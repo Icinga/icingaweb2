@@ -1,5 +1,4 @@
 <?php
-// @codeCoverageIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
@@ -107,4 +106,3 @@ class SyslogWriter extends LogWriter
         closelog();
     }
 }
-// @codeCoverageIgnoreEnd

@@ -9,6 +9,7 @@
 $dependencies = $module->getDependencies();
 $restrictions = $module->getProvidedRestrictions();
 $permissions = $module->getProvidedPermissions();
+$state = $moduleData->enabled ? ($moduleData->loaded ? 'enabled' : 'failed') : 'disabled'
 
 ?>
 <h1><?= $this->escape($module->getTitle()) ?></h1>
@@ -17,6 +18,19 @@ $permissions = $module->getProvidedPermissions();
   <th><?= $this->escape('Name') ?></th>
   <td><?= $this->escape($module->getName()) ?></td>
 </tr>
+<tr>
+  <th><?= $this->translate('State') ?></th>
+  <td><?= $state ?><?php if ($state === 'enabled'): ?>
+  <?= $this->qlink('disable', 'config/moduledisable', array(
+      'name' => $module->getName()
+  )) ?>
+  <?php endif ?>
+  <?php if ($state === 'disabled'): ?>
+  <?= $this->qlink('enable', 'config/moduleenable', array(
+      'name' => $module->getName()
+  )) ?>
+  <?php endif ?>
+  </td>
 <tr>
   <th><?= $this->escape('Version') ?></th>
   <td><?= $this->escape($module->getVersion()) ?></td></tr>

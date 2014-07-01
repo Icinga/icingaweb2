@@ -46,3 +46,127 @@ table.multiselect tr[href] td {
   -ms-user-select: none;
 }
 
+#main form.filterEditor input[type=text], #main form.filterEditor select {
+    width: 12em;
+}
+
+ul.datafilter li {
+  list-style-type: none;
+  margin: 0;
+}
+
+ul.tree select { /* ?? */
+  margin-bottom: 0.3em;
+  margin-left: 1em;
+}
+ul.datafilter li input, ul.datafilter li select:first-child {
+    margin-left: 1em;
+}
+
+ul.tree {
+  font-size: 0.8em;
+  padding: 0;
+  margin: 0;
+}
+
+ul.tree, ul.tree ul {
+  padding-left: 1.5em;
+}
+
+ul.tree ul {
+  padding-left: 1.5em;
+}
+
+ul.tree li {
+  margin: 0;
+  list-style-type: none;
+  position: relative;
+  padding: 0;
+}
+
+ul.tree li .handle {
+  background-image: url('../img/tree/tree-minus.gif'); 
+  background-repeat: no-repeat;
+  display: inline-block;
+  position: absolute;
+  width: 1em;
+  height: 2em;
+  left: -0.6em;
+  background-position: -3px 3px;
+  z-index: 1;
+  cursor: pointer;
+}
+
+ul.tree li.collapsed > .handle {
+  background-image: url('../img/tree/tree-plus.gif'); 
+}
+
+ul.tree li.collapsed > ul {
+  display: none;
+}
+
+ul.tree li::before, ul.tree li::after {
+  content: '';
+  position: absolute; 
+  right: auto;
+  left: -0.2em;
+  border-color: #aaa;
+  border-style: dotted;
+  border-width: 0;
+}
+
+/* This is the left vertical line */
+ul.tree li::before {
+  border-left-width: 1px;
+  top: 0;
+  width: 1em; 
+  height: 100%;
+  bottom: 1em;
+}
+
+/* This is the horizontal dash in front of each item */
+ul.tree li::after {
+  border-top-width: 1px;
+  top: 1em;
+  width: 1em;
+  height: 1em;
+}
+
+/* Stop left vertical line at "mid-height" after last nodes (at each level) */
+ul.tree li:last-child::before {
+  height: 1em;
+}
+
+/* No border for the root element - there must be only ONE root */
+ul.tree > li::before, ul.tree > li::after {
+  display: none;
+}
+
+/* No connector before (each) root element */
+ul.tree > ul > li::before, ul.tree > ul > li::after {
+	border: 0;
+}
+
+ul.tree li a {
+  display: inline-block;
+/* TODO -> find something better  padding-left: 2.4em; */
+  line-height: 2em;
+  text-decoration: none;
+  color: #777;
+  outline: 0;
+  background-repeat: no-repeat;
+  background-position: 0.8em 0.4em;
+}
+
+ul.tree li a.error {
+  color: @colorCriticalHandled;
+}
+
+ul.tree li a:hover {
+	color: #000;
+  text-decoration: underline;
+}
+
+ul.tree li a.error:hover {
+  color: @colorCritical;
+}

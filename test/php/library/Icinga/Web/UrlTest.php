@@ -147,36 +147,6 @@ class UrlTest extends BaseTestCase
     /**
      * @depends testWhetherFromPathProperlyRecognizesAndDecodesQueryParameters
      */
-    public function testWhetherTranslateAliasTranslatesKnownAliases()
-    {
-        $url = Url::fromPath('/my/test/url.html');
-        $url->setAliases(array('foo' => 'bar'));
-
-        $this->assertEquals(
-            'bar',
-            $url->translateAlias('foo'),
-            'Url::translateAlias does not translate a known alias'
-        );
-    }
-
-    /**
-     * @depends testWhetherFromPathProperlyRecognizesAndDecodesQueryParameters
-     */
-    public function testWhetherTranslateAliasDoesNotTranslateUnknownAliases()
-    {
-        $url = Url::fromPath('/my/test/url.html');
-        $url->setAliases(array('foo' => 'bar'));
-
-        $this->assertEquals(
-            'fo',
-            $url->translateAlias('fo'),
-            'Url::translateAlias does translate an unknown alias'
-        );
-    }
-
-    /**
-     * @depends testWhetherFromPathProperlyRecognizesAndDecodesQueryParameters
-     */
     public function testWhetherGetAbsoluteUrlReturnsTheAbsoluteUrl()
     {
         $url = Url::fromPath('/my/test/url.html?param=val&param2=val2');

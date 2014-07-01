@@ -29,11 +29,11 @@
 
 namespace Icinga\Authentication\Backend;
 
-use \Exception;
 use Icinga\User;
 use Icinga\Authentication\UserBackend;
 use Icinga\Protocol\Ldap\Connection;
 use Icinga\Exception\AuthenticationException;
+use Icinga\Protocol\Ldap\Exception as LdapException;
 
 class LdapUserBackend extends UserBackend
 {
@@ -127,10 +127,11 @@ class LdapUserBackend extends UserBackend
      *
      * @param   User    $user
      * @param   string  $password
-     * @param   boolean $healthCheck        Perform additional health checks to generate more useful
-     *                                          exceptions in case of a configuration or backend error
+     * @param   boolean $healthCheck        Perform additional health checks to generate more useful exceptions in case
+     *                                      of a configuration or backend error
      *
-     * @return  bool    True when the authentication was successful, false when the username or password was invalid
+     * @return  bool                        True when the authentication was successful, false when the username
+     *                                      or password was invalid
      * @throws  AuthenticationException     When an error occurred during authentication and authentication is not possible
      */
     public function authenticate(User $user, $password, $healthCheck = true)
@@ -150,14 +151,15 @@ class LdapUserBackend extends UserBackend
                 );
             }
         }
+        if (! $this->hasUser($user)) {
+            return false;
+        }
         try {
-            $userDn = $this->conn->fetchDN($this->createQuery($user->getUsername()));
-            if (!$userDn) {
-                // User does not exist
-                return false;
-            }
-            return $this->conn->testCredentials($userDn, $password);
-        } catch (Exception $e) {
+            return $this->conn->testCredentials(
+                $this->conn->fetchDN($this->createQuery($user->getUsername())),
+                $password
+            );
+        } catch (LdapException $e) {
             // Error during authentication of this specific user
             throw new AuthenticationException(
                 sprintf(

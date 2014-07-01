@@ -1,5 +1,4 @@
 <?php
-// @codeCoverageIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga Web 2.
@@ -37,6 +36,7 @@ use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\NotReadableError;
 use Icinga\Logger\Logger;
 use Icinga\Web\Request;
+use Icinga\Web\Response;
 use Icinga\Web\View;
 use Icinga\Web\Session\Session as BaseSession;
 use Icinga\Web\Session;
@@ -48,7 +48,7 @@ use Exception;
 use Zend_Layout;
 use Zend_Paginator;
 use Zend_View_Helper_PaginationControl;
-use Zend_Controller_Action_HelperBroker;
+use Zend_Controller_Action_HelperBroker as ActionHelperBroker;
 use Zend_Controller_Router_Route;
 use Zend_Controller_Front;
 
@@ -124,7 +124,7 @@ class Web extends ApplicationBootstrap
             ->setupInternationalization()
             ->setupRequest()
             ->setupZendMvc()
-			->setupFormNamespace()
+            ->setupFormNamespace()
             ->setupModuleManager()
             ->loadEnabledModules()
             ->setupRoute()
@@ -177,7 +177,7 @@ class Web extends ApplicationBootstrap
      */
     public function dispatch()
     {
-        $this->frontController->dispatch();
+        $this->frontController->dispatch($this->request, new Response());
     }
 
     /**
@@ -274,7 +274,7 @@ class Web extends ApplicationBootstrap
     private function setupViewRenderer()
     {
         /** @var \Zend_Controller_Action_Helper_ViewRenderer $view */
-        $view = Zend_Controller_Action_HelperBroker::getStaticHelper('viewRenderer');
+        $view = ActionHelperBroker::getStaticHelper('viewRenderer');
         $view->setView(new View());
 
         $view->view->addHelperPath($this->getApplicationDir('/views/helpers'));
@@ -375,4 +375,3 @@ class Web extends ApplicationBootstrap
         return $this;
     }
 }
-// @codeCoverageIgnoreEnd

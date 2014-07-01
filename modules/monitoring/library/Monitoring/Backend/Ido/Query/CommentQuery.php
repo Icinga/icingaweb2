@@ -44,24 +44,25 @@ class CommentQuery extends IdoQuery
             'comment_is_persistent' => 'cm.is_persistent',
             'comment_expiration'    => 'CASE cm.expires WHEN 1 THEN UNIX_TIMESTAMP(cm.expiration_time) ELSE NULL END',
             'comment_host'          => 'CASE WHEN ho.name1 IS NULL THEN so.name1 ELSE ho.name1 END COLLATE latin1_general_ci',
+            'host'          => 'CASE WHEN ho.name1 IS NULL THEN so.name1 ELSE ho.name1 END COLLATE latin1_general_ci',
             'comment_service'       => 'so.name2 COLLATE latin1_general_ci',
+            'service'       => 'so.name2 COLLATE latin1_general_ci',
             'comment_objecttype'    => "CASE WHEN ho.object_id IS NOT NULL THEN 'host' ELSE CASE WHEN so.object_id IS NOT NULL THEN 'service' ELSE NULL END END",
         )
     );
 
     protected function joinBaseTables()
     {
-        $this->baseQuery = $this->db->select()->from(
+        $this->select->from(
             array('cm' => $this->prefix . 'comments'),
             array()
         );
-        $this->baseQuery->joinLeft(
+        $this->select->joinLeft(
             array('ho' => $this->prefix . 'objects'),
             'cm.object_id = ho.object_id AND ho.is_active = 1 AND ho.objecttype_id = 1',
             array()
         );
-
-        $this->baseQuery->joinLeft(
+        $this->select->joinLeft(
             array('so' => $this->prefix . 'objects'),
             'cm.object_id = so.object_id AND so.is_active = 1 AND so.objecttype_id = 2',
             array()

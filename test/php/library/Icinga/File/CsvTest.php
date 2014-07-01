@@ -13,7 +13,7 @@ class CsvTest extends BaseTestCase
     public function testWhetherValidCsvIsRendered()
     {
         $queryMock = Mockery::mock(
-            'Icinga\Data\BaseQuery',
+            'Icinga\Data\SimpleQuery',
             array(
                 'fetchAll' => array(
                     array('col1' => 'val1', 'col2' => 'val2', 'col3' => 'val3', 'col4' => 'val4'),

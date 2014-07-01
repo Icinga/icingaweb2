@@ -1,5 +1,4 @@
 <?php
-// @codeCoverageIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga Web 2.
@@ -27,21 +26,25 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use \Icinga\Web\Controller\BaseConfigController;
-use \Icinga\Web\Widget\Tab;
-use \Icinga\Web\Widget\AlertMessageBox;
-use \Icinga\Web\Url;
-use \Icinga\Application\Icinga;
-use \Icinga\Application\Config as IcingaConfig;
-use \Icinga\Data\ResourceFactory;
-use \Icinga\Form\Config\GeneralForm;
-use \Icinga\Form\Config\Authentication\ReorderForm;
-use \Icinga\Form\Config\Authentication\LdapBackendForm;
-use \Icinga\Form\Config\Authentication\DbBackendForm;
-use \Icinga\Form\Config\ResourceForm;
-use \Icinga\Form\Config\LoggingForm;
-use \Icinga\Form\Config\ConfirmRemovalForm;
-use \Icinga\Config\PreservingIniWriter;
+use Icinga\Web\Controller\BaseConfigController;
+use Icinga\Web\Widget\Tab;
+use Icinga\Web\Widget\AlertMessageBox;
+use Icinga\Web\Notification;
+use Icinga\Application\Modules\Module;
+use Icinga\Web\Url;
+use Icinga\Web\Widget;
+use Icinga\Application\Icinga;
+use Icinga\Application\Config as IcingaConfig;
+use Icinga\Data\ResourceFactory;
+use Icinga\Form\Config\GeneralForm;
+use Icinga\Form\Config\Authentication\ReorderForm;
+use Icinga\Form\Config\Authentication\LdapBackendForm;
+use Icinga\Form\Config\Authentication\DbBackendForm;
+use Icinga\Form\Config\ResourceForm;
+use Icinga\Form\Config\LoggingForm;
+use Icinga\Form\Config\ConfirmRemovalForm;
+use Icinga\Config\PreservingIniWriter;
+
 
 /**
  * Application wide controller for application preferences
@@ -55,52 +58,29 @@ class ConfigController extends BaseConfigController
      */
     private $resourceTypes = array('livestatus', 'ido', 'statusdat', 'ldap');
 
-    /**
-     * Create tabs for this configuration controller
-     *
-     * @return  array
-     *
-     * @see     BaseConfigController::createProvidedTabs()
-     */
-    public static function createProvidedTabs()
+    public function init()
     {
-        return array(
-            'index' => new Tab(
-                array(
-                    'name'      => 'index',
-                    'title'     => 'Application',
-                    'url'       => Url::fromPath('/config')
-                )
-            ),
-            'authentication' => new Tab(
-                array(
-                    'name'      => 'auth',
-                    'title'     => 'Authentication',
-                    'url'       =>  Url::fromPath('/config/authentication')
-                )
-            ),
-            'resources' => new Tab(
-                array(
-                    'name'      => 'resource',
-                    'title'     => 'Resources',
-                    'url'       => Url::fromPath('/config/resource')
-                )
-            ),
-            'logging' => new Tab(
-                array(
-                    'name'      => 'logging',
-                    'title'     => 'Logging',
-                    'url'       => Url::fromPath('/config/logging')
-                )
-            ),
-            'modules' => new Tab(
-                array(
-                    'name'      => 'modules',
-                    'title'     => 'Modules',
-                    'url'       => Url::fromPath('/config/moduleoverview')
-                )
-            )
-        );
+        $this->view->tabs = Widget::create('tabs')->add('index', array(
+            'title' => 'Application',
+            'url'   => 'config'
+        ))->add('authentication', array(
+            'title' => 'Authentication',
+            'url'   => 'config/authentication'
+        ))->add('resources', array(
+            'title' => 'Resources',
+            'url'   => 'config/resource'
+        ))->add('logging', array(
+            'title' => 'Logging',
+            'url'   => 'config/logging'
+        ))->add('modules', array(
+            'title' => 'Modules',
+            'url'   => 'config/modules'
+        ));
+    }
+
+    public function devtoolsAction()
+    {
+        $this->view->tabs = null;
     }
 
     /**
@@ -117,7 +97,7 @@ class ConfigController extends BaseConfigController
             if (!$this->writeConfigFile($form->getConfig(), 'config'))  {
                 return;
             }
-            $this->addSuccessMessage("Configuration Sucessfully Updated");
+            Notification::success('New configuration has successfully been stored');
             $form->setConfiguration(IcingaConfig::app(), true);
             $this->redirectNow('config/index');
         }
@@ -139,7 +119,7 @@ class ConfigController extends BaseConfigController
             if (!$this->writeConfigFile($form->getConfig(), 'config')) {
                 return;
             }
-            $this->addSuccessMessage("Configuration Sucessfully Updated");
+            Notification::success('New configuration has sucessfully been stored');
             $form->setConfiguration(IcingaConfig::app(), true);
             $this->redirectNow('config/logging');
         }
@@ -149,15 +129,29 @@ class ConfigController extends BaseConfigController
     /**
      * Display the list of all modules
      */
-    public function moduleoverviewAction()
+    public function modulesAction()
     {
-        $this->view->messageBox = new AlertMessageBox(true);
         $this->view->tabs->activate('modules');
-
         $this->view->modules = Icinga::app()->getModuleManager()->select()
             ->from('modules')
-            ->order('name');
-        $this->render('module/overview');
+            ->order('enabled', 'desc')
+            ->order('name')->paginate();
+    }
+
+    public function moduleAction()
+    {
+        $name = $this->getParam('name');
+        $app = Icinga::app();
+        $manager = $app->getModuleManager();
+        if ($manager->hasInstalled($name)) {
+            $this->view->moduleData = Icinga::app()->getModuleManager()->select()
+            ->from('modules')->where('name', $name)->fetchRow();
+            $module = new Module($app, $name, $manager->getModuleDir($name));
+            $this->view->module = $module;
+        } else {
+            $this->view->module = false;
+        }
+        $this->view->tabs = $module->getConfigTabs()->activate('info');
     }
 
     /**
@@ -170,9 +164,8 @@ class ConfigController extends BaseConfigController
         try {
             $manager->enableModule($module);
             $manager->loadModule($module);
-            $this->addSuccessMessage('Module "' . $module . '" enabled');
-            $this->redirectNow('config/moduleoverview?_render=layout&_reload=css');
-            return;
+            Notification::success('Module "' . $module . '" enabled');
+            $this->rerenderLayout()->reloadCss()->redirectNow('config/modules');
         } catch (Exception $e) {
             $this->view->exceptionMesssage = $e->getMessage();
             $this->view->moduleName = $module;
@@ -190,9 +183,8 @@ class ConfigController extends BaseConfigController
         $manager = Icinga::app()->getModuleManager();
         try {
             $manager->disableModule($module);
-            $this->addSuccessMessage('Module "' . $module . '" disabled');
-            $this->redirectNow('config/moduleoverview?_render=layout&_reload=css');
-            return;
+            Notification::success('Module "' . $module . '" disabled');
+            $this->rerenderLayout()->reloadCss()->redirectNow('config/modules');
         } catch (Exception $e) {
             $this->view->exceptionMessage = $e->getMessage();
             $this->view->moduleName = $module;
@@ -222,7 +214,7 @@ class ConfigController extends BaseConfigController
 
             if ($form->isSubmittedAndValid()) {
                 if ($this->writeAuthenticationFile($form->getReorderedConfig($config))) {
-                    $this->addSuccessMessage('Authentication Order Updated');
+                    Notification::success('Authentication Order Updated');
                     $this->redirectNow('config/authentication');
                 }
 
@@ -272,7 +264,7 @@ class ConfigController extends BaseConfigController
             }
             if ($this->writeAuthenticationFile($backendCfg)) {
                 // redirect to overview with success message
-                $this->addSuccessMessage('Backend Modification Written.');
+                Notification::success('Backend Modification Written.');
                 $this->redirectNow("config/authentication");
             }
             return;
@@ -337,7 +329,7 @@ class ConfigController extends BaseConfigController
             }
             if ($this->writeAuthenticationFile($backendCfg)) {
                 // redirect to overview with success message
-                $this->addSuccessMessage('Backend "' . $authBackend . '" created');
+                Notification::success('Backend "' . $authBackend . '" created');
                 $this->redirectNow("config/authentication");
             }
             return;
@@ -361,7 +353,7 @@ class ConfigController extends BaseConfigController
         $configArray = IcingaConfig::app('authentication', true)->toArray();
         $authBackend =  $this->getParam('auth_backend');
         if (!isset($configArray[$authBackend])) {
-            $this->addSuccessMessage('Can\'t perform removal: Unknown Authentication Backend Provided');
+            Notification::error('Can\'t perform removal: Unknown Authentication Backend Provided');
             $this->render('authentication/remove');
             return;
         }
@@ -373,7 +365,7 @@ class ConfigController extends BaseConfigController
         if ($form->isSubmittedAndValid()) {
             unset($configArray[$authBackend]);
             if ($this->writeAuthenticationFile($configArray)) {
-                $this->addSuccessMessage('Authentication Backend "' . $authBackend . '" Removed');
+                Notification::success('Authentication Backend "' . $authBackend . '" Removed');
                 $this->redirectNow("config/authentication");
             }
             return;
@@ -497,7 +489,6 @@ class ConfigController extends BaseConfigController
         $this->render('resource/remove');
     }
 
-
     /**
      * Redirect target only for error-states
      *
@@ -507,7 +498,7 @@ class ConfigController extends BaseConfigController
     public function configurationerrorAction()
     {
         $this->view->messageBox = new AlertMessageBox(true);
-        $this->render('error/error');
+        $this->render('error/error', null, true);
     }
 
     /**
@@ -557,4 +548,3 @@ class ConfigController extends BaseConfigController
         }
     }
 }
-// @codeCoverageIgnoreEnd

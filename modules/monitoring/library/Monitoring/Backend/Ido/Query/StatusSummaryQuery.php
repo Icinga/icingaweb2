@@ -1,5 +1,4 @@
 <?php
-// @codingStandardsIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga Web 2.
@@ -179,11 +178,10 @@ class StatusSummaryQuery extends IdoQuery
             'object_type'                   => '(\'service\')'
         ));
         $union = $this->db->select()->union(array($hosts, $services), Zend_Db_Select::SQL_UNION_ALL);
-        $this->baseQuery = $this->db->select()->from(array('statussummary' => $union), array());
+        $this->select->from(array('statussummary' => $union), array());
         $this->joinedVirtualTables = array(
             'servicestatussummary'  => true,
             'hoststatussummary'     => true
         );
     }
 }
-// @codingStandardsIgnoreStop

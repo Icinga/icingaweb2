@@ -29,8 +29,6 @@
 
 namespace Icinga\Module\Monitoring\DataView;
 
-use Icinga\Module\Monitoring\Filter\MonitoringFilter;
-
 class HostStatus extends DataView
 {
     /**
@@ -62,7 +60,8 @@ class HostStatus extends DataView
             'host_long_output',
             'host_check_command',
             'host_perfdata',
-	    'host_check_source',
+            'host_check_source',
+            'host_unhandled_services',
             'host_passive_checks_enabled',
             'host_passive_checks_enabled_changed',
             'host_obsessing',
@@ -82,6 +81,9 @@ class HostStatus extends DataView
             'host_percent_state_change',
             'host_is_flapping',
             'host_last_comment',
+            'host_last_downtime',
+            'host_last_ack',
+            'host_last_flapping',
             'host_action_url',
             'host_notes_url',
             'host_percent_state_change',
@@ -91,12 +93,7 @@ class HostStatus extends DataView
         );
     }
 
-    /**
-     * Return the table name
-     *
-     * @return string
-     */
-    public static function getTableName()
+    public static function getQueryName()
     {
         return 'status';
     }

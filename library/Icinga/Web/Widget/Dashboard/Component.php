@@ -165,13 +165,13 @@ EOD;
     {
         $view = $this->view();
         $url = clone($this->url);
-        $url->addParams(array('view' => 'compact'));
+        $url->setParam('view', 'compact');
         $iframeUrl = clone($url);
-        $iframeUrl->addParams(array('_render' => 'iframe'));
+        $iframeUrl->setParam('isIframe');
 
         $html = str_replace('{URL}', $url, $this->template);
         $html = str_replace('{IFRAME_URL}', $iframeUrl, $html);
-        $html = str_replace('{FULL_URL}', $url->getUrlWithout('view'), $html);
+        $html = str_replace('{FULL_URL}', $url->getUrlWithout(array('view', 'limit')), $html);
         $html = str_replace('{REMOVE_BTN}', $this->getRemoveForm($view), $html);
         $html = str_replace('{TITLE}', $view->escape($this->getTitle()), $html);
         $html = str_replace('{REMOVE}', $this->getRemoveForm(), $html);

@@ -30,6 +30,14 @@ if (!defined('EXTCMD_TEST_BIN')) {
  */
 class CommandPipeTest extends BaseTestCase
 {
+    public function setUp()
+    {
+        parent::setUp();
+        if (! file_exists(EXTCMD_TEST_BIN)) {
+            $this->markTestSkipped('Cannot find "' . EXTCMD_TEST_BIN . '"');
+        }
+    }
+
     /**
      * Return the path of the test pipe used in these tests
      *

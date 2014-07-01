@@ -3,77 +3,59 @@ $this->is_service = true;
 $this->hostquery = implode($this->hostnames, ',');
 $this->servicequery = implode($this->servicenames, ',');
 $this->target = array(
-	'host'	=> $this->hostquery,
-	'service' => $this->servicequery
+    'host' => $this->hostquery,
+    'service' => $this->servicequery
 );
 ?>
 
 <div class="controls">
-    <?= $this->tabs; ?>
+<?= $this->tabs ?>
 </div>
 
 <div class="content">
-    <h1> Summary for <?= count($objects) ?> services </h1>
+  <?php if (count($objects) === 0): ?>
+      <?= t('No services matching the filter'); ?>
+  <?php else: ?>
+  <h1> Summary for <?= count($objects) ?> services </h1>
 
-    <?= $this->render('multi/components/objectlist.phtml'); ?>
-    <table class="avp">
-        <tr>
-            <th align="center">
-                <h3><?= array_sum(array_values($service_states)) ?> Services</h3>
-            </th>
-            <th></th>
-            <th align="center">
-                <h3><?= array_sum(array_values($host_states)) ?> Hosts</h3>
-            </th>
-            <th></th>
-        </tr>
-        <tr>
-            <td align="center">
-                <?= $this->service_pie->render(); ?>
-            </td>
-            <td>
-                <?php
-                foreach ($service_states as $state => $count) {
-                    if ($count > 0) {
-                        echo ucfirst($state) . ': ' . $count . '<br />';
-                    }
-                }
-                ?>
-            </td>
-            <td align="center">
-                <?= $this->host_pie->render(); ?>
-            </td>
-            <td>
-                <?php
-                foreach ($host_states as $state => $count) {
-                    if ($count > 0) {
-                        echo ucfirst($state) . ': ' . $count . '<br />';
-                    }
-                }
-                ?>
-            </td>
-            <td></td>
-        </tr>
-    </table>
+  <table style="width: 100%; font-size: 0.8em;">
+    <tr>
+      <th colspan="2"><?= array_sum(array_values($service_states)) ?> Services</th>
+      <th colspan="2"><?= array_sum(array_values($host_states)) ?> Hosts</th>
+    </tr>
+    <tr>
+      <td align="center"><?= $this->service_pie->render() ?></td>
+      <td><?php
 
-    <h2> <?=$this->icon('servicegroup.png')?> Service Actions </h2>
+          foreach ($service_states as $state => $count) {
+              if ($count > 0) {
+                  echo ucfirst($state) . ': ' . $count . '<br />';
+              }
+          }
 
-    <table class="avp newsection">
-        <tbody>
-            <?= $this->render('multi/components/summary.phtml'); ?>
-            <?= $this->render('multi/components/comments.phtml'); ?>
-            <?= $this->render('multi/components/downtimes.phtml'); ?>
-        </tbody>
-    </table>
+      ?></td>
+      <td align="center"><?= $this->host_pie->render() ?></td>
+      <td><?php
+          foreach ($host_states as $state => $count) {
+              if ($count > 0) {
+                  echo ucfirst($state) . ': ' . $count . '<br />';
+              }
+          }
+      ?></td>
+    </tr>
+  </table>
 
-    <?= $this->render('multi/components/flags.phtml') ?>
+  <h2><?=$this->icon('servicegroup.png')?> Service Actions</h2>
+
+  <table class="avp newsection">
+    <tbody>
+      <?= $this->render('multi/components/objectlist.phtml') ?>
+      <?= $this->render('multi/components/summary.phtml') ?>
+      <?= $this->render('multi/components/comments.phtml') ?>
+      <?= $this->render('multi/components/downtimes.phtml') ?>
+    </tbody>
+  </table>
+
+  <?= $this->render('multi/components/flags.phtml') ?>
+  <?php endif ?>
 </div>
-
-<a
-    rel="tooltip"
-    title="Submit passive checkresults"
-    href="<?= $this->href('monitoring/command/submitpassivecheckresult', $this->target); ?>"
-    class="button btn-cta btn-common btn-small"
->
-    <i class="icinga-icon-submit"></i>
-</a>

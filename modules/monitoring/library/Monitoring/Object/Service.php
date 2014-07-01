@@ -3,14 +3,14 @@
 namespace Icinga\Module\Monitoring\Object;
 
 use Icinga\Module\Monitoring\DataView\ServiceStatus;
-use Icinga\Data\Db\Query;
+use Icinga\Data\Db\DbQuery;
 
 class Service extends AbstractObject
 {
     public $type   = 'service';
     public $prefix = 'service_';
 
-    protected function applyObjectFilter(Query $query)
+    protected function applyObjectFilter(DbQuery $query)
     {
         return $query->where('service_host_name', $this->host_name)
                      ->where('service_description', $this->service_description);
@@ -28,7 +28,7 @@ class Service extends AbstractObject
 
     protected function getProperties()
     {
-        $this->view = ServiceStatus::fromRequest($this->request, array(
+        $this->view = ServiceStatus::fromParams(array('backend' => null), array(
             'host_name',
             'host_state',
             'host_state_type',
@@ -70,10 +70,9 @@ class Service extends AbstractObject
             'host_is_flapping',
             'host_last_check',
             'host_notifications_enabled',
-            'host_unhandled_service_count',
+            'host_unhandled_services',
             'host_action_url',
             'host_notes_url',
-            'host_last_comment',
             'host_display_name',
             'host_alias',
             'host_ipv4',
@@ -102,6 +101,8 @@ class Service extends AbstractObject
             'service_last_time_warning',
             'service_last_time_critical',
             'service_last_time_unknown',
+            'service_check_execution_time',
+            'service_check_latency',
             'service_current_check_attempt',
             'service_max_check_attempts',
             'service_obsessing',
@@ -111,7 +112,9 @@ class Service extends AbstractObject
             'service_flap_detection_enabled',
             'service_flap_detection_enabled_changed',
             'service_modified_service_attributes',
-        ));
+        ))->where('host_name', $this->params->get('host'))
+          ->where('service_description', $this->params->get('service'));
+
         return $this->view->getQuery()->fetchRow();
     }
 }

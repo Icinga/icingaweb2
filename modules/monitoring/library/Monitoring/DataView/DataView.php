@@ -29,56 +29,72 @@
 
 namespace Icinga\Module\Monitoring\DataView;
 
-use Icinga\Data\BaseQuery;
+use Icinga\Data\Filter\Filter;
+use Icinga\Data\SimpleQuery;
+use Icinga\Data\Browsable;
 use Icinga\Data\PivotTable;
-use Icinga\Filter\Filterable;
-use Icinga\Filter\Query\Tree;
-use Icinga\Module\Monitoring\Backend;
-use Icinga\Module\Monitoring\Filter\UrlViewFilter;
+use Icinga\Data\Sortable;
+use Icinga\Data\ConnectionInterface;
+use Icinga\Data\Filterable;
 use Icinga\Web\Request;
+use Icinga\Web\Url;
+use Icinga\Module\Monitoring\Backend;
 
 /**
- * A read-only view of an underlying Query
+ * A read-only view of an underlying query
  */
-abstract class DataView implements Filterable
+abstract class DataView implements Browsable, Filterable, Sortable
 {
-    /**
-     * Sort in ascending order, default
-     */
-    const SORT_ASC = BaseQuery::SORT_ASC;
-    /**
-     * Sort in reverse order
-     */
-    const SORT_DESC = BaseQuery::SORT_DESC;
     /**
      * The query used to populate the view
      *
-     * @var BaseQuery
+     * @var SimpleQuery
      */
     private $query;
+    
+    protected $filter;
+
+    protected $connection;
 
     /**
      * Create a new view
      *
-     * @param Backend $ds         Which backend to query
-     * @param array $columns    Select columns
+     * @param SimpleQuery $query      Which backend to query
+     * @param array     $columns    Select columns
      */
-    public function __construct(Backend $ds, array $columns = null)
+    public function __construct(ConnectionInterface $connection, array $columns = null)
     {
-        $this->query = $ds->select()->from(static::getTableName(), $columns === null ? $this->getColumns() : $columns);
+        $this->connection = $connection;
+        $queryClass = $connection->getQueryClass($this->getQueryName());
+        $this->query = new $queryClass($this->connection->getResource(), $columns);
+        $this->filter = Filter::matchAll();
     }
 
     /**
-     * Get the queried table name
+     * Get the query name this data view relies on
+     *
+     * By default this is this class' name without its namespace
      *
      * @return string
      */
-    public static function getTableName()
+    public static function getQueryName()
     {
         $tableName = explode('\\', get_called_class());
         $tableName = end($tableName);
         return $tableName;
     }
+
+public function where($condition, $value = null)
+{
+    $this->filter->addFilter(Filter::where($condition, $value));
+    $this->query->where($condition, $value);
+    return $this;
+}
+
+public function dump()
+{
+    return $this->query->dump();
+}
 
     /**
      * Retrieve columns provided by this view
@@ -94,27 +110,33 @@ abstract class DataView implements Filterable
      * @param   array $columns
      *
      * @return  static
+     * @deprecated Use $backend->select()->from($viewName) instead
      */
     public static function fromRequest($request, array $columns = null)
     {
-
         $view = new static(Backend::createBackend($request->getParam('backend')), $columns);
-        $parser = new UrlViewFilter($view);
-        $view->getQuery()->setFilter($parser->fromRequest($request));
+        $view->applyUrlFilter($request);
 
-        $order = $request->getParam('dir');
-        if ($order !== null) {
-            if (strtolower($order) === 'desc') {
-                $order = self::SORT_DESC;
-            } else {
-                $order = self::SORT_ASC;
-            }
-        }
-        $view->sort(
-            $request->getParam('sort'),
-            $order
-        );
         return $view;
+    }
+
+    // TODO: This is not the right place for this, move it away
+    protected function applyUrlFilter($request = null)
+    {
+        $url = Url::fromRequest();
+        $limit = $url->shift('limit');
+        $sort = $url->shift('sort');
+        $dir = $url->shift('dir');
+        $page = $url->shift('page');
+        $format = $url->shift('format');
+        $view = $url->shift('view');
+        $view = $url->shift('backend');
+        foreach ($url->getParams() as $k => $v) {
+            $this->where($k, $v);
+        }
+        if ($sort) {
+            $this->order($sort, $dir);
+        }
     }
 
     /**
@@ -131,9 +153,10 @@ abstract class DataView implements Filterable
 
         foreach ($params as $key => $value) {
             if ($view->isValidFilterTarget($key)) {
-                $view->getQuery()->where($key, $value);
+                $view->where($key, $value);
             }
         }
+
         $order = isset($params['order']) ? $params['order'] : null;
         if ($order !== null) {
             if (strtolower($order) === 'desc') {
@@ -147,6 +170,7 @@ abstract class DataView implements Filterable
             isset($params['sort']) ? $params['sort'] : null,
             $order
         );
+
         return $view;
     }
 
@@ -168,6 +192,11 @@ abstract class DataView implements Filterable
         return array();
     }
 
+    public function getFilter()
+    {
+        return $this->filter;
+    }
+
     /**
      * Return a pivot table for the given columns based on the current query
      *
@@ -184,15 +213,18 @@ abstract class DataView implements Filterable
     /**
      * Sort the rows, according to the specified sort column and order
      *
-     * @param   string $column   Sort column
-     * @param   int $order    Sort order, one of the SORT_ constants
+     * @param   string  $column Sort column
+     * @param   int     $order  Sort order, one of the SORT_ constants
      *
+     * @return  self
      * @see     DataView::SORT_ASC
      * @see     DataView::SORT_DESC
+     * @deprecated Use DataView::order() instead
      */
     public function sort($column = null, $order = null)
     {
         $sortRules = $this->getSortRules();
+
         if ($sortRules !== null) {
             if ($column === null) {
                 $sortColumns = reset($sortRules);
@@ -214,7 +246,7 @@ abstract class DataView implements Filterable
             }
 
             $order = $order === null ? (isset($sortColumns['order']) ? $sortColumns['order'] : self::SORT_ASC) : $order;
-            $order = ($order === self::SORT_ASC) ? 'ASC' : 'DESC';
+            $order = (strtoupper($order) === self::SORT_ASC) ? 'ASC' : 'DESC';
 
             foreach ($sortColumns['columns'] as $column) {
                 $this->query->order($column, $order);
@@ -233,6 +265,39 @@ abstract class DataView implements Filterable
         return null;
     }
 
+    /**
+     * Sort result set either by the given column (and direction) or the sort defaults
+     *
+     * @param  string   $column
+     * @param  string   $direction
+     *
+     * @return self
+     */
+    public function order($column = null, $direction = null)
+    {
+        return $this->sort($column, $direction);
+    }
+
+    /**
+     * Whether an order is set
+     *
+     * @return bool
+     */
+    public function hasOrder()
+    {
+        return $this->query->hasOrder();
+    }
+
+    /**
+     * Get the order if any
+     *
+     * @return array|null
+     */
+    public function getOrder()
+    {
+        return $this->query->getOrder();
+    }
+
     public function getMappedField($field)
     {
         return $this->query->getMappedField($field);
@@ -248,10 +313,9 @@ abstract class DataView implements Filterable
         return $this->query;
     }
 
-    public function applyFilter()
+    public function applyFilter(Filter $filter)
     {
-        $this->query->applyFilter();
-        return $this;
+        return $this->addFilter($filter);
     }
 
     public function clearFilter()
@@ -260,9 +324,29 @@ abstract class DataView implements Filterable
         return $this;
     }
 
-    public function addFilter($filter)
+    public function setFilter(Filter $filter)
     {
-        $this->query->addFilter($filter);
+        $this->query->setFilter($filter);
         return $this;
+    }
+
+    public function addFilter(Filter $filter)
+    {
+        $this->query->addFilter(clone($filter));
+        $this->filter = $filter; // TODO: Hmmmm.... and?
+        return $this;
+    }
+
+    /**
+     * Paginate data
+     *
+     * @param   int $itemsPerPage   Number of items per page
+     * @param   int $pageNumber     Current page number
+     *
+     * @return  Zend_Paginator
+     */
+    public function paginate($itemsPerPage = null, $pageNumber = null)
+    {
+        return $this->query->paginate($itemsPerPage, $pageNumber);
     }
 }

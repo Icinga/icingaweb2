@@ -4,31 +4,31 @@
 
 namespace Icinga\Data;
 
-use \Zend_Paginator;
-use Icinga\Data\BaseQuery;
+use Icinga\Data\SimpleQuery;
 use Icinga\Application\Icinga;
 use Icinga\Web\Paginator\Adapter\QueryAdapter;
+use Zend_Paginator;
 
 class PivotTable
 {
     /**
      * The query to fetch as pivot table
      *
-     * @var BaseQuery
+     * @var SimpleQuery
      */
     protected $baseQuery;
 
     /**
      * The query to fetch the x axis labels
      *
-     * @var BaseQuery
+     * @var SimpleQuery
      */
     protected $xAxisQuery;
 
     /**
      * The query to fetch the y axis labels
      *
-     * @var BaseQuery
+     * @var SimpleQuery
      */
     protected $yAxisQuery;
 
@@ -49,11 +49,11 @@ class PivotTable
     /**
      * Create a new pivot table
      *
-     * @param   BaseQuery   $query          The query to fetch as pivot table
+     * @param   SimpleQuery   $query          The query to fetch as pivot table
      * @param   string      $xAxisColumn    The column that contains the labels for the x axis
      * @param   string      $yAxisColumn    The column that contains the labels for the y axis
      */
-    public function __construct(BaseQuery $query, $xAxisColumn, $yAxisColumn)
+    public function __construct(SimpleQuery $query, $xAxisColumn, $yAxisColumn)
     {
         $this->baseQuery = $query;
         $this->xAxisColumn = $xAxisColumn;
@@ -70,10 +70,10 @@ class PivotTable
     {
         $this->xAxisQuery = clone $this->baseQuery;
         $this->xAxisQuery->distinct();
-        $this->xAxisQuery->setColumns(array($this->xAxisColumn));
+        $this->xAxisQuery->columns(array($this->xAxisColumn));
         $this->yAxisQuery = clone $this->baseQuery;
         $this->yAxisQuery->distinct();
-        $this->yAxisQuery->setColumns(array($this->yAxisColumn));
+        $this->yAxisQuery->columns(array($this->yAxisColumn));
 
         return $this;
     }
@@ -85,9 +85,9 @@ class PivotTable
      */
     protected function adjustSorting()
     {
-        $currentOrderColumns = $this->baseQuery->getOrderColumns();
-        $xAxisOrderColumns = array(array($this->baseQuery->getMappedField($this->xAxisColumn), BaseQuery::SORT_ASC));
-        $yAxisOrderColumns = array(array($this->baseQuery->getMappedField($this->yAxisColumn), BaseQuery::SORT_ASC));
+        $currentOrderColumns = $this->baseQuery->getOrder();
+        $xAxisOrderColumns = array(array($this->baseQuery->getMappedField($this->xAxisColumn), SimpleQuery::SORT_ASC));
+        $yAxisOrderColumns = array(array($this->baseQuery->getMappedField($this->yAxisColumn), SimpleQuery::SORT_ASC));
 
         foreach ($currentOrderColumns as $orderInfo) {
             if ($orderInfo[0] === $xAxisOrderColumns[0][0]) {
@@ -99,9 +99,10 @@ class PivotTable
                 $yAxisOrderColumns[] = $orderInfo;
             }
         }
-
-        $this->xAxisQuery->setOrderColumns($xAxisOrderColumns);
-        $this->yAxisQuery->setOrderColumns($yAxisOrderColumns);
+//TODO: simplify this whole function. No need to care about mapping
+//        foreach ($xAxisOrderColumns as 
+//        $this->xAxisQuery->setOrder($xAxisOrderColumns);
+//        $this->yAxisQuery->setOrder($yAxisOrderColumns);
         return $this;
     }
 

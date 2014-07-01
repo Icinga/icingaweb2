@@ -32,8 +32,8 @@ namespace Icinga\Application\Modules;
 use Icinga\Application\ApplicationBootstrap;
 use Icinga\Application\Icinga;
 use Icinga\Logger\Logger;
-use Icinga\Data\DataArray\Datasource as ArrayDatasource;
-use Icinga\Data\DataArray\Query as ArrayQuery;
+use Icinga\Data\DataArray\ArrayDatasource;
+use Icinga\Data\SimpleQuery;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\SystemPermissionException;
 use Icinga\Exception\ProgrammingError;
@@ -110,7 +110,7 @@ class Manager
     /**
      * Query interface for the module manager
      *
-     * @return ArrayQuery
+     * @return SimpleQuery
      */
     public function select()
     {

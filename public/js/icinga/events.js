@@ -70,8 +70,37 @@
             $('input.autofocus', el).focus();
 
             // replace all sparklines
-            $('span.sparkline', el).sparkline('html', { enableTagOptions: true });
-
+            $('span.sparkline', el).each(function(i, element) {
+                // read custom options
+                var $spark            = $(element);
+                var labels            = $spark.attr('labels').split('|');
+                var formatted         = $spark.attr('formatted').split('|');
+                var tooltipChartTitle = $spark.attr('sparkTooltipChartTitle') || '';
+                var format            = $spark.attr('tooltipformat');
+                var hideEmpty         = $spark.attr('hideEmptyLabel') === 'true';
+                $spark.sparkline(
+                    'html',
+                    {
+                        enableTagOptions: true,
+                        tooltipFormatter: function (sparkline, options, fields) {
+                            var out       = format;
+                            if (hideEmpty && fields.offset === 3) {
+                                return '';
+                            }
+                            var replace   = {
+                                title:     tooltipChartTitle,
+                                label:     labels[fields.offset] ? labels[fields.offset] : fields.offset,
+                                formatted: formatted[fields.offset] ? formatted[fields.offset] : '',
+                                value:     fields.value,
+                                percent:   Math.round(fields.percent * 100) / 100
+                            };
+                            $.each(replace, function(key, value) {
+                                out = out.replace('{{' + key + '}}', value);
+                            });
+                            return out;
+                        }
+                });
+            });
             var searchField = $('#menu input.search', el);
             // Remember initial search field value if any
             if (searchField.length && searchField.val().length) {
@@ -110,6 +139,7 @@
 
             // We support an 'autosubmit' class on dropdown form elements
             $(document).on('change', 'form select.autosubmit', { self: this }, this.autoSubmitForm);
+            $(document).on('change', 'form input.autosubmit', { self: this }, this.autoSubmitForm);
 
             $(document).on('keyup', '#menu input.search', {self: this}, this.autoSubmitSearch);
 
@@ -362,35 +392,25 @@
             var $tr      = $(this);
             var $table   = $tr.closest('table.multiselect');
             var data     = self.icinga.ui.getSelectionKeys($table);
-            var multisel = $table.hasClass('multiselect');
             var url      = $table.data('icinga-multiselect-url');
-
-            // When the selection points to a link, select the closest row
-            if ($tr.prop('tagName').toLowerCase() === 'a') {
-                $tr = $tr.closest('tr').first();
-            }
 
             event.stopPropagation();
             event.preventDefault();
 
-            if (icinga.events.handleExternalTarget($tr)) {
-                // link handled externally
-                return false;
-            }
-            if (multisel && !data) {
-                icinga.logger.error('A table with multiselection must define the attribute "data-icinga-multiselect-data"');
+            if (!data) {
+                icinga.logger.error('multiselect table has no data-icinga-multiselect-data');
                 return;
             }
-            if (multisel && !url) {
-                icinga.logger.error('A table with multiselection must define the attribute "data-icinga-multiselect-url"');
+            if (!url) {
+                icinga.logger.error('multiselect table has no data-icinga-multiselect-url');
                 return;
             }
 
             // update selection
-            if ((event.ctrlKey || event.metaKey) && multisel) {
+            if (event.ctrlKey || event.metaKey) {
                 icinga.ui.toogleTableRowSelection($tr);
                 // multi selection
-            } else if (event.shiftKey && multisel) {
+            } else if (event.shiftKey) {
                 // range selection
                 icinga.ui.addTableRowRangeSelection($tr);
             } else {
@@ -400,28 +420,27 @@
             // focus only the current table.
             icinga.ui.focusTable($table[0]);
 
-            // update url
             var $target = self.getLinkTargetFor($tr);
-            if (multisel) {
-                var $trs = $table.find('tr[href].active');
-                if ($trs.length > 1) {
-                    var queries = [];
-                    var selectionData = icinga.ui.getSelectionSetData($trs, data);
-                    var query = icinga.ui.selectionDataToQuery(selectionData, data, icinga);
-                    icinga.loader.loadUrl(url + '?' + query, $target);
-                    icinga.ui.storeSelectionData(selectionData);
-                } else if ($trs.length === 1) {
-                    // display a single row
-                    icinga.loader.loadUrl($tr.attr('href'), $target);
-                    icinga.ui.storeSelectionData($tr.attr('href'));
-                } else {
-                    // display nothing
-                    icinga.loader.loadUrl('#');
-                    icinga.ui.storeSelectionData(null);
-                }
-            } else {
+
+            var $trs = $table.find('tr[href].active');
+            if ($trs.length > 1) {
+                var selectionData = icinga.ui.getSelectionSetData($trs, data);
+                var query = icinga.ui.selectionDataToQuery(selectionData);
+                icinga.loader.loadUrl(url + '?' + query, $target);
+                icinga.ui.storeSelectionData(selectionData);
+            } else if ($trs.length === 1) {
+                // display a single row
+                $tr = $trs.first();
                 icinga.loader.loadUrl($tr.attr('href'), $target);
+                icinga.ui.storeSelectionData($tr.attr('href'));
+            } else {
+                // display nothing
+                if ($target.attr('id') === 'col2') {
+                    icinga.ui.layout1col();
+                }
+                icinga.ui.storeSelectionData(null);
             }
+
             return false;
         },
 
@@ -440,6 +459,17 @@
             var isMenuLink = $a.closest('#menu').length > 0;
             var formerUrl;
             var remote = /^(?:[a-z]+:)\/\//;
+            if (href.match(/^javascript:/)) {
+                return true;
+            }
+
+            // Ignore clicks on multiselect table inner links while key pressed
+            if ((event.ctrlKey || event.metaKey || event.shiftKey) &&
+                ! $a.is('tr[href]') && $a.closest('table.multiselect').length > 0 &&
+                $a.closest('tr[href]').length > 0)
+            {
+                return self.rowSelected.call($a.closest('tr[href]'), event);
+            }
 
             // Let remote links pass through
             if  (href.match(remote)) {
@@ -531,11 +561,16 @@
                 // Simulate _next to prepare migration to dynamic column layout
                 // YES, there are duplicate lines right now.
                 if (targetId === '_next') {
-                    if ($el.closest('#col2').length) {
-                        this.icinga.ui.moveToLeft();
+                    if (this.icinga.ui.hasOnlyOneColumn()) {
+                        targetId = 'col1';
+                        $target = $('#' + targetId);
+                    } else {
+                        if ($el.closest('#col2').length) {
+                            this.icinga.ui.moveToLeft();
+                        }
+                        targetId = 'col2';
+                        $target = $('#' + targetId);
                     }
-                    targetId = 'col2';
-                    $target = $('#' + targetId);
                 } else if (targetId === '_self') {
                     $target = $el.closest('.container');
                     targetId = $target.attr('id');

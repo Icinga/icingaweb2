@@ -29,14 +29,22 @@
 
 namespace Icinga\Module\Monitoring;
 
-use Icinga\Web\Controller\ActionController;
+use Icinga\Web\Controller\ModuleActionController;
+use Icinga\Web\Url;
 use Icinga\File\Csv;
 
 /**
  * Base class for all monitoring action controller
  */
-class Controller extends ActionController
+class Controller extends ModuleActionController
 {
+    /**
+     * The backend used for this controller
+     *
+     * @var Backend
+     */
+    protected $backend;
+
     /**
      * Compact layout name
      *
@@ -46,6 +54,12 @@ class Controller extends ActionController
      * @var string
      */
     protected $compactView;
+
+    protected function moduleInit()
+    {
+        $this->backend = Backend::createBackend($this->_getParam('backend'));
+        $this->view->url = Url::fromRequest();
+    }
 
     protected function handleFormatRequest($query)
     {
@@ -62,7 +76,7 @@ class Controller extends ActionController
         if ($this->_getParam('format') === 'json'
             || $this->_request->getHeader('Accept') === 'application/json') {
             header('Content-type: application/json');
-            echo json_encode($query->fetchAll());
+            echo json_encode($query->getQuery()->fetchAll());
             exit;
         }
         if ($this->_getParam('format') === 'csv'

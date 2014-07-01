@@ -18,19 +18,17 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
             if (!$perfdata->isPercentage() && $perfdata->getMaximumValue() === null) {
                 continue;
             }
-
-            $pieChart = new InlinePie($this->calculatePieChartData($perfdata));
+            $pieChart = $this->createInlinePie($perfdata, $label, htmlspecialchars($label));
             if ($compact) {
-                $pieChart->setTitle(
-                    htmlspecialchars($label) . ': ' . htmlspecialchars($this->formatPerfdataValue($perfdata))
-                );
-                if (!$float) {
+                if (! $float) {
                     $result .= $pieChart->render();
                 } else {
                     $result .= '<div style="float: right;">' . $pieChart->render() . '</div>';
                 }
             } else {
-                $pieChart->setTitle(htmlspecialchars($label));
+                if (! $perfdata->isPercentage()) {
+                    $pieChart->setTooltipFormat('{{label}}: {{formatted}} ({{percent}}%)');
+                }
                 $pieChart->setStyle('float: left; margin: 0.2em 0.5em 0.2em 0.5em;');
                 $table[] = '<tr><th>' . $pieChart->render()
                     . htmlspecialchars($label)
@@ -59,9 +57,9 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
         $gray = $unusedValue;
         $green = $orange = $red = 0;
         // TODO(#6122): Add proper treshold parsing.
-        if ($perfdata->getCriticalTreshold() && $perfdata->getValue() > $perfdata->getCriticalTreshold()) {
+        if ($perfdata->getCriticalThreshold() && $perfdata->getValue() > $perfdata->getCriticalThreshold()) {
             $red = $usedValue;
-        } elseif ($perfdata->getWarningTreshold() && $perfdata->getValue() > $perfdata->getWarningTreshold()) {
+        } elseif ($perfdata->getWarningThreshold() && $perfdata->getValue() > $perfdata->getWarningThreshold()) {
             $orange = $usedValue;
         } else {
             $green = $usedValue;
@@ -81,5 +79,26 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
         }
 
         return $perfdata->getValue();
+    }
+
+    protected function createInlinePie(Perfdata $perfdata, $title, $label = '')
+    {
+        $pieChart = new InlinePie($this->calculatePieChartData($perfdata), $title);
+        $pieChart->setLabel($label);
+        $pieChart->setHideEmptyLabel();
+
+        //$pieChart->setHeight(32)->setWidth(32);
+        if ($perfdata->isBytes()) {
+            $pieChart->setTooltipFormat('{{label}}: {{formatted}} ({{percent}}%)');
+            $pieChart->setNumberFormat(InlinePie::NUMBER_FORMAT_BYTES);
+        } else if ($perfdata->isSeconds()) {
+            $pieChart->setTooltipFormat('{{label}}: {{formatted}} ({{percent}}%)');
+            $pieChart->setNumberFormat(InlinePie::NUMBER_FORMAT_TIME);
+        } else {
+            $pieChart->setTooltipFormat('{{label}}: {{formatted}}%');
+            $pieChart->setNumberFormat(InlinePie::NUMBER_FORMAT_RATIO);
+            $pieChart->setHideEmptyLabel();
+        }
+        return $pieChart;
     }
 }

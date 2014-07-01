@@ -33,7 +33,7 @@ use Icinga\Exception\ProgrammingError;
 use Zend_Config;
 use Icinga\Util\ConfigAwareFactory;
 use Icinga\Exception\ConfigurationError;
-use Icinga\Data\Db\Connection as DbConnection;
+use Icinga\Data\Db\DbConnection;
 use Icinga\Protocol\Livestatus\Connection as LivestatusConnection;
 use Icinga\Protocol\Statusdat\Reader as StatusdatReader;
 use Icinga\Protocol\Ldap\Connection as LdapConnection;

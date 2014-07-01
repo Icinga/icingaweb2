@@ -1,25 +1,19 @@
 <?php
-    $objectName = $this->is_service ? 'Services' : 'Hosts';
-?>
 
+$objectName = $this->is_service ? 'Services' : 'Hosts';
+
+?>
 <tr class="newsection">
-    <th>
-        <?= count($downtimes) ?> Downtimes
-    </th>
-    <td>
-        <a href="<?=$this->href('monitoring/command/removedowntime', $this->target); ?>">
-            <?= $this->icon('remove_petrol.png') ?> Remove Downtimes
-        </a> <br />
-        <a
-            title="Schedule downtimes for all selected <?= $objectName ?>"
-            href="<?= $this->href('monitoring/command/scheduledowntime', $this->target); ?>"
-            >
-            <?= $this->icon('in_downtime_petrol.png') ?> Schedule Downtimes
-        </a>
-    </td>
-    <td>
-        Change <a data-base-target='_next' href="<?= $this->href('') ?>"
-            > <?= count($downtimes) ?> downtimes
-        </a>.
-    </td>
+  <th><?= count($downtimes) ?> Downtimes</th>
+  <td>
+    <a href="<?=$this->href('monitoring/command/removedowntime', $this->target); ?>"><?=
+      $this->icon('remove_petrol.png') ?>Remove Downtimes</a><br />
+    <a title="Schedule downtimes for all selected <?= $objectName ?>" href="<?=
+      $this->href('monitoring/command/scheduledowntime', $this->target) ?>"><?=
+      $this->icon('in_downtime_petrol.png')
+      ?> Schedule Downtimes</a>
+  </td>
+  <td>
+    Change <a data-base-target='_next' href="<?= $this->href('') ?>"> <?= count($downtimes) ?> downtimes</a>.
+  </td>
 </tr>

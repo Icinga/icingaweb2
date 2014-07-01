@@ -28,6 +28,8 @@
          */
         this.requests = {};
 
+        this.iconCache = {};
+
         this.autorefreshEnabled = true;
     };
 
@@ -68,7 +70,7 @@
             }
 
             // If we have a pending request for the same target...
-            if (id in this.requests) {
+            if (typeof this.requests[id] !== 'undefined') {
                 if (autorefresh) {
                     return false;
                 }
@@ -139,11 +141,11 @@
 
         stopPendingRequestsFor: function ($el) {
             var id;
-            if (typeof $el !== 'undefined' || ! (id = $el.attr('id'))) {
+            if (typeof $el === 'undefined' || ! (id = $el.attr('id'))) {
                 return;
             }
 
-            if (id in this.requests) {
+            if (typeof this.requests[id] !== 'undefined') {
                 this.requests[id].abort();
             }
         },
@@ -161,7 +163,7 @@
             $('.container').filter(this.filterAutorefreshingContainers).each(function (idx, el) {
                 var $el = $(el);
                 var id = $el.attr('id');
-                if (id in self.requests) {
+                if (typeof self.requests[id] !== 'undefined') {
                     self.icinga.logger.debug('No refresh, request pending for ', id);
                     return;
                 }
@@ -222,21 +224,64 @@
 
         processNotificationHeader: function(req) {
             var header = req.getResponseHeader('X-Icinga-Notification');
+            var self = this;
             if (! header) return false;
-            var parts = decodeURIComponent(header).split(' ');
-            this.createNotice(parts.shift(), parts.join(' '));
+            var list = header.split('&');
+            $.each(list, function(idx, el) {
+                var parts = decodeURIComponent(el).split(' ');
+                self.createNotice(parts.shift(), parts.join(' '));
+            });
             return true;
         },
 
+        addUrlFlag: function(url, flag)
+        {
+            if (url.match(/\?/)) {
+                return url + '&' + flag;
+            } else {
+                return url + '?' + flag;
+            }
+        },
+
         processRedirectHeader: function(req) {
+            var icinga = this.icinga;
             var redirect = req.getResponseHeader('X-Icinga-Redirect');
             if (! redirect) return false;
-            this.icinga.logger.debug(
+            icinga.logger.debug(
                 'Got redirect for ', req.$target, ', URL was ' + redirect
             );
             redirect = decodeURIComponent(redirect);
-            this.loadUrl(redirect, req.$target);
+
+            if (req.getResponseHeader('X-Icinga-Rerender-Layout')) {
+                var redirectionUrl = this.addUrlFlag(redirect, 'renderLayout');
+                this.loadUrl(redirectionUrl, $('#layout')).url = redirect;
+            } else {
+                if (req.$target.attr('id') === 'col2') { // TODO: multicol
+                    if ($('#col1').data('icingaUrl') === redirect) {
+                        icinga.ui.layout1col();
+                        req.$target = $('#col1');
+                    }
+                }
+
+                this.loadUrl(redirect, req.$target);
+            }
             return true;
+        },
+
+        cacheLoadedIcons: function($container) {
+            // TODO: this is just a prototype, disabled for now
+            return;
+
+            var self = this;
+            $('img.icon', $container).each(function(idx, img) {
+                var src = $(img).attr('src');
+                if (typeof self.iconCache[src] !== 'undefined') {
+                    return;
+                }
+                var cache = new Image();
+                cache.src = src
+                self.iconCache[src] = cache;
+            });
         },
 
         /**
@@ -264,6 +309,11 @@
                 'Got response for ', req.$target, ', URL was ' + url
             );
             this.processNotificationHeader(req);
+
+            var cssreload = req.getResponseHeader('X-Icinga-Reload-Css');
+            if (cssreload) {
+                this.icinga.ui.reloadCss();
+            }
 
             var redirect = req.getResponseHeader('X-Icinga-Redirect');
             if (this.processRedirectHeader(req)) return;
@@ -312,6 +362,7 @@
 
             var target = req.getResponseHeader('X-Icinga-Container');
             var newBody = false;
+            var oldNotifications = false;
             if (target) {
                 if (target === 'ignore') {
                     return;
@@ -321,6 +372,11 @@
                 delete this.requests[req.$target.attr('id')];
 
                 req.$target = $('#' + target);
+                if (target === 'layout') {
+                    oldNotifications = $('#notifications li').detach();
+                }
+                // We assume target === 'layout' right now. This might not be correct
+                this.icinga.ui.layout1col();
                 newBody = true;
             }
 
@@ -339,11 +395,6 @@
                 req.$target.removeData('icingaModule');
             }
             req.$target.attr('class', classes.join(' '));
-
-            var cssreload = req.getResponseHeader('X-Icinga-CssReload');
-            if (cssreload) {
-                this.icinga.ui.reloadCss();
-            }
 
             var title = req.getResponseHeader('X-Icinga-Title');
             if (title && ! req.autorefresh && req.$target.closest('.dashboard').length === 0) {
@@ -397,16 +448,6 @@
 
             req.$target.data('icingaUrl', req.url);
 
-            // Update history when necessary. Don't do so for requests triggered
-            // by history or autorefresh events
-            if (! req.historyTriggered && ! req.autorefresh) {
-
-                // We only want to care about top-level containers
-                if (req.$target.parent().closest('.container').length === 0) {
-                    this.icinga.history.pushCurrentState();
-                }
-            }
-
             this.icinga.ui.initializeTriStates($resp);
 
             /* Should we try to fiddle with responses containing full HTML? */
@@ -433,13 +474,17 @@
             if (rendered) return;
 
             // .html() removes outer div we added above
-            this.renderContentToContainer($resp.html(), req.$target, req.action);
+            this.renderContentToContainer($resp.html(), req.$target, req.action, req.autorefresh);
+            if (oldNotifications) {
+                oldNotifications.appendTo($('#notifications'));
+            }
             if (url.match(/#/)) {
                 this.icinga.ui.scrollContainerToAnchor(req.$target, url.split(/#/)[1]);
             }
             if (newBody) {
                 this.icinga.ui.fixDebugVisibility().triggerWindowResize();
             }
+            self.cacheLoadedIcons(req.$target);
 
             if (active) {
                 var focusedUrl = this.icinga.ui.getFocusedContainerDataUrl();
@@ -483,6 +528,21 @@
          * Regardless of whether a request succeeded of failed, clean up
          */
         onComplete: function (req, textStatus) {
+            // Update history when necessary. Don't do so for requests triggered
+            // by history or autorefresh events
+            if (! req.historyTriggered && ! req.autorefresh) {
+                if (req.$target.hasClass('container')) {
+                    // We only want to care about top-level containers
+                    if (req.$target.parent().closest('.container').length === 0) {
+                        this.icinga.history.pushCurrentState();
+                    }
+                } else {
+                    // Request wasn't for a container, so it's usually the body
+                    // or the full layout. Push request URL to history:
+                    this.icinga.history.pushUrl(req.url);
+                }
+            }
+
             req.$target.data('lastUpdate', (new Date()).getTime());
             delete this.requests[req.$target.attr('id')];
             this.icinga.ui.fadeNotificationsAway();
@@ -515,7 +575,8 @@
                 this.renderContentToContainer(
                     req.responseText,
                     req.$target,
-                    req.action
+                    req.action,
+                    req.autorefresh
                 );
 
                 // Header example:
@@ -567,7 +628,24 @@
         /**
          * Smoothly render given HTML to given container
          */
-        renderContentToContainer: function (content, $container, action) {
+        renderContentToContainer: function (content, $container, action, autorefresh) {
+            // Container update happens here
+            var scrollPos = false;
+            var self = this;
+            var containerId = $container.attr('id');
+            if (typeof containerId !== 'undefined') {
+                scrollPos = $container.scrollTop();
+            }
+
+            var origFocus = document.activeElement;
+            if (typeof containerId !== 'undefined' && autorefresh && origFocus && $(origFocus).closest('form').length && $container.has($(origFocus)) && $(origFocus).closest('#' + containerId).length && ! $(origFocus).hasClass('autosubmit')) {
+                this.icinga.logger.debug('Not changing content, form has focus');
+                return;
+            }
+
+            // TODO: We do not want to wrap this twice...
+            var $content = $('<div>' + content + '</div>');
+
             // Disable all click events while rendering
             $('*').click(function (event) {
                 event.stopImmediatePropagation();
@@ -575,17 +653,9 @@
                 event.preventDefault();
             });
 
-            // Container update happens here
-            var scrollPos = false;
-            var containerId = $container.attr('id');
-            if (typeof containerId !== 'undefined') {
-                scrollPos = $container.scrollTop();
-            }
-
-            var origFocus = document.activeElement;
-
-            // TODO: We do not want to wrap this twice...
-            var $content = $('<div>' + content + '</div>');
+            $('.container', $container).each(function() {
+                self.stopPendingRequestsFor($(this));
+            });
 
             if (false &&
                 $('.dashboard', $content).length > 0 &&
@@ -607,6 +677,7 @@
                     $container.append(content);
                 }
             }
+            this.icinga.ui.assignUniqueContainerIds();
 
             if (scrollPos !== false) {
                 $container.scrollTop(scrollPos);

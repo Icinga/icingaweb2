@@ -1,5 +1,4 @@
 <?php
-// @codeCoverageIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga Web 2.
@@ -138,35 +137,25 @@ class SortBox extends AbstractWidget
     {
         $form = new Form();
         $form->setAttrib('class', 'inline');
-        $form->setMethod('GET');
+        $form->setMethod('POST');
         $form->setTokenDisabled();
         $form->setName($this->name);
-        $form->addElement(
-            'select',
-            'sort',
-            array(
-                'label'         => 'Sort By',
-                'multiOptions'  => $this->sortFields,
-                'class' => 'autosubmit'
-            )
-        );
-        $form->addElement(
-            'select',
-            'dir',
-            array(
-                'multiOptions'  => array(
-                    'desc'      => 'Desc',
-                    'asc'       => 'Asc',
-                ),
-                'class' => 'autosubmit'
-
-            )
-        );
+        $form->addElement('select', 'sort', array(
+            'label'         => 'Sort By',
+            'multiOptions'  => $this->sortFields,
+            'style'         => 'width: 12em',
+            'class'         => 'autosubmit',
+        ));
+        $form->addElement('select', 'dir', array(
+            'multiOptions'  => array(
+                'asc'       => 'Asc',
+                'desc'      => 'Desc',
+            ),
+            'style' => 'width: 5em',
+            'class' => 'autosubmit'
+        ));
         $sort = $form->getElement('sort')->setDecorators(array('ViewHelper'));
         $dir = $form->getElement('dir')->setDecorators(array('ViewHelper'));
-        // $form->enableAutoSubmit(array('sort', 'dir'));
-        // $form->addElement($this->createFallbackSubmitButton());
-
         if ($this->request) {
             $form->setAction($this->request->getRequestUri());
             $form->populate($this->request->getParams());
@@ -174,4 +163,3 @@ class SortBox extends AbstractWidget
         return $form;
     }
 }
-// @codeCoverageIgnoreEnd

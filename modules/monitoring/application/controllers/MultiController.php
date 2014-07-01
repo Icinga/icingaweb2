@@ -27,36 +27,25 @@
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use \Icinga\Web\Form;
-use \Icinga\Web\Controller\ActionController;
-use \Icinga\Web\Widget\Tabextension\OutputFormat;
-use \Icinga\Module\Monitoring\Backend;
-use \Icinga\Data\BaseQuery;
-use \Icinga\Web\Widget\Chart\InlinePie;
-use \Icinga\Module\Monitoring\Form\Command\MultiCommandFlagForm;
-use \Icinga\Module\Monitoring\DataView\HostStatus    as HostStatusView;
-use \Icinga\Module\Monitoring\DataView\ServiceStatus as ServiceStatusView;
-use \Icinga\Module\Monitoring\DataView\Comment       as CommentView;
+use Icinga\Web\Form;
+use Icinga\Module\Monitoring\Controller;
+use Icinga\Module\Monitoring\Backend;
+use Icinga\Data\SimpleQuery;
+use Icinga\Web\Widget\Chart\InlinePie;
+use Icinga\Module\Monitoring\Form\Command\MultiCommandFlagForm;
+use Icinga\Web\Widget;
+use Icinga\Data\Filter\Filter;
 
 /**
  * Displays aggregations collections of multiple objects.
  */
-class Monitoring_MultiController extends ActionController
+class Monitoring_MultiController extends Controller
 {
-    public function init()
-    {
-        $this->backend = Backend::createBackend($this->_getParam('backend'));
-        $this->createTabs();
-    }
-
     public function hostAction()
     {
-        $multiFilter = $this->getAllParamsAsArray();
         $errors  = array();
-
-        // Fetch Hosts
-        $hostQuery = HostStatusView::fromRequest(
-            $this->_request,
+        $query = $this->backend->select()->from(
+            'hostStatus',
             array(
                 'host_name',
                 'host_in_downtime',
@@ -68,35 +57,34 @@ class Monitoring_MultiController extends ActionController
                 'host_event_handler_enabled',
                 'host_flap_detection_enabled',
                 'host_active_checks_enabled',
-
                 // columns intended for filter-request
                 'host_problem',
                 'host_handled'
             )
         )->getQuery();
-        $this->applyQueryFilter($hostQuery, $multiFilter);
-        $hosts = $hostQuery->fetchAll();
+        $this->applyQueryFilter($query);
+        $hosts = $query->fetchAll();
 
-        // Fetch comments
-        $commentQuery = $this->applyQueryFilter(
-            CommentView::fromParams(array('backend' => $this->_request->getParam('backend')))->getQuery(),
-            $multiFilter,
-            'comment_host'
-        );
-        $comments = array_keys($this->getUniqueValues($commentQuery->fetchAll(), 'comment_internal_id'));
+        $comments = $this->backend->select()->from('comment', array(
+            'comment_internal_id',
+            'comment_host',
+        ));
+        $this->applyQueryFilter($comments);
+        $uniqueComments = array_keys($this->getUniqueValues($comments->getQuery()->fetchAll(), 'comment_internal_id'));
 
         // Populate view
-        $this->view->objects   = $this->view->hosts = $hosts;
-        $this->view->problems  = $this->getProblems($hosts);
-        $this->view->comments  = isset($comments) ? $comments : $this->getComments($hosts);
+        $this->view->objects = $this->view->hosts = $hosts;
+        $this->view->problems = $this->getProblems($hosts);
+        $this->view->comments = $uniqueComments;
         $this->view->hostnames = $this->getProperties($hosts, 'host_name');
         $this->view->downtimes = $this->getDowntimes($hosts);
-        $this->view->errors    = $errors;
-        $this->view->states    = $this->countStates($hosts, 'host', 'host_name');
-        $this->view->pie       = $this->createPie($this->view->states, $this->view->getHelper('MonitoringState')->getHostStateColors());
-
-        // need the query content to list all hosts
-        $this->view->query = $this->_request->getQuery();
+        $this->view->errors = $errors;
+        $this->view->states = $this->countStates($hosts, 'host', 'host_name');
+        $this->view->pie = $this->createPie(
+            $this->view->states,
+            $this->view->getHelper('MonitoringState')->getHostStateColors(),
+            t('Host State')
+        );
 
         // Handle configuration changes
         $this->handleConfigurationForm(array(
@@ -109,65 +97,63 @@ class Monitoring_MultiController extends ActionController
         ));
     }
 
-
     public function serviceAction()
     {
-        $multiFilter = $this->getAllParamsAsArray();
         $errors = array();
-        $backendQuery = ServiceStatusView::fromRequest(
-            $this->_request,
-            array(
-                'host_name',
-                'host_state',
-                'service_description',
-                'service_handled',
-                'service_state',
-                'service_in_downtime',
-                'service_passive_checks_enabled',
-                'service_notifications_enabled',
-                'service_event_handler_enabled',
-                'service_flap_detection_enabled',
-                'service_active_checks_enabled',
-                'service_obsessing',
+        $query = $this->backend->select()->from('serviceStatus', array(
+            'host_name',
+            'host_state',
+            'service_description',
+            'service_handled',
+            'service_state',
+            'service_in_downtime',
+            'service_passive_checks_enabled',
+            'service_notifications_enabled',
+            'service_event_handler_enabled',
+            'service_flap_detection_enabled',
+            'service_active_checks_enabled',
+            'service_obsessing',
+             // also accept all filter-requests from ListView
+            'service_problem',
+            'service_severity',
+            'service_last_check',
+            'service_state_type',
+            'host_severity',
+            'host_address',
+            'host_last_check'
+        ));
 
-                 // also accept all filter-requests from ListView
-                'service_problem',
-                'service_severity',
-                'service_last_check',
-                'service_state_type',
-                'host_severity',
-                'host_address',
-                'host_last_check'
-            )
-        )->getQuery();
+        $this->applyQueryFilter($query);
+        $services = $query->getQuery()->fetchAll();
 
-        $this->applyQueryFilter($backendQuery, $multiFilter);
-        $services = $backendQuery->fetchAll();
-
-        // Comments
-        $commentQuery = $this->applyQueryFilter(
-            CommentView::fromParams(array('backend' => $this->_request->getParam('backend')))->getQuery(),
-            $multiFilter,
+        $comments = $this->backend->select()->from('comment', array(
+            'comment_internal_id',
             'comment_host',
             'comment_service'
-        );
-        $comments = array_keys($this->getUniqueValues($commentQuery->fetchAll(), 'comment_internal_id'));
+        ));
+        $this->applyQueryFilter($comments);
+        $uniqueComments = array_keys($this->getUniqueValues($comments->getQuery()->fetchAll(), 'comment_internal_id'));
 
         // populate the view
         $this->view->objects        = $this->view->services = $services;
         $this->view->problems       = $this->getProblems($services);
-        $this->view->comments       = isset($comments) ? $comments : $this->getComments($services);
+        $this->view->comments       = $uniqueComments;
         $this->view->hostnames      = $this->getProperties($services, 'host_name');
         $this->view->servicenames   = $this->getProperties($services, 'service_description');
         $this->view->downtimes      = $this->getDowntimes($services);
         $this->view->service_states = $this->countStates($services, 'service');
-        $this->view->host_states    = $this->countStates($services, 'host',  'host_name');
-        $this->view->service_pie    = $this->createPie($this->view->service_states, $this->view->getHelper('MonitoringState')->getServiceStateColors());
-        $this->view->host_pie       = $this->createPie($this->view->host_states, $this->view->getHelper('MonitoringState')->getHostStateColors());
+        $this->view->host_states    = $this->countStates($services, 'host', 'host_name');
+        $this->view->service_pie    = $this->createPie(
+            $this->view->service_states,
+            $this->view->getHelper('MonitoringState')->getServiceStateColors(),
+            t('Service State')
+        );
+        $this->view->host_pie       = $this->createPie(
+            $this->view->host_states,
+            $this->view->getHelper('MonitoringState')->getHostStateColors(),
+            t('Host State')
+        );
         $this->view->errors         = $errors;
-
-        // need the query content to list all hosts
-        $this->view->query = $this->_request->getQuery();
 
         $this->handleConfigurationForm(array(
             'service_passive_checks_enabled' => 'Passive Checks',
@@ -179,38 +165,21 @@ class Monitoring_MultiController extends ActionController
         ));
     }
 
+    protected function applyQueryFilter($query)
+    {
+        $params = clone $this->params;
+        $modifyFilter = $params->shift('modifyFilter');
 
-    /**
-     * Apply the query-filter received
-     *
-     * @param $backendQuery  BaseQuery  The query to apply the filter to
-     * @param $filter        array      Containing the queries of the current request, converted into an
-     *                                      array-structure.
-     * @param $hostColumn    string     The name of the host-column in the BaseQuery, defaults to 'host_name'
-     * @param $serviceColumn string     The name of the service-column in the BaseQuery, defaults to 'service-description'
-     *
-     * @return BaseQuery    The given BaseQuery
-     */
-    private function applyQueryFilter(
-        BaseQuery $backendQuery,
-        array $filter,
-        $hostColumn = 'host_name',
-        $serviceColumn = 'service_description'
-    ) {
-        // fetch specified hosts
-        foreach ($filter as $index => $expr) {
-            // Every query entry must define at least the host.
-            if (!array_key_exists('host', $expr)) {
-                $errors[] = 'Query ' . $index . ' misses property host.';
-                continue;
-            }
-            // apply filter expressions from query
-            $backendQuery->orWhere($hostColumn, $expr['host']);
-            if (array_key_exists('service', $expr)) {
-                $backendQuery->andWhere($serviceColumn, $expr['service']);
-            }
+        $filter = Filter::fromQueryString((string) $params);
+        if ($modifyFilter) {
+            $this->view->filterWidget = Widget::create('filterEditor', array(
+                'filter' => $filter,
+                'query'  => $query
+            ));
         }
-        return $backendQuery;
+        $this->view->filter = $filter;
+        $query->applyFilter($filter);
+        return $query;
     }
 
     /**
@@ -224,13 +193,12 @@ class Monitoring_MultiController extends ActionController
     private function getUniqueValues($values, $key)
     {
         $unique = array();
-        foreach ($values as $value)
-        {
-			if (is_array($value)) {
-				$unique[$value[$key]] = $value[$key];
-			} else {
-            	$unique[$value->$key] = $value->$key;
-			}
+        foreach ($values as $value) {
+            if (is_array($value)) {
+                $unique[$value[$key]] = $value[$key];
+            } else {
+                $unique[$value->$key] = $value->$key;
+            }
         }
         return $unique;
     }
@@ -279,10 +247,11 @@ class Monitoring_MultiController extends ActionController
         return $states;
     }
 
-    private function createPie($states, $colors)
+    private function createPie($states, $colors, $title)
     {
-        $chart = new InlinePie(array_values($states), $colors);
-        $chart->setLabels(array_keys($states))->setHeight(100)->setWidth(100);
+        $chart = new InlinePie(array_values($states), $title, $colors);
+        $chart->setLabel(array_keys($states))->setHeight(100)->setWidth(100);
+        $chart->setTitle($title);
         return $chart;
     }
 
@@ -338,50 +307,5 @@ class Monitoring_MultiController extends ActionController
         if ($this->_request->isPost() === false) {
             $this->view->form->initFromItems($this->view->objects);
         }
-    }
-
-    /**
-     * "Flips" the structure of the objects created by _getAllParams
-     *
-     * Regularly, _getAllParams would return queries like <b>host[0]=value1&service[0]=value2</b> as
-     * two entirely separate arrays. Instead, we want it as one single array, containing one single object
-     * for each index, containing all of its members as keys.
-     *
-     * @return array    An array of all query parameters (See example above)
-     *                  <b>
-     *                      array( <br />
-     *                          0 => array(host => value1, service => value2), <br />
-     *                          ... <br />
-     *                      )
-     *                  </b>
-     */
-    private function getAllParamsAsArray()
-    {
-        $details = $this->_getAllParams();
-        $queries = array();
-
-        foreach ($details as $property => $values) {
-            if (!is_array($values)) {
-                continue;
-            }
-            foreach ($values as $index => $value) {
-                if (!array_key_exists($index, $queries)) {
-                    $queries[$index] = array();
-                }
-                $queries[$index][$property] = $value;
-            }
-        }
-        return $queries;
-    }
-
-    /**
-     * Return all tabs for this controller
-     *
-     * @return Tabs
-     */
-    private function createTabs()
-    {
-        $tabs = $this->getTabs();
-        $tabs->extend(new OutputFormat());
     }
 }

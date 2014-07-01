@@ -1,5 +1,4 @@
 <?php
-// @codingStandardsIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga Web 2.
@@ -29,11 +28,6 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 
 use Icinga\Module\Monitoring\Controller as MonitoringController;
-use Icinga\Module\Monitoring\Backend;
-
-use Icinga\Module\Monitoring\DataView\Runtimevariables as RuntimevariablesView;
-use Icinga\Module\Monitoring\DataView\Programstatus as ProgramstatusView;
-use Icinga\Module\Monitoring\DataView\Runtimesummary as RuntimesummaryView;
 
 /**
  * Display process information and global commands
@@ -41,17 +35,12 @@ use Icinga\Module\Monitoring\DataView\Runtimesummary as RuntimesummaryView;
 class Monitoring_ProcessController extends MonitoringController
 {
     /**
-     * @var \Icinga\Module\Monitoring\Backend
-     */
-    public $backend;
-    /**
      * Retrieve backend and hooks for this controller
      *
      * @see ActionController::init
      */
     public function init()
     {
-        $this->backend = Backend::createBackend($this->_getParam('backend'));
         $this->getTabs()->add('info', array(
             'title' => 'Process Info',
             'url' =>'monitoring/process/info'
@@ -66,26 +55,50 @@ class Monitoring_ProcessController extends MonitoringController
         $this->getTabs()->activate('info');
         $this->setAutorefreshInterval(10);
 
-        $this->view->programstatus = ProgramstatusView::fromRequest(
-            $this->_request
-        )->getQuery()->fetchRow();
+        // TODO: This one is broken right now, doublecheck default columns
+        $this->view->programstatus = $this->backend->select()
+            ->from('programstatus', array(
+                'id',
+                'status_update_time',
+                'program_start_time',
+                'program_end_time',
+                'is_currently_running',
+                'process_id',
+                'daemon_mode',
+                'last_command_check',
+                'last_log_rotation',
+                'notifications_enabled',
+                'disable_notif_expire_time',
+                'active_service_checks_enabled',
+                'passive_service_checks_enabled',
+                'active_host_checks_enabled',
+                'passive_host_checks_enabled',
+                'event_handlers_enabled',
+                'flap_detection_enabled',
+                'failure_prediction_enabled',
+                'process_performance_data',
+                'obsess_over_hosts',
+                'obsess_over_services',
+                'modified_host_attributes',
+                'modified_service_attributes',
+                'global_host_event_handler',
+                'global_service_event_handler'
+            ))
+            ->getQuery()->fetchRow();
 
-        $this->view->backendName = $this->backend->getDefaultBackendName();
+        $this->view->backendName = $this->backend->getName();
     }
 
     public function performanceAction()
     {
         $this->getTabs()->activate('performance');
         $this->setAutorefreshInterval(10);
-        $this->view->runtimevariables = (object) RuntimevariablesView::fromRequest(
-            $this->_request,
-            array('varname', 'varvalue')
-        )->getQuery()->fetchPairs();
+        $this->view->runtimevariables = (object) $this->backend->select()
+            ->from('runtimevariables', array('varname', 'varvalue'))
+            ->getQuery()->fetchPairs();
 
-        $this->view->checkperformance = $query = RuntimesummaryView::fromRequest(
-            $this->_request
-        )->getQuery()->fetchAll();
+        $this->view->checkperformance = $this->backend->select()
+            ->from('runtimesummary')
+            ->getQuery()->fetchAll();
     }
 }
-
-// @codingStandardsIgnoreStop

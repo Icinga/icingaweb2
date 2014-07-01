@@ -1,5 +1,4 @@
 <?php
-// @codingStandardsIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga Web 2.
@@ -101,14 +100,14 @@ class Inline {
         foreach ($this->data as $key => $value) {
             $this->data[$key] = (int)$value;
         }
-        for ($i = 0; $i < sizeof($this->data); $i++) {
+        for ($i = 0; $i < count($this->data); $i++) {
             $this->labels[] = '';
         }
 
         if (array_key_exists('colors', $_GET)) {
             $this->colors = $this->sanitizeStringArray(explode(',', $_GET['colors']));
         }
-        while (sizeof($this->colors) < sizeof($this->data)) {
+        while (count($this->colors) < count($this->data)) {
             $this->colors[] = '#FEFEFE';
         }
 

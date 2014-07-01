@@ -1,5 +1,4 @@
 <?php
-// @codeCoverageIgnoreStart
 
 namespace Icinga\User;
 
@@ -56,4 +55,3 @@ class Message
         return $this->level;
     }
 }
-// @codeCoverageIgnoreEnd

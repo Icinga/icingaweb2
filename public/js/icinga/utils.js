@@ -54,6 +54,19 @@
         },
 
         /**
+         * Format the given byte-value into a human-readable string
+         *
+         * @param   {number}    The amount of bytes to format
+         * @returns {string}    The formatted string
+         */
+        formatBytes: function (bytes) {
+            var log2  = Math.log(bytes) / Math.LN2;
+            var pot   = Math.floor(log2 / 10);
+            var unit  = (['b', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB'])[pot];
+            return ((bytes / Math.pow(1024, pot)).toFixed(2)) + ' ' + unit;
+        },
+
+        /**
         * Return whether the given element is visible in the users view
         *
         * Borrowed from: http://stackoverflow.com/q/487073

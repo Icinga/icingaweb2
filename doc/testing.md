@@ -57,7 +57,7 @@ database test looks like this:
 
         /**
          * @dataProvider    mysqlDb
-         * @param           Icinga\Data\Db\Connection    $mysqlDb
+         * @param           Icinga\Data\Db\DbConnection    $mysqlDb
          */
         public function testSomethingWithMySql($mysqlDb)
         {

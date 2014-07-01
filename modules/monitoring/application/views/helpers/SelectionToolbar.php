@@ -12,6 +12,7 @@ class Zend_View_Helper_SelectionToolbar extends Zend_View_Helper_Abstract
      */
     public function selectionToolbar($type, $target = null)
     {
+        return '';
         if ($type == 'multi') {
             return '<div class="selection-toolbar">'
                 . '<a href="' . $target . '" data-base-target="_next"> Show All </a> </div>';

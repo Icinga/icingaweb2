@@ -1,5 +1,4 @@
 <?php
-// @codingStandardsIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga Web 2.
@@ -31,14 +30,13 @@
 use Icinga\Application\Icinga;
 use Icinga\Application\Config;
 use Icinga\Logger\Logger;
-use Icinga\Module\Monitoring\DataView\HostStatus;
-use Icinga\Module\Monitoring\DataView\ServiceStatus;
 use Icinga\Module\Monitoring\Form\Command\DisableNotificationWithExpireForm;
 use Icinga\Module\Monitoring\Form\Command\SingleArgumentCommandForm;
 use Icinga\Web\Form;
 use Icinga\Web\Url;
+use Icinga\Data\Filter\Filter;
 use Icinga\Web\Notification;
-use Icinga\Web\Controller\ActionController;
+use Icinga\Module\Monitoring\Controller;
 use Icinga\Protocol\Commandpipe\CommandPipe;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\MissingParameterException;
@@ -58,7 +56,7 @@ use Icinga\Module\Monitoring\Form\Command\SubmitPassiveCheckResultForm;
  *
  * Interface to send commands and display forms
  */
-class Monitoring_CommandController extends ActionController
+class Monitoring_CommandController extends Controller
 {
     const DEFAULT_VIEW_SCRIPT = 'renderform';
 
@@ -182,21 +180,21 @@ class Monitoring_CommandController extends ActionController
             $servicename =  $this->getParam('service', null);
 
             if (!$hostname && !$servicename) {
-                throw new MissingParameterException("No target given for this command");
-            }
-
-            if ($hostname) {
-                $view = HostStatus::fromRequest($this->_request);
+                throw new MissingParameterException('No target given for this command');
             }
 
             if ($servicename && !$hostOnly) {
                 $fields[] = 'service_description';
-                $view = ServiceStatus::fromRequest($this->_request);
+                $query = $this->backend->select()
+                    ->from('serviceStatus', $fields)
+                    ->where('host', $hostname)
+                    ->where('service', $servicename);
+            } elseif ($hostname) {
+                $query = $this->backend->select()->from('hostStatus', $fields)->where('host', $hostname);
+            } else {
+                throw new MissingParameterException('hostOnly command got no hostname');
             }
-
-            $query = $view->getQuery()->from("status", $fields);
-
-            return $data = $query->fetchAll();
+            return $query->getQuery()->fetchAll();
 
         } catch (\Exception $e) {
             Logger::error(
@@ -1119,4 +1117,3 @@ class Monitoring_CommandController extends ActionController
         }
     }
 }
-// @codingStandardsIgnoreStop

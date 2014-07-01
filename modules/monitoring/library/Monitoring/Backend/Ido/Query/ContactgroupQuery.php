@@ -41,17 +41,17 @@ class ContactgroupQuery extends IdoQuery
             'service_description' => 'so.name2 COLLATE latin1_general_ci',
         )
     );
+
     protected $useSubqueryCount = true;
 
     protected function joinBaseTables()
     {
-        $this->baseQuery = $this->db->select()->from(
+        $this->select->from(
             array('cg' => $this->prefix . 'contactgroups'),
             array()
         )->join(
             array('cgo' => $this->prefix . 'objects'),
-            'cg.contactgroup_object_id = cgo.' . $this->object_id
-          . ' AND cgo.is_active = 1',
+            'cg.contactgroup_object_id = cgo.' . $this->object_id . ' AND cgo.is_active = 1',
             array()
         );
 
@@ -60,7 +60,7 @@ class ContactgroupQuery extends IdoQuery
 
     protected function joinContacts()
     {
-        $this->baseQuery->distinct()->join(
+        $this->select->distinct()->join(
             array('cgm' => $this->prefix . 'contactgroup_members'),
             'cgm.contactgroup_id = cg.contactgroup_id',
             array()
@@ -77,7 +77,7 @@ class ContactgroupQuery extends IdoQuery
 
     protected function joinHosts()
     {
-        $this->baseQuery->distinct()->join(
+        $this->select->distinct()->join(
             array('hcg' => $this->prefix . 'host_contactgroups'),
             'hcg.contactgroup_object_id = cg.contactgroup_object_id',
             array()
@@ -94,10 +94,10 @@ class ContactgroupQuery extends IdoQuery
 
     protected function joinServices()
     {
-        $scgSub = $this->db->select()->distinct()
-            ->from($this->prefix . 'service_contactgroups', array(
-            'service_id', 'contactgroup_object_id'
-            ));
+        $scgSub = $this->db->select()->distinct()->from(
+            $this->prefix . 'service_contactgroups',
+            array('contactgroup_object_id', 'service_id')
+        );
 
             /*
             This subselect is a workaround for a fucking stupid bug. Other tables
@@ -113,7 +113,7 @@ class ContactgroupQuery extends IdoQuery
             +-------------------------+-------------+------------+------------------------+
             */
 
-        $this->baseQuery->distinct()->join(
+        $this->select->distinct()->join(
             array('scg' => $this->prefix . 'service_contactgroups'),
             // array('scg' => $scgSub),
             'scg.contactgroup_object_id = cg.contactgroup_object_id',
@@ -128,5 +128,4 @@ class ContactgroupQuery extends IdoQuery
             array()
         );
     }
-
 }

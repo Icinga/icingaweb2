@@ -45,22 +45,20 @@ class ContactQuery extends IdoQuery
 
     protected function joinBaseTables()
     {
-        $this->baseQuery = $this->db->select()->from(
+        $this->select->from(
             array('c' => $this->prefix . 'contacts'),
             array()
         )->join(
             array('co' => $this->prefix . 'objects'),
-            'c.contact_object_id = co.' . $this->object_id
-          . ' AND co.is_active = 1',
+            'c.contact_object_id = co.' . $this->object_id . ' AND co.is_active = 1',
             array()
         );
-
         $this->joinedVirtualTables = array('contacts' => true);
     }
 
     protected function joinHosts()
     {
-        $this->baseQuery->join(
+        $this->select->join(
             array('hc' => $this->prefix . 'host_contacts'),
             'hc.contact_object_id = c.contact_object_id',
             array()
@@ -77,7 +75,7 @@ class ContactQuery extends IdoQuery
 
     protected function joinServices()
     {
-        $this->baseQuery->join(
+        $this->select->join(
             array('sc' => $this->prefix . 'service_contacts'),
             'sc.contact_object_id = c.contact_object_id',
             array()
@@ -94,12 +92,12 @@ class ContactQuery extends IdoQuery
 
     protected function joinTimeperiods()
     {
-        $this->baseQuery->join(
+        $this->select->join(
             array('ht' => $this->prefix . 'timeperiods'),
             'ht.timeperiod_object_id = c.host_timeperiod_object_id',
             array()
         );
-        $this->baseQuery->join(
+        $this->select->join(
             array('st' => $this->prefix . 'timeperiods'),
             'st.timeperiod_object_id = c.service_timeperiod_object_id',
             array()

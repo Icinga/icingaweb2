@@ -1,5 +1,4 @@
 <?php
-// @codeCoverageIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga Web 2.
@@ -151,7 +150,8 @@ abstract class ApplicationBootstrap
                 $configDir = '/etc/icingaweb';
             }
         }
-        $this->configDir = realpath($configDir);
+        $canonical = realpath($configDir);
+        $this->configDir = $canonical ? $canonical : $configDir;
 
         $this->setupAutoloader();
         $this->setupZendAutoloader();
@@ -457,7 +457,11 @@ abstract class ApplicationBootstrap
      */
     protected function setupTimezone()
     {
-        $timeZoneString = $this->config->global !== null ? $this->config->global->get('timezone', 'UTC') : 'UTC';
+        $default = @date_default_timezone_get();
+        if (! $default) {
+            $default = 'UTC';
+        }
+        $timeZoneString = $this->config->global !== null ? $this->config->global->get('timezone', $default) : $default;
         date_default_timezone_set($timeZoneString);
         DateTimeFactory::setConfig(array('timezone' => $timeZoneString));
         return $this;
@@ -466,27 +470,27 @@ abstract class ApplicationBootstrap
     /**
      * Setup internationalization using gettext
      *
-     * Uses the language defined in the global config or the default one
+     * Uses the preferred language sent by the browser or the default one
      *
      * @return  self
      */
     protected function setupInternationalization()
     {
+        $localeDir = $this->getApplicationDir('locale');
+        if (file_exists($localeDir) && is_dir($localeDir)) {
+            Translator::registerDomain(Translator::DEFAULT_DOMAIN, $localeDir);
+        }
+
         try {
             Translator::setupLocale(
-                $this->config->global !== null ? $this->config->global->get('language', Translator::DEFAULT_LOCALE)
+                isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])
+                    ? Translator::getPreferredLocaleCode($_SERVER['HTTP_ACCEPT_LANGUAGE'])
                     : Translator::DEFAULT_LOCALE
             );
         } catch (Exception $error) {
             Logger::error($error);
         }
 
-        $localeDir = $this->getApplicationDir('locale');
-        if (file_exists($localeDir) && is_dir($localeDir)) {
-            Translator::registerDomain(Translator::DEFAULT_DOMAIN, $localeDir);
-        }
-
         return $this;
     }
 }
-// @codeCoverageIgnoreEnd

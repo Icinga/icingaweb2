@@ -3,7 +3,6 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 
 use Icinga\Module\Monitoring\Controller as MonitoringController;
-use Icinga\Module\Monitoring\DataView\StatusSummary;
 use Icinga\Web\Url;
 
 class Monitoring_TacticalController extends MonitoringController
@@ -14,12 +13,12 @@ class Monitoring_TacticalController extends MonitoringController
             'tactical_overview',
             array(
                 'title' => 'Tactical Overview',
-                'url'   => Url::fromPath('monitoring/tactical')
+                'url'   => Url::fromRequest()
             )
         )->activate('tactical_overview');
 
-        $this->view->statusSummary = StatusSummary::fromRequest(
-            $this->_request,
+        $this->view->statusSummary = $this->backend->select()->from(
+            'statusSummary',
             array(
                 'hosts_up',
                 'hosts_pending',

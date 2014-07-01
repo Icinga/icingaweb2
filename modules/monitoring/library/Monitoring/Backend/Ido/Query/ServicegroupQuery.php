@@ -20,7 +20,7 @@ class ServicegroupQuery extends IdoQuery
 
     protected function joinBaseTables()
     {
-        $this->baseQuery = $this->db->select()->from(
+        $this->select->from(
             array('sg' => $this->prefix . 'servicegroups'),
             array()
         )->join(
@@ -35,7 +35,7 @@ class ServicegroupQuery extends IdoQuery
 
     protected function joinServices()
     {
-        $this->baseQuery->join(
+        $this->select->join(
             array('sgm' => $this->prefix . 'servicegroup_members'),
             'sgm.' . $this->servicegroup_id . ' = sg.' . $this->servicegroup_id,
             array()

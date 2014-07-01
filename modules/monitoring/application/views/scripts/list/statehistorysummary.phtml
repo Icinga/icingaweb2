@@ -7,6 +7,10 @@
 
 $grid->setColor('#FC0707');
 $data = array();
+
+if (count($summary) === 0) {
+    echo t('No history entry matching the filter');
+}
 foreach ($summary as $entry) {
     $day = $entry->day;
     $value = $entry->cnt_critical;
@@ -22,7 +26,7 @@ foreach ($summary as $entry) {
                 'timestamp>'  => strtotime($day . ' 00:00:00'),
                 'object_type' => 'service',
                 'state'       => '2',
-                'type'        => 'hard_state,soft_state'
+                'type'        => '(hard_state|soft_state)'
             )
         )
     );

@@ -1,5 +1,4 @@
 <?php
-// @codeCoverageIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga Web 2.
@@ -32,7 +31,6 @@
 
 use Icinga\Authentication\Backend\AutoLoginBackend;
 use Icinga\Web\Controller\ActionController;
-use Icinga\Authentication\Manager as AuthManager;
 use Icinga\Form\Authentication\LoginForm;
 use Icinga\Authentication\AuthChain;
 use Icinga\Application\Config;
@@ -60,21 +58,16 @@ class AuthenticationController extends ActionController
      */
     public function loginAction()
     {
+        $auth = $this->Auth();
         $this->view->form = new LoginForm();
         $this->view->form->setRequest($this->_request);
         $this->view->title = $this->translate('Icingaweb Login');
 
         try {
-            $redirectUrl = Url::fromPath($this->_request->getParam('redirect', 'dashboard'));
-
-            if ($this->_request->isXmlHttpRequest()) {
-                $redirectUrl->setParam('_render', 'layout');
-            }
-
-            $auth = AuthManager::getInstance();
+            $redirectUrl = Url::fromPath($this->params->get('redirect', 'dashboard'));
 
             if ($auth->isAuthenticated()) {
-                $this->redirectNow($redirectUrl);
+                $this->rerenderLayout()->redirectNow($redirectUrl);
             }
 
             try {
@@ -99,7 +92,7 @@ class AuthenticationController extends ActionController
                         $authenticated  = $backend->authenticate($user);
                         if ($authenticated === true) {
                             $auth->setAuthenticated($user);
-                            $this->redirectNow($redirectUrl);
+                            $this->rerenderLayout()->redirectNow($redirectUrl);
                         }
                     }
                 }
@@ -123,7 +116,7 @@ class AuthenticationController extends ActionController
                     }
                     if ($authenticated === true) {
                         $auth->setAuthenticated($user);
-                        $this->redirectNow($redirectUrl);
+                        $this->rerenderLayout()->redirectNow($redirectUrl);
                     }
                 }
                 if ($backendsWithError === $backendsTried) {
@@ -154,16 +147,14 @@ class AuthenticationController extends ActionController
      */
     public function logoutAction()
     {
-        $auth = AuthManager::getInstance();
+        $auth = $this->Auth();
         $auth->removeAuthorization();
 
         if ($auth->isAuthenticatedFromRemoteUser()) {
             $this->_helper->layout->setLayout('login');
             $this->_response->setHttpResponseCode(401);
         } else {
-            $this->_helper->layout->setLayout('inline');
-            $this->redirectToLogin();
+            $this->rerenderLayout()->redirectToLogin();
         }
     }
 }
-// @codeCoverageIgnoreEnd
