@@ -27,6 +27,11 @@ $contactHelper = $this->getHelper('ContactFlags');
 
     <table class="table table-condensed pull-left">
         <tbody>
+            <?php
+            if (count($contacts) === 0) {
+                echo t('No contacts matching the filter');
+            }
+            ?>
             <?php foreach($contacts as $contact): ?>
                 <?php $periodLink = $this->href('monitoring/show/contacts', array('contact' => $contact->contact_name)); ?>
                 <tr>

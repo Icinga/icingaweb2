@@ -1,5 +1,4 @@
 <?php
-// @codeCoverageIgnoreStart
 
 use Icinga\Web\Controller\ActionController;
 use Icinga\Application\Icinga;
@@ -57,4 +56,3 @@ class SearchController extends ActionController
         $this->view->tabs = $dashboard->getTabs();
     }
 }
-// @codeCoverageIgnoreEnd

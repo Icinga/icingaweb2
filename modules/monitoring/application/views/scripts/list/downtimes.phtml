@@ -12,6 +12,11 @@ $helper = $this->getHelper('CommandForm');
 <div class="content downtimes">
 <table data-base-target="_next" class="action">
 <tbody>
+<?php
+if (count($downtimes) === 0) {
+    echo t('No downtimes matching the filter');
+}
+?>
 <?php foreach ($this->downtimes as $downtime): ?>
 <tr>
   <td>

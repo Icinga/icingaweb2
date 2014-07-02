@@ -1,5 +1,4 @@
 <?php
-// @codeCoverageIgnoreStart
 
 namespace Icinga\Web;
 
@@ -69,4 +68,3 @@ class StyleSheet
 
     }
 }
-// @codeCoverageIgnoreEnd

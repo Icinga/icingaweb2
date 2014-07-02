@@ -60,7 +60,6 @@ class PhpCommand extends Command
         }
         if ($build) {
             $reportPath = $this->setupAndReturnReportDirectory();
-            echo $reportPath;
             $options[] = '--log-junit';
             $options[] = $reportPath . '/phpunit_results.xml';
             $options[] = '--coverage-html';

@@ -23,7 +23,7 @@ $hostFilter = '(' . implode('|', array_keys($pivotData)) . ')';
 ?>
 
 <?php if (count($pivotData) === 0): ?>
-    <?= $this->translate('No Service Found'); ?>
+    <?= $this->translate('No Services matching the filter'); ?>
 <?php endif ?>
 
 <?php foreach ($pivotData as $host_name => $serviceStates): ?>

@@ -1,5 +1,4 @@
 <?php
-// @codingStandardsIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
@@ -44,4 +43,3 @@ class Doc_ModuleController extends DocController
         $this->_helper->redirector->gotoSimpleAndExit('view', null, null, array('name' => $moduleName));
     }
 }
-// @codingStandardsIgnoreEnd

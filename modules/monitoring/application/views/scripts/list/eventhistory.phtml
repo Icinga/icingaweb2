@@ -14,6 +14,11 @@
 
 <table data-base-target="_next" class="action">
   <tbody>
+  <?php
+  if (count($history) === 0) {
+      echo t('No history events matching the filter');
+  }
+  ?>
   <?php foreach ($history as $event): ?>
       <?php
           $class = null;

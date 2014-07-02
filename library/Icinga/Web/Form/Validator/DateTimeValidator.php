@@ -60,9 +60,7 @@ class DateTimeValidator extends Zend_Validate_Abstract
      *
      * @see Zend_Validate_Abstract::$_messageTemplates
      */
-    // @codingStandardsIgnoreStart
     protected $_messageTemplates = array();
-    // @codingStandardsIgnoreEnd
 
     /**
      * Create this validator

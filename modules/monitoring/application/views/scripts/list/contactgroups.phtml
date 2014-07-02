@@ -5,6 +5,13 @@
 <?php endif ?>
 <div class="content">
     <div class="boxview" data-base-target="_next">
+
+<?php
+if (count($groupData) === 0) {
+    echo t('No contacts matching the filter');
+}
+?>
+
 <?php foreach ($groupData as $groupName => $groupInfo): ?>
         <div class="box contactgroup">
             <h2><?= $groupInfo['alias']; ?></h2>

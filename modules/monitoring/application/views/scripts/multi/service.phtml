@@ -13,6 +13,9 @@ $this->target = array(
 </div>
 
 <div class="content">
+  <?php if (count($objects) === 0): ?>
+      <?= t('No services matching the filter'); ?>
+  <?php else: ?>
   <h1> Summary for <?= count($objects) ?> services </h1>
 
   <table style="width: 100%; font-size: 0.8em;">
@@ -54,4 +57,5 @@ $this->target = array(
   </table>
 
   <?= $this->render('multi/components/flags.phtml') ?>
+  <?php endif ?>
 </div>

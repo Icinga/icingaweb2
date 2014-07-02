@@ -26,10 +26,10 @@ class DbBackendFormTest extends BaseTestCase
      */
     public function testValidBackendIsValid()
     {
-        Mockery::mock('alias:Icinga\Authentication\UserBackend')
-            ->shouldReceive('create')->with('test', Mockery::type('\Zend_Config'))->andReturnUsing(
-                function () { return Mockery::mock(array('count' => 1)); }
-        );
+        $this->setUpUserBackendMock()
+            ->shouldReceive('count')
+            ->andReturn(2);
+        $this->setUpResourceFactoryMock();
 
         $form = new DbBackendForm();
         $form->setBackendName('test');
@@ -49,10 +49,10 @@ class DbBackendFormTest extends BaseTestCase
      */
     public function testInvalidBackendIsNotValid()
     {
-        Mockery::mock('alias:Icinga\Authentication\UserBackend')
-            ->shouldReceive('create')->with('test', Mockery::type('\Zend_Config'))->andReturnUsing(
-                function () { return Mockery::mock(array('count' => 0)); }
-        );
+        $this->setUpUserBackendMock()
+            ->shouldReceive('count')
+            ->andReturn(0);
+        $this->setUpResourceFactoryMock();
 
         $form = new DbBackendForm();
         $form->setBackendName('test');
@@ -64,5 +64,20 @@ class DbBackendFormTest extends BaseTestCase
             $form->isValidAuthenticationBackend(),
             'DbBackendForm claims that an invalid authentication backend without users is valid'
         );
+    }
+
+    protected function setUpUserBackendMock()
+    {
+        return Mockery::mock('overload:Icinga\Authentication\Backend\DbUserBackend');
+    }
+
+    protected function setUpResourceFactoryMock()
+    {
+        Mockery::mock('alias:Icinga\Data\ResourceFactory')
+            ->shouldReceive('getResourceConfig')
+            ->andReturn(new \Zend_Config(array()))
+            ->shouldReceive('createResource')
+            ->with(Mockery::type('\Zend_Config'))
+            ->andReturn(Mockery::mock('Icinga\Data\Db\DbConnection'));
     }
 }

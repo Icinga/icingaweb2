@@ -29,6 +29,9 @@ if (!$this->compact): ?>
   <tbody>
 <?php
 
+if (count($services) === 0) {
+    echo t('No services matching the filter');
+}
 foreach ($services as $service):
     $serviceLink = $this->href(
       'monitoring/show/service',

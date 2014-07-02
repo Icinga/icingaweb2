@@ -1,5 +1,4 @@
 <?php
-// @codeCoverageIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga Web 2.
@@ -202,4 +201,3 @@ class LoggingForm extends Form
         return new Zend_Config($cfg);
     }
 }
-// @codeCoverageIgnoreEnd

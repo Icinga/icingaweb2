@@ -1,5 +1,4 @@
 <?php
-// @codeCoverageIgnoreStart
 
 namespace Icinga\Web;
 
@@ -94,4 +93,3 @@ class JavaScript
         echo $out;
     }
 }
-// @codeCoverageIgnoreEnd

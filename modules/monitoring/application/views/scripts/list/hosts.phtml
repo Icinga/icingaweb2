@@ -20,14 +20,13 @@ if (! $this->compact): ?>
 <?php
 endif;
 
-if ($hosts->count() === 0): ?>
-        <?= $this->translate('No host found') ?>
-        <?php if (! $this->compact): ?>
-    </div>
-<?php
-endif;
-return;
-endif;
+if ($hosts->count() === 0) {
+    echo t('No hosts matching the filter');
+    if (! $this->compact) {
+        echo '</div>';
+    }
+    return;
+}
 ?>
 
 <table

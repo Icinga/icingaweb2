@@ -1,5 +1,4 @@
 <?php
-// @codeCoverageIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
  * This file is part of Icinga Web 2.
@@ -344,4 +343,3 @@ class HistoryColorGrid extends AbstractWidget {
         return $this->renderVertical($grid);
     }
 }
-// @codeCoverageIgnoreEnd

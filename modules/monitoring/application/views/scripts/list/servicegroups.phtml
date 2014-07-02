@@ -5,6 +5,12 @@
 <?php endif ?>
 <div class="content">
     <div class="boxview" data-base-target="_next">
+
+<?php
+if (count($servicegroups) === 0) {
+    echo t('No service groups matching the filter');
+}
+?>
 <?php foreach($servicegroups as $servicegroup): ?>
         <div class="box servicegroup">
             <h2>
