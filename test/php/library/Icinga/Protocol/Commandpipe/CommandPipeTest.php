@@ -19,7 +19,7 @@ use Icinga\Module\Monitoring\Command\ScheduleCheckCommand;
 use Icinga\Module\Monitoring\Command\SubmitPassiveCheckresultCommand;
 
 if (!defined('EXTCMD_TEST_BIN')) {
-    define('EXTCMD_TEST_BIN', './bin/extcmd_test');
+    define('EXTCMD_TEST_BIN', BaseTestCase::$testDir . '/bin/extcmd_test');
 }
 
 /**
