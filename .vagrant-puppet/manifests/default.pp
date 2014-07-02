@@ -202,7 +202,7 @@ exec { 'iptables-allow-http':
 
 exec { 'icinga-htpasswd':
   creates => '/usr/share/icinga/htpasswd.users',
-  command => 'mkdir /usr/share/icinga && htpasswd -b -c /usr/share/icinga/htpasswd.users icingaadmin icinga',
+  command => 'mkdir -p /usr/share/icinga && htpasswd -b -c /usr/share/icinga/htpasswd.users icingaadmin icinga',
   require => Class['apache']
 }
 
