@@ -160,7 +160,7 @@ class LdapBackendForm extends BaseBackendForm
      */
     public function isValidAuthenticationBackend()
     {
-        if (!ResourceFactory::ldapAvailable()) {
+        if (! ResourceFactory::ldapAvailable()) {
             /*
              * It should be possible to run icingaweb without the php ldap extension, when
              * no ldap backends are needed. When the user tries to create an ldap backend
@@ -187,7 +187,7 @@ class LdapBackendForm extends BaseBackendForm
             */
         } catch (Exception $exc) {
             $this->addErrorMessage(
-               t('Connection Validation Failed: ' . $exc->getMessage())
+                t('Connection Validation Failed: ' . $exc->getMessage())
             );
             return false;
         }
