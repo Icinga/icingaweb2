@@ -2,6 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
+use Icinga\Web\MenuRenderer;
 use Icinga\Web\Controller\ActionController;
 use Icinga\Web\Hook;
 use Icinga\Web\Menu;
@@ -17,9 +18,7 @@ class LayoutController extends ActionController
      */
     public function menuAction()
     {
-        $this->view->url    = Url::fromRequest()->getRelativeUrl();
-        $this->view->items  = Menu::fromConfig()->getChildren();
-        $this->view->sub    = false;
+        $this->view->menuRenderer = new MenuRenderer(Menu::fromConfig()->order(), Url::fromRequest()->getRelativeUrl());
     }
 
     /**
