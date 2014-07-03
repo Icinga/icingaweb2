@@ -467,7 +467,7 @@ EOD
         );
     }
 
-    public function testWhetherSectionAndPropertyOrderIsPreserved()
+    public function testWhetherSectionAndPropertyOrderIsUpdated()
     {
         $config = <<<'EOD'
 [one]
@@ -483,6 +483,22 @@ d.e                 = "f"
 [three]
 key                 = "value"
 foo.bar             = "raboof"
+EOD;
+
+        $reverted = <<<'EOD'
+[three]
+key                 = "value"
+foo.bar             = "raboof"
+
+
+[two]
+a.b                 = "c"
+d.e                 = "f"
+
+
+[one]
+key1                = "1"
+key2                = "2"
 EOD;
         $target = $this->writeConfigToTemporaryFile($config);
         $writer = new PreservingIniWriter(
@@ -514,8 +530,8 @@ EOD;
         );
 
         $this->assertEquals(
-            $config,
-            $writer->render(),
+            trim($reverted),
+            trim($writer->render()),
             'PreservingIniWriter does not preserve section and/or property order'
         );
     }
