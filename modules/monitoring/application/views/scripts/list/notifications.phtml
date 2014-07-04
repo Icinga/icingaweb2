@@ -1,13 +1,16 @@
-<div class="controls">
-<?= $this->tabs ?>
-<div class="dontprint">
-<?= $this->translate('Sort by') ?> <?=  $this->sortControl->render($this) ?>
-<?= $this->selectionToolbar('single') ?>
-</div>
-<?= $this->widget('limiter') ?>
-<?php if ($notifications->count() >= 100): ?><br /><?php endif ?>
-<?=  $this->paginationControl($notifications, null, null, array('preserve' => $this->preserve)) ?>
-</div>
+
+<?php if (!$this->compact): ?>
+    <div class="controls">
+    <?= $this->tabs ?>
+    <div class="dontprint">
+    <?= $this->translate('Sort by') ?> <?=  $this->sortControl->render($this) ?>
+    <?= $this->selectionToolbar('single') ?>
+    </div>
+    <?= $this->widget('limiter') ?>
+    <?php if ($notifications->count() >= 100): ?><br /><?php endif ?>
+    <?=  $this->paginationControl($notifications, null, null, array('preserve' => $this->preserve)) ?>
+    </div>
+<?php endif ?>
 
 <div class="content">
 <?php

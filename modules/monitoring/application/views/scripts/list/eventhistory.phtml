@@ -1,10 +1,13 @@
-<div class="controls">
-<?= $this->tabs->render($this); ?>
-<div style="margin: 1em" class="dontprint">
-<?= $this->translate('Sort by') ?> <?=  $this->sortControl->render($this); ?>
-</div>
-<?=  $this->paginationControl($history, null, null, array('preserve' => $this->preserve)); ?>
-</div>
+
+<?php if (!$this->compact): ?>
+    <div class="controls">
+    <?= $this->tabs->render($this); ?>
+    <div style="margin: 1em" class="dontprint">
+    <?= $this->translate('Sort by') ?> <?=  $this->sortControl->render($this); ?>
+    </div>
+    <?=  $this->paginationControl($history, null, null, array('preserve' => $this->preserve)); ?>
+    </div>
+<?php endif; ?>
 
 <div class="content">
 <?php if (empty($history)): ?>
