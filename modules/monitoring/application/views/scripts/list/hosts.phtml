@@ -81,20 +81,6 @@ if ($hosts->count() === 0) {
             <td class="state" title="<?= $helper->getStateTitle($host, 'host') ?>">
                 <?php if (! $this->compact): ?>
                 <div>
-                    <?php if (isset($host->host_unhandled_services) && $host->host_unhandled_services > 0): ?>
-                        <span
-                            class="badge pull-right"
-                            title="<?= $host->host_unhandled_services ?> Service Problems on Host"
-                        >
-                            <a
-                                href="<?= $this->href(
-                                    'monitoring/show/services',
-                                    array('host' => $host->host_name, 'service_problem' => 1)
-                                ) ?>"
-                            ><?= $host->host_unhandled_services ?></a>
-                        </span>
-                    <?php endif; ?>
-
                     <strong><?= ucfirst($helper->monitoringState($host, 'host')) ?></strong><br />
                     <div class="small-row">
                         <?php endif; ?>
@@ -122,11 +108,27 @@ if ($hosts->count() === 0) {
                         ) ?>
                     <?php endif; ?>
                     <?= implode(' ', $icons) ?>
-                <?php endif; ?>
+                <?php endif ?>
                 <a href="<?= $this->compact ? $hostLink : $this->href(
                     'monitoring/show/host',
                     array('host' => $host->host_name)
-                ) ?>"><?= $host->host_name ?></a><br />
+                ) ?>"><?= $host->host_name ?></a>
+                    <?php if (isset($host->host_unhandled_services) && $host->host_unhandled_services > 0): ?>
+                    <span style="font-weight: normal" title="<?=
+                        $host->host_unhandled_services
+                    ?> Service Problems on Host"> (<?= $this->qlink(
+                       sprintf($this->translate('%d unhandled services'), $host->host_unhandled_services),
+                       'monitoring/show/services',
+                       array(
+                           'host'                 => $host->host_name,
+                           'service_problem'      => 1,
+                           'service_acknowledged' => 0,
+                           'service_in_downtime'  => 0
+                       ),
+                       array('style' => 'font-weight: normal')
+                    ) ?>)</span>
+                <?php endif ?>
+                <br />
                 <?= $this->escape(substr(strip_tags($host->host_output), 0, 10000)) ?>
             </td>
         </tr>
