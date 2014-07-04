@@ -111,6 +111,8 @@ class ActionController extends Zend_Controller_Action
         $this->handlerBrowserWindows();
         $this->view->translationDomain = 'icinga';
         $this->_helper->layout()->isIframe = $this->params->shift('isIframe');
+        $this->_helper->layout()->moduleName = false;
+
         if ($this->rerenderLayout = $this->params->shift('renderLayout')) {
             $this->xhrLayout = 'body';
         }
@@ -375,7 +377,6 @@ class ActionController extends Zend_Controller_Action
 
         $req = $this->getRequest();
         $layout = $this->_helper->layout();
-        $layout->moduleName = false;
 
         if ($user = $req->getUser()) {
             // Cast preference app.show_benchmark to bool because preferences loaded from a preferences storage are

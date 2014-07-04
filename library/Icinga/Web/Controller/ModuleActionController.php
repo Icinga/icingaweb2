@@ -24,6 +24,7 @@ class ModuleActionController extends ActionController
     ) {
         parent::__construct($request, $response, $invokeArgs);
         $this->moduleName = $request->getModuleName();
+        $this->_helper->layout()->moduleName = $this->moduleName;
         $this->view->translationDomain = $this->moduleName;
         $this->moduleInit();
     }
@@ -59,9 +60,7 @@ class ModuleActionController extends ActionController
     {
         $req = $this->getRequest();
         $resp = $this->getResponse();
-        $layout = $this->_helper->layout();
 
-        $layout->moduleName = $this->moduleName;
         if ($this->isXhr()) {
             $resp->setHeader('X-Icinga-Module', $layout->moduleName);
         }
