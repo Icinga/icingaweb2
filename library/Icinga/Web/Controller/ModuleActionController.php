@@ -62,7 +62,7 @@ class ModuleActionController extends ActionController
         $resp = $this->getResponse();
 
         if ($this->isXhr()) {
-            $resp->setHeader('X-Icinga-Module', $layout->moduleName);
+            $resp->setHeader('X-Icinga-Module', $this->moduleName);
         }
 
         parent::postDispatch();
