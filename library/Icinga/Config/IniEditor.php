@@ -276,7 +276,7 @@ class IniEditor
                  */
                 $j = $i - 1;
                 $comments = array();
-                while ($j > 0 && $this->isComment($this->text[$j])) {
+                while ($j >= 0 && $this->isComment($this->text[$j])) {
                     array_push($comments, array_pop($sections[$section]));
                     $j--;
                 }
