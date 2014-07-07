@@ -260,6 +260,7 @@
                     if ($('#col1').data('icingaUrl') === redirect) {
                         icinga.ui.layout1col();
                         req.$target = $('#col1');
+                        delete(this.requests['col2']);
                     }
                 }
 
