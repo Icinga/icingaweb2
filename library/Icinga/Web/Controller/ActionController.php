@@ -63,13 +63,6 @@ class ActionController extends Zend_Controller_Action
      */
     protected $requiresAuthentication = true;
 
-    /**
-     * Whether the controller requires configuration
-     *
-     * @var bool
-     */
-    protected $requiresConfiguration = true;
-
     private $config;
 
     private $configs = array();
@@ -217,38 +210,10 @@ class ActionController extends Zend_Controller_Action
     }
 
     /**
-     * Check whether the controller requires configuration. That is when no configuration
-     * is available and when it is possible to setup the configuration
-     *
-     * @return  bool
-     *
-     * @see     requiresConfiguration
-     */
-    protected function requiresConfig()
-    {
-        if (!$this->requiresConfiguration) {
-            return false;
-        }
-
-        if (file_exists(Config::$configDir . '/setup.token')) {
-            try {
-                $config = Config::app()->toArray();
-            } catch (NotReadableError $e) {
-                return true;
-            }
-
-            return empty($config);
-        } else {
-            return false;
-        }
-    }
-
-    /**
      * Check whether the controller requires a login. That is when the controller requires authentication and the
      * user is currently not authenticated
      *
      * @return  bool
-     *
      * @see     requiresAuthentication
      */
     protected function requiresLogin()
