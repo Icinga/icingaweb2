@@ -109,9 +109,6 @@ class ActionController extends Zend_Controller_Action
         if ($this->rerenderLayout = $this->params->shift('renderLayout')) {
             $this->xhrLayout = 'body';
         }
-        if ($this->requiresConfig()) {
-            $this->redirectNow(Url::fromPath('install'));
-        }
 
         if ($this->requiresLogin()) {
             $this->redirectToLogin(Url::fromRequest());
