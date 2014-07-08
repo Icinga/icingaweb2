@@ -524,7 +524,9 @@ class Monitoring_ListController extends Controller
                 'query'  => $query
             ));
         }
-        $query->applyFilter($filter);
+        if (! $filter->isEmpty()) {
+            $query->applyFilter($filter);
+        }
         $this->view->filter = $filter;
         if ($sort) {
             $query->order($sort, $dir);
