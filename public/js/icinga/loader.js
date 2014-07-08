@@ -394,6 +394,9 @@
                 classes.push('module-' + moduleName);
             } else {
                 req.$target.removeData('icingaModule');
+                if (req.$target.attr('data-icinga-module')) {
+                    req.$target.removeAttr('data-icinga-module');
+                }
             }
             req.$target.attr('class', classes.join(' '));
 
@@ -407,6 +410,9 @@
                 req.$target.data('icingaRefresh', refresh);
             } else {
                 req.$target.removeData('icingaRefresh');
+                if (req.$target.attr('data-icinga-refresh')) {
+                    req.$target.removeAttr('data-icinga-refresh');
+                }
             }
 
             // Set a window identifier if the server asks us to do so
