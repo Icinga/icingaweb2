@@ -29,14 +29,14 @@
 
 namespace Icinga\Chart;
 
-use \DOMElement;
-use \Icinga\Chart\Primitive\Drawable;
-use \Icinga\Chart\Primitive\Line;
-use \Icinga\Chart\Primitive\Text;
-use \Icinga\Chart\Render\RenderContext;
-use \Icinga\Chart\Unit\AxisUnit;
-use \Icinga\Chart\Unit\CalendarUnit;
-use \Icinga\Chart\Unit\LinearUnit;
+use DOMElement;
+use Icinga\Chart\Primitive\Drawable;
+use Icinga\Chart\Primitive\Line;
+use Icinga\Chart\Primitive\Text;
+use Icinga\Chart\Render\RenderContext;
+use Icinga\Chart\Unit\AxisUnit;
+use Icinga\Chart\Unit\CalendarUnit;
+use Icinga\Chart\Unit\LinearUnit;
 
 /**
  * Axis class for the GridChart class.

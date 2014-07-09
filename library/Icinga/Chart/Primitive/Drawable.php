@@ -29,8 +29,8 @@
 
 namespace Icinga\Chart\Primitive;
 
-use \DOMElement;
-use \Icinga\Chart\Render\RenderContext;
+use DOMElement;
+use Icinga\Chart\Render\RenderContext;
 
 /**
  * Drawable element for creating svg out of components

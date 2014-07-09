@@ -29,14 +29,14 @@
 
 namespace Icinga\Chart;
 
-use \DOMElement;
-use \Icinga\Chart\Palette;
-use \Icinga\Chart\Primitive\Canvas;
-use \Icinga\Chart\Primitive\Drawable;
-use \Icinga\Chart\Primitive\Rect;
-use \Icinga\Chart\Primitive\Text;
-use \Icinga\Chart\Render\LayoutBox;
-use \Icinga\Chart\Render\RenderContext;
+use DOMElement;
+use Icinga\Chart\Palette;
+use Icinga\Chart\Primitive\Canvas;
+use Icinga\Chart\Primitive\Drawable;
+use Icinga\Chart\Primitive\Rect;
+use Icinga\Chart\Primitive\Text;
+use Icinga\Chart\Render\LayoutBox;
+use Icinga\Chart\Render\RenderContext;
 
 /**
  * Drawable for creating a Graph Legend on the bottom of a graph.

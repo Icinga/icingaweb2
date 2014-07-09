@@ -47,15 +47,15 @@ use Icinga\Chart\Unit\StaticAxis;
 
 class Monitoring_ChartController extends Controller
 {
-    public function testAction() {
+    public function testAction()
+    {
         $this->chart = new GridChart();
         $this->chart->setAxisLabel('X axis label', 'Y axis label')->setXAxis(new StaticAxis());
         $data1 = array();
         $data2 = array();
         $data3 = array();
-        for ($i=0; $i<25; $i++) {
-
-            $data3[] = array('Label ' . $i, rand(0,30));
+        for ($i = 0; $i < 25; $i++) {
+            $data3[] = array('Label ' . $i, rand(0, 30));
         }
 
         /*
@@ -200,9 +200,18 @@ class Monitoring_ChartController extends Controller
         $downBars = array();
         $unreachableBars = array();
         foreach ($query as $hostgroup) {
-            $upBars[] = array($hostgroup->hostgroup, $hostgroup->hosts_up);
-            $downBars[] = array($hostgroup->hostgroup, $hostgroup->hosts_down_unhandled);
-            $unreachableBars[] = array($hostgroup->hostgroup, $hostgroup->hosts_unreachable_unhandled);
+            $upBars[] = array(
+                $hostgroup->hostgroup,
+                $hostgroup->hosts_up
+            );
+            $downBars[] = array(
+                $hostgroup->hostgroup,
+                $hostgroup->hosts_down_unhandled
+            );
+            $unreachableBars[] = array(
+                $hostgroup->hostgroup,
+                $hostgroup->hosts_unreachable_unhandled
+            );
         }
         $this->view->chart = new GridChart();
         $this->view->chart->setAxisLabel('', 'Hosts')->setXAxis(new StaticAxis());

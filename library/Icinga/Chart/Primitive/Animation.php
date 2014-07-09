@@ -29,8 +29,8 @@
 
 namespace Icinga\Chart\Primitive;
 
-use \DOMElement;
-use \Icinga\Chart\Render\RenderContext;
+use DOMElement;
+use Icinga\Chart\Render\RenderContext;
 
 /**
  * Drawable for the SVG animate tag

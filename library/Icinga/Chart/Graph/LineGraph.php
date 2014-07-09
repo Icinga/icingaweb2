@@ -30,12 +30,12 @@
 
 namespace Icinga\Chart\Graph;
 
-use \DOMElement;
-use \Icinga\Chart\Primitive\Drawable;
-use \Icinga\Chart\Primitive\Path;
-use \Icinga\Chart\Primitive\Circle;
-use \Icinga\Chart\Primitive\Styleable;
-use \Icinga\Chart\Render\RenderContext;
+use DOMElement;
+use Icinga\Chart\Primitive\Drawable;
+use Icinga\Chart\Primitive\Path;
+use Icinga\Chart\Primitive\Circle;
+use Icinga\Chart\Primitive\Styleable;
+use Icinga\Chart\Render\RenderContext;
 
 /**
  * LineGraph implementation for drawing a set of datapoints as

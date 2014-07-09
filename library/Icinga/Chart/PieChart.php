@@ -29,14 +29,14 @@
 
 namespace Icinga\Chart;
 
-use \DOMElement;
-use \Icinga\Chart\Chart;
-use \Icinga\Chart\Primitive\Canvas;
-use \Icinga\Chart\Primitive\PieSlice;
-use \Icinga\Chart\Primitive\RawElement;
-use \Icinga\Chart\Primitive\Rect;
-use \Icinga\Chart\Render\RenderContext;
-use \Icinga\Chart\Render\LayoutBox;
+use DOMElement;
+use Icinga\Chart\Chart;
+use Icinga\Chart\Primitive\Canvas;
+use Icinga\Chart\Primitive\PieSlice;
+use Icinga\Chart\Primitive\RawElement;
+use Icinga\Chart\Primitive\Rect;
+use Icinga\Chart\Render\RenderContext;
+use Icinga\Chart\Render\LayoutBox;
 
 /**
  * Graphing component for rendering Pie Charts.

@@ -40,7 +40,8 @@ namespace Icinga\Chart\Inline;
  * Class Inline
  * @package Icinga\Chart\Inline
  */
-class Inline {
+class Inline
+{
 
     /**
      * The data displayed in this chart

@@ -30,9 +30,9 @@
 
 namespace Icinga\Chart\Primitive;
 
-use \DOMElement;
-use \Icinga\Chart\Render\LayoutBox;
-use \Icinga\Chart\Render\RenderContext;
+use DOMElement;
+use Icinga\Chart\Render\LayoutBox;
+use Icinga\Chart\Render\RenderContext;
 
 /**
  * Canvas SVG component that encapsulates grouping and padding and allows rendering

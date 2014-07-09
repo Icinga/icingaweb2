@@ -30,7 +30,7 @@
 
 namespace Icinga\Chart\Primitive;
 
-use \DOMElement;
+use DOMElement;
 
 /**
  * Base class for stylable drawables

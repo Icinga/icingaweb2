@@ -30,8 +30,9 @@
 
 namespace Icinga\Chart\Primitive;
 
-use \DOMElement;
-use \Icinga\Chart\Render\RenderContext;
+use DOMElement;
+use Icinga\Chart\Render\RenderContext;
+use Icinga\Chart\Format;
 
 /**
  * Drawable for svg circles

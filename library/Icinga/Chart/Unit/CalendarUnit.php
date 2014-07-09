@@ -30,10 +30,7 @@
 
 namespace Icinga\Chart\Unit;
 
-use \Zend_Config;
-use \Icinga\Application\Icinga;
-use \Icinga\Application\Config as IcingaConfig;
-use \Icinga\Util\DateTimeFactory;
+use Icinga\Util\DateTimeFactory;
 
 /**
  * Calendar Axis Unit that transforms timestamps into user-readable values

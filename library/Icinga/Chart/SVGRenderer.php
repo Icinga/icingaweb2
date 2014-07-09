@@ -29,14 +29,13 @@
 
 namespace Icinga\Chart;
 
-use \DOMNode;
-use \DOMElement;
-use \DOMDocument;
-use \DOMImplementation;
-use \Icinga\Util\Dimension;
-use \Icinga\Chart\Render\LayoutBox;
-use \Icinga\Chart\Render\RenderContext;
-use \Icinga\Chart\Primitive\Canvas;
+use DOMNode;
+use DOMElement;
+use DOMDocument;
+use DOMImplementation;
+use Icinga\Chart\Render\LayoutBox;
+use Icinga\Chart\Render\RenderContext;
+use Icinga\Chart\Primitive\Canvas;
 
 /**
  * SVG Renderer component.
