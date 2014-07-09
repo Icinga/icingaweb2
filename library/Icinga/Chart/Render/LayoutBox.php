@@ -29,6 +29,8 @@
 
 namespace Icinga\Chart\Render;
 
+use Icinga\Chart\Format;
+
 /**
  * Layout class encapsulating size, padding and margin information
  */
@@ -147,7 +149,13 @@ class LayoutBox
 
         $scaleX *= $this->getWidth()/100;
         $scaleY *= $this->getHeight()/100;
-        return sprintf('translate(%s, %s) scale(%s, %s)', $translateX, $translateY, $scaleX, $scaleY);
+        return sprintf(
+            'translate(%s, %s) scale(%s, %s)',
+            Format::formatSVGNumber($translateX),
+            Format::formatSVGNumber($translateY),
+            Format::formatSVGNumber($scaleX),
+            Format::formatSVGNumber($scaleY)
+        );
     }
 
     /**

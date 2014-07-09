@@ -29,8 +29,9 @@
 
 namespace Icinga\Chart\Primitive;
 
-use \DOMElement;
-use \Icinga\Chart\Render\RenderContext;
+use DOMElement;
+use Icinga\Chart\Render\RenderContext;
+use Icinga\Chart\Format;
 
 /**
  * Component for drawing a pie slice
@@ -138,15 +139,15 @@ class PieSlice extends Animatable implements Drawable
         $yEnd = $y - ($r * cos($this->endRadian));
 
         // Draw a straight line to the upper part of the arc
-        $pathString .= 'L ' . $xStart . ' ' . $yStart;
+        $pathString .= 'L ' . Format::formatSVGNumber($xStart) . ' ' . Format::formatSVGNumber($yStart);
         // Instead of directly connecting the upper part of the arc (leaving a triangle), draw a bow with the radius
-        $pathString .= ' A ' . $r . ' ' . $r ;
+        $pathString .= ' A ' . Format::formatSVGNumber($r) . ' ' . Format::formatSVGNumber($r);
         // These are the flags for the bow, see the SVG path documentation for details
         // http://www.w3.org/TR/SVG/paths.html#PathDataEllipticalArcCommands
         $pathString .= ' 0 ' . (($this->endRadian - $this->startRadian > M_PI) ?  '1'  : '0 ') . ' 1';
 
         // xEnd and yEnd are the lower point of the arc
-        $pathString .= ' '.$xEnd . ' ' . $yEnd;
+        $pathString .= ' ' . Format::formatSVGNumber($xEnd) . ' ' . Format::formatSVGNumber($yEnd);
         return $pathString;
     }
 

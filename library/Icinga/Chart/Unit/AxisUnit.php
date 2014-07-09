@@ -29,7 +29,7 @@
 
 namespace Icinga\Chart\Unit;
 
-use \Iterator;
+use Iterator;
 
 /**
  * Base class for Axis Units

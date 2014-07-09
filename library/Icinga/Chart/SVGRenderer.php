@@ -107,9 +107,9 @@ class SVGRenderer
         $ctx = $this->createRenderContext();
         $svg = $this->document->createElement('svg');
         $svg->setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-        $svg->setATtribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
+        $svg->setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
         $svg->setAttribute('width', $this->width . '%');
-        $svg->setAttribute('height', $this->width . '%');
+        $svg->setAttribute('height', $this->height . '%');
         $svg->setAttribute(
             'viewBox',
             sprintf(

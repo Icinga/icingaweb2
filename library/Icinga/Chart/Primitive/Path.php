@@ -30,8 +30,9 @@
 namespace Icinga\Chart\Primitive;
 
 
-use \DOMElement;
-use \Icinga\Chart\Render\RenderContext;
+use DOMElement;
+use Icinga\Chart\Render\RenderContext;
+use Icinga\Chart\Format;
 
 /**
  * Drawable for creating a svg path element
@@ -177,6 +178,8 @@ class Path extends Styleable implements Drawable
             if (!$this->isAbsolute) {
                 $point = $ctx->toAbsolute($point[0], $point[1]);
             }
+            $point[0] = Format::formatSVGNumber($point[0]);
+            $point[1] = Format::formatSVGNumber($point[1]);
             if ($lastPoint && $this->discrete) {
                 $pathDescription .= sprintf($tpl, $point[0], $lastPoint[1]);
             }

@@ -101,10 +101,10 @@ class Line extends Styleable implements Drawable
         list($x1, $y1) = $ctx->toAbsolute($this->xStart, $this->yStart);
         list($x2, $y2) = $ctx->toAbsolute($this->xEnd, $this->yEnd);
         $line = $doc->createElement('line');
-        $line->setAttribute('x1', $x1);
-        $line->setAttribute('x2', $x2);
-        $line->setAttribute('y1', $y1);
-        $line->setAttribute('y2', $y2);
+        $line->setAttribute('x1', Format::formatSVGNumber($x1));
+        $line->setAttribute('x2', Format::formatSVGNumber($x2));
+        $line->setAttribute('y1', Format::formatSVGNumber($y1));
+        $line->setAttribute('y2', Format::formatSVGNumber($y2));
         $line->setAttribute('style', $this->getStyle());
         $this->applyAttributes($line);
         return $line;

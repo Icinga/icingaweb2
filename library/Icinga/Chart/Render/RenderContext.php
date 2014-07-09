@@ -30,8 +30,7 @@
 
 namespace Icinga\Chart\Render;
 
-use \DOMDocument;
-use \Icinga\Util\Dimension;
+use DOMDocument;
 
 /**
  * Context for rendering, handles ratio based coordinate calculations.
