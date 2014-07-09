@@ -92,9 +92,9 @@ class RenderContext
     {
         $this->document = $document;
         if ($width > $height) {
-            $this->xratio = $width/$height;
-        } elseif ($height < $width) {
-            $this->yratio = $width/$height;
+            $this->xratio = $width / $height;
+        } elseif ($height > $width) {
+            $this->yratio = $height / $width;
         }
     }
 
