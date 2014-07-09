@@ -5,7 +5,6 @@
 namespace Icinga\User\Preferences\Store;
 
 use Exception;
-use Zend_Db_Select;
 use Icinga\Exception\NotReadableError;
 use Icinga\Exception\NotWritableError;
 use Icinga\User\Preferences;
@@ -73,10 +72,10 @@ class DbStore extends PreferencesStore
     public function load()
     {
         try {
-            $select = new Zend_Db_Select($this->getStoreConfig()->connection->getConnection());
+            $select = $this->getStoreConfig()->connection->select();
             $result = $select->from($this->table, array(self::COLUMN_PREFERENCE, self::COLUMN_VALUE))
                 ->where(self::COLUMN_USERNAME . ' = ?', $this->getUser()->getUsername())
-                ->query()->fetchAll();
+                ->fetchAll();
         } catch (Exception $e) {
             throw new NotReadableError(
                 'Cannot fetch preferences for user ' . $this->getUser()->getUsername() . ' from database', 0, $e
