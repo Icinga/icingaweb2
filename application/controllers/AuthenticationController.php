@@ -60,7 +60,6 @@ class AuthenticationController extends ActionController
     {
         $auth = $this->Auth();
         $this->view->form = new LoginForm();
-        $this->view->form->setRequest($this->_request);
         $this->view->title = $this->translate('Icingaweb Login');
 
         try {
@@ -85,18 +84,7 @@ class AuthenticationController extends ActionController
             }
 
             $chain = new AuthChain($config);
-            if ($this->getRequest()->isGet()) {
-                $user = new User('');
-                foreach ($chain as $backend) {
-                    if ($backend instanceof AutoLoginBackend) {
-                        $authenticated  = $backend->authenticate($user);
-                        if ($authenticated === true) {
-                            $auth->setAuthenticated($user);
-                            $this->rerenderLayout()->redirectNow($redirectUrl);
-                        }
-                    }
-                }
-            } elseif ($this->view->form->isSubmittedAndValid()) {
+            if ($this->view->form->isSubmittedAndValid($this->_request->getParams())) {
                 $user = new User($this->view->form->getValue('username'));
                 $password = $this->view->form->getValue('password');
                 $backendsTried = 0;
@@ -136,7 +124,7 @@ class AuthenticationController extends ActionController
                     );
                 }
                 if ($backendsWithError) {
-                    $this->view->form->addNote(
+                    $this->view->form->getElement('username')->addError(
                         $this->translate(
                             'Note that not all authentication backends are available for authentication because they'
                             . ' have errors. Please check the system log or Icinga Web 2 log for more information'
@@ -144,6 +132,17 @@ class AuthenticationController extends ActionController
                     );
                 }
                 $this->view->form->getElement('password')->addError($this->translate('Incorrect username or password'));
+            } elseif (false === $this->view->form->isSubmitted()) {
+                $user = new User('');
+                foreach ($chain as $backend) {
+                    if ($backend instanceof AutoLoginBackend) {
+                        $authenticated  = $backend->authenticate($user);
+                        if ($authenticated === true) {
+                            $auth->setAuthenticated($user);
+                            $this->rerenderLayout()->redirectNow($redirectUrl);
+                        }
+                    }
+                }
             }
         } catch (Exception $e) {
             $this->view->errorInfo = $e->getMessage();

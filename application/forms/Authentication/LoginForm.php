@@ -1,4 +1,6 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Form\Authentication;
 
@@ -10,34 +12,55 @@ use Icinga\Web\Form;
 class LoginForm extends Form
 {
     /**
-     * Disable CSRF protection
-     * @var bool
+     * Initialize this login form
      */
-    protected $tokenDisabled = true;
+    public function init()
+    {
+        $this->setTokenDisabled();
+        $this->setName('form_login');
+        $this->setSubmitLabel('Login');
+    }
 
     /**
-     * Interface how the form should be created
+     * @see Form::createElements()
      */
-    protected function create()
+    public function createElements()
     {
-        $this->setName('form_login');
-        $this->addElement('text', 'username', array(
-            'label'       => t('Username'),
-            'placeholder' => t('Please enter your username...'),
-            'required'    => true,
-        ));
+        return array(
+            $this->createElement(
+                'text',
+                'username',
+                array(
+                    'label'       => t('Username'),
+                    'placeholder' => t('Please enter your username...'),
+                    'required'    => true
+                )
+            ),
+            $this->createElement(
+                'password',
+                'password',
+                array(
+                    'label'       => t('Password'),
+                    'placeholder' => t('...and your password'),
+                    'required'    => true
+                )
+            )
+        );
+    }
 
-        $this->addElement('password', 'password', array(
-            'label'       => t('Password'),
-            'placeholder' => t('...and your password'),
-            'required'    => true
-        ));
-        // TODO: We need a place to intercept filled forms before rendering
-        if (isset($_POST['username'])) {
+    /**
+     * @see Form::applyValues()
+     */
+    public function applyValues(array $values)
+    {
+        parent::applyValues($values);
+
+        if (isset($values['username'])) {
             $this->getElement('password')->setAttrib('class', 'autofocus');
         } else {
             $this->getElement('username')->setAttrib('class', 'autofocus');
         }
-        $this->setSubmitLabel('Login');
+
+        return $this;
     }
 }
