@@ -1,35 +1,10 @@
 <?php
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Form\Config;
 
-use \Zend_Config;
+use Zend_Config;
 use Icinga\Web\Form;
 use Icinga\Application\Icinga;
 use Icinga\Web\Form\Validator\WritablePathValidator;
@@ -40,47 +15,39 @@ use Icinga\Web\Form\Validator\WritablePathValidator;
 class LoggingForm extends Form
 {
     /**
-     * Return the default logging directory for type "file"
-     *
-     * @return  string
+     * Initialize this logging configuration form
      */
-    protected function getDefaultLogDir()
+    public function init()
     {
-        return realpath(Icinga::app()->getApplicationDir() . '/../var/log/icingaweb.log');
+        $this->setName('form_config_logging');
+        $this->setSubmitLabel('{{SAVE_ICON}} Save Changes');
     }
 
     /**
-     * Create this logging configuration form
-     *
-     * @see Form::create()
+     * @see Form::createElements()
      */
-    public function create()
+    public function createElements()
     {
-        $this->setName('form_config_logging');
+        $elements = array();
 
-        $config = $this->getConfiguration();
-        if (($loggingConfig = $config->logging) === null) {
-            $loggingConfig = new Zend_Config(array());
-        }
-
-        $this->addElement(
+        $elements[] = $this->createElement(
             'checkbox',
-            'logging_enable',
+            'enable',
             array(
                 'required'  => true,
                 'label'     => t('Logging Enabled'),
                 'helptext'  => t('Check this to enable logging.'),
-                'value'     => $loggingConfig->enable ? 1 : 0
+                'value'     => 0
             )
         );
-        $this->addElement(
+        $elements[] = $this->createElement(
             'select',
-            'logging_level',
+            'level',
             array(
                 'required'      => true,
                 'label'         => t('Logging Level'),
                 'helptext'      => t('The maximum loglevel to emit.'),
-                'value'         => intval($loggingConfig->get('level', 0)),
+                'value'         => 0,
                 'multiOptions'  => array(
                     0 => t('Error'),
                     1 => t('Warning'),
@@ -89,115 +56,111 @@ class LoggingForm extends Form
                 )
             )
         );
-        $this->addElement(
+        $elements[] = $this->createElement(
             'select',
-            'logging_type',
+            'type',
             array(
                 'required'      => true,
+                'class'         => 'autosubmit',
                 'label'         => t('Logging Type'),
                 'helptext'      => t('The type of logging to utilize.'),
-                'value'         => $loggingConfig->get('type', 'file'),
+                'value'         => 'file',
                 'multiOptions'  => array(
                     'file'      => t('File'),
                     'syslog'    => 'Syslog'
                 )
             )
         );
-        $this->enableAutoSubmit(array('logging_type'));
-
-        switch ($this->getRequest()->getParam('logging_type', $loggingConfig->get('type', 'file')))
-        {
-            case 'syslog':
-                $this->addElement(
-                    'text',
-                    'logging_application',
+        $elements[] = $this->createElement(
+            'text',
+            'application',
+            array(
+                'depends'       => 'type',
+                'requires'      => 'syslog',
+                'required'      => true,
+                'label'         => t('Application Prefix'),
+                'helptext'      => t('The name of the application by which to prefix syslog messages.'),
+                'value'         => 'icingaweb',
+                'validators'    => array(
                     array(
-                        'required'  => true,
-                        'label'     => t('Application Prefix'),
-                        'helptext'  => t('The name of the application by which to prefix syslog messages.'),
-                        'value'     => $loggingConfig->get('application', 'icingaweb'),
-                        'validators' => array(
-                            array(
-                                'Regex',
-                                false,
-                                array(
-                                    'pattern'  => '/^[^\W]+$/',
-                                    'messages' => array(
-                                        'regexNotMatch' => 'The application prefix cannot contain any whitespaces.'
-                                    )
-                                )
+                        'Regex',
+                        false,
+                        array(
+                            'pattern'  => '/^[^\W]+$/',
+                            'messages' => array(
+                                'regexNotMatch' => 'The application prefix cannot contain any whitespaces.'
                             )
                         )
                     )
-                );
-                $this->addElement(
-                    'select',
-                    'logging_facility',
-                    array(
-                        'required'      => true,
-                        'label'         => t('Facility'),
-                        'helptext'      => t('The Syslog facility to utilize.'),
-                        'value'         => $loggingConfig->get('facility', 'LOG_USER'),
-                        'multiOptions'  => array(
-                            'LOG_USER' => 'LOG_USER'
-                        )
-                    )
-                );
-                break;
-            case 'file':
-            default:
-                $this->addElement(
-                    'text',
-                    'logging_target',
-                    array(
-                        'required'      => true,
-                        'label'         => t('Filepath'),
-                        'helptext'      => t('The logfile to write messages to.'),
-                        'value'         => $loggingConfig->target ? $loggingConfig->target : $this->getDefaultLogDir(),
-                        'validators'    => array(new WritablePathValidator())
-                    )
-                );
-        }
+                )
+            )
+        );
+        $elements[] = $this->createElement(
+            'select',
+            'facility',
+            array(
+                'depends'       => 'type',
+                'requires'      => 'syslog',
+                'required'      => true,
+                'label'         => t('Facility'),
+                'helptext'      => t('The Syslog facility to utilize.'),
+                'value'         => 'LOG_USER',
+                'multiOptions'  => array(
+                    'LOG_USER'  => 'LOG_USER'
+                )
+            )
+        );
+        $elements[] = $this->createElement(
+            'text',
+            'target',
+            array(
+                'depends'       => 'type',
+                'requires'      => 'file',
+                'required'      => true,
+                'label'         => t('Filepath'),
+                'helptext'      => t('The logfile to write messages to.'),
+                'value'         => $this->getDefaultLogDir(),
+                'validators'    => array(new WritablePathValidator())
+            )
+        );
 
-        $this->setSubmitLabel('{{SAVE_ICON}} Save Changes');
-    }
-
-    public function isValid($data) {
-        foreach ($this->getElements() as $key => $element) {
-            // Initialize all empty elements with their default values.
-            if (!isset($data[$key])) {
-                $data[$key] = $element->getValue();
-            }
-        }
-        return parent::isValid($data);
+        return $elements;
     }
 
     /**
-     * Return a Zend_Config object containing the state defined in this form
+     * Return the current logging configuration
      *
-     * @return  Zend_Config     The config defined in this form
+     * @return  array
      */
-    public function getConfig()
+    public function getConfiguration()
     {
-        $values = $this->getValues();
-        $cfg = $this->getConfiguration()->toArray();
-
-        $cfg['logging']['enable'] = $values['logging_enable'] == 1;
-        $cfg['logging']['level'] = $values['logging_level'];
-
-        switch ($values['logging_type'])
-        {
-            case 'file':
-                $cfg['logging']['type'] = 'file';
-                $cfg['logging']['target'] = $values['logging_target'];
-                break;
-            case 'syslog':
-                $cfg['logging']['type'] = 'syslog';
-                $cfg['logging']['application'] = $values['logging_application'];
-                $cfg['logging']['facility'] = $values['logging_facility'];
-                break;
+        $loggingConfig = Icinga::app()->getConfig()->logging;
+        if ($loggingConfig === null) {
+            $loggingConfig = new Zend_Config(array());
         }
 
-        return new Zend_Config($cfg);
+        $config = array();
+        $config['enable'] = $loggingConfig->enable ? 1 : 0;
+        $config['level'] = $loggingConfig->level;
+        $config['type'] = $loggingConfig->type;
+
+        if ($loggingConfig->type === 'file') {
+            $config['target'] = $loggingConfig->target;
+        } elseif ($loggingConfig->type === 'syslog') {
+            $config['application'] = $loggingConfig->application;
+            $config['facility'] = $loggingConfig->facility;
+        }
+
+        return $config;
+    }
+
+    /**
+     * Return the default logging directory for type "file"
+     *
+     * @return  string
+     */
+    protected function getDefaultLogDir()
+    {
+        return realpath(Icinga::app()->getApplicationDir() . '/../var/log/icingaweb.log');
     }
 }

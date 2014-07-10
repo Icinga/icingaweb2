@@ -113,16 +113,17 @@ class ConfigController extends BaseConfigController
         $this->view->tabs->activate('logging');
 
         $form = new LoggingForm();
-        $form->setConfiguration(IcingaConfig::app());
-        $form->setRequest($this->_request);
-        if ($form->isSubmittedAndValid()) {
-            if (!$this->writeConfigFile($form->getConfig(), 'config')) {
+        if ($form->isSubmittedAndValid($this->_request->getParams())) {
+            $appConfig = IcingaConfig::app();
+            $appConfig['logging'] = $form->getValues();
+            if (false === $this->writeConfigFile($appConfig, 'config')) {
                 return;
             }
+
             Notification::success('New configuration has sucessfully been stored');
-            $form->setConfiguration(IcingaConfig::app(), true);
             $this->redirectNow('config/logging');
         }
+
         $this->view->form = $form;
     }
 
