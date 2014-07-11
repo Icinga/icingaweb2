@@ -30,8 +30,7 @@
 
 namespace Icinga\Chart\Render;
 
-use \DOMDocument;
-use \Icinga\Util\Dimension;
+use DOMDocument;
 
 /**
  * Context for rendering, handles ratio based coordinate calculations.
@@ -93,9 +92,9 @@ class RenderContext
     {
         $this->document = $document;
         if ($width > $height) {
-            $this->xratio = $width/$height;
-        } elseif ($height < $width) {
-            $this->yratio = $width/$height;
+            $this->xratio = $width / $height;
+        } elseif ($height > $width) {
+            $this->yratio = $height / $width;
         }
     }
 

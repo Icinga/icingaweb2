@@ -30,8 +30,9 @@
 
 namespace Icinga\Chart\Primitive;
 
-use \DOMElement;
-use \Icinga\Chart\Render\RenderContext;
+use DOMElement;
+use Icinga\Chart\Render\RenderContext;
+use Icinga\Chart\Format;
 
 /**
  * Drawable for svg circles
@@ -83,8 +84,8 @@ class Circle extends Styleable implements Drawable
     {
         $coords = $ctx->toAbsolute($this->x, $this->y);
         $circle = $ctx->getDocument()->createElement('circle');
-        $circle->setAttribute('cx', $coords[0]);
-        $circle->setAttribute('cy', $coords[1]);
+        $circle->setAttribute('cx', Format::formatSVGNumber($coords[0]));
+        $circle->setAttribute('cy', Format::formatSVGNumber($coords[1]));
         $circle->setAttribute('r', 5);
         $circle->setAttribute('style', $this->getStyle());
         $this->applyAttributes($circle);

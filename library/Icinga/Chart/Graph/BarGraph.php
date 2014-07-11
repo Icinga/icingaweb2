@@ -29,12 +29,12 @@
 
 namespace Icinga\Chart\Graph;
 
-use \DOMElement;
-use \Icinga\Chart\Primitive\Animation;
-use \Icinga\Chart\Primitive\Drawable;
-use \Icinga\Chart\Primitive\Rect;
-use \Icinga\Chart\Primitive\Styleable;
-use \Icinga\Chart\Render\RenderContext;
+use DOMElement;
+use Icinga\Chart\Primitive\Animation;
+use Icinga\Chart\Primitive\Drawable;
+use Icinga\Chart\Primitive\Rect;
+use Icinga\Chart\Primitive\Styleable;
+use Icinga\Chart\Render\RenderContext;
 
 /**
  * Bar graph implementation
@@ -94,7 +94,7 @@ class BarGraph extends Styleable implements Drawable
         $group = $doc->createElement('g');
         $idx = 0;
         foreach ($this->dataSet as $point) {
-            $rect = new Rect($point[0]-1, $point[1], $this->barWidth, 100- $point[1]);
+            $rect = new Rect($point[0] - 1, $point[1], 2, 100 - $point[1]);
             $rect->setFill($this->fill);
             $rect->setStrokeWidth($this->strokeWidth);
             $rect->setStrokeColor('black');

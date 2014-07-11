@@ -30,9 +30,10 @@
 
 namespace Icinga\Chart\Primitive;
 
-use \DOMElement;
-use \DOMText;
-use \Icinga\Chart\Render\RenderContext;
+use DOMElement;
+use DOMText;
+use Icinga\Chart\Render\RenderContext;
+use Icinga\Chart\Format;
 
 /**
  *  Wrapper for the SVG text element
@@ -184,7 +185,7 @@ class Text extends Styleable implements Drawable
     {
         list($x, $y) = $ctx->toAbsolute($this->x, $this->y);
         $text = $ctx->getDocument()->createElement('text');
-        $text->setAttribute('x', $x - 15);
+        $text->setAttribute('x', Format::formatSVGNumber($x - 15));
         $text->setAttribute(
             'style',
             $this->getStyle()
@@ -196,7 +197,7 @@ class Text extends Styleable implements Drawable
             .  'text-anchor: ' . $this->alignment
         );
 
-        $text->setAttribute('y', $y);
+        $text->setAttribute('y', Format::formatSVGNumber($y));
         $text->appendChild(new DOMText($this->text));
         return $text;
     }

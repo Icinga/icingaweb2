@@ -77,14 +77,14 @@ class AuthenticationController extends ActionController
                     new Exception('Cannot load authentication configuration. An exception was thrown:', 0, $e)
                 );
                 throw new ConfigurationError(
-                    'No authentication methods available. It seems that none authentication method has been set'
-                    . ' up. Please check the system log or Icinga Web 2 log for more information'
+                    t(
+                        'No authentication methods available. Authentication configuration could not be loaded.'
+                        . ' Please check the system log or Icinga Web 2 log for more information'
+                    )
                 );
             }
 
             $chain = new AuthChain($config);
-
-
             if ($this->getRequest()->isGet()) {
                 $user = new User('');
                 foreach ($chain as $backend) {
@@ -119,7 +119,15 @@ class AuthenticationController extends ActionController
                         $this->rerenderLayout()->redirectNow($redirectUrl);
                     }
                 }
-                if ($backendsWithError === $backendsTried) {
+                if ($backendsTried === 0) {
+                    throw new ConfigurationError(
+                        t(
+                            'No authentication methods available. It seems that no authentication method has been set'
+                            . ' up. Please check the system log or Icinga Web 2 log for more information'
+                        )
+                    );
+                }
+                if ($backendsTried === $backendsWithError) {
                     throw new ConfigurationError(
                         $this->translate(
                             'No authentication methods available. It seems that all set up authentication methods have'

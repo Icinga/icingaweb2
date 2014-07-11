@@ -29,8 +29,8 @@
 
 namespace Icinga\Chart\Primitive;
 
-use \DOMElement;
-use \Icinga\Chart\Render\RenderContext;
+use DOMElement;
+use Icinga\Chart\Render\RenderContext;
 
 /**
  * Wrapper for raw elements to be added as Drawable's

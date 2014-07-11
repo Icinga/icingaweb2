@@ -35,10 +35,12 @@ class StaticAxis implements AxisUnit
     private $items = array();
 
     /**
-     * Add a dataset to this AxisUnit, required for dynamic min and max vlaues
+     * Add a dataset to this AxisUnit, required for dynamic min and max values
      *
      * @param array $dataset    The dataset that will be shown in the Axis
-     * @param int $id           The idx in the dataset (0 for x, 1 for y)
+     * @param int   $idx        The idx in the dataset (0 for x, 1 for y)
+     *
+     * @return self             Fluent interface
      */
     public function addValues(array $dataset, $idx = 0)
     {

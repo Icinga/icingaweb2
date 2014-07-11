@@ -203,7 +203,7 @@ class IniEditor
     public function setSection($section, $extend = null)
     {
         if (isset($extend)) {
-            $decl = '[' . $section . ' : ' . $extend.']';
+            $decl = '[' . $section . ' : ' . $extend . ']';
         } else {
             $decl = '[' . $section . ']';
         }
@@ -276,7 +276,7 @@ class IniEditor
                  */
                 $j = $i - 1;
                 $comments = array();
-                while ($j > 0 && $this->isComment($this->text[$j])) {
+                while ($j >= 0 && $this->isComment($this->text[$j])) {
                     array_push($comments, array_pop($sections[$section]));
                     $j--;
                 }
@@ -296,6 +296,8 @@ class IniEditor
      * Extract the section name from a section declaration
      *
      * @param String $declaration    The section declaration
+     *
+     * @return string   The section name
      */
     private function getSectionFromDeclaration($declaration)
     {
@@ -319,9 +321,9 @@ class IniEditor
     /**
      * Insert the key at the end of the corresponding section
      *
-     * @param array $key    The key to insert
-     * @param mixed $value  The value to insert
-     * @param array $key    The key to insert
+     * @param array $key        The key to insert
+     * @param mixed $value      The value to insert
+     * @param array $section    The key to insert
      */
     private function insert(array $key, $value, $section = null)
     {
@@ -392,7 +394,7 @@ class IniEditor
      * Update the line $lineNr
      *
      * @param int       $lineNr     The line number of the target line
-     * @param string    $toInsert   The new line content
+     * @param string    $content    The new line content
      */
     private function updateLine($lineNr, $content)
     {
@@ -612,6 +614,8 @@ class IniEditor
      *
      * @param $array    The array to use
      * @param $pos      The position to remove
+     *
+     * @return array    The altered array
      */
     private function removeFromArray($array, $pos)
     {

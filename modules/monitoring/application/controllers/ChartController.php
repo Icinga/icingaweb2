@@ -47,15 +47,15 @@ use Icinga\Chart\Unit\StaticAxis;
 
 class Monitoring_ChartController extends Controller
 {
-    public function testAction() {
+    public function testAction()
+    {
         $this->chart = new GridChart();
         $this->chart->setAxisLabel('X axis label', 'Y axis label')->setXAxis(new StaticAxis());
         $data1 = array();
         $data2 = array();
         $data3 = array();
-        for ($i=0; $i<25; $i++) {
-
-            $data3[] = array('Label ' . $i, rand(0,30));
+        for ($i = 0; $i < 25; $i++) {
+            $data3[] = array('Label ' . $i, rand(0, 30));
         }
 
         /*
@@ -164,29 +164,30 @@ class Monitoring_ChartController extends Controller
             $unknownBars[] = array($servicegroup->servicegroup, $servicegroup->services_unknown_unhandled);
         }
         $this->view->chart = new GridChart();
-        $this->view->chart->setAxisLabel('', 'Services')
+        $this->view->chart->setAxisLabel('', t('Services'))
             ->setXAxis(new \Icinga\Chart\Unit\StaticAxis());
+
         $this->view->chart->drawBars(
             array(
-                'label' => 'Ok',
+                'label' => t('Ok'),
                 'color' => '#44bb77',
                 'stack' => 'stack1',
                 'data'  => $okBars
             ),
             array(
-                'label' => 'Warning',
+                'label' => t('Warning'),
                 'color' => '#ffaa44',
                 'stack' => 'stack1',
                 'data'  => $warningBars
             ),
             array(
-                'label' => 'Critical',
+                'label' => t('Critical'),
                 'color' => '#ff5566',
                 'stack' => 'stack1',
                 'data'  => $critBars
             ),
             array(
-                'label' => 'Unknown',
+                'label' => t('Unknown'),
                 'color' => '#dd66ff',
                 'stack' => 'stack1',
                 'data'  => $unknownBars
@@ -200,27 +201,36 @@ class Monitoring_ChartController extends Controller
         $downBars = array();
         $unreachableBars = array();
         foreach ($query as $hostgroup) {
-            $upBars[] = array($hostgroup->hostgroup, $hostgroup->hosts_up);
-            $downBars[] = array($hostgroup->hostgroup, $hostgroup->hosts_down_unhandled);
-            $unreachableBars[] = array($hostgroup->hostgroup, $hostgroup->hosts_unreachable_unhandled);
+            $upBars[] = array(
+                $hostgroup->hostgroup,
+                $hostgroup->hosts_up
+            );
+            $downBars[] = array(
+                $hostgroup->hostgroup,
+                $hostgroup->hosts_down_unhandled
+            );
+            $unreachableBars[] = array(
+                $hostgroup->hostgroup,
+                $hostgroup->hosts_unreachable_unhandled
+            );
         }
         $this->view->chart = new GridChart();
-        $this->view->chart->setAxisLabel('', 'Hosts')->setXAxis(new StaticAxis());
+        $this->view->chart->setAxisLabel('', t('Hosts'))->setXAxis(new StaticAxis());
         $this->view->chart->drawBars(
             array(
-                'label' => 'Up',
+                'label' => t('Up'),
                 'color' => '#44bb77',
                 'stack' => 'stack1',
                 'data'  => $upBars
             ),
             array(
-                'label' => 'Down',
+                'label' => t('Down'),
                 'color' => '#ff5566',
                 'stack' => 'stack1',
                 'data'  => $downBars
             ),
             array(
-                'label' => 'Unreachable',
+                'label' => t('Unreachable'),
                 'color' => '#dd66ff',
                 'stack' => 'stack1',
                 'data'  => $unreachableBars
@@ -244,11 +254,11 @@ class Monitoring_ChartController extends Controller
                 'colors' => array( '#ff4444', '#ff0000', '#E066FF', '#f099FF', '#fefefe'),
                 'labels'=> array(
       //              (int) $query->hosts_up . ' Up Hosts',
-                    (int) $query->hosts_down_handled . ' Down Hosts (Handled)',
-                    (int) $query->hosts_down_unhandled . ' Down Hosts (Unhandled)',
-                    (int) $query->hosts_unreachable_handled . ' Unreachable Hosts (Handled)',
-                    (int) $query->hosts_unreachable_unhandled . ' Unreachable Hosts (Unhandled)',
-                    (int) $query->hosts_pending . ' Pending Hosts'
+                    (int) $query->hosts_down_handled . t(' Down Hosts (Handled)'),
+                    (int) $query->hosts_down_unhandled . t(' Down Hosts (Unhandled)'),
+                    (int) $query->hosts_unreachable_handled . t(' Unreachable Hosts (Handled)'),
+                    (int) $query->hosts_unreachable_unhandled . t(' Unreachable Hosts (Unhandled)'),
+                    (int) $query->hosts_pending . t(' Pending Hosts')
                 )
             ), array(
             'data' => array(
@@ -264,14 +274,13 @@ class Monitoring_ChartController extends Controller
             'colors' => array('#ff4444', '#ff0000', '#ffff00', '#ffff33', '#E066FF', '#f099FF', '#fefefe'),
             'labels'=> array(
        //         $query->services_ok . ' Up Services',
-                $query->services_warning_handled . ' Warning Services (Handled)',
-                $query->services_warning_unhandled . ' Warning Services (Unhandled)',
-                $query->services_critical_handled . ' Down Services (Handled)',
-                $query->services_critical_unhandled . ' Down Services (Unhandled)',
-                $query->services_unknown_handled . '  Unreachable Services (Handled)',
-                $query->services_unknown_unhandled . '  Unreachable Services (Unhandled)',
-                $query->services_pending . ' Pending Services',
-
+                $query->services_warning_handled . t(' Warning Services (Handled)'),
+                $query->services_warning_unhandled . t(' Warning Services (Unhandled)'),
+                $query->services_critical_handled . t(' Down Services (Handled)'),
+                $query->services_critical_unhandled . t(' Down Services (Unhandled)'),
+                $query->services_unknown_handled . t(' Unreachable Services (Handled)'),
+                $query->services_unknown_unhandled . t(' Unreachable Services (Unhandled)'),
+                $query->services_pending . t(' Pending Services')
               )
         ));
         }

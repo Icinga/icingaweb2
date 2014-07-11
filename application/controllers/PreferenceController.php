@@ -32,6 +32,7 @@ use Icinga\Web\Widget\Tab;
 use Icinga\Application\Config as IcingaConfig;
 use Icinga\Web\Url;
 use Icinga\Form\Preference\GeneralForm;
+use Icinga\Web\Notification;
 
 /**
  * Application wide preference controller for user preferences
@@ -69,14 +70,14 @@ class PreferenceController extends BasePreferenceController
         if ($form->isSubmittedAndValid()) {
             try {
                 $this->savePreferences($form->getPreferences());
-                $this->view->successMessage = 'Preferences Updated Successfully';
+                Notification::success(t('Preferences updated successfully'));
                 // Recreate form to show new values
                 // TODO(el): It must sufficient to call $form->populate(...)
                 $form = new GeneralForm();
                 $form->setConfiguration(IcingaConfig::app());
                 $form->setRequest($this->getRequest());
             } catch (Exception $e) {
-                $this->view->exceptionMessage = $e->getMessage();
+                Notification::error(sprintf(t('Failed to persist preferences. (%s)'), $e->getMessage()));
             }
         }
         $this->view->form = $form;

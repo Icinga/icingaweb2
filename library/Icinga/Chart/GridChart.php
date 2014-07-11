@@ -29,18 +29,18 @@
 
 namespace Icinga\Chart;
 
-use \DOMElement;
-use \Icinga\Chart\Chart;
-use \Icinga\Chart\Axis;
-use \Icinga\Chart\Graph\BarGraph;
-use \Icinga\Chart\Graph\LineGraph;
-use \Icinga\Chart\Graph\StackedGraph;
-use \Icinga\Chart\Primitive\Canvas;
-use \Icinga\Chart\Primitive\Rect;
-use \Icinga\Chart\Primitive\Path;
-use \Icinga\Chart\Render\LayoutBox;
-use \Icinga\Chart\Render\RenderContext;
-use \Icinga\Chart\Unit\AxisUnit;
+use DOMElement;
+use Icinga\Chart\Chart;
+use Icinga\Chart\Axis;
+use Icinga\Chart\Graph\BarGraph;
+use Icinga\Chart\Graph\LineGraph;
+use Icinga\Chart\Graph\StackedGraph;
+use Icinga\Chart\Primitive\Canvas;
+use Icinga\Chart\Primitive\Rect;
+use Icinga\Chart\Primitive\Path;
+use Icinga\Chart\Render\LayoutBox;
+use Icinga\Chart\Render\RenderContext;
+use Icinga\Chart\Unit\AxisUnit;
 
 /**
  * Base class for grid based charts.

@@ -29,9 +29,9 @@
 
 namespace Icinga\Chart\Graph;
 
-use \DOMElement;
-use \Icinga\Chart\Primitive\Drawable;
-use \Icinga\Chart\Render\RenderContext;
+use DOMElement;
+use Icinga\Chart\Primitive\Drawable;
+use Icinga\Chart\Render\RenderContext;
 
 /**
  * Graph implementation that stacks several graphs and displays them in a cumulative way

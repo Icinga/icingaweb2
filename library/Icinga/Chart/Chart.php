@@ -29,11 +29,11 @@
 
 namespace Icinga\Chart;
 
-use \Exception;
-use \Icinga\Chart\Legend;
-use \Icinga\Chart\Palette;
-use \Icinga\Chart\Primitive\Drawable;
-use \Icinga\Chart\SVGRenderer;
+use Exception;
+use Icinga\Chart\Legend;
+use Icinga\Chart\Palette;
+use Icinga\Chart\Primitive\Drawable;
+use Icinga\Chart\SVGRenderer;
 
 /**
  * Base class for charts, extended by all other Chart classes.

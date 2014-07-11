@@ -11,6 +11,7 @@ require_once realpath(dirname(__FILE__) . '/../../../../bootstrap.php');
 use Mockery;
 use Icinga\Test\BaseTestCase;
 use Icinga\Form\Config\Authentication\LdapBackendForm;
+use Icinga\Exception\AuthenticationException;
 
 class LdapBackendFormTest extends BaseTestCase
 {
@@ -26,10 +27,9 @@ class LdapBackendFormTest extends BaseTestCase
      */
     public function testValidBackendIsValid()
     {
-        Mockery::mock('alias:Icinga\Authentication\UserBackend')
-            ->shouldReceive('create')->with('test', Mockery::type('\Zend_Config'))->andReturnUsing(
-                function () { return Mockery::mock(array('count' => 1)); }
-        );
+        $this->setUpResourceFactoryMock();
+        Mockery::mock('overload:Icinga\Authentication\Backend\LdapUserBackend')
+            ->shouldReceive('assertAuthenticationPossible')->andReturn(null);
 
         $form = new LdapBackendForm();
         $form->setBackendName('test');
@@ -49,10 +49,9 @@ class LdapBackendFormTest extends BaseTestCase
      */
     public function testInvalidBackendIsNotValid()
     {
-        Mockery::mock('alias:Icinga\Authentication\UserBackend')
-            ->shouldReceive('create')->with('test', Mockery::type('\Zend_Config'))->andReturnUsing(
-                function () { return Mockery::mock(array('count' => 0)); }
-        );
+        $this->setUpResourceFactoryMock();
+        Mockery::mock('overload:Icinga\Authentication\Backend\LdapUserBackend')
+            ->shouldReceive('assertAuthenticationPossible')->andThrow(new AuthenticationException);
 
         $form = new LdapBackendForm();
         $form->setBackendName('test');
@@ -64,5 +63,17 @@ class LdapBackendFormTest extends BaseTestCase
             $form->isValidAuthenticationBackend(),
             'LdapBackendForm claims that an invalid authentication backend without users is valid'
         );
+    }
+
+    protected function setUpResourceFactoryMock()
+    {
+        Mockery::mock('alias:Icinga\Data\ResourceFactory')
+            ->shouldReceive('ldapAvailable')
+            ->andReturn(true)
+            ->shouldReceive('getResourceConfig')
+            ->andReturn(new \Zend_Config(array()))
+            ->shouldReceive('createResource')
+            ->with(Mockery::type('\Zend_Config'))
+            ->andReturn(Mockery::mock('Icinga\Protocol\Ldap\Connection'));
     }
 }

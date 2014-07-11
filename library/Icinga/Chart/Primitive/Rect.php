@@ -31,6 +31,7 @@ namespace Icinga\Chart\Primitive;
 
 use \DomElement;
 use \Icinga\Chart\Render\RenderContext;
+use Icinga\Chart\Format;
 
 /**
  * Drawable representing the SVG rect element
@@ -116,10 +117,10 @@ class Rect extends Animatable implements Drawable
         if ($this->keepRatio) {
             $ctx->ignoreRatio();
         }
-        $rect->setAttribute('x', $x);
-        $rect->setAttribute('y', $y);
-        $rect->setAttribute('width', $width);
-        $rect->setAttribute('height', $height);
+        $rect->setAttribute('x', Format::formatSVGNumber($x));
+        $rect->setAttribute('y', Format::formatSVGNumber($y));
+        $rect->setAttribute('width', Format::formatSVGNumber($width));
+        $rect->setAttribute('height', Format::formatSVGNumber($height));
         $rect->setAttribute('style', $this->getStyle());
 
         $this->applyAttributes($rect);

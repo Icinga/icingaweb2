@@ -63,13 +63,6 @@ class ActionController extends Zend_Controller_Action
      */
     protected $requiresAuthentication = true;
 
-    /**
-     * Whether the controller requires configuration
-     *
-     * @var bool
-     */
-    protected $requiresConfiguration = true;
-
     private $config;
 
     private $configs = array();
@@ -111,11 +104,10 @@ class ActionController extends Zend_Controller_Action
         $this->handlerBrowserWindows();
         $this->view->translationDomain = 'icinga';
         $this->_helper->layout()->isIframe = $this->params->shift('isIframe');
+        $this->_helper->layout()->moduleName = false;
+
         if ($this->rerenderLayout = $this->params->shift('renderLayout')) {
             $this->xhrLayout = 'body';
-        }
-        if ($this->requiresConfig()) {
-            $this->redirectNow(Url::fromPath('install'));
         }
 
         if ($this->requiresLogin()) {
@@ -215,38 +207,10 @@ class ActionController extends Zend_Controller_Action
     }
 
     /**
-     * Check whether the controller requires configuration. That is when no configuration
-     * is available and when it is possible to setup the configuration
-     *
-     * @return  bool
-     *
-     * @see     requiresConfiguration
-     */
-    protected function requiresConfig()
-    {
-        if (!$this->requiresConfiguration) {
-            return false;
-        }
-
-        if (file_exists(Config::$configDir . '/setup.token')) {
-            try {
-                $config = Config::app()->toArray();
-            } catch (NotReadableError $e) {
-                return true;
-            }
-
-            return empty($config);
-        } else {
-            return false;
-        }
-    }
-
-    /**
      * Check whether the controller requires a login. That is when the controller requires authentication and the
      * user is currently not authenticated
      *
      * @return  bool
-     *
      * @see     requiresAuthentication
      */
     protected function requiresLogin()
@@ -375,7 +339,6 @@ class ActionController extends Zend_Controller_Action
 
         $req = $this->getRequest();
         $layout = $this->_helper->layout();
-        $layout->moduleName = false;
 
         if ($user = $req->getUser()) {
             // Cast preference app.show_benchmark to bool because preferences loaded from a preferences storage are

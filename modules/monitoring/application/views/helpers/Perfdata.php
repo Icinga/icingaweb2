@@ -29,7 +29,7 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
                 if (! $perfdata->isPercentage()) {
                     $pieChart->setTooltipFormat('{{label}}: {{formatted}} ({{percent}}%)');
                 }
-                $pieChart->setStyle('float: left; margin: 0.2em 0.5em 0.2em 0.5em;');
+                $pieChart->setStyle('margin: 0.2em 0.5em 0.2em 0.5em;');
                 $table[] = '<tr><th>' . $pieChart->render()
                     . htmlspecialchars($label)
                     . '</th><td> '

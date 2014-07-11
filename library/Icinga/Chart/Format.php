@@ -1,9 +1,9 @@
 <?php
 // {{{ICINGA_LICENSE_HEADER}}}
 /**
- * This file is part of Icinga Web 2.
+ * This file is part of Icinga 2 Web.
  *
- * Icinga Web 2 - Head for multiple monitoring backends.
+ * Icinga 2 Web - Head for multiple monitoring backends.
  * Copyright (C) 2013 Icinga Development Team
  *
  * This program is free software; you can redistribute it and/or
@@ -20,29 +20,27 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
+ * @copyright 2013 Icinga Development Team <info@icinga.org>
+ * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
+ * @author    Icinga Development Team <info@icinga.org>
  */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Chart\Primitive;
+namespace Icinga\Chart;
 
-use DOMElement;
-use Icinga\Chart\Render\RenderContext;
-
-/**
- * Drawable element for creating svg out of components
- */
-interface Drawable
+class Format
 {
     /**
-     * Create the SVG representation from this Drawable
+     * Format a number into a number-string as defined by the SVG-Standard
      *
-     * @param   RenderContext $ctx The context to use for rendering
+     * @see http://www.w3.org/TR/SVG/types.html#DataTypeNumber
      *
-     * @return  DOMElement         The SVG Element
+     * @param $number
+     *
+     * @return string
      */
-    public function toSvg(RenderContext $ctx);
+    public static function formatSVGNumber($number)
+    {
+        return number_format($number, 1, '.', '');
+    }
 }

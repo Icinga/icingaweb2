@@ -91,20 +91,24 @@ class LdapUserBackend extends UserBackend
     {
         $q = $this->conn->select()->from($this->userClass);
         $result = $q->fetchRow();
-        if (!isset($result)) {
+        if (! isset($result)) {
             throw new AuthenticationException(
-                sprintf('No objects with objectClass="%s" in DN="%s" found.',
-                $this->userClass,
-                $this->conn->getDN()
-            ));
+                sprintf(
+                    'No objects with objectClass="%s" in DN="%s" found.',
+                    $this->userClass,
+                    $this->conn->getDN()
+                )
+            );
         }
 
-        if (!isset($result->{$this->userNameAttribute})) {
+        if (! isset($result->{$this->userNameAttribute})) {
             throw new AuthenticationException(
-                sprintf('UserNameAttribute "%s" not existing in objectClass="%s"',
+                sprintf(
+                    'UserNameAttribute "%s" not existing in objectClass="%s"',
                     $this->userNameAttribute,
                     $this->userClass
-            ));
+                )
+            );
         }
     }
 

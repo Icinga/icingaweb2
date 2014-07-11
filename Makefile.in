@@ -32,8 +32,8 @@ install: install-config install-basic ensure-writable-folders install-cli
 #
 
 install-cli:
- $(INSTALL) -m 755 -d $(INSTALL_OPTS) $(bindir) 
- $(INSTALL) -m 755 $(INSTALL_OPTS) "./bin/icingacli"  $(bindir)/icingacli;
+	$(INSTALL) -m 755 -d $(INSTALL_OPTS) $(bindir) 
+	$(INSTALL) -m 755 $(INSTALL_OPTS) "./bin/icingacli"  $(bindir)/icingacli;
 
 #
 # Installs the whole application w\o configuration
