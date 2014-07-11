@@ -15,7 +15,7 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
         $table = array();
         $pset = array_slice(PerfdataSet::fromString($perfdataStr)->asArray(), 0, ($compact ? 5 : null));
         foreach ($pset as $perfdata) {
-            if (!$perfdata->isPercentage() && $perfdata->getMaximumValue() === null) {
+            if ($perfdata->getPercentage() == 0) {
                 continue;
             }
             $pieChart = $this->createInlinePie($perfdata);
