@@ -14,11 +14,11 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
         $result = '';
         $table = array();
         $pset = array_slice(PerfdataSet::fromString($perfdataStr)->asArray(), 0, ($compact ? 5 : null));
-        foreach ($pset as $label => $perfdata) {
+        foreach ($pset as $perfdata) {
             if (!$perfdata->isPercentage() && $perfdata->getMaximumValue() === null) {
                 continue;
             }
-            $pieChart = $this->createInlinePie($perfdata, $label, htmlspecialchars($label));
+            $pieChart = $this->createInlinePie($perfdata);
             if ($compact) {
                 if (! $float) {
                     $result .= $pieChart->render();
@@ -31,7 +31,7 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
                 }
                 $pieChart->setStyle('margin: 0.2em 0.5em 0.2em 0.5em;');
                 $table[] = '<tr><th>' . $pieChart->render()
-                    . htmlspecialchars($label)
+                    . htmlspecialchars($perfdata->getLabel())
                     . '</th><td> '
                     . htmlspecialchars($this->formatPerfdataValue($perfdata)) .
                     ' </td></tr>';
@@ -81,10 +81,10 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
         return $perfdata->getValue();
     }
 
-    protected function createInlinePie(Perfdata $perfdata, $title, $label = '')
+    protected function createInlinePie(Perfdata $perfdata)
     {
-        $pieChart = new InlinePie($this->calculatePieChartData($perfdata), $title);
-        $pieChart->setLabel($label);
+        $pieChart = new InlinePie($this->calculatePieChartData($perfdata), $perfdata->getLabel());
+        $pieChart->setLabel(htmlspecialchars($perfdata->getLabel()));
         $pieChart->setHideEmptyLabel();
 
         //$pieChart->setHeight(32)->setWidth(32);

@@ -4,7 +4,7 @@
 
 namespace Icinga\Module\Monitoring\Plugin;
 
-use Icinga\Exception\ProgrammingError;
+use InvalidArgumentException;
 
 class Perfdata
 {
@@ -21,6 +21,13 @@ class Perfdata
      * @var string
      */
     protected $unit;
+
+    /**
+     * The label
+     *
+     * @var string
+     */
+    protected $label;
 
     /**
      * The value
@@ -58,13 +65,15 @@ class Perfdata
     protected $criticalThreshold;
 
     /**
-     * Create a new Perfdata object based on the given performance data value
+     * Create a new Perfdata object based on the given performance data label and value
      *
-     * @param   string      $perfdataValue      The value to parse
+     * @param   string      $label      The perfdata label
+     * @param   string      $value      The perfdata value
      */
-    protected function __construct($perfdataValue)
+    public function __construct($label, $value)
     {
-        $this->perfdataValue = $perfdataValue;
+        $this->perfdataValue = $value;
+        $this->label = $label;
         $this->parse();
 
         if ($this->unit === '%') {
@@ -78,25 +87,30 @@ class Perfdata
     }
 
     /**
-     * Return a new Perfdata object based on the given performance data value
+     * Return a new Perfdata object based on the given performance data key=value pair
      *
-     * @param   string      $perfdataValue      The value to parse
+     * @param   string      $perfdata       The key=value pair to parse
      *
      * @return  Perfdata
      *
-     * @throws  ProgrammingError                In case the given performance data value has no content
+     * @throws  InvalidArgumentException    In case the given performance data has no content or a invalid format
      */
-    public static function fromString($perfdataValue)
+    public static function fromString($perfdata)
     {
-        if (empty($perfdataValue)) {
-            throw new ProgrammingError('Perfdata::fromString expects a string with content');
+        if (empty($perfdata)) {
+            throw new InvalidArgumentException('Perfdata::fromString expects a string with content');
+        } elseif (false === strpos($perfdata, '=')) {
+            throw new InvalidArgumentException(
+                'Perfdata::fromString expects a key=value formatted string. Got "' . $perfdata . '" instead'
+            );
         }
 
-        return new static($perfdataValue);
+        list($label, $value) = explode('=', $perfdata, 2);
+        return new static(trim($label), trim($value));
     }
 
     /**
-     * Return whether this performance data value is a number
+     * Return whether this performance data's value is a number
      *
      * @return  bool    True in case it's a number, otherwise False
      */
@@ -106,7 +120,7 @@ class Perfdata
     }
 
     /**
-     * Return whether this performance data value are seconds
+     * Return whether this performance data's value are seconds
      *
      * @return  bool    True in case it's seconds, otherwise False
      */
@@ -116,7 +130,7 @@ class Perfdata
     }
 
     /**
-     * Return whether this performance data value is in percentage
+     * Return whether this performance data's value is in percentage
      *
      * @return  bool    True in case it's in percentage, otherwise False
      */
@@ -126,7 +140,7 @@ class Perfdata
     }
 
     /**
-     * Return whether this performance data value is in bytes
+     * Return whether this performance data's value is in bytes
      *
      * @return  bool    True in case it's in bytes, otherwise False
      */
@@ -136,13 +150,21 @@ class Perfdata
     }
 
     /**
-     * Return whether this performance data value is a counter
+     * Return whether this performance data's value is a counter
      *
      * @return  bool    True in case it's a counter, otherwise False
      */
     public function isCounter()
     {
         return $this->unit === 'c';
+    }
+
+    /**
+     * Return this perfomance data's label
+     */
+    public function getLabel()
+    {
+        return $this->label;
     }
 
     /**
@@ -176,7 +198,7 @@ class Perfdata
     }
 
     /**
-     * Return this value's warning treshold or null if it is not available
+     * Return this performance data's warning treshold or null if it is not available
      *
      * @return  null|string
      */
@@ -186,7 +208,7 @@ class Perfdata
     }
 
     /**
-     * Return this value's critical treshold or null if it is not available
+     * Return this performance data's critical treshold or null if it is not available
      *
      * @return  null|string
      */
