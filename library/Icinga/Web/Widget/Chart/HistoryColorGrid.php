@@ -33,7 +33,6 @@ use Icinga\Util\DateTimeFactory;
 use Icinga\Util\Color;
 use Icinga\Web\Widget\AbstractWidget;
 use DateInterval;
-use Zend_View_Abstract;
 
 /**
  * Display a colored grid that visualizes a set of values for each day
@@ -45,7 +44,7 @@ class HistoryColorGrid extends AbstractWidget {
 
     const ORIENTATION_HORIZONTAL = 'horizontal';
 
-    public $orientation = self::ORIENTATION_HORIZONTAL;
+    public $orientation = self::ORIENTATION_VERTICAL;
 
     private $maxValue = 1;
 
