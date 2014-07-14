@@ -11,13 +11,17 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
 {
     public function perfdata($perfdataStr, $compact = false, $float = false)
     {
+        $pset = PerfdataSet::fromString($perfdataStr)->asArray();
+        $onlyPieChartData = array_filter($pset, function ($e) { return $e->getPercentage() > 0; });
+        if ($compact) {
+            $onlyPieChartData = array_slice($onlyPieChartData, 0, 5);
+        } else {
+            $nonPieChartData = array_filter($pset, function ($e) { return $e->getPercentage() == 0; });
+        }
+
         $result = '';
         $table = array();
-        $pset = array_slice(PerfdataSet::fromString($perfdataStr)->asArray(), 0, ($compact ? 5 : null));
-        foreach ($pset as $perfdata) {
-            if ($perfdata->getPercentage() == 0) {
-                continue;
-            }
+        foreach ($onlyPieChartData as $perfdata) {
             $pieChart = $this->createInlinePie($perfdata);
             if ($compact) {
                 if (! $float) {
@@ -27,6 +31,7 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
                 }
             } else {
                 if (! $perfdata->isPercentage()) {
+                    // TODO: Should we trust sprintf-style placeholders in perfdata titles?
                     $pieChart->setTooltipFormat('{{label}}: {{formatted}} ({{percent}}%)');
                 }
                 $pieChart->setStyle('margin: 0.2em 0.5em 0.2em 0.5em;');
@@ -38,11 +43,11 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
             }
         }
 
-        // TODO: What if we have both? And should we trust sprintf-style placeholders in perfdata titles?
-        if (empty($table)) {
-            return $compact ? $result : $perfdataStr;
+        if ($compact) {
+            return $result;
         } else {
-            return '<table class="perfdata">' . implode("\n", $table) . '</table>';
+            $pieCharts = empty($table) ? '' : '<table class="perfdata">' . implode("\n", $table) . '</table>';
+            return $pieCharts . "\n" . implode("<br>\n", $nonPieChartData);
         }
     }
 

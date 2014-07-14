@@ -238,6 +238,16 @@ class Perfdata
     }
 
     /**
+     * Return this performance data as string
+     *
+     * @return  string
+     */
+    public function __toString()
+    {
+        return sprintf(strpos($this->label, ' ') === false ? '%s=%s' : "'%s'=%s", $this->label, $this->perfdataValue);
+    }
+
+    /**
      * Parse the current performance data value
      *
      * @todo    Handle optional min/max if UOM == %
