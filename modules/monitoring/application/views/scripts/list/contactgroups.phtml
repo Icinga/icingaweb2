@@ -10,9 +10,8 @@
 if (count($groupData) === 0) {
     echo t('No contacts matching the filter');
 }
-?>
 
-<?php foreach ($groupData as $groupName => $groupInfo): ?>
+foreach ($groupData as $groupName => $groupInfo): ?>
         <div class="box contactgroup">
             <h2><?= $groupInfo['alias']; ?></h2>
 <?php if ($groupInfo['alias'] !== $groupName): ?>
@@ -31,8 +30,8 @@ if (count($groupData) === 0) {
                     <p>
 <?php if ($c->contact_email): ?>
                         <?= $c->contact_email; ?>
-<?php endif ?>
-<?php if ($c->contact_pager): ?>
+<?php endif;
+if ($c->contact_pager): ?>
                         <br />
                         <?= $c->contact_pager; ?>
 <?php endif ?>
