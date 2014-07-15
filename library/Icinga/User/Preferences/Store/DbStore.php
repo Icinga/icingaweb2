@@ -107,14 +107,10 @@ class DbStore extends PreferencesStore
             $this->insert($toBeInserted);
         }
 
-        $current = $this->preferences;
-        $toBeUpdated = array();
-        foreach (array_filter(
-            array_keys(array_intersect_key($preferences, $this->preferences)),
-            function ($k) use ($current, $preferences) { return $current[$k] == $preferences[$k] ? false : true; }
-        ) as $key) {
-            $toBeUpdated[$key] = $preferences[$key];
-        }
+        $toBeUpdated = array_intersect_key(
+            array_diff_assoc($preferences, $this->preferences),
+            array_diff_assoc($this->preferences, $preferences)
+        );
         if (!empty($toBeUpdated)) {
             $this->update($toBeUpdated);
         }
