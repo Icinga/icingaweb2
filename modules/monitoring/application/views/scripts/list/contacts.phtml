@@ -2,53 +2,34 @@
 $viewHelper = $this->getHelper('MonitoringState');
 $contactHelper = $this->getHelper('ContactFlags');
 ?>
-<div class="row">
-  <div class="pull-left">
-    <h1>Contacts</h1>
-  </div>
-  <div class="pull-right">
-    <?= $this->tabs->render($this); ?>
-  </div>
-</div>
-<div data-icinga-component="app/mainDetailGrid" data-icinga-grid-selection-type="none">
-
-    <div class="container pull-left">
-
-        <div class="row">
-          <div class="col-md-12">
-            <?=  $this->sortControl->render($this); ?>
-          </div>
-        </div>
-
-        <div class="row">
-            <?=  $this->paginationControl($contacts, null, null, array('preserve' => $this->preserve)); ?>
-        </div>
+<div class="controls">
+    <?= $this->tabs ?>
+    <div style="margin: 1em">
+        <?=  $this->sortControl->render($this); ?>
     </div>
+    <?=  $this->paginationControl($contacts, null, null, array('preserve' => $this->preserve)); ?>
+</div>
 
-    <table class="table table-condensed pull-left">
+<div class="content contacts">
+    <table data-base-target="_next" class="action">
         <tbody>
             <?php
             if (count($contacts) === 0) {
                 echo t('No contacts matching the filter');
             }
-            ?>
-            <?php foreach($contacts as $contact): ?>
-                <?php $periodLink = $this->href('monitoring/show/contacts', array('contact' => $contact->contact_name)); ?>
+            foreach($contacts as $contact):
+                $periodLink = $this->href('monitoring/show/contacts', array('contact' => $contact->contact_name)); ?>
                 <tr>
-                    <td> <?= $contact->contact_name ?> </td>
-                    <td> <?= $contact->contact_alias ?> </td>
-                    <td> <?= $contact->contact_email ?> </td>
-                    <td> <?= $contact->contact_pager ?> </td>
-                    <td> <?= $contactHelper->contactFlags($contact, 'service') ?> </td>
-                    <td> <?= $contactHelper->contactFlags($contact, 'host') ?> </td>
-                    <td> <?= $contact->contact_notify_service_timeperiod ?> </td>
-                    <td> <?= $contact->contact_notify_host_timeperiod ?> </td>
+                    <td><?= $contact->contact_name ?></td>
+                    <td><?= $contact->contact_alias ?></td>
+                    <td><?= $contact->contact_email ?></td>
+                    <td><?= $contact->contact_pager ?></td>
+                    <td><?= $contactHelper->contactFlags($contact, 'service') ?></td>
+                    <td><?= $contactHelper->contactFlags($contact, 'host') ?></td>
+                    <td><?= $contact->contact_notify_service_timeperiod ?></td>
+                    <td><?= $contact->contact_notify_host_timeperiod ?></td>
                 </tr>
             <?php endforeach; ?>
         </tbody>
     </table>
-
-    <div class="pull-left">
-        <?= $this->paginationControl($contacts, null, null, array('preserve' => $this->preserve)); ?>
-    </div>
 </div>
