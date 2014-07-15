@@ -1,3 +1,6 @@
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
+
 /**
  * Icinga utility functions
  */

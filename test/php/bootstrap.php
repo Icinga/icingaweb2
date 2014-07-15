@@ -1,4 +1,6 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 $applicationPath = realpath(dirname(__FILE__) . '/../../application/');
 $modulePath = realpath(dirname(__FILE__) . '/../../modules/');
