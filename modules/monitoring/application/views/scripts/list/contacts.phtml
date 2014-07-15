@@ -5,31 +5,37 @@ $contactHelper = $this->getHelper('ContactFlags');
 <div class="controls">
     <?= $this->tabs ?>
     <div style="margin: 1em">
-        <?=  $this->sortControl->render($this); ?>
+        <?= $this->sortControl->render($this); ?>
     </div>
-    <?=  $this->paginationControl($contacts, null, null, array('preserve' => $this->preserve)); ?>
+    <?= $this->paginationControl($contacts, null, null, array('preserve' => $this->preserve)); ?>
 </div>
 
 <div class="content contacts">
-    <table data-base-target="_next" class="action">
-        <tbody>
+    <?php
+    if (count($contacts) === 0) {
+        echo t('No contacts matching the filter');
+    }
+    foreach ($contacts as $contact):
+        $periodLink = $this->href('monitoring/show/contacts', array('contact' => $contact->contact_name)); ?>
+        <div style="background-color: lightgray; padding: 0.5em; border-radius: 0.5em; overflow: hidden; margin: 0.125em; float: left;">
+            <img src="<?= $this->href('/static/gravatar', array('email' => $contact->contact_email )) ?>"
+                 style="width: 60px; border: 4px solid white; border-radius: 8px; margin-right: 8px; float: left;" />
+            <strong><?= $contact->contact_name ?></strong> (<?= $contact->contact_alias ?>)
             <?php
-            if (count($contacts) === 0) {
-                echo t('No contacts matching the filter');
-            }
-            foreach($contacts as $contact):
-                $periodLink = $this->href('monitoring/show/contacts', array('contact' => $contact->contact_name)); ?>
-                <tr>
-                    <td><?= $contact->contact_name ?></td>
-                    <td><?= $contact->contact_alias ?></td>
-                    <td><?= $contact->contact_email ?></td>
-                    <td><?= $contact->contact_pager ?></td>
-                    <td><?= $contactHelper->contactFlags($contact, 'service') ?></td>
-                    <td><?= $contactHelper->contactFlags($contact, 'host') ?></td>
-                    <td><?= $contact->contact_notify_service_timeperiod ?></td>
-                    <td><?= $contact->contact_notify_host_timeperiod ?></td>
-                </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
+            foreach (array(
+                $contact->contact_email => 'eMail: <a href="mailto:%1$s">%1$s</a>',
+                $contact->contact_pager => 'Pager: %s',
+                $contact->contact_notify_service_timeperiod => 'Service notification period: %s',
+                $contact->contact_notify_host_timeperiod => 'Host notification period: %s'
+            ) as $value => $format):
+                if ($value): ?>
+                    <br />
+                    <?php
+                    printf($format, $value);
+                endif;
+            endforeach;
+            ?>
+            <div class="clearfix"></div>
+        </div>
+    <?php endforeach; ?>
 </div>
