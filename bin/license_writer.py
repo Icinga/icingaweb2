@@ -191,6 +191,9 @@ def get_license(type):
     try:
         return __LICENSE_STORE[type]
     except(KeyError):
+        if not LICENSE_DATA:
+            __LICENSE_STORE[type] = ''
+            return ''
         config = FILE_TYPE_CONFIG[type]
         license_data = []
         license_data.extend([''] * config['linesBefore'])
@@ -239,8 +242,9 @@ def replace_text(org_data, license_data):
             test = True
         elif SECTION_MARKER.search(line) and test == True:
             test = False
-            out += license_data
-            out += '\n'
+            if license_data:
+                out += license_data
+                out += '\n'
         elif test == True:
             continue
 
