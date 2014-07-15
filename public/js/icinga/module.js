@@ -1,3 +1,6 @@
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
+
 /**
  * This is how we bootstrap JS code in our modules
  */

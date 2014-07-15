@@ -1,11 +1,6 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: moja
- * Date: 7/17/13
- * Time: 1:29 PM
- * To change this template use File | Settings | File Templates.
- */
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Module\Monitoring\Backend\Statusdat\Query;
 
