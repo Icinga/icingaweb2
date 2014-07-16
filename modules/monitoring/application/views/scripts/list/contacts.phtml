@@ -34,7 +34,7 @@ $contactHelper = $this->getHelper('ContactFlags');
                 if ($value): ?>
                     <br />
                     <?php
-                    printf($format, $value);
+                    printf($format, htmlspecialchars($value));
                 endif;
             endforeach;
             ?>
