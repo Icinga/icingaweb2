@@ -196,8 +196,15 @@ class PhpSession extends Session
      */
     public function getId()
     {
-        $this->open(); // Make sure we actually get a id
-        return session_id();
+        if (($id = session_id()) === '') {
+            // Make sure we actually get a id
+            $this->open();
+            session_write_close();
+            $this->hasBeenTouched = true;
+            $id = session_id();
+        }
+
+        return $id;
     }
 
     /**
