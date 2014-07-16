@@ -310,6 +310,11 @@ class UrlParams
         }
     }
 
+    public function asArray()
+    {
+        return $this->params;
+    }
+
     public function __toString()
     {
         $parts = array();

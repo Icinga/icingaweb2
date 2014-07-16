@@ -22,7 +22,7 @@ class Url
     /**
      * An array of all parameters stored in this Url
      *
-     * @var array
+     * @var UrlParams
      */
     protected $params;
 
@@ -335,7 +335,7 @@ class Url
      */
     public function getParams()
     {
-        return $this->params;
+        return $this->params->asArray();
     }
 
     /**
