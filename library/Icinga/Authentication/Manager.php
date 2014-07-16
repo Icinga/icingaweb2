@@ -27,7 +27,7 @@ class Manager
      * Authenticated user
      *
      * @var User
-     **/
+     */
     private $user;
 
     /**
@@ -96,25 +96,24 @@ class Manager
         );
         $this->user = $user;
         if ($persist == true) {
-            $session = Session::getSession();
-            $session->refreshId();
             $this->persistCurrentUser();
         }
     }
 
     /**
      * Writes the current user to the session
-     **/
+     */
     public function persistCurrentUser()
     {
         $session = Session::getSession();
         $session->set('user', $this->user);
         $session->write();
+        $session->refreshId();
     }
 
     /**
      * Tries to authenticate the user with the current session
-     **/
+     */
     public function authenticateFromSession()
     {
         $this->user = Session::getSession()->get('user');
@@ -189,7 +188,7 @@ class Manager
      * Returns the current user or null if no user is authenticated
      *
      * @return User
-     **/
+     */
     public function getUser()
     {
         return $this->user;
@@ -200,7 +199,7 @@ class Manager
      *
      * @return  array
      * @see     User::getGroups
-     **/
+     */
     public function getGroups()
     {
         return $this->user->getGroups();

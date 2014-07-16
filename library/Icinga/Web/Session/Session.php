@@ -38,6 +38,13 @@ abstract class Session extends SessionNamespace
     }
 
     /**
+     * Return whether a session exists
+     *
+     * @return  bool
+     */
+    abstract public function exists();
+
+    /**
      * Purge session
      */
     abstract public function purge();

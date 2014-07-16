@@ -100,8 +100,11 @@ class Notification
     {
         $session = Session::getSession();
         $msgs = $session->messages;
-        $session->messages = array();
-        $session->write();
+        if (false === empty($msgs)) {
+            $session->messages = array();
+            $session->write();
+        }
+
         return $msgs;
     }
 

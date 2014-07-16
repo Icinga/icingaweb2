@@ -5,7 +5,7 @@
 namespace Icinga\Web\Session;
 
 use Icinga\Logger\Logger;
-use \Icinga\Exception\ConfigurationError;
+use Icinga\Exception\ConfigurationError;
 
 /**
  * Session implementation in PHP
@@ -24,21 +24,21 @@ class PhpSession extends Session
      *
      * @var bool
      */
-    private $hasBeenTouched = false;
+    protected $hasBeenTouched = false;
 
     /**
      * Name of the session
      *
      * @var string
      */
-    private $sessionName = 'Icingaweb2';
+    protected $sessionName = 'Icingaweb2';
 
     /**
      * Configuration for cookie options
      *
      * @var array
      */
-    private static $defaultCookieOptions = array(
+    protected static $defaultCookieOptions = array(
         'use_trans_sid'             => false,
         'use_cookies'               => true,
         'cookie_httponly'           => true,
@@ -82,13 +82,16 @@ class PhpSession extends Session
             throw new ConfigurationError('Can\'t save session');
         }
 
-        $this->read();
+        if ($this->exists()) {
+            // We do not want to start a new session here if there is not any
+            $this->read();
+        }
     }
 
     /**
      * Open a PHP session
      */
-    private function open()
+    protected function open()
     {
         session_name($this->sessionName);
 
@@ -171,7 +174,7 @@ class PhpSession extends Session
     /**
      * Remove session cookies
      */
-    private function clearCookies()
+    protected function clearCookies()
     {
         if (ini_get('session.use_cookies')) {
             Logger::debug('Clear session cookie');
@@ -196,5 +199,14 @@ class PhpSession extends Session
         $this->open();
         session_regenerate_id();
         session_write_close();
+        $this->hasBeenTouched = true;
+    }
+
+    /**
+     * @see Session::exists()
+     */
+    public function exists()
+    {
+        return isset($_COOKIE[$this->sessionName]);
     }
 }
