@@ -73,9 +73,9 @@ class Monitoring_ListController extends Controller
             $stateColumn = 'host_hard_state';
             $stateChangeColumn = 'host_last_hard_state_change';
         } else {
-            $stateType = 'soft';
             $stateColumn = 'host_state';
             $stateChangeColumn = 'host_last_state_change';
+            $stateType = 'soft';
         }
 
         $this->addTitleTab('hosts');
@@ -148,7 +148,7 @@ class Monitoring_ListController extends Controller
             }
         }
         $this->setAutorefreshInterval(10);
-
+        
         $columns = array_merge(array(
             'host_name',
             'host_state',
