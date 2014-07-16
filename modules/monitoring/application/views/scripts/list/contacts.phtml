@@ -10,7 +10,7 @@ $contactHelper = $this->getHelper('ContactFlags');
     <?= $this->paginationControl($contacts, null, null, array('preserve' => $this->preserve)); ?>
 </div>
 
-<div class="content contacts">
+<div data-base-target="_next" class="content contacts">
     <?php
     if (count($contacts) === 0) {
         echo t('No contacts matching the filter');
@@ -20,14 +20,17 @@ $contactHelper = $this->getHelper('ContactFlags');
         <div style="background-color: lightgray; padding: 0.5em; border-radius: 0.5em; overflow: hidden; margin: 0.125em; float: left;">
             <img src="<?= $this->href('/static/gravatar', array('email' => $contact->contact_email )) ?>"
                  style="width: 60px; border: 4px solid white; border-radius: 8px; margin-right: 8px; float: left;" />
-            <strong><?= $contact->contact_name ?></strong> (<?= $contact->contact_alias ?>)
+            <a href="<?= $this->href(
+                'monitoring/show/contact',
+                array('contact' => $contact->contact_name)
+            ) ?>"><strong><?= $contact->contact_name ?></strong></a> (<?= $contact->contact_alias ?>)
             <?php
             foreach (array(
-                $contact->contact_email => 'eMail: <a href="mailto:%1$s">%1$s</a>',
-                $contact->contact_pager => 'Pager: %s',
-                $contact->contact_notify_service_timeperiod => 'Service notification period: %s',
-                $contact->contact_notify_host_timeperiod => 'Host notification period: %s'
-            ) as $value => $format):
+                'eMail: <a href="mailto:%1$s">%1$s</a>' => $contact->contact_email,
+                'Pager: %s'                             => $contact->contact_pager,
+                'Service notification period: %s'       => $contact->contact_notify_service_timeperiod,
+                'Host notification period: %s'          => $contact->contact_notify_host_timeperiod
+            ) as $format => $value):
                 if ($value): ?>
                     <br />
                     <?php
