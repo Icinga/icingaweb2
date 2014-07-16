@@ -176,12 +176,12 @@ class Manager
     }
 
     /**
-     * Purges the current authorization information and removes the user from the session
-     **/
+     * Purges the current authorization information and session
+     */
     public function removeAuthorization()
     {
         $this->user = null;
-        $this->persistCurrentUser();
+        Session::getSession()->purge();
     }
 
     /**
