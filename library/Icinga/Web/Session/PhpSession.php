@@ -192,6 +192,15 @@ class PhpSession extends Session
     }
 
     /**
+     * @see Session::getId()
+     */
+    public function getId()
+    {
+        $this->open(); // Make sure we actually get a id
+        return session_id();
+    }
+
+    /**
      * Assign a new sessionId to the currently active session
      */
     public function refreshId()

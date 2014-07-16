@@ -10,6 +10,7 @@ use Zend_Config;
 use Zend_Form_Element_Submit;
 use Zend_Form_Element_Reset;
 use Zend_View_Interface;
+use Icinga\Web\Session;
 use Icinga\Web\Form\Element\Note;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Web\Form\Decorator\HelpText;
@@ -112,7 +113,7 @@ class Form extends Zend_Form
     public function getSessionId()
     {
         if (!$this->sessionId) {
-            $this->sessionId = session_id();
+            $this->sessionId = Session::getSession()->getId();
         }
 
         return $this->sessionId;

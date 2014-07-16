@@ -55,6 +55,13 @@ abstract class Session extends SessionNamespace
     abstract public function refreshId();
 
     /**
+     * Return the id of this session
+     *
+     * @return  string
+     */
+    abstract public function getId();
+
+    /**
      * Get or create a new session namespace
      *
      * @param   string      $identifier     The namespace's identifier

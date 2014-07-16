@@ -12,12 +12,6 @@ use Icinga\Web\Form;
 class LoginForm extends Form
 {
     /**
-     * Disable CSRF protection
-     * @var bool
-     */
-    protected $tokenDisabled = true;
-
-    /**
      * Interface how the form should be created
      */
     protected function create()
