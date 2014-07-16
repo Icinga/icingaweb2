@@ -61,4 +61,4 @@ class Controller extends ModuleActionController
         }
     }
 }
-// @codingStandardsIgnoreEnd
+
