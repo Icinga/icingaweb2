@@ -322,7 +322,7 @@ class Web extends ApplicationBootstrap
     {
         parent::setupInternationalization();
         if ($this->user !== null && $this->user->getPreferences() !== null
-            && ($locale = $this->user->getPreferences()->get('app.language') !== null)
+            && (($locale = $this->user->getPreferences()->get('app.language')) !== null)
         ) {
             try {
                 Translator::setupLocale($locale);
