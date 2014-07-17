@@ -1,8 +1,7 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
-/**
- * Web widget class
- */
 namespace Icinga\Web;
 
 use Icinga\Exception\ProgrammingError;

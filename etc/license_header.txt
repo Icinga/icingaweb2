@@ -1,0 +1,5 @@
+Icinga Web 2
+
+@link https://www.icinga.org/icingaweb2/
+@copyright Copyright (c) 2013-%(YEAR)s Icinga Development Team (https://www.icinga.org)
+@license http://www.gnu.org/licenses/gpl-2.0.txt, or any later version

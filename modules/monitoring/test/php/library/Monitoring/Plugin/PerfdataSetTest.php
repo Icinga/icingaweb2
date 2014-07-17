@@ -17,19 +17,19 @@ class PerfdataSetTest extends BaseTestCase
     public function testWhetherValidSimplePerfdataLabelsAreProperlyParsed()
     {
         $pset = PerfdataSetWithPublicData::fromString('key1=val1   key2=val2 key3  =val3');
-        $this->assertArrayHasKey(
+        $this->assertEquals(
             'key1',
-            $pset->perfdata,
+            $pset->perfdata[0]->getLabel(),
             'PerfdataSet does not correctly parse valid simple labels'
         );
-        $this->assertArrayHasKey(
+        $this->assertEquals(
             'key2',
-            $pset->perfdata,
+            $pset->perfdata[1]->getLabel(),
             'PerfdataSet does not correctly parse valid simple labels'
         );
-        $this->assertArrayHasKey(
+        $this->assertEquals(
             'key3',
-            $pset->perfdata,
+            $pset->perfdata[2]->getLabel(),
             'PerfdataSet does not correctly parse valid simple labels'
         );
     }
@@ -37,14 +37,14 @@ class PerfdataSetTest extends BaseTestCase
     public function testWhetherNonQuotedPerfdataLablesWithSpacesAreProperlyParsed()
     {
         $pset = PerfdataSetWithPublicData::fromString('key 1=val1 key 1 + 1=val2');
-        $this->assertArrayHasKey(
+        $this->assertEquals(
             'key 1',
-            $pset->perfdata,
+            $pset->perfdata[0]->getLabel(),
             'PerfdataSet does not correctly parse non quoted labels with spaces'
         );
-        $this->assertArrayHasKey(
+        $this->assertEquals(
             'key 1 + 1',
-            $pset->perfdata,
+            $pset->perfdata[1]->getLabel(),
             'PerfdataSet does not correctly parse non quoted labels with spaces'
         );
     }
@@ -52,14 +52,14 @@ class PerfdataSetTest extends BaseTestCase
     public function testWhetherValidQuotedPerfdataLabelsAreProperlyParsed()
     {
         $pset = PerfdataSetWithPublicData::fromString('\'key 1\'=val1 "key 2"=val2');
-        $this->assertArrayHasKey(
+        $this->assertEquals(
             'key 1',
-            $pset->perfdata,
+            $pset->perfdata[0]->getLabel(),
             'PerfdataSet does not correctly parse valid quoted labels'
         );
-        $this->assertArrayHasKey(
+        $this->assertEquals(
             'key 2',
-            $pset->perfdata,
+            $pset->perfdata[1]->getLabel(),
             'PerfdataSet does not correctly parse valid quoted labels'
         );
     }
@@ -67,14 +67,14 @@ class PerfdataSetTest extends BaseTestCase
     public function testWhetherInvalidQuotedPerfdataLabelsAreProperlyParsed()
     {
         $pset = PerfdataSetWithPublicData::fromString('\'key 1=val1 key 2"=val2');
-        $this->assertArrayHasKey(
+        $this->assertEquals(
             'key 1',
-            $pset->perfdata,
+            $pset->perfdata[0]->getLabel(),
             'PerfdataSet does not correctly parse invalid quoted labels'
         );
-        $this->assertArrayHasKey(
+        $this->assertEquals(
             'key 2"',
-            $pset->perfdata,
+            $pset->perfdata[1]->getLabel(),
             'PerfdataSet does not correctly parse invalid quoted labels'
         );
     }
@@ -85,8 +85,8 @@ class PerfdataSetTest extends BaseTestCase
     public function testWhetherAPerfdataSetIsIterable()
     {
         $pset = PerfdataSet::fromString('key=value');
-        foreach ($pset as $label => $value) {
-            $this->assertEquals('key', $label);
+        foreach ($pset as $p) {
+            $this->assertEquals('key', $p->getLabel());
             return;
         }
 

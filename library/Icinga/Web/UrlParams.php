@@ -1,4 +1,6 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Web;
 
@@ -306,6 +308,11 @@ class UrlParams
             list($key, $val) = preg_split('/=/', $part, 2);
             $this->add($key, $val);
         }
+    }
+
+    public function asArray()
+    {
+        return $this->params;
     }
 
     public function __toString()

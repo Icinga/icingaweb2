@@ -1,4 +1,6 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 // TODO: Throw away as soon as our backends are handling things better
 class Zend_View_Helper_ResolveComments extends Zend_View_Helper_Abstract

@@ -81,12 +81,7 @@ class IniStore extends PreferencesStore
     public function save(Preferences $preferences)
     {
         $preferences = $preferences->toArray();
-        $this->update(
-            array_merge(
-                array_diff_key($preferences, $this->preferences),
-                array_intersect_key($preferences, $this->preferences)
-            )
-        );
+        $this->update(array_diff_assoc($preferences, $this->preferences));
         $this->delete(array_keys(array_diff_key($this->preferences, $preferences)));
         $this->write();
     }

@@ -5,6 +5,7 @@
 namespace Icinga\Web;
 
 use Zend_Form;
+use Icinga\Web\Session;
 use Icinga\Web\Form\Decorator\HelpText;
 use Icinga\Web\Form\Decorator\ElementWrapper;
 use Icinga\Web\Form\InvalidCSRFTokenException;
@@ -438,7 +439,7 @@ class Form extends Zend_Form
     protected function generateCsrfToken()
     {
         $seed = mt_rand();
-        $hash = hash('sha256', session_id() . $seed);
+        $hash = hash('sha256', Session::getSession()->getId() . $seed);
         return sprintf('%s|%s', $seed, $hash);
     }
 
@@ -479,6 +480,6 @@ class Form extends Zend_Form
             return false;
         }
 
-        return $hash === hash('sha256', session_id() . $seed);
+        return $hash === hash('sha256', Session::getSession()->getId() . $seed);
     }
 }

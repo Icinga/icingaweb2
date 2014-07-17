@@ -1,4 +1,6 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 /*
 CREATE INDEX tgelf_comments ON icinga_comments (object_id, comment_type, comment_time);

@@ -25,11 +25,22 @@ class FileWriter extends LogWriter
 
     /**
      * Create a new log writer initialized with the given configuration
+     *
+     * @throws  ConfigurationError      In case the log path does not exist
      */
     public function __construct(Zend_Config $config)
     {
         $this->path = $config->target;
-        $this->setup();
+
+        if (substr($this->path, 0, 6) !== 'php://' && false === file_exists(dirname($this->path))) {
+            throw new ConfigurationError('Log path "' . dirname($this->path) . '" does not exist');
+        }
+
+        try {
+            $this->write(''); // Avoid to handle such errors on every write access
+        } catch (Exception $e) {
+            throw new ConfigurationError('Cannot write to log file "' . $this->path . '" (' . $e->getMessage() . ')');
+        }
     }
 
     /**
@@ -40,23 +51,7 @@ class FileWriter extends LogWriter
      */
     public function log($severity, $message)
     {
-        $this->write(date('c') . ' ' . $this->getSeverityString($severity) . ' ' . $message);
-    }
-
-    /**
-     * Create the file if it does not already exist
-     */
-    protected function setup()
-    {
-        if (substr($this->path, 0, 6) !== 'php://') {
-            if (!file_exists($this->path) && (!@touch($this->path) || !@chmod($this->path, 0664))) {
-                throw new ConfigurationError('Cannot create log file "' . $this->path . '"');
-            }
-
-            if (!@is_writable($this->path)) {
-                throw new ConfigurationError('Cannot write to log file "' . $this->path . '"');
-            }
-        }
+        $this->write(date('c') . ' ' . $this->getSeverityString($severity) . ' ' . $message . PHP_EOL);
     }
 
     /**
@@ -94,7 +89,7 @@ class FileWriter extends LogWriter
     protected function write($text)
     {
         $file = new File($this->path, 'a');
-        $file->fwrite($text . PHP_EOL);
+        $file->fwrite($text);
         $file->fflush();
     }
 }

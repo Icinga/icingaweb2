@@ -1,12 +1,7 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
-/**
- * Icingaweb 2
- *
- * @link https://git.icinga.org/icingaweb2.git/ for the official source repository
- * @copyright Copyright (c) 2013-2014 Icinga Development Team (https://www.icinga.org)
- * @license http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- */
 namespace Icinga\Application\Modules;
 
 use Exception;

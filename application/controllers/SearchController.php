@@ -1,4 +1,6 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 use Icinga\Web\Controller\ActionController;
 use Icinga\Application\Icinga;
