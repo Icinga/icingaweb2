@@ -26,15 +26,26 @@ $contactHelper = $this->getHelper('ContactFlags');
             ) ?>"><strong><?= $contact->contact_name ?></strong></a> (<?= $contact->contact_alias ?>)
             <?php
             foreach (array(
-                'eMail: <a href="mailto:%1$s">%1$s</a>' => $contact->contact_email,
-                'Pager: %s'                             => $contact->contact_pager,
-                'Service notification period: %s'       => $contact->contact_notify_service_timeperiod,
-                'Host notification period: %s'          => $contact->contact_notify_host_timeperiod
-            ) as $format => $value):
+                'eMail' => array(
+                    $contact->contact_email, '<a href="mailto:%1$s">%1$s</a>'
+                ),
+                'Pager'                       => $contact->contact_pager,
+                'Service notification period' => $contact->contact_notify_service_timeperiod,
+                'Host notification period'    => $contact->contact_notify_host_timeperiod
+            ) as $key => $value):
+                if (is_string($value)) {
+                    $format = '%s';
+                } else {
+                    $format = $value[1];
+                    $value = $value[0];
+                }
                 if ($value): ?>
                     <br />
                     <?php
-                    printf($format, htmlspecialchars($value));
+                    printf(
+                        '%s: %s', $key,
+                        sprintf($format, htmlspecialchars($value))
+                    );
                 endif;
             endforeach;
             ?>
