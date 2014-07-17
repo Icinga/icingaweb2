@@ -14,42 +14,41 @@ $contactHelper = $this->getHelper('ContactFlags');
     <?php
     if (count($contacts) === 0) {
         echo t('No contacts matching the filter');
+        return;
     }
-    foreach ($contacts as $contact):
-        $periodLink = $this->href('monitoring/show/contacts', array('contact' => $contact->contact_name)); ?>
-        <div style="background-color: lightgray; padding: 0.5em; border-radius: 0.5em; overflow: hidden; margin: 0.125em; float: left;">
-            <img src="<?= $this->href('/static/gravatar', array('email' => $contact->contact_email )) ?>"
-                 style="width: 60px; border: 4px solid white; border-radius: 8px; margin-right: 8px; float: left;" />
+    foreach ($contacts as $contact): ?>
+        <div class="contact">
+            <img src="<?= $this->href('/static/gravatar', array('email' => $contact->contact_email )) ?>" />
             <a href="<?= $this->href(
                 'monitoring/show/contact',
                 array('contact' => $contact->contact_name)
             ) ?>"><strong><?= $contact->contact_name ?></strong></a> (<?= $contact->contact_alias ?>)
-            <?php
-            foreach (array(
-                'eMail' => array(
-                    $contact->contact_email, '<a href="mailto:%1$s">%1$s</a>'
-                ),
-                'Pager'                       => $contact->contact_pager,
-                'Service notification period' => $contact->contact_notify_service_timeperiod,
-                'Host notification period'    => $contact->contact_notify_host_timeperiod
-            ) as $key => $value):
-                if (is_string($value)) {
-                    $format = '%s';
-                } else {
-                    $format = $value[1];
-                    $value = $value[0];
-                }
-                if ($value): ?>
-                    <br />
-                    <?php
-                    printf(
-                        '%s: %s', $key,
-                        sprintf($format, htmlspecialchars($value))
-                    );
-                endif;
-            endforeach;
-            ?>
-            <div class="clearfix"></div>
+            <div><?= sprintf(
+                '%1$s: <a href="mailto:%2$s">%2$s</a>',
+                t('Email'),
+                htmlspecialchars($contact->contact_email)
+            ) ?></div>
+            <?php if ($contact->contact_pager): ?>
+            <div>
+                <?= t('Pager') ?>:
+                <?= htmlspecialchars($contact->contact_pager) ?>
+            </div>
+            <?php endif; ?>
+            <div style="clear: both;"></div>
+            <div class="notification-periods">
+                <div>
+                    <?= t('Service notification period') ?>:
+                    <?= htmlspecialchars($contact->contact_notify_service_timeperiod) ?>
+                </div>
+                <div>
+                    <?= t('Host notification period') ?>:
+                    <?= htmlspecialchars($contact->contact_notify_host_timeperiod) ?>
+                </div>
+            </div>
         </div>
-    <?php endforeach; ?>
+    <?php
+    endforeach;
+    if (true): /* The following piece of HTML MUST be nested in <?php */ ?>
+    <div style="clear: both;"></div>
+    <?php endif; ?>
 </div>
