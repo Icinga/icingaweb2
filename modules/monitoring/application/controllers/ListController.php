@@ -518,7 +518,7 @@ class Monitoring_ListController extends Controller
 
         if ($modifyFilter) {
             if ($this->_request->isPost()) {
-                $filter = $filter->applyChanges($_POST);
+                $filter = $filter->applyChanges($this->_request->getPost());
                 $this->redirectNow($this->url->without('page')->setQueryString($filter->toQueryString()));
             }
             $this->view->filterEditor = Widget::create('filterEditor', array(

@@ -29,7 +29,7 @@ class LoginForm extends Form
             'required'    => true
         ));
         // TODO: We need a place to intercept filled forms before rendering
-        if (isset($_POST['username'])) {
+        if ($this->getRequest()->getPost('username') !== null) {
             $this->getElement('password')->setAttrib('class', 'autofocus');
         } else {
             $this->getElement('username')->setAttrib('class', 'autofocus');
