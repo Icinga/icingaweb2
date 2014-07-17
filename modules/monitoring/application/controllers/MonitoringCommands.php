@@ -64,7 +64,7 @@ class Zend_View_Helper_MonitoringCommands extends Zend_View_Helper_Abstract
 
         $out .= '</div>';
 
-        $out .= '<div class="clearfix"></div>';
+        $out .= '<div style="clear: both;"></div>';
 
         if ($type === Meta::TYPE_FULL) {
             return '<div>'. $out. '</div>';
