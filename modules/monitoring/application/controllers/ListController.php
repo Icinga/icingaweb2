@@ -530,9 +530,7 @@ class Monitoring_ListController extends Controller
             $query->applyFilter($filter);
         }
         $this->view->filter = $filter;
-        if ($sort) {
-            $query->order($sort, $dir);
-        }
+        $query->order($sort, $dir);
         $this->applyRestrictions($query);
         $this->handleFormatRequest($query);
         return $query;
