@@ -285,7 +285,8 @@ class Form extends Zend_Form
     /**
      * Load the default decorators
      *
-     * Overwrites Zend_Form::loadDefaultDecorators to avoid having the HtmlTag-Decorator added
+     * Overwrites Zend_Form::loadDefaultDecorators to avoid having
+     * the HtmlTag-Decorator added and to provide viewscript usage
      *
      * @return  self
      */
