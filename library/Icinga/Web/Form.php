@@ -17,13 +17,6 @@ use Icinga\Exception\ProgrammingError;
 class Form extends Zend_Form
 {
     /**
-     * The title of this form
-     *
-     * @var string
-     */
-    protected $title;
-
-    /**
      * The view script to use when rendering this form
      *
      * @var string
@@ -63,29 +56,6 @@ class Form extends Zend_Form
      * @var string
      */
     protected $tokenElementName = 'CSRFToken';
-
-    /**
-     * Set this form's title
-     *
-     * @param   string  $title  The title to set
-     *
-     * @return  self
-     */
-    public function setTitle($title)
-    {
-        $this->title = $title;
-        return $this;
-    }
-
-    /**
-     * Return this form's title
-     *
-     * @return  string
-     */
-    public function getTitle()
-    {
-        return $this->title;
-    }
 
     /**
      * Set the view script to use when rendering this form
