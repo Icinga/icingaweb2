@@ -16,51 +16,49 @@ class LoginForm extends Form
      */
     public function init()
     {
-        $this->setTokenDisabled();
         $this->setName('form_login');
-        $this->setSubmitLabel('Login');
     }
 
     /**
      * @see Form::createElements()
      */
-    public function createElements()
+    public function createElements($formData)
     {
         return array(
             $this->createElement(
                 'text',
                 'username',
                 array(
-                    'label'       => t('Username'),
-                    'placeholder' => t('Please enter your username...'),
-                    'required'    => true
+                    'required'      => true,
+                    'label'         => t('Username'),
+                    'placeholder'   => t('Please enter your username...'),
+                    'class'         => false === isset($formData['username']) ? 'autofocus' : ''
                 )
             ),
             $this->createElement(
                 'password',
                 'password',
                 array(
-                    'label'       => t('Password'),
-                    'placeholder' => t('...and your password'),
-                    'required'    => true
+                    'required'      => true,
+                    'label'         => t('Password'),
+                    'placeholder'   => t('...and your password'),
+                    'class'         => isset($formData['username']) ? 'autofocus' : ''
                 )
             )
         );
     }
 
     /**
-     * @see Form::applyValues()
+     * @see Form::addSubmitButton()
      */
-    public function applyValues(array $values)
+    public function addSubmitButton()
     {
-        parent::applyValues($values);
-
-        if (isset($values['username'])) {
-            $this->getElement('password')->setAttrib('class', 'autofocus');
-        } else {
-            $this->getElement('username')->setAttrib('class', 'autofocus');
-        }
-
-        return $this;
+        $this->addElement(
+            'submit',
+            'btn_submit',
+            array(
+                'label' => t('Login')
+            )
+        );
     }
 }

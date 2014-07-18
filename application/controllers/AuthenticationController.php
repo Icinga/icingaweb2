@@ -59,7 +59,8 @@ class AuthenticationController extends ActionController
             }
 
             $chain = new AuthChain($config);
-            if ($this->view->form->isSubmittedAndValid($this->_request->getParams())) {
+            $request = $this->getRequest();
+            if ($request->isPost() && $this->view->form->isValid($request->getPost())) {
                 $user = new User($this->view->form->getValue('username'));
                 $password = $this->view->form->getValue('password');
                 $backendsTried = 0;
@@ -107,7 +108,7 @@ class AuthenticationController extends ActionController
                     );
                 }
                 $this->view->form->getElement('password')->addError($this->translate('Incorrect username or password'));
-            } elseif (false === $this->view->form->isSubmitted()) {
+            } elseif ($request->isGet()) {
                 $user = new User('');
                 foreach ($chain as $backend) {
                     if ($backend instanceof AutoLoginBackend) {
