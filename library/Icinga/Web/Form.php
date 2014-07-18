@@ -132,7 +132,7 @@ class Form extends Zend_Form
     {
         if (false === $this->created) {
             $this->addElements($this->createElements($formData));
-            $this->addCsrfToken();
+            $this->addCsrfToken()->addSubmitButton();
             $this->created = true;
         }
 
@@ -151,6 +151,18 @@ class Form extends Zend_Form
     public function createElements(array $formData)
     {
         return array();
+    }
+
+    /**
+     * Add a submit button to this form
+     *
+     * Intended to be implemented by concrete form classes.
+     *
+     * @return  self
+     */
+    public function addSubmitButton()
+    {
+        return $this;
     }
 
     /**
