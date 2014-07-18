@@ -24,24 +24,6 @@ class Form extends Zend_Form
     protected $viewScript;
 
     /**
-     * Label for submit button
-     *
-     * If omitted, no button will be shown
-     *
-     * @var string
-     */
-    protected $submitLabel;
-
-    /**
-     * Label for cancel button
-     *
-     * If omitted, no button will be shown
-     *
-     * @var string
-     */
-    protected $cancelLabel;
-
-    /**
      * Whether this form should NOT add random generated "challenge" tokens that are associated with the user's current
      * session in order to prevent Cross-Site Request Forgery (CSRF). It is the form's responsibility to verify the
      * existence and correctness of this token
@@ -78,52 +60,6 @@ class Form extends Zend_Form
     public function getViewScript()
     {
         return $this->viewScript;
-    }
-
-    /**
-     * Set the label for the submit button of this form
-     *
-     * @param   string  $submitLabel    The label to set
-     *
-     * @return  self
-     */
-    public function setSubmitLabel($submitLabel)
-    {
-        $this->submitLabel = $submitLabel;
-        return $this;
-    }
-
-    /**
-     * Return the label for the submit button of this form
-     *
-     * @return  string
-     */
-    public function getSubmitLabel()
-    {
-        return $this->submitLabel;
-    }
-
-    /**
-     * Set the label for the cancel button of this form
-     *
-     * @param   string  $cancelLabel    The label to set
-     *
-     * @return  self
-     */
-    public function setCancelLabel($cancelLabel)
-    {
-        $this->cancelLabel = $cancelLabel;
-        return $this;
-    }
-
-    /**
-     * Return the label for the cancel button of this form
-     *
-     * @return  string
-     */
-    public function getCancelLabel()
-    {
-        return $this->cancelLabel;
     }
 
     /**
@@ -350,39 +286,6 @@ class Form extends Zend_Form
         }
 
         return false;
-    }
-
-    /**
-     * Add submit button to this form
-     */
-    protected function initSubmitButton()
-    {
-        if ($this->submitLabel) {
-            $this->addElement(
-                'submit',
-                'btn_submit',
-                array(
-                    'label' => $this->submitLabel
-                )
-            );
-        }
-    }
-
-    /**
-     * Add cancel button to this form
-     */
-    protected function initCancelButton()
-    {
-        if ($this->cancelLabel) {
-            $this->addElement(
-                'reset',
-                'btn_reset',
-                array(
-                    'label' => $this->cancelLabel,
-                    'class' => 'pull-right'
-                )
-            );
-        }
     }
 
     /**
