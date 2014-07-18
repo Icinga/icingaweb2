@@ -158,6 +158,26 @@ class Form extends Zend_Form
     }
 
     /**
+     * Add CSRF counter measure field to this form
+     *
+     * @return  self
+     */
+    public function addCsrfToken()
+    {
+        if (false === $this->tokenDisabled && $this->getElement($this->tokenElementName) === null) {
+            $this->addElement(
+                'hidden',
+                $this->tokenElementName,
+                array(
+                    'value' => $this->generateCsrfToken()
+                )
+            );
+        }
+
+        return $this;
+    }
+
+    /**
      * Load the default decorators
      *
      * Overwrites Zend_Form::loadDefaultDecorators to avoid having the HtmlTag-Decorator added
@@ -182,22 +202,6 @@ class Form extends Zend_Form
         }
 
         return $this;
-    }
-
-    /**
-     * Add CSRF counter measure field to this form
-     */
-    protected function initCsrfToken()
-    {
-        if (false === $this->tokenDisabled && $this->getElement($this->tokenElementName) === null) {
-            $this->addElement(
-                'hidden',
-                $this->tokenElementName,
-                array(
-                    'value' => $this->generateCsrfToken()
-                )
-            );
-        }
     }
 
     /**
