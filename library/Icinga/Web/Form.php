@@ -337,7 +337,7 @@ class Form extends Zend_Form
     /**
      * Test the submitted data for a correct CSRF token
      *
-     * @param   array   $requestData        The POST data sent by the user
+     * @param   array   $requestData        The data sent by the user
      *
      * @throws  InvalidCSRFTokenException   When CSRF Validation fails
      */
