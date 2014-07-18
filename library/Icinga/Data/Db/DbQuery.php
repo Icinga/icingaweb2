@@ -193,7 +193,7 @@ class DbQuery extends SimpleQuery
     }
 
     /**
-     * Return true if an field contains an explicit timestamp
+     * Check for timestamp fields
      *
      * TODO: This is not here to do automagic timestamp stuff. One may
      *       override this function for custom voodoo, IdoQuery right now
