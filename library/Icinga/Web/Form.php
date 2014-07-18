@@ -4,7 +4,9 @@
 
 namespace Icinga\Web;
 
+use LogicException;
 use Zend_Form;
+use Zend_View_Interface;
 use Icinga\Web\Session;
 use Icinga\Web\Form\Decorator\HelpText;
 use Icinga\Web\Form\Decorator\ElementWrapper;
@@ -15,6 +17,13 @@ use Icinga\Web\Form\InvalidCSRFTokenException;
  */
 class Form extends Zend_Form
 {
+    /**
+     * Whether this form has been created
+     *
+     * @var bool
+     */
+    protected $created = false;
+
     /**
      * The view script to use when rendering this form
      *
@@ -113,13 +122,33 @@ class Form extends Zend_Form
     }
 
     /**
+     * Create this form
+     *
+     * @param   array   $formData   The data to populate the form with
+     *
+     * @return  self
+     */
+    public function create(array $formData = array())
+    {
+        if (false === $this->created) {
+            $this->addElements($this->createElements($formData));
+            $this->addCsrfToken();
+            $this->created = true;
+        }
+
+        return $this;
+    }
+
+    /**
      * Create and return the elements to add to this form
      *
      * Intended to be implemented by concrete form classes.
      *
+     * @param   array   $formData   The data to populate the elements with
+     *
      * @return  array
      */
-    public function createElements()
+    public function createElements(array $formData)
     {
         return array();
     }
@@ -178,6 +207,82 @@ class Form extends Zend_Form
     }
 
     /**
+     * Populate the elements with the given values
+     *
+     * @param   array   $defaults   The values to populate the elements with
+     */
+    public function setDefaults(array $defaults)
+    {
+        $this->create($defaults);
+        return parent::setDefaults($defaults);
+    }
+
+    /**
+     * Return whether the given data provides a value for each element of this form
+     *
+     * @param   array   $formData   The data to check
+     *
+     * @return  bool
+     *
+     * @throws  LogicException      In case this form has no elements
+     */
+    public function isComplete(array $formData)
+    {
+        $elements = $this->create($formData)->getElements();
+        if (empty($elements)) {
+            throw new LogicException('Forms without elements cannot be complete');
+        }
+
+        $missingValues = array_diff_key($elements, $formData);
+        return empty($missingValues);
+    }
+
+    /**
+     * Return whether the given values (possibly incomplete) are valid
+     *
+     * Unlike Zend_Form::isValid() this will not set NULL as value for
+     * an element that is not present in the given data.
+     *
+     * @param   array   $formData   The data to validate
+     *
+     * @return  bool
+     */
+    public function isValidPartial(array $formData)
+    {
+        $this->create($formData);
+        return parent::isValidPartial($formData);
+    }
+
+    /**
+     * Return whether the given values are complete and valid
+     *
+     * @param   array   $formData   The data to validate
+     *
+     * @return  bool
+     */
+    public function isValid($formData)
+    {
+        if ($this->isComplete($formData)) {
+            $this->assertValidCsrfToken($formData);
+            return parent::isValid($formData);
+        }
+
+        $this->isValidPartial($formData); // The form can't be processed but we want to show validation errors though
+        return false;
+    }
+
+    /**
+     * Remove all elements of this form
+     *
+     * @return  self
+     */
+    public function clearElements()
+    {
+        $this->created = false;
+        return parent::clearElements();
+    }
+
+    /**
      * Load the default decorators
      *
      * Overwrites Zend_Form::loadDefaultDecorators to avoid having the HtmlTag-Decorator added
@@ -202,6 +307,19 @@ class Form extends Zend_Form
         }
 
         return $this;
+    }
+
+    /**
+     * Render this form
+     *
+     * @param   Zend_View_Interface     $view   The view context to use
+     *
+     * @return  string
+     */
+    public function render(Zend_View_Interface $view = null)
+    {
+        $this->create();
+        return parent::render($view);
     }
 
     /**
