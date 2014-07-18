@@ -114,18 +114,6 @@ class Form extends Zend_Form
     }
 
     /**
-     * Return the current configuration for this form
-     *
-     * Intended to be implemented by concrete form classes.
-     *
-     * @return  array
-     */
-    public function getConfiguration()
-    {
-        return array();
-    }
-
-    /**
      * Create and return the elements to add to this form
      *
      * Intended to be implemented by concrete form classes.
