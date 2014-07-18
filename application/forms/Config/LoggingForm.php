@@ -4,7 +4,6 @@
 
 namespace Icinga\Form\Config;
 
-use Zend_Config;
 use Icinga\Web\Form;
 use Icinga\Application\Icinga;
 use Icinga\Web\Form\Validator\WritablePathValidator;
@@ -16,17 +15,18 @@ class LoggingForm extends Form
 {
     /**
      * Initialize this logging configuration form
+     *
+     * Sets actually only the name.
      */
     public function init()
     {
         $this->setName('form_config_logging');
-        $this->setSubmitLabel('{{SAVE_ICON}} Save Changes');
     }
 
     /**
      * @see Form::createElements()
      */
-    public function createElements()
+    public function createElements(array $formData)
     {
         $elements = array();
 
@@ -37,7 +37,7 @@ class LoggingForm extends Form
                 'required'  => true,
                 'label'     => t('Logging Enabled'),
                 'helptext'  => t('Check this to enable logging.'),
-                'value'     => 0
+                'value'     => isset($formData['enable']) ? $formData['enable'] : 0
             )
         );
         $elements[] = $this->createElement(
@@ -47,7 +47,7 @@ class LoggingForm extends Form
                 'required'      => true,
                 'label'         => t('Logging Level'),
                 'helptext'      => t('The maximum loglevel to emit.'),
-                'value'         => 0,
+                'value'         => isset($formData['level']) ? $formData['level'] : 0,
                 'multiOptions'  => array(
                     0 => t('Error'),
                     1 => t('Warning'),
@@ -64,94 +64,96 @@ class LoggingForm extends Form
                 'class'         => 'autosubmit',
                 'label'         => t('Logging Type'),
                 'helptext'      => t('The type of logging to utilize.'),
-                'value'         => 'file',
+                'value'         => isset($formData['type']) ? $formData['type'] : 'syslog',
                 'multiOptions'  => array(
                     'file'      => t('File'),
                     'syslog'    => 'Syslog'
                 )
             )
         );
-        $elements[] = $this->createElement(
-            'text',
-            'application',
-            array(
-                'depends'       => 'type',
-                'requires'      => 'syslog',
-                'required'      => true,
-                'label'         => t('Application Prefix'),
-                'helptext'      => t('The name of the application by which to prefix syslog messages.'),
-                'value'         => 'icingaweb',
-                'validators'    => array(
-                    array(
-                        'Regex',
-                        false,
+
+        if (false === isset($formData['type']) || $formData['type'] === 'syslog') {
+            $elements[] = $this->createElement(
+                'text',
+                'application',
+                array(
+                    'required'      => true,
+                    'label'         => t('Application Prefix'),
+                    'helptext'      => t('The name of the application by which to prefix syslog messages.'),
+                    'value'         => isset($formData['application']) ? $formData['application'] : 'icingaweb',
+                    'validators'    => array(
                         array(
-                            'pattern'  => '/^[^\W]+$/',
-                            'messages' => array(
-                                'regexNotMatch' => 'The application prefix cannot contain any whitespaces.'
+                            'Regex',
+                            false,
+                            array(
+                                'pattern'  => '/^[^\W]+$/',
+                                'messages' => array(
+                                    'regexNotMatch' => 'The application prefix cannot contain any whitespaces.'
+                                )
                             )
                         )
                     )
                 )
-            )
-        );
-        $elements[] = $this->createElement(
-            'select',
-            'facility',
-            array(
-                'depends'       => 'type',
-                'requires'      => 'syslog',
-                'required'      => true,
-                'label'         => t('Facility'),
-                'helptext'      => t('The Syslog facility to utilize.'),
-                'value'         => 'LOG_USER',
-                'multiOptions'  => array(
-                    'LOG_USER'  => 'LOG_USER'
+            );
+            $elements[] = $this->createElement(
+                'select',
+                'facility',
+                array(
+                    'required'      => true,
+                    'label'         => t('Facility'),
+                    'helptext'      => t('The Syslog facility to utilize.'),
+                    'value'         => isset($formData['facility']) ? $formData['facility'] : 'LOG_USER',
+                    'multiOptions'  => array(
+                        'LOG_USER'  => 'LOG_USER'
+                    )
                 )
-            )
-        );
-        $elements[] = $this->createElement(
-            'text',
-            'target',
-            array(
-                'depends'       => 'type',
-                'requires'      => 'file',
-                'required'      => true,
-                'label'         => t('Filepath'),
-                'helptext'      => t('The logfile to write messages to.'),
-                'value'         => $this->getDefaultLogDir(),
-                'validators'    => array(new WritablePathValidator())
-            )
-        );
+            );
+        } elseif ($formData['type'] === 'file') {
+            $elements[] = $this->createElement(
+                'text',
+                'target',
+                array(
+                    'required'      => true,
+                    'label'         => t('Filepath'),
+                    'helptext'      => t('The logfile to write messages to.'),
+                    'value'         => isset($formData['target']) ? $formData['target'] : $this->getDefaultLogDir(),
+                    'validators'    => array(new WritablePathValidator())
+                )
+            );
+        }
 
         return $elements;
     }
 
     /**
-     * Return the current logging configuration
+     * @see Form::addSubmitButton()
+     */
+    public function addSubmitButton()
+    {
+        $this->addElement(
+            'submit',
+            'btn_submit',
+            array(
+                'label' => t('Save')
+            )
+        );
+
+        return $this;
+    }
+
+    /**
+     * Retrieve all form element values
+     *
+     * Returns all configuration relevant element values.
      *
      * @return  array
      */
-    public function getConfiguration()
+    public function getValues()
     {
-        $loggingConfig = Icinga::app()->getConfig()->logging;
-        if ($loggingConfig === null) {
-            $loggingConfig = new Zend_Config(array());
-        }
-
-        $config = array();
-        $config['enable'] = $loggingConfig->enable ? 1 : 0;
-        $config['level'] = $loggingConfig->level;
-        $config['type'] = $loggingConfig->type;
-
-        if ($loggingConfig->type === 'file') {
-            $config['target'] = $loggingConfig->target;
-        } elseif ($loggingConfig->type === 'syslog') {
-            $config['application'] = $loggingConfig->application;
-            $config['facility'] = $loggingConfig->facility;
-        }
-
-        return $config;
+        $values = parent::getValues();
+        unset($values['btn_submit']);
+        unset($values[$this->getTokenElementName()]);
+        return $values;
     }
 
     /**

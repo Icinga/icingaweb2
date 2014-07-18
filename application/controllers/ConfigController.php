@@ -89,15 +89,22 @@ class ConfigController extends BaseConfigController
         $this->view->tabs->activate('logging');
 
         $form = new LoggingForm();
-        if ($form->isSubmittedAndValid($this->_request->getParams())) {
-            $appConfig = IcingaConfig::app();
-            $appConfig['logging'] = $form->getValues();
-            if (false === $this->writeConfigFile($appConfig, 'config')) {
-                return;
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            if ($form->isValid($request->getPost())) {
+                $appConfig = IcingaConfig::app();
+                $appConfig->logging = new Zend_Config($form->getValues());
+                if ($this->writeConfigFile($appConfig, 'config')) {
+                    $this->addSuccessMessage($this->translate('Logging configuration has sucessfully been stored'));
+                    $this->redirectNow('config/logging');
+                }
             }
-
-            Notification::success('New configuration has sucessfully been stored');
-            $this->redirectNow('config/logging');
+        } else {
+            $loggingConfig = Icinga::app()->getConfig()->logging;
+            if ($loggingConfig === null) {
+                $loggingConfig = new Zend_Config(array());
+            }
+            $form->populate($loggingConfig->toArray());
         }
 
         $this->view->form = $form;
