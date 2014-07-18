@@ -9,7 +9,6 @@ use Icinga\Web\Session;
 use Icinga\Web\Form\Decorator\HelpText;
 use Icinga\Web\Form\Decorator\ElementWrapper;
 use Icinga\Web\Form\InvalidCSRFTokenException;
-use Icinga\Exception\ProgrammingError;
 
 /**
  * Base class for forms providing CSRF protection, confirmation logic and auto submission
@@ -183,97 +182,6 @@ class Form extends Zend_Form
         }
 
         return $this;
-    }
-
-    /**
-     * Create, add this form's elements and populate them with the given values
-     *
-     * @param   array   $values     The values with which to populate the elements
-     *
-     * @return  self
-     *
-     * @throws  ProgrammingError    In case the parent for a dependent field cannot be found
-     */
-    public function applyValues(array $values)
-    {
-        foreach ($this->createElements() as $element) {
-            $parentName = $element->getAttrib('depends');
-            if ($parentName !== null) {
-                $parent = $this->getElement($parentName);
-                if ($parent) {
-                    $parentValue = isset($values[$parentName]) ? $values[$parentName] : $parent->getValue();
-                    if ($parentValue != $element->getAttrib('requires')) {
-                        if ($element->getAttrib('action') === 'disable') {
-                            $this->addElement($element->setAttrib('disabled', 'disabled'));
-                        }
-                    } else {
-                        $this->addElement($element);
-                    }
-                } else {
-                    throw new ProgrammingError(
-                        'Cannot find parent "' . $parentName . '" for dependent field "' . $element->getName() . '"'
-                        . '(Correct usage of field dependencies requires their parents to occur beforehand in order)'
-                    );
-                }
-            } else {
-                $this->addElement($element);
-            }
-        }
-
-        $this->initCsrfToken();
-        $this->initSubmitButton();
-        $this->initCancelButton();
-        $this->populate($values);
-        return $this;
-    }
-
-    /**
-     * Check whether the form was submitted with a valid request
-     *
-     * Create and add this form's elements, populate them with the given request data and
-     * run a full validation if the form was submitted or a partial validation if not.
-     *
-     * @param   array   The request data to validate
-     *
-     * @return  bool    True when the form is submitted and valid, otherwise false
-     */
-    public function isSubmittedAndValid(array $data)
-    {
-        $this->applyValues(array_merge($this->getConfiguration(), $data));
-
-        if ($this->isSubmitted()) {
-            $this->assertValidCsrfToken($data);
-            return $this->isValid($data); // Run full validation once this form's data is going to be processed
-        } else {
-            $this->isValidPartial($data); // Run a partial validation to not to overwrite default values
-            return false;
-        }
-    }
-
-    /**
-     * Check whether this form has been submitted
-     *
-     * Per default, this checks whether the button set with the 'setSubmitLabel' method
-     * is being submitted. For custom submission logic, this method must be overwritten.
-     *
-     * @return  bool                True when the form has been submitted, otherwise false
-     *
-     * @throws  ProgrammingError    In case the submit button has not yet been created
-     */
-    public function isSubmitted()
-    {
-        if ($this->submitLabel) {
-            $submitBtn = $this->getElement('btn_submit');
-            if ($submitBtn) {
-                return $submitBtn->isChecked();
-            }
-
-            throw new ProgrammingError(
-                'Submit button not created yet. You need to call isSubmittedAndValid or applyValues beforehand!'
-            );
-        }
-
-        return false;
     }
 
     /**
