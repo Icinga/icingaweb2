@@ -66,17 +66,25 @@ class ConfigController extends BaseConfigController
     {
         $this->view->messageBox = new AlertMessageBox(true);
         $this->view->tabs->activate('index');
+
         $form = new GeneralForm();
-        $form->setConfiguration(IcingaConfig::app());
-        $form->setRequest($this->_request);
-        if ($form->isSubmittedAndValid()) {
-            if (!$this->writeConfigFile($form->getConfig(), 'config'))  {
-                return;
+        $request = $this->getRequest();
+        $currentConfig = IcingaConfig::app();
+        if ($request->isPost()) {
+            if ($form->isValid($request->getPost())) {
+                $formConfig = $form->getConfiguration();
+                $newConfig = new Zend_Config($currentConfig->toArray(), true);
+                $newConfig->global = $formConfig->global;
+                $newConfig->preferences = $formConfig->preferences;
+                if ($this->writeConfigFile($newConfig, 'config')) {
+                    Notification::success($this->translate('New configuration has successfully been stored'));
+                    $this->redirectNow('config');
+                }
             }
-            Notification::success('New configuration has successfully been stored');
-            $form->setConfiguration(IcingaConfig::app(), true);
-            $this->redirectNow('config/index');
+        } else {
+            $form->setConfiguration($currentConfig);
         }
+
         $this->view->form = $form;
     }
 
