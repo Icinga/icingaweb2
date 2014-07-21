@@ -310,7 +310,7 @@ class UrlParams
         }
     }
 
-    public function asArray()
+    public function toArray()
     {
         return $this->params;
     }

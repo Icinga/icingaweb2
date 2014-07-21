@@ -331,11 +331,11 @@ class Url
     /**
      * Return all parameters that will be used in the query part
      *
-     * @return  array   An associative key => value array containing all parameters
+     * @return  UrlParams   An instance of UrlParam containing all parameters
      */
     public function getParams()
     {
-        return $this->params->asArray();
+        return $this->params;
     }
 
     /**

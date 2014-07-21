@@ -126,7 +126,7 @@ EOD;
     public function toArray()
     {
         $array = array('url' => $this->url->getPath());
-        foreach ($this->url->getParams() as $param) {
+        foreach ($this->url->getParams()->toArray() as $param) {
             $array[$param[0]] = $param[1];
         }
         return $array;
