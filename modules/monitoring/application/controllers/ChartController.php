@@ -94,8 +94,8 @@ class Monitoring_ChartController extends Controller
                 'services_pending'
             )
         )->getQuery()->fetchAll();
-        $this->view->height = intval($this->getParam('height', 220));
-        $this->view->width = intval($this->getParam('width', 520));
+        $this->view->height = intval($this->getParam('height', 500));
+        $this->view->width = intval($this->getParam('width', 500));
         if (count($query) === 1) {
             $this->drawGroupPie($query[0]);
         } else {
@@ -119,8 +119,8 @@ class Monitoring_ChartController extends Controller
                 'services_pending'
             )
         )->getQuery()->fetchAll();
-        $this->view->height = intval($this->getParam('height', 220));
-        $this->view->width = intval($this->getParam('width', 520));
+        $this->view->height = intval($this->getParam('height', 500));
+        $this->view->width = intval($this->getParam('width', 500));
 
         $this->drawServiceGroupChart($query);
 
