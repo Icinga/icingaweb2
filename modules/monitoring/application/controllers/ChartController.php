@@ -140,7 +140,8 @@ class Monitoring_ChartController extends Controller
         }
         $this->view->chart = new GridChart();
         $this->view->chart->setAxisLabel('', t('Services'))
-            ->setXAxis(new \Icinga\Chart\Unit\StaticAxis());
+            ->setXAxis(new \Icinga\Chart\Unit\StaticAxis())
+            ->setAxisMin(null, 0);
 
         $this->view->chart->drawBars(
             array(
@@ -190,7 +191,9 @@ class Monitoring_ChartController extends Controller
             );
         }
         $this->view->chart = new GridChart();
-        $this->view->chart->setAxisLabel('', t('Hosts'))->setXAxis(new StaticAxis());
+        $this->view->chart->setAxisLabel('', t('Hosts'))
+            ->setXAxis(new StaticAxis())
+            ->setAxisMin(null, 0);
         $this->view->chart->drawBars(
             array(
                 'label' => t('Up'),

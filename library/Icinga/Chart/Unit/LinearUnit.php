@@ -90,15 +90,50 @@ class LinearUnit implements AxisUnit
         }
         sort($datapoints);
         if (!$this->staticMax) {
-            $this->max = max($this->max, $datapoints[count($datapoints)-1]);
+            $this->max = max($this->max, $datapoints[count($datapoints) - 1]);
         }
         if (!$this->staticMin) {
             $this->min = min($this->min, $datapoints[0]);
         }
-
+        if (!$this->staticMin || !$this->staticMax) {
+            $this->updateMaxValue();
+        }
         $this->currentTick = 0;
         $this->currentValue = $this->min;
         return $this;
+    }
+
+    /**
+     * Refresh the range depending on the current values of min, max and nrOfTicks
+     */
+    private function updateMaxValue()
+    {
+        $this->max = $this->calculateTickRange($this->max - $this->min, $this->nrOfTicks) *
+             $this->nrOfTicks + $this->min;
+    }
+
+    /**
+     * Determine the minimum tick range that is necessary to display the given value range
+     * correctly
+     *
+     * @param   int range   The range to display
+     * @param   int ticks   The amount of ticks to use
+     *
+     * @return  int         The value for each tick
+     */
+    private function calculateTickRange($range, $ticks)
+    {
+        $factor = 1;
+        $steps = array(1, 2, 5);
+        $step = 0;
+        while ($range / ($factor * $steps[$step]) > $ticks) {
+            $step++;
+            if ($step === count($steps)) {
+                $step = 0;
+                $factor *= 10;
+            }
+        }
+        return $steps[$step] * $factor;
     }
 
     /**
@@ -114,7 +149,7 @@ class LinearUnit implements AxisUnit
         } elseif ($value > $this->max) {
             return 100;
         } else {
-            return 100 * ($value - $this->min) / ($this->max - $this->min);
+            return 100 * ($value - $this->min) / $this->max - $this->min;
         }
     }
 
@@ -176,6 +211,7 @@ class LinearUnit implements AxisUnit
         if ($max !== null) {
             $this->max = $max;
             $this->staticMax = true;
+            $this->updateMaxValue();
         }
     }
 
@@ -189,6 +225,7 @@ class LinearUnit implements AxisUnit
         if ($min !== null) {
             $this->min = $min;
             $this->staticMin = true;
+            $this->updateMaxValue();
         }
     }
 
