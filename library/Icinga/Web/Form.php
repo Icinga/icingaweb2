@@ -245,7 +245,15 @@ class Form extends Zend_Form
             throw new LogicException('Forms without elements cannot be complete');
         }
 
-        $missingValues = array_diff_key($elements, $formData);
+        $missingValues = array_diff_key(
+            array_filter(
+                $elements,
+                function ($el) {
+                    return $el->getAttrib('disabled') === null;
+                }
+            ),
+            $formData
+        );
         return empty($missingValues);
     }
 
