@@ -5,6 +5,8 @@ Alias @web_path@ "@prefix@/public"
     AllowOverride None
     Order allow,deny
     Allow from all
+    # new directive needed in Apache 2.4.3+
+    #Require all granted
 
     SetEnv ICINGAWEB_CONFIGDIR @icingaweb_config_path@
 
