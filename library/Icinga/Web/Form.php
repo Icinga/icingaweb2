@@ -232,6 +232,8 @@ class Form extends Zend_Form
     /**
      * Return whether the given data provides a value for each element of this form
      *
+     * Note that elements that are disabled or of type submit are not taken into consideration.
+     *
      * @param   array   $formData   The data to check
      *
      * @return  bool
@@ -249,7 +251,7 @@ class Form extends Zend_Form
             array_filter(
                 $elements,
                 function ($el) {
-                    return $el->getAttrib('disabled') === null;
+                    return $el->getAttrib('disabled') === null && $el->getType() !== 'submit';
                 }
             ),
             $formData
