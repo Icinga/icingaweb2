@@ -4,7 +4,6 @@
 
 use Icinga\Web\Controller\BasePreferenceController;
 use Icinga\Web\Widget\Tab;
-use Icinga\Application\Config as IcingaConfig;
 use Icinga\Web\Url;
 use Icinga\Form\Preference\GeneralForm;
 use Icinga\Web\Notification;
@@ -38,23 +37,29 @@ class PreferenceController extends BasePreferenceController
      */
     public function indexAction()
     {
-        $form = new GeneralForm();
         $this->getTabs()->activate('general');
-        $form->setConfiguration(IcingaConfig::app())
-            ->setRequest($this->getRequest());
-        if ($form->isSubmittedAndValid()) {
-            try {
-                $this->savePreferences($form->getPreferences());
-                Notification::success(t('Preferences updated successfully'));
-                // Recreate form to show new values
-                // TODO(el): It must sufficient to call $form->populate(...)
-                $form = new GeneralForm();
-                $form->setConfiguration(IcingaConfig::app());
-                $form->setRequest($this->getRequest());
-            } catch (Exception $e) {
-                Notification::error(sprintf(t('Failed to persist preferences. (%s)'), $e->getMessage()));
+
+        $form = new GeneralForm();
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            if ($form->isValid($request->getPost())) {
+                try {
+                    $this->savePreferences($form->getPreferences()->toArray());
+                    Notification::success($this->translate('Preferences updated successfully'));
+                    $this->redirectNow('preference');
+                } catch (Exception $e) {
+                    Notification::error(
+                        sprintf(
+                            $this->translate('Failed to persist preferences. (%s)'),
+                            $e->getMessage()
+                        )
+                    );
+                }
             }
+        } else {
+            $form->setPreferences($request->getUser()->getPreferences());
         }
+
         $this->view->form = $form;
     }
 }
