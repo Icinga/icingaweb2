@@ -31,16 +31,6 @@ class Text extends Styleable implements Drawable
     const ALIGN_MIDDLE  = 'middle';
 
     /**
-     * Normal left to right orientation
-     */
-    const ORIENTATION_HORIZONTAL = "";
-
-    /**
-     * Top down orientation (rotated by 90°)
-     */
-    const ORIENTATION_VERTICAL = "writing-mode: tb;";
-
-    /**
      * The x position of the Text
      *
      * @var int
