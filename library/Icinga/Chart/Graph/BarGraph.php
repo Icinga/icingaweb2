@@ -69,7 +69,7 @@ class BarGraph extends Styleable implements Drawable
         $group = $doc->createElement('g');
         $idx = 0;
         foreach ($this->dataSet as $point) {
-            $rect = new Rect($point[0] - 1, $point[1], 2, 100 - $point[1]);
+            $rect = new Rect($point[0] - 2, $point[1], 4, 100 - $point[1]);
             $rect->setFill($this->fill);
             $rect->setStrokeWidth($this->strokeWidth);
             $rect->setStrokeColor('black');
