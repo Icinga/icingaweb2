@@ -1,4 +1,6 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Backend;
@@ -71,9 +73,9 @@ class Monitoring_ListController extends Controller
             $stateColumn = 'host_hard_state';
             $stateChangeColumn = 'host_last_hard_state_change';
         } else {
+            $stateType = 'soft';
             $stateColumn = 'host_state';
             $stateChangeColumn = 'host_last_state_change';
-            $stateType = 'soft';
         }
 
         $this->addTitleTab('hosts');
@@ -146,7 +148,7 @@ class Monitoring_ListController extends Controller
             }
         }
         $this->setAutorefreshInterval(10);
-        
+
         $columns = array_merge(array(
             'host_name',
             'host_state',
@@ -516,7 +518,7 @@ class Monitoring_ListController extends Controller
 
         if ($modifyFilter) {
             if ($this->_request->isPost()) {
-                $filter = $filter->applyChanges($_POST);
+                $filter = $filter->applyChanges($this->_request->getPost());
                 $this->redirectNow($this->url->without('page')->setQueryString($filter->toQueryString()));
             }
             $this->view->filterEditor = Widget::create('filterEditor', array(
@@ -528,9 +530,7 @@ class Monitoring_ListController extends Controller
             $query->applyFilter($filter);
         }
         $this->view->filter = $filter;
-        if ($sort) {
-            $query->order($sort, $dir);
-        }
+        $query->order($sort, $dir);
         $this->applyRestrictions($query);
         $this->handleFormatRequest($query);
         return $query;

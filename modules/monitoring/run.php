@@ -1,10 +1,6 @@
 <?php
-/*
- * run.php
- *
- * This file runs every request to register runtime functionality
- *
- */
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 $this->registerHook(
     'TopBar',

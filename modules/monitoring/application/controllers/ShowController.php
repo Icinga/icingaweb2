@@ -1,30 +1,5 @@
 <?php
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 use Icinga\Application\Benchmark;
@@ -126,6 +101,40 @@ class Monitoring_ShowController extends Controller
             'view'  => 'compact',
             'sort'  => 'service_description',
         ));
+    }
+
+    public function contactAction()
+    {
+        $contact = $this->getParam('contact');
+        if (! $contact) {
+            throw new Zend_Controller_Action_Exception(
+                $this->translate('The parameter `contact\' is required'),
+                404
+            );
+        }
+        $query = $this->backend->select()->from('contact', array(
+            'contact_name',
+            'contact_id',
+            'contact_alias',
+            'contact_email',
+            'contact_pager',
+            'contact_notify_service_timeperiod',
+            'contact_notify_service_recovery',
+            'contact_notify_service_warning',
+            'contact_notify_service_critical',
+            'contact_notify_service_unknown',
+            'contact_notify_service_flapping',
+            'contact_notify_service_downtime',
+            'contact_notify_host_timeperiod',
+            'contact_notify_host_recovery',
+            'contact_notify_host_down',
+            'contact_notify_host_unreachable',
+            'contact_notify_host_flapping',
+            'contact_notify_host_downtime',
+        ));
+        $query->where('contact_name', $contact);
+        $this->view->contacts = $query->paginate();
+        $this->view->contact_name = $contact;
     }
 
     /**

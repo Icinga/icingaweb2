@@ -1,30 +1,5 @@
 <?php
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2014 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2014 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Authentication;
@@ -52,7 +27,7 @@ class Manager
      * Authenticated user
      *
      * @var User
-     **/
+     */
     private $user;
 
     /**
@@ -121,25 +96,24 @@ class Manager
         );
         $this->user = $user;
         if ($persist == true) {
-            $session = Session::getSession();
-            $session->refreshId();
             $this->persistCurrentUser();
         }
     }
 
     /**
      * Writes the current user to the session
-     **/
+     */
     public function persistCurrentUser()
     {
         $session = Session::getSession();
         $session->set('user', $this->user);
         $session->write();
+        $session->refreshId();
     }
 
     /**
      * Tries to authenticate the user with the current session
-     **/
+     */
     public function authenticateFromSession()
     {
         $this->user = Session::getSession()->get('user');
@@ -202,19 +176,19 @@ class Manager
     }
 
     /**
-     * Purges the current authorization information and removes the user from the session
-     **/
+     * Purges the current authorization information and session
+     */
     public function removeAuthorization()
     {
         $this->user = null;
-        $this->persistCurrentUser();
+        Session::getSession()->purge();
     }
 
     /**
      * Returns the current user or null if no user is authenticated
      *
      * @return User
-     **/
+     */
     public function getUser()
     {
         return $this->user;
@@ -225,7 +199,7 @@ class Manager
      *
      * @return  array
      * @see     User::getGroups
-     **/
+     */
     public function getGroups()
     {
         return $this->user->getGroups();

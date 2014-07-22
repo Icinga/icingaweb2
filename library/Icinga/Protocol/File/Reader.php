@@ -4,38 +4,92 @@
 
 namespace Icinga\Protocol\File;
 
-use Icinga\Data\DatasourceInterface;
+use FilterIterator;
+use Iterator;
+use Zend_Config;
+use Icinga\Protocol\File\FileReaderException;
+use Icinga\Util\File;
 
 /**
- * Class Reader
- *
  * Read file line by line
- *
- * @package Icinga\Protocol\File
  */
-class Reader implements DatasourceInterface
+class Reader extends FilterIterator
 {
     /**
-     * Name of the file to read
+     * A PCRE string with the fields to extract from the file's lines as named subpatterns
      *
      * @var string
      */
-    private $filename;
+    protected $fields;
 
     /**
-     * Configuration for this Datasource
+     * An associative array of the current line's fields ($field => $value)
      *
-     * @var \Zend_Config
+     * @var array
      */
-    private $config;
+    protected $currentData;
 
     /**
-     * @param \Zend_Config $config
+     * Create a new reader
+     *
+     * @param   Zend_Config $config
+     *
+     * @throws  FileReaderException If a required $config directive (filename or fields) is missing
      */
-    public function __construct($config)
+    public function __construct(Zend_Config $config)
     {
-        $this->config = $config;
-        $this->filename = $config->filename;
+        foreach (array('filename', 'fields') as $key) {
+            if (! isset($config->{$key})) {
+                throw new FileReaderException('The directive `' . $key . '\' is required');
+            }
+        }
+        $this->fields = $config->fields;
+        $f = new File($config->filename);
+        $f->setFlags(
+            File::DROP_NEW_LINE |
+            File::READ_AHEAD |
+            File::SKIP_EMPTY
+        );
+        parent::__construct($f);
+    }
+
+    /**
+     * Return the current data
+     *
+     * @return array
+     */
+    public function current()
+    {
+        return $this->currentData;
+    }
+
+    /**
+     * Accept lines matching the given PCRE pattern
+     *
+     * @return bool
+     *
+     * @throws FileReaderException  If PHP failed parsing the PCRE pattern
+     */
+    public function accept()
+    {
+        $data = array();
+        $matched = @preg_match(
+            $this->fields,
+            $this->getInnerIterator()->current(),
+            $data
+        );
+        if ($matched === false) {
+            throw new FileReaderException('Failed parsing regular expression!');
+        } else if ($matched === 1) {
+            foreach ($data as $key) {
+                if (is_int($key)) {
+                    unset($data[$key]);
+                }
+            }
+            $this->currentData = $data;
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -49,26 +103,77 @@ class Reader implements DatasourceInterface
     }
 
     /**
+     * Return the number of available valid lines.
+     *
+     * @return int
+     */
+    public function count()
+    {
+        return iterator_count($this);
+    }
+
+    /**
      * Fetch result as an array of objects
      *
-     * @return array
+     * @param   Query $query
+     *
+     * @return  array
      */
     public function fetchAll(Query $query)
     {
         $all = array();
         foreach ($this->fetchPairs($query) as $index => $value) {
-            $all[$index] = new \stdClass();
-            foreach ($value as $key => $value_2) {
-                $all[$index]->{$key} = $value_2;
-            }
+            $all[$index] = (object) $value;
         }
         return $all;
     }
 
     /**
+     * Fetch result as a key/value pair array
+     *
+     * @param   Query $query
+     *
+     * @return  array
+     */
+    public function fetchPairs(Query $query)
+    {
+        $skipLines = $query->getOffset();
+        $readLines = $query->getLimit();
+        if ($skipLines === null) {
+            $skipLines = 0;
+        }
+        $lines = array();
+        if ($query->sortDesc()) {
+            $count = $this->count($query);
+            if ($count <= $skipLines) {
+                return $lines;
+            } else if ($count < ($skipLines + $readLines)) {
+                $readLines = $count - $skipLines;
+                $skipLines = 0;
+            } else {
+                $skipLines = $count - ($skipLines + $readLines);
+            }
+        }
+        foreach ($this as $index => $line) {
+            if ($index >= $skipLines) {
+                if ($index >= $skipLines + $readLines) {
+                    break;
+                }
+                $lines[] = $line;
+            }
+        }
+        if ($query->sortDesc()) {
+            $lines = array_reverse($lines);
+        }
+        return $lines;
+    }
+
+    /**
      * Fetch first result row
      *
-     * @return object
+     * @param   Query $query
+     *
+     * @return  object
      */
     public function fetchRow(Query $query)
     {
@@ -82,14 +187,16 @@ class Reader implements DatasourceInterface
     /**
      * Fetch first result column
      *
-     * @return array
+     * @param   Query $query
+     *
+     * @return  array
      */
     public function fetchColumn(Query $query)
     {
         $column = array();
-        foreach ($this->fetchPairs($query) as $value) {
-            foreach ($value as $value_2) {
-                $column[] = $value_2;
+        foreach ($this->fetchPairs($query) as $pair) {
+            foreach ($pair as $value) {
+                $column[] = $value;
                 break;
             }
         }
@@ -99,7 +206,9 @@ class Reader implements DatasourceInterface
     /**
      * Fetch first column value from first result row
      *
-     * @return mixed
+     * @param   Query $query
+     *
+     * @return  mixed
      */
     public function fetchOne(Query $query)
     {
@@ -110,216 +219,5 @@ class Reader implements DatasourceInterface
             }
         }
         return null;
-    }
-
-    /**
-     * Fetch result as a key/value pair array
-     *
-     * @return array
-     */
-    public function fetchPairs(Query $query)
-    {
-        return $this->read($query);
-    }
-
-    /**
-     * If given $line matches the $query's PCRE pattern and contains all the strings in the $query's filters array,
-     * return an associative array of the matches of the PCRE pattern.
-     * Otherwise, return false.
-     * If preg_match returns false, it failed parsing the PCRE pattern.
-     * In that case, throw an exception.
-     *
-     * @param string $line
-     * @param Query $query
-     *
-     * @return array|bool
-     *
-     * @throws \Exception
-     */
-    public function validateLine($line, Query $query)
-    {
-        $data = array();
-        $PCRE_result = @preg_match($this->config->fields, $line, $data);
-        if ($PCRE_result === false) {
-            throw new \Exception('Failed parsing regular expression!');
-        } else if ($PCRE_result === 1) {
-            foreach ($query->getFilters() as $filter) {
-                if (strpos($line, $filter) === false) {
-                    return false;
-                }
-            }
-            foreach ($data as $key => $value) {
-                if (is_int($key)) {
-                    unset($data[$key]);
-                }
-            }
-            return $data;
-        }
-        return false;
-    }
-
-    /**
-     * Skip and read as many lines as needed according to given $query.
-     *
-     * @param Query $query
-     *
-     * @return array  result
-     */
-    public function read(Query $query)
-    {
-        $skip_lines = $query->getOffset();
-        $read_lines = $query->getLimit();
-        if ($skip_lines === null) {
-            $skip_lines = 0;
-        }
-        return $this->{$query->sortDesc() ? 'readFromEnd' : 'readFromStart'}($skip_lines, $read_lines, $query);
-    }
-
-    /**
-     * Backend for $this->read
-     * Direction: LIFO
-     */
-    public function readFromEnd($skip_lines, $read_lines, Query $query)
-    {
-        $PHP_EOL_len = strlen(PHP_EOL);
-        $lines = array();
-        $s = '';
-        $f = @fopen($this->filename, 'rb');
-        if ($f !== false) {
-            $buffer = '';
-            fseek($f, 0, SEEK_END);
-            if (ftell($f) === 0) {
-                return array();
-            }
-            while ($read_lines === null || count($lines) < $read_lines) {
-                $c = $this->fgetc($f, $buffer);
-                if ($c === false) {
-                    $l = $this->validateLine($s, $query);
-                    if (!($l === false || $skip_lines)) {
-                        $lines[] = $l;
-                    }
-                    break;
-                }
-                $s = $c . $s;
-                if (strpos($s, PHP_EOL) === 0) {
-                    $l = $this->validateLine((string)substr($s, $PHP_EOL_len), $query);
-                    if ($l !== false) {
-                        if ($skip_lines) {
-                            $skip_lines--;
-                        } else {
-                            $lines[] = $l;
-                        }
-                    }
-                    $s = '';
-                }
-            }
-        }
-        return $lines;
-    }
-
-    /**
-     * Backend for $this->readFromEnd
-     */
-    public function fgetc($file, &$buffer)
-    {
-        $strlen = strlen($buffer);
-        if ($strlen === 0) {
-            $pos = ftell($file);
-            if ($pos === 0) {
-                return false;
-            }
-            if ($pos < 4096) {
-                fseek($file, 0);
-                $buffer = fread($file, $pos);
-                fseek($file, 0);
-            } else {
-                fseek($file, -4096, SEEK_CUR);
-                $buffer = fread($file, 4096);
-                fseek($file, -4096, SEEK_CUR);
-            }
-            return $this->fgetc($file, $buffer);
-        } else {
-            $char = substr($buffer, -1);
-            $buffer = substr($buffer, 0, $strlen - 1);
-            return $char;
-        }
-    }
-
-    /**
-     * Backend for $this->read
-     * Direction: FIFO
-     */
-    public function readFromStart($skip_lines, $read_lines, Query $query)
-    {
-        $PHP_EOL_len = strlen(PHP_EOL);
-        $lines = array();
-        $s = '';
-        $f = @fopen($this->filename, 'rb');
-        if ($f !== false) {
-            $buffer = '';
-            while ($read_lines === null || count($lines) < $read_lines) {
-                if (strlen($buffer) === 0) {
-                    $buffer = fread($f, 4096);
-                    if (strlen($buffer) === 0) {
-                        $l = $this->validateLine($s, $query);
-                        if (!($l === false || $skip_lines)) {
-                            $lines[] = $l;
-                        }
-                        break;
-                    }
-                }
-                $s .= substr($buffer, 0, 1);
-                $buffer = substr($buffer, 1);
-                if (strpos($s, PHP_EOL) !== false) {
-                    $l = $this->validateLine((string)substr($s, 0, strlen($s) - $PHP_EOL_len), $query);
-                    if ($l !== false) {
-                        if ($skip_lines) {
-                            $skip_lines--;
-                        } else {
-                            $lines[] = $l;
-                        }
-                    }
-                    $s = '';
-                }
-            }
-        }
-        return $lines;
-    }
-
-    /**
-     * Return the number of available valid lines.
-     *
-     * @param Query $query
-     *
-     * @return int
-     */
-    public function count(Query $query) {
-        $PHP_EOL_len = strlen(PHP_EOL);
-        $lines = 0;
-        $s = '';
-        $f = @fopen($this->filename, 'rb');
-        if ($f !== false) {
-            $buffer = '';
-            while (true) {
-                if (strlen($buffer) === 0) {
-                    $buffer = fread($f, 4096);
-                    if (strlen($buffer) === 0) {
-                        if ($this->validateLine($s, $query) !== false) {
-                            $lines++;
-                        }
-                        break;
-                    }
-                }
-                $s .= substr($buffer, 0, 1);
-                $buffer = substr($buffer, 1);
-                if (strpos($s, PHP_EOL) !== false) {
-                    if ($this->validateLine((string)substr($s, 0, strlen($s) - $PHP_EOL_len), $query) !== false) {
-                        $lines++;
-                    }
-                    $s = '';
-                }
-            }
-        }
-        return $lines;
     }
 }

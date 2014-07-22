@@ -1,4 +1,6 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Module\Monitoring\Clicommands;
 
@@ -263,13 +265,13 @@ class ListCommand extends Command
             try {
                 $pset = PerfdataSet::fromString($row->service_perfdata);
                 $perfs = array();
-                foreach ($pset as $perfName => $p) {
+                foreach ($pset as $p) {
                     if ($percent = $p->getPercentage()) {
                         if ($percent < 0 || $percent > 100) {
                             continue;
                         }
                         $perfs[] = ' '
-                                 . $perfName
+                                 . $p->getLabel()
                                  . ': '
                                  . $this->getPercentageSign($percent)
                                  . '  '

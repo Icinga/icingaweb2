@@ -1,4 +1,6 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 use \Icinga\Module\Monitoring\Backend;
 use Icinga\Util\Format;

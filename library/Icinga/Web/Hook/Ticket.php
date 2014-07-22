@@ -1,8 +1,7 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
-/**
- * Icinga Web Ticket Hook
- */
 namespace Icinga\Web\Hook;
 
 /**

@@ -1,7 +1,7 @@
 ; authentication.ini
 ;
 ; Each section listed in this configuration represents a backend used to authenticate users. The backend configurations
-: must define a resource referring to a configured database or LDAP connection in the INI file resources.ini.
+; must define a resource referring to a configured database or LDAP connection in the INI file resources.ini.
 ;
 ; The backends will be processed from top to bottom using the first backend for authentication which reports that
 ; the user trying to log in is available.

@@ -1,4 +1,6 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 // TODO: We need to define a useful permission set for this module, the
 //       list provided here is just an example

@@ -1,4 +1,6 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 class Zend_View_Helper_SelectionToolbar extends Zend_View_Helper_Abstract
 {

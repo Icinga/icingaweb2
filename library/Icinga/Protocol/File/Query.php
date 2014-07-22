@@ -5,6 +5,7 @@
 namespace Icinga\Protocol\File;
 
 use Icinga\Data\SimpleQuery;
+use Icinga\Data\Filter\Filter;
 
 /**
  * Class Query
@@ -32,7 +33,7 @@ class Query extends SimpleQuery
     /**
      * Nothing to do here
      */
-    public function applyFilter()
+    public function applyFilter(Filter $filter)
     {}
 
     /**
@@ -42,9 +43,11 @@ class Query extends SimpleQuery
      *
      * @return Query
      */
-    public function order($dir)
+    public function order($field, $direction = null)
     {
-        $this->sortDir = ($dir === null || strtoupper(trim($dir)) === 'DESC') ? self::SORT_DESC : self::SORT_ASC;
+        $this->sortDir = (
+            $direction === null || strtoupper(trim($direction)) === 'DESC'
+        ) ? self::SORT_DESC : self::SORT_ASC;
         return $this;
     }
 

@@ -1,30 +1,5 @@
 <?php
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 use Icinga\Application\Icinga;
@@ -119,8 +94,8 @@ class Monitoring_ChartController extends Controller
                 'services_pending'
             )
         )->getQuery()->fetchAll();
-        $this->view->height = intval($this->getParam('height', 220));
-        $this->view->width = intval($this->getParam('width', 520));
+        $this->view->height = intval($this->getParam('height', 500));
+        $this->view->width = intval($this->getParam('width', 500));
         if (count($query) === 1) {
             $this->drawGroupPie($query[0]);
         } else {
@@ -144,8 +119,8 @@ class Monitoring_ChartController extends Controller
                 'services_pending'
             )
         )->getQuery()->fetchAll();
-        $this->view->height = intval($this->getParam('height', 220));
-        $this->view->width = intval($this->getParam('width', 520));
+        $this->view->height = intval($this->getParam('height', 500));
+        $this->view->width = intval($this->getParam('width', 500));
 
         $this->drawServiceGroupChart($query);
 
@@ -165,7 +140,8 @@ class Monitoring_ChartController extends Controller
         }
         $this->view->chart = new GridChart();
         $this->view->chart->setAxisLabel('', t('Services'))
-            ->setXAxis(new \Icinga\Chart\Unit\StaticAxis());
+            ->setXAxis(new \Icinga\Chart\Unit\StaticAxis())
+            ->setAxisMin(null, 0);
 
         $this->view->chart->drawBars(
             array(
@@ -215,7 +191,9 @@ class Monitoring_ChartController extends Controller
             );
         }
         $this->view->chart = new GridChart();
-        $this->view->chart->setAxisLabel('', t('Hosts'))->setXAxis(new StaticAxis());
+        $this->view->chart->setAxisLabel('', t('Hosts'))
+            ->setXAxis(new StaticAxis())
+            ->setAxisMin(null, 0);
         $this->view->chart->drawBars(
             array(
                 'label' => t('Up'),

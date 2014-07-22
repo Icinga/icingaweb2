@@ -1,3 +1,5 @@
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 (function (Object) {
 
