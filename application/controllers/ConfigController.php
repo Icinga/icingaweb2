@@ -8,12 +8,12 @@ use Icinga\Web\Widget\AlertMessageBox;
 use Icinga\Web\Notification;
 use Icinga\Application\Modules\Module;
 use Icinga\Web\Url;
+use Icinga\Web\Form;
 use Icinga\Web\Widget;
 use Icinga\Application\Icinga;
 use Icinga\Application\Config as IcingaConfig;
 use Icinga\Data\ResourceFactory;
 use Icinga\Form\Config\GeneralForm;
-use Icinga\Form\Config\Authentication\ReorderForm;
 use Icinga\Form\Config\Authentication\LdapBackendForm;
 use Icinga\Form\Config\Authentication\DbBackendForm;
 use Icinga\Form\Config\ResourceForm;
@@ -186,40 +186,47 @@ class ConfigController extends BaseConfigController
     }
 
     /**
-     * Action for creating a new authentication backend
+     * Action for reordering authentication backends
      */
     public function authenticationAction()
     {
-        $config = IcingaConfig::app('authentication', true);
+        $this->view->messageBox = new AlertMessageBox(true);
         $this->view->tabs->activate('authentication');
 
-        $order = array_keys($config->toArray());
-        $this->view->messageBox = new AlertMessageBox(true);
-
-        $backends = array();
-        foreach ($order as $backend) {
-            $form = new ReorderForm();
-            $form->setName('form_reorder_backend_' . $backend);
-            $form->setBackendName($backend);
-            $form->setCurrentOrder($order);
-            $form->setRequest($this->_request);
-
-            if ($form->isSubmittedAndValid()) {
-                if ($this->writeAuthenticationFile($form->getReorderedConfig($config))) {
-                    Notification::success('Authentication Order Updated');
-                    $this->redirectNow('config/authentication');
+        $config = IcingaConfig::app('authentication');
+        $backendOrder = array_keys($config->toArray());
+        $form = new Form();
+        $form->setName('form_reorder_authbackend');
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $requestData = $request->getPost();
+            if ($form->isValid($requestData)) { // Validate the CSRF token
+                $reordered = false;
+                foreach ($backendOrder as $backendName) {
+                    if (isset($requestData[$backendName])) {
+                        array_splice($backendOrder, array_search($backendName, $backendOrder), 1);
+                        array_splice($backendOrder, $requestData[$backendName], 0, $backendName);
+                        $reordered = true;
+                        break;
+                    }
                 }
 
-                return;
-            }
+                if ($reordered) {
+                    $reorderedConfig = array();
+                    foreach ($backendOrder as $backendName) {
+                        $reorderedConfig[$backendName] = $config->{$backendName};
+                    }
 
-            $backends[] = (object) array(
-                'name'          => $backend,
-                'reorderForm'   => $form
-            );
+                    if ($this->writeAuthenticationFile($reorderedConfig)) {
+                        Notification::success($this->translate('Authentication order updated!'));
+                        $this->redirectNow('config/authentication');
+                    }
+                }
+            }
         }
 
-        $this->view->backends = $backends;
+        $this->view->form = $form->create(); // Necessary in case its a GET request
+        $this->view->backendNames = $backendOrder;
     }
 
     /**
