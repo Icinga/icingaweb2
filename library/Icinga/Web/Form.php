@@ -166,22 +166,21 @@ class Form extends Zend_Form
     }
 
     /**
-     * Add a new element
+     * Create a new element
      *
      * Additionally, all structural form element decorators by Zend are replaced with our own ones.
      *
-     * @param   string|Zend_Form_Element    $element    String element type, or an object of type Zend_Form_Element
-     * @param   string                      $name       The name of the element to add if $element is a string
-     * @param   array                       $options    The options for the element if $element is a string
+     * @param   string  $type       String element type
+     * @param   string  $name       The name of the element to add
+     * @param   array   $options    The options for the element
      *
-     * @return  self
+     * @return  Zend_Form_Element
      *
-     * @see     Zend_Form::addElement()
+     * @see     Zend_Form::createElement()
      */
-    public function addElement($element, $name = null, $options = null)
+    public function createElement($type, $name, $options = null)
     {
-        parent::addElement($element, $name, $options);
-        $el = $name !== null ? $this->getElement($name) : $element;
+        $el = parent::createElement($type, $name, $options);
 
         if ($el) {
             if (strpos(strtolower(get_class($el)), 'hidden') !== false) {
@@ -195,7 +194,7 @@ class Form extends Zend_Form
             }
         }
 
-        return $this;
+        return $el;
     }
 
     /**
