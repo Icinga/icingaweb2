@@ -27,13 +27,6 @@ use Icinga\Config\PreservingIniWriter;
  */
 class ConfigController extends BaseConfigController
 {
-    /**
-     * The resource types that are available.
-     *
-     * @var array
-     */
-    private $resourceTypes = array('livestatus', 'ido', 'statusdat', 'ldap');
-
     public function init()
     {
         $this->view->tabs = Widget::create('tabs')->add('index', array(
@@ -386,28 +379,30 @@ class ConfigController extends BaseConfigController
         $this->view->resources = IcingaConfig::app('resources', true)->toArray();
     }
 
+    /**
+     * Display a form to create a new resource
+     */
     public function createresourceAction()
     {
-        $this->view->resourceTypes = $this->resourceTypes;
-        $resources = IcingaConfig::app('resources', true);
+        $this->view->messageBox = new AlertMessageBox(true);
+
         $form = new ResourceForm();
-        $form->setRequest($this->_request);
-        if ($form->isSubmittedAndValid()) {
-            $name = $form->getName();
-            if (isset($resources->{$name})) {
-                $this->addErrorMessage('Resource name "' . $name .'" already in use.');
+        $request = $this->getRequest();
+        if ($request->isPost() && $form->isValid($request->getPost())) {
+            list($name, $config) = $form->getResourceConfig();
+            $resources = IcingaConfig::app('resources')->toArray();
+            if (array_key_exists($name, $resources)) {
+                $this->addErrorMessage(sprintf($this->translate('Resource name "%s" already in use.'), $name));
             } else {
-                $resources->{$name} = $form->getConfig();
+                $resources[$name] = $config;
                 if ($this->writeConfigFile($resources, 'resources')) {
-                    $this->addSuccessMessage('Resource "' . $name . '" created.');
-                    $this->redirectNow("config/resource");
+                    $this->addSuccessMessage(sprintf($this->translate('Resource "%s" successfully created.'), $name));
                 }
             }
         }
 
-        $this->view->messageBox = new AlertMessageBox(true);
-        $this->view->messageBox->addForm($form);
         $this->view->form = $form;
+        $this->view->messageBox->addForm($form);
         $this->render('resource/create');
     }
 
