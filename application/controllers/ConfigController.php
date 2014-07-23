@@ -375,13 +375,15 @@ class ConfigController extends BaseConfigController
         $this->render('authentication/remove');
     }
 
-    public function resourceAction($showOnly = false)
+    /**
+     * Display all available resources and a link to create a new one
+     */
+    public function resourceAction()
     {
+        $this->view->messageBox = new AlertMessageBox(true);
         $this->view->tabs->activate('resources');
 
-        $this->view->messageBox = new AlertMessageBox(true);
         $this->view->resources = IcingaConfig::app('resources', true)->toArray();
-        $this->render('resource');
     }
 
     public function createresourceAction()
