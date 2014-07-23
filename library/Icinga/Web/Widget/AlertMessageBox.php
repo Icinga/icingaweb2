@@ -6,6 +6,7 @@ namespace Icinga\Web\Widget;
 
 use Zend_Log;
 use Zend_Form;
+use Zend_View_Abstract;
 use Icinga\User;
 use Icinga\User\Message;
 use Icinga\Web\Session;
