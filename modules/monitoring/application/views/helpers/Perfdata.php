@@ -36,9 +36,9 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
                 }
                 $pieChart->setStyle('margin: 0.2em 0.5em 0.2em 0.5em;');
                 $table[] = '<tr><th>' . $pieChart->render()
-                    . $this->escape($perfdata->getLabel())
+                    . htmlspecialchars($perfdata->getLabel())
                     . '</th><td> '
-                    . $this->escape($this->formatPerfdataValue($perfdata)) .
+                    . htmlspecialchars($this->formatPerfdataValue($perfdata)) .
                     ' </td></tr>';
             }
         }
@@ -89,7 +89,7 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
     protected function createInlinePie(Perfdata $perfdata)
     {
         $pieChart = new InlinePie($this->calculatePieChartData($perfdata), $perfdata->getLabel());
-        $pieChart->setLabel($this->escape($perfdata->getLabel()));
+        $pieChart->setLabel(htmlspecialchars($perfdata->getLabel()));
         $pieChart->setHideEmptyLabel();
 
         //$pieChart->setHeight(32)->setWidth(32);
