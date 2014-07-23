@@ -259,7 +259,7 @@ EOT;
         try {
             $html = $this->render(Icinga::app()->getViewRenderer()->view);
         } catch (Exception $e) {
-            return $this->escape($e->getMessage());
+            return htmlspecialchars($e->getMessage());
         }
         return $html;
     }

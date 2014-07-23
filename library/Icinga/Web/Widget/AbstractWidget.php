@@ -118,7 +118,7 @@ abstract class AbstractWidget
         try {
             $html = $this->render($this->view());
         } catch (Exception $e) {
-            return $this->escape($e->getMessage());
+            return htmlspecialchars($e->getMessage());
         }
         return (string) $html;
     }
