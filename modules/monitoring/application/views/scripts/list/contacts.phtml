@@ -26,23 +26,23 @@ $contactHelper = $this->getHelper('ContactFlags');
             <div><?= sprintf(
                 '%1$s: <a href="mailto:%2$s">%2$s</a>',
                 t('Email'),
-                htmlspecialchars($contact->contact_email)
+                $this->escape($contact->contact_email)
             ) ?></div>
             <?php if ($contact->contact_pager): ?>
             <div>
                 <?= t('Pager') ?>:
-                <?= htmlspecialchars($contact->contact_pager) ?>
+                <?= $this->escape($contact->contact_pager) ?>
             </div>
             <?php endif; ?>
             <div style="clear: both;"></div>
             <div class="notification-periods">
                 <div>
                     <?= t('Service notification period') ?>:
-                    <?= htmlspecialchars($contact->contact_notify_service_timeperiod) ?>
+                    <?= $this->escape($contact->contact_notify_service_timeperiod) ?>
                 </div>
                 <div>
                     <?= t('Host notification period') ?>:
-                    <?= htmlspecialchars($contact->contact_notify_host_timeperiod) ?>
+                    <?= $this->escape($contact->contact_notify_host_timeperiod) ?>
                 </div>
             </div>
         </div>
