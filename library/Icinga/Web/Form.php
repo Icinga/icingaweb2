@@ -250,7 +250,8 @@ class Form extends Zend_Form
             array_filter(
                 $elements,
                 function ($el) {
-                    return $el->getAttrib('disabled') === null && $el->getType() !== 'submit';
+                    return $el->getAttrib('disabled') === null
+                        && 0 === preg_match('@(submit|button)@', strtolower(get_class($el)));
                 }
             ),
             $formData
