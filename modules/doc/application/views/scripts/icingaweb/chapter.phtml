@@ -2,6 +2,7 @@
 $urlHelper = $this->getHelper('Url');
 $view = $this;
 ?>
+<div class="chapter">
 <?= preg_replace_callback(
     '/<a\s+(?P<attribs>[^>]*?\s+)?href="#(?P<fragment>[^"]+)"/im',
     function($match) use ($toc, $urlHelper, $view) {
@@ -36,3 +37,4 @@ $view = $this;
     },
     $chapterHtml
 ); ?>
+</div>
