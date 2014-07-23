@@ -24,7 +24,7 @@ class InlinePie extends AbstractWidget
     const NUMBER_FORMAT_TIME = 'time';
     const NUMBER_FORMAT_BYTES = 'bytes';
     const NUMBER_FORMAT_RATIO = 'ratio';
-        
+
     /**
      * The template string used for rendering this widget
      * The template string used for rendering this widget
@@ -137,7 +137,7 @@ EOD;
      * @var string
      */
     private $tooltipFormat = '<b>{{title}}</b></br> {{label}}: {{formatted}} ({{percent}}%)';
-    
+
     /**
      * The number format used to render numeric values in tooltips
      *
@@ -212,7 +212,7 @@ EOD;
     {
         $this->format = $format;
     }
-    
+
     /**
      * A format string used to render the content of the piechart tooltips
      *
@@ -346,11 +346,11 @@ EOD;
     {
         $template = $this->template;
         $template = str_replace('{url}', $this->url, $template);
-        
+
         // style
         $template = str_replace('{width}', $this->width, $template);
         $template = str_replace('{height}', $this->height, $template);
-        $template = str_replace('{title}', htmlspecialchars($this->title), $template);
+        $template = str_replace('{title}', $this->escape($this->title), $template);
         $template = str_replace('{style}', $this->style, $template);
         $template = str_replace('{colors}', implode(',', $this->colors), $template);
         $template = str_replace('{borderWidth}', $this->borderWidth, $template);
@@ -370,9 +370,9 @@ EOD;
         foreach ($this->data as $key => $value) {
             $formatted[$key] = $this->formatValue($value);
         }
-        $template = str_replace('{data}', htmlspecialchars(implode(',', $data)), $template);
-        $template = str_replace('{formatted}', htmlspecialchars(implode('|', $formatted)), $template);
-        $template = str_replace('{labels}', htmlspecialchars($this->createLabelString()), $template);
+        $template = str_replace('{data}', $this->escape(implode(',', $data)), $template);
+        $template = str_replace('{formatted}', $this->escape(implode('|', $formatted)), $template);
+        $template = str_replace('{labels}', $this->escape($this->createLabelString()), $template);
         $template = str_replace('{tooltipFormat}', $this->tooltipFormat, $template);
         return $template;
     }

@@ -124,7 +124,7 @@ class AlertMessageBox extends AbstractWidget
             $alert = $this->states[$level];
             $html .= '<div class="alert ' . $alert['state']. '">' .
                 $this->view()->icon($alert['icon']) .
-                '<strong>' . htmlspecialchars($message->getMessage()) . '</strong>' .
+                '<strong>' . $this->escape($message->getMessage()) . '</strong>' .
             '</div>';
         }
         return $html;
