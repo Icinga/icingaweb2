@@ -31,6 +31,22 @@ abstract class BaseBackendForm extends Form
     }
 
     /**
+     * @see Form::addSubmitButton()
+     */
+    public function addSubmitButton()
+    {
+        $this->addElement(
+            'submit',
+            'btn_submit',
+            array(
+                'label' => t('Save Changes')
+            )
+        );
+
+        return $this;
+    }
+
+    /**
      * Validate this form with the Zend validation mechanism and perform a logic validation of the connection.
      *
      * If logic validation fails, the 'backend_force_creation' checkbox is prepended to the form to allow users to
