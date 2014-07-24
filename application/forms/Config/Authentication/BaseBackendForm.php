@@ -56,14 +56,6 @@ abstract class BaseBackendForm extends Form
     }
 
     /**
-     * Return an array containing all sections defined by this form as the key and all settings
-     * as an key-value sub-array
-     *
-     * @return  array
-     */
-    abstract public function getConfig();
-
-    /**
      * Validate the configuration state of this backend with the concrete authentication backend.
      *
      * An implementation should not throw any exception, but use the add/setErrorMessages method of
@@ -72,4 +64,34 @@ abstract class BaseBackendForm extends Form
      * @return  bool    Whether validation succeeded or not
      */
     abstract public function isValidAuthenticationBackend();
+
+    /**
+     * Return the backend's configuration values and its name
+     *
+     * The first value is the name and the second one the values as array.
+     *
+     * @return  array
+     */
+    public function getBackendConfig()
+    {
+        $values = $this->getValues();
+        $name = $values['name'];
+        unset($values['name']);
+        unset($values['btn_submit']);
+        unset($values['force_creation']);
+        unset($values[$this->getTokenElementName()]);
+        return array($name, $values);
+    }
+
+    /**
+     * Populate the form with the given configuration values
+     *
+     * @param   string  $name       The name of the backend
+     * @param   array   $config     The configuration values
+     */
+    public function setBackendConfig($name, array $config)
+    {
+        $config['name'] = $name;
+        $this->populate($config);
+    }
 }
