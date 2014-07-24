@@ -4,32 +4,13 @@
 
 namespace Icinga\Form\Config\Authentication;
 
-use \Zend_Form_Element_Checkbox;
 use Icinga\Web\Form;
-use Icinga\Web\Form\Decorator\HelpText;
 
 /**
  * Base form for authentication backend forms
  */
 abstract class BaseBackendForm extends Form
 {
-    /**
-     * Add checkbox at the beginning of the form which allows to skip logic connection validation
-     */
-    protected function addForceCreationCheckbox()
-    {
-        $checkbox = new Zend_Form_Element_Checkbox(
-            array(
-                'name'      =>  'backend_force_creation',
-                'label'     =>  t('Force Changes'),
-                'helptext'  =>  t('Check this box to enforce changes without connectivity validation'),
-                'order'     =>  0
-            )
-        );
-        $checkbox->addDecorator(new HelpText());
-        $this->addElement($checkbox);
-    }
-
     /**
      * @see Form::addSubmitButton()
      */
@@ -109,5 +90,22 @@ abstract class BaseBackendForm extends Form
     {
         $config['name'] = $name;
         $this->populate($config);
+    }
+
+    /**
+     * Add a checkbox to be displayed at the beginning of the form
+     * which allows the user to skip the connection validation
+     */
+    protected function addForceCreationCheckbox()
+    {
+        $this->addElement(
+            'checkbox',
+            'force_creation',
+            array(
+                'order'     => 0,
+                'label'     => t('Force Changes'),
+                'helptext'  => t('Check this box to enforce changes without connectivity validation')
+            )
+        );
     }
 }
