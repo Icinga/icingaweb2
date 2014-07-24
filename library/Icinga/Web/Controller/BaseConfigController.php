@@ -47,6 +47,20 @@ class BaseConfigController extends ActionController
         Session::getSession()->write();
     }
 
+    /**
+     * Send a message with the logging level Zend_Log::WARN to the current user and
+     * commit the changes to the underlying session.
+     *
+     * @param $msg      The message content
+     */
+    protected function addWarningMessage($msg)
+    {
+        AuthenticationManager::getInstance()->getUser()->addMessage(
+            new Message($msg, Zend_Log::WARN)
+        );
+        Session::getSession()->write();
+    }
+
     /*
      * Return an array of tabs provided by this configuration controller.
      *

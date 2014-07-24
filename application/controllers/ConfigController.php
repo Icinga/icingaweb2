@@ -447,44 +447,50 @@ class ConfigController extends BaseConfigController
         $this->render('resource/modify');
     }
 
+    /**
+     * Display a confirmation form to remove a resource
+     */
     public function removeresourceAction()
     {
         $this->view->messageBox = new AlertMessageBox(true);
 
-        $resources = ResourceFactory::getResourceConfigs()->toArray();
-        $name =  $this->getParam('resource');
-        if (!isset($resources[$name])) {
-            $this->addSuccessMessage('Can\'t remove: Unknown resource provided');
-            $this->render('resource/remove');
-            return;
+        // Fetch the resource to be removed
+        $resources = IcingaConfig::app('resources')->toArray();
+        $name = $this->getParam('resource');
+        if (false === array_key_exists($name, $resources)) {
+            $this->addErrorMessage(sprintf($this->translate('Cannot remove "%s". Resource not found.'), $name));
+            $this->redirectNow('config/configurationerror');
+        }
+
+        // Check if selected resource is currently used for authentication
+        $authConfig = IcingaConfig::app('authentication')->toArray();
+        foreach ($authConfig as $backendName => $config) {
+            if (array_key_exists('resource', $config) && $config['resource'] === $name) {
+                $this->addWarningMessage(
+                    sprintf(
+                        $this->translate(
+                            'The resource "%s" is currently in use by the authentication backend "%s". ' .
+                            'Removing the resource can result in noone being able to log in any longer.'
+                        ),
+                        $name,
+                        $backendName
+                    )
+                );
+            }
         }
 
         $form = new ConfirmRemovalForm();
-        $form->setRequest($this->getRequest());
-        $form->setRemoveTarget('resource', $name);
-
-        // Check if selected resource is currently used for authentication
-        $authConfig = IcingaConfig::app('authentication', true)->toArray();
-        foreach ($authConfig as $backendName => $config) {
-           if (array_key_exists('resource', $config) && $config['resource'] === $name) {
-              $this->addErrorMessage(
-				'Warning: The resource "' . $name . '" is currently used for user authentication by "' . $backendName  . '". ' .
-				' Deleting it could eventally make login impossible.'
-              );
-           }
-        }
-
-        if ($form->isSubmittedAndValid()) {
+        $request = $this->getRequest();
+        if ($request->isPost() && $form->isValid($request->getPost())) {
             unset($resources[$name]);
             if ($this->writeConfigFile($resources, 'resources')) {
-                $this->addSuccessMessage('Resource "' . $name . '" removed.');
+                $this->addSuccessMessage(sprintf($this->translate('Resource "%s" successfully removed.'), $name));
                 $this->redirectNow('config/resource');
             }
-            return;
         }
 
-        $this->view->name = $name;
         $this->view->form = $form;
+        $this->view->messageBox->addForm($form);
         $this->render('resource/remove');
     }
 
