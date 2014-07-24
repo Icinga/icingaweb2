@@ -28,35 +28,36 @@ abstract class BaseBackendForm extends Form
     }
 
     /**
-     * Validate this form with the Zend validation mechanism and perform a logic validation of the connection.
+     * Return whether the given values are complete/valid and check whether it is possible to connect to the backend
      *
-     * If logic validation fails, the 'backend_force_creation' checkbox is prepended to the form to allow users to
-     * skip the logic connection validation.
+     * If connection validation fails, a checkbox is prepended to the form to allow users to skip it.
      *
-     * @param   array   $data   The form input to validate
+     * @param   array   $data   The data to validate
      *
-     * @return  bool            Whether validation succeeded or not
+     * @return  bool            Whether the validation succeeded or not
      */
     public function isValid($data)
     {
-        if (!parent::isValid($data)) {
+        if (false === parent::isValid($data)) {
             return false;
         }
-        if (isset($data['backend_force_creation']) && $data['backend_force_creation']) {
-            return true;
-        }
-        if (!$this->isValidAuthenticationBackend()) {
+
+        if (
+            (false === isset($data['force_creation']) || false === $data['force_creation'])
+            && false === $this->isValidAuthenticationBackend()
+        ) {
             $this->addForceCreationCheckbox();
             return false;
         }
+
         return true;
     }
 
     /**
      * Validate the configuration state of this backend with the concrete authentication backend.
      *
-     * An implementation should not throw any exception, but use the add/setErrorMessages method of
-     * Zend_Form. If the 'backend_force_creation' checkbox is set, this method won't be called.
+     * An implementation should not throw any exception, but use the add/setErrorMessages method
+     * of Zend_Form. If the 'force_creation' checkbox is set, this method won't be called.
      *
      * @return  bool    Whether validation succeeded or not
      */
