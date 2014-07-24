@@ -11,6 +11,10 @@
     <a href="<?= $this->href('/config/createAuthenticationBackend', array('type' => 'db')); ?>">
       <?= $this->icon('create.png'); ?><?= $this->translate('Create A New DB Authentication Backend'); ?>
     </a>
+    <br>
+    <a href="<?= $this->href('/config/createAuthenticationBackend', array('type' => 'autologin')); ?>">
+      <?= $this->icon('create.png'); ?><?= $this->translate('Create A New Autologin Authentication Backend'); ?>
+    </a>
   </p>
   <form id="<?= $form->getName(); ?>" name="<?= $form->getName(); ?>" enctype="<?= $form->getEncType(); ?>" method="<?= $form->getMethod(); ?>">
     <?= $form->getElement($form->getTokenElementName()); ?>

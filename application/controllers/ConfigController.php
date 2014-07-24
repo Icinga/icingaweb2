@@ -16,6 +16,7 @@ use Icinga\Data\ResourceFactory;
 use Icinga\Form\Config\GeneralForm;
 use Icinga\Form\Config\Authentication\LdapBackendForm;
 use Icinga\Form\Config\Authentication\DbBackendForm;
+use Icinga\Form\Config\Authentication\AutologinBackendForm;
 use Icinga\Form\Config\ResourceForm;
 use Icinga\Form\Config\LoggingForm;
 use Icinga\Form\Config\ConfirmRemovalForm;
@@ -228,38 +229,47 @@ class ConfigController extends BaseConfigController
     public function createauthenticationbackendAction()
     {
         $this->view->messageBox = new AlertMessageBox(true);
+        $this->view->tabs->activate('authentication');
 
-        if ($this->getRequest()->getParam('type') === 'ldap') {
+        $backendType = $this->getRequest()->getParam('type');
+        $authenticationConfig = IcingaConfig::app('authentication')->toArray();
+        if ($backendType === 'ldap') {
             $form = new LdapBackendForm();
-        } else {
+        } else if ($backendType === 'db') {
             $form = new DbBackendForm();
+        } else if ($backendType === 'autologin') {
+            $existing = array_filter($authenticationConfig, function ($e) { return $e['backend'] === 'autologin'; });
+            if (false === empty($existing)) {
+                $this->addErrorMessage(
+                    $this->translate('An autologin backend already exists')
+                );
+                $this->redirectNow('config/configurationerror');
+            }
+            $form = new AutologinBackendForm();
+        } else {
+            $this->addErrorMessage(sprintf(
+                $this->translate('There is no backend type `%s\''),
+                $backendType
+            ));
+            $this->redirectNow('config/configurationerror');
         }
-        if ($this->getParam('auth_backend')) {
-            $form->setBackendName($this->getParam('auth_backend'));
-        }
-        $form->setRequest($this->getRequest());
 
-        if ($form->isSubmittedAndValid()) {
-            $backendCfg = IcingaConfig::app('authentication')->toArray();
-            foreach ($backendCfg as $backendName => $settings) {
-                unset($backendCfg[$backendName]['name']);
-            }
-            foreach ($form->getConfig() as $backendName => $settings) {
-                unset($settings->{'name'});
-                if (isset($backendCfg[$backendName])) {
-                    $this->addErrorMessage('Backend name already exists');
-                    $this->view->form = $form;
-                    $this->render('authentication/create');
-                    return;
+        $request = $this->getRequest();
+        if ($request->isPost() && $form->isValid($request->getPost())) {
+            list($backendName, $backendConfig) = $form->getBackendConfig();
+            if (isset($authenticationConfig[$backendName])) {
+                $this->addErrorMessage(
+                    $this->translate('Backend name already exists')
+                );
+            } else {
+                $authenticationConfig[$backendName] = $backendConfig;
+                if ($this->writeConfigFile($authenticationConfig, 'authentication')) {
+                    $this->addSuccessMessage(
+                        $this->translate('Backend Modification Written.')
+                    );
+                    $this->redirectNow('config/authentication');
                 }
-                $backendCfg[$backendName] = $settings;
             }
-            if ($this->writeAuthenticationFile($backendCfg)) {
-                // redirect to overview with success message
-                Notification::success('Backend Modification Written.');
-                $this->redirectNow("config/authentication");
-            }
-            return;
         }
 
         $this->view->messageBox->addForm($form);
