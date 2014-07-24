@@ -233,25 +233,29 @@ class ConfigController extends BaseConfigController
 
         $backendType = $this->getRequest()->getParam('type');
         $authenticationConfig = IcingaConfig::app('authentication')->toArray();
-        if ($backendType === 'ldap') {
-            $form = new LdapBackendForm();
-        } else if ($backendType === 'db') {
-            $form = new DbBackendForm();
-        } else if ($backendType === 'autologin') {
-            $existing = array_filter($authenticationConfig, function ($e) { return $e['backend'] === 'autologin'; });
-            if (false === empty($existing)) {
-                $this->addErrorMessage(
-                    $this->translate('An autologin backend already exists')
-                );
+        switch ($backendType) {
+            case 'ldap':
+                $form = new LdapBackendForm();
+                break;
+            case 'db':
+                $form = new DbBackendForm();
+                break;
+            case 'autologin':
+                $existing = array_filter($authenticationConfig, function ($e) { return $e['backend'] === 'autologin'; });
+                if (false === empty($existing)) {
+                    $this->addErrorMessage(
+                        $this->translate('An autologin backend already exists')
+                    );
+                    $this->redirectNow('config/configurationerror');
+                }
+                $form = new AutologinBackendForm();
+                break;
+            default:
+                $this->addErrorMessage(sprintf(
+                    $this->translate('There is no backend type `%s\''),
+                    $backendType
+                ));
                 $this->redirectNow('config/configurationerror');
-            }
-            $form = new AutologinBackendForm();
-        } else {
-            $this->addErrorMessage(sprintf(
-                $this->translate('There is no backend type `%s\''),
-                $backendType
-            ));
-            $this->redirectNow('config/configurationerror');
         }
 
         $request = $this->getRequest();
