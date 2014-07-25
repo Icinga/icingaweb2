@@ -242,30 +242,4 @@ class Monitoring_ConfigController extends ModuleActionController
 
         return true;
     }
-
-    /**
-     * Return whether the given backend exists in the current configuration
-     *
-     * @param   string  $backend    The name of the backend to check
-     *
-     * @return  bool                Whether the backend exists or not
-     */
-    protected function isExistingBackend($backend)
-    {
-        $backendCfg = $this->Config('backends');
-        return $backend && $backendCfg->get($backend);
-    }
-
-    /**
-     * Return whether the given instance exists in the current configuration
-     *
-     * @param   string  $instance   The name of the instance to check
-     *
-     * @return  bool                Whether the instance exists or not
-     */
-    protected function isExistingInstance($instance)
-    {
-        $instanceCfg = $this->Config('instances');
-        return $instanceCfg && $instanceCfg->get($instance);
-    }
 }
