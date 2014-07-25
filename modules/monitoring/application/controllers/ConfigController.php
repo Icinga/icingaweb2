@@ -2,19 +2,15 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use \Exception;
-
+use Exception;
 use Icinga\Config\PreservingIniWriter;
 use Icinga\Web\Controller\ModuleActionController;
 use Icinga\Web\Notification;
-use Icinga\Web\Url;
-
 use Icinga\Module\Monitoring\Form\Config\ConfirmRemovalForm;
 use Icinga\Module\Monitoring\Form\Config\Backend\EditBackendForm;
 use Icinga\Module\Monitoring\Form\Config\Backend\CreateBackendForm;
 use Icinga\Module\Monitoring\Form\Config\Instance\EditInstanceForm;
 use Icinga\Module\Monitoring\Form\Config\Instance\CreateInstanceForm;
-
 use Icinga\Exception\NotReadableError;
 
 /**
@@ -22,7 +18,6 @@ use Icinga\Exception\NotReadableError;
  */
 class Monitoring_ConfigController extends ModuleActionController
 {
-
     /**
      * Display a list of available backends and instances
      */
@@ -74,7 +69,7 @@ class Monitoring_ConfigController extends ModuleActionController
     }
 
     /**
-     * Display a form to create a new backends
+     * Display a form to create a new backend
      */
     public function createbackendAction()
     {
@@ -128,7 +123,7 @@ class Monitoring_ConfigController extends ModuleActionController
     }
 
     /**
-     * Display a form to remove the instance identified by the 'instance' parameter
+     * Display a confirmation form to remove the instance identified by the 'instance' parameter
      */
     public function removeinstanceAction()
     {
@@ -214,9 +209,14 @@ class Monitoring_ConfigController extends ModuleActionController
     }
 
     /**
-     * Display a form to remove the instance identified by the 'instance' parameter
+     * Write configuration to an ini file
+     *
+     * @param   Zend_Config     $config     The configuration to write
+     * @param   string          $file       The config file to write to
+     *
+     * @return  bool                        Whether the configuration was written or not
      */
-    private function writeConfiguration($config, $file)
+    protected function writeConfiguration($config, $file)
     {
         $target = $this->Config($file)->getConfigFile();
         $writer = new PreservingIniWriter(array('filename' => $target, 'config' => $config));
@@ -234,26 +234,26 @@ class Monitoring_ConfigController extends ModuleActionController
     }
 
     /**
-     * Return true if the backend exists in the current configuration
+     * Return whether the given backend exists in the current configuration
      *
-     * @param   string $backend The name of the backend to check for existence
+     * @param   string  $backend    The name of the backend to check
      *
-     * @return  bool True if the backend name exists, otherwise false
+     * @return  bool                Whether the backend exists or not
      */
-    private function isExistingBackend($backend)
+    protected function isExistingBackend($backend)
     {
         $backendCfg = $this->Config('backends');
         return $backend && $backendCfg->get($backend);
     }
 
     /**
-     * Return true if the instance exists in the current configuration
+     * Return whether the given instance exists in the current configuration
      *
-     * @param   string $instance The name of the instance to check for existence
+     * @param   string  $instance   The name of the instance to check
      *
-     * @return  bool True if the instance name exists, otherwise false
+     * @return  bool                Whether the instance exists or not
      */
-    private function isExistingInstance($instance)
+    protected function isExistingInstance($instance)
     {
         $instanceCfg = $this->Config('instances');
         return $instanceCfg && $instanceCfg->get($instance);
