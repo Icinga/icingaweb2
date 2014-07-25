@@ -84,22 +84,21 @@ class Monitoring_ConfigController extends ModuleActionController
      */
     public function createbackendAction()
     {
-        $form = new CreateBackendForm();
-        $form->setRequest($this->getRequest());
-        if ($form->isSubmittedAndValid()) {
-            $configArray  =  $this->Config('backends')->toArray();
-            $configArray[$form->getBackendName()] = $form->getConfig();
-
-            if ($this->writeConfiguration(new Zend_Config($configArray), 'backends')) {
-                Notification::success('Backend Creation Succeeded');
+        $form = new BackendForm();
+        $request = $this->getRequest();
+        if ($request->isPost() && $form->isValid($request->getPost())) {
+            list($name, $config) = $form->getBackendConfig();
+            $backendsConfig = $this->Config('backends')->toArray();
+            $backendsConfig[$name] = $config;
+            if ($this->writeConfiguration($backendsConfig, 'backends')) {
+                Notification::success(sprintf($this->translate('Backend "%s" created successfully.'), $name));
                 $this->redirectNow('monitoring/config');
             } else {
                 $this->render('show-configuration');
             }
-            return;
         }
+
         $this->view->form = $form;
-        $this->render('editbackend');
     }
 
     /**
