@@ -79,4 +79,21 @@ class EditBackendForm extends Form
             )
         );
     }
+
+    /**
+     * Return a list of all resources of the given type ready to be used as content for a select input
+     *
+     * @param   string  $type   The type of resources to return
+     *
+     * @return  array
+     */
+    protected function getResourcesByType($type)
+    {
+        $backends = array();
+        foreach (array_keys(ResourceFactory::getResourceConfigs($type)->toArray()) as $name) {
+            $backends[$name] = $name;
+        }
+
+        return $backends;
+    }
 }
