@@ -294,18 +294,21 @@ class ConfigController extends BaseConfigController
 
         $configArray = IcingaConfig::app('authentication', true)->toArray();
         $authBackend =  $this->getParam('auth_backend');
-        if (!isset($configArray[$authBackend])) {
-            $this->addErrorMessage('Can\'t edit: Unknown Authentication Backend Provided');
-            $this->configurationerrorAction();
-            return;
-        }
-        if (!array_key_exists('resource', $configArray[$authBackend])) {
-            $this->addErrorMessage('Configuration error: Backend "' . $authBackend . '" has no Resource');
-            $this->configurationerrorAction();
-            return;
+        if (false === isset($configArray[$authBackend])) {
+            $this->addErrorMessage(
+                $this->translate('Can\'t edit: Unknown Authentication Backend Provided')
+            );
+            $this->redirectNow('config/configurationerror');
         }
 
-        $type = ResourceFactory::getResourceConfig($configArray[$authBackend]['resource'])->type;
+        if (false === array_key_exists('backend', $configArray[$authBackend])) {
+            $this->addErrorMessage(sprintf(
+                $this->translate('Backend "%s" has no `backend\' setting'),
+                $authBackend
+            ));
+            $this->redirectNow('config/configurationerror');
+        }
+        $type = $configArray[$authBackend]['backend'];
         switch ($type) {
             case 'ldap':
                 $form = new LdapBackendForm();
@@ -313,32 +316,37 @@ class ConfigController extends BaseConfigController
             case 'db':
                 $form = new DbBackendForm();
                 break;
+            case 'autologin':
+                $form = new AutologinBackendForm();
+                break;
             default:
-                $this->addErrorMessage('Can\'t edit: backend type "' . $type . '" of given resource not supported.');
-                $this->configurationerrorAction();
-                return;
+                $this->addErrorMessage(sprintf(
+                    $this->translate('Can\'t edit: backend type "%s" of given resource not supported.'),
+                    $type
+                ));
+                $this->redirectNow('config/configurationerror');
         }
 
-        $form->setBackendName($this->getParam('auth_backend'));
-        $form->setBackend(IcingaConfig::app('authentication', true)->$authBackend);
-        $form->setRequest($this->getRequest());
-
-        if ($form->isSubmittedAndValid()) {
-            $backendCfg = IcingaConfig::app('authentication')->toArray();
-            foreach ($form->getConfig() as $backendName => $settings) {
-                $backendCfg[$backendName] = $settings;
-                // Remove the old section if the backend is renamed
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            if ($form->isValid($request->getPost())) {
+                list($backendName, $backendConfig) = $form->getBackendConfig();
+                $configArray[$backendName] = $backendConfig;
                 if ($backendName != $authBackend) {
-                    unset($backendCfg[$authBackend]);
+                    unset($configArray[$authBackend]);
                 }
-                unset($settings['name']);
+                if ($this->writeAuthenticationFile($configArray)) {
+                    // redirect to overview with success message
+                    Notification::success(sprintf(
+                        $this->translate('Backend "%s" saved'),
+                        $backendName
+                    ));
+                    $this->redirectNow('config/authentication');
+                }
+                return;
             }
-            if ($this->writeAuthenticationFile($backendCfg)) {
-                // redirect to overview with success message
-                Notification::success('Backend "' . $authBackend . '" created');
-                $this->redirectNow("config/authentication");
-            }
-            return;
+        } else {
+            $form->setBackendConfig($authBackend, $configArray[$authBackend]);
         }
 
         $this->view->messageBox->addForm($form);
