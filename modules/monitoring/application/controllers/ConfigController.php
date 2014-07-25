@@ -3,18 +3,14 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 
 use \Exception;
-
+use \Zend_Config;
 use Icinga\Config\PreservingIniWriter;
 use Icinga\Web\Controller\ModuleActionController;
 use Icinga\Web\Notification;
-use Icinga\Web\Url;
-
+use Icinga\Module\Monitoring\Form\Config\BackendForm;
 use Icinga\Module\Monitoring\Form\Config\ConfirmRemovalForm;
-use Icinga\Module\Monitoring\Form\Config\Backend\EditBackendForm;
-use Icinga\Module\Monitoring\Form\Config\Backend\CreateBackendForm;
 use Icinga\Module\Monitoring\Form\Config\Instance\EditInstanceForm;
 use Icinga\Module\Monitoring\Form\Config\Instance\CreateInstanceForm;
-
 use Icinga\Exception\NotReadableError;
 
 /**
@@ -22,7 +18,6 @@ use Icinga\Exception\NotReadableError;
  */
 class Monitoring_ConfigController extends ModuleActionController
 {
-
     /**
      * Display a list of available backends and instances
      */
@@ -48,33 +43,44 @@ class Monitoring_ConfigController extends ModuleActionController
      */
     public function editbackendAction()
     {
+        // Fetch the backend to be edited
         $backend = $this->getParam('backend');
-        if (!$this->isExistingBackend($backend)) {
-            $this->view->error = 'Unknown backend ' . $backend;
-            return;
+        $backendsConfig = $this->Config('backends')->toArray();
+        if (false === array_key_exists($backend, $backendsConfig)) {
+            // TODO: Should behave as in the app's config controller (Specific redirect to an error action)
+            Notification::error(sprintf($this->translate('Cannot edit "%s". Backend not found.'), $backend));
+            $this->redirectNow('monitoring/config');
         }
-        $backendForm = new EditBackendForm();
-        $backendForm->setRequest($this->getRequest());
-        $backendForm->setBackendConfiguration($this->Config('backends')->get($backend));
 
-        if ($backendForm->isSubmittedAndValid()) {
-            $newConfig = $backendForm->getConfig();
-            $config = $this->Config('backends');
-            $config->$backend = $newConfig;
-            if ($this->writeConfiguration($config, 'backends')) {
-                Notification::success('Backend ' . $backend . ' Modified.');
-                $this->redirectNow('monitoring/config');
-            } else {
-                $this->render('show-configuration');
-                return;
+        $form = new BackendForm();
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            if ($form->isValid($request->getPost())) {
+                list($newName, $config) = $form->getBackendConfig();
+
+                if ($newName !== $backend) {
+                    // Backend name has changed
+                    unset($backendsConfig[$backend]); // We can safely use unset as all values are part of the form
+                }
+
+                $backendsConfig[$newName] = $config;
+                if ($this->writeConfiguration($backendsConfig, 'backends')) {
+                    Notification::success(sprintf($this->translate('Backend "%s" successfully modified.'), $backend));
+                    $this->redirectNow('monitoring/config');
+                } else {
+                    $this->render('show-configuration');
+                    return;
+                }
             }
+        } else {
+            $form->setBackendConfig($backend, $backendsConfig[$backend]);
         }
-        $this->view->name = $backend;
-        $this->view->form = $backendForm;
+
+        $this->view->form = $form;
     }
 
     /**
-     * Display a form to create a new backends
+     * Display a form to create a new backend
      */
     public function createbackendAction()
     {
@@ -128,7 +134,7 @@ class Monitoring_ConfigController extends ModuleActionController
     }
 
     /**
-     * Display a form to remove the instance identified by the 'instance' parameter
+     * Display a confirmation form to remove the instance identified by the 'instance' parameter
      */
     public function removeinstanceAction()
     {
@@ -214,10 +220,18 @@ class Monitoring_ConfigController extends ModuleActionController
     }
 
     /**
-     * Display a form to remove the instance identified by the 'instance' parameter
+     * Write configuration to an ini file
+     *
+     * @param   Zend_Config     $config     The configuration to write
+     * @param   string          $file       The config file to write to
+     *
+     * @return  bool                        Whether the configuration was written or not
      */
-    private function writeConfiguration($config, $file)
+    protected function writeConfiguration($config, $file)
     {
+        if (is_array($config)) {
+            $config = new Zend_Config($config);
+        }
         $target = $this->Config($file)->getConfigFile();
         $writer = new PreservingIniWriter(array('filename' => $target, 'config' => $config));
 
@@ -234,26 +248,26 @@ class Monitoring_ConfigController extends ModuleActionController
     }
 
     /**
-     * Return true if the backend exists in the current configuration
+     * Return whether the given backend exists in the current configuration
      *
-     * @param   string $backend The name of the backend to check for existence
+     * @param   string  $backend    The name of the backend to check
      *
-     * @return  bool True if the backend name exists, otherwise false
+     * @return  bool                Whether the backend exists or not
      */
-    private function isExistingBackend($backend)
+    protected function isExistingBackend($backend)
     {
         $backendCfg = $this->Config('backends');
         return $backend && $backendCfg->get($backend);
     }
 
     /**
-     * Return true if the instance exists in the current configuration
+     * Return whether the given instance exists in the current configuration
      *
-     * @param   string $instance The name of the instance to check for existence
+     * @param   string  $instance   The name of the instance to check
      *
-     * @return  bool True if the instance name exists, otherwise false
+     * @return  bool                Whether the instance exists or not
      */
-    private function isExistingInstance($instance)
+    protected function isExistingInstance($instance)
     {
         $instanceCfg = $this->Config('instances');
         return $instanceCfg && $instanceCfg->get($instance);
