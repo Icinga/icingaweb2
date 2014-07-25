@@ -428,82 +428,91 @@ class ConfigController extends BaseConfigController
         $this->render('resource/create');
     }
 
+    /**
+     * Display a form to edit a existing resource
+     */
     public function editresourceAction()
     {
         $this->view->messageBox = new AlertMessageBox(true);
 
-        $resources = ResourceFactory::getResourceConfigs();
-        $name =  $this->getParam('resource');
-        if ($resources->get($name) === null) {
-            $this->addErrorMessage('Can\'t edit: Unknown Resource Provided');
-            $this->render('resource/modify');
-            return;
-        }
-        $form = new ResourceForm();
-        if ($this->_request->isPost() === false) {
-            $form->setOldName($name);
-            $form->setName($name);
-        }
-        $form->setRequest($this->_request);
-        $form->setResource($resources->get($name));
-        if ($form->isSubmittedAndValid()) {
-            $oldName = $form->getOldName();
-            $name = $form->getName();
-            if ($oldName !== $name) {
-                unset($resources->{$oldName});
-            }
-            $resources->{$name} = $form->getConfig();
-            if ($this->writeConfigFile($resources, 'resources')) {
-                $this->addSuccessMessage('Resource "' . $name . '" edited.');
-                $this->redirectNow("config/resource");
-            }
-            return;
+        // Fetch the resource to be edited
+        $resources = IcingaConfig::app('resources')->toArray();
+        $name = $this->getParam('resource');
+        if (false === array_key_exists($name, $resources)) {
+            $this->addErrorMessage(sprintf($this->translate('Cannot edit "%s". Resource not found.'), $name));
+            $this->redirectNow('config/configurationerror');
         }
 
-        $this->view->messageBox->addForm($form);
+        $form = new ResourceForm();
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            if ($form->isValid($request->getPost())) {
+                list($newName, $config) = $form->getResourceConfig();
+
+                if ($newName !== $name) {
+                    // Resource name has changed
+                    unset($resources[$name]); // We can safely use unset as all values are part of the form
+                }
+
+                $resources[$newName] = $config;
+                if ($this->writeConfigFile($resources, 'resources')) {
+                    $this->addSuccessMessage(sprintf($this->translate('Resource "%s" successfully edited.'), $name));
+                    $this->redirectNow('config/resource');
+                }
+            }
+        } else {
+            $form->setResourceConfig($name, $resources[$name]);
+        }
+
         $this->view->form = $form;
-        $this->view->name = $name;
+        $this->view->messageBox->addForm($form);
         $this->render('resource/modify');
     }
 
+    /**
+     * Display a confirmation form to remove a resource
+     */
     public function removeresourceAction()
     {
         $this->view->messageBox = new AlertMessageBox(true);
 
-        $resources = ResourceFactory::getResourceConfigs()->toArray();
-        $name =  $this->getParam('resource');
-        if (!isset($resources[$name])) {
-            $this->addSuccessMessage('Can\'t remove: Unknown resource provided');
-            $this->render('resource/remove');
-            return;
+        // Fetch the resource to be removed
+        $resources = IcingaConfig::app('resources')->toArray();
+        $name = $this->getParam('resource');
+        if (false === array_key_exists($name, $resources)) {
+            $this->addErrorMessage(sprintf($this->translate('Cannot remove "%s". Resource not found.'), $name));
+            $this->redirectNow('config/configurationerror');
+        }
+
+        // Check if selected resource is currently used for authentication
+        $authConfig = IcingaConfig::app('authentication')->toArray();
+        foreach ($authConfig as $backendName => $config) {
+            if (array_key_exists('resource', $config) && $config['resource'] === $name) {
+                $this->addWarningMessage(
+                    sprintf(
+                        $this->translate(
+                            'The resource "%s" is currently in use by the authentication backend "%s". ' .
+                            'Removing the resource can result in noone being able to log in any longer.'
+                        ),
+                        $name,
+                        $backendName
+                    )
+                );
+            }
         }
 
         $form = new ConfirmRemovalForm();
-        $form->setRequest($this->getRequest());
-        $form->setRemoveTarget('resource', $name);
-
-        // Check if selected resource is currently used for authentication
-        $authConfig = IcingaConfig::app('authentication', true)->toArray();
-        foreach ($authConfig as $backendName => $config) {
-           if (array_key_exists('resource', $config) && $config['resource'] === $name) {
-              $this->addErrorMessage(
-				'Warning: The resource "' . $name . '" is currently used for user authentication by "' . $backendName  . '". ' .
-				' Deleting it could eventally make login impossible.'
-              );
-           }
-        }
-
-        if ($form->isSubmittedAndValid()) {
+        $request = $this->getRequest();
+        if ($request->isPost() && $form->isValid($request->getPost())) {
             unset($resources[$name]);
             if ($this->writeConfigFile($resources, 'resources')) {
-                $this->addSuccessMessage('Resource "' . $name . '" removed.');
+                $this->addSuccessMessage(sprintf($this->translate('Resource "%s" successfully removed.'), $name));
                 $this->redirectNow('config/resource');
             }
-            return;
         }
 
-        $this->view->name = $name;
         $this->view->form = $form;
+        $this->view->messageBox->addForm($form);
         $this->render('resource/remove');
     }
 
