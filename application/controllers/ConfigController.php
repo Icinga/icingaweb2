@@ -366,23 +366,25 @@ class ConfigController extends BaseConfigController
 
         $configArray = IcingaConfig::app('authentication', true)->toArray();
         $authBackend =  $this->getParam('auth_backend');
-        if (!isset($configArray[$authBackend])) {
-            Notification::error('Can\'t perform removal: Unknown Authentication Backend Provided');
-            $this->render('authentication/remove');
-            return;
+        if (false === array_key_exists($authBackend, $configArray)) {
+            $this->addErrorMessage(
+                $this->translate('Can\'t perform removal: Unknown authentication backend provided')
+            );
+            $this->redirectNow('config/configurationerror');
         }
 
         $form = new ConfirmRemovalForm();
-        $form->setRequest($this->getRequest());
-        $form->setRemoveTarget('auth_backend', $authBackend);
+        $request = $this->getRequest();
 
-        if ($form->isSubmittedAndValid()) {
+        if ($request->isPost() && $form->isValid($request->getPost())) {
             unset($configArray[$authBackend]);
             if ($this->writeAuthenticationFile($configArray)) {
-                Notification::success('Authentication Backend "' . $authBackend . '" Removed');
-                $this->redirectNow("config/authentication");
+                Notification::success(sprintf(
+                    $this->translate('Authentication Backend "%s" Removed'),
+                    $authBackend
+                ));
+                $this->redirectNow('config/authentication');
             }
-            return;
         }
 
         $this->view->form = $form;
