@@ -7,8 +7,8 @@ use \Zend_Config;
 use Icinga\Config\PreservingIniWriter;
 use Icinga\Web\Controller\ModuleActionController;
 use Icinga\Web\Notification;
+use Icinga\Form\Config\ConfirmRemovalForm;
 use Icinga\Module\Monitoring\Form\Config\BackendForm;
-use Icinga\Module\Monitoring\Form\Config\ConfirmRemovalForm;
 use Icinga\Module\Monitoring\Form\Config\Instance\EditInstanceForm;
 use Icinga\Module\Monitoring\Form\Config\Instance\CreateInstanceForm;
 use Icinga\Exception\NotReadableError;
@@ -107,29 +107,26 @@ class Monitoring_ConfigController extends ModuleActionController
     public function removebackendAction()
     {
         $backend = $this->getParam('backend');
-        if (!$this->isExistingBackend($backend)) {
-            $this->view->error = 'Unknown backend ' . $backend;
-            return;
+        $backendsConfig = $this->Config('backends')->toArray();
+        if (false === array_key_exists($backend, $backendsConfig)) {
+            // TODO: Should behave as in the app's config controller (Specific redirect to an error action)
+            Notification::error(sprintf($this->translate('Cannot remove "%s". Backend not found.'), $backend));
+            $this->redirectNow('monitoring/config');
         }
+
         $form = new ConfirmRemovalForm();
-        $form->setRequest($this->getRequest());
-        $form->setRemoveTarget('backend', $backend);
-
-        if ($form->isSubmittedAndValid()) {
-            $configArray = $this->Config('backends')->toArray();
-            unset($configArray[$backend]);
-
-            if ($this->writeConfiguration(new Zend_Config($configArray), 'backends')) {
-                Notification::success('Backend "' . $backend . '" Removed');
+        $request = $this->getRequest();
+        if ($request->isPost() && $form->isValid($request->getPost())) {
+            unset($backendsConfig[$backend]);
+            if ($this->writeConfiguration($backendsConfig, 'backends')) {
+                Notification::success(sprintf($this->translate('Backend "%s" successfully removed.'), $backend));
                 $this->redirectNow('monitoring/config');
             } else {
                 $this->render('show-configuration');
             }
-            return;
         }
 
         $this->view->form = $form;
-        $this->view->name = $backend;
     }
 
     /**
