@@ -1,13 +1,2 @@
-<?php if ($this->name): ?>
-  <h4><i> <i class="icinga-icon-edit"></i> Edit Backend "<?= $this->escape($this->name) ?>"</h4>
-<?php else: ?>
-  <h4> <i class="icinga-icon-create"></i> Create New Backend</h4>
-<?php endif; ?>
-
-<?php if ($this->error): ?>
-<div class="alert alert-danger">
-  <?= $this->escape($this->error); ?>
-</div>
-<?php endif; ?>
-
-<?= $this->form; ?>
+<h4><?= $this->translate('Edit Existing Backend'); ?></h4>
+<?= $form; ?>
