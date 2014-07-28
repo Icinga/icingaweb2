@@ -7,6 +7,4 @@ namespace Icinga\Module\Doc\Exception;
 /**
  * Exception thrown if a documentation directory is empty
  */
-class DocEmptyException extends DocException
-{
-}
+class DocEmptyException extends DocException {}
