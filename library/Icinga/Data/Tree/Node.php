@@ -4,9 +4,6 @@
 
 namespace Icinga\Data\Tree;
 
-use Exception;
-use RecursiveIteratorIterator;
-use RuntimeException;
 use SplDoublyLinkedList;
 
 class Node extends SplDoublyLinkedList implements NodeInterface
@@ -78,32 +75,5 @@ class Node extends SplDoublyLinkedList implements NodeInterface
             $current = $this;
         }
         return $current;
-    }
-
-    /**
-     * Find the first child node by searching through nodes deeper than the immediate children using a custom function
-     *
-     * @param   $callback
-     *
-     * @return  NodeInterface|null
-     * @throws  Exception
-     */
-    public function findNodeBy($callback)
-    {
-        if (! is_callable($callback)) {
-            throw new RuntimeException('Callable expected');
-        }
-        foreach (new RecursiveIteratorIterator($this, RecursiveIteratorIterator::SELF_FIRST) as $node) {
-            try {
-                $found = call_user_func($callback, $node);
-            } catch (Exception $e) {
-                // TODO(el): Log exception and return false instead?
-                throw $e;
-            }
-            if ($found) {
-                return $node;
-            }
-        }
-        return null;
     }
 }
