@@ -4,11 +4,9 @@
 
 namespace Icinga\Module\Doc\Exception;
 
-use Exception;
+use RuntimeException;
 
 /**
- * Exception thrown if an error in the documentation module occurs
+ * Exception thrown if an error in the documentation module's library occurs
  */
-class DocException extends Exception
-{
-}
+class DocException extends RuntimeException {}
