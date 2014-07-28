@@ -1,0 +1,6 @@
+<div class="controls">
+    <h1><?= $docName ?> <?= $this->translate('Documentation'); ?></h1>
+</div>
+<div class="content toc" data-base-target="_next">
+    <?= $tocRenderer->render($this, $this->getHelper('Url')); ?>
+</div>

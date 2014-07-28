@@ -1,0 +1,7 @@
+<h1><?= $docName ?> <?= $this->translate('Documentation'); ?></h1>
+<div class="toc">
+    <?= $tocRenderer->render($this, $this->getHelper('Url')); ?>
+</div>
+<div class="chapter">
+    <?= $sectionRenderer->render($this, $this->getHelper('Url')); ?>
+</div>
