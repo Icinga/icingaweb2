@@ -7,8 +7,8 @@ $contactHelper = $this->getHelper('ContactFlags');
             <thead>
             <tr>
                 <th colspan="2" style="text-align: left">
-                    <?= htmlspecialchars($contact->contact_name) ?><span style="font-weight: normal;"> (<?=
-                        htmlspecialchars($contact->contact_alias)
+                    <?= $this->escape($contact->contact_name) ?><span style="font-weight: normal;"> (<?=
+                        $this->escape($contact->contact_alias)
                         ?>)</span>
                 </th>
             </tr>
@@ -18,30 +18,30 @@ $contactHelper = $this->getHelper('ContactFlags');
                 <td><?= t('Email') ?></td>
                 <td><?php printf(
                         '<a href="mailto:%1$s">%1$s</a>',
-                        htmlspecialchars($contact->contact_email)
+                        $this->escape($contact->contact_email)
                     ); ?></td>
             </tr>
             <?php if ($contact->contact_pager): ?>
                 <tr>
                     <td><?= t('Pager') ?></td>
-                    <td><?= htmlspecialchars($contact->contact_pager) ?></td>
+                    <td><?= $this->escape($contact->contact_pager) ?></td>
                 </tr>
             <?php endif; ?>
             <tr>
                 <td><?= t('Flags (service)') ?></td>
-                <td><?= htmlspecialchars($contactHelper->contactFlags($contact, 'service')) ?></td>
+                <td><?= $this->escape($contactHelper->contactFlags($contact, 'service')) ?></td>
             </tr>
             <tr>
                 <td><?= t('Flags (host)') ?></td>
-                <td><?= htmlspecialchars($contactHelper->contactFlags($contact, 'host')) ?></td>
+                <td><?= $this->escape($contactHelper->contactFlags($contact, 'host')) ?></td>
             </tr>
             <tr>
                 <td><?= t('Service notification period') ?></td>
-                <td><?= htmlspecialchars($contact->contact_notify_service_timeperiod) ?></td>
+                <td><?= $this->escape($contact->contact_notify_service_timeperiod) ?></td>
             </tr>
             <tr>
                 <td><?= t('Host notification period') ?></td>
-                <td><?= htmlspecialchars($contact->contact_notify_host_timeperiod) ?></td>
+                <td><?= $this->escape($contact->contact_notify_host_timeperiod) ?></td>
             </tr>
             </tbody>
         </table>
