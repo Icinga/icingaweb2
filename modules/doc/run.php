@@ -34,7 +34,17 @@ $docModuleToc = new Zend_Controller_Router_Route(
     )
 );
 
+$docModulePdf = new Zend_Controller_Router_Route(
+    'doc/module/:moduleName/pdf',
+    array(
+        'controller'    => 'module',
+        'action'        => 'pdf',
+        'module'        => 'doc'
+    )
+);
+
 $this->addRoute('doc/module/chapter', $docModuleChapter);
 $this->addRoute('doc/icingaweb/chapter', $docIcingaWebChapter);
 $this->addRoute('doc/module/toc', $docModuleToc);
+$this->addRoute('doc/module/pdf', $docModulePdf);
 
