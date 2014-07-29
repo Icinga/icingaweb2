@@ -14,6 +14,7 @@ use Icinga\Exception\AuthenticationException;
 use Icinga\Exception\NotReadableError;
 use Icinga\Exception\ConfigurationError;
 use Icinga\User;
+use Icinga\Web\Session;
 use Icinga\Web\Url;
 
 /**
@@ -67,6 +68,9 @@ class AuthenticationController extends ActionController
                         $authenticated  = $backend->authenticate($user);
                         if ($authenticated === true) {
                             $auth->setAuthenticated($user);
+                            $session = Session::getSession()->getNamespace('authentication');
+                            $session->set('is_remote_user', true);
+                            $session->write();
                             $this->rerenderLayout()->redirectNow($redirectUrl);
                         }
                     }
@@ -131,9 +135,12 @@ class AuthenticationController extends ActionController
     public function logoutAction()
     {
         $auth = $this->Auth();
+
+        $session = Session::getSession()->getNamespace('authentication');
+
         $auth->removeAuthorization();
 
-        if ($auth->isAuthenticatedFromRemoteUser()) {
+        if ($session->get('is_remote_user', false) === true) {
             $this->_helper->layout->setLayout('login');
             $this->_response->setHttpResponseCode(401);
         } else {
