@@ -5,10 +5,10 @@
 namespace Icinga\Form\Config\Authentication;
 
 use \Exception;
-use \Zend_Config;
 use Icinga\Data\ResourceFactory;
 use Icinga\Authentication\DbConnection;
 use Icinga\Authentication\Backend\DbUserBackend;
+use Icinga\Exception\ConfigurationError;
 
 /**
  * Form class for adding/modifying database authentication backends
@@ -16,68 +16,67 @@ use Icinga\Authentication\Backend\DbUserBackend;
 class DbBackendForm extends BaseBackendForm
 {
     /**
-     * Return content of the resources.ini or previously set resources
-     *
-     * @return  array
+     * @var array
      */
-    public function getResources()
+    protected $resources;
+
+    public function __construct()
     {
-        if ($this->resources === null) {
-            $res = ResourceFactory::getResourceConfigs('db')->toArray();
-
-            foreach (array_keys($res) as $key) {
-                $res[$key] = $key;
-            }
-
-            return $res;
-        } else {
-            return $this->resources;
+        $dbResources = array_keys(
+            ResourceFactory::getResourceConfigs('db')->toArray()
+        );
+        if (empty($dbResources)) {
+            throw new ConfigurationError(
+                t('There are no database resources')
+            );
         }
+        $this->resources = array_combine($dbResources, $dbResources);
+
+        parent::__construct();
     }
 
-    /**
-     * Create this form and add all required elements
-     *
-     * @see Form::create()
-     */
-    public function create()
+    public function createElements(array $formData)
     {
-        $this->setName('form_modify_backend');
-        $name = $this->filterName($this->getBackendName());
-        $this->addElement(
-            'text',
-            'backend_' . $name . '_name',
-            array(
-                'required'      => true,
-                'allowEmpty'    => false,
-                'label'         => t('Backend Name'),
-                'helptext'      => t('The name of this authentication provider'),
-                'value'         => $this->getBackendName()
-            )
-        );
-
-        $this->addElement(
-            'select',
-            'backend_' . $name . '_resource',
-            array(
-                'required'      => true,
-                'allowEmpty'    => false,
-                'label'         => t('Database Connection'),
-                'helptext'      => t('The database connection to use for authenticating with this provider'),
-                'value'         => $this->getBackend()->get('resource'),
-                'multiOptions'  => $this->getResources()
-            )
-        );
-
-        $this->addElement(
-            'button',
-            'btn_submit',
-            array(
-                'type'      => 'submit',
-                'value'     => '1',
-                'escape'    => false,
-                'class'     => 'btn btn-cta btn-wide',
-                'label'     => '<i class="icinga-icon-save"></i> Save Backend'
+        return array(
+            $this->createElement(
+                'text',
+                'name',
+                array(
+                    'required'      => true,
+                    'allowEmpty'    => false,
+                    'label'         => t('Backend Name'),
+                    'helptext'      => t('The name of this authentication provider'),
+                )
+            ),
+            $this->createElement(
+                'select',
+                'resource',
+                array(
+                    'required'      => true,
+                    'allowEmpty'    => false,
+                    'label'         => t('Database Connection'),
+                    'helptext'      => t('The database connection to use for authenticating with this provider'),
+                    'multiOptions'  => $this->resources
+                )
+            ),
+            $this->createElement(
+                'button',
+                'btn_submit',
+                array(
+                    'type'      => 'submit',
+                    'value'     => '1',
+                    'escape'    => false,
+                    'class'     => 'btn btn-cta btn-wide',
+                    'label'     => '<i class="icinga-icon-save"></i> Save Backend'
+                )
+            ),
+            $this->createElement(
+                'hidden',
+                'backend',
+                array(
+                    'required'  => true,
+                    'value'     => 'db'
+                )
             )
         );
     }
@@ -91,14 +90,12 @@ class DbBackendForm extends BaseBackendForm
      */
     public function getConfig()
     {
-        $prefix = 'backend_' . $this->filterName($this->getBackendName()) . '_';
-        $section = $this->getValue($prefix . 'name');
-        $cfg = array(
-            'backend'   => 'db',
-            'resource'  => $this->getValue($prefix . 'resource'),
+        return array(
+            $this->getValue('name') => array(
+                'backend'   => 'db',
+                'resource'  => $this->getValue('resource')
+            )
         );
-
-        return array($section => $cfg);
     }
 
     /**
@@ -112,7 +109,7 @@ class DbBackendForm extends BaseBackendForm
     {
         try {
             $testConnection = ResourceFactory::createResource(ResourceFactory::getResourceConfig(
-                $this->getValue('backend_' . $this->filterName($this->getBackendName()) . '_resource')
+                $this->getValue('resource')
             ));
             $dbUserBackend = new DbUserBackend($testConnection);
             if ($dbUserBackend->count() < 1) {
