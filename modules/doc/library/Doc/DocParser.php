@@ -150,12 +150,12 @@ class DocParser
                         $nofollow = false;
                     }
                     if ($stack->isEmpty()) {
-                        $chapterName = $header;
-                        $section = new Section($id, $header, $level, $nofollow, $chapterName);
+                        $chapterTitle = $header;
+                        $section = new Section($id, $header, $level, $nofollow, $chapterTitle);
                         $tree->addRoot($section);
                     } else {
-                        $chapterName = $stack->bottom()->getTitle();
-                        $section = new Section($id, $header, $level, $nofollow, $chapterName);
+                        $chapterTitle = $stack->bottom()->getTitle();
+                        $section = new Section($id, $header, $level, $nofollow, $chapterTitle);
                         $tree->addChild($section, $stack->top());
                     }
                     $stack->push($section);
