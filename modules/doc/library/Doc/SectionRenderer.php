@@ -6,10 +6,13 @@ namespace Icinga\Module\Doc;
 
 require_once 'IcingaVendor/Parsedown/Parsedown.php';
 
-use Icinga\Module\Doc\Exception\ChapterNotFoundException;
+use DOMDocument;
+use DOMXPath;
 use RecursiveIteratorIterator;
 use Parsedown;
 use Zend_View_Helper_Url;
+use Icinga\Module\Doc\Exception\ChapterNotFoundException;
+use Icinga\Web\Url;
 use Icinga\Web\View;
 
 /**
@@ -157,6 +160,24 @@ class SectionRenderer extends Renderer
     }
 
     /**
+     * Replace img src tags
+     *
+     * @param   $match
+     *
+     * @return  string
+     */
+    protected function replaceImg($match)
+    {
+        $doc = new DOMDocument();
+        $doc->loadHTML($match[0]);
+        $xpath = new DOMXPath($doc);
+        $img = $xpath->query('//img[1]')->item(0);
+        /* @var $img \DOMElement */
+        $img->setAttribute('src', Url::fromPath($img->getAttribute('src'))->getAbsoluteUrl());
+        return substr_replace($doc->saveXML($img), '', -2, 1);  // Replace '/>' with '>'
+    }
+
+    /**
      * Render the section
      *
      * @param   View                    $view
@@ -180,6 +201,11 @@ class SectionRenderer extends Renderer
                 '#<pre><code class="language-php">(.*?)</code></pre>#s',
                 array($this, 'highlightPhp'),
                 $this->parsedown->text(implode('', $section->getContent()))
+            );
+            $html = preg_replace_callback(
+                '/<img[^>]+>/',
+                array($this, 'replaceImg'),
+                $html
             );
             $content[] = preg_replace_callback(
                 '/<a\s+(?P<attribs>[^>]*?\s+)?href="#(?P<fragment>[^"]+)"/',
