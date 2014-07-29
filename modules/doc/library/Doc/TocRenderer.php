@@ -85,7 +85,7 @@ class TocRenderer extends Renderer
                 array_merge(
                     $this->urlParams,
                     array(
-                        'chapterName' => $this->encodeUrlParam($section->getChapterTitle())
+                        'chapterTitle' => $this->encodeUrlParam($section->getChapterTitle())
                     )
                 ),
                 $this->url,

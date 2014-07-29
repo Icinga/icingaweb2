@@ -82,7 +82,7 @@ class Doc_ModuleController extends DocController
     /**
      * View a chapter of a module's documentation
      *
-     * @throws  Zend_Controller_Action_Exception    If the required parameter 'chapterName' is missing or if an error in
+     * @throws  Zend_Controller_Action_Exception    If the required parameter 'chapterTitle' is missing or if an error in
      *                                              the documentation module's library occurs
      * @see     assertModuleEnabled()
      */
@@ -90,10 +90,10 @@ class Doc_ModuleController extends DocController
     {
         $moduleName = $this->getParam('moduleName');
         $this->assertModuleEnabled($moduleName);
-        $chapterTitle = $this->getParam('chapterName');
+        $chapterTitle = $this->getParam('chapterTitle');
         if ($chapterTitle === null) {
             throw new Zend_Controller_Action_Exception(
-                $this->translate('Missing parameter \'chapterName\''),
+                $this->translate('Missing parameter \'chapterTitle\''),
                 404
             );
         }

@@ -57,7 +57,7 @@ class Callback
             array_merge(
                 $this->urlParams,
                 array(
-                    'chapterName' => SectionRenderer::encodeUrlParam($section->getChapterTitle())
+                    'chapterTitle' => SectionRenderer::encodeUrlParam($section->getChapterTitle())
                 )
             ),
             $this->url,

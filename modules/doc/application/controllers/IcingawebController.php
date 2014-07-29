@@ -23,14 +23,14 @@ class Doc_IcingawebController extends DocController
      */
     public function chapterAction()
     {
-        $chapterName = $this->getParam('chapterName');
-        if ($chapterName === null) {
+        $chapterTitle = $this->getParam('chapterTitle');
+        if ($chapterTitle === null) {
             throw new Zend_Controller_Action_Exception(
-                $this->translate('Missing parameter \'chapterName\''),
+                $this->translate('Missing parameter \'chapterTitle\''),
                 404
             );
         }
-        $this->renderChapter(Icinga::app()->getApplicationDir('/../doc'), $chapterName, 'doc/icingaweb/chapter');
+        $this->renderChapter(Icinga::app()->getApplicationDir('/../doc'), $chapterTitle, 'doc/icingaweb/chapter');
     }
 
     /**
