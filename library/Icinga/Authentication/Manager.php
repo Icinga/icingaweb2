@@ -117,6 +117,13 @@ class Manager
     public function authenticateFromSession()
     {
         $this->user = Session::getSession()->get('user');
+
+        if ($this->user
+            && array_key_exists('REMOTE_USER', $_SERVER)
+            && $this->user->getUsername() !== $_SERVER['REMOTE_USER']
+        ) {
+            $this->removeAuthorization();
+        }
     }
 
     /**
