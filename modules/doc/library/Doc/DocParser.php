@@ -131,9 +131,7 @@ class DocParser
             foreach ($file as $line) {
                 $header = $this->extractHeader($line, $lastLine);
                 if ($header !== null) {
-                    list($header, $id, $level) = $header;  // When overwriting the variable to extract, it has to be
-                                                           // list()'s first parameter since list() assigns the values
-                                                           // starting with the right-most parameter
+                    list($title, $id, $level) = $header;
                     while (! $stack->isEmpty() && $stack->top()->getLevel() >= $level) {
                         $stack->pop();
                     }
@@ -143,19 +141,19 @@ class DocParser
                             /* @var $section Section */
                             $path[] = $section->getTitle();
                         }
-                        $path[] = $header;
+                        $path[] = $title;
                         $id = implode('-', $path);
                         $nofollow = true;
                     } else {
                         $nofollow = false;
                     }
                     if ($stack->isEmpty()) {
-                        $chapterTitle = $header;
-                        $section = new Section($id, $header, $level, $nofollow, $chapterTitle);
+                        $chapterTitle = $title;
+                        $section = new Section($id, $title, $level, $nofollow, $chapterTitle);
                         $tree->addRoot($section);
                     } else {
                         $chapterTitle = $stack->bottom()->getTitle();
-                        $section = new Section($id, $header, $level, $nofollow, $chapterTitle);
+                        $section = new Section($id, $title, $level, $nofollow, $chapterTitle);
                         $tree->addChild($section, $stack->top());
                     }
                     $stack->push($section);
