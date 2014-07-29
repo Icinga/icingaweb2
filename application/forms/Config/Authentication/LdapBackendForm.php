@@ -9,6 +9,7 @@ use \Zend_Config;
 use Icinga\Web\Form;
 use Icinga\Data\ResourceFactory;
 use Icinga\Authentication\Backend\LdapUserBackend;
+use Icinga\Exception\ConfigurationError;
 
 /**
  * Form for adding or modifying LDAP authentication backends
@@ -16,92 +17,87 @@ use Icinga\Authentication\Backend\LdapUserBackend;
 class LdapBackendForm extends BaseBackendForm
 {
     /**
-     * Return content of the resources.ini or previously set resources
-     *
-     * @return  array
+     * @var array
      */
-    public function getResources()
+    protected $resources;
+
+    public function __construct()
     {
-        if ($this->resources === null) {
-            $res = ResourceFactory::getResourceConfigs('ldap')->toArray();
-
-            foreach (array_keys($res) as $key) {
-                $res[$key] = $key;
-            }
-
-            return $res;
-        } else {
-            return $this->resources;
+        $ldapResources = array_keys(
+            ResourceFactory::getResourceConfigs('ldap')->toArray()
+        );
+        if (empty($ldapResources)) {
+            throw new ConfigurationError(
+                t('There are no LDAP resources')
+            );
         }
+        $this->resources = array_combine($ldapResources, $ldapResources);
+
+        parent::__construct();
     }
 
-    /**
-     * Create this form and add all required elements
-     *
-     * @see Form::create()
-     */
-    public function create()
+    public function createElements(array $formData)
     {
-        $this->setName('form_modify_backend');
-        $name = $this->filterName($this->getBackendName());
-        $backend = $this->getBackend();
-
-        $this->addElement(
-            'text',
-            'backend_' . $name . '_name',
-            array(
-                'required'      => true,
-                'allowEmpty'    => false,
-                'label'         => t('Backend Name'),
-                'helptext'      => t('The name of this authentication backend'),
-                'value'         => $this->getBackendName()
-            )
-        );
-
-        $this->addElement(
-            'select',
-            'backend_' . $name . '_resource',
-            array(
-                'required'      => true,
-                'allowEmpty'    => false,
-                'label'         => t('LDAP Resource'),
-                'helptext'      => t('The resource to use for authenticating with this provider'),
-                'value'         => $this->getBackend()->get('resource'),
-                'multiOptions'  => $this->getResources()
-            )
-        );
-
-        $this->addElement(
-            'text',
-            'backend_' . $name . '_user_class',
-            array(
-                'required'  => true,
-                'label'     => t('LDAP User Object Class'),
-                'helptext'  => t('The object class used for storing users on the ldap server'),
-                'value'     => $backend->get('user_class', 'inetOrgPerson')
-            )
-        );
-
-        $this->addElement(
-            'text',
-            'backend_' . $name . '_user_name_attribute',
-            array(
-                'required'  => true,
-                'label'     => t('LDAP User Name Attribute'),
-                'helptext'  => t('The attribute name used for storing the user name on the ldap server'),
-                'value'     => $backend->get('user_name_attribute', 'uid')
-            )
-        );
-
-        $this->addElement(
-            'button',
-            'btn_submit',
-            array(
-                'type'      => 'submit',
-                'value'     => '1',
-                'escape'    => false,
-                'class'     => 'btn btn-cta btn-wide',
-                'label'     => '<i class="icinga-icon-save"></i> Save Backend'
+        return array(
+            $this->createElement(
+                'text',
+                'name',
+                array(
+                    'required'      => true,
+                    'allowEmpty'    => false,
+                    'label'         => t('Backend Name'),
+                    'helptext'      => t('The name of this authentication backend')
+                )
+            ),
+            $this->createElement(
+                'select',
+                'resource',
+                array(
+                    'required'      => true,
+                    'allowEmpty'    => false,
+                    'label'         => t('LDAP Resource'),
+                    'helptext'      => t('The resource to use for authenticating with this provider'),
+                    'multiOptions'  => $this->resources
+                )
+            ),
+            $this->createElement(
+                'text',
+                'user_class',
+                array(
+                    'required'  => true,
+                    'label'     => t('LDAP User Object Class'),
+                    'helptext'  => t('The object class used for storing users on the ldap server'),
+                    'value'     => 'inetOrgPerson'
+                )
+            ),
+            $this->createElement(
+                'text',
+                'user_name_attribute',
+                array(
+                    'required'  => true,
+                    'label'     => t('LDAP User Name Attribute'),
+                    'helptext'  => t('The attribute name used for storing the user name on the ldap server'),
+                    'value'     => 'uid'
+                )
+            ),
+            $this->createElement(
+                'button',
+                'btn_submit',
+                array(
+                    'type'      => 'submit',
+                    'value'     => '1',
+                    'escape'    => false,
+                    'class'     => 'btn btn-cta btn-wide',
+                    'label'     => '<i class="icinga-icon-save"></i> Save Backend'
+                )
+            ),
+            $this->createElement(
+                'hidden',
+                'backend',
+                array(
+                    'required'  => true,
+                    'value'     => 'ldap'
+                )
             )
         );
     }
@@ -115,15 +111,14 @@ class LdapBackendForm extends BaseBackendForm
      */
     public function getConfig()
     {
-        $prefix = 'backend_' . $this->filterName($this->getBackendName()) . '_';
-        $section = $this->getValue($prefix . 'name');
-        $cfg = array(
-            'backend'               => 'ldap',
-            'resource'              => $this->getValue($prefix . 'resource'),
-            'user_class'            => $this->getValue($prefix . 'user_class'),
-            'user_name_attribute'   => $this->getValue($prefix . 'user_name_attribute')
+        return array(
+            $this->getValue('name') => array(
+                'backend'               => 'ldap',
+                'resource'              => $this->getValue('resource'),
+                'user_class'            => $this->getValue('user_class'),
+                'user_name_attribute'   => $this->getValue('user_name_attribute')
+            )
         );
-        return array($section => $cfg);
     }
 
     /**
@@ -146,8 +141,7 @@ class LdapBackendForm extends BaseBackendForm
         }
         try {
             $cfg = $this->getConfig();
-            $backendName = 'backend_' . $this->filterName($this->getBackendName()) . '_name';
-            $backendConfig = new Zend_Config($cfg[$this->getValue($backendName)]);
+            $backendConfig = new Zend_Config($cfg[$this->getValue('name')]);
             $backend = ResourceFactory::createResource(ResourceFactory::getResourceConfig($backendConfig->resource));
             $testConn = new LdapUserBackend(
                 $backend,
