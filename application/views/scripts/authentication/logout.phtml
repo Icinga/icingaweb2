@@ -7,10 +7,7 @@
     in every further request until the browser was closed. To allow logout and to allow the user to change the
     logged-in user this JavaScript provides a workaround to force a new authentication prompt in most browsers.
 -->
-
-<div class="row">
-  <br/>
-  <div class="md-offset-3 col-md-6 col-sm-6 col-sm-offset-3">
+<div class="content">
     <div class="alert alert-warning" id="logout-status">
         <b> <?= t('Logging out...'); ?> </b> <br />
         <?= t(
@@ -19,37 +16,19 @@
             'browser session.'
         ); ?>
     </div>
-  </div>
-</div>
 
-<div class="row">
-  <div class="col-md-4 col-md-offset-4 col-sm-6 col-sm-offset-3">
     <div class="container" >
-        <a class="button btn btn-cta form-control input-sm" href="<?= $this->href('dashboard/index'); ?>"> <?= t('Login'); ?></a>
+        <a href="<?= $this->href('dashboard/index'); ?>"> <?= t('Login'); ?></a>
     </div>
-  </div>
 </div>
-
 <script type="text/javascript">
-
     /**
      * When JavaScript is available, trigger an XmlHTTPRequest with the non-existing user 'logout' and abort it
      * before it is able to finish. This will cause the browser to show a new authentication prompt in the next
      * request.
      */
-    window.onload = function () {
-        function getXMLHttpRequest() {
-            var xmlhttp = null;
-            try {
-                if (window.XMLHttpRequest) {
-                    xmlhttp = new XMLHttpRequest();
-                } else if (window.ActiveXObject) {
-                    xmlhttp = new ActiveXObject('Microsoft.XMLHTTP');
-                }
-            } catch (e) {}
-            return xmlhttp;
-        }
-        var msg = document.getElementById('logout-status');
+    $(document).ready(function() {
+        msg = $('#logout-status');
         try {
             if (navigator.userAgent.toLowerCase().indexOf('msie') !== -1) {
                 document.execCommand('ClearAuthenticationCache');
@@ -60,13 +39,9 @@
                 xhttp.abort();
             }
         } catch (e) {
-            msg.innerHTML = '<?= t(
-                'Logout not possible, it may be necessary to quit the session manually ' .
-                'by clearing the cache, or closing the current browser session. Error: '
-            );?>' + ': ' + e.getMessage() ;
-            msg.setAttribute('class', 'alert alert-danger');
         }
-        msg.innerHTML = '<?= t('Logout successful!'); ?>';
-        msg.setAttribute('class', 'alert alert-success');
-    };
+        msg.html('<?= t('Logout successful!'); ?>');
+        msg.removeClass();
+        msg.addClass('alert alert-success');
+    });
 </script>
