@@ -68,9 +68,6 @@ class AuthenticationController extends ActionController
                         $authenticated  = $backend->authenticate($user);
                         if ($authenticated === true) {
                             $auth->setAuthenticated($user);
-                            $session = Session::getSession()->getNamespace('authentication');
-                            $session->set('is_remote_user', true);
-                            $session->write();
                             $this->rerenderLayout()->redirectNow($redirectUrl);
                         }
                     }
@@ -135,12 +132,10 @@ class AuthenticationController extends ActionController
     public function logoutAction()
     {
         $auth = $this->Auth();
-
-        $session = Session::getSession()->getNamespace('authentication');
-
+        $isRemoteUser = $auth->getUser()->isRemoteUser();
         $auth->removeAuthorization();
 
-        if ($session->get('is_remote_user', false) === true) {
+        if ($isRemoteUser === true) {
             $this->_helper->layout->setLayout('login');
             $this->_response->setHttpResponseCode(401);
         } else {

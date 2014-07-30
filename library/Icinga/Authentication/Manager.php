@@ -30,12 +30,6 @@ class Manager
      */
     private $user;
 
-    /**
-     * If the user was authenticated from the REMOTE_USER server variable
-     *
-     * @var Boolean
-     */
-    private $fromRemoteUser = false;
 
     private function __construct()
     {
