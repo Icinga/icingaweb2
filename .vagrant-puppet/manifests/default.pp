@@ -7,6 +7,10 @@ Exec { path => '/bin:/usr/bin:/sbin' }
 
 $icingaVersion = '1.11.5'
 $icinga2Version = '2.0.1'
+$pluginVersion = '2.0'
+$livestatusVersion = '1.2.4p5'
+$phantomjsVersion = '1.9.1'
+$casperjsVersion = '1.0.2'
 
 exec { 'create-mysql-icinga-db':
   unless  => 'mysql -uicinga -picinga icinga',
@@ -207,8 +211,8 @@ exec { 'icinga-htpasswd':
 }
 
 cmmi { 'icinga-plugins':
-  url     => 'https://www.monitoring-plugins.org/download/nagios-plugins-1.5.tar.gz',
-  output  => 'nagios-plugins-1.5.tar.gz',
+  url     => "https://www.monitoring-plugins.org/download/monitoring-plugins-${pluginVersion}.tar.gz",
+  output  => "monitoring-plugins-${pluginVersion}.tar.gz",
   flags   => '--prefix=/usr/lib64/nagios/plugins \
               --with-nagios-user=icinga --with-nagios-group=icinga \
               --with-cgiurl=/icinga-mysql/cgi-bin',
@@ -218,8 +222,8 @@ cmmi { 'icinga-plugins':
 }
 
 cmmi { 'mk-livestatus':
-  url     => 'http://mathias-kettner.de/download/mk-livestatus-1.2.2p1.tar.gz',
-  output  => 'mk-livestatus-1.2.2p1.tar.gz',
+  url     => "http://mathias-kettner.de/download/mk-livestatus-${livestatusVersion}.tar.gz",
+  output  => "mk-livestatus-${livestatusVersion}.tar.gz",
   flags   => '--prefix=/usr/local/icinga-mysql --exec-prefix=/usr/local/icinga-mysql',
   creates => '/usr/local/icinga-mysql/lib/mk-livestatus',
   make    => 'make && make install',
@@ -262,14 +266,14 @@ exec { 'populate-openldap':
 }
 
 class { 'phantomjs':
-  url     => 'https://phantomjs.googlecode.com/files/phantomjs-1.9.1-linux-x86_64.tar.bz2',
-  output  => 'phantomjs-1.9.1-linux-x86_64.tar.bz2',
+  url     => "https://phantomjs.googlecode.com/files/phantomjs-${phantomjsVersion}-linux-x86_64.tar.bz2",
+  output  => "phantomjs-${phantomjsVersion}-linux-x86_64.tar.bz2",
   creates => '/usr/local/phantomjs'
 }
 
 class { 'casperjs':
-  url     => 'https://github.com/n1k0/casperjs/tarball/1.0.2',
-  output  => 'casperjs-1.0.2.tar.gz',
+  url     => "https://github.com/n1k0/casperjs/tarball/${casperjsVersion}",
+  output  => "casperjs-${casperjsVersion}.tar.gz",
   creates => '/usr/local/casperjs'
 }
 
