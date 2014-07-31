@@ -72,6 +72,7 @@ class ListCommand extends Command
 
     protected function showFormatted($query, $format, $columns)
     {
+        $query = $query->getQuery();
         switch($format) {
             case 'json':
                 echo json_encode($query->fetchAll());
@@ -155,7 +156,7 @@ class ListCommand extends Command
             'service_perfdata',
             'service_last_state_change'
         );
-        $query = $this->getQuery('status', $columns)
+        $query = $this->getQuery('serviceStatus', $columns)
             ->order('host_name');
         echo $this->renderStatusQuery($query);
     }
@@ -167,6 +168,7 @@ class ListCommand extends Command
         $screen = $this->screen;
         $utils = new CliUtils($screen);
         $maxCols = $screen->getColumns();
+        $query = $query->getQuery();
         $rows = $query->fetchAll();
         $count = $query->count();
         $count = count($rows);
