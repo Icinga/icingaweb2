@@ -8,21 +8,9 @@ Exec { path => '/bin:/usr/bin:/sbin' }
 $icingaVersion = '1.11.2'
 $icinga2Version = '2.0.0'
 
-exec { 'create-mysql-icinga-db':
-  unless  => 'mysql -uicinga -picinga icinga',
-  command => 'mysql -uroot -e "CREATE DATABASE icinga; \
-              GRANT SELECT,INSERT,UPDATE,DELETE ON icinga.* TO icinga@localhost \
-              IDENTIFIED BY \'icinga\';"',
-  require => Service['mysqld']
-}
+mysql::database { 'icinga': }
 
-exec { 'create-mysql-icinga2-db':
-  unless  => 'mysql -uicinga2 -picinga2 icinga2',
-  command => 'mysql -uroot -e "CREATE DATABASE icinga2; \
-              GRANT SELECT,INSERT,UPDATE,DELETE ON icinga2.* to icinga2@localhost \
-              IDENTIFIED BY \'icinga2\';"',
-  require => Service['mysqld']
-}
+mysql::database { 'icinga2': }
 
 exec{ 'create-pgsql-icinga-db':
   unless  => 'sudo -u postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname=\'icinga\'" | grep -q 1',
