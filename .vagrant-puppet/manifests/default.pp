@@ -26,12 +26,11 @@ mysql::database { 'icinga2':
   requirement => Package['icinga2-ido-mysql'],
 }
 
-exec{ 'create-pgsql-icinga-db':
-  unless  => 'sudo -u postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname=\'icinga\'" | grep -q 1',
-  command => 'sudo -u postgres psql -c "CREATE ROLE icinga WITH LOGIN PASSWORD \'icingaweb\';" && \
-              sudo -u postgres createdb -O icinga -E UTF8 -T template0 icinga && \
-              sudo -u postgres createlang plpgsql icinga',
-  require => Service['postgresql']
+pgsql::database { 'icinga':
+  username => 'icinga',
+  password => 'icingaweb',
+  schemafile => "/usr/local/src/icinga-pgsql/icinga-${icingaVersion}/module/idoutils/db/pgsql/pgsql.sql",
+  requirement => Cmmi['icinga-pgsql'],
 }
 
 package { [
@@ -117,12 +116,6 @@ file { '/etc/init.d/icinga-pgsql':
 file { '/etc/init.d/ido2db-pgsql':
   source  => '/usr/local/icinga-pgsql/etc/init.d/ido2db',
   require => Cmmi['icinga-pgsql']
-}
-
-exec { 'populate-icinga-pgsql-db':
-  unless  => 'psql -U icinga -d icinga -c "SELECT * FROM icinga_dbversion;" &> /dev/null',
-  command => "sudo -u postgres psql -U icinga -d icinga < /usr/local/src/icinga-pgsql/icinga-${icingaVersion}/module/idoutils/db/pgsql/pgsql.sql",
-  require => [ Cmmi['icinga-pgsql'], Exec['create-pgsql-icinga-db'] ]
 }
 
 service { 'icinga-mysql':
