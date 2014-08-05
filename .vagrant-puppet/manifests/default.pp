@@ -489,12 +489,9 @@ exec { 'create-mysql-icinga_unittest-db':
   require => Service['mysqld']
 }
 
-exec{ 'create-pgsql-icinga_unittest-db':
-  unless  => 'sudo -u postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname=\'icinga_unittest\'" | grep -q 1',
-  command => 'sudo -u postgres psql -c "CREATE ROLE icinga_unittest WITH LOGIN PASSWORD \'icinga_unittest\';" && \
-              sudo -u postgres createdb -O icinga_unittest -E UTF8 -T template0 icinga_unittest && \
-              sudo -u postgres createlang plpgsql icinga_unittest',
-  require => Service['postgresql']
+pgsql::database::create { 'icinga_unittest':
+  username => 'icinga_unittest',
+  password => 'icinga_unittest',
 }
 
 exec { 'install php-ZendFramework-Db-Adapter-Pdo-Pgsql':
