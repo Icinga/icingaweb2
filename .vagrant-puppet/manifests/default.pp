@@ -26,7 +26,7 @@ mysql::database { 'icinga2':
   requirement => Package['icinga2-ido-mysql'],
 }
 
-pgsql::database { 'icinga':
+pgsql::database::populate { 'icinga':
   username => 'icinga',
   password => 'icingaweb',
   schemafile => "/usr/local/src/icinga-pgsql/icinga-${icingaVersion}/module/idoutils/db/pgsql/pgsql.sql",

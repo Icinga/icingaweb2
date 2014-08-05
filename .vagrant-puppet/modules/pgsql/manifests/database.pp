@@ -1,4 +1,4 @@
-define pgsql::database ($username, $password, $schemafile, $requirement) {
+define pgsql::database::create ($username, $password) {
   include pgsql
 
   exec { "create-pgsql-${name}-db":
@@ -7,6 +7,15 @@ define pgsql::database ($username, $password, $schemafile, $requirement) {
 sudo -u postgres createdb -O ${username} -E UTF8 -T template0 ${name} && \
 sudo -u postgres createlang plpgsql ${name}",
     require => Service['postgresql']
+  }
+}
+
+define pgsql::database::populate ($username, $password, $schemafile, $requirement) {
+  include pgsql
+
+  pgsql::database::create { "create-pgsql-${name}-db":
+    username => $username,
+    password => $password,
   }
 
   exec { "populate-${name}-pgsql-db":
