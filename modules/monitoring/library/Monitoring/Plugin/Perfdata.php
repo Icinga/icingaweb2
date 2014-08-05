@@ -190,6 +190,9 @@ class Perfdata
 
         if ($this->maxValue !== null) {
             $minValue = $this->minValue !== null ? $this->minValue : 0;
+            if ($this->maxValue - $minValue === 0.0) {
+                return null;
+            }
 
             if ($this->value > $minValue) {
                 return (($this->value - $minValue) / ($this->maxValue - $minValue)) * 100;
@@ -267,9 +270,13 @@ class Perfdata
         switch (count($parts))
         {
             case 5:
-                $this->maxValue = self::convert($parts[4], $this->unit);
+                if ($parts[4] !== '') {
+                    $this->maxValue = self::convert($parts[4], $this->unit);
+                }
             case 4:
-                $this->minValue = self::convert($parts[3], $this->unit);
+                if ($parts[3] !== '') {
+                    $this->minValue = self::convert($parts[3], $this->unit);
+                }
             case 3:
                 // TODO(#6123): Tresholds have the same UOM and need to be converted as well!
                 $this->criticalThreshold = trim($parts[2]) ? trim($parts[2]) : null;

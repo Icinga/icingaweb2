@@ -30,12 +30,6 @@ class Manager
      */
     private $user;
 
-    /**
-     * If the user was authenticated from the REMOTE_USER server variable
-     *
-     * @var Boolean
-     */
-    private $fromRemoteUser = false;
 
     private function __construct()
     {
@@ -117,6 +111,13 @@ class Manager
     public function authenticateFromSession()
     {
         $this->user = Session::getSession()->get('user');
+
+        if ($this->user !== null && $this->user->isRemoteUser() === true) {
+            list($originUsername, $field) = $this->user->getRemoteUserInformation();
+            if (array_key_exists($field, $_SERVER) && $_SERVER[$field] !== $originUsername) {
+                $this->removeAuthorization();
+            }
+        }
     }
 
     /**
@@ -203,36 +204,5 @@ class Manager
     public function getGroups()
     {
         return $this->user->getGroups();
-    }
-
-    /**
-     * Tries to authenticate the user from the session, and then from the REMOTE_USER superglobal, that can be set by
-     * an external authentication provider.
-     */
-    public function authenticateFromRemoteUser()
-    {
-        if (array_key_exists('REMOTE_USER', $_SERVER)) {
-            $this->fromRemoteUser = true;
-        }
-        $this->authenticateFromSession();
-        if ($this->user !== null) {
-            if (array_key_exists('REMOTE_USER', $_SERVER) && $this->user->getUsername() !== $_SERVER["REMOTE_USER"]) {
-                // Remote user has changed, clear all sessions
-                $this->removeAuthorization();
-            }
-            return;
-        }
-        if (array_key_exists('REMOTE_USER', $_SERVER) && $_SERVER["REMOTE_USER"]) {
-            $this->user = new User($_SERVER["REMOTE_USER"]);
-            $this->persistCurrentUser();
-        }
-    }
-
-    /**
-     * If the session was established from the REMOTE_USER server variable.
-     */
-    public function isAuthenticatedFromRemoteUser()
-    {
-        return $this->fromRemoteUser;
     }
 }
