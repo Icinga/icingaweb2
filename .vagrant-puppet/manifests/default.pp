@@ -8,9 +8,15 @@ Exec { path => '/bin:/usr/bin:/sbin' }
 $icingaVersion = '1.11.2'
 $icinga2Version = '2.0.0'
 
-mysql::database { 'icinga': }
+mysql::database { 'icinga':
+  username => 'icinga',
+  password => 'icinga',
+}
 
-mysql::database { 'icinga2': }
+mysql::database { 'icinga2':
+  username => 'icinga2',
+  password => 'icinga2',
+}
 
 exec{ 'create-pgsql-icinga-db':
   unless  => 'sudo -u postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname=\'icinga\'" | grep -q 1',
