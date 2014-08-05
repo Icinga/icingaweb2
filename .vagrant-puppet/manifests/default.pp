@@ -573,12 +573,10 @@ populate_monitoring_test_config_plugins{ ['test_hostcheck.pl', 'test_servicechec
 #
 # Following section creates and populates MySQL and PostgreSQL Icinga Web 2 databases
 #
-exec { 'create-mysql-icingaweb-db':
-  unless  => 'mysql -uicingaweb -picingaweb icingaweb',
-  command => 'mysql -uroot -e "CREATE DATABASE icingaweb; \
-              GRANT ALL ON icingaweb.* TO icingaweb@localhost \
-              IDENTIFIED BY \'icingaweb\';"',
-  require => Service['mysqld']
+mysql::database::create { 'icingaweb':
+    username => 'icingaweb',
+    password => 'icingaweb',
+    privileges => 'ALL',
 }
 
 pgsql::database::create { 'icingaweb':
