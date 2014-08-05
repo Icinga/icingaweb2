@@ -11,11 +11,15 @@ $icinga2Version = '2.0.0'
 mysql::database { 'icinga':
   username => 'icinga',
   password => 'icinga',
+  schemafile => "/usr/local/src/icinga-mysql/icinga-${icingaVersion}/module/idoutils/db/mysql/mysql.sql",
+  requirement => Cmmi['icinga-mysql'],
 }
 
 mysql::database { 'icinga2':
   username => 'icinga2',
   password => 'icinga2',
+  schemafile => "/usr/share/doc/icinga2-ido-mysql-${icinga2Version}/schema/mysql.sql",
+  requirement => Package['icinga2-ido-mysql'],
 }
 
 exec{ 'create-pgsql-icinga-db':
@@ -109,12 +113,6 @@ file { '/etc/init.d/icinga-pgsql':
 file { '/etc/init.d/ido2db-pgsql':
   source  => '/usr/local/icinga-pgsql/etc/init.d/ido2db',
   require => Cmmi['icinga-pgsql']
-}
-
-exec { 'populate-icinga-mysql-db':
-  unless  => 'mysql -uicinga -picinga icinga -e "SELECT * FROM icinga_dbversion;" &> /dev/null',
-  command => "mysql -uroot icinga < /usr/local/src/icinga-mysql/icinga-${icingaVersion}/module/idoutils/db/mysql/mysql.sql",
-  require => [ Cmmi['icinga-mysql'], Exec['create-mysql-icinga-db'] ]
 }
 
 exec { 'populate-icinga-pgsql-db':
@@ -413,12 +411,6 @@ package { 'icinga2-ido-mysql':
   ensure => latest,
   require => Yumrepo['icinga2-repo'],
   alias => 'icinga2-ido-mysql'
-}
-
-exec { 'populate-icinga2-mysql-db':
-  unless  => 'mysql -uicinga2 -picinga2 icinga2 -e "SELECT * FROM icinga_dbversion;" &> /dev/null',
-  command => "mysql -uroot icinga2 < /usr/share/doc/icinga2-ido-mysql-$icinga2Version/schema/mysql.sql",
-  require => [ Exec['create-mysql-icinga2-db'], Package['icinga2-ido-mysql'] ]
 }
 
 
