@@ -581,12 +581,9 @@ exec { 'create-mysql-icingaweb-db':
   require => Service['mysqld']
 }
 
-exec { 'create-pgsql-icingaweb-db':
-  unless  => 'sudo -u postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname=\'icingaweb\'" | grep -q 1',
-  command => 'sudo -u postgres psql -c "CREATE ROLE icingaweb WITH LOGIN PASSWORD \'icinga\';" && \
-              sudo -u postgres createdb -O icingaweb -E UTF8 -T template0 icingaweb && \
-              sudo -u postgres createlang plpgsql icingaweb',
-  require => Service['postgresql']
+pgsql::database::create { 'icingaweb':
+  username => 'icingaweb',
+  password => 'icinga',
 }
 
 exec { 'populate-icingaweb-mysql-db-accounts':
