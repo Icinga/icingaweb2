@@ -1,21 +1,22 @@
-define mysql::database::create ($username, $password) {
+define mysql::database::create ($username, $password, $privileges) {
   include mysql
 
   exec { "create-mysql-${name}-db":
     unless  => "mysql -u${username} -p${password} ${name}",
     command => "mysql -uroot -e \"CREATE DATABASE ${name}; \
-GRANT SELECT,INSERT,UPDATE,DELETE ON ${name}.* TO ${username}@localhost \
+GRANT ${privileges} ON ${name}.* TO ${username}@localhost \
 IDENTIFIED BY '${password}';\"",
     require => Service['mysqld']
   }
 }
 
-define mysql::database::populate ($username, $password, $schemafile, $requirement) {
+define mysql::database::populate ($username, $password, $privileges, $schemafile, $requirement) {
   include mysql
 
   mysql::database::create { $name:
     username => $username,
     password => $password,
+    privileges => $privileges,
   }
 
   exec { "populate-${name}-mysql-db":

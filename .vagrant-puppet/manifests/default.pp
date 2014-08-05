@@ -15,6 +15,7 @@ $casperjsVersion = '1.0.2'
 mysql::database::populate { 'icinga':
   username => 'icinga',
   password => 'icinga',
+  privileges => 'SELECT,INSERT,UPDATE,DELETE',
   schemafile => "/usr/local/src/icinga-mysql/icinga-${icingaVersion}/module/idoutils/db/mysql/mysql.sql",
   requirement => Cmmi['icinga-mysql'],
 }
@@ -22,6 +23,7 @@ mysql::database::populate { 'icinga':
 mysql::database::populate { 'icinga2':
   username => 'icinga2',
   password => 'icinga2',
+  privileges => 'SELECT,INSERT,UPDATE,DELETE',
   schemafile => "/usr/share/doc/icinga2-ido-mysql-${icinga2Version}/schema/mysql.sql",
   requirement => Package['icinga2-ido-mysql'],
 }
