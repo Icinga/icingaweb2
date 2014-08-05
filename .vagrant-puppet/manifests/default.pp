@@ -483,12 +483,10 @@ user { 'vagrant':
   require => Group['icinga-cmd']
 }
 
-exec { 'create-mysql-icinga_unittest-db':
-  unless  => 'mysql -uicinga_unittest -picinga_unittest icinga_unittest',
-  command => 'mysql -uroot -e "CREATE DATABASE icinga_unittest; \
-              GRANT ALL ON icinga_unittest.* TO icinga_unittest@localhost \
-              IDENTIFIED BY \'icinga_unittest\';"',
-  require => Service['mysqld']
+mysql::database::create { 'icinga_unittest':
+  username => 'icinga_unittest',
+  password => 'icinga_unittest',
+  privileges => 'ALL',
 }
 
 pgsql::database::create { 'icinga_unittest':
