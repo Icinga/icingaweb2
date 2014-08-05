@@ -20,11 +20,13 @@ exec{ 'create-pgsql-icinga-db':
   require => Service['postgresql']
 }
 
-$icinga_packages = [ 'gcc', 'glibc', 'glibc-common', 'gd', 'gd-devel',
+package { [
+  'gcc', 'glibc', 'glibc-common', 'gd', 'gd-devel',
   'libpng', 'libpng-devel', 'net-snmp', 'net-snmp-devel', 'net-snmp-utils',
   'libdbi', 'libdbi-devel', 'libdbi-drivers',
-  'libdbi-dbd-mysql', 'libdbi-dbd-pgsql' ]
-package { $icinga_packages: ensure => installed }
+  'libdbi-dbd-mysql', 'libdbi-dbd-pgsql' ]:
+  ensure => installed
+}
 
 php::extension { ['php-mysql', 'php-pgsql', 'php-ldap']:
   require => [ Class['mysql'], Class['pgsql'], Class['openldap'] ]
