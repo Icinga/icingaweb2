@@ -639,12 +639,10 @@ service { 'icinga_command_proxy':
   require => [ File['/etc/init.d/icinga_command_proxy'], Service['icinga-mysql'], Service['icinga-pgsql'] ]
 }
 
-exec { 'create-mysql-icinga_web-db':
-  unless  => 'mysql -uicinga_web -picinga_web icinga_web',
-  command => 'mysql -uroot -e "CREATE DATABASE icinga_web; \
-              GRANT ALL ON icinga_web.* TO icinga_web@localhost \
-              IDENTIFIED BY \'icinga_web\';"',
-  require => Service['mysqld']
+mysql::database::create { 'icinga_web':
+  username => 'icinga_web',
+  password => 'icinga_web',
+  privileges => 'ALL',
 }
 
 cmmi { 'icinga-web':
