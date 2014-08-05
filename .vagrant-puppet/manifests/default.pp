@@ -12,14 +12,14 @@ $livestatusVersion = '1.2.4p5'
 $phantomjsVersion = '1.9.1'
 $casperjsVersion = '1.0.2'
 
-mysql::database { 'icinga':
+mysql::database::populate { 'icinga':
   username => 'icinga',
   password => 'icinga',
   schemafile => "/usr/local/src/icinga-mysql/icinga-${icingaVersion}/module/idoutils/db/mysql/mysql.sql",
   requirement => Cmmi['icinga-mysql'],
 }
 
-mysql::database { 'icinga2':
+mysql::database::populate { 'icinga2':
   username => 'icinga2',
   password => 'icinga2',
   schemafile => "/usr/share/doc/icinga2-ido-mysql-${icinga2Version}/schema/mysql.sql",

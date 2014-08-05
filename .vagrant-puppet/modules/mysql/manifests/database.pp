@@ -1,4 +1,4 @@
-define mysql::database ($username, $password, $schemafile, $requirement) {
+define mysql::database::create ($username, $password) {
   include mysql
 
   exec { "create-mysql-${name}-db":
@@ -7,6 +7,15 @@ define mysql::database ($username, $password, $schemafile, $requirement) {
 GRANT SELECT,INSERT,UPDATE,DELETE ON ${name}.* TO ${username}@localhost \
 IDENTIFIED BY '${password}';\"",
     require => Service['mysqld']
+  }
+}
+
+define mysql::database::populate ($username, $password, $schemafile, $requirement) {
+  include mysql
+
+  mysql::database::create { $name:
+    username => $username,
+    password => $password,
   }
 
   exec { "populate-${name}-mysql-db":
