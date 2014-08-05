@@ -13,7 +13,7 @@ sudo -u postgres createlang plpgsql ${name}",
 define pgsql::database::populate ($username, $password, $schemafile, $requirement) {
   include pgsql
 
-  pgsql::database::create { "create-pgsql-${name}-db":
+  pgsql::database::create { $name:
     username => $username,
     password => $password,
   }
