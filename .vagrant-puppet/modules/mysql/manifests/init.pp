@@ -25,12 +25,12 @@ class mysql {
 
   service { 'mysqld':
     ensure  => running,
-    require => Package['mysql-server']
+    require => Package['mysql-server'],
   }
 
   file { '/etc/my.cnf':
     content => template('mysql/my.cnf.erb'),
     require => Package['mysql-server'],
-    notify  => Service['mysqld']
+    notify  => Service['mysqld'],
   }
 }

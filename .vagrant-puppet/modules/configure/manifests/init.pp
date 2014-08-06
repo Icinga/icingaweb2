@@ -12,6 +12,6 @@ define configure(
 ) {
   exec { "configure-${name}":
     cwd     => $path,
-    command => "sh ./configure ${flags}"
+    command => "sh ./configure ${flags}",
   }
 }

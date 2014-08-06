@@ -13,25 +13,25 @@ class profile::icingaweb2 {
   exec { 'populate-icingaweb-mysql-db-accounts':
     unless  => 'mysql -uicingaweb -picingaweb icingaweb -e "SELECT * FROM account;" &> /dev/null',
     command => 'mysql -uicingaweb -picingaweb icingaweb < /vagrant/etc/schema/accounts.mysql.sql',
-    require => [ Exec['create-mysql-icingaweb-db'] ]
+    require => [ Exec['create-mysql-icingaweb-db'] ],
   }
 
   exec { 'populate-icingweba-pgsql-db-accounts':
     unless  => 'psql -U icingaweb -d icingaweb -c "SELECT * FROM account;" &> /dev/null',
     command => 'sudo -u postgres psql -U icingaweb -d icingaweb -f /vagrant/etc/schema/accounts.pgsql.sql',
-    require => [ Exec['create-pgsql-icingaweb-db'] ]
+    require => [ Exec['create-pgsql-icingaweb-db'] ],
   }
 
   exec { 'populate-icingaweb-mysql-db-preferences':
     unless  => 'mysql -uicingaweb -picingaweb icingaweb -e "SELECT * FROM preference;" &> /dev/null',
     command => 'mysql -uicingaweb -picingaweb icingaweb < /vagrant/etc/schema/preferences.mysql.sql',
-    require => [ Exec['create-mysql-icingaweb-db'] ]
+    require => [ Exec['create-mysql-icingaweb-db'] ],
   }
 
   exec { 'populate-icingweba-pgsql-db-preferences':
     unless  => 'psql -U icingaweb -d icingaweb -c "SELECT * FROM preference;" &> /dev/null',
     command => 'sudo -u postgres psql -U icingaweb -d icingaweb -f /vagrant/etc/schema/preferences.pgsql.sql',
-    require => [ Exec['create-pgsql-icingaweb-db'] ]
+    require => [ Exec['create-pgsql-icingaweb-db'] ],
   }
 
   file { '/etc/httpd/conf.d/icingaweb.conf':
@@ -43,7 +43,7 @@ class profile::icingaweb2 {
   file { '/etc/icingaweb':
     ensure    => 'directory',
     owner     => 'apache',
-    group     => 'apache'
+    group     => 'apache',
   }
 
   file { '/etc/icingaweb/authentication.ini':
@@ -70,7 +70,7 @@ class profile::icingaweb2 {
     source    => 'puppet:////vagrant/.vagrant-puppet/files/etc/icingaweb/resources.ini',
     owner     => 'apache',
     group     => 'apache',
-    replace   => false
+    replace   => false,
   }
 
   file { ['/etc/icingaweb/enabledModules', '/etc/icingaweb/modules', '/etc/icingaweb/modules/monitoring']:

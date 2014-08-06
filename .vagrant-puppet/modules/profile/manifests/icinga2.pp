@@ -13,7 +13,7 @@ class profile::icinga2 ($icinga2Version) {
       unless => "readlink /etc/icinga2/features-enabled/${feature}.conf",
       command => "icinga2-enable-feature ${feature}",
       require => [ Package['icinga2'] ],
-      notify => Service['icinga2']
+      notify => Service['icinga2'],
     }
   }
 
@@ -40,25 +40,25 @@ class profile::icinga2 ($icinga2Version) {
       File['/etc/icinga2/features-enabled/ido-mysql.conf'],
       File['/etc/icinga2/conf.d/test-config.conf'],
       File['/etc/icinga2/conf.d/commands.conf']
-    ]
+    ],
   }
 
   package { 'icinga2':
     ensure => latest,
     require => Yumrepo['icinga2-repo'],
-    alias => 'icinga2'
+    alias => 'icinga2',
   }
 
   package { 'icinga2-bin':
     ensure => latest,
     require => [ Yumrepo['icinga2-repo'], Package['icinga2'] ],
-    alias => 'icinga2-bin'
+    alias => 'icinga2-bin',
   }
 
   package { 'icinga2-doc':
     ensure => latest,
     require => Yumrepo['icinga2-repo'],
-    alias => 'icinga2-doc'
+    alias => 'icinga2-doc',
   }
 
   package { 'icinga2-classicui-config':
@@ -71,7 +71,7 @@ class profile::icinga2 ($icinga2Version) {
   package { 'icinga2-ido-mysql':
     ensure => latest,
     require => Yumrepo['icinga2-repo'],
-    alias => 'icinga2-ido-mysql'
+    alias => 'icinga2-ido-mysql',
   }
 
 
@@ -95,7 +95,7 @@ class profile::icinga2 ($icinga2Version) {
     source  => 'puppet:////vagrant/.vagrant-puppet/files/etc/icinga2/conf.d/test-config.conf',
     owner   => 'icinga',
     group   => 'icinga',
-    require => [ Package['icinga2'], Exec['create_monitoring_test_config'] ]
+    require => [ Package['icinga2'], Exec['create_monitoring_test_config'] ],
   }
 
   file { '/etc/icinga2/conf.d/commands.conf':

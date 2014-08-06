@@ -39,7 +39,7 @@ class profile::icinga-mysql ($icingaVersion) {
     owner   => 'icinga',
     group   => 'icinga',
     require => Cmmi['icinga-mysql'],
-    notify  => [ Service['icinga-mysql'], Service['ido2db-mysql'] ]
+    notify  => [ Service['icinga-mysql'], Service['ido2db-mysql'] ],
   }
 
   file { '/usr/local/icinga-mysql/etc/idomod.cfg':
@@ -47,7 +47,7 @@ class profile::icinga-mysql ($icingaVersion) {
     owner   => 'icinga',
     group   => 'icinga',
     require => Cmmi['icinga-mysql'],
-    notify  => [ Service['icinga-mysql'], Service['ido2db-mysql'] ]
+    notify  => [ Service['icinga-mysql'], Service['ido2db-mysql'] ],
   }
 
   file { '/usr/local/icinga-mysql/etc/modules/idoutils.cfg':
@@ -55,7 +55,7 @@ class profile::icinga-mysql ($icingaVersion) {
     owner   => 'icinga',
     group   => 'icinga',
     require => Cmmi['icinga-mysql'],
-    notify  => [ Service['icinga-mysql'], Service['ido2db-mysql'] ]
+    notify  => [ Service['icinga-mysql'], Service['ido2db-mysql'] ],
   }
 
   mysql::database::populate { 'icinga':

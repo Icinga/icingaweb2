@@ -16,17 +16,17 @@ class apache {
 
   $apache = $::operatingsystem ? {
     /(Debian|Ubuntu)/ => 'apache2',
-    /(RedHat|CentOS|Fedora)/ => 'httpd'
+    /(RedHat|CentOS|Fedora)/ => 'httpd',
   }
 
   package { $apache:
     ensure => installed,
-    alias  => 'apache'
+    alias  => 'apache',
   }
 
   service { $apache:
     ensure  => running,
     alias   => 'apache',
-    require => Package['apache']
+    require => Package['apache'],
   }
 }

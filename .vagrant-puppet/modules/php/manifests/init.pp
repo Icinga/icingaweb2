@@ -21,18 +21,18 @@ class php {
   package { 'php':
     ensure  => installed,
     require => Package['apache'],
-    notify  => Service['apache']
+    notify  => Service['apache'],
   }
 
   file { '/etc/php.d/error_reporting.ini':
     content => template('php/error_reporting.ini.erb'),
     require => Package['php'],
-    notify  => Service['apache']
+    notify  => Service['apache'],
   }
 
   file { '/etc/php.d/xdebug_settings.ini':
     content => template('php/xdebug_settings.ini.erb'),
     require => Package['php'],
-    notify  => Service['apache']
+    notify  => Service['apache'],
   }
 }

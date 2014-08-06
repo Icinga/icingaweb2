@@ -40,7 +40,7 @@ class profile::icinga-pgsql ($icingaVersion) {
     owner   => 'icinga',
     group   => 'icinga',
     require => Cmmi['icinga-pgsql'],
-    notify  => [ Service['icinga-pgsql'], Service['ido2db-pgsql'] ]
+    notify  => [ Service['icinga-pgsql'], Service['ido2db-pgsql'] ],
   }
 
   file { '/usr/local/icinga-pgsql/etc/idomod.cfg':
@@ -48,7 +48,7 @@ class profile::icinga-pgsql ($icingaVersion) {
     owner   => 'icinga',
     group   => 'icinga',
     require => Cmmi['icinga-pgsql'],
-    notify  => [ Service['icinga-pgsql'], Service['ido2db-pgsql'] ]
+    notify  => [ Service['icinga-pgsql'], Service['ido2db-pgsql'] ],
   }
 
   file { '/usr/local/icinga-pgsql/etc/modules/idoutils.cfg':
@@ -56,7 +56,7 @@ class profile::icinga-pgsql ($icingaVersion) {
     owner   => 'icinga',
     group   => 'icinga',
     require => Cmmi['icinga-pgsql'],
-    notify  => [ Service['icinga-pgsql'], Service['ido2db-pgsql'] ]
+    notify  => [ Service['icinga-pgsql'], Service['ido2db-pgsql'] ],
   }
 
   pgsql::database::populate { 'icinga':
