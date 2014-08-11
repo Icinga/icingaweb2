@@ -20,19 +20,27 @@ class DbBackendForm extends BaseBackendForm
      */
     protected $resources;
 
-    public function __construct()
+    /**
+     * Initialize this form
+     *
+     * Populates $this->resources.
+     *
+     * @throws  ConfigurationError  In case no database resources can be found
+     */
+    public function init()
     {
         $dbResources = array_keys(
             ResourceFactory::getResourceConfigs('db')->toArray()
         );
+
         if (empty($dbResources)) {
             throw new ConfigurationError(
                 t('There are no database resources')
             );
         }
-        $this->resources = array_combine($dbResources, $dbResources);
 
-        parent::__construct();
+        // array_combine() is necessary in order to use the array as select input data
+        $this->resources = array_combine($dbResources, $dbResources);
     }
 
     public function createElements(array $formData)
