@@ -82,23 +82,6 @@ class DbBackendForm extends BaseBackendForm
     }
 
     /**
-     * Return the datatbase authentication backend configuration for this form
-     *
-     * @return  array
-     *
-     * @see     BaseBackendForm::getConfig()
-     */
-    public function getConfig()
-    {
-        return array(
-            $this->getValue('name') => array(
-                'backend'   => 'db',
-                'resource'  => $this->getValue('resource')
-            )
-        );
-    }
-
-    /**
      * Validate the current configuration by creating a backend and requesting the user count
      *
      * @return  bool    Whether validation succeeded or not
