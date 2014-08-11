@@ -159,9 +159,7 @@ class LdapBackendForm extends BaseBackendForm
             );
             $testConn->assertAuthenticationPossible();
         } catch (Exception $exc) {
-            $this->addErrorMessage(
-                t('Connection Validation Failed: ' . $exc->getMessage())
-            );
+            $this->addErrorMessage(sprintf(t('Connection validation failed: %s'), $exc->getMessage()));
             return false;
         }
 
