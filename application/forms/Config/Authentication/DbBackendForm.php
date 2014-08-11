@@ -55,7 +55,6 @@ class DbBackendForm extends BaseBackendForm
                 'name',
                 array(
                     'required'      => true,
-                    'allowEmpty'    => false,
                     'label'         => t('Backend Name'),
                     'helptext'      => t('The name of this authentication provider'),
                 )
@@ -65,21 +64,9 @@ class DbBackendForm extends BaseBackendForm
                 'resource',
                 array(
                     'required'      => true,
-                    'allowEmpty'    => false,
                     'label'         => t('Database Connection'),
                     'helptext'      => t('The database connection to use for authenticating with this provider'),
                     'multiOptions'  => $this->resources
-                )
-            ),
-            $this->createElement(
-                'button',
-                'btn_submit',
-                array(
-                    'type'      => 'submit',
-                    'value'     => '1',
-                    'escape'    => false,
-                    'class'     => 'btn btn-cta btn-wide',
-                    'label'     => '<i class="icinga-icon-save"></i> Save Backend'
                 )
             ),
             $this->createElement(

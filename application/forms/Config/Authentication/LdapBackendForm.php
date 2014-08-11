@@ -55,7 +55,6 @@ class LdapBackendForm extends BaseBackendForm
                 'name',
                 array(
                     'required'      => true,
-                    'allowEmpty'    => false,
                     'label'         => t('Backend Name'),
                     'helptext'      => t('The name of this authentication backend')
                 )
@@ -65,7 +64,6 @@ class LdapBackendForm extends BaseBackendForm
                 'resource',
                 array(
                     'required'      => true,
-                    'allowEmpty'    => false,
                     'label'         => t('LDAP Resource'),
                     'helptext'      => t('The resource to use for authenticating with this provider'),
                     'multiOptions'  => $this->resources
@@ -89,17 +87,6 @@ class LdapBackendForm extends BaseBackendForm
                     'label'     => t('LDAP User Name Attribute'),
                     'helptext'  => t('The attribute name used for storing the user name on the ldap server'),
                     'value'     => 'uid'
-                )
-            ),
-            $this->createElement(
-                'button',
-                'btn_submit',
-                array(
-                    'type'      => 'submit',
-                    'value'     => '1',
-                    'escape'    => false,
-                    'class'     => 'btn btn-cta btn-wide',
-                    'label'     => '<i class="icinga-icon-save"></i> Save Backend'
                 )
             ),
             $this->createElement(
