@@ -4,12 +4,10 @@
 
 namespace Icinga\Form\Config\Authentication;
 
-use \Exception;
-use \Zend_Config;
-use Icinga\Web\Form;
+use Exception;
 use Icinga\Data\ResourceFactory;
-use Icinga\Authentication\Backend\LdapUserBackend;
 use Icinga\Exception\ConfigurationError;
+use Icinga\Authentication\Backend\LdapUserBackend;
 
 /**
  * Form for adding or modifying LDAP authentication backends
@@ -17,6 +15,8 @@ use Icinga\Exception\ConfigurationError;
 class LdapBackendForm extends BaseBackendForm
 {
     /**
+     * The available ldap resources prepared to be used as select input data
+     *
      * @var array
      */
     protected $resources;
@@ -44,6 +44,9 @@ class LdapBackendForm extends BaseBackendForm
         $this->resources = array_combine($ldapResources, $ldapResources);
     }
 
+    /**
+     * @see Form::createElements()
+     */
     public function createElements(array $formData)
     {
         return array(
@@ -130,23 +133,21 @@ class LdapBackendForm extends BaseBackendForm
     }
 
     /**
-     * Validate the current configuration by creating a backend and requesting the user count
+     * Validate the current configuration by connecting to a backend and requesting the user count
      *
      * @return  bool    Whether validation succeeded or not
      *
-     * @see BaseBackendForm::isValidAuthenticationBacken
+     * @see BaseBackendForm::isValidAuthenticationBacken()
      */
     public function isValidAuthenticationBackend()
     {
-        if (! ResourceFactory::ldapAvailable()) {
-            /*
-             * It should be possible to run icingaweb without the php ldap extension, when
-             * no ldap backends are needed. When the user tries to create an ldap backend
-             * without ldap installed we need to show him an error.
-             */
+        if (false === ResourceFactory::ldapAvailable()) {
+            // It should be possible to run icingaweb without the php ldap extension. When the user
+            // tries to create an ldap backend without ldap being installed we display an error.
             $this->addErrorMessage(t('Using ldap is not possible, the php extension "ldap" is not installed.'));
             return false;
         }
+
         try {
             $cfg = $this->getConfig();
             $backendConfig = new Zend_Config($cfg[$this->getValue('name')]);
@@ -157,11 +158,6 @@ class LdapBackendForm extends BaseBackendForm
                 $backendConfig->user_name_attribute
             );
             $testConn->assertAuthenticationPossible();
-            /*
-            if ($testConn->count() === 0) {
-                throw new Exception('No Users Found On Directory Server');
-            }
-            */
         } catch (Exception $exc) {
             $this->addErrorMessage(
                 t('Connection Validation Failed: ' . $exc->getMessage())

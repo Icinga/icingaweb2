@@ -4,11 +4,10 @@
 
 namespace Icinga\Form\Config\Authentication;
 
-use \Exception;
+use Exception;
 use Icinga\Data\ResourceFactory;
-use Icinga\Authentication\DbConnection;
-use Icinga\Authentication\Backend\DbUserBackend;
 use Icinga\Exception\ConfigurationError;
+use Icinga\Authentication\Backend\DbUserBackend;
 
 /**
  * Form class for adding/modifying database authentication backends
@@ -16,6 +15,8 @@ use Icinga\Exception\ConfigurationError;
 class DbBackendForm extends BaseBackendForm
 {
     /**
+     * The available database resources prepared to be used as select input data
+     *
      * @var array
      */
     protected $resources;
@@ -43,6 +44,9 @@ class DbBackendForm extends BaseBackendForm
         $this->resources = array_combine($dbResources, $dbResources);
     }
 
+    /**
+     * @see Form::createElements()
+     */
     public function createElements(array $formData)
     {
         return array(
@@ -94,7 +98,7 @@ class DbBackendForm extends BaseBackendForm
      *
      * @return  bool    Whether validation succeeded or not
      *
-     * @see BaseBackendForm::isValidAuthenticationBackend
+     * @see BaseBackendForm::isValidAuthenticationBackend()
      */
     public function isValidAuthenticationBackend()
     {
@@ -104,13 +108,14 @@ class DbBackendForm extends BaseBackendForm
             ));
             $dbUserBackend = new DbUserBackend($testConnection);
             if ($dbUserBackend->count() < 1) {
-                $this->addErrorMessage(t("No users found under the specified database backend"));
+                $this->addErrorMessage(t('No users found under the specified database backend'));
                 return false;
             }
         } catch (Exception $e) {
             $this->addErrorMessage(sprintf(t('Using the specified backend failed: %s'), $e->getMessage()));
             return false;
         }
+
         return true;
     }
 }
