@@ -114,25 +114,6 @@ class LdapBackendForm extends BaseBackendForm
     }
 
     /**
-     * Return the ldap authentication backend configuration for this form
-     *
-     * @return  array
-     *
-     * @see     BaseBackendForm::getConfig()
-     */
-    public function getConfig()
-    {
-        return array(
-            $this->getValue('name') => array(
-                'backend'               => 'ldap',
-                'resource'              => $this->getValue('resource'),
-                'user_class'            => $this->getValue('user_class'),
-                'user_name_attribute'   => $this->getValue('user_name_attribute')
-            )
-        );
-    }
-
-    /**
      * Validate the current configuration by connecting to a backend and requesting the user count
      *
      * @return  bool    Whether validation succeeded or not
@@ -149,13 +130,13 @@ class LdapBackendForm extends BaseBackendForm
         }
 
         try {
-            $cfg = $this->getConfig();
-            $backendConfig = new Zend_Config($cfg[$this->getValue('name')]);
-            $backend = ResourceFactory::createResource(ResourceFactory::getResourceConfig($backendConfig->resource));
+            $backend = ResourceFactory::createResource(
+                ResourceFactory::getResourceConfig($this->getValue('resource'))
+            );
             $testConn = new LdapUserBackend(
                 $backend,
-                $backendConfig->user_class,
-                $backendConfig->user_name_attribute
+                $this->getValue('user_class'),
+                $this->getValue('user_name_attribute')
             );
             $testConn->assertAuthenticationPossible();
         } catch (Exception $exc) {
