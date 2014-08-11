@@ -1,14 +1,2 @@
-
-<?php if (isset($this->name)): ?>
-    <h4><i class="icinga-icon-edit"></i> } Edit Instance Configuration for "<?= $this->escape($this->name) ?>"</h4>
-<?php else: ?>
-    <h4><i class="icinga-icon-create"></i>  Configure New Icinga Instance</h4>
-<?php endif; ?>
-
-<?php if ($this->error): ?>
-    <div class="alert alert-danger">
-        <?= $this->escape($this->error); ?>
-    </div>
-<?php endif; ?>
-
-<?= $this->form; ?>
+<h4><?= $this->translate('Edit Existing Instance'); ?></h4>
+<?= $form; ?>
