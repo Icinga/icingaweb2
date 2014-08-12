@@ -56,8 +56,9 @@ class AddUrlForm extends Form
                     'submit',
                     'use_existing_dashboard',
                     array(
-                        'label' => t('Use An Existing Pane'),
-                        'style' => 'display: inline-block'
+                        'ignore'    => true,
+                        'label'     => t('Use An Existing Pane'),
+                        'style'     => 'display: inline-block'
                     )
                 );
             }
@@ -76,8 +77,9 @@ class AddUrlForm extends Form
                 'submit',
                 'create_new_pane',
                 array(
-                    'label' => t('Create A New Pane'),
-                    'style' => 'display: inline-block'
+                    'ignore'    => true,
+                    'label'     => t('Create A New Pane'),
+                    'style'     => 'display: inline-block'
                 )
             );
         }
@@ -103,7 +105,8 @@ class AddUrlForm extends Form
             'submit',
             'btn_submit',
             array(
-                'label' => t('Add To Dashboard')
+                'ignore'    => true,
+                'label'     => t('Add To Dashboard')
             )
         );
 

@@ -83,7 +83,8 @@ class ResourceForm extends Form
             'submit',
             'btn_submit',
             array(
-                'label' => t('Save Changes')
+                'ignore'    => true,
+                'label'     => t('Save Changes')
             )
         );
 
@@ -197,9 +198,6 @@ class ResourceForm extends Form
         $values = $this->getValues();
         $name = $values['name'];
         unset($values['name']);
-        unset($values['btn_submit']);
-        unset($values['force_creation']);
-        unset($values[$this->getTokenElementName()]);
         return array($name, $values);
     }
 
@@ -228,6 +226,7 @@ class ResourceForm extends Form
             'force_creation',
             array(
                 'order'     => 0,
+                'ignore'    => true,
                 'label'     => t('Force Changes'),
                 'helptext'  => t('Check this box to enforce changes without connectivity validation')
             )

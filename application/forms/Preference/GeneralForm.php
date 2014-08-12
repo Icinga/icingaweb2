@@ -138,7 +138,8 @@ class GeneralForm extends Form
             'submit',
             'btn_submit',
             array(
-                'label' => t('Save Changes')
+                'ignore'    => true,
+                'label'     => t('Save Changes')
             )
         );
 

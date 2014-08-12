@@ -74,7 +74,8 @@ class BackendForm extends Form
             'submit',
             'btn_submit',
             array(
-                'label' => t('Save Changes')
+                'ignore'    => true,
+                'label'     => t('Save Changes')
             )
         );
 
@@ -98,8 +99,6 @@ class BackendForm extends Form
         }
 
         unset($values['name']);
-        unset($values['btn_submit']);
-        unset($values[$this->getTokenElementName()]);
         return array($name, $values);
     }
 

@@ -33,6 +33,7 @@ class InstanceForm extends Form
                 'type',
                 array(
                     'required'      => true,
+                    'ignore'        => true,
                     'label'         => t('Instance Type'),
                     'class'         => 'autosubmit',
                     'helptext'      => t(
@@ -92,6 +93,7 @@ class InstanceForm extends Form
                 'hitchhiker',
                 array(
                     'required'  => true,
+                    'ignore'    => true,
                     'value'     => 'Arthur'
                 )
             );
@@ -119,7 +121,8 @@ class InstanceForm extends Form
             'submit',
             'btn_submit',
             array(
-                'label' => t('Save Changes')
+                'ignore'    => true,
+                'label'     => t('Save Changes')
             )
         );
 
@@ -138,10 +141,6 @@ class InstanceForm extends Form
         $values = $this->getValues();
         $name = $values['name'];
         unset($values['name']);
-        unset($values['type']);
-        unset($values['hitchhiker']);
-        unset($values['btn_submit']);
-        unset($values[$this->getTokenElementName()]);
         return array($name, $values);
     }
 

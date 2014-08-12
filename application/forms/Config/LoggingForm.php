@@ -134,26 +134,12 @@ class LoggingForm extends Form
             'submit',
             'btn_submit',
             array(
-                'label' => t('Save')
+                'ignore'    => true,
+                'label'     => t('Save')
             )
         );
 
         return $this;
-    }
-
-    /**
-     * Retrieve all form element values
-     *
-     * Returns all configuration relevant element values.
-     *
-     * @return  array
-     */
-    public function getValues()
-    {
-        $values = parent::getValues();
-        unset($values['btn_submit']);
-        unset($values[$this->getTokenElementName()]);
-        return $values;
     }
 
     /**

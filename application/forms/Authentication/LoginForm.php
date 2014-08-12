@@ -57,7 +57,8 @@ class LoginForm extends Form
             'submit',
             'btn_submit',
             array(
-                'label' => t('Login')
+                'ignore'    => true,
+                'label'     => t('Login')
             )
         );
     }

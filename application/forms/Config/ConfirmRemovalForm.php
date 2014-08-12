@@ -28,7 +28,8 @@ class ConfirmRemovalForm extends Form
             'submit',
             'btn_submit',
             array(
-                'label' => t('Confirm Removal')
+                'ignore'    => true,
+                'label'     => t('Confirm Removal')
             )
         );
     }

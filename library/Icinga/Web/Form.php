@@ -216,7 +216,8 @@ class Form extends Zend_Form
                 'hidden',
                 $this->tokenElementName,
                 array(
-                    'value' => $this->generateCsrfToken()
+                    'ignore'    => true,
+                    'value'     => $this->generateCsrfToken()
                 )
             );
         }
