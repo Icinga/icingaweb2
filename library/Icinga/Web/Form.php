@@ -7,6 +7,7 @@ namespace Icinga\Web;
 use LogicException;
 use Zend_Form;
 use Zend_View_Interface;
+use Icinga\Application\Icinga;
 use Icinga\Web\Session;
 use Icinga\Web\Form\Decorator\HelpText;
 use Icinga\Web\Form\Decorator\ElementWrapper;
@@ -131,6 +132,12 @@ class Form extends Zend_Form
     public function create(array $formData = array())
     {
         if (false === $this->created) {
+            if ($this->getAction() === '') {
+                // We MUST set an action as JS gets confused otherwise, if
+                // this form is being displayed in an additional column
+                $this->setAction(Icinga::app()->getFrontController()->getRequest()->getRequestUri());
+            }
+
             $this->addElements($this->createElements($formData));
             $this->addCsrfToken()->addSubmitButton();
             $this->created = true;
