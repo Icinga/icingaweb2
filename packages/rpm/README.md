@@ -5,6 +5,7 @@ package (RHEL/CentOS/Fedora, SLES/OpenSUSE).
 
 ## Requirements
 
+* EPEL/OBS Repository for Zend Framework
 * Apache 2.2+
 * PHP 5.3+, Zend Framework, PHP PDO MySQL/PostgreSQL, PHP LDAP (optional)
 * MySQL or PostgreSQL for internal DB
