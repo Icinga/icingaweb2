@@ -36,6 +36,9 @@ config/preferences/*.ini
 # Application logfiles
 var/log/*.log
 
+# Packaging
 /debian
+*.tar.gz
+*.komodoproject
 
 
