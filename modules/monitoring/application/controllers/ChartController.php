@@ -2,15 +2,8 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use Icinga\Application\Icinga;
-use Icinga\Application\Config;
-use Icinga\Logger\Logger;
-use Icinga\Web\Form;
 use Icinga\Module\Monitoring\Controller;
-use Icinga\Chart\SVGRenderer;
 use Icinga\Chart\GridChart;
-use Icinga\Chart\Palette;
-use Icinga\Chart\Axis;
 use Icinga\Chart\PieChart;
 use Icinga\Chart\Unit\StaticAxis;
 
@@ -140,7 +133,7 @@ class Monitoring_ChartController extends Controller
         }
         $this->view->chart = new GridChart();
         $this->view->chart->setAxisLabel('', t('Services'))
-            ->setXAxis(new \Icinga\Chart\Unit\StaticAxis());
+            ->setXAxis(new StaticAxis());
 
         $this->view->chart->drawBars(
             array(
