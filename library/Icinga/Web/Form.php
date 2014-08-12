@@ -8,10 +8,9 @@ use LogicException;
 use Zend_Form;
 use Zend_View_Interface;
 use Icinga\Application\Icinga;
-use Icinga\Web\Session;
 use Icinga\Web\Form\Decorator\HelpText;
 use Icinga\Web\Form\Decorator\ElementWrapper;
-use Icinga\Web\Form\InvalidCSRFTokenException;
+use Icinga\Web\Form\Element\CsrfCounterMeasure;
 
 /**
  * Base class for forms providing CSRF protection, confirmation logic and auto submission
@@ -139,7 +138,7 @@ class Form extends Zend_Form
             }
 
             $this->addElements($this->createElements($formData));
-            $this->addCsrfToken()->addSubmitButton();
+            $this->addCsrfCounterMeasure()->addSubmitButton();
             $this->created = true;
         }
 
@@ -209,17 +208,12 @@ class Form extends Zend_Form
      *
      * @return  self
      */
-    public function addCsrfToken()
+    public function addCsrfCounterMeasure()
     {
         if (false === $this->tokenDisabled && $this->getElement($this->tokenElementName) === null) {
-            $this->addElement(
-                'hidden',
-                $this->tokenElementName,
-                array(
-                    'ignore'    => true,
-                    'value'     => $this->generateCsrfToken()
-                )
-            );
+            $element = new CsrfCounterMeasure($this->tokenElementName);
+            $element->setDecorators(array('ViewHelper'));
+            $this->addElement($element);
         }
 
         return $this;
@@ -293,7 +287,6 @@ class Form extends Zend_Form
     public function isValid($formData)
     {
         if ($this->isComplete($formData)) {
-            $this->assertValidCsrfToken($formData);
             return parent::isValid($formData);
         }
 
@@ -351,57 +344,5 @@ class Form extends Zend_Form
     {
         $this->create();
         return parent::render($view);
-    }
-
-    /**
-     * Generate a new (seed, token) pair
-     *
-     * @return  string
-     */
-    protected function generateCsrfToken()
-    {
-        $seed = mt_rand();
-        $hash = hash('sha256', Session::getSession()->getId() . $seed);
-        return sprintf('%s|%s', $seed, $hash);
-    }
-
-    /**
-     * Test the submitted data for a correct CSRF token
-     *
-     * @param   array   $requestData        The data sent by the user
-     *
-     * @throws  InvalidCSRFTokenException   When CSRF Validation fails
-     */
-    protected function assertValidCsrfToken(array $requestData)
-    {
-        if (false === $this->tokenDisabled) {
-            if (false === isset($requestData[$this->tokenElementName])
-                || false === $this->isValidCsrfToken($requestData[$this->tokenElementName])
-            ) {
-                throw new InvalidCSRFTokenException();
-            }
-        }
-    }
-
-    /**
-     * Check whether the given value is a valid CSRF token for the current session
-     *
-     * @param   string  $token  Value from the CSRF form element
-     *
-     * @return  bool
-     */
-    protected function isValidCsrfToken($token)
-    {
-        if (strpos($token, '|') === false) {
-            return false;
-        }
-
-        list($seed, $hash) = explode('|', $token);
-
-        if (false === is_numeric($seed)) {
-            return false;
-        }
-
-        return $hash === hash('sha256', Session::getSession()->getId() . $seed);
     }
 }
