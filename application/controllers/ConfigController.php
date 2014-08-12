@@ -425,6 +425,7 @@ class ConfigController extends BaseConfigController
                 $resources[$name] = $config;
                 if ($this->writeConfigFile($resources, 'resources')) {
                     $this->addSuccessMessage(sprintf($this->translate('Resource "%s" successfully created.'), $name));
+                    $this->redirectNow('config/resource');
                 }
             }
         }
