@@ -132,7 +132,6 @@ class SortBox extends AbstractWidget
         $sort = $form->getElement('sort')->setDecorators(array('ViewHelper'));
         $dir = $form->getElement('dir')->setDecorators(array('ViewHelper'));
         if ($this->request) {
-            $form->setAction($this->request->getRequestUri());
             $form->populate($this->request->getParams());
         }
         return $form;

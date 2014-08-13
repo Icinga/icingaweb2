@@ -7,7 +7,6 @@ namespace Icinga\Web;
 use LogicException;
 use Zend_Form;
 use Zend_View_Interface;
-use Icinga\Application\Icinga;
 use Icinga\Web\Form\Decorator\HelpText;
 use Icinga\Web\Form\Decorator\ElementWrapper;
 use Icinga\Web\Form\Element\CsrfCounterMeasure;
@@ -131,14 +130,15 @@ class Form extends Zend_Form
     public function create(array $formData = array())
     {
         if (false === $this->created) {
+            $this->addElements($this->createElements($formData));
+            $this->addCsrfCounterMeasure()->addSubmitButton();
+
             if ($this->getAction() === '') {
                 // We MUST set an action as JS gets confused otherwise, if
                 // this form is being displayed in an additional column
-                $this->setAction(Icinga::app()->getFrontController()->getRequest()->getRequestUri());
+                $this->setAction(Url::fromRequest()->getUrlWithout(array_keys($this->getElements())));
             }
 
-            $this->addElements($this->createElements($formData));
-            $this->addCsrfCounterMeasure()->addSubmitButton();
             $this->created = true;
         }
 
