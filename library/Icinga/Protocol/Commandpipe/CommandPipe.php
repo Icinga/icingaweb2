@@ -109,7 +109,19 @@ class CommandPipe
      */
     public function send($command)
     {
-        $this->transport->send($command);
+        $this->transport->send($this->escape($command));
+    }
+
+    /**
+     * Return the given command string with escaped newlines
+     *
+     * @param   string  $command    The command string to escape
+     *
+     * @return  string              The escaped command string
+     */
+    public function escape($command)
+    {
+        return str_replace(array("\r", "\n"), array('\r', '\n'), $command);
     }
 
     /**
@@ -121,16 +133,14 @@ class CommandPipe
     public function sendCommand(Command $command, array $objects = array())
     {
         if ($command->provideGlobalCommand() === true) {
-            $this->transport->send($command->getGlobalCommand());
+            $this->send($command->getGlobalCommand());
         } else {
             foreach ($objects as $object) {
                 $objectType = $this->getObjectType($object);
                 if ($objectType === self::TYPE_SERVICE) {
-                    $this->transport->send(
-                        $command->getServiceCommand($object->host_name, $object->service_description)
-                    );
+                    $this->send($command->getServiceCommand($object->host_name, $object->service_description));
                 } else {
-                    $this->transport->send($command->getHostCommand($object->host_name));
+                    $this->send($command->getHostCommand($object->host_name));
                 }
             }
         }
