@@ -76,6 +76,11 @@ class HoststatusQuery extends IdoQuery
                             ELSE 4
                         END
                 END
+            END
+            +
+            CASE WHEN hs.state_type = 1
+                THEN 8
+                ELSE 0
             END'
         ),
         'hostgroups' => array(
