@@ -130,7 +130,7 @@ class Url
         // Fetch fragment manually and remove it from the url, to 'help' the parse_url() function
         // parsing the url properly. Otherwise calling the function with a fragment, but without a
         // query will cause unpredictable behaviour.
-        $url = self::stripUrlFragment($url);
+        $fragment = self::stripUrlFragment($url);
         $urlParts = parse_url($url);
         if (isset($urlParts['path'])) {
             if ($baseUrl !== '' && strpos($urlParts['path'], $baseUrl) === 0) {
@@ -144,8 +144,7 @@ class Url
             $params = UrlParams::fromQueryString($urlParts['query'])->mergeValues($params);
         }
 
-        $fragment = self::getUrlFragment($url);
-        if ($fragment !== '') {
+        if ($fragment) {
             $urlObject->setAnchor($fragment);
         }
 
@@ -154,32 +153,18 @@ class Url
     }
 
     /**
-     * Get the fragment of a given url
+     * Remove the fragment-part of a given url and return it
      *
-     * @param   string  $url    The url containing the fragment.
+     * @param   string  $url    The url to strip its fragment from
      *
-     * @return  string          The fragment without the '#'
+     * @return  null|string     The stripped fragment, without the '#'
      */
-    protected static function getUrlFragment($url)
+    protected static function stripUrlFragment(&$url)
     {
-        $url = parse_url($url);
-        if (isset($url['fragment'])) {
-            return $url['fragment'];
-        } else {
-            return '';
+        if (preg_match('@#(.*)$@', $url, $matches)) {
+            $url = str_replace('#' . $matches[1], '', $url);
+            return $matches[1];
         }
-    }
-
-    /**
-     * Remove the fragment-part of a given url
-     *
-     * @param   string  $url    The url to strip from its fragment
-     *
-     * @return  string          The url without the fragment
-     */
-    protected static function stripUrlFragment($url)
-    {
-        return preg_replace('/#.*$/', '', $url);
     }
 
     /**

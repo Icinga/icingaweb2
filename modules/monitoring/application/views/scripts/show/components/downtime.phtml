@@ -42,11 +42,11 @@ foreach ($object->downtimes as $downtime) {
     ) : $this->escape($downtime->comment);
 
     $list[] = sprintf(
-        '<tr><th>%s</th><td data-base-target="_self">%s %s: %s</td></tr>',
+        '<tr><th>%s</th><td><table><tr><td style="vertical-align: top;" data-base-target="_self">%s %s:</td><td style="padding-left: .5em;">%s</td></tr></table></td></tr>',
         $this->escape($downtime->author),
         $iconForm,
         $state,
-        $text
+        str_replace(array('\r\n', '\n'), '<br>', $text)
     );
 }
 

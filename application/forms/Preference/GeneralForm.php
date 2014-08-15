@@ -33,7 +33,6 @@ class GeneralForm extends Form
         foreach (Translator::getAvailableLocaleCodes() as $language) {
             $languages[$language] = $language;
         }
-        $languages[Translator::DEFAULT_LOCALE] = Translator::DEFAULT_LOCALE;
         $prefs = $this->getUserPreferences();
         $useDefaultLanguage = $this->getRequest()->getParam('default_language', !$prefs->has('app.language'));
 
