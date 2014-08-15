@@ -17,15 +17,7 @@ class profile::icinga2 ($icinga2Version) {
     }
   }
 
-  icinga2::feature { 'statusdata':
-    require => Package['icinga2-classicui-config'],
-  }
-
-  icinga2::feature { 'command':
-    require => Package['icinga2-classicui-config'],
-  }
-
-  icinga2::feature { 'compatlog':
+  icinga2::feature { [ 'statusdata', 'command', 'compatlog' ]:
     require => Package['icinga2-classicui-config'],
   }
 
