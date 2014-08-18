@@ -16,7 +16,7 @@
 #
 #   cpan { 'perl-module':
 #     creates => '/usr/local/share/perl5/perl-module',
-#     timeout => 600,
+#     timeout => 600
 #   }
 #
 define cpan(
@@ -27,11 +27,11 @@ define cpan(
   Exec { path => '/usr/bin' }
 
   package { 'perl-CPAN':
-    ensure => installed,
+    ensure => installed
   }
 
   file { [ '/root/.cpan/', '/root/.cpan/CPAN/' ]:
-    ensure  => directory,
+    ensure  => directory
   }
 
   file { '/root/.cpan/CPAN/MyConfig.pm':
@@ -44,6 +44,6 @@ define cpan(
     command => "sudo perl -MCPAN -e 'install ${name}'",
     creates => $creates,
     require => File['/root/.cpan/CPAN/MyConfig.pm'],
-    timeout => $timeout,
+    timeout => $timeout
   }
 }

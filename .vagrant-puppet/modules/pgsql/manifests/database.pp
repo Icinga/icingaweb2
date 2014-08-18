@@ -6,7 +6,7 @@ define pgsql::database::create ($username, $password) {
     command => "sudo -u postgres psql -c \"CREATE ROLE ${username} WITH LOGIN PASSWORD '${password}';\" && \
 sudo -u postgres createdb -O ${username} -E UTF8 -T template0 ${name} && \
 sudo -u postgres createlang plpgsql ${name}",
-    require => Service['postgresql'],
+    require => Service['postgresql']
   }
 }
 
@@ -21,6 +21,6 @@ define pgsql::database::populate ($username, $password, $schemafile, $requiremen
   exec { "populate-${name}-pgsql-db":
     unless  => "psql -U ${username} -d ${name} -c \"SELECT * FROM icinga_dbversion;\" &> /dev/null",
     command => "sudo -u postgres psql -U ${username} -d ${name} < ${schemafile}",
-    require => [ $requirement, Exec["create-pgsql-${name}-db"] ],
+    require => [ $requirement, Exec["create-pgsql-${name}-db"] ]
   }
 }

@@ -33,18 +33,18 @@ define pear::package(
       command => "sudo pear channel-discover ${channel}",
       unless => "pear channel-info ${channel}",
       require => $require_,
-      before => Exec["pear install ${name}"],
+      before => Exec["pear install ${name}"]
     }
   }
 
   exec { "pear install ${name}":
     command => "pear install --alldeps ${name}",
     unless => "pear list ${name}",
-    require => $require_,
+    require => $require_
   }
 
   exec { "pear upgrade ${name}":
     command => "pear upgrade ${name}",
-    require => Exec["pear install ${name}"],
+    require => Exec["pear install ${name}"]
   }
 }

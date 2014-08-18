@@ -27,17 +27,17 @@ class pgsql {
   exec { 'initdb':
     creates => '/var/lib/pgsql/data/pg_xlog',
     command => 'service postgresql initdb',
-    require => Package['postgresql-server'],
+    require => Package['postgresql-server']
   }
 
   service { 'postgresql':
     ensure  => running,
-    require => [Package['postgresql-server'], Exec['initdb']],
+    require => [Package['postgresql-server'], Exec['initdb']]
   }
 
   file { '/var/lib/pgsql/data/pg_hba.conf':
     content => template('pgsql/pg_hba.conf.erb'),
     require => [Package['postgresql-server'], Exec['initdb']],
-    notify  => Service['postgresql'],
+    notify  => Service['postgresql']
   }
 }

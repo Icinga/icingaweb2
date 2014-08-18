@@ -17,7 +17,7 @@
 #   class {'phantomjs':
 #     url     => 'https://phantomjs.googlecode.com/files/phantomjs-1.9.1-linux-x86_64.tar.bz2',
 #     output  => 'phantomjs-1.9.1-linux-x86_64.tar.bz2',
-#     creates => '/usr/local/phantomjs',
+#     creates => '/usr/local/phantomjs'
 #   }
 #
 class phantomjs(
@@ -37,7 +37,7 @@ class phantomjs(
     command => "wget -q ${url} -O ${output}",
     creates => "${cwd}/${output}",
     timeout => 120,
-    require => Class['wget'],
+    require => Class['wget']
   }
 
   $src = "${cwd}/phantomjs"
@@ -48,18 +48,18 @@ class phantomjs(
                 --no-same-permissions -xjf ${output} -C ${src} \
                 --strip-components 1",
     creates => $src,
-    require => Exec['download-phantomjs'],
+    require => Exec['download-phantomjs']
   }
 
   file { 'install-phantomjs':
     path    => $creates,
     source  => $src,
     recurse => true,
-    require => Exec['extract-phantomjs'],
+    require => Exec['extract-phantomjs']
   }
 
   file { 'link-phantomjs-bin':
     ensure => "${creates}/bin/phantomjs",
-    path   => '/usr/local/bin/phantomjs',
+    path   => '/usr/local/bin/phantomjs'
   }
 }

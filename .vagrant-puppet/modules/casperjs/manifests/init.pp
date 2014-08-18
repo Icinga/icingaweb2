@@ -17,7 +17,7 @@
 #   class {'casperjs':
 #     url     => 'https://github.com/n1k0/casperjs/tarball/1.0.2',
 #     output  => 'casperjs-1.0.2.tar.gz',
-#     creates => '/usr/local/casperjs',
+#     creates => '/usr/local/casperjs'
 #   }
 #
 class casperjs(
@@ -37,7 +37,7 @@ class casperjs(
     command => "wget -q ${url} -O ${output}",
     creates => "${cwd}/${output}",
     timeout => 120,
-    require => Class['wget'],
+    require => Class['wget']
   }
 
   $tld = inline_template('<%= File.basename(output, ".tar.bz2") %>')
@@ -49,18 +49,18 @@ class casperjs(
                 --no-same-permissions -xzf ${output} -C ${src} \
                 --strip-components 1",
     creates => $src,
-    require => Exec['download-casperjs'],
+    require => Exec['download-casperjs']
   }
 
   file { 'install-casperjs':
     path    => $creates,
     source  => $src,
     recurse => true,
-    require => Exec['extract-casperjs'],
+    require => Exec['extract-casperjs']
   }
 
   file { 'link-casperjs-bin':
     ensure => "${creates}/bin/casperjs",
-    path   => '/usr/local/bin/casperjs',
+    path   => '/usr/local/bin/casperjs'
   }
 }

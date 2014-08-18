@@ -24,8 +24,8 @@
 #     output       => 'example-software.tar.gz',
 #     flags        => '--prefix=/opt/example-software',
 #     creates      => '/opt/example-software',
-#     make         => 'make && make install',
-#     make_timeout => 600,
+#     make         => 'make && make install'
+#     make_timeout => 600
 #   }
 #
 define cmmi(
@@ -48,7 +48,7 @@ define cmmi(
     cwd     => $cwd,
     command => "wget -q \"${url}\" -O ${output}",
     creates => "${cwd}/${output}",
-    require => Class['wget'],
+    require => Class['wget']
   }
 
   $tld = inline_template('<%= File.basename(output, ".tar.gz") %>')
@@ -60,14 +60,14 @@ define cmmi(
                 --no-same-permissions -xzf ${output} -C ${name}/${tld} \
                 --strip-components 1",
     creates => $src,
-    require => Exec["download-${name}"],
+    require => Exec["download-${name}"]
   }
 
   exec { "configure-${name}":
     cwd     => $src,
     command => "${configure_command} ${flags}",
     creates => "${src}/Makefile",
-    require => Exec["extract-${name}"],
+    require => Exec["extract-${name}"]
   }
 
   exec { "make-${name}":
@@ -75,6 +75,6 @@ define cmmi(
     command => $make,
     creates => $creates,
     require => Exec["configure-${name}"],
-    timeout => $make_timeout,
+    timeout => $make_timeout
   }
 }
