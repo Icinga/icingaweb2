@@ -1,149 +1,127 @@
-<?php
-
-use Icinga\Module\Monitoring\Object\Service;
-
-if ($object instanceof Service) {
-    $title = $object->service_description;
-    $params = array(
-        'host'    => $object->host_name,
-        'service' => $object->service_description
-    );
-} else {
-    $title = $object->host_name;
-    $params = array('host' => $object->host_name);
-}
-
-// TODO: Remove this once we have better helpers
-$states = array(
-    'service' => array(
-        'ok',
-        'warning',
-        'critical',
-        'unknown',
-        99 => 'pending',
-    ),
-    'host' => array(
-        'up',
-        'down',
-        'unreachable',
-        99 => 'pending',
-    )
-);
-
-
-?><div class="controls">
-<?= $this->render('show/components/header.phtml') ?>
-<h1><?= $this->translate("This object's event history") ?></h1>
-<?= $this->widget('limiter', array('url' => $this->url, 'max' => $this->history->count())) ?>
-<?=  $this->paginationControl($this->history, null, null, array('preserve' => $this->preserve)); ?>
+<div class="controls">
+  <?= $this->render('show/components/header.phtml'); ?>
+  <h1><?= $this->translate('This Object\'s Event History'); ?></h1>
+  <?= $this->widget('limiter', array('url' => $url, 'max' => $history->count())); ?>
+  <?= $this->paginationControl($history, null, null, array('preserve' => $this->preserve)); ?>
 </div>
 
 <div class="content">
-<?php if($this->history->count() === 0): ?>
-<?= $this->translate('No History Available For This Object') ?>
+<?php if (empty($history)): ?>
+  <?= $this->translate('No history available for this object'); ?>
 </div>
 <?php return; endif ?>
 
-<table data-base-target="_next" class="action objecthistory">
-<tbody>
-
-<?php foreach ($this->history as $event):
-if (array_key_exists($event->state, $states[$event->object_type])) {
-    $state_class = $states[$event->object_type][$event->state];
-} else {
-    $state_class = 'invalid';
-}
-$extraTitle = false;
-switch ($event->type) {
-    case 'notify':
-        $icon   = 'notification';
-        $title  = $this->translate('Notification');
-        $state  = $this->translate('ACK');
-        break;
-    case 'comment':
-        $icon   = 'comment';
-        $title  = $this->translate('Comment');
-        break;
-    case 'comment_deleted':
-        $icon   = 'remove';
-        $title  = $this->translate('Comment deleted');
-        break;
-    case 'ack':
-        $icon   = 'acknowledgement';
-        $title  = $this->translate('Acknowledge');
-        break;
-    case 'ack_deleted':
-        $icon   = 'remove';
-        $title  = $this->translate('Ack removed');
-        break;
-    case 'dt_comment':
-        $icon   = 'in_downtime';
-        $title  = $this->translate('In Downtime');
-        break;
-    case 'dt_comment_deleted':
-        $icon   = 'remove';
-        $title  = $this->translate('Downtime removed');
-        break;
-    case 'flapping':
-        $icon   = 'flapping';
-        $title  = $this->translate('Flapping');
-        break;
-    case 'flapping_deleted':
-        $icon   = 'remove';
-        $title  = $this->translate('Flapping stopped');
-        break;
-    case 'hard_state':
-        $icon   = 'submit';
-        $title  = strtoupper($state_class);
-        break;
-    case 'soft_state':
-        $icon   = 'softstate';
-        $title  = strtoupper($state_class);
-        $extraTitle = $this->translate('Soft State');
-        $state_class .= ' handled';
-        break;
-    case 'dt_start':
-        $icon   = 'downtime_start';
-        $title  = $this->translate('Downtime Start');
-        break;
-    case 'dt_end':
-        $icon   = 'downtime_end';
-        $title  = $this->translate('Downtime End');
-        break;
-}
-
-
-
-?>
-  <tr class="state <?= $state_class ?>">
-    <td class="state"><strong><?= $this->escape($title) ?></strong><br /><?= $this->prefixedTimeSince($event->timestamp) ?><?= $extraTitle === false ? '' : '<br />' . $this->escape($extraTitle) ?></td>
-    <td>
-<?php
+  <table data-base-target="_next" class="action objecthistory">
+    <tbody>
+    <?php foreach ($history as $event): ?>
+    <?php
+      $stateClass = 'invalid';
+      $isService = isset($event->service_description);
+      switch ($event->type) {
+        case 'notify':
+          $icon = 'notification';
+          $title = $this->translate('Notification');
+          $msg = $event->output;
+          break;
+        case 'comment':
+          $icon = 'comment';
+          $title = $this->translate('Comment');
+          $msg = $event->output;
+          break;
+        case 'comment_deleted':
+          $icon = 'remove';
+          $title = $this->translate('Comment deleted');
+          $msg = $event->output;
+          break;
+        case 'ack':
+          $icon = 'acknowledgement';
+          $title = $this->translate('Acknowledge');
+          $msg = $event->output;
+          break;
+        case 'ack_deleted':
+          $icon = 'remove';
+          $title = $this->translate('Ack removed');
+          $msg = $event->output;
+          break;
+        case 'dt_comment':
+          $icon = 'in_downtime';
+          $title = $this->translate('In Downtime');
+          $msg = $event->output;
+          break;
+        case 'dt_comment_deleted':
+          $icon = 'remove';
+          $title = $this->translate('Downtime removed');
+          $msg = $event->output;
+          break;
+        case 'flapping':
+          $icon = 'flapping';
+          $title = $this->translate('Flapping');
+          $msg = $event->output;
+          break;
+        case 'flapping_deleted':
+          $icon = 'remove';
+          $title = $this->translate('Flapping stopped');
+          $msg = $event->output;
+          break;
+        case 'hard_state':
+          $icon = $isService ? 'service' : 'host';
+          $msg = '[ ' . $event->attempt . '/' . $event->max_attempts . ' ] ' . $event->output;
+          $stateClass = (
+            $isService
+              ? strtolower($this->util()->getServiceStateName($event->state))
+              : strtolower($this->util()->getHostStateName($event->state))
+          );
+          $title = strtoupper($stateClass); // TODO: Should be translatable!
+          break;
+        case 'soft_state':
+          $icon = 'softstate';
+          $msg = '[ ' . $event->attempt . '/' . $event->max_attempts . ' ] ' . $event->output;
+          $stateClass = (
+            $isService
+              ? strtolower($this->util()->getServiceStateName($event->state))
+              : strtolower($this->util()->getHostStateName($event->state))
+          );
+          $title = strtoupper($stateClass); // TODO: Should be translatable!
+          break;
+        case 'dt_start':
+          $icon = 'downtime_start';
+          $title = $this->translate('Downtime Start');
+          $msg = $event->output;
+          break;
+        case 'dt_end':
+          $icon = 'downtime_end';
+          $title = $this->translate('Downtime End');
+          $msg = $event->output;
+          break;
+      }
+    ?>
+      <tr class="state <?= $stateClass; ?>">
+        <td class="state">
+          <strong><?= $this->escape($title); ?></strong>
+          <br>
+          <?= date('d.m. H:i', $event->timestamp); ?>
+        </td>
+        <td><?php
 
 $output = $this->tickets ? preg_replace_callback(
     $this->tickets->getPattern(),
     array($this->tickets, 'createLink'),
-    $this->escape($event->output)
-) : $this->escape($event->output);
-
-echo $this->icon($icon . '.png', $title) . ' ';
-
-if ($object instanceof Host): ?>
-  <?= $this->escape($event->service_description) ?>
-<?php elseif ($object instanceof Service): ?>
-<?php else: ?>
-  <?= $this->escape($event->service_description) ?> on <?= $this->escape($event->host_name) ?>
-<?php endif;
-
-if ($event->attempt !== null) {
- printf('[ %d/%d ] ', $event->attempt, $event->max_attempts);
-}
-echo $output;
+    $this->escape($msg)
+) : $this->escape($msg);
 
 ?>
-    </td>
-  </tr>
+        <?php if ($isService): ?>
+          <?= $this->escape($event->service_description) . ' ' . $this->translate('on') . ' ' . $this->escape($event->host_name); ?>
+        <?php else: ?>
+          <?= $this->escape($event->host_name); ?>
+        <?php endif ?>
+          <br>
+          <div>
+            <?= $this->icon($icon . '.png', $title); ?> <?= empty($msg) ? '' : $msg; ?>
+          </div>
+        </td>
+      </tr>
 <? endforeach; ?>
-</tbody>
-</table>
+    </tbody>
+  </table>
 </div>
