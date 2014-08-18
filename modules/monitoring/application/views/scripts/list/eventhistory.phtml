@@ -4,6 +4,7 @@
   <div style="margin: 1em" class="dontprint">
     <?= $this->translate('Sort by'); ?> <?= $this->sortControl->render($this); ?>
   </div>
+  <?= $this->widget('limiter', array('url' => $this->url, 'max' => $this->history->count())); ?>
   <?= $this->paginationControl($history, null, null, array('preserve' => $this->preserve)); ?>
 </div>
 <?php endif ?>
@@ -14,9 +15,9 @@
 </div>
 <?php return; endif ?>
 
-<table data-base-target="_next" class="action">
-  <tbody>
-  <?php foreach ($history as $event): ?>
+  <table data-base-target="_next" class="action">
+    <tbody>
+    <?php foreach ($history as $event): ?>
     <?php
       $stateName = 'invalid';
       $isService = isset($event->service);
@@ -102,13 +103,13 @@
             <?= $event->host; ?>
           </a>
         <?php endif ?>
-        <br>
-        <div>
-          <?= $this->icon($icon . '.png', $title); ?> <?= empty($msg) ? '' : $msg; ?>
-        </div>
-      </td>
-    </tr>
-  <? endforeach ?>
-  </tbody>
-</table>
+          <br>
+          <div>
+            <?= $this->icon($icon . '.png', $title); ?> <?= empty($msg) ? '' : $msg; ?>
+          </div>
+        </td>
+      </tr>
+    <? endforeach ?>
+    </tbody>
+  </table>
 </div>
