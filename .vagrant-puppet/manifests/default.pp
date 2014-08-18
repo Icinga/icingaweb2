@@ -425,7 +425,7 @@ package { 'icinga2-ido-mysql':
 
 exec { 'populate-icinga2-mysql-db':
   unless  => 'mysql -uicinga2 -picinga2 icinga2 -e "SELECT * FROM icinga_dbversion;" &> /dev/null',
-  command => 'mysql -uroot icinga2 < /usr/share/doc/icinga2-ido-mysql-$(rpm -q icinga2-ido-mysql | cut -d\'-\' -f4)/schema/mysql.sql',
+  command => 'mysql -uroot icinga2 < /usr/share/icinga2-ido-mysql/schema/mysql.sql',
   require => [ Exec['create-mysql-icinga2-db'], Package['icinga2-ido-mysql'] ]
 }
 
