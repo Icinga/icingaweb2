@@ -400,7 +400,7 @@
         rowSelected: function(event) {
             var self     = event.data.self;
             var icinga   = self.icinga;
-            var $tr      = $(this).closest('tr');
+            var $tr      = $(this);
             var $table   = $tr.closest('table.multiselect');
             var data     = self.icinga.ui.getSelectionKeys($table);
             var url      = $table.data('icinga-multiselect-url');
@@ -499,11 +499,6 @@
             if (linkTarget === '_blank' || linkTarget === '_self') {
                 window.open(href, linkTarget);
                 return false;
-            }
-
-            // ignore multiselect table row clicks
-            if ($a.closest('tr[href]').length > 0 && $a.closest('table.action').length > 0) {
-                return;
             }
 
             // ignore multiselect table row clicks
