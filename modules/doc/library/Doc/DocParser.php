@@ -109,7 +109,7 @@ class DocParser
                                 array(
                                     'name' => $this->module
                                 )
-                            )->setAnchor($id)->getRelativeUrl(),
+                            )->setAnchor($id),
                             'title'     => htmlspecialchars($header),
                             'priority'  => $itemPriority++,
                             'attribs'   => $attribs
