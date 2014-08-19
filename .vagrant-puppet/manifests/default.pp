@@ -735,6 +735,12 @@ file { '/etc/icingaweb/modules/monitoring/backends.ini':
    group     => 'apache',
 }
 
+file { '/etc/icingaweb/modules/monitoring/config.ini':
+  source    => 'puppet:////vagrant/.vagrant-puppet/files/etc/icingaweb/modules/monitoring/config.ini',
+  owner     => 'apache',
+  group     => 'apache',
+}
+
 file { '/etc/icingaweb/modules/monitoring/instances.ini':
   source    => 'puppet:////vagrant/.vagrant-puppet/files/etc/icingaweb/modules/monitoring/instances.ini',
   owner     => 'apache',
