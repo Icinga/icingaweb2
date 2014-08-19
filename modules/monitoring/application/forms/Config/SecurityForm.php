@@ -30,7 +30,7 @@ class SecurityForm extends Form
                 'value'     =>  $this->config->protected_customvars
             )
         );
-        $this->setSubmitLabel('{{SAVE_ICON}} Save');
+        $this->setSubmitLabel('Save');
     }
 
     /**
