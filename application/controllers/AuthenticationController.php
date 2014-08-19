@@ -54,13 +54,9 @@ class AuthenticationController extends ActionController
             try {
                 $config = Config::app('authentication');
             } catch (NotReadableError $e) {
-                Logger::error(
-                    new Exception('Cannot load authentication configuration. An exception was thrown:', 0, $e)
-                );
                 throw new ConfigurationError(
-                    t(
-                        'No authentication methods available. Authentication configuration could not be loaded.'
-                        . ' Please check the system log or Icinga Web 2 log for more information'
+                    $this->translate(
+                        'Could not read your authentiction.ini, no authentication methods are available.'
                     )
                 );
             }
@@ -110,25 +106,25 @@ class AuthenticationController extends ActionController
                 }
                 if ($backendsTried === 0) {
                     throw new ConfigurationError(
-                        t(
-                            'No authentication methods available. It seems that no authentication method has been set'
-                            . ' up. Please check the system log or Icinga Web 2 log for more information'
-                        )
+                        $this->translate(
+                            'No authentication methods available. Did you create'
+                          . ' authentication.ini when installing Icinga Web 2?'
+                         )
                     );
                 }
                 if ($backendsTried === $backendsWithError) {
                     throw new ConfigurationError(
                         $this->translate(
-                            'No authentication methods available. It seems that all set up authentication methods have'
-                            . ' errors. Please check the system log or Icinga Web 2 log for more information'
+                            'All configured authentication methods failed.'
+                          . ' Please check the system log or Icinga Web 2 log for more information.'
                         )
                     );
                 }
                 if ($backendsWithError) {
                     $form->addNote(
                         $this->translate(
-                            'Note that not all authentication backends are available for authentication because they'
-                            . ' have errors. Please check the system log or Icinga Web 2 log for more information'
+                            'Please note that not all authentication methods where available.'
+                          . ' Check the system log or Icinga Web 2 log for more information.'
                         )
                     );
                 }
