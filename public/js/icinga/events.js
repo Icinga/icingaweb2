@@ -134,7 +134,6 @@
 
             // Select a table row
             $(document).on('click', 'table.multiselect tr[href]', { self: this }, this.rowSelected);
-            $(document).on('click', 'table.multiselect .select-click', { self: this }, this.rowSelected);
 
             $(document).on('click', 'button', { self: this }, this.submitForm);
 
@@ -475,12 +474,20 @@
                 return true;
             }
 
-            // Ignore clicks on multiselect table inner links while key pressed
-            if ((event.ctrlKey || event.metaKey || event.shiftKey) &&
-                ! $a.is('tr[href]') && $a.closest('table.multiselect').length > 0 &&
-                $a.closest('tr[href]').length > 0)
-            {
-                return self.rowSelected.call($a.closest('tr[href]'), event);
+            // Special checks for link clicks in multiselect rows
+            if (! $a.is('tr[href]') && $a.closest('tr[href]').length > 0 && $a.closest('table.multiselect').length > 0) {
+
+                // Forward clicks to ANY link with special key pressed to rowSelected
+                if (event.ctrlKey || event.metaKey || event.shiftKey)
+                {
+                    return self.rowSelected.call($a.closest('tr[href]'), event);
+                }
+
+                // Forward inner links matching the row URL to rowSelected
+                if ($a.attr('href') === $a.closest('tr[href]').attr('href'))
+                {
+                    return self.rowSelected.call($a.closest('tr[href]'), event);
+                }
             }
 
             // Let remote links pass through
@@ -492,6 +499,11 @@
             if (linkTarget === '_blank' || linkTarget === '_self') {
                 window.open(href, linkTarget);
                 return false;
+            }
+
+            // ignore multiselect table row clicks
+            if ($a.closest('tr[href]').length > 0 && $a.closest('table.action').length > 0) {
+                return;
             }
 
             // ignore multiselect table row clicks
