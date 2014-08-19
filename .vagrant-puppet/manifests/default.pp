@@ -3,10 +3,14 @@ include mysql
 include pgsql
 include openldap
 
-Exec { path => '/bin:/usr/bin:/sbin' }
+Exec { path => '/bin:/usr/bin:/sbin:/usr/sbin' }
 
-$icingaVersion = '1.11.2'
-$icinga2Version = '2.0.0'
+$icingaVersion = '1.11.5'
+$icinga2Version = '2.0.1'
+$pluginVersion = '2.0'
+$livestatusVersion = '1.2.4p5'
+$phantomjsVersion = '1.9.1'
+$casperjsVersion = '1.0.2'
 
 exec { 'create-mysql-icinga-db':
   unless  => 'mysql -uicinga -picinga icinga',
@@ -72,10 +76,10 @@ cmmi { 'icinga-mysql':
               --with-htmurl=/icinga-mysql --with-httpd-conf-file=/etc/httpd/conf.d/icinga-mysql.conf \
               --with-cgiurl=/icinga-mysql/cgi-bin \
               --with-http-auth-file=/usr/share/icinga/htpasswd.users \
-              --with-plugin-dir=/usr/lib64/nagios/plugins/libexec',
+              --with-plugin-dir=/usr/lib64/nagios/plugins',
   creates => '/usr/local/icinga-mysql',
   make    => 'make all && make fullinstall install-config',
-  require => [ User['icinga'], Cmmi['icinga-plugins'], Package['apache'] ],
+  require => [ User['icinga'], Class['monitoring-plugins'], Package['apache'] ],
   notify  => Service['apache']
 }
 
@@ -98,10 +102,10 @@ cmmi { 'icinga-pgsql':
               --with-htmurl=/icinga-pgsql --with-httpd-conf-file=/etc/httpd/conf.d/icinga-pgsql.conf \
               --with-cgiurl=/icinga-pgsql/cgi-bin \
               --with-http-auth-file=/usr/share/icinga/htpasswd.users \
-              --with-plugin-dir=/usr/lib64/nagios/plugins/libexec',
+              --with-plugin-dir=/usr/lib64/nagios/plugins',
   creates => '/usr/local/icinga-pgsql',
   make    => 'make all && make fullinstall install-config',
-  require => [ User['icinga'], Cmmi['icinga-plugins'], Package['apache'] ],
+  require => [ User['icinga'], Class['monitoring-plugins'], Package['apache'] ],
   notify  => Service['apache']
 }
 
@@ -206,20 +210,11 @@ exec { 'icinga-htpasswd':
   require => Class['apache']
 }
 
-cmmi { 'icinga-plugins':
-  url     => 'https://www.monitoring-plugins.org/download/nagios-plugins-1.5.tar.gz',
-  output  => 'nagios-plugins-1.5.tar.gz',
-  flags   => '--prefix=/usr/lib64/nagios/plugins \
-              --with-nagios-user=icinga --with-nagios-group=icinga \
-              --with-cgiurl=/icinga-mysql/cgi-bin',
-  creates => '/usr/lib64/nagios/plugins/libexec',
-  make    => 'make && make install',
-  require => User['icinga']
-}
+include monitoring-plugins
 
 cmmi { 'mk-livestatus':
-  url     => 'http://mathias-kettner.de/download/mk-livestatus-1.2.2p1.tar.gz',
-  output  => 'mk-livestatus-1.2.2p1.tar.gz',
+  url     => "http://mathias-kettner.de/download/mk-livestatus-${livestatusVersion}.tar.gz",
+  output  => "mk-livestatus-${livestatusVersion}.tar.gz",
   flags   => '--prefix=/usr/local/icinga-mysql --exec-prefix=/usr/local/icinga-mysql',
   creates => '/usr/local/icinga-mysql/lib/mk-livestatus',
   make    => 'make && make install',
@@ -262,14 +257,14 @@ exec { 'populate-openldap':
 }
 
 class { 'phantomjs':
-  url     => 'https://phantomjs.googlecode.com/files/phantomjs-1.9.1-linux-x86_64.tar.bz2',
-  output  => 'phantomjs-1.9.1-linux-x86_64.tar.bz2',
+  url     => "https://phantomjs.googlecode.com/files/phantomjs-${phantomjsVersion}-linux-x86_64.tar.bz2",
+  output  => "phantomjs-${phantomjsVersion}-linux-x86_64.tar.bz2",
   creates => '/usr/local/phantomjs'
 }
 
 class { 'casperjs':
-  url     => 'https://github.com/n1k0/casperjs/tarball/1.0.2',
-  output  => 'casperjs-1.0.2.tar.gz',
+  url     => "https://github.com/n1k0/casperjs/tarball/${casperjsVersion}",
+  output  => "casperjs-${casperjsVersion}.tar.gz",
   creates => '/usr/local/casperjs'
 }
 
@@ -421,10 +416,9 @@ package { 'icinga2-ido-mysql':
 
 exec { 'populate-icinga2-mysql-db':
   unless  => 'mysql -uicinga2 -picinga2 icinga2 -e "SELECT * FROM icinga_dbversion;" &> /dev/null',
-  command => "mysql -uroot icinga2 < /usr/share/doc/icinga2-ido-mysql-$icinga2Version/schema/mysql.sql",
+  command => 'mysql -uroot icinga2 < /usr/share/icinga2-ido-mysql/schema/mysql.sql',
   require => [ Exec['create-mysql-icinga2-db'], Package['icinga2-ido-mysql'] ]
 }
-
 
 file { '/etc/icinga2/features-available/ido-mysql.conf':
   source  => 'puppet:////vagrant/.vagrant-puppet/files/etc/icinga2/features-available/ido-mysql.conf',
@@ -574,7 +568,7 @@ populate_monitoring_test_config { ['commands', 'contacts', 'dependencies',
 }
 
 define populate_monitoring_test_config_plugins {
-  file { "/usr/lib64/nagios/plugins/libexec/${name}":
+  file { "/usr/lib64/nagios/plugins/${name}":
     owner   => 'icinga',
     group   => 'icinga',
     source  => "/usr/local/share/misc/monitoring_test_config/plugins/${name}",

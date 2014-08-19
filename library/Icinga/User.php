@@ -59,6 +59,18 @@ class User
     protected $additionalInformation = array();
 
     /**
+     * Information if the user is external authenticated
+     *
+     * Keys:
+     *
+     * 0: origin username
+     * 1: origin field name
+     *
+     * @var array
+     */
+    protected $remoteUserInformation = array();
+
+    /**
      * Set of permissions
      *
      * @var array
@@ -400,5 +412,36 @@ class User
     public function clearMessages()
     {
         $this->messages = null;
+    }
+
+    /**
+     * Set additional remote user information
+     *
+     * @param stirng    $username
+     * @param string    $field
+     */
+    public function setRemoteUserInformation($username, $field)
+    {
+        $this->remoteUserInformation = array($username, $field);
+    }
+
+    /**
+     * Get additional remote user information
+     *
+     * @return array
+     */
+    public function getRemoteUserInformation()
+    {
+        return $this->remoteUserInformation;
+    }
+
+    /**
+     * Return true if user has remote user information set
+     *
+     * @return bool
+     */
+    public function isRemoteUser()
+    {
+        return (count($this->remoteUserInformation)) ? true : false;
     }
 }

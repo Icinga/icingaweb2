@@ -250,14 +250,24 @@
             var icinga = this.icinga;
             var redirect = req.getResponseHeader('X-Icinga-Redirect');
             if (! redirect) return false;
+            redirect = decodeURIComponent(redirect);
+            if (redirect.match(/__SELF__/)) {
+                redirect = redirect.replace(/__SELF__/, encodeURIComponent(document.location.pathname + document.location.search + document.location.hash));
+            }
             icinga.logger.debug(
                 'Got redirect for ', req.$target, ', URL was ' + redirect
             );
-            redirect = decodeURIComponent(redirect);
 
             if (req.getResponseHeader('X-Icinga-Rerender-Layout')) {
+                var parts = redirect.split(/#!/);
+                redirect = parts.shift();
                 var redirectionUrl = this.addUrlFlag(redirect, 'renderLayout');
-                this.loadUrl(redirectionUrl, $('#layout')).url = redirect;
+                var r = this.loadUrl(redirectionUrl, $('#layout'));
+                r.url = redirect;
+                if (parts.length) {
+                    r.loadNext = parts;
+                }
+
             } else {
                 if (req.$target.attr('id') === 'col2') { // TODO: multicol
                     if ($('#col1').data('icingaUrl') === redirect) {
@@ -556,6 +566,17 @@
             req.$target.data('lastUpdate', (new Date()).getTime());
             delete this.requests[req.$target.attr('id')];
             this.icinga.ui.fadeNotificationsAway();
+
+
+            if (typeof req.loadNext !== 'undefined') {
+                if ($('#col2').length) {
+                    this.loadUrl(req.loadNext[0], $('#col2'));
+                    this.icinga.ui.layout2col();
+                } else {
+                  this.icinga.logger.error('Failed to load URL for #col2', req.loadNext);
+                }
+            }
+
             this.icinga.ui.refreshDebug();
         },
 

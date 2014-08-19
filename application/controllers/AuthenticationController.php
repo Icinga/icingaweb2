@@ -14,6 +14,7 @@ use Icinga\Exception\AuthenticationException;
 use Icinga\Exception\NotReadableError;
 use Icinga\Exception\ConfigurationError;
 use Icinga\User;
+use Icinga\Web\Session;
 use Icinga\Web\Url;
 
 /**
@@ -34,12 +35,17 @@ class AuthenticationController extends ActionController
     public function loginAction()
     {
         $auth = $this->Auth();
-        $this->view->form = new LoginForm();
-        $this->view->form->setRequest($this->_request);
+        $this->view->form = $form = new LoginForm();
+        $form->setRequest($this->_request);
         $this->view->title = $this->translate('Icingaweb Login');
 
         try {
-            $redirectUrl = Url::fromPath($this->params->get('redirect', 'dashboard'));
+            $redirectUrl = $this->view->form->getValue('redirect');
+            if ($redirectUrl) {
+                $redirectUrl = Url::fromPath($redirectUrl);
+            } else {
+                $redirectUrl = Url::fromPath('dashboard');
+            }
 
             if ($auth->isAuthenticated()) {
                 $this->rerenderLayout()->redirectNow($redirectUrl);
@@ -71,11 +77,19 @@ class AuthenticationController extends ActionController
                         }
                     }
                 }
-            } elseif ($this->view->form->isSubmittedAndValid()) {
-                $user = new User($this->view->form->getValue('username'));
-                $password = $this->view->form->getValue('password');
+            } elseif ($form->isSubmittedAndValid()) {
+                $user = new User($form->getValue('username'));
+                $password = $form->getValue('password');
                 $backendsTried = 0;
                 $backendsWithError = 0;
+
+                $redirectUrl = $form->getValue('redirect');
+
+                if ($redirectUrl) {
+                    $redirectUrl = Url::fromPath($redirectUrl);
+                } else {
+                    $redirectUrl = Url::fromPath('dashboard');
+                }
 
                 foreach ($chain as $backend) {
                     if ($backend instanceof AutoLoginBackend) {
@@ -111,14 +125,14 @@ class AuthenticationController extends ActionController
                     );
                 }
                 if ($backendsWithError) {
-                    $this->view->form->addNote(
+                    $form->addNote(
                         $this->translate(
                             'Note that not all authentication backends are available for authentication because they'
                             . ' have errors. Please check the system log or Icinga Web 2 log for more information'
                         )
                     );
                 }
-                $this->view->form->getElement('password')->addError($this->translate('Incorrect username or password'));
+                $form->getElement('password')->addError($this->translate('Incorrect username or password'));
             }
         } catch (Exception $e) {
             $this->view->errorInfo = $e->getMessage();
@@ -131,9 +145,10 @@ class AuthenticationController extends ActionController
     public function logoutAction()
     {
         $auth = $this->Auth();
+        $isRemoteUser = $auth->getUser()->isRemoteUser();
         $auth->removeAuthorization();
 
-        if ($auth->isAuthenticatedFromRemoteUser()) {
+        if ($isRemoteUser === true) {
             $this->_helper->layout->setLayout('login');
             $this->_response->setHttpResponseCode(401);
         } else {

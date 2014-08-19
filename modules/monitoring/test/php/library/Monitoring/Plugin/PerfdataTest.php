@@ -347,6 +347,14 @@ class PerfdataTest extends BaseTestCase
             Perfdata::fromString('test=25;;;50;100')->getPercentage(),
             'Perfdata objects do return a percentage though their value is lower than it\'s allowed minimum'
         );
+        $this->assertNull(
+            Perfdata::fromString('test=25;;;0;')->getPercentage(),
+            'Perfdata objects do not ignore empty max values when returning percentages'
+        );
+        $this->assertNull(
+            Perfdata::fromString('test=25;;;0;0')->getPercentage(),
+            'Perfdata objects do not ignore impossible min/max combinations when returning percentages'
+        );
     }
 
     /**

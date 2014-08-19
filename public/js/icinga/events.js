@@ -355,12 +355,20 @@
             $target = self.getLinkTargetFor($form);
 
             if (method === 'GET') {
-                url = icinga.utils.addUrlParams(url, $form.serializeObject());
+                var dataObj = $form.serializeObject();
+
+                if (typeof autosubmit === 'undefined' || ! autosubmit) {
+                    if ($button.length && $button.attr('name') !== 'undefined') {
+                        dataObj[$button.attr('name')] = $button.attr('value');
+                    }
+                }
+
+                url = icinga.utils.addUrlParams(url, dataObj);
             } else {
                 data = $form.serializeArray();
 
                 if (typeof autosubmit === 'undefined' || ! autosubmit) {
-                    if ($button.length) {
+                    if ($button.length && $button.attr('name') !== 'undefined') {
                         data.push({
                             name: $button.attr('name'),
                             value: $button.attr('value')

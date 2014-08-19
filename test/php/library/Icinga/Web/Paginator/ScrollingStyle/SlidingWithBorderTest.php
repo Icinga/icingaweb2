@@ -19,8 +19,8 @@ class SlidingwithborderTest extends BaseTestCase
 
         $pages = $scrollingStyle->getPages($paginator);
         $this->assertInternalType('array', $pages);
-        $this->assertCount(13, $pages);
-        $this->assertEquals('...', $pages[11]);
+        $this->assertCount(10, $pages);
+        $this->assertEquals('...', $pages[8]);
     }
 
     public function testGetPages3()
@@ -31,9 +31,9 @@ class SlidingwithborderTest extends BaseTestCase
 
         $pages = $scrollingStyle->getPages($paginator);
         $this->assertInternalType('array', $pages);
-        $this->assertCount(16, $pages);
+        $this->assertCount(10, $pages);
         $this->assertEquals('...', $pages[3]);
-        $this->assertEquals('...', $pages[14]);
+        $this->assertEquals('...', $pages[12]);
     }
 
     protected function getPaginatorAdapter()

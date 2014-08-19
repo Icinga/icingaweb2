@@ -115,7 +115,7 @@ class Translator
      */
     public static function getAvailableLocaleCodes()
     {
-        $codes = array();
+        $codes = array(static::DEFAULT_LOCALE);
         foreach (array_values(self::$knownDomains) as $directory) {
             $dh = opendir($directory);
             while (false !== ($name = readdir($dh))) {

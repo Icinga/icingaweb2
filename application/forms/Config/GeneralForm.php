@@ -93,7 +93,6 @@ class GeneralForm extends Form
         foreach (Translator::getAvailableLocaleCodes() as $language) {
             $languages[$language] = $language;
         }
-        $languages[Translator::DEFAULT_LOCALE] = Translator::DEFAULT_LOCALE;
 
         $this->addElement(
             'select',
