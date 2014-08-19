@@ -44,13 +44,13 @@ class Doc_ModuleController extends DocController
         $moduleManager = Icinga::app()->getModuleManager();
         if (! $moduleManager->hasInstalled($moduleName)) {
             throw new Zend_Controller_Action_Exception(
-                $this->translate('Module') . ' \'' . $moduleName . '\' ' . $this->translate('is not installed'),
+                $this->translate(sprintf('Module \'%s\' is not installed', $moduleName)),
                 404
             );
         }
         if (! $moduleManager->hasEnabled($moduleName)) {
             throw new Zend_Controller_Action_Exception(
-                $this->translate('Module') . ' \'' . $moduleName . '\' ' . $this->translate('is not enabled'),
+                $this->translate(sprintf('Module \'%s\' is not enabled', $moduleName)),
                 404
             );
         }

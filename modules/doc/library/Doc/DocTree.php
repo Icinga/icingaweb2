@@ -57,7 +57,7 @@ class DocTree extends Node
         }
         if (! isset($this->nodes[$parentId])) {
             throw new LogicException(
-                sprintf('Can\'t add child node: there\'s no parent node having the id \'%s\'', $parentId)
+                mt('doc', sprintf('Can\'t add child node: there\'s no parent node having the id \'%s\'', $parentId))
             );
         }
         $this->nodes[$childId] = $this->nodes[$parentId]->appendChild($child);
