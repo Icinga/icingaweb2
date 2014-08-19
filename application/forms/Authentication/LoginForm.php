@@ -17,7 +17,7 @@ class LoginForm extends Form
      */
     protected function create()
     {
-        $url = Url::fromRequest();
+        $url = Url::fromRequest()->without('renderLayout');
         
         $this->setName('form_login');
         $this->addElement('text', 'username', array(
