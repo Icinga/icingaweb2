@@ -1,18 +1,18 @@
 <?php
 // {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}
 
 namespace Icinga\Module\Doc;
 
 use RecursiveFilterIterator;
 
 /**
- * Recursive iterator over Markdown files
+ * Recursive iterator over non-empty files
  */
-class MarkdownFileIterator extends RecursiveFilterIterator
+class NonEmptyFileIterator extends RecursiveFilterIterator
 {
     /**
-     * Accept files with '.md' suffix
+     * Accept non-empty files
      *
      * @return bool Whether the current element of the iterator is acceptable
      *              through this filter
@@ -21,11 +21,11 @@ class MarkdownFileIterator extends RecursiveFilterIterator
     {
         $current = $this->getInnerIterator()->current();
         /* @var $current \SplFileInfo */
-        if (! $current->isFile()) {
+        if (! $current->isFile()
+            || $current->getSize() === 0
+        ) {
             return false;
         }
-        $filename = $current->getFilename();
-        $sfx = substr($filename, -3);
-        return $sfx === false ? false : strtolower($sfx) === '.md';
+        return true;
     }
 }

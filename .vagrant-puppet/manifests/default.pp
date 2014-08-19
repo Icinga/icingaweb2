@@ -786,3 +786,15 @@ file { '/etc/bash_completion.d/icingacli':
    require   => Exec['install bash-completion']
 }
 
+file { '/etc/icingaweb/modules/doc/':
+  ensure    => 'directory',
+  owner     => 'apache',
+  group     => 'apache'
+}
+
+file { '/etc/icingaweb/modules/doc/menu.ini':
+  source    => 'puppet:////vagrant/.vagrant-puppet/files/etc/icingaweb/modules/doc/menu.ini',
+  owner     => 'apache',
+  group     => 'apache',
+}
+
