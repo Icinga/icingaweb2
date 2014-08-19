@@ -216,7 +216,7 @@ class Monitoring_ConfigController extends ModuleActionController
     /**
      * Display a form to remove the instance identified by the 'instance' parameter
      */
-    private function writeConfiguration($config, $file)
+    private function writeConfiguration($config, $file = null)
     {
         $target = $this->Config($file)->getConfigFile();
         $writer = new PreservingIniWriter(array('filename' => $target, 'config' => $config));
