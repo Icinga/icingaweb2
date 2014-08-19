@@ -256,7 +256,7 @@ class UrlParams
                 foreach ($this->index[$p] as $key) {
                     unset($this->params[$key]);
                 }
-                $this->changed = true;
+                $changed = true;
             }
         }
 
