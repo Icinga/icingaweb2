@@ -127,10 +127,6 @@ class Url
         $baseUrl = $request->getBaseUrl();
         $urlObject->setBaseUrl($baseUrl);
 
-        // Fetch fragment manually and remove it from the url, to 'help' the parse_url() function
-        // parsing the url properly. Otherwise calling the function with a fragment, but without a
-        // query will cause unpredictable behaviour.
-        $fragment = self::stripUrlFragment($url);
         $urlParts = parse_url($url);
         if (isset($urlParts['path'])) {
             if ($baseUrl !== '' && strpos($urlParts['path'], $baseUrl) === 0) {
@@ -144,27 +140,12 @@ class Url
             $params = UrlParams::fromQueryString($urlParts['query'])->mergeValues($params);
         }
 
-        if ($fragment) {
-            $urlObject->setAnchor($fragment);
+        if (isset($urlParts['fragment'])) {
+            $urlObject->setAnchor($urlParts['fragment']);
         }
 
         $urlObject->setParams($params);
         return $urlObject;
-    }
-
-    /**
-     * Remove the fragment-part of a given url and return it
-     *
-     * @param   string  $url    The url to strip its fragment from
-     *
-     * @return  null|string     The stripped fragment, without the '#'
-     */
-    protected static function stripUrlFragment(&$url)
-    {
-        if (preg_match('@#(.*)$@', $url, $matches)) {
-            $url = str_replace('#' . $matches[1], '', $url);
-            return $matches[1];
-        }
     }
 
     /**
