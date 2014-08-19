@@ -20,6 +20,7 @@ use Icinga\Module\Monitoring\DataView\Comment;
 use Icinga\Module\Monitoring\DataView\Servicegroup;
 use Icinga\Module\Monitoring\DataView\Customvar;
 use Icinga\Web\UrlParams;
+use Icinga\Application\Config;
 
 
 abstract class AbstractObject
@@ -120,6 +121,17 @@ abstract class AbstractObject
 
     public function fetchCustomvars()
     {
+        $monitoringSecurity = Config::module('monitoring')->get('security')->toArray();
+        $customvars = array();
+        foreach (explode(',', $monitoringSecurity['protected_customvars']) as $customvar) {
+            $nonWildcards = array();
+            foreach (explode('*', $customvar) as $nonWildcard) {
+                $nonWildcards[] = preg_quote($nonWildcard, '/');
+            }
+            $customvars[] = implode('.*', $nonWildcards);
+        }
+        $customvars = '/^(' . implode('|', $customvars) . ')$/i';
+
         $query = Customvar::fromParams(array('backend' => null), array(
                 'varname',
                 'varvalue'
@@ -136,6 +148,12 @@ abstract class AbstractObject
         }
 
         $this->customvars = $query->getQuery()->fetchPairs();
+        foreach ($this->customvars as $name => &$value) {
+            if (preg_match($customvars, ucwords(str_replace('_', ' ', strtolower($name))))) {
+                $value = '***';
+            }
+        }
+
         return $this;
     }
 
