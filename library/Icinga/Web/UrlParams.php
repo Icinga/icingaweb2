@@ -114,6 +114,18 @@ class UrlParams
         return $ret;
     }
 
+    public function addEncoded($param, $value = true)
+    {
+        $this->params[] = array($param, $this->cleanupValue($value));
+        $this->indexLastOne();
+        return $this;
+    }
+
+    protected function urlEncode($value)
+    {
+        return rawurlencode((string) $value);
+    }
+
     /**
      * Add the given parameter with the given value
      *
@@ -127,9 +139,7 @@ class UrlParams
      */
     public function add($param, $value = true)
     {
-        $this->params[] = array($param, $this->cleanupValue($value));
-        $this->indexLastOne();
-        return $this;
+        return $this->addEncoded($this->urlEncode($param), $this->urlEncode($value));
     }
 
     /**
@@ -198,7 +208,7 @@ class UrlParams
      */
     public function unshift($param, $value)
     {
-        array_unshift($this->params, array($param, $this->cleanupValue($value)));
+        array_unshift($this->params, array($this->urlEncode($param), $this->urlEncode($value)));
         $this->reIndexAll();
         return $this;
     }
@@ -224,7 +234,10 @@ class UrlParams
             unset($this->params[$remove]);
         }
 
-        $this->params[$this->index[$param][0]] = array($param, $this->cleanupValue($value));
+        $this->params[$this->index[$param][0]] = array(
+            $this->urlEncode($param),
+            $this->urlEncode($this->cleanupValue($value))
+        );
         $this->reIndexAll();
 
         return $this;        
@@ -303,10 +316,10 @@ class UrlParams
     protected function parseQueryStringPart($part)
     {
         if (strpos($part, '=') === false) {
-            $this->add($part, true);
+            $this->addEncoded($part, true);
         } else {
             list($key, $val) = preg_split('/=/', $part, 2);
-            $this->add($key, $val);
+            $this->addEncoded($key, $val);
         }
     }
 
