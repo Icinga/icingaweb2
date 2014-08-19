@@ -67,7 +67,7 @@ class ConfigController extends BaseConfigController
         $form->setConfiguration(IcingaConfig::app());
         $form->setRequest($this->_request);
         if ($form->isSubmittedAndValid()) {
-            if (!$this->writeConfigFile($form->getConfig(), 'config'))  {
+            if (!$this->writeConfigFile($form->getConfig(), 'config')) {
                 return;
             }
             Notification::success('New configuration has successfully been stored');
@@ -104,6 +104,11 @@ class ConfigController extends BaseConfigController
      */
     public function modulesAction()
     {
+        $this->view->tabs = Widget::create('tabs')->add('modules', array(
+            'title' => 'Modules',
+            'url'   => 'config/modules'
+        ));
+
         $this->view->tabs->activate('modules');
         $this->view->modules = Icinga::app()->getModuleManager()->select()
             ->from('modules')
