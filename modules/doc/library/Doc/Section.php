@@ -37,7 +37,7 @@ class Section implements Identifiable
      *
      * @var bool
      */
-    protected $nofollow;
+    protected $noFollow;
 
     /**
      * The ID of the chapter the section is part of
@@ -59,15 +59,15 @@ class Section implements Identifiable
      * @param string    $id             The ID of the section
      * @param string    $title          The title of the section
      * @param int       $level          The header level
-     * @param bool      $nofollow       Whether to instruct search engines to not index the link to the section
+     * @param bool      $noFollow       Whether to instruct search engines to not index the link to the section
      * @param string    $chapterId      The ID of the chapter the section is part of
      */
-    public function __construct($id, $title, $level, $nofollow, $chapterId)
+    public function __construct($id, $title, $level, $noFollow, $chapterId)
     {
         $this->id = $id;
         $this->title = $title;
         $this->level = $level;
-        $this->nofollow = $nofollow;
+        $this->noFollow = $noFollow;
         $this->chapterId= $chapterId;
     }
 
@@ -106,9 +106,9 @@ class Section implements Identifiable
      *
      * @return bool
      */
-    public function isNofollow()
+    public function isNoFollow()
     {
-        return $this->nofollow;
+        return $this->noFollow;
     }
 
     /**

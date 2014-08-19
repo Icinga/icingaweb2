@@ -143,17 +143,17 @@ class DocParser
                         }
                         $path[] = $title;
                         $id = implode('-', $path);
-                        $nofollow = true;
+                        $noFollow = true;
                     } else {
-                        $nofollow = false;
+                        $noFollow = false;
                     }
                     if ($stack->isEmpty()) {
                         $chapterId = $id;
-                        $section = new Section($id, $title, $level, $nofollow, $chapterId);
+                        $section = new Section($id, $title, $level, $noFollow, $chapterId);
                         $tree->addRoot($section);
                     } else {
                         $chapterId = $stack->bottom()->getId();
-                        $section = new Section($id, $title, $level, $nofollow, $chapterId);
+                        $section = new Section($id, $title, $level, $noFollow, $chapterId);
                         $tree->addChild($section, $stack->top());
                     }
                     $stack->push($section);

@@ -69,7 +69,7 @@ class Callback
         return sprintf(
             '<a %s%shref="%s"',
             strlen($match['attribs']) ? trim($match['attribs']) . ' ' : '',
-            $section->isNofollow() ? 'rel="nofollow" ' : '',
+            $section->isNoFollow() ? 'rel="nofollow" ' : '',
             $url->getAbsoluteUrl()
         );
     }

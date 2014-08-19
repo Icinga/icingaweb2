@@ -96,7 +96,7 @@ class TocRenderer extends Renderer
             $url->setAnchor($this->encodeAnchor($section->getId()));
             $this->content[] = sprintf(
                 '<li><a %shref="%s">%s</a>',
-                $section->isNofollow() ? 'rel="nofollow" ' : '',
+                $section->isNoFollow() ? 'rel="nofollow" ' : '',
                 $url->getAbsoluteUrl(),
                 $view->escape($section->getTitle())
             );
