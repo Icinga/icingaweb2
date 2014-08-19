@@ -23,11 +23,11 @@ class SecurityForm extends Form
     {
         $this->addElement(
             'text',
-            'customvars',
+            'protected_customvars',
             array(
                 'label'     =>  'Protected Custom Variables',
                 'required'  =>  true,
-                'value'     =>  $this->config->customvars
+                'value'     =>  $this->config->protected_customvars
             )
         );
         $this->setSubmitLabel('{{SAVE_ICON}} Save');
@@ -50,7 +50,7 @@ class SecurityForm extends Form
     {
         $values = $this->getValues();
         return new Zend_Config(array(
-            'customvars' => $values['customvars']
+            'protected_customvars' => $values['protected_customvars']
         ));
     }
 }
