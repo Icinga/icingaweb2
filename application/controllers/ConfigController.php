@@ -48,9 +48,6 @@ class ConfigController extends BaseConfigController
         ))->add('logging', array(
             'title' => 'Logging',
             'url'   => 'config/logging'
-        ))->add('modules', array(
-            'title' => 'Modules',
-            'url'   => 'config/modules'
         ));
     }
 
