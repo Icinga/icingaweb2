@@ -352,7 +352,7 @@ class UrlParams
     public static function fromQueryString($queryString = null)
     {
         if ($queryString === null) {
-            $queryString = $_SERVER['QUERY_STRING'];
+            $queryString = isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '';
         }
         $params = new static();
         $params->parseQueryString($queryString);
