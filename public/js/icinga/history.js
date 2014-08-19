@@ -162,11 +162,18 @@
 
                 parts = document.location.hash.split(/#!/);
 
-                if ($('#col2').data('icingaUrl') !== main) {
-                    icinga.loader.loadUrl(
-                        parts[1],
-                        $('#col2')
-                    ).historyTriggered = true;
+                if ($('#layout > #login').length) {
+                    // We are on the login page!
+                    $('#login form #redirect').val(
+                        $('#login form #redirect').val() + '#!' + parts[1]
+                    );
+                } else {
+                    if ($('#col2').data('icingaUrl') !== main) {
+                        icinga.loader.loadUrl(
+                            parts[1],
+                            $('#col2')
+                        ).historyTriggered = true;
+                    }
                 }
 
                 // TODO: Replace with dynamic columns
