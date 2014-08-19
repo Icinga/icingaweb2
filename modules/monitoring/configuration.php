@@ -12,4 +12,7 @@ $this->provideConfigTab('backends', array(
     'title' => 'Backends',
     'url' => 'config'
 ));
-
+$this->provideConfigTab('security', array(
+    'title' => 'Security',
+    'url' => 'config/security'
+));

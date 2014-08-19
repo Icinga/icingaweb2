@@ -258,4 +258,9 @@ class Monitoring_ConfigController extends ModuleActionController
         $instanceCfg = $this->Config('instances');
         return $instanceCfg && $instanceCfg->get($instance);
     }
+
+    public function securityAction()
+    {
+        $this->view->tabs = $this->Module()->getConfigTabs()->activate('security');
+    }
 }
