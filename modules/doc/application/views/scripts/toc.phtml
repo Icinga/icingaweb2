@@ -1,5 +1,5 @@
 <div class="controls">
-    <h1><?= $docName ?> <?= $this->translate('Documentation'); ?></h1>
+    <h1><?= $this->translate(sprintf('%s Documentation', ucfirst($docName))); ?></h1>
 </div>
 <div class="content toc" data-base-target="_next">
     <?= $tocRenderer->render($this, $this->getHelper('Url')); ?>
