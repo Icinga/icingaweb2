@@ -94,7 +94,6 @@ class Monitoring_ListController extends Controller
             'host_last_check',
             'host_last_state_change' => $stateChangeColumn,
             'host_notifications_enabled',
-            // 'host_unhandled_service_count',
             'host_unhandled_services',
             'host_action_url',
             'host_notes_url',
