@@ -254,18 +254,23 @@ class ActionController extends Zend_Controller_Action
      *
      * @throws  \Exception
      */
-    protected function redirectToLogin($afterLogin = '/dashboard')
+    protected function redirectToLogin($afterLogin = null)
     {
-        if (! $afterLogin instanceof Url) {
-            $afterLogin = Url::fromPath($afterLogin);
+        $redir = null;
+        if ($afterLogin !== null) {
+            if (! $afterLogin instanceof Url) {
+                $afterLogin = Url::fromPath($afterLogin);
+            }
+            if ($this->isXhr()) {
+                $redir = '__SELF__';
+            } else {
+                // TODO: Ignore /?
+                $redir = $afterLogin->getRelativeUrl();
+            }
         }
-        if ($this->isXhr()) {
-            $redir = '__SELF__';
-        } else {
-            // TODO: Ignore /?
-            $redir = $afterLogin->getRelativeUrl();
-        }
+
         $url = Url::fromPath('authentication/login');
+
         if ($redir) {
             $url->setParam('redirect', $redir);
         }
