@@ -30,7 +30,12 @@ class Doc_IcingawebController extends DocController
                 404
             );
         }
-        $this->renderChapter(Icinga::app()->getApplicationDir('/../doc'), $chapterId, 'doc/icingaweb/chapter');
+        $this->renderChapter(
+            Icinga::app()->getApplicationDir('/../doc'),
+            $chapterId,
+            'doc/icingaweb/toc',
+            'doc/icingaweb/chapter'
+        );
     }
 
     /**

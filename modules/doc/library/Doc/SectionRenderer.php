@@ -87,6 +87,8 @@ class SectionRenderer extends Renderer
      */
     protected $docTree;
 
+    protected $tocUrl;
+
     /**
      * The URL to replace links with
      *
@@ -120,12 +122,13 @@ class SectionRenderer extends Renderer
      *
      * @param   DocTree     $docTree        The documentation tree
      * @param   string|null $chapterId      If not null, the chapter ID to filter for
+     * @param   string      $tocUrl
      * @param   string      $url            The URL to replace links with
      * @param   array       $urlParams      Additional URL parameters
      *
      * @throws  ChapterNotFoundException    If the chapter to filter for was not found
      */
-    public function __construct(DocTree $docTree, $chapterId, $url, array $urlParams)
+    public function __construct(DocTree $docTree, $chapterId, $tocUrl, $url, array $urlParams)
     {
         if ($chapterId !== null) {
             $filter = new SectionFilterIterator($docTree, $chapterId);
@@ -142,6 +145,7 @@ class SectionRenderer extends Renderer
             parent::__construct($docTree, RecursiveIteratorIterator::SELF_FIRST);
         }
         $this->docTree = $docTree;
+        $this->tocUrl = $tocUrl;
         $this->url = $url;
         $this->urlParams = array_map(array($this, 'encodeUrlParam'), $urlParams);
         $this->parsedown = Parsedown::instance();
@@ -182,9 +186,11 @@ class SectionRenderer extends Renderer
      *
      * @param   View                    $view
      * @param   Zend_View_Helper_Url    $zendUrlHelper
+     * @param   bool                    $renderNavigation
+     *
      * @return  string
      */
-    public function render(View $view, Zend_View_Helper_Url $zendUrlHelper)
+    public function render(View $view, Zend_View_Helper_Url $zendUrlHelper, $renderNavigation = true)
     {
         $callback = new Callback($this->docTree, $view, $zendUrlHelper, $this->url, $this->urlParams);
         $content = array();
@@ -192,7 +198,7 @@ class SectionRenderer extends Renderer
             $section = $node->getValue();
             /* @var $section \Icinga\Module\Doc\Section */
             $content[] = sprintf(
-                '<a name="%1$s"></a> <h%2$d>%3$s</h%2$d>',
+                '<a name="%1$s"></a><h%2$d>%3$s</h%2$d>',
                 Renderer::encodeAnchor($section->getId()),
                 $section->getLevel(),
                 $view->escape($section->getTitle())
@@ -212,6 +218,73 @@ class SectionRenderer extends Renderer
                 array($callback, 'render'),
                 $html
             );
+        }
+        if ($renderNavigation) {
+            foreach ($this->docTree as $chapter) {
+                if ($chapter->getValue()->getId() === $section->getChapterId()) {
+                    $content[] = '<ul class="navigation">';
+                    $this->docTree->prev();
+                    $prev = $this->docTree->current();
+                    if ($prev !== null) {
+                        $prev = $prev->getValue();
+                        $path = $zendUrlHelper->url(
+                            array_merge(
+                                $this->urlParams,
+                                array(
+                                    'chapterId' => $this->encodeUrlParam($prev->getChapterId())
+                                )
+                            ),
+                            $this->url,
+                            false,
+                            false
+                        );
+                        $url = $view->url($path);
+                        $url->setAnchor($this->encodeAnchor($prev->getId()));
+                        $content[] = sprintf(
+                            '<li><a %shref="%s">%s</a></li>',
+                            $prev->isNoFollow() ? 'rel="nofollow" ' : '',
+                            $url->getAbsoluteUrl(),
+                            $view->escape($prev->getTitle())
+                        );
+                        $this->docTree->next();
+                        $this->docTree->next();
+                    } else {
+                        $this->docTree->rewind();
+                        $this->docTree->next();
+                    }
+                    $url = $view->url($this->tocUrl);
+                    $content[] = sprintf(
+                        '<li><a href="%s">%s</a></li>',
+                        $url->getAbsoluteUrl(),
+                        mt('doc', 'Index')
+                    );
+                    $next = $this->docTree->current();
+                    if ($next !== null) {
+                        $next = $next->getValue();
+                        $path = $zendUrlHelper->url(
+                            array_merge(
+                                $this->urlParams,
+                                array(
+                                    'chapterId' => $this->encodeUrlParam($next->getChapterId())
+                                )
+                            ),
+                            $this->url,
+                            false,
+                            false
+                        );
+                        $url = $view->url($path);
+                        $url->setAnchor($this->encodeAnchor($next->getId()));
+                        $content[] = sprintf(
+                            '<li><a %shref="%s">%s</a></li>',
+                            $next->isNoFollow() ? 'rel="nofollow" ' : '',
+                            $url->getAbsoluteUrl(),
+                            $view->escape($next->getTitle())
+                        );
+                    }
+                    $content[] = '</ul>';
+                    break;
+                }
+            }
         }
         return implode("\n", $content);
     }

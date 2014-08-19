@@ -13,15 +13,17 @@ class DocController extends ModuleActionController
      *
      * @param string    $path           Path to the documentation
      * @param string    $chapterId      ID of the chapter
+     * @param string    $tocUrl
      * @param string    $url
      * @param array     $urlParams
      */
-    protected function renderChapter($path, $chapterId, $url, array $urlParams = array())
+    protected function renderChapter($path, $chapterId, $tocUrl, $url, array $urlParams = array())
     {
         $parser = new DocParser($path);
         $this->view->sectionRenderer = new SectionRenderer(
             $parser->getDocTree(),
             SectionRenderer::decodeUrlParam($chapterId),
+            $tocUrl,
             $url,
             $urlParams
         );
@@ -59,6 +61,7 @@ class DocController extends ModuleActionController
         $this->view->tocRenderer = new TocRenderer($docTree, $url, $urlParams);
         $this->view->sectionRenderer = new SectionRenderer(
             $docTree,
+            null,
             null,
             $url,
             $urlParams

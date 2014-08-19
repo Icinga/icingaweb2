@@ -9,7 +9,7 @@ use Zend_View_Helper_Url;
 use Icinga\Web\View;
 
 /**
- * toc renderer
+ * TOC renderer
  */
 class TocRenderer extends Renderer
 {

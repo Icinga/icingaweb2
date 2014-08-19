@@ -102,6 +102,7 @@ class Doc_ModuleController extends DocController
             $this->renderChapter(
                 $moduleManager->getModuleDir($moduleName, '/doc'),
                 $chapterId,
+                $this->_helper->url->url(array('moduleName' => $moduleName), 'doc/module/toc'),
                 'doc/module/chapter',
                 array('moduleName' => $moduleName)
             );
