@@ -134,6 +134,7 @@
 
             // Select a table row
             $(document).on('click', 'table.multiselect tr[href]', { self: this }, this.rowSelected);
+            $(document).on('click', 'table.multiselect .select-click', { self: this }, this.rowSelected);
 
             $(document).on('click', 'button', { self: this }, this.submitForm);
 
@@ -400,7 +401,7 @@
         rowSelected: function(event) {
             var self     = event.data.self;
             var icinga   = self.icinga;
-            var $tr      = $(this);
+            var $tr      = $(this).closest('tr');
             var $table   = $tr.closest('table.multiselect');
             var data     = self.icinga.ui.getSelectionKeys($table);
             var url      = $table.data('icinga-multiselect-url');

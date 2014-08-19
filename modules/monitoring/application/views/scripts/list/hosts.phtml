@@ -109,7 +109,7 @@ if ($hosts->count() === 0) {
                     <?php endif; ?>
                     <?= implode(' ', $icons) ?>
                 <?php endif ?>
-                <a href="<?= $this->compact ? $hostLink : $this->href(
+                <a class="select-click" href="<?= $this->compact ? $hostLink : $this->href(
                     'monitoring/show/host',
                     array('host' => $host->host_name)
                 ) ?>"><?= $host->host_name ?></a>
