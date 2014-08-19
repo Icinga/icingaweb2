@@ -315,8 +315,11 @@ class UrlParams
         return $this->params;
     }
 
-    public function __toString()
+    public function toString($separator = null)
     {
+        if ($separator === null) {
+            $separator = $this->separator;
+        }
         $parts = array();
         foreach ($this->params as $p) {
             if ($p[1] === true) {
@@ -325,7 +328,12 @@ class UrlParams
                 $parts[] = $p[0] . '=' . $p[1];
             }
         }
-        return implode($this->separator, $parts);
+        return implode($separator, $parts);
+    }
+
+    public function __toString()
+    {
+        return $this->toString();
     }
 
     public static function fromQueryString($queryString = null)

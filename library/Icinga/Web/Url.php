@@ -207,12 +207,12 @@ class Url
      *
      * @return  string
      */
-    public function getRelativeUrl()
+    public function getRelativeUrl($separator = '&')
     {
         if ($this->params->isEmpty()) {
             return $this->path . $this->anchor;
         } else {
-            return $this->path . '?' . $this->params->setSeparator('&amp;') . $this->anchor;
+            return $this->path . '?' . $this->params->toString($separator) . $this->anchor;
         }
     }
 
@@ -232,9 +232,9 @@ class Url
      *
      * @return  string
      */
-    public function getAbsoluteUrl()
+    public function getAbsoluteUrl($separator = '&')
     {
-        return $this->baseUrl . ($this->baseUrl !== '/' ? '/' : '') . $this->getRelativeUrl();
+        return $this->baseUrl . ($this->baseUrl !== '/' ? '/' : '') . $this->getRelativeUrl($separator);
     }
 
     /**
@@ -416,6 +416,6 @@ class Url
      */
     public function __toString()
     {
-        return $this->getAbsoluteUrl();
+        return $this->getAbsoluteUrl('&amp;');
     }
 }
