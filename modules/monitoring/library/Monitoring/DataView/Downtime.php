@@ -30,6 +30,8 @@ class Downtime extends DataView
             'downtime_internal_id',
             'downtime_host',
             'downtime_service',
+            'downtime_host_state',
+            'downtiem_service_state'
         );
     }
 
