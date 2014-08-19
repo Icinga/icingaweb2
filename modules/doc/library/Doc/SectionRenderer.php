@@ -222,7 +222,7 @@ class SectionRenderer extends Renderer
         if ($renderNavigation) {
             foreach ($this->docTree as $chapter) {
                 if ($chapter->getValue()->getId() === $section->getChapterId()) {
-                    $content[] = '<ul class="navigation">';
+                    $navigation = array('<ul class="navigation">');
                     $this->docTree->prev();
                     $prev = $this->docTree->current();
                     if ($prev !== null) {
@@ -240,8 +240,8 @@ class SectionRenderer extends Renderer
                         );
                         $url = $view->url($path);
                         $url->setAnchor($this->encodeAnchor($prev->getId()));
-                        $content[] = sprintf(
-                            '<li><a %shref="%s">%s</a></li>',
+                        $navigation[] = sprintf(
+                            '<li class="prev"><a %shref="%s">%s</a></li>',
                             $prev->isNoFollow() ? 'rel="nofollow" ' : '',
                             $url->getAbsoluteUrl(),
                             $view->escape($prev->getTitle())
@@ -253,7 +253,7 @@ class SectionRenderer extends Renderer
                         $this->docTree->next();
                     }
                     $url = $view->url($this->tocUrl);
-                    $content[] = sprintf(
+                    $navigation[] = sprintf(
                         '<li><a href="%s">%s</a></li>',
                         $url->getAbsoluteUrl(),
                         mt('doc', 'Index')
@@ -274,14 +274,15 @@ class SectionRenderer extends Renderer
                         );
                         $url = $view->url($path);
                         $url->setAnchor($this->encodeAnchor($next->getId()));
-                        $content[] = sprintf(
-                            '<li><a %shref="%s">%s</a></li>',
+                        $navigation[] = sprintf(
+                            '<li class="next"><a %shref="%s">%s</a></li>',
                             $next->isNoFollow() ? 'rel="nofollow" ' : '',
                             $url->getAbsoluteUrl(),
                             $view->escape($next->getTitle())
                         );
                     }
-                    $content[] = '</ul>';
+                    $navigation[] = '</ul>';
+                    $content = array_merge($navigation, $content, $navigation);
                     break;
                 }
             }

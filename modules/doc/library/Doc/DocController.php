@@ -27,6 +27,7 @@ class DocController extends ModuleActionController
             $url,
             $urlParams
         );
+        $this->view->title = $chapterId;
         $this->_helper->viewRenderer('chapter', null, true);
     }
 
@@ -42,7 +43,9 @@ class DocController extends ModuleActionController
     {
         $parser = new DocParser($path);
         $this->view->tocRenderer = new TocRenderer($parser->getDocTree(), $url, $urlParams);
+        $name = ucfirst($name);
         $this->view->docName = $name;
+        $this->view->title = $this->translate(sprintf('%s Documentation', $name));
         $this->_helper->viewRenderer('toc', null, true);
     }
 
