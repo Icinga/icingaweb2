@@ -57,7 +57,7 @@ class Callback
             array_merge(
                 $this->urlParams,
                 array(
-                    'chapterTitle' => SectionRenderer::encodeUrlParam($section->getChapterTitle())
+                    'chapterId' => SectionRenderer::encodeUrlParam($section->getChapterId())
                 )
             ),
             $this->url,
@@ -119,19 +119,19 @@ class SectionRenderer extends Renderer
      * Create a new section renderer
      *
      * @param   DocTree     $docTree        The documentation tree
-     * @param   string|null $chapterTitle   If not null, the chapter title to filter for
+     * @param   string|null $chapterId      If not null, the chapter ID to filter for
      * @param   string      $url            The URL to replace links with
      * @param   array       $urlParams      Additional URL parameters
      *
      * @throws  ChapterNotFoundException    If the chapter to filter for was not found
      */
-    public function __construct(DocTree $docTree, $chapterTitle, $url, array $urlParams)
+    public function __construct(DocTree $docTree, $chapterId, $url, array $urlParams)
     {
-        if ($chapterTitle !== null) {
-            $filter = new SectionFilterIterator($docTree, $chapterTitle);
+        if ($chapterId !== null) {
+            $filter = new SectionFilterIterator($docTree, $chapterId);
             if ($filter->count() === 0) {
                 throw new ChapterNotFoundException(
-                    mt('doc', 'Chapter') . ' \'' . $chapterTitle . '\' ' . mt('doc', 'not found')
+                    mt('doc', 'Chapter') . ' \'' . $chapterId . '\' ' . mt('doc', 'not found')
                 );
             }
             parent::__construct(

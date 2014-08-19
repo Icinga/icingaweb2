@@ -40,11 +40,11 @@ class Section implements Identifiable
     protected $nofollow;
 
     /**
-     * The title of the chapter the section is part of
+     * The ID of the chapter the section is part of
      *
      * @var string
      */
-    protected $chapterTitle;
+    protected $chapterId;
 
     /**
      * The content of the section
@@ -60,15 +60,15 @@ class Section implements Identifiable
      * @param string    $title          The title of the section
      * @param int       $level          The header level
      * @param bool      $nofollow       Whether to instruct search engines to not index the link to the section
-     * @param string    $chapterTitle   The title of the chapter the section is part of
+     * @param string    $chapterId      The ID of the chapter the section is part of
      */
-    public function __construct($id, $title, $level, $nofollow, $chapterTitle)
+    public function __construct($id, $title, $level, $nofollow, $chapterId)
     {
         $this->id = $id;
         $this->title = $title;
         $this->level = $level;
         $this->nofollow = $nofollow;
-        $this->chapterTitle= $chapterTitle;
+        $this->chapterId= $chapterId;
     }
 
     /**
@@ -112,13 +112,13 @@ class Section implements Identifiable
     }
 
     /**
-     * The title of the chapter the section is part of
+     * The ID of the chapter the section is part of
      *
      * @return string
      */
-    public function getChapterTitle()
+    public function getChapterId()
     {
-        return $this->chapterTitle;
+        return $this->chapterId;
     }
 
     /**

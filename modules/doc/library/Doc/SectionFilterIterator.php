@@ -14,22 +14,22 @@ use Icinga\Data\Tree\NodeInterface;
 class SectionFilterIterator extends RecursiveFilterIterator implements Countable
 {
     /**
-     * The chapter title to filter for
+     * The chapter ID to filter for
      *
      * @var string
      */
-    protected $chapterTitle;
+    protected $chapterId;
 
     /**
      * Create a new SectionFilterIterator
      *
      * @param NodeInterface $node           Node
-     * @param string        $chapterTitle   The chapter title to filter for
+     * @param string        $chapterId      The chapter ID to filter for
      */
-    public function __construct(NodeInterface $node, $chapterTitle)
+    public function __construct(NodeInterface $node, $chapterId)
     {
         parent::__construct($node);
-        $this->chapterTitle = $chapterTitle;
+        $this->chapterId = $chapterId;
     }
 
     /**
@@ -42,7 +42,7 @@ class SectionFilterIterator extends RecursiveFilterIterator implements Countable
     {
         $section = $this->getInnerIterator()->current()->getValue();
         /* @var $section \Icinga\Module\Doc\Section */
-        if ($section->getChapterTitle() === $this->chapterTitle) {
+        if ($section->getChapterId() === $this->chapterId) {
             return true;
         }
         return false;
@@ -54,7 +54,7 @@ class SectionFilterIterator extends RecursiveFilterIterator implements Countable
      */
     public function getChildren()
     {
-        return new static($this->getInnerIterator()->getChildren(), $this->chapterTitle);
+        return new static($this->getInnerIterator()->getChildren(), $this->chapterId);
     }
 
     /**

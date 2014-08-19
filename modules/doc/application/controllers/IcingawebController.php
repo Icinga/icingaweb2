@@ -19,18 +19,18 @@ class Doc_IcingawebController extends DocController
     /**
      * View a chapter of Icinga Web 2's documentation
      *
-     * @throws Zend_Controller_Action_Exception
+     * @throws Zend_Controller_Action_Exception If the required parameter 'chapterId' is missing
      */
     public function chapterAction()
     {
-        $chapterTitle = $this->getParam('chapterTitle');
-        if ($chapterTitle === null) {
+        $chapterId = $this->getParam('chapterId');
+        if ($chapterId === null) {
             throw new Zend_Controller_Action_Exception(
-                $this->translate('Missing parameter \'chapterTitle\''),
+                $this->translate('Missing parameter \'chapterId\''),
                 404
             );
         }
-        $this->renderChapter(Icinga::app()->getApplicationDir('/../doc'), $chapterTitle, 'doc/icingaweb/chapter');
+        $this->renderChapter(Icinga::app()->getApplicationDir('/../doc'), $chapterId, 'doc/icingaweb/chapter');
     }
 
     /**

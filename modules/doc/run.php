@@ -8,7 +8,7 @@ if (Icinga::app()->isCli()) {
 }
 
 $docModuleChapter = new Zend_Controller_Router_Route(
-    'doc/module/:moduleName/chapter/:chapterTitle',
+    'doc/module/:moduleName/chapter/:chapterId',
     array(
         'controller'    => 'module',
         'action'        => 'chapter',
@@ -17,7 +17,7 @@ $docModuleChapter = new Zend_Controller_Router_Route(
 );
 
 $docIcingaWebChapter = new Zend_Controller_Router_Route(
-    'doc/icingaweb/chapter/:chapterTitle',
+    'doc/icingaweb/chapter/:chapterId',
     array(
         'controller'    => 'icingaweb',
         'action'        => 'chapter',
