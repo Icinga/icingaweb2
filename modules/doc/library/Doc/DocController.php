@@ -45,7 +45,7 @@ class DocController extends ModuleActionController
         $this->view->tocRenderer = new TocRenderer($parser->getDocTree(), $url, $urlParams);
         $name = ucfirst($name);
         $this->view->docName = $name;
-        $this->view->title = $this->translate(sprintf('%s Documentation', $name));
+        $this->view->title = sprintf($this->translate('%s Documentation'), $name);
         $this->_helper->viewRenderer('toc', null, true);
     }
 

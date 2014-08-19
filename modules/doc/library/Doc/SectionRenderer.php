@@ -134,7 +134,7 @@ class SectionRenderer extends Renderer
             $filter = new SectionFilterIterator($docTree, $chapterId);
             if ($filter->count() === 0) {
                 throw new ChapterNotFoundException(
-                    mt('doc', sprintf('Chapter \'%s\' not found', $chapterId))
+                    sprintf(mt('doc', 'Chapter \'%s\' not found'), $chapterId)
                 );
             }
             parent::__construct(

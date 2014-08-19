@@ -41,23 +41,23 @@ class DocParser
     {
         if (! is_dir($path)) {
             throw new DocException(
-                mt('doc', sprintf('Documentation directory \'%s\' does not exist', $path))
+                sprintf(mt('doc', 'Documentation directory \'%s\' does not exist'), $path)
             );
         }
         if (! is_readable($path)) {
             throw new DocException(
-                mt('doc', sprintf('Documentation directory \'%s\' is not readable', $path))
+                sprintf(mt('doc', 'Documentation directory \'%s\' is not readable'), $path)
             );
         }
         $docIterator = new DocIterator($path);
         if ($docIterator->count() === 0) {
             throw new DocEmptyException(
-                mt(
-                    'doc',
-                    sprintf(
-                        'Documentation directory \'%s\' does not contain any non-empty Markdown file (\'.md\' suffix)',
-                        $path
-                    )
+                sprintf(
+                    mt(
+                        'doc',
+                        'Documentation directory \'%s\' does not contain any non-empty Markdown file (\'.md\' suffix)'
+                    ),
+                    $path
                 )
             );
         }
