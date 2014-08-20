@@ -710,7 +710,7 @@ file { '/etc/icingaweb/config.ini':
 }
 
 file { '/etc/icingaweb/menu.ini':
-  source    => 'puppet:////vagrant/.vagrant-puppet/files/etc/icingaweb/menu.ini',
+  source    => 'puppet:////vagrant/config/menu.ini',
   owner     => 'apache',
   group     => 'apache',
   # replace   => false,
@@ -736,7 +736,7 @@ file { '/etc/icingaweb/modules/monitoring/backends.ini':
 }
 
 file { '/etc/icingaweb/modules/monitoring/config.ini':
-  source    => 'puppet:////vagrant/.vagrant-puppet/files/etc/icingaweb/modules/monitoring/config.ini',
+  source    => 'puppet:////vagrant/config/modules/monitoring/config.ini',
   owner     => 'apache',
   group     => 'apache',
 }
@@ -748,7 +748,7 @@ file { '/etc/icingaweb/modules/monitoring/instances.ini':
 }
 
 file { '/etc/icingaweb/modules/monitoring/menu.ini':
-  source    => 'puppet:////vagrant/.vagrant-puppet/files/etc/icingaweb/modules/monitoring/menu.ini',
+  source    => 'puppet:////vagrant/config/modules/monitoring/menu.ini',
   owner     => 'apache',
   group     => 'apache',
 }
@@ -760,7 +760,7 @@ file { '/etc/icingaweb/dashboard':
 }
 
 file { '/etc/icingaweb/dashboard/dashboard.ini':
-   source    => 'puppet:////vagrant/.vagrant-puppet/files/etc/icingaweb/dashboard/dashboard.ini',
+   source    => 'puppet:////vagrant/config/dashboard/dashboard.ini',
    owner     => 'apache',
    group     => 'apache',
 }
@@ -799,7 +799,7 @@ file { '/etc/icingaweb/modules/doc/':
 }
 
 file { '/etc/icingaweb/modules/doc/menu.ini':
-  source    => 'puppet:////vagrant/.vagrant-puppet/files/etc/icingaweb/modules/doc/menu.ini',
+  source    => 'puppet:////vagrant/config/modules/doc/menu.ini',
   owner     => 'apache',
   group     => 'apache',
 }
