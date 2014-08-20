@@ -21,13 +21,14 @@ class SecurityForm extends Form
      */
     public function create()
     {
+        $default = '*pw*,*pass*,community';
         $this->addElement(
             'text',
             'protected_customvars',
             array(
                 'label'     =>  'Protected Custom Variables',
                 'required'  =>  true,
-                'value'     =>  $this->config->protected_customvars,
+                'value'     =>  $this->config ? $this->config->get('protected_customvars', $default) : $default,
                 'helptext'  =>  'Comma separated case insensitive list of protected custom variables.'
                               . ' Use * as a placeholder for zero or more wildcard characters.'
                               . ' Existance of those custom variables will be shown, but their values will be masked.'
