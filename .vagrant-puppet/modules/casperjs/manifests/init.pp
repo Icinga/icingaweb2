@@ -40,7 +40,7 @@ class casperjs(
     require => Class['wget']
   }
 
-  $tld = inline_template('<%= File.basename(output, ".tar.bz2") %>')
+  $tld = inline_template('<%= File.basename(@output, ".tar.bz2") %>')
   $src = "${cwd}/casperjs"
 
   exec { 'extract-casperjs':
