@@ -14,6 +14,7 @@ use Icinga\Module\Monitoring\Form\Config\Backend\EditBackendForm;
 use Icinga\Module\Monitoring\Form\Config\Backend\CreateBackendForm;
 use Icinga\Module\Monitoring\Form\Config\Instance\EditInstanceForm;
 use Icinga\Module\Monitoring\Form\Config\Instance\CreateInstanceForm;
+use Icinga\Module\Monitoring\Form\Config\SecurityForm;
 
 use Icinga\Exception\NotReadableError;
 
@@ -216,7 +217,7 @@ class Monitoring_ConfigController extends ModuleActionController
     /**
      * Display a form to remove the instance identified by the 'instance' parameter
      */
-    private function writeConfiguration($config, $file)
+    private function writeConfiguration($config, $file = null)
     {
         $target = $this->Config($file)->getConfigFile();
         $writer = new PreservingIniWriter(array('filename' => $target, 'config' => $config));
@@ -257,5 +258,26 @@ class Monitoring_ConfigController extends ModuleActionController
     {
         $instanceCfg = $this->Config('instances');
         return $instanceCfg && $instanceCfg->get($instance);
+    }
+
+    public function securityAction()
+    {
+        $this->view->tabs = $this->Module()->getConfigTabs()->activate('security');
+
+        $form = new SecurityForm();
+        $form->setConfiguration($this->Config()->get('security'));
+        $form->setRequest($this->getRequest());
+        if ($form->isSubmittedAndValid()) {
+            $config = $this->Config()->toArray();
+            $config['security'] = $form->getConfig();
+            if ($this->writeConfiguration(new Zend_Config($config))) {
+                Notification::success('Configuration modified successfully');
+                $this->redirectNow('monitoring/config/security');
+            } else {
+                $this->render('show-configuration');
+                return;
+            }
+        }
+        $this->view->form = $form;
     }
 }
