@@ -121,16 +121,22 @@ abstract class AbstractObject
 
     public function fetchCustomvars()
     {
-        $monitoringSecurity = Config::module('monitoring')->get('security')->toArray();
-        $customvars = array();
-        foreach (explode(',', $monitoringSecurity['protected_customvars']) as $customvar) {
-            $nonWildcards = array();
-            foreach (explode('*', $customvar) as $nonWildcard) {
-                $nonWildcards[] = preg_quote($nonWildcard, '/');
+        $blacklist = array();
+        $blacklistPattern = '/^(.*pw.*|.*pass.*|community)$/';
+
+        if ($security = Config::module('monitoring')->get('security')) {
+
+            $blacklistConfig = $security->get('protected_customvars', '');
+
+            foreach (explode(',', $blacklistConfig) as $customvar) {
+                $nonWildcards = array();
+                foreach (explode('*', $customvar) as $nonWildcard) {
+                    $nonWildcards[] = preg_quote($nonWildcard, '/');
+                }
+                $blacklist[] = implode('.*', $nonWildcards);
             }
-            $customvars[] = implode('.*', $nonWildcards);
+            $blacklistPattern = '/^(' . implode('|', $blacklist) . ')$/i';
         }
-        $customvars = '/^(' . implode('|', $customvars) . ')$/i';
 
         $query = Customvar::fromParams(array('backend' => null), array(
                 'varname',
@@ -147,11 +153,13 @@ abstract class AbstractObject
                 ->where('service_description', $this->service_description);
         }
 
-        $this->customvars = $query->getQuery()->fetchPairs();
-        foreach ($this->customvars as $name => &$value) {
-            if (preg_match($customvars, ucwords(str_replace('_', ' ', strtolower($name))))) {
+        $customvars = $query->getQuery()->fetchPairs();
+        foreach ($customvars as $name => &$value) {
+            $name = ucwords(str_replace('_', ' ', strtolower($name)));
+            if ($blacklistPattern && preg_match($blacklistPattern, $name)) {
                 $value = '***';
             }
+            $this->customvars[$name] = $value;
         }
 
         return $this;
