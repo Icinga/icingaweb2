@@ -81,7 +81,7 @@ class Limiter extends AbstractWidget
                     $this->url->setParam('limit', $limit),
                     null,
                     array(
-                        'title' => t(sprintf('Show %s rows on one page', $caption))
+                        'title' => sprintf(t('Show %s rows on one page'), $caption)
                     )
                 );
             }

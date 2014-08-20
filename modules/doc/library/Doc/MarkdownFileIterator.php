@@ -4,15 +4,15 @@
 
 namespace Icinga\Module\Doc;
 
-use \RecursiveFilterIterator;
+use RecursiveFilterIterator;
 
 /**
- * Iterator over Markdown files recursively
+ * Recursive iterator over Markdown files
  */
 class MarkdownFileIterator extends RecursiveFilterIterator
 {
     /**
-     * Accept files with .md suffix
+     * Accept files with '.md' suffix
      *
      * @return bool Whether the current element of the iterator is acceptable
      *              through this filter
@@ -20,7 +20,8 @@ class MarkdownFileIterator extends RecursiveFilterIterator
     public function accept()
     {
         $current = $this->getInnerIterator()->current();
-        if (!$current->isFile()) {
+        /* @var $current \SplFileInfo */
+        if (! $current->isFile()) {
             return false;
         }
         $filename = $current->getFilename();

@@ -1,0 +1,62 @@
+// W3C Recommendation <http://www.w3.org/TR/CSS21/sample.html> (except h4)
+h1 { font-size:    2em !important; }
+h2 { font-size:  1.5em !important; }
+h3 { font-size: 1.17em !important; }
+h4 { font-size:    1em !important; }
+h5 { font-size:  .83em !important; }
+h6 { font-size:  .75em !important; }
+
+div.chapter {
+  padding-left: 5px;
+}
+
+table th {
+  text-align: left;
+}
+
+table th,
+table td {
+  border: solid 1px lightgray;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+code {
+  width: 100%;
+  overflow-x: auto;
+  padding: 0.2em;
+  display: inline;
+}
+
+pre > code {
+  display: inline-block;
+}
+
+div.chapter > ul.navigation {
+  margin: 0;
+  padding: 0.4em;
+  text-align: center;
+  background-color: #888;
+
+  li {
+    list-style: none;
+    display: inline;
+    margin: 0.2em;
+    padding: 0;
+
+    a {
+      color: #fff;
+      text-decoration: none;
+    }
+
+    &.prev {
+      padding-right: 0.6em;
+      border-right: 2px solid #fff;
+    }
+
+    &.next {
+      padding-left: 0.6em;
+      border-left: 2px solid #fff;
+    }
+  }
+}

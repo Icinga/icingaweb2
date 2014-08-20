@@ -5,6 +5,7 @@
 namespace Icinga\Application\Modules;
 
 use Exception;
+use Zend_Controller_Router_Route_Abstract;
 use Zend_Controller_Router_Route as Route;
 use Icinga\Application\ApplicationBootstrap;
 use Icinga\Application\Config;
@@ -135,6 +136,16 @@ class Module
      */
     private $app;
 
+
+    /**
+     * Routes to add to the route chain
+     *
+     * @var array Array of name-route pairs
+     *
+     * @see addRoute()
+     */
+    protected $routes = array();
+
     /**
      * Create a new module object
      *
@@ -166,8 +177,7 @@ class Module
      */
     public function register()
     {
-        $this->registerAutoloader()
-             ->registerWebIntegration();
+        $this->registerAutoloader();
         try {
             $this->launchRunScript();
         } catch (Exception $e) {
@@ -179,6 +189,7 @@ class Module
             );
             return false;
         }
+        $this->registerWebIntegration();
         return true;
     }
 
@@ -658,24 +669,29 @@ class Module
     }
 
     /**
-     * Register routes for web access
+     * Add routes for static content and any route added via addRoute() to the route chain
      *
-     * @return self
+     * @return  self
+     * @see     addRoute()
      */
     protected function registerRoutes()
     {
-        $this->app->getFrontController()->getRouter()->addRoute(
+        $router = $this->app->getFrontController()->getRouter();
+        foreach ($this->routes as $name => $route) {
+            $router->addRoute($name, $route);
+        }
+        $router->addRoute(
             $this->name . '_jsprovider',
             new Route(
                 'js/' . $this->name . '/:file',
                 array(
                     'controller'    => 'static',
                     'action'        =>'javascript',
-                    'module_name'    => $this->name
+                    'module_name'   => $this->name
                 )
             )
         );
-        $this->app->getFrontController()->getRouter()->addRoute(
+        $router->addRoute(
             $this->name . '_img',
             new Route(
                 'img/' . $this->name . '/:file',
@@ -748,6 +764,21 @@ class Module
 
         Hook::register($name, $key, $class);
 
+        return $this;
+    }
+
+    /**
+     * Add a route which will be added to the route chain
+     *
+     * @param   string                                  $name   Name of the route
+     * @param   Zend_Controller_Router_Route_Abstract   $route  Instance of the route
+     *
+     * @return  self
+     * @see     registerRoutes()
+     */
+    protected function addRoute($name, Zend_Controller_Router_Route_Abstract $route)
+    {
+        $this->routes[$name] = $route;
         return $this;
     }
 }
