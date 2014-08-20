@@ -501,6 +501,12 @@
                 return false;
             }
 
+            // Ignore form elements in action rows
+            if ($(event.target).is('input') || $(event.target).is('button')) {
+                return;
+            }
+
+
             // ignore multiselect table row clicks
             if ($a.is('tr') && $a.closest('table.multiselect').length > 0) {
                 return;
