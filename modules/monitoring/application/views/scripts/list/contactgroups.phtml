@@ -22,7 +22,7 @@ foreach ($groupData as $groupName => $groupInfo): ?>
                 <div class="box entry">
                     <img src="<?= $this->href('/static/gravatar', array('email' => $c->contact_email )) ?>" />
                     <a href="<?= $this->href(
-                        'monitoring/show/contacts',
+                        'monitoring/show/contact',
                         array('contact' => $c->contact_name)
                     ); ?>">
                         <?= $this->escape($c->contact_alias) ?>

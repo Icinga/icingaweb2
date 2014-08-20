@@ -28,7 +28,7 @@ class DashboardAction implements Tabextension
                 'title'     => 'Add To Dashboard',
                 'url'       => Url::fromPath('dashboard/addurl'),
                 'urlParams' => array(
-                    'url' => Url::fromRequest()->getRelativeUrl()
+                    'url' => rawurlencode(Url::fromRequest()->getRelativeUrl())
                 )
             )
         );

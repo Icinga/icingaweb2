@@ -192,6 +192,24 @@ class DbQuery extends SimpleQuery
         return $this->escapeForSql(date('Y-m-d H:i:s', $value));
     }
 
+    /**
+     * Check for timestamp fields
+     *
+     * TODO: This is not here to do automagic timestamp stuff. One may
+     *       override this function for custom voodoo, IdoQuery right now
+     *       does. IMO we need to split whereToSql functionality, however
+     *       I'd prefer to wait with this unless we understood how other
+     *       backends will work. We probably should also rename this
+     *       function to isTimestampColumn().
+     *
+     * @param  string $field Field Field name to checked
+     * @return bool          Whether this field expects timestamps
+     */
+    public function isTimestamp($field)
+    {
+        return $this;
+    }
+
     public function whereToSql($col, $sign, $expression)
     {
         if ($this->isTimestamp($col)) {

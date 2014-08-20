@@ -87,8 +87,8 @@ class Monitoring_ChartController extends Controller
                 'services_pending'
             )
         )->getQuery()->fetchAll();
-        $this->view->height = intval($this->getParam('height', 220));
-        $this->view->width = intval($this->getParam('width', 520));
+        $this->view->height = intval($this->getParam('height', 500));
+        $this->view->width = intval($this->getParam('width', 500));
         if (count($query) === 1) {
             $this->drawGroupPie($query[0]);
         } else {
@@ -112,8 +112,8 @@ class Monitoring_ChartController extends Controller
                 'services_pending'
             )
         )->getQuery()->fetchAll();
-        $this->view->height = intval($this->getParam('height', 220));
-        $this->view->width = intval($this->getParam('width', 520));
+        $this->view->height = intval($this->getParam('height', 500));
+        $this->view->width = intval($this->getParam('width', 500));
 
         $this->drawServiceGroupChart($query);
 
@@ -133,7 +133,8 @@ class Monitoring_ChartController extends Controller
         }
         $this->view->chart = new GridChart();
         $this->view->chart->setAxisLabel('', t('Services'))
-            ->setXAxis(new StaticAxis());
+            ->setXAxis(new StaticAxis())
+            ->setAxisMin(null, 0);
 
         $this->view->chart->drawBars(
             array(
@@ -183,7 +184,9 @@ class Monitoring_ChartController extends Controller
             );
         }
         $this->view->chart = new GridChart();
-        $this->view->chart->setAxisLabel('', t('Hosts'))->setXAxis(new StaticAxis());
+        $this->view->chart->setAxisLabel('', t('Hosts'))
+            ->setXAxis(new StaticAxis())
+            ->setAxisMin(null, 0);
         $this->view->chart->drawBars(
             array(
                 'label' => t('Up'),

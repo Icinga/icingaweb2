@@ -2,12 +2,58 @@
 
 ## Table of Contents
 
-1. [Vagrant - Virtual development environment](#vagrant)
+0. [General Information](#general information)
+1. [Installation](#installation)
+2. [Support](#support)
+3. [Vagrant - Virtual development environment](#vagrant)
+
+## General Information
+
+`Icinga Web 2` is the next generation monitoring web interface, framework
+and CLI tool developed by the [Icinga Project](https://www.icinga.org/community/team/).
+
+Responsive and fast, rewritten from scratch supporting multiple backends and
+providing a CLI tool. Compatible with Icinga Core 2.x and 1.x.
+
+Check the Icinga website for some [insights](https://www.icinga.org/icinga/screenshots/icinga-web-2/).
+
+> **Note**
+>
+> `Icinga Web 2` is still in development and not meant for production deployment.
+> Watch the [development roadmap](https://dev.icinga.org/projects/icingaweb2/roadmap)
+> and [Icinga website](https://www.icinga.org/) for release schedule updates!
+
+## Installation
+
+Please navigate to [doc/installation.md](doc/installation.md) for updated details.
+
+## Support
+
+Please head over to the [community support channels](https://www.icinga.org/icinga/faq/get-help/)
+in case of questions, bugs, etc.
+
+Please make sure to provide the following details:
+
+* OS, distribution, version
+* PHP and/or MySQL/PostgreSQL version
+* Which browser and its version
+* Screenshot and problem description
+
 
 ## Vagrant
 
-> **Note** that the deployment of the virtual machine is tested against Vagrant starting with version 1.1.
+### Requirements
+
+* Vagrant 1.2+
+* Virtualbox 4.2.16+
+* a fairly powerful hardware (quad core, 4gb ram, fast hdd)
+
+> **Note**
+>
+> The deployment of the virtual machine is tested against Vagrant starting with version 1.2.
 > Unfortunately older versions will not work.
+
+### General
 
 The Icinga Web 2 project ships with a Vagrant virtual machine that integrates
 the source code with various services and example data in a controlled
@@ -17,7 +63,9 @@ have to do is install Vagrant and run:
 
     vagrant up
 
-> **Note** that the first boot of the vm takes a fairly long time because
+> **Note**
+> 
+> The first boot of the vm takes a fairly long time because
 > you'll download a plain CentOS base box and Vagrant will automatically
 > provision the environment on the first go.
 
@@ -68,7 +116,7 @@ After you should be able to browse [localhost:8080/icingaweb](http://localhost:8
 **Installed files**:
 
 * `/usr/share/icinga/htpasswd.users` account information for logging into the Icinga classic web interface for both icinga instances
-* `/usr/lib64/nagios/plugins` Nagios Plugins for both icinga instances
+* `/usr/lib64/nagios/plugins` Monitoring Plugins for all Icinga instances
 
 #### Icinga with IDOUtils using a MySQL database
 
@@ -196,12 +244,13 @@ code style issues.
 
 #### Icinga 2
 
-**Installation path**: `/usr/local/icinga2`
+Installed from the Icinga [snapshot package repository](http://packages.icinga.org/epel/).
+The configuration is located in `/etc/icinga2`.
 
 **Example usage**:
 
-    cd /usr/local/icinga2
-    ./sbin/icinga2 -c etc/icinga2/icinga2.conf.dist
+    /etc/init.d/icinga2 (start|stop|restart|reload)
+
 
 ## Log into Icinga Web 2
 
@@ -211,3 +260,9 @@ If you've configure LDAP as authentication backend (which is the default) use th
 > **Password**: password
 
 Have a look at [LDAP example data](#ldap example data) for more accounts.
+
+Using MySQL as backend:
+
+> **Username**: icingaadmin
+> **Password**: icinga
+

@@ -5,6 +5,7 @@
 namespace Icinga\Form\Authentication;
 
 use Icinga\Web\Form;
+use Icinga\Web\Url;
 
 /**
  * Class LoginForm
@@ -43,6 +44,13 @@ class LoginForm extends Form
                     'label'         => t('Password'),
                     'placeholder'   => t('...and your password'),
                     'class'         => isset($formData['username']) ? 'autofocus' : ''
+                )
+            ),
+            $this->createElement(
+                'hidden',
+                'redirect',
+                array(
+                    'value' => Url::fromRequest()->getParam('redirect')
                 )
             )
         );

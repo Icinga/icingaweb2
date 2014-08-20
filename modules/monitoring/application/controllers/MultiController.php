@@ -21,7 +21,6 @@ class Monitoring_MultiController extends Controller
             array(
                 'host_name',
                 'host_in_downtime',
-                'host_unhandled_service_count',
                 'host_passive_checks_enabled',
                 'host_obsessing',
                 'host_state',

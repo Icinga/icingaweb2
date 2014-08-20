@@ -9,6 +9,7 @@ use Icinga\Chart\Primitive\Drawable;
 use Icinga\Chart\Primitive\Line;
 use Icinga\Chart\Primitive\Text;
 use Icinga\Chart\Render\RenderContext;
+use Icinga\Chart\Render\Rotator;
 use Icinga\Chart\Unit\AxisUnit;
 use Icinga\Chart\Unit\CalendarUnit;
 use Icinga\Chart\Unit\LinearUnit;
@@ -188,11 +189,11 @@ class Axis implements Drawable
                 $labelField->setFontSize('2.5em');
             }
 
+            if ($this->labelRotationStyle === self::LABEL_ROTATE_DIAGONAL) {
+                $labelField = new Rotator($labelField, 45);
+            }
             $labelField = $labelField->toSvg($ctx);
 
-            if ($this->labelRotationStyle === self::LABEL_ROTATE_DIAGONAL) {
-                $labelField = $this->rotate($ctx, $labelField, 45);
-            }
             $group->appendChild($labelField);
 
             if ($this->drawYGrid) {
@@ -212,34 +213,6 @@ class Axis implements Drawable
                 ->setAlignment(Text::ALIGN_MIDDLE);
             $group->appendChild($axisLabel->toSvg($ctx));
         }
-    }
-
-    /**
-     * Rotate the given element.
-     *
-     * @param RenderContext $ctx        The rendering context
-     * @param DOMElement    $el         The element to rotate
-     * @param               $degrees    The rotation degrees
-     *
-     * @return DOMElement
-     */
-    private function rotate(RenderContext $ctx, DOMElement $el, $degrees)
-    {
-        // Create a box containing the rotated element relative to the original text position
-        $container = $ctx->getDocument()->createElement('g');
-        $x = $el->getAttribute('x');
-        $y = $el->getAttribute('y');
-        $container->setAttribute('transform', 'translate(' . $x . ',' . $y . ')');
-        $el->removeAttribute('x');
-        $el->removeAttribute('y');
-
-        // Create a rotated box containing the text
-        $rotate = $ctx->getDocument()->createElement('g');
-        $rotate->setAttribute('transform', 'rotate(' . $degrees . ')');
-        $rotate->appendChild($el);
-
-        $container->appendChild($rotate);
-        return $container;
     }
 
     /**
@@ -275,9 +248,9 @@ class Axis implements Drawable
         if ($this->yLabel) {
             $axisLabel = new Text(-8, 50, $this->yLabel);
             $axisLabel->setFontSize('2em')
-                ->setAdditionalStyle(Text::ORIENTATION_VERTICAL)
                 ->setFontWeight('bold')
                 ->setAlignment(Text::ALIGN_MIDDLE);
+            $axisLabel = new Rotator($axisLabel, 90);
 
             $group->appendChild($axisLabel->toSvg($ctx));
         }

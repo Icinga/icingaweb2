@@ -103,6 +103,40 @@ class Monitoring_ShowController extends Controller
         ));
     }
 
+    public function contactAction()
+    {
+        $contact = $this->getParam('contact');
+        if (! $contact) {
+            throw new Zend_Controller_Action_Exception(
+                $this->translate('The parameter `contact\' is required'),
+                404
+            );
+        }
+        $query = $this->backend->select()->from('contact', array(
+            'contact_name',
+            'contact_id',
+            'contact_alias',
+            'contact_email',
+            'contact_pager',
+            'contact_notify_service_timeperiod',
+            'contact_notify_service_recovery',
+            'contact_notify_service_warning',
+            'contact_notify_service_critical',
+            'contact_notify_service_unknown',
+            'contact_notify_service_flapping',
+            'contact_notify_service_downtime',
+            'contact_notify_host_timeperiod',
+            'contact_notify_host_recovery',
+            'contact_notify_host_down',
+            'contact_notify_host_unreachable',
+            'contact_notify_host_flapping',
+            'contact_notify_host_downtime',
+        ));
+        $query->where('contact_name', $contact);
+        $this->view->contacts = $query->paginate();
+        $this->view->contact_name = $contact;
+    }
+
     /**
      * Creating tabs for this controller
      * @return Tabs

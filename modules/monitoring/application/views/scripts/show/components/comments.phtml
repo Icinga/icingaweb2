@@ -31,12 +31,12 @@ foreach ($object->comments as $comment) {
     );
 
     $list[] = sprintf(
-        '<tr><th>%s (%s)</th><td data-base-target="_self">%s (%s) %s</td></tr>',
+        '<tr><th>%s (%s)</th><td><table><tr><td style="vertical-align: top;" data-base-target="_self">%s (%s):</td><td style="padding-left: .5em;">%s</td></tr></table></td></tr>',
         $this->escape($comment->author),
         $this->timeSince($comment->timestamp),
         $iconForm,
         ucfirst($comment->type),
-        $text
+        str_replace(array('\r\n', '\n'), '<br>', $text)
     );
 }
 

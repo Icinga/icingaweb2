@@ -95,6 +95,13 @@ if (!Function.prototype.bind) {
 
     'use strict';
 
+    /* Whether a HTML tag has a specific attribute */
+    $.fn.hasAttr = function(name) {
+        // We have inconsistent behaviour across browsers (false VS undef)
+        var val = this.attr(name);
+        return typeof val !== 'undefined' && val !== false;
+    };
+
     /* Get class list */
     $.fn.classes = function (callback) {
 

@@ -6,7 +6,6 @@ use Icinga\Web\Controller\BaseConfigController;
 use Icinga\Web\Widget\AlertMessageBox;
 use Icinga\Web\Notification;
 use Icinga\Application\Modules\Module;
-use Icinga\Web\Url;
 use Icinga\Web\Form;
 use Icinga\Web\Widget;
 use Icinga\Application\Icinga;
@@ -41,9 +40,6 @@ class ConfigController extends BaseConfigController
         ))->add('logging', array(
             'title' => 'Logging',
             'url'   => 'config/logging'
-        ))->add('modules', array(
-            'title' => 'Modules',
-            'url'   => 'config/modules'
         ));
     }
 
@@ -116,6 +112,11 @@ class ConfigController extends BaseConfigController
      */
     public function modulesAction()
     {
+        $this->view->tabs = Widget::create('tabs')->add('modules', array(
+            'title' => 'Modules',
+            'url'   => 'config/modules'
+        ));
+
         $this->view->tabs->activate('modules');
         $this->view->modules = Icinga::app()->getModuleManager()->select()
             ->from('modules')

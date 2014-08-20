@@ -1,0 +1,6 @@
+#!/usr/bin/php
+<?php
+
+use Icinga\Application\Cli;
+require_once '/usr/share/icingaweb/library/Icinga/Application/Cli.php';
+Cli::start()->dispatch();

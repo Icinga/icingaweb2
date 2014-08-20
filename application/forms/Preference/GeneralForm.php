@@ -36,7 +36,6 @@ class GeneralForm extends Form
         foreach (Translator::getAvailableLocaleCodes() as $language) {
             $languages[$language] = $language;
         }
-        $languages[Translator::DEFAULT_LOCALE] = Translator::DEFAULT_LOCALE;
 
         $useBrowserLanguage = isset($formData['browser_language']) ? $formData['browser_language'] == 1 : true;
         $selectOptions = array(

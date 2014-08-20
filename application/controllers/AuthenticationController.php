@@ -34,11 +34,16 @@ class AuthenticationController extends ActionController
     public function loginAction()
     {
         $auth = $this->Auth();
-        $this->view->form = new LoginForm();
+        $this->view->form = $form = new LoginForm();
         $this->view->title = $this->translate('Icingaweb Login');
 
         try {
-            $redirectUrl = Url::fromPath($this->params->get('redirect', 'dashboard'));
+            $redirectUrl = $this->view->form->getValue('redirect');
+            if ($redirectUrl) {
+                $redirectUrl = Url::fromPath($redirectUrl);
+            } else {
+                $redirectUrl = Url::fromPath('dashboard');
+            }
 
             if ($auth->isAuthenticated()) {
                 $this->rerenderLayout()->redirectNow($redirectUrl);
@@ -47,14 +52,10 @@ class AuthenticationController extends ActionController
             try {
                 $config = Config::app('authentication');
             } catch (NotReadableError $e) {
-                Logger::error(
-                    new Exception('Cannot load authentication configuration. An exception was thrown:', 0, $e)
-                );
                 throw new ConfigurationError(
-                    t(
-                        'No authentication methods available. Authentication configuration could not be loaded.'
-                        . ' Please check the system log or Icinga Web 2 log for more information'
-                    )
+                    $this->translate('Could not read your authentiction.ini, no authentication methods are available.'),
+                    0,
+                    $e
                 );
             }
 
@@ -65,6 +66,14 @@ class AuthenticationController extends ActionController
                 $password = $this->view->form->getValue('password');
                 $backendsTried = 0;
                 $backendsWithError = 0;
+
+                $redirectUrl = $form->getValue('redirect');
+
+                if ($redirectUrl) {
+                    $redirectUrl = Url::fromPath($redirectUrl);
+                } else {
+                    $redirectUrl = Url::fromPath('dashboard');
+                }
 
                 foreach ($chain as $backend) {
                     if ($backend instanceof AutoLoginBackend) {
@@ -85,25 +94,25 @@ class AuthenticationController extends ActionController
                 }
                 if ($backendsTried === 0) {
                     throw new ConfigurationError(
-                        t(
-                            'No authentication methods available. It seems that no authentication method has been set'
-                            . ' up. Please check the system log or Icinga Web 2 log for more information'
-                        )
+                        $this->translate(
+                            'No authentication methods available. Did you create'
+                          . ' authentication.ini when installing Icinga Web 2?'
+                         )
                     );
                 }
                 if ($backendsTried === $backendsWithError) {
                     throw new ConfigurationError(
                         $this->translate(
-                            'No authentication methods available. It seems that all set up authentication methods have'
-                            . ' errors. Please check the system log or Icinga Web 2 log for more information'
+                            'All configured authentication methods failed.'
+                          . ' Please check the system log or Icinga Web 2 log for more information.'
                         )
                     );
                 }
                 if ($backendsWithError) {
                     $this->view->form->getElement('username')->addError(
                         $this->translate(
-                            'Note that not all authentication backends are available for authentication because they'
-                            . ' have errors. Please check the system log or Icinga Web 2 log for more information'
+                            'Please note that not all authentication methods where available.'
+                          . ' Check the system log or Icinga Web 2 log for more information.'
                         )
                     );
                 }
@@ -131,9 +140,10 @@ class AuthenticationController extends ActionController
     public function logoutAction()
     {
         $auth = $this->Auth();
+        $isRemoteUser = $auth->getUser()->isRemoteUser();
         $auth->removeAuthorization();
 
-        if ($auth->isAuthenticatedFromRemoteUser()) {
+        if ($isRemoteUser === true) {
             $this->_helper->layout->setLayout('login');
             $this->_response->setHttpResponseCode(401);
         } else {
