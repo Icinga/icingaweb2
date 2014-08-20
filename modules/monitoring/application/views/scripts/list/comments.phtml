@@ -1,98 +1,114 @@
+<?php
+
+$helper = $this->getHelper('CommandForm');
+
+?>
+
+<?php if (false === $this->compact): ?>
 <div class="controls">
-<?= $this->tabs ?>
-<div style="margin: 1em">
-<?=  $this->sortControl->render($this); ?>
+  <?= $this->tabs->render($this); ?>
+  <div style="margin: 1em" class="dontprint">
+    <?= $this->translate('Sort by'); ?> <?= $this->sortControl->render($this); ?>
+  </div>
+  <?= $this->widget('limiter', array('url' => $this->url, 'max' => $comments->count())); ?>
+  <?= $this->paginationControl($comments, null, null, array('preserve' => $this->preserve)); ?>
 </div>
-<?=  $this->paginationControl($comments, null, null, array('preserve' => $this->preserve)); ?>
-</div>
+<?php endif ?>
 
 <div class="content">
-<table data-base-target="_next" class="action comments">
-<tbody>
-<?php
+<?php if (empty($comments)): ?>
+  <?= $this->translate('No comments matching the filter') ?>
+</div>
+<?php return; endif ?>
 
-$cf = $this->getHelper('CommandForm');
-
-if (count($comments) === 0) {
-    echo t('No comments matching the filter');
-}
-
-foreach ($comments as $comment):
-
-?>
-<tr>
-  <td style="width: 5em; text-align: center;">
+  <table data-base-target="_next" class="action comments">
+    <tbody>
+    <?php foreach ($comments as $comment): ?>
     <?php
-    switch ($comment->type) {
+      switch ($comment->type) {
         case 'flapping':
-            $icon = 'flapping';
-            $tooltip = 'Comment was caused by a flapping host or service.';
-            break;
+          $icon = 'flapping';
+          $title = $this->translate('Flapping');
+          $tooltip = $this->translate('Comment was caused by a flapping host or service.');
+          break;
         case 'comment':
-            $icon = 'user';
-            $tooltip = 'Comment was created by an user.';
-            break;
+          $icon = 'user';
+          $title = $this->translate('User Comment');
+          $tooltip = $this->translate('Comment was created by an user.');
+          break;
         case 'downtime':
-            $icon = 'down';
-            $tooltip = 'Comment was caused by a downtime.';
+          $icon = 'down';
+          $title = $this->translate('Downtime');
+          $tooltip = $this->translate('Comment was caused by a downtime.');
         case 'ack':
-            $icon = 'acknowledgement';
-            $tooltip = 'Comment was caused by an acknowledgement.';
-    }
+          $icon = 'acknowledgement';
+          $title = $this->translate('Acknowledgement');
+          $tooltip = $this->translate('Comment was caused by an acknowledgement.');
+      }
     ?>
-    <?= $this->icon($icon . '.png', $tooltip) ?><br />
-    <?= $this->timeSince($comment->timestamp) ?>
-    </td>
-    <td>
-    <?php if ($comment->objecttype === 'service'): ?><?= $this->icon('service.png', 'Service comment') ?> <?= $this->qlink(
-        $comment->service,
-        'monitoring/show/service',
-        array(
+      <tr class="state invalid">
+        <td class="state" style="width: 12em;">
+          <?= $this->icon($icon . '.png', $tooltip) ?>
+          <br>
+          <strong><?= $this->escape($title); ?></strong>
+          <br>
+          <?= $this->prefixedTimeSince($comment->timestamp); ?>
+        </td>
+        <td>
+        <?php if ($comment->objecttype === 'service'): ?>
+          <?= $this->icon('service.png'); ?> <a href="<?= $this->href('monitoring/show/service', array(
             'host'    => $comment->host,
             'service' => $comment->service,
-        )
-    ) ?> on<?php else: ?><?= $this->icon('host.png', 'Host comment') ?> <?php endif ?> <?= $this->qlink(
-        $comment->host,
-        'monitoring/show/host',
-        array(
+          )); ?>">
+            <?= $comment->service; ?>
+          </a>
+          <small>
+            <?= $this->translate('on') . ' ' . $comment->host; ?>
+          </small>
+        <?php else: ?>
+          <?= $this->icon('host.png'); ?> <a href="<?= $this->href('monitoring/show/host', array(
             'host' => $comment->host
-        )
-    ) ?> by <strong><?= $this->escape($comment->author) ?></strong><br />
-      <p><?= $this->escape($comment->comment) ?></p>
-        <?php if ($comment->persistent): ?>Comment is persistent<br /><?php endif ?>
-        <b>Expires: </b> <?=
-            ($comment->expiration) ?
-                $this->timeUntil($comment->expiration) :
-                'Never'
+          )); ?>">
+            <?= $comment->host; ?>
+          </a>
+        <?php endif ?>
+          <br>
+          <?= $this->icon('comment.png'); ?> <?= isset($comment->author)
+            ? '[' . $comment->author . '] '
+            : '';
+          ?><?= $this->escape($comment->comment); ?>
+          <br>
+          <?= $comment->persistent
+            ? $this->translate('This comment is persistent.')
+            : $this->translate('This comment is not persistent.');
+          ?>
+          <br>
+          <?= $comment->expiration ? sprintf(
+              $this->translate('This comment expires on %s at %s.'),
+              date('d.m.y', $comment-expiration),
+              date('H:i', $comment->expiration)
+            ) : $this->translate('This comment does not expire.'); ?>
+        </td>
+        <?php
+          $data = array(
+            'commentid' => $comment->id,
+            'host'      => $comment->host
+          );
+          if ($comment->objecttype === 'service') {
+            $data['service'] = $comment->service;
+          }
         ?>
-    </td>
-    <td style="width: 2em">
-<?php
-
-    $data = array(
-      'commentid' => $comment->id,
-      'host'      => $comment->host
-    );
-
-    if ($comment->objecttype === 'service') {
-        $data['service'] = $comment->service;
-    }
-
-    // echo $cf->iconSubmitForm(
-    //    'img/icons/remove.png',
-    echo $cf->labelSubmitForm(
-        'X',
-        'Remove comment',
-        'link-like',
-        'removecomment',
-        $data
-    );
-
-?>
-    </td>
-  </tr>
-<?php endforeach; ?>
-</tbody>
-</table>
-
+        <td style="width: 2em">
+          <?= $helper->labelSubmitForm(
+            'X',
+            $this->translate('Remove Comment'),
+            'link-like',
+            'removecomment',
+            $data
+          ); ?>
+        </td>
+      </tr>
+<?php endforeach ?>
+    </tbody>
+  </table>
 </div>
