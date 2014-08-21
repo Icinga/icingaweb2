@@ -30,8 +30,8 @@ class StaticController extends ActionController
 
     public function gravatarAction()
     {
+        header('Content-Type: image/jpg');
         $img = file_get_contents('http://www.gravatar.com/avatar/' . md5(strtolower(trim($this->_request->getParam('email')))) . '?s=200&d=mm');
-        header('image/jpeg');
         echo $img;
     }
 
