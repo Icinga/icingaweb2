@@ -274,9 +274,6 @@ class PieChart extends Chart
             $lastRadius = 0;
             foreach ($pie['data'] as $idx => $dataset) {
                 $color = $this->getColorForPieSlice($pie, $idx);
-                if ($dataset === 100) {
-                    $dataset = 99.9;
-                }
                 if ($dataset == 0) {
                     $labelPos++;
                     continue;
