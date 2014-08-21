@@ -15,25 +15,41 @@ class SecurityForm extends Form
     protected $config;
 
     /**
-     * Create this form
-     *
-     * @see Icinga\Web\Form::create
+     * @see Form::createElements()
      */
-    public function create()
+    public function createElements(array $formData)
     {
-        $this->addElement(
-            'text',
-            'protected_customvars',
-            array(
-                'label'     =>  'Protected Custom Variables',
-                'required'  =>  true,
-                'value'     =>  $this->config->protected_customvars,
-                'helptext'  =>  'Comma separated case insensitive list of protected custom variables.'
-                              . ' Use * as a placeholder for zero or more wildcard characters.'
-                              . ' Existance of those custom variables will be shown, but their values will be masked.'
+        return array(
+            $this->createElement(
+                'text',
+                'protected_customvars',
+                array(
+                    'label'     =>  'Protected Custom Variables',
+                    'required'  =>  true,
+                    'value'     =>  $this->config->protected_customvars,
+                    'helptext'  =>  'Comma separated case insensitive list of protected custom variables.'
+                        . ' Use * as a placeholder for zero or more wildcard characters.'
+                        . ' Existance of those custom variables will be shown, but their values will be masked.'
+                )
             )
         );
-        $this->setSubmitLabel('Save');
+    }
+
+    /**
+     * @see Form::addSubmitButton()
+     */
+    public function addSubmitButton()
+    {
+        $this->addElement(
+            'submit',
+            'btn_submit',
+            array(
+                'ignore'    => true,
+                'label'     => t('Save Changes')
+            )
+        );
+
+        return $this;
     }
 
     /**
