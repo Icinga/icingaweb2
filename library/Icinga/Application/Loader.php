@@ -40,9 +40,9 @@ class Loader
     {
         if (!is_dir($directory)) {
             throw new ProgrammingError(sprintf(
-                'Namespace directory "%s" for "%s" does not exist',
-                $namespace,
-                $directory
+                'Directory "%s" for namespace "%s" does not exist',
+                $directory,
+                $namespace
             ));
         }
 
