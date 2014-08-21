@@ -257,8 +257,8 @@ class Monitoring_ConfigController extends ModuleActionController
 
         $form = new SecurityForm();
         $form->setConfiguration($this->Config()->get('security'));
-        $form->setRequest($this->getRequest());
-        if ($form->isSubmittedAndValid()) {
+        $request = $this->getRequest();
+        if ($request->isPost() && $form->isValid($request->getPost())) {
             $config = $this->Config()->toArray();
             $config['security'] = $form->getConfig();
             if ($this->writeConfiguration(new Zend_Config($config))) {
