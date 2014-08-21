@@ -104,17 +104,22 @@ class PieSlice extends Animatable implements Drawable
      */
     private function getPieSlicePath($x, $y, $r)
     {
-        // start at the center of the pieslice
-        $pathString =  'M ' . $x . ' ' . $y . ' ';
-
         // The coordinate system is mirrored on the Y axis, so we have to flip cos and sin
         $xStart = $x + ($r * sin($this->startRadian));
         $yStart = $y - ($r * cos($this->startRadian));
-        $xEnd = $x + ($r * sin($this->endRadian));
-        $yEnd = $y - ($r * cos($this->endRadian));
 
-        // Draw a straight line to the upper part of the arc
-        $pathString .= 'L ' . Format::formatSVGNumber($xStart) . ' ' . Format::formatSVGNumber($yStart);
+        if($this->endRadian - $this->startRadian == 2*M_PI) {
+            // To draw a full circle, adjust arc endpoint by a small (unvisible) value
+            $this->endRadian -= 0.001;
+            $pathString = 'M '. Format::formatSVGNumber($xStart) . ' ' . Format::formatSVGNumber($yStart);
+        }
+        else {
+            // Start at the center of the pieslice
+            $pathString =  'M ' . $x . ' ' . $y;
+            // Draw a straight line to the upper part of the arc
+            $pathString .= ' L ' . Format::formatSVGNumber($xStart) . ' ' . Format::formatSVGNumber($yStart);
+        }
+
         // Instead of directly connecting the upper part of the arc (leaving a triangle), draw a bow with the radius
         $pathString .= ' A ' . Format::formatSVGNumber($r) . ' ' . Format::formatSVGNumber($r);
         // These are the flags for the bow, see the SVG path documentation for details
@@ -122,7 +127,10 @@ class PieSlice extends Animatable implements Drawable
         $pathString .= ' 0 ' . (($this->endRadian - $this->startRadian > M_PI) ?  '1'  : '0 ') . ' 1';
 
         // xEnd and yEnd are the lower point of the arc
+        $xEnd = $x + ($r * sin($this->endRadian));
+        $yEnd = $y - ($r * cos($this->endRadian));
         $pathString .= ' ' . Format::formatSVGNumber($xEnd) . ' ' . Format::formatSVGNumber($yEnd);
+
         return $pathString;
     }
 
