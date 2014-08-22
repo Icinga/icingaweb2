@@ -5,6 +5,7 @@ include openldap
 
 include profile::icingaweb2
 include profile::nodejs
+include profile::icinga2-dev
 
 Exec { path => '/bin:/usr/bin:/sbin:/usr/sbin' }
 
@@ -13,10 +14,6 @@ $icinga2Version = '2.0.1'
 $livestatusVersion = '1.2.4p5'
 $phantomjsVersion = '1.9.1'
 $casperjsVersion = '1.0.2'
-
-class { 'profile::icinga2-dev ':
-  icinga2Version => $icinga2Version,
-}
 
 class { [
   'profile::icinga-mysql',
