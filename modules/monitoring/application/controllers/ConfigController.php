@@ -259,19 +259,23 @@ class Monitoring_ConfigController extends ModuleActionController
         $this->view->tabs = $this->Module()->getConfigTabs()->activate('security');
 
         $form = new SecurityForm();
-        $form->setConfiguration($this->Config()->get('security'));
         $request = $this->getRequest();
-        if ($request->isPost() && $form->isValid($request->getPost())) {
-            $config = $this->Config()->toArray();
-            $config['security'] = $form->getConfig();
-            if ($this->writeConfiguration(new Zend_Config($config))) {
-                Notification::success('Configuration modified successfully');
-                $this->redirectNow('monitoring/config/security');
-            } else {
-                $this->render('show-configuration');
-                return;
+        $config = $this->Config()->toArray();
+        if ($request->isPost()) {
+            if ($form->isValid($request->getPost())) {
+                $config['security'] = $form->getValues();
+                if ($this->writeConfiguration(new Zend_Config($config))) {
+                    Notification::success('Configuration modified successfully');
+                    $this->redirectNow('monitoring/config/security');
+                } else {
+                    $this->render('show-configuration');
+                    return;
+                }
             }
+        } elseif (isset($config['security'])) {
+            $form->populate($config['security']);
         }
+
         $this->view->form = $form;
     }
 }
