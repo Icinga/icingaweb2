@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Monitoring Module (2.0.0~alpha4)\n"
 "Report-Msgid-Bugs-To: dev@icinga.org\n"
 "POT-Creation-Date: 2014-08-22 16:18+0200\n"
-"PO-Revision-Date: 2014-08-22 17:21+0100\n"
+"PO-Revision-Date: 2014-08-22 17:57+0100\n"
 "Last-Translator: Thomas Gelf <thomas@gelf.net>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -1197,11 +1197,11 @@ msgstr ""
 
 #: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/CustomNotificationForm.php:65
 msgid "Selecting this option causes the notification to be sent out to all normal (non-escalated)  and escalated contacts. These options allow you to override the normal notification logic if you need to get an important message out."
-msgstr ""
+msgstr "Das Aktivieren diese Option verursacht, dass die Benachrichtigung an alle normalen (nicht-eskalierten) sowie eskalierten Kontakte gesendet wird. Die erlaubt es, die normale Benachrichtigungslogik zu übergehen, wenn eine dringende Nachricht versendet werden muss."
 
 #: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/CustomNotificationForm.php:72
 msgid "Send Custom Notification"
-msgstr ""
+msgstr "Benutzerdefinierte Benachrichtigung senden"
 
 #: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/AcknowledgeForm.php:107
 msgid "Send Notification"
@@ -1253,19 +1253,19 @@ msgstr "Service im Zustand %s"
 
 #: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/RescheduleNextCheckForm.php:37
 msgid "Set the date/time when this check should be executed."
-msgstr ""
+msgstr "Setze den Zeitpunkt zu welchem dieser Check ausgeführt werden soll."
 
 #: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/ScheduleDowntimeForm.php:176
 msgid "Set the end date/time for the downtime."
-msgstr ""
+msgstr "Setze den Endzeitpunkt für diese Downtime."
 
 #: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/ScheduleDowntimeForm.php:165
 msgid "Set the start date/time for the downtime."
-msgstr ""
+msgstr "Setze den Startzeitpunkt für diese Downtime."
 
 #: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/SubmitPassiveCheckResultForm.php:132
 msgid "Set the state which should be send to Icinga for this objects."
-msgstr ""
+msgstr "Setze den Status welcher für dieses Objekt an Icinga gesendet werden soll."
 
 #: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:1019
 #: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/process/info.phtml:168
@@ -1477,7 +1477,7 @@ msgstr "Unbestätigte Hosts"
 
 #: /usr/local/src/bugfix.master/modules/monitoring/configuration.php:33
 msgid "Unhandled Services"
-msgstr "Offene Service-Probleme"
+msgstr "Unbestätigte Services"
 
 #: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/ChartController.php:166
 msgid "Unknown"
