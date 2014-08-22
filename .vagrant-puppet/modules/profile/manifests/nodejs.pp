@@ -1,4 +1,6 @@
 class profile::nodejs {
+  include epel
+
   exec { 'install nodejs':
     command => 'yum -d 0 -e 0 -y --enablerepo=epel install npm',
     unless  => 'rpm -qa | grep ^npm',
