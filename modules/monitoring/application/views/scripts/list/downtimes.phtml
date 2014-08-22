@@ -1,70 +1,121 @@
 <?php
 $helper = $this->getHelper('CommandForm');
 ?>
-<div class="controls">
-<?= $this->tabs ?>
-<div style="margin: 1em">
-<?= $this->sortControl->render($this); ?>
-</div>
-<?= $this->paginationControl($downtimes, null, null, array('preserve' => $this->preserve)); ?>
-</div>
 
-<div class="content downtimes">
-<table data-base-target="_next" class="action">
-<tbody>
-<?php
-if (count($downtimes) === 0) {
-    echo t('No downtimes matching the filter');
-}
-foreach ($this->downtimes as $downtime): ?>
-<tr>
-  <td>
-    <?= $this->dateFormat()->formatDateTime($downtime->start); ?> -
-    <?= $this->dateFormat()->formatDateTime($downtime->end); ?>
-    <br />
-    <small>Duration: <?= $this->util()->showHourMin($downtime->duration); ?></small>
-    <br />
-    <small>The <?php if($downtime->is_flexible): ?>flexible<?php else: ?>fixed<?php endif; ?> downtime is <?php if(!$downtime->is_in_effect): ?>not <?php endif; ?>in effect</small>
-  </td>
-  <td>
-    <?php if (isset($downtime->service)): ?>
-      <a href="<?= $this->href('monitoring/show/service', array(
-        'host'    => (string) $downtime->host,
-        'service' => (string) $downtime->service
-      )); ?>"><?= $downtime->service ?></a>
-      <small>on <?= $downtime->host ?></small>
-    <?php else: ?>
-      <a href="<?= $this->href('monitoring/show/host', array(
-        'host'    => (string) $downtime->host
-      )); ?>"><?= $downtime->host ?> </a>
-    <?php endif; ?>
-    <br />
-    <?= $downtime->author ?>: <?= $downtime->comment ?>
-    <br />
-    <small>Entry Time: <?= ($downtime->entry_time) ? $this->dateFormat()->formatDateTime((int) $downtime->entry_time) : ''; ?>
-    </small>
-  <td style="width: 2em">
-      <?php
-        $data = array(
-          'downtimeid'    => $downtime->id,
-          'host'          => $downtime->host
-        );
-        if (isset($downtime->service)) {
-          $data['service'] = $downtime->service;
-        }
-        // echo $helper->iconSubmitForm(
-        //   'img/icons/remove.png',
-        echo $helper->labelSubmitForm(
-          'X',
-          'Remove Downtime',
-          'link-like',
-          'removedowntime',
-          $data
-        );
-      ?>
-  </td>
-</tr>
+<?php if (false === $this->compact): ?>
+<div class="controls">
+  <?= $this->tabs->render($this); ?>
+  <div style="margin: 1em" class="dontprint">
+    <?= $this->translate('Sort by'); ?> <?= $this->sortControl->render($this); ?>
+  </div>
+  <?= $this->widget('limiter', array('url' => $this->url, 'max' => $downtimes->count())); ?>
+  <?= $this->paginationControl($downtimes, null, null, array('preserve' => $this->preserve)); ?>
+</div>
+<?php endif ?>
+
+<div class="content">
+<?php if (empty($downtimes)): ?>
+  <?= $this->translate('No downtimes matching the filter'); ?>
+</div>
+<?php return; endif ?>
+
+  <table data-base-target="_next" class="action">
+    <tbody>
+    <?php foreach ($downtimes as $downtime): ?>
+    <?php
+      if (isset($downtime->service)) {
+          $stateName = strtolower($this->util()->getServiceStateName($downtime->service_state));
+      } else {
+          $stateName = strtolower($this->util()->getHostStateName($downtime->host_state));
+      }
+    ?>
+      <tr class="state <?= $stateName; ?><?= $downtime->is_in_effect ? ' handled' : ''; ?>">
+        <td class="state">
+          <strong><?= $downtime->is_in_effect ? $this->translate('Expires') : $this->translate('Starts'); ?></strong>
+          <br>
+          <?= $this->prefixedTimeUntil($downtime->is_in_effect ? $downtime->end : $downtime->start); ?>
+        </td>
+        <td>
+        <?php if (isset($downtime->service)): ?>
+          <a href="<?= $this->href('monitoring/show/service', array(
+            'host'      => $downtime->host,
+            'service'   => $downtime->service
+          )); ?>">
+            <?= $downtime->service; ?>
+          </a>
+          <small>
+            <?= $this->translate('on'); ?> <?= $downtime->host; ?>
+          </small>
+        <?php else: ?>
+          <a href="<?= $this->href('monitoring/show/host', array(
+            'host' => $downtime->host
+          )); ?>">
+            <?= $downtime->host; ?>
+          </a>
+        <?php endif ?>
+          <br>
+          <?= $this->icon('comment.png'); ?> [<?= $downtime->author; ?>] <?= $downtime->comment; ?>
+          <br>
+          <small>
+        <?php if ($downtime->is_flexible): ?>
+          <?php if ($downtime->is_in_effect): ?>
+            <?= sprintf(
+              $this->translate('This flexible downtime was started on %s at %s and lasts for %s until %s at %s.'),
+              date('d.m.y', $downtime->start),
+              date('H:i', $downtime->start),
+              $this->format()->duration($downtime->duration),
+              date('d.m.y', $downtime->end),
+              date('H:i', $downtime->end)
+            ); ?>
+          <?php else: ?>
+            <?= sprintf(
+              $this->translate('This flexible downtime has been scheduled to start between %s - %s and to last for %s.'),
+              date('d.m.y H:i', $downtime->scheduled_start),
+              date('d.m.y H:i', $downtime->scheduled_end),
+              $this->format()->duration($downtime->duration)
+            ); ?>
+          <?php endif ?>
+        <?php else: ?>
+          <?php if ($downtime->is_in_effect): ?>
+            <?= sprintf(
+              $this->translate('This fixed downtime was started on %s at %s and expires on %s at %s.'),
+              date('d.m.y', $downtime->start),
+              date('H:i', $downtime->start),
+              date('d.m.y', $downtime->end),
+              date('H:i', $downtime->end)
+            ); ?>
+          <?php else: ?>
+            <?= sprintf(
+              $this->translate('This fixed downtime has been scheduled to start on %s at %s and to end on %s at %s.'),
+              date('d.m.y', $downtime->scheduled_start),
+              date('H:i', $downtime->scheduled_start),
+              date('d.m.y', $downtime->scheduled_end),
+              date('H:i', $downtime->scheduled_end)
+            ); ?>
+          <?php endif ?>
+        <?php endif ?>
+          </small>
+        </td>
+        <?php
+          $data = array(
+            'downtimeid'    => $downtime->id,
+            'host'          => $downtime->host
+          );
+          if (isset($downtime->service)) {
+            $data['service'] = $downtime->service;
+          }
+        ?>
+        <td style="width: 2em">
+          <?= $helper->labelSubmitForm(
+            'X',
+            'Remove Downtime',
+            'link-like',
+            'removedowntime',
+            $data
+          ); ?>
+        </td>
+      </tr>
 <?php endforeach ?>
-</tbody>
-</table>
+    </tbody>
+  </table>
 </div>

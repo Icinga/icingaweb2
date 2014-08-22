@@ -130,6 +130,11 @@ class StatusQuery extends IdoQuery
                             ELSE 4
                         END
                 END
+            END
+            +
+            CASE WHEN hs.state_type = 1
+                THEN 8
+                ELSE 0
             END'
         ),
         'hostgroups' => array(
@@ -266,6 +271,11 @@ class StatusQuery extends IdoQuery
                                      END
                              END
                          END
+                END
+                +
+                CASE WHEN ss.state_type = 1
+                    THEN 8
+                    ELSE 0
                 END'
         ),
         'serviceproblemsummary' => array(

@@ -23,12 +23,8 @@ class TranslationCommand extends Command
      */
     public function validateLocaleCode($code)
     {
-        $current = setlocale(LC_ALL, '0');
-        $result = setlocale(LC_ALL, $code);
-        setlocale(LC_ALL, $current);
-
-        if ($result === false) {
-            throw new Exception("Locale code '$code' is not valid");
+        if (! preg_match('@[a-z]{2}_[A-Z]{2}@', $code)) {
+            throw new Exception("Locale code '$code' is not valid. Expected format is: ll_CC");
         }
 
         return $code;

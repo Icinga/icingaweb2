@@ -20,6 +20,7 @@ use Icinga\Module\Monitoring\DataView\Comment;
 use Icinga\Module\Monitoring\DataView\Servicegroup;
 use Icinga\Module\Monitoring\DataView\Customvar;
 use Icinga\Web\UrlParams;
+use Icinga\Application\Config;
 
 
 abstract class AbstractObject
@@ -120,6 +121,23 @@ abstract class AbstractObject
 
     public function fetchCustomvars()
     {
+        $blacklist = array();
+        $blacklistPattern = '/^(.*pw.*|.*pass.*|community)$/';
+
+        if ($security = Config::module('monitoring')->get('security')) {
+
+            $blacklistConfig = $security->get('protected_customvars', '');
+
+            foreach (explode(',', $blacklistConfig) as $customvar) {
+                $nonWildcards = array();
+                foreach (explode('*', $customvar) as $nonWildcard) {
+                    $nonWildcards[] = preg_quote($nonWildcard, '/');
+                }
+                $blacklist[] = implode('.*', $nonWildcards);
+            }
+            $blacklistPattern = '/^(' . implode('|', $blacklist) . ')$/i';
+        }
+
         $query = Customvar::fromParams(array('backend' => null), array(
                 'varname',
                 'varvalue'
@@ -135,7 +153,15 @@ abstract class AbstractObject
                 ->where('service_description', $this->service_description);
         }
 
-        $this->customvars = $query->getQuery()->fetchPairs();
+        $customvars = $query->getQuery()->fetchPairs();
+        foreach ($customvars as $name => &$value) {
+            $name = ucwords(str_replace('_', ' ', strtolower($name)));
+            if ($blacklistPattern && preg_match($blacklistPattern, $name)) {
+                $value = '***';
+            }
+            $this->customvars[$name] = $value;
+        }
+
         return $this;
     }
 

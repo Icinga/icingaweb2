@@ -21,7 +21,7 @@ class UrlTest extends BaseTestCase
         $url = Url::fromRequest();
         $this->assertEquals(
             '/path/to/my/test/url.html?param1=value1&amp;param2=value2',
-            $url->getAbsoluteUrl(),
+            $url->getAbsoluteUrl('&amp;'),
             'Url::fromRequest does not reassemble the correct url from the global request'
         );
     }
@@ -119,7 +119,7 @@ class UrlTest extends BaseTestCase
      */
     public function testWhetherFromPathProperlyRecognizesAndDecodesQueryParameters()
     {
-        $url = Url::fromPath('/my/test/url.html?param1=%25arg1&param2=arg+2'
+        $url = Url::fromPath('/my/test/url.html?param1=%25arg1&param2=arg%202'
             . '&param3[]=1&param3[]=2&param3[]=3&param4[key1]=val1&param4[key2]=val2');
 
         $this->assertEquals(

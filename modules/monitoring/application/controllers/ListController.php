@@ -94,7 +94,6 @@ class Monitoring_ListController extends Controller
             'host_last_check',
             'host_last_state_change' => $stateChangeColumn,
             'host_notifications_enabled',
-            // 'host_unhandled_service_count',
             'host_unhandled_services',
             'host_action_url',
             'host_notes_url',
@@ -222,6 +221,7 @@ class Monitoring_ListController extends Controller
             'author'          => 'downtime_author',
             'start'           => 'downtime_start',
             'scheduled_start' => 'downtime_scheduled_start',
+            'scheduled_end'   => 'downtime_scheduled_end',
             'end'             => 'downtime_end',
             'duration'        => 'downtime_duration',
             'is_flexible'     => 'downtime_is_flexible',
@@ -229,7 +229,9 @@ class Monitoring_ListController extends Controller
             'is_in_effect'    => 'downtime_is_in_effect',
             'entry_time'      => 'downtime_entry_time',
             'host'            => 'downtime_host',
-            'service'         => 'downtime_service'
+            'service'         => 'downtime_service',
+            'host_state'      => 'downtime_host_state',
+            'service_state'   => 'downtime_service_state'
         ))->order('downtime_is_in_effect', 'DESC')
           ->order('downtime_scheduled_start', 'DESC');
 

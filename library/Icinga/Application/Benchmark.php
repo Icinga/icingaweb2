@@ -142,6 +142,7 @@ class Benchmark
         // TODO: Move formatting to CSS file
         $html = '<table class="benchmark">' . "\n" . '<tr>';
         foreach ($data->columns as & $col) {
+            if ($col->title === 'Time') continue;
             $html .= sprintf(
                 '<td align="%s">%s</td>',
                 $col->align,
@@ -153,6 +154,7 @@ class Benchmark
         foreach ($data->rows as & $row) {
             $html .= '<tr>';
             foreach ($data->columns as $key => & $col) {
+                if ($col->title === 'Time') continue;
                 $html .= sprintf(
                     '<td align="%s">%s</td>',
                     $col->align,

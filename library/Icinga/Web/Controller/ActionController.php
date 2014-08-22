@@ -254,10 +254,27 @@ class ActionController extends Zend_Controller_Action
      *
      * @throws  \Exception
      */
-    protected function redirectToLogin($afterLogin = '/dashboard')
+    protected function redirectToLogin($afterLogin = null)
     {
+        $redir = null;
+        if ($afterLogin !== null) {
+            if (! $afterLogin instanceof Url) {
+                $afterLogin = Url::fromPath($afterLogin);
+            }
+            if ($this->isXhr()) {
+                $redir = '__SELF__';
+            } else {
+                // TODO: Ignore /?
+                $redir = $afterLogin->getRelativeUrl();
+            }
+        }
+
         $url = Url::fromPath('authentication/login');
-        $url->setParam('redirect', $afterLogin);
+
+        if ($redir) {
+            $url->setParam('redirect', $redir);
+        }
+
         $this->rerenderLayout()->redirectNow($url);
     }
 
@@ -273,6 +290,27 @@ class ActionController extends Zend_Controller_Action
         return $this->getRequest()->isXmlHttpRequest();
     }
 
+    protected function redirectXhr($url)
+    {
+        if (! $url instanceof Url) {
+            $url = Url::fromPath($url);
+        }
+
+        if ($this->rerenderLayout) {
+            $this->getResponse()->setHeader('X-Icinga-Rerender-Layout', 'yes');
+        }
+        if ($this->reloadCss) {
+            $this->getResponse()->setHeader('X-Icinga-Reload-Css', 'now');
+        }
+
+        $this->getResponse()
+            ->setHeader('X-Icinga-Redirect', rawurlencode($url->getAbsoluteUrl()))
+            ->sendHeaders();
+
+        // TODO: Session shutdown?
+        exit;
+    }
+
     /**
     *  Redirect to a specific url, updating the browsers URL field
     *
@@ -280,26 +318,13 @@ class ActionController extends Zend_Controller_Action
     **/
     public function redirectNow($url)
     {
-        if (! $url instanceof Url) {
-            $url = Url::fromPath($url);
-        }
-        $url = preg_replace('~&amp;~', '&', $url);
         if ($this->isXhr()) {
-            if ($this->rerenderLayout) {
-                $this->getResponse()->setHeader('X-Icinga-Rerender-Layout', 'yes');
-            }
-            if ($this->reloadCss) {
-                $this->getResponse()->setHeader('X-Icinga-Reload-Css', 'now');
-            }
-
-            $this->getResponse()
-                ->setHeader('X-Icinga-Redirect', rawurlencode($url))
-                ->sendHeaders();
-
-            // TODO: Session shutdown?
-            exit;
+            $this->redirectXhr($url);
         } else {
-            $this->_helper->Redirector->gotoUrlAndExit(Url::fromPath($url)->getRelativeUrl());
+            if (! $url instanceof Url) {
+                $url = Url::fromPath($url);
+            }
+            $this->_helper->Redirector->gotoUrlAndExit($url->getRelativeUrl());
         }
     }
 

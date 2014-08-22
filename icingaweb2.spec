@@ -40,11 +40,12 @@
 %endif
 # SLE 11 = 1110
 %if 0%{?suse_version} == 1110
+%define phpname php53
 %define apache2modphpname apache2-mod_php53
 %define usermodparam -A
 %endif
 
-%if "%{_vendor}" == "redhat" || 0%{?suse_version} == 1110
+%if "%{_vendor}" == "redhat"
 %define phpname php
 %define phpzendname php-ZendFramework
 %endif

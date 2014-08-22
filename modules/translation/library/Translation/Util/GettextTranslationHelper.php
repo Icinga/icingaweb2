@@ -37,11 +37,18 @@ class GettextTranslationHelper
     private $moduleMgr;
 
     /**
-     * The current version of IcingaWeb2
+     * The current version of Icingaweb 2 or of the module the catalog is being created for
      *
      * @var string
      */
     private $version;
+
+    /**
+     * The name of the module if any
+     *
+     * @var string
+     */
+    private $moduleName;
 
     /**
      * The locale used by this helper
@@ -93,8 +100,7 @@ class GettextTranslationHelper
      */
     public function __construct(ApplicationBootstrap $bootstrap, $locale)
     {
-        $this->version = $bootstrap->getConfig()->app()->global->get('version', '0.1');
-        $this->moduleMgr = $bootstrap->getModuleManager();
+        $this->moduleMgr = $bootstrap->getModuleManager()->loadEnabledModules();
         $this->appDir = $bootstrap->getApplicationDir();
         $this->locale = $locale;
     }
@@ -106,6 +112,7 @@ class GettextTranslationHelper
     {
         $this->catalogPath = tempnam(sys_get_temp_dir(), 'IcingaTranslation_');
         $this->templatePath = tempnam(sys_get_temp_dir(), 'IcingaPot_');
+        $this->version = 'None'; // TODO: Access icinga version from a file or property
 
         $this->moduleDir = null;
         $this->tablePath = implode(
@@ -133,6 +140,8 @@ class GettextTranslationHelper
     {
         $this->catalogPath = tempnam(sys_get_temp_dir(), 'IcingaTranslation_');
         $this->templatePath = tempnam(sys_get_temp_dir(), 'IcingaPot_');
+        $this->version = $this->moduleMgr->getModule($module)->getVersion();
+        $this->moduleName = $this->moduleMgr->getModule($module)->getName();
 
         $this->moduleDir = $this->moduleMgr->getModuleDir($module);
         $this->tablePath = implode(
@@ -251,7 +260,7 @@ class GettextTranslationHelper
             'author_name' => 'FIRST AUTHOR',
             'author_mail' => 'EMAIL@ADDRESS',
             'author_year' => 'YEAR',
-            'project_name' => 'Icinga Web 2',
+            'project_name' => $this->moduleName ? ucfirst($this->moduleName) . ' Module' : 'Icinga Web 2',
             'project_version' => $this->version,
             'project_bug_mail' => 'dev@icinga.org',
             'pot_creation_date' => date('Y-m-d H:iO'),

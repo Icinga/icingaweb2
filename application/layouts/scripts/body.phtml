@@ -38,7 +38,7 @@ if ($notifications->hasMessages()) {
  </div>
 <?php endif ?>
  <div id="main" role="main">
-  <div id="col1" class="container<?= $moduleClass ?>"<?php if ($moduleName): ?> data-icinga-module="<?= $moduleName ?>" <?php endif ?> data-icinga-url="<?= Url::fromRequest() ?>"<?= $refresh ?> style="display: block">
+  <div id="col1" class="container<?= $moduleClass ?>"<?php if ($moduleName): ?> data-icinga-module="<?= $moduleName ?>" <?php endif ?> data-icinga-url="<?= Url::fromRequest()->without('renderLayout') ?>"<?= $refresh ?> style="display: block">
    <?= $this->render('inline.phtml') ?>
   </div>
   <div id="col2" class="container">
