@@ -740,18 +740,6 @@ file { '/etc/icingaweb/modules/monitoring/instances.ini':
   group     => 'apache',
 }
 
-file { '/etc/icingaweb/dashboard':
-  ensure    => 'directory',
-  owner     => 'apache',
-  group     => 'apache',
-}
-
-file { '/etc/icingaweb/dashboard/dashboard.ini':
-   source    => 'puppet:////vagrant/config/dashboard/dashboard.ini',
-   owner     => 'apache',
-   group     => 'apache',
-}
-
 # pear::package { 'deepend/Mockery':
 #  channel => 'pear.survivethedeepend.com'
 # }

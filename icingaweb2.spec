@@ -185,8 +185,6 @@ install -D -m0644 packages/rpm/etc/httpd/conf.d/icingaweb.conf %{buildroot}/%{ap
 install -D -m0644 packages/rpm/etc/icingaweb/authentication.ini %{buildroot}/%{_sysconfdir}/icingaweb/authentication.ini
 # custom resource paths
 install -D -m0644 packages/rpm/etc/icingaweb/resources.ini %{buildroot}/%{_sysconfdir}/icingaweb/resources.ini
-# dashboard
-install -D -m0644 config/dashboard/dashboard.ini %{buildroot}/%{_sysconfdir}/icingaweb/dashboard/dashboard.ini
 # monitoring module (icinga2)
 install -D -m0644 packages/rpm/etc/icingaweb/modules/monitoring/backends.ini %{buildroot}/%{_sysconfdir}/icingaweb/modules/monitoring/backends.ini
 install -D -m0644 packages/rpm/etc/icingaweb/modules/monitoring/instances.ini %{buildroot}/%{_sysconfdir}/icingaweb/modules/monitoring/instances.ini
