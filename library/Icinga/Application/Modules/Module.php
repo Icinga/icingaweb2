@@ -5,6 +5,7 @@
 namespace Icinga\Application\Modules;
 
 use Exception;
+use Zend_Config;
 use Zend_Controller_Router_Route_Abstract;
 use Zend_Controller_Router_Route as Route;
 use Icinga\Application\ApplicationBootstrap;
@@ -13,6 +14,7 @@ use Icinga\Application\Icinga;
 use Icinga\Logger\Logger;
 use Icinga\Util\Translator;
 use Icinga\Web\Hook;
+use Icinga\Web\Menu;
 use Icinga\Web\Widget;
 use Icinga\Util\File;
 use Icinga\Exception\ProgrammingError;
@@ -136,7 +138,6 @@ class Module
      */
     private $app;
 
-
     /**
      * Routes to add to the route chain
      *
@@ -145,6 +146,42 @@ class Module
      * @see addRoute()
      */
     protected $routes = array();
+
+    /**
+     * A set of menu elements
+     *
+     * @var array
+     */
+    protected $menuItems = array();
+
+    /**
+     * Get all Menu Items
+     *
+     * @return array
+     */
+    public function getMenuItems()
+    {
+        $this->launchConfigScript();
+        return $this->menuItems;
+    }
+
+    /**
+     * Add a menu Section to the Sidebar menu
+     *
+     * @param $name
+     * @param array $properties
+     * @return mixed
+     */
+    protected function menuSection($name, array $properties = array())
+    {
+        if (array_key_exists($name, $this->menuItems)) {
+            $this->menuItems[$name]->setProperties($properties);
+        } else {
+            $this->menuItems[$name] = new Menu($name, new Zend_Config($properties));
+        }
+
+        return $this->menuItems[$name];
+    }
 
     /**
      * Create a new module object
@@ -780,5 +817,16 @@ class Module
     {
         $this->routes[$name] = $route;
         return $this;
+    }
+
+    /**
+     * Translate a string with the global mt()
+     *
+     * @param $string
+     * @return mixed|string
+     */
+    protected function translate($string)
+    {
+        return mt($this->name, $string);
     }
 }

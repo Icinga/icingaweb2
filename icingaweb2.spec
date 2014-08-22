@@ -181,9 +181,6 @@ install -D -m0644 packages/rpm/etc/httpd/conf.d/icingaweb.conf %{buildroot}/%{ap
 %{__cp} -r application library modules public %{buildroot}/%{sharedir}/
 
 ## config
-# use the default menu.ini for application and monitoring mobule
-install -D -m0644 config/menu.ini %{buildroot}/%{_sysconfdir}/icingaweb/menu.ini
-install -D -m0644 config/modules/monitoring/menu.ini %{buildroot}/%{_sysconfdir}/icingaweb/modules/monitoring/menu.ini
 # authentication is db only
 install -D -m0644 packages/rpm/etc/icingaweb/authentication.ini %{buildroot}/%{_sysconfdir}/icingaweb/authentication.ini
 # custom resource paths

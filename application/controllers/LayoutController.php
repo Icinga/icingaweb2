@@ -18,8 +18,9 @@ class LayoutController extends ActionController
      */
     public function menuAction()
     {
+        $this->_helper->layout()->disableLayout();
         $this->view->menuRenderer = new MenuRenderer(
-            Menu::fromConfig()->order(), Url::fromRequest()->without('renderLayout')->getRelativeUrl()
+            Menu::load(), Url::fromRequest()->without('renderLayout')->getRelativeUrl()
         );
     }
 
