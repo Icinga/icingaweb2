@@ -19,11 +19,6 @@ class AutologinBackendForm extends BaseBackendForm
         $this->setName('form_config_authentication_autologin');
     }
 
-    public function isValidAuthenticationBackend()
-    {
-        return true;
-    }
-
     /**
      * @see Form::createElements()
      */
@@ -77,5 +72,17 @@ class AutologinBackendForm extends BaseBackendForm
                 )
             )
         );
+    }
+
+    /**
+     * Validate the configuration state of this backend
+     *
+     * Returns just true as autologins are being handled externally by the webserver.
+     *
+     * @return  true
+     */
+    public function isValidAuthenticationBackend()
+    {
+        return true;
     }
 }
