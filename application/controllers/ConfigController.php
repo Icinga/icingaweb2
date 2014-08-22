@@ -58,20 +58,15 @@ class ConfigController extends BaseConfigController
 
         $form = new GeneralForm();
         $request = $this->getRequest();
-        $currentConfig = IcingaConfig::app();
         if ($request->isPost()) {
             if ($form->isValid($request->getPost())) {
-                $formConfig = $form->getConfiguration();
-                $newConfig = new Zend_Config($currentConfig->toArray(), true);
-                $newConfig->global = $formConfig->global;
-                $newConfig->preferences = $formConfig->preferences;
-                if ($this->writeConfigFile($newConfig, 'config')) {
+                if ($this->writeConfigFile($form->getConfiguration(), 'config')) {
                     Notification::success($this->translate('New configuration has successfully been stored'));
                     $this->redirectNow('config');
                 }
             }
         } else {
-            $form->setConfiguration($currentConfig);
+            $form->setConfiguration(IcingaConfig::app());
         }
 
         $this->view->form = $form;

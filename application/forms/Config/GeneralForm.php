@@ -8,7 +8,9 @@ use DateTimeZone;
 use Zend_Config;
 use Icinga\Web\Form;
 use Icinga\Util\Translator;
+use Icinga\Application\Icinga;
 use Icinga\Data\ResourceFactory;
+use Icinga\Web\Form\Validator\WritablePathValidator;
 
 /**
  * Configuration form for general, application-wide settings
@@ -34,7 +36,11 @@ class GeneralForm extends Form
             $this->getModulePathInput($formData)
         );
 
-        return array_merge($elements, $this->getPreferencesElements($formData));
+        return array_merge(
+            $elements,
+            $this->getPreferencesElements($formData),
+            $this->getLoggingElements($formData)
+        );
     }
 
     /**
@@ -63,13 +69,14 @@ class GeneralForm extends Form
      */
     public function setConfiguration(Zend_Config $config)
     {
-        $defaults = $config->get('global', new Zend_Config(array()))->toArray();
-        if ($config->get('preferences', new Zend_Config(array()))->type !== null) {
-            $defaults['preferences_type'] = $config->get('preferences')->type;
-            $defaults['preferences_resource'] = $config->get('preferences')->resource;
+        $defaults = array();
+        foreach ($config as $section => $properties) {
+            foreach ($properties as $name => $value) {
+                $defaults[$section . '_' . $name] = $value;
+            }
         }
 
-        $this->setDefaults($defaults);
+        $this->populate($defaults);
         return $this;
     }
 
@@ -80,19 +87,14 @@ class GeneralForm extends Form
      */
     public function getConfiguration()
     {
+        $config = array();
         $values = $this->getValues();
-        $globalData = array(
-            'language'   => $values['language'],
-            'timezone'   => $values['timezone'],
-            'modulePath' => $values['modulePath']
-        );
-
-        $preferencesData = array('type' => $values['preferences_type']);
-        if ($values['preferences_type'] === 'db') {
-            $preferencesData['resource'] = $values['preferences_resource'];
+        foreach ($values as $sectionAndPropertyName => $value) {
+            list($section, $property) = explode('_', $sectionAndPropertyName);
+            $config[$section][$property] = $value;
         }
 
-        return new Zend_Config(array('global' => $globalData, 'preferences' => $preferencesData));
+        return new Zend_Config($config);
     }
 
     /**
@@ -113,7 +115,7 @@ class GeneralForm extends Form
 
         return $this->createElement(
             'select',
-            'language',
+            'global_language',
             array(
                 'label'         => t('Default Language'),
                 'required'      => true,
@@ -144,7 +146,7 @@ class GeneralForm extends Form
 
         $this->addElement(
             'select',
-            'timezone',
+            'global_timezone',
             array(
                 'label'         => t('Default Application Timezone'),
                 'required'      => true,
@@ -167,7 +169,7 @@ class GeneralForm extends Form
     {
         $this->addElement(
             'text',
-            'modulePath',
+            'global_modulePath',
             array(
                 'label'     => t('Module Path'),
                 'required'  => true,
@@ -231,5 +233,109 @@ class GeneralForm extends Form
         }
 
         return $elements;
+    }
+
+    /**
+     * Return form elements to setup the application's logging
+     *
+     * @param   array   $formData   The data sent by the user
+     *
+     * @return  array
+     */
+    protected function getLoggingElements(array $formData)
+    {
+        $elements = array();
+
+        $elements[] = $this->createElement(
+            'select',
+            'logging_level',
+            array(
+                'required'      => true,
+                'label'         => t('Logging Level'),
+                'helptext'      => t('The maximum loglevel to emit.'),
+                'multiOptions'  => array(
+                    0 => t('None'),
+                    1 => t('Error'),
+                    2 => t('Warning'),
+                    3 => t('Information'),
+                    4 => t('Debug')
+                )
+            )
+        );
+        $elements[] = $this->createElement(
+            'select',
+            'logging_type',
+            array(
+                'required'      => true,
+                'class'         => 'autosubmit',
+                'label'         => t('Logging Type'),
+                'helptext'      => t('The type of logging to utilize.'),
+                'multiOptions'  => array(
+                    'syslog'    => 'Syslog',
+                    'file'      => t('File')
+                )
+            )
+        );
+
+        if (false === isset($formData['logging_type']) || $formData['logging_type'] === 'syslog') {
+            $elements[] = $this->createElement(
+                'text',
+                'logging_application',
+                array(
+                    'required'      => true,
+                    'label'         => t('Application Prefix'),
+                    'helptext'      => t('The name of the application by which to prefix syslog messages.'),
+                    'value'         => 'icingaweb',
+                    'validators'    => array(
+                        array(
+                            'Regex',
+                            false,
+                            array(
+                                'pattern'  => '/^[^\W]+$/',
+                                'messages' => array(
+                                    'regexNotMatch' => 'The application prefix cannot contain any whitespaces.'
+                                )
+                            )
+                        )
+                    )
+                )
+            );
+            $elements[] = $this->createElement(
+                'select',
+                'logging_facility',
+                array(
+                    'required'      => true,
+                    'label'         => t('Facility'),
+                    'helptext'      => t('The Syslog facility to utilize.'),
+                    'multiOptions'  => array(
+                        'LOG_USER'  => 'LOG_USER'
+                    )
+                )
+            );
+        } elseif ($formData['logging_type'] === 'file') {
+            $elements[] = $this->createElement(
+                'text',
+                'logging_target',
+                array(
+                    'required'      => true,
+                    'label'         => t('Filepath'),
+                    'helptext'      => t('The logfile to write messages to.'),
+                    'value'         => $this->getDefaultLogDir(),
+                    'validators'    => array(new WritablePathValidator())
+                )
+            );
+        }
+
+        return $elements;
+    }
+
+    /**
+     * Return the default logging directory for type "file"
+     *
+     * @return  string
+     */
+    protected function getDefaultLogDir()
+    {
+        return realpath(Icinga::app()->getApplicationDir('../var/log/icingaweb.log'));
     }
 }

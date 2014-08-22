@@ -6,6 +6,7 @@ namespace Icinga\Logger;
 
 use Exception;
 use Zend_Config;
+use LogicException;
 use Icinga\Exception\ConfigurationError;
 
 /**
@@ -37,10 +38,11 @@ class Logger
     /**
      * The supported severities
      */
-    public static $ERROR = 0;
-    public static $WARNING = 1;
-    public static $INFO = 2;
-    public static $DEBUG = 3;
+    public static $NONE = 0;
+    public static $ERROR = 1;
+    public static $WARNING = 2;
+    public static $INFO = 3;
+    public static $DEBUG = 4;
 
     /**
      * Create a new logger object
@@ -90,9 +92,15 @@ class Logger
      *
      * @param   string  $message    The message to write
      * @param   int     $severity   The severity to use
+     *
+     * @throws  LogicException      In case $severity equals self::$NONE
      */
     public function log($message, $severity)
     {
+        if ($severity === static::$NONE) {
+            throw new LogicException("`None' (0) is not a valid severity to log messages");
+        }
+
         if ($this->writer !== null && $this->verbosity >= $severity) {
             $this->writer->log($severity, $message);
         }
