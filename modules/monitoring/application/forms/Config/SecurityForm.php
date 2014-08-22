@@ -18,6 +18,14 @@ class SecurityForm extends Form
     protected $config;
 
     /**
+     * Initialize this form
+     */
+    public function init()
+    {
+        $this->setName('form_config_monitoring_security');
+    }
+
+    /**
      * @see Form::createElements()
      */
     public function createElements(array $formData)

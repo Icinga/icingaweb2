@@ -13,6 +13,14 @@ use Icinga\Data\ResourceFactory;
 class BackendForm extends Form
 {
     /**
+     * Initialize this form
+     */
+    public function init()
+    {
+        $this->setName('form_config_monitoring_backends');
+    }
+
+    /**
      * @see Form::createElements()
      */
     public function createElements(array $formData)

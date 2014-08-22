@@ -19,7 +19,7 @@ class GeneralForm extends Form
      */
     public function init()
     {
-        $this->setName('form_preference_set');
+        $this->setName('form_config_preferences');
     }
 
     /**

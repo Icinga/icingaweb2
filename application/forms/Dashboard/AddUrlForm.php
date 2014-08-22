@@ -14,6 +14,14 @@ use Icinga\Web\Form;
 class AddUrlForm extends Form
 {
     /**
+     * Initialize this form
+     */
+    public function init()
+    {
+        $this->setName('form_dashboard_addurl');
+    }
+
+    /**
      * @see Form::createElements()
      */
     public function createElements(array $formData)

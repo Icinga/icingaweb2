@@ -11,6 +11,14 @@ use Zend_Validate_Callback;
  */
 class AutologinBackendForm extends BaseBackendForm
 {
+    /**
+     * Initialize this form
+     */
+    public function init()
+    {
+        $this->setName('form_config_authentication_autologin');
+    }
+
     public function isValidAuthenticationBackend()
     {
         return true;

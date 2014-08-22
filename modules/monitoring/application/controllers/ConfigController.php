@@ -251,6 +251,9 @@ class Monitoring_ConfigController extends ModuleActionController
         return true;
     }
 
+    /**
+     * Display a form to adjust security relevant settings
+     */
     public function securityAction()
     {
         $this->view->tabs = $this->Module()->getConfigTabs()->activate('security');

@@ -15,6 +15,14 @@ use Icinga\Web\Form\Decorator\ElementWrapper;
 class InstanceForm extends Form
 {
     /**
+     * Initialize this form
+     */
+    public function init()
+    {
+        $this->setName('form_config_monitoring_instances');
+    }
+
+    /**
      * @see Form::createElements()
      */
     public function createElements(array $formData)
