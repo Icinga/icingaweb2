@@ -87,6 +87,7 @@ class Monitoring_ListController extends Controller
             'host_address',
             'host_acknowledged',
             'host_output',
+            'host_attempt',
             'host_in_downtime',
             'host_is_flapping',
             'host_state_type',
