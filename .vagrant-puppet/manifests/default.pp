@@ -6,11 +6,10 @@ include openldap
 include profile::icingaweb2
 include profile::nodejs
 
-Exec { path => '/bin:/usr/bin:/sbin' }
+Exec { path => '/bin:/usr/bin:/sbin:/usr/sbin' }
 
 $icingaVersion = '1.11.5'
 $icinga2Version = '2.0.1'
-$pluginVersion = '2.0'
 $livestatusVersion = '1.2.4p5'
 $phantomjsVersion = '1.9.1'
 $casperjsVersion = '1.0.2'
@@ -68,17 +67,6 @@ exec { 'icinga-htpasswd':
   creates => '/usr/share/icinga/htpasswd.users',
   command => 'mkdir -p /usr/share/icinga && htpasswd -b -c /usr/share/icinga/htpasswd.users icingaadmin icinga',
   require => Class['apache']
-}
-
-cmmi { 'icinga-plugins':
-  url     => "https://www.monitoring-plugins.org/download/monitoring-plugins-${pluginVersion}.tar.gz",
-  output  => "monitoring-plugins-${pluginVersion}.tar.gz",
-  flags   => '--prefix=/usr/lib64/nagios/plugins \
-              --with-nagios-user=icinga --with-nagios-group=icinga \
-              --with-cgiurl=/icinga-mysql/cgi-bin',
-  creates => '/usr/lib64/nagios/plugins/libexec',
-  make    => 'make && make install',
-  require => User['icinga']
 }
 
 cmmi { 'mk-livestatus':
@@ -179,6 +167,8 @@ exec { 'install nagios-plugins-all':
   unless  => 'rpm -qa | grep nagios-plugins-all',
   require => [ Class['epel'], Package['icinga2'] ],
 }
+# vs include monitoring-plugins (epel is disabled)
+
 
 # icinga 2 classic ui
 package { 'icinga-gui':

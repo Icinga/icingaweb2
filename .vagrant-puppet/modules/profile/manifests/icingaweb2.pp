@@ -47,7 +47,7 @@ class profile::icingaweb2 {
   }
 
   file { '/etc/icingaweb/authentication.ini':
-    source    => 'puppet:////vagrant/.vagrant-puppet/files/etc/icingaweb/authentication.ini',
+    source    => 'puppet:////vagrant/config/authentication.ini',
     owner     => 'apache',
     group     => 'apache',
     require   => File['/etc/icingaweb'],
@@ -60,20 +60,20 @@ class profile::icingaweb2 {
   }
 
   file { '/etc/icingaweb/menu.ini':
-    source    => 'puppet:////vagrant/.vagrant-puppet/files/etc/icingaweb/menu.ini',
+    source    => 'puppet:////vagrant/config/menu.ini',
     owner     => 'apache',
     group     => 'apache',
   # replace   => false,
   }
 
   file { '/etc/icingaweb/resources.ini':
-    source    => 'puppet:////vagrant/.vagrant-puppet/files/etc/icingaweb/resources.ini',
+    source    => 'puppet:////vagrant/config/resources.ini',
     owner     => 'apache',
     group     => 'apache',
     replace   => false
   }
 
-  file { ['/etc/icingaweb/enabledModules', '/etc/icingaweb/modules', '/etc/icingaweb/modules/monitoring']:
+  file { ['/etc/icingaweb/enabledModules', '/etc/icingaweb/modules', '/etc/icingaweb/modules/monitoring', '/etc/icingaweb/modules/doc']:
     ensure    => 'directory',
     owner     => 'apache',
     group     => 'apache',
@@ -85,14 +85,20 @@ class profile::icingaweb2 {
     group     => 'apache',
   }
 
+  file { '/etc/icingaweb/modules/monitoring/config.ini':
+    source    => 'puppet:////vagrant/config/modules/monitoring/config.ini',
+    owner     => 'apache',
+    group     => 'apache',
+  }
+
   file { '/etc/icingaweb/modules/monitoring/instances.ini':
-    source    => 'puppet:////vagrant/.vagrant-puppet/files/etc/icingaweb/modules/monitoring/instances.ini',
+    source    => 'puppet:////vagrant/config/modules/monitoring/instances.ini',
     owner     => 'apache',
     group     => 'apache',
   }
 
   file { '/etc/icingaweb/modules/monitoring/menu.ini':
-    source    => 'puppet:////vagrant/.vagrant-puppet/files/etc/icingaweb/modules/monitoring/menu.ini',
+    source    => 'puppet:////vagrant/config/modules/monitoring/menu.ini',
     owner     => 'apache',
     group     => 'apache',
   }
@@ -104,7 +110,13 @@ class profile::icingaweb2 {
   }
 
   file { '/etc/icingaweb/dashboard/dashboard.ini':
-    source    => 'puppet:////vagrant/.vagrant-puppet/files/etc/icingaweb/dashboard/dashboard.ini',
+    source    => 'puppet:////vagrant/config/dashboard/dashboard.ini',
+    owner     => 'apache',
+    group     => 'apache',
+  }
+
+  file { '/etc/icingaweb/modules/doc/menu.ini':
+    source    => 'puppet:////vagrant/config/modules/doc/menu.ini',
     owner     => 'apache',
     group     => 'apache',
   }

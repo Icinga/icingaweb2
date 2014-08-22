@@ -3,7 +3,7 @@ class profile::icinga2 ($icinga2Version) {
     username => 'icinga2',
     password => 'icinga2',
     privileges => 'SELECT,INSERT,UPDATE,DELETE',
-    schemafile => "/usr/share/doc/icinga2-ido-mysql-${icinga2Version}/schema/mysql.sql",
+    schemafile => '/usr/share/icinga2-ido-mysql/schema/mysql.sql',
     requirement => Package['icinga2-ido-mysql'],
   }
 

@@ -11,7 +11,7 @@ class profile::icinga-pgsql ($icingaVersion) {
                 --with-plugin-dir=/usr/lib64/nagios/plugins/libexec',
     creates => '/usr/local/icinga-pgsql',
     make    => 'make all && make fullinstall install-config',
-    require => [ User['icinga'], Cmmi['icinga-plugins'], Package['apache'] ],
+    require => [ User['icinga'], Exec['install nagios-plugins-all'], Package['apache'] ],
     notify  => Service['apache'],
   }
 
