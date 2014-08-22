@@ -709,13 +709,6 @@ file { '/etc/icingaweb/config.ini':
   group     => 'apache',
 }
 
-file { '/etc/icingaweb/menu.ini':
-  source    => 'puppet:////vagrant/config/menu.ini',
-  owner     => 'apache',
-  group     => 'apache',
-  # replace   => false,
-}
-
 file { '/etc/icingaweb/resources.ini':
   source    => 'puppet:////vagrant/.vagrant-puppet/files/etc/icingaweb/resources.ini',
   owner     => 'apache',
@@ -743,12 +736,6 @@ file { '/etc/icingaweb/modules/monitoring/config.ini':
 
 file { '/etc/icingaweb/modules/monitoring/instances.ini':
   source    => 'puppet:////vagrant/.vagrant-puppet/files/etc/icingaweb/modules/monitoring/instances.ini',
-  owner     => 'apache',
-  group     => 'apache',
-}
-
-file { '/etc/icingaweb/modules/monitoring/menu.ini':
-  source    => 'puppet:////vagrant/config/modules/monitoring/menu.ini',
   owner     => 'apache',
   group     => 'apache',
 }
@@ -791,16 +778,3 @@ file { '/etc/bash_completion.d/icingacli':
    mode      => 755,
    require   => Exec['install bash-completion']
 }
-
-file { '/etc/icingaweb/modules/doc/':
-  ensure    => 'directory',
-  owner     => 'apache',
-  group     => 'apache'
-}
-
-file { '/etc/icingaweb/modules/doc/menu.ini':
-  source    => 'puppet:////vagrant/config/modules/doc/menu.ini',
-  owner     => 'apache',
-  group     => 'apache',
-}
-
