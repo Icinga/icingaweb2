@@ -17,6 +17,7 @@ class AutologinBackendForm extends BaseBackendForm
     public function init()
     {
         $this->setName('form_config_authentication_autologin');
+        $this->setSubmitLabel(t('Save Changes'));
     }
 
     /**

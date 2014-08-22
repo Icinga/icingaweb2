@@ -18,6 +18,7 @@ class LoginForm extends Form
     public function init()
     {
         $this->setName('form_login');
+        $this->setSubmitLabel(t('Login'));
     }
 
     /**
@@ -52,21 +53,6 @@ class LoginForm extends Form
                 array(
                     'value' => Url::fromRequest()->getParam('redirect')
                 )
-            )
-        );
-    }
-
-    /**
-     * @see Form::addSubmitButton()
-     */
-    public function addSubmitButton()
-    {
-        $this->addElement(
-            'submit',
-            'btn_submit',
-            array(
-                'ignore'    => true,
-                'label'     => t('Login')
             )
         );
     }

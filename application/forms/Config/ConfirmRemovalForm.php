@@ -17,20 +17,6 @@ class ConfirmRemovalForm extends Form
     public function init()
     {
         $this->setName('form_confirm_removal');
-    }
-
-    /**
-     * @see Form::addSubmitButton()
-     */
-    public function addSubmitButton()
-    {
-        $this->addElement(
-            'submit',
-            'btn_submit',
-            array(
-                'ignore'    => true,
-                'label'     => t('Confirm Removal')
-            )
-        );
+        $this->setSubmitLabel(t('Confirm Removal'));
     }
 }

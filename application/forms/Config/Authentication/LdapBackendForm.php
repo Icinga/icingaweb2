@@ -31,6 +31,7 @@ class LdapBackendForm extends BaseBackendForm
     public function init()
     {
         $this->setName('form_config_authentication_ldap');
+        $this->setSubmitLabel(t('Save Changes'));
 
         $ldapResources = array_keys(
             ResourceFactory::getResourceConfigs('ldap')->toArray()

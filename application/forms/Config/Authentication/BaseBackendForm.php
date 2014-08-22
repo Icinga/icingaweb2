@@ -12,23 +12,6 @@ use Icinga\Web\Form;
 abstract class BaseBackendForm extends Form
 {
     /**
-     * @see Form::addSubmitButton()
-     */
-    public function addSubmitButton()
-    {
-        $this->addElement(
-            'submit',
-            'btn_submit',
-            array(
-                'ignore'    => true,
-                'label'     => t('Save Changes')
-            )
-        );
-
-        return $this;
-    }
-
-    /**
      * Return whether the given values are complete/valid and check whether it is possible to connect to the backend
      *
      * If connection validation fails, a checkbox is prepended to the form to allow users to skip it.

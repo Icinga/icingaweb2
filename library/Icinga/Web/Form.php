@@ -24,6 +24,13 @@ class Form extends Zend_Form
     protected $created = false;
 
     /**
+     * Label to use for the standard submit button
+     *
+     * @var string
+     */
+    protected $submitLabel;
+
+    /**
      * The view script to use when rendering this form
      *
      * @var string
@@ -45,6 +52,29 @@ class Form extends Zend_Form
      * @var string
      */
     protected $tokenElementName = 'CSRFToken';
+
+    /**
+     * Set the label to use for the standard submit button
+     *
+     * @param   string  $label  The label to use for the submit button
+     *
+     * @return  self
+     */
+    public function setSubmitLabel($label)
+    {
+        $this->submitLabel = $label;
+        return $this;
+    }
+
+    /**
+     * Return the label being used for the standard submit button
+     *
+     * @return  string
+     */
+    public function getSubmitLabel()
+    {
+        return $this->submitLabel;
+    }
 
     /**
      * Set the view script to use when rendering this form
@@ -162,12 +192,24 @@ class Form extends Zend_Form
     /**
      * Add a submit button to this form
      *
-     * Intended to be implemented by concrete form classes.
+     * Uses the label previously set with Form::setSubmitLabel(). Overwrite this
+     * method in order to add multiple submit buttons or one with a custom name.
      *
      * @return  self
      */
     public function addSubmitButton()
     {
+        if ($this->submitLabel !== null) {
+            $this->addElement(
+                'submit',
+                'btn_submit',
+                array(
+                    'ignore'    => true,
+                    'label'     => $this->submitLabel
+                )
+            );
+        }
+
         return $this;
     }
 
@@ -259,6 +301,22 @@ class Form extends Zend_Form
             $formData
         );
         return empty($missingValues);
+    }
+
+    /**
+     * Return whether the submit button of this form was pressed
+     *
+     * When overwriting Form::addSubmitButton() be sure to overwrite this method as well.
+     *
+     * @return  bool                True in case it was pressed, False otherwise or no submit label was set
+     */
+    public function isSubmitted()
+    {
+        if ($this->submitLabel !== null) {
+            return $this->getElement('btn_submit')->isChecked();
+        }
+
+        return false;
     }
 
     /**

@@ -20,6 +20,7 @@ class InstanceForm extends Form
     public function init()
     {
         $this->setName('form_config_monitoring_instances');
+        $this->setSubmitLabel(t('Save Changes'));
     }
 
     /**
@@ -118,23 +119,6 @@ class InstanceForm extends Form
             )
         );
         return $elements;
-    }
-
-    /**
-     * @see Form::addSubmitButton()
-     */
-    public function addSubmitButton()
-    {
-        $this->addElement(
-            'submit',
-            'btn_submit',
-            array(
-                'ignore'    => true,
-                'label'     => t('Save Changes')
-            )
-        );
-
-        return $this;
     }
 
     /**

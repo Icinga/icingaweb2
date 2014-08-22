@@ -23,6 +23,7 @@ class GeneralForm extends Form
     public function init()
     {
         $this->setName('form_config_general');
+        $this->setSubmitLabel(t('Save Changes'));
     }
 
     /**
@@ -41,23 +42,6 @@ class GeneralForm extends Form
             $this->getPreferencesElements($formData),
             $this->getLoggingElements($formData)
         );
-    }
-
-    /**
-     * @see Form::addSubmitButton()
-     */
-    public function addSubmitButton()
-    {
-        $this->addElement(
-            'submit',
-            'btn_submit',
-            array(
-                'ignore'    => true,
-                'label'     => t('Save Changes')
-            )
-        );
-
-        return $this;
     }
 
     /**

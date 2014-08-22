@@ -84,7 +84,7 @@ class DashboardController extends ActionController
         $form = new AddUrlForm();
         $request = $this->getRequest();
         if ($request->isPost()) {
-            if ($form->isValid($request->getPost()) && $form->getElement('btn_submit')->isChecked()) {
+            if ($form->isValid($request->getPost()) && $form->isSubmitted()) {
                 $dashboard = $this->getDashboard();
                 $dashboard->setComponentUrl(
                     $form->getValue('pane'),

@@ -31,6 +31,7 @@ class DbBackendForm extends BaseBackendForm
     public function init()
     {
         $this->setName('form_config_authentication_db');
+        $this->setSubmitLabel(t('Save Changes'));
 
         $dbResources = array_keys(
             ResourceFactory::getResourceConfigs('db')->toArray()

@@ -19,6 +19,7 @@ class AddUrlForm extends Form
     public function init()
     {
         $this->setName('form_dashboard_addurl');
+        $this->setSubmitLabel(t('Add To Dashboard'));
     }
 
     /**
@@ -102,23 +103,6 @@ class AddUrlForm extends Form
             )
         );
         return $elements;
-    }
-
-    /**
-     * @see Form::addSubmitButton()
-     */
-    public function addSubmitButton()
-    {
-        $this->addElement(
-            'submit',
-            'btn_submit',
-            array(
-                'ignore'    => true,
-                'label'     => t('Add To Dashboard')
-            )
-        );
-
-        return $this;
     }
 
     /**
