@@ -37,9 +37,6 @@ class ConfigController extends BaseConfigController
         ))->add('resources', array(
             'title' => 'Resources',
             'url'   => 'config/resource'
-        ))->add('logging', array(
-            'title' => 'Logging',
-            'url'   => 'config/logging'
         ));
     }
 
@@ -67,36 +64,6 @@ class ConfigController extends BaseConfigController
             }
         } else {
             $form->setConfiguration(IcingaConfig::app());
-        }
-
-        $this->view->form = $form;
-    }
-
-    /**
-     * Form for modifying the logging configuration
-     */
-    public function loggingAction()
-    {
-        $this->view->messageBox = new AlertMessageBox(true);
-        $this->view->tabs->activate('logging');
-
-        $form = new LoggingForm();
-        $request = $this->getRequest();
-        if ($request->isPost()) {
-            if ($form->isValid($request->getPost())) {
-                $appConfig = IcingaConfig::app();
-                $appConfig->logging = new Zend_Config($form->getValues());
-                if ($this->writeConfigFile($appConfig, 'config')) {
-                    $this->addSuccessMessage($this->translate('Logging configuration has sucessfully been stored'));
-                    $this->redirectNow('config/logging');
-                }
-            }
-        } else {
-            $loggingConfig = Icinga::app()->getConfig()->logging;
-            if ($loggingConfig === null) {
-                $loggingConfig = new Zend_Config(array());
-            }
-            $form->populate($loggingConfig->toArray());
         }
 
         $this->view->form = $form;
