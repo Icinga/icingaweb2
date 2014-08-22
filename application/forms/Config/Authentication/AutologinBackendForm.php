@@ -6,6 +6,9 @@ namespace Icinga\Form\Config\Authentication;
 
 use Zend_Validate_Callback;
 
+/**
+ * Form class for adding/modifying autologin authentication backends
+ */
 class AutologinBackendForm extends BaseBackendForm
 {
     public function isValidAuthenticationBackend()
@@ -13,6 +16,9 @@ class AutologinBackendForm extends BaseBackendForm
         return true;
     }
 
+    /**
+     * @see Form::createElements()
+     */
     public function createElements(array $formData)
     {
         return array(
@@ -24,7 +30,6 @@ class AutologinBackendForm extends BaseBackendForm
                     'allowEmpty'    => false,
                     'label'         => t('Backend Name'),
                     'helptext'      => t('The name of this authentication backend'),
-                    'value'         => '',
                     'validators'    => array(
                         array(
                             'Regex',

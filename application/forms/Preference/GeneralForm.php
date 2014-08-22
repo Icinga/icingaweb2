@@ -28,7 +28,7 @@ class GeneralForm extends Form
      * Possible values are determined by Translator::getAvailableLocaleCodes.
      * Also, a 'use browser language' checkbox is added in order to allow a user to discard his setting
      *
-     * @param   array   $formData   The data to populate the elements with
+     * @param   array   $formData   The data sent by the user
      */
     protected function getLanguageElements(array $formData)
     {
@@ -43,9 +43,7 @@ class GeneralForm extends Form
             'required'      => false === $useBrowserLanguage,
             'multiOptions'  => $languages,
             'helptext'      => t('Use the following language to display texts and messages'),
-            'value'         => isset($formData['language'])
-                ? $formData['language']
-                : substr(setlocale(LC_ALL, 0), 0, 5)
+            'value'         => substr(setlocale(LC_ALL, 0), 0, 5)
         );
         if ($useBrowserLanguage) {
             $selectOptions['disabled'] = 'disabled';
@@ -72,7 +70,7 @@ class GeneralForm extends Form
      * Possible values are determined by DateTimeZone::listIdentifiers.
      * Also, a 'use local timezone' checkbox is added in order to allow a user to discard his overwritten setting
      *
-     * @param   array   $formData   The data to populate the elements with
+     * @param   array   $formData   The data sent by the user
      */
     protected function getTimezoneElements(array $formData)
     {
@@ -87,9 +85,7 @@ class GeneralForm extends Form
             'required'      => false === $useLocalTimezone,
             'multiOptions'  => $tzList,
             'helptext'      => t('Use the following timezone for dates and times'),
-            'value'         => isset($formData['timezone'])
-                ? $formData['timezone']
-                : date_default_timezone_get()
+            'value'         => date_default_timezone_get()
         );
         if ($useLocalTimezone) {
             $selectOptions['disabled'] = 'disabled';
@@ -120,8 +116,7 @@ class GeneralForm extends Form
             'checkbox',
             'show_benchmark',
             array(
-                'label' => t('Use benchmark'),
-                'value' => isset($formData['show_benchmark']) ? $formData['show_benchmark'] : 0
+                'label' => t('Use benchmark')
             )
         );
 

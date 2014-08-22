@@ -31,9 +31,9 @@ class GeneralForm extends Form
     public function createElements(array $formData)
     {
         $elements = array(
-            $this->getLanguageSelection($formData),
-            $this->getTimezoneSelection($formData),
-            $this->getModulePathInput($formData)
+            $this->getLanguageSelection(),
+            $this->getTimezoneSelection(),
+            $this->getModulePathInput()
         );
 
         return array_merge(
@@ -102,11 +102,9 @@ class GeneralForm extends Form
      *
      * Possible values are determined by Translator::getAvailableLocaleCodes.
      *
-     * @param   array   $formData   The data to populate the elements with
-     *
      * @return  Zend_Form_Element
      */
-    protected function getLanguageSelection(array $formData)
+    protected function getLanguageSelection()
     {
         $languages = array();
         foreach (Translator::getAvailableLocaleCodes() as $language) {
@@ -122,8 +120,7 @@ class GeneralForm extends Form
                 'multiOptions'  => $languages,
                 'helptext'      => t(
                     'Select the language to use by default. Can be overwritten by a user in his preferences.'
-                ),
-                'value'         => isset($formData['language']) ? $formData['language'] : Translator::DEFAULT_LOCALE
+                )
             )
         );
     }
@@ -133,11 +130,9 @@ class GeneralForm extends Form
      *
      * Possible values are determined by DateTimeZone::listIdentifiers.
      *
-     * @param   array   $formData   The data to populate the elements with
-     *
      * @return  Zend_Form_Element
      */
-    protected function getTimezoneSelection(array $formData)
+    protected function getTimezoneSelection()
     {
         $tzList = array();
         foreach (DateTimeZone::listIdentifiers() as $tz) {
@@ -155,17 +150,15 @@ class GeneralForm extends Form
                     'Select the timezone to be used as the default. User\'s can set their own timezone if'
                     . ' they like to, but this is the timezone to be used as the default setting .'
                 ),
-                'value'         => isset($formData['timezone']) ? $formData['timezone'] : date_default_timezone_get()
+                'value'         => date_default_timezone_get()
             )
         );
     }
 
     /**
      * Return a input field for setting the module path
-     *
-     * @param   array   $formData   The data to populate the elements with
      */
-    protected function getModulePathInput(array $formData)
+    protected function getModulePathInput()
     {
         $this->addElement(
             'text',
@@ -178,9 +171,7 @@ class GeneralForm extends Form
                     . 'colons. Modules that don\'t exist in these directories can still be symlinked in '
                     . 'the module folder, but won\'t show up in the list of disabled modules.'
                 ),
-                'value'     => isset($formData['modulePath'])
-                    ? $formData['modulePath']
-                    : realpath(ICINGAWEB_APPDIR . '/../modules')
+                'value'     => realpath(ICINGAWEB_APPDIR . '/../modules')
             )
         );
     }
@@ -188,7 +179,7 @@ class GeneralForm extends Form
     /**
      * Return form elements for setting the user preference storage backend
      *
-     * @param   array   $formData   The data to populate the elements with
+     * @param   array   $formData   The data sent by the user
      */
     protected function getPreferencesElements(array $formData)
     {
@@ -200,7 +191,6 @@ class GeneralForm extends Form
                     'required'      => true,
                     'class'         => 'autosubmit',
                     'label'         => t('User Preference Storage Type'),
-                    'value'         => isset($formData['preferences_type']) ? $formData['preferences_type'] : 'ini',
                     'multiOptions'  => array(
                         'ini'   => t('File System (INI Files)'),
                         'db'    => t('Database'),
@@ -224,10 +214,7 @@ class GeneralForm extends Form
                 array(
                     'required'      => true,
                     'multiOptions'  => $backends,
-                    'label'         => t('Database Connection'),
-                    'value'         => isset($formData['preferences_resource'])
-                        ? $formData['preferences_resource']
-                        : null
+                    'label'         => t('Database Connection')
                 )
             );
         }

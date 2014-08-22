@@ -123,7 +123,7 @@ class Form extends Zend_Form
     /**
      * Create this form
      *
-     * @param   array   $formData   The data to populate the form with
+     * @param   array   $formData   The data sent by the user
      *
      * @return  self
      */
@@ -150,7 +150,7 @@ class Form extends Zend_Form
      *
      * Intended to be implemented by concrete form classes.
      *
-     * @param   array   $formData   The data to populate the elements with
+     * @param   array   $formData   The data sent by the user
      *
      * @return  array
      */
