@@ -1,4 +1,4 @@
-class profile::icinga2 ($icinga2Version) {
+class profile::icinga2-dev ($icinga2Version) {
   include icinga2-mysql
 
   icinga2::feature { [ 'statusdata', 'command', 'compatlog' ]:

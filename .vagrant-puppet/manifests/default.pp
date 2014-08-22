@@ -14,7 +14,7 @@ $livestatusVersion = '1.2.4p5'
 $phantomjsVersion = '1.9.1'
 $casperjsVersion = '1.0.2'
 
-class { 'profile::icinga2':
+class { 'profile::icinga2-dev ':
   icinga2Version => $icinga2Version,
 }
 
