@@ -54,16 +54,18 @@ abstract class UserBackend implements Countable
             // Use a custom backend class, this is only useful for testing
             if (!class_exists($backendConfig->class)) {
                 throw new ConfigurationError(
-                    'Authentication configuration for backend "' . $name . '" defines an invalid backend'
-                    . ' class. Backend class "' . $backendConfig->class. '" not found'
+                    'Authentication configuration for backend "%s" defines an invalid backend class.'
+                    . ' Backend class "%s" not found',
+                    $name,
+                    $backendConfig->class
                 );
             }
             return new $backendConfig->class($backendConfig);
         }
         if (($backendType = $backendConfig->backend) === null) {
             throw new ConfigurationError(
-                'Authentication configuration for backend "' . $name
-                . '" is missing the backend directive'
+                'Authentication configuration for backend "%s" is missing the backend directive',
+                $name
             );
         }
         $backendType = strtolower($backendType);
@@ -74,8 +76,8 @@ abstract class UserBackend implements Countable
         }
         if ($backendConfig->resource === null) {
             throw new ConfigurationError(
-                'Authentication configuration for backend "' . $name
-                . '" is missing the resource directive'
+                'Authentication configuration for backend "%s" is missing the resource directive',
+                $name
             );
         }
         try {
@@ -100,22 +102,24 @@ abstract class UserBackend implements Countable
             case 'ldap':
                 if (($userClass = $backendConfig->user_class) === null) {
                     throw new ConfigurationError(
-                        'Authentication configuration for backend "' . $name
-                        . '" is missing the user_class directive'
+                        'Authentication configuration for backend "%s" is missing the user_class directive',
+                        $name
                     );
                 }
                 if (($userNameAttribute = $backendConfig->user_name_attribute) === null) {
                     throw new ConfigurationError(
-                        'Authentication configuration for backend "' . $name
-                        . '" is missing the user_name_attribute directive'
+                        'Authentication configuration for backend "%s" is missing the user_name_attribute directive',
+                        $name
                     );
                 }
                 $backend = new LdapUserBackend($resource, $userClass, $userNameAttribute);
                 break;
             default:
                 throw new ConfigurationError(
-                    'Authentication configuration for backend "' . $name. '" defines an invalid backend'
-                    . ' type. Backend type "' . $backendType . '" is not supported'
+                    'Authentication configuration for backend "%s" defines an invalid backend type.'
+                    . ' Backend type "%s" is not supported',
+                    $name,
+                    $backendType
                 );
         }
         $backend->setName($name);

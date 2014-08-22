@@ -87,12 +87,13 @@ class Backend implements Selectable, Queryable, ConnectionInterface
             $backendConfig = $defaultBackend;
         } else {
             if (!array_key_exists($backendName, $allBackends)) {
-                throw new ConfigurationError('No configuration for backend ' . $backendName);
+                throw new ConfigurationError('No configuration for backend %s', $backendName);
             }
             $backendConfig = $allBackends[$backendName];
             if ((bool) $backendConfig->get('disabled', false)) {
                 throw new ConfigurationError(
-                    'Configuration for backend ' . $backendName . ' available but backend is disabled'
+                    'Configuration for backend %s available but backend is disabled',
+                    $backendName
                 );
             }
         }

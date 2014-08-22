@@ -39,7 +39,8 @@ class ResourceFactory implements ConfigAwareFactory
         self::assertResourcesExist();
         if (($resourceConfig = self::$resources->get($resourceName)) === null) {
             throw new ConfigurationError(
-                'Cannot load resource config "' . $resourceName . '". Resource does not exist'
+                'Cannot load resource config "%s". Resource does not exist',
+                $resourceName
             );
         }
         return $resourceConfig;
@@ -113,7 +114,10 @@ class ResourceFactory implements ConfigAwareFactory
                 $resource = new FileReader($config);
                 break;
             default:
-                throw new ConfigurationError('Unsupported resource type "' . $config->type . '"');
+                throw new ConfigurationError(
+                    'Unsupported resource type "%s"',
+                    $config->type
+                );
         }
         return $resource;
     }

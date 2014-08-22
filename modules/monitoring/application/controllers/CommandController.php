@@ -114,7 +114,7 @@ class Monitoring_CommandController extends Controller
                 if ($targetConfig->get($instance)) {
                     $this->target = new CommandPipe($targetConfig->get($instance));
                 } else {
-                    throw new ConfigurationError('Instance is not configured: '. $instance);
+                    throw new ConfigurationError('Instance is not configured: %s', $instance);
                 }
             } else {
                 if ($targetConfig && $targetInfo = $targetConfig->current()) {

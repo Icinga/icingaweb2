@@ -206,10 +206,8 @@ class Manager
     {
         if (!$this->hasInstalled($name)) {
             throw new ConfigurationError(
-                sprintf(
-                    'Cannot enable module "%s". Module is not installed.',
-                    $name
-                )
+                'Cannot enable module "%s". Module is not installed.',
+                $name
             );
         }
 
@@ -268,14 +266,18 @@ class Manager
         }
         $link = $this->enableDir . '/' . $name;
         if (!file_exists($link)) {
-            throw new ConfigurationError('Could not disable module. The module ' . $name . ' was not found.');
+            throw new ConfigurationError(
+                'Could not disable module. The module %s was not found.',
+                $name
+            );
         }
         if (!is_link($link)) {
             throw new ConfigurationError(
-                'Could not disable module. The module "' . $name . '" is not a symlink. '
+                'Could not disable module. The module "%s" is not a symlink. '
                 . 'It looks like you have installed this module manually and moved it to your module folder. '
                 . 'In order to dynamically enable and disable modules, you have to create a symlink to '
-                . 'the enabled_modules folder.'
+                . 'the enabled_modules folder.',
+                $name
             );
         }
 

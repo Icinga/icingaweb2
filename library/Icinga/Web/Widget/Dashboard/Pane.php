@@ -157,7 +157,7 @@ class Pane extends AbstractWidget
         } elseif (is_string($component) && $url !== null) {
              $this->components[$component] = new Component($component, $url, $this);
         } else {
-            throw new ConfigurationError('Invalid component added: ' . $component);
+            throw new ConfigurationError('Invalid component added: %s', $component);
         }
         return $this;
     }
