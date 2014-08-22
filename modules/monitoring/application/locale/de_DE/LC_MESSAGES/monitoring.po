@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Monitoring Module (2.0.0~alpha4)\n"
 "Report-Msgid-Bugs-To: dev@icinga.org\n"
-"POT-Creation-Date: 2014-08-22 16:18+0200\n"
-"PO-Revision-Date: 2014-08-22 17:57+0100\n"
+"POT-Creation-Date: 2014-08-22 18:04+0200\n"
+"PO-Revision-Date: 2014-08-22 18:05+0100\n"
 "Last-Translator: Thomas Gelf <thomas@gelf.net>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -103,6 +103,18 @@ msgstr "%d werden nicht überwacht"
 msgid "%d are passively checked"
 msgstr "%d werden passiv überwacht"
 
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:20
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:87
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:138
+#, php-format
+msgid "%d hosts disabled"
+msgstr "%d deaktivierte Hosts"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:36
+#, php-format
+msgid "%d hosts flapping"
+msgstr "%d flapping Hosts"
+
 #: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:62
 #: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:132
 #: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:202
@@ -118,6 +130,18 @@ msgstr "%d wird nicht überwacht"
 #, php-format
 msgid "%d is passively checked"
 msgstr "%d wird passiv überwacht"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:48
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:107
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:158
+#, php-format
+msgid "%d services disabled"
+msgstr "%d deaktivierte Services"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:64
+#, php-format
+msgid "%d services flapping"
+msgstr "%d flapping services"
 
 #: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/hosts.phtml:105
 #, php-format
@@ -1349,6 +1373,7 @@ msgid "TODO: Help message when with children is enabled"
 msgstr ""
 
 #: /usr/local/src/bugfix.master/modules/monitoring/configuration.php:54
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/TacticalController.php:15
 msgid "Tactical Overview"
 msgstr "Taktische Übersicht"
 
