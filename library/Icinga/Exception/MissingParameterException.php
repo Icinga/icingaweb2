@@ -4,12 +4,10 @@
 
 namespace Icinga\Exception;
 
-use RuntimeException;
-
 /**
  * Class MissingParameterException
  * @package Icinga\Exception
  */
-class MissingParameterException extends RuntimeException
+class MissingParameterException extends IcingaException
 {
 }
