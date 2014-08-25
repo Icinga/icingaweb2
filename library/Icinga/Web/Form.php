@@ -4,7 +4,6 @@
 
 namespace Icinga\Web;
 
-use LogicException;
 use Zend_Form;
 use Zend_View_Interface;
 use Icinga\Web\Form\Decorator\HelpText;
@@ -161,7 +160,9 @@ class Form extends Zend_Form
     {
         if (false === $this->created) {
             $this->addElements($this->createElements($formData));
-            $this->addCsrfCounterMeasure()->addSubmitButton();
+            $this->addFormIdentification()
+                ->addCsrfCounterMeasure()
+                ->addSubmitButton();
 
             if ($this->getAction() === '') {
                 // We MUST set an action as JS gets confused otherwise, if
@@ -246,6 +247,25 @@ class Form extends Zend_Form
     }
 
     /**
+     * Add a field with a unique and form specific ID
+     *
+     * @return  self
+     */
+    public function addFormIdentification()
+    {
+        $this->addElement(
+            'hidden',
+            'form_uid',
+            array(
+                'ignore'    => true,
+                'value'     => $this->getName()
+            )
+        );
+
+        return $this;
+    }
+
+    /**
      * Add CSRF counter measure field to this form
      *
      * @return  self
@@ -273,37 +293,6 @@ class Form extends Zend_Form
     }
 
     /**
-     * Return whether the given data provides a value for each element of this form
-     *
-     * Note that elements that are disabled or of type submit are not taken into consideration.
-     *
-     * @param   array   $formData   The data to check
-     *
-     * @return  bool
-     *
-     * @throws  LogicException      In case this form has no elements
-     */
-    public function isComplete(array $formData)
-    {
-        $elements = $this->create($formData)->getElements();
-        if (empty($elements)) {
-            throw new LogicException('Forms without elements cannot be complete');
-        }
-
-        $missingValues = array_diff_key(
-            array_filter(
-                $elements,
-                function ($el) {
-                    return $el->getAttrib('disabled') === null
-                        && 0 === preg_match('@(submit|button)@', strtolower(get_class($el)));
-                }
-            ),
-            $formData
-        );
-        return empty($missingValues);
-    }
-
-    /**
      * Return whether the submit button of this form was pressed
      *
      * When overwriting Form::addSubmitButton() be sure to overwrite this method as well.
@@ -317,6 +306,21 @@ class Form extends Zend_Form
         }
 
         return false;
+    }
+
+    /**
+     * Return whether the data sent by the user refers to this form
+     *
+     * Ensures that the correct form gets processed in case there are multiple forms
+     * with equal submit button names being posted against the same route.
+     *
+     * @param   array   $formData   The data sent by the user
+     *
+     * @return  bool                Whether the given data refers to this form
+     */
+    public function wasSent(array $formData)
+    {
+        return isset($formData['form_uid']) && $formData['form_uid'] === $this->getName();
     }
 
     /**
@@ -336,7 +340,7 @@ class Form extends Zend_Form
     }
 
     /**
-     * Return whether the given values are complete and valid
+     * Return whether the given values are valid
      *
      * @param   array   $formData   The data to validate
      *
@@ -344,12 +348,8 @@ class Form extends Zend_Form
      */
     public function isValid($formData)
     {
-        if ($this->isComplete($formData)) {
-            return parent::isValid($formData);
-        }
-
-        $this->isValidPartial($formData); // The form can't be processed but we want to show validation errors though
-        return false;
+        $this->create($formData);
+        return parent::isValid($formData);
     }
 
     /**
@@ -389,6 +389,22 @@ class Form extends Zend_Form
         }
 
         return $this;
+    }
+
+    /**
+     * Return the name of this form
+     *
+     * @return  string
+     */
+    public function getName()
+    {
+        $name = parent::getName();
+        if (! $name) {
+            $name = get_class($this);
+            $this->setName($name);
+        }
+
+        return $name;
     }
 
     /**
