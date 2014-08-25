@@ -78,7 +78,9 @@ class DbStore extends PreferencesStore
                 ->fetchAll();
         } catch (Exception $e) {
             throw new NotReadableError(
-                'Cannot fetch preferences for user ' . $this->getUser()->getUsername() . ' from database', 0, $e
+                'Cannot fetch preferences for user %s from database',
+                $this->getUser()->getUsername(),
+                $e
             );
         }
 

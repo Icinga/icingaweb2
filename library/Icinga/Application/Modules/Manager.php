@@ -110,12 +110,14 @@ class Manager
         }
         if (!is_dir($this->enableDir)) {
             throw new NotReadableError(
-                'Cannot read enabled modules. Module directory "' . $this->enableDir . '" is not a directory'
+                'Cannot read enabled modules. Module directory "%s" is not a directory',
+                $this->enableDir
             );
         }
         if (!is_readable($this->enableDir)) {
             throw new NotReadableError(
-                'Cannot read enabled modules. Module directory "' . $this->enableDir . '" is not readable'
+                'Cannot read enabled modules. Module directory "%s" is not readable',
+                $this->enableDir
             );
         }
         if (($dh = opendir($canonical)) !== false) {

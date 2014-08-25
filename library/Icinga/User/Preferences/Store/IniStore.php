@@ -62,8 +62,9 @@ class IniStore extends PreferencesStore
         if (file_exists($this->preferencesFile)) {
             if (!is_readable($this->preferencesFile)) {
                 throw new NotReadableError(
-                    'Preferences INI file ' . $this->preferencesFile . ' for user '
-                    . $this->getUser()->getUsername() . ' is not readable'
+                    'Preferences INI file %s for user %s is not readable',
+                    $this->preferencesFile,
+                    $this->getUser()->getUsername()
                 );
             } else {
                 $this->preferences = parse_ini_file($this->preferencesFile);
