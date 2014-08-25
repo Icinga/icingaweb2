@@ -191,6 +191,30 @@ class Form extends Zend_Form
     }
 
     /**
+     * Perform actions after this form was submitted using a valid request
+     *
+     * Intended to be implemented by concrete form classes.
+     *
+     * @param   Request     $request    The valid request used to process this form
+     */
+    public function onSuccess(Request $request)
+    {
+
+    }
+
+    /**
+     * Perform actions after this form was submitted using an invalid request
+     *
+     * Intended to be implemented by concrete form classes.
+     *
+     * @param   Request     $request    The invalid request supposed to process this form
+     */
+    public function onFailure(Request $request)
+    {
+
+    }
+
+    /**
      * Add a submit button to this form
      *
      * Uses the label previously set with Form::setSubmitLabel(). Overwrite this
@@ -290,6 +314,37 @@ class Form extends Zend_Form
     {
         $this->create($defaults);
         return parent::setDefaults($defaults);
+    }
+
+    /**
+     * Process the given request using this form
+     *
+     * @param   Request     $request    The request to be processed
+     *
+     * @return  null|bool               True in case the request was handled and valid,
+     *                                  false if invalid and null if it was not handled
+     */
+    public function handleRequest(Request $request)
+    {
+        if (strtolower($request->getMethod()) === $this->getMethod()) {
+            $formData = $request->{'get' . $request->isPost() ? 'Post' : 'Query'}();
+            if ($this->wasSent($formData)) {
+                $this->populate($formData); // Necessary to get isSubmitted() to work
+                if ($this->isSubmitted()) {
+                    if ($this->isValid($formData)) {
+                        $this->onSuccess($request);
+                        return true;
+                    } else {
+                        $this->onFailure($request);
+                    }
+                } else {
+                    // The form can't be processed but we want to show validation errors though
+                    $this->isValidPartial($formData);
+                }
+
+                return false;
+            }
+        }
     }
 
     /**
