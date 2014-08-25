@@ -98,10 +98,8 @@ class IniStore extends PreferencesStore
             if (!file_exists($this->preferencesFile)) {
                 if (!is_writable($this->getStoreConfig()->location)) {
                     throw new NotWritableError(
-                        sprintf(
-                            'Path to the preferences INI files %s is not writable',
-                            $this->getStoreConfig()->location
-                        )
+                        'Path to the preferences INI files %s is not writable',
+                        $this->getStoreConfig()->location
                     );
                 }
 
@@ -110,8 +108,9 @@ class IniStore extends PreferencesStore
 
             if (!is_writable($this->preferencesFile)) {
                 throw new NotWritableError(
-                    'Preferences INI file ' . $this->preferencesFile . ' for user '
-                    . $this->getUser()->getUsername() . ' is not writable'
+                    'Preferences INI file %s for user %s is not writable',
+                    $this->preferencesFile,
+                    $this->getUser()->getUsername()
                 );
             }
 

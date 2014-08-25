@@ -147,7 +147,9 @@ class DbStore extends PreferencesStore
             }
         } catch (Exception $e) {
             throw new NotWritableError(
-                'Cannot insert preferences for user ' . $this->getUser()->getUsername() . ' into database', 0, $e
+                'Cannot insert preferences for user %s into database',
+                $this->getUser()->getUsername(),
+                $e
             );
         }
     }
@@ -176,7 +178,9 @@ class DbStore extends PreferencesStore
             }
         } catch (Exception $e) {
             throw new NotWritableError(
-                'Cannot update preferences for user ' . $this->getUser()->getUsername() . ' in database', 0, $e
+                'Cannot update preferences for user %s in database',
+                $this->getUser()->getUsername(),
+                $e
             );
         }
     }
@@ -202,7 +206,9 @@ class DbStore extends PreferencesStore
             );
         } catch (Exception $e) {
             throw new NotWritableError(
-                'Cannot delete preferences for user ' . $this->getUser()->getUsername() . ' from database', 0, $e
+                'Cannot delete preferences for user %s from database',
+                $this->getUser()->getUsername(),
+                $e
             );
         }
     }
