@@ -8,6 +8,6 @@ namespace Icinga\Exception;
  * Class NotImplementedError
  * @package Icinga\Exception
  */
-class NotImplementedError extends \Exception
+class NotImplementedError extends IcingaException
 {
 }
