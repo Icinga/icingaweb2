@@ -163,6 +163,47 @@ class Pane extends AbstractWidget
     }
 
     /**
+     * Add new components to existing components
+     *
+     * @param array $components
+     * @return $this
+     */
+    public function addComponents(array $components)
+    {
+        /* @var $component Component */
+        foreach ($components as $component) {
+            if (array_key_exists($component->getTitle(), $this->components)) {
+                if (preg_match('/_(\d+)$/', $component->getTitle(), $m)) {
+                    $name = preg_replace('/_\d+$/', $m[1]++, $component->getTitle());
+                } else {
+                    $name = $component->getTitle() . '_2';
+                }
+                $this->components[$name] = $component;
+            } else {
+                $this->components[$component->getTitle()] = $component;
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Add a component to the current pane
+     *
+     * @param $title
+     * @param $url
+     * @return Component
+     *
+     * @see addComponent()
+     */
+    public function add($title, $url = null)
+    {
+        $this->addComponent($title, $url);
+
+        return $this->components[$title];
+    }
+
+    /**
      * Return the this pane's structure as array
      *
      * @return  array

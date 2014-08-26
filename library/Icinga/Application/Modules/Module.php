@@ -16,6 +16,7 @@ use Icinga\Util\Translator;
 use Icinga\Web\Hook;
 use Icinga\Web\Menu;
 use Icinga\Web\Widget;
+use Icinga\Web\Widget\Dashboard\Pane;
 use Icinga\Util\File;
 use Icinga\Exception\ProgrammingError;
 
@@ -153,6 +154,36 @@ class Module
      * @var array
      */
     protected $menuItems = array();
+
+    /**
+     * A set of Pane elements
+     *
+     * @var array
+     */
+    protected $paneItems = array();
+
+    /**
+     * Get all Menu Items
+     *
+     * @return array
+     */
+    public function getPaneItems()
+    {
+        $this->launchConfigScript();
+        return $this->paneItems;
+    }
+
+    /**
+     * Add a pane to dashboard
+     *
+     * @param $name
+     * @return Pane
+     */
+    protected function dashboard($name)
+    {
+        $this->paneItems[$name] = new Pane($name);
+        return $this->paneItems[$name];
+    }
 
     /**
      * Get all Menu Items

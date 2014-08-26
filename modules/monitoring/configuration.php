@@ -125,10 +125,18 @@ $section->add($this->translate('Performance Info'), array(
 ));
 
 /*
-
-$dashboard = $this->dashboard('Current Incidents'); // Web\Widget\Dashboard\Pane
-$dashboard->add('Service Problems', array(
-
-));
-
-*/
+ * Dashboard
+ */
+$dashboard = $this->dashboard($this->translate('Current Incidents'));
+$dashboard->add(
+    $this->translate('Service Problems'),
+    'monitoring/list/services?service_problem=1&limit=10&sort=service_severity'
+);
+$dashboard->add(
+    $this->translate('Recently Recovered Services'),
+    'monitoring/list/services?service_state=0&limit=10&sort=service_last_state_change&dir=desc'
+);
+$dashboard->add(
+    $this->translate('Host Problems'),
+    'monitoring/list/hosts?host_problem=1&sort=host_severity'
+);
