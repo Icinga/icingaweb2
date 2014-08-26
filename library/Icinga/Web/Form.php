@@ -363,8 +363,12 @@ class Form extends Zend_Form
      *
      * @return  self
      */
-    public function handleRequest(Request $request)
+    public function handleRequest(Request $request = null)
     {
+        if ($request === null) {
+            $request = $this->getRequest();
+        }
+
         if (strtolower($request->getMethod()) === $this->getMethod()) {
             $formData = $request->{'get' . $request->isPost() ? 'Post' : 'Query'}();
             if ($this->wasSent($formData)) {
@@ -500,6 +504,16 @@ class Form extends Zend_Form
         }
 
         return $name;
+    }
+
+    /**
+     * Return the current request
+     *
+     * @return  Request
+     */
+    public function getRequest()
+    {
+        return Icinga::app()->getFrontController()->getRequest();
     }
 
     /**
