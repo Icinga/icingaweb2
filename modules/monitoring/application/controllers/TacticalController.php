@@ -12,7 +12,7 @@ class Monitoring_TacticalController extends MonitoringController
         $this->getTabs()->add(
             'tactical_overview',
             array(
-                'title' => 'Tactical Overview',
+                'title' => $this->translate('Tactical Overview'),
                 'url'   => Url::fromRequest()
             )
         )->activate('tactical_overview');

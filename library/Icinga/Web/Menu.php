@@ -4,6 +4,7 @@
 
 namespace Icinga\Web;
 
+use Icinga\Exception\ConfigurationError;
 use Zend_Config;
 use RecursiveIterator;
 use Icinga\Application\Config;
@@ -67,19 +68,67 @@ class Menu implements RecursiveIterator
     public function __construct($id, Zend_Config $config = null)
     {
         $this->id = $id;
+        $this->setProperties($config);
+    }
 
-        if ($config !== null) {
-            foreach ($config as $key => $value) {
+    /**
+     * Set all given properties
+     *
+     * @param   array|Zend_Config   $props Property list
+     */
+    public function setProperties($props = null)
+    {
+        if ($props !== null) {
+            foreach ($props as $key => $value) {
                 $method = 'set' . implode('', array_map('ucfirst', explode('_', strtolower($key))));
                 if (method_exists($this, $method)) {
                     $this->{$method}($value);
+                } else {
+                    throw new ConfigurationError(
+                        sprintf('Menu got invalid property "%s"', $key)
+                    );
                 }
             }
         }
+        return $this;
+    }
+
+    /**
+     * Get Properties
+     *
+     * @return array
+     */
+    public function getProperties()
+    {
+        $props = array();
+        $keys = array('url', 'icon', 'priority', 'title');
+        foreach ($keys as $key) {
+            $func = 'get' . ucfirst($key);
+            if (null !== ($val = $this->{$func}())) {
+                $props[$key] = $val;
+            }
+        }
+        return $props;
+    }
+
+    /**
+     * Whether this Menu conflicts with the given Menu object
+     *
+     * @param Menu $menu
+     * @return bool
+     */
+    public function conflictsWith(Menu $menu)
+    {
+        if ($menu->getUrl() === null || $this->getUrl() === null) {
+            return false;
+        }
+        return $menu->getUrl() !== $this->getUrl();
     }
 
     /**
      * Create menu from the application's menu config file plus the config files from all enabled modules
+     *
+     * THIS IS OBSOLATE. LEFT HERE FOR FUTURE USE WITH USER-SPECIFIC MODULES
      *
      * @return  self
      */
@@ -98,6 +147,63 @@ class Menu implements RecursiveIterator
         }
 
         return $menu->loadSubMenus($menu->flattenConfigs($menuConfigs));
+    }
+
+    /**
+     * Create menu from the application's menu config plus menu entries provided by all enabled modules
+     *
+     * @return  self
+     */
+    public static function load()
+    {
+        /** @var $menu \Icinga\Web\Menu */
+        $menu = new static('menu');
+        $menu->addMainMenuItems();
+        $manager = Icinga::app()->getModuleManager();
+        foreach ($manager->getLoadedModules() as $module) {
+            /** @var $module \Icinga\Application\Modules\Module */
+            $menu->mergeSubMenus($module->getMenuItems());
+        }
+        return $menu->order();
+    }
+
+    /**
+     * Add Applications Main Menu Items
+     */
+    protected function addMainMenuItems()
+    {
+        $this->add(t('Dashboard'), array(
+            'url'      => 'dashboard',
+            'icon'     => 'img/icons/dashboard.png',
+            'priority' => 10
+        ));
+
+        $section = $this->add(t('System'), array(
+            'icon'     => 'img/icons/configuration.png',
+            'priority' => 200
+        ));
+        $section->add(t('Preferences'), array(
+            'url'      => 'preference',
+            'priority' => 200
+        ));
+        $section->add(t('Configuration'), array(
+            'url'      => 'config',
+            'priority' => 300
+        ));
+        $section->add(t('Modules'), array(
+            'url'      => 'config/modules',
+            'priority' => 400
+        ));
+        $section->add(t('ApplicationLog'), array(
+            'url'      => 'list/applicationlog',
+            'priority' => 500
+        ));
+
+        $this->add(t('Logout'), array(
+            'url'      => 'authentication/logout',
+            'icon'     => 'img/icons/logout.png',
+            'priority' => 300
+        ));
     }
 
     /**
@@ -251,6 +357,79 @@ class Menu implements RecursiveIterator
         }
 
         return $subMenu;
+    }
+
+    /**
+     * Set required Permissions
+     *
+     * @param $permission
+     * @return $this
+     */
+    public function requirePermission($permission)
+    {
+        // Not implemented yet
+        return $this;
+    }
+
+    /**
+     * Merge Sub Menus
+     *
+     * @param array $submenus
+     * @return $this
+     */
+    public function mergeSubMenus(array $submenus)
+    {
+        foreach ($submenus as $menu) {
+            $this->mergeSubMenu($menu);
+        }
+        return $this;
+    }
+
+    /**
+     * Merge Sub Menu
+     *
+     * @param Menu $menu
+     * @return mixed
+     */
+    public function mergeSubMenu(Menu $menu)
+    {
+        $name = $menu->getId();
+        if (array_key_exists($name, $this->subMenus)) {
+            /** @var $current Menu */
+            $current = $this->subMenus[$name];
+            if ($current->conflictsWith($menu)) {
+                while (array_key_exists($name, $this->subMenus)) {
+                    if (preg_match('/_(\d+)$/', $name, $m)) {
+                        $name = preg_replace('/_\d+$/', $m[1]++, $name);
+                    } else {
+                        $name .= '_2';
+                    }
+                }
+                $menu->setId($name);
+                $this->subMenus[$name] = $menu;
+            } else {
+                $current->setProperties($menu->getProperties());
+                foreach ($menu->subMenus as $child) {
+                    $current->mergeSubMenu($child);
+                }
+            }
+        } else {
+            $this->subMenus[$name] = $menu;
+        }
+
+        return $this->subMenus[$name];
+    }
+
+    /**
+     * Add a Menu
+     *
+     * @param $name
+     * @param array $config
+     * @return Menu
+     */
+    public function add($name, $config = array())
+    {
+        return $this->addSubMenu($name, new Zend_Config($config));
     }
 
     /**
