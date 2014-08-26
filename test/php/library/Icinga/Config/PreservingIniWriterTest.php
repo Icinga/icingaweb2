@@ -12,12 +12,14 @@ use Icinga\Config\PreservingIniWriter;
 class PreservingIniWriterTest extends BaseTestCase
 {
     protected $tempFile;
+    protected $tempFile2;
 
     public function setUp()
     {
         parent::setUp();
 
         $this->tempFile = tempnam(sys_get_temp_dir(), 'icinga-ini-writer-test');
+        $this->tempFile2 = tempnam(sys_get_temp_dir(), 'icinga-ini-writer-test-2');
     }
 
     public function tearDown()
@@ -25,6 +27,7 @@ class PreservingIniWriterTest extends BaseTestCase
         parent::tearDown();
 
         unlink($this->tempFile);
+        unlink($this->tempFile2);
     }
 
     public function testWhetherSimplePropertiesAreInsertedInEmptyFiles()
@@ -299,7 +302,7 @@ EOD
         );
         $this->assertEquals(
             '1',
-            $newConfig->get('bar')->get('key1'),
+            $newConfig->get('foo')->get('key1'),
             'PreservingIniWriter does not properly define extending sections'
         );
     }
@@ -676,6 +679,44 @@ EOD;
             $writer->render(),
             'PreservingIniWriter does not preserve comments on property lines'
         );
+    }
+
+    public function testKeyNormalization()
+    {
+        $normalKeys = new PreservingIniWriter(
+            array (
+                'config' => new Zend_Config(array (
+                        'foo' => 'bar',
+                        'nest' => array (
+                            'nested' => array (
+                                'stuff' => 'nested configuration element'
+                            )
+                        ),
+                        'preserving' => array (
+                            'ini' => array(
+                                'writer' => 'n'
+                            ),
+                            'foo' => 'this should not be overwritten'
+                        )
+                 )),
+                'filename' => $this->tempFile
+            )
+
+        );
+
+        $nestedKeys = new PreservingIniWriter(
+            array (
+                'config' => new Zend_Config(array (
+                    'foo' => 'bar',
+                    'nest.nested.stuff' => 'nested configuration element',
+                    'preserving.ini.writer' => 'n',
+                    'preserving.foo' => 'this should not be overwritten'
+                )),
+                'filename' => $this->tempFile2
+            )
+
+        );
+        $this->assertEquals($normalKeys->render(), $nestedKeys->render());
     }
 
     /**
