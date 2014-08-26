@@ -9,7 +9,7 @@ use Icinga\Module\Monitoring\Timeline\TimeRange;
 /**
  * Base class for TimeLine providers
  */
-abstract class TimelineProvider
+abstract class TimelineProviderHook
 {
     /**
      * Return the names by which to group entries

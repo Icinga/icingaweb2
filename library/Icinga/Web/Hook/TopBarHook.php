@@ -10,7 +10,7 @@ use \Zend_View;
 /**
  * Hook to extend topbar items
  */
-interface TopBar
+abstract class TopBarHook
 {
     /**
      * Function to generate top bar content
@@ -20,5 +20,5 @@ interface TopBar
      *
      * @return  string
      */
-    public function getHtml($request, $view);
+    abstract public function getHtml($request, $view);
 }

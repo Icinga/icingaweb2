@@ -14,7 +14,7 @@ namespace Icinga\Web\Hook;
  * @author     Icinga-Web Team <info@icinga.org>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License
  */
-class Grapher
+class GrapherHook
 {
     /**
      * Whether this grapher provides preview images
