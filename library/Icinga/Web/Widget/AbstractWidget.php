@@ -52,11 +52,9 @@ abstract class AbstractWidget
         }
 
         throw new ProgrammingError(
-            sprintf(
-                'Trying to get invalid "%s" property for %s',
-                $key,
-                get_class($this)
-            )
+            'Trying to get invalid "%s" property for %s',
+            $key,
+            get_class($this)
         );
     }
 
@@ -78,14 +76,12 @@ abstract class AbstractWidget
         }
 
         throw new ProgrammingError(
-            sprintf(
-                'Trying to set invalid "%s" property in %s. Allowed are: %s',
-                $key,
-                get_class($this),
-                empty($this->properties)
+            'Trying to set invalid "%s" property in %s. Allowed are: %s',
+            $key,
+            get_class($this),
+            empty($this->properties)
                 ? 'none'
                 : implode(', ', array_keys($this->properties))
-            )
         );
     }
 

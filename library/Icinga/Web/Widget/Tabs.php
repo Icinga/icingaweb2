@@ -154,10 +154,8 @@ EOT;
     {
         if ($this->has($name)) {
             throw new ProgrammingError(
-                sprintf(
-                    'Cannot add a tab named "%s" twice"',
-                    $name
-                )
+                'Cannot add a tab named "%s" twice"',
+                $name
             );
         }
         return $this->set($name, $tab);

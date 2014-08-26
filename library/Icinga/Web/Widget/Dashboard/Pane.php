@@ -105,7 +105,10 @@ class Pane extends AbstractWidget
         if ($this->hasComponent($title)) {
             return $this->components[$title];
         }
-        throw new ProgrammingError(sprintf('Trying to access invalid component: %s', $title));
+        throw new ProgrammingError(
+            'Trying to access invalid component: %s',
+            $title
+        );
     }
 
     /**
@@ -157,7 +160,7 @@ class Pane extends AbstractWidget
         } elseif (is_string($component) && $url !== null) {
              $this->components[$component] = new Component($component, $url, $this);
         } else {
-            throw new ConfigurationError('Invalid component added: ' . $component);
+            throw new ConfigurationError('Invalid component added: %s', $component);
         }
         return $this;
     }

@@ -73,12 +73,9 @@ class DbUserBackend extends UserBackend
             return ($row !== false) ? true : false;
         } catch (Exception $e) {
             throw new AuthenticationException(
-                sprintf(
-                    'Failed to authenticate user "%s" against backend "%s". An exception was thrown:',
-                    $user->getUsername(),
-                    $this->getName()
-                ),
-                0,
+                'Failed to authenticate user "%s" against backend "%s". An exception was thrown:',
+                $user->getUsername(),
+                $this->getName(),
                 $e
             );
         }

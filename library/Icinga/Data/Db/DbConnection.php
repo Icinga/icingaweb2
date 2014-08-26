@@ -142,7 +142,10 @@ class DbConnection implements Selectable
                 }
                 break;*/
             default:
-                throw new ConfigurationError(sprintf('Backend "%s" is not supported', $this->dbType));
+                throw new ConfigurationError(
+                    'Backend "%s" is not supported',
+                    $this->dbType
+                );
         }
         $this->dbAdapter = Zend_Db::factory($adapter, $adapterParamaters);
         $this->dbAdapter->setFetchMode(Zend_Db::FETCH_OBJ);

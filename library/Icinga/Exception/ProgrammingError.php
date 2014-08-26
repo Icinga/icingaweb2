@@ -8,6 +8,6 @@ namespace Icinga\Exception;
  * Class ProgrammingError
  * @package Icinga\Exception
  */
-class ProgrammingError extends \Exception
+class ProgrammingError extends IcingaException
 {
 }

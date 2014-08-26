@@ -33,13 +33,20 @@ class FileWriter extends LogWriter
         $this->path = $config->target;
 
         if (substr($this->path, 0, 6) !== 'php://' && false === file_exists(dirname($this->path))) {
-            throw new ConfigurationError('Log path "' . dirname($this->path) . '" does not exist');
+            throw new ConfigurationError(
+                'Log path "%s" does not exist',
+                dirname($this->path)
+            );
         }
 
         try {
             $this->write(''); // Avoid to handle such errors on every write access
         } catch (Exception $e) {
-            throw new ConfigurationError('Cannot write to log file "' . $this->path . '" (' . $e->getMessage() . ')');
+            throw new ConfigurationError(
+                'Cannot write to log file "%s" (%s)',
+                $this->path,
+                $e->getMessage()
+            );
         }
     }
 

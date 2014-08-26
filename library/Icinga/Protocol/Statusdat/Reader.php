@@ -246,7 +246,8 @@ class Reader implements IReader, Selectable
     {
         if (!is_readable($this->config->object_file)) {
             throw new ConfigurationError(
-                'Can\'t read object-file "' . $this->config->object_file . '", check your configuration'
+                'Can\'t read object-file "%s", check your configuration',
+                $this->config->object_file
             );
         }
         if (!$this->parser) {
@@ -265,7 +266,8 @@ class Reader implements IReader, Selectable
     {
         if (!is_readable($this->config->status_file)) {
             throw new ConfigurationError(
-                "Can't read status-file {$this->config->status_file}, check your configuration"
+                'Can\'t read status-file %s, check your configuration',
+                $this->config->status_file
             );
         }
         if (!$this->parser) {

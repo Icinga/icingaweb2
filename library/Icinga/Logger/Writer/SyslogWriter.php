@@ -45,7 +45,8 @@ class SyslogWriter extends LogWriter
     {
         if (!array_key_exists($config->facility, $this->facilities)) {
             throw new ConfigurationError(
-                'Cannot create syslog writer with unknown facility "' . $config->facility . '"'
+                'Cannot create syslog writer with unknown facility "%s"',
+                $config->facility
             );
         }
 
