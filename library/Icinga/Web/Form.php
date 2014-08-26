@@ -6,6 +6,7 @@ namespace Icinga\Web;
 
 use Zend_Form;
 use Zend_View_Interface;
+use Icinga\Application\Icinga;
 use Icinga\Web\Form\Decorator\HelpText;
 use Icinga\Web\Form\Decorator\ElementWrapper;
 use Icinga\Web\Form\Element\CsrfCounterMeasure;
@@ -28,6 +29,13 @@ class Form extends Zend_Form
      * @var string
      */
     protected $submitLabel;
+
+    /**
+     * The url to redirect to upon success
+     *
+     * @var string|Url
+     */
+    protected $redirectUrl;
 
     /**
      * The view script to use when rendering this form
@@ -73,6 +81,34 @@ class Form extends Zend_Form
     public function getSubmitLabel()
     {
         return $this->submitLabel;
+    }
+
+    /**
+     * Set the url to redirect to upon success
+     *
+     * @param   string|Url  $url    The url to redirect to
+     *
+     * @return  self
+     */
+    public function setRedirectUrl($url)
+    {
+        $this->redirectUrl = $url;
+        return $this;
+    }
+
+    /**
+     * Return the url to redirect to upon success
+     *
+     * @return  string|Url
+     */
+    public function getRedirectUrl()
+    {
+        if ($this->redirectUrl === null) {
+            // Be sure to remove all form dependent params because we do not want to submit it again
+            $this->redirectUrl = Url::fromRequest()->without(array_keys($this->getElements()));
+        }
+
+        return $this->redirectUrl;
     }
 
     /**
@@ -196,10 +232,12 @@ class Form extends Zend_Form
      * Intended to be implemented by concrete form classes.
      *
      * @param   Request     $request    The valid request used to process this form
+     *
+     * @return  bool                    Whether any redirection should take place
      */
     public function onSuccess(Request $request)
     {
-
+        return true;
     }
 
     /**
@@ -319,10 +357,11 @@ class Form extends Zend_Form
     /**
      * Process the given request using this form
      *
+     * Redirects to the url set with setRedirectUrl() upon success.
+     *
      * @param   Request     $request    The request to be processed
      *
-     * @return  null|bool               True in case the request was handled and valid,
-     *                                  false if invalid and null if it was not handled
+     * @return  self
      */
     public function handleRequest(Request $request)
     {
@@ -332,8 +371,9 @@ class Form extends Zend_Form
                 $this->populate($formData); // Necessary to get isSubmitted() to work
                 if ($this->isSubmitted()) {
                     if ($this->isValid($formData)) {
-                        $this->onSuccess($request);
-                        return true;
+                        if ($this->onSuccess($request)) {
+                            $this->getResponse()->redirectAndExit($this->getRedirectUrl());
+                        }
                     } else {
                         $this->onFailure($request);
                     }
@@ -341,10 +381,10 @@ class Form extends Zend_Form
                     // The form can't be processed but we want to show validation errors though
                     $this->isValidPartial($formData);
                 }
-
-                return false;
             }
         }
+
+        return $this;
     }
 
     /**
@@ -460,6 +500,16 @@ class Form extends Zend_Form
         }
 
         return $name;
+    }
+
+    /**
+     * Return the current Response
+     *
+     * @return  Response
+     */
+    public function getResponse()
+    {
+        return Icinga::app()->getFrontController()->getResponse();
     }
 
     /**
