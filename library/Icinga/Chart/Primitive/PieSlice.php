@@ -108,12 +108,11 @@ class PieSlice extends Animatable implements Drawable
         $xStart = $x + ($r * sin($this->startRadian));
         $yStart = $y - ($r * cos($this->startRadian));
 
-        if($this->endRadian - $this->startRadian == 2*M_PI) {
+        if ($this->endRadian - $this->startRadian == 2*M_PI) {
             // To draw a full circle, adjust arc endpoint by a small (unvisible) value
             $this->endRadian -= 0.001;
-            $pathString = 'M '. Format::formatSVGNumber($xStart) . ' ' . Format::formatSVGNumber($yStart);
-        }
-        else {
+            $pathString = 'M ' . Format::formatSVGNumber($xStart) . ' ' . Format::formatSVGNumber($yStart);
+        } else {
             // Start at the center of the pieslice
             $pathString =  'M ' . $x . ' ' . $y;
             // Draw a straight line to the upper part of the arc
