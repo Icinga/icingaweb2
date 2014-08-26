@@ -440,7 +440,7 @@ class Query extends SimpleQuery
      */
     public function fetchOne()
     {
-        throw new ProgrammingError('Statusdat/Query::fetchOne not yet implemented');
+        throw new ProgrammingError('Statusdat/Query::fetchOne() is not implemented yet');
     }
 
     /**
