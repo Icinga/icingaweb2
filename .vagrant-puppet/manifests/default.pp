@@ -699,7 +699,8 @@ file { '/etc/icingaweb':
 file { '/etc/icingaweb/preferences':
   ensure    => 'directory',
   owner     => 'apache',
-  group     => 'apache'
+  group     => 'apache',
+  require   => File['/etc/icingaweb']
 }
 
 file { '/etc/icingaweb/authentication.ini':
