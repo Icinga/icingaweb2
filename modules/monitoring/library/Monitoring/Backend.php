@@ -148,7 +148,10 @@ public function getResource()
     {
         $viewClass = '\\Icinga\\Module\\Monitoring\\DataView\\' . ucfirst($viewName);
         if (!class_exists($viewClass)) {
-            throw new ProgrammingError('DataView ' . ucfirst($viewName) . ' does not exist');
+            throw new ProgrammingError(
+                'DataView %s does not exist',
+                ucfirst($viewName)
+            );
         }
         return $viewClass;
     }
@@ -175,7 +178,9 @@ public function getResource()
             . 'Query';
         if (!class_exists($queryClass)) {
             throw new ProgrammingError(
-                'Query "' . ucfirst($queryName) . '" does not exist for backend ' . ucfirst($this->type)
+                'Query "%s" does not exist for backend %s',
+                ucfirst($queryName),
+                ucfirst($this->type)
             );
         }
         return $queryClass;

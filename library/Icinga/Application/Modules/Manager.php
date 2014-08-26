@@ -323,10 +323,8 @@ class Manager
         }
 
         throw new ProgrammingError(
-            sprintf(
-                'Trying to access uninstalled module dir: %s',
-                $name
-            )
+            'Trying to access uninstalled module dir: %s',
+            $name
         );
     }
 
@@ -392,10 +390,8 @@ class Manager
     {
         if (!$this->hasLoaded($name)) {
             throw new ProgrammingError(
-                sprintf(
-                    'Cannot access module %s as it hasn\'t been loaded',
-                    $name
-                )
+                'Cannot access module %s as it hasn\'t been loaded',
+                $name
             );
         }
         return $this->loadedModules[$name];

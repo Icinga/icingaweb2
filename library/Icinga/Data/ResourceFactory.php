@@ -78,7 +78,7 @@ class ResourceFactory implements ConfigAwareFactory
     {
         if (!isset(self::$resources)) {
             throw new ProgrammingError(
-                "The ResourceFactory must be initialised by setting a config, before it can be used"
+                'The ResourceFactory must be initialised by setting a config, before it can be used'
             );
         }
     }

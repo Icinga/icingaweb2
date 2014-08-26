@@ -39,11 +39,11 @@ class Loader
     public function registerNamespace($namespace, $directory)
     {
         if (!is_dir($directory)) {
-            throw new ProgrammingError(sprintf(
+            throw new ProgrammingError(
                 'Directory "%s" for namespace "%s" does not exist',
                 $directory,
                 $namespace
-            ));
+            );
         }
 
         $this->namespaces[$namespace] = $directory;

@@ -120,7 +120,10 @@ class Url
         }
 
         if (!is_string($url)) {
-            throw new ProgrammingError(sprintf('url "%s" is not a string', $url));
+            throw new ProgrammingError(
+                'url "%s" is not a string',
+                $url
+            );
         }
 
         $urlObject = new Url();

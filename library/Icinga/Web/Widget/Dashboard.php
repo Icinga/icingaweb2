@@ -224,7 +224,8 @@ class Dashboard extends AbstractWidget
     {
         if (! array_key_exists($name, $this->panes)) {
             throw new ProgrammingError(
-                sprintf('Trying to retrieve invalid dashboard pane "%s"', $name)
+                'Trying to retrieve invalid dashboard pane "%s"',
+                $name
             );
         }
         return $this->panes[$name];

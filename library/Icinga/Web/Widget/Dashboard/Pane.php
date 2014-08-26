@@ -105,7 +105,10 @@ class Pane extends AbstractWidget
         if ($this->hasComponent($title)) {
             return $this->components[$title];
         }
-        throw new ProgrammingError(sprintf('Trying to access invalid component: %s', $title));
+        throw new ProgrammingError(
+            'Trying to access invalid component: %s',
+            $title
+        );
     }
 
     /**

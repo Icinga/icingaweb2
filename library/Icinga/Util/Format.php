@@ -95,7 +95,10 @@ class Format
             return '-';
         }
         if (! preg_match('~^\d+$~', $timestamp)) {
-            throw new ProgrammingError(sprintf('"%s" is not a number', $timestamp));
+            throw new ProgrammingError(
+                '"%s" is not a number',
+                $timestamp
+            );
         }
         $prefix = '';
         if ($diff < 0) {

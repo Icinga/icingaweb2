@@ -277,7 +277,10 @@ class Menu implements RecursiveIterator
     public function getSubMenu($id)
     {
         if (false === $this->hasSubMenu($id)) {
-            throw new ProgrammingError('Tried to get invalid sub menu "' . $id . '"');
+            throw new ProgrammingError(
+                'Tried to get invalid sub menu "%s"',
+                $id
+            );
         }
 
         return $this->subMenus[$id];

@@ -94,10 +94,10 @@ $this->addHelperFunction('attributeToString', function ($key, $value)
 {
     // TODO: Doublecheck this!
     if (! preg_match('~^[a-zA-Z0-9-]+$~', $key)) {
-        throw new ProgrammingError(sprintf(
+        throw new ProgrammingError(
             'Trying to set an invalid HTML attribute name: %s',
             $key
-        ));
+        );
     }
 
     return sprintf(

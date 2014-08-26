@@ -369,8 +369,8 @@ class Form extends Zend_Form
                 $element->setAttrib('class', $class);
             } else {
                 throw new ProgrammingError(
-                    'You need to add the element "' . $elementName . '" to' .
-                    ' the form before automatic submission can be enabled!'
+                    'You need to add the element "%s" to the form before automatic submission can be enabled!',
+                    $elementName
                 );
             }
         }
