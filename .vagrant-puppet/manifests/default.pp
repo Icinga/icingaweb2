@@ -696,6 +696,12 @@ file { '/etc/icingaweb':
   group     => 'apache'
 }
 
+file { '/etc/icingaweb/preferences':
+  ensure    => 'directory',
+  owner     => 'apache',
+  group     => 'apache'
+}
+
 file { '/etc/icingaweb/authentication.ini':
   source    => 'puppet:////vagrant/.vagrant-puppet/files/etc/icingaweb/authentication.ini',
   owner     => 'apache',
