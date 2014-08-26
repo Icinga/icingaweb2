@@ -219,8 +219,8 @@ class Manager
 
         if (!is_writable($this->enableDir)) {
             throw new SystemPermissionException(
-                'Can not enable module "' . $name . '". '
-                . 'Insufficient system permissions for enabling modules.'
+                'Can not enable module "%s". Insufficient system permissions for enabling modules.',
+                $name
             );
         }
 
@@ -232,9 +232,11 @@ class Manager
             $error = error_get_last();
             if (strstr($error["message"], "File exists") === false) {
                 throw new SystemPermissionException(
-                    'Could not enable module "' . $name . '" due to file system errors. '
+                    'Could not enable module "%s" due to file system errors. '
                     . 'Please check path and mounting points because this is not a permission error. '
-                    . 'Primary error was: ' . $error['message']
+                    . 'Primary error was: %s',
+                    $name,
+                    $error['message']
                 );
             }
         }
@@ -287,9 +289,11 @@ class Manager
             if (!@unlink($link)) {
                 $error = error_get_last();
                 throw new SystemPermissionException(
-                    'Could not disable module "' . $name . '" due to file system errors. '
+                    'Could not disable module "%s" due to file system errors. '
                     . 'Please check path and mounting points because this is not a permission error. '
-                    . 'Primary error was: ' . $error['message']
+                    . 'Primary error was: %s',
+                    $name,
+                    $error['message']
                 );
             }
         }
