@@ -4,8 +4,9 @@
 
 
 namespace Icinga\Module\Monitoring\Exception;
-use Exception;
 
-class UnsupportedBackendException extends Exception
+use Icinga\Exception\IcingaException;
+
+class UnsupportedBackendException extends IcingaException
 {
 }
