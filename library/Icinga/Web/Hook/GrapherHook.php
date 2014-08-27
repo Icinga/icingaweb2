@@ -4,6 +4,8 @@
 
 namespace Icinga\Web\Hook;
 
+use Icinga\Exception\ProgrammingError;
+
 /**
  * Icinga Web Grapher Hook base class
  *
@@ -14,7 +16,7 @@ namespace Icinga\Web\Hook;
  * @author     Icinga-Web Team <info@icinga.org>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License
  */
-class GrapherHook
+abstract class GrapherHook
 {
     /**
      * Whether this grapher provides preview images
@@ -56,9 +58,13 @@ class GrapherHook
     /**
      * Whether a graph for the given host[, service [, plot]] exists
      *
+     * @param   string  $host
+     * @param   string  $service
+     * @param   string  $plot
+     *
      * @return bool
      */
-    public function hasGraph($host, $service = null, $plot = null)
+    public function has($host, $service = null, $plot = null)
     {
         return false;
     }
@@ -66,13 +72,47 @@ class GrapherHook
     /**
      * Get a preview image for the given host[, service [, plot]] exists
      *
-     * WARNING: We are not sure yet whether this will remain as is
+     * @param   string  $host
+     * @param   string  $service
+     * @param   string  $plot
      *
-     * @return string
+     * @return  string
+     *
+     * @throws  ProgrammingError
      */
-    public function getPreviewImage($host, $service = null, $plot = null)
+    public function getPreviewHtml($host, $service = null, $plot = null)
     {
-        throw new Exception('This backend has no preview images');
+        throw new ProgrammingError('This backend has no preview images');
+    }
+
+    /**
+     * Whether a tiny graph for the given host[, service [, plot]] exists
+     *
+     * @param   string  $host
+     * @param   string  $service
+     * @param   string  $plot
+     *
+     * @return  bool
+     */
+    public function hasTinyPreview($host, $service = null, $plot = null)
+    {
+        return false;
+    }
+
+    /**
+     * Get a tiny preview image for the given host[, service [, plot]] exists
+     *
+     * @param   string  $host
+     * @param   string  $service
+     * @param   string  $plot
+     *
+     * @return  string
+     *
+     * @throws  ProgrammingError
+     */
+    public function getTinyPreviewHtml($host, $service = null, $plot = null)
+    {
+        throw new ProgrammingError('This backend has no tiny preview images');
     }
 
     /**
@@ -80,10 +120,11 @@ class GrapherHook
      *
      * WARNING: We are not sure yet whether this will remain as is
      *
-     * @return string
+     * @param   string  $host
+     * @param   string  $service
+     * @param   string  $plot
+     *
+     * @return  string
      */
-    public function getGraphUrl($host, $service = null, $plot = null)
-    {
-        throw new Exception('This backend has no images');
-    }
+    abstract function getGraphUrl($host, $service = null, $plot = null);
 }
