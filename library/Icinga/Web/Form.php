@@ -61,6 +61,13 @@ class Form extends Zend_Form
     protected $tokenElementName = 'CSRFToken';
 
     /**
+     * Name of the form identification element
+     *
+     * @var string
+     */
+    protected $uidElementName = 'formUID';
+
+    /**
      * Set the label to use for the standard submit button
      *
      * @param   string  $label  The label to use for the submit button
@@ -183,6 +190,29 @@ class Form extends Zend_Form
     public function getTokenElementName()
     {
         return $this->tokenElementName;
+    }
+
+    /**
+     * Set the name to use for the form identification element
+     *
+     * @param   string  $name   The name to set
+     *
+     * @return  self
+     */
+    public function setUidElementName($name)
+    {
+        $this->uidElementName = $name;
+        return $this;
+    }
+
+    /**
+     * Return the name of the form identification element
+     *
+     * @return  string
+     */
+    public function getUidElementName()
+    {
+        return $this->uidElementName;
     }
 
     /**
@@ -317,7 +347,7 @@ class Form extends Zend_Form
     {
         $this->addElement(
             'hidden',
-            'form_uid',
+            $this->uidElementName,
             array(
                 'ignore'    => true,
                 'value'     => $this->getName()
@@ -416,7 +446,7 @@ class Form extends Zend_Form
      */
     public function wasSent(array $formData)
     {
-        return isset($formData['form_uid']) && $formData['form_uid'] === $this->getName();
+        return isset($formData[$this->uidElementName]) && $formData[$this->uidElementName] === $this->getName();
     }
 
     /**
