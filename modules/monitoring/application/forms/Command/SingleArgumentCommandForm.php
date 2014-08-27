@@ -5,7 +5,7 @@
 namespace Icinga\Module\Monitoring\Form\Command;
 
 use Zend_Controller_Request_Abstract;
-use Zend_Form_Element_Hidden;
+use \Zend_Form_Element_Hidden;
 use Icinga\Module\Monitoring\Command\AcknowledgeCommand;
 use Icinga\Module\Monitoring\Command\SingleArgumentCommand;
 

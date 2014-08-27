@@ -4,7 +4,7 @@
 
 namespace Tests\Icinga\Protocol\Commandpipe;
 
-use Zend_Config;
+use \Zend_Config;
 use Icinga\Test\BaseTestCase;
 use Icinga\Protocol\Commandpipe\Comment;
 use Icinga\Protocol\Commandpipe\CommandPipe;

@@ -2,7 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use Zend_View_Helper_Abstract;
+use \Zend_View_Helper_Abstract;
 use Icinga\Module\Monitoring\Object\AbstractObject;
 
 class Zend_View_Helper_ResolveMacros extends Zend_View_Helper_Abstract

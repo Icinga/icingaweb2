@@ -4,7 +4,7 @@
 
 namespace Icinga\Web\Form\Validator;
 
-use Zend_Validate_Abstract;
+use \Zend_Validate_Abstract;
 
 class TriStateValidator extends Zend_Validate_Abstract
 {

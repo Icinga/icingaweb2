@@ -8,7 +8,7 @@ use Icinga\Protocol\Ldap\Exception as LdapException;
 use Icinga\Application\Platform;
 use Icinga\Application\Config;
 use Icinga\Logger\Logger;
-use Zend_Config;
+use \Zend_Config;
 
 /**
  * Backend class managing all the LDAP stuff for you.

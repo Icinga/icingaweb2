@@ -2,9 +2,9 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use DateTime;
-use DateInterval;
-use Zend_Config;
+use \DateTime;
+use \DateInterval;
+use \Zend_Config;
 use Icinga\Web\Url;
 use Icinga\Util\Format;
 use Icinga\Application\Config;

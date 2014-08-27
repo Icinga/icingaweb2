@@ -4,8 +4,8 @@
 
 namespace Icinga\Module\Monitoring\Form\Config\Instance;
 
-use Zend_Config;
-use Icinga\Web\Form;
+use \Zend_Config;
+use \Icinga\Web\Form;
 
 /**
  * Form for editing existing instances

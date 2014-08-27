@@ -1,6 +1,6 @@
 <?php
 
-use Zend_Controller_Router_Route;
+use \Zend_Controller_Router_Route;
 use Icinga\Application\Icinga;
 
 if (Icinga::app()->isCli()) {

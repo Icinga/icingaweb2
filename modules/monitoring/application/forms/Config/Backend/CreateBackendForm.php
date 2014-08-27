@@ -4,7 +4,7 @@
 
 namespace Icinga\Module\Monitoring\Form\Config\Backend;
 
-use Zend_Config;
+use \Zend_Config;
 
 /**
  * Extended EditBackendForm for creating new Backends

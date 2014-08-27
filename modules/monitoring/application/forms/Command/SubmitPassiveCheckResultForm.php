@@ -4,7 +4,7 @@
 
 namespace Icinga\Module\Monitoring\Form\Command;
 
-use Icinga\Exception\ProgrammingError;
+use \Icinga\Exception\ProgrammingError;
 
 /**
  * Form for submitting passive check results

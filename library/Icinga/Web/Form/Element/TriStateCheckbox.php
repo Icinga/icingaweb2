@@ -4,8 +4,8 @@
 
 namespace Icinga\Web\Form\Element;
 
-use Icinga\Web\Form\Validator\TriStateValidator;
-use Zend_Form_Element_Xhtml;
+use \Icinga\Web\Form\Validator\TriStateValidator;
+use \Zend_Form_Element_Xhtml;
 
 /**
  * A checkbox that can display three different states:

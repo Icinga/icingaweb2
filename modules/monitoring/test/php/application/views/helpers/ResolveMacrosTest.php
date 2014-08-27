@@ -4,8 +4,8 @@
 
 namespace Tests\Icinga\Modules\Monitoring\Application\Views\Helpers;
 
-use Mockery;
-use Zend_View_Helper_ResolveMacros;
+use \Mockery;
+use \Zend_View_Helper_ResolveMacros;
 use Icinga\Test\BaseTestCase;
 
 require_once realpath(BaseTestCase::$moduleDir . '/monitoring/application/views/helpers/ResolveMacros.php');

@@ -4,7 +4,7 @@
 
 namespace Icinga\Module\Monitoring\Timeline;
 
-use DateTime;
+use \DateTime;
 use Icinga\Web\Url;
 use Icinga\Exception\ProgrammingError;
 

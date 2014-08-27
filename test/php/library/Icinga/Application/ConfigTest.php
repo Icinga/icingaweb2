@@ -5,7 +5,7 @@
 namespace Tests\Icinga\Application;
 
 use Icinga\Test\BaseTestCase;
-use Icinga\Application\Config as IcingaConfig;
+use \Icinga\Application\Config as IcingaConfig;
 
 class ConfigTest extends BaseTestCase
 {

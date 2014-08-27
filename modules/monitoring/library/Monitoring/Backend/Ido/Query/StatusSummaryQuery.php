@@ -4,7 +4,7 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
-use Zend_Db_Select;
+use \Zend_Db_Select;
 
 class StatusSummaryQuery extends IdoQuery
 {

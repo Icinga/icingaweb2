@@ -4,10 +4,10 @@
 
 namespace Icinga\Module\Monitoring\Timeline;
 
-use DateTime;
-use Exception;
-use ArrayIterator;
-use IteratorAggregate;
+use \DateTime;
+use \Exception;
+use \ArrayIterator;
+use \IteratorAggregate;
 use Icinga\Data\Filter\Filter;
 use Icinga\Web\Hook;
 use Icinga\Web\Session;
