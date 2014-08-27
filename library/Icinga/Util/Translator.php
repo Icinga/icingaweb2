@@ -5,6 +5,7 @@
 namespace Icinga\Util;
 
 use Exception;
+use Icinga\Exception\IcingaException;
 
 /**
  * Helper class to ease internationalization when using gettext
@@ -53,12 +54,16 @@ class Translator
      * @param   string  $name       The name of the domain to register
      * @param   string  $directory  The directory where message catalogs can be found
      *
-     * @throws  Exception           In case the domain was not successfully registered
+     * @throws  IcingaException     In case the domain was not successfully registered
      */
     public static function registerDomain($name, $directory)
     {
         if (bindtextdomain($name, $directory) === false) {
-            throw new Exception("Cannot register domain '$name' with path '$directory'");
+            throw new IcingaException(
+                'Cannot register domain \'%s\' with path \'%s\'',
+                $name,
+                $directory
+            );
         }
         bind_textdomain_codeset($name, 'UTF-8');
         self::$knownDomains[$name] = $directory;
@@ -69,14 +74,17 @@ class Translator
      *
      * @param   string  $localeName     The name of the locale to use
      *
-     * @throws  Exception               In case the locale's name is invalid
+     * @throws  IcingaException         In case the locale's name is invalid
      */
     public static function setupLocale($localeName)
     {
         if (setlocale(LC_ALL, $localeName . '.UTF-8') === false && setlocale(LC_ALL, $localeName) === false) {
             setlocale(LC_ALL, 'C'); // C == "use whatever is hardcoded"
             if ($localeName !== self::DEFAULT_LOCALE) {
-                throw new Exception("Cannot set locale '$localeName' for category 'LC_ALL'");
+                throw new IcingaException(
+                    'Cannot set locale \'%s\' for category \'LC_ALL\'',
+                    $localeName
+                );
             }
         } else {
             $locale = setlocale(LC_ALL, 0);

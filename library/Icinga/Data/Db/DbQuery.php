@@ -11,6 +11,7 @@ use Icinga\Data\Filter\FilterExpression;
 use Icinga\Data\Filter\FilterOr;
 use Icinga\Data\Filter\FilterAnd;
 use Icinga\Data\Filter\FilterNot;
+use Icinga\Exception\IcingaException;
 use Zend_Db_Select;
 
 /**
@@ -124,7 +125,10 @@ class DbQuery extends SimpleQuery
                 $op = ' AND ';
                 $str .= ' NOT ';
             } else {
-                throw new \Exception('Cannot render filter: ' . $filter);
+                throw new IcingaException(
+                    'Cannot render filter: %s',
+                    $filter
+                );
             }
             $parts = array();
             if (! $filter->isEmpty()) {
@@ -177,7 +181,7 @@ class DbQuery extends SimpleQuery
         if (! $value) {
             /*
             NOTE: It's too late to throw exceptions, we might finish in __toString
-            throw new \Exception(sprintf(
+            throw new IcingaException(sprintf(
                 '"%s" is not a valid time expression',
                 $value
             ));

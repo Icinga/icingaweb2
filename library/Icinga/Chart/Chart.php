@@ -9,6 +9,7 @@ use Icinga\Chart\Legend;
 use Icinga\Chart\Palette;
 use Icinga\Chart\Primitive\Drawable;
 use Icinga\Chart\SVGRenderer;
+use Icinga\Exception\IcingaException;
 
 /**
  * Base class for charts, extended by all other Chart classes.
@@ -89,15 +90,15 @@ abstract class Chart implements Drawable
      *
      * Render this graph and return the created SVG
      *
-     * @return  string      The SVG created by the SvgRenderer
+     * @return  string              The SVG created by the SvgRenderer
      *
-     * @throws  Exception   Thrown wen the dataset is not valid for this graph
+     * @throws  IcingaException     Thrown wen the dataset is not valid for this graph
      * @see     SVGRenderer::render
      */
     public function render()
     {
         if (!$this->isValidDataFormat()) {
-            throw new Exception('Dataset for graph doesn\'t have the proper structure');
+            throw new IcingaException('Dataset for graph doesn\'t have the proper structure');
         }
         $this->build();
         if ($this->align) {

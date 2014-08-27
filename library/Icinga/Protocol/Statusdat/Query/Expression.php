@@ -4,6 +4,8 @@
 
 namespace Icinga\Protocol\Statusdat\Query;
 
+use Icinga\Exception\IcingaException;
+
 class Expression implements IQueryPart
 {
     /**
@@ -70,7 +72,7 @@ class Expression implements IQueryPart
 
     /**
      * @param $token
-     * @throws \Exception
+     * @throws IcingaException
      */
     private function getOperatorType($token)
     {
@@ -106,7 +108,11 @@ class Expression implements IQueryPart
                 $this->CB = "isNotIn";
                 break;
             default:
-                throw new \Exception("Unknown operator $token in expression $this->expression !");
+                throw new IcingaException(
+                    'Unknown operator %s in expression %s !',
+                    $token,
+                    $this->expression
+                );
         }
     }
 

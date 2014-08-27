@@ -83,7 +83,7 @@ BuildArch:      noarch
 AutoReqProv:    Off
 %endif
 
-Source0:        icingaweb2-%{version}.tar.gz
+Source:        icingaweb2-%{version}.tar.gz
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root
 

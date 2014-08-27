@@ -4,8 +4,7 @@
 
 /* @var $this \Icinga\Application\Modules\Module */
 
-$section = $this->menuSection($this->translate('Documentation'), array(
-    'title'    => 'Documentation',
+$section = $this->menuSection('documentation', $this->translate('Documentation'), array(
     'icon'     => 'img/icons/comment.png',
     'url'      => 'doc',
     'priority' => 80

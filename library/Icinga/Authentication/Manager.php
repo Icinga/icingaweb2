@@ -13,6 +13,7 @@ use Icinga\Exception\NotReadableError;
 use Icinga\Application\Config as IcingaConfig;
 use Icinga\User\Preferences;
 use Icinga\User\Preferences\PreferencesStore;
+use Icinga\Exception\IcingaException;
 
 class Manager
 {
@@ -55,7 +56,11 @@ class Manager
             $config = IcingaConfig::app();
         } catch (NotReadableError $e) {
             Logger::error(
-                new Exception('Cannot load preferences for user "' . $username . '". An exception was thrown', 0, $e)
+                new IcingaException(
+                    'Cannot load preferences for user "%s". An exception was thrown',
+                    $username,
+                    $e
+                )
             );
             $config = new Zend_Config(array());
         }
@@ -68,8 +73,10 @@ class Manager
                 $preferences = new Preferences($preferencesStore->load());
             } catch (NotReadableError $e) {
                 Logger::error(
-                    new Exception(
-                        'Cannot load preferences for user "' . $username . '". An exception was thrown', 0, $e
+                    new IcingaException(
+                        'Cannot load preferences for user "%s". An exception was thrown',
+                        $username,
+                        $e
                     )
                 );
                 $preferences = new Preferences();

@@ -5,6 +5,7 @@
 namespace Icinga\Logger\Writer;
 
 use Exception;
+use Icinga\Exception\IcingaException;
 use Zend_Config;
 use Icinga\Util\File;
 use Icinga\Logger\Logger;
@@ -68,7 +69,7 @@ class FileWriter extends LogWriter
      *
      * @return  string                  The string representation of the severity
      *
-     * @throws  Exception               In case the given severity is unknown
+     * @throws  IcingaException         In case the given severity is unknown
      */
     protected function getSeverityString($severity)
     {
@@ -82,7 +83,10 @@ class FileWriter extends LogWriter
             case Logger::$DEBUG:
                 return '- DEBUG -';
             default:
-                throw new Exception('Unknown severity "' . $severity . '"');
+                throw new IcingaException(
+                    'Unknown severity "%s"',
+                    $severity
+                );
         }
     }
 

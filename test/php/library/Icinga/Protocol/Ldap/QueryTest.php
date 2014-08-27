@@ -4,7 +4,7 @@
 
 namespace Tests\Icinga\Protocol\Ldap;
 
-use \Zend_Config;
+use Zend_Config;
 use Icinga\Test\BaseTestCase;
 use Icinga\Protocol\Ldap\Connection;
 

@@ -4,7 +4,7 @@
 
 namespace Icinga\User\Preferences;
 
-use \Zend_Config;
+use Zend_Config;
 use Icinga\User;
 use Icinga\User\Preferences;
 use Icinga\Data\ResourceFactory;

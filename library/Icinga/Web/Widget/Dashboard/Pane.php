@@ -83,44 +83,44 @@ class Pane extends AbstractWidget
     /**
      * Return true if a component with the given title exists in this pane
      *
-     * @param string $title     The title of the component to check for existence
+     * @param string $id     The id of the component to check for existence
      *
      * @return bool
      */
-    public function hasComponent($title)
+    public function hasComponent($id)
     {
-        return array_key_exists($title, $this->components);
+        return array_key_exists($id, $this->components);
     }
 
     /**
      * Return a component with the given name if existing
      *
-     * @param string $title         The title of the component to return
+     * @param string $id            The id of the component to return
      *
      * @return Component            The component with the given title
      * @throws ProgrammingError     If the component doesn't exist
      */
-    public function getComponent($title)
+    public function getComponent($id)
     {
-        if ($this->hasComponent($title)) {
-            return $this->components[$title];
+        if ($this->hasComponent($id)) {
+            return $this->components[$id];
         }
         throw new ProgrammingError(
             'Trying to access invalid component: %s',
-            $title
+            $id
         );
     }
 
     /**
-     * Removes the component with the given title if it exists in this pane
+     * Removes the component with the given id if it exists in this pane
      *
-     * @param string $title         The pane
+     * @param string $id         The pane
      * @return Pane $this
      */
-    public function removeComponent($title)
+    public function removeComponent($id)
     {
-        if ($this->hasComponent($title)) {
-            unset($this->components[$title]);
+        if ($this->hasComponent($id)) {
+            unset($this->components[$id]);
         }
         return $this;
     }
@@ -146,6 +146,7 @@ class Pane extends AbstractWidget
     /**
      * Add a component to this pane, optionally creating it if $component is a string
      *
+     * @param string $id                                An unique Identifier
      * @param string|Component $component               The component object or title
      *                                                  (if a new component will be created)
      * @param string|null $url                          An Url to be used when component is a string
@@ -153,12 +154,12 @@ class Pane extends AbstractWidget
      * @return self
      * @throws \Icinga\Exception\ConfigurationError
      */
-    public function addComponent($component, $url = null)
+    public function addComponent($id, $component, $url = null)
     {
         if ($component instanceof Component) {
-            $this->components[$component->getTitle()] = $component;
-        } elseif (is_string($component) && $url !== null) {
-             $this->components[$component] = new Component($component, $url, $this);
+            $this->components[$component->getId()] = $component;
+        } elseif (is_string($id) && is_string($component) && $url !== null) {
+             $this->components[$id] = new Component($id, $component, $url, $this);
         } else {
             throw new ConfigurationError('Invalid component added: %s', $component);
         }
@@ -175,15 +176,15 @@ class Pane extends AbstractWidget
     {
         /* @var $component Component */
         foreach ($components as $component) {
-            if (array_key_exists($component->getTitle(), $this->components)) {
-                if (preg_match('/_(\d+)$/', $component->getTitle(), $m)) {
-                    $name = preg_replace('/_\d+$/', $m[1]++, $component->getTitle());
+            if (array_key_exists($component->getId(), $this->components)) {
+                if (preg_match('/-(\d+)$/', $component->getId(), $m)) {
+                    $name = preg_replace('/-\d+$/', $m[1]++, $component->getId());
                 } else {
-                    $name = $component->getTitle() . '_2';
+                    $name = $component->getId() . '-2';
                 }
                 $this->components[$name] = $component;
             } else {
-                $this->components[$component->getTitle()] = $component;
+                $this->components[$component->getId()] = $component;
             }
         }
 
@@ -193,17 +194,18 @@ class Pane extends AbstractWidget
     /**
      * Add a component to the current pane
      *
+     * @param $id
      * @param $title
-     * @param $url
-     * @return Component
+     * @param null $url
+     * @return mixed
      *
      * @see addComponent()
      */
-    public function add($title, $url = null)
+    public function add($id, $title, $url = null)
     {
-        $this->addComponent($title, $url);
+        $this->addComponent($id, $title, $url);
 
-        return $this->components[$title];
+        return $this->components[$id];
     }
 
     /**

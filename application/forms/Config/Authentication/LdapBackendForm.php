@@ -4,8 +4,8 @@
 
 namespace Icinga\Form\Config\Authentication;
 
-use \Exception;
-use \Zend_Config;
+use Exception;
+use Zend_Config;
 use Icinga\Web\Form;
 use Icinga\Data\ResourceFactory;
 use Icinga\Authentication\Backend\LdapUserBackend;
@@ -157,7 +157,7 @@ class LdapBackendForm extends BaseBackendForm
             $testConn->assertAuthenticationPossible();
             /*
             if ($testConn->count() === 0) {
-                throw new Exception('No Users Found On Directory Server');
+                throw new IcingaException('No Users Found On Directory Server');
             }
             */
         } catch (Exception $exc) {
