@@ -4,8 +4,8 @@
 
 namespace Icinga\Form\Config\Authentication;
 
-use \Zend_Config;
-use \Zend_Form_Element_Checkbox;
+use Zend_Config;
+use Zend_Form_Element_Checkbox;
 use Icinga\Web\Form;
 use Icinga\Data\ResourceFactory;
 use Icinga\Web\Form\Decorator\HelpText;

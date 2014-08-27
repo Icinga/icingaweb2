@@ -4,7 +4,7 @@
 
 namespace Icinga\Module\Translation\Cli;
 
-use \Exception;
+use Exception;
 use Icinga\Cli\Command;
 
 /**

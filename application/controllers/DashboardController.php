@@ -2,7 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use \Zend_Config;
+use Zend_Config;
 use Icinga\Web\Url;
 use Icinga\Logger\Logger;
 use Icinga\Config\PreservingIniWriter;

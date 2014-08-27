@@ -4,10 +4,10 @@
 
 namespace Icinga\Protocol\Statusdat\View;
 
-use \Iterator;
-use \Countable;
-use \ArrayAccess;
-use \Exception;
+use Iterator;
+use Countable;
+use ArrayAccess;
+use Exception;
 
 /**
  * Wrapper around an array of monitoring objects that can be enhanced with an optional

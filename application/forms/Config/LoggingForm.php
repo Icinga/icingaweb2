@@ -4,7 +4,7 @@
 
 namespace Icinga\Form\Config;
 
-use \Zend_Config;
+use Zend_Config;
 use Icinga\Web\Form;
 use Icinga\Application\Icinga;
 use Icinga\Web\Form\Validator\WritablePathValidator;

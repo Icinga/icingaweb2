@@ -2,7 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use \Icinga\Util\Translator;
+use Icinga\Util\Translator;
 
 if (extension_loaded('gettext')) {
     function t($messageId)
