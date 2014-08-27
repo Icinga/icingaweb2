@@ -4,15 +4,15 @@
 
 namespace Icinga\Form\Preference;
 
-use \DateTimeZone;
-use \Zend_Config;
-use \Zend_Form_Element_Text;
-use \Zend_Form_Element_Select;
-use \Zend_View_Helper_DateFormat;
-use \Icinga\Web\Form;
-use \Icinga\Web\Form\Validator\TimeFormatValidator;
-use \Icinga\Web\Form\Validator\DateFormatValidator;
-use \Icinga\Util\Translator;
+use DateTimeZone;
+use Zend_Config;
+use Zend_Form_Element_Text;
+use Zend_Form_Element_Select;
+use Zend_View_Helper_DateFormat;
+use Icinga\Web\Form;
+use Icinga\Web\Form\Validator\TimeFormatValidator;
+use Icinga\Web\Form\Validator\DateFormatValidator;
+use Icinga\Util\Translator;
 
 /**
  * General user preferences

@@ -4,9 +4,9 @@
 
 namespace Icinga\Web\Session;
 
-use \Exception;
-use \ArrayIterator;
-use \IteratorAggregate;
+use Exception;
+use ArrayIterator;
+use IteratorAggregate;
 
 /**
  * Container for session values

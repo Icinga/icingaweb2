@@ -4,8 +4,8 @@
 
 namespace Icinga\Web\Hook;
 
-use \Icinga\Web\Request;
-use \Zend_View;
+use Icinga\Web\Request;
+use Zend_View;
 
 /**
  * Hook to extend topbar items

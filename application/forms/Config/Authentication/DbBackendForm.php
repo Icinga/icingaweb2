@@ -4,8 +4,8 @@
 
 namespace Icinga\Form\Config\Authentication;
 
-use \Exception;
-use \Zend_Config;
+use Exception;
+use Zend_Config;
 use Icinga\Data\ResourceFactory;
 use Icinga\Authentication\DbConnection;
 use Icinga\Authentication\Backend\DbUserBackend;
