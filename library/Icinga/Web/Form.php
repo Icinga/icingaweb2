@@ -479,7 +479,10 @@ class Form extends Zend_Form
         $decorators = $this->getDecorators();
         if (empty($decorators)) {
             if ($this->viewScript) {
-                $this->addDecorator('ViewScript', array('viewScript' => $this->viewScript));
+                $this->addDecorator('ViewScript', array(
+                    'viewScript'    => $this->viewScript,
+                    'form'          => $this
+                ));
             } else {
                 $this->addDecorator('FormElements')
                     //->addDecorator('HtmlTag', array('tag' => 'dl', 'class' => 'zend_form'))
