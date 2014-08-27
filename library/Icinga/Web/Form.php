@@ -241,13 +241,13 @@ class Form extends Zend_Form
     }
 
     /**
-     * Perform actions after this form was submitted using an invalid request
+     * Perform actions when no form dependent data was sent
      *
      * Intended to be implemented by concrete form classes.
      *
-     * @param   Request     $request    The invalid request supposed to process this form
+     * @param   Request     $request    The current request
      */
-    public function onFailure(Request $request)
+    public function onShow(Request $request)
     {
 
     }
@@ -357,7 +357,8 @@ class Form extends Zend_Form
     /**
      * Process the given request using this form
      *
-     * Redirects to the url set with setRedirectUrl() upon success.
+     * Redirects to the url set with setRedirectUrl() upon success. See onSuccess()
+     * and onShow() wherewith you can customize the processing logic.
      *
      * @param   Request     $request    The request to be processed
      *
@@ -373,17 +374,15 @@ class Form extends Zend_Form
         if ($this->wasSent($formData)) {
             $this->populate($formData); // Necessary to get isSubmitted() to work
             if ($this->isSubmitted()) {
-                if ($this->isValid($formData)) {
-                    if ($this->onSuccess($request)) {
-                        $this->getResponse()->redirectAndExit($this->getRedirectUrl());
-                    }
-                } else {
-                    $this->onFailure($request);
+                if ($this->isValid($formData) && $this->onSuccess($request)) {
+                    $this->getResponse()->redirectAndExit($this->getRedirectUrl());
                 }
             } else {
                 // The form can't be processed but we want to show validation errors though
                 $this->isValidPartial($formData);
             }
+        } else {
+            $this->onShow($request);
         }
 
         return $request;
