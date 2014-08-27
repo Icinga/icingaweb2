@@ -4,6 +4,8 @@
 
 namespace Icinga\Protocol\Statusdat\Query;
 
+use Icinga\Exception\IcingaException;
+
 /**
  * Class Group
  * @package Icinga\Protocol\Statusdat\Query
@@ -130,7 +132,7 @@ class Group implements IQueryPart
     }
 
     /**
-     * @throws \Exception
+     * @throws IcingaException
      */
     private function tokenize()
     {
@@ -154,7 +156,10 @@ class Group implements IQueryPart
             }
             if ($token === self::GROUP_END) {
                 if ($subgroupCount < 1) {
-                    throw new \Exception("Invalid Query: unexpected ')' at pos " . $this->parsePos);
+                    throw new IcingaException(
+                        'Invalid Query: unexpected \')\' at pos %s',
+                        $this->parsePos
+                    );
                 }
                 $subgroupCount--;
                 /*
@@ -192,7 +197,7 @@ class Group implements IQueryPart
             $this->subExpressionLength = $this->parsePos - $this->subExpressionStart;
         }
         if ($subgroupCount > 0) {
-            throw new \Exception("Unexpected end of query, are you missing a parenthesis?");
+            throw new IcingaException('Unexpected end of query, are you missing a parenthesis?');
         }
 
         $this->startNewSubExpression();

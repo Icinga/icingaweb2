@@ -25,6 +25,7 @@ use Icinga\Module\Monitoring\Form\Command\DelayNotificationForm;
 use Icinga\Module\Monitoring\Form\Command\RescheduleNextCheckForm;
 use Icinga\Module\Monitoring\Form\Command\ScheduleDowntimeForm;
 use Icinga\Module\Monitoring\Form\Command\SubmitPassiveCheckResultForm;
+use Icinga\Exception\IcingaException;
 
 /**
  * Class Monitoring_CommandController
@@ -238,13 +239,16 @@ class Monitoring_CommandController extends Controller
         $given = array_intersect_key($supported, $this->getRequest()->getParams());
 
         if (empty($given)) {
-            throw new \Exception('Missing parameter, supported: '.implode(', ', array_flip($supported)));
+            throw new IcingaException(
+                'Missing parameter, supported: %s',
+                implode(', ', array_flip($supported))
+            );
         }
 
         if (isset($given['host'])) {
             $objects = $this->selectCommandTargets(!in_array("service", $supported));
             if (empty($objects)) {
-                throw new \Exception("No objects found for your command");
+                throw new IcingaException('No objects found for your command');
             }
         }
 

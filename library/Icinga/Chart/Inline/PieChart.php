@@ -7,6 +7,7 @@ namespace Icinga\Chart\Inline;
 use Icinga\Chart\PieChart as PieChartRenderer;
 use Imagick;
 use Exception;
+use Icinga\Exception\IcingaException;
 
 /**
  * Draw an inline pie-chart directly from the available request parameters.
@@ -33,7 +34,7 @@ class PieChart extends Inline
     {
         if (! class_exists('Imagick')) {
             // TODO: This is quick & dirty. 404?
-            throw new Exception('Cannot render PNGs without Imagick');
+            throw new IcingaException('Cannot render PNGs without Imagick');
         }
         $image = new Imagick();
         $image->readImageBlob($this->render(false));

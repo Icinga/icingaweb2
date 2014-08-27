@@ -19,6 +19,7 @@ use Icinga\Web\Widget;
 use Icinga\Web\Widget\Dashboard\Pane;
 use Icinga\Util\File;
 use Icinga\Exception\ProgrammingError;
+use Icinga\Exception\IcingaException;
 
 /**
  * Module handling
@@ -630,8 +631,9 @@ class Module
     protected function providePermission($name, $description)
     {
         if ($this->providesPermission($name)) {
-            throw new Exception(
-                sprintf('Cannot provide permission "%s" twice', $name)
+            throw new IcingaException(
+                'Cannot provide permission "%s" twice',
+                $name
             );
         }
         $this->permissionList[$name] = (object) array(
@@ -651,8 +653,9 @@ class Module
     protected function provideRestriction($name, $description)
     {
         if ($this->providesRestriction($name)) {
-            throw new Exception(
-                sprintf('Cannot provide restriction "%s" twice', $name)
+            throw new IcingaException(
+                'Cannot provide restriction "%s" twice',
+                $name
             );
         }
         $this->restrictionList[$name] = (object) array(

@@ -4,6 +4,7 @@
 
 namespace Icinga\Web\Widget\Dashboard;
 
+use Icinga\Exception\IcingaException;
 use Icinga\Util\Dimension;
 use Icinga\Web\Form;
 use Icinga\Web\Url;
@@ -81,11 +82,9 @@ EOD;
         } elseif ($url) {
             $this->url = Url::fromPath($url);
         } else {
-            throw new Exception(
-                sprintf(
-                    'Cannot create dashboard component "%s" without valid URL',
-                    $title
-                )
+            throw new IcingaException(
+                'Cannot create dashboard component "%s" without valid URL',
+                $title
             );
         }
     }

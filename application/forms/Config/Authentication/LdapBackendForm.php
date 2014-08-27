@@ -157,7 +157,7 @@ class LdapBackendForm extends BaseBackendForm
             $testConn->assertAuthenticationPossible();
             /*
             if ($testConn->count() === 0) {
-                throw new Exception('No Users Found On Directory Server');
+                throw new IcingaException('No Users Found On Directory Server');
             }
             */
         } catch (Exception $exc) {

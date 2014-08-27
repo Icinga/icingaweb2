@@ -7,6 +7,7 @@ namespace Icinga\Module\Monitoring\Timeline;
 use DateTime;
 use Exception;
 use ArrayIterator;
+use Icinga\Exception\IcingaException;
 use IteratorAggregate;
 use Icinga\Data\Filter\Filter;
 use Icinga\Web\Hook;
@@ -166,7 +167,10 @@ class TimeLine implements IteratorAggregate
             $this->circleDiameter = floatval($matches[1]);
             $this->diameterUnit = $matches[2];
         } else {
-            throw new Exception('Width "' . $width . '" is not a valid width');
+            throw new IcingaException(
+                'Width "%s" is not a valid width',
+                $width
+            );
         }
     }
 
@@ -184,10 +188,16 @@ class TimeLine implements IteratorAggregate
             if ($matches[2] === $this->diameterUnit) {
                 $this->minCircleDiameter = floatval($matches[1]);
             } else {
-                throw new Exception('Unit needs to be in "' . $this->diameterUnit . '"');
+                throw new IcingaException(
+                    'Unit needs to be in "%s"',
+                    $this->diameterUnit
+                );
             }
         } else {
-            throw new Exception('Width "' . $width . '" is not a valid width');
+            throw new IcingaException(
+                'Width "%s" is not a valid width',
+                $width
+            );
         }
     }
 

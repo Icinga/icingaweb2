@@ -5,6 +5,7 @@
 namespace Icinga\Module\Translation\Util;
 
 use Exception;
+use Icinga\Exception\IcingaException;
 use Icinga\Util\File;
 use Icinga\Application\Modules\Manager;
 use Icinga\Application\ApplicationBootstrap;
@@ -215,7 +216,10 @@ class GettextTranslationHelper
         } else {
             if ((!is_dir(dirname($this->tablePath)) && !@mkdir(dirname($this->tablePath), 0755, true)) ||
                 !rename($this->templatePath, $this->tablePath)) {
-                throw new Exception('Unable to create ' . $this->tablePath);
+                throw new IcingaException(
+                    'Unable to create %s',
+                    $this->tablePath
+                );
             }
         }
         $this->updateHeader($this->tablePath);
@@ -364,7 +368,10 @@ class GettextTranslationHelper
     {
         $directoryHandle = opendir($directory);
         if (!$directoryHandle) {
-            throw new Exception('Unable to read files from ' . $directory);
+            throw new IcingaException(
+                'Unable to read files from %s',
+                $directory
+            );
         }
 
         $subdirs = array();

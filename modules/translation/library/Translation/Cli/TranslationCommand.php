@@ -6,6 +6,7 @@ namespace Icinga\Module\Translation\Cli;
 
 use Exception;
 use Icinga\Cli\Command;
+use Icinga\Exception\IcingaException;
 
 /**
  * Base class for translation commands
@@ -24,7 +25,10 @@ class TranslationCommand extends Command
     public function validateLocaleCode($code)
     {
         if (! preg_match('@[a-z]{2}_[A-Z]{2}@', $code)) {
-            throw new Exception("Locale code '$code' is not valid. Expected format is: ll_CC");
+            throw new IcingaException(
+                'Locale code \'%s\' is not valid. Expected format is: ll_CC',
+                $code
+            );
         }
 
         return $code;
@@ -44,7 +48,10 @@ class TranslationCommand extends Command
         $enabledModules = $this->app->getModuleManager()->listEnabledModules();
 
         if (!in_array($name, $enabledModules)) {
-            throw new Exception("Module with name '$name' not found or is not enabled");
+            throw new IcingaException(
+                'Module with name \'%s\' not found or is not enabled',
+                $name
+            );
         }
 
         return $name;

@@ -4,6 +4,8 @@
 
 namespace Icinga\Protocol\Ldap;
 
+use Icinga\Exception\IcingaException;
+
 /**
  * This class is a special node object, representing your connections root node
  *
@@ -95,16 +97,14 @@ class Root
     /**
      * @param $rdn
      * @return mixed
-     * @throws Exception
+     * @throws IcingaException
      */
     public function getChildByRDN($rdn)
     {
         if (!$this->hasChildRDN($rdn)) {
-            throw new Exception(
-                sprintf(
-                    'The child RDN "%s" is not available',
-                    $rdn
-                )
+            throw new IcingaException(
+                'The child RDN "%s" is not available',
+                $rdn
             );
         }
         return $this->children[strtolower($rdn)];
@@ -154,28 +154,24 @@ class Root
     /**
      * @param $dn
      * @return $this
-     * @throws Exception
+     * @throws IcingaException
      */
     protected function assertSubDN($dn)
     {
         $mydn = $this->getDN();
         $end = substr($dn, -1 * strlen($mydn));
         if (strtolower($end) !== strtolower($mydn)) {
-            throw new Exception(
-                sprintf(
-                    '"%s" is not a child of "%s"',
-                    $dn,
-                    $mydn
-                )
+            throw new IcingaException(
+                '"%s" is not a child of "%s"',
+                $dn,
+                $mydn
             );
         }
         if (strlen($dn) === strlen($mydn)) {
-            throw new Exception(
-                sprintf(
-                    '"%s" is not a child of "%s", they are equal',
-                    $dn,
-                    $mydn
-                )
+            throw new IcingaException(
+                '"%s" is not a child of "%s", they are equal',
+                $dn,
+                $mydn
             );
         }
         return $this;
