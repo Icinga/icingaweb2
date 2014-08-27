@@ -2,7 +2,7 @@
 $contactHelper = $this->getHelper('ContactFlags');
 ?>
 <div style="margin-top: 0.5em;">
-    <?php foreach ($contacts as $contact): ?>
+    <?php if ($contact): ?>
         <table style="border-spacing: 0.25em; border-collapse: separate;">
             <thead>
             <tr>
@@ -45,12 +45,15 @@ $contactHelper = $this->getHelper('ContactFlags');
             </tr>
             </tbody>
         </table>
-        <?php
-        return;
-    endforeach;
-    printf(
-        '%s: `%s\'',
-        t('No such contact'), $contact_name
-    );
-    ?>
+
+        <h4><?= $this->translate('Commands'); ?>:</h4>
+        <ul>
+        <?php foreach ($commands as $command): ?>
+            <li><?= $command->command_name; ?></li>
+        <?php endforeach; ?>
+        </ul>
+
+    <?php else: ?>
+        <?= $this->translate('No such contact'); ?>: <?= $contactName; ?>
+    <?php endif; ?>
 </div>

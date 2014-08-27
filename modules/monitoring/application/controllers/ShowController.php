@@ -108,13 +108,15 @@ class Monitoring_ShowController extends Controller
 
     public function contactAction()
     {
-        $contact = $this->getParam('contact');
-        if (! $contact) {
+        $contactName = $this->getParam('contact');
+
+        if (! $contactName) {
             throw new Zend_Controller_Action_Exception(
                 $this->translate('The parameter `contact\' is required'),
                 404
             );
         }
+
         $query = $this->backend->select()->from('contact', array(
             'contact_name',
             'contact_id',
@@ -135,9 +137,22 @@ class Monitoring_ShowController extends Controller
             'contact_notify_host_flapping',
             'contact_notify_host_downtime',
         ));
-        $query->where('contact_name', $contact);
-        $this->view->contacts = $query->paginate();
-        $this->view->contact_name = $contact;
+
+        $query->where('contact_name', $contactName);
+
+        $contact = $query->getQuery()->fetchRow();
+
+        if ($contact) {
+            $commands = $this->backend->select()->from('command', array(
+                'command_line',
+                'command_name'
+            ))->where('contact_id', $contact->contact_id);
+
+            $this->view->commands = $commands->paginate();
+        }
+
+        $this->view->contact = $contact;
+        $this->view->contactName = $contactName;
     }
 
     /**
