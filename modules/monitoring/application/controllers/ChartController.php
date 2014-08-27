@@ -25,6 +25,7 @@ class Monitoring_ChartController extends Controller
     public function testAction()
     {
         $this->chart = new GridChart();
+        $this->chart->alignTopLeft();
         $this->chart->setAxisLabel('X axis label', 'Y axis label')->setXAxis(new StaticAxis());
         $data1 = array();
         $data2 = array();
@@ -139,6 +140,7 @@ class Monitoring_ChartController extends Controller
             $unknownBars[] = array($servicegroup->servicegroup, $servicegroup->services_unknown_unhandled);
         }
         $this->view->chart = new GridChart();
+        $this->view->chart->alignTopLeft();
         $this->view->chart->setAxisLabel('', t('Services'))
             ->setXAxis(new \Icinga\Chart\Unit\StaticAxis())
             ->setAxisMin(null, 0);
@@ -191,6 +193,7 @@ class Monitoring_ChartController extends Controller
             );
         }
         $this->view->chart = new GridChart();
+        $this->view->chart->alignTopLeft();
         $this->view->chart->setAxisLabel('', t('Hosts'))
             ->setXAxis(new StaticAxis())
             ->setAxisMin(null, 0);
@@ -219,6 +222,7 @@ class Monitoring_ChartController extends Controller
     private function drawGroupPie($query)
     {
         $this->view->chart = new PieChart();
+        $this->view->chart->alignTopLeft();
         if (isset($query->hosts_up)) {
             $this->view->chart->drawPie(array(
                 'data' => array(
