@@ -4,7 +4,7 @@
 
 namespace Icinga\Module\Monitoring\Web\Hook;
 
-use Icinga\Web\Hook\TopBar as IcingaTopBar;
+use Icinga\Web\Hook\TopBarHook;
 use Icinga\Module\Monitoring\DataView\StatusSummary as StatusSummaryView;
 use Icinga\Web\Request;
 use Zend_View;
@@ -12,7 +12,7 @@ use Zend_View;
 /**
  * Render status summary into the topbar of icinga
  */
-class TopBar implements IcingaTopBar
+class TopBar extends TopBarHook
 {
     /**
      * Function to generate top bar content
