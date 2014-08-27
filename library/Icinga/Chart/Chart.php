@@ -15,6 +15,8 @@ use Icinga\Chart\SVGRenderer;
  */
 abstract class Chart implements Drawable
 {
+    protected $align = false;
+
     /**
      * SVG renderer that handles
      *
@@ -98,8 +100,22 @@ abstract class Chart implements Drawable
             throw new Exception('Dataset for graph doesn\'t have the proper structure');
         }
         $this->build();
-
+        if ($this->align) {
+            $this->renderer->preserveAspectRatio();
+            $this->renderer->setXAspectRatioAlignment(SVGRenderer::X_ASPECT_RATIO_MIN);
+            $this->renderer->setYAspectRatioAlignment(SVGRenderer::Y_ASPECT_RATIO_MIN);
+        }
         $this->renderer->getCanvas()->addElement($this);
         return $this->renderer->render();
+    }
+
+    /**
+     * Align the chart to the top left corner instead of centering it
+     *
+     * @param bool $align
+     */
+    public function alignTopLeft ($align = true)
+    {
+        $this->align = $align;
     }
 }
