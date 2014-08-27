@@ -229,7 +229,7 @@ class Form extends Zend_Form
     /**
      * Perform actions after this form was submitted using a valid request
      *
-     * Intended to be implemented by concrete form classes.
+     * Intended to be implemented by concrete form classes. The base implementation returns always FALSE.
      *
      * @param   Request     $request    The valid request used to process this form
      *
@@ -237,7 +237,7 @@ class Form extends Zend_Form
      */
     public function onSuccess(Request $request)
     {
-        return true;
+        return false;
     }
 
     /**
