@@ -53,6 +53,9 @@ $contactHelper = $this->getHelper('ContactFlags');
         <?php endforeach; ?>
         </ul>
 
+        <h4><?= $this->translate('Notifications'); ?>:</h4>
+        <?= $this->render('list/notifications.phtml') ?>
+
     <?php else: ?>
         <?= $this->translate('No such contact'); ?>: <?= $contactName; ?>
     <?php endif; ?>

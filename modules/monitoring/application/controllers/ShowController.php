@@ -123,6 +123,7 @@ class Monitoring_ShowController extends Controller
             'contact_alias',
             'contact_email',
             'contact_pager',
+            'contact_object_id',
             'contact_notify_service_timeperiod',
             'contact_notify_service_recovery',
             'contact_notify_service_warning',
@@ -149,6 +150,20 @@ class Monitoring_ShowController extends Controller
             ))->where('contact_id', $contact->contact_id);
 
             $this->view->commands = $commands->paginate();
+
+            $notifications = $this->backend->select()->from('notification', array(
+                'host',
+                'service',
+                'notification_output',
+                'notification_contact',
+                'notification_start_time',
+                'notification_state'
+            ));
+
+            $notifications->where('contact_object_id', $contact->contact_object_id);
+
+            $this->view->compact = true;
+            $this->view->notifications = $notifications->paginate();
         }
 
         $this->view->contact = $contact;
