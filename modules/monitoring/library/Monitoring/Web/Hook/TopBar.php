@@ -18,11 +18,10 @@ class TopBar extends TopBarHook
      * Function to generate top bar content
      *
      * @param   Request $request
-     * @param   Zend_View $view
      *
      * @return  string
      */
-    public function getHtml($request, $view)
+    public function getHtml($request)
     {
         $hostSummary = StatusSummaryView::fromRequest(
             $request,
@@ -50,7 +49,7 @@ class TopBar extends TopBarHook
             )
         )->getQuery()->fetchRow();
 
-        return $view->partial(
+        return $this->getView()->partial(
             'layout/topbar.phtml',
             'monitoring',
             array(
