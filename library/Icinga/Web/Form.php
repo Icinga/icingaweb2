@@ -373,7 +373,7 @@ class Form extends Zend_Form
         $formData = $this->getRequestData($request);
         if ($this->wasSent($formData)) {
             $this->populate($formData); // Necessary to get isSubmitted() to work
-            if ($this->isSubmitted()) {
+            if ($this->isSubmitted() || ! $this->getSubmitLabel()) {
                 if ($this->isValid($formData) && $this->onSuccess($request)) {
                     $this->getResponse()->redirectAndExit($this->getRedirectUrl());
                 }
