@@ -361,7 +361,7 @@ class Form extends Zend_Form
      *
      * @param   Request     $request    The request to be processed
      *
-     * @return  self
+     * @return  Request                 The request supposed to be processed
      */
     public function handleRequest(Request $request = null)
     {
@@ -369,26 +369,24 @@ class Form extends Zend_Form
             $request = $this->getRequest();
         }
 
-        if (strtolower($request->getMethod()) === $this->getMethod()) {
-            $formData = $request->{'get' . $request->isPost() ? 'Post' : 'Query'}();
-            if ($this->wasSent($formData)) {
-                $this->populate($formData); // Necessary to get isSubmitted() to work
-                if ($this->isSubmitted()) {
-                    if ($this->isValid($formData)) {
-                        if ($this->onSuccess($request)) {
-                            $this->getResponse()->redirectAndExit($this->getRedirectUrl());
-                        }
-                    } else {
-                        $this->onFailure($request);
+        $formData = $this->getRequestData($request);
+        if ($this->wasSent($formData)) {
+            $this->populate($formData); // Necessary to get isSubmitted() to work
+            if ($this->isSubmitted()) {
+                if ($this->isValid($formData)) {
+                    if ($this->onSuccess($request)) {
+                        $this->getResponse()->redirectAndExit($this->getRedirectUrl());
                     }
                 } else {
-                    // The form can't be processed but we want to show validation errors though
-                    $this->isValidPartial($formData);
+                    $this->onFailure($request);
                 }
+            } else {
+                // The form can't be processed but we want to show validation errors though
+                $this->isValidPartial($formData);
             }
         }
 
-        return $this;
+        return $request;
     }
 
     /**
@@ -507,6 +505,22 @@ class Form extends Zend_Form
         }
 
         return $name;
+    }
+
+    /**
+     * Return the request data based on this form's request method
+     *
+     * @param   Request     $request    The request to fetch the data from
+     *
+     * @return  array
+     */
+    public function getRequestData(Request $request)
+    {
+        if (strtolower($request->getMethod()) === $this->getMethod()) {
+            return $request->{'get' . ($request->isPost() ? 'Post' : 'Query')}();
+        }
+
+        return array();
     }
 
     /**
