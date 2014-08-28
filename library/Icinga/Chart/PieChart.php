@@ -52,46 +52,6 @@ class PieChart extends Chart
     private $noCaption = false;
 
     /**
-     * Scaling level of the rendered svgs width in percent.
-     *
-     * @var float
-     */
-    private $width = 100;
-
-    /**
-     * Scaling level of the rendered svgs height in percent.
-     *
-     * @var int
-     */
-    private $height = 100;
-
-    /**
-     * Set the size of the rendered pie-chart svg.
-     *
-     * @param $width    int The width in percent.
-     *
-     * @return self  Fluent interface
-     */
-    public function setWidth($width)
-    {
-        $this->width = $width;
-        return $this;
-    }
-
-    /**
-     * Set the size of the rendered pie-chart svg.
-     *
-     * @param $height   int The height in percent.
-     *
-     * @return self  Fluent interface
-     */
-    public function setHeight($height)
-    {
-        $this->height = $height;
-        return $this;
-    }
-
-    /**
      * Test if the given pies have the correct format
      *
      * @return bool True when the given pies are correct, otherwise false
@@ -111,10 +71,7 @@ class PieChart extends Chart
      */
     protected function build()
     {
-        $this->renderer = new SVGRenderer(
-            $this->type === self::STACKED ? $this->width : count($this->pies) * $this->width,
-            $this->width
-        );
+        $this->renderer = new SVGRenderer(($this->type === self::STACKED) ? 1 : count($this->pies), 1);
         foreach ($this->pies as &$pie) {
             $this->normalizeDataSet($pie);
         }
