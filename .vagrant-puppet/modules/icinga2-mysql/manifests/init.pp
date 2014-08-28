@@ -1,4 +1,5 @@
 class icinga2-mysql {
+  include icinga-packages
   include icinga2
 
   mysql::database::populate { 'icinga2':
@@ -10,20 +11,19 @@ class icinga2-mysql {
   }
 
   icinga2::feature { 'ido-mysql':
-    require => Exec['populate-icinga2-mysql-db'],
+    require => Mysql::Database::Populate['icinga2'],
   }
 
   package { 'icinga2-ido-mysql':
     ensure => latest,
-    require => Yumrepo['icinga2-repo'],
-    alias => 'icinga2-ido-mysql'
+    require => Class['icinga-packages'],
   }
 
   file { '/etc/icinga2/features-available/ido-mysql.conf':
     source  => 'puppet:////vagrant/.vagrant-puppet/files/etc/icinga2/features-available/ido-mysql.conf',
     owner   => 'icinga',
     group   => 'icinga',
-    require => Package['icinga2'],
+    require => Class['icinga2'],
     notify => Service['icinga2'],
   }
 
