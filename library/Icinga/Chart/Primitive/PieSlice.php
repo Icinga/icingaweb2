@@ -32,7 +32,7 @@ class PieSlice extends Animatable implements Drawable
      *
      * @var float
      */
-    private $endRadian= 0;
+    private $endRadian = 0;
 
     /**
      * The x position of the pie slice's center

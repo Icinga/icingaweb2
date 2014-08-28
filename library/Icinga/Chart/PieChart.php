@@ -337,3 +337,4 @@ class PieChart extends Chart
         $clipBox->addElement($rect);
     }
 }
+
