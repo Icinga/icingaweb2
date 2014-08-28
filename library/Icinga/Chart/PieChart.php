@@ -16,7 +16,7 @@ use Icinga\Chart\Render\LayoutBox;
 /**
  * Graphing component for rendering Pie Charts.
  *
- * See the graphs.md documentation for futher information about how to use this component
+ * See the graphs.md documentation for further information about how to use this component
  */
 class PieChart extends Chart
 {
