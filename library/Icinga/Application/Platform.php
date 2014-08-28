@@ -66,4 +66,19 @@ class Platform
             self::$domain = array_shift(preg_split('~\.~', self::$hostname, 2));
         }
     }
+
+    public static function ldapAvailable()
+    {
+        return extension_loaded('ldap');
+    }
+
+    public static function pgsqlAvailable()
+    {
+        return extension_loaded('pgsql');
+    }
+
+    public static function mysqlAvailable()
+    {
+        return extension_loaded('mysql');
+    }
 }

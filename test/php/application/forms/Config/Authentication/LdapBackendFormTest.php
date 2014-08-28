@@ -68,8 +68,6 @@ class LdapBackendFormTest extends BaseTestCase
     protected function setUpResourceFactoryMock()
     {
         Mockery::mock('alias:Icinga\Data\ResourceFactory')
-            ->shouldReceive('ldapAvailable')
-            ->andReturn(true)
             ->shouldReceive('getResourceConfig')
             ->andReturn(new \Zend_Config(array()))
             ->shouldReceive('createResource')
