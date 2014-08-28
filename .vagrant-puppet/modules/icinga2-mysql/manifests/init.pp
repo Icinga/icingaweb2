@@ -7,7 +7,7 @@ class icinga2-mysql {
     password => 'icinga2',
     privileges => 'SELECT,INSERT,UPDATE,DELETE',
     schemafile => '/usr/share/icinga2-ido-mysql/schema/mysql.sql',
-    requirement => Package['icinga2-ido-mysql'],
+    require => Package['icinga2-ido-mysql'],
   }
 
   icinga2::feature { 'ido-mysql':
