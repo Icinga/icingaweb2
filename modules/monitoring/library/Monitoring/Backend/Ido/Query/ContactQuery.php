@@ -95,12 +95,12 @@ class ContactQuery extends IdoQuery
 
     protected function joinTimeperiods()
     {
-        $this->select->join(
+        $this->select->joinLeft(
             array('ht' => $this->prefix . 'timeperiods'),
             'ht.timeperiod_object_id = c.host_timeperiod_object_id',
             array()
         );
-        $this->select->join(
+        $this->select->joinLeft(
             array('st' => $this->prefix . 'timeperiods'),
             'st.timeperiod_object_id = c.service_timeperiod_object_id',
             array()

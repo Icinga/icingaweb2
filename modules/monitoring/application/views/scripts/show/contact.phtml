@@ -46,15 +46,22 @@ $contactHelper = $this->getHelper('ContactFlags');
             </tbody>
         </table>
 
-        <h4><?= $this->translate('Commands'); ?>:</h4>
-        <ul>
-        <?php foreach ($commands as $command): ?>
-            <li><?= $command->command_name; ?></li>
-        <?php endforeach; ?>
-        </ul>
+        <?php if (count($commands)): ?>
+            <h4><?= $this->translate('Commands'); ?>:</h4>
+            <ul>
+            <?php foreach ($commands as $command): ?>
+                <li><?= $command->command_name; ?></li>
+            <?php endforeach; ?>
+            </ul>
+        <?php endif; ?>
+
 
         <h4><?= $this->translate('Notifications'); ?>:</h4>
-        <?= $this->render('list/notifications.phtml') ?>
+        <?php if (count($notifications)): ?>
+            <?= $this->render('list/notifications.phtml') ?>
+        <?php else: ?>
+           <p><?= $this->translate('No notifications for this contact'); ?></p>
+        <?php endif; ?>
 
     <?php else: ?>
         <?= $this->translate('No such contact'); ?>: <?= $contactName; ?>

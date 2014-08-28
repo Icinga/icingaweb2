@@ -36,14 +36,18 @@ $contactHelper = $this->getHelper('ContactFlags');
             <?php endif; ?>
             <div style="clear: both;"></div>
             <div class="notification-periods">
+                <?php if ($contact->contact_notify_service_timeperiod): ?>
                 <div>
                     <?= t('Service notification period') ?>:
                     <?= $this->escape($contact->contact_notify_service_timeperiod) ?>
                 </div>
+                <?php endif; ?>
+                <?php if ($contact->contact_notify_host_timeperiod): ?>
                 <div>
                     <?= t('Host notification period') ?>:
                     <?= $this->escape($contact->contact_notify_host_timeperiod) ?>
                 </div>
+                <?php endif; ?>
             </div>
         </div>
     <?php
