@@ -159,7 +159,7 @@ class PieSlice extends Animatable implements Drawable
         // Draw the handle
         $path = new Path(array($midX, $midY));
 
-        $midX += ($addOffset + $r/1.8) * ($midRadius > M_PI ? -1 : 1);
+        $midX += ($addOffset + $r/3) * ($midRadius > M_PI ? -1 : 1);
         $path->append(array($midX, $midY))->toAbsolute();
 
         $midX += intval($r/2 * sin(M_PI/9)) * ($midRadius > M_PI ? -1 : 1);

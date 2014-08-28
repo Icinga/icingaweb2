@@ -122,7 +122,7 @@ class PieChart extends Chart
      */
     public function toSvg(RenderContext $ctx)
     {
-        $outerBox = new Canvas('outerGraph', new LayoutBox(0, 0, 100, 100));
+        $outerBox = new Canvas('outerGraph', new LayoutBox(33, -5, 40, 40));
         $innerBox = new Canvas('graph', new LayoutBox(0, 0, 100, 100));
         $labelBox = $ctx->getDocument()->createElement('g');
         if (!$this->noCaption) {
