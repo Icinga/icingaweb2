@@ -5,6 +5,7 @@
 namespace Icinga\Form\Config\Authentication;
 
 use Exception;
+use Icinga\Application\Platform;
 use Zend_Config;
 use Icinga\Web\Form;
 use Icinga\Data\ResourceFactory;
@@ -135,7 +136,7 @@ class LdapBackendForm extends BaseBackendForm
      */
     public function isValidAuthenticationBackend()
     {
-        if (! ResourceFactory::ldapAvailable()) {
+        if (! Platform::extensionLoaded('ldap')) {
             /*
              * It should be possible to run icingaweb without the php ldap extension, when
              * no ldap backends are needed. When the user tries to create an ldap backend
@@ -148,7 +149,7 @@ class LdapBackendForm extends BaseBackendForm
             $cfg = $this->getConfig();
             $backendName = 'backend_' . $this->filterName($this->getBackendName()) . '_name';
             $backendConfig = new Zend_Config($cfg[$this->getValue($backendName)]);
-            $backend = ResourceFactory::createResource(ResourceFactory::getResourceConfig($backendConfig->resource));
+            $backend = ResourceFactory::create($backendConfig->resource);
             $testConn = new LdapUserBackend(
                 $backend,
                 $backendConfig->user_class,

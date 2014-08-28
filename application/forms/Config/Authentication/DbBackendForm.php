@@ -111,10 +111,9 @@ class DbBackendForm extends BaseBackendForm
     public function isValidAuthenticationBackend()
     {
         try {
-            $testConnection = ResourceFactory::createResource(ResourceFactory::getResourceConfig(
+            $dbUserBackend = new DbUserBackend(ResourceFactory::create(
                 $this->getValue('backend_' . $this->filterName($this->getBackendName()) . '_resource')
             ));
-            $dbUserBackend = new DbUserBackend($testConnection);
             if ($dbUserBackend->count() < 1) {
                 $this->addErrorMessage(t("No users found under the specified database backend"));
                 return false;
