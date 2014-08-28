@@ -22,6 +22,11 @@ use Icinga\Chart\Unit\StaticAxis;
 
 class Monitoring_ChartController extends Controller
 {
+    public function init()
+    {
+        $this->view->compact = $this->_request->getParam('view') === 'compact';
+    }
+
     public function testAction()
     {
         $this->chart = new GridChart();
