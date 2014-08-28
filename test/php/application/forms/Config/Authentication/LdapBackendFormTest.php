@@ -70,8 +70,7 @@ class LdapBackendFormTest extends BaseTestCase
         Mockery::mock('alias:Icinga\Data\ResourceFactory')
             ->shouldReceive('getResourceConfig')
             ->andReturn(new \Zend_Config(array()))
-            ->shouldReceive('createResource')
-            ->with(Mockery::type('\Zend_Config'))
+            ->shouldReceive('create')
             ->andReturn(Mockery::mock('Icinga\Protocol\Ldap\Connection'));
     }
 }
