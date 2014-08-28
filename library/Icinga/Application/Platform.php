@@ -121,32 +121,14 @@ class Platform
     }
 
     /**
-     * Test of php ldap support
+     * Test for php extension
      *
-     * @return bool
-     */
-    public static function ldapAvailable()
-    {
-        return extension_loaded('ldap');
-    }
-
-    /**
-     * Test of php pgsql support
+     * @param   string  $extensionName  E.g. mysql, ldap
      *
-     * @return bool
+     * @return  bool
      */
-    public static function pgsqlAvailable()
+    public static function extensionLoaded($extensionName)
     {
-        return extension_loaded('pgsql');
-    }
-
-    /**
-     * Test of php mysql support
-     *
-     * @return bool
-     */
-    public static function mysqlAvailable()
-    {
-        return extension_loaded('mysql');
+        return extension_loaded($extensionName);
     }
 }

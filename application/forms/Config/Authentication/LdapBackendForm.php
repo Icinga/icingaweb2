@@ -136,7 +136,7 @@ class LdapBackendForm extends BaseBackendForm
      */
     public function isValidAuthenticationBackend()
     {
-        if (! Platform::ldapAvailable()) {
+        if (! Platform::extensionLoaded('ldap')) {
             /*
              * It should be possible to run icingaweb without the php ldap extension, when
              * no ldap backends are needed. When the user tries to create an ldap backend
