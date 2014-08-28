@@ -4,22 +4,57 @@
 
 namespace Icinga\Application;
 
+/**
+ * Platform tests for icingaweb
+ */
 class Platform
 {
+    /**
+     * Domain name
+     *
+     * @var string
+     */
     protected static $domain;
+
+    /**
+     * Host name
+     *
+     * @var string
+     */
     protected static $hostname;
+
+    /**
+     * Fully qualified domain name
+     *
+     * @var string
+     */
     protected static $fqdn;
 
+    /**
+     * Test of windows
+     *
+     * @return bool
+     */
     public static function isWindows()
     {
         return strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
     }
 
+    /**
+     * Test of linux
+     *
+     * @return bool
+     */
     public static function isLinux()
     {
         return strtoupper(substr(PHP_OS, 0, 5)) === 'LINUX';
     }
 
+    /**
+     * Test of CLI environment
+     *
+     * @return bool
+     */
     public static function isCli()
     {
         if (PHP_SAPI == 'cli') {
@@ -31,6 +66,11 @@ class Platform
         return false;
     }
 
+    /**
+     * Get the hostname
+     *
+     * @return string
+     */
     public static function getHostname()
     {
         if (self::$hostname === null) {
@@ -39,6 +79,11 @@ class Platform
         return self::$hostname;
     }
 
+    /**
+     * Get the domain name
+     *
+     * @return string
+     */
     public static function getDomain()
     {
         if (self::$domain === null) {
@@ -47,6 +92,11 @@ class Platform
         return self::$domain;
     }
 
+    /**
+     * Get the fully qualified domain name
+     *
+     * @return string
+     */
     public static function getFqdn()
     {
         if (self::$fqdn === null) {
@@ -55,6 +105,9 @@ class Platform
         return self::$fqdn;
     }
 
+    /**
+     * Initialize domain and host strings
+     */
     protected static function discoverHostname()
     {
         self::$hostname = gethostname();
@@ -67,16 +120,31 @@ class Platform
         }
     }
 
+    /**
+     * Test of php ldap support
+     *
+     * @return bool
+     */
     public static function ldapAvailable()
     {
         return extension_loaded('ldap');
     }
 
+    /**
+     * Test of php pgsql support
+     *
+     * @return bool
+     */
     public static function pgsqlAvailable()
     {
         return extension_loaded('pgsql');
     }
 
+    /**
+     * Test of php mysql support
+     *
+     * @return bool
+     */
     public static function mysqlAvailable()
     {
         return extension_loaded('mysql');
