@@ -4,19 +4,12 @@
 
 namespace Icinga\Web;
 
-use Zend_Controller_Request_Abstract;
 use Zend_Form;
-use Zend_Config;
-use Zend_Form_Element_Submit;
-use Zend_Form_Element_Reset;
 use Zend_View_Interface;
-use Icinga\Web\Session;
-use Icinga\Web\Form\Element\Note;
-use Icinga\Exception\ProgrammingError;
+use Icinga\Application\Icinga;
 use Icinga\Web\Form\Decorator\HelpText;
-use Icinga\Web\Form\Decorator\BootstrapForm;
-use Icinga\Web\Form\InvalidCSRFTokenException;
-use Icinga\Application\Config as IcingaConfig;
+use Icinga\Web\Form\Decorator\ElementWrapper;
+use Icinga\Web\Form\Element\CsrfCounterMeasure;
 
 /**
  * Base class for forms providing CSRF protection, confirmation logic and auto submission
@@ -24,27 +17,32 @@ use Icinga\Application\Config as IcingaConfig;
 class Form extends Zend_Form
 {
     /**
-     * The form's request object
+     * Whether this form has been created
      *
-     * @var Zend_Controller_Request_Abstract
+     * @var bool
      */
-    protected $request;
+    protected $created = false;
 
     /**
-     * Main configuration
+     * Label to use for the standard submit button
      *
-     * Used as fallback if user preferences are not available.
-     *
-     * @var IcingaConfig
+     * @var string
      */
-    protected $config;
+    protected $submitLabel;
 
     /**
-     * The preference object to use instead of the one from the user (used for testing)
+     * The url to redirect to upon success
      *
-     * @var Zend_Config
+     * @var string|Url
      */
-    protected $preferences;
+    protected $redirectUrl;
+
+    /**
+     * The view script to use when rendering this form
+     *
+     * @var string
+     */
+    protected $viewScript;
 
     /**
      * Whether this form should NOT add random generated "challenge" tokens that are associated with the user's current
@@ -56,83 +54,129 @@ class Form extends Zend_Form
     protected $tokenDisabled = false;
 
     /**
-     * Name of the CSRF token element (used to create non-colliding hashes)
+     * Name of the CSRF token element
      *
      * @var string
      */
     protected $tokenElementName = 'CSRFToken';
 
     /**
-     * Flag to indicate that form is already build
+     * Set the label to use for the standard submit button
      *
-     * @var bool
+     * @param   string  $label  The label to use for the submit button
+     *
+     * @return  self
      */
-    protected $created = false;
+    public function setSubmitLabel($label)
+    {
+        $this->submitLabel = $label;
+        return $this;
+    }
 
     /**
-     * Session id used for CSRF token generation
-     *
-     * @var string
-     */
-    protected $sessionId;
-
-    /**
-     * Label for submit button
-     *
-     * If omitted, no button will be shown
-     *
-     * @var string
-     */
-    protected $submitLabel;
-
-    /**
-     * Label for cancel button
-     *
-     * If omitted, no button will be shown
-     *
-     * @var string
-     */
-    protected $cancelLabel;
-
-    /**
-     * Last used note-id
-     *
-     * Helper to generate unique names for note elements
-     *
-     * @var int
-     */
-    protected $last_note_id = 0;
-
-    /**
-     * Getter for the session ID
-     *
-     * If the ID has never been set, the ID from session_id() is returned
+     * Return the label being used for the standard submit button
      *
      * @return  string
      */
-    public function getSessionId()
+    public function getSubmitLabel()
     {
-        if (!$this->sessionId) {
-            $this->sessionId = Session::getSession()->getId();
+        return $this->submitLabel;
+    }
+
+    /**
+     * Set the url to redirect to upon success
+     *
+     * @param   string|Url  $url    The url to redirect to
+     *
+     * @return  self
+     */
+    public function setRedirectUrl($url)
+    {
+        $this->redirectUrl = $url;
+        return $this;
+    }
+
+    /**
+     * Return the url to redirect to upon success
+     *
+     * @return  string|Url
+     */
+    public function getRedirectUrl()
+    {
+        if ($this->redirectUrl === null) {
+            // Be sure to remove all form dependent params because we do not want to submit it again
+            $this->redirectUrl = Url::fromRequest()->without(array_keys($this->getElements()));
         }
 
-        return $this->sessionId;
+        return $this->redirectUrl;
     }
 
     /**
-     * Setter for the session ID
+     * Set the view script to use when rendering this form
      *
-     * This method should be used for testing purposes only
+     * @param   string  $viewScript     The view script to use
      *
-     * @param   string      $sessionId
+     * @return  self
      */
-    public function setSessionId($sessionId)
+    public function setViewScript($viewScript)
     {
-        $this->sessionId = $sessionId;
+        $this->viewScript = $viewScript;
+        return $this;
     }
 
     /**
-     * Return the HTML element name of the CSRF token field
+     * Return the view script being used when rendering this form
+     *
+     * @return  string
+     */
+    public function getViewScript()
+    {
+        return $this->viewScript;
+    }
+
+    /**
+     * Disable CSRF counter measure and remove its field if already added
+     *
+     * @param   bool    $disabled   Set true in order to disable CSRF protection for this form, otherwise false
+     *
+     * @return  self
+     */
+    public function setTokenDisabled($disabled = true)
+    {
+        $this->tokenDisabled = (bool) $disabled;
+
+        if ($disabled && $this->getElement($this->tokenElementName) !== null) {
+            $this->removeElement($this->tokenElementName);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Return whether CSRF counter measures are disabled for this form
+     *
+     * @return  bool
+     */
+    public function getTokenDisabled()
+    {
+        return $this->tokenDisabled;
+    }
+
+    /**
+     * Set the name to use for the CSRF element
+     *
+     * @param   string  $name   The name to set
+     *
+     * @return  self
+     */
+    public function setTokenElementName($name)
+    {
+        $this->tokenElementName = $name;
+        return $this;
+    }
+
+    /**
+     * Return the name of the CSRF element
      *
      * @return  string
      */
@@ -142,427 +186,284 @@ class Form extends Zend_Form
     }
 
     /**
-     * Render the form to HTML
+     * Create this form
      *
-     * @param   Zend_View_Interface     $view
-     *
-     * @return  string
-     */
-    public function render(Zend_View_Interface $view = null)
-    {
-        // Elements must be there to render the form
-        $this->buildForm();
-        return parent::render($view);
-    }
-
-    /**
-     * Add elements to this form (used by extending classes)
-     */
-    protected function create()
-    {
-
-    }
-
-    /**
-     * Method called before validation
-     */
-    protected function preValidation(array $data)
-    {
-
-    }
-
-    /**
-     * Setter for the request
-     *
-     * @param   Zend_Controller_Request_Abstract    $request
-     */
-    public function setRequest(Zend_Controller_Request_Abstract $request)
-    {
-        $this->request = $request;
-    }
-
-    /**
-     * Getter for the request
-     *
-     * @return  Zend_Controller_Request_Abstract
-     */
-    public function getRequest()
-    {
-        return $this->request;
-    }
-
-    /**
-     * Set the configuration to be used for this form when no preferences are set yet
-     *
-     * @param   IcingaConfig    $cfg
+     * @param   array   $formData   The data sent by the user
      *
      * @return  self
      */
-    public function setConfiguration($cfg)
+    public function create(array $formData = array())
     {
-        $this->config = $cfg;
-        return $this;
-    }
+        if (false === $this->created) {
+            $this->addElements($this->createElements($formData));
+            $this->addFormIdentification()
+                ->addCsrfCounterMeasure()
+                ->addSubmitButton();
 
-    /**
-     * Get the main configuration
-     *
-     * Returns the set configuration or an empty default one.
-     *
-     * @return  Zend_Config
-     */
-    public function getConfiguration()
-    {
-        if ($this->config === null) {
-            $this->config = new Zend_Config(array(), true);
-        }
-
-        return $this->config;
-    }
-
-    /**
-     * Set preferences to be used instead of the one from the user object (used for testing)
-     *
-     * @param   Zend_Config     $prefs
-     */
-    public function setUserPreferences($prefs)
-    {
-        $this->preferences = $prefs;
-    }
-
-    /**
-     * Return the preferences of the user or the overwritten ones
-     *
-     * @return  Zend_Config
-     */
-    public function getUserPreferences()
-    {
-        if ($this->preferences) {
-            return $this->preferences;
-        }
-
-        return $this->getRequest()->getUser()->getPreferences();
-    }
-
-    /**
-     * Create the form if not done already
-     *
-     * Adds all elements to the form
-     */
-    public function buildForm()
-    {
-        if ($this->created === false) {
-            $this->initCsrfToken();
-            $this->create();
-
-            if ($this->submitLabel) {
-                $this->addSubmitButton();
-            }
-
-            if ($this->cancelLabel) {
-                $this->addCancelButton();
-            }
-
-            // Empty action if not safe
-            if (!$this->getAction() && $this->getRequest()) {
-                $this->setAction($this->getRequest()->getRequestUri());
+            if ($this->getAction() === '') {
+                // We MUST set an action as JS gets confused otherwise, if
+                // this form is being displayed in an additional column
+                $this->setAction(Url::fromRequest()->getUrlWithout(array_keys($this->getElements())));
             }
 
             $this->created = true;
         }
+
+        return $this;
     }
 
     /**
-     * Setter for the cancel label
+     * Create and return the elements to add to this form
      *
-     * @param   string  $cancelLabel
-     */
-    public function setCancelLabel($cancelLabel)
-    {
-        $this->cancelLabel = $cancelLabel;
-    }
-
-    /**
-     * Add cancel button to form
-     */
-    protected function addCancelButton()
-    {
-        $this->addElement(
-            new Zend_Form_Element_Reset(
-                array(
-                    'name' => 'btn_reset',
-                    'label' => $this->cancelLabel,
-                    'class' => 'btn pull-right'
-                )
-            )
-        );
-    }
-
-    /**
-     * Setter for the submit label
+     * Intended to be implemented by concrete form classes.
      *
-     * @param   string  $submitLabel
-     */
-    public function setSubmitLabel($submitLabel)
-    {
-        $this->submitLabel = $submitLabel;
-    }
-
-    /**
-     * Add submit button to form
-     */
-    protected function addSubmitButton()
-    {
-        $this->addElement(
-            new Zend_Form_Element_Submit(
-                array(
-                    'name'  => 'btn_submit',
-                    'label' => $this->submitLabel
-                )
-            )
-        );
-    }
-
-    /**
-     * Add message to form
-     *
-     * @param   string      $message        The message to be displayed
-     * @param   int         $headingType    Whether it should be displayed as heading (1-6) or not (null)
-     */
-    public function addNote($message, $headingType = null)
-    {
-        $this->addElement(
-            new Note(
-                array(
-                    'escape'    => $headingType === null ? false : true,
-                    'name'      => sprintf('note_%s', $this->last_note_id++),
-                    'value'     => $headingType === null ? $message : sprintf(
-                        '<h%1$s>%2$s</h%1$s>',
-                        $headingType,
-                        $message
-                    )
-                )
-            )
-        );
-    }
-
-    /**
-     * Enable automatic form submission on the given elements
-     *
-     * Enables automatic submission of this form once the user edits specific elements
-     *
-     * @param   array   $triggerElements    The element names which should auto-submit the form
-     *
-     * @throws  ProgrammingError            When an element is found which does not yet exist
-     */
-    public function enableAutoSubmit($triggerElements)
-    {
-        foreach ($triggerElements as $elementName) {
-            $element = $this->getElement($elementName);
-            if ($element !== null) {
-                $class = $element->getAttrib('class');
-                if ($class === null) {
-                    $class = 'autosubmit';
-                } else {
-                    $class .= ' autosubmit';
-                }
-                $element->setAttrib('class', $class);
-            } else {
-                throw new ProgrammingError(
-                    'You need to add the element "%s" to the form before automatic submission can be enabled!',
-                    $elementName
-                );
-            }
-        }
-    }
-
-    /**
-     * Check whether the form was submitted with a valid request
-     *
-     * Ensures that the current request method is POST, that the form was manually submitted and that the data provided
-     * in the request is valid and gets repopulated in case its invalid.
-     *
-     * @return  bool    True when the form is submitted and valid, otherwise false
-     */
-    public function isSubmittedAndValid()
-    {
-        if ($this->getRequest()->isPost() === false) {
-            return false;
-        }
-
-        $this->buildForm();
-        $checkData = $this->getRequest()->getParams();
-        $this->assertValidCsrfToken($checkData);
-
-        if ($this->isSubmitted()) {
-            // perform full validation if submitted
-            $this->preValidation($checkData);
-            return $this->isValid($checkData);
-        } else {
-            // only populate if not submitted
-            $this->populate($checkData);
-            $this->setAttrib('data-icinga-form-modified', 'true');
-            return false;
-        }
-    }
-
-    /**
-     * Check whether this form has been submitted
-     *
-     * Per default, this checks whether the button set with the 'setSubmitLabel' method
-     * is being submitted. For custom submission logic, this method must be overwritten
-     *
-     * @return  bool    True when the form is marked as submitted, otherwise false
-     */
-    public function isSubmitted()
-    {
-        // TODO: There are some missunderstandings and missconceptions to be
-        //       found in this class. If populate() etc would have been used as
-        //       designed this function would read as simple as:
-        //       return $this->getElement('btn_submit')->isChecked();
-
-        if ($this->submitLabel) {
-            $checkData = $this->getRequest()->getParams();
-            return isset($checkData['btn_submit']) && $checkData['btn_submit'];
-        }
-        return true;
-    }
-
-    /**
-     * Disable CSRF counter measure and remove its field if already added
-     *
-     * This method should be used for testing purposes only
-     *
-     * @param   bool    $disabled   Set true in order to disable CSRF tokens in
-     *                              this form (default: true), otherwise false
-     */
-    public function setTokenDisabled($disabled = true)
-    {
-        $this->tokenDisabled = (boolean) $disabled;
-
-        if ($disabled === true) {
-            $this->removeElement($this->tokenElementName);
-        }
-    }
-
-    /**
-     * Add CSRF counter measure field to form
-     */
-    public function initCsrfToken()
-    {
-        if (!$this->tokenDisabled && $this->getElement($this->tokenElementName) === null) {
-            $this->addElement(
-                'hidden',
-                $this->tokenElementName,
-                array(
-                    'value' => $this->generateCsrfTokenAsString()
-                )
-            );
-        }
-    }
-
-    /**
-     * Test the submitted data for a correct CSRF token
-     *
-     * @param   array   $checkData          The POST data send by the user
-     *
-     * @throws  InvalidCSRFTokenException   When CSRF Validation fails
-     */
-    public function assertValidCsrfToken(array $checkData)
-    {
-        if (!$this->tokenDisabled) {
-            if (!isset($checkData[$this->tokenElementName])
-                || !$this->hasValidCsrfToken($checkData[$this->tokenElementName])
-            ) {
-                throw new InvalidCSRFTokenException();
-            }
-        }
-    }
-
-    /**
-     * Check whether the form's CSRF token-field has a valid value
-     *
-     * @param   string  $elementValue   Value from the form element
-     *
-     * @return  bool
-     */
-    protected function hasValidCsrfToken($elementValue)
-    {
-        if ($this->getElement($this->tokenElementName) === null || strpos($elementValue, '|') === false) {
-            return false;
-        }
-
-        list($seed, $token) = explode('|', $elementValue);
-
-        if (!is_numeric($seed)) {
-            return false;
-        }
-
-        return $token === hash('sha256', $this->getSessionId() . $seed);
-    }
-
-    /**
-     * Generate a new (seed, token) pair
+     * @param   array   $formData   The data sent by the user
      *
      * @return  array
      */
-    public function generateCsrfToken()
+    public function createElements(array $formData)
     {
-        $seed = mt_rand();
-        $hash = hash('sha256', $this->getSessionId() . $seed);
-
-        return array($seed, $hash);
+        return array();
     }
 
     /**
-     * Return the string representation of the CSRF seed/token pair
+     * Perform actions after this form was submitted using a valid request
      *
-     * @return  string
+     * Intended to be implemented by concrete form classes. The base implementation returns always FALSE.
+     *
+     * @param   Request     $request    The valid request used to process this form
+     *
+     * @return  bool                    Whether any redirection should take place
      */
-    public function generateCsrfTokenAsString()
+    public function onSuccess(Request $request)
     {
-        list ($seed, $token) = $this->generateCsrfToken($this->getSessionId());
-        return sprintf('%s|%s', $seed, $token);
+        return false;
     }
 
     /**
-     * Add a new element
+     * Perform actions when no form dependent data was sent
      *
-     * Additionally, all DtDd tags will be removed and the Bootstrap compatible
-     * BootstrapForm decorator will be added to the elements
+     * Intended to be implemented by concrete form classes.
      *
-     * @param   string|Zend_Form_Element    $element    String element type, or an object of type Zend_Form_Element
-     * @param   string                      $name       The name of the element to add if $element is a string
-     * @param   array                       $options    The settings for the element if $element is a string
+     * @param   Request     $request    The current request
+     */
+    public function onShow(Request $request)
+    {
+
+    }
+
+    /**
+     * Add a submit button to this form
+     *
+     * Uses the label previously set with Form::setSubmitLabel(). Overwrite this
+     * method in order to add multiple submit buttons or one with a custom name.
      *
      * @return  self
-     * @see     Zend_Form::addElement()
      */
-    public function addElement($element, $name = null, $options = null)
+    public function addSubmitButton()
     {
-        parent::addElement($element, $name, $options);
-        $el = $name !== null ? $this->getElement($name) : $element;
+        if ($this->submitLabel !== null) {
+            $this->addElement(
+                'submit',
+                'btn_submit',
+                array(
+                    'ignore'    => true,
+                    'label'     => $this->submitLabel
+                )
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * Create a new element
+     *
+     * Additionally, all structural form element decorators by Zend are replaced with our own ones.
+     *
+     * @param   string  $type       String element type
+     * @param   string  $name       The name of the element to add
+     * @param   array   $options    The options for the element
+     *
+     * @return  Zend_Form_Element
+     *
+     * @see     Zend_Form::createElement()
+     */
+    public function createElement($type, $name, $options = null)
+    {
+        $el = parent::createElement($type, $name, $options);
 
         if ($el) {
             if (strpos(strtolower(get_class($el)), 'hidden') !== false) {
-                // Do not add structural elements to invisible elements which produces ugly views
                 $el->setDecorators(array('ViewHelper'));
             } else {
                 $el->removeDecorator('HtmlTag');
                 $el->removeDecorator('Label');
                 $el->removeDecorator('DtDdWrapper');
-                $el->addDecorator(new BootstrapForm());
+                $el->addDecorator(new ElementWrapper());
                 $el->addDecorator(new HelpText());
             }
+        }
+
+        return $el;
+    }
+
+    /**
+     * Add a field with a unique and form specific ID
+     *
+     * @return  self
+     */
+    public function addFormIdentification()
+    {
+        $this->addElement(
+            'hidden',
+            'form_uid',
+            array(
+                'ignore'    => true,
+                'value'     => $this->getName()
+            )
+        );
+
+        return $this;
+    }
+
+    /**
+     * Add CSRF counter measure field to this form
+     *
+     * @return  self
+     */
+    public function addCsrfCounterMeasure()
+    {
+        if (false === $this->tokenDisabled && $this->getElement($this->tokenElementName) === null) {
+            $element = new CsrfCounterMeasure($this->tokenElementName);
+            $element->setDecorators(array('ViewHelper'));
+            $this->addElement($element);
         }
 
         return $this;
     }
 
     /**
+     * Populate the elements with the given values
+     *
+     * @param   array   $defaults   The values to populate the elements with
+     */
+    public function setDefaults(array $defaults)
+    {
+        $this->create($defaults);
+        return parent::setDefaults($defaults);
+    }
+
+    /**
+     * Process the given request using this form
+     *
+     * Redirects to the url set with setRedirectUrl() upon success. See onSuccess()
+     * and onShow() wherewith you can customize the processing logic.
+     *
+     * @param   Request     $request    The request to be processed
+     *
+     * @return  Request                 The request supposed to be processed
+     */
+    public function handleRequest(Request $request = null)
+    {
+        if ($request === null) {
+            $request = $this->getRequest();
+        }
+
+        $formData = $this->getRequestData($request);
+        if ($this->wasSent($formData)) {
+            $this->populate($formData); // Necessary to get isSubmitted() to work
+            if ($this->isSubmitted() || ! $this->getSubmitLabel()) {
+                if ($this->isValid($formData) && $this->onSuccess($request)) {
+                    $this->getResponse()->redirectAndExit($this->getRedirectUrl());
+                }
+            } else {
+                // The form can't be processed but we want to show validation errors though
+                $this->isValidPartial($formData);
+            }
+        } else {
+            $this->onShow($request);
+        }
+
+        return $request;
+    }
+
+    /**
+     * Return whether the submit button of this form was pressed
+     *
+     * When overwriting Form::addSubmitButton() be sure to overwrite this method as well.
+     *
+     * @return  bool                True in case it was pressed, False otherwise or no submit label was set
+     */
+    public function isSubmitted()
+    {
+        if ($this->submitLabel !== null) {
+            return $this->getElement('btn_submit')->isChecked();
+        }
+
+        return false;
+    }
+
+    /**
+     * Return whether the data sent by the user refers to this form
+     *
+     * Ensures that the correct form gets processed in case there are multiple forms
+     * with equal submit button names being posted against the same route.
+     *
+     * @param   array   $formData   The data sent by the user
+     *
+     * @return  bool                Whether the given data refers to this form
+     */
+    public function wasSent(array $formData)
+    {
+        return isset($formData['form_uid']) && $formData['form_uid'] === $this->getName();
+    }
+
+    /**
+     * Return whether the given values (possibly incomplete) are valid
+     *
+     * Unlike Zend_Form::isValid() this will not set NULL as value for
+     * an element that is not present in the given data.
+     *
+     * @param   array   $formData   The data to validate
+     *
+     * @return  bool
+     */
+    public function isValidPartial(array $formData)
+    {
+        $this->create($formData);
+        return parent::isValidPartial($formData);
+    }
+
+    /**
+     * Return whether the given values are valid
+     *
+     * @param   array   $formData   The data to validate
+     *
+     * @return  bool
+     */
+    public function isValid($formData)
+    {
+        $this->create($formData);
+        return parent::isValid($formData);
+    }
+
+    /**
+     * Remove all elements of this form
+     *
+     * @return  self
+     */
+    public function clearElements()
+    {
+        $this->created = false;
+        return parent::clearElements();
+    }
+
+    /**
      * Load the default decorators
      *
-     * Overwrites Zend_Form::loadDefaultDecorators to avoid having the HtmlTag-Decorator added
+     * Overwrites Zend_Form::loadDefaultDecorators to avoid having
+     * the HtmlTag-Decorator added and to provide viewscript usage
      *
      * @return  self
      */
@@ -574,11 +475,83 @@ class Form extends Zend_Form
 
         $decorators = $this->getDecorators();
         if (empty($decorators)) {
-            $this->addDecorator('FormElements')
-                //->addDecorator('HtmlTag', array('tag' => 'dl', 'class' => 'zend_form'))
-                ->addDecorator('Form');
+            if ($this->viewScript) {
+                $this->addDecorator('ViewScript', array(
+                    'viewScript'    => $this->viewScript,
+                    'form'          => $this
+                ));
+            } else {
+                $this->addDecorator('FormElements')
+                    //->addDecorator('HtmlTag', array('tag' => 'dl', 'class' => 'zend_form'))
+                    ->addDecorator('Form');
+            }
         }
 
         return $this;
+    }
+
+    /**
+     * Return the name of this form
+     *
+     * @return  string
+     */
+    public function getName()
+    {
+        $name = parent::getName();
+        if (! $name) {
+            $name = get_class($this);
+            $this->setName($name);
+        }
+
+        return $name;
+    }
+
+    /**
+     * Return the request data based on this form's request method
+     *
+     * @param   Request     $request    The request to fetch the data from
+     *
+     * @return  array
+     */
+    public function getRequestData(Request $request)
+    {
+        if (strtolower($request->getMethod()) === $this->getMethod()) {
+            return $request->{'get' . ($request->isPost() ? 'Post' : 'Query')}();
+        }
+
+        return array();
+    }
+
+    /**
+     * Return the current request
+     *
+     * @return  Request
+     */
+    public function getRequest()
+    {
+        return Icinga::app()->getFrontController()->getRequest();
+    }
+
+    /**
+     * Return the current Response
+     *
+     * @return  Response
+     */
+    public function getResponse()
+    {
+        return Icinga::app()->getFrontController()->getResponse();
+    }
+
+    /**
+     * Render this form
+     *
+     * @param   Zend_View_Interface     $view   The view context to use
+     *
+     * @return  string
+     */
+    public function render(Zend_View_Interface $view = null)
+    {
+        $this->create();
+        return parent::render($view);
     }
 }

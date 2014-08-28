@@ -3,23 +3,22 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 
 use Icinga\Web\Controller\BaseConfigController;
-use Icinga\Web\Widget\Tab;
 use Icinga\Web\Widget\AlertMessageBox;
 use Icinga\Web\Notification;
 use Icinga\Application\Modules\Module;
-use Icinga\Web\Url;
+use Icinga\Web\Form;
 use Icinga\Web\Widget;
 use Icinga\Application\Icinga;
 use Icinga\Application\Config as IcingaConfig;
-use Icinga\Data\ResourceFactory;
 use Icinga\Form\Config\GeneralForm;
-use Icinga\Form\Config\Authentication\ReorderForm;
 use Icinga\Form\Config\Authentication\LdapBackendForm;
 use Icinga\Form\Config\Authentication\DbBackendForm;
+use Icinga\Form\Config\Authentication\AutologinBackendForm;
 use Icinga\Form\Config\ResourceForm;
 use Icinga\Form\Config\LoggingForm;
 use Icinga\Form\Config\ConfirmRemovalForm;
 use Icinga\Config\PreservingIniWriter;
+use Icinga\Exception\ConfigurationError;
 
 
 /**
@@ -27,13 +26,6 @@ use Icinga\Config\PreservingIniWriter;
  */
 class ConfigController extends BaseConfigController
 {
-    /**
-     * The resource types that are available.
-     *
-     * @var array
-     */
-    private $resourceTypes = array('livestatus', 'ido', 'statusdat', 'ldap');
-
     public function init()
     {
         $this->view->tabs = Widget::create('tabs')->add('index', array(
@@ -45,9 +37,6 @@ class ConfigController extends BaseConfigController
         ))->add('resources', array(
             'title' => 'Resources',
             'url'   => 'config/resource'
-        ))->add('logging', array(
-            'title' => 'Logging',
-            'url'   => 'config/logging'
         ));
     }
 
@@ -63,39 +52,20 @@ class ConfigController extends BaseConfigController
     {
         $this->view->messageBox = new AlertMessageBox(true);
         $this->view->tabs->activate('index');
+
         $form = new GeneralForm();
-        $form->setConfiguration(IcingaConfig::app());
-        $form->setRequest($this->_request);
-        if ($form->isSubmittedAndValid()) {
-            if (!$this->writeConfigFile($form->getConfig(), 'config')) {
-                return;
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            if ($form->isValid($request->getPost())) {
+                if ($this->writeConfigFile($form->getConfiguration(), 'config')) {
+                    Notification::success($this->translate('New configuration has successfully been stored'));
+                    $this->redirectNow('config');
+                }
             }
-            Notification::success('New configuration has successfully been stored');
-            $form->setConfiguration(IcingaConfig::app(), true);
-            $this->redirectNow('config/index');
+        } else {
+            $form->setConfiguration(IcingaConfig::app());
         }
-        $this->view->form = $form;
-    }
 
-    /**
-     * Form for modifying the logging configuration
-     */
-    public function loggingAction()
-    {
-        $this->view->messageBox = new AlertMessageBox(true);
-        $this->view->tabs->activate('logging');
-
-        $form = new LoggingForm();
-        $form->setConfiguration(IcingaConfig::app());
-        $form->setRequest($this->_request);
-        if ($form->isSubmittedAndValid()) {
-            if (!$this->writeConfigFile($form->getConfig(), 'config')) {
-                return;
-            }
-            Notification::success('New configuration has sucessfully been stored');
-            $form->setConfiguration(IcingaConfig::app(), true);
-            $this->redirectNow('config/logging');
-        }
         $this->view->form = $form;
     }
 
@@ -172,40 +142,47 @@ class ConfigController extends BaseConfigController
     }
 
     /**
-     * Action for creating a new authentication backend
+     * Action for reordering authentication backends
      */
     public function authenticationAction()
     {
-        $config = IcingaConfig::app('authentication', true);
+        $this->view->messageBox = new AlertMessageBox(true);
         $this->view->tabs->activate('authentication');
 
-        $order = array_keys($config->toArray());
-        $this->view->messageBox = new AlertMessageBox(true);
-
-        $backends = array();
-        foreach ($order as $backend) {
-            $form = new ReorderForm();
-            $form->setName('form_reorder_backend_' . $backend);
-            $form->setBackendName($backend);
-            $form->setCurrentOrder($order);
-            $form->setRequest($this->_request);
-
-            if ($form->isSubmittedAndValid()) {
-                if ($this->writeAuthenticationFile($form->getReorderedConfig($config))) {
-                    Notification::success('Authentication Order Updated');
-                    $this->redirectNow('config/authentication');
+        $config = IcingaConfig::app('authentication');
+        $backendOrder = array_keys($config->toArray());
+        $form = new Form();
+        $form->setName('form_reorder_authbackend');
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $requestData = $request->getPost();
+            if ($form->isValid($requestData)) { // Validate the CSRF token
+                $reordered = false;
+                foreach ($backendOrder as $backendName) {
+                    if (isset($requestData[$backendName])) {
+                        array_splice($backendOrder, array_search($backendName, $backendOrder), 1);
+                        array_splice($backendOrder, $requestData[$backendName], 0, $backendName);
+                        $reordered = true;
+                        break;
+                    }
                 }
 
-                return;
-            }
+                if ($reordered) {
+                    $reorderedConfig = array();
+                    foreach ($backendOrder as $backendName) {
+                        $reorderedConfig[$backendName] = $config->{$backendName};
+                    }
 
-            $backends[] = (object) array(
-                'name'          => $backend,
-                'reorderForm'   => $form
-            );
+                    if ($this->writeAuthenticationFile($reorderedConfig)) {
+                        Notification::success($this->translate('Authentication order updated!'));
+                        $this->redirectNow('config/authentication');
+                    }
+                }
+            }
         }
 
-        $this->view->backends = $backends;
+        $this->view->form = $form->create(); // Necessary in case its a GET request
+        $this->view->backendNames = $backendOrder;
     }
 
     /**
@@ -214,38 +191,56 @@ class ConfigController extends BaseConfigController
     public function createauthenticationbackendAction()
     {
         $this->view->messageBox = new AlertMessageBox(true);
+        $this->view->tabs->activate('authentication');
 
-        if ($this->getRequest()->getParam('type') === 'ldap') {
-            $form = new LdapBackendForm();
-        } else {
-            $form = new DbBackendForm();
-        }
-        if ($this->getParam('auth_backend')) {
-            $form->setBackendName($this->getParam('auth_backend'));
-        }
-        $form->setRequest($this->getRequest());
-
-        if ($form->isSubmittedAndValid()) {
-            $backendCfg = IcingaConfig::app('authentication')->toArray();
-            foreach ($backendCfg as $backendName => $settings) {
-                unset($backendCfg[$backendName]['name']);
+        $backendType = $this->getRequest()->getParam('type');
+        $authenticationConfig = IcingaConfig::app('authentication')->toArray();
+        try {
+            switch ($backendType) {
+                case 'ldap':
+                    $form = new LdapBackendForm();
+                    break;
+                case 'db':
+                    $form = new DbBackendForm();
+                    break;
+                case 'autologin':
+                    foreach ($authenticationConfig as $ac) {
+                        if (array_key_exists('backend', $ac) && $ac['backend'] === 'autologin') {
+                            throw new ConfigurationError(
+                                $this->translate('An autologin backend already exists')
+                            );
+                        }
+                    }
+                    $form = new AutologinBackendForm();
+                    break;
+                default:
+                    $this->addErrorMessage(sprintf(
+                        $this->translate('There is no backend type `%s\''),
+                        $backendType
+                    ));
+                    $this->redirectNow('config/configurationerror');
             }
-            foreach ($form->getConfig() as $backendName => $settings) {
-                unset($settings->{'name'});
-                if (isset($backendCfg[$backendName])) {
-                    $this->addErrorMessage('Backend name already exists');
-                    $this->view->form = $form;
-                    $this->render('authentication/create');
-                    return;
+        } catch (ConfigurationError $e) {
+            $this->addErrorMessage($e->getMessage());
+            $this->redirectNow('config/configurationerror');
+        }
+
+        $request = $this->getRequest();
+        if ($request->isPost() && $form->isValid($request->getPost())) {
+            list($backendName, $backendConfig) = $form->getBackendConfig();
+            if (isset($authenticationConfig[$backendName])) {
+                $this->addErrorMessage(
+                    $this->translate('Backend name already exists')
+                );
+            } else {
+                $authenticationConfig[$backendName] = $backendConfig;
+                if ($this->writeConfigFile($authenticationConfig, 'authentication')) {
+                    $this->addSuccessMessage(
+                        $this->translate('Backend Modification Written.')
+                    );
+                    $this->redirectNow('config/authentication');
                 }
-                $backendCfg[$backendName] = $settings;
             }
-            if ($this->writeAuthenticationFile($backendCfg)) {
-                // redirect to overview with success message
-                Notification::success('Backend Modification Written.');
-                $this->redirectNow("config/authentication");
-            }
-            return;
         }
 
         $this->view->messageBox->addForm($form);
@@ -266,18 +261,21 @@ class ConfigController extends BaseConfigController
 
         $configArray = IcingaConfig::app('authentication', true)->toArray();
         $authBackend =  $this->getParam('auth_backend');
-        if (!isset($configArray[$authBackend])) {
-            $this->addErrorMessage('Can\'t edit: Unknown Authentication Backend Provided');
-            $this->configurationerrorAction();
-            return;
-        }
-        if (!array_key_exists('resource', $configArray[$authBackend])) {
-            $this->addErrorMessage('Configuration error: Backend "' . $authBackend . '" has no Resource');
-            $this->configurationerrorAction();
-            return;
+        if (false === isset($configArray[$authBackend])) {
+            $this->addErrorMessage(
+                $this->translate('Can\'t edit: Unknown Authentication Backend Provided')
+            );
+            $this->redirectNow('config/configurationerror');
         }
 
-        $type = ResourceFactory::getResourceConfig($configArray[$authBackend]['resource'])->type;
+        if (false === array_key_exists('backend', $configArray[$authBackend])) {
+            $this->addErrorMessage(sprintf(
+                $this->translate('Backend "%s" has no `backend\' setting'),
+                $authBackend
+            ));
+            $this->redirectNow('config/configurationerror');
+        }
+        $type = $configArray[$authBackend]['backend'];
         switch ($type) {
             case 'ldap':
                 $form = new LdapBackendForm();
@@ -285,32 +283,37 @@ class ConfigController extends BaseConfigController
             case 'db':
                 $form = new DbBackendForm();
                 break;
+            case 'autologin':
+                $form = new AutologinBackendForm();
+                break;
             default:
-                $this->addErrorMessage('Can\'t edit: backend type "' . $type . '" of given resource not supported.');
-                $this->configurationerrorAction();
-                return;
+                $this->addErrorMessage(sprintf(
+                    $this->translate('Can\'t edit: backend type "%s" of given resource not supported.'),
+                    $type
+                ));
+                $this->redirectNow('config/configurationerror');
         }
 
-        $form->setBackendName($this->getParam('auth_backend'));
-        $form->setBackend(IcingaConfig::app('authentication', true)->$authBackend);
-        $form->setRequest($this->getRequest());
-
-        if ($form->isSubmittedAndValid()) {
-            $backendCfg = IcingaConfig::app('authentication')->toArray();
-            foreach ($form->getConfig() as $backendName => $settings) {
-                $backendCfg[$backendName] = $settings;
-                // Remove the old section if the backend is renamed
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            if ($form->isValid($request->getPost())) {
+                list($backendName, $backendConfig) = $form->getBackendConfig();
+                $configArray[$backendName] = $backendConfig;
                 if ($backendName != $authBackend) {
-                    unset($backendCfg[$authBackend]);
+                    unset($configArray[$authBackend]);
                 }
-                unset($settings['name']);
+                if ($this->writeAuthenticationFile($configArray)) {
+                    // redirect to overview with success message
+                    Notification::success(sprintf(
+                        $this->translate('Backend "%s" saved'),
+                        $backendName
+                    ));
+                    $this->redirectNow('config/authentication');
+                }
+                return;
             }
-            if ($this->writeAuthenticationFile($backendCfg)) {
-                // redirect to overview with success message
-                Notification::success('Backend "' . $authBackend . '" created');
-                $this->redirectNow("config/authentication");
-            }
-            return;
+        } else {
+            $form->setBackendConfig($authBackend, $configArray[$authBackend]);
         }
 
         $this->view->messageBox->addForm($form);
@@ -330,23 +333,25 @@ class ConfigController extends BaseConfigController
 
         $configArray = IcingaConfig::app('authentication', true)->toArray();
         $authBackend =  $this->getParam('auth_backend');
-        if (!isset($configArray[$authBackend])) {
-            Notification::error('Can\'t perform removal: Unknown Authentication Backend Provided');
-            $this->render('authentication/remove');
-            return;
+        if (false === array_key_exists($authBackend, $configArray)) {
+            $this->addErrorMessage(
+                $this->translate('Can\'t perform removal: Unknown authentication backend provided')
+            );
+            $this->redirectNow('config/configurationerror');
         }
 
         $form = new ConfirmRemovalForm();
-        $form->setRequest($this->getRequest());
-        $form->setRemoveTarget('auth_backend', $authBackend);
+        $request = $this->getRequest();
 
-        if ($form->isSubmittedAndValid()) {
+        if ($request->isPost() && $form->isValid($request->getPost())) {
             unset($configArray[$authBackend]);
             if ($this->writeAuthenticationFile($configArray)) {
-                Notification::success('Authentication Backend "' . $authBackend . '" Removed');
-                $this->redirectNow("config/authentication");
+                Notification::success(sprintf(
+                    $this->translate('Authentication Backend "%s" Removed'),
+                    $authBackend
+                ));
+                $this->redirectNow('config/authentication');
             }
-            return;
         }
 
         $this->view->form = $form;
@@ -354,116 +359,130 @@ class ConfigController extends BaseConfigController
         $this->render('authentication/remove');
     }
 
-    public function resourceAction($showOnly = false)
+    /**
+     * Display all available resources and a link to create a new one
+     */
+    public function resourceAction()
     {
+        $this->view->messageBox = new AlertMessageBox(true);
         $this->view->tabs->activate('resources');
 
-        $this->view->messageBox = new AlertMessageBox(true);
         $this->view->resources = IcingaConfig::app('resources', true)->toArray();
-        $this->render('resource');
     }
 
+    /**
+     * Display a form to create a new resource
+     */
     public function createresourceAction()
     {
-        $this->view->resourceTypes = $this->resourceTypes;
-        $resources = IcingaConfig::app('resources', true);
+        $this->view->messageBox = new AlertMessageBox(true);
+
         $form = new ResourceForm();
-        $form->setRequest($this->_request);
-        if ($form->isSubmittedAndValid()) {
-            $name = $form->getName();
-            if (isset($resources->{$name})) {
-                $this->addErrorMessage('Resource name "' . $name .'" already in use.');
+        $request = $this->getRequest();
+        if ($request->isPost() && $form->isValid($request->getPost())) {
+            list($name, $config) = $form->getResourceConfig();
+            $resources = IcingaConfig::app('resources')->toArray();
+            if (array_key_exists($name, $resources)) {
+                $this->addErrorMessage(sprintf($this->translate('Resource name "%s" already in use.'), $name));
             } else {
-                $resources->{$name} = $form->getConfig();
+                $resources[$name] = $config;
                 if ($this->writeConfigFile($resources, 'resources')) {
-                    $this->addSuccessMessage('Resource "' . $name . '" created.');
-                    $this->redirectNow("config/resource");
+                    $this->addSuccessMessage(sprintf($this->translate('Resource "%s" successfully created.'), $name));
+                    $this->redirectNow('config/resource');
                 }
             }
         }
 
-        $this->view->messageBox = new AlertMessageBox(true);
-        $this->view->messageBox->addForm($form);
         $this->view->form = $form;
+        $this->view->messageBox->addForm($form);
         $this->render('resource/create');
     }
 
+    /**
+     * Display a form to edit a existing resource
+     */
     public function editresourceAction()
     {
         $this->view->messageBox = new AlertMessageBox(true);
 
-        $resources = ResourceFactory::getResourceConfigs();
-        $name =  $this->getParam('resource');
-        if ($resources->get($name) === null) {
-            $this->addErrorMessage('Can\'t edit: Unknown Resource Provided');
-            $this->render('resource/modify');
-            return;
-        }
-        $form = new ResourceForm();
-        if ($this->_request->isPost() === false) {
-            $form->setOldName($name);
-            $form->setName($name);
-        }
-        $form->setRequest($this->_request);
-        $form->setResource($resources->get($name));
-        if ($form->isSubmittedAndValid()) {
-            $oldName = $form->getOldName();
-            $name = $form->getName();
-            if ($oldName !== $name) {
-                unset($resources->{$oldName});
-            }
-            $resources->{$name} = $form->getConfig();
-            if ($this->writeConfigFile($resources, 'resources')) {
-                $this->addSuccessMessage('Resource "' . $name . '" edited.');
-                $this->redirectNow("config/resource");
-            }
-            return;
+        // Fetch the resource to be edited
+        $resources = IcingaConfig::app('resources')->toArray();
+        $name = $this->getParam('resource');
+        if (false === array_key_exists($name, $resources)) {
+            $this->addErrorMessage(sprintf($this->translate('Cannot edit "%s". Resource not found.'), $name));
+            $this->redirectNow('config/configurationerror');
         }
 
-        $this->view->messageBox->addForm($form);
+        $form = new ResourceForm();
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            if ($form->isValid($request->getPost())) {
+                list($newName, $config) = $form->getResourceConfig();
+
+                if ($newName !== $name) {
+                    // Resource name has changed
+                    unset($resources[$name]); // We can safely use unset as all values are part of the form
+                }
+
+                $resources[$newName] = $config;
+                if ($this->writeConfigFile($resources, 'resources')) {
+                    $this->addSuccessMessage(sprintf($this->translate('Resource "%s" successfully edited.'), $name));
+                    $this->redirectNow('config/resource');
+                }
+            }
+        } else {
+            $form->setResourceConfig($name, $resources[$name]);
+        }
+
         $this->view->form = $form;
-        $this->view->name = $name;
+        $this->view->messageBox->addForm($form);
         $this->render('resource/modify');
     }
 
+    /**
+     * Display a confirmation form to remove a resource
+     */
     public function removeresourceAction()
     {
         $this->view->messageBox = new AlertMessageBox(true);
 
-        $resources = ResourceFactory::getResourceConfigs()->toArray();
-        $name =  $this->getParam('resource');
-        if (!isset($resources[$name])) {
-            $this->addSuccessMessage('Can\'t remove: Unknown resource provided');
-            $this->render('resource/remove');
-            return;
+        // Fetch the resource to be removed
+        $resources = IcingaConfig::app('resources')->toArray();
+        $name = $this->getParam('resource');
+        if (false === array_key_exists($name, $resources)) {
+            $this->addErrorMessage(sprintf($this->translate('Cannot remove "%s". Resource not found.'), $name));
+            $this->redirectNow('config/configurationerror');
+        }
+
+        // Check if selected resource is currently used for authentication
+        $authConfig = IcingaConfig::app('authentication')->toArray();
+        foreach ($authConfig as $backendName => $config) {
+            if (array_key_exists('resource', $config) && $config['resource'] === $name) {
+                $this->addWarningMessage(
+                    sprintf(
+                        $this->translate(
+                            'The resource "%s" is currently in use by the authentication backend "%s". ' .
+                            'Removing the resource can result in noone being able to log in any longer.'
+                        ),
+                        $name,
+                        $backendName
+                    )
+                );
+            }
         }
 
         $form = new ConfirmRemovalForm();
-        $form->setRequest($this->getRequest());
-        $form->setRemoveTarget('resource', $name);
-
-        // Check if selected resource is currently used for authentication
-        $authConfig = IcingaConfig::app('authentication', true)->toArray();
-        foreach ($authConfig as $backendName => $config) {
-           if (array_key_exists('resource', $config) && $config['resource'] === $name) {
-              $this->addErrorMessage(
-				'Warning: The resource "' . $name . '" is currently used for user authentication by "' . $backendName  . '". ' .
-				' Deleting it could eventally make login impossible.'
-              );
-           }
-        }
-
-        if ($form->isSubmittedAndValid()) {
+        $request = $this->getRequest();
+        if ($request->isPost() && $form->isValid($request->getPost())) {
             unset($resources[$name]);
             if ($this->writeConfigFile($resources, 'resources')) {
-                $this->addSuccessMessage('Resource "' . $name . '" removed.');
+                $this->addSuccessMessage(sprintf($this->translate('Resource "%s" successfully removed.'), $name));
                 $this->redirectNow('config/resource');
             }
-            return;
         }
 
-        $this->view->name = $name;
         $this->view->form = $form;
+        $this->view->messageBox->addForm($form);
         $this->render('resource/remove');
     }
 

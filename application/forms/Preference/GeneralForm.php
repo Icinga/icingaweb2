@@ -4,15 +4,10 @@
 
 namespace Icinga\Form\Preference;
 
-use \DateTimeZone;
-use \Zend_Config;
-use \Zend_Form_Element_Text;
-use \Zend_Form_Element_Select;
-use \Zend_View_Helper_DateFormat;
-use \Icinga\Web\Form;
-use \Icinga\Web\Form\Validator\TimeFormatValidator;
-use \Icinga\Web\Form\Validator\DateFormatValidator;
-use \Icinga\Util\Translator;
+use DateTimeZone;
+use Icinga\Web\Form;
+use Icinga\Util\Translator;
+use Icinga\User\Preferences;
 
 /**
  * General user preferences
@@ -20,131 +15,157 @@ use \Icinga\Util\Translator;
 class GeneralForm extends Form
 {
     /**
+     * Initialize this preferences config form
+     */
+    public function init()
+    {
+        $this->setName('form_config_preferences');
+        $this->setSubmitLabel(t('Save Changes'));
+    }
+
+    /**
      * Add a select field for setting the user's language
      *
      * Possible values are determined by Translator::getAvailableLocaleCodes.
-     * Also, a 'use default format' checkbox is added in order to allow a user to discard his overwritten setting
+     * Also, a 'use browser language' checkbox is added in order to allow a user to discard his setting
      *
-     * @param   Zend_Config     $cfg    The "global" section of the config.ini to be used as default value
+     * @param   array   $formData   The data sent by the user
      */
-    private function addLanguageSelection(Zend_Config $cfg)
+    protected function getLanguageElements(array $formData)
     {
         $languages = array();
         foreach (Translator::getAvailableLocaleCodes() as $language) {
             $languages[$language] = $language;
         }
-        $prefs = $this->getUserPreferences();
-        $useDefaultLanguage = $this->getRequest()->getParam('default_language', !$prefs->has('app.language'));
 
-        $this->addElement(
-            'checkbox',
-            'default_language',
-            array(
-                'label'     => t('Use Default Language'),
-                'value'     => $useDefaultLanguage,
-                'required'  => true
-            )
-        );
+        $useBrowserLanguage = isset($formData['browser_language']) ? $formData['browser_language'] == 1 : true;
         $selectOptions = array(
             'label'         => t('Your Current Language'),
-            'required'      => !$useDefaultLanguage,
+            'required'      => false === $useBrowserLanguage,
             'multiOptions'  => $languages,
             'helptext'      => t('Use the following language to display texts and messages'),
-            'value'         => $prefs->get('app.language', $cfg->get('language', Translator::DEFAULT_LOCALE))
+            'value'         => substr(setlocale(LC_ALL, 0), 0, 5)
         );
-        if ($useDefaultLanguage) {
+        if ($useBrowserLanguage) {
             $selectOptions['disabled'] = 'disabled';
         }
-        $this->addElement('select', 'language', $selectOptions);
-        $this->enableAutoSubmit(array('default_language'));
+
+        return array(
+            $this->createElement(
+                'checkbox',
+                'browser_language',
+                array(
+                    'required'  => true,
+                    'class'     => 'autosubmit',
+                    'label'     => t('Use your browser\'s language suggestions'),
+                    'value'     => $useBrowserLanguage
+                )
+            ),
+            $this->createElement('select', 'language', $selectOptions)
+        );
     }
 
     /**
-     * Add a select field for setting the user's timezone.
+     * Add a select field for setting the user's timezone
      *
-     * Possible values are determined by DateTimeZone::listIdentifiers
-     * Also, a 'use default format' checkbox is added in order to allow a user to discard his overwritten setting
+     * Possible values are determined by DateTimeZone::listIdentifiers.
+     * Also, a 'use local timezone' checkbox is added in order to allow a user to discard his overwritten setting
      *
-     * @param Zend_Config $cfg The "global" section of the config.ini to be used as default value
+     * @param   array   $formData   The data sent by the user
      */
-    private function addTimezoneSelection(Zend_Config $cfg)
+    protected function getTimezoneElements(array $formData)
     {
         $tzList = array();
         foreach (DateTimeZone::listIdentifiers() as $tz) {
             $tzList[$tz] = $tz;
         }
-        $helptext = 'Use the following timezone for dates and times';
-        $prefs = $this->getUserPreferences();
-        $useGlobalTimezone = $this->getRequest()->getParam('default_timezone', !$prefs->has('app.timezone'));
 
-        $selectTimezone = new Zend_Form_Element_Select(
-            array(
-                'name'          => 'timezone',
-                'label'         =>  'Your Current Timezone',
-                'required'      =>  !$useGlobalTimezone,
-                'multiOptions'  =>  $tzList,
-                'helptext'      =>  $helptext,
-                'value'         =>  $prefs->get('app.timezone', $cfg->get('timezone', date_default_timezone_get()))
-            )
+        $useLocalTimezone = isset($formData['local_timezone']) ? $formData['local_timezone'] == 1 : true;
+        $selectOptions = array(
+            'label'         => 'Your Current Timezone',
+            'required'      => false === $useLocalTimezone,
+            'multiOptions'  => $tzList,
+            'helptext'      => t('Use the following timezone for dates and times'),
+            'value'         => date_default_timezone_get()
         );
-        $this->addElement(
-            'checkbox',
-            'default_timezone',
-            array(
-                'label'         => 'Use Default Timezone',
-                'value'         => $useGlobalTimezone,
-                'required'      => true
-            )
-        );
-        if ($useGlobalTimezone) {
-            $selectTimezone->setAttrib('disabled', 1);
+        if ($useLocalTimezone) {
+            $selectOptions['disabled'] = 'disabled';
         }
-        $this->addElement($selectTimezone);
-        $this->enableAutoSubmit(array('default_timezone'));
+
+        return array(
+            $this->createElement(
+                'checkbox',
+                'local_timezone',
+                array(
+                    'required'  => true,
+                    'class'     => 'autosubmit',
+                    'label'     => t('Use your local timezone'),
+                    'value'     => $useLocalTimezone,
+                )
+            ),
+            $this->createElement('select', 'timezone', $selectOptions)
+        );
     }
 
     /**
-     * Create the general form, using the global configuration as fallback values for preferences
-     *
-     * @see Form::create()
+     * @see Form::createElements()
      */
-    public function create()
+    public function createElements(array $formData)
     {
-        $this->setName('form_preference_set');
-
-        $config = $this->getConfiguration();
-        $global = $config->global;
-        if ($global === null) {
-            $global = new Zend_Config(array());
-        }
-
-        $this->addLanguageSelection($global);
-        $this->addTimezoneSelection($global);
-
-        $this->setSubmitLabel('Save Changes');
-
-        $this->addElement(
+        $elements = array_merge($this->getLanguageElements($formData), $this->getTimezoneElements($formData));
+        $elements[] = $this->createElement(
             'checkbox',
             'show_benchmark',
             array(
-                'label' => 'Use benchmark',
-                'value' => $this->getUserPreferences()->get('app.show_benchmark')
+                'label' => t('Use benchmark')
             )
         );
+
+        return $elements;
     }
 
     /**
-     * Return an array containing the preferences set in this form
+     * Populate the form with the given preferences
      *
-     * @return array
+     * @param   Preferences     $preferences    The preferences to populate the form with
+     *
+     * @return  self
+     */
+    public function setPreferences(Preferences $preferences)
+    {
+        $defaults = array(
+            'browser_language'  => $preferences->get('app.language') === null,
+            'local_timezone'    => $preferences->get('app.timezone') === null
+        );
+
+        if ($preferences->get('app.language') !== null) {
+            $defaults['language'] = $preferences->get('app.language');
+        }
+        if ($preferences->get('app.timezone') !== null) {
+            $defaults['timezone'] = $preferences->get('app.timezone');
+        }
+        if ($preferences->get('app.show_benchmark')) {
+            $defaults['show_benchmark'] = $preferences->get('app.show_benchmark');
+        }
+
+        $this->setDefaults($defaults);
+        return $this;
+    }
+
+    /**
+     * Return the configured preferences
+     *
+     * @return  Preferences
      */
     public function getPreferences()
     {
         $values = $this->getValues();
-        return array(
-            'app.language'          => $values['default_language'] ? null : $values['language'],
-            'app.timezone'          => $values['default_timezone'] ? null : $values['timezone'],
-            'app.show_benchmark'    => $values['show_benchmark'] === '1' ? true : false
+        return new Preferences(
+            array(
+                'app.language'          => $values['browser_language'] ? null : $values['language'],
+                'app.timezone'          => $values['local_timezone'] ? null : $values['timezone'],
+                'app.show_benchmark'    => $values['show_benchmark'] ? $values['show_benchmark'] : null
+            )
         );
     }
 }

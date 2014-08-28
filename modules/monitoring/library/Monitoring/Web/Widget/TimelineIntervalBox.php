@@ -97,7 +97,6 @@ class TimelineIntervalBox extends AbstractWidget
         );
 
         if ($this->request) {
-            $form->setAction($this->request->getRequestUri());
             $form->populate($this->request->getParams());
         }
 

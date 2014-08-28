@@ -4,15 +4,13 @@
 
 namespace Icinga\Form\Config;
 
-use Icinga\Application\Config as IcingaConfig;
-use Icinga\Data\ResourceFactory;
+use DateTimeZone;
+use Zend_Config;
 use Icinga\Web\Form;
 use Icinga\Util\Translator;
+use Icinga\Application\Icinga;
+use Icinga\Data\ResourceFactory;
 use Icinga\Web\Form\Validator\WritablePathValidator;
-use Icinga\Web\Form\Decorator\ConditionalHidden;
-use DateTimeZone;
-use Zend_Form_Element_Select;
-use Zend_Config;
 
 /**
  * Configuration form for general, application-wide settings
@@ -20,251 +18,295 @@ use Zend_Config;
 class GeneralForm extends Form
 {
     /**
-     * The base directory of the icingaweb configuration
-     *
-     * @var string
+     * Initialize this configuration form
      */
-    private $configDir = null;
-
-    /**
-     * The resources to use instead of the factory provided ones (use for testing)
-     *
-     * @var null
-     */
-    private $resources;
-
-    /**
-     * Set a specific configuration directory to use for configuration specific default paths
-     *
-     * @param string    $dir
-     */
-    public function setConfigDir($dir)
+    public function init()
     {
-        $this->configDir = $dir;
+        $this->setName('form_config_general');
+        $this->setSubmitLabel(t('Save Changes'));
     }
 
     /**
-     * Return the config path set for this form or the application wide config path if none is set
-     *
-     * @return  string
-     *
-     * @see     IcingaConfig::configDir
+     * @see Form::createElements()
      */
-    public function getConfigDir()
+    public function createElements(array $formData)
     {
-        return $this->configDir === null ? IcingaConfig::$configDir : $this->configDir;
+        $elements = array(
+            $this->getLanguageSelection(),
+            $this->getTimezoneSelection(),
+            $this->getModulePathInput()
+        );
+
+        return array_merge(
+            $elements,
+            $this->getPreferencesElements($formData),
+            $this->getLoggingElements($formData)
+        );
     }
 
     /**
-     * Set an alternative array of resources that should be used instead of the DBFactory resource set
-     * (used for testing)
+     * Populate this form with the given configuration
      *
-     * @param array $resources  The resources to use for populating the db selection field
-     */
-    public function setResources(array $resources)
-    {
-        $this->resources = $resources;
-    }
-
-    /**
-     * Return content of the resources.ini or previously set resources for displaying in the database selection field
+     * @param   Zend_Config     $config     The configuration to populate this form with
      *
-     * @return array
+     * @return  self
      */
-    public function getResources()
+    public function setConfiguration(Zend_Config $config)
     {
-        if ($this->resources === null) {
-            return ResourceFactory::getResourceConfigs()->toArray();
-        } else {
-            return $this->resources;
+        $defaults = array();
+        foreach ($config as $section => $properties) {
+            foreach ($properties as $name => $value) {
+                $defaults[$section . '_' . $name] = $value;
+            }
         }
+
+        $this->populate($defaults);
+        return $this;
     }
 
     /**
-     * Add a select field for setting the default language
+     * Return the configured configuration values
+     *
+     * @return  Zend_Config
+     */
+    public function getConfiguration()
+    {
+        $config = array();
+        $values = $this->getValues();
+        foreach ($values as $sectionAndPropertyName => $value) {
+            list($section, $property) = explode('_', $sectionAndPropertyName);
+            $config[$section][$property] = $value;
+        }
+
+        return new Zend_Config($config);
+    }
+
+    /**
+     * Return a select field for setting the default language
      *
      * Possible values are determined by Translator::getAvailableLocaleCodes.
      *
-     * @param   Zend_Config     $cfg    The "global" section of the config.ini
+     * @return  Zend_Form_Element
      */
-    private function addLanguageSelection(Zend_Config $cfg)
+    protected function getLanguageSelection()
     {
         $languages = array();
         foreach (Translator::getAvailableLocaleCodes() as $language) {
             $languages[$language] = $language;
         }
 
-        $this->addElement(
+        return $this->createElement(
             'select',
-            'language',
+            'global_language',
             array(
                 'label'         => t('Default Language'),
                 'required'      => true,
                 'multiOptions'  => $languages,
                 'helptext'      => t(
                     'Select the language to use by default. Can be overwritten by a user in his preferences.'
-                ),
-                'value'         => $cfg->get('language', Translator::DEFAULT_LOCALE)
+                )
             )
         );
     }
 
     /**
-     * Add a select field for setting the default timezone.
+     * Return a select field for setting the default timezone
      *
-     * Possible values are determined by DateTimeZone::listIdentifiers
+     * Possible values are determined by DateTimeZone::listIdentifiers.
      *
-     * @param Zend_Config   $cfg    The "global" section of the config.ini
+     * @return  Zend_Form_Element
      */
-    private function addTimezoneSelection(Zend_Config $cfg)
+    protected function getTimezoneSelection()
     {
         $tzList = array();
         foreach (DateTimeZone::listIdentifiers() as $tz) {
             $tzList[$tz] = $tz;
         }
-        $helptext = 'Select the timezone to be used as the default. User\'s can set their own timezone if'
-            . ' they like to, but this is the timezone to be used as the default setting .';
 
         $this->addElement(
             'select',
-            'timezone',
+            'global_timezone',
             array(
-                'label'         =>  'Default Application Timezone',
-                'required'      =>  true,
-                'multiOptions'  =>  $tzList,
-                'helptext'      =>  $helptext,
-                'value'         =>  $cfg->get('timezone', date_default_timezone_get())
+                'label'         => t('Default Application Timezone'),
+                'required'      => true,
+                'multiOptions'  => $tzList,
+                'helptext'      => t(
+                    'Select the timezone to be used as the default. User\'s can set their own timezone if'
+                    . ' they like to, but this is the timezone to be used as the default setting .'
+                ),
+                'value'         => date_default_timezone_get()
             )
         );
     }
 
     /**
-     * Add configuration settings for module paths
-     *
-     * @param Zend_Config   $cfg    The "global" section of the config.ini
+     * Return a input field for setting the module path
      */
-    private function addModuleSettings(Zend_Config $cfg)
+    protected function getModulePathInput()
     {
         $this->addElement(
             'text',
-            'module_path',
+            'global_modulePath',
             array(
-                'label'     => 'Module Path',
+                'label'     => t('Module Path'),
                 'required'  => true,
-                'helptext'  => 'Contains the directories that will be searched for available modules, separated by ' .
-                    ' colons. Modules  that don\'t exist in these directories can still be symlinked in the module ' .
-                    ' folder, but won\'t show up in the list of disabled modules.',
-                'value'     => $cfg->get('modulePath', realpath(ICINGAWEB_APPDIR . '/../modules'))
+                'helptext'  => t(
+                    'Contains the directories that will be searched for available modules, separated by '
+                    . 'colons. Modules that don\'t exist in these directories can still be symlinked in '
+                    . 'the module folder, but won\'t show up in the list of disabled modules.'
+                ),
+                'value'     => realpath(ICINGAWEB_APPDIR . '/../modules')
             )
         );
     }
 
     /**
-     * Add form elements for setting the user preference storage backend
+     * Return form elements for setting the user preference storage backend
      *
-     * @param Zend_Config   $cfg    The Zend_config object of preference section
+     * @param   array   $formData   The data sent by the user
      */
-    public function addUserPreferencesDialog(Zend_Config $cfg)
+    protected function getPreferencesElements(array $formData)
     {
-        $backend = $cfg->get('type', 'ini');
-        if ($this->getRequest()->get('preferences_type', null) !== null) {
-            $backend = $this->getRequest()->get('preferences_type');
-        }
-        $this->addElement(
-            'select',
-            'preferences_type',
-            array(
-                'label'         => 'User Preference Storage Type',
-                'required'      => true,
-                'value'         => $backend,
-                'multiOptions'  => array(
-                    'ini'   => 'File System (INI Files)',
-                    'db'    => 'Database',
-                    'null'  => 'Don\'t Store Preferences'
+        $elements = array(
+            $this->createElement(
+                'select',
+                'preferences_type',
+                array(
+                    'required'      => true,
+                    'class'         => 'autosubmit',
+                    'label'         => t('User Preference Storage Type'),
+                    'multiOptions'  => array(
+                        'ini'   => t('File System (INI Files)'),
+                        'db'    => t('Database'),
+                        'null'  => t('Don\'t Store Preferences')
+                    )
                 )
             )
         );
 
-        $backends = array();
-        foreach ($this->getResources() as $name => $resource) {
-            if ($resource['type'] !== 'db') {
-                continue;
+        if (isset($formData['preferences_type']) && $formData['preferences_type'] === 'db') {
+            $backends = array();
+            foreach (ResourceFactory::getResourceConfigs()->toArray() as $name => $resource) {
+                if ($resource['type'] === 'db') {
+                    $backends[$name] = $name;
+                }
             }
-            $backends[$name] = $name;
+
+            $elements[] = $this->createElement(
+                'select',
+                'preferences_resource',
+                array(
+                    'required'      => true,
+                    'multiOptions'  => $backends,
+                    'label'         => t('Database Connection')
+                )
+            );
         }
 
-        $txtPreferencesDbResource = new Zend_Form_Element_Select(
-            array(
-                'name'          =>  'preferences_db_resource',
-                'label'         =>  'Database Connection',
-                'required'      =>  $backend === 'db',
-                'condition'     =>  $backend === 'db',
-                'value'         =>  $cfg->get('resource'),
-                'multiOptions'  =>  $backends
-            )
-        );
-        $validator = new WritablePathValidator();
-        $validator->setRequireExistence();
-        $this->addElement($txtPreferencesDbResource);
-
-        $txtPreferencesDbResource->addDecorator(new ConditionalHidden());
-        $this->enableAutoSubmit(
-            array(
-                'preferences_type'
-            )
-        );
+        return $elements;
     }
 
     /**
-     * Create the general form, using the provided configuration
+     * Return form elements to setup the application's logging
      *
-     * @see Form::create()
+     * @param   array   $formData   The data sent by the user
+     *
+     * @return  array
      */
-    public function create()
+    protected function getLoggingElements(array $formData)
     {
-        $config = $this->getConfiguration();
-        $global = $config->global;
-        if ($global === null) {
-            $global = new Zend_Config(array());
-        }
-        $preferences = $config->preferences;
-        if ($preferences === null) {
-            $preferences = new Zend_Config(array());
-        }
-        $this->setName('form_config_general');
-        $this->addLanguageSelection($global);
-        $this->addTimezoneSelection($global);
-        $this->addModuleSettings($global);
-        $this->addUserPreferencesDialog($preferences);
+        $elements = array();
 
-        $this->setSubmitLabel('Save Changes');
+        $elements[] = $this->createElement(
+            'select',
+            'logging_level',
+            array(
+                'required'      => true,
+                'label'         => t('Logging Level'),
+                'helptext'      => t('The maximum loglevel to emit.'),
+                'multiOptions'  => array(
+                    0 => t('None'),
+                    1 => t('Error'),
+                    2 => t('Warning'),
+                    3 => t('Information'),
+                    4 => t('Debug')
+                )
+            )
+        );
+        $elements[] = $this->createElement(
+            'select',
+            'logging_type',
+            array(
+                'required'      => true,
+                'class'         => 'autosubmit',
+                'label'         => t('Logging Type'),
+                'helptext'      => t('The type of logging to utilize.'),
+                'multiOptions'  => array(
+                    'syslog'    => 'Syslog',
+                    'file'      => t('File')
+                )
+            )
+        );
+
+        if (false === isset($formData['logging_type']) || $formData['logging_type'] === 'syslog') {
+            $elements[] = $this->createElement(
+                'text',
+                'logging_application',
+                array(
+                    'required'      => true,
+                    'label'         => t('Application Prefix'),
+                    'helptext'      => t('The name of the application by which to prefix syslog messages.'),
+                    'value'         => 'icingaweb',
+                    'validators'    => array(
+                        array(
+                            'Regex',
+                            false,
+                            array(
+                                'pattern'  => '/^[^\W]+$/',
+                                'messages' => array(
+                                    'regexNotMatch' => 'The application prefix cannot contain any whitespaces.'
+                                )
+                            )
+                        )
+                    )
+                )
+            );
+            $elements[] = $this->createElement(
+                'select',
+                'logging_facility',
+                array(
+                    'required'      => true,
+                    'label'         => t('Facility'),
+                    'helptext'      => t('The Syslog facility to utilize.'),
+                    'multiOptions'  => array(
+                        'LOG_USER'  => 'LOG_USER'
+                    )
+                )
+            );
+        } elseif ($formData['logging_type'] === 'file') {
+            $elements[] = $this->createElement(
+                'text',
+                'logging_target',
+                array(
+                    'required'      => true,
+                    'label'         => t('Filepath'),
+                    'helptext'      => t('The logfile to write messages to.'),
+                    'value'         => $this->getDefaultLogDir(),
+                    'validators'    => array(new WritablePathValidator())
+                )
+            );
+        }
+
+        return $elements;
     }
 
     /**
-     * Return an Zend_Config object containing the configuration set in this form
+     * Return the default logging directory for type "file"
      *
-     * @return Zend_Config
+     * @return  string
      */
-    public function getConfig()
+    protected function getDefaultLogDir()
     {
-        $config = $this->getConfiguration();
-        if ($config->global === null) {
-            $config->global = new Zend_Config(array(), true);
-        }
-        if ($config->preferences === null) {
-            $config->preferences = new Zend_Config(array(), true);
-        }
-
-        $values = $this->getValues();
-        $cfg = clone $config;
-        $cfg->global->language     = $values['language'];
-        $cfg->global->timezone     = $values['timezone'];
-        $cfg->global->modulePath   = $values['module_path'];
-        $cfg->preferences->type = $values['preferences_type'];
-        if ($cfg->preferences->type === 'db') {
-            $cfg->preferences->resource = $values['preferences_db_resource'];
-        }
-
-        return $cfg;
+        return realpath(Icinga::app()->getApplicationDir('../var/log/icingaweb.log'));
     }
 }

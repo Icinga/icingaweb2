@@ -4,10 +4,9 @@
 
 namespace Icinga\Form\Config\Authentication;
 
-use \Exception;
-use \Zend_Config;
+use Exception;
 use Icinga\Data\ResourceFactory;
-use Icinga\Authentication\DbConnection;
+use Icinga\Exception\ConfigurationError;
 use Icinga\Authentication\Backend\DbUserBackend;
 
 /**
@@ -16,89 +15,72 @@ use Icinga\Authentication\Backend\DbUserBackend;
 class DbBackendForm extends BaseBackendForm
 {
     /**
-     * Return content of the resources.ini or previously set resources
+     * The available database resources prepared to be used as select input data
      *
-     * @return  array
+     * @var array
      */
-    public function getResources()
+    protected $resources;
+
+    /**
+     * Initialize this form
+     *
+     * Populates $this->resources.
+     *
+     * @throws  ConfigurationError  In case no database resources can be found
+     */
+    public function init()
     {
-        if ($this->resources === null) {
-            $res = ResourceFactory::getResourceConfigs('db')->toArray();
+        $this->setName('form_config_authentication_db');
+        $this->setSubmitLabel(t('Save Changes'));
 
-            foreach (array_keys($res) as $key) {
-                $res[$key] = $key;
-            }
+        $dbResources = array_keys(
+            ResourceFactory::getResourceConfigs('db')->toArray()
+        );
 
-            return $res;
-        } else {
-            return $this->resources;
+        if (empty($dbResources)) {
+            throw new ConfigurationError(
+                t('There are no database resources')
+            );
         }
+
+        // array_combine() is necessary in order to use the array as select input data
+        $this->resources = array_combine($dbResources, $dbResources);
     }
 
     /**
-     * Create this form and add all required elements
-     *
-     * @see Form::create()
+     * @see Form::createElements()
      */
-    public function create()
+    public function createElements(array $formData)
     {
-        $this->setName('form_modify_backend');
-        $name = $this->filterName($this->getBackendName());
-        $this->addElement(
-            'text',
-            'backend_' . $name . '_name',
-            array(
-                'required'      => true,
-                'allowEmpty'    => false,
-                'label'         => t('Backend Name'),
-                'helptext'      => t('The name of this authentication provider'),
-                'value'         => $this->getBackendName()
+        return array(
+            $this->createElement(
+                'text',
+                'name',
+                array(
+                    'required'      => true,
+                    'label'         => t('Backend Name'),
+                    'helptext'      => t('The name of this authentication provider'),
+                )
+            ),
+            $this->createElement(
+                'select',
+                'resource',
+                array(
+                    'required'      => true,
+                    'label'         => t('Database Connection'),
+                    'helptext'      => t('The database connection to use for authenticating with this provider'),
+                    'multiOptions'  => $this->resources
+                )
+            ),
+            $this->createElement(
+                'hidden',
+                'backend',
+                array(
+                    'required'  => true,
+                    'value'     => 'db'
+                )
             )
         );
-
-        $this->addElement(
-            'select',
-            'backend_' . $name . '_resource',
-            array(
-                'required'      => true,
-                'allowEmpty'    => false,
-                'label'         => t('Database Connection'),
-                'helptext'      => t('The database connection to use for authenticating with this provider'),
-                'value'         => $this->getBackend()->get('resource'),
-                'multiOptions'  => $this->getResources()
-            )
-        );
-
-        $this->addElement(
-            'button',
-            'btn_submit',
-            array(
-                'type'      => 'submit',
-                'value'     => '1',
-                'escape'    => false,
-                'class'     => 'btn btn-cta btn-wide',
-                'label'     => '<i class="icinga-icon-save"></i> Save Backend'
-            )
-        );
-    }
-
-    /**
-     * Return the datatbase authentication backend configuration for this form
-     *
-     * @return  array
-     *
-     * @see     BaseBackendForm::getConfig()
-     */
-    public function getConfig()
-    {
-        $prefix = 'backend_' . $this->filterName($this->getBackendName()) . '_';
-        $section = $this->getValue($prefix . 'name');
-        $cfg = array(
-            'backend'   => 'db',
-            'resource'  => $this->getValue($prefix . 'resource'),
-        );
-
-        return array($section => $cfg);
     }
 
     /**
@@ -106,23 +88,24 @@ class DbBackendForm extends BaseBackendForm
      *
      * @return  bool    Whether validation succeeded or not
      *
-     * @see BaseBackendForm::isValidAuthenticationBackend
+     * @see BaseBackendForm::isValidAuthenticationBackend()
      */
     public function isValidAuthenticationBackend()
     {
         try {
             $testConnection = ResourceFactory::createResource(ResourceFactory::getResourceConfig(
-                $this->getValue('backend_' . $this->filterName($this->getBackendName()) . '_resource')
+                $this->getValue('resource')
             ));
             $dbUserBackend = new DbUserBackend($testConnection);
             if ($dbUserBackend->count() < 1) {
-                $this->addErrorMessage(t("No users found under the specified database backend"));
+                $this->addErrorMessage(t('No users found under the specified database backend'));
                 return false;
             }
         } catch (Exception $e) {
             $this->addErrorMessage(sprintf(t('Using the specified backend failed: %s'), $e->getMessage()));
             return false;
         }
+
         return true;
     }
 }

@@ -315,14 +315,7 @@ namespace Icinga\Test {
         public function createForm($formClass, array $requestData = array())
         {
             $form = new $formClass;
-            // If the form has CSRF protection enabled, add the token to the request data, else all calls to
-            // isSubmittedAndValid will fail
-            $form->setSessionId('1234');
-            $form->initCsrfToken();
-            $token = $form->getValue($form->getTokenElementName());
-            if ($token !== null) {
-                $requestData[$form->getTokenElementName()] = $token;
-            }
+            $form->setTokenDisabled(); // Disable CSRF protection else all calls to isSubmittedAndValid will fail
             $request = $this->getRequest();
             $request->setMethod('POST');
             $request->setPost($requestData);

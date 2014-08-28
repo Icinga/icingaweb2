@@ -3,19 +3,14 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 
 use \Exception;
-
+use \Zend_Config;
 use Icinga\Config\PreservingIniWriter;
 use Icinga\Web\Controller\ModuleActionController;
 use Icinga\Web\Notification;
-use Icinga\Web\Url;
-
-use Icinga\Module\Monitoring\Form\Config\ConfirmRemovalForm;
-use Icinga\Module\Monitoring\Form\Config\Backend\EditBackendForm;
-use Icinga\Module\Monitoring\Form\Config\Backend\CreateBackendForm;
-use Icinga\Module\Monitoring\Form\Config\Instance\EditInstanceForm;
-use Icinga\Module\Monitoring\Form\Config\Instance\CreateInstanceForm;
+use Icinga\Form\Config\ConfirmRemovalForm;
+use Icinga\Module\Monitoring\Form\Config\BackendForm;
+use Icinga\Module\Monitoring\Form\Config\InstanceForm;
 use Icinga\Module\Monitoring\Form\Config\SecurityForm;
-
 use Icinga\Exception\NotReadableError;
 
 /**
@@ -23,7 +18,6 @@ use Icinga\Exception\NotReadableError;
  */
 class Monitoring_ConfigController extends ModuleActionController
 {
-
     /**
      * Display a list of available backends and instances
      */
@@ -49,52 +43,63 @@ class Monitoring_ConfigController extends ModuleActionController
      */
     public function editbackendAction()
     {
+        // Fetch the backend to be edited
         $backend = $this->getParam('backend');
-        if (!$this->isExistingBackend($backend)) {
-            $this->view->error = 'Unknown backend ' . $backend;
-            return;
+        $backendsConfig = $this->Config('backends')->toArray();
+        if (false === array_key_exists($backend, $backendsConfig)) {
+            // TODO: Should behave as in the app's config controller (Specific redirect to an error action)
+            Notification::error(sprintf($this->translate('Cannot edit "%s". Backend not found.'), $backend));
+            $this->redirectNow('monitoring/config');
         }
-        $backendForm = new EditBackendForm();
-        $backendForm->setRequest($this->getRequest());
-        $backendForm->setBackendConfiguration($this->Config('backends')->get($backend));
 
-        if ($backendForm->isSubmittedAndValid()) {
-            $newConfig = $backendForm->getConfig();
-            $config = $this->Config('backends');
-            $config->$backend = $newConfig;
-            if ($this->writeConfiguration($config, 'backends')) {
-                Notification::success('Backend ' . $backend . ' Modified.');
+        $form = new BackendForm();
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            if ($form->isValid($request->getPost())) {
+                list($newName, $config) = $form->getBackendConfig();
+
+                if ($newName !== $backend) {
+                    // Backend name has changed
+                    unset($backendsConfig[$backend]); // We can safely use unset as all values are part of the form
+                }
+
+                $backendsConfig[$newName] = $config;
+                if ($this->writeConfiguration($backendsConfig, 'backends')) {
+                    Notification::success(sprintf($this->translate('Backend "%s" successfully modified.'), $backend));
+                    $this->redirectNow('monitoring/config');
+                } else {
+                    $this->render('show-configuration');
+                    return;
+                }
+            }
+        } else {
+            $form->setBackendConfig($backend, $backendsConfig[$backend]);
+        }
+
+        $this->view->form = $form;
+    }
+
+    /**
+     * Display a form to create a new backend
+     */
+    public function createbackendAction()
+    {
+        $form = new BackendForm();
+        $request = $this->getRequest();
+        if ($request->isPost() && $form->isValid($request->getPost())) {
+            list($name, $config) = $form->getBackendConfig();
+            $backendsConfig = $this->Config('backends')->toArray();
+            $backendsConfig[$name] = $config;
+            if ($this->writeConfiguration($backendsConfig, 'backends')) {
+                Notification::success(sprintf($this->translate('Backend "%s" created successfully.'), $name));
                 $this->redirectNow('monitoring/config');
             } else {
                 $this->render('show-configuration');
                 return;
             }
         }
-        $this->view->name = $backend;
-        $this->view->form = $backendForm;
-    }
 
-    /**
-     * Display a form to create a new backends
-     */
-    public function createbackendAction()
-    {
-        $form = new CreateBackendForm();
-        $form->setRequest($this->getRequest());
-        if ($form->isSubmittedAndValid()) {
-            $configArray  =  $this->Config('backends')->toArray();
-            $configArray[$form->getBackendName()] = $form->getConfig();
-
-            if ($this->writeConfiguration(new Zend_Config($configArray), 'backends')) {
-                Notification::success('Backend Creation Succeeded');
-                $this->redirectNow('monitoring/config');
-            } else {
-                $this->render('show-configuration');
-            }
-            return;
-        }
         $this->view->form = $form;
-        $this->render('editbackend');
     }
 
     /**
@@ -103,57 +108,53 @@ class Monitoring_ConfigController extends ModuleActionController
     public function removebackendAction()
     {
         $backend = $this->getParam('backend');
-        if (!$this->isExistingBackend($backend)) {
-            $this->view->error = 'Unknown backend ' . $backend;
-            return;
+        $backendsConfig = $this->Config('backends')->toArray();
+        if (false === array_key_exists($backend, $backendsConfig)) {
+            // TODO: Should behave as in the app's config controller (Specific redirect to an error action)
+            Notification::error(sprintf($this->translate('Cannot remove "%s". Backend not found.'), $backend));
+            $this->redirectNow('monitoring/config');
         }
+
         $form = new ConfirmRemovalForm();
-        $form->setRequest($this->getRequest());
-        $form->setRemoveTarget('backend', $backend);
-
-        if ($form->isSubmittedAndValid()) {
-            $configArray = $this->Config('backends')->toArray();
-            unset($configArray[$backend]);
-
-            if ($this->writeConfiguration(new Zend_Config($configArray), 'backends')) {
-                Notification::success('Backend "' . $backend . '" Removed');
+        $request = $this->getRequest();
+        if ($request->isPost() && $form->isValid($request->getPost())) {
+            unset($backendsConfig[$backend]);
+            if ($this->writeConfiguration($backendsConfig, 'backends')) {
+                Notification::success(sprintf($this->translate('Backend "%s" successfully removed.'), $backend));
                 $this->redirectNow('monitoring/config');
             } else {
                 $this->render('show-configuration');
+                return;
             }
-            return;
         }
 
         $this->view->form = $form;
-        $this->view->name = $backend;
     }
 
     /**
-     * Display a form to remove the instance identified by the 'instance' parameter
+     * Display a confirmation form to remove the instance identified by the 'instance' parameter
      */
     public function removeinstanceAction()
     {
         $instance = $this->getParam('instance');
-        if (!$this->isExistingInstance($instance)) {
-            $this->view->error = 'Unknown instance ' . $instance;
-            return;
+        $instancesConfig = $this->Config('instances')->toArray();
+        if (false === array_key_exists($instance, $instancesConfig)) {
+            // TODO: Should behave as in the app's config controller (Specific redirect to an error action)
+            Notification::error(sprintf($this->translate('Cannot remove "%s". Instance not found.'), $instance));
+            $this->redirectNow('monitoring/config');
         }
 
         $form = new ConfirmRemovalForm();
-        $form->setRequest($this->getRequest());
-        $form->setRemoveTarget('instance', $instance);
-
-        if ($form->isSubmittedAndValid()) {
-            $configArray = $this->Config('instances')->toArray();
-            unset($configArray[$instance]);
-
-            if ($this->writeConfiguration(new Zend_Config($configArray), 'instances')) {
-                Notification::success('Instance "' . $instance . '" Removed');
+        $request = $this->getRequest();
+        if ($request->isPost() && $form->isValid($request->getPost())) {
+            unset($instancesConfig[$instance]);
+            if ($this->writeConfiguration($instancesConfig, 'instances')) {
+                Notification::success(sprintf($this->translate('Instance "%s" successfully removed.'), $instance));
                 $this->redirectNow('monitoring/config');
             } else {
                 $this->render('show-configuration');
+                return;
             }
-            return;
         }
 
         $this->view->form = $form;
@@ -166,24 +167,36 @@ class Monitoring_ConfigController extends ModuleActionController
     public function editinstanceAction()
     {
         $instance = $this->getParam('instance');
-        if (!$this->isExistingInstance($instance)) {
-            $this->view->error = 'Unknown instance ' . htmlentities($instance);
-            return;
+        $instancesConfig = $this->Config('instances')->toArray();
+        if (false === array_key_exists($instance, $instancesConfig)) {
+            // TODO: Should behave as in the app's config controller (Specific redirect to an error action)
+            Notification::error(sprintf($this->translate('Cannot edit "%s". Instance not found.'), $instance));
+            $this->redirectNow('monitoring/config');
         }
-        $form = new EditInstanceForm();
-        $form->setInstanceConfiguration($this->Config('instances')->get($instance));
-        $form->setRequest($this->getRequest());
-        if ($form->isSubmittedAndValid()) {
-            $instanceConfig = $this->Config('instances')->toArray();
-            $instanceConfig[$instance] = $form->getConfig();
-            if ($this->writeConfiguration(new Zend_Config($instanceConfig), 'instances')) {
-                Notification::success('Instance Modified');
-                $this->redirectNow('monitoring/config');
-            } else {
-                $this->render('show-configuration');
-                return;
+
+        $form = new InstanceForm();
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            if ($form->isValid($request->getPost())) {
+                list($newName, $config) = $form->getInstanceConfig();
+
+                if ($newName !== $instance) {
+                    unset($instancesConfig[$instance]); // We can safely use unset as all values are part of the form
+                }
+
+                $instancesConfig[$newName] = $config;
+                if ($this->writeConfiguration($instancesConfig, 'instances')) {
+                    Notification::success(sprintf($this->translate('Instance "%s" successfully modified.'), $instance));
+                    $this->redirectNow('monitoring/config');
+                } else {
+                    $this->render('show-configuration');
+                    return;
+                }
             }
+        } else {
+            $form->setInstanceConfig($instance, $instancesConfig[$instance]);
         }
+
         $this->view->form = $form;
     }
 
@@ -192,33 +205,37 @@ class Monitoring_ConfigController extends ModuleActionController
      */
     public function createinstanceAction()
     {
-        $form = new CreateInstanceForm();
-        $form->setRequest($this->getRequest());
-        if ($form->isSubmittedAndValid()) {
-            $instanceConfig = $this->Config('instances');
-            if ($instanceConfig === null) {
-                $instanceConfig = array();
-            } else {
-                $instanceConfig = $instanceConfig->toArray();
-            }
-            $instanceConfig[$form->getInstanceName()] = $form->getConfig()->toArray();
-            if ($this->writeConfiguration(new Zend_Config($instanceConfig), 'instances')) {
-                Notification::success('Instance Creation Succeeded');
+        $form = new InstanceForm();
+        $request = $this->getRequest();
+        if ($request->isPost() && $form->isValid($request->getPost())) {
+            list($name, $config) = $form->getInstanceConfig();
+            $instancesConfig = $this->Config('instances')->toArray();
+            $instancesConfig[$name] = $config;
+            if ($this->writeConfiguration($instancesConfig, 'instances')) {
+                Notification::success(sprintf($this->translate('Instance "%s" created successfully.'), $name));
                 $this->redirectNow('monitoring/config');
             } else {
                 $this->render('show-configuration');
+                return;
             }
-            return;
         }
+
         $this->view->form = $form;
-        $this->render('editinstance');
     }
 
     /**
-     * Display a form to remove the instance identified by the 'instance' parameter
+     * Write configuration to an ini file
+     *
+     * @param   Zend_Config     $config     The configuration to write
+     * @param   string          $file       The config file to write to
+     *
+     * @return  bool                        Whether the configuration was written or not
      */
-    private function writeConfiguration($config, $file = null)
+    protected function writeConfiguration($config, $file = null)
     {
+        if (is_array($config)) {
+            $config = new Zend_Config($config);
+        }
         $target = $this->Config($file)->getConfigFile();
         $writer = new PreservingIniWriter(array('filename' => $target, 'config' => $config));
 
@@ -235,49 +252,30 @@ class Monitoring_ConfigController extends ModuleActionController
     }
 
     /**
-     * Return true if the backend exists in the current configuration
-     *
-     * @param   string $backend The name of the backend to check for existence
-     *
-     * @return  bool True if the backend name exists, otherwise false
+     * Display a form to adjust security relevant settings
      */
-    private function isExistingBackend($backend)
-    {
-        $backendCfg = $this->Config('backends');
-        return $backend && $backendCfg->get($backend);
-    }
-
-    /**
-     * Return true if the instance exists in the current configuration
-     *
-     * @param   string $instance The name of the instance to check for existence
-     *
-     * @return  bool True if the instance name exists, otherwise false
-     */
-    private function isExistingInstance($instance)
-    {
-        $instanceCfg = $this->Config('instances');
-        return $instanceCfg && $instanceCfg->get($instance);
-    }
-
     public function securityAction()
     {
         $this->view->tabs = $this->Module()->getConfigTabs()->activate('security');
 
         $form = new SecurityForm();
-        $form->setConfiguration($this->Config()->get('security'));
-        $form->setRequest($this->getRequest());
-        if ($form->isSubmittedAndValid()) {
-            $config = $this->Config()->toArray();
-            $config['security'] = $form->getConfig();
-            if ($this->writeConfiguration(new Zend_Config($config))) {
-                Notification::success('Configuration modified successfully');
-                $this->redirectNow('monitoring/config/security');
-            } else {
-                $this->render('show-configuration');
-                return;
+        $request = $this->getRequest();
+        $config = $this->Config()->toArray();
+        if ($request->isPost()) {
+            if ($form->isValid($request->getPost())) {
+                $config['security'] = $form->getValues();
+                if ($this->writeConfiguration(new Zend_Config($config))) {
+                    Notification::success('Configuration modified successfully');
+                    $this->redirectNow('monitoring/config/security');
+                } else {
+                    $this->render('show-configuration');
+                    return;
+                }
             }
+        } elseif (isset($config['security'])) {
+            $form->populate($config['security']);
         }
+
         $this->view->form = $form;
     }
 }
