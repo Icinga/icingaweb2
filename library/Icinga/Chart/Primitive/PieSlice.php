@@ -176,7 +176,7 @@ class PieSlice extends Animatable implements Drawable
 
         // Draw the text box
         $text = new Text($rel[0]+1.5, $rel[1], $this->caption);
-        $text->setFontSize('2.5em');
+        $text->setFontSize('5em');
         $text->setAlignment(($midRadius > M_PI ? Text::ALIGN_END : Text::ALIGN_START));
 
         $group->appendChild($path->toSvg($ctx));
