@@ -18,11 +18,11 @@ class PieChart extends Inline
     public function render($output = true)
     {
         $pie = new PieChartRenderer();
+        $pie->alignTopLeft();
         $pie->disableLegend();
         $pie->drawPie(array(
             'data' => $this->data, 'colors' => $this->colors, 'labels' => $this->labels
         ));
-        $pie->setWidth($this->width)->setHeight($this->height);
         if ($output) {
             echo $pie->render();
         } else {

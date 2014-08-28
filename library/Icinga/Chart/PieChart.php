@@ -122,11 +122,16 @@ class PieChart extends Chart
      */
     public function toSvg(RenderContext $ctx)
     {
-        $outerBox = new Canvas('outerGraph', new LayoutBox(33, -5, 40, 40));
-        $innerBox = new Canvas('graph', new LayoutBox(0, 0, 100, 100));
         $labelBox = $ctx->getDocument()->createElement('g');
         if (!$this->noCaption) {
+            // Scale SVG to make room for captions
+            $outerBox = new Canvas('outerGraph', new LayoutBox(33, -5, 40, 40));
+            $innerBox = new Canvas('graph', new LayoutBox(0, 0, 100, 100));
             $innerBox->getLayout()->setPadding(10, 10, 10, 10);
+        } else {
+            $outerBox = new Canvas('outerGraph', new LayoutBox(1.5, -10, 124, 124));
+            $innerBox = new Canvas('graph', new LayoutBox(0, 0, 100, 100));
+            $innerBox->getLayout()->setPadding(0, 0, 0, 0);
         }
         $this->createContentClipBox($innerBox);
         $this->renderPies($innerBox, $labelBox);
