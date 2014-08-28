@@ -20,7 +20,7 @@ class icinga2-mysql {
   }
 
   file { '/etc/icinga2/features-available/ido-mysql.conf':
-    source  => 'puppet:////vagrant/.vagrant-puppet/files/etc/icinga2/features-available/ido-mysql.conf',
+    source  => 'puppet:///modules/icinga2-mysql/etc/icinga2/features-available/ido-mysql.conf',
     owner   => 'icinga',
     group   => 'icinga',
     notify => Service['icinga2'],
