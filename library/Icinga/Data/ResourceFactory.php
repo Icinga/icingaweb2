@@ -132,4 +132,15 @@ class ResourceFactory implements ConfigAwareFactory
         }
         return $resource;
     }
+
+    /**
+     * Create a resource from name
+     *
+     * @param   string  $resourceName
+     * @return  DbConnection|LdapConnection|LivestatusConnection|StatusdatReader
+     */
+    public static function create($resourceName)
+    {
+        return self::createResource(self::getResourceConfig($resourceName));
+    }
 }
