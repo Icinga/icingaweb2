@@ -11,6 +11,8 @@ sudo -u postgres createlang plpgsql ${name}",
 }
 
 define pgsql::database::populate ($username, $password, $schemafile) {
+  Exec { path => '/usr/bin' }
+
   pgsql::database::create { $name:
     username => $username,
     password => $password,
