@@ -98,7 +98,7 @@ class Monitoring_ChartController extends Controller
         $this->view->height = intval($this->getParam('height', 500));
         $this->view->width = intval($this->getParam('width', 500));
         if (count($query) === 1) {
-            $this->drawGroupPie($query[0]);
+            $this->drawHostGroupPie($query[0]);
         } else {
             $this->drawHostGroupChart($query);
         }
@@ -123,8 +123,12 @@ class Monitoring_ChartController extends Controller
         $this->view->height = intval($this->getParam('height', 500));
         $this->view->width = intval($this->getParam('width', 500));
 
-        $this->drawServiceGroupChart($query);
 
+        if (count($query) === 1) {
+            $this->drawServiceGroupPie($query[0]);
+        } else {
+            $this->drawServiceGroupChart($query);
+        }
     }
 
     private function drawServiceGroupChart($query)
@@ -219,30 +223,11 @@ class Monitoring_ChartController extends Controller
         );
     }
 
-    private function drawGroupPie($query)
+    private function drawServiceGroupPie($query)
     {
         $this->view->chart = new PieChart();
         $this->view->chart->alignTopLeft();
-        if (isset($query->hosts_up)) {
-            $this->view->chart->drawPie(array(
-                'data' => array(
-                    (int) $query->hosts_up,
-                    (int) $query->hosts_down_handled,
-                    (int) $query->hosts_down_unhandled,
-                    (int) $query->hosts_unreachable_handled,
-                    (int) $query->hosts_unreachable_unhandled,
-                    (int) $query->hosts_pending
-                ),
-                'colors' => array('#44bb77', '#ff4444', '#ff0000', '#E066FF', '#f099FF', '#fefefe'),
-                'labels'=> array(
-                    (int) $query->hosts_up . ' Up Hosts',
-                    (int) $query->hosts_down_handled . t(' Down Hosts (Handled)'),
-                    (int) $query->hosts_down_unhandled . t(' Down Hosts (Unhandled)'),
-                    (int) $query->hosts_unreachable_handled . t(' Unreachable Hosts (Handled)'),
-                    (int) $query->hosts_unreachable_unhandled . t(' Unreachable Hosts (Unhandled)'),
-                    (int) $query->hosts_pending . t(' Pending Hosts')
-                )
-            ), array(
+        $this->view->chart->drawPie(array(
             'data' => array(
                 (int) $query->services_ok,
                 (int) $query->services_warning_unhandled,
@@ -263,8 +248,54 @@ class Monitoring_ChartController extends Controller
                 $query->services_unknown_handled . t(' Unreachable Services (Handled)'),
                 $query->services_unknown_unhandled . t(' Unreachable Services (Unhandled)'),
                 $query->services_pending . t(' Pending Services')
-              )
+            )
         ));
-        }
+    }
+
+    private function drawHostGroupPie($query)
+    {
+        $this->view->chart = new PieChart();
+        $this->view->chart->alignTopLeft();
+        $this->view->chart->drawPie(array(
+            'data' => array(
+                (int) $query->hosts_up,
+                (int) $query->hosts_down_handled,
+                (int) $query->hosts_down_unhandled,
+                (int) $query->hosts_unreachable_handled,
+                (int) $query->hosts_unreachable_unhandled,
+                (int) $query->hosts_pending
+            ),
+            'colors' => array('#44bb77', '#ff4444', '#ff0000', '#E066FF', '#f099FF', '#fefefe'),
+            'labels'=> array(
+                (int) $query->hosts_up . ' Up Hosts',
+                (int) $query->hosts_down_handled . t(' Down Hosts (Handled)'),
+                (int) $query->hosts_down_unhandled . t(' Down Hosts (Unhandled)'),
+                (int) $query->hosts_unreachable_handled . t(' Unreachable Hosts (Handled)'),
+                (int) $query->hosts_unreachable_unhandled . t(' Unreachable Hosts (Unhandled)'),
+                (int) $query->hosts_pending . t(' Pending Hosts')
+            )
+        ), array(
+            'data' => array(
+                (int) $query->services_ok,
+                (int) $query->services_warning_unhandled,
+                (int) $query->services_warning_handled,
+                (int) $query->services_critical_unhandled,
+                (int) $query->services_critical_handled,
+                (int) $query->services_unknown_unhandled,
+                (int) $query->services_unknown_handled,
+                (int) $query->services_pending
+            ),
+            'colors' => array('#44bb77', '#ff4444', '#ff0000', '#ffff00', '#ffff33', '#E066FF', '#f099FF', '#fefefe'),
+            'labels'=> array(
+                $query->services_ok . ' Up Services',
+                $query->services_warning_handled . t(' Warning Services (Handled)'),
+                $query->services_warning_unhandled . t(' Warning Services (Unhandled)'),
+                $query->services_critical_handled . t(' Down Services (Handled)'),
+                $query->services_critical_unhandled . t(' Down Services (Unhandled)'),
+                $query->services_unknown_handled . t(' Unreachable Services (Handled)'),
+                $query->services_unknown_unhandled . t(' Unreachable Services (Unhandled)'),
+                $query->services_pending . t(' Pending Services')
+            )
+        ));
     }
 }
