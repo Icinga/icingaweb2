@@ -63,6 +63,6 @@ class profile::icinga-pgsql ($icingaVersion) {
     username => 'icinga',
     password => 'icingaweb',
     schemafile => "/usr/local/src/icinga-pgsql/icinga-${icingaVersion}/module/idoutils/db/pgsql/pgsql.sql",
-    requirement => Cmmi['icinga-pgsql'],
+    require => Cmmi['icinga-pgsql'],
   }
 }
