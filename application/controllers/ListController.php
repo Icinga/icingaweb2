@@ -45,8 +45,7 @@ class ListController extends Controller
                     file_exists($config_ini['logging']['target'])
             )
         ) {
-            $config = ResourceFactory::getResourceConfig('logfile');
-            $resource = ResourceFactory::createResource($config);
+            $resource = ResourceFactory::create('logfile');
             $this->view->logData = $resource->select()->order('DESC')->paginate();
         } else {
             $this->view->logData = null;

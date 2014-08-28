@@ -149,7 +149,7 @@ class LdapBackendForm extends BaseBackendForm
             $cfg = $this->getConfig();
             $backendName = 'backend_' . $this->filterName($this->getBackendName()) . '_name';
             $backendConfig = new Zend_Config($cfg[$this->getValue($backendName)]);
-            $backend = ResourceFactory::createResource(ResourceFactory::getResourceConfig($backendConfig->resource));
+            $backend = ResourceFactory::create($backendConfig->resource);
             $testConn = new LdapUserBackend(
                 $backend,
                 $backendConfig->user_class,
