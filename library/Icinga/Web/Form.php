@@ -4,6 +4,7 @@
 
 namespace Icinga\Web;
 
+use LogicException;
 use Zend_Form;
 use Zend_View_Interface;
 use Icinga\Application\Icinga;
@@ -23,6 +24,13 @@ class Form extends Zend_Form
      * @var bool
      */
     protected $created = false;
+
+    /**
+     * The callback to call instead of Form::onSuccess()
+     *
+     * @var Closure
+     */
+    protected $onSuccess;
 
     /**
      * Label to use for the standard submit button
@@ -67,6 +75,33 @@ class Form extends Zend_Form
      * @var string
      */
     protected $uidElementName = 'formUID';
+
+    /**
+     * Create a new form
+     *
+     * Accepts an additional option `onSuccess' which is a
+     * callback that is called instead of this form's method.
+     *
+     * @see Zend_Form::__construct()
+     *
+     * @throws  LogicException      In case `onSuccess' is not callable
+     */
+    public function __construct($options = null)
+    {
+        if (is_array($options) && isset($options['onSuccess'])) {
+            $this->onSuccess = $options['onSuccess'];
+            unset($options['onSuccess']);
+        } elseif (isset($options->onSuccess)) {
+            $this->onSuccess = $options->onSuccess;
+            unset($options->onSuccess);
+        }
+
+        if ($this->onSuccess !== null && false === is_callable($this->onSuccess)) {
+            throw new LogicException('The option `onSuccess\' is not callable');
+        }
+
+        parent::__construct($options);
+    }
 
     /**
      * Set the label to use for the standard submit button
@@ -413,7 +448,9 @@ class Form extends Zend_Form
         if ($this->wasSent($formData)) {
             $this->populate($formData); // Necessary to get isSubmitted() to work
             if (! $this->getSubmitLabel() || $this->isSubmitted()) {
-                if ($this->isValid($formData) && false !== $this->onSuccess($request)) {
+                if ($this->isValid($formData)
+                    && (($this->onSuccess !== null && false !== call_user_func($this->onSuccess, $request))
+                        || ($this->onSuccess === null && false !== $this->onSuccess($request)))) {
                     $this->getResponse()->redirectAndExit($this->getRedirectUrl());
                 }
             } else {
