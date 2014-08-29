@@ -8,6 +8,7 @@ use Zend_Form;
 use Zend_View_Interface;
 use Icinga\Application\Icinga;
 use Icinga\Web\Form\Decorator\HelpText;
+use Icinga\Web\Form\Decorator\NoScriptApply;
 use Icinga\Web\Form\Decorator\ElementWrapper;
 use Icinga\Web\Form\Element\CsrfCounterMeasure;
 
@@ -330,6 +331,14 @@ class Form extends Zend_Form
                 $el->removeDecorator('HtmlTag');
                 $el->removeDecorator('Label');
                 $el->removeDecorator('DtDdWrapper');
+
+                if ($el->getAttrib('autosubmit')) {
+                    // Need to add this decorator first or it interferes with the other's two HTML otherwise
+                    $el->addDecorator(new NoScriptApply()); // Non-JS environments
+                    $el->setAttrib('class', 'autosubmit'); // JS environments
+                    unset($el->autosubmit);
+                }
+
                 $el->addDecorator(new ElementWrapper());
                 $el->addDecorator(new HelpText());
             }
