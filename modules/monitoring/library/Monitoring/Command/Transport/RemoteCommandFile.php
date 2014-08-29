@@ -153,6 +153,9 @@ class RemoteCommandFile implements CommandTransportInterface
         if (! isset($this->path)) {
             throw new LogicException;
         }
+        if (! isset($this->host)) {
+            throw new LogicException;
+        }
         Logger::debug(
             sprintf(
                 mt('monitoring', 'Sending external Icinga command "%s" to the remote command file "%s:%u%s"'),
