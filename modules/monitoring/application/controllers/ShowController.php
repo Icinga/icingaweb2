@@ -25,6 +25,9 @@ class Monitoring_ShowController extends Controller
      */
     protected $backend;
 
+    /**
+     * @var Hook\GrapherHook
+     */
     protected $grapher;
 
     /**
@@ -61,8 +64,8 @@ class Monitoring_ShowController extends Controller
             . ' on ' . $o->host_name;
         $this->getTabs()->activate('service');
         $o->populate();
-        if ($this->grapher && $this->grapher->hasGraph($o->host_name, $o->service_description)) {
-            $this->view->grapherHtml = $this->grapher->getPreviewImage($o->host_name, $o->service_description);
+        if ($this->grapher && $this->grapher->hasPreviews($o->host_name, $o->service_description)) {
+            $this->view->grapherHtml = $this->grapher->getPreviewHtml($o->host_name, $o->service_description);
         }
     }
 
@@ -76,8 +79,8 @@ class Monitoring_ShowController extends Controller
         $this->getTabs()->activate('host');
         $this->view->title = $o->host_name;
         $o->populate();
-        if ($this->grapher && $this->grapher->hasGraph($o->host_name)) {
-            $this->view->grapherHtml = $this->grapher->getPreviewImage($o->host_name);
+        if ($this->grapher && $this->grapher->hasPreviews($o->host_name)) {
+            $this->view->grapherHtml = $this->grapher->getPreviewHtml($o->host_name);
         }
     }
 
@@ -105,19 +108,22 @@ class Monitoring_ShowController extends Controller
 
     public function contactAction()
     {
-        $contact = $this->getParam('contact');
-        if (! $contact) {
+        $contactName = $this->getParam('contact');
+
+        if (! $contactName) {
             throw new Zend_Controller_Action_Exception(
                 $this->translate('The parameter `contact\' is required'),
                 404
             );
         }
+
         $query = $this->backend->select()->from('contact', array(
             'contact_name',
             'contact_id',
             'contact_alias',
             'contact_email',
             'contact_pager',
+            'contact_object_id',
             'contact_notify_service_timeperiod',
             'contact_notify_service_recovery',
             'contact_notify_service_warning',
@@ -132,9 +138,36 @@ class Monitoring_ShowController extends Controller
             'contact_notify_host_flapping',
             'contact_notify_host_downtime',
         ));
-        $query->where('contact_name', $contact);
-        $this->view->contacts = $query->paginate();
-        $this->view->contact_name = $contact;
+
+        $query->where('contact_name', $contactName);
+
+        $contact = $query->getQuery()->fetchRow();
+
+        if ($contact) {
+            $commands = $this->backend->select()->from('command', array(
+                'command_line',
+                'command_name'
+            ))->where('contact_id', $contact->contact_id);
+
+            $this->view->commands = $commands->paginate();
+
+            $notifications = $this->backend->select()->from('notification', array(
+                'host',
+                'service',
+                'notification_output',
+                'notification_contact',
+                'notification_start_time',
+                'notification_state'
+            ));
+
+            $notifications->where('contact_object_id', $contact->contact_object_id);
+
+            $this->view->compact = true;
+            $this->view->notifications = $notifications->paginate();
+        }
+
+        $this->view->contact = $contact;
+        $this->view->contactName = $contactName;
     }
 
     /**

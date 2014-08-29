@@ -2,7 +2,6 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use \Zend_Config;
 use Icinga\Web\Url;
 use Icinga\Logger\Logger;
 use Icinga\Config\PreservingIniWriter;
@@ -12,6 +11,7 @@ use Icinga\Form\Dashboard\AddUrlForm;
 use Icinga\Exception\NotReadableError;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Web\Controller\ActionController;
+use Icinga\Exception\IcingaException;
 
 /**
  * Handle creation, removal and displaying of dashboards, panes and components
@@ -42,7 +42,7 @@ class DashboardController extends ActionController
             }
             $dashboard->readConfig($dashboardConfig);
         } catch (NotReadableError $e) {
-            Logger::error(new Exception('Cannot load dashboard configuration. An exception was thrown:', 0, $e));
+            Logger::error(new IcingaException('Cannot load dashboard configuration. An exception was thrown:', $e));
             return null;
         }
         return $dashboard;

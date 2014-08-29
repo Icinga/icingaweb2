@@ -4,10 +4,12 @@
 
 namespace Icinga\Web;
 
+use LogicException;
 use Zend_Form;
 use Zend_View_Interface;
 use Icinga\Application\Icinga;
 use Icinga\Web\Form\Decorator\HelpText;
+use Icinga\Web\Form\Decorator\NoScriptApply;
 use Icinga\Web\Form\Decorator\ElementWrapper;
 use Icinga\Web\Form\Element\CsrfCounterMeasure;
 
@@ -22,6 +24,13 @@ class Form extends Zend_Form
      * @var bool
      */
     protected $created = false;
+
+    /**
+     * The callback to call instead of Form::onSuccess()
+     *
+     * @var Closure
+     */
+    protected $onSuccess;
 
     /**
      * Label to use for the standard submit button
@@ -59,6 +68,40 @@ class Form extends Zend_Form
      * @var string
      */
     protected $tokenElementName = 'CSRFToken';
+
+    /**
+     * Name of the form identification element
+     *
+     * @var string
+     */
+    protected $uidElementName = 'formUID';
+
+    /**
+     * Create a new form
+     *
+     * Accepts an additional option `onSuccess' which is a
+     * callback that is called instead of this form's method.
+     *
+     * @see Zend_Form::__construct()
+     *
+     * @throws  LogicException      In case `onSuccess' is not callable
+     */
+    public function __construct($options = null)
+    {
+        if (is_array($options) && isset($options['onSuccess'])) {
+            $this->onSuccess = $options['onSuccess'];
+            unset($options['onSuccess']);
+        } elseif (isset($options->onSuccess)) {
+            $this->onSuccess = $options->onSuccess;
+            unset($options->onSuccess);
+        }
+
+        if ($this->onSuccess !== null && false === is_callable($this->onSuccess)) {
+            throw new LogicException('The option `onSuccess\' is not callable');
+        }
+
+        parent::__construct($options);
+    }
 
     /**
      * Set the label to use for the standard submit button
@@ -186,6 +229,29 @@ class Form extends Zend_Form
     }
 
     /**
+     * Set the name to use for the form identification element
+     *
+     * @param   string  $name   The name to set
+     *
+     * @return  self
+     */
+    public function setUidElementName($name)
+    {
+        $this->uidElementName = $name;
+        return $this;
+    }
+
+    /**
+     * Return the name of the form identification element
+     *
+     * @return  string
+     */
+    public function getUidElementName()
+    {
+        return $this->uidElementName;
+    }
+
+    /**
      * Create this form
      *
      * @param   array   $formData   The data sent by the user
@@ -233,7 +299,7 @@ class Form extends Zend_Form
      *
      * @param   Request     $request    The valid request used to process this form
      *
-     * @return  bool                    Whether any redirection should take place
+     * @return  null|bool               Return FALSE in case no redirect should take place
      */
     public function onSuccess(Request $request)
     {
@@ -300,6 +366,14 @@ class Form extends Zend_Form
                 $el->removeDecorator('HtmlTag');
                 $el->removeDecorator('Label');
                 $el->removeDecorator('DtDdWrapper');
+
+                if ($el->getAttrib('autosubmit')) {
+                    // Need to add this decorator first or it interferes with the other's two HTML otherwise
+                    $el->addDecorator(new NoScriptApply()); // Non-JS environments
+                    $el->setAttrib('class', 'autosubmit'); // JS environments
+                    unset($el->autosubmit);
+                }
+
                 $el->addDecorator(new ElementWrapper());
                 $el->addDecorator(new HelpText());
             }
@@ -317,7 +391,7 @@ class Form extends Zend_Form
     {
         $this->addElement(
             'hidden',
-            'form_uid',
+            $this->uidElementName,
             array(
                 'ignore'    => true,
                 'value'     => $this->getName()
@@ -373,8 +447,10 @@ class Form extends Zend_Form
         $formData = $this->getRequestData($request);
         if ($this->wasSent($formData)) {
             $this->populate($formData); // Necessary to get isSubmitted() to work
-            if ($this->isSubmitted() || ! $this->getSubmitLabel()) {
-                if ($this->isValid($formData) && $this->onSuccess($request)) {
+            if (! $this->getSubmitLabel() || $this->isSubmitted()) {
+                if ($this->isValid($formData)
+                    && (($this->onSuccess !== null && false !== call_user_func($this->onSuccess, $request))
+                        || ($this->onSuccess === null && false !== $this->onSuccess($request)))) {
                     $this->getResponse()->redirectAndExit($this->getRedirectUrl());
                 }
             } else {
@@ -416,7 +492,7 @@ class Form extends Zend_Form
      */
     public function wasSent(array $formData)
     {
-        return isset($formData['form_uid']) && $formData['form_uid'] === $this->getName();
+        return isset($formData[$this->uidElementName]) && $formData[$this->uidElementName] === $this->getName();
     }
 
     /**

@@ -14,7 +14,7 @@ namespace Icinga\Web\Hook;
  * @author     Icinga-Web Team <info@icinga.org>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License
  */
-abstract class Ticket
+abstract class TicketHook
 {
     /**
      * Constructor must live without arguments right now

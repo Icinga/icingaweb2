@@ -2,7 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use \Zend_Controller_Action_Exception as ActionException;
+use Zend_Controller_Action_Exception as ActionException;
 use Icinga\Web\Controller\ActionController;
 use Icinga\Application\Icinga;
 use Icinga\Logger\Logger;

@@ -5,19 +5,19 @@
 namespace Icinga\Form\Config\Authentication;
 
 use Zend_Validate_Callback;
+use Icinga\Web\Form;
 
 /**
  * Form class for adding/modifying autologin authentication backends
  */
-class AutologinBackendForm extends BaseBackendForm
+class AutologinBackendForm extends Form
 {
     /**
      * Initialize this form
      */
     public function init()
     {
-        $this->setName('form_config_authentication_autologin');
-        $this->setSubmitLabel(t('Save Changes'));
+        $this->setName('form_config_authbackend_autologin');
     }
 
     /**
@@ -31,7 +31,6 @@ class AutologinBackendForm extends BaseBackendForm
                 'name',
                 array(
                     'required'      => true,
-                    'allowEmpty'    => false,
                     'label'         => t('Backend Name'),
                     'helptext'      => t('The name of this authentication backend'),
                     'validators'    => array(
@@ -53,7 +52,6 @@ class AutologinBackendForm extends BaseBackendForm
                 'strip_username_regexp',
                 array(
                     'required'      => true,
-                    'allowEmpty'    => false,
                     'label'         => t('Backend Domain Pattern'),
                     'helptext'      => t('The domain pattern of this authentication backend'),
                     'value'         => '/\@[^$]+$/',
@@ -76,13 +74,15 @@ class AutologinBackendForm extends BaseBackendForm
     }
 
     /**
-     * Validate the configuration state of this backend
+     * Validate the configuration by creating a backend and requesting the user count
      *
-     * Returns just true as autologins are being handled externally by the webserver.
+     * Returns always true as autologin backends are just "passive" backends. (The webserver authenticates users.)
      *
-     * @return  true
+     * @param   Form    $form   The form to fetch the configuration values from
+     *
+     * @return  bool            Whether validation succeeded or not
      */
-    public function isValidAuthenticationBackend()
+    public function isValidAuthenticationBackend(Form $form)
     {
         return true;
     }

@@ -4,10 +4,10 @@
 
 namespace Icinga\Module\Monitoring\Form\Command;
 
-use \Icinga\Web\Form\Element\DateTimePicker;
-use \Icinga\Protocol\Commandpipe\Comment;
-use \Icinga\Util\DateTimeFactory;
-use \Icinga\Module\Monitoring\Command\AcknowledgeCommand;
+use Icinga\Web\Form\Element\DateTimePicker;
+use Icinga\Protocol\Commandpipe\Comment;
+use Icinga\Util\DateTimeFactory;
+use Icinga\Module\Monitoring\Command\AcknowledgeCommand;
 
 /**
  * Form for problem acknowledgements

@@ -261,8 +261,6 @@ class ResourceFormTest extends BaseTestCase
     protected function setUpResourceFactoryMock($resourceMock)
     {
         Mockery::mock('alias:Icinga\Data\ResourceFactory')
-            ->shouldReceive('mysqlAvailable')
-            ->andReturn(true)
             ->shouldReceive('createResource')
             ->with(Mockery::type('\Zend_Config'))
             ->andReturn($resourceMock);

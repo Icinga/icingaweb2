@@ -31,11 +31,11 @@ class LayoutController extends ActionController
     {
         $topbarHtmlParts = array();
 
-        /** @var Hook\Layout\TopBar $hook */
+        /** @var Hook\TopBarHook $hook */
         $hook = null;
 
         foreach (Hook::all('TopBar') as $hook) {
-            $topbarHtmlParts[] = $hook->getHtml($this->getRequest(), $this->view);
+            $topbarHtmlParts[] = $hook->getHtml($this->getRequest());
         }
 
         $this->view->topbarHtmlParts = $topbarHtmlParts;

@@ -50,7 +50,7 @@ class InlinePie extends AbstractWidget
         sparkType="pie"></span>
     <noscript>
     <img class="inlinepie"
-        title="{title}" src="{url}" style="width: {width}px; height: {height}px; {style}"
+        title="{title}" src="{url}" style="position: relative; top: 10px; width: {width}px; height: {height}px; {style}"
         data-icinga-colors="{colors}" data-icinga-values="{data}"
     />
     </noscript>

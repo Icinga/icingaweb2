@@ -42,6 +42,15 @@ class Hook
     public static $BASE_NS = 'Icinga\\Web\\Hook\\';
 
     /**
+     * Append this string to base class
+     *
+     * All base classes renamed to *Hook
+     *
+     * @var string
+     */
+    public static $classSuffix = 'Hook';
+
+    /**
      * Reset object state
      */
     public static function clean()
@@ -114,7 +123,7 @@ class Hook
      */
     private static function assertValidHook($instance, $name)
     {
-        $base_class = self::$BASE_NS . ucfirst($name);
+        $base_class = self::$BASE_NS . ucfirst($name) . self::$classSuffix;
         if (!$instance instanceof $base_class) {
             throw new ProgrammingError(
                 '%s is not an instance of %s',

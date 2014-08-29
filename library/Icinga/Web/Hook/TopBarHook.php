@@ -4,21 +4,20 @@
 
 namespace Icinga\Web\Hook;
 
-use \Icinga\Web\Request;
-use \Zend_View;
+use Icinga\Web\Request;
+use Zend_View;
 
 /**
  * Hook to extend topbar items
  */
-interface TopBar
+abstract class TopBarHook extends WebBaseHook
 {
     /**
      * Function to generate top bar content
      *
      * @param   Request     $request
-     * @param   Zend_View   $view
      *
      * @return  string
      */
-    public function getHtml($request, $view);
+    abstract public function getHtml($request);
 }

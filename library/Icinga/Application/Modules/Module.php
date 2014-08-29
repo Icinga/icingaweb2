@@ -19,6 +19,7 @@ use Icinga\Web\Widget;
 use Icinga\Web\Widget\Dashboard\Pane;
 use Icinga\Util\File;
 use Icinga\Exception\ProgrammingError;
+use Icinga\Exception\IcingaException;
 
 /**
  * Module handling
@@ -176,6 +177,7 @@ class Module
     /**
      * Add a pane to dashboard
      *
+     * @param $id
      * @param $name
      * @return Pane
      */
@@ -199,19 +201,21 @@ class Module
     /**
      * Add a menu Section to the Sidebar menu
      *
-     * @param $name
+     * @param string $id
+     * @param string $name
      * @param array $properties
      * @return mixed
      */
-    protected function menuSection($name, array $properties = array())
+    protected function menuSection($id, $name, array $properties = array())
     {
-        if (array_key_exists($name, $this->menuItems)) {
-            $this->menuItems[$name]->setProperties($properties);
+        if (array_key_exists($id, $this->menuItems)) {
+            $this->menuItems[$id]->setProperties($properties);
         } else {
-            $this->menuItems[$name] = new Menu($name, new Zend_Config($properties));
+            $this->menuItems[$id] = new Menu($id, new Zend_Config($properties));
+            $this->menuItems[$id]->setTitle($name);
         }
 
-        return $this->menuItems[$name];
+        return $this->menuItems[$id];
     }
 
     /**
@@ -627,8 +631,9 @@ class Module
     protected function providePermission($name, $description)
     {
         if ($this->providesPermission($name)) {
-            throw new Exception(
-                sprintf('Cannot provide permission "%s" twice', $name)
+            throw new IcingaException(
+                'Cannot provide permission "%s" twice',
+                $name
             );
         }
         $this->permissionList[$name] = (object) array(
@@ -648,8 +653,9 @@ class Module
     protected function provideRestriction($name, $description)
     {
         if ($this->providesRestriction($name)) {
-            throw new Exception(
-                sprintf('Cannot provide restriction "%s" twice', $name)
+            throw new IcingaException(
+                'Cannot provide restriction "%s" twice',
+                $name
             );
         }
         $this->restrictionList[$name] = (object) array(

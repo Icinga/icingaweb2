@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
+use Icinga\Exception\IcingaException;
 use Icinga\Logger\Logger;
 use Icinga\Data\Db\DbQuery;
 use Icinga\Exception\ProgrammingError;
@@ -272,7 +273,10 @@ abstract class IdoQuery extends DbQuery
         $this->requireColumn($condition);
         $col = $this->getMappedField($condition);
         if ($col === null) {
-            throw new \Exception("No such field: $condition");
+            throw new IcingaException(
+                'No such field: %s',
+                $condition
+            );
         }
         return parent::where($col, $value);
     }

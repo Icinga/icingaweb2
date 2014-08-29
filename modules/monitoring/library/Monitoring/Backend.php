@@ -97,7 +97,7 @@ class Backend implements Selectable, Queryable, ConnectionInterface
                 );
             }
         }
-        $resource = ResourceFactory::createResource(ResourceFactory::getResourceConfig($backendConfig->resource));
+        $resource = ResourceFactory::create($backendConfig->resource);
         if ($backendConfig->type === 'ido' && $resource->getDbType() !== 'oracle') {
             // TODO(el): The resource should set the table prefix
             $resource->setTablePrefix('icinga_');

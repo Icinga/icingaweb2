@@ -14,13 +14,23 @@ use Icinga\Protocol\Statusdat\Reader as StatusdatReader;
 use Icinga\Protocol\Ldap\Connection as LdapConnection;
 use Icinga\Protocol\File\Reader as FileReader;
 
+/**
+ * Create resources from names or resource configuration
+ */
 class ResourceFactory implements ConfigAwareFactory
 {
     /**
+     * Resource configuration
+     *
      * @var Zend_Config
      */
     private static $resources;
 
+    /**
+     * Set resource configurations
+     *
+     * @param Zend_Config $config
+     */
     public static function setConfig($config)
     {
         self::$resources = $config;
@@ -29,10 +39,11 @@ class ResourceFactory implements ConfigAwareFactory
     /**
      * Get the configuration for a specific resource
      *
-     * @param $resourceName String      The resource's name
+     * @param   $resourceName   String      The resource's name
      *
-     * @return              Zend_Config The configuration of the resource
-     * @throws \Icinga\Exception\ConfigurationError
+     * @return                  Zend_Config The configuration of the resource
+     *
+     * @throws                  ConfigurationError
      */
     public static function getResourceConfig($resourceName)
     {
@@ -72,7 +83,7 @@ class ResourceFactory implements ConfigAwareFactory
     /**
      * Check if the existing resources are set. If not, throw an error.
      *
-     * @throws \Icinga\Exception\ProgrammingError
+     * @throws ProgrammingError
      */
     private static function assertResourcesExist()
     {
@@ -93,7 +104,7 @@ class ResourceFactory implements ConfigAwareFactory
      *
      * @return DbConnection|LdapConnection|LivestatusConnection|StatusdatReader An objects that can be used to access
      *         the given resource. The returned class depends on the configuration property 'type'.
-     * @throws \Icinga\Exception\ConfigurationError When an unsupported type is given
+     * @throws ConfigurationError When an unsupported type is given
      */
     public static function createResource(Zend_Config $config)
     {
@@ -122,18 +133,14 @@ class ResourceFactory implements ConfigAwareFactory
         return $resource;
     }
 
-    public static function ldapAvailable()
+    /**
+     * Create a resource from name
+     *
+     * @param   string  $resourceName
+     * @return  DbConnection|LdapConnection|LivestatusConnection|StatusdatReader
+     */
+    public static function create($resourceName)
     {
-        return extension_loaded('ldap');
-    }
-
-    public static function pgsqlAvailable()
-    {
-        return extension_loaded('pgsql');
-    }
-
-    public static function mysqlAvailable()
-    {
-        return extension_loaded('mysql');
+        return self::createResource(self::getResourceConfig($resourceName));
     }
 }
