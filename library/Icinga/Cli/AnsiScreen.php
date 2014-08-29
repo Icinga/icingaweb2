@@ -5,6 +5,7 @@
 namespace Icinga\Cli;
 
 use Icinga\Cli\Screen;
+use Icinga\Exception\IcingaException;
 
 // @see http://en.wikipedia.org/wiki/ANSI_escape_code
 
@@ -74,7 +75,10 @@ class AnsiScreen extends Screen
     protected function fgColor($color)
     {
         if (! array_key_exists($color, $this->fgColors)) {
-            throw new \Exception(sprintf('There is no such foreground color: %s', $color));
+            throw new IcingaException(
+                'There is no such foreground color: %s',
+                $color
+            );
         }
         return $this->fgColors[$color];
     }
@@ -82,7 +86,10 @@ class AnsiScreen extends Screen
     protected function bgColor($color)
     {
         if (! array_key_exists($color, $this->bgColors)) {
-            throw new \Exception(sprintf('There is no such background color: %s', $color));
+            throw new IcingaException(
+                'There is no such background color: %s',
+                $color
+            );
         }
         return $this->bgColors[$color];
     }

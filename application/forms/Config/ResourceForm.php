@@ -5,6 +5,7 @@
 namespace Icinga\Form\Config;
 
 use Exception;
+use Icinga\Application\Platform;
 use Zend_Config;
 use Icinga\Web\Form;
 use Icinga\Application\Icinga;
@@ -118,14 +119,14 @@ class ResourceForm extends Form
                      * in case they aren't actually used. When the user tries to create a resource that depends on an
                      * uninstalled extension, an error should be displayed.
                      */
-                    if ($config['db'] === 'mysql' && false === ResourceFactory::mysqlAvailable()) {
+                    if ($config['db'] === 'mysql' && false === Platform::extensionLoaded('mysql')) {
                         $this->addErrorMessage(
                             t('You need to install the php extension "mysql" and the ' .
                               'Zend_Pdo_Mysql classes to use  MySQL database resources.')
                         );
                         return false;
                     }
-                    if ($config['db'] === 'pgsql' && false === ResourceFactory::pgsqlAvailable()) {
+                    if ($config['db'] === 'pgsql' && false === Platform::extensionLoaded('pgsql')) {
                         $this->addErrorMessage(
                             t('You need to install the php extension "pgsql" and the ' .
                               'Zend_Pdo_Pgsql classes to use  PostgreSQL database resources.')

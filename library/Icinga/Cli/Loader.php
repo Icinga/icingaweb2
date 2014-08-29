@@ -332,7 +332,8 @@ class Loader
     {
         if (! $this->hasModule($module)) {
             throw new ProgrammingError(
-                sprintf('There is no such module: %s', $module)
+                'There is no such module: %s',
+                $module
             );
         }
     }
@@ -341,7 +342,8 @@ class Loader
     {
         if (! $this->hasCommand($command)) {
             throw new ProgrammingError(
-                sprintf('There is no such command: %s', $command)
+                'There is no such command: %s',
+                $command
             );
         }
     }
@@ -351,7 +353,9 @@ class Loader
         $this->assertModuleExists($module);
         if (! $this->hasModuleCommand($module, $command)) {
             throw new ProgrammingError(
-                sprintf("The module '%s' has no such command: %s", $module, $command)
+                'The module \'%s\' has no such command: %s',
+                $module,
+                $command
             );
         }
     }

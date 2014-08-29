@@ -9,7 +9,7 @@ use Icinga\Web\Request;
 use Icinga\Form\ConfigForm;
 use Icinga\Web\Notification;
 use Icinga\Application\Config;
-use Icinga\Data\ResourceFactory;
+use Icinga\Application\Platform;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Form\Config\Authentication\DbBackendForm;
 use Icinga\Form\Config\Authentication\LdapBackendForm;
@@ -283,7 +283,7 @@ class AuthenticationBackendConfigForm extends ConfigForm
         if (isset($this->resources['db'])) {
             $backendTypes['db'] = t('Database');
         }
-        if (isset($this->resources['ldap']) && ($backendType === 'ldap' || ResourceFactory::ldapAvailable())) {
+        if (isset($this->resources['ldap']) && ($backendType === 'ldap' || Platform::extensionLoaded('ldap'))) {
             $backendTypes['ldap'] = 'LDAP';
         }
 

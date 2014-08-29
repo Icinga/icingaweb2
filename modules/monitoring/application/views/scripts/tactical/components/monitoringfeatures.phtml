@@ -17,7 +17,7 @@
                                 'monitoring/list/hosts',
                                 array('host_flap_detection_enabled' => 0)
                             ); ?>" class="feature-highlight">
-                                <?= sprintf('%d hosts disabled', $this->statusSummary->hosts_without_flap_detection); ?>
+                                <?= sprintf($this->translate('%d hosts disabled'), $this->statusSummary->hosts_without_flap_detection); ?>
                             </a>
 <?php else: ?>
                         <div class="box entry">
@@ -33,7 +33,7 @@
                                 'monitoring/list/hosts',
                                 array('host_is_flapping' => 1)
                             ); ?>" class="feature-highlight">
-                                <?= sprintf('%d hosts flapping', $this->statusSummary->hosts_flapping); ?>
+                                <?= sprintf($this->translate('%d hosts flapping'), $this->statusSummary->hosts_flapping); ?>
                             </a>
 <?php endif ?>
                         </div>
@@ -45,7 +45,7 @@
                                 'monitoring/list/services',
                                 array('service_flap_detection_enabled' => 0)
                             ); ?>" class="feature-highlight">
-                                <?= sprintf('%d services disabled', $this->statusSummary->services_without_flap_detection); ?>
+                                <?= sprintf($this->translate('%d services disabled'), $this->statusSummary->services_without_flap_detection); ?>
                             </a>
 <?php else: ?>
                         <div class="box entry">
@@ -61,7 +61,7 @@
                                 'monitoring/list/services',
                                 array('service_is_flapping' => 1)
                             ); ?>" class="feature-highlight">
-                                <?= sprintf('%d services flapping', $this->statusSummary->services_flapping); ?>
+                                <?= sprintf($this->translate('%d services flapping'), $this->statusSummary->services_flapping); ?>
                             </a>
 <?php endif ?>
                         </div>
@@ -84,7 +84,7 @@
                                 'monitoring/list/hosts',
                                 array('host_notifications_enabled' => 0)
                             ); ?>" class="feature-highlight">
-                                <?= sprintf('%d hosts disabled', $this->statusSummary->hosts_not_triggering_notifications); ?>
+                                <?= sprintf($this->translate('%d hosts disabled'), $this->statusSummary->hosts_not_triggering_notifications); ?>
                             </a>
 <?php else: ?>
                         <div class="box entry ">
@@ -104,7 +104,7 @@
                                 'monitoring/list/services',
                                 array('service_notifications_enabled' => 0)
                             ); ?>" class="feature-highlight">
-                                <?= sprintf('%d services disabled', $this->statusSummary->services_not_triggering_notifications); ?>
+                                <?= sprintf($this->translate('%d services disabled'), $this->statusSummary->services_not_triggering_notifications); ?>
                             </a>
 <?php else: ?>
                         <div class="box entry">
@@ -135,7 +135,7 @@
                                 'monitoring/list/hosts',
                                 array('host_event_handler_enabled' => 0)
                             ); ?>" class="feature-highlight">
-                                <?= sprintf('%d hosts disabled', $this->statusSummary->hosts_not_processing_event_handlers); ?>
+                                <?= sprintf($this->translate('%d hosts disabled'), $this->statusSummary->hosts_not_processing_event_handlers); ?>
                             </a>
 <?php else: ?>
                         <div class="box entry">
@@ -155,7 +155,7 @@
                                 'monitoring/list/services',
                                 array('service_event_handler_enabled' => 0)
                             ); ?>" class="feature-highlight">
-                                <?= sprintf('%d services disabled', $this->statusSummary->services_not_processing_event_handlers); ?>
+                                <?= sprintf($this->translate('%d services disabled'), $this->statusSummary->services_not_processing_event_handlers); ?>
                             </a>
 <?php else: ?>
                         <div class="box entry">

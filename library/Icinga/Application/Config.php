@@ -59,7 +59,7 @@ class Config extends Zend_Config
             $config->setConfigFile($filepath);
             $config->merge(new Zend_Config_Ini($filepath));
         } else {
-            throw new NotReadableError('Cannot read config file "' . $filepath . '". Permission denied');
+            throw new NotReadableError('Cannot read config file "%s". Permission denied', $filepath);
         }
 
         return $config;

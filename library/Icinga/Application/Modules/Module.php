@@ -5,6 +5,7 @@
 namespace Icinga\Application\Modules;
 
 use Exception;
+use Zend_Config;
 use Zend_Controller_Router_Route_Abstract;
 use Zend_Controller_Router_Route as Route;
 use Icinga\Application\ApplicationBootstrap;
@@ -13,9 +14,12 @@ use Icinga\Application\Icinga;
 use Icinga\Logger\Logger;
 use Icinga\Util\Translator;
 use Icinga\Web\Hook;
+use Icinga\Web\Menu;
 use Icinga\Web\Widget;
+use Icinga\Web\Widget\Dashboard\Pane;
 use Icinga\Util\File;
 use Icinga\Exception\ProgrammingError;
+use Icinga\Exception\IcingaException;
 
 /**
  * Module handling
@@ -136,7 +140,6 @@ class Module
      */
     private $app;
 
-
     /**
      * Routes to add to the route chain
      *
@@ -145,6 +148,75 @@ class Module
      * @see addRoute()
      */
     protected $routes = array();
+
+    /**
+     * A set of menu elements
+     *
+     * @var array
+     */
+    protected $menuItems = array();
+
+    /**
+     * A set of Pane elements
+     *
+     * @var array
+     */
+    protected $paneItems = array();
+
+    /**
+     * Get all Menu Items
+     *
+     * @return array
+     */
+    public function getPaneItems()
+    {
+        $this->launchConfigScript();
+        return $this->paneItems;
+    }
+
+    /**
+     * Add a pane to dashboard
+     *
+     * @param $id
+     * @param $name
+     * @return Pane
+     */
+    protected function dashboard($name)
+    {
+        $this->paneItems[$name] = new Pane($name);
+        return $this->paneItems[$name];
+    }
+
+    /**
+     * Get all Menu Items
+     *
+     * @return array
+     */
+    public function getMenuItems()
+    {
+        $this->launchConfigScript();
+        return $this->menuItems;
+    }
+
+    /**
+     * Add a menu Section to the Sidebar menu
+     *
+     * @param string $id
+     * @param string $name
+     * @param array $properties
+     * @return mixed
+     */
+    protected function menuSection($id, $name, array $properties = array())
+    {
+        if (array_key_exists($id, $this->menuItems)) {
+            $this->menuItems[$id]->setProperties($properties);
+        } else {
+            $this->menuItems[$id] = new Menu($id, new Zend_Config($properties));
+            $this->menuItems[$id]->setTitle($name);
+        }
+
+        return $this->menuItems[$id];
+    }
 
     /**
      * Create a new module object
@@ -559,8 +631,9 @@ class Module
     protected function providePermission($name, $description)
     {
         if ($this->providesPermission($name)) {
-            throw new Exception(
-                sprintf('Cannot provide permission "%s" twice', $name)
+            throw new IcingaException(
+                'Cannot provide permission "%s" twice',
+                $name
             );
         }
         $this->permissionList[$name] = (object) array(
@@ -580,8 +653,9 @@ class Module
     protected function provideRestriction($name, $description)
     {
         if ($this->providesRestriction($name)) {
-            throw new Exception(
-                sprintf('Cannot provide restriction "%s" twice', $name)
+            throw new IcingaException(
+                'Cannot provide restriction "%s" twice',
+                $name
             );
         }
         $this->restrictionList[$name] = (object) array(
@@ -780,5 +854,16 @@ class Module
     {
         $this->routes[$name] = $route;
         return $this;
+    }
+
+    /**
+     * Translate a string with the global mt()
+     *
+     * @param $string
+     * @return mixed|string
+     */
+    protected function translate($string)
+    {
+        return mt($this->name, $string);
     }
 }

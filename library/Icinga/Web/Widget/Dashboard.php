@@ -64,6 +64,46 @@ class Dashboard extends AbstractWidget
     }
 
     /**
+     * Load Pane items provided by all enabled modules
+     *
+     * @return  self
+     */
+    public static function load()
+    {
+        /** @var $dashboard Dashboard */
+        $dashboard = new static('dashboard');
+        $manager = Icinga::app()->getModuleManager();
+        foreach ($manager->getLoadedModules() as $module) {
+            /** @var $module \Icinga\Application\Modules\Module */
+            $dashboard->mergePanes($module->getPaneItems());
+
+        }
+        return $dashboard;
+    }
+
+    /**
+     * Merge panes with existing panes
+     *
+     * @param array $panes
+     * @return $this
+     */
+    public function mergePanes(array $panes)
+    {
+        /** @var $pane Pane  */
+        foreach ($panes as $pane) {
+            if (array_key_exists($pane->getName(), $this->panes)) {
+                /** @var $current Pane */
+                $current = $this->panes[$pane->getName()];
+                $current->addComponents($pane->getComponents());
+            } else {
+                $this->panes = array_filter(array_merge($this->panes, $panes));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
      * Return the tab object used to navigate through this dashboard
      *
      * @return Tabs
@@ -148,6 +188,16 @@ class Dashboard extends AbstractWidget
     }
 
     /**
+     * Checks if the current dashboard has any panes
+     *
+     * @return bool
+     */
+    public function hasPanes()
+    {
+        return ! empty($this->panes);
+    }
+
+    /**
      * Return true if a pane doesn't exist or doesn't have any components in it
      *
      * @param string $pane      The name of the pane to check for emptyness
@@ -224,7 +274,8 @@ class Dashboard extends AbstractWidget
     {
         if (! array_key_exists($name, $this->panes)) {
             throw new ProgrammingError(
-                sprintf('Trying to retrieve invalid dashboard pane "%s"', $name)
+                'Trying to retrieve invalid dashboard pane "%s"',
+                $name
             );
         }
         return $this->panes[$name];

@@ -125,9 +125,7 @@ class LdapBackendForm extends Form
 
         try {
             $ldapUserBackend = new LdapUserBackend(
-                ResourceFactory::createResource(
-                    ResourceFactory::getResourceConfig($element->getValue())
-                ),
+                ResourceFactory::create($element->getValue()),
                 $form->getElement('user_class')->getValue(),
                 $form->getElement('user_name_attribute')->getValue()
             );

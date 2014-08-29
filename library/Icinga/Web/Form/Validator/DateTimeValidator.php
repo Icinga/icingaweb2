@@ -4,9 +4,9 @@
 
 namespace Icinga\Web\Form\Validator;
 
-use \Icinga\Util\DateTimeFactory;
-use \Zend_Validate_Abstract;
-use \Icinga\Exception\ProgrammingError;
+use Icinga\Util\DateTimeFactory;
+use Zend_Validate_Abstract;
+use Icinga\Exception\ProgrammingError;
 
 /**
  * Validator that checks if a textfield contains a correct date format

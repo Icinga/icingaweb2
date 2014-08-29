@@ -4,7 +4,7 @@
 
 namespace Icinga\User\Preferences;
 
-use \Zend_Config;
+use Zend_Config;
 use Icinga\User;
 use Icinga\User\Preferences;
 use Icinga\Data\ResourceFactory;
@@ -127,7 +127,8 @@ abstract class PreferencesStore
         $storeClass = 'Icinga\\User\\Preferences\\Store\\' . $type . 'Store';
         if (!class_exists($storeClass)) {
             throw new ConfigurationError(
-                'Preferences configuration defines an invalid storage type. Storage type ' . $type . ' not found'
+                'Preferences configuration defines an invalid storage type. Storage type %s not found',
+                $type
             );
         }
 

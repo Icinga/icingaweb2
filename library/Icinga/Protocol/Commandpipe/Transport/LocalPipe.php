@@ -49,11 +49,9 @@ class LocalPipe implements Transport
             $file->fflush();
         } catch (Exception $e) {
             throw new ConfigurationError(
-                sprintf(
-                    'Could not open icinga command pipe at "%s" (%s)',
-                    $this->path,
-                    $e->getMessage()
-                )
+                'Could not open icinga command pipe at "%s" (%s)',
+                $this->path,
+                $e->getMessage()
             );
         }
 

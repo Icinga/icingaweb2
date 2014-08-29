@@ -72,12 +72,12 @@ class Parser
      */
     public function parseObjectsFile()
     {
-        $DEFINE = strlen("define ");
+        $DEFINE = strlen('define ');
         $this->icingaState = array();
         foreach ($this->file as $line) {
             $line = trim($line);
             $this->lineCtr++;
-            if ($line === "" || $line[0] === "#") {
+            if ($line === '' || $line[0] === '#') {
                 continue;
             }
             $this->currentObjectType = trim(substr($line, $DEFINE, -1));
@@ -103,13 +103,13 @@ class Parser
         }
 
         if (!$this->icingaState) {
-            throw new ProgrammingError("Tried to read runtime state without existing objects data");
+            throw new ProgrammingError('Tried to read runtime state without existing objects data');
         }
         $this->overwrites = array();
         foreach ($file as $line) {
             $line = trim($line);
             $this->lineCtr++;
-            if ($line === "" || $line[0] === "#") {
+            if ($line === '' || $line[0] === '#') {
                 continue;
             }
             $this->currentStateType = trim(substr($line, 0, -1));
@@ -133,16 +133,16 @@ class Parser
             }
 
             // End of object
-            if ($line[0] === "}") {
+            if ($line[0] === '}') {
                 $this->registerObject($monitoringObject);
                 return;
             }
             if (!isset($line[1])) {
-                $line[1] = "";
+                $line[1] = '';
             }
             $monitoringObject->{$line[0]} = trim($line[1]);
         }
-        throw new ParsingException("Unexpected EOF in objects.cache, line " . $this->lineCtr);
+        throw new ParsingException('Unexpected EOF in objects.cache, line ' . $this->lineCtr);
     }
 
     /**
@@ -156,7 +156,7 @@ class Parser
 
         $objectType = $this->getObjectTypeForState();
 
-        if ($objectType != "host" && $objectType != "service") {
+        if ($objectType != 'host' && $objectType != 'service') {
             $this->skipObject(); // ignore unknown objects
             return;
         }
@@ -170,7 +170,7 @@ class Parser
 
         if (!isset($base[$name])) {
             throw new ParsingException(
-                "Unknown object $name " . $this->currentObjectType . " - "
+                "Unknown object $name " . $this->currentObjectType . ' - '
                 . print_r(
                     $statusdatObject,
                     true
@@ -180,7 +180,7 @@ class Parser
         }
         $type = substr($this->currentStateType, strlen($objectType));
 
-        if ($type == "status") {
+        if ($type == 'status') {
             // directly set the status to the status field of the given object
             $base[$name]->status = & $statusdatObject;
         } else {
@@ -211,20 +211,20 @@ class Parser
      */
     private function getObjectTypeForState()
     {
-        $pos = strpos($this->currentStateType, "service");
+        $pos = strpos($this->currentStateType, 'service');
 
         if ($pos === false) {
-            $pos = strpos($this->currentStateType, "host");
+            $pos = strpos($this->currentStateType, 'host');
         } else {
-            $this->currentObjectType = "service";
-            return "service";
+            $this->currentObjectType = 'service';
+            return 'service';
         }
 
         if ($pos === false) {
             return $this->currentStateType;
         } else {
-            $this->currentObjectType = "host";
-            return "host";
+            $this->currentObjectType = 'host';
+            return 'host';
         }
 
         return $this->currentObjectType;
@@ -239,12 +239,12 @@ class Parser
     protected function skipObject($returnString = false)
     {
         if (!$returnString) {
-            while (trim($this->file->fgets()) !== "}") {
+            while (trim($this->file->fgets()) !== '}') {
             }
             return null;
         } else {
-            $str = "";
-            while (($val = trim($this->file->fgets())) !== "}") {
+            $str = '';
+            while (($val = trim($this->file->fgets())) !== '}') {
                 $str .= $val . "\n";
             }
             return $str;
@@ -280,9 +280,9 @@ class Parser
             || $this->currentObjectType == 'contact') {
             return null;
         }
-        $isService = strpos($this->currentObjectType, "service") !== false;
-        $isHost = strpos($this->currentObjectType, "host") !== false;
-        $isContact = strpos($this->currentObjectType, "contact") !== false;
+        $isService = strpos($this->currentObjectType, 'service') !== false;
+        $isHost = strpos($this->currentObjectType, 'host') !== false;
+        $isContact = strpos($this->currentObjectType, 'contact') !== false;
         $name = $this->getObjectIdentifier($object);
 
         if ($isService === false && $isHost === false && $isContact === false) {
@@ -291,14 +291,14 @@ class Parser
         }
         $property = $this->currentObjectType;
         if ($isService) {
-            $this->currentObjectType = "service";
-            $property = substr($property, strlen("service"));
+            $this->currentObjectType = 'service';
+            $property = substr($property, strlen('service'));
         } elseif ($isHost) {
-            $this->currentObjectType = "host";
-            $property = substr($property, strlen("host"));
+            $this->currentObjectType = 'host';
+            $property = substr($property, strlen('host'));
         } elseif ($isContact) {
-            $this->currentObjectType = "contact";
-            $property = substr($property, strlen("contact"));
+            $this->currentObjectType = 'contact';
+            $property = substr($property, strlen('contact'));
         }
 
         if (!isset($this->icingaState[$this->currentObjectType])) {
@@ -306,7 +306,7 @@ class Parser
         }
 
         // @TODO: Clean up, this differates between 1:n and 1:1 references
-        if (strpos($property, "group") !== false) {
+        if (strpos($property, 'group') !== false) {
             $sourceIdentifier = $this->getMembers($object);
             foreach ($sourceIdentifier as $id) {
                 $source = $this->icingaState[$this->currentObjectType][$id];
@@ -368,12 +368,12 @@ class Parser
             return array();
         }
 
-        $members = explode(",", $object->members);
+        $members = explode(',', $object->members);
 
-        if ($this->currentObjectType == "service") {
+        if ($this->currentObjectType == 'service') {
             $res = array();
             for ($i = 0; $i < count($members); $i += 2) {
-                $res[] = $members[$i] . ";" . $members[$i + 1];
+                $res[] = $members[$i] . ';' . $members[$i + 1];
             }
             return $res;
         } else {
@@ -394,15 +394,15 @@ class Parser
             return $object->contact_name;
         }
 
-        if ($this->currentObjectType == "service") {
-            return $object->host_name . ";" . $object->service_description;
+        if ($this->currentObjectType == 'service') {
+            return $object->host_name . ';' . $object->service_description;
         }
-        $name = $this->currentObjectType . "_name";
+        $name = $this->currentObjectType . '_name';
         if (isset($object->{$name})) {
             return $object->{$name};
         }
         if (isset($object->service_description)) {
-            return $object->host_name . ";" . $object->service_description;
+            return $object->host_name . ';' . $object->service_description;
         } elseif (isset($object->host_name)) {
             return $object->host_name;
         }

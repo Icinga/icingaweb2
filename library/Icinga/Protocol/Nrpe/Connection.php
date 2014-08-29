@@ -4,6 +4,8 @@
 
 namespace Icinga\Protocol\Nrpe;
 
+use Icinga\Exception\IcingaException;
+
 class Connection
 {
     protected $host;
@@ -47,11 +49,10 @@ class Connection
         // TODO: Check result checksum!
         $result = fread($conn, 8192);
         if ($result === false) {
-            throw new \Exception('CHECK_NRPE: Error receiving data from daemon.');
+            throw new IcingaException('CHECK_NRPE: Error receiving data from daemon.');
         } elseif (strlen($result) === 0) {
-            throw new \Exception(
-                'CHECK_NRPE: Received 0 bytes from daemon.'
-                . ' Check the remote server logs for error messages'
+            throw new IcingaException(
+                'CHECK_NRPE: Received 0 bytes from daemon. Check the remote server logs for error messages'
             );
         }
         // TODO: CHECK_NRPE: Receive underflow - only %d bytes received (%d expected)
@@ -80,7 +81,10 @@ class Connection
             $ctx
         );
         if (! $this->connection) {
-            throw new \Exception(sprintf('NRPE Connection failed: ' . $errstr));
+            throw new IcingaException(
+                'NRPE Connection failed: %s',
+                $errstr
+            );
         }
     }
 

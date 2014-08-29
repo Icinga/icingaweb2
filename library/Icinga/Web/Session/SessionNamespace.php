@@ -4,9 +4,10 @@
 
 namespace Icinga\Web\Session;
 
-use \Exception;
-use \ArrayIterator;
-use \IteratorAggregate;
+use Exception;
+use ArrayIterator;
+use Icinga\Exception\IcingaException;
+use IteratorAggregate;
 
 /**
  * Container for session values
@@ -76,7 +77,10 @@ class SessionNamespace implements IteratorAggregate
     public function __get($key)
     {
         if (!array_key_exists($key, $this->values)) {
-            throw new Exception('Cannot access non-existent session value "' . $key . '"');
+            throw new IcingaException(
+                'Cannot access non-existent session value "%s"',
+                $key
+            );
         }
 
         return $this->get($key);
@@ -178,7 +182,7 @@ class SessionNamespace implements IteratorAggregate
     public function write()
     {
         if (!$this->session) {
-            throw new Exception('Cannot save, session not set');
+            throw new IcingaException('Cannot save, session not set');
         }
 
         $this->session->write();

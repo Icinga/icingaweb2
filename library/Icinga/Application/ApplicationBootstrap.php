@@ -14,6 +14,7 @@ use Icinga\Exception\NotReadableError;
 use Icinga\Logger\Logger;
 use Icinga\Util\DateTimeFactory;
 use Icinga\Util\Translator;
+use Icinga\Exception\IcingaException;
 
 /**
  * This class bootstraps a thin Icinga application layer
@@ -332,7 +333,7 @@ abstract class ApplicationBootstrap
         try {
             $this->moduleManager->loadEnabledModules();
         } catch (NotReadableError $e) {
-            Logger::error(new Exception('Cannot load enabled modules. An exception was thrown:', 0, $e));
+            Logger::error(new IcingaException('Cannot load enabled modules. An exception was thrown:', $e));
         }
         return $this;
     }
@@ -369,7 +370,7 @@ abstract class ApplicationBootstrap
         try {
             $this->config = Config::app();
         } catch (NotReadableError $e) {
-            Logger::error(new Exception('Cannot load application configuration. An exception was thrown:', 0, $e));
+            Logger::error(new IcingaException('Cannot load application configuration. An exception was thrown:', $e));
             $this->config = new Zend_Config(array());
         }
         return $this;
@@ -417,7 +418,7 @@ abstract class ApplicationBootstrap
             ResourceFactory::setConfig($config);
         } catch (NotReadableError $e) {
             Logger::error(
-                new Exception('Cannot load resource configuration. An exception was thrown:', 0, $e)
+                new IcingaException('Cannot load resource configuration. An exception was thrown:', $e)
             );
         }
 

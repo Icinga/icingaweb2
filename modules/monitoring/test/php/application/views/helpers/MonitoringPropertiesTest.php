@@ -4,7 +4,7 @@
 
 namespace Test\Modules\Monitoring\Application\Views\Helpers;
 
-use \Zend_View_Helper_MonitoringProperties;
+use Zend_View_Helper_MonitoringProperties;
 use Icinga\Test\BaseTestCase;
 
 require_once realpath(BaseTestCase::$moduleDir . '/monitoring/application/views/helpers/MonitoringProperties.php');

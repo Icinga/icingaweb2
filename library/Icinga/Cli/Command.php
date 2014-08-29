@@ -10,6 +10,7 @@ use Icinga\Cli\Params;
 use Icinga\Application\Config;
 use Icinga\Application\ApplicationBootstrap as App;
 use Exception;
+use Icinga\Exception\IcingaException;
 
 abstract class Command
 {
@@ -123,7 +124,7 @@ abstract class Command
 
     public function fail($msg)
     {
-        throw new Exception($msg);
+        throw new IcingaException('%s', $msg);
     }
 
     public function getDefaultActionName()

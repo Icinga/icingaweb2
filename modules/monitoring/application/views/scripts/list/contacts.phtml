@@ -18,7 +18,7 @@ $contactHelper = $this->getHelper('ContactFlags');
     }
     foreach ($contacts as $contact): ?>
         <div class="contact">
-            <img src="<?= $this->href('/static/gravatar', array('email' => $contact->contact_email )) ?>" />
+            <img style="width: 60px; height: 60px;" src="<?= $this->href('/static/gravatar', array('email' => $contact->contact_email )) ?>" />
             <a href="<?= $this->href(
                 'monitoring/show/contact',
                 array('contact' => $contact->contact_name)
@@ -36,14 +36,18 @@ $contactHelper = $this->getHelper('ContactFlags');
             <?php endif; ?>
             <div style="clear: both;"></div>
             <div class="notification-periods">
+                <?php if ($contact->contact_notify_service_timeperiod): ?>
                 <div>
                     <?= t('Service notification period') ?>:
                     <?= $this->escape($contact->contact_notify_service_timeperiod) ?>
                 </div>
+                <?php endif; ?>
+                <?php if ($contact->contact_notify_host_timeperiod): ?>
                 <div>
                     <?= t('Host notification period') ?>:
                     <?= $this->escape($contact->contact_notify_host_timeperiod) ?>
                 </div>
+                <?php endif; ?>
             </div>
         </div>
     <?php

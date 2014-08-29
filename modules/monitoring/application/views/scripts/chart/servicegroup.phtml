@@ -1,6 +1,8 @@
 
-<div style="max-height:548px; margin:auto;">
-<?=
-$chart->render();
-?>
-</div>
+<?php if (! $this->compact) { ?>
+    <div class="svg-container-responsive">
+        <?= $chart->render(); ?>
+    </div>
+<?php } else { ?>
+    <?= $chart->render(); ?>
+<?php } ?>

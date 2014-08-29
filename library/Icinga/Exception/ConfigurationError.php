@@ -8,6 +8,6 @@ namespace Icinga\Exception;
  * Class ConfigurationError
  * @package Icinga\Exception
  */
-class ConfigurationError extends \RuntimeException
+class ConfigurationError extends IcingaException
 {
 }

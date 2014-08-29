@@ -696,6 +696,13 @@ file { '/etc/icingaweb':
   group     => 'apache'
 }
 
+file { '/etc/icingaweb/preferences':
+  ensure    => 'directory',
+  owner     => 'apache',
+  group     => 'apache',
+  require   => File['/etc/icingaweb']
+}
+
 file { '/etc/icingaweb/authentication.ini':
   source    => 'puppet:////vagrant/.vagrant-puppet/files/etc/icingaweb/authentication.ini',
   owner     => 'apache',
@@ -707,13 +714,6 @@ file { '/etc/icingaweb/config.ini':
   ensure    => file,
   owner     => 'apache',
   group     => 'apache',
-}
-
-file { '/etc/icingaweb/menu.ini':
-  source    => 'puppet:////vagrant/config/menu.ini',
-  owner     => 'apache',
-  group     => 'apache',
-  # replace   => false,
 }
 
 file { '/etc/icingaweb/resources.ini':
@@ -747,24 +747,6 @@ file { '/etc/icingaweb/modules/monitoring/instances.ini':
   group     => 'apache',
 }
 
-file { '/etc/icingaweb/modules/monitoring/menu.ini':
-  source    => 'puppet:////vagrant/config/modules/monitoring/menu.ini',
-  owner     => 'apache',
-  group     => 'apache',
-}
-
-file { '/etc/icingaweb/dashboard':
-  ensure    => 'directory',
-  owner     => 'apache',
-  group     => 'apache',
-}
-
-file { '/etc/icingaweb/dashboard/dashboard.ini':
-   source    => 'puppet:////vagrant/config/dashboard/dashboard.ini',
-   owner     => 'apache',
-   group     => 'apache',
-}
-
 # pear::package { 'deepend/Mockery':
 #  channel => 'pear.survivethedeepend.com'
 # }
@@ -791,16 +773,3 @@ file { '/etc/bash_completion.d/icingacli':
    mode      => 755,
    require   => Exec['install bash-completion']
 }
-
-file { '/etc/icingaweb/modules/doc/':
-  ensure    => 'directory',
-  owner     => 'apache',
-  group     => 'apache'
-}
-
-file { '/etc/icingaweb/modules/doc/menu.ini':
-  source    => 'puppet:////vagrant/config/modules/doc/menu.ini',
-  owner     => 'apache',
-  group     => 'apache',
-}
-

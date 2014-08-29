@@ -2,7 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use \Zend_View_Helper_FormElement;
+use Zend_View_Helper_FormElement;
 
 /**
  * Helper to generate a "datetime" element

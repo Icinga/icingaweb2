@@ -132,7 +132,7 @@ class RenderContext
      * @param   int $x  The relative x coordinate
      * @param   int $y  The relative y coordinate
      *
-     * @return  array   An x,y tupel containing absolute coordinates
+     * @return  array   An x,y tuple containing absolute coordinates
      * @see     RenderContext::toRelative
      */
     public function toAbsolute($x, $y)

@@ -19,6 +19,22 @@ use Icinga\Chart\Primitive\Canvas;
  */
 class SVGRenderer
 {
+    const X_ASPECT_RATIO_MIN = 'xMin';
+
+    const X_ASPECT_RATIO_MID = 'xMid';
+
+    const X_ASPECT_RATIO_MAX = 'xMax';
+
+    const Y_ASPECT_RATIO_MIN = 'YMin';
+
+    const Y_ASPECT_RATIO_MID = 'YMid';
+
+    const Y_ASPECT_RATIO_MAX = 'YMax';
+
+    const ASPECT_RATIO_PAD = 'meet';
+
+    const ASPECT_RATIO_CUTOFF = 'slice';
+
     /**
      * The XML-document
      *
@@ -55,6 +71,35 @@ class SVGRenderer
     private $height = 100;
 
     /**
+     * Whether the aspect ratio is preversed
+     *
+     * @var bool
+     */
+    private $preserveAspectRatio = false;
+
+    /**
+     * Horizontal alignment of SVG element
+     *
+     * @var string
+     */
+    private $xAspectRatio = self::X_ASPECT_RATIO_MID;
+
+    /**
+     * Vertical alignment of SVG element
+     *
+     * @var string
+     */
+    private $yAspectRatio = self::Y_ASPECT_RATIO_MID;
+
+    /**
+     * Define whether aspect differences should be handled using padding (default) or cutoff
+     *
+     * @var string
+     */
+    private $xFillMode = "meet";
+
+
+    /**
      * Create the root document and the SVG root node
      */
     private function createRootDocument()
@@ -82,8 +127,8 @@ class SVGRenderer
         $svg = $this->document->createElement('svg');
         $svg->setAttribute('xmlns', 'http://www.w3.org/2000/svg');
         $svg->setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
-        $svg->setAttribute('width', $this->width . '%');
-        $svg->setAttribute('height', $this->height . '%');
+        $svg->setAttribute('width', '100%');
+        $svg->setAttribute('height', '100%');
         $svg->setAttribute(
             'viewBox',
             sprintf(
@@ -92,6 +137,17 @@ class SVGRenderer
                 $ctx->getNrOfUnitsY()
             )
         );
+        if ($this->preserveAspectRatio) {
+            $svg->setAttribute(
+                'preserveAspectRatio',
+                sprintf (
+                    '%s%s %s',
+                    $this->xAspectRatio,
+                    $this->yAspectRatio,
+                    $this->xFillMode
+                )
+            );
+        }
         return $svg;
     }
 
@@ -140,5 +196,41 @@ class SVGRenderer
     public function getCanvas()
     {
         return $this->rootCanvas;
+    }
+
+    /**
+     * Preserve the aspect ratio of the rendered object
+     *
+     * Do not deform the content of the SVG when the aspect ratio of the viewBox
+     * differs from the aspect ratio of the SVG element, but add padding or cutoff
+     * instead
+     *
+     * @param bool $preserve    Whether the aspect ratio should be preserved
+     */
+    public function preserveAspectRatio($preserve = true)
+    {
+        $this->preserveAspectRatio = $preserve;
+    }
+
+    /**
+     * Change the horizontal alignment of the SVG element
+     *
+     * Change the horizontal alignment of the svg, when preserveAspectRatio is used and
+     * padding is present. Defaults to
+     */
+    public function setXAspectRatioAlignment($alignment)
+    {
+        $this->xAspectRatio = $alignment;
+    }
+
+    /**
+     * Change the vertical alignment of the SVG element
+     *
+     * Change the vertical alignment of the svg, when preserveAspectRatio is used and
+     * padding is present.
+     */
+    public function setYAspectRatioAlignment($alignment)
+    {
+        $this->yAspectRatio = $alignment;
     }
 }

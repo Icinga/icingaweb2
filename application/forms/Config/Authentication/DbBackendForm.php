@@ -105,10 +105,7 @@ class DbBackendForm extends Form
         $element = $form->getElement('resource');
 
         try {
-            $testConnection = ResourceFactory::createResource(
-                ResourceFactory::getResourceConfig($element->getValue())
-            );
-            $dbUserBackend = new DbUserBackend($testConnection);
+            $dbUserBackend = new DbUserBackend(ResourceFactory::create($element->getValue()));
             if ($dbUserBackend->count() < 1) {
                 $element->addError(t('No users found under the specified database backend'));
                 return false;

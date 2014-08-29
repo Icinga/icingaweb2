@@ -138,7 +138,10 @@ abstract class Command
      */
     public function getHostgroupCommand($hostgroup)
     {
-        throw new ProgrammingError(get_class($this) . ' does not provide a hostgroup command');
+        throw new ProgrammingError(
+            '%s does not provide a hostgroup command',
+            get_class($this)
+        );
     }
 
     /**
@@ -150,7 +153,10 @@ abstract class Command
      */
     public function getServicegroupCommand($servicegroup)
     {
-        throw new ProgrammingError(get_class($this) . ' does not provide a servicegroup command');
+        throw new ProgrammingError(
+            '%s does not provide a servicegroup command',
+            get_class($this)
+        );
     }
 
     /**
@@ -163,6 +169,9 @@ abstract class Command
      */
     public function getGlobalCommand($instance = null)
     {
-        throw new ProgrammingError(getclass($this) . ' does not provide a global command');
+        throw new ProgrammingError(
+            '%s does not provide a global command',
+            getclass($this)
+        );
     }
 }

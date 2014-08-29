@@ -81,7 +81,10 @@ class Logger
     {
         $class = 'Icinga\\Logger\\Writer\\' . ucfirst(strtolower($config->type)) . 'Writer';
         if (!class_exists($class)) {
-            throw new ConfigurationError('Cannot find log writer of type "' . $config->type . '"');
+            throw new ConfigurationError(
+                'Cannot find log writer of type "%s"',
+                $config->type
+            );
         }
 
         return new $class($config);

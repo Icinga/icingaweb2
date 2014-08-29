@@ -18,8 +18,9 @@ class LayoutController extends ActionController
      */
     public function menuAction()
     {
+        $this->_helper->layout()->disableLayout();
         $this->view->menuRenderer = new MenuRenderer(
-            Menu::fromConfig()->order(), Url::fromRequest()->without('renderLayout')->getRelativeUrl()
+            Menu::load(), Url::fromRequest()->without('renderLayout')->getRelativeUrl()
         );
     }
 
@@ -30,11 +31,11 @@ class LayoutController extends ActionController
     {
         $topbarHtmlParts = array();
 
-        /** @var Hook\Layout\TopBar $hook */
+        /** @var Hook\TopBarHook $hook */
         $hook = null;
 
         foreach (Hook::all('TopBar') as $hook) {
-            $topbarHtmlParts[] = $hook->getHtml($this->getRequest(), $this->view);
+            $topbarHtmlParts[] = $hook->getHtml($this->getRequest());
         }
 
         $this->view->topbarHtmlParts = $topbarHtmlParts;
