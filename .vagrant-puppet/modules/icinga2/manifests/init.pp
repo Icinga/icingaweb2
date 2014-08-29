@@ -16,4 +16,6 @@ class icinga2 {
     ensure => latest,
     require => Class['icinga-packages'],
   }
+
+  icinga2::feature { [ 'statusdata', 'command', 'compatlog' ]: }
 }
