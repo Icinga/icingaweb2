@@ -88,7 +88,7 @@ ul.tree li {
 }
 
 ul.tree li .handle {
-  background-image: url('../img/tree/tree-minus.gif'); 
+  background-image: url('../img/tree/tree-minus.gif');
   background-repeat: no-repeat;
   display: inline-block;
   position: absolute;
@@ -101,7 +101,7 @@ ul.tree li .handle {
 }
 
 ul.tree li.collapsed > .handle {
-  background-image: url('../img/tree/tree-plus.gif'); 
+  background-image: url('../img/tree/tree-plus.gif');
 }
 
 ul.tree li.collapsed > ul {
@@ -110,7 +110,7 @@ ul.tree li.collapsed > ul {
 
 ul.tree li::before, ul.tree li::after {
   content: '';
-  position: absolute; 
+  position: absolute;
   right: auto;
   left: -0.2em;
   border-color: #aaa;
@@ -122,7 +122,7 @@ ul.tree li::before, ul.tree li::after {
 ul.tree li::before {
   border-left-width: 1px;
   top: 0;
-  width: 1em; 
+  width: 1em;
   height: 100%;
   bottom: 1em;
 }
@@ -175,6 +175,7 @@ ul.tree li a.error:hover {
 }
 
 /* charts should grow as much as possible but never beyond the current viewport's size */
-div.chart {
-  height: 90vh;
+.svg-container-responsive {
+  padding: 1.5em;
+  height: 80vh;
 }

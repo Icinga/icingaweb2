@@ -32,7 +32,7 @@ class PieSlice extends Animatable implements Drawable
      *
      * @var float
      */
-    private $endRadian= 0;
+    private $endRadian = 0;
 
     /**
      * The x position of the pie slice's center
@@ -159,7 +159,7 @@ class PieSlice extends Animatable implements Drawable
         // Draw the handle
         $path = new Path(array($midX, $midY));
 
-        $midX += ($addOffset + $r/1.8) * ($midRadius > M_PI ? -1 : 1);
+        $midX += ($addOffset + $r/3) * ($midRadius > M_PI ? -1 : 1);
         $path->append(array($midX, $midY))->toAbsolute();
 
         $midX += intval($r/2 * sin(M_PI/9)) * ($midRadius > M_PI ? -1 : 1);
@@ -176,7 +176,7 @@ class PieSlice extends Animatable implements Drawable
 
         // Draw the text box
         $text = new Text($rel[0]+1.5, $rel[1], $this->caption);
-        $text->setFontSize('2.5em');
+        $text->setFontSize('5em');
         $text->setAlignment(($midRadius > M_PI ? Text::ALIGN_END : Text::ALIGN_START));
 
         $group->appendChild($path->toSvg($ctx));
