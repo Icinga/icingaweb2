@@ -89,6 +89,17 @@ class DbQuery extends SimpleQuery
     public function getSelectQuery()
     {
         $select = $this->dbSelect();
+
+        // Add order fields to select for postgres distinct queries (#6351)
+        if ($this->hasOrder()
+            && $this->getDatasource()->getDbType() === 'pgsql'
+            && $select->getPart(Zend_Db_Select::DISTINCT) === true) {
+            foreach ($this->getOrder() as $fieldAndDirection) {
+                list($alias, $field) = explode('.', $fieldAndDirection[0]);
+                $this->columns[$field] = $fieldAndDirection[0];
+            }
+        }
+
         $select->columns($this->columns);
         $this->applyFilterSql($select);
 
@@ -102,6 +113,7 @@ class DbQuery extends SimpleQuery
                 );
             }
         }
+
         return $select;
     }
 
