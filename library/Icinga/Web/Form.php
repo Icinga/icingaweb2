@@ -263,7 +263,7 @@ class Form extends Zend_Form
      *
      * @param   Request     $request    The valid request used to process this form
      *
-     * @return  bool                    Whether any redirection should take place
+     * @return  null|bool               Return FALSE in case no redirect should take place
      */
     public function onSuccess(Request $request)
     {
@@ -403,8 +403,8 @@ class Form extends Zend_Form
         $formData = $this->getRequestData($request);
         if ($this->wasSent($formData)) {
             $this->populate($formData); // Necessary to get isSubmitted() to work
-            if ($this->isSubmitted() || ! $this->getSubmitLabel()) {
-                if ($this->isValid($formData) && $this->onSuccess($request)) {
+            if (! $this->getSubmitLabel() || $this->isSubmitted()) {
+                if ($this->isValid($formData) && false !== $this->onSuccess($request)) {
                     $this->getResponse()->redirectAndExit($this->getRedirectUrl());
                 }
             } else {
