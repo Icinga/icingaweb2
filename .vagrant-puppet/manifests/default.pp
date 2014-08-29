@@ -4,7 +4,7 @@ include pgsql
 include openldap
 
 include profile::icingaweb2
-include profile::nodejs
+include nodejs
 include profile::icinga2-dev
 
 Exec { path => '/bin:/usr/bin:/sbin:/usr/sbin' }

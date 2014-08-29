@@ -1,4 +1,4 @@
-class profile::nodejs {
+class nodejs {
   include epel
 
   exec { 'install nodejs':
