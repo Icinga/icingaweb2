@@ -5,17 +5,17 @@
 namespace Icinga\Form\Config\Authentication;
 
 use Exception;
+use Icinga\Web\Form;
 use Icinga\Data\ResourceFactory;
-use Icinga\Exception\ConfigurationError;
 use Icinga\Authentication\Backend\LdapUserBackend;
 
 /**
- * Form for adding or modifying LDAP authentication backends
+ * Form class for adding/modifying LDAP authentication backends
  */
-class LdapBackendForm extends BaseBackendForm
+class LdapBackendForm extends Form
 {
     /**
-     * The available ldap resources prepared to be used as select input data
+     * The ldap resource names the user can choose from
      *
      * @var array
      */
@@ -23,28 +23,23 @@ class LdapBackendForm extends BaseBackendForm
 
     /**
      * Initialize this form
-     *
-     * Populates $this->resources.
-     *
-     * @throws  ConfigurationError  In case no database resources can be found
      */
     public function init()
     {
-        $this->setName('form_config_authentication_ldap');
-        $this->setSubmitLabel(t('Save Changes'));
+        $this->setName('form_config_authbackend_ldap');
+    }
 
-        $ldapResources = array_keys(
-            ResourceFactory::getResourceConfigs('ldap')->toArray()
-        );
-
-        if (empty($ldapResources)) {
-            throw new ConfigurationError(
-                t('There are no LDAP resources')
-            );
-        }
-
-        // array_combine() is necessary in order to use the array as select input data
-        $this->resources = array_combine($ldapResources, $ldapResources);
+    /**
+     * Set the resource names the user can choose from
+     *
+     * @param   array   $resources      The resources to choose from
+     *
+     * @return  self
+     */
+    public function setResources(array $resources)
+    {
+        $this->resources = $resources;
+        return $this;
     }
 
     /**
@@ -69,7 +64,9 @@ class LdapBackendForm extends BaseBackendForm
                     'required'      => true,
                     'label'         => t('LDAP Resource'),
                     'helptext'      => t('The resource to use for authenticating with this provider'),
-                    'multiOptions'  => $this->resources
+                    'multiOptions'  => false === empty($this->resources)
+                        ? array_combine($this->resources, $this->resources)
+                        : array()
                 )
             ),
             $this->createElement(
@@ -104,33 +101,39 @@ class LdapBackendForm extends BaseBackendForm
     }
 
     /**
-     * Validate the current configuration by connecting to a backend and requesting the user count
+     * Validate that the selected resource is a valid ldap authentication backend
      *
-     * @return  bool    Whether validation succeeded or not
-     *
-     * @see BaseBackendForm::isValidAuthenticationBacken()
+     * @see Form::onSuccess()
      */
-    public function isValidAuthenticationBackend()
+    public function onSuccess(Request $request)
     {
-        if (false === ResourceFactory::ldapAvailable()) {
-            // It should be possible to run icingaweb without the php ldap extension. When the user
-            // tries to create an ldap backend without ldap being installed we display an error.
-            $this->addErrorMessage(t('Using ldap is not possible, the php extension "ldap" is not installed.'));
+        if (false === $this->isValidAuthenticationBackend($this)) {
             return false;
         }
+    }
+
+    /**
+     * Validate the configuration by creating a backend and requesting the user count
+     *
+     * @param   Form    $form   The form to fetch the configuration values from
+     *
+     * @return  bool            Whether validation succeeded or not
+     */
+    public function isValidAuthenticationBackend(Form $form)
+    {
+        $element = $form->getElement('resource');
 
         try {
-            $backend = ResourceFactory::createResource(
-                ResourceFactory::getResourceConfig($this->getValue('resource'))
+            $ldapUserBackend = new LdapUserBackend(
+                ResourceFactory::createResource(
+                    ResourceFactory::getResourceConfig($element->getValue())
+                ),
+                $form->getElement('user_class')->getValue(),
+                $form->getElement('user_name_attribute')->getValue()
             );
-            $testConn = new LdapUserBackend(
-                $backend,
-                $this->getValue('user_class'),
-                $this->getValue('user_name_attribute')
-            );
-            $testConn->assertAuthenticationPossible();
-        } catch (Exception $exc) {
-            $this->addErrorMessage(sprintf(t('Connection validation failed: %s'), $exc->getMessage()));
+            $ldapUserBackend->assertAuthenticationPossible();
+        } catch (Exception $e) {
+            $element->addError(sprintf(t('Connection validation failed: %s'), $e->getMessage()));
             return false;
         }
 

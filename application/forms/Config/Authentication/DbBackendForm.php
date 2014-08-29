@@ -5,17 +5,18 @@
 namespace Icinga\Form\Config\Authentication;
 
 use Exception;
+use Icinga\Web\Form;
+use Icinga\Web\Request;
 use Icinga\Data\ResourceFactory;
-use Icinga\Exception\ConfigurationError;
 use Icinga\Authentication\Backend\DbUserBackend;
 
 /**
  * Form class for adding/modifying database authentication backends
  */
-class DbBackendForm extends BaseBackendForm
+class DbBackendForm extends Form
 {
     /**
-     * The available database resources prepared to be used as select input data
+     * The database resource names the user can choose from
      *
      * @var array
      */
@@ -23,28 +24,23 @@ class DbBackendForm extends BaseBackendForm
 
     /**
      * Initialize this form
-     *
-     * Populates $this->resources.
-     *
-     * @throws  ConfigurationError  In case no database resources can be found
      */
     public function init()
     {
-        $this->setName('form_config_authentication_db');
-        $this->setSubmitLabel(t('Save Changes'));
+        $this->setName('form_config_authbackend_db');
+    }
 
-        $dbResources = array_keys(
-            ResourceFactory::getResourceConfigs('db')->toArray()
-        );
-
-        if (empty($dbResources)) {
-            throw new ConfigurationError(
-                t('There are no database resources')
-            );
-        }
-
-        // array_combine() is necessary in order to use the array as select input data
-        $this->resources = array_combine($dbResources, $dbResources);
+    /**
+     * Set the resource names the user can choose from
+     *
+     * @param   array   $resources      The resources to choose from
+     *
+     * @return  self
+     */
+    public function setResources(array $resources)
+    {
+        $this->resources = $resources;
+        return $this;
     }
 
     /**
@@ -69,7 +65,9 @@ class DbBackendForm extends BaseBackendForm
                     'required'      => true,
                     'label'         => t('Database Connection'),
                     'helptext'      => t('The database connection to use for authenticating with this provider'),
-                    'multiOptions'  => $this->resources
+                    'multiOptions'  => false === empty($this->resources)
+                        ? array_combine($this->resources, $this->resources)
+                        : array()
                 )
             ),
             $this->createElement(
@@ -84,25 +82,39 @@ class DbBackendForm extends BaseBackendForm
     }
 
     /**
-     * Validate the current configuration by creating a backend and requesting the user count
+     * Validate that the selected resource is a valid database authentication backend
      *
-     * @return  bool    Whether validation succeeded or not
-     *
-     * @see BaseBackendForm::isValidAuthenticationBackend()
+     * @see Form::onSuccess()
      */
-    public function isValidAuthenticationBackend()
+    public function onSuccess(Request $request)
     {
+        if (false === $this->isValidAuthenticationBackend($this)) {
+            return false;
+        }
+    }
+
+    /**
+     * Validate the configuration by creating a backend and requesting the user count
+     *
+     * @param   Form    $form   The form to fetch the configuration values from
+     *
+     * @return  bool            Whether validation succeeded or not
+     */
+    public function isValidAuthenticationBackend(Form $form)
+    {
+        $element = $form->getElement('resource');
+
         try {
-            $testConnection = ResourceFactory::createResource(ResourceFactory::getResourceConfig(
-                $this->getValue('resource')
-            ));
+            $testConnection = ResourceFactory::createResource(
+                ResourceFactory::getResourceConfig($element->getValue())
+            );
             $dbUserBackend = new DbUserBackend($testConnection);
             if ($dbUserBackend->count() < 1) {
-                $this->addErrorMessage(t('No users found under the specified database backend'));
+                $element->addError(t('No users found under the specified database backend'));
                 return false;
             }
         } catch (Exception $e) {
-            $this->addErrorMessage(sprintf(t('Using the specified backend failed: %s'), $e->getMessage()));
+            $element->addError(sprintf(t('Using the specified backend failed: %s'), $e->getMessage()));
             return false;
         }
 

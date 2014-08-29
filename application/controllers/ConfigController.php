@@ -6,19 +6,16 @@ use Icinga\Web\Controller\BaseConfigController;
 use Icinga\Web\Widget\AlertMessageBox;
 use Icinga\Web\Notification;
 use Icinga\Application\Modules\Module;
-use Icinga\Web\Form;
 use Icinga\Web\Widget;
 use Icinga\Application\Icinga;
 use Icinga\Application\Config as IcingaConfig;
 use Icinga\Form\Config\GeneralForm;
-use Icinga\Form\Config\Authentication\LdapBackendForm;
-use Icinga\Form\Config\Authentication\DbBackendForm;
-use Icinga\Form\Config\Authentication\AutologinBackendForm;
+use Icinga\Form\Config\AuthenticationBackendReorderForm;
+use Icinga\Form\Config\AuthenticationBackendConfigForm;
 use Icinga\Form\Config\ResourceForm;
-use Icinga\Form\Config\LoggingForm;
 use Icinga\Form\Config\ConfirmRemovalForm;
 use Icinga\Config\PreservingIniWriter;
-use Icinga\Exception\ConfigurationError;
+use Icinga\Data\ResourceFactory;
 
 
 /**
@@ -142,47 +139,17 @@ class ConfigController extends BaseConfigController
     }
 
     /**
-     * Action for reordering authentication backends
+     * Action for listing and reordering authentication backends
      */
     public function authenticationAction()
     {
-        $this->view->messageBox = new AlertMessageBox(true);
+        $form = new AuthenticationBackendReorderForm();
+        $form->setConfig(IcingaConfig::app('authentication'));
+        $form->handleRequest();
+
+        $this->view->form = $form;
         $this->view->tabs->activate('authentication');
-
-        $config = IcingaConfig::app('authentication');
-        $backendOrder = array_keys($config->toArray());
-        $form = new Form();
-        $form->setName('form_reorder_authbackend');
-        $request = $this->getRequest();
-        if ($request->isPost()) {
-            $requestData = $request->getPost();
-            if ($form->isValid($requestData)) { // Validate the CSRF token
-                $reordered = false;
-                foreach ($backendOrder as $backendName) {
-                    if (isset($requestData[$backendName])) {
-                        array_splice($backendOrder, array_search($backendName, $backendOrder), 1);
-                        array_splice($backendOrder, $requestData[$backendName], 0, $backendName);
-                        $reordered = true;
-                        break;
-                    }
-                }
-
-                if ($reordered) {
-                    $reorderedConfig = array();
-                    foreach ($backendOrder as $backendName) {
-                        $reorderedConfig[$backendName] = $config->{$backendName};
-                    }
-
-                    if ($this->writeAuthenticationFile($reorderedConfig)) {
-                        Notification::success($this->translate('Authentication order updated!'));
-                        $this->redirectNow('config/authentication');
-                    }
-                }
-            }
-        }
-
-        $this->view->form = $form->create(); // Necessary in case its a GET request
-        $this->view->backendNames = $backendOrder;
+        $this->render('authentication/reorder');
     }
 
     /**
@@ -190,172 +157,66 @@ class ConfigController extends BaseConfigController
      */
     public function createauthenticationbackendAction()
     {
-        $this->view->messageBox = new AlertMessageBox(true);
-        $this->view->tabs->activate('authentication');
+        $form = new AuthenticationBackendConfigForm();
+        $form->setConfig(IcingaConfig::app('authentication'));
+        $form->setResourceConfig(ResourceFactory::getResourceConfigs());
+        $form->setRedirectUrl('config/authentication');
+        $form->handleRequest();
 
-        $backendType = $this->getRequest()->getParam('type');
-        $authenticationConfig = IcingaConfig::app('authentication')->toArray();
-        try {
-            switch ($backendType) {
-                case 'ldap':
-                    $form = new LdapBackendForm();
-                    break;
-                case 'db':
-                    $form = new DbBackendForm();
-                    break;
-                case 'autologin':
-                    foreach ($authenticationConfig as $ac) {
-                        if (array_key_exists('backend', $ac) && $ac['backend'] === 'autologin') {
-                            throw new ConfigurationError(
-                                $this->translate('An autologin backend already exists')
-                            );
-                        }
-                    }
-                    $form = new AutologinBackendForm();
-                    break;
-                default:
-                    $this->addErrorMessage(sprintf(
-                        $this->translate('There is no backend type `%s\''),
-                        $backendType
-                    ));
-                    $this->redirectNow('config/configurationerror');
-            }
-        } catch (ConfigurationError $e) {
-            $this->addErrorMessage($e->getMessage());
-            $this->redirectNow('config/configurationerror');
-        }
-
-        $request = $this->getRequest();
-        if ($request->isPost() && $form->isValid($request->getPost())) {
-            list($backendName, $backendConfig) = $form->getBackendConfig();
-            if (isset($authenticationConfig[$backendName])) {
-                $this->addErrorMessage(
-                    $this->translate('Backend name already exists')
-                );
-            } else {
-                $authenticationConfig[$backendName] = $backendConfig;
-                if ($this->writeConfigFile($authenticationConfig, 'authentication')) {
-                    $this->addSuccessMessage(
-                        $this->translate('Backend Modification Written.')
-                    );
-                    $this->redirectNow('config/authentication');
-                }
-            }
-        }
-
-        $this->view->messageBox->addForm($form);
         $this->view->form = $form;
+        $this->view->tabs->activate('authentication');
         $this->render('authentication/create');
     }
 
-
     /**
-     *  Form for editing backends
-     *
-     *  Mostly the same like the createAuthenticationBackendAction, but with additional checks for backend existence
-     *  and form population
+     * Action for editing authentication backends
      */
     public function editauthenticationbackendAction()
     {
-        $this->view->messageBox = new AlertMessageBox(true);
+        $form = new AuthenticationBackendConfigForm();
+        $form->setConfig(IcingaConfig::app('authentication'));
+        $form->setResourceConfig(ResourceFactory::getResourceConfigs());
+        $form->setRedirectUrl('config/authentication');
+        $form->handleRequest();
 
-        $configArray = IcingaConfig::app('authentication', true)->toArray();
-        $authBackend =  $this->getParam('auth_backend');
-        if (false === isset($configArray[$authBackend])) {
-            $this->addErrorMessage(
-                $this->translate('Can\'t edit: Unknown Authentication Backend Provided')
-            );
-            $this->redirectNow('config/configurationerror');
-        }
-
-        if (false === array_key_exists('backend', $configArray[$authBackend])) {
-            $this->addErrorMessage(sprintf(
-                $this->translate('Backend "%s" has no `backend\' setting'),
-                $authBackend
-            ));
-            $this->redirectNow('config/configurationerror');
-        }
-        $type = $configArray[$authBackend]['backend'];
-        switch ($type) {
-            case 'ldap':
-                $form = new LdapBackendForm();
-                break;
-            case 'db':
-                $form = new DbBackendForm();
-                break;
-            case 'autologin':
-                $form = new AutologinBackendForm();
-                break;
-            default:
-                $this->addErrorMessage(sprintf(
-                    $this->translate('Can\'t edit: backend type "%s" of given resource not supported.'),
-                    $type
-                ));
-                $this->redirectNow('config/configurationerror');
-        }
-
-        $request = $this->getRequest();
-        if ($request->isPost()) {
-            if ($form->isValid($request->getPost())) {
-                list($backendName, $backendConfig) = $form->getBackendConfig();
-                $configArray[$backendName] = $backendConfig;
-                if ($backendName != $authBackend) {
-                    unset($configArray[$authBackend]);
-                }
-                if ($this->writeAuthenticationFile($configArray)) {
-                    // redirect to overview with success message
-                    Notification::success(sprintf(
-                        $this->translate('Backend "%s" saved'),
-                        $backendName
-                    ));
-                    $this->redirectNow('config/authentication');
-                }
-                return;
-            }
-        } else {
-            $form->setBackendConfig($authBackend, $configArray[$authBackend]);
-        }
-
-        $this->view->messageBox->addForm($form);
-        $this->view->name = $authBackend;
         $this->view->form = $form;
+        $this->view->tabs->activate('authentication');
         $this->render('authentication/modify');
     }
 
     /**
-     * Action for removing a backend from the authentication list.
-     *
-     * Redirects to the overview after removal is finished
+     * Action for removing a backend from the authentication list
      */
     public function removeauthenticationbackendAction()
     {
-        $this->view->messageBox = new AlertMessageBox(true);
+        $form = new ConfirmRemovalForm(array(
+            'onSuccess' => function ($request) {
+                $configForm = new AuthenticationBackendConfigForm();
+                $configForm->setConfig(IcingaConfig::app('authentication'));
+                $authBackend = $request->getQuery('auth_backend');
 
-        $configArray = IcingaConfig::app('authentication', true)->toArray();
-        $authBackend =  $this->getParam('auth_backend');
-        if (false === array_key_exists($authBackend, $configArray)) {
-            $this->addErrorMessage(
-                $this->translate('Can\'t perform removal: Unknown authentication backend provided')
-            );
-            $this->redirectNow('config/configurationerror');
-        }
+                try {
+                    $configForm->remove($authBackend);
+                } catch (InvalidArgumentException $e) {
+                    Notification::error($e->getMessage());
+                    return;
+                }
 
-        $form = new ConfirmRemovalForm();
-        $request = $this->getRequest();
-
-        if ($request->isPost() && $form->isValid($request->getPost())) {
-            unset($configArray[$authBackend]);
-            if ($this->writeAuthenticationFile($configArray)) {
-                Notification::success(sprintf(
-                    $this->translate('Authentication Backend "%s" Removed'),
-                    $authBackend
-                ));
-                $this->redirectNow('config/authentication');
+                if ($configForm->save()) {
+                    Notification::success(sprintf(
+                        t('Authentication backend "%s" has been successfully removed'),
+                        $authBackend
+                    ));
+                } else {
+                    return false;
+                }
             }
-        }
+        ));
+        $form->setRedirectUrl('config/authentication');
+        $form->handleRequest();
 
         $this->view->form = $form;
-        $this->view->name = $authBackend;
+        $this->view->tabs->activate('authentication');
         $this->render('authentication/remove');
     }
 
