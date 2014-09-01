@@ -17,7 +17,7 @@ $casperjsVersion = '1.0.2'
 
 class { [
   'icinga-mysql',
-  'profile::icinga-pgsql' ]:
+  'icinga-pgsql' ]:
   icingaVersion => $icingaVersion,
 }
 

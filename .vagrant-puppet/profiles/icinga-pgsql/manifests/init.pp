@@ -1,4 +1,4 @@
-class profile::icinga-pgsql ($icingaVersion) {
+class icinga-pgsql ($icingaVersion) {
   cmmi { 'icinga-pgsql':
     url     => "https://github.com/Icinga/icinga-core/releases/download/v${icingaVersion}/icinga-${icingaVersion}.tar.gz",
     output  => "icinga-${icingaVersion}.tar.gz",
