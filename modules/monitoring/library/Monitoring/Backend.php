@@ -69,35 +69,30 @@ class Backend implements Selectable, Queryable, ConnectionInterface
      */
     public static function createBackend($backendName = null)
     {
-        $allBackends = array();
-        $defaultBackend = null;
-        foreach (IcingaConfig::module('monitoring', 'backends') as $name => $config) {
-            if (!(bool) $config->get('disabled', false) && $defaultBackend === null) {
-                $defaultBackend = $config;
-                if ($backendName === null) {
-                    $backendName = $name;
-                }
-            }
-            $allBackends[$name] = $config;
+        $config = IcingaConfig::module('monitoring', 'backends');
+        if ($config->count() === 0) {
+            throw new ConfigurationError(t('No backend has been configured'));
         }
-        if (empty($allBackends)) {
-            throw new ConfigurationError('No backend has been configured');
-        }
-        if ($defaultBackend === null) {
-            throw new ConfigurationError('All backends are disabled');
-        }
-        if ($backendName === null) {
-            $backendConfig = $defaultBackend;
-        } else {
-            if (!array_key_exists($backendName, $allBackends)) {
+        if ($backendName !== null) {
+            $backendConfig = $config->get($backendName);
+            if ($backendConfig === null) {
                 throw new ConfigurationError('No configuration for backend %s', $backendName);
             }
-            $backendConfig = $allBackends[$backendName];
-            if ((bool) $backendConfig->get('disabled', false)) {
+            if ((bool) $backendConfig->get('disabled', false) === true) {
                 throw new ConfigurationError(
-                    'Configuration for backend %s available but backend is disabled',
+                    t('Configuration for backend %s available but backend is disabled'),
                     $backendName
                 );
+            }
+        } else {
+            foreach ($config as $name => $backendConfig) {
+                if ((bool) $config->get('disabled', false) === false) {
+                    $backendName = $name;
+                    break;
+                }
+            }
+            if ($backendName === null) {
+                throw new ConfigurationError(t('All backends are disabled'));
             }
         }
         $resource = ResourceFactory::create($backendConfig->resource);
