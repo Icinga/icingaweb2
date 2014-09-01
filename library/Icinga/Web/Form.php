@@ -370,7 +370,15 @@ class Form extends Zend_Form
                 if ($el->getAttrib('autosubmit')) {
                     // Need to add this decorator first or it interferes with the other's two HTML otherwise
                     $el->addDecorator(new NoScriptApply()); // Non-JS environments
-                    $el->setAttrib('class', 'autosubmit'); // JS environments
+                    $class = $el->getAttrib('class');
+                    if (is_array($class)) {
+                        $class[] = 'autosubmit';
+                    } elseif ($class === null) {
+                        $class = 'autosubmit';
+                    } else {
+                        $class .= ' autosubmit';
+                    }
+                    $el->setAttrib('class', $class); // JS environments
                     unset($el->autosubmit);
                 }
 
@@ -577,8 +585,8 @@ class Form extends Zend_Form
         if (! $name) {
             $name = get_class($this);
             $this->setName($name);
+            $name = parent::getName();
         }
-
         return $name;
     }
 
