@@ -7,12 +7,8 @@ class icinga2 {
     require => Package['icinga2']
   }
 
-  package { 'icinga2':
-    ensure => latest,
-    require => Class['icinga-packages'],
-  }
-
-  package { 'icinga2-doc':
+  package { [
+    'icinga2', 'icinga2-doc', 'icinga2-debuginfo' ]:
     ensure => latest,
     require => Class['icinga-packages'],
   }
