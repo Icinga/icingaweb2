@@ -5,7 +5,7 @@
 use Icinga\Config\PreservingIniWriter;
 use Icinga\Web\Controller\ModuleActionController;
 use Icinga\Web\Notification;
-use Icinga\Form\Config\ConfirmRemovalForm;
+use Icinga\Form\ConfirmRemovalForm;
 use Icinga\Module\Monitoring\Form\Config\BackendForm;
 use Icinga\Module\Monitoring\Form\Config\InstanceForm;
 use Icinga\Module\Monitoring\Form\Config\SecurityForm;

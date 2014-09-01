@@ -13,7 +13,7 @@ use Icinga\Form\Config\GeneralForm;
 use Icinga\Form\Config\AuthenticationBackendReorderForm;
 use Icinga\Form\Config\AuthenticationBackendConfigForm;
 use Icinga\Form\Config\ResourceForm;
-use Icinga\Form\Config\ConfirmRemovalForm;
+use Icinga\Form\ConfirmRemovalForm;
 use Icinga\Config\PreservingIniWriter;
 use Icinga\Data\ResourceFactory;
 
