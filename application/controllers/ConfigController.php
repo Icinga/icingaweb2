@@ -9,7 +9,7 @@ use Icinga\Application\Modules\Module;
 use Icinga\Web\Widget;
 use Icinga\Application\Icinga;
 use Icinga\Application\Config as IcingaConfig;
-use Icinga\Form\Config\GeneralForm;
+use Icinga\Form\Config\GeneralConfigForm;
 use Icinga\Form\Config\AuthenticationBackendReorderForm;
 use Icinga\Form\Config\AuthenticationBackendConfigForm;
 use Icinga\Form\Config\ResourceForm;
@@ -47,23 +47,12 @@ class ConfigController extends BaseConfigController
      */
     public function indexAction()
     {
-        $this->view->messageBox = new AlertMessageBox(true);
-        $this->view->tabs->activate('index');
-
-        $form = new GeneralForm();
-        $request = $this->getRequest();
-        if ($request->isPost()) {
-            if ($form->isValid($request->getPost())) {
-                if ($this->writeConfigFile($form->getConfiguration(), 'config')) {
-                    Notification::success($this->translate('New configuration has successfully been stored'));
-                    $this->redirectNow('config');
-                }
-            }
-        } else {
-            $form->setConfiguration(IcingaConfig::app());
-        }
+        $form = new GeneralConfigForm();
+        $form->setConfig(IcingaConfig::app());
+        $form->handleRequest();
 
         $this->view->form = $form;
+        $this->view->tabs->activate('index');
     }
 
     /**

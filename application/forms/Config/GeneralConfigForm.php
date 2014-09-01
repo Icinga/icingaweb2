@@ -1,0 +1,76 @@
+<?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
+
+namespace Icinga\Form\Config;
+
+use Icinga\Web\Request;
+use Icinga\Web\Notification;
+use Icinga\Form\ConfigForm;
+use Icinga\Form\Config\General\LoggingConfigForm;
+use Icinga\Form\Config\General\ApplicationConfigForm;
+
+/**
+ * Form class for application-wide and logging specific settings
+ */
+class GeneralConfigForm extends ConfigForm
+{
+    /**
+     * Initialize this configuration form
+     */
+    public function init()
+    {
+        $this->setName('form_config_general');
+        $this->setSubmitLabel(t('Save Changes'));
+    }
+
+    /**
+     * @see Form::createElements()
+     */
+    public function createElements(array $formData)
+    {
+        $appConfigForm = new ApplicationConfigForm();
+        $loggingConfigForm = new LoggingConfigForm();
+
+        return array_merge(
+            $appConfigForm->createElements($formData),
+            $loggingConfigForm->createElements($formData)
+        );
+    }
+
+    /**
+     * @see Form::onSuccess()
+     */
+    public function onSuccess(Request $request)
+    {
+        foreach ($this->getValues() as $sectionAndPropertyName => $value) {
+            list($section, $property) = explode('_', $sectionAndPropertyName);
+            if (isset($this->config->{$section})) {
+                $this->config->{$section}->{$property} = $value;
+            } else {
+                $this->config->{$section} = array($property => $value);
+            }
+        }
+
+        if ($this->save()) {
+            Notification::success(t('New configuration has successfully been stored'));
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @see Form::onShow()
+     */
+    public function onShow(Request $request)
+    {
+        $values = array();
+        foreach ($this->config as $section => $properties) {
+            foreach ($properties as $name => $value) {
+                $values[$section . '_' . $name] = $value;
+            }
+        }
+
+        $this->populate($values);
+    }
+}
