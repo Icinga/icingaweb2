@@ -74,6 +74,9 @@ class Backend implements Selectable, Queryable, ConnectionInterface
         foreach (IcingaConfig::module('monitoring', 'backends') as $name => $config) {
             if (!(bool) $config->get('disabled', false) && $defaultBackend === null) {
                 $defaultBackend = $config;
+                if ($backendName === null) {
+                    $backendName = $name;
+                }
             }
             $allBackends[$name] = $config;
         }
