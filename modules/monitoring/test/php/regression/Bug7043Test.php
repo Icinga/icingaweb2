@@ -2,30 +2,49 @@
 
 namespace Tests\Icinga\Module\Monitoring\Regression;
 
-use Icinga\Data\ResourceFactory;
+// Necessary as some of these tests disable phpunit's preservation
+// of the global state (e.g. autoloaders are in the global state)
+require_once realpath(dirname(__FILE__) . '/../../../../../test/php/bootstrap.php');
+
+use Icinga\Application\Config;
 use Icinga\Module\Monitoring\Backend;
 use Icinga\Test\BaseTestCase;
+use Mockery;
+use Zend_Config;
 
-class Bug7043 extends BaseTestCase
+class Bug7043Test extends BaseTestCase
 {
+    public function tearDown()
+    {
+        parent::tearDown();
+        Mockery::close(); // Necessary because some tests run in a separate process
+    }
+
+    /**
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     */
     public function testBackendDefaultName()
     {
-        $config = new \Zend_Config(array(
-            'ido' => array(
-                'type' => 'db',
-                'db'        => 'mysql',
-                'host'      => 'localhost',
-                'port'      => '3306',
-                'password'  => 'icinga',
-                'username'  => 'icinga',
-                'dbname'    => 'icinga'
-            )
-        ));
+        Mockery::mock('alias:Icinga\Data\ResourceFactory')
+            ->shouldReceive('create')
+            ->andReturn(
+                Mockery::mock('Icinga\Data\Db\DbConnection')
+                    ->shouldReceive('getDbType')
+                    ->andReturn('mysql')
+                    ->shouldReceive('setTablePrefix')
+                    ->getMock()
+            );
 
-        ResourceFactory::setConfig($config);
+        Config::setModuleConfig('monitoring', 'backends', new Zend_Config(array(
+            'backendName' => array(
+                'type'      => 'ido',
+                'resource'  => 'ido'
+            )
+        )));
 
         $defaultBackend = Backend::createBackend();
 
-        $this->assertNotNull($defaultBackend->getName(), 'Default backend has a name property set');
+        $this->assertEquals('backendName', $defaultBackend->getName(), 'Default backend has name set');
     }
 }
