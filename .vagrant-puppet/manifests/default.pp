@@ -3,7 +3,7 @@ include mysql
 include pgsql
 include openldap
 
-include profile::icingaweb2
+include icingaweb2
 include nodejs
 include profile::icinga2-dev
 
