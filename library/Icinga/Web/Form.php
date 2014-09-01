@@ -585,8 +585,8 @@ class Form extends Zend_Form
         if (! $name) {
             $name = get_class($this);
             $this->setName($name);
+            $name = parent::getName();
         }
-
         return $name;
     }
 
