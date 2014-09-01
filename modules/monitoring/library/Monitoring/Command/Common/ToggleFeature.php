@@ -7,7 +7,7 @@ namespace Icinga\Module\Monitoring\Command\Common;
 use Icinga\Module\Monitoring\Command\IcingaCommand;
 
 /**
- * Enable/disable features of the monitoring host
+ * Enable/disable features of an Icinga instance
  */
 abstract class ToggleFeature extends IcingaCommand
 {
@@ -21,7 +21,7 @@ abstract class ToggleFeature extends IcingaCommand
     /**
      * Enable the feature
      *
-     * @return self
+     * @return $this
      */
     public function enable()
     {
@@ -32,7 +32,7 @@ abstract class ToggleFeature extends IcingaCommand
     /**
      * Disable the feature
      *
-     * @return self
+     * @return $this
      */
     public function disable()
     {
