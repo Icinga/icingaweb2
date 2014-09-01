@@ -487,10 +487,10 @@ class StatusQuery extends IdoQuery
     {
         $sub = '(SELECT'
             . ' lc.object_id,'
-            . " CASE WHEN lc.entry_type = 1 THEN CONCAT('[' || c.author_name || '] ' || c.comment_data) ELSE NULL END AS last_comment_data,"
-            . " CASE WHEN lc.entry_type = 2 THEN CONCAT('[' || c.author_name || '] ' || c.comment_data) ELSE NULL END AS last_downtime_data,"
-            . " CASE WHEN lc.entry_type = 3 THEN CONCAT('[' || c.author_name || '] ' || c.comment_data) ELSE NULL END AS last_flapping_data,"
-            . " CASE WHEN lc.entry_type = 4 THEN CONCAT('[' || c.author_name || '] ' || c.comment_data) ELSE NULL END AS last_ack_data"
+            . " CASE WHEN lc.entry_type = 1 THEN '[' || c.author_name || '] ' || c.comment_data ELSE NULL END AS last_comment_data,"
+            . " CASE WHEN lc.entry_type = 2 THEN '[' || c.author_name || '] ' || c.comment_data ELSE NULL END AS last_downtime_data,"
+            . " CASE WHEN lc.entry_type = 3 THEN '[' || c.author_name || '] ' || c.comment_data ELSE NULL END AS last_flapping_data,"
+            . " CASE WHEN lc.entry_type = 4 THEN '[' || c.author_name || '] ' || c.comment_data ELSE NULL END AS last_ack_data"
             . ' FROM icinga_comments c'
             . ' JOIN (SELECT'
             . ' MAX(comment_id) as comment_id,'
@@ -499,7 +499,8 @@ class StatusQuery extends IdoQuery
 	        . ' FROM icinga_comments'
             . ' WHERE entry_type = 1 OR entry_type = 4'
 	        . ' GROUP BY object_id, entry_type'
-            . ') lc ON lc.comment_id = c.comment_id GROUP BY lc.object_id)';
+            . ') lc ON lc.comment_id = c.comment_id'
+            . ' GROUP BY lc.object_id, lc.entry_type, c.author_name, c.comment_data)';
         return new Zend_Db_Expr($sub);
     }
 
