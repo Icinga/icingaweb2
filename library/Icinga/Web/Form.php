@@ -28,7 +28,7 @@ class Form extends Zend_Form
     /**
      * The callback to call instead of Form::onSuccess()
      *
-     * @var Closure
+     * @var Callback
      */
     protected $onSuccess;
 
@@ -79,8 +79,8 @@ class Form extends Zend_Form
     /**
      * Create a new form
      *
-     * Accepts an additional option `onSuccess' which is a
-     * callback that is called instead of this form's method.
+     * Accepts an additional option `onSuccess' which is a callback that is called instead of this
+     * form's method. It is called using the following signature: (Request $request, Form $form).
      *
      * @see Zend_Form::__construct()
      *
@@ -457,7 +457,7 @@ class Form extends Zend_Form
             $this->populate($formData); // Necessary to get isSubmitted() to work
             if (! $this->getSubmitLabel() || $this->isSubmitted()) {
                 if ($this->isValid($formData)
-                    && (($this->onSuccess !== null && false !== call_user_func($this->onSuccess, $request))
+                    && (($this->onSuccess !== null && false !== call_user_func($this->onSuccess, $request, $this))
                         || ($this->onSuccess === null && false !== $this->onSuccess($request)))) {
                     $this->getResponse()->redirectAndExit($this->getRedirectUrl());
                 }
