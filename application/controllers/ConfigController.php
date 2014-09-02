@@ -13,7 +13,6 @@ use Icinga\Form\Config\AuthenticationBackendReorderForm;
 use Icinga\Form\Config\AuthenticationBackendConfigForm;
 use Icinga\Form\Config\ResourceConfigForm;
 use Icinga\Form\ConfirmRemovalForm;
-use Icinga\Config\PreservingIniWriter;
 use Icinga\Data\ResourceFactory;
 
 
@@ -291,63 +290,5 @@ class ConfigController extends ActionController
 
         $this->view->form = $form;
         $this->render('resource/remove');
-    }
-
-    /**
-     * Redirect target only for error-states
-     *
-     * When an error is opened in the side-pane, redirecting this request to the index or the overview will look
-     * weird. This action returns a clear page containing only an AlertMessageBox.
-     */
-    public function configurationerrorAction()
-    {
-        $this->render('error/error', null, true);
-    }
-
-    /**
-     * Write changes to an authentication file
-     *
-     * @param   array $config The configuration changes
-     *
-     * @return  bool True when persisting succeeded, otherwise false
-     *
-     * @see     writeConfigFile()
-     */
-    private function writeAuthenticationFile($config) {
-        return $this->writeConfigFile($config, 'authentication');
-    }
-
-    /**
-     * Write changes to a configuration file $file, using the supplied writer or PreservingIniWriter if none is set
-     *
-     * @param   array|Zend_Config   $config The configuration to write
-     * @param   string              $file   The filename to write to (without .ini)
-     * @param   Zend_Config_Writer  $writer An optional writer to use for persisting changes
-     *
-     * @return  bool True when persisting succeeded, otherwise false
-     */
-    private function writeConfigFile($config, $file, $writer = null)
-    {
-        if (is_array($config)) {
-            $config = new Zend_Config($config);
-        }
-        if ($writer === null) {
-            $writer = new PreservingIniWriter(
-                array(
-                    'config' => $config,
-                    'filename' => IcingaConfig::app($file)->getConfigFile()
-                )
-            );
-        }
-        try {
-            $writer->write();
-            return true;
-        } catch (Exception $exc) {
-            $this->view->exceptionMessage = $exc->getMessage();
-            $this->view->iniConfigurationString = $writer->render();
-            $this->view->file = $file;
-            $this->render('show-configuration');
-            return false;
-        }
     }
 }
