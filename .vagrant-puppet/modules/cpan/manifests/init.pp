@@ -36,8 +36,10 @@ define cpan(
 
   file { '/root/.cpan/CPAN/MyConfig.pm':
     content => template('cpan/MyConfig.pm.erb'),
-    require => [ Package['perl-CPAN'],
-                 File[[ '/root/.cpan/', '/root/.cpan/CPAN/' ]] ]
+    require => [
+      Package['perl-CPAN'],
+      File[[ '/root/.cpan/', '/root/.cpan/CPAN/' ]]
+    ]
   }
 
   exec { "cpan-${name}":
