@@ -2,7 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Module\Monitoring\Form\Command\Instance;
+namespace Icinga\Module\Monitoring\Form\Command;
 
 use Icinga\Module\Monitoring\Backend;
 use Icinga\Module\Monitoring\Command\Transport\CommandTransport;
@@ -10,9 +10,9 @@ use Icinga\Web\Form;
 use Icinga\Web\Request;
 
 /**
- * Base class for forms that handle program-wide commands
+ * Base class for command forms
  */
-abstract class InstanceCommandForm extends Form
+abstract class CommandForm extends Form
 {
     /**
      * Monitoring backend
