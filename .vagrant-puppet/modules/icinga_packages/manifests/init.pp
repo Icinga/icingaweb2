@@ -1,3 +1,11 @@
+# Class: icinga_packages
+#
+#   This class adds the YUM repository for the Icinga packages.
+#
+# Sample Usage:
+#
+#   include icinga_packages
+#
 class icinga_packages {
   yumrepo { 'icinga_packages':
     baseurl   => 'http://packages.icinga.org/epel/6/snapshot/',
