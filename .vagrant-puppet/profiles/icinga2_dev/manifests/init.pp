@@ -1,5 +1,17 @@
+# Class: icinga2_dev
+#
+#   This class installs Icinga 2 w/ MySQL and provides Icinga 2 test configuration.
+#
+# Requires:
+#
+#   icinga2_mysql
+#   icinga2::config
+#
+# Sample Usage:
+#
+#   include icinga2_dev
+#
 class icinga2_dev {
-  include icinga2
   include icinga2_mysql
 
   icinga2::config { [
