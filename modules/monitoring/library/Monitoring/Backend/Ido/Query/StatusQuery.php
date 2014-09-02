@@ -278,20 +278,41 @@ class StatusQuery extends IdoQuery
                     ELSE 0
                 END'
         ),
+
         'serviceproblemsummary' => array(
             'host_unhandled_services' => 'sps.unhandled_services_count'
         ),
-        'lasthostcomment' => array(
-            'host_last_comment'  => 'hlc.last_comment_data',
-            'host_last_downtime' => 'hlc.last_downtime_data',
-            'host_last_flapping' => 'hlc.last_flapping_data',
-            'host_last_ack'      => 'hlc.last_ack_data',
+
+        'lasthostcommentgeneric' => array(
+            'host_last_comment' => 'hlcg.last_comment_data'
         ),
-        'lastservicecomment' => array(
-            'service_last_comment'  => 'slc.last_comment_data',
-            'service_last_downtime' => 'slc.last_downtime_data',
-            'service_last_flapping' => 'slc.last_flapping_data',
-            'service_last_ack'      => 'slc.last_ack_data',
+
+        'lasthostcommentdowntime' => array(
+            'host_last_downtime' => 'hlcd.last_downtime_data'
+        ),
+
+        'lasthostcommentflapping' => array(
+            'host_last_flapping' => 'hlcf.last_flapping_data'
+        ),
+
+        'lasthostcommentack' => array(
+            'host_last_ack' => 'hlca.last_ack_data'
+        ),
+
+        'lastservicecommentgeneric' => array(
+            'service_last_comment' => 'slcg.last_comment_data'
+        ),
+
+        'lastservicecommentdowntime' => array(
+            'service_last_downtime' => 'slcd.last_downtime_data'
+        ),
+
+        'lastservicecommentflapping' => array(
+            'service_last_flapping' => 'slcf.last_flapping_data'
+        ),
+
+        'lastservicecommentack' => array(
+            'service_last_ack' => 'slca.last_ack_data'
         )
     );
 
@@ -483,42 +504,116 @@ class StatusQuery extends IdoQuery
         );
     }
 
-    protected function getLastCommentSubQuery()
+    /**
+     * Create a subquery to join comments into status query
+     * @param   int     $entryType
+     * @param   string  $fieldName
+     * @return  Zend_Db_Expr
+     */
+    protected function getLastCommentSubQuery($entryType, $fieldName)
     {
         $sub = '(SELECT'
-            . ' lc.object_id,'
-            . " CASE WHEN lc.entry_type = 1 THEN '[' || c.author_name || '] ' || c.comment_data ELSE NULL END AS last_comment_data,"
-            . " CASE WHEN lc.entry_type = 2 THEN '[' || c.author_name || '] ' || c.comment_data ELSE NULL END AS last_downtime_data,"
-            . " CASE WHEN lc.entry_type = 3 THEN '[' || c.author_name || '] ' || c.comment_data ELSE NULL END AS last_flapping_data,"
-            . " CASE WHEN lc.entry_type = 4 THEN '[' || c.author_name || '] ' || c.comment_data ELSE NULL END AS last_ack_data"
+            . ' c.object_id,'
+            . " '[' || c.author_name || '] ' || c.comment_data AS $fieldName"
             . ' FROM icinga_comments c'
-            . ' JOIN (SELECT'
-            . ' MAX(comment_id) as comment_id,'
-            . ' object_id,'
-            . ' entry_type'
-	        . ' FROM icinga_comments'
-            . ' WHERE entry_type = 1 OR entry_type = 4'
-	        . ' GROUP BY object_id, entry_type'
-            . ') lc ON lc.comment_id = c.comment_id'
-            . ' GROUP BY lc.object_id, lc.entry_type, c.author_name, c.comment_data)';
+            . ' WHERE c.entry_type = ' . $entryType
+            . ' ORDER BY c.comment_id DESC LIMIT 1)';
+
         return new Zend_Db_Expr($sub);
     }
 
-    protected function joinLasthostcomment()
+    /**
+     * Join last host comment
+     */
+    protected function joinLasthostcommentgeneric()
     {
         $this->select->joinLeft(
-            array('hlc' => $this->getLastCommentSubQuery()),
-            'hlc.object_id = hs.host_object_id',
+            array('hlcg' => $this->getLastCommentSubQuery(1, 'last_comment_data')),
+            'hlcg.object_id = hs.host_object_id',
             array()
         );
     }
 
-    // TODO: Terribly slow. As I have no idea of how to fix this we should remove it.
-    protected function joinLastservicecomment()
+    /**
+     * Join last host downtime comment
+     */
+    protected function joinLasthostcommentdowntime()
     {
         $this->select->joinLeft(
-            array('slc' => $this->getLastCommentSubQuery()),
-            'slc.object_id = ss.service_object_id',
+            array('hlcd' => $this->getLastCommentSubQuery(2, 'last_downtime_data')),
+            'hlcg.object_id = hs.host_object_id',
+            array()
+        );
+    }
+
+    /**
+     * Join last host flapping comment
+     */
+    protected function joinLastHostcommentflapping()
+    {
+        $this->select->joinLeft(
+            array('hlcf' => $this->getLastCommentSubQuery(3, 'last_flapping_data')),
+            'hlcg.object_id = hs.host_object_id',
+            array()
+        );
+    }
+
+    /**
+     * Join last host acknowledgement comment
+     */
+    protected function joinLasthostcommentack()
+    {
+        $this->select->joinLeft(
+            array('hlca' => $this->getLastCommentSubQuery(4, 'last_ack_data')),
+            'hlca.object_id = hs.host_object_id',
+            array()
+        );
+    }
+
+    /**
+     * Join last service comment
+     */
+    protected function joinLastservicecommentgeneric()
+    {
+        $this->select->joinLeft(
+            array('slcg' => $this->getLastCommentSubQuery(1, 'last_comment_data')),
+            'slcg.object_id = ss.service_object_id',
+            array()
+        );
+    }
+
+    /**
+     * Join last service downtime comment
+     */
+    protected function joinLastservicecommentdowntime()
+    {
+        $this->select->joinLeft(
+            array('slcd' => $this->getLastCommentSubQuery(2, 'last_downtime_data')),
+            'slcd.object_id = ss.service_object_id',
+            array()
+        );
+    }
+
+    /**
+     * Join last service flapping comment
+     */
+    protected function joinLastservicecommentflapping()
+    {
+        $this->select->joinLeft(
+            array('slcf' => $this->getLastCommentSubQuery(3, 'last_flapping_data')),
+            'slcf.object_id = ss.service_object_id',
+            array()
+        );
+    }
+
+    /**
+     * Join last service acknowledgement comment
+     */
+    protected function joinLastservicecommentack()
+    {
+        $this->select->joinLeft(
+            array('slca' => $this->getLastCommentSubQuery(4, 'last_ack_data')),
+            'slca.object_id = ss.service_object_id',
             array()
         );
     }
