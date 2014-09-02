@@ -486,7 +486,7 @@ msgstr "Die Objekt-Klasse welche benutzt wird, um Benutzer auf diesem LDAP-Serve
 
 #: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:182
 msgid "The password to use for authentication"
-msgstr "Das Kennwort welche zur Authentifizierung benutzt werden soll"
+msgstr "Das Kennwort welches zur Authentifizierung benutzt werden soll"
 
 #: /usr/local/src/bugfix.master/application/forms/Config/ResourceForm.php:270
 msgid "The password to use for querying the ldap server"
