@@ -202,7 +202,7 @@ class AuthenticationBackendConfigForm extends ConfigForm
         if (($el = $this->getElement('force_creation')) === null || false === $el->isChecked()) {
             $backendForm = $this->getBackendForm($this->getElement('type')->getValue());
             if (false === $backendForm->isValidAuthenticationBackend($this)) {
-                $this->addForceCreationCheckbox();
+                $this->addElement($this->getForceCreationCheckbox());
                 return false;
             }
         }
@@ -255,12 +255,14 @@ class AuthenticationBackendConfigForm extends ConfigForm
     }
 
     /**
-     * Add a checkbox to be displayed at the beginning of the form
+     * Return a checkbox to be displayed at the beginning of the form
      * which allows the user to skip the connection validation
+     *
+     * @return  Zend_Form_Element
      */
-    protected function addForceCreationCheckbox()
+    protected function getForceCreationCheckbox()
     {
-        $this->addElement(
+        return $this->createElement(
             'checkbox',
             'force_creation',
             array(
@@ -297,7 +299,8 @@ class AuthenticationBackendConfigForm extends ConfigForm
             $backendTypes['autologin'] = t('Autologin');
         }
 
-        $typeSelection = $this->createElement(
+        $elements = array();
+        $elements[] = $this->createElement(
             'select',
             'type',
             array(
@@ -310,9 +313,11 @@ class AuthenticationBackendConfigForm extends ConfigForm
             )
         );
 
-        return array_merge(
-            array($typeSelection),
-            $this->getBackendForm($backendType)->createElements($formData)
-        );
+        if (isset($formData['force_creation']) && $formData['force_creation']) {
+            // In case another error occured and the checkbox was displayed before
+            $elements[] = $this->getForceCreationCheckbox();
+        }
+
+        return array_merge($elements, $this->getBackendForm($backendType)->createElements($formData));
     }
 }
