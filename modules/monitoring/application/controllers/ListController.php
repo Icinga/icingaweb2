@@ -34,8 +34,21 @@ class Monitoring_ListController extends Controller
 
     protected function hasBetterUrl()
     {
+        $request = $this->getRequest();
         $url = clone($this->url);
+
         if ($this->getRequest()->isPost()) {
+
+            if ($request->getPost('sort')) {
+                $url->setParam('sort', $request->getPost('sort'));
+                if ($request->getPost('dir')) {
+                    $url->setParam('dir', $request->getPost('dir'));
+                } else {
+                    $url->removeParam('dir');
+                }
+                return $url;
+            }
+
             $q = $this->getRequest()->getPost('q');
         } else {
             $q = $url->shift('q');
