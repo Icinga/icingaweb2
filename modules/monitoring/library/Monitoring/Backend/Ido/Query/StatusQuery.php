@@ -41,7 +41,7 @@ class StatusQuery extends IdoQuery
             'host_next_check'             => 'CASE hs.should_be_scheduled WHEN 1 THEN UNIX_TIMESTAMP(hs.next_check) ELSE NULL END',
             'host_check_execution_time'   => 'hs.execution_time',
             'host_check_latency'          => 'hs.latency',
-            'host_problem'                => 'CASE WHEN hs.current_state = 0 THEN 0 ELSE 1 END',
+            'host_problem'                => 'CASE WHEN COALESCE(hs.current_state, 0) = 0 THEN 0 ELSE 1 END',
 
             'host_notifications_enabled'  => 'hs.notifications_enabled',
 
