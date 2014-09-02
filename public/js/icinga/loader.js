@@ -665,7 +665,11 @@
             var self = this;
             var containerId = $container.attr('id');
             if (typeof containerId !== 'undefined') {
-                scrollPos = $container.scrollTop();
+                if (autorefresh) {
+                    scrollPos = $container.scrollTop();
+                } else {
+                    scrollPos = 0;
+                }
             }
 
             var origFocus = document.activeElement;
