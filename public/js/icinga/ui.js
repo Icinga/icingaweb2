@@ -10,6 +10,9 @@
 
     'use strict';
 
+    // The currently hovered tooltip
+    var tooltip = null;
+
     // Stores the icinga-data-url of the last focused table.
     var focusedTableDataUrl = null;
 
@@ -767,7 +770,6 @@
             this.debugTimer = null;
             this.timeCounterTimer = null;
         }
-
     };
 
 }(Icinga, jQuery));

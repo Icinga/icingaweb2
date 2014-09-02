@@ -109,6 +109,62 @@
             if (searchField.length && searchField.val().length) {
                 this.searchValue = searchField.val();
             }
+
+            $('[title]').each(function () {
+                var $el = $(this);
+                $el.attr('title', $el.attr('title-rich') || $el.attr('title'));
+                // $el.attr('title', null);
+            });
+
+            $('svg rect.chart-data[title]', el).tipsy({ gravity: 'e', html: true });
+            $('.historycolorgrid a[title]', el).tipsy({ gravity: 's', offset: 2 });
+            $('img.icon[title]', el).tipsy({ gravity: $.fn.tipsy.autoNS, offset: 2 });
+            $('[title]', el).tipsy({ gravity: $.fn.tipsy.autoNS, delayIn: 500 });
+
+            // Rescue or remove all orphaned tooltips
+            $('.tipsy').each(function () {
+                function isElementInDOM(ele) {
+                    while (ele = ele.parentNode) {
+                        if (ele == document) return true;
+                    }
+                    return false;
+                };
+
+                var arrow = $('.tipsy-arrow', this)[0];
+                if (!icinga.utils.elementsOverlap(arrow, $('#main')[0])) {
+                    $(this).remove();
+                    return;
+                }
+                // all tooltips are direct children of the body
+                // so we need find out whether the tooltip belongs applied area,
+                // by checking if both areas overlap
+                if (!icinga.utils.elementsOverlap(arrow, el)) {
+                    // tooltip does not belong to this area
+                    return;
+                }
+
+                var pointee = $.data(this, 'tipsy-pointee');
+                if (!pointee || !isElementInDOM(pointee)) {
+                    var orphan = this;
+                    var oldTitle = $(this).find('.tipsy-inner').html();
+                    var migrated = false;
+                    // try to find an element with the same title
+                    $('[original-title="' + oldTitle + '"]').each(function() {
+                        // get stored instance of Tipsy from newly created element
+                        // point it to the orphaned tooltip
+                        var tipsy = $.data(this, 'tipsy');
+                        tipsy.$tip = $(orphan);
+                        $.data(this, 'tipsy', tipsy);
+
+                        // orphaned tooltip has the new element as pointee
+                        $.data(orphan, 'tipsy-pointee', this);
+                        migrated = true;
+                    });
+                    if (!migrated) {
+                        $(orphan).remove();
+                    }
+                }
+            });
         },
 
         /**
@@ -162,6 +218,13 @@
             // $(document).on('keyup', 'form.auto input', this.formChangeDelayed);
             // $(document).on('change', 'form.auto input', this.formChanged);
             // $(document).on('change', 'form.auto select', this.submitForm);
+
+            $(document).on('mouseenter', '[title-original]', { gravity: 'n' }, function(event) {
+                icinga.ui.hoverTooltip (this, event.data);
+            });
+            $(document).on('mouseleave', '[title-original]', {}, function() {
+                icinga.ui.unhoverTooltip (this);
+            });
         },
 
         menuTitleHovered: function (event) {

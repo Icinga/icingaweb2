@@ -23,6 +23,8 @@ class StyleSheet
         'css/icinga/monitoring-colors.less',
         'css/icinga/selection-toolbar.less',
         'css/icinga/login.less',
+        'css/icinga/charts.less',
+        'css/vendor/tipsy.less'
     );
 
     public static function compileForPdf()

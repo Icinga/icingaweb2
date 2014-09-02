@@ -24,12 +24,14 @@ class JavaScript
 
     protected static $vendorFiles = array(
         'js/vendor/jquery-2.1.0',
-        'js/vendor/jquery.sparkline'
+        'js/vendor/jquery.sparkline',
+        'js/vendor/jquery.tipsy'
     );
 
     protected static $ie8VendorFiles = array(
         'js/vendor/jquery-1.11.0',
-        'js/vendor/jquery.sparkline'
+        'js/vendor/jquery.sparkline',
+        'js/vendor/jquery.tipsy'
     );
 
     public static function listModuleFiles()
