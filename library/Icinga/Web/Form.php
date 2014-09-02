@@ -321,7 +321,7 @@ class Form extends Zend_Form
      *
      * @param   Request     $request    The current request
      */
-    public function onShow(Request $request)
+    public function onRequest(Request $request)
     {
 
     }
@@ -439,7 +439,7 @@ class Form extends Zend_Form
      * Process the given request using this form
      *
      * Redirects to the url set with setRedirectUrl() upon success. See onSuccess()
-     * and onShow() wherewith you can customize the processing logic.
+     * and onRequest() wherewith you can customize the processing logic.
      *
      * @param   Request     $request    The request to be processed
      *
@@ -465,7 +465,7 @@ class Form extends Zend_Form
                 $this->isValidPartial($formData);
             }
         } else {
-            $this->onShow($request);
+            $this->onRequest($request);
         }
 
         return $request;

@@ -60,9 +60,9 @@ class GeneralConfigForm extends ConfigForm
     }
 
     /**
-     * @see Form::onShow()
+     * @see Form::onRequest()
      */
-    public function onShow(Request $request)
+    public function onRequest(Request $request)
     {
         $values = array();
         foreach ($this->config as $section => $properties) {

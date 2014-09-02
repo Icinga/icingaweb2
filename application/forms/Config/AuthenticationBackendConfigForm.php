@@ -231,11 +231,11 @@ class AuthenticationBackendConfigForm extends ConfigForm
     /**
      * Populate the form in case an authentication backend is being edited
      *
-     * @see Form::onShow()
+     * @see Form::onRequest()
      *
      * @throws  ConfigurationError      In case the backend name is missing in the request or is invalid
      */
-    public function onShow(Request $request)
+    public function onRequest(Request $request)
     {
         $authBackend = $request->getQuery('auth_backend');
         if ($authBackend !== null) {
