@@ -300,17 +300,7 @@ class Query
      *
      * @string
      */
-    public function __toString()
-    {
-        return $this->render();
-    }
-
-    /**
-     * Returns the LDAP filter that will be applied
-     *
-     * @string
-     */
-    protected function render()
+    public function create()
     {
         $parts = array();
         if (! isset($this->filters['objectClass']) || $this->filters['objectClass'] === null) {
