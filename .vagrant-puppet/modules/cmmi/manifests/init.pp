@@ -31,9 +31,9 @@
 define cmmi(
   $url,
   $output,
-  $flags='',
   $creates,
   $make,
+  $flags='',
   $make_timeout=300,
   $configure_command='sh ./configure'
 ) {
