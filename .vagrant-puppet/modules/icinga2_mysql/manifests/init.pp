@@ -1,9 +1,9 @@
-class icinga2-mysql {
-  include icinga-packages
+class icinga2_mysql {
+  include icinga_packages
 
   package { 'icinga2-ido-mysql':
     ensure => latest,
-    require => Class['icinga-packages'],
+    require => Class['icinga_packages'],
   }
 
   mysql::database::populate { 'icinga2':
@@ -15,7 +15,7 @@ class icinga2-mysql {
   }
 
   file { '/etc/icinga2/features-available/ido-mysql.conf':
-    source  => 'puppet:///modules/icinga2-mysql/etc/icinga2/features-available/ido-mysql.conf',
+    source  => 'puppet:///modules/icinga2_mysql/etc/icinga2/features-available/ido-mysql.conf',
     owner   => 'icinga',
     group   => 'icinga',
   }

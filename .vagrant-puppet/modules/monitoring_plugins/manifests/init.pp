@@ -1,4 +1,4 @@
-class monitoring-plugins {
+class monitoring_plugins {
   include epel
 
   # nagios plugins from epel

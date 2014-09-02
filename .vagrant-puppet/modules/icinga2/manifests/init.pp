@@ -1,5 +1,5 @@
 class icinga2 {
-  include icinga-packages
+  include icinga_packages
 
   service { 'icinga2':
     ensure  => running,
@@ -10,7 +10,7 @@ class icinga2 {
   package { [
     'icinga2', 'icinga2-doc', 'icinga2-debuginfo' ]:
     ensure => latest,
-    require => Class['icinga-packages'],
+    require => Class['icinga_packages'],
   }
 
   icinga2::feature { [ 'statusdata', 'command', 'compatlog' ]: }

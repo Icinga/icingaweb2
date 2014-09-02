@@ -1,4 +1,4 @@
-class icinga-mysql ($icingaVersion) {
+class icinga_mysql ($icingaVersion) {
   cmmi { 'icinga-mysql':
     url     => "https://github.com/Icinga/icinga-core/releases/download/v${icingaVersion}/icinga-${icingaVersion}.tar.gz",
     output  => "icinga-${icingaVersion}.tar.gz",

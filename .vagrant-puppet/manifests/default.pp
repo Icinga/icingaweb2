@@ -5,7 +5,7 @@ include openldap
 
 include icingaweb2
 include nodejs
-include profile::icinga2-dev
+include icinga2_dev
 
 Exec { path => '/bin:/usr/bin:/sbin:/usr/sbin' }
 
@@ -16,8 +16,8 @@ $phantomjsVersion = '1.9.1'
 $casperjsVersion = '1.0.2'
 
 class { [
-  'icinga-mysql',
-  'icinga-pgsql' ]:
+  'icinga_mysql',
+  'icinga_pgsql' ]:
   icingaVersion => $icingaVersion,
 }
 
@@ -164,7 +164,7 @@ exec { 'install nagios-plugins-all':
   unless  => 'rpm -qa | grep nagios-plugins-all',
   require => [ Class['epel'], Package['icinga2'] ],
 }
-# vs include monitoring-plugins (epel is disabled)
+# vs include monitoring_plugins (epel is disabled)
 
 
 # icinga 2 classic ui
