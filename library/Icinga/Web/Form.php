@@ -99,7 +99,15 @@ class Form extends Zend_Form
         if ($this->onSuccess !== null && false === is_callable($this->onSuccess)) {
             throw new LogicException('The option `onSuccess\' is not callable');
         }
-
+        if (! isset($options['elementDecorators'])) {
+            $options['elementDecorators'] = array(
+                'ViewHelper',
+                'Errors',
+                array('Description', array('tag' => 'span', 'class' => 'description')),
+                'Label',
+                array('HtmlTag', array('tag' => 'div'))
+            );
+        }
         parent::__construct($options);
     }
 
@@ -333,8 +341,12 @@ class Form extends Zend_Form
                 'submit',
                 'btn_submit',
                 array(
-                    'ignore'    => true,
-                    'label'     => $this->submitLabel
+                    'ignore'        => true,
+                    'label'         => $this->submitLabel,
+                    'decorators'    => array(
+                        'ViewHelper',
+                        array('HtmlTag', array('tag' => 'div'))
+                    )
                 )
             );
         }
@@ -357,36 +369,23 @@ class Form extends Zend_Form
      */
     public function createElement($type, $name, $options = null)
     {
-        $el = parent::createElement($type, $name, $options);
-
-        if ($el) {
-            if (strpos(strtolower(get_class($el)), 'hidden') !== false) {
-                $el->setDecorators(array('ViewHelper'));
-            } else {
-                $el->removeDecorator('HtmlTag');
-                $el->removeDecorator('Label');
-                $el->removeDecorator('DtDdWrapper');
-
-                if ($el->getAttrib('autosubmit')) {
-                    // Need to add this decorator first or it interferes with the other's two HTML otherwise
-                    $el->addDecorator(new NoScriptApply()); // Non-JS environments
-                    $class = $el->getAttrib('class');
-                    if (is_array($class)) {
-                        $class[] = 'autosubmit';
-                    } elseif ($class === null) {
-                        $class = 'autosubmit';
-                    } else {
-                        $class .= ' autosubmit';
-                    }
-                    $el->setAttrib('class', $class); // JS environments
-                    unset($el->autosubmit);
-                }
-
-                $el->addDecorator(new ElementWrapper());
-                $el->addDecorator(new HelpText());
-            }
+        if (is_array($options) && ! isset($options['disableLoadDefaultDecorators'])) {
+            $options['disableLoadDefaultDecorators'] = true;
         }
-
+        $el = parent::createElement($type, $name, $options);
+        if ($el && $el->getAttrib('autosubmit')) {
+            $el->addDecorator(new NoScriptApply()); // Non-JS environments
+            $class = $el->getAttrib('class');
+            if (is_array($class)) {
+                $class[] = 'autosubmit';
+            } elseif ($class === null) {
+                $class = 'autosubmit';
+            } else {
+                $class .= ' autosubmit';
+            }
+            $el->setAttrib('class', $class); // JS environments
+            unset($el->autosubmit);
+        }
         return $el;
     }
 
@@ -556,7 +555,6 @@ class Form extends Zend_Form
         if ($this->loadDefaultDecoratorsIsDisabled()) {
             return $this;
         }
-
         $decorators = $this->getDecorators();
         if (empty($decorators)) {
             if ($this->viewScript) {
@@ -565,12 +563,11 @@ class Form extends Zend_Form
                     'form'          => $this
                 ));
             } else {
-                $this->addDecorator('FormElements')
-                    //->addDecorator('HtmlTag', array('tag' => 'dl', 'class' => 'zend_form'))
+                $this
+                    ->addDecorator('FormElements')
                     ->addDecorator('Form');
             }
         }
-
         return $this;
     }
 
