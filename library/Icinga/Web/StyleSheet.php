@@ -5,6 +5,7 @@
 namespace Icinga\Web;
 
 use Icinga\Application\Icinga;
+use Icinga\Web\FileCache;
 use Icinga\Web\LessCompiler;
 
 class StyleSheet
@@ -44,28 +45,45 @@ class StyleSheet
 
     public static function send($minified = false)
     {
+        $app = Icinga::app();
+        $basedir = $app->getBootstrapDirecory();
+        foreach (self::$lessFiles as $file) {
+            $lessFiles[] = $basedir . '/' . $file;
+        }
+        $files = $lessFiles;
+        foreach ($app->getModuleManager()->getLoadedModules() as $name => $module) {
+            if ($module->hasCss()) {
+                $files[] = $module->getCssFilename();
+            }
+        }
+
+        if ($etag = FileCache::etagMatchesFiles($files)) {
+            header("HTTP/1.1 304 Not Modified");
+            return;
+        } else {
+            $etag = FileCache::etagForFiles($files);
+        }
+        header('Cache-Control: public');
+        header('ETag: "' . $etag . '"');
         header('Content-Type: text/css');
 
         $min = $minified ? '.min' : '';
-        $cacheFile = '/tmp/cache_icinga' . $min . '.css';
-        if (file_exists($cacheFile)) {
-            readfile($cacheFile);
-            exit;
+        $cacheFile = 'icinga-' . $etag . $min . '.css';
+        $cache = FileCache::instance();
+        if ($cache->has($cacheFile)) {
+            $cache->send($cacheFile);
+            return;
         }
-
         $less = new LessCompiler();
-        $basedir = Icinga::app()->getBootstrapDirecory();
-        foreach (self::$lessFiles as $file) {
-            $less->addFile($basedir . '/' . $file);
+        foreach ($lessFiles as $file) {
+            $less->addFile($file);
         }
         $less->addLoadedModules();
         if ($minified) {
             $less->compress();
         }
         $out = $less->compile();
-        // Not yet, this is for tests only. Waiting for Icinga\Web\Cache
-        // file_put_contents($cacheFile, $out);
+        $cache->store($cacheFile, $out);
         echo $out;
-
     }
 }
