@@ -1,3 +1,16 @@
+# Class: icinga2
+#
+#   This class installs Icinga 2.
+#
+# Requires:
+#
+#   icinga_packages
+#   icinga2::feature
+#
+# Sample Usage:
+#
+#   include icinga2
+#
 class icinga2 {
   include icinga_packages
 
