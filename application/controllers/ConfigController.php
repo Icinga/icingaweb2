@@ -2,8 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use Icinga\Web\Controller\BaseConfigController;
-use Icinga\Web\Widget\AlertMessageBox;
+use Icinga\Web\Controller\ActionController;
 use Icinga\Web\Notification;
 use Icinga\Application\Modules\Module;
 use Icinga\Web\Widget;
@@ -21,7 +20,7 @@ use Icinga\Data\ResourceFactory;
 /**
  * Application wide controller for application preferences
  */
-class ConfigController extends BaseConfigController
+class ConfigController extends ActionController
 {
     public function init()
     {
@@ -302,7 +301,6 @@ class ConfigController extends BaseConfigController
      */
     public function configurationerrorAction()
     {
-        $this->view->messageBox = new AlertMessageBox(true);
         $this->render('error/error', null, true);
     }
 
