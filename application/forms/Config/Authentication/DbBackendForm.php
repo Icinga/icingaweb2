@@ -55,7 +55,7 @@ class DbBackendForm extends Form
                 array(
                     'required'      => true,
                     'label'         => t('Backend Name'),
-                    'helptext'      => t('The name of this authentication provider'),
+                    'description'   => t('The name of this authentication provider'),
                 )
             ),
             $this->createElement(
@@ -64,7 +64,7 @@ class DbBackendForm extends Form
                 array(
                     'required'      => true,
                     'label'         => t('Database Connection'),
-                    'helptext'      => t('The database connection to use for authenticating with this provider'),
+                    'description'   => t('The database connection to use for authenticating with this provider'),
                     'multiOptions'  => false === empty($this->resources)
                         ? array_combine($this->resources, $this->resources)
                         : array()

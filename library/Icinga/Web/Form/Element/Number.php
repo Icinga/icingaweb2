@@ -4,38 +4,37 @@
 
 namespace Icinga\Web\Form\Element;
 
-use Zend_Form_Element_Xhtml;
+use Zend_Form_Element;
 
 /**
- * Number form element
+ * A number input control
  */
-class Number extends Zend_Form_Element_Xhtml
+class Number extends Zend_Form_Element
 {
     /**
-     * Default form view helper to use for rendering
+     * Disable default decorators
+     *
+     * \Icinga\Web\Form sets default decorators for elements.
+     *
+     * @var bool
+     *
+     * @see \Icinga\Web\Form::__construct() For default element decorators.
+     */
+    protected $_disableLoadDefaultDecorators = true;
+
+    /**
+     * Form view helper to use for rendering
      *
      * @var string
      */
-    public $helper = "formNumber";
+    public $helper = 'formNumber';
 
     /**
-     * Check whether $value is of type integer
-     *
-     * @param   string      $value      The value to check
-     * @param   mixed       $context    Context to use
-     *
-     * @return  bool
+     * (non-PHPDoc)
+     * @see \Zend_Form_Element::init() For the method documentation.
      */
-    public function isValid($value, $context = null)
+    public function init()
     {
-        if (parent::isValid($value, $context)) {
-            if (is_numeric($value)) {
-                return true;
-            }
-
-            $this->addError(t('Please enter a number.'));
-        }
-
-        return false;
+        $this->addValidator('Int');
     }
 }

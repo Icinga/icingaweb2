@@ -202,7 +202,7 @@ class AuthenticationBackendConfigForm extends ConfigForm
         if (($el = $this->getElement('force_creation')) === null || false === $el->isChecked()) {
             $backendForm = $this->getBackendForm($this->getElement('type')->getValue());
             if (false === $backendForm->isValidAuthenticationBackend($this)) {
-                $this->addForceCreationCheckbox();
+                $this->addElement($this->getForceCreationCheckbox());
                 return false;
             }
         }
@@ -231,11 +231,11 @@ class AuthenticationBackendConfigForm extends ConfigForm
     /**
      * Populate the form in case an authentication backend is being edited
      *
-     * @see Form::onShow()
+     * @see Form::onRequest()
      *
      * @throws  ConfigurationError      In case the backend name is missing in the request or is invalid
      */
-    public function onShow(Request $request)
+    public function onRequest(Request $request)
     {
         $authBackend = $request->getQuery('auth_backend');
         if ($authBackend !== null) {
@@ -255,19 +255,21 @@ class AuthenticationBackendConfigForm extends ConfigForm
     }
 
     /**
-     * Add a checkbox to be displayed at the beginning of the form
+     * Return a checkbox to be displayed at the beginning of the form
      * which allows the user to skip the connection validation
+     *
+     * @return  Zend_Form_Element
      */
-    protected function addForceCreationCheckbox()
+    protected function getForceCreationCheckbox()
     {
-        $this->addElement(
+        return $this->createElement(
             'checkbox',
             'force_creation',
             array(
-                'order'     => 0,
-                'ignore'    => true,
-                'label'     => t('Force Changes'),
-                'helptext'  => t('Check this box to enforce changes without connectivity validation')
+                'order'         => 0,
+                'ignore'        => true,
+                'label'         => t('Force Changes'),
+                'description'   => t('Check this box to enforce changes without connectivity validation')
             )
         );
     }
@@ -297,22 +299,25 @@ class AuthenticationBackendConfigForm extends ConfigForm
             $backendTypes['autologin'] = t('Autologin');
         }
 
-        $typeSelection = $this->createElement(
+        $elements = array();
+        $elements[] = $this->createElement(
             'select',
             'type',
             array(
-                'ignore'        => true,
-                'required'      => true,
-                'autosubmit'    => true,
-                'label'         => t('Backend Type'),
-                'helptext'      => t('The type of the resource to use for this authenticaton backend'),
-                'multiOptions'  => $backendTypes
+                'ignore'            => true,
+                'required'          => true,
+                'autosubmit'        => true,
+                'label'             => t('Backend Type'),
+                'description'       => t('The type of the resource to use for this authenticaton backend'),
+                'multiOptions'      => $backendTypes
             )
         );
 
-        return array_merge(
-            array($typeSelection),
-            $this->getBackendForm($backendType)->createElements($formData)
-        );
+        if (isset($formData['force_creation']) && $formData['force_creation']) {
+            // In case another error occured and the checkbox was displayed before
+            $elements[] = $this->getForceCreationCheckbox();
+        }
+
+        return array_merge($elements, $this->getBackendForm($backendType)->createElements($formData));
     }
 }

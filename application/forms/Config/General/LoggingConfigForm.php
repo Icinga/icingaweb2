@@ -31,7 +31,7 @@ class LoggingConfigForm extends Form
             array(
                 'required'      => true,
                 'label'         => t('Logging Level'),
-                'helptext'      => t('The maximum loglevel to emit.'),
+                'description'   => t('The maximum loglevel to emit.'),
                 'multiOptions'  => array(
                     0 => t('None'),
                     1 => t('Error'),
@@ -48,7 +48,7 @@ class LoggingConfigForm extends Form
                 'required'      => true,
                 'class'         => 'autosubmit',
                 'label'         => t('Logging Type'),
-                'helptext'      => t('The type of logging to utilize.'),
+                'description'   => t('The type of logging to utilize.'),
                 'multiOptions'  => array(
                     'syslog'    => 'Syslog',
                     'file'      => t('File')
@@ -63,7 +63,7 @@ class LoggingConfigForm extends Form
                 array(
                     'required'      => true,
                     'label'         => t('Application Prefix'),
-                    'helptext'      => t('The name of the application by which to prefix syslog messages.'),
+                    'description'   => t('The name of the application by which to prefix syslog messages.'),
                     'value'         => 'icingaweb',
                     'validators'    => array(
                         array(
@@ -85,7 +85,7 @@ class LoggingConfigForm extends Form
                 array(
                     'required'      => true,
                     'label'         => t('Facility'),
-                    'helptext'      => t('The Syslog facility to utilize.'),
+                    'description'   => t('The Syslog facility to utilize.'),
                     'multiOptions'  => array(
                         'LOG_USER'  => 'LOG_USER'
                     )
@@ -98,7 +98,7 @@ class LoggingConfigForm extends Form
                 array(
                     'required'      => true,
                     'label'         => t('Filepath'),
-                    'helptext'      => t('The logfile to write messages to.'),
+                    'description'   => t('The logfile to write messages to.'),
                     'value'         => $this->getDefaultLogDir(),
                     'validators'    => array(new WritablePathValidator())
                 )

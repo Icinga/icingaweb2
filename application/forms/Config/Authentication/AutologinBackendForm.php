@@ -32,7 +32,7 @@ class AutologinBackendForm extends Form
                 array(
                     'required'      => true,
                     'label'         => t('Backend Name'),
-                    'helptext'      => t('The name of this authentication backend'),
+                    'description'   => t('The name of this authentication backend'),
                     'validators'    => array(
                         array(
                             'Regex',
@@ -53,7 +53,7 @@ class AutologinBackendForm extends Form
                 array(
                     'required'      => true,
                     'label'         => t('Backend Domain Pattern'),
-                    'helptext'      => t('The domain pattern of this authentication backend'),
+                    'description'   => t('The domain pattern of this authentication backend'),
                     'value'         => '/\@[^$]+$/',
                     'validators'    => array(
                         new Zend_Validate_Callback(function ($value) {
