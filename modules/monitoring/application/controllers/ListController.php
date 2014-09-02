@@ -501,15 +501,8 @@ class Monitoring_ListController extends Controller
         $request = $this->getRequest();
 
         $limit   = $params->shift('limit');
-
-        $sort = null;
-        $dir = null;
-        if ($request->isPost()) {
-            $sort = $request->getPost('sort', null);
-            $dir  = $request->getPost('dir', null);
-        }
-        $sort    = $params->shift('sort', $sort);
-        $dir     = $params->shift('dir', $dir);
+        $sort    = $params->shift('sort');
+        $dir     = $params->shift('dir');
         $page    = $params->shift('page');
         $format  = $params->shift('format');
         $view    = $params->shift('view');
@@ -546,7 +539,9 @@ class Monitoring_ListController extends Controller
             $query->applyFilter($filter);
         }
         $this->view->filter = $filter;
-        $query->order($sort, $dir);
+        if ($sort) {
+            $query->order($sort, $dir);
+        }
         $this->applyRestrictions($query);
         $this->handleFormatRequest($query);
         return $query;
