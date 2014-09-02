@@ -45,7 +45,7 @@ class CommentdeletionhistoryQuery extends IdoQuery
             array()
         )->join(
             array('h' => $this->prefix . 'commenthistory'),
-            'o.' . $this->object_id . ' = h.' . $this->object_id . " AND o.is_active = 1 AND h.deletion_time > '1970-01-01 00:00:00' AND h.entry_type <> 2",
+            'o.' . $this->object_id . ' = h.' . $this->object_id . " AND o.is_active = 1 AND h.deletion_time > '1970-01-02 00:00:00' AND h.entry_type <> 2",
             array()
         );
         $this->joinedVirtualTables = array('commenthistory' => true);
