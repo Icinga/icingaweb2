@@ -4,8 +4,6 @@
 
 namespace Icinga\Protocol\Ldap;
 
-use Icinga\Exception\IcingaException;
-
 /**
  * Search class
  *
@@ -84,7 +82,7 @@ class Query
     public function limit($count = null, $offset = null)
     {
         if (! preg_match('~^\d+~', $count . $offset)) {
-            throw new IcingaException(
+            throw new Exception(
                 'Got invalid limit: %s, %s',
                 $count,
                 $offset
@@ -316,7 +314,7 @@ class Query
     {
         $parts = array();
         if (! isset($this->filters['objectClass']) || $this->filters['objectClass'] === null) {
-            // throw new IcingaException('Object class is mandatory');
+            throw new Exception('Object class is mandatory');
         }
         foreach ($this->filters as $key => $value) {
             $parts[] = sprintf(
