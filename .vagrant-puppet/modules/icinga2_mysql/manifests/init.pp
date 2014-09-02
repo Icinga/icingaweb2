@@ -1,4 +1,20 @@
+# Class: icinga2_mysql
+#
+#   This class installs Icinga 2 and Icinga-2-IDO-MySQL and set up the database for the last one.
+#
+# Requires:
+#
+#   icinga2
+#   icinga_packages
+#   icinga2::feature
+#   mysql::database::populate
+#
+# Sample Usage:
+#
+#   include icinga2_mysql
+#
 class icinga2_mysql {
+  include icinga2
   include icinga_packages
 
   package { 'icinga2-ido-mysql':
