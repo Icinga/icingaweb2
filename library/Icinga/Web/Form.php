@@ -99,6 +99,7 @@ class Form extends Zend_Form
         if ($this->onSuccess !== null && false === is_callable($this->onSuccess)) {
             throw new LogicException('The option `onSuccess\' is not callable');
         }
+
         if (! isset($options['elementDecorators'])) {
             $options['elementDecorators'] = array(
                 'ViewHelper',
@@ -108,6 +109,7 @@ class Form extends Zend_Form
                 array('HtmlTag', array('tag' => 'div'))
             );
         }
+
         parent::__construct($options);
     }
 
@@ -372,6 +374,7 @@ class Form extends Zend_Form
         if (is_array($options) && ! isset($options['disableLoadDefaultDecorators'])) {
             $options['disableLoadDefaultDecorators'] = true;
         }
+
         $el = parent::createElement($type, $name, $options);
         if ($el && $el->getAttrib('autosubmit')) {
             $el->addDecorator(new NoScriptApply()); // Non-JS environments
@@ -386,6 +389,7 @@ class Form extends Zend_Form
             $el->setAttrib('class', $class); // JS environments
             unset($el->autosubmit);
         }
+
         return $el;
     }
 
@@ -555,6 +559,7 @@ class Form extends Zend_Form
         if ($this->loadDefaultDecoratorsIsDisabled()) {
             return $this;
         }
+
         $decorators = $this->getDecorators();
         if (empty($decorators)) {
             if ($this->viewScript) {
@@ -563,11 +568,13 @@ class Form extends Zend_Form
                     'form'          => $this
                 ));
             } else {
-                $this
+                $this->addDecorator('FormErrors', array('onlyCustomFormErrors' => true))
                     ->addDecorator('FormElements')
+                    //->addDecorator('HtmlTag', array('tag' => 'dl', 'class' => 'zend_form'))
                     ->addDecorator('Form');
             }
         }
+
         return $this;
     }
 
