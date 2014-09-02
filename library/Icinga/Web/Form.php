@@ -8,9 +8,7 @@ use LogicException;
 use Zend_Form;
 use Zend_View_Interface;
 use Icinga\Application\Icinga;
-use Icinga\Web\Form\Decorator\HelpText;
 use Icinga\Web\Form\Decorator\NoScriptApply;
-use Icinga\Web\Form\Decorator\ElementWrapper;
 use Icinga\Web\Form\Element\CsrfCounterMeasure;
 
 /**

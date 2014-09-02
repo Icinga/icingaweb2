@@ -9,8 +9,6 @@ use Zend_Config;
 use Icinga\Web\Form;
 use Icinga\Web\Request;
 use Icinga\Web\Form\Element\Number;
-use Icinga\Web\Form\Decorator\HelpText;
-use Icinga\Web\Form\Decorator\ElementWrapper;
 use Icinga\Data\ResourceFactory;
 
 /**
@@ -62,13 +60,7 @@ class DbResourceForm extends Form
                     'name'          => 'port',
                     'label'         => t('Port'),
                     'helptext'      => t('The port to use'),
-                    'value'         => 3306,
-                    'decorators'    => array( // The order is important!
-                        'ViewHelper',
-                        'Errors',
-                        new ElementWrapper(),
-                        new HelpText()
-                    )
+                    'value'         => 3306
                 )
             ),
             $this->createElement(
