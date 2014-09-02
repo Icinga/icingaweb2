@@ -515,9 +515,10 @@ class StatusQuery extends IdoQuery
         $sub = '(SELECT'
             . ' c.object_id,'
             . " '[' || c.author_name || '] ' || c.comment_data AS $fieldName"
-            . ' FROM icinga_comments c'
-            . ' WHERE c.entry_type = ' . $entryType
-            . ' ORDER BY c.comment_id DESC LIMIT 1)';
+            . ' FROM icinga_comments c JOIN ('
+            . ' SELECT MAX(comment_id) AS comment_id, object_id FROM icinga_comments'
+            . ' WHERE entry_type = ' . $entryType . ' GROUP BY object_id'
+            . ' ) lc ON c.comment_id = lc.comment_id)';
 
         return new Zend_Db_Expr($sub);
     }
