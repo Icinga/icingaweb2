@@ -4,13 +4,14 @@
 
 namespace Icinga\Module\Monitoring\Form\Command\Instance;
 
+use Icinga\Module\Monitoring\Form\Command\CommandForm;
 use Icinga\Web\Notification;
 use Icinga\Web\Request;
 
 /**
  * Base class for forms enabling/disabling features of an Icinga instance
  */
-abstract class ToggleFeatureCommandForm extends InstanceCommandForm
+abstract class ToggleFeatureCommandForm extends CommandForm
 {
     /**
      * @var string
@@ -25,7 +26,7 @@ abstract class ToggleFeatureCommandForm extends InstanceCommandForm
     /**
      * Get the command which is to be sent to an Icinga instance
      *
-     * @return \Icinga\Module\Monitoring\Command\IcingaCommand
+     * @return \Icinga\Module\Monitoring\Command\ToggleFeature
      */
     abstract public function getCommand();
 
