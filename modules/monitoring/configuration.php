@@ -130,7 +130,7 @@ $section->add('performance info', $this->translate('Performance Info'), array(
 /*
  * Dashboard
  */
-$dashboard = $this->dashboard('current incidents')->setTitle($this->translate('Current Incidents'));
+$dashboard = $this->dashboard('current-incidents', $this->translate('Current Incidents'));
 $dashboard->add(
     'service problems',
     $this->translate('Service Problems'),
