@@ -2,10 +2,9 @@
   <?= $tabs; ?>
 </div>
 <div class="content" data-base-target="_next">
-  <?= $messageBox; ?>
   <p>
-    <a href="<?= $this->href('/config/createresource') ?>">
-      <?= $this->icon('create.png'); ?> <?= $this->translate('Create a new resource'); ?>
+    <a href="<?= $this->href('/config/createresource'); ?>">
+      <?= $this->icon('create.png'); ?> <?= $this->translate('Create A New Resource'); ?>
     </a>
   </p>
   <table class="action">
@@ -17,12 +16,12 @@
 <?php foreach ($this->resources as $name => $resource): ?>
       <tr>
         <td>
-          <a href="<?= $this->href('config/editresource', array('resource' => $name)) ?>">
-            <?= $this->icon('edit.png') ?> <?= $this->escape($name); ?>
+          <a href="<?= $this->href('config/editresource', array('resource' => $name)); ?>">
+            <?= $this->icon('edit.png'); ?> <?= $this->escape($name); ?>
           </a>
         </td>
         <td style="text-align: center">
-          <a href="<?= $this->href('config/removeresource', array('resource' => $name)) ?>">
+          <a href="<?= $this->href('config/removeresource', array('resource' => $name)); ?>">
             <?= $this->icon('remove.png'); ?>
           </a>
         </td>
