@@ -31,13 +31,6 @@ class Component extends AbstractWidget
     private $url;
 
     /**
-     * The id of this Component
-     *
-     * @var string
-     */
-    private $id;
-
-    /**
      * The title being displayed on top of the component
      * @var
      */
@@ -67,14 +60,12 @@ EOD;
     /**
      * Create a new component displaying the given url in the provided pane
      *
-     * @param string $id        The id to use for this component
      * @param string $title     The title to use for this component
      * @param Url|string $url   The url this component uses for displaying information
      * @param Pane $pane        The pane this Component will be added to
      */
-    public function __construct($id, $title, $url, Pane $pane)
+    public function __construct($title, $url, Pane $pane)
     {
-        $this->id = $id;
         $this->title = $title;
         $this->pane = $pane;
         if ($url instanceof Url) {
@@ -195,14 +186,14 @@ EOD;
 
     /**
      * Create a @see Component instance from the given Zend config, using the provided title
-     * @param $id                       The id for this component
+     *
      * @param $title                    The title for this component
      * @param Zend_Config $config       The configuration defining url, parameters, height, width, etc.
      * @param Pane $pane                The pane this component belongs to
      *
      * @return Component                A newly created Component for use in the Dashboard
      */
-    public static function fromIni($id, $title, Zend_Config $config, Pane $pane)
+    public static function fromIni($title, Zend_Config $config, Pane $pane)
     {
         $height = null;
         $width = null;
@@ -210,27 +201,7 @@ EOD;
         $parameters = $config->toArray();
         unset($parameters['url']); // otherwise there's an url = parameter in the Url
 
-        $cmp = new Component($id, $title, Url::fromPath($url, $parameters), $pane);
+        $cmp = new Component($title, Url::fromPath($url, $parameters), $pane);
         return $cmp;
-    }
-
-    /**
-     * Set the components id
-     *
-     * @param $id string
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-    }
-
-    /**
-     * Retrieve the components id
-     *
-     * @return string
-     */
-    public function getId()
-    {
-        return $this->id;
     }
 }
