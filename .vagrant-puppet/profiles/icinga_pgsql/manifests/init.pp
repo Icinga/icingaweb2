@@ -60,9 +60,9 @@ class icinga_pgsql ($icingaVersion) {
   }
 
   pgsql::database::populate { 'icinga':
-    username => 'icinga',
-    password => 'icingaweb',
+    username   => 'icinga',
+    password   => 'icingaweb',
     schemafile => "/usr/local/src/icinga-pgsql/icinga-${icingaVersion}/module/idoutils/db/pgsql/pgsql.sql",
-    require => Cmmi['icinga-pgsql'],
+    require    => Cmmi['icinga-pgsql'],
   }
 }

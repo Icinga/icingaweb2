@@ -14,8 +14,8 @@ define mysql::database::populate ($username, $password, $privileges, $schemafile
   Exec { path => '/usr/bin' }
 
   mysql::database::create { $name:
-    username => $username,
-    password => $password,
+    username   => $username,
+    password   => $password,
     privileges => $privileges,
   }
 

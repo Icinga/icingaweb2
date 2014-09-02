@@ -59,10 +59,10 @@ class icinga_mysql ($icingaVersion) {
   }
 
   mysql::database::populate { 'icinga':
-    username => 'icinga',
-    password => 'icinga',
-    privileges => 'SELECT,INSERT,UPDATE,DELETE',
-    schemafile => "/usr/local/src/icinga-mysql/icinga-${icingaVersion}/module/idoutils/db/mysql/mysql.sql",
+    username    => 'icinga',
+    password    => 'icinga',
+    privileges  => 'SELECT,INSERT,UPDATE,DELETE',
+    schemafile  => "/usr/local/src/icinga-mysql/icinga-${icingaVersion}/module/idoutils/db/mysql/mysql.sql",
     requirement => Cmmi['icinga-mysql'],
   }
 }

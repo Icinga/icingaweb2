@@ -14,7 +14,7 @@
 #
 class openldap {
 
-  package { ['openldap-servers', 'openldap-clients']: 
+  package { ['openldap-servers', 'openldap-clients']:
     ensure => installed
   }
 

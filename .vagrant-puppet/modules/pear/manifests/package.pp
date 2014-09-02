@@ -31,15 +31,15 @@ define pear::package(
   if $channel {
     exec { "pear discover ${channel}":
       command => "sudo pear channel-discover ${channel}",
-      unless => "pear channel-info ${channel}",
+      unless  => "pear channel-info ${channel}",
       require => $require_,
-      before => Exec["pear install ${name}"]
+      before  => Exec["pear install ${name}"]
     }
   }
 
   exec { "pear install ${name}":
     command => "pear install --alldeps ${name}",
-    unless => "pear list ${name}",
+    unless  => "pear list ${name}",
     require => $require_
   }
 

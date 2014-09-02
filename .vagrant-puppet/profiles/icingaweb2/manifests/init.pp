@@ -1,7 +1,7 @@
 class icingaweb2 {
   mysql::database::create { 'icingaweb':
-    username => 'icingaweb',
-    password => 'icingaweb',
+    username   => 'icingaweb',
+    password   => 'icingaweb',
     privileges => 'ALL',
   }
 

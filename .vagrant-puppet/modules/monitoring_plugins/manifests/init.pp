@@ -3,7 +3,7 @@ class monitoring_plugins {
 
   # nagios plugins from epel
   package { 'nagios-plugins-all':
-    ensure => installed,
+    ensure  => installed,
     require => Class['epel']
   }
 }
