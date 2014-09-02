@@ -32,7 +32,7 @@ class FileResourceForm extends Form
                 array(
                     'required'      => true,
                     'label'         => t('Filepath'),
-                    'helptext'      => t('The filename to fetch information from'),
+                    'description'   => t('The filename to fetch information from'),
                     'validators'    => array(new ReadablePathValidator())
                 )
             ),
@@ -40,9 +40,9 @@ class FileResourceForm extends Form
                 'text',
                 'fields',
                 array(
-                    'required'  => true,
-                    'label'     => t('Pattern'),
-                    'helptext'  => t('The regular expression by which to identify columns')
+                    'required'      => true,
+                    'label'         => t('Pattern'),
+                    'description'   => t('The regular expression by which to identify columns')
                 )
             )
         );

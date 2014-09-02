@@ -34,10 +34,10 @@ class LivestatusResourceForm extends Form
                 'text',
                 'socket',
                 array(
-                    'required'  => true,
-                    'label'     => t('Socket'),
-                    'helptext'  => t('The path to your livestatus socket used for querying monitoring data'),
-                    'value'     => realpath(Icinga::app()->getApplicationDir() . '/../var/rw/livestatus')
+                    'required'      => true,
+                    'label'         => t('Socket'),
+                    'description'   => t('The path to your livestatus socket used for querying monitoring data'),
+                    'value'         => realpath(Icinga::app()->getApplicationDir() . '/../var/rw/livestatus')
                 )
             )
         );

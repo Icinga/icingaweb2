@@ -36,11 +36,11 @@ class DbResourceForm extends Form
                 array(
                     'required'      => true,
                     'label'         => t('Database Type'),
-                    'helptext'      => t('The type of SQL database'),
+                    'description'   => t('The type of SQL database'),
                     'multiOptions'  => array(
-                        'mysql'         => 'MySQL',
-                        'pgsql'         => 'PostgreSQL'
-                        //'oracle'        => 'Oracle'
+                        'mysql'     => 'MySQL',
+                        'pgsql'     => 'PostgreSQL'
+                        //'oracle'    => 'Oracle'
                     )
                 )
             ),
@@ -48,10 +48,10 @@ class DbResourceForm extends Form
                 'text',
                 'host',
                 array (
-                    'required'  => true,
-                    'label'     => t('Host'),
-                    'helptext'  => t('The hostname of the database'),
-                    'value'     => 'localhost'
+                    'required'      => true,
+                    'label'         => t('Host'),
+                    'description'   => t('The hostname of the database'),
+                    'value'         => 'localhost'
                 )
             ),
             new Number(
@@ -59,7 +59,7 @@ class DbResourceForm extends Form
                     'required'      => true,
                     'name'          => 'port',
                     'label'         => t('Port'),
-                    'helptext'      => t('The port to use'),
+                    'description'   => t('The port to use'),
                     'value'         => 3306
                 )
             ),
@@ -67,18 +67,18 @@ class DbResourceForm extends Form
                 'text',
                 'dbname',
                 array(
-                    'required'  => true,
-                    'label'     => t('Database Name'),
-                    'helptext'  => t('The name of the database to use')
+                    'required'      => true,
+                    'label'         => t('Database Name'),
+                    'description'   => t('The name of the database to use')
                 )
             ),
             $this->createElement(
                 'text',
                 'username',
                 array (
-                    'required'  => true,
-                    'label'     => t('Username'),
-                    'helptext'  => t('The user name to use for authentication')
+                    'required'      => true,
+                    'label'         => t('Username'),
+                    'description'   => t('The user name to use for authentication')
                 )
             ),
             $this->createElement(
@@ -88,7 +88,7 @@ class DbResourceForm extends Form
                     'required'          => true,
                     'renderPassword'    => true,
                     'label'             => t('Password'),
-                    'helptext'          => t('The password to use for authentication')
+                    'description'       => t('The password to use for authentication')
                 )
             )
         );

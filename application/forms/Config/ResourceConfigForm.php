@@ -197,10 +197,10 @@ class ResourceConfigForm extends ConfigForm
             'checkbox',
             'force_creation',
             array(
-                'order'     => 0,
-                'ignore'    => true,
-                'label'     => t('Force Changes'),
-                'helptext'  => t('Check this box to enforce changes without connectivity validation')
+                'order'         => 0,
+                'ignore'        => true,
+                'label'         => t('Force Changes'),
+                'description'   => t('Check this box to enforce changes without connectivity validation')
             )
         );
     }
@@ -229,21 +229,21 @@ class ResourceConfigForm extends ConfigForm
                 'text',
                 'name',
                 array(
-                    'required'  => true,
-                    'label'     => t('Resource Name'),
-                    'helptext'  => t('The unique name of this resource')
+                    'required'      => true,
+                    'label'         => t('Resource Name'),
+                    'description'   => t('The unique name of this resource')
                 )
             ),
             $this->createElement(
                 'select',
                 'type',
                 array(
-                    'required'      => true,
-                    'autosubmit'    => true,
-                    'label'         => t('Resource Type'),
-                    'helptext'      => t('The type of resource'),
-                    'multiOptions'  => $resourceTypes,
-                    'value'         => $resourceType
+                    'required'          => true,
+                    'autosubmit'        => true,
+                    'label'             => t('Resource Type'),
+                    'description'       => t('The type of resource'),
+                    'multiOptions'      => $resourceTypes,
+                    'value'             => $resourceType
                 )
             )
         );

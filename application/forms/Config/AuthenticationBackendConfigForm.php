@@ -266,10 +266,10 @@ class AuthenticationBackendConfigForm extends ConfigForm
             'checkbox',
             'force_creation',
             array(
-                'order'     => 0,
-                'ignore'    => true,
-                'label'     => t('Force Changes'),
-                'helptext'  => t('Check this box to enforce changes without connectivity validation')
+                'order'         => 0,
+                'ignore'        => true,
+                'label'         => t('Force Changes'),
+                'description'   => t('Check this box to enforce changes without connectivity validation')
             )
         );
     }
@@ -304,12 +304,12 @@ class AuthenticationBackendConfigForm extends ConfigForm
             'select',
             'type',
             array(
-                'ignore'        => true,
-                'required'      => true,
-                'autosubmit'    => true,
-                'label'         => t('Backend Type'),
-                'helptext'      => t('The type of the resource to use for this authenticaton backend'),
-                'multiOptions'  => $backendTypes
+                'ignore'            => true,
+                'required'          => true,
+                'autosubmit'        => true,
+                'label'             => t('Backend Type'),
+                'description'       => t('The type of the resource to use for this authenticaton backend'),
+                'multiOptions'      => $backendTypes
             )
         );
 

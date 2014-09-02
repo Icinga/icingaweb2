@@ -36,7 +36,7 @@ class LdapResourceForm extends Form
                 array(
                     'required'      => true,
                     'label'         => t('Host'),
-                    'helptext'      => t('The hostname or address of the LDAP server to use for authentication'),
+                    'description'   => t('The hostname or address of the LDAP server to use for authentication'),
                     'value'         => 'localhost'
                 )
             ),
@@ -45,7 +45,7 @@ class LdapResourceForm extends Form
                     'required'      => true,
                     'name'          => 'port',
                     'label'         => t('Port'),
-                    'helptext'      => t('The port of the LDAP server to use for authentication'),
+                    'description'   => t('The port of the LDAP server to use for authentication'),
                     'value'         => 389
                 )
             ),
@@ -53,18 +53,18 @@ class LdapResourceForm extends Form
                 'text',
                 'root_dn',
                 array(
-                    'required'  => true,
-                    'label'     => t('Root DN'),
-                    'helptext'  => t('The path where users can be found on the ldap server')
+                    'required'      => true,
+                    'label'         => t('Root DN'),
+                    'description'   => t('The path where users can be found on the ldap server')
                 )
             ),
             $this->createElement(
                 'text',
                 'bind_dn',
                 array(
-                    'required'  => true,
-                    'label'     => t('Bind DN'),
-                    'helptext'  => t('The user dn to use for querying the ldap server')
+                    'required'      => true,
+                    'label'         => t('Bind DN'),
+                    'description'   => t('The user dn to use for querying the ldap server')
                 )
             ),
             $this->createElement(
@@ -74,7 +74,7 @@ class LdapResourceForm extends Form
                     'required'          => true,
                     'renderPassword'    => true,
                     'label'             => t('Bind Password'),
-                    'helptext'          => t('The password to use for querying the ldap server')
+                    'description'       => t('The password to use for querying the ldap server')
                 )
             )
         );

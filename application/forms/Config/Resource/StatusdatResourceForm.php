@@ -33,7 +33,7 @@ class StatusdatResourceForm extends Form
                 array(
                     'required'      => true,
                     'label'         => t('Filepath'),
-                    'helptext'      => t('Location of your icinga status.dat file'),
+                    'description'   => t('Location of your icinga status.dat file'),
                     'value'         => realpath(Icinga::app()->getApplicationDir() . '/../var/status.dat'),
                     'validators'    => array(new ReadablePathValidator())
                 )
@@ -44,7 +44,7 @@ class StatusdatResourceForm extends Form
                 array(
                     'required'      => true,
                     'label'         => t('Filepath'),
-                    'helptext'      => t('Location of your icinga objects.cache file'),
+                    'description'   => t('Location of your icinga objects.cache file'),
                     'value'         => realpath(Icinga::app()->getApplicationDir() . '/../var/objects.cache'),
                     'validators'    => array(new ReadablePathValidator())
                 )

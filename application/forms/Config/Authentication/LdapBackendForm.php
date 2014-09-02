@@ -54,7 +54,7 @@ class LdapBackendForm extends Form
                 array(
                     'required'      => true,
                     'label'         => t('Backend Name'),
-                    'helptext'      => t('The name of this authentication backend')
+                    'description'   => t('The name of this authentication backend')
                 )
             ),
             $this->createElement(
@@ -63,7 +63,7 @@ class LdapBackendForm extends Form
                 array(
                     'required'      => true,
                     'label'         => t('LDAP Resource'),
-                    'helptext'      => t('The resource to use for authenticating with this provider'),
+                    'description'   => t('The resource to use for authenticating with this provider'),
                     'multiOptions'  => false === empty($this->resources)
                         ? array_combine($this->resources, $this->resources)
                         : array()
@@ -73,20 +73,20 @@ class LdapBackendForm extends Form
                 'text',
                 'user_class',
                 array(
-                    'required'  => true,
-                    'label'     => t('LDAP User Object Class'),
-                    'helptext'  => t('The object class used for storing users on the ldap server'),
-                    'value'     => 'inetOrgPerson'
+                    'required'      => true,
+                    'label'         => t('LDAP User Object Class'),
+                    'description'   => t('The object class used for storing users on the ldap server'),
+                    'value'         => 'inetOrgPerson'
                 )
             ),
             $this->createElement(
                 'text',
                 'user_name_attribute',
                 array(
-                    'required'  => true,
-                    'label'     => t('LDAP User Name Attribute'),
-                    'helptext'  => t('The attribute name used for storing the user name on the ldap server'),
-                    'value'     => 'uid'
+                    'required'      => true,
+                    'label'         => t('LDAP User Name Attribute'),
+                    'description'   => t('The attribute name used for storing the user name on the ldap server'),
+                    'value'         => 'uid'
                 )
             ),
             $this->createElement(
