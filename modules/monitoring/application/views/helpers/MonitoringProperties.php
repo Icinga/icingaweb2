@@ -121,7 +121,7 @@ class Zend_View_Helper_MonitoringProperties extends Zend_View_Helper_Abstract
      */
     private function floatFormatter($value)
     {
-        return sprintf('%.4f', $value);
+        return sprintf('%.4F', $value);
     }
 
     /**
