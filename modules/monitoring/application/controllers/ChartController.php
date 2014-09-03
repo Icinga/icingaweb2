@@ -99,7 +99,7 @@ class Monitoring_ChartController extends Controller
                 'services_warning_unhandled',
                 'services_pending'
             )
-        )->getQuery()->fetchAll();
+        )->order('hostgroup')->getQuery()->fetchAll();
         $this->view->height = intval($this->getParam('height', 500));
         $this->view->width = intval($this->getParam('width', 500));
         if (count($query) === 1) {
@@ -124,7 +124,7 @@ class Monitoring_ChartController extends Controller
                 'services_warning_unhandled',
                 'services_pending'
             )
-        )->getQuery()->fetchAll();
+        )->order('servicegroup')->getQuery()->fetchAll();
         $this->view->height = intval($this->getParam('height', 500));
         $this->view->width = intval($this->getParam('width', 500));
 
