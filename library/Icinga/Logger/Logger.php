@@ -194,4 +194,14 @@ class Logger
             static::$instance->log(static::formatMessage(func_get_args()), static::$DEBUG);
         }
     }
+
+    public function getWriter()
+    {
+        return $this->writer;
+    }
+
+    public static function getInstance()
+    {
+        return static::$instance;
+    }
 }
