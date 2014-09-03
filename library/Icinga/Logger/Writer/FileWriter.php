@@ -103,4 +103,12 @@ class FileWriter extends LogWriter
         $file->fwrite($text);
         $file->fflush();
     }
+
+    /**
+     * @return string
+     */
+    public function getPath()
+    {
+        return $this->path;
+    }
 }
