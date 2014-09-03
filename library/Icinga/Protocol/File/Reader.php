@@ -81,7 +81,7 @@ class Reader extends FilterIterator
         if ($matched === false) {
             throw new FileReaderException('Failed parsing regular expression!');
         } else if ($matched === 1) {
-            foreach ($data as $key) {
+            foreach ($data as $key => $value) {
                 if (is_int($key)) {
                     unset($data[$key]);
                 }
