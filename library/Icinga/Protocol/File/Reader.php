@@ -40,7 +40,7 @@ class Reader extends FilterIterator
     {
         foreach (array('filename', 'fields') as $key) {
             if (! isset($config->{$key})) {
-                throw new FileReaderException('The directive `' . $key . '\' is required');
+                throw new FileReaderException('The directive `%s\' is required', $key);
             }
         }
         $this->fields = $config->fields;

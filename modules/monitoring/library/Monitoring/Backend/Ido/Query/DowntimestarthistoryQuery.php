@@ -47,7 +47,7 @@ class DowntimestarthistoryQuery extends IdoQuery
             array('h' => $this->prefix . 'downtimehistory'),
             'o.' . $this->object_id . ' = h.' . $this->object_id . ' AND o.is_active = 1',
             array()
-        )->where('h.actual_start_time > ?', '1970-01-01 00:00:00');
+        )->where('h.actual_start_time > ?', '1970-01-02 00:00:00');
         $this->joinedVirtualTables = array('downtimehistory' => true);
     }
 }

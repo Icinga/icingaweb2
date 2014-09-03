@@ -348,7 +348,9 @@ class ActionController extends Zend_Controller_Action
             // Cast preference app.show_benchmark to bool because preferences loaded from a preferences storage are
             // always strings
             if ((bool) $user->getPreferences()->get('app.show_benchmark', false) === true) {
-                $layout->benchmark = $this->renderBenchmark();
+                if (!$this->_helper->viewRenderer->getNoRender()) {
+                    $layout->benchmark = $this->renderBenchmark();
+                }
             }
         }
 

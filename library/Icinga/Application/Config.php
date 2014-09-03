@@ -86,6 +86,18 @@ class Config extends Zend_Config
     }
 
     /**
+     * Set module config
+     *
+     * @param string        $moduleName
+     * @param string        $configName
+     * @param Zend_Config   $config
+     */
+    public static function setModuleConfig($moduleName, $configName, Zend_Config $config)
+    {
+        self::$modules[$moduleName][$configName] = $config;
+    }
+
+    /**
      * Retrieve a module config instance
      *
      * @param   string  $modulename     The name of the module to look for configurations
