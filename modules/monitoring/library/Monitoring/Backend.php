@@ -86,7 +86,7 @@ class Backend implements Selectable, Queryable, ConnectionInterface
             }
         } else {
             foreach ($config as $name => $backendConfig) {
-                if ((bool) $config->get('disabled', false) === false) {
+                if ((bool) $backendConfig->get('disabled', false) === false) {
                     $backendName = $name;
                     break;
                 }

@@ -47,7 +47,7 @@ class Session
     public static function getSession()
     {
         if (self::$session === null) {
-            throw new ProgrammingError('No session created yet');
+            self::create();
         }
 
         return self::$session;

@@ -708,10 +708,42 @@ class Module
      */
     protected function registerLocales()
     {
-        if (file_exists($this->localedir) && is_dir($this->localedir)) {
+        if ($this->hasLocales()) {
             Translator::registerDomain($this->name, $this->localedir);
         }
         return $this;
+    }
+
+    /**
+     * return bool Whether this module has translations
+     */
+    public function hasLocales()
+    {
+        return file_exists($this->localedir) && is_dir($this->localedir);
+    }
+
+    /**
+     * List all available locales
+     *
+     * return array Locale list
+     */
+    public function listLocales()
+    {
+        $locales = array();
+        if (! $this->hasLocales()) {
+            return $locales;
+        }
+
+        $dh = opendir($this->localedir);
+        while (false !== ($file = readdir($dh))) {
+            $filename = $this->localedir . DIRECTORY_SEPARATOR . $file;
+            if (preg_match('/^[a-z]{2}_[A-Z]{2}$/', $file) && is_dir($filename)) {
+                $locales[] = $file;
+            }
+        }
+        closedir($dh);
+        sort($locales);
+        return $locales;
     }
 
     /**
