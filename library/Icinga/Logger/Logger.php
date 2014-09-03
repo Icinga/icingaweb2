@@ -52,7 +52,7 @@ class Logger
         $this->verbosity = $config->level;
 
         if ($config->enable) {
-            $this->writer = $this->getWriter($config);
+            $this->writer = $this->createWriter($config);
         }
     }
 
@@ -75,7 +75,7 @@ class Logger
      *
      * @throws  ConfigurationError          In case the requested writer cannot be found
      */
-    protected function getWriter(Zend_Config $config)
+    protected function createWriter(Zend_Config $config)
     {
         $class = 'Icinga\\Logger\\Writer\\' . ucfirst(strtolower($config->type)) . 'Writer';
         if (!class_exists($class)) {
