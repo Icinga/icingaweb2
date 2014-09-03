@@ -5,7 +5,6 @@
 use Icinga\Application\Icinga;
 use Icinga\Application\Config;
 use Icinga\Util\DateTimeFactory;
-use Icinga\Web\Form\Validator\DateTimeValidator;
 
 /**
  * Helper to format date and time. Utilizes DateTimeFactory to ensure time zone awareness
@@ -58,7 +57,7 @@ class Zend_View_Helper_DateFormat extends Zend_View_Helper_Abstract
     public function format($timestamp, $format)
     {
         $dt = DateTimeFactory::create();
-        if (DateTimeValidator::isUnixTimestamp($timestamp)) {
+        if (DateTimeFactory::isUnixTimestamp($timestamp)) {
             $dt->setTimestamp($timestamp);
         } else {
             return $timestamp;
