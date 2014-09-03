@@ -8,7 +8,7 @@ use Icinga\Web\Notification;
 use Icinga\Form\ConfirmRemovalForm;
 use Icinga\Module\Monitoring\Form\Config\BackendForm;
 use Icinga\Module\Monitoring\Form\Config\InstanceForm;
-use Icinga\Module\Monitoring\Form\Config\SecurityForm;
+use Icinga\Module\Monitoring\Form\Config\SecurityConfigForm;
 use Icinga\Exception\NotReadableError;
 
 /**
@@ -254,26 +254,11 @@ class Monitoring_ConfigController extends ModuleActionController
      */
     public function securityAction()
     {
-        $this->view->tabs = $this->Module()->getConfigTabs()->activate('security');
-
-        $form = new SecurityForm();
-        $request = $this->getRequest();
-        $config = $this->Config()->toArray();
-        if ($request->isPost()) {
-            if ($form->isValid($request->getPost())) {
-                $config['security'] = $form->getValues();
-                if ($this->writeConfiguration(new Zend_Config($config))) {
-                    Notification::success('Configuration modified successfully');
-                    $this->redirectNow('monitoring/config/security');
-                } else {
-                    $this->render('show-configuration');
-                    return;
-                }
-            }
-        } elseif (isset($config['security'])) {
-            $form->populate($config['security']);
-        }
+        $form = new SecurityConfigForm();
+        $form->setConfig($this->Config());
+        $form->handleRequest();
 
         $this->view->form = $form;
+        $this->view->tabs = $this->Module()->getConfigTabs()->activate('security');
     }
 }
