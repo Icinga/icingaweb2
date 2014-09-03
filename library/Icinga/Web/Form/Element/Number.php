@@ -30,11 +30,112 @@ class Number extends Zend_Form_Element
     public $helper = 'formNumber';
 
     /**
+     * The expected lower bound for the element’s value
+     *
+     * @var float|null
+     */
+    protected $min;
+
+    /**
+     * The expected upper bound for the element’s
+     *
+     * @var float|null
+     */
+    protected $max;
+
+    /**
+     * The value granularity of the element’s value
+     *
+     * Normally, number input controls are limited to an accuracy of integer values.
+     *
+     * @var float|string|null
+     */
+    protected $step;
+
+    /**
      * (non-PHPDoc)
      * @see \Zend_Form_Element::init() For the method documentation.
      */
     public function init()
     {
-        $this->addValidator('Int');
+        $this->addValidator('Float', true);  // true for breaking the validator chain on failure
+        if ($this->min !== null) {
+            $this->addValidator('GreaterThan', true, array('min' => $this->min));
+        }
+        if ($this->max !== null) {
+            $this->addValidator('LessThan', true, array('max' => $this->max));
+        }
+    }
+
+    /**
+     * Set the expected lower bound for the element’s value
+     *
+     * @param   float $min
+     *
+     * @return  $this
+     */
+    public function setMin($min)
+    {
+        $this->min = (float) $min;
+        return $this;
+    }
+
+    /**
+     * Get the expected lower bound for the element’s value
+     *
+     * @return float|null
+     */
+    public function getMin()
+    {
+        return $this->min;
+    }
+
+    /**
+     * Set the expected upper bound for the element’s value
+     *
+     * @param   float $max
+     *
+     * @return  $this
+     */
+    public function setMax($max)
+    {
+        $this->max = (int) $max;
+        return $this;
+    }
+
+    /**
+     * Get the expected upper bound for the element’s value
+     *
+     * @return float|null
+     */
+    public function getMax()
+    {
+        return $this->max;
+    }
+
+    /**
+     * Set the value granularity of the element’s value
+     *
+     * @param   float|string $step
+     *
+     * @return  $this
+     */
+    public function setStep($step)
+    {
+        if ($step !== 'any') {
+            $step = (float) $step;
+        }
+        $this->step = $step;
+        return $this;
+    }
+
+    /**
+     * Get the value granularity of the element’s value
+     *
+     * @return float|string|null
+     */
+    public function getStep()
+    {
+        return $this->step;
     }
 }
