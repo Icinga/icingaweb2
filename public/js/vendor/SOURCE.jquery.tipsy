@@ -1,0 +1,33 @@
+jquery.tipsy.js SOURCE
+======================
+
+This file contains information about how to acquire and install the source files for jquery.tipsy
+
+
+# version
+
+    1.0.0a
+
+
+# license
+
+    MIT license
+
+
+# used files
+
+    src/javascript/tipsy.css
+    src/javascript/jquery.tipsy.js
+
+
+# source
+
+    https://github.com/jaz303/tipsy.git
+
+
+# installation
+
+
+        mv src/javascript/tipsy.css ICINGAWEB/public/css/vendor/tipsy.css
+        mv src/javascript/jquery.tipsy.js ICINGAWEB/public/js/vendor/jquery.tipsy.js
+        uglifyjs src/javascript/jquery.tipsy.js ICINGAWEB/public/js/vendor/jquery.tipsy.min.js

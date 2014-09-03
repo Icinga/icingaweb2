@@ -10,6 +10,7 @@ use Icinga\Chart\Axis;
 use Icinga\Chart\Graph\BarGraph;
 use Icinga\Chart\Graph\LineGraph;
 use Icinga\Chart\Graph\StackedGraph;
+use Icinga\Chart\Graph\Tooltip;
 use Icinga\Chart\Primitive\Canvas;
 use Icinga\Chart\Primitive\Rect;
 use Icinga\Chart\Primitive\Path;
@@ -73,6 +74,16 @@ class GridChart extends Chart
      * @var array
      */
     private $stacks = array();
+
+    /**
+     * An associative array containing all Tooltips used to render the titles
+     *
+     * Each tooltip represents the summary for all y-values of a certain x-value
+     * in the grid chart
+     *
+     * @var Tooltip
+     */
+    private $tooltips = array();
 
     /**
      * Check if the current dataset has the proper structure for this chart.
@@ -167,6 +178,26 @@ class GridChart extends Chart
             $this->graphs[$axisName][] = $graph;
             if ($this->legend) {
                 $this->legend->addDataset($graph);
+            }
+        }
+        $this->initTooltips($data);
+    }
+
+
+    private function initTooltips($data)
+    {
+        foreach ($data as &$graph) {
+            foreach  ($graph['data'] as $x => $point) {
+                if (!array_key_exists($x, $this->tooltips)) {
+                    $this->tooltips[$x] = new Tooltip(
+                        array(
+                            'color' => $graph['color'],
+
+                        )
+
+                    );
+                }
+                $this->tooltips[$x]->addDataPoint($point);
             }
         }
     }
@@ -353,11 +384,16 @@ class GridChart extends Chart
         foreach ($this->graphs as $axisName => $graphs) {
             $axis = $this->axis[$axisName];
             $graphObj = null;
-            foreach ($graphs as $graph) {
+            foreach ($graphs as $dataset => $graph) {
                 // determine the type and create a graph object for it
                 switch ($graph['graphType']) {
                     case self::TYPE_BAR:
-                        $graphObj = new BarGraph($axis->transform($graph['data']));
+                        $graphObj = new BarGraph(
+                            $axis->transform($graph['data']),
+                            $graphs,
+                            $dataset,
+                            $this->tooltips
+                        );
                         break;
                     case self::TYPE_LINE:
                         $graphObj = new LineGraph($axis->transform($graph['data']));
