@@ -182,7 +182,7 @@ class FilterTest extends BaseTestCase
 
     public function testComplexFilterFromQueryString()
     {
-        $q = 'host=localhost|nohost*&problem&service=*www*|ups*&state!=1&!handled';
+        $q = '(host=localhost|host=nohost*)&problem&(service=*www*|service=ups*)&state!=1&!handled';
         $filter = Filter::fromQueryString($q);
         $this->assertFalse($filter->matches($this->row(0)));
         $this->assertTrue($filter->matches($this->row(1)));
