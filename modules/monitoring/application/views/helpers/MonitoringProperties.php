@@ -222,7 +222,7 @@ class Zend_View_Helper_MonitoringProperties extends Zend_View_Helper_Abstract
             $val .= self::VALUE_YES;
         }
 
-        $val .= sprintf(' (%.2f%% state change)', $object->percent_state_change);
+        $val .= sprintf(' (%.2F%% state change)', $object->percent_state_change);
 
         return $val;
     }
