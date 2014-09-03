@@ -78,7 +78,7 @@ abstract class ToggleFeatureCommandForm extends CommandForm
 
     /**
      * (non-PHPDoc)
-     * @see \Icinga\Web\Form::createElements() For the method documentation.
+     * @see \Icinga\Web\Form::onSuccess() For the method documentation.
      */
     public function onSuccess(Request $request)
     {
