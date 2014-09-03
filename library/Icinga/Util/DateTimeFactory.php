@@ -76,4 +76,18 @@ class DateTimeFactory implements ConfigAwareFactory
     {
         return new DateTime($time, $timeZone !== null ? $timeZone : self::$timeZone);
     }
+
+    /**
+     * Check whether a variable is a Unix timestamp
+     *
+     * @param   mixed $timestamp
+     *
+     * @return  bool
+     */
+    public static function isUnixTimestamp($timestamp)
+    {
+        return (is_int($timestamp) || ctype_digit($timestamp))
+        && ($timestamp <= PHP_INT_MAX)
+        && ($timestamp >= ~PHP_INT_MAX);
+    }
 }
