@@ -5,7 +5,6 @@
 namespace Icinga\Web;
 
 use Icinga\Exception\ConfigurationError;
-use Icinga\Logger\Logger;
 use Zend_Config;
 use RecursiveIterator;
 use Icinga\Application\Config;
@@ -173,34 +172,34 @@ class Menu implements RecursiveIterator
      */
     protected function addMainMenuItems()
     {
-        $this->add('dashboard', t('Dashboard'), array(
+        $this->add(t('Dashboard'), array(
             'url'      => 'dashboard',
             'icon'     => 'img/icons/dashboard.png',
             'priority' => 10
         ));
 
-        $section = $this->add('system', t('System'), array(
+        $section = $this->add(t('System'), array(
             'icon'     => 'img/icons/configuration.png',
             'priority' => 200
         ));
-        $section->add('preferences', t('Preferences'), array(
+        $section->add(t('Preferences'), array(
             'url'      => 'preference',
             'priority' => 200
         ));
-        $section->add('configuration', t('Configuration'), array(
+        $section->add(t('Configuration'), array(
             'url'      => 'config',
             'priority' => 300
         ));
-        $section->add('modules', t('Modules'), array(
+        $section->add(t('Modules'), array(
             'url'      => 'config/modules',
             'priority' => 400
         ));
-        $section->add('applicationlog', t('ApplicationLog'), array(
+        $section->add(t('ApplicationLog'), array(
             'url'      => 'list/applicationlog',
             'priority' => 500
         ));
 
-        $this->add('logout', t('Logout'), array(
+        $this->add(t('Logout'), array(
             'url'      => 'authentication/logout',
             'icon'     => 'img/icons/logout.png',
             'priority' => 300
@@ -428,10 +427,9 @@ class Menu implements RecursiveIterator
      * @param array $config
      * @return Menu
      */
-    public function add($id, $name, $config = array())
+    public function add($name, $config = array())
     {
-        $config['title'] = $name;
-        return $this->addSubMenu($id, new Zend_Config($config));
+        return $this->addSubMenu($name, new Zend_Config($config));
     }
 
     /**

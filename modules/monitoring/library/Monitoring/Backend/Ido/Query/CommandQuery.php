@@ -51,10 +51,12 @@ class CommandQuery extends IdoQuery
     {
         $this->select->join(
             array('cnc' => $this->prefix . 'contact_notificationcommands'),
-            'cnc.command_object_id = co.object_id'
+            'cnc.command_object_id = co.object_id',
+            array()
         )->join(
             array('con' => $this->prefix . 'contacts'),
-            'con.contact_id = cnc.contact_id'
+            'con.contact_id = cnc.contact_id',
+            array()
         );
     }
 }

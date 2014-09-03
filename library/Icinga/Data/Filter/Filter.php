@@ -132,12 +132,12 @@ abstract class Filter
     public static function expression($col, $op, $expression)
     {
         switch ($op) {
-            case '=': return new FilterEqual($col, $op, $expression);
+            case '=': return new FilterMatch($col, $op, $expression);
             case '<': return new FilterLessThan($col, $op, $expression);
             case '>': return new FilterGreaterThan($col, $op, $expression);
             case '>=': return new FilterEqualOrGreaterThan($col, $op, $expression);
             case '<=': return new FilterEqualOrLessThan($col, $op, $expression);
-            case '!=': return new FilterNotEqual($col, $op, $expression);
+            case '!=': return new FilterMatchNot($col, $op, $expression);
             default: throw new ProgrammingError(
                 'There is no such filter sign: %s',
                 $op

@@ -307,7 +307,7 @@ class Connection
         $results = @ldap_search(
             $this->ds,
             $base,
-            (string) $query,
+            $query->create(),
             $fields,
             0, // Attributes and values
             0  // No limit - at least where possible
@@ -619,7 +619,7 @@ class Connection
         $result = @ldap_read(
             $ds,
             '',
-            (string) $query,
+            $query->create(),
             $query->listFields()
         );
 

@@ -17,6 +17,13 @@ use Icinga\Chart\Render\RenderContext;
 class BarGraph extends Styleable implements Drawable
 {
     /**
+     * The dataset order
+     *
+     * @var int
+     */
+    private $order = 0;
+
+    /**
      * The width of the bars.
      *
      * @var int
@@ -31,13 +38,36 @@ class BarGraph extends Styleable implements Drawable
     private $dataSet;
 
     /**
+     * The tooltips
+     *
+     * @var
+     */
+    private $tooltips;
+
+    /**
+     * All graphs
+     *
+     * @var
+     */
+    private $graphs;
+
+    /**
      * Create a new BarGraph with the given dataset
      *
-     * @param array $dataSet    An array of datapoints
+     * @param array $dataSet    An array of data points
+     * @param int   $order      The graph number displayed by this BarGraph
+     * @param array $tooltips   The tooltips to display for each value
      */
-    public function __construct(array $dataSet)
-    {
+    public function __construct(
+        array $dataSet,
+        array &$graphs,
+        $order,
+        array $tooltips = null
+    ) {
+        $this->order = $order;
         $this->dataSet = $dataSet;
+        $this->tooltips = $tooltips;
+        $this->graphs = $graphs;
     }
 
     /**
@@ -57,6 +87,30 @@ class BarGraph extends Styleable implements Drawable
     }
 
     /**
+     * Draw a single rectangle
+     *
+     * @param array     $point          The
+     * @param null      $index
+     * @param string    $fill           The fill color to use
+     * @param           $strokeWidth
+     *
+     * @return Rect
+     */
+    private function drawSingleBar($point, $index = null, $fill, $strokeWidth)
+    {
+        $rect = new Rect($point[0] - ($this->barWidth / 2), $point[1], $this->barWidth, 100 - $point[1]);
+        $rect->setFill($fill);
+        $rect->setStrokeWidth($strokeWidth);
+        $rect->setStrokeColor('black');
+        if (isset($index)) {
+            $rect->setAttribute('data-icinga-graph-index', $index);
+        }
+        $rect->setAttribute('data-icinga-graph-type', 'bar');
+        $rect->setAdditionalStyle('clip-path: url(#clip);');
+        return $rect;
+    }
+
+    /**
      * Render this BarChart
      *
      * @param   RenderContext   $ctx    The rendering context to use for drawing
@@ -68,23 +122,33 @@ class BarGraph extends Styleable implements Drawable
         $doc = $ctx->getDocument();
         $group = $doc->createElement('g');
         $idx = 0;
-        foreach ($this->dataSet as $point) {
-            $rect = new Rect($point[0] - 2, $point[1], 4, 100 - $point[1]);
-            $rect->setFill($this->fill);
-            $rect->setStrokeWidth($this->strokeWidth);
-            $rect->setStrokeColor('black');
-            $rect->setAttribute('data-icinga-graph-index', $idx++);
-            $rect->setAttribute('data-icinga-graph-type', 'bar');
-            $rect->setAdditionalStyle('clip-path: url(#clip);');
-            /*$rect->setAnimation(
-                new Animation(
-                    'y',
-                    $ctx->yToAbsolute(100),
-                    $ctx->yToAbsolute($point[1]),
-                    rand(1, 1.5)/2
-                )
-            );*/
-            $group->appendChild($rect->toSvg($ctx));
+        foreach ($this->dataSet as $x => $point) {
+            // add white background bar, to prevent other bars from altering transparency effects
+            $bar = $this->drawSingleBar($point, $idx++, 'white', $this->strokeWidth, $idx)->toSvg($ctx);
+            $group->appendChild($bar);
+
+            // draw actual bar
+            $bar = $this->drawSingleBar($point, null, $this->fill, $this->strokeWidth, $idx)->toSvg($ctx);
+            $bar->setAttribute('class', 'chart-data');
+            if (isset($this->tooltips[$x])) {
+                $data = array(
+                    'label' => isset($this->graphs[$this->order]['label']) ?
+                            strtolower($this->graphs[$this->order]['label']) : '',
+                    'color' => isset($this->graphs[$this->order]['color']) ?
+                            strtolower($this->graphs[$this->order]['color']) : '#fff'
+                );
+                $format = isset($this->graphs[$this->order]['tooltip'])
+                    ? $this->graphs[$this->order]['tooltip'] : null;
+                $bar->setAttribute(
+                    'title',
+                    $this->tooltips[$x]->renderNoHtml($this->order, $data, $format)
+                );
+                $bar->setAttribute(
+                    'title-rich',
+                    $this->tooltips[$x]->render($this->order, $data, $format)
+                );
+            }
+            $group->appendChild($bar);
         }
         return $group;
     }

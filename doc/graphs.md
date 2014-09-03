@@ -238,6 +238,77 @@ the labels to show you can use the 'disableLegend()' call on the GridChart objec
 
 ![Various Line Graph Options][graph7]
 
+
+### Tooltips
+
+It is possible to specify custom tooltip format strings when creating bar charts.
+Tooltips provide information about the points of each bar chart column, by aggregating
+the values of all data sets with the same x-coordinate.
+
+When no custom format string is given, a sane default format string is used, but its usually
+clearer for the user to describe the data of each chart more accurately with a custom one.
+
+
+**Example #9.1: Bar Charts with custom tooltips**
+
+     $this->chart->drawBars(
+            array(
+                'label' => 'Hosts critical',
+                'palette'  => Palette::PROBLEM,
+                'stack' => 'stack1',
+                'data'  => $data2,
+                'tooltip' => '{title}<br/> {value} of {sum} hosts are ok.'
+            ),
+            array(
+                'label' => 'Hosts warning',
+                'stack' => 'stack1',
+                'palette'  => Palette::WARNING,
+                'data'  => $data,
+                'tooltip' => '{title}<br/> Oh no, {value} of {sum} hosts are down!'
+            )
+        );
+
+
+As you can see, you can specify a format string for each data set, which allows you to
+pass a custom message for all "down" hosts, one custom message for all "Ok" hosts and so on.
+In contrast to that, the aggregation of values works on a column basis and will give you the
+sum of all y-values with the same x-coordinate and not the aggregation of all values of the data set.
+
+#### Rich Tooltips
+
+It is also possible to use HTML in the tooltip strings to create rich tooltip markups, which can
+be useful to provide extended output that spans over multiple lines. Please keep in mind that
+users without JavaScript will see the tooltip with all of its html-tags stripped.
+
+![Various Line Graph Options][graph7.1]
+
+#### Available replacements
+
+The available replacements depend on the used chart type, since the tooltip data is
+ instantiated and populated by the chart. All bar graphs have the following replacements available:
+
+Aggregated values, are calculated from the data points of each column:
+
+    - sum: The amount of all Y-values of the current column
+    - max: The biggest occurring Y-value of the current column
+    - min: The smallest occurring Y-value of the current column
+
+
+Column values are also defined by the current column, but are not
+the product of any aggregation
+
+    - title: The x-value of the current column
+
+
+Row values are defined by the properties the current data set, and are only useful for rendering the
+generic tooltip correctly, since you could also just directly write
+those values into your custom tooltip.
+
+    - label: The name of the current data set
+    - color: The color of this data set
+
+
+
 ## Pie Charts
 
 ### The PieChart Object
@@ -317,5 +388,6 @@ Rendering is straightforward, assuming $svg is the PieChart/GridChart object, yo
 [graph5]: res/GraphExample#5.png
 [graph6]: res/GraphExample#6.png
 [graph7]: res/GraphExample#7.png
+[graph7.1]: res/GraphExample#7.1.png
 [graph8]: res/GraphExample#8.png
 [graph9]: res/GraphExample#9.png

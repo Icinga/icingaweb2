@@ -24,7 +24,7 @@ class Logger
     /**
      * The log writer to use
      *
-     * @var LogWriter
+     * @var \Icinga\Logger\LogWriter
      */
     protected $writer;
 
@@ -54,7 +54,7 @@ class Logger
         $this->verbosity = $config->level;
 
         if ($config->enable) {
-            $this->writer = $this->getWriter($config);
+            $this->writer = $this->createWriter($config);
         }
     }
 
@@ -73,11 +73,10 @@ class Logger
      *
      * @param   Zend_Config     $config     The configuration to initialize the writer with
      *
-     * @return  LogWriter                   The requested log writer
-     *
-     * @throws  ConfigurationError          In case the requested writer cannot be found
+     * @return  \Icinga\Logger\LogWriter    The requested log writer
+     * @throws  ConfigurationError          If the requested writer cannot be found
      */
-    protected function getWriter(Zend_Config $config)
+    protected function createWriter(Zend_Config $config)
     {
         $class = 'Icinga\\Logger\\Writer\\' . ucfirst(strtolower($config->type)) . 'Writer';
         if (!class_exists($class)) {
@@ -201,5 +200,25 @@ class Logger
         if (static::$instance !== null && func_num_args() > 0) {
             static::$instance->log(static::formatMessage(func_get_args()), static::$DEBUG);
         }
+    }
+
+    /**
+     * Get the log writer to use
+     *
+     * @return \Icinga\Logger\LogWriter
+     */
+    public function getWriter()
+    {
+        return $this->writer;
+    }
+
+    /**
+     * Get this' instance
+     *
+     * @return Logger
+     */
+    public static function getInstance()
+    {
+        return static::$instance;
     }
 }

@@ -2,9 +2,9 @@
 
 namespace Icinga\Protocol\File;
 
-use RuntimeException;
+use Icinga\Exception\IcingaException;
 
 /**
  * Exception thrown if a file reader specific error occurs
  */
-class FileReaderException extends RuntimeException {}
+class FileReaderException extends IcingaException {}

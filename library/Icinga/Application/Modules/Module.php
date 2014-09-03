@@ -177,7 +177,6 @@ class Module
     /**
      * Add a pane to dashboard
      *
-     * @param $id
      * @param $name
      * @return Pane
      */
@@ -201,21 +200,19 @@ class Module
     /**
      * Add a menu Section to the Sidebar menu
      *
-     * @param string $id
-     * @param string $name
+     * @param $name
      * @param array $properties
      * @return mixed
      */
-    protected function menuSection($id, $name, array $properties = array())
+    protected function menuSection($name, array $properties = array())
     {
-        if (array_key_exists($id, $this->menuItems)) {
-            $this->menuItems[$id]->setProperties($properties);
+        if (array_key_exists($name, $this->menuItems)) {
+            $this->menuItems[$name]->setProperties($properties);
         } else {
-            $this->menuItems[$id] = new Menu($id, new Zend_Config($properties));
-            $this->menuItems[$id]->setTitle($name);
+            $this->menuItems[$name] = new Menu($name, new Zend_Config($properties));
         }
 
-        return $this->menuItems[$id];
+        return $this->menuItems[$name];
     }
 
     /**
@@ -711,10 +708,42 @@ class Module
      */
     protected function registerLocales()
     {
-        if (file_exists($this->localedir) && is_dir($this->localedir)) {
+        if ($this->hasLocales()) {
             Translator::registerDomain($this->name, $this->localedir);
         }
         return $this;
+    }
+
+    /**
+     * return bool Whether this module has translations
+     */
+    public function hasLocales()
+    {
+        return file_exists($this->localedir) && is_dir($this->localedir);
+    }
+
+    /**
+     * List all available locales
+     *
+     * return array Locale list
+     */
+    public function listLocales()
+    {
+        $locales = array();
+        if (! $this->hasLocales()) {
+            return $locales;
+        }
+
+        $dh = opendir($this->localedir);
+        while (false !== ($file = readdir($dh))) {
+            $filename = $this->localedir . DIRECTORY_SEPARATOR . $file;
+            if (preg_match('/^[a-z]{2}_[A-Z]{2}$/', $file) && is_dir($filename)) {
+                $locales[] = $file;
+            }
+        }
+        closedir($dh);
+        sort($locales);
+        return $locales;
     }
 
     /**
