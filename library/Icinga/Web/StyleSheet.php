@@ -24,7 +24,7 @@ class StyleSheet
         'css/icinga/selection-toolbar.less',
         'css/icinga/login.less',
         'css/icinga/charts.less',
-        'css/vendor/tipsy.less'
+        'css/vendor/tipsy.css'
     );
 
     public static function compileForPdf()
