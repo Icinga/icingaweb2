@@ -53,6 +53,8 @@
                 }
             });
 
+            $('td.state span.timesince').attr('title', null);
+
             var moduleName = el.data('icingaModule');
             if (moduleName) {
                 if (icinga.hasModule(moduleName)) {
