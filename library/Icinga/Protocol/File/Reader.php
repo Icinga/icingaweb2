@@ -154,13 +154,15 @@ class Reader extends FilterIterator
                 $skip = $count - ($skip + $read);
             }
         }
-        foreach ($this as $index => $line) {
+        $index = 0;
+        foreach ($this as $line) {
             if ($index >= $skip) {
                 if ($index >= $skip + $read) {
                     break;
                 }
                 $lines[] = $line;
             }
+            ++$index;
         }
         if ($query->sortDesc()) {
             $lines = array_reverse($lines);
