@@ -29,17 +29,17 @@ class LdapResourceForm extends Form
      */
     public function createElements(array $formData)
     {
-        return array(
-            $this->createElement(
-                'text',
-                'hostname',
-                array(
-                    'required'      => true,
-                    'label'         => t('Host'),
-                    'description'   => t('The hostname or address of the LDAP server to use for authentication'),
-                    'value'         => 'localhost'
-                )
-            ),
+        $this->addElement(
+            'text',
+            'hostname',
+            array(
+                'required'      => true,
+                'label'         => t('Host'),
+                'description'   => t('The hostname or address of the LDAP server to use for authentication'),
+                'value'         => 'localhost'
+            )
+        );
+        $this->addElement(
             new Number(
                 array(
                     'required'      => true,
@@ -48,36 +48,38 @@ class LdapResourceForm extends Form
                     'description'   => t('The port of the LDAP server to use for authentication'),
                     'value'         => 389
                 )
-            ),
-            $this->createElement(
-                'text',
-                'root_dn',
-                array(
-                    'required'      => true,
-                    'label'         => t('Root DN'),
-                    'description'   => t('The path where users can be found on the ldap server')
-                )
-            ),
-            $this->createElement(
-                'text',
-                'bind_dn',
-                array(
-                    'required'      => true,
-                    'label'         => t('Bind DN'),
-                    'description'   => t('The user dn to use for querying the ldap server')
-                )
-            ),
-            $this->createElement(
-                'password',
-                'bind_pw',
-                array(
-                    'required'          => true,
-                    'renderPassword'    => true,
-                    'label'             => t('Bind Password'),
-                    'description'       => t('The password to use for querying the ldap server')
-                )
             )
         );
+        $this->addElement(
+            'text',
+            'root_dn',
+            array(
+                'required'      => true,
+                'label'         => t('Root DN'),
+                'description'   => t('The path where users can be found on the ldap server')
+            )
+        );
+        $this->addElement(
+            'text',
+            'bind_dn',
+            array(
+                'required'      => true,
+                'label'         => t('Bind DN'),
+                'description'   => t('The user dn to use for querying the ldap server')
+            )
+        );
+        $this->addElement(
+            'password',
+            'bind_pw',
+            array(
+                'required'          => true,
+                'renderPassword'    => true,
+                'label'             => t('Bind Password'),
+                'description'       => t('The password to use for querying the ldap server')
+            )
+        );
+
+        return $this;
     }
 
     /**

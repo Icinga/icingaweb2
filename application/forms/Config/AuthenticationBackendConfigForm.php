@@ -299,8 +299,7 @@ class AuthenticationBackendConfigForm extends ConfigForm
             $backendTypes['autologin'] = t('Autologin');
         }
 
-        $elements = array();
-        $elements[] = $this->createElement(
+        $this->addElement(
             'select',
             'type',
             array(
@@ -315,9 +314,11 @@ class AuthenticationBackendConfigForm extends ConfigForm
 
         if (isset($formData['force_creation']) && $formData['force_creation']) {
             // In case another error occured and the checkbox was displayed before
-            $elements[] = $this->getForceCreationCheckbox();
+            $this->addElement($this->getForceCreationCheckbox());
         }
 
-        return array_merge($elements, $this->getBackendForm($backendType)->createElements($formData));
+        $this->addElements($this->getBackendForm($backendType)->createElements($formData)->getElements());
+
+        return $this;
     }
 }

@@ -47,57 +47,57 @@ class LdapBackendForm extends Form
      */
     public function createElements(array $formData)
     {
-        return array(
-            $this->createElement(
-                'text',
-                'name',
-                array(
-                    'required'      => true,
-                    'label'         => t('Backend Name'),
-                    'description'   => t('The name of this authentication backend')
-                )
-            ),
-            $this->createElement(
-                'select',
-                'resource',
-                array(
-                    'required'      => true,
-                    'label'         => t('LDAP Resource'),
-                    'description'   => t('The resource to use for authenticating with this provider'),
-                    'multiOptions'  => false === empty($this->resources)
-                        ? array_combine($this->resources, $this->resources)
-                        : array()
-                )
-            ),
-            $this->createElement(
-                'text',
-                'user_class',
-                array(
-                    'required'      => true,
-                    'label'         => t('LDAP User Object Class'),
-                    'description'   => t('The object class used for storing users on the ldap server'),
-                    'value'         => 'inetOrgPerson'
-                )
-            ),
-            $this->createElement(
-                'text',
-                'user_name_attribute',
-                array(
-                    'required'      => true,
-                    'label'         => t('LDAP User Name Attribute'),
-                    'description'   => t('The attribute name used for storing the user name on the ldap server'),
-                    'value'         => 'uid'
-                )
-            ),
-            $this->createElement(
-                'hidden',
-                'backend',
-                array(
-                    'required'  => true,
-                    'value'     => 'ldap'
-                )
+        $this->addElement(
+            'text',
+            'name',
+            array(
+                'required'      => true,
+                'label'         => t('Backend Name'),
+                'description'   => t('The name of this authentication backend')
             )
         );
+        $this->addElement(
+            'select',
+            'resource',
+            array(
+                'required'      => true,
+                'label'         => t('LDAP Resource'),
+                'description'   => t('The resource to use for authenticating with this provider'),
+                'multiOptions'  => false === empty($this->resources)
+                    ? array_combine($this->resources, $this->resources)
+                    : array()
+            )
+        );
+        $this->addElement(
+            'text',
+            'user_class',
+            array(
+                'required'      => true,
+                'label'         => t('LDAP User Object Class'),
+                'description'   => t('The object class used for storing users on the ldap server'),
+                'value'         => 'inetOrgPerson'
+            )
+        );
+        $this->addElement(
+            'text',
+            'user_name_attribute',
+            array(
+                'required'      => true,
+                'label'         => t('LDAP User Name Attribute'),
+                'description'   => t('The attribute name used for storing the user name on the ldap server'),
+                'value'         => 'uid'
+            )
+        );
+        $this->addElement(
+            'hidden',
+            'backend',
+            array(
+                'required'  => true,
+                'value'     => 'ldap'
+            )
+        );
+
+        return $this;
     }
 
     /**

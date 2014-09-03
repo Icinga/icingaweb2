@@ -29,31 +29,31 @@ class DbResourceForm extends Form
      */
     public function createElements(array $formData)
     {
-        return array(
-            $this->createElement(
-                'select',
-                'db',
-                array(
-                    'required'      => true,
-                    'label'         => t('Database Type'),
-                    'description'   => t('The type of SQL database'),
-                    'multiOptions'  => array(
-                        'mysql'     => 'MySQL',
-                        'pgsql'     => 'PostgreSQL'
-                        //'oracle'    => 'Oracle'
-                    )
+        $this->addElement(
+            'select',
+            'db',
+            array(
+                'required'      => true,
+                'label'         => t('Database Type'),
+                'description'   => t('The type of SQL database'),
+                'multiOptions'  => array(
+                    'mysql'     => 'MySQL',
+                    'pgsql'     => 'PostgreSQL'
+                    //'oracle'    => 'Oracle'
                 )
-            ),
-            $this->createElement(
-                'text',
-                'host',
-                array (
-                    'required'      => true,
-                    'label'         => t('Host'),
-                    'description'   => t('The hostname of the database'),
-                    'value'         => 'localhost'
-                )
-            ),
+            )
+        );
+        $this->addElement(
+            'text',
+            'host',
+            array (
+                'required'      => true,
+                'label'         => t('Host'),
+                'description'   => t('The hostname of the database'),
+                'value'         => 'localhost'
+            )
+        );
+        $this->addElement(
             new Number(
                 array(
                     'required'      => true,
@@ -62,36 +62,38 @@ class DbResourceForm extends Form
                     'description'   => t('The port to use'),
                     'value'         => 3306
                 )
-            ),
-            $this->createElement(
-                'text',
-                'dbname',
-                array(
-                    'required'      => true,
-                    'label'         => t('Database Name'),
-                    'description'   => t('The name of the database to use')
-                )
-            ),
-            $this->createElement(
-                'text',
-                'username',
-                array (
-                    'required'      => true,
-                    'label'         => t('Username'),
-                    'description'   => t('The user name to use for authentication')
-                )
-            ),
-            $this->createElement(
-                'password',
-                'password',
-                array(
-                    'required'          => true,
-                    'renderPassword'    => true,
-                    'label'             => t('Password'),
-                    'description'       => t('The password to use for authentication')
-                )
             )
         );
+        $this->addElement(
+            'text',
+            'dbname',
+            array(
+                'required'      => true,
+                'label'         => t('Database Name'),
+                'description'   => t('The name of the database to use')
+            )
+        );
+        $this->addElement(
+            'text',
+            'username',
+            array (
+                'required'      => true,
+                'label'         => t('Username'),
+                'description'   => t('The user name to use for authentication')
+            )
+        );
+        $this->addElement(
+            'password',
+            'password',
+            array(
+                'required'          => true,
+                'renderPassword'    => true,
+                'label'             => t('Password'),
+                'description'       => t('The password to use for authentication')
+            )
+        );
+
+        return $this;
     }
 
     /**

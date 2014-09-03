@@ -224,35 +224,35 @@ class ResourceConfigForm extends ConfigForm
             $resourceTypes['db'] = t('SQL Database');
         }
 
-        $elements = array(
-            $this->createElement(
-                'text',
-                'name',
-                array(
-                    'required'      => true,
-                    'label'         => t('Resource Name'),
-                    'description'   => t('The unique name of this resource')
-                )
-            ),
-            $this->createElement(
-                'select',
-                'type',
-                array(
-                    'required'          => true,
-                    'autosubmit'        => true,
-                    'label'             => t('Resource Type'),
-                    'description'       => t('The type of resource'),
-                    'multiOptions'      => $resourceTypes,
-                    'value'             => $resourceType
-                )
+        $this->addElement(
+            'text',
+            'name',
+            array(
+                'required'      => true,
+                'label'         => t('Resource Name'),
+                'description'   => t('The unique name of this resource')
+            )
+        );
+        $this->addElement(
+            'select',
+            'type',
+            array(
+                'required'          => true,
+                'autosubmit'        => true,
+                'label'             => t('Resource Type'),
+                'description'       => t('The type of resource'),
+                'multiOptions'      => $resourceTypes,
+                'value'             => $resourceType
             )
         );
 
         if (isset($formData['force_creation']) && $formData['force_creation']) {
             // In case another error occured and the checkbox was displayed before
-            $elements[] = $this->getForceCreationCheckbox();
+            $this->addElement($this->getForceCreationCheckbox());
         }
 
-        return array_merge($elements, $this->getResourceForm($resourceType)->createElements($formData));
+        $this->addElements($this->getResourceForm($resourceType)->createElements($formData)->getElements());
+
+        return $this;
     }
 }

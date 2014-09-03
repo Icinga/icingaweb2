@@ -25,26 +25,26 @@ class FileResourceForm extends Form
      */
     public function createElements(array $formData)
     {
-        return array(
-            $this->createElement(
-                'text',
-                'filename',
-                array(
-                    'required'      => true,
-                    'label'         => t('Filepath'),
-                    'description'   => t('The filename to fetch information from'),
-                    'validators'    => array(new ReadablePathValidator())
-                )
-            ),
-            $this->createElement(
-                'text',
-                'fields',
-                array(
-                    'required'      => true,
-                    'label'         => t('Pattern'),
-                    'description'   => t('The regular expression by which to identify columns')
-                )
+        $this->addElement(
+            'text',
+            'filename',
+            array(
+                'required'      => true,
+                'label'         => t('Filepath'),
+                'description'   => t('The filename to fetch information from'),
+                'validators'    => array(new ReadablePathValidator())
             )
         );
+        $this->addElement(
+            'text',
+            'fields',
+            array(
+                'required'      => true,
+                'label'         => t('Pattern'),
+                'description'   => t('The regular expression by which to identify columns')
+            )
+        );
+
+        return $this;
     }
 }

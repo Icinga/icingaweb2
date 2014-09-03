@@ -48,37 +48,37 @@ class DbBackendForm extends Form
      */
     public function createElements(array $formData)
     {
-        return array(
-            $this->createElement(
-                'text',
-                'name',
-                array(
-                    'required'      => true,
-                    'label'         => t('Backend Name'),
-                    'description'   => t('The name of this authentication provider'),
-                )
-            ),
-            $this->createElement(
-                'select',
-                'resource',
-                array(
-                    'required'      => true,
-                    'label'         => t('Database Connection'),
-                    'description'   => t('The database connection to use for authenticating with this provider'),
-                    'multiOptions'  => false === empty($this->resources)
-                        ? array_combine($this->resources, $this->resources)
-                        : array()
-                )
-            ),
-            $this->createElement(
-                'hidden',
-                'backend',
-                array(
-                    'required'  => true,
-                    'value'     => 'db'
-                )
+        $this->addElement(
+            'text',
+            'name',
+            array(
+                'required'      => true,
+                'label'         => t('Backend Name'),
+                'description'   => t('The name of this authentication provider'),
             )
         );
+        $this->addElement(
+            'select',
+            'resource',
+            array(
+                'required'      => true,
+                'label'         => t('Database Connection'),
+                'description'   => t('The database connection to use for authenticating with this provider'),
+                'multiOptions'  => false === empty($this->resources)
+                    ? array_combine($this->resources, $this->resources)
+                    : array()
+            )
+        );
+        $this->addElement(
+            'hidden',
+            'backend',
+            array(
+                'required'  => true,
+                'value'     => 'db'
+            )
+        );
+
+        return $this;
     }
 
     /**
