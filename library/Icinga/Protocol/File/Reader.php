@@ -137,26 +137,26 @@ class Reader extends FilterIterator
      */
     public function fetchPairs(Query $query)
     {
-        $skipLines = $query->getOffset();
-        $readLines = $query->getLimit();
-        if ($skipLines === null) {
-            $skipLines = 0;
+        $skip = $query->getOffset();
+        $read = $query->getLimit();
+        if ($skip === null) {
+            $skip = 0;
         }
         $lines = array();
         if ($query->sortDesc()) {
             $count = $this->count($query);
-            if ($count <= $skipLines) {
+            if ($count <= $skip) {
                 return $lines;
-            } else if ($count < ($skipLines + $readLines)) {
-                $readLines = $count - $skipLines;
-                $skipLines = 0;
+            } else if ($count < ($skip + $read)) {
+                $read = $count - $skip;
+                $skip = 0;
             } else {
-                $skipLines = $count - ($skipLines + $readLines);
+                $skip = $count - ($skip + $read);
             }
         }
         foreach ($this as $index => $line) {
-            if ($index >= $skipLines) {
-                if ($index >= $skipLines + $readLines) {
+            if ($index >= $skip) {
+                if ($index >= $skip + $read) {
                     break;
                 }
                 $lines[] = $line;
