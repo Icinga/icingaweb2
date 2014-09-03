@@ -6,7 +6,7 @@ namespace Tests\Icinga\Web;
 
 // Necessary as some of these tests disable phpunit's preservation
 // of the global state (e.g. autoloaders are in the global state)
-require_once realpath(dirname(__FILE__) . '/../../../bootstrap.php');
+require_once realpath(dirname(__FILE__) . '/../../../../bootstrap.php');
 
 use Mockery;
 use Icinga\Application\Icinga;
