@@ -23,9 +23,7 @@ class LoggingConfigForm extends Form
      */
     public function createElements(array $formData)
     {
-        $elements = array();
-
-        $elements[] = $this->createElement(
+        $this->addElement(
             'select',
             'logging_level',
             array(
@@ -41,7 +39,7 @@ class LoggingConfigForm extends Form
                 )
             )
         );
-        $elements[] = $this->createElement(
+        $this->addElement(
             'select',
             'logging_type',
             array(
@@ -57,7 +55,7 @@ class LoggingConfigForm extends Form
         );
 
         if (false === isset($formData['logging_type']) || $formData['logging_type'] === 'syslog') {
-            $elements[] = $this->createElement(
+           $this->addElement(
                 'text',
                 'logging_application',
                 array(
@@ -79,7 +77,7 @@ class LoggingConfigForm extends Form
                     )
                 )
             );
-            $elements[] = $this->createElement(
+            $this->addElement(
                 'select',
                 'logging_facility',
                 array(
@@ -92,7 +90,7 @@ class LoggingConfigForm extends Form
                 )
             );
         } elseif ($formData['logging_type'] === 'file') {
-            $elements[] = $this->createElement(
+            $this->addElement(
                 'text',
                 'logging_target',
                 array(
@@ -105,7 +103,7 @@ class LoggingConfigForm extends Form
             );
         }
 
-        return $elements;
+        return $this;
     }
 
     /**

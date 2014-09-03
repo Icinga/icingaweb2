@@ -27,14 +27,12 @@ class ApplicationConfigForm extends Form
      */
     public function createElements(array $formData)
     {
-        $elements = array();
-
         $languages = array();
         foreach (Translator::getAvailableLocaleCodes() as $language) {
             $languages[$language] = $language;
         }
 
-        $elements[] = $this->createElement(
+        $this->addElement(
             'select',
             'global_language',
             array(
@@ -52,7 +50,7 @@ class ApplicationConfigForm extends Form
             $tzList[$tz] = $tz;
         }
 
-        $elements[] = $this->createElement(
+        $this->addElement(
             'select',
             'global_timezone',
             array(
@@ -67,7 +65,7 @@ class ApplicationConfigForm extends Form
             )
         );
 
-        $elements[] = $this->createElement(
+        $this->addElement(
             'text',
             'global_modulePath',
             array(
@@ -82,7 +80,7 @@ class ApplicationConfigForm extends Form
             )
         );
 
-        $elements[] = $this->createElement(
+        $this->addElement(
             'select',
             'preferences_type',
             array(
@@ -104,7 +102,7 @@ class ApplicationConfigForm extends Form
                 }
             }
 
-            $elements[] = $this->createElement(
+            $this->addElement(
                 'select',
                 'preferences_resource',
                 array(
@@ -115,6 +113,6 @@ class ApplicationConfigForm extends Form
             );
         }
 
-        return $elements;
+        return $this;
     }
 }

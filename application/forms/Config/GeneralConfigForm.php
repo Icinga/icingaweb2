@@ -31,11 +31,10 @@ class GeneralConfigForm extends ConfigForm
     {
         $appConfigForm = new ApplicationConfigForm();
         $loggingConfigForm = new LoggingConfigForm();
+        $this->addElements($appConfigForm->createElements($formData)->getElements());
+        $this->addElements($loggingConfigForm->createElements($formData)->getElements());
 
-        return array_merge(
-            $appConfigForm->createElements($formData),
-            $loggingConfigForm->createElements($formData)
-        );
+        return $this;
     }
 
     /**

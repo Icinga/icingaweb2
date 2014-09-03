@@ -29,18 +29,18 @@ class LivestatusResourceForm extends Form
      */
     public function createElements(array $formData)
     {
-        return array(
-            $this->createElement(
-                'text',
-                'socket',
-                array(
-                    'required'      => true,
-                    'label'         => t('Socket'),
-                    'description'   => t('The path to your livestatus socket used for querying monitoring data'),
-                    'value'         => realpath(Icinga::app()->getApplicationDir() . '/../var/rw/livestatus')
-                )
+        $this->addElement(
+            'text',
+            'socket',
+            array(
+                'required'      => true,
+                'label'         => t('Socket'),
+                'description'   => t('The path to your livestatus socket used for querying monitoring data'),
+                'value'         => realpath(Icinga::app()->getApplicationDir() . '/../var/rw/livestatus')
             )
         );
+
+        return $this;
     }
 
     /**

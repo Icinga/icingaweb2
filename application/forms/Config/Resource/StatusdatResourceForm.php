@@ -26,29 +26,29 @@ class StatusdatResourceForm extends Form
      */
     public function createElements(array $formData)
     {
-        return array(
-            $this->createElement(
-                'text',
-                'status_file',
-                array(
-                    'required'      => true,
-                    'label'         => t('Filepath'),
-                    'description'   => t('Location of your icinga status.dat file'),
-                    'value'         => realpath(Icinga::app()->getApplicationDir() . '/../var/status.dat'),
-                    'validators'    => array(new ReadablePathValidator())
-                )
-            ),
-            $this->createElement(
-                'text',
-                'object_file',
-                array(
-                    'required'      => true,
-                    'label'         => t('Filepath'),
-                    'description'   => t('Location of your icinga objects.cache file'),
-                    'value'         => realpath(Icinga::app()->getApplicationDir() . '/../var/objects.cache'),
-                    'validators'    => array(new ReadablePathValidator())
-                )
+        $this->addElement(
+            'text',
+            'status_file',
+            array(
+                'required'      => true,
+                'label'         => t('Filepath'),
+                'description'   => t('Location of your icinga status.dat file'),
+                'value'         => realpath(Icinga::app()->getApplicationDir() . '/../var/status.dat'),
+                'validators'    => array(new ReadablePathValidator())
             )
         );
+        $this->addElement(
+            'text',
+            'object_file',
+            array(
+                'required'      => true,
+                'label'         => t('Filepath'),
+                'description'   => t('Location of your icinga objects.cache file'),
+                'value'         => realpath(Icinga::app()->getApplicationDir() . '/../var/objects.cache'),
+                'validators'    => array(new ReadablePathValidator())
+            )
+        );
+
+        return $this;
     }
 }

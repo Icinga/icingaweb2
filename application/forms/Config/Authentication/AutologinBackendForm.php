@@ -25,52 +25,52 @@ class AutologinBackendForm extends Form
      */
     public function createElements(array $formData)
     {
-        return array(
-            $this->createElement(
-                'text',
-                'name',
-                array(
-                    'required'      => true,
-                    'label'         => t('Backend Name'),
-                    'description'   => t('The name of this authentication backend'),
-                    'validators'    => array(
+        $this->addElement(
+            'text',
+            'name',
+            array(
+                'required'      => true,
+                'label'         => t('Backend Name'),
+                'description'   => t('The name of this authentication backend'),
+                'validators'    => array(
+                    array(
+                        'Regex',
+                        false,
                         array(
-                            'Regex',
-                            false,
-                            array(
-                                'pattern'  => '/^[^\\[\\]:]+$/',
-                                'messages' => array(
-                                    'regexNotMatch' => 'The backend name cannot contain \'[\', \']\' or \':\'.'
-                                )
+                            'pattern'  => '/^[^\\[\\]:]+$/',
+                            'messages' => array(
+                                'regexNotMatch' => 'The backend name cannot contain \'[\', \']\' or \':\'.'
                             )
                         )
                     )
                 )
-            ),
-            $this->createElement(
-                'text',
-                'strip_username_regexp',
-                array(
-                    'required'      => true,
-                    'label'         => t('Backend Domain Pattern'),
-                    'description'   => t('The domain pattern of this authentication backend'),
-                    'value'         => '/\@[^$]+$/',
-                    'validators'    => array(
-                        new Zend_Validate_Callback(function ($value) {
-                            return @preg_match($value, '') !== false;
-                        })
-                    )
-                )
-            ),
-            $this->createElement(
-                'hidden',
-                'backend',
-                array(
-                    'required'  => true,
-                    'value'     => 'autologin'
+            )
+        );
+        $this->addElement(
+            'text',
+            'strip_username_regexp',
+            array(
+                'required'      => true,
+                'label'         => t('Backend Domain Pattern'),
+                'description'   => t('The domain pattern of this authentication backend'),
+                'value'         => '/\@[^$]+$/',
+                'validators'    => array(
+                    new Zend_Validate_Callback(function ($value) {
+                        return @preg_match($value, '') !== false;
+                    })
                 )
             )
         );
+        $this->addElement(
+            'hidden',
+            'backend',
+            array(
+                'required'  => true,
+                'value'     => 'autologin'
+            )
+        );
+
+        return $this;
     }
 
     /**
