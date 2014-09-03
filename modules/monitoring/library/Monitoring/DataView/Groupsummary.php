@@ -37,20 +37,4 @@ class Groupsummary extends DataView
             'services_pending'
         );
     }
-
-    public function getSortRules()
-    {
-        if (in_array('servicegroup', $this->getQuery()->getColumns())) {
-            return array(
-                'servicegroup' => array(
-                    'order' => self::SORT_ASC
-                )
-            );
-        }
-        return array(
-            'hostgroup' => array(
-                'order' => self::SORT_ASC
-            )
-        );
-    }
 }

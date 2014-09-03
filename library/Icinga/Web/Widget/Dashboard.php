@@ -8,7 +8,6 @@ use Icinga\Application\Icinga;
 use Icinga\Application\Config as IcingaConfig;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\ProgrammingError;
-use Icinga\Web\Widget\AbstractWidget;
 use Icinga\Web\Widget\Dashboard\Pane;
 use Icinga\Web\Widget\Dashboard\Component as DashboardComponent;
 use Icinga\Web\Url;
@@ -96,7 +95,7 @@ class Dashboard extends AbstractWidget
                 $current = $this->panes[$pane->getName()];
                 $current->addComponents($pane->getComponents());
             } else {
-                $this->panes = array_filter(array_merge($this->panes, $panes));
+                $this->panes[$pane->getName()] = $pane;
             }
         }
 
@@ -126,6 +125,16 @@ class Dashboard extends AbstractWidget
             }
         }
         return $this->tabs;
+    }
+
+    /**
+     * Return all panes of this dashboard
+     *
+     * @return array
+     */
+    public function getPanes()
+    {
+        return $this->panes;
     }
 
     /**
@@ -164,9 +173,9 @@ class Dashboard extends AbstractWidget
      *
      * @TODO:   Should only allow component objects to be added directly as soon as we store more information
      *
-     * @param string $pane                  The pane to add the component to
-     * @param Component|string $component   The component to add or the title of the newly created component
-     * @param $url                          The url to use for the component
+     * @param   string              $pane       The pane to add the component to
+     * @param   Component|string    $component  The component to add or the title of the newly created component
+     * @param   string|null         $url        The url to use for the component
      *
      * @return self
      */
@@ -198,20 +207,14 @@ class Dashboard extends AbstractWidget
     }
 
     /**
-     * Return true if a pane doesn't exist or doesn't have any components in it
+     * Check if this dashboard has a specific pane
      *
-     * @param string $pane      The name of the pane to check for emptyness
-     *
+     * @param $pane string  The name of the pane
      * @return bool
      */
-    public function isEmptyPane($pane)
+    public function hasPane($pane)
     {
-        $paneObj = $this->getPane($pane);
-        if ($paneObj === null) {
-            return true;
-        }
-        $cmps = $paneObj->getComponents();
-        return !empty($cmps);
+        return array_key_exists($pane, $this->panes);
     }
 
     /**
@@ -305,11 +308,11 @@ class Dashboard extends AbstractWidget
         return $active;
     }
 
+    /**
+     * @see determineActivePane()
+     */
     public function getActivePane()
     {
-        if ($active = $this->getTabs()->getActiveName()) {
-            return $this->getPane($active);
-        }
         return $this->determineActivePane();
     }
 
@@ -323,10 +326,12 @@ class Dashboard extends AbstractWidget
         $active = $this->getTabs()->getActiveName();
         if (! $active) {
             if ($active = Url::fromRequest()->getParam($this->tabParam)) {
-                if ($this->isEmptyPane($active)) {
-                    $active = $this->setDefaultPane();
-                } else {
+                if ($this->hasPane($active)) {
                     $this->activate($active);
+                } else {
+                    throw new ProgrammingError(
+                        'Try to get an inexistent pane.'
+                    );
                 }
             } else {
                 $active = $this->setDefaultPane();

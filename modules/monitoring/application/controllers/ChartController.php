@@ -99,7 +99,7 @@ class Monitoring_ChartController extends Controller
                 'services_warning_unhandled',
                 'services_pending'
             )
-        )->getQuery()->fetchAll();
+        )->order('hostgroup')->getQuery()->fetchAll();
         $this->view->height = intval($this->getParam('height', 500));
         $this->view->width = intval($this->getParam('width', 500));
         if (count($query) === 1) {
@@ -124,7 +124,7 @@ class Monitoring_ChartController extends Controller
                 'services_warning_unhandled',
                 'services_pending'
             )
-        )->getQuery()->fetchAll();
+        )->order('servicegroup')->getQuery()->fetchAll();
         $this->view->height = intval($this->getParam('height', 500));
         $this->view->width = intval($this->getParam('width', 500));
 
@@ -154,30 +154,35 @@ class Monitoring_ChartController extends Controller
             ->setXAxis(new \Icinga\Chart\Unit\StaticAxis())
             ->setAxisMin(null, 0);
 
+        $tooltip = t('<b>{title}:</b><br />{value} of {sum} services are {label}');
         $this->view->chart->drawBars(
             array(
                 'label' => t('Ok'),
                 'color' => '#44bb77',
                 'stack' => 'stack1',
-                'data'  => $okBars
+                'data'  => $okBars,
+                'tooltip' => $tooltip
             ),
             array(
                 'label' => t('Warning'),
                 'color' => '#ffaa44',
                 'stack' => 'stack1',
-                'data'  => $warningBars
+                'data'  => $warningBars,
+                'tooltip' => $tooltip
             ),
             array(
                 'label' => t('Critical'),
                 'color' => '#ff5566',
                 'stack' => 'stack1',
-                'data'  => $critBars
+                'data'  => $critBars,
+                'tooltip' => $tooltip
             ),
             array(
                 'label' => t('Unknown'),
                 'color' => '#dd66ff',
                 'stack' => 'stack1',
-                'data'  => $unknownBars
+                'data'  => $unknownBars,
+                'tooltip' => $tooltip
             )
         );
     }
@@ -201,6 +206,7 @@ class Monitoring_ChartController extends Controller
                 $hostgroup->hosts_unreachable_unhandled
             );
         }
+        $tooltip = t('<b>{title}:</b><br /> {value} of {sum} hosts are {label}');
         $this->view->chart = new GridChart();
         $this->view->chart->alignTopLeft();
         $this->view->chart->setAxisLabel('', t('Hosts'))
@@ -211,19 +217,22 @@ class Monitoring_ChartController extends Controller
                 'label' => t('Up'),
                 'color' => '#44bb77',
                 'stack' => 'stack1',
-                'data'  => $upBars
+                'data'  => $upBars,
+                'tooltip' => $tooltip
             ),
             array(
                 'label' => t('Down'),
                 'color' => '#ff5566',
                 'stack' => 'stack1',
-                'data'  => $downBars
+                'data'  => $downBars,
+                'tooltip' => $tooltip
             ),
             array(
                 'label' => t('Unreachable'),
                 'color' => '#dd66ff',
                 'stack' => 'stack1',
-                'data'  => $unreachableBars
+                'data'  => $unreachableBars,
+                'tooltip' => $tooltip
             )
         );
     }
