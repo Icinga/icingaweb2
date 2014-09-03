@@ -39,7 +39,7 @@ class Pane extends AbstractWidget
     /**
      * Create a new pane
      *
-     * @param $name         The pane to create
+     * @param string $name         The pane to create
      */
     public function __construct($name)
     {
@@ -90,6 +90,16 @@ class Pane extends AbstractWidget
     public function hasComponent($title)
     {
         return array_key_exists($title, $this->components);
+    }
+
+    /**
+     * Checks if the current pane has any components
+     *
+     * @return bool
+     */
+    public function hasComponents()
+    {
+        return ! empty($this->components);
     }
 
     /**
