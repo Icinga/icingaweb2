@@ -116,7 +116,7 @@ abstract class CommandForm extends Form
     public function getValidDateTimeFormats()
     {
         // TODO(mh): Missing localized format (#6077)
-        return 'd/m/Y g:i A';
+        return array('d/m/Y g:i A');
     }
 
     /**
