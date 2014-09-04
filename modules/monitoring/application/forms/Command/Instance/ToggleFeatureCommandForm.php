@@ -63,17 +63,16 @@ abstract class ToggleFeatureCommandForm extends CommandForm
                 ->getQuery()
                 ->fetchRow();
         }
-        return array(
-            $this->createElement(
-                'checkbox',
-                $this->feature,
-                array(
-                    'label'         => $this->label,
-                    'autosubmit'    => $this->inline,
-                    'value'         => $enabled
-                )
+        $this->addElement(
+            'checkbox',
+            $this->feature,
+            array(
+                'label'         => $this->label,
+                'autosubmit'    => $this->inline,
+                'value'         => $enabled
             )
         );
+        return $this;
     }
 
     /**
