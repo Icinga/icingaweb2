@@ -44,7 +44,7 @@ class TranslatorTest extends BaseTestCase
     }
 
     /**
-     * @expectedException \Exception
+     * @expectedException Icinga\Exception\IcingaException
      */
     public function testWhetherSetupLocaleThrowsAnExceptionWhenGivenAnInvalidLocale()
     {
