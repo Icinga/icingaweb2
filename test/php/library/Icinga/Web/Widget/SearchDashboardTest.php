@@ -48,27 +48,27 @@ class SearchDashboardTest extends BaseTestCase
      */
     public function testFoo()
     {
-        $dashboard = SearchDashboard::load('pending');
+        $dashboard = SearchDashboard::search('pending');
         $dashboard->getPane('search')->removeComponents();
         $dashboard->render();
     }
 
     public function testWhetherLoadLoadsSearchDashletsFromModules()
     {
-        $dashboard = SearchDashboard::load('pending');
+        $dashboard = SearchDashboard::search('pending');
 
         $result = $dashboard->getPane('search')->hasComponent('Hosts: pending');
 
-        $this->assertTrue($result, 'Dashboard::load() could not load search dashlets from modules');
+        $this->assertTrue($result, 'Dashboard::search() could not load search dashlets from modules');
     }
 
 
     public function testWhetherLoadProvidesHint()
     {
-        $dashboard = SearchDashboard::load('');
+        $dashboard = SearchDashboard::search('');
 
         $result = $dashboard->getPane('search')->hasComponent('Ready to search');
 
-        $this->assertTrue($result, 'Dashboard::load() could not get hint for search');
+        $this->assertTrue($result, 'Dashboard::search() could not get hint for search');
     }
 }

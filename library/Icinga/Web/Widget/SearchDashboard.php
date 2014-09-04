@@ -32,7 +32,7 @@ class SearchDashboard extends Dashboard
      * @param $searchQuery
      * @return Dashboard|SearchDashboard
      */
-    public static function load($searchQuery = '')
+    public static function search($searchQuery = '')
     {
         /** @var $dashboard SearchDashboard */
         $dashboard = new static('searchDashboard');

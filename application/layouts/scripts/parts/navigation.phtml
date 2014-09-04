@@ -12,7 +12,7 @@ if (! $this->auth()->isAuthenticated()) {
 
 ?>
 <div id="menu" data-base-target="_main">
-  <? if (SearchDashboard::load('dummy')->getPane('search')->hasComponents()): ?>
+  <? if (SearchDashboard::search('dummy')->getPane('search')->hasComponents()): ?>
   <form action="<?= $this->href('search') ?>" method="get" role="search">
     <input type="text" name="q" class="search autofocus" placeholder="<?= $this->translate('Search...') ?>" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
   </form>
