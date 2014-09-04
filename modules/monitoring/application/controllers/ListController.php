@@ -50,13 +50,31 @@ class Monitoring_ListController extends Controller
             }
 
             $q = $this->getRequest()->getPost('q');
+            if ($q) {
+                list($k, $v) = preg_split('/=/', $q);
+                $url->addParams(array($k => $v));
+                return $url;
+            }
+
         } else {
             $q = $url->shift('q');
-        }
-        if ($q) {
-            list($k, $v) = preg_split('/=/', $q);
-            $url->addParams(array($k => $v));
-            return $url;
+            if ($q) {
+                $action = $this->_request->getActionName();
+                switch($action) {
+                    case 'services':
+                        $this->params->remove('q')->set('service_description', '*' . $q . '*');
+                        break;
+                    case 'hosts':
+                        $this->params->remove('q')->set('host_name', '*' . $q . '*');
+                        break;
+                    case 'hostgroups':
+                        $this->params->remove('q')->set('hostgroups', '*' . $q . '*');
+                        break;
+                    case 'servicegroups':
+                        $this->params->remove('q')->set('servicegroup', '*' . $q . '*');
+                        break;
+                }
+            }
         }
         return false;
     }
