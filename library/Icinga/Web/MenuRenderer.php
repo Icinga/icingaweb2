@@ -33,7 +33,11 @@ class MenuRenderer extends RecursiveIteratorIterator
      */
     public function __construct(Menu $menu, $url = null)
     {
-        $this->url = $url;
+        if ($url instanceof Url) {
+            $this->url = $url;
+        } else {
+            $this->url = Url::fromPath($url);
+        }
         parent::__construct($menu, RecursiveIteratorIterator::CHILD_FIRST);
     }
 
@@ -89,7 +93,7 @@ class MenuRenderer extends RecursiveIteratorIterator
     {
         return sprintf(
             '<a href="%s">%s%s</a>',
-            $child->getUrl() ? Url::fromPath($child->getUrl()) : '#',
+            $child->getUrl() ?: '#',
             $child->getIcon() ? '<img src="' . Url::fromPath($child->getIcon()) . '" class="icon" /> ' : '',
             htmlspecialchars($child->getTitle())
         );
@@ -146,6 +150,9 @@ class MenuRenderer extends RecursiveIteratorIterator
      */
     protected function isActive(Menu $child)
     {
-        return html_entity_decode(rawurldecode($this->url)) === html_entity_decode(rawurldecode($child->getUrl()));
+        if (! $this->url) return false;
+        if (! ($childUrl = $child->getUrl())) return false;
+
+        return $this->url && $this->url->matches($childUrl);
     }
 }

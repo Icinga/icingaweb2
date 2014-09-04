@@ -4,12 +4,13 @@
 
 namespace Icinga\Web;
 
-use Icinga\Exception\ConfigurationError;
-use Zend_Config;
 use RecursiveIterator;
+use Zend_Config;
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
+use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\ProgrammingError;
+use Icinga\Web\Url;
 
 class Menu implements RecursiveIterator
 {
@@ -278,13 +279,17 @@ class Menu implements RecursiveIterator
     /**
      * Set the url of this menu
      *
-     * @param   string  $url    The url to set for this menu
+     * @param   Url|string  $url    The url to set for this menu
      *
      * @return  self
      */
     public function setUrl($url)
     {
-        $this->url = $url;
+        if ($url instanceof Url) {
+            $this->url = $url;
+        } else {
+            $this->url = Url::fromPath($url);
+        }
         return $this;
     }
 
