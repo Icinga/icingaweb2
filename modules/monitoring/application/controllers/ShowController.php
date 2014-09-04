@@ -48,7 +48,7 @@ class Monitoring_ShowController extends Controller
         }
         if (Hook::has('grapher')) {
             $this->grapher = Hook::first('grapher');
-            if (! $this->grapher->hasPreviews()) {
+            if ($this->grapher && ! $this->grapher->hasPreviews()) {
                 $this->grapher = null;
             }
         }
