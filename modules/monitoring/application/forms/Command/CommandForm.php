@@ -77,7 +77,7 @@ abstract class CommandForm extends Form
      *
      * @param   Request $request
      *
-     * @return  \Icinga\Module\Monitoring\Command\CommandTransportInterface
+     * @return  \Icinga\Module\Monitoring\Command\Transport\CommandTransportInterface
      */
     public function getTransport(Request $request)
     {
