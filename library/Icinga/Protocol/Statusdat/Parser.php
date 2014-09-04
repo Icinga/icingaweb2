@@ -54,6 +54,13 @@ class Parser
      * @var int
      */
     private $lineCtr = 0;
+    
+    /**
+     * The amount of objects found
+     *
+     * @var int
+     */
+    private $objectsCtr = 0;
 
     /**
      * Create a new parser using the given file
@@ -135,12 +142,18 @@ class Parser
             // End of object
             if ($line[0] === '}') {
                 $this->registerObject($monitoringObject);
+                $this->objectsCtr++;
                 return;
             }
             if (!isset($line[1])) {
                 $line[1] = '';
             }
-            $monitoringObject->{$line[0]} = trim($line[1]);
+
+            if ($this->objectsCtr === 0) {
+                throw new ParsingException('No objects found in objects.cache, check configuration');
+            } else {
+                $monitoringObject->{$line[0]} = trim($line[1]);
+            }
         }
         throw new ParsingException('Unexpected EOF in objects.cache, line ' . $this->lineCtr);
     }
