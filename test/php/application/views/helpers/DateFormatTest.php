@@ -7,24 +7,14 @@ namespace Tests\Icinga\Views\Helper;
 use Mockery;
 use Zend_View_Helper_DateFormat;
 use Icinga\Test\BaseTestCase;
-use Icinga\Application\Config;
 use Icinga\Util\DateTimeFactory;
 
 require_once BaseTestCase::$appDir . '/views/helpers/DateFormat.php';
 
 class DateFormatTest extends BaseTestCase
 {
-    public function setUp()
-    {
-        parent::setUp();
-        $this->oldConfigDir = Config::$configDir;
-        Config::$configDir = dirname(__FILE__) . '/DateFormatTest';
-    }
-
     public function tearDown()
     {
-        parent::tearDown();
-        Config::$configDir = $this->oldConfigDir;
         DateTimeFactory::setConfig(array('timezone' => date_default_timezone_get()));
     }
 
@@ -145,21 +135,6 @@ class DateFormatTest extends BaseTestCase
 
     protected function getRequestMock($dateFormat = null, $timeFormat = null)
     {
-        $mock = Mockery::mock('\Zend_Controller_Request_Abstract');
-        $mock->shouldReceive('getUser->getPreferences->get')
-            ->with(Mockery::type('string'), Mockery::type('string'))
-            ->andReturnUsing(
-                function ($ident, $default) use ($dateFormat, $timeFormat) {
-                    if ($dateFormat !== null && $ident === 'app.dateFormat') {
-                        return $dateFormat;
-                    } elseif ($timeFormat !== null && $ident === 'app.timeFormat') {
-                        return $timeFormat;
-                    } else {
-                        return $default;
-                    }
-                }
-        );
-
-        return $mock;
+        return Mockery::mock('\Zend_Controller_Request_Abstract');
     }
 }

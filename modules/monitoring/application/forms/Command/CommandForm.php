@@ -115,21 +115,8 @@ abstract class CommandForm extends Form
      */
     public function getValidDateTimeFormats()
     {
-        $config = $this->getConfiguration();
-        $global = $config->global;
-        if ($global === null) {
-            $global = new Zend_Config(array());
-        }
-        $preferences = $this->getUserPreferences();
-        return array(
-            implode(
-                ' ',
-                array(
-                    $preferences->get('app.dateFormat', $global->get('dateFormat', 'd/m/Y')),
-                    $preferences->get('app.timeFormat', $global->get('timeFormat', 'g:i A'))
-                )
-            )
-        );
+        // TODO(mh): Missing localized format (#6077)
+        return 'd/m/Y g:i A';
     }
 
     /**
