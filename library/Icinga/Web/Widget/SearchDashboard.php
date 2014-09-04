@@ -32,7 +32,7 @@ class SearchDashboard extends Dashboard
      * @param $searchQuery
      * @return Dashboard|SearchDashboard
      */
-    public static function load($searchQuery)
+    public static function load($searchQuery = '')
     {
         /** @var $dashboard SearchDashboard */
         $dashboard = new static('searchDashboard');
@@ -48,7 +48,7 @@ class SearchDashboard extends Dashboard
      */
     public function render()
     {
-        if (!$this->getPane(self::SEARCH_PANE)->hasComponents()) {
+        if (! $this->getPane(self::SEARCH_PANE)->hasComponents()) {
             throw new ActionError('Site not found', 404);
         }
         return parent::render();
