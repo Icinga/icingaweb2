@@ -7,7 +7,7 @@ use Icinga\Web\Controller\ModuleActionController;
 use Icinga\Web\Notification;
 use Icinga\Form\ConfirmRemovalForm;
 use Icinga\Module\Monitoring\Form\Config\BackendForm;
-use Icinga\Module\Monitoring\Form\Config\InstanceForm;
+use Icinga\Module\Monitoring\Form\Config\InstanceConfigForm;
 use Icinga\Module\Monitoring\Form\Config\SecurityConfigForm;
 use Icinga\Exception\NotReadableError;
 
@@ -134,29 +134,31 @@ class Monitoring_ConfigController extends ModuleActionController
      */
     public function removeinstanceAction()
     {
-        $instance = $this->getParam('instance');
-        $instancesConfig = $this->Config('instances')->toArray();
-        if (false === array_key_exists($instance, $instancesConfig)) {
-            // TODO: Should behave as in the app's config controller (Specific redirect to an error action)
-            Notification::error(sprintf($this->translate('Cannot remove "%s". Instance not found.'), $instance));
-            $this->redirectNow('monitoring/config');
-        }
+        $config = $this->Config('instances');
+        $form = new ConfirmRemovalForm(array(
+            'onSuccess' => function ($request) use ($config) {
+                $instanceName = $request->getQuery('instance');
+                $configForm = new InstanceConfigForm();
+                $configForm->setConfig($config);
 
-        $form = new ConfirmRemovalForm();
-        $request = $this->getRequest();
-        if ($request->isPost() && $form->isValid($request->getPost())) {
-            unset($instancesConfig[$instance]);
-            if ($this->writeConfiguration($instancesConfig, 'instances')) {
-                Notification::success(sprintf($this->translate('Instance "%s" successfully removed.'), $instance));
-                $this->redirectNow('monitoring/config');
-            } else {
-                $this->render('show-configuration');
-                return;
+                try {
+                    $configForm->remove($instanceName);
+                } catch (InvalidArgumentException $e) {
+                    Notification::error($e->getMessage());
+                    return;
+                }
+
+                if ($configForm->save()) {
+                    Notification::success(sprintf(t('Instance "%s" successfully removed.'), $instanceName));
+                } else {
+                    return false;
+                }
             }
-        }
+        ));
+        $form->setRedirectUrl('monitoring/config');
+        $form->handleRequest();
 
         $this->view->form = $form;
-        $this->view->name = $instance;
     }
 
     /**
@@ -164,36 +166,10 @@ class Monitoring_ConfigController extends ModuleActionController
      */
     public function editinstanceAction()
     {
-        $instance = $this->getParam('instance');
-        $instancesConfig = $this->Config('instances')->toArray();
-        if (false === array_key_exists($instance, $instancesConfig)) {
-            // TODO: Should behave as in the app's config controller (Specific redirect to an error action)
-            Notification::error(sprintf($this->translate('Cannot edit "%s". Instance not found.'), $instance));
-            $this->redirectNow('monitoring/config');
-        }
-
-        $form = new InstanceForm();
-        $request = $this->getRequest();
-        if ($request->isPost()) {
-            if ($form->isValid($request->getPost())) {
-                list($newName, $config) = $form->getInstanceConfig();
-
-                if ($newName !== $instance) {
-                    unset($instancesConfig[$instance]); // We can safely use unset as all values are part of the form
-                }
-
-                $instancesConfig[$newName] = $config;
-                if ($this->writeConfiguration($instancesConfig, 'instances')) {
-                    Notification::success(sprintf($this->translate('Instance "%s" successfully modified.'), $instance));
-                    $this->redirectNow('monitoring/config');
-                } else {
-                    $this->render('show-configuration');
-                    return;
-                }
-            }
-        } else {
-            $form->setInstanceConfig($instance, $instancesConfig[$instance]);
-        }
+        $form = new InstanceConfigForm();
+        $form->setConfig($this->Config('instances'));
+        $form->setRedirectUrl('monitoring/config');
+        $form->handleRequest();
 
         $this->view->form = $form;
     }
@@ -203,20 +179,10 @@ class Monitoring_ConfigController extends ModuleActionController
      */
     public function createinstanceAction()
     {
-        $form = new InstanceForm();
-        $request = $this->getRequest();
-        if ($request->isPost() && $form->isValid($request->getPost())) {
-            list($name, $config) = $form->getInstanceConfig();
-            $instancesConfig = $this->Config('instances')->toArray();
-            $instancesConfig[$name] = $config;
-            if ($this->writeConfiguration($instancesConfig, 'instances')) {
-                Notification::success(sprintf($this->translate('Instance "%s" created successfully.'), $name));
-                $this->redirectNow('monitoring/config');
-            } else {
-                $this->render('show-configuration');
-                return;
-            }
-        }
+        $form = new InstanceConfigForm();
+        $form->setConfig($this->Config('instances'));
+        $form->setRedirectUrl('monitoring/config');
+        $form->handleRequest();
 
         $this->view->form = $form;
     }
