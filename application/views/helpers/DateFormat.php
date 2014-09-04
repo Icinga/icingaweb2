@@ -3,7 +3,6 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 
 use Icinga\Application\Icinga;
-use Icinga\Application\Config;
 use Icinga\Util\DateTimeFactory;
 use Icinga\Web\Form\Validator\DateTimeValidator;
 
@@ -109,10 +108,8 @@ class Zend_View_Helper_DateFormat extends Zend_View_Helper_Abstract
      */
     public function getDateFormat()
     {
-        return $this->request->getUser()->getPreferences()->get(
-            'app.dateFormat',
-            Config::app()->global !== null ? Config::app()->global->get('dateFormat', 'd/m/Y') : 'd/m/Y'
-        );
+        // TODO(mh): Missing localized format (#6077)
+        return 'd/m/Y';
     }
 
     /**
@@ -122,10 +119,8 @@ class Zend_View_Helper_DateFormat extends Zend_View_Helper_Abstract
      */
     public function getTimeFormat()
     {
-        return $this->request->getUser()->getPreferences()->get(
-            'app.timeFormat',
-            Config::app()->global !== null ? Config::app()->global->get('timeFormat', 'g:i A') : 'g:i A'
-        );
+        // TODO(mh): Missing localized format (#6077)
+        return 'g:i A';
     }
 
     /**
