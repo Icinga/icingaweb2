@@ -10,7 +10,7 @@ use Icinga\Data\Filter\Filter;
 /**
  * Class Query
  *
- * Query for Datasource Icinga\Protocol\File\Reader
+ * Query for Datasource Icinga\Protocol\File\FileReader
  *
  * @package Icinga\Protocol\File
  */

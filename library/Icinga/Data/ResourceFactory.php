@@ -12,7 +12,7 @@ use Icinga\Data\Db\DbConnection;
 use Icinga\Protocol\Livestatus\Connection as LivestatusConnection;
 use Icinga\Protocol\Statusdat\Reader as StatusdatReader;
 use Icinga\Protocol\Ldap\Connection as LdapConnection;
-use Icinga\Protocol\File\Reader as FileReader;
+use Icinga\Protocol\File\FileReader;
 
 /**
  * Create resources from names or resource configuration

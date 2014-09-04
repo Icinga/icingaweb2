@@ -8,7 +8,7 @@ use Icinga\Web\Url;
 use Icinga\Data\ResourceFactory;
 use Icinga\Logger\Logger;
 use Icinga\Logger\Writer\FileWriter;
-use Icinga\Protocol\File\Reader as FileReader;
+use Icinga\Protocol\File\FileReader;
 
 /**
  * Class ListController

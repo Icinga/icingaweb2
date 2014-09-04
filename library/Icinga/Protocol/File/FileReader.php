@@ -13,7 +13,7 @@ use Icinga\Util\File;
 /**
  * Read file line by line
  */
-class Reader extends FilterIterator
+class FileReader extends FilterIterator
 {
     /**
      * A PCRE string with the fields to extract from the file's lines as named subpatterns
