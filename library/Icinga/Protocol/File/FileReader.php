@@ -4,16 +4,12 @@
 
 namespace Icinga\Protocol\File;
 
-use FilterIterator;
-use Iterator;
 use Zend_Config;
-use Icinga\Protocol\File\FileReaderException;
-use Icinga\Util\File;
 
 /**
  * Read file line by line
  */
-class FileReader extends FilterIterator
+class FileReader
 {
     /**
      * A PCRE string with the fields to extract from the file's lines as named subpatterns
@@ -23,11 +19,11 @@ class FileReader extends FilterIterator
     protected $fields;
 
     /**
-     * An associative array of the current line's fields ($field => $value)
+     * Name of the target file
      *
-     * @var array
+     * @var string
      */
-    protected $currentData;
+    protected $filename;
 
     /**
      * Create a new reader
@@ -39,57 +35,22 @@ class FileReader extends FilterIterator
     public function __construct(Zend_Config $config)
     {
         foreach (array('filename', 'fields') as $key) {
-            if (! isset($config->{$key})) {
+            if (isset($config->{$key})) {
+                $this->{$key} = $config->{$key};
+            } else {
                 throw new FileReaderException('The directive `%s\' is required', $key);
             }
         }
-        $this->fields = $config->fields;
-        $f = new File($config->filename);
-        $f->setFlags(
-            File::DROP_NEW_LINE |
-            File::READ_AHEAD |
-            File::SKIP_EMPTY
-        );
-        parent::__construct($f);
     }
 
     /**
-     * Return the current data
+     * Instantiate a FileIterator object with the target file
      *
-     * @return array
+     * @return FileIterator
      */
-    public function current()
+    public function iterate()
     {
-        return $this->currentData;
-    }
-
-    /**
-     * Accept lines matching the given PCRE pattern
-     *
-     * @return bool
-     *
-     * @throws FileReaderException  If PHP failed parsing the PCRE pattern
-     */
-    public function accept()
-    {
-        $data = array();
-        $matched = @preg_match(
-            $this->fields,
-            $this->getInnerIterator()->current(),
-            $data
-        );
-        if ($matched === false) {
-            throw new FileReaderException('Failed parsing regular expression!');
-        } else if ($matched === 1) {
-            foreach ($data as $key => $value) {
-                if (is_int($key)) {
-                    unset($data[$key]);
-                }
-            }
-            $this->currentData = $data;
-            return true;
-        }
-        return false;
+        return new FileIterator($this->filename, $this->fields);
     }
 
     /**
@@ -109,7 +70,7 @@ class FileReader extends FilterIterator
      */
     public function count()
     {
-        return iterator_count($this);
+        return iterator_count($this->iterate());
     }
 
     /**
@@ -155,7 +116,7 @@ class FileReader extends FilterIterator
             }
         }
         $index = 0;
-        foreach ($this as $line) {
+        foreach ($this->iterate() as $line) {
             if ($index >= $skip) {
                 if ($index >= $skip + $read) {
                     break;
