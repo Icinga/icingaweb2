@@ -48,6 +48,9 @@ class Monitoring_ShowController extends Controller
         }
         if (Hook::has('grapher')) {
             $this->grapher = Hook::first('grapher');
+            if (! $this->grapher->hasPreviews()) {
+                $this->grapher = null;
+            }
         }
 
         $this->createTabs();
@@ -64,7 +67,7 @@ class Monitoring_ShowController extends Controller
             . ' on ' . $o->host_name;
         $this->getTabs()->activate('service');
         $o->populate();
-        if ($this->grapher && $this->grapher->hasPreviews($o)) {
+        if ($this->grapher) {
             $this->view->grapherHtml = $this->grapher->getPreviewHtml($o);
         }
     }
@@ -79,7 +82,7 @@ class Monitoring_ShowController extends Controller
         $this->getTabs()->activate('host');
         $this->view->title = $o->host_name;
         $o->populate();
-        if ($this->grapher && $this->grapher->hasPreviews($o)) {
+        if ($this->grapher) {
             $this->view->grapherHtml = $this->grapher->getPreviewHtml($o);
         }
     }
