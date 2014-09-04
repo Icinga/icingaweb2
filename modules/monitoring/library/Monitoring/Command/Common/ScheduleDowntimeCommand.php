@@ -9,7 +9,7 @@ use DateTime;
 /**
  * Base class for commands scheduling downtimes
  */
-abstract class ScheduleDowntimeCommand extends Comment
+abstract class ScheduleDowntimeCommand extends AddCommentCommand
 {
     /**
      * Downtime starts at the exact time specified
