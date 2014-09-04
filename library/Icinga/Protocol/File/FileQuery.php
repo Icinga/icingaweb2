@@ -8,13 +8,13 @@ use Icinga\Data\SimpleQuery;
 use Icinga\Data\Filter\Filter;
 
 /**
- * Class Query
+ * Class FileQuery
  *
  * Query for Datasource Icinga\Protocol\File\FileReader
  *
  * @package Icinga\Protocol\File
  */
-class Query extends SimpleQuery
+class FileQuery extends SimpleQuery
 {
     /**
      * Sort direction
@@ -41,7 +41,7 @@ class Query extends SimpleQuery
      *
      * @param string $dir  Sort direction, 'ASC' or 'DESC' (default)
      *
-     * @return Query
+     * @return FileQuery
      */
     public function order($field, $direction = null)
     {
@@ -66,7 +66,7 @@ class Query extends SimpleQuery
      *
      * @param string $expression  the filter expression to be applied
      *
-     * @return Query
+     * @return FileQuery
      */
     public function andWhere($expression)
     {

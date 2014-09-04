@@ -93,13 +93,13 @@ class FileReader extends FilterIterator
     }
 
     /**
-     * Instantiate a Query object
+     * Instantiate a FileQuery object
      *
-     * @return Query
+     * @return FileQuery
      */
     public function select()
     {
-        return new Query($this);
+        return new FileQuery($this);
     }
 
     /**
@@ -115,11 +115,11 @@ class FileReader extends FilterIterator
     /**
      * Fetch result as an array of objects
      *
-     * @param   Query $query
+     * @param   FileQuery $query
      *
      * @return  array
      */
-    public function fetchAll(Query $query)
+    public function fetchAll(FileQuery $query)
     {
         $all = array();
         foreach ($this->fetchPairs($query) as $index => $value) {
@@ -131,11 +131,11 @@ class FileReader extends FilterIterator
     /**
      * Fetch result as a key/value pair array
      *
-     * @param   Query $query
+     * @param   FileQuery $query
      *
      * @return  array
      */
-    public function fetchPairs(Query $query)
+    public function fetchPairs(FileQuery $query)
     {
         $skip = $query->getOffset();
         $read = $query->getLimit();
@@ -173,11 +173,11 @@ class FileReader extends FilterIterator
     /**
      * Fetch first result row
      *
-     * @param   Query $query
+     * @param   FileQuery $query
      *
      * @return  object
      */
-    public function fetchRow(Query $query)
+    public function fetchRow(FileQuery $query)
     {
         $all = $this->fetchAll($query);
         if (isset($all[0])) {
@@ -189,11 +189,11 @@ class FileReader extends FilterIterator
     /**
      * Fetch first result column
      *
-     * @param   Query $query
+     * @param   FileQuery $query
      *
      * @return  array
      */
-    public function fetchColumn(Query $query)
+    public function fetchColumn(FileQuery $query)
     {
         $column = array();
         foreach ($this->fetchPairs($query) as $pair) {
@@ -208,11 +208,11 @@ class FileReader extends FilterIterator
     /**
      * Fetch first column value from first result row
      *
-     * @param   Query $query
+     * @param   FileQuery $query
      *
      * @return  mixed
      */
-    public function fetchOne(Query $query)
+    public function fetchOne(FileQuery $query)
     {
         $pairs = $this->fetchPairs($query);
         if (isset($pairs[0])) {
