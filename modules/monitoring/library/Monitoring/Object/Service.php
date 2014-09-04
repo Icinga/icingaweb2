@@ -119,4 +119,24 @@ class Service extends AbstractObject
 
         return $this->view->getQuery()->fetchRow();
     }
+
+    /**
+     * Get the host name the service is running on
+     *
+     * @return string
+     */
+    public function getHostName()
+    {
+        return $this->params->get('host');
+    }
+
+    /**
+     * Get the service name
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->params->get('service');
+    }
 }
