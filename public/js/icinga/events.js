@@ -116,7 +116,7 @@
 
             $('[title]').each(function () {
                 var $el = $(this);
-                $el.attr('title', $el.attr('title-rich') || $el.attr('title'));
+                $el.attr('title', $el.data('title-rich') || $el.attr('title'));
             });
             $('svg rect.chart-data[title]', el).tipsy({ gravity: 'se', html: true });
             $('.historycolorgrid a[title]', el).tipsy({ gravity: 's', offset: 2 });
