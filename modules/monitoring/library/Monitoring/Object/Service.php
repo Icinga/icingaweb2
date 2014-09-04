@@ -7,7 +7,7 @@ namespace Icinga\Module\Monitoring\Object;
 use Icinga\Module\Monitoring\DataView\ServiceStatus;
 use Icinga\Data\Db\DbQuery;
 
-class Service extends AbstractObject
+class Service extends MonitoredObject
 {
     public $type   = 'service';
     public $prefix = 'service_';

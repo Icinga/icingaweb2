@@ -3,13 +3,13 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 
 use Icinga\Application\Benchmark;
+use Icinga\Module\Monitoring\Object\MonitoredObject;
 use Icinga\Web\Hook;
 use Icinga\Web\Widget\Tabs;
 use Icinga\Web\Widget\Tabextension\OutputFormat;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
 use Icinga\Module\Monitoring\Backend;
 use Icinga\Module\Monitoring\Controller;
-use Icinga\Module\Monitoring\Object\AbstractObject;
 use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Object\Service;
 
@@ -41,7 +41,7 @@ class Monitoring_ShowController extends Controller
             $this->view->object = new Service($this->params);
         } else {
             // TODO: Well... this could be done better
-            $this->view->object = AbstractObject::fromParams($this->params);
+            $this->view->object = MonitoredObject::fromParams($this->params);
         }
         if (Hook::has('ticket')) {
             $this->view->tickets = Hook::first('ticket');
