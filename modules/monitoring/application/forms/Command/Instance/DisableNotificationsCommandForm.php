@@ -32,6 +32,16 @@ class DisableNotificationsCommandForm extends CommandForm
      */
     public function createElements(array $formData = array())
     {
+        $this->addElement(
+            'note',
+            'command-info',
+            array(
+                'value' => mt(
+                    'monitoring',
+                    'This command is used to disable host and service notifications for a specific time.'
+                )
+            )
+        );
         $expire = new DateTime();
         $expire->add(new DateInterval('PT1H'));
         $this->addElement(
@@ -69,7 +79,7 @@ class DisableNotificationsCommandForm extends CommandForm
             ->disable()
             ->setExpire($this->getElement('expire')->getValue());
         $this->getTransport($request)->send($toggleNotifications);
-        Notification::success(mt('monitoring', 'Command sent'));
+        Notification::success(mt('monitoring', 'Disabling host and service notifications..'));
         return true;
     }
 
