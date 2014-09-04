@@ -14,7 +14,7 @@ class SearchDashboardTest extends BaseTestCase
     public function tearDown()
     {
         parent::tearDown();
-        Mockery::close(); // Necessary because some tests run in a separate process
+        Mockery::close();
     }
 
     protected function setupIcingaMock(\Zend_Controller_Request_Abstract $request)
@@ -46,14 +46,14 @@ class SearchDashboardTest extends BaseTestCase
     /**
      * @expectedException Zend_Controller_Action_Exception
      */
-    public function testFoo()
+    public function testWhetherRenderThrowsAnExceptionWhenHasNoComponents()
     {
         $dashboard = SearchDashboard::search('pending');
         $dashboard->getPane('search')->removeComponents();
         $dashboard->render();
     }
 
-    public function testWhetherLoadLoadsSearchDashletsFromModules()
+    public function testWhetherSearchLoadsSearchDashletsFromModules()
     {
         $dashboard = SearchDashboard::search('pending');
 
@@ -62,10 +62,9 @@ class SearchDashboardTest extends BaseTestCase
         $this->assertTrue($result, 'Dashboard::search() could not load search dashlets from modules');
     }
 
-
-    public function testWhetherLoadProvidesHint()
+    public function testWhetherSearchProvidesHintWhenSearchStringIsEmpty()
     {
-        $dashboard = SearchDashboard::search('');
+        $dashboard = SearchDashboard::search();
 
         $result = $dashboard->getPane('search')->hasComponent('Ready to search');
 

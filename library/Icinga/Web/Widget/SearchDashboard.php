@@ -29,14 +29,14 @@ class SearchDashboard extends Dashboard
     /**
      * Load all available search dashlets from modules
      *
-     * @param $searchQuery
+     * @param string $searchString
      * @return Dashboard|SearchDashboard
      */
-    public static function search($searchQuery = '')
+    public static function search($searchString = '')
     {
         /** @var $dashboard SearchDashboard */
         $dashboard = new static('searchDashboard');
-        $dashboard->loadSearchDashlets($searchQuery);
+        $dashboard->loadSearchDashlets($searchString);
         return $dashboard;
     }
 
