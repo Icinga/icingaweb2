@@ -4,12 +4,14 @@
 
 namespace Icinga\Protocol\File;
 
+use Icinga\Data\Selectable;
+use Countable;
 use Zend_Config;
 
 /**
  * Read file line by line
  */
-class FileReader
+class FileReader implements Selectable, Countable
 {
     /**
      * A PCRE string with the fields to extract from the file's lines as named subpatterns
