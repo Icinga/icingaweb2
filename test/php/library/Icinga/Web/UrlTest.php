@@ -305,6 +305,26 @@ class UrlTest extends BaseTestCase
         );
     }
 
+    public function testWhetherEqualUrlMaches()
+    {
+        $url1 = '/whatever/is/here?a=b&c=d';
+        $url2 = Url::fromPath('whatever/is/here', array('a' => 'b', 'c' => 'd'));
+        $this->assertEquals(
+            true,
+            $url2->matches($url1)
+        );
+    }
+
+    public function testWhetherDifferentUrlDoesNotMatch()
+    {
+        $url1 = '/whatever/is/here?a=b&d=d';
+        $url2 = Url::fromPath('whatever/is/here', array('a' => 'b', 'c' => 'd'));
+        $this->assertEquals(
+            false,
+            $url2->matches($url1)
+        );
+    }
+
     /**
      * @depends testWhetherGetAbsoluteUrlReturnsTheAbsoluteUrlForHtmlAttributes
      */
