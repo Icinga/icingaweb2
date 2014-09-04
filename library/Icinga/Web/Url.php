@@ -386,6 +386,23 @@ class Url
     }
 
     /**
+     * Whether the given URL matches this URL object
+     *
+     * This does an exact match, parameters MUST be in the same order
+     *
+     * @param Url|string $url the URL to compare against
+     *
+     * @return bool whether the URL matches
+     */
+    public function matches($url)
+    {
+        if (! $url instanceof Url) {
+            $url = Url::fromPath($url);
+        }
+        return (string) $url === (string) $this;
+    }
+
+    /**
      * Return a copy of this url without the parameter given
      *
      * The argument can be either a single query parameter name or an array of parameter names to
