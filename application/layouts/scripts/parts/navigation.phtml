@@ -3,6 +3,7 @@
 use Icinga\Web\Url;
 use Icinga\Web\Menu;
 use Icinga\Web\MenuRenderer;
+use Icinga\Web\Widget\SearchDashboard;
 
 // Don't render a menu for unauthenticated users unless menu is auth aware
 if (! $this->auth()->isAuthenticated()) {
@@ -11,8 +12,10 @@ if (! $this->auth()->isAuthenticated()) {
 
 ?>
 <div id="menu" data-base-target="_main">
+  <? if (SearchDashboard::load('dummy')->getPane('search')->hasComponents()): ?>
   <form action="<?= $this->href('search') ?>" method="get" role="search">
     <input type="text" name="q" class="search autofocus" placeholder="<?= $this->translate('Search...') ?>" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
   </form>
+  <? endif; ?>
 <?= new MenuRenderer(Menu::load(), Url::fromRequest()->without('renderLayout')->getRelativeUrl()); ?>
 </div>
