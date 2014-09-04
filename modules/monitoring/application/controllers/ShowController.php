@@ -64,8 +64,8 @@ class Monitoring_ShowController extends Controller
             . ' on ' . $o->host_name;
         $this->getTabs()->activate('service');
         $o->populate();
-        if ($this->grapher && $this->grapher->hasPreviews($o->host_name, $o->service_description)) {
-            $this->view->grapherHtml = $this->grapher->getPreviewHtml($o->host_name, $o->service_description);
+        if ($this->grapher && $this->grapher->hasPreviews($o)) {
+            $this->view->grapherHtml = $this->grapher->getPreviewHtml($o);
         }
     }
 
@@ -79,8 +79,8 @@ class Monitoring_ShowController extends Controller
         $this->getTabs()->activate('host');
         $this->view->title = $o->host_name;
         $o->populate();
-        if ($this->grapher && $this->grapher->hasPreviews($o->host_name)) {
-            $this->view->grapherHtml = $this->grapher->getPreviewHtml($o->host_name);
+        if ($this->grapher && $this->grapher->hasPreviews($o)) {
+            $this->view->grapherHtml = $this->grapher->getPreviewHtml($o);
         }
     }
 
