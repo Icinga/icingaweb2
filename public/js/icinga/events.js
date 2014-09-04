@@ -118,7 +118,7 @@
                 var $el = $(this);
                 $el.attr('title', $el.attr('title-rich') || $el.attr('title'));
             });
-            $('svg rect.chart-data[title]', el).tipsy({ gravity: 'e', html: true });
+            $('svg rect.chart-data[title]', el).tipsy({ gravity: 'se', html: true });
             $('.historycolorgrid a[title]', el).tipsy({ gravity: 's', offset: 2 });
             $('img.icon[title]', el).tipsy({ gravity: $.fn.tipsy.autoNS, offset: 2 });
             $('[title]', el).tipsy({ gravity: $.fn.tipsy.autoNS, delayIn: 500 });
