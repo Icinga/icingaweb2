@@ -278,9 +278,8 @@ class Monitoring_TimelineController extends Controller
      */
     private function getTimeFormat()
     {
-        $globalConfig = $this->getGlobalConfiguration();
-        $preferences = $this->getRequest()->getUser()->getPreferences();
-        return $preferences->get('app.timeFormat', $globalConfig->get('timeFormat', 'g:i A'));
+        // TODO(mh): Missing localized format (#6077)
+        return 'g:i A';
     }
 
     /**
@@ -290,8 +289,7 @@ class Monitoring_TimelineController extends Controller
      */
     private function getDateFormat()
     {
-        $globalConfig = $this->getGlobalConfiguration();
-        $preferences = $this->getRequest()->getUser()->getPreferences();
-        return $preferences->get('app.dateFormat', $globalConfig->get('dateFormat', 'd/m/Y'));
+        // TODO(mh): Missing localized format (#6077)
+        return 'd/m/Y';
     }
 }
