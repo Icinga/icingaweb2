@@ -164,6 +164,31 @@ class Module
     protected $paneItems = array();
 
     /**
+     * @var array
+     */
+    protected $searchUrls = array();
+
+    /**
+     * @param string $title
+     * @param string $url
+     */
+    public function provideSearchUrl($title, $url)
+    {
+        $searchUrl = (object) array(
+            'title' => $title,
+            'url'   => $url
+        );
+
+        $this->searchUrls[] = $searchUrl;
+    }
+
+    public function getSearchUrls()
+    {
+        $this->launchConfigScript();
+        return $this->searchUrls;
+    }
+
+    /**
      * Get all Menu Items
      *
      * @return array

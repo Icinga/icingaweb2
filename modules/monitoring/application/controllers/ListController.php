@@ -55,10 +55,9 @@ class Monitoring_ListController extends Controller
                 $url->addParams(array($k => $v));
                 return $url;
             }
-
         } else {
             $q = $url->shift('q');
-            if ($q) {
+            if ($q !== null) {
                 $action = $this->_request->getActionName();
                 switch($action) {
                     case 'services':
@@ -68,7 +67,7 @@ class Monitoring_ListController extends Controller
                         $this->params->remove('q')->set('host_name', '*' . $q . '*');
                         break;
                     case 'hostgroups':
-                        $this->params->remove('q')->set('hostgroups', '*' . $q . '*');
+                        $this->params->remove('q')->set('hostgroup', '*' . $q . '*');
                         break;
                     case 'servicegroups':
                         $this->params->remove('q')->set('servicegroup', '*' . $q . '*');
@@ -413,6 +412,9 @@ class Monitoring_ListController extends Controller
 
     public function servicegroupsAction()
     {
+        if ($url = $this->hasBetterUrl()) {
+            return $this->redirectNow($url);
+        }
         $this->addTitleTab('servicegroups');
         $this->setAutorefreshInterval(12);
         $query = $this->backend->select()->from('groupsummary', array(
@@ -441,6 +443,9 @@ class Monitoring_ListController extends Controller
 
     public function hostgroupsAction()
     {
+        if ($url = $this->hasBetterUrl()) {
+            return $this->redirectNow($url);
+        }
         $this->addTitleTab('hostgroups');
         $this->setAutorefreshInterval(12);
         $query = $this->backend->select()->from('groupsummary', array(
