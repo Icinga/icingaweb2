@@ -5,6 +5,7 @@
 namespace Icinga\Form\Preference;
 
 use DateTimeZone;
+use Icinga\Util\TimezoneDetect;
 use Zend_Config;
 use Zend_Form_Element_Text;
 use Zend_Form_Element_Select;
@@ -69,13 +70,22 @@ class GeneralForm extends Form
      */
     private function addTimezoneSelection(Zend_Config $cfg)
     {
+        $prefs = $this->getUserPreferences();
+        $useGlobalTimezone = $this->getRequest()->getParam('default_timezone', !$prefs->has('app.timezone'));
+        $detect = new TimezoneDetect();
+
         $tzList = array();
         foreach (DateTimeZone::listIdentifiers() as $tz) {
             $tzList[$tz] = $tz;
         }
+
         $helptext = 'Use the following timezone for dates and times';
-        $prefs = $this->getUserPreferences();
-        $useGlobalTimezone = $this->getRequest()->getParam('default_timezone', !$prefs->has('app.timezone'));
+
+        if ($useGlobalTimezone && $detect->success() === true) {
+            $helptext .= '<br />' . t('Currently your time was detected to be')
+                . ': '
+                . '<strong>' . $detect->getTimezoneName() . '</strong>';
+        }
 
         $selectTimezone = new Zend_Form_Element_Select(
             array(
@@ -87,6 +97,7 @@ class GeneralForm extends Form
                 'value'         =>  $prefs->get('app.timezone', $cfg->get('timezone', date_default_timezone_get()))
             )
         );
+
         $this->addElement(
             'checkbox',
             'default_timezone',
@@ -99,7 +110,9 @@ class GeneralForm extends Form
         if ($useGlobalTimezone) {
             $selectTimezone->setAttrib('disabled', 1);
         }
+
         $this->addElement($selectTimezone);
+
         $this->enableAutoSubmit(array('default_timezone'));
     }
 
