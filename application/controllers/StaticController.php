@@ -47,7 +47,7 @@ class StaticController extends ActionController
             $cache->send($cacheFile);
             return;
         }
-        $img = file_get_contents('http://www.gravatar.com/avatar/' . $filename . '?s=200&d=mm');
+        $img = file_get_contents('http://www.gravatar.com/avatar/' . $filename . '?s=120&d=mm');
         $cache->store($cacheFile, $img);
         header('ETag: "' . $cache->etagForCachedFile($cacheFile) . '"');
         echo $img;
