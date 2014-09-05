@@ -438,8 +438,9 @@ class Form extends Zend_Form
                 'hidden',
                 $this->uidElementName,
                 array(
-                    'ignore'    => true,
-                    'value'     => $this->getName()
+                    'ignore'        => true,
+                    'value'         => $this->getName(),
+                    'decorators'    => array('ViewHelper')
                 )
             );
         }
