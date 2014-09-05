@@ -29,17 +29,17 @@ $iframeClass = $isIframe ? ' iframe' : '';
   <title><?= $this->title ? $this->escape($this->title) : 'Icinga Web' ?></title>
   <!-- TODO: viewport and scale settings make no sense for us, fix this -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <link rel="stylesheet" href="<?= $this->href($cssfile) ?>" media="screen" type="text/css" />
-  <? if ($isIframe): ?>
+<? if ($isIframe): ?>
   <base target="_parent"/>
-  <?php else: ?>
+<?php else: ?>
   <script type="text/javascript">
   (function() {
     var html = document.getElementsByTagName('html')[0];
     html.className = html.className.replace(/no-js/, 'js');
   }());
   </script>
-  <?php endif ?>
+<?php endif ?>
+  <link rel="stylesheet" href="<?= $this->href($cssfile) ?>" media="screen" type="text/css" />
   <!-- Respond.js IE8 support of media queries -->
   <!--[if lt IE 9]>
   <script src="<?= $this->baseUrl('js/vendor/respond.min.js');?>"></script>
