@@ -47,7 +47,7 @@ class ListController extends Controller
         $pattern = '/^(?<datetime>[0-9]{4}(-[0-9]{2}){2}'                 // date
                  . 'T[0-9]{2}(:[0-9]{2}){2}([\\+\\-][0-9]{2}:[0-9]{2})?)' // time
                  . ' - (?<loglevel>[A-Za-z]+)'                            // loglevel
-                 . ' - (?<message>.*)$/'                                  // message
+                 . ' - (?<message>.*)$/';                                 // message
 
         $loggerWriter = Logger::getInstance()->getWriter();
         $resource = new FileReader(new Zend_Config(array(
