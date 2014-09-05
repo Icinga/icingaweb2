@@ -4,6 +4,7 @@
 
 namespace Icinga\Web;
 
+use Icinga\Web\Menu\MenuItemRenderer;
 use RecursiveIterator;
 use Zend_Config;
 use Icinga\Application\Config;
@@ -61,6 +62,13 @@ class Menu implements RecursiveIterator
     protected $subMenus = array();
 
     /**
+     * A custom item renderer used instead of the default rendering logic
+     *
+     * @var MenuItemRenderer
+     */
+    protected $itemRenderer = null;
+
+    /**
      * Create a new menu
      *
      * @param   int             $id         The id of this menu
@@ -82,6 +90,15 @@ class Menu implements RecursiveIterator
         if ($props !== null) {
             foreach ($props as $key => $value) {
                 $method = 'set' . implode('', array_map('ucfirst', explode('_', strtolower($key))));
+                if ($key === 'renderer') {
+                    $class = '\Icinga\Web\Menu\\' . $value;
+                    if (!class_exists($class)) {
+                        throw new ConfigurationError(
+                            sprintf('ItemRenderer with class "%s" does not exist', $class)
+                        );
+                    }
+                    $value = new $class;
+                }
                 if (method_exists($this, $method)) {
                     $this->{$method}($value);
                 } else {
@@ -324,6 +341,26 @@ class Menu implements RecursiveIterator
     public function getIcon()
     {
         return $this->icon;
+    }
+
+    /**
+     * Get the class that renders the current menu item
+     *
+     * @return MenuItemRenderer
+     */
+    public function getRenderer()
+    {
+        return $this->itemRenderer;
+    }
+
+    /**
+     * Set the class that renders the current menu item
+     *
+     * @param MenuItemRenderer $renderer
+     */
+    public function setRenderer(MenuItemRenderer $renderer)
+    {
+        $this->itemRenderer = $renderer;
     }
 
     /**
