@@ -1,4 +1,8 @@
-<div class="controls">
+<?php
+
+use Icinga\Data\Filter\Filter;
+
+?><div class="controls">
 <?= $this->tabs ?>
 <h1>History - Critical Events</h1>
 </div>
@@ -16,19 +20,20 @@ foreach ($summary as $entry) {
     $value = $entry->cnt_critical;
     $caption =  $value . ' ' .
         t('critical events on ') . $this->dateFormat()->formatDate(strtotime($day));
+    $filter = Filter::matchAll(
+        Filter::expression('timestamp', '<', strtotime($day . ' 23:59:59')),
+        Filter::expression('timestamp', '>', strtotime($day . ' 00:00:00')),
+        Filter::expression('object_type', '=', 'service'),
+        Filter::expression('state', '=', '2'),
+        Filter::matchAny(
+            Filter::expression('type', '=', 'hard_state'),
+            Filter::expression('type', '=', 'hard_state')
+        )
+    );
     $data[$day] = array(
         'value'   => $value,
         'caption' => $caption,
-        'url'     => $this->href(
-            'monitoring/list/eventhistory',
-            array(
-                'timestamp<'  => strtotime($day . ' 23:59:59'),
-                'timestamp>'  => strtotime($day . ' 00:00:00'),
-                'object_type' => 'service',
-                'state'       => '2',
-                'type'        => '(hard_state|soft_state)'
-            )
-        )
+        'url'     => $this->href('monitoring/list/eventhistory?' . $filter->toQueryString())
     );
 }
 $grid->setData($data);
