@@ -69,7 +69,8 @@ class Host extends MonitoredObject
             'host_action_url',
             'host_notes_url',
             'host_modified_host_attributes',
-            'host_problem'
+            'host_problem',
+            'process_perfdata' => 'host_process_performance_data',
         ))->where('host_name', $this->params->get('host'));
         return $this->view->getQuery()->fetchRow();
     }
