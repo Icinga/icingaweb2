@@ -6,6 +6,7 @@ namespace Icinga\Protocol\File;
 
 use Icinga\Data\Selectable;
 use Countable;
+use Icinga\Util\Enumerate;
 use Zend_Config;
 
 /**
@@ -52,7 +53,9 @@ class FileReader implements Selectable, Countable
      */
     public function iterate()
     {
-        return new FileIterator($this->filename, $this->fields);
+        return new Enumerate(
+            new FileIterator($this->filename, $this->fields)
+        );
     }
 
     /**
@@ -117,15 +120,13 @@ class FileReader implements Selectable, Countable
                 $skip = $count - ($skip + $read);
             }
         }
-        $index = 0;
-        foreach ($this->iterate() as $line) {
+        foreach ($this->iterate() as $index => $line) {
             if ($index >= $skip) {
                 if ($index >= $skip + $read) {
                     break;
                 }
                 $lines[] = $line;
             }
-            ++$index;
         }
         if ($query->sortDesc()) {
             $lines = array_reverse($lines);
