@@ -9,6 +9,7 @@ use Icinga\Data\ResourceFactory;
 use Icinga\Logger\Logger;
 use Icinga\Logger\Writer\FileWriter;
 use Icinga\Protocol\File\FileReader;
+use \Zend_Controller_Action_Exception as ActionError;
 
 /**
  * Class ListController
@@ -38,20 +39,21 @@ class ListController extends Controller
      */
     public function applicationlogAction()
     {
+        if (! Logger::writesToFile()) {
+            throw new ActionError('Site not found', 404);
+        }
+
         $this->addTitleTab('application log');
+        $pattern = '/^(?<datetime>[0-9]{4}(-[0-9]{2}){2}'                 // date
+                 . 'T[0-9]{2}(:[0-9]{2}){2}([\\+\\-][0-9]{2}:[0-9]{2})?)' // time
+                 . ' - (?<loglevel>[A-Za-z]+)'                            // loglevel
+                 . ' - (?<message>.*)$/'                                  // message
 
         $loggerWriter = Logger::getInstance()->getWriter();
-        if ($loggerWriter instanceof FileWriter) {
-            $resource = new FileReader(new Zend_Config(array(
-                'filename'  => $loggerWriter->getPath(),
-                'fields'    => '/^(?<datetime>[0-9]{4}(-[0-9]{2}){2}'           // date
-                    . 'T[0-9]{2}(:[0-9]{2}){2}([\\+\\-][0-9]{2}:[0-9]{2})?)'    // time
-                    . ' - (?<loglevel>[A-Za-z]+)'                               // loglevel
-                    . ' - (?<message>.*)$/'                                     // message
-            )));
-            $this->view->logData = $resource->select()->order('DESC')->paginate();
-        } else {
-            $this->view->logData = null;
-        }
+        $resource = new FileReader(new Zend_Config(array(
+            'filename'  => $loggerWriter->getPath(),
+            'fields'    => $pattern
+        )));
+        $this->view->logData = $resource->select()->order('DESC')->paginate();
     }
 }

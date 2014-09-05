@@ -8,6 +8,7 @@ use RecursiveIterator;
 use Zend_Config;
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
+use Icinga\Logger\Logger;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Web\Url;
@@ -195,10 +196,13 @@ class Menu implements RecursiveIterator
             'url'      => 'config/modules',
             'priority' => 400
         ));
-        $section->add(t('ApplicationLog'), array(
-            'url'      => 'list/applicationlog',
-            'priority' => 500
-        ));
+
+        if (Logger::writesToFile()) {
+            $section->add(t('Application Log'), array(
+                'url'      => 'list/applicationlog',
+                'priority' => 500
+            ));
+        }
 
         $this->add(t('Logout'), array(
             'url'      => 'authentication/logout',
