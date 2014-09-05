@@ -26,9 +26,15 @@ class TranslatorTest extends BaseTestCase
 
     public function testWhetherGetAvailableLocaleCodesReturnsAllAvailableLocaleCodes()
     {
+        $expected = array(Translator::DEFAULT_LOCALE, 'de_DE', 'fr_FR');
+        $result = Translator::getAvailableLocaleCodes();
+
+        sort($expected);
+        sort($result);
+
         $this->assertEquals(
-            array(Translator::DEFAULT_LOCALE, 'de_DE', 'fr_FR'),
-            Translator::getAvailableLocaleCodes(),
+            $expected,
+            $result,
             'Translator::getAvailableLocaleCodes does not return all available locale codes'
         );
     }
