@@ -21,6 +21,7 @@ class JavaScript
         'js/icinga/events.js',
         'js/icinga/history.js',
         'js/icinga/module.js',
+        'js/icinga/timezone.js',
     );
 
     protected static $vendorFiles = array(
