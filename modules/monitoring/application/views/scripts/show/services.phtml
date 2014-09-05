@@ -1,7 +1,5 @@
 <div class="controls">
 <?= $this->render('show/components/header.phtml') ?>
-<h1><?= $this->translate('All services configured on this host') ?></h1>
+<?= $this->render('show/components/hostservicesummary.phtml') ?>
 </div>
-<div class="content">
 <?= preg_replace('~<table data-base-target="_next"~', '<table data-base-target="_self"', $services) /* TODO: find an elegant solution for this */ ?>
-</div>

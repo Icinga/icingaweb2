@@ -4,7 +4,6 @@
 
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Backend;
-use Icinga\Module\Monitoring\DataView\DataView;
 use Icinga\Web\Url;
 use Icinga\Web\Hook;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
@@ -236,6 +235,25 @@ class Monitoring_ListController extends Controller
             // TODO: Workaround, paginate should be able to fetch limit from new params
             $this->view->services = $query->paginate($this->params->get('limit'));
         }
+
+        $this->view->stats = $this->backend->select()->from('statusSummary', array(
+            'services_total',
+            'services_ok',
+            'services_problem',
+            'services_problem_handled',
+            'services_problem_unhandled',
+            'services_critical',
+            'services_critical_unhandled',
+            'services_critical_handled',
+            'services_warning',
+            'services_warning_unhandled',
+            'services_warning_handled',
+            'services_unknown',
+            'services_unknown_unhandled',
+            'services_unknown_handled',
+            'services_pending',
+        ))->getQuery()->fetchRow();
+
     }
 
     /**
@@ -500,19 +518,19 @@ class Monitoring_ListController extends Controller
     {
         $this->addTitleTab('servicematrix');
         $this->setAutorefreshInterval(15);
-        $dataview = $this->backend->select()->from('serviceStatus', array(
+        $query = $this->backend->select()->from('serviceStatus', array(
             'host_name',
             'service_description',
             'service_state',
             'service_output',
             'service_handled'
         ));
-        $this->applyFilters($dataview);
+        $this->applyFilters($query);
         $this->setupSortControl(array(
             'host_name'           => 'Hostname',
             'service_description' => 'Service description'
         ));
-        $pivot = $dataview->pivot('service_description', 'host_name');
+        $pivot = $query->pivot('service_description', 'host_name');
         $this->view->pivot = $pivot;
         $this->view->horizontalPaginator = $pivot->paginateXAxis();
         $this->view->verticalPaginator   = $pivot->paginateYAxis();
@@ -572,10 +590,6 @@ class Monitoring_ListController extends Controller
 
     /**
      * Apply current user's `monitoring/filter' restrictions on the given data view
-     *
-     * @param   DataView $dataView
-     *
-     * @return  DataView
      */
     protected function applyRestrictions($query)
     {

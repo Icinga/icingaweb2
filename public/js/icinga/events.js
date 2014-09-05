@@ -515,7 +515,7 @@
             var isMenuLink = $a.closest('#menu').length > 0;
             var formerUrl;
             var remote = /^(?:[a-z]+:)\/\//;
-            if (href.match(/^javascript:/)) {
+            if (href.match(/^(mailto|javascript):/)) {
                 return true;
             }
 

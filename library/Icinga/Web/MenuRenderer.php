@@ -118,9 +118,9 @@ class MenuRenderer extends RecursiveIteratorIterator
 
             if ($childIsActive || ($passedActiveChild && $this->getDepth() === 0)) {
                 $passedActiveChild &= $this->getDepth() !== 0;
-                $openTag = '<li class="active">';
+                $openTag = '<li class="active" id="' . $child->getUniqueId() . '">';
             } else {
-                $openTag = '<li>';
+                $openTag = '<li id="' . $child->getUniqueId() . '">';
             }
             $content = $this->renderChild($child);
             $closingTag = '</li>';
