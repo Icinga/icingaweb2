@@ -68,6 +68,13 @@ class Form extends Zend_Form
     protected $tokenElementName = 'CSRFToken';
 
     /**
+     * Whether this form should add a UID element being used to distinct different forms posting to the same action
+     *
+     * @var bool
+     */
+    protected $uidDisabled = false;
+
+    /**
      * Name of the form identification element
      *
      * @var string
@@ -237,6 +244,34 @@ class Form extends Zend_Form
     }
 
     /**
+     * Disable form identification and remove its field if already added
+     *
+     * @param   bool    $disabled   Set true in order to disable identification for this form, otherwise false
+     *
+     * @return  self
+     */
+    public function setUidDisabled($disabled = true)
+    {
+        $this->uidDisabled = (bool) $disabled;
+
+        if ($disabled && $this->getElement($this->uidElementName) !== null) {
+            $this->removeElement($this->uidElementName);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Return whether identification is disabled for this form
+     *
+     * @return  bool
+     */
+    public function getUidDisabled()
+    {
+        return $this->uidDisabled;
+    }
+
+    /**
      * Set the name to use for the form identification element
      *
      * @param   string  $name   The name to set
@@ -398,14 +433,16 @@ class Form extends Zend_Form
      */
     public function addFormIdentification()
     {
-        $this->addElement(
-            'hidden',
-            $this->uidElementName,
-            array(
-                'ignore'    => true,
-                'value'     => $this->getName()
-            )
-        );
+        if (false === $this->uidDisabled && $this->getElement($this->uidElementName) === null) {
+            $this->addElement(
+                'hidden',
+                $this->uidElementName,
+                array(
+                    'ignore'    => true,
+                    'value'     => $this->getName()
+                )
+            );
+        }
 
         return $this;
     }
