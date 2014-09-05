@@ -91,6 +91,9 @@ class MenuRenderer extends RecursiveIteratorIterator
      */
     public function renderChild(Menu $child)
     {
+        if ($child->getRenderer() !== null) {
+            return $child->getRenderer()->render($child);
+        }
         return sprintf(
             '<a href="%s">%s%s</a>',
             $child->getUrl() ?: '#',
