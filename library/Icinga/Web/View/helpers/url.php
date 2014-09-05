@@ -22,7 +22,7 @@ $this->addHelperFunction('url', function ($path = null, $params = null) {
         $url = Url::fromPath($path);
     }
     if ($params !== null) {
-        $url->setParams($params);
+        $url->overwriteParams($params);
     }
 
     return $url;
