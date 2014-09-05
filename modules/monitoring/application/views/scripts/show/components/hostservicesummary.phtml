@@ -43,7 +43,7 @@ foreach (array(2 => 'critical', 3 => 'unknown', 1 => 'warning') as $stateId => $
                 $this->stats->$unhandled,
                 $selfUrl,
                 $paramsUnhandled,
-                array('title' => sprintf($this->translate('Unandled services with state %s'), strtoupper($this->translate($state))))
+                array('title' => sprintf($this->translate('Unhandled services with state %s'), strtoupper($this->translate($state))))
             );
         }
         if ($this->stats->$handled) {
