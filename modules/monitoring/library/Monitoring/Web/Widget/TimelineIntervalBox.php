@@ -84,6 +84,7 @@ class TimelineIntervalBox extends AbstractWidget
         $form = new Form();
         $form->setAttrib('class', 'inline');
         $form->setMethod('GET');
+        $form->setUidDisabled();
         $form->setTokenDisabled();
         $form->setName($this->name);
         $form->addElement(
@@ -92,7 +93,7 @@ class TimelineIntervalBox extends AbstractWidget
             array(
                 'label'         => 'Timeline Interval',
                 'multiOptions'  => $this->values,
-                'class'         => 'autosubmit'
+                'autosubmit'    => true
             )
         );
 
