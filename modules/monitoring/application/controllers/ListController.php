@@ -235,6 +235,25 @@ class Monitoring_ListController extends Controller
             // TODO: Workaround, paginate should be able to fetch limit from new params
             $this->view->services = $query->paginate($this->params->get('limit'));
         }
+
+        $this->view->stats = $this->backend->select()->from('statusSummary', array(
+            'services_total',
+            'services_ok',
+            'services_problem',
+            'services_problem_handled',
+            'services_problem_unhandled',
+            'services_critical',
+            'services_critical_unhandled',
+            'services_critical_handled',
+            'services_warning',
+            'services_warning_unhandled',
+            'services_warning_handled',
+            'services_unknown',
+            'services_unknown_unhandled',
+            'services_unknown_handled',
+            'services_pending',
+        ))->getQuery()->fetchRow();
+
     }
 
     /**
