@@ -10,6 +10,7 @@ use Icinga\Authentication\Manager as AuthenticationManager;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\NotReadableError;
 use Icinga\Logger\Logger;
+use Icinga\Util\TimezoneDetect;
 use Icinga\Web\Request;
 use Icinga\Web\Response;
 use Icinga\Web\View;
@@ -273,10 +274,11 @@ class Web extends ApplicationBootstrap
      */
     protected function setupTimezone()
     {
+        $userTimezone = null;
+
         if ($this->user !== null && $this->user->getPreferences() !== null) {
-            $userTimezone = $this->user->getPreferences()->get('app.timezone');
-        } else {
-            $userTimezone = null;
+            $detect = new TimezoneDetect();
+            $userTimezone = $this->user->getPreferences()->get('app.timezone', $detect->getTimezoneName());
         }
 
         try {
