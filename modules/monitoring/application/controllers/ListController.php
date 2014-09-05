@@ -508,7 +508,7 @@ class Monitoring_ListController extends Controller
         ));
 
         $this->setupSortControl(array(
-            'raw_timestamp' => 'Occurence'
+            'timestamp' => 'Occurence'
         ));
         $this->applyFilters($query);
         $this->view->history = $query->paginate();
