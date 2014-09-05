@@ -31,7 +31,7 @@
 
     /**
      * Test for daylight saving time zone
-     * 
+     *
      * @returns {boolean}
      */
     Date.prototype.isDst = function() {
@@ -71,7 +71,7 @@
                 return;
             }
 
-            this.writeCookie(this.cookieName, timezoneOffset + ',' + dst);
+            this.writeCookie(this.cookieName, timezoneOffset + ',' + Number(dst));
         },
 
         /**
