@@ -6,6 +6,11 @@ namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
 class StatehistoryQuery extends IdoQuery
 {
+    protected $types = array(
+        'soft_state' => 0,
+        'hard_state' => 1,
+    );
+
     protected $columnMap = array(
         'statehistory' => array(
             'raw_timestamp' => 'sh.state_time',
@@ -33,6 +38,8 @@ class StatehistoryQuery extends IdoQuery
     {
         if ($col === 'UNIX_TIMESTAMP(sh.state_time)') {
             return 'sh.state_time ' . $sign . ' ' . $this->timestampForSql($this->valueToTimestamp($expression));
+        } elseif ($col === $this->columnMap['statehistory']['type']) {
+            return 'sh.state_type ' . $sign . ' ' . $this->types[$expression];
         } else {
             return parent::whereToSql($col, $sign, $expression);
         }
