@@ -71,7 +71,7 @@
                 return;
             }
 
-            this.writeCookie(this.cookieName, timezoneOffset + ',' + Number(dst));
+            this.writeCookie(this.cookieName, timezoneOffset + ',' + Number(dst), 1);
         },
 
         /**
