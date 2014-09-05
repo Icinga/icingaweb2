@@ -424,6 +424,13 @@ class Url
         return $url;
     }
 
+    public function with($param, $values = null)
+    {
+        $url = clone($this);
+        $url->params->mergeValues($param, $values);
+        return $url;
+    }
+
     public function __clone()
     {
         $this->params = clone $this->params;
