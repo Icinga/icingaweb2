@@ -5,6 +5,7 @@
 namespace Icinga\Web;
 
 use Icinga\Application\Icinga;
+use Icinga\Cli\FakeRequest;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Web\UrlParams;
 
@@ -98,7 +99,12 @@ class Url
      */
     protected static function getRequest()
     {
-        return Icinga::app()->getFrontController()->getRequest();
+        $app = Icinga::app();
+        if ($app->isCli()) {
+            return new FakeRequest();
+        } else {
+            return $app->getFrontController()->getRequest();
+        }
     }
 
     /**
@@ -424,6 +430,17 @@ class Url
         return $url;
     }
 
+    /**
+     * Return a copy of this url with the given parameter(s)
+     *
+     * The argument can be either a single query parameter name or an array of parameter names to
+     * remove from the query list
+     *
+     * @param string|array $param  A single string or an array containing parameter names
+     * @param array        $values an optional values array
+     *
+     * @return Url
+     */
     public function with($param, $values = null)
     {
         $url = clone($this);
