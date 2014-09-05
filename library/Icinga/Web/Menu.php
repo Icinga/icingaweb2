@@ -62,14 +62,24 @@ class Menu implements RecursiveIterator
     protected $subMenus = array();
 
     /**
+     * Parent menu
+     *
+     * @var Menu
+     */
+    protected $parent;
+
+    /**
      * Create a new menu
      *
      * @param   int             $id         The id of this menu
      * @param   Zend_Config     $config     The configuration for this menu
      */
-    public function __construct($id, Zend_Config $config = null)
+    public function __construct($id, Zend_Config $config = null, Menu $parent = null)
     {
         $this->id = $id;
+        if ($parent !== null) {
+            $this->parent = $parent;
+        }
         $this->setProperties($config);
     }
 
@@ -235,6 +245,30 @@ class Menu implements RecursiveIterator
     }
 
     /**
+     * Get our ID without invalid characters
+     *
+     * @return string the ID
+     */
+    protected function getSafeHtmlId()
+    {
+        return preg_replace('/[^a-zA-Z0-9]/', '_', $this->getId());
+    }
+
+    /**
+     * Get a unique menu item id
+     *
+     * @return string the ID
+     */
+    public function getUniqueId()
+    {
+        if ($this->parent === null) {
+            return 'menuitem-' . $this->getSafeHtmlId();
+        } else {
+            return $this->parent->getUniqueId() . '-' . $this->getSafeHtmlId();
+        }
+    }
+
+    /**
      * Set the title of this menu
      *
      * @param   string  $title  The title to set for this menu
@@ -351,7 +385,7 @@ class Menu implements RecursiveIterator
     public function addSubMenu($id, Zend_Config $menuConfig = null)
     {
         if (false === ($pos = strpos($id, '.'))) {
-            $subMenu = new self($id, $menuConfig);
+            $subMenu = new self($id, $menuConfig, $this);
             $this->subMenus[$id] = $subMenu;
         } else {
             list($parentId, $id) = explode('.', $id, 2);
@@ -617,5 +651,13 @@ class Menu implements RecursiveIterator
     public function next()
     {
         next($this->subMenus);
+    }
+
+    /**
+     * PHP 5.3 GC should not leak, but just to be on the safe side... 
+     */
+    public function __destruct()
+    {
+        $this->parent = null;
     }
 }
