@@ -8,6 +8,7 @@ use Exception;
 use Zend_Config;
 use Zend_Controller_Router_Route_Abstract;
 use Zend_Controller_Router_Route as Route;
+use Zend_Controller_Router_Route_Regex as RegexRoute;
 use Icinga\Application\ApplicationBootstrap;
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
@@ -821,12 +822,15 @@ class Module
         );
         $router->addRoute(
             $this->name . '_img',
-            new Route(
-                'img/' . $this->name . '/:file',
+            new RegexRoute(
+                'img/' . $this->name . '/(.+)',
                 array(
                     'controller'    => 'static',
                     'action'        => 'img',
                     'module_name'   => $this->name
+                ),
+                array(
+                    1 => 'file'
                 )
             )
         );
