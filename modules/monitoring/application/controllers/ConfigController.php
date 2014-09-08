@@ -31,7 +31,7 @@ class Monitoring_ConfigController extends ModuleActionController
     public function editbackendAction()
     {
         $form = new BackendConfigForm();
-        $form->setConfig($this->Config('backends'));
+        $form->setIniConfig($this->Config('backends'));
         $form->setResourceConfig(ResourceFactory::getResourceConfigs());
         $form->setRedirectUrl('monitoring/config');
         $form->handleRequest();
@@ -45,7 +45,7 @@ class Monitoring_ConfigController extends ModuleActionController
     public function createbackendAction()
     {
         $form = new BackendConfigForm();
-        $form->setConfig($this->Config('backends'));
+        $form->setIniConfig($this->Config('backends'));
         $form->setResourceConfig(ResourceFactory::getResourceConfigs());
         $form->setRedirectUrl('monitoring/config');
         $form->handleRequest();
@@ -63,7 +63,7 @@ class Monitoring_ConfigController extends ModuleActionController
             'onSuccess' => function ($request) use ($config) {
                 $backendName = $request->getQuery('backend');
                 $configForm = new BackendConfigForm();
-                $configForm->setConfig($config);
+                $configForm->setIniConfig($config);
 
                 try {
                     $configForm->remove($backendName);
@@ -95,7 +95,7 @@ class Monitoring_ConfigController extends ModuleActionController
             'onSuccess' => function ($request) use ($config) {
                 $instanceName = $request->getQuery('instance');
                 $configForm = new InstanceConfigForm();
-                $configForm->setConfig($config);
+                $configForm->setIniConfig($config);
 
                 try {
                     $configForm->remove($instanceName);
@@ -123,7 +123,7 @@ class Monitoring_ConfigController extends ModuleActionController
     public function editinstanceAction()
     {
         $form = new InstanceConfigForm();
-        $form->setConfig($this->Config('instances'));
+        $form->setIniConfig($this->Config('instances'));
         $form->setRedirectUrl('monitoring/config');
         $form->handleRequest();
 
@@ -136,7 +136,7 @@ class Monitoring_ConfigController extends ModuleActionController
     public function createinstanceAction()
     {
         $form = new InstanceConfigForm();
-        $form->setConfig($this->Config('instances'));
+        $form->setIniConfig($this->Config('instances'));
         $form->setRedirectUrl('monitoring/config');
         $form->handleRequest();
 
@@ -149,7 +149,7 @@ class Monitoring_ConfigController extends ModuleActionController
     public function securityAction()
     {
         $form = new SecurityConfigForm();
-        $form->setConfig($this->Config());
+        $form->setIniConfig($this->Config());
         $form->handleRequest();
 
         $this->view->form = $form;

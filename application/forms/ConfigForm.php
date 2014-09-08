@@ -28,7 +28,7 @@ class ConfigForm extends Form
      *
      * @return  self
      */
-    public function setConfig(Config $config)
+    public function setIniConfig(Config $config)
     {
         $this->config = $config;
         return $this;
