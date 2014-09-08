@@ -18,10 +18,11 @@ class LayoutController extends ActionController
      */
     public function menuAction()
     {
+        $this->setAutorefreshInterval(15);
         $this->_helper->layout()->disableLayout();
-        $this->view->menuRenderer = new MenuRenderer(
-            Menu::load(), Url::fromRequest()->without('renderLayout')->getRelativeUrl()
-        );
+
+        $url = Url::fromPath($this->getParam('url'));
+        $this->view->menuRenderer = new MenuRenderer(Menu::load(), $url->getRelativeUrl());
     }
 
     /**

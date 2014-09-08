@@ -10,6 +10,8 @@
 
     'use strict';
 
+    var activeMenuId;
+
     var mouseX, mouseY;
 
     Icinga.Events = function (icinga) {
@@ -133,22 +135,25 @@
                 if (!icinga.utils.elementsOverlap(arrow, el)) {
                     return;
                 }
-                
                 var title = $(this).find('.tipsy-inner').html();
                 var atMouse = document.elementFromPoint(mouseX, mouseY);
                 var nearestTip = $(atMouse)
                     .closest('[original-title="' + title + '"]')[0];
                 if (nearestTip) {
-                    console.log ('migrating orphan...');
                     var tipsy = $.data(nearestTip, 'tipsy');
                     tipsy.$tip = $(this);
                     $.data(this, 'tipsy-pointee', nearestTip);
                 } else {
                     // doesn't match delete
-                    console.log ('deleting orphan...');
                     $(this).remove();
                 }
             });
+
+            // restore menu state
+            if (activeMenuId) {
+                $('#menu .active').removeClass('active');
+                $('#' + activeMenuId).addClass('active');
+            }
         },
 
         /**
@@ -569,7 +574,9 @@
                     $li = $a.closest('li');
                     $('#menu .active').removeClass('active');
                     $li.addClass('active');
+                    activeMenuId = $($li).attr('id');
                     if ($li.hasClass('hover')) {
+                        $('#menu .active').removeClass('active');
                         $li.removeClass('hover');
                     }
                 }
@@ -600,8 +607,13 @@
             // Load link URL
             icinga.loader.loadUrl(href, $target);
 
-            // Menu links should remove all but the first layout column
             if (isMenuLink) {
+                // update target url of the menu container to the clicked link
+                var menuDataUrl = icinga.utils.parseUrl($('#menu').data('icinga-url'));
+                menuDataUrl = icinga.utils.addUrlParams(menuDataUrl.path, { url: href });
+                $('#menu').data('icinga-url', menuDataUrl);
+
+                // Menu links should remove all but the first layout column
                 icinga.ui.layout1col();
             }
 
