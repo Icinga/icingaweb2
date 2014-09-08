@@ -699,6 +699,7 @@
             $(document).off('mouseenter', 'li.dropdown', this.dropdownHover);
             $(document).off('mouseleave', 'li.dropdown', this.dropdownLeave);
             $(document).off('click', 'div.tristate .tristate-dummy', this.clickTriState);
+            $(document).off('mousemove');
         },
 
         destroy: function() {
