@@ -27,15 +27,13 @@ class AddUrlForm extends Form
      */
     public function createElements(array $formData)
     {
-        $elements = array(
-            $this->createElement(
-                'text',
-                'url',
-                array(
-                    'required'  => true,
-                    'label'     => t('Url'),
-                    'helptext'  => t('The url being loaded in the dashlet')
-                )
+        $this->addElement(
+            'text',
+            'url',
+            array(
+                'required'  => true,
+                'label'     => t('Url'),
+                'helptext'  => t('The url being loaded in the dashlet')
             )
         );
 
@@ -44,7 +42,7 @@ class AddUrlForm extends Form
             ((isset($formData['create_new_pane']) && $formData['create_new_pane'] != false) &&
              (false === isset($formData['use_existing_dashboard']) || $formData['use_existing_dashboard'] != true))
         ) {
-            $elements[] = $this->createElement(
+            $this->addElement(
                 'text',
                 'pane',
                 array(
@@ -53,7 +51,7 @@ class AddUrlForm extends Form
                     'style'     => 'display: inline-block'
                 )
             );
-            $elements[] = $this->createElement( // Prevent the button from being displayed again on validation errors
+            $this->addElement( // Prevent the button from being displayed again on validation errors
                 'hidden',
                 'create_new_pane',
                 array(
@@ -61,7 +59,7 @@ class AddUrlForm extends Form
                 )
             );
             if (false === empty($paneSelectionValues)) {
-                $elements[] = $this->createElement(
+                $this->addElement(
                     'submit',
                     'use_existing_dashboard',
                     array(
@@ -72,7 +70,7 @@ class AddUrlForm extends Form
                 );
             }
         } else {
-            $elements[] = $this->createElement(
+            $this->addElement(
                 'select',
                 'pane',
                 array(
@@ -82,7 +80,7 @@ class AddUrlForm extends Form
                     'multiOptions'  => $paneSelectionValues
                 )
             );
-            $elements[] = $this->createElement(
+            $this->addElement(
                 'submit',
                 'create_new_pane',
                 array(
@@ -93,7 +91,7 @@ class AddUrlForm extends Form
             );
         }
 
-        $elements[] = $this->createElement(
+        $this->addElement(
             'text',
             'component',
             array(
@@ -102,7 +100,8 @@ class AddUrlForm extends Form
                 'helptext'  => t('The title for the dashlet')
             )
         );
-        return $elements;
+
+        return $this;
     }
 
     /**
