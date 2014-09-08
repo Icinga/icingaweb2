@@ -53,7 +53,5 @@ class LoginForm extends Form
                 'value' => Url::fromRequest()->getParam('redirect')
             )
         );
-
-        return $this;
     }
 }

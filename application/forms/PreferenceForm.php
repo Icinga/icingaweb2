@@ -206,8 +206,6 @@ class PreferenceForm extends Form
                 'label'     => t('Use benchmark')
             )
         );
-
-        return $this;
     }
 
     /**

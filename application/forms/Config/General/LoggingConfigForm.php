@@ -102,8 +102,6 @@ class LoggingConfigForm extends Form
                 )
             );
         }
-
-        return $this;
     }
 
     /**

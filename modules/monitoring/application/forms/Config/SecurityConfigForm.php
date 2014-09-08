@@ -62,7 +62,5 @@ class SecurityConfigForm extends ConfigForm
                     . ' Existance of those custom variables will be shown, but their values will be masked.'
             )
         );
-
-        return $this;
     }
 }

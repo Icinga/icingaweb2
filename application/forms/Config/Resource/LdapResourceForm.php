@@ -78,8 +78,6 @@ class LdapResourceForm extends Form
                 'description'       => t('The password to use for querying the ldap server')
             )
         );
-
-        return $this;
     }
 
     /**

@@ -96,8 +96,6 @@ class LdapBackendForm extends Form
                 'value'     => 'ldap'
             )
         );
-
-        return $this;
     }
 
     /**

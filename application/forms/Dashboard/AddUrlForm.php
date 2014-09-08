@@ -100,8 +100,6 @@ class AddUrlForm extends Form
                 'helptext'  => t('The title for the dashlet')
             )
         );
-
-        return $this;
     }
 
     /**

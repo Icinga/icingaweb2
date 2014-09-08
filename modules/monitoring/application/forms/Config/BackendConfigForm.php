@@ -238,7 +238,5 @@ class BackendConfigForm extends ConfigForm
                 'multiOptions'  => $this->resources[$resourceType]
             )
         );
-
-        return $this;
     }
 }

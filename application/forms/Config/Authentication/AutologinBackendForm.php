@@ -69,8 +69,6 @@ class AutologinBackendForm extends Form
                 'value'     => 'autologin'
             )
         );
-
-        return $this;
     }
 
     /**

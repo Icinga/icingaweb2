@@ -205,7 +205,5 @@ class InstanceConfigForm extends ConfigForm
         );
 
         $this->addElements($this->getInstanceForm($instanceType)->createElements($formData)->getElements());
-
-        return $this;
     }
 }

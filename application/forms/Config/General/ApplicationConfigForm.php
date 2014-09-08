@@ -112,7 +112,5 @@ class ApplicationConfigForm extends Form
                 )
             );
         }
-
-        return $this;
     }
 }

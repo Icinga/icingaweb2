@@ -39,8 +39,6 @@ class LivestatusResourceForm extends Form
                 'value'         => realpath(Icinga::app()->getApplicationDir() . '/../var/rw/livestatus')
             )
         );
-
-        return $this;
     }
 
     /**

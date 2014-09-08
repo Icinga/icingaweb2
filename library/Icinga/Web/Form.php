@@ -304,8 +304,8 @@ class Form extends Zend_Form
     public function create(array $formData = array())
     {
         if (false === $this->created) {
-            $this->createElements($formData)
-                ->addFormIdentification()
+            $this->createElements($formData);
+            $this->addFormIdentification()
                 ->addCsrfCounterMeasure()
                 ->addSubmitButton();
 
@@ -327,12 +327,10 @@ class Form extends Zend_Form
      * Intended to be implemented by concrete form classes.
      *
      * @param   array   $formData   The data sent by the user
-     *
-     * @return  self
      */
     public function createElements(array $formData)
     {
-        return $this;
+
     }
 
     /**
