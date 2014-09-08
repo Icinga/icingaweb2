@@ -2,7 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use Zend_Controller_Action_Exception;
+use \Zend_Controller_Action_Exception;
 use Icinga\Application\Icinga;
 use Icinga\Module\Doc\DocController;
 

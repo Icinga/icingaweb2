@@ -4,9 +4,12 @@
 
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Web\Hook;
-use Icinga\Application\Config as IcingaConfig;
 use Icinga\Web\Url;
 use Icinga\Data\ResourceFactory;
+use Icinga\Logger\Logger;
+use Icinga\Logger\Writer\FileWriter;
+use Icinga\Protocol\File\FileReader;
+use \Zend_Controller_Action_Exception as ActionError;
 
 /**
  * Class ListController
@@ -36,19 +39,21 @@ class ListController extends Controller
      */
     public function applicationlogAction()
     {
-        $this->addTitleTab('application log');
-        $config_ini = IcingaConfig::app()->toArray();
-        if (!in_array('logging', $config_ini) || (
-                in_array('type', $config_ini['logging']) &&
-                    $config_ini['logging']['type'] === 'file' &&
-                in_array('target', $config_ini['logging']) &&
-                    file_exists($config_ini['logging']['target'])
-            )
-        ) {
-            $resource = ResourceFactory::create('logfile');
-            $this->view->logData = $resource->select()->order('DESC')->paginate();
-        } else {
-            $this->view->logData = null;
+        if (! Logger::writesToFile()) {
+            throw new ActionError('Site not found', 404);
         }
+
+        $this->addTitleTab('application log');
+        $pattern = '/^(?<datetime>[0-9]{4}(-[0-9]{2}){2}'                 // date
+                 . 'T[0-9]{2}(:[0-9]{2}){2}([\\+\\-][0-9]{2}:[0-9]{2})?)' // time
+                 . ' - (?<loglevel>[A-Za-z]+)'                            // loglevel
+                 . ' - (?<message>.*)$/';                                 // message
+
+        $loggerWriter = Logger::getInstance()->getWriter();
+        $resource = new FileReader(new Zend_Config(array(
+            'filename'  => $loggerWriter->getPath(),
+            'fields'    => $pattern
+        )));
+        $this->view->logData = $resource->select()->order('DESC')->paginate();
     }
 }

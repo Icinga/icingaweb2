@@ -201,6 +201,40 @@
         },
 
         /**
+         * Check whether two HTMLElements overlap
+         *
+         * @param a {HTMLElement}
+         * @param b {HTMLElement}
+         *
+         * @returns {Boolean}      whether elements overlap, will return false when one
+         *                         element is not in the DOM
+         */
+        elementsOverlap: function(a, b)
+        {
+            // a bounds
+            var aoff = $(a).offset();
+            if (!aoff) {
+                return false;
+            }
+            var at = aoff.top;
+            var ah = a.offsetHeight;
+            var al = aoff.left;
+            var aw = a.offsetWidth;
+
+            // b bounds
+            var boff = $(b).offset();
+            if (!boff) {
+                return false;
+            }
+            var bt = boff.top;
+            var bh = b.offsetHeight;
+            var bl = boff.left;
+            var bw = b.offsetWidth;
+
+            return !(at > (bt + bh) || bt > (at + ah)) && !(bl  > (al + aw) || al > (bl + bw));
+        },
+
+        /**
          * Cleanup
          */
         destroy: function () {

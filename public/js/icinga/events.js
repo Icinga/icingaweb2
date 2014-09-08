@@ -10,6 +10,8 @@
 
     'use strict';
 
+    var mouseX, mouseY;
+
     Icinga.Events = function (icinga) {
         this.icinga = icinga;
 
@@ -52,6 +54,8 @@
                     $(el).attr('href', $a.attr('href'));
                 }
             });
+
+            $('td.state span.timesince').attr('title', null);
 
             var moduleName = el.data('icingaModule');
             if (moduleName) {
@@ -109,6 +113,42 @@
             if (searchField.length && searchField.val().length) {
                 this.searchValue = searchField.val();
             }
+
+            $('[title]').each(function () {
+                var $el = $(this);
+                $el.attr('title', $el.data('title-rich') || $el.attr('title'));
+            });
+            $('svg rect.chart-data[title]', el).tipsy({ gravity: 'se', html: true });
+            $('.historycolorgrid a[title]', el).tipsy({ gravity: 's', offset: 2 });
+            $('img.icon[title]', el).tipsy({ gravity: $.fn.tipsy.autoNS, offset: 2 });
+            $('[title]', el).tipsy({ gravity: $.fn.tipsy.autoNS, delayIn: 500 });
+
+            // migrate or remove all orphaned tooltips
+            $('.tipsy').each(function () {
+                var arrow = $('.tipsy-arrow', this)[0];
+                if (!icinga.utils.elementsOverlap(arrow, $('#main')[0])) {
+                    $(this).remove();
+                    return;
+                }
+                if (!icinga.utils.elementsOverlap(arrow, el)) {
+                    return;
+                }
+                
+                var title = $(this).find('.tipsy-inner').html();
+                var atMouse = document.elementFromPoint(mouseX, mouseY);
+                var nearestTip = $(atMouse)
+                    .closest('[original-title="' + title + '"]')[0];
+                if (nearestTip) {
+                    console.log ('migrating orphan...');
+                    var tipsy = $.data(nearestTip, 'tipsy');
+                    tipsy.$tip = $(this);
+                    $.data(this, 'tipsy-pointee', nearestTip);
+                } else {
+                    // doesn't match delete
+                    console.log ('deleting orphan...');
+                    $(this).remove();
+                }
+            });
         },
 
         /**
@@ -162,6 +202,11 @@
             // $(document).on('keyup', 'form.auto input', this.formChangeDelayed);
             // $(document).on('change', 'form.auto input', this.formChanged);
             // $(document).on('change', 'form.auto select', this.submitForm);
+
+            $(document).on('mousemove', function (event) {
+                mouseX = event.pageX;
+                mouseY = event.pageY;
+            });
         },
 
         menuTitleHovered: function (event) {
@@ -470,7 +515,7 @@
             var isMenuLink = $a.closest('#menu').length > 0;
             var formerUrl;
             var remote = /^(?:[a-z]+:)\/\//;
-            if (href.match(/^javascript:/)) {
+            if (href.match(/^(mailto|javascript):/)) {
                 return true;
             }
 

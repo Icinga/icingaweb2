@@ -7,7 +7,7 @@ namespace Icinga\Module\Monitoring\Object;
 use Icinga\Module\Monitoring\DataView\HostStatus;
 use Icinga\Data\Db\DbQuery;
 
-class Host extends AbstractObject
+class Host extends MonitoredObject
 {
     public $type   = 'host';
     public $prefix = 'host_';

@@ -123,7 +123,12 @@ class Hook
      */
     private static function assertValidHook($instance, $name)
     {
-        $base_class = self::$BASE_NS . ucfirst($name) . self::$classSuffix;
+        $base_class = self::$BASE_NS . ucfirst($name);
+
+        if (strpos($base_class, self::$classSuffix) === false) {
+            $base_class .= self::$classSuffix;
+        }
+
         if (!$instance instanceof $base_class) {
             throw new ProgrammingError(
                 '%s is not an instance of %s',

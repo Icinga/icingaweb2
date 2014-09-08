@@ -34,16 +34,46 @@ class Monitoring_ListController extends Controller
 
     protected function hasBetterUrl()
     {
+        $request = $this->getRequest();
         $url = clone($this->url);
+
         if ($this->getRequest()->isPost()) {
+
+            if ($request->getPost('sort')) {
+                $url->setParam('sort', $request->getPost('sort'));
+                if ($request->getPost('dir')) {
+                    $url->setParam('dir', $request->getPost('dir'));
+                } else {
+                    $url->removeParam('dir');
+                }
+                return $url;
+            }
+
             $q = $this->getRequest()->getPost('q');
+            if ($q) {
+                list($k, $v) = preg_split('/=/', $q);
+                $url->addParams(array($k => $v));
+                return $url;
+            }
         } else {
             $q = $url->shift('q');
-        }
-        if ($q) {
-            list($k, $v) = preg_split('/=/', $q);
-            $url->addParams(array($k => $v));
-            return $url;
+            if ($q !== null) {
+                $action = $this->_request->getActionName();
+                switch($action) {
+                    case 'services':
+                        $this->params->remove('q')->set('service_description', '*' . $q . '*');
+                        break;
+                    case 'hosts':
+                        $this->params->remove('q')->set('host_name', '*' . $q . '*');
+                        break;
+                    case 'hostgroups':
+                        $this->params->remove('q')->set('hostgroup', '*' . $q . '*');
+                        break;
+                    case 'servicegroups':
+                        $this->params->remove('q')->set('servicegroup', '*' . $q . '*');
+                        break;
+                }
+            }
         }
         return false;
     }
@@ -382,6 +412,9 @@ class Monitoring_ListController extends Controller
 
     public function servicegroupsAction()
     {
+        if ($url = $this->hasBetterUrl()) {
+            return $this->redirectNow($url);
+        }
         $this->addTitleTab('servicegroups');
         $this->setAutorefreshInterval(12);
         $query = $this->backend->select()->from('groupsummary', array(
@@ -410,6 +443,9 @@ class Monitoring_ListController extends Controller
 
     public function hostgroupsAction()
     {
+        if ($url = $this->hasBetterUrl()) {
+            return $this->redirectNow($url);
+        }
         $this->addTitleTab('hostgroups');
         $this->setAutorefreshInterval(12);
         $query = $this->backend->select()->from('groupsummary', array(
@@ -488,15 +524,8 @@ class Monitoring_ListController extends Controller
         $request = $this->getRequest();
 
         $limit   = $params->shift('limit');
-
-        $sort = null;
-        $dir = null;
-        if ($request->isPost()) {
-            $sort = $request->getPost('sort', null);
-            $dir  = $request->getPost('dir', null);
-        }
-        $sort    = $params->shift('sort', $sort);
-        $dir     = $params->shift('dir', $dir);
+        $sort    = $params->shift('sort');
+        $dir     = $params->shift('dir');
         $page    = $params->shift('page');
         $format  = $params->shift('format');
         $view    = $params->shift('view');
@@ -533,7 +562,9 @@ class Monitoring_ListController extends Controller
             $query->applyFilter($filter);
         }
         $this->view->filter = $filter;
-        $query->order($sort, $dir);
+        if ($sort) {
+            $query->order($sort, $dir);
+        }
         $this->applyRestrictions($query);
         $this->handleFormatRequest($query);
         return $query;

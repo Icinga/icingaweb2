@@ -5,25 +5,29 @@
 namespace Icinga\Web\Hook;
 
 use Icinga\Exception\ProgrammingError;
+use Icinga\Module\Monitoring\Object\MonitoredObject;
 
 /**
  * Icinga Web Grapher Hook base class
  *
  * Extend this class if you want to integrate your graphing solution nicely into
- * Icinga Web
- *
- * @copyright  Copyright (c) 2013 Icinga-Web Team <info@icinga.org>
- * @author     Icinga-Web Team <info@icinga.org>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License
+ * Icinga Web.
  */
-abstract class GrapherHook
+abstract class GrapherHook extends WebBaseHook
 {
     /**
-     * Whether this grapher provides preview images
+     * Whether this grapher provides previews
      *
      * @var bool
      */
     protected $hasPreviews = false;
+
+    /**
+     * Whether this grapher provides tiny previews
+     *
+     * @var bool
+     */
+    protected $hasTinyPreviews = false;
 
     /**
      * Constructor must live without arguments right now
@@ -37,16 +41,6 @@ abstract class GrapherHook
     }
 
     /**
-     * Whether this grapher provides preview images
-     *
-     * @return bool
-     */
-    public function hasPreviews()
-    {
-        return $this->hasPreviews;
-    }
-
-    /**
      * Overwrite this function if you want to do some initialization stuff
      *
      * @return void
@@ -56,75 +50,63 @@ abstract class GrapherHook
     }
 
     /**
-     * Whether a graph for the given host[, service [, plot]] exists
-     *
-     * @param   string  $host
-     * @param   string  $service
-     * @param   string  $plot
+     * Whether this grapher provides previews
      *
      * @return bool
      */
-    public function has($host, $service = null, $plot = null)
+    public function hasPreviews()
     {
-        return false;
+        return $this->hasPreviews;
     }
 
     /**
-     * Get a preview image for the given host[, service [, plot]] exists
+     * Whether this grapher provides tiny previews
      *
-     * @param   string  $host
-     * @param   string  $service
-     * @param   string  $plot
-     *
-     * @return  string
-     *
-     * @throws  ProgrammingError
+     * @return bool
      */
-    public function getPreviewHtml($host, $service = null, $plot = null)
+    public function hasTinyPreviews()
     {
-        throw new ProgrammingError('This backend has no preview images');
+        return $this->hasTinyPreviews;
     }
 
     /**
-     * Whether a tiny graph for the given host[, service [, plot]] exists
+     * Whether a graph for the monitoring object exist
      *
-     * @param   string  $host
-     * @param   string  $service
-     * @param   string  $plot
+     * @param   MonitoredObject $object
      *
      * @return  bool
      */
-    public function hasTinyPreview($host, $service = null, $plot = null)
-    {
-        return false;
-    }
+    abstract public function has(MonitoredObject $object);
 
     /**
-     * Get a tiny preview image for the given host[, service [, plot]] exists
+     * Get a preview for the given object
      *
-     * @param   string  $host
-     * @param   string  $service
-     * @param   string  $plot
+     * This function must return an empty string if no graph exists.
+     *
+     * @param   MonitoredObject $object
      *
      * @return  string
+     * @throws  ProgrammingError
      *
+     */
+    public function getPreviewHtml(MonitoredObject $object)
+    {
+        throw new ProgrammingError('This hook provide previews but it is not implemented');
+    }
+
+
+    /**
+     * Get a tiny preview for the given object
+     *
+     * This function must return an empty string if no graph exists.
+     *
+     * @param   MonitoredObject $object
+     *
+     * @return  string
      * @throws  ProgrammingError
      */
-    public function getTinyPreviewHtml($host, $service = null, $plot = null)
+    public function getTinyPreviewHtml(MonitoredObject $object)
     {
-        throw new ProgrammingError('This backend has no tiny preview images');
+        throw new ProgrammingError('This hook provide tiny previews but it is not implemented');
     }
-
-    /**
-     * Get URL pointing to the grapher
-     *
-     * WARNING: We are not sure yet whether this will remain as is
-     *
-     * @param   string  $host
-     * @param   string  $service
-     * @param   string  $plot
-     *
-     * @return  string
-     */
-    abstract function getGraphUrl($host, $service = null, $plot = null);
 }

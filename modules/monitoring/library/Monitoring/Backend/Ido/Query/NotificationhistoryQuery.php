@@ -85,7 +85,8 @@ class NotificationhistoryQuery extends IdoQuery
             $this->select->group('n.object_id')
                 ->group('n.start_time')
                 ->group('n.output')
-                ->group('n.state');
+                ->group('n.state')
+                ->group('o.objecttype_id');
         }
 
         $this->joinedVirtualTables = array('history' => true);

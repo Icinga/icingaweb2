@@ -183,9 +183,10 @@ class FilterEditor extends AbstractWidget
     {
         $name = 'sign_' . $filter->getId();
         $signs = array(
-            '=' => '=',
-            '>' => '>',
-            '<' => '<',
+            '='  => '=',
+            '!=' => '!=',
+            '>'  => '>',
+            '<'  => '<',
             '>=' => '>=',
             '<=' => '<=',
         );

@@ -2,7 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-/*use Icinga\Module\Monitoring\Object\AbstractObject;*/
+/* use Icinga\Module\Monitoring\Object\MonitoredObject; */
 
 /**
  * Rendering helper for object's properties which may be either enabled or disabled
@@ -26,11 +26,11 @@ class Zend_View_Helper_MonitoringFlags extends Zend_View_Helper_Abstract
     /**
      * Retrieve flags as array with either true or false as value
      *
-     * @param   AbstractObject $object
+     * @param   MonitoredObject $object
      *
      * @return  array
      */
-    public function monitoringFlags(/*AbstractObject*/$object)
+    public function monitoringFlags(/*MonitoredObject*/ $object)
     {
         $flags = array();
         foreach (self::$flags as $column => $description) {

@@ -452,9 +452,8 @@ abstract class ApplicationBootstrap
      */
     protected function setupInternationalization()
     {
-        $localeDir = $this->getApplicationDir('locale');
-        if (file_exists($localeDir) && is_dir($localeDir)) {
-            Translator::registerDomain(Translator::DEFAULT_DOMAIN, $localeDir);
+        if ($this->hasLocales()) {
+            Translator::registerDomain(Translator::DEFAULT_DOMAIN, $this->getLocaleDir());
         }
 
         try {
@@ -468,5 +467,49 @@ abstract class ApplicationBootstrap
         }
 
         return $this;
+    }
+
+    /**
+     * @return string Our locale directory
+     */
+    public function getLocaleDir()
+    {
+        return $this->getApplicationDir('locale');
+    }
+
+    /**
+     * return bool Whether Icinga Web has translations
+     */
+    public function hasLocales()
+    {
+        $localedir = $this->getLocaleDir();
+        return file_exists($localedir) && is_dir($localedir);
+    }
+
+    /**
+     * List all available locales
+     *
+     * NOTE: Might be a candidate for a static function in Translator
+     *
+     * return array Locale list
+     */
+    public function listLocales()
+    {
+        $locales = array();
+        if (! $this->hasLocales()) {
+            return $locales;
+        }
+        $localedir = $this->getLocaleDir();
+
+        $dh = opendir($localedir);
+        while (false !== ($file = readdir($dh))) {
+            $filename = $localedir . DIRECTORY_SEPARATOR . $file;
+            if (preg_match('/^[a-z]{2}_[A-Z]{2}$/', $file) && is_dir($filename)) {
+                $locales[] = $file;
+            }
+        }
+        closedir($dh);
+        sort($locales);
+        return $locales;
     }
 }

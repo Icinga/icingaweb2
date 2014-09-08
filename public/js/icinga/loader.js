@@ -329,8 +329,7 @@
                 this.icinga.ui.reloadCss();
             }
 
-            var redirect = req.getResponseHeader('X-Icinga-Redirect');
-            if (this.processRedirectHeader(req)) return;
+            if (req.getResponseHeader('X-Icinga-Redirect')) return;
 
             // div helps getting an XML tree
             var $resp = $('<div>' + req.responseText + '</div>');
@@ -567,6 +566,7 @@
             delete this.requests[req.$target.attr('id')];
             this.icinga.ui.fadeNotificationsAway();
 
+            this.processRedirectHeader(req);
 
             if (typeof req.loadNext !== 'undefined') {
                 if ($('#col2').length) {
@@ -665,7 +665,11 @@
             var self = this;
             var containerId = $container.attr('id');
             if (typeof containerId !== 'undefined') {
-                scrollPos = $container.scrollTop();
+                if (autorefresh) {
+                    scrollPos = $container.scrollTop();
+                } else {
+                    scrollPos = 0;
+                }
             }
 
             var origFocus = document.activeElement;

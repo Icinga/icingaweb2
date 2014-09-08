@@ -31,6 +31,8 @@ abstract class DataView implements Browsable, Filterable, Sortable
 
     protected $connection;
 
+    protected $isSorted = false;
+
     /**
      * Create a new view
      *
@@ -99,6 +101,7 @@ public function dump()
     protected function applyUrlFilter($request = null)
     {
         $url = Url::fromRequest();
+
         $limit = $url->shift('limit');
         $sort = $url->shift('sort');
         $dir = $url->shift('dir');
@@ -132,20 +135,19 @@ public function dump()
             }
         }
 
-        $order = isset($params['order']) ? $params['order'] : null;
-        if ($order !== null) {
-            if (strtolower($order) === 'desc') {
-                $order = self::SORT_DESC;
-            } else {
-                $order = self::SORT_ASC;
+        if (isset($params['sort'])) {
+
+            $order = isset($params['order']) ? $params['order'] : null;
+            if ($order !== null) {
+                if (strtolower($order) === 'desc') {
+                    $order = self::SORT_DESC;
+                } else {
+                    $order = self::SORT_ASC;
+                }
             }
+
+            $view->sort($params['sort'], $order);
         }
-
-        $view->sort(
-            isset($params['sort']) ? $params['sort'] : null,
-            $order
-        );
-
         return $view;
     }
 
@@ -226,6 +228,7 @@ public function dump()
             foreach ($sortColumns['columns'] as $column) {
                 $this->query->order($column, $order);
             }
+            $this->isSorted = true;
         }
         return $this;
     }
@@ -285,6 +288,7 @@ public function dump()
      */
     public function getQuery()
     {
+        if (! $this->isSorted) { $this->sort(); }
         return $this->query;
     }
 

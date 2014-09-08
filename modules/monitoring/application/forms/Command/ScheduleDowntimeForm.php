@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Monitoring\Form\Command;
 
+use Icinga\Module\Monitoring\Object\MonitoredObject;
 use Zend_Form_Element_Text;
 use Zend_Validate_GreaterThan;
 use Zend_Validate_Digits;
@@ -12,7 +13,6 @@ use Icinga\Protocol\Commandpipe\Comment;
 use Icinga\Util\DateTimeFactory;
 use Icinga\Module\Monitoring\Backend;
 use Icinga\Module\Monitoring\Command\ScheduleDowntimeCommand;
-use Icinga\Module\Monitoring\Object\AbstractObject;
 use Icinga\Module\Monitoring\Object\Service;
 use Icinga\Web\Url;
 
@@ -67,7 +67,7 @@ class ScheduleDowntimeForm extends WithChildrenCommandForm
 
         $cfg = $this->getConfiguration();
         $preferences = $this->getUserPreferences();
-        $object = AbstractObject::fromParams(Url::fromRequest()->getParams());
+        $object = MonitoredObject::fromParams(Url::fromRequest()->getParams());
         $object->fetchDowntimes();
         $downtimes = $object->downtimes;
 /*

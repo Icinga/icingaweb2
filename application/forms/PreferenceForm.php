@@ -11,6 +11,7 @@ use Icinga\Web\Request;
 use Icinga\Web\Session;
 use Icinga\Web\Notification;
 use Icinga\Util\Translator;
+use Icinga\Util\TimezoneDetect;
 use Icinga\User\Preferences;
 use Icinga\User\Preferences\PreferencesStore;
 
@@ -189,7 +190,7 @@ class PreferenceForm extends Form
                 'label'         => t('Your Current Timezone'),
                 'description'   => t('Use the following timezone for dates and times'),
                 'multiOptions'  => $tzList,
-                'value'         => date_default_timezone_get()
+                'value'         => $this->getDefaultTimezone()
             )
         );
         if ($useLocalTimezone) {
@@ -207,5 +208,20 @@ class PreferenceForm extends Form
         );
 
         return $this;
+    }
+
+    /**
+     * Return the current default timezone
+     *
+     * @return  string
+     */
+    protected function getDefaultTimezone()
+    {
+        $detect = new TimezoneDetect();
+        if ($detect->success()) {
+            return $detect->getTimezoneName();
+        } else {
+            return date_default_timezone_get();
+        }
     }
 }

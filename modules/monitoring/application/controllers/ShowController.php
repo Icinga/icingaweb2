@@ -3,13 +3,13 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 
 use Icinga\Application\Benchmark;
+use Icinga\Module\Monitoring\Object\MonitoredObject;
 use Icinga\Web\Hook;
 use Icinga\Web\Widget\Tabs;
 use Icinga\Web\Widget\Tabextension\OutputFormat;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
 use Icinga\Module\Monitoring\Backend;
 use Icinga\Module\Monitoring\Controller;
-use Icinga\Module\Monitoring\Object\AbstractObject;
 use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Object\Service;
 
@@ -41,13 +41,16 @@ class Monitoring_ShowController extends Controller
             $this->view->object = new Service($this->params);
         } else {
             // TODO: Well... this could be done better
-            $this->view->object = AbstractObject::fromParams($this->params);
+            $this->view->object = MonitoredObject::fromParams($this->params);
         }
         if (Hook::has('ticket')) {
             $this->view->tickets = Hook::first('ticket');
         }
         if (Hook::has('grapher')) {
             $this->grapher = Hook::first('grapher');
+            if ($this->grapher && ! $this->grapher->hasPreviews()) {
+                $this->grapher = null;
+            }
         }
 
         $this->createTabs();
@@ -64,8 +67,8 @@ class Monitoring_ShowController extends Controller
             . ' on ' . $o->host_name;
         $this->getTabs()->activate('service');
         $o->populate();
-        if ($this->grapher && $this->grapher->hasPreviews($o->host_name, $o->service_description)) {
-            $this->view->grapherHtml = $this->grapher->getPreviewHtml($o->host_name, $o->service_description);
+        if ($this->grapher) {
+            $this->view->grapherHtml = $this->grapher->getPreviewHtml($o);
         }
     }
 
@@ -79,8 +82,8 @@ class Monitoring_ShowController extends Controller
         $this->getTabs()->activate('host');
         $this->view->title = $o->host_name;
         $o->populate();
-        if ($this->grapher && $this->grapher->hasPreviews($o->host_name)) {
-            $this->view->grapherHtml = $this->grapher->getPreviewHtml($o->host_name);
+        if ($this->grapher) {
+            $this->view->grapherHtml = $this->grapher->getPreviewHtml($o);
         }
     }
 
@@ -89,9 +92,8 @@ class Monitoring_ShowController extends Controller
         $this->getTabs()->activate('history');
         //$this->view->object->populate();
         $this->view->object->fetchEventHistory();
+        $this->view->history = $this->view->object->eventhistory->paginate($this->params->get('limit', 50));
         $this->handleFormatRequest($this->view->object->eventhistory);
-        $this->view->history = $this->view->object->eventhistory
-            ->paginate($this->params->get('limit', 50));
     }
 
     public function servicesAction()
