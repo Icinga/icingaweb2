@@ -59,20 +59,12 @@ class StaticController extends ActionController
     public function imgAction()
     {
         $module = $this->_getParam('module_name');
-        // TODO: This is more than dangerous, must be fixed!!
         $file   = $this->_getParam('file');
         $basedir = Icinga::app()->getModuleManager()->getModule($module)->getBaseDir();
 
         $filePath = realpath($basedir . '/public/img/' . $file);
 
-        if (strpos($filePath, $basedir) === false) {
-            throw new ActionException(sprintf(
-                '%s does not exist',
-                $filePath
-            ), 404);
-        }
-
-        if (! file_exists($filePath)) {
+        if (! $filePath || strpos($filePath, $basedir) !== 0) {
             throw new ActionException(sprintf(
                 '%s does not exist',
                 $filePath
