@@ -179,3 +179,68 @@ ul.tree li a.error:hover {
   padding: 1.5em;
   height: 80vh;
 }
+
+.badge-container {
+  font-size: 1em;
+  display: inline-block;
+  float: right;
+  margin-right: 0.6em;
+}
+
+
+li li .badge-container {
+  /*
+   fix margin for smaller font-size of list elements
+   1 = 0,8em / 0.8em
+  */
+  margin-right: 0.75em;
+}
+
+#menu > ul > li.active > a > .badge-container {
+  display: none;
+}
+
+#layout.hoveredmenu .hover > a > .badge-container {
+  margin-right: 14.15em;
+}
+
+.badge {
+  position: relative;
+  top: -0.1em;
+  display: inline-block;
+  min-width: 1em;
+  padding: 3px 7px;
+  font-size: 0.8em;
+  font-weight: 700;
+  line-height: 1.1em;
+  color: white;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: 1em;
+  background-color: @colorInvalid;
+}
+
+li li .badge {
+  font-size: 0.975em;
+}
+
+.badge-critical {
+  background-color: @colorCritical;
+}
+
+.badge-warning {
+  background-color: @colorWarning;
+}
+
+.badge-ok {
+  background-color: @colorOk;
+}
+
+.badge-pending {
+  background-color: @colorPending;
+}
+
+.badge-pending {
+  background-color: @colorUnknown;
+}

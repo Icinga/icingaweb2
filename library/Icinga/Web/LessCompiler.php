@@ -86,16 +86,6 @@ class LessCompiler
 
     public function compile()
     {
-        //TODO:
-/*        $tmpfile = '/tmp/icinga.less';
-        $cssfile = '/tmp/icinga.css';
-        if (! file_exists($tmpfile)) {
-            file_put_contents($tmpfile, $this->source);
-        }
-        if ($this->lessc->checkedCompile($tmpfile, $cssfile)) {
-        }
-        return file_get_contents($cssfile);
-*/
         return $this->lessc->compile($this->source);
     }
 

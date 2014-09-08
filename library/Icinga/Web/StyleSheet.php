@@ -45,6 +45,15 @@ class StyleSheet
         self::send(true);
     }
 
+    protected static function fixModuleLayoutCss($css)
+    {
+        return preg_replace(
+            '/(\.icinga-module\.module-[^\s]+) (#layout\.[^\s]+)/m',
+            '\2 \1',
+            $css
+        );
+    }
+
     public static function send($minified = false)
     {
         $app = Icinga::app();
@@ -84,7 +93,7 @@ class StyleSheet
         if ($minified) {
             $less->compress();
         }
-        $out = $less->compile();
+        $out = self::fixModuleLayoutCss($less->compile());
         $cache->store($cacheFile, $out);
         echo $out;
     }

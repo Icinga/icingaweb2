@@ -136,6 +136,24 @@ class Pane extends AbstractWidget
     }
 
     /**
+     * Removes all or a given list of components from this pane
+     *
+     * @param array $components Optional list of component titles
+     * @return Pane $this
+     */
+    public function removeComponents(array $components = null)
+    {
+        if ($components === null) {
+            $this->components = array();
+        } else {
+            foreach ($components as $component) {
+                $this->removeComponent($component);
+            }
+        }
+        return $this;
+    }
+
+    /**
      * Return all components added at this pane
      *
      * @return array

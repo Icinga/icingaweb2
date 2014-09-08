@@ -1,7 +1,5 @@
 [global]
 timezone            = "Europe/Berlin"
-dateFormat          = "d/m/Y"
-timeFormat          = "g:i A"
 
 ; Contains the directories that will be searched for available modules. Modules that
 ; don't exist in these directories can still be symlinked in the module folder, but

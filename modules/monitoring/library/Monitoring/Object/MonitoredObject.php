@@ -23,7 +23,7 @@ use Icinga\Web\UrlParams;
 use Icinga\Application\Config;
 
 
-abstract class AbstractObject
+abstract class MonitoredObject
 {
     public $type;
     public $prefix;

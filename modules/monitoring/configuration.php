@@ -20,17 +20,28 @@ $this->provideConfigTab('security', array(
 ));
 
 /*
+ * Available Search Urls
+ */
+$this->provideSearchUrl($this->translate('Hosts'), 'monitoring/list/hosts?sort=host_severity&limit=10');
+$this->provideSearchUrl($this->translate('Services'), 'monitoring/list/services?sort=service_severity&limit=10');
+$this->provideSearchUrl($this->translate('Hostgroups'), 'monitoring/list/hostgroups?limit=10');
+$this->provideSearchUrl($this->translate('Servicegroups'), 'monitoring/list/servicegroups?limit=10');
+
+/*
  * Problems Section
  */
 $section = $this->menuSection($this->translate('Problems'), array(
-    'icon'      => 'img/icons/error.png',
-    'priority'  => 20
+    'renderer' => 'ProblemMenuItemRenderer',
+    'icon'     => 'img/icons/error.png',
+    'priority' => 20
 ));
 $section->add($this->translate('Unhandled Hosts'), array(
+    'renderer' => 'UnhandledHostMenuItemRenderer',
     'url'      => 'monitoring/list/hosts?host_problem=1&host_handled=0',
     'priority' => 40
 ));
 $section->add($this->translate('Unhandled Services'), array(
+    'renderer' => 'UnhandledServiceMenuItemRenderer',
     'url'      => 'monitoring/list/services?service_problem=1&service_handled=0&sort=service_severity',
     'priority' => 40
 ));

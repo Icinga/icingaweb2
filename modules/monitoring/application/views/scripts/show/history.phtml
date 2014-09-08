@@ -11,6 +11,16 @@
 </div>
 <?php return; endif ?>
 
+<?php
+function contactsLink($match, $self) {
+    $links = array();
+    foreach (preg_split('/,\s/', $match[1]) as $contact) {
+        $links[] = $self->qlink($contact, 'monitoring/show/contact', array('contact' => $contact));
+    }
+    return '[' . implode(', ', $links) . ']';
+}
+?>
+
   <table data-base-target="_next" class="action objecthistory">
     <tbody>
     <?php foreach ($history as $event): ?>
@@ -21,51 +31,61 @@
         case 'notify':
           $icon = 'notification';
           $title = $this->translate('Notification');
-          $msg = $event->output;
+          $stateClass = (
+            $isService
+              ? strtolower($this->util()->getServiceStateName($event->state))
+              : strtolower($this->util()->getHostStateName($event->state))
+          );
+
+          $msg = preg_replace_callback(
+              '/^\[([^\]]+)\]/',
+              function($match) { return contactsLink($match, $this); },
+              $this->escape($event->output)
+          );
           break;
         case 'comment':
           $icon = 'comment';
           $title = $this->translate('Comment');
-          $msg = $event->output;
+          $msg = $this->escape($event->output);
           break;
         case 'comment_deleted':
           $icon = 'remove';
           $title = $this->translate('Comment deleted');
-          $msg = $event->output;
+          $msg = $this->escape($event->output);
           break;
         case 'ack':
           $icon = 'acknowledgement';
           $title = $this->translate('Acknowledge');
-          $msg = $event->output;
+          $msg = $this->escape($event->output);
           break;
         case 'ack_deleted':
           $icon = 'remove';
           $title = $this->translate('Ack removed');
-          $msg = $event->output;
+          $msg = $this->escape($event->output);
           break;
         case 'dt_comment':
           $icon = 'in_downtime';
           $title = $this->translate('In Downtime');
-          $msg = $event->output;
+          $msg = $this->escape($event->output);
           break;
         case 'dt_comment_deleted':
           $icon = 'remove';
           $title = $this->translate('Downtime removed');
-          $msg = $event->output;
+          $msg = $this->escape($event->output);
           break;
         case 'flapping':
           $icon = 'flapping';
           $title = $this->translate('Flapping');
-          $msg = $event->output;
+          $msg = $this->escape($event->output);
           break;
         case 'flapping_deleted':
           $icon = 'remove';
           $title = $this->translate('Flapping stopped');
-          $msg = $event->output;
+          $msg = $this->escape($event->output);
           break;
         case 'hard_state':
           $icon = $isService ? 'service' : 'host';
-          $msg = '[ ' . $event->attempt . '/' . $event->max_attempts . ' ] ' . $event->output;
+          $msg = '[ ' . $event->attempt . '/' . $event->max_attempts . ' ] ' . $this->escape($event->output);
           $stateClass = (
             $isService
               ? strtolower($this->util()->getServiceStateName($event->state))
@@ -75,7 +95,7 @@
           break;
         case 'soft_state':
           $icon = 'softstate';
-          $msg = '[ ' . $event->attempt . '/' . $event->max_attempts . ' ] ' . $event->output;
+          $msg = '[ ' . $event->attempt . '/' . $event->max_attempts . ' ] ' . $this->escape($event->output);
           $stateClass = (
             $isService
               ? strtolower($this->util()->getServiceStateName($event->state))
@@ -86,12 +106,12 @@
         case 'dt_start':
           $icon = 'downtime_start';
           $title = $this->translate('Downtime Start');
-          $msg = $event->output;
+          $msg = $this->escape($event->output);
           break;
         case 'dt_end':
           $icon = 'downtime_end';
           $title = $this->translate('Downtime End');
-          $msg = $event->output;
+          $msg = $this->escape($event->output);
           break;
       }
     ?>
@@ -106,8 +126,8 @@
 $output = $this->tickets ? preg_replace_callback(
     $this->tickets->getPattern(),
     array($this->tickets, 'createLink'),
-    $this->escape($msg)
-) : $this->escape($msg);
+    $msg
+) : $msg;
 
 ?>
         <?php if ($isService): ?>

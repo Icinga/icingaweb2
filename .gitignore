@@ -11,6 +11,8 @@
 
 build/
 
+development/
+
 # ./configure output
 config.log
 autom4te.cache

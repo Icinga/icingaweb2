@@ -144,7 +144,7 @@ class BarGraph extends Styleable implements Drawable
                     $this->tooltips[$x]->renderNoHtml($this->order, $data, $format)
                 );
                 $bar->setAttribute(
-                    'title-rich',
+                    'data-title-rich',
                     $this->tooltips[$x]->render($this->order, $data, $format)
                 );
             }

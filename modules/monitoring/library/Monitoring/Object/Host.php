@@ -7,7 +7,7 @@ namespace Icinga\Module\Monitoring\Object;
 use Icinga\Module\Monitoring\DataView\HostStatus;
 use Icinga\Data\Db\DbQuery;
 
-class Host extends AbstractObject
+class Host extends MonitoredObject
 {
     public $type   = 'host';
     public $prefix = 'host_';
@@ -69,7 +69,8 @@ class Host extends AbstractObject
             'host_action_url',
             'host_notes_url',
             'host_modified_host_attributes',
-            'host_problem'
+            'host_problem',
+            'process_perfdata' => 'host_process_performance_data',
         ))->where('host_name', $this->params->get('host'));
         return $this->view->getQuery()->fetchRow();
     }

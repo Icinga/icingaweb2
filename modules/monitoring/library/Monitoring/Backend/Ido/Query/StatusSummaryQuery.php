@@ -8,7 +8,15 @@ use Zend_Db_Select;
 
 class StatusSummaryQuery extends IdoQuery
 {
+    protected $subHosts;
+
+    protected $subServices;
+
     protected $columnMap = array(
+        'services' => array(
+            'service_host_name' => 'so.name1',
+            'service_description' => 'so.name2',
+        ),
         'hoststatussummary' => array(
             'hosts_up'                              => 'SUM(CASE WHEN object_type = \'host\' AND state = 0 THEN 1 ELSE 0 END)',
             'hosts_up_not_checked'                  => 'SUM(CASE WHEN object_type = \'host\' AND state = 0 AND is_active_checked = 0 AND is_passive_checked = 0 THEN 1 ELSE 0 END)',
@@ -159,10 +167,24 @@ class StatusSummaryQuery extends IdoQuery
             'object_type'                   => '(\'service\')'
         ));
         $union = $this->db->select()->union(array($hosts, $services), Zend_Db_Select::SQL_UNION_ALL);
+        $this->subHosts    = $hosts;
+        $this->subServices = $services;
         $this->select->from(array('statussummary' => $union), array());
         $this->joinedVirtualTables = array(
-            'servicestatussummary'  => true,
-            'hoststatussummary'     => true
+            'services'             => true,
+            'servicestatussummary' => true,
+            'hoststatussummary'    => true
         );
+    }
+
+    public function whereToSql($col, $sign, $expression)
+    {
+        if ($col === 'so.name1') {
+            $this->subServices->where('so.name1 ' . $sign . ' ?', $expression);
+            return '';
+            return 'sh.state_time ' . $sign . ' ' . $this->timestampForSql($this->valueToTimestamp($expression));
+        } else {
+            return parent::whereToSql($col, $sign, $expression);
+        }
     }
 }

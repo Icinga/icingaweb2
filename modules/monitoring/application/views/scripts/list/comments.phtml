@@ -85,7 +85,7 @@ $helper = $this->getHelper('CommandForm');
           <br>
           <?= $comment->expiration ? sprintf(
               $this->translate('This comment expires on %s at %s.'),
-              date('d.m.y', $comment-expiration),
+              date('d.m.y', $comment->expiration),
               date('H:i', $comment->expiration)
             ) : $this->translate('This comment does not expire.'); ?>
         </td>

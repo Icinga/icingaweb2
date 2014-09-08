@@ -29,6 +29,13 @@ class Logger
     protected $writer;
 
     /**
+     * The configured type
+     *
+     * @string Type (syslog, file)
+     */
+    protected $type = 'none';
+
+    /**
      * The maximum severity to emit
      *
      * @var int
@@ -85,6 +92,7 @@ class Logger
                 $config->type
             );
         }
+        $this->type = $config->type;
 
         return new $class($config);
     }
@@ -210,6 +218,16 @@ class Logger
     public function getWriter()
     {
         return $this->writer;
+    }
+
+    public static function writesToSyslog()
+    {
+        return static::$instance && static::$instance->type === 'syslog';
+    }
+
+    public static function writesToFile()
+    {
+        return static::$instance && static::$instance->type === 'file';
     }
 
     /**
