@@ -30,84 +30,30 @@ class icingaweb2_dev {
     notify    => Service['apache'],
   }
 
-  file { '/etc/icingaweb':
-    ensure    => 'directory',
-    owner     => 'apache',
-    group     => 'apache'
-  }
-
-  file { '/etc/icingaweb/authentication.ini':
-    source    => 'puppet:////vagrant/config/authentication.ini',
-    owner     => 'apache',
-    group     => 'apache',
-    require   => File['/etc/icingaweb'],
-  }
-
   file { '/etc/icingaweb/config.ini':
     ensure    => file,
     owner     => 'apache',
     group     => 'apache',
   }
 
-  file { '/etc/icingaweb/menu.ini':
-    source    => 'puppet:////vagrant/config/menu.ini',
-    owner     => 'apache',
-    group     => 'apache',
-  # replace   => false,
-  }
-
-  file { '/etc/icingaweb/resources.ini':
-    source    => 'puppet:////vagrant/config/resources.ini',
-    owner     => 'apache',
-    group     => 'apache',
-    replace   => false
-  }
-
-  file { ['/etc/icingaweb/enabledModules', '/etc/icingaweb/modules', '/etc/icingaweb/modules/monitoring', '/etc/icingaweb/modules/doc']:
+  file { [
+    '/etc/icingaweb',
+    '/etc/icingaweb/enabledModules',
+    '/etc/icingaweb/modules',
+    '/etc/icingaweb/modules/monitoring',
+    '/etc/icingaweb/modules/doc',
+    '/etc/icingaweb/dashboard'
+  ]:
     ensure    => 'directory',
     owner     => 'apache',
     group     => 'apache',
   }
 
-  file { '/etc/icingaweb/modules/monitoring/backends.ini':
-    source    => 'puppet:////vagrant/.vagrant-puppet/files/etc/icingaweb/modules/monitoring/backends.ini',
-    owner     => 'apache',
-    group     => 'apache',
+  icingaweb2::config { [ 'dashboard/dashboard', 'modules/doc/menu', 'authentication', 'menu' ]: }
+
+  icingaweb2::config { 'resources':
+    replace   => false,
   }
 
-  file { '/etc/icingaweb/modules/monitoring/config.ini':
-    source    => 'puppet:////vagrant/config/modules/monitoring/config.ini',
-    owner     => 'apache',
-    group     => 'apache',
-  }
-
-  file { '/etc/icingaweb/modules/monitoring/instances.ini':
-    source    => 'puppet:////vagrant/config/modules/monitoring/instances.ini',
-    owner     => 'apache',
-    group     => 'apache',
-  }
-
-  file { '/etc/icingaweb/modules/monitoring/menu.ini':
-    source    => 'puppet:////vagrant/config/modules/monitoring/menu.ini',
-    owner     => 'apache',
-    group     => 'apache',
-  }
-
-  file { '/etc/icingaweb/dashboard':
-    ensure    => 'directory',
-    owner     => 'apache',
-    group     => 'apache',
-  }
-
-  file { '/etc/icingaweb/dashboard/dashboard.ini':
-    source    => 'puppet:////vagrant/config/dashboard/dashboard.ini',
-    owner     => 'apache',
-    group     => 'apache',
-  }
-
-  file { '/etc/icingaweb/modules/doc/menu.ini':
-    source    => 'puppet:////vagrant/config/modules/doc/menu.ini',
-    owner     => 'apache',
-    group     => 'apache',
-  }
+  icingaweb2::config::monitoring { [ 'backends', 'config', 'instances', 'menu' ]: }
 }
