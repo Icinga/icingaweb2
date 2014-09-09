@@ -6,6 +6,7 @@ namespace Icinga\Form\Config\Authentication;
 
 use Exception;
 use Icinga\Web\Form;
+use Icinga\Web\Request;
 use Icinga\Data\ResourceFactory;
 use Icinga\Authentication\Backend\LdapUserBackend;
 
