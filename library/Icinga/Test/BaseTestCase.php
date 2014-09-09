@@ -145,6 +145,8 @@ namespace Icinga\Test {
 
         /**
          * Setup mock object for the application's bootstrap
+         *
+         * @return  Mockery\Mock
          */
         protected function setupIcingaMock()
         {
@@ -163,6 +165,7 @@ namespace Icinga\Test {
                 ->shouldReceive('getResponse')->andReturn($responseMock);
 
             Icinga::setApp($bootstrapMock, true);
+            return $bootstrapMock;
         }
 
         /**
