@@ -23,7 +23,7 @@ class LayoutController extends ActionController
 
         $url = Url::fromRequest();
         $menu = new MenuRenderer(Menu::load(), $url->getRelativeUrl());
-        $this->view->menuRenderer = $menu->useCustomRenderers();
+        $this->view->menuRenderer = $menu->useCustomRenderer();
     }
 
     /**

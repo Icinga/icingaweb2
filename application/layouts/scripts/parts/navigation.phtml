@@ -12,7 +12,7 @@ if (! $this->auth()->isAuthenticated()) {
 
 ?>
 <div
-    id="menu" data-base-target="_main" class="container" data-icinga-url="<?=$this->href('layout/menu');?>"
+    id="menu" data-last-update="<?= (time() - 14) ?>000" data-base-target="_main" class="container" data-icinga-url="<?=$this->href('layout/menu');?>"
     data-icinga-refresh="15"
 >
   <? if (SearchDashboard::search('dummy')->getPane('search')->hasComponents()): ?>
