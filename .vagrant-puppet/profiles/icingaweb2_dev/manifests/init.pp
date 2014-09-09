@@ -30,30 +30,31 @@ class icingaweb2_dev {
     notify    => Service['apache'],
   }
 
-  file { '/etc/icingaweb/config.ini':
+  $cfgpath = '/etc/icingaweb'
+
+  file { "${cfgpath}/config.ini":
     ensure    => file,
     owner     => 'apache',
     group     => 'apache',
   }
 
   file { [
-    '/etc/icingaweb',
-    '/etc/icingaweb/enabledModules',
-    '/etc/icingaweb/modules',
-    '/etc/icingaweb/modules/monitoring',
-    '/etc/icingaweb/modules/doc',
-    '/etc/icingaweb/dashboard'
+    "${cfgpath}",
+    "${cfgpath}/enabledModules",
+    "${cfgpath}/modules",
+    "${cfgpath}/modules/monitoring",
+    "${cfgpath}/modules/doc"
   ]:
     ensure    => 'directory',
     owner     => 'apache',
     group     => 'apache',
   }
 
-  icingaweb2::config { [ 'dashboard/dashboard', 'modules/doc/menu', 'authentication', 'menu' ]: }
+  icingaweb2::config { 'authentication': }
 
   icingaweb2::config { 'resources':
     replace   => false,
   }
 
-  icingaweb2::config::monitoring { [ 'backends', 'config', 'instances', 'menu' ]: }
+  icingaweb2::config::monitoring { [ 'backends', 'config', 'instances' ]: }
 }
