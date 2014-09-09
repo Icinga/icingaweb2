@@ -162,8 +162,9 @@ class Form extends Zend_Form
     public function getRedirectUrl()
     {
         if ($this->redirectUrl === null) {
+            $url = Url::fromRequest(array(), $this->getRequest());
             // Be sure to remove all form dependent params because we do not want to submit it again
-            $this->redirectUrl = Url::fromRequest()->without(array_keys($this->getElements()));
+            $this->redirectUrl = $url->without(array_keys($this->getElements()));
         }
 
         return $this->redirectUrl;
@@ -312,7 +313,7 @@ class Form extends Zend_Form
             if ($this->getAction() === '') {
                 // We MUST set an action as JS gets confused otherwise, if
                 // this form is being displayed in an additional column
-                $this->setAction(Url::fromRequest()->getUrlWithout(array_keys($this->getElements())));
+                $this->setAction(Url::fromRequest()->without(array_keys($this->getElements())));
             }
 
             $this->created = true;
