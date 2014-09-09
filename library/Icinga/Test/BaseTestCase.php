@@ -153,7 +153,9 @@ namespace Icinga\Test {
             $requestMock = Mockery::mock('Icinga\Web\Request')->shouldDeferMissing();
             $requestMock->shouldReceive('getPathInfo')->andReturn('')->byDefault()
                 ->shouldReceive('getBaseUrl')->andReturn('/')->byDefault()
-                ->shouldReceive('getQuery')->andReturn(array())->byDefault();
+                ->shouldReceive('getQuery')->andReturn(array())->byDefault()
+                ->shouldReceive('getParam')->with(Mockery::type('string'), Mockery::type('string'))
+                ->andReturnUsing(function ($name, $default) { return $default; })->byDefault();
 
             $responseMock = Mockery::mock('Icinga\Web\Response')->shouldDeferMissing();
 
