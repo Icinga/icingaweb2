@@ -32,12 +32,6 @@ class icingaweb2_dev {
 
   $cfgpath = '/etc/icingaweb'
 
-  file { "${cfgpath}/config.ini":
-    ensure    => file,
-    owner     => 'apache',
-    group     => 'apache',
-  }
-
   file { [
     "${cfgpath}",
     "${cfgpath}/enabledModules",
@@ -54,7 +48,7 @@ class icingaweb2_dev {
     source  => 'puppet:///modules/icingaweb2_dev',
   }
 
-  icingaweb2::config { 'resources':
+  icingaweb2::config { [ 'resources', 'config' ]:
     source  => 'puppet:///modules/icingaweb2_dev',
     replace => false,
   }
