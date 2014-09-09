@@ -31,5 +31,7 @@ class LocalInstanceForm extends Form
                 'description'   => t('The file path where the icinga commandpipe can be found')
             )
         );
+
+        return $this;
     }
 }

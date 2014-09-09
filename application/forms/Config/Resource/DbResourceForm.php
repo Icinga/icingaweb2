@@ -92,6 +92,8 @@ class DbResourceForm extends Form
                 'description'       => t('The password to use for authentication')
             )
         );
+
+        return $this;
     }
 
     /**

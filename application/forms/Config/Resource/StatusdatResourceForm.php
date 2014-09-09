@@ -48,5 +48,7 @@ class StatusdatResourceForm extends Form
                 'validators'    => array(new ReadablePathValidator())
             )
         );
+
+        return $this;
     }
 }

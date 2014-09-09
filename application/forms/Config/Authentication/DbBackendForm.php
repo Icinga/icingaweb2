@@ -77,6 +77,8 @@ class DbBackendForm extends Form
                 'value'     => 'db'
             )
         );
+
+        return $this;
     }
 
     /**

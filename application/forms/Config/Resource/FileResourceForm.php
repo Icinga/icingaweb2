@@ -44,5 +44,7 @@ class FileResourceForm extends Form
                 'description'   => t('The regular expression by which to identify columns')
             )
         );
+
+        return $this;
     }
 }
