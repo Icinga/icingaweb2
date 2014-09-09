@@ -9,14 +9,11 @@ use Icinga\Web\Widget\SearchDashboard;
 if (! $this->auth()->isAuthenticated()) {
     return;
 }
-$dataIcingaUrl = $this->href(
-    'layout/menu',
-    array('url' => Url::fromRequest()->without('renderLayout')->getAbsoluteUrl())
-);
 
 ?>
 <div
-    id="menu" data-base-target="_main" class="container" data-icinga-url="<?= $dataIcingaUrl?>" data-icinga-refresh="15"
+    id="menu" data-base-target="_main" class="container" data-icinga-url="<?=$this->href('layout/menu');?>"
+    data-icinga-refresh="15"
 >
   <? if (SearchDashboard::search('dummy')->getPane('search')->hasComponents()): ?>
       <form action="<?= $this->href('search') ?>" method="get" role="search">

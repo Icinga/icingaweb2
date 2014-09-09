@@ -151,8 +151,14 @@
 
             // restore menu state
             if (activeMenuId) {
-                $('#menu .active').removeClass('active');
-                $('#' + activeMenuId).addClass('active');
+                $('li.active', el).removeClass('active');
+
+                var $selectedMenu = $('#' + activeMenuId, el);
+                var $outerMenu = $selectedMenu.parent().closest('li');
+                if ($outerMenu.size()) {
+                    $selectedMenu = $outerMenu;
+                }
+                $selectedMenu.addClass('active');
             }
         },
 
@@ -576,7 +582,6 @@
                     $li.addClass('active');
                     activeMenuId = $($li).attr('id');
                     if ($li.hasClass('hover')) {
-                        $('#menu .active').removeClass('active');
                         $li.removeClass('hover');
                     }
                 }
@@ -601,6 +606,9 @@
                     return false;
                 }
             } else {
+                if (isMenuLink) {
+                    activeMenuId = $(event.target).closest('li').attr('id');
+                }
                 $target = self.getLinkTargetFor($a);
             }
 
