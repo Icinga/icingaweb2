@@ -8,7 +8,7 @@ class icingaweb2_dev {
 
   pgsql::database::populate { 'icingaweb':
     username => 'icingaweb',
-    password => 'icinga',
+    password => 'icingaweb',
     schemafile => '/vagrant/etc/schema/accounts.pgsql.sql',
   }
 
@@ -53,7 +53,8 @@ class icingaweb2_dev {
   icingaweb2::config { 'authentication': }
 
   icingaweb2::config { 'resources':
-    replace   => false,
+    source  => 'puppet:///modules/icingaweb2_dev',
+    replace => false,
   }
 
   icingaweb2::config::module { [ 'backends', 'config', 'instances' ]: }
