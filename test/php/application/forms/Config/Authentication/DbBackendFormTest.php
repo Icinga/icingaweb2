@@ -32,13 +32,12 @@ class DbBackendFormTest extends BaseTestCase
             ->andReturn(2);
 
         $form = new DbBackendForm();
-        $form->setBackendName('test');
-        $form->setResources(array('test_db_backend' => null));
-        $form->create();
-        $form->populate(array('backend_test_resource' => 'test_db_backend'));
+        $form->setTokenDisabled();
+        $form->setResources(array('test_db_backend'));
+        $form->populate(array('resource' => 'test_db_backend'));
 
         $this->assertTrue(
-            $form->isValidAuthenticationBackend(),
+            $form->isValidAuthenticationBackend($form),
             'DbBackendForm claims that a valid authentication backend with users is not valid'
         );
     }
@@ -55,13 +54,12 @@ class DbBackendFormTest extends BaseTestCase
             ->andReturn(0);
 
         $form = new DbBackendForm();
-        $form->setBackendName('test');
-        $form->setResources(array('test_db_backend' => null));
-        $form->create();
-        $form->populate(array('backend_test_resource' => 'test_db_backend'));
+        $form->setTokenDisabled();
+        $form->setResources(array('test_db_backend'));
+        $form->populate(array('resource' => 'test_db_backend'));
 
         $this->assertFalse(
-            $form->isValidAuthenticationBackend(),
+            $form->isValidAuthenticationBackend($form),
             'DbBackendForm claims that an invalid authentication backend without users is valid'
         );
     }
