@@ -490,7 +490,7 @@ class Form extends Zend_Form
         }
 
         $formData = $this->getRequestData($request);
-        if ($this->wasSent($formData)) {
+        if ($this->getUidDisabled() || $this->wasSent($formData)) {
             $this->populate($formData); // Necessary to get isSubmitted() to work
             if (! $this->getSubmitLabel() || $this->isSubmitted()) {
                 if ($this->isValid($formData)
