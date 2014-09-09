@@ -54,6 +54,7 @@ class ConfigForm extends Form
             $writer->write();
         } catch (Exception $e) {
             $this->addDecorator('ViewScript', array(
+                'viewModule'    => 'default',
                 'viewScript'    => 'showConfiguration.phtml',
                 'errorMessage'  => $e->getMessage(),
                 'configString'  => $writer->render(),
