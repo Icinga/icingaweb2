@@ -151,7 +151,7 @@
 
             // restore menu state
             if (activeMenuId) {
-                $('li.active', el).removeClass('active');
+                $('[role="navigation"] li.active', el).removeClass('active');
 
                 var $selectedMenu = $('#' + activeMenuId, el);
                 var $outerMenu = $selectedMenu.parent().closest('li');
