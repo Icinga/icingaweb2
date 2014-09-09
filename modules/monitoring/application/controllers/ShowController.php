@@ -70,6 +70,7 @@ class Monitoring_ShowController extends Controller
         if ($this->grapher) {
             $this->view->grapherHtml = $this->grapher->getPreviewHtml($o);
         }
+        $this->fetchHostStats();
     }
 
     /**
@@ -85,6 +86,7 @@ class Monitoring_ShowController extends Controller
         if ($this->grapher) {
             $this->view->grapherHtml = $this->grapher->getPreviewHtml($o);
         }
+        $this->fetchHostStats();
     }
 
     public function historyAction()
@@ -94,6 +96,7 @@ class Monitoring_ShowController extends Controller
         $this->view->object->fetchEventHistory();
         $this->view->history = $this->view->object->eventhistory->paginate($this->params->get('limit', 50));
         $this->handleFormatRequest($this->view->object->eventhistory);
+        $this->fetchHostStats();
     }
 
     public function servicesAction()
@@ -106,6 +109,28 @@ class Monitoring_ShowController extends Controller
             'view'  => 'compact',
             'sort'  => 'service_description',
         ));
+        $this->fetchHostStats();
+    }
+
+    protected function fetchHostStats()
+    {
+        $this->view->stats = $this->backend->select()->from('statusSummary', array(
+            'services_total',
+            'services_ok',
+            'services_problem',
+            'services_problem_handled',
+            'services_problem_unhandled',
+            'services_critical',
+            'services_critical_unhandled',
+            'services_critical_handled',
+            'services_warning',
+            'services_warning_unhandled',
+            'services_warning_handled',
+            'services_unknown',
+            'services_unknown_unhandled',
+            'services_unknown_handled',
+            'services_pending',
+        ))->where('service_host_name', $this->params->get('host'))->getQuery()->fetchRow();
     }
 
     public function contactAction()

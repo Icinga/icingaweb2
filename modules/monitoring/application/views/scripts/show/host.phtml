@@ -1,7 +1,7 @@
 <?php if ($object->host_name !== false): ?>
     <div class="controls">
     <?= $this->render('show/components/header.phtml') ?>
-    <h1><?= $this->translate("This host's current state") ?></h1>
+    <?= $this->render('show/components/hostservicesummary.phtml') ?>
     </div>
     <div class="content" data-base-target="_next">
     <?= $this->render('show/components/output.phtml') ?>

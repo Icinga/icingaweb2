@@ -26,6 +26,11 @@ class MenuRenderer extends RecursiveIteratorIterator
     protected $tags = array();
 
     /**
+     * @var bool
+     */
+    protected $useCustomRenderer = false;
+
+    /**
      * Create a new MenuRenderer
      *
      * @param   Menu    $menu   The menu to render
@@ -39,6 +44,15 @@ class MenuRenderer extends RecursiveIteratorIterator
             $this->url = Url::fromPath($url);
         }
         parent::__construct($menu, RecursiveIteratorIterator::CHILD_FIRST);
+    }
+
+    /**
+     * @param bool $value
+     */
+    public function useCustomRenderer($value = true)
+    {
+        $this->useCustomRenderer = $value;
+        return $this;
     }
 
     /**
@@ -91,6 +105,9 @@ class MenuRenderer extends RecursiveIteratorIterator
      */
     public function renderChild(Menu $child)
     {
+        if ($child->getRenderer() !== null && $this->useCustomRenderer) {
+            return $child->getRenderer()->render($child);
+        }
         return sprintf(
             '<a href="%s">%s%s</a>',
             $child->getUrl() ?: '#',
@@ -115,9 +132,9 @@ class MenuRenderer extends RecursiveIteratorIterator
 
             if ($childIsActive || ($passedActiveChild && $this->getDepth() === 0)) {
                 $passedActiveChild &= $this->getDepth() !== 0;
-                $openTag = '<li class="active">';
+                $openTag = '<li class="active" id="' . $child->getUniqueId() . '">';
             } else {
-                $openTag = '<li>';
+                $openTag = '<li id="' . $child->getUniqueId() . '">';
             }
             $content = $this->renderChild($child);
             $closingTag = '</li>';

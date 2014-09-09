@@ -1493,7 +1493,7 @@ msgstr "UP"
 
 #: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/components/servicesummary.phtml:23
 #, php-format
-msgid "Unandled services with state %s"
+msgid "Unhandled services with state %s"
 msgstr "Unbestätigte Services mit Status %s"
 
 #: /usr/local/src/bugfix.master/modules/monitoring/configuration.php:29

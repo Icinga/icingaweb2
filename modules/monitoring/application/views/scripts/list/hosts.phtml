@@ -81,13 +81,13 @@ if ($hosts->count() === 0) {
     <tr class="state <?= $hostStateName ?><?= $host->host_handled ? ' handled' : '' ?>">
       <!-- State -->
       <td class="state" title="<?= $helper->getStateTitle($host, 'host') ?>">
-        <?php if (! $this->compact): ?>
         <strong><?= ucfirst($helper->monitoringState($host, 'host')) ?></strong><br />
-        <?php endif ?>
+        <?php if ((int) $host->host_state !== 99): ?>
         <?= $this->prefixedTimeSince($host->host_last_state_change, true) ?>
         <?php if ($host->host_state > 0 && (int) $host->host_state_type === 0): ?>
         <br />
         <strong>Soft <?= $host->host_attempt ?></strong>
+        <?php endif ?>
         <?php endif ?>
       </td>
 

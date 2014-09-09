@@ -4,6 +4,7 @@
 
 namespace Icinga\Web;
 
+use Icinga\Web\Menu\MenuItemRenderer;
 use RecursiveIterator;
 use Zend_Config;
 use Icinga\Application\Config;
@@ -62,14 +63,31 @@ class Menu implements RecursiveIterator
     protected $subMenus = array();
 
     /**
+     * A custom item renderer used instead of the default rendering logic
+     *
+     * @var MenuItemRenderer
+     */
+    protected $itemRenderer = null;
+    
+    /*
+     * Parent menu
+     *
+     * @var Menu
+     */
+    protected $parent;
+
+    /**
      * Create a new menu
      *
      * @param   int             $id         The id of this menu
      * @param   Zend_Config     $config     The configuration for this menu
      */
-    public function __construct($id, Zend_Config $config = null)
+    public function __construct($id, Zend_Config $config = null, Menu $parent = null)
     {
         $this->id = $id;
+        if ($parent !== null) {
+            $this->parent = $parent;
+        }
         $this->setProperties($config);
     }
 
@@ -83,6 +101,15 @@ class Menu implements RecursiveIterator
         if ($props !== null) {
             foreach ($props as $key => $value) {
                 $method = 'set' . implode('', array_map('ucfirst', explode('_', strtolower($key))));
+                if ($key === 'renderer') {
+                    $class = '\Icinga\Web\Menu\\' . $value;
+                    if (!class_exists($class)) {
+                        throw new ConfigurationError(
+                            sprintf('ItemRenderer with class "%s" does not exist', $class)
+                        );
+                    }
+                    $value = new $class;
+                }
                 if (method_exists($this, $method)) {
                     $this->{$method}($value);
                 } else {
@@ -235,6 +262,30 @@ class Menu implements RecursiveIterator
     }
 
     /**
+     * Get our ID without invalid characters
+     *
+     * @return string the ID
+     */
+    protected function getSafeHtmlId()
+    {
+        return preg_replace('/[^a-zA-Z0-9]/', '_', $this->getId());
+    }
+
+    /**
+     * Get a unique menu item id
+     *
+     * @return string the ID
+     */
+    public function getUniqueId()
+    {
+        if ($this->parent === null) {
+            return 'menuitem-' . $this->getSafeHtmlId();
+        } else {
+            return $this->parent->getUniqueId() . '-' . $this->getSafeHtmlId();
+        }
+    }
+
+    /**
      * Set the title of this menu
      *
      * @param   string  $title  The title to set for this menu
@@ -331,6 +382,26 @@ class Menu implements RecursiveIterator
     }
 
     /**
+     * Get the class that renders the current menu item
+     *
+     * @return MenuItemRenderer
+     */
+    public function getRenderer()
+    {
+        return $this->itemRenderer;
+    }
+
+    /**
+     * Set the class that renders the current menu item
+     *
+     * @param MenuItemRenderer $renderer
+     */
+    public function setRenderer(MenuItemRenderer $renderer)
+    {
+        $this->itemRenderer = $renderer;
+    }
+
+    /**
      * Return whether this menu has any sub menus
      *
      * @return  bool
@@ -351,7 +422,7 @@ class Menu implements RecursiveIterator
     public function addSubMenu($id, Zend_Config $menuConfig = null)
     {
         if (false === ($pos = strpos($id, '.'))) {
-            $subMenu = new self($id, $menuConfig);
+            $subMenu = new self($id, $menuConfig, $this);
             $this->subMenus[$id] = $subMenu;
         } else {
             list($parentId, $id) = explode('.', $id, 2);
@@ -617,5 +688,13 @@ class Menu implements RecursiveIterator
     public function next()
     {
         next($this->subMenus);
+    }
+
+    /**
+     * PHP 5.3 GC should not leak, but just to be on the safe side... 
+     */
+    public function __destruct()
+    {
+        $this->parent = null;
     }
 }

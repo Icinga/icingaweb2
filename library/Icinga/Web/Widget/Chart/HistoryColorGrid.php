@@ -273,7 +273,7 @@ class HistoryColorGrid extends AbstractWidget {
         $sun = DateTimeFactory::create('last Sunday');
         $interval = new DateInterval('P' .  $weekday . 'D');
         $sun->add($interval);
-        return $sun->format('D');
+        return substr($sun->format('D'), 0, 2);
     }
 
     /**
