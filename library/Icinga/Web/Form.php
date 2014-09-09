@@ -370,7 +370,7 @@ class Form extends Zend_Form
      */
     public function addSubmitButton()
     {
-        if ($this->submitLabel !== null) {
+        if ($this->submitLabel) {
             $this->addElement(
                 'submit',
                 'btn_submit',
@@ -386,6 +386,31 @@ class Form extends Zend_Form
         }
 
         return $this;
+    }
+
+    /**
+     * Add a subform
+     *
+     * @param   Zend_Form   $form   The subform to add
+     * @param   string      $name   The name of the subform or null to use the name of $form
+     * @param   int         $order  The location where to insert the form
+     *
+     * @return  Zend_Form
+     */
+    public function addSubForm(Zend_Form $form, $name = null, $order = null)
+    {
+        if ($form instanceof self) {
+            $form->removeDecorator('Form');
+            $form->setSubmitLabel('');
+            $form->setTokenDisabled();
+            $form->setUidDisabled();
+        }
+
+        if ($name === null) {
+            $name = $form->getName();
+        }
+
+        return parent::addSubForm($form, $name, $order);
     }
 
     /**
