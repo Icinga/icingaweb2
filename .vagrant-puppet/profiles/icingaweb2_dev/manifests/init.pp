@@ -53,5 +53,7 @@ class icingaweb2_dev {
     replace => false,
   }
 
-  icingaweb2::config::module { [ 'backends', 'config', 'instances' ]: }
+  icingaweb2::config::module { [ 'backends', 'config', 'instances' ]:
+    source  => 'puppet:///modules/icingaweb2_dev',
+  }
 }
