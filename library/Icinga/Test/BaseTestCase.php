@@ -151,28 +151,49 @@ namespace Icinga\Test {
         public function setUp()
         {
             parent::setUp();
-
-            $requestMock = Mockery::mock('Icinga\Web\Request');
-            $requestMock->shouldReceive('getPathInfo')->andReturn('')
-                ->shouldReceive('getBaseUrl')->andReturn('/')
-                ->shouldReceive('getQuery')->andReturn(array());
-            $this->setupIcingaMock($requestMock);
+            $this->setupIcingaMock();
         }
 
         /**
          * Setup mock object for the application's bootstrap
-         *
-         * @param   Zend_Controller_Request_Abstract    $request    The request to be returned by
-         *                                                          Icinga::app()->getFrontController()->getRequest()
          */
-        protected function setupIcingaMock(Zend_Controller_Request_Abstract $request)
+        protected function setupIcingaMock()
         {
+            $requestMock = Mockery::mock('Icinga\Web\Request')->shouldDeferMissing();
+            $requestMock->shouldReceive('getPathInfo')->andReturn('')->byDefault()
+                ->shouldReceive('getBaseUrl')->andReturn('/')->byDefault()
+                ->shouldReceive('getQuery')->andReturn(array())->byDefault();
+
+            $responseMock = Mockery::mock('Icinga\Web\Response')->shouldDeferMissing();
+
+            // Can't express this as demeter chains. See: https://github.com/padraic/mockery/issues/59
             $bootstrapMock = Mockery::mock('Icinga\Application\ApplicationBootstrap')->shouldDeferMissing();
-            $bootstrapMock->shouldReceive('getFrontController->getRequest')->andReturnUsing(
-                function () use ($request) { return $request; }
-            )->shouldReceive('getApplicationDir')->andReturn(self::$appDir);
+            $bootstrapMock->shouldReceive('getFrontController')->andReturn($bootstrapMock)
+                ->shouldReceive('getApplicationDir')->andReturn(self::$appDir)
+                ->shouldReceive('getRequest')->andReturn($requestMock)
+                ->shouldReceive('getResponse')->andReturn($responseMock);
 
             Icinga::setApp($bootstrapMock, true);
+        }
+
+        /**
+         * Return the currently active request mock object
+         *
+         * @return  Icinga\Web\Request
+         */
+        public function getRequestMock()
+        {
+            return Icinga::app()->getFrontController()->getRequest();
+        }
+
+        /**
+         * Return the currently active response mock object
+         *
+         * @return  Icinga\Web\Response
+         */
+        public function getResponseMock()
+        {
+            return Icinga::app()->getFrontController()->getResponse();
         }
 
         /**
