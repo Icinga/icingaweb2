@@ -10,35 +10,12 @@ namespace Icinga\Module\Monitoring\Command;
 abstract class IcingaCommand
 {
     /**
-     * Get the command string
+     * Get the name of the command
      *
      * @return string
      */
-    abstract public function getCommandString();
-
-    /**
-     * Escape a command string
-     *
-     * @param   string $commandString
-     *
-     * @return  string
-     */
-    public function escape($commandString)
+    public function getName()
     {
-        return str_replace(array("\r", "\n"), array('\r', '\n'), $commandString);
-    }
-
-    /**
-     * Get the command as string with the current timestamp as the command submission time
-     *
-     * @return string
-     */
-    public function __toString()
-    {
-        return sprintf(
-            '[%u] %s',
-            time(),
-            $this->escape($this->getCommandString())
-        );
+        return substr_replace(end(explode('\\', get_called_class())), '', -7);  // Remove 'Command' Suffix
     }
 }
