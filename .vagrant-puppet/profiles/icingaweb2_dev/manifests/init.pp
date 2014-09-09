@@ -56,5 +56,5 @@ class icingaweb2_dev {
     replace   => false,
   }
 
-  icingaweb2::config::monitoring { [ 'backends', 'config', 'instances' ]: }
+  icingaweb2::config::module { [ 'backends', 'config', 'instances' ]: }
 }
