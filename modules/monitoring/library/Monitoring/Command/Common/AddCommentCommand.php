@@ -4,80 +4,47 @@
 
 namespace Icinga\Module\Monitoring\Command\Common;
 
-use Icinga\Module\Monitoring\Command\IcingaCommand;
-use Icinga\User;
-
 /**
- * Base class for commands adding comments
+ * Add a comment to a host or service
  */
-abstract class AddCommentCommand extends IcingaCommand
+class AddCommentCommand extends WithCommentCommand
 {
     /**
-     * Author of the comment
-     *
-     * @var User
-     */
-    protected $author;
-
-    /**
-     * Comment
-     *
-     * @var string
-     */
-    protected $comment;
-
-    /**
-     * Set the author
-     *
-     * @param   User $author
-     *
-     * @return  $this
-     */
-    public function setAuthor(User $author)
-    {
-        $this->author = $author;
-        return $this;
-    }
-
-    /**
-     * Get the author
-     *
-     * @return User
-     */
-    public function getAuthor()
-    {
-        return $this->author;
-    }
-
-    /**
-     * Set the comment
-     *
-     * @param   string $comment
-     *
-     * @return  $this
-     */
-    public function setComment($comment)
-    {
-        $this->comment = (string) $comment;
-        return $this;
-    }
-
-    /**
-     * Get the comment
-     *
-     * @return string
-     */
-    public function getComment()
-    {
-        return $this->comment;
-    }
-
-    /**
      * (non-PHPDoc)
-     * @see \Icinga\Module\Monitoring\Command\IcingaCommand::getCommandString() For the method documentation.
+     * @see \Icinga\Module\Monitoring\Command\Common\ObjectCommand::$allowedObjects For the property documentation.
      */
-    public function getCommandString()
+    protected $allowedObjects = array(
+        self::TYPE_HOST,
+        self::TYPE_SERVICE
+    );
+
+    /**
+     * Whether the comment is persistent
+     *
+     * Persistent comments are not lost the next time the monitoring host restarts.
+     */
+    protected $persistent;
+
+    /**
+     * Set whether the comment is persistent
+     *
+     * @param   bool $persistent
+     *
+     * @return  $this
+     */
+    public function setPersistent($persistent = true)
     {
-        return sprintf('%s;%s', $this->author->getUsername(), $this->comment);
+        $this->persistent = $persistent;
+        return $this;
+    }
+
+    /**
+     * Is the comment persistent?
+     *
+     * @return bool
+     */
+    public function getPersistent()
+    {
+        return $this->persistent;
     }
 }
