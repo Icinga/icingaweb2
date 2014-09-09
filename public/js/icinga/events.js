@@ -12,8 +12,6 @@
 
     var activeMenuId;
 
-    var mouseX, mouseY;
-
     Icinga.Events = function (icinga) {
         this.icinga = icinga;
 
@@ -34,7 +32,22 @@
         initialize: function () {
             this.applyGlobalDefaults();
             this.applyHandlers($('#layout'));
-            this.icinga.ui.prepareContainers();
+            var self = this;
+
+            // define global site behavior
+            $.each(self.icinga.behaviors, function (name, behavior) {
+                behavior.bind();
+            });
+
+            // prepare container html
+            $('.container').each(function(idx, el) {
+                // apply event handlers
+                icinga.events.applyHandlers($(el));
+                icinga.ui.initializeControls($(el));
+                $.each(self.icinga.behaviors, function (name, behavior) {
+                    behavior.apply(el);
+                });
+            });
         },
 
         // TODO: What's this?
@@ -116,39 +129,6 @@
                 this.searchValue = searchField.val();
             }
 
-            $('[title]').each(function () {
-                var $el = $(this);
-                $el.attr('title', $el.data('title-rich') || $el.attr('title'));
-            });
-            $('svg rect.chart-data[title]', el).tipsy({ gravity: 'se', html: true });
-            $('.historycolorgrid a[title]', el).tipsy({ gravity: 's', offset: 2 });
-            $('img.icon[title]', el).tipsy({ gravity: $.fn.tipsy.autoNS, offset: 2 });
-            $('[title]', el).tipsy({ gravity: $.fn.tipsy.autoNS, delayIn: 500 });
-
-            // migrate or remove all orphaned tooltips
-            $('.tipsy').each(function () {
-                var arrow = $('.tipsy-arrow', this)[0];
-                if (!icinga.utils.elementsOverlap(arrow, $('#main')[0])) {
-                    $(this).remove();
-                    return;
-                }
-                if (!icinga.utils.elementsOverlap(arrow, el)) {
-                    return;
-                }
-                var title = $(this).find('.tipsy-inner').html();
-                var atMouse = document.elementFromPoint(mouseX, mouseY);
-                var nearestTip = $(atMouse)
-                    .closest('[original-title="' + title + '"]')[0];
-                if (nearestTip) {
-                    var tipsy = $.data(nearestTip, 'tipsy');
-                    tipsy.$tip = $(this);
-                    $.data(this, 'tipsy-pointee', nearestTip);
-                } else {
-                    // doesn't match delete
-                    $(this).remove();
-                }
-            });
-
             // restore menu state
             if (activeMenuId) {
                 $('[role="navigation"] li.active', el).removeClass('active');
@@ -220,10 +200,6 @@
             // $(document).on('change', 'form.auto input', this.formChanged);
             // $(document).on('change', 'form.auto select', this.submitForm);
 
-            $(document).on('mousemove', function (event) {
-                mouseX = event.pageX;
-                mouseY = event.pageY;
-            });
         },
 
         menuTitleHovered: function (event) {
@@ -713,7 +689,6 @@
             $(document).off('mouseenter', 'li.dropdown', this.dropdownHover);
             $(document).off('mouseleave', 'li.dropdown', this.dropdownLeave);
             $(document).off('click', 'div.tristate .tristate-dummy', this.clickTriState);
-            $(document).off('mousemove');
         },
 
         destroy: function() {

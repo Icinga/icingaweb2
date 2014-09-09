@@ -22,6 +22,7 @@ class JavaScript
         'js/icinga/history.js',
         'js/icinga/module.js',
         'js/icinga/timezone.js',
+        'js/icinga/behavior/tooltip.js'
     );
 
     protected static $vendorFiles = array(
