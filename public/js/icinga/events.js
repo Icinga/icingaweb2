@@ -159,6 +159,12 @@
                     $selectedMenu = $outerMenu;
                 }
                 $selectedMenu.addClass('active');
+            } else {
+                // store menu state
+                var $menus = $('[role="navigation"] li.active', el);
+                if ($menus.size()) {
+                    activeMenuId = $menus[0].id;
+                }
             }
         },
 
