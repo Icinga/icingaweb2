@@ -50,7 +50,9 @@ class icingaweb2_dev {
     group     => 'apache',
   }
 
-  icingaweb2::config { 'authentication': }
+  icingaweb2::config { 'authentication':
+    source  => 'puppet:///modules/icingaweb2_dev',
+  }
 
   icingaweb2::config { 'resources':
     source  => 'puppet:///modules/icingaweb2_dev',
