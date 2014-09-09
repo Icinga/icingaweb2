@@ -25,20 +25,16 @@ namespace Icinga\Test {
     use RuntimeException;
     use Mockery;
     use Zend_Config;
-    use Zend_Controller_Request_Abstract;
-    use Zend_Controller_Request_HttpTestCase;
     use PHPUnit_Framework_TestCase;
     use Icinga\Application\Icinga;
     use Icinga\Util\DateTimeFactory;
     use Icinga\Data\ResourceFactory;
     use Icinga\Data\Db\DbConnection;
-    use Icinga\User\Preferences;
-    use Icinga\Web\Form;
 
     /**
      * Class BaseTestCase
      */
-    class BaseTestCase extends PHPUnit_Framework_TestCase implements DbTest, FormTest
+    class BaseTestCase extends PHPUnit_Framework_TestCase implements DbTest
     {
         /**
          * Path to application/
@@ -81,13 +77,6 @@ namespace Icinga\Test {
          * @var string
          */
         public static $moduleDir;
-
-        /**
-         * Store request for form tests
-         * 
-         * @var Zend_Controller_Request_HttpTestCase
-         */
-        private $request;
 
         /**
          * Resource configuration for different database types
@@ -318,51 +307,6 @@ namespace Icinga\Test {
             foreach ($tables as $table) {
                 $adapter->exec('DROP TABLE ' . $table . ';');
             }
-        }
-
-        /**
-         * Instantiate a form
-         *
-         * If the form has CSRF protection enabled, creates the form's token element and adds the generated token to the
-         * request data
-         *
-         * @param   string  $formClass      Qualified class name of the form to create. Note that the class has to be
-         *                                  defined as no attempt is made to require the class before instantiating.
-         * @param   array   $requestData    Request data for the form
-         *
-         * @return  Form
-         * @throws  RuntimeException
-         */
-        public function createForm($formClass, array $requestData = array())
-        {
-            $form = new $formClass;
-            $form->setTokenDisabled(); // Disable CSRF protection else all calls to isSubmittedAndValid will fail
-            $request = $this->getRequest();
-            $request->setMethod('POST');
-            $request->setPost($requestData);
-            $form->setRequest($request);
-            $form->setUserPreferences(
-                new Preferences(
-                    array()
-                )
-            );
-            return $form;
-        }
-
-        /**
-         * Retrieve test case request object
-         *
-         * This is a mock methods borrowed from Zend Controller Test Case to handle form tests properly (#6106)
-         *
-         * @return Zend_Controller_Request_HttpTestCase
-         */
-        public function getRequest()
-        {
-            if (null === $this->request) {
-                require_once 'Zend/Controller/Request/HttpTestCase.php';
-                $this->request = new Zend_Controller_Request_HttpTestCase;
-            }
-            return $this->request;
         }
     }
 
