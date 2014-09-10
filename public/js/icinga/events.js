@@ -10,10 +10,6 @@
 
     'use strict';
 
-    var activeMenuId;
-
-    var mouseX, mouseY;
-
     Icinga.Events = function (icinga) {
         this.icinga = icinga;
 
@@ -34,11 +30,17 @@
         initialize: function () {
             this.applyGlobalDefaults();
             this.applyHandlers($('#layout'));
-            this.icinga.ui.prepareContainers();
+            $('.container').each(function(idx, el) {
+                icinga.events.applyHandlers($(el));
+                icinga.ui.initializeControls($(el));
+            });
         },
 
         // TODO: What's this?
         applyHandlers: function (el) {
+            $.each(this.icinga.behaviors, function (name, behavior) {
+                behavior.apply(el);
+            });
 
             var icinga = this.icinga;
 
@@ -78,93 +80,10 @@
 
             $('input.autofocus', el).focus();
 
-            // replace all sparklines
-            $('span.sparkline', el).each(function(i, element) {
-                // read custom options
-                var $spark            = $(element);
-                var labels            = $spark.attr('labels').split('|');
-                var formatted         = $spark.attr('formatted').split('|');
-                var tooltipChartTitle = $spark.attr('sparkTooltipChartTitle') || '';
-                var format            = $spark.attr('tooltipformat');
-                var hideEmpty         = $spark.attr('hideEmptyLabel') === 'true';
-                $spark.sparkline(
-                    'html',
-                    {
-                        enableTagOptions: true,
-                        tooltipFormatter: function (sparkline, options, fields) {
-                            var out       = format;
-                            if (hideEmpty && fields.offset === 3) {
-                                return '';
-                            }
-                            var replace   = {
-                                title:     tooltipChartTitle,
-                                label:     labels[fields.offset] ? labels[fields.offset] : fields.offset,
-                                formatted: formatted[fields.offset] ? formatted[fields.offset] : '',
-                                value:     fields.value,
-                                percent:   Math.round(fields.percent * 100) / 100
-                            };
-                            $.each(replace, function(key, value) {
-                                out = out.replace('{{' + key + '}}', value);
-                            });
-                            return out;
-                        }
-                });
-            });
             var searchField = $('#menu input.search', el);
             // Remember initial search field value if any
             if (searchField.length && searchField.val().length) {
                 this.searchValue = searchField.val();
-            }
-
-            $('[title]').each(function () {
-                var $el = $(this);
-                $el.attr('title', $el.data('title-rich') || $el.attr('title'));
-            });
-            $('svg rect.chart-data[title]', el).tipsy({ gravity: 'se', html: true });
-            $('.historycolorgrid a[title]', el).tipsy({ gravity: 's', offset: 2 });
-            $('img.icon[title]', el).tipsy({ gravity: $.fn.tipsy.autoNS, offset: 2 });
-            $('[title]', el).tipsy({ gravity: $.fn.tipsy.autoNS, delayIn: 500 });
-
-            // migrate or remove all orphaned tooltips
-            $('.tipsy').each(function () {
-                var arrow = $('.tipsy-arrow', this)[0];
-                if (!icinga.utils.elementsOverlap(arrow, $('#main')[0])) {
-                    $(this).remove();
-                    return;
-                }
-                if (!icinga.utils.elementsOverlap(arrow, el)) {
-                    return;
-                }
-                var title = $(this).find('.tipsy-inner').html();
-                var atMouse = document.elementFromPoint(mouseX, mouseY);
-                var nearestTip = $(atMouse)
-                    .closest('[original-title="' + title + '"]')[0];
-                if (nearestTip) {
-                    var tipsy = $.data(nearestTip, 'tipsy');
-                    tipsy.$tip = $(this);
-                    $.data(this, 'tipsy-pointee', nearestTip);
-                } else {
-                    // doesn't match delete
-                    $(this).remove();
-                }
-            });
-
-            // restore menu state
-            if (activeMenuId) {
-                $('[role="navigation"] li.active', el).removeClass('active');
-
-                var $selectedMenu = $('#' + activeMenuId, el);
-                var $outerMenu = $selectedMenu.parent().closest('li');
-                if ($outerMenu.size()) {
-                    $selectedMenu = $outerMenu;
-                }
-                $selectedMenu.addClass('active');
-            } else {
-                // store menu state
-                var $menus = $('[role="navigation"] li.active', el);
-                if ($menus.size()) {
-                    activeMenuId = $menus[0].id;
-                }
             }
         },
 
@@ -172,6 +91,10 @@
          * Global default event handlers
          */
         applyGlobalDefaults: function () {
+            $.each(self.icinga.behaviors, function (name, behavior) {
+                behavior.bind();
+            });
+
             // We catch resize events
             $(window).on('resize', { self: this.icinga.ui }, this.icinga.ui.onWindowResize);
 
@@ -203,103 +126,12 @@
 
             $(document).on('keyup', '#menu input.search', {self: this}, this.autoSubmitSearch);
 
-            $(document).on('mouseenter', '.historycolorgrid td', this.historycolorgridHover);
-            $(document).on('mouseleave', '.historycolorgrid td', this.historycolorgidUnhover);
-            $(document).on('mouseenter', 'li.dropdown', this.dropdownHover);
-            $(document).on('mouseleave', 'li.dropdown', {self: this}, this.dropdownLeave);
-
-            $(document).on('mouseenter', '#menu > ul > li', { self: this }, this.menuTitleHovered);
-            $(document).on('mouseleave', '#sidebar', { self: this }, this.leaveSidebar);
             $(document).on('click', '.tree .handle', { self: this }, this.treeNodeToggle);
-
-            // Toggle all triStateButtons
-            $(document).on('click', 'div.tristate .tristate-dummy', { self: this }, this.clickTriState);
 
             // TBD: a global autocompletion handler
             // $(document).on('keyup', 'form.auto input', this.formChangeDelayed);
             // $(document).on('change', 'form.auto input', this.formChanged);
             // $(document).on('change', 'form.auto select', this.submitForm);
-
-            $(document).on('mousemove', function (event) {
-                mouseX = event.pageX;
-                mouseY = event.pageY;
-            });
-        },
-
-        menuTitleHovered: function (event) {
-            var $li = $(this),
-                delay = 800,
-                self = event.data.self;
-
-            if ($li.hasClass('active')) {
-                $li.siblings().removeClass('hover');
-                return;
-            }
-            if ($li.children('ul').children('li').length === 0) {
-                return;
-            }
-            if ($('#menu').scrollTop() > 0) {
-                return;
-            }
-
-            if ($('#layout').hasClass('hoveredmenu')) {
-                delay = 0;
-            }
-
-            setTimeout(function () {
-                if (! $li.is('li:hover')) {
-                    return;
-                }
-                if ($li.hasClass('active')) {
-                    return;
-                }
-
-                $li.siblings().each(function () {
-                    var $sibling = $(this);
-                    if ($sibling.is('li:hover')) {
-                        return;
-                    }
-                    if ($sibling.hasClass('hover')) {
-                        $sibling.removeClass('hover');
-                    }
-                });
-
-                $('#layout').addClass('hoveredmenu');
-                $li.addClass('hover');
-            }, delay);
-        },
-
-        leaveSidebar: function (event) {
-            var $sidebar = $(this),
-                $li = $sidebar.find('li.hover'),
-                self = event.data.self;
-            if (! $li.length) {
-                $('#layout').removeClass('hoveredmenu');
-                return;
-            }
-
-            setTimeout(function () {
-                if ($li.is('li:hover') || $sidebar.is('sidebar:hover') ) {
-                    return;
-                }
-                $li.removeClass('hover');
-                $('#layout').removeClass('hoveredmenu');
-            }, 500);
-        },
-
-        dropdownHover: function () {
-            $(this).addClass('hover');
-        },
-
-        dropdownLeave: function (event) {
-            var $li = $(this),
-                self = event.data.self;
-            setTimeout(function () {
-                // TODO: make this behave well together with keyboard navigation
-                if (! $li.is('li:hover') /*&& ! $li.find('a:focus')*/) {
-                    $li.removeClass('hover');
-                }
-            }, 300);
         },
 
         treeNodeToggle: function () {
@@ -330,14 +162,6 @@
             icinga.ui.fixControls();
         },
 
-        historycolorgridHover: function () {
-            $(this).addClass('hover');
-        },
-
-        historycolorgidUnhover: function() {
-            $(this).removeClass('hover');
-        },
-
         autoSubmitSearch: function(event) {
             var self = event.data.self;
             if ($('#menu input.search').val() === self.searchValue) {
@@ -349,39 +173,6 @@
 
         autoSubmitForm: function (event) {
             return event.data.self.submitForm(event, true);
-        },
-
-        clickTriState: function (event) {
-            var self = event.data.self;
-            var $tristate = $(this);
-            var triState  = parseInt($tristate.data('icinga-tristate'), 10);
-
-            // load current values
-            var old   = $tristate.data('icinga-old').toString();
-            var value = $tristate.parent().find('input:radio:checked').first().prop('checked', false).val();
-
-            // calculate the new value
-            if (triState) {
-                // 1         => 0
-                // 0         => unchanged
-                // unchanged => 1
-                value = value === '1' ? '0' : (value === '0' ? 'unchanged' : '1');
-            } else {
-                // 1 => 0
-                // 0 => 1
-                value = value === '1' ? '0' : '1';
-            }
-
-            // update form value
-            $tristate.parent().find('input:radio[value="' + value + '"]').prop('checked', true);
-            // update dummy
-
-            if (value !== old) {
-                $tristate.parent().find('b.tristate-changed').css('visibility', 'visible');
-            } else {
-                $tristate.parent().find('b.tristate-changed').css('visibility', 'hidden');
-            }
-            self.icinga.ui.setTriState(value.toString(), $tristate);    
         },
 
         /**
@@ -527,9 +318,7 @@
             var $a = $(this);
             var href = $a.attr('href');
             var linkTarget = $a.attr('target');
-            var $li;
             var $target;
-            var isMenuLink = $a.closest('#menu').length > 0;
             var formerUrl;
             var remote = /^(?:[a-z]+:)\/\//;
             if (href.match(/^(mailto|javascript):/)) {
@@ -580,26 +369,9 @@
 
             // If link has hash tag...
             if (href.match(/#/)) {
-                // ...it may be a menu section without a dedicated link.
-                // Switch the active menu item:
-                if (isMenuLink) {
-                    $li = $a.closest('li');
-                    $('#menu .active').removeClass('active');
-                    $li.addClass('active');
-                    activeMenuId = $($li).attr('id');
-                    if ($li.hasClass('hover')) {
-                        $li.removeClass('hover');
-                    }
-                }
                 if (href === '#') {
-                    // Allow to access dropdown menu by keyboard
-                    if ($a.hasClass('dropdown-toggle')) {
-                        $a.closest('li').toggleClass('hover');
-                    }
-                    // Ignore link, no action
                     return false;
                 }
-
                 $target = self.getLinkTargetFor($a);
 
                 formerUrl = $target.data('icingaUrl');
@@ -612,21 +384,13 @@
                     return false;
                 }
             } else {
-                if (isMenuLink) {
-                    activeMenuId = $(event.target).closest('li').attr('id');
-                }
                 $target = self.getLinkTargetFor($a);
             }
 
             // Load link URL
             icinga.loader.loadUrl(href, $target);
 
-            if (isMenuLink) {
-                // update target url of the menu container to the clicked link
-                var menuDataUrl = icinga.utils.parseUrl($('#menu').data('icinga-url'));
-                menuDataUrl = icinga.utils.addUrlParams(menuDataUrl.path, { url: href });
-                $('#menu').data('icinga-url', menuDataUrl);
-
+            if ($a.closest('#menu').length > 0) {
                 // Menu links should remove all but the first layout column
                 icinga.ui.layout1col();
             }
@@ -697,6 +461,9 @@
     */
 
         unbindGlobalHandlers: function () {
+            $.each(self.icinga.behaviors, function (name, behavior) {
+                behavior.unbind();
+            });
             $(window).off('resize', this.onWindowResize);
             $(window).off('load', this.onLoad);
             $(window).off('unload', this.onUnload);
@@ -708,12 +475,6 @@
             $(document).off('submit', 'form', this.submitForm);
             $(document).off('click', 'button', this.submitForm);
             $(document).off('change', 'form select.autosubmit', this.submitForm);
-            $(document).off('mouseenter', '.historycolorgrid td', this.historycolorgridHover);
-            $(document).off('mouseleave', '.historycolorgrid td', this.historycolorgidUnhover);
-            $(document).off('mouseenter', 'li.dropdown', this.dropdownHover);
-            $(document).off('mouseleave', 'li.dropdown', this.dropdownLeave);
-            $(document).off('click', 'div.tristate .tristate-dummy', this.clickTriState);
-            $(document).off('mousemove');
         },
 
         destroy: function() {
