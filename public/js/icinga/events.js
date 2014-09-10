@@ -10,8 +10,6 @@
 
     'use strict';
 
-    var activeMenuId;
-
     Icinga.Events = function (icinga) {
         this.icinga = icinga;
 
@@ -82,60 +80,10 @@
 
             $('input.autofocus', el).focus();
 
-            // replace all sparklines
-            $('span.sparkline', el).each(function(i, element) {
-                // read custom options
-                var $spark            = $(element);
-                var labels            = $spark.attr('labels').split('|');
-                var formatted         = $spark.attr('formatted').split('|');
-                var tooltipChartTitle = $spark.attr('sparkTooltipChartTitle') || '';
-                var format            = $spark.attr('tooltipformat');
-                var hideEmpty         = $spark.attr('hideEmptyLabel') === 'true';
-                $spark.sparkline(
-                    'html',
-                    {
-                        enableTagOptions: true,
-                        tooltipFormatter: function (sparkline, options, fields) {
-                            var out       = format;
-                            if (hideEmpty && fields.offset === 3) {
-                                return '';
-                            }
-                            var replace   = {
-                                title:     tooltipChartTitle,
-                                label:     labels[fields.offset] ? labels[fields.offset] : fields.offset,
-                                formatted: formatted[fields.offset] ? formatted[fields.offset] : '',
-                                value:     fields.value,
-                                percent:   Math.round(fields.percent * 100) / 100
-                            };
-                            $.each(replace, function(key, value) {
-                                out = out.replace('{{' + key + '}}', value);
-                            });
-                            return out;
-                        }
-                });
-            });
             var searchField = $('#menu input.search', el);
             // Remember initial search field value if any
             if (searchField.length && searchField.val().length) {
                 this.searchValue = searchField.val();
-            }
-
-            // restore menu state
-            if (activeMenuId) {
-                $('[role="navigation"] li.active', el).removeClass('active');
-
-                var $selectedMenu = $('#' + activeMenuId, el);
-                var $outerMenu = $selectedMenu.parent().closest('li');
-                if ($outerMenu.size()) {
-                    $selectedMenu = $outerMenu;
-                }
-                $selectedMenu.addClass('active');
-            } else {
-                // store menu state
-                var $menus = $('[role="navigation"] li.active', el);
-                if ($menus.size()) {
-                    activeMenuId = $menus[0].id;
-                }
             }
         },
 
@@ -178,8 +126,6 @@
 
             $(document).on('keyup', '#menu input.search', {self: this}, this.autoSubmitSearch);
 
-            $(document).on('mouseenter', '.historycolorgrid td', this.historycolorgridHover);
-            $(document).on('mouseleave', '.historycolorgrid td', this.historycolorgidUnhover);
             $(document).on('mouseenter', 'li.dropdown', this.dropdownHover);
             $(document).on('mouseleave', 'li.dropdown', {self: this}, this.dropdownLeave);
 
@@ -187,14 +133,11 @@
             $(document).on('mouseleave', '#sidebar', { self: this }, this.leaveSidebar);
             $(document).on('click', '.tree .handle', { self: this }, this.treeNodeToggle);
 
-            // Toggle all triStateButtons
-            $(document).on('click', 'div.tristate .tristate-dummy', { self: this }, this.clickTriState);
 
             // TBD: a global autocompletion handler
             // $(document).on('keyup', 'form.auto input', this.formChangeDelayed);
             // $(document).on('change', 'form.auto input', this.formChanged);
             // $(document).on('change', 'form.auto select', this.submitForm);
-
         },
 
         menuTitleHovered: function (event) {
@@ -301,14 +244,6 @@
             icinga.ui.fixControls();
         },
 
-        historycolorgridHover: function () {
-            $(this).addClass('hover');
-        },
-
-        historycolorgidUnhover: function() {
-            $(this).removeClass('hover');
-        },
-
         autoSubmitSearch: function(event) {
             var self = event.data.self;
             if ($('#menu input.search').val() === self.searchValue) {
@@ -320,39 +255,6 @@
 
         autoSubmitForm: function (event) {
             return event.data.self.submitForm(event, true);
-        },
-
-        clickTriState: function (event) {
-            var self = event.data.self;
-            var $tristate = $(this);
-            var triState  = parseInt($tristate.data('icinga-tristate'), 10);
-
-            // load current values
-            var old   = $tristate.data('icinga-old').toString();
-            var value = $tristate.parent().find('input:radio:checked').first().prop('checked', false).val();
-
-            // calculate the new value
-            if (triState) {
-                // 1         => 0
-                // 0         => unchanged
-                // unchanged => 1
-                value = value === '1' ? '0' : (value === '0' ? 'unchanged' : '1');
-            } else {
-                // 1 => 0
-                // 0 => 1
-                value = value === '1' ? '0' : '1';
-            }
-
-            // update form value
-            $tristate.parent().find('input:radio[value="' + value + '"]').prop('checked', true);
-            // update dummy
-
-            if (value !== old) {
-                $tristate.parent().find('b.tristate-changed').css('visibility', 'visible');
-            } else {
-                $tristate.parent().find('b.tristate-changed').css('visibility', 'hidden');
-            }
-            self.icinga.ui.setTriState(value.toString(), $tristate);    
         },
 
         /**
@@ -557,7 +459,6 @@
                     $li = $a.closest('li');
                     $('#menu .active').removeClass('active');
                     $li.addClass('active');
-                    activeMenuId = $($li).attr('id');
                     if ($li.hasClass('hover')) {
                         $li.removeClass('hover');
                     }
@@ -583,9 +484,6 @@
                     return false;
                 }
             } else {
-                if (isMenuLink) {
-                    activeMenuId = $(event.target).closest('li').attr('id');
-                }
                 $target = self.getLinkTargetFor($a);
             }
 
@@ -593,11 +491,6 @@
             icinga.loader.loadUrl(href, $target);
 
             if (isMenuLink) {
-                // update target url of the menu container to the clicked link
-                var menuDataUrl = icinga.utils.parseUrl($('#menu').data('icinga-url'));
-                menuDataUrl = icinga.utils.addUrlParams(menuDataUrl.path, { url: href });
-                $('#menu').data('icinga-url', menuDataUrl);
-
                 // Menu links should remove all but the first layout column
                 icinga.ui.layout1col();
             }
@@ -682,11 +575,8 @@
             $(document).off('submit', 'form', this.submitForm);
             $(document).off('click', 'button', this.submitForm);
             $(document).off('change', 'form select.autosubmit', this.submitForm);
-            $(document).off('mouseenter', '.historycolorgrid td', this.historycolorgridHover);
-            $(document).off('mouseleave', '.historycolorgrid td', this.historycolorgidUnhover);
             $(document).off('mouseenter', 'li.dropdown', this.dropdownHover);
             $(document).off('mouseleave', 'li.dropdown', this.dropdownLeave);
-            $(document).off('click', 'div.tristate .tristate-dummy', this.clickTriState);
         },
 
         destroy: function() {

@@ -7,13 +7,14 @@
 
     Icinga.Behaviors = Icinga.Behaviors || {};
 
-    var Tooltip = function () {
+    var Tooltip = function (icinga) {
+        this.icinga = icinga;
         this.mouseX = 0;
         this.mouseY = 0;
     };
 
     Tooltip.prototype.apply = function(el) {
-        var self = this;
+        var self = this, icinga = this.icinga;
 
         $('[title]').each(function () {
             var $el = $(this);
@@ -27,11 +28,11 @@
         // migrate or remove all orphaned tooltips
         $('.tipsy').each(function () {
             var arrow = $('.tipsy-arrow', this)[0];
-            if (!Icinga.utils.elementsOverlap(arrow, $('#main')[0])) {
+            if (!icinga.utils.elementsOverlap(arrow, $('#main')[0])) {
                 $(this).remove();
                 return;
             }
-            if (!Icinga.utils.elementsOverlap(arrow, el)) {
+            if (!icinga.utils.elementsOverlap(arrow, el)) {
                 return;
             }
             var title = $(this).find('.tipsy-inner').html();
