@@ -1,5 +1,6 @@
 class icingaweb2_dev {
   include apache
+  include php
 
   Exec { path => '/bin:/usr/bin' }
 
