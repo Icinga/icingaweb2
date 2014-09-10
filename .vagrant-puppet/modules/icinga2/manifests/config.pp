@@ -23,10 +23,19 @@
 define icinga2::config ($source) {
   include icinga2
 
-  file { "/etc/icinga2/${name}.conf":
+  $path = "/etc/icinga2/${name}.conf"
+  $cmd = "mkdir-p-for-${path}"
+
+  exec { $cmd:
+    command => "mkdir -p \"\$(dirname \"\$(readlink -m '${path}')\")\"",
+    path    => '/bin:/usr/bin',
+  }
+
+  file { $path:
     source  => "${source}/${name}.conf",
     owner   => 'icinga',
     group   => 'icinga',
     notify  => Service['icinga2'],
+    require => Exec[$cmd],
   }
 }
