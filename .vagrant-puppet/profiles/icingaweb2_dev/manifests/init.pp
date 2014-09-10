@@ -1,4 +1,6 @@
 class icingaweb2_dev {
+  include apache
+
   Exec { path => '/bin:/usr/bin' }
 
   mysql::database::populate { 'icingaweb':
@@ -28,7 +30,6 @@ class icingaweb2_dev {
 
   file { '/etc/httpd/conf.d/icingaweb.conf':
     source    => 'puppet:////vagrant/.vagrant-puppet/files/etc/httpd/conf.d/icingaweb.conf',
-    require   => Package['apache'],
     notify    => Service['apache'],
   }
 
@@ -44,6 +45,7 @@ class icingaweb2_dev {
     ensure    => 'directory',
     owner     => 'apache',
     group     => 'apache',
+    require   => Class['apache'],
   }
 
   icingaweb2::config::general { 'authentication':
