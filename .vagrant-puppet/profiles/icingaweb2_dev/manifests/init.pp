@@ -35,21 +35,6 @@ class icingaweb2_dev {
     notify    => Service['apache'],
   }
 
-  $cfgpath = '/etc/icingaweb'
-
-  file { [
-    "${cfgpath}",
-    "${cfgpath}/enabledModules",
-    "${cfgpath}/modules",
-    "${cfgpath}/modules/monitoring",
-    "${cfgpath}/modules/doc"
-  ]:
-    ensure    => 'directory',
-    owner     => 'apache',
-    group     => 'apache',
-    require   => Class['apache'],
-  }
-
   icingaweb2::config::general { 'authentication':
     source  => 'puppet:///modules/icingaweb2_dev',
   }
