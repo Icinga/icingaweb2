@@ -14,16 +14,14 @@
     };
 
     Navigation.prototype.apply = function(el) {
-        // restore menu state
+        // restore old menu state
         if (activeMenuId) {
             $('[role="navigation"] li.active', el).removeClass('active');
-
-            var $selectedMenu = $('#' + activeMenuId, el);
+            var $selectedMenu = $('#' + activeMenuId, el).addClass('active');
             var $outerMenu = $selectedMenu.parent().closest('li');
             if ($outerMenu.size()) {
-                $selectedMenu = $outerMenu;
+                $outerMenu.addClass('active');
             }
-            $selectedMenu.addClass('active');
         } else {
             // store menu state
             var $menus = $('[role="navigation"] li.active', el);
@@ -34,8 +32,8 @@
     };
 
     Navigation.prototype.bind = function() {
-        $(document).on('click', 'a', { self: this }, this.linkClicked);
-        $(document).on('click', 'tr[href]', { self: this }, this.linkClicked);
+        $(document).on('click', '#menu a', { self: this }, this.linkClicked);
+        $(document).on('click', '#menu tr[href]', { self: this }, this.linkClicked);
         $(document).on('mouseenter', 'li.dropdown', this.dropdownHover);
         $(document).on('mouseleave', 'li.dropdown', {self: this}, this.dropdownLeave);
         $(document).on('mouseenter', '#menu > ul > li', { self: this }, this.menuTitleHovered);
@@ -43,8 +41,8 @@
     };
 
     Navigation.prototype.unbind = function() {
-        $(document).off('click', 'a', this.linkClicked);
-        $(document).off('click', 'tr[href]', this.linkClicked);
+        $(document).off('click', '#menu a', this.linkClicked);
+        $(document).off('click', '#menu tr[href]', this.linkClicked);
         $(document).off('mouseenter', 'li.dropdown', this.dropdownHover);
         $(document).off('mouseleave', 'li.dropdown', this.dropdownLeave);
         $(document).off('mouseenter', '#menu > ul > li', this.menuTitleHovered);
@@ -53,40 +51,34 @@
     Navigation.prototype.linkClicked = function(event) {
         var $a = $(this);
         var href = $a.attr('href');
-        var isMenuLink = $a.closest('#menu').length > 0;
         var $li;
         var icinga = event.data.self.icinga;
 
         if (href.match(/#/)) {
             // ...it may be a menu section without a dedicated link.
             // Switch the active menu item:
-            if (isMenuLink) {
-                $li = $a.closest('li');
-                $('#menu .active').removeClass('active');
-                $li.addClass('active');
-                activeMenuId = $($li).attr('id');
-                if ($li.hasClass('hover')) {
-                    $li.removeClass('hover');
-                }
+            $li = $a.closest('li');
+            $('#menu .active').removeClass('active');
+            $li.addClass('active');
+            activeMenuId = $($li).attr('id');
+            if ($li.hasClass('hover')) {
+                $li.removeClass('hover');
             }
             if (href === '#') {
                 // Allow to access dropdown menu by keyboard
                 if ($a.hasClass('dropdown-toggle')) {
                     $a.closest('li').toggleClass('hover');
                 }
+                return;
             }
         } else {
-            if (isMenuLink) {
-                activeMenuId = $(event.target).closest('li').attr('id');
-            }
+            activeMenuId = $(event.target).closest('li').attr('id');
         }
-        if (isMenuLink) {
-            var $menu = $('#menu');
-            // update target url of the menu container to the clicked link
-            var menuDataUrl = icinga.utils.parseUrl($menu.data('icinga-url'));
-            menuDataUrl = icinga.utils.addUrlParams(menuDataUrl.path, { url: href });
-            $menu.data('icinga-url', menuDataUrl);
-        }
+        // update target url of the menu container to the clicked link
+        var $menu = $('#menu');
+        var menuDataUrl = icinga.utils.parseUrl($menu.data('icinga-url'));
+        menuDataUrl = icinga.utils.addUrlParams(menuDataUrl.path, { url: href });
+        $menu.data('icinga-url', menuDataUrl);
     };
 
     Navigation.prototype.menuTitleHovered = function(event) {
