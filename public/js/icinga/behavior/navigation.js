@@ -46,6 +46,7 @@
         $(document).off('mouseenter', 'li.dropdown', this.dropdownHover);
         $(document).off('mouseleave', 'li.dropdown', this.dropdownLeave);
         $(document).off('mouseenter', '#menu > ul > li', this.menuTitleHovered);
+        $(document).on('mouseleave', '#sidebar', this.leaveSidebar);
     };
 
     Navigation.prototype.linkClicked = function(event) {
