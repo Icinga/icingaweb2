@@ -369,6 +369,9 @@
 
             // If link has hash tag...
             if (href.match(/#/)) {
+                if (href === '#') {
+                    return false;
+                }
                 $target = self.getLinkTargetFor($a);
 
                 formerUrl = $target.data('icingaUrl');

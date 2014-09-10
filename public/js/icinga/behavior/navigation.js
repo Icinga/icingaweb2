@@ -74,10 +74,7 @@
                 if ($a.hasClass('dropdown-toggle')) {
                     $a.closest('li').toggleClass('hover');
                 }
-                // Ignore link, no action
-                return false;
             }
-
         } else {
             if (isMenuLink) {
                 activeMenuId = $(event.target).closest('li').attr('id');
