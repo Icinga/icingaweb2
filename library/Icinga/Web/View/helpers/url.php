@@ -90,8 +90,7 @@ $this->addHelperFunction('propertiesToString', function ($properties) use ($view
     return ' ' . implode(' ', $attributes);
 });
 
-$this->addHelperFunction('attributeToString', function ($key, $value)
-{
+$this->addHelperFunction('attributeToString', function ($key, $value) use ($view) {
     // TODO: Doublecheck this!
     if (! preg_match('~^[a-zA-Z0-9-]+$~', $key)) {
         throw new ProgrammingError(
