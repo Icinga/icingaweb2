@@ -33,7 +33,8 @@ define pgsql::database::populate ($username, $password, $schemafile) {
 
   exec { "populate-${name}-pgsql-db":
     onlyif  => "psql -U ${username} -d ${name} -c \"SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '${name}';\" 2>/dev/null |grep -qEe '^ *0 *$'",
-    command => "sudo -u postgres psql -U ${username} -d ${name} < ${schemafile}",
+    command => "psql -U ${username} -d ${name} < ${schemafile}",
+    user    => 'postgres',
     require => [
       Pgsql::Database::Create[$name],
       Class['grep']

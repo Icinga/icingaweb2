@@ -24,7 +24,8 @@ class icingaweb2_dev {
 
   exec { 'populate-icingweb-pgsql-db-preferences':
     unless  => 'psql -U icingaweb -d icingaweb -c "SELECT * FROM preference;" &> /dev/null',
-    command => 'sudo -u postgres psql -U icingaweb -d icingaweb -f /vagrant/etc/schema/preferences.pgsql.sql',
+    command => 'psql -U icingaweb -d icingaweb -f /vagrant/etc/schema/preferences.pgsql.sql',
+    user    => 'postgres',
     require => Pgsql::Database::Populate['icingaweb'],
   }
 
