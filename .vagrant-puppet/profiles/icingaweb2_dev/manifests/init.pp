@@ -1,4 +1,6 @@
 class icingaweb2_dev {
+  Exec { path => '/bin:/usr/bin' }
+
   mysql::database::populate { 'icingaweb':
     username   => 'icingaweb',
     password   => 'icingaweb',
