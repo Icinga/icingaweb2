@@ -24,12 +24,8 @@ define icinga2::config ($source) {
   include icinga2
 
   $path = "/etc/icinga2/${name}.conf"
-  $cmd = "mkdir-p-for-${path}"
 
-  exec { $cmd:
-    command => "mkdir -p \"\$(dirname \"\$(readlink -m '${path}')\")\"",
-    path    => '/bin:/usr/bin',
-  }
+  parent_dirs { $path: }
 
   file { $path:
     source  => "${source}/${name}.conf",
@@ -37,7 +33,7 @@ define icinga2::config ($source) {
     group   => 'icinga',
     notify  => Service['icinga2'],
     require => [
-      Exec[$cmd],
+      Parent_dirs[$path],
       User['icinga']
     ],
   }
