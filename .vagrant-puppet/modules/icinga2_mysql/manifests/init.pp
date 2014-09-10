@@ -4,9 +4,10 @@
 #
 # Requires:
 #
-#   icinga2
 #   icinga_packages
+#   icinga2
 #   icinga2::feature
+#   icinga2::config
 #   mysql::database::populate
 #
 # Sample Usage:
@@ -30,10 +31,8 @@ class icinga2_mysql {
     require    => Package['icinga2-ido-mysql'],
   }
 
-  file { '/etc/icinga2/features-available/ido-mysql.conf':
-    source  => 'puppet:///modules/icinga2_mysql/etc/icinga2/features-available/ido-mysql.conf',
-    owner   => 'icinga',
-    group   => 'icinga',
+  icinga2::config { 'features-available/ido-mysql':
+    source => 'puppet:///modules/icinga2_mysql',
   }
 
   icinga2::feature { 'ido-mysql':
