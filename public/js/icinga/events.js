@@ -126,94 +126,12 @@
 
             $(document).on('keyup', '#menu input.search', {self: this}, this.autoSubmitSearch);
 
-            $(document).on('mouseenter', 'li.dropdown', this.dropdownHover);
-            $(document).on('mouseleave', 'li.dropdown', {self: this}, this.dropdownLeave);
-
-            $(document).on('mouseenter', '#menu > ul > li', { self: this }, this.menuTitleHovered);
-            $(document).on('mouseleave', '#sidebar', { self: this }, this.leaveSidebar);
             $(document).on('click', '.tree .handle', { self: this }, this.treeNodeToggle);
-
 
             // TBD: a global autocompletion handler
             // $(document).on('keyup', 'form.auto input', this.formChangeDelayed);
             // $(document).on('change', 'form.auto input', this.formChanged);
             // $(document).on('change', 'form.auto select', this.submitForm);
-        },
-
-        menuTitleHovered: function (event) {
-            var $li = $(this),
-                delay = 800,
-                self = event.data.self;
-
-            if ($li.hasClass('active')) {
-                $li.siblings().removeClass('hover');
-                return;
-            }
-            if ($li.children('ul').children('li').length === 0) {
-                return;
-            }
-            if ($('#menu').scrollTop() > 0) {
-                return;
-            }
-
-            if ($('#layout').hasClass('hoveredmenu')) {
-                delay = 0;
-            }
-
-            setTimeout(function () {
-                if (! $li.is('li:hover')) {
-                    return;
-                }
-                if ($li.hasClass('active')) {
-                    return;
-                }
-
-                $li.siblings().each(function () {
-                    var $sibling = $(this);
-                    if ($sibling.is('li:hover')) {
-                        return;
-                    }
-                    if ($sibling.hasClass('hover')) {
-                        $sibling.removeClass('hover');
-                    }
-                });
-
-                $('#layout').addClass('hoveredmenu');
-                $li.addClass('hover');
-            }, delay);
-        },
-
-        leaveSidebar: function (event) {
-            var $sidebar = $(this),
-                $li = $sidebar.find('li.hover'),
-                self = event.data.self;
-            if (! $li.length) {
-                $('#layout').removeClass('hoveredmenu');
-                return;
-            }
-
-            setTimeout(function () {
-                if ($li.is('li:hover') || $sidebar.is('sidebar:hover') ) {
-                    return;
-                }
-                $li.removeClass('hover');
-                $('#layout').removeClass('hoveredmenu');
-            }, 500);
-        },
-
-        dropdownHover: function () {
-            $(this).addClass('hover');
-        },
-
-        dropdownLeave: function (event) {
-            var $li = $(this),
-                self = event.data.self;
-            setTimeout(function () {
-                // TODO: make this behave well together with keyboard navigation
-                if (! $li.is('li:hover') /*&& ! $li.find('a:focus')*/) {
-                    $li.removeClass('hover');
-                }
-            }, 300);
         },
 
         treeNodeToggle: function () {
@@ -400,9 +318,7 @@
             var $a = $(this);
             var href = $a.attr('href');
             var linkTarget = $a.attr('target');
-            var $li;
             var $target;
-            var isMenuLink = $a.closest('#menu').length > 0;
             var formerUrl;
             var remote = /^(?:[a-z]+:)\/\//;
             if (href.match(/^(mailto|javascript):/)) {
@@ -453,25 +369,6 @@
 
             // If link has hash tag...
             if (href.match(/#/)) {
-                // ...it may be a menu section without a dedicated link.
-                // Switch the active menu item:
-                if (isMenuLink) {
-                    $li = $a.closest('li');
-                    $('#menu .active').removeClass('active');
-                    $li.addClass('active');
-                    if ($li.hasClass('hover')) {
-                        $li.removeClass('hover');
-                    }
-                }
-                if (href === '#') {
-                    // Allow to access dropdown menu by keyboard
-                    if ($a.hasClass('dropdown-toggle')) {
-                        $a.closest('li').toggleClass('hover');
-                    }
-                    // Ignore link, no action
-                    return false;
-                }
-
                 $target = self.getLinkTargetFor($a);
 
                 formerUrl = $target.data('icingaUrl');
@@ -490,7 +387,7 @@
             // Load link URL
             icinga.loader.loadUrl(href, $target);
 
-            if (isMenuLink) {
+            if ($a.closest('#menu').length > 0) {
                 // Menu links should remove all but the first layout column
                 icinga.ui.layout1col();
             }
@@ -575,8 +472,6 @@
             $(document).off('submit', 'form', this.submitForm);
             $(document).off('click', 'button', this.submitForm);
             $(document).off('change', 'form select.autosubmit', this.submitForm);
-            $(document).off('mouseenter', 'li.dropdown', this.dropdownHover);
-            $(document).off('mouseleave', 'li.dropdown', this.dropdownLeave);
         },
 
         destroy: function() {
