@@ -27,4 +27,8 @@ class icinga2 {
   }
 
   icinga2::feature { [ 'statusdata', 'command', 'compatlog' ]: }
+
+  user { 'icinga':
+    ensure => present,
+  }
 }

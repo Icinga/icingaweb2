@@ -36,6 +36,9 @@ define icinga2::config ($source) {
     owner   => 'icinga',
     group   => 'icinga',
     notify  => Service['icinga2'],
-    require => Exec[$cmd],
+    require => [
+      Exec[$cmd],
+      User['icinga']
+    ],
   }
 }
