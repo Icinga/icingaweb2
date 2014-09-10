@@ -26,7 +26,7 @@
 define mysql::database::populate ($username, $password, $privileges, $schemafile) {
   include grep
 
-  Exec { path => '/usr/bin' }
+  Exec { path => '/bin:/usr/bin' }
 
   mysql::database::create { $name:
     username   => $username,
