@@ -13,15 +13,22 @@
 define icinga2::feature ($source = undef) {
   include icinga2
 
+  $target = "features-available/${name}"
+  $cfgpath = '/etc/icinga2'
+  $path = "${cfgpath}/features-enabled/${name}.conf"
+
   if $source != undef {
-    icinga2::config { "features-available/${name}":
+    icinga2::config { $target:
       source => $source,
     }
   }
 
-  file { "/etc/icinga2/features-enabled/${name}.conf":
-    ensure => link,
-    target => "/etc/icinga2/features-available/${name}.conf",
-    notify => Service['icinga2'],
+  parent_dirs { $path: }
+
+  file { $path:
+    ensure  => link,
+    target  => "${cfgpath}/${target}.conf",
+    require => Parent_dirs[$path],
+    notify  => Service['icinga2'],
   }
 }
