@@ -27,6 +27,6 @@ define icinga2::config ($source) {
     source  => "${source}/${name}.conf",
     owner   => 'icinga',
     group   => 'icinga',
-    require => Class['icinga2'],
+    notify  => Service['icinga2'],
   }
 }
