@@ -97,7 +97,7 @@
             this.history    = new Icinga.History(this);
             var self = this;
             $.each(Icinga.Behaviors, function(name, Behavior) {
-                self.behaviors[name.toLowerCase()] = new Behavior();
+                self.behaviors[name.toLowerCase()] = new Behavior(self);
             });
 
             this.timezone.initialize();

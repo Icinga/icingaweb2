@@ -32,26 +32,17 @@
         initialize: function () {
             this.applyGlobalDefaults();
             this.applyHandlers($('#layout'));
-            var self = this;
-
-            // define global site behavior
-            $.each(self.icinga.behaviors, function (name, behavior) {
-                behavior.bind();
-            });
-
-            // prepare container html
             $('.container').each(function(idx, el) {
-                // apply event handlers
                 icinga.events.applyHandlers($(el));
                 icinga.ui.initializeControls($(el));
-                $.each(self.icinga.behaviors, function (name, behavior) {
-                    behavior.apply(el);
-                });
             });
         },
 
         // TODO: What's this?
         applyHandlers: function (el) {
+            $.each(this.icinga.behaviors, function (name, behavior) {
+                behavior.apply(el);
+            });
 
             var icinga = this.icinga;
 
@@ -152,6 +143,10 @@
          * Global default event handlers
          */
         applyGlobalDefaults: function () {
+            $.each(self.icinga.behaviors, function (name, behavior) {
+                behavior.bind();
+            });
+
             // We catch resize events
             $(window).on('resize', { self: this.icinga.ui }, this.icinga.ui.onWindowResize);
 
@@ -673,6 +668,9 @@
     */
 
         unbindGlobalHandlers: function () {
+            $.each(self.icinga.behaviors, function (name, behavior) {
+                behavior.unbind();
+            });
             $(window).off('resize', this.onWindowResize);
             $(window).off('load', this.onLoad);
             $(window).off('unload', this.onUnload);
