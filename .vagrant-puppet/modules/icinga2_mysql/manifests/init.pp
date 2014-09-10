@@ -31,14 +31,8 @@ class icinga2_mysql {
     require    => Package['icinga2-ido-mysql'],
   }
 
-  icinga2::config { 'features-available/ido-mysql':
-    source => 'puppet:///modules/icinga2_mysql',
-  }
-
   icinga2::feature { 'ido-mysql':
-    require => [
-      Mysql::Database::Populate['icinga2'],
-      Icinga2::Config['features-available/ido-mysql'],
-    ],
+    source => 'puppet:///modules/icinga2_mysql',
+    require => Mysql::Database::Populate['icinga2'],
   }
 }

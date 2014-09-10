@@ -10,8 +10,14 @@
 #
 #   icinga2::feature { 'example-feature'; }
 #
-define icinga2::feature {
+define icinga2::feature ($source = undef) {
   include icinga2
+
+  if $source != undef {
+    icinga2::config { "features-available/${name}":
+      source => $source,
+    }
+  }
 
   file { "/etc/icinga2/features-enabled/${name}.conf":
     ensure => link,
