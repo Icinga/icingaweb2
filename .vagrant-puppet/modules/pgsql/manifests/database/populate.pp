@@ -24,7 +24,7 @@
 define pgsql::database::populate ($username, $password, $schemafile) {
   include grep
 
-  Exec { path => '/usr/bin' }
+  Exec { path => '/bin:/usr/bin' }
 
   pgsql::database::create { $name:
     username => $username,
