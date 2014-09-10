@@ -1,4 +1,4 @@
-define icingaweb2::config ($source, $replace = true) {
+define icingaweb2::config::general ($source, $replace = true) {
   $path = "/etc/icingaweb/${name}.ini"
   file { $path:
     source  => "${source}${path}",

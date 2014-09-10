@@ -44,11 +44,11 @@ class icingaweb2_dev {
     group     => 'apache',
   }
 
-  icingaweb2::config { 'authentication':
+  icingaweb2::config::general { 'authentication':
     source  => 'puppet:///modules/icingaweb2_dev',
   }
 
-  icingaweb2::config { [ 'resources', 'config' ]:
+  icingaweb2::config::general { [ 'resources', 'config' ]:
     source  => 'puppet:///modules/icingaweb2_dev',
     replace => false,
   }
