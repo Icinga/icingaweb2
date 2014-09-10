@@ -17,7 +17,6 @@ define icinga2::feature {
     path    => '/bin:/usr/bin:/sbin:/usr/sbin',
     unless  => "readlink /etc/icinga2/features-enabled/${name}.conf",
     command => "icinga2-enable-feature ${name}",
-    require => Package['icinga2'],
     notify  => Service['icinga2']
   }
 }
