@@ -103,7 +103,7 @@ $this->addHelperFunction('attributeToString', function ($key, $value)
     return sprintf(
         '%s="%s"',
         $key,
-        $this->escape($value)
+        $view->escape($value)
     );
 });
 
