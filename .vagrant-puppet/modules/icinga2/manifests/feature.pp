@@ -13,10 +13,9 @@
 define icinga2::feature {
   include icinga2
 
-  exec { "icinga2-feature-${name}":
-    path    => '/bin:/usr/bin:/sbin:/usr/sbin',
-    unless  => "readlink /etc/icinga2/features-enabled/${name}.conf",
-    command => "icinga2-enable-feature ${name}",
-    notify  => Service['icinga2']
+  file { "/etc/icinga2/features-enabled/${name}.conf":
+    ensure => link,
+    target => "/etc/icinga2/features-available/${name}.conf",
+    notify => Service['icinga2'],
   }
 }
