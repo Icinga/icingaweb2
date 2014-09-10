@@ -4,6 +4,7 @@
 
 namespace Icinga\Web;
 
+use Exception;
 use RecursiveIteratorIterator;
 use Icinga\Logger\Logger;
 
