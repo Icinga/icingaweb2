@@ -38,7 +38,7 @@ class icinga2_mysql {
   icinga2::feature { 'ido-mysql':
     require => [
       Mysql::Database::Populate['icinga2'],
-      File['/etc/icinga2/features-available/ido-mysql.conf']
+      Icinga2::Config['features-available/ido-mysql'],
     ],
   }
 }
