@@ -12,7 +12,6 @@
 # Requires:
 #
 #   mysql::database::create
-#   grep
 #
 # Sample Usage:
 #
@@ -24,8 +23,6 @@
 # }
 #
 define mysql::database::populate ($username, $password, $privileges, $schemafile) {
-  include grep
-
   Exec { path => '/bin:/usr/bin' }
 
   mysql::database::create { $name:
@@ -37,9 +34,6 @@ define mysql::database::populate ($username, $password, $privileges, $schemafile
   exec { "populate-${name}-mysql-db":
     onlyif  => "mysql -u${username} -p${password} ${name} -e \"SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '${name}';\" 2>/dev/null |grep -qEe '^ *0 *$'",
     command => "mysql -uroot ${name} < ${schemafile}",
-    require => [
-      Mysql::Database::Create[$name],
-      Class['grep']
-    ],
+    require => Mysql::Database::Create[$name],
   }
 }
