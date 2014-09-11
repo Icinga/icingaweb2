@@ -282,20 +282,6 @@
             return $('#main > .container').length;
         },
 
-        prepareContainers: function () {
-            var icinga = this.icinga;
-            $('.container').each(function(idx, el) {
-                icinga.events.applyHandlers($(el));
-                icinga.ui.initializeControls($(el));
-            });
-            /*
-            $('#icinga-main').attr(
-                'icingaurl',
-                window.location.pathname + window.location.search
-            );
-            */
-        },
-
         /**
          * Add the given table-row to the selection of the closest
          * table and deselect all other rows of the closest table.
@@ -767,7 +753,6 @@
             this.debugTimer = null;
             this.timeCounterTimer = null;
         }
-
     };
 
 }(Icinga, jQuery));

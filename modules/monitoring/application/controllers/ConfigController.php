@@ -2,13 +2,9 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use \Exception;
-
 use Icinga\Config\PreservingIniWriter;
 use Icinga\Web\Controller\ModuleActionController;
 use Icinga\Web\Notification;
-use Icinga\Web\Url;
-
 use Icinga\Module\Monitoring\Form\Config\ConfirmRemovalForm;
 use Icinga\Module\Monitoring\Form\Config\Backend\EditBackendForm;
 use Icinga\Module\Monitoring\Form\Config\Backend\CreateBackendForm;

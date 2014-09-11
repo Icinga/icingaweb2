@@ -22,7 +22,7 @@ $this->addHelperFunction('url', function ($path = null, $params = null) {
         $url = Url::fromPath($path);
     }
     if ($params !== null) {
-        $url->setParams($params);
+        $url->overwriteParams($params);
     }
 
     return $url;
@@ -90,20 +90,19 @@ $this->addHelperFunction('propertiesToString', function ($properties) use ($view
     return ' ' . implode(' ', $attributes);
 });
 
-$this->addHelperFunction('attributeToString', function ($key, $value)
-{
+$this->addHelperFunction('attributeToString', function ($key, $value) use ($view) {
     // TODO: Doublecheck this!
     if (! preg_match('~^[a-zA-Z0-9-]+$~', $key)) {
-        throw new ProgrammingError(sprintf(
+        throw new ProgrammingError(
             'Trying to set an invalid HTML attribute name: %s',
             $key
-        ));
+        );
     }
 
     return sprintf(
         '%s="%s"',
         $key,
-        $value
+        $view->escape($value)
     );
 });
 

@@ -5,6 +5,7 @@
 namespace Icinga\Web;
 
 use Icinga\Application\Icinga;
+use Icinga\Cli\FakeRequest;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Web\UrlParams;
 
@@ -98,7 +99,12 @@ class Url
      */
     protected static function getRequest()
     {
-        return Icinga::app()->getFrontController()->getRequest();
+        $app = Icinga::app();
+        if ($app->isCli()) {
+            return new FakeRequest();
+        } else {
+            return $app->getFrontController()->getRequest();
+        }
     }
 
     /**
@@ -120,7 +126,10 @@ class Url
         }
 
         if (!is_string($url)) {
-            throw new ProgrammingError(sprintf('url "%s" is not a string', $url));
+            throw new ProgrammingError(
+                'url "%s" is not a string',
+                $url
+            );
         }
 
         $urlObject = new Url();
@@ -383,6 +392,23 @@ class Url
     }
 
     /**
+     * Whether the given URL matches this URL object
+     *
+     * This does an exact match, parameters MUST be in the same order
+     *
+     * @param Url|string $url the URL to compare against
+     *
+     * @return bool whether the URL matches
+     */
+    public function matches($url)
+    {
+        if (! $url instanceof Url) {
+            $url = Url::fromPath($url);
+        }
+        return (string) $url === (string) $this;
+    }
+
+    /**
      * Return a copy of this url without the parameter given
      *
      * The argument can be either a single query parameter name or an array of parameter names to
@@ -401,6 +427,24 @@ class Url
     {
         $url = clone($this);
         $url->remove($keyOrArrayOfKeys);
+        return $url;
+    }
+
+    /**
+     * Return a copy of this url with the given parameter(s)
+     *
+     * The argument can be either a single query parameter name or an array of parameter names to
+     * remove from the query list
+     *
+     * @param string|array $param  A single string or an array containing parameter names
+     * @param array        $values an optional values array
+     *
+     * @return Url
+     */
+    public function with($param, $values = null)
+    {
+        $url = clone($this);
+        $url->params->mergeValues($param, $values);
         return $url;
     }
 

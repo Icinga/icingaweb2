@@ -4,7 +4,7 @@
 
 namespace Icinga\Form\Config\Authentication;
 
-use \Zend_Config;
+use Zend_Config;
 use Icinga\Web\Form;
 
 /**

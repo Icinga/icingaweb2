@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
+use Icinga\Logger\Logger;
 use Zend_Db_Select;
 
 class GroupSummaryQuery extends IdoQuery
@@ -69,8 +70,15 @@ class GroupSummaryQuery extends IdoQuery
             )
         );
 
+        $groupColumn = 'hostgroup';
+
+        if (in_array('servicegroup', $this->desiredColumns)) {
+            $groupColumn = 'servicegroup';
+        }
+
         $union = $this->db->select()->union(array($hosts, $services), Zend_Db_Select::SQL_UNION_ALL);
-        $this->select->from(array('statussummary' => $union), '*')->group($columns[0]);
+        $this->select->from(array('statussummary' => $union), array($groupColumn))->group(array($groupColumn));
+
         $this->joinedVirtualTables = array(
             'servicestatussummary'  => true,
             'hoststatussummary'     => true

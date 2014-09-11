@@ -38,10 +38,8 @@ class Widget
 
         if (! class_exists($class)) {
             throw new ProgrammingError(
-                sprintf(
-                    'There is no such widget: %s',
-                    $name
-                )
+                'There is no such widget: %s',
+                $name
             );
         }
 

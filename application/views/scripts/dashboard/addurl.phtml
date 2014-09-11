@@ -2,6 +2,11 @@
 <?= $this->tabs ?>
 </div>
 
-<div class="content" >
-<?= $this->form ?>
+<div class="content">
+    <h1><?= $this->escape($this->translate('This feature is deactivated at the moment.')); ?></h1>
+    <p>
+        <?=
+        $this->escape($this->translate('Please have a little patience, we are hard working on it, take a look at icingaweb2 issues.'));
+        ?>
+    </p>
 </div>

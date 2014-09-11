@@ -4,6 +4,7 @@
 
 namespace Icinga\Web\Widget\Dashboard;
 
+use Icinga\Exception\IcingaException;
 use Icinga\Util\Dimension;
 use Icinga\Web\Form;
 use Icinga\Web\Url;
@@ -42,6 +43,13 @@ class Component extends AbstractWidget
     private $pane;
 
     /**
+     * The disabled option is used to "delete" default dashlets provided by modules
+     *
+     * @var bool
+     */
+    private $disabled = false;
+
+    /**
      * The template string used for rendering this widget
      *
      * @var string
@@ -72,11 +80,9 @@ EOD;
         } elseif ($url) {
             $this->url = Url::fromPath($url);
         } else {
-            throw new Exception(
-                sprintf(
-                    'Cannot create dashboard component "%s" without valid URL',
-                    $title
-                )
+            throw new IcingaException(
+                'Cannot create dashboard component "%s" without valid URL',
+                $title
             );
         }
     }
@@ -119,6 +125,26 @@ EOD;
     }
 
     /**
+     * Set the disabled property
+     *
+     * @param boolean $disabled
+     */
+    public function setDisabled($disabled)
+    {
+        $this->disabled = $disabled;
+    }
+
+    /**
+     * Get the disabled property
+     *
+     * @return boolean
+     */
+    public function getDisabled()
+    {
+        return $this->disabled;
+    }
+
+    /**
      * Return this component's structure as array
      *
      * @return  array
@@ -137,6 +163,10 @@ EOD;
      */
     public function render()
     {
+        if ($this->disabled === true) {
+            return '';
+        }
+
         $view = $this->view();
         $url = clone($this->url);
         $url->setParam('view', 'compact');

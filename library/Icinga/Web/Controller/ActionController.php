@@ -8,6 +8,7 @@ use Exception;
 use Icinga\Authentication\Manager as AuthManager;
 use Icinga\Application\Benchmark;
 use Icinga\Application\Config;
+use Icinga\Exception\IcingaException;
 use Icinga\Util\Translator;
 use Icinga\Web\Widget\Tabs;
 use Icinga\Web\Window;
@@ -177,7 +178,10 @@ class ActionController extends Zend_Controller_Action
     {
         if (! $this->Auth()->hasPermission($name)) {
             // TODO: Shall this be an Auth Exception? Or a 404?
-            throw new Exception(sprintf('Auth error, no permission for "%s"', $name));
+            throw new IcingaException(
+                'Auth error, no permission for "%s"',
+                $name
+            );
         }
     }
 
@@ -344,7 +348,9 @@ class ActionController extends Zend_Controller_Action
             // Cast preference app.show_benchmark to bool because preferences loaded from a preferences storage are
             // always strings
             if ((bool) $user->getPreferences()->get('app.show_benchmark', false) === true) {
-                $layout->benchmark = $this->renderBenchmark();
+                if (!$this->_helper->viewRenderer->getNoRender()) {
+                    $layout->benchmark = $this->renderBenchmark();
+                }
             }
         }
 
@@ -381,7 +387,7 @@ class ActionController extends Zend_Controller_Action
         if ($this->view->title) {
             if (preg_match('~[\r\n]~', $this->view->title)) {
                 // TODO: Innocent exception and error log for hack attempts
-                throw new Exception('No way, guy');
+                throw new IcingaException('No way, guy');
             }
             $resp->setHeader(
                 'X-Icinga-Title',

@@ -5,17 +5,22 @@
 namespace Icinga\Application\Modules;
 
 use Exception;
+use Zend_Config;
 use Zend_Controller_Router_Route_Abstract;
 use Zend_Controller_Router_Route as Route;
+use Zend_Controller_Router_Route_Regex as RegexRoute;
 use Icinga\Application\ApplicationBootstrap;
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
 use Icinga\Logger\Logger;
 use Icinga\Util\Translator;
 use Icinga\Web\Hook;
+use Icinga\Web\Menu;
 use Icinga\Web\Widget;
+use Icinga\Web\Widget\Dashboard\Pane;
 use Icinga\Util\File;
 use Icinga\Exception\ProgrammingError;
+use Icinga\Exception\IcingaException;
 
 /**
  * Module handling
@@ -136,7 +141,6 @@ class Module
      */
     private $app;
 
-
     /**
      * Routes to add to the route chain
      *
@@ -145,6 +149,97 @@ class Module
      * @see addRoute()
      */
     protected $routes = array();
+
+    /**
+     * A set of menu elements
+     *
+     * @var array
+     */
+    protected $menuItems = array();
+
+    /**
+     * A set of Pane elements
+     *
+     * @var array
+     */
+    protected $paneItems = array();
+
+    /**
+     * @var array
+     */
+    protected $searchUrls = array();
+
+    /**
+     * @param string $title
+     * @param string $url
+     */
+    public function provideSearchUrl($title, $url)
+    {
+        $searchUrl = (object) array(
+            'title' => $title,
+            'url'   => $url
+        );
+
+        $this->searchUrls[] = $searchUrl;
+    }
+
+    public function getSearchUrls()
+    {
+        $this->launchConfigScript();
+        return $this->searchUrls;
+    }
+
+    /**
+     * Get all Menu Items
+     *
+     * @return array
+     */
+    public function getPaneItems()
+    {
+        $this->launchConfigScript();
+        return $this->paneItems;
+    }
+
+    /**
+     * Add a pane to dashboard
+     *
+     * @param $name
+     * @return Pane
+     */
+    protected function dashboard($name)
+    {
+        $this->paneItems[$name] = new Pane($name);
+        return $this->paneItems[$name];
+    }
+
+    /**
+     * Get all Menu Items
+     *
+     * @return array
+     */
+    public function getMenuItems()
+    {
+        $this->launchConfigScript();
+        return $this->menuItems;
+    }
+
+    /**
+     * Add a menu Section to the Sidebar menu
+     *
+     * @param $name
+     * @param array $properties
+     * @return mixed
+     */
+    protected function menuSection($name, array $properties = array())
+    {
+        if (array_key_exists($name, $this->menuItems)) {
+            $this->menuItems[$name]->setProperties($properties);
+        } else {
+            $this->menuItems[$name] = new Menu($name, new Zend_Config($properties));
+        }
+
+        return $this->menuItems[$name];
+    }
 
     /**
      * Create a new module object
@@ -559,8 +654,9 @@ class Module
     protected function providePermission($name, $description)
     {
         if ($this->providesPermission($name)) {
-            throw new Exception(
-                sprintf('Cannot provide permission "%s" twice', $name)
+            throw new IcingaException(
+                'Cannot provide permission "%s" twice',
+                $name
             );
         }
         $this->permissionList[$name] = (object) array(
@@ -580,8 +676,9 @@ class Module
     protected function provideRestriction($name, $description)
     {
         if ($this->providesRestriction($name)) {
-            throw new Exception(
-                sprintf('Cannot provide restriction "%s" twice', $name)
+            throw new IcingaException(
+                'Cannot provide restriction "%s" twice',
+                $name
             );
         }
         $this->restrictionList[$name] = (object) array(
@@ -637,10 +734,42 @@ class Module
      */
     protected function registerLocales()
     {
-        if (file_exists($this->localedir) && is_dir($this->localedir)) {
+        if ($this->hasLocales()) {
             Translator::registerDomain($this->name, $this->localedir);
         }
         return $this;
+    }
+
+    /**
+     * return bool Whether this module has translations
+     */
+    public function hasLocales()
+    {
+        return file_exists($this->localedir) && is_dir($this->localedir);
+    }
+
+    /**
+     * List all available locales
+     *
+     * return array Locale list
+     */
+    public function listLocales()
+    {
+        $locales = array();
+        if (! $this->hasLocales()) {
+            return $locales;
+        }
+
+        $dh = opendir($this->localedir);
+        while (false !== ($file = readdir($dh))) {
+            $filename = $this->localedir . DIRECTORY_SEPARATOR . $file;
+            if (preg_match('/^[a-z]{2}_[A-Z]{2}$/', $file) && is_dir($filename)) {
+                $locales[] = $file;
+            }
+        }
+        closedir($dh);
+        sort($locales);
+        return $locales;
     }
 
     /**
@@ -693,12 +822,15 @@ class Module
         );
         $router->addRoute(
             $this->name . '_img',
-            new Route(
-                'img/' . $this->name . '/:file',
+            new RegexRoute(
+                'img/' . $this->name . '/(.+)',
                 array(
                     'controller'    => 'static',
                     'action'        => 'img',
                     'module_name'   => $this->name
+                ),
+                array(
+                    1 => 'file'
                 )
             )
         );
@@ -780,5 +912,16 @@ class Module
     {
         $this->routes[$name] = $route;
         return $this;
+    }
+
+    /**
+     * Translate a string with the global mt()
+     *
+     * @param $string
+     * @return mixed|string
+     */
+    protected function translate($string)
+    {
+        return mt($this->name, $string);
     }
 }

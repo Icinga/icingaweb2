@@ -4,7 +4,6 @@
 
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Backend;
-use Icinga\Module\Monitoring\DataView\DataView;
 use Icinga\Web\Url;
 use Icinga\Web\Hook;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
@@ -34,16 +33,46 @@ class Monitoring_ListController extends Controller
 
     protected function hasBetterUrl()
     {
+        $request = $this->getRequest();
         $url = clone($this->url);
+
         if ($this->getRequest()->isPost()) {
+
+            if ($request->getPost('sort')) {
+                $url->setParam('sort', $request->getPost('sort'));
+                if ($request->getPost('dir')) {
+                    $url->setParam('dir', $request->getPost('dir'));
+                } else {
+                    $url->removeParam('dir');
+                }
+                return $url;
+            }
+
             $q = $this->getRequest()->getPost('q');
+            if ($q) {
+                list($k, $v) = preg_split('/=/', $q);
+                $url->addParams(array($k => $v));
+                return $url;
+            }
         } else {
             $q = $url->shift('q');
-        }
-        if ($q) {
-            list($k, $v) = preg_split('/=/', $q);
-            $url->addParams(array($k => $v));
-            return $url;
+            if ($q !== null) {
+                $action = $this->_request->getActionName();
+                switch($action) {
+                    case 'services':
+                        $this->params->remove('q')->set('service_description', '*' . $q . '*');
+                        break;
+                    case 'hosts':
+                        $this->params->remove('q')->set('host_name', '*' . $q . '*');
+                        break;
+                    case 'hostgroups':
+                        $this->params->remove('q')->set('hostgroup', '*' . $q . '*');
+                        break;
+                    case 'servicegroups':
+                        $this->params->remove('q')->set('servicegroup', '*' . $q . '*');
+                        break;
+                }
+            }
         }
         return false;
     }
@@ -87,6 +116,7 @@ class Monitoring_ListController extends Controller
             'host_address',
             'host_acknowledged',
             'host_output',
+            'host_attempt',
             'host_in_downtime',
             'host_is_flapping',
             'host_state_type',
@@ -205,6 +235,25 @@ class Monitoring_ListController extends Controller
             // TODO: Workaround, paginate should be able to fetch limit from new params
             $this->view->services = $query->paginate($this->params->get('limit'));
         }
+
+        $this->view->stats = $this->backend->select()->from('statusSummary', array(
+            'services_total',
+            'services_ok',
+            'services_problem',
+            'services_problem_handled',
+            'services_problem_unhandled',
+            'services_critical',
+            'services_critical_unhandled',
+            'services_critical_handled',
+            'services_warning',
+            'services_warning_unhandled',
+            'services_warning_handled',
+            'services_unknown',
+            'services_unknown_unhandled',
+            'services_unknown_handled',
+            'services_pending',
+        ))->getQuery()->fetchRow();
+
     }
 
     /**
@@ -381,6 +430,9 @@ class Monitoring_ListController extends Controller
 
     public function servicegroupsAction()
     {
+        if ($url = $this->hasBetterUrl()) {
+            return $this->redirectNow($url);
+        }
         $this->addTitleTab('servicegroups');
         $this->setAutorefreshInterval(12);
         $query = $this->backend->select()->from('groupsummary', array(
@@ -409,6 +461,9 @@ class Monitoring_ListController extends Controller
 
     public function hostgroupsAction()
     {
+        if ($url = $this->hasBetterUrl()) {
+            return $this->redirectNow($url);
+        }
         $this->addTitleTab('hostgroups');
         $this->setAutorefreshInterval(12);
         $query = $this->backend->select()->from('groupsummary', array(
@@ -453,7 +508,7 @@ class Monitoring_ListController extends Controller
         ));
 
         $this->setupSortControl(array(
-            'raw_timestamp' => 'Occurence'
+            'timestamp' => 'Occurence'
         ));
         $this->applyFilters($query);
         $this->view->history = $query->paginate();
@@ -463,19 +518,19 @@ class Monitoring_ListController extends Controller
     {
         $this->addTitleTab('servicematrix');
         $this->setAutorefreshInterval(15);
-        $dataview = $this->backend->select()->from('serviceStatus', array(
+        $query = $this->backend->select()->from('serviceStatus', array(
             'host_name',
             'service_description',
             'service_state',
             'service_output',
             'service_handled'
         ));
-        $this->applyFilters($dataview);
+        $this->applyFilters($query);
         $this->setupSortControl(array(
             'host_name'           => 'Hostname',
             'service_description' => 'Service description'
         ));
-        $pivot = $dataview->pivot('service_description', 'host_name');
+        $pivot = $query->pivot('service_description', 'host_name');
         $this->view->pivot = $pivot;
         $this->view->horizontalPaginator = $pivot->paginateXAxis();
         $this->view->verticalPaginator   = $pivot->paginateYAxis();
@@ -487,15 +542,8 @@ class Monitoring_ListController extends Controller
         $request = $this->getRequest();
 
         $limit   = $params->shift('limit');
-
-        $sort = null;
-        $dir = null;
-        if ($request->isPost()) {
-            $sort = $request->getPost('sort', null);
-            $dir  = $request->getPost('dir', null);
-        }
-        $sort    = $params->shift('sort', $sort);
-        $dir     = $params->shift('dir', $dir);
+        $sort    = $params->shift('sort');
+        $dir     = $params->shift('dir');
         $page    = $params->shift('page');
         $format  = $params->shift('format');
         $view    = $params->shift('view');
@@ -532,7 +580,9 @@ class Monitoring_ListController extends Controller
             $query->applyFilter($filter);
         }
         $this->view->filter = $filter;
-        $query->order($sort, $dir);
+        if ($sort) {
+            $query->order($sort, $dir);
+        }
         $this->applyRestrictions($query);
         $this->handleFormatRequest($query);
         return $query;
@@ -540,10 +590,6 @@ class Monitoring_ListController extends Controller
 
     /**
      * Apply current user's `monitoring/filter' restrictions on the given data view
-     *
-     * @param   DataView $dataView
-     *
-     * @return  DataView
      */
     protected function applyRestrictions($query)
     {

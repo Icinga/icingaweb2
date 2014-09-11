@@ -14,6 +14,7 @@ use Icinga\Exception\NotReadableError;
 use Icinga\Logger\Logger;
 use Icinga\Util\DateTimeFactory;
 use Icinga\Util\Translator;
+use Icinga\Exception\IcingaException;
 
 /**
  * This class bootstraps a thin Icinga application layer
@@ -332,7 +333,7 @@ abstract class ApplicationBootstrap
         try {
             $this->moduleManager->loadEnabledModules();
         } catch (NotReadableError $e) {
-            Logger::error(new Exception('Cannot load enabled modules. An exception was thrown:', 0, $e));
+            Logger::error(new IcingaException('Cannot load enabled modules. An exception was thrown:', $e));
         }
         return $this;
     }
@@ -369,7 +370,7 @@ abstract class ApplicationBootstrap
         try {
             $this->config = Config::app();
         } catch (NotReadableError $e) {
-            Logger::error(new Exception('Cannot load application configuration. An exception was thrown:', 0, $e));
+            Logger::error(new IcingaException('Cannot load application configuration. An exception was thrown:', $e));
             $this->config = new Zend_Config(array());
         }
         return $this;
@@ -417,7 +418,7 @@ abstract class ApplicationBootstrap
             ResourceFactory::setConfig($config);
         } catch (NotReadableError $e) {
             Logger::error(
-                new Exception('Cannot load resource configuration. An exception was thrown:', 0, $e)
+                new IcingaException('Cannot load resource configuration. An exception was thrown:', $e)
             );
         }
 
@@ -451,9 +452,8 @@ abstract class ApplicationBootstrap
      */
     protected function setupInternationalization()
     {
-        $localeDir = $this->getApplicationDir('locale');
-        if (file_exists($localeDir) && is_dir($localeDir)) {
-            Translator::registerDomain(Translator::DEFAULT_DOMAIN, $localeDir);
+        if ($this->hasLocales()) {
+            Translator::registerDomain(Translator::DEFAULT_DOMAIN, $this->getLocaleDir());
         }
 
         try {
@@ -467,5 +467,49 @@ abstract class ApplicationBootstrap
         }
 
         return $this;
+    }
+
+    /**
+     * @return string Our locale directory
+     */
+    public function getLocaleDir()
+    {
+        return $this->getApplicationDir('locale');
+    }
+
+    /**
+     * return bool Whether Icinga Web has translations
+     */
+    public function hasLocales()
+    {
+        $localedir = $this->getLocaleDir();
+        return file_exists($localedir) && is_dir($localedir);
+    }
+
+    /**
+     * List all available locales
+     *
+     * NOTE: Might be a candidate for a static function in Translator
+     *
+     * return array Locale list
+     */
+    public function listLocales()
+    {
+        $locales = array();
+        if (! $this->hasLocales()) {
+            return $locales;
+        }
+        $localedir = $this->getLocaleDir();
+
+        $dh = opendir($localedir);
+        while (false !== ($file = readdir($dh))) {
+            $filename = $localedir . DIRECTORY_SEPARATOR . $file;
+            if (preg_match('/^[a-z]{2}_[A-Z]{2}$/', $file) && is_dir($filename)) {
+                $locales[] = $file;
+            }
+        }
+        closedir($dh);
+        sort($locales);
+        return $locales;
     }
 }

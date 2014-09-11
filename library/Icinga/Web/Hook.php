@@ -42,6 +42,15 @@ class Hook
     public static $BASE_NS = 'Icinga\\Web\\Hook\\';
 
     /**
+     * Append this string to base class
+     *
+     * All base classes renamed to *Hook
+     *
+     * @var string
+     */
+    public static $classSuffix = 'Hook';
+
+    /**
      * Reset object state
      */
     public static function clean()
@@ -114,14 +123,17 @@ class Hook
      */
     private static function assertValidHook($instance, $name)
     {
-        $base_class = self::$BASE_NS . ucfirst($name);
+        $base_class = self::$BASE_NS . ucfirst($name) . 'Hook';
+
+        if (strpos($base_class, self::$classSuffix) === false) {
+            $base_class .= self::$classSuffix;
+        }
+
         if (!$instance instanceof $base_class) {
             throw new ProgrammingError(
-                sprintf(
-                    '%s is not an instance of %s',
-                    get_class($instance),
-                    $base_class
-                )
+                '%s is not an instance of %s',
+                get_class($instance),
+                $base_class
             );
         }
     }
@@ -185,7 +197,10 @@ class Hook
     public static function registerClass($name, $key, $class)
     {
         if (!class_exists($class)) {
-            throw new ProgrammingError('"' . $class . '" is not an existing class');
+            throw new ProgrammingError(
+                '"%s" is not an existing class',
+                $class
+            );
         }
 
         if (!isset(self::$hooks[$name])) {
@@ -207,7 +222,10 @@ class Hook
     public static function registerObject($name, $key, $object)
     {
         if (!is_object($object)) {
-            throw new ProgrammingError('"' . $object . '" is not an instantiated class');
+            throw new ProgrammingError(
+                '"%s" is not an instantiated class',
+                $object
+            );
         }
 
         if (!isset(self::$instances[$name])) {

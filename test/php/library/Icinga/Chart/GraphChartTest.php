@@ -4,8 +4,8 @@
 
 namespace Tests\Icinga\Chart;
 
-use \DOMXPath;
-use \DOMDocument;
+use DOMXPath;
+use DOMDocument;
 use Icinga\Chart\GridChart;
 use Icinga\Test\BaseTestCase;
 
@@ -27,7 +27,7 @@ class GraphChartTest extends BaseTestCase
         $xpath = new DOMXPath($doc);
         $xpath->registerNamespace('x', 'http://www.w3.org/2000/svg');
         $path = $xpath->query('//x:rect[@data-icinga-graph-type="bar"]');
-        $this->assertEquals(3, $path->length, 'Assert the correct number of datapoints being drawn as SVG bars');
+        $this->assertEquals(6, $path->length, 'Assert the correct number of datapoints being drawn as SVG bars');
     }
 
     public function testLineChartCreation()

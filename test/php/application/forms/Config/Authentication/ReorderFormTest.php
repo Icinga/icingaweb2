@@ -4,8 +4,8 @@
 
 namespace Tests\Icinga\Form\Config\Authentication;
 
-use \Mockery;
-use \Zend_Config;
+use Mockery;
+use Zend_Config;
 use Icinga\Test\BaseTestCase;
 use Icinga\Form\Config\Authentication\ReorderForm;
 

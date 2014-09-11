@@ -9,6 +9,7 @@ use Icinga\Exception\ProgrammingError;
 use Icinga\Data\SimpleQuery;
 use Icinga\Protocol\Statusdat\View\MonitoringObjectList;
 use Icinga\Protocol\Statusdat\Query\IQueryPart;
+use Icinga\Exception\IcingaException;
 
 /**
  * Base implementation for Statusdat queries.
@@ -163,7 +164,7 @@ class Query extends SimpleQuery
      * @param array  $columns   An array of attributes to use (required for fetchPairs())
      *
      * @return $this            Fluent interface
-     * @throws \Exception       If the target is unknonw
+     * @throws IcingaException  If the target is unknonw
      */
     public function from($table, array $attributes = null)
     {
@@ -173,7 +174,10 @@ class Query extends SimpleQuery
         if (isset(self::$VALID_TARGETS[$table])) {
             $this->source = $table;
         } else {
-            throw new \Exception('Unknown from target for status.dat :' . $table);
+            throw new IcingaException(
+                'Unknown from target for status.dat :%s',
+                $table
+            );
         }
         return $this;
     }
@@ -397,16 +401,15 @@ class Query extends SimpleQuery
     /**
      * Fetch the result as an associative array using the first column as the key and the second as the value
      *
-     * @return array        An associative array with the result
-     * @throws \Exception   If no attributes are defined
+     * @return array            An associative array with the result
+     * @throws IcingaException  If no attributes are defined
      */
     public function fetchPairs()
     {
         $result = array();
         if (count($this->getColumns()) < 2) {
-            throw new Exception(
-                'Status.dat "fetchPairs()" query expects at least' .
-                ' columns to be set in the query expression'
+            throw new IcingaException(
+                'Status.dat "fetchPairs()" query expects at least columns to be set in the query expression'
             );
         }
         $attributes = $this->getColumns();
@@ -440,7 +443,7 @@ class Query extends SimpleQuery
      */
     public function fetchOne()
     {
-        throw new ProgrammingError('Statusdat/Query::fetchOne not yet implemented');
+        throw new ProgrammingError('Statusdat/Query::fetchOne() is not implemented yet');
     }
 
     /**

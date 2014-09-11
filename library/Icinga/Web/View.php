@@ -103,10 +103,8 @@ class View extends Zend_View_Abstract
     {
         if ($this->hasHelperFunction($name)) {
             throw new ProgrammingError(
-                sprintf(
-                    'Cannot assign the same helper function twice: "%s"',
-                    $name
-                )
+                'Cannot assign the same helper function twice: "%s"',
+                $name
             );
         }
 

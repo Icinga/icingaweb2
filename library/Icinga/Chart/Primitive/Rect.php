@@ -4,8 +4,8 @@
 
 namespace Icinga\Chart\Primitive;
 
-use \DomElement;
-use \Icinga\Chart\Render\RenderContext;
+use DomElement;
+use Icinga\Chart\Render\RenderContext;
 use Icinga\Chart\Format;
 
 /**

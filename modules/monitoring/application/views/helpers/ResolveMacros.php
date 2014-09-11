@@ -3,7 +3,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 
 use \Zend_View_Helper_Abstract;
-use Icinga\Module\Monitoring\Object\AbstractObject;
+use Icinga\Module\Monitoring\Object\MonitoredObject;
 
 class Zend_View_Helper_ResolveMacros extends Zend_View_Helper_Abstract
 {
@@ -22,7 +22,7 @@ class Zend_View_Helper_ResolveMacros extends Zend_View_Helper_Abstract
      * Return the given string with macros being resolved
      *
      * @param   string                      $input      The string in which to look for macros
-     * @param   AbstractObject|stdClass     $object     The host or service used to resolve macros
+     * @param   MonitoredObject|stdClass     $object     The host or service used to resolve macros
      *
      * @return  string                                  The substituted or unchanged string
      */
@@ -45,7 +45,7 @@ class Zend_View_Helper_ResolveMacros extends Zend_View_Helper_Abstract
      * Resolve a macro based on the given object
      *
      * @param   string                      $macro      The macro to resolve
-     * @param   AbstractObject|stdClass     $object     The object used to resolve the macro
+     * @param   MonitoredObject|stdClass     $object     The object used to resolve the macro
      *
      * @return  string                                  The new value or the macro if it cannot be resolved
      */

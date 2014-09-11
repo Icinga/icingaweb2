@@ -15,7 +15,7 @@ class FilterQueryString
     protected $reportDebug = false;
 
     protected $length;
-    
+
     protected function __construct()
     {
     }
@@ -111,13 +111,13 @@ class FilterQueryString
             $extra .= "\n" . implode("\n", $this->debug);
         }
 
-        throw new FilterParseException(sprintf(
+        throw new FilterParseException(
             'Invalid filter "%s", unexpected %s at pos %d%s',
             $this->string,
             $char,
             $this->pos,
             $extra
-        ));
+        );
     }
 
     protected function readFilters($nestingLevel = 0, $op = null)

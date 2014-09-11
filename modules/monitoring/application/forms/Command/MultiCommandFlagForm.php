@@ -4,10 +4,10 @@
 
 namespace Icinga\Module\Monitoring\Form\Command;
 
-use \Icinga\Web\Form\Element\TriStateCheckbox;
-use \Icinga\Web\Form;
-use \Zend_Form_Element_Hidden;
-use \Zend_Form;
+use Icinga\Web\Form\Element\TriStateCheckbox;
+use Icinga\Web\Form;
+use Zend_Form_Element_Hidden;
+use Zend_Form;
 
 /**
  * A form to edit multiple command flags of multiple commands at once. When some commands have

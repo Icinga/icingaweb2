@@ -8,7 +8,7 @@ use Icinga\Protocol\Ldap\Exception as LdapException;
 use Icinga\Application\Platform;
 use Icinga\Application\Config;
 use Icinga\Logger\Logger;
-use \Zend_Config;
+use Zend_Config;
 
 /**
  * Backend class managing all the LDAP stuff for you.
@@ -307,7 +307,7 @@ class Connection
         $results = @ldap_search(
             $this->ds,
             $base,
-            (string) $query,
+            $query->create(),
             $fields,
             0, // Attributes and values
             0  // No limit - at least where possible
@@ -619,7 +619,7 @@ class Connection
         $result = @ldap_read(
             $ds,
             '',
-            (string) $query,
+            $query->create(),
             $query->listFields()
         );
 

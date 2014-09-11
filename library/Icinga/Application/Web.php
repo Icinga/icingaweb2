@@ -10,11 +10,10 @@ use Icinga\Authentication\Manager as AuthenticationManager;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\NotReadableError;
 use Icinga\Logger\Logger;
+use Icinga\Util\TimezoneDetect;
 use Icinga\Web\Request;
 use Icinga\Web\Response;
 use Icinga\Web\View;
-use Icinga\Web\Session\Session as BaseSession;
-use Icinga\Web\Session;
 use Icinga\User;
 use Icinga\Util\Translator;
 use Icinga\Util\DateTimeFactory;
@@ -60,13 +59,6 @@ class Web extends ApplicationBootstrap
     private $request;
 
     /**
-     * Session object
-     *
-     * @var BaseSession
-     */
-    private $session;
-
-    /**
      * User object
      *
      * @var User
@@ -92,7 +84,6 @@ class Web extends ApplicationBootstrap
             ->setupErrorHandling()
             ->loadConfig()
             ->setupResourceFactory()
-            ->setupSession()
             ->setupUser()
             ->setupTimezone()
             ->setupLogger()
@@ -172,7 +163,6 @@ class Web extends ApplicationBootstrap
 
         $this->setupFrontController();
         $this->setupViewRenderer();
-
         return $this;
     }
 
@@ -189,17 +179,6 @@ class Web extends ApplicationBootstrap
             $this->user = $authenticationManager->getUser();
         }
 
-        return $this;
-    }
-
-    /**
-     * Initialize a session provider
-     *
-     * @return  self
-     */
-    private function setupSession()
-    {
-        $this->session = Session::create();
         return $this;
     }
 
@@ -295,10 +274,11 @@ class Web extends ApplicationBootstrap
      */
     protected function setupTimezone()
     {
+        $userTimezone = null;
+
         if ($this->user !== null && $this->user->getPreferences() !== null) {
-            $userTimezone = $this->user->getPreferences()->get('app.timezone');
-        } else {
-            $userTimezone = null;
+            $detect = new TimezoneDetect();
+            $userTimezone = $this->user->getPreferences()->get('app.timezone', $detect->getTimezoneName());
         }
 
         try {

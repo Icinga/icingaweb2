@@ -5,6 +5,7 @@
 namespace Icinga\Protocol\Livestatus;
 
 use Icinga\Protocol\AbstractQuery;
+use Icinga\Exception\IcingaException;
 
 class Query extends AbstractQuery
 {
@@ -86,12 +87,10 @@ class Query extends AbstractQuery
     public function limit($count = null, $offset = null)
     {
         if (! preg_match('~^\d+~', $count . $offset)) {
-            throw new Exception(
-                sprintf(
-                    'Got invalid limit: %s, %s',
-                    $count,
-                    $offset
-                )
+            throw new IcingaException(
+                'Got invalid limit: %s, %s',
+                $count,
+                $offset
             );
         }
         $this->limit_count  = (int) $count;
@@ -122,11 +121,9 @@ class Query extends AbstractQuery
     public function from($table, $columns = null)
     {
         if (! $this->connection->hasTable($table)) {
-            throw new Exception(
-                sprintf(
-                    'This livestatus connection does not provide "%s"',
-                    $table
-                )
+            throw new IcingaException(
+                'This livestatus connection does not provide "%s"',
+                $table
             );
         }
         $this->table = $table;
@@ -169,7 +166,7 @@ class Query extends AbstractQuery
     public function __toString()
     {
         if ($this->table === null) {
-            throw new Exception('Table is required');
+            throw new IcingaException('Table is required');
         }
         $default_headers = array(
             'OutputFormat: json',

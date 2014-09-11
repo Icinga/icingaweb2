@@ -4,7 +4,6 @@
 
 namespace Tests\Icinga\Web\Session;
 
-use Exception;
 use Mockery;
 use Icinga\Test\BaseTestCase;
 use Icinga\Web\Session\SessionNamespace;
@@ -66,7 +65,7 @@ class SessionNamespaceTest extends BaseTestCase
     }
 
     /**
-     * @expectedException Exception
+     * @expectedException Icinga\Exception\IcingaException
      */
     public function testFailingPropertyAccess()
     {
@@ -88,7 +87,7 @@ class SessionNamespaceTest extends BaseTestCase
     }
 
     /**
-     * @expectedException Exception
+     * @expectedException Icinga\Exception\IcingaException
      * @expectedExceptionMessage Cannot save, session not set
      */
     public function testInvalidParentWrite()

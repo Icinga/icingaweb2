@@ -1,15 +1,13 @@
 
 <?php if (!$this->compact): ?>
-    <div class="controls">
-    <?= $this->tabs ?>
-    <div class="dontprint">
+<div class="controls">
+  <?= $this->tabs ?>
+  <div class="dontprint" style="margin: 1em;">
     <?= $this->translate('Sort by') ?> <?=  $this->sortControl->render($this) ?>
-    <?= $this->selectionToolbar('single') ?>
-    </div>
-    <?= $this->widget('limiter') ?>
-    <?php if ($notifications->count() >= 100): ?><br /><?php endif ?>
-    <?=  $this->paginationControl($notifications, null, null, array('preserve' => $this->preserve)) ?>
-    </div>
+  </div>
+  <?= $this->widget('limiter') ?>
+  <?=  $this->paginationControl($notifications, null, null, array('preserve' => $this->preserve)) ?>
+ </div>
 <?php endif ?>
 
 <div class="content">
@@ -47,7 +45,7 @@ foreach ($notifications as $notification):
 ?>
   <tr class="state <?= $stateName ?>">
     <td class="state"><?= $this->timeSince($notification->notification_start_time) ?></td>
-    <td>
+    <td style="font-size: 0.8em">
       <?php if ($isService): ?>
         <a href="<?= $href ?>"><?= $notification->service ?></a> on <?= $notification->host ?>
       <?php else: ?>
@@ -56,12 +54,14 @@ foreach ($notifications as $notification):
       <br />
       <?= $this->escape(substr(strip_tags($notification->notification_output), 0, 10000)); ?>
       <br />
+      <?php if (!$this->contact): ?>
       <small>
           Sent to <a href="<?= $this->href(
               'monitoring/show/contact',
               array('contact' => $notification->notification_contact)
           ) ?>"><?= $this->escape($notification->notification_contact) ?></a>
       </small>
+      <?php endif ?>
     </td>
   </tr>
 <?php endforeach ?>

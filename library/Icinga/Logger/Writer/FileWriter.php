@@ -5,6 +5,7 @@
 namespace Icinga\Logger\Writer;
 
 use Exception;
+use Icinga\Exception\IcingaException;
 use Zend_Config;
 use Icinga\Util\File;
 use Icinga\Logger\Logger;
@@ -33,13 +34,20 @@ class FileWriter extends LogWriter
         $this->path = $config->target;
 
         if (substr($this->path, 0, 6) !== 'php://' && false === file_exists(dirname($this->path))) {
-            throw new ConfigurationError('Log path "' . dirname($this->path) . '" does not exist');
+            throw new ConfigurationError(
+                'Log path "%s" does not exist',
+                dirname($this->path)
+            );
         }
 
         try {
             $this->write(''); // Avoid to handle such errors on every write access
         } catch (Exception $e) {
-            throw new ConfigurationError('Cannot write to log file "' . $this->path . '" (' . $e->getMessage() . ')');
+            throw new ConfigurationError(
+                'Cannot write to log file "%s" (%s)',
+                $this->path,
+                $e->getMessage()
+            );
         }
     }
 
@@ -61,7 +69,7 @@ class FileWriter extends LogWriter
      *
      * @return  string                  The string representation of the severity
      *
-     * @throws  Exception               In case the given severity is unknown
+     * @throws  IcingaException         In case the given severity is unknown
      */
     protected function getSeverityString($severity)
     {
@@ -75,7 +83,10 @@ class FileWriter extends LogWriter
             case Logger::$DEBUG:
                 return '- DEBUG -';
             default:
-                throw new Exception('Unknown severity "' . $severity . '"');
+                throw new IcingaException(
+                    'Unknown severity "%s"',
+                    $severity
+                );
         }
     }
 
@@ -91,5 +102,13 @@ class FileWriter extends LogWriter
         $file = new File($this->path, 'a');
         $file->fwrite($text);
         $file->fflush();
+    }
+
+    /**
+     * @return string
+     */
+    public function getPath()
+    {
+        return $this->path;
     }
 }

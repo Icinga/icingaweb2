@@ -9,6 +9,7 @@ use Zend_Config;
 use Icinga\Logger\Logger;
 use Icinga\Logger\LogWriter;
 use Icinga\Exception\ConfigurationError;
+use Icinga\Exception\IcingaException;
 
 /**
  * Class to write messages to syslog
@@ -45,7 +46,8 @@ class SyslogWriter extends LogWriter
     {
         if (!array_key_exists($config->facility, $this->facilities)) {
             throw new ConfigurationError(
-                'Cannot create syslog writer with unknown facility "' . $config->facility . '"'
+                'Cannot create syslog writer with unknown facility "%s"',
+                $config->facility
             );
         }
 
@@ -71,7 +73,10 @@ class SyslogWriter extends LogWriter
         );
 
         if (!array_key_exists($severity, $priorities)) {
-            throw new Exception('Severity "' . $severity . '" cannot be mapped to a valid syslog priority');
+            throw new IcingaException(
+                'Severity "%s" cannot be mapped to a valid syslog priority',
+                $severity
+            );
         }
 
         $this->open();

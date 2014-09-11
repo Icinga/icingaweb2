@@ -4,8 +4,8 @@
 
 namespace Icinga\Data\Filter;
 
-use Exception;
+use Icinga\Exception\IcingaException;
 
-class FilterParseException extends Exception
+class FilterParseException extends IcingaException
 {
 }

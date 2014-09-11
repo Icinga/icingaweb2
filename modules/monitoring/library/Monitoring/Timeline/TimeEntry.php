@@ -4,7 +4,7 @@
 
 namespace Icinga\Module\Monitoring\Timeline;
 
-use \DateTime;
+use DateTime;
 use Icinga\Web\Url;
 use Icinga\Exception\ProgrammingError;
 
@@ -79,7 +79,9 @@ class TimeEntry
                 $entry->{$methodName}($value);
             } else {
                 throw new ProgrammingError(
-                    'Method "' . $methodName . '" does not exist on object of type "' . __CLASS__ . '"'
+                    'Method "%s" does not exist on object of type "%s"',
+                    $methodName,
+                    __CLASS__
                 );
             }
         }

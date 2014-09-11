@@ -4,7 +4,7 @@
 
 namespace Tests\Icinga\Protocol\Ldap;
 
-use \Zend_Config;
+use Zend_Config;
 use Icinga\Test\BaseTestCase;
 use Icinga\Protocol\Ldap\Connection;
 
@@ -109,10 +109,10 @@ class QueryTest extends BaseTestCase
         $this->assertEquals('testIntColumn', $cols[0][0]);
     }
 
-    public function test__toString()
+    public function testCreateQuery()
     {
         $select = $this->prepareSelect();
         $res = '(&(objectClass=dummyClass)(testIntColumn=1)(testStringColumn=test)(testWildcard=abc*))';
-        $this->assertEquals($res, (string) $select);
+        $this->assertEquals($res, $select->create());
     }
 }

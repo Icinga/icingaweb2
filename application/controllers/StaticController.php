@@ -2,10 +2,11 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use \Zend_Controller_Action_Exception as ActionException;
 use Icinga\Web\Controller\ActionController;
 use Icinga\Application\Icinga;
 use Icinga\Logger\Logger;
+use Icinga\Web\FileCache;
+use Zend_Controller_Action_Exception as ActionException;
 
 /**
  * Delivery static content to clients
@@ -30,8 +31,25 @@ class StaticController extends ActionController
 
     public function gravatarAction()
     {
+        $cache = FileCache::instance();
+        $filename = md5(strtolower(trim($this->_request->getParam('email'))));
+        $cacheFile = 'gravatar-' . $filename;
+        header('Cache-Control: public');
+        header('Pragma: cache');
+        if ($etag = $cache->etagMatchesCachedFile($cacheFile)) {
+            header("HTTP/1.1 304 Not Modified");
+            return;
+        }
+
         header('Content-Type: image/jpg');
-        $img = file_get_contents('http://www.gravatar.com/avatar/' . md5(strtolower(trim($this->_request->getParam('email')))) . '?s=200&d=mm');
+        if ($cache->has($cacheFile)) {
+            header('ETag: "' . $cache->etagForCachedFile($cacheFile) . '"');
+            $cache->send($cacheFile);
+            return;
+        }
+        $img = file_get_contents('http://www.gravatar.com/avatar/' . $filename . '?s=120&d=mm');
+        $cache->store($cacheFile, $img);
+        header('ETag: "' . $cache->etagForCachedFile($cacheFile) . '"');
         echo $img;
     }
 
@@ -41,13 +59,12 @@ class StaticController extends ActionController
     public function imgAction()
     {
         $module = $this->_getParam('module_name');
-        // TODO: This is more than dangerous, must be fixed!!
         $file   = $this->_getParam('file');
-
         $basedir = Icinga::app()->getModuleManager()->getModule($module)->getBaseDir();
 
-        $filePath = $basedir . '/public/img/' . $file;
-        if (! file_exists($filePath)) {
+        $filePath = realpath($basedir . '/public/img/' . $file);
+
+        if (! $filePath || strpos($filePath, $basedir) !== 0) {
             throw new ActionException(sprintf(
                 '%s does not exist',
                 $filePath

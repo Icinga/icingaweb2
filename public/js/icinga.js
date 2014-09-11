@@ -61,6 +61,11 @@
         this.utils = null;
 
         /**
+         * Additional site behavior
+         */
+        this.behaviors = {};
+
+        /**
          * Loaded modules
          */
         this.modules = {};
@@ -82,19 +87,26 @@
                 return false;
             }
 
-            this.utils   = new Icinga.Utils(this);
-            this.logger  = new Icinga.Logger(this);
-            this.timer   = new Icinga.Timer(this);
-            this.ui      = new Icinga.UI(this);
-            this.loader  = new Icinga.Loader(this);
-            this.events  = new Icinga.Events(this);
-            this.history = new Icinga.History(this);
+            this.timezone   = new Icinga.Timezone();
+            this.utils      = new Icinga.Utils(this);
+            this.logger     = new Icinga.Logger(this);
+            this.timer      = new Icinga.Timer(this);
+            this.ui         = new Icinga.UI(this);
+            this.loader     = new Icinga.Loader(this);
+            this.events     = new Icinga.Events(this);
+            this.history    = new Icinga.History(this);
+            var self = this;
+            $.each(Icinga.Behaviors, function(name, Behavior) {
+                self.behaviors[name.toLowerCase()] = new Behavior(self);
+            });
 
+            this.timezone.initialize();
             this.timer.initialize();
             this.events.initialize();
             this.history.initialize();
             this.ui.initialize();
             this.loader.initialize();
+
             this.logger.info('Icinga is ready, running on jQuery ', $().jquery);
             this.initialized = true;
         },
@@ -147,6 +159,7 @@
                 module.destroy();
             });
 
+            this.timezone.destroy();
             this.timer.destroy();
             this.events.destroy();
             this.loader.destroy();

@@ -5,6 +5,7 @@
 namespace Icinga\Web;
 
 use Icinga\Application\Icinga;
+use Icinga\Web\FileCache;
 use JShrink\Minifier;
 
 class JavaScript
@@ -20,16 +21,23 @@ class JavaScript
         'js/icinga/events.js',
         'js/icinga/history.js',
         'js/icinga/module.js',
+        'js/icinga/timezone.js',
+        'js/icinga/behavior/tooltip.js',
+        'js/icinga/behavior/sparkline.js',
+        'js/icinga/behavior/tristate.js',
+        'js/icinga/behavior/navigation.js'
     );
 
     protected static $vendorFiles = array(
         'js/vendor/jquery-2.1.0',
-        'js/vendor/jquery.sparkline'
+        'js/vendor/jquery.sparkline',
+        'js/vendor/jquery.tipsy'
     );
 
     protected static $ie8VendorFiles = array(
         'js/vendor/jquery-1.11.0',
-        'js/vendor/jquery.sparkline'
+        'js/vendor/jquery.sparkline',
+        'js/vendor/jquery.tipsy'
     );
 
     public static function listModuleFiles()
@@ -62,36 +70,58 @@ class JavaScript
         $js = $out = '';
         $min = $minified ? '.min' : '';
 
-        // TODO: Cache header
-        header('Content-Type: application/javascript');
-        $cacheFile = '/tmp/cache_icinga' . $min . '.js';
-        if (file_exists($cacheFile)) {
-            readfile($cacheFile);
-            exit;
-        }
-
-        // We do not minify vendor files
+        // Prepare vendor file list
+        $vendorFiles = array();
         foreach (self::$vendorFiles as $file) {
-            $out .= file_get_contents($basedir . '/' . $file . $min . '.js');
+            $vendorFiles[] = $basedir . '/' . $file . $min . '.js';
         }
 
+        // Prepare Icinga JS file list
+        $jsFiles = array();
         foreach (self::$jsFiles as $file) {
-            $js .= file_get_contents($basedir . '/' . $file);
+            $jsFiles[] = $basedir . '/' . $file;
         }
 
         foreach (Icinga::app()->getModuleManager()->getLoadedModules() as $name => $module) {
             if ($module->hasJs()) {
-                $js .= file_get_contents($module->getJsFilename());
+                $jsFiles[] = $module->getJsFilename();
             }
         }
+        $files = array_merge($vendorFiles, $jsFiles);
+
+        if ($etag = FileCache::etagMatchesFiles($files)) {
+            header("HTTP/1.1 304 Not Modified");
+            return;
+        } else {
+            $etag = FileCache::etagForFiles($files);
+        }
+        header('Cache-Control: public');
+        header('ETag: "' . $etag . '"');
+        header('Content-Type: application/javascript');
+
+        $cacheFile = 'icinga-' . $etag . $min . '.js';
+        $cache = FileCache::instance();
+        if ($cache->has($cacheFile)) {
+            $cache->send($cacheFile);
+            return;
+        }
+
+        // We do not minify vendor files
+        foreach ($vendorFiles as $file) {
+            $out .= file_get_contents($file);
+        }
+
+        foreach ($jsFiles as $file) {
+            $js .= file_get_contents($file);
+        }
+
         if ($minified) {
             require_once 'IcingaVendor/JShrink/Minifier.php';
             $out .= Minifier::minify($js, array('flaggedComments' => false));
         } else {
             $out .= $js;
         }
-        // Not yet, this is for tests only. Waiting for Icinga\Web\Cache
-        // file_put_contents($cacheFile, $out);
+        $cache->store($cacheFile, $out);
         echo $out;
     }
 }

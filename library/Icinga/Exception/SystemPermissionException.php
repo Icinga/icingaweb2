@@ -4,11 +4,9 @@
 
 namespace Icinga\Exception;
 
-use \Exception;
-
 /**
  * Handle problems according to file system permissions
  */
-class SystemPermissionException extends Exception
+class SystemPermissionException extends IcingaException
 {
 }

@@ -61,7 +61,10 @@ class Config extends Zend_Config
             $this->configFile = $filepath;
             $this->merge(new Zend_Config_Ini($filepath));
         } else {
-            throw new NotReadableError('Cannot read config file "' . $filename . '". Permission denied');
+            throw new NotReadableError(
+                'Cannot read config file "%s". Permission denied',
+                $filename
+            );
         }
     }
 
@@ -80,6 +83,18 @@ class Config extends Zend_Config
             self::$app[$configname] = new Config(self::resolvePath($configname . '.ini'));
         }
         return self::$app[$configname];
+    }
+
+    /**
+     * Set module config
+     *
+     * @param string        $moduleName
+     * @param string        $configName
+     * @param Zend_Config   $config
+     */
+    public static function setModuleConfig($moduleName, $configName, Zend_Config $config)
+    {
+        self::$modules[$moduleName][$configName] = $config;
     }
 
     /**

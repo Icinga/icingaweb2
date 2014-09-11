@@ -4,10 +4,11 @@
 
 namespace Icinga\Protocol\Statusdat\View;
 
-use \Iterator;
-use \Countable;
-use \ArrayAccess;
-use \Exception;
+use Iterator;
+use Countable;
+use ArrayAccess;
+use Exception;
+use Icinga\Exception\IcingaException;
 
 /**
  * Wrapper around an array of monitoring objects that can be enhanced with an optional
@@ -115,7 +116,7 @@ class MonitoringObjectList implements Iterator, Countable, ArrayAccess
 
     public function __set($name, $value)
     {
-        throw new Exception("Setting is currently not available for objects");
+        throw new IcingaException('Setting is currently not available for objects');
     }
 
     public function offsetExists($offset)

@@ -4,6 +4,7 @@
 
 // namespace Icinga\Application\Controllers;
 
+use Icinga\Logger\Logger;
 use Icinga\Web\Controller\ActionController;
 use Icinga\Application\Icinga;
 
@@ -21,6 +22,10 @@ class ErrorController extends ActionController
     {
         $error      = $this->_getParam('error_handler');
         $exception  = $error->exception;
+
+        Logger::error($exception);
+        Logger::error('Stacktrace: %s', $exception->getTraceAsString());
+
         switch ($error->type) {
             case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_ROUTE:
             case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_CONTROLLER:

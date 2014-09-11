@@ -3,13 +3,13 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 
 use Icinga\Application\Benchmark;
+use Icinga\Module\Monitoring\Object\MonitoredObject;
 use Icinga\Web\Hook;
 use Icinga\Web\Widget\Tabs;
 use Icinga\Web\Widget\Tabextension\OutputFormat;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
 use Icinga\Module\Monitoring\Backend;
 use Icinga\Module\Monitoring\Controller;
-use Icinga\Module\Monitoring\Object\AbstractObject;
 use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Object\Service;
 
@@ -25,6 +25,9 @@ class Monitoring_ShowController extends Controller
      */
     protected $backend;
 
+    /**
+     * @var Hook\GrapherHook
+     */
     protected $grapher;
 
     /**
@@ -38,13 +41,16 @@ class Monitoring_ShowController extends Controller
             $this->view->object = new Service($this->params);
         } else {
             // TODO: Well... this could be done better
-            $this->view->object = AbstractObject::fromParams($this->params);
+            $this->view->object = MonitoredObject::fromParams($this->params);
         }
         if (Hook::has('ticket')) {
             $this->view->tickets = Hook::first('ticket');
         }
         if (Hook::has('grapher')) {
             $this->grapher = Hook::first('grapher');
+            if ($this->grapher && ! $this->grapher->hasPreviews()) {
+                $this->grapher = null;
+            }
         }
 
         $this->createTabs();
@@ -61,9 +67,10 @@ class Monitoring_ShowController extends Controller
             . ' on ' . $o->host_name;
         $this->getTabs()->activate('service');
         $o->populate();
-        if ($this->grapher && $this->grapher->hasGraph($o->host_name, $o->service_description)) {
-            $this->view->grapherHtml = $this->grapher->getPreviewImage($o->host_name, $o->service_description);
+        if ($this->grapher) {
+            $this->view->grapherHtml = $this->grapher->getPreviewHtml($o);
         }
+        $this->fetchHostStats();
     }
 
     /**
@@ -76,9 +83,10 @@ class Monitoring_ShowController extends Controller
         $this->getTabs()->activate('host');
         $this->view->title = $o->host_name;
         $o->populate();
-        if ($this->grapher && $this->grapher->hasGraph($o->host_name)) {
-            $this->view->grapherHtml = $this->grapher->getPreviewImage($o->host_name);
+        if ($this->grapher) {
+            $this->view->grapherHtml = $this->grapher->getPreviewHtml($o);
         }
+        $this->fetchHostStats();
     }
 
     public function historyAction()
@@ -86,9 +94,9 @@ class Monitoring_ShowController extends Controller
         $this->getTabs()->activate('history');
         //$this->view->object->populate();
         $this->view->object->fetchEventHistory();
+        $this->view->history = $this->view->object->eventhistory->paginate($this->params->get('limit', 50));
         $this->handleFormatRequest($this->view->object->eventhistory);
-        $this->view->history = $this->view->object->eventhistory
-            ->paginate($this->params->get('limit', 50));
+        $this->fetchHostStats();
     }
 
     public function servicesAction()
@@ -101,23 +109,48 @@ class Monitoring_ShowController extends Controller
             'view'  => 'compact',
             'sort'  => 'service_description',
         ));
+        $this->fetchHostStats();
+    }
+
+    protected function fetchHostStats()
+    {
+        $this->view->stats = $this->backend->select()->from('statusSummary', array(
+            'services_total',
+            'services_ok',
+            'services_problem',
+            'services_problem_handled',
+            'services_problem_unhandled',
+            'services_critical',
+            'services_critical_unhandled',
+            'services_critical_handled',
+            'services_warning',
+            'services_warning_unhandled',
+            'services_warning_handled',
+            'services_unknown',
+            'services_unknown_unhandled',
+            'services_unknown_handled',
+            'services_pending',
+        ))->where('service_host_name', $this->params->get('host'))->getQuery()->fetchRow();
     }
 
     public function contactAction()
     {
-        $contact = $this->getParam('contact');
-        if (! $contact) {
+        $contactName = $this->getParam('contact');
+
+        if (! $contactName) {
             throw new Zend_Controller_Action_Exception(
                 $this->translate('The parameter `contact\' is required'),
                 404
             );
         }
+
         $query = $this->backend->select()->from('contact', array(
             'contact_name',
             'contact_id',
             'contact_alias',
             'contact_email',
             'contact_pager',
+            'contact_object_id',
             'contact_notify_service_timeperiod',
             'contact_notify_service_recovery',
             'contact_notify_service_warning',
@@ -132,9 +165,36 @@ class Monitoring_ShowController extends Controller
             'contact_notify_host_flapping',
             'contact_notify_host_downtime',
         ));
-        $query->where('contact_name', $contact);
-        $this->view->contacts = $query->paginate();
-        $this->view->contact_name = $contact;
+
+        $query->where('contact_name', $contactName);
+
+        $contact = $query->getQuery()->fetchRow();
+
+        if ($contact) {
+            $commands = $this->backend->select()->from('command', array(
+                'command_line',
+                'command_name'
+            ))->where('contact_id', $contact->contact_id);
+
+            $this->view->commands = $commands->paginate();
+
+            $notifications = $this->backend->select()->from('notification', array(
+                'host',
+                'service',
+                'notification_output',
+                'notification_contact',
+                'notification_start_time',
+                'notification_state'
+            ));
+
+            $notifications->where('contact_object_id', $contact->contact_object_id);
+
+            $this->view->compact = true;
+            $this->view->notifications = $notifications->paginate();
+        }
+
+        $this->view->contact = $contact;
+        $this->view->contactName = $contactName;
     }
 
     /**

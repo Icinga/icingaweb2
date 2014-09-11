@@ -4,7 +4,9 @@
 
 namespace Icinga\Web;
 
+use Exception;
 use RecursiveIteratorIterator;
+use Icinga\Logger\Logger;
 
 /**
  * A renderer to draw a menu with its sub-menus using an unordered html list
@@ -26,6 +28,11 @@ class MenuRenderer extends RecursiveIteratorIterator
     protected $tags = array();
 
     /**
+     * @var bool
+     */
+    protected $useCustomRenderer = false;
+
+    /**
      * Create a new MenuRenderer
      *
      * @param   Menu    $menu   The menu to render
@@ -33,8 +40,21 @@ class MenuRenderer extends RecursiveIteratorIterator
      */
     public function __construct(Menu $menu, $url = null)
     {
-        $this->url = $url;
+        if ($url instanceof Url) {
+            $this->url = $url;
+        } else {
+            $this->url = Url::fromPath($url);
+        }
         parent::__construct($menu, RecursiveIteratorIterator::CHILD_FIRST);
+    }
+
+    /**
+     * @param bool $value
+     */
+    public function useCustomRenderer($value = true)
+    {
+        $this->useCustomRenderer = $value;
+        return $this;
     }
 
     /**
@@ -87,9 +107,16 @@ class MenuRenderer extends RecursiveIteratorIterator
      */
     public function renderChild(Menu $child)
     {
+        if ($child->getRenderer() !== null && $this->useCustomRenderer) {
+            try {
+                return $child->getRenderer()->render($child);
+            } catch (Exception $e) {
+                Logger::error('Could not invoke custom renderer. Exception: '. $e->getMessage());
+            }
+        }
         return sprintf(
             '<a href="%s">%s%s</a>',
-            $child->getUrl() ? Url::fromPath($child->getUrl()) : '#',
+            $child->getUrl() ?: '#',
             $child->getIcon() ? '<img src="' . Url::fromPath($child->getIcon()) . '" class="icon" /> ' : '',
             htmlspecialchars($child->getTitle())
         );
@@ -111,9 +138,9 @@ class MenuRenderer extends RecursiveIteratorIterator
 
             if ($childIsActive || ($passedActiveChild && $this->getDepth() === 0)) {
                 $passedActiveChild &= $this->getDepth() !== 0;
-                $openTag = '<li class="active">';
+                $openTag = '<li class="active" id="' . $child->getUniqueId() . '">';
             } else {
-                $openTag = '<li>';
+                $openTag = '<li id="' . $child->getUniqueId() . '">';
             }
             $content = $this->renderChild($child);
             $closingTag = '</li>';
@@ -146,6 +173,9 @@ class MenuRenderer extends RecursiveIteratorIterator
      */
     protected function isActive(Menu $child)
     {
-        return html_entity_decode(rawurldecode($this->url)) === html_entity_decode(rawurldecode($child->getUrl()));
+        if (! $this->url) return false;
+        if (! ($childUrl = $child->getUrl())) return false;
+
+        return $this->url && $this->url->matches($childUrl);
     }
 }

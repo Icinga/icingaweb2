@@ -4,7 +4,7 @@
 
 namespace Icinga\Web\Form\Decorator;
 
-use \Zend_Form_Decorator_Abstract;
+use Zend_Form_Decorator_Abstract;
 
 /**
  * Decorator to hide elements using a &gt;noscript&lt; tag instead of

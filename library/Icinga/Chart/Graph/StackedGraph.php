@@ -41,6 +41,10 @@ class StackedGraph implements Drawable
             if (!isset($this->points[$x])) {
                 $this->points[$x] = 0;
             }
+            // store old y-value for displaying the actual (non-aggregated)
+            // value in the tooltip
+            $point[2] = $point[1];
+
             $this->points[$x] += $point[1];
             $point[1] = $this->points[$x];
         }

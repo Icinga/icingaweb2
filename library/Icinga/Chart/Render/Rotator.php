@@ -1,10 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: mjentsch
- * Date: 22.07.14
- * Time: 10:17
- */
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
+
 
 namespace Icinga\Chart\Render;
 

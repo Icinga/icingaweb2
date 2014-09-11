@@ -83,7 +83,7 @@ BuildArch:      noarch
 AutoReqProv:    Off
 %endif
 
-Source0:        icingaweb2-%{version}.tar.gz
+Source:        icingaweb2-%{version}.tar.gz
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root
 
@@ -181,15 +181,10 @@ install -D -m0644 packages/rpm/etc/httpd/conf.d/icingaweb.conf %{buildroot}/%{ap
 %{__cp} -r application library modules public %{buildroot}/%{sharedir}/
 
 ## config
-# use the default menu.ini for application and monitoring mobule
-install -D -m0644 config/menu.ini %{buildroot}/%{_sysconfdir}/icingaweb/menu.ini
-install -D -m0644 config/modules/monitoring/menu.ini %{buildroot}/%{_sysconfdir}/icingaweb/modules/monitoring/menu.ini
 # authentication is db only
 install -D -m0644 packages/rpm/etc/icingaweb/authentication.ini %{buildroot}/%{_sysconfdir}/icingaweb/authentication.ini
 # custom resource paths
 install -D -m0644 packages/rpm/etc/icingaweb/resources.ini %{buildroot}/%{_sysconfdir}/icingaweb/resources.ini
-# dashboard
-install -D -m0644 config/dashboard/dashboard.ini %{buildroot}/%{_sysconfdir}/icingaweb/dashboard/dashboard.ini
 # monitoring module (icinga2)
 install -D -m0644 packages/rpm/etc/icingaweb/modules/monitoring/backends.ini %{buildroot}/%{_sysconfdir}/icingaweb/modules/monitoring/backends.ini
 install -D -m0644 packages/rpm/etc/icingaweb/modules/monitoring/instances.ini %{buildroot}/%{_sysconfdir}/icingaweb/modules/monitoring/instances.ini

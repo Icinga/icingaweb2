@@ -11,6 +11,7 @@ use Icinga\Exception\AuthenticationException;
 use Exception;
 use Zend_Db_Expr;
 use Zend_Db_Select;
+use Icinga\Exception\IcingaException;
 
 class DbUserBackend extends UserBackend
 {
@@ -60,7 +61,10 @@ class DbUserBackend extends UserBackend
                 return false;
             }
             if ($salt === '') {
-                throw new Exception('Cannot find salt for user ' . $user->getUsername());
+                throw new IcingaException(
+                    'Cannot find salt for user %s',
+                    $user->getUsername()
+                );
             }
 
             $select = new Zend_Db_Select($this->conn->getConnection());
@@ -73,12 +77,9 @@ class DbUserBackend extends UserBackend
             return ($row !== false) ? true : false;
         } catch (Exception $e) {
             throw new AuthenticationException(
-                sprintf(
-                    'Failed to authenticate user "%s" against backend "%s". An exception was thrown:',
-                    $user->getUsername(),
-                    $this->getName()
-                ),
-                0,
+                'Failed to authenticate user "%s" against backend "%s". An exception was thrown:',
+                $user->getUsername(),
+                $this->getName(),
                 $e
             );
         }

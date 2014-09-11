@@ -53,10 +53,8 @@ class Notification
             )
         )) {
             throw new ProgrammingError(
-                sprintf(
-                    '"%s" is not a valid notification type',
-                    $type
-                )
+                '"%s" is not a valid notification type',
+                $type
             );
         }
 

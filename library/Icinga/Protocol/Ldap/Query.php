@@ -83,11 +83,9 @@ class Query
     {
         if (! preg_match('~^\d+~', $count . $offset)) {
             throw new Exception(
-                sprintf(
-                    'Got invalid limit: %s, %s',
-                    $count,
-                    $offset
-                )
+                'Got invalid limit: %s, %s',
+                $count,
+                $offset
             );
         }
         $this->limit_count  = (int) $count;
@@ -302,21 +300,11 @@ class Query
      *
      * @string
      */
-    public function __toString()
-    {
-        return $this->render();
-    }
-
-    /**
-     * Returns the LDAP filter that will be applied
-     *
-     * @string
-     */
-    protected function render()
+    public function create()
     {
         $parts = array();
         if (! isset($this->filters['objectClass']) || $this->filters['objectClass'] === null) {
-            // throw new Exception('Object class is mandatory');
+            throw new Exception('Object class is mandatory');
         }
         foreach ($this->filters as $key => $value) {
             $parts[] = sprintf(

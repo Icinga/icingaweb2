@@ -34,7 +34,7 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
                     // TODO: Should we trust sprintf-style placeholders in perfdata titles?
                     $pieChart->setTooltipFormat('{{label}}: {{formatted}} ({{percent}}%)');
                 }
-                $pieChart->setStyle('margin: 0.2em 0.5em 0.2em 0.5em;');
+                // $pieChart->setStyle('margin: 0.2em 0.5em 0.2em 0.5em;');
                 $table[] = '<tr><th>' . $pieChart->render()
                     . htmlspecialchars($perfdata->getLabel())
                     . '</th><td> '

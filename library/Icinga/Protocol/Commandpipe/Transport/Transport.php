@@ -4,7 +4,7 @@
 
 namespace Icinga\Protocol\Commandpipe\Transport;
 
-use \Zend_Config;
+use Zend_Config;
 
 /**
  * Interface for Transport classes handling the concrete access to the command pipe

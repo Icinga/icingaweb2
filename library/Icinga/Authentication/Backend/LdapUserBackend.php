@@ -68,21 +68,17 @@ class LdapUserBackend extends UserBackend
         $result = $q->fetchRow();
         if (! isset($result)) {
             throw new AuthenticationException(
-                sprintf(
-                    'No objects with objectClass="%s" in DN="%s" found.',
-                    $this->userClass,
-                    $this->conn->getDN()
-                )
+                'No objects with objectClass="%s" in DN="%s" found.',
+                $this->userClass,
+                $this->conn->getDN()
             );
         }
 
         if (! isset($result->{$this->userNameAttribute})) {
             throw new AuthenticationException(
-                sprintf(
-                    'UserNameAttribute "%s" not existing in objectClass="%s"',
-                    $this->userNameAttribute,
-                    $this->userClass
-                )
+                'UserNameAttribute "%s" not existing in objectClass="%s"',
+                $this->userNameAttribute,
+                $this->userClass
             );
         }
     }
@@ -121,11 +117,8 @@ class LdapUserBackend extends UserBackend
             } catch (AuthenticationException $e) {
                 // Authentication not possible
                 throw new AuthenticationException(
-                    sprintf(
-                        'Authentication against backend "%s" not possible: ',
-                        $this->getName()
-                    ),
-                    0,
+                    'Authentication against backend "%s" not possible: ',
+                    $this->getName(),
                     $e
                 );
             }
@@ -141,12 +134,9 @@ class LdapUserBackend extends UserBackend
         } catch (LdapException $e) {
             // Error during authentication of this specific user
             throw new AuthenticationException(
-                sprintf(
-                    'Failed to authenticate user "%s" against backend "%s". An exception was thrown:',
-                    $user->getUsername(),
-                    $this->getName()
-                ),
-                0,
+                'Failed to authenticate user "%s" against backend "%s". An exception was thrown:',
+                $user->getUsername(),
+                $this->getName(),
                 $e
             );
         }
