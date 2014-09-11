@@ -17,7 +17,9 @@
 #
 # Requires:
 #
+#   wget
 #   tar
+#   gcc
 #
 # Sample Usage:
 #
@@ -44,6 +46,7 @@ define cmmi(
 
   include wget
   include tar
+  include gcc
 
   exec { "download-${name}":
     cwd     => $cwd,
@@ -78,7 +81,10 @@ define cmmi(
     cwd     => $src,
     command => $make,
     creates => $creates,
-    require => Exec["configure-${name}"],
+    require => [
+      Exec["configure-${name}"],
+      Class['gcc']
+    ],
     timeout => $make_timeout
   }
 }
