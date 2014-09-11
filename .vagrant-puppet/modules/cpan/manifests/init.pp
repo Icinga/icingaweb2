@@ -43,7 +43,7 @@ define cpan(
   }
 
   exec { "cpan-${name}":
-    command => "sudo perl -MCPAN -e 'install ${name}'",
+    command => "perl -MCPAN -e 'install ${name}'",
     creates => $creates,
     require => File['/root/.cpan/CPAN/MyConfig.pm'],
     timeout => $timeout
