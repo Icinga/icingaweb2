@@ -237,6 +237,7 @@ class GettextTranslationHelper
                     '/usr/bin/xgettext',
                     '--language=PHP',
                     '--keyword=translate',
+                    '--keyword=translatePlural:1,2',
                     '--keyword=mt:2',
                     '--keyword=t',
                     '--sort-output',

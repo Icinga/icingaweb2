@@ -14,6 +14,10 @@ if (extension_loaded('gettext')) {
     {
         return Translator::translate($messageId, $domain);
     }
+    function mtp($domain, $messageId, $messageId2, $n)
+    {
+        return Translator::translatePlural($messageId, $messageId2, $n, $domain);
+    }
 } else {
     function t($messageId)
     {

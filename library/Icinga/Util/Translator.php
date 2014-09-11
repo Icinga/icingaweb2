@@ -48,6 +48,12 @@ class Translator
         return $res;
     }
 
+    public static function translatePlural($msgid1, $msgid2, $n, $domain)
+    {
+        $res = dngettext($domain, $msgid1, $msgid2, $n);
+        return $res;
+    }
+
     /**
      * Register a new gettext domain
      *

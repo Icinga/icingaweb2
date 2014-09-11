@@ -132,6 +132,11 @@ class View extends Zend_View_Abstract
         return Translator::translate($text, $this->translationDomain);
     }
 
+    public function translatePlural($text, $text2, $n)
+    {
+        return Translator::translatePlural($text, $text2, $n, $this->translationDomain);
+    }
+
     /**
      * Load helpers
      */

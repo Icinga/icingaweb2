@@ -924,4 +924,9 @@ class Module
     {
         return mt($this->name, $string);
     }
+
+    protected function translatePlural($string, $string2, $n)
+    {
+        return mtp($this->name, $string, $string2, $n);
+    }
 }
