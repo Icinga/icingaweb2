@@ -11,7 +11,6 @@
 # Requires:
 #
 #   pgsql::database::create
-#   grep
 #
 # Sample Usage:
 #
@@ -22,8 +21,6 @@
 # }
 #
 define pgsql::database::populate ($username, $password, $schemafile) {
-  include grep
-
   Exec { path => '/bin:/usr/bin' }
 
   pgsql::database::create { $name:
@@ -35,9 +32,6 @@ define pgsql::database::populate ($username, $password, $schemafile) {
     onlyif  => "psql -U ${username} -d ${name} -c \"SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '${name}';\" 2>/dev/null |grep -qEe '^ *0 *$'",
     command => "psql -U ${username} -d ${name} < ${schemafile}",
     user    => 'postgres',
-    require => [
-      Pgsql::Database::Create[$name],
-      Class['grep']
-    ],
+    require => Pgsql::Database::Create[$name],
   }
 }
