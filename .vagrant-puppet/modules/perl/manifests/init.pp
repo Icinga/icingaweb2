@@ -16,5 +16,8 @@ class perl {
     creates           => $perlDir,
     configure_command => 'sh ./Configure',
     flags             => "-des -Dprefix=${perlDir}",
+  } -> file { '/usr/local/bin/perl':
+    ensure => link,
+    target => "${perlDir}/bin/perl",
   }
 }
