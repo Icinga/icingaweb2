@@ -10,7 +10,7 @@
 #
 # Requires:
 #
-#   Perl
+#   perl
 #
 # Sample Usage:
 #
@@ -23,12 +23,7 @@ define cpan(
   $creates,
   $timeout = 0
 ) {
-
-  Exec { path => '/usr/bin' }
-
-  package { 'perl-CPAN':
-    ensure => installed
-  }
+  include perl
 
   file { [ '/root/.cpan/', '/root/.cpan/CPAN/' ]:
     ensure  => directory
@@ -36,16 +31,17 @@ define cpan(
 
   file { '/root/.cpan/CPAN/MyConfig.pm':
     content => template('cpan/MyConfig.pm.erb'),
-    require => [
-      Package['perl-CPAN'],
-      File[[ '/root/.cpan/', '/root/.cpan/CPAN/' ]]
-    ]
+    require => File[[ '/root/.cpan/', '/root/.cpan/CPAN/' ]],
   }
 
   exec { "cpan-${name}":
     command => "perl -MCPAN -e 'install ${name}'",
     creates => $creates,
-    require => File['/root/.cpan/CPAN/MyConfig.pm'],
+    path    => '/usr/local/bin:/usr/bin',
+    require => [
+      Class['perl'],
+      File['/root/.cpan/CPAN/MyConfig.pm']
+    ],
     timeout => $timeout
   }
 }
