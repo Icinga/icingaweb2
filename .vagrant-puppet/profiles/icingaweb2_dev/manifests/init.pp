@@ -1,6 +1,7 @@
 class icingaweb2_dev {
   include apache
   include php
+  include zend_framework
 
   Exec { path => '/bin:/usr/bin' }
 
