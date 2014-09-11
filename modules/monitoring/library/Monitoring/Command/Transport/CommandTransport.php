@@ -58,13 +58,13 @@ abstract class CommandTransport
                 $transport = new LocalCommandFile();
                 break;
             default:
-                throw new ConfigurationError;
+                throw new ConfigurationError();
         }
         unset($config->transport);
         foreach ($config as $key => $value) {
             $method = 'set' . ucfirst($key);
             if (! method_exists($transport, $method)) {
-                throw new ConfigurationError;
+                throw new ConfigurationError();
             }
             $transport->$method($value);
         }
@@ -83,7 +83,7 @@ abstract class CommandTransport
     {
         $config = self::getConfig()->get($name);
         if ($config === null) {
-            throw new ConfigurationError;
+            throw new ConfigurationError();
         }
         return self::fromConfig($config);
     }

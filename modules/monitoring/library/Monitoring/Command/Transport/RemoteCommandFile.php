@@ -8,6 +8,7 @@ use LogicException;
 use Icinga\Logger\Logger;
 use Icinga\Module\Monitoring\Command\Exception\TransportException;
 use Icinga\Module\Monitoring\Command\IcingaCommand;
+use Icinga\Module\Monitoring\Command\Renderer\IcingaCommandFileCommandRenderer;
 
 /**
  * A remote Icinga command file
@@ -45,6 +46,21 @@ class RemoteCommandFile implements CommandTransportInterface
      * @var string
      */
     protected $path;
+
+    /**
+     * Command renderer
+     *
+     * @var IcingaCommandFileCommandRenderer
+     */
+    protected $renderer;
+
+    /**
+     * Create a new remote command file command transport
+     */
+    public function __construct()
+    {
+        $this->renderer = new IcingaCommandFileCommandRenderer();
+    }
 
     /**
      * Set the remote host
@@ -143,12 +159,13 @@ class RemoteCommandFile implements CommandTransportInterface
     /**
      * Write the command to the Icinga command file on the remote host
      *
-     * @param   IcingaCommand $command
+     * @param   IcingaCommand   $command
+     * @param   int|null        $now
      *
      * @throws  LogicException
      * @throws  TransportException
      */
-    public function send(IcingaCommand $command)
+    public function send(IcingaCommand $command, $now = null)
     {
         if (! isset($this->path)) {
             throw new LogicException;
@@ -156,10 +173,11 @@ class RemoteCommandFile implements CommandTransportInterface
         if (! isset($this->host)) {
             throw new LogicException;
         }
+        $commandString = $this->renderer->render($command, $now);
         Logger::debug(
             sprintf(
                 mt('monitoring', 'Sending external Icinga command "%s" to the remote command file "%s:%u%s"'),
-                $command,
+                $commandString,
                 $this->host,
                 $this->port,
                 $this->path
@@ -173,7 +191,7 @@ class RemoteCommandFile implements CommandTransportInterface
         $ssh .= sprintf(
             ' %s "echo %s > %s" 2>&1',  // Redirect stderr to stdout
             escapeshellarg($this->host),
-            escapeshellarg($command),
+            escapeshellarg($commandString),
             escapeshellarg($this->path)
         );
         exec($ssh, $output, $status);

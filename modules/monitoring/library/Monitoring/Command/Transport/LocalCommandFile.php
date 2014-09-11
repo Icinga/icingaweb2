@@ -9,6 +9,7 @@ use LogicException;
 use Icinga\Logger\Logger;
 use Icinga\Module\Monitoring\Command\Exception\TransportException;
 use Icinga\Module\Monitoring\Command\IcingaCommand;
+use Icinga\Module\Monitoring\Command\Renderer\IcingaCommandFileCommandRenderer;
 use Icinga\Util\File;
 
 /**
@@ -29,6 +30,21 @@ class LocalCommandFile implements CommandTransportInterface
      * @var string
      */
     protected $openMode = 'wn';
+
+    /**
+     * Command renderer
+     *
+     * @var IcingaCommandFileCommandRenderer
+     */
+    protected $renderer;
+
+    /**
+     * Create a new local command file command transport
+     */
+    public function __construct()
+    {
+        $this->renderer = new IcingaCommandFileCommandRenderer();
+    }
 
     /**
      * Set the path to the local Icinga command file
@@ -79,26 +95,28 @@ class LocalCommandFile implements CommandTransportInterface
     /**
      * Write the command to the local Icinga command file
      *
-     * @param   IcingaCommand $command
+     * @param   IcingaCommand   $command
+     * @param   int|null        $now
      *
      * @throws  LogicException
      * @throws  TransportException
      */
-    public function send(IcingaCommand $command)
+    public function send(IcingaCommand $command, $now = null)
     {
         if (! isset($this->path)) {
             throw new LogicException;
         }
+        $commandString = $this->renderer->render($command, $now);
         Logger::debug(
             sprintf(
                 mt('monitoring', 'Sending external Icinga command "%s" to the local command file "%s"'),
-                $command,
+                $commandString,
                 $this->path
             )
         );
         try {
             $file = new File($this->path, $this->openMode);
-            $file->fwrite($command . "\n");
+            $file->fwrite($commandString . "\n");
             $file->fflush();
         } catch (Exception $e) {
             throw new TransportException(
@@ -106,7 +124,7 @@ class LocalCommandFile implements CommandTransportInterface
                     'monitoring',
                     'Can\'t send external Icinga command "%s" to the local command file "%s": %s'
                 ),
-                $command,
+                $commandString,
                 $this->path,
                 $e
             );
