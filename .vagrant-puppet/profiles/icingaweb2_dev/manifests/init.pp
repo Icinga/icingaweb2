@@ -1,6 +1,7 @@
 class icingaweb2_dev {
   include apache
   include php
+  include icinga_packages
 
   class { 'zend_framework':
     notify => Service['apache'],
@@ -9,6 +10,13 @@ class icingaweb2_dev {
   package { 'php-pdo':
     ensure => latest,
     notify => Service['apache'],
+  }
+
+  package { 'icingacli':
+    ensure  => latest,
+    require => Class['icinga_packages'],
+  } -> exec { 'enable-monitoring-module':
+    command => 'icingacli module enable monitoring',
   }
 
   Exec { path => '/bin:/usr/bin' }
