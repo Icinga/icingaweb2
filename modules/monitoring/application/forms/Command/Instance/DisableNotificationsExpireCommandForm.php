@@ -6,7 +6,7 @@ namespace Icinga\Module\Monitoring\Form\Command\Instance;
 
 use DateTime;
 use DateInterval;
-use Icinga\Module\Monitoring\Command\Instance\ToggleNotifications;
+use Icinga\Module\Monitoring\Command\Instance\DisableNotificationsExpireCommand;
 use Icinga\Module\Monitoring\Form\Command\CommandForm;
 use Icinga\Web\Form\Element\DateTimePicker;
 use Icinga\Web\Notification;
@@ -15,7 +15,7 @@ use Icinga\Web\Request;
 /**
  * Form for disabling host and service notifications w/ an optional expire date and time on an Icinga instance
  */
-class DisableNotificationsCommandForm extends CommandForm
+class DisableNotificationsExpireCommandForm extends CommandForm
 {
     /**
      * (non-PHPDoc)
@@ -42,30 +42,20 @@ class DisableNotificationsCommandForm extends CommandForm
                 )
             )
         );
-        $expire = new DateTime();
-        $expire->add(new DateInterval('PT1H'));
+        $expireTime = new DateTime();
+        $expireTime->add(new DateInterval('PT1H'));
         $this->addElement(
             new DateTimePicker(
-                'expire',
+                'expire_time',
                 array(
                     'required'      => true,
-                    'label'         => t('Expire Time'),
-                    'description'   => mt('monitoring', 'Set the start date and time for the service downtime.'),
-                    'value'         => $expire
+                    'label'         => mt('monitoring', 'Expire Time'),
+                    'description'   => mt('monitoring', 'Set the expire time.'),
+                    'value'         => $expireTime
                 )
             )
         );
         return $this;
-    }
-
-    /**
-     * Get the command which is to be sent to an Icinga instance
-     *
-     * @return ToggleNotifications
-     */
-    public function getCommand()
-    {
-        return new ToggleNotifications();
     }
 
     /**
@@ -74,11 +64,10 @@ class DisableNotificationsCommandForm extends CommandForm
      */
     public function onSuccess(Request $request)
     {
-        $toggleNotifications = $this->getCommand();
-        $toggleNotifications
-            ->disable()
-            ->setExpire($this->getElement('expire')->getValue());
-        $this->getTransport($request)->send($toggleNotifications);
+        $disableNotifications = new DisableNotificationsExpireCommand();
+        $disableNotifications
+            ->setExpireTime($this->getElement('expire_time')->getValue());
+        $this->getTransport($request)->send($disableNotifications);
         Notification::success(mt('monitoring', 'Disabling host and service notifications..'));
         return true;
     }
