@@ -17,6 +17,8 @@
 #
 # Requires:
 #
+#   tar
+#
 # Sample Usage:
 #
 #   cmmi { 'example-software':
@@ -41,6 +43,7 @@ define cmmi(
   $cwd = '/usr/local/src'
 
   include wget
+  include tar
 
   exec { "download-${name}":
     cwd     => $cwd,
@@ -58,7 +61,10 @@ define cmmi(
                 --no-same-permissions -xzf ${output} -C ${name}/${tld} \
                 --strip-components 1",
     creates => $src,
-    require => Exec["download-${name}"]
+    require => [
+      Exec["download-${name}"],
+      Class['tar']
+    ],
   }
 
   exec { "configure-${name}":
