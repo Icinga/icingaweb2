@@ -3,6 +3,11 @@ class icingaweb2_dev {
   include php
   include zend_framework
 
+  package { 'php-pdo':
+    ensure => latest,
+    notify => Service['apache'],
+  }
+
   Exec { path => '/bin:/usr/bin' }
 
   mysql::database::populate { 'icingaweb':
