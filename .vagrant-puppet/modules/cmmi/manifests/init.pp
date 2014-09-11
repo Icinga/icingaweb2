@@ -24,14 +24,13 @@
 #     output       => 'example-software.tar.gz',
 #     flags        => '--prefix=/opt/example-software',
 #     creates      => '/opt/example-software',
-#     make         => 'make && make install'
 #   }
 #
 define cmmi(
   $url,
   $output,
   $creates,
-  $make,
+  $make='make && make install',
   $flags='',
   $make_timeout=0,
   $configure_command='sh ./configure'
