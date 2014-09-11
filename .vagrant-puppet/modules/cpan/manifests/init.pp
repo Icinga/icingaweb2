@@ -21,7 +21,7 @@
 #
 define cpan(
   $creates,
-  $timeout
+  $timeout = 0
 ) {
 
   Exec { path => '/usr/bin' }
