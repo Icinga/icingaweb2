@@ -22,13 +22,6 @@ abstract class CommandForm extends Form
     protected $backend;
 
     /**
-     * Whether the form's inline
-     *
-     * @var bool
-     */
-    protected $inline = false;
-
-    /**
      * Set the monitoring backend
      *
      * @param   Backend $backend
@@ -49,27 +42,6 @@ abstract class CommandForm extends Form
     public function getBackend()
     {
         return $this->backend;
-    }
-
-    /**
-     * Set the form as inline
-     *
-     * @return $this
-     */
-    public function inline()
-    {
-        $this->inline = true;
-        $this->submitLabel = null;  // Inline forms must not have a submit button
-        $class = $this->getAttrib('class');
-        if (is_array($class)) {
-            $class[] = 'inline';
-        } elseif ($class === null) {
-            $class = 'inline';
-        } else {
-            $class .= 'inline';
-        }
-        $this->setAttrib('class', $class);
-        return $this;
     }
 
     /**
