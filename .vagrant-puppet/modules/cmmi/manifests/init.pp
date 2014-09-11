@@ -25,7 +25,6 @@
 #     flags        => '--prefix=/opt/example-software',
 #     creates      => '/opt/example-software',
 #     make         => 'make && make install'
-#     make_timeout => 600
 #   }
 #
 define cmmi(
@@ -34,7 +33,7 @@ define cmmi(
   $creates,
   $make,
   $flags='',
-  $make_timeout=300,
+  $make_timeout=0,
   $configure_command='sh ./configure'
 ) {
 
