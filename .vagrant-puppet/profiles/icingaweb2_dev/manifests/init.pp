@@ -1,7 +1,10 @@
 class icingaweb2_dev {
   include apache
   include php
-  include zend_framework
+
+  class { 'zend_framework':
+    notify => Service['apache'],
+  }
 
   package { 'php-pdo':
     ensure => latest,
