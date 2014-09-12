@@ -13,6 +13,8 @@
 #
 class icinga2_dev {
   include icinga2_mysql
+  include monitoring_plugins
+  include monitoring_test_config
 
   icinga2::config { [
     'conf.d/test-config', 'conf.d/commands', 'constants' ]:
