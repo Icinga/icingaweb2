@@ -27,7 +27,7 @@
         // restore old menu state
         if (activeMenuId) {
             $('[role="navigation"] li.active', el).removeClass('active');
-            var $selectedMenu = $('#' + activeMenuId, el).addClass('active');
+            var $selectedMenu = $('#' + activeMenuId).addClass('active');
             var $outerMenu = $selectedMenu.parent().closest('li');
             if ($outerMenu.size()) {
                 $outerMenu.addClass('active');
@@ -72,6 +72,23 @@
         var menuDataUrl = icinga.utils.parseUrl($menu.data('icinga-url'));
         menuDataUrl = icinga.utils.addUrlParams(menuDataUrl.path, { url: href });
         $menu.data('icinga-url', menuDataUrl);
+    };
+
+    /**
+     * Change the active menu element
+     *
+     * @param $el   {jQuery}    A selector pointing to the active element
+     */
+    Navigation.prototype.setActive = function($el) {
+
+        $el.closest('li').addClass('active');
+        $el.parents('li').addClass('active');
+        activeMenuId = $el.closest('li').attr('id');
+    };
+
+    Navigation.prototype.resetActive = function() {
+        $('#menu .active').removeClass('active');
+        activeMenuId = null;
     };
 
     Navigation.prototype.menuTitleHovered = function(event) {
