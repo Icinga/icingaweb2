@@ -6,7 +6,6 @@ namespace Icinga\Module\Monitoring\Form\Command\Object;
 
 use Icinga\Module\Monitoring\Command\Object\ScheduleHostCheckCommand;
 use Icinga\Module\Monitoring\Command\Object\ScheduleServiceCheckCommand;
-use Icinga\Module\Monitoring\Form\Command\Object\ObjectsCommandForm;
 use Icinga\Web\Notification;
 use Icinga\Web\Request;
 
@@ -15,15 +14,50 @@ use Icinga\Web\Request;
  */
 class CheckNowCommandForm extends ObjectsCommandForm
 {
-
     /**
      * (non-PHPDoc)
      * @see \Zend_Form::init() For the method documentation.
      */
     public function init()
     {
-        $this->setSubmitLabel(mt('monitoring', 'Check Now'));
         $this->setAttrib('class', 'inline link-like');
+    }
+
+    /**
+     * (non-PHPDoc)
+     * @see \Icinga\Web\Form::addSubmitButton() For the method documentation.
+     */
+    public function addSubmitButton()
+    {
+        $this->addElements(array(
+            array(
+                'note',
+                'icon',
+                array(
+                    'decorators' => array(
+                        array(
+                            'HtmlTag',
+                            array(
+                                'tag' => 'img',
+                                'src' => $this->getView()->href('img/icons/refresh_petrol.png'),
+                            )
+                        )
+                    )
+                )
+            ),
+            array(
+                'submit',
+                'btn_submit',
+                array(
+                    'ignore'        => true,
+                    'label'         => mt('monitoring', 'Check Now'),
+                    'decorators'    => array(
+                        'ViewHelper'
+                    )
+                )
+            )
+        ));
+        return $this;
     }
 
     /**
