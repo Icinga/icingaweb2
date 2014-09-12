@@ -40,7 +40,7 @@ if (count($services) === 0) {
 }
 foreach ($services as $service):
     $serviceLink = $this->href(
-      'monitoring/show/service',
+      'monitoring/service/show',
       array(
         'host' => $service->host_name,
         'service' => $service->service_description
