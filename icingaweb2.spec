@@ -26,12 +26,12 @@
 
 %define revision 1
 
-%define configdir %{_sysconfdir}/icingaweb
-%define sharedir %{_datadir}/icingaweb
-%define prefixdir %{_datadir}/icingaweb
-%define logdir %{sharedir}/log
+%define configdir %{_sysconfdir}/%{name}
+%define sharedir %{_datadir}/%{name}
+%define prefixdir %{_datadir}/%{name}
 %define usermodparam -a -G
-%define logdir %{_localstatedir}/log/icingaweb
+%define logdir %{_localstatedir}/log/%{name}
+%define docdir %{sharedir}/log
 
 %if "%{_vendor}" == "suse"
 %define phpname php5
@@ -172,25 +172,26 @@ install -D -m0644 packages/rpm/etc/httpd/conf.d/icingaweb.conf %{buildroot}/%{ap
 # install public, library, modules
 %{__mkdir} -p %{buildroot}/%{sharedir}
 %{__mkdir} -p %{buildroot}/%{logdir}
-%{__mkdir} -p %{buildroot}/%{_sysconfdir}/icingaweb
+%{__mkdir} -p %{buildroot}/%{docdir}
+%{__mkdir} -p %{buildroot}/%{_sysconfdir}/%{name}
 %{__mkdir} -p %{buildroot}/%{_sysconfdir}/dashboard
-%{__mkdir} -p %{buildroot}/%{_sysconfdir}/icingaweb/modules
-%{__mkdir} -p %{buildroot}/%{_sysconfdir}/icingaweb/modules/monitoring
-%{__mkdir} -p %{buildroot}/%{_sysconfdir}/icingaweb/enabledModules
+%{__mkdir} -p %{buildroot}/%{_sysconfdir}/%{name}/modules
+%{__mkdir} -p %{buildroot}/%{_sysconfdir}/%{name}/modules/monitoring
+%{__mkdir} -p %{buildroot}/%{_sysconfdir}/%{name}/enabledModules
 
-%{__cp} -r application library modules public %{buildroot}/%{sharedir}/
+%{__cp} -r application doc library modules public %{buildroot}/%{sharedir}/
 
 ## config
 # authentication is db only
-install -D -m0644 packages/rpm/etc/icingaweb/authentication.ini %{buildroot}/%{_sysconfdir}/icingaweb/authentication.ini
+install -D -m0644 packages/rpm/etc/%{name}/authentication.ini %{buildroot}/%{_sysconfdir}/%{name}/authentication.ini
 # custom resource paths
-install -D -m0644 packages/rpm/etc/icingaweb/resources.ini %{buildroot}/%{_sysconfdir}/icingaweb/resources.ini
+install -D -m0644 packages/rpm/etc/%{name}/resources.ini %{buildroot}/%{_sysconfdir}/%{name}/resources.ini
 # monitoring module (icinga2)
-install -D -m0644 packages/rpm/etc/icingaweb/modules/monitoring/backends.ini %{buildroot}/%{_sysconfdir}/icingaweb/modules/monitoring/backends.ini
-install -D -m0644 packages/rpm/etc/icingaweb/modules/monitoring/instances.ini %{buildroot}/%{_sysconfdir}/icingaweb/modules/monitoring/instances.ini
+install -D -m0644 packages/rpm/etc/%{name}/modules/monitoring/backends.ini %{buildroot}/%{_sysconfdir}/%{name}/modules/monitoring/backends.ini
+install -D -m0644 packages/rpm/etc/%{name}/modules/monitoring/instances.ini %{buildroot}/%{_sysconfdir}/%{name}/modules/monitoring/instances.ini
 
 # enable the monitoring module by default
-ln -s %{sharedir}/modules/monitoring %{buildroot}/%{_sysconfdir}/icingaweb/enabledModules/monitoring
+ln -s %{sharedir}/modules/monitoring %{buildroot}/%{_sysconfdir}/%{name}/enabledModules/monitoring
 ## config
 
 # install icingacli
@@ -228,6 +229,8 @@ fi
 %config(noreplace) %attr(-,%{apacheuser},%{apachegroup}) %{configdir}
 # logs
 %attr(2775,%{apacheuser},%{apachegroup}) %dir %{logdir}
+# shipped docs
+%attr(755,%{apacheuser},%{apachegroup}) %{sharedir}/doc
 
 %files -n php-Icinga
 %attr(755,%{apacheuser},%{apachegroup}) %{sharedir}/application
