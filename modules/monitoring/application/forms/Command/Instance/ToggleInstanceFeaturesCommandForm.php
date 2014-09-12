@@ -27,7 +27,7 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
      */
     public function init()
     {
-        $this->setAttrib('class', 'inline');
+        $this->setAttrib('class', 'inline instance-features');
     }
 
     /**
@@ -60,19 +60,19 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
     public function createElements(array $formData = array())
     {
         if ((bool) $this->status->notifications_enabled) {
-            $description = sprintf(
+            $notificationDescription = sprintf(
                 '<a title="%s" href="%s" data-base-target="_next">%s</a>',
                 mt('monitoring', 'Disable notifications for a specific time on a program-wide basis'),
                 $this->getView()->href('monitoring/process/disable-notifications'),
                 mt('monitoring', 'Disable temporarily')
             );
         } elseif ($this->status->disable_notif_expire_time) {
-            $description = sprintf(
+            $notificationDescription = sprintf(
                 mt('monitoring', 'Notifications will be re-enabled in <strong>%s</strong>'),
                 $this->getView()->timeUntil($this->status->disable_notif_expire_time)
             );
         } else {
-            $description = '';
+            $notificationDescription = null;
         }
         $this->addElements(array(
             array(
@@ -113,17 +113,17 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
                 array(
                     'label'         => mt('monitoring', 'Notifications Enabled'),
                     'autosubmit'    => true,
-                    'description'   => $description,
+                    'description'   => $notificationDescription,
                     'decorators'    => array(
                         'ViewHelper',
                         'Errors',
                         array(
                             'Description',
-                            array('tag' => 'span', 'class' => 'feature-instance-notifications', 'escape' => false)
+                            array('tag' => 'span', 'class' => 'description', 'escape' => false)
                         ),
                         'Label',
                         array('HtmlTag', array('tag' => 'div'))
-                    ),
+                    )
                 )
             ),
             array(

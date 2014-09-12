@@ -7,4 +7,6 @@ namespace Icinga\Module\Monitoring\Command\Transport;
 /**
  * Interface for Icinga command transports
  */
-interface CommandTransportInterface {}
+interface CommandTransportInterface
+{
+}

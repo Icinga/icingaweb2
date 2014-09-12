@@ -183,13 +183,13 @@ class RemoteCommandFile implements CommandTransportInterface
                 $this->path
             )
         );
-        $ssh = sprintf('ssh -o BatchMode=yes -p %u', $this->port);  // -o BatchMode=yes for disabling interactive
-                                                                    // authentication methods
+        $ssh = sprintf('ssh -o BatchMode=yes -p %u', $this->port);
+        // -o BatchMode=yes for disabling interactive authentication methods
         if (isset($this->user)) {
             $ssh .= sprintf(' -l %s', escapeshellarg($this->user));
         }
         $ssh .= sprintf(
-            ' %s "echo %s > %s" 2>&1',  // Redirect stderr to stdout
+            ' %s "echo %s > %s" 2>&1', // Redirect stderr to stdout
             escapeshellarg($this->host),
             escapeshellarg($commandString),
             escapeshellarg($this->path)
