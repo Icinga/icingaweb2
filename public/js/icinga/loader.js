@@ -540,7 +540,6 @@
                         }).addClass('active');
                 }
             }
-            req.$target.trigger('rendered');
         },
 
         /**
@@ -726,8 +725,10 @@
             }
 
             // TODO: this.icinga.events.refreshContainer(container);
+            $container.trigger('rendered');
+
             var icinga = this.icinga;
-            icinga.events.applyHandlers($container);
+            //icinga.events.applyHandlers($container);
             icinga.ui.initializeControls($container);
             icinga.ui.fixControls();
 
