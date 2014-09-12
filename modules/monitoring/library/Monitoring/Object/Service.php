@@ -4,33 +4,83 @@
 
 namespace Icinga\Module\Monitoring\Object;
 
-use Icinga\Module\Monitoring\DataView\ServiceStatus;
-use Icinga\Data\Db\DbQuery;
+use Icinga\Module\Monitoring\Backend;
 
+/**
+ * A Icinga service
+ */
 class Service extends MonitoredObject
 {
-    public $type   = 'service';
+    /**
+     * Type of the Icinga service
+     *
+     * @var string
+     */
+    public $type = self::TYPE_SERVICE;
+
+    /**
+     * Prefix of the Icinga service
+     *
+     * @var string
+     */
     public $prefix = 'service_';
 
-    protected function applyObjectFilter(DbQuery $query)
+    /**
+     * Host name the service is running on
+     *
+     * @var string
+     */
+    protected $host;
+
+    /**
+     * Service name
+     *
+     * @var string
+     */
+    protected $service;
+
+    /**
+     * Create a new service
+     *
+     * @param Backend   $backend    Backend to fetch service information from
+     * @param string    $host       Host name the service is running on
+     * @param string    $service    Service name
+     */
+    public function __construct(Backend $backend, $host, $service)
     {
-        return $query->where('service_host_name', $this->host_name)
-                     ->where('service_description', $this->service_description);
+        parent::__construct($backend);
+        $this->host = $host;
+        $this->service = $service;
     }
 
-    public function populate()
+    /**
+     * Get the host name the service is running on
+     *
+     * @return string
+     */
+    public function getHost()
     {
-        $this->fetchComments()
-            ->fetchServicegroups()
-            ->fetchContacts()
-            ->fetchContactGroups()
-            ->fetchCustomvars()
-            ->fetchDowntimes();
+        return $this->host;
     }
 
-    protected function getProperties()
+    /**
+     * Get the service name
+     *
+     * @return string
+     */
+    public function getService()
     {
-        $this->view = ServiceStatus::fromParams(array('backend' => null), array(
+        return $this->service;
+    }
+
+    /**
+     * Get the data view
+     *
+     * @return \Icinga\Module\Monitoring\DataView\ServiceStatus
+     */
+    protected function getDataView()
+    {
+        return $this->backend->select()->from('serviceStatus', array(
             'host_name',
             'host_state',
             'host_state_type',
@@ -114,30 +164,10 @@ class Service extends MonitoredObject
             'service_flap_detection_enabled',
             'service_flap_detection_enabled_changed',
             'service_modified_service_attributes',
-            'process_perfdata' => 'service_process_performance_data',
-        ))->where('host_name', $this->params->get('host'))
-          ->where('service_description', $this->params->get('service'));
-
-        return $this->view->getQuery()->fetchRow();
-    }
-
-    /**
-     * Get the host name the service is running on
-     *
-     * @return string
-     */
-    public function getHostName()
-    {
-        return $this->params->get('host');
-    }
-
-    /**
-     * Get the service name
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->params->get('service');
+            'service_process_performance_data',
+            'service_percent_state_change'
+        ))
+            ->where('host_name', $this->host)
+            ->where('service_description', $this->service);
     }
 }

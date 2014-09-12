@@ -4,32 +4,64 @@
 
 namespace Icinga\Module\Monitoring\Object;
 
-use Icinga\Module\Monitoring\DataView\HostStatus;
-use Icinga\Data\Db\DbQuery;
+use Icinga\Module\Monitoring\Backend;
 
+/**
+ * A Icinga host
+ */
 class Host extends MonitoredObject
 {
-    public $type   = 'host';
+    /**
+     * Type of the Icinga host
+     *
+     * @var string
+     */
+    public $type = self::TYPE_HOST;
+
+    /**
+     * Prefix of the Icinga host
+     *
+     * @var string
+     */
     public $prefix = 'host_';
 
-    protected function applyObjectFilter(DbQuery $query)
+    /**
+     * Host name
+     *
+     * @var string
+     */
+    protected $host;
+
+    /**
+     * Create a new host
+     *
+     * @param Backend   $backend    Backend to fetch host information from
+     * @param string    $host       Host name
+     */
+    public function __construct(Backend $backend, $host)
     {
-        return $query->where('host_name', $this->host_name);
+        parent::__construct($backend);
+        $this->host = $host;
     }
 
-    public function populate()
+    /**
+     * Get the host name
+     *
+     * @return string
+     */
+    public function getHost()
     {
-        $this->fetchComments()
-            ->fetchHostgroups()
-            ->fetchContacts()
-            ->fetchContactGroups()
-            ->fetchCustomvars()
-            ->fetchDowntimes();
+        return $this->host;
     }
 
-    protected function getProperties()
+    /**
+     * Get the data view to fetch the host information from
+     *
+     * @return \Icinga\Module\Monitoring\DataView\HostStatus
+     */
+    protected function getDataView()
     {
-        $this->view = HostStatus::fromParams(array('backend' => null), array(
+        return $this->backend->select()->from('hostStatus', array(
             'host_name',
             'host_alias',
             'host_address',
@@ -70,8 +102,8 @@ class Host extends MonitoredObject
             'host_notes_url',
             'host_modified_host_attributes',
             'host_problem',
-            'process_perfdata' => 'host_process_performance_data',
-        ))->where('host_name', $this->params->get('host'));
-        return $this->view->getQuery()->fetchRow();
+            'host_process_performance_data'
+        ))
+            ->where('host_name', $this->host);
     }
 }
