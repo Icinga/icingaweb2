@@ -20,7 +20,7 @@ class ToggleObjectFeaturesCommandForm extends ObjectsCommandForm
      */
     public function init()
     {
-        $this->setAttrib('class', 'inline');
+        $this->setAttrib('class', 'inline object-features');
     }
 
     /**
@@ -93,7 +93,11 @@ class ToggleObjectFeaturesCommandForm extends ObjectsCommandForm
     {
         $this->create();
         foreach ($this->getValues() as $feature => $enabled) {
-            $this->getElement($feature)->setChecked($object->{$feature});
+            $element = $this->getElement($feature);
+            $element->setChecked($object->{$feature});
+            if ((bool) $object->{$feature . '_changed'} === true) {
+                $element->setDescription(mt('monitoring', 'changed'));
+            }
         }
         return $this;
     }
