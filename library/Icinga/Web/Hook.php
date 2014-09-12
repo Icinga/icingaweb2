@@ -175,18 +175,6 @@ class Hook
     }
 
     /**
-     * Register your hook
-     *
-     * Alias for Hook::registerClass()
-     *
-     * @see Hook::registerClass()
-     */
-    public static function register($name, $key, $class)
-    {
-        self::registerClass($name, $key, $class);
-    }
-
-    /**
      * Register a class
      *
      * @param   string      $name   One of the predefined hook names
@@ -194,45 +182,12 @@ class Hook
      * @param   string      $class  Your class name, must inherit one of the
      *                              classes in the Icinga/Web/Hook folder
      */
-    public static function registerClass($name, $key, $class)
+    public static function register($name, $key, $class)
     {
-        if (!class_exists($class)) {
-            throw new ProgrammingError(
-                '"%s" is not an existing class',
-                $class
-            );
-        }
-
         if (!isset(self::$hooks[$name])) {
             self::$hooks[$name] = array();
         }
 
         self::$hooks[$name][$key] = $class;
-    }
-
-    /**
-     * Register an object
-     *
-     * @param   string      $name   One of the predefined hook names
-     * @param   string      $key    The identifier of a specific subtype
-     * @param   object      $object The instantiated hook to register
-     *
-     * @throws  ProgrammingError
-     */
-    public static function registerObject($name, $key, $object)
-    {
-        if (!is_object($object)) {
-            throw new ProgrammingError(
-                '"%s" is not an instantiated class',
-                $object
-            );
-        }
-
-        if (!isset(self::$instances[$name])) {
-            self::$instances[$name] = array();
-        }
-
-        self::$instances[$name][$key] = $object;
-        self::registerClass($name, $key, get_class($object));
     }
 }
