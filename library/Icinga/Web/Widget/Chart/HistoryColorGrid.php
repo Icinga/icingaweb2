@@ -239,8 +239,11 @@ class HistoryColorGrid extends AbstractWidget {
             if ($weekday > 6) {
                 $weekday = 0;
                 $weeks[] = array();
+                // PRESENT => The last day of week determines the month
+                if ($this->weekFlow === self::CAL_GROW_INTO_PRESENT) {
+                    $months[$week] = $month;
+                }
                 $week++;
-                $months[$week] = $month;
             }
             if ($day > cal_days_in_month(CAL_GREGORIAN, $month, $year)) {
                 $month++;
@@ -249,6 +252,12 @@ class HistoryColorGrid extends AbstractWidget {
                     $month = 1;
                 }
                 $day = 1;
+            }
+            if ($weekday === 0) {
+                // PAST => The first day of each week determines the month
+                if ($this->weekFlow === self::CAL_GROW_INTO_PAST) {
+                    $months[$week] = $month;
+                }
             }
             $date = $this->toDateStr($day, $month, $year);
             $weeks[$week][$weekday] = $date;
