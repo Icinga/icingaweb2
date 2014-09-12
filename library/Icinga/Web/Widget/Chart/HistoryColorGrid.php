@@ -15,10 +15,13 @@ use DateInterval;
  */
 class HistoryColorGrid extends AbstractWidget {
 
-    const ORIENTATION_VERTICAL = 'vertical';
+    const CAL_GROW_INTO_PAST = 'past';
+    const CAL_GROW_INTO_PRESENT = 'present';
 
+    const ORIENTATION_VERTICAL = 'vertical';
     const ORIENTATION_HORIZONTAL = 'horizontal';
 
+    public $weekFlow = self::CAL_GROW_INTO_PAST;
     public $orientation = self::ORIENTATION_VERTICAL;
 
     private $maxValue = 1;
@@ -244,6 +247,12 @@ class HistoryColorGrid extends AbstractWidget {
             $weeks[$week][$weekday] = $date;
         };
         $months[$week] = $month;
+        if ($this->weekFlow == self::CAL_GROW_INTO_PAST) {
+            return array(
+                'weeks'  => array_reverse($weeks),
+                'months' => array_reverse($months)
+            );
+        }
         return array(
             'weeks'  => $weeks,
             'months' => $months
