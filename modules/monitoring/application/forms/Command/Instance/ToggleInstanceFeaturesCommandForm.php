@@ -59,6 +59,21 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
      */
     public function createElements(array $formData = array())
     {
+        if ((bool) $this->status->notifications_enabled) {
+            $description = sprintf(
+                '<a title="%s" href="%s" data-base-target="_next">%s</a>',
+                mt('monitoring', 'Disable notifications for a specific time on a program-wide basis'),
+                $this->getView()->href('monitoring/process/disable-notifications'),
+                mt('monitoring', 'Disable temporarily')
+            );
+        } elseif ($this->status->disable_notif_expire_time) {
+            $description = sprintf(
+                mt('monitoring', 'Notifications will be re-enabled in <strong>%s</strong>'),
+                $this->getView()->timeUntil($this->status->disable_notif_expire_time)
+            );
+        } else {
+            $description = '';
+        }
         $this->addElements(array(
             array(
                 'checkbox',
@@ -97,7 +112,18 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
                 ToggleInstanceFeatureCommand::FEATURE_NOTIFICATIONS,
                 array(
                     'label'         => mt('monitoring', 'Notifications Enabled'),
-                    'autosubmit'    => true
+                    'autosubmit'    => true,
+                    'description'   => $description,
+                    'decorators'    => array(
+                        'ViewHelper',
+                        'Errors',
+                        array(
+                            'Description',
+                            array('tag' => 'span', 'class' => 'feature-instance-notifications', 'escape' => false)
+                        ),
+                        'Label',
+                        array('HtmlTag', array('tag' => 'div'))
+                    ),
                 )
             ),
             array(

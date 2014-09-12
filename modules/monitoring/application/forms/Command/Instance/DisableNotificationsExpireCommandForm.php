@@ -71,5 +71,4 @@ class DisableNotificationsExpireCommandForm extends CommandForm
         Notification::success(mt('monitoring', 'Disabling host and service notifications..'));
         return true;
     }
-
 }
