@@ -19,6 +19,15 @@ class icingaweb2_dev {
     command => 'icingacli module enable monitoring',
   }
 
+  exec { 'usermod -aG icingacmd apache':
+    command => '/usr/sbin/usermod -aG icingacmd apache',
+    require => [
+      Package['icingacli'],
+      User['apache']
+    ],
+    notify  => Service['apache'],
+  }
+
   Exec { path => '/bin:/usr/bin' }
 
   mysql::database::populate { 'icingaweb':
