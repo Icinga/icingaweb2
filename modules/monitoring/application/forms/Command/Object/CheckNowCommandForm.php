@@ -34,15 +34,10 @@ class CheckNowCommandForm extends ObjectsCommandForm
                 'note',
                 'icon',
                 array(
-                    'decorators' => array(
-                        array(
-                            'HtmlTag',
-                            array(
-                                'tag' => 'img',
-                                'src' => $this->getView()->href('img/icons/refresh_petrol.png'),
-                            )
-                        )
-                    )
+                    'decorators' => array(array(
+                        'HtmlTag',
+                        array('tag' => 'img', 'src' => $this->getView()->href('img/icons/refresh_petrol.png'))
+                    ))
                 )
             ),
             array(
@@ -51,9 +46,7 @@ class CheckNowCommandForm extends ObjectsCommandForm
                 array(
                     'ignore'        => true,
                     'label'         => mt('monitoring', 'Check Now'),
-                    'decorators'    => array(
-                        'ViewHelper'
-                    )
+                    'decorators'    => array('ViewHelper')
                 )
             )
         ));

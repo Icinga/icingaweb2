@@ -41,7 +41,7 @@ class ScheduleServiceCheckCommandForm extends ObjectsCommandForm
                     'value' => mt(
                         'monitoring',
                         'This command is used to schedule the next check of hosts or services. Icinga will re-queue the'
-                            . ' hosts or services to be checked at the time you specify.'
+                        . ' hosts or services to be checked at the time you specify.'
                     )
                 )
             ),
@@ -62,7 +62,7 @@ class ScheduleServiceCheckCommandForm extends ObjectsCommandForm
                     'description'   => mt(
                         'monitoring',
                         'If you select this option, Icinga will force a check regardless of both what time the'
-                            . 'scheduled check occurs and whether or not checks are enabled.'
+                        . 'scheduled check occurs and whether or not checks are enabled.'
                     )
                 )
             )

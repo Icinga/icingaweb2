@@ -48,8 +48,8 @@ class AddCommentCommandForm extends ObjectsCommandForm
                     'description'   => mt(
                         'monitoring',
                         'If you work with other administrators, you may find it useful to share information about the'
-                            . ' the host or service that is having problems. Make sure you enter a brief description of'
-                            . ' what you are doing.'
+                        . ' the host or service that is having problems. Make sure you enter a brief description of'
+                        . ' what you are doing.'
                     )
                 )
             ),
@@ -62,7 +62,7 @@ class AddCommentCommandForm extends ObjectsCommandForm
                     'description'   => mt(
                         'monitoring',
                         'If you uncheck this option, the comment will automatically be deleted the next time Icinga is'
-                            . ' restarted.'
+                        . ' restarted.'
                     )
                 )
             )

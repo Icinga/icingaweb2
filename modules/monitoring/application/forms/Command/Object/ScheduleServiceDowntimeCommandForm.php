@@ -53,10 +53,10 @@ class ScheduleServiceDowntimeCommandForm extends ObjectsCommandForm
                     'value' => mt(
                         'monitoring',
                         'This command is used to schedule host and service downtimes. During the specified downtime,'
-                            . ' Icinga will not send notifications out about the hosts and services. When the scheduled'
-                            . ' downtime expires, Icinga will send out notifications for the hosts and services as it'
-                            . ' normally would. Scheduled downtimes are preserved across program shutdowns and'
-                            . ' restarts.'
+                        . ' Icinga will not send notifications out about the hosts and services. When the scheduled'
+                        . ' downtime expires, Icinga will send out notifications for the hosts and services as it'
+                        . ' normally would. Scheduled downtimes are preserved across program shutdowns and'
+                        . ' restarts.'
                     )
                 )
             ),
@@ -69,8 +69,8 @@ class ScheduleServiceDowntimeCommandForm extends ObjectsCommandForm
                     'description'   => mt(
                         'monitoring',
                         'If you work with other administrators, you may find it useful to share information about the'
-                            . ' the host or service that is having problems. Make sure you enter a brief description of'
-                            . ' what you are doing.'
+                        . ' the host or service that is having problems. Make sure you enter a brief description of'
+                        . ' what you are doing.'
                     )
                 )
             ),
@@ -102,9 +102,9 @@ class ScheduleServiceDowntimeCommandForm extends ObjectsCommandForm
                     'description'   => mt(
                         'monitoring',
                         'If you select the fixed option, the downtime will be in effect between the start and end'
-                            . ' times you specify whereas a flexible downtime starts when the host or service enters a'
-                            . ' problem state sometime between the start and end times you specified and lasts as long'
-                            . ' as the duration time you enter. The duration fields do not apply for fixed downtimes.'
+                        . ' times you specify whereas a flexible downtime starts when the host or service enters a'
+                        . ' problem state sometime between the start and end times you specified and lasts as long'
+                        . ' as the duration time you enter. The duration fields do not apply for fixed downtimes.'
                     ),
                     'multiOptions' => array(
                         self::FIXED     => mt('monitoring', 'Fixed'),
@@ -159,7 +159,7 @@ class ScheduleServiceDowntimeCommandForm extends ObjectsCommandForm
                     'description'   => mt(
                         'monitoring',
                         'Enter here the duration of the downtime. The downtime will be automatically deleted after this'
-                            . ' time expired.'
+                        . ' time expired.'
                     ),
                     'decorators' => array(
                         'FormElements',

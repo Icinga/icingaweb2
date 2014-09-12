@@ -39,8 +39,8 @@ class AcknowledgeProblemCommandForm extends ObjectsCommandForm
                     'value' => mt(
                         'monitoring',
                         'This command is used to acknowledge host or service problems. When a problem is acknowledged,'
-                            . ' future notifications about problems are temporarily disabled until the host or service'
-                            . ' recovers.'
+                        . ' future notifications about problems are temporarily disabled until the host or service'
+                        . ' recovers.'
                     )
                 )
             ),
@@ -53,8 +53,8 @@ class AcknowledgeProblemCommandForm extends ObjectsCommandForm
                     'description'   => mt(
                         'monitoring',
                         'If you work with other administrators, you may find it useful to share information about the'
-                            . ' the host or service that is having problems. Make sure you enter a brief description of'
-                            . ' what you are doing.'
+                        . ' the host or service that is having problems. Make sure you enter a brief description of'
+                        . ' what you are doing.'
                     )
                 )
             ),
@@ -66,7 +66,7 @@ class AcknowledgeProblemCommandForm extends ObjectsCommandForm
                     'description'   => mt(
                         'monitoring',
                         'If you would like the comment to remain even when the acknowledgement is removed, check this'
-                            . ' option.'
+                        . ' option.'
                     )
                 )
             ),
@@ -92,7 +92,7 @@ class AcknowledgeProblemCommandForm extends ObjectsCommandForm
                         'description'   => mt(
                             'monitoring',
                             'Enter the expire date and time for this acknowledgement here. Icinga will delete the'
-                                . ' acknowledgement after this time expired.'
+                            . ' acknowledgement after this time expired.'
                         )
                     )
                 )
@@ -118,7 +118,7 @@ class AcknowledgeProblemCommandForm extends ObjectsCommandForm
                     'description'   => mt(
                         'monitoring',
                         'If you want the acknowledgement to disable notifications until the host or service recovers,'
-                            . 'check this option.'
+                        . 'check this option.'
                     )
                 )
             ),
@@ -131,7 +131,7 @@ class AcknowledgeProblemCommandForm extends ObjectsCommandForm
                     'description'   => mt(
                         'monitoring',
                         'If you do not want an acknowledgement notification to be sent out to the appropriate contacts,'
-                            . 'uncheck this option.'
+                        . 'uncheck this option.'
                     )
                 )
             )
