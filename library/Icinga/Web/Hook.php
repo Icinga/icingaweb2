@@ -123,7 +123,7 @@ class Hook
      */
     private static function assertValidHook($instance, $name)
     {
-        $base_class = self::$BASE_NS . ucfirst($name);
+        $base_class = self::$BASE_NS . ucfirst($name) . 'Hook';
 
         if (strpos($base_class, self::$classSuffix) === false) {
             $base_class .= self::$classSuffix;
