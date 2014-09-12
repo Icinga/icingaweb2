@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Monitoring\Command\Renderer;
 
+use Icinga\Module\Monitoring\Command\Instance\DisableNotificationsExpireCommand;
 use Icinga\Module\Monitoring\Command\Object\AcknowledgeProblemCommand;
 use Icinga\Module\Monitoring\Command\Object\AddCommentCommand;
 use Icinga\Module\Monitoring\Command\Object\DeleteCommentCommand;
@@ -385,5 +386,14 @@ class IcingaCommandFileCommandRenderer implements IcingaCommandRendererInterface
             );
         }
         return $commandString;
+    }
+
+    public function renderDisableNotificationsExpire(DisableNotificationsExpireCommand $command)
+    {
+        return sprintf(
+            '%s;%u',
+            'DISABLE_NOTIFICATIONS_EXPIRE_TIME',
+            $command->getExpireTime()
+        );
     }
 }

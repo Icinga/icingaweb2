@@ -66,7 +66,7 @@ class DisableNotificationsExpireCommandForm extends CommandForm
     {
         $disableNotifications = new DisableNotificationsExpireCommand();
         $disableNotifications
-            ->setExpireTime($this->getElement('expire_time')->getValue());
+            ->setExpireTime($this->getElement('expire_time')->getValue()->getTimestamp());
         $this->getTransport($request)->send($disableNotifications);
         Notification::success(mt('monitoring', 'Disabling host and service notifications..'));
         return true;
