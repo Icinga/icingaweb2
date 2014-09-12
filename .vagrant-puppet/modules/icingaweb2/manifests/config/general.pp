@@ -6,7 +6,7 @@ define icingaweb2::config::general ($source, $replace = true) {
   parent_dirs { $path: }
 
   file { $path:
-    source  => "${source}${path}",
+    source  => "${source}/${name}.ini",
     owner   => 'apache',
     group   => 'apache',
     replace => $replace,
