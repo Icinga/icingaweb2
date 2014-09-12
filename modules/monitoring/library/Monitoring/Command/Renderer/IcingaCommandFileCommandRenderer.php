@@ -3,6 +3,7 @@
 namespace Icinga\Module\Monitoring\Command\Renderer;
 
 use Icinga\Module\Monitoring\Command\Instance\DisableNotificationsExpireCommand;
+use Icinga\Module\Monitoring\Command\Instance\ToggleInstanceFeatureCommand;
 use Icinga\Module\Monitoring\Command\Object\AcknowledgeProblemCommand;
 use Icinga\Module\Monitoring\Command\Object\AddCommentCommand;
 use Icinga\Module\Monitoring\Command\Object\DeleteCommentCommand;
@@ -36,8 +37,8 @@ class IcingaCommandFileCommandRenderer implements IcingaCommandRendererInterface
     /**
      * Render a command
      *
-     * @param   IcingaCommand $command
-     * @param   int|null $now
+     * @param   IcingaCommand   $command
+     * @param   int|null        $now
      *
      * @return  string
      */
@@ -391,9 +392,115 @@ class IcingaCommandFileCommandRenderer implements IcingaCommandRendererInterface
     public function renderDisableNotificationsExpire(DisableNotificationsExpireCommand $command)
     {
         return sprintf(
-            '%s;%u',
+            '%s;%u;%u',
             'DISABLE_NOTIFICATIONS_EXPIRE_TIME',
+            time(),
             $command->getExpireTime()
         );
+    }
+
+    public function renderToggleInstanceFeature(ToggleInstanceFeatureCommand $command)
+    {
+        switch ($command->getFeature()) {
+            case ToggleInstanceFeatureCommand::FEATURE_ACTIVE_HOST_CHECKS:
+            case ToggleInstanceFeatureCommand::FEATURE_ACTIVE_SERVICE_CHECKS:
+            case ToggleInstanceFeatureCommand::FEATURE_HOST_OBSESSING:
+            case ToggleInstanceFeatureCommand::FEATURE_SERVICE_OBSESSING:
+            case ToggleInstanceFeatureCommand::FEATURE_PASSIVE_HOST_CHECKS:
+            case ToggleInstanceFeatureCommand::FEATURE_PASSIVE_SERVICE_CHECKS:
+                if ($command->getEnabled() === true) {
+                    $commandPrefix = 'START';
+                } else {
+                    $commandPrefix = 'STOP';
+                }
+                break;
+            case ToggleInstanceFeatureCommand::FEATURE_EVENT_HANDLERS:
+            case ToggleInstanceFeatureCommand::FEATURE_FLAP_DETECTION:
+            case ToggleInstanceFeatureCommand::FEATURE_NOTIFICATIONS:
+            case ToggleInstanceFeatureCommand::FEATURE_PERFORMANCE_DATA:
+                if ($command->getEnabled() === true) {
+                    $commandPrefix = 'ENABLE';
+                } else {
+                    $commandPrefix = 'DISABLE';
+                }
+                break;
+            default:
+                throw new InvalidArgumentException($command->getFeature());
+        }
+        switch ($command->getFeature()) {
+            case ToggleInstanceFeatureCommand::FEATURE_ACTIVE_HOST_CHECKS:
+                $commandString = sprintf(
+                    '%s_%s',
+                    $commandPrefix,
+                    'EXECUTING_HOST_CHECKS'
+                );
+                break;
+            case ToggleInstanceFeatureCommand::FEATURE_ACTIVE_SERVICE_CHECKS:
+                $commandString = sprintf(
+                    '%s_%s',
+                    $commandPrefix,
+                    'EXECUTING_SVC_CHECKS'
+                );
+                break;
+            case ToggleInstanceFeatureCommand::FEATURE_EVENT_HANDLERS:
+                $commandString = sprintf(
+                    '%s_%s',
+                    $commandPrefix,
+                    'EVENT_HANDLERS'
+                );
+                break;
+            case ToggleInstanceFeatureCommand::FEATURE_FLAP_DETECTION:
+                $commandString = sprintf(
+                    '%s_%s',
+                    $commandPrefix,
+                    'FLAP_DETECTION'
+                );
+                break;
+            case ToggleInstanceFeatureCommand::FEATURE_NOTIFICATIONS:
+                $commandString = sprintf(
+                    '%s_%s',
+                    $commandPrefix,
+                    'NOTIFICATIONS'
+                );
+                break;
+            case ToggleInstanceFeatureCommand::FEATURE_HOST_OBSESSING:
+                $commandString = sprintf(
+                    '%s_%s',
+                    $commandPrefix,
+                    'OBSESSING_OVER_HOST_CHECKS'
+                );
+                break;
+            case ToggleInstanceFeatureCommand::FEATURE_SERVICE_OBSESSING:
+                $commandString = sprintf(
+                    '%s_%s',
+                    $commandPrefix,
+                    'OBSESSING_OVER_SVC_CHECKS'
+                );
+                break;
+            case ToggleInstanceFeatureCommand::FEATURE_PASSIVE_HOST_CHECKS:
+                $commandString = sprintf(
+                    '%s_%s',
+                    $commandPrefix,
+                    'ACCEPTING_PASSIVE_HOST_CHECKS'
+                );
+                break;
+            case ToggleInstanceFeatureCommand::FEATURE_PASSIVE_SERVICE_CHECKS:
+                $commandString = sprintf(
+                    '%s_%s',
+                    $commandPrefix,
+                    'ACCEPTING_PASSIVE_SVC_CHECKS'
+                );
+                break;
+            case ToggleInstanceFeatureCommand::FEATURE_PERFORMANCE_DATA:
+                $commandString = sprintf(
+                    '%s_%s',
+                    $commandPrefix,
+                    'PERFORMANCE_DATA'
+                );
+                break;
+            default:
+                throw new InvalidArgumentException($command->getFeature());
+        }
+        return $commandString;
     }
 }
