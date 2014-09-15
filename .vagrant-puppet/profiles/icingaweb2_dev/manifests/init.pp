@@ -2,6 +2,7 @@ class icingaweb2_dev {
   include apache
   include php
   include icinga_packages
+  include icingaweb2
 
   class { 'zend_framework':
     notify => Service['apache'],
@@ -15,8 +16,21 @@ class icingaweb2_dev {
   package { 'icingacli':
     ensure  => latest,
     require => Class['icinga_packages'],
-  } -> exec { 'enable-monitoring-module':
+  }
+
+  file { '/etc/icingaweb/enabledModules':
+    ensure  => directory,
+    owner   => 'apache',
+    group   => 'apache',
+    mode    => 6750,
+    require => [
+      Class['apache'],
+      File['icingaweb2cfgDir']
+    ],
+  }
+  -> exec { 'enable-monitoring-module':
     command => 'icingacli module enable monitoring',
+    require => Package['icingacli'],
   }
 
   exec { 'usermod -aG icingacmd apache':
