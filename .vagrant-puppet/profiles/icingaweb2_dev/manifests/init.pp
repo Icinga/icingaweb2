@@ -31,7 +31,10 @@ class icingaweb2_dev {
     require => Class[[ 'icingacli', 'apache' ]],
   }
 
-  exec { 'usermod -aG icingacmd apache':
+  group { 'icingacmd':
+    ensure => present,
+  }
+  -> exec { 'usermod -aG icingacmd apache':
     command => '/usr/sbin/usermod -aG icingacmd apache',
     require => [
       Class['icingacli'],
