@@ -22,17 +22,13 @@ class icinga2_mysql {
     ensure  => latest,
     require => Class['icinga_packages'],
   }
-
-  mysql::database::populate { 'icinga2':
+  -> mysql::database::populate { 'icinga2':
     username   => 'icinga2',
     password   => 'icinga2',
     privileges => 'SELECT,INSERT,UPDATE,DELETE',
     schemafile => '/usr/share/icinga2-ido-mysql/schema/mysql.sql',
-    require    => Package['icinga2-ido-mysql'],
   }
-
-  icinga2::feature { 'ido-mysql':
+  -> icinga2::feature { 'ido-mysql':
     source => 'puppet:///modules/icinga2_mysql',
-    require => Mysql::Database::Populate['icinga2'],
   }
 }
