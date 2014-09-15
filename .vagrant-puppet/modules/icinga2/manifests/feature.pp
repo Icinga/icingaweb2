@@ -24,7 +24,11 @@ define icinga2::feature ($source = undef) {
   }
 
   parent_dirs { $path:
-    require => File['icinga2cfgDir'],
+    user    => 'icinga',
+    require => [
+      User['icinga'],
+      File['icinga2cfgDir']
+    ],
   }
   -> file { $path:
     ensure  => link,

@@ -26,7 +26,11 @@ define icinga2::config ($source) {
   $path = "/etc/icinga2/${name}.conf"
 
   parent_dirs { $path:
-    require => File['icinga2cfgDir'],
+    user    => 'icinga',
+    require => [
+      User['icinga'],
+      File['icinga2cfgDir']
+    ],
   }
   -> file { $path:
     source  => "${source}/${name}.conf",

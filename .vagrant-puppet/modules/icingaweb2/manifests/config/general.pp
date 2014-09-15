@@ -5,7 +5,11 @@ define icingaweb2::config::general ($source, $replace = true) {
   $path = "/etc/icingaweb/${name}.ini"
 
   parent_dirs { $path:
-    require => File['icingaweb2cfgDir'],
+    user    => 'apache',
+    require => [
+      Class['apache'],
+      File['icingaweb2cfgDir']
+    ],
   }
   -> file { $path:
     source  => "${source}/${name}.ini",
