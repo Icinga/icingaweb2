@@ -40,6 +40,13 @@ class icingaweb2_dev {
     notify  => Service['apache'],
   }
 
+  file { '/var/log/icingaweb.log':
+    ensure  => file,
+    owner   => 'apache',
+    group   => 'apache',
+    require => Class['apache'],
+  }
+
   mysql::database::populate { 'icingaweb':
     username   => 'icingaweb',
     password   => 'icingaweb',
