@@ -30,7 +30,11 @@ class icingaweb2_dev {
   }
   -> exec { 'enable-monitoring-module':
     command => 'icingacli module enable monitoring',
-    require => Package['icingacli'],
+    user    => 'apache',
+    require => [
+      Package['icingacli'],
+      Class['apache']
+    ],
   }
 
   exec { 'usermod -aG icingacmd apache':
