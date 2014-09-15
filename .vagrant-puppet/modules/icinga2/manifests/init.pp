@@ -23,8 +23,10 @@ class icinga2 {
   -> service { 'icinga2':
     ensure  => running,
     enable  => true,
+    require => User['icinga'],
   }
-  -> user { 'icinga':
+
+  user { 'icinga':
     ensure => present,
   }
   -> file { 'icinga2cfgDir':
