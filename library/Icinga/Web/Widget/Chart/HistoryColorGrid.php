@@ -15,11 +15,15 @@ use DateInterval;
  */
 class HistoryColorGrid extends AbstractWidget {
 
-    const ORIENTATION_VERTICAL = 'vertical';
+    const CAL_GROW_INTO_PAST = 'past';
+    const CAL_GROW_INTO_PRESENT = 'present';
 
+    const ORIENTATION_VERTICAL = 'vertical';
     const ORIENTATION_HORIZONTAL = 'horizontal';
 
+    public $weekFlow = self::CAL_GROW_INTO_PAST;
     public $orientation = self::ORIENTATION_VERTICAL;
+    public $weekStartMonday = true;
 
     private $maxValue = 1;
 
@@ -158,7 +162,7 @@ class HistoryColorGrid extends AbstractWidget {
         $html = '<table class="historycolorgrid">';
         $html .= '<tr>';
         for ($i = 0; $i < 7; $i++) {
-            $html .= '<th>' . $this->weekdayName($i) . "</th>";
+            $html .= '<th>' . $this->weekdayName($this->weekStartMonday ? $i + 1 : $i) . "</th>";
         }
         $html .= '</tr>';
         $old = -1;
@@ -192,7 +196,9 @@ class HistoryColorGrid extends AbstractWidget {
      */
     private function renderWeekdayHorizontal($weekday, &$weeks)
     {
-        $html = '<tr><td class="weekday">' . $this->weekdayName($weekday) . '</td>';
+        $html = '<tr><td class="weekday">'
+            . $this->weekdayName($this->weekStartMonday ? $weekday + 1 : $weekday)
+        . '</td>';
         foreach ($weeks as $week) {
             if (array_key_exists($weekday, $week)) {
                 $html .= '<td>' . $this->renderDay($week[$weekday]) . '</td>';
@@ -219,6 +225,10 @@ class HistoryColorGrid extends AbstractWidget {
         $month   = intval(date('n', $start));
         $day     = intval(date('j', $start));
         $weekday = intval(date('w', $start));
+        if ($this->weekStartMonday) {
+            // 0 => monday, 6 => sunday
+            $weekday = $weekday === 0 ? 6 : $weekday - 1;
+        }
 
         $date = $this->toDateStr($day, $month, $year);
         $weeks[0][$weekday] = $date;
@@ -229,8 +239,11 @@ class HistoryColorGrid extends AbstractWidget {
             if ($weekday > 6) {
                 $weekday = 0;
                 $weeks[] = array();
+                // PRESENT => The last day of week determines the month
+                if ($this->weekFlow === self::CAL_GROW_INTO_PRESENT) {
+                    $months[$week] = $month;
+                }
                 $week++;
-                $months[$week] = $month;
             }
             if ($day > cal_days_in_month(CAL_GREGORIAN, $month, $year)) {
                 $month++;
@@ -240,10 +253,22 @@ class HistoryColorGrid extends AbstractWidget {
                 }
                 $day = 1;
             }
+            if ($weekday === 0) {
+                // PAST => The first day of each week determines the month
+                if ($this->weekFlow === self::CAL_GROW_INTO_PAST) {
+                    $months[$week] = $month;
+                }
+            }
             $date = $this->toDateStr($day, $month, $year);
             $weeks[$week][$weekday] = $date;
         };
         $months[$week] = $month;
+        if ($this->weekFlow == self::CAL_GROW_INTO_PAST) {
+            return array(
+                'weeks'  => array_reverse($weeks),
+                'months' => array_reverse($months)
+            );
+        }
         return array(
             'weeks'  => $weeks,
             'months' => $months

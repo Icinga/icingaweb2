@@ -8,21 +8,10 @@
     Icinga.Behaviors = Icinga.Behaviors || {};
 
     var Tristate = function (icinga) {
-        this.icinga = icinga;
+        Icinga.EventListener.call(this, icinga);
+        this.on('click', 'div.tristate .tristate-dummy', this.clickTriState, this);
     };
-
-    Tristate.prototype.apply = function(el) {
-        var self = this, icinga = this.icinga;
-    };
-
-    Tristate.prototype.bind = function() {
-        // Toggle all triStateButtons
-        $(document).on('click', 'div.tristate .tristate-dummy', { self: this }, this.clickTriState);
-    };
-
-    Tristate.prototype.unbind = function() {
-        $(document).off('click', 'div.tristate .tristate-dummy', this.clickTriState);
-    };
+    Tristate.prototype = new Icinga.EventListener();
 
     Tristate.prototype.clickTriState = function (event) {
         var self = event.data.self;

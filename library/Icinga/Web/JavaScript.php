@@ -18,6 +18,7 @@ class JavaScript
         'js/icinga/ui.js',
         'js/icinga/timer.js',
         'js/icinga/loader.js',
+        'js/icinga/eventlistener.js',
         'js/icinga/events.js',
         'js/icinga/history.js',
         'js/icinga/module.js',
