@@ -38,8 +38,11 @@ class StatehistoryQuery extends IdoQuery
     {
         if ($col === 'UNIX_TIMESTAMP(sh.state_time)') {
             return 'sh.state_time ' . $sign . ' ' . $this->timestampForSql($this->valueToTimestamp($expression));
-        } elseif ($col === $this->columnMap['statehistory']['type']) {
-            return 'sh.state_type ' . $sign . ' ' . $this->types[$expression];
+        } elseif ($col === $this->columnMap['statehistory']['type']
+            && is_array($expression) === false
+            && array_key_exists($expression, $this->types) === true
+        ) {
+                return 'sh.state_type ' . $sign . ' ' . $this->types[$expression];
         } else {
             return parent::whereToSql($col, $sign, $expression);
         }
@@ -58,4 +61,3 @@ class StatehistoryQuery extends IdoQuery
         $this->joinedVirtualTables = array('statehistory' => true);
     }
 }
-

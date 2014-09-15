@@ -294,11 +294,12 @@ class GettextTranslationHelper
                 $headerInfo['translator_name'] = $translatorInfo[1];
                 $headerInfo['translator_mail'] = $translatorInfo[2];
             }
-            $languageInfo = array();
-            if (preg_match('@Language-Team: (.+) <(.+)>@', $content, $languageInfo)) {
-                $headerInfo['language_team_name'] = $languageInfo[1];
-                $headerInfo['language_team_url'] = $languageInfo[2];
+            $languageTeamInfo = array();
+            if (preg_match('@Language-Team: (.+) <(.+)>@', $content, $languageTeamInfo)) {
+                $headerInfo['language_team_name'] = $languageTeamInfo[1];
+                $headerInfo['language_team_url'] = $languageTeamInfo[2];
             }
+            $languageInfo = array();
             if (preg_match('@Language: ([a-z]{2}_[A-Z]{2})@', $content, $languageInfo)) {
                 $headerInfo['language'] = $languageInfo[1];
             }

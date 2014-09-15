@@ -345,7 +345,7 @@
 
                 $matches.each(function (idx, el) {
                     if ($(el).closest('#menu').length) {
-                        $('#menu .active').removeClass('active');
+                        self.icinga.behaviors.navigation.resetActive();
                     } else if ($(el).closest('table.action').length) {
                         $(el).closest('table.action').find('.active').removeClass('active');
                     }
@@ -357,8 +357,7 @@
                         if ($el.is('form')) {
                             $('input', $el).addClass('active');
                         } else {
-                            $el.closest('li').addClass('active');
-                            $el.parents('li').addClass('active');
+                            self.icinga.behaviors.navigation.setActive($el);
                         }
                         // Interrupt .each, only on menu item shall be active
                         return false;
@@ -540,7 +539,6 @@
                         }).addClass('active');
                 }
             }
-            req.$target.trigger('rendered');
         },
 
         /**
@@ -726,8 +724,10 @@
             }
 
             // TODO: this.icinga.events.refreshContainer(container);
+            $container.trigger('rendered');
+
             var icinga = this.icinga;
-            icinga.events.applyHandlers($container);
+            //icinga.events.applyHandlers($container);
             icinga.ui.initializeControls($container);
             icinga.ui.fixControls();
 

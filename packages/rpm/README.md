@@ -42,8 +42,8 @@ Decide whether to use MySQL or PostgreSQL.
         FLUSH PRIVILEGES;
         quit
 
-    mysql -u root -p icingaweb < /usr/share/doc/icingaweb2-*/schema/accounts.mysql.sql
-    mysql -u root -p icingaweb < /usr/share/doc/icingaweb2-*/schema/preferences.mysql.sql
+    mysql -u root -p icingaweb < /usr/share/doc/icingaweb2*/schema/accounts.mysql.sql
+    mysql -u root -p icingaweb < /usr/share/doc/icingaweb2*/schema/preferences.mysql.sql
 
 ### PostgreSQL
 
@@ -62,8 +62,8 @@ in `/var/lib/pgsql/data/pg_hba.conf` and restart the PostgreSQL server.
 
 Now install the `icingaweb` schema
 
-    bash$  psql -U icingaweb -a -f /usr/share/doc/icingaweb2-*/schema/accounts.pgsql.sql
-    bash$  psql -U icingaweb -a -f /usr/share/doc/icingaweb2-*/schema/preferences.pgsql.sql
+    bash$  psql -U icingaweb -a -f /usr/share/doc/icingaweb2*/schema/accounts.pgsql.sql
+    bash$  psql -U icingaweb -a -f /usr/share/doc/icingaweb2*/schema/preferences.pgsql.sql
 
 
 ## Configuration
@@ -74,16 +74,16 @@ The monitoring module is enabled by default.
 
 ### Backend configuration
 
-`/etc/icingaweb/resources.ini` contains the database backend information.
+`/etc/icingaweb2/resources.ini` contains the database backend information.
 By default the Icinga 2 DB IDO is used by the monitoring module in
-`/etc/icingaweb/modules/monitoring/backends.ini`
+`/etc/icingaweb2/modules/monitoring/backends.ini`
 
 The external command pipe is required for sending commands
 and configured for Icinga 2 in
-`/etc/icingaweb/modules/monitoring/instances.ini`
+`/etc/icingaweb2/modules/monitoring/instances.ini`
 
 ### Authentication configuration
 
-The `/etc/icingaweb/authentication.ini` file uses the internal database as
+The `/etc/icingaweb2/authentication.ini` file uses the internal database as
 default. This requires the database being installed properly before
 allowing users to login via web console.

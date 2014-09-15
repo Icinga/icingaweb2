@@ -17,7 +17,7 @@ class Response extends Zend_Controller_Response_Http
         $url->getParams()->setSeparator('&');
 
         if (Icinga::app()->getFrontController()->getRequest()->isXmlHttpRequest()) {
-            $this->setHeader('X-Icinga-Redirect', rawurlencode($url));
+            $this->setHeader('X-Icinga-Redirect', rawurlencode($url->getAbsoluteUrl()));
         } else {
             $this->setRedirect($url->getAbsoluteUrl());
         }

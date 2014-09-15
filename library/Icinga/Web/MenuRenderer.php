@@ -4,7 +4,9 @@
 
 namespace Icinga\Web;
 
+use Exception;
 use RecursiveIteratorIterator;
+use Icinga\Logger\Logger;
 
 /**
  * A renderer to draw a menu with its sub-menus using an unordered html list
@@ -106,7 +108,11 @@ class MenuRenderer extends RecursiveIteratorIterator
     public function renderChild(Menu $child)
     {
         if ($child->getRenderer() !== null && $this->useCustomRenderer) {
-            return $child->getRenderer()->render($child);
+            try {
+                return $child->getRenderer()->render($child);
+            } catch (Exception $e) {
+                Logger::error('Could not invoke custom renderer. Exception: '. $e->getMessage());
+            }
         }
         return sprintf(
             '<a href="%s">%s%s</a>',

@@ -6,7 +6,7 @@ $currentUrl = Url::fromRequest()->without('limit')->getRelativeUrl();
 
 ?>
 <h3 class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : '' ?>>
-<?= $this->qlink(sprintf($this->translate('%s service configured:'), $this->stats->services_total), $selfUrl) ?>
+<?= $this->qlink(sprintf($this->translate('%s configured services:'), $this->stats->services_total), $selfUrl) ?>
 <?php if ($this->stats->services_ok > 0): ?>
  <span class="state ok<?= $currentUrl === $selfUrl->with('service_state', 0)->getRelativeUrl() ? ' active' : '' ?>"><?= $this->qlink(
     $this->stats->services_ok,
