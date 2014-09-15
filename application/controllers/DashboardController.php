@@ -96,7 +96,7 @@ class DashboardController extends ActionController
                 if ($this->writeConfiguration(new Zend_Config($dashboard->toArray()), $configFile)) {
                     $this->redirectNow(Url::fromPath('dashboard', array('pane' => $form->getValue('pane'))));
                 } else {
-                    $this->render('show-configuration');
+                    $this->render('showConfiguration');
                     return;
                 }
             }
@@ -164,9 +164,9 @@ class DashboardController extends ActionController
             $writer->write();
         } catch (Exception $e) {
             Logger::error(new ConfiguationError("Cannot write dashboard to $target", 0, $e));
-            $this->view->iniConfigurationString = $writer->render();
-            $this->view->exceptionMessage = $e->getMessage();
-            $this->view->file = $target;
+            $this->view->configString = $writer->render();
+            $this->view->errorMessage = $e->getMessage();
+            $this->view->filePath = $target;
             return false;
         }
 

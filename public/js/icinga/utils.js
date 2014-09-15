@@ -217,9 +217,9 @@
                 return false;
             }
             var at = aoff.top;
-            var ah = a.offsetHeight;
+            var ah = a.offsetHeight || (a.getBBox && a.getBBox().height);
             var al = aoff.left;
-            var aw = a.offsetWidth;
+            var aw = a.offsetWidth || (a.getBBox && a.getBBox().width);
 
             // b bounds
             var boff = $(b).offset();
@@ -227,9 +227,9 @@
                 return false;
             }
             var bt = boff.top;
-            var bh = b.offsetHeight;
+            var bh = b.offsetHeight || (b.getBBox && b.getBBox().height);
             var bl = boff.left;
-            var bw = b.offsetWidth;
+            var bw = b.offsetWidth || (b.getBBox && b.getBBox().width);
 
             return !(at > (bt + bh) || bt > (at + ah)) && !(bl  > (al + aw) || al > (bl + bw));
         },

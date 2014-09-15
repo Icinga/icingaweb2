@@ -28,7 +28,7 @@ class ConfigForm extends Form
      *
      * @return  self
      */
-    public function setConfig(Config $config)
+    public function setIniConfig(Config $config)
     {
         $this->config = $config;
         return $this;
@@ -54,6 +54,7 @@ class ConfigForm extends Form
             $writer->write();
         } catch (Exception $e) {
             $this->addDecorator('ViewScript', array(
+                'viewModule'    => 'default',
                 'viewScript'    => 'showConfiguration.phtml',
                 'errorMessage'  => $e->getMessage(),
                 'configString'  => $writer->render(),

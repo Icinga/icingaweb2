@@ -13,7 +13,6 @@ use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Timeline\TimeLine;
 use Icinga\Module\Monitoring\Timeline\TimeRange;
 use Icinga\Module\Monitoring\Web\Widget\TimelineIntervalBox;
-use Icinga\Module\Monitoring\DataView\EventHistory as EventHistoryView;
 
 class Monitoring_TimelineController extends Controller
 {

@@ -271,6 +271,7 @@ class GettextTranslationHelper
             'po_revision_date' => 'YEAR-MO-DA HO:MI+ZONE',
             'translator_name' => 'FULL NAME',
             'translator_mail' => 'EMAIL@ADDRESS',
+            'language'  => $this->locale,
             'language_team_name' => 'LANGUAGE',
             'language_team_url' => 'LL@li.org',
             'charset' => self::FILE_ENCODING
@@ -298,6 +299,9 @@ class GettextTranslationHelper
                 $headerInfo['language_team_name'] = $languageInfo[1];
                 $headerInfo['language_team_url'] = $languageInfo[2];
             }
+            if (preg_match('@Language: ([a-z]{2}_[A-Z]{2})@', $content, $languageInfo)) {
+                $headerInfo['language'] = $languageInfo[1];
+            }
         }
 
         file_put_contents(
@@ -321,6 +325,7 @@ class GettextTranslationHelper
                     '"PO-Revision-Date: ' . $headerInfo['po_revision_date'] . '\n"',
                     '"Last-Translator: ' . $headerInfo['translator_name'] . ' <'
                     . $headerInfo['translator_mail'] . '>\n"',
+                    '"Language: ' . $headerInfo['language'] . '\n"',
                     '"Language-Team: ' . $headerInfo['language_team_name'] . ' <'
                     . $headerInfo['language_team_url'] . '>\n"',
                     '"MIME-Version: 1.0\n"',

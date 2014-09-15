@@ -12,11 +12,9 @@ class UrlTest extends BaseTestCase
 {
     public function testWhetherFromRequestWorksWithoutARequest()
     {
-        $request = Mockery::mock('Icinga\Web\Request');
-        $request->shouldReceive('getPathInfo')->andReturn('my/test/url.html')
-            ->shouldReceive('getBaseUrl')->andReturn('/path/to')
+        $this->getRequestMock()->shouldReceive('getBaseUrl')->andReturn('/path/to')
+            ->shouldReceive('getPathInfo')->andReturn('my/test/url.html')
             ->shouldReceive('getQuery')->andReturn(array('param1' => 'value1', 'param2' => 'value2'));
-        $this->setupIcingaMock($request);
 
         $url = Url::fromRequest();
         $this->assertEquals(

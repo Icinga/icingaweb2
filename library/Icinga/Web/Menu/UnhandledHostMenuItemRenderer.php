@@ -22,7 +22,8 @@ class UnhandledHostMenuItemRenderer implements MenuItemRenderer {
         $badge = '';
         if ($statusSummary->hosts_down_unhandled) {
             $badge = sprintf(
-                '<div class="badge-container"><span class="badge badge-critical">%s</span></div>',
+                '<div title="%s" class="badge-container"><span class="badge badge-critical">%s</span></div>',
+                t(sprintf('%d unhandled host problems', $statusSummary->hosts_down_unhandled)),
                 $statusSummary->hosts_down_unhandled
             );
         }

@@ -62,7 +62,7 @@ class AuthenticationBackendReorderForm extends ConfigForm
     protected function getConfigForm()
     {
         $form = new AuthenticationBackendConfigForm();
-        $form->setConfig($this->config);
+        $form->setIniConfig($this->config);
         return $form;
     }
 }

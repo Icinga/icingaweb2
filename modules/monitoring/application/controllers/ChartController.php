@@ -147,7 +147,7 @@ class Monitoring_ChartController extends Controller
             ->setXAxis(new StaticAxis())
             ->setAxisMin(null, 0);
 
-        $tooltip = t('<b>{title}:</b><br />{value} of {sum} services are {label}');
+        $tooltip = t('<b>{title}:</b><br>{value} of {sum} services are {label}');
         $this->view->chart->drawBars(
             array(
                 'label' => t('Ok'),
@@ -199,7 +199,7 @@ class Monitoring_ChartController extends Controller
                 $hostgroup->hosts_unreachable_unhandled
             );
         }
-        $tooltip = t('<b>{title}:</b><br /> {value} of {sum} hosts are {label}');
+        $tooltip = t('<b>{title}:</b><br> {value} of {sum} hosts are {label}');
         $this->view->chart = new GridChart();
         $this->view->chart->alignTopLeft();
         $this->view->chart->setAxisLabel('', t('Hosts'))

@@ -5,19 +5,12 @@
 namespace Tests\Icinga\Web;
 
 use Mockery;
-use Icinga\Application\Icinga;
-use Icinga\Web\Widget\SearchDashboard;
 use Icinga\Test\BaseTestCase;
+use Icinga\Web\Widget\SearchDashboard;
 
 class SearchDashboardTest extends BaseTestCase
 {
-    public function tearDown()
-    {
-        parent::tearDown();
-        Mockery::close();
-    }
-
-    protected function setupIcingaMock(\Zend_Controller_Request_Abstract $request)
+    public function setUp()
     {
         $moduleMock = Mockery::mock('Icinga\Application\Modules\Module');
         $searchUrl = (object) array(
@@ -33,14 +26,8 @@ class SearchDashboardTest extends BaseTestCase
             'test-module' => $moduleMock
         ));
 
-        $bootstrapMock = Mockery::mock('Icinga\Application\ApplicationBootstrap')->shouldDeferMissing();
-        $bootstrapMock->shouldReceive('getFrontController->getRequest')->andReturnUsing(
-            function () use ($request) { return $request; }
-        )->shouldReceive('getApplicationDir')->andReturn(self::$appDir);
-
+        $bootstrapMock = $this->setupIcingaMock();
         $bootstrapMock->shouldReceive('getModuleManager')->andReturn($moduleManagerMock);
-
-        Icinga::setApp($bootstrapMock, true);
     }
 
     /**

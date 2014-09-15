@@ -673,8 +673,12 @@
             }
 
             var origFocus = document.activeElement;
-            if (typeof containerId !== 'undefined' && autorefresh && origFocus && $(origFocus).closest('form').length && $container.has($(origFocus)) && $(origFocus).closest('#' + containerId).length && ! $(origFocus).hasClass('autosubmit')) {
-                this.icinga.logger.debug('Not changing content, form has focus');
+            if (
+                // Do not reload menu when search field has content
+                (containerId === 'menu' && $(origFocus).length && $(origFocus).val().length)
+                // TODO: remove once #7146 is solved
+                || (containerId !== 'menu' && typeof containerId !== 'undefined' && autorefresh && origFocus && $(origFocus).closest('form').length && $container.has($(origFocus)) && $(origFocus).closest('#' + containerId).length && ! $(origFocus).hasClass('autosubmit'))) {
+                this.icinga.logger.debug('Not changing content for ', containerId, ' form has focus');
                 return;
             }
 

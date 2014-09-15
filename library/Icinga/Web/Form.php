@@ -68,6 +68,13 @@ class Form extends Zend_Form
     protected $tokenElementName = 'CSRFToken';
 
     /**
+     * Whether this form should add a UID element being used to distinct different forms posting to the same action
+     *
+     * @var bool
+     */
+    protected $uidDisabled = false;
+
+    /**
      * Name of the form identification element
      *
      * @var string
@@ -155,8 +162,9 @@ class Form extends Zend_Form
     public function getRedirectUrl()
     {
         if ($this->redirectUrl === null) {
+            $url = Url::fromRequest(array(), $this->getRequest());
             // Be sure to remove all form dependent params because we do not want to submit it again
-            $this->redirectUrl = Url::fromRequest()->without(array_keys($this->getElements()));
+            $this->redirectUrl = $url->without(array_keys($this->getElements()));
         }
 
         return $this->redirectUrl;
@@ -237,6 +245,34 @@ class Form extends Zend_Form
     }
 
     /**
+     * Disable form identification and remove its field if already added
+     *
+     * @param   bool    $disabled   Set true in order to disable identification for this form, otherwise false
+     *
+     * @return  self
+     */
+    public function setUidDisabled($disabled = true)
+    {
+        $this->uidDisabled = (bool) $disabled;
+
+        if ($disabled && $this->getElement($this->uidElementName) !== null) {
+            $this->removeElement($this->uidElementName);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Return whether identification is disabled for this form
+     *
+     * @return  bool
+     */
+    public function getUidDisabled()
+    {
+        return $this->uidDisabled;
+    }
+
+    /**
      * Set the name to use for the form identification element
      *
      * @param   string  $name   The name to set
@@ -269,15 +305,15 @@ class Form extends Zend_Form
     public function create(array $formData = array())
     {
         if (false === $this->created) {
-            $this->createElements($formData)
-                ->addFormIdentification()
+            $this->createElements($formData);
+            $this->addFormIdentification()
                 ->addCsrfCounterMeasure()
                 ->addSubmitButton();
 
             if ($this->getAction() === '') {
                 // We MUST set an action as JS gets confused otherwise, if
                 // this form is being displayed in an additional column
-                $this->setAction(Url::fromRequest()->getUrlWithout(array_keys($this->getElements())));
+                $this->setAction(Url::fromRequest()->without(array_keys($this->getElements())));
             }
 
             $this->created = true;
@@ -292,12 +328,10 @@ class Form extends Zend_Form
      * Intended to be implemented by concrete form classes.
      *
      * @param   array   $formData   The data sent by the user
-     *
-     * @return  self
      */
     public function createElements(array $formData)
     {
-        return $this;
+
     }
 
     /**
@@ -336,7 +370,7 @@ class Form extends Zend_Form
      */
     public function addSubmitButton()
     {
-        if ($this->submitLabel !== null) {
+        if ($this->submitLabel) {
             $this->addElement(
                 'submit',
                 'btn_submit',
@@ -352,6 +386,31 @@ class Form extends Zend_Form
         }
 
         return $this;
+    }
+
+    /**
+     * Add a subform
+     *
+     * @param   Zend_Form   $form   The subform to add
+     * @param   string      $name   The name of the subform or null to use the name of $form
+     * @param   int         $order  The location where to insert the form
+     *
+     * @return  Zend_Form
+     */
+    public function addSubForm(Zend_Form $form, $name = null, $order = null)
+    {
+        if ($form instanceof self) {
+            $form->removeDecorator('Form');
+            $form->setSubmitLabel('');
+            $form->setTokenDisabled();
+            $form->setUidDisabled();
+        }
+
+        if ($name === null) {
+            $name = $form->getName();
+        }
+
+        return parent::addSubForm($form, $name, $order);
     }
 
     /**
@@ -398,14 +457,17 @@ class Form extends Zend_Form
      */
     public function addFormIdentification()
     {
-        $this->addElement(
-            'hidden',
-            $this->uidElementName,
-            array(
-                'ignore'    => true,
-                'value'     => $this->getName()
-            )
-        );
+        if (false === $this->uidDisabled && $this->getElement($this->uidElementName) === null) {
+            $this->addElement(
+                'hidden',
+                $this->uidElementName,
+                array(
+                    'ignore'        => true,
+                    'value'         => $this->getName(),
+                    'decorators'    => array('ViewHelper')
+                )
+            );
+        }
 
         return $this;
     }
@@ -431,7 +493,7 @@ class Form extends Zend_Form
      *
      * @param   array   $defaults   The values to populate the elements with
      */
-    public function setDefaults(array $defaults)
+    public function setDefaults($defaults)
     {
         $this->create($defaults);
         return parent::setDefaults($defaults);
@@ -454,7 +516,7 @@ class Form extends Zend_Form
         }
 
         $formData = $this->getRequestData($request);
-        if ($this->wasSent($formData)) {
+        if ($this->getUidDisabled() || $this->wasSent($formData)) {
             $this->populate($formData); // Necessary to get isSubmitted() to work
             if (! $this->getSubmitLabel() || $this->isSubmitted()) {
                 if ($this->isValid($formData)

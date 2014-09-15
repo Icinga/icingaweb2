@@ -11,11 +11,15 @@ if (! $this->auth()->isAuthenticated()) {
 }
 
 ?>
-<div id="menu" data-base-target="_main">
+<div
+    id="menu" data-last-update="<?= (time() - 14) ?>000" data-base-target="_main" class="container" data-icinga-url="<?=$this->href('layout/menu');?>"
+    data-icinga-refresh="15"
+>
   <? if (SearchDashboard::search('dummy')->getPane('search')->hasComponents()): ?>
-  <form action="<?= $this->href('search') ?>" method="get" role="search">
-    <input type="text" name="q" class="search autofocus" placeholder="<?= $this->translate('Search...') ?>" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
-  </form>
+      <form action="<?= $this->href('search') ?>" method="get" role="search">
+        <input type="text" name="q" class="search autofocus" placeholder="<?= $this->translate('Search...') ?>"
+               autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+      </form>
   <? endif; ?>
-<?= new MenuRenderer(Menu::load(), Url::fromRequest()->without('renderLayout')->getRelativeUrl()); ?>
+  <?= new MenuRenderer(Menu::load(), Url::fromRequest()->without('renderLayout')->getRelativeUrl()); ?>
 </div>

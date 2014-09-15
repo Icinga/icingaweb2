@@ -46,7 +46,7 @@ class ConfigController extends ActionController
     public function indexAction()
     {
         $form = new GeneralConfigForm();
-        $form->setConfig(IcingaConfig::app());
+        $form->setIniConfig(IcingaConfig::app());
         $form->handleRequest();
 
         $this->view->form = $form;
@@ -131,7 +131,7 @@ class ConfigController extends ActionController
     public function authenticationAction()
     {
         $form = new AuthenticationBackendReorderForm();
-        $form->setConfig(IcingaConfig::app('authentication'));
+        $form->setIniConfig(IcingaConfig::app('authentication'));
         $form->handleRequest();
 
         $this->view->form = $form;
@@ -145,7 +145,7 @@ class ConfigController extends ActionController
     public function createauthenticationbackendAction()
     {
         $form = new AuthenticationBackendConfigForm();
-        $form->setConfig(IcingaConfig::app('authentication'));
+        $form->setIniConfig(IcingaConfig::app('authentication'));
         $form->setResourceConfig(ResourceFactory::getResourceConfigs());
         $form->setRedirectUrl('config/authentication');
         $form->handleRequest();
@@ -161,7 +161,7 @@ class ConfigController extends ActionController
     public function editauthenticationbackendAction()
     {
         $form = new AuthenticationBackendConfigForm();
-        $form->setConfig(IcingaConfig::app('authentication'));
+        $form->setIniConfig(IcingaConfig::app('authentication'));
         $form->setResourceConfig(ResourceFactory::getResourceConfigs());
         $form->setRedirectUrl('config/authentication');
         $form->handleRequest();
@@ -179,7 +179,7 @@ class ConfigController extends ActionController
         $form = new ConfirmRemovalForm(array(
             'onSuccess' => function ($request) {
                 $configForm = new AuthenticationBackendConfigForm();
-                $configForm->setConfig(IcingaConfig::app('authentication'));
+                $configForm->setIniConfig(IcingaConfig::app('authentication'));
                 $authBackend = $request->getQuery('auth_backend');
 
                 try {
@@ -222,7 +222,7 @@ class ConfigController extends ActionController
     public function createresourceAction()
     {
         $form = new ResourceConfigForm();
-        $form->setConfig(IcingaConfig::app('resources'));
+        $form->setIniConfig(IcingaConfig::app('resources'));
         $form->setRedirectUrl('config/resource');
         $form->handleRequest();
 
@@ -236,7 +236,7 @@ class ConfigController extends ActionController
     public function editresourceAction()
     {
         $form = new ResourceConfigForm();
-        $form->setConfig(IcingaConfig::app('resources'));
+        $form->setIniConfig(IcingaConfig::app('resources'));
         $form->setRedirectUrl('config/resource');
         $form->handleRequest();
 
@@ -252,7 +252,7 @@ class ConfigController extends ActionController
         $form = new ConfirmRemovalForm(array(
             'onSuccess' => function ($request) {
                 $configForm = new ResourceConfigForm();
-                $configForm->setConfig(IcingaConfig::app('resources'));
+                $configForm->setIniConfig(IcingaConfig::app('resources'));
                 $resource = $request->getQuery('resource');
 
                 try {

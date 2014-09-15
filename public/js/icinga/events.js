@@ -10,6 +10,8 @@
 
     'use strict';
 
+    var activeMenuId;
+
     var mouseX, mouseY;
 
     Icinga.Events = function (icinga) {
@@ -133,22 +135,37 @@
                 if (!icinga.utils.elementsOverlap(arrow, el)) {
                     return;
                 }
-                
                 var title = $(this).find('.tipsy-inner').html();
                 var atMouse = document.elementFromPoint(mouseX, mouseY);
                 var nearestTip = $(atMouse)
                     .closest('[original-title="' + title + '"]')[0];
                 if (nearestTip) {
-                    console.log ('migrating orphan...');
                     var tipsy = $.data(nearestTip, 'tipsy');
                     tipsy.$tip = $(this);
                     $.data(this, 'tipsy-pointee', nearestTip);
                 } else {
                     // doesn't match delete
-                    console.log ('deleting orphan...');
                     $(this).remove();
                 }
             });
+
+            // restore menu state
+            if (activeMenuId) {
+                $('li.active', el).removeClass('active');
+
+                var $selectedMenu = $('#' + activeMenuId, el);
+                var $outerMenu = $selectedMenu.parent().closest('li');
+                if ($outerMenu.size()) {
+                    $selectedMenu = $outerMenu;
+                }
+                $selectedMenu.addClass('active');
+            } else {
+                // store menu state
+                var $menus = $('[role="navigation"] li.active', el);
+                if ($menus.size()) {
+                    activeMenuId = $menus[0].id;
+                }
+            }
         },
 
         /**
@@ -569,6 +586,7 @@
                     $li = $a.closest('li');
                     $('#menu .active').removeClass('active');
                     $li.addClass('active');
+                    activeMenuId = $($li).attr('id');
                     if ($li.hasClass('hover')) {
                         $li.removeClass('hover');
                     }
@@ -594,14 +612,22 @@
                     return false;
                 }
             } else {
+                if (isMenuLink) {
+                    activeMenuId = $(event.target).closest('li').attr('id');
+                }
                 $target = self.getLinkTargetFor($a);
             }
 
             // Load link URL
             icinga.loader.loadUrl(href, $target);
 
-            // Menu links should remove all but the first layout column
             if (isMenuLink) {
+                // update target url of the menu container to the clicked link
+                var menuDataUrl = icinga.utils.parseUrl($('#menu').data('icinga-url'));
+                menuDataUrl = icinga.utils.addUrlParams(menuDataUrl.path, { url: href });
+                $('#menu').data('icinga-url', menuDataUrl);
+
+                // Menu links should remove all but the first layout column
                 icinga.ui.layout1col();
             }
 
@@ -687,6 +713,7 @@
             $(document).off('mouseenter', 'li.dropdown', this.dropdownHover);
             $(document).off('mouseleave', 'li.dropdown', this.dropdownLeave);
             $(document).off('click', 'div.tristate .tristate-dummy', this.clickTriState);
+            $(document).off('mousemove');
         },
 
         destroy: function() {

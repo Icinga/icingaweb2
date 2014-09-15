@@ -318,7 +318,5 @@ class AuthenticationBackendConfigForm extends ConfigForm
         }
 
         $this->addElements($this->getBackendForm($backendType)->createElements($formData)->getElements());
-
-        return $this;
     }
 }

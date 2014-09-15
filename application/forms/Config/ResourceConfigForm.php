@@ -252,7 +252,5 @@ class ResourceConfigForm extends ConfigForm
         }
 
         $this->addElements($this->getResourceForm($resourceType)->createElements($formData)->getElements());
-
-        return $this;
     }
 }

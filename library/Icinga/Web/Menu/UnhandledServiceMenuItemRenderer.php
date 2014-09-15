@@ -22,7 +22,8 @@ class UnhandledServiceMenuItemRenderer implements MenuItemRenderer {
         $badge = '';
         if ($statusSummary->services_critical_unhandled) {
             $badge = sprintf(
-                '<div class="badge-container"><span class="badge badge-critical">%s</span></div>',
+                '<div title="%s" class="badge-container"><span class="badge badge-critical">%s</span></div>',
+                t(sprintf('%d unhandled service problems', $statusSummary->services_critical_unhandled)),
                 $statusSummary->services_critical_unhandled
             );
         }
