@@ -1,8 +1,8 @@
 class icingaweb2_dev {
   include apache
   include php
-  include icinga_packages
   include icingaweb2
+  include icingacli
 
   class { 'zend_framework':
     notify => Service['apache'],
@@ -13,10 +13,7 @@ class icingaweb2_dev {
     notify => Service['apache'],
   }
 
-  package { 'icingacli':
-    ensure  => latest,
-    require => Class['icinga_packages'],
-  }
+  Exec { path => '/usr/local/bin:/usr/bin:/bin' }
 
   file { '/etc/icingaweb/enabledModules':
     ensure  => directory,
@@ -31,22 +28,17 @@ class icingaweb2_dev {
   -> exec { 'enable-monitoring-module':
     command => 'icingacli module enable monitoring',
     user    => 'apache',
-    require => [
-      Package['icingacli'],
-      Class['apache']
-    ],
+    require => Class[[ 'icingacli', 'apache' ]],
   }
 
   exec { 'usermod -aG icingacmd apache':
     command => '/usr/sbin/usermod -aG icingacmd apache',
     require => [
-      Package['icingacli'],
+      Class['icingacli'],
       User['apache']
     ],
     notify  => Service['apache'],
   }
-
-  Exec { path => '/bin:/usr/bin' }
 
   mysql::database::populate { 'icingaweb':
     username   => 'icingaweb',
