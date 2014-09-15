@@ -14,21 +14,27 @@
 class icinga2 {
   include icinga_packages
 
-  service { 'icinga2':
-    ensure  => running,
-    enable  => true,
-    require => Package['icinga2']
-  }
-
   package { [
-    'icinga2', 'icinga2-doc', 'icinga2-debuginfo' ]:
+    'icinga2', 'icinga2-doc', 'icinga2-debuginfo'
+  ]:
     ensure  => latest,
     require => Class['icinga_packages'],
   }
-
-  icinga2::feature { [ 'statusdata', 'command', 'compatlog' ]: }
-
-  user { 'icinga':
+  -> service { 'icinga2':
+    ensure  => running,
+    enable  => true,
+  }
+  -> user { 'icinga':
     ensure => present,
   }
+  -> file { 'icinga2cfgDir':
+    path   => '/etc/icinga2',
+    ensure => directory,
+    links  => follow,
+    owner  => 'icinga',
+    group  => 'icinga',
+    mode   => 6750,
+  }
+
+  icinga2::feature { [ 'statusdata', 'command', 'compatlog' ]: }
 }
