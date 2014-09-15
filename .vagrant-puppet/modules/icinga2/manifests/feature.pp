@@ -23,12 +23,12 @@ define icinga2::feature ($source = undef) {
     }
   }
 
-  parent_dirs { $path: }
-
-  file { $path:
+  parent_dirs { $path:
+    require => File['icinga2cfgDir'],
+  }
+  -> file { $path:
     ensure  => link,
     target  => "${cfgpath}/${target}.conf",
-    require => Parent_dirs[$path],
     notify  => Service['icinga2'],
   }
 }
