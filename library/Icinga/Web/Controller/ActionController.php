@@ -228,15 +228,15 @@ class ActionController extends Zend_Controller_Action
     /**
      * Translate a plural string
      *
-     * @param $msgid1
-     * @param $msgid2
-     * @param $n
+     * @param string    $textSingular   The string in singular form to translate
+     * @param string    $textPlural     The string in plural form to translate
+     * @param string    $number         The number to get the plural or singular string
      *
-     * @return string
+     * @return string                   The translated string
      */
-    public function translatePlural($msgid1, $msgid2, $n)
+    public function translatePlural($textSingular, $textPlural, $number)
     {
-        return Translator::translatePlural($msgid1, $msgid2, $n, $this->view->translationDomain);
+        return Translator::translatePlural($textSingular, $textPlural, $number, $this->view->translationDomain);
     }
 
     protected function ignoreXhrBody()

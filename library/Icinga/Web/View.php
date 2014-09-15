@@ -132,9 +132,14 @@ class View extends Zend_View_Abstract
         return Translator::translate($text, $this->translationDomain);
     }
 
-    public function translatePlural($text, $text2, $n)
+    /**
+     * Translate a plural string
+     *
+     * @see Translator::translatePlural()
+     */
+    public function translatePlural($textSingular, $textPlural, $number)
     {
-        return Translator::translatePlural($text, $text2, $n, $this->translationDomain);
+        return Translator::translatePlural($textSingular, $textPlural, $number, $this->translationDomain);
     }
 
     /**

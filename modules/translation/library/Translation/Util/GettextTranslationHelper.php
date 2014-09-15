@@ -333,6 +333,7 @@ class GettextTranslationHelper
                     '"MIME-Version: 1.0\n"',
                     '"Content-Type: text/plain; charset=' . $headerInfo['charset'] . '\n"',
                     '"Content-Transfer-Encoding: 8bit\n"',
+                    '"Plural-Forms: nplurals=2; plural=(n != 1);\n"',
                     ''
                 )
             ) . PHP_EOL . substr($content, strpos($content, '#: '))

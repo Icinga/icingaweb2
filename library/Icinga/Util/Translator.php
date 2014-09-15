@@ -48,9 +48,19 @@ class Translator
         return $res;
     }
 
-    public static function translatePlural($msgid1, $msgid2, $n, $domain)
+    /**
+     * Translate a plural string
+     *
+     * @param   string      $textSingular   The string in singular form to translate
+     * @param   string      $textPlural     The string in plural form to translate
+     * @param   integer     $number         The number to get the plural or singular string
+     * @param   string      $domain         The primary domain to use
+     *
+     * @return string                       The translated string
+     */
+    public static function translatePlural($textSingular, $textPlural, $number, $domain)
     {
-        $res = dngettext($domain, $msgid1, $msgid2, $n);
+        $res = dngettext($domain, $textSingular, $textPlural, $number);
         return $res;
     }
 

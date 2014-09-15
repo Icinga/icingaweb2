@@ -14,9 +14,15 @@ if (extension_loaded('gettext')) {
     {
         return Translator::translate($messageId, $domain);
     }
-    function mtp($domain, $messageId, $messageId2, $n)
+
+    function tp($messageId, $messageId2, $number)
     {
-        return Translator::translatePlural($messageId, $messageId2, $n, $domain);
+        return Translator::translatePlural($messageId, $messageId2, $number, Translator::DEFAULT_DOMAIN);
+    }
+
+    function mtp($domain, $messageId, $messageId2, $number)
+    {
+        return Translator::translatePlural($messageId, $messageId2, $number, $domain);
     }
 } else {
     function t($messageId)
@@ -26,6 +32,22 @@ if (extension_loaded('gettext')) {
 
     function mt($domain, $messageId)
     {
+        return $messageId;
+    }
+
+    function tp($messageId, $messageId2, $number)
+    {
+        if ($number === 0 || $number > 1 || $number < 0) {
+            return $messageId2;
+        }
+        return $messageId;
+    }
+
+    function mt($domain, $messageId, $messageId2, $number)
+    {
+        if ($number === 0 || $number > 1 || $number < 0) {
+            return $messageId2;
+        }
         return $messageId;
     }
 }
