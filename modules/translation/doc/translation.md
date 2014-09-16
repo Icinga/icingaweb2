@@ -42,6 +42,40 @@ The same works also for views:
 If you need to provide placeholders in your messages, you should wrap the `$this->translate()` with `sprintf()` for e.g.
     sprintf($this->translate('Hello User: (%s)'), $user->getName())
 
+## Translating plural forms
+
+To provide a plural translation, just use the `translatePlural()` function.
+
+```php
+<?php
+
+class ExampleController extends Controller
+{
+    public function indexAction()
+    {
+        $this->view->message = $this->translatePlural('Service', 'Services', 3);
+    }
+}
+```
+
+## Context based translation
+
+If you want to provide context based translations, you can easily do it with an extra parameter in both methods
+`translate()` and `translatePlural()`.
+
+```php
+<?php
+
+class ExampleController extends Controller
+{
+    public function indexAction()
+    {
+        $this->view->title = $this->translate('My Titile', 'mycontext');
+        $this->view->message = $this->translatePlural('Service', 'Services', 3, 'mycontext');
+    }
+}
+```
+
 # Translation for Translators
 
 Icinga Web 2 internally uses the UNIX standard gettext tool to perform internationalization, this means translation
