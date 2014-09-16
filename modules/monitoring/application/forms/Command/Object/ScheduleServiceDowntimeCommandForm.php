@@ -176,6 +176,23 @@ class ScheduleServiceDowntimeCommandForm extends ObjectsCommandForm
         return $this;
     }
 
+    public function scheduleDowntime(ScheduleServiceDowntimeCommand $downtime, Request $request)
+    {
+        $downtime
+            ->setComment($this->getElement('comment')->getValue())
+            ->setAuthor($request->getUser()->getUsername())
+            ->setStart($this->getElement('start')->getValue()->getTimestamp())
+            ->setEnd($this->getElement('end')->getValue()->getTimestamp());
+        if ($this->getElement('type')->getValue() === self::FLEXIBLE) {
+            $downtime->setFixed(false);
+            $downtime->setDuration(
+                (float) $this->getElement('hours')->getValue() * 3600
+                + (float) $this->getElement('minutes')->getValue() * 60
+            );
+        }
+        $this->getTransport($request)->send($downtime);
+    }
+
     /**
      * (non-PHPDoc)
      * @see \Icinga\Web\Form::onSuccess() For the method documentation.
@@ -185,20 +202,8 @@ class ScheduleServiceDowntimeCommandForm extends ObjectsCommandForm
         foreach ($this->objects as $object) {
             /** @var \Icinga\Module\Monitoring\Object\Service $object */
             $downtime = new ScheduleServiceDowntimeCommand();
-            $downtime
-                ->setObject($object)
-                ->setComment($this->getElement('comment')->getValue())
-                ->setAuthor($request->getUser()->getUsername())
-                ->setStart($this->getElement('start')->getValue()->getTimestamp())
-                ->setEnd($this->getElement('end')->getValue()->getTimestamp());
-            if ($this->getElement('type')->getValue() === self::FLEXIBLE) {
-                $downtime->setFixed(false);
-                $downtime->setDuration(
-                    (float) $this->getElement('hours')->getValue() * 3600
-                    + (float) $this->getElement('minutes')->getValue() * 60
-                );
-            }
-            $this->getTransport($request)->send($downtime);
+            $downtime->setObject($object);
+            $this->scheduleDowntime($downtime, $request);
         }
         Notification::success(mt('monitoring', 'Scheduling service downtime..'));
         return true;
