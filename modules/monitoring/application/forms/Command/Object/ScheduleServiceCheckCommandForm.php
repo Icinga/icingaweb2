@@ -70,6 +70,14 @@ class ScheduleServiceCheckCommandForm extends ObjectsCommandForm
         return $this;
     }
 
+    public function scheduleCheck(ScheduleServiceCheckCommand $check, Request $request)
+    {
+        $check
+            ->setForced($this->getElement('force_check')->isChecked())
+            ->setCheckTime($this->getElement('check_time')->getValue()->getTimestamp());
+        $this->getTransport($request)->send($check);
+    }
+
     /**
      * (non-PHPDoc)
      * @see \Icinga\Web\Form::onSuccess() For the method documentation.
@@ -79,11 +87,8 @@ class ScheduleServiceCheckCommandForm extends ObjectsCommandForm
         foreach ($this->objects as $object) {
             /** @var \Icinga\Module\Monitoring\Object\Service $object */
             $check = new ScheduleServiceCheckCommand();
-            $check
-                ->setObject($object)
-                ->setForced((bool) $this->getElement('force_check')->getValue())
-                ->setCheckTime($this->getElement('check_time')->getValue());
-            $this->getTransport($request)->send($check);
+            $check->setObject($object);
+            $this->scheduleCheck($check, $request);
         }
         Notification::success(mt('monitoring', 'Scheduling service check..'));
         return true;

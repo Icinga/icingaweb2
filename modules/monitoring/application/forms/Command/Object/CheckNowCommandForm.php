@@ -31,8 +31,8 @@ class CheckNowCommandForm extends ObjectsCommandForm
     {
         $this->addElements(array(
             array(
-                'note',
-                'icon',
+                'note', // Bogus
+                'icon', // Bogus
                 array(
                     'decorators' => array(array(
                         'HtmlTag',
