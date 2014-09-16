@@ -1,34 +1,47 @@
 <?php
-
 use Icinga\Data\Filter\Filter;
+use Icinga\Web\Widget\Chart\HistoryColorGrid;
+?>
 
-?><div class="controls">
-<?= $this->tabs ?>
-<h1>History - Critical Events</h1>
-</div>
+
+<? if (!$compact): ?>
+    <div class="controls">
+        <?= $this->tabs->render($this); ?>
+        <div class="fake-controls">
+            <br />
+            <?= $intervalBox ?>
+            <?= $eventBox; ?>
+            <?= $orientationBox; ?>
+        </div>
+    </div>
+<? endif; ?>
+
 <div class="content" data-base-target="_next">
 <?php
 
-$grid->setColor('#f05060');
+$from = strtotime($from);
+$to = time();
 $data = array();
 
 if (count($summary) === 0) {
-    echo t('No history entry matching the filter');
+    echo t('No events in the selected time period.');
 }
 foreach ($summary as $entry) {
     $day = $entry->day;
-    $value = $entry->cnt_critical;
-    $caption =  $value . ' ' .
-        t('critical events on ') . $this->dateFormat()->formatDate(strtotime($day));
+    $value = $entry->{$selection['column']};
+    $caption = sprintf(
+        $selection['tooltip'],
+        $value,
+        $this->dateFormat()->formatDate(strtotime($day))
+    );
     $filter = Filter::matchAll(
         Filter::expression('timestamp', '<', strtotime($day . ' 23:59:59')),
         Filter::expression('timestamp', '>', strtotime($day . ' 00:00:00')),
-        Filter::expression('object_type', '=', 'service'),
-        Filter::expression('state', '=', '2'),
         Filter::matchAny(
             Filter::expression('type', '=', 'hard_state'),
             Filter::expression('type', '=', 'hard_state')
-        )
+        ),
+        $selection['filter']
     );
     $data[$day] = array(
         'value'   => $value,
@@ -36,7 +49,39 @@ foreach ($summary as $entry) {
         'url'     => $this->href('monitoring/list/eventhistory?' . $filter->toQueryString())
     );
 }
-$grid->setData($data);
+
+$f = new DateTime();
+$f->setTimestamp($from);
+$t = new DateTime();
+$t->setTimestamp($to);
+$diff = $t->diff($f);
+$step = 124;
+
+for ($i = 0; $i < $diff->days; $i += $step) {
+    $end = clone $f;
+    if ($diff->days - $i > $step) {
+        // full range, move last day to next chunk
+        $end->add(new DateInterval('P' . ($step - 1) . 'D'));
+    } else {
+        // include last day
+        $end->add(new DateInterval('P' . ($diff->days - $i) . 'D'));
+    }
+    $grid = new HistoryColorGrid(null, $f->getTimestamp(), $end->getTimestamp());
+    $grid->setColor($selection['color']);
+    $grid->opacity = $selection['opacity'];
+    $grid->orientation = $orientation;
+    $grid->setData($data);
+    $grids[] = $grid;
+
+    $f->add(new DateInterval('P' . $step . 'D'));
+}
 ?>
-<?= $grid ?>
+<div style="width: 33.5em;">
+<? foreach (array_reverse($grids) as $key => $grid) { ?>
+    <div style=" <?= $this->orientation === 'horizontal' ? '' : 'display: inline-block; vertical-align: top; top; margin: 0.5em;' ?>">
+        <?= $grid; ?>
+        <?= $this->orientation === 'horizontal' ? '<br />' : '' ?>
+    </div>
+<? } ?>
+    </div>
 </div>

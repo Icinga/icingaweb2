@@ -14,6 +14,7 @@ use Icinga\Web\Widget\FilterBox;
 use Icinga\Web\Widget\Chart\HistoryColorGrid;
 use Icinga\Data\Filter\Filter;
 use Icinga\Web\Widget;
+use Icinga\Module\Monitoring\Web\Widget\SelectBox;
 
 class Monitoring_ListController extends Controller
 {
@@ -359,15 +360,100 @@ class Monitoring_ListController extends Controller
 
     public function statehistorysummaryAction()
     {
-        $this->addTitleTab('statehistorysummary', 'Critical Events');
+        $this->view->from = $this->params->shift('from', '3 months ago');
+        $this->addTitleTab('statehistorysummary', 'State Summary');
+        $selections = array(
+            'critical' => array(
+                'column' => 'cnt_critical',
+                'filter' => Filter::matchAll(
+                    Filter::expression('object_type', '=', 'service'),
+                    Filter::expression('state', '=', '2')
+                ),
+                'tooltip' => t('%d critical events on %s'),
+                'color' => '#ff5566', 'opacity' => '0.9'
+            ),
+            'warning' => array(
+                'column' => 'cnt_warning',
+                'filter' => Filter::matchAll(
+                    Filter::expression('object_type', '=', 'service'),
+                    Filter::expression('state', '=', '1')
+                ),
+                'tooltip' => t('%d warning events on %s'),
+                'color' => '#ffaa44', 'opacity' => '1.0'
+            ),
+            'unknown' => array(
+                'column' => 'cnt_unknown',
+                'filter' => Filter::matchAll(
+                    Filter::expression('object_type', '=', 'service'),
+                    Filter::expression('state', '=', '3')
+                ),
+                'tooltip' => t('%d unknown events on %s'),
+                'color' => '#cc77ff', 'opacity' => '0.7'
+            ),
+            'ok' => array(
+                'column' => 'cnt_ok',
+                'filter' => Filter::matchAll(
+                    Filter::expression('object_type', '=', 'service'),
+                    Filter::expression('state', '=', '0')
+                ),
+                'tooltip' => t('%d ok events on %s'),
+                'color' => '#49DF96', 'opacity' => '0.55'
+            )
+        );
+
+        $eventBox = new SelectBox(
+            'statehistoryfilter',
+            array(
+                'critical' => t('Critical'),
+                'warning' => t('Warning'),
+                'unknown' => t('Unknown'),
+                'ok' => t('Ok')
+            ),
+            t('Events'),
+            'event'
+        );
+        $eventBox->applyRequest($this->getRequest());
+
+        $orientationBox = new SelectBox(
+            'orientation',
+            array(
+                '0' => t('Vertical'),
+                '1' => t('Horizontal')
+            ),
+            t('Orientation'),
+            'horizontal'
+        );
+        $orientationBox->applyRequest($this->getRequest());
+
+        $intervalBox = new SelectBox(
+            'from',
+            array(
+                '3 months ago' => t('3 Months'),
+                '4 months ago' => t('4 Months'),
+                '8 months ago' => t('8 Months'),
+                '12 months ago' => t('1 Year'),
+                '24 months ago' => t('2 Years')
+            ),
+            t('Interval'),
+            'from'
+        );
+        $intervalBox->applyRequest($this->getRequest());
+
+        $eventtype = $this->params->shift('event', 'critical');
+        $orientation = $this->params->shift('horizontal', 0) ? 'horizontal' : 'vertical';
+        $selection = $selections[$eventtype];
+
         $query = $this->backend->select()->from(
             'stateHistorySummary',
-            array('day', 'cnt_critical')
-        )->getQuery()->order('day');
-        $query->limit(365);
-        $this->view->summary = $query->fetchAll();
-        $this->view->grid = new HistoryColorGrid();
-        $this->handleFormatRequest($query);
+            array('day', $selection['column'])
+        );
+        $this->applyFilters($query);
+        $this->view->orientationBox = $orientationBox;
+        $this->view->eventBox = $eventBox;
+        $this->view->selection = $selection;
+        $this->view->orientation = $orientation;
+        $this->view->summary = $query->getQuery()->fetchAll();
+        $this->view->intervalBox = $intervalBox;
     }
 
     public function contactgroupsAction()
