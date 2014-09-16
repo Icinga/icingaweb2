@@ -9,6 +9,7 @@ use Icinga\Module\Monitoring\Command\Object\AddCommentCommand;
 use Icinga\Module\Monitoring\Command\Object\DeleteCommentCommand;
 use Icinga\Module\Monitoring\Command\Object\DeleteDowntimeCommand;
 use Icinga\Module\Monitoring\Command\Object\ProcessCheckResultCommand;
+use Icinga\Module\Monitoring\Command\Object\PropagateHostDowntimeCommand;
 use Icinga\Module\Monitoring\Command\Object\RemoveAcknowledgementCommand;
 use Icinga\Module\Monitoring\Command\Object\ScheduleServiceCheckCommand;
 use Icinga\Module\Monitoring\Command\Object\ScheduleServiceDowntimeCommand;
@@ -61,14 +62,14 @@ class IcingaCommandFileCommandRenderer implements IcingaCommandRendererInterface
             /** @var \Icinga\Module\Monitoring\Object\Host $object */
             $commandString = sprintf(
                 'ADD_HOST_COMMENT;%s',
-                $object->getHost()
+                $object->getName()
             );
         } else {
             /** @var \Icinga\Module\Monitoring\Object\Service $object */
             $commandString = sprintf(
                 'ADD_SVC_COMMENT;%s;%s',
-                $object->getHost(),
-                $object->getService()
+                $object->getHost()->getName(),
+                $object->getName()
             );
         }
         return sprintf(
@@ -87,14 +88,14 @@ class IcingaCommandFileCommandRenderer implements IcingaCommandRendererInterface
             /** @var \Icinga\Module\Monitoring\Object\Host $object */
             $commandString = sprintf(
                 'SEND_CUSTOM_HOST_NOTIFICATION;%s',
-                $object->getHost()
+                $object->getName()
             );
         } else {
             /** @var \Icinga\Module\Monitoring\Object\Service $object */
             $commandString = sprintf(
                 'SEND_CUSTOM_SVC_NOTIFICATION;%s;%s',
-                $object->getHost(),
-                $object->getService()
+                $object->getHost()->getName(),
+                $object->getName()
             );
         }
         $options = 0; // 0 for no options
@@ -120,14 +121,14 @@ class IcingaCommandFileCommandRenderer implements IcingaCommandRendererInterface
             /** @var \Icinga\Module\Monitoring\Object\Host $object */
             $commandString = sprintf(
                 'PROCESS_HOST_CHECK_RESULT;%s',
-                $object->getHost()
+                $object->getName()
             );
         } else {
             /** @var \Icinga\Module\Monitoring\Object\Service $object */
             $commandString = sprintf(
                 'PROCESS_SVC_CHECK_RESULT;%s;%s',
-                $object->getHost(),
-                $object->getService()
+                $object->getHost()->getName(),
+                $object->getName()
             );
         }
         $output = $command->getOutput();
@@ -164,15 +165,15 @@ class IcingaCommandFileCommandRenderer implements IcingaCommandRendererInterface
             $commandString = sprintf(
                 '%s;%s',
                 $commandName,
-                $object->getHost()
+                $object->getName()
             );
         } else {
             /** @var \Icinga\Module\Monitoring\Object\Service $object */
             $commandString = sprintf(
                 '%s;%s;%s',
                 $command->getForced() === true ? 'SCHEDULE_FORCED_SVC_CHECK' : 'SCHEDULE_SVC_CHECK',
-                $object->getHost(),
-                $object->getService()
+                $object->getHost()->getName(),
+                $object->getName()
             );
         }
         return sprintf(
@@ -188,7 +189,11 @@ class IcingaCommandFileCommandRenderer implements IcingaCommandRendererInterface
         if ($command->getObject()->getType() === $command::TYPE_HOST) {
             /** @var \Icinga\Module\Monitoring\Object\Host $object */
             /** @var \Icinga\Module\Monitoring\Command\Object\ScheduleHostDowntimeCommand $command */
-            if ($command->getForAllServices() === true) {
+            if ($command instanceof PropagateHostDowntimeCommand) {
+                /** @var \Icinga\Module\Monitoring\Command\Object\PropagateHostDowntimeCommand $command */
+                $commandName = $command->getTriggered() === true ? 'SCHEDULE_AND_PROPAGATE_TRIGGERED_HOST_DOWNTIME'
+                    : 'SCHEDULE_AND_PROPAGATE_HOST_DOWNTIME';
+            } elseif ($command->getForAllServices() === true) {
                 $commandName = 'SCHEDULE_HOST_SVC_DOWNTIME';
             } else {
                 $commandName = 'SCHEDULE_HOST_DOWNTIME';
@@ -196,15 +201,15 @@ class IcingaCommandFileCommandRenderer implements IcingaCommandRendererInterface
             $commandString = sprintf(
                 '%s;%s',
                 $commandName,
-                $object->getHost()
+                $object->getName()
             );
         } else {
             /** @var \Icinga\Module\Monitoring\Object\Service $object */
             $commandString = sprintf(
                 '%s;%s;%s',
                 'SCHEDULE_SVC_DOWNTIME',
-                $object->getHost(),
-                $object->getService()
+                $object->getHost()->getName(),
+                $object->getName()
             );
         }
         return sprintf(
@@ -228,15 +233,15 @@ class IcingaCommandFileCommandRenderer implements IcingaCommandRendererInterface
             $commandString = sprintf(
                 '%s;%s',
                 $command->getExpireTime() !== null ? 'ACKNOWLEDGE_HOST_PROBLEM_EXPIRE' : 'ACKNOWLEDGE_HOST_PROBLEM',
-                $object->getHost()
+                $object->getName()
             );
         } else {
             /** @var \Icinga\Module\Monitoring\Object\Service $object */
             $commandString = sprintf(
                 '%s;%s;%s',
                 $command->getExpireTime() !== null ? 'ACKNOWLEDGE_SVC_PROBLEM_EXPIRE' : 'ACKNOWLEDGE_SVC_PROBLEM',
-                $object->getHost(),
-                $object->getService()
+                $object->getHost()->getName(),
+                $object->getName()
             );
         }
         $commandString = sprintf(
@@ -301,15 +306,15 @@ class IcingaCommandFileCommandRenderer implements IcingaCommandRendererInterface
             $commandString = sprintf(
                 $commandFormat . ';%s',
                 'HOST',
-                $object->getHost()
+                $object->getName()
             );
         } else {
             /** @var \Icinga\Module\Monitoring\Object\Service $object */
             $commandString = sprintf(
                 $commandFormat . ';%s;%s',
                 'SVC',
-                $object->getHost(),
-                $object->getService()
+                $object->getHost()->getName(),
+                $object->getName()
             );
         }
         return $commandString;
@@ -323,15 +328,15 @@ class IcingaCommandFileCommandRenderer implements IcingaCommandRendererInterface
             $commandString = sprintf(
                 '%s;%s',
                 'DEL_HOST_DOWNTIME',
-                $object->getHost()
+                $object->getName()
             );
         } else {
             /** @var \Icinga\Module\Monitoring\Object\Service $object */
             $commandString = sprintf(
                 '%s;%s;%s',
                 'DEL_SVC_COMMENT',
-                $object->getHost(),
-                $object->getService()
+                $object->getHost()->getName(),
+                $object->getName()
             );
         }
         return sprintf(
@@ -349,15 +354,15 @@ class IcingaCommandFileCommandRenderer implements IcingaCommandRendererInterface
             $commandString = sprintf(
                 '%s;%s',
                 'DEL_HOST_DOWNTIME',
-                $object->getHost()
+                $object->getName()
             );
         } else {
             /** @var \Icinga\Module\Monitoring\Object\Service $object */
             $commandString = sprintf(
                 '%s;%s;%s',
                 'DEL_SVC_DOWNTIME',
-                $object->getHost(),
-                $object->getService()
+                $object->getHost()->getName(),
+                $object->getName()
             );
         }
         return sprintf(
@@ -375,15 +380,15 @@ class IcingaCommandFileCommandRenderer implements IcingaCommandRendererInterface
             $commandString = sprintf(
                 '%s;%s',
                 'REMOVE_HOST_ACKNOWLEDGEMENT',
-                $object->getHost()
+                $object->getName()
             );
         } else {
             /** @var \Icinga\Module\Monitoring\Object\Service $object */
             $commandString = sprintf(
                 '%s;%s;%s',
                 'REMOVE_SVC_ACKNOWLEDGEMENT',
-                $object->getHost(),
-                $object->getService()
+                $object->getHost()->getName(),
+                $object->getName()
             );
         }
         return $commandString;
