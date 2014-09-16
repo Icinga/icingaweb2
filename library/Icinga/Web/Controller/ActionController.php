@@ -91,7 +91,20 @@ class ActionController extends Zend_Controller_Action
         }
 
         $this->view->tabs = new Tabs();
+        $this->prepareInit();
         $this->init();
+    }
+
+    /**
+     * Prepare controller initialization
+     *
+     * As it should not be required for controllers to call the parent's init() method, base controllers should use
+     * prepareInit() in order to prepare the controller initialization.
+     *
+     * @see \Zend_Controller_Action()::init() For the controller initialization method.
+     */
+    protected function prepareInit()
+    {
     }
 
     public function Config($file = null)
