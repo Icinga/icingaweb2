@@ -101,7 +101,7 @@ class ActionController extends Zend_Controller_Action
      * As it should not be required for controllers to call the parent's init() method, base controllers should use
      * prepareInit() in order to prepare the controller initialization.
      *
-     * @see \Zend_Controller_Action()::init() For the controller initialization method.
+     * @see \Zend_Controller_Action::init() For the controller initialization method.
      */
     protected function prepareInit()
     {
