@@ -127,9 +127,9 @@ class View extends Zend_View_Abstract
         );
     }
 
-    public function translate($text)
+    public function translate($text, $context = null)
     {
-        return Translator::translate($text, $this->translationDomain);
+        return Translator::translate($text, $this->translationDomain, $context);
     }
 
     /**
@@ -137,9 +137,9 @@ class View extends Zend_View_Abstract
      *
      * @see Translator::translatePlural()
      */
-    public function translatePlural($textSingular, $textPlural, $number)
+    public function translatePlural($textSingular, $textPlural, $number, $context = null)
     {
-        return Translator::translatePlural($textSingular, $textPlural, $number, $this->translationDomain);
+        return Translator::translatePlural($textSingular, $textPlural, $number, $this->translationDomain, $context);
     }
 
     /**

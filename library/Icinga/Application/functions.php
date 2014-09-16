@@ -5,49 +5,85 @@
 use Icinga\Util\Translator;
 
 if (extension_loaded('gettext')) {
-    function t($messageId)
+
+    /**
+     * (non-PHPDoc)
+     * @see Translator::translate() For the function documentation.
+     */
+    function t($messageId, $context = null)
     {
-        return Translator::translate($messageId, Translator::DEFAULT_DOMAIN);
+        return Translator::translate($messageId, Translator::DEFAULT_DOMAIN, $context);
     }
 
-    function mt($domain, $messageId)
+    /**
+     * (non-PHPDoc)
+     * @see Translator::translate() For the function documentation.
+     */
+    function mt($domain, $messageId, $context = null)
     {
-        return Translator::translate($messageId, $domain);
+        return Translator::translate($messageId, $domain, $context);
     }
 
-    function tp($messageId, $messageId2, $number)
+    /**
+     * (non-PHPDoc)
+     * @see Translator::translatePlural() For the function documentation.
+     */
+    function tp($messageId, $messageId2, $number, $context = null)
     {
-        return Translator::translatePlural($messageId, $messageId2, $number, Translator::DEFAULT_DOMAIN);
+        return Translator::translatePlural($messageId, $messageId2, $number, Translator::DEFAULT_DOMAIN, $context);
     }
 
-    function mtp($domain, $messageId, $messageId2, $number)
+    /**
+     * (non-PHPDoc)
+     * @see Translator::translatePlural() For the function documentation.
+     */
+    function mtp($domain, $messageId, $messageId2, $number, $context = null)
     {
-        return Translator::translatePlural($messageId, $messageId2, $number, $domain);
+        return Translator::translatePlural($messageId, $messageId2, $number, $domain, $context);
     }
+
 } else {
-    function t($messageId)
+
+    /**
+     * (non-PHPDoc)
+     * @see Translator::translate() For the function documentation.
+     */
+    function t($messageId, $context = null)
     {
         return $messageId;
     }
 
-    function mt($domain, $messageId)
+    /**
+     * (non-PHPDoc)
+     * @see Translator::translate() For the function documentation.
+     */
+    function mt($domain, $messageId, $context = null)
     {
         return $messageId;
     }
 
-    function tp($messageId, $messageId2, $number)
+    /**
+     * (non-PHPDoc)
+     * @see Translator::translatePlural() For the function documentation.
+     */
+    function tp($messageId, $messageId2, $number, $context = null)
     {
-        if ($number === 0 || $number > 1 || $number < 0) {
+        if ((int) $number !== 1) {
             return $messageId2;
         }
         return $messageId;
     }
 
-    function mt($domain, $messageId, $messageId2, $number)
+    /**
+     * (non-PHPDoc)
+     * @see Translator::translatePlural() For the function documentation.
+     */
+    function mtp($domain, $messageId, $messageId2, $number, $context = null)
     {
-        if ($number === 0 || $number > 1 || $number < 0) {
+        if ((int) $number !== 1) {
             return $messageId2;
         }
         return $messageId;
     }
+
 }

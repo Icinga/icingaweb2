@@ -918,15 +918,21 @@ class Module
      * Translate a string with the global mt()
      *
      * @param $string
+     * @param null $context
+     *
      * @return mixed|string
      */
-    protected function translate($string)
+    protected function translate($string, $context = null)
     {
-        return mt($this->name, $string);
+        return mt($this->name, $string, $context);
     }
 
-    protected function translatePlural($string, $string2, $n)
+    /**
+     * (non-PHPDoc)
+     * @see Translator::translatePlural() For the function documentation.
+     */
+    protected function translatePlural($textSingular, $textPlural, $number, $context = null)
     {
-        return mtp($this->name, $string, $string2, $n);
+        return mtp($this->name, $textSingular, $textPlural, $number, $context);
     }
 }

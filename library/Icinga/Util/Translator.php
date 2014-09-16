@@ -34,13 +34,18 @@ class Translator
      *
      * Falls back to the default domain in case the string cannot be translated using the given domain
      *
-     * @param   string  $text       The string to translate
-     * @param   string  $domain     The primary domain to use
+     * @param   string  $text           The string to translate
+     * @param   string  $domain         The primary domain to use
+     * @param   string|null $context    Optional parameter for context based translation
      *
-     * @return  string              The translated string
+     * @return  string                  The translated string
      */
-    public static function translate($text, $domain)
+    public static function translate($text, $domain, $context = null)
     {
+        if ($context !== null) {
+            return self::pgettext($text, $domain, $context);
+        }
+
         $res = dgettext($domain, $text);
         if ($res === $text && $domain !== self::DEFAULT_DOMAIN) {
             return dgettext(self::DEFAULT_DOMAIN, $text);
@@ -55,13 +60,68 @@ class Translator
      * @param   string      $textPlural     The string in plural form to translate
      * @param   integer     $number         The number to get the plural or singular string
      * @param   string      $domain         The primary domain to use
+     * @param   string|null $context        Optional parameter for context based translation
      *
      * @return string                       The translated string
      */
-    public static function translatePlural($textSingular, $textPlural, $number, $domain)
+    public static function translatePlural($textSingular, $textPlural, $number, $domain, $context = null)
     {
+        if ($context !== null) {
+            return self::pngettext($textSingular, $textPlural, $number, $domain, $context);
+        }
+
         $res = dngettext($domain, $textSingular, $textPlural, $number);
         return $res;
+    }
+
+    /**
+     * Emulated pgettext()
+     *
+     * @link http://php.net/manual/de/book.gettext.php#89975
+     *
+     * @param $text
+     * @param $domain
+     * @param $context
+     *
+     * @return string
+     */
+    public static function pgettext($text, $domain, $context)
+    {
+        $contextString = "{$context}\004{$text}";
+
+        $translation = dcgettext($domain, $contextString, LC_MESSAGES);
+
+        if ($translation == $contextString) {
+            return $text;
+        } else {
+            return $translation;
+        }
+    }
+
+    /**
+     * Emulated pngettext()
+     *
+     * @link http://php.net/manual/de/book.gettext.php#89975
+     *
+     * @param $textSingular
+     * @param $textPlural
+     * @param $number
+     * @param $domain
+     * @param $context
+     *
+     * @return string
+     */
+    public static function pngettext($textSingular, $textPlural, $number, $domain, $context)
+    {
+        $contextString = "{$context}\004{$textSingular}";
+
+        $translation = dcngettext($domain, $contextString, $textPlural, $number, LC_MESSAGES);
+
+        if ($translation == $contextString || $translation == $textPlural) {
+            return ($number == 1 ? $textSingular : $textPlural);
+        } else {
+            return $translation;
+        }
     }
 
     /**
