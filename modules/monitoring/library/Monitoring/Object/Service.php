@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Monitoring\Object;
 
+use InvalidArgumentException;
 use Icinga\Module\Monitoring\Backend;
 
 /**
@@ -11,6 +12,31 @@ use Icinga\Module\Monitoring\Backend;
  */
 class Service extends MonitoredObject
 {
+    /**
+     * Service state 'OK'
+     */
+    const STATE_OK = 0;
+
+    /**
+     * Service state 'WARNING'
+     */
+    const STATE_WARNING = 1;
+
+    /**
+     * Service state 'CRITICAL'
+     */
+    const STATE_CRITICAL = 2;
+
+    /**
+     * Service state 'UNKNOWN'
+     */
+    const STATE_UNKNOWN = 3;
+
+    /**
+     * Service state 'PENDING'
+     */
+    const STATE_PENDING = 99;
+
     /**
      * Type of the Icinga service
      *
@@ -26,9 +52,9 @@ class Service extends MonitoredObject
     public $prefix = 'service_';
 
     /**
-     * Host name the service is running on
+     * Host the service is running on
      *
-     * @var string
+     * @var Host
      */
     protected $host;
 
@@ -49,14 +75,14 @@ class Service extends MonitoredObject
     public function __construct(Backend $backend, $host, $service)
     {
         parent::__construct($backend);
-        $this->host = $host;
+        $this->host = new Host($backend, $host);
         $this->service = $service;
     }
 
     /**
-     * Get the host name the service is running on
+     * Get the host the service is running on
      *
-     * @return string
+     * @return Host
      */
     public function getHost()
     {
@@ -68,7 +94,7 @@ class Service extends MonitoredObject
      *
      * @return string
      */
-    public function getService()
+    public function getName()
     {
         return $this->service;
     }
@@ -167,7 +193,40 @@ class Service extends MonitoredObject
             'service_process_performance_data',
             'service_percent_state_change'
         ))
-            ->where('host_name', $this->host)
+            ->where('host_name', $this->host->getName())
             ->where('service_description', $this->service);
+    }
+
+    /**
+     * Get the translated textual representation of a service state
+     *
+     * @param   int $state
+     *
+     * @return  string
+     * @throws  InvalidArgumentException If the service state is not valid
+     */
+    public static function getStateText($state)
+    {
+        switch ((int) $state) {
+            case self::STATE_OK:
+                $text = mt('monitoring', 'ok');
+                break;
+            case self::STATE_WARNING:
+                $text = mt('monitoring', 'warning');
+                break;
+            case self::STATE_CRITICAL:
+                $text = mt('monitoring', 'critical');
+                break;
+            case self::STATE_UNKNOWN:
+                $text = mt('monitoring', 'unknown');
+                break;
+            case self::STATE_PENDING:
+                $text = mt('monitoring', 'pending');
+                break;
+            default:
+                throw new InvalidArgumentException('Invalid service state \'%s\'', $state);
+                break;
+        }
+        return $text;
     }
 }
