@@ -2,107 +2,41 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Form\Command\Object\AcknowledgeProblemCommandForm;
 use Icinga\Module\Monitoring\Form\Command\Object\AddCommentCommandForm;
-use Icinga\Module\Monitoring\Form\Command\Object\CheckNowCommandForm;
-use Icinga\Module\Monitoring\Form\Command\Object\DeleteCommentCommandForm;
-use Icinga\Module\Monitoring\Form\Command\Object\DeleteDowntimeCommandForm;
-use Icinga\Module\Monitoring\Form\Command\Object\ObjectsCommandForm;
-use Icinga\Module\Monitoring\Form\Command\Object\RemoveAcknowledgementCommandForm;
 use Icinga\Module\Monitoring\Form\Command\Object\ScheduleServiceCheckCommandForm;
 use Icinga\Module\Monitoring\Form\Command\Object\ScheduleServiceDowntimeCommandForm;
-use Icinga\Module\Monitoring\Form\Command\Object\ToggleObjectFeaturesCommandForm;
 use Icinga\Module\Monitoring\Object\Service;
-use Icinga\Web\Url;
+use Icinga\Module\Monitoring\Web\Controller\MonitoredObjectController;
 
-class Monitoring_ServiceController extends Controller
+class Monitoring_ServiceController extends MonitoredObjectController
 {
     /**
-     * @var Service
+     * (non-PHPDoc)
+     * @see MonitoredObjectController::$commandRedirectUrl For the property documentation.
      */
-    protected $service;
+    protected $commandRedirectUrl = 'monitoring/service/show';
 
-    public function moduleInit()
+    /**
+     * Fetch the requested service from the monitoring backend
+     *
+     * @throws Zend_Controller_Action_Exception If the service was not found
+     */
+    public function init()
     {
-        parent::moduleInit();
         $service = new Service($this->backend, $this->params->get('host'), $this->params->get('service'));
         if ($service->fetch() === false) {
             throw new Zend_Controller_Action_Exception($this->translate('Service not found'));
         }
-        $this->service = $service;
-    }
-
-    public function showAction()
-    {
-        $this->setAutorefreshInterval(10);
-        $checkNowForm = new CheckNowCommandForm();
-        $checkNowForm
-            ->setObjects($this->service)
-            ->handleRequest();
-        $this->view->checkNowForm = $checkNowForm;
-
-        if ( ! in_array((int) $this->service->state, array(0, 99))) {
-            if ((bool) $this->service->acknowledged) {
-                $removeAckForm = new RemoveAcknowledgementCommandForm();
-                $removeAckForm
-                    ->setObjects($this->service)
-                    ->handleRequest();
-                $this->view->removeAckForm = $removeAckForm;
-            } else {
-                $ackForm = new AcknowledgeProblemCommandForm();
-                $ackForm
-                    ->setObjects($this->service)
-                    ->handleRequest();
-                $this->view->ackForm = $ackForm;
-            }
-        }
-        if (count($this->service->comments) > 0) {
-            $delCommentForm = new DeleteCommentCommandForm();
-            $delCommentForm
-                ->setObjects($this->service)
-                ->handleRequest();
-            $this->view->delCommentForm = $delCommentForm;
-        }
-
-        if (count($this->service->downtimes > 0)) {
-            $delDowntimeForm = new DeleteDowntimeCommandForm();
-            $delDowntimeForm
-                ->setObjects($this->service)
-                ->handleRequest();
-            $this->view->delDowntimeForm = $delDowntimeForm;
-        }
-
-        $toggleFeaturesForm = new ToggleObjectFeaturesCommandForm();
-        $toggleFeaturesForm
-            ->load($this->service)
-            ->setObjects($this->service)
-            ->handleRequest();
-        $this->view->toggleFeaturesForm = $toggleFeaturesForm;
-
-        $this->view->object = $this->service->populate();
-    }
-
-    protected function handleCommandForm(ObjectsCommandForm $form)
-    {
-        $form
-            ->setObjects($this->service)
-            ->setRedirectUrl(Url::fromPath(
-                'monitoring/service/show',
-                array('host' => $this->service->getHost(), 'service' => $this->service->getService())
-            ))
-            ->handleRequest();
-        $this->view->form = $form;
-        $this->_helper->viewRenderer('command');
-        return $form;
+        $this->object = $service;
     }
 
     /**
-     * Acknowledge a service downtime
+     * Acknowledge a service problem
      */
     public function acknowledgeProblemAction()
     {
-        $this->view->title = $this->translate('Acknowledge Service Downtime');
+        $this->view->title = $this->translate('Acknowledge Service Problem');
         $this->handleCommandForm(new AcknowledgeProblemCommandForm());
     }
 
