@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Monitoring\Object;
 
+use InvalidArgumentException;
 use Icinga\Module\Monitoring\Backend;
 
 /**
@@ -11,6 +12,26 @@ use Icinga\Module\Monitoring\Backend;
  */
 class Host extends MonitoredObject
 {
+    /**
+     * Host state 'UP'
+     */
+    const STATE_UP = 0;
+
+    /**
+     * Host state 'DOWN'
+     */
+    const STATE_DOWN = 1;
+
+    /**
+     * Host state 'UNREACHABLE'
+     */
+    const STATE_UNREACHABLE = 2;
+
+    /**
+     * Host state 'PENDING'
+     */
+    const STATE_PENDING = 99;
+
     /**
      * Type of the Icinga host
      *
@@ -33,6 +54,20 @@ class Host extends MonitoredObject
     protected $host;
 
     /**
+     * The services running on the hosts
+     *
+     * @var \Icinga\Module\Monitoring\Object\Service[]
+     */
+    protected $services;
+
+    /**
+     * Stats
+     *
+     * @var object
+     */
+    protected $stats;
+
+    /**
      * Create a new host
      *
      * @param Backend   $backend    Backend to fetch host information from
@@ -49,7 +84,7 @@ class Host extends MonitoredObject
      *
      * @return string
      */
-    public function getHost()
+    public function getName()
     {
         return $this->host;
     }
@@ -105,5 +140,84 @@ class Host extends MonitoredObject
             'host_process_performance_data'
         ))
             ->where('host_name', $this->host);
+    }
+
+    /**
+     * Fetch the services running on the host
+     *
+     * @return $this
+     */
+    public function fetchServices()
+    {
+        $services = array();
+        foreach ($this->backend->select()->from('serviceStatus', array('service_description'))
+                ->where('host_name', $this->host)
+                ->getQuery()
+                ->fetchAll() as $service) {
+            $services[] = new Service($this->backend, $this->host, $service->service_description);
+        }
+        $this->services = $services;
+        return $this;
+    }
+
+    /**
+     * Fetch stats
+     *
+     * @return $this
+     */
+    public function fetchStats()
+    {
+        $this->stats = $this->backend->select()->from('statusSummary', array(
+            'services_total',
+            'services_ok',
+            'services_problem',
+            'services_problem_handled',
+            'services_problem_unhandled',
+            'services_critical',
+            'services_critical_unhandled',
+            'services_critical_handled',
+            'services_warning',
+            'services_warning_unhandled',
+            'services_warning_handled',
+            'services_unknown',
+            'services_unknown_unhandled',
+            'services_unknown_handled',
+            'services_pending',
+        ))
+            ->where('service_host_name', $this->host)
+            ->getQuery()
+            ->fetchRow();
+        return $this;
+    }
+
+    /**
+     * Get the optional translated textual representation of a host state
+     *
+     * @param   int     $state
+     * @param   bool    $translate
+     *
+     * @return  string
+     * @throws  InvalidArgumentException If the host state is not valid
+     */
+    public static function getStateText($state, $translate = false)
+    {
+        switch ((int) $state) {
+            case self::STATE_UP:
+                $text = $translate ? mt('monitoring', 'up') : 'up';
+                break;
+            case self::STATE_DOWN:
+                $text = $translate ? mt('monitoring', 'down') : 'down';
+                break;
+            case self::STATE_UNREACHABLE:
+                $text = $translate ? mt('monitoring', 'unreachable') : 'unreachable';
+                break;
+            case self::STATE_PENDING:
+                $text = $translate ? mt('monitoring', 'pending') : 'pending';
+                break;
+            default:
+                throw new InvalidArgumentException('Invalid host state \'%s\'', $state);
+                break;
+        }
+        return $text;
     }
 }
