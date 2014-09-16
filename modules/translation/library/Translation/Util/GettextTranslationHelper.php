@@ -237,8 +237,16 @@ class GettextTranslationHelper
                     '/usr/bin/xgettext',
                     '--language=PHP',
                     '--keyword=translate',
+                    '--keyword=translate:1,2c',
+                    '--keyword=translatePlural:1,2',
+                    '--keyword=translatePlural:1,2,4c',
                     '--keyword=mt:2',
+                    '--keyword=mtp:2,3',
+                    '--keyword=mtp:2,3,5c',
                     '--keyword=t',
+                    '--keyword=t:1,2c',
+                    '--keyword=tp:1,2',
+                    '--keyword=tp:1,2,4c',
                     '--sort-output',
                     '--force-po',
                     '--omit-header',
@@ -332,6 +340,7 @@ class GettextTranslationHelper
                     '"MIME-Version: 1.0\n"',
                     '"Content-Type: text/plain; charset=' . $headerInfo['charset'] . '\n"',
                     '"Content-Transfer-Encoding: 8bit\n"',
+                    '"Plural-Forms: nplurals=2; plural=(n != 1);\n"',
                     ''
                 )
             ) . PHP_EOL . substr($content, strpos($content, '#: '))

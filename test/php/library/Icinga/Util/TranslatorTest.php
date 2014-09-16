@@ -213,4 +213,76 @@ class TranslatorTest extends BaseTestCase
             'Translator::getPreferredLocaleCode does not return the default locale if no match could be found'
         );
     }
+
+    /**
+     * @depends testWhetherSetupLocaleSetsUpTheGivenLocale
+     */
+    public function testWhetherTranslatePluralReturnsTheSingularForm()
+    {
+        Translator::setupLocale('de_DE');
+
+        $result = Translator::translatePlural('test service', 'test services', 1, 'icingatest');
+
+        $expected = 'test dienst';
+
+        $this->assertEquals(
+            $expected,
+            $result,
+            'Translator::translatePlural() could not return the translated singular form'
+        );
+    }
+
+    /**
+     * @depends testWhetherSetupLocaleSetsUpTheGivenLocale
+     */
+    public function testWhetherTranslatePluralReturnsThePluralForm()
+    {
+        Translator::setupLocale('de_DE');
+
+        $result = Translator::translatePlural('test service', 'test services', 2, 'icingatest');
+
+        $expected = 'test dienste';
+
+        $this->assertEquals(
+            $expected,
+            $result,
+            'Translator::translatePlural() could not return the translated plural form'
+        );
+    }
+
+    /**
+     * @depends testWhetherSetupLocaleSetsUpTheGivenLocale
+     */
+    public function testWhetherTranslateReturnsTheContextForm()
+    {
+        Translator::setupLocale('de_DE');
+
+        $result = Translator::translate('context service', 'icingatest', 'test2');
+
+        $expected = 'context dienst test2';
+
+        $this->assertEquals(
+            $expected,
+            $result,
+            'Translator::translate() could not return the translated context form'
+        );
+    }
+
+    /**
+     * @depends testWhetherSetupLocaleSetsUpTheGivenLocale
+     */
+    public function testWhetherTranslatePluralReturnsTheContextForm()
+    {
+        Translator::setupLocale('de_DE');
+
+        $result = Translator::translatePlural('context service', 'context services', 3, 'icingatest', 'test-context');
+
+        $expected = 'context plural dienste';
+
+        $this->assertEquals(
+            $expected,
+            $result,
+            'Translator::translatePlural() could not return the translated context form'
+        );
+    }
 }

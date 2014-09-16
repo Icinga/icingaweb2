@@ -216,13 +216,29 @@ class ActionController extends Zend_Controller_Action
      *
      * Autoselects the module domain, if any, and falls back to the global one if no translation could be found.
      *
-     * @param   string  $text   The string to translate
+     * @param   string      $text       The string to translate
+     * @param   string|null $context    Optional parameter for context based translation
      *
-     * @return  string          The translated string
+     * @return  string                  The translated string
      */
-    public function translate($text)
+    public function translate($text, $context = null)
     {
-        return Translator::translate($text, $this->view->translationDomain);
+        return Translator::translate($text, $this->view->translationDomain, $context);
+    }
+
+    /**
+     * Translate a plural string
+     *
+     * @param string        $textSingular   The string in singular form to translate
+     * @param string        $textPlural     The string in plural form to translate
+     * @param string        $number         The number to get the plural or singular string
+     * @param string|null   $context        Optional parameter for context based translation
+     *
+     * @return string                       The translated string
+     */
+    public function translatePlural($textSingular, $textPlural, $number, $context = null)
+    {
+        return Translator::translatePlural($textSingular, $textPlural, $number, $this->view->translationDomain, $context);
     }
 
     protected function ignoreXhrBody()
