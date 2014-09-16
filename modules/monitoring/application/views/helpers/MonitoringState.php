@@ -2,11 +2,17 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
+/**
+ * @deprecated Crap.
+ */
 class Zend_View_Helper_MonitoringState extends Zend_View_Helper_Abstract
 {
     private $servicestates = array('ok', 'warning', 'critical', 'unknown', 99 => 'pending', null => 'pending');
     private $hoststates = array('up', 'down', 'unreachable', 99 => 'pending', null => 'pending');
 
+    /**
+     * @deprecated The host or service object must know it's possible states.
+     */
     public function monitoringState($object, $type = 'service')
     {
         if ($type === 'service') {
@@ -16,26 +22,41 @@ class Zend_View_Helper_MonitoringState extends Zend_View_Helper_Abstract
         }
     }
 
+    /**
+     * @deprecated Monitoring colors are clustered.
+     */
     public function getServiceStateColors()
     {
         return array('#44bb77', '#FFCC66', '#FF5566', '#E066FF', '#77AAFF');
     }
 
+    /**
+     * @deprecated Monitoring colors are clustered.
+     */
     public function getHostStateColors()
     {
         return array('#44bb77', '#FF5566', '#E066FF', '#77AAFF');
     }
 
+    /**
+     * @deprecated The service object must know about it's possible states.
+     */
     public function getServiceStateNames()
     {
         return array_values($this->servicestates);
     }
 
+    /**
+     * @deprecated The host object must know about it's possible states.
+     */
     public function getHostStateNames()
     {
         return array_values($this->hoststates);
     }
 
+    /**
+     * @deprecated Not used anywhere.
+     */
     public function getStateFlags($object, $type = 'service')
     {
         $state_classes = array();
@@ -60,6 +81,9 @@ class Zend_View_Helper_MonitoringState extends Zend_View_Helper_Abstract
         return $state_classes;
     }
 
+    /**
+     * @deprecated Not translated.
+     */
     public function getStateTitle($object, $type)
     {
         return strtoupper($this->monitoringState($object, $type))
