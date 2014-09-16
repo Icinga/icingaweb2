@@ -29,10 +29,9 @@ class HistoryColorGrid extends AbstractWidget {
 
     private $start = null;
     private $end = null;
-
     private $data = array();
-
     private $color;
+    public $opacity = 1.0;
 
     public function __construct($color = '#51e551', $start = null, $end = null) {
         $this->setColor($color);
@@ -91,6 +90,16 @@ class HistoryColorGrid extends AbstractWidget {
     }
 
     /**
+     * Set the used opacity
+     *
+     * @param $opacity
+     */
+    public function setOpacity($opacity)
+    {
+        $this->opacity = $opacity;
+    }
+
+    /**
      * Calculate the color to display for the given value.
      *
      * @param $value    integer
@@ -115,13 +124,14 @@ class HistoryColorGrid extends AbstractWidget {
         if (array_key_exists($day, $this->data)) {
             $entry = $this->data[$day];
             return'<a ' .
-                'style="background-color:' . $this->calculateColor($entry['value']) . ';" ' .
+                'style="background-color:' . $this->calculateColor($entry['value']) . '; '
+                    . ' opacity: ' . $this->opacity . ';"' .
                 'title="' . $entry['caption'] . '" ' .
                 'href="'  . $entry['url'] . '"' .
             '>&nbsp;</a>';
         } else {
             return '<a ' .
-                'style="background-color:' . $this->calculateColor(0) . ';" ' .
+                'style="background-color:' . $this->calculateColor(0) . '; ' . ' opacity: ' . $this->opacity . ';' .
                 'title="No entries for ' . $day . '" ' .
             '></a>';
         }
