@@ -163,6 +163,19 @@ abstract class MonitoredObject
     }
 
     /**
+     * Set the object's properties
+     *
+     * @param   object $properties
+     *
+     * @return  $this
+     */
+    public function setProperties($properties)
+    {
+        $this->properties = (object) $properties;
+        return $this;
+    }
+
+    /**
      * Fetch the object's comments
      *
      * @return $this
@@ -178,9 +191,9 @@ abstract class MonitoredObject
         ))
             ->where('comment_type', array('comment', 'ack'))
             ->where('comment_objecttype', $this->type)
-            ->where('comment_host', $this->host);
+            ->where('comment_host', $this->host_name);
         if ($this->type === self::TYPE_SERVICE) {
-            $comments->where('comment_service', $this->service);
+            $comments->where('comment_service', $this->service_description);
         }
         $this->comments = $comments->getQuery()->fetchAll();
         return $this;
@@ -210,11 +223,11 @@ abstract class MonitoredObject
             'service'           => 'downtime_service'
         ))
             ->where('downtime_objecttype', $this->type)
-            ->where('downtime_host', $this->host)
+            ->where('downtime_host', $this->host_name)
             ->order('downtime_is_in_effect', 'DESC')
             ->order('downtime_scheduled_start', 'ASC');
         if ($this->type === self::TYPE_SERVICE) {
-            $downtimes->where('downtime_service', $this->service);
+            $downtimes->where('downtime_service', $this->service_description);
         }
         $this->downtimes = $downtimes->getQuery()->fetchAll();
         return $this;
@@ -265,9 +278,9 @@ abstract class MonitoredObject
             'varvalue'
         ))
             ->where('object_type', $this->type)
-            ->where('host_name', $this->host);
+            ->where('host_name', $this->host_name);
         if ($this->type === self::TYPE_SERVICE) {
-            $query->where('service_description', $this->service);
+            $query->where('service_description', $this->service_description);
         }
 
         $this->customvars = array();
@@ -299,7 +312,7 @@ abstract class MonitoredObject
         ))
             ->where('host_name', $this->host_name);
         if ($this->type === self::TYPE_SERVICE) {
-            $contacts->where('service_description', $this->service);
+            $contacts->where('service_description', $this->service_description);
         }
         $this->contacts = $contacts->getQuery()->fetchAll();
         return $this;
@@ -316,8 +329,8 @@ abstract class MonitoredObject
                 'servicegroup_name',
                 'servicegroup_alias'
         ))
-            ->where('service_host_name', $this->host)
-            ->where('service_description', $this->service);
+            ->where('service_host_name', $this->host_name)
+            ->where('service_description', $this->service_description);
         $this->servicegroups = $serviceGroups->getQuery()->fetchPairs();
         return $this;
     }
@@ -333,9 +346,9 @@ abstract class MonitoredObject
                 'contactgroup_name',
                 'contactgroup_alias'
         ))
-            ->where('host_name', $this->host);
+            ->where('host_name', $this->host_name);
         if ($this->type === self::TYPE_SERVICE) {
-            $contactsGroups->where('service_description', $this->service);
+            $contactsGroups->where('service_description', $this->service_description);
         }
         $this->contactgroups = $contactsGroups->getQuery()->fetchAll();
         return $this;
@@ -360,9 +373,9 @@ abstract class MonitoredObject
                 'type'
         ))
             ->order('timestamp', 'DESC')
-            ->where('host_name', $this->host);
+            ->where('host_name', $this->host_name);
         if ($this->type === self::TYPE_SERVICE) {
-            $eventHistory->where('service_description', $this->service);
+            $eventHistory->where('service_description', $this->service_description);
         }
         $this->eventhistory = $eventHistory->getQuery();
         return $this;
@@ -398,10 +411,12 @@ abstract class MonitoredObject
             $this->$fetchMethod();
             return $this->$name;
         }
-        if (substr($name, 0, strlen($this->prefix)) === $this->prefix) {
-            throw new InvalidPropertyException('Can\'t access property \'%s\'. Property does not exist.', $name);
+        if (substr($name, 0, strlen($this->prefix)) !== $this->prefix) {
+            $prefixedName = $this->prefix . strtolower($name);
+            if (property_exists($this->properties, $prefixedName)) {
+                return $this->properties->$prefixedName;
+            }
         }
-        $prefixedName = $this->prefix . strtolower($name);
-        return $this->$prefixedName;
+        throw new InvalidPropertyException('Can\'t access property \'%s\'. Property does not exist.', $name);
     }
 }
