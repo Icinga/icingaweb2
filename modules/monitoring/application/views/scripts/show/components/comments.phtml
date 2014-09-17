@@ -8,12 +8,12 @@
         if ($object->getType() === $object::TYPE_HOST) {
             $addCommentLink = $this->href(
                 'monitoring/host/add-comment',
-                array('host' => $object->getHost())
+                array('host' => $object->getName())
             );
         } else {
             $addCommentLink = $this->href(
                 'monitoring/service/add-comment',
-                array('host' => $object->getHost(), 'service' => $object->getService())
+                array('host' => $object->getHost()->getName(), 'service' => $object->getName())
             );
         }
 

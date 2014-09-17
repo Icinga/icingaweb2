@@ -8,12 +8,12 @@
         if ($object->getType() === $object::TYPE_HOST) {
             $scheduleDowntimeLink = $this->href(
                 'monitoring/host/schedule-downtime',
-                array('host' => $object->getHost())
+                array('host' => $object->getName())
             );
         } else {
             $scheduleDowntimeLink = $this->href(
                 'monitoring/service/schedule-downtime',
-                array('host' => $object->getHost(), 'service' => $object->getService())
+                array('host' => $object->getHost()->getName(), 'service' => $object->getName())
             );
         }
         ?>

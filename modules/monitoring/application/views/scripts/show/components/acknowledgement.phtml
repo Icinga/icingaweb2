@@ -10,12 +10,12 @@ if (in_array((int) $object->state, array(0, 99))) {
 if ($object->getType() === $object::TYPE_HOST) {
     $ackLink = $this->href(
         'monitoring/host/acknowledge-problem',
-        array('host' => $object->getHost())
+        array('host' => $object->getName())
     );
 } else {
     $ackLink = $this->href(
         'monitoring/service/acknowledge-problem',
-        array('host' => $object->getHost(), 'service' => $object->getService())
+        array('host' => $object->getHost()->getName(), 'service' => $object->getName())
     );
 }
 

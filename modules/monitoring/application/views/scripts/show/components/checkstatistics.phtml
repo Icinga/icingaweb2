@@ -5,12 +5,12 @@
 if ($object->getType() === $object::TYPE_HOST) {
     $reschedule = $this->href(
         'monitoring/host/reschedule-check',
-        array('host' => $object->getHost())
+        array('host' => $object->getName())
     );
 } else {
     $reschedule = $this->href(
         'monitoring/service/reschedule-check',
-        array('host' => $object->getHost(), 'service' => $object->getService())
+        array('host' => $object->getHost()->getName(), 'service' => $object->getName())
     );
 }
 
