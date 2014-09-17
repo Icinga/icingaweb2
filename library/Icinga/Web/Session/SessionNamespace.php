@@ -111,7 +111,7 @@ class SessionNamespace implements IteratorAggregate
 
     public function setByRef($key, &$value)
     {
-        $this->values[$key] = $value;
+        $this->values[$key] = & $value;
 
         if (in_array($key, $this->removed)) {
             unset($this->removed[array_search($key, $this->removed)]);

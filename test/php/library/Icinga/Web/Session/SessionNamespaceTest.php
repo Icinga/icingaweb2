@@ -84,4 +84,40 @@ class SessionNamespaceTest extends BaseTestCase
             $this->assertEquals($value, $values[$key]);
         }
     }
+
+    public function testRetrievingValuesByReferenceWorks()
+    {
+        $ns = new SessionNamespace();
+        $ns->array = array(1, 2);
+        $array = & $ns->getByRef('array');
+        $array[0] = 11;
+
+        $this->assertEquals(
+            array(11, 2),
+            $ns->array,
+            'Values retrieved with getByRef() seem not be affected by external changes'
+        );
+    }
+
+    public function testSettingValuesByReferenceWorks()
+    {
+        $ns = new SessionNamespace();
+        $array = array(1, 2);
+        $ns->setByRef('array', $array);
+        $array[0] = 11;
+
+        $this->assertEquals(
+            array(11, 2),
+            $ns->array,
+            'Values set with setByRef() seem not to receive external changes'
+        );
+    }
+
+    public function testTrackingChangesWorks()
+    {
+        $ns = new SessionNamespace();
+        $this->assertFalse($ns->hasChanged(), 'A new empty session namespace seems to have changes');
+        $ns->test = 1;
+        $this->assertTrue($ns->hasChanged(), 'A new session namespace with values seems not to have changes');
+    }
 }
