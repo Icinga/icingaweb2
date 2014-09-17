@@ -44,7 +44,7 @@ class LoggingConfigForm extends Form
             'logging_type',
             array(
                 'required'      => true,
-                'class'         => 'autosubmit',
+                'autosubmit'    => true,
                 'label'         => t('Logging Type'),
                 'description'   => t('The type of logging to utilize.'),
                 'multiOptions'  => array(
