@@ -208,4 +208,23 @@ class SessionNamespace implements IteratorAggregate
 
         $this->session->write();
     }
+
+    /**
+     * Return whether the session namespace has been changed
+     *
+     * @return  bool
+     */
+    public function hasChanged()
+    {
+        return false === empty($this->values) || false === empty($this->removed);
+    }
+
+    /**
+     * Clear all values from the session namespace
+     */
+    public function clear()
+    {
+        $this->values = array();
+        $this->removed = array();
+    }
 }

@@ -80,30 +80,24 @@ class Notification
             'message' => $message,
         );
 
-        // Get, change, set - just to be on the safe side:
         $session = Session::getSession();
-        $msgs = $session->messages;
-        $msgs[] = $mo;
-        $session->messages = $msgs;
-        $session->write();
+        $session->messages[] = $mo;
     }
 
     public function hasMessages()
     {
         $session = Session::getSession();
-        return !empty($session->messages);
+        return false === empty($session->messages);
     }
 
     public function getMessages()
     {
         $session = Session::getSession();
-        $msgs = $session->messages;
-        if (false === empty($msgs)) {
+        if (false === empty($session->messages)) {
             $session->messages = array();
-            $session->write();
         }
 
-        return $msgs;
+        return $session->messages;
     }
 
     final private function __construct()

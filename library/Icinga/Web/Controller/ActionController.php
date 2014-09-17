@@ -18,8 +18,6 @@ use Icinga\File\Pdf;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Web\Session;
 use Icinga\Web\UrlParams;
-use Icinga\Session\SessionNamespace;
-use Icinga\Exception\NotReadableError;
 use Zend_Controller_Action;
 use Zend_Controller_Action_HelperBroker as ActionHelperBroker;
 use Zend_Controller_Request_Abstract as Request;
@@ -325,12 +323,22 @@ class ActionController extends Zend_Controller_Action
             $this->getResponse()->setHeader('X-Icinga-Reload-Css', 'now');
         }
 
+        $this->shutdownSession();
+
         $this->getResponse()
             ->setHeader('X-Icinga-Redirect', rawurlencode($url->getAbsoluteUrl()))
             ->sendHeaders();
 
-        // TODO: Session shutdown?
         exit;
+    }
+
+    protected function redirectHttp($url)
+    {
+        if (! $url instanceof Url) {
+            $url = Url::fromPath($url);
+        }
+        $this->shutdownSession();
+        $this->_helper->Redirector->gotoUrlAndExit($url->getRelativeUrl());
     }
 
     /**
@@ -343,10 +351,7 @@ class ActionController extends Zend_Controller_Action
         if ($this->isXhr()) {
             $this->redirectXhr($url);
         } else {
-            if (! $url instanceof Url) {
-                $url = Url::fromPath($url);
-            }
-            $this->_helper->Redirector->gotoUrlAndExit($url->getRelativeUrl());
+            $this->redirectHttp($url);
         }
     }
 
@@ -371,6 +376,8 @@ class ActionController extends Zend_Controller_Action
                 }
             }
         }
+
+        $this->shutdownSession();
 
         if ($req->getParam('format') === 'pdf') {
             $layout->setLayout('pdf');
@@ -428,6 +435,14 @@ class ActionController extends Zend_Controller_Action
     {
         $pdf = new Pdf();
         $pdf->renderControllerAction($this);
+    }
+
+    protected function shutdownSession()
+    {
+        $session = Session::getSession();
+        if ($session->hasChanged()) {
+            $session->write();
+        }
     }
 
     /**

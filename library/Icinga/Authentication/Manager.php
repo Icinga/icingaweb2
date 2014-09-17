@@ -106,10 +106,7 @@ class Manager
      */
     public function persistCurrentUser()
     {
-        $session = Session::getSession();
-        $session->set('user', $this->user);
-        $session->write();
-        $session->refreshId();
+        Session::getSession()->set('user', $this->user)->refreshId();
     }
 
     /**
