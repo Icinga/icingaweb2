@@ -126,6 +126,17 @@ class SessionNamespace implements IteratorAggregate
         return $this;
     }
 
+    public function setByRef($key, &$value)
+    {
+        $this->values[$key] = $value;
+
+        if (in_array($key, $this->removed)) {
+            unset($this->removed[array_search($key, $this->removed)]);
+        }
+
+        return $this;
+    }
+
     /**
      * Getter for session values
      *
@@ -137,6 +148,16 @@ class SessionNamespace implements IteratorAggregate
     public function get($key, $default = null)
     {
         return isset($this->values[$key]) ? $this->values[$key] : $default;
+    }
+
+    public function & getByRef($key, $default = null)
+    {
+        $value = $default;
+        if (isset($this->values[$key])) {
+            $value = & $this->values[$key];
+        }
+
+        return $value;
     }
 
     /**
