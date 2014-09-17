@@ -75,13 +75,11 @@ class Notification
             return;
         }
 
-        $mo = (object) array(
+        $messages = Session::getSession()->getByRef('messages');
+        $messages[] = (object) array(
             'type'    => $type,
             'message' => $message,
         );
-
-        $session = Session::getSession();
-        $session->messages[] = $mo;
     }
 
     public function hasMessages()
