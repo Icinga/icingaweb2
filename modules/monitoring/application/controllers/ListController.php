@@ -15,6 +15,7 @@ use Icinga\Web\Widget\Chart\HistoryColorGrid;
 use Icinga\Data\Filter\Filter;
 use Icinga\Web\Widget;
 use Icinga\Module\Monitoring\Web\Widget\SelectBox;
+use Icinga\Module\Monitoring\Form\StatehistoryForm;
 
 class Monitoring_ListController extends Controller
 {
@@ -360,59 +361,17 @@ class Monitoring_ListController extends Controller
 
     public function statehistorysummaryAction()
     {
-        $this->view->from = $this->params->shift('from', '3 months ago');
         $this->addTitleTab('statehistorysummary', 'State Summary');
-        $selections = array(
-            'critical' => array(
-                'column' => 'cnt_critical',
-                'filter' => Filter::matchAll(
-                    Filter::expression('object_type', '=', 'service'),
-                    Filter::expression('state', '=', '2')
-                ),
-                'tooltip' => t('%d critical events on %s'),
-                'color' => '#ff5566', 'opacity' => '0.9'
-            ),
-            'warning' => array(
-                'column' => 'cnt_warning',
-                'filter' => Filter::matchAll(
-                    Filter::expression('object_type', '=', 'service'),
-                    Filter::expression('state', '=', '1')
-                ),
-                'tooltip' => t('%d warning events on %s'),
-                'color' => '#ffaa44', 'opacity' => '1.0'
-            ),
-            'unknown' => array(
-                'column' => 'cnt_unknown',
-                'filter' => Filter::matchAll(
-                    Filter::expression('object_type', '=', 'service'),
-                    Filter::expression('state', '=', '3')
-                ),
-                'tooltip' => t('%d unknown events on %s'),
-                'color' => '#cc77ff', 'opacity' => '0.7'
-            ),
-            'ok' => array(
-                'column' => 'cnt_ok',
-                'filter' => Filter::matchAll(
-                    Filter::expression('object_type', '=', 'service'),
-                    Filter::expression('state', '=', '0')
-                ),
-                'tooltip' => t('%d ok events on %s'),
-                'color' => '#49DF96', 'opacity' => '0.55'
-            )
-        );
 
-        $eventBox = new SelectBox(
-            'statehistoryfilter',
-            array(
-                'critical' => t('Critical'),
-                'warning' => t('Warning'),
-                'unknown' => t('Unknown'),
-                'ok' => t('Ok')
-            ),
-            t('Events'),
-            'event'
-        );
-        $eventBox->applyRequest($this->getRequest());
+        $form = new StatehistoryForm();
+        $form->setEnctype(Zend_Form::ENCTYPE_URLENCODED);
+        $form->setMethod('get');
+        $form->setTokenDisabled();
+        $form->setRequest($this->getRequest());
+        $form->buildForm();
+        $this->view->form = $form;
+
+        $orientation = $this->params->shift('horizontal', 0) ? 'horizontal' : 'vertical';
 
         $orientationBox = new SelectBox(
             'orientation',
@@ -425,35 +384,20 @@ class Monitoring_ListController extends Controller
         );
         $orientationBox->applyRequest($this->getRequest());
 
-        $intervalBox = new SelectBox(
-            'from',
-            array(
-                '3 months ago' => t('3 Months'),
-                '4 months ago' => t('4 Months'),
-                '8 months ago' => t('8 Months'),
-                '12 months ago' => t('1 Year'),
-                '24 months ago' => t('2 Years')
-            ),
-            t('Interval'),
-            'from'
-        );
-        $intervalBox->applyRequest($this->getRequest());
-
-        $eventtype = $this->params->shift('event', 'critical');
-        $orientation = $this->params->shift('horizontal', 0) ? 'horizontal' : 'vertical';
-        $selection = $selections[$eventtype];
-
         $query = $this->backend->select()->from(
             'stateHistorySummary',
-            array('day', $selection['column'])
+            array('day', $form->getValue('state'))
         );
+        $this->params->shift('objecttype');
+        $this->params->shift('from');
+        $this->params->shift('to');
+        $this->params->shift('state');
+        $this->params->shift('btn_submit');
         $this->applyFilters($query);
-        $this->view->orientationBox = $orientationBox;
-        $this->view->eventBox = $eventBox;
-        $this->view->selection = $selection;
-        $this->view->orientation = $orientation;
         $this->view->summary = $query->getQuery()->fetchAll();
-        $this->view->intervalBox = $intervalBox;
+        $this->view->column = $form->getValue('state');
+        $this->view->orientationBox = $orientationBox;
+        $this->view->orientation = $orientation;
     }
 
     public function contactgroupsAction()
@@ -735,6 +679,7 @@ class Monitoring_ListController extends Controller
             'hosts',
             'services',
             'eventhistory',
+            'statehistorysummary',
             'notifications'
         ))) {
             $tabs->extend(new OutputFormat())->extend(new DashboardAction());

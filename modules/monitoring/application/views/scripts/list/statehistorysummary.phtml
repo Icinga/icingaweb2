@@ -9,9 +9,7 @@ use Icinga\Web\Widget\Chart\HistoryColorGrid;
         <?= $this->tabs->render($this); ?>
         <div class="fake-controls">
             <br />
-            <?= $intervalBox ?>
-            <?= $eventBox; ?>
-            <?= $orientationBox; ?>
+            <?= $form ?>
         </div>
     </div>
 <? endif; ?>
@@ -19,34 +17,75 @@ use Icinga\Web\Widget\Chart\HistoryColorGrid;
 <div class="content" data-base-target="_next">
 <?php
 
-$from = strtotime($from);
-$to = time();
+$settings = array(
+    'cnt_up' => array(
+        'tooltip' => t('%d ok states on %s'),
+        'color' => '#49DF96',
+        'opacity' => '0.55'
+    ),
+    'cnt_down_hard' => array(
+        'tooltip' => t('%d ok states on %s'),
+        'color' => '#ff5566',
+        'opacity' => '0.7'
+    ),
+    'cnt_unreachable_hard' => array(
+        'tooltip' => t('%d ok states on %s'),
+        'color' => '#77AAFF',
+        'opacity' => '0.55'
+    ),
+    'cnt_critical_hard' => array(
+        'tooltip' => t('%d critical states on %s'),
+        'color' => '#ff5566',
+        'opacity' => '0.9'
+    ),
+
+    'cnt_warning_hard' => array(
+        'tooltip' => t('%d warning states on %s'),
+        'color' => '#ffaa44',
+        'opacity' => '1.0'
+    ),
+    'cnt_unknown_hard' => array(
+        'tooltip' => t('%d unknown states on %s'),
+        'color' => '#cc77ff',
+        'opacity' => '0.7'
+    ),
+    'cnt_ok' => array(
+        'tooltip' => t('%d ok states on %s'),
+        'color' => '#49DF96',
+        'opacity' => '0.55'
+    )
+);
+
+$from = intval($form->getValue('from', strtotime('3 months ago')));
+$to = intval($form->getValue('to', time()));
+
+// don't display more than ten years, or else this will get really slow
+if ($to - $from > 315360000) {
+    $from = $to - 315360000;
+}
 $data = array();
 
 if (count($summary) === 0) {
-    echo t('No events in the selected time period.');
+    echo t('No state changes in the selected time period.');
 }
 foreach ($summary as $entry) {
     $day = $entry->day;
-    $value = $entry->{$selection['column']};
+    $value = $entry->$column;
     $caption = sprintf(
-        $selection['tooltip'],
+        $settings[$column]['tooltip'],
         $value,
         $this->dateFormat()->formatDate(strtotime($day))
     );
-    $filter = Filter::matchAll(
+    $linkFilter = Filter::matchAll(
         Filter::expression('timestamp', '<', strtotime($day . ' 23:59:59')),
         Filter::expression('timestamp', '>', strtotime($day . ' 00:00:00')),
-        Filter::matchAny(
-            Filter::expression('type', '=', 'hard_state'),
-            Filter::expression('type', '=', 'hard_state')
-        ),
-        $selection['filter']
+        $form->getFilter(),
+        $filter
     );
     $data[$day] = array(
         'value'   => $value,
         'caption' => $caption,
-        'url'     => $this->href('monitoring/list/eventhistory?' . $filter->toQueryString())
+        'url'     => $this->href('monitoring/list/eventhistory?' . $linkFilter->toQueryString())
     );
 }
 
@@ -67,8 +106,8 @@ for ($i = 0; $i < $diff->days; $i += $step) {
         $end->add(new DateInterval('P' . ($diff->days - $i) . 'D'));
     }
     $grid = new HistoryColorGrid(null, $f->getTimestamp(), $end->getTimestamp());
-    $grid->setColor($selection['color']);
-    $grid->opacity = $selection['opacity'];
+    $grid->setColor($settings[$column]['color']);
+    $grid->opacity = $settings[$column]['opacity'];
     $grid->orientation = $orientation;
     $grid->setData($data);
     $grids[] = $grid;
