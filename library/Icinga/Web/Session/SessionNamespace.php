@@ -120,7 +120,7 @@ class SessionNamespace implements IteratorAggregate
         $this->values[$key] = $value;
 
         if (in_array($key, $this->removed)) {
-            unset($this->removed[array_search($key, $this->values)]);
+            unset($this->removed[array_search($key, $this->removed)]);
         }
 
         return $this;
