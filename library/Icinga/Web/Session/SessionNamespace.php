@@ -15,13 +15,6 @@ use IteratorAggregate;
 class SessionNamespace implements IteratorAggregate
 {
     /**
-     * The session this namespace is associated to
-     *
-     * @var Session
-     */
-    protected $session;
-
-    /**
      * The actual values stored in this container
      *
      * @var array
@@ -34,16 +27,6 @@ class SessionNamespace implements IteratorAggregate
      * @var array
      */
     protected $removed = array();
-
-    /**
-     * Create a new session namespace
-     *
-     * @param   Session     $session    The session this namespace is associated to
-     */
-    public function __construct(Session $session = null)
-    {
-        $this->session = $session;
-    }
 
     /**
      * Return an iterator for all values in this namespace
@@ -195,18 +178,6 @@ class SessionNamespace implements IteratorAggregate
             }
             $this->set($key, $value);
         }
-    }
-
-    /**
-     * Save the session this namespace is associated to
-     */
-    public function write()
-    {
-        if (!$this->session) {
-            throw new IcingaException('Cannot save, session not set');
-        }
-
-        $this->session->write();
     }
 
     /**

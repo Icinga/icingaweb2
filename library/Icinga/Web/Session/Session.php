@@ -75,7 +75,7 @@ abstract class Session extends SessionNamespace
                 unset($this->removedNamespaces[array_search($identifier, $this->removedNamespaces)]);
             }
 
-            $this->namespaces[$identifier] = new SessionNamespace($this);
+            $this->namespaces[$identifier] = new SessionNamespace();
         }
 
         return $this->namespaces[$identifier];
