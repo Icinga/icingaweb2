@@ -145,25 +145,16 @@ class Manager
     /**
      * Whether an authenticated user has a given permission
      *
-     * This is true if the user owns this permission, false if not.
-     * Also false if there is no authenticated user
-     *
-     * TODO: I'd like to see wildcard support, e.g. module/*
-     *
      * @param  string  $permission  Permission name
-     * @return bool
+     *
+     * @return bool                 True if the user owns the given permission, false if not or if not authenticated
      */
     public function hasPermission($permission)
     {
         if (! $this->isAuthenticated()) {
             return false;
         }
-        foreach ($this->user->getPermissions() as $p) {
-            if ($p === $permission) {
-                return true;
-            }
-        }
-        return false;
+        return $this->user->can($permission);
     }
 
     /**
