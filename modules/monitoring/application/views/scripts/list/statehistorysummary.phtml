@@ -11,6 +11,10 @@ use Icinga\Web\Widget\Chart\HistoryColorGrid;
             <br />
             <?= $form ?>
         </div>
+        <?php if (! $this->filterEditor): ?>
+            <?= $this->filterPreview ?>
+        <?php endif ?>
+        <?= $this->filterEditor ?>
     </div>
 <? endif; ?>
 
@@ -19,38 +23,39 @@ use Icinga\Web\Widget\Chart\HistoryColorGrid;
 
 $settings = array(
     'cnt_up' => array(
-        'tooltip' => t('%d ok states on %s'),
+        'tooltip' => t('%d ok on %s'),
         'color' => '#49DF96',
         'opacity' => '0.55'
     ),
-    'cnt_down_hard' => array(
-        'tooltip' => t('%d ok states on %s'),
-        'color' => '#ff5566',
-        'opacity' => '0.7'
-    ),
     'cnt_unreachable_hard' => array(
-        'tooltip' => t('%d ok states on %s'),
+        'tooltip' => t('%d unreachable on %s'),
         'color' => '#77AAFF',
         'opacity' => '0.55'
     ),
     'cnt_critical_hard' => array(
-        'tooltip' => t('%d critical states on %s'),
+        'tooltip' => t('%d critical on %s'),
         'color' => '#ff5566',
         'opacity' => '0.9'
     ),
 
     'cnt_warning_hard' => array(
-        'tooltip' => t('%d warning states on %s'),
+        'tooltip' => t('%d warning on %s'),
         'color' => '#ffaa44',
         'opacity' => '1.0'
     ),
+
+    'cnt_down_hard' => array(
+        'tooltip' => t('%d down on %s'),
+        'color' => '#ff5566',
+        'opacity' => '0.9'
+    ),
     'cnt_unknown_hard' => array(
-        'tooltip' => t('%d unknown states on %s'),
+        'tooltip' => t('%d unknown on %s'),
         'color' => '#cc77ff',
         'opacity' => '0.7'
     ),
     'cnt_ok' => array(
-        'tooltip' => t('%d ok states on %s'),
+        'tooltip' => t('%d ok on %s'),
         'color' => '#49DF96',
         'opacity' => '0.55'
     )

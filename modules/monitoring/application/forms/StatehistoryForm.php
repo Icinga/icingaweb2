@@ -39,13 +39,12 @@ class StatehistoryForm extends Form
             'cnt_unknown_hard'      => Filter::expression('state', '=', '3'),
             'cnt_ok'                => Filter::expression('state', '=', '0')
         );
-        $stateFilter =  $states[$this->getValue('state', 'cnt_critical_hard')];
+        $state = $this->getValue('state', 'cnt_critical_hard');
+        $stateFilter =  $states[$state];
+        if (in_array($state, array('cnt_ok', 'cnt_up'))) {
+            return Filter::matchAll($objectTypeFilter, $stateFilter);
+        }
         return Filter::matchAll($baseFilter, $objectTypeFilter, $stateFilter);
-    }
-
-    public function relativeMonth($month)
-    {
-        $timestamp = strtotime('3 months ago');
     }
 
     /**
@@ -100,7 +99,7 @@ class StatehistoryForm extends Form
         );
         if ($objectType === 'services') {
             $serviceState = $this->getRequest()->getParam('state', 'cnt_critical_hard');
-            if (in_array($serviceState, array('cnt_down_hard', 'cnt_unreachable', 'cnt_up'))) {
+            if (in_array($serviceState, array('cnt_down_hard', 'cnt_unreachable_hard', 'cnt_up'))) {
                 $serviceState = 'cnt_critical_hard';
             }
             $this->addElement(
@@ -132,7 +131,7 @@ class StatehistoryForm extends Form
                     'multiOptions' =>  array(
                         'cnt_up' => t('Up'),
                         'cnt_down_hard' => t('Down'),
-                        'cnt_unreachable' => t('Unreachable')
+                        'cnt_unreachable_hard' => t('Unreachable')
                     ),
                     'class' => 'autosubmit'
                 )

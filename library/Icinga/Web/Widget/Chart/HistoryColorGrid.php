@@ -121,7 +121,7 @@ class HistoryColorGrid extends AbstractWidget {
      */
     private function renderDay($day)
     {
-        if (array_key_exists($day, $this->data)) {
+        if (array_key_exists($day, $this->data) && $this->data[$day]['value'] > 0) {
             $entry = $this->data[$day];
             return'<a ' .
                 'style="background-color:' . $this->calculateColor($entry['value']) . '; '
