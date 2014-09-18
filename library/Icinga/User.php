@@ -187,9 +187,9 @@ class User
     }
 
     /**
-     * Return permission information for this user
+     * Get the user's permissions
      *
-     * @return  array
+     * @return array
      */
     public function getPermissions()
     {
@@ -197,13 +197,17 @@ class User
     }
 
     /**
-     * Setter for permissions
+     * Set the user's permissions
      *
-     * @param   array   $permissions
+     * @param   array $permissions
+     *
+     * @return  $this
      */
     public function setPermissions(array $permissions)
     {
-        $this->permissions = $permissions;
+        natcasesort($permissions);
+        $this->permissions = array_combine($permissions, $permissions);
+        return $this;
     }
 
     /**
@@ -443,5 +447,32 @@ class User
     public function isRemoteUser()
     {
         return (count($this->remoteUserInformation)) ? true : false;
+    }
+
+    /**
+     * Whether the user has a given permission
+     *
+     * @param   string $permission
+     *
+     * @return  bool
+     */
+    public function can($permission)
+    {
+        if (isset($this->permissions['*']) || isset($this->permissions[$permission])) {
+            return true;
+        }
+        foreach ($this->permissions as $permitted) {
+            $wildcard = strpos($permitted, '*');
+            if ($wildcard !== false) {
+                if (substr($permission, 0, $wildcard) === substr($permitted, 0, $wildcard)) {
+                    return true;
+                } else {
+                    if ($permission === $permitted) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 }
