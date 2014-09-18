@@ -446,7 +446,7 @@ class User
      */
     public function isRemoteUser()
     {
-        return (count($this->remoteUserInformation)) ? true : false;
+        return ! empty($this->remoteUserInformation);
     }
 
     /**
