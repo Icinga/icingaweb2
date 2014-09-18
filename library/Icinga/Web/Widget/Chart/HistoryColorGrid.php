@@ -131,7 +131,7 @@ class HistoryColorGrid extends AbstractWidget {
             '>&nbsp;</a>';
         } else {
             return '<a ' .
-                'style="background-color:' . $this->calculateColor(0) . '; ' . ' opacity: ' . $this->opacity . ';' .
+                'style="background-color:' . $this->calculateColor(0) . '; ' . ' opacity: ' . $this->opacity . ';" ' .
                 'title="No entries for ' . $day . '" ' .
             '></a>';
         }
