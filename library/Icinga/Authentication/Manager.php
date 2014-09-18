@@ -113,30 +113,32 @@ class Manager
     }
 
     /**
-     * Tries to authenticate the user with the current session
+     * Try to authenticate the user with the current session
+     *
+     * Authentication for externally-authenticated users will be revoked if the username changed or external
+     * authentication is no longer in effect
      */
     public function authenticateFromSession()
     {
         $this->user = Session::getSession()->get('user');
-
         if ($this->user !== null && $this->user->isRemoteUser() === true) {
             list($originUsername, $field) = $this->user->getRemoteUserInformation();
-            if (array_key_exists($field, $_SERVER) && $_SERVER[$field] !== $originUsername) {
+            if (! array_key_exists($field, $_SERVER) || $_SERVER[$field] !== $originUsername) {
                 $this->removeAuthorization();
             }
         }
     }
 
     /**
-     * Returns true when the user is currently authenticated
+     * Whether the user is authenticated
      *
-     * @param  Boolean  $ignoreSession  Set to true to prevent authentication by session
+     * @param  bool $ignoreSession True to prevent session authentication
      *
      * @return bool
      */
     public function isAuthenticated($ignoreSession = false)
     {
-        if ($this->user === null && !$ignoreSession) {
+        if ($this->user === null && ! $ignoreSession) {
             $this->authenticateFromSession();
         }
         return is_object($this->user);
