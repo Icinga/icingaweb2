@@ -1,7 +1,3 @@
-<?php
-$helper = $this->getHelper('CommandForm');
-?>
-
 <?php if (false === $this->compact): ?>
 <div class="controls">
   <?= $this->tabs->render($this); ?>
@@ -37,7 +33,7 @@ $helper = $this->getHelper('CommandForm');
         </td>
         <td>
         <?php if (isset($downtime->service)): ?>
-          <a href="<?= $this->href('monitoring/show/service', array(
+          <a href="<?= $this->href('monitoring/service/show', array(
             'host'      => $downtime->host,
             'service'   => $downtime->service
           )); ?>">
@@ -47,7 +43,7 @@ $helper = $this->getHelper('CommandForm');
             <?= $this->translate('on'); ?> <?= $downtime->host; ?>
           </small>
         <?php else: ?>
-          <a href="<?= $this->href('monitoring/show/host', array(
+          <a href="<?= $this->href('monitoring/host/show', array(
             'host' => $downtime->host
           )); ?>">
             <?= $downtime->host; ?>
@@ -96,23 +92,17 @@ $helper = $this->getHelper('CommandForm');
         <?php endif ?>
           </small>
         </td>
-        <?php
-          $data = array(
-            'downtimeid'    => $downtime->id,
-            'host'          => $downtime->host
-          );
-          if (isset($downtime->service)) {
-            $data['service'] = $downtime->service;
-          }
-        ?>
         <td style="width: 2em">
-          <?= $helper->labelSubmitForm(
-            'X',
-            'Remove Downtime',
-            'link-like',
-            'removedowntime',
-            $data
-          ); ?>
+          <?php
+          $delDowntimeForm = clone $delDowntimeForm;
+          $delDowntimeForm->populate(array('downtime_id' => $downtime->id, 'redirect' => $this->url));
+          if (! isset($downtime->service)) {
+            $delDowntimeForm->setAction($this->url('monitoring/host/delete-downtime', array('host' => $downtime->host)));
+          } else {
+            $delDowntimeForm->setAction($this->url('monitoring/service/delete-downtime', array('host' => $downtime->host, 'service' => $downtime->service)));
+          }
+          echo $delDowntimeForm;
+          ?>
         </td>
       </tr>
 <?php endforeach ?>
