@@ -370,13 +370,14 @@ class Form extends Zend_Form
      */
     public function addSubmitButton()
     {
-        if ($this->submitLabel) {
+        $submitLabel = $this->getSubmitLabel();
+        if ($submitLabel) {
             $this->addElement(
                 'submit',
                 'btn_submit',
                 array(
                     'ignore'        => true,
-                    'label'         => $this->getSubmitLabel(),
+                    'label'         => $submitLabel,
                     'decorators'    => array(
                         'ViewHelper',
                         array('HtmlTag', array('tag' => 'div'))
