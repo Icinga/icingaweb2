@@ -75,8 +75,9 @@
                 }
             });
 
-            $('input.autofocus', el).focus();
-
+            if (document.activeElement === document.body) {
+                $('input.autofocus', el).focus();
+            }
             var searchField = $('#menu input.search', el);
             // Remember initial search field value if any
             if (searchField.length && searchField.val().length) {

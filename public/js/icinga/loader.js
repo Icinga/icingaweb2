@@ -661,6 +661,7 @@
             // Container update happens here
             var scrollPos = false;
             var self = this;
+            var origFocus = document.activeElement;
             var containerId = $container.attr('id');
             if (typeof containerId !== 'undefined') {
                 if (autorefresh) {
@@ -670,13 +671,18 @@
                 }
             }
 
-            var origFocus = document.activeElement;
-            if (
-                // Do not reload menu when search field has content
-                (containerId === 'menu' && $(origFocus).length && $(origFocus).val().length)
-                // TODO: remove once #7146 is solved
-                || (containerId !== 'menu' && typeof containerId !== 'undefined' && autorefresh && origFocus && $(origFocus).closest('form').length && $container.has($(origFocus)) && $(origFocus).closest('#' + containerId).length && ! $(origFocus).hasClass('autosubmit'))) {
-                this.icinga.logger.debug('Not changing content for ', containerId, ' form has focus');
+            var discard = false;
+            $.each(self.icinga.behaviors, function(name, behavior) {
+                if (behavior.renderHook) {
+                    var changed = behavior.renderHook(content, $container, action, autorefresh);
+                    if (!changed) {
+                        discard = true;
+                    } else {
+                        content = changed;
+                    }
+                }
+            });
+            if (discard) {
                 return;
             }
 
