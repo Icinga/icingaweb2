@@ -491,7 +491,7 @@ class Form extends Zend_Form
      *
      * @param   array   $defaults   The values to populate the elements with
      */
-    public function setDefaults($defaults)
+    public function setDefaults(array $defaults)
     {
         $this->create($defaults);
         return parent::setDefaults($defaults);
