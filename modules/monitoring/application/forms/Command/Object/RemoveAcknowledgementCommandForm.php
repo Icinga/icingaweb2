@@ -19,8 +19,18 @@ class RemoveAcknowledgementCommandForm extends ObjectsCommandForm
      */
     public function init()
     {
-        $this->setSubmitLabel(mt('monitoring', 'Remove Problem Acknowledgement'));
         $this->setAttrib('class', 'inline link-like');
+    }
+
+    /**
+     * (non-PHPDoc)
+     * @see \Icinga\Web\Form::getSubmitLabel() For the method documentation.
+     */
+    public function getSubmitLabel()
+    {
+        return mtp(
+            'monitoring', 'Remove problem acknowledgement', 'Remove problem acknowledgements', count($this->objects)
+        );
     }
 
     /**
@@ -35,7 +45,12 @@ class RemoveAcknowledgementCommandForm extends ObjectsCommandForm
             $removeAck->setObject($object);
             $this->getTransport($request)->send($removeAck);
         }
-        Notification::success(mt('monitoring', 'Removing problem acknowledgement..'));
+        Notification::success(mtp(
+            'monitoring',
+            'Removing problem acknowledgement..',
+            'Removing problem acknowledgements..',
+            count($this->objects)
+        ));
         return true;
     }
 }

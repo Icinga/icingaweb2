@@ -15,11 +15,13 @@ class AddCommentCommandForm extends ObjectsCommandForm
 {
     /**
      * (non-PHPDoc)
-     * @see \Zend_Form::init() For the method documentation.
+     * @see \Icinga\Web\Form::getSubmitLabel() For the method documentation.
      */
-    public function init()
+    public function getSubmitLabel()
     {
-        $this->setSubmitLabel(mt('monitoring', 'Add Comment'));
+        return mtp(
+            'monitoring', 'Add comment', 'Add comments', count($this->objects)
+        );
     }
 
     /**
@@ -82,10 +84,15 @@ class AddCommentCommandForm extends ObjectsCommandForm
             $comment->setObject($object);
             $comment->setComment($this->getElement('comment')->getValue());
             $comment->setAuthor($request->getUser()->getUsername());
-            $comment->setPersistent((bool) $this->getElement('persistent')->getValue());
+            $comment->setPersistent($this->getElement('persistent')->isChecked());
             $this->getTransport($request)->send($comment);
         }
-        Notification::success(mt('monitoring', 'Adding comment..'));
+        Notification::success(mtp(
+            'monitoring',
+            'Adding comment..',
+            'Adding comments..',
+            count($this->objects)
+        ));
         return true;
     }
 }

@@ -29,11 +29,13 @@ class ScheduleServiceDowntimeCommandForm extends ObjectsCommandForm
 
     /**
      * (non-PHPDoc)
-     * @see \Zend_Form::init() For the method documentation.
+     * @see \Icinga\Web\Form::getSubmitLabel() For the method documentation.
      */
-    public function init()
+    public function getSubmitLabel()
     {
-        $this->setSubmitLabel(mt('monitoring', 'Schedule Downtime'));
+        return mtp(
+            'monitoring', 'Schedule downtime', 'Schedule downtimes', count($this->objects)
+        );
     }
 
     /**
@@ -205,7 +207,12 @@ class ScheduleServiceDowntimeCommandForm extends ObjectsCommandForm
             $downtime->setObject($object);
             $this->scheduleDowntime($downtime, $request);
         }
-        Notification::success(mt('monitoring', 'Scheduling service downtime..'));
+        Notification::success(mtp(
+            'monitoring',
+            'Scheduling service downtime..',
+            'Scheduling service downtimes..',
+            count($this->objects)
+        ));
         return true;
     }
 }

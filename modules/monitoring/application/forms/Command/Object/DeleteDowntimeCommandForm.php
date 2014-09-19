@@ -19,7 +19,6 @@ class DeleteDowntimeCommandForm extends ObjectsCommandForm
      */
     public function init()
     {
-        $this->setSubmitLabel(mt('monitoring', 'X'));
         $this->setAttrib('class', 'inline link-like');
     }
 
@@ -36,8 +35,31 @@ class DeleteDowntimeCommandForm extends ObjectsCommandForm
                 array(
                     'required' => true
                 )
+            ),
+            array(
+                'hidden',
+                'redirect'
             )
         ));
+        return $this;
+    }
+
+    /**
+     * (non-PHPDoc)
+     * @see \Icinga\Web\Form::addSubmitButton() For the method documentation.
+     */
+    public function addSubmitButton()
+    {
+        $this->addElement(
+            'submit',
+            'btn_submit',
+            array(
+                'ignore'        => true,
+                'label'         => 'X',
+                'title'         => mt('monitoring', 'Delete downtime'),
+                'decorators'    => array('ViewHelper')
+            )
+        );
         return $this;
     }
 
@@ -54,6 +76,10 @@ class DeleteDowntimeCommandForm extends ObjectsCommandForm
                 ->setObject($object)
                 ->setDowntimeId($this->getElement('downtime_id')->getValue());
             $this->getTransport($request)->send($delDowntime);
+        }
+        $redirect = $this->getElement('redirect')->getValue();
+        if (! empty($redirect)) {
+            $this->setRedirectUrl($redirect);
         }
         Notification::success(mt('monitoring', 'Deleting downtime..'));
         return true;

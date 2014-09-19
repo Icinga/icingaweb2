@@ -18,11 +18,13 @@ class AcknowledgeProblemCommandForm extends ObjectsCommandForm
 {
     /**
      * (non-PHPDoc)
-     * @see \Zend_Form::init() For the method documentation.
+     * @see \Icinga\Web\Form::getSubmitLabel() For the method documentation.
      */
-    public function init()
+    public function getSubmitLabel()
     {
-        $this->setSubmitLabel(mt('monitoring', 'Acknowledge Problem'));
+        return mtp(
+            'monitoring', 'Acknowledge problem', 'Acknowledge problems', count($this->objects)
+        );
     }
 
     /**
@@ -118,7 +120,7 @@ class AcknowledgeProblemCommandForm extends ObjectsCommandForm
                     'description'   => mt(
                         'monitoring',
                         'If you want the acknowledgement to disable notifications until the host or service recovers,'
-                        . 'check this option.'
+                        . ' check this option.'
                     )
                 )
             ),
@@ -131,7 +133,7 @@ class AcknowledgeProblemCommandForm extends ObjectsCommandForm
                     'description'   => mt(
                         'monitoring',
                         'If you do not want an acknowledgement notification to be sent out to the appropriate contacts,'
-                        . 'uncheck this option.'
+                        . ' uncheck this option.'
                     )
                 )
             )
@@ -160,7 +162,12 @@ class AcknowledgeProblemCommandForm extends ObjectsCommandForm
             }
             $this->getTransport($request)->send($ack);
         }
-        Notification::success(mt('monitoring', 'Acknowledging problem..'));
+        Notification::success(mtp(
+            'monitoring',
+            'Acknowledging problem..',
+            'Acknowledging problems..',
+            count($this->objects)
+        ));
         return true;
     }
 }

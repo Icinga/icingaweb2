@@ -19,7 +19,6 @@ class DeleteCommentCommandForm extends ObjectsCommandForm
      */
     public function init()
     {
-        $this->setSubmitLabel(mt('monitoring', 'X'));
         $this->setAttrib('class', 'inline link-like');
     }
 
@@ -36,8 +35,31 @@ class DeleteCommentCommandForm extends ObjectsCommandForm
                 array(
                     'required' => true
                 )
+            ),
+            array(
+                'hidden',
+                'redirect'
             )
         ));
+        return $this;
+    }
+
+    /**
+     * (non-PHPDoc)
+     * @see \Icinga\Web\Form::addSubmitButton() For the method documentation.
+     */
+    public function addSubmitButton()
+    {
+        $this->addElement(
+            'submit',
+            'btn_submit',
+            array(
+                'ignore'        => true,
+                'label'         => 'X',
+                'title'         => mt('monitoring', 'Delete comment'),
+                'decorators'    => array('ViewHelper')
+            )
+        );
         return $this;
     }
 
@@ -54,6 +76,10 @@ class DeleteCommentCommandForm extends ObjectsCommandForm
                 ->setObject($object)
                 ->setCommentId($this->getElement('comment_id')->getValue());
             $this->getTransport($request)->send($delComment);
+        }
+        $redirect = $this->getElement('redirect')->getValue();
+        if (! empty($redirect)) {
+            $this->setRedirectUrl($redirect);
         }
         Notification::success(mt('monitoring', 'Deleting comment..'));
         return true;

@@ -45,7 +45,7 @@ class CheckNowCommandForm extends ObjectsCommandForm
                 'btn_submit',
                 array(
                     'ignore'        => true,
-                    'label'         => mt('monitoring', 'Check Now'),
+                    'label'         => mt('monitoring', 'Check now'),
                     'decorators'    => array('ViewHelper')
                 )
             )
@@ -72,7 +72,12 @@ class CheckNowCommandForm extends ObjectsCommandForm
                 ->setCheckTime(time());
             $this->getTransport($request)->send($check);
         }
-        Notification::success(mt('monitoring', 'Scheduling check..'));
+        Notification::success(mtp(
+            'monitoring',
+            'Scheduling check..',
+            'Scheduling checks..',
+            count($this->objects)
+        ));
         return true;
     }
 }

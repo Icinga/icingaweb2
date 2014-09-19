@@ -18,11 +18,13 @@ class ScheduleServiceCheckCommandForm extends ObjectsCommandForm
 {
     /**
      * (non-PHPDoc)
-     * @see \Zend_Form::init() For the method documentation.
+     * @see \Icinga\Web\Form::getSubmitLabel() For the method documentation.
      */
-    public function init()
+    public function getSubmitLabel()
     {
-        $this->setSubmitLabel(mt('monitoring', 'Schedule Check'));
+        return mtp(
+            'monitoring', 'Schedule check', 'Schedule checks', count($this->objects)
+        );
     }
 
     /**
@@ -62,7 +64,7 @@ class ScheduleServiceCheckCommandForm extends ObjectsCommandForm
                     'description'   => mt(
                         'monitoring',
                         'If you select this option, Icinga will force a check regardless of both what time the'
-                        . 'scheduled check occurs and whether or not checks are enabled.'
+                        . ' scheduled check occurs and whether or not checks are enabled.'
                     )
                 )
             )
@@ -70,6 +72,12 @@ class ScheduleServiceCheckCommandForm extends ObjectsCommandForm
         return $this;
     }
 
+    /**
+     * Schedule a check
+     *
+     * @param ScheduleServiceCheckCommand   $check
+     * @param Request                       $request
+     */
     public function scheduleCheck(ScheduleServiceCheckCommand $check, Request $request)
     {
         $check
@@ -90,7 +98,12 @@ class ScheduleServiceCheckCommandForm extends ObjectsCommandForm
             $check->setObject($object);
             $this->scheduleCheck($check, $request);
         }
-        Notification::success(mt('monitoring', 'Scheduling service check..'));
+        Notification::success(mtp(
+            'monitoring',
+            'Scheduling service check..',
+            'Scheduling service checks..',
+            count($this->objects)
+        ));
         return true;
     }
 }

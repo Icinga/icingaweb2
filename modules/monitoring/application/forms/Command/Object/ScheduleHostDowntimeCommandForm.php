@@ -87,7 +87,12 @@ class ScheduleHostDowntimeCommandForm extends ScheduleServiceDowntimeCommandForm
             $hostDowntime->setObject($object);
             $this->scheduleDowntime($hostDowntime, $request);
         }
-        Notification::success(mt('monitoring', 'Scheduling host downtime..'));
+        Notification::success(mtp(
+            'monitoring',
+            'Scheduling host downtime..',
+            'Scheduling host downtimes..',
+            count($this->objects)
+        ));
         return true;
     }
 }
