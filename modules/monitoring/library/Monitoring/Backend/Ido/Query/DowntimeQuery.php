@@ -28,8 +28,10 @@ class DowntimeQuery extends IdoQuery
             'downtime_duration'        => 'sd.duration',
             'downtime_is_in_effect'    => 'sd.is_in_effect',
             'downtime_internal_id'     => 'sd.internal_downtime_id',
-            'downtime_host'            => 'CASE WHEN ho.name1 IS NULL THEN so.name1 ELSE ho.name1 END COLLATE latin1_general_ci',
+            'downtime_host'            => 'CASE WHEN ho.name1 IS NULL THEN so.name1 ELSE ho.name1 END COLLATE latin1_general_ci', // #7278, #7279
+            'host'                     => 'CASE WHEN ho.name1 IS NULL THEN so.name1 ELSE ho.name1 END COLLATE latin1_general_ci',
             'downtime_service'         => 'so.name2 COLLATE latin1_general_ci',
+            'service'                  => 'so.name2 COLLATE latin1_general_ci', // #7278, #7279
             'downtime_objecttype'      => "CASE WHEN ho.object_id IS NOT NULL THEN 'host' ELSE CASE WHEN so.object_id IS NOT NULL THEN 'service' ELSE NULL END END",
             'downtime_host_state'      => 'CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL THEN 99 ELSE hs.current_state END',
             'downtime_service_state'   => 'CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL THEN 99 ELSE ss.current_state END'
