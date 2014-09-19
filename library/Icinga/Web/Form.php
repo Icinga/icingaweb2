@@ -376,7 +376,7 @@ class Form extends Zend_Form
                 'btn_submit',
                 array(
                     'ignore'        => true,
-                    'label'         => $this->submitLabel,
+                    'label'         => $this->getSubmitLabel(),
                     'decorators'    => array(
                         'ViewHelper',
                         array('HtmlTag', array('tag' => 'div'))
