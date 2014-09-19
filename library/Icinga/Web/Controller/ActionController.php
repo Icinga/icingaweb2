@@ -39,10 +39,6 @@ class ActionController extends Zend_Controller_Action
      */
     protected $requiresAuthentication = true;
 
-    private $config;
-
-    private $configs = array();
-
     private $autorefreshInterval;
 
     private $reloadCss = false;
@@ -110,17 +106,10 @@ class ActionController extends Zend_Controller_Action
     public function Config($file = null)
     {
         if ($file === null) {
-            if ($this->config === null) {
-                $this->config = Config::app();
-            }
-            return $this->config;
+            return Config::app();
         } else {
-            if (! array_key_exists($file, $this->configs)) {
-                $this->configs[$file] = Config::module($module, $file);
-            }
-            return $this->configs[$file];
+            return Config::app($file);
         }
-        return $this->config;
     }
 
     public function Auth()
