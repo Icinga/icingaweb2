@@ -543,7 +543,7 @@ class Form extends Zend_Form
      */
     public function isSubmitted()
     {
-        if ($this->submitLabel !== null) {
+        if ($this->getSubmitLabel()) {
             return $this->getElement('btn_submit')->isChecked();
         }
 
