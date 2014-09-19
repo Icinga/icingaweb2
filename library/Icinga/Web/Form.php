@@ -480,9 +480,7 @@ class Form extends Zend_Form
     public function addCsrfCounterMeasure()
     {
         if (false === $this->tokenDisabled && $this->getElement($this->tokenElementName) === null) {
-            $element = new CsrfCounterMeasure($this->tokenElementName);
-            $element->setDecorators(array('ViewHelper'));
-            $this->addElement($element);
+            $this->addElement(new CsrfCounterMeasure($this->tokenElementName));
         }
 
         return $this;

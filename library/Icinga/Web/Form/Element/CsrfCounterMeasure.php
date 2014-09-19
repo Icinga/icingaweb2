@@ -29,6 +29,7 @@ class CsrfCounterMeasure extends Zend_Form_Element_Xhtml
     {
         $this->setRequired(true); // Not requiring this element would not make any sense
         $this->setIgnore(true); // We do not want this element's value being retrieved by Form::getValues()
+        $this->setDecorators(array('ViewHelper'));
         $this->setValue($this->generateCsrfToken());
     }
 
